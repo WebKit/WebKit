@@ -435,8 +435,7 @@ TEST_P(MultithreadingTest, MultiContextDrawWithSwapBuffers)
 }
 
 // Test that ANGLE handles multiple threads creating and destroying resources (vertex buffer in this
-// case). Disable defer_flush_until_endrenderpass so that glFlush will issue work to GPU in order to
-// maximize the chance we resources can be destroyed at the wrong time.
+// case).
 TEST_P(MultithreadingTest, MultiContextCreateAndDeleteResources)
 {
     ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
@@ -4052,7 +4051,7 @@ void main()
         }
         ASSERT_GL_NO_ERROR();
 
-        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
+        threadSynchronization.nextStep(Step::Finish);
     };
     auto thread1 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
         ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
@@ -4082,7 +4081,7 @@ void main()
         EXPECT_PIXEL_RECT_EQ(0, 0, kSurfaceWidth, kSurfaceHeight, expect);
         ASSERT_GL_NO_ERROR();
 
-        threadSynchronization.nextStep(Step::Finish);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
     };
 
     std::array<LockStepThreadFunc, 2> threadFuncs = {

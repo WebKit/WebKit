@@ -4340,6 +4340,13 @@ CallCapture ParseCallCapture(const Token &nameToken,
                                                                                     strings);
         return CallCapture(EntryPoint::GLPatchParameteriEXT, std::move(params));
     }
+    if (strcmp(nameToken, "glPatchParameteriOES") == 0)
+    {
+        ParamBuffer params =
+            ParseParameters<std::remove_pointer<PFNGLPATCHPARAMETERIOESPROC>::type>(paramTokens,
+                                                                                    strings);
+        return CallCapture(EntryPoint::GLPatchParameteriOES, std::move(params));
+    }
     if (strcmp(nameToken, "glPauseTransformFeedback") == 0)
     {
         ParamBuffer params =

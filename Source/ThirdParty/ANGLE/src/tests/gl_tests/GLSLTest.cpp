@@ -538,7 +538,11 @@ class GLSLTest_ES3 : public GLSLTest
 {};
 
 class GLSLTest_ES31 : public GLSLTest
-{};
+{
+  protected:
+    void testArrayOfArrayOfSamplerDynamicIndex(const APIExtensionVersion usedExtension);
+    void testTessellationTextureBufferAccess(const APIExtensionVersion usedExtension);
+};
 
 // Tests the "init output variables" ANGLE shader translator option.
 class GLSLTest_ES31_InitShaderVariables : public GLSLTest
@@ -7358,64 +7362,91 @@ TEST_P(GLSLTest_ES31, VaryingIOBlockDeclaredAsInAndOut)
     ASSERT_GL_NO_ERROR();
 }
 
-// Test that texture buffers can be accessed in a tessellation stage
-// Triggers a bug in the Vulkan backend: http://anglebug.com/7135
-TEST_P(GLSLTest_ES31, TessellationTextureBufferAccess)
+void GLSLTest_ES31::testTessellationTextureBufferAccess(const APIExtensionVersion usedExtension)
 {
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_buffer"));
+    ASSERT(usedExtension == APIExtensionVersion::EXT || usedExtension == APIExtensionVersion::OES);
 
+    // Vertex shader
     constexpr char kVS[] = R"(#version 310 es
-    precision highp float;
-    in vec4 inputAttribute;
+precision highp float;
+in vec4 inputAttribute;
 
-    void main()
+void main()
+{
+gl_Position = inputAttribute;
+})";
+
+    // Tessellation shaders
+    constexpr char kGLSLVersion[] = R"(#version 310 es
+)";
+    constexpr char kTessEXT[]     = R"(#extension GL_EXT_tessellation_shader : require
+)";
+    constexpr char kTessOES[]     = R"(#extension GL_OES_tessellation_shader : require
+)";
+    constexpr char kTexBufEXT[]   = R"(#extension GL_EXT_texture_buffer : require
+)";
+    constexpr char kTexBufOES[]   = R"(#extension GL_OES_texture_buffer : require
+)";
+
+    std::string tcs;
+    std::string tes;
+
+    tcs.append(kGLSLVersion);
+    tes.append(kGLSLVersion);
+
+    if (usedExtension == APIExtensionVersion::EXT)
     {
-        gl_Position = inputAttribute;
-    })";
-
-    constexpr char kTCS[] = R"(#version 310 es
-    #extension GL_EXT_tessellation_shader : require
-    precision mediump float;
-    layout(vertices = 2) out;
-
-    void main()
+        tcs.append(kTessEXT);
+        tes.append(kTessEXT);
+        tes.append(kTexBufEXT);
+    }
+    else
     {
-        gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
-        gl_TessLevelInner[0] = 1.0;
-        gl_TessLevelInner[1] = 1.0;
-        gl_TessLevelOuter[0] = 1.0;
-        gl_TessLevelOuter[1] = 1.0;
-        gl_TessLevelOuter[2] = 1.0;
-        gl_TessLevelOuter[3] = 1.0;
-    })";
+        tcs.append(kTessOES);
+        tes.append(kTessOES);
+        tes.append(kTexBufOES);
+    }
 
-    constexpr char kTES[] = R"(#version 310 es
-    #extension GL_EXT_tessellation_shader : require
-    #extension GL_OES_texture_buffer : require
-    precision mediump float;
-    layout (isolines, point_mode) in;
+    constexpr char kTCSBody[] = R"(precision mediump float;
+layout(vertices = 2) out;
 
-    uniform highp samplerBuffer tex;
+void main()
+{
+gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+gl_TessLevelInner[0] = 1.0;
+gl_TessLevelInner[1] = 1.0;
+gl_TessLevelOuter[0] = 1.0;
+gl_TessLevelOuter[1] = 1.0;
+gl_TessLevelOuter[2] = 1.0;
+gl_TessLevelOuter[3] = 1.0;
+})";
+    tcs.append(kTCSBody);
 
-    out vec4 tex_color;
+    constexpr char kTESBody[] = R"(precision mediump float;
+layout (isolines, point_mode) in;
 
-    void main()
-    {
-        tex_color = texelFetch(tex, 0);
-        gl_Position = gl_in[0].gl_Position;
-    })";
+uniform highp samplerBuffer tex;
 
+out vec4 tex_color;
+
+void main()
+{
+tex_color = texelFetch(tex, 0);
+gl_Position = gl_in[0].gl_Position;
+})";
+    tes.append(kTESBody);
+
+    // Fragment shader
     constexpr char kFS[] = R"(#version 310 es
-    precision mediump float;
-    layout(location = 0) out mediump vec4 color;
+precision mediump float;
+layout(location = 0) out mediump vec4 color;
 
-    in vec4 tex_color;
+in vec4 tex_color;
 
-    void main()
-    {
-        color = tex_color;
-    })";
+void main()
+{
+color = tex_color;
+})";
 
     constexpr GLint kBufferSize = 32;
     GLubyte texData[]           = {0u, 255u, 0u, 255u};
@@ -7432,9 +7463,25 @@ TEST_P(GLSLTest_ES31, TessellationTextureBufferAccess)
     glClearColor(1.0, 0, 0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    ANGLE_GL_PROGRAM_WITH_TESS(program, kVS, kTCS, kTES, kFS);
+    ANGLE_GL_PROGRAM_WITH_TESS(program, kVS, tcs.c_str(), tes.c_str(), kFS);
     drawPatches(program, "inputAttribute", 0.5f, 1.0f, GL_FALSE);
     ASSERT_GL_NO_ERROR();
+}
+
+// Test that texture buffers can be accessed in a tessellation stage (using EXT)
+TEST_P(GLSLTest_ES31, TessellationTextureBufferAccessEXT)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_buffer"));
+    testTessellationTextureBufferAccess(APIExtensionVersion::EXT);
+}
+
+// Test that texture buffers can be accessed in a tessellation stage (using OES)
+TEST_P(GLSLTest_ES31, TessellationTextureBufferAccessOES)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_tessellation_shader"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_buffer"));
+    testTessellationTextureBufferAccess(APIExtensionVersion::OES);
 }
 
 // Test that a varying struct that's not declared in the fragment shader links successfully.
@@ -9044,6 +9091,42 @@ void main()
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
     drawQuad(program, "inputAttribute", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that multi variables struct should not crash in separated struct expressions.
+TEST_P(GLSLTest_ES3, VaryingStructWithInlineDefinition2)
+{
+    constexpr char kVS[] = R"(#version 300 es
+in vec4 inputAttribute;
+flat out struct A
+{
+    int a;
+} z1, z2;
+void main()
+{
+    z1.a = 1;
+    z2.a = 2;
+    gl_Position = inputAttribute;
+})";
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+flat in struct A
+{
+    int a;
+} z1, z2;
+void main()
+{
+    bool success = (z1.a == 1 && z2.a == 2);
+    my_FragColor = vec4(1, 0, 0, 1);
+    if (success)
+    {
+        my_FragColor = vec4(0, 1, 0, 1);
+    }
+})";
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    drawQuad(program.get(), "inputAttribute", 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -12188,11 +12271,9 @@ void main(void)
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 }
 
-// Test that array of array of samplers can be indexed correctly with dynamic indices.
-TEST_P(GLSLTest_ES31, ArrayOfArrayOfSamplerDynamicIndex)
+void GLSLTest_ES31::testArrayOfArrayOfSamplerDynamicIndex(const APIExtensionVersion usedExtension)
 {
-    // Skip if EXT_gpu_shader5 is not enabled.
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_gpu_shader5"));
+    ASSERT(usedExtension == APIExtensionVersion::EXT || usedExtension == APIExtensionVersion::OES);
 
     int maxTextureImageUnits = 0;
     glGetIntegerv(GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS, &maxTextureImageUnits);
@@ -12204,13 +12285,29 @@ TEST_P(GLSLTest_ES31, ArrayOfArrayOfSamplerDynamicIndex)
     // http://anglebug.com/5546
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsOpenGL());
 
-    constexpr char kComputeShader[] = R"(#version 310 es
-#extension GL_EXT_gpu_shader5 : require
+    std::string computeShader;
+    constexpr char kGLSLVersion[]  = R"(#version 310 es
+)";
+    constexpr char kGPUShaderEXT[] = R"(#extension GL_EXT_gpu_shader5 : require
+)";
+    constexpr char kGPUShaderOES[] = R"(#extension GL_OES_gpu_shader5 : require
+)";
 
+    computeShader.append(kGLSLVersion);
+    if (usedExtension == APIExtensionVersion::EXT)
+    {
+        computeShader.append(kGPUShaderEXT);
+    }
+    else
+    {
+        computeShader.append(kGPUShaderOES);
+    }
+
+    constexpr char kComputeShaderBody[] = R"(
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
 layout(binding = 1, std430) buffer Output {
-  uint success;
+uint success;
 } outbuf;
 
 uniform sampler2D smplr[2][3][4];
@@ -12218,47 +12315,49 @@ layout(binding=0) uniform atomic_uint ac;
 
 bool sampler1DAndAtomicCounter(uvec4 sExpect, in sampler2D s[4], in atomic_uint a, uint aExpect)
 {
-    uvec4 sResult = uvec4(uint(texture(s[0], vec2(0.5, 0.5)).x * 255.0),
-                          uint(texture(s[1], vec2(0.5, 0.5)).x * 255.0),
-                          uint(texture(s[2], vec2(0.5, 0.5)).x * 255.0),
-                          uint(texture(s[3], vec2(0.5, 0.5)).x * 255.0));
-    uint aResult = atomicCounter(a);
+uvec4 sResult = uvec4(uint(texture(s[0], vec2(0.5, 0.5)).x * 255.0),
+                      uint(texture(s[1], vec2(0.5, 0.5)).x * 255.0),
+                      uint(texture(s[2], vec2(0.5, 0.5)).x * 255.0),
+                      uint(texture(s[3], vec2(0.5, 0.5)).x * 255.0));
+uint aResult = atomicCounter(a);
 
-    return sExpect == sResult && aExpect == aResult;
+return sExpect == sResult && aExpect == aResult;
 }
 
 bool sampler3DAndAtomicCounter(in sampler2D s[2][3][4], uint aInitial, in atomic_uint a)
 {
-    bool success = true;
-    // [0][0]
-    success = sampler1DAndAtomicCounter(uvec4(0, 8, 16, 24),
-                    s[atomicCounterIncrement(ac)][0], a, aInitial + 1u) && success;
-    // [1][0]
-    success = sampler1DAndAtomicCounter(uvec4(96, 104, 112, 120),
-                    s[atomicCounterIncrement(ac)][0], a, aInitial + 2u) && success;
-    // [0][1]
-    success = sampler1DAndAtomicCounter(uvec4(32, 40, 48, 56),
-                    s[0][atomicCounterIncrement(ac) - 1u], a, aInitial + 3u) && success;
-    // [0][2]
-    success = sampler1DAndAtomicCounter(uvec4(64, 72, 80, 88),
-                    s[0][atomicCounterIncrement(ac) - 1u], a, aInitial + 4u) && success;
-    // [1][1]
-    success = sampler1DAndAtomicCounter(uvec4(128, 136, 144, 152),
-                    s[1][atomicCounterIncrement(ac) - 3u], a, aInitial + 5u) && success;
-    // [1][2]
-    uint acValue = atomicCounterIncrement(ac);  // Returns 5
-    success = sampler1DAndAtomicCounter(uvec4(160, 168, 176, 184),
-                    s[acValue - 4u][atomicCounterIncrement(ac) - 4u], a, aInitial + 7u) && success;
+bool success = true;
+// [0][0]
+success = sampler1DAndAtomicCounter(uvec4(0, 8, 16, 24),
+                s[atomicCounterIncrement(ac)][0], a, aInitial + 1u) && success;
+// [1][0]
+success = sampler1DAndAtomicCounter(uvec4(96, 104, 112, 120),
+                s[atomicCounterIncrement(ac)][0], a, aInitial + 2u) && success;
+// [0][1]
+success = sampler1DAndAtomicCounter(uvec4(32, 40, 48, 56),
+                s[0][atomicCounterIncrement(ac) - 1u], a, aInitial + 3u) && success;
+// [0][2]
+success = sampler1DAndAtomicCounter(uvec4(64, 72, 80, 88),
+                s[0][atomicCounterIncrement(ac) - 1u], a, aInitial + 4u) && success;
+// [1][1]
+success = sampler1DAndAtomicCounter(uvec4(128, 136, 144, 152),
+                s[1][atomicCounterIncrement(ac) - 3u], a, aInitial + 5u) && success;
+// [1][2]
+uint acValue = atomicCounterIncrement(ac);  // Returns 5
+success = sampler1DAndAtomicCounter(uvec4(160, 168, 176, 184),
+                s[acValue - 4u][atomicCounterIncrement(ac) - 4u], a, aInitial + 7u) && success;
 
-    return success;
+return success;
 }
 
 void main(void)
 {
-    outbuf.success = uint(sampler3DAndAtomicCounter(smplr, 0u, ac));
+outbuf.success = uint(sampler3DAndAtomicCounter(smplr, 0u, ac));
 }
 )";
-    ANGLE_GL_COMPUTE_PROGRAM(program, kComputeShader);
+    computeShader.append(kComputeShaderBody);
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, computeShader.c_str());
     EXPECT_GL_NO_ERROR();
 
     glUseProgram(program);
@@ -12322,6 +12421,22 @@ void main(void)
     EXPECT_EQ(ptr[0], 1u);
 
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+}
+
+// Test that array of array of samplers can be indexed correctly with dynamic indices.
+TEST_P(GLSLTest_ES31, ArrayOfArrayOfSamplerDynamicIndexEXT)
+{
+    // Skip if EXT_gpu_shader5 is not enabled.
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_gpu_shader5"));
+    testArrayOfArrayOfSamplerDynamicIndex(APIExtensionVersion::EXT);
+}
+
+// Test that array of array of samplers can be indexed correctly with dynamic indices.
+TEST_P(GLSLTest_ES31, ArrayOfArrayOfSamplerDynamicIndexOES)
+{
+    // Skip if OES_gpu_shader5 is not enabled.
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_gpu_shader5"));
+    testArrayOfArrayOfSamplerDynamicIndex(APIExtensionVersion::OES);
 }
 
 // Test that array of array of samplers can be indexed correctly with dynamic indices.  Uses
@@ -19574,6 +19689,7 @@ void main()
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     GLSLTest,
+    ES3_OPENGL().enable(Feature::ForceInitShaderVariables),
     ES3_OPENGL().enable(Feature::ScalarizeVecAndMatConstructorArgs),
     ES3_OPENGLES().enable(Feature::ScalarizeVecAndMatConstructorArgs),
     ES3_VULKAN().enable(Feature::AvoidOpSelectWithMismatchingRelaxedPrecision),
@@ -19585,6 +19701,7 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(GLSLTestNoValidation);
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GLSLTest_ES3);
 ANGLE_INSTANTIATE_TEST_ES3_AND(
     GLSLTest_ES3,
+    ES3_OPENGL().enable(Feature::ForceInitShaderVariables),
     ES3_OPENGL().enable(Feature::ScalarizeVecAndMatConstructorArgs),
     ES3_OPENGLES().enable(Feature::ScalarizeVecAndMatConstructorArgs),
     ES3_VULKAN().enable(Feature::AvoidOpSelectWithMismatchingRelaxedPrecision),

@@ -89,11 +89,11 @@ For UWP, set `target_os = "winuwp"` in the args. For WinUI 3, instead set
 `angle_is_winappsdk=true` along with the path to the Windows App SDK
 headers: `winappsdk_dir="/path/to/headers"`. The headers need to be generated
 from the winmd files, which is done by running the `scripts/winappsdk_setup.py`
-script and passing in the path to store the headers.  
+script and passing in the path to store the headers.
 For both UWP and WinUI 3, setting `is_component_build = false` is highly
 recommended to support moving libEGL.dll and libGLESv2.dll to an application's
 directory and being self-contained, instead of depending on other DLLs
-(d3dcompiler_47.dll is still needed for the Direct3D backend).  
+(d3dcompiler_47.dll is still needed for the Direct3D backend).
 We also recommend using `is_clang = false`.
 
 For more information on GN run `gn help`.
@@ -109,16 +109,6 @@ autoninja -C out/Release
 from earlier steps. Ninja automatically calls GN to regenerate the build
 files on any configuration change. `autoninja` automatically specifies a
 thread count to `ninja` based on your system configuration.
-
-### Building with Goma (Google employees only)
-
-Deprecated, see Reclient.
-
-To enable Goma set the GN arg:
-
-```
-use_goma = true
-```
 
 ### Building with Reclient (Google employees only)
 

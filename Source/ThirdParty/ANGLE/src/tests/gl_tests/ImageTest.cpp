@@ -6225,7 +6225,7 @@ TEST_P(ImageTest, UpdatedData)
 }
 
 // Check that the external texture is successfully updated when only glTexSubImage2D is called.
-TEST_P(ImageTest, UpdatedExternalTexture)
+TEST_P(ImageTest, AHBUpdatedExternalTexture)
 {
     EGLWindow *window = getEGLWindow();
 

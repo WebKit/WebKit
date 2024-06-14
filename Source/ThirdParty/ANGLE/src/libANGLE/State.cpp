@@ -1744,7 +1744,7 @@ void PrivateState::getBooleanv(GLenum pname, GLboolean *params) const
             *params = mIsSampleShadingEnabled;
             break;
         case GL_PRIMITIVE_RESTART_FOR_PATCHES_SUPPORTED:
-            *params = isPrimitiveRestartEnabled() && getExtensions().tessellationShaderEXT;
+            *params = isPrimitiveRestartEnabled() && getExtensions().tessellationShaderAny();
             break;
         case GL_ROBUST_FRAGMENT_SHADER_OUTPUT_ANGLE:
             *params = mExtensions.robustFragmentShaderOutputANGLE ? GL_TRUE : GL_FALSE;
@@ -3793,7 +3793,7 @@ angle::Result State::installProgramExecutable(const Context *context)
     // Make sure the program binary is cached if needed and not already.  This is automatically done
     // on program destruction, but is done here anyway to support situations like Android apps that
     // are typically killed instead of cleanly closed.
-    mProgram->cacheProgramBinaryIfNotAlready(context);
+    mProgram->cacheProgramBinaryIfNecessary(context);
 
     // The bound Program always overrides the ProgramPipeline, so install the executable regardless
     // of whether a program pipeline is bound.

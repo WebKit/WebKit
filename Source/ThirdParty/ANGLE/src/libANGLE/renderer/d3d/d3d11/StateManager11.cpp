@@ -1691,6 +1691,7 @@ void StateManager11::invalidateImageBindings()
     mInternalDirtyBits.set(DIRTY_BIT_GRAPHICS_UAV_STATE);
     mInternalDirtyBits.set(DIRTY_BIT_COMPUTE_SRV_STATE);
     mInternalDirtyBits.set(DIRTY_BIT_COMPUTE_UAV_STATE);
+    mInternalDirtyBits.set(DIRTY_BIT_PROGRAM_UNIFORMS);
 }
 
 void StateManager11::invalidateConstantBuffer(unsigned int slot)

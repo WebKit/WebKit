@@ -276,7 +276,6 @@ b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.image.render_multiple_context
 
 6678 TSAN : dEQP-EGL.functional.multithread.* = SKIP
 6678 TSAN : dEQP-EGL.functional.sharing.gles2.multithread.* = SKIP
-7327 TSAN : dEQP-EGL.functional.color_clears.multi_thread.gles3.rgba8888_window = SKIP
 7327 TSAN : dEQP-EGL.functional.render.multi_thread.gles3.rgba8888_window = SKIP
 
 6678 UBSAN : dEQP-EGL.functional.sharing.gles2.multithread.* = SKIP

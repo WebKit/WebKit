@@ -283,7 +283,7 @@ angle::Result TextureWgpu::syncState(const gl::Context *context,
     ANGLE_TRY(initializeImage(contextWgpu, isGenerateMipmap
                                                ? ImageMipLevels::FullMipChainForGenerateMipmap
                                                : ImageMipLevels::EnabledLevels));
-    mImage->flushStagedUpdates(contextWgpu);
+    ANGLE_TRY(mImage->flushStagedUpdates(contextWgpu));
     return angle::Result::Continue;
 }
 
@@ -316,8 +316,6 @@ angle::Result TextureWgpu::getAttachmentRenderTarget(const gl::Context *context,
     {
         ANGLE_TRY(initializeImage(contextWgpu, ImageMipLevels::EnabledLevels));
     }
-    // Note: Flushing updates will be moved to FramebufferWgpu when deferring clears is supported.
-    mImage->flushStagedUpdates(contextWgpu);
 
     GLuint layerIndex = 0, layerCount = 0, imageLayerCount = 0;
     GetRenderTargetLayerCountAndIndex(mImage, imageIndex, &layerIndex, &layerCount,
@@ -330,9 +328,9 @@ angle::Result TextureWgpu::getAttachmentRenderTarget(const gl::Context *context,
 
     if (layerCount == 1)
     {
-        initSingleLayerRenderTargets(contextWgpu, imageLayerCount,
-                                     gl::LevelIndex(imageIndex.getLevelIndex()),
-                                     renderToTextureIndex);
+        ANGLE_TRY(initSingleLayerRenderTargets(contextWgpu, imageLayerCount,
+                                               gl::LevelIndex(imageIndex.getLevelIndex()),
+                                               renderToTextureIndex));
 
         std::vector<std::vector<RenderTargetWgpu>> &levelRenderTargets =
             mSingleLayerRenderTargets[renderToTextureIndex];
@@ -516,7 +514,7 @@ angle::Result TextureWgpu::respecifyImageStorageIfNecessary(ContextWgpu *context
          mImage->getLevelCount() !=
              getMipLevelCount(ImageMipLevels::FullMipChainForGenerateMipmap)))
     {
-        mImage->flushStagedUpdates(contextWgpu);
+        ANGLE_TRY(mImage->flushStagedUpdates(contextWgpu));
 
         mImage->resetImage();
     }
@@ -527,7 +525,7 @@ angle::Result TextureWgpu::respecifyImageStorageIfNecessary(ContextWgpu *context
     // TODO(liza): Respecify the image once copying images is supported.
     if (TextureHasAnyRedefinedLevels(mRedefinedLevels) || isMipmapEnabledByMinFilter)
     {
-        mImage->flushStagedUpdates(contextWgpu);
+        ANGLE_TRY(mImage->flushStagedUpdates(contextWgpu));
 
         mImage->resetImage();
     }
@@ -606,10 +604,11 @@ angle::Result TextureWgpu::maybeUpdateBaseMaxLevels(ContextWgpu *contextWgpu)
     return angle::Result::Continue;
 }
 
-void TextureWgpu::initSingleLayerRenderTargets(ContextWgpu *contextWgpu,
-                                               GLuint layerCount,
-                                               gl::LevelIndex levelIndex,
-                                               gl::RenderToTextureImageIndex renderToTextureIndex)
+angle::Result TextureWgpu::initSingleLayerRenderTargets(
+    ContextWgpu *contextWgpu,
+    GLuint layerCount,
+    gl::LevelIndex levelIndex,
+    gl::RenderToTextureImageIndex renderToTextureIndex)
 {
     std::vector<std::vector<RenderTargetWgpu>> &allLevelsRenderTargets =
         mSingleLayerRenderTargets[renderToTextureIndex];
@@ -624,7 +623,7 @@ void TextureWgpu::initSingleLayerRenderTargets(ContextWgpu *contextWgpu,
     // Lazy init. Check if already initialized.
     if (!renderTargets.empty())
     {
-        return;
+        return angle::Result::Continue;
     }
 
     // There are |layerCount| render targets, one for each layer
@@ -632,33 +631,14 @@ void TextureWgpu::initSingleLayerRenderTargets(ContextWgpu *contextWgpu,
 
     for (uint32_t layerIndex = 0; layerIndex < layerCount; ++layerIndex)
     {
-        wgpu::TextureViewDescriptor textureViewDesc;
-        textureViewDesc.aspect          = wgpu::TextureAspect::All;
-        textureViewDesc.baseArrayLayer  = layerIndex;
-        textureViewDesc.arrayLayerCount = 1;
-        textureViewDesc.baseMipLevel    = mImage->toWgpuLevel(levelIndex).get();
-        textureViewDesc.mipLevelCount   = 1;
-        switch (mImage->getTextureDescriptor().dimension)
-        {
-            case wgpu::TextureDimension::Undefined:
-                textureViewDesc.dimension = wgpu::TextureViewDimension::Undefined;
-                break;
-            case wgpu::TextureDimension::e1D:
-                textureViewDesc.dimension = wgpu::TextureViewDimension::e1D;
-                break;
-            case wgpu::TextureDimension::e2D:
-                textureViewDesc.dimension = wgpu::TextureViewDimension::e2D;
-                break;
-            case wgpu::TextureDimension::e3D:
-                textureViewDesc.dimension = wgpu::TextureViewDimension::e3D;
-                break;
-        }
-        textureViewDesc.format        = mImage->getTextureDescriptor().format;
-        wgpu::TextureView textureView = mImage->getTexture().CreateView(&textureViewDesc);
+        wgpu::TextureView textureView;
+        ANGLE_TRY(mImage->createTextureView(levelIndex, layerIndex, textureView));
 
         renderTargets[layerIndex].set(mImage, textureView, mImage->toWgpuLevel(levelIndex),
                                       layerIndex, mImage->toWgpuTextureFormat());
     }
+
+    return angle::Result::Continue;
 }
 
 }  // namespace rx

@@ -990,6 +990,8 @@ deqp_khr_common_sources = [
   "$deqp_path/external/openglcts/modules/common/glcTextureLodBiasTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcTextureRepeatModeTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcTextureRepeatModeTests.hpp",
+  "$deqp_path/external/openglcts/modules/common/glcTransformFeedbackTests.cpp",
+  "$deqp_path/external/openglcts/modules/common/glcTransformFeedbackTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcUniformBlockCase.cpp",
   "$deqp_path/external/openglcts/modules/common/glcUniformBlockCase.hpp",
   "$deqp_path/external/openglcts/modules/common/glcUniformBlockNegativeTests.cpp",
@@ -1471,6 +1473,7 @@ deqp_khr_glesext_sources = [
 deqp_framework_debase_sources = [
   "$deqp_path/framework/delibs/debase/deDefs.c",
   "$deqp_path/framework/delibs/debase/deDefs.h",
+  "$deqp_path/framework/delibs/debase/deDefs_kc_cts.h",
   "$deqp_path/framework/delibs/debase/deFloat16.c",
   "$deqp_path/framework/delibs/debase/deFloat16.h",
   "$deqp_path/framework/delibs/debase/deInt32.c",

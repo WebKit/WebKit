@@ -9,6 +9,7 @@
 
 #include "libANGLE/renderer/wgpu/ContextWgpu.h"
 #include "libANGLE/renderer/wgpu/DisplayWgpu.h"
+#include "libANGLE/renderer/wgpu/FramebufferWgpu.h"
 #include "wgpu_helpers.h"
 
 namespace rx
@@ -35,32 +36,63 @@ angle::Result ImageHelper::initImage(wgpu::Device &device,
     return angle::Result::Continue;
 }
 
-void ImageHelper::flushStagedUpdates(ContextWgpu *contextWgpu)
+angle::Result ImageHelper::flushStagedUpdates(ContextWgpu *contextWgpu,
+                                              ClearValuesArray *deferredClears,
+                                              uint32_t deferredClearIndex)
 {
-    if (mBufferQueue.empty())
+    if (mSubresourceQueue.empty())
     {
-        return;
+        return angle::Result::Continue;
     }
     wgpu::Device device          = contextWgpu->getDevice();
     wgpu::Queue queue            = contextWgpu->getQueue();
     wgpu::CommandEncoder encoder = device.CreateCommandEncoder();
     wgpu::ImageCopyTexture dst;
     dst.texture = mTexture;
-    for (const QueuedDataUpload &src : mBufferQueue)
+    std::vector<wgpu::RenderPassColorAttachment> colorAttachments;
+    for (const SubresourceUpdate &srcUpdate : mSubresourceQueue)
     {
-        if (src.targetLevel < mFirstAllocatedLevel ||
-            src.targetLevel >= (mFirstAllocatedLevel + mTextureDescriptor.mipLevelCount))
+        if (!isTextureLevelInAllocatedImage(srcUpdate.targetLevel))
         {
             continue;
         }
-        LevelIndex targetLevelWgpu = toWgpuLevel(src.targetLevel);
-        dst.mipLevel               = targetLevelWgpu.get();
-        encoder.CopyBufferToTexture(&src.buffer, &dst, &mTextureDescriptor.size);
+        switch (srcUpdate.updateSource)
+        {
+            case UpdateSource::Texture:
+                dst.mipLevel = toWgpuLevel(srcUpdate.targetLevel).get();
+                encoder.CopyBufferToTexture(&srcUpdate.textureData, &dst, &mTextureDescriptor.size);
+                break;
+            case UpdateSource::Clear:
+                if (deferredClears)
+                {
+                    deferredClears->store(deferredClearIndex, srcUpdate.clearData);
+                }
+                else
+                {
+
+                    wgpu::TextureView textureView;
+                    ANGLE_TRY(createTextureView(srcUpdate.targetLevel, 0, textureView));
+
+                    colorAttachments.push_back(
+                        CreateNewClearColorAttachment(srcUpdate.clearData.clearColor,
+                                                      srcUpdate.clearData.depthSlice, textureView));
+                }
+                break;
+        }
+    }
+
+    if (!colorAttachments.empty())
+    {
+        FramebufferWgpu *frameBuffer =
+            GetImplAs<FramebufferWgpu>(contextWgpu->getState().getDrawFramebuffer());
+        frameBuffer->addNewColorAttachments(colorAttachments);
     }
     wgpu::CommandBuffer commandBuffer = encoder.Finish();
     queue.Submit(1, &commandBuffer);
     encoder = nullptr;
-    mBufferQueue.clear();
+    mSubresourceQueue.clear();
+
+    return angle::Result::Continue;
 }
 
 wgpu::TextureDescriptor ImageHelper::createTextureDescriptor(wgpu::TextureUsage usage,
@@ -113,20 +145,26 @@ angle::Result ImageHelper::stageTextureUpload(ContextWgpu *contextWgpu,
     textureDataLayout.bytesPerRow             = outputRowPitch;
     textureDataLayout.rowsPerImage            = outputDepthPitch;
     wgpu::ImageCopyBuffer imageCopyBuffer;
-    imageCopyBuffer.layout      = textureDataLayout;
-    imageCopyBuffer.buffer      = bufferHelper.getBuffer();
-    QueuedDataUpload dataUpload = {imageCopyBuffer, levelGL};
-    mBufferQueue.push_back(dataUpload);
+    imageCopyBuffer.layout = textureDataLayout;
+    imageCopyBuffer.buffer = bufferHelper.getBuffer();
+    SubresourceUpdate subresourceUpdate(UpdateSource::Texture, levelGL, imageCopyBuffer);
+    mSubresourceQueue.push_back(subresourceUpdate);
     return angle::Result::Continue;
+}
+
+void ImageHelper::stageClear(gl::LevelIndex targetLevel, ClearValues clearValues)
+{
+    SubresourceUpdate subresourceUpdate(UpdateSource::Clear, targetLevel, clearValues);
+    mSubresourceQueue.push_back(subresourceUpdate);
 }
 
 void ImageHelper::removeStagedUpdates(gl::LevelIndex levelToRemove)
 {
-    for (auto it = mBufferQueue.begin(); it != mBufferQueue.end(); it++)
+    for (auto it = mSubresourceQueue.begin(); it != mSubresourceQueue.end(); it++)
     {
-        if (it->targetLevel == levelToRemove)
+        if (it->updateSource == UpdateSource::Texture && it->targetLevel == levelToRemove)
         {
-            mBufferQueue.erase(it);
+            mSubresourceQueue.erase(it);
         }
     }
 }
@@ -209,6 +247,40 @@ angle::Result ImageHelper::readPixels(rx::ContextWgpu *contextWgpu,
     const uint8_t *readPixelBuffer = bufferHelper.getMapReadPointer(0, allocationSize);
     PackPixels(packPixelsParams, aspectFormat, textureBytesPerRow, readPixelBuffer,
                static_cast<uint8_t *>(pixels));
+    return angle::Result::Continue;
+}
+
+angle::Result ImageHelper::createTextureView(gl::LevelIndex targetLevel,
+                                             uint32_t layerIndex,
+                                             wgpu::TextureView &textureViewOut)
+{
+    if (!isTextureLevelInAllocatedImage(targetLevel))
+    {
+        return angle::Result::Stop;
+    }
+    wgpu::TextureViewDescriptor textureViewDesc;
+    textureViewDesc.aspect          = wgpu::TextureAspect::All;
+    textureViewDesc.baseArrayLayer  = layerIndex;
+    textureViewDesc.arrayLayerCount = 1;
+    textureViewDesc.baseMipLevel    = toWgpuLevel(targetLevel).get();
+    textureViewDesc.mipLevelCount   = 1;
+    switch (mTextureDescriptor.dimension)
+    {
+        case wgpu::TextureDimension::Undefined:
+            textureViewDesc.dimension = wgpu::TextureViewDimension::Undefined;
+            break;
+        case wgpu::TextureDimension::e1D:
+            textureViewDesc.dimension = wgpu::TextureViewDimension::e1D;
+            break;
+        case wgpu::TextureDimension::e2D:
+            textureViewDesc.dimension = wgpu::TextureViewDimension::e2D;
+            break;
+        case wgpu::TextureDimension::e3D:
+            textureViewDesc.dimension = wgpu::TextureViewDimension::e3D;
+            break;
+    }
+    textureViewDesc.format = mTextureDescriptor.format;
+    textureViewOut         = mTexture.CreateView(&textureViewDesc);
     return angle::Result::Continue;
 }
 

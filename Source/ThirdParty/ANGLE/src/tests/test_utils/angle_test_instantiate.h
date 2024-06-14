@@ -37,6 +37,9 @@ bool IsPixel6();
 bool IsGalaxyS22();
 bool IsNVIDIAShield();
 
+// Android versions
+bool IsAndroid14OrNewer();
+
 // GPU vendors.
 bool IsIntel();
 bool IsAMD();

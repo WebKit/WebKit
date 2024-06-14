@@ -1006,6 +1006,14 @@ PFN_vkCmdSetRasterizerDiscardEnableEXT vkCmdSetRasterizerDiscardEnableEXT = null
 // VK_EXT_vertex_input_dynamic_state
 PFN_vkCmdSetVertexInputEXT vkCmdSetVertexInputEXT = nullptr;
 
+// VK_KHR_dynamic_rendering
+PFN_vkCmdBeginRenderingKHR vkCmdBeginRenderingKHR = nullptr;
+PFN_vkCmdEndRenderingKHR vkCmdEndRenderingKHR     = nullptr;
+
+// VK_KHR_dynamic_rendering_local_read
+PFN_vkCmdSetRenderingAttachmentLocationsKHR vkCmdSetRenderingAttachmentLocationsKHR       = nullptr;
+PFN_vkCmdSetRenderingInputAttachmentIndicesKHR vkCmdSetRenderingInputAttachmentIndicesKHR = nullptr;
+
 // VK_KHR_fragment_shading_rate
 PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR vkGetPhysicalDeviceFragmentShadingRatesKHR = nullptr;
 PFN_vkCmdSetFragmentShadingRateKHR vkCmdSetFragmentShadingRateKHR                         = nullptr;
@@ -1122,6 +1130,20 @@ void InitExtendedDynamicState2EXTFunctions(VkDevice device)
 void InitVertexInputDynamicStateEXTFunctions(VkDevice device)
 {
     GET_DEVICE_FUNC(vkCmdSetVertexInputEXT);
+}
+
+// VK_KHR_dynamic_rendering
+void InitDynamicRenderingFunctions(VkDevice device)
+{
+    GET_DEVICE_FUNC(vkCmdBeginRenderingKHR);
+    GET_DEVICE_FUNC(vkCmdEndRenderingKHR);
+}
+
+// VK_KHR_dynamic_rendering_local_read
+void InitDynamicRenderingLocalReadFunctions(VkDevice device)
+{
+    GET_DEVICE_FUNC(vkCmdSetRenderingAttachmentLocationsKHR);
+    GET_DEVICE_FUNC(vkCmdSetRenderingInputAttachmentIndicesKHR);
 }
 
 // VK_KHR_fragment_shading_rate

@@ -726,6 +726,38 @@ TEST_P(EGLMultiContextTest, ThreadBCanSubmitWhileThreadAWaiting)
     ASSERT_NE(currentStep, Step::Abort);
 }
 
+// Test that if there are any placeholder objects when the programs don't use any resources
+// (such as textures), they can correctly be used in non-shared contexts (without causing
+// double-free).
+TEST_P(EGLMultiContextTest, NonSharedContextsReuseDescritorSetLayoutHandle)
+{
+    EGLWindow *window   = getEGLWindow();
+    EGLDisplay dpy      = window->getDisplay();
+    EGLSurface surface  = window->getSurface();
+    EGLContext context1 = window->createContext(EGL_NO_CONTEXT, nullptr);
+    EGLContext context2 = window->createContext(EGL_NO_CONTEXT, nullptr);
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, context1));
+    EXPECT_EGL_SUCCESS();
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, context2));
+    EXPECT_EGL_SUCCESS();
+
+    ANGLE_GL_PROGRAM(program1, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(program1, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Cleanup
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    EXPECT_EGL_TRUE(eglDestroyContext(dpy, context1));
+    EXPECT_EGL_TRUE(eglDestroyContext(dpy, context2));
+    EXPECT_EGL_SUCCESS();
+}
+
 }  // anonymous namespace
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLMultiContextTest);

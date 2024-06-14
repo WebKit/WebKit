@@ -2448,6 +2448,9 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
         case angle::EntryPoint::GLPatchParameteriEXT:
             glPatchParameteriEXT(captures[0].value.GLenumVal, captures[1].value.GLintVal);
             break;
+        case angle::EntryPoint::GLPatchParameteriOES:
+            glPatchParameteriOES(captures[0].value.GLenumVal, captures[1].value.GLintVal);
+            break;
         case angle::EntryPoint::GLPauseTransformFeedback:
             glPauseTransformFeedback();
             break;

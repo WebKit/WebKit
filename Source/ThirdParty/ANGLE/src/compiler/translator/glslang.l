@@ -106,10 +106,10 @@ static int ES3_1_keyword(TParseContext *context, int token);
 static int ES2_reserved_ES2_extension_ES3_keyword(TParseContext *context, TExtension extension, int token);
 static int ES3_extension(TParseContext *context, TExtension extension, int token);
 static int ES3_reserved_ES3_1_extension_ES3_2_keyword(TParseContext *context, TExtension extension, int token);
+static int ES3_reserved_ES3_1_extension_ES3_2_keyword_2(TParseContext *context, TExtension extension1, TExtension extension2, int token);
 static int ES3_reserved_ES3_extension(TParseContext *context, TExtension extension, int token);
 static int ES3_reserved_ES3_extension_ES3_1_keyword(TParseContext *context, TExtension extension, int token);
 static int ES3_reserved_ES3_extension_ES3_2_keyword(TParseContext *context, TExtension extension, int token);
-static int ES3_1_reserved_ES3_1_extension_ES3_2_keyword(TParseContext *context, TExtension extension, int token);
 static int ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(TParseContext *context, TExtension extension1, TExtension extension2, int token1, int token2);
 static int ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(TParseContext *context, TExtension extension1, TExtension extension2, int token1, int token2);
 static int WEBGL_video_texture_extension(TParseContext *context, int token);
@@ -166,7 +166,7 @@ O           [0-7]
 "smooth"        { return ES3_keyword(context, SMOOTH); }
 "noperspective" { return ES3_reserved_ES3_extension(context, TExtension::NV_shader_noperspective_interpolation, NOPERSPECTIVE); }
 
-"patch"        { return ES3_reserved_ES3_1_extension_ES3_2_keyword(context, TExtension::EXT_tessellation_shader, PATCH); }
+"patch"        { return ES3_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::EXT_tessellation_shader, TExtension::OES_tessellation_shader, PATCH); }
 
 "in"           { return IN_QUAL; }
 "out"          { return OUT_QUAL; }
@@ -279,7 +279,7 @@ O           [0-7]
 "volatile" { return ES2_reserved_ES3_1_keyword(context, VOLATILE); }
 "atomic_uint" { return ES3_reserved_ES3_1_keyword(context, ATOMICUINT); }
 "sample" { return ES3_reserved_ES3_extension_ES3_2_keyword(context, TExtension::OES_shader_multisample_interpolation, SAMPLE); }
-"precise" { return ES3_1_reserved_ES3_1_extension_ES3_2_keyword(context, TExtension::EXT_gpu_shader5, PRECISE); }
+"precise" { return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5, PRECISE, PRECISE); }
 
     /* ANGLE_shader_pixel_local_storage */
 "pixelLocalANGLE" { return ES3_extension(context, TExtension::ANGLE_shader_pixel_local_storage, PIXELLOCALANGLE); }
@@ -702,6 +702,31 @@ int ES3_reserved_ES3_1_extension_ES3_2_keyword(TParseContext *context, TExtensio
     return check_type(yyscanner);
 }
 
+int ES3_reserved_ES3_1_extension_ES3_2_keyword_2(TParseContext *context, TExtension extension1, TExtension extension2, int token)
+{
+    struct yyguts_t* yyg = (struct yyguts_t*) context->getScanner();
+    yyscan_t yyscanner = (yyscan_t) context->getScanner();
+
+    // a keyword in GLSL ES 3.10 with enabled extension
+    if (is_extension_enabled_or_is_core(context, 310, extension1, 320))
+    {
+        return token;
+    }
+    else if (is_extension_enabled_or_is_core(context, 310, extension2, 320))
+    {
+        return token;
+    }
+    // a reserved word in GLSL ES 3.00+
+    if (context->getShaderVersion() >= 300)
+    {
+        return reserved_word(yyscanner);
+    }
+
+    // Otherwise can be used as an identifier/type name
+    yylval->lex.string = AllocatePoolCharArray(yytext, yyleng);
+    return check_type(yyscanner);
+}
+
 int ES3_reserved_ES3_extension(TParseContext *context, TExtension extension, int token)
 {
     struct yyguts_t* yyg = (struct yyguts_t*) context->getScanner();
@@ -752,27 +777,6 @@ int ES3_reserved_ES3_extension_ES3_2_keyword(TParseContext *context, TExtension 
     }
 
     if(context->getShaderVersion() == 300 ||context->getShaderVersion() == 310)
-    {
-        return reserved_word(yyscanner);
-    }
-
-    yylval->lex.string = AllocatePoolCharArray(yytext, yyleng);
-    return check_type(yyscanner);
-}
-
-static int ES3_1_reserved_ES3_1_extension_ES3_2_keyword(TParseContext *context, TExtension extension, int token)
-{
-    struct yyguts_t* yyg = (struct yyguts_t*) context->getScanner();
-    yyscan_t yyscanner = (yyscan_t) context->getScanner();
-
-    // A keyword in GLSL ES 3.20 or GLSL ES 3.10 with enabled extension.
-    if (is_extension_enabled_or_is_core(context, 310, extension, 320))
-    {
-        return token;
-    }
-
-    // A reserved word in GLSL ES 3.10
-    if (context->getShaderVersion() == 310)
     {
         return reserved_word(yyscanner);
     }

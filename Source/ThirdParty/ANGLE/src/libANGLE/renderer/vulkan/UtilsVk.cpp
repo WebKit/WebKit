@@ -2884,17 +2884,17 @@ angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
     if (blitColor)
     {
         imageInfos[0].imageView   = srcColorView->getHandle();
-        imageInfos[0].imageLayout = src->getCurrentLayout(contextVk);
+        imageInfos[0].imageLayout = src->getCurrentLayout(renderer);
     }
     if (blitDepth)
     {
         imageInfos[0].imageView   = srcDepthView->getHandle();
-        imageInfos[0].imageLayout = src->getCurrentLayout(contextVk);
+        imageInfos[0].imageLayout = src->getCurrentLayout(renderer);
     }
     if (blitStencil)
     {
         imageInfos[1].imageView   = srcStencilView->getHandle();
-        imageInfos[1].imageLayout = src->getCurrentLayout(contextVk);
+        imageInfos[1].imageLayout = src->getCurrentLayout(renderer);
     }
 
     VkDescriptorImageInfo samplerInfo = {};
@@ -3104,7 +3104,7 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
     // Blit/resolve stencil into the buffer.
     VkDescriptorImageInfo imageInfo = {};
     imageInfo.imageView             = srcStencilView->getHandle();
-    imageInfo.imageLayout           = src->getCurrentLayout(contextVk);
+    imageInfo.imageLayout           = src->getCurrentLayout(renderer);
 
     VkDescriptorBufferInfo bufferInfo = {};
     bufferInfo.buffer                 = blitBuffer.get().getBuffer().getHandle();
@@ -3176,7 +3176,7 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
 
     commandBuffer->copyBufferToImage(blitBuffer.get().getBuffer().getHandle(),
                                      depthStencilImage->getImage(),
-                                     depthStencilImage->getCurrentLayout(contextVk), 1, &region);
+                                     depthStencilImage->getCurrentLayout(renderer), 1, &region);
 
     return angle::Result::Continue;
 }
@@ -3355,7 +3355,7 @@ angle::Result UtilsVk::copyImage(ContextVk *contextVk,
 
     VkDescriptorImageInfo imageInfo = {};
     imageInfo.imageView             = srcView->getHandle();
-    imageInfo.imageLayout           = src->getCurrentLayout(contextVk);
+    imageInfo.imageLayout           = src->getCurrentLayout(renderer);
 
     VkWriteDescriptorSet writeInfo = {};
     writeInfo.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -3508,7 +3508,7 @@ angle::Result UtilsVk::copyImageBits(ContextVk *contextVk,
     srcRegion.imageExtent.height              = params.copyExtents[1];
     srcRegion.imageExtent.depth               = isSrc3D ? params.copyExtents[2] : 1;
 
-    commandBuffer->copyImageToBuffer(src->getImage(), src->getCurrentLayout(contextVk),
+    commandBuffer->copyImageToBuffer(src->getImage(), src->getCurrentLayout(renderer),
                                      srcBuffer.get().getBuffer().getHandle(), 1, &srcRegion);
 
     // Add a barrier prior to dispatch call.
@@ -3634,7 +3634,7 @@ angle::Result UtilsVk::copyImageBits(ContextVk *contextVk,
     dstRegion.imageExtent.depth               = isDst3D ? params.copyExtents[2] : 1;
 
     commandBuffer->copyBufferToImage(dstBuffer.get().getBuffer().getHandle(), dst->getImage(),
-                                     dst->getCurrentLayout(contextVk), 1, &dstRegion);
+                                     dst->getCurrentLayout(renderer), 1, &dstRegion);
 
     return angle::Result::Continue;
 }
@@ -3644,6 +3644,7 @@ angle::Result UtilsVk::copyImageToBuffer(ContextVk *contextVk,
                                          vk::ImageHelper *src,
                                          const CopyImageToBufferParameters &params)
 {
+    vk::Renderer *renderer = contextVk->getRenderer();
     ANGLE_TRY(ensureCopyImageToBufferResourcesInitialized(contextVk));
 
     const angle::Format &srcFormat = src->getActualFormat();
@@ -3705,7 +3706,7 @@ angle::Result UtilsVk::copyImageToBuffer(ContextVk *contextVk,
 
     VkDescriptorImageInfo imageInfo = {};
     imageInfo.imageView             = srcView.get().getHandle();
-    imageInfo.imageLayout           = src->getCurrentLayout(contextVk);
+    imageInfo.imageLayout           = src->getCurrentLayout(renderer);
 
     VkDescriptorBufferInfo bufferInfo = {};
     bufferInfo.buffer                 = dst->getBuffer().getHandle();
@@ -3956,6 +3957,8 @@ angle::Result UtilsVk::generateMipmap(ContextVk *contextVk,
                                       const vk::Sampler &sampler,
                                       const GenerateMipmapParameters &params)
 {
+    vk::Renderer *renderer = contextVk->getRenderer();
+
     ANGLE_TRY(ensureGenerateMipmapResourcesInitialized(contextVk));
 
     const gl::Extents &srcExtents = src->getLevelExtents(vk::LevelIndex(params.srcLevel));
@@ -3984,12 +3987,12 @@ angle::Result UtilsVk::generateMipmap(ContextVk *contextVk,
     for (uint32_t level = 0; level < kGenerateMipmapMaxLevels; ++level)
     {
         destImageInfos[level].imageView   = destLevelViews[level]->getHandle();
-        destImageInfos[level].imageLayout = dst->getCurrentLayout(contextVk);
+        destImageInfos[level].imageLayout = dst->getCurrentLayout(renderer);
     }
 
     VkDescriptorImageInfo srcImageInfo = {};
     srcImageInfo.imageView             = srcLevelZeroView->getHandle();
-    srcImageInfo.imageLayout           = src->getCurrentLayout(contextVk);
+    srcImageInfo.imageLayout           = src->getCurrentLayout(renderer);
     srcImageInfo.sampler               = sampler.getHandle();
 
     VkWriteDescriptorSet writeInfos[2] = {};
@@ -4381,7 +4384,7 @@ angle::Result UtilsVk::drawOverlay(ContextVk *contextVk,
 
     VkDescriptorImageInfo imageInfo = {};
     imageInfo.imageView             = fontView->getHandle();
-    imageInfo.imageLayout           = font->getCurrentLayout(contextVk);
+    imageInfo.imageLayout           = font->getCurrentLayout(renderer);
 
     VkDescriptorBufferInfo bufferInfos[2] = {};
     bufferInfos[0].buffer                 = textWidgetsBuffer->getBuffer().getHandle();

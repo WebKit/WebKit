@@ -499,7 +499,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -510,7 +510,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -521,7 +521,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -532,7 +532,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -543,7 +543,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -554,7 +554,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -565,7 +565,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -576,7 +576,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -587,7 +587,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -598,7 +598,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -609,7 +609,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -620,7 +620,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -631,7 +631,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -642,7 +642,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -653,7 +653,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -664,7 +664,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -675,7 +675,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     },
@@ -686,7 +686,7 @@
                             "precision":"Medium",
                             "qualifier":"Const"
                         },
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "value":"resources"
                     }
@@ -1286,7 +1286,7 @@
             "gl_PatchVerticesIn":{
                 "suffix":"TCS",
                 "essl_level":"ESSL3_1_BUILTINS",
-                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "type":{
                     "basic":"Int",
@@ -1297,7 +1297,7 @@
             "gl_InvocationID":{
                 "suffix":"TCS",
                 "essl_level":"ESSL3_1_BUILTINS",
-                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "type":{
                     "basic":"Int",
@@ -1308,7 +1308,7 @@
             "gl_PrimitiveID":{
                 "suffix":"TCS",
                 "essl_level":"ESSL3_1_BUILTINS",
-                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "type":{
                     "basic":"Int",
@@ -1319,21 +1319,21 @@
             "gl_TessLevelOuter":{
                 "suffix":"TCS",
                 "essl_level":"ESSL3_1_BUILTINS",
-                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpHigh, EvqTessLevelOuter, 1); {type_name}->makeArray(4u);"
             },
             "gl_TessLevelInner":{
                 "suffix":"TCS",
                 "essl_level":"ESSL3_1_BUILTINS",
-                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpHigh, EvqTessLevelInner, 1); {type_name}->makeArray(2u);"
             },
             "gl_PerVertex":{
                 "suffix":"TCS",
                 "essl_level":"ESSL3_1_BUILTINS",
-                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "class":"TInterfaceBlock",
                 "fields":{
@@ -1348,21 +1348,21 @@
             "gl_in":{
                 "suffix":"TCS",
                 "essl_level":"ESSL3_1_BUILTINS",
-                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "initDynamicType":"TType *{type_name} = new TType(gl_PerVertex, EvqPerVertexIn, TLayoutQualifier::Create()); {type_name}->makeArray(resources.MaxPatchVertices);"
             },
             "gl_out":{
                 "suffix":"TCS",
                 "essl_level":"ESSL3_1_BUILTINS",
-                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "initDynamicType":"TType *{type_name} = new TType(gl_PerVertex, EvqPerVertexOut, TLayoutQualifier::Create()); {type_name}->makeArray(resources.MaxPatchVertices);"
             },
             "gl_BoundingBox":{
                 "suffix":"TCS",
                 "essl_level":"ESSL3_2_BUILTINS",
-                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpHigh, EvqBoundingBox, 4); {type_name}->makeArray(2u);"
             }
@@ -1373,7 +1373,7 @@
                     "gl_PerVertex":{
                         "suffix":"OutTcsBlock",
                         "essl_level":"ESSL3_1_BUILTINS",
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "private":true,
                         "class":"TInterfaceBlock",
@@ -1389,7 +1389,7 @@
                     "gl_Position":{
                         "suffix":"TCS",
                         "essl_level":"ESSL3_1_BUILTINS",
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpHigh, EvqPosition, 4); {type_name}->setInterfaceBlock(gl_PerVertexOutTcsBlock{ext_or_core_suffix});"
                     }
@@ -1400,7 +1400,7 @@
                     "gl_BoundingBoxEXT":{
                         "suffix":"TCS",
                         "essl_level":"ESSL3_1_BUILTINS",
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpHigh, EvqBoundingBox, 4); {type_name}->makeArray(2u);"
                     }
@@ -1411,7 +1411,7 @@
                     "gl_BoundingBoxOES":{
                         "suffix":"TCS",
                         "essl_level":"ESSL3_1_BUILTINS",
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpHigh, EvqBoundingBox, 4); {type_name}->makeArray(2u);"
                     }
@@ -1425,7 +1425,7 @@
             "gl_PatchVerticesIn":{
                 "suffix":"TES",
                 "essl_level":"ESSL3_1_BUILTINS",
-                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "type":{
                     "basic":"Int",
@@ -1436,7 +1436,7 @@
             "gl_PrimitiveID":{
                 "suffix":"TES",
                 "essl_level":"ESSL3_1_BUILTINS",
-                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "type":{
                     "basic":"Int",
@@ -1456,21 +1456,21 @@
             "gl_TessLevelOuter":{
                 "suffix":"TES",
                 "essl_level":"ESSL3_1_BUILTINS",
-                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpHigh, EvqTessLevelOuter, 1); {type_name}->makeArray(4u);"
             },
             "gl_TessLevelInner":{
                 "suffix":"TES",
                 "essl_level":"ESSL3_1_BUILTINS",
-                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpHigh, EvqTessLevelInner, 1); {type_name}->makeArray(2u);"
             },
             "gl_PerVertex":{
                 "suffix":"TES",
                 "essl_level":"ESSL3_1_BUILTINS",
-                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "class":"TInterfaceBlock",
                 "fields":{
@@ -1485,14 +1485,14 @@
             "gl_in":{
                 "suffix":"TES",
                 "essl_level":"ESSL3_1_BUILTINS",
-                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "initDynamicType":"TType *{type_name} = new TType(gl_PerVertex, EvqPerVertexIn, TLayoutQualifier::Create()); {type_name}->makeArray(resources.MaxPatchVertices);"
             },
             "gl_out":{
                 "suffix":"TES",
                 "essl_level":"ESSL3_1_BUILTINS",
-                "essl_extension":"EXT_tessellation_shader",
+                "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                 "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                 "initDynamicType":"TType *{type_name} = new TType(gl_PerVertex, EvqPerVertexOut, TLayoutQualifier::Create()); {type_name}->makeArray(resources.MaxPatchVertices);"
             }
@@ -1503,7 +1503,7 @@
                     "gl_PerVertex":{
                         "suffix":"OutTesBlock",
                         "essl_level":"ESSL3_1_BUILTINS",
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "private":true,
                         "class":"TInterfaceBlock",
@@ -1519,7 +1519,7 @@
                     "gl_Position":{
                         "suffix":"TES",
                         "essl_level":"ESSL3_1_BUILTINS",
-                        "essl_extension":"EXT_tessellation_shader",
+                        "essl_extension":"EXT_tessellation_shader, OES_tessellation_shader",
                         "essl_extension_becomes_core_in":"ESSL3_2_BUILTINS",
                         "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpHigh, EvqPosition, 4); {type_name}->setInterfaceBlock(gl_PerVertexOutTesBlock{ext_or_core_suffix});"
                     }

@@ -1131,6 +1131,7 @@ enum class EntryPoint
     GLPatchParameterfv,
     GLPatchParameteri,
     GLPatchParameteriEXT,
+    GLPatchParameteriOES,
     GLPauseTransformFeedback,
     GLPixelLocalStorageBarrierANGLE,
     GLPixelMapfv,

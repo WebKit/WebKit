@@ -104,6 +104,8 @@ class OutputWGSLTraverser : public TIntermTraverser
     void groupedTraverse(TIntermNode &node);
     template <typename T>
     void emitNameOf(const T &namedObject);
+    void emitBareTypeName(const TType &type);
+    void emitType(const TType &type);
     void emitIndentation();
     void emitOpenBrace();
     void emitCloseBrace();
@@ -272,7 +274,7 @@ void OutputWGSLTraverser::emitFunctionReturn(const TFunction &func)
         return;
     }
     mSink << " -> ";
-    mSink << "FAKE_RETURN_TYPE";
+    emitType(returnType);
 }
 
 // TODO(anglebug.com/42267100): Function overloads are not supported in WGSL, so function names
@@ -420,6 +422,114 @@ void OutputWGSLTraverser::visitPreprocessorDirective(TIntermPreprocessorDirectiv
 {
     // No preprocessor directives expected at this point.
     UNREACHABLE();
+}
+
+void OutputWGSLTraverser::emitBareTypeName(const TType &type)
+{
+    const TBasicType basicType = type.getBasicType();
+
+    switch (basicType)
+    {
+        case TBasicType::EbtVoid:
+        case TBasicType::EbtBool:
+            mSink << type.getBasicString();
+            break;
+        // TODO(anglebug.com/8662): is there double precision (f64) in GLSL? It doesn't really exist
+        // in WGSL (i.e. f64 does not exist but AbstractFloat can handle 64 bits???) Metal does not
+        // have 64 bit double precision types. It's being implemented in WGPU:
+        // https://github.com/gpuweb/gpuweb/issues/2805
+        case TBasicType::EbtFloat:
+            mSink << "f32";
+            break;
+        case TBasicType::EbtInt:
+            mSink << "i32";
+            break;
+        case TBasicType::EbtUInt:
+            mSink << "u32";
+            break;
+
+        case TBasicType::EbtStruct:
+            emitNameOf(*type.getStruct());
+            break;
+
+        case TBasicType::EbtInterfaceBlock:
+            emitNameOf(*type.getInterfaceBlock());
+            break;
+
+        default:
+            if (IsSampler(basicType))
+            {
+                //  TODO(anglebug.com/8662): possibly emit both a sampler and a texture2d. WGSL has
+                //  sampler variables for the sampler configuration, whereas GLSL has sampler2d and
+                //  other sampler* variables for an actual texture.
+                mSink << "texture2d<";
+                switch (type.getBasicType())
+                {
+                    case EbtSampler2D:
+                        mSink << "f32";
+                        break;
+                    case EbtISampler2D:
+                        mSink << "i32";
+                        break;
+                    case EbtUSampler2D:
+                        mSink << "u32";
+                        break;
+                    default:
+                        // TODO(anglebug.com/8662): are any of the other sampler types necessary to
+                        // translate?
+                        UNIMPLEMENTED();
+                        break;
+                }
+                if (type.getMemoryQualifier().readonly || type.getMemoryQualifier().writeonly)
+                {
+                    // TODO(anglebug.com/8662): implement memory qualifiers.
+                    UNIMPLEMENTED();
+                }
+                mSink << ">";
+            }
+            else if (IsImage(basicType))
+            {
+                // TODO(anglebug.com/8662): does texture2d also correspond to GLSL's image type?
+                mSink << "texture2d<";
+                switch (type.getBasicType())
+                {
+                    case EbtImage2D:
+                        mSink << "f32";
+                        break;
+                    case EbtIImage2D:
+                        mSink << "i32";
+                        break;
+                    case EbtUImage2D:
+                        mSink << "u32";
+                        break;
+                    default:
+                        // TODO(anglebug.com/8662): are any of the other image types necessary to
+                        // translate?
+                        UNIMPLEMENTED();
+                        break;
+                }
+                if (type.getMemoryQualifier().readonly || type.getMemoryQualifier().writeonly)
+                {
+                    // TODO(anglebug.com/8662): implement memory qualifiers.
+                    UNREACHABLE();
+                }
+                mSink << ">";
+            }
+            else
+            {
+                UNREACHABLE();
+            }
+            break;
+    }
+}
+
+void OutputWGSLTraverser::emitType(const TType &type)
+{
+    // TODO(anglebug.com/8662): support types with dimensions.
+    ASSERT(!type.isVector() && !type.isMatrix() && !type.isArray());
+
+    // This type has no dimensions and is equivalent to its bare type.
+    emitBareTypeName(type);
 }
 
 }  // namespace

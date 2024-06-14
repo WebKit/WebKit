@@ -117,6 +117,10 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     {
         extBehavior[TExtension::EXT_gpu_shader5] = EBhUndefined;
     }
+    if (resources.OES_gpu_shader5)
+    {
+        extBehavior[TExtension::OES_gpu_shader5] = EBhUndefined;
+    }
     if (resources.EXT_shader_non_constant_global_initializers)
     {
         extBehavior[TExtension::EXT_shader_non_constant_global_initializers] = EBhUndefined;
@@ -176,6 +180,10 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     if (resources.EXT_tessellation_shader)
     {
         extBehavior[TExtension::EXT_tessellation_shader] = EBhUndefined;
+    }
+    if (resources.OES_tessellation_shader)
+    {
+        extBehavior[TExtension::OES_tessellation_shader] = EBhUndefined;
     }
     if (resources.OES_texture_buffer)
     {

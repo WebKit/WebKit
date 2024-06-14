@@ -373,6 +373,37 @@ void SetUniformImpl(const gl::ProgramExecutable *executable,
         }
     }
 }
+
+template <int cols, int rows>
+void SetUniformMatrixfv(const gl::ProgramExecutable *executable,
+                        GLint location,
+                        GLsizei count,
+                        GLboolean transpose,
+                        const GLfloat *value,
+                        DefaultUniformBlockMap *defaultUniformBlocks,
+                        gl::ShaderBitSet *defaultUniformBlocksDirty)
+{
+    const gl::VariableLocation &locationInfo = executable->getUniformLocations()[location];
+    const gl::LinkedUniform &linkedUniform   = executable->getUniforms()[locationInfo.index];
+
+    for (const gl::ShaderType shaderType : executable->getLinkedShaderStages())
+    {
+        DefaultUniformBlockVk &uniformBlock   = *(*defaultUniformBlocks)[shaderType];
+        const sh::BlockMemberInfo &layoutInfo = uniformBlock.uniformLayout[location];
+
+        // Assume an offset of -1 means the block is unused.
+        if (layoutInfo.offset == -1)
+        {
+            continue;
+        }
+
+        SetFloatUniformMatrixGLSL<cols, rows>::Run(
+            locationInfo.arrayIndex, linkedUniform.getBasicTypeElementCount(), count, transpose,
+            value, uniformBlock.uniformData.data() + layoutInfo.offset);
+
+        defaultUniformBlocksDirty->set(shaderType);
+    }
+}
 }  // namespace
 
 class ProgramExecutableVk::WarmUpTaskCommon : public vk::Context, public LinkSubTask
@@ -669,8 +700,7 @@ ProgramExecutableVk::ProgramExecutableVk(const gl::ProgramExecutable *executable
     : ProgramExecutableImpl(executable),
       mImmutableSamplersMaxDescriptorCount(1),
       mUniformBufferDescriptorType(VK_DESCRIPTOR_TYPE_MAX_ENUM),
-      mDynamicUniformDescriptorOffsets{},
-      mWarmUpGraphicsPipelineDesc{}
+      mDynamicUniformDescriptorOffsets{}
 {
     mDescriptorSets.fill(VK_NULL_HANDLE);
     for (std::shared_ptr<DefaultUniformBlockVk> &defaultBlock : mDefaultUniformBlocks)
@@ -995,8 +1025,7 @@ angle::Result ProgramExecutableVk::prepareForWarmUpPipelineCache(
         // Initialize compute program.
         ANGLE_TRY(initComputeProgram(context, &mComputeProgramInfo, mVariableInfoMap));
 
-        *isComputeOut               = true;
-        mWarmUpGraphicsPipelineDesc = {};
+        *isComputeOut = true;
         return angle::Result::Continue;
     }
 
@@ -1040,9 +1069,8 @@ angle::Result ProgramExecutableVk::prepareForWarmUpPipelineCache(
     for (bool rotation : *surfaceRotationVariationsOut)
     {
         // Initialize graphics programs.
-        transformOptions.surfaceRotation       = rotation;
-        vk::ShaderProgramHelper *shaderProgram = nullptr;
-        ANGLE_TRY(initGraphicsShaderPrograms(context, transformOptions, &shaderProgram));
+        transformOptions.surfaceRotation = rotation;
+        ANGLE_TRY(initGraphicsShaderPrograms(context, transformOptions));
     }
 
     return angle::Result::Continue;
@@ -1059,8 +1087,7 @@ angle::Result ProgramExecutableVk::warmUpComputePipelineCache(
     // been setup by the caller. Assert that all required state is valid so all that is left will
     // be the call to `vkCreateComputePipelines`
 
-    // Make sure the program and shader modules for compute shader stage is valid.
-    ASSERT(mComputeProgramInfo.getShaderProgram());
+    // Make sure the shader module for compute shader stage is valid.
     ASSERT(mComputeProgramInfo.valid(gl::ShaderType::Compute));
 
     // No synchronization necessary since mPipelineCache is internally synchronized.
@@ -1137,14 +1164,15 @@ void ProgramExecutableVk::waitForPostLinkTasksImpl(ContextVk *contextVk)
         }
     }
 
-    mWarmUpGraphicsPipelineDesc = {};
     mExecutable->onPostLinkTasksComplete();
 }
 
-void ProgramExecutableVk::waitForPostLinkTasksIfNecessary(
+void ProgramExecutableVk::waitForGraphicsPostLinkTasks(
     ContextVk *contextVk,
-    const vk::GraphicsPipelineDesc *currentGraphicsPipelineDesc)
+    const vk::GraphicsPipelineDesc &currentGraphicsPipelineDesc)
 {
+    ASSERT(mExecutable->hasLinkedShaderStage(gl::ShaderType::Vertex));
+
     if (mExecutable->getPostLinkSubTasks().empty())
     {
         return;
@@ -1155,15 +1183,19 @@ void ProgramExecutableVk::waitForPostLinkTasksIfNecessary(
             ? vk::GraphicsPipelineSubset::Shaders
             : vk::GraphicsPipelineSubset::Complete;
 
-    if (currentGraphicsPipelineDesc &&
-        (mWarmUpGraphicsPipelineDesc.hash(subset) != currentGraphicsPipelineDesc->hash(subset)))
+    if (!mWarmUpGraphicsPipelineDesc.keyEqual(currentGraphicsPipelineDesc, subset))
     {
         // The GraphicsPipelineDesc used for warmup differs from the one used by the draw call.
         // There is no need to wait for the warmup tasks to complete.
         ANGLE_PERF_WARNING(
             contextVk->getDebug(), GL_DEBUG_SEVERITY_LOW,
             "GraphicsPipelineDesc used for warmup differs from the one used by draw.");
-        return;
+
+        // If the warm up tasks are finished anyway, let |waitForPostLinkTasksImpl| clean them up.
+        if (!angle::WaitableEvent::AllReady(&mExecutable->getPostLinkSubTaskWaitableEvents()))
+        {
+            return;
+        }
     }
 
     waitForPostLinkTasksImpl(contextVk);
@@ -1465,8 +1497,7 @@ ProgramTransformOptions ProgramExecutableVk::getTransformOptions(
 
 angle::Result ProgramExecutableVk::initGraphicsShaderPrograms(
     vk::Context *context,
-    ProgramTransformOptions transformOptions,
-    vk::ShaderProgramHelper **shaderProgramOut)
+    ProgramTransformOptions transformOptions)
 {
     ASSERT(mExecutable->hasLinkedShaderStage(gl::ShaderType::Vertex));
 
@@ -1485,9 +1516,6 @@ angle::Result ProgramExecutableVk::initGraphicsShaderPrograms(
                                             &programInfo, mVariableInfoMap));
     }
 
-    *shaderProgramOut = programInfo.getShaderProgram();
-    ASSERT(*shaderProgramOut);
-
     return angle::Result::Continue;
 }
 
@@ -1502,8 +1530,7 @@ angle::Result ProgramExecutableVk::initProgramThenCreateGraphicsPipeline(
     const vk::GraphicsPipelineDesc **descPtrOut,
     vk::PipelineHelper **pipelineOut)
 {
-    vk::ShaderProgramHelper *shaderProgram = nullptr;
-    ANGLE_TRY(initGraphicsShaderPrograms(context, transformOptions, &shaderProgram));
+    ANGLE_TRY(initGraphicsShaderPrograms(context, transformOptions));
 
     return createGraphicsPipelineImpl(context, transformOptions, pipelineSubset, pipelineCache,
                                       source, desc, compatibleRenderPass, descPtrOut, pipelineOut);
@@ -1528,10 +1555,8 @@ angle::Result ProgramExecutableVk::createGraphicsPipelineImpl(
     const uint8_t programIndex = GetGraphicsProgramIndex(transformOptions);
     ASSERT(programIndex >= 0 && programIndex < ProgramTransformOptions::kPermutationCount);
 
-    // Make sure the program and shader modules for all linked shader stages are valid.
-    ProgramInfo &programInfo               = mGraphicsProgramInfos[programIndex];
-    vk::ShaderProgramHelper *shaderProgram = programInfo.getShaderProgram();
-    ASSERT(shaderProgram);
+    // Make sure the shader modules for all linked shader stages are valid.
+    ProgramInfo &programInfo = mGraphicsProgramInfos[programIndex];
     for (gl::ShaderType shaderType : mExecutable->getLinkedShaderStages())
     {
         ASSERT(programInfo.valid(shaderType));
@@ -1544,7 +1569,7 @@ angle::Result ProgramExecutableVk::createGraphicsPipelineImpl(
     if (pipelineSubset == vk::GraphicsPipelineSubset::Complete)
     {
         CompleteGraphicsPipelineCache &pipelines = mCompleteGraphicsPipelines[programIndex];
-        return shaderProgram->createGraphicsPipeline(
+        return programInfo.getShaderProgram().createGraphicsPipeline(
             context, &pipelines, pipelineCache, compatibleRenderPass, getPipelineLayout(), source,
             desc, specConsts, descPtrOut, pipelineOut);
     }
@@ -1555,7 +1580,7 @@ angle::Result ProgramExecutableVk::createGraphicsPipelineImpl(
         ASSERT(pipelineSubset == vk::GraphicsPipelineSubset::Shaders);
 
         ShadersGraphicsPipelineCache &pipelines = mShadersGraphicsPipelines[programIndex];
-        return shaderProgram->createGraphicsPipeline(
+        return programInfo.getShaderProgram().createGraphicsPipeline(
             context, &pipelines, pipelineCache, compatibleRenderPass, getPipelineLayout(), source,
             desc, specConsts, descPtrOut, pipelineOut);
     }
@@ -1569,8 +1594,7 @@ angle::Result ProgramExecutableVk::getGraphicsPipeline(ContextVk *contextVk,
 {
     ProgramTransformOptions transformOptions = getTransformOptions(contextVk, desc);
 
-    vk::ShaderProgramHelper *shaderProgram = nullptr;
-    ANGLE_TRY(initGraphicsShaderPrograms(contextVk, transformOptions, &shaderProgram));
+    ANGLE_TRY(initGraphicsShaderPrograms(contextVk, transformOptions));
 
     const uint8_t programIndex = GetGraphicsProgramIndex(transformOptions);
 
@@ -1657,10 +1681,8 @@ angle::Result ProgramExecutableVk::linkGraphicsPipelineLibraries(
     {
         vk::SpecializationConstants specConsts = MakeSpecConsts(transformOptions, desc);
 
-        mGraphicsProgramInfos[programIndex]
-            .getShaderProgram()
-            ->createMonolithicPipelineCreationTask(contextVk, pipelineCache, desc,
-                                                   getPipelineLayout(), specConsts, *pipelineOut);
+        mGraphicsProgramInfos[programIndex].getShaderProgram().createMonolithicPipelineCreationTask(
+            contextVk, pipelineCache, desc, getPipelineLayout(), specConsts, *pipelineOut);
     }
 
     return angle::Result::Continue;
@@ -1688,11 +1710,9 @@ angle::Result ProgramExecutableVk::getOrCreateComputePipeline(
         pipelineFlags.set(vk::ComputePipelineFlag::Protected);
     }
 
-    vk::ShaderProgramHelper *shaderProgram = mComputeProgramInfo.getShaderProgram();
-    ASSERT(shaderProgram);
-    return shaderProgram->getOrCreateComputePipeline(context, &mComputePipelines, pipelineCache,
-                                                     getPipelineLayout(), pipelineFlags, source,
-                                                     pipelineOut, nullptr, nullptr);
+    return mComputeProgramInfo.getShaderProgram().getOrCreateComputePipeline(
+        context, &mComputePipelines, pipelineCache, getPipelineLayout(), pipelineFlags, source,
+        pipelineOut, nullptr, nullptr);
 }
 
 angle::Result ProgramExecutableVk::createPipelineLayout(
@@ -1893,8 +1913,8 @@ angle::Result ProgramExecutableVk::getOrAllocateDescriptorSet(
     if (*newSharedCacheKeyOut != nullptr)
     {
         // Cache miss. A new cache entry has been created.
-        descriptorSetDesc.updateDescriptorSet(context, writeDescriptorDescs, updateBuilder,
-                                              mDescriptorSets[setIndex]);
+        descriptorSetDesc.updateDescriptorSet(context->getRenderer(), writeDescriptorDescs,
+                                              updateBuilder, mDescriptorSets[setIndex]);
     }
     else
     {
@@ -1976,8 +1996,8 @@ angle::Result ProgramExecutableVk::updateTexturesDescriptorSet(
         ANGLE_TRY(fullDesc.updateFullActiveTextures(
             context, mVariableInfoMap, mTextureWriteDescriptorDescs, *mExecutable, textures,
             samplers, emulateSeamfulCubeMapSampling, pipelineType, newSharedCacheKey));
-        fullDesc.updateDescriptorSet(context, mTextureWriteDescriptorDescs, updateBuilder,
-                                     mDescriptorSets[DescriptorSetIndex::Texture]);
+        fullDesc.updateDescriptorSet(context->getRenderer(), mTextureWriteDescriptorDescs,
+                                     updateBuilder, mDescriptorSets[DescriptorSetIndex::Texture]);
     }
     else
     {
@@ -2332,40 +2352,13 @@ void ProgramExecutableVk::setUniform4uiv(GLint location, GLsizei count, const GL
                    &mDefaultUniformBlocksDirty);
 }
 
-template <int cols, int rows>
-void ProgramExecutableVk::setUniformMatrixfv(GLint location,
-                                             GLsizei count,
-                                             GLboolean transpose,
-                                             const GLfloat *value)
-{
-    const gl::VariableLocation &locationInfo = mExecutable->getUniformLocations()[location];
-    const gl::LinkedUniform &linkedUniform   = mExecutable->getUniforms()[locationInfo.index];
-
-    for (const gl::ShaderType shaderType : mExecutable->getLinkedShaderStages())
-    {
-        DefaultUniformBlockVk &uniformBlock   = *mDefaultUniformBlocks[shaderType];
-        const sh::BlockMemberInfo &layoutInfo = uniformBlock.uniformLayout[location];
-
-        // Assume an offset of -1 means the block is unused.
-        if (layoutInfo.offset == -1)
-        {
-            continue;
-        }
-
-        SetFloatUniformMatrixGLSL<cols, rows>::Run(
-            locationInfo.arrayIndex, linkedUniform.getBasicTypeElementCount(), count, transpose,
-            value, uniformBlock.uniformData.data() + layoutInfo.offset);
-
-        mDefaultUniformBlocksDirty.set(shaderType);
-    }
-}
-
 void ProgramExecutableVk::setUniformMatrix2fv(GLint location,
                                               GLsizei count,
                                               GLboolean transpose,
                                               const GLfloat *value)
 {
-    setUniformMatrixfv<2, 2>(location, count, transpose, value);
+    SetUniformMatrixfv<2, 2>(mExecutable, location, count, transpose, value, &mDefaultUniformBlocks,
+                             &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniformMatrix3fv(GLint location,
@@ -2373,7 +2366,8 @@ void ProgramExecutableVk::setUniformMatrix3fv(GLint location,
                                               GLboolean transpose,
                                               const GLfloat *value)
 {
-    setUniformMatrixfv<3, 3>(location, count, transpose, value);
+    SetUniformMatrixfv<3, 3>(mExecutable, location, count, transpose, value, &mDefaultUniformBlocks,
+                             &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniformMatrix4fv(GLint location,
@@ -2381,7 +2375,8 @@ void ProgramExecutableVk::setUniformMatrix4fv(GLint location,
                                               GLboolean transpose,
                                               const GLfloat *value)
 {
-    setUniformMatrixfv<4, 4>(location, count, transpose, value);
+    SetUniformMatrixfv<4, 4>(mExecutable, location, count, transpose, value, &mDefaultUniformBlocks,
+                             &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniformMatrix2x3fv(GLint location,
@@ -2389,7 +2384,8 @@ void ProgramExecutableVk::setUniformMatrix2x3fv(GLint location,
                                                 GLboolean transpose,
                                                 const GLfloat *value)
 {
-    setUniformMatrixfv<2, 3>(location, count, transpose, value);
+    SetUniformMatrixfv<2, 3>(mExecutable, location, count, transpose, value, &mDefaultUniformBlocks,
+                             &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniformMatrix3x2fv(GLint location,
@@ -2397,7 +2393,8 @@ void ProgramExecutableVk::setUniformMatrix3x2fv(GLint location,
                                                 GLboolean transpose,
                                                 const GLfloat *value)
 {
-    setUniformMatrixfv<3, 2>(location, count, transpose, value);
+    SetUniformMatrixfv<3, 2>(mExecutable, location, count, transpose, value, &mDefaultUniformBlocks,
+                             &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniformMatrix2x4fv(GLint location,
@@ -2405,7 +2402,8 @@ void ProgramExecutableVk::setUniformMatrix2x4fv(GLint location,
                                                 GLboolean transpose,
                                                 const GLfloat *value)
 {
-    setUniformMatrixfv<2, 4>(location, count, transpose, value);
+    SetUniformMatrixfv<2, 4>(mExecutable, location, count, transpose, value, &mDefaultUniformBlocks,
+                             &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniformMatrix4x2fv(GLint location,
@@ -2413,7 +2411,8 @@ void ProgramExecutableVk::setUniformMatrix4x2fv(GLint location,
                                                 GLboolean transpose,
                                                 const GLfloat *value)
 {
-    setUniformMatrixfv<4, 2>(location, count, transpose, value);
+    SetUniformMatrixfv<4, 2>(mExecutable, location, count, transpose, value, &mDefaultUniformBlocks,
+                             &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniformMatrix3x4fv(GLint location,
@@ -2421,7 +2420,8 @@ void ProgramExecutableVk::setUniformMatrix3x4fv(GLint location,
                                                 GLboolean transpose,
                                                 const GLfloat *value)
 {
-    setUniformMatrixfv<3, 4>(location, count, transpose, value);
+    SetUniformMatrixfv<3, 4>(mExecutable, location, count, transpose, value, &mDefaultUniformBlocks,
+                             &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniformMatrix4x3fv(GLint location,
@@ -2429,7 +2429,8 @@ void ProgramExecutableVk::setUniformMatrix4x3fv(GLint location,
                                                 GLboolean transpose,
                                                 const GLfloat *value)
 {
-    setUniformMatrixfv<4, 3>(location, count, transpose, value);
+    SetUniformMatrixfv<4, 3>(mExecutable, location, count, transpose, value, &mDefaultUniformBlocks,
+                             &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::getUniformfv(const gl::Context *context,

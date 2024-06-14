@@ -24,8 +24,12 @@
 
 341780527 LINUX VULKAN NVIDIA : KHR-GLES3.clip_distance.coverage = FAIL
 341780527 LINUX VULKAN NVIDIA : KHR-GLES3.cull_distance.functional = FAIL
+341780527 LINUX VULKAN AMD : KHR-GLES3.clip_distance.coverage = FAIL
+341780527 LINUX VULKAN AMD : KHR-GLES3.cull_distance.functional = FAIL
 341780527 WIN VULKAN NVIDIA : KHR-GLES3.clip_distance.coverage = FAIL
 341780527 WIN VULKAN NVIDIA : KHR-GLES3.cull_distance.functional = FAIL
+341780527 WIN VULKAN AMD : KHR-GLES3.clip_distance.coverage = FAIL
+341780527 WIN VULKAN AMD : KHR-GLES3.cull_distance.functional = FAIL
 
 // Fails only with SwiftShader:
 
@@ -112,4 +116,4 @@ b/328156792 PINEAPPLE VULKAN : KHR-GLES3.shaders.function.global_variable_aliasi
 b/332383430 PIXEL6 VULKAN : KHR-GLES3.texture_lod_bias.texture_lod_bias_all = FAIL
 
 // Flaky timeout
-b/332383430 TSAN SWIFTSHADER : KHR-GLES3.texture_lod_bias.texture_lod_bias_all = SKIP
+332383430 SWIFTSHADER : KHR-GLES3.texture_lod_bias.texture_lod_bias_all = TIMEOUT

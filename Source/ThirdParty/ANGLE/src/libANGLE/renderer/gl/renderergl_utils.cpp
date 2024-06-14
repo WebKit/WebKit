@@ -2040,7 +2040,9 @@ void GenerateCaps(const FunctionsGL *functions,
     extensions->gpuShader5EXT = functions->isAtLeastGL(gl::Version(4, 0)) ||
                                 functions->isAtLeastGLES(gl::Version(3, 2)) ||
                                 functions->hasGLExtension("GL_ARB_gpu_shader5") ||
-                                functions->hasGLESExtension("GL_EXT_gpu_shader5");
+                                functions->hasGLESExtension("GL_EXT_gpu_shader5") ||
+                                functions->hasGLESExtension("GL_OES_gpu_shader5");
+    extensions->gpuShader5OES     = extensions->gpuShader5EXT;
     extensions->shaderIoBlocksOES = functions->isAtLeastGL(gl::Version(3, 2)) ||
                                     functions->isAtLeastGLES(gl::Version(3, 2)) ||
                                     functions->hasGLESExtension("GL_OES_shader_io_blocks") ||

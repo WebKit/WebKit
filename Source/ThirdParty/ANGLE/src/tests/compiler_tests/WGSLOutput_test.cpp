@@ -58,12 +58,20 @@ TEST_F(WGSLOutputTest, BasicTranslation)
             outColor = vec4(foo.x, foo.y, zw, zw);
         }
 
+        Foo returnFoo(Foo foo) {
+          return foo;
+        }
+
+        float returnFloat(float x) {
+          return x;
+        }
+
         void main()
         {
             Foo foo;
             foo.x = 2.0;
             foo.y = 2.0;
-            doFoo(foo, 3.0);
+            doFoo(returnFoo(foo), returnFloat(3.0));
         })";
     const std::string &outputString =
         R"(
@@ -76,6 +84,16 @@ fn _udoFoo(FAKE_FUNCTION_PARAMETER, FAKE_FUNCTION_PARAMETER);
 fn _udoFoo(FAKE_FUNCTION_PARAMETER, FAKE_FUNCTION_PARAMETER)
 {
   ;
+  ;
+}
+
+fn _ureturnFoo(FAKE_FUNCTION_PARAMETER) -> _uFoo
+{
+  ;
+}
+
+fn _ureturnFloat(FAKE_FUNCTION_PARAMETER) -> f32
+{
   ;
 }
 

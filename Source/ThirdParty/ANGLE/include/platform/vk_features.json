@@ -264,14 +264,6 @@
             "issue": "http://anglebug.com/7551"
         },
         {
-            "name": "supports_multisampled_render_to_single_sampled_GOOGLEX",
-            "category": "Features",
-            "description": [
-                "VkDevice supports the VK_GOOGLEX_multisampled_render_to_single_sampled extension"
-            ],
-            "issue": "http://anglebug.com/4836"
-        },
-        {
             "name": "supports_multisampled_render_to_single_sampled",
             "category": "Features",
             "description": [
@@ -545,14 +537,6 @@
                 "Expose EXT_multisampled_render_to_texture"
             ],
             "issue": "http://anglebug.com/4937"
-        },
-        {
-            "name": "defer_flush_until_end_render_pass",
-            "category": "Workarounds",
-            "description": [
-                "Allow glFlush to be deferred until renderpass ends"
-            ],
-            "issue": "https://issuetracker.google.com/issues/166475273"
         },
         {
             "name": "wait_idle_before_swapchain_recreation",
@@ -1473,6 +1457,15 @@
             "issue": "http://anglebug.com/8658"
         },
         {
+            "name": "limit_max_storage_buffer_size",
+            "category": "Workarounds",
+            "description": [
+                "On some drivers, a storage buffer max size limit is exposed that is incompatible with ",
+                "older hardware"
+            ],
+            "issue": "http://anglebug.com/345244067"
+        },
+        {
             "name": "cl_dump_vk_spirv",
             "category": "Features",
             "description": [
@@ -1504,16 +1497,6 @@
                 "Enable non-semantic info inside shader module via VK_KHR_shader_non_semantic_info extension"
             ],
             "issue": "http://anglebug.com/8549"
-        },
-        {
-            "name": "combine_all_shaders_in_pipeline_library",
-            "category": "Features",
-            "description": [
-                "For Vulkan ICDs that support VK_EXT_graphics_pipeline_library the shaders subset of the pipeline",
-                "can either be combined into a single pipeline or can be decoupled into separate pipelines. This feature",
-                "is enabled when the former is the case."
-            ],
-            "issue": "http://anglebug.com/8601"
         },
         {
             "name": "supports_8_bit_storage_buffer",
@@ -1586,6 +1569,30 @@
                 "VkDevice supports VK_KHR_synchronization2 extension"
             ],
             "issue": "https://issuetracker.google.com/336844257"
+        },
+        {
+            "name": "supports_dynamic_rendering",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_KHR_dynamic_rendering extension"
+            ],
+            "issue": "http://anglebug.com/42267038"
+        },
+        {
+            "name": "supports_dynamic_rendering_local_read",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_KHR_dynamic_rendering_local_read extension"
+            ],
+            "issue": "http://anglebug.com/42267038"
+        },
+        {
+            "name": "prefer_dynamic_rendering",
+            "category": "Features",
+            "description": [
+                "Whether dynamic rendering should be used instead of render pass objects"
+            ],
+            "issue": "http://anglebug.com/42267038"
         }
     ]
 }

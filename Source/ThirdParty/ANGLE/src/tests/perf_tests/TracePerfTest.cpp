@@ -1761,6 +1761,16 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
         }
     }
 
+    if (traceNameIs("modern_combat_5"))
+    {
+        if (IsPixel6() && !IsAndroid14OrNewer())
+        {
+            skipTest(
+                "https://issuetracker.google.com/42267261 Causing thermal failures on Pixel 6 with "
+                "Android 13");
+        }
+    }
+
     if (IsGalaxyS22())
     {
         if (traceNameIs("cod_mobile") || traceNameIs("dota_underlords") ||

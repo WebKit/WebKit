@@ -139,6 +139,7 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 1252169 LINUX AMD OPENGL : ComputeShaderTest.BufferImageBufferMapWrite/* = SKIP
 7300 LINUX INTEL OPENGL : ComputeShaderTest.DrawDispatchImageReadDraw/* = SKIP
 7661 LINUX INTEL OPENGL : CopyTexImageTest.CopyTexImageMesaYFlipPartial/* = SKIP
+342316794 LINUX INTEL VULKAN : GLSLTest_ES31.TernaryOnStructsInDifferentBlockStorages/* = SKIP
 
 // Nvidia
 6115 NVIDIA OPENGL : GLSLTestLoops.DoWhileContinue/* = SKIP
@@ -523,8 +524,6 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 7140 PIXEL4ORXL VULKAN : DrawBuffersTest.MidRenderPassClearWithGaps/* = SKIP
 7140 PIXEL4ORXL VULKAN : DrawBuffersTest.MidRenderPassClearWithGapsRGB/* = SKIP
 
-7207 PIXEL4ORXL VULKAN : VulkanPerformanceCounterTest.InRenderpassFlushShouldNotBreakRenderpass/* = SKIP
-
 8480 PIXEL4ORXL : GLSLTest_ES3.LargeConstGlobalArraysOfStructs/* = SKIP
 
 7372 PIXEL4ORXL VULKAN : FramebufferTest_ES3.SurfaceDimensionsChangeAndFragCoord/* = SKIP
@@ -545,7 +544,11 @@ b/308668391 PIXEL4ORXL VULKAN : ImageTest.SourceYUVAHBTargetExternalRGBSampleNoD
 343011429 PIXEL4ORXL VULKAN : GLSLTest_ES31_InitShaderVariables.InitIOBlockWithComplexTypes/*_ForceInitShaderVariables* = SKIP
 343011429 PIXEL4ORXL VULKAN : GLSLTest_ES31_InitShaderVariables.InitIOBlockWithStruct/*_ForceInitShaderVariables* = SKIP
 
+42267047 PIXEL4ORXL VULKAN : GLSLTest_ES3.VaryingStructWithInlineDefinition2/*_ForceInitShaderVariables* = SKIP
+
 343218490 PIXEL4ORXL : GLSLTest_ES31.TernaryOnStructsInDifferentBlockStorages/* = SKIP
+
+b/346650202 PIXEL4ORXL : GeometryShaderTest.CreateAndAttachGeometryShaderOES/* = SKIP
 
 8310 PIXEL4ORXL VULKAN : VulkanExternalImageTest.PreInitializedOnGLImportLinear*/* = SKIP
 8310 LINUX SWIFTSHADER : VulkanExternalImageTest.PreInitializedOnGLImportLinear*/* = SKIP
@@ -804,7 +807,6 @@ b/330697097 PIXEL6 VULKAN : FramebufferTest_ES31.MultisampleResolveBothAttachmen
 7994 IOS METAL : PixelLocalStorageTest.ProgramCache/ES3_Metal_EmulatePixelLocalStorage* = SKIP
 7994 IOS METAL : PixelLocalStorageTest.R32/ES3_Metal_EmulatePixelLocalStorage* = SKIP
 7994 IOS METAL : PixelLocalStorageTest.RGBA8/ES3_Metal_EmulatePixelLocalStorage* = SKIP
-7994 IOS METAL : PixelLocalStorageTest.TextureLevelsAndLayers/ES3_Metal_EmulatePixelLocalStorage* = SKIP
 7994 IOS METAL : PointSpritesTest.PointSizeAboveMaxIsClamped/* = SKIP
 7994 IOS METAL : RobustBufferAccessWebGL2ValidationStateChangeTest.BindZeroSizeBufferThenDeleteBufferBug/* = SKIP
 7994 IOS METAL : SamplerTypeMixTestES3.SamplerTypeMixDraw/* = SKIP
@@ -1115,7 +1117,6 @@ b/330697097 PIXEL6 VULKAN : FramebufferTest_ES31.MultisampleResolveBothAttachmen
 
 // GL_TEXTURE_2D_ARRAY and GL_TEXTURE_3D shader images.
 8124 D3D11 : PixelLocalStorageTest.TextureLevelsAndLayers/* = SKIP
-8125 MAC METAL : PixelLocalStorageTest.TextureLevelsAndLayers/* = SKIP
 
 // Failures as a result of Mac 13 -> Mac 14 upgrade.
 8628 MAC AMD METAL : GLSLTest_ES3.LiteralInfinityOutput/* = SKIP
@@ -1143,6 +1144,9 @@ b/330697097 PIXEL6 VULKAN : FramebufferTest_ES31.MultisampleResolveBothAttachmen
 // SSBO Alias Overwrite
 5990 PIXEL4ORXL VULKAN : ComputeShaderTest.SSBOAliasOverWrite/* = SKIP
 b/266235549 D3D11 : ComputeShaderTest.SSBOAliasOverWrite/* = SKIP
+
+// Incorrect image binding in Vulkan backend
+344950165 VULKAN : TextureTestES31.Texture2DLayered/* = SKIP
 
 // Samsung Galaxy S22 (Xclipse)
 b/267953710 GALAXYS22 GLES : VulkanImageTest.DeviceVulkan/* = SKIP
@@ -1223,7 +1227,6 @@ b/267953710 GALAXYS22 VULKAN : VulkanPerformanceCounterTest_ES31.ColorMaskedFram
 8185 GALAXYQUALCOMM VULKAN : Texture2DTestES3.TexImageWithStencilData/* = SKIP
 8185 GALAXYQUALCOMM VULKAN : Texture2DTestES3.TexImageWithStencilPBO/* = SKIP
 8185 GALAXYQUALCOMM VULKAN : WebGL2GLSLTest.InitUninitializedLocals/* = SKIP
-8185 GALAXYQUALCOMM VULKAN : VulkanPerformanceCounterTest.InRenderpassFlushShouldNotBreakRenderpass/* = SKIP
 // Skip all forms of _*Prerotation* tests
 8185 GALAXYQUALCOMM VULKAN : */*Vulkan_EmulatedPrerotation* = SKIP
 8185 GALAXYQUALCOMM VULKAN : */*PreRotationEnabled* = SKIP
@@ -1234,7 +1237,8 @@ b/267953710 GALAXYS22 VULKAN : VulkanPerformanceCounterTest_ES31.ColorMaskedFram
 8157 GALAXYS23 VULKAN : EGLBlobCacheTest.ThreadSafety/* = SKIP
 8157 GALAXYS23 VULKAN : EGLQueryContextTest.NotInitialized/* = SKIP
 8157 GALAXYS23 VULKAN : FramebufferTest_ES3.AttachmentsWithUnequalDimensions/ES3_Vulkan_AsyncCommandQueue = SKIP
-8157 GALAXYS23 VULKAN : GLSLTest_ES31.ArrayOfArrayOfSamplerDynamicIndex/* = SKIP
+8157 GALAXYS23 VULKAN : GLSLTest_ES31.ArrayOfArrayOfSamplerDynamicIndexEXT/* = SKIP
+8157 GALAXYS23 VULKAN : GLSLTest_ES31.ArrayOfArrayOfSamplerDynamicIndexOES/* = SKIP
 8157 GALAXYS23 VULKAN : GLSLTest_ES31.ArrayOfArrayOfSamplerInStructDynamicIndex/* = SKIP
 8157 GALAXYS23 VULKAN : PointSpritesTest.PointSizeAboveMaxIsClamped/* = SKIP
 8157 GALAXYS23 VULKAN : ProgramPipelineTest31.SampleTextureAThenTextureB/* = SKIP
@@ -1326,7 +1330,6 @@ b/328156792 PINEAPPLE VULKAN : StateChangeTestES3.RasterizerDiscard/* = SKIP
 b/328156792 PINEAPPLE VULKAN : StateChangeTestES3.StencilReferenceAndCompareMask/* = SKIP
 b/328156792 PINEAPPLE VULKAN : Texture2DMemoryTestES3.TextureDataInLoopManyTimes/* = SKIP
 b/328156792 PINEAPPLE VULKAN : TransformFeedbackTestIOBlocks.Interleaved/* = SKIP
-b/328156792 PINEAPPLE VULKAN : VulkanPerformanceCounterTest.InRenderpassFlushShouldNotBreakRenderpass/* = SKIP
 b/328156792 PINEAPPLE VULKAN : VulkanPerformanceCounterTest.RenderToTexture* = SKIP
 b/328156792 PINEAPPLE VULKAN : WebGL2GLSLTest.InitUninitializedLocals/* = SKIP
 
@@ -1414,7 +1417,11 @@ b/292285899 PIXEL4ORXL GLES : EGLSurfaceTest.DestroyAndRecreateWhileCurrent/* = 
 
 // WebGPU failures
 8485 WGPU : RendererTest.SimpleOperation/* = SKIP
-8582 WGPU : ClearTest.* = SKIP
+8582 WGPU : ClearTest.*Scissor* = SKIP
+8582 WGPU : ClearTest.*Mask* = SKIP
+8582 WGPU : ClearTest.DefaultFramebuffer* = SKIP
+8582 WGPU : ClearTest.ChangeFramebufferAttachmentFromRGBAtoRGB* = SKIP
+8582 WGPU : ClearTest.ClearIssue*  = SKIP
 8547 WGPU : Texture2DTest.Tex* = SKIP
 8547 WGPU : Texture2DTest.Upload* = SKIP
 8547 WGPU : Texture2DTest.*Superseding* = SKIP

@@ -250,6 +250,21 @@ bool IsArrayTextureType(TextureType type)
     }
 }
 
+bool IsLayeredTextureType(TextureType type)
+{
+    switch (type)
+    {
+        case TextureType::_2DArray:
+        case TextureType::_2DMultisampleArray:
+        case TextureType::_3D:
+        case TextureType::CubeMap:
+        case TextureType::CubeMapArray:
+            return true;
+        default:
+            return false;
+    }
+}
+
 bool IsStaticBufferUsage(BufferUsage useage)
 {
     switch (useage)

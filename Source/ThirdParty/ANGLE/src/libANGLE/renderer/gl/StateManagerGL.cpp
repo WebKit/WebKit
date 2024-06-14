@@ -1115,9 +1115,11 @@ void StateManagerGL::updateProgramImageBindings(const gl::Context *context)
         const TextureGL *textureGL     = SafeGetImplAs<TextureGL>(imageUnit.texture.get());
         if (textureGL)
         {
+            // Do not set layer parameters for non-layered texture types to avoid driver bugs.
+            const bool layered = IsLayeredTextureType(textureGL->getType());
             bindImageTexture(imageUnitIndex, textureGL->getTextureID(), imageUnit.level,
-                             imageUnit.layered, imageUnit.layer, imageUnit.access,
-                             imageUnit.format);
+                             layered && imageUnit.layered, layered ? imageUnit.layer : 0,
+                             imageUnit.access, imageUnit.format);
         }
         else
         {

@@ -3382,7 +3382,7 @@ void GL_APIENTRY GL_Uniform1f(GLint location, GLfloat v0)
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid =
             (context->skipValidation() ||
              ValidateUniform1f(context, angle::EntryPoint::GLUniform1f, locationPacked, v0));
@@ -3409,7 +3409,7 @@ void GL_APIENTRY GL_Uniform1fv(GLint location, GLsizei count, const GLfloat *val
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid = (context->skipValidation() ||
                             ValidateUniform1fv(context, angle::EntryPoint::GLUniform1fv,
                                                locationPacked, count, value));
@@ -3487,7 +3487,7 @@ void GL_APIENTRY GL_Uniform2f(GLint location, GLfloat v0, GLfloat v1)
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid =
             (context->skipValidation() ||
              ValidateUniform2f(context, angle::EntryPoint::GLUniform2f, locationPacked, v0, v1));
@@ -3514,7 +3514,7 @@ void GL_APIENTRY GL_Uniform2fv(GLint location, GLsizei count, const GLfloat *val
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid = (context->skipValidation() ||
                             ValidateUniform2fv(context, angle::EntryPoint::GLUniform2fv,
                                                locationPacked, count, value));
@@ -3540,7 +3540,7 @@ void GL_APIENTRY GL_Uniform2i(GLint location, GLint v0, GLint v1)
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid =
             (context->skipValidation() ||
              ValidateUniform2i(context, angle::EntryPoint::GLUniform2i, locationPacked, v0, v1));
@@ -3567,7 +3567,7 @@ void GL_APIENTRY GL_Uniform2iv(GLint location, GLsizei count, const GLint *value
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid = (context->skipValidation() ||
                             ValidateUniform2iv(context, angle::EntryPoint::GLUniform2iv,
                                                locationPacked, count, value));
@@ -3593,7 +3593,7 @@ void GL_APIENTRY GL_Uniform3f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid =
             (context->skipValidation() || ValidateUniform3f(context, angle::EntryPoint::GLUniform3f,
                                                             locationPacked, v0, v1, v2));
@@ -3620,7 +3620,7 @@ void GL_APIENTRY GL_Uniform3fv(GLint location, GLsizei count, const GLfloat *val
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid = (context->skipValidation() ||
                             ValidateUniform3fv(context, angle::EntryPoint::GLUniform3fv,
                                                locationPacked, count, value));
@@ -3646,7 +3646,7 @@ void GL_APIENTRY GL_Uniform3i(GLint location, GLint v0, GLint v1, GLint v2)
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid =
             (context->skipValidation() || ValidateUniform3i(context, angle::EntryPoint::GLUniform3i,
                                                             locationPacked, v0, v1, v2));
@@ -3673,7 +3673,7 @@ void GL_APIENTRY GL_Uniform3iv(GLint location, GLsizei count, const GLint *value
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid = (context->skipValidation() ||
                             ValidateUniform3iv(context, angle::EntryPoint::GLUniform3iv,
                                                locationPacked, count, value));
@@ -3699,7 +3699,7 @@ void GL_APIENTRY GL_Uniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid =
             (context->skipValidation() || ValidateUniform4f(context, angle::EntryPoint::GLUniform4f,
                                                             locationPacked, v0, v1, v2, v3));
@@ -3726,7 +3726,7 @@ void GL_APIENTRY GL_Uniform4fv(GLint location, GLsizei count, const GLfloat *val
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid = (context->skipValidation() ||
                             ValidateUniform4fv(context, angle::EntryPoint::GLUniform4fv,
                                                locationPacked, count, value));
@@ -3752,7 +3752,7 @@ void GL_APIENTRY GL_Uniform4i(GLint location, GLint v0, GLint v1, GLint v2, GLin
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid =
             (context->skipValidation() || ValidateUniform4i(context, angle::EntryPoint::GLUniform4i,
                                                             locationPacked, v0, v1, v2, v3));
@@ -3779,7 +3779,7 @@ void GL_APIENTRY GL_Uniform4iv(GLint location, GLsizei count, const GLint *value
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid = (context->skipValidation() ||
                             ValidateUniform4iv(context, angle::EntryPoint::GLUniform4iv,
                                                locationPacked, count, value));
@@ -3809,7 +3809,7 @@ void GL_APIENTRY GL_UniformMatrix2fv(GLint location,
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid = (context->skipValidation() ||
                             ValidateUniformMatrix2fv(context, angle::EntryPoint::GLUniformMatrix2fv,
                                                      locationPacked, count, transpose, value));
@@ -3840,7 +3840,7 @@ void GL_APIENTRY GL_UniformMatrix3fv(GLint location,
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid = (context->skipValidation() ||
                             ValidateUniformMatrix3fv(context, angle::EntryPoint::GLUniformMatrix3fv,
                                                      locationPacked, count, transpose, value));
@@ -3871,7 +3871,7 @@ void GL_APIENTRY GL_UniformMatrix4fv(GLint location,
     if (context)
     {
         UniformLocation locationPacked = PackParam<UniformLocation>(location);
-        SCOPED_SHARE_CONTEXT_LOCK(context);
+
         bool isCallValid = (context->skipValidation() ||
                             ValidateUniformMatrix4fv(context, angle::EntryPoint::GLUniformMatrix4fv,
                                                      locationPacked, count, transpose, value));

@@ -1735,7 +1735,7 @@ class DescriptorSetDesc
         return mDescriptorInfos[infoDescIndex];
     }
 
-    void updateDescriptorSet(Context *context,
+    void updateDescriptorSet(Renderer *renderer,
                              const WriteDescriptorDescs &writeDescriptorDescs,
                              UpdateDescriptorSetsBuilder *updateBuilder,
                              const DescriptorDescHandles *handles,
@@ -1872,7 +1872,7 @@ class DescriptorSetDescBuilder final
                                            PipelineType pipelineType,
                                            const SharedDescriptorSetCacheKey &sharedCacheKey);
 
-    void updateDescriptorSet(Context *context,
+    void updateDescriptorSet(Renderer *renderer,
                              const WriteDescriptorDescs &writeDescriptorDescs,
                              UpdateDescriptorSetsBuilder *updateBuilder,
                              VkDescriptorSet descriptorSet) const;

@@ -1943,14 +1943,6 @@ TEST_P(PixelLocalStorageTest, MipMapLevels)
     GLFramebuffer fbo;
     for (int level = 0; level < LEVELS; ++level)
     {
-        if (IsVulkan())
-        {
-            // anglebug.com/7647 -- a workaround is to create and bind a new texture.
-            glGenTextures(1, &tex);
-            glBindTexture(GL_TEXTURE_2D, tex);
-            glTexStorage2D(GL_TEXTURE_2D, LEVELS, GL_RGBA8, 179, 313);
-        }
-
         glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
         glUniform1f(mProgram.widthUniform(), levelWidth);
@@ -2044,37 +2036,6 @@ TEST_P(PixelLocalStorageTest, TextureLevelsAndLayers)
         mProgram.drawBoxes({{HALFSCREEN}});
         glEndPixelLocalStorageANGLE(1, GLenumArray({GL_STORE_OP_STORE_ANGLE}));
         attachTextureLayerToScratchFBO(tex, 1, D - 1);
-        EXPECT_PIXEL_RECT_EQ(0, 0, W / 2.f, H, GLColor::yellow);
-        EXPECT_PIXEL_RECT_EQ(W / 2.f, 0, W / 2.f, H, GLColor::red);
-        ASSERT_GL_NO_ERROR();
-    }
-
-    // GL_TEXTURE_3D
-    {
-        // Level 2, layer 0.
-        GLTexture tex;
-        glBindTexture(GL_TEXTURE_2D_ARRAY, tex);
-        glTexStorage3D(GL_TEXTURE_2D_ARRAY, 3, GL_RGBA8, W * 4, H * 4, D);
-        glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 2, 0, 0, 0, W, H, D, GL_RGBA, GL_UNSIGNED_BYTE,
-                        redImg.data());
-        GLFramebuffer fbo;
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        glFramebufferTexturePixelLocalStorageANGLE(0, tex, 2, 0);
-        glBeginPixelLocalStorageANGLE(1, GLenumArray({GL_LOAD_OP_LOAD_ANGLE}));
-        mProgram.drawBoxes({{HALFSCREEN}});
-        glEndPixelLocalStorageANGLE(1, GLenumArray({GL_STORE_OP_STORE_ANGLE}));
-        attachTextureLayerToScratchFBO(tex, 2, 0);
-        EXPECT_PIXEL_RECT_EQ(0, 0, W / 2.f, H, GLColor::yellow);
-        EXPECT_PIXEL_RECT_EQ(W / 2.f, 0, W / 2.f, H, GLColor::red);
-        ASSERT_GL_NO_ERROR();
-
-        // Level 2, layer D - 1.
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        glFramebufferTexturePixelLocalStorageANGLE(0, tex, 2, D - 1);
-        glBeginPixelLocalStorageANGLE(1, GLenumArray({GL_LOAD_OP_LOAD_ANGLE}));
-        mProgram.drawBoxes({{HALFSCREEN}});
-        glEndPixelLocalStorageANGLE(1, GLenumArray({GL_STORE_OP_STORE_ANGLE}));
-        attachTextureLayerToScratchFBO(tex, 2, D - 1);
         EXPECT_PIXEL_RECT_EQ(0, 0, W / 2.f, H, GLColor::yellow);
         EXPECT_PIXEL_RECT_EQ(W / 2.f, 0, W / 2.f, H, GLColor::red);
         ASSERT_GL_NO_ERROR();
@@ -3619,8 +3580,8 @@ TEST_P(PixelLocalStorageValidationTest, FramebufferTexturePixelLocalStorageANGLE
     EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);
     EXPECT_GL_SINGLE_ERROR_MSG("Texture is not immutable.");
 
-    // INVALID_OPERATION is generated if <backingtexture> is nonzero and not of type TEXTURE_2D,
-    // TEXTURE_2D_ARRAY, or TEXTURE_3D.
+    // INVALID_OPERATION is generated if <backingtexture> is nonzero
+    // and not of type TEXTURE_2D or TEXTURE_2D_ARRAY.
     GLTexture texCube;
     glBindTexture(GL_TEXTURE_CUBE_MAP, texCube);
     glTexStorage2D(GL_TEXTURE_CUBE_MAP, 1, GL_RGBA8, 10, 10);
@@ -3638,6 +3599,18 @@ TEST_P(PixelLocalStorageValidationTest, FramebufferTexturePixelLocalStorageANGLE
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 1, GL_RGBA8, 10, 10, 1);
     EXPECT_GL_NO_ERROR();
     glFramebufferTexturePixelLocalStorageANGLE(0, tex2DMultisample, 0, 0);
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Invalid pixel local storage texture type.");
+    EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_FORMAT_ANGLE, GL_NONE);
+    EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE, 0);
+    EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE, 0);
+    EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE, 0);
+
+    GLTexture tex3D;
+    glBindTexture(GL_TEXTURE_3D, tex3D);
+    glTexStorage3D(GL_TEXTURE_3D, 1, GL_RGBA8, 5, 5, 5);
+    EXPECT_GL_NO_ERROR();
+    glFramebufferTexturePixelLocalStorageANGLE(0, tex3D, 0, 0);
     EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);
     EXPECT_GL_SINGLE_ERROR_MSG("Invalid pixel local storage texture type.");
     EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_FORMAT_ANGLE, GL_NONE);
@@ -3701,39 +3674,6 @@ TEST_P(PixelLocalStorageValidationTest, FramebufferTexturePixelLocalStorageANGLE
         EXPECT_PLS_INTEGER(2, GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE, 0);
         EXPECT_PLS_INTEGER(2, GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE, 0);
         EXPECT_PLS_INTEGER(2, GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE, 0);
-    }
-
-    GLTexture tex3D;
-    glBindTexture(GL_TEXTURE_3D, tex3D);
-    glTexStorage3D(GL_TEXTURE_3D, 3, GL_RGBA8I, 10, 10, 256);
-    EXPECT_GL_NO_ERROR();
-    glFramebufferTexturePixelLocalStorageANGLE(0, tex3D, 2, 256);
-    EXPECT_GL_SINGLE_ERROR(GL_INVALID_VALUE);
-    EXPECT_GL_SINGLE_ERROR_MSG("Layer is larger than texture depth.");
-    glFramebufferTexturePixelLocalStorageANGLE(0, tex3D, 3, 255);
-    EXPECT_GL_SINGLE_ERROR(GL_INVALID_VALUE);
-    EXPECT_GL_SINGLE_ERROR_MSG("Level is larger than texture level count.");
-    glFramebufferTexturePixelLocalStorageANGLE(0, tex3D, 2, 255);
-    EXPECT_GL_NO_ERROR();
-    EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_FORMAT_ANGLE, GL_RGBA8I);
-    EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE, tex3D);
-    EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE, 2);
-    EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE, 255);
-    // When a texture object is deleted, any pixel local storage plane to which it was bound is
-    // automatically deinitialized.
-    {
-        GLFramebuffer keepalive;  // Keep the underlying texture alive after deleting its ID by
-                                  // binding it to a framebuffer.
-        glBindFramebuffer(GL_FRAMEBUFFER, keepalive);
-        glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex3D, 0, 0);
-        ASSERT_GL_NO_ERROR();
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        tex3D.reset();
-        PLSTestTexture newTextureMaybeRecycledID(GL_RGBA8, 1, 1);
-        EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_FORMAT_ANGLE, GL_NONE);
-        EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE, 0);
-        EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE, 0);
-        EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE, 0);
     }
 
     // INVALID_ENUM is generated if <backingtexture> is nonzero and its internalformat is not
@@ -5074,7 +5014,8 @@ TEST_P(PixelLocalStorageValidationTest, BannedCommands)
     EXPECT_BANNED_DEFAULT_MSG(glDrawBuffers(0, nullptr));
 
     // INVALID_OPERATION is generated by Enable(), Disable() if <cap> is not one of: CULL_FACE,
-    // DEPTH_CLAMP_EXT, DEPTH_TEST, POLYGON_OFFSET_FILL, PRIMITIVE_RESTART_FIXED_INDEX,
+    // DEPTH_CLAMP_EXT, DEPTH_TEST, POLYGON_OFFSET_POINT_NV, POLYGON_OFFSET_LINE_NV,
+    // POLYGON_OFFSET_LINE_ANGLE, POLYGON_OFFSET_FILL, PRIMITIVE_RESTART_FIXED_INDEX,
     // SCISSOR_TEST, STENCIL_TEST, CLIP_DISTANCE[0..7]_EXT
     EXPECT_ALLOWED_CAP(GL_CULL_FACE);
     if (EnsureGLExtensionEnabled("GL_KHR_debug"))
@@ -5089,6 +5030,24 @@ TEST_P(PixelLocalStorageValidationTest, BannedCommands)
     if (EnsureGLExtensionEnabled("GL_EXT_depth_clamp"))
     {
         EXPECT_ALLOWED_CAP(GL_DEPTH_CLAMP_EXT);
+    }
+    if (EnsureGLExtensionEnabled("GL_ANGLE_polygon_mode"))
+    {
+        EXPECT_ALLOWED_CAP(GL_POLYGON_OFFSET_LINE_ANGLE);
+        glPolygonModeANGLE(GL_FRONT_AND_BACK, GL_FILL_ANGLE);
+        EXPECT_GL_NO_ERROR();
+    }
+    if (EnsureGLExtensionEnabled("GL_NV_polygon_mode"))
+    {
+        EXPECT_ALLOWED_CAP(GL_POLYGON_OFFSET_POINT_NV);
+        EXPECT_ALLOWED_CAP(GL_POLYGON_OFFSET_LINE_NV);
+        glPolygonModeNV(GL_FRONT_AND_BACK, GL_FILL_NV);
+        EXPECT_GL_NO_ERROR();
+    }
+    if (EnsureGLExtensionEnabled("GL_EXT_polygon_offset_clamp"))
+    {
+        glPolygonOffsetClampEXT(0.0f, 0.0f, 0.0f);
+        EXPECT_GL_NO_ERROR();
     }
     EXPECT_ALLOWED_CAP(GL_POLYGON_OFFSET_FILL);
     EXPECT_ALLOWED_CAP(GL_PRIMITIVE_RESTART_FIXED_INDEX);

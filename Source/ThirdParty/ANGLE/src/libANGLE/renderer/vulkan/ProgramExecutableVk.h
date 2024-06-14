@@ -85,7 +85,7 @@ class ProgramInfo final : angle::NonCopyable
         return mProgramHelper.valid(shaderType);
     }
 
-    vk::ShaderProgramHelper *getShaderProgram() { return &mProgramHelper; }
+    vk::ShaderProgramHelper &getShaderProgram() { return mProgramHelper; }
 
   private:
     vk::ShaderProgramHelper mProgramHelper;
@@ -343,15 +343,19 @@ class ProgramExecutableVk : public ProgramExecutableImpl
         vk::PipelineProtectedAccess pipelineProtectedAccess,
         vk::GraphicsPipelineSubset subset,
         std::vector<std::shared_ptr<LinkSubTask>> *postLinkSubTasksOut);
+
     void waitForPostLinkTasks(const gl::Context *context) override
     {
         ContextVk *contextVk = vk::GetImpl(context);
         waitForPostLinkTasksImpl(contextVk);
     }
-
-    void waitForPostLinkTasksIfNecessary(
-        ContextVk *contextVk,
-        const vk::GraphicsPipelineDesc *currentGraphicsPipelineDesc);
+    void waitForComputePostLinkTasks(ContextVk *contextVk)
+    {
+        ASSERT(mExecutable->hasLinkedShaderStage(gl::ShaderType::Compute));
+        waitForPostLinkTasksImpl(contextVk);
+    }
+    void waitForGraphicsPostLinkTasks(ContextVk *contextVk,
+                                      const vk::GraphicsPipelineDesc &currentGraphicsPipelineDesc);
 
     angle::Result mergePipelineCacheToRenderer(vk::Context *context) const;
 
@@ -394,18 +398,11 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     class WarmUpTaskCommon;
     class WarmUpComputeTask;
     class WarmUpGraphicsTask;
+
     friend class ProgramVk;
     friend class ProgramPipelineVk;
-    friend class WarmUpComputeTask;
-    friend class WarmUpGraphicsTask;
 
     void reset(ContextVk *contextVk);
-
-    template <int cols, int rows>
-    void setUniformMatrixfv(GLint location,
-                            GLsizei count,
-                            GLboolean transpose,
-                            const GLfloat *value);
 
     template <class T>
     void getUniformImpl(GLint location, T *v, GLenum entryPointType) const;
@@ -476,8 +473,7 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     ProgramTransformOptions getTransformOptions(ContextVk *contextVk,
                                                 const vk::GraphicsPipelineDesc &desc);
     angle::Result initGraphicsShaderPrograms(vk::Context *context,
-                                             ProgramTransformOptions transformOptions,
-                                             vk::ShaderProgramHelper **shaderProgramOut);
+                                             ProgramTransformOptions transformOptions);
     angle::Result initProgramThenCreateGraphicsPipeline(vk::Context *context,
                                                         ProgramTransformOptions transformOptions,
                                                         vk::GraphicsPipelineSubset pipelineSubset,

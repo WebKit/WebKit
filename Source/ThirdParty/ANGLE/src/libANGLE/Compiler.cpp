@@ -69,6 +69,7 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
         extensions.shaderNoperspectiveInterpolationNV;
     mResources.ARB_texture_rectangle = extensions.textureRectangleANGLE;
     mResources.EXT_gpu_shader5       = extensions.gpuShader5EXT;
+    mResources.OES_gpu_shader5       = extensions.gpuShader5OES;
     mResources.OES_shader_io_blocks  = extensions.shaderIoBlocksOES;
     mResources.EXT_shader_io_blocks  = extensions.shaderIoBlocksEXT;
     mResources.OES_texture_storage_multisample_2d_array =
@@ -240,6 +241,7 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
 
     // Tessellation Shader constants
     mResources.EXT_tessellation_shader        = extensions.tessellationShaderEXT;
+    mResources.OES_tessellation_shader        = extensions.tessellationShaderOES;
     mResources.MaxTessControlInputComponents  = caps.maxTessControlInputComponents;
     mResources.MaxTessControlOutputComponents = caps.maxTessControlOutputComponents;
     mResources.MaxTessControlTextureImageUnits =

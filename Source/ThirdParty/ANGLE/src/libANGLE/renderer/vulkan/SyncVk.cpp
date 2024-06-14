@@ -285,8 +285,7 @@ angle::Result SyncHelper::submitSyncIfDeferred(ContextVk *contextVk, RenderPassC
     // render pass before a submission happens for another reason.  If the sync object is being
     // waited on by the current context, the application must have used GL_SYNC_FLUSH_COMMANDS_BIT.
     // However, when waited on by other contexts, the application must have ensured the original
-    // context is flushed.  Due to the deferFlushUntilEndRenderPass feature, a glFlush is not
-    // sufficient to guarantee this.
+    // context is flushed.  Due to deferred flushes, a glFlush is not sufficient to guarantee this.
     //
     // Deferring the submission is restricted to non-EGL sync objects, so it's sufficient to ensure
     // that the contexts in the share group issue their deferred flushes.

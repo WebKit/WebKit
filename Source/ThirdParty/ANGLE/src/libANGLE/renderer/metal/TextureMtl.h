@@ -32,6 +32,9 @@ struct ImageDefinitionMtl
 class TextureMtl : public TextureImpl
 {
   public:
+    using TextureViewVector           = std::vector<mtl::TextureRef>;
+    using LayerLevelTextureViewVector = std::vector<TextureViewVector>;
+
     TextureMtl(const gl::TextureState &state);
     // Texture  view
     TextureMtl(const TextureMtl &mtl, GLenum format);
@@ -354,8 +357,10 @@ class TextureMtl : public TextureImpl
     std::map<int, gl::TexLevelArray<RenderTargetMtl>> mPerLayerRenderTargets;
     std::map<int, gl::TexLevelArray<mtl::TextureRef>> mImplicitMSTextures;
 
-    // Views for glBindImageTexture.
-    std::map<MTLPixelFormat, gl::TexLevelArray<mtl::TextureRef>> mShaderImageViews;
+    // Lazily populated 2D views for shader storage images.
+    // May have different formats than the original texture.
+    // Indexed by format, then layer, then level.
+    std::map<MTLPixelFormat, LayerLevelTextureViewVector> mShaderImageViews;
 
     // Mipmap views are indexed from (base GL level -> max GL level):
     mtl::NativeTexLevelArray mLevelViewsWithinBaseMax;

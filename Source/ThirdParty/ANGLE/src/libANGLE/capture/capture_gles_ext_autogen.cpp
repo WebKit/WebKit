@@ -11174,6 +11174,19 @@ CallCapture CaptureMinSampleShadingOES(const State &glState, bool isCallValid, G
     return CallCapture(angle::EntryPoint::GLMinSampleShadingOES, std::move(paramBuffer));
 }
 
+CallCapture CapturePatchParameteriOES(const State &glState,
+                                      bool isCallValid,
+                                      GLenum pname,
+                                      GLint value)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addEnumParam("pname", GLESEnum::PatchParameterName, ParamType::TGLenum, pname);
+    paramBuffer.addValueParam("value", ParamType::TGLint, value);
+
+    return CallCapture(angle::EntryPoint::GLPatchParameteriOES, std::move(paramBuffer));
+}
+
 CallCapture CaptureCompressedTexImage3DOES(const State &glState,
                                            bool isCallValid,
                                            TextureTarget targetPacked,

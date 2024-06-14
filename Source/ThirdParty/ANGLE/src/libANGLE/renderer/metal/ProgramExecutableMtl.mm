@@ -1217,6 +1217,11 @@ angle::Result ProgramExecutableMtl::updateTextures(const gl::Context *glContext,
 
             const gl::ImageUnit &imageUnit = glState.getImageUnit(glslImageBinding);
             TextureMtl *textureMtl         = mtl::GetImpl(imageUnit.texture.get());
+            if (imageUnit.layered)
+            {
+                UNIMPLEMENTED();
+                continue;
+            }
             ANGLE_TRY(textureMtl->bindToShaderImage(
                 glContext, cmdEncoder, shaderType, static_cast<uint32_t>(mtlRWTextureBinding),
                 imageUnit.level, imageUnit.layer, imageUnit.format));

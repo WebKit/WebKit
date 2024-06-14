@@ -16,36 +16,6 @@
 #    include <vulkan/vulkan.h>
 #endif
 
-// For the unreleased VK_GOOGLEX_multisampled_render_to_single_sampled
-#if !defined(VK_GOOGLEX_multisampled_render_to_single_sampled)
-#    define VK_GOOGLEX_multisampled_render_to_single_sampled 1
-#    define VK_GOOGLEX_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_SPEC_VERSION 1
-#    define VK_GOOGLEX_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_EXTENSION_NAME \
-        "VK_GOOGLEX_multisampled_render_to_single_sampled"
-
-#    define VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_FEATURES_GOOGLEX \
-        ((VkStructureType)(1000376000))
-#    define VK_STRUCTURE_TYPE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_INFO_GOOGLEX \
-        ((VkStructureType)(1000376001))
-
-typedef struct VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesGOOGLEX
-{
-    VkStructureType sType;
-    const void *pNext;
-    VkBool32 multisampledRenderToSingleSampled;
-} VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesGOOGLEX;
-
-typedef struct VkMultisampledRenderToSingleSampledInfoGOOGLEX
-{
-    VkStructureType sType;
-    const void *pNext;
-    VkBool32 multisampledRenderToSingleSampledEnable;
-    VkSampleCountFlagBits rasterizationSamples;
-    VkResolveModeFlagBits depthResolveMode;
-    VkResolveModeFlagBits stencilResolveMode;
-} VkMultisampledRenderToSingleSampledInfoGOOGLEX;
-#endif /* VK_GOOGLEX_multisampled_render_to_single_sampled */
-
 #if !defined(ANGLE_SHARED_LIBVULKAN)
 
 namespace rx

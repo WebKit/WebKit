@@ -1214,7 +1214,7 @@ Caps GenerateMinimumCaps(const Version &clientVersion, const Extensions &extensi
         caps.maxCombinedTextureImageUnits = 64;
     }
 
-    if (extensions.tessellationShaderEXT)
+    if (extensions.tessellationShaderAny())
     {
         // Table 20.43 "Implementation Dependent Tessellation Shader Limits"
         caps.maxTessControlInputComponents                          = 64;

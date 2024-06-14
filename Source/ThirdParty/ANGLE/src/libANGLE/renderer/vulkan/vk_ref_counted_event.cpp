@@ -17,6 +17,33 @@ namespace vk
 {
 namespace
 {
+// Predefined VkPipelineStageFlags for RefCountedEvent
+constexpr angle::PackedEnumMap<EventStage, VkPipelineStageFlags>
+    kEventStageAndPipelineStageFlagsMap = {
+        {EventStage::Transfer, VK_PIPELINE_STAGE_TRANSFER_BIT},
+        {EventStage::VertexShader, VK_PIPELINE_STAGE_VERTEX_SHADER_BIT},
+        {EventStage::FragmentShader, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT},
+        {EventStage::ComputeShader, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT},
+        {EventStage::AllShaders, kAllShadersPipelineStageFlags},
+        {EventStage::PreFragmentShaders, kPreFragmentStageFlags},
+        {EventStage::FragmentShadingRate,
+         VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR},
+        {EventStage::ColorAttachmentOutput, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT},
+        {EventStage::ColorAttachmentOutputAndFragmentShader,
+         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT},
+        {EventStage::ColorAttachmentOutputAndFragmentShaderAndTransfer,
+         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT |
+             VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT},
+        {EventStage::ColorAttachmentOutputAndAllShaders,
+         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | kAllShadersPipelineStageFlags},
+        {EventStage::AllFragmentTest, kAllDepthStencilPipelineStageFlags},
+        {EventStage::AllFragmentTestAndFragmentShader,
+         VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | kAllDepthStencilPipelineStageFlags},
+        {EventStage::AllFragmentTestAndAllShaders,
+         kAllShadersPipelineStageFlags | kAllDepthStencilPipelineStageFlags},
+        {EventStage::TransferAndComputeShader,
+         VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT}};
+
 void DestroyRefCountedEvents(VkDevice device, RefCountedEventCollector &events)
 {
     while (!events.empty())
@@ -27,10 +54,21 @@ void DestroyRefCountedEvents(VkDevice device, RefCountedEventCollector &events)
 }
 }  // namespace
 
-bool RefCountedEvent::init(Context *context, ImageLayout layout)
+void InitializeEventAndPipelineStagesMap(
+    angle::PackedEnumMap<EventStage, VkPipelineStageFlags> *map,
+    VkPipelineStageFlags supportedVulkanPipelineStageMask)
+{
+    *map = kEventStageAndPipelineStageFlagsMap;
+    for (VkPipelineStageFlags &flag : *map)
+    {
+        flag &= supportedVulkanPipelineStageMask;
+    }
+}
+
+bool RefCountedEvent::init(Context *context, EventStage eventStage)
 {
     ASSERT(mHandle == nullptr);
-    ASSERT(layout != ImageLayout::Undefined);
+    ASSERT(eventStage != EventStage::InvalidEnum);
 
     // First try with recycler. We must issue VkCmdResetEvent before VkCmdSetEvent
     if (context->getRefCountedEventsGarbageRecycler()->fetch(context->getRenderer(), this))
@@ -41,7 +79,7 @@ bool RefCountedEvent::init(Context *context, ImageLayout layout)
     else
     {
         // If failed to fetch from recycler, then create a new event.
-        mHandle                      = new RefCounted<EventAndLayout>;
+        mHandle                      = new RefCounted<EventAndStage>;
         VkEventCreateInfo createInfo = {};
         createInfo.sType             = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
         // Use device only for performance reasons.
@@ -70,7 +108,7 @@ bool RefCountedEvent::init(Context *context, ImageLayout layout)
     }
 
     mHandle->addRef();
-    mHandle->get().imageLayout = layout;
+    mHandle->get().eventStage = eventStage;
     return true;
 }
 
@@ -196,13 +234,14 @@ void RefCountedEventRecycler::resetEvents(Context *context,
         return;
     }
 
+    Renderer *renderer = context->getRenderer();
     while (!mEventsToReset.empty())
     {
         RefCountedEventCollector &events = mEventsToReset.back();
         ASSERT(!events.empty());
         for (const RefCountedEvent &refCountedEvent : events)
         {
-            VkPipelineStageFlags stageMask = GetRefCountedEventStageMask(context, refCountedEvent);
+            VkPipelineStageFlags stageMask = renderer->getEventPipelineStageMask(refCountedEvent);
             commandbuffer->resetEvent(refCountedEvent.getEvent().getHandle(), stageMask);
         }
         mResettingQueue.emplace(queueSerial, std::move(events));
@@ -348,28 +387,27 @@ void EventBarrierArray::addAdditionalStageAccess(const RefCountedEvent &waitEven
     UNREACHABLE();
 }
 
-void EventBarrierArray::addMemoryEvent(Context *context,
+void EventBarrierArray::addMemoryEvent(Renderer *renderer,
                                        const RefCountedEvent &waitEvent,
                                        VkPipelineStageFlags dstStageMask,
                                        VkAccessFlags dstAccess)
 {
     ASSERT(waitEvent.valid());
-    VkAccessFlags accessMask;
-    VkPipelineStageFlags stageFlags = GetRefCountedEventStageMask(context, waitEvent, &accessMask);
+    VkPipelineStageFlags stageFlags = renderer->getEventPipelineStageMask(waitEvent);
     // This should come down as WAW without layout change, dstStageMask should be the same as
     // event's stageMask. Otherwise you should get into addImageEvent.
-    ASSERT(stageFlags == dstStageMask && accessMask == dstAccess);
-    mBarriers.emplace_back(stageFlags, dstStageMask, accessMask, dstAccess,
+    ASSERT(stageFlags == dstStageMask);
+    mBarriers.emplace_back(stageFlags, dstStageMask, dstAccess, dstAccess,
                            waitEvent.getEvent().getHandle());
 }
 
-void EventBarrierArray::addImageEvent(Context *context,
+void EventBarrierArray::addImageEvent(Renderer *renderer,
                                       const RefCountedEvent &waitEvent,
                                       VkPipelineStageFlags dstStageMask,
                                       const VkImageMemoryBarrier &imageMemoryBarrier)
 {
     ASSERT(waitEvent.valid());
-    VkPipelineStageFlags srcStageFlags = GetRefCountedEventStageMask(context, waitEvent);
+    VkPipelineStageFlags srcStageFlags = renderer->getEventPipelineStageMask(waitEvent);
     mBarriers.emplace_back(srcStageFlags, dstStageMask, waitEvent.getEvent().getHandle(),
                            imageMemoryBarrier);
 }

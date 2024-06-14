@@ -3160,6 +3160,9 @@ void ProgramExecutable::waitForPostLinkTasks(const Context *context)
     }
 
     mImplementation->waitForPostLinkTasks(context);
+
+    // Implementation is expected to call |onPostLinkTasksComplete|.
+    ASSERT(mPostLinkSubTasks.empty());
 }
 
 void InstallExecutable(const Context *context,

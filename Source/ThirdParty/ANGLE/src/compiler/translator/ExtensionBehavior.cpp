@@ -37,6 +37,7 @@
     OP(OES_shader_io_blocks,                           310, 320) \
     OP(EXT_shader_io_blocks,                           310, 320) \
     OP(EXT_gpu_shader5,                                310, 320) \
+    OP(OES_gpu_shader5,                                310, 320) \
     OP(EXT_primitive_bounding_box,                     310, 320) \
     OP(OES_primitive_bounding_box,                     310, 320) \
     OP(EXT_separate_shader_objects,                    100, 320) \
@@ -46,6 +47,7 @@
     OP(EXT_shader_texture_lod,                         100, 100) \
     OP(EXT_shadow_samplers,                            100, 100) \
     OP(EXT_tessellation_shader,                        310, 320) \
+    OP(OES_tessellation_shader,                        310, 320) \
     OP(EXT_texture_buffer,                             310, 320) \
     OP(EXT_texture_cube_map_array,                     310, 320) \
     OP(EXT_YUV_target,                                 300, 320) \

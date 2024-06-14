@@ -59,6 +59,7 @@ struct Extensions
     }
     bool framebufferBlitAny() const { return (framebufferBlitANGLE || framebufferBlitNV); }
     bool geometryShaderAny() const { return (geometryShaderEXT || geometryShaderOES); }
+    bool gpuShader5Any() const { return (gpuShader5EXT || gpuShader5OES); }
     bool instancedArraysAny() const { return (instancedArraysANGLE || instancedArraysEXT); }
     bool polygonModeAny() const { return (polygonModeANGLE || polygonModeNV); }
     bool primitiveBoundingBoxAny() const
@@ -71,6 +72,7 @@ struct Extensions
         return (shaderFramebufferFetchARM || shaderFramebufferFetchEXT);
     }
     bool shaderIoBlocksAny() const { return (shaderIoBlocksEXT || shaderIoBlocksOES); }
+    bool tessellationShaderAny() const { return (tessellationShaderEXT || tessellationShaderOES); }
     bool textureBorderClampAny() const { return (textureBorderClampEXT || textureBorderClampOES); }
     bool textureBufferAny() const { return (textureBufferEXT || textureBufferOES); }
     bool textureCubeMapArrayAny() const
@@ -279,6 +281,9 @@ struct Extensions
     // GL_EXT_gpu_shader5
     bool gpuShader5EXT = false;
 
+    // GL_OES_gpu_shader5
+    bool gpuShader5OES = false;
+
     // GL_ANGLE_instanced_arrays
     bool instancedArraysANGLE = false;
 
@@ -458,6 +463,9 @@ struct Extensions
 
     // GL_EXT_tessellation_shader
     bool tessellationShaderEXT = false;
+
+    // GL_OES_tessellation_shader
+    bool tessellationShaderOES = false;
 
     // GL_OES_texture_3D
     bool texture3DOES = false;

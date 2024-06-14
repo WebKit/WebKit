@@ -922,6 +922,7 @@ const ProcEntry g_procTable[] = {
     {"glPatchParameterfv", P(GL_PatchParameterfv)},
     {"glPatchParameteri", P(GL_PatchParameteri)},
     {"glPatchParameteriEXT", P(GL_PatchParameteriEXT)},
+    {"glPatchParameteriOES", P(GL_PatchParameteriOES)},
     {"glPauseTransformFeedback", P(GL_PauseTransformFeedback)},
     {"glPixelLocalStorageBarrierANGLE", P(GL_PixelLocalStorageBarrierANGLE)},
     {"glPixelMapfv", P(GL_PixelMapfv)},

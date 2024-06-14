@@ -659,6 +659,13 @@ class ANGLETest : public ANGLETestBase, public ::testing::TestWithParam<Params>
     }
 };
 
+enum class APIExtensionVersion
+{
+    Core,
+    OES,
+    EXT,
+};
+
 template <typename Params>
 ANGLETest<Params>::ANGLETest()
     : ANGLETestBase(std::get<angle::PlatformParameters>(this->GetParam()))

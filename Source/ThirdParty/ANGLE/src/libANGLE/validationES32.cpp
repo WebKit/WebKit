@@ -378,7 +378,14 @@ bool ValidateFramebufferTexture(const Context *context,
                                 TextureID texture,
                                 GLint level)
 {
-    return true;
+    if (context->getClientVersion() < ES_3_2)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES32Required);
+        return false;
+    }
+
+    return ValidateFramebufferTextureCommon(context, entryPoint, target, attachment, texture,
+                                            level);
 }
 
 bool ValidateGetDebugMessageLog(const Context *context,
@@ -637,7 +644,13 @@ bool ValidatePatchParameteri(const PrivateState &state,
                              GLenum pname,
                              GLint value)
 {
-    return true;
+    if (state.getClientVersion() < ES_3_2)
+    {
+        errors->validationError(entryPoint, GL_INVALID_OPERATION, kES32Required);
+        return false;
+    }
+
+    return ValidatePatchParameteriBase(state, errors, entryPoint, pname, value);
 }
 
 bool ValidatePopDebugGroup(const Context *context, angle::EntryPoint entryPoint)

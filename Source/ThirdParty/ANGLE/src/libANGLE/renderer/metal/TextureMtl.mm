@@ -731,6 +731,31 @@ GLenum OverrideSwizzleValue(const gl::Context *context,
     return swizzle;
 }
 
+mtl::TextureRef &GetLayerLevelTextureView(
+    TextureMtl::LayerLevelTextureViewVector *layerLevelTextureViews,
+    uint32_t layer,
+    uint32_t level,
+    uint32_t layerCount,
+    uint32_t levelCount)
+{
+    // Lazily allocate the full layer and level count to not trigger any std::vector reallocations.
+    if (layerLevelTextureViews->empty())
+    {
+        layerLevelTextureViews->resize(layerCount);
+    }
+    ASSERT(layerLevelTextureViews->size() > layer);
+
+    TextureMtl::TextureViewVector &levelTextureViews = (*layerLevelTextureViews)[layer];
+
+    if (levelTextureViews.empty())
+    {
+        levelTextureViews.resize(levelCount);
+    }
+    ASSERT(levelTextureViews.size() > level);
+
+    return levelTextureViews[level];
+}
+
 }  // namespace
 
 // TextureMtl::NativeTextureWrapper implementation.
@@ -852,9 +877,9 @@ class TextureMtl::NativeTextureWrapperWithViewSupport : public NativeTextureWrap
         return mNativeTexture->createMipView(getNativeLevel(glLevel));
     }
     // Create a view for a shader image binding.
-    mtl::TextureRef createShaderImageView(GLuint glLevel, int layer, MTLPixelFormat format)
+    mtl::TextureRef createShaderImageView2D(GLuint glLevel, int layer, MTLPixelFormat format)
     {
-        return mNativeTexture->createShaderImageView(getNativeLevel(glLevel), layer, format);
+        return mNativeTexture->createShaderImageView2D(getNativeLevel(glLevel), layer, format);
     }
 
     // Create a swizzled view
@@ -1903,27 +1928,23 @@ angle::Result TextureMtl::bindToShaderImage(const gl::Context *context,
                                             int layer,
                                             GLenum format)
 {
-    ASSERT(mViewFromBaseToMaxLevel);
-    ASSERT(0 <= level && static_cast<uint32_t>(level) < mViewFromBaseToMaxLevel->mipmapLevels());
-
-    if (layer != 0)
-    {
-        UNIMPLEMENTED();
-        return angle::Result::Stop;
-    }
+    ASSERT(mNativeTextureStorage);
+    ASSERT(mState.getImmutableFormat());
+    ASSERT(0 <= level && static_cast<uint32_t>(level) < mState.getImmutableLevels());
+    ASSERT(0 <= layer && static_cast<uint32_t>(layer) < mSlices);
 
     ContextMtl *contextMtl        = mtl::GetImpl(context);
     angle::FormatID angleFormatId = angle::Format::InternalFormatToID(format);
     mtl::Format imageAccessFormat = contextMtl->getPixelFormat(angleFormatId);
-    gl::TexLevelArray<mtl::TextureRef> &levelsForFormat =
+    LayerLevelTextureViewVector &textureViewVector =
         mShaderImageViews[imageAccessFormat.metalFormat];
-    GLuint imageMipLevel = mViewFromBaseToMaxLevel->getGLLevel(mtl::kZeroNativeMipLevel + level);
-    mtl::TextureRef &textureRef = levelsForFormat[imageMipLevel];
+    mtl::TextureRef &textureRef = GetLayerLevelTextureView(&textureViewVector, layer, level,
+                                                           mSlices, mState.getImmutableLevels());
 
     if (textureRef == nullptr)
     {
-        textureRef = mNativeTextureStorage->createShaderImageView(imageMipLevel, layer,
-                                                                  imageAccessFormat.metalFormat);
+        textureRef = mNativeTextureStorage->createShaderImageView2D(level, layer,
+                                                                    imageAccessFormat.metalFormat);
     }
 
     cmdEncoder->setRWTexture(shaderType, textureRef, textureSlotIndex);

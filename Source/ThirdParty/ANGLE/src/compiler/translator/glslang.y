@@ -881,8 +881,10 @@ storage_qualifier
         $$ = new TStorageQualifierWrapper(EvqCentroid, @1);
     }
     | PATCH {
-        if (context->getShaderVersion() < 320 &&
-            !context->checkCanUseExtension(@1, TExtension::EXT_tessellation_shader))
+        constexpr std::array<TExtension, 2u> extensions{ { TExtension::OES_tessellation_shader,
+                                                           TExtension::EXT_tessellation_shader } };
+        if (context->getShaderVersion() < 320
+        && !context->checkCanUseOneOfExtensions(@1, extensions))
         {
             context->error(@1, "unsupported storage qualifier", "patch");
         }

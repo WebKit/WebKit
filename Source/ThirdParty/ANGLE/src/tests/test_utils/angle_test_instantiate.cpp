@@ -131,18 +131,23 @@ bool IsAndroidDevice(const std::string &deviceName)
     return false;
 }
 
-bool IsAndroid9OrNewer()
+bool IsAndroidSdkLevelOrNewer(int level)
 {
     if (!IsAndroid())
     {
         return false;
     }
     SystemInfo *systemInfo = GetTestSystemInfo();
-    if (systemInfo->androidSdkLevel >= 28)
+    if (systemInfo->androidSdkLevel >= level)
     {
         return true;
     }
     return false;
+}
+
+bool IsAndroid9OrNewer()
+{
+    return IsAndroidSdkLevelOrNewer(28);
 }
 
 GPUDeviceInfo *GetActiveGPUDeviceInfo()
@@ -317,6 +322,11 @@ bool IsGalaxyS22()
 bool IsNVIDIAShield()
 {
     return IsAndroidDevice("SHIELD Android TV");
+}
+
+bool IsAndroid14OrNewer()
+{
+    return IsAndroidSdkLevelOrNewer(34);
 }
 
 bool IsIntel()

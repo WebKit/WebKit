@@ -1133,6 +1133,8 @@ EXPORTS
     glGetProgramBinaryOES
     glProgramBinaryOES
 
+    ; GL_OES_gpu_shader5
+
     ; GL_OES_mapbuffer
     glGetBufferPointervOES
     glMapBufferOES
@@ -1173,6 +1175,9 @@ EXPORTS
     ; GL_OES_standard_derivatives
 
     ; GL_OES_surfaceless_context
+
+    ; GL_OES_tessellation_shader
+    glPatchParameteriOES
 
     ; GL_OES_texture_3D
     glCompressedTexImage3DOES

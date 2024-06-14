@@ -265,6 +265,8 @@ class ContextWgpu : public ContextImpl
     angle::Result startRenderPass(const wgpu::RenderPassDescriptor &desc);
     angle::Result endRenderPass(webgpu::RenderPassClosureReason closure_reason);
 
+    bool hasActiveRenderPass() { return mCurrentRenderPass != nullptr; }
+
     angle::Result flush();
 
   private:

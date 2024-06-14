@@ -77,6 +77,12 @@
 6314 : FramebufferTest_ES3.AttachmentsWithUnequalDimensions/* = SKIP_FOR_CAPTURE
 6314 : FramebufferTest_ES3.ChangeAttachmentThenInvalidateAndDraw/* = SKIP_FOR_CAPTURE
 6314 : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBeyondMaxLevel/* = SKIP_FOR_CAPTURE
+
+# The following tests fail with forceRobustResourceInit
+# They were accidentally passing until http://crrev/c/5588816
+6314 : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBellowBaseLevelLOD/* = SKIP_FOR_CAPTURE
+6314 : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithSubImageWithBeyondMaxLevel/* = SKIP_FOR_CAPTURE
+
 6399 : Texture2DTestES3.TexStorage2DCycleThroughYuvSourcesNoData/* = SKIP_FOR_CAPTURE
 6399 : Texture2DTestES3.TexStorage2DSimultaneousUseOfMultipleYuvSourcesNoData/* = SKIP_FOR_CAPTURE
 6400 : Texture2DTestES3.TextureCompletenessChangesWithBaseLevel/* = SKIP_FOR_CAPTURE
@@ -113,7 +119,8 @@
 
 6926 : Texture2DTestES3.TextureRGBUpdateWithPBO/ES3_Vulkan* = NOT_RUN
 
-8409 : Texture2DTestES3.CopyImageDepthStencil/ES3_Vulkan* = SKIP_FOR_CAPTURE
+8409 : Texture2DTestES3.CopyImageEXTDepthStencil/ES3_Vulkan* = SKIP_FOR_CAPTURE
+8409 : Texture2DTestES3.CopyImageOESDepthStencil/ES3_Vulkan* = SKIP_FOR_CAPTURE
 
 7112 : TransformFeedbackTest.BaseInstance/* = NOT_RUN
 
@@ -208,3 +215,6 @@
 8539 : EGLSyncTest.GlobalFenceSync/* = FAIL
 5773 : Texture2DTestES3.TexStorage2DMultipleYuvSamplersSwitchSamplerUniformValues/* = SKIP_FOR_CAPTURE
 5773 : Texture2DTestES3.TexStorage2DMultipleYuvSamplersSwitchBoundTextures/* = SKIP_FOR_CAPTURE
+
+# Capture not supported
+8677 : EGLMultiContextTest.NonSharedContextsReuseDescritorSetLayoutHandle/* = SKIP_FOR_CAPTURE

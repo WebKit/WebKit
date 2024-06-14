@@ -377,13 +377,14 @@ class Program final : public LabeledObject, public angle::Subject
         return mLinked;
     }
     bool isBinaryReady(const Context *context);
-    ANGLE_INLINE void cacheProgramBinaryIfNotAlready(const Context *context)
+    ANGLE_INLINE void cacheProgramBinaryIfNecessary(const Context *context)
     {
         // This function helps ensure the program binary is cached, even if the backend waits for
         // post-link tasks without the knowledge of the front-end.
-        if (!mIsBinaryCached && mState.mExecutable->mPostLinkSubTasks.empty())
+        if (!mIsBinaryCached && !mState.mBinaryRetrieveableHint &&
+            mState.mExecutable->mPostLinkSubTasks.empty())
         {
-            cacheProgramBinary(context);
+            cacheProgramBinaryIfNotAlready(context);
         }
     }
 
@@ -529,7 +530,7 @@ class Program final : public LabeledObject, public angle::Subject
     void waitForPostLinkTasks(const Context *context);
 
     void postResolveLink(const Context *context);
-    void cacheProgramBinary(const Context *context);
+    void cacheProgramBinaryIfNotAlready(const Context *context);
 
     void dumpProgramInfo(const Context *context) const;
 

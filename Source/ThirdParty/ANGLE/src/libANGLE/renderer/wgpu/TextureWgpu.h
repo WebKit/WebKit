@@ -202,10 +202,10 @@ class TextureWgpu : public TextureImpl
     angle::Result respecifyImageStorageIfNecessary(ContextWgpu *contextWgpu, gl::Command source);
     void prepareForGenerateMipmap(ContextWgpu *contextWgpu);
     angle::Result maybeUpdateBaseMaxLevels(ContextWgpu *contextWgpu);
-    void initSingleLayerRenderTargets(ContextWgpu *contextWgpu,
-                                      GLuint layerCount,
-                                      gl::LevelIndex levelIndex,
-                                      gl::RenderToTextureImageIndex renderToTextureIndex);
+    angle::Result initSingleLayerRenderTargets(ContextWgpu *contextWgpu,
+                                               GLuint layerCount,
+                                               gl::LevelIndex levelIndex,
+                                               gl::RenderToTextureImageIndex renderToTextureIndex);
     webgpu::ImageHelper *mImage;
     gl::LevelIndex mCurrentBaseLevel;
     gl::LevelIndex mCurrentMaxLevel;

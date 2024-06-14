@@ -26,7 +26,7 @@
   "third_party/VK-GL-CTS/src/external/openglcts/modules/CMakeLists.txt":
     "51bab42277ace2f99407b1b88715a92f",
   "third_party/VK-GL-CTS/src/external/openglcts/modules/common/CMakeLists.txt":
-    "38908cad976953ed99c59b6b1ba61a87",
+    "80559e94ef28d062aa669db96c024264",
   "third_party/VK-GL-CTS/src/external/openglcts/modules/common/subgroups/CMakeLists.txt":
     "bf71ce2d9756ccee7833a789737e6481",
   "third_party/VK-GL-CTS/src/external/openglcts/modules/gl/CMakeLists.txt":

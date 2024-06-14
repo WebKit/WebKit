@@ -224,7 +224,8 @@ void InsertInitCode(TCompiler *compiler,
         {
             if (tempVariableName != "")
             {
-                initializedSymbol = ReferenceGlobalVariable(tempVariableName, *symbolTable);
+                initializedSymbol =
+                    new TIntermSymbol(&FindSymbolNode(root, tempVariableName)->variable());
             }
             else
             {

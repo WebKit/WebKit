@@ -815,7 +815,7 @@ bool ValidateTransformFeedbackPrimitiveMode(const Context *context,
     ASSERT(context);
 
     if ((!context->getExtensions().geometryShaderAny() ||
-         !context->getExtensions().tessellationShaderEXT) &&
+         !context->getExtensions().tessellationShaderAny()) &&
         context->getClientVersion() < ES_3_2)
     {
         // It is an invalid operation to call DrawArrays or DrawArraysInstanced with a draw mode
@@ -4536,9 +4536,9 @@ void RecordDrawModeError(const Context *context, angle::EntryPoint entryPoint, P
             break;
 
         case PrimitiveMode::Patches:
-            if (!extensions.tessellationShaderEXT && context->getClientVersion() < ES_3_2)
+            if (!extensions.tessellationShaderAny() && context->getClientVersion() < ES_3_2)
             {
-                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kTessellationShaderExtensionNotEnabled);
+                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kTessellationShaderEXTNotEnabled);
                 return;
             }
             break;
@@ -6187,10 +6187,10 @@ bool ValidateGetProgramivBase(const Context *context,
         case GL_TESS_GEN_SPACING_EXT:
         case GL_TESS_GEN_VERTEX_ORDER_EXT:
         case GL_TESS_GEN_POINT_MODE_EXT:
-            if (!context->getExtensions().tessellationShaderEXT &&
+            if (!context->getExtensions().tessellationShaderAny() &&
                 context->getClientVersion() < ES_3_2)
             {
-                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kTessellationShaderExtensionNotEnabled);
+                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kTessellationShaderEXTNotEnabled);
                 return false;
             }
             if (!programObject->isLinked())

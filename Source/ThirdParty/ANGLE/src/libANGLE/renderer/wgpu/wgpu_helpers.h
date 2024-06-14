@@ -28,9 +28,39 @@ namespace webgpu
 // https://www.w3.org/TR/webgpu/#abstract-opdef-validating-gpuimagecopybuffer
 static const GLuint kCopyBufferAlignment = 256;
 
-struct QueuedDataUpload
+enum class UpdateSource
 {
-    wgpu::ImageCopyBuffer buffer;
+    Clear,
+    Texture,
+};
+
+struct SubresourceUpdate
+{
+    SubresourceUpdate() {}
+    ~SubresourceUpdate() {}
+
+    SubresourceUpdate(UpdateSource targetUpdateSource,
+                      gl::LevelIndex newTargetLevel,
+                      wgpu::ImageCopyBuffer targetBuffer)
+    {
+        updateSource = targetUpdateSource;
+        textureData  = targetBuffer;
+        targetLevel  = newTargetLevel;
+    }
+
+    SubresourceUpdate(UpdateSource targetUpdateSource,
+                      gl::LevelIndex newTargetLevel,
+                      ClearValues clearUpdate)
+    {
+        updateSource = targetUpdateSource;
+        targetLevel  = newTargetLevel;
+        clearData    = clearUpdate;
+    }
+
+    UpdateSource updateSource;
+    ClearValues clearData;
+    wgpu::ImageCopyBuffer textureData;
+
     gl::LevelIndex targetLevel;
 };
 
@@ -46,7 +76,9 @@ class ImageHelper
                             gl::LevelIndex firstAllocatedLevel,
                             wgpu::TextureDescriptor textureDescriptor);
 
-    void flushStagedUpdates(ContextWgpu *contextWgpu);
+    angle::Result flushStagedUpdates(ContextWgpu *contextWgpu,
+                                     ClearValuesArray *deferredClears = nullptr,
+                                     uint32_t deferredClearIndex      = 0);
 
     wgpu::TextureDescriptor createTextureDescriptor(wgpu::TextureUsage usage,
                                                     wgpu::TextureDimension dimension,
@@ -64,6 +96,8 @@ class ImageHelper
                                      uint32_t allocationSize,
                                      const gl::ImageIndex &index,
                                      const uint8_t *pixels);
+
+    void stageClear(gl::LevelIndex targetLevel, ClearValues clearValues);
 
     void removeStagedUpdates(gl::LevelIndex levelToRemove);
 
@@ -84,6 +118,10 @@ class ImageHelper
                              const rx::PackPixelsParams &packPixelsParams,
                              const angle::Format &aspectFormat,
                              void *pixels);
+
+    angle::Result createTextureView(gl::LevelIndex targetLevel,
+                                    uint32_t layerIndex,
+                                    wgpu::TextureView &textureViewOut);
     LevelIndex toWgpuLevel(gl::LevelIndex levelIndexGl) const;
     gl::LevelIndex toGlLevel(LevelIndex levelIndexWgpu) const;
     bool isTextureLevelInAllocatedImage(gl::LevelIndex textureLevel);
@@ -104,7 +142,7 @@ class ImageHelper
 
     gl::LevelIndex mFirstAllocatedLevel = gl::LevelIndex(0);
 
-    std::vector<QueuedDataUpload> mBufferQueue;
+    std::vector<SubresourceUpdate> mSubresourceQueue;
 };
 struct BufferMapState
 {

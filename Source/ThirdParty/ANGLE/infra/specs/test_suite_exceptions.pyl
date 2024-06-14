@@ -32,6 +32,16 @@
       },
     },
   },
+  'angle_perftests': {
+    'modifications': {
+      'android-arm64-pixel6-perf': {
+        'args': [
+          # Custom temp throttling for perf tests on pixel6 b/345514719
+          '--custom-throttling-temp=38',
+        ],
+      },
+    },
+  },
   'angle_restricted_trace_gold_tests': {
     'modifications': {
       # anglebug.com/5415 flaky 4x8 pixel artifacts on Win Intel
@@ -52,6 +62,26 @@
       # TODO: Implement on Android. http://anglebug.com/7777
       'android-arm64-pixel4',
     ],
+  },
+  'angle_trace_perf_native_tests': {
+    'modifications': {
+      'android-arm64-pixel6-perf': {
+        'args': [
+          # Custom temp throttling for perf tests on pixel6 b/345514719
+          '--custom-throttling-temp=38',
+        ],
+      },
+    },
+  },
+  'angle_trace_perf_vulkan_tests': {
+    'modifications': {
+      'android-arm64-pixel6-perf': {
+        'args': [
+          # Custom temp throttling for perf tests on pixel6 b/345514719
+          '--custom-throttling-temp=38',
+        ],
+      },
+    },
   },
   'angle_white_box_tests': {
     'modifications': {

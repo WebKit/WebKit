@@ -239,9 +239,9 @@ class Texture final : public Resource,
     // Create a view with different format
     TextureRef createViewWithDifferentFormat(MTLPixelFormat format);
     // Create a view for a shader image binding.
-    TextureRef createShaderImageView(const MipmapNativeLevel &level,
-                                     int layer,
-                                     MTLPixelFormat format);
+    TextureRef createShaderImageView2D(const MipmapNativeLevel &level,
+                                       int layer,
+                                       MTLPixelFormat format);
     // Same as above but the target format must be compatible, for example sRGB to linear. In
     // this case texture doesn't need format view usage flag.
     TextureRef createViewWithCompatibleFormat(MTLPixelFormat format);
