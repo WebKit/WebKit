@@ -33,7 +33,8 @@
 #   OFF by default. Enabled in test infrastructure only.
 # preview::
 #   Ready to be used in beta contexts like Safari Technology Preview.
-#   OFF by default. May be enabled automatically by clients.
+#   ON by default in Safari Technology Preview. OFF by default elsewhere.
+#   May be enabled automatically by clients.
 # stable::
 #   Ready for general use, but should be able to be toggled to support
 #   debugging, A/B testing.
