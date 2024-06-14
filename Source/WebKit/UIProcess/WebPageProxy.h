@@ -84,7 +84,7 @@ namespace IPC {
 class Decoder;
 class FormDataReference;
 class SharedBufferReference;
-template<typename> struct ConnectionSendSyncResult;
+template<typename> class ConnectionSendSyncResult;
 }
 
 namespace JSC {
