@@ -1822,7 +1822,7 @@ public:
     AppHighlightStorage* appHighlightStorageIfExists() const { return m_appHighlightStorage.get(); };
 #endif
 
-    bool allowsContentJavaScript() const;
+    WEBCORE_EXPORT bool allowsContentJavaScript() const;
 
     LazyLoadImageObserver& lazyLoadImageObserver();
 

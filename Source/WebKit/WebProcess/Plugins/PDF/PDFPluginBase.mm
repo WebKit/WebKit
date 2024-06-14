@@ -593,6 +593,15 @@ void PDFPluginBase::notifyCursorChanged(WebCore::PlatformCursorType cursorType)
     m_frame->protectedPage()->send(Messages::WebPageProxy::SetCursor(WebCore::Cursor::fromType(cursorType)));
 }
 
+bool PDFPluginBase::allowedToEvaluateJavascript() const
+{
+    if (!m_frame || !m_frame->coreLocalFrame())
+        return false;
+
+    RefPtr document = m_frame->coreLocalFrame()->document();
+    return document && document->allowsContentJavaScript();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(PDF_PLUGIN)

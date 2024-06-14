@@ -242,6 +242,8 @@ protected:
     bool hudEnabled() const;
 #endif
 
+    bool allowedToEvaluateJavascript() const;
+
     SingleThreadWeakPtr<PluginView> m_view;
     WeakPtr<WebFrame> m_frame;
     WeakPtr<WebCore::HTMLPlugInElement, WebCore::WeakPtrImplWithEventTargetData> m_element;

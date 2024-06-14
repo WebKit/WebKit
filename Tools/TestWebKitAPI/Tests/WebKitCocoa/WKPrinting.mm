@@ -25,10 +25,13 @@
 
 #import "config.h"
 
+#import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
+#import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebpagePreferences.h>
 #import <WebKit/_WKFrameHandle.h>
 #import <wtf/RetainPtr.h>
 
@@ -145,4 +148,80 @@ TEST(Printing, PrintPageBorders)
     [webView evaluateJavaScript:@"window.print()" completionHandler:nil];
     [webView _waitUntilPageBorderDrawn];
 }
+
+@interface TestPDFPrintDelegate : NSObject <WKUIDelegatePrivate>
+- (bool)printFrameCalled;
+- (void)waitForPrintFrameCall;
+@end
+
+@implementation TestPDFPrintDelegate {
+    bool _printFrameCalled;
+}
+
+- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame pdfFirstPageSize:(CGSize)size completionHandler:(void (^)(void))completionHandler
+{
+    completionHandler();
+    _printFrameCalled = true;
+}
+
+- (bool)printFrameCalled
+{
+    return _printFrameCalled;
+}
+
+- (void)waitForPrintFrameCall
+{
+    while (!_printFrameCalled)
+        TestWebKitAPI::Util::spinRunLoop();
+}
+
+@end
+
+class PrintWithJSExecutionOptionTests : public ::testing::TestWithParam<bool> {
+public:
+    bool allowsContentJavascript() const { return GetParam(); }
+
+    void assertPrintObservation(TestWKWebView *webView, TestPDFPrintDelegate *delegate) const
+    {
+        // If JS evaluation is allowed, then we just wait for the
+        // UI delegate to observe a printFrame call.
+        if (allowsContentJavascript())
+            return [delegate waitForPrintFrameCall];
+
+        // If JS evaluation is disallowed, we want a web content process
+        // round trip before asserting that the UI delegate has not
+        // observed a printFrame call.
+        __block bool done = false;
+        [webView _doAfterNextPresentationUpdate:^{
+            ASSERT_FALSE([delegate printFrameCalled]);
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+    }
+
+    static NSURLRequest *pdfRequest()
+    {
+        return [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test_print" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+    }
+};
+
+TEST_P(PrintWithJSExecutionOptionTests, PDFWithWindowPrintEmbeddedJS)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr delegate = adoptNS([TestPDFPrintDelegate new]);
+    [webView setUIDelegate:delegate.get()];
+
+    RetainPtr preferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    [preferences setAllowsContentJavaScript:allowsContentJavascript()];
+
+    [webView synchronouslyLoadRequest:pdfRequest() preferences:preferences.get()];
+
+    assertPrintObservation(webView.get(), delegate.get());
+}
+
+INSTANTIATE_TEST_SUITE_P(Printing,
+    PrintWithJSExecutionOptionTests,
+    testing::Bool(),
+    [](testing::TestParamInfo<bool> info) { return std::string { "allowsContentJavascript_is_" } + (info.param ? "true" : "false"); }
+);
 #endif

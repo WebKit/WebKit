@@ -1500,7 +1500,7 @@ void PDFPlugin::tryRunScriptsInPDFDocument()
 {
     ASSERT(isMainRunLoop());
 
-    if (!m_pdfDocument || !m_documentFinishedLoading)
+    if (!allowedToEvaluateJavascript() || !m_pdfDocument || !m_documentFinishedLoading)
         return;
 
     auto completionHandler = [this, protectedThis = Ref { *this }] (Vector<RetainPtr<CFStringRef>>&& scripts) mutable {
