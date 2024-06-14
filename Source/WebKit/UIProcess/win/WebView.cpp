@@ -550,6 +550,8 @@ LRESULT WebView::onPrintClientEvent(HWND hWnd, UINT, WPARAM wParam, LPARAM, bool
 
 LRESULT WebView::onSizeEvent(HWND hwnd, UINT, WPARAM, LPARAM lParam, bool& handled)
 {
+    if (m_page)
+        m_page->setIntrinsicDeviceScaleFactor(deviceScaleFactorForWindow(hwnd));
     // If there are no m_page, use intrinsic device scale factor.
     float deviceScaleFactor = m_page ? m_page->deviceScaleFactor() : deviceScaleFactorForWindow(hwnd);
     m_viewSize = expandedIntSize(FloatSize(LOWORD(lParam), HIWORD(lParam)) / deviceScaleFactor);
