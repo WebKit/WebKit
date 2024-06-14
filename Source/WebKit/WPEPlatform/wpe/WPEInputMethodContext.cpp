@@ -346,7 +346,7 @@ static void wpe_input_method_context_class_init(WPEInputMethodContextClass* klas
  *
  * Create a new #WPEInputMethodContext for @view
  *
- * Returns: (transfer full) (nullable): a #WPEInputMethodContext, or %NULL
+ * Returns: (transfer full): a #WPEInputMethodContext
  */
 WPEInputMethodContext* wpe_input_method_context_new(WPEView* view)
 {

@@ -386,7 +386,7 @@ static void wpe_view_class_init(WPEViewClass* viewClass)
  *
  * Create a new #WPEView for @display
  *
- * Returns: (transfer full) (nullable): a #WPEView, or %NULL
+ * Returns: (transfer full): a #WPEView
  */
 WPEView* wpe_view_new(WPEDisplay* display)
 {

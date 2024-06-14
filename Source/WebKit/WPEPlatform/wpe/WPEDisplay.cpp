@@ -29,6 +29,7 @@
 #include "WPEDisplayPrivate.h"
 #include "WPEEGLError.h"
 #include "WPEExtensions.h"
+#include "WPEInputMethodContextNone.h"
 #include <epoxy/egl.h>
 #include <gio/gio.h>
 #include <mutex>
@@ -141,7 +142,7 @@ static void wpe_display_class_init(WPEDisplayClass* displayClass)
 WPEView* wpeDisplayCreateView(WPEDisplay* display)
 {
     auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
-    return wpeDisplayClass->create_view ? wpeDisplayClass->create_view(display) : nullptr;
+    return wpeDisplayClass->create_view(display);
 }
 
 bool wpeDisplayCheckEGLExtension(WPEDisplay* display, const char* extensionName)
@@ -151,6 +152,12 @@ bool wpeDisplayCheckEGLExtension(WPEDisplay* display, const char* extensionName)
         return eglDisplay ? epoxy_has_egl_extension(eglDisplay, extensionName) : false;
     });
     return addResult.iterator->value;
+}
+
+WPEInputMethodContext* wpeDisplayCreateInputMethodContext(WPEDisplay* display)
+{
+    auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
+    return wpeDisplayClass->create_input_method_context ? wpeDisplayClass->create_input_method_context(display) : wpeInputMethodContextNoneNew();
 }
 
 /**
@@ -524,8 +531,3 @@ const char* wpe_display_get_drm_render_node(WPEDisplay* display)
     return wpeDisplayClass->get_drm_render_node ? wpeDisplayClass->get_drm_render_node(display) : nullptr;
 }
 
-WPEInputMethodContext* wpeDisplayCreateInputMethodContext(WPEDisplay* display)
-{
-    auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
-    return wpeDisplayClass->create_input_method_context ? wpeDisplayClass->create_input_method_context(display) : nullptr;
-}

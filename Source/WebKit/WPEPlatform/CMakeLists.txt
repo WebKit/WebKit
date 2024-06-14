@@ -22,6 +22,7 @@ set(WPEPlatform_SOURCES
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEEGLError.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEExtensions.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEInputMethodContext.cpp
+    ${WEBKIT_DIR}/WPEPlatform/wpe/WPEInputMethodContextNone.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEKeyUnicode.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEKeymap.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEKeymapXKB.cpp
