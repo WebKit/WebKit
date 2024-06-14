@@ -35,6 +35,7 @@
 #include "IPCTesterReceiverMessages.h"
 #include "IPCUtilities.h"
 
+#include <WebCore/ExceptionData.h>
 #include <atomic>
 #include <dlfcn.h>
 #include <stdio.h>
@@ -216,6 +217,15 @@ void IPCTester::syncPingEmptyReply(IPC::Connection&, uint32_t value, CompletionH
 {
     UNUSED_PARAM(value);
     completionHandler();
+}
+
+void IPCTester::asyncOptionalExceptionData(IPC::Connection&, bool sendEngaged, CompletionHandler<void(std::optional<WebCore::ExceptionData>, String)>&& completionHandler)
+{
+    if (sendEngaged) {
+        completionHandler(WebCore::ExceptionData { WebCore::ExceptionCode::WrongDocumentError, "m"_s }, "a"_s);
+        return;
+    }
+    completionHandler(std::nullopt, "b"_s);
 }
 
 void IPCTester::stopIfNeeded()
