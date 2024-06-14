@@ -317,6 +317,7 @@ template<typename U> struct Bar { };
 ```cpp
 template <typename T> T foo();
 template <typename U> struct Bar { };
+```
 
 [](#spacing-braced-init) When initializing an object, place a space before the leading brace as well as between the braces and their content.
 
