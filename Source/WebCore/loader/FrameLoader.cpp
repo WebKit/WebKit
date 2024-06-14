@@ -3085,13 +3085,9 @@ String FrameLoader::userAgent(const URL& url) const
 
 String FrameLoader::navigatorPlatform() const
 {
-    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_frame->mainFrame())) {
-        if (RefPtr documentLoader = localFrame->loader().activeDocumentLoader()) {
-            auto& customNavigatorPlatform = documentLoader->customNavigatorPlatform();
-            if (!customNavigatorPlatform.isEmpty())
-                return customNavigatorPlatform;
-        }
-    }
+    auto customNavigatorPlatform = m_frame->mainFrame().customNavigatorPlatform();
+    if (!customNavigatorPlatform.isEmpty())
+        return customNavigatorPlatform;
     return String();
 }
 

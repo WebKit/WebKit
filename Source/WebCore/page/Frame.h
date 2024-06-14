@@ -110,6 +110,7 @@ public:
 
     virtual String customUserAgent() const = 0;
     virtual String customUserAgentAsSiteSpecificQuirks() const = 0;
+    virtual String customNavigatorPlatform() const = 0;
     virtual OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const = 0;
 
     WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.

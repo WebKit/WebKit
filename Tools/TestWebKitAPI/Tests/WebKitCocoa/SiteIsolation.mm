@@ -2974,6 +2974,30 @@ TEST(SiteIsolation, WebsitePoliciesCustomUserAgentDuringCrossSiteProvisionalNavi
     Util::run(&receivedRequestFromSubframe);
 }
 
+TEST(SiteIsolation, WebsitePoliciesCustomNavigatorPlatform)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://frame.com/frame'></iframe>"_s } },
+        { "/frame"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *navigationAction, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        if (navigationAction.targetFrame.mainFrame)
+            [preferences _setCustomNavigatorPlatform:@"Custom Navigator Platform"];
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block RetainPtr<WKFrameInfo> childFrameInfo;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        childFrameInfo = mainFrame.childFrames.firstObject.info;
+    }];
+    while (childFrameInfo.get())
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ("Custom Navigator Platform", [[webView objectByEvaluatingJavaScript:@"navigator.platform" inFrame:childFrameInfo.get()] stringValue]);
+}
+
 TEST(SiteIsolation, LoadHTMLString)
 {
     HTTPServer server({

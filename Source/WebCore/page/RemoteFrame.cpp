@@ -146,6 +146,11 @@ String RemoteFrame::customUserAgentAsSiteSpecificQuirks() const
     return m_customUserAgentAsSiteSpecificQuirks;
 }
 
+String RemoteFrame::customNavigatorPlatform() const
+{
+    return m_customNavigatorPlatform;
+}
+
 void RemoteFrame::documentURLForConsoleLog(CompletionHandler<void(const URL&)>&& completionHandler)
 {
     m_client->documentURLForConsoleLog(WTFMove(completionHandler));

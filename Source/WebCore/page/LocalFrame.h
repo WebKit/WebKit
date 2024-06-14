@@ -316,6 +316,7 @@ public:
 
     String customUserAgent() const final;
     String customUserAgentAsSiteSpecificQuirks() const final;
+    String customNavigatorPlatform() const final;
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final;
 
 protected:

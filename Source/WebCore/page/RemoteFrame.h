@@ -70,6 +70,9 @@ public:
     void setCustomUserAgentAsSiteSpecificQuirks(const String& customUserAgentAsSiteSpecificQuirks) { m_customUserAgentAsSiteSpecificQuirks = customUserAgentAsSiteSpecificQuirks; }
     String customUserAgentAsSiteSpecificQuirks() const final;
 
+    void setCustomNavigatorPlatform(const String& customNavigatorPlatform) { m_customNavigatorPlatform = customNavigatorPlatform; }
+    String customNavigatorPlatform() const final;
+
     void setAdvancedPrivacyProtections(OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections) { m_advancedPrivacyProtections = advancedPrivacyProtections; }
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final;
 
@@ -95,6 +98,7 @@ private:
     Markable<LayerHostingContextIdentifier> m_layerHostingContextIdentifier;
     String m_customUserAgent;
     String m_customUserAgentAsSiteSpecificQuirks;
+    String m_customNavigatorPlatform;
     OptionSet<AdvancedPrivacyProtections> m_advancedPrivacyProtections;
     bool m_preventsParentFromBeingComplete { true };
 };
