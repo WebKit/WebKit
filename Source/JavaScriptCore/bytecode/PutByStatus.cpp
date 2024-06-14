@@ -292,7 +292,7 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
 
                 case ComplexGetStatus::Inlineable: {
                     auto callLinkStatus = makeUnique<CallLinkStatus>();
-                    if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, i))
+                    if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, i, access))
                         *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
 
                     auto variant = PutByVariant::setter(access.identifier(), structure, complexGetStatus.offset(), complexGetStatus.conditionSet(), WTFMove(callLinkStatus));
@@ -310,7 +310,7 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
             case AccessCase::ProxyObjectStore: {
                 auto& accessCase = access.as<ProxyObjectAccessCase>();
                 auto callLinkStatus = makeUnique<CallLinkStatus>();
-                if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, i))
+                if (CallLinkInfo* callLinkInfo = stubInfo->callLinkInfoAt(locker, i, access))
                     *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
                 auto variant = PutByVariant::proxy(accessCase.identifier(), access.structure(), WTFMove(callLinkStatus));
                 if (!result.appendVariant(variant))

@@ -45,7 +45,7 @@ class StructureStubInfoClearingWatchpoint final : public Watchpoint {
     WTF_MAKE_NONCOPYABLE(StructureStubInfoClearingWatchpoint);
     WTF_MAKE_TZONE_ALLOCATED(StructureStubInfoClearingWatchpoint);
 public:
-    StructureStubInfoClearingWatchpoint(CodeBlock* owner, StructureStubInfo* stubInfo)
+    StructureStubInfoClearingWatchpoint(CodeBlock* owner, StructureStubInfo& stubInfo)
         : Watchpoint(Watchpoint::Type::StructureStubInfoClearing)
         , m_owner(owner)
         , m_stubInfo(stubInfo)
@@ -56,7 +56,7 @@ public:
 
 private:
     PackedCellPtr<CodeBlock> m_owner;
-    StructureStubInfo* m_stubInfo { nullptr };
+    StructureStubInfo& m_stubInfo;
 };
 
 class StructureTransitionStructureStubClearingWatchpoint final : public Watchpoint {

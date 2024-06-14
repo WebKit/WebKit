@@ -48,7 +48,7 @@ void StructureStubInfoClearingWatchpoint::fireInternal(VM&, const FireDetail&)
     // That works, because deleting a watchpoint removes it from the set's list, and
     // the set's list traversal for firing is robust against the set changing.
     ConcurrentJSLocker locker(m_owner->m_lock);
-    m_stubInfo->reset(locker, m_owner.get());
+    m_stubInfo.reset(locker, m_owner.get());
 }
 
 void StructureTransitionStructureStubClearingWatchpoint::fireInternal(VM& vm, const FireDetail&)

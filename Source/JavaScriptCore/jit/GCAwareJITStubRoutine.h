@@ -109,7 +109,7 @@ public:
     unsigned hash() const
     {
         if (!m_hash)
-            m_hash = computeHash(m_cases);
+            m_hash = computeHash(m_cases.span());
         return m_hash;
     }
 

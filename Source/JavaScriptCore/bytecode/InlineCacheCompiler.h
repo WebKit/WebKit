@@ -127,10 +127,7 @@ public:
 
     // When this fails (returns GaveUp), this will leave the old stub intact but you should not try
     // to call this method again for that PolymorphicAccess instance.
-    AccessGenerationResult addCases(const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&, ListType&&);
-
-    AccessGenerationResult addCase(
-        const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&, Ref<AccessCase>);
+    AccessGenerationResult addCases(const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&, RefPtr<AccessCase>&& previousCase, Ref<AccessCase>);
 
     bool isEmpty() const { return m_list.isEmpty(); }
     unsigned size() const { return m_list.size(); }
@@ -154,7 +151,6 @@ private:
     friend class InlineCacheCompiler;
 
     ListType m_list;
-    RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
 };
 
 class InlineCacheHandler final : public RefCounted<InlineCacheHandler>, public TrailingArray<InlineCacheHandler, DataOnlyCallLinkInfo> {
@@ -163,12 +159,8 @@ class InlineCacheHandler final : public RefCounted<InlineCacheHandler>, public T
 public:
     using Base = TrailingArray<InlineCacheHandler, DataOnlyCallLinkInfo>;
 
-    static constexpr ptrdiff_t offsetOfCallTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_callTarget); }
-    static constexpr ptrdiff_t offsetOfJumpTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_jumpTarget); }
-    static constexpr ptrdiff_t offsetOfNext() { return OBJECT_OFFSETOF(InlineCacheHandler, m_next); }
-
-    static Ref<InlineCacheHandler> create(CodeBlock*, StructureStubInfo&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, unsigned callLinkInfoCount);
-    static Ref<InlineCacheHandler> createPreCompiled(CodeBlock*, StructureStubInfo&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, AccessCase&);
+    static Ref<InlineCacheHandler> create(Ref<InlineCacheHandler>&&, CodeBlock*, StructureStubInfo&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, unsigned callLinkInfoCount);
+    static Ref<InlineCacheHandler> createPreCompiled(Ref<InlineCacheHandler>&&, CodeBlock*, StructureStubInfo&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, AccessCase&);
 
     CodePtr<JITStubRoutinePtrTag> callTarget() const { return m_callTarget; }
     CodePtr<JITStubRoutinePtrTag> jumpTarget() const { return m_jumpTarget; }
@@ -195,6 +187,23 @@ public:
     void addOwner(CodeBlock*);
     void removeOwner(CodeBlock*);
 
+    PolymorphicAccessJITStubRoutine* stubRoutine() { return m_stubRoutine.get(); }
+
+    InlineCacheHandler* next() const { return m_next.get(); }
+    void setNext(RefPtr<InlineCacheHandler>&& next)
+    {
+        m_next = WTFMove(next);
+    }
+
+    AccessCase* accessCase() const { return m_accessCase.get(); }
+    void setAccessCase(RefPtr<AccessCase>&& accessCase)
+    {
+        m_accessCase = WTFMove(accessCase);
+    }
+
+    static constexpr ptrdiff_t offsetOfCallTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_callTarget); }
+    static constexpr ptrdiff_t offsetOfJumpTarget() { return OBJECT_OFFSETOF(InlineCacheHandler, m_jumpTarget); }
+    static constexpr ptrdiff_t offsetOfNext() { return OBJECT_OFFSETOF(InlineCacheHandler, m_next); }
     static constexpr ptrdiff_t offsetOfUid() { return OBJECT_OFFSETOF(InlineCacheHandler, m_uid); }
     static constexpr ptrdiff_t offsetOfStructureID() { return OBJECT_OFFSETOF(InlineCacheHandler, m_structureID); }
     static constexpr ptrdiff_t offsetOfOffset() { return OBJECT_OFFSETOF(InlineCacheHandler, m_offset); }
@@ -211,7 +220,7 @@ private:
         : Base(0)
     { }
 
-    InlineCacheHandler(Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, unsigned callLinkInfoCount);
+    InlineCacheHandler(Ref<InlineCacheHandler>&&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, unsigned callLinkInfoCount);
 
     static Ref<InlineCacheHandler> createSlowPath(VM&, AccessType);
 
@@ -233,6 +242,7 @@ private:
         } s1;
     } u;
     RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
+    RefPtr<AccessCase> m_accessCase;
     std::unique_ptr<StructureStubInfoClearingWatchpoint> m_watchpoint;
     RefPtr<InlineCacheHandler> m_next;
 };
@@ -264,7 +274,7 @@ public:
     InlineCacheCompiler(JITType jitType, VM& vm, JSGlobalObject* globalObject, ECMAMode ecmaMode, StructureStubInfo& stubInfo)
         : m_vm(vm)
         , m_globalObject(globalObject)
-        , m_stubInfo(&stubInfo)
+        , m_stubInfo(stubInfo)
         , m_ecmaMode(ecmaMode)
         , m_jitType(jitType)
     {
@@ -344,12 +354,14 @@ public:
     VM& vm() { return m_vm; }
 
     AccessGenerationResult compile(const GCSafeConcurrentJSLocker&, PolymorphicAccess&, CodeBlock*);
+    AccessGenerationResult compileHandler(const GCSafeConcurrentJSLocker&, PolymorphicAccess&, CodeBlock*, Ref<AccessCase>&&);
 
     static MacroAssemblerCodeRef<JITThunkPtrTag> generateSlowPathCode(VM&, AccessType);
     static Ref<InlineCacheHandler> generateSlowPathHandler(VM&, AccessType);
 
     static void emitDataICPrologue(CCallHelpers&);
     static void emitDataICEpilogue(CCallHelpers&);
+    static void emitDataICJumpNextHandler(CCallHelpers&);
 
     bool useHandlerIC() const;
 
@@ -357,7 +369,7 @@ private:
     CallSiteIndex callSiteIndexForExceptionHandlingOrOriginal();
     const ScalarRegisterSet& liveRegistersToPreserveAtExceptionHandlingCallSite();
 
-    AccessGenerationResult compileOneAccessCaseHandler(PolymorphicAccess&, CodeBlock*, AccessCase&, Vector<WatchpointSet*, 8>&&);
+    AccessGenerationResult compileOneAccessCaseHandler(CodeBlock*, AccessCase&, Vector<WatchpointSet*, 8>&&);
 
     void emitDOMJITGetter(GetterSetterAccessCase&, const DOMJIT::GetterSetter*, GPRReg baseForGetGPR);
     void emitModuleNamespaceLoad(ModuleNamespaceAccessCase&, MacroAssembler::JumpList& fallThrough);
@@ -367,9 +379,11 @@ private:
     void generateWithConditionChecks(unsigned index, AccessCase&);
     void generateAccessCase(unsigned index, AccessCase&);
 
+    RefPtr<AccessCase> tryFoldToMegamorphic(CodeBlock*, std::span<const Ref<AccessCase>>);
+
     VM& m_vm;
     JSGlobalObject* const m_globalObject;
-    StructureStubInfo* m_stubInfo { nullptr };
+    StructureStubInfo& m_stubInfo;
     const ECMAMode m_ecmaMode { ECMAMode::sloppy() };
     JITType m_jitType;
     CCallHelpers* m_jit { nullptr };
