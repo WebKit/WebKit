@@ -59,13 +59,13 @@ static void enableSiteIsolation(WKWebViewConfiguration *configuration)
     }
 }
 
-static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(const HTTPServer& server)
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(const HTTPServer& server, CGRect rect = CGRectZero)
 {
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
     auto configuration = server.httpsProxyConfiguration();
     enableSiteIsolation(configuration);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:rect configuration:configuration]);
     webView.get().navigationDelegate = navigationDelegate.get();
     return { WTFMove(webView), WTFMove(navigationDelegate) };
 }
@@ -1491,6 +1491,66 @@ TEST(SiteIsolation, PropagateMouseEventsToSubframe)
     EXPECT_WK_STREQ("mousemove", eventTypes[0]);
     EXPECT_WK_STREQ("mousedown,40,40", eventTypes[1]);
     EXPECT_WK_STREQ("mouseup,40,40", eventTypes[2]);
+}
+
+TEST(SiteIsolation, RunOpenPanel)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://b.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<!DOCTYPE html><input style='width: 100vw; height: 100vh;' type='file'>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
+    __block bool fileSelected = false;
+    [uiDelegate setRunOpenPanelWithParameters:^(WKWebView *, WKOpenPanelParameters *, WKFrameInfo *, void (^completionHandler)(NSArray<NSURL *> *)) {
+        fileSelected = true;
+        completionHandler(@[ [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"test"]] ]);
+    }];
+
+    CGPoint eventLocationInWindow = [webView convertPoint:CGPointMake(100, 100) toView:nil];
+    [webView mouseDownAtPoint:eventLocationInWindow simulatePressure:NO];
+    [webView mouseUpAtPoint:eventLocationInWindow];
+    [webView waitForPendingMouseEvents];
+    Util::run(&fileSelected);
+
+    __block RetainPtr<WKFrameInfo> childFrameInfo;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        childFrameInfo = mainFrame.childFrames.firstObject.info;
+    }];
+    while (!childFrameInfo)
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ("test", [[webView objectByEvaluatingJavaScript:@"document.getElementsByTagName('input')[0].files[0].name" inFrame:childFrameInfo.get()] stringValue]);
+}
+
+TEST(SiteIsolation, CancelOpenPanel)
+{
+    auto subframeHTML = "<!DOCTYPE html><input style='width: 100vw; height: 100vh;' id='file' type='file'>"
+        "<script>"
+        "document.getElementById('file').addEventListener('cancel', () => { alert('cancel'); });"
+        "</script>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://b.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { subframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
+    [uiDelegate setRunOpenPanelWithParameters:^(WKWebView *, WKOpenPanelParameters *, WKFrameInfo *, void (^completionHandler)(NSArray<NSURL *> *)) {
+        completionHandler(nil);
+    }];
+
+    CGPoint eventLocationInWindow = [webView convertPoint:CGPointMake(100, 100) toView:nil];
+    [webView mouseDownAtPoint:eventLocationInWindow simulatePressure:NO];
+    [webView mouseUpAtPoint:eventLocationInWindow];
+    [webView waitForPendingMouseEvents];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "cancel");
 }
 
 TEST(SiteIsolation, DragEvents)

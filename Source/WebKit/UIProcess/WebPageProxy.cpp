@@ -8025,7 +8025,7 @@ void WebPageProxy::runOpenPanel(IPC::Connection& connection, FrameIdentifier fra
     MESSAGE_CHECK_BASE(frame, &connection);
 
     Ref parameters = API::OpenPanelParameters::create(settings);
-    Ref openPanelResultListener = WebOpenPanelResultListenerProxy::create(this);
+    Ref openPanelResultListener = WebOpenPanelResultListenerProxy::create(this, frame->process());
     m_openPanelResultListener = openPanelResultListener.copyRef();
 
     if (m_controlledByAutomation) {
@@ -9196,15 +9196,17 @@ void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs, co
     if (!hasRunningProcess())
         return;
 
-    if (!didChooseFilesForOpenPanelWithImageTranscoding(fileURLs, allowedMIMETypes)) {
+    RefPtr openPanelResultListener = std::exchange(m_openPanelResultListener, nullptr);
+    if (RefPtr process = openPanelResultListener->process()) {
+        if (!didChooseFilesForOpenPanelWithImageTranscoding(fileURLs, allowedMIMETypes)) {
 #if ENABLE(SANDBOX_EXTENSIONS)
-        auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanel"_s, fileURLs);
-        send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTFMove(sandboxExtensionHandles)));
+            auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanel"_s, fileURLs);
+            process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTFMove(sandboxExtensionHandles)), webPageID());
 #endif
-        send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs, { }));
+            process->send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs, { }), webPageID());
+        }
     }
 
-    RefPtr openPanelResultListener = std::exchange(m_openPanelResultListener, nullptr);
     openPanelResultListener->invalidate();
 }
 
@@ -9213,9 +9215,10 @@ void WebPageProxy::didCancelForOpenPanel()
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::DidCancelForOpenPanel());
-    
     RefPtr openPanelResultListener = std::exchange(m_openPanelResultListener, nullptr);
+    if (RefPtr process = openPanelResultListener->process())
+        process->send(Messages::WebPage::DidCancelForOpenPanel(), webPageID());
+
     openPanelResultListener->invalidate();
 }
 
