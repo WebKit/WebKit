@@ -3751,6 +3751,7 @@ void InlineCacheCompiler::emitModuleNamespaceLoad(ModuleNamespaceAccessCase& acc
     CCallHelpers& jit = *m_jit;
     JSValueRegs valueRegs = m_stubInfo.valueRegs();
     GPRReg baseGPR = m_stubInfo.m_baseGPR;
+    GPRReg scratchGPR = m_scratchGPR;
 
     fallThrough.append(
         jit.branchPtr(
@@ -3758,8 +3759,15 @@ void InlineCacheCompiler::emitModuleNamespaceLoad(ModuleNamespaceAccessCase& acc
             baseGPR,
             CCallHelpers::TrustedImmPtr(accessCase.moduleNamespaceObject())));
 
+#if USE(JSVALUE64)
+    jit.loadValue(&accessCase.moduleEnvironment()->variableAt(accessCase.scopeOffset()), JSValueRegs { scratchGPR });
+    m_failAndIgnore.append(jit.branchIfEmpty(JSValueRegs { scratchGPR }));
+    jit.moveValueRegs(JSValueRegs { scratchGPR }, valueRegs);
+#else
+    jit.load32(bitwise_cast<uint8_t*>(&accessCase.moduleEnvironment()->variableAt(accessCase.scopeOffset())) + TagOffset, scratchGPR);
+    m_failAndIgnore.append(jit.branchIfEmpty(scratchGPR));
     jit.loadValue(&accessCase.moduleEnvironment()->variableAt(accessCase.scopeOffset()), valueRegs);
-    m_failAndIgnore.append(jit.branchIfEmpty(valueRegs));
+#endif
     succeed();
 }
 
