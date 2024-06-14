@@ -51,6 +51,7 @@ struct MediaTrackSupportedConstraints {
     bool zoom { true };
     bool torch { true };
     bool backgroundBlur { true };
+    bool powerEfficientPixelFormat { true };
 };
 
 } // namespace WebCore

@@ -1,0 +1,6 @@
+
+
+PASS Selecting a non power efficient preset
+PASS Selecting a power efficient preset
+PASS Selecting a power efficient preset and check clones
+

@@ -105,7 +105,6 @@ private:
 
     VideoFrameRotation videoFrameRotation() const final { return m_videoFrameRotation; }
     void setFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&) final;
-    bool prefersPreset(const VideoPreset&) final;
     void generatePresets() final;
     bool canResizeVideoFrames() const final { return true; }
 

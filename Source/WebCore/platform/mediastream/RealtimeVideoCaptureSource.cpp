@@ -222,9 +222,26 @@ bool RealtimeVideoCaptureSource::supportsCaptureSize(std::optional<int> width, s
     return false;
 }
 
-bool RealtimeVideoCaptureSource::shouldUsePreset(const VideoPreset& current, const VideoPreset& candidate)
+static bool shouldUsePreset(const VideoPreset& current, const VideoPreset& candidate, bool shouldPreferPowerEfficiency)
 {
-    return candidate.size().width() <= current.size().width() && candidate.size().height() <= current.size().height() && prefersPreset(candidate);
+    if (shouldPreferPowerEfficiency && candidate.isEfficient() && !current.isEfficient())
+        return true;
+    return candidate.size().width() <= current.size().width() && candidate.size().height() <= current.size().height() && candidate.isEfficient();
+}
+
+static bool isPresetEfficient(const std::optional<VideoPreset>& preset)
+{
+    return preset && preset->isEfficient();
+}
+
+enum PresetToUse : uint8_t { Exact, AspectRatio, Resize };
+static PresetToUse computePresetToUse(const std::optional<VideoPreset>& exactSizePreset, const std::optional<VideoPreset>& aspectRatioPreset, const std::optional<VideoPreset>& resizePreset, bool shouldPreferPowerEfficiency)
+{
+    if (exactSizePreset && (!shouldPreferPowerEfficiency || exactSizePreset->isEfficient() || (!isPresetEfficient(aspectRatioPreset) && !isPresetEfficient(resizePreset))))
+        return PresetToUse::Exact;
+    if (aspectRatioPreset && (!shouldPreferPowerEfficiency || aspectRatioPreset->isEfficient() || !isPresetEfficient(resizePreset)))
+        return PresetToUse::AspectRatio;
+    return PresetToUse::Resize;
 }
 
 static inline double frameRateFromPreset(const VideoPreset& preset, double currentFrameRate)
@@ -287,7 +304,7 @@ std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeV
             return preset.size() == size;
         };
         if (supportsCaptureSize(requestedWidth, requestedHeight, WTFMove(lookForExactSizeMatch))) {
-            if (!exactSizePreset || prefersPreset(preset))
+            if (!exactSizePreset || preset.isEfficient())
                 exactSizePreset = preset;
             continue;
         }
@@ -304,7 +321,7 @@ std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeV
             return true;
         };
         if (supportsCaptureSize(requestedWidth, requestedHeight, WTFMove(lookForAspectRatioMatch))) {
-            if (!aspectRatioPreset || shouldUsePreset(*aspectRatioPreset, preset)) {
+            if (!aspectRatioPreset || shouldUsePreset(*aspectRatioPreset, preset, constraints.shouldPreferPowerEfficiency)) {
                 aspectRatioPreset = preset;
                 aspectRatioMatchSize = encodingSize;
             }
@@ -317,7 +334,7 @@ std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeV
             continue;
 
         if (requestedWidth && requestedHeight) {
-            if (!resizePreset || shouldUsePreset(*resizePreset, preset)) {
+            if (!resizePreset || shouldUsePreset(*resizePreset, preset, constraints.shouldPreferPowerEfficiency)) {
                 resizePreset = preset;
                 resizeSize = { requestedWidth.value(), requestedHeight.value() };
             }
@@ -328,13 +345,13 @@ std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeV
                 if ((requestedWidth && requestedWidth.value() != standardSize.width()) || (requestedHeight && requestedHeight.value() != standardSize.height()))
                     continue;
 
-                if (!resizePreset || shouldUsePreset(*resizePreset, preset)) {
+                if (!resizePreset || shouldUsePreset(*resizePreset, preset, constraints.shouldPreferPowerEfficiency)) {
                     resizePreset = preset;
                     resizeSize = standardSize;
                 }
             }
 
-            if (!resizePreset || shouldUsePreset(*resizePreset, preset)) {
+            if (!resizePreset || shouldUsePreset(*resizePreset, preset, constraints.shouldPreferPowerEfficiency)) {
                 resizePreset = preset;
                 if (requestedWidth)
                     resizeSize = { requestedWidth.value(), requestedWidth.value() * preset.size().height() / preset.size().width() };
@@ -357,22 +374,26 @@ std::optional<RealtimeVideoCaptureSource::CaptureSizeFrameRateAndZoom> RealtimeV
         return { };
     }
 
-    if (exactSizePreset) {
+    switch (computePresetToUse(exactSizePreset, aspectRatioPreset, resizePreset, constraints.shouldPreferPowerEfficiency)) {
+    case PresetToUse::Exact: {
         auto size = exactSizePreset->size();
         auto captureFrameRate = requestedFrameRate ? *requestedFrameRate : frameRateFromPreset(*exactSizePreset, frameRate());
         auto captureZoom = requestedZoom ? *requestedZoom : zoomFromPreset(*exactSizePreset, zoom());
         return CaptureSizeFrameRateAndZoom { WTFMove(exactSizePreset), size, captureFrameRate, captureZoom };
     }
-
-    if (aspectRatioPreset) {
+    case PresetToUse::AspectRatio: {
         auto captureFrameRate = requestedFrameRate ? *requestedFrameRate : frameRateFromPreset(*aspectRatioPreset, frameRate());
         auto captureZoom = requestedZoom ? *requestedZoom : zoomFromPreset(*aspectRatioPreset, zoom());
         return CaptureSizeFrameRateAndZoom { WTFMove(aspectRatioPreset), aspectRatioMatchSize, captureFrameRate, captureZoom };
     }
-
-    auto captureFrameRate = requestedFrameRate ? *requestedFrameRate : frameRateFromPreset(*resizePreset, frameRate());
-    auto captureZoom = requestedZoom ? *requestedZoom : zoomFromPreset(*resizePreset, zoom());
-    return CaptureSizeFrameRateAndZoom { WTFMove(resizePreset), resizeSize, captureFrameRate, captureZoom };
+    case PresetToUse::Resize: {
+        auto captureFrameRate = requestedFrameRate ? *requestedFrameRate : frameRateFromPreset(*resizePreset, frameRate());
+        auto captureZoom = requestedZoom ? *requestedZoom : zoomFromPreset(*resizePreset, zoom());
+        return CaptureSizeFrameRateAndZoom { WTFMove(resizePreset), resizeSize, captureFrameRate, captureZoom };
+    }
+    }
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 void RealtimeVideoCaptureSource::dispatchVideoFrameToObservers(VideoFrame& videoFrame, WebCore::VideoFrameTimeMetadata metadata)
@@ -547,6 +568,11 @@ void RealtimeVideoCaptureSource::ensureIntrinsicSizeMaintainsAspectRatio()
     }
 
     setSize(intrinsicSize);
+}
+
+bool RealtimeVideoCaptureSource::isPowerEfficient() const
+{
+    return m_currentPreset->isEfficient();
 }
 
 #if !RELEASE_LOG_DISABLED

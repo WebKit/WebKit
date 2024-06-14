@@ -606,6 +606,7 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::PowerEfficientPixelFormat:
     case MediaConstraintType::Unknown:
         break;
     }
@@ -652,6 +653,7 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::PowerEfficientPixelFormat:
     case MediaConstraintType::Unknown:
         break;
     }
@@ -701,6 +703,7 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::PowerEfficientPixelFormat:
     case MediaConstraintType::Unknown:
         break;
     }
@@ -727,6 +730,7 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
 
         return constraint.fitnessDistance(capabilities.torch());
     case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::PowerEfficientPixelFormat:
         return 0;
     case MediaConstraintType::Width:
     case MediaConstraintType::Height:
@@ -931,7 +935,12 @@ void RealtimeMediaSource::applyConstraint(MediaConstraintType constraintType, co
     }
     case MediaConstraintType::BackgroundBlur: {
         ASSERT(constraint.isBoolean());
-        // FIXME: Add support
+        // FIXME: Implement support, https://bugs.webkit.org/show_bug.cgi?id=275491
+        break;
+    }
+    case MediaConstraintType::PowerEfficientPixelFormat: {
+        ASSERT(constraint.isBoolean());
+        // FIXME: Implement support, https://bugs.webkit.org/show_bug.cgi?id=275491
         break;
     }
 
@@ -985,7 +994,7 @@ std::optional<MediaConstraintType> RealtimeMediaSource::selectSettings(const Med
         if (!supportsConstraint(constraintType))
             return false;
 
-        if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom) {
+        if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom || constraintType == MediaConstraintType::PowerEfficientPixelFormat) {
             candidates.set(constraintType, constraint);
             return false;
         }
@@ -1030,7 +1039,7 @@ std::optional<MediaConstraintType> RealtimeMediaSource::selectSettings(const Med
 
         advancedConstraint.forEach([&](auto constraintType, const MediaConstraint& constraint) {
 
-            if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom)
+            if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom || constraintType == MediaConstraintType::PowerEfficientPixelFormat)
                 return;
 
             distance = fitnessDistance(constraintType, constraint);
@@ -1103,6 +1112,8 @@ bool RealtimeMediaSource::supportsConstraint(MediaConstraintType constraintType)
         return capabilities.supportsTorch();
     case MediaConstraintType::BackgroundBlur:
         return capabilities.supportsBackgroundBlur();
+    case MediaConstraintType::PowerEfficientPixelFormat:
+        return deviceType() == CaptureDevice::DeviceType::Camera;
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
         // https://www.w3.org/TR/screen-capture/#new-constraints-for-captured-display-surfaces
@@ -1155,6 +1166,7 @@ std::optional<MediaConstraintType> RealtimeMediaSource::hasAnyInvalidConstraint(
         case MediaConstraintType::Zoom:
         case MediaConstraintType::Torch:
         case MediaConstraintType::BackgroundBlur:
+        case MediaConstraintType::PowerEfficientPixelFormat:
         case MediaConstraintType::Unknown:
             m_fitnessScore += distance ? 1 : 2;
             break;
@@ -1216,6 +1228,9 @@ RealtimeMediaSource::VideoPresetConstraints RealtimeMediaSource::extractVideoPre
             result.zoom = constraint->valueForCapabilityRange(this->zoom(), range);
         }
     }
+
+    if (auto contraint = constraints.powerEfficientPixelFormat())
+        contraint->getExact(result.shouldPreferPowerEfficiency) || contraint->getIdeal(result.shouldPreferPowerEfficiency);
 
     return result;
 }

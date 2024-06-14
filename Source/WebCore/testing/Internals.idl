@@ -1104,6 +1104,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=MEDIA_STREAM] undefined setMediaStreamSourceInterrupted(MediaStreamTrack track, boolean interrupted);
     [Conditional=MEDIA_STREAM] boolean isMediaStreamSourceInterrupted(MediaStreamTrack track);
     [Conditional=MEDIA_STREAM] boolean isMediaStreamSourceEnded(MediaStreamTrack track);
+    [Conditional=MEDIA_STREAM] boolean isMediaStreamTrackPowerEfficient(MediaStreamTrack track);
     [Conditional=MEDIA_STREAM] boolean isMockRealtimeMediaSourceCenterEnabled();
     [Conditional=MEDIA_STREAM] boolean shouldAudioTrackPlay(AudioTrack track);
 

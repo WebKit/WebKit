@@ -66,4 +66,5 @@
     boolean torch = true;
 
     boolean backgroundBlur = true;
+    boolean powerEfficientPixelFormat = true;
 };

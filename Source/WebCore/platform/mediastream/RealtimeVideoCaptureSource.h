@@ -62,10 +62,8 @@ protected:
 
     void setSizeFrameRateAndZoom(const VideoPresetConstraints&) override;
 
-    virtual bool prefersPreset(const VideoPreset&) { return true; }
     virtual void setFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&) { };
     virtual bool canResizeVideoFrames() const { return false; }
-    bool shouldUsePreset(const VideoPreset& current, const VideoPreset& candidate);
 
     void setSupportedPresets(Vector<VideoPreset>&&);
     void setSupportedPresets(Vector<VideoPresetData>&&);
@@ -99,6 +97,7 @@ private:
     bool presetSupportsZoom(const VideoPreset&, double);
 
     Ref<TakePhotoNativePromise> takePhoto(PhotoSettings&&) final;
+    bool isPowerEfficient() const final;
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const override { return "RealtimeVideoCaptureSource"_s; }

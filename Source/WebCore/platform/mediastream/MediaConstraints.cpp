@@ -161,6 +161,10 @@ void MediaTrackConstraintSetMap::filter(const Function<bool(MediaConstraintType,
         return;
     if (m_torch && !m_torch->isEmpty() && callback(MediaConstraintType::Torch, *m_torch))
         return;
+    if (m_backgroundBlur && !m_backgroundBlur->isEmpty() && callback(MediaConstraintType::BackgroundBlur, *m_backgroundBlur))
+        return;
+    if (m_powerEfficientPixelFormat && !m_powerEfficientPixelFormat->isEmpty() && callback(MediaConstraintType::PowerEfficientPixelFormat, *m_powerEfficientPixelFormat))
+        return;
 }
 
 void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::optional<IntConstraint>&& constraint)
@@ -193,6 +197,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::Zoom:
     case MediaConstraintType::Torch:
     case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::PowerEfficientPixelFormat:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -229,6 +234,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::WhiteBalanceMode:
     case MediaConstraintType::Torch:
     case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::PowerEfficientPixelFormat:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -253,6 +259,9 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
         break;
     case MediaConstraintType::BackgroundBlur:
         m_backgroundBlur = WTFMove(constraint);
+        break;
+    case MediaConstraintType::PowerEfficientPixelFormat:
+        m_powerEfficientPixelFormat = WTFMove(constraint);
         break;
     case MediaConstraintType::Width:
     case MediaConstraintType::Height:
@@ -305,6 +314,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::Zoom:
     case MediaConstraintType::Torch:
     case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::PowerEfficientPixelFormat:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -370,6 +380,7 @@ void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const
     case MediaConstraintType::Torch:
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::PowerEfficientPixelFormat:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -417,6 +428,7 @@ void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const
     case MediaConstraintType::Torch:
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::PowerEfficientPixelFormat:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -464,6 +476,7 @@ void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const
     case MediaConstraintType::Torch:
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::PowerEfficientPixelFormat:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -502,6 +515,12 @@ void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const
             m_backgroundBlur = constraint;
         else
             m_backgroundBlur->merge(constraint);
+        break;
+    case MediaConstraintType::PowerEfficientPixelFormat:
+        if (!m_powerEfficientPixelFormat)
+            m_powerEfficientPixelFormat = constraint;
+        else
+            m_powerEfficientPixelFormat->merge(constraint);
         break;
 
     case MediaConstraintType::FacingMode:
@@ -589,6 +608,9 @@ bool MediaTrackConstraintSetMap::isValid() const
         case MediaConstraintType::BackgroundBlur:
             isValid &= (constraint.dataType() == MediaConstraint::DataType::Boolean);
             break;
+        case MediaConstraintType::PowerEfficientPixelFormat:
+            isValid &= (constraint.dataType() == MediaConstraint::DataType::Boolean);
+            break;
         case MediaConstraintType::Unknown:
             ASSERT_NOT_REACHED();
             break;
@@ -653,7 +675,7 @@ void MediaConstraints::setDefaultVideoConstraints()
     });
     
     bool needsHeightConstraint = !isConstraintSet([](const MediaTrackConstraintSetMap& constraint) {
-        return !!constraint.width() || !!constraint.height() || !!constraint.aspectRatio();
+        return !!constraint.width() || !!constraint.height() || !!constraint.aspectRatio() || !!constraint.powerEfficientPixelFormat();
     });
 
     addDefaultVideoConstraints(mandatoryConstraints, needsFrameRateConstraint, needsWidthConstraint, needsHeightConstraint);
@@ -698,7 +720,7 @@ StringConstraint StringConstraint::isolatedCopy() const
 
 MediaTrackConstraintSetMap MediaTrackConstraintSetMap::isolatedCopy() const
 {
-    return { m_width, m_height, m_sampleRate, m_sampleSize, m_aspectRatio, m_frameRate, m_volume, m_echoCancellation, m_displaySurface, m_logicalSurface, crossThreadCopy(m_facingMode), crossThreadCopy(m_deviceId), crossThreadCopy(m_groupId), crossThreadCopy(m_whiteBalanceMode), m_zoom, m_torch, m_backgroundBlur };
+    return { m_width, m_height, m_sampleRate, m_sampleSize, m_aspectRatio, m_frameRate, m_volume, m_echoCancellation, m_displaySurface, m_logicalSurface, crossThreadCopy(m_facingMode), crossThreadCopy(m_deviceId), crossThreadCopy(m_groupId), crossThreadCopy(m_whiteBalanceMode), m_zoom, m_torch, m_backgroundBlur, m_powerEfficientPixelFormat };
 }
 
 MediaConstraints MediaConstraints::isolatedCopy() const

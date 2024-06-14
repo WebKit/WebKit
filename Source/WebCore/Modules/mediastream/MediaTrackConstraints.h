@@ -81,6 +81,7 @@ struct MediaTrackConstraintSet {
     std::optional<ConstrainBoolean> torch;
 
     std::optional<ConstrainBoolean> backgroundBlur;
+    std::optional<ConstrainBoolean> powerEfficientPixelFormat;
 };
 
 struct MediaTrackConstraints : MediaTrackConstraintSet {

@@ -777,17 +777,6 @@ double AVVideoCaptureSource::facingModeFitnessScoreAdjustment() const
     return fitnessScore;
 }
 
-bool AVVideoCaptureSource::prefersPreset(const VideoPreset& preset)
-{
-#if PLATFORM(IOS_FAMILY)
-    return [preset.format() isVideoBinned];
-#else
-    UNUSED_PARAM(preset);
-#endif
-
-    return true;
-}
-
 void AVVideoCaptureSource::setFrameRateAndZoomWithPreset(double requestedFrameRate, double requestedZoom, std::optional<VideoPreset>&& preset)
 {
     requestedZoom *= m_zoomScaleFactor;
@@ -829,7 +818,11 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
     if (!m_currentPreset)
         return;
 
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, SizeFrameRateAndZoom { m_currentPreset->size().width(), m_currentPreset->size().height(), m_currentFrameRate, m_currentZoom });
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, SizeFrameRateAndZoom { m_currentPreset->size().width(), m_currentPreset->size().height(), m_currentFrameRate, m_currentZoom }
+#if PLATFORM(IOS_FAMILY)
+        , " binned: ", !!m_currentPreset->format().isVideoBinned
+#endif
+    );
 
     auto* frameRateRange = frameDurationForFrameRate(m_currentFrameRate);
     ASSERT(frameRateRange);
@@ -1257,6 +1250,16 @@ bool AVVideoCaptureSource::interrupted() const
     return RealtimeMediaSource::interrupted();
 }
 
+static bool isFormatPowerEfficient(AVCaptureDeviceFormat* format)
+{
+#if PLATFORM(IOS_FAMILY)
+    return format.isVideoBinned;
+#else
+    UNUSED_PARAM(format);
+    return false;
+#endif
+}
+
 void AVVideoCaptureSource::generatePresets()
 {
     Vector<VideoPreset> presets;
@@ -1274,7 +1277,7 @@ void AVVideoCaptureSource::generatePresets()
         for (AVFrameRateRange* range in [format videoSupportedFrameRateRanges])
             frameRates.append({ range.minFrameRate, range.maxFrameRate});
 
-        VideoPreset preset { size, WTFMove(frameRates), computeMinZoom(), computeMaxZoom(format) };
+        VideoPreset preset { size, WTFMove(frameRates), computeMinZoom(), computeMaxZoom(format), isFormatPowerEfficient(format) };
         preset.setFormat(format);
         presets.append(WTFMove(preset));
     }

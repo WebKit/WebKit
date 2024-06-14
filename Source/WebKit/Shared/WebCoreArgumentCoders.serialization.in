@@ -2293,6 +2293,7 @@ struct WebCore::MediaStreamRequest {
     std::optional<WebCore::DoubleConstraint> m_zoom;
     std::optional<WebCore::BooleanConstraint> m_torch;
     std::optional<WebCore::BooleanConstraint> m_backgroundBlur;
+    std::optional<WebCore::BooleanConstraint> m_powerEfficientPixelFormat;
 }
 #endif
 
@@ -5302,6 +5303,7 @@ header: <WebCore/VideoPreset.h>
     Vector<WebCore::FrameRateRange> frameRateRanges;
     double minZoom;
     double maxZoom;
+    bool isEfficient;
 };
 
 class WebCore::RealtimeMediaSourceSupportedConstraints {

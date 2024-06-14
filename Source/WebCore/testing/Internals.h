@@ -982,6 +982,7 @@ public:
     void setMediaStreamSourceInterrupted(MediaStreamTrack&, bool);
     bool isMediaStreamSourceInterrupted(MediaStreamTrack&) const;
     bool isMediaStreamSourceEnded(MediaStreamTrack&) const;
+    bool isMediaStreamTrackPowerEfficient(const MediaStreamTrack&) const;
     bool isMockRealtimeMediaSourceCenterEnabled();
     bool shouldAudioTrackPlay(const AudioTrack&);
 #endif

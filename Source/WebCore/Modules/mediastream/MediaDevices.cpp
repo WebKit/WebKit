@@ -233,6 +233,7 @@ static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constrai
         case MediaConstraintType::Zoom:
         case MediaConstraintType::Torch:
         case MediaConstraintType::BackgroundBlur:
+        case MediaConstraintType::PowerEfficientPixelFormat:
             // Ignored.
             break;
 

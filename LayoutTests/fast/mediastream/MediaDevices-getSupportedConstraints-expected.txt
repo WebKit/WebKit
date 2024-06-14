@@ -30,6 +30,7 @@ PASS supportedConstraints["facingMode"] is true
 PASS supportedConstraints["frameRate"] is true
 PASS supportedConstraints["groupId"] is true
 PASS supportedConstraints["height"] is true
+PASS supportedConstraints["powerEfficientPixelFormat"] is true
 PASS supportedConstraints["sampleRate"] is true
 PASS supportedConstraints["sampleSize"] is true
 PASS supportedConstraints["torch"] is true

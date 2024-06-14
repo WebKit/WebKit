@@ -73,6 +73,7 @@
     ConstrainBoolean torch;
 
     ConstrainBoolean backgroundBlur;
+    ConstrainBoolean powerEfficientPixelFormat;
 };
 
 typedef (double or ConstrainDoubleRange) ConstrainDouble;

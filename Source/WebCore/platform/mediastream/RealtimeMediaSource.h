@@ -252,6 +252,7 @@ public:
         std::optional<int> height;
         std::optional<double> frameRate;
         std::optional<double> zoom;
+        bool shouldPreferPowerEfficiency { false };
 
         bool hasConstraints() const { return !!width || !!height || !!frameRate || !!zoom; }
     };
@@ -299,6 +300,8 @@ public:
 
     using OwnerCallback = std::function<void(RealtimeMediaSource&, bool isNewClonedSource)>;
     void registerOwnerCallback(OwnerCallback&&);
+
+    virtual bool isPowerEfficient() const { return false; }
 
 protected:
     RealtimeMediaSource(const CaptureDevice&, MediaDeviceHashSalts&& hashSalts = { }, PageIdentifier = { });

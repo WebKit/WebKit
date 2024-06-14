@@ -1634,6 +1634,8 @@ fast/mediastream/mediastreamtrack-video-zoom.html [ Failure ]
 
 fast/mediastream/resize-trim.html [ Failure ]
 
+fast/mediastream/camera-powerEfficient-track.html [ Failure ]
+
 http/wpt/webcodecs/videoFrame-video-element.html [ Failure ]
 
 imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.any.html [ Failure ]
