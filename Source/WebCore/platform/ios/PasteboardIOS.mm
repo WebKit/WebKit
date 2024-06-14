@@ -206,14 +206,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 static bool isTypeAllowedByReadingPolicy(NSString *type, WebContentReadingPolicy policy)
 {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return policy == WebContentReadingPolicy::AnyType
         || [type isEqualToString:WebArchivePboardType]
-        || [type isEqualToString:(__bridge NSString *)kUTTypeWebArchive]
-        || [type isEqualToString:(__bridge NSString *)kUTTypeHTML]
-        || [type isEqualToString:(__bridge NSString *)kUTTypeRTF]
-        || [type isEqualToString:(__bridge NSString *)kUTTypeFlatRTFD];
-ALLOW_DEPRECATED_DECLARATIONS_END
+        || [type isEqualToString:UTTypeWebArchive.identifier]
+        || [type isEqualToString:UTTypeHTML.identifier]
+        || [type isEqualToString:UTTypeRTF.identifier]
+        || [type isEqualToString:UTTypeFlatRTFD.identifier];
 }
 
 Pasteboard::ReaderResult Pasteboard::readPasteboardWebContentDataForType(PasteboardWebContentReader& reader, PasteboardStrategy& strategy, NSString *type, const PasteboardItemInfo& itemInfo, int itemIndex)
@@ -325,6 +323,28 @@ static bool prefersAttachmentRepresentation(const PasteboardItemInfo& info)
     return info.canBeTreatedAsAttachmentOrFile() || shouldTreatAsAttachmentByDefault(contentTypeForHighestFidelityItem);
 }
 
+static NSArray *supportedWebContentPasteboardTypesWhenCustomDataIsPresent()
+{
+    static NeverDestroyed<RetainPtr<NSArray>> types = @[
+#if !PLATFORM(MACCATALYST)
+        WebArchivePboardType,
+#endif
+        UTTypeWebArchive.identifier,
+        UTTypeHTML.identifier,
+        UTTypePNG.identifier,
+        UTTypeTIFF.identifier,
+        UTTypeJPEG.identifier,
+        UTTypeGIF.identifier,
+        UTTypeURL.identifier,
+        UTTypeText.identifier,
+#if !PLATFORM(MACCATALYST)
+        UTTypeFlatRTFD.identifier,
+        UTTypeRTF.identifier
+#endif
+    ];
+    return types->get();
+}
+
 void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, std::optional<size_t> itemIndex)
 {
     reader.setContentOrigin(readOrigin());
@@ -339,9 +359,6 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
 
     if (!numberOfItems)
         return;
-
-    NSArray *types = supportedWebContentPasteboardTypes();
-    int numberOfTypes = [types count];
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool canReadAttachment = policy == WebContentReadingPolicy::AnyType && DeprecatedGlobalSettings::attachmentElementEnabled();
@@ -368,8 +385,13 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
         }
 #endif
 
-        for (int typeIndex = 0; typeIndex < numberOfTypes; typeIndex++) {
-            NSString *type = [types objectAtIndex:typeIndex];
+        RetainPtr<NSArray> typesToRead;
+        if (info->platformTypesByFidelity.contains(String { PasteboardCustomData::cocoaType() }))
+            typesToRead = supportedWebContentPasteboardTypesWhenCustomDataIsPresent();
+        else
+            typesToRead = supportedWebContentPasteboardTypes();
+
+        for (NSString *type in typesToRead.get()) {
             if (!isTypeAllowedByReadingPolicy(type, policy))
                 continue;
 
@@ -437,25 +459,24 @@ void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader,
 
 NSArray *Pasteboard::supportedWebContentPasteboardTypes()
 {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return @[
+    static NeverDestroyed<RetainPtr<NSArray>> types = @[
 #if !PLATFORM(MACCATALYST)
         WebArchivePboardType,
 #endif
-        (__bridge NSString *)kUTTypeWebArchive,
+        UTTypeWebArchive.identifier,
 #if !PLATFORM(MACCATALYST)
-        (__bridge NSString *)kUTTypeFlatRTFD,
-        (__bridge NSString *)kUTTypeRTF,
+        UTTypeFlatRTFD.identifier,
+        UTTypeRTF.identifier,
 #endif
-        (__bridge NSString *)kUTTypeHTML,
-        (__bridge NSString *)kUTTypePNG,
-        (__bridge NSString *)kUTTypeTIFF,
-        (__bridge NSString *)kUTTypeJPEG,
-        (__bridge NSString *)kUTTypeGIF,
-        (__bridge NSString *)kUTTypeURL,
-        (__bridge NSString *)kUTTypeText
+        UTTypeHTML.identifier,
+        UTTypePNG.identifier,
+        UTTypeTIFF.identifier,
+        UTTypeJPEG.identifier,
+        UTTypeGIF.identifier,
+        UTTypeURL.identifier,
+        UTTypeText.identifier
     ];
-ALLOW_DEPRECATED_DECLARATIONS_END
+    return types->get();
 }
 
 NSArray *Pasteboard::supportedFileUploadPasteboardTypes()
