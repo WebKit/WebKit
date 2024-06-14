@@ -324,6 +324,7 @@ public:
     // Transparency Layers
 
     WEBCORE_EXPORT virtual void beginTransparencyLayer(float opacity);
+    WEBCORE_EXPORT virtual void beginTransparencyLayer(CompositeOperator, BlendMode = BlendMode::Normal);
     WEBCORE_EXPORT virtual void endTransparencyLayer();
     bool isInTransparencyLayer() const { return (m_transparencyLayerCount > 0); }
 

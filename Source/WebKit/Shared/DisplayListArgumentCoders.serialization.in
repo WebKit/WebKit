@@ -175,6 +175,10 @@ headers: <WebCore/DisplayListItems.h>
     float opacity();
 };
 
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::BeginTransparencyLayerWithCompositeMode {
+    WebCore::CompositeMode compositeMode();
+};
+
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::EndTransparencyLayer {
 };
 

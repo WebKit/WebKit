@@ -141,6 +141,11 @@ void GraphicsContext::beginTransparencyLayer(float)
     ++m_transparencyLayerCount;
 }
 
+void GraphicsContext::beginTransparencyLayer(CompositeOperator, BlendMode)
+{
+    ++m_transparencyLayerCount;
+}
+
 void GraphicsContext::endTransparencyLayer()
 {
     ASSERT(m_transparencyLayerCount > 0);

@@ -1217,11 +1217,7 @@ void CanvasRenderingContext2DBase::beginCompositeLayer()
 {
 #if !USE(CAIRO)
     auto* context = drawingContext();
-    context->beginTransparencyLayer(1);
-#if USE(SKIA)
-    // When on transparency layer, we don't want to blend operations as when layer ends, we blend it as a whole.
-    context->setCompositeOperation(CompositeOperator::SourceOver, BlendMode::Normal);
-#endif
+    context->beginTransparencyLayer(state().globalComposite, state().globalBlend);
 #endif
 }
 
@@ -1230,9 +1226,6 @@ void CanvasRenderingContext2DBase::endCompositeLayer()
 #if !USE(CAIRO)
     auto* context = drawingContext();
     context->endTransparencyLayer();
-#if USE(SKIA)
-    context->setCompositeOperation(state().globalComposite, state().globalBlend);
-#endif
 #endif
 }
 
@@ -1363,7 +1356,16 @@ void CanvasRenderingContext2DBase::fillRect(double x, double y, double width, do
 
     bool repaintEntireCanvas = false;
     if (rectContainsCanvas(rect)) {
+#if USE(SKIA)
+        const bool needsCompositeLayer = shouldDrawShadows() && isFullCanvasCompositeMode(state().globalComposite);
+        if (needsCompositeLayer)
+            beginCompositeLayer();
+#endif
         c->fillRect(rect);
+#if USE(SKIA)
+        if (needsCompositeLayer)
+            endCompositeLayer();
+#endif
         repaintEntireCanvas = true;
     } else if (isFullCanvasCompositeMode(state().globalComposite)) {
         beginCompositeLayer();

@@ -275,6 +275,11 @@ void RemoteDisplayListRecorderProxy::recordBeginTransparencyLayer(float opacity)
     send(Messages::RemoteDisplayListRecorder::BeginTransparencyLayer(opacity));
 }
 
+void RemoteDisplayListRecorderProxy::recordBeginTransparencyLayer(CompositeOperator compositeOperator, BlendMode blendMode)
+{
+    send(Messages::RemoteDisplayListRecorder::BeginTransparencyLayerWithCompositeMode({ compositeOperator, blendMode }));
+}
+
 void RemoteDisplayListRecorderProxy::recordEndTransparencyLayer()
 {
     send(Messages::RemoteDisplayListRecorder::EndTransparencyLayer());

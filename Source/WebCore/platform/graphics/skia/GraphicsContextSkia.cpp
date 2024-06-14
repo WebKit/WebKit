@@ -148,7 +148,6 @@ void GraphicsContextSkia::drawRect(const FloatRect& rect, float borderThickness)
     SkRegion region;
     region.setRects(rects, 4);
     SkPaint strokePaint = createStrokePaint();
-    strokePaint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     setupStrokeSource(strokePaint);
     m_canvas.drawRegion(region, strokePaint);
 }
@@ -285,8 +284,15 @@ void GraphicsContextSkia::drawNativeImageInternal(NativeImage& nativeImage, cons
     SkPaint paint = createFillPaint();
     paint.setAlphaf(alpha());
     paint.setBlendMode(toSkiaBlendMode(options.compositeOperator(), options.blendMode()));
-    paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
+    bool inExtraTransparencyLayer = false;
+    if (hasDropShadow()) {
+        inExtraTransparencyLayer = drawOutsetShadow(paint, [&](const SkPaint& paint) {
+            m_canvas.drawImageRect(image, normalizedSrcRect, normalizedDestRect, toSkSamplingOptions(m_state.imageInterpolationQuality()), &paint, { });
+        });
+    }
     m_canvas.drawImageRect(image, normalizedSrcRect, normalizedDestRect, toSkSamplingOptions(m_state.imageInterpolationQuality()), &paint, { });
+    if (inExtraTransparencyLayer)
+        endTransparencyLayer();
 
     if (options.orientation() != ImageOrientation::Orientation::None)
         m_canvas.restore();
@@ -362,6 +368,19 @@ static inline SkPathFillType toSkiaFillType(const WindRule& windRule)
     return SkPathFillType::kWinding;
 }
 
+void GraphicsContextSkia::drawSkiaPath(const SkPath& path, SkPaint& paint)
+{
+    bool inExtraTransparencyLayer = false;
+    if (hasDropShadow()) {
+        inExtraTransparencyLayer = drawOutsetShadow(paint, [&](const SkPaint& paint) {
+            m_canvas.drawPath(path, paint);
+        });
+    }
+    m_canvas.drawPath(path, paint);
+    if (inExtraTransparencyLayer)
+        endTransparencyLayer();
+}
+
 void GraphicsContextSkia::fillPath(const Path& path)
 {
     if (path.isEmpty())
@@ -371,19 +390,18 @@ void GraphicsContextSkia::fillPath(const Path& path)
         return;
 
     SkPaint paint = createFillPaint();
-    paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     setupFillSource(paint);
 
     auto fillRule = toSkiaFillType(state().fillRule());
     auto& skiaPath= *path.platformPath();
     if (skiaPath.getFillType() == fillRule) {
-        m_canvas.drawPath(skiaPath, paint);
+        drawSkiaPath(skiaPath, paint);
         return;
     }
 
     auto skiaPathCopy = skiaPath;
     skiaPathCopy.setFillType(fillRule);
-    m_canvas.drawPath(skiaPathCopy, paint);
+    drawSkiaPath(skiaPathCopy, paint);
 }
 
 void GraphicsContextSkia::strokePath(const Path& path)
@@ -395,9 +413,8 @@ void GraphicsContextSkia::strokePath(const Path& path)
         return;
 
     SkPaint strokePaint = createStrokePaint();
-    strokePaint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     setupStrokeSource(strokePaint);
-    m_canvas.drawPath(*path.platformPath(), strokePaint);
+    drawSkiaPath(*path.platformPath(), strokePaint);
 }
 
 sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowStyle shadowStyle) const
@@ -417,39 +434,54 @@ sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowS
     const auto& state = this->state();
     auto sigma = shadow->radius / 2.0;
 
-    switch (shadowStyle) {
-    case ShadowStyle::Outset:
-        if (state.shadowsIgnoreTransforms()) {
-            // When state.shadowsIgnoreTransforms() is true, the offset is in
-            // natural orientation for the Y axis, like CG. Convert that back to
-            // the Skia coordinate system.
-            offset.scale(1.0, -1.0);
-
-            // Fast path: identity CTM doesn't need the transform compensation
-            AffineTransform ctm = getCTM(GraphicsContext::IncludeDeviceScale::PossiblyIncludeDeviceScale);
-            if (ctm.isIdentity())
-                return SkImageFilters::DropShadow(offset.width(), offset.height(), sigma, sigma, shadowColor, nullptr);
-
-            // Ignoring the CTM is practically equal as applying the inverse of
-            // the CTM when post-processing the drop shadow.
-            if (const std::optional<SkMatrix>& inverse = ctm.inverse()) {
-                SkPoint3 p = SkPoint3::Make(offset.width(), offset.height(), 0);
-                inverse->mapHomogeneousPoints(&p, &p, 1);
-                sigma = inverse->mapRadius(sigma);
-                return SkImageFilters::DropShadow(p.x(), p.y(), sigma, sigma, shadowColor, nullptr);
-            }
-
-            return nullptr;
-        }
-
-        return SkImageFilters::DropShadow(offset.width(), offset.height(), sigma, sigma, shadowColor, nullptr);
-    case ShadowStyle::Inset: {
+    if (shadowStyle == ShadowStyle::Inset) {
         auto dropShadow = SkImageFilters::DropShadowOnly(offset.width(), offset.height(), sigma, sigma, SK_ColorBLACK, nullptr);
         return SkImageFilters::ColorFilter(SkColorFilters::Blend(shadowColor, SkBlendMode::kSrcIn), dropShadow);
     }
+
+    RELEASE_ASSERT(shadowStyle == ShadowStyle::Outset);
+
+    if (!state.shadowsIgnoreTransforms())
+        return SkImageFilters::DropShadowOnly(offset.width(), offset.height(), sigma, sigma, shadowColor, nullptr);
+
+    // When state.shadowsIgnoreTransforms() is true, the offset is in
+    // natural orientation for the Y axis, like CG. Convert that back to
+    // the Skia coordinate system.
+    offset.scale(1.0, -1.0);
+
+    // Fast path: identity CTM doesn't need the transform compensation
+    AffineTransform ctm = getCTM(GraphicsContext::IncludeDeviceScale::PossiblyIncludeDeviceScale);
+    if (ctm.isIdentity())
+        return SkImageFilters::DropShadowOnly(offset.width(), offset.height(), sigma, sigma, shadowColor, nullptr);
+
+    // Ignoring the CTM is practically equal as applying the inverse of
+    // the CTM when post-processing the drop shadow.
+    if (const std::optional<SkMatrix>& inverse = ctm.inverse()) {
+        SkPoint3 p = SkPoint3::Make(offset.width(), offset.height(), 0);
+        inverse->mapHomogeneousPoints(&p, &p, 1);
+        sigma = inverse->mapRadius(sigma);
+        return SkImageFilters::DropShadowOnly(p.x(), p.y(), sigma, sigma, shadowColor, nullptr);
     }
 
     return nullptr;
+}
+
+bool GraphicsContextSkia::drawOutsetShadow(SkPaint& paint, Function<void(const SkPaint&)>&& drawFunction)
+{
+    auto shadow = createDropShadowFilterIfNeeded(ShadowStyle::Outset);
+    if (!shadow)
+        return false;
+
+    paint.setImageFilter(shadow);
+    drawFunction(paint);
+    paint.setImageFilter(nullptr);
+    if (!m_layerStateStack.isEmpty()) {
+        if (auto compositeMode = m_layerStateStack.last().compositeMode) {
+            beginTransparencyLayer(compositeMode->operation, compositeMode->blendMode);
+            return true;
+        }
+    }
+    return false;
 }
 
 SkPaint GraphicsContextSkia::createFillPaint() const
@@ -497,15 +529,27 @@ void GraphicsContextSkia::setupStrokeSource(SkPaint& paint) const
         paint.setColor(SkColor(strokeBrush().color().colorWithAlphaMultipliedBy(alpha())));
 }
 
+void GraphicsContextSkia::drawSkiaRect(const SkRect& boundaries, SkPaint& paint)
+{
+    bool inExtraTransparencyLayer = false;
+    if (hasDropShadow()) {
+        inExtraTransparencyLayer = drawOutsetShadow(paint, [&](const SkPaint& paint) {
+            m_canvas.drawRect(boundaries, paint);
+        });
+    }
+    m_canvas.drawRect(boundaries, paint);
+    if (inExtraTransparencyLayer)
+        endTransparencyLayer();
+}
+
 void GraphicsContextSkia::fillRect(const FloatRect& boundaries)
 {
     if (!makeGLContextCurrentIfNeeded())
         return;
 
     SkPaint paint = createFillPaint();
-    paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     setupFillSource(paint);
-    m_canvas.drawRect(boundaries, paint);
+    drawSkiaRect(boundaries, paint);
 }
 
 void GraphicsContextSkia::fillRect(const FloatRect& boundaries, const Color& fillColor)
@@ -515,8 +559,7 @@ void GraphicsContextSkia::fillRect(const FloatRect& boundaries, const Color& fil
 
     SkPaint paint = createFillPaint();
     paint.setColor(SkColor(fillColor));
-    paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
-    m_canvas.drawRect(boundaries, paint);
+    drawSkiaRect(boundaries, paint);
 }
 
 void GraphicsContextSkia::fillRect(const FloatRect& boundaries, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
@@ -526,8 +569,7 @@ void GraphicsContextSkia::fillRect(const FloatRect& boundaries, Gradient& gradie
 
     SkPaint paint = createFillPaint();
     paint.setShader(gradient.shader(alpha(), gradientSpaceTransform));
-    paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
-    m_canvas.drawRect(boundaries, paint);
+    drawSkiaRect(boundaries, paint);
 }
 
 void GraphicsContextSkia::resetClip()
@@ -736,10 +778,27 @@ void GraphicsContextSkia::beginTransparencyLayer(float opacity)
         return;
 
     GraphicsContext::beginTransparencyLayer(opacity);
+    m_layerStateStack.append({ });
+
     SkPaint paint;
     paint.setAlphaf(opacity);
     paint.setBlendMode(toSkiaBlendMode(m_state.compositeMode().operation, m_state.compositeMode().blendMode));
     m_canvas.saveLayer(nullptr, &paint);
+}
+
+void GraphicsContextSkia::beginTransparencyLayer(CompositeOperator operation, BlendMode blendMode)
+{
+    if (!makeGLContextCurrentIfNeeded())
+        return;
+
+    GraphicsContext::beginTransparencyLayer(operation, blendMode);
+    m_layerStateStack.append({ CompositeMode(operation, blendMode) });
+
+    SkPaint paint;
+    paint.setBlendMode(toSkiaBlendMode(operation, blendMode));
+    m_canvas.saveLayer(nullptr, &paint);
+    // When on transparency layer, we don't want to blend operations as when layer ends, we blend it as a whole.
+    setCompositeMode({ CompositeOperator::SourceOver, BlendMode::Normal });
 }
 
 void GraphicsContextSkia::endTransparencyLayer()
@@ -749,6 +808,11 @@ void GraphicsContextSkia::endTransparencyLayer()
 
     GraphicsContext::endTransparencyLayer();
     m_canvas.restore();
+    if (!m_layerStateStack.isEmpty()) {
+        auto layerState = m_layerStateStack.takeLast();
+        if (layerState.compositeMode)
+            setCompositeMode(*layerState.compositeMode);
+    }
 }
 
 void GraphicsContextSkia::clearRect(const FloatRect& rect)
@@ -768,9 +832,8 @@ void GraphicsContextSkia::strokeRect(const FloatRect& boundaries, float lineWidt
 
     auto strokePaint = createStrokePaint();
     strokePaint.setStrokeWidth(SkFloatToScalar(lineWidth));
-    strokePaint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     setupStrokeSource(strokePaint);
-    m_canvas.drawRect(boundaries, strokePaint);
+    drawSkiaRect(boundaries, strokePaint);
 }
 
 void GraphicsContextSkia::setLineCap(LineCap lineCap)
@@ -860,8 +923,15 @@ void GraphicsContextSkia::fillRoundedRectImpl(const FloatRoundedRect& rect, cons
 
     SkPaint paint = createFillPaint();
     paint.setColor(SkColor(color));
-    paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
+    bool inExtraTransparencyLayer = false;
+    if (hasDropShadow()) {
+        inExtraTransparencyLayer = drawOutsetShadow(paint, [&](const SkPaint& paint) {
+            m_canvas.drawRRect(rect, paint);
+        });
+    }
     m_canvas.drawRRect(rect, paint);
+    if (inExtraTransparencyLayer)
+        endTransparencyLayer();
 }
 
 void GraphicsContextSkia::fillRectWithRoundedHole(const FloatRect& outerRect, const FloatRoundedRect& innerRRect, const Color& color)
@@ -926,6 +996,42 @@ void GraphicsContextSkia::drawPattern(NativeImage& nativeImage, const FloatRect&
     }
 
     m_canvas.drawRect(destRect, paint);
+}
+
+void GraphicsContextSkia::drawSkiaText(const sk_sp<SkTextBlob>& blob, SkScalar x, SkScalar y, bool enableAntialias, bool isVertical)
+{
+    if (isVertical) {
+        m_canvas.save();
+
+        SkMatrix matrix;
+        matrix.setSinCos(-1, 0, x, y);
+        m_canvas.concat(matrix);
+    }
+
+    if (textDrawingMode().contains(TextDrawingMode::Fill)) {
+        SkPaint paint = createFillPaint();
+        setupFillSource(paint);
+        paint.setAntiAlias(enableAntialias);
+        bool inExtraTransparencyLayer = false;
+        if (hasDropShadow()) {
+            inExtraTransparencyLayer = drawOutsetShadow(paint, [&](const SkPaint& paint) {
+                m_canvas.drawTextBlob(blob, x, y, paint);
+            });
+        }
+        m_canvas.drawTextBlob(blob, x, y, paint);
+        if (inExtraTransparencyLayer)
+            endTransparencyLayer();
+    }
+
+    if (textDrawingMode().contains(TextDrawingMode::Stroke)) {
+        SkPaint paint = createStrokePaint();
+        setupStrokeSource(paint);
+        paint.setAntiAlias(enableAntialias);
+        m_canvas.drawTextBlob(blob, x, y, paint);
+    }
+
+    if (isVertical)
+        m_canvas.restore();
 }
 
 RenderingMode GraphicsContextSkia::renderingMode() const

@@ -101,6 +101,7 @@ protected:
     virtual void recordDrawSystemImage(SystemImage&, const FloatRect&) = 0;
     virtual void recordDrawPattern(RenderingResourceIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) = 0;
     virtual void recordBeginTransparencyLayer(float) = 0;
+    virtual void recordBeginTransparencyLayer(CompositeOperator, BlendMode) = 0;
     virtual void recordEndTransparencyLayer() = 0;
     virtual void recordDrawRect(const FloatRect&, float) = 0;
     virtual void recordDrawLine(const FloatPoint& point1, const FloatPoint& point2) = 0;
@@ -269,6 +270,7 @@ private:
     WEBCORE_EXPORT AffineTransform getCTM(GraphicsContext::IncludeDeviceScale = PossiblyIncludeDeviceScale) const final;
 
     WEBCORE_EXPORT void beginTransparencyLayer(float opacity) final;
+    WEBCORE_EXPORT void beginTransparencyLayer(CompositeOperator, BlendMode) final;
     WEBCORE_EXPORT void endTransparencyLayer() final;
 
     WEBCORE_EXPORT void resetClip() final;

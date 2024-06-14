@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Ensure correct behavior of canvas with fillRect using destination-atop globalCompositeOperation and shadow on top of pre-existing content when rect fits canvas perfectly");
+
+function print(message, color)
+{
+    var paragraph = document.createElement("div");
+    paragraph.appendChild(document.createTextNode(message));
+    paragraph.style.fontFamily = "monospace";
+    if (color)
+        paragraph.style.color = color;
+    document.getElementById("console").appendChild(paragraph);
+}
+
+var canvas = document.createElement('canvas');
+document.body.appendChild(canvas);
+canvas.setAttribute('width', '100');
+canvas.setAttribute('height', '100');
+var ctx = canvas.getContext('2d');
+
+ctx.save();
+
+ctx.fillStyle = '#f00';
+ctx.fillRect(0, 0, 100, 50); // original content
+ctx.globalCompositeOperation = 'destination-atop';
+ctx.shadowColor = '#00f';
+ctx.shadowOffsetX = 50;
+ctx.fillStyle = '#0f0';
+ctx.fillRect(0, 0, 100, 100); // shape and shadow
+
+ctx.restore();
+
+var imageData, data;
+ctx.fillStyle = 'brown';
+
+function test(alphaTestFunction, x, y, r, g, b, a) {
+    // Get pixel.
+    imageData = ctx.getImageData(x, y, 1, 1);
+    data = imageData.data;
+    // Test pixel color components.
+    shouldBe('data[0]', r+'');
+    shouldBe('data[1]', g+'');
+    shouldBe('data[2]', b+'');
+    alphaTestFunction('data[3]', a+'');
+    // Plot test point.
+    ctx.fillRect(x, y, 3, 3);
+}
+
+print('Verifying if the original content was preserved where it overlaps with both shadow and shape...');
+test(shouldBe, 25, 25, 255, 0, 0, 255);
+test(shouldBe, 75, 25, 255, 0, 0, 255);
+
+print('Verifying if the shadow is "atop" the shape...');
+test(shouldBe, 75, 75, 0, 0, 255, 255);
+
+print('Verifying if the only visible part of shape is there...');
+test(shouldBe, 25, 75, 0, 255, 0, 255);
+
+print(' ');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
