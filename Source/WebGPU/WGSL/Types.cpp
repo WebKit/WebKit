@@ -338,8 +338,11 @@ unsigned Type::size() const
         [&](const Struct& structure) -> unsigned {
             return structure.structure.size();
         },
-        [&](const PrimitiveStruct&) -> unsigned {
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const PrimitiveStruct& structure) -> unsigned {
+            unsigned size = 0;
+            for (auto* type : structure.values)
+                size += type->size();
+            return size;
         },
         [&](const Function&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();

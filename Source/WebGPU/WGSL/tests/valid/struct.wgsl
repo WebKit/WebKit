@@ -15,10 +15,16 @@ fn testStructConstructor() -> i32
     return 0;
 }
 
+fn testPrimitiveStruct()
+{
+    var x = frexp(vec4<f16>());
+}
+
 @compute @workgroup_size(1)
 fn main()
 {
     _ = testStructConstructor();
+    testPrimitiveStruct();
 }
 
 struct S1 {
