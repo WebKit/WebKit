@@ -57,6 +57,7 @@ public:
 
     virtual bool supportsControlTints() const { return false; }
     virtual bool usesOverlayScrollbars() const { return false; }
+    virtual bool allowsCustomScrollbars() const { return true; }
     virtual void usesOverlayScrollbarsChanged() { }
     virtual void updateScrollbarOverlayStyle(Scrollbar&) { }
 

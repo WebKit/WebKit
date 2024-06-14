@@ -23,10 +23,10 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (15,0) size 127x14
           RenderBlock {DIV} at (141,7) size 0x0
       RenderBR {BR} at (154,63) size 1x20
-      RenderBR {BR} at (168,104) size 0x20
+      RenderBR {BR} at (153,104) size 0x20
       RenderTextControl {INPUT} at (0,119) size 155x35 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
       RenderBR {BR} at (154,118) size 1x20
-      RenderBR {BR} at (168,185) size 0x20
+      RenderBR {BR} at (153,185) size 0x20
       RenderTextControl {INPUT} at (5,205) size 212x37 [bgcolor=#FFFFFF] [border: (5px solid #000000)]
       RenderBR {BR} at (221,213) size 1x20
       RenderTextControl {INPUT} at (0,246) size 155x34 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
@@ -69,10 +69,10 @@ layer at (30,76) size 126x14
       text run at (0,0) width 62: "placeholder"
 layer at (30,76) size 127x14 backgroundClip at (30,76) size 126x14 clip at (30,76) size 126x14
   RenderBlock {DIV} at (0,0) size 127x14
-layer at (8,94) size 168x34 clip at (9,95) size 166x32
-  RenderTextControl {TEXTAREA} at (0,85) size 168x35 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-    RenderBlock {DIV} at (6,3) size 156x14
-    RenderBlock {DIV} at (6,3) size 156x14 [color=#A9A9A9]
+layer at (8,94) size 153x34 clip at (9,95) size 151x32
+  RenderTextControl {TEXTAREA} at (0,85) size 153x35 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+    RenderBlock {DIV} at (6,3) size 141x14
+    RenderBlock {DIV} at (6,3) size 141x14 [color=#A9A9A9]
       RenderText {#text} at (0,0) size 62x14
         text run at (0,0) width 62: "placeholder"
 layer at (15,131) size 141x14
@@ -81,10 +81,10 @@ layer at (15,131) size 141x14
       text run at (0,0) width 62: "placeholder"
 layer at (15,131) size 141x14
   RenderBlock {DIV} at (6,3) size 143x15
-layer at (8,161) size 168x47 clip at (9,162) size 166x45
-  RenderTextControl {TEXTAREA} at (0,153) size 168x48 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-    RenderBlock {DIV} at (6,16) size 156x14
-    RenderBlock {DIV} at (6,16) size 156x14 [color=#A9A9A9]
+layer at (8,161) size 153x47 clip at (9,162) size 151x45
+  RenderTextControl {TEXTAREA} at (0,153) size 153x48 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+    RenderBlock {DIV} at (6,16) size 141x14
+    RenderBlock {DIV} at (6,16) size 141x14 [color=#A9A9A9]
       RenderText {#text} at (0,0) size 62x14
         text run at (0,0) width 62: "placeholder"
 layer at (26,221) size 186x19

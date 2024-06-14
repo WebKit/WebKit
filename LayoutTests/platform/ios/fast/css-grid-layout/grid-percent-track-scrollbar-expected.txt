@@ -1,0 +1,25 @@
+This test checks that percentage tracks reduce the grid's scrollbars if any in order to calculate their breadths.
+
+PASS
+FAIL:
+Expected 20 for width, but got 23.
+Expected 40 for height, but got 46.
+Expected 50 for width, but got 58.
+Expected 40 for height, but got 46.
+Expected 30 for width, but got 35.
+Expected 40 for height, but got 46.
+Expected 20 for width, but got 23.
+Expected 60 for height, but got 69.
+Expected 50 for width, but got 58.
+Expected 60 for height, but got 69.
+Expected 30 for width, but got 35.
+Expected 60 for height, but got 69.
+
+<div class="grid scroll">
+        <div data-expected-width="20" data-expected-height="40"></div>
+        <div data-expected-width="50" data-expected-height="40"></div>
+        <div data-expected-width="30" data-expected-height="40"></div>
+        <div data-expected-width="20" data-expected-height="60"></div>
+        <div data-expected-width="50" data-expected-height="60"></div>
+        <div data-expected-width="30" data-expected-height="60"></div>
+    </div>

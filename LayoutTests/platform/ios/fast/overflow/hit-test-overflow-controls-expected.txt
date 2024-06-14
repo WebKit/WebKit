@@ -24,15 +24,15 @@ layer at (0,0) size 800x600
       RenderBlock (floating) {DIV} at (135,92) size 125x125 [bgcolor=#FF0000]
       RenderBlock (floating) {DIV} at (270,92) size 125x125 [bgcolor=#FF0000]
       RenderBlock (floating) {DIV} at (405,92) size 125x125 [bgcolor=#FF0000]
-layer at (8,100) size 75x75 clip at (8,100) size 60x60 scrollWidth 100 scrollHeight 100
+layer at (8,100) size 75x75 scrollWidth 100 scrollHeight 100
   RenderBlock {DIV} at (0,0) size 75x75 [bgcolor=#008000]
     RenderBlock {DIV} at (0,0) size 100x100
-layer at (143,100) size 75x75 clip at (143,100) size 60x60 scrollWidth 100 scrollHeight 100
+layer at (143,100) size 75x75 scrollWidth 100 scrollHeight 100
   RenderBlock {DIV} at (0,0) size 75x75 [bgcolor=#008000]
     RenderBlock {DIV} at (0,0) size 100x100
-layer at (278,100) size 75x75 clip at (278,100) size 60x75 scrollWidth 100 scrollHeight 100
+layer at (278,100) size 75x75 scrollWidth 100 scrollHeight 100
   RenderBlock {DIV} at (0,0) size 75x75 [bgcolor=#008000]
     RenderBlock {DIV} at (0,0) size 100x100
-layer at (413,100) size 75x75 clip at (413,100) size 75x60 scrollWidth 100 scrollHeight 100
+layer at (413,100) size 75x75 scrollWidth 100 scrollHeight 100
   RenderBlock {DIV} at (0,0) size 75x75 [bgcolor=#008000]
     RenderBlock {DIV} at (0,0) size 100x100

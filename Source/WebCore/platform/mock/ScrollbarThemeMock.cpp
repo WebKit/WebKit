@@ -39,6 +39,9 @@ IntRect ScrollbarThemeMock::trackRect(Scrollbar& scrollbar, bool)
 
 int ScrollbarThemeMock::scrollbarThickness(ScrollbarWidth scrollbarWidth, ScrollbarExpansionState)
 {
+#if PLATFORM(IOS_FAMILY)
+    return 0;
+#endif
     switch (scrollbarWidth) {
     case ScrollbarWidth::Auto:
         return 15;
@@ -69,5 +72,13 @@ bool ScrollbarThemeMock::usesOverlayScrollbars() const
     return DeprecatedGlobalSettings::usesOverlayScrollbars();
 }
 
+bool ScrollbarThemeMock::allowsCustomScrollbars() const
+{
+#if PLATFORM(IOS_FAMILY)
+    return false;
+#else
+    return true;
+#endif
 }
 
+}
