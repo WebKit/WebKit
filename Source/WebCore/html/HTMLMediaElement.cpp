@@ -655,6 +655,15 @@ RefPtr<HTMLMediaElement> HTMLMediaElement::bestMediaElementForRemoteControls(Med
     return selectedSession ? RefPtr { &downcast<MediaElementSession>(selectedSession.get())->element() } : nullptr;
 }
 
+bool HTMLMediaElement::isNowPlayingEligible() const
+{
+    RefPtr page = document().page();
+    if (page && page->mediaPlaybackIsSuspended())
+        return false;
+
+    return m_mediaSession->hasNowPlayingInfo();
+}
+
 std::optional<NowPlayingInfo> HTMLMediaElement::nowPlayingInfo() const
 {
     return m_mediaSession->computeNowPlayingInfo();

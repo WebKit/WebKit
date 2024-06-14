@@ -960,7 +960,7 @@ private:
     bool hasMediaStreamSource() const final;
     void processIsSuspendedChanged() final;
     bool shouldOverridePauseDuringRouteChange() const final;
-    bool isNowPlayingEligible() const final { return m_mediaSession->hasNowPlayingInfo(); }
+    bool isNowPlayingEligible() const final;
     std::optional<NowPlayingInfo> nowPlayingInfo() const final;
     WeakPtr<PlatformMediaSession> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSession>>&, PlatformMediaSession::PlaybackControlsPurpose) final;
 

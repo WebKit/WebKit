@@ -1286,6 +1286,8 @@ std::optional<NowPlayingInfo> MediaElementSession::computeNowPlayingInfo() const
         return { };
 
     RefPtr page = m_element.document().page();
+    if (!page)
+        return { };
 
     bool allowsNowPlayingControlsVisibility = page && !page->isVisibleAndActive();
     bool isPlaying = state() == PlatformMediaSession::State::Playing;
@@ -1306,6 +1308,15 @@ std::optional<NowPlayingInfo> MediaElementSession::computeNowPlayingInfo() const
 #endif
 
     NowPlayingInfo info { m_element.mediaSessionTitle(), emptyString(), emptyString(), sourceApplicationIdentifier, duration, currentTime, rate, supportsSeeking, m_element.mediaUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, { } };
+
+    if (page->usesEphemeralSession()) {
+        info.title = { };
+        info.artist = { };
+        info.album = { };
+        info.artwork = std::nullopt;
+        return info;
+    }
+
 #if ENABLE(MEDIA_SESSION)
     if (RefPtr session = mediaSession())
         session->updateNowPlayingInfo(info);
