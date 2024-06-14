@@ -479,20 +479,6 @@ bool RenderPassEncoder::executePreDrawCommands(const Buffer* indirectBuffer)
         return false;
     }
 
-    auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
-    for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
-        auto it = m_vertexBuffers.find(bufferIndex);
-        RELEASE_ASSERT(it != m_vertexBuffers.end());
-        auto bufferSize = it->value.size;
-        auto lastStride = bufferData.lastStride;
-        if (bufferData.stepMode == WGPUVertexStepMode_Vertex) {
-            if (bufferSize < lastStride) {
-                makeInvalid([NSString stringWithFormat:@"Buffer[%d] fails: bufferSize(%llu) < lastStride(%llu)", bufferIndex, bufferSize, lastStride]);
-                return false;
-            }
-        }
-    }
-
     for (auto& [groupIndex, weakBindGroup] : m_bindGroups) {
         if (!weakBindGroup.get()) {
             makeInvalid(@"Bind group is missing");
