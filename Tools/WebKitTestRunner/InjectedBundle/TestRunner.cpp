@@ -391,7 +391,7 @@ void TestRunner::syncLocalStorage()
 
 bool TestRunner::isCommandEnabled(JSStringRef name)
 {
-    return WKBundlePageIsEditingCommandEnabled(page(), toWK(name).get());
+    return postSynchronousPageMessageReturningBoolean("IsCommandEnabled", toWK(name));
 }
 
 void TestRunner::preventPopupWindows()

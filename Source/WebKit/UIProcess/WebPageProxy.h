@@ -2481,6 +2481,8 @@ public:
     void didAdjustVisibilityWithSelectors(Vector<String>&&);
     BrowsingContextGroup& browsingContextGroup() const { return m_browsingContextGroup; }
 
+    bool isEditingCommandEnabledForTesting(const String&);
+
 private:
     std::optional<Vector<uint8_t>> getWebCryptoMasterKey();
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

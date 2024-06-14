@@ -3230,3 +3230,8 @@ void WKPageExecuteCommandForTesting(WKPageRef pageRef, WKStringRef command, WKSt
 {
     toImpl(pageRef)->executeEditCommand(toImpl(command)->string(), toImpl(value)->string());
 }
+
+bool WKPageIsEditingCommandEnabledForTesting(WKPageRef pageRef, WKStringRef command)
+{
+    return toImpl(pageRef)->isEditingCommandEnabledForTesting(toImpl(command)->string());
+}

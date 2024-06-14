@@ -675,7 +675,7 @@ public:
     Ref<API::Array> trackedRepaintRects();
 
     void executeEditingCommand(const String& commandName, const String& argument);
-    bool isEditingCommandEnabled(const String& commandName);
+    void isEditingCommandEnabled(const String& commandName, CompletionHandler<void(bool)>&&);
     void clearMainFrameName();
     void sendClose();
 

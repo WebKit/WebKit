@@ -1771,19 +1771,19 @@ void WebPage::setBaseWritingDirection(WritingDirection direction)
     frame->editor().setBaseWritingDirection(direction);
 }
 
-bool WebPage::isEditingCommandEnabled(const String& commandName)
+void WebPage::isEditingCommandEnabled(const String& commandName, CompletionHandler<void(bool)>&& completionHandler)
 {
     RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
     if (!frame)
-        return false;
+        return completionHandler(false);
 
 #if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = focusedPluginViewForFrame(*frame))
-        return pluginView->isEditingCommandEnabled(commandName);
+        return completionHandler(pluginView->isEditingCommandEnabled(commandName));
 #endif
 
     Editor::Command command = frame->editor().command(commandName);
-    return command.isSupported() && command.isEnabled();
+    completionHandler(command.isSupported() && command.isEnabled());
 }
     
 void WebPage::clearMainFrameName()

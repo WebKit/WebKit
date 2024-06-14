@@ -14347,6 +14347,16 @@ void WebPageProxy::frameNameChanged(IPC::Connection& connection, WebCore::FrameI
     });
 }
 
+bool WebPageProxy::isEditingCommandEnabledForTesting(const String& commandName)
+{
+    auto targetFrameID = focusedOrMainFrame() ? std::optional(focusedOrMainFrame()->frameID()) : std::nullopt;
+    auto sendResult = sendSyncToProcessContainingFrame(targetFrameID, Messages::WebPage::IsEditingCommandEnabled(commandName));
+    if (!sendResult.succeeded())
+        return false;
+    auto [result] = sendResult.takeReply();
+    return result;
+}
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG
