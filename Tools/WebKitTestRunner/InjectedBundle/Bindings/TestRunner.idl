@@ -28,6 +28,7 @@ interface TestRunner {
     readonly attribute boolean isIOSFamily;
     readonly attribute boolean isMac;
     readonly attribute boolean isKeyboardImmediatelyAvailable;
+    readonly attribute boolean keyboardAppearsOverContent;
 
     // The basics.
     undefined dumpAsText(boolean dumpPixels);

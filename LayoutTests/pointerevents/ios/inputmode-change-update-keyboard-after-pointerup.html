@@ -38,7 +38,10 @@ async function runTest() {
     if (window.testRunner) {
         await UIHelper.activateFormControl(input);
         window.keyboardRect = await UIHelper.inputViewBounds();
-        shouldBeTrue('textHeight = keyboardRect.height; keyboardRect.height > 0');
+        if (window.testRunner.keyboardAppearsOverContent)
+            shouldBeTrue('textHeight = keyboardRect.height; keyboardRect.height == 0');
+        else
+            shouldBeTrue('textHeight = keyboardRect.height; keyboardRect.height > 0');
     } else {
         await new Promise((resolve) => { didResize = resolve; });
         shouldBeTrue('textHeight = document.documentElement.clientHeight - visualViewport.height; document.documentElement.clientHeight - visualViewport.height < 100');
