@@ -3166,7 +3166,6 @@ InputTypeDateEnabled:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebKit:
-      "PLATFORM(APPLETV)": false
       default: true
     WebCore:
       default: false
@@ -3182,7 +3181,6 @@ InputTypeDateTimeLocalEnabled:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebKit:
-      "PLATFORM(APPLETV)": false
       default: true
     WebCore:
       default: false
@@ -3198,7 +3196,7 @@ InputTypeMonthEnabled:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebKit:
-      "!PLATFORM(MAC) && !PLATFORM(APPLETV)": true
+      "!PLATFORM(MAC)": true
       default: false
     WebCore:
       default: false
@@ -3214,7 +3212,6 @@ InputTypeTimeEnabled:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebKit:
-      "PLATFORM(APPLETV)": false
       default: true
     WebCore:
       default: false
