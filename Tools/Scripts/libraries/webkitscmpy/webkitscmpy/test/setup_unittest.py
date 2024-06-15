@@ -62,8 +62,11 @@ class TestSetup(testing.PathTestCase):
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Create a private fork of 'WebKit/WebKit' named 'WebKit' belonging to 'username' ([Yes]/No): \n"
-            'Setup succeeded!\n',
+            '''Create a private fork of 'WebKit/WebKit' named 'WebKit' belonging to 'username'
+For detailed information about forking, please see: https://github.com/WebKit/WebKit/wiki/Git-Config#forking
+Press Enter to continue (Ctrl+C to exit)
+Setup succeeded!
+''',
         )
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
@@ -163,7 +166,9 @@ a pull request branch? ([when-user-owned]/disabled/always/never):
 Pick a commit message editor for this repository:
     {}
 : 
-Create a private fork of 'WebKit/WebKit' named 'WebKit' belonging to 'username' ([Yes]/No): 
+Create a private fork of 'WebKit/WebKit' named 'WebKit' belonging to 'username'
+For detailed information about forking, please see: https://github.com/WebKit/WebKit/wiki/Git-Config#forking
+Press Enter to continue (Ctrl+C to exit)
 Setup succeeded!
 '''.format('\n    '.join([
             '{}) {}'.format(

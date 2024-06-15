@@ -185,13 +185,12 @@ class Setup(Command):
                 log.info("User already owns a fork of '{}'!".format(parent_name))
                 return result
 
-        if repository.owner == username or args.defaults or Terminal.choose(
-            "Create a private fork of '{}/{}' named '{}' belonging to '{}'".format(
-                repository.owner, repository.name, forked_name, username
-            ), default='Yes',
-        ) == 'No':
+        if repository.owner == username or args.defaults:
             log.info("Continuing without forking '{}/{}'".format(repository.owner, repository.name))
             return 1
+        print("Create a private fork of '{}/{}' named '{}' belonging to '{}'".format(repository.owner, repository.name, forked_name, username))
+        print('For detailed information about forking, please see: https://github.com/WebKit/WebKit/wiki/Git-Config#forking')
+        input('Press Enter to continue (Ctrl+C to exit)')
 
         data = dict(
             owner=username,
