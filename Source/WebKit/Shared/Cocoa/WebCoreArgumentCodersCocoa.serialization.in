@@ -405,3 +405,8 @@ using CGDirectDisplayID = uint32_t
 using CFTimeInterval = double
 using CGGlyph = uint16_t
 using NSRect = CGRect
+
+#if ENABLE(WRITING_TOOLS)
+using WebCore::UnifiedTextReplacement::Replacement::ID = WTF::UUID
+using WebCore::UnifiedTextReplacement::Session::ID = WTF::UUID
+#endif
