@@ -453,6 +453,7 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
 
         auto configuration = platformView.configuration;
         configuration.preferences.textInteractionEnabled = options.textInteractionEnabled();
+        configuration.preferences._textExtractionEnabled = options.textExtractionEnabled();
     }
 
     [LayoutTestSpellChecker uninstallAndReset];

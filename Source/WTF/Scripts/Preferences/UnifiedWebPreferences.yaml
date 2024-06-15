@@ -6593,8 +6593,9 @@ TextExtractionEnabled:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: true
-      
+      "HAVE(UIINTELLIGENCESUPPORT_FRAMEWORK)": true
+      default: false
+
 TextIndicatorStylingEnabled:
   type: bool
   status: internal

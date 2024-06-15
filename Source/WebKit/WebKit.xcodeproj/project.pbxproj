@@ -8128,7 +8128,7 @@
 		F4648E91296E81F500744170 /* WebPrivacyHelpers.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPrivacyHelpers.mm; sourceTree = "<group>"; };
 		F4660BC125DEF08100E86598 /* PasteboardAccessIntent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteboardAccessIntent.h; sourceTree = "<group>"; };
 		F476894628D2B5CD00073641 /* LayerTreeContext.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = LayerTreeContext.serialization.in; sourceTree = "<group>"; };
-		F47AA6C92B7A80BB00CD8AE9 /* WKWebView+TextExtraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "WKWebView+TextExtraction.swift"; path = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WKWebView+TextExtraction.swift"; sourceTree = "<group>"; };
+		F47AA6C92B7A80BB00CD8AE9 /* WKWebView+TextExtraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "WKWebView+TextExtraction.swift"; path = "TextExtraction/WKWebView+TextExtraction.swift"; sourceTree = "<group>"; };
 		F48570A22644BEC400C05F71 /* Timeout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timeout.h; sourceTree = "<group>"; };
 		F488B90F2ACFC67A00792C16 /* RemoteWorkerInitializationData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteWorkerInitializationData.serialization.in; sourceTree = "<group>"; };
 		F488B9142AD09C9C00792C16 /* DocumentEditingContext.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = DocumentEditingContext.serialization.in; sourceTree = "<group>"; };

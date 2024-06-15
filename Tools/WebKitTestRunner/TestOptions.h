@@ -83,6 +83,7 @@ public:
     bool showsScrollIndicators() const { return boolTestRunnerFeatureValue("showsScrollIndicators"); }
     bool longPressActionsEnabled() const { return boolTestRunnerFeatureValue("longPressActionsEnabled"); }
     bool enhancedWindowingEnabled() const { return boolTestRunnerFeatureValue("enhancedWindowingEnabled"); }
+    bool textExtractionEnabled() const { return boolTestRunnerFeatureValue("textExtractionEnabled"); }
     double contentInsetTop() const { return doubleTestRunnerFeatureValue("contentInset.top"); }
     double obscuredInsetTop() const { return doubleTestRunnerFeatureValue("obscuredInset.top"); }
     double horizontalSystemMinimumLayoutMargin() const { return doubleTestRunnerFeatureValue("horizontalSystemMinimumLayoutMargin"); }

@@ -272,6 +272,7 @@
 #include "UserMediaCaptureManagerProxy.h"
 #include "VideoPresentationManagerProxy.h"
 #include "VideoPresentationManagerProxyMessages.h"
+#include "WKTextExtractionUtilities.h"
 #include "WebPrivacyHelpers.h"
 #include <WebCore/AttributedString.h>
 #include <WebCore/CoreAudioCaptureDeviceManager.h>
@@ -387,10 +388,6 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 #include "WebExtensionController.h"
-#endif
-
-#if ENABLE(TEXT_EXTRACTION)
-#import "WKTextExtractionUtilities.h"
 #endif
 
 #if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
@@ -6493,7 +6490,7 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
         resetMediaCapability();
 #endif
 
-#if ENABLE(TEXT_EXTRACTION)
+#if PLATFORM(COCOA)
     if (frame->isMainFrame() && preferences().textExtractionEnabled())
         prepareTextExtractionSupportIfNeeded();
 #endif
