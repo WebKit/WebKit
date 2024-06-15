@@ -227,6 +227,7 @@ public:
 #endif
 
 #if PLATFORM(MAC)
+    static const int synthesizedMouseEventMagicEventNumber = 0;
     bool wasEventSynthesizedForAutomation(NSEvent *);
     void markEventAsSynthesizedForAutomation(NSEvent *);
 #endif
