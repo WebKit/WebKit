@@ -76,13 +76,13 @@ void GeoNotifier::runSuccessCallback(GeolocationPosition* position)
     if (!m_geolocation->isAllowed())
         CRASH();
 
-    m_successCallback->handleEvent(position);
+    protectedSuccessCallback()->handleEvent(position);
 }
 
 void GeoNotifier::runErrorCallback(GeolocationPositionError& error)
 {
-    if (m_errorCallback)
-        m_errorCallback->handleEvent(error);
+    if (RefPtr errorCallback = m_errorCallback)
+        errorCallback->handleEvent(error);
 }
 
 void GeoNotifier::startTimerIfNeeded()
@@ -105,10 +105,11 @@ void GeoNotifier::timerFired()
 
     // Test for fatal error first. This is required for the case where the Frame is
     // disconnected and requests are cancelled.
-    if (m_fatalError) {
-        runErrorCallback(*m_fatalError);
+    Ref geolocation = m_geolocation;
+    if (RefPtr fatalError = m_fatalError) {
+        runErrorCallback(*fatalError);
         // This will cause this notifier to be deleted.
-        m_geolocation->fatalErrorOccurred(this);
+        geolocation->fatalErrorOccurred(this);
         return;
     }
 
@@ -116,7 +117,7 @@ void GeoNotifier::timerFired()
         // Clear the cached position flag in case this is a watch request, which
         // will continue to run.
         m_useCachedPosition = false;
-        m_geolocation->requestUsesCachedPosition(this);
+        geolocation->requestUsesCachedPosition(this);
         return;
     }
     
@@ -124,7 +125,7 @@ void GeoNotifier::timerFired()
         auto error = GeolocationPositionError::create(GeolocationPositionError::TIMEOUT, "Timeout expired"_s);
         m_errorCallback->handleEvent(error);
     }
-    m_geolocation->requestTimedOut(this);
+    geolocation->requestTimedOut(this);
 }
 
 } // namespace WebCore
