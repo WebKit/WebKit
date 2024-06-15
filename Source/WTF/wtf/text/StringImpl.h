@@ -25,6 +25,7 @@
 #include <limits.h>
 #include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/Atomics.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/CompactPtr.h>
 #include <wtf/DebugHeap.h>
@@ -154,7 +155,13 @@ protected:
     template<unsigned characterCount> constexpr StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag);
     template<unsigned characterCount> constexpr StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag);
 
-    unsigned m_refCount;
+#if CPU(RELAXED_EXCHANGE_OPS_ARE_FREE)
+    using RefCountType = Atomic<unsigned>;
+#else
+    using RefCountType = NonAtomic<unsigned>;
+#endif
+
+    RefCountType m_refCount;
     unsigned m_length;
     union {
         const LChar* m_data8;
@@ -164,7 +171,7 @@ protected:
         const char* m_data8Char;
         const char16_t* m_data16Char;
     };
-    mutable unsigned m_hashAndFlags;
+    mutable Atomic<unsigned> m_hashAndFlags;
 };
 
 // FIXME: Use of StringImpl and const is rather confused.
@@ -290,6 +297,7 @@ public:
     static constexpr unsigned flagIs8Bit() { return s_hashFlag8BitBuffer; }
     static constexpr unsigned flagIsAtom() { return s_hashFlagStringKindIsAtom; }
     static constexpr unsigned flagIsSymbol() { return s_hashFlagStringKindIsSymbol; }
+    static constexpr unsigned maskIsUniqued() { return flagIsAtom() | flagIsSymbol(); }
     static constexpr unsigned maskStringKind() { return s_hashMaskStringKind; }
     static constexpr unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
 
@@ -303,7 +311,7 @@ public:
     static constexpr ptrdiff_t lengthMemoryOffset() { return OBJECT_OFFSETOF(StringImpl, m_length); }
     bool isEmpty() const { return !m_length; }
 
-    bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
+    bool is8Bit() const { return m_hashAndFlags.loadRelaxed() & s_hashFlag8BitBuffer; }
     ALWAYS_INLINE std::span<const LChar> span8() const { ASSERT(is8Bit()); return { m_data8, length() }; }
     ALWAYS_INLINE std::span<const UChar> span16() const { ASSERT(!is8Bit() || isEmpty()); return { m_data16, length() }; }
 
@@ -314,8 +322,9 @@ public:
 
     WTF_EXPORT_PRIVATE size_t sizeInBytes() const;
 
-    bool isSymbol() const { return m_hashAndFlags & s_hashFlagStringKindIsSymbol; }
-    bool isAtom() const { return m_hashAndFlags & s_hashFlagStringKindIsAtom; }
+    bool isSymbol() const { return m_hashAndFlags.loadRelaxed() & flagIsSymbol(); }
+    bool isAtom() const { return m_hashAndFlags.loadRelaxed() & flagIsAtom(); }
+    bool isUniqued() const { return m_hashAndFlags.loadRelaxed() & maskIsUniqued(); }
     void setIsAtom(bool);
     
     bool isExternal() const { return bufferOwnership() == BufferExternal; }
@@ -342,7 +351,7 @@ private:
     // So, we shift left and right when setting and getting our hash code.
     void setHash(unsigned) const;
 
-    unsigned rawHash() const { return m_hashAndFlags >> s_flagCount; }
+    unsigned rawHash() const { return m_hashAndFlags.loadRelaxed() >> s_flagCount; }
 
 public:
     bool hasHash() const { return !!rawHash(); }
@@ -355,21 +364,26 @@ public:
     unsigned symbolAwareHash() const;
     unsigned existingSymbolAwareHash() const;
 
-    SUPPRESS_TSAN bool isStatic() const { return m_refCount & s_refCountFlagIsStaticString; }
+    SUPPRESS_TSAN bool isStatic() const { return m_refCount.loadRelaxed() & s_refCountFlagIsStaticString; }
 
-    size_t refCount() const { return m_refCount / s_refCountIncrement; }
-    bool hasOneRef() const { return m_refCount == s_refCountIncrement; }
-    bool hasAtLeastOneRef() const { return m_refCount; } // For assertions.
+    size_t refCount() const { return m_refCount.loadRelaxed() / s_refCountIncrement; }
+    bool hasOneRef() const { return m_refCount.loadRelaxed() == s_refCountIncrement; }
+    bool hasAtLeastOneRef() const { return m_refCount.loadRelaxed(); } // For assertions.
 
     void ref();
     void deref();
+
+    // This function should be avoided unless you know what you're doing.
+    enum class DerefResult { NeedsMainThreadDeref, DerefedButStillAlive, Destroyed };
+    DerefResult tryDerefConcurrently() WARN_UNUSED_RETURN;
 
     class StaticStringImpl : private StringImplShape {
         WTF_MAKE_NONCOPYABLE(StaticStringImpl);
     public:
         // Used to construct static strings, which have an special refCount that can never hit zero.
         // This means that the static string will never be destroyed, which is important because
-        // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
+        // static strings will be shared across threads and potentially ref-counted in a non-threadsafe
+        // manner.
         //
         // In order to make StaticStringImpl thread safe, we also need to ensure that the rest of
         // the fields are never mutated by threads. We have this guarantee because:
@@ -380,13 +394,14 @@ public:
         //    We also know that a StringImpl never changes from 8 bit to 16 bit because there
         //    is no way to set/clear the s_hashFlag8BitBuffer flag other than at construction.
         //
-        // 3. m_hashAndFlags will not be mutated by different threads because:
+        // 3. m_hashAndFlags can be set by multiple threads with the following caveats:
         //
         //    a. StaticStringImpl's constructor sets the s_hashFlagDidReportCost flag to ensure
         //       that StringImpl::cost() returns early.
-        //       This means StaticStringImpl costs are not counted. But since there should only
+        //       This means most StaticStringImpl costs are not counted. But since there should only
         //       be a finite set of StaticStringImpls, their cost can be aggregated into a single
         //       system cost if needed.
+        //       That said, some runtime generated StaticStringImpl's do generate a cost.
         //    b. setIsAtom() is never called on a StaticStringImpl.
         //       setIsAtom() asserts !isStatic().
         //    c. setHash() is never called on a StaticStringImpl.
@@ -512,7 +527,7 @@ public:
     ALWAYS_INLINE static StringStats& stringStats() { return m_stringStats; }
 #endif
 
-    BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
+    BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags.loadRelaxed() & s_hashMaskBufferOwnership); }
 
     template<typename T> static constexpr size_t headerSize() { return tailOffset<T>(); }
     
@@ -1070,14 +1085,13 @@ inline size_t StringImpl::cost() const
     if (bufferOwnership() == BufferSubstring)
         return substringBuffer()->cost();
 
-    // Note: we must not alter the m_hashAndFlags field in instances of StaticStringImpl.
-    // We ensure this by pre-setting the s_hashFlagDidReportCost bit in all instances of
-    // StaticStringImpl. As a result, StaticStringImpl instances will always return a cost of
-    // 0 here and avoid modifying m_hashAndFlags.
-    if (m_hashAndFlags & s_hashFlagDidReportCost)
+    // Note: most StaticStringImpls already have their s_hashFlagDidReportCost flag set
+    // on construction since their data is in the text section and thus doesn't count
+    // against dirty memory.
+    if (m_hashAndFlags.loadRelaxed() & s_hashFlagDidReportCost)
         return 0;
 
-    m_hashAndFlags |= s_hashFlagDidReportCost;
+    m_hashAndFlags.exchangeOr(s_hashFlagDidReportCost, std::memory_order_relaxed);
     size_t result = m_length;
     if (!is8Bit())
         result <<= 1;
@@ -1102,10 +1116,20 @@ inline void StringImpl::setIsAtom(bool isAtom)
 {
     ASSERT(!isStatic());
     ASSERT(!isSymbol());
+    // We use a release memory order here because we don't want a subsequent deref to be hoisted above the
+    // setting/unsetting of the isAtom flag. This prevents the the following race on weak ordering CPUs:
+    // Thread a       (refCount/isAtomFlag)            Thread b              (refCount/isAtomFlag)
+    //                (2/false)                                              (2/false)
+    // setIsAtom(true)(2/true)                                               (2/false)
+    // deref()        (1/true)                                               (1/false)
+    //                (1/true)                         tryDerefConcurrently()(0/false)
+    //
+    // This is important even though refCount isn't always atomic because JSC tries to destroy
+    // StringImpls that only have one ref from the sweeper thread.
     if (isAtom)
-        m_hashAndFlags |= s_hashFlagStringKindIsAtom;
+        m_hashAndFlags.exchangeOr(s_hashFlagStringKindIsAtom, std::memory_order_release);
     else
-        m_hashAndFlags &= ~s_hashFlagStringKindIsAtom;
+        m_hashAndFlags.exchangeAnd(~s_hashFlagStringKindIsAtom, std::memory_order_release);
 }
 
 inline void StringImpl::setHash(unsigned hash) const
@@ -1114,17 +1138,15 @@ inline void StringImpl::setHash(unsigned hash) const
     // in the low bits because it makes them slightly more efficient to access.
     // So, we shift left and right when setting and getting our hash code.
 
-    ASSERT(!hasHash());
     ASSERT(!isStatic());
     // Multiple clients assume that StringHasher is the canonical string hash function.
     ASSERT(hash == (is8Bit() ? StringHasher::computeHashAndMaskTop8Bits(span8()) : StringHasher::computeHashAndMaskTop8Bits(span16())));
     ASSERT(!(hash & (s_flagMask << (8 * sizeof(hash) - s_flagCount)))); // Verify that enough high bits are empty.
 
     hash <<= s_flagCount;
-    ASSERT(!(hash & m_hashAndFlags)); // Verify that enough low bits are empty after shift.
     ASSERT(hash); // Verify that 0 is a valid sentinel hash value.
 
-    m_hashAndFlags |= hash; // Store hash with flags in low bits.
+    m_hashAndFlags.exchangeOr(hash, std::memory_order_relaxed); // Store hash with flags in low bits.
 }
 
 inline void StringImpl::ref()
@@ -1136,7 +1158,7 @@ inline void StringImpl::ref()
         return;
 #endif
 
-    m_refCount += s_refCountIncrement;
+    m_refCount.exchangeAdd(s_refCountIncrement, std::memory_order_relaxed);
 }
 
 inline void StringImpl::deref()
@@ -1148,12 +1170,55 @@ inline void StringImpl::deref()
         return;
 #endif
 
-    unsigned tempRefCount = m_refCount - s_refCountIncrement;
-    if (!tempRefCount) {
+    unsigned newRefCount = (m_refCount.exchangeSub(s_refCountIncrement, std::memory_order_relaxed) - s_refCountIncrement);
+    if (!newRefCount) {
         StringImpl::destroy(this);
         return;
     }
-    m_refCount = tempRefCount;
+}
+
+inline StringImpl::DerefResult StringImpl::tryDerefConcurrently()
+{
+#if CPU(RELAXED_EXCHANGE_OPS_ARE_FREE)
+    StringImpl::DerefResult result;
+    m_refCount.transaction([&] (unsigned& oldValue) {
+        unsigned newRefCount = oldValue -= s_refCountIncrement;
+        Dependency refCountDependency = Dependency::fence(newRefCount);
+        if (!newRefCount) {
+            // We need a dependency on newRefCount otherwise the compiler and/or the CPU could
+            // hoist the flags check out of the CAS loop.
+            auto* hashAndFlagsFenced = refCountDependency.consume(&m_hashAndFlags);
+            if (hashAndFlagsFenced->loadRelaxed() & maskIsUniqued()) {
+                result = DerefResult::NeedsMainThreadDeref;
+                return false;
+            }
+
+            result = DerefResult::Destroyed;
+            return true;
+        }
+
+        result = DerefResult::DerefedButStillAlive;
+        return true;
+    });
+
+    if (result == DerefResult::Destroyed)
+        StringImpl::destroy(this);
+    return result;
+#else
+    bool hasOneRef = this->hasOneRef();
+    Dependency refCountDependency = Dependency::fence(hasOneRef);
+    if (hasOneRef && !isSubString()) {
+        // This dependency prevents the compiler from loading our flags before our refCount on
+        // X86 and inserts a data dependency between them on ARM giving us a consume ordering.
+        auto* hashAndFlagsFenced = refCountDependency.consume(&m_hashAndFlags);
+        if (!(hashAndFlagsFenced->loadRelaxed() & maskIsUniqued())) {
+            StringImpl::destroy(this);
+            return DerefResult::Destroyed;
+        }
+    }
+
+    return DerefResult::NeedsMainThreadDeref;
+#endif
 }
 
 inline UChar StringImpl::at(unsigned i) const
