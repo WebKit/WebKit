@@ -70,7 +70,11 @@ inline std::optional<WebExtensionTabIdentifier> toWebExtensionTabIdentifier(doub
     }
 
     WebExtensionTabIdentifier result { static_cast<uint64_t>(identifier) };
-    ASSERT(result.isValid());
+    if (!result.isValid()) {
+        ASSERT_NOT_REACHED();
+        return WebExtensionTabConstants::NoneIdentifier;
+    }
+
     return result;
 }
 

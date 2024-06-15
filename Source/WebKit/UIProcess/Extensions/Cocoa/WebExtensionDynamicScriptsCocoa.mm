@@ -125,6 +125,12 @@ void executeScript(std::optional<SourcePairs> scriptPairs, WKWebView *webView, A
     });
 
     [webView _frames:makeBlockPtr([webView = RetainPtr { webView }, tab = Ref { tab }, context = Ref { context }, scriptPairs, executionWorld = Ref { executionWorld }, injectionResults, aggregator, parameters](_WKFrameTreeNode *mainFrame) mutable {
+        if (!mainFrame.info.isMainFrame) {
+            RELEASE_LOG_INFO(Extensions, "Not executing script because the mainFrame is nil");
+            injectionResults->results.append(toInjectionResultParameters(nil, nil, @"Failed to execute script."));
+            return;
+        }
+
         WKContentWorld *world = executionWorld->wrapper();
         Vector<RetainPtr<_WKFrameTreeNode>> frames = getFrames(mainFrame, parameters.frameIDs);
 
