@@ -258,8 +258,8 @@ AllowFileAccessFromFileURLs:
 AllowMediaContentTypesRequiringHardwareSupportAsFallback:
   type: bool
   status: embedder
-  humanReadableName: "Allow Media Content Types Requirining Hardware As Fallback"
-  humanReadableDescription: "Allow Media Content Types Requirining Hardware As Fallback"
+  humanReadableName: "Allow Media Content Types Requiring Hardware As Fallback"
+  humanReadableDescription: "Allow Media Content Types Requiring Hardware As Fallback"
   defaultValue:
     WebKitLegacy:
       default: true
