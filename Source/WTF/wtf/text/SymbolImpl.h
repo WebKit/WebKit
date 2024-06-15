@@ -92,7 +92,7 @@ inline SymbolImpl::SymbolImpl(std::span<const LChar> characters, Ref<StringImpl>
     , m_hashForSymbolShiftedWithFlagCount(nextHashForSymbol())
     , m_flags(flags)
 {
-    ASSERT(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
+    static_assert(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
 }
 
 inline SymbolImpl::SymbolImpl(std::span<const UChar> characters, Ref<StringImpl>&& base, Flags flags)
@@ -101,7 +101,7 @@ inline SymbolImpl::SymbolImpl(std::span<const UChar> characters, Ref<StringImpl>
     , m_hashForSymbolShiftedWithFlagCount(nextHashForSymbol())
     , m_flags(flags)
 {
-    ASSERT(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
+    static_assert(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
 }
 
 inline SymbolImpl::SymbolImpl(Flags flags)
@@ -110,7 +110,7 @@ inline SymbolImpl::SymbolImpl(Flags flags)
     , m_hashForSymbolShiftedWithFlagCount(nextHashForSymbol())
     , m_flags(flags | s_flagIsNullSymbol)
 {
-    ASSERT(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
+    static_assert(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
 }
 
 template<unsigned characterCount>

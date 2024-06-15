@@ -133,7 +133,7 @@ void JITCompiler::linkOSRExits()
         store32(GPRInfo::numberTagRegister, &vm().osrExitIndex);
         loadPtr(Address(GPRInfo::jitDataRegister, JITData::offsetOfExits()), GPRInfo::jitDataRegister);
         static_assert(sizeof(JITData::ExitVector::value_type) == 16);
-        ASSERT(!JITData::ExitVector::value_type::offsetOfCodePtr());
+        static_assert(!JITData::ExitVector::value_type::offsetOfCodePtr());
         lshiftPtr(TrustedImm32(4), GPRInfo::numberTagRegister);
         addPtr(GPRInfo::numberTagRegister, GPRInfo::jitDataRegister);
         emitMaterializeTagCheckRegisters();

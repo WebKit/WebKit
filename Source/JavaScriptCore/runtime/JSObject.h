@@ -1030,9 +1030,12 @@ public:
         if (isCopyOnWrite(indexingMode()))
             convertFromCopyOnWrite(vm);
     }
-        
-    static size_t offsetOfInlineStorage();
-        
+
+    static constexpr size_t offsetOfInlineStorage()
+    {
+        return sizeof(JSObject);
+    }
+
     static constexpr ptrdiff_t butterflyOffset()
     {
         return OBJECT_OFFSETOF(JSObject, m_butterfly);
@@ -1360,11 +1363,6 @@ inline JSFinalObject* JSFinalObject::createWithButterfly(VM& vm, Structure* stru
 inline JSFinalObject* JSFinalObject::create(VM& vm, Structure* structure)
 {
     return createWithButterfly(vm, structure, nullptr);
-}
-
-inline size_t JSObject::offsetOfInlineStorage()
-{
-    return sizeof(JSObject);
 }
 
 inline bool JSObject::isGlobalObject() const
@@ -1712,7 +1710,7 @@ inline int indexRelativeToBase(PropertyOffset offset)
 {
     if (isOutOfLineOffset(offset))
         return offsetInOutOfLineStorage(offset) + Butterfly::indexOfPropertyStorage();
-    ASSERT(!(JSObject::offsetOfInlineStorage() % sizeof(EncodedJSValue)));
+    static_assert(!(JSObject::offsetOfInlineStorage() % sizeof(EncodedJSValue)));
     return JSObject::offsetOfInlineStorage() / sizeof(EncodedJSValue) + offsetInInlineStorage(offset);
 }
 

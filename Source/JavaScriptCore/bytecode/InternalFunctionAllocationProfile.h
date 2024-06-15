@@ -33,7 +33,7 @@ namespace JSC {
 
 class InternalFunctionAllocationProfile {
 public:
-    static inline ptrdiff_t offsetOfStructureID() { return OBJECT_OFFSETOF(InternalFunctionAllocationProfile, m_structureID); }
+    static constexpr ptrdiff_t offsetOfStructureID() { return OBJECT_OFFSETOF(InternalFunctionAllocationProfile, m_structureID); }
 
     Structure* structure() { return m_structureID.get(); }
     Structure* createAllocationStructureFromBase(VM&, JSGlobalObject*, JSCell* owner, JSObject* prototype, Structure* base, InlineWatchpointSet&);

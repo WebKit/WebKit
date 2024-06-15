@@ -122,7 +122,7 @@ public:
     JS_EXPORT_PRIVATE static CallData getConstructData(JSCell*);
     JS_EXPORT_PRIVATE static CallData getCallData(JSCell*);
 
-    static inline ptrdiff_t offsetOfExecutableOrRareData()
+    static constexpr ptrdiff_t offsetOfExecutableOrRareData()
     {
         return OBJECT_OFFSETOF(JSFunction, m_executableOrRareData);
     }

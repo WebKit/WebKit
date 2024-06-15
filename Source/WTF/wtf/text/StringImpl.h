@@ -286,12 +286,12 @@ public:
     static Expected<Ref<StringImpl>, UTF8ConversionError> tryReallocate(Ref<StringImpl>&& originalString, unsigned length, LChar*& data);
     static Expected<Ref<StringImpl>, UTF8ConversionError> tryReallocate(Ref<StringImpl>&& originalString, unsigned length, UChar*& data);
 
-    static unsigned flagsOffset() { return OBJECT_OFFSETOF(StringImpl, m_hashAndFlags); }
+    static constexpr unsigned flagsOffset() { return OBJECT_OFFSETOF(StringImpl, m_hashAndFlags); }
     static constexpr unsigned flagIs8Bit() { return s_hashFlag8BitBuffer; }
     static constexpr unsigned flagIsAtom() { return s_hashFlagStringKindIsAtom; }
     static constexpr unsigned flagIsSymbol() { return s_hashFlagStringKindIsSymbol; }
     static constexpr unsigned maskStringKind() { return s_hashMaskStringKind; }
-    static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
+    static constexpr unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
 
     template<typename CharacterType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
     static Ref<StringImpl> adopt(Vector<CharacterType, inlineCapacity, OverflowHandler, minCapacity, Malloc>&&);
@@ -514,7 +514,7 @@ public:
 
     BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
 
-    template<typename T> static size_t headerSize() { return tailOffset<T>(); }
+    template<typename T> static constexpr size_t headerSize() { return tailOffset<T>(); }
     
 protected:
     ~StringImpl();
@@ -530,7 +530,7 @@ protected:
 private:
     template<typename> static size_t allocationSize(Checked<size_t> tailElementCount);
     template<typename> static size_t maxInternalLength();
-    template<typename> static size_t tailOffset();
+    template<typename> static constexpr size_t tailOffset();
 
     WTF_EXPORT_PRIVATE size_t find(std::span<const LChar>, size_t start);
     WTF_EXPORT_PRIVATE size_t reverseFind(std::span<const LChar>, size_t start);
@@ -1198,7 +1198,7 @@ inline size_t StringImpl::maxInternalLength()
     return std::min(static_cast<size_t>(MaxLength), (std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(CharacterType));
 }
 
-template<typename T> inline size_t StringImpl::tailOffset()
+template<typename T> constexpr size_t StringImpl::tailOffset()
 {
     return roundUpToMultipleOf<alignof(T)>(offsetof(StringImpl, m_hashAndFlags) + sizeof(StringImpl::m_hashAndFlags));
 }

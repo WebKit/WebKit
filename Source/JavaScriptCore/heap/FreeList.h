@@ -70,7 +70,7 @@ struct FreeCell {
         interval = bitwise_cast<FreeCell*>(intervalStart + offsetToNext);
     }
 
-    static ALWAYS_INLINE ptrdiff_t offsetOfScrambledBits() { return OBJECT_OFFSETOF(FreeCell, scrambledBits); }
+    static constexpr ptrdiff_t offsetOfScrambledBits() { return OBJECT_OFFSETOF(FreeCell, scrambledBits); }
 
     uint64_t preservedBitsForCrashAnalysis;
     uint64_t scrambledBits;
