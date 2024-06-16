@@ -314,24 +314,24 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 }
 
 #if ENABLE(WRITING_TOOLS_UI)
-void WebPage::createTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
+void WebPage::createTextIndicatorForTextAnimationID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
 {
-    m_textIndicatorStyleController->createTextIndicatorForID(uuid, WTFMove(completionHandler));
+    m_textAnimationController->createTextIndicatorForTextAnimationID(uuid, WTFMove(completionHandler));
 }
 
-void WebPage::updateTextIndicatorStyleVisibilityForID(const WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
+void WebPage::updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
 {
-    m_textIndicatorStyleController->updateTextIndicatorStyleVisibilityForID(uuid, visible, WTFMove(completionHandler));
+    m_textAnimationController->updateUnderlyingTextVisibilityForTextAnimationID(uuid, visible, WTFMove(completionHandler));
 }
 
-void WebPage::enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
+void WebPage::enableSourceTextAnimationAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
 {
-    m_textIndicatorStyleController->enableTextIndicatorStyleAfterElementWithID(elementID, uuid);
+    m_textAnimationController->enableSourceTextAnimationAfterElementWithID(elementID, uuid);
 }
 
-void WebPage::enableTextIndicatorStyleForElementWithID(const String& elementID, const WTF::UUID& uuid)
+void WebPage::enableTextAnimationTypeForElementWithID(const String& elementID, const WTF::UUID& uuid)
 {
-    m_textIndicatorStyleController->enableTextIndicatorStyleForElementWithID(elementID, uuid);
+    m_textAnimationController->enableTextAnimationTypeForElementWithID(elementID, uuid);
 }
 
 #endif // ENABLE(WRITING_TOOLS)

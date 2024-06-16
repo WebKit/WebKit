@@ -52,48 +52,48 @@ namespace WebKit {
 
 class WebPage;
 
-struct TextIndicatorStyleState {
+struct TextAnimationState {
     WTF::UUID styleID;
     WebCore::CharacterRange range;
 };
 
-struct TextIndicatorStyleUnstyledRangeData {
+struct TextAnimationUnstyledRangeData {
     WTF::UUID styleID;
     WebCore::SimpleRange range;
 };
 
-class TextIndicatorStyleController final {
+class TextAnimationController final {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(TextIndicatorStyleController);
+    WTF_MAKE_NONCOPYABLE(TextAnimationController);
 
 public:
-    explicit TextIndicatorStyleController(WebPage&);
+    explicit TextAnimationController(WebPage&);
 
-    void cleanUpTextStylesForSessionID(const WTF::UUID& sessionUUID);
-    void removeTransparentMarkersForUUID(const WTF::UUID&);
+    void cleanUpTextAnimationsForSessionID(const WTF::UUID& sessionUUID);
+    void removeTransparentMarkersForTextAnimationID(const WTF::UUID&);
 
-    void addSourceTextIndicatorStyle(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&);
-    void addDestinationTextIndicatorStyle(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&);
+    void addSourceTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&);
+    void addDestinationTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&);
 
-    void updateTextIndicatorStyleVisibilityForID(const WTF::UUID&, bool visible, CompletionHandler<void()>&&);
+    void updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool visible, CompletionHandler<void()>&&);
 
     void createTextIndicatorForRange(const WebCore::SimpleRange&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
-    void createTextIndicatorForID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
+    void createTextIndicatorForTextAnimationID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
 
-    void enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID&);
-    void enableTextIndicatorStyleForElementWithID(const String& elementID, const WTF::UUID&);
+    void enableSourceTextAnimationAfterElementWithID(const String& elementID, const WTF::UUID&);
+    void enableTextAnimationTypeForElementWithID(const String& elementID, const WTF::UUID&);
 
 private:
-    std::optional<WebCore::SimpleRange> contextRangeForTextIndicatorStyle(const WTF::UUID&) const;
+    std::optional<WebCore::SimpleRange> contextRangeForTextAnimationType(const WTF::UUID&) const;
     std::optional<WebCore::SimpleRange> contextRangeForSessionWithID(const WebCore::UnifiedTextReplacement::SessionID&) const;
 
     RefPtr<WebCore::Document> document() const;
     WeakPtr<WebPage> m_webPage;
 
-    HashMap<WTF::UUID, Vector<TextIndicatorStyleState>> m_activeTextIndicatorStyles;
-    HashMap<WTF::UUID, WebCore::CharacterRange> m_currentlyStyledRange;
-    HashMap<WTF::UUID, std::optional<TextIndicatorStyleUnstyledRangeData>> m_unstyledRanges;
-    HashMap<WTF::UUID, Ref<WebCore::Range>> m_textIndicatorStyleEnablementRanges;
+    HashMap<WTF::UUID, Vector<TextAnimationState>> m_activeTextAnimations;
+    HashMap<WTF::UUID, WebCore::CharacterRange> m_alreadyReplacedRanges;
+    HashMap<WTF::UUID, std::optional<TextAnimationUnstyledRangeData>> m_unstyledRanges;
+    HashMap<WTF::UUID, Ref<WebCore::Range>> m_manuallyEnabledAnimationRanges;
 };
 
 } // namespace WebKit

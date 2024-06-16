@@ -335,8 +335,8 @@
 #include "RemoteLayerTreeDrawingArea.h"
 #include "RemoteLayerTreeTransaction.h"
 #include "RemoteObjectRegistryMessages.h"
+#include "TextAnimationController.h"
 #include "TextCheckingControllerProxy.h"
-#include "TextIndicatorStyleController.h"
 #include "VideoPresentationManager.h"
 #include "WKStringCF.h"
 #include "WebRemoteObjectRegistry.h"
@@ -628,7 +628,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
     , m_historyItemClient(WebHistoryItemClient::create())
 #if ENABLE(WRITING_TOOLS_UI)
-    , m_textIndicatorStyleController(makeUniqueRef<TextIndicatorStyleController>(*this))
+    , m_textAnimationController(makeUniqueRef<TextAnimationController>(*this))
 #endif
 {
     ASSERT(m_identifier);
@@ -9152,29 +9152,29 @@ void WebPage::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&& comp
 
 #if ENABLE(WRITING_TOOLS_UI)
 
-void WebPage::addTextIndicatorStyleForID(const WTF::UUID& uuid, const WebKit::TextIndicatorStyleData& styleData, const WebCore::TextIndicatorData& indicatorData)
+void WebPage::addTextAnimationTypeForID(const WTF::UUID& uuid, const WebKit::TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData)
 {
-    send(Messages::WebPageProxy::AddTextIndicatorStyleForID(uuid, styleData, indicatorData));
+    send(Messages::WebPageProxy::AddTextAnimationTypeForID(uuid, styleData, indicatorData));
 }
 
-void WebPage::removeTextIndicatorStyleForID(const WTF::UUID& uuid)
+void WebPage::removeTextAnimationForID(const WTF::UUID& uuid)
 {
-    send(Messages::WebPageProxy::RemoveTextIndicatorStyleForID(uuid));
+    send(Messages::WebPageProxy::removeTextAnimationForID(uuid));
 }
 
-void WebPage::cleanUpTextStylesForSessionID(const WTF::UUID& uuid)
+void WebPage::cleanUpTextAnimationsForSessionID(const WTF::UUID& uuid)
 {
-    m_textIndicatorStyleController->cleanUpTextStylesForSessionID(uuid);
+    m_textAnimationController->cleanUpTextAnimationsForSessionID(uuid);
 }
 
-void WebPage::addSourceTextIndicatorStyle(const WTF::UUID& uuid, const CharacterRange& range)
+void WebPage::addSourceTextAnimation(const WTF::UUID& uuid, const CharacterRange& range)
 {
-    m_textIndicatorStyleController->addSourceTextIndicatorStyle(uuid, range);
+    m_textAnimationController->addSourceTextAnimation(uuid, range);
 }
 
-void WebPage::addDestinationTextIndicatorStyle(const WTF::UUID& uuid, const CharacterRange& range)
+void WebPage::addDestinationTextAnimation(const WTF::UUID& uuid, const CharacterRange& range)
 {
-    m_textIndicatorStyleController->addDestinationTextIndicatorStyle(uuid, range);
+    m_textAnimationController->addDestinationTextAnimation(uuid, range);
 }
 
 #endif

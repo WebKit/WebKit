@@ -668,13 +668,13 @@ public:
 
     virtual void textReplacementSessionUpdateStateForReplacementWithID(const UnifiedTextReplacement::SessionID&, UnifiedTextReplacement::ReplacementState, const UnifiedTextReplacement::ReplacementID&) { }
 
-    virtual void removeTextIndicatorStyleForID(const UnifiedTextReplacement::SessionID&) { }
+    virtual void removeTextAnimationForID(const UnifiedTextReplacement::SessionID&) { }
 
-    virtual void cleanUpTextStylesForSessionID(const UnifiedTextReplacement::SessionID&) { }
+    virtual void cleanUpTextAnimationsForSessionID(const UnifiedTextReplacement::SessionID&) { }
 
-    virtual void addSourceTextIndicatorStyle(const UnifiedTextReplacement::SessionID&, const CharacterRange&) { }
+    virtual void addSourceTextAnimation(const UnifiedTextReplacement::SessionID&, const CharacterRange&) { }
 
-    virtual void addDestinationTextIndicatorStyle(const UnifiedTextReplacement::SessionID&, const CharacterRange&) { }
+    virtual void addDestinationTextAnimation(const UnifiedTextReplacement::SessionID&, const CharacterRange&) { }
 #endif
 
     WEBCORE_EXPORT virtual ~ChromeClient();

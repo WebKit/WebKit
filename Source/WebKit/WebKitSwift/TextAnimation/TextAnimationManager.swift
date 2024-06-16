@@ -10,15 +10,15 @@ import WebKitSwift
 @_implementationOnly import UIKit_Private
 @_spi(TextEffects) import UIKit
 
-@objc public enum WKTextIndicatorStyleType: Int {
+@objc public enum WKTextAnimationType: Int {
     case initial
     case source
     case final
 }
 
-@objc(WKSTextStyleManager)
-@MainActor public final class TextStyleManager: NSObject {
-    private static let logger = Logger(subsystem: "com.apple.WebKit", category: "TextIndicatorStyle")
+@objc(WKSTextAnimationManager)
+@MainActor public final class TextAnimationManager: NSObject {
+    private static let logger = Logger(subsystem: "com.apple.WebKit", category: "TextAnimationType")
     
     final class TextEffectChunk: UITextEffectTextChunk {
         public let uuid: UUID
@@ -32,16 +32,16 @@ import WebKitSwift
     private lazy var effectView = UITextEffectView(source: self)
     private var chunkToEffect = [UUID: UITextEffectView.EffectID]()
     
-    @objc public weak var delegate: WKSTextStyleSourceDelegate?
-    
-    @objc(initWithDelegate:) public init(with delegate: any WKSTextStyleSourceDelegate) {
+    @objc public weak var delegate: WKSTextAnimationSourceDelegate?
+
+    @objc(initWithDelegate:) public init(with delegate: any WKSTextAnimationSourceDelegate) {
         super.init()
         
         self.delegate = delegate
-        delegate.containingViewForTextIndicatorStyle().addSubview(self.effectView)
+        delegate.containingViewForTextAnimationType().addSubview(self.effectView)
     }
     
-    @objc(addTextIndicatorStyleForID:withStyleType:) public func beginEffect(for uuid: UUID, style: WKTextIndicatorStyleType) {
+    @objc(addTextAnimationTypeForID:withStyleType:) public func beginEffect(for uuid: UUID, style: WKTextAnimationType) {
         if style == .initial {
             let newEffect = self.effectView.addEffect(UITextEffectView.PonderingEffect(chunk: TextEffectChunk(uuid: uuid), view: self.effectView) as UITextEffectView.TextEffect)
             self.chunkToEffect[uuid] = newEffect
@@ -51,7 +51,7 @@ import WebKitSwift
         }
     }
     
-    @objc(removeTextIndicatorStyleForID:) public func endEffect(for uuid: UUID) {
+    @objc(removeTextAnimationForID:) public func endEffect(for uuid: UUID) {
         if let effectID = chunkToEffect.removeValue(forKey: uuid) {
             self.effectView.removeEffect(effectID)
         }
@@ -59,7 +59,7 @@ import WebKitSwift
 }
     
 @_spi(TextEffects)
-extension TextStyleManager: UITextEffectViewSource {
+extension TextAnimationManager: UITextEffectViewSource {
     public func targetedPreview(for chunk: UITextEffectTextChunk) async -> UITargetedPreview {
         
         guard let delegate = self.delegate else {
@@ -67,7 +67,7 @@ extension TextStyleManager: UITextEffectViewSource {
             return UITargetedPreview(view: UIView(frame: .zero))
         }
         
-        let defaultPreview = UITargetedPreview(view: UIView(frame: .zero), parameters:UIPreviewParameters(), target:UIPreviewTarget(container:delegate.containingViewForTextIndicatorStyle(), center:delegate.containingViewForTextIndicatorStyle().center))
+        let defaultPreview = UITargetedPreview(view: UIView(frame: .zero), parameters:UIPreviewParameters(), target:UIPreviewTarget(container:delegate.containingViewForTextAnimationType(), center:delegate.containingViewForTextAnimationType().center))
         guard let uuidChunk = chunk as? TextEffectChunk else {
             Self.logger.debug("Can't get text preview. Incorrect UITextEffectTextChunk subclass")
             return defaultPreview
@@ -90,12 +90,12 @@ extension TextStyleManager: UITextEffectViewSource {
             Self.logger.debug("Can't update Chunk Visibility. Missing delegate." )
             return
         }
-        await delegate.updateTextIndicatorStyleVisibility(for: uuidChunk.uuid, visible: visible)
+        await delegate.updateUnderlyingTextVisibility(forTextAnimationID:uuidChunk.uuid, visible: visible)
     }
 }
 
 @_spi(TextEffects)
-extension TextStyleManager: UITextEffectView.ReplacementTextEffect.Delegate {
+extension TextAnimationManager: UITextEffectView.ReplacementTextEffect.Delegate {
     public func performReplacementAndGeneratePreview(for chunk: UITextEffectTextChunk, effect: UITextEffectView.ReplacementTextEffect, animation: UITextEffectView.ReplacementTextEffect.AnimationParameters) async -> UITargetedPreview? {
         guard let uuidChunk = chunk as? TextEffectChunk else {
             Self.logger.debug("Can't get text preview. Incorrect UITextEffectTextChunk subclass")

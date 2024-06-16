@@ -6528,6 +6528,20 @@ TemporaryTileCohortRetentionEnabled:
     WebCore:
       default: true
 
+TextAnimationsEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Text Animations"
+  humanReadableDescription: "Text Animations"
+  condition: ENABLE(WRITING_TOOLS_UI)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 TextAreasAreResizable:
   type: bool
   status: embedder
@@ -6595,20 +6609,6 @@ TextExtractionEnabled:
     WebKit:
       "HAVE(UIINTELLIGENCESUPPORT_FRAMEWORK)": true
       default: false
-
-TextIndicatorStylingEnabled:
-  type: bool
-  status: internal
-  humanReadableName: "Text Indicator Styling"
-  humanReadableDescription: "Text Indicator Styling"
-  condition: ENABLE(WRITING_TOOLS)
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 TextInteractionEnabled:
   type: bool

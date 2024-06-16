@@ -23,29 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import <Foundation/Foundation.h>
 
-#if ENABLE(WRITING_TOOLS_UI)
+#if defined(TARGET_OS_IOS) && TARGET_OS_IOS
 
-#import "TextIndicatorStyle.h"
+#import <UIKit/UIKit.h>
 
-namespace WebKit {
-class WebViewImpl;
-}
+NS_ASSUME_NONNULL_BEGIN
 
-@interface WKTextIndicatorStyleManager : NSObject
-
-- (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)view;
-- (void)addTextIndicatorStyleForID:(NSUUID *)uuid withData:(const WebKit::TextIndicatorStyleData&)data;
-- (void)removeTextIndicatorStyleForID:(NSUUID *)uuid;
-
-- (BOOL)hasActiveTextIndicatorStyle;
-
-- (void)suppressTextIndicatorStyle;
-- (void)restoreTextIndicatorStyle;
+@protocol WKSTextAnimationSourceDelegate <NSObject>
+- (void)targetedPreviewForID:(NSUUID *)uuid completionHandler:(void (^)(UITargetedPreview * _Nullable))completionHandler;
+- (void)updateUnderlyingTextVisibilityForTextAnimationID:(NSUUID *)uuid visible:(BOOL)visible completionHandler:(void (^)(void))completionHandler;
+- (UIView *)containingViewForTextAnimationType;
 
 @end
 
-#endif // ENABLE(WRITING_TOOLS_UI)
+NS_ASSUME_NONNULL_END
+
+#endif // defined(TARGET_OS_IOS) && TARGET_OS_IOS

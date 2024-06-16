@@ -498,7 +498,7 @@ struct RemotePageParameters;
 struct SessionState;
 struct TapIdentifierType;
 struct TextCheckerRequestType;
-struct TextIndicatorStyleData;
+struct TextAnimationData;
 struct TransactionIDType;
 struct URLSchemeTaskParameters;
 struct UserMessage;
@@ -545,7 +545,7 @@ enum class ShouldExpectSafeBrowsingResult : bool;
 enum class ShouldWaitForInitialLinkDecorationFilteringData : bool;
 enum class SyntheticEditingCommandType : uint8_t;
 enum class TextRecognitionUpdateResult : uint8_t;
-enum class TextIndicatorStyle : uint8_t;
+enum class TextAnimationType : uint8_t;
 enum class UndoOrRedo : bool;
 enum class WasNavigationIntercepted : bool;
 enum class WebContentMode : uint8_t;
@@ -2437,13 +2437,13 @@ public:
 #endif // ENABLE(WRITING_TOOLS)
 
 #if ENABLE(WRITING_TOOLS_UI)
-    void addTextIndicatorStyleForID(const WTF::UUID&, const WebKit::TextIndicatorStyleData&, const WebCore::TextIndicatorData&);
-    void removeTextIndicatorStyleForID(const WTF::UUID&);
-    void enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID&);
-    void enableTextIndicatorStyleForElementWithID(const String& elementID, const WTF::UUID&);
+    void addTextAnimationTypeForID(const WTF::UUID&, const WebKit::TextAnimationData&, const WebCore::TextIndicatorData&);
+    void removeTextAnimationForID(const WTF::UUID&);
+    void enableSourceTextAnimationAfterElementWithID(const String& elementID, const WTF::UUID&);
+    void enableTextAnimationTypeForElementWithID(const String& elementID, const WTF::UUID&);
 
     void getTextIndicatorForID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
-    void updateTextIndicatorStyleVisibilityForID(const WTF::UUID&, bool, CompletionHandler<void()>&& = [] { });
+    void updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool, CompletionHandler<void()>&& = [] { });
 #endif
 
     void resetVisibilityAdjustmentsForTargetedElements(const Vector<Ref<API::TargetedElementInfo>>&, CompletionHandler<void(bool)>&&);

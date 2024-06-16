@@ -82,9 +82,9 @@
 #import "WKSecurityOriginInternal.h"
 #import "WKSharedAPICast.h"
 #import "WKSnapshotConfigurationPrivate.h"
+#import "WKTextAnimationType.h"
 #import "WKTextExtractionItem.h"
 #import "WKTextExtractionUtilities.h"
-#import "WKTextIndicatorStyleType.h"
 #import "WKUIDelegate.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKUserContentControllerInternal.h"
@@ -1787,39 +1787,39 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 }
 #endif
 
-static inline WKTextIndicatorStyleType toWKTextIndicatorStyleType(WebKit::TextIndicatorStyle style)
+static inline WKTextAnimationType toWKTextAnimationType(WebKit::TextAnimationType style)
 {
     switch (style) {
-    case WebKit::TextIndicatorStyle::Initial:
-        return WKTextIndicatorStyleTypeInitial;
-    case WebKit::TextIndicatorStyle::Source:
-        return WKTextIndicatorStyleTypeSource;
-    case WebKit::TextIndicatorStyle::Final:
-        return WKTextIndicatorStyleTypeFinal;
+    case WebKit::TextAnimationType::Initial:
+        return WKTextAnimationTypeInitial;
+    case WebKit::TextAnimationType::Source:
+        return WKTextAnimationTypeSource;
+    case WebKit::TextAnimationType::Final:
+        return WKTextAnimationTypeFinal;
     }
 }
 
 #if ENABLE(WRITING_TOOLS_UI)
-- (void)_addTextIndicatorStyleForID:(NSUUID *)nsUUID withData:(const WebKit::TextIndicatorStyleData&)data
+- (void)_addTextAnimationTypeForID:(NSUUID *)nsUUID withData:(const WebKit::TextAnimationData&)data
 {
 #if PLATFORM(IOS_FAMILY)
-    [_contentView addTextIndicatorStyleForID:nsUUID withStyleType:toWKTextIndicatorStyleType(data.style)];
+    [_contentView addTextAnimationTypeForID:nsUUID withStyleType:toWKTextAnimationType(data.style)];
 #elif PLATFORM(MAC)
     auto uuid = WTF::UUID::fromNSUUID(nsUUID);
     if (!uuid)
         return;
-    _impl->addTextIndicatorStyleForID(*uuid, data);
+    _impl->addTextAnimationTypeForID(*uuid, data);
 #endif
 }
-- (void)_removeTextIndicatorStyleForID:(NSUUID *)nsUUID
+- (void)_removeTextAnimationForID:(NSUUID *)nsUUID
 {
 #if PLATFORM(IOS_FAMILY)
-    [_contentView removeTextIndicatorStyleForID:nsUUID];
+    [_contentView removeTextAnimationForID:nsUUID];
 #elif PLATFORM(MAC)
     auto uuid = WTF::UUID::fromNSUUID(nsUUID);
     if (!uuid)
         return;
-    _impl->removeTextIndicatorStyleForID(*uuid);
+    _impl->removeTextAnimationForID(*uuid);
 #endif
 }
 #endif
@@ -2816,28 +2816,19 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 
 - (NSUUID *)_enableTextIndicatorStylingAfterElementWithID:(NSString *)elementID
 {
-    RetainPtr nsUUID = [NSUUID UUID];
-
-    auto uuid = WTF::UUID::fromNSUUID(nsUUID.get());
-    if (!uuid)
-        return nil;
-
-#if ENABLE(WRITING_TOOLS_UI)
-    _page->enableTextIndicatorStyleAfterElementWithID(elementID, *uuid);
-
-#if PLATFORM(IOS_FAMILY)
-    [_contentView addTextIndicatorStyleForID:nsUUID.get() withStyleType:WKTextIndicatorStyleTypeInitial];
-#elif PLATFORM(MAC)
-    _impl->addTextIndicatorStyleForID(*uuid, { WebKit::TextIndicatorStyle::Initial, WTF::UUID(WTF::UUID::emptyValue) });
-#endif
-    return nsUUID.get();
-#else // ENABLE(WRITING_TOOLS_UI)
-    return nil;
-#endif
+    return [self _enableSourceTextAnimationAfterElementWithID:elementID];
 }
-
 - (NSUUID *)_enableTextIndicatorStylingForElementWithID:(NSString *)elementID
 {
+    return [self _enableFinalTextAnimationForElementWithID:elementID];
+}
+- (void)_disableTextIndicatorStylingWithUUID:(NSUUID *)nsUUID
+{
+    return [self _disableTextAnimationWithUUID:nsUUID];
+}
+
+- (NSUUID *)_enableSourceTextAnimationAfterElementWithID:(NSString *)elementID
+{
     RetainPtr nsUUID = [NSUUID UUID];
 
     auto uuid = WTF::UUID::fromNSUUID(nsUUID.get());
@@ -2845,12 +2836,12 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
         return nil;
 
 #if ENABLE(WRITING_TOOLS_UI)
-    _page->enableTextIndicatorStyleForElementWithID(elementID, *uuid);
+    _page->enableSourceTextAnimationAfterElementWithID(elementID, *uuid);
 
 #if PLATFORM(IOS_FAMILY)
-    [_contentView addTextIndicatorStyleForID:nsUUID.get() withStyleType:WKTextIndicatorStyleTypeFinal];
+    [_contentView addTextAnimationTypeForID:nsUUID.get() withStyleType:WKTextAnimationTypeInitial];
 #elif PLATFORM(MAC)
-    _impl->addTextIndicatorStyleForID(*uuid, { WebKit::TextIndicatorStyle::Final, WTF::UUID(WTF::UUID::emptyValue) });
+    _impl->addTextAnimationTypeForID(*uuid, { WebKit::TextAnimationType::Initial, WTF::UUID(WTF::UUID::emptyValue) });
 #endif
     return nsUUID.get();
 #else // ENABLE(WRITING_TOOLS_UI)
@@ -2858,16 +2849,38 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 #endif
 }
 
-- (void)_disableTextIndicatorStylingWithUUID:(NSUUID *)nsUUID
+- (NSUUID *)_enableFinalTextAnimationForElementWithID:(NSString *)elementID
+{
+    RetainPtr nsUUID = [NSUUID UUID];
+
+    auto uuid = WTF::UUID::fromNSUUID(nsUUID.get());
+    if (!uuid)
+        return nil;
+
+#if ENABLE(WRITING_TOOLS_UI)
+    _page->enableTextAnimationTypeForElementWithID(elementID, *uuid);
+
+#if PLATFORM(IOS_FAMILY)
+    [_contentView addTextAnimationTypeForID:nsUUID.get() withStyleType:WKTextAnimationTypeFinal];
+#elif PLATFORM(MAC)
+    _impl->addTextAnimationTypeForID(*uuid, { WebKit::TextAnimationType::Final, WTF::UUID(WTF::UUID::emptyValue) });
+#endif
+    return nsUUID.get();
+#else // ENABLE(WRITING_TOOLS_UI)
+    return nil;
+#endif
+}
+
+- (void)_disableTextAnimationWithUUID:(NSUUID *)nsUUID
 {
 #if ENABLE(WRITING_TOOLS_UI)
 #if PLATFORM(IOS_FAMILY)
-    [_contentView removeTextIndicatorStyleForID:nsUUID];
+    [_contentView removeTextAnimationForID:nsUUID];
 #elif PLATFORM(MAC)
     auto uuid = WTF::UUID::fromNSUUID(nsUUID);
     if (!uuid)
         return;
-    _impl->removeTextIndicatorStyleForID(*uuid);
+    _impl->removeTextAnimationForID(*uuid);
 #endif
 #endif // ENABLE(WRITING_TOOLS_UI)
 }

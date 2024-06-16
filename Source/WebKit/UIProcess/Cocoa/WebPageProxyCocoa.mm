@@ -1198,29 +1198,29 @@ void WebPageProxy::textReplacementSessionDidReceiveEditAction(const WebCore::Uni
 
 #if ENABLE(WRITING_TOOLS_UI)
 
-void WebPageProxy::enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
+void WebPageProxy::enableSourceTextAnimationAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
 {
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::EnableTextIndicatorStyleAfterElementWithID(elementID, uuid));
+    send(Messages::WebPage::enableSourceTextAnimationAfterElementWithID(elementID, uuid));
 }
 
-void WebPageProxy::enableTextIndicatorStyleForElementWithID(const String& elementID, const WTF::UUID& uuid)
+void WebPageProxy::enableTextAnimationTypeForElementWithID(const String& elementID, const WTF::UUID& uuid)
 {
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::EnableTextIndicatorStyleForElementWithID(elementID, uuid));
+    send(Messages::WebPage::EnableTextAnimationTypeForElementWithID(elementID, uuid));
 }
 
-void WebPageProxy::addTextIndicatorStyleForID(const WTF::UUID& uuid, const TextIndicatorStyleData& styleData, const WebCore::TextIndicatorData& indicatorData)
+void WebPageProxy::addTextAnimationTypeForID(const WTF::UUID& uuid, const TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData)
 {
     MESSAGE_CHECK(uuid.isValid());
 
     internals().textIndicatorDataForChunk.add(uuid, indicatorData);
 
-    protectedPageClient()->addTextIndicatorStyleForID(uuid, styleData);
+    protectedPageClient()->addTextAnimationTypeForID(uuid, styleData);
 }
 
 void WebPageProxy::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
@@ -1237,24 +1237,24 @@ void WebPageProxy::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandle
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::CreateTextIndicatorForID(uuid), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPage::createTextIndicatorForTextAnimationID(uuid), WTFMove(completionHandler));
 }
 
-void WebPageProxy::updateTextIndicatorStyleVisibilityForID(const WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler();
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::UpdateTextIndicatorStyleVisibilityForID(uuid, visible), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPage::updateUnderlyingTextVisibilityForTextAnimationID(uuid, visible), WTFMove(completionHandler));
 }
 
-void WebPageProxy::removeTextIndicatorStyleForID(const WTF::UUID& uuid)
+void WebPageProxy::removeTextAnimationForID(const WTF::UUID& uuid)
 {
     MESSAGE_CHECK(uuid.isValid());
 
-    protectedPageClient()->removeTextIndicatorStyleForID(uuid);
+    protectedPageClient()->removeTextAnimationForID(uuid);
 }
 
 #endif // ENABLE(WRITING_TOOLS_UI)

@@ -381,8 +381,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
     
 #if ENABLE(WRITING_TOOLS_UI)
-    CreateTextIndicatorForID(WTF::UUID uuid) -> (std::optional<WebCore::TextIndicatorData> textIndicator)
-    UpdateTextIndicatorStyleVisibilityForID(WTF::UUID uuid, bool visible) -> ()
+    createTextIndicatorForTextAnimationID(WTF::UUID uuid) -> (std::optional<WebCore::TextIndicatorData> textIndicator)
+    updateUnderlyingTextVisibilityForTextAnimationID(WTF::UUID uuid, bool visible) -> ()
 #endif
 
     # Popup menu.
@@ -796,9 +796,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
-    EnableTextIndicatorStyleAfterElementWithID(String elementID, WTF::UUID uuid);
+    enableSourceTextAnimationAfterElementWithID(String elementID, WTF::UUID uuid);
     
-    EnableTextIndicatorStyleForElementWithID(String elementID, WTF::UUID uuid);
+    EnableTextAnimationTypeForElementWithID(String elementID, WTF::UUID uuid);
 #endif
 
     TakeSnapshotForTargetedElement(WebCore::ElementIdentifier elementID, WebCore::ScriptExecutionContextIdentifier documentID) -> (std::optional<WebCore::ShareableBitmapHandle> image)

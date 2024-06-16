@@ -22,16 +22,16 @@
 
 #if ENABLE(WRITING_TOOLS)
 
-header: "TextIndicatorStyle.h"
-[CustomHeader] enum class WebKit::TextIndicatorStyle : uint8_t {
+header: "TextAnimationType.h"
+[CustomHeader] enum class WebKit::TextAnimationType : uint8_t {
     Initial,
     Source,
     Final,
 };
 
-header: "TextIndicatorStyle.h"
-[CustomHeader] struct WebKit::TextIndicatorStyleData {
-    WebKit::TextIndicatorStyle style;
+header: "TextAnimationType.h"
+[CustomHeader] struct WebKit::TextAnimationData {
+    WebKit::TextAnimationType style;
     WTF::UUID remainingRangeUUID;
 };
 

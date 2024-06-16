@@ -61,7 +61,7 @@
 #endif
 
 #if PLATFORM(COCOA)
-#import "WKTextIndicatorStyleType.h"
+#import "WKTextAnimationType.h"
 #endif
 
 #if !defined(WK_WEB_VIEW_PROTOCOLS)
@@ -398,8 +398,8 @@ struct PerWebProcessState {
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
-- (void)_addTextIndicatorStyleForID:(NSUUID *)uuid withData:(const WebKit::TextIndicatorStyleData&)styleData;
-- (void)_removeTextIndicatorStyleForID:(NSUUID *)uuid;
+- (void)_addTextAnimationTypeForID:(NSUUID *)uuid withData:(const WebKit::TextAnimationData&)styleData;
+- (void)_removeTextAnimationForID:(NSUUID *)uuid;
 
 - (BOOL)_wantsCompleteUnifiedTextReplacementBehavior;
 #endif

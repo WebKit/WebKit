@@ -64,7 +64,7 @@ public:
 
     void updateStateForSelectedReplacementIfNeeded();
 
-    // FIXME: Refactor `TextIndicatorStyleController` in such a way so as to not explicitly depend on `UnifiedTextReplacementController`,
+    // FIXME: Refactor `TextAnimationController` in such a way so as to not explicitly depend on `UnifiedTextReplacementController`,
     // and then remove this method after doing so.
     std::optional<SimpleRange> contextRangeForSessionWithID(const UnifiedTextReplacement::Session::ID&) const;
 

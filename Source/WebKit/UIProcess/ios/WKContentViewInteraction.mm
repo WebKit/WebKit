@@ -73,7 +73,7 @@
 #import "WKSelectMenuListViewController.h"
 #import "WKSyntheticFlagsChangedWebEvent.h"
 #import "WKTapHighlightView.h"
-#import "WKTextIndicatorStyleType.h"
+#import "WKTextAnimationType.h"
 #import "WKTextInputListViewController.h"
 #import "WKTextInteractionWrapper.h"
 #import "WKTextPlaceholder.h"
@@ -199,7 +199,7 @@
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-#import "WKSTextStyleManager.h"
+#import "WKSTextAnimationManager.h"
 #import "WebKitSwiftSoftLink.h"
 #endif
 
@@ -11755,26 +11755,26 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #if ENABLE(WRITING_TOOLS_UI)
 
-- (void)addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType
+- (void)addTextAnimationTypeForID:(NSUUID *)uuid withStyleType:(WKTextAnimationType)styleType
 {
-    if (!_page->preferences().textIndicatorStylingEnabled())
+    if (!_page->preferences().textAnimationsEnabled())
         return;
 
-    if (!_textStyleManager)
-        _textStyleManager = adoptNS([WebKit::allocWKSTextStyleManagerInstance() initWithDelegate:self]);
+    if (!_textAnimationManager)
+        _textAnimationManager = adoptNS([WebKit::allocWKSTextAnimationManagerInstance() initWithDelegate:self]);
 
-    [_textStyleManager addTextIndicatorStyleForID:uuid withStyleType:styleType];
+    [_textAnimationManager addTextAnimationTypeForID:uuid withStyleType:styleType];
 }
 
-- (void)removeTextIndicatorStyleForID:(NSUUID *)uuid
+- (void)removeTextAnimationForID:(NSUUID *)uuid
 {
-    if (!_page->preferences().textIndicatorStylingEnabled())
+    if (!_page->preferences().textAnimationsEnabled())
         return;
 
-    if (!_textStyleManager)
+    if (!_textAnimationManager)
         return;
 
-    [_textStyleManager removeTextIndicatorStyleForID:uuid];
+    [_textAnimationManager removeTextAnimationForID:uuid];
 }
 
 #endif
@@ -13130,7 +13130,7 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
     return !!_suppressSelectionAssistantReasons;
 }
 
-#pragma mark - WKSTextStyleSourceDelegate
+#pragma mark - WKSTextAnimationSourceDelegate
 
 #if ENABLE(WRITING_TOOLS_UI)
 - (void)targetedPreviewForID:(NSUUID *)uuid completionHandler:(void (^)(UITargetedPreview *))completionHandler
@@ -13163,15 +13163,15 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
     });
 }
 
-- (void)updateTextIndicatorStyleVisibilityForID:(NSUUID *)uuid visible:(BOOL)visible completionHandler:(void (^)(void))completionHandler
+- (void)updateUnderlyingTextVisibilityForTextAnimationID:(NSUUID *)uuid visible:(BOOL)visible completionHandler:(void (^)(void))completionHandler
 {
     auto textUUID = WTF::UUID::fromNSUUID(uuid);
-    _page->updateTextIndicatorStyleVisibilityForID(*textUUID, visible, [completionHandler = makeBlockPtr(completionHandler)] () {
+    _page->updateUnderlyingTextVisibilityForTextAnimationID(*textUUID, visible, [completionHandler = makeBlockPtr(completionHandler)] () {
         completionHandler();
     });
 }
 
-- (UIView *)containingViewForTextIndicatorStyle
+- (UIView *)containingViewForTextAnimationType
 {
     return self;
 }

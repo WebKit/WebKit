@@ -32,7 +32,7 @@
 #include "ImageAnalysisUtilities.h"
 #include "PDFPluginIdentifier.h"
 #include "WKLayoutMode.h"
-#include "WKTextIndicatorStyleType.h"
+#include "WKTextAnimationType.h"
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/PlatformPlaybackSessionInterface.h>
@@ -73,7 +73,7 @@ OBJC_CLASS WKMouseTrackingObserver;
 OBJC_CLASS WKRevealItemPresenter;
 OBJC_CLASS WKSafeBrowsingWarning;
 OBJC_CLASS WKShareSheet;
-OBJC_CLASS WKTextIndicatorStyleManager;
+OBJC_CLASS WKTextAnimationManager;
 OBJC_CLASS WKViewLayoutStrategy;
 OBJC_CLASS WKWebView;
 OBJC_CLASS WKWindowVisibilityObserver;
@@ -751,8 +751,8 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
-    void addTextIndicatorStyleForID(WTF::UUID, const WebKit::TextIndicatorStyleData&);
-    void removeTextIndicatorStyleForID(WTF::UUID);
+    void addTextAnimationTypeForID(WTF::UUID, const WebKit::TextAnimationData&);
+    void removeTextAnimationForID(WTF::UUID);
 #endif
 
 #if HAVE(INLINE_PREDICTIONS)
@@ -993,7 +993,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    RetainPtr<WKTextIndicatorStyleManager> m_textIndicatorStyleManager;
+    RetainPtr<WKTextAnimationManager> m_TextAnimationTypeManager;
 #endif
 
 #if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)

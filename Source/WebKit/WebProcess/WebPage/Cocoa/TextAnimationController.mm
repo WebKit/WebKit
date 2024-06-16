@@ -26,9 +26,9 @@
 #if ENABLE(WRITING_TOOLS_UI)
 
 #include "config.h"
-#include "TextIndicatorStyleController.h"
+#include "TextAnimationController.h"
 
-#include "TextIndicatorStyle.h"
+#include "TextAnimationType.h"
 #include "WebPage.h"
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/FocusController.h>
@@ -42,19 +42,19 @@
 namespace WebKit {
 
 // This should mirror what is in UnifiedTextReplacementController, and eventually not be copied.
-static constexpr auto defaultTextIndicatorStyleControllerTextIteratorBehaviors = WebCore::TextIteratorBehaviors {
+static constexpr auto defaultTextAnimationControllerTextIteratorBehaviors = WebCore::TextIteratorBehaviors {
     WebCore::TextIteratorBehavior::EmitsObjectReplacementCharactersForImages,
 #if ENABLE(ATTACHMENT_ELEMENT)
     WebCore::TextIteratorBehavior::EmitsObjectReplacementCharactersForAttachments
 #endif
 };
 
-TextIndicatorStyleController::TextIndicatorStyleController(WebPage& webPage)
+TextAnimationController::TextAnimationController(WebPage& webPage)
     : m_webPage(webPage)
 {
 }
 
-RefPtr<WebCore::Document> TextIndicatorStyleController::document() const
+RefPtr<WebCore::Document> TextAnimationController::document() const
 {
     if (!m_webPage) {
         ASSERT_NOT_REACHED();
@@ -77,7 +77,7 @@ RefPtr<WebCore::Document> TextIndicatorStyleController::document() const
 }
 
 // FIXME: This is a layering violation.
-std::optional<WebCore::SimpleRange> TextIndicatorStyleController::contextRangeForSessionWithID(const WebCore::UnifiedTextReplacement::Session::ID& sessionID) const
+std::optional<WebCore::SimpleRange> TextAnimationController::contextRangeForSessionWithID(const WebCore::UnifiedTextReplacement::Session::ID& sessionID) const
 {
     if (!m_webPage) {
         ASSERT_NOT_REACHED();
@@ -93,39 +93,39 @@ std::optional<WebCore::SimpleRange> TextIndicatorStyleController::contextRangeFo
     return corePage->contextRangeForSessionWithID(sessionID);
 }
 
-std::optional<WebCore::SimpleRange> TextIndicatorStyleController::contextRangeForTextIndicatorStyle(const WTF::UUID& uuid) const
+std::optional<WebCore::SimpleRange> TextAnimationController::contextRangeForTextAnimationType(const WTF::UUID& uuid) const
 {
     if (auto sessionRange = contextRangeForSessionWithID(uuid))
         return sessionRange;
 
-    if (m_textIndicatorStyleEnablementRanges.contains(uuid))
-        return WebCore::makeSimpleRange(m_textIndicatorStyleEnablementRanges.find(uuid)->value.get());
+    if (m_manuallyEnabledAnimationRanges.contains(uuid))
+        return WebCore::makeSimpleRange(m_manuallyEnabledAnimationRanges.find(uuid)->value.get());
 
-    for (auto sessionUUID : m_activeTextIndicatorStyles.keys()) {
-        for (auto styleState : m_activeTextIndicatorStyles.get(sessionUUID)) {
-            if (styleState.styleID == uuid) {
+    for (auto sessionUUID : m_activeTextAnimations.keys()) {
+        for (auto animationState : m_activeTextAnimations.get(sessionUUID)) {
+            if (animationState.styleID == uuid) {
                 if (auto fullSessionRange = contextRangeForSessionWithID(sessionUUID))
-                    return WebCore::resolveCharacterRange(*fullSessionRange, styleState.range, defaultTextIndicatorStyleControllerTextIteratorBehaviors);
+                    return WebCore::resolveCharacterRange(*fullSessionRange, animationState.range, defaultTextAnimationControllerTextIteratorBehaviors);
             }
         }
     }
     return std::nullopt;
 }
 
-void TextIndicatorStyleController::cleanUpTextStylesForSessionID(const WTF::UUID& sessionUUID)
+void TextAnimationController::cleanUpTextAnimationsForSessionID(const WTF::UUID& sessionUUID)
 {
-    auto styleStates = m_activeTextIndicatorStyles.take(sessionUUID);
-    if (styleStates.isEmpty())
+    auto animationStates = m_activeTextAnimations.take(sessionUUID);
+    if (animationStates.isEmpty())
         return;
-    for (auto styleState : styleStates)
-        removeTransparentMarkersForUUID(styleState.styleID);
+    for (auto animationState : animationStates)
+        removeTransparentMarkersForTextAnimationID(animationState.styleID);
 
     auto unstyledRange = m_unstyledRanges.find(sessionUUID);
     if (unstyledRange->value)
-        removeTransparentMarkersForUUID(unstyledRange->value->styleID);
+        removeTransparentMarkersForTextAnimationID(unstyledRange->value->styleID);
 }
 
-void TextIndicatorStyleController::removeTransparentMarkersForUUID(const WTF::UUID& uuid)
+void TextAnimationController::removeTransparentMarkersForTextAnimationID(const WTF::UUID& uuid)
 {
     RefPtr document = this->document();
     if (!document) {
@@ -151,10 +151,10 @@ static WebCore::CharacterRange newlyReplacedCharacterRange(WebCore::CharacterRan
 };
 #endif
 
-void TextIndicatorStyleController::addSourceTextIndicatorStyle(const WTF::UUID& sessionUUID, const WebCore::CharacterRange& currentReplacedRange)
+void TextAnimationController::addSourceTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange& currentReplacedRange)
 {
 #if PLATFORM(MAC)
-    auto currentlyStyledRange = m_currentlyStyledRange.getOptional(sessionUUID);
+    auto currentlyStyledRange = m_alreadyReplacedRanges.getOptional(sessionUUID);
     if (!currentlyStyledRange)
         return;
 
@@ -165,7 +165,7 @@ void TextIndicatorStyleController::addSourceTextIndicatorStyle(const WTF::UUID& 
         return;
     }
 
-    auto replacedRange = WebCore::resolveCharacterRange(*sessionRange, *currentlyStyledRange, defaultTextIndicatorStyleControllerTextIteratorBehaviors);
+    auto replacedRange = WebCore::resolveCharacterRange(*sessionRange, *currentlyStyledRange, defaultTextAnimationControllerTextIteratorBehaviors);
 
     auto sourceTextIndicatorUUID = WTF::UUID::createVersion4();
     createTextIndicatorForRange(replacedRange, [sourceTextIndicatorUUID, weakWebPage = WeakPtr { m_webPage }](std::optional<WebCore::TextIndicatorData>&& textIndicatorData) {
@@ -173,20 +173,20 @@ void TextIndicatorStyleController::addSourceTextIndicatorStyle(const WTF::UUID& 
             return;
         RefPtr protectedWebPage = weakWebPage.get();
         if (textIndicatorData)
-            protectedWebPage->addTextIndicatorStyleForID(sourceTextIndicatorUUID, { WebKit::TextIndicatorStyle::Source, WTF::UUID(WTF::UUID::emptyValue)  }, *textIndicatorData);
+            protectedWebPage->addTextAnimationTypeForID(sourceTextIndicatorUUID, { WebKit::TextAnimationType::Source, WTF::UUID(WTF::UUID::emptyValue)  }, *textIndicatorData);
     });
-    TextIndicatorStyleState styleState = { sourceTextIndicatorUUID, replaceCharacterRange };
-    auto& styleStates = m_activeTextIndicatorStyles.ensure(sessionUUID, [&] {
-        return Vector<TextIndicatorStyleState> { };
+    TextAnimationState animationState = { sourceTextIndicatorUUID, replaceCharacterRange };
+    auto& animationStates = m_activeTextAnimations.ensure(sessionUUID, [&] {
+        return Vector<TextAnimationState> { };
     }).iterator->value;
 
-    styleStates.append(styleState);
+    animationStates.append(animationState);
 
-    m_currentlyStyledRange.set(sessionUUID, currentReplacedRange);
+    m_alreadyReplacedRanges.set(sessionUUID, currentReplacedRange);
 #endif
 }
 
-void TextIndicatorStyleController::addDestinationTextIndicatorStyle(const WTF::UUID& sessionUUID, const WebCore::CharacterRange& characterRangeAfterReplace)
+void TextAnimationController::addDestinationTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange& characterRangeAfterReplace)
 {
     auto finalTextIndicatorUUID = WTF::UUID::createVersion4();
     auto sessionRange = contextRangeForSessionWithID(sessionUUID);
@@ -201,14 +201,14 @@ void TextIndicatorStyleController::addDestinationTextIndicatorStyle(const WTF::U
         return;
     }
 
-    auto replacedRangeAfterReplace = WebCore::resolveCharacterRange(*sessionRange, characterRangeAfterReplace, defaultTextIndicatorStyleControllerTextIteratorBehaviors);
+    auto replacedRangeAfterReplace = WebCore::resolveCharacterRange(*sessionRange, characterRangeAfterReplace, defaultTextAnimationControllerTextIteratorBehaviors);
 
     auto unstyledRange = WebCore::makeRangeSelectingNodeContents(*document);
     unstyledRange.start.container = replacedRangeAfterReplace.endContainer();
     unstyledRange.start.offset = replacedRangeAfterReplace.endOffset();
 
     auto unstyledRangeUUID = WTF::UUID::createVersion4();
-    TextIndicatorStyleUnstyledRangeData unstyledRangeData = { unstyledRangeUUID, unstyledRange };
+    TextAnimationUnstyledRangeData unstyledRangeData = { unstyledRangeUUID, unstyledRange };
     m_unstyledRanges.add(sessionUUID, unstyledRangeData);
 
     createTextIndicatorForRange(replacedRangeAfterReplace, [finalTextIndicatorUUID, unstyledRangeUUID, weakWebPage = WeakPtr { m_webPage }](std::optional<WebCore::TextIndicatorData>&& textIndicatorData) {
@@ -216,17 +216,17 @@ void TextIndicatorStyleController::addDestinationTextIndicatorStyle(const WTF::U
             return;
         RefPtr protectedWebPage = weakWebPage.get();
         if (textIndicatorData)
-            protectedWebPage->addTextIndicatorStyleForID(finalTextIndicatorUUID, { TextIndicatorStyle::Final, unstyledRangeUUID }, *textIndicatorData);
+            protectedWebPage->addTextAnimationTypeForID(finalTextIndicatorUUID, { TextAnimationType::Final, unstyledRangeUUID }, *textIndicatorData);
     });
-    TextIndicatorStyleState styleState = { finalTextIndicatorUUID, characterRangeAfterReplace };
-    auto& styleStates = m_activeTextIndicatorStyles.ensure(sessionUUID, [&] {
-        return Vector<TextIndicatorStyleState> { };
+    TextAnimationState animationState = { finalTextIndicatorUUID, characterRangeAfterReplace };
+    auto& animationStates = m_activeTextAnimations.ensure(sessionUUID, [&] {
+        return Vector<TextAnimationState> { };
     }).iterator->value;
 
-    styleStates.append(styleState);
+    animationStates.append(animationState);
 }
 
-void TextIndicatorStyleController::updateTextIndicatorStyleVisibilityForID(const WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
+void TextAnimationController::updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
 {
     RefPtr document = this->document();
     if (!document) {
@@ -236,9 +236,9 @@ void TextIndicatorStyleController::updateTextIndicatorStyleVisibilityForID(const
     }
 
     if (visible)
-        removeTransparentMarkersForUUID(uuid);
+        removeTransparentMarkersForTextAnimationID(uuid);
     else {
-        auto sessionRange = contextRangeForTextIndicatorStyle(uuid);
+        auto sessionRange = contextRangeForTextAnimationType(uuid);
 
         if (!sessionRange) {
             completionHandler();
@@ -249,7 +249,7 @@ void TextIndicatorStyleController::updateTextIndicatorStyleVisibilityForID(const
     completionHandler();
 }
 
-void TextIndicatorStyleController::createTextIndicatorForRange(const WebCore::SimpleRange& range, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
+void TextAnimationController::createTextIndicatorForRange(const WebCore::SimpleRange& range, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
 {
     if (!m_webPage) {
         ASSERT_NOT_REACHED();
@@ -283,9 +283,9 @@ void TextIndicatorStyleController::createTextIndicatorForRange(const WebCore::Si
     completionHandler(std::nullopt);
 }
 
-void TextIndicatorStyleController::createTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
+void TextAnimationController::createTextIndicatorForTextAnimationID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
 {
-    auto sessionRange = contextRangeForTextIndicatorStyle(uuid);
+    auto sessionRange = contextRangeForTextAnimationType(uuid);
 
     if (!sessionRange) {
         completionHandler(std::nullopt);
@@ -294,7 +294,7 @@ void TextIndicatorStyleController::createTextIndicatorForID(const WTF::UUID& uui
     createTextIndicatorForRange(*sessionRange, WTFMove(completionHandler));
 }
 
-void TextIndicatorStyleController::enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
+void TextAnimationController::enableSourceTextAnimationAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
 {
     RefPtr document = this->document();
     if (!document) {
@@ -321,10 +321,10 @@ void TextIndicatorStyleController::enableTextIndicatorStyleAfterElementWithID(co
             simpleRange->start = elementRange.end;
     }
 
-    m_textIndicatorStyleEnablementRanges.add(uuid, createLiveRange(*simpleRange));
+    m_manuallyEnabledAnimationRanges.add(uuid, createLiveRange(*simpleRange));
 }
 
-void TextIndicatorStyleController::enableTextIndicatorStyleForElementWithID(const String& elementID, const WTF::UUID& uuid)
+void TextAnimationController::enableTextAnimationTypeForElementWithID(const String& elementID, const WTF::UUID& uuid)
 {
     RefPtr document = this->document();
     if (!document) {
@@ -344,7 +344,7 @@ void TextIndicatorStyleController::enableTextIndicatorStyleForElementWithID(cons
         return;
     }
 
-    m_textIndicatorStyleEnablementRanges.add(uuid, createLiveRange(elementRange));
+    m_manuallyEnabledAnimationRanges.add(uuid, createLiveRange(elementRange));
 }
 
 } // namespace WebKit

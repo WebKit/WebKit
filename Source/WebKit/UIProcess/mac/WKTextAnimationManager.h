@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,19 +25,27 @@
 
 #pragma once
 
-#import <wtf/SoftLinking.h>
+#import <Foundation/Foundation.h>
 
-SOFT_LINK_LIBRARY_FOR_HEADER(WebKit, WebKitSwift)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKGroupSessionObserver)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaContentMetadata)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaPlayer)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaTimeRange)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaTrack)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSPreviewWindowController)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSTextAnimationManager)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionContainerItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionEditable)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionLink)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionTextItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionScrollableItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionImageItem)
+#if ENABLE(WRITING_TOOLS_UI)
+
+#import "TextAnimationType.h"
+
+namespace WebKit {
+class WebViewImpl;
+}
+
+@interface WKTextAnimationManager : NSObject
+
+- (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)view;
+- (void)addTextAnimationTypeForID:(NSUUID *)uuid withData:(const WebKit::TextAnimationData&)data;
+- (void)removeTextAnimationForID:(NSUUID *)uuid;
+
+- (BOOL)hasActiveTextAnimationType;
+
+- (void)suppressTextAnimationType;
+- (void)restoreTextAnimationType;
+
+@end
+
+#endif // ENABLE(WRITING_TOOLS_UI)

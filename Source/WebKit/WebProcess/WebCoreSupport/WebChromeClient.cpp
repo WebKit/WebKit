@@ -1860,24 +1860,24 @@ void WebChromeClient::textReplacementSessionUpdateStateForReplacementWithID(cons
 
 #if ENABLE(WRITING_TOOLS_UI)
 
-void WebChromeClient::removeTextIndicatorStyleForID(const UnifiedTextReplacement::Session::ID& sessionID)
+void WebChromeClient::removeTextAnimationForID(const UnifiedTextReplacement::Session::ID& sessionID)
 {
-    protectedPage()->removeTextIndicatorStyleForID(sessionID);
+    protectedPage()->removeTextAnimationForID(sessionID);
 }
 
-void WebChromeClient::cleanUpTextStylesForSessionID(const UnifiedTextReplacement::Session::ID& sessionID)
+void WebChromeClient::cleanUpTextAnimationsForSessionID(const UnifiedTextReplacement::Session::ID& sessionID)
 {
-    protectedPage()->cleanUpTextStylesForSessionID(sessionID);
+    protectedPage()->cleanUpTextAnimationsForSessionID(sessionID);
 }
 
-void WebChromeClient::addSourceTextIndicatorStyle(const UnifiedTextReplacement::Session::ID& sessionID, const CharacterRange& range)
+void WebChromeClient::addSourceTextAnimation(const UnifiedTextReplacement::Session::ID& sessionID, const CharacterRange& range)
 {
-    protectedPage()->addSourceTextIndicatorStyle(sessionID, range);
+    protectedPage()->addSourceTextAnimation(sessionID, range);
 }
 
-void WebChromeClient::addDestinationTextIndicatorStyle(const UnifiedTextReplacement::Session::ID& sessionID, const CharacterRange& range)
+void WebChromeClient::addDestinationTextAnimation(const UnifiedTextReplacement::Session::ID& sessionID, const CharacterRange& range)
 {
-    protectedPage()->addDestinationTextIndicatorStyle(sessionID, range);
+    protectedPage()->addDestinationTextAnimation(sessionID, range);
 }
 
 #endif

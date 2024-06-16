@@ -33,8 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol WKSTextStyleSourceDelegate <NSObject>
 - (void)targetedPreviewForID:(NSUUID *)uuid completionHandler:(void (^)(UITargetedPreview * _Nullable))completionHandler;
-- (void)updateTextIndicatorStyleVisibilityForID:(NSUUID *)uuid visible:(BOOL)visible completionHandler:(void (^)(void))completionHandler;
-- (UIView *)containingViewForTextIndicatorStyle;
+- (void)updateUnderlyingTextVisibilityForTextAnimationID:(NSUUID *)uuid visible:(BOOL)visible completionHandler:(void (^)(void))completionHandler;
+- (UIView *)containingViewForTextAnimationType;
 
 @end
 

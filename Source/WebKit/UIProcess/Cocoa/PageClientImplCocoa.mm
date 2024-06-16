@@ -26,8 +26,8 @@
 #import "config.h"
 #import "PageClientImplCocoa.h"
 
-#import "TextIndicatorStyle.h"
-#import "WKTextIndicatorStyleType.h"
+#import "TextAnimationType.h"
+#import "WKTextAnimationType.h"
 #import "WKWebViewInternal.h"
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -157,14 +157,14 @@ void PageClientImplCocoa::storeAppHighlight(const WebCore::AppHighlight &highlig
 #endif // ENABLE(APP_HIGHLIGHTS)
 
 #if ENABLE(WRITING_TOOLS_UI)
-void PageClientImplCocoa::addTextIndicatorStyleForID(const WTF::UUID& uuid, const WebKit::TextIndicatorStyleData& data)
+void PageClientImplCocoa::addTextAnimationTypeForID(const WTF::UUID& uuid, const WebKit::TextAnimationData& data)
 {
-    [m_webView _addTextIndicatorStyleForID:uuid withData:data];
+    [m_webView _addTextAnimationTypeForID:uuid withData:data];
 }
 
-void PageClientImplCocoa::removeTextIndicatorStyleForID(const WTF::UUID& uuid)
+void PageClientImplCocoa::removeTextAnimationForID(const WTF::UUID& uuid)
 {
-    [m_webView _removeTextIndicatorStyleForID:uuid];
+    [m_webView _removeTextAnimationForID:uuid];
 }
 #endif
 

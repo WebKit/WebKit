@@ -513,13 +513,13 @@ private:
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
-    void removeTextIndicatorStyleForID(const WebCore::UnifiedTextReplacement::SessionID&) final;
+    void removeTextAnimationForID(const WebCore::UnifiedTextReplacement::SessionID&) final;
 
-    void cleanUpTextStylesForSessionID(const WebCore::UnifiedTextReplacement::SessionID&) final;
+    void cleanUpTextAnimationsForSessionID(const WebCore::UnifiedTextReplacement::SessionID&) final;
 
-    void addSourceTextIndicatorStyle(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::CharacterRange&) final;
+    void addSourceTextAnimation(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::CharacterRange&) final;
 
-    void addDestinationTextIndicatorStyle(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::CharacterRange&) final;
+    void addDestinationTextAnimation(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::CharacterRange&) final;
 #endif
 
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };

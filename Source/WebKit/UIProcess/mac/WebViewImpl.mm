@@ -67,7 +67,7 @@
 #import "WKQuickLookPreviewController.h"
 #import "WKRevealItemPresenter.h"
 #import "WKSafeBrowsingWarning.h"
-#import "WKTextIndicatorStyleManager.h"
+#import "WKTextAnimationManager.h"
 #import "WKTextInputWindowController.h"
 #import "WKTextPlaceholder.h"
 #import "WKViewLayoutStrategy.h"
@@ -3440,7 +3440,7 @@ void WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly()
 bool WebViewImpl::hasContentRelativeChildViews() const
 {
 #if ENABLE(WRITING_TOOLS)
-    return [m_textIndicatorStyleManager hasActiveTextIndicatorStyle];
+    return [m_TextAnimationTypeManager hasActiveTextAnimationType];
 #else
     return false;
 #endif
@@ -3477,14 +3477,14 @@ void WebViewImpl::contentRelativeViewsHysteresisTimerFired(PAL::HysteresisState 
 void WebViewImpl::suppressContentRelativeChildViews()
 {
 #if ENABLE(WRITING_TOOLS)
-    [m_textIndicatorStyleManager suppressTextIndicatorStyle];
+    [m_TextAnimationTypeManager suppressTextAnimationType];
 #endif
 }
 
 void WebViewImpl::restoreContentRelativeChildViews()
 {
 #if ENABLE(WRITING_TOOLS)
-    [m_textIndicatorStyleManager restoreTextIndicatorStyle];
+    [m_TextAnimationTypeManager restoreTextAnimationType];
 #endif
 }
 
@@ -4606,23 +4606,23 @@ void WebViewImpl::removeTextPlaceholder(NSTextPlaceholder *placeholder, bool wil
 }
 
 #if ENABLE(WRITING_TOOLS_UI)
-void WebViewImpl::addTextIndicatorStyleForID(WTF::UUID uuid, const WebKit::TextIndicatorStyleData& data)
+void WebViewImpl::addTextAnimationTypeForID(WTF::UUID uuid, const WebKit::TextAnimationData& data)
 {
-    if (!m_page->preferences().textIndicatorStylingEnabled())
+    if (!m_page->preferences().textAnimationsEnabled())
         return;
 
-    if (!m_textIndicatorStyleManager)
-        m_textIndicatorStyleManager = adoptNS([[WKTextIndicatorStyleManager alloc] initWithWebViewImpl:*this]);
+    if (!m_TextAnimationTypeManager)
+        m_TextAnimationTypeManager = adoptNS([[WKTextAnimationManager alloc] initWithWebViewImpl:*this]);
 
-    [m_textIndicatorStyleManager addTextIndicatorStyleForID:uuid withData:data];
+    [m_TextAnimationTypeManager addTextAnimationTypeForID:uuid withData:data];
 }
 
-void WebViewImpl::removeTextIndicatorStyleForID(WTF::UUID uuid)
+void WebViewImpl::removeTextAnimationForID(WTF::UUID uuid)
 {
-    if (!m_page->preferences().textIndicatorStylingEnabled())
+    if (!m_page->preferences().textAnimationsEnabled())
         return;
 
-    [m_textIndicatorStyleManager removeTextIndicatorStyleForID:uuid];
+    [m_TextAnimationTypeManager removeTextAnimationForID:uuid];
 }
 #endif
 

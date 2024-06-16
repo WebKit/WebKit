@@ -23,17 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(WRITING_TOOLS_UI)
+#pragma once
 
-#import "WKTextIndicatorStyleType.h"
-
-@protocol WKSTextStyleSourceDelegate;
-
-@interface WKSTextStyleManager : NSObject
-
-- (instancetype)initWithDelegate:(id <WKSTextStyleSourceDelegate>)delegate NS_DESIGNATED_INITIALIZER;
-- (void)addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType;
-- (void)removeTextIndicatorStyleForID:(NSUUID *)uuid;
-@end
-
-#endif // ENABLE(WRITING_TOOLS)
+typedef NS_ENUM(NSInteger, WKTextAnimationType) {
+    WKTextAnimationTypeInitial,
+    WKTextAnimationTypeSource,
+    WKTextAnimationTypeFinal
+};

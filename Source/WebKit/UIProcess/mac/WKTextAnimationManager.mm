@@ -27,23 +27,24 @@
 #if ENABLE(WRITING_TOOLS_UI) && PLATFORM(MAC)
 
 #import "config.h"
-#import "WKTextIndicatorStyleManager.h"
+#import "WKTextAnimationManager.h"
 
-#import "TextIndicatorStyle.h"
-#import "WKTextIndicatorStyleType.h"
+#import "ImageOptions.h"
+#import "TextAnimationType.h"
+#import "WKTextAnimationType.h"
 #import "WebViewImpl.h"
 #import <pal/spi/cocoa/WritingToolsUISPI.h>
 
-@interface WKTextIndicatorStyleEffectData : NSObject
+@interface WKTextAnimationTypeEffectData : NSObject
 @property (nonatomic, strong, readonly) NSUUID *effectID;
-@property (nonatomic, assign, readonly) WebKit::TextIndicatorStyle type;
+@property (nonatomic, assign, readonly) WebKit::TextAnimationType type;
 @end
 
-@implementation WKTextIndicatorStyleEffectData {
+@implementation WKTextAnimationTypeEffectData {
     RetainPtr<NSUUID> _effectID;
 }
 
-- (instancetype)initWithEffectID:(NSUUID *)effectID type:(WebKit::TextIndicatorStyle)type
+- (instancetype)initWithEffectID:(NSUUID *)effectID type:(WebKit::TextAnimationType)type
 {
     if (!(self = [super init]))
         return nil;
@@ -61,16 +62,16 @@
 
 @end
 
-@interface WKTextIndicatorStyleManager () <_WTTextPreviewAsyncSource>
+@interface WKTextAnimationManager () <_WTTextPreviewAsyncSource>
 @end
 
 @interface _WTReplaceDestinationTextEffect (WritingTools_Staging_128304889)
 @property (copy) void (^preCompletion)(void);
 @end
 
-@implementation WKTextIndicatorStyleManager {
+@implementation WKTextAnimationManager {
     WeakPtr<WebKit::WebViewImpl> _webView;
-    RetainPtr<NSMutableDictionary<NSUUID *, WKTextIndicatorStyleEffectData *>> _chunkToEffect;
+    RetainPtr<NSMutableDictionary<NSUUID *, WKTextAnimationTypeEffectData *>> _chunkToEffect;
     RetainPtr<_WTTextEffectView> _effectView;
 }
 
@@ -88,40 +89,40 @@
     return self;
 }
 
-- (void)addTextIndicatorStyleForID:(NSUUID *)uuid withData:(const WebKit::TextIndicatorStyleData&)data
+- (void)addTextAnimationTypeForID:(NSUUID *)uuid withData:(const WebKit::TextAnimationData&)data
 {
     RetainPtr<id<_WTTextEffect>> effect;
     RetainPtr chunk = adoptNS([[_WTTextChunk alloc] initChunkWithIdentifier:uuid.UUIDString]);
     switch (data.style) {
-    case WebKit::TextIndicatorStyle::Initial:
+    case WebKit::TextAnimationType::Initial:
         effect = adoptNS([[_WTSweepTextEffect alloc] initWithChunk:chunk.get() effectView:_effectView.get()]);
         break;
-    case WebKit::TextIndicatorStyle::Source:
+    case WebKit::TextAnimationType::Source:
         effect = adoptNS([[_WTReplaceSourceTextEffect alloc] initWithChunk:chunk.get() effectView:_effectView.get()]);
         break;
-    case WebKit::TextIndicatorStyle::Final:
+    case WebKit::TextAnimationType::Final:
         effect = adoptNS([[_WTReplaceDestinationTextEffect alloc] initWithChunk:chunk.get() effectView:_effectView.get()]);
         if ([effect respondsToSelector:@selector(setPreCompletion:)] && [effect respondsToSelector:@selector(setCompletion:)]) {
             static_cast<_WTReplaceDestinationTextEffect *>(effect.get()).preCompletion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), remainingID = data.remainingRangeUUID] {
                 auto strongWebView = weakWebView.get();
                 if (strongWebView)
-                    strongWebView->page().updateTextIndicatorStyleVisibilityForID(remainingID, false);
+                    strongWebView->page().updateUnderlyingTextVisibilityForTextAnimationID(remainingID, false);
             }).get();
             effect.get().completion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), remainingID = data.remainingRangeUUID] {
                 auto strongWebView = weakWebView.get();
                 if (strongWebView)
-                    strongWebView->page().updateTextIndicatorStyleVisibilityForID(remainingID, true);
+                    strongWebView->page().updateUnderlyingTextVisibilityForTextAnimationID(remainingID, true);
             }).get();
         }
         break;
     }
 
     RetainPtr effectID = [_effectView addEffect:effect.get()];
-    RetainPtr effectData = adoptNS([[WKTextIndicatorStyleEffectData alloc] initWithEffectID:effectID.get() type:data.style]);
+    RetainPtr effectData = adoptNS([[WKTextAnimationTypeEffectData alloc] initWithEffectID:effectID.get() type:data.style]);
     [_chunkToEffect setObject:effectData.get() forKey:uuid];
 }
 
-- (void)removeTextIndicatorStyleForID:(NSUUID *)uuid
+- (void)removeTextAnimationForID:(NSUUID *)uuid
 {
     RetainPtr effectData = [_chunkToEffect objectForKey:uuid];
     if (effectData) {
@@ -130,28 +131,28 @@
     }
 }
 
-- (BOOL)hasActiveTextIndicatorStyle
+- (BOOL)hasActiveTextAnimationType
 {
     return [_chunkToEffect count];
 }
 
-- (void)suppressTextIndicatorStyle
+- (void)suppressTextAnimationType
 {
     for (NSUUID *chunkID in [_chunkToEffect allKeys]) {
         RetainPtr effectData = [_chunkToEffect objectForKey:chunkID];
         [_effectView removeEffect:[effectData effectID]];
 
-        if ([effectData type] != WebKit::TextIndicatorStyle::Initial)
+        if ([effectData type] != WebKit::TextAnimationType::Initial)
             [_chunkToEffect removeObjectForKey:chunkID];
     }
 }
 
-- (void)restoreTextIndicatorStyle
+- (void)restoreTextAnimationType
 {
     for (NSUUID *chunkID in [_chunkToEffect allKeys]) {
         RetainPtr effectData = [_chunkToEffect objectForKey:chunkID];
-        if ([effectData type] == WebKit::TextIndicatorStyle::Initial)
-            [self addTextIndicatorStyleForID:chunkID withData: { WebKit::TextIndicatorStyle::Initial, WTF::UUID(WTF::UUID::emptyValue) }];
+        if ([effectData type] == WebKit::TextAnimationType::Initial)
+            [self addTextAnimationTypeForID:chunkID withData: { WebKit::TextAnimationType::Initial, WTF::UUID(WTF::UUID::emptyValue) }];
     }
 }
 
@@ -226,7 +227,7 @@
             completionHandler();
         return;
     }
-    _webView->page().updateTextIndicatorStyleVisibilityForID(*uuid, isTextVisible, [completionHandler = makeBlockPtr(completionHandler)] () {
+    _webView->page().updateUnderlyingTextVisibilityForTextAnimationID(*uuid, isTextVisible, [completionHandler = makeBlockPtr(completionHandler)] () {
         if (completionHandler)
             completionHandler();
     });

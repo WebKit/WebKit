@@ -195,7 +195,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
     }
 
     // FIXME: Text indicator styles are not used within this method, so is this still needed?
-    m_page->chrome().client().removeTextIndicatorStyleForID(session.identifier);
+    m_page->chrome().client().removeTextAnimationForID(session.identifier);
 
     document->selection().clear();
 
@@ -327,7 +327,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         return;
     }
 
-    m_page->chrome().client().removeTextIndicatorStyleForID(session.identifier);
+    m_page->chrome().client().removeTextAnimationForID(session.identifier);
 
     document->selection().clear();
 
@@ -353,11 +353,11 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         return;
     }
 
-    m_page->chrome().client().addSourceTextIndicatorStyle(session.identifier, range);
+    m_page->chrome().client().addSourceTextAnimation(session.identifier, range);
 
     replaceContentsOfRangeInSession(*state, resolvedRange, WTFMove(fragment), hasAttributes ? MatchStyle::No : MatchStyle::Yes);
 
-    m_page->chrome().client().addDestinationTextIndicatorStyle(session.identifier, adjustedCharacterRange);
+    m_page->chrome().client().addDestinationTextAnimation(session.identifier, adjustedCharacterRange);
 }
 
 template<>
@@ -536,12 +536,12 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const Unifie
         return;
     }
 
-    m_page->chrome().client().removeTextIndicatorStyleForID(session.identifier);
+    m_page->chrome().client().removeTextAnimationForID(session.identifier);
 
     if (session.correctionType != UnifiedTextReplacement::Session::CorrectionType::Spelling)
         document->selection().setSelection({ *sessionRange });
 
-    m_page->chrome().client().cleanUpTextStylesForSessionID(session.identifier);
+    m_page->chrome().client().cleanUpTextAnimationsForSessionID(session.identifier);
 
     m_states.remove(session.identifier);
 }

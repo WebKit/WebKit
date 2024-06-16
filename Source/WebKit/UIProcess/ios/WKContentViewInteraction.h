@@ -44,9 +44,9 @@
 #import "UIKitSPI.h"
 #import "WKBrowserEngineDefinitions.h"
 #import "WKMouseInteraction.h"
-#import "WKSTextStyleManager.h"
-#import "WKSTextStyleSourceDelegate.h"
-#import "WKTextIndicatorStyleType.h"
+#import "WKSTextAnimationManager.h"
+#import "WKSTextAnimationSourceDelegate.h"
+#import "WKTextAnimationType.h"
 #import <WebKit/WKActionSheetAssistant.h>
 #import <WebKit/WKAirPlayRoutePicker.h>
 #import <WebKit/WKContactPicker.h>
@@ -139,7 +139,7 @@ enum class PickerDismissalReason : uint8_t;
 @class WKTextRange;
 @class _WKTextInputContext;
 
-@class WKSTextStyleManager;
+@class WKSTextAnimationManager;
 
 #if !PLATFORM(WATCHOS)
 @class WKDateTimeInputControl;
@@ -434,7 +434,7 @@ struct ImageAnalysisContextMenuActionData {
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    RetainPtr<WKSTextStyleManager> _textStyleManager;
+    RetainPtr<WKSTextAnimationManager> _textAnimationManager;
 #endif
 
     std::unique_ptr<WebKit::SmartMagnificationController> _smartMagnificationController;
@@ -642,7 +642,7 @@ struct ImageAnalysisContextMenuActionData {
     , UIDragInteractionDelegate
 #endif
 #if ENABLE(WRITING_TOOLS_UI)
-    , WKSTextStyleSourceDelegate
+    , WKSTextAnimationSourceDelegate
 #endif
 >
 
@@ -842,8 +842,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)clearTextIndicator:(WebCore::TextIndicatorDismissalAnimation)animation;
 
 #if ENABLE(WRITING_TOOLS_UI)
-- (void)addTextIndicatorStyleForID:(NSUUID *)uuid withStyleType:(WKTextIndicatorStyleType)styleType;
-- (void)removeTextIndicatorStyleForID:(NSUUID *)uuid;
+- (void)addTextAnimationTypeForID:(NSUUID *)uuid withStyleType:(WKTextAnimationType)styleType;
+- (void)removeTextAnimationForID:(NSUUID *)uuid;
 #endif
 
 @property (nonatomic, readonly) BOOL _shouldUseContextMenus;

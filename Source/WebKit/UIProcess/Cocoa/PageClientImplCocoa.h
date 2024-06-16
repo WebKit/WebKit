@@ -46,8 +46,8 @@ struct AppHighlight;
 
 namespace WebKit {
 
-struct TextIndicatorStyleData;
-enum class TextIndicatorStyle : uint8_t;
+struct TextAnimationData;
+enum class TextAnimationType : uint8_t;
 
 class PageClientImplCocoa : public PageClient {
 public:
@@ -100,8 +100,8 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
-    void addTextIndicatorStyleForID(const WTF::UUID&, const WebKit::TextIndicatorStyleData&) final;
-    void removeTextIndicatorStyleForID(const WTF::UUID&) final;
+    void addTextAnimationTypeForID(const WTF::UUID&, const WebKit::TextAnimationData&) final;
+    void removeTextAnimationForID(const WTF::UUID&) final;
 #endif
 
     void microphoneCaptureWillChange() final;

@@ -350,7 +350,7 @@ class RemoteRenderingBackendProxy;
 class RemoteWebInspectorUI;
 class SharedMemoryHandle;
 class TextCheckingControllerProxy;
-class TextIndicatorStyleController;
+class TextAnimationController;
 class UserMediaPermissionRequestManager;
 class ViewGestureGeometryCollector;
 class WebColorChooser;
@@ -396,7 +396,7 @@ enum class FindDecorationStyle : uint8_t;
 enum class NavigatingToAppBoundDomain : bool;
 enum class SyntheticEditingCommandType : uint8_t;
 enum class TextRecognitionUpdateResult : uint8_t;
-enum class TextIndicatorStyle : uint8_t;
+enum class TextAnimationType : uint8_t;
 
 struct BackForwardListItemState;
 struct DataDetectionResult;
@@ -415,7 +415,7 @@ struct LoadParameters;
 struct PlatformFontInfo;
 struct PrintInfo;
 struct ProvisionalFrameCreationParameters;
-struct TextIndicatorStyleData;
+struct TextAnimationData;
 struct TextInputContext;
 struct UserMessage;
 struct WebAutocorrectionData;
@@ -1757,18 +1757,20 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
-    void enableTextIndicatorStyleAfterElementWithID(const String&, const WTF::UUID&);
-    void enableTextIndicatorStyleForElementWithID(const String&, const WTF::UUID&);
+    void enableSourceTextAnimationAfterElementWithID(const String&, const WTF::UUID&);
+    void enableTextAnimationTypeForElementWithID(const String&, const WTF::UUID&);
 
-    void addTextIndicatorStyleForID(const WTF::UUID&, const WebKit::TextIndicatorStyleData&, const WebCore::TextIndicatorData&);
-    void removeTextIndicatorStyleForID(const WebCore::UnifiedTextReplacement::SessionID&);
-    void cleanUpTextStylesForSessionID(const WebCore::UnifiedTextReplacement::SessionID&);
+    void addTextAnimationTypeForID(const WTF::UUID&, const WebKit::TextAnimationData&, const WebCore::TextIndicatorData&);
+    // FIXME: try and combine these two and/or clarify why both are needed.
+    // rdar://129882958 (Combine or clarify removeTextAnimationForID and cleanUpTextAnimationsForSessionID)
+    void removeTextAnimationForID(const WebCore::UnifiedTextReplacement::SessionID&);
+    void cleanUpTextAnimationsForSessionID(const WebCore::UnifiedTextReplacement::SessionID&);
 
-    void addSourceTextIndicatorStyle(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::CharacterRange&);
-    void addDestinationTextIndicatorStyle(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::CharacterRange&);
+    void addSourceTextAnimation(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::CharacterRange&);
+    void addDestinationTextAnimation(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::CharacterRange&);
 
     void createTextIndicatorForRange(const WebCore::SimpleRange&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
-    void createTextIndicatorForID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
+    void createTextIndicatorForTextAnimationID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
 #endif
 
     void startObservingNowPlayingMetadata();
@@ -2278,7 +2280,7 @@ private:
 
     void textReplacementSessionDidReceiveEditAction(const WebCore::UnifiedTextReplacement::Session&, WebCore::UnifiedTextReplacement::EditAction);
 
-    void updateTextIndicatorStyleVisibilityForID(const WTF::UUID&, bool, CompletionHandler<void()>&&);
+    void updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool, CompletionHandler<void()>&&);
 #endif
 
     void remotePostMessage(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts&);
@@ -2830,7 +2832,7 @@ private:
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
-    UniqueRef<TextIndicatorStyleController> m_textIndicatorStyleController;
+    UniqueRef<TextAnimationController> m_textAnimationController;
 #endif
 
     std::unique_ptr<WebCore::NowPlayingMetadataObserver> m_nowPlayingMetadataObserver;

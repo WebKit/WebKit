@@ -29,14 +29,14 @@
 
 namespace WebKit {
 
-enum class TextIndicatorStyle : uint8_t {
+enum class TextAnimationType : uint8_t {
     Initial,
     Source,
     Final
 };
 
-struct TextIndicatorStyleData {
-    TextIndicatorStyle style;
+struct TextAnimationData {
+    TextAnimationType style;
     WTF::UUID remainingRangeUUID { WTF::UUID::emptyValue };
 };
 
