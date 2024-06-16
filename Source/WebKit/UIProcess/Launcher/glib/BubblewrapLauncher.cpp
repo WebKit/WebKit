@@ -764,7 +764,6 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
 
     const char* runDir = g_get_user_runtime_dir();
     Vector<CString> sandboxArgs = {
-        "--die-with-parent",
         "--unshare-uts",
 
         // We assume /etc has safe permissions.
