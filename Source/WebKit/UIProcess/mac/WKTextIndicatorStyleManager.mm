@@ -32,11 +32,7 @@
 #import "TextIndicatorStyle.h"
 #import "WKTextIndicatorStyleType.h"
 #import "WebViewImpl.h"
-
-#import <WritingTools/WTSession_Private.h>
-#import <WritingToolsUI/WritingToolsUI.h>
-#import <WritingToolsUI/WritingToolsUI_Private.h>
-
+#import <pal/spi/cocoa/WritingToolsUISPI.h>
 
 @interface WKTextIndicatorStyleEffectData : NSObject
 @property (nonatomic, strong, readonly) NSUUID *effectID;

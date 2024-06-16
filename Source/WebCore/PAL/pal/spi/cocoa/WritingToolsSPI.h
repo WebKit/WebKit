@@ -23,8 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#pragma once
+
+#if ENABLE(WRITING_TOOLS)
 
 #if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/UnifiedTextReplacementSoftLinkAdditions.mm>
+
+#import <WritingTools/WTSession_Private.h>
+#import <WritingTools/WritingTools.h>
+
+#else
+
+#error Symbols must be forward declared once used with non-internal SDKS.
+
 #endif
+
+#endif // ENABLE(WRITING_TOOLS)

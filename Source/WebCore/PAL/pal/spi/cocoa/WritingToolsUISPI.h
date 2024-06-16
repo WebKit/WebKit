@@ -25,6 +25,17 @@
 
 #pragma once
 
+#if ENABLE(WRITING_TOOLS_UI)
+
 #if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/UnifiedTextReplacementSoftLinkAdditions.h>
+
+#import <WritingToolsUI/WritingToolsUI.h>
+#import <WritingToolsUI/WritingToolsUI_Private.h>
+
+#else
+
+#error Symbols must be forward declared once used with non-internal SDKS.
+
 #endif
+
+#endif // ENABLE(WRITING_TOOLS_UI)

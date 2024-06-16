@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		071C00372707EDF000D027C7 /* ReplayKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 071C00352707EDF000D027C7 /* ReplayKitSoftLink.mm */; };
 		07611DB7243FA5BF00D80704 /* UsageTrackingSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07611DB5243FA5BF00D80704 /* UsageTrackingSoftLink.mm */; };
+		077121B62C1E8B4400FACBF9 /* WritingToolsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 077121B52C1E8B4400FACBF9 /* WritingToolsSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		077121BA2C1E8BE500FACBF9 /* WritingToolsUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 077121B92C1E8BE500FACBF9 /* WritingToolsUISPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07789181273B14FF00E408D1 /* ScreenCaptureKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0778917F273B14FF00E408D1 /* ScreenCaptureKitSoftLink.mm */; };
 		077E87B1226A460200A2AFF0 /* AVFoundationSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 077E87AF226A460200A2AFF0 /* AVFoundationSoftLink.mm */; };
 		079D1D9826950DD700883577 /* SystemStatusSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 079D1D9626950DD700883577 /* SystemStatusSoftLink.mm */; };
@@ -419,6 +421,8 @@
 		071C00362707EDF000D027C7 /* ReplayKitSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayKitSoftLink.h; sourceTree = "<group>"; };
 		07611DB4243FA5BE00D80704 /* UsageTrackingSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsageTrackingSoftLink.h; sourceTree = "<group>"; };
 		07611DB5243FA5BF00D80704 /* UsageTrackingSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UsageTrackingSoftLink.mm; sourceTree = "<group>"; };
+		077121B52C1E8B4400FACBF9 /* WritingToolsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WritingToolsSPI.h; sourceTree = "<group>"; };
+		077121B92C1E8BE500FACBF9 /* WritingToolsUISPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WritingToolsUISPI.h; sourceTree = "<group>"; };
 		0778917F273B14FF00E408D1 /* ScreenCaptureKitSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScreenCaptureKitSoftLink.mm; sourceTree = "<group>"; };
 		07789180273B14FF00E408D1 /* ScreenCaptureKitSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScreenCaptureKitSoftLink.h; sourceTree = "<group>"; };
 		077E87AF226A460200A2AFF0 /* AVFoundationSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationSoftLink.mm; sourceTree = "<group>"; };
@@ -861,6 +865,8 @@
 				F46B8C4E26740AD8007A6554 /* VisionKitCoreSPI.h */,
 				0C2DA13D1F3BEB4900DBC317 /* WebFilterEvaluatorSPI.h */,
 				F499BAAE2947FDDB001241D6 /* WebPrivacySPI.h */,
+				077121B52C1E8B4400FACBF9 /* WritingToolsSPI.h */,
+				077121B92C1E8BE500FACBF9 /* WritingToolsUISPI.h */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -1537,6 +1543,8 @@
 				DD20DE4727BC90D80093D175 /* WebPanel.h in Headers */,
 				F499BAAC2947FDBA001241D6 /* WebPrivacySoftLink.h in Headers */,
 				F499BAAF2947FDDB001241D6 /* WebPrivacySPI.h in Headers */,
+				077121B62C1E8B4400FACBF9 /* WritingToolsSPI.h in Headers */,
+				077121BA2C1E8BE500FACBF9 /* WritingToolsUISPI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
