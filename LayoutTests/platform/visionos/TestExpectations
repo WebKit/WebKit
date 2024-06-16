@@ -142,8 +142,6 @@ fast/events/pointer/ios/tap-gives-pointerdown-pointerup.html [ Timeout ]
 
 webkit.org/b/275115 imported/w3c/web-platform-tests/webxr/getInputPose_pointer.https.html [ Skip ]
 
-webkit.org/b/275514 interaction-region/icon-masking.html [ Failure ]
-
 ### END OF Triaged failures
 ###################################################################################################
 
