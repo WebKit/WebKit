@@ -28,11 +28,11 @@
 namespace WebCore {
 
 template<>
-inline unsigned SVGIDLEnumLimits<CompositeOperationType>::highestExposedEnumValue() { return enumToUnderlyingType(CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC); }
+inline unsigned SVGIDLEnumLimits<CompositeOperationType>::highestExposedEnumValue() { return std::to_underlying(CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC); }
 
 template<>
 struct SVGPropertyTraits<CompositeOperationType> {
-    static unsigned highestEnumValue() { return enumToUnderlyingType(CompositeOperationType::FECOMPOSITE_OPERATOR_LIGHTER); }
+    static unsigned highestEnumValue() { return std::to_underlying(CompositeOperationType::FECOMPOSITE_OPERATOR_LIGHTER); }
 
     static String toString(CompositeOperationType type)
     {

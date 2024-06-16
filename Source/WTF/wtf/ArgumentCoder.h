@@ -75,8 +75,8 @@ struct ArgumentCoder<T, typename std::enable_if_t<std::is_enum_v<T>>> {
     template<typename Encoder>
     static void encode(Encoder& encoder, T value)
     {
-        ASSERT(WTF::isValidEnum<T>(WTF::enumToUnderlyingType<T>(value)));
-        encoder << WTF::enumToUnderlyingType<T>(value);
+        ASSERT(WTF::isValidEnum<T>(std::to_underlying<T>(value)));
+        encoder << std::to_underlying<T>(value);
     }
 
     template<typename Decoder>

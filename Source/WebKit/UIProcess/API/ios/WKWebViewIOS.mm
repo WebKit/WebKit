@@ -952,7 +952,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 {
     if (_perProcessState.didDeferUpdateVisibleContentRectsForUnstableScrollView) {
         WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _didCommitLayerTree:] - received a commit (%llu) while deferring visible content rect updates (dynamicViewportUpdateMode %d, needsResetViewStateAfterCommitLoadForMainFrame %d (wants commit %llu), sizeChangedSinceLastVisibleContentRectUpdate %d, [_scrollView isZoomBouncing] %d, currentlyAdjustingScrollViewInsetsForKeyboard %d)",
-        self, _page->identifier().toUInt64(), layerTreeTransaction.transactionID().toUInt64(), enumToUnderlyingType(_perProcessState.dynamicViewportUpdateMode), _perProcessState.needsResetViewStateAfterCommitLoadForMainFrame, _perProcessState.firstPaintAfterCommitLoadTransactionID.toUInt64(), [_contentView sizeChangedSinceLastVisibleContentRectUpdate], [_scrollView isZoomBouncing], _perProcessState.currentlyAdjustingScrollViewInsetsForKeyboard);
+        self, _page->identifier().toUInt64(), layerTreeTransaction.transactionID().toUInt64(), std::to_underlying(_perProcessState.dynamicViewportUpdateMode), _perProcessState.needsResetViewStateAfterCommitLoadForMainFrame, _perProcessState.firstPaintAfterCommitLoadTransactionID.toUInt64(), [_contentView sizeChangedSinceLastVisibleContentRectUpdate], [_scrollView isZoomBouncing], _perProcessState.currentlyAdjustingScrollViewInsetsForKeyboard);
     }
 
     if (_timeOfFirstVisibleContentRectUpdateWithPendingCommit) {
@@ -1074,7 +1074,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     if (![self usesStandardContentView])
         return;
 
-    LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView " << _page->identifier() << " _didCommitLayerTree:] transactionID " << layerTreeTransaction.transactionID() << " dynamicViewportUpdateMode " << enumToUnderlyingType(_perProcessState.dynamicViewportUpdateMode));
+    LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView " << _page->identifier() << " _didCommitLayerTree:] transactionID " << layerTreeTransaction.transactionID() << " dynamicViewportUpdateMode " << std::to_underlying(_perProcessState.dynamicViewportUpdateMode));
 
     bool needUpdateVisibleContentRects = _page->updateLayoutViewportParameters(layerTreeTransaction);
 
@@ -2767,7 +2767,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         _perProcessState.didDeferUpdateVisibleContentRectsForAnyReason = YES;
         _perProcessState.didDeferUpdateVisibleContentRectsForUnstableScrollView = YES;
         WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _updateVisibleContentRects:] - scroll view state is non-stable, bailing (shouldDeferGeometryUpdates %d, dynamicViewportUpdateMode %d, needsResetViewStateAfterCommitLoadForMainFrame %d, sizeChangedSinceLastVisibleContentRectUpdate %d, [_scrollView isZoomBouncing] %d, currentlyAdjustingScrollViewInsetsForKeyboard %d)",
-            self, _page->identifier().toUInt64(), self._shouldDeferGeometryUpdates, enumToUnderlyingType(_perProcessState.dynamicViewportUpdateMode), _perProcessState.needsResetViewStateAfterCommitLoadForMainFrame, [_contentView sizeChangedSinceLastVisibleContentRectUpdate], [_scrollView isZoomBouncing], _perProcessState.currentlyAdjustingScrollViewInsetsForKeyboard);
+            self, _page->identifier().toUInt64(), self._shouldDeferGeometryUpdates, std::to_underlying(_perProcessState.dynamicViewportUpdateMode), _perProcessState.needsResetViewStateAfterCommitLoadForMainFrame, [_contentView sizeChangedSinceLastVisibleContentRectUpdate], [_scrollView isZoomBouncing], _perProcessState.currentlyAdjustingScrollViewInsetsForKeyboard);
         return;
     }
 
@@ -2891,7 +2891,7 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 
 - (void)_cancelAnimatedResize
 {
-    WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _cancelAnimatedResize] dynamicViewportUpdateMode %d", self, _page->identifier().toUInt64(), enumToUnderlyingType(_perProcessState.dynamicViewportUpdateMode));
+    WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _cancelAnimatedResize] dynamicViewportUpdateMode %d", self, _page->identifier().toUInt64(), std::to_underlying(_perProcessState.dynamicViewportUpdateMode));
 
     if (_perProcessState.dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing)
         return;
@@ -4277,7 +4277,7 @@ static bool isLockdownModeWarningNeeded()
 
 - (void)_endAnimatedResize
 {
-    WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _endAnimatedResize] dynamicViewportUpdateMode %d", self, _page->identifier().toUInt64(), enumToUnderlyingType(_perProcessState.dynamicViewportUpdateMode));
+    WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _endAnimatedResize] dynamicViewportUpdateMode %d", self, _page->identifier().toUInt64(), std::to_underlying(_perProcessState.dynamicViewportUpdateMode));
 
     // If we already have an up-to-date layer tree, immediately complete
     // the resize. Otherwise, we will defer completion until we do.

@@ -345,7 +345,7 @@ enum class NodeListInvalidationType : uint8_t {
     InvalidateOnHRefAttrChange,
     InvalidateOnAnyAttrChange,
 };
-const auto numNodeListInvalidationTypes = enumToUnderlyingType(NodeListInvalidationType::InvalidateOnAnyAttrChange) + 1;
+const auto numNodeListInvalidationTypes = std::to_underlying(NodeListInvalidationType::InvalidateOnAnyAttrChange) + 1;
 
 enum class EventHandlerRemoval : bool { One, All };
 using EventTargetSet = HashCountedSet<Node*>;
@@ -634,7 +634,7 @@ public:
     virtual bool isFrameSet() const { return false; }
 
     static constexpr ptrdiff_t documentClassesMemoryOffset() { return OBJECT_OFFSETOF(Document, m_documentClasses); }
-    static auto isHTMLDocumentClassFlag() { return enumToUnderlyingType(DocumentClass::HTML); }
+    static auto isHTMLDocumentClassFlag() { return std::to_underlying(DocumentClass::HTML); }
 
     bool isSrcdocDocument() const { return m_isSrcdocDocument; }
 

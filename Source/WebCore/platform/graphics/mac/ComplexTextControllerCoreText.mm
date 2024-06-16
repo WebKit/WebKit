@@ -137,7 +137,7 @@ enum class CoreTextTypesetterEmbeddingLevel : short { LTR = 0, RTL = 1 };
 
 NEVER_INLINE static RetainPtr<CFDictionaryRef> buildCoreTextTypesetterEmbeddingLevelDictionary(CoreTextTypesetterEmbeddingLevel embeddingLevel)
 {
-    auto embeddingLevelValue = enumToUnderlyingType(embeddingLevel);
+    auto embeddingLevelValue = std::to_underlying(embeddingLevel);
     static_assert(std::is_same_v<short, decltype(embeddingLevelValue)>);
     const void* optionKeys[] = { kCTTypesetterOptionForcedEmbeddingLevel };
     const void* optionValues[] = { CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &embeddingLevelValue) };

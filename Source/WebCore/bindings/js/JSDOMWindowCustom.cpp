@@ -248,14 +248,14 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* le
         if (is<LocalFrame>(frame)) {
             if (index < frame->tree().scopedChildCount()) {
                 if (auto* scopedChild = frame->tree().scopedChild(index)) {
-                    slot.setValue(thisObject, enumToUnderlyingType(JSC::PropertyAttribute::ReadOnly), toJS(lexicalGlobalObject, scopedChild->window()));
+                    slot.setValue(thisObject, std::to_underlying(JSC::PropertyAttribute::ReadOnly), toJS(lexicalGlobalObject, scopedChild->window()));
                     return true;
                 }
             }
         } else {
             if (index < frame->tree().childCount()) {
                 if (auto* child = frame->tree().child(index)) {
-                    slot.setValue(thisObject, enumToUnderlyingType(JSC::PropertyAttribute::ReadOnly), toJS(lexicalGlobalObject, child->window()));
+                    slot.setValue(thisObject, std::to_underlying(JSC::PropertyAttribute::ReadOnly), toJS(lexicalGlobalObject, child->window()));
                     return true;
                 }
             }

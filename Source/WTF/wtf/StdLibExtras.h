@@ -793,6 +793,16 @@ template<typename T, typename U> constexpr auto forward_like(U&& value) -> detai
 } // namespace std
 #endif
 
+#if !(defined(__cpp_lib_to_underlying) && __cpp_lib_to_underlying >= 202102L)
+namespace std {
+template<class Enum>
+constexpr std::underlying_type_t<Enum> to_underlying(Enum e)
+{
+    return static_cast<std::underlying_type_t<Enum>>(e);
+}
+}
+#endif
+
 using WTF::GB;
 using WTF::KB;
 using WTF::MB;

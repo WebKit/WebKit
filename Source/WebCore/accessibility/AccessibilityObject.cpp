@@ -2701,20 +2701,20 @@ static void initializeRoleMap()
     size_t roleLength = std::size(roles);
     for (size_t i = 0; i < roleLength; ++i) {
         gAriaRoleMap->set(roles[i].ariaRole, roles[i].webcoreRole);
-        gAriaReverseRoleMap->set(enumToUnderlyingType(roles[i].webcoreRole), roles[i].ariaRole);
+        gAriaReverseRoleMap->set(std::to_underlying(roles[i].webcoreRole), roles[i].ariaRole);
     }
 
     // Create specific synonyms for the computedRole which is used in WPT tests and the accessibility inspector.
-    gAriaReverseRoleMap->set(enumToUnderlyingType(AccessibilityRole::DateTime), "textbox"_s);
-    gAriaReverseRoleMap->set(enumToUnderlyingType(AccessibilityRole::TextArea), "textbox"_s);
+    gAriaReverseRoleMap->set(std::to_underlying(AccessibilityRole::DateTime), "textbox"_s);
+    gAriaReverseRoleMap->set(std::to_underlying(AccessibilityRole::TextArea), "textbox"_s);
 
-    gAriaReverseRoleMap->set(enumToUnderlyingType(AccessibilityRole::DescriptionListDetail), "definition"_s);
-    gAriaReverseRoleMap->set(enumToUnderlyingType(AccessibilityRole::DescriptionListTerm), "term"_s);
-    gAriaReverseRoleMap->set(enumToUnderlyingType(AccessibilityRole::Details), "group"_s);
-    gAriaReverseRoleMap->set(enumToUnderlyingType(AccessibilityRole::Image), "image"_s);
-    gAriaReverseRoleMap->set(enumToUnderlyingType(AccessibilityRole::ListBoxOption), "option"_s);
-    gAriaReverseRoleMap->set(enumToUnderlyingType(AccessibilityRole::MenuListOption), "option"_s);
-    gAriaReverseRoleMap->set(enumToUnderlyingType(AccessibilityRole::Presentational), "none"_s);
+    gAriaReverseRoleMap->set(std::to_underlying(AccessibilityRole::DescriptionListDetail), "definition"_s);
+    gAriaReverseRoleMap->set(std::to_underlying(AccessibilityRole::DescriptionListTerm), "term"_s);
+    gAriaReverseRoleMap->set(std::to_underlying(AccessibilityRole::Details), "group"_s);
+    gAriaReverseRoleMap->set(std::to_underlying(AccessibilityRole::Image), "image"_s);
+    gAriaReverseRoleMap->set(std::to_underlying(AccessibilityRole::ListBoxOption), "option"_s);
+    gAriaReverseRoleMap->set(std::to_underlying(AccessibilityRole::MenuListOption), "option"_s);
+    gAriaReverseRoleMap->set(std::to_underlying(AccessibilityRole::Presentational), "none"_s);
 }
 
 static ARIARoleMap& ariaRoleMap()
@@ -2736,7 +2736,7 @@ AccessibilityRole AccessibilityObject::ariaRoleToWebCoreRole(const String& value
     auto simplifiedValue = value.simplifyWhiteSpace(isASCIIWhitespace);
     for (auto roleName : StringView(simplifiedValue).split(' ')) {
         AccessibilityRole role = ariaRoleMap().get<ASCIICaseInsensitiveStringViewHashTranslator>(roleName);
-        if (enumToUnderlyingType(role))
+        if (std::to_underlying(role))
             return role;
     }
     return AccessibilityRole::Unknown;
@@ -2748,34 +2748,34 @@ String AccessibilityObject::computedRoleString() const
     AccessibilityRole role = roleValue();
 
     if (role == AccessibilityRole::Image && accessibilityIsIgnored())
-        return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::Presentational));
+        return reverseAriaRoleMap().get(std::to_underlying(AccessibilityRole::Presentational));
 
     // We do compute a role string for block elements with author-provided roles.
     if (ariaRoleAttribute() == AccessibilityRole::TextGroup
         || role == AccessibilityRole::Footnote
         || role == AccessibilityRole::GraphicsObject)
-        return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::Group));
+        return reverseAriaRoleMap().get(std::to_underlying(AccessibilityRole::Group));
 
     // We do not compute a role string for generic block elements with user-agent assigned roles.
     if (role == AccessibilityRole::TextGroup)
         return emptyString();
 
     if (role == AccessibilityRole::GraphicsDocument)
-        return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::Document));
+        return reverseAriaRoleMap().get(std::to_underlying(AccessibilityRole::Document));
 
     if (role == AccessibilityRole::GraphicsSymbol)
-        return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::Image));
+        return reverseAriaRoleMap().get(std::to_underlying(AccessibilityRole::Image));
 
     if (role == AccessibilityRole::HorizontalRule)
-        return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::Splitter));
+        return reverseAriaRoleMap().get(std::to_underlying(AccessibilityRole::Splitter));
 
     if (role == AccessibilityRole::PopUpButton || role == AccessibilityRole::ToggleButton)
-        return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::Button));
+        return reverseAriaRoleMap().get(std::to_underlying(AccessibilityRole::Button));
 
     if (role == AccessibilityRole::LandmarkDocRegion)
-        return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::LandmarkRegion));
+        return reverseAriaRoleMap().get(std::to_underlying(AccessibilityRole::LandmarkRegion));
 
-    return reverseAriaRoleMap().get(enumToUnderlyingType(role));
+    return reverseAriaRoleMap().get(std::to_underlying(role));
 }
 
 void AccessibilityObject::updateRole()
@@ -4408,7 +4408,7 @@ PlatformRoleMap createPlatformRoleMap() { return PlatformRoleMap(); }
 String roleToPlatformString(AccessibilityRole role)
 {
     static NeverDestroyed<PlatformRoleMap> roleMap = createPlatformRoleMap();
-    return roleMap->get(enumToUnderlyingType(role));
+    return roleMap->get(std::to_underlying(role));
 }
 
 // This function determines if the given `axObject` is a radio button part of a different ad-hoc radio group

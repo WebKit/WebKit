@@ -56,8 +56,8 @@ static_assert(sizeof(CSSSelector) == sizeof(SameSizeAsCSSSelector), "CSSSelector
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSelectorRareData);
 
 CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
-    : m_relation(enumToUnderlyingType(Relation::DescendantSpace))
-    , m_match(enumToUnderlyingType(Match::Tag))
+    : m_relation(std::to_underlying(Relation::DescendantSpace))
+    , m_match(std::to_underlying(Match::Tag))
     , m_tagIsForNamespaceRule(tagIsForNamespaceRule)
 {
     m_data.tagQName = tagQName.impl();
@@ -111,7 +111,7 @@ SelectorSpecificity::SelectorSpecificity(unsigned specificity)
 }
 
 SelectorSpecificity::SelectorSpecificity(SelectorSpecificityIncrement specificity)
-    : specificity(enumToUnderlyingType(specificity))
+    : specificity(std::to_underlying(specificity))
 {
 }
 

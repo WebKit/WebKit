@@ -191,7 +191,7 @@ SQLiteStatementAutoResetScope SWRegistrationDatabase::cachedStatement(StatementT
     ASSERT(m_database);
     ASSERT(type < StatementType::Invalid);
 
-    auto index = enumToUnderlyingType(type);
+    auto index = std::to_underlying(type);
     if (!m_cachedStatements[index]) {
         if (auto result = m_database->prepareHeapStatement(statementString(type)))
             m_cachedStatements[index] = result.value().moveToUniquePtr();

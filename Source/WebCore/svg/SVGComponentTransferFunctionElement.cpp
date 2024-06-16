@@ -53,7 +53,7 @@ void SVGComponentTransferFunctionElement::attributeChanged(const QualifiedName& 
     switch (name.nodeName()) {
     case AttributeNames::typeAttr: {
         ComponentTransferType propertyValue = SVGPropertyTraits<ComponentTransferType>::fromString(newValue);
-        if (enumToUnderlyingType(propertyValue))
+        if (std::to_underlying(propertyValue))
             m_type->setBaseValInternal<ComponentTransferType>(propertyValue);
         break;
     }

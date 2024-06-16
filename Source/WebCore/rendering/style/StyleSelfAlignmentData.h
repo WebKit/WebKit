@@ -41,15 +41,15 @@ public:
     // Style data for Self-Aligment and Default-Alignment properties: align-{self, items}, justify-{self, items}.
     // [ <self-position> && <overflow-position>? ] | [ legacy && [ left | right | center ] ]
     constexpr StyleSelfAlignmentData(ItemPosition position, OverflowAlignment overflow = OverflowAlignment::Default, ItemPositionType positionType = ItemPositionType::NonLegacy)
-        : m_position(enumToUnderlyingType(position))
-        , m_positionType(enumToUnderlyingType(positionType))
-        , m_overflow(enumToUnderlyingType(overflow))
+        : m_position(std::to_underlying(position))
+        , m_positionType(std::to_underlying(positionType))
+        , m_overflow(std::to_underlying(overflow))
     {
     }
 
-    void setPosition(ItemPosition position) { m_position = enumToUnderlyingType(position); }
-    void setPositionType(ItemPositionType positionType) { m_positionType = enumToUnderlyingType(positionType); }
-    void setOverflow(OverflowAlignment overflow) { m_overflow = enumToUnderlyingType(overflow); }
+    void setPosition(ItemPosition position) { m_position = std::to_underlying(position); }
+    void setPositionType(ItemPositionType positionType) { m_positionType = std::to_underlying(positionType); }
+    void setOverflow(OverflowAlignment overflow) { m_overflow = std::to_underlying(overflow); }
 
     ItemPosition position() const { return static_cast<ItemPosition>(m_position); }
     ItemPositionType positionType() const { return static_cast<ItemPositionType>(m_positionType); }

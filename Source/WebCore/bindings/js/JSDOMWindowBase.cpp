@@ -150,7 +150,7 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSWindowProxy* proxy)
         setNeedsSiteSpecificQuirks(true);
 
     if (m_wrapped && ((m_wrapped->frame() && m_wrapped->frame()->settings().showModalDialogEnabled()) || (m_wrapped->documentIfLocal() && m_wrapped->documentIfLocal()->quirks().shouldExposeShowModalDialog())))
-        putDirectCustomAccessor(vm, builtinNames(vm).showModalDialogPublicName(), CustomGetterSetter::create(vm, showModalDialogGetter, nullptr), enumToUnderlyingType(PropertyAttribute::CustomValue));
+        putDirectCustomAccessor(vm, builtinNames(vm).showModalDialogPublicName(), CustomGetterSetter::create(vm, showModalDialogGetter, nullptr), std::to_underlying(PropertyAttribute::CustomValue));
 }
 
 void JSDOMWindowBase::destroy(JSCell* cell)

@@ -354,7 +354,7 @@ PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoCla
 {
     ASSERT(keyType != InvalidationKeyType::Universal || keyString == starAtom());
     return {
-        enumToUnderlyingType(pseudoClass),
+        std::to_underlying(pseudoClass),
         static_cast<uint8_t>(keyType),
         keyString
     };

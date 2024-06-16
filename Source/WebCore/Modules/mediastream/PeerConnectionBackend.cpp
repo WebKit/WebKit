@@ -525,7 +525,7 @@ void PeerConnectionBackend::addIceCandidate(RTCIceCandidate* iceCandidate, Funct
                 return;
 
             if (result.hasException()) {
-                RELEASE_LOG_ERROR(WebRTC, "Adding ice candidate failed %hhu", enumToUnderlyingType(result.exception().code()));
+                RELEASE_LOG_ERROR(WebRTC, "Adding ice candidate failed %hhu", std::to_underlying(result.exception().code()));
                 callback(result.releaseException());
                 return;
             }

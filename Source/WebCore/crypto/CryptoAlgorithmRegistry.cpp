@@ -65,7 +65,7 @@ String CryptoAlgorithmRegistry::name(CryptoAlgorithmIdentifier identifier)
 {
     Locker locker { m_lock };
 
-    auto contructor = m_constructors.find(enumToUnderlyingType(identifier));
+    auto contructor = m_constructors.find(std::to_underlying(identifier));
     if (contructor == m_constructors.end())
         return { };
 
@@ -76,7 +76,7 @@ RefPtr<CryptoAlgorithm> CryptoAlgorithmRegistry::create(CryptoAlgorithmIdentifie
 {
     Locker locker { m_lock };
 
-    auto contructor = m_constructors.find(enumToUnderlyingType(identifier));
+    auto contructor = m_constructors.find(std::to_underlying(identifier));
     if (contructor == m_constructors.end())
         return nullptr;
 
@@ -88,10 +88,10 @@ void CryptoAlgorithmRegistry::registerAlgorithm(const String& name, CryptoAlgori
     Locker locker { m_lock };
 
     ASSERT(!m_identifiers.contains(name));
-    ASSERT(!m_constructors.contains(enumToUnderlyingType(identifier)));
+    ASSERT(!m_constructors.contains(std::to_underlying(identifier)));
 
     m_identifiers.add(name, identifier);
-    m_constructors.add(enumToUnderlyingType(identifier), std::make_pair(name, constructor));
+    m_constructors.add(std::to_underlying(identifier), std::make_pair(name, constructor));
 }
 
 

@@ -2788,7 +2788,7 @@ auto UnifiedPDFPlugin::toContextMenuItemTag(int tagValue) const -> ContextMenuIt
         ContextMenuItemTag::ActualSize,
     };
     const auto isKnownContextMenuItemTag = WTF::anyOf(regularContextMenuItemTags, [tagValue](ContextMenuItemTag tag) {
-        return tagValue == enumToUnderlyingType(tag);
+        return tagValue == std::to_underlying(tag);
     });
     return isKnownContextMenuItemTag ? static_cast<ContextMenuItemTag>(tagValue) : ContextMenuItemTag::Unknown;
 }
@@ -2836,7 +2836,7 @@ std::optional<PDFContextMenu> UnifiedPDFPlugin::createContextMenu(const WebMouse
 
     auto contextMenuPoint = frameView->contentsToScreen(IntRect(frameView->windowToContents(contextMenuEventRootViewPoint), IntSize())).location();
 
-    return PDFContextMenu { contextMenuPoint, WTFMove(menuItems), { enumToUnderlyingType(ContextMenuItemTag::OpenWithPreview) } };
+    return PDFContextMenu { contextMenuPoint, WTFMove(menuItems), { std::to_underlying(ContextMenuItemTag::OpenWithPreview) } };
 }
 
 bool UnifiedPDFPlugin::isDisplayModeContextMenuItemTag(ContextMenuItemTag tag) const
@@ -2900,14 +2900,14 @@ PDFContextMenuItem UnifiedPDFPlugin::contextMenuItem(ContextMenuItemTag tag, boo
         } else if (tag == ContextMenuItemTag::AutoSize)
             state = m_shouldUpdateAutoSizeScale == ShouldUpdateAutoSizeScale::Yes;
 
-        return { titleForContextMenuItemTag(tag), state, enumToUnderlyingType(tag), ContextMenuItemEnablement::Enabled, hasAction ? ContextMenuItemHasAction::Yes : ContextMenuItemHasAction::No, ContextMenuItemIsSeparator::No };
+        return { titleForContextMenuItemTag(tag), state, std::to_underlying(tag), ContextMenuItemEnablement::Enabled, hasAction ? ContextMenuItemHasAction::Yes : ContextMenuItemHasAction::No, ContextMenuItemIsSeparator::No };
     }
     }
 }
 
 PDFContextMenuItem UnifiedPDFPlugin::separatorContextMenuItem() const
 {
-    return { { }, 0, enumToUnderlyingType(ContextMenuItemTag::Invalid), ContextMenuItemEnablement::Disabled, ContextMenuItemHasAction::No, ContextMenuItemIsSeparator::Yes };
+    return { { }, 0, std::to_underlying(ContextMenuItemTag::Invalid), ContextMenuItemEnablement::Disabled, ContextMenuItemHasAction::No, ContextMenuItemIsSeparator::Yes };
 }
 
 Vector<PDFContextMenuItem> UnifiedPDFPlugin::selectionContextMenuItems(const IntPoint& contextMenuEventRootViewPoint) const

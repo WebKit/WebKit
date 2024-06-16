@@ -85,7 +85,7 @@ bool GraphicsContextState::containsOnlyInlineStrokeChanges() const
 
 constexpr unsigned toIndex(GraphicsContextState::Change change)
 {
-    return WTF::ctzConstexpr(enumToUnderlyingType(change));
+    return WTF::ctzConstexpr(std::to_underlying(change));
 }
 
 void GraphicsContextState::mergeLastChanges(const GraphicsContextState& state, const std::optional<GraphicsContextState>& lastDrawingState)

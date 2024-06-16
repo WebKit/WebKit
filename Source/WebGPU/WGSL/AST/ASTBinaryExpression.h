@@ -66,7 +66,7 @@ constexpr ASCIILiteral toASCIILiteral(BinaryOperation op)
 #undef WGSL_AST_BINOP
     };
 
-    return binaryOperationNames[WTF::enumToUnderlyingType(op)];
+    return binaryOperationNames[std::to_underlying(op)];
 }
 
 void printInternal(PrintStream&, BinaryOperation);

@@ -260,7 +260,7 @@ namespace WTF {
 
 template<> constexpr bool isValidEnum<IPC::MessageName, void>(std::underlying_type_t<IPC::MessageName> messageName)
 {
-    return messageName <= WTF::enumToUnderlyingType(IPC::MessageName::Last);
+    return messageName <= std::to_underlying(IPC::MessageName::Last);
 }
 
 } // namespace WTF

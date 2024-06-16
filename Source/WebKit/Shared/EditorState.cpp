@@ -68,11 +68,11 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
         if (editorState.postLayoutData->selectedTextLength)
             ts.dumpProperty("selectedTextLength", editorState.postLayoutData->selectedTextLength);
         if (editorState.postLayoutData->textAlignment != TextAlignment::Natural)
-            ts.dumpProperty("textAlignment", enumToUnderlyingType(editorState.postLayoutData->textAlignment));
+            ts.dumpProperty("textAlignment", std::to_underlying(editorState.postLayoutData->textAlignment));
         if (editorState.postLayoutData->textColor.isValid())
             ts.dumpProperty("textColor", editorState.postLayoutData->textColor);
         if (editorState.postLayoutData->enclosingListType != ListType::None)
-            ts.dumpProperty("enclosingListType", enumToUnderlyingType(editorState.postLayoutData->enclosingListType));
+            ts.dumpProperty("enclosingListType", std::to_underlying(editorState.postLayoutData->enclosingListType));
         if (editorState.postLayoutData->baseWritingDirection != WebCore::WritingDirection::Natural)
             ts.dumpProperty("baseWritingDirection", static_cast<uint8_t>(editorState.postLayoutData->baseWritingDirection));
         if (editorState.postLayoutData->canEnableWritingSuggestions)

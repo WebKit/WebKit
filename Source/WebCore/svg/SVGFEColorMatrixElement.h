@@ -28,7 +28,7 @@ namespace WebCore {
 
 template<>
 struct SVGPropertyTraits<ColorMatrixType> {
-    static unsigned highestEnumValue() { return enumToUnderlyingType(ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA); }
+    static unsigned highestEnumValue() { return std::to_underlying(ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA); }
 
     static String toString(ColorMatrixType type)
     {

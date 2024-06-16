@@ -1552,7 +1552,7 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const WebCore::NavigationAc
         auto element = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:core(m_webFrame.get())->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType)]);
         [result setObject:element.get() forKey:WebActionElementKey];
 
-        auto button = enumToUnderlyingType(mouseEventData->isTrusted ? mouseEventData->button : MouseButton::None);
+        auto button = std::to_underlying(mouseEventData->isTrusted ? mouseEventData->button : MouseButton::None);
         [result setObject:@(button) forKey:WebActionButtonKey];
     }
 
@@ -2141,7 +2141,7 @@ void WebFrameLoaderClient::finishedLoadingIcon(WebCore::FragmentedSharedBuffer* 
     // response policy decision, "Ignore" for other policy decisions).
     _frame = nullptr;
     if (auto policyFunction = std::exchange(_policyFunction, nullptr)) {
-        RELEASE_LOG_ERROR(Loading, "Client application failed to make a policy decision via WebPolicyDecisionListener, using defaultPolicy %hhu", enumToUnderlyingType(_defaultPolicy));
+        RELEASE_LOG_ERROR(Loading, "Client application failed to make a policy decision via WebPolicyDecisionListener, using defaultPolicy %hhu", std::to_underlying(_defaultPolicy));
         policyFunction(_defaultPolicy);
     }
 

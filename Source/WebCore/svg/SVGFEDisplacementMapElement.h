@@ -27,7 +27,7 @@ namespace WebCore {
  
 template<>
 struct SVGPropertyTraits<ChannelSelectorType> {
-    static unsigned highestEnumValue() { return enumToUnderlyingType(ChannelSelectorType::CHANNEL_A); }
+    static unsigned highestEnumValue() { return std::to_underlying(ChannelSelectorType::CHANNEL_A); }
 
     static String toString(ChannelSelectorType type)
     {

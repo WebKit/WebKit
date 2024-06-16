@@ -199,8 +199,8 @@ private:
     unsigned simpleSelectorSpecificityForPage() const;
     CSSSelector* tagHistory() { return m_isLastInTagHistory ? nullptr : this + 1; }
 
-    unsigned m_relation : 4 { enumToUnderlyingType(Relation::DescendantSpace) };
-    mutable unsigned m_match : 5 { enumToUnderlyingType(Match::Unknown) };
+    unsigned m_relation : 4 { std::to_underlying(Relation::DescendantSpace) };
+    mutable unsigned m_match : 5 { std::to_underlying(Match::Unknown) };
     mutable unsigned m_pseudoType : 8 { 0 }; // PseudoType.
     // 17 bits
     unsigned m_isLastInSelectorList : 1 { false };
@@ -354,7 +354,7 @@ inline CSSSelector::~CSSSelector()
     } else if (match() == Match::Tag) {
         m_data.tagQName->deref();
         m_data.tagQName = nullptr;
-        m_match = enumToUnderlyingType(Match::Unknown);
+        m_match = std::to_underlying(Match::Unknown);
     } else if (m_data.value) {
         m_data.value->deref();
         m_data.value = nullptr;
@@ -404,7 +404,7 @@ inline auto CSSSelector::pseudoClass() const -> PseudoClass
 
 inline void CSSSelector::setPseudoClass(PseudoClass pseudoClass)
 {
-    m_pseudoType = enumToUnderlyingType(pseudoClass);
+    m_pseudoType = std::to_underlying(pseudoClass);
     ASSERT(static_cast<PseudoClass>(m_pseudoType) == pseudoClass);
 }
 
@@ -416,7 +416,7 @@ inline auto CSSSelector::pseudoElement() const -> PseudoElement
 
 inline void CSSSelector::setPseudoElement(PseudoElement pseudoElement)
 {
-    m_pseudoType = enumToUnderlyingType(pseudoElement);
+    m_pseudoType = std::to_underlying(pseudoElement);
     ASSERT(static_cast<PseudoElement>(m_pseudoType) == pseudoElement);
 }
 
@@ -428,18 +428,18 @@ inline auto CSSSelector::pagePseudoClass() const -> PagePseudoClass
 
 inline void CSSSelector::setPagePseudoClass(PagePseudoClass pagePseudoClass)
 {
-    m_pseudoType = enumToUnderlyingType(pagePseudoClass);
+    m_pseudoType = std::to_underlying(pagePseudoClass);
     ASSERT(static_cast<PagePseudoClass>(m_pseudoType) == pagePseudoClass);
 }
 
 inline void CSSSelector::setRelation(Relation relation)
 {
-    m_relation = enumToUnderlyingType(relation);
+    m_relation = std::to_underlying(relation);
 }
 
 inline void CSSSelector::setMatch(Match match)
 {
-    m_match = enumToUnderlyingType(match);
+    m_match = std::to_underlying(match);
 }
 
 } // namespace WebCore

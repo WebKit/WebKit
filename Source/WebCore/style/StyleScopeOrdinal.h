@@ -43,13 +43,13 @@ enum class ScopeOrdinal : int8_t {
 inline ScopeOrdinal& operator++(ScopeOrdinal& ordinal)
 {
     ASSERT(ordinal < ScopeOrdinal::SlotLimit);
-    return ordinal = static_cast<ScopeOrdinal>(enumToUnderlyingType(ordinal) + 1);
+    return ordinal = static_cast<ScopeOrdinal>(std::to_underlying(ordinal) + 1);
 }
 
 inline ScopeOrdinal& operator--(ScopeOrdinal& ordinal)
 {
     ASSERT(ordinal > ScopeOrdinal::ContainingHostLimit);
-    return ordinal = static_cast<ScopeOrdinal>(enumToUnderlyingType(ordinal) - 1);
+    return ordinal = static_cast<ScopeOrdinal>(std::to_underlying(ordinal) - 1);
 }
 
 }

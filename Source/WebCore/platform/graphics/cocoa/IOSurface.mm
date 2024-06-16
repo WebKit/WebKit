@@ -254,7 +254,7 @@ IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, IOSu
         setColorSpaceProperty();
         m_totalBytes = IOSurfaceGetAllocSize(m_surface.get());
     } else
-        RELEASE_LOG_ERROR(Layers, "IOSurface creation failed for size: (%d %d) and format: (%d)", size.width(), size.height(), enumToUnderlyingType(format));
+        RELEASE_LOG_ERROR(Layers, "IOSurface creation failed for size: (%d %d) and format: (%d)", size.width(), size.height(), std::to_underlying(format));
 }
 
 static std::optional<IOSurface::Format> formatFromSurface(IOSurfaceRef surface)
