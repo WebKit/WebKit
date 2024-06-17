@@ -30,7 +30,7 @@ import sys
 
 
 # Enable this if `FeatureNeededForHeaderReplacement` should be taken into account.
-should_restrict_header_replacement_based_on_feature = True
+should_restrict_header_replacement_based_on_feature = False
 
 
 def read_content_from_webkit_additions(built_products_directory, sdk_root_directory, filename):

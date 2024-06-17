@@ -602,9 +602,113 @@ static NSString *defaultApplicationNameForUserAgent()
 }
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewConfigurationAdditions.mm>
+#if ENABLE(WRITING_TOOLS)
+
+- (void)setSupportsAdaptiveImageGlyph:(BOOL)supportsAdaptiveImageGlyph
+{
+    [self _setMultiRepresentationHEICInsertionEnabled:supportsAdaptiveImageGlyph];
+}
+
+- (BOOL)supportsAdaptiveImageGlyph
+{
+    return [self _multiRepresentationHEICInsertionEnabled];
+}
+
+#if TARGET_OS_IOS && !TARGET_OS_VISION
+
+static _WKUnifiedTextReplacementBehavior convert(UIWritingToolsBehavior behavior)
+{
+    switch (behavior) {
+    case UIWritingToolsBehaviorNone:
+        return _WKUnifiedTextReplacementBehaviorNone;
+
+    case UIWritingToolsBehaviorDefault:
+        return _WKUnifiedTextReplacementBehaviorDefault;
+
+    case UIWritingToolsBehaviorLimited:
+        return _WKUnifiedTextReplacementBehaviorLimited;
+
+    case UIWritingToolsBehaviorComplete:
+        return _WKUnifiedTextReplacementBehaviorComplete;
+    }
+}
+
+static UIWritingToolsBehavior convert(_WKUnifiedTextReplacementBehavior behavior)
+{
+    switch (behavior) {
+    case _WKUnifiedTextReplacementBehaviorNone:
+        return UIWritingToolsBehaviorNone;
+
+    case _WKUnifiedTextReplacementBehaviorDefault:
+        return UIWritingToolsBehaviorDefault;
+
+    case _WKUnifiedTextReplacementBehaviorLimited:
+        return UIWritingToolsBehaviorLimited;
+
+    case _WKUnifiedTextReplacementBehaviorComplete:
+        return UIWritingToolsBehaviorComplete;
+    }
+}
+
+- (void)setWritingToolsBehavior:(UIWritingToolsBehavior)writingToolsBehavior
+{
+    [self _setUnifiedTextReplacementBehavior:convert(writingToolsBehavior)];
+}
+
+- (UIWritingToolsBehavior)writingToolsBehavior
+{
+    return convert([self _unifiedTextReplacementBehavior]);
+}
+
+#elif TARGET_OS_OSX
+
+static _WKUnifiedTextReplacementBehavior convert(NSWritingToolsBehavior behavior)
+{
+    switch (behavior) {
+    case NSWritingToolsBehaviorNone:
+        return _WKUnifiedTextReplacementBehaviorNone;
+
+    case NSWritingToolsBehaviorDefault:
+        return _WKUnifiedTextReplacementBehaviorDefault;
+
+    case NSWritingToolsBehaviorLimited:
+        return _WKUnifiedTextReplacementBehaviorLimited;
+
+    case NSWritingToolsBehaviorComplete:
+        return _WKUnifiedTextReplacementBehaviorComplete;
+    }
+}
+
+static NSWritingToolsBehavior convert(_WKUnifiedTextReplacementBehavior behavior)
+{
+    switch (behavior) {
+    case _WKUnifiedTextReplacementBehaviorNone:
+        return NSWritingToolsBehaviorNone;
+
+    case _WKUnifiedTextReplacementBehaviorDefault:
+        return NSWritingToolsBehaviorDefault;
+
+    case _WKUnifiedTextReplacementBehaviorLimited:
+        return NSWritingToolsBehaviorLimited;
+
+    case _WKUnifiedTextReplacementBehaviorComplete:
+        return NSWritingToolsBehaviorComplete;
+    }
+}
+
+- (void)setWritingToolsBehavior:(NSWritingToolsBehavior)writingToolsBehavior
+{
+    [self _setUnifiedTextReplacementBehavior:convert(writingToolsBehavior)];
+}
+
+- (NSWritingToolsBehavior)writingToolsBehavior
+{
+    return convert([self _unifiedTextReplacementBehavior]);
+}
+
 #endif
+
+#endif // ENABLE(WRITING_TOOLS)
 
 #pragma mark WKObject protocol implementation
 
