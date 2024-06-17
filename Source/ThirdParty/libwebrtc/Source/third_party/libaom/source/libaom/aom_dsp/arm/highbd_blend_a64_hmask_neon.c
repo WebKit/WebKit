@@ -67,7 +67,7 @@ void aom_highbd_blend_a64_hmask_neon(uint8_t *dst_8, uint32_t dst_stride,
 
       uint16x8_t blend = alpha_blend_a64_u16x8(m0, s0, s1);
 
-      store_unaligned_u16_4x2(dst, dst_stride, blend);
+      store_u16x4_strided_x2(dst, dst_stride, blend);
 
       src0 += 2 * src0_stride;
       src1 += 2 * src1_stride;
@@ -83,7 +83,7 @@ void aom_highbd_blend_a64_hmask_neon(uint8_t *dst_8, uint32_t dst_stride,
 
       uint16x4_t blend = alpha_blend_a64_u16x4(m0, s0, s1);
 
-      store_unaligned_u16_2x2(dst, dst_stride, blend);
+      store_u16x2_strided_x2(dst, dst_stride, blend);
 
       src0 += 2 * src0_stride;
       src1 += 2 * src1_stride;

@@ -58,6 +58,7 @@ static void od_ec_enc_normalize(od_ec_enc *enc, od_ec_enc_window low,
   int d;
   int c;
   int s;
+  if (enc->error) return;
   c = enc->cnt;
   assert(rng <= 65535U);
   /*The number of leading zeros in the 16-bit binary representation of rng.*/
@@ -83,7 +84,6 @@ static void od_ec_enc_normalize(od_ec_enc *enc, od_ec_enc_window low,
       out = (unsigned char *)realloc(out, sizeof(*out) * storage);
       if (out == NULL) {
         enc->error = -1;
-        enc->offs = 0;
         return;
       }
       enc->buf = out;
@@ -371,29 +371,4 @@ int od_ec_enc_tell(const od_ec_enc *enc) {
            rounding error is in the positive direction).*/
 uint32_t od_ec_enc_tell_frac(const od_ec_enc *enc) {
   return od_ec_tell_frac(od_ec_enc_tell(enc), enc->rng);
-}
-
-/*Saves a entropy coder checkpoint to dst.
-  This allows an encoder to reverse a series of entropy coder
-   decisions if it decides that the information would have been
-   better coded some other way.*/
-void od_ec_enc_checkpoint(od_ec_enc *dst, const od_ec_enc *src) {
-  OD_COPY(dst, src, 1);
-}
-
-/*Restores an entropy coder checkpoint saved by od_ec_enc_checkpoint.
-  This can only be used to restore from checkpoints earlier in the target
-   state's history: you can not switch backwards and forwards or otherwise
-   switch to a state which isn't a casual ancestor of the current state.
-  Restore is also incompatible with patching the initial bits, as the
-   changes will remain in the restored version.*/
-void od_ec_enc_rollback(od_ec_enc *dst, const od_ec_enc *src) {
-  unsigned char *buf;
-  uint32_t storage;
-  assert(dst->storage >= src->storage);
-  buf = dst->buf;
-  storage = dst->storage;
-  OD_COPY(dst, src, 1);
-  dst->buf = buf;
-  dst->storage = storage;
 }

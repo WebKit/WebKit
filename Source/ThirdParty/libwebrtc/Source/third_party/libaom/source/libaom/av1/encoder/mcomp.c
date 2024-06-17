@@ -1807,7 +1807,6 @@ int av1_full_pixel_search(const FULLPEL_MV start_mv,
   }
 
   assert(ms_params->ms_buffers.ref->stride == ms_params->search_sites->stride);
-  assert(ms_params->ms_buffers.ref->width == ms_params->ms_buffers.src->width);
 
   switch (search_method) {
     case FAST_BIGDIA:
@@ -2154,7 +2153,7 @@ unsigned int av1_int_pro_motion_estimation(const AV1_COMP *cpi, MACROBLOCK *x,
     aom_free(vbuf);
     aom_free(src_hbuf);
     aom_free(src_vbuf);
-    aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
+    aom_internal_error(xd->error_info, AOM_CODEC_MEM_ERROR,
                        "Failed to allocate hbuf, vbuf, src_hbuf, or src_vbuf");
   }
 

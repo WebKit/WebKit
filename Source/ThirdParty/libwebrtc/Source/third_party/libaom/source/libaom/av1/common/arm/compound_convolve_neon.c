@@ -336,10 +336,8 @@ static INLINE void dist_wtd_convolve_2d_copy_dist_wtd_avg_neon(
           dd0, dd1, dd2, dd3, d0, d1, d2, d3, fwd_offset, bck_offset,
           vreinterpretq_s16_u16(round_offset_vec), &d01, &d23);
 
-      store_u8_4x1(dst8 + 0 * dst8_stride, d01, 0);
-      store_u8_4x1(dst8 + 1 * dst8_stride, d01, 1);
-      store_u8_4x1(dst8 + 2 * dst8_stride, d23, 0);
-      store_u8_4x1(dst8 + 3 * dst8_stride, d23, 1);
+      store_u8x4_strided_x2(dst8 + 0 * dst8_stride, dst8_stride, d01);
+      store_u8x4_strided_x2(dst8 + 2 * dst8_stride, dst8_stride, d23);
 
       src += 4 * src_stride;
       dst += 4 * dst_stride;
@@ -425,10 +423,8 @@ static INLINE void dist_wtd_convolve_2d_copy_avg_neon(
                             vreinterpretq_s16_u16(round_offset_vec), &d01,
                             &d23);
 
-      store_u8_4x1(dst8 + 0 * dst8_stride, d01, 0);
-      store_u8_4x1(dst8 + 1 * dst8_stride, d01, 1);
-      store_u8_4x1(dst8 + 2 * dst8_stride, d23, 0);
-      store_u8_4x1(dst8 + 3 * dst8_stride, d23, 1);
+      store_u8x4_strided_x2(dst8 + 0 * dst8_stride, dst8_stride, d01);
+      store_u8x4_strided_x2(dst8 + 2 * dst8_stride, dst8_stride, d23);
 
       src += 4 * src_stride;
       dst += 4 * dst_stride;
@@ -647,7 +643,7 @@ static INLINE void dist_wtd_convolve_x_dist_wtd_avg_neon(
       compute_dist_wtd_avg_4x1(dd0, d0, fwd_offset, bck_offset,
                                vget_low_s16(round_offset_vec), &d01);
 
-      store_u8_4x1(dst8_ptr, d01, 0);
+      store_u8_4x1(dst8_ptr, d01);
 
       src_ptr += src_stride;
       dst_ptr += dst_stride;
@@ -860,7 +856,7 @@ static INLINE void dist_wtd_convolve_x_avg_neon(
       uint8x8_t d01;
       compute_basic_avg_4x1(dd0, d0, vget_low_s16(round_offset_vec), &d01);
 
-      store_u8_4x1(dst8_ptr, d01, 0);
+      store_u8_4x1(dst8_ptr, d01);
 
       src_ptr += src_stride;
       dst_ptr += dst_stride;
@@ -1321,10 +1317,8 @@ static INLINE void dist_wtd_convolve_y_6tap_dist_wtd_avg_neon(
         compute_dist_wtd_avg_4x4(dd0, dd1, dd2, dd3, d0, d1, d2, d3, fwd_offset,
                                  bck_offset, round_offset_vec, &d01, &d23);
 
-        store_u8_4x1(d_u8 + 0 * dst8_stride, d01, 0);
-        store_u8_4x1(d_u8 + 1 * dst8_stride, d01, 1);
-        store_u8_4x1(d_u8 + 2 * dst8_stride, d23, 0);
-        store_u8_4x1(d_u8 + 3 * dst8_stride, d23, 1);
+        store_u8x4_strided_x2(d_u8 + 0 * dst8_stride, dst8_stride, d01);
+        store_u8x4_strided_x2(d_u8 + 2 * dst8_stride, dst8_stride, d23);
 
         s0 = s4;
         s1 = s5;
@@ -1348,7 +1342,7 @@ static INLINE void dist_wtd_convolve_y_6tap_dist_wtd_avg_neon(
         compute_dist_wtd_avg_4x1(dd0, d0, fwd_offset, bck_offset,
                                  vget_low_s16(round_offset_vec), &d01);
 
-        store_u8_4x1(d_u8, d01, 0);
+        store_u8_4x1(d_u8, d01);
 
         s0 = s1;
         s1 = s2;
@@ -1540,10 +1534,8 @@ static INLINE void dist_wtd_convolve_y_6tap_avg_neon(
         compute_basic_avg_4x4(dd0, dd1, dd2, dd3, d0, d1, d2, d3,
                               round_offset_vec, &d01, &d23);
 
-        store_u8_4x1(d_u8 + 0 * dst8_stride, d01, 0);
-        store_u8_4x1(d_u8 + 1 * dst8_stride, d01, 1);
-        store_u8_4x1(d_u8 + 2 * dst8_stride, d23, 0);
-        store_u8_4x1(d_u8 + 3 * dst8_stride, d23, 1);
+        store_u8x4_strided_x2(d_u8 + 0 * dst8_stride, dst8_stride, d01);
+        store_u8x4_strided_x2(d_u8 + 2 * dst8_stride, dst8_stride, d23);
 
         s0 = s4;
         s1 = s5;
@@ -1566,7 +1558,7 @@ static INLINE void dist_wtd_convolve_y_6tap_avg_neon(
         uint8x8_t d01;
         compute_basic_avg_4x1(dd0, d0, vget_low_s16(round_offset_vec), &d01);
 
-        store_u8_4x1(d_u8, d01, 0);
+        store_u8_4x1(d_u8, d01);
 
         s0 = s1;
         s1 = s2;
@@ -1998,10 +1990,8 @@ static INLINE void dist_wtd_convolve_y_8tap_dist_wtd_avg_neon(
         compute_dist_wtd_avg_4x4(dd0, dd1, dd2, dd3, d0, d1, d2, d3, fwd_offset,
                                  bck_offset, round_offset_vec, &d01, &d23);
 
-        store_u8_4x1(d_u8 + 0 * dst8_stride, d01, 0);
-        store_u8_4x1(d_u8 + 1 * dst8_stride, d01, 1);
-        store_u8_4x1(d_u8 + 2 * dst8_stride, d23, 0);
-        store_u8_4x1(d_u8 + 3 * dst8_stride, d23, 1);
+        store_u8x4_strided_x2(d_u8 + 0 * dst8_stride, dst8_stride, d01);
+        store_u8x4_strided_x2(d_u8 + 2 * dst8_stride, dst8_stride, d23);
 
         s0 = s4;
         s1 = s5;
@@ -2029,7 +2019,7 @@ static INLINE void dist_wtd_convolve_y_8tap_dist_wtd_avg_neon(
         compute_dist_wtd_avg_4x1(dd0, d0, fwd_offset, bck_offset,
                                  vget_low_s16(round_offset_vec), &d01);
 
-        store_u8_4x1(d_u8, d01, 0);
+        store_u8_4x1(d_u8, d01);
 
         s0 = s1;
         s1 = s2;
@@ -2278,10 +2268,8 @@ static INLINE void dist_wtd_convolve_y_8tap_avg_neon(
         compute_basic_avg_4x4(dd0, dd1, dd2, dd3, d0, d1, d2, d3,
                               round_offset_vec, &d01, &d23);
 
-        store_u8_4x1(d_u8 + 0 * dst8_stride, d01, 0);
-        store_u8_4x1(d_u8 + 1 * dst8_stride, d01, 1);
-        store_u8_4x1(d_u8 + 2 * dst8_stride, d23, 0);
-        store_u8_4x1(d_u8 + 3 * dst8_stride, d23, 1);
+        store_u8x4_strided_x2(d_u8 + 0 * dst8_stride, dst8_stride, d01);
+        store_u8x4_strided_x2(d_u8 + 2 * dst8_stride, dst8_stride, d23);
 
         s0 = s4;
         s1 = s5;
@@ -2308,7 +2296,7 @@ static INLINE void dist_wtd_convolve_y_8tap_avg_neon(
         uint8x8_t d01;
         compute_basic_avg_4x1(dd0, d0, vget_low_s16(round_offset_vec), &d01);
 
-        store_u8_4x1(d_u8, d01, 0);
+        store_u8_4x1(d_u8, d01);
 
         s0 = s1;
         s1 = s2;

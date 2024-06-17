@@ -103,11 +103,12 @@ static INLINE void masked_sadx4d_ssse3(const uint8_t *src_ptr, int src_stride,
   pred = _mm_packus_epi16(pred_l, pred_r);                                     \
   res##idx = _mm_add_epi32(res##idx, _mm_sad_epu8(pred, src));
 
-void aom_masked_sad8xhx4d_ssse3(const uint8_t *src_ptr, int src_stride,
-                                const uint8_t *ref_array[4], int a_stride,
-                                const uint8_t *b_ptr, int b_stride,
-                                const uint8_t *m_ptr, int m_stride, int height,
-                                int inv_mask, unsigned sad_array[4]) {
+static void masked_sad8xhx4d_ssse3(const uint8_t *src_ptr, int src_stride,
+                                   const uint8_t *ref_array[4], int a_stride,
+                                   const uint8_t *b_ptr, int b_stride,
+                                   const uint8_t *m_ptr, int m_stride,
+                                   int height, int inv_mask,
+                                   unsigned sad_array[4]) {
   const uint8_t *ref0 = ref_array[0];
   const uint8_t *ref1 = ref_array[1];
   const uint8_t *ref2 = ref_array[2];
@@ -164,11 +165,12 @@ void aom_masked_sad8xhx4d_ssse3(const uint8_t *src_ptr, int src_stride,
   pred = _mm_packus_epi16(pred, _mm_setzero_si128());                     \
   res##idx = _mm_add_epi32(res##idx, _mm_sad_epu8(pred, src));
 
-void aom_masked_sad4xhx4d_ssse3(const uint8_t *src_ptr, int src_stride,
-                                const uint8_t *ref_array[4], int a_stride,
-                                const uint8_t *b_ptr, int b_stride,
-                                const uint8_t *m_ptr, int m_stride, int height,
-                                int inv_mask, unsigned sad_array[4]) {
+static void masked_sad4xhx4d_ssse3(const uint8_t *src_ptr, int src_stride,
+                                   const uint8_t *ref_array[4], int a_stride,
+                                   const uint8_t *b_ptr, int b_stride,
+                                   const uint8_t *m_ptr, int m_stride,
+                                   int height, int inv_mask,
+                                   unsigned sad_array[4]) {
   const uint8_t *ref0 = ref_array[0];
   const uint8_t *ref1 = ref_array[1];
   const uint8_t *ref2 = ref_array[2];
@@ -224,22 +226,22 @@ void aom_masked_sad4xhx4d_ssse3(const uint8_t *src_ptr, int src_stride,
                         msk_stride, m, n, inv_mask, sad_array);                \
   }
 
-#define MASKSAD8XN_SSSE3(n)                                                   \
-  void aom_masked_sad8x##n##x4d_ssse3(                                        \
-      const uint8_t *src, int src_stride, const uint8_t *ref[4],              \
-      int ref_stride, const uint8_t *second_pred, const uint8_t *msk,         \
-      int msk_stride, int inv_mask, unsigned sad_array[4]) {                  \
-    aom_masked_sad8xhx4d_ssse3(src, src_stride, ref, ref_stride, second_pred, \
-                               8, msk, msk_stride, n, inv_mask, sad_array);   \
+#define MASKSAD8XN_SSSE3(n)                                                  \
+  void aom_masked_sad8x##n##x4d_ssse3(                                       \
+      const uint8_t *src, int src_stride, const uint8_t *ref[4],             \
+      int ref_stride, const uint8_t *second_pred, const uint8_t *msk,        \
+      int msk_stride, int inv_mask, unsigned sad_array[4]) {                 \
+    masked_sad8xhx4d_ssse3(src, src_stride, ref, ref_stride, second_pred, 8, \
+                           msk, msk_stride, n, inv_mask, sad_array);         \
   }
 
-#define MASKSAD4XN_SSSE3(n)                                                   \
-  void aom_masked_sad4x##n##x4d_ssse3(                                        \
-      const uint8_t *src, int src_stride, const uint8_t *ref[4],              \
-      int ref_stride, const uint8_t *second_pred, const uint8_t *msk,         \
-      int msk_stride, int inv_mask, unsigned sad_array[4]) {                  \
-    aom_masked_sad4xhx4d_ssse3(src, src_stride, ref, ref_stride, second_pred, \
-                               4, msk, msk_stride, n, inv_mask, sad_array);   \
+#define MASKSAD4XN_SSSE3(n)                                                  \
+  void aom_masked_sad4x##n##x4d_ssse3(                                       \
+      const uint8_t *src, int src_stride, const uint8_t *ref[4],             \
+      int ref_stride, const uint8_t *second_pred, const uint8_t *msk,        \
+      int msk_stride, int inv_mask, unsigned sad_array[4]) {                 \
+    masked_sad4xhx4d_ssse3(src, src_stride, ref, ref_stride, second_pred, 4, \
+                           msk, msk_stride, n, inv_mask, sad_array);         \
   }
 
 MASKSADMXN_SSSE3(128, 128)

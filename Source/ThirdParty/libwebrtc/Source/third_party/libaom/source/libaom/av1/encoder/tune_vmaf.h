@@ -43,13 +43,13 @@ typedef struct {
 struct AV1_COMP;
 
 void av1_vmaf_blk_preprocessing(struct AV1_COMP *cpi,
-                                YV12_BUFFER_CONFIG *source);
+                                const YV12_BUFFER_CONFIG *source);
 
 void av1_vmaf_frame_preprocessing(struct AV1_COMP *cpi,
-                                  YV12_BUFFER_CONFIG *source);
+                                  const YV12_BUFFER_CONFIG *source);
 
 void av1_vmaf_neg_preprocessing(struct AV1_COMP *cpi,
-                                YV12_BUFFER_CONFIG *source);
+                                const YV12_BUFFER_CONFIG *source);
 
 void av1_set_mb_vmaf_rdmult_scaling(struct AV1_COMP *cpi);
 

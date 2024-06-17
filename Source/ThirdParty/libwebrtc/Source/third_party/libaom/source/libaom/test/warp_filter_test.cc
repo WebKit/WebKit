@@ -88,6 +88,12 @@ INSTANTIATE_TEST_SUITE_P(
 INSTANTIATE_TEST_SUITE_P(
     SVE, AV1WarpFilterTest,
     libaom_test::AV1WarpFilter::BuildParams(av1_warp_affine_sve));
+
+#if CONFIG_AV1_HIGHBITDEPTH
+INSTANTIATE_TEST_SUITE_P(
+    SVE, AV1HighbdWarpFilterTest,
+    libaom_test::AV1HighbdWarpFilter::BuildParams(av1_highbd_warp_affine_sve));
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 #endif  // HAVE_SVE
 
 }  // namespace

@@ -51,7 +51,7 @@ static INLINE void highbd_dist_wtd_comp_avg_neon(
       d0_u16 = vmin_u16(d0_u16, vget_low_u16(max));
 
       if (w == 2) {
-        store_u16_2x1(dst_ptr, d0_u16, 0);
+        store_u16_2x1(dst_ptr, d0_u16);
       } else {
         vst1_u16(dst_ptr, d0_u16);
       }
@@ -123,7 +123,7 @@ static INLINE void highbd_comp_avg_neon(const uint16_t *src_ptr, int src_stride,
       d0_u16 = vmin_u16(d0_u16, vget_low_u16(max));
 
       if (w == 2) {
-        store_u16_2x1(dst_ptr, d0_u16, 0);
+        store_u16_2x1(dst_ptr, d0_u16);
       } else {
         vst1_u16(dst_ptr, d0_u16);
       }
@@ -260,9 +260,9 @@ static INLINE void highbd_convolve_2d_x_scale_8tap_neon(
           s0, s1, s2, s3, filters_lo, filters_hi, shift_s32, offset_s32);
 
       if (w == 2) {
-        store_u16_2x1(d + 0 * dst_stride, d0, 0);
+        store_u16_2x1(d, d0);
       } else {
-        vst1_u16(d + 0 * dst_stride, d0);
+        vst1_u16(d, d0);
       }
 
       src_ptr += src_stride;
@@ -398,7 +398,7 @@ static INLINE void highbd_convolve_2d_y_scale_8tap_neon(
           offset_s32, vdupq_n_s32(0));
 
       if (w == 2) {
-        store_u16_2x1(d, d0, 0);
+        store_u16_2x1(d, d0);
       } else {
         vst1_u16(d, d0);
       }
@@ -458,7 +458,7 @@ static INLINE void highbd_convolve_correct_offset_neon(
       uint16x4_t d = vqmovun_s32(d0);
       d = vmin_u16(d, vget_low_u16(max));
       if (w == 2) {
-        store_u16_2x1(dst_ptr + y * dst_stride, d, 0);
+        store_u16_2x1(dst_ptr + y * dst_stride, d);
       } else {
         vst1_u16(dst_ptr + y * dst_stride, d);
       }

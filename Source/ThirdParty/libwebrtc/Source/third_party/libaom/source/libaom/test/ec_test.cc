@@ -78,6 +78,7 @@ TEST(EC_TEST, random_ec_test) {
       tell[j + 1] = od_ec_enc_tell_frac(&enc);
     }
     ptr = od_ec_enc_done(&enc, &ptr_sz);
+    ASSERT_NE(ptr, nullptr);
     EXPECT_GE(((od_ec_enc_tell(&enc) + 7U) >> 3), ptr_sz)
         << "od_ec_enc_tell() lied: "
            "there's "
@@ -143,6 +144,7 @@ TEST(EC_TEST, random_ec_test) {
   od_ec_enc_patch_initial_bits(&enc, 0, 2);
   EXPECT_FALSE(enc.error) << "od_ec_enc_patch_initial_bits() failed.\n";
   ptr = od_ec_enc_done(&enc, &ptr_sz);
+  ASSERT_NE(ptr, nullptr);
   EXPECT_EQ(ptr_sz, 2u);
   EXPECT_EQ(ptr[0], 63)
       << "Got " << ptr[0]

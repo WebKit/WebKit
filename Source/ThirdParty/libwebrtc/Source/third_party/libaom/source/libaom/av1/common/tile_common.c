@@ -177,46 +177,16 @@ int av1_get_sb_cols_in_tile(const AV1_COMMON *cm, const TileInfo *tile) {
                            cm->seq_params->mib_size_log2);
 }
 
-PixelRect av1_get_tile_rect(const TileInfo *tile_info, const AV1_COMMON *cm,
-                            int is_uv) {
-  PixelRect r;
-
-  // Calculate position in the Y plane
-  r.left = tile_info->mi_col_start * MI_SIZE;
-  r.right = tile_info->mi_col_end * MI_SIZE;
-  r.top = tile_info->mi_row_start * MI_SIZE;
-  r.bottom = tile_info->mi_row_end * MI_SIZE;
-
-  // If upscaling is enabled, the tile limits need scaling to match the
-  // upscaled frame where the restoration units live. To do this, scale up the
-  // top-left and bottom-right of the tile.
-  if (av1_superres_scaled(cm)) {
-    av1_calculate_unscaled_superres_size(&r.left, &r.top,
-                                         cm->superres_scale_denominator);
-    av1_calculate_unscaled_superres_size(&r.right, &r.bottom,
-                                         cm->superres_scale_denominator);
-  }
-
-  const int frame_w = cm->superres_upscaled_width;
-  const int frame_h = cm->superres_upscaled_height;
-
-  // Make sure we don't fall off the bottom-right of the frame.
-  r.right = AOMMIN(r.right, frame_w);
-  r.bottom = AOMMIN(r.bottom, frame_h);
-
-  // Convert to coordinates in the appropriate plane
-  const int ss_x = is_uv && cm->seq_params->subsampling_x;
-  const int ss_y = is_uv && cm->seq_params->subsampling_y;
-
-  r.left = ROUND_POWER_OF_TWO(r.left, ss_x);
-  r.right = ROUND_POWER_OF_TWO(r.right, ss_x);
-  r.top = ROUND_POWER_OF_TWO(r.top, ss_y);
-  r.bottom = ROUND_POWER_OF_TWO(r.bottom, ss_y);
-
-  return r;
-}
-
-void av1_get_uniform_tile_size(const AV1_COMMON *cm, int *w, int *h) {
+// Section 7.3.1 of the AV1 spec says, on pages 200-201:
+//   It is a requirement of bitstream conformance that the following conditions
+//   are met:
+//     ...
+//     * TileHeight is equal to (use_128x128_superblock ? 128 : 64) for all
+//       tiles (i.e. the tile is exactly one superblock high)
+//     * TileWidth is identical for all tiles and is an integer multiple of
+//       TileHeight (i.e. the tile is an integer number of superblocks wide)
+//     ...
+bool av1_get_uniform_tile_size(const AV1_COMMON *cm, int *w, int *h) {
   const CommonTileParams *const tiles = &cm->tiles;
   if (tiles->uniform_spacing) {
     *w = tiles->width;
@@ -226,7 +196,10 @@ void av1_get_uniform_tile_size(const AV1_COMMON *cm, int *w, int *h) {
       const int tile_width_sb =
           tiles->col_start_sb[i + 1] - tiles->col_start_sb[i];
       const int tile_w = tile_width_sb * cm->seq_params->mib_size;
-      assert(i == 0 || tile_w == *w);  // ensure all tiles have same dimension
+      // ensure all tiles have same dimension
+      if (i != 0 && tile_w != *w) {
+        return false;
+      }
       *w = tile_w;
     }
 
@@ -234,10 +207,14 @@ void av1_get_uniform_tile_size(const AV1_COMMON *cm, int *w, int *h) {
       const int tile_height_sb =
           tiles->row_start_sb[i + 1] - tiles->row_start_sb[i];
       const int tile_h = tile_height_sb * cm->seq_params->mib_size;
-      assert(i == 0 || tile_h == *h);  // ensure all tiles have same dimension
+      // ensure all tiles have same dimension
+      if (i != 0 && tile_h != *h) {
+        return false;
+      }
       *h = tile_h;
     }
   }
+  return true;
 }
 
 int av1_is_min_tile_width_satisfied(const AV1_COMMON *cm) {

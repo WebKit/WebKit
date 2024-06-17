@@ -142,9 +142,9 @@ void av1_highbd_convolve_horiz_rs_neon(const uint16_t *src, int src_stride,
       d0 = vmin_u16(d0, max);
 
       if (w == 2) {
-        store_u16_2x1(d + 0 * dst_stride, d0, 0);
+        store_u16_2x1(d, d0);
       } else {
-        vst1_u16(d + 0 * dst_stride, d0);
+        vst1_u16(d, d0);
       }
 
       src_ptr += src_stride;

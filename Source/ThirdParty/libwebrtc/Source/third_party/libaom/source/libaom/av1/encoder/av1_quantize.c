@@ -15,6 +15,7 @@
 
 #include "aom_dsp/quantize.h"
 #include "aom_mem/aom_mem.h"
+#include "aom_ports/bitops.h"
 #include "aom_ports/mem.h"
 
 #include "av1/common/idct.h"
@@ -581,7 +582,7 @@ static void invert_quant(int16_t *quant, int16_t *shift, int d) {
   uint32_t t;
   int l, m;
   t = d;
-  for (l = 0; t > 1; l++) t >>= 1;
+  l = get_msb(t);
   m = 1 + (1 << (16 + l)) / d;
   *quant = (int16_t)(m - (1 << 16));
   *shift = 1 << (16 - l);

@@ -1109,13 +1109,11 @@ static INLINE void dist_block_tx_domain(MACROBLOCK *x, int plane, int block,
   *out_sse = RIGHT_SIGNED_SHIFT(this_sse, shift);
 }
 
-uint16_t prune_txk_type_separ(const AV1_COMP *cpi, MACROBLOCK *x, int plane,
-                              int block, TX_SIZE tx_size, int blk_row,
-                              int blk_col, BLOCK_SIZE plane_bsize, int *txk_map,
-                              int16_t allowed_tx_mask, int prune_factor,
-                              const TXB_CTX *const txb_ctx,
-                              int reduced_tx_set_used, int64_t ref_best_rd,
-                              int num_sel) {
+static uint16_t prune_txk_type_separ(
+    const AV1_COMP *cpi, MACROBLOCK *x, int plane, int block, TX_SIZE tx_size,
+    int blk_row, int blk_col, BLOCK_SIZE plane_bsize, int *txk_map,
+    int16_t allowed_tx_mask, int prune_factor, const TXB_CTX *const txb_ctx,
+    int reduced_tx_set_used, int64_t ref_best_rd, int num_sel) {
   const AV1_COMMON *cm = &cpi->common;
   MACROBLOCKD *xd = &x->e_mbd;
 
@@ -1255,11 +1253,12 @@ uint16_t prune_txk_type_separ(const AV1_COMP *cpi, MACROBLOCK *x, int plane,
   return prune;
 }
 
-uint16_t prune_txk_type(const AV1_COMP *cpi, MACROBLOCK *x, int plane,
-                        int block, TX_SIZE tx_size, int blk_row, int blk_col,
-                        BLOCK_SIZE plane_bsize, int *txk_map,
-                        uint16_t allowed_tx_mask, int prune_factor,
-                        const TXB_CTX *const txb_ctx, int reduced_tx_set_used) {
+static uint16_t prune_txk_type(const AV1_COMP *cpi, MACROBLOCK *x, int plane,
+                               int block, TX_SIZE tx_size, int blk_row,
+                               int blk_col, BLOCK_SIZE plane_bsize,
+                               int *txk_map, uint16_t allowed_tx_mask,
+                               int prune_factor, const TXB_CTX *const txb_ctx,
+                               int reduced_tx_set_used) {
   const AV1_COMMON *cm = &cpi->common;
   MACROBLOCKD *xd = &x->e_mbd;
   int tx_type;

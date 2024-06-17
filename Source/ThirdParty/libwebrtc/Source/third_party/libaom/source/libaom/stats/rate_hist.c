@@ -42,8 +42,7 @@ struct rate_hist *init_rate_histogram(const aom_codec_enc_cfg_t *cfg,
 
   if (hist == NULL || cfg == NULL || fps == NULL || fps->num == 0 ||
       fps->den == 0) {
-    destroy_rate_histogram(hist);
-    return NULL;
+    goto fail;
   }
 
   // Determine the number of samples in the buffer. Use the file's framerate
@@ -59,6 +58,7 @@ struct rate_hist *init_rate_histogram(const aom_codec_enc_cfg_t *cfg,
 
   hist->pts = calloc(hist->samples, sizeof(*hist->pts));
   hist->sz = calloc(hist->samples, sizeof(*hist->sz));
+  if (hist->pts == NULL || hist->sz == NULL) goto fail;
   for (i = 0; i < RATE_BINS; i++) {
     hist->bucket[i].low = INT_MAX;
     hist->bucket[i].high = 0;
@@ -66,6 +66,14 @@ struct rate_hist *init_rate_histogram(const aom_codec_enc_cfg_t *cfg,
   }
 
   return hist;
+
+fail:
+  fprintf(stderr,
+          "Warning: Unable to allocate buffers required for "
+          "show_rate_histogram().\n"
+          "Continuing without rate histogram feature...\n");
+  destroy_rate_histogram(hist);
+  return NULL;
 }
 
 void destroy_rate_histogram(struct rate_hist *hist) {

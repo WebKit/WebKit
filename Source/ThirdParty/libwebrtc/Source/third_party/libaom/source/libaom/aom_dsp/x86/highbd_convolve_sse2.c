@@ -15,10 +15,9 @@
 
 // -----------------------------------------------------------------------------
 
-void aom_highbd_filter_block1d4_v4_sse2(const uint16_t *src_ptr,
-                                        ptrdiff_t src_pitch, uint16_t *dst_ptr,
-                                        ptrdiff_t dst_pitch, uint32_t height,
-                                        const int16_t *filter, int bd) {
+static void aom_highbd_filter_block1d4_v4_sse2(
+    const uint16_t *src_ptr, ptrdiff_t src_pitch, uint16_t *dst_ptr,
+    ptrdiff_t dst_pitch, uint32_t height, const int16_t *filter, int bd) {
   __m128i filtersReg;
   __m128i srcReg2, srcReg3, srcReg4, srcReg5, srcReg6;
   __m128i srcReg23_lo, srcReg34_lo;
@@ -101,10 +100,9 @@ void aom_highbd_filter_block1d4_v4_sse2(const uint16_t *src_ptr,
   }
 }
 
-void aom_highbd_filter_block1d4_h4_sse2(const uint16_t *src_ptr,
-                                        ptrdiff_t src_pitch, uint16_t *dst_ptr,
-                                        ptrdiff_t dst_pitch, uint32_t height,
-                                        const int16_t *filter, int bd) {
+static void aom_highbd_filter_block1d4_h4_sse2(
+    const uint16_t *src_ptr, ptrdiff_t src_pitch, uint16_t *dst_ptr,
+    ptrdiff_t dst_pitch, uint32_t height, const int16_t *filter, int bd) {
   __m128i filtersReg;
   __m128i addFilterReg64;
   __m128i secondFilters, thirdFilters;
@@ -153,10 +151,9 @@ void aom_highbd_filter_block1d4_h4_sse2(const uint16_t *src_ptr,
   }
 }
 
-void aom_highbd_filter_block1d8_v4_sse2(const uint16_t *src_ptr,
-                                        ptrdiff_t src_pitch, uint16_t *dst_ptr,
-                                        ptrdiff_t dst_pitch, uint32_t height,
-                                        const int16_t *filter, int bd) {
+static void aom_highbd_filter_block1d8_v4_sse2(
+    const uint16_t *src_ptr, ptrdiff_t src_pitch, uint16_t *dst_ptr,
+    ptrdiff_t dst_pitch, uint32_t height, const int16_t *filter, int bd) {
   __m128i filtersReg;
   __m128i srcReg2, srcReg3, srcReg4, srcReg5, srcReg6;
   __m128i srcReg23_lo, srcReg23_hi, srcReg34_lo, srcReg34_hi;
@@ -262,10 +259,9 @@ void aom_highbd_filter_block1d8_v4_sse2(const uint16_t *src_ptr,
   }
 }
 
-void aom_highbd_filter_block1d8_h4_sse2(const uint16_t *src_ptr,
-                                        ptrdiff_t src_pitch, uint16_t *dst_ptr,
-                                        ptrdiff_t dst_pitch, uint32_t height,
-                                        const int16_t *filter, int bd) {
+static void aom_highbd_filter_block1d8_h4_sse2(
+    const uint16_t *src_ptr, ptrdiff_t src_pitch, uint16_t *dst_ptr,
+    ptrdiff_t dst_pitch, uint32_t height, const int16_t *filter, int bd) {
   __m128i filtersReg;
   __m128i addFilterReg64;
   __m128i secondFilters, thirdFilters;
@@ -330,22 +326,57 @@ void aom_highbd_filter_block1d8_h4_sse2(const uint16_t *src_ptr,
   }
 }
 
-void aom_highbd_filter_block1d16_v4_sse2(const uint16_t *src_ptr,
-                                         ptrdiff_t src_pitch, uint16_t *dst_ptr,
-                                         ptrdiff_t dst_pitch, uint32_t height,
-                                         const int16_t *filter, int bd) {
+static void aom_highbd_filter_block1d16_v4_sse2(
+    const uint16_t *src_ptr, ptrdiff_t src_pitch, uint16_t *dst_ptr,
+    ptrdiff_t dst_pitch, uint32_t height, const int16_t *filter, int bd) {
   aom_highbd_filter_block1d8_v4_sse2(src_ptr, src_pitch, dst_ptr, dst_pitch,
                                      height, filter, bd);
   aom_highbd_filter_block1d8_v4_sse2((src_ptr + 8), src_pitch, (dst_ptr + 8),
                                      dst_pitch, height, filter, bd);
 }
 
-void aom_highbd_filter_block1d16_h4_sse2(const uint16_t *src_ptr,
-                                         ptrdiff_t src_pitch, uint16_t *dst_ptr,
-                                         ptrdiff_t dst_pitch, uint32_t height,
-                                         const int16_t *filter, int bd) {
+static void aom_highbd_filter_block1d16_h4_sse2(
+    const uint16_t *src_ptr, ptrdiff_t src_pitch, uint16_t *dst_ptr,
+    ptrdiff_t dst_pitch, uint32_t height, const int16_t *filter, int bd) {
   aom_highbd_filter_block1d8_h4_sse2(src_ptr, src_pitch, dst_ptr, dst_pitch,
                                      height, filter, bd);
   aom_highbd_filter_block1d8_h4_sse2((src_ptr + 8), src_pitch, (dst_ptr + 8),
                                      dst_pitch, height, filter, bd);
 }
+
+// From aom_dsp/x86/aom_high_subpixel_8t_sse2.asm
+highbd_filter8_1dfunction aom_highbd_filter_block1d16_v8_sse2;
+highbd_filter8_1dfunction aom_highbd_filter_block1d16_h8_sse2;
+highbd_filter8_1dfunction aom_highbd_filter_block1d8_v8_sse2;
+highbd_filter8_1dfunction aom_highbd_filter_block1d8_h8_sse2;
+highbd_filter8_1dfunction aom_highbd_filter_block1d4_v8_sse2;
+highbd_filter8_1dfunction aom_highbd_filter_block1d4_h8_sse2;
+
+// From aom_dsp/x86/aom_high_subpixel_bilinear_sse2.asm
+highbd_filter8_1dfunction aom_highbd_filter_block1d16_v2_sse2;
+highbd_filter8_1dfunction aom_highbd_filter_block1d16_h2_sse2;
+highbd_filter8_1dfunction aom_highbd_filter_block1d8_v2_sse2;
+highbd_filter8_1dfunction aom_highbd_filter_block1d8_h2_sse2;
+highbd_filter8_1dfunction aom_highbd_filter_block1d4_v2_sse2;
+highbd_filter8_1dfunction aom_highbd_filter_block1d4_h2_sse2;
+
+// void aom_highbd_convolve8_horiz_sse2(const uint8_t *src,
+//                                      ptrdiff_t src_stride,
+//                                      uint8_t *dst,
+//                                      ptrdiff_t dst_stride,
+//                                      const int16_t *filter_x,
+//                                      int x_step_q4,
+//                                      const int16_t *filter_y,
+//                                      int y_step_q4,
+//                                      int w, int h, int bd);
+// void aom_highbd_convolve8_vert_sse2(const uint8_t *src,
+//                                     ptrdiff_t src_stride,
+//                                     uint8_t *dst,
+//                                     ptrdiff_t dst_stride,
+//                                     const int16_t *filter_x,
+//                                     int x_step_q4,
+//                                     const int16_t *filter_y,
+//                                     int y_step_q4,
+//                                     int w, int h, int bd);
+HIGH_FUN_CONV_1D(horiz, x_step_q4, filter_x, h, src, , sse2)
+HIGH_FUN_CONV_1D(vert, y_step_q4, filter_y, v, src - src_stride * 3, , sse2)

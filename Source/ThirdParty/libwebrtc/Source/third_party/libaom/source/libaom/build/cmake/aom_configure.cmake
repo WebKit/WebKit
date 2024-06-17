@@ -184,11 +184,13 @@ if(AOM_TARGET_CPU STREQUAL "x86" OR AOM_TARGET_CPU STREQUAL "x86_64")
   string(STRIP "${AOM_AS_FLAGS}" AOM_AS_FLAGS)
 elseif(AOM_TARGET_CPU MATCHES "arm")
   if(AOM_TARGET_SYSTEM STREQUAL "Darwin")
-    set(CMAKE_ASM_COMPILER as)
+    if(NOT CMAKE_ASM_COMPILER)
+      set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER})
+    endif()
     set(AOM_AS_FLAGS -arch ${AOM_TARGET_CPU} -isysroot ${CMAKE_OSX_SYSROOT})
   elseif(AOM_TARGET_SYSTEM STREQUAL "Windows")
     if(NOT CMAKE_ASM_COMPILER)
-      set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER} -c -mimplicit-it=always)
+      set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER} "-c -mimplicit-it=always")
     endif()
   else()
     if(NOT CMAKE_ASM_COMPILER)
@@ -318,6 +320,10 @@ else()
     # minimum supported C++ version. If Clang is using this Standard Library
     # implementation, it cannot target C++11.
     require_cxx_flag_nomsvc("-std=c++14" YES)
+  elseif(CYGWIN AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # The GNU C++ compiler in Cygwin needs the -std=gnu++11 flag to make the
+    # POSIX function declarations visible in the Standard C Library headers.
+    require_cxx_flag_nomsvc("-std=gnu++11" YES)
   else()
     require_cxx_flag_nomsvc("-std=c++11" YES)
   endif()
@@ -391,6 +397,13 @@ else()
   endif()
   add_compiler_flag_if_supported("-D_LARGEFILE_SOURCE")
   add_compiler_flag_if_supported("-D_FILE_OFFSET_BITS=64")
+
+  # Do not allow implicit vector type conversions on Clang builds (this is
+  # already the default on GCC builds).
+  if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+    # Clang 8.0.1 (in Cygwin) doesn't support -flax-vector-conversions=none.
+    add_compiler_flag_if_supported("-flax-vector-conversions=none")
+  endif()
 endif()
 
 # Prior to r23, or with ANDROID_USE_LEGACY_TOOLCHAIN_FILE set,

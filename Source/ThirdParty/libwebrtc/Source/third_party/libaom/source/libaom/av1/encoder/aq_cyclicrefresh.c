@@ -15,6 +15,7 @@
 #include "av1/common/pred_common.h"
 #include "av1/common/seg_common.h"
 #include "av1/encoder/aq_cyclicrefresh.h"
+#include "av1/encoder/encoder_utils.h"
 #include "av1/encoder/ratectrl.h"
 #include "av1/encoder/segmentation.h"
 #include "av1/encoder/tokenize.h"
@@ -295,6 +296,7 @@ static void cyclic_refresh_update_map(AV1_COMP *const cpi) {
   const CommonModeInfoParams *const mi_params = &cm->mi_params;
   CYCLIC_REFRESH *const cr = cpi->cyclic_refresh;
   unsigned char *const seg_map = cpi->enc_seg.map;
+  unsigned char *const active_map_4x4 = cpi->active_map.map;
   int i, block_count, bl_index, sb_rows, sb_cols, sbs_in_frame;
   int xmis, ymis, x, y;
   uint64_t sb_sad = 0;
@@ -302,7 +304,12 @@ static void cyclic_refresh_update_map(AV1_COMP *const cpi) {
   uint64_t thresh_sad = INT64_MAX;
   const int mi_rows = mi_params->mi_rows, mi_cols = mi_params->mi_cols;
   const int mi_stride = mi_cols;
-  memset(seg_map, CR_SEGMENT_ID_BASE, mi_rows * mi_cols);
+  // Don't set seg_map to 0 if active_maps is enabled. Active_maps will set
+  // seg_map to either 7 or 0 (AM_SEGMENT_ID_INACTIVE/ACTIVE), and cyclic
+  // refresh set below (segment 1 or 2) will only be set for ACTIVE blocks.
+  if (!cpi->active_map.enabled) {
+    memset(seg_map, CR_SEGMENT_ID_BASE, mi_rows * mi_cols);
+  }
   sb_cols = (mi_cols + cm->seq_params->mib_size - 1) / cm->seq_params->mib_size;
   sb_rows = (mi_rows + cm->seq_params->mib_size - 1) / cm->seq_params->mib_size;
   sbs_in_frame = sb_cols * sb_rows;
@@ -357,7 +364,10 @@ static void cyclic_refresh_update_map(AV1_COMP *const cpi) {
         // for possible boost/refresh (segment 1). The segment id may get
         // reset to 0 later if block gets coded anything other than low motion.
         // If the block_sad (sb_sad) is very low label it for refresh anyway.
-        if (cr->map[bl_index2] == 0 || sb_sad < thresh_sad_low) {
+        // If active_maps is enabled, only allow for setting on ACTIVE blocks.
+        if ((cr->map[bl_index2] == 0 || sb_sad < thresh_sad_low) &&
+            (!cpi->active_map.enabled ||
+             active_map_4x4[bl_index2] == AM_SEGMENT_ID_ACTIVE)) {
           sum_map += 4;
         } else if (cr->map[bl_index2] < 0) {
           cr->map[bl_index2]++;
@@ -380,7 +390,8 @@ static void cyclic_refresh_update_map(AV1_COMP *const cpi) {
   cr->sb_index = i;
   if (cr->target_num_seg_blocks == 0) {
     // Disable segmentation, seg_map is already set to 0 above.
-    av1_disable_segmentation(&cm->seg);
+    // Don't disable if active_map is being used.
+    if (!cpi->active_map.enabled) av1_disable_segmentation(&cm->seg);
   }
 }
 
@@ -423,8 +434,6 @@ void av1_cyclic_refresh_update_parameters(AV1_COMP *const cpi) {
   // function av1_cyclic_reset_segment_skip(). Skipping over
   // 4x4 will therefore have small bdrate loss (~0.2%), so
   // we use it only for speed > 9 for now.
-  // Also if loop-filter deltas is applied via segment, then
-  // we need to set cr->skip_over4x4 = 1.
   cr->skip_over4x4 = (cpi->oxcf.speed > 9) ? 1 : 0;
 
   // should we enable cyclic refresh on this frame.
@@ -449,6 +458,15 @@ void av1_cyclic_refresh_update_parameters(AV1_COMP *const cpi) {
     cr->percent_refresh = 15;
   else
     cr->percent_refresh = 10 + cr->percent_refresh_adjustment;
+
+  if (cpi->active_map.enabled) {
+    // Scale down the percent_refresh to target the active blocks only.
+    cr->percent_refresh =
+        cr->percent_refresh * (100 - cpi->rc.percent_blocks_inactive) / 100;
+    if (cr->percent_refresh == 0) {
+      cr->apply_cyclic_refresh = 0;
+    }
+  }
 
   cr->max_qdelta_perc = 60;
   cr->time_for_refresh = 0;
@@ -543,10 +561,14 @@ void av1_cyclic_refresh_setup(AV1_COMP *const cpi) {
 
   if (resolution_change) av1_cyclic_refresh_reset_resize(cpi);
   if (!cr->apply_cyclic_refresh) {
-    // Set segmentation map to 0 and disable.
-    unsigned char *const seg_map = cpi->enc_seg.map;
-    memset(seg_map, 0, cm->mi_params.mi_rows * cm->mi_params.mi_cols);
-    av1_disable_segmentation(&cm->seg);
+    // Don't disable and set seg_map to 0 if active_maps is enabled, unless
+    // whole frame is set as inactive (since we only apply cyclic_refresh to
+    // active blocks).
+    if (!cpi->active_map.enabled || cpi->rc.percent_blocks_inactive == 100) {
+      unsigned char *const seg_map = cpi->enc_seg.map;
+      memset(seg_map, 0, cm->mi_params.mi_rows * cm->mi_params.mi_cols);
+      av1_disable_segmentation(&cm->seg);
+    }
     if (frame_is_intra_only(cm) || scene_change_detected ||
         cpi->ppi->rtc_ref.bias_recovery_frame) {
       cr->sb_index = 0;
@@ -574,9 +596,11 @@ void av1_cyclic_refresh_setup(AV1_COMP *const cpi) {
       cr->thresh_rate_sb = INT64_MAX;
     }
     // Set up segmentation.
-    // Clear down the segment map.
     av1_enable_segmentation(&cm->seg);
-    av1_clearall_segfeatures(seg);
+    if (!cpi->active_map.enabled) {
+      // Clear down the segment map, only if active_maps is not enabled.
+      av1_clearall_segfeatures(seg);
+    }
 
     // Note: setting temporal_update has no effect, as the seg-map coding method
     // (temporal or spatial) is determined in
@@ -644,6 +668,10 @@ void av1_cyclic_refresh_reset_resize(AV1_COMP *const cpi) {
 int av1_cyclic_refresh_disable_lf_cdef(AV1_COMP *const cpi) {
   CYCLIC_REFRESH *const cr = cpi->cyclic_refresh;
   const int qindex = cpi->common.quant_params.base_qindex;
+  if (cpi->active_map.enabled &&
+      cpi->rc.percent_blocks_inactive >
+          cpi->sf.rt_sf.thresh_active_maps_skip_lf_cdef)
+    return 1;
   if (cpi->rc.frames_since_key > 30 && cr->percent_refresh > 0 &&
       cr->counter_encode_maxq_scene_change > 300 / cr->percent_refresh &&
       cpi->rc.frame_source_sad < 1000 &&

@@ -16,6 +16,7 @@
 
 #include "av1/common/av1_loopfilter.h"
 #include "av1/common/cdef.h"
+#include "aom_util/aom_pthread.h"
 #include "aom_util/aom_thread.h"
 
 #ifdef __cplusplus
@@ -269,6 +270,7 @@ static AOM_INLINE void loop_filter_frame_mt_init(
     av1_loop_filter_dealloc(lf_sync);
     av1_loop_filter_alloc(lf_sync, cm, sb_rows, cm->width, num_workers);
   }
+  lf_sync->lf_mt_exit = false;
 
   // Initialize cur_sb_col to -1 for all SB rows.
   for (int i = 0; i < MAX_MB_PLANE; i++) {
@@ -314,15 +316,21 @@ static AOM_INLINE void loop_filter_data_reset(LFWorkerData *lf_data,
   }
 }
 
-static AOM_INLINE int check_planes_to_loop_filter(const struct loopfilter *lf,
-                                                  int *planes_to_lf,
-                                                  int plane_start,
-                                                  int plane_end) {
+static AOM_INLINE void set_planes_to_loop_filter(const struct loopfilter *lf,
+                                                 int planes_to_lf[MAX_MB_PLANE],
+                                                 int plane_start,
+                                                 int plane_end) {
   // For each luma and chroma plane, whether to filter it or not.
   planes_to_lf[0] = (lf->filter_level[0] || lf->filter_level[1]) &&
                     plane_start <= 0 && 0 < plane_end;
   planes_to_lf[1] = lf->filter_level_u && plane_start <= 1 && 1 < plane_end;
   planes_to_lf[2] = lf->filter_level_v && plane_start <= 2 && 2 < plane_end;
+}
+
+static AOM_INLINE int check_planes_to_loop_filter(
+    const struct loopfilter *lf, int planes_to_lf[MAX_MB_PLANE],
+    int plane_start, int plane_end) {
+  set_planes_to_loop_filter(lf, planes_to_lf, plane_start, plane_end);
   // If the luma plane is purposely not filtered, neither are the chroma
   // planes.
   if (!planes_to_lf[0] && plane_start <= 0 && 0 < plane_end) return 0;

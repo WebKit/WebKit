@@ -27,12 +27,25 @@
 #include "av1/encoder/encoder.h"
 #include "av1/encoder/picklpf.h"
 
+// AV1 loop filter applies to the whole frame according to mi_rows and mi_cols,
+// which are calculated based on aligned width and aligned height,
+// In addition, if super res is enabled, it copies the whole frame
+// according to the aligned width and height (av1_superres_upscale()).
+// So we need to copy the whole filtered region, instead of the cropped region.
+// For example, input image size is: 160x90.
+// Then src->y_crop_width = 160, src->y_crop_height = 90.
+// The aligned frame size is: src->y_width = 160, src->y_height = 96.
+// AV1 aligns frame size to a multiple of 8, if there is
+// chroma subsampling, it is able to ensure the chroma is also
+// an integer number of mi units. mi unit is 4x4, 8 = 4 * 2, and 2 luma mi
+// units correspond to 1 chroma mi unit if there is subsampling.
+// See: aom_realloc_frame_buffer() in yv12config.c.
 static void yv12_copy_plane(const YV12_BUFFER_CONFIG *src_bc,
                             YV12_BUFFER_CONFIG *dst_bc, int plane) {
   switch (plane) {
-    case 0: aom_yv12_copy_y(src_bc, dst_bc); break;
-    case 1: aom_yv12_copy_u(src_bc, dst_bc); break;
-    case 2: aom_yv12_copy_v(src_bc, dst_bc); break;
+    case 0: aom_yv12_copy_y(src_bc, dst_bc, 0); break;
+    case 1: aom_yv12_copy_u(src_bc, dst_bc, 0); break;
+    case 2: aom_yv12_copy_v(src_bc, dst_bc, 0); break;
     default: assert(plane >= 0 && plane <= 2); break;
   }
 }
@@ -244,6 +257,8 @@ void av1_pick_filter_level(const YV12_BUFFER_CONFIG *sd, AV1_COMP *cpi,
         inter_frame_multiplier = inter_frame_multiplier << 1;
       else if (cpi->rc.frame_source_sad > 50000)
         inter_frame_multiplier = 3 * (inter_frame_multiplier >> 1);
+    } else if (cpi->sf.rt_sf.use_fast_fixed_part) {
+      inter_frame_multiplier = inter_frame_multiplier << 1;
     }
     // These values were determined by linear fitting the result of the
     // searched level for 8 bit depth:
@@ -311,7 +326,7 @@ void av1_pick_filter_level(const YV12_BUFFER_CONFIG *sd, AV1_COMP *cpi,
             &cpi->last_frame_uf, cm->width, cm->height,
             seq_params->subsampling_x, seq_params->subsampling_y,
             seq_params->use_highbitdepth, cpi->oxcf.border_in_pixels,
-            cm->features.byte_alignment, NULL, NULL, NULL, 0, 0))
+            cm->features.byte_alignment, NULL, NULL, NULL, false, 0))
       aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
                          "Failed to allocate last frame buffer");
 

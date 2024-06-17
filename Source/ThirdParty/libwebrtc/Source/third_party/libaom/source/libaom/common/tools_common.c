@@ -97,7 +97,7 @@ int read_yuv_frame(struct AvxInputContext *input_ctx, aom_image_t *yuv_frame) {
     int w = aom_img_plane_width(yuv_frame, plane);
     const int h = aom_img_plane_height(yuv_frame, plane);
     int r;
-    // Assuming that for nv12 we read all chroma data at one time
+    // Assuming that for nv12 we read all chroma data at once
     if (yuv_frame->fmt == AOM_IMG_FMT_NV12 && plane > 1) break;
     if (yuv_frame->fmt == AOM_IMG_FMT_NV12 && plane == 1) w *= 2;
     /* Determine the correct plane based on the image format. The for-loop
@@ -245,17 +245,21 @@ uint32_t get_fourcc_by_aom_decoder(aom_codec_iface_t *iface) {
 
 void aom_img_write(const aom_image_t *img, FILE *file) {
   int plane;
+  const int bytespp = (img->fmt & AOM_IMG_FMT_HIGHBITDEPTH) ? 2 : 1;
 
   for (plane = 0; plane < 3; ++plane) {
     const unsigned char *buf = img->planes[plane];
     const int stride = img->stride[plane];
-    const int w = aom_img_plane_width(img, plane) *
-                  ((img->fmt & AOM_IMG_FMT_HIGHBITDEPTH) ? 2 : 1);
+    int w = aom_img_plane_width(img, plane);
     const int h = aom_img_plane_height(img, plane);
     int y;
 
+    // Assuming that for nv12 we write all chroma data at once
+    if (img->fmt == AOM_IMG_FMT_NV12 && plane > 1) break;
+    if (img->fmt == AOM_IMG_FMT_NV12 && plane == 1) w *= 2;
+
     for (y = 0; y < h; ++y) {
-      fwrite(buf, 1, w, file);
+      fwrite(buf, bytespp, w, file);
       buf += stride;
     }
   }
@@ -268,12 +272,16 @@ bool aom_img_read(aom_image_t *img, FILE *file) {
   for (plane = 0; plane < 3; ++plane) {
     unsigned char *buf = img->planes[plane];
     const int stride = img->stride[plane];
-    const int w = aom_img_plane_width(img, plane) * bytespp;
+    int w = aom_img_plane_width(img, plane);
     const int h = aom_img_plane_height(img, plane);
     int y;
 
+    // Assuming that for nv12 we read all chroma data at once
+    if (img->fmt == AOM_IMG_FMT_NV12 && plane > 1) break;
+    if (img->fmt == AOM_IMG_FMT_NV12 && plane == 1) w *= 2;
+
     for (y = 0; y < h; ++y) {
-      if (fread(buf, 1, w, file) != (size_t)w) return false;
+      if (fread(buf, bytespp, w, file) != (size_t)w) return false;
       buf += stride;
     }
   }

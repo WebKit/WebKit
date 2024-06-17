@@ -43,6 +43,16 @@ static INLINE void yy_storeu_256(void *const a, const __m256i v) {
   _mm256_storeu_si256((__m256i *)a, v);
 }
 
+// Fill an AVX register using an interleaved pair of values, ie. set the
+// 16 channels to {a, b} repeated 8 times, using the same channel ordering
+// as when a register is stored to / loaded from memory.
+//
+// This is useful for rearranging filter kernels for use with the _mm_madd_epi16
+// instruction
+static INLINE __m256i yy_set2_epi16(int16_t a, int16_t b) {
+  return _mm256_setr_epi16(a, b, a, b, a, b, a, b, a, b, a, b, a, b, a, b);
+}
+
 // The _mm256_set1_epi64x() intrinsic is undefined for some Visual Studio
 // compilers. The following function is equivalent to _mm256_set1_epi64x()
 // acting on a 32-bit integer.

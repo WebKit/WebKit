@@ -199,7 +199,7 @@ int func_compound_6(VP9_COMP *cpi) {
   for (int i = 0; i < 10; ++i) cpi->y--;
 }
 
-int main() {
+int main(void) {
   int x;
   VP9_COMP cpi;
   RD rd;

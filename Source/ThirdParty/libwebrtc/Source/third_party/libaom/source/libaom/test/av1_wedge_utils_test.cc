@@ -408,4 +408,16 @@ INSTANTIATE_TEST_SUITE_P(
                                    av1_wedge_compute_delta_squares_avx2)));
 #endif  // HAVE_AVX2
 
+#if HAVE_SVE
+INSTANTIATE_TEST_SUITE_P(
+    SVE, WedgeUtilsSSEOptTest,
+    ::testing::Values(TestFuncsFSSE(av1_wedge_sse_from_residuals_c,
+                                    av1_wedge_sse_from_residuals_sve)));
+
+INSTANTIATE_TEST_SUITE_P(
+    SVE, WedgeUtilsSignOptTest,
+    ::testing::Values(TestFuncsFSign(av1_wedge_sign_from_residuals_c,
+                                     av1_wedge_sign_from_residuals_sve)));
+#endif  // HAVE_SVE
+
 }  // namespace

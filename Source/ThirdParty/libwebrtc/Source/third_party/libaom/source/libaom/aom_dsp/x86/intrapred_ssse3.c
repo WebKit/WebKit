@@ -940,10 +940,10 @@ static AOM_FORCE_INLINE __m128i cvtepu16_epi32(__m128i x) {
   return _mm_unpacklo_epi16((x), _mm_setzero_si128());
 }
 
-void smooth_predictor_wxh(uint8_t *LIBAOM_RESTRICT dst, ptrdiff_t stride,
-                          const uint8_t *LIBAOM_RESTRICT top_row,
-                          const uint8_t *LIBAOM_RESTRICT left_column, int width,
-                          int height) {
+static void smooth_predictor_wxh(uint8_t *LIBAOM_RESTRICT dst, ptrdiff_t stride,
+                                 const uint8_t *LIBAOM_RESTRICT top_row,
+                                 const uint8_t *LIBAOM_RESTRICT left_column,
+                                 int width, int height) {
   const uint8_t *const sm_weights_h = smooth_weights + height - 4;
   const uint8_t *const sm_weights_w = smooth_weights + width - 4;
   const __m128i zero = _mm_setzero_si128();

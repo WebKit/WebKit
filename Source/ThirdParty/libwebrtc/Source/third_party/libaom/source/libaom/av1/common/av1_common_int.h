@@ -17,7 +17,7 @@
 
 #include "aom/internal/aom_codec_internal.h"
 #include "aom_dsp/flow_estimation/corner_detect.h"
-#include "aom_util/aom_thread.h"
+#include "aom_util/aom_pthread.h"
 #include "av1/common/alloccommon.h"
 #include "av1/common/av1_loopfilter.h"
 #include "av1/common/entropy.h"

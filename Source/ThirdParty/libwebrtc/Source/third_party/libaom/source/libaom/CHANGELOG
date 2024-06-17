@@ -1,3 +1,221 @@
+2024-04-09 v3.9.0
+  This release includes new codec interfaces, compression efficiency and
+  perceptual improvements, speedup for RTC for both video and screen content,
+  and many bug fixes. This release is ABI compatible with the previous release.
+
+  - New Features
+    * New codec control
+      * AV1E_SET_SVC_FRAME_DROP_MODE is added to configure the SVC encoder to
+        only drop spatial layers or the whole superframe.
+    * Active Map is fixed and tested for RTC.
+    * CONFIG_QUANT_MATRIX is added to disable quantization matrices when aom
+      decoder is disabled with CONFIG_AV1_DECODER. Reduces ~10% binary size when
+      both are disabled.
+    * libwebm is updated to libwebm-1.0.0.31-1-gaffd7f4.
+
+  - Compression Efficiency Improvements
+    * RTC encoding improvements
+      * 1-2% BD-rate gain for screen content with temporal layers; 5% BD-rate
+        gain on scrolling content.
+
+  - Perceptual Quality Improvements
+    * For RTC screen content
+      * Reduced color artifacts for RTC screen content
+      * Visual quality improved for scene changes for SVC with quality layers.
+      * Removed visual artifacts for speed 11
+
+  - Speedups:
+    * RTC Speed 11: aggressive speedup setting added for video mode,
+      resolutions <= VGA: ~30% faster than speed 10.
+    * 5-9% speed up for high bit-depth encoding with good mode on Arm, half of
+      which comes from SVE/SVE2 optimizations.
+
+  - Other improvements
+    * Further improvements to global motion estimation.
+    * Documented minimum required SIMD support: SSE4.1 on x86, Neon on Arm.
+    * Remove unneeded SIMD functions, saving >100 KiB from binary size.
+    * Cleaned up and improved pattern_search.
+    * Added end-to-end c vs SIMD bit-exactness test.
+    * Added config flag to calc psnr using libvmaf peak: use a slightly
+      different peak value for PSNR (1020 and 2040 for 10- and 12-bit)
+
+  - Bug Fixes
+    * Fuzzing bug fixes
+      * b/329485898 Null-dereference WRITE in av1_cdef_frame_mt
+      * b/329810149 Null-dereference WRITE in av1_cdef_copy_sb8_16
+      * b/329813868 Ill in av1_cdef_frame_mt
+      * chromium:327882824 Null-dereference WRITE in av1_cdef_init_fb_row
+      * b/330014723 Null-dereference WRITE in
+        cdef_copy_rect8_16bit_to_16bit_avx2
+      * b/310455204 Null-dereference WRITE in prepare_enc_workers
+      * b/314858909 Heap-buffer-overflow in aom_variance64x64_avx2
+      * oss-fuzz:67132 av1_dec_fuzzer: ASSERT: (pbi->tile_count_minus_1 + 1) <=
+        (pbi->output_frame_width_in_tiles_minus_1 + 1)
+      * oss-fuzz:67058 av1_dec_fuzzer: ASSERT: i == 0 || tile_w == *w
+      * oss-fuzz:67161 av1_dec_fuzzer: ASSERT: i == 0 || tile_h == *h
+      * oss-fuzz:67059 av1_dec_fuzzer: Crash in mem_get_varsize
+      * oss-fuzz:67162 av1_dec_fuzzer: Use-of-uninitialized-value in
+        od_ec_decode_bool_q15
+      * oss-fuzz:67184 av1_dec_fuzzer: Heap-buffer-overflow in od_ec_dec_init
+      * oss-fuzz:67216 av1_dec_fuzzer: Heap-buffer-overflow in
+        od_ec_dec_normalize
+      * oss-fuzz:67055 av1_dec_fuzzer: Heap-buffer-overflow in
+        get_ls_tile_buffers
+    * libaom library
+      * aomedia:3510 Large value of duration could cause encoder overflow
+      * chromium:328105513 Fix build conflicts between Abseil and libaom/libvpx
+        in Win ARM64 builds
+      * aomedia:3544 AV1/SharpnessTestLarge.SharpnessPSNRTest failures after
+        59c592bb8
+      * aomedia:3531 Exception encountered with PSNR calculation
+      * aomedia:3541 Can not compile correctly by CYGWIN
+      * chromium:41482688 heap-buffer-overflow write in vpx_img_read()
+        (tools_common.c) with VPX_IMG_FMT_NV12
+      * aomedia:3521 Assertion failures on Arm in CNNTest.* in
+        av1_cnn_convolve_no_maxpool_padding_valid_2x2_neon and
+        av1_cnn_convolve_no_maxpool_padding_valid_5x5_neon
+      * aomedia:3486 C vs NEON mismatch in AV1 encoder
+      * aomedia:3536 Over write in highbd_dr_prediction_z3_upsample1_neon()
+      * aomedia:3276 Significant progress on ensuring all allocations are
+        checked
+      * aomedia:3491 heap-buffer-overflow encoding frames of size 256x256,
+        512x512 in good quality usage mode using 4 threads
+      * aomedia:3322 PSNR number discrepancy
+      * aomedia:3493 Cmake generates garbage symbols for libaom_srcs.gni
+      * aomedia:3478 GCC 12.2.0 emits a -Wstringop-overflow warning on
+        aom/av1/encoder/motion_search_facade.c
+      * aomedia:3484 C vs NEON mismatch in AV1 encoder for high-bitdepth case
+
+2024-03-08 v3.8.2
+  This release includes several bug fixes. This release is ABI
+  compatible with the last release. See
+  https://aomedia.googlesource.com/aom/+log/v3.8.1..v3.8.2 for all the
+  commits in this release.
+
+  - Bug Fixes
+    * aomedia:3523: SIGFPE in av1_twopass_postencode_update()
+      pass2_strategy.c:4261.
+    * aomedia:3535, b/317646516: Over reads in aom_convolve_copy_neon().
+    * aomedia:3543: invalid feature modifier when compiling
+      aom_dsp/arm/aom_convolve8_neon_i8mm.c on Debian 10 with arm64
+      architecture.
+    * aomedia:3545: Failed to parse configurations due to inconsistent
+      elements between two arrays "av1_ctrl_args" and "av1_arg_ctrl_map"
+      in aomenc.c.
+    * oss-fuzz:66474, b/319140742: Integer-overflow in search_wiener.
+    * Zero initialize an array in cdef search.
+
+2024-01-17 v3.8.1
+  This release includes several bug fixes. This release is ABI
+  compatible with the last release. See
+  https://aomedia.googlesource.com/aom/+log/v3.8.0..v3.8.1 for all the
+  commits in this release.
+
+  - Bug Fixes
+    * aomedia:3520: get_cubic_kernel_dbl: Assertion `0 <= x && x < 1'
+      failed.
+    * aomedia:3526: alloc_compressor_data() is called during every
+      aom_codec_control() call on the encoder.
+    * aomedia:3527: aom/av1/encoder/mcomp.c:1810: av1_full_pixel_search:
+      Assertion `ms_params->ms_buffers.ref->width ==
+      ms_params->ms_buffers.src->width' failed.
+    * aomedia:3534: libaom encoder crashed by AOM_USAGE_ALL_INTRA and
+      AOM_EFLAG_NO_REF_LAST flags.
+    * b/310455204: Recreate workers if necessary.
+    * b/310548198: Update frame size in actual encoding.
+    * b/314858909: Do not use adaptive error estimate.
+    * Fix a hang of cmake on arm64 macOS with cmake 3.27.0 or later.
+
+2024-01-18 v3.7.2
+  This release includes three bug fixes. This release is ABI compatible
+  with the last release. See
+  https://aomedia.googlesource.com/aom/+log/v3.7.1..v3.7.2 for all the
+  commits in this release.
+
+  - Bug Fixes
+    * aomedia:3520: get_cubic_kernel_dbl: Assertion `0 <= x && x < 1'
+      failed.
+    * aomedia:3526: alloc_compressor_data() is called during every
+      aom_codec_control() call on the encoder. Note that this partially
+      reverts the fix for bug aomedia:3349.
+    * b/310457427 and b/310766628: Only use rec_sse in CBR mode.
+    * Fix a hang of cmake on arm64 macOS with cmake 3.27.0 or later.
+
+2023-11-30 v3.8.0
+  This release includes new codec interfaces, compression efficiency and
+  perceptual improvements, speedup and memory optimizations and many bug
+  fixes. This release is ABI compatible with the last release.
+
+  - New Features
+    * New codec controls:
+      * AV1E_SET_MAX_CONSEC_FRAME_DROP_CBR: Set the maximum number of
+        consecutive frame drops allowed for the frame dropper in 1 pass
+        CBR mode.
+    * Run-time CPU feature detection for all Arm platforms:
+      CRC, DotProd, I8MM and SVE CPU feature presence is detected at run
+      time and code paths making use of these features are selected
+      dynamically. These code paths provide meaningful performance gains
+      for standard bitdepth RTC and VoD encoding: up to 10% and 20%
+      respectively, over the Armv8.0-A baseline build.
+    * RTC: Frame-dropper support added to the rate control library.
+    * RTC Rate control improvements for low bitrate and for SVC.
+
+  - Compression Efficiency Improvements
+    * Improved accuracy of cost estimation for loop restoration and
+      global motion.
+    * Improved selection of loop restoration unit size - full search up
+      to (non-realtime) speed 2, retuned static selection at higher
+      speeds.
+    * RTC Screen content mode: 3-5% bdrate gains across speeds 7 - 10.
+    * Good-quality mode: 0.2 - 0.5% bdrate gains across speeds 1 - 4.
+
+  - Perceptual Quality Improvements
+    * RTC Screen: Improved visual quality for scrolling.
+    * RTC: Improved color quality for both screen and video mode.
+
+  - Speedup and Memory Optimizations
+    * Good-quality, single-thread encoder speedups:
+      o 15% improvement for speed 5.
+      o 12% improvement for speed 6.
+    * Arm standard bitdepth VoD (--good):
+      o 8% speedup for speeds 0 and 1.
+      o 20% speedup for speed 2.
+      o 27% speedup for speed 3.
+      o 30% speedup for speed 4.
+      o 38% speedup for speeds 5 and 6.
+    * Arm high bitdepth VoD (--good):
+      o 206% speedup for speeds 0 and 1.
+      o 180% speedup for speed 2.
+      o 51% speedup for speeds 3 and 4.
+      o 68% speedup for speed 5.
+      o 72% speedup for speed 6.
+    * RTC Screen content: 2-6% speedup across speeds 7-10.
+    * RTC: 2-3% speedup for temporal layers.
+    * RTC: Speedups to reference scaling in nonrd pickmode.
+    * Good-quality mode: Simplified global motion estimation, saving
+      ~1200 lines of code and 1KB of tables while improving quality.
+
+  - Bug Fixes
+    * Fixes to improve libaom stability in case of memory allocation
+      failures.
+    * Fixes to SIMD functions (x86 AVX2/SSE2 and ARM Neon).
+    * b/310457427, b/310766628: Bug fixes to only use rec_sse in CBR
+      mode.
+
+2023-11-17 v3.7.1
+  This release includes several bug fixes. This release is ABI
+  compatible with the last release. See
+  https://aomedia.googlesource.com/aom/+log/v3.7.0..v3.7.1 for all the
+  commits in this release.
+
+  - Bug Fixes
+    * aomedia:3349: heap overflow when increasing resolution
+    * aomedia:3478: GCC 12.2.0 emits a -Wstringop-overflow warning on
+      aom/av1/encoder/motion_search_facade.c
+    * aomedia:3489: Detect encoder and image high bit depth mismatch
+    * aomedia:3491: heap-buffer-overflow on frame size change (CVE-2023-6879)
+    * b/303023614:  Segfault at encoding time for high bit depth images
+
 2023-08-10 v3.7.0
   This release includes new codec interfaces, compression efficiency and
   perceptual improvements, speedup and memory optimizations and many bug fixes.

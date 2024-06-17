@@ -25,14 +25,20 @@
 extern "C" {
 #endif
 
-#define MATCH_SZ 13
+#define MATCH_SZ 16
 #define MATCH_SZ_BY2 ((MATCH_SZ - 1) / 2)
 #define MATCH_SZ_SQ (MATCH_SZ * MATCH_SZ)
 
+// Minimum threshold for the variance of a patch, in order for it to be
+// considered useful for matching.
+// This is evaluated against the scaled variance MATCH_SZ_SQ * sigma^2,
+// so a setting of 1 * MATCH_SZ_SQ corresponds to an unscaled variance of 1
+#define MIN_FEATURE_VARIANCE (1 * MATCH_SZ_SQ)
+
 bool av1_compute_global_motion_feature_match(
     TransformationType type, YV12_BUFFER_CONFIG *src, YV12_BUFFER_CONFIG *ref,
-    int bit_depth, MotionModel *motion_models, int num_motion_models,
-    bool *mem_alloc_failed);
+    int bit_depth, int downsample_level, MotionModel *motion_models,
+    int num_motion_models, bool *mem_alloc_failed);
 
 #ifdef __cplusplus
 }

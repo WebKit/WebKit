@@ -17,7 +17,6 @@
 #include <string.h>
 
 #include "aom_dsp/aom_dsp_common.h"
-#include "aom_mem/aom_mem.h"
 
 static const double TINY_NEAR_ZERO = 1.0E-16;
 

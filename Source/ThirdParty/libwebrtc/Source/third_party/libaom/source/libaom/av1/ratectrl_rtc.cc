@@ -39,6 +39,8 @@ AV1RateControlRtcConfig::AV1RateControlRtcConfig() {
   undershoot_pct = overshoot_pct = 50;
   max_intra_bitrate_pct = 50;
   max_inter_bitrate_pct = 0;
+  frame_drop_thresh = 0;
+  max_consec_drop = 0;
   framerate = 30.0;
   ss_number_layers = 1;
   ts_number_layers = 1;
@@ -124,7 +126,9 @@ bool AV1RateControlRTC::InitRateControl(const AV1RateControlRtcConfig &rc_cfg) {
   oxcf->pass = AOM_RC_ONE_PASS;
   oxcf->q_cfg.aq_mode = rc_cfg.aq_mode ? CYCLIC_REFRESH_AQ : NO_AQ;
   oxcf->tune_cfg.content = AOM_CONTENT_DEFAULT;
-  oxcf->rc_cfg.drop_frames_water_mark = 0;
+  oxcf->rc_cfg.drop_frames_water_mark = rc_cfg.frame_drop_thresh;
+  rc->max_consec_drop = rc_cfg.max_consec_drop;
+  cpi_->svc.framedrop_mode = AOM_FULL_SUPERFRAME_DROP;
   oxcf->tool_cfg.bit_depth = AOM_BITS_8;
   oxcf->tool_cfg.superblock_size = AOM_SUPERBLOCK_SIZE_DYNAMIC;
   oxcf->algo_cfg.loopfilter_control = LOOPFILTER_ALL;
@@ -185,9 +189,15 @@ bool AV1RateControlRTC::UpdateRateControl(
   oxcf->rc_cfg.maximum_buffer_size_ms = rc_cfg.buf_sz;
   oxcf->rc_cfg.under_shoot_pct = rc_cfg.undershoot_pct;
   oxcf->rc_cfg.over_shoot_pct = rc_cfg.overshoot_pct;
+  oxcf->rc_cfg.drop_frames_water_mark = rc_cfg.frame_drop_thresh;
+  rc->max_consec_drop = rc_cfg.max_consec_drop;
   oxcf->rc_cfg.max_intra_bitrate_pct = rc_cfg.max_intra_bitrate_pct;
   oxcf->rc_cfg.max_inter_bitrate_pct = rc_cfg.max_inter_bitrate_pct;
   cpi_->framerate = rc_cfg.framerate;
+  if (rc_cfg.is_screen) {
+    cpi_->oxcf.tune_cfg.content = AOM_CONTENT_SCREEN;
+    cpi_->is_screen_content_type = 1;
+  }
   cpi_->svc.number_spatial_layers = rc_cfg.ss_number_layers;
   cpi_->svc.number_temporal_layers = rc_cfg.ts_number_layers;
   set_primary_rc_buffer_sizes(oxcf, cpi_->ppi);
@@ -226,7 +236,8 @@ bool AV1RateControlRTC::UpdateRateControl(
   return true;
 }
 
-void AV1RateControlRTC::ComputeQP(const AV1FrameParamsRTC &frame_params) {
+FrameDropDecision AV1RateControlRTC::ComputeQP(
+    const AV1FrameParamsRTC &frame_params) {
   AV1_COMMON *const cm = &cpi_->common;
   int width, height;
   GF_GROUP *const gf_group = &cpi_->ppi->gf_group;
@@ -292,14 +303,25 @@ void AV1RateControlRTC::ComputeQP(const AV1FrameParamsRTC &frame_params) {
     }
   }
   av1_rc_set_frame_target(cpi_, target, cm->width, cm->height);
-
-  int bottom_index, top_index;
+  // Always drop for spatial enhancement layer if layer bandwidth is 0.
+  // Otherwise check for frame-dropping based on buffer level in
+  // av1_rc_drop_frame().
+  if ((cpi_->svc.spatial_layer_id > 0 &&
+       cpi_->oxcf.rc_cfg.target_bandwidth == 0) ||
+      av1_rc_drop_frame(cpi_)) {
+    cpi_->is_dropped_frame = true;
+    av1_rc_postencode_update_drop_frame(cpi_);
+    cpi_->frame_index_set.show_frame_count++;
+    cpi_->common.current_frame.frame_number++;
+    return FrameDropDecision::kDrop;
+  }
+  int bottom_index = 0, top_index = 0;
   cpi_->common.quant_params.base_qindex =
       av1_rc_pick_q_and_bounds(cpi_, cm->width, cm->height,
                                cpi_->gf_frame_index, &bottom_index, &top_index);
-
   if (cpi_->oxcf.q_cfg.aq_mode == CYCLIC_REFRESH_AQ)
     av1_cyclic_refresh_setup(cpi_);
+  return FrameDropDecision::kOk;
 }
 
 int AV1RateControlRTC::GetQP() const {

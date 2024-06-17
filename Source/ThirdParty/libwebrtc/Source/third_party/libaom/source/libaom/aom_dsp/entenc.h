@@ -74,9 +74,6 @@ OD_WARN_UNUSED_RESULT int od_ec_enc_tell(const od_ec_enc *enc)
 OD_WARN_UNUSED_RESULT uint32_t od_ec_enc_tell_frac(const od_ec_enc *enc)
     OD_ARG_NONNULL(1);
 
-void od_ec_enc_checkpoint(od_ec_enc *dst, const od_ec_enc *src);
-void od_ec_enc_rollback(od_ec_enc *dst, const od_ec_enc *src);
-
 // buf is the frame bitbuffer, offs is where carry to be added
 static AOM_INLINE void propagate_carry_bwd(unsigned char *buf, uint32_t offs) {
   uint16_t sum, carry = 1;

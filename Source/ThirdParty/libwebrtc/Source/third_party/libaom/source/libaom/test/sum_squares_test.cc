@@ -172,6 +172,14 @@ INSTANTIATE_TEST_SUITE_P(
 
 #endif  // HAVE_NEON
 
+#if HAVE_SVE
+INSTANTIATE_TEST_SUITE_P(
+    SVE, SumSquaresTest,
+    ::testing::Values(TestFuncs(&aom_sum_squares_2d_i16_c,
+                                &aom_sum_squares_2d_i16_sve)));
+
+#endif  // HAVE_SVE
+
 #if HAVE_AVX2
 INSTANTIATE_TEST_SUITE_P(
     AVX2, SumSquaresTest,
@@ -200,8 +208,8 @@ TEST_P(SumSquares1DTest, RandomValues) {
     for (int i = 0; i < kMaxSize * kMaxSize; ++i)
       src[i] = rng_(kInt13Max * 2 + 1) - kInt13Max;
 
-    const int n = rng_(2) ? rng_(kMaxSize * kMaxSize + 1 - kMaxSize) + kMaxSize
-                          : rng_(kMaxSize) + 1;
+    // Block size is between 64 and 128 * 128 and is always a multiple of 64.
+    const int n = (rng_(255) + 1) * 64;
 
     const uint64_t ref_res = params_.ref_func(src, n);
     uint64_t tst_res;
@@ -221,8 +229,8 @@ TEST_P(SumSquares1DTest, ExtremeValues) {
       for (int i = 0; i < kMaxSize * kMaxSize; ++i) src[i] = -kInt13Max;
     }
 
-    const int n = rng_(2) ? rng_(kMaxSize * kMaxSize + 1 - kMaxSize) + kMaxSize
-                          : rng_(kMaxSize) + 1;
+    // Block size is between 64 and 128 * 128 and is always a multiple of 64.
+    const int n = (rng_(255) + 1) * 64;
 
     const uint64_t ref_res = params_.ref_func(src, n);
     uint64_t tst_res;
@@ -245,6 +253,13 @@ INSTANTIATE_TEST_SUITE_P(NEON, SumSquares1DTest,
                              aom_sum_squares_i16_c, aom_sum_squares_i16_neon)));
 
 #endif  // HAVE_NEON
+
+#if HAVE_SVE
+INSTANTIATE_TEST_SUITE_P(SVE, SumSquares1DTest,
+                         ::testing::Values(TestFuncs1D(
+                             aom_sum_squares_i16_c, aom_sum_squares_i16_sve)));
+
+#endif  // HAVE_SVE
 
 typedef int64_t (*SSEFunc)(const uint8_t *a, int a_stride, const uint8_t *b,
                            int b_stride, int width, int height);
@@ -443,6 +458,15 @@ INSTANTIATE_TEST_SUITE_P(AVX2, SSETest,
                          Combine(ValuesIn(sse_avx2), Range(4, 129, 4)));
 #endif  // HAVE_AVX2
 
+#if HAVE_SVE
+#if CONFIG_AV1_HIGHBITDEPTH
+TestSSEFuncs sse_sve[] = { TestSSEFuncs(&aom_highbd_sse_c,
+                                        &aom_highbd_sse_sve) };
+INSTANTIATE_TEST_SUITE_P(SVE, SSETest,
+                         Combine(ValuesIn(sse_sve), Range(4, 129, 4)));
+#endif
+#endif  // HAVE_SVE
+
 //////////////////////////////////////////////////////////////////////////////
 // get_blk sum squares test functions
 //////////////////////////////////////////////////////////////////////////////
@@ -594,6 +618,14 @@ INSTANTIATE_TEST_SUITE_P(NEON, SSE_Sum_Test,
                          Combine(ValuesIn(sse_sum_neon),
                                  ValuesIn(kValidBlockSize)));
 #endif  // HAVE_NEON
+
+#if HAVE_SVE
+TestSSE_SumFuncs sse_sum_sve[] = { TestSSE_SumFuncs(&aom_get_blk_sse_sum_c,
+                                                    &aom_get_blk_sse_sum_sve) };
+INSTANTIATE_TEST_SUITE_P(SVE, SSE_Sum_Test,
+                         Combine(ValuesIn(sse_sum_sve),
+                                 ValuesIn(kValidBlockSize)));
+#endif  // HAVE_SVE
 
 //////////////////////////////////////////////////////////////////////////////
 // 2D Variance test functions
@@ -885,4 +917,12 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Values(TestFuncVar2D(&aom_var_2d_u16_c, &aom_var_2d_u16_neon)));
 
 #endif  // HAVE_NEON
+
+#if HAVE_SVE
+
+INSTANTIATE_TEST_SUITE_P(SVE, Highbd2dVarTest,
+                         ::testing::Values(TestFuncVar2D(&aom_var_2d_u16_c,
+                                                         &aom_var_2d_u16_sve)));
+
+#endif  // HAVE_SVE
 }  // namespace

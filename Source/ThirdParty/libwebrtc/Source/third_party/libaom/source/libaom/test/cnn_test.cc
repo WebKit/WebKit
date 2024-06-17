@@ -2651,4 +2651,11 @@ INSTANTIATE_TEST_SUITE_P(AVX2, CNNConvolveTest,
                              &av1_cnn_convolve_no_maxpool_padding_valid_avx2)));
 #endif
 
+#if HAVE_NEON
+INSTANTIATE_TEST_SUITE_P(NEON, CNNConvolveTest,
+                         ::testing::Values(CNNConvolveTestFuncs(
+                             &av1_cnn_convolve_no_maxpool_padding_valid_c,
+                             &av1_cnn_convolve_no_maxpool_padding_valid_neon)));
+#endif
+
 }  // namespace

@@ -248,11 +248,11 @@ void av1_free_pc_tree_recursive(PC_TREE *pc_tree, int num_planes, int keep_best,
   if (!keep_best && !keep_none) aom_free(pc_tree);
 }
 
-void av1_setup_sms_tree(AV1_COMP *const cpi, ThreadData *td) {
+int av1_setup_sms_tree(AV1_COMP *const cpi, ThreadData *td) {
   // The structure 'sms_tree' is used to store the simple motion search data for
   // partition pruning in inter frames. Hence, the memory allocations and
   // initializations related to it are avoided for allintra encoding mode.
-  if (cpi->oxcf.kf_cfg.key_freq_max == 0) return;
+  if (cpi->oxcf.kf_cfg.key_freq_max == 0) return 0;
 
   AV1_COMMON *const cm = &cpi->common;
   const int stat_generation_stage = is_stat_generation_stage(cpi);
@@ -265,8 +265,9 @@ void av1_setup_sms_tree(AV1_COMP *const cpi, ThreadData *td) {
   int nodes;
 
   aom_free(td->sms_tree);
-  CHECK_MEM_ERROR(cm, td->sms_tree,
-                  aom_calloc(tree_nodes, sizeof(*td->sms_tree)));
+  td->sms_tree =
+      (SIMPLE_MOTION_DATA_TREE *)aom_calloc(tree_nodes, sizeof(*td->sms_tree));
+  if (!td->sms_tree) return -1;
   this_sms = &td->sms_tree[0];
 
   if (!stat_generation_stage) {
@@ -301,6 +302,7 @@ void av1_setup_sms_tree(AV1_COMP *const cpi, ThreadData *td) {
 
   // Set up the root node for the largest superblock size
   td->sms_root = &td->sms_tree[tree_nodes - 1];
+  return 0;
 }
 
 void av1_free_sms_tree(ThreadData *td) {

@@ -46,4 +46,4 @@ typedef struct S7 {
   } z;
 } T7;
 
-int main() {}
+int main(void) {}

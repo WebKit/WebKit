@@ -489,7 +489,7 @@ static int av1_denoiser_realloc_svc_helper(AV1_COMMON *cm,
         &denoiser->running_avg_y[fb_idx], cm->width, cm->height,
         cm->seq_params->subsampling_x, cm->seq_params->subsampling_y,
         cm->seq_params->use_highbitdepth, AOM_BORDER_IN_PIXELS,
-        cm->features.byte_alignment, 0, 0);
+        cm->features.byte_alignment, false, 0);
     if (fail) {
       av1_denoiser_free(denoiser);
       return 1;
@@ -577,7 +577,7 @@ int av1_denoiser_alloc(AV1_COMMON *cm, struct SVC *svc, AV1_DENOISER *denoiser,
       fail = aom_alloc_frame_buffer(
           &denoiser->running_avg_y[i + denoiser->num_ref_frames * layer],
           denoise_width, denoise_height, ssx, ssy, use_highbitdepth, border,
-          legacy_byte_alignment, 0, 0);
+          legacy_byte_alignment, false, 0);
       if (fail) {
         av1_denoiser_free(denoiser);
         return 1;
@@ -589,7 +589,7 @@ int av1_denoiser_alloc(AV1_COMMON *cm, struct SVC *svc, AV1_DENOISER *denoiser,
 
     fail = aom_alloc_frame_buffer(
         &denoiser->mc_running_avg_y[layer], denoise_width, denoise_height, ssx,
-        ssy, use_highbitdepth, border, legacy_byte_alignment, 0, 0);
+        ssy, use_highbitdepth, border, legacy_byte_alignment, false, 0);
     if (fail) {
       av1_denoiser_free(denoiser);
       return 1;
@@ -600,7 +600,7 @@ int av1_denoiser_alloc(AV1_COMMON *cm, struct SVC *svc, AV1_DENOISER *denoiser,
   // layer.
   fail = aom_alloc_frame_buffer(&denoiser->last_source, width, height, ssx, ssy,
                                 use_highbitdepth, border, legacy_byte_alignment,
-                                0, 0);
+                                false, 0);
   if (fail) {
     av1_denoiser_free(denoiser);
     return 1;

@@ -20,13 +20,6 @@ extern "C" {
 
 AV1EncoderConfig av1_get_encoder_config(const aom_codec_enc_cfg_t *cfg);
 
-aom_codec_err_t av1_create_stats_buffer(FIRSTPASS_STATS **frame_stats_buffer,
-                                        STATS_BUFFER_CTX *stats_buf_context,
-                                        int num_lap_buffers);
-
-void av1_destroy_stats_buffer(STATS_BUFFER_CTX *stats_buf_context,
-                              FIRSTPASS_STATS *frame_stats_buffer);
-
 aom_codec_err_t av1_create_context_and_bufferpool(AV1_PRIMARY *ppi,
                                                   AV1_COMP **p_cpi,
                                                   BufferPool **p_buffer_pool,
@@ -36,8 +29,6 @@ aom_codec_err_t av1_create_context_and_bufferpool(AV1_PRIMARY *ppi,
 
 void av1_destroy_context_and_bufferpool(AV1_COMP *cpi,
                                         BufferPool **p_buffer_pool);
-
-int av1_get_image_bps(const aom_image_t *img);
 
 #ifdef __cplusplus
 }  // extern "C"

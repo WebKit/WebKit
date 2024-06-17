@@ -26,21 +26,21 @@ namespace libaom_test {
 static void generate_kernels(ACMRandom *rnd, InterpKernel hkernel,
                              InterpKernel vkernel, int kernel_type = 2) {
   if (kernel_type == 0) {
-    // Low possible values for filter coefficients
+    // Low possible values for filter coefficients, 7-tap kernel
     hkernel[0] = hkernel[6] = vkernel[0] = vkernel[6] = WIENER_FILT_TAP0_MINV;
     hkernel[1] = hkernel[5] = vkernel[1] = vkernel[5] = WIENER_FILT_TAP1_MINV;
     hkernel[2] = hkernel[4] = vkernel[2] = vkernel[4] = WIENER_FILT_TAP2_MINV;
     hkernel[3] = vkernel[3] = -2 * (hkernel[0] + hkernel[1] + hkernel[2]);
     hkernel[7] = vkernel[7] = 0;
   } else if (kernel_type == 1) {
-    // Max possible values for filter coefficients
+    // Max possible values for filter coefficients, 7-tap kernel
     hkernel[0] = hkernel[6] = vkernel[0] = vkernel[6] = WIENER_FILT_TAP0_MAXV;
     hkernel[1] = hkernel[5] = vkernel[1] = vkernel[5] = WIENER_FILT_TAP1_MAXV;
     hkernel[2] = hkernel[4] = vkernel[2] = vkernel[4] = WIENER_FILT_TAP2_MAXV;
     hkernel[3] = vkernel[3] = -2 * (hkernel[0] + hkernel[1] + hkernel[2]);
     hkernel[7] = vkernel[7] = 0;
-  } else {
-    // Randomly generated values for filter coefficients
+  } else if (kernel_type == 2) {
+    // Randomly generated values for filter coefficients, 7-tap kernel
     hkernel[0] = hkernel[6] =
         WIENER_FILT_TAP0_MINV +
         rnd->PseudoUniform(WIENER_FILT_TAP0_MAXV + 1 - WIENER_FILT_TAP0_MINV);
@@ -56,6 +56,41 @@ static void generate_kernels(ACMRandom *rnd, InterpKernel hkernel,
     vkernel[0] = vkernel[6] =
         WIENER_FILT_TAP0_MINV +
         rnd->PseudoUniform(WIENER_FILT_TAP0_MAXV + 2 - WIENER_FILT_TAP0_MINV);
+    vkernel[1] = vkernel[5] =
+        WIENER_FILT_TAP1_MINV +
+        rnd->PseudoUniform(WIENER_FILT_TAP1_MAXV + 2 - WIENER_FILT_TAP1_MINV);
+    vkernel[2] = vkernel[4] =
+        WIENER_FILT_TAP2_MINV +
+        rnd->PseudoUniform(WIENER_FILT_TAP2_MAXV + 2 - WIENER_FILT_TAP2_MINV);
+    vkernel[3] = -2 * (vkernel[0] + vkernel[1] + vkernel[2]);
+    vkernel[7] = 0;
+  } else if (kernel_type == 3) {
+    // Low possible values for filter coefficients, 5-tap kernel
+    hkernel[0] = hkernel[6] = vkernel[0] = vkernel[6] = 0;
+    hkernel[1] = hkernel[5] = vkernel[1] = vkernel[5] = WIENER_FILT_TAP1_MINV;
+    hkernel[2] = hkernel[4] = vkernel[2] = vkernel[4] = WIENER_FILT_TAP2_MINV;
+    hkernel[3] = vkernel[3] = -2 * (hkernel[0] + hkernel[1] + hkernel[2]);
+    hkernel[7] = vkernel[7] = 0;
+  } else if (kernel_type == 4) {
+    // Max possible values for filter coefficients, 5-tap kernel
+    hkernel[0] = hkernel[6] = vkernel[0] = vkernel[6] = 0;
+    hkernel[1] = hkernel[5] = vkernel[1] = vkernel[5] = WIENER_FILT_TAP1_MAXV;
+    hkernel[2] = hkernel[4] = vkernel[2] = vkernel[4] = WIENER_FILT_TAP2_MAXV;
+    hkernel[3] = vkernel[3] = -2 * (hkernel[0] + hkernel[1] + hkernel[2]);
+    hkernel[7] = vkernel[7] = 0;
+  } else {
+    // Randomly generated values for filter coefficients, 5-tap kernel
+    hkernel[0] = hkernel[6] = 0;
+    hkernel[1] = hkernel[5] =
+        WIENER_FILT_TAP1_MINV +
+        rnd->PseudoUniform(WIENER_FILT_TAP1_MAXV + 1 - WIENER_FILT_TAP1_MINV);
+    hkernel[2] = hkernel[4] =
+        WIENER_FILT_TAP2_MINV +
+        rnd->PseudoUniform(WIENER_FILT_TAP2_MAXV + 1 - WIENER_FILT_TAP2_MINV);
+    hkernel[3] = -2 * (hkernel[0] + hkernel[1] + hkernel[2]);
+    hkernel[7] = 0;
+
+    vkernel[0] = vkernel[6] = 0;
     vkernel[1] = vkernel[5] =
         WIENER_FILT_TAP1_MINV +
         rnd->PseudoUniform(WIENER_FILT_TAP1_MAXV + 2 - WIENER_FILT_TAP1_MINV);
@@ -93,7 +128,7 @@ void AV1HiprecConvolveTest::RunCheckOutput(hiprec_convolve_func test_impl) {
   const int out_w = GET_PARAM(0), out_h = GET_PARAM(1);
   const int num_iters = GET_PARAM(2);
   int i, j, k, m;
-  const ConvolveParams conv_params = get_conv_params_wiener(8);
+  const WienerConvolveParams conv_params = get_conv_params_wiener(8);
 
   std::unique_ptr<uint8_t[]> input_(new (std::nothrow) uint8_t[h * w]);
   ASSERT_NE(input_, nullptr);
@@ -112,7 +147,7 @@ void AV1HiprecConvolveTest::RunCheckOutput(hiprec_convolve_func test_impl) {
   DECLARE_ALIGNED(16, InterpKernel, hkernel);
   DECLARE_ALIGNED(16, InterpKernel, vkernel);
 
-  for (int kernel_type = 0; kernel_type < 3; kernel_type++) {
+  for (int kernel_type = 0; kernel_type < 6; kernel_type++) {
     generate_kernels(&rnd_, hkernel, vkernel, kernel_type);
     for (i = 0; i < num_iters; ++i) {
       for (k = 0; k < h; ++k)
@@ -139,7 +174,7 @@ void AV1HiprecConvolveTest::RunSpeedTest(hiprec_convolve_func test_impl) {
   const int out_w = GET_PARAM(0), out_h = GET_PARAM(1);
   const int num_iters = GET_PARAM(2) / 500;
   int i, j, k;
-  const ConvolveParams conv_params = get_conv_params_wiener(8);
+  const WienerConvolveParams conv_params = get_conv_params_wiener(8);
 
   std::unique_ptr<uint8_t[]> input_(new (std::nothrow) uint8_t[h * w]);
   ASSERT_NE(input_, nullptr);
@@ -227,7 +262,7 @@ void AV1HighbdHiprecConvolveTest::RunCheckOutput(
   const int num_iters = GET_PARAM(2);
   const int bd = GET_PARAM(3);
   int i, j;
-  const ConvolveParams conv_params = get_conv_params_wiener(bd);
+  const WienerConvolveParams conv_params = get_conv_params_wiener(bd);
 
   std::unique_ptr<uint16_t[]> input(new (std::nothrow) uint16_t[h * w]);
   ASSERT_NE(input, nullptr);
@@ -251,7 +286,7 @@ void AV1HighbdHiprecConvolveTest::RunCheckOutput(
   uint8_t *input_ptr = CONVERT_TO_BYTEPTR(input.get());
   uint8_t *output_ptr = CONVERT_TO_BYTEPTR(output.get());
   uint8_t *output2_ptr = CONVERT_TO_BYTEPTR(output2.get());
-  for (int kernel_type = 0; kernel_type < 3; kernel_type++) {
+  for (int kernel_type = 0; kernel_type < 6; kernel_type++) {
     generate_kernels(&rnd_, hkernel, vkernel, kernel_type);
     for (i = 0; i < num_iters; ++i) {
       // Choose random locations within the source block
@@ -278,7 +313,7 @@ void AV1HighbdHiprecConvolveTest::RunSpeedTest(
   const int num_iters = GET_PARAM(2) / 500;
   const int bd = GET_PARAM(3);
   int i, j, k;
-  const ConvolveParams conv_params = get_conv_params_wiener(bd);
+  const WienerConvolveParams conv_params = get_conv_params_wiener(bd);
 
   std::unique_ptr<uint16_t[]> input(new (std::nothrow) uint16_t[h * w]);
   ASSERT_NE(input, nullptr);

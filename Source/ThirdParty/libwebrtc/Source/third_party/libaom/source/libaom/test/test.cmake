@@ -28,8 +28,7 @@ function(add_to_libaom_test_srcs src_list_name)
   set(AOM_TEST_SOURCE_VARS "${AOM_TEST_SOURCE_VARS}" PARENT_SCOPE)
 endfunction()
 
-list(APPEND AOM_UNIT_TEST_WRAPPER_SOURCES "${AOM_GEN_SRC_DIR}/usage_exit.c"
-            "${AOM_ROOT}/test/test_libaom.cc")
+list(APPEND AOM_UNIT_TEST_WRAPPER_SOURCES "${AOM_ROOT}/test/test_libaom.cc")
 add_to_libaom_test_srcs(AOM_UNIT_TEST_WRAPPER_SOURCES)
 
 list(APPEND AOM_UNIT_TEST_COMMON_SOURCES
@@ -102,7 +101,7 @@ add_to_libaom_test_srcs(AOM_UNIT_TEST_ENCODER_SOURCES)
 list(APPEND AOM_ENCODE_PERF_TEST_SOURCES "${AOM_ROOT}/test/encode_perf_test.cc")
 list(APPEND AOM_UNIT_TEST_WEBM_SOURCES "${AOM_ROOT}/test/webm_video_source.h")
 add_to_libaom_test_srcs(AOM_UNIT_TEST_WEBM_SOURCES)
-list(APPEND AOM_TEST_INTRA_PRED_SPEED_SOURCES "${AOM_GEN_SRC_DIR}/usage_exit.c"
+list(APPEND AOM_TEST_INTRA_PRED_SPEED_SOURCES
             "${AOM_ROOT}/test/test_intra_pred_speed.cc")
 
 if(CONFIG_AV1_DECODER)
@@ -157,12 +156,6 @@ if(NOT BUILD_SHARED_LIBS)
               "${AOM_ROOT}/test/simd_cmp_impl.h"
               "${AOM_ROOT}/test/simd_impl.h")
 
-  if(HAVE_NEON)
-    list(APPEND AOM_UNIT_TEST_COMMON_INTRIN_NEON
-                "${AOM_ROOT}/test/simd_cmp_neon.cc")
-    add_to_libaom_test_srcs(AOM_UNIT_TEST_COMMON_INTRIN_NEON)
-  endif()
-
   if(HAVE_SSE2)
     list(APPEND AOM_UNIT_TEST_COMMON_INTRIN_SSE2
                 "${AOM_ROOT}/test/simd_cmp_sse2.cc")
@@ -216,7 +209,7 @@ if(NOT BUILD_SHARED_LIBS)
               "${AOM_ROOT}/test/fdct4x4_test.cc"
               "${AOM_ROOT}/test/fft_test.cc"
               "${AOM_ROOT}/test/firstpass_test.cc"
-              "${AOM_ROOT}/test/frame_error_test.cc"
+              "${AOM_ROOT}/test/frame_resize_test.cc"
               "${AOM_ROOT}/test/fwht4x4_test.cc"
               "${AOM_ROOT}/test/hadamard_test.cc"
               "${AOM_ROOT}/test/horver_correlation_test.cc"
@@ -284,29 +277,24 @@ if(NOT BUILD_SHARED_LIBS)
       list(APPEND AOM_UNIT_TEST_COMMON_SOURCES
                   "${AOM_ROOT}/test/coding_path_sync.cc")
     endif()
-    if(CONFIG_REALTIME_ONLY)
-      list(REMOVE_ITEM AOM_UNIT_TEST_COMMON_SOURCES
-                       "${AOM_ROOT}/test/altref_test.cc"
-                       "${AOM_ROOT}/test/av1_encoder_parms_get_to_decoder.cc"
-                       "${AOM_ROOT}/test/av1_ext_tile_test.cc"
-                       "${AOM_ROOT}/test/cnn_test.cc"
-                       "${AOM_ROOT}/test/decode_multithreaded_test.cc"
-                       "${AOM_ROOT}/test/error_resilience_test.cc"
-                       "${AOM_ROOT}/test/kf_test.cc"
-                       "${AOM_ROOT}/test/lossless_test.cc"
-                       "${AOM_ROOT}/test/sb_multipass_test.cc"
-                       "${AOM_ROOT}/test/sb_qp_sweep_test.cc"
-                       "${AOM_ROOT}/test/selfguided_filter_test.cc"
-                       "${AOM_ROOT}/test/screen_content_test.cc"
-                       "${AOM_ROOT}/test/still_picture_test.cc"
-                       "${AOM_ROOT}/test/tile_independence_test.cc"
-                       "${AOM_ROOT}/test/tpl_model_test.cc")
-    endif()
   endif()
-
-  if(HAVE_NEON)
-    list(APPEND AOM_UNIT_TEST_COMMON_SOURCES
-                "${AOM_ROOT}/test/simd_neon_test.cc")
+  if(CONFIG_REALTIME_ONLY)
+    list(REMOVE_ITEM AOM_UNIT_TEST_COMMON_SOURCES
+                     "${AOM_ROOT}/test/altref_test.cc"
+                     "${AOM_ROOT}/test/av1_encoder_parms_get_to_decoder.cc"
+                     "${AOM_ROOT}/test/av1_ext_tile_test.cc"
+                     "${AOM_ROOT}/test/cnn_test.cc"
+                     "${AOM_ROOT}/test/decode_multithreaded_test.cc"
+                     "${AOM_ROOT}/test/error_resilience_test.cc"
+                     "${AOM_ROOT}/test/kf_test.cc"
+                     "${AOM_ROOT}/test/lossless_test.cc"
+                     "${AOM_ROOT}/test/sb_multipass_test.cc"
+                     "${AOM_ROOT}/test/sb_qp_sweep_test.cc"
+                     "${AOM_ROOT}/test/selfguided_filter_test.cc"
+                     "${AOM_ROOT}/test/screen_content_test.cc"
+                     "${AOM_ROOT}/test/still_picture_test.cc"
+                     "${AOM_ROOT}/test/tile_independence_test.cc"
+                     "${AOM_ROOT}/test/tpl_model_test.cc")
   endif()
 
   if(CONFIG_FPMT_TEST AND (NOT CONFIG_REALTIME_ONLY))
@@ -381,7 +369,6 @@ if(NOT BUILD_SHARED_LIBS)
                      "${AOM_ROOT}/test/end_to_end_qmpsnr_test.cc"
                      "${AOM_ROOT}/test/end_to_end_ssim_test.cc"
                      "${AOM_ROOT}/test/firstpass_test.cc"
-                     "${AOM_ROOT}/test/frame_error_test.cc"
                      "${AOM_ROOT}/test/motion_vector_test.cc"
                      "${AOM_ROOT}/test/obmc_sad_test.cc"
                      "${AOM_ROOT}/test/obmc_variance_test.cc"
@@ -475,6 +462,7 @@ function(setup_aom_test_targets)
 
   add_executable(test_libaom ${AOM_UNIT_TEST_WRAPPER_SOURCES}
                              $<TARGET_OBJECTS:aom_common_app_util>
+                             $<TARGET_OBJECTS:aom_usage_exit>
                              $<TARGET_OBJECTS:test_aom_common>)
   set_property(TARGET test_libaom PROPERTY FOLDER ${AOM_IDE_TEST_FOLDER})
   list(APPEND AOM_APP_TARGETS test_libaom)
@@ -497,9 +485,9 @@ function(setup_aom_test_targets)
     endif()
 
     if(NOT BUILD_SHARED_LIBS)
-      add_executable(test_intra_pred_speed
-                     ${AOM_TEST_INTRA_PRED_SPEED_SOURCES}
-                     $<TARGET_OBJECTS:aom_common_app_util>)
+      add_executable(test_intra_pred_speed ${AOM_TEST_INTRA_PRED_SPEED_SOURCES}
+                                           $<TARGET_OBJECTS:aom_common_app_util>
+                                           $<TARGET_OBJECTS:aom_usage_exit>)
       set_property(TARGET test_intra_pred_speed
                    PROPERTY FOLDER ${AOM_IDE_TEST_FOLDER})
       target_link_libraries(test_intra_pred_speed ${AOM_LIB_LINK_TYPE} aom

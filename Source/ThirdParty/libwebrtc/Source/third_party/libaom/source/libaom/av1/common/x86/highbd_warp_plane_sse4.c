@@ -302,9 +302,7 @@ void av1_highbd_warp_affine_sse4_1(const int32_t *mat, const uint16_t *ref,
                                    int16_t beta, int16_t gamma, int16_t delta) {
   __m128i tmp[15];
   int i, j, k;
-  const int reduce_bits_horiz =
-      conv_params->round_0 +
-      AOMMAX(bd + FILTER_BITS - conv_params->round_0 - 14, 0);
+  const int reduce_bits_horiz = conv_params->round_0;
   const int reduce_bits_vert = conv_params->is_compound
                                    ? conv_params->round_1
                                    : 2 * FILTER_BITS - reduce_bits_horiz;
@@ -312,6 +310,10 @@ void av1_highbd_warp_affine_sse4_1(const int32_t *mat, const uint16_t *ref,
   assert(IMPLIES(conv_params->is_compound, conv_params->dst != NULL));
   assert(!(bd == 12 && reduce_bits_horiz < 5));
   assert(IMPLIES(conv_params->do_average, conv_params->is_compound));
+
+  // Check that, even with 12-bit input, the intermediate values will fit
+  // into an unsigned 16-bit intermediate array.
+  assert(bd + FILTER_BITS + 2 - conv_params->round_0 <= 16);
 
   const int offset_bits_vert = bd + 2 * FILTER_BITS - reduce_bits_horiz;
   const __m128i clip_pixel =

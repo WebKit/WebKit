@@ -518,8 +518,8 @@ void aom_highbd_comp_mask_pred_avx2(uint8_t *comp_pred8, const uint8_t *pred8,
   }
 }
 
-uint64_t aom_mse_4xh_16bit_avx2(uint8_t *dst, int dstride, uint16_t *src,
-                                int sstride, int h) {
+static uint64_t mse_4xh_16bit_avx2(uint8_t *dst, int dstride, uint16_t *src,
+                                   int sstride, int h) {
   uint64_t sum = 0;
   __m128i dst0_4x8, dst1_4x8, dst2_4x8, dst3_4x8, dst_16x8;
   __m128i src0_4x16, src1_4x16, src2_4x16, src3_4x16;
@@ -575,8 +575,9 @@ uint64_t aom_mse_4xh_16bit_avx2(uint8_t *dst, int dstride, uint16_t *src,
 // In src buffer, each 4x4 block in a 32x32 filter block is stored sequentially.
 // Hence src_blk_stride is same as block width. Whereas dst buffer is a frame
 // buffer, thus dstride is a frame level stride.
-uint64_t aom_mse_4xh_quad_16bit_avx2(uint8_t *dst, int dstride, uint16_t *src,
-                                     int src_blk_stride, int h) {
+static uint64_t mse_4xh_quad_16bit_avx2(uint8_t *dst, int dstride,
+                                        uint16_t *src, int src_blk_stride,
+                                        int h) {
   uint64_t sum = 0;
   __m128i dst0_16x8, dst1_16x8, dst2_16x8, dst3_16x8;
   __m256i dst0_16x16, dst1_16x16, dst2_16x16, dst3_16x16;
@@ -665,8 +666,8 @@ uint64_t aom_mse_4xh_quad_16bit_avx2(uint8_t *dst, int dstride, uint16_t *src,
   return sum;
 }
 
-uint64_t aom_mse_8xh_16bit_avx2(uint8_t *dst, int dstride, uint16_t *src,
-                                int sstride, int h) {
+static uint64_t mse_8xh_16bit_avx2(uint8_t *dst, int dstride, uint16_t *src,
+                                   int sstride, int h) {
   uint64_t sum = 0;
   __m128i dst0_8x8, dst1_8x8, dst3_16x8;
   __m256i src0_8x16, src1_8x16, src_16x16, dst_16x16;
@@ -715,8 +716,9 @@ uint64_t aom_mse_8xh_16bit_avx2(uint8_t *dst, int dstride, uint16_t *src,
 // In src buffer, each 8x8 block in a 64x64 filter block is stored sequentially.
 // Hence src_blk_stride is same as block width. Whereas dst buffer is a frame
 // buffer, thus dstride is a frame level stride.
-uint64_t aom_mse_8xh_dual_16bit_avx2(uint8_t *dst, int dstride, uint16_t *src,
-                                     int src_blk_stride, int h) {
+static uint64_t mse_8xh_dual_16bit_avx2(uint8_t *dst, int dstride,
+                                        uint16_t *src, int src_blk_stride,
+                                        int h) {
   uint64_t sum = 0;
   __m128i dst0_16x8, dst1_16x8;
   __m256i dst0_16x16, dst1_16x16;
@@ -780,8 +782,8 @@ uint64_t aom_mse_wxh_16bit_avx2(uint8_t *dst, int dstride, uint16_t *src,
   assert((w == 8 || w == 4) && (h == 8 || h == 4) &&
          "w=8/4 and h=8/4 must be satisfied");
   switch (w) {
-    case 4: return aom_mse_4xh_16bit_avx2(dst, dstride, src, sstride, h);
-    case 8: return aom_mse_8xh_16bit_avx2(dst, dstride, src, sstride, h);
+    case 4: return mse_4xh_16bit_avx2(dst, dstride, src, sstride, h);
+    case 8: return mse_8xh_16bit_avx2(dst, dstride, src, sstride, h);
     default: assert(0 && "unsupported width"); return -1;
   }
 }
@@ -795,8 +797,8 @@ uint64_t aom_mse_16xh_16bit_avx2(uint8_t *dst, int dstride, uint16_t *src,
   assert((w == 8 || w == 4) && (h == 8 || h == 4) &&
          "w=8/4 and h=8/4 must be satisfied");
   switch (w) {
-    case 4: return aom_mse_4xh_quad_16bit_avx2(dst, dstride, src, w * h, h);
-    case 8: return aom_mse_8xh_dual_16bit_avx2(dst, dstride, src, w * h, h);
+    case 4: return mse_4xh_quad_16bit_avx2(dst, dstride, src, w * h, h);
+    case 8: return mse_8xh_dual_16bit_avx2(dst, dstride, src, w * h, h);
     default: assert(0 && "unsupported width"); return -1;
   }
 }

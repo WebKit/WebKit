@@ -10,15 +10,19 @@
  */
 
 #include <assert.h>
-#include <math.h>
+#include <stddef.h>
 #include <string.h>
 
 #include "config/aom_scale_rtcd.h"
 
 #include "aom/aom_integer.h"
+#include "aom_util/aom_pthread.h"
 #include "av1/common/av1_common_int.h"
 #include "av1/common/cdef.h"
 #include "av1/common/cdef_block.h"
+#include "av1/common/common.h"
+#include "av1/common/common_data.h"
+#include "av1/common/enums.h"
 #include "av1/common/reconinter.h"
 #include "av1/common/thread_common.h"
 
@@ -92,7 +96,7 @@ void av1_cdef_copy_sb8_16_lowbd(uint16_t *const dst, int dstride,
                                 const uint8_t *src, int src_voffset,
                                 int src_hoffset, int sstride, int vsize,
                                 int hsize) {
-  const uint8_t *base = &src[src_voffset * sstride + src_hoffset];
+  const uint8_t *base = &src[src_voffset * (ptrdiff_t)sstride + src_hoffset];
   cdef_copy_rect8_8bit_to_16bit(dst, dstride, base, sstride, hsize, vsize);
 }
 
@@ -101,7 +105,7 @@ void av1_cdef_copy_sb8_16_highbd(uint16_t *const dst, int dstride,
                                  int src_hoffset, int sstride, int vsize,
                                  int hsize) {
   const uint16_t *base =
-      &CONVERT_TO_SHORTPTR(src)[src_voffset * sstride + src_hoffset];
+      &CONVERT_TO_SHORTPTR(src)[src_voffset * (ptrdiff_t)sstride + src_hoffset];
   cdef_copy_rect8_16bit_to_16bit(dst, dstride, base, sstride, hsize, vsize);
 }
 
@@ -247,7 +251,8 @@ static void cdef_prepare_fb(const AV1_COMMON *const cm, CdefBlockInfo *fb_info,
 
 static INLINE void cdef_filter_fb(CdefBlockInfo *const fb_info, int plane,
                                   uint8_t use_highbitdepth) {
-  int offset = fb_info->dst_stride * fb_info->roffset + fb_info->coffset;
+  ptrdiff_t offset =
+      (ptrdiff_t)fb_info->dst_stride * fb_info->roffset + fb_info->coffset;
   if (use_highbitdepth) {
     av1_cdef_filter_fb(
         NULL, CONVERT_TO_SHORTPTR(fb_info->dst + offset), fb_info->dst_stride,

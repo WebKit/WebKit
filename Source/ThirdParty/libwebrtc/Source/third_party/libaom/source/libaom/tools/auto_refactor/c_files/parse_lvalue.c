@@ -39,7 +39,7 @@ int func(VP9_COMP *cpi, int x) {
   return 0;
 }
 
-int main() {
+int main(void) {
   int x = 0;
   VP9_COMP cpi;
   func(&cpi, x);

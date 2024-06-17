@@ -173,4 +173,10 @@ INSTANTIATE_TEST_SUITE_P(AVX2, SumSSETest,
                              &aom_sum_sse_2d_i16_c, &aom_sum_sse_2d_i16_avx2)));
 #endif  // HAVE_AVX2
 
+#if HAVE_SVE
+INSTANTIATE_TEST_SUITE_P(SVE, SumSSETest,
+                         ::testing::Values(TestFuncs(&aom_sum_sse_2d_i16_c,
+                                                     &aom_sum_sse_2d_i16_sve)));
+#endif  // HAVE_SVE
+
 }  // namespace

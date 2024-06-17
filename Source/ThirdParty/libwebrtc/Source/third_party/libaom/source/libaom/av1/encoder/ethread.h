@@ -53,6 +53,8 @@ void av1_accumulate_frame_counts(struct FRAME_COUNTS *acc_counts,
 
 void av1_row_mt_mem_dealloc(AV1_COMP *cpi);
 
+void av1_row_mt_sync_mem_dealloc(AV1EncRowMultiThreadSync *row_mt_sync);
+
 void av1_global_motion_estimation_mt(AV1_COMP *cpi);
 
 #if !CONFIG_REALTIME_ONLY
@@ -85,6 +87,8 @@ void av1_compute_num_workers_for_mt(AV1_COMP *cpi);
 int av1_get_max_num_workers(const AV1_COMP *cpi);
 
 void av1_create_workers(AV1_PRIMARY *ppi, int num_workers);
+
+void av1_terminate_workers(AV1_PRIMARY *ppi);
 
 void av1_init_frame_mt(AV1_PRIMARY *ppi, AV1_COMP *cpi);
 
@@ -120,8 +124,8 @@ int av1_compute_num_fp_contexts(AV1_PRIMARY *ppi, AV1EncoderConfig *oxcf);
 
 int av1_check_fpmt_config(AV1_PRIMARY *const ppi, AV1EncoderConfig *const oxcf);
 
-int av1_compress_parallel_frames(AV1_PRIMARY *const ppi,
-                                 AV1_COMP_DATA *const first_cpi_data);
+void av1_compress_parallel_frames(AV1_PRIMARY *const ppi,
+                                  AV1_COMP_DATA *const first_cpi_data);
 #ifdef __cplusplus
 }  // extern "C"
 #endif
