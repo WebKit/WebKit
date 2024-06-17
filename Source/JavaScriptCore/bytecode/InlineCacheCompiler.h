@@ -213,6 +213,8 @@ public:
     static constexpr ptrdiff_t offsetOfHolder() { return OBJECT_OFFSETOF(InlineCacheHandler, u.s1.m_holder); }
     static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(InlineCacheHandler, u.s1.m_globalObject); }
     static constexpr ptrdiff_t offsetOfCustomAccessor() { return OBJECT_OFFSETOF(InlineCacheHandler, u.s1.m_customAccessor); }
+    static constexpr ptrdiff_t offsetOfModuleNamespaceObject() { return OBJECT_OFFSETOF(InlineCacheHandler, u.s3.m_moduleNamespaceObject); }
+    static constexpr ptrdiff_t offsetOfModuleVariableSlot() { return OBJECT_OFFSETOF(InlineCacheHandler, u.s3.m_moduleVariableSlot); }
     static constexpr ptrdiff_t offsetOfCallLinkInfos() { return Base::offsetOfData(); }
 
 private:
@@ -240,6 +242,10 @@ private:
             JSGlobalObject* m_globalObject;
             void* m_customAccessor;
         } s1;
+        struct {
+            JSObject* m_moduleNamespaceObject;
+            WriteBarrierBase<Unknown>* m_moduleVariableSlot;
+        } s3;
     } u;
     RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
     RefPtr<AccessCase> m_accessCase;
@@ -416,6 +422,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomAccessorHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomValueHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdGetterHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdProxyObjectLoadHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdModuleNamespaceLoadHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandlerCodeGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNonAllocatingHandlerCodeGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNewlyAllocatingHandlerCodeGenerator(VM&);
