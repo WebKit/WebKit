@@ -225,8 +225,7 @@ SourceBufferParserAVFObjC::SourceBufferParserAVFObjC()
 #endif
         m_delegate = adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:this]);
 #if USE(MEDIAPARSERD)
-    if ([m_parser.get() respondsToSelector:@selector(setPreferSandboxedParsing:)])
-        [m_parser.get() setPreferSandboxedParsing:YES];
+    [m_parser setPreferSandboxedParsing:YES];
 #endif
 }
 
