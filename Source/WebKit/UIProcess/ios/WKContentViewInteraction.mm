@@ -13194,6 +13194,76 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 
 #endif // USE(BROWSERENGINEKIT)
 
+#if ENABLE(WRITING_TOOLS)
+
+- (UIWritingToolsAllowedInputOptions)writingToolsAllowedInputOptions
+{
+    return [_webView writingToolsAllowedInputOptions];
+}
+
+- (BOOL)wantsWritingToolsInlineEditing
+{
+    return [_webView wantsWritingToolsInlineEditing];
+}
+
+- (void)willBeginWritingToolsSession:(WTSession *)session requestContexts:(void (^)(NSArray<WTContext *> *))completion
+{
+    [_webView willBeginWritingToolsSession:session requestContexts:completion];
+}
+
+- (void)didBeginWritingToolsSession:(WTSession *)session contexts:(NSArray<WTContext *> *)contexts
+{
+    [_webView didBeginWritingToolsSession:session contexts:contexts];
+}
+
+- (void)proofreadingSession:(WTSession *)session didReceiveSuggestions:(NSArray<WTTextSuggestion *> *)suggestions processedRange:(NSRange)range inContext:(WTContext *)context finished:(BOOL)finished
+{
+    [_webView proofreadingSession:session didReceiveSuggestions:suggestions processedRange:range inContext:context finished:finished];
+}
+
+- (void)proofreadingSession:(WTSession *)session didUpdateState:(WTTextSuggestionState)state forSuggestionWithUUID:(NSUUID *)suggestionUUID inContext:(WTContext *)context
+{
+    [_webView proofreadingSession:session didUpdateState:state forSuggestionWithUUID:suggestionUUID inContext:context];
+}
+
+- (void)didEndWritingToolsSession:(WTSession *)session accepted:(BOOL)accepted
+{
+    [_webView didEndWritingToolsSession:session accepted:accepted];
+}
+
+- (void)compositionSession:(WTSession *)session didReceiveText:(NSAttributedString *)attributedText replacementRange:(NSRange)range inContext:(WTContext *)context finished:(BOOL)finished
+{
+    [_webView compositionSession:session didReceiveText:attributedText replacementRange:range inContext:context finished:finished];
+}
+
+- (void)writingToolsSession:(WTSession *)session didReceiveAction:(WTAction)action
+{
+    [_webView writingToolsSession:session didReceiveAction:action];
+}
+
+static UIWritingToolsBehavior convert(WebCore::UnifiedTextReplacement::ReplacementBehavior behavior)
+{
+    switch (behavior) {
+    case WebCore::UnifiedTextReplacement::ReplacementBehavior::None:
+        return UIWritingToolsBehaviorNone;
+
+    case WebCore::UnifiedTextReplacement::ReplacementBehavior::Default:
+    case WebCore::UnifiedTextReplacement::ReplacementBehavior::Limited:
+        return UIWritingToolsBehaviorLimited;
+
+    case WebCore::UnifiedTextReplacement::ReplacementBehavior::Complete:
+        return UIWritingToolsBehaviorComplete;
+    }
+}
+
+- (void)_updateTextInputTraitsForUnifiedTextReplacement:(id<UITextInputTraits>)traits
+{
+    UIWritingToolsBehavior behavior = convert([self unifiedTextReplacementBehavior]);
+    [traits setWritingToolsBehavior:behavior];
+}
+
+#endif
+
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.mm>
 #endif

@@ -159,7 +159,6 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebViewVisualIdentificationOverlay.h>
 #import <WebCore/WritingMode.h>
-#import <pal/spi/cocoa/WritingToolsSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/HashMap.h>

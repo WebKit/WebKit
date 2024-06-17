@@ -24,11 +24,13 @@
  */
 
 #import "PDFPluginIdentifier.h"
+#import "WKTextAnimationType.h"
 #import <WebKit/WKShareSheet.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import "_WKAttachmentInternal.h"
 #import "_WKWebViewPrintFormatterInternal.h"
+#import <pal/spi/cocoa/WritingToolsSPI.h>
 #import <variant>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
@@ -53,15 +55,23 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+
+#if ENABLE(WRITING_TOOLS)
+#define WK_WEB_VIEW_PROTOCOLS <WKBEScrollViewDelegate, WTWritingToolsDelegate>
+#else
 #define WK_WEB_VIEW_PROTOCOLS <WKBEScrollViewDelegate>
 #endif
 
+#endif
+
 #if PLATFORM(MAC)
+
+#if ENABLE(WRITING_TOOLS)
+#define WK_WEB_VIEW_PROTOCOLS <WKShareSheetDelegate, WTWritingToolsDelegate>
+#else
 #define WK_WEB_VIEW_PROTOCOLS <WKShareSheetDelegate>
 #endif
 
-#if PLATFORM(COCOA)
-#import "WKTextAnimationType.h"
 #endif
 
 #if !defined(WK_WEB_VIEW_PROTOCOLS)
@@ -395,13 +405,20 @@ struct PerWebProcessState {
 - (void)_textReplacementSession:(NSUUID *)sessionUUID showInformationForReplacementWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect;
 
 - (void)_textReplacementSession:(NSUUID *)sessionUUID updateState:(WebCore::UnifiedTextReplacement::ReplacementState)state forReplacementWithUUID:(NSUUID *)replacementUUID;
+
+#if PLATFORM(MAC)
+- (NSWritingToolsAllowedInputOptions)writingToolsAllowedInputOptions;
+#else
+- (UIWritingToolsAllowedInputOptions)writingToolsAllowedInputOptions;
 #endif
+
+- (BOOL)_wantsCompleteUnifiedTextReplacementBehavior;
+
+#endif // ENABLE(WRITING_TOOLS)
 
 #if ENABLE(WRITING_TOOLS_UI)
 - (void)_addTextAnimationTypeForID:(NSUUID *)uuid withData:(const WebKit::TextAnimationData&)styleData;
 - (void)_removeTextAnimationForID:(NSUUID *)uuid;
-
-- (BOOL)_wantsCompleteUnifiedTextReplacementBehavior;
 #endif
 
 - (void)_internalDoAfterNextPresentationUpdate:(void (^)(void))updateBlock withoutWaitingForPainting:(BOOL)withoutWaitingForPainting withoutWaitingForAnimatedResize:(BOOL)withoutWaitingForAnimatedResize;

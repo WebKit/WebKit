@@ -59,8 +59,8 @@
 @property (nonatomic, strong) UIColor *selectionHandleColor;
 @property (nonatomic, strong) UIColor *selectionHighlightColor;
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKExtendedTextInputTraitsAdditions.h>
+#if ENABLE(WRITING_TOOLS)
+@property UIWritingToolsBehavior writingToolsBehavior;
 #endif
 
 - (void)setSelectionColorsToMatchTintColor:(UIColor *)tintColor;
