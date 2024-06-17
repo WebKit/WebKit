@@ -971,8 +971,10 @@ void HistoryController::replaceState(RefPtr<SerializedScriptValue>&& stateObject
     addVisitedLink(*page, URL({ }, urlString));
     frame->checkedLoader()->client().updateGlobalHistory();
 
-    if (RefPtr document = frame->document(); document && document->settings().navigationAPIEnabled())
+    if (RefPtr document = frame->document(); document && document->settings().navigationAPIEnabled()) {
+        currentItem->setNavigationAPIStateObject(nullptr);
         document->protectedWindow()->navigation().updateForNavigation(*currentItem, NavigationNavigationType::Replace);
+    }
 }
 
 void HistoryController::replaceCurrentItem(RefPtr<HistoryItem>&& item)
