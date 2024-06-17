@@ -46,6 +46,7 @@
 #include "MarkedSpaceInlines.h"
 #include "Microtask.h"
 #include "NativeExecutable.h"
+#include "ProtocolUtilities.h"
 #include "RegularExpression.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
@@ -997,45 +998,25 @@ Protocol::ErrorStringOr<Ref<Protocol::Debugger::FunctionDetails>> InspectorDebug
     return details.releaseNonNull();
 }
 
-Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Debugger::Location>>> InspectorDebuggerAgent::getBreakpointLocations(Ref<JSON::Object>&& start, Ref<JSON::Object>&& end)
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::GenericTypes::SourcePosition>>> InspectorDebuggerAgent::getBreakpointSourcePositions(const Protocol::Debugger::ScriptId& scriptId, Ref<JSON::Object>&& protocolSourceRange)
 {
-    Protocol::ErrorString errorString;
+    auto sourceID = parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptId).value_or(0);
 
-    JSC::SourceID startSourceID;
-    unsigned startLineNumber;
-    unsigned startColumnNumber;
-    if (!parseLocation(errorString, WTFMove(start), startSourceID, startLineNumber, startColumnNumber))
-        return makeUnexpected(errorString);
+    auto sourceRange = Protocol::parseSourceRange(WTFMove(protocolSourceRange));
+    if (!sourceRange)
+        return makeUnexpected(sourceRange.error());
 
-    JSC::SourceID endSourceID;
-    unsigned endLineNumber;
-    unsigned endColumnNumber;
-    if (!parseLocation(errorString, WTFMove(end), endSourceID, endLineNumber, endColumnNumber))
-        return makeUnexpected(errorString);
-
-    if (startSourceID != endSourceID)
-        return makeUnexpected("Must have same scriptId for given start and given end"_s);
-
-    if (endLineNumber < startLineNumber)
-        return makeUnexpected("Cannot have lineNumber of given end be before lineNumber of given start"_s);
-
-    if (startLineNumber == endLineNumber && endColumnNumber < startColumnNumber)
-        return makeUnexpected("Cannot have columnNumber of given end be before columnNumber of given start"_s);
-
-    auto scriptIterator = m_scripts.find(startSourceID);
+    auto scriptIterator = m_scripts.find(sourceID);
     if (scriptIterator == m_scripts.end())
-        return makeUnexpected("Missing script for scriptId in given start"_s);
+        return makeUnexpected("Missing script for given scriptId"_s);
 
-    auto protocolLocations = JSON::ArrayOf<Protocol::Debugger::Location>::create();
-    m_debugger.forEachBreakpointLocation(startSourceID, scriptIterator->value.sourceProvider.get(), startLineNumber, startColumnNumber, endLineNumber, endColumnNumber, [&] (int lineNumber, int columnNumber) {
-        auto protocolLocation = Protocol::Debugger::Location::create()
-            .setScriptId(String::number(startSourceID))
-            .setLineNumber(lineNumber)
-            .release();
-        protocolLocation->setColumnNumber(columnNumber);
-        protocolLocations->addItem(WTFMove(protocolLocation));
+    auto& [start, end] = *sourceRange;
+
+    auto sourcePositions = JSON::ArrayOf<Protocol::GenericTypes::SourcePosition>::create();
+    m_debugger.forEachBreakpointLocation(sourceID, scriptIterator->value.sourceProvider.get(), start.m_line.zeroBasedInt(), start.m_column.zeroBasedInt(), end.m_line.zeroBasedInt(), end.m_column.zeroBasedInt(), [&] (int lineNumber, int columnNumber) {
+        sourcePositions->addItem(Protocol::buildSourcePosition({ OrdinalNumber::fromZeroBasedInt(lineNumber), OrdinalNumber::fromZeroBasedInt(columnNumber) }));
     });
-    return protocolLocations;
+    return sourcePositions;
 }
 
 void InspectorDebuggerAgent::schedulePauseAtNextOpportunity(DebuggerFrontendDispatcher::Reason reason, RefPtr<JSON::Object>&& data)

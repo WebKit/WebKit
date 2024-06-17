@@ -85,7 +85,7 @@ function test()
         }
 
         function replacer(key, value) {
-            if (key === "ruleId" || key === "styleId" || key === "range" || key === "sourceLine" || key === "sourceURL")
+            if (key === "ruleId" || key === "styleId" || key === "sourceRange" || key === "sourceLine" || key === "sourceURL")
                 return "<filtered>";
             return value;
         }

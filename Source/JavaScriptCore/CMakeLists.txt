@@ -809,6 +809,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/InspectorProtocolTypes.h
     inspector/InspectorTarget.h
     inspector/PerGlobalObjectWrapperWorld.h
+    inspector/ProtocolUtilities.h
     inspector/ScriptArguments.h
     inspector/ScriptCallFrame.h
     inspector/ScriptCallStack.h

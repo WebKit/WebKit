@@ -248,26 +248,45 @@ WI.Script = class Script extends WI.SourceCode
         console.assert(startPosition instanceof WI.SourceCodePosition, startPosition);
         console.assert(endPosition instanceof WI.SourceCodePosition, endPosition);
 
-        // COMPATIBILITY (macOS 13.0, iOS 16.0): Debugger.getBreakpointLocations did not exist yet.
-        if (!this._target.hasCommand("Debugger.getBreakpointLocations"))
-            return [];
+        // COMPATIBILITY (macOS X.Y, iOS X.Y): Debugger.getBreakpointSourcePositions did not exist yet.
+        if (!this._target.hasCommand("Debugger.getBreakpointSourcePositions")) {
+            // COMPATIBILITY (macOS 13.0, iOS 16.0): Debugger.getBreakpointLocations did not exist yet.
+            // COMPATIBILITY (macOS X.Y, iOS X.Y): Debugger.getBreakpointLocations was renamed to Debugger.getBreakpointSourcePositions.
+            if (!this._target.hasCommand("Debugger.getBreakpointLocations"))
+                return [];
 
-        let {locations} = await this._target.DebuggerAgent.getBreakpointLocations.invoke({
+            let {locations} = await this._target.DebuggerAgent.getBreakpointLocations.invoke({
+                start: {
+                    scriptId: this._id,
+                    lineNumber: startPosition.lineNumber,
+                    columnNumber: startPosition.columnNumber,
+                },
+                end: {
+                    scriptId: this._id,
+                    lineNumber: endPosition.lineNumber,
+                    columnNumber: endPosition.columnNumber,
+                },
+            });
+            return locations.map((location) => {
+                console.assert(location.scriptId === this._id, location);
+                let sourceCode = this._resource || this;
+                return sourceCode.createLazySourceCodeLocation(location.lineNumber, location.columnNumber);
+            });
+        }
+
+        let {sourcePositions} = await this._target.DebuggerAgent.getBreakpointSourcePositions(this._id, {
             start: {
-                scriptId: this._id,
-                lineNumber: startPosition.lineNumber,
-                columnNumber: startPosition.columnNumber,
+                line: startPosition.lineNumber,
+                column: startPosition.columnNumber,
             },
             end: {
-                scriptId: this._id,
-                lineNumber: endPosition.lineNumber,
-                columnNumber: endPosition.columnNumber,
+                line: endPosition.lineNumber,
+                column: endPosition.columnNumber,
             },
         });
-        return locations.map((location) => {
-            console.assert(location.scriptId === this._id, location);
+        return sourcePositions.map(({line, column}) => {
             let sourceCode = this._resource || this;
-            return sourceCode.createLazySourceCodeLocation(location.lineNumber, location.columnNumber);
+            return sourceCode.createLazySourceCodeLocation(line, column);
         });
     }
 

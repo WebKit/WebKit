@@ -11,8 +11,8 @@ function test() {
 
     let mainFrame = WI.networkManager.mainFrame;
 
-    function stringify(range) {
-        return `${range.startLine}:${range.startColumn},${range.endLine}:${range.endColumn}`;
+    function stringify(sourceRange) {
+        return `${sourceRange.start.line}:${sourceRange.start.column},${sourceRange.end.line}:${sourceRange.end.column}`;
     }
 
     suite.addTestCase({
@@ -26,7 +26,7 @@ function test() {
                 }
 
                 InspectorTest.expectEqual(rulePayload.selectorList.text, "body", `Rule selector should be "body"`);
-                InspectorTest.expectEqual(stringify(rulePayload.selectorList.range), "0:0,0:4", `Rule range should be [0:0,0:4]`);
+                InspectorTest.expectEqual(stringify(rulePayload.selectorList.sourceRange), "0:0,0:4", `Rule range should be [0:0,0:4]`);
                 InspectorTest.expectEqual(rulePayload.origin, "inspector", `Rule origin should be "inspector"`);
 
                 resolve();
@@ -58,7 +58,7 @@ function test() {
                 }
 
                 InspectorTest.expectEqual(rulePayload.selectorList.text, "div", `Rule selector should be "div"`);
-                InspectorTest.expectEqual(stringify(rulePayload.selectorList.range), "1:0,1:3", `Rule range should be [1:0,1:3]`);
+                InspectorTest.expectEqual(stringify(rulePayload.selectorList.sourceRange), "1:0,1:3", `Rule range should be [1:0,1:3]`);
                 InspectorTest.expectEqual(rulePayload.origin, "inspector", `Rule origin should be "inspector"`);
 
                 resolve();
@@ -94,7 +94,7 @@ function test() {
                 }
 
                 InspectorTest.expectEqual(rulePayload.selectorList.text, "div", `Rule selector should be "div"`);
-                InspectorTest.expectEqual(stringify(rulePayload.selectorList.range), "2:0,2:3", `Rule range should be [2:0,2:3]`);
+                InspectorTest.expectEqual(stringify(rulePayload.selectorList.sourceRange), "2:0,2:3", `Rule range should be [2:0,2:3]`);
                 InspectorTest.expectEqual(rulePayload.origin, "author", `Rule origin should be "author"`);
 
                 resolve();

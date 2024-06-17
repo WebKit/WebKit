@@ -106,23 +106,23 @@ TestPage.registerInitializer(() => {
         }
     }
 
-    window.logResolvedBreakpointLocationsInRange = function(start, end, resolvedLocations) {
-        InspectorTest.assert(!resolvedLocations.length || start.lineNumber < resolvedLocations.firstValue.lineNumber || start.columnNumber <= resolvedLocations.firstValue.columnNumber, "Start position should always come before first resolved location position.");
-        InspectorTest.assert(!resolvedLocations.length || end.lineNumber > resolvedLocations.lastValue.lineNumber || end.columnNumber > resolvedLocations.lastValue.columnNumber, "End position should always come after last resolved position.");
+    window.logResolvedBreakpointLocationsInRange = function(range, resolvedLocations) {
+        InspectorTest.assert(!resolvedLocations.length || range.start.line < resolvedLocations.firstValue.lineNumber || range.start.column <= resolvedLocations.firstValue.columnNumber, "Start position should always come before first resolved location position.");
+        InspectorTest.assert(!resolvedLocations.length || range.end.line > resolvedLocations.lastValue.lineNumber || range.end.column > resolvedLocations.lastValue.columnNumber, "End position should always come after last resolved position.");
 
         const inputCaret = "#";
         const resolvedCaret = "|";
 
-        for (let lineNumber = start.lineNumber; lineNumber <= end.lineNumber; ++lineNumber) {
+        for (let lineNumber = range.start.line; lineNumber <= range.end.line; ++lineNumber) {
             let lineContent = lines[lineNumber];
             if (typeof lineContent !== "string")
                 continue;
 
-            if (lineNumber === start.lineNumber)
-                lineContent = " ".repeat(start.columnNumber) + lineContent.slice(start.columnNumber);
+            if (lineNumber === range.start.line)
+                lineContent = " ".repeat(range.start.column) + lineContent.slice(range.start.column);
 
-            if (lineNumber === end.lineNumber)
-                lineContent = lineContent.slice(0, end.columnNumber)
+            if (lineNumber === range.end.line)
+                lineContent = lineContent.slice(0, range.end.column)
 
             for (let i = resolvedLocations.length - 1; i >= 0; --i) {
                 let resolvedLocation = resolvedLocations[i];

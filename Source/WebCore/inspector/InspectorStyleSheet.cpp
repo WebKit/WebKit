@@ -67,6 +67,7 @@
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
+#include <JavaScriptCore/ProtocolUtilities.h>
 #include <JavaScriptCore/RegularExpression.h>
 #include <wtf/NotFound.h>
 #include <wtf/text/StringBuilder.h>
@@ -539,7 +540,7 @@ void StyleSheetHandler::observeComment(unsigned startOffset, unsigned endOffset)
     m_currentRuleDataStack.last()->styleSourceData->propertyData.append(CSSPropertySourceData(propertyData.name, propertyData.value, false, true, true, SourceRange(startOffset - topRuleBodyRange.start, endOffset - topRuleBodyRange.start)));
 }
 
-static RefPtr<Inspector::Protocol::CSS::SourceRange> buildSourceRangeObject(const SourceRange& range, const Vector<size_t>& lineEndings, int* endingLine = nullptr)
+static RefPtr<Inspector::Protocol::GenericTypes::SourceRange> buildSourceRangeObject(const SourceRange& range, const Vector<size_t>& lineEndings, int* endingLine = nullptr)
 {
     if (lineEndings.isEmpty())
         return nullptr;
@@ -550,12 +551,7 @@ static RefPtr<Inspector::Protocol::CSS::SourceRange> buildSourceRangeObject(cons
     if (endingLine)
         *endingLine = end.m_line.zeroBasedInt();
 
-    return Inspector::Protocol::CSS::SourceRange::create()
-        .setStartLine(start.m_line.zeroBasedInt())
-        .setStartColumn(start.m_column.zeroBasedInt())
-        .setEndLine(end.m_line.zeroBasedInt())
-        .setEndColumn(end.m_column.zeroBasedInt())
-        .release();
+    return Inspector::Protocol::buildSourceRange({ WTFMove(start), WTFMove(end) });
 }
 
 static RefPtr<CSSRuleList> asCSSRuleList(CSSStyleSheet* styleSheet)
@@ -620,8 +616,8 @@ RefPtr<Inspector::Protocol::CSS::Grouping> InspectorStyleSheet::buildObjectForGr
         if (auto text = m_parsedStyleSheet->text().substring(sourceData->ruleHeaderRange.start, sourceData->ruleHeaderRange.length()); !text.isEmpty())
             payload->setText(text);
 
-        if (auto range = buildSourceRangeObject(sourceData->ruleHeaderRange, lineEndings()))
-            payload->setRange(range.releaseNonNull());
+        if (auto sourceRange = buildSourceRangeObject(sourceData->ruleHeaderRange, lineEndings()))
+            payload->setSourceRange(sourceRange.releaseNonNull());
     }
 
     if (auto sourceURL = sourceURLForCSSRule(*groupingRule); !sourceURL.isEmpty())
@@ -728,8 +724,8 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::buildObjectForStyle() co
     result->setHeight(m_style->getPropertyValue("height"_s));
 
     if (auto sourceData = extractSourceData()) {
-        if (auto range = buildSourceRangeObject(sourceData->ruleBodyRange, m_parentStyleSheet->lineEndings()))
-            result->setRange(range.releaseNonNull());
+        if (auto sourceRange = buildSourceRangeObject(sourceData->ruleBodyRange, m_parentStyleSheet->lineEndings()))
+            result->setSourceRange(sourceRange.releaseNonNull());
     }
 
     return result;
@@ -866,8 +862,8 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() co
             SourceRange absolutePropertyRange = propertyEntry.range;
             absolutePropertyRange.start += ruleBodyRangeStart;
             absolutePropertyRange.end += ruleBodyRangeStart;
-            if (auto range = buildSourceRangeObject(absolutePropertyRange, lineEndings))
-                property->setRange(range.releaseNonNull());
+            if (auto sourceRange = buildSourceRangeObject(absolutePropertyRange, lineEndings))
+                property->setSourceRange(sourceRange.releaseNonNull());
         }
 
         if (!it->disabled) {
@@ -1399,8 +1395,8 @@ Ref<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForS
         .setText(selectorText)
         .release();
     if (sourceData) {
-        if (auto range = buildSourceRangeObject(sourceData->ruleHeaderRange, lineEndings(), &endingLine))
-            result->setRange(range.releaseNonNull());
+        if (auto sourceRange = buildSourceRangeObject(sourceData->ruleHeaderRange, lineEndings(), &endingLine))
+            result->setSourceRange(sourceRange.releaseNonNull());
     }
     return result;
 }

@@ -41,6 +41,11 @@ public:
 
     TextPosition() { }
     friend bool operator==(const TextPosition&, const TextPosition&) = default;
+    friend std::strong_ordering operator<=>(const TextPosition& a, const TextPosition& b)
+    {
+        auto lineComparison = a.m_line <=> b.m_line;
+        return lineComparison != std::strong_ordering::equal ? lineComparison : a.m_column <=> b.m_column;
+    }
 
     // A value with line value less than a minimum; used as an impossible position.
     static TextPosition belowRangePosition() { return TextPosition(OrdinalNumber::beforeFirst(), OrdinalNumber::beforeFirst()); }

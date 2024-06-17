@@ -163,7 +163,7 @@ Matched:
           }
         ],
         "text": "div",
-        "range": "<filtered>"
+        "sourceRange": "<filtered>"
       },
       "sourceLine": "<filtered>",
       "origin": "author",
@@ -173,7 +173,7 @@ Matched:
             "name": "z-index",
             "value": "300",
             "text": "z-index: 300;",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "implicit": false,
             "status": "active"
           }
@@ -182,7 +182,7 @@ Matched:
         "styleId": "<filtered>",
         "width": "",
         "height": "",
-        "range": "<filtered>",
+        "sourceRange": "<filtered>",
         "cssText": " z-index: 300; "
       },
       "sourceURL": "<filtered>",
@@ -207,7 +207,7 @@ Matched:
           }
         ],
         "text": "#x",
-        "range": "<filtered>"
+        "sourceRange": "<filtered>"
       },
       "sourceLine": "<filtered>",
       "origin": "author",
@@ -217,7 +217,7 @@ Matched:
             "name": "z-index",
             "value": "200",
             "text": "z-index: 200;",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "implicit": false,
             "status": "active"
           }
@@ -226,7 +226,7 @@ Matched:
         "styleId": "<filtered>",
         "width": "",
         "height": "",
-        "range": "<filtered>",
+        "sourceRange": "<filtered>",
         "cssText": " z-index: 200; "
       },
       "sourceURL": "<filtered>",
@@ -251,7 +251,7 @@ Matched:
           }
         ],
         "text": "div#x",
-        "range": "<filtered>"
+        "sourceRange": "<filtered>"
       },
       "sourceLine": "<filtered>",
       "origin": "author",
@@ -261,7 +261,7 @@ Matched:
             "name": "z-index",
             "value": "100",
             "text": "z-index: 100;",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "implicit": false,
             "status": "active"
           }
@@ -270,7 +270,7 @@ Matched:
         "styleId": "<filtered>",
         "width": "",
         "height": "",
-        "range": "<filtered>",
+        "sourceRange": "<filtered>",
         "cssText": " z-index: 100; "
       },
       "sourceURL": "<filtered>",
@@ -302,7 +302,7 @@ Pseudo:
               }
             ],
             "text": "div::first-line",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -312,7 +312,7 @@ Pseudo:
                 "name": "z-index",
                 "value": "1",
                 "text": "z-index: 1;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -321,7 +321,7 @@ Pseudo:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " z-index: 1; "
           },
           "sourceURL": "<filtered>",
@@ -351,7 +351,7 @@ Pseudo:
               }
             ],
             "text": "div::first-letter",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -361,7 +361,7 @@ Pseudo:
                 "name": "z-index",
                 "value": "2",
                 "text": "z-index: 2;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -370,7 +370,7 @@ Pseudo:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " z-index: 2; "
           },
           "sourceURL": "<filtered>",
@@ -400,7 +400,7 @@ Pseudo:
               }
             ],
             "text": "div::before",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -410,7 +410,7 @@ Pseudo:
                 "name": "z-index",
                 "value": "4",
                 "text": "z-index: 4;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -419,7 +419,7 @@ Pseudo:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " z-index: 4; "
           },
           "sourceURL": "<filtered>",
@@ -449,7 +449,7 @@ Pseudo:
               }
             ],
             "text": "div::after",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -459,7 +459,7 @@ Pseudo:
                 "name": "z-index",
                 "value": "5",
                 "text": "z-index: 5;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -468,7 +468,7 @@ Pseudo:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " z-index: 5; "
           },
           "sourceURL": "<filtered>",
@@ -498,7 +498,7 @@ Pseudo:
               }
             ],
             "text": "div::selection",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -508,7 +508,7 @@ Pseudo:
                 "name": "z-index",
                 "value": "6",
                 "text": "z-index: 6;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -517,7 +517,7 @@ Pseudo:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " z-index: 6; "
           },
           "sourceURL": "<filtered>",
@@ -547,7 +547,7 @@ Pseudo:
               }
             ],
             "text": "div::-webkit-scrollbar",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -557,7 +557,7 @@ Pseudo:
                 "name": "z-index",
                 "value": "7",
                 "text": "z-index: 7;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -566,7 +566,7 @@ Pseudo:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " z-index: 7; "
           },
           "sourceURL": "<filtered>",
@@ -596,7 +596,7 @@ Pseudo:
               }
             ],
             "text": "div::-webkit-scrollbar-thumb",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -606,7 +606,7 @@ Pseudo:
                 "name": "z-index",
                 "value": "8",
                 "text": "z-index: 8;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -615,7 +615,7 @@ Pseudo:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " z-index: 8; "
           },
           "sourceURL": "<filtered>",
@@ -645,7 +645,7 @@ Pseudo:
               }
             ],
             "text": "div::-webkit-scrollbar-button",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -655,7 +655,7 @@ Pseudo:
                 "name": "z-index",
                 "value": "9",
                 "text": "z-index: 9;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -664,7 +664,7 @@ Pseudo:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " z-index: 9; "
           },
           "sourceURL": "<filtered>",
@@ -694,7 +694,7 @@ Pseudo:
               }
             ],
             "text": "div::-webkit-scrollbar-track",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -704,7 +704,7 @@ Pseudo:
                 "name": "z-index",
                 "value": "10",
                 "text": "z-index: 10;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -713,7 +713,7 @@ Pseudo:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " z-index: 10; "
           },
           "sourceURL": "<filtered>",
@@ -743,7 +743,7 @@ Pseudo:
               }
             ],
             "text": "div::-webkit-scrollbar-track-piece",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -753,7 +753,7 @@ Pseudo:
                 "name": "z-index",
                 "value": "11",
                 "text": "z-index: 11;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -762,7 +762,7 @@ Pseudo:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " z-index: 11; "
           },
           "sourceURL": "<filtered>",
@@ -792,7 +792,7 @@ Pseudo:
               }
             ],
             "text": "div::-webkit-scrollbar-corner",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -802,7 +802,7 @@ Pseudo:
                 "name": "z-index",
                 "value": "12",
                 "text": "z-index: 12;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -811,7 +811,7 @@ Pseudo:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " z-index: 12; "
           },
           "sourceURL": "<filtered>",
@@ -841,7 +841,7 @@ Pseudo:
               }
             ],
             "text": "div::-webkit-resizer",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -851,7 +851,7 @@ Pseudo:
                 "name": "z-index",
                 "value": "13",
                 "text": "z-index: 13;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -860,7 +860,7 @@ Pseudo:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " z-index: 13; "
           },
           "sourceURL": "<filtered>",
@@ -893,7 +893,7 @@ Inherited:
               }
             ],
             "text": "body",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -903,7 +903,7 @@ Inherited:
                 "name": "color",
                 "value": "red",
                 "text": "color: red;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -912,7 +912,7 @@ Inherited:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " color: red; "
           },
           "sourceURL": "<filtered>",
@@ -944,7 +944,7 @@ Inherited:
               }
             ],
             "text": "body",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -954,7 +954,7 @@ Inherited:
                 "name": "color",
                 "value": "red",
                 "text": "color: red;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -963,7 +963,7 @@ Inherited:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " color: red; "
           },
           "sourceURL": "<filtered>",
@@ -988,7 +988,7 @@ Inherited:
               }
             ],
             "text": "body",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -998,7 +998,7 @@ Inherited:
                 "name": "color",
                 "value": "red",
                 "text": "color: red;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -1007,7 +1007,7 @@ Inherited:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " color: red; "
           },
           "sourceURL": "<filtered>",
@@ -1017,7 +1017,7 @@ Inherited:
               "type": "media-rule",
               "ruleId": "<filtered>",
               "text": "(min-width: 1px)",
-              "range": "<filtered>",
+              "sourceRange": "<filtered>",
               "sourceURL": "<filtered>"
             }
           ],
@@ -1041,7 +1041,7 @@ Inherited:
               }
             ],
             "text": "body",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -1051,7 +1051,7 @@ Inherited:
                 "name": "color",
                 "value": "red",
                 "text": "color: red;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -1060,7 +1060,7 @@ Inherited:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " color: red; "
           },
           "sourceURL": "<filtered>",
@@ -1070,14 +1070,14 @@ Inherited:
               "type": "supports-rule",
               "ruleId": "<filtered>",
               "text": "(display: block)",
-              "range": "<filtered>",
+              "sourceRange": "<filtered>",
               "sourceURL": "<filtered>"
             },
             {
               "type": "media-rule",
               "ruleId": "<filtered>",
               "text": "(min-width: 2px)",
-              "range": "<filtered>",
+              "sourceRange": "<filtered>",
               "sourceURL": "<filtered>"
             }
           ],
@@ -1101,7 +1101,7 @@ Inherited:
               }
             ],
             "text": "body",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -1111,7 +1111,7 @@ Inherited:
                 "name": "color",
                 "value": "red",
                 "text": "color: red;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -1120,7 +1120,7 @@ Inherited:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " color: red;"
           },
           "sourceURL": "<filtered>",
@@ -1152,7 +1152,7 @@ Inherited:
               }
             ],
             "text": "body",
-            "range": "<filtered>"
+            "sourceRange": "<filtered>"
           },
           "sourceLine": "<filtered>",
           "origin": "author",
@@ -1162,7 +1162,7 @@ Inherited:
                 "name": "color",
                 "value": "red",
                 "text": "color: red;",
-                "range": "<filtered>",
+                "sourceRange": "<filtered>",
                 "implicit": false,
                 "status": "active"
               }
@@ -1171,7 +1171,7 @@ Inherited:
             "styleId": "<filtered>",
             "width": "",
             "height": "",
-            "range": "<filtered>",
+            "sourceRange": "<filtered>",
             "cssText": " color: red; "
           },
           "sourceURL": "<filtered>",

@@ -42,7 +42,7 @@ public:
     int oneBasedInt() const { return m_zeroBasedValue + 1; }
 
     friend bool operator==(OrdinalNumber, OrdinalNumber) = default;
-    bool operator>(OrdinalNumber other) const { return m_zeroBasedValue > other.m_zeroBasedValue; }
+    friend std::strong_ordering operator<=>(OrdinalNumber, OrdinalNumber) = default;
 
 private:
     OrdinalNumber(int zeroBasedInt) : m_zeroBasedValue(zeroBasedInt) { }

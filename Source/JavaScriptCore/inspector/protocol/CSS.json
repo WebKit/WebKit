@@ -119,7 +119,7 @@
             "properties": [
                 { "name": "selectors", "type": "array", "items": { "$ref": "CSSSelector" }, "description": "Selectors in the list." },
                 { "name": "text", "type": "string", "description": "Rule selector text." },
-                { "name": "range", "$ref": "SourceRange", "optional": true, "description": "Rule selector range in the underlying resource (if available)." }
+                { "name": "sourceRange", "$ref": "GenericTypes.SourceRange", "optional": true, "description": "Rule selector range in the underlying resource (if available)." }
             ]
         },
         {
@@ -173,17 +173,6 @@
             ]
         },
         {
-            "id": "SourceRange",
-            "type": "object",
-            "description": "Text range within a resource.",
-            "properties": [
-                { "name": "startLine", "type": "integer", "description": "Start line of range." },
-                { "name": "startColumn", "type": "integer", "description": "Start column of range (inclusive)." },
-                { "name": "endLine", "type": "integer", "description": "End line of range" },
-                { "name": "endColumn", "type": "integer", "description": "End column of range (exclusive)." }
-            ]
-        },
-        {
             "id": "ShorthandEntry",
             "type": "object",
             "properties": [
@@ -219,7 +208,7 @@
                 { "name": "cssProperties", "type": "array", "items": { "$ref": "CSSProperty" }, "description": "CSS properties in the style." },
                 { "name": "shorthandEntries", "type": "array", "items": { "$ref": "ShorthandEntry" }, "description": "Computed values for all shorthands found in the style." },
                 { "name": "cssText", "type": "string", "optional": true, "description": "Style declaration text (if available)." },
-                { "name": "range", "$ref": "SourceRange", "optional": true, "description": "Style declaration range in the enclosing stylesheet (if available)." },
+                { "name": "sourceRange", "$ref": "GenericTypes.SourceRange", "optional": true, "description": "Style declaration range in the enclosing stylesheet (if available)." },
                 { "name": "width", "type": "string", "optional": true, "description": "The effective \"width\" property value from this style." },
                 { "name": "height", "type": "string", "optional": true, "description": "The effective \"height\" property value from this style." }
             ]
@@ -242,7 +231,7 @@
                 { "name": "text", "type": "string", "optional": true, "description": "The full property text as specified in the style." },
                 { "name": "parsedOk", "type": "boolean", "optional": true, "description": "Whether the property is understood by the browser (implies <code>true</code> if absent)." },
                 { "name": "status", "$ref": "CSSPropertyStatus", "optional": true, "description": "Whether the property is active or disabled." },
-                { "name": "range", "$ref": "SourceRange", "optional": true, "description": "The entire property range in the enclosing style declaration (if available)." }
+                { "name": "sourceRange", "$ref": "GenericTypes.SourceRange", "optional": true, "description": "The entire property range in the enclosing style declaration (if available)." }
             ]
         },
         {
@@ -254,7 +243,7 @@
                 { "name": "ruleId", "$ref": "CSSRuleId", "optional": true, "description": "The CSS rule identifier for the `@rule` (absent for non-editable grouping rules) or the nesting parent style rule's selector. In CSSOM terms, this is the parent rule of either the previous Grouping for a CSSRule, or of a CSSRule itself."},
                 { "name": "text", "type": "string", "optional": true, "description": "Query text if specified by a @media, @supports, or @container rule. Layer name (or not present for anonymous layers) for @layer rules." },
                 { "name": "sourceURL", "type": "string", "optional": true, "description": "URL of the document containing the CSS grouping." },
-                { "name": "range", "$ref": "SourceRange", "optional": true, "description": "@-rule's header text range in the enclosing stylesheet (if available). This is from the first non-whitespace character after the @ declarartion to the last non-whitespace character before an opening curly bracket or semicolon." }
+                { "name": "sourceRange", "$ref": "GenericTypes.SourceRange", "optional": true, "description": "@-rule's header text range in the enclosing stylesheet (if available). This is from the first non-whitespace character after the @ declarartion to the last non-whitespace character before an opening curly bracket or semicolon." }
             ]
         },
         {

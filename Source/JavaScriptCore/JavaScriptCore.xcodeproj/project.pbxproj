@@ -1431,6 +1431,7 @@
 		9177A1DC22F958D500B34CA2 /* HeapAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9177A1DB22F958D300B34CA2 /* HeapAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		918E15C12447B22700447A56 /* AggregateErrorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 918E15BD2447B22600447A56 /* AggregateErrorPrototype.h */; };
 		918E15C32447B22700447A56 /* AggregateErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 918E15BF2447B22700447A56 /* AggregateErrorConstructor.h */; };
+		91DF80BB2C1FB21700BD3657 /* ProtocolUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 91DF80B92C1FB20900BD3657 /* ProtocolUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93052C350FB792190048FDC3 /* ParserArena.h in Headers */ = {isa = PBXBuildFile; fileRef = 93052C330FB792190048FDC3 /* ParserArena.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5BDD0822A1C700736975 /* jsc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45E12D8806A49B0F00E9DF84 /* jsc.cpp */; };
 		933040040E6A749400786E6A /* SmallStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = 93303FEA0E6A72C000786E6A /* SmallStrings.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4728,6 +4729,8 @@
 		918E15BE2447B22700447A56 /* AggregateErrorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AggregateErrorPrototype.cpp; sourceTree = "<group>"; };
 		918E15BF2447B22700447A56 /* AggregateErrorConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AggregateErrorConstructor.h; sourceTree = "<group>"; };
 		91D1578C24E0BE35001F4CED /* Breakpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Breakpoint.cpp; sourceTree = "<group>"; };
+		91DF80B82C1FB20900BD3657 /* ProtocolUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProtocolUtilities.cpp; sourceTree = "<group>"; };
+		91DF80B92C1FB20900BD3657 /* ProtocolUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtocolUtilities.h; sourceTree = "<group>"; };
 		91F548A52A4CF448007292DE /* MapConstructor.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = MapConstructor.js; sourceTree = "<group>"; };
 		91FD55322A4CF52100F5D482 /* MapConstructor.lut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapConstructor.lut.h; sourceTree = "<group>"; };
 		93052C320FB792190048FDC3 /* ParserArena.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParserArena.cpp; sourceTree = "<group>"; };
@@ -9768,6 +9771,8 @@
 				A503FA18188E0FB000110F14 /* JSJavaScriptCallFramePrototype.h */,
 				A5AB49DA1BEC8079007020FB /* PerGlobalObjectWrapperWorld.cpp */,
 				A5AB49DB1BEC8079007020FB /* PerGlobalObjectWrapperWorld.h */,
+				91DF80B82C1FB20900BD3657 /* ProtocolUtilities.cpp */,
+				91DF80B92C1FB20900BD3657 /* ProtocolUtilities.h */,
 				A5FD0065189AFE9C00633231 /* ScriptArguments.cpp */,
 				A5FD0066189AFE9C00633231 /* ScriptArguments.h */,
 				A5FD0069189B00A900633231 /* ScriptCallFrame.cpp */,
@@ -11546,6 +11551,7 @@
 				276B39142A71D2B600252F4E /* PropertyTableInlines.h in Headers */,
 				BC18C4560E16F5CD00B34460 /* Protect.h in Headers */,
 				FE1D6D752362649F007A5C26 /* ProtoCallFrameInlines.h in Headers */,
+				91DF80BB2C1FB21700BD3657 /* ProtocolUtilities.h in Headers */,
 				0F74B93B1F89614800B935D3 /* PrototypeKey.h in Headers */,
 				534E03561E53BEDE00213F64 /* ProxyableAccessCase.h in Headers */,
 				79B00CBD1C6AB07E0088C65D /* ProxyConstructor.h in Headers */,
