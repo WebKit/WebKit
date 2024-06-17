@@ -689,7 +689,7 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(RenderLaye
             transform->translate(layoutOffset.x(), layoutOffset.y());
 
             auto offset = -toFloatSize(frameView.visibleContentRect().location());
-            transform->translate(offset.width(), offset.height());
+            transform->translateRight(offset.width(), offset.height());
 
             // Apply the inverse of what will be added by the default value of 'transform-origin',
             // since the computed transform has already included it.
