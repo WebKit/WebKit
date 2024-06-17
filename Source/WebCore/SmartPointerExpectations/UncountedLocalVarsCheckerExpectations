@@ -969,7 +969,6 @@ rendering/RenderDetailsMarker.cpp
 rendering/RenderElement.cpp
 rendering/RenderEmbeddedObject.cpp
 rendering/RenderFileUploadControl.cpp
-rendering/RenderHTMLCanvas.cpp
 rendering/RenderImage.cpp
 rendering/RenderImageResource.cpp
 rendering/RenderLayer.cpp
