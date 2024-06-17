@@ -93,6 +93,7 @@ StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
     , m_loadCompleted(true)
     , m_hasSyntacticallyValidCSSHeader(o.m_hasSyntacticallyValidCSSHeader)
     , m_usesStyleBasedEditability(o.m_usesStyleBasedEditability)
+    , m_hasNestingRulesCache(o.m_hasNestingRulesCache)
     , m_parserContext(o.m_parserContext)
 {
     ASSERT(o.isCacheable());
@@ -132,7 +133,7 @@ bool StyleSheetContents::isCacheable() const
     // FIXME: Valid mime type avoids the check too.
     if (!m_hasSyntacticallyValidCSSHeader)
         return false;
-    if (m_hasNestingRules)
+    if (hasNestingRules())
         return false;
     return true;
 }
@@ -514,6 +515,20 @@ bool StyleSheetContents::traverseRules(const Function<bool(const StyleRuleBase&)
             return true;
     }
     return traverseRulesInVector(m_childRules, handler);
+}
+
+bool StyleSheetContents::hasNestingRules() const
+{
+    if (m_hasNestingRulesCache)
+        return *m_hasNestingRulesCache;
+
+    m_hasNestingRulesCache = traverseRulesInVector(m_childRules, [&] (auto& rule) {
+        if (rule.isStyleRuleWithNesting())
+            return true;
+        return false;
+    });
+
+    return *m_hasNestingRulesCache;
 }
 
 bool StyleSheetContents::traverseSubresources(const Function<bool(const CachedResource&)>& handler) const
