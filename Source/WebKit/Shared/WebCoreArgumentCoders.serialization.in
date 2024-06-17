@@ -8251,3 +8251,7 @@ struct WebCore::WrappedCryptoKey {
     Vector<uint8_t> encryptedKey;
     std::array<uint8_t, 16> tag;
 };
+
+#if PLATFORM(IOS_FAMILY)
+using WebCore::RenderThemeIOS::CSSValueToSystemColorMap = HashMap<WebCore::CSSValueKey, WebCore::Color>
+#endif

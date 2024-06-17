@@ -390,7 +390,7 @@ messages -> WebPageProxy {
     FocusedElementDidChangeInputMode(enum:uint8_t WebCore::InputMode mode)
     ScrollingNodeScrollWillStartScroll(std::optional<WebCore::ScrollingNodeID> nodeID)
     ScrollingNodeScrollDidEndScroll(std::optional<WebCore::ScrollingNodeID> nodeID)
-    ShowInspectorHighlight(struct WebCore::InspectorOverlay::Highlight highlight)
+    ShowInspectorHighlight(struct WebCore::InspectorOverlayHighlight highlight)
     HideInspectorHighlight()
 
     ShowInspectorIndication()

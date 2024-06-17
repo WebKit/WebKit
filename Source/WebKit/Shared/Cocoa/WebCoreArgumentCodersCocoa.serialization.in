@@ -359,7 +359,7 @@ using WebCore::CocoaColor = NSColor;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-using WebCore::CocoaColor = UIColor;
+using WebCore::CocoaColor = PlatformColor;
 #endif
 
 #if USE(AVFOUNDATION)
@@ -409,4 +409,8 @@ using NSRect = CGRect
 #if ENABLE(WRITING_TOOLS)
 using WebCore::UnifiedTextReplacement::Replacement::ID = WTF::UUID
 using WebCore::UnifiedTextReplacement::Session::ID = WTF::UUID
+#endif
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
+using WebCore::MediaControlsContextMenuItem::ID = uint64_t;
 #endif

@@ -873,7 +873,7 @@ def headers_for_type(type):
         'WebCore::IndexedDB::ObjectStoreOverwriteMode': ['<WebCore/IndexedDB.h>'],
         'WebCore::InputMode': ['<WebCore/InputMode.h>'],
         'WebCore::InspectorClientDeveloperPreference': ['<WebCore/InspectorClient.h>'],
-        'WebCore::InspectorOverlay::Highlight': ['<WebCore/InspectorOverlay.h>'],
+        'WebCore::InspectorOverlayHighlight': ['<WebCore/InspectorOverlay.h>'],
         'WebCore::ISOWebVTTCue': ['<WebCore/ISOVTTCue.h>'],
         'WebCore::KeyframeValueList': ['<WebCore/GraphicsLayer.h>'],
         'WebCore::KeypressCommand': ['<WebCore/KeyboardEvent.h>'],

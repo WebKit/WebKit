@@ -687,11 +687,6 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
         @"WKDDActionContext",
         @"CGDisplayChangeSummaryFlags",
         @"WebCore::ContextMenuAction"
-#else
-        @"WebCore::InspectorOverlay::Highlight",
-        @"WebCore::MediaControlsContextMenuItem::ID",
-        @"UIColor",
-        @"WebCore::RenderThemeIOS::CSSValueToSystemColorMap"
 #endif
     ]];
     if (![expectedTypesNeedingDescriptions isEqual:typesNeedingDescriptions]) {
