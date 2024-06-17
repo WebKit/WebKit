@@ -531,16 +531,14 @@ bool RenderPassEncoder::executePreDrawCommands(const Buffer* indirectBuffer)
         if (pvertexOffsets && pvertexOffsets->size()) {
             auto& vertexOffsets = *pvertexOffsets;
             auto startIndex = pipelineLayout.vertexOffsetForBindGroup(bindGroupIndex);
-            RELEASE_ASSERT(vertexOffsets.size() <= m_vertexDynamicOffsets.size() + startIndex);
-            memcpy(&m_vertexDynamicOffsets[startIndex], &vertexOffsets[0], sizeof(vertexOffsets[0]) * vertexOffsets.size());
+            memcpySpan(m_vertexDynamicOffsets.mutableSpan().subspan(startIndex, vertexOffsets.size()), vertexOffsets.span());
         }
 
         auto* pfragmentOffsets = pipelineLayout.fragmentOffsets(bindGroupIndex, kvp.value);
         if (pfragmentOffsets && pfragmentOffsets->size()) {
             auto& fragmentOffsets = *pfragmentOffsets;
             auto startIndex = pipelineLayout.fragmentOffsetForBindGroup(bindGroupIndex);
-            RELEASE_ASSERT(fragmentOffsets.size() <= m_fragmentDynamicOffsets.size() + startIndex);
-            memcpy(&m_fragmentDynamicOffsets[startIndex + RenderBundleEncoder::startIndexForFragmentDynamicOffsets], &fragmentOffsets[0], sizeof(fragmentOffsets[0]) * fragmentOffsets.size());
+            memcpySpan(m_fragmentDynamicOffsets.mutableSpan().subspan(startIndex + RenderBundleEncoder::startIndexForFragmentDynamicOffsets, fragmentOffsets.size()), fragmentOffsets.span());
         }
     }
 

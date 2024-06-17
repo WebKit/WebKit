@@ -230,8 +230,7 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
         if (pcomputeOffsets && pcomputeOffsets->size()) {
             auto& computeOffsets = *pcomputeOffsets;
             auto startIndex = pipelineLayout.computeOffsetForBindGroup(bindGroupIndex);
-            RELEASE_ASSERT(computeOffsets.size() <= m_computeDynamicOffsets.size() + startIndex);
-            memcpy(&m_computeDynamicOffsets[startIndex], &computeOffsets[0], sizeof(computeOffsets[0]) * computeOffsets.size());
+            memcpySpan(m_computeDynamicOffsets.mutableSpan().subspan(startIndex, computeOffsets.size()), computeOffsets.span());
         }
     }
 
