@@ -1639,10 +1639,10 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estim
 
 #if PLATFORM(COCOA)
     destroyRenderingResources();
+    accessibilityRelayProcessSuspended(true);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    accessibilityRelayProcessSuspended(true);
     updateFreezerStatus();
 #endif
 
@@ -1715,7 +1715,7 @@ void WebProcess::processDidResume()
     cancelMarkAllLayersVolatile();
     unfreezeAllLayerTrees();
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     accessibilityRelayProcessSuspended(false);
 #endif
 
