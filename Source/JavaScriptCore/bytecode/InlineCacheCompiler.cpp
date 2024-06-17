@@ -4555,6 +4555,7 @@ RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBloc
 
 AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLocker&, PolymorphicAccess& poly, CodeBlock* codeBlock)
 {
+    ASSERT(!useHandlerIC());
     SuperSamplerScope superSamplerScope(false);
 
     dataLogLnIf(InlineCacheCompilerInternal::verbose, "Regenerate with m_list: ", listDump(poly.m_list));
@@ -4630,16 +4631,8 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
 
         unsigned callLinkInfoCount = 0;
         bool isMegamorphic = false;
-        bool doesJSCalls = false;
-        for (auto& accessCase : cases) {
-            doesJSCalls |= JSC::doesJSCalls(accessCase->type());
+        for (auto& accessCase : cases)
             isMegamorphic |= JSC::isMegamorphic(accessCase->type());
-        }
-
-        if (useHandlerIC()) {
-            if (doesJSCalls)
-                callLinkInfoCount = cases.size();
-        }
 
         auto handler = InlineCacheHandler::create(InlineCacheCompiler::generateSlowPathHandler(vm(), m_stubInfo.accessType), codeBlock, m_stubInfo, WTFMove(stub), WTFMove(watchpoint), callLinkInfoCount);
         dataLogLnIf(InlineCacheCompilerInternal::verbose, "Returning: ", handler->callTarget());
@@ -4654,45 +4647,6 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
 
         return AccessGenerationResult(resultKind, WTFMove(handler));
     };
-
-#if CPU(ADDRESS64)
-    if (useHandlerIC()) {
-        ASSERT(m_stubInfo.useDataIC);
-        if (cases.size() == 1) {
-            auto accessCase = WTFMove(cases[0]);
-            auto result = compileOneAccessCaseHandler(codeBlock, accessCase.get(), WTFMove(additionalWatchpointSets));
-            if (result.generatedSomeCode()) {
-                poly.m_list.shrink(0);
-                if (auto* handler = result.handler())
-                    poly.m_list.append(Ref { *handler->accessCase() });
-            }
-            return result;
-        }
-
-        std::sort(cases.begin(), cases.end(), [](auto& lhs, auto& rhs) {
-            if (lhs->type() == rhs->type()) {
-                if (lhs->structure() == rhs->structure())
-                    return bitwise_cast<uintptr_t>(lhs->uid()) < bitwise_cast<uintptr_t>(rhs->uid());
-                return lhs->structure() < rhs->structure();
-            }
-            return lhs->type() < rhs->type();
-        });
-
-        SharedJITStubSet::Searcher searcher {
-            SharedJITStubSet::stubInfoKey(m_stubInfo),
-            cases.span(),
-        };
-        if (auto stub = vm().m_sharedJITStubs->find(searcher)) {
-            if (stub->isStillValid()) {
-                dataLogLnIf(InlineCacheCompilerInternal::verbose, "Using ", m_stubInfo.accessType, " / ", listDump(stub->cases()));
-                return finishCodeGeneration(stub.releaseNonNull());
-            }
-            vm().m_sharedJITStubs->remove(stub.get());
-        }
-    }
-#else
-    UNUSED_PARAM(isStateless);
-#endif
 
     // At this point we're convinced that 'cases' contains cases that we want to JIT now and we won't change that set anymore.
 
@@ -4712,8 +4666,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
     if (!hasConstantIdentifier)
         allGuardedByStructureCheck = false;
     FixedVector<Ref<AccessCase>> keys(WTFMove(cases));
-    if (!useHandlerIC())
-        m_callLinkInfos.resize(keys.size());
+    m_callLinkInfos.resize(keys.size());
     Vector<JSCell*> cellsToMark;
     for (auto& entry : keys) {
         if (!scratchFPR && needsScratchFPR(entry->m_type))
@@ -4743,14 +4696,10 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
     CCallHelpers jit(codeBlock);
     m_jit = &jit;
 
-    if (useHandlerIC())
-        emitDataICPrologue(*m_jit);
-    else if (ASSERT_ENABLED) {
+    if (ASSERT_ENABLED) {
         if (m_stubInfo.useDataIC) {
             jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), jit.scratchRegister());
             jit.addPtr(jit.scratchRegister(), GPRInfo::callFrameRegister, jit.scratchRegister());
-            if (useHandlerIC())
-                jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC) + maxFrameExtentForSlowPathCall)), jit.scratchRegister());
         } else
             jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, jit.scratchRegister());
         auto ok = jit.branchPtr(CCallHelpers::Equal, CCallHelpers::stackPointerRegister, jit.scratchRegister());
@@ -4966,10 +4915,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
     if (m_stubInfo.useDataIC) {
         JIT_COMMENT(jit, "failure far jump");
         failure.link(&jit);
-        if (useHandlerIC())
-            emitDataICJumpNextHandler(jit);
-        else
-            jit.farJump(CCallHelpers::Address(m_stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfSlowPathStartLocation()), JITStubRoutinePtrTag);
+        jit.farJump(CCallHelpers::Address(m_stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfSlowPathStartLocation()), JITStubRoutinePtrTag);
     } else {
         m_success.linkThunk(successLabel, &jit);
         failure.linkThunk(m_stubInfo.slowPathStartLocation, &jit);
@@ -4990,11 +4936,6 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> code = FINALIZE_CODE_FOR(codeBlock, linkBuffer, JITStubRoutinePtrTag, categoryName(m_stubInfo.accessType), "%s", toCString("Access stub for ", *codeBlock, " ", m_stubInfo.codeOrigin, "with start: ", m_stubInfo.startLocation, " with return point ", successLabel, ": ", listDump(keys)).data());
 
     CodeBlock* owner = codeBlock;
-    if (useHandlerIC()) {
-        ASSERT(m_stubInfo.useDataIC);
-        owner = nullptr;
-    }
-
     FixedVector<StructureID> weakStructures(WTFMove(m_weakStructures));
     auto stub = createICJITStubRoutine(code, WTFMove(keys), WTFMove(weakStructures), vm(), owner, doesCalls, cellsToMark, WTFMove(m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
 
@@ -5010,13 +4951,6 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
         // Those common kinds of JSC object accesses don't hit this case.
         for (WatchpointSet* set : additionalWatchpointSets)
             ensureReferenceAndAddWatchpoint(vm(), watchpoints, stub->watchpointSet(), *set);
-    }
-
-    if (useHandlerIC()) {
-        ASSERT(m_stubInfo.useDataIC);
-        dataLogLnIf(InlineCacheCompilerInternal::verbose, "Installing ", m_stubInfo.accessType, " / ", listDump(stub->cases()));
-        vm().m_sharedJITStubs->add(SharedJITStubSet::Hash::Key(SharedJITStubSet::stubInfoKey(m_stubInfo), stub.ptr()));
-        stub->addedToSharedJITStubSet();
     }
 
     return finishCodeGeneration(WTFMove(stub));
@@ -5843,7 +5777,7 @@ AccessGenerationResult InlineCacheCompiler::compileHandler(const GCSafeConcurren
         additionalWatchpointSets.appendVector(WTFMove(sets));
 
     ASSERT(m_stubInfo.useDataIC);
-    auto result = compileOneAccessCaseHandler(codeBlock, accessCase.get(), WTFMove(additionalWatchpointSets));
+    auto result = compileOneAccessCaseHandler(poly, codeBlock, accessCase.get(), WTFMove(additionalWatchpointSets));
     if (result.generatedSomeCode()) {
         if (auto* handler = result.handler()) {
             Ref resultCase { *handler->accessCase() };
@@ -5863,7 +5797,7 @@ AccessGenerationResult InlineCacheCompiler::compileHandler(const GCSafeConcurren
     return result;
 }
 
-AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(CodeBlock* codeBlock, AccessCase& accessCase, Vector<WatchpointSet*, 8>&& additionalWatchpointSets)
+AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(PolymorphicAccess& poly, CodeBlock* codeBlock, AccessCase& accessCase, Vector<WatchpointSet*, 8>&& additionalWatchpointSets)
 {
     ASSERT(useHandlerIC());
 
@@ -5896,6 +5830,8 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(CodeBloc
         AccessGenerationResult::Kind resultKind;
         if (isMegamorphic(accessCase.m_type))
             resultKind = AccessGenerationResult::GeneratedMegamorphicCode;
+        else if (poly.m_list.size() >= Options::maxAccessVariantListSize())
+            resultKind = AccessGenerationResult::GeneratedFinalCode;
         else
             resultKind = AccessGenerationResult::GeneratedNewCode;
 
@@ -5917,6 +5853,8 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(CodeBloc
         AccessGenerationResult::Kind resultKind;
         if (isMegamorphic(accessCase.m_type))
             resultKind = AccessGenerationResult::GeneratedMegamorphicCode;
+        else if (poly.m_list.size() >= Options::maxAccessVariantListSize())
+            resultKind = AccessGenerationResult::GeneratedFinalCode;
         else
             resultKind = AccessGenerationResult::GeneratedNewCode;
 
@@ -6226,10 +6164,9 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(CodeBloc
             }
         }
 
-        std::array<Ref<AccessCase>, 1> cases { { Ref { accessCase } } };
         SharedJITStubSet::Searcher searcher {
             SharedJITStubSet::stubInfoKey(m_stubInfo),
-            cases,
+            Ref { accessCase }
         };
         if (auto stub = vm.m_sharedJITStubs->find(searcher)) {
             if (stub->isStillValid()) {

@@ -377,7 +377,7 @@ private:
     CallSiteIndex callSiteIndexForExceptionHandlingOrOriginal();
     const ScalarRegisterSet& liveRegistersToPreserveAtExceptionHandlingCallSite();
 
-    AccessGenerationResult compileOneAccessCaseHandler(CodeBlock*, AccessCase&, Vector<WatchpointSet*, 8>&&);
+    AccessGenerationResult compileOneAccessCaseHandler(PolymorphicAccess&, CodeBlock*, AccessCase&, Vector<WatchpointSet*, 8>&&);
 
     void emitDOMJITGetter(JSGlobalObject*, const DOMJIT::GetterSetter*, GPRReg baseForGetGPR);
     void emitModuleNamespaceLoad(ModuleNamespaceAccessCase&, MacroAssembler::JumpList& fallThrough);

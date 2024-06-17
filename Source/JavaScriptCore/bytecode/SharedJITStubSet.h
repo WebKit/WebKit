@@ -94,31 +94,27 @@ public:
             static bool equal(const Hash::Key a, const Searcher& b)
             {
                 if (a.m_stubInfoKey == b.m_stubInfoKey && Hash::hash(a) == b.m_hash) {
-                    // FIXME: The ordering of cases does not matter for sharing capabilities.
-                    // We can potentially increase success rate by making this comparison / hashing non ordering sensitive.
-                    const auto& aCases = a.m_wrapped->cases();
-                    const auto& bCases = b.m_cases;
-                    if (aCases.size() != bCases.size())
+                    if (a.m_wrapped->cases().size() != 1)
                         return false;
-                    for (unsigned index = 0; index < bCases.size(); ++index) {
-                        if (!AccessCase::canBeShared(aCases[index].get(), bCases[index].get()))
-                            return false;
-                    }
+                    const auto& aCase = a.m_wrapped->cases()[0];
+                    const auto& bCase = b.m_accessCase;
+                    if (!AccessCase::canBeShared(aCase.get(), bCase.get()))
+                        return false;
                     return true;
                 }
                 return false;
             }
         };
 
-        Searcher(StructureStubInfoKey&& stubInfoKey, std::span<const Ref<AccessCase>>&& span)
+        Searcher(StructureStubInfoKey&& stubInfoKey, Ref<AccessCase>&& accessCase)
             : m_stubInfoKey(WTFMove(stubInfoKey))
-            , m_cases(WTFMove(span))
-            , m_hash(PolymorphicAccessJITStubRoutine::computeHash(m_cases))
+            , m_accessCase(WTFMove(accessCase))
+            , m_hash(m_accessCase->hash())
         {
         }
 
         StructureStubInfoKey m_stubInfoKey;
-        std::span<const Ref<AccessCase>> m_cases;
+        Ref<AccessCase> m_accessCase;
         unsigned m_hash { 0 };
     };
 

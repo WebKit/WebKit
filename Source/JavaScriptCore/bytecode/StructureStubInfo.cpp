@@ -166,7 +166,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(const GCSafeConcurrentJS
             return result;
         }
 
-        if (useHandlerIC() && hasConstantIdentifier(accessType)) {
+        if (useHandlerIC()) {
             InlineCacheCompiler compiler(codeBlock->jitType(), vm, globalObject, ecmaMode, *this);
             return compiler.compileHandler(locker, *m_stub, codeBlock, WTFMove(accessCase));
         }
@@ -209,7 +209,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(const GCSafeConcurrentJS
         return result;
     })(accessCase.releaseNonNull());
     if (result.generatedSomeCode()) {
-        if (useHandlerIC() && hasConstantIdentifier(accessType))
+        if (useHandlerIC())
             prependHandler(codeBlock, Ref { *result.handler() }, result.generatedMegamorphicCode());
         else
             rewireStubAsJumpInAccess(codeBlock, *result.handler());
@@ -423,7 +423,7 @@ CallLinkInfo* StructureStubInfo::callLinkInfoAt(const ConcurrentJSLocker& locker
     if (!m_handler)
         return nullptr;
 
-    if (!(useDataIC && hasConstantIdentifier(accessType)))
+    if (!useDataIC)
         return m_handler->callLinkInfoAt(locker, index);
 
     auto* cursor = m_handler.get();
@@ -830,19 +830,13 @@ void StructureStubInfo::resetStubAsJumpInAccess(CodeBlock* codeBlock)
         m_inlineAccessBaseStructureID.clear(); // Clear out the inline access code.
 
     if (useHandlerIC()) {
-        if (hasConstantIdentifier(accessType)) {
-            auto* cursor = m_handler.get();
-            while (cursor) {
-                cursor->removeOwner(codeBlock);
-                cursor = cursor->next();
-            }
-            m_handler = InlineCacheCompiler::generateSlowPathHandler(codeBlock->vm(), accessType);
-            m_codePtr = m_handler->callTarget();
-            return;
+        auto* cursor = m_handler.get();
+        while (cursor) {
+            cursor->removeOwner(codeBlock);
+            cursor = cursor->next();
         }
-
-        auto handler = InlineCacheCompiler::generateSlowPathHandler(codeBlock->vm(), accessType);
-        rewireStubAsJumpInAccess(codeBlock, handler.get());
+        m_handler = InlineCacheCompiler::generateSlowPathHandler(codeBlock->vm(), accessType);
+        m_codePtr = m_handler->callTarget();
         return;
     }
     auto handler = InlineCacheHandler::createNonHandlerSlowPath(slowPathStartLocation);

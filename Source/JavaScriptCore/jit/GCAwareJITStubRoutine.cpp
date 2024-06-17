@@ -141,6 +141,9 @@ void PolymorphicAccessJITStubRoutine::invalidate()
 
 unsigned PolymorphicAccessJITStubRoutine::computeHash(std::span<const Ref<AccessCase>> cases)
 {
+    if (cases.size() == 1)
+        return cases.front()->hash();
+
     Hasher hasher;
     for (auto& key : cases)
         WTF::add(hasher, key->hash());
