@@ -189,7 +189,7 @@ def types_that_must_be_moved():
     ]
 
 
-def function_parameter_type(type, kind):
+def function_parameter_type(type, kind, for_reply=False):
     # Don't use references for built-in types.
     builtin_types = frozenset([
         'bool',
@@ -210,11 +210,11 @@ def function_parameter_type(type, kind):
     if type in builtin_types:
         return type
 
-    if type in types_that_must_be_moved():
-        return '%s&&' % type
-
     if kind.startswith('enum:'):
         return type
+
+    if type in types_that_must_be_moved() or for_reply:
+        return '%s&&' % type
 
     return 'const %s&' % type
 
@@ -257,6 +257,7 @@ def message_to_struct_declaration(receiver, message):
         else:
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;\n')
         result.append('    using ReplyArguments = std::tuple<%s>;\n' % ', '.join([parameter.type for parameter in message.reply_parameters]))
+        result.append('    using Reply = CompletionHandler<void(%s)>;\n' % ', '.join([function_parameter_type(x.type, x.kind, True) for x in message.reply_parameters]))
         if not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
             if len(message.reply_parameters) == 0:
                 result.append('    using Promise = WTF::NativePromise<void, IPC::Error>;\n')

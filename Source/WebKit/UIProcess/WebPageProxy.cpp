@@ -129,6 +129,7 @@
 #include "ViewWindowCoordinates.h"
 #include "WKContextPrivate.h"
 #include "WebAutomationSession.h"
+#include "WebAutomationSessionProxyMessages.h"
 #include "WebBackForwardCache.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListCounts.h"
@@ -14105,11 +14106,29 @@ void WebPageProxy::sendToProcessContainingFrame(std::optional<FrameIdentifier> f
     );
 }
 
+#define INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(message) \
+    template void WebPageProxy::sendToProcessContainingFrame<Messages::message>(std::optional<WebCore::FrameIdentifier>, Messages::message&&)
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
-template void WebPageProxy::sendToProcessContainingFrame<Messages::RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarVisibilityDidChange>(std::optional<WebCore::FrameIdentifier>, Messages::RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarVisibilityDidChange&&);
-
-template void WebPageProxy::sendToProcessContainingFrame<Messages::RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarMinimumThumbLengthDidChange>(std::optional<WebCore::FrameIdentifier>, Messages::RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarMinimumThumbLengthDidChange&&);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarVisibilityDidChange);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarMinimumThumbLengthDidChange);
 #endif
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::TakeScreenshot);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::EvaluateJavaScriptFunction);
+#undef INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME
+
+#define INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(message) \
+    template void WebPageProxy::sendToProcessContainingFrame<Messages::message, Messages::message::Reply>(std::optional<WebCore::FrameIdentifier>, Messages::message&&, Messages::message::Reply&&)
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::ComputeElementLayout);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::GetComputedRole);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::GetComputedLabel);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::ResolveParentFrame);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::SelectOptionElement);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::ResolveChildFrameWithName);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::SnapshotRectForScreenshot);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::SetFilesForInputFileUpload);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::ResolveChildFrameWithOrdinal);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::ResolveChildFrameWithNodeHandle);
+#undef INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY
 
 template<typename M>
 IPC::ConnectionSendSyncResult<M> WebPageProxy::sendSyncToProcessContainingFrame(std::optional<FrameIdentifier> frameID, M&& message)

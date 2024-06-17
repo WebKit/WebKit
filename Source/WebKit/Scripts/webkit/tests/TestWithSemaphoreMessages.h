@@ -75,6 +75,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphoreReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<IPC::Semaphore>;
+    using Reply = CompletionHandler<void(IPC::Semaphore&&)>;
     using Promise = WTF::NativePromise<IPC::Semaphore, IPC::Error>;
     auto&& arguments()
     {
