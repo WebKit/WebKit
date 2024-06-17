@@ -31,6 +31,7 @@ from webkitcorepy import Version, Timeout
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.systemhost import SystemHost
+from webkitpy.port.config import apple_additions
 from webkitpy.port.device import Device
 from webkitpy.xcode.device_type import DeviceType
 
@@ -448,6 +449,9 @@ class SimulatedDeviceManager(object):
         deadline = time.time() + timeout
         for device in SimulatedDeviceManager.INITIALIZED_DEVICES:
             cls._wait_until_device_is_usable(device, deadline)
+            if apple_additions() and getattr(apple_additions(), 'disable_extra_simulator_logging', None) is not None:
+                _log.debug('Disabling extra logging for {}'.format(device))
+                apple_additions().disable_extra_simulator_logging(device)
 
         return SimulatedDeviceManager.INITIALIZED_DEVICES
 
