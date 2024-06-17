@@ -50,6 +50,12 @@
 #include "HardwareAccelerationManager.h"
 #endif
 
+#if PLATFORM(WAYLAND)
+#include <WebCore/PlatformDisplay.h>
+#endif
+
+#define FEATURE_DEFAULT(featureName) ((DEFAULT_VALUE_FOR_ ## featureName) ? TRUE : FALSE)
+
 using namespace WebKit;
 
 struct _WebKitSettingsPrivate {
@@ -190,20 +196,13 @@ static void webKitSettingsConstructed(GObject* object)
     G_OBJECT_CLASS(webkit_settings_parent_class)->constructed(object);
 
     WebKitSettings* settings = WEBKIT_SETTINGS(object);
-    RefPtr prefs = settings->priv->preferences.get();
-    prefs->setShouldRespectImageOrientation(true);
+    [[maybe_unused]] RefPtr prefs = settings->priv->preferences.get();
 
 #if ENABLE(MEDIA_STREAM)
-    prefs->setMediaDevicesEnabled(true);
-    prefs->setMediaStreamEnabled(true);
+    ASSERT(prefs->mediaDevicesEnabled() == prefs->mediaStreamEnabled());
 #endif
 
-    // FIXME: Expose API for this when this feature is officially non-experimental.
-#if ENABLE(MEDIA_SESSION)
-    prefs->setMediaSessionEnabled(true);
-    prefs->setMediaSessionCoordinatorEnabled(true);
-    prefs->setMediaSessionPlaylistEnabled(true);
-#endif
+    // FIXME: Expose API for MediaSession when the feature is officially non-experimental.
 }
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -653,7 +652,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-javascript",
             _("Enable JavaScript"),
             _("Enable JavaScript."),
-            TRUE,
+            FEATURE_DEFAULT(JavaScriptEnabled),
             readWriteConstructParamFlags);
 
     /**
@@ -668,7 +667,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "auto-load-images",
             _("Auto load images"),
             _("Load images automatically."),
-            TRUE,
+            FEATURE_DEFAULT(LoadsImagesAutomatically),
             readWriteConstructParamFlags);
 
     /**
@@ -715,7 +714,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-html5-local-storage",
             _("Enable HTML5 local storage"),
             _("Whether to enable HTML5 Local Storage support."),
-            TRUE,
+            FEATURE_DEFAULT(LocalStorageEnabled),
             readWriteConstructParamFlags);
 
     /**
@@ -728,7 +727,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-html5-database",
             _("Enable HTML5 database"),
             _("Whether to enable HTML5 database support."),
-            TRUE,
+            FEATURE_DEFAULT(IndexedDBAPIEnabled),
             readWriteConstructParamFlags);
 
 #if !ENABLE(2022_GLIB_API)
@@ -805,7 +804,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "javascript-can-open-windows-automatically",
             _("JavaScript can open windows automatically"),
             _("Whether JavaScript can open windows automatically."),
-            FALSE,
+            FEATURE_DEFAULT(JavaScriptCanOpenWindowsAutomatically),
             readWriteConstructParamFlags);
 
     /**
@@ -821,7 +820,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-hyperlink-auditing",
             _("Enable hyperlink auditing"),
             _("Whether <a ping> should be able to send pings."),
-            TRUE,
+            FEATURE_DEFAULT(HyperlinkAuditingEnabled),
             readWriteConstructParamFlags);
 
     /**
@@ -1000,7 +999,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-developer-extras",
             _("Enable developer extras"),
             _("Whether to enable developer extras"),
-            FALSE,
+            FEATURE_DEFAULT(DeveloperExtrasEnabled),
             readWriteConstructParamFlags);
 
     /**
@@ -1013,7 +1012,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-resizable-text-areas",
             _("Enable resizable text areas"),
             _("Whether to enable resizable text areas"),
-            TRUE,
+            FEATURE_DEFAULT(TextAreasAreResizable),
             readWriteConstructParamFlags);
 
     /**
@@ -1029,7 +1028,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-tabs-to-links",
             _("Enable tabs to links"),
             _("Whether to enable tabs to links"),
-            TRUE,
+            FEATURE_DEFAULT(TabsToLinks),
             readWriteConstructParamFlags);
 
     /**
@@ -1043,7 +1042,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-dns-prefetching",
             _("Enable DNS prefetching"),
             _("Whether to enable DNS prefetching"),
-            FALSE,
+            FEATURE_DEFAULT(DNSPrefetchingEnabled),
             readWriteConstructParamFlags);
 
     /**
@@ -1072,7 +1071,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-fullscreen",
             _("Enable Fullscreen"),
             _("Whether to enable the Javascript Fullscreen API"),
-            TRUE,
+            FEATURE_DEFAULT(FullScreenEnabled),
             readWriteConstructParamFlags);
 
     /**
@@ -1085,7 +1084,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "print-backgrounds",
             _("Print Backgrounds"),
             _("Whether background images should be drawn during printing"),
-            TRUE,
+            FEATURE_DEFAULT(ShouldPrintBackgrounds),
             readWriteConstructParamFlags);
 
     /**
@@ -1102,7 +1101,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-webaudio",
             _("Enable WebAudio"),
             _("Whether WebAudio content should be handled"),
-            TRUE,
+            FEATURE_DEFAULT(WebAudioEnabled),
             readWriteConstructParamFlags);
 
     /**
@@ -1116,7 +1115,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-webgl",
             _("Enable WebGL"),
             _("Whether WebGL content should be rendered"),
-            TRUE,
+            FEATURE_DEFAULT(WebGLEnabled),
             readWriteConstructParamFlags);
 
     /**
@@ -1165,7 +1164,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "javascript-can-access-clipboard",
             _("JavaScript can access clipboard"),
             _("Whether JavaScript can access Clipboard"),
-            FALSE,
+            FEATURE_DEFAULT(JavaScriptCanAccessClipboard),
             readWriteConstructParamFlags);
 
     /**
@@ -1182,7 +1181,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "media-playback-requires-user-gesture",
             _("Media playback requires user gesture"),
             _("Whether media playback requires user gesture"),
-            FALSE,
+            FEATURE_DEFAULT(RequiresUserGestureForMediaPlayback),
             readWriteConstructParamFlags);
 
     /**
@@ -1197,7 +1196,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "media-playback-allows-inline",
             _("Media playback allows inline"),
             _("Whether media playback allows inline"),
-            TRUE,
+            FEATURE_DEFAULT(AllowsInlineMediaPlayback),
             readWriteConstructParamFlags);
 
     /**
@@ -1212,7 +1211,10 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "draw-compositing-indicators",
             _("Draw compositing indicators"),
             _("Whether to draw compositing borders and repaint counters"),
-            FALSE,
+            // Note that this property controls also the CompositingRepaintCountersVisible
+            // feature flag. We pick CompositingBordersVisible for the default, as both
+            // are always expected to be the same.
+            FEATURE_DEFAULT(CompositingBordersVisible),
             readWriteConstructParamFlags);
 
     /**
@@ -1230,7 +1232,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-site-specific-quirks",
             _("Enable Site Specific Quirks"),
             _("Enables the site-specific compatibility workarounds"),
-            TRUE,
+            FEATURE_DEFAULT(NeedsSiteSpecificQuirks),
             readWriteConstructParamFlags);
 
     /**
@@ -1251,7 +1253,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-page-cache",
             _("Enable page cache"),
             _("Whether the page cache should be used"),
-            TRUE,
+            FEATURE_DEFAULT(UsesBackForwardCache),
             readWriteConstructParamFlags);
 
     /**
@@ -1284,7 +1286,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-smooth-scrolling",
             _("Enable smooth scrolling"),
             _("Whether to enable smooth scrolling"),
-            TRUE,
+            FEATURE_DEFAULT(ScrollAnimatorEnabled),
             readWriteConstructParamFlags);
 
 #if !ENABLE(2022_GLIB_API)
@@ -1305,7 +1307,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-accelerated-2d-canvas",
             _("Enable accelerated 2D canvas"),
             _("Whether to enable accelerated 2D canvas"),
-            FALSE,
+            FEATURE_DEFAULT(CanvasUsesAcceleratedDrawing),
             static_cast<GParamFlags>(readWriteConstructParamFlags | G_PARAM_DEPRECATED));
 #endif
 
@@ -1324,7 +1326,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-2d-canvas-acceleration",
             _("Enable 2D canvas acceleration"),
             _("Whether to enable 2D canvas acceleration"),
-            TRUE,
+            FEATURE_DEFAULT(CanvasUsesAcceleratedDrawing),
             readWriteConstructParamFlags);
 
     /**
@@ -1340,7 +1342,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-write-console-messages-to-stdout",
             _("Write console messages on stdout"),
             _("Whether to write console messages on stdout"),
-            FALSE,
+            FEATURE_DEFAULT(LogsPageMessagesToSystemConsoleEnabled),
             readWriteConstructParamFlags);
 
     /**
@@ -1359,7 +1361,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-media-stream",
             _("Enable MediaStream"),
             _("Whether MediaStream content should be handled"),
-            FALSE,
+            FEATURE_DEFAULT(MediaStreamEnabled),
             readWriteConstructParamFlags);
 
     /**
@@ -1375,7 +1377,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
         g_param_spec_boolean("enable-mock-capture-devices",
             _("Enable mock capture devices"),
             _("Whether we expose mock capture devices or not"),
-            FALSE,
+            FEATURE_DEFAULT(MockCaptureDevicesEnabled),
             readWriteConstructParamFlags);
 
    /**
@@ -1395,7 +1397,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-spatial-navigation",
             _("Enable Spatial Navigation"),
             _("Whether to enable Spatial Navigation support."),
-            FALSE,
+            FEATURE_DEFAULT(SpatialNavigationEnabled),
             readWriteConstructParamFlags);
 
     /**
@@ -1414,7 +1416,11 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-mediasource",
             _("Enable MediaSource"),
             _("Whether MediaSource should be enabled."),
-            TRUE,
+#if ENABLE(MEDIA_SOURCE)
+            FEATURE_DEFAULT(MediaSourceEnabled),
+#else
+            FALSE,
+#endif
             readWriteConstructParamFlags);
 
    /**
@@ -1434,7 +1440,11 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-encrypted-media",
             _("Enable EncryptedMedia"),
             _("Whether EncryptedMedia should be enabled."),
+#if ENABLE(ENCRYPTED_MEDIA)
+            FEATURE_DEFAULT(EncryptedMediaAPIEnabled),
+#else
             FALSE,
+#endif
             readWriteConstructParamFlags);
 
     /**
@@ -1456,7 +1466,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-media-capabilities",
             _("Enable MediaCapabilities"),
             _("Whether MediaCapabilities should be enabled."),
-            FALSE,
+            FEATURE_DEFAULT(MediaCapabilitiesEnabled),
             readWriteConstructParamFlags);
 
     /**
@@ -1475,7 +1485,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "allow-file-access-from-file-urls",
             _("Allow file access from file URLs"),
             _("Whether file access is allowed from file URLs."),
-            FALSE,
+            FEATURE_DEFAULT(AllowFileAccessFromFileURLs),
             readWriteConstructParamFlags);
 
     /**
@@ -1495,7 +1505,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "allow-universal-access-from-file-urls",
             _("Allow universal access from the context of file scheme URLs"),
             _("Whether or not universal access is allowed from the context of file scheme URLs"),
-            FALSE,
+            FEATURE_DEFAULT(AllowUniversalAccessFromFileURLs),
             readWriteConstructParamFlags);
 
     /**
@@ -1513,7 +1523,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "allow-top-navigation-to-data-urls",
             _("Allow top frame navigation to data URLs"),
             _("Whether or not top frame navigation is allowed to data URLs"),
-            FALSE,
+            FEATURE_DEFAULT(AllowTopNavigationToDataURLs),
             readWriteConstructParamFlags);
 
 #if PLATFORM(GTK)
@@ -1569,7 +1579,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-javascript-markup",
             _("Enable JavaScript Markup"),
             _("Enable JavaScript in document markup."),
-            TRUE,
+            FEATURE_DEFAULT(JavaScriptMarkupEnabled),
             readWriteConstructParamFlags);
 
     /**
@@ -1586,7 +1596,11 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-media",
             _("Enable media"),
             _("Whether media content should be handled"),
+#if ENABLE(VIDEO)
+            FEATURE_DEFAULT(MediaEnabled),
+#else
             TRUE,
+#endif
             readWriteConstructParamFlags);
 
     /**
@@ -1621,7 +1635,11 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
         "enable-webrtc",
         _("Enable WebRTC"),
         _("Whether WebRTC content should be handled"),
+#if ENABLE(WEB_RTC)
+        FEATURE_DEFAULT(PeerConnectionEnabled),
+#else
         FALSE,
+#endif
         readWriteConstructParamFlags);
 
     /**
@@ -1640,7 +1658,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
         "disable-web-security",
         _("Disable web security"),
         _("Whether web security should be disabled."),
-        FALSE,
+        !FEATURE_DEFAULT(WebSecurityEnabled),
         readWriteConstructParamFlags);
 
     g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);

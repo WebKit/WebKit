@@ -2368,6 +2368,7 @@ EncryptedMediaAPIEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(GTK) || PLATFORM(WPE)": false
       default: true
     WebCore:
       default: false
@@ -2668,8 +2669,10 @@ FullScreenEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
 FullScreenKeyboardLock:
@@ -3524,7 +3527,7 @@ JavaScriptCanOpenWindowsAutomatically:
       "PLATFORM(IOS_FAMILY)": WebKit::defaultJavaScriptCanOpenWindowsAutomatically()
       default: true
     WebKit:
-      "PLATFORM(IOS_FAMILY)": false
+      "PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)": false
       default: true
     WebCore:
       default: false
@@ -4083,6 +4086,7 @@ MediaCapabilitiesEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(GTK) || PLATFORM(WPE)": false
       default: true
     WebCore:
       default: false
@@ -4224,8 +4228,10 @@ MediaDevicesEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
 MediaEnabled:
@@ -6110,6 +6116,7 @@ ShouldPrintBackgrounds:
       default: false
     WebKit:
       "PLATFORM(IOS_FAMILY)": WebKit::defaultShouldPrintBackgrounds()
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
       default: false
@@ -6122,10 +6129,10 @@ ShouldRespectImageOrientation:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebKit:
-      "PLATFORM(IOS_FAMILY)": true
+      "PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
-      "PLATFORM(IOS_FAMILY)": true
+      "PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
 ShouldRestrictBaseURLSchemes:
@@ -6501,7 +6508,7 @@ TabsToLinks:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(GTK)": true
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
 TelephoneNumberParsingEnabled:
