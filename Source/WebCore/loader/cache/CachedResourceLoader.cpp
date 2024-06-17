@@ -713,7 +713,7 @@ static void updateRequestFetchMetadataHeaders(ResourceRequest& request, const Re
 
     String destinationString;
     // The Fetch IDL documents this as "" while FetchMetadata expects "empty".
-    if (options.destination == FetchOptions::Destination::EmptyString)
+    if (options.destination == FetchOptions::Destination::EmptyString || options.loadedFromFetch == LoadedFromFetch::Yes)
         destinationString = "empty"_s;
     else
         destinationString = convertEnumerationToString(options.destination);

@@ -584,6 +584,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
 
     if (m_async) {
         ResourceLoaderOptions options = m_options;
+        options.loadedFromFetch = m_options.initiatorType == cachedResourceRequestInitiatorTypes().fetch ? LoadedFromFetch::Yes : LoadedFromFetch::No;
         options.clientCredentialPolicy = m_sameOriginRequest ? ClientCredentialPolicy::MayAskClientForCredentials : ClientCredentialPolicy::CannotAskClientForCredentials;
         options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
         
