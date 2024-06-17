@@ -1,0 +1,8 @@
+
+PASS same-origin iframe
+PASS same-origin sandboxed iframe
+PASS same-origin redirect iframe
+PASS same-origin redirect sandboxed iframe
+PASS cross-origin redirect iframe
+PASS cross-origin redirect sandboxed iframe
+

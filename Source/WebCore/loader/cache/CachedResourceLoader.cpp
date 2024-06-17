@@ -681,7 +681,7 @@ bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type,
 String convertEnumerationToString(FetchOptions::Destination);
 String convertEnumerationToString(FetchOptions::Mode);
 
-static const String& convertEnumerationToString(FetchMetadataSite enumerationValue)
+const String& convertEnumerationToString(FetchMetadataSite enumerationValue)
 {
     static NeverDestroyed<const String> none(MAKE_STATIC_STRING_IMPL("none"));
     static NeverDestroyed<const String> sameOrigin(MAKE_STATIC_STRING_IMPL("same-origin"));
@@ -723,21 +723,39 @@ static void updateRequestFetchMetadataHeaders(ResourceRequest& request, const Re
     request.setHTTPHeaderField(HTTPHeaderName::SecFetchSite, convertEnumerationToString(site));
 }
 
-FetchMetadataSite CachedResourceLoader::computeFetchMetadataSite(const ResourceRequest& request, CachedResource::Type type, FetchOptions::Mode mode, const SecurityOrigin& originalOrigin, FetchMetadataSite originalSite, bool isDirectlyUserInitiatedRequest)
+static FetchMetadataSite computeFetchMetadataSiteInternal(const ResourceRequest& request, CachedResource::Type type, FetchOptions::Mode mode, const SecurityOrigin* originalOrigin, const LocalFrame* frame, FetchMetadataSite originalSite, bool isDirectlyUserInitiatedRequest)
 {
+    ASSERT(frame || originalOrigin);
+
     // This is true when a user causes a request, such as entering a URL.
     if (mode == FetchOptions::Mode::Navigate && type == CachedResource::Type::MainResource && isDirectlyUserInitiatedRequest)
         return FetchMetadataSite::None;
+
+    Ref contextOrigin = originalOrigin ? *originalOrigin : frame->document()->securityOrigin();
+    if (type == CachedResource::Type::MainResource && frame && frame->loader().activeDocumentLoader()) {
+        if (auto& request = frame->loader().activeDocumentLoader()->triggeringAction().requester())
+            contextOrigin = request->securityOrigin;
+    }
 
     // If this is a redirect we start with the old value.
     // The value can never get more "secure" so a full redirect
     // chain only degrades towards cross-site.
     Ref requestOrigin = SecurityOrigin::create(request.url());
-    if ((originalSite == FetchMetadataSite::SameOrigin || originalSite == FetchMetadataSite::None) && originalOrigin.isSameOriginAs(requestOrigin))
+    if ((originalSite == FetchMetadataSite::SameOrigin || originalSite == FetchMetadataSite::None) && contextOrigin->isSameOriginAs(requestOrigin))
         return FetchMetadataSite::SameOrigin;
-    if (originalSite != FetchMetadataSite::CrossSite && originalOrigin.isSameSiteAs(requestOrigin))
+    if (originalSite != FetchMetadataSite::CrossSite && contextOrigin->isSameSiteAs(requestOrigin))
         return FetchMetadataSite::SameSite;
     return FetchMetadataSite::CrossSite;
+}
+
+FetchMetadataSite CachedResourceLoader::computeFetchMetadataSite(const ResourceRequest& request, CachedResource::Type type, FetchOptions::Mode mode, const LocalFrame& frame, bool isDirectlyUserInitiatedRequest)
+{
+    return computeFetchMetadataSiteInternal(request, type, mode, nullptr, &frame, FetchMetadataSite::SameOrigin, isDirectlyUserInitiatedRequest);
+}
+
+FetchMetadataSite CachedResourceLoader::computeFetchMetadataSiteAfterRedirection(const ResourceRequest& request, CachedResource::Type type, FetchOptions::Mode mode, const SecurityOrigin& originalOrigin, FetchMetadataSite originalSite, bool isDirectlyUserInitiatedRequest)
+{
+    return computeFetchMetadataSiteInternal(request, type, mode, &originalOrigin, nullptr, originalSite, isDirectlyUserInitiatedRequest);
 }
 
 bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type type, ResourceRequest& request, const ResourceLoaderOptions& options, FetchMetadataSite site, const URL& preRedirectURL)
@@ -928,8 +946,8 @@ void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, Ca
     // FetchMetadata depends on PSL to determine same-site relationships and without this
     // ability it is best to not set any FetchMetadata headers as sites generally expect
     // all of them or none.
-    if (!frameLoader.frame().document() || !frameLoader.frame().document()->quirks().shouldDisableFetchMetadata()) {
-        auto site = computeFetchMetadataSite(request.resourceRequest(), type, request.options().mode, frameLoader.frame().document()->protectedSecurityOrigin(), FetchMetadataSite::SameOrigin, frameLoader.frame().isMainFrame() && m_documentLoader && m_documentLoader->isRequestFromClientOrUserInput());
+    if (frameLoader.frame().document() && !frameLoader.frame().document()->quirks().shouldDisableFetchMetadata()) {
+        auto site = computeFetchMetadataSite(request.resourceRequest(), type, request.options().mode, frameLoader.frame(), frameLoader.frame().isMainFrame() && m_documentLoader && m_documentLoader->isRequestFromClientOrUserInput());
         updateRequestFetchMetadataHeaders(request.resourceRequest(), request.options(), site);
     }
     request.updateUserAgentHeader(frameLoader);
