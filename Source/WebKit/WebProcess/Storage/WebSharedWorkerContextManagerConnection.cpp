@@ -134,9 +134,9 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
 
     auto sharedWorkerThreadProxy = WebCore::SharedWorkerThreadProxy::create(Ref { page }, sharedWorkerIdentifier, origin, WTFMove(workerFetchResult), WTFMove(workerOptions), WTFMove(initializationData), WebProcess::singleton().cacheStorageProvider());
 
-    auto& thread = sharedWorkerThreadProxy->thread();
+    Ref thread = sharedWorkerThreadProxy->thread();
     auto workerClient = WebWorkerClient::create(WTFMove(page), thread);
-    thread.setWorkerClient(workerClient.moveToUniquePtr());
+    thread->setWorkerClient(workerClient.moveToUniquePtr());
 
     WebCore::SharedWorkerContextManager::singleton().registerSharedWorkerThread(WTFMove(sharedWorkerThreadProxy));
 }
