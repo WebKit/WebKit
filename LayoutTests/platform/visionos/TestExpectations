@@ -142,6 +142,8 @@ fast/events/pointer/ios/tap-gives-pointerdown-pointerup.html [ Timeout ]
 
 webkit.org/b/275115 imported/w3c/web-platform-tests/webxr/getInputPose_pointer.https.html [ Skip ]
 
+webkit.org/b/275590 interaction-region/text-input-focused-edited-empty.html [ Pass Failure ]
+
 ### END OF Triaged failures
 ###################################################################################################
 
