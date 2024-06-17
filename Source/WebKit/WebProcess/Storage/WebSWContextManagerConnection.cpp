@@ -207,10 +207,9 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
         notificationClient = makeUnique<WebNotificationClient>(nullptr);
 #endif
 
-        auto& corePage = page.get();
-        auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(page), WTFMove(contextData), WTFMove(workerData), WTFMove(effectiveUserAgent), workerThreadMode, WebProcess::singleton().cacheStorageProvider(), WTFMove(notificationClient));
+        auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(Ref { page }, WTFMove(contextData), WTFMove(workerData), WTFMove(effectiveUserAgent), workerThreadMode, WebProcess::singleton().cacheStorageProvider(), WTFMove(notificationClient));
 
-        auto workerClient = WebWorkerClient::create(corePage, serviceWorkerThreadProxy->thread());
+        auto workerClient = WebWorkerClient::create(WTFMove(page), serviceWorkerThreadProxy->thread());
         serviceWorkerThreadProxy->thread().setWorkerClient(workerClient.moveToUniquePtr());
 
         if (lastNavigationWasAppInitiated)
