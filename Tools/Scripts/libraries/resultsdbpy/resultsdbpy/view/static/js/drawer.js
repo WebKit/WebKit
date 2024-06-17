@@ -123,10 +123,15 @@ function CommitSearchBar(onSearchAction = null) {
         }
     });
     const searchHotKeyFunction = (e) => {
-        if (e.key == "f" && ( e.ctrlKey || e.metaKey )) {
-            e.preventDefault();
-            searchInputRef.element.focus();
-        }
+        if (e.key !== "f" || !( e.ctrlKey || e.metaKey ))
+            return;
+
+        const element = searchInputRef.element;
+        if (element.disabled)
+            return;
+
+        e.preventDefault();
+        element.focus();
     };
     const searchInputEventStream = searchInputRef.fromEvent("keyup");
     searchInputEventStream.action((e) => {
@@ -138,8 +143,8 @@ function CommitSearchBar(onSearchAction = null) {
     });
     
     const searchButtonRef = REF.createRef({});
-    const searchButtonClikEventStream = searchButtonRef.fromEvent("click");
-    searchButtonClikEventStream.action((e) => {
+    const searchButtonClickEventStream = searchButtonRef.fromEvent("click");
+    searchButtonClickEventStream.action((e) => {
         const searchValue = searchInputRef.element.value;
         if (onSearchAction)
             onSearchAction(searchValue);
