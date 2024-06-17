@@ -1476,12 +1476,6 @@ def generate_message_names_header(receivers):
         result.append('    return Detail::messageDescriptions[static_cast<size_t>(messageName)].%s;\n' % fname)
         result.append('}\n')
         result.append('\n')
-    result.append('inline ASCIILiteral descriptionLiteral(MessageName messageName)\n')
-    result.append('{\n')
-    result.append('    messageName = std::min(messageName, MessageName::Last);\n')
-    result.append('    return ASCIILiteral::fromLiteralUnsafe(Detail::messageDescriptions[static_cast<size_t>(messageName)].description);\n')
-    result.append('}\n')
-    result.append('\n')
     result.append('constexpr bool messageIsSync(MessageName name)\n')
     result.append('{\n')
     if seen_synchronous:

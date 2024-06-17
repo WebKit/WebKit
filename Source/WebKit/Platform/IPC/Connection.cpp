@@ -542,7 +542,7 @@ Error Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption
 {
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     auto signpostIdentifier = generateSignpostIdentifier();
-    WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendMessage: %{public}s", description(encoder->messageName()));
+    WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendMessage: %{public}s", description(encoder->messageName()).characters());
 #endif
 
     auto error = sendMessageImpl(WTFMove(encoder), sendOptions, qos);
@@ -653,7 +653,7 @@ Error Connection::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncR
         handler(decoder);
     });
 
-    WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendMessageWithAsyncReply: %{public}s", description(encoder->messageName()));
+    WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendMessageWithAsyncReply: %{public}s", description(encoder->messageName()).characters());
 #endif
 
     addAsyncReplyHandler(WTFMove(replyHandler));
@@ -706,7 +706,7 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     auto signpostIdentifier = generateSignpostIdentifier();
-    WTFBeginSignpost(signpostIdentifier, IPCConnection, "waitForMessage: %{public}s", description(messageName));
+    WTFBeginSignpost(signpostIdentifier, IPCConnection, "waitForMessage: %{public}s", description(messageName).characters());
     auto endSignpost = makeScopeExit([&] {
         WTFEndSignpost(signpostIdentifier, IPCConnection);
     });
@@ -852,7 +852,7 @@ auto Connection::sendSyncMessage(SyncRequestID syncRequestID, UniqueRef<Encoder>
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     auto signpostIdentifier = generateSignpostIdentifier();
-    WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendSyncMessage: %{public}s", description(messageName));
+    WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendSyncMessage: %{public}s", description(messageName).characters());
 #endif
 
     // Since sync IPC is blocking the current thread, make sure we use the same priority for the IPC sending thread

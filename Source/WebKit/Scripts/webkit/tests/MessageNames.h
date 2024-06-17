@@ -243,12 +243,6 @@ inline bool messageAllowedWhenWaitingForUnboundedSyncReply(MessageName messageNa
     return Detail::messageDescriptions[static_cast<size_t>(messageName)].messageAllowedWhenWaitingForUnboundedSyncReply;
 }
 
-inline ASCIILiteral descriptionLiteral(MessageName messageName)
-{
-    messageName = std::min(messageName, MessageName::Last);
-    return ASCIILiteral::fromLiteralUnsafe(Detail::messageDescriptions[static_cast<size_t>(messageName)].description);
-}
-
 constexpr bool messageIsSync(MessageName name)
 {
     return name >= MessageName::FirstSynchronous;
