@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DOMJITGetterSetter.h"
 #include "StructureStubInfo.h"
 
 namespace JSC {
@@ -38,6 +39,7 @@ public:
 
     using StructureStubInfoKey = std::tuple<AccessType, bool, bool, bool, bool>;
     using StatelessCacheKey = std::tuple<StructureStubInfoKey, AccessCase::AccessType>;
+    using DOMJITCacheKey = std::tuple<StructureStubInfoKey, const DOMJIT::GetterSetter*>;
 
     static StructureStubInfoKey stubInfoKey(const StructureStubInfo& stubInfo)
     {
@@ -155,12 +157,16 @@ public:
     RefPtr<PolymorphicAccessJITStubRoutine> getStatelessStub(StatelessCacheKey) const;
     void setStatelessStub(StatelessCacheKey, Ref<PolymorphicAccessJITStubRoutine>);
 
+    MacroAssemblerCodeRef<JITStubRoutinePtrTag> getDOMJITCode(DOMJITCacheKey) const;
+    void setDOMJITCode(DOMJITCacheKey, MacroAssemblerCodeRef<JITStubRoutinePtrTag>);
+
     RefPtr<InlineCacheHandler> getSlowPathHandler(AccessType) const;
     void setSlowPathHandler(AccessType, Ref<InlineCacheHandler>);
 
 private:
     HashSet<Hash::Key, Hash, Hash::KeyTraits> m_stubs;
     HashMap<StatelessCacheKey, Ref<PolymorphicAccessJITStubRoutine>> m_statelessStubs;
+    HashMap<DOMJITCacheKey, MacroAssemblerCodeRef<JITStubRoutinePtrTag>> m_domJITCodes;
     std::array<RefPtr<InlineCacheHandler>, numberOfAccessTypes> m_fallbackHandlers { };
     std::array<RefPtr<InlineCacheHandler>, numberOfAccessTypes> m_slowPathHandlers { };
 };

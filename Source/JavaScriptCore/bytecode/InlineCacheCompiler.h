@@ -373,7 +373,7 @@ private:
 
     AccessGenerationResult compileOneAccessCaseHandler(CodeBlock*, AccessCase&, Vector<WatchpointSet*, 8>&&);
 
-    void emitDOMJITGetter(GetterSetterAccessCase&, const DOMJIT::GetterSetter*, GPRReg baseForGetGPR);
+    void emitDOMJITGetter(JSGlobalObject*, const DOMJIT::GetterSetter*, GPRReg baseForGetGPR);
     void emitModuleNamespaceLoad(ModuleNamespaceAccessCase&, MacroAssembler::JumpList& fallThrough);
     void emitProxyObjectAccess(unsigned index, ProxyObjectAccessCase&, MacroAssembler::JumpList& fallThrough);
     void emitIntrinsicGetter(IntrinsicGetterAccessCase&);
@@ -381,6 +381,7 @@ private:
     void generateWithConditionChecks(unsigned index, AccessCase&);
     void generateAccessCase(unsigned index, AccessCase&);
 
+    MacroAssemblerCodeRef<JITStubRoutinePtrTag> compileGetByIdDOMJITHandler(CodeBlock*, const DOMJIT::GetterSetter*);
     RefPtr<AccessCase> tryFoldToMegamorphic(CodeBlock*, std::span<const Ref<AccessCase>>);
 
     VM& m_vm;
