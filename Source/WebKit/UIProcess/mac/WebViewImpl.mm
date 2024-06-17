@@ -132,6 +132,8 @@
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/cocoa/NSTouchBarSPI.h>
 #import <pal/spi/cocoa/VisionKitCoreSPI.h>
+#import <pal/spi/cocoa/WritingToolsSPI.h>
+#import <pal/spi/cocoa/WritingToolsUISPI.h>
 #import <pal/spi/mac/LookupSPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
@@ -167,6 +169,14 @@
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/cocoa/TranslationUIServicesSoftLink.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
+
+#if ENABLE(WRITING_TOOLS_UI)
+namespace WebKit {
+void showSwapCharactersViewRelativeToRectOfView(NSRect positioningRect, NSView *positioningView);
+void scheduleShowSwapCharactersViewForSelectionRectOfView(NSRect positioningRect, NSView *positioningView);
+bool webViewCanHandleSwapCharacters();
+}
+#endif
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 SOFT_LINK_FRAMEWORK(AVKit)
@@ -6697,8 +6707,24 @@ Ref<WebPageProxy> WebViewImpl::protectedPage() const
     return m_page.get();
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebViewImplAdditionsAfter.mm>
+#if ENABLE(WRITING_TOOLS_UI)
+
+void showSwapCharactersViewRelativeToRectOfView(NSRect positioningRect, NSView *positioningView)
+{
+    [WTWritingTools.sharedInstance showPanelForSelectionRect:positioningRect ofView:positioningView forDelegate:(NSObject<WTWritingToolsDelegate> *)positioningView];
+}
+
+void scheduleShowSwapCharactersViewForSelectionRectOfView(NSRect positioningRect, NSView *positioningView)
+{
+    // The affordance will only show up if the selected range consists of >= 50 characters.
+    [WTWritingTools.sharedInstance scheduleShowAffordanceForSelectionRect:positioningRect ofView:positioningView forDelegate:(NSObject<WTWritingToolsDelegate> *)positioningView];
+}
+
+bool webViewCanHandleSwapCharacters()
+{
+    return WTWritingToolsViewController.isAvailable;
+}
+
 #endif
 
 } // namespace WebKit
