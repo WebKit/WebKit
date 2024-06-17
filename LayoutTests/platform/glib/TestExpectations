@@ -1468,7 +1468,6 @@ webkit.org/b/274830 imported/w3c/web-platform-tests/html/canvas/offscreen/shadow
 webkit.org/b/274830 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.transparent.2.html [ Failure ]
 webkit.org/b/274830 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.transparent.2.worker.html [ Failure ]
 webkit.org/b/273766 fast/canvas/canvas-scale-shadowBlur.html [ Failure ]
-webkit.org/b/275353 fast/canvas/canvas-filter-repaint-rect.html [ Failure ]
 
 # Minor reftest image differences introduced with skia.
 http/tests/css/css-masking/mask-external-svg-fragment.html [ ImageOnlyFailure ]

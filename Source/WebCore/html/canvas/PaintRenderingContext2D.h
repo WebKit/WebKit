@@ -44,6 +44,7 @@ public:
 
     GraphicsContext* drawingContext() const final;
     GraphicsContext* existingDrawingContext() const final;
+    GraphicsContext* effectiveDrawingContext() const final { return drawingContext(); }
     AffineTransform baseTransform() const final;
 
     CustomPaintCanvas& canvas() const;

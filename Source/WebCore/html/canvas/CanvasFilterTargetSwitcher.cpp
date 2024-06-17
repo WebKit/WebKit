@@ -47,7 +47,7 @@ std::unique_ptr<CanvasFilterTargetSwitcher> CanvasFilterTargetSwitcher::create(C
     filter->setFilterRenderingModes(filter->filterRenderingModes() - FilterRenderingMode::GraphicsContext);
 
     ASSERT(!bounds.isEmpty());
-    auto* destinationContext = context.drawingContext();
+    auto* destinationContext = context.effectiveDrawingContext();
 
     auto filterTargetSwitcher = FilterTargetSwitcher::create(*destinationContext, *filter, bounds, colorSpace);
     if (!filterTargetSwitcher)
@@ -78,7 +78,7 @@ CanvasFilterTargetSwitcher::~CanvasFilterTargetSwitcher()
 {
     m_context.setFilterTargetSwitcher(nullptr);
 
-    auto* destinationContext = m_context.drawingContext();
+    auto* destinationContext = m_context.effectiveDrawingContext();
     m_filterTargetSwitcher->endDrawSourceImage(*destinationContext, DestinationColorSpace::SRGB());
 }
 

@@ -321,6 +321,7 @@ protected:
 
     virtual GraphicsContext* drawingContext() const;
     virtual GraphicsContext* existingDrawingContext() const;
+    virtual GraphicsContext* effectiveDrawingContext() const;
     virtual AffineTransform baseTransform() const;
 
     enum class DidDrawOption {

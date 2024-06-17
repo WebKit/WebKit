@@ -106,7 +106,7 @@ RefPtr<Filter> CanvasRenderingContext2D::createFilter(const Function<FloatRect()
 {
     ASSERT(!state().filterOperations.isEmpty());
 
-    auto* context = drawingContext();
+    auto* context = effectiveDrawingContext();
     if (!context)
         return nullptr;
 
@@ -157,7 +157,7 @@ void CanvasRenderingContext2D::drawFocusIfNeeded(Path2D& path, Element& element)
 
 void CanvasRenderingContext2D::drawFocusIfNeededInternal(const Path& path, Element& element)
 {
-    auto* context = drawingContext();
+    auto* context = effectiveDrawingContext();
     if (!element.focused() || !state().hasInvertibleTransform || path.isEmpty() || !element.isDescendantOf(canvas()) || !context)
         return;
     context->drawFocusRing(path, 1, RenderTheme::singleton().focusRingColor(element.document().styleColorOptions(canvas().computedStyle())));

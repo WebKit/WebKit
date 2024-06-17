@@ -523,7 +523,7 @@ void CanvasRenderingContext2DBase::setStrokeStyle(CanvasStyle style)
     realizeSaves();
     State& state = modifiableState();
     state.strokeStyle = WTFMove(style);
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return;
     state.strokeStyle.applyStrokeColor(*c);
@@ -547,7 +547,7 @@ void CanvasRenderingContext2DBase::setFillStyle(CanvasStyle style)
     realizeSaves();
     State& state = modifiableState();
     state.fillStyle = WTFMove(style);
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return;
 
@@ -570,7 +570,7 @@ void CanvasRenderingContext2DBase::setLineWidth(double width)
         return;
     realizeSaves();
     modifiableState().lineWidth = width;
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return;
     c->setStrokeThickness(width);
@@ -583,7 +583,7 @@ void CanvasRenderingContext2DBase::setLineCap(CanvasLineCap canvasLineCap)
         return;
     realizeSaves();
     modifiableState().lineCap = lineCap;
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return;
     c->setLineCap(lineCap);
@@ -611,7 +611,7 @@ void CanvasRenderingContext2DBase::setLineJoin(CanvasLineJoin canvasLineJoin)
         return;
     realizeSaves();
     modifiableState().lineJoin = lineJoin;
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return;
     c->setLineJoin(lineJoin);
@@ -640,7 +640,7 @@ void CanvasRenderingContext2DBase::setMiterLimit(double limit)
         return;
     realizeSaves();
     modifiableState().miterLimit = limit;
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return;
     c->setMiterLimit(limit);
@@ -738,7 +738,7 @@ void CanvasRenderingContext2DBase::setLineDashOffset(double offset)
 
 void CanvasRenderingContext2DBase::applyLineDash() const
 {
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return;
     DashArray convertedLineDash(state().lineDash.size());
@@ -755,7 +755,7 @@ void CanvasRenderingContext2DBase::setGlobalAlpha(double alpha)
         return;
     realizeSaves();
     modifiableState().globalAlpha = alpha;
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return;
     c->setAlpha(alpha);
@@ -772,7 +772,7 @@ void CanvasRenderingContext2DBase::setGlobalCompositeOperation(const String& ope
     realizeSaves();
     modifiableState().globalComposite = op;
     modifiableState().globalBlend = blendMode;
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return;
     c->setCompositeOperation(op, blendMode);
@@ -805,7 +805,7 @@ void CanvasRenderingContext2DBase::setFilterString(const String& filterString)
 
 void CanvasRenderingContext2DBase::scale(double sx, double sy)
 {
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return;
     if (!state().hasInvertibleTransform)
@@ -833,7 +833,7 @@ void CanvasRenderingContext2DBase::scale(double sx, double sy)
 
 void CanvasRenderingContext2DBase::rotate(double angleInRadians)
 {
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return;
     if (!state().hasInvertibleTransform)
@@ -856,7 +856,7 @@ void CanvasRenderingContext2DBase::rotate(double angleInRadians)
 
 void CanvasRenderingContext2DBase::translate(double tx, double ty)
 {
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return;
     if (!state().hasInvertibleTransform)
@@ -879,7 +879,7 @@ void CanvasRenderingContext2DBase::translate(double tx, double ty)
 
 void CanvasRenderingContext2DBase::transform(double m11, double m12, double m21, double m22, double dx, double dy)
 {
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return;
     if (!state().hasInvertibleTransform)
@@ -911,7 +911,7 @@ Ref<DOMMatrix> CanvasRenderingContext2DBase::getTransform() const
 
 void CanvasRenderingContext2DBase::setTransform(double m11, double m12, double m21, double m22, double dx, double dy)
 {
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return;
 
@@ -934,7 +934,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::setTransform(DOMMatrix2DInit&& m
 
 void CanvasRenderingContext2DBase::resetTransform()
 {
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return;
 
@@ -1123,7 +1123,7 @@ void CanvasRenderingContext2DBase::fillInternal(const Path& path, CanvasFillRule
         });
     }
 
-    auto* c = drawingContext();
+    auto* c = effectiveDrawingContext();
     if (!c)
         return;
     if (!state().hasInvertibleTransform)
@@ -1169,7 +1169,7 @@ void CanvasRenderingContext2DBase::strokeInternal(const Path& path)
         });
     }
 
-    auto* c = drawingContext();
+    auto* c = effectiveDrawingContext();
     if (!c)
         return;
     if (!state().hasInvertibleTransform)
@@ -1203,7 +1203,7 @@ void CanvasRenderingContext2DBase::strokeInternal(const Path& path)
 
 void CanvasRenderingContext2DBase::clipInternal(const Path& path, CanvasFillRule windingRule)
 {
-    auto* c = drawingContext();
+    auto* c = effectiveDrawingContext();
     if (!c)
         return;
     if (!state().hasInvertibleTransform)
@@ -1216,7 +1216,7 @@ void CanvasRenderingContext2DBase::clipInternal(const Path& path, CanvasFillRule
 void CanvasRenderingContext2DBase::beginCompositeLayer()
 {
 #if !USE(CAIRO)
-    auto* context = drawingContext();
+    auto* context = effectiveDrawingContext();
     context->beginTransparencyLayer(state().globalComposite, state().globalBlend);
 #endif
 }
@@ -1224,7 +1224,7 @@ void CanvasRenderingContext2DBase::beginCompositeLayer()
 void CanvasRenderingContext2DBase::endCompositeLayer()
 {
 #if !USE(CAIRO)
-    auto* context = drawingContext();
+    auto* context = effectiveDrawingContext();
     context->endTransparencyLayer();
 #endif
 }
@@ -1254,7 +1254,7 @@ bool CanvasRenderingContext2DBase::isPointInPathInternal(const Path& path, doubl
     if (!std::isfinite(x) || !std::isfinite(y))
         return false;
     
-    if (!drawingContext())
+    if (!effectiveDrawingContext())
         return false;
     auto& state = this->state();
     if (!state.hasInvertibleTransform)
@@ -1271,7 +1271,7 @@ bool CanvasRenderingContext2DBase::isPointInStrokeInternal(const Path& path, dou
     if (!std::isfinite(x) || !std::isfinite(y))
         return false;
 
-    if (!drawingContext())
+    if (!effectiveDrawingContext())
         return false;
     auto& state = this->state();
     if (!state.hasInvertibleTransform)
@@ -1297,7 +1297,7 @@ void CanvasRenderingContext2DBase::clearRect(double x, double y, double width, d
 {
     if (!validateRectForCanvas(x, y, width, height))
         return;
-    auto* context = drawingContext();
+    auto* context = effectiveDrawingContext();
     if (!context)
         return;
     if (!state().hasInvertibleTransform)
@@ -1341,7 +1341,7 @@ void CanvasRenderingContext2DBase::fillRect(double x, double y, double width, do
     if (!state().filterOperations.isEmpty())
         targetSwitcher = CanvasFilterTargetSwitcher::create(*this, colorSpace(), rect);
 
-    auto* c = drawingContext();
+    auto* c = effectiveDrawingContext();
     if (!c)
         return;
     if (!state().hasInvertibleTransform)
@@ -1398,7 +1398,7 @@ void CanvasRenderingContext2DBase::strokeRect(double x, double y, double width, 
     if (!state().filterOperations.isEmpty())
         targetSwitcher = CanvasFilterTargetSwitcher::create(*this, colorSpace(), inflatedStrokeRect);
 
-    auto* c = drawingContext();
+    auto* c = effectiveDrawingContext();
     if (!c)
         return;
     if (!state().hasInvertibleTransform)
@@ -1481,7 +1481,7 @@ void CanvasRenderingContext2DBase::setShadow(const FloatSize& offset, float blur
 
 void CanvasRenderingContext2DBase::applyShadow()
 {
-    auto* c = drawingContext();
+    auto* c = effectiveDrawingContext();
     if (!c)
         return;
 
@@ -1673,7 +1673,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
     if (frame.isDetached())
         return Exception { ExceptionCode::InvalidStateError, "frame is detached"_s };
 
-    auto* context = drawingContext();
+    auto* context = effectiveDrawingContext();
     if (!context)
         return { };
 
@@ -1718,7 +1718,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
     if (!state().filterOperations.isEmpty())
         targetSwitcher = CanvasFilterTargetSwitcher::create(*this, colorSpace(), normalizedDstRect);
 
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return { };
     if (!state().hasInvertibleTransform)
@@ -1804,7 +1804,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
     if (!state().filterOperations.isEmpty())
         targetSwitcher = CanvasFilterTargetSwitcher::create(*this, colorSpace(), normalizedDstRect);
 
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return { };
     if (!state().hasInvertibleTransform)
@@ -1871,7 +1871,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLVideoElement& vide
     if (!state().filterOperations.isEmpty())
         targetSwitcher = CanvasFilterTargetSwitcher::create(*this, colorSpace(), normalizedDstRect);
 
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return { };
     if (!state().hasInvertibleTransform)
@@ -1931,7 +1931,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
     if (!state().filterOperations.isEmpty())
         targetSwitcher = CanvasFilterTargetSwitcher::create(*this, colorSpace(), dstRect);
 
-    GraphicsContext* c = drawingContext();
+    GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return { };
     if (!state().hasInvertibleTransform)
@@ -1976,7 +1976,7 @@ void CanvasRenderingContext2DBase::drawImageFromRect(HTMLImageElement& imageElem
 
 void CanvasRenderingContext2DBase::clearCanvas()
 {
-    auto* c = drawingContext();
+    auto* c = effectiveDrawingContext();
     if (!c)
         return;
 
@@ -2026,7 +2026,7 @@ void CanvasRenderingContext2DBase::compositeBuffer(ImageBuffer& buffer, const In
     IntRect canvasRect(0, 0, canvasBase().width(), canvasBase().height());
     canvasRect = baseTransform().mapRect(canvasRect);
 
-    auto* c = drawingContext();
+    auto* c = effectiveDrawingContext();
     if (!c)
         return;
 
@@ -2063,7 +2063,7 @@ template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawIma
         return;
     }
 
-    auto* c = drawingContext();
+    auto* c = effectiveDrawingContext();
     if (!c)
         return;
 
@@ -2311,7 +2311,7 @@ void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, Option
     if (!options.contains(DidDrawOption::PreserveCachedContents))
         m_cachedContents.emplace<CachedContentsUnknown>();
 
-    if (!drawingContext())
+    if (!effectiveDrawingContext())
         return;
 
     m_hasDeferredOperations = true;
@@ -2342,7 +2342,7 @@ void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, Option
     }
 
     // Inflate dirty rect to cover antialiasing on image buffers.
-    if (drawingContext()->shouldAntialias())
+    if (effectiveDrawingContext()->shouldAntialias())
         dirtyRect.inflate(1);
 
     // FIXME: This does not apply the clip because we have no way of reading the clip out of the GraphicsContext.
@@ -2401,13 +2401,9 @@ const Vector<CanvasRenderingContext2DBase::State, 1>& CanvasRenderingContext2DBa
 GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
 {
     // FIXME(https://bugs.webkit.org/show_bug.cgi?id=275100): The image buffer from CanvasBase should be moved to CanvasRenderingContext2DBase.
-    auto* buffer = canvasBase().buffer();
-    if (!buffer)
-        return nullptr;
-    auto& context = buffer->context();
-    if (UNLIKELY(m_targetSwitcher))
-        return m_targetSwitcher->drawingContext(context);
-    return &context;
+    if (auto* buffer = canvasBase().buffer())
+        return &buffer->context();
+    return nullptr;
 }
 
 GraphicsContext* CanvasRenderingContext2DBase::existingDrawingContext() const
@@ -2415,6 +2411,16 @@ GraphicsContext* CanvasRenderingContext2DBase::existingDrawingContext() const
     if (!canvasBase().hasCreatedImageBuffer())
         return nullptr;
     return drawingContext();
+}
+
+GraphicsContext* CanvasRenderingContext2DBase::effectiveDrawingContext() const
+{
+    auto context = drawingContext();
+    if (!context)
+        return nullptr;
+    if (UNLIKELY(m_targetSwitcher))
+        return m_targetSwitcher->drawingContext(*context);
+    return context;
 }
 
 AffineTransform CanvasRenderingContext2DBase::baseTransform() const
@@ -2685,7 +2691,7 @@ void CanvasRenderingContext2DBase::setImageSmoothingQuality(ImageSmoothingQualit
     if (!state().imageSmoothingEnabled)
         return;
 
-    if (auto* context = drawingContext())
+    if (auto* context = effectiveDrawingContext())
         context->setImageInterpolationQuality(smoothingToInterpolationQuality(quality));
 }
 
@@ -2696,7 +2702,7 @@ void CanvasRenderingContext2DBase::setImageSmoothingEnabled(bool enabled)
 
     realizeSaves();
     modifiableState().imageSmoothingEnabled = enabled;
-    auto* c = drawingContext();
+    auto* c = effectiveDrawingContext();
     if (c)
         c->setImageInterpolationQuality(enabled ? smoothingToInterpolationQuality(state().imageSmoothingQuality) : InterpolationQuality::DoNotInterpolate);
 }
@@ -2743,7 +2749,7 @@ bool CanvasRenderingContext2DBase::canDrawText(double x, double y, bool fill, st
     if (!fontProxy()->realized())
         return false;
 
-    auto* c = drawingContext();
+    auto* c = effectiveDrawingContext();
     if (!c)
         return false;
     if (!state().hasInvertibleTransform)
@@ -2829,7 +2835,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
     if (!state().filterOperations.isEmpty())
         targetSwitcher = CanvasFilterTargetSwitcher::create(*this, colorSpace(), textRect);
 
-    auto* c = drawingContext();
+    auto* c = effectiveDrawingContext();
 
 #if USE(CG)
     const CanvasStyle& drawStyle = fill ? state().fillStyle : state().strokeStyle;
