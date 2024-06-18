@@ -452,6 +452,7 @@ class SimulatedDeviceManager(object):
         deadline = time.time() + timeout
         for device in SimulatedDeviceManager.INITIALIZED_DEVICES:
             cls._wait_until_device_is_usable(device, deadline)
+            device.set_up_environment_extras()
 
         return SimulatedDeviceManager.INITIALIZED_DEVICES
 
@@ -547,6 +548,8 @@ class SimulatedDevice(object):
         self.executive = host.executive
         self.filesystem = host.filesystem
         self.platform = host.platform
+
+        self.environment_extras = []
 
         # Determine tear down behavior
         self.booted_by_script = False
@@ -679,6 +682,13 @@ class SimulatedDevice(object):
             raise RuntimeError(u'Failed to find process id for {}: {}'.format(bundle_id, output))
         _log.debug(u'Returning pid {} of launched process'.format(match.group('pid')))
         return int(match.group('pid'))
+
+    def set_up_environment_extras(self):
+        if len(self.environment_extras) == 0:
+            return
+        _log.debug(u'Running extra environment setup commands.')
+        for command in self.environment_extras:
+            self.executive.run_command(command)
 
     def __eq__(self, other):
         return self.udid == other.udid
