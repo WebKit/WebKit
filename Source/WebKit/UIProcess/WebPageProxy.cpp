@@ -875,6 +875,11 @@ Ref<PageClient> WebPageProxy::protectedPageClient() const
     return pageClient();
 }
 
+RefPtr<PageClient> WebPageProxy::optionalProtectedPageClient() const
+{
+    return m_pageClient.get();
+}
+
 PAL::SessionID WebPageProxy::sessionID() const
 {
     return m_websiteDataStore->sessionID();
@@ -1604,6 +1609,10 @@ void WebPageProxy::close()
 
     stopAllURLSchemeTasks();
     updatePlayingMediaDidChange(MediaProducer::IsNotPlaying);
+
+#if ENABLE(GAMEPAD)
+    m_recentGamepadAccessHysteresis.cancel();
+#endif
 
     if (m_preferences->siteIsolationEnabled())
         m_browsingContextGroup->removePage(*this);
@@ -10166,6 +10175,10 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     internals().currentFullscreenVideoSessionIdentifier = std::nullopt;
 #endif
 
+#if ENABLE(GAMEPAD)
+    m_recentGamepadAccessHysteresis.cancel();
+#endif
+
     // FIXME: <rdar://problem/38676604> In case of process swaps, the old process should gracefully suspend instead of terminating.
     protectedLegacyMainFrameProcess()->processTerminated();
 }
@@ -10571,13 +10584,16 @@ void WebPageProxy::gamepadActivity(const Vector<std::optional<GamepadData>>& gam
 
 void WebPageProxy::recentGamepadAccessStateChanged(PAL::HysteresisState state)
 {
+    auto pageClient = optionalProtectedPageClient();
     switch (state) {
     case PAL::HysteresisState::Started:
-        protectedPageClient()->setGamepadsRecentlyAccessed(PageClient::GamepadsRecentlyAccessed::Yes);
+        if (pageClient)
+            pageClient->setGamepadsRecentlyAccessed(PageClient::GamepadsRecentlyAccessed::Yes);
         m_uiClient->recentlyAccessedGamepadsForTesting(*this);
         break;
     case PAL::HysteresisState::Stopped:
-        protectedPageClient()->setGamepadsRecentlyAccessed(PageClient::GamepadsRecentlyAccessed::No);
+        if (pageClient)
+            pageClient->setGamepadsRecentlyAccessed(PageClient::GamepadsRecentlyAccessed::No);
         m_uiClient->stoppedAccessingGamepadsForTesting(*this);
     }
 }

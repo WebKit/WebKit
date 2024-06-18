@@ -881,6 +881,7 @@ public:
 
     PageClient& pageClient() const;
     Ref<PageClient> protectedPageClient() const;
+    RefPtr<PageClient> optionalProtectedPageClient() const;
 
     void setViewNeedsDisplay(const WebCore::Region&);
     void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, WebCore::ScrollIsAnimated);
