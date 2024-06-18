@@ -25,15 +25,18 @@
  */
 
 #include "config.h"
-#include "NicosiaImageBufferPipe.h"
+#include "PlaceholderRenderingContext.h"
 
 #include "GLFence.h"
+#include "GraphicsLayerContentsDisplayDelegate.h"
 #include "ImageBuffer.h"
 #include "NativeImage.h"
+#include "NicosiaContentLayer.h"
 #include "NicosiaPlatformLayer.h"
 #include "TextureMapperFlags.h"
 #include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxyGL.h"
+#include <wtf/Lock.h>
 
 #if USE(CAIRO)
 #include <cairo.h>
@@ -47,7 +50,7 @@
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
 
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
-#include <skia/core/SkPixmap.h>
+#include <skia/core/SkPixmap.h> // NOLINT
 IGNORE_CLANG_WARNINGS_END
 #endif
 
@@ -57,18 +60,57 @@ namespace Nicosia {
 
 using namespace WebCore;
 
-NicosiaImageBufferPipeSource::NicosiaImageBufferPipeSource()
+class NicosiaPlaceholderRenderingContextSourceDisplayDelegate final : public WebCore::GraphicsLayerContentsDisplayDelegate {
+public:
+    static Ref<NicosiaPlaceholderRenderingContextSourceDisplayDelegate> create(ContentLayer& nicosiaLayer)
+    {
+        return adoptRef(*new NicosiaPlaceholderRenderingContextSourceDisplayDelegate(nicosiaLayer));
+    }
+
+    // GraphicsLayerContentsDisplayDelegate overrides.
+    PlatformLayer* platformLayer() const final { return m_nicosiaLayer.ptr(); }
+private:
+    NicosiaPlaceholderRenderingContextSourceDisplayDelegate(ContentLayer& nicosiaLayer)
+        : m_nicosiaLayer(nicosiaLayer)
+    {
+    }
+    Ref<ContentLayer> m_nicosiaLayer;
+};
+
+class NicosiaPlaceholderRenderingContextSource final : public WebCore::PlaceholderRenderingContextSource, public ContentLayer::Client {
+public:
+    NicosiaPlaceholderRenderingContextSource(PlaceholderRenderingContext&);
+    ~NicosiaPlaceholderRenderingContextSource();
+
+    // PlaceholderRenderingContextSource overrides.
+    void setPlaceholderBuffer(WebCore::ImageBuffer&) final;
+    void setContentsToLayer(GraphicsLayer&) final;
+
+    // ContentLayerTextureMapperImpl::Client overrides.
+    void swapBuffersIfNeeded() final;
+
+private:
+    Ref<ContentLayer> m_nicosiaLayer;
+    Ref<NicosiaPlaceholderRenderingContextSourceDisplayDelegate> m_layerContentsDisplayDelegate;
+    RefPtr<WebCore::NativeImage> m_image WTF_GUARDED_BY_LOCK(m_imageLock);
+    mutable Lock m_imageLock;
+};
+
+NicosiaPlaceholderRenderingContextSource::NicosiaPlaceholderRenderingContextSource(PlaceholderRenderingContext& context)
+    : PlaceholderRenderingContextSource(context)
+    , m_nicosiaLayer(Nicosia::ContentLayer::create(*this, adoptRef(*new TextureMapperPlatformLayerProxyGL(TextureMapperPlatformLayerProxy::ContentType::OffscreenCanvas))))
+    , m_layerContentsDisplayDelegate(NicosiaPlaceholderRenderingContextSourceDisplayDelegate::create(m_nicosiaLayer))
 {
-    m_nicosiaLayer = Nicosia::ContentLayer::create(*this, adoptRef(*new TextureMapperPlatformLayerProxyGL(TextureMapperPlatformLayerProxy::ContentType::OffscreenCanvas)));
 }
 
-NicosiaImageBufferPipeSource::~NicosiaImageBufferPipeSource()
+NicosiaPlaceholderRenderingContextSource::~NicosiaPlaceholderRenderingContextSource()
 {
     m_nicosiaLayer->invalidateClient();
 }
 
-void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
+void NicosiaPlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& buffer)
 {
+    PlaceholderRenderingContextSource::setPlaceholderBuffer(buffer);
     auto nativeImage = ImageBuffer::sinkIntoNativeImage(buffer.clone());
     if (!nativeImage)
         return;
@@ -167,22 +209,11 @@ void NicosiaImageBufferPipeSource::handle(ImageBuffer& buffer)
     m_image = WTFMove(nativeImage);
 }
 
-void NicosiaImageBufferPipeSource::swapBuffersIfNeeded()
+void NicosiaPlaceholderRenderingContextSource::swapBuffersIfNeeded()
 {
 }
 
-NicosiaImageBufferPipe::NicosiaImageBufferPipe()
-    : m_source(adoptRef(*new NicosiaImageBufferPipeSource))
-    , m_layerContentsDisplayDelegate(NicosiaImageBufferPipeSourceDisplayDelegate::create(m_source->platformLayer()))
-{
-}
-
-RefPtr<ImageBufferPipe::Source> NicosiaImageBufferPipe::source() const
-{
-    return m_source.ptr();
-}
-
-void NicosiaImageBufferPipe::setContentsToLayer(GraphicsLayer& layer)
+void NicosiaPlaceholderRenderingContextSource::setContentsToLayer(GraphicsLayer& layer)
 {
     layer.setContentsDisplayDelegate(m_layerContentsDisplayDelegate.ptr(), GraphicsLayer::ContentsLayerPurpose::Canvas);
 }
@@ -191,9 +222,9 @@ void NicosiaImageBufferPipe::setContentsToLayer(GraphicsLayer& layer)
 
 namespace WebCore {
 
-RefPtr<ImageBufferPipe> ImageBufferPipe::create()
+Ref<PlaceholderRenderingContextSource> PlaceholderRenderingContextSource::create(PlaceholderRenderingContext& context)
 {
-    return adoptRef(new Nicosia::NicosiaImageBufferPipe);
+    return adoptRef(*new Nicosia::NicosiaPlaceholderRenderingContextSource(context));
 }
 
 }

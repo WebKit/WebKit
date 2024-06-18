@@ -67,34 +67,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(OffscreenCanvas);
 
-class OffscreenCanvasPlaceholderData : public ThreadSafeRefCounted<OffscreenCanvasPlaceholderData, WTF::DestructionThread::Main> {
-    WTF_MAKE_NONCOPYABLE(OffscreenCanvasPlaceholderData);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static Ref<OffscreenCanvasPlaceholderData> create(HTMLCanvasElement& placeholder)
-    {
-        RefPtr<ImageBufferPipe::Source> pipeSource;
-        RefPtr placeholderContext = downcast<PlaceholderRenderingContext>(placeholder.renderingContext());
-        if (auto& pipe = placeholderContext->imageBufferPipe())
-            pipeSource = pipe->source();
-        return adoptRef(*new OffscreenCanvasPlaceholderData { placeholder, WTFMove(pipeSource) });
-    }
-    RefPtr<HTMLCanvasElement> placeholder() const { return m_placeholder.get(); }
-    RefPtr<ImageBufferPipe::Source> pipeSource() const { return m_pipeSource; }
-
-private:
-    OffscreenCanvasPlaceholderData(HTMLCanvasElement& placeholder, RefPtr<ImageBufferPipe::Source> pipeSource)
-        : m_placeholder(placeholder)
-        , m_pipeSource(WTFMove(pipeSource))
-    {
-    }
-
-    WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_placeholder;
-    RefPtr<ImageBufferPipe::Source> m_pipeSource;
-};
-
-DetachedOffscreenCanvas::DetachedOffscreenCanvas(const IntSize& size, bool originClean, RefPtr<OffscreenCanvasPlaceholderData> placeholderData)
-    : m_placeholderData(WTFMove(placeholderData))
+DetachedOffscreenCanvas::DetachedOffscreenCanvas(const IntSize& size, bool originClean, RefPtr<PlaceholderRenderingContextSource>&& placeholderSource)
+    : m_placeholderSource(WTFMove(placeholderSource))
     , m_size(size)
     , m_originClean(originClean)
 {
@@ -102,9 +76,9 @@ DetachedOffscreenCanvas::DetachedOffscreenCanvas(const IntSize& size, bool origi
 
 DetachedOffscreenCanvas::~DetachedOffscreenCanvas() = default;
 
-RefPtr<OffscreenCanvasPlaceholderData> DetachedOffscreenCanvas::takePlaceholderData()
+RefPtr<PlaceholderRenderingContextSource> DetachedOffscreenCanvas::takePlaceholderSource()
 {
-    return WTFMove(m_placeholderData);
+    return WTFMove(m_placeholderSource);
 }
 
 bool OffscreenCanvas::enabledForContext(ScriptExecutionContext& context)
@@ -129,24 +103,24 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecu
 
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, std::unique_ptr<DetachedOffscreenCanvas>&& detachedCanvas)
 {
-    Ref<OffscreenCanvas> clone = adoptRef(*new OffscreenCanvas(scriptExecutionContext, detachedCanvas->size(), detachedCanvas->takePlaceholderData()));
+    Ref<OffscreenCanvas> clone = adoptRef(*new OffscreenCanvas(scriptExecutionContext, detachedCanvas->size(), detachedCanvas->takePlaceholderSource()));
     if (!detachedCanvas->originClean())
         clone->setOriginTainted();
     clone->suspendIfNeeded();
     return clone;
 }
 
-Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, HTMLCanvasElement& placeholder)
+Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, PlaceholderRenderingContext& placeholder)
 {
-    auto offscreen = adoptRef(*new OffscreenCanvas(scriptExecutionContext, placeholder.size(), OffscreenCanvasPlaceholderData::create(placeholder)));
+    auto offscreen = adoptRef(*new OffscreenCanvas(scriptExecutionContext, placeholder.size(), placeholder.source().ptr()));
     offscreen->suspendIfNeeded();
     return offscreen;
 }
 
-OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& scriptExecutionContext, IntSize size, RefPtr<OffscreenCanvasPlaceholderData> placeholderData)
+OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& scriptExecutionContext, IntSize size, RefPtr<PlaceholderRenderingContextSource>&& placeholderSource)
     : ActiveDOMObject(&scriptExecutionContext)
     , CanvasBase(WTFMove(size), scriptExecutionContext.noiseInjectionHashSalt())
-    , m_placeholderData(WTFMove(placeholderData))
+    , m_placeholderSource(WTFMove(placeholderSource))
 {
 }
 
@@ -409,14 +383,14 @@ std::unique_ptr<DetachedOffscreenCanvas> OffscreenCanvas::detach()
 
     m_detached = true;
 
-    auto detached = makeUnique<DetachedOffscreenCanvas>(size(), originClean(), WTFMove(m_placeholderData));
+    auto detached = makeUnique<DetachedOffscreenCanvas>(size(), originClean(), WTFMove(m_placeholderSource));
     setSize(IntSize(0, 0));
     return detached;
 }
 
 void OffscreenCanvas::commitToPlaceholderCanvas()
 {
-    if (!m_placeholderData)
+    if (!m_placeholderSource)
         return;
     if  (!m_context)
         return;
@@ -425,29 +399,12 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
     RefPtr imageBuffer = m_context->surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
     if (!imageBuffer)
         return;
-    if (auto pipeSource = m_placeholderData->pipeSource())
-        pipeSource->handle(*imageBuffer);
-
-    auto clone = imageBuffer->clone();
-    if (!clone)
-        return;
-    auto serializedClone = ImageBuffer::sinkIntoSerializedImageBuffer(WTFMove(clone));
-    if (!serializedClone)
-        return;
-    callOnMainThread([placeholderData = Ref { *m_placeholderData }, buffer = WTFMove(serializedClone)] () mutable {
-        RefPtr canvas = placeholderData->placeholder();
-        if (!canvas)
-            return;
-        RefPtr imageBuffer = SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(buffer), canvas->document().graphicsClient());
-        if (!imageBuffer)
-            return;
-        canvas->setImageBufferAndMarkDirty(WTFMove(imageBuffer));
-    });
-}
+    m_placeholderSource->setPlaceholderBuffer(*imageBuffer);
+    }
 
 void OffscreenCanvas::scheduleCommitToPlaceholderCanvas()
 {
-    if (!m_hasScheduledCommit && m_placeholderData) {
+    if (!m_hasScheduledCommit && m_placeholderSource) {
         auto& scriptContext = *scriptExecutionContext();
         m_hasScheduledCommit = true;
         scriptContext.postTask([protectedThis = Ref { *this }, this] (ScriptExecutionContext&) {

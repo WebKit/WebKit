@@ -30,6 +30,7 @@
 #include "DNSResolveQueue.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
+#include <wtf/URL.h>
 
 #if OS(UNIX)
 #include <arpa/inet.h>

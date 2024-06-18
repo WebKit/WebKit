@@ -761,11 +761,12 @@ ExceptionOr<Ref<OffscreenCanvas>> HTMLCanvasElement::transferControlToOffscreen(
     if (m_context)
         return Exception { ExceptionCode::InvalidStateError };
 
-    m_context = makeUniqueWithoutRefCountedCheck<PlaceholderRenderingContext>(*this);
+    std::unique_ptr placeholderContext = PlaceholderRenderingContext::create(*this);
+    Ref offscreen = OffscreenCanvas::create(document(), *placeholderContext);
+    m_context = WTFMove(placeholderContext);
     if (m_context->delegatesDisplay())
         invalidateStyleAndLayerComposition();
-
-    return OffscreenCanvas::create(document(), *this);
+    return offscreen;
 }
 #endif
 

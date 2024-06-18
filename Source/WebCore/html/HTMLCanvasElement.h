@@ -144,6 +144,8 @@ public:
     void ref() const final { HTMLElement::ref(); }
     void deref() const final { HTMLElement::deref(); }
 
+    using HTMLElement::scriptExecutionContext;
+
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 
