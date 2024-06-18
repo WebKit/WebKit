@@ -111,7 +111,7 @@ static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
         if (!keyID)
             return nullptr;
 
-        auto sinfData = base64Decode(keyID, Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace);
+        auto sinfData = base64Decode(keyID, { Base64DecodeOption::ValidatePadding, Base64DecodeOption::IgnoreWhitespace });
         if (!sinfData)
             return nullptr;
 

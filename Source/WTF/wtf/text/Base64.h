@@ -36,15 +36,11 @@ namespace WTF {
 
 enum class Base64EncodeMode : bool { Default, URL };
 
-// - ::DefaultIgnorePadding and ::URL ignore padding-related requirements.
-//   Note that no mode enforces "Canonical Encoding" as defined in RFC 4648.
-// - ::DefaultValidatePadding and ::DefaultValidatePaddingAndIgnoreWhitespace
-//   enforce a correct number of trailing equal signs in the input.
-// - ::DefaultValidatePaddingAndIgnoreWhitespace ignores ASCII whitespace in
-//   the input. It matches <https://infra.spec.whatwg.org/#forgiving-base64>.
-// - ::DefaultIgnoreWhitespaceForQuirk, URL ignores ASCII whitespace in the
-//   input but doesn't validate padding. It is currently only used for quirks.
-enum class Base64DecodeMode { DefaultIgnorePadding, DefaultValidatePadding, DefaultValidatePaddingAndIgnoreWhitespace, DefaultIgnoreWhitespaceForQuirk, URL };
+enum class Base64DecodeOption {
+    URL = 1 << 0,
+    ValidatePadding = 1 << 1,
+    IgnoreWhitespace = 1 << 2,
+};
 
 struct Base64Specification {
     std::span<const std::byte> input;
@@ -71,11 +67,11 @@ String base64EncodeToString(std::span<const uint8_t>, Base64EncodeMode = Base64E
 WTF_EXPORT_PRIVATE String base64EncodeToStringReturnNullIfOverflow(std::span<const std::byte>, Base64EncodeMode = Base64EncodeMode::Default);
 String base64EncodeToStringReturnNullIfOverflow(const CString&, Base64EncodeMode = Base64EncodeMode::Default);
 
-WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(std::span<const std::byte>, Base64DecodeMode = Base64DecodeMode::DefaultIgnorePadding);
-WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(StringView, Base64DecodeMode = Base64DecodeMode::DefaultIgnorePadding);
-std::optional<Vector<uint8_t>> base64Decode(std::span<const uint8_t>, Base64DecodeMode = Base64DecodeMode::DefaultIgnorePadding);
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(std::span<const std::byte>, OptionSet<Base64DecodeOption> = { });
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(StringView, OptionSet<Base64DecodeOption> = { });
+std::optional<Vector<uint8_t>> base64Decode(std::span<const uint8_t>, OptionSet<Base64DecodeOption> = { });
 
-WTF_EXPORT_PRIVATE String base64DecodeToString(StringView, Base64DecodeMode = Base64DecodeMode::DefaultIgnorePadding);
+WTF_EXPORT_PRIVATE String base64DecodeToString(StringView, OptionSet<Base64DecodeOption> = { });
 
 // All the same functions modified for base64url, as defined in RFC 4648.
 // This format uses '-' and '_' instead of '+' and '/' respectively.
@@ -120,9 +116,9 @@ inline String base64EncodeToStringReturnNullIfOverflow(const CString& input, Bas
     return base64EncodeToStringReturnNullIfOverflow(input.span(), mode);
 }
 
-inline std::optional<Vector<uint8_t>> base64Decode(std::span<const uint8_t> input, Base64DecodeMode mode)
+inline std::optional<Vector<uint8_t>> base64Decode(std::span<const uint8_t> input, OptionSet<Base64DecodeOption> options)
 {
-    return base64Decode(std::as_bytes(input), mode);
+    return base64Decode(std::as_bytes(input), options);
 }
 
 inline Vector<uint8_t> base64URLEncodeToVector(std::span<const std::byte> input)
@@ -147,17 +143,17 @@ inline String base64URLEncodeToString(std::span<const uint8_t> input)
 
 inline std::optional<Vector<uint8_t>> base64URLDecode(StringView input)
 {
-    return base64Decode(input, Base64DecodeMode::URL);
+    return base64Decode(input, { Base64DecodeOption::URL });
 }
 
 inline std::optional<Vector<uint8_t>> base64URLDecode(std::span<const std::byte> input)
 {
-    return base64Decode(input, Base64DecodeMode::URL);
+    return base64Decode(input, { Base64DecodeOption::URL });
 }
 
 inline std::optional<Vector<uint8_t>> base64URLDecode(std::span<const uint8_t> input)
 {
-    return base64Decode(input, Base64DecodeMode::URL);
+    return base64Decode(input, { Base64DecodeOption::URL });
 }
 
 template<typename CharacterType> bool isBase64OrBase64URLCharacter(CharacterType c)
@@ -236,7 +232,7 @@ private:
 
 } // namespace WTF
 
-using WTF::Base64DecodeMode;
+using WTF::Base64DecodeOption;
 using WTF::base64Decode;
 using WTF::base64EncodeToString;
 using WTF::base64EncodeToVector;

@@ -26,6 +26,7 @@ set(TestWTF_SOURCES
     Utilities.cpp
 
     Tests/WTF/AtomString.cpp
+    Tests/WTF/Base64.cpp
     Tests/WTF/BitSet.cpp
     Tests/WTF/BloomFilter.cpp
     Tests/WTF/BoxPtr.cpp
