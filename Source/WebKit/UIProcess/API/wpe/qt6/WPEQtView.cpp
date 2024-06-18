@@ -100,6 +100,7 @@ void WPEQtView::createWebView()
 
     auto* wpeView = webkit_web_view_get_wpe_view(m_webView.get());
     wpe_view_resize(wpeView, m_size.width(), m_size.height());
+    wpe_view_map(wpeView); // FIXME: unmap when appropriate and implement can_be_mapped if needed.
 
     if (!wpe_view_qtquick_initialize_rendering(WPE_VIEW_QTQUICK(wpeView), this, &error.outPtr())) {
         g_warning("Failed to create Web view: %s", error->message);

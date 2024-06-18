@@ -51,6 +51,8 @@ struct _WPEViewPrivate {
     gdouble scale { 1 };
     WPEViewState state;
     bool closed;
+    bool visible { true };
+    bool mapped;
 #if USE(LIBDRM)
     GRefPtr<WPEBufferDMABufFormats> overridenDMABufFormats;
 #endif
@@ -84,6 +86,8 @@ enum {
     PROP_SCALE,
     PROP_STATE,
     PROP_MONITOR,
+    PROP_VISIBLE,
+    PROP_MAPPED,
 
     N_PROPERTIES
 };
@@ -114,6 +118,9 @@ static void wpeViewSetProperty(GObject* object, guint propId, const GValue* valu
     case PROP_DISPLAY:
         view->priv->display = WPE_DISPLAY(g_value_get_object(value));
         break;
+    case PROP_VISIBLE:
+        wpe_view_set_visible(view, g_value_get_boolean(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -141,6 +148,12 @@ static void wpeViewGetProperty(GObject* object, guint propId, GValue* value, GPa
         break;
     case PROP_MONITOR:
         g_value_set_object(value, wpe_view_get_monitor(view));
+        break;
+    case PROP_VISIBLE:
+        g_value_set_boolean(value, wpe_view_get_visible(view));
+        break;
+    case PROP_MAPPED:
+        g_value_set_boolean(value, wpe_view_get_mapped(view));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -235,6 +248,39 @@ static void wpe_view_class_init(WPEViewClass* viewClass)
             "monitor",
             nullptr, nullptr,
             WPE_TYPE_MONITOR,
+            WEBKIT_PARAM_READABLE);
+
+    /**
+     * WPEView:visible:
+     *
+     * Whether the view should be visible or not. This property
+     * can be used to show or hide a view, but setting to %TRUE (which
+     * is the default) doesn't mean it will always be shown, because
+     * the visbility also depends on the status of its toplevel (for
+     * example if the toplevel is minimized the view will be hidden).
+     * To know whether the view is actually visible, you can check
+     * #WPEView:mapped property.
+     */
+    sObjProperties[PROP_VISIBLE] =
+        g_param_spec_boolean(
+            "visible",
+            nullptr, nullptr,
+            TRUE,
+            WEBKIT_PARAM_READWRITE);
+
+    /**
+     * WPEView:mapped:
+     *
+     * Whether the view is mapped or not. A view is mapped when #WPEView:visible
+     * is %TRUE and it's not hidden for other reasons, like for example when its
+     * toplevel is minimized. This is a readonly property that can be used to
+     * monitor when a #WPEView is shown or hidden.
+     */
+    sObjProperties[PROP_MAPPED] =
+        g_param_spec_boolean(
+            "mapped",
+            nullptr, nullptr,
+            FALSE,
             WEBKIT_PARAM_READABLE);
 
     g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
@@ -554,6 +600,113 @@ void wpe_view_scale_changed(WPEView* view, gdouble scale)
 
     view->priv->scale = scale;
     g_object_notify_by_pspec(G_OBJECT(view), sObjProperties[PROP_SCALE]);
+}
+
+/**
+ * wpe_view_get_visible:
+ * @view: a #WPEView
+ *
+ * Get the visibility of @view.
+ * This might return %TRUE even if the view is not mapped,
+ * for example when it's minimized.
+ *
+ * Returns: %TRUE if the view is visible, or %FALSE otherwise
+ */
+gboolean wpe_view_get_visible(WPEView* view)
+{
+    g_return_val_if_fail(WPE_IS_VIEW(view), FALSE);
+
+    return view->priv->visible;
+}
+
+/**
+ * wpe_view_set_visible:
+ * @view: a #WPEView
+ * @visible: whether the view should be visible
+ *
+ * Set the visibility of @view. See #WPEView:visible property
+ * for more information.
+ */
+void wpe_view_set_visible(WPEView* view, gboolean visible)
+{
+    g_return_if_fail(WPE_IS_VIEW(view));
+
+    if (view->priv->visible == visible)
+        return;
+
+    view->priv->visible = visible;
+    if (view->priv->visible)
+        wpe_view_map(view);
+    else
+        wpe_view_unmap(view);
+    g_object_notify_by_pspec(G_OBJECT(view), sObjProperties[PROP_VISIBLE]);
+}
+
+/**
+ * wpe_view_get_mapped:
+ * @view: a #WPEView
+ *
+ * Get whether @view is mapped. A #WPEView isa mapped if
+ * #WPEView:visible is %TRUE and it's not hidden for other
+ * reasons, like for example when its toplevel is minimized.
+ * You can connect to notify::mapped signal of @view to
+ * monitor the visibility.
+ *
+ * Returns: %TRUE if the view is mapped, or %FALSE otherwise
+ */
+gboolean wpe_view_get_mapped(WPEView* view)
+{
+    g_return_val_if_fail(WPE_IS_VIEW(view), FALSE);
+
+    return view->priv->mapped;
+}
+
+/**
+ * wpe_view_map:
+ * @view: a #WPEView
+ *
+ * Make @view to be mapped. If #WPEView:visible is %TRUE and
+ * the view can be shown (determined by #WPEViewClass::can_be_mapped)
+ * #WPEView:mapped will be set to %TRUE.
+ *
+ * This function should only be called by #WPEView derived classes
+ * in platform implementations.
+ */
+void wpe_view_map(WPEView* view)
+{
+    g_return_if_fail(WPE_IS_VIEW(view));
+
+    if (view->priv->mapped || !view->priv->visible)
+        return;
+
+    auto* viewClass = WPE_VIEW_GET_CLASS(view);
+    if (viewClass->can_be_mapped && !viewClass->can_be_mapped(view))
+        return;
+
+    view->priv->mapped = TRUE;
+    g_object_notify_by_pspec(G_OBJECT(view), sObjProperties[PROP_MAPPED]);
+}
+
+/**
+ * wpe_view_unmap:
+ * @view: a #WPEView
+ *
+ * Make @view to be unmapped. This always sets the #WPEView:mapped
+ * property to %FALSE and the @view is considered to be hidden even
+ * if #WPEView:visible is %TRUE.
+ *
+ * This function should only be called by #WPEView derived classes
+ * in platform implementations.
+ */
+void wpe_view_unmap(WPEView* view)
+{
+    g_return_if_fail(WPE_IS_VIEW(view));
+
+    if (!view->priv->mapped)
+        return;
+
+    view->priv->mapped = FALSE;
+    g_object_notify_by_pspec(G_OBJECT(view), sObjProperties[PROP_MAPPED]);
 }
 
 /**

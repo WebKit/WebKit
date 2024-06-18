@@ -73,6 +73,7 @@ struct _WPEViewClass
     void                    (* set_opaque_rectangles)         (WPEView      *view,
                                                                WPERectangle *rects,
                                                                guint         n_rects);
+    gboolean                (* can_be_mapped)                 (WPEView      *view);
 
     gpointer padding[32];
 };
@@ -119,6 +120,12 @@ WPE_API void                    wpe_view_resized                       (WPEView 
 WPE_API gdouble                 wpe_view_get_scale                     (WPEView      *view);
 WPE_API void                    wpe_view_scale_changed                 (WPEView      *view,
                                                                         gdouble       scale);
+WPE_API gboolean                wpe_view_get_visible                   (WPEView      *view);
+WPE_API void                    wpe_view_set_visible                   (WPEView      *view,
+                                                                        gboolean      visible);
+WPE_API gboolean                wpe_view_get_mapped                    (WPEView      *view);
+WPE_API void                    wpe_view_map                           (WPEView      *view);
+WPE_API void                    wpe_view_unmap                         (WPEView      *view);
 WPE_API void                    wpe_view_set_cursor_from_name          (WPEView      *view,
                                                                         const char   *name);
 WPE_API void                    wpe_view_set_cursor_from_bytes         (WPEView      *view,

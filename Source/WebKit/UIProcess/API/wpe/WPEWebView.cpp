@@ -85,7 +85,6 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
 #endif
     , m_pageClient(makeUniqueWithoutRefCountedCheck<PageClientImpl>(*this))
     , m_size { 800, 600 }
-    , m_viewStateFlags { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsVisible, WebCore::ActivityState::IsInWindow }
     , m_backend(backend)
 {
 #if ENABLE(WPE_PLATFORM)
@@ -93,6 +92,9 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
 #else
     ASSERT(m_backend);
 #endif
+
+    if (m_backend)
+        m_viewStateFlags = { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsVisible, WebCore::ActivityState::IsInWindow };
 
     auto configuration = baseConfiguration.copy();
     auto& preferences = configuration->preferences();
@@ -109,12 +111,33 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
         m_size.setWidth(wpe_view_get_width(m_wpeView.get()));
         m_size.setHeight(wpe_view_get_height(m_wpeView.get()));
 
+        m_viewStateFlags = { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsInWindow };
+        if (wpe_view_get_mapped(m_wpeView.get()))
+            m_viewStateFlags.add(WebCore::ActivityState::IsVisible);
+
         if (auto* monitor = wpe_view_get_monitor(m_wpeView.get()))
             m_displayID = wpe_monitor_get_id(monitor);
         else
             m_displayID = ScreenManager::singleton().primaryDisplayID();
         m_pageProxy->windowScreenDidChange(m_displayID);
 
+        g_signal_connect(m_wpeView.get(), "notify::mapped", G_CALLBACK(+[](WPEView* view, GParamSpec*, gpointer userData) {
+            auto& webView = *reinterpret_cast<View*>(userData);
+
+            OptionSet<WebCore::ActivityState> flagsToUpdate { WebCore::ActivityState::IsVisible };
+            if (wpe_view_get_mapped(view)) {
+                if (webView.m_viewStateFlags.contains(WebCore::ActivityState::IsVisible))
+                    return;
+
+                webView.m_viewStateFlags.add(WebCore::ActivityState::IsVisible);
+            } else {
+                if (!webView.m_viewStateFlags.contains(WebCore::ActivityState::IsVisible))
+                    return;
+
+                webView.m_viewStateFlags.remove(WebCore::ActivityState::IsVisible);
+            }
+            webView.page().activityStateDidChange(flagsToUpdate);
+        }), this);
         g_signal_connect(m_wpeView.get(), "resized", G_CALLBACK(+[](WPEView* view, gpointer userData) {
             auto& webView = *reinterpret_cast<View*>(userData);
             webView.setSize(WebCore::IntSize(wpe_view_get_width(view), wpe_view_get_height(view)));

@@ -62,6 +62,8 @@ static void wpeViewHeadlessConstructed(GObject* object)
 {
     G_OBJECT_CLASS(wpe_view_headless_parent_class)->constructed(object);
 
+    wpe_view_map(WPE_VIEW(object));
+
     auto* priv = WPE_VIEW_HEADLESS(object)->priv;
     priv->frameSource = adoptGRef(g_source_new(&frameSourceFuncs, sizeof(GSource)));
     g_source_set_priority(priv->frameSource.get(), RunLoopSourcePriority::RunLoopTimer);
