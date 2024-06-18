@@ -515,7 +515,7 @@ WI.Recording = class Recording extends WI.Object
                     let promises = [];
 
                     // callFrames
-                    promises.push(Promise.all(array[0].map((item) => this.swizzle(item, WI.Recording.Swizzle.CallFrame))));
+                    promises.push(Promise.all(array[0].map((item) => this.swizzle(item, WI.Recording.Swizzle.CallFramePayload))));
 
                     // topCallFrameIsBoundary
                     if (array.length > 1)
@@ -534,18 +534,18 @@ WI.Recording = class Recording extends WI.Object
                     break;
                 }
 
-                case WI.Recording.Swizzle.CallFrame: {
+                case WI.Recording.Swizzle.CallFramePayload: {
                     let array = await this.swizzle(data, WI.Recording.Swizzle.Array);
                     let [functionName, url] = await Promise.all([
                         this.swizzle(array[0], WI.Recording.Swizzle.String),
                         this.swizzle(array[1], WI.Recording.Swizzle.String),
                     ]);
-                    this._swizzle[index][type] = WI.CallFrame.fromPayload(WI.assumingMainTarget(), {
+                    this._swizzle[index][type] = {
                         functionName,
                         url,
                         lineNumber: array[2],
                         columnNumber: array[3],
-                    });
+                    };
                     break;
                 }
                 }
@@ -1031,5 +1031,5 @@ WI.Recording.Swizzle = {
 
     // Special frontend-only swizzle types.
     CallStack: Symbol("CallStack"),
-    CallFrame: Symbol("CallFrame"),
+    CallFramePayload: Symbol("CallFramePayload"),
 };
