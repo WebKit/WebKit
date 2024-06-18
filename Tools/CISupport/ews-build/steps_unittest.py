@@ -6212,6 +6212,8 @@ class TestRetrievePRDataFromLabel(BuildStepMixinAdditions, unittest.TestCase):
                         {'context': 'style', 'state': 'SUCCESS'},
                         {'context': 'tv', 'state': 'SUCCESS'},
                         {'context': 'tv-sim', 'state': 'SUCCESS'},
+                        {'context': 'vision', 'state': 'SUCCESS'},
+                        {'context': 'vision-sim', 'state': 'SUCCESS'},
                         {'context': 'watch', 'state': 'SUCCESS'},
                         {'context': 'watch-sim', 'state': 'SUCCESS'},
                         {'context': 'webkitperl', 'state': 'SUCCESS'},
