@@ -321,6 +321,9 @@ public:
         : ScheduledNavigation(0, submission->lockHistory(), lockBackForwardList, duringLoad, true, submission->state().sourceDocument().shouldOpenExternalURLsPolicyToPropagate())
         , m_submission(WTFMove(submission))
     {
+        Ref requestingDocument = m_submission->state().sourceDocument();
+        if (!requestingDocument->loadEventFinished() && !UserGestureIndicator::processingUserGesture())
+            m_navigationHistoryBehavior = NavigationHistoryBehavior::Replace;
     }
 
     void fire(Frame& frame) final
@@ -349,6 +352,10 @@ public:
         frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLs());
         frameLoadRequest.disableShouldReplaceDocumentIfJavaScriptURL();
         submission->populateFrameLoadRequest(frameLoadRequest);
+        auto navigationHistoryBehavior = m_navigationHistoryBehavior;
+        if (localFrame->document() != requestingDocument.ptr())
+            navigationHistoryBehavior = NavigationHistoryBehavior::Push;
+        frameLoadRequest.setNavigationHistoryBehavior(navigationHistoryBehavior);
         localFrame->checkedLoader()->loadFrameRequest(WTFMove(frameLoadRequest), submission->protectedEvent().get(), submission->takeState());
     }
 
@@ -393,6 +400,7 @@ public:
 private:
     Ref<FormSubmission> m_submission;
     bool m_haveToldClient { false };
+    NavigationHistoryBehavior m_navigationHistoryBehavior { NavigationHistoryBehavior::Push };
 };
 
 class ScheduledPageBlock final : public ScheduledNavigation {
