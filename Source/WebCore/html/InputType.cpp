@@ -995,6 +995,7 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
     // https://html.spec.whatwg.org/C/#dom-input-stepup
 
     StepRange stepRange(createStepRange(anyStepHandling));
+    // 2. If the element has no allowed value step, then throw an InvalidStateError exception, and abort these steps.
     if (!stepRange.hasStep())
         return Exception { ExceptionCode::InvalidStateError };
 
@@ -1014,8 +1015,28 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
     Decimal step = stepRange.step();
     Decimal newValue = current;
 
-    newValue = newValue + stepRange.step() * Decimal::fromDouble(count);
     const AtomString& stepString = element()->getAttribute(HTMLNames::stepAttr);
+
+    if (!equalLettersIgnoringASCIICase(stepString, "any"_s) && stepRange.stepMismatch(current)) {
+        // Snap-to-step / clamping steps
+        // If the current value is not matched to step value:
+        // - The value should be the larger matched value nearest to 0 if count > 0
+        //   e.g. <input type=number value=3 min=-100 step=3> -> 5
+        // - The value should be the smaller matched value nearest to 0 if count < 0
+        //   e.g. <input type=number value=3 min=-100 step=3> -> 2
+
+        ASSERT(!step.isZero());
+        if (count < 0) {
+            newValue = base + ((newValue - base) / step).floor() * step;
+            ++count;
+        } else if (count > 0) {
+            newValue = base + ((newValue - base) / step).ceil() * step;
+            --count;
+        }
+    }
+
+    newValue = newValue + stepRange.step() * Decimal::fromDouble(count);
+
     if (!equalLettersIgnoringASCIICase(stepString, "any"_s))
         newValue = stepRange.alignValueForStep(current, newValue);
 
@@ -1037,6 +1058,10 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
     if ((count < 0 && current < newValue) || (count > 0 && current > newValue))
         return { };
     
+    // 11. Let value as string be the result of running the algorithm to convert a number to a string, as defined for the input element's type attribute's
+    // current state, on value.
+    // 12. Set the value of the element to value as string.
+
     Ref protectedThis { *this };
     auto result = setValueAsDecimal(newValue, eventBehavior);
     if (result.hasException() || !element())
@@ -1211,5 +1236,13 @@ bool InputType::hasTouchEventHandler() const
     return false;
 }
 #endif
+
+Decimal InputType::findStepBase(const Decimal& defaultValue) const
+{
+    Decimal stepBase = parseToNumber(element()->attributeWithoutSynchronization(minAttr), Decimal::nan());
+    if (!stepBase.isFinite())
+        stepBase = parseToNumber(element()->attributeWithoutSynchronization(valueAttr), defaultValue);
+    return stepBase;
+}
 
 } // namespace WebCore
