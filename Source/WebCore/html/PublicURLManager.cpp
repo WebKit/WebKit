@@ -60,7 +60,7 @@ void PublicURLManager::revoke(const URL& url)
     if (m_isStopped || !scriptExecutionContext())
         return;
 
-    auto* contextOrigin = scriptExecutionContext()->securityOrigin();
+    RefPtr contextOrigin = scriptExecutionContext()->securityOrigin();
     if (!contextOrigin)
         return;
 
@@ -79,7 +79,7 @@ void PublicURLManager::stop()
         return;
 
     m_isStopped = true;
-    if (auto* context = scriptExecutionContext()) {
+    if (RefPtr context = scriptExecutionContext()) {
         URLRegistry::forEach([&](auto& registry) {
             registry.unregisterURLsForContext(*context);
         });
