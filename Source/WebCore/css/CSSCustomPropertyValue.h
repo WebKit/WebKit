@@ -107,8 +107,7 @@ public:
 
     Ref<const CSSVariableData> asVariableData() const;
 
-    // Say true conservatively.
-    bool customMayDependOnBaseURL() const { return true; }
+    bool customMayDependOnBaseURL() const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
     {
