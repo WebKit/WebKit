@@ -288,8 +288,19 @@ bool RenderBundleEncoder::executePreDrawCommands()
         return false;
     }
 
-    m_vertexDynamicOffset += sizeof(uint32_t) * m_pipeline->pipelineLayout().sizeOfVertexDynamicOffsets();
-    m_fragmentDynamicOffset += sizeof(uint32_t) * m_pipeline->pipelineLayout().sizeOfFragmentDynamicOffsets();
+    auto vertexDynamicOffsetSum = checkedSum<uint64_t>(m_vertexDynamicOffset, sizeof(uint32_t) * m_pipeline->pipelineLayout().sizeOfVertexDynamicOffsets());
+    if (vertexDynamicOffsetSum.hasOverflowed()) {
+        makeInvalid(@"Invalid vertexDynamicOffset");
+        return false;
+    }
+    m_vertexDynamicOffset = vertexDynamicOffsetSum.value();
+
+    auto fragmentDynamicOffsetSum = checkedSum<uint64_t>(m_fragmentDynamicOffset, sizeof(uint32_t) * m_pipeline->pipelineLayout().sizeOfFragmentDynamicOffsets());
+    if (fragmentDynamicOffsetSum.hasOverflowed()) {
+        makeInvalid(@"Invalid fragmentDynamicOffset");
+        return false;
+    }
+    m_fragmentDynamicOffset = fragmentDynamicOffsetSum.value();
 
     id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand();
     if (!icbCommand)
@@ -351,10 +362,14 @@ bool RenderBundleEncoder::executePreDrawCommands()
                 auto* pvertexOffsets = pipelineLayout.vertexOffsets(bindGroupIndex, kvp.value);
                 if (pvertexOffsets && pvertexOffsets->size()) {
                     auto& vertexOffsets = *pvertexOffsets;
-                    auto startIndex = sizeof(uint32_t) * pipelineLayout.vertexOffsetForBindGroup(bindGroupIndex);
-                    auto bytesToCopy = sizeof(vertexOffsets[0]) * vertexOffsets.size();
-                    RELEASE_ASSERT(bytesToCopy <= maxBufferLength - (startIndex + bufferOffset));
-                    memcpy(&vertexBufferContents[startIndex], &vertexOffsets[0], bytesToCopy);
+                    auto startIndex = checkedProduct<uint64_t>(sizeof(uint32_t), pipelineLayout.vertexOffsetForBindGroup(bindGroupIndex));
+                    auto bytesToCopy = checkedProduct<uint64_t>(sizeof(vertexOffsets[0]), vertexOffsets.size());
+                    if (startIndex.hasOverflowed() || bytesToCopy.hasOverflowed()) {
+                        makeInvalid(@"Incorrect data for fragmentBuffer");
+                        return false;
+                    }
+                    RELEASE_ASSERT(bytesToCopy.value() <= maxBufferLength - (startIndex.value() + bufferOffset));
+                    memcpy(&vertexBufferContents[startIndex.value()], &vertexOffsets[0], bytesToCopy.value());
                 }
             }
 
@@ -365,10 +380,14 @@ bool RenderBundleEncoder::executePreDrawCommands()
                 auto* pfragmentOffsets = pipelineLayout.fragmentOffsets(bindGroupIndex, kvp.value);
                 if (pfragmentOffsets && pfragmentOffsets->size()) {
                     auto& fragmentOffsets = *pfragmentOffsets;
-                    auto startIndex = sizeof(uint32_t) * pipelineLayout.fragmentOffsetForBindGroup(bindGroupIndex);
-                    auto bytesToCopy = sizeof(fragmentOffsets[0]) * fragmentOffsets.size();
-                    RELEASE_ASSERT(bytesToCopy <= maxBufferLength - (startIndex + bufferOffset));
-                    memcpy(&fragmentBufferContents[startIndex], &fragmentOffsets[0], bytesToCopy);
+                    auto startIndex = checkedProduct<uint64_t>(sizeof(uint32_t), pipelineLayout.fragmentOffsetForBindGroup(bindGroupIndex));
+                    auto bytesToCopy = checkedProduct<uint64_t>(sizeof(fragmentOffsets[0]), fragmentOffsets.size());
+                    if (startIndex.hasOverflowed() || bytesToCopy.hasOverflowed()) {
+                        makeInvalid(@"Incorrect data for fragmentBuffer");
+                        return false;
+                    }
+                    RELEASE_ASSERT(bytesToCopy.value() <= maxBufferLength - (startIndex.value() + bufferOffset));
+                    memcpy(&fragmentBufferContents[startIndex.value()], &fragmentOffsets[0], bytesToCopy.value());
                 }
             }
         }
@@ -518,17 +537,17 @@ bool RenderBundleEncoder::runVertexBufferValidation(uint32_t vertexCount, uint32
 
     auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
     for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
-        Checked<int64_t, WTF::RecordOverflow> strideCount = 0;
+        Checked<uint64_t, WTF::RecordOverflow> strideCount = 0;
         switch (bufferData.stepMode) {
         case WGPUVertexStepMode_Vertex:
-            strideCount = checkedSum<uint32_t>(firstVertex, vertexCount);
+            strideCount = checkedSum<uint64_t>(firstVertex, vertexCount);
             if (strideCount.hasOverflowed()) {
                 makeInvalid(@"StrideCount invalid");
                 return false;
             }
             break;
         case WGPUVertexStepMode_Instance:
-            strideCount = checkedSum<uint32_t>(firstInstance, instanceCount);
+            strideCount = checkedSum<uint64_t>(firstInstance, instanceCount);
             if (strideCount.hasOverflowed()) {
                 makeInvalid(@"StrideCount invalid");
                 return false;
@@ -546,7 +565,9 @@ bool RenderBundleEncoder::runVertexBufferValidation(uint32_t vertexCount, uint32
         }
         auto& vertexBuffer = m_vertexBuffers[bufferIndex];
         auto bufferSize = vertexBuffer.size;
-        if ((strideCount.value() - 1) * bufferData.stride + bufferData.lastStride > bufferSize) {
+        auto strideSize = checkedProduct<uint64_t>((strideCount.value() - 1), bufferData.stride);
+        auto requiredSize = checkedSum<uint64_t>(strideSize.value(), bufferData.lastStride);
+        if (strideSize.hasOverflowed() || requiredSize.hasOverflowed() ||  requiredSize.value() > bufferSize) {
             makeInvalid([NSString stringWithFormat:@"Buffer[%d] fails: (strideCount(%llu) - 1) * bufferData.stride(%llu) + bufferData.lastStride(%llu) > bufferSize(%llu)", bufferIndex, strideCount.value(), bufferData.stride,  bufferData.lastStride, bufferSize]);
             return false;
         }
@@ -615,8 +636,11 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
         return finalizeRenderCommand();
 
     auto indexSizeInBytes = (m_indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t));
-    auto firstIndexOffsetInBytes = firstIndex * indexSizeInBytes;
-    auto indexBufferOffsetInBytes = m_indexBufferOffset + firstIndexOffsetInBytes;
+    auto firstIndexOffsetInBytes = checkedProduct<NSUInteger>(firstIndex, indexSizeInBytes);
+    auto indexBufferOffsetInBytes = checkedSum<NSUInteger>(m_indexBufferOffset, firstIndexOffsetInBytes);
+    if (indexBufferOffsetInBytes.hasOverflowed() || firstIndexOffsetInBytes.hasOverflowed())
+        return finalizeRenderCommand();
+
     id<MTLBuffer> indexBuffer = m_indexBuffer ? m_indexBuffer->buffer() : nil;
     RenderPassEncoder::IndexCall useIndirectCall { RenderPassEncoder::IndexCall::Draw };
     if (m_renderPassEncoder) {
@@ -629,7 +653,9 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
             makeInvalid(error);
             return finalizeRenderCommand();
         }
-        if (firstIndexOffsetInBytes + indexCount * indexSizeInBytes > m_indexBufferSize) {
+
+        auto lastIndexOffset = checkedSum<NSUInteger>(firstIndexOffsetInBytes, indexCount * indexSizeInBytes);
+        if (lastIndexOffset.hasOverflowed() || lastIndexOffset.value() > m_indexBufferSize) {
             makeInvalid(@"firstIndexOffsetInBytes + indexCount * indexSizeInBytes > m_indexBufferSize");
             return finalizeRenderCommand();
         }
@@ -702,7 +728,8 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexedIndir
             return finalizeRenderCommand();
         }
 
-        if (indirectBuffer.initialSize() < indirectOffset + sizeof(MTLDrawIndexedPrimitivesIndirectArguments)) {
+        auto indirectOffsetSum = checkedSum<uint64_t>(indirectOffset,  sizeof(MTLDrawIndexedPrimitivesIndirectArguments));
+        if (indirectOffsetSum.hasOverflowed() || indirectBuffer.initialSize() < indirectOffsetSum.value()) {
             makeInvalid(@"drawIndexedIndirect: validation failed");
             return finalizeRenderCommand();
         }
@@ -1205,6 +1232,7 @@ void RenderBundleEncoder::setVertexBuffer(uint32_t slot, Buffer* optionalBuffer,
                 makeInvalid(@"setVertexBuffer: validation failed");
                 return;
             }
+
             auto sum = checkedSum<uint64_t>(offset, size);
             if (sum.hasOverflowed() || sum.value() > buffer.initialSize()) {
                 makeInvalid(@"offset + size > buffer.size()");
