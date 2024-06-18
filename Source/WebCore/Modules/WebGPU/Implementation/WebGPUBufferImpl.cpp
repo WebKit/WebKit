@@ -93,7 +93,7 @@ auto BufferImpl::getBufferContents() -> MappedRange
     return { static_cast<uint8_t*>(pointer), static_cast<size_t>(bufferSize) };
 }
 
-void BufferImpl::copy(Vector<uint8_t>&&, size_t)
+void BufferImpl::copy(std::span<const uint8_t>, size_t)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -56,6 +56,21 @@ RefPtr<SharedMemory> SharedMemory::copyBuffer(const FragmentedSharedBuffer& buff
     return sharedMemory;
 }
 
+RefPtr<SharedMemory> SharedMemory::copySpan(std::span<const uint8_t> span)
+{
+    if (!span.size())
+        return nullptr;
+
+    auto sharedMemory = allocate(span.size());
+    if (!sharedMemory)
+        return nullptr;
+
+    auto destination = sharedMemory->mutableSpan();
+    memcpySpan(destination, span);
+
+    return sharedMemory;
+}
+
 Ref<SharedBuffer> SharedMemory::createSharedBuffer(size_t dataSize) const
 {
     ASSERT(dataSize <= size());
