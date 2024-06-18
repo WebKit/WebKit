@@ -464,7 +464,6 @@ crypto/algorithms/CryptoAlgorithmECDH.cpp
 crypto/algorithms/CryptoAlgorithmX25519.cpp
 css/CSSBasicShapes.cpp
 css/CSSCounterStyleDescriptors.cpp
-css/CSSCounterStyleRegistry.cpp
 css/CSSFontFace.cpp
 css/CSSFontFaceSet.cpp
 css/CSSFontFaceSource.cpp
@@ -679,7 +678,6 @@ html/NumberInputType.cpp
 html/OffscreenCanvas.cpp
 html/PermissionsPolicy.cpp
 html/PluginDocument.cpp
-html/PublicURLManager.cpp
 html/RadioInputType.cpp
 html/RangeInputType.cpp
 html/SearchInputType.cpp
@@ -773,7 +771,6 @@ loader/WorkerThreadableLoader.cpp
 loader/appcache/ApplicationCacheGroup.cpp
 loader/appcache/ApplicationCacheHost.cpp
 loader/appcache/ApplicationCacheStorage.cpp
-loader/archive/ArchiveResourceCollection.cpp
 loader/archive/cf/LegacyWebArchive.cpp
 loader/cache/CachedImage.cpp
 loader/cache/CachedResourceLoader.cpp
@@ -925,7 +922,6 @@ platform/graphics/filters/software/FECompositeSoftwareArithmeticApplier.cpp
 platform/graphics/filters/software/FEConvolveMatrixSoftwareApplier.cpp
 platform/graphics/filters/software/FEImageSoftwareApplier.cpp
 platform/graphics/filters/software/FEMorphologySoftwareApplier.cpp
-platform/graphics/filters/software/SourceAlphaSoftwareApplier.cpp
 platform/graphics/mac/ComplexTextControllerCoreText.mm
 platform/graphics/mac/controls/MeterMac.mm
 platform/graphics/mac/controls/ProgressBarMac.mm
