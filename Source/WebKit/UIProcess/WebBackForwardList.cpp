@@ -87,7 +87,7 @@ void WebBackForwardList::pageClosed()
             didRemoveItem(m_entries[i]);
     }
 
-    m_page = nullptr;
+    m_page.clear();
     m_entries.clear();
     m_currentIndex = std::nullopt;
 }
@@ -96,13 +96,14 @@ void WebBackForwardList::addItem(Ref<WebBackForwardListItem>&& newItem)
 {
     ASSERT(!m_currentIndex || *m_currentIndex < m_entries.size());
 
-    if (!m_page)
+    RefPtr page = m_page.get();
+    if (!page)
         return;
 
     Vector<Ref<WebBackForwardListItem>> removedItems;
     
     if (m_currentIndex) {
-        m_page->recordAutomaticNavigationSnapshot();
+        page->recordAutomaticNavigationSnapshot();
 
         // Toss everything in the forward list.
         unsigned targetSize = *m_currentIndex + 1;
@@ -144,7 +145,7 @@ void WebBackForwardList::addItem(Ref<WebBackForwardListItem>&& newItem)
         ASSERT(m_entries.isEmpty());
         m_currentIndex = 0;
     } else {
-        shouldKeepCurrentItem = m_page->shouldKeepCurrentBackForwardListItemInList(m_entries[*m_currentIndex]);
+        shouldKeepCurrentItem = page->shouldKeepCurrentBackForwardListItemInList(m_entries[*m_currentIndex]);
         if (shouldKeepCurrentItem)
             ++*m_currentIndex;
     }
@@ -167,14 +168,15 @@ void WebBackForwardList::addItem(Ref<WebBackForwardListItem>&& newItem)
     }
 
     LOG(BackForward, "(Back/Forward) WebBackForwardList %p added an item. Current size %zu, current index %zu, threw away %zu items", this, m_entries.size(), *m_currentIndex, removedItems.size());
-    m_page->didChangeBackForwardList(newItemPtr, WTFMove(removedItems));
+    page->didChangeBackForwardList(newItemPtr, WTFMove(removedItems));
 }
 
 void WebBackForwardList::goToItem(WebBackForwardListItem& item)
 {
     ASSERT(!m_currentIndex || *m_currentIndex < m_entries.size());
 
-    if (!m_entries.size() || !m_page || !m_currentIndex)
+    RefPtr page = m_page.get();
+    if (!m_entries.size() || !page || !m_currentIndex)
         return;
 
     size_t targetIndex = notFound;
@@ -194,7 +196,7 @@ void WebBackForwardList::goToItem(WebBackForwardListItem& item)
     if (targetIndex < *m_currentIndex) {
         unsigned delta = m_entries.size() - targetIndex - 1;
         String deltaValue = delta > 10 ? "over10"_s : String::number(delta);
-        m_page->logDiagnosticMessage(WebCore::DiagnosticLoggingKeys::backNavigationDeltaKey(), deltaValue, ShouldSample::No);
+        page->logDiagnosticMessage(WebCore::DiagnosticLoggingKeys::backNavigationDeltaKey(), deltaValue, ShouldSample::No);
     }
 
     // If we're going to an item different from the current item, ask the client if the current
@@ -202,8 +204,8 @@ void WebBackForwardList::goToItem(WebBackForwardListItem& item)
     auto& currentItem = m_entries[*m_currentIndex];
     bool shouldKeepCurrentItem = true;
     if (currentItem.ptr() != &item) {
-        m_page->recordAutomaticNavigationSnapshot();
-        shouldKeepCurrentItem = m_page->shouldKeepCurrentBackForwardListItemInList(m_entries[*m_currentIndex]);
+        page->recordAutomaticNavigationSnapshot();
+        shouldKeepCurrentItem = page->shouldKeepCurrentBackForwardListItemInList(m_entries[*m_currentIndex]);
     }
 
     // If the client said to remove the current item, remove it and then update the target index.
@@ -224,7 +226,7 @@ void WebBackForwardList::goToItem(WebBackForwardListItem& item)
     m_currentIndex = targetIndex;
 
     LOG(BackForward, "(Back/Forward) WebBackForwardList %p going to item %s, is now at index %zu", this, item.itemID().toString().utf8().data(), targetIndex);
-    m_page->didChangeBackForwardList(nullptr, WTFMove(removedItems));
+    page->didChangeBackForwardList(nullptr, WTFMove(removedItems));
 }
 
 WebBackForwardListItem* WebBackForwardList::currentItem() const
@@ -349,7 +351,7 @@ void WebBackForwardList::removeAllItems()
         didRemoveItem(entry);
 
     m_currentIndex = std::nullopt;
-    m_page->didChangeBackForwardList(nullptr, std::exchange(m_entries, { }));
+    protectedPage()->didChangeBackForwardList(nullptr, std::exchange(m_entries, { }));
 }
 
 void WebBackForwardList::clear()
@@ -358,8 +360,9 @@ void WebBackForwardList::clear()
 
     LOG(BackForward, "(Back/Forward) WebBackForwardList %p clear (has %zu of them)", this, m_entries.size());
 
+    RefPtr page = m_page.get();
     size_t size = m_entries.size();
-    if (!m_page || size <= 1)
+    if (!page || size <= 1)
         return;
 
     RefPtr<WebBackForwardListItem> currentItem = this->currentItem();
@@ -373,7 +376,7 @@ void WebBackForwardList::clear()
             didRemoveItem(entry);
 
         m_currentIndex = std::nullopt;
-        m_page->didChangeBackForwardList(nullptr, std::exchange(m_entries, { }));
+        page->didChangeBackForwardList(nullptr, std::exchange(m_entries, { }));
 
         return;
     }
@@ -397,7 +400,7 @@ void WebBackForwardList::clear()
         m_entries.append(currentItem.releaseNonNull());
     else
         m_currentIndex = std::nullopt;
-    m_page->didChangeBackForwardList(nullptr, WTFMove(removedItems));
+    page->didChangeBackForwardList(nullptr, WTFMove(removedItems));
 }
 
 BackForwardListState WebBackForwardList::backForwardListState(WTF::Function<bool (WebBackForwardListItem&)>&& filter) const
@@ -465,7 +468,7 @@ void WebBackForwardList::didRemoveItem(WebBackForwardListItem& backForwardListIt
 {
     backForwardListItem.wasRemovedFromBackForwardList();
 
-    m_page->backForwardRemovedItem(backForwardListItem.itemID());
+    protectedPage()->backForwardRemovedItem(backForwardListItem.itemID());
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     backForwardListItem.setSnapshot(nullptr);
@@ -538,6 +541,11 @@ WebBackForwardListItem* WebBackForwardList::goBackItemSkippingItemsWithoutUserGe
 WebBackForwardListItem* WebBackForwardList::goForwardItemSkippingItemsWithoutUserGesture() const
 {
     return itemSkippingBackForwardItemsAddedByJSWithoutUserGesture(*this, NavigationDirection::Forward);
+}
+
+RefPtr<WebPageProxy> WebBackForwardList::protectedPage()
+{
+    return m_page.get();
 }
 
 #if !LOG_DISABLED

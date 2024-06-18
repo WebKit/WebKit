@@ -30,6 +30,7 @@
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace API {
 class Array;
@@ -95,7 +96,9 @@ private:
 
     void didRemoveItem(WebBackForwardListItem&);
 
-    WebPageProxy* m_page;
+    RefPtr<WebPageProxy> protectedPage();
+
+    WeakPtr<WebPageProxy> m_page;
     BackForwardListItemVector m_entries;
     std::optional<size_t> m_currentIndex;
 };
