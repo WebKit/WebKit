@@ -54,7 +54,7 @@ IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 IGNORE_CLANG_WARNINGS_END
 #endif
 
-#if USE(NICOSIA)
+#if USE(NICOSIA) && ENABLE(OFFSCREEN_CANVAS)
 
 namespace Nicosia {
 
@@ -229,4 +229,4 @@ Ref<PlaceholderRenderingContextSource> PlaceholderRenderingContextSource::create
 
 }
 
-#endif // USE(NICOSIA)
+#endif // USE(NICOSIA) && ENABLE(OFFSCREEN_CANVAS)
