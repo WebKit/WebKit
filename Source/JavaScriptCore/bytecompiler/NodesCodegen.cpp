@@ -4046,14 +4046,9 @@ RegisterID* ShortCircuitReadModifyBracketNode::emitBytecode(BytecodeGenerator& g
 
 RegisterID* CommaNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    DebugHookType debugHookType = isOnlyChildOfStatement() ? WillExecuteStatement : WillExecuteExpression;
-
     CommaNode* node = this;
-    for (; node->next(); node = node->next()) {
-        generator.emitDebugHook(debugHookType, node->m_expr->position());
+    for (; node->next(); node = node->next())
         generator.emitNodeInIgnoreResultPosition(node->m_expr);
-    }
-    generator.emitDebugHook(debugHookType, node->m_expr->position());
     return generator.emitNodeInTailPosition(dst, node->m_expr);
 }
 

@@ -263,6 +263,15 @@ PAUSE AT testCommas:45:5
      46
      47    function testChainedExpressions() {
 
+PAUSE AT testCommas:45:14
+     41            y = 2,
+     42            z = 3;
+     43        a(), b(), c();
+ ->  44        true && (|a(), b(), c()) && true;
+     45    }
+     46
+     47    function testChainedExpressions() {
+
 PAUSE AT testCommas:45:19
      41            y = 2,
      42            z = 3;
