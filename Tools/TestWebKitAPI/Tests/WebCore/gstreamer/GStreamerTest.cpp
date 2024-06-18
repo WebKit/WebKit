@@ -49,6 +49,21 @@ void GStreamerTest::TearDownTestSuite()
     gst_deinit();
 }
 
+TEST_F(GStreamerTest, gstStructureGetters)
+{
+    GUniquePtr<GstStructure> structure(gst_structure_new("foo", "int-val", G_TYPE_INT, -5, "int64-val", G_TYPE_INT64, -10, "uint-val", G_TYPE_UINT, 5, "uint64-val", G_TYPE_UINT64, 10, "double-val", G_TYPE_DOUBLE, 1.0, nullptr));
+    ASSERT_EQ(gstStructureGet<int>(structure.get(), "int-val"_s), -5);
+    ASSERT_TRUE(!gstStructureGet<int>(structure.get(), "int-val-noexist"_s).has_value());
+    ASSERT_EQ(gstStructureGet<int64_t>(structure.get(), "int64-val"_s), -10);
+    ASSERT_TRUE(!gstStructureGet<int64_t>(structure.get(), "int64-val-noexist"_s).has_value());
+    ASSERT_EQ(gstStructureGet<unsigned>(structure.get(), "uint-val"_s), 5);
+    ASSERT_TRUE(!gstStructureGet<unsigned>(structure.get(), "uint-val-noexist"_s).has_value());
+    ASSERT_EQ(gstStructureGet<uint64_t>(structure.get(), "uint64-val"_s), 10);
+    ASSERT_TRUE(!gstStructureGet<uint64_t>(structure.get(), "uint64-val-noexist"_s).has_value());
+    ASSERT_EQ(gstStructureGet<double>(structure.get(), "double-val"_s), 1.0);
+    ASSERT_TRUE(!gstStructureGet<double>(structure.get(), "double-val-noexist"_s).has_value());
+}
+
 TEST_F(GStreamerTest, gstStructureJSONSerializing)
 {
     GUniquePtr<GstStructure> structure(gst_structure_new("foo", "int-val", G_TYPE_INT, 5, "str-val", G_TYPE_STRING, "foo", "bool-val", G_TYPE_BOOLEAN, TRUE, nullptr));
