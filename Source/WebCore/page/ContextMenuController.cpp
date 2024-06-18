@@ -374,6 +374,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagToggleVideoEnhancedFullscreen:
         m_context.hitTestResult().toggleEnhancedFullscreenForVideo();
         break;
+    case ContextMenuItemTagToggleVideoViewer:
+        m_context.hitTestResult().toggleVideoViewer();
+        break;
     case ContextMenuItemTagOpenFrameInNewWindow: {
         RefPtr loader = frame->loader().documentLoader();
         if (!loader->unreachableURL().isEmpty())
@@ -947,6 +950,7 @@ void ContextMenuController::populate()
         contextMenuItemTagEnterVideoFullscreen());
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     ContextMenuItem ToggleVideoEnhancedFullscreen(ContextMenuItemType::Action, ContextMenuItemTagToggleVideoEnhancedFullscreen, contextMenuItemTagEnterVideoEnhancedFullscreen());
+    ContextMenuItem ToggleVideoViewer(ContextMenuItemType::Action, ContextMenuItemTagToggleVideoViewer, contextMenuItemTagEnterVideoViewer());
 #endif
 
 #if ENABLE(PDFJS)
@@ -1138,12 +1142,14 @@ void ContextMenuController::populate()
             appendItem(ToggleMediaControls, m_contextMenu.get());
             appendItem(ToggleMediaLoop, m_contextMenu.get());
 #if SUPPORTS_TOGGLE_VIDEO_FULLSCREEN
-            appendItem(ToggleVideoFullscreen, m_contextMenu.get());
+            if (!m_context.hitTestResult().mediaIsInVideoViewer())
+                appendItem(ToggleVideoFullscreen, m_contextMenu.get());
 #else
             appendItem(EnterVideoFullscreen, m_contextMenu.get());
 #endif
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
             appendItem(ToggleVideoEnhancedFullscreen, m_contextMenu.get());
+            appendItem(ToggleVideoViewer, m_contextMenu.get());
 #endif
             if (m_context.hitTestResult().isDownloadableMedia() && loader->client().canHandleRequest(ResourceRequest(mediaURL))) {
                 appendItem(*separatorItem(), m_contextMenu.get());
@@ -1740,6 +1746,11 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             item.setTitle(m_context.hitTestResult().mediaIsInEnhancedFullscreen() ? contextMenuItemTagExitVideoEnhancedFullscreen() : contextMenuItemTagEnterVideoEnhancedFullscreen());
 #endif
             shouldEnable = m_context.hitTestResult().mediaSupportsEnhancedFullscreen();
+            break;
+        case ContextMenuItemTagToggleVideoViewer:
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+            item.setTitle(m_context.hitTestResult().mediaIsInVideoViewer() ? contextMenuItemTagExitVideoViewer() : contextMenuItemTagEnterVideoViewer());
+#endif
             break;
         case ContextMenuItemTagOpenFrameInNewWindow:
         case ContextMenuItemTagSpellingGuess:

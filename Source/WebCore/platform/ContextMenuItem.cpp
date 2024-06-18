@@ -262,6 +262,7 @@ static bool isValidContextMenuAction(WebCore::ContextMenuAction action)
     case ContextMenuAction::ContextMenuItemTagDictationAlternative:
     case ContextMenuAction::ContextMenuItemTagToggleVideoFullscreen:
     case ContextMenuAction::ContextMenuItemTagShareMenu:
+    case ContextMenuAction::ContextMenuItemTagToggleVideoViewer:
     case ContextMenuAction::ContextMenuItemTagToggleVideoEnhancedFullscreen:
     case ContextMenuAction::ContextMenuItemTagLookUpImage:
     case ContextMenuAction::ContextMenuItemTagTranslate:

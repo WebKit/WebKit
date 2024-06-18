@@ -160,6 +160,8 @@ namespace WebCore {
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     String contextMenuItemTagEnterVideoEnhancedFullscreen();
     String contextMenuItemTagExitVideoEnhancedFullscreen();
+    String contextMenuItemTagEnterVideoViewer();
+    String contextMenuItemTagExitVideoViewer();
 #endif
     String contextMenuItemTagMediaPlay();
     String contextMenuItemTagMediaPause();

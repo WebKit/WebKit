@@ -542,6 +542,31 @@ void HitTestResult::enterFullscreenForVideo() const
 #endif
 }
 
+bool HitTestResult::mediaIsInVideoViewer() const
+{
+#if PLATFORM(MAC) && ENABLE(VIDEO) && ENABLE(VIDEO_PRESENTATION_MODE)
+    HTMLMediaElement* mediaElt(mediaElement());
+    return is<HTMLVideoElement>(mediaElt) && mediaElt->fullscreenMode() == HTMLMediaElementEnums::VideoFullscreenModeInWindow;
+#else
+    return false;
+#endif
+}
+
+void HitTestResult::toggleVideoViewer() const
+{
+#if PLATFORM(MAC) && ENABLE(VIDEO) && ENABLE(VIDEO_PRESENTATION_MODE)
+    RefPtr mediaElement(this->mediaElement());
+    RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(mediaElement);
+    if (!videoElement || !mediaElement->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeInWindow))
+        return;
+
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes, &mediaElement->document());
+    auto newMode = videoElement->webkitPresentationMode() == HTMLVideoElement::VideoPresentationMode::InWindow ? HTMLVideoElement::VideoPresentationMode::Inline : HTMLVideoElement::VideoPresentationMode::InWindow;
+
+    videoElement->webkitSetPresentationMode(newMode);
+#endif
+}
+
 bool HitTestResult::mediaControlsEnabled() const
 {
 #if ENABLE(VIDEO)

@@ -54,6 +54,7 @@ NSString * const _WKMenuItemIdentifierShowHideMediaControls = @"WKMenuItemIdenti
 NSString * const _WKMenuItemIdentifierShowHideMediaStats = @"WKMenuItemIdentifierShowHideMediaStats";
 NSString * const _WKMenuItemIdentifierToggleEnhancedFullScreen = @"WKMenuItemIdentifierToggleEnhancedFullScreen";
 NSString * const _WKMenuItemIdentifierToggleFullScreen = @"WKMenuItemIdentifierToggleFullScreen";
+NSString * const _WKMenuItemIdentifierToggleVideoViewer = @"WKMenuItemIdentifierToggleVideoViewer";
 
 NSString * const _WKMenuItemIdentifierShareMenu = @"WKMenuItemIdentifierShareMenu";
 NSString * const _WKMenuItemIdentifierSpeechMenu = @"WKMenuItemIdentifierSpeechMenu";

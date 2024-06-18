@@ -405,6 +405,8 @@ static std::optional<WebCore::ContextMenuAction> toAction(NSInteger tag)
         return ContextMenuItemTagEnterVideoFullscreen;
     case WebMenuItemTagToggleVideoEnhancedFullscreen:
         return ContextMenuItemTagToggleVideoEnhancedFullscreen;
+    case WebMenuItemTagToggleVideoViewer:
+        return ContextMenuItemTagToggleVideoViewer;
     case WebMenuItemTagMediaPlayPause:
         return ContextMenuItemTagMediaPlayPause;
     case WebMenuItemTagMediaMute:
@@ -593,6 +595,8 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         return WebMenuItemTagShareMenu;
     case ContextMenuItemTagToggleVideoEnhancedFullscreen:
         return WebMenuItemTagToggleVideoEnhancedFullscreen;
+    case ContextMenuItemTagToggleVideoViewer:
+        return WebMenuItemTagToggleVideoViewer;
     case ContextMenuItemTagTranslate:
         return WebMenuItemTagTranslate;
     case ContextMenuItemTagSwapCharacters:

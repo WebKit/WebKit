@@ -175,6 +175,9 @@
 /* Allow button title in speech recognition prompt */
 "Allow (speechrecognition)" = "Allow";
 
+/* Display USDZ file */
+"Allow (usdz QuickLook Preview)" = "Allow (usdz QuickLook Preview)";
+
 /* Allow button title in user media prompt */
 "Allow (usermedia)" = "Allow";
 
@@ -286,11 +289,11 @@
 /* Button title in Device Orientation Permission API prompt */
 "Cancel (device motion and orientation access)" = "Cancel";
 
+/* Cancel USDZ file */
+"Cancel (usdz QuickLook Preview)" = "Cancel (usdz QuickLook Preview)";
+
 /* Title for Cancel button label in button bar */
 "Cancel button label in button bar" = "Cancel";
-
-/* Cancel USDZ file */
-"Cancel (usdz QuickLook Preview)" = "Cancel";
 
 /* Capitalize context menu item */
 "Capitalize" = "Capitalize";
@@ -439,9 +442,6 @@
 /* Undo action name */
 "Dictation (Undo action name)" = "Dictation";
 
-/* Display USDZ file */
-"Allow (usdz QuickLook Preview)" = "Allow";
-
 /* Message for requesting cross-site cookie and website data access. */
 "Do you want to allow “%@” and “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” and “%@” to use cookies and website data while browsing “%@”?";
 
@@ -550,6 +550,9 @@
 /* menu item */
 "Enter Picture in Picture" = "Enter Picture in Picture";
 
+/* Enter Video Viewer context menu item */
+"Enter Viewer" = "Enter Viewer";
+
 /* Validation message for input form controls of type 'url' that have an invalid value */
 "Enter a URL" = "Enter a URL";
 
@@ -582,6 +585,9 @@
 
 /* menu item */
 "Exit Picture in Picture" = "Exit Picture in Picture";
+
+/* Exit Video Viewer context menu item */
+"Exit Viewer" = "Exit Viewer";
 
 /* Codec Strings */
 "Extended Profile (AVC Codec Profile)" = "Extended Profile";
@@ -1096,6 +1102,9 @@
 /* Title for Open in External Application Link action button */
 "Open in “%@”" = "Open in “%@”";
 
+/* Open 3D object in a new window? */
+"Open this 3D model?" = "Open this 3D model?";
+
 /* context menu item for PDF */
 "Open with %@" = "Open with %@";
 
@@ -1317,9 +1326,6 @@
 
 /* Title for Show Text action button */
 "Show Text" = "Show Text";
-
-/* Open 3D object in a new window? */
-"Open this 3D model?" = "Open this 3D model?";
 
 /* Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin */
 "Show in blocked plug-in" = "Show in blocked plug-in";
