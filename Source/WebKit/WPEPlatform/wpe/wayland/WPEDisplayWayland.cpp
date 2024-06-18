@@ -182,14 +182,6 @@ static void wpeDisplayWaylandDispose(GObject* object)
         auto monitor = priv->monitors.takeLast();
         wpe_monitor_invalidate(monitor.get());
     }
-#if USE(LIBDRM)
-    g_clear_pointer(&priv->dmabufFeedback, zwp_linux_dmabuf_feedback_v1_destroy);
-#endif
-    g_clear_pointer(&priv->linuxDMABuf, zwp_linux_dmabuf_v1_destroy);
-    g_clear_pointer(&priv->wlSHM, wl_shm_destroy);
-    g_clear_pointer(&priv->xdgWMBase, xdg_wm_base_destroy);
-    g_clear_pointer(&priv->wlCompositor, wl_compositor_destroy);
-    g_clear_pointer(&priv->wlDisplay, wl_display_disconnect);
     if (priv->textInputManagerV1) {
         g_clear_pointer(&priv->textInputV1, zwp_text_input_v1_destroy);
         g_clear_pointer(&priv->textInputManagerV1, zwp_text_input_manager_v1_destroy);
@@ -198,6 +190,15 @@ static void wpeDisplayWaylandDispose(GObject* object)
         g_clear_pointer(&priv->textInputV3, zwp_text_input_v3_destroy);
         g_clear_pointer(&priv->textInputManagerV3, zwp_text_input_manager_v3_destroy);
     }
+#if USE(LIBDRM)
+    g_clear_pointer(&priv->dmabufFeedback, zwp_linux_dmabuf_feedback_v1_destroy);
+#endif
+    g_clear_pointer(&priv->linuxDMABuf, zwp_linux_dmabuf_v1_destroy);
+    g_clear_pointer(&priv->wlSHM, wl_shm_destroy);
+    g_clear_pointer(&priv->xdgWMBase, xdg_wm_base_destroy);
+    g_clear_pointer(&priv->wlCompositor, wl_compositor_destroy);
+    g_clear_pointer(&priv->wlDisplay, wl_display_disconnect);
+
     G_OBJECT_CLASS(wpe_display_wayland_parent_class)->dispose(object);
 }
 
