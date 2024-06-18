@@ -884,11 +884,11 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() co
                 HashMap<String, RefPtr<Inspector::Protocol::CSS::CSSProperty>>::iterator activeIt = propertyNameToPreviousActiveProperty.find(canonicalPropertyName);
                 if (activeIt != propertyNameToPreviousActiveProperty.end()) {
                     if (propertyEntry.parsedOk) {
-                        auto newPriority = activeIt->value->getString(Inspector::Protocol::CSS::CSSProperty::priorityKey);
+                        auto newPriority = activeIt->value->getString("priority"_s);
                         if (!!newPriority)
                             previousPriority = newPriority;
 
-                        auto newStatus = activeIt->value->getString(Inspector::Protocol::CSS::CSSProperty::statusKey);
+                        auto newStatus = activeIt->value->getString("status"_s);
                         if (!!newStatus) {
                             previousStatus = newStatus;
                             if (previousStatus != Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::CSS::CSSPropertyStatus::Inactive)) {
@@ -901,7 +901,7 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() co
                             }
                         }
                     } else {
-                        auto previousParsedOk = activeIt->value->getBoolean(Inspector::Protocol::CSS::CSSProperty::parsedOkKey);
+                        auto previousParsedOk = activeIt->value->getBoolean("parsedOk"_s);
                         if (previousParsedOk && !previousParsedOk)
                             shouldInactivate = true;
                     }

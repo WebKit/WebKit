@@ -150,13 +150,13 @@ static std::optional<Color> parseColor(RefPtr<JSON::Object>&& colorObject)
     if (!colorObject)
         return std::nullopt;
 
-    auto r = colorObject->getInteger(Inspector::Protocol::DOM::RGBAColor::rKey);
-    auto g = colorObject->getInteger(Inspector::Protocol::DOM::RGBAColor::gKey);
-    auto b = colorObject->getInteger(Inspector::Protocol::DOM::RGBAColor::bKey);
+    auto r = colorObject->getInteger("r"_s);
+    auto g = colorObject->getInteger("g"_s);
+    auto b = colorObject->getInteger("b"_s);
     if (!r || !g || !b)
         return std::nullopt;
 
-    auto a = colorObject->getDouble(Inspector::Protocol::DOM::RGBAColor::aKey);
+    auto a = colorObject->getDouble("a"_s);
     if (!a)
         return { makeFromComponentsClamping<SRGBA<uint8_t>>(*r, *g, *b) };
     return { makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(*r, *g, *b, convertFloatAlphaTo<uint8_t>(*a)) };
@@ -1321,11 +1321,11 @@ std::unique_ptr<InspectorOverlay::Highlight::Config> InspectorDOMAgent::highligh
     }
 
     auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
-    highlightConfig->showInfo = highlightInspectorObject->getBoolean(Inspector::Protocol::DOM::HighlightConfig::showInfoKey).value_or(false);
-    highlightConfig->content = parseOptionalConfigColor(Inspector::Protocol::DOM::HighlightConfig::contentColorKey, *highlightInspectorObject);
-    highlightConfig->padding = parseOptionalConfigColor(Inspector::Protocol::DOM::HighlightConfig::paddingColorKey, *highlightInspectorObject);
-    highlightConfig->border = parseOptionalConfigColor(Inspector::Protocol::DOM::HighlightConfig::borderColorKey, *highlightInspectorObject);
-    highlightConfig->margin = parseOptionalConfigColor(Inspector::Protocol::DOM::HighlightConfig::marginColorKey, *highlightInspectorObject);
+    highlightConfig->showInfo = highlightInspectorObject->getBoolean("showInfo"_s).value_or(false);
+    highlightConfig->content = parseOptionalConfigColor("contentColor"_s, *highlightInspectorObject);
+    highlightConfig->padding = parseOptionalConfigColor("paddingColor"_s, *highlightInspectorObject);
+    highlightConfig->border = parseOptionalConfigColor("borderColor"_s, *highlightInspectorObject);
+    highlightConfig->margin = parseOptionalConfigColor("marginColor"_s, *highlightInspectorObject);
     return highlightConfig;
 }
 
@@ -1334,7 +1334,7 @@ std::optional<InspectorOverlay::Grid::Config> InspectorDOMAgent::gridOverlayConf
     if (!gridOverlayInspectorObject)
         return std::nullopt;
 
-    auto gridColor = parseRequiredConfigColor(Inspector::Protocol::DOM::GridOverlayConfig::gridColorKey, *gridOverlayInspectorObject);
+    auto gridColor = parseRequiredConfigColor("gridColor"_s, *gridOverlayInspectorObject);
     if (!gridColor) {
         errorString = "Internal error: grid color property of grid overlay configuration parameter is missing"_s;
         return std::nullopt;
@@ -1342,11 +1342,11 @@ std::optional<InspectorOverlay::Grid::Config> InspectorDOMAgent::gridOverlayConf
 
     InspectorOverlay::Grid::Config gridOverlayConfig;
     gridOverlayConfig.gridColor = *gridColor;
-    gridOverlayConfig.showLineNames = gridOverlayInspectorObject->getBoolean(Inspector::Protocol::DOM::GridOverlayConfig::showLineNamesKey).value_or(false);
-    gridOverlayConfig.showLineNumbers = gridOverlayInspectorObject->getBoolean(Inspector::Protocol::DOM::GridOverlayConfig::showLineNumbersKey).value_or(false);
-    gridOverlayConfig.showExtendedGridLines = gridOverlayInspectorObject->getBoolean(Inspector::Protocol::DOM::GridOverlayConfig::showExtendedGridLinesKey).value_or(false);
-    gridOverlayConfig.showTrackSizes = gridOverlayInspectorObject->getBoolean(Inspector::Protocol::DOM::GridOverlayConfig::showTrackSizesKey).value_or(false);
-    gridOverlayConfig.showAreaNames = gridOverlayInspectorObject->getBoolean(Inspector::Protocol::DOM::GridOverlayConfig::showAreaNamesKey).value_or(false);
+    gridOverlayConfig.showLineNames = gridOverlayInspectorObject->getBoolean("showLineNames"_s).value_or(false);
+    gridOverlayConfig.showLineNumbers = gridOverlayInspectorObject->getBoolean("showLineNumbers"_s).value_or(false);
+    gridOverlayConfig.showExtendedGridLines = gridOverlayInspectorObject->getBoolean("showExtendedGridLines"_s).value_or(false);
+    gridOverlayConfig.showTrackSizes = gridOverlayInspectorObject->getBoolean("showTrackSizes"_s).value_or(false);
+    gridOverlayConfig.showAreaNames = gridOverlayInspectorObject->getBoolean("showAreaNames"_s).value_or(false);
     return gridOverlayConfig;
 }
 
@@ -1355,7 +1355,7 @@ std::optional<InspectorOverlay::Flex::Config> InspectorDOMAgent::flexOverlayConf
     if (!flexOverlayInspectorObject)
         return std::nullopt;
 
-    auto flexColor = parseRequiredConfigColor(Inspector::Protocol::DOM::FlexOverlayConfig::flexColorKey, *flexOverlayInspectorObject);
+    auto flexColor = parseRequiredConfigColor("flexColor"_s, *flexOverlayInspectorObject);
     if (!flexColor) {
         errorString = "Internal error: flex color property of flex overlay configuration parameter is missing"_s;
         return std::nullopt;
@@ -1363,7 +1363,7 @@ std::optional<InspectorOverlay::Flex::Config> InspectorDOMAgent::flexOverlayConf
 
     InspectorOverlay::Flex::Config flexOverlayConfig;
     flexOverlayConfig.flexColor = *flexColor;
-    flexOverlayConfig.showOrderNumbers = flexOverlayInspectorObject->getBoolean(Inspector::Protocol::DOM::FlexOverlayConfig::showOrderNumbersKey).value_or(false);
+    flexOverlayConfig.showOrderNumbers = flexOverlayInspectorObject->getBoolean("showOrderNumbers"_s).value_or(false);
     return flexOverlayConfig;
 }
 

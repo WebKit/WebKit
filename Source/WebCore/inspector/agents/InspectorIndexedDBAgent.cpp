@@ -250,7 +250,7 @@ private:
 
 static RefPtr<IDBKey> idbKeyFromInspectorObject(Ref<JSON::Object>&& key)
 {
-    auto typeString = key->getString(Inspector::Protocol::IndexedDB::Key::typeKey);
+    auto typeString = key->getString("type"_s);
     if (!typeString)
         return nullptr;
 
@@ -260,28 +260,28 @@ static RefPtr<IDBKey> idbKeyFromInspectorObject(Ref<JSON::Object>&& key)
 
     switch (*type) {
     case Inspector::Protocol::IndexedDB::Key::Type::Number: {
-        auto number = key->getDouble(Inspector::Protocol::IndexedDB::Key::numberKey);
+        auto number = key->getDouble("number"_s);
         if (!number)
             return nullptr;
         return IDBKey::createNumber(*number);
     }
 
     case Inspector::Protocol::IndexedDB::Key::Type::String: {
-        auto string = key->getString(Inspector::Protocol::IndexedDB::Key::stringKey);
+        auto string = key->getString("string"_s);
         if (!string)
             return nullptr;
         return IDBKey::createString(string);
     }
 
     case Inspector::Protocol::IndexedDB::Key::Type::Date: {
-        auto date = key->getDouble(Inspector::Protocol::IndexedDB::Key::dateKey);
+        auto date = key->getDouble("date"_s);
         if (!date)
             return nullptr;
         return IDBKey::createDate(*date);
     }
 
     case Inspector::Protocol::IndexedDB::Key::Type::Array: {
-        auto array = key->getArray(Inspector::Protocol::IndexedDB::Key::arrayKey);
+        auto array = key->getArray("array"_s);
         if (!array)
             return nullptr;
 
@@ -303,24 +303,24 @@ static RefPtr<IDBKey> idbKeyFromInspectorObject(Ref<JSON::Object>&& key)
 static RefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(JSON::Object& keyRange)
 {
     RefPtr<IDBKey> idbLower;
-    if (auto lower = keyRange.getObject(Inspector::Protocol::IndexedDB::KeyRange::lowerKey)) {
+    if (auto lower = keyRange.getObject("lower"_s)) {
         idbLower = idbKeyFromInspectorObject(lower.releaseNonNull());
         if (!idbLower)
             return nullptr;
     }
 
     RefPtr<IDBKey> idbUpper;
-    if (auto upper = keyRange.getObject(Inspector::Protocol::IndexedDB::KeyRange::upperKey)) {
+    if (auto upper = keyRange.getObject("upper"_s)) {
         idbUpper = idbKeyFromInspectorObject(upper.releaseNonNull());
         if (!idbUpper)
             return nullptr;
     }
 
-    auto lowerOpen = keyRange.getBoolean(Inspector::Protocol::IndexedDB::KeyRange::lowerOpenKey);
+    auto lowerOpen = keyRange.getBoolean("lowerOpen"_s);
     if (!lowerOpen)
         return nullptr;
 
-    auto upperOpen = keyRange.getBoolean(Inspector::Protocol::IndexedDB::KeyRange::upperOpenKey);
+    auto upperOpen = keyRange.getBoolean("upperOpen"_s);
     if (!upperOpen)
         return nullptr;
 

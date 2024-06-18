@@ -70,7 +70,6 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         sections.append(Template(CppTemplates.ImplementationPrelude).substitute(None, **header_args))
         sections.append('namespace Protocol {')
         sections.extend(self._generate_enum_mapping_and_conversion_methods(domains))
-        sections.append(self._generate_open_field_names())
         builder_sections = list(map(self._generate_builders_for_domain, domains))
         sections.extend([section for section in builder_sections if len(section) > 0])
         sections.append('} // namespace Protocol')
@@ -172,20 +171,6 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         sections.append('} // namespace %s' % self.helpers_namespace())
         return sections
 
-    def _generate_open_field_names(self):
-        lines = []
-        for domain in self.domains_to_generate():
-            domain_lines = []
-            type_declarations = self.type_declarations_for_domain(domain)
-            for type_declaration in [decl for decl in type_declarations if Generator.type_has_open_fields(decl.type)]:
-                open_members = Generator.open_fields(type_declaration)
-                for type_member in sorted(open_members, key=lambda member: member.member_name):
-                    domain_lines.append('const ASCIILiteral Protocol::%s::%s::%sKey = "%s"_s;' % (domain.domain_name, ucfirst(type_declaration.type_name), type_member.member_name, type_member.member_name))
-            if len(domain_lines):
-                lines.append(self.wrap_with_guard_for_condition(domain.condition, '\n'.join(domain_lines)))
-
-        return '\n'.join(lines)
-
     def _generate_builders_for_domain(self, domain):
         sections = []
         type_declarations = self.type_declarations_for_domain(domain)
@@ -248,9 +233,8 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         BindingTraits<%(memberType)s>::assertValueHasExpectedType(%(memberName)sPos->value.ptr());
     }""" % args)
 
-        if should_count_properties:
-            lines.append('')
-            lines.append('    size_t foundPropertiesCount = %s;' % len(required_members))
+        lines.append('')
+        lines.append('    size_t foundPropertiesCount = %s;' % len(required_members))
 
         for type_member in optional_members:
             member_type = type_member.type
@@ -272,14 +256,12 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         if (%(memberName)sPos != object->end()) {
             BindingTraits<%(memberType)s>::assertValueHasExpectedType(%(memberName)sPos->value.ptr());""" % args)
 
-            if should_count_properties:
-                lines.append('            ++foundPropertiesCount;')
+            lines.append('            ++foundPropertiesCount;')
             lines.append('        }')
             lines.append('    }')
 
-        if should_count_properties:
-            lines.append('    if (foundPropertiesCount != object->size())')
-            lines.append('        FATAL("Unexpected properties in object: %s\\n", object->toJSONString().ascii().data());')
+        lines.append('    if (foundPropertiesCount %s object->size())' % ('!=' if should_count_properties else '>='))
+        lines.append('        FATAL("Unexpected properties in object: %s\\n", object->toJSONString().ascii().data());')
         lines.append('#endif')
         lines.append('}')
         return '\n'.join(lines)

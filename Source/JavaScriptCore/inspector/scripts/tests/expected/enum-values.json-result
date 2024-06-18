@@ -599,8 +599,6 @@ template<> std::optional<Protocol::TypeDomain::Enum> parseEnumValueFromString<Pr
 
 } // namespace TestHelpers
 
-
-
 } // namespace Protocol
 
 } // namespace Inspector

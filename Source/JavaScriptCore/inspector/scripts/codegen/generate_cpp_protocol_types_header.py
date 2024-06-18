@@ -269,14 +269,6 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         for member in optional_members:
             lines.append(self._generate_unchecked_setter_for_member(member, domain))
 
-        if Generator.type_has_open_fields(type_declaration.type):
-            lines.append('')
-            lines.append('    // Property names for type generated as open.')
-            open_members = Generator.open_fields(type_declaration)
-            for type_member in open_members:
-                export_macro = self.model().framework.setting('export_macro', None)
-                lines.append('    %s static const ASCIILiteral %sKey;' % (export_macro, type_member.member_name))
-
         lines.append('};')
         return self.wrap_with_guard_for_condition(type_declaration.condition, '\n'.join(lines))
 

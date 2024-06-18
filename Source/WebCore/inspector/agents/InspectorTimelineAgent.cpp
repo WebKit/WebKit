@@ -781,7 +781,7 @@ static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType ty
 
 void InspectorTimelineAgent::addRecordToTimeline(Ref<JSON::Object>&& record, TimelineRecordType type)
 {
-    record->setString(Inspector::Protocol::Timeline::TimelineEvent::typeKey, Inspector::Protocol::Helpers::getEnumConstantValue(toProtocol(type)));
+    record->setString("type"_s, Inspector::Protocol::Helpers::getEnumConstantValue(toProtocol(type)));
 
     if (m_recordStack.isEmpty()) {
         // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
@@ -811,9 +811,9 @@ void InspectorTimelineAgent::setFrameIdentifier(JSON::Object* record, LocalFrame
 
 void InspectorTimelineAgent::didCompleteRecordEntry(const TimelineRecordEntry& entry)
 {
-    entry.record->setObject(Inspector::Protocol::Timeline::TimelineEvent::dataKey, entry.data.copyRef());
+    entry.record->setObject("data"_s, entry.data.copyRef());
     if (entry.children)
-        entry.record->setArray(Inspector::Protocol::Timeline::TimelineEvent::childrenKey, *entry.children);
+        entry.record->setArray("children"_s, *entry.children);
     entry.record->setDouble("endTime"_s, timestamp());
     addRecordToTimeline(entry.record.copyRef(), entry.type);
 }
@@ -838,7 +838,7 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
 void InspectorTimelineAgent::appendRecord(Ref<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, LocalFrame* frame, std::optional<double> startTime)
 {
     Ref<JSON::Object> record = TimelineRecordFactory::createGenericRecord(startTime.value_or(timestamp()), captureCallStack ? m_maxCallStackDepth : 0);
-    record->setObject(Inspector::Protocol::Timeline::TimelineEvent::dataKey, WTFMove(data));
+    record->setObject("data"_s, WTFMove(data));
     setFrameIdentifier(&record.get(), frame);
     addRecordToTimeline(WTFMove(record), type);
 }

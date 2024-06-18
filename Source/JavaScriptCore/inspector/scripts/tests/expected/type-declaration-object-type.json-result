@@ -1078,8 +1078,6 @@ template<> std::optional<Protocol::Test::ParameterBundle::Directionality> parseE
 
 } // namespace TestHelpers
 
-
-
 } // namespace Protocol
 
 } // namespace Inspector

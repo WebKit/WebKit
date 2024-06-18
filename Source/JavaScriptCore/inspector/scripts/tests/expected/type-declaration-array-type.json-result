@@ -453,8 +453,6 @@ template<> std::optional<Protocol::Debugger::Reason> parseEnumValueFromString<Pr
 
 } // namespace TestHelpers
 
-
-
 } // namespace Protocol
 
 } // namespace Inspector

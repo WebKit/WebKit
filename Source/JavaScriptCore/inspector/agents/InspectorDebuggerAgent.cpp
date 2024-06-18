@@ -114,9 +114,9 @@ static T parseBreakpointOptions(Protocol::ErrorString& errorString, RefPtr<JSON:
     size_t ignoreCount = 0;
 
     if (options) {
-        condition = options->getString(Protocol::Debugger::BreakpointOptions::conditionKey);
+        condition = options->getString("condition"_s);
 
-        auto actionsPayload = options->getArray(Protocol::Debugger::BreakpointOptions::actionsKey);
+        auto actionsPayload = options->getArray("actions"_s);
         if (auto count = actionsPayload ? actionsPayload->length() : 0) {
             actions.reserveInitialCapacity(count);
 
@@ -127,7 +127,7 @@ static T parseBreakpointOptions(Protocol::ErrorString& errorString, RefPtr<JSON:
                     return { };
                 }
 
-                auto actionTypeString = actionObject->getString(Protocol::Debugger::BreakpointAction::typeKey);
+                auto actionTypeString = actionObject->getString("type"_s);
                 if (!actionTypeString) {
                     errorString = "Missing type for item in given actions"_s;
                     return { };
@@ -139,20 +139,20 @@ static T parseBreakpointOptions(Protocol::ErrorString& errorString, RefPtr<JSON:
 
                 JSC::Breakpoint::Action action(*actionType);
 
-                action.data = actionObject->getString(Protocol::Debugger::BreakpointAction::dataKey);
+                action.data = actionObject->getString("data"_s);
 
                 // Specifying an identifier is optional. They are used to correlate probe samples
                 // in the frontend across multiple backend probe actions and segregate object groups.
-                action.id = actionObject->getInteger(Protocol::Debugger::BreakpointAction::idKey).value_or(JSC::noBreakpointActionID);
+                action.id = actionObject->getInteger("id"_s).value_or(JSC::noBreakpointActionID);
 
-                action.emulateUserGesture = actionObject->getBoolean(Protocol::Debugger::BreakpointAction::emulateUserGestureKey).value_or(false);
+                action.emulateUserGesture = actionObject->getBoolean("emulateUserGesture"_s).value_or(false);
 
                 actions.append(WTFMove(action));
             }
         }
 
-        autoContinue = options->getBoolean(Protocol::Debugger::BreakpointOptions::autoContinueKey).value_or(false);
-        ignoreCount = options->getInteger(Protocol::Debugger::BreakpointOptions::ignoreCountKey).value_or(0);
+        autoContinue = options->getBoolean("autoContinue"_s).value_or(false);
+        ignoreCount = options->getInteger("ignoreCount"_s).value_or(0);
     }
 
     return callback(condition, WTFMove(actions), autoContinue, ignoreCount);
@@ -538,7 +538,7 @@ static Ref<Protocol::Debugger::Location> buildDebuggerLocation(const JSC::Breakp
 
 static bool parseLocation(Protocol::ErrorString& errorString, const JSON::Object& location, JSC::SourceID& sourceID, unsigned& lineNumber, unsigned& columnNumber)
 {
-    auto lineNumberValue = location.getInteger(Protocol::Debugger::Location::lineNumberKey);
+    auto lineNumberValue = location.getInteger("lineNumber"_s);
     if (!lineNumberValue) {
         errorString = "Unexpected non-integer lineNumber in given location"_s;
         sourceID = JSC::noSourceID;
@@ -547,7 +547,7 @@ static bool parseLocation(Protocol::ErrorString& errorString, const JSON::Object
 
     lineNumber = *lineNumberValue;
 
-    auto scriptIDStr = location.getString(Protocol::Debugger::Location::scriptIdKey);
+    auto scriptIDStr = location.getString("scriptId"_s);
     if (!scriptIDStr) {
         sourceID = JSC::noSourceID;
         errorString = "Unexepcted non-string scriptId in given location"_s;
@@ -555,7 +555,7 @@ static bool parseLocation(Protocol::ErrorString& errorString, const JSON::Object
     }
 
     sourceID = parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptIDStr).value_or(0);
-    columnNumber = location.getInteger(Protocol::Debugger::Location::columnNumberKey).value_or(0);
+    columnNumber = location.getInteger("columnNumber"_s).value_or(0);
     return true;
 }
 
