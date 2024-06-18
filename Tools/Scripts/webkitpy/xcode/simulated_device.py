@@ -367,6 +367,10 @@ class SimulatedDeviceManager(object):
     @staticmethod
     def _boot_device(device, host=None):
         host = host or SystemHost.get_default()
+
+        # FIXME: remove this workaround after rdar://129789675 has been resolved.
+        host.executive.run_command(['sh', '-c', "mkdir -m 700 -p " + "~/Library/Developer/CoreSimulator/Devices/" + device.udid + "/data/private/var/db"])
+
         _log.debug(u"Booting device '{}'".format(device.udid))
         device.platform_device.booted_by_script = True
         try:
