@@ -283,8 +283,8 @@ void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>
         }
 
         auto removeUserScriptsAndStyleSheets = ^(String scriptID) {
-            RefPtr registeredScript = m_registeredScriptsMap.take(scriptID);
-            registeredScript->removeUserScriptsAndStyleSheets(scriptID);
+            if (RefPtr registeredScript = m_registeredScriptsMap.take(scriptID))
+                registeredScript->removeUserScriptsAndStyleSheets(scriptID);
         };
 
         for (auto& scriptID : ids)
