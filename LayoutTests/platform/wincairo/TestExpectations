@@ -825,9 +825,11 @@ http/tests/resourceLoadStatistics/omit-referrer-for-navigation-ephemeral.html [ 
 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Failure ]
 
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-after-long-deletion.html [ Failure ]
+http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-js-cookie-checking.html [ Failure ]
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-unfiltered-link-decoration-after-short-deletion.html [ Failure ]
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-without-link-decoration.html [ Failure ]
 
+http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction-js-cookie-checking.html [ Failure ]
 http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html [ Failure ]
 
 http/tests/security/XFrameOptions/x-frame-options-deny.html [ Skip ] # Failure
