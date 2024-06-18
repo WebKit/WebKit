@@ -31,7 +31,6 @@
 
 namespace WebCore {
 
-struct StyleGradientImageStop;
 class StyleImage;
 
 namespace Style {
@@ -69,7 +68,7 @@ struct CSSGradientColorInterpolationMethod {
         return { { ColorInterpolationMethod::SRGB { }, alphaPremultiplication }, Default::SRGB };
     }
 
-    friend bool operator==(const CSSGradientColorInterpolationMethod&, const CSSGradientColorInterpolationMethod&) = default;
+    bool operator==(const CSSGradientColorInterpolationMethod&) const = default;
 };
 
 // MARK: Gradient Definitions.
@@ -85,8 +84,8 @@ inline bool operator==(const CSSGradientPosition& a, const CSSGradientPosition& 
 
 class CSSLinearGradientValue final : public CSSValue {
 public:
-    enum class Horizontal { Left, Right };
-    enum class Vertical { Top, Bottom };
+    enum class Horizontal : bool { Left, Right };
+    enum class Vertical : bool { Top, Bottom };
     struct Angle {
         Ref<CSSPrimitiveValue> value;
         friend bool operator==(const Angle&, const Angle&);
@@ -164,8 +163,8 @@ private:
 
 class CSSPrefixedLinearGradientValue final : public CSSValue {
 public:
-    enum class Horizontal { Left, Right };
-    enum class Vertical { Top, Bottom };
+    enum class Horizontal : bool { Left, Right };
+    enum class Vertical : bool { Top, Bottom };
     struct Angle {
         Ref<CSSPrimitiveValue> value;
         friend bool operator==(const Angle&, const Angle&);
@@ -312,8 +311,8 @@ bool operator==(const CSSDeprecatedLinearGradientValue::Data&, const CSSDeprecat
 
 class CSSRadialGradientValue final : public CSSValue {
 public:
-    enum class ShapeKeyword { Circle, Ellipse };
-    enum class ExtentKeyword { ClosestCorner, ClosestSide, FarthestCorner, FarthestSide };
+    enum class ShapeKeyword : bool { Circle, Ellipse };
+    enum class ExtentKeyword : uint8_t { ClosestCorner, ClosestSide, FarthestCorner, FarthestSide };
     struct Shape {
         ShapeKeyword shape;
         std::optional<CSSGradientPosition> position;
@@ -513,8 +512,8 @@ private:
 
 class CSSPrefixedRadialGradientValue final : public CSSValue {
 public:
-    enum class ShapeKeyword { Circle, Ellipse };
-    enum class ExtentKeyword { ClosestSide, ClosestCorner, FarthestSide, FarthestCorner, Contain, Cover };
+    enum class ShapeKeyword : bool { Circle, Ellipse };
+    enum class ExtentKeyword : uint8_t { ClosestSide, ClosestCorner, FarthestSide, FarthestCorner, Contain, Cover };
     struct ShapeAndExtent {
         ShapeKeyword shape;
         ExtentKeyword extent;

@@ -27,9 +27,11 @@
 #include "CSSGradientValue.h"
 
 #include "CSSCalcValue.h"
-#include "CSSToLengthConversionData.h"
+#include "CSSPrimitiveValueMappings.h"
 #include "CSSValueKeywords.h"
+#include "CalculationValue.h"
 #include "ColorInterpolation.h"
+#include "StyleBuilderConverter.h"
 #include "StyleBuilderState.h"
 #include "StyleGradientImage.h"
 #include <wtf/text/StringBuilder.h>
@@ -38,14 +40,18 @@ namespace WebCore {
 
 static bool styleImageIsCacheable(const CSSGradientColorStopList& stops)
 {
+    // FIXME: Can this be replaced via extending the `ComputedStyleDependencies` system?
+
     for (auto& stop : stops) {
+        if (stop.position && (stop.position->isFontRelativeLength() || stop.position->isContainerPercentageLength()))
+            return false;
         if (stop.color && Style::BuilderState::isColorFromPrimitiveValueDerivedFromElement(*stop.color))
             return false;
     }
     return true;
 }
 
-static inline std::optional<StyleColor> computeStyleColor(const RefPtr<CSSPrimitiveValue>& color, Style::BuilderState& state)
+static inline std::optional<StyleColor> computeStopColor(const RefPtr<CSSPrimitiveValue>& color, Style::BuilderState& state)
 {
     if (!color)
         return std::nullopt;
@@ -53,10 +59,49 @@ static inline std::optional<StyleColor> computeStyleColor(const RefPtr<CSSPrimit
     return state.colorFromPrimitiveValue(*color);
 }
 
-static decltype(auto) computeStops(const CSSGradientColorStopList& stops, Style::BuilderState& state)
+enum class StopPositionResolution { Standard, Deprecated };
+
+template<StopPositionResolution resolution>
+static inline std::optional<Length> computeLengthStopPosition(const RefPtr<CSSPrimitiveValue>& position, Style::BuilderState& state)
 {
-    return stops.map([&] (auto& stop) -> StyleGradientImageStop {
-        return { computeStyleColor(stop.color, state), stop.position };
+    if (!position)
+        return std::nullopt;
+
+    if constexpr (resolution == StopPositionResolution::Deprecated) {
+        if (position->isPercentage())
+            return Length(position->floatValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);
+        return Length(position->floatValue(CSSUnitType::CSS_NUMBER), LengthType::Fixed);
+    } else
+        return Style::BuilderConverter::convertLength(state, *position);
+}
+
+static inline std::variant<std::monostate, AngleRaw, PercentRaw> computeAngularStopPosition(const RefPtr<CSSPrimitiveValue>& position)
+{
+    if (!position)
+        return std::monostate { };
+
+    if (position->isPercentage())
+        return { PercentRaw { position->doubleValue(CSSUnitType::CSS_PERCENTAGE) } };
+
+    if (position->isAngle())
+        return { AngleRaw { position->primitiveType(), position->doubleValue() } };
+
+    ASSERT_NOT_REACHED();
+    return std::monostate { };
+}
+
+template<StopPositionResolution resolution>
+static decltype(auto) computeLengthStops(const CSSGradientColorStopList& stops, Style::BuilderState& state)
+{
+    return stops.map([&](auto& stop) -> StyleGradientImageLengthStop {
+        return { computeStopColor(stop.color, state), computeLengthStopPosition<resolution>(stop.position, state) };
+    });
+}
+
+static decltype(auto) computeAngularStops(const CSSGradientColorStopList& stops, Style::BuilderState& state)
+{
+    return stops.map([&](auto& stop) -> StyleGradientImageAngularStop {
+        return { computeStopColor(stop.color, state), computeAngularStopPosition(stop.position) };
     });
 }
 
@@ -67,9 +112,12 @@ RefPtr<StyleImage> CSSLinearGradientValue::createStyleImage(Style::BuilderState&
 
     auto styleImage = StyleGradientImage::create(
         // FIXME: The parameters to LinearData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
-        StyleGradientImage::LinearData { m_data, m_repeating },
-        m_colorInterpolationMethod,
-        computeStops(m_stops, state)
+        StyleGradientImage::LinearData {
+            m_data,
+            m_repeating,
+            computeLengthStops<StopPositionResolution::Standard>(m_stops, state)
+        },
+        m_colorInterpolationMethod
     );
     if (styleImageIsCacheable(m_stops))
         m_cachedStyleImage = styleImage.ptr();
@@ -84,9 +132,12 @@ RefPtr<StyleImage> CSSPrefixedLinearGradientValue::createStyleImage(Style::Build
 
     auto styleImage = StyleGradientImage::create(
         // FIXME: The parameters to LinearData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
-        StyleGradientImage::PrefixedLinearData { m_data, m_repeating },
-        m_colorInterpolationMethod,
-        computeStops(m_stops, state)
+        StyleGradientImage::PrefixedLinearData {
+            m_data,
+            m_repeating,
+            computeLengthStops<StopPositionResolution::Standard>(m_stops, state)
+        },
+        m_colorInterpolationMethod
     );
     if (styleImageIsCacheable(m_stops))
         m_cachedStyleImage = styleImage.ptr();
@@ -101,9 +152,11 @@ RefPtr<StyleImage> CSSDeprecatedLinearGradientValue::createStyleImage(Style::Bui
 
     auto styleImage = StyleGradientImage::create(
         // FIXME: The parameters to LinearData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
-        StyleGradientImage::DeprecatedLinearData { m_data },
-        m_colorInterpolationMethod,
-        computeStops(m_stops, state)
+        StyleGradientImage::DeprecatedLinearData {
+            m_data,
+            computeLengthStops<StopPositionResolution::Deprecated>(m_stops, state)
+        },
+        m_colorInterpolationMethod
     );
     if (styleImageIsCacheable(m_stops))
         m_cachedStyleImage = styleImage.ptr();
@@ -118,9 +171,12 @@ RefPtr<StyleImage> CSSRadialGradientValue::createStyleImage(Style::BuilderState&
 
     auto styleImage = StyleGradientImage::create(
         // FIXME: The parameters to RadialData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
-        StyleGradientImage::RadialData { m_data, m_repeating },
-        m_colorInterpolationMethod,
-        computeStops(m_stops, state)
+        StyleGradientImage::RadialData {
+            m_data,
+            m_repeating,
+            computeLengthStops<StopPositionResolution::Standard>(m_stops, state)
+        },
+        m_colorInterpolationMethod
     );
     if (styleImageIsCacheable(m_stops))
         m_cachedStyleImage = styleImage.ptr();
@@ -135,9 +191,12 @@ RefPtr<StyleImage> CSSPrefixedRadialGradientValue::createStyleImage(Style::Build
 
     auto styleImage = StyleGradientImage::create(
         // FIXME: The parameters to RadialData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
-        StyleGradientImage::PrefixedRadialData { m_data, m_repeating },
-        m_colorInterpolationMethod,
-        computeStops(m_stops, state)
+        StyleGradientImage::PrefixedRadialData {
+            m_data,
+            m_repeating,
+            computeLengthStops<StopPositionResolution::Standard>(m_stops, state)
+        },
+        m_colorInterpolationMethod
     );
     if (styleImageIsCacheable(m_stops))
         m_cachedStyleImage = styleImage.ptr();
@@ -152,9 +211,11 @@ RefPtr<StyleImage> CSSDeprecatedRadialGradientValue::createStyleImage(Style::Bui
 
     auto styleImage = StyleGradientImage::create(
         // FIXME: The parameters to RadialData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
-        StyleGradientImage::DeprecatedRadialData { m_data },
-        m_colorInterpolationMethod,
-        computeStops(m_stops, state)
+        StyleGradientImage::DeprecatedRadialData {
+            m_data,
+            computeLengthStops<StopPositionResolution::Deprecated>(m_stops, state)
+        },
+        m_colorInterpolationMethod
     );
     if (styleImageIsCacheable(m_stops))
         m_cachedStyleImage = styleImage.ptr();
@@ -169,9 +230,12 @@ RefPtr<StyleImage> CSSConicGradientValue::createStyleImage(Style::BuilderState& 
 
     auto styleImage = StyleGradientImage::create(
         // FIXME: The parameters to ConicData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
-        StyleGradientImage::ConicData { m_data, m_repeating },
-        m_colorInterpolationMethod,
-        computeStops(m_stops, state)
+        StyleGradientImage::ConicData {
+            m_data,
+            m_repeating,
+            computeAngularStops(m_stops, state)
+        },
+        m_colorInterpolationMethod
     );
     if (styleImageIsCacheable(m_stops))
         m_cachedStyleImage = styleImage.ptr();

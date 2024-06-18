@@ -96,6 +96,7 @@ public:
     bool isX() const { return primitiveType() == CSSUnitType::CSS_X; }
     bool isResolution() const { return unitCategory(primitiveType()) == CSSUnitCategory::Resolution; }
     bool isViewportPercentageLength() const { return isViewportPercentageLength(primitiveUnitType()); }
+    bool isContainerPercentageLength() const { return isContainerPercentageLength(primitiveUnitType()); }
     bool isFlex() const { return primitiveType() == CSSUnitType::CSS_FR; }
     bool isAnchor() const { return primitiveType() == CSSUnitType::CSS_ANCHOR; }
 
@@ -236,6 +237,7 @@ private:
     static constexpr bool isFontIndependentLength(CSSUnitType);
     static constexpr bool isFontRelativeLength(CSSUnitType);
     static constexpr bool isRootFontRelativeLength(CSSUnitType);
+    static constexpr bool isContainerPercentageLength(CSSUnitType);
     static constexpr bool isViewportPercentageLength(CSSUnitType);
 
     union {
@@ -287,6 +289,16 @@ constexpr bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
         || isRootFontRelativeLength(type);
 }
 
+constexpr bool CSSPrimitiveValue::isContainerPercentageLength(CSSUnitType type)
+{
+    return type == CSSUnitType::CSS_CQW
+        || type == CSSUnitType::CSS_CQH
+        || type == CSSUnitType::CSS_CQI
+        || type == CSSUnitType::CSS_CQB
+        || type == CSSUnitType::CSS_CQMIN
+        || type == CSSUnitType::CSS_CQMAX;
+}
+
 constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
 {
     return type == CSSUnitType::CSS_EM
@@ -298,14 +310,9 @@ constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
         || type == CSSUnitType::CSS_PT
         || type == CSSUnitType::CSS_PC
         || type == CSSUnitType::CSS_Q
-        || type == CSSUnitType::CSS_CQW
-        || type == CSSUnitType::CSS_CQH
-        || type == CSSUnitType::CSS_CQI
-        || type == CSSUnitType::CSS_CQB
-        || type == CSSUnitType::CSS_CQMIN
-        || type == CSSUnitType::CSS_CQMAX
         || isFontRelativeLength(type)
         || isViewportPercentageLength(type)
+        || isContainerPercentageLength(type)
         || type == CSSUnitType::CSS_QUIRKY_EM;
 }
 

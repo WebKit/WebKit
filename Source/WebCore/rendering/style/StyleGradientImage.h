@@ -27,67 +27,79 @@
 #pragma once
 
 #include "CSSGradientValue.h"
+#include "Length.h"
 #include "StyleColor.h"
 #include "StyleGeneratedImage.h"
 #include <variant>
 
 namespace WebCore {
 
+template<typename Position>
 struct StyleGradientImageStop {
     std::optional<StyleColor> color;
-    RefPtr<CSSPrimitiveValue> position;
+    Position position;
+
+    bool operator==(const StyleGradientImageStop&) const = default;
 };
+
+using StyleGradientImageLengthStop = StyleGradientImageStop<std::optional<Length>>;
+using StyleGradientImageAngularStop = StyleGradientImageStop<std::variant<std::monostate, AngleRaw, PercentRaw>>;
 
 class StyleGradientImage final : public StyleGeneratedImage {
 public:
-    using Stop = StyleGradientImageStop;
-
     struct LinearData {
         CSSLinearGradientValue::Data data;
         CSSGradientRepeat repeating;
+        Vector<StyleGradientImageLengthStop> stops;
 
         friend bool operator==(const LinearData&, const LinearData&) = default;
     };
     struct PrefixedLinearData {
         CSSPrefixedLinearGradientValue::Data data;
         CSSGradientRepeat repeating;
+        Vector<StyleGradientImageLengthStop> stops;
 
         friend bool operator==(const PrefixedLinearData&, const PrefixedLinearData&) = default;
     };
     struct DeprecatedLinearData {
         CSSDeprecatedLinearGradientValue::Data data;
+        Vector<StyleGradientImageLengthStop> stops;
 
         friend bool operator==(const DeprecatedLinearData&, const DeprecatedLinearData&) = default;
     };
     struct RadialData {
         CSSRadialGradientValue::Data data;
         CSSGradientRepeat repeating;
+        Vector<StyleGradientImageLengthStop> stops;
 
         friend bool operator==(const RadialData&, const RadialData&) = default;
     };
     struct PrefixedRadialData {
         CSSPrefixedRadialGradientValue::Data data;
         CSSGradientRepeat repeating;
+        Vector<StyleGradientImageLengthStop> stops;
 
         friend bool operator==(const PrefixedRadialData&, const PrefixedRadialData&) = default;
     };
     struct DeprecatedRadialData {
         CSSDeprecatedRadialGradientValue::Data data;
+        Vector<StyleGradientImageLengthStop> stops;
 
         friend bool operator==(const DeprecatedRadialData&, const DeprecatedRadialData&) = default;
     };
     struct ConicData {
         CSSConicGradientValue::Data data;
         CSSGradientRepeat repeating;
+        Vector<StyleGradientImageAngularStop> stops;
 
         friend bool operator==(const ConicData&, const ConicData&) = default;
     };
 
     using Data = std::variant<LinearData, DeprecatedLinearData, PrefixedLinearData, RadialData, DeprecatedRadialData, PrefixedRadialData, ConicData>;
 
-    static Ref<StyleGradientImage> create(Data data, CSSGradientColorInterpolationMethod colorInterpolationMethod, Vector<StyleGradientImageStop> stops)
+    static Ref<StyleGradientImage> create(Data data, CSSGradientColorInterpolationMethod colorInterpolationMethod)
     {
-        return adoptRef(*new StyleGradientImage(WTFMove(data), colorInterpolationMethod, WTFMove(stops)));
+        return adoptRef(*new StyleGradientImage(WTFMove(data), colorInterpolationMethod));
     }
     virtual ~StyleGradientImage();
 
@@ -97,7 +109,7 @@ public:
     static constexpr bool isFixedSize = false;
 
 private:
-    explicit StyleGradientImage(Data&&, CSSGradientColorInterpolationMethod, Vector<StyleGradientImageStop>&&);
+    explicit StyleGradientImage(Data&&, CSSGradientColorInterpolationMethod);
 
     Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
     bool isPending() const final;
@@ -116,12 +128,11 @@ private:
     Ref<Gradient> createGradient(const DeprecatedRadialData&, const RenderElement&, const FloatSize&, const RenderStyle&) const;
     Ref<Gradient> createGradient(const ConicData&, const RenderElement&, const FloatSize&, const RenderStyle&) const;
 
-    template<typename GradientAdapter> GradientColorStops computeStops(GradientAdapter&, const CSSToLengthConversionData&, const RenderStyle&, float maxLengthForRepeat, CSSGradientRepeat) const;
-    template<typename GradientAdapter> GradientColorStops computeStopsForDeprecatedVariants(GradientAdapter&, const CSSToLengthConversionData&, const RenderStyle&) const;
+    template<typename GradientAdapter, typename Stops> GradientColorStops computeStops(GradientAdapter&, const Stops&, const RenderStyle&, float maxLengthForRepeat, CSSGradientRepeat) const;
+    template<typename GradientAdapter, typename Stops> GradientColorStops computeStopsForDeprecatedVariants(GradientAdapter&, const Stops&, const RenderStyle&) const;
 
     Data m_data;
     CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
-    Vector<StyleGradientImageStop> m_stops;
     bool m_knownCacheableBarringFilter { false };
 };
 

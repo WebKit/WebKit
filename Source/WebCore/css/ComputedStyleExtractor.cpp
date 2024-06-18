@@ -402,7 +402,7 @@ static Ref<CSSPrimitiveValue> zoomAdjustedPixelValue(double value, const RenderS
     return CSSPrimitiveValue::create(adjustFloatForAbsoluteZoom(value, style), CSSUnitType::CSS_PX);
 }
 
-static Ref<CSSPrimitiveValue> zoomAdjustedPixelValueForLength(const Length& length, const RenderStyle& style)
+Ref<CSSPrimitiveValue> ComputedStyleExtractor::zoomAdjustedPixelValueForLength(const Length& length, const RenderStyle& style)
 {
     if (length.isFixed())
         return zoomAdjustedPixelValue(length.value(), style);
@@ -431,12 +431,12 @@ static Ref<CSSValueList> createPositionListForLayer(CSSPropertyID propertyID, co
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPosition || propertyID == CSSPropertyMaskPosition || propertyID == CSSPropertyWebkitMaskPosition);
         list.append(createConvertingToCSSValueID(layer.backgroundXOrigin()));
     }
-    list.append(zoomAdjustedPixelValueForLength(layer.xPosition(), style));
+    list.append(ComputedStyleExtractor::zoomAdjustedPixelValueForLength(layer.xPosition(), style));
     if (layer.isBackgroundYOriginSet() && layer.backgroundYOrigin() != Edge::Top) {
         ASSERT(propertyID == CSSPropertyBackgroundPosition || propertyID == CSSPropertyMaskPosition || propertyID == CSSPropertyWebkitMaskPosition);
         list.append(createConvertingToCSSValueID(layer.backgroundYOrigin()));
     }
-    list.append(zoomAdjustedPixelValueForLength(layer.yPosition(), style));
+    list.append(ComputedStyleExtractor::zoomAdjustedPixelValueForLength(layer.yPosition(), style));
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
@@ -444,14 +444,14 @@ static Ref<CSSValue> createSingleAxisPositionValueForLayer(CSSPropertyID propert
 {
     if (propertyID == CSSPropertyBackgroundPositionX || propertyID == CSSPropertyWebkitMaskPositionX) {
         if (!layer.isBackgroundXOriginSet() || layer.backgroundXOrigin() == Edge::Left)
-            return zoomAdjustedPixelValueForLength(layer.xPosition(), style);
+            return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(layer.xPosition(), style);
         return CSSValueList::createSpaceSeparated(createConvertingToCSSValueID(layer.backgroundXOrigin()),
-            zoomAdjustedPixelValueForLength(layer.xPosition(), style));
+            ComputedStyleExtractor::zoomAdjustedPixelValueForLength(layer.xPosition(), style));
     }
     if (!layer.isBackgroundYOriginSet() || layer.backgroundYOrigin() == Edge::Top)
-        return zoomAdjustedPixelValueForLength(layer.yPosition(), style);
+        return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(layer.yPosition(), style);
     return CSSValueList::createSpaceSeparated(createConvertingToCSSValueID(layer.backgroundYOrigin()),
-        zoomAdjustedPixelValueForLength(layer.yPosition(), style));
+        ComputedStyleExtractor::zoomAdjustedPixelValueForLength(layer.yPosition(), style));
 }
 
 static Length getOffsetComputedLength(const RenderStyle& style, CSSPropertyID propertyID)
@@ -537,7 +537,7 @@ static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropert
     // If the element is not displayed; return the "computed value".
     CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
     if (!box)
-        return zoomAdjustedPixelValueForLength(offset, style);
+        return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(offset, style);
 
     auto* containingBlock = box->containingBlock();
 
@@ -573,7 +573,7 @@ static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropert
 
     // Return a "computed value" length.
     if (!offset.isAuto())
-        return zoomAdjustedPixelValueForLength(offset, style);
+        return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(offset, style);
 
     // The property won't be overconstrained if its computed value is "auto", so the "used value" can be returned.
     if (box->isRelativelyPositioned())
@@ -633,7 +633,7 @@ static Ref<CSSPrimitiveValue> percentageOrZoomAdjustedValue(Length length, const
     if (length.isPercent())
         return CSSPrimitiveValue::create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
 
-    return zoomAdjustedPixelValueForLength(length, style);
+    return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(length, style);
 }
 
 static Ref<CSSPrimitiveValue> autoOrZoomAdjustedValue(Length length, const RenderStyle& style)
@@ -641,7 +641,7 @@ static Ref<CSSPrimitiveValue> autoOrZoomAdjustedValue(Length length, const Rende
     if (length.isAuto())
         return CSSPrimitiveValue::create(CSSValueAuto);
 
-    return zoomAdjustedPixelValueForLength(length, style);
+    return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(length, style);
 }
 
 static Ref<CSSValue> valueForQuotes(const QuotesData* quotes)
@@ -766,7 +766,7 @@ RefPtr<CSSFunctionValue> transformOperationAsCSSValue(const TransformOperation& 
     auto translateLengthAsCSSValue = [&](const Length& length) {
         if (length.isZero())
             return CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX);
-        return zoomAdjustedPixelValueForLength(length, style);
+        return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(length, style);
     };
 
     auto includeLength = [](const Length& length) -> bool {
@@ -844,7 +844,7 @@ RefPtr<CSSFunctionValue> transformOperationAsCSSValue(const TransformOperation& 
     // perspective
     case TransformOperation::Type::Perspective:
         if (auto perspective = uncheckedDowncast<PerspectiveTransformOperation>(operation).perspective())
-            return CSSFunctionValue::create(CSSValuePerspective, zoomAdjustedPixelValueForLength(*perspective, style));
+            return CSSFunctionValue::create(CSSValuePerspective, ComputedStyleExtractor::zoomAdjustedPixelValueForLength(*perspective, style));
         return CSSFunctionValue::create(CSSValuePerspective, CSSPrimitiveValue::create(CSSValueNone));
     // matrix
     case TransformOperation::Type::Matrix:
@@ -903,7 +903,7 @@ static Ref<CSSValue> computedTranslate(RenderObject* renderer, const RenderStyle
     };
 
     auto value = [&](const Length& length) {
-        return zoomAdjustedPixelValueForLength(length, style);
+        return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(length, style);
     };
 
     if (includeLength(translate->z()))
@@ -1052,7 +1052,7 @@ static Ref<CSSValue> specifiedValueForGridTrackBreadth(const GridLength& trackBr
     const Length& trackBreadthLength = trackBreadth.length();
     if (trackBreadthLength.isAuto())
         return CSSPrimitiveValue::create(CSSValueAuto);
-    return zoomAdjustedPixelValueForLength(trackBreadthLength, style);
+    return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(trackBreadthLength, style);
 }
 
 static Ref<CSSValue> specifiedValueForGridTrackSize(const GridTrackSize& trackSize, const RenderStyle& style)
@@ -1061,7 +1061,7 @@ static Ref<CSSValue> specifiedValueForGridTrackSize(const GridTrackSize& trackSi
     case LengthTrackSizing:
         return specifiedValueForGridTrackBreadth(trackSize.minTrackBreadth(), style);
     case FitContentTrackSizing:
-        return CSSFunctionValue::create(CSSValueFitContent, zoomAdjustedPixelValueForLength(trackSize.fitContentTrackBreadth().length(), style));
+        return CSSFunctionValue::create(CSSValueFitContent, ComputedStyleExtractor::zoomAdjustedPixelValueForLength(trackSize.fitContentTrackBreadth().length(), style));
     default:
         ASSERT(trackSize.type() == MinMaxTrackSizing);
         if (trackSize.minTrackBreadth().isAuto() && trackSize.maxTrackBreadth().isFlex())
@@ -1794,8 +1794,8 @@ static Element* styleElementForNode(Node* node)
 
 static Ref<CSSValue> valueForPosition(const RenderStyle& style, const LengthPoint& position)
 {
-    return CSSValueList::createSpaceSeparated(zoomAdjustedPixelValueForLength(position.x(), style),
-        zoomAdjustedPixelValueForLength(position.y(), style));
+    return CSSValueList::createSpaceSeparated(ComputedStyleExtractor::zoomAdjustedPixelValueForLength(position.x(), style),
+        ComputedStyleExtractor::zoomAdjustedPixelValueForLength(position.y(), style));
 }
 
 static bool isAuto(const LengthPoint& position)
@@ -1874,7 +1874,7 @@ static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathO
     case PathOperation::Ray: {
         auto& ray = uncheckedDowncast<RayPathOperation>(*operation);
         auto angle = CSSPrimitiveValue::create(ray.angle(), CSSUnitType::CSS_DEG);
-        RefPtr<CSSValuePair> position = ray.position().x().isAuto() ? nullptr : RefPtr { CSSValuePair::createNoncoalescing(Ref { zoomAdjustedPixelValueForLength(ray.position().x(), style) }, Ref { zoomAdjustedPixelValueForLength(ray.position().y(), style) }) };
+        RefPtr<CSSValuePair> position = ray.position().x().isAuto() ? nullptr : RefPtr { CSSValuePair::createNoncoalescing(Ref { ComputedStyleExtractor::zoomAdjustedPixelValueForLength(ray.position().x(), style) }, Ref { ComputedStyleExtractor::zoomAdjustedPixelValueForLength(ray.position().y(), style) }) };
         return CSSRayValue::create(WTFMove(angle), valueIDForRaySize(ray.size()), ray.isContaining(), WTFMove(position), ray.referenceBox());
     }
     }
@@ -1889,10 +1889,10 @@ static Ref<CSSValue> valueForContainIntrinsicSize(const RenderStyle& style, cons
     case ContainIntrinsicSizeType::None:
         return CSSPrimitiveValue::create(CSSValueNone);
     case ContainIntrinsicSizeType::Length:
-        return zoomAdjustedPixelValueForLength(containIntrinsicLength.value(), style);
+        return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(containIntrinsicLength.value(), style);
     case ContainIntrinsicSizeType::AutoAndLength:
         return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueAuto),
-            zoomAdjustedPixelValueForLength(containIntrinsicLength.value(), style));
+            ComputedStyleExtractor::zoomAdjustedPixelValueForLength(containIntrinsicLength.value(), style));
     case ContainIntrinsicSizeType::AutoAndNone:
         return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueAuto), CSSPrimitiveValue::create(CSSValueNone));
     }
@@ -2086,7 +2086,7 @@ static Ref<CSSValue> textDecorationThicknessToCSSValue(const RenderStyle& style,
     const auto& length = textDecorationThickness.length();
     if (length.isPercent())
         return CSSPrimitiveValue::create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
-    return zoomAdjustedPixelValueForLength(length, style);
+    return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(length, style);
 }
 
 static Ref<CSSValue> renderEmphasisPositionFlagsToCSSValue(OptionSet<TextEmphasisPosition> textEmphasisPosition)
@@ -2218,10 +2218,10 @@ static Ref<CSSValue> fillSizeToCSSValue(CSSPropertyID propertyID, const FillSize
         return CSSPrimitiveValue::create(CSSValueCover);
 
     if (fillSize.size.height.isAuto() && (propertyID == CSSPropertyMaskSize || fillSize.size.width.isAuto()))
-        return zoomAdjustedPixelValueForLength(fillSize.size.width, style);
+        return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(fillSize.size.width, style);
 
-    return CSSValueList::createSpaceSeparated(zoomAdjustedPixelValueForLength(fillSize.size.width, style),
-        zoomAdjustedPixelValueForLength(fillSize.size.height, style));
+    return CSSValueList::createSpaceSeparated(ComputedStyleExtractor::zoomAdjustedPixelValueForLength(fillSize.size.width, style),
+        ComputedStyleExtractor::zoomAdjustedPixelValueForLength(fillSize.size.height, style));
 }
 
 static Ref<CSSValue> contentToCSSValue(const RenderStyle& style)
@@ -2435,7 +2435,7 @@ static RefPtr<CSSValue> zoomAdjustedPaddingOrMarginPixelValue(const RenderStyle&
     Length unzoomedLength = (style.*lengthGetter)();
     auto* renderBox = dynamicDowncast<RenderBox>(renderer);
     if (!renderBox || unzoomedLength.isFixed())
-        return zoomAdjustedPixelValueForLength(unzoomedLength, style);
+        return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(unzoomedLength, style);
     return zoomAdjustedPixelValue((renderBox->*computedCSSValueGetter)(), style);
 }
 
