@@ -163,8 +163,16 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::FrameData::LayerData& 
     }
 
     bindCompositorTexturesForDisplay(*gl, data);
-    if (!m_displayAttachmentsSets[m_currentDisplayAttachmentIndex][0].colorBuffer.image)
+    auto displayAttachmentSet = reusableDisplayAttachmentsAtIndex(m_currentDisplayAttachmentIndex);
+    ASSERT(displayAttachmentSet);
+    if (!displayAttachmentSet) {
+        RELEASE_LOG_ERROR(XR, "WebXROpaqueFramebuffer::startFrame(): unable to find display attachments at index: %zu", m_currentDisplayAttachmentIndex);
         return;
+    }
+    if (!(*displayAttachmentSet)[0].colorBuffer.image) {
+        RELEASE_LOG_ERROR(XR, "WebXROpaqueFramebuffer::startFrame(): no color texture at index: %zu", m_currentDisplayAttachmentIndex);
+        return;
+    }
 
     m_renderingFrameIndex = data.renderingFrameIndex;
 
@@ -253,9 +261,16 @@ void WebXROpaqueFramebuffer::blitShared(GraphicsContextGL& gl)
 {
     ASSERT(!m_resolvedFBO, "blitShared should not require intermediate resolve buffers");
 
+    auto displayAttachmentSet = reusableDisplayAttachmentsAtIndex(m_currentDisplayAttachmentIndex);
+    ASSERT(displayAttachmentSet);
+    if (!displayAttachmentSet) {
+        RELEASE_LOG_ERROR(XR, "WebXROpaqueFramebuffer::blitShared(): unable to find display attachments at index: %zu", m_currentDisplayAttachmentIndex);
+        return;
+    }
+
     ensure(gl, m_displayFBO);
     gl.bindFramebuffer(GL::FRAMEBUFFER, m_displayFBO);
-    gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, m_displayAttachmentsSets[m_currentDisplayAttachmentIndex][0].colorBuffer.renderBufferObject);
+    gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, (*displayAttachmentSet)[0].colorBuffer.renderBufferObject);
     ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
     resolveMSAAFramebuffer(gl);
 }
@@ -269,6 +284,13 @@ void WebXROpaqueFramebuffer::blitSharedToLayered(GraphicsContextGL& gl)
     PlatformGLObject drawFBO = m_displayFBO;
     ASSERT(drawFBO, "drawFBO shouldn't be the default framebuffer");
 
+    auto displayAttachmentSet = reusableDisplayAttachmentsAtIndex(m_currentDisplayAttachmentIndex);
+    ASSERT(displayAttachmentSet);
+    if (!displayAttachmentSet) {
+        RELEASE_LOG_ERROR(XR, "WebXROpaqueFramebuffer::blitSharedToLayered(): unable to find display attachments at index: %zu", m_currentDisplayAttachmentIndex);
+        return;
+    }
+
     GCGLint xOffset = 0;
     GCGLint width = m_leftPhysicalSize.width();
     GCGLint height = m_leftPhysicalSize.height();
@@ -281,11 +303,11 @@ void WebXROpaqueFramebuffer::blitSharedToLayered(GraphicsContextGL& gl)
         gl.bindFramebuffer(GL::DRAW_FRAMEBUFFER, drawFBO);
 
         GCGLbitfield buffers = GL::COLOR_BUFFER_BIT;
-        gl.framebufferRenderbuffer(GL::DRAW_FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, m_displayAttachmentsSets[m_currentDisplayAttachmentIndex][layer].colorBuffer.renderBufferObject);
+        gl.framebufferRenderbuffer(GL::DRAW_FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, (*displayAttachmentSet)[layer].colorBuffer.renderBufferObject);
 
-        if (m_displayAttachmentsSets[m_currentDisplayAttachmentIndex][layer].depthStencilBuffer.image) {
+        if ((*displayAttachmentSet)[layer].depthStencilBuffer.image) {
             buffers |= GL::DEPTH_BUFFER_BIT;
-            gl.framebufferRenderbuffer(GL::DRAW_FRAMEBUFFER, GL::DEPTH_STENCIL_ATTACHMENT, GL::RENDERBUFFER, m_displayAttachmentsSets[m_currentDisplayAttachmentIndex][layer].depthStencilBuffer.renderBufferObject);
+            gl.framebufferRenderbuffer(GL::DRAW_FRAMEBUFFER, GL::DEPTH_STENCIL_ATTACHMENT, GL::RENDERBUFFER, (*displayAttachmentSet)[layer].depthStencilBuffer.renderBufferObject);
         }
         ASSERT(gl.checkFramebufferStatus(GL::DRAW_FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
 
@@ -460,6 +482,14 @@ void WebXROpaqueFramebuffer::bindCompositorTexturesForDisplay(GraphicsContextGL&
             createAndBindCompositorBuffer(gl, m_displayAttachmentsSets[m_currentDisplayAttachmentIndex][layer].depthStencilBuffer, GL::DEPTH24_STENCIL8, WTFMove(depthStencilBufferSource), layer);
         }
     }
+}
+
+const std::array<WebXRExternalAttachments, 2>* WebXROpaqueFramebuffer::reusableDisplayAttachmentsAtIndex(size_t index)
+{
+    if (index >= m_displayAttachmentsSets.size())
+        return nullptr;
+
+    return &m_displayAttachmentsSets[index];
 }
 
 void WebXROpaqueFramebuffer::releaseDisplayAttachmentsAtIndex(size_t index)
