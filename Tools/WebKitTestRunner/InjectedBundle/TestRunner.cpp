@@ -800,13 +800,11 @@ void TestRunner::setAsynchronousSpellCheckingEnabled(bool enabled)
 
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)
 {
-    WKBundleSetWebNotificationPermission(InjectedBundle::singleton().bundle(), page(), toWK(origin).get(), true);
     postSynchronousPageMessageWithReturnValue("GrantNotificationPermission", toWK(origin));
 }
 
 void TestRunner::denyWebNotificationPermission(JSStringRef origin)
 {
-    WKBundleSetWebNotificationPermission(InjectedBundle::singleton().bundle(), page(), toWK(origin).get(), false);
     postSynchronousPageMessageWithReturnValue("DenyNotificationPermission", toWK(origin));
 }
 

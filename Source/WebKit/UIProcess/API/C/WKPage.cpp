@@ -3235,3 +3235,8 @@ bool WKPageIsEditingCommandEnabledForTesting(WKPageRef pageRef, WKStringRef comm
 {
     return toImpl(pageRef)->isEditingCommandEnabledForTesting(toImpl(command)->string());
 }
+
+void WKPageSetPermissionLevelForTesting(WKPageRef pageRef, WKStringRef origin, bool allowed)
+{
+    toImpl(pageRef)->setPermissionLevelForTesting(toImpl(origin)->string(), allowed);
+}

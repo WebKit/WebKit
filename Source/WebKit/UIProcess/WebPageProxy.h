@@ -2484,6 +2484,7 @@ public:
     BrowsingContextGroup& browsingContextGroup() const { return m_browsingContextGroup; }
 
     bool isEditingCommandEnabledForTesting(const String&);
+    void setPermissionLevelForTesting(const String& origin, bool allowed);
 
 private:
     std::optional<Vector<uint8_t>> getWebCryptoMasterKey();

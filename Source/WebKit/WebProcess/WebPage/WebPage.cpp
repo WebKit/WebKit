@@ -9711,6 +9711,16 @@ void WebPage::updateLastNodeBeforeWritingSuggestions(const KeyboardEvent& event)
         m_lastNodeBeforeWritingSuggestions = frame->editor().nodeBeforeWritingSuggestions();
 }
 
+void WebPage::setPermissionLevelForTesting(const String& origin, bool allowed)
+{
+#if ENABLE(NOTIFICATIONS)
+    notificationPermissionRequestManager()->setPermissionLevelForTesting(origin, allowed);
+#else
+    UNUSED_PARAM(origin);
+    UNUSED_PARAM(allowed);
+#endif
+}
+
 } // namespace WebKit
 
 #undef WEBPAGE_RELEASE_LOG

@@ -14392,6 +14392,13 @@ bool WebPageProxy::isEditingCommandEnabledForTesting(const String& commandName)
     return result;
 }
 
+void WebPageProxy::setPermissionLevelForTesting(const String& origin, bool allowed)
+{
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPage::SetPermissionLevelForTesting(origin, allowed), pageID);
+    });
+}
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG

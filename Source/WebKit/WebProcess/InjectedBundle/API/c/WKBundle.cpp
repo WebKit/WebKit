@@ -186,11 +186,6 @@ void WKBundleSetUserStyleSheetLocationForTesting(WKBundleRef bundleRef, WKString
     WebKit::toImpl(bundleRef)->setUserStyleSheetLocation(WebKit::toWTFString(location));
 }
 
-void WKBundleSetWebNotificationPermission(WKBundleRef bundleRef, WKBundlePageRef pageRef, WKStringRef originStringRef, bool allowed)
-{
-    WebKit::toImpl(bundleRef)->setWebNotificationPermission(WebKit::toImpl(pageRef), WebKit::toWTFString(originStringRef), allowed);
-}
-
 void WKBundleRemoveAllWebNotificationPermissions(WKBundleRef bundleRef, WKBundlePageRef pageRef)
 {
     WebKit::toImpl(bundleRef)->removeAllWebNotificationPermissions(WebKit::toImpl(pageRef));

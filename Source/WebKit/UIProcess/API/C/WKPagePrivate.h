@@ -214,6 +214,7 @@ WK_EXPORT void WKPagePermissionChanged(WKStringRef permissionName, WKStringRef o
 
 WK_EXPORT void WKPageExecuteCommandForTesting(WKPageRef pageRef, WKStringRef command, WKStringRef value);
 WK_EXPORT bool WKPageIsEditingCommandEnabledForTesting(WKPageRef page, WKStringRef command);
+WK_EXPORT void WKPageSetPermissionLevelForTesting(WKPageRef page, WKStringRef origin, bool allowed);
 
 #ifdef __cplusplus
 }

@@ -2313,6 +2313,8 @@ private:
 
     void frameNameWasChangedInAnotherProcess(WebCore::FrameIdentifier, const String& frameName);
 
+    void setPermissionLevelForTesting(const String& origin, bool allowed);
+
     WebCore::PageIdentifier m_identifier;
 
     RefPtr<WebCore::Page> m_page;

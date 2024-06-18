@@ -822,4 +822,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     FrameNameWasChangedInAnotherProcess(WebCore::FrameIdentifier frameID, String frameName)
 
     IsEditingCommandEnabled(String commandName) -> (bool result) Synchronous
+
+    SetPermissionLevelForTesting(String origin, bool allowed)
 }

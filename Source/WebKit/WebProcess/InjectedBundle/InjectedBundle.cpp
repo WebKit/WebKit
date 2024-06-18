@@ -274,17 +274,6 @@ void InjectedBundle::setUserStyleSheetLocation(const String& location)
     });
 }
 
-void InjectedBundle::setWebNotificationPermission(WebPage* page, const String& originString, bool allowed)
-{
-#if ENABLE(NOTIFICATIONS)
-    page->notificationPermissionRequestManager()->setPermissionLevelForTesting(originString, allowed);
-#else
-    UNUSED_PARAM(page);
-    UNUSED_PARAM(originString);
-    UNUSED_PARAM(allowed);
-#endif
-}
-
 void InjectedBundle::removeAllWebNotificationPermissions(WebPage* page)
 {
 #if ENABLE(NOTIFICATIONS)
