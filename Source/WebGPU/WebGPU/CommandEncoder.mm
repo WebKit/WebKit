@@ -225,6 +225,18 @@ void CommandEncoder::setExistingEncoder(id<MTLCommandEncoder> encoder)
     m_device->getQueue().setEncoderForBuffer(m_commandBuffer, encoder);
 }
 
+void CommandEncoder::discardCommandBuffer()
+{
+    if (!m_commandBuffer || m_commandBuffer.status >= MTLCommandBufferStatusCommitted)
+        return;
+
+    id<MTLCommandEncoder> existingEncoder = m_device->getQueue().encoderForBuffer(m_commandBuffer);
+    m_device->getQueue().endEncoding(existingEncoder, m_commandBuffer);
+    [m_abortCommandBuffer setSignaledValue:1];
+    m_device->getQueue().commitMTLCommandBuffer(m_commandBuffer);
+    m_commandBuffer = nil;
+}
+
 void CommandEncoder::endEncoding(id<MTLCommandEncoder> encoder)
 {
     id<MTLCommandEncoder> existingEncoder = m_device->getQueue().encoderForBuffer(m_commandBuffer);
@@ -237,6 +249,8 @@ void CommandEncoder::endEncoding(id<MTLCommandEncoder> encoder)
     m_device->getQueue().endEncoding(m_existingCommandEncoder, m_commandBuffer);
     setExistingEncoder(nil);
     m_blitCommandEncoder = nil;
+    if (m_lastErrorString)
+        discardCommandBuffer();
 }
 
 NSString* CommandEncoder::errorValidatingRenderPassDescriptor(const WGPURenderPassDescriptor& descriptor) const
@@ -1736,6 +1750,7 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
 {
     if (descriptor.nextInChain || !isValid() || (m_existingCommandEncoder && m_existingCommandEncoder != m_blitCommandEncoder)) {
         m_state = EncoderState::Ended;
+        discardCommandBuffer();
         m_device->generateAValidationError(m_lastErrorString ?: @"Invalid CommandEncoder.");
         return CommandBuffer::createInvalid(m_device);
     }
@@ -1748,6 +1763,7 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
     m_state = EncoderState::Ended;
     UNUSED_PARAM(priorState);
     if (validationFailedError) {
+        discardCommandBuffer();
         m_device->generateAValidationError(m_lastErrorString ?: validationFailedError);
         return CommandBuffer::createInvalid(m_device);
     }

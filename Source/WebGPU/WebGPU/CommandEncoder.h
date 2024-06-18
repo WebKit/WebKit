@@ -96,7 +96,7 @@ public:
     void runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, float depthClearValue = 0, uint32_t stencilClearValue = 0, id<MTLRenderCommandEncoder> existingEncoder = nil);
     static void clearTextureIfNeeded(const WGPUImageCopyTexture&, NSUInteger, id<MTLDevice>, id<MTLBlitCommandEncoder>);
     static void clearTextureIfNeeded(Texture&, NSUInteger, NSUInteger, id<MTLDevice>, id<MTLBlitCommandEncoder>);
-    void makeInvalid(NSString* = nil);
+    void makeInvalid(NSString*);
     void makeSubmitInvalid(NSString* = nil);
     void incrementBufferMapCount();
     void decrementBufferMapCount();
@@ -122,6 +122,7 @@ private:
     NSString* errorValidatingImageCopyBuffer(const WGPUImageCopyBuffer&) const;
     NSString* errorValidatingCopyBufferToTexture(const WGPUImageCopyBuffer&, const WGPUImageCopyTexture&, const WGPUExtent3D&) const;
     NSString* errorValidatingCopyTextureToBuffer(const WGPUImageCopyTexture&, const WGPUImageCopyBuffer&, const WGPUExtent3D&) const;
+    void discardCommandBuffer();
 
     id<MTLCommandBuffer> m_commandBuffer { nil };
     id<MTLSharedEvent> m_abortCommandBuffer { nil };

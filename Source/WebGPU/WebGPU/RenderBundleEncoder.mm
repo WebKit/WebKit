@@ -319,20 +319,6 @@ bool RenderBundleEncoder::executePreDrawCommands()
         return false;
     }
 
-    auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
-    for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
-        RELEASE_ASSERT(bufferIndex < m_vertexBuffers.size());
-        auto& vertexBuffer = m_vertexBuffers[bufferIndex];
-        auto bufferSize = vertexBuffer.size;
-        auto lastStride = bufferData.lastStride;
-        if (bufferData.stepMode == WGPUVertexStepMode_Vertex) {
-            if (bufferSize < lastStride) {
-                makeInvalid([NSString stringWithFormat:@"Buffer[%d] fails: bufferSize(%llu) < lastStride(%llu)", bufferIndex, bufferSize, lastStride]);
-                return false;
-            }
-        }
-    }
-
     for (size_t i = 0, sz = m_vertexBuffers.size(); i < sz; ++i) {
         if (m_vertexBuffers[i].buffer) {
             if (m_vertexBuffers[i].offset < m_vertexBuffers[i].buffer.length)
@@ -591,9 +577,9 @@ std::pair<uint32_t, uint32_t> RenderBundleEncoder::computeMininumVertexInstanceC
         auto bufferSize = vertexBuffer.size;
         auto stride = bufferData.stride;
         auto lastStride = bufferData.lastStride;
-        if (!stride || bufferSize < lastStride)
+        if (!stride)
             continue;
-        auto elementCount = (bufferSize - lastStride) / stride + 1;
+        auto elementCount = bufferSize < lastStride ? 0 : ((bufferSize - lastStride) / stride + 1);
         if (bufferData.stepMode == WGPUVertexStepMode_Vertex)
             minVertexCount = std::min<uint32_t>(minVertexCount, elementCount);
         else
