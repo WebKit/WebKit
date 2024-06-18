@@ -31,6 +31,10 @@
 #include <memory>
 #include <wpe/webkit.h>
 
+#if ENABLE_WPE_PLATFORM_HEADLESS
+#include <wpe/headless/wpe-headless.h>
+#endif
+
 #if USE_ATK
 #include <atk/atk.h>
 #endif
@@ -404,6 +408,10 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
         delete static_cast<WPEToolingBackends::ViewBackend*>(data);
     }, backend) : nullptr;
 
+#if ENABLE_WPE_PLATFORM_HEADLESS
+    WPEDisplay* wpeDisplay = headlessMode && useWPEPlatformAPI ? wpe_display_headless_new() : nullptr;
+#endif
+
     auto* defaultWebsitePolicies = webkit_website_policies_new_with_policies(
         "autoplay", WEBKIT_AUTOPLAY_ALLOW,
         nullptr);
@@ -418,9 +426,15 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
         "user-content-manager", userContentManager,
         "is-controlled-by-automation", automationMode,
         "website-policies", defaultWebsitePolicies,
+#if ENABLE_WPE_PLATFORM_HEADLESS
+        "display", wpeDisplay,
+#endif
         nullptr));
     g_object_unref(settings);
     g_object_unref(defaultWebsitePolicies);
+#if ENABLE_WPE_PLATFORM_HEADLESS
+    g_clear_object(&wpeDisplay);
+#endif
 
     if (backend) {
         backend->setInputClient(std::make_unique<InputClient>(application, webView));
