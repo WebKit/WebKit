@@ -376,7 +376,7 @@ TEST(SiteIsolation, BasicPostMessageWindowOpen)
 }
 
 struct WebViewAndDelegates {
-    RetainPtr<WKWebView> webView;
+    RetainPtr<TestWKWebView> webView;
     RetainPtr<TestNavigationDelegate> navigationDelegate;
     RetainPtr<TestUIDelegate> uiDelegate;
 };
@@ -394,7 +394,7 @@ static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(
     opener.uiDelegate = adoptNS([TestUIDelegate new]);
     opener.uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
         enableSiteIsolation(configuration);
-        opened.webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        opened.webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
         opened.navigationDelegate = adoptNS([TestNavigationDelegate new]);
         [opened.navigationDelegate allowAnyTLSCertificate];
         opened.uiDelegate = adoptNS([TestUIDelegate new]);
@@ -449,13 +449,6 @@ TEST(SiteIsolation, PreferencesUpdatesToAllProcesses)
     [navigationDelegate waitForDidFinishNavigation];
     webView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
 
-    __block RetainPtr<WKFrameInfo> childFrame;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        childFrame = mainFrame.childFrames[0].info;
-    }];
-    while (!childFrame)
-        Util::spinRunLoop();
-
     auto uiDelegate = adoptNS([TestUIDelegate new]);
     __block bool opened { false };
     uiDelegate.get().createWebViewWithConfiguration = ^WKWebView *(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures)
@@ -465,7 +458,7 @@ TEST(SiteIsolation, PreferencesUpdatesToAllProcesses)
     };
     [webView setUIDelegate:uiDelegate.get()];
 
-    [webView _evaluateJavaScript:@"window.open('https://example.com/opened')" withSourceURL:nil inFrame:childFrame.get() inContentWorld:WKContentWorld.pageWorld withUserGesture:NO completionHandler:nil];
+    [webView evaluateJavaScript:@"window.open('https://example.com/opened')" inFrame:[[webView firstChildFrame] info] completionHandler:nil];
     Util::run(&opened);
 }
 
@@ -476,20 +469,12 @@ TEST(SiteIsolation, ParentOpener)
         { "/webkit"_s, { "<iframe src='https://apple.com/apple'></iframe>"_s } },
         { "/apple"_s, { "hi"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
-
     auto [opener, opened] = openerAndOpenedViews(server);
-
-    __block RetainPtr<WKFrameInfo> childFrame;
-    [opened.webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        childFrame = mainFrame.childFrames[0].info;
-    }];
-    while (!childFrame)
-        Util::spinRunLoop();
 
     [opened.webView evaluateJavaScript:@"try { opener.postMessage('test1', '*'); alert('posted message 1') } catch(e) { alert(e) }" completionHandler:nil];
     EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "posted message 1");
 
-    [opened.webView evaluateJavaScript:@"try { top.opener.postMessage('test2', '*'); alert('posted message 2') } catch(e) { alert(e) }" inFrame:childFrame.get() inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
+    [opened.webView evaluateJavaScript:@"try { top.opener.postMessage('test2', '*'); alert('posted message 2') } catch(e) { alert(e) }" inFrame:[[opened.webView firstChildFrame] info] completionHandler:nil];
     EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "posted message 2");
 }
 
@@ -527,30 +512,17 @@ TEST(SiteIsolation, CloseAfterWindowOpen)
         { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
         { "/webkit"_s, { "hi"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
-
     auto [opener, opened] = openerAndOpenedViews(server);
     pid_t webKitPid = findFramePID(frameTrees(opener.webView.get()).get(), FrameType::Remote);
 
-    __block bool done = false;
-    [opener.webView evaluateJavaScript:@"w.closed" completionHandler:^(id result, NSError *) {
-        EXPECT_FALSE([result boolValue]);
-        done = true;
-    }];
-    Util::run(&done);
-
+    EXPECT_FALSE([[opener.webView objectByEvaluatingJavaScript:@"w.closed"] boolValue]);
     [opener.webView evaluateJavaScript:@"w.close()" completionHandler:nil];
     [opened.uiDelegate waitForDidClose];
-    opened.webView = nullptr;
+    [opened.webView _close];
     while (processStillRunning(webKitPid))
         Util::spinRunLoop();
     checkFrameTreesInProcesses(opener.webView.get(), { { "https://example.com"_s } });
-
-    done = false;
-    [opener.webView evaluateJavaScript:@"w.closed" completionHandler:^(id result, NSError *) {
-        EXPECT_TRUE([result boolValue]);
-        done = true;
-    }];
-    Util::run(&done);
+    EXPECT_TRUE([[opener.webView objectByEvaluatingJavaScript:@"w.closed"] boolValue]);
 }
 
 // FIXME: <rdar://117383420> Add a test that deallocates the opened WKWebView without being asked to by JS.
@@ -609,16 +581,12 @@ TEST(SiteIsolation, PostMessageWithMessagePorts)
         Util::spinRunLoop();
     EXPECT_WK_STREQ(alert.get(), "parent frame received got port and message ping");
 
-    __block bool done { false };
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        pid_t mainFramePid = mainFrame.info._processIdentifier;
-        pid_t childFramePid = mainFrame.childFrames.firstObject.info._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_NE(mainFramePid, childFramePid);
-        done = true;
-    }];
-    Util::run(&done);
+    auto mainFrame = [webView mainFrame];
+    pid_t mainFramePid = mainFrame.info._processIdentifier;
+    pid_t childFramePid = mainFrame.childFrames.firstObject.info._processIdentifier;
+    EXPECT_NE(mainFramePid, 0);
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_NE(mainFramePid, childFramePid);
 }
 
 TEST(SiteIsolation, PostMessageWithNotAllowedTargetOrigin)
@@ -677,16 +645,12 @@ TEST(SiteIsolation, PostMessageWithNotAllowedTargetOrigin)
         Util::spinRunLoop();
     EXPECT_WK_STREQ(alert.get(), "child did not receive message");
 
-    __block bool done { false };
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        pid_t mainFramePid = mainFrame.info._processIdentifier;
-        pid_t childFramePid = mainFrame.childFrames.firstObject.info._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_NE(mainFramePid, childFramePid);
-        done = true;
-    }];
-    Util::run(&done);
+    auto mainFrame = [webView mainFrame];
+    pid_t mainFramePid = mainFrame.info._processIdentifier;
+    pid_t childFramePid = mainFrame.childFrames.firstObject.info._processIdentifier;
+    EXPECT_NE(mainFramePid, 0);
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_NE(mainFramePid, childFramePid);
 }
 
 TEST(SiteIsolation, PostMessageToIFrameWithOpaqueOrigin)
@@ -739,16 +703,12 @@ TEST(SiteIsolation, PostMessageToIFrameWithOpaqueOrigin)
         Util::spinRunLoop();
     EXPECT_WK_STREQ(alert.get(), "SyntaxError: The string did not match the expected pattern.");
 
-    __block bool done { false };
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        pid_t mainFramePid = mainFrame.info._processIdentifier;
-        pid_t childFramePid = mainFrame.childFrames.firstObject.info._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_NE(mainFramePid, childFramePid);
-        done = true;
-    }];
-    Util::run(&done);
+    auto mainFrame = [webView mainFrame];
+    pid_t mainFramePid = mainFrame.info._processIdentifier;
+    pid_t childFramePid = mainFrame.childFrames.firstObject.info._processIdentifier;
+    EXPECT_NE(mainFramePid, 0);
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_NE(mainFramePid, childFramePid);
 }
 
 TEST(SiteIsolation, QueryFramesStateAfterNavigating)
@@ -761,23 +721,12 @@ TEST(SiteIsolation, QueryFramesStateAfterNavigating)
         { "/subframe3.html"_s, { "SubFrame3"_s } },
         { "/subframe4.html"_s, { "SubFrame4"_s } }
     }, HTTPServer::Protocol::Http);
-
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero]);
     [webView synchronouslyLoadRequest:server.request("/page1.html"_s)];
-    __block bool done = false;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        EXPECT_EQ(mainFrame.childFrames.count, 3U);
-        done = true;
-    }];
-    Util::run(&done);
+    EXPECT_EQ(3u, [webView mainFrame].childFrames.count);
 
     [webView synchronouslyLoadRequest:server.request("/page2.html"_s)];
-    done = false;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        EXPECT_EQ(mainFrame.childFrames.count, 1U);
-        done = true;
-    }];
-    Util::run(&done);
+    EXPECT_EQ(1u, [webView mainFrame].childFrames.count);
 }
 
 TEST(SiteIsolation, NavigatingCrossOriginIframeToSameOrigin)
@@ -792,19 +741,15 @@ TEST(SiteIsolation, NavigatingCrossOriginIframeToSameOrigin)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
 
-    __block bool done { false };
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
-        pid_t mainFramePid = mainFrame.info._processIdentifier;
-        pid_t childFramePid = childFrame.info._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_EQ(mainFramePid, childFramePid);
-        EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
-        EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "example.com");
-        done = true;
-    }];
-    Util::run(&done);
+    auto mainFrame = [webView mainFrame];
+    auto childFrame = mainFrame.childFrames.firstObject;
+    pid_t mainFramePid = mainFrame.info._processIdentifier;
+    pid_t childFramePid = childFrame.info._processIdentifier;
+    EXPECT_NE(mainFramePid, 0);
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_EQ(mainFramePid, childFramePid);
+    EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
+    EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "example.com");
 }
 
 TEST(SiteIsolation, ParentNavigatingCrossOriginIframeToSameOrigin)
@@ -815,23 +760,18 @@ TEST(SiteIsolation, ParentNavigatingCrossOriginIframeToSameOrigin)
         { "/webkit"_s, { "hi"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
-
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
 
-    __block bool done { false };
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
-        pid_t mainFramePid = mainFrame.info._processIdentifier;
-        pid_t childFramePid = childFrame.info._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_EQ(mainFramePid, childFramePid);
-        EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
-        EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "example.com");
-        done = true;
-    }];
-    Util::run(&done);
+    auto mainFrame = [webView mainFrame];
+    auto childFrame = mainFrame.childFrames.firstObject;
+    pid_t mainFramePid = mainFrame.info._processIdentifier;
+    pid_t childFramePid = childFrame.info._processIdentifier;
+    EXPECT_NE(mainFramePid, 0);
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_EQ(mainFramePid, childFramePid);
+    EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
+    EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "example.com");
 
     checkFrameTreesInProcesses(webView.get(), {
         { "https://example.com"_s,
@@ -848,23 +788,18 @@ TEST(SiteIsolation, IframeNavigatesSelfWithoutChangingOrigin)
         { "/webkit_second"_s, { "<script>alert('done')</script>"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
-
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
 
-    __block bool done { false };
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
-        pid_t mainFramePid = mainFrame.info._processIdentifier;
-        pid_t childFramePid = childFrame.info._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_NE(mainFramePid, childFramePid);
-        EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
-        EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
-        done = true;
-    }];
-    Util::run(&done);
+    auto mainFrame = [webView mainFrame];
+    auto childFrame = mainFrame.childFrames.firstObject;
+    pid_t mainFramePid = mainFrame.info._processIdentifier;
+    pid_t childFramePid = childFrame.info._processIdentifier;
+    EXPECT_NE(mainFramePid, 0);
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_NE(mainFramePid, childFramePid);
+    EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
+    EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
 }
 
 TEST(SiteIsolation, IframeWithConfirm)
@@ -873,25 +808,19 @@ TEST(SiteIsolation, IframeWithConfirm)
         { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s } },
         { "/webkit"_s, { "<script>confirm('confirm message')</script>"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
-
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
-
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     EXPECT_WK_STREQ([webView _test_waitForConfirm], "confirm message");
 
-    __block bool done { false };
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
-        pid_t mainFramePid = mainFrame.info._processIdentifier;
-        pid_t childFramePid = childFrame.info._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_NE(mainFramePid, childFramePid);
-        EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
-        EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
-        done = true;
-    }];
-    Util::run(&done);
+    auto mainFrame = [webView mainFrame];
+    auto childFrame = mainFrame.childFrames.firstObject;
+    pid_t mainFramePid = mainFrame.info._processIdentifier;
+    pid_t childFramePid = childFrame.info._processIdentifier;
+    EXPECT_NE(mainFramePid, 0);
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_NE(mainFramePid, childFramePid);
+    EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
+    EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
 }
 
 TEST(SiteIsolation, IframeWithPrompt)
@@ -900,25 +829,19 @@ TEST(SiteIsolation, IframeWithPrompt)
         { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s } },
         { "/webkit"_s, { "<script>prompt('prompt message', 'default input')</script>"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
-
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
-
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     EXPECT_WK_STREQ([webView _test_waitForPromptWithReply:@"default input"], "prompt message");
 
-    __block bool done { false };
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
-        pid_t mainFramePid = mainFrame.info._processIdentifier;
-        pid_t childFramePid = childFrame.info._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_NE(mainFramePid, childFramePid);
-        EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
-        EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
-        done = true;
-    }];
-    Util::run(&done);
+    auto mainFrame = [webView mainFrame];
+    auto childFrame = mainFrame.childFrames.firstObject;
+    pid_t mainFramePid = mainFrame.info._processIdentifier;
+    pid_t childFramePid = childFrame.info._processIdentifier;
+    EXPECT_NE(mainFramePid, 0);
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_NE(mainFramePid, childFramePid);
+    EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
+    EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
 }
 
 TEST(SiteIsolation, GrandchildIframe)
@@ -960,25 +883,19 @@ TEST(SiteIsolation, ChildNavigatingToNewDomain)
         { "/example_subframe"_s, { "<script>alert('done')</script>"_s } },
         { "/webkit"_s, { "<script>window.location='https://foo.com/example_subframe'</script>"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
-
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
-
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
 
-    __block bool done { false };
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
-        pid_t mainFramePid = mainFrame.info._processIdentifier;
-        pid_t childFramePid = childFrame.info._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_NE(mainFramePid, childFramePid);
-        EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
-        EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "foo.com");
-        done = true;
-    }];
-    Util::run(&done);
+    auto mainFrame = [webView mainFrame];
+    auto childFrame = mainFrame.childFrames.firstObject;
+    pid_t mainFramePid = mainFrame.info._processIdentifier;
+    pid_t childFramePid = childFrame.info._processIdentifier;
+    EXPECT_NE(mainFramePid, 0);
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_NE(mainFramePid, childFramePid);
+    EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
+    EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "foo.com");
 }
 
 TEST(SiteIsolation, ChildNavigatingToMainFrameDomain)
@@ -988,25 +905,19 @@ TEST(SiteIsolation, ChildNavigatingToMainFrameDomain)
         { "/example_subframe"_s, { "<script>alert('done')</script>"_s } },
         { "/webkit"_s, { "<script>window.location='https://example.com/example_subframe'</script>"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
-
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
-
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
 
-    __block bool done { false };
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
-        pid_t mainFramePid = mainFrame.info._processIdentifier;
-        pid_t childFramePid = childFrame.info._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_EQ(mainFramePid, childFramePid);
-        EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
-        EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "example.com");
-        done = true;
-    }];
-    Util::run(&done);
+    auto mainFrame = [webView mainFrame];
+    auto childFrame = mainFrame.childFrames.firstObject;
+    pid_t mainFramePid = mainFrame.info._processIdentifier;
+    pid_t childFramePid = childFrame.info._processIdentifier;
+    EXPECT_NE(mainFramePid, 0);
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_EQ(mainFramePid, childFramePid);
+    EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
+    EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "example.com");
 }
 
 TEST(SiteIsolation, ChildNavigatingToSameDomain)
@@ -1016,25 +927,19 @@ TEST(SiteIsolation, ChildNavigatingToSameDomain)
         { "/example_subframe"_s, { "<script>alert('done')</script>"_s } },
         { "/webkit"_s, { "<script>window.location='https://webkit.org/example_subframe'</script>"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
-
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
-
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
 
-    __block bool done { false };
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
-        pid_t mainFramePid = mainFrame.info._processIdentifier;
-        pid_t childFramePid = childFrame.info._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_NE(mainFramePid, childFramePid);
-        EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
-        EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
-        done = true;
-    }];
-    Util::run(&done);
+    auto mainFrame = [webView mainFrame];
+    auto childFrame = mainFrame.childFrames.firstObject;
+    pid_t mainFramePid = mainFrame.info._processIdentifier;
+    pid_t childFramePid = childFrame.info._processIdentifier;
+    EXPECT_NE(mainFramePid, 0);
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_NE(mainFramePid, childFramePid);
+    EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
+    EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
 }
 
 TEST(SiteIsolation, ChildNavigatingToDomainLoadedOnADifferentPage)
@@ -1049,37 +954,27 @@ TEST(SiteIsolation, ChildNavigatingToDomainLoadedOnADifferentPage)
 
     [firstWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/foo"]]];
     
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:firstWebView.get().configuration]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:firstWebView.get().configuration]);
     webView.get().navigationDelegate = navigationDelegate.get();
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     
     EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
 
-    __block pid_t firstFramePID = 0;
-    __block bool done { false };
-    [firstWebView _frames:^(_WKFrameTreeNode *mainFrame) {
-        pid_t mainFramePid = mainFrame.info._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        firstFramePID = mainFramePid;
-        EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "webkit.org");
-        done = true;
-    }];
-    Util::run(&done);
+    auto firstWebViewMainFrame = [firstWebView mainFrame];
+    EXPECT_NE(firstWebViewMainFrame.info._processIdentifier, 0);
+    pid_t firstFramePID = firstWebViewMainFrame.info._processIdentifier;
+    EXPECT_WK_STREQ(firstWebViewMainFrame.info.securityOrigin.host, "webkit.org");
 
-    done = false;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
-        pid_t mainFramePid = mainFrame.info._processIdentifier;
-        pid_t childFramePid = childFrame.info._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_NE(mainFramePid, childFramePid);
-        EXPECT_EQ(firstFramePID, childFramePid);
-        EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
-        EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
-        done = true;
-    }];
-    Util::run(&done);
+    auto mainFrame = [webView mainFrame];
+    auto childFrame = mainFrame.childFrames.firstObject;
+    pid_t mainFramePid = mainFrame.info._processIdentifier;
+    pid_t childFramePid = childFrame.info._processIdentifier;
+    EXPECT_NE(mainFramePid, 0);
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_NE(mainFramePid, childFramePid);
+    EXPECT_EQ(firstFramePID, childFramePid);
+    EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
+    EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
 }
 
 TEST(SiteIsolation, MainFrameWithTwoIFramesInTheSameProcess)
@@ -1102,25 +997,21 @@ TEST(SiteIsolation, MainFrameWithTwoIFramesInTheSameProcess)
     else
         EXPECT_TRUE(false);
 
-    __block bool done { false };
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        EXPECT_EQ(mainFrame.childFrames.count, 2u);
-        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
-        _WKFrameTreeNode *otherChildFrame = mainFrame.childFrames[1];
-        pid_t mainFramePid = mainFrame.info._processIdentifier;
-        pid_t childFramePid = childFrame.info._processIdentifier;
-        pid_t otherChildFramePid = otherChildFrame.info._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_NE(otherChildFramePid, 0);
-        EXPECT_EQ(childFramePid, otherChildFramePid);
-        EXPECT_NE(mainFramePid, childFramePid);
-        EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
-        EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
-        EXPECT_WK_STREQ(otherChildFrame.info.securityOrigin.host, "webkit.org");
-        done = true;
-    }];
-    Util::run(&done);
+    auto mainFrame = [webView mainFrame];
+    EXPECT_EQ(mainFrame.childFrames.count, 2u);
+    _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
+    _WKFrameTreeNode *otherChildFrame = mainFrame.childFrames[1];
+    pid_t mainFramePid = mainFrame.info._processIdentifier;
+    pid_t childFramePid = childFrame.info._processIdentifier;
+    pid_t otherChildFramePid = otherChildFrame.info._processIdentifier;
+    EXPECT_NE(mainFramePid, 0);
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_NE(otherChildFramePid, 0);
+    EXPECT_EQ(childFramePid, otherChildFramePid);
+    EXPECT_NE(mainFramePid, childFramePid);
+    EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
+    EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
+    EXPECT_WK_STREQ(otherChildFrame.info.securityOrigin.host, "webkit.org");
 }
 
 TEST(SiteIsolation, ChildBeingNavigatedToMainFrameDomainByParent)
@@ -1136,14 +1027,9 @@ TEST(SiteIsolation, ChildBeingNavigatedToMainFrameDomainByParent)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
-    __block bool done { false };
-    __block pid_t childFramePid { 0 };
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        childFramePid = mainFrame.childFrames.firstObject.info._processIdentifier;
-        EXPECT_NE(childFramePid, mainFrame.info._processIdentifier);
-        done = true;
-    }];
-    Util::run(&done);
+    auto mainFrame = [webView mainFrame];
+    auto childFrame = [webView firstChildFrame];
+    EXPECT_NE(mainFrame.info._processIdentifier, childFrame.info._processIdentifier);
 
     [webView evaluateJavaScript:@"document.getElementById('webkit_frame').src = 'https://example.com/example_subframe'" completionHandler:nil];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
@@ -1154,7 +1040,7 @@ TEST(SiteIsolation, ChildBeingNavigatedToMainFrameDomainByParent)
         }
     });
 
-    while (processStillRunning(childFramePid))
+    while (processStillRunning(childFrame.info._processIdentifier))
         Util::spinRunLoop();
 }
 
@@ -1171,19 +1057,15 @@ TEST(SiteIsolation, ChildBeingNavigatedToSameDomainByParent)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
 
-    __block bool done { false };
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
-        pid_t mainFramePid = mainFrame.info._processIdentifier;
-        pid_t childFramePid = childFrame.info._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_NE(mainFramePid, childFramePid);
-        EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
-        EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
-        done = true;
-    }];
-    Util::run(&done);
+    auto mainFrame = [webView mainFrame];
+    auto childFrame = [webView firstChildFrame];
+    pid_t mainFramePid = mainFrame.info._processIdentifier;
+    pid_t childFramePid = childFrame.info._processIdentifier;
+    EXPECT_NE(mainFramePid, 0);
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_NE(mainFramePid, childFramePid);
+    EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
+    EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
 
     checkFrameTreesInProcesses(webView.get(), {
         { "https://example.com"_s,
@@ -1301,11 +1183,7 @@ TEST(SiteIsolation, CrossOriginOpenerPolicy)
         { "https://example.com"_s, { { RemoteFrame } } },
         { RemoteFrame, { { "https://webkit.org"_s } } }
     });
-    __block bool done { false };
-    [webView _doAfterNextPresentationUpdate:^{
-        done = true;
-    }];
-    Util::run(&done);
+    [webView waitForNextPresentationUpdate];
 }
 
 TEST(SiteIsolation, NavigationWithIFrames)
@@ -1468,14 +1346,7 @@ TEST(SiteIsolation, PropagateMouseEventsToSubframe)
         { "/mainframe"_s, { mainframeHTML } },
         { "/subframe"_s, { subframeHTML } }
     }, HTTPServer::Protocol::HttpsProxy);
-
-    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
-    [navigationDelegate allowAnyTLSCertificate];
-    auto configuration = server.httpsProxyConfiguration();
-    enableSiteIsolation(configuration);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
-    webView.get().navigationDelegate = navigationDelegate.get();
-
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
@@ -1517,13 +1388,7 @@ TEST(SiteIsolation, RunOpenPanel)
     [webView waitForPendingMouseEvents];
     Util::run(&fileSelected);
 
-    __block RetainPtr<WKFrameInfo> childFrameInfo;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        childFrameInfo = mainFrame.childFrames.firstObject.info;
-    }];
-    while (!childFrameInfo)
-        Util::spinRunLoop();
-    EXPECT_WK_STREQ("test", [[webView objectByEvaluatingJavaScript:@"document.getElementsByTagName('input')[0].files[0].name" inFrame:childFrameInfo.get()] stringValue]);
+    EXPECT_WK_STREQ("test", [[webView objectByEvaluatingJavaScript:@"document.getElementsByTagName('input')[0].files[0].name" inFrame:[[webView firstChildFrame] info]] stringValue]);
 }
 
 TEST(SiteIsolation, CancelOpenPanel)
@@ -1628,13 +1493,7 @@ TEST(SiteIsolation, PasteGIF)
         { "/mainframe"_s, { mainframeHTML } },
         { "/subframe"_s, { subframeHTML } }
     }, HTTPServer::Protocol::HttpsProxy);
-
-    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
-    [navigationDelegate allowAnyTLSCertificate];
-    auto configuration = server.httpsProxyConfiguration();
-    enableSiteIsolation(configuration);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
-    webView.get().navigationDelegate = navigationDelegate.get();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigation];
@@ -1700,11 +1559,11 @@ TEST(SiteIsolation, OpenerProcessSharing)
 
     auto [webView, delegate] = siteIsolatedViewAndDelegate(server);
 
-    __block RetainPtr<WKWebView> openedWebView;
+    __block RetainPtr<TestWKWebView> openedWebView;
     __block auto uiDelegate = adoptNS([TestUIDelegate new]);
     webView.get().UIDelegate = uiDelegate.get();
     uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
-        openedWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        openedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
         static auto openedNavigationDelegate = adoptNS([TestNavigationDelegate new]);
         [openedNavigationDelegate allowAnyTLSCertificate];
         openedWebView.get().navigationDelegate = openedNavigationDelegate.get();
@@ -1717,23 +1576,17 @@ TEST(SiteIsolation, OpenerProcessSharing)
     [webView evaluateJavaScript:@"w = window.open('/opened')" completionHandler:nil];
     EXPECT_WK_STREQ([uiDelegate waitForAlert], "done");
 
-    __block bool done { false };
-    [webView _frames:^(_WKFrameTreeNode *openerMainFrame) {
-        __block RetainPtr<_WKFrameTreeNode> retainedOpenerMainFrame = openerMainFrame;
-        [openedWebView _frames:^(_WKFrameTreeNode *openedMainFrame) {
-            pid_t openerMainFramePid = retainedOpenerMainFrame.get().info._processIdentifier;
-            pid_t openedMainFramePid = openedMainFrame.info._processIdentifier;
-            pid_t openerIframePid = retainedOpenerMainFrame.get().childFrames.firstObject.info._processIdentifier;
-            pid_t openedIframePid = openedMainFrame.childFrames.firstObject.info._processIdentifier;
+    auto openerMainFrame = [webView mainFrame];
+    auto openedMainFrame = [openedWebView mainFrame];
+    pid_t openerMainFramePid = openerMainFrame.info._processIdentifier;
+    pid_t openedMainFramePid = openedMainFrame.info._processIdentifier;
+    pid_t openerIframePid = openerMainFrame.childFrames.firstObject.info._processIdentifier;
+    pid_t openedIframePid = openedMainFrame.childFrames.firstObject.info._processIdentifier;
 
-            EXPECT_EQ(openerMainFramePid, openedMainFramePid);
-            EXPECT_NE(openerMainFramePid, 0);
-            EXPECT_EQ(openerIframePid, openedIframePid);
-            EXPECT_NE(openerIframePid, 0);
-            done = true;
-        }];
-    }];
-    Util::run(&done);
+    EXPECT_EQ(openerMainFramePid, openedMainFramePid);
+    EXPECT_NE(openerMainFramePid, 0);
+    EXPECT_EQ(openerIframePid, openedIframePid);
+    EXPECT_NE(openerIframePid, 0);
 }
 
 TEST(SiteIsolation, SetFocusedFrame)
@@ -1743,52 +1596,19 @@ TEST(SiteIsolation, SetFocusedFrame)
         { "/mainframe"_s, { mainframeHTML } },
         { "/subframe"_s, { ""_s } }
     }, HTTPServer::Protocol::HttpsProxy);
-
-    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
-    [navigationDelegate allowAnyTLSCertificate];
-    auto configuration = server.httpsProxyConfiguration();
-    enableSiteIsolation(configuration);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
-    webView.get().navigationDelegate = navigationDelegate.get();
-
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_FALSE([webView mainFrame].info._isFocused);
+    EXPECT_FALSE([webView firstChildFrame].info._isFocused);
 
-    RetainPtr<WKFrameInfo> mainFrameInfo;
-    RetainPtr<WKFrameInfo> childFrameInfo;
-    auto getUpdatedFrameInfo = [&] {
-        __block bool done = false;
-        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-            mainFrameInfo = mainFrame.info;
-            childFrameInfo = mainFrame.childFrames.firstObject.info;
-            done = true;
-        }];
-        Util::run(&done);
-    };
+    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:nil];
+    while ([webView mainFrame].info._isFocused || ![webView firstChildFrame].info._isFocused)
+        Util::spinRunLoop();
 
-    getUpdatedFrameInfo();
-    EXPECT_FALSE(mainFrameInfo.get()._isFocused);
-    EXPECT_FALSE(childFrameInfo.get()._isFocused);
-
-    __block bool done = false;
-    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:^(id value, NSError *error) {
-        done = true;
-    }];
-    Util::run(&done);
-
-    do {
-        getUpdatedFrameInfo();
-    } while (mainFrameInfo.get()._isFocused || !childFrameInfo.get()._isFocused);
-
-    done = false;
-    [webView evaluateJavaScript:@"window.focus()" completionHandler:^(id value, NSError *error) {
-        done = true;
-    }];
-    Util::run(&done);
-
-    do {
-        getUpdatedFrameInfo();
-    } while (!mainFrameInfo.get()._isFocused || childFrameInfo.get()._isFocused);
+    [webView evaluateJavaScript:@"window.focus()" completionHandler:nil];
+    while (![webView mainFrame].info._isFocused || [webView firstChildFrame].info._isFocused)
+        Util::spinRunLoop();
 }
 
 TEST(SiteIsolation, EvaluateJavaScriptInFrame)
@@ -1798,24 +1618,9 @@ TEST(SiteIsolation, EvaluateJavaScriptInFrame)
         { "/subframe"_s, { "<script>test = 'abc';</script>"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
-
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigation];
-
-    __block RetainPtr<WKFrameInfo> childFrameInfo;
-    __block bool done = false;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        childFrameInfo = mainFrame.childFrames.firstObject.info;
-        done = true;
-    }];
-    Util::run(&done);
-
-    done = false;
-    [webView evaluateJavaScript:@"window.test" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
-        EXPECT_STREQ([result UTF8String], "abc");
-        done = true;
-    }];
-    Util::run(&done);
+    EXPECT_WK_STREQ("abc", [webView objectByEvaluatingJavaScript:@"window.test" inFrame:[[webView firstChildFrame] info]]);
 }
 
 TEST(SiteIsolation, MainFrameURLAfterFragmentNavigation)
@@ -1848,16 +1653,9 @@ TEST(SiteIsolation, MainFrameURLAfterFragmentNavigation)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
-    __block RetainPtr<WKFrameInfo> childFrameInfo;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        childFrameInfo = mainFrame.childFrames.firstObject.info;
-    }];
-    while (!childFrameInfo)
-        Util::spinRunLoop();
-
-    auto canLoadURLInIFrame = [childFrameInfo = RetainPtr { childFrameInfo }, webView = RetainPtr { webView }] (NSString *path) -> bool {
+    auto canLoadURLInIFrame = [childFrame = RetainPtr { [webView firstChildFrame] }, webView = RetainPtr { webView }] (NSString *path) -> bool {
         __block std::optional<bool> loadedSuccessfully;
-        [webView callAsyncJavaScript:[NSString stringWithFormat:@"try { let response = await fetch('%@'); return await response.text() } catch (e) { return 'load failed' }", path] arguments:nil inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        [webView callAsyncJavaScript:[NSString stringWithFormat:@"try { let response = await fetch('%@'); return await response.text() } catch (e) { return 'load failed' }", path] arguments:nil inFrame:[childFrame info] inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
             if ([result isEqualToString:@"loaded successfully"])
                 loadedSuccessfully = true;
             else if ([result isEqualToString:@"load failed"])
@@ -1890,35 +1688,13 @@ TEST(SiteIsolation, FocusOpenedWindow)
         { "/opened"_s, { ""_s } }
     }, HTTPServer::Protocol::HttpsProxy);
     auto [opener, opened] = openerAndOpenedViews(server);
-
-    RetainPtr<WKFrameInfo> openerInfo;
-    RetainPtr<WKFrameInfo> openedInfo;
-    auto getUpdatedFrameInfo = [&] (WKWebView *openerWebView, WKWebView *openedWebView) {
-        __block bool done = false;
-        [openerWebView _frames:^(_WKFrameTreeNode *mainFrame) {
-            openerInfo = mainFrame.info;
-            done = true;
-        }];
-        Util::run(&done);
-
-        done = false;
-        [openedWebView _frames:^(_WKFrameTreeNode *mainFrame) {
-            openedInfo = mainFrame.info;
-            done = true;
-        }];
-        Util::run(&done);
-    };
-
-    getUpdatedFrameInfo(opener.webView.get(), opened.webView.get());
-    EXPECT_FALSE([openerInfo _isFocused]);
-    EXPECT_FALSE([openedInfo _isFocused]);
+    EXPECT_FALSE([[[opener.webView mainFrame] info] _isFocused]);
+    EXPECT_FALSE([[[opened.webView mainFrame] info] _isFocused]);
 
     [opener.webView.get() evaluateJavaScript:@"w.focus()" completionHandler:nil];
-
-    do {
-        getUpdatedFrameInfo(opener.webView.get(), opened.webView.get());
-    } while (![openedInfo _isFocused]);
-    EXPECT_FALSE([openerInfo _isFocused]);
+    while (![[[opened.webView mainFrame] info] _isFocused])
+        Util::spinRunLoop();
+    EXPECT_FALSE([[[opener.webView mainFrame] info] _isFocused]);
 }
 
 #if PLATFORM(MAC)
@@ -1963,21 +1739,8 @@ TEST(SiteIsolation, FindStringInFrame)
     [navigationDelegate waitForDidFinishNavigation];
 
     auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
-
-    __block bool done = false;
-    [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
-        EXPECT_TRUE(result.matchFound);
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    [webView findString:@"Missing string" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
-        EXPECT_FALSE(result.matchFound);
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    EXPECT_TRUE([[webView findStringAndWait:@"Hello World" withConfiguration:findConfiguration.get()] matchFound]);
+    EXPECT_FALSE([[webView findStringAndWait:@"Missing string" withConfiguration:findConfiguration.get()] matchFound]);
 }
 
 TEST(SiteIsolation, FindStringInNestedFrame)
@@ -1993,21 +1756,8 @@ TEST(SiteIsolation, FindStringInNestedFrame)
     [navigationDelegate waitForDidFinishNavigation];
 
     auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
-
-    __block bool done = false;
-    [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
-        EXPECT_TRUE(result.matchFound);
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    [webView findString:@"Missing string" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
-        EXPECT_FALSE(result.matchFound);
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
+    EXPECT_TRUE([[webView findStringAndWait:@"Hello World" withConfiguration:findConfiguration.get()] matchFound]);
+    EXPECT_FALSE([[webView findStringAndWait:@"Missing string" withConfiguration:findConfiguration.get()] matchFound]);
 }
 
 TEST(SiteIsolation, FindStringSelection)
@@ -2026,24 +1776,11 @@ TEST(SiteIsolation, FindStringSelection)
     auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
     using SelectionOffsets = std::array<std::pair<int, int>, 3>;
     auto findStringAndValidateResults = [&findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
-        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
-        __block bool done = false;
-        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-            EXPECT_EQ(2UL, mainFrame.childFrames.count);
-            mainFrameNode = mainFrame;
-            done = true;
-        }];
-        Util::run(&done);
-        done = false;
-
-        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
-            EXPECT_TRUE(result.matchFound);
-            done = true;
-        }];
-        Util::run(&done);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrameNode.get().childFrames[1].info]);
+        EXPECT_TRUE([[webView findStringAndWait:@"Hello World" withConfiguration:findConfiguration.get()] matchFound]);
+        auto mainFrame = [webView mainFrame];
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrame.info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrame.childFrames[0].info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrame.childFrames[1].info]);
     };
 
     std::array<SelectionOffsets, 4> selectionOffsetsForFrames = { {
@@ -2078,24 +1815,11 @@ TEST(SiteIsolation, FindStringSelectionWithEmptyFrames)
     auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
     using SelectionOffsets = std::array<std::pair<int, int>, 3>;
     auto findStringAndValidateResults = [&findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
-        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
-        __block bool done = false;
-        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-            EXPECT_EQ(4UL, mainFrame.childFrames.count);
-            mainFrameNode = mainFrame;
-            done = true;
-        }];
-        Util::run(&done);
-        done = false;
-
-        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
-            EXPECT_TRUE(result.matchFound);
-            done = true;
-        }];
-        Util::run(&done);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrameNode.get().childFrames[2].info]);
+        EXPECT_TRUE([[webView findStringAndWait:@"Hello World" withConfiguration:findConfiguration.get()] matchFound]);
+        auto mainFrame = [webView mainFrame];
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrame.info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrame.childFrames[0].info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrame.childFrames[2].info]);
     };
 
     std::array<SelectionOffsets, 4> selectionOffsetsForFrames = { {
@@ -2127,22 +1851,10 @@ TEST(SiteIsolation, FindStringSelectionNoWrap)
     findConfiguration.get().wraps = NO;
     using SelectionOffsets = std::array<std::pair<int, int>, 2>;
     auto findStringAndValidateResults = [findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
-        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
-        __block bool done = false;
-        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-            EXPECT_EQ(1UL, mainFrame.childFrames.count);
-            mainFrameNode = mainFrame;
-            done = true;
-        }];
-        Util::run(&done);
-        done = false;
-
-        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
-            done = true;
-        }];
-        Util::run(&done);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
+        [[webView findStringAndWait:@"Hello World" withConfiguration:findConfiguration.get()] matchFound];
+        auto mainFrame = [webView mainFrame];
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrame.info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrame.childFrames[0].info]);
     };
 
     std::array<SelectionOffsets, 3> selectionOffsetsForFrames = { {
@@ -2174,24 +1886,11 @@ TEST(SiteIsolation, FindStringSelectionBackwards)
     findConfiguration.get().backwards = YES;
     using SelectionOffsets = std::array<std::pair<int, int>, 3>;
     auto findStringAndValidateResults = [&findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
-        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
-        __block bool done = false;
-        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-            EXPECT_EQ(2UL, mainFrame.childFrames.count);
-            mainFrameNode = mainFrame;
-            done = true;
-        }];
-        Util::run(&done);
-        done = false;
-
-        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
-            EXPECT_TRUE(result.matchFound);
-            done = true;
-        }];
-        Util::run(&done);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrameNode.get().childFrames[1].info]);
+        EXPECT_TRUE([[webView findStringAndWait:@"Hello World" withConfiguration:findConfiguration.get()] matchFound]);
+        auto mainFrame = [webView mainFrame];
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrame.info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrame.childFrames[0].info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrame.childFrames[1].info]);
     };
 
     std::array<SelectionOffsets, 4> selectionOffsetsForFrames = { {
@@ -2220,24 +1919,11 @@ TEST(SiteIsolation, FindStringSelectionSameOriginFrames)
     auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
     using SelectionOffsets = std::array<std::pair<int, int>, 3>;
     auto findStringAndValidateResults = [&findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
-        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
-        __block bool done = false;
-        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-            EXPECT_EQ(2UL, mainFrame.childFrames.count);
-            mainFrameNode = mainFrame;
-            done = true;
-        }];
-        Util::run(&done);
-        done = false;
-
-        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
-            EXPECT_TRUE(result.matchFound);
-            done = true;
-        }];
-        Util::run(&done);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrameNode.get().childFrames[1].info]);
+        EXPECT_TRUE([[webView findStringAndWait:@"Hello World" withConfiguration:findConfiguration.get()] matchFound]);
+        auto mainFrame = [webView mainFrame];
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrame.info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrame.childFrames[0].info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrame.childFrames[1].info]);
     };
 
     std::array<SelectionOffsets, 4> selectionOffsetsForFrames = { {
@@ -2272,28 +1958,13 @@ TEST(SiteIsolation, FindStringSelectionNestedFrames)
     auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
     using SelectionOffsets = std::array<std::pair<int, int>, 5>;
     auto findStringAndValidateResults = [&findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
-        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
-        __block bool done = false;
-        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-            EXPECT_EQ(2UL, mainFrame.childFrames.count);
-            EXPECT_EQ(1UL, mainFrame.childFrames[0].childFrames.count);
-            EXPECT_EQ(1UL, mainFrame.childFrames[1].childFrames.count);
-            mainFrameNode = mainFrame;
-            done = true;
-        }];
-        Util::run(&done);
-        done = false;
-
-        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
-            EXPECT_TRUE(result.matchFound);
-            done = true;
-        }];
-        Util::run(&done);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrameNode.get().childFrames[1].info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[3].first endOffset:offsets[3].second inFrame:mainFrameNode.get().childFrames[0].childFrames[0].info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[4].first endOffset:offsets[4].second inFrame:mainFrameNode.get().childFrames[1].childFrames[0].info]);
+        EXPECT_TRUE([[webView findStringAndWait:@"Hello World" withConfiguration:findConfiguration.get()] matchFound]);
+        auto mainFrame = [webView mainFrame];
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrame.info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrame.childFrames[0].info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrame.childFrames[1].info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[3].first endOffset:offsets[3].second inFrame:mainFrame.childFrames[0].childFrames[0].info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[4].first endOffset:offsets[4].second inFrame:mainFrame.childFrames[1].childFrames[0].info]);
     };
 
     std::array<SelectionOffsets, 5> selectionOffsetsForFrames = { {
@@ -2325,23 +1996,10 @@ TEST(SiteIsolation, FindStringSelectionMultipleMatchesInMainFrame)
     auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
     using SelectionOffsets = std::array<std::pair<int, int>, 2>;
     auto findStringAndValidateResults = [&findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
-        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
-        __block bool done = false;
-        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-            EXPECT_EQ(1UL, mainFrame.childFrames.count);
-            mainFrameNode = mainFrame;
-            done = true;
-        }];
-        Util::run(&done);
-        done = false;
-
-        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
-            EXPECT_TRUE(result.matchFound);
-            done = true;
-        }];
-        Util::run(&done);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
+        EXPECT_TRUE([[webView findStringAndWait:@"Hello World" withConfiguration:findConfiguration.get()] matchFound]);
+        auto mainFrame = [webView mainFrame];
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrame.info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrame.childFrames[0].info]);
     };
 
     std::array<SelectionOffsets, 5> selectionOffsetsForFrames = { {
@@ -2373,23 +2031,10 @@ TEST(SiteIsolation, FindStringSelectionMultipleMatchesInChildFrame)
     auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
     using SelectionOffsets = std::array<std::pair<int, int>, 2>;
     auto findStringAndValidateResults = [&findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
-        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
-        __block bool done = false;
-        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-            EXPECT_EQ(1UL, mainFrame.childFrames.count);
-            mainFrameNode = mainFrame;
-            done = true;
-        }];
-        Util::run(&done);
-        done = false;
-
-        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
-            EXPECT_TRUE(result.matchFound);
-            done = true;
-        }];
-        Util::run(&done);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
+        EXPECT_TRUE([[webView findStringAndWait:@"Hello World" withConfiguration:findConfiguration.get()] matchFound]);
+        auto mainFrame = [webView mainFrame];
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrame.info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrame.childFrames[0].info]);
     };
 
     std::array<SelectionOffsets, 5> selectionOffsetsForFrames = { {
@@ -2431,24 +2076,11 @@ TEST(SiteIsolation, FindStringSelectionSameOriginFrameBeforeWrap)
     auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
     using SelectionOffsets = std::array<std::pair<int, int>, 3>;
     auto findStringAndValidateResults = [&findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
-        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
-        __block bool done = false;
-        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-            EXPECT_EQ(2UL, mainFrame.childFrames.count);
-            mainFrameNode = mainFrame;
-            done = true;
-        }];
-        Util::run(&done);
-        done = false;
-
-        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
-            EXPECT_TRUE(result.matchFound);
-            done = true;
-        }];
-        Util::run(&done);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
-        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrameNode.get().childFrames[1].info]);
+        EXPECT_TRUE([[webView findStringAndWait:@"Hello World" withConfiguration:findConfiguration.get()] matchFound]);
+        auto mainFrame = [webView mainFrame];
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrame.info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrame.childFrames[0].info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrame.childFrames[1].info]);
     };
 
     std::array<SelectionOffsets, 4> selectionOffsetsForFrames = { {
@@ -2481,13 +2113,7 @@ TEST(SiteIsolation, FindStringMatchCount)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
-    __block bool done = false;
-    [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
-        EXPECT_TRUE(result.matchFound);
-        done = true;
-    }];
-    Util::run(&done);
-
+    EXPECT_TRUE([[webView findStringAndWait:@"Hello World" withConfiguration:findConfiguration.get()] matchFound]);
     EXPECT_EQ(3ul, [findDelegate matchesCount]);
 }
 
@@ -2812,23 +2438,8 @@ TEST(SiteIsolation, CustomUserAgent)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
-    __block RetainPtr<WKFrameInfo> childFrameInfo;
-    __block bool done = false;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        EXPECT_EQ(1UL, mainFrame.childFrames.count);
-        childFrameInfo = mainFrame.childFrames.firstObject.info;
-        done = true;
-    }];
-    Util::run(&done);
-    done = false;
-
-    webView.get().customUserAgent = @"Custom UserAgent";
-
-    [webView evaluateJavaScript:@"navigator.userAgent" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *) {
-        EXPECT_WK_STREQ(@"Custom UserAgent", (NSString *)result);
-        done = true;
-    }];
-    Util::run(&done);
+    [webView setCustomUserAgent:@"Custom UserAgent"];
+    EXPECT_WK_STREQ(@"Custom UserAgent", [webView objectByEvaluatingJavaScript:@"navigator.userAgent" inFrame:[[webView firstChildFrame] info]]);
 }
 
 TEST(SiteIsolation, ApplicationNameForUserAgent)
@@ -2862,27 +2473,11 @@ TEST(SiteIsolation, ApplicationNameForUserAgent)
         }
     }, HTTPServer::Protocol::HttpsProxy);
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
-
     [webView _setApplicationNameForUserAgent:@"Custom UserAgent"];
-
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
-    __block RetainPtr<WKFrameInfo> childFrameInfo;
-    __block bool done = false;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        EXPECT_EQ(1UL, mainFrame.childFrames.count);
-        childFrameInfo = mainFrame.childFrames.firstObject.info;
-        done = true;
-    }];
-    Util::run(&done);
-    done = false;
-
-    [webView evaluateJavaScript:@"navigator.userAgent" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *) {
-        EXPECT_TRUE([result hasSuffix:@" Custom UserAgent"]);
-        done = true;
-    }];
-    Util::run(&done);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"navigator.userAgent" inFrame:[[webView firstChildFrame] info]] hasSuffix:@" Custom UserAgent"]);
     Util::run(&receivedRequestFromSubframe);
 }
 
@@ -2934,22 +2529,7 @@ TEST(SiteIsolation, WebsitePoliciesCustomUserAgent)
     Util::run(&receivedRequestFromSubframe);
     receivedRequestFromSubframe = false;
 
-    __block RetainPtr<WKFrameInfo> childFrameInfo;
-    __block bool done = false;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        EXPECT_EQ(1UL, mainFrame.childFrames.count);
-        childFrameInfo = mainFrame.childFrames.firstObject.info;
-        done = true;
-    }];
-    Util::run(&done);
-    done = false;
-
-    [webView evaluateJavaScript:@"navigator.userAgent" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *) {
-        EXPECT_WK_STREQ(@"Custom UserAgent", (NSString *)result);
-        done = true;
-    }];
-    Util::run(&done);
-    done = false;
+    EXPECT_WK_STREQ("Custom UserAgent", [webView objectByEvaluatingJavaScript:@"navigator.userAgent" inFrame:[[webView firstChildFrame] info]]);
 
     navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *navigationAction, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         if (navigationAction.targetFrame.mainFrame)
@@ -2960,20 +2540,7 @@ TEST(SiteIsolation, WebsitePoliciesCustomUserAgent)
     [navigationDelegate waitForDidFinishNavigation];
 
     Util::run(&receivedRequestFromSubframe);
-
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        EXPECT_EQ(1UL, mainFrame.childFrames.count);
-        childFrameInfo = mainFrame.childFrames.firstObject.info;
-        done = true;
-    }];
-    Util::run(&done);
-    done = false;
-
-    [webView evaluateJavaScript:@"navigator.userAgent" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *) {
-        EXPECT_WK_STREQ(@"Custom UserAgent2", (NSString *)result);
-        done = true;
-    }];
-    Util::run(&done);
+    EXPECT_WK_STREQ("Custom UserAgent2", [webView objectByEvaluatingJavaScript:@"navigator.userAgent" inFrame:[[webView firstChildFrame] info]]);
 }
 
 TEST(SiteIsolation, WebsitePoliciesCustomUserAgentDuringCrossSiteProvisionalNavigation)
@@ -3049,13 +2616,7 @@ TEST(SiteIsolation, WebsitePoliciesCustomNavigatorPlatform)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
-    __block RetainPtr<WKFrameInfo> childFrameInfo;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        childFrameInfo = mainFrame.childFrames.firstObject.info;
-    }];
-    while (childFrameInfo.get())
-        Util::spinRunLoop();
-    EXPECT_WK_STREQ("Custom Navigator Platform", [[webView objectByEvaluatingJavaScript:@"navigator.platform" inFrame:childFrameInfo.get()] stringValue]);
+    EXPECT_WK_STREQ("Custom Navigator Platform", [[webView objectByEvaluatingJavaScript:@"navigator.platform" inFrame:[[webView firstChildFrame] info]] stringValue]);
 }
 
 TEST(SiteIsolation, LoadHTMLString)
@@ -3158,20 +2719,12 @@ TEST(SiteIsolation, ProvisionalLoadFailureOnCrossSiteRedirect)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
-    __block RetainPtr<WKFrameInfo> childFrameInfo;
     __block bool done = false;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        childFrameInfo = mainFrame.childFrames.firstObject.info;
-        done = true;
-    }];
-    Util::run(&done);
-
-    done = false;
     navigationDelegate.get().didFailProvisionalLoadWithRequestInFrameWithError = ^(WKWebView *, NSURLRequest *request, WKFrameInfo *, NSError *) {
         EXPECT_WK_STREQ(request.URL.absoluteString, "https://example.com/terminate");
         done = true;
     };
-    [webView evaluateJavaScript:@"location.href = 'https://webkit.org/redirect'" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
+    [webView evaluateJavaScript:@"location.href = 'https://webkit.org/redirect'" inFrame:[[webView firstChildFrame] info] inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
     Util::run(&done);
 }
 
@@ -3186,22 +2739,13 @@ TEST(SiteIsolation, SynchronouslyExecuteEditCommandSelectAll)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
-    __block bool done = false;
-    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:^(id, NSError *) {
-        done = true;
-    }];
-    Util::run(&done);
-    done = false;
-
-    __block RetainPtr<_WKFrameTreeNode> childFrameNode;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        childFrameNode = mainFrame.childFrames[0];
-        done = true;
-    }];
-    Util::run(&done);
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:nil];
+    while (![[childFrame info] _isFocused])
+        childFrame = [webView firstChildFrame];
 
     [webView _synchronouslyExecuteEditCommand:@"SelectAll" argument:nil];
-    while (![webView selectionRangeHasStartOffset:0 endOffset:4 inFrame:childFrameNode.get().info])
+    while (![webView selectionRangeHasStartOffset:0 endOffset:4 inFrame:[childFrame info]])
         Util::spinRunLoop();
 }
 
@@ -3213,26 +2757,16 @@ TEST(SiteIsolation, SelectAll)
         { "/frame"_s, { "test"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
-
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
-    __block bool done = false;
-    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:^(id, NSError *) {
-        done = true;
-    }];
-    Util::run(&done);
-    done = false;
-
-    __block RetainPtr<_WKFrameTreeNode> childFrameNode;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        childFrameNode = mainFrame.childFrames[0];
-        done = true;
-    }];
-    Util::run(&done);
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:nil];
+    while (![[childFrame info] _isFocused])
+        childFrame = [webView firstChildFrame];
 
     [webView selectAll:nil];
-    while (![webView selectionRangeHasStartOffset:0 endOffset:4 inFrame:childFrameNode.get().info])
+    while (![webView selectionRangeHasStartOffset:0 endOffset:4 inFrame:[childFrame info]])
         Util::spinRunLoop();
 }
 
@@ -3247,13 +2781,7 @@ TEST(SiteIsolation, TopContentInsetAfterCrossSiteNavigation)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/source"]]];
     [navigationDelegate waitForDidFinishNavigation];
     [navigationDelegate waitForDidFinishNavigation];
-
-    __block bool done = false;
-    [webView evaluateJavaScript:@"window.innerHeight" completionHandler:^(id result, NSError *) {
-        EXPECT_EQ(-10, [result intValue]);
-        done = true;
-    }];
-    Util::run(&done);
+    EXPECT_EQ(-10, [[webView objectByEvaluatingJavaScript:@"window.innerHeight"] intValue]);
 }
 #endif
 
@@ -3282,15 +2810,7 @@ TEST(SiteIsolation, CanGoBackAfterLoadingAndNavigatingFrame)
     [navigationDelegate waitForDidFinishNavigation];
     EXPECT_FALSE([webView canGoBack]);
 
-    __block RetainPtr<WKFrameInfo> childFrameInfo;
-    __block bool done = false;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        childFrameInfo = mainFrame.childFrames.firstObject.info;
-        done = true;
-    }];
-    Util::run(&done);
-
-    [webView evaluateJavaScript:@"location.href = 'https://webkit.org/destination'" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
+    [webView evaluateJavaScript:@"location.href = 'https://webkit.org/destination'" inFrame:[[webView firstChildFrame] info] completionHandler:nil];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
     EXPECT_TRUE([webView canGoBack]);
 }
@@ -3306,15 +2826,7 @@ TEST(SiteIsolation, CanGoBackAfterNavigatingFrameCrossOrigin)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
-    __block RetainPtr<WKFrameInfo> childFrameInfo;
-    __block bool done = false;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        childFrameInfo = mainFrame.childFrames.firstObject.info;
-        done = true;
-    }];
-    Util::run(&done);
-
-    [webView evaluateJavaScript:@"location.href = 'https://domain2.com/destination'" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
+    [webView evaluateJavaScript:@"location.href = 'https://domain2.com/destination'" inFrame:[[webView firstChildFrame] info] completionHandler:nil];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "destination");
     EXPECT_TRUE([webView canGoBack]);
 }
@@ -3330,34 +2842,17 @@ TEST(SiteIsolation, NavigateIframeSameOriginBackForward)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "source");
 
-    __block RetainPtr<WKFrameInfo> childFrameInfo;
-    __block bool done = false;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        childFrameInfo = mainFrame.childFrames.firstObject.info;
-        done = true;
-    }];
-    Util::run(&done);
-    done = false;
-
-    [webView evaluateJavaScript:@"location.href = 'https://webkit.org/destination'" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView evaluateJavaScript:@"location.href = 'https://webkit.org/destination'" inFrame:[childFrame info] completionHandler:nil];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "destination");
 
     [webView goBack];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "source");
-    [webView evaluateJavaScript:@"location.href" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *) {
-        EXPECT_STREQ([result UTF8String], "https://webkit.org/source");
-        done = true;
-    }];
-    Util::run(&done);
-    done = false;
+    EXPECT_WK_STREQ("source", [webView _test_waitForAlert]);
+    EXPECT_WK_STREQ("https://webkit.org/source", [webView objectByEvaluatingJavaScript:@"location.href" inFrame:[childFrame info]]);
 
     [webView goForward];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "destination");
-    [webView evaluateJavaScript:@"location.href" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *) {
-        EXPECT_STREQ([result UTF8String], "https://webkit.org/destination");
-        done = true;
-    }];
-    Util::run(&done);
+    EXPECT_WK_STREQ("destination", [webView _test_waitForAlert]);
+    EXPECT_WK_STREQ("https://webkit.org/destination", [webView objectByEvaluatingJavaScript:@"location.href" inFrame:[childFrame info]]);
 }
 
 TEST(SiteIsolation, NavigateIframeCrossOriginBackForward)
@@ -3371,14 +2866,7 @@ TEST(SiteIsolation, NavigateIframeCrossOriginBackForward)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "a");
 
-    __block RetainPtr<WKFrameInfo> childFrameInfo;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        childFrameInfo = mainFrame.childFrames.firstObject.info;
-    }];
-    while (!childFrameInfo)
-        Util::spinRunLoop();
-
-    [webView evaluateJavaScript:@"location.href = 'https://b.com/b'" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
+    [webView evaluateJavaScript:@"location.href = 'https://b.com/b'" inFrame:[[webView firstChildFrame] info] completionHandler:nil];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "b");
     [webView goBack];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "a");
@@ -3461,14 +2949,8 @@ TEST(SiteIsolation, NavigateNestedIframeSameOriginBackForward)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "a");
 
-    __block RetainPtr<WKFrameInfo> childFrameInfo;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        childFrameInfo = mainFrame.childFrames.firstObject.childFrames.firstObject.info;
-    }];
-    while (!childFrameInfo)
-        Util::spinRunLoop();
-
-    [webView evaluateJavaScript:@"location.href = 'https://a.com/b'" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
+    RetainPtr childFrame = [[[webView firstChildFrame] childFrames] firstObject];
+    [webView evaluateJavaScript:@"location.href = 'https://a.com/b'" inFrame:[childFrame info] completionHandler:nil];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "b");
     [webView goBack];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "a");
@@ -3495,16 +2977,11 @@ TEST(SiteIsolation, AdvancedPrivacyProtectionsHideScreenMetricsFromBindings)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
-    __block RetainPtr<WKFrameInfo> childFrameInfo;
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        childFrameInfo = mainFrame.childFrames.firstObject.info;
-    }];
-    while (!childFrameInfo)
-        Util::spinRunLoop();
-    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"screenX" inFrame:childFrameInfo.get()] intValue]);
-    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"screenY" inFrame:childFrameInfo.get()] intValue]);
-    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"screen.availLeft" inFrame:childFrameInfo.get()] intValue]);
-    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"screen.availTop" inFrame:childFrameInfo.get()] intValue]);
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"screenX" inFrame:[childFrame info]] intValue]);
+    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"screenY" inFrame:[childFrame info]] intValue]);
+    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"screen.availLeft" inFrame:[childFrame info]] intValue]);
+    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"screen.availTop" inFrame:[childFrame info]] intValue]);
 }
 
 }

@@ -26,6 +26,7 @@
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
+@class _WKFrameTreeNode;
 @class _WKProcessPoolConfiguration;
 
 #if PLATFORM(IOS_FAMILY)
@@ -207,4 +208,11 @@ struct AutocorrectionContext {
 @property (nonatomic) BOOL forceWindowToBecomeKey;
 @end
 #endif
+
+@interface TestWKWebView (SiteIsolation)
+- (_WKFrameTreeNode *)mainFrame;
+- (_WKFrameTreeNode *)firstChildFrame;
+- (void)evaluateJavaScript:(NSString *)string inFrame:(WKFrameInfo *)frame completionHandler:(void(^)(id, NSError *))completionHandler;
+- (WKFindResult *)findStringAndWait:(NSString *)string withConfiguration:(WKFindConfiguration *)configuration;
+@end
 
