@@ -71,7 +71,11 @@ void setAllowsDeprecatedSynchronousXMLHttpRequestDuringUnload(bool allowsRequest
 
 bool defaultMediaSourceEnabled()
 {
+#if PLATFORM(APPLETV)
+    return true;
+#else
     return !PAL::deviceClassIsSmallScreen();
+#endif
 }
 
 #endif
