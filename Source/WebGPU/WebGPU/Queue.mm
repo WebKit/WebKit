@@ -124,11 +124,7 @@ std::pair<id<MTLCommandBuffer>, id<MTLSharedEvent>> Queue::commandBufferWithDesc
     if (!isValid())
         return std::make_pair(nil, nil);
 
-#if PLATFORM(IOS)
     constexpr auto maxCommandBufferCount = 1000;
-#else
-    const auto maxCommandBufferCount = Device::maxCommandBufferCount();
-#endif
     auto devicePtr = m_device.get();
     if (m_createdNotCommittedBuffers.count >= maxCommandBufferCount) {
         if (devicePtr)

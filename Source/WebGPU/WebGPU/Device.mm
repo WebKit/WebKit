@@ -134,14 +134,9 @@ bool Device::isDestroyed() const
     return m_destroyed;
 }
 
-NSUInteger Device::maxCommandBufferCount()
-{
-    return SHRT_MAX;
-}
-
 Ref<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, HardwareCapabilities&& capabilities, Adapter& adapter)
 {
-    id<MTLCommandQueue> commandQueue = [device newCommandQueueWithMaxCommandBufferCount:Device::maxCommandBufferCount()];
+    id<MTLCommandQueue> commandQueue = [device newCommandQueueWithMaxCommandBufferCount:2048];
     if (!commandQueue)
         return Device::createInvalid(adapter);
 

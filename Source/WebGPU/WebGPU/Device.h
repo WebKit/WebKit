@@ -146,7 +146,6 @@ public:
     id<MTLBuffer> safeCreateBuffer(NSUInteger length, MTLStorageMode, MTLCPUCacheMode = MTLCPUCacheModeDefaultCache, MTLHazardTrackingMode = MTLHazardTrackingModeDefault) const;
     void loseTheDevice(WGPUDeviceLostReason);
     int bufferIndexForICBContainer() const;
-    static NSUInteger maxCommandBufferCount();
 
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&&, Adapter&);
