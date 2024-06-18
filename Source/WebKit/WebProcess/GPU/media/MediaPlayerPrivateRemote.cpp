@@ -1808,10 +1808,10 @@ bool MediaPlayerPrivateRemote::supportsLinearMediaPlayer() const
     switch (m_remoteEngineIdentifier) {
     case MediaPlayerMediaEngineIdentifier::AVFoundation:
     case MediaPlayerMediaEngineIdentifier::AVFoundationMSE:
+    case MediaPlayerMediaEngineIdentifier::CocoaWebM:
         return true;
     case MediaPlayerMediaEngineIdentifier::AVFoundationMediaStream:
-    case MediaPlayerMediaEngineIdentifier::CocoaWebM:
-        // FIXME: MediaStream and WebM players don't support LinearMediaPlayer yet but should.
+        // FIXME: MediaStream doesn't support LinearMediaPlayer yet but should.
         return false;
     case MediaPlayerMediaEngineIdentifier::AVFoundationCF:
     case MediaPlayerMediaEngineIdentifier::GStreamer:

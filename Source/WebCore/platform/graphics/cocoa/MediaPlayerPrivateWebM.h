@@ -44,6 +44,8 @@
 OBJC_CLASS AVSampleBufferAudioRenderer;
 OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS AVSampleBufferRenderSynchronizer;
+OBJC_CLASS AVSampleBufferVideoRenderer;
+OBJC_PROTOCOL(WebSampleBufferVideoRendering);
 
 typedef struct __CVBuffer *CVPixelBufferRef;
 
@@ -112,6 +114,9 @@ private:
     bool paused() const final;
     bool timeIsProgressing() const final;
 
+    WebCoreDecompressionSession *decompressionSession() const { return m_decompressionSession.get(); }
+    WebSampleBufferVideoRendering *layerOrVideoRenderer() const;
+
     FloatSize naturalSize() const final { return m_naturalSize; }
 
     bool hasVideo() const final { return m_hasVideo; }
@@ -167,7 +172,6 @@ private:
     void setReadyState(MediaPlayer::ReadyState);
     void characteristicsChanged();
 
-    bool shouldEnsureLayer() const;
     void setPresentationSize(const IntSize&) final;
     bool supportsAcceleratedRendering() const final { return true; }
     void acceleratedRenderingStateChanged() final;
@@ -191,8 +195,12 @@ private:
 #endif
 
     void enqueueSample(Ref<MediaSample>&&, TrackID);
-    void reenqueSamples(TrackID);
-    void reenqueueMediaForTime(TrackBuffer&, TrackID, const MediaTime&);
+    enum class NeedsFlush: bool {
+        No = 0,
+        Yes
+    };
+    void reenqueSamples(TrackID, NeedsFlush = NeedsFlush::Yes);
+    void reenqueueMediaForTime(TrackBuffer&, TrackID, const MediaTime&, NeedsFlush = NeedsFlush::Yes);
     void notifyClientWhenReadyForMoreSamples(TrackID);
 
     void setMinimumUpcomingPresentationTime(TrackID, const MediaTime&);
@@ -222,17 +230,29 @@ private:
 
     void addTrackBuffer(TrackID, RefPtr<MediaDescription>&&);
 
+    bool shouldEnsureLayerOrVideoRenderer() const;
     void ensureLayer();
+    void destroyLayer();
     void ensureDecompressionSession();
+    void destroyDecompressionSession();
+    void ensureVideoRenderer();
+    void destroyVideoRenderer();
+
+    void ensureLayerOrVideoRenderer();
+    void destroyLayerOrVideoRenderer();
+    void configureLayerOrVideoRenderer(WebSampleBufferVideoRendering *);
+
     void addAudioRenderer(TrackID);
     void removeAudioRenderer(TrackID);
-
-    void destroyLayer();
-    void destroyDecompressionSession();
     void destroyAudioRenderer(RetainPtr<AVSampleBufferAudioRenderer>);
     void destroyAudioRenderers();
     void clearTracks();
-        
+
+    void configureVideoRenderer(VideoMediaSampleRenderer&);
+    void invalidateVideoRenderer(VideoMediaSampleRenderer&);
+    void setVideoRenderer(WebSampleBufferVideoRendering *);
+    void stageVideoRenderer(WebSampleBufferVideoRendering *);
+
     void registerNotifyWhenHasAvailableVideoFrame();
         
     void startVideoFrameMetadataGathering() final;
@@ -247,6 +267,36 @@ private:
     void videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *) final;
     void audioRendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *) final;
     void videoRendererReadyForDisplayChanged(WebSampleBufferVideoRendering *, bool isReadyForDisplay) final;
+
+    void setShouldDisableHDR(bool) final;
+    void playerContentBoxRectChanged(const LayoutRect&) final;
+    void setShouldMaintainAspectRatio(bool) final;
+    bool m_shouldMaintainAspectRatio { true };
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    const String& defaultSpatialTrackingLabel() const final;
+    void setDefaultSpatialTrackingLabel(const String&) final;
+    const String& spatialTrackingLabel() const final;
+    void setSpatialTrackingLabel(const String&) final;
+    void updateSpatialTrackingLabel();
+#endif
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    void setVideoTarget(const PlatformVideoTarget&) final;
+#endif
+    void isInFullscreenOrPictureInPictureChanged(bool) final;
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    bool supportsLinearMediaPlayer() const final { return true; }
+#endif
+
+    enum class AcceleratedVideoMode: uint8_t {
+        Layer = 0,
+        StagedVideoRenderer,
+        VideoRenderer,
+        StagedLayer
+    };
+    AcceleratedVideoMode acceleratedVideoMode() const;
 
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const final { return "MediaPlayerPrivateWebM"_s; }
@@ -275,6 +325,10 @@ private:
     PlatformTimeRanges m_buffered;
 
     RefPtr<VideoMediaSampleRenderer> m_videoRenderer;
+    RefPtr<VideoMediaSampleRenderer> m_expiringVideoRenderer;
+
+    RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+    RetainPtr<AVSampleBufferVideoRenderer> m_sampleBufferVideoRenderer;
     StdUnorderedMap<TrackID, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
     Ref<SourceBufferParserWebM> m_parser;
     const Ref<WTF::WorkQueue> m_appendQueue;
@@ -306,6 +360,7 @@ private:
     double m_rate { 1 };
 
     bool isEnabledVideoTrackID(TrackID) const;
+    bool hasSelectedVideo() const;
     std::optional<TrackID> m_enabledVideoTrackID;
     std::atomic<uint32_t> m_abortCalled { 0 };
     uint32_t m_pendingAppends { 0 };
@@ -343,6 +398,14 @@ private:
     };
     SeekState m_seekState { SeekCompleted };
     bool m_isSynchronizerSeeking { false };
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    String m_defaultSpatialTrackingLabel;
+    String m_spatialTrackingLabel;
+#endif
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    bool m_usingLinearMediaPlayer { false };
+    RetainPtr<FigVideoTargetRef> m_videoTarget;
+#endif
 };
 
 } // namespace WebCore

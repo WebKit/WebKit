@@ -118,7 +118,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     MediaTime currentTime() const override;
     bool timeIsProgressing() const final;
-    AVSampleBufferDisplayLayer *sampleBufferDisplayLayer() const { return m_sampleBufferDisplayLayer.get(); }
     WebCoreDecompressionSession *decompressionSession() const { return m_decompressionSession.get(); }
     WebSampleBufferVideoRendering *layerOrVideoRenderer() const;
 
@@ -290,6 +289,7 @@ private:
     void ensureVideoRenderer();
     void destroyVideoRenderer();
 
+    bool shouldEnsureLayerOrVideoRenderer() const;
     void ensureLayerOrVideoRenderer();
     void destroyLayerOrVideoRenderer();
     void configureLayerOrVideoRenderer(WebSampleBufferVideoRendering *);
@@ -311,8 +311,6 @@ private:
 
     void checkNewVideoFrameMetadata(CMTime);
     MediaTime clampTimeToSensicalValue(const MediaTime&) const;
-
-    bool shouldEnsureLayerOrVideoRenderer() const;
 
     void setShouldDisableHDR(bool) final;
     void playerContentBoxRectChanged(const LayoutRect&) final;
