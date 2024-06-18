@@ -136,6 +136,7 @@ namespace WebCore {
     M(UnifiedTextReplacement) \
     M(URLParser) \
     M(Viewports) \
+    M(ViewTransitions) \
     M(VirtualMemory) \
     M(WebAudio) \
     M(WebGL) \

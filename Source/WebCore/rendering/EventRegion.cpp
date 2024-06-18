@@ -62,7 +62,7 @@ void EventRegionContext::unite(const FloatRoundedRect& roundedRect, RenderObject
     auto region = transformAndClipIfNeeded(approximateAsRegion(roundedRect), [](auto affineTransform, auto region) {
         return affineTransform.mapRegion(region);
     });
-    m_eventRegion.unite(region, style, overrideUserModifyIsEditable);
+    m_eventRegion.unite(region, renderer, style, overrideUserModifyIsEditable);
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     auto rect = roundedRect.rect();
@@ -422,9 +422,9 @@ EventRegion::EventRegion(Region&& region
 {
 }
 
-void EventRegion::unite(const Region& region, const RenderStyle& style, bool overrideUserModifyIsEditable)
+void EventRegion::unite(const Region& region, RenderObject& renderer, const RenderStyle& style, bool overrideUserModifyIsEditable)
 {
-    if (style.usedPointerEvents() == PointerEvents::None)
+    if (renderer.usedPointerEvents() == PointerEvents::None)
         return;
 
     m_region.unite(region);
