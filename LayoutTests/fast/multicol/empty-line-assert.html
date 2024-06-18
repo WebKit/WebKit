@@ -1,0 +1,14 @@
+<style>
+body { writing-mode: vertical-lr }
+.c { direction: rtl; columns: 10px; widows: 100; }
+.f { float: left; min-block-size: 1000px; shape-outside: border-box; border-top-style: solid; }
+label { border-top-style: solid };
+</style>
+<div class=c>
+<label>
+<div class=f>This test passes if it doesn't crash.</div>
+</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
