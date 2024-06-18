@@ -24,12 +24,15 @@
  */
 
 #import <Foundation/NSObject.h>
+#import <Foundation/NSURLAuthenticationChallenge.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <CFNetwork/CFNSURLConnection.h>
 
 #else
+
+typedef struct _CFURLAuthChallenge* CFURLAuthChallengeRef;
 
 @interface NSURLAuthenticationChallenge ()
 #if PLATFORM(IOS_FAMILY)

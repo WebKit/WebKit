@@ -174,10 +174,6 @@
 #import <WebCore/WebItemProviderPasteboard.h>
 #endif
 
-#if HAVE(LOOKUP_GESTURE_RECOGNIZER)
-#import <UIKit/_UILookupGestureRecognizer.h>
-#endif
-
 #if ENABLE(ATTACHMENT_ELEMENT)
 #import "APIAttachment.h"
 #endif

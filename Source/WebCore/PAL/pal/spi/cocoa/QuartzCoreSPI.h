@@ -93,7 +93,7 @@ typedef struct _CARenderContext CARenderContext;
 + (CAContext *)currentContext;
 + (CAContext *)localContext;
 + (CAContext *)remoteContextWithOptions:(NSDictionary *)dict;
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 + (CAContext *)contextWithCGSConnection:(CGSConnectionID)cid options:(NSDictionary *)dict;
 #endif
 + (id)objectForSlot:(uint32_t)name;

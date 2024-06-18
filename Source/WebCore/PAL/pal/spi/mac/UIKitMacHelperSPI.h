@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,33 +21,28 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 #pragma once
 
-// Handle __IOS_PROHIBITED and friends.
-#undef __OS_AVAILABILITY
-#define __OS_AVAILABILITY(...)
+#if USE(APPLE_INTERNAL_SDK)
+#import <UIKitMacHelper/UINSRevealController.h>
+#else
 
-// Take care of {A,S}PI_AVAILABLE{,_BEGIN,_END}
-#undef __API_AVAILABLE_GET_MACRO
-#define __API_AVAILABLE_GET_MACRO(...) __NULL_AVAILABILITY
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#undef SWIFT_AVAILABILITY
-#define SWIFT_AVAILABILITY __NULL_AVAILABILITY
+@protocol UIRVPresenterHighlightDelegate
+@end
 
-// Take care of {A,S}PI_DEPRECATED{,WITH_REPLACEMENT}{,_BEGIN,_END}
-#undef __API_DEPRECATED_MSG_GET_MACRO
-#define __API_DEPRECATED_MSG_GET_MACRO(...) __NULL_AVAILABILITY
+@protocol UINSRevealController
+- (void)revealItem:(RVItem *)item locationInWindow:(CGPoint)locationInWindow window:(id)window highlighter:(id<UIRVPresenterHighlightDelegate>)highlighter;
+@end
 
-// Take care of API_UNAVAILABLE{,_BEGIN,_END}
-#undef __API_UNAVAILABLE_GET_MACRO
-#define __API_UNAVAILABLE_GET_MACRO(...) __NULL_AVAILABILITY
+id<UINSRevealController> UINSSharedRevealController(void);
 
-#undef __API_UNAVAILABLE_BEGIN_GET_MACRO
-#define __API_UNAVAILABLE_BEGIN_GET_MACRO(...) __NULL_AVAILABILITY
-
-#define __NULL_AVAILABILITY(...)
-
-// Silence legacy AVAILABLE_MAC_OS_X_VERSION_* macros
-#define __AVAILABILITY_MACROS_USES_AVAILABILITY 0
+#ifdef __cplusplus
+}
+#endif
+#endif // USE(APPLE_INTERNAL_SDK)

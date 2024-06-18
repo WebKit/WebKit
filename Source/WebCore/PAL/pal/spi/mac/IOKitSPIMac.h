@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
 #import <IOKit/hid/IOHIDDevice.h>
 #import <IOKit/hid/IOHIDManager.h>
@@ -114,4 +114,4 @@ IOHIDEventScrollMomentumBits IOHIDEventGetScrollMomentum(IOHIDEventRef);
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)

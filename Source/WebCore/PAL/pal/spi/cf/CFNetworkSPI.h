@@ -334,7 +334,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 #if PLATFORM(WATCHOS)
 @property NSURLSessionCompanionProxyPreference _companionProxyPreference;
 #endif
-#if HAVE(APP_SSO)
+#if HAVE(APP_SSO) || PLATFORM(MACCATALYST)
 @property BOOL _preventsAppSSO;
 #endif
 #if HAVE(ALLOWS_SENSITIVE_LOGGING)
@@ -397,7 +397,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 
 @interface NSURLSession (SPI)
 + (void)_strictTrustEvaluate:(NSURLAuthenticationChallenge *)challenge queue:(dispatch_queue_t)queue completionHandler:(void (^)(NSURLAuthenticationChallenge *challenge, OSStatus trustResult))cb;
-#if HAVE(APP_SSO)
+#if HAVE(APP_SSO) || PLATFORM(MACCATALYST)
 + (void)_disableAppSSO;
 #endif
 #if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
