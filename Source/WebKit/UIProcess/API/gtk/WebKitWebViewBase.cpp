@@ -191,12 +191,19 @@ struct MotionEvent {
             yRoot = rootPoint.y();
         }
 
-        MotionEvent(FloatPoint(x, y), FloatPoint(xRoot, yRoot), state);
+        position = FloatPoint(x, y);
+        globalPosition = FloatPoint(xRoot, yRoot);
+        setState(state);
     }
 
     MotionEvent(FloatPoint&& position, FloatPoint&& globalPosition, GdkModifierType state)
         : position(WTFMove(position))
         , globalPosition(WTFMove(globalPosition))
+    {
+        setState(state);
+    }
+
+    void setState(GdkModifierType state)
     {
         if (state & GDK_CONTROL_MASK)
             modifiers.add(WebEventModifier::ControlKey);
