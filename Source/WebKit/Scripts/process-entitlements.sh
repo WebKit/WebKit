@@ -204,8 +204,16 @@ function notify_entitlements()
 
         # Keep in sync with the list in WebProcessPool::registerNotificationObservers.
         FORWARDED_NOTIFICATIONS=(
+            "_AXNotification_shouldPerformValidationsAtRuntime"
             "_NS_ctasd"
+            "AppleDatePreferencesChangedNotification"
+            "AppleLanguagePreferencesChangedNotification"
+            "AppleNumberPreferencesChangedNotification"
+            "AppleTextBehaviorPreferencesChangedNotification"
+            "AppleTimePreferencesChangedNotification"
             "LetterFeedbackEnabled.notification"
+            "PhoneticFeedbackEnabled.notification"
+            "QuickTypePredictionFeedbackEnabled.notification"
             "com.apple.CFPreferences._domainsChangedExternally"
             "com.apple.WebKit.LibraryPathDiagnostics"
             "com.apple.WebKit.deleteAllCode"
@@ -271,7 +279,9 @@ function notify_entitlements()
         NON_FORWARDED_NOTIFICATIONS=(
             "com.apple.accessibility.cache.app.ax"
             "com.apple.accessibility.cache.ast"
+            "com.apple.accessibility.cache.automation.localized.lookup"
             "com.apple.accessibility.cache.ax"
+            "com.apple.accessibility.cache.enhance.background.contrast"
             "com.apple.accessibility.cache.enhance.text.legibility"
             "com.apple.accessibility.cache.enhance.text.legibilitycom.apple.WebKit.WebContent"
             "com.apple.accessibility.cache.guided.access"

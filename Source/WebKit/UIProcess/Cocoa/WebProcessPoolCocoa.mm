@@ -703,8 +703,16 @@ void WebProcessPool::registerNotificationObservers()
     const Vector<ASCIILiteral> notificationMessages = {
         // Keep in sync with notify_entitlements() in process-entitlements.sh.
         // FORWARDED_NOTIFICATIONS
+        "_AXNotification_shouldPerformValidationsAtRuntime"_s,
         "_NS_ctasd"_s,
+        "AppleDatePreferencesChangedNotification"_s,
+        "AppleLanguagePreferencesChangedNotification"_s,
+        "AppleNumberPreferencesChangedNotification"_s,
+        "AppleTextBehaviorPreferencesChangedNotification"_s,
+        "AppleTimePreferencesChangedNotification"_s,
         "LetterFeedbackEnabled.notification"_s,
+        "PhoneticFeedbackEnabled.notification"_s,
+        "QuickTypePredictionFeedbackEnabled.notification"_s,
         "com.apple.CFPreferences._domainsChangedExternally"_s,
         "com.apple.WebKit.LibraryPathDiagnostics"_s,
         "com.apple.WebKit.deleteAllCode"_s,
