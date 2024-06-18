@@ -161,10 +161,6 @@
 #include "MediaSessionCoordinatorProxyPrivate.h"
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebViewImplAdditionsBefore.mm>
-#endif
-
 #import <pal/cocoa/RevealSoftLink.h>
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/cocoa/TranslationUIServicesSoftLink.h>
@@ -3255,8 +3251,8 @@ NSTextCheckingTypes WebViewImpl::getTextCheckingTypes() const
     if (allowsInlinePredictions()) {
         types |= (NSTextCheckingType)_NSTextCheckingTypeSingleCompletion;
 
-#if HAVE(TEXT_CHECKING_TYPE_GRAMMAR)
-        types |= (NSTextCheckingType)_NSTextCheckingTypeGrammar;
+#if HAVE(NS_TEXT_CHECKING_TYPE_MATH_COMPLETION)
+        types |= (NSTextCheckingType)_NSTextCheckingTypeMathCompletion;
 #endif
     }
 #endif
