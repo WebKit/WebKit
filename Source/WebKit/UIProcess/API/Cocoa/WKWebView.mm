@@ -48,6 +48,7 @@
 #import "MediaUtilities.h"
 #import "NavigationState.h"
 #import "PageClient.h"
+#import "PlatformWritingToolsUtilities.h"
 #import "ProvisionalPageProxy.h"
 #import "QuickLookThumbnailLoader.h"
 #import "RemoteLayerTreeScrollingPerformanceData.h"
@@ -2060,122 +2061,6 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 #if ENABLE(WRITING_TOOLS)
 
-#pragma mark - WTWritingToolsDelegate Helpers
-
-static WTTextSuggestionState convert(WebCore::UnifiedTextReplacement::Replacement::State state)
-{
-    switch (state) {
-    case WebCore::UnifiedTextReplacement::Replacement::State::Pending:
-        return WTTextSuggestionStatePending;
-    case WebCore::UnifiedTextReplacement::Replacement::State::Active:
-        return WTTextSuggestionStateReviewing;
-    case WebCore::UnifiedTextReplacement::Replacement::State::Reverted:
-        return WTTextSuggestionStateRejected;
-    case WebCore::UnifiedTextReplacement::Replacement::State::Invalid:
-        return WTTextSuggestionStateInvalid;
-    }
-}
-
-static WebCore::UnifiedTextReplacement::Replacement::State convert(WTTextSuggestionState state)
-{
-    switch (state) {
-    case WTTextSuggestionStatePending:
-        return WebCore::UnifiedTextReplacement::Replacement::State::Pending;
-    case WTTextSuggestionStateReviewing:
-        return WebCore::UnifiedTextReplacement::Replacement::State::Active;
-    case WTTextSuggestionStateRejected:
-        return WebCore::UnifiedTextReplacement::Replacement::State::Reverted;
-    case WTTextSuggestionStateInvalid:
-        return WebCore::UnifiedTextReplacement::Replacement::State::Invalid;
-
-    // FIXME: Remove this default case once the WTTextSuggestionStateAccepted case is no longer in the build.
-    default:
-        ASSERT_NOT_REACHED();
-        return WebCore::UnifiedTextReplacement::Replacement::State::Invalid;
-    }
-}
-
-static WebCore::UnifiedTextReplacement::EditAction convert(WTAction action)
-{
-    switch (action) {
-    case WTActionShowOriginal:
-        return WebCore::UnifiedTextReplacement::EditAction::Undo;
-    case WTActionShowRewritten:
-        return WebCore::UnifiedTextReplacement::EditAction::Redo;
-    case WTActionCompositionRestart:
-        return WebCore::UnifiedTextReplacement::EditAction::UndoAll;
-    }
-}
-
-static WebCore::UnifiedTextReplacement::Session::ReplacementType convert(WTSessionType type)
-{
-    switch (type) {
-    case WTSessionTypeProofreading:
-        return WebCore::UnifiedTextReplacement::Session::ReplacementType::PlainText;
-    case WTSessionTypeComposition:
-        return WebCore::UnifiedTextReplacement::Session::ReplacementType::RichText;
-    }
-}
-
-static WebCore::UnifiedTextReplacement::Session::CorrectionType convert(WTCompositionSessionType type)
-{
-    switch (type) {
-    case WTCompositionSessionTypeNone:
-        return WebCore::UnifiedTextReplacement::Session::CorrectionType::None;
-
-    // FIXME: Map these to specific `CorrectionType` types post-upstreaming.
-    case WTCompositionSessionTypeMagic:
-    case WTCompositionSessionTypeConcise:
-    case WTCompositionSessionTypeFriendly:
-    case WTCompositionSessionTypeProfessional:
-    case WTCompositionSessionTypeOpenEnded:
-    case WTCompositionSessionTypeSummary:
-    case WTCompositionSessionTypeKeyPoints:
-    case WTCompositionSessionTypeList:
-    case WTCompositionSessionTypeTable:
-    case WTCompositionSessionTypeCompose:
-        return WebCore::UnifiedTextReplacement::Session::CorrectionType::Grammar;
-
-    case WTCompositionSessionTypeSmartReply:
-        return WebCore::UnifiedTextReplacement::Session::CorrectionType::Spelling;
-
-    default:
-        return WebCore::UnifiedTextReplacement::Session::CorrectionType::Grammar;
-    }
-}
-
-static std::optional<WebCore::UnifiedTextReplacement::Context> convert(WTContext *context)
-{
-    auto contextUUID = WTF::UUID::fromNSUUID(context.uuid);
-    if (!contextUUID)
-        return std::nullopt;
-
-    return { { *contextUUID, WebCore::AttributedString::fromNSAttributedString(context.attributedText), { context.range } } };
-}
-
-static RetainPtr<WTContext> convert(const WebCore::UnifiedTextReplacement::Context& contextData)
-{
-    return adoptNS([[WTContext alloc] initWithAttributedText:contextData.attributedText.nsAttributedString().get() range:NSMakeRange(contextData.range.location, contextData.range.length)]);
-}
-
-static std::optional<WebCore::UnifiedTextReplacement::Session> convert(WTSession *session)
-{
-    auto sessionUUID = WTF::UUID::fromNSUUID(session.uuid);
-    if (!sessionUUID)
-        return std::nullopt;
-
-    return { { *sessionUUID, convert(session.type), convert(session.compositionSessionType) } };
-}
-
-static std::optional<WebCore::UnifiedTextReplacement::Replacement> convert(WTTextSuggestion *suggestion)
-{
-    auto suggestionUUID = WTF::UUID::fromNSUUID(suggestion.uuid);
-    if (!suggestionUUID)
-        return std::nullopt;
-
-    return { { *suggestionUUID, { suggestion.originalRange }, { suggestion.replacement }, convert(suggestion.state) } };
-}
-
 #pragma mark - Writing Tools API
 
 - (BOOL)isWritingToolsActive
@@ -2185,52 +2070,35 @@ static std::optional<WebCore::UnifiedTextReplacement::Replacement> convert(WTTex
 
 #pragma mark - WTWritingToolsDelegate conformance
 
-#if PLATFORM(MAC)
-- (NSWritingToolsAllowedInputOptions)writingToolsAllowedInputOptions {
+- (PlatformWritingToolsAllowedInputOptions)writingToolsAllowedInputOptions {
     auto& editorState = _page->editorState();
     if (editorState.isContentEditable && !editorState.isContentRichlyEditable)
-        return NSWritingToolsAllowedInputOptionsPlainText;
+        return PlatformWritingToolsAllowedInputOptionsPlainText;
 
-    NSWritingToolsAllowedInputOptions listOption = (NSWritingToolsAllowedInputOptions)(1 << 2);
+    PlatformWritingToolsAllowedInputOptions listOption = (PlatformWritingToolsAllowedInputOptions)(1 << 2);
 
-    return NSWritingToolsAllowedInputOptionsPlainText | NSWritingToolsAllowedInputOptionsRichText | listOption | NSWritingToolsAllowedInputOptionsTable;
-}
-#else
-- (UIWritingToolsAllowedInputOptions)writingToolsAllowedInputOptions {
-    auto& editorState = _page->editorState();
-    if (editorState.isContentEditable && !editorState.isContentRichlyEditable)
-        return UIWritingToolsAllowedInputOptionsPlainText;
-
-    UIWritingToolsAllowedInputOptions listOption = (UIWritingToolsAllowedInputOptions)(1 << 2);
-
-    return UIWritingToolsAllowedInputOptionsPlainText | UIWritingToolsAllowedInputOptionsRichText | listOption | UIWritingToolsAllowedInputOptionsTable;
-}
-#endif
-
-- (BOOL)_wantsCompleteUnifiedTextReplacementBehavior
-{
-    return [self wantsWritingToolsInlineEditing];
+    return PlatformWritingToolsAllowedInputOptionsPlainText | PlatformWritingToolsAllowedInputOptionsRichText | listOption | PlatformWritingToolsAllowedInputOptionsTable;
 }
 
 - (BOOL)wantsWritingToolsInlineEditing
 {
-    return [self _isEditable] || [_configuration _unifiedTextReplacementBehavior] == _WKUnifiedTextReplacementBehaviorComplete;
+    return [self _isEditable] || [_configuration writingToolsBehavior] == PlatformWritingToolsBehaviorComplete;
 }
 
 - (void)willBeginWritingToolsSession:(WTSession *)session requestContexts:(void (^)(NSArray<WTContext *> *))completion
 {
-    auto sessionData = convert(session);
+    auto webSession = WebKit::convertToWebSession(session);
 
     if (session) {
         [_unifiedTextReplacementSessions setObject:session forKey:session.uuid];
         _page->setUnifiedTextReplacementActive(true);
     }
 
-    _page->willBeginTextReplacementSession(sessionData, [completion = makeBlockPtr(completion)](const auto& contextData) {
+    _page->willBeginTextReplacementSession(webSession, [completion = makeBlockPtr(completion)](const auto& contextData) {
         auto contexts = [NSMutableArray arrayWithCapacity:contextData.size()];
         for (auto& context : contextData) {
-            auto wtContext = convert(context);
-            [contexts addObject:wtContext.get()];
+            auto platformContext = WebKit::convertToPlatformContext(context);
+            [contexts addObject:platformContext.get()];
         }
         completion(contexts);
     });
@@ -2238,47 +2106,47 @@ static std::optional<WebCore::UnifiedTextReplacement::Replacement> convert(WTTex
 
 - (void)didBeginWritingToolsSession:(WTSession *)session contexts:(NSArray<WTContext *> *)contexts
 {
-    auto sessionData = convert(session);
-    if (!sessionData) {
+    auto webSession = WebKit::convertToWebSession(session);
+    if (!webSession) {
         ASSERT_NOT_REACHED();
         return;
     }
 
     Vector<WebCore::UnifiedTextReplacement::Context> contextData;
     for (WTContext *context in contexts) {
-        auto contextDataItem = convert(context);
-        if (!contextDataItem) {
+        auto webContext = WebKit::convertToWebContext(context);
+        if (!webContext) {
             ASSERT_NOT_REACHED();
             return;
         }
 
-        contextData.append(*contextDataItem);
+        contextData.append(*webContext);
     }
 
     // Don't animate smart replies, they are animated by UIKit/AppKit.
-    if (sessionData->correctionType != WebCore::UnifiedTextReplacement::Session::CorrectionType::Spelling)
+    if (webSession->correctionType != WebCore::UnifiedTextReplacement::Session::CorrectionType::Spelling)
         [self beginWritingToolsAnimationForSessionWithUUID:session.uuid];
 
-    _page->didBeginTextReplacementSession(*sessionData, contextData);
+    _page->didBeginTextReplacementSession(*webSession, contextData);
 }
 
 - (void)proofreadingSession:(WTSession *)session didReceiveSuggestions:(NSArray<WTTextSuggestion *> *)suggestions processedRange:(NSRange)range inContext:(WTContext *)context finished:(BOOL)finished
 {
-    auto sessionData = convert(session);
-    if (!sessionData) {
+    auto webSession = WebKit::convertToWebSession(session);
+    if (!webSession) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    auto contextData = convert(context);
-    if (!contextData) {
+    auto webContext = WebKit::convertToWebContext(context);
+    if (!webContext) {
         ASSERT_NOT_REACHED();
         return;
     }
 
     Vector<WebCore::UnifiedTextReplacement::Replacement> replacementData;
     for (WTTextSuggestion *suggestion in suggestions) {
-        auto replacementDataItem = convert(suggestion);
+        auto replacementDataItem = WebKit::convertToWebTextSuggestion(suggestion);
         if (!replacementDataItem) {
             ASSERT_NOT_REACHED();
             continue;
@@ -2289,24 +2157,24 @@ static std::optional<WebCore::UnifiedTextReplacement::Replacement> convert(WTTex
         [_unifiedTextReplacementSessionReplacements setObject:suggestion forKey:suggestion.uuid];
     }
 
-    _page->textReplacementSessionDidReceiveReplacements(*sessionData, replacementData, *contextData, finished);
+    _page->textReplacementSessionDidReceiveReplacements(*webSession, replacementData, *webContext, finished);
 }
 
 - (void)proofreadingSession:(WTSession *)session didUpdateState:(WTTextSuggestionState)state forSuggestionWithUUID:(NSUUID *)suggestionUUID inContext:(WTContext *)context
 {
-    auto sessionData = convert(session);
-    if (!sessionData) {
+    auto webSession = WebKit::convertToWebSession(session);
+    if (!webSession) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    auto contextData = convert(context);
-    if (!contextData) {
+    auto webContext = WebKit::convertToWebContext(context);
+    if (!webContext) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    auto stateData = convert(state);
+    auto webTextSuggestionState = WebKit::convertToWebTextSuggestionState(state);
 
     WTTextSuggestion *suggestion = [_unifiedTextReplacementSessionReplacements objectForKey:suggestionUUID];
     if (!suggestion) {
@@ -2314,19 +2182,19 @@ static std::optional<WebCore::UnifiedTextReplacement::Replacement> convert(WTTex
         return;
     }
 
-    auto replacementDataItem = convert(suggestion);
-    if (!replacementDataItem) {
+    auto webTextSuggestion = WebKit::convertToWebTextSuggestion(suggestion);
+    if (!webTextSuggestion) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    _page->textReplacementSessionDidUpdateStateForReplacement(*sessionData, stateData, *replacementDataItem, *contextData);
+    _page->textReplacementSessionDidUpdateStateForReplacement(*webSession, webTextSuggestionState, *webTextSuggestion, *webContext);
 }
 
 - (void)didEndWritingToolsSession:(WTSession *)session accepted:(BOOL)accepted
 {
-    auto sessionData = convert(session);
-    if (!sessionData) {
+    auto webSession = WebKit::convertToWebSession(session);
+    if (!webSession) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -2336,35 +2204,35 @@ static std::optional<WebCore::UnifiedTextReplacement::Replacement> convert(WTTex
 
     _page->setUnifiedTextReplacementActive(false);
 
-    _page->didEndTextReplacementSession(*sessionData, accepted);
+    _page->didEndTextReplacementSession(*webSession, accepted);
 }
 
 - (void)compositionSession:(WTSession *)session didReceiveText:(NSAttributedString *)attributedText replacementRange:(NSRange)range inContext:(WTContext *)context finished:(BOOL)finished
 {
-    auto sessionData = convert(session);
-    if (!sessionData) {
+    auto webSession = WebKit::convertToWebSession(session);
+    if (!webSession) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    auto contextData = convert(context);
-    if (!contextData) {
+    auto webContext = WebKit::convertToWebContext(context);
+    if (!webContext) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    _page->textReplacementSessionDidReceiveTextWithReplacementRange(*sessionData, WebCore::AttributedString::fromNSAttributedString(attributedText), { range }, *contextData, finished);
+    _page->textReplacementSessionDidReceiveTextWithReplacementRange(*webSession, WebCore::AttributedString::fromNSAttributedString(attributedText), { range }, *webContext, finished);
 }
 
 - (void)writingToolsSession:(WTSession *)session didReceiveAction:(WTAction)action
 {
-    auto sessionData = convert(session);
-    if (!sessionData) {
+    auto webSession = WebKit::convertToWebSession(session);
+    if (!webSession) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    _page->textReplacementSessionDidReceiveEditAction(*sessionData, convert(action));
+    _page->textReplacementSessionDidReceiveEditAction(*webSession, WebKit::convertToWebAction(action));
 }
 
 
@@ -2401,7 +2269,7 @@ static std::optional<WebCore::UnifiedTextReplacement::Replacement> convert(WTTex
     if (![textViewDelegate respondsToSelector:@selector(proofreadingSessionWithUUID:updateState:forSuggestionWithUUID:)])
         return;
 
-    [textViewDelegate proofreadingSessionWithUUID:session.uuid updateState:convert(state) forSuggestionWithUUID:replacementUUID];
+    [textViewDelegate proofreadingSessionWithUUID:session.uuid updateState:WebKit::convertToPlatformTextSuggestionState(state) forSuggestionWithUUID:replacementUUID];
 }
 
 

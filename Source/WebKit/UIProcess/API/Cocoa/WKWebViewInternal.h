@@ -412,8 +412,6 @@ struct PerWebProcessState {
 - (UIWritingToolsAllowedInputOptions)writingToolsAllowedInputOptions;
 #endif
 
-- (BOOL)_wantsCompleteUnifiedTextReplacementBehavior;
-
 #endif // ENABLE(WRITING_TOOLS)
 
 #if ENABLE(WRITING_TOOLS_UI)

@@ -32,10 +32,44 @@
 #import <WritingTools/WTSession_Private.h>
 #import <WritingTools/WritingTools.h>
 
+#if PLATFORM(MAC)
+
+using PlatformWritingToolsBehavior = NSWritingToolsBehavior;
+
+constexpr auto PlatformWritingToolsBehaviorNone = NSWritingToolsBehaviorNone;
+constexpr auto PlatformWritingToolsBehaviorDefault = NSWritingToolsBehaviorDefault;
+constexpr auto PlatformWritingToolsBehaviorLimited = NSWritingToolsBehaviorLimited;
+constexpr auto PlatformWritingToolsBehaviorComplete = NSWritingToolsBehaviorComplete;
+
+using PlatformWritingToolsAllowedInputOptions = NSWritingToolsAllowedInputOptions;
+
+constexpr auto PlatformWritingToolsAllowedInputOptionsPlainText = NSWritingToolsAllowedInputOptionsPlainText;
+constexpr auto PlatformWritingToolsAllowedInputOptionsRichText = NSWritingToolsAllowedInputOptionsRichText;
+constexpr auto PlatformWritingToolsAllowedInputOptionsList = NSWritingToolsAllowedInputOptionsList;
+constexpr auto PlatformWritingToolsAllowedInputOptionsTable = NSWritingToolsAllowedInputOptionsTable;
+
+#else
+
+using PlatformWritingToolsBehavior = UIWritingToolsBehavior;
+
+constexpr auto PlatformWritingToolsBehaviorNone = UIWritingToolsBehaviorNone;
+constexpr auto PlatformWritingToolsBehaviorDefault = UIWritingToolsBehaviorDefault;
+constexpr auto PlatformWritingToolsBehaviorLimited = UIWritingToolsBehaviorLimited;
+constexpr auto PlatformWritingToolsBehaviorComplete = UIWritingToolsBehaviorComplete;
+
+using PlatformWritingToolsAllowedInputOptions = UIWritingToolsAllowedInputOptions;
+
+constexpr auto PlatformWritingToolsAllowedInputOptionsPlainText = UIWritingToolsAllowedInputOptionsPlainText;
+constexpr auto PlatformWritingToolsAllowedInputOptionsRichText = UIWritingToolsAllowedInputOptionsRichText;
+constexpr auto PlatformWritingToolsAllowedInputOptionsList = UIWritingToolsAllowedInputOptionsList;
+constexpr auto PlatformWritingToolsAllowedInputOptionsTable = UIWritingToolsAllowedInputOptionsTable;
+
+#endif
+
 #else
 
 #error Symbols must be forward declared once used with non-internal SDKS.
 
-#endif
+#endif // USE(APPLE_INTERNAL_SDK)
 
 #endif // ENABLE(WRITING_TOOLS)

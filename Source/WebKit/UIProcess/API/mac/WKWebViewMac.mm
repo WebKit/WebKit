@@ -1235,7 +1235,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(WRITING_TOOLS)
 - (BOOL)_web_wantsCompleteUnifiedTextReplacementBehavior
 {
-    return [self _wantsCompleteUnifiedTextReplacementBehavior];
+    return [self wantsWritingToolsInlineEditing];
 }
 #endif
 

@@ -28,6 +28,7 @@
 
 #import "APIPageConfiguration.h"
 #import "CSPExtensionUtilities.h"
+#import "PlatformWritingToolsUtilities.h"
 #import "WKDataDetectorTypesInternal.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
@@ -128,60 +129,6 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 - (BOOL)allowsInlinePredictions
 {
     return _pageConfiguration->allowsInlinePredictions();
-}
-
-#if ENABLE(WRITING_TOOLS)
-
-static _WKUnifiedTextReplacementBehavior convertToPlatform(WebCore::UnifiedTextReplacement::ReplacementBehavior behavior)
-{
-    switch (behavior) {
-    case WebCore::UnifiedTextReplacement::ReplacementBehavior::None:
-        return _WKUnifiedTextReplacementBehaviorNone;
-
-    case WebCore::UnifiedTextReplacement::ReplacementBehavior::Default:
-        return _WKUnifiedTextReplacementBehaviorDefault;
-
-    case WebCore::UnifiedTextReplacement::ReplacementBehavior::Limited:
-        return _WKUnifiedTextReplacementBehaviorLimited;
-
-    case WebCore::UnifiedTextReplacement::ReplacementBehavior::Complete:
-        return _WKUnifiedTextReplacementBehaviorComplete;
-    }
-}
-
-static WebCore::UnifiedTextReplacement::ReplacementBehavior convertToWeb(_WKUnifiedTextReplacementBehavior behavior)
-{
-    switch (behavior) {
-    case _WKUnifiedTextReplacementBehaviorNone:
-        return WebCore::UnifiedTextReplacement::ReplacementBehavior::None;
-
-    case _WKUnifiedTextReplacementBehaviorDefault:
-        return WebCore::UnifiedTextReplacement::ReplacementBehavior::Default;
-
-    case _WKUnifiedTextReplacementBehaviorLimited:
-        return WebCore::UnifiedTextReplacement::ReplacementBehavior::Limited;
-
-    case _WKUnifiedTextReplacementBehaviorComplete:
-        return WebCore::UnifiedTextReplacement::ReplacementBehavior::Complete;
-    }
-}
-
-#endif
-
-- (void)_setUnifiedTextReplacementBehavior:(_WKUnifiedTextReplacementBehavior)behavior
-{
-#if ENABLE(WRITING_TOOLS)
-    _pageConfiguration->setUnifiedTextReplacementBehavior(convertToWeb(behavior));
-#endif
-}
-
-- (_WKUnifiedTextReplacementBehavior)_unifiedTextReplacementBehavior
-{
-#if ENABLE(WRITING_TOOLS)
-    return convertToPlatform(_pageConfiguration->unifiedTextReplacementBehavior());
-#else
-    return _WKUnifiedTextReplacementBehaviorNone;
-#endif
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -614,99 +561,15 @@ static NSString *defaultApplicationNameForUserAgent()
     return [self _multiRepresentationHEICInsertionEnabled];
 }
 
-#if TARGET_OS_IOS && !TARGET_OS_VISION
-
-static _WKUnifiedTextReplacementBehavior convert(UIWritingToolsBehavior behavior)
+- (void)setWritingToolsBehavior:(PlatformWritingToolsBehavior)writingToolsBehavior
 {
-    switch (behavior) {
-    case UIWritingToolsBehaviorNone:
-        return _WKUnifiedTextReplacementBehaviorNone;
-
-    case UIWritingToolsBehaviorDefault:
-        return _WKUnifiedTextReplacementBehaviorDefault;
-
-    case UIWritingToolsBehaviorLimited:
-        return _WKUnifiedTextReplacementBehaviorLimited;
-
-    case UIWritingToolsBehaviorComplete:
-        return _WKUnifiedTextReplacementBehaviorComplete;
-    }
+    _pageConfiguration->setUnifiedTextReplacementBehavior(WebKit::convertToWebWritingToolsBehavior(writingToolsBehavior));
 }
 
-static UIWritingToolsBehavior convert(_WKUnifiedTextReplacementBehavior behavior)
+- (PlatformWritingToolsBehavior)writingToolsBehavior
 {
-    switch (behavior) {
-    case _WKUnifiedTextReplacementBehaviorNone:
-        return UIWritingToolsBehaviorNone;
-
-    case _WKUnifiedTextReplacementBehaviorDefault:
-        return UIWritingToolsBehaviorDefault;
-
-    case _WKUnifiedTextReplacementBehaviorLimited:
-        return UIWritingToolsBehaviorLimited;
-
-    case _WKUnifiedTextReplacementBehaviorComplete:
-        return UIWritingToolsBehaviorComplete;
-    }
+    return WebKit::convertToPlatformWritingToolsBehavior(_pageConfiguration->unifiedTextReplacementBehavior());
 }
-
-- (void)setWritingToolsBehavior:(UIWritingToolsBehavior)writingToolsBehavior
-{
-    [self _setUnifiedTextReplacementBehavior:convert(writingToolsBehavior)];
-}
-
-- (UIWritingToolsBehavior)writingToolsBehavior
-{
-    return convert([self _unifiedTextReplacementBehavior]);
-}
-
-#elif TARGET_OS_OSX
-
-static _WKUnifiedTextReplacementBehavior convert(NSWritingToolsBehavior behavior)
-{
-    switch (behavior) {
-    case NSWritingToolsBehaviorNone:
-        return _WKUnifiedTextReplacementBehaviorNone;
-
-    case NSWritingToolsBehaviorDefault:
-        return _WKUnifiedTextReplacementBehaviorDefault;
-
-    case NSWritingToolsBehaviorLimited:
-        return _WKUnifiedTextReplacementBehaviorLimited;
-
-    case NSWritingToolsBehaviorComplete:
-        return _WKUnifiedTextReplacementBehaviorComplete;
-    }
-}
-
-static NSWritingToolsBehavior convert(_WKUnifiedTextReplacementBehavior behavior)
-{
-    switch (behavior) {
-    case _WKUnifiedTextReplacementBehaviorNone:
-        return NSWritingToolsBehaviorNone;
-
-    case _WKUnifiedTextReplacementBehaviorDefault:
-        return NSWritingToolsBehaviorDefault;
-
-    case _WKUnifiedTextReplacementBehaviorLimited:
-        return NSWritingToolsBehaviorLimited;
-
-    case _WKUnifiedTextReplacementBehaviorComplete:
-        return NSWritingToolsBehaviorComplete;
-    }
-}
-
-- (void)setWritingToolsBehavior:(NSWritingToolsBehavior)writingToolsBehavior
-{
-    [self _setUnifiedTextReplacementBehavior:convert(writingToolsBehavior)];
-}
-
-- (NSWritingToolsBehavior)writingToolsBehavior
-{
-    return convert([self _unifiedTextReplacementBehavior]);
-}
-
-#endif
 
 #endif // ENABLE(WRITING_TOOLS)
 

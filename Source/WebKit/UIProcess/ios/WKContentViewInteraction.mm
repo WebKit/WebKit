@@ -39,6 +39,7 @@
 #import "NativeWebTouchEvent.h"
 #import "PageClient.h"
 #import "PickerDismissalReason.h"
+#import "PlatformWritingToolsUtilities.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeViews.h"
 #import "RemoteScrollingCoordinatorProxyIOS.h"
@@ -13241,24 +13242,9 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
     [_webView writingToolsSession:session didReceiveAction:action];
 }
 
-static UIWritingToolsBehavior convert(WebCore::UnifiedTextReplacement::ReplacementBehavior behavior)
-{
-    switch (behavior) {
-    case WebCore::UnifiedTextReplacement::ReplacementBehavior::None:
-        return UIWritingToolsBehaviorNone;
-
-    case WebCore::UnifiedTextReplacement::ReplacementBehavior::Default:
-    case WebCore::UnifiedTextReplacement::ReplacementBehavior::Limited:
-        return UIWritingToolsBehaviorLimited;
-
-    case WebCore::UnifiedTextReplacement::ReplacementBehavior::Complete:
-        return UIWritingToolsBehaviorComplete;
-    }
-}
-
 - (void)_updateTextInputTraitsForUnifiedTextReplacement:(id<UITextInputTraits>)traits
 {
-    UIWritingToolsBehavior behavior = convert([self unifiedTextReplacementBehavior]);
+    auto behavior = WebKit::convertToPlatformWritingToolsBehavior([self unifiedTextReplacementBehavior]);
     [traits setWritingToolsBehavior:behavior];
 }
 

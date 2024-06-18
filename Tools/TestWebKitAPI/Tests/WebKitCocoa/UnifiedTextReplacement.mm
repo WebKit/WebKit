@@ -50,33 +50,6 @@
 
 #if PLATFORM(MAC)
 
-#define PlatformWritingToolsBehavior NSWritingToolsBehavior
-#define PlatformWritingToolsBehaviorNone NSWritingToolsBehaviorNone
-#define PlatformWritingToolsBehaviorDefault NSWritingToolsBehaviorDefault
-#define PlatformWritingToolsBehaviorLimited NSWritingToolsBehaviorLimited
-#define PlatformWritingToolsBehaviorComplete NSWritingToolsBehaviorComplete
-
-#define PlatformWritingToolsAllowedInputOptions NSWritingToolsAllowedInputOptions
-
-#else
-
-#define PlatformWritingToolsBehavior UIWritingToolsBehavior
-#define PlatformWritingToolsBehaviorNone UIWritingToolsBehaviorNone
-#define PlatformWritingToolsBehaviorDefault UIWritingToolsBehaviorDefault
-#define PlatformWritingToolsBehaviorLimited UIWritingToolsBehaviorLimited
-#define PlatformWritingToolsBehaviorComplete UIWritingToolsBehaviorComplete
-
-#define PlatformWritingToolsAllowedInputOptions UIWritingToolsAllowedInputOptions
-
-#endif
-
-#define PlatformWritingToolsAllowedInputOptionsPlainText ((PlatformWritingToolsAllowedInputOptions)(1 << 0))
-#define PlatformWritingToolsAllowedInputOptionsRichText ((PlatformWritingToolsAllowedInputOptions)(1 << 1))
-#define PlatformWritingToolsAllowedInputOptionsList ((PlatformWritingToolsAllowedInputOptions)(1 << 2))
-#define PlatformWritingToolsAllowedInputOptionsTable ((PlatformWritingToolsAllowedInputOptions)(1 << 3))
-
-#if PLATFORM(MAC)
-
 @interface NSMenu (Extras)
 - (NSMenuItem *)itemWithIdentifier:(NSString *)identifier;
 @end
