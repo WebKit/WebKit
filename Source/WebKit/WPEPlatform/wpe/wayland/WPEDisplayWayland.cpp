@@ -230,7 +230,6 @@ const struct wl_registry_listener registryListener = {
             priv->textInputV1 = zwp_text_input_manager_v1_create_text_input(priv->textInputManagerV1);
         } else if (!std::strcmp(interface, "zwp_text_input_manager_v3")) {
             priv->textInputManagerV3 = static_cast<struct zwp_text_input_manager_v3*>(wl_registry_bind(registry, name, &zwp_text_input_manager_v3_interface, 1));
-            priv->textInputV3 = zwp_text_input_manager_v3_get_text_input(priv->textInputManagerV3, priv->wlSeat->seat());
         }
     },
     // global_remove
@@ -370,6 +369,15 @@ static gboolean wpeDisplayWaylandConnect(WPEDisplay* display, GError** error)
     if (priv->wlSeat) {
         priv->wlCursor = makeUnique<WPE::WaylandCursor>(displayWayland);
         priv->wlSeat->startListening();
+    }
+
+    if (priv->textInputManagerV3) {
+        // Using this interface needs a valid seat. Do not keep around the object
+        // without a seat, to give a chance for a different IM interface to be used.
+        if (priv->wlSeat)
+            priv->textInputV3 = zwp_text_input_manager_v3_get_text_input(priv->textInputManagerV3, priv->wlSeat->seat());
+        else
+            g_clear_pointer(&priv->textInputManagerV3, zwp_text_input_manager_v3_destroy);
     }
 
     if (priv->linuxDMABuf) {
