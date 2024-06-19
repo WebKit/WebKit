@@ -232,7 +232,7 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(VideoEncoder::Descr
 
             if (header) {
                 GstMappedBuffer buffer(header, GST_MAP_READ);
-                configuration.description = { { buffer.data(), buffer.size() } };
+                configuration.description = Vector<uint8_t> { std::span { buffer.data(), buffer.size() } };
             }
             encoder->m_descriptionCallback(WTFMove(configuration));
         });

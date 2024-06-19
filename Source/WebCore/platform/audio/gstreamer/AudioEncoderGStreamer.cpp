@@ -230,7 +230,7 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::Descr
             AudioEncoder::ActiveConfiguration configuration;
             if (header) {
                 GstMappedBuffer buffer(header, GST_MAP_READ);
-                configuration.description = { { buffer.data(), buffer.size() } };
+                configuration.description = Vector<uint8_t> { std::span { buffer.data(), buffer.size() } };
             }
             configuration.numberOfChannels = gstStructureGet<int>(structure, "channels"_s);
             configuration.sampleRate = gstStructureGet<int>(structure, "rate"_s);

@@ -731,15 +731,9 @@ public:
         }
     }
 
-    // Include this non-template conversion from std::span to guide implicit conversion from arrays.
-    Vector(std::span<const T> span)
-        : Base(span.size(), span.size())
-    {
-        asanSetInitialBufferSizeTo(span.size());
-
-        if (begin())
-            VectorCopier<std::is_trivial<T>::value, T>::uninitializedCopy(span.data(), span.data() + span.size(), begin());
-    }
+    template<typename U, size_t Extent>
+    Vector(std::array<U, Extent> array)
+        : Vector(std::span { array }) { }
 
     template<typename U, size_t Extent> Vector(std::span<U, Extent> span)
         : Base(span.size(), span.size())
