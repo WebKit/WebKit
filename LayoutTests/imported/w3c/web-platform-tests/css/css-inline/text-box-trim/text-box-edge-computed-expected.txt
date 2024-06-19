@@ -1,0 +1,12 @@
+
+FAIL Property text-box-edge value 'leading' assert_equals: expected "leading" but got "leading leading"
+FAIL Property text-box-edge value 'text' assert_equals: expected "text" but got "text text"
+FAIL Property text-box-edge value 'ex' assert_equals: expected "ex" but got "ex text"
+FAIL Property text-box-edge value 'cap' assert_equals: expected "cap" but got "cap text"
+PASS Property text-box-edge value 'text alphabetic'
+FAIL Property text-box-edge value 'text text' assert_equals: expected "text" but got "text text"
+PASS Property text-box-edge value 'cap alphabetic'
+FAIL Property text-box-edge value 'cap text' assert_equals: expected "cap" but got "cap text"
+PASS Property text-box-edge value 'ex alphabetic'
+FAIL Property text-box-edge value 'ex text' assert_equals: expected "ex" but got "ex text"
+

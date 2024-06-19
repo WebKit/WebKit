@@ -1,0 +1,6 @@
+
+FAIL Property text-box-edge has initial value leading assert_equals: expected "leading" but got "leading leading"
+FAIL Property text-box-edge inherits assert_equals: expected "text" but got "text text"
+PASS Property text-box-trim has initial value none
+PASS Property text-box-trim does not inherit
+

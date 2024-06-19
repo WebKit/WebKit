@@ -1,0 +1,7 @@
+A
+
+PASS getBoundingClientRect.top
+PASS getBoundingClientRect.height
+PASS elementFromPoint: 10px above the client rect
+PASS elementFromPoint: 10px below the client rect
+
