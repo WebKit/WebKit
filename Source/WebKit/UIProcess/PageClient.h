@@ -158,14 +158,14 @@ struct TranslationContextMenuInfo;
 #endif
 
 namespace WritingTools {
-enum class EditAction : uint8_t;
-enum class ReplacementState : uint8_t;
+enum class Action : uint8_t;
+enum class TextSuggestionState : uint8_t;
 
 struct Context;
-struct Replacement;
+struct TextSuggestion;
 struct Session;
 
-using ReplacementID = WTF::UUID;
+using TextSuggestionID = WTF::UUID;
 using SessionID = WTF::UUID;
 }
 
@@ -745,9 +745,9 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    virtual void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::SessionID&, const WebCore::WritingTools::ReplacementID&, WebCore::IntRect selectionBoundsInRootView) = 0;
+    virtual void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::SessionID&, const WebCore::WritingTools::TextSuggestionID&, WebCore::IntRect selectionBoundsInRootView) = 0;
 
-    virtual void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::WritingTools::SessionID&, WebCore::WritingTools::ReplacementState, const WebCore::WritingTools::ReplacementID&) = 0;
+    virtual void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::WritingTools::SessionID&, WebCore::WritingTools::TextSuggestionState, const WebCore::WritingTools::TextSuggestionID&) = 0;
 
     virtual void unifiedTextReplacementActiveWillChange() = 0;
 

@@ -6454,7 +6454,7 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
 #if ENABLE(WRITING_TOOLS)
-WebCore::WritingTools::ReplacementBehavior WebViewImpl::unifiedTextReplacementBehavior() const
+WebCore::WritingTools::Behavior WebViewImpl::unifiedTextReplacementBehavior() const
 {
     return m_page->configuration().unifiedTextReplacementBehavior();
 }
@@ -6469,7 +6469,7 @@ bool WebViewImpl::wantsCompleteUnifiedTextReplacementBehavior() const
 
 bool WebViewImpl::canHandleSwapCharacters() const
 {
-    return [PAL::getWTWritingToolsViewControllerClass() isAvailable] && unifiedTextReplacementBehavior() != WebCore::WritingTools::ReplacementBehavior::None;
+    return [PAL::getWTWritingToolsViewControllerClass() isAvailable] && unifiedTextReplacementBehavior() != WebCore::WritingTools::Behavior::None;
 }
 
 void WebViewImpl::handleContextMenuSwapCharacters(IntRect selectionBoundsInRootView)

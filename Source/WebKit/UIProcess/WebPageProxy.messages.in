@@ -238,9 +238,9 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    TextReplacementSessionShowInformationForReplacementWithIDRelativeToRect(struct WebCore::WritingTools::Session::ID sessionID, struct WebCore::WritingTools::Replacement::ID replacementID, WebCore::IntRect selectionBoundsInRootView)
+    TextReplacementSessionShowInformationForReplacementWithIDRelativeToRect(struct WebCore::WritingTools::Session::ID sessionID, struct WebCore::WritingTools::TextSuggestion::ID replacementID, WebCore::IntRect selectionBoundsInRootView)
 
-    TextReplacementSessionUpdateStateForReplacementWithID(struct WebCore::WritingTools::Session::ID sessionID, enum:uint8_t WebCore::WritingTools::Replacement::State state, struct WebCore::WritingTools::Replacement::ID replacementID)
+    TextReplacementSessionUpdateStateForReplacementWithID(struct WebCore::WritingTools::Session::ID sessionID, enum:uint8_t WebCore::WritingTools::TextSuggestion::State state, struct WebCore::WritingTools::TextSuggestion::ID replacementID)
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

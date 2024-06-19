@@ -404,7 +404,7 @@ struct PerWebProcessState {
 #if ENABLE(WRITING_TOOLS)
 - (void)_textReplacementSession:(NSUUID *)sessionUUID showInformationForReplacementWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect;
 
-- (void)_textReplacementSession:(NSUUID *)sessionUUID updateState:(WebCore::WritingTools::ReplacementState)state forReplacementWithUUID:(NSUUID *)replacementUUID;
+- (void)_textReplacementSession:(NSUUID *)sessionUUID updateState:(WebCore::WritingTools::TextSuggestionState)state forReplacementWithUUID:(NSUUID *)replacementUUID;
 
 #if PLATFORM(MAC)
 - (NSWritingToolsAllowedInputOptions)writingToolsAllowedInputOptions;

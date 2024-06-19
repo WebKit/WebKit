@@ -34,33 +34,33 @@ namespace WebKit {
 
 #pragma mark - Conversions from web types to platform types.
 
-PlatformWritingToolsBehavior convertToPlatformWritingToolsBehavior(WebCore::WritingTools::ReplacementBehavior behavior)
+PlatformWritingToolsBehavior convertToPlatformWritingToolsBehavior(WebCore::WritingTools::Behavior behavior)
 {
     switch (behavior) {
-    case WebCore::WritingTools::ReplacementBehavior::None:
+    case WebCore::WritingTools::Behavior::None:
         return PlatformWritingToolsBehaviorNone;
 
-    case WebCore::WritingTools::ReplacementBehavior::Default:
+    case WebCore::WritingTools::Behavior::Default:
         return PlatformWritingToolsBehaviorDefault;
 
-    case WebCore::WritingTools::ReplacementBehavior::Limited:
+    case WebCore::WritingTools::Behavior::Limited:
         return PlatformWritingToolsBehaviorLimited;
 
-    case WebCore::WritingTools::ReplacementBehavior::Complete:
+    case WebCore::WritingTools::Behavior::Complete:
         return PlatformWritingToolsBehaviorComplete;
     }
 }
 
-WTTextSuggestionState convertToPlatformTextSuggestionState(WebCore::WritingTools::Replacement::State state)
+WTTextSuggestionState convertToPlatformTextSuggestionState(WebCore::WritingTools::TextSuggestion::State state)
 {
     switch (state) {
-    case WebCore::WritingTools::Replacement::State::Pending:
+    case WebCore::WritingTools::TextSuggestion::State::Pending:
         return WTTextSuggestionStatePending;
-    case WebCore::WritingTools::Replacement::State::Active:
+    case WebCore::WritingTools::TextSuggestion::State::Reviewing:
         return WTTextSuggestionStateReviewing;
-    case WebCore::WritingTools::Replacement::State::Reverted:
+    case WebCore::WritingTools::TextSuggestion::State::Rejected:
         return WTTextSuggestionStateRejected;
-    case WebCore::WritingTools::Replacement::State::Invalid:
+    case WebCore::WritingTools::TextSuggestion::State::Invalid:
         return WTTextSuggestionStateInvalid;
     }
 }
@@ -72,88 +72,75 @@ RetainPtr<WTContext> convertToPlatformContext(const WebCore::WritingTools::Conte
 
 #pragma mark - Conversions from platform types to web types.
 
-WebCore::WritingTools::ReplacementBehavior convertToWebWritingToolsBehavior(PlatformWritingToolsBehavior behavior)
+WebCore::WritingTools::Behavior convertToWebWritingToolsBehavior(PlatformWritingToolsBehavior behavior)
 {
     switch (behavior) {
     case PlatformWritingToolsBehaviorNone:
-        return WebCore::WritingTools::ReplacementBehavior::None;
+        return WebCore::WritingTools::Behavior::None;
 
     case PlatformWritingToolsBehaviorDefault:
-        return WebCore::WritingTools::ReplacementBehavior::Default;
+        return WebCore::WritingTools::Behavior::Default;
 
     case PlatformWritingToolsBehaviorLimited:
-        return WebCore::WritingTools::ReplacementBehavior::Limited;
+        return WebCore::WritingTools::Behavior::Limited;
 
     case PlatformWritingToolsBehaviorComplete:
-        return WebCore::WritingTools::ReplacementBehavior::Complete;
+        return WebCore::WritingTools::Behavior::Complete;
     }
 }
 
-WebCore::WritingTools::Replacement::State convertToWebTextSuggestionState(WTTextSuggestionState state)
+WebCore::WritingTools::TextSuggestion::State convertToWebTextSuggestionState(WTTextSuggestionState state)
 {
     switch (state) {
     case WTTextSuggestionStatePending:
-        return WebCore::WritingTools::Replacement::State::Pending;
+        return WebCore::WritingTools::TextSuggestion::State::Pending;
     case WTTextSuggestionStateReviewing:
-        return WebCore::WritingTools::Replacement::State::Active;
+        return WebCore::WritingTools::TextSuggestion::State::Reviewing;
     case WTTextSuggestionStateRejected:
-        return WebCore::WritingTools::Replacement::State::Reverted;
+        return WebCore::WritingTools::TextSuggestion::State::Rejected;
     case WTTextSuggestionStateInvalid:
-        return WebCore::WritingTools::Replacement::State::Invalid;
+        return WebCore::WritingTools::TextSuggestion::State::Invalid;
 
     // FIXME: Remove this default case once the WTTextSuggestionStateAccepted case is no longer in the build.
     default:
         ASSERT_NOT_REACHED();
-        return WebCore::WritingTools::Replacement::State::Invalid;
+        return WebCore::WritingTools::TextSuggestion::State::Invalid;
     }
 }
 
-WebCore::WritingTools::EditAction convertToWebAction(WTAction action)
+WebCore::WritingTools::Action convertToWebAction(WTAction action)
 {
     switch (action) {
     case WTActionShowOriginal:
-        return WebCore::WritingTools::EditAction::Undo;
+        return WebCore::WritingTools::Action::ShowOriginal;
     case WTActionShowRewritten:
-        return WebCore::WritingTools::EditAction::Redo;
+        return WebCore::WritingTools::Action::ShowRewritten;
     case WTActionCompositionRestart:
-        return WebCore::WritingTools::EditAction::UndoAll;
+        return WebCore::WritingTools::Action::Restart;
     }
 }
 
-WebCore::WritingTools::Session::ReplacementType convertToWebSessionType(WTSessionType type)
+WebCore::WritingTools::Session::Type convertToWebSessionType(WTSessionType type)
 {
     switch (type) {
     case WTSessionTypeProofreading:
-        return WebCore::WritingTools::Session::ReplacementType::PlainText;
+        return WebCore::WritingTools::Session::Type::Proofreading;
     case WTSessionTypeComposition:
-        return WebCore::WritingTools::Session::ReplacementType::RichText;
+        return WebCore::WritingTools::Session::Type::Composition;
     }
 }
 
-WebCore::WritingTools::Session::CorrectionType convertToWebCompositionSessionType(WTCompositionSessionType type)
+WebCore::WritingTools::Session::CompositionType convertToWebCompositionSessionType(WTCompositionSessionType type)
 {
     switch (type) {
     case WTCompositionSessionTypeNone:
-        return WebCore::WritingTools::Session::CorrectionType::None;
-
-    // FIXME: Map these to specific `CorrectionType` types post-upstreaming.
-    case WTCompositionSessionTypeMagic:
-    case WTCompositionSessionTypeConcise:
-    case WTCompositionSessionTypeFriendly:
-    case WTCompositionSessionTypeProfessional:
-    case WTCompositionSessionTypeOpenEnded:
-    case WTCompositionSessionTypeSummary:
-    case WTCompositionSessionTypeKeyPoints:
-    case WTCompositionSessionTypeList:
-    case WTCompositionSessionTypeTable:
-    case WTCompositionSessionTypeCompose:
-        return WebCore::WritingTools::Session::CorrectionType::Grammar;
+        return WebCore::WritingTools::Session::CompositionType::None;
 
     case WTCompositionSessionTypeSmartReply:
-        return WebCore::WritingTools::Session::CorrectionType::Spelling;
+        return WebCore::WritingTools::Session::CompositionType::SmartReply;
 
     default:
-        return WebCore::WritingTools::Session::CorrectionType::Grammar;
+        return WebCore::WritingTools::Session::CompositionType::Other;
     }
 }
 
@@ -175,7 +162,7 @@ std::optional<WebCore::WritingTools::Session> convertToWebSession(WTSession *ses
     return { { *sessionUUID, convertToWebSessionType(session.type), convertToWebCompositionSessionType(session.compositionSessionType) } };
 }
 
-std::optional<WebCore::WritingTools::Replacement> convertToWebTextSuggestion(WTTextSuggestion *suggestion)
+std::optional<WebCore::WritingTools::TextSuggestion> convertToWebTextSuggestion(WTTextSuggestion *suggestion)
 {
     auto suggestionUUID = WTF::UUID::fromNSUUID(suggestion.uuid);
     if (!suggestionUUID)

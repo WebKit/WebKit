@@ -6413,7 +6413,7 @@ header: <WebCore/TextExtractionTypes.h>
 
 #if ENABLE(WRITING_TOOLS)
 header: <WebCore/WritingToolsTypes.h>
-[CustomHeader] enum class WebCore::WritingTools::ReplacementBehavior : uint8_t {
+[CustomHeader] enum class WebCore::WritingTools::Behavior : uint8_t {
     None,
     Default,
     Limited,
@@ -6421,23 +6421,23 @@ header: <WebCore/WritingToolsTypes.h>
 };
 
 header: <WebCore/WritingToolsTypes.h>
-[CustomHeader] enum class WebCore::WritingTools::EditAction : uint8_t {
-    Undo,
-    Redo,
-    UndoAll
+[CustomHeader] enum class WebCore::WritingTools::Action : uint8_t {
+    ShowOriginal,
+    ShowRewritten,
+    Restart
 };
 
 header: <WebCore/WritingToolsTypes.h>
-[CustomHeader] enum class WebCore::WritingTools::SessionReplacementType : uint8_t {
-    PlainText,
-    RichText
+[CustomHeader] enum class WebCore::WritingTools::SessionType : uint8_t {
+    Proofreading,
+    Composition
 };
 
 header: <WebCore/WritingToolsTypes.h>
-[CustomHeader] enum class WebCore::WritingTools::SessionCorrectionType : uint8_t {
+[CustomHeader] enum class WebCore::WritingTools::SessionCompositionType : uint8_t {
     None,
-    Grammar,
-    Spelling
+    SmartReply,
+    Other
 };
 
 using WebCore::WritingTools::SessionID = WTF::UUID;
@@ -6445,8 +6445,8 @@ using WebCore::WritingTools::SessionID = WTF::UUID;
 header: <WebCore/WritingToolsTypes.h>
 [CustomHeader] struct WebCore::WritingTools::Session {
     WebCore::WritingTools::SessionID identifier;
-    WebCore::WritingTools::SessionReplacementType replacementType;
-    WebCore::WritingTools::SessionCorrectionType correctionType;
+    WebCore::WritingTools::SessionType type;
+    WebCore::WritingTools::SessionCompositionType compositionType;
 };
 
 using WebCore::WritingTools::ContextID = WTF::UUID;
@@ -6459,21 +6459,21 @@ header: <WebCore/WritingToolsTypes.h>
 };
 
 header: <WebCore/WritingToolsTypes.h>
-[CustomHeader] enum class WebCore::WritingTools::ReplacementState : uint8_t {
+[CustomHeader] enum class WebCore::WritingTools::TextSuggestionState : uint8_t {
     Pending,
-    Active,
-    Reverted,
+    Reviewing,
+    Rejected,
     Invalid
 };
 
-using WebCore::WritingTools::ReplacementID = WTF::UUID;
+using WebCore::WritingTools::TextSuggestionID = WTF::UUID;
 
 header: <WebCore/WritingToolsTypes.h>
-[CustomHeader] struct WebCore::WritingTools::Replacement {
-    WebCore::WritingTools::ReplacementID identifier;
+[CustomHeader] struct WebCore::WritingTools::TextSuggestion {
+    WebCore::WritingTools::TextSuggestionID identifier;
     WebCore::CharacterRange originalRange;
     String replacement;
-    WebCore::WritingTools::ReplacementState state;
+    WebCore::WritingTools::TextSuggestionState state;
 };
 #endif
 

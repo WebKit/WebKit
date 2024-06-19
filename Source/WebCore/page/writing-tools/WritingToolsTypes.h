@@ -34,30 +34,30 @@
 namespace WebCore {
 namespace WritingTools {
 
-enum class ReplacementBehavior : uint8_t {
+enum class Behavior : uint8_t {
     None,
     Default,
     Limited,
     Complete,
 };
 
-enum class EditAction : uint8_t {
-    Undo,
-    Redo,
-    UndoAll,
+enum class Action : uint8_t {
+    ShowOriginal,
+    ShowRewritten,
+    Restart,
 };
 
 #pragma mark - Session
 
-enum class SessionReplacementType : uint8_t {
-    PlainText,
-    RichText,
+enum class SessionType : uint8_t {
+    Proofreading,
+    Composition,
 };
 
-enum class SessionCorrectionType : uint8_t {
+enum class SessionCompositionType : uint8_t {
     None,
-    Grammar,
-    Spelling,
+    SmartReply,
+    Other,
 };
 
 using SessionID = WTF::UUID;
@@ -65,12 +65,12 @@ using SessionID = WTF::UUID;
 struct Session {
     using ID = SessionID;
 
-    using ReplacementType = SessionReplacementType;
-    using CorrectionType = SessionCorrectionType;
+    using Type = SessionType;
+    using CompositionType = SessionCompositionType;
 
     ID identifier;
-    ReplacementType replacementType { ReplacementType::RichText };
-    CorrectionType correctionType { CorrectionType::None };
+    Type type { Type::Composition };
+    CompositionType compositionType { CompositionType::None };
 };
 
 #pragma mark - Context
@@ -85,21 +85,21 @@ struct Context {
     CharacterRange range;
 };
 
-#pragma mark - Replacement
+#pragma mark - TextSuggestion
 
-enum class ReplacementState : uint8_t {
+enum class TextSuggestionState : uint8_t {
     Pending,
-    Active,
-    Reverted,
+    Reviewing,
+    Rejected,
     Invalid,
 };
 
-using ReplacementID = WTF::UUID;
+using TextSuggestionID = WTF::UUID;
 
-struct Replacement {
-    using ID = ReplacementID;
+struct TextSuggestion {
+    using ID = TextSuggestionID;
 
-    using State = ReplacementState;
+    using State = TextSuggestionState;
 
     ID identifier;
     CharacterRange originalRange;

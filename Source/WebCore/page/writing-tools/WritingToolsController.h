@@ -52,15 +52,15 @@ public:
 
     void didBeginTextReplacementSession(const WritingTools::Session&, const Vector<WritingTools::Context>&);
 
-    void textReplacementSessionDidReceiveReplacements(const WritingTools::Session&, const Vector<WritingTools::Replacement>&, const WritingTools::Context&, bool finished);
+    void textReplacementSessionDidReceiveReplacements(const WritingTools::Session&, const Vector<WritingTools::TextSuggestion>&, const WritingTools::Context&, bool finished);
 
-    void textReplacementSessionDidUpdateStateForReplacement(const WritingTools::Session&, WritingTools::Replacement::State, const WritingTools::Replacement&, const WritingTools::Context&);
+    void textReplacementSessionDidUpdateStateForReplacement(const WritingTools::Session&, WritingTools::TextSuggestion::State, const WritingTools::TextSuggestion&, const WritingTools::Context&);
 
     void didEndTextReplacementSession(const WritingTools::Session&, bool accepted);
 
     void textReplacementSessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished);
 
-    void textReplacementSessionDidReceiveEditAction(const WritingTools::Session&, WritingTools::EditAction);
+    void textReplacementSessionDidReceiveEditAction(const WritingTools::Session&, WritingTools::Action);
 
     void updateStateForSelectedReplacementIfNeeded();
 
@@ -69,11 +69,11 @@ public:
     std::optional<SimpleRange> contextRangeForSessionWithID(const WritingTools::Session::ID&) const;
 
 private:
-    struct RichTextState : CanMakeCheckedPtr<RichTextState> {
+    struct CompositionState : CanMakeCheckedPtr<CompositionState> {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(RichTextState);
+        WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(CompositionState);
 
-        RichTextState(const Ref<Range>& contextRange, const Vector<Ref<ReplaceSelectionCommand>>& commands)
+        CompositionState(const Ref<Range>& contextRange, const Vector<Ref<ReplaceSelectionCommand>>& commands)
             : contextRange(contextRange)
             , commands(commands)
         {
@@ -83,11 +83,11 @@ private:
         Vector<Ref<ReplaceSelectionCommand>> commands;
     };
 
-    struct PlainTextState : CanMakeCheckedPtr<PlainTextState> {
+    struct ProofreadingState : CanMakeCheckedPtr<ProofreadingState> {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlainTextState);
+        WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProofreadingState);
 
-        PlainTextState(const Ref<Range>& contextRange, int replacementLocationOffset)
+        ProofreadingState(const Ref<Range>& contextRange, int replacementLocationOffset)
             : contextRange(contextRange)
             , replacementLocationOffset(replacementLocationOffset)
         {
@@ -97,17 +97,17 @@ private:
         int replacementLocationOffset { 0 };
     };
 
-    template<WritingTools::Session::ReplacementType Type>
-    struct StateFromReplacementType { };
+    template<WritingTools::Session::Type Type>
+    struct StateFromSessionType { };
 
     template<>
-    struct StateFromReplacementType<WritingTools::Session::ReplacementType::PlainText> {
-        using Value = PlainTextState;
+    struct StateFromSessionType<WritingTools::Session::Type::Proofreading> {
+        using Value = ProofreadingState;
     };
 
     template<>
-    struct StateFromReplacementType<WritingTools::Session::ReplacementType::RichText> {
-        using Value = RichTextState;
+    struct StateFromSessionType<WritingTools::Session::Type::Composition> {
+        using Value = CompositionState;
     };
 
     enum MatchStyle : bool {
@@ -119,28 +119,28 @@ private:
     static uint64_t characterCount(const SimpleRange&);
     static String plainText(const SimpleRange&);
 
-    template<WritingTools::Session::ReplacementType Type>
-    StateFromReplacementType<Type>::Value* stateForSession(const WritingTools::Session&);
+    template<WritingTools::Session::Type Type>
+    StateFromSessionType<Type>::Value* stateForSession(const WritingTools::Session&);
 
-    std::optional<std::tuple<Node&, DocumentMarker&>> findReplacementMarkerContainingRange(const SimpleRange&) const;
-    std::optional<std::tuple<Node&, DocumentMarker&>> findReplacementMarkerByID(const SimpleRange& outerRange, const WritingTools::Replacement::ID&) const;
+    std::optional<std::tuple<Node&, DocumentMarker&>> findTextSuggestionMarkerContainingRange(const SimpleRange&) const;
+    std::optional<std::tuple<Node&, DocumentMarker&>> findTextSuggestionMarkerByID(const SimpleRange& outerRange, const WritingTools::TextSuggestion::ID&) const;
 
     template<typename State>
     void replaceContentsOfRangeInSessionInternal(State&, const SimpleRange&, WTF::Function<void()>&&);
-    void replaceContentsOfRangeInSession(PlainTextState&, const SimpleRange&, const String&);
-    void replaceContentsOfRangeInSession(RichTextState&, const SimpleRange&, RefPtr<DocumentFragment>&&, MatchStyle);
+    void replaceContentsOfRangeInSession(ProofreadingState&, const SimpleRange&, const String&);
+    void replaceContentsOfRangeInSession(CompositionState&, const SimpleRange&, RefPtr<DocumentFragment>&&, MatchStyle);
 
-    template<WritingTools::Session::ReplacementType Type>
-    void textReplacementSessionDidReceiveEditAction(const WritingTools::Session&, WritingTools::EditAction);
+    template<WritingTools::Session::Type Type>
+    void textReplacementSessionDidReceiveEditAction(const WritingTools::Session&, WritingTools::Action);
 
-    template<WritingTools::Session::ReplacementType Type>
+    template<WritingTools::Session::Type Type>
     void didEndTextReplacementSession(const WritingTools::Session&, bool accepted);
 
     RefPtr<Document> document() const;
 
     SingleThreadWeakPtr<Page> m_page;
 
-    HashMap<WritingTools::Session::ID, std::variant<std::monostate, PlainTextState, RichTextState>> m_states;
+    HashMap<WritingTools::Session::ID, std::variant<std::monostate, ProofreadingState, CompositionState>> m_states;
 };
 
 } // namespace WebKit

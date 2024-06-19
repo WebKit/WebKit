@@ -178,14 +178,14 @@ class WindowEventLoop;
 class WritingToolsController;
 
 namespace WritingTools {
-enum class EditAction : uint8_t;
-enum class ReplacementState : uint8_t;
+enum class Action : uint8_t;
+enum class TextSuggestionState : uint8_t;
 
 struct Context;
-struct Replacement;
+struct TextSuggestion;
 struct Session;
 
-using ReplacementID = WTF::UUID;
+using TextSuggestionID = WTF::UUID;
 using SessionID = WTF::UUID;
 }
 #endif
@@ -1152,15 +1152,15 @@ public:
 
     WEBCORE_EXPORT void didBeginTextReplacementSession(const WritingTools::Session&, const Vector<WritingTools::Context>&);
 
-    WEBCORE_EXPORT void textReplacementSessionDidReceiveReplacements(const WritingTools::Session&, const Vector<WritingTools::Replacement>&, const WritingTools::Context&, bool finished);
+    WEBCORE_EXPORT void textReplacementSessionDidReceiveReplacements(const WritingTools::Session&, const Vector<WritingTools::TextSuggestion>&, const WritingTools::Context&, bool finished);
 
-    WEBCORE_EXPORT void textReplacementSessionDidUpdateStateForReplacement(const WritingTools::Session&, WritingTools::ReplacementState, const WritingTools::Replacement&, const WritingTools::Context&);
+    WEBCORE_EXPORT void textReplacementSessionDidUpdateStateForReplacement(const WritingTools::Session&, WritingTools::TextSuggestionState, const WritingTools::TextSuggestion&, const WritingTools::Context&);
 
     WEBCORE_EXPORT void didEndTextReplacementSession(const WritingTools::Session&, bool accepted);
 
     WEBCORE_EXPORT void textReplacementSessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished);
 
-    WEBCORE_EXPORT void textReplacementSessionDidReceiveEditAction(const WritingTools::Session&, WritingTools::EditAction);
+    WEBCORE_EXPORT void textReplacementSessionDidReceiveEditAction(const WritingTools::Session&, WritingTools::Action);
 
     WEBCORE_EXPORT void updateStateForSelectedReplacementIfNeeded();
 

@@ -1169,12 +1169,12 @@ void WebPageProxy::didBeginTextReplacementSession(const WebCore::WritingTools::S
     send(Messages::WebPage::DidBeginTextReplacementSession(session, contexts));
 }
 
-void WebPageProxy::textReplacementSessionDidReceiveReplacements(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::Replacement>& replacements, const WebCore::WritingTools::Context& context, bool finished)
+void WebPageProxy::textReplacementSessionDidReceiveReplacements(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::TextSuggestion>& replacements, const WebCore::WritingTools::Context& context, bool finished)
 {
     send(Messages::WebPage::TextReplacementSessionDidReceiveReplacements(session, replacements, context, finished));
 }
 
-void WebPageProxy::textReplacementSessionDidUpdateStateForReplacement(const WebCore::WritingTools::Session& session, WebCore::WritingTools::Replacement::State state, const WebCore::WritingTools::Replacement& replacement, const WebCore::WritingTools::Context& context)
+void WebPageProxy::textReplacementSessionDidUpdateStateForReplacement(const WebCore::WritingTools::Session& session, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion& replacement, const WebCore::WritingTools::Context& context)
 {
     send(Messages::WebPage::TextReplacementSessionDidUpdateStateForReplacement(session, state, replacement, context));
 }
@@ -1189,7 +1189,7 @@ void WebPageProxy::textReplacementSessionDidReceiveTextWithReplacementRange(cons
     send(Messages::WebPage::TextReplacementSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished));
 }
 
-void WebPageProxy::textReplacementSessionDidReceiveEditAction(const WebCore::WritingTools::Session& session, WebCore::WritingTools::EditAction action)
+void WebPageProxy::textReplacementSessionDidReceiveEditAction(const WebCore::WritingTools::Session& session, WebCore::WritingTools::Action action)
 {
     send(Messages::WebPage::TextReplacementSessionDidReceiveEditAction(session, action));
 }
@@ -1261,14 +1261,14 @@ void WebPageProxy::removeTextAnimationForID(const WTF::UUID& uuid)
 
 #if ENABLE(WRITING_TOOLS)
 
-void WebPageProxy::textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::Replacement::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
+void WebPageProxy::textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
 {
     MESSAGE_CHECK(sessionID.isValid());
 
     protectedPageClient()->textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(sessionID, replacementID, selectionBoundsInRootView);
 }
 
-void WebPageProxy::textReplacementSessionUpdateStateForReplacementWithID(const WebCore::WritingTools::Session::ID& sessionID, WebCore::WritingTools::Replacement::State state, const WebCore::WritingTools::Replacement::ID& replacementID)
+void WebPageProxy::textReplacementSessionUpdateStateForReplacementWithID(const WebCore::WritingTools::Session::ID& sessionID, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion::ID& replacementID)
 {
     MESSAGE_CHECK(sessionID.isValid());
 

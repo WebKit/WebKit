@@ -717,7 +717,7 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    WebCore::WritingTools::ReplacementBehavior unifiedTextReplacementBehavior() const;
+    WebCore::WritingTools::Behavior unifiedTextReplacementBehavior() const;
 #endif
 
 #if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)

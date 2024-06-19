@@ -302,14 +302,14 @@ struct Item;
 
 #if ENABLE(WRITING_TOOLS)
 namespace WritingTools {
-enum class EditAction : uint8_t;
-enum class ReplacementState : uint8_t;
+enum class Action : uint8_t;
+enum class TextSuggestionState : uint8_t;
 
 struct Context;
-struct Replacement;
+struct TextSuggestion;
 struct Session;
 
-using ReplacementID = WTF::UUID;
+using TextSuggestionID = WTF::UUID;
 using SessionID = WTF::UUID;
 }
 #endif
@@ -2421,20 +2421,20 @@ public:
 
     void didBeginTextReplacementSession(const WebCore::WritingTools::Session&, const Vector<WebCore::WritingTools::Context>&);
 
-    void textReplacementSessionDidReceiveReplacements(const WebCore::WritingTools::Session&, const Vector<WebCore::WritingTools::Replacement>&, const WebCore::WritingTools::Context&, bool finished);
+    void textReplacementSessionDidReceiveReplacements(const WebCore::WritingTools::Session&, const Vector<WebCore::WritingTools::TextSuggestion>&, const WebCore::WritingTools::Context&, bool finished);
 
-    void textReplacementSessionDidUpdateStateForReplacement(const WebCore::WritingTools::Session&, WebCore::WritingTools::ReplacementState, const WebCore::WritingTools::Replacement&, const WebCore::WritingTools::Context&);
+    void textReplacementSessionDidUpdateStateForReplacement(const WebCore::WritingTools::Session&, WebCore::WritingTools::TextSuggestionState, const WebCore::WritingTools::TextSuggestion&, const WebCore::WritingTools::Context&);
 
     void didEndTextReplacementSession(const WebCore::WritingTools::Session&, bool accepted);
 
     void textReplacementSessionDidReceiveTextWithReplacementRange(const WebCore::WritingTools::Session&, const WebCore::AttributedString&, const WebCore::CharacterRange&, const WebCore::WritingTools::Context&, bool finished);
 
-    void textReplacementSessionDidReceiveEditAction(const WebCore::WritingTools::Session&, WebCore::WritingTools::EditAction);
+    void textReplacementSessionDidReceiveEditAction(const WebCore::WritingTools::Session&, WebCore::WritingTools::Action);
 
     bool isUnifiedTextReplacementActive() const { return m_isUnifiedTextReplacementActive; }
 
-    void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::SessionID&, const WebCore::WritingTools::ReplacementID&, WebCore::IntRect selectionBoundsInRootView);
-    void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::WritingTools::SessionID&, WebCore::WritingTools::ReplacementState, const WebCore::WritingTools::ReplacementID&);
+    void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::SessionID&, const WebCore::WritingTools::TextSuggestionID&, WebCore::IntRect selectionBoundsInRootView);
+    void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::WritingTools::SessionID&, WebCore::WritingTools::TextSuggestionState, const WebCore::WritingTools::TextSuggestionID&);
 #endif // ENABLE(WRITING_TOOLS)
 
 #if ENABLE(WRITING_TOOLS_UI)

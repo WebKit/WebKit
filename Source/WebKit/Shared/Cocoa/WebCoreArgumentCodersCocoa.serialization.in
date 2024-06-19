@@ -407,7 +407,7 @@ using CGGlyph = uint16_t
 using NSRect = CGRect
 
 #if ENABLE(WRITING_TOOLS)
-using WebCore::WritingTools::Replacement::ID = WTF::UUID
+using WebCore::WritingTools::TextSuggestion::ID = WTF::UUID
 using WebCore::WritingTools::Session::ID = WTF::UUID
 #endif
 

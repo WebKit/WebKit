@@ -4863,12 +4863,12 @@ void Page::didBeginTextReplacementSession(const WritingTools::Session& session, 
     m_writingToolsController->didBeginTextReplacementSession(session, contexts);
 }
 
-void Page::textReplacementSessionDidReceiveReplacements(const WritingTools::Session& session, const Vector<WritingTools::Replacement>& replacements, const WritingTools::Context& context, bool finished)
+void Page::textReplacementSessionDidReceiveReplacements(const WritingTools::Session& session, const Vector<WritingTools::TextSuggestion>& replacements, const WritingTools::Context& context, bool finished)
 {
     m_writingToolsController->textReplacementSessionDidReceiveReplacements(session, replacements, context, finished);
 }
 
-void Page::textReplacementSessionDidUpdateStateForReplacement(const WritingTools::Session& session, WritingTools::Replacement::State state, const WritingTools::Replacement& replacement, const WritingTools::Context& context)
+void Page::textReplacementSessionDidUpdateStateForReplacement(const WritingTools::Session& session, WritingTools::TextSuggestion::State state, const WritingTools::TextSuggestion& replacement, const WritingTools::Context& context)
 {
     m_writingToolsController->textReplacementSessionDidUpdateStateForReplacement(session, state, replacement, context);
 }
@@ -4893,7 +4893,7 @@ std::optional<SimpleRange> Page::contextRangeForSessionWithID(const WritingTools
     return m_writingToolsController->contextRangeForSessionWithID(sessionID);
 }
 
-void Page::textReplacementSessionDidReceiveEditAction(const WritingTools::Session& session, WritingTools::EditAction action)
+void Page::textReplacementSessionDidReceiveEditAction(const WritingTools::Session& session, WritingTools::Action action)
 {
     m_writingToolsController->textReplacementSessionDidReceiveEditAction(session, action);
 }

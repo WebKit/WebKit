@@ -664,9 +664,9 @@ public:
     virtual double baseViewportLayoutSizeScaleFactor() const { return 1; }
 
 #if ENABLE(WRITING_TOOLS)
-    virtual void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WritingTools::SessionID&, const WritingTools::ReplacementID&, IntRect) { }
+    virtual void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WritingTools::SessionID&, const WritingTools::TextSuggestionID&, IntRect) { }
 
-    virtual void textReplacementSessionUpdateStateForReplacementWithID(const WritingTools::SessionID&, WritingTools::ReplacementState, const WritingTools::ReplacementID&) { }
+    virtual void textReplacementSessionUpdateStateForReplacementWithID(const WritingTools::SessionID&, WritingTools::TextSuggestionState, const WritingTools::TextSuggestionID&) { }
 
     virtual void removeTextAnimationForID(const WritingTools::SessionID&) { }
 

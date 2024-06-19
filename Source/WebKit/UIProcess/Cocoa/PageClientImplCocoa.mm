@@ -287,12 +287,12 @@ WindowKind PageClientImplCocoa::windowKind()
 }
 
 #if ENABLE(WRITING_TOOLS)
-void PageClientImplCocoa::textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::Replacement::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
+void PageClientImplCocoa::textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
 {
     [m_webView _textReplacementSession:sessionID showInformationForReplacementWithUUID:replacementID relativeToRect:selectionBoundsInRootView];
 }
 
-void PageClientImplCocoa::textReplacementSessionUpdateStateForReplacementWithID(const WebCore::WritingTools::Session::ID& sessionID, WebCore::WritingTools::Replacement::State state, const WebCore::WritingTools::Replacement::ID& replacementID)
+void PageClientImplCocoa::textReplacementSessionUpdateStateForReplacementWithID(const WebCore::WritingTools::Session::ID& sessionID, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion::ID& replacementID)
 {
     [m_webView _textReplacementSession:sessionID updateState:state forReplacementWithUUID:replacementID];
 }
