@@ -38,7 +38,6 @@
 #include "CanvasTextBaseline.h"
 #include "Color.h"
 #include "Filter.h"
-#include "FilterTargetSwitcher.h"
 #include "FloatSize.h"
 #include "FontCascade.h"
 #include "FontSelectorClient.h"
@@ -57,6 +56,7 @@ namespace WebCore {
 
 class ByteArrayPixelBuffer;
 class CachedImage;
+class CanvasLayerContextSwitcher;
 class CanvasGradient;
 class DOMMatrix;
 class FloatRect;
@@ -91,7 +91,8 @@ using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>
 
 class CanvasRenderingContext2DBase : public CanvasRenderingContext, public CanvasPath {
     WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext2DBase);
-    friend class CanvasFilterTargetSwitcher;
+    friend class CanvasFilterContextSwitcher;
+    friend class CanvasLayerContextSwitcher;
 protected:
     CanvasRenderingContext2DBase(CanvasBase&, CanvasRenderingContext2DSettings&&, bool usesCSSCompatibilityParseMode);
 
@@ -150,6 +151,9 @@ public:
 
     void save() { ++m_unrealizedSaveCount; }
     void restore();
+
+    void beginLayer();
+    void endLayer();
 
     void scale(double sx, double sy);
     void rotate(double angleInRadians);
@@ -301,6 +305,8 @@ public:
         String unparsedFont;
         FontProxy font;
 
+        RefPtr<CanvasLayerContextSwitcher> targetSwitcher;
+
         CanvasLineCap canvasLineCap() const;
         CanvasLineJoin canvasLineJoin() const;
         CanvasTextAlign canvasTextAlign() const;
@@ -357,10 +363,8 @@ protected:
 
     virtual std::optional<FilterOperations> setFilterStringWithoutUpdatingStyle(const String&) { return std::nullopt; }
 
-    virtual RefPtr<Filter> createFilter(const Function<FloatRect()>&) const { return nullptr; }
+    virtual RefPtr<Filter> createFilter(const FloatRect&) const { return nullptr; }
     virtual IntOutsets calculateFilterOutsets(const FloatRect&) const { return { }; }
-
-    void setFilterTargetSwitcher(FilterTargetSwitcher* targetSwitcher) { m_targetSwitcher = targetSwitcher; }
 
     static String normalizeSpaces(const String&);
 
@@ -489,7 +493,6 @@ private:
     mutable std::variant<CachedContentsTransparent, CachedContentsUnknown, CachedContentsImageData> m_cachedContents;
     CanvasRenderingContext2DSettings m_settings;
     bool m_hasDeferredOperations { false };
-    FilterTargetSwitcher* m_targetSwitcher { nullptr };
 };
 
 } // namespace WebCore

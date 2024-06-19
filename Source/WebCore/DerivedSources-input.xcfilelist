@@ -1622,6 +1622,7 @@ $(PROJECT_DIR)/html/canvas/CanvasFilters.idl
 $(PROJECT_DIR)/html/canvas/CanvasGradient.idl
 $(PROJECT_DIR)/html/canvas/CanvasImageData.idl
 $(PROJECT_DIR)/html/canvas/CanvasImageSmoothing.idl
+$(PROJECT_DIR)/html/canvas/CanvasLayers.idl
 $(PROJECT_DIR)/html/canvas/CanvasLineCap.idl
 $(PROJECT_DIR)/html/canvas/CanvasLineJoin.idl
 $(PROJECT_DIR)/html/canvas/CanvasPath.idl

@@ -150,7 +150,7 @@ bool LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
         return makeUnique<FilterResults>();
     });
 
-    filterData->targetSwitcher = FilterTargetSwitcher::create(*context, Ref { *filterData->filter }, filterData->sourceImageRect, colorSpace, &results);
+    filterData->targetSwitcher = GraphicsContextSwitcher::create(*context, filterData->sourceImageRect, colorSpace, filterData->filter, &results);
     if (!filterData->targetSwitcher) {
         m_rendererFilterDataMap.remove(renderer);
         return false;

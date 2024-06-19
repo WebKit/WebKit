@@ -102,9 +102,10 @@ std::optional<FilterOperations> CanvasRenderingContext2D::setFilterStringWithout
     return CSSPropertyParserWorkerSafe::parseFilterString(document, const_cast<RenderStyle&>(*style), filterString, parserMode);
 }
 
-RefPtr<Filter> CanvasRenderingContext2D::createFilter(const Function<FloatRect()>& boundsProvider) const
+RefPtr<Filter> CanvasRenderingContext2D::createFilter(const FloatRect& bounds) const
 {
-    ASSERT(!state().filterOperations.isEmpty());
+    if (bounds.isEmpty())
+        return nullptr;
 
     auto* context = effectiveDrawingContext();
     if (!context)
@@ -116,10 +117,6 @@ RefPtr<Filter> CanvasRenderingContext2D::createFilter(const Function<FloatRect()
 
     RefPtr page = canvas().document().page();
     if (!page)
-        return nullptr;
-
-    auto bounds = boundsProvider();
-    if (bounds.isEmpty())
         return nullptr;
 
     auto preferredFilterRenderingModes = page->preferredFilterRenderingModes();

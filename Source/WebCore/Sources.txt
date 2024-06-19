@@ -1530,7 +1530,8 @@ html/ValidatedFormListedElement.cpp
 html/ValidationMessage.cpp
 html/WeekInputType.cpp
 html/canvas/ANGLEInstancedArrays.cpp
-html/canvas/CanvasFilterTargetSwitcher.cpp
+html/canvas/CanvasLayerContextSwitcher.cpp
+html/canvas/CanvasFilterContextSwitcher.cpp
 html/canvas/CanvasGradient.cpp
 html/canvas/CanvasPath.cpp
 html/canvas/CanvasPattern.cpp
@@ -2341,6 +2342,7 @@ platform/graphics/GraphicsContext.cpp
 platform/graphics/GraphicsContextGL.cpp
 platform/graphics/GraphicsContextGLImageExtractor.cpp
 platform/graphics/GraphicsContextState.cpp
+platform/graphics/GraphicsContextSwitcher.cpp
 platform/graphics/GraphicsLayer.cpp
 platform/graphics/GraphicsLayerContentsDisplayDelegate.cpp
 platform/graphics/GraphicsLayerTransform.cpp
@@ -2353,6 +2355,7 @@ platform/graphics/ImageAdapter.cpp
 platform/graphics/ImageBuffer.cpp
 platform/graphics/ImageBufferAllocator.cpp
 platform/graphics/ImageBufferBackend.cpp
+platform/graphics/ImageBufferContextSwitcher.cpp
 platform/graphics/ImageDecoder.cpp
 platform/graphics/ImageFrame.cpp
 platform/graphics/ImageFrameAnimator.cpp
@@ -2364,6 +2367,7 @@ platform/graphics/ImageResolution.cpp
 platform/graphics/IntPoint.cpp
 platform/graphics/IntRect.cpp
 platform/graphics/IntSize.cpp
+platform/graphics/TransparencyLayerContextSwitcher.cpp
 platform/graphics/LayoutPoint.cpp
 platform/graphics/LayoutRect.cpp
 platform/graphics/LayoutSize.cpp
@@ -2455,12 +2459,9 @@ platform/graphics/filters/Filter.cpp
 platform/graphics/filters/FilterEffect.cpp
 platform/graphics/filters/FilterFunction.cpp
 platform/graphics/filters/FilterImage.cpp
-platform/graphics/filters/FilterImageTargetSwitcher.cpp
 platform/graphics/filters/FilterOperation.cpp
 platform/graphics/filters/FilterOperations.cpp
 platform/graphics/filters/FilterResults.cpp
-platform/graphics/filters/FilterStyleTargetSwitcher.cpp
-platform/graphics/filters/FilterTargetSwitcher.cpp
 platform/graphics/filters/PointLightSource.cpp
 platform/graphics/filters/SourceAlpha.cpp
 platform/graphics/filters/SourceGraphic.cpp

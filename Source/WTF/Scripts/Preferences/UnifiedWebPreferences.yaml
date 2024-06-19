@@ -1458,6 +1458,20 @@ CanvasFingerprintingQuirkEnabled:
     WebCore:
       default: true
 
+CanvasLayersEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Canvas Layers"
+  humanReadableDescription: "Enable Canvas Layers"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CanvasUsesAcceleratedDrawing:
   type: bool
   status: embedder

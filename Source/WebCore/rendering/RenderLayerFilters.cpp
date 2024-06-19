@@ -34,7 +34,7 @@
 #include "CSSFilter.h"
 #include "CachedSVGDocument.h"
 #include "CachedSVGDocumentReference.h"
-#include "FilterTargetSwitcher.h"
+#include "GraphicsContextSwitcher.h"
 #include "LegacyRenderSVGResourceFilter.h"
 #include "Logging.h"
 #include "RenderStyleInlines.h"
@@ -190,7 +190,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     filter.setFilterRegion(m_filterRegion);
 
     if (!m_targetSwitcher || hasUpdatedBackingStore)
-        m_targetSwitcher = FilterTargetSwitcher::create(context, filter, m_targetBoundingBox, DestinationColorSpace::SRGB());
+        m_targetSwitcher = GraphicsContextSwitcher::create(context, m_targetBoundingBox, DestinationColorSpace::SRGB(), { &filter });
 
     if (!m_targetSwitcher)
         return nullptr;
