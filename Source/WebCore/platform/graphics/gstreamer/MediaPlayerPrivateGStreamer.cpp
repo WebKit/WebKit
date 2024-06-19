@@ -185,12 +185,14 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_loader(player->createResourceLoader())
 {
 
+#if !RELEASE_LOG_DISABLED
     // MediaPlayer relies on the Document logger, so to prevent duplicate messages in case
     // more than one MediaPlayer is created, we register a single observer.
     if (auto player = m_player.get()) {
         auto& logObserver = mediaLogObserverSingleton();
         logObserver.addWatch(player->mediaPlayerLogger());
     }
+#endif
 
 #if USE(GLIB)
     m_pausedTimerHandler.setPriority(G_PRIORITY_DEFAULT_IDLE);
@@ -333,10 +335,12 @@ void MediaPlayerPrivateGStreamer::registerMediaEngine(MediaEngineRegistrar regis
 void MediaPlayerPrivateGStreamer::mediaPlayerWillBeDestroyed()
 {
     GST_DEBUG_OBJECT(m_pipeline.get(), "Parent MediaPlayer is about to be destroyed");
+#if !RELEASE_LOG_DISABLED
     if (auto player = m_player.get()) {
         auto& logObserver = mediaLogObserverSingleton();
         logObserver.removeWatch(player->mediaPlayerLogger());
     }
+#endif
 }
 
 void MediaPlayerPrivateGStreamer::load(const String& urlString)
@@ -3055,8 +3059,10 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
         return;
     }
 
+#if !RELEASE_LOG_DISABLED
     auto logIdentifier = makeString(hex(reinterpret_cast<uintptr_t>(mediaPlayerLogIdentifier())));
     GST_INFO_OBJECT(m_pipeline.get(), "WebCore logs identifier for this pipeline is: %s", logIdentifier.ascii().data());
+#endif
     registerActivePipeline(m_pipeline);
 
     setStreamVolumeElement(GST_STREAM_VOLUME(m_pipeline.get()));
