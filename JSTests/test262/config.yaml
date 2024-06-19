@@ -85,8 +85,10 @@ skip:
     - test/intl402/Locale/likely-subtags-grandfathered.js
 
     # ICU 72~ is required
+    - test/intl402/Intl/supportedValuesOf/numberingSystems-with-simple-digit-mappings.js
     - test/intl402/NumberFormat/prototype/format/format-rounding-priority-less-precision.js
     - test/intl402/NumberFormat/prototype/format/format-rounding-priority-more-precision.js
+    - test/intl402/NumberFormat/prototype/format/numbering-systems.js
     - test/intl402/NumberFormat/test-option-roundingPriority-mixed-options.js
 
     # ICU canonicalization bug
