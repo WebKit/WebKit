@@ -241,8 +241,19 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate
 
     // Important: In order to ensure correct propagation whether pre-roll has happened or not, we send the seek directly
     // to the source element, rather than letting playbin do the routing.
-    gst_element_seek(m_source.get(), rate, GST_FORMAT_TIME, m_seekFlags,
-        GST_SEEK_TYPE_SET, toGstClockTime(target.time), GST_SEEK_TYPE_NONE, 0);
+    {
+        // Take the STATE_LOCK of the __pipeline__.
+        //
+        // gst_element_send_event() [which is called by gst_element_seek()] already takes the STATE_LOCK of the element
+        // in order to delay any state change attempts from other threads while the event is travelling the pipeline.
+        //
+        // Normally that would happen to both the pipeline and then recursively to the elements inside as they handle
+        // the seek event, but since we're sending the event directly to the source element we need to take the
+        // STATE_LOCK on the pipeline ourselves.
+        auto locker = GstStateLocker(pipeline());
+        gst_element_seek(m_source.get(), rate, GST_FORMAT_TIME, m_seekFlags,
+            GST_SEEK_TYPE_SET, toGstClockTime(target.time), GST_SEEK_TYPE_NONE, 0);
+    }
     invalidateCachedPosition();
 
     // Notify MediaSource and have new frames enqueued (when they're available).
