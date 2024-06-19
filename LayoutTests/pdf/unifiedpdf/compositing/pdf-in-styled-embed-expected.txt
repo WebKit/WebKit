@@ -1,0 +1,71 @@
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 788.00 805.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 788.00 805.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (offsetFromRenderer width=-28 height=-28)
+          (position 180.00 180.00)
+          (bounds 436.00 436.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 68.00 68.00)
+              (anchor 0.00 0.00)
+              (bounds 300.00 300.00)
+              (backgroundColor #808080)
+              (children 2
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 300.00 300.00)
+                  (children 1
+                    (GraphicsLayer
+                      (anchor 0.00 0.00)
+                      (children 2
+                        (GraphicsLayer
+                          (anchor 0.00 0.00)
+                          (transform [0.97 0.00 0.00 0.00] [0.00 0.97 0.00 0.00] [0.00 0.00 1.00 0.00] [12.00 7.00 0.00 1.00])
+                          (children 1
+                            (GraphicsLayer
+                              (position 15.27 20.36)
+                              (anchor 0.00 0.00)
+                              (bounds 254.46 254.46)
+                              (children 1
+                                (GraphicsLayer
+                                  (anchor 0.00 0.00)
+                                  (bounds 100.00 100.00)
+                                  (drawsContent 1)
+                                  (backgroundColor #FFFFFF)
+                                  (transform [2.54 0.00 0.00 0.00] [0.00 2.54 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+                                )
+                              )
+                            )
+                          )
+                        )
+                        (GraphicsLayer
+                          (anchor 0.00 0.00)
+                          (bounds 285.00 296.00)
+                          (drawsContent 1)
+                          (transform [0.97 0.00 0.00 0.00] [0.00 0.97 0.00 0.00] [0.00 0.00 1.00 0.00] [12.00 7.00 0.00 1.00])
+                        )
+                      )
+                    )
+                  )
+                )
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 300.00 300.00)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

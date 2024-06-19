@@ -1514,7 +1514,7 @@ IntSize UnifiedPDFPlugin::documentSize() const
 
 IntSize UnifiedPDFPlugin::contentsSize() const
 {
-    if (isLocked())
+    if (isLocked() || !m_pdfDocument)
         return { 0, 0 };
 
     auto size = m_documentLayout.scaledContentsSize();
