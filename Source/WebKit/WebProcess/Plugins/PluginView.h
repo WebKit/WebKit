@@ -207,6 +207,7 @@ private:
     // This snapshot is used to avoid side effects should the plugin run JS during painting.
     RefPtr<WebCore::ShareableBitmap> m_transientPaintingSnapshot;
 
+    bool sendEditingCommandToPDFForTesting(const String& commandName, const String& argument) final;
     void setPDFDisplayModeForTesting(const String&) final;
     Vector<WebCore::FloatRect> pdfAnnotationRectsForTesting() const override;
     void registerPDFTestCallback(RefPtr<WebCore::VoidCallback> &&) final;

@@ -3123,13 +3123,23 @@ bool UnifiedPDFPlugin::performCopyEditingOperation() const
         return false;
     }
 
-    NSString *plainString = [m_currentSelection string];
-    NSString *htmlString = [m_currentSelection html];
-    NSData *webArchiveData = [m_currentSelection webArchive];
+    NSMutableArray *types = [NSMutableArray array];
+    NSMutableArray *items = [NSMutableArray array];
 
-    NSArray *types = @[ PasteboardTypes::WebArchivePboardType, NSPasteboardTypeString, NSPasteboardTypeHTML ];
+    if (NSData *webArchiveData = [m_currentSelection webArchive]) {
+        [types addObject:PasteboardTypes::WebArchivePboardType];
+        [items addObject:webArchiveData];
+    }
 
-    NSArray *items = @[ webArchiveData, [plainString dataUsingEncoding:NSUTF8StringEncoding], [htmlString dataUsingEncoding:NSUTF8StringEncoding] ];
+    if (NSData *plainStringData = [[m_currentSelection string] dataUsingEncoding:NSUTF8StringEncoding]) {
+        [types addObject:NSPasteboardTypeString];
+        [items addObject:plainStringData];
+    }
+
+    if (NSData *htmlStringData = [[m_currentSelection html] dataUsingEncoding:NSUTF8StringEncoding]) {
+        [types addObject:NSPasteboardTypeHTML];
+        [items addObject:htmlStringData];
+    }
 
     writeItemsToPasteboard(NSPasteboardNameGeneral, items, types);
     return true;

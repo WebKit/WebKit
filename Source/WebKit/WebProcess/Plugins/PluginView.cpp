@@ -1032,6 +1032,11 @@ void PluginView::didSameDocumentNavigationForFrame(WebFrame& frame)
     return protectedPlugin()->didSameDocumentNavigationForFrame(frame);
 }
 
+bool PluginView::sendEditingCommandToPDFForTesting(const String& commandName, const String& argument)
+{
+    return protectedPlugin()->handleEditingCommand(commandName, argument);
+}
+
 void PluginView::setPDFDisplayModeForTesting(const String& mode)
 {
     protectedPlugin()->setPDFDisplayModeForTesting(mode);

@@ -7458,6 +7458,19 @@ void Internals::setPDFDisplayModeForTesting(Element& element, const String& disp
     pluginViewBase->setPDFDisplayModeForTesting(displayMode);
 }
 
+bool Internals::sendEditingCommandToPDFForTesting(Element& element, const String& commandName, const String& argument) const
+{
+    RefPtr pluginElement = dynamicDowncast<HTMLPlugInElement>(element);
+    if (!pluginElement)
+        return false;
+
+    RefPtr pluginViewBase = pluginElement->pluginWidget();
+    if (!pluginViewBase)
+        return false;
+
+    return pluginViewBase->sendEditingCommandToPDFForTesting(commandName, argument);
+}
+
 Vector<Internals::PDFAnnotationRect> Internals::pdfAnnotationRectsForTesting(Element& element) const
 {
     Vector<PDFAnnotationRect> annotationRects;

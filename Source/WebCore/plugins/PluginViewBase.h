@@ -75,6 +75,7 @@ public:
     virtual id accessibilityAssociatedPluginParentForElement(Element*) const { return nullptr; }
 #endif
     virtual void setPDFDisplayModeForTesting(const String&) { };
+    virtual bool sendEditingCommandToPDFForTesting(const String&, const String&) { return false; }
     virtual Vector<FloatRect> pdfAnnotationRectsForTesting() const { return { }; }
 
     virtual void releaseMemory() { }

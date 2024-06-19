@@ -1469,6 +1469,7 @@ public:
 
     Vector<PDFAnnotationRect> pdfAnnotationRectsForTesting(Element& pluginElement) const;
     void setPDFDisplayModeForTesting(Element&, const String&) const;
+    bool sendEditingCommandToPDFForTesting(Element&, const String& commandName, const String& argument) const;
     void registerPDFTest(Ref<VoidCallback>&&, Element&);
 
     const String& defaultSpatialTrackingLabel() const;
