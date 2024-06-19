@@ -65,6 +65,7 @@ svg/W3C-SVG-1.1/filters-conv-01-f.svg                                           
 svg/W3C-SVG-1.1/filters-diffuse-01-f.svg                                               [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/filters-example-01-b.svg                                               [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/filters-felem-01-b.svg                                                 [ ImageOnlyFailure ]
+svg/W3C-SVG-1.1/filters-image-01-b.svg                                                 [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/filters-light-01-f.svg                                                 [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/filters-light-04-f.svg                                                 [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/filters-morph-01-f.svg                                                 [ ImageOnlyFailure ]
@@ -330,6 +331,9 @@ svg/filters/filter-source-position.svg                                          
 svg/filters/filteredImage.svg                                                          [ ImageOnlyFailure ]
 svg/filters/hidpi/fePointLight-coordinates.svg                                         [ ImageOnlyFailure ]
 svg/filters/hidpi/feSpotLight-coordinates.svg                                          [ ImageOnlyFailure ]
+svg/filters/in-attribute-error-handling.html                                           [ ImageOnlyFailure ]
+svg/filters/filter-on-root-tile-boundary.html                                          [ ImageOnlyFailure ]
+svg/filters/filter-specified-on-svg-root.html                                          [ ImageOnlyFailure ]
 svg/filters/parent-children-with-same-filter.svg                                       [ ImageOnlyFailure ]
 svg/filters/repeated-drop-shadow-effects.svg                                           [ ImageOnlyFailure ]
 svg/filters/sourceAlpha.svg                                                            [ ImageOnlyFailure ]
@@ -350,6 +354,12 @@ svg/as-image/same-image-two-instances.html                [ ImageOnlyFailure ]
 svg/as-image/svg-as-image-with-relative-size.html         [ ImageOnlyFailure ]
 svg/custom/use-image-in-g.svg                             [ ImageOnlyFailure ]
 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ ImageOnlyFailure ]
+svg/as-background-image/background-image-preserveaspectRatio-support.html [ Failure ]
+svg/as-image/img-preserveAspectRatio-support-1.html [ Failure ]
+
+# Zooming issue
+svg/zoom/page/zoom-background-images.html [ ImageOnlyFailure ]
+svg/custom/absolute-sized-content-with-resources.xhtml [ ImageOnlyFailure ]
 
 # SVG document w/o viewBox + <img> sizing differs to FF/Chrome
 svg/as-background-image/background-image-preserveaspectRatio-support.html [ ImageOnlyFailure ]
@@ -362,6 +372,7 @@ svg/custom/pattern-content-inheritance-cycle.svg                            [ Im
 svg/custom/stroked-pattern.svg                                              [ Failure ]
 svg/transforms/text-with-pattern-inside-transformed-html.xhtml              [ Failure ]
 svg/transforms/text-with-pattern-with-svg-transform.svg                     [ Failure ]
+svg/transforms/transformed-text-fill-pattern.html                           [ ImageOnlyFailure ]
 
 # Clipping problems
 css3/masking/reference-clip-path-change-repaint.html                                              [ Failure ]
@@ -428,7 +439,6 @@ svg/css/mix-blend-mode-opacity-root.svg    [ ImageOnlyFailure ]
 
 # SMIL animation issues
 imported/w3c/web-platform-tests/svg/import/animate-elem-91-t-manual.svg [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/animate-elem-30-t.svg                                   [ Pass ImageOnlyFailure ]
 svg/animations/animateMotion-additive-1.svg                             [ ImageOnlyFailure ]
 svg/stroke/animated-non-scaling-stroke.html                             [ ImageOnlyFailure ]
 
@@ -485,7 +495,15 @@ svg/W3C-SVG-1.1/animate-elem-04-t.svg                                   [ Pass I
 svg/W3C-SVG-1.1/animate-elem-08-t.svg                                   [ Pass ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-17-t.svg                                   [ Pass ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-81-t.svg                                   [ Pass ImageOnlyFailure ]
+svg/W3C-SVG-1.1/animate-elem-85-t.svg                                   [ Failure ]
+svg/W3C-SVG-1.1/animate-elem-07-t.svg                                   [ ImageOnlyFailure Pass ]
+svg/W3C-SVG-1.1/animate-elem-36-t.svg                                   [ ImageOnlyFailure Pass ]
+svg/W3C-SVG-1.1/animate-elem-30-t.svg                                   [ Failure ]
 imported/w3c/web-platform-tests/svg/import/animate-elem-10-t-manual.svg [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/animate-elem-03-t-manual.svg [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/animate-elem-04-t-manual.svg [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/animate-elem-30-t-manual.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/import/animate-elem-85-t-manual.svg [ Failure ]
 
 # 5) Unknown flakiness.
 imported/w3c/web-platform-tests/svg/import/masking-path-04-b-manual.svg [ Pass ImageOnlyFailure ]
