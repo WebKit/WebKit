@@ -4148,6 +4148,10 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     if (!isSelfPaintingLayer() && !hasSelfPaintingLayerDescendant())
         return { nullptr };
 
+    // Renderers that are captured in a view transition are not hit tested.
+    if (renderer().effectiveCapturedInViewTransition())
+        return { nullptr };
+
     // If we're hit testing 'SVG clip content' (aka. RenderSVGResourceClipper) do not early exit.
     if (!request.svgClipContent()) {
         // SVG resource layers and their children are never hit tested.

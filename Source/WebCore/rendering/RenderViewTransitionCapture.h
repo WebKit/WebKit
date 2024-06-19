@@ -60,6 +60,8 @@ private:
 
     void updateFromStyle() override;
 
+    Node* nodeForHitTest() const override;
+
     RefPtr<ImageBuffer> m_oldImage;
     // The overflow rect that the captured image represents, in RenderLayer coordinates
     // of the captured renderer (see layerToLayoutOffset in ViewTransition.cpp).

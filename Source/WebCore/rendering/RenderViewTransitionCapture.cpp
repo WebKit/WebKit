@@ -113,6 +113,12 @@ LayoutPoint RenderViewTransitionCapture::captureContentInset() const
     return location;
 }
 
+Node* RenderViewTransitionCapture::nodeForHitTest() const
+{
+    // The view transition pseudo-elements should hit-test to their originating element (the document element).
+    return document().documentElement();
+}
+
 String RenderViewTransitionCapture::debugDescription() const
 {
     StringBuilder builder;

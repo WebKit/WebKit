@@ -1957,9 +1957,10 @@ bool RenderBlock::isPointInOverflowControl(HitTestResult& result, const LayoutPo
 
 Node* RenderBlock::nodeForHitTest() const
 {
+    switch (style().pseudoElementType()) {
     // If we're a ::backdrop pseudo-element, we should hit-test to the element that generated it.
     // This matches the behavior that other browsers have.
-    if (style().pseudoElementType() == PseudoId::Backdrop) {
+    case PseudoId::Backdrop:
         for (auto& element : document().topLayerElements()) {
             if (!element->renderer())
                 continue;
@@ -1968,6 +1969,16 @@ Node* RenderBlock::nodeForHitTest() const
                 return element.ptr();
         }
         ASSERT_NOT_REACHED();
+        break;
+
+    // The view transition pseudo-elements should hit-test to their originating element (the document element).
+    case PseudoId::ViewTransition:
+    case PseudoId::ViewTransitionGroup:
+    case PseudoId::ViewTransitionImagePair:
+        return document().documentElement();
+
+    default:
+        break;
     }
 
     // If we are in the margins of block elements that are part of a
