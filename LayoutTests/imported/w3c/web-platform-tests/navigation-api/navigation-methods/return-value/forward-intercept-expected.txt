@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT forward() and intercept() with a fulfilled promise Test timed out
+PASS forward() and intercept() with a fulfilled promise
 

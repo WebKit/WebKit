@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Using intercept() then navigate() in the ensuing currententrychange should abort the finished promise (but not the committed promise) Test timed out
+FAIL Using intercept() then navigate() in the ensuing currententrychange should abort the finished promise (but not the committed promise) assert_equals: expected "#2" but got ""
 

@@ -1,3 +1,3 @@
 
-FAIL navigation.back() same-document preventDefault promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: navigateerror_called"
+FAIL navigation.back() same-document preventDefault assert_equals: expected 1 but got 0
 

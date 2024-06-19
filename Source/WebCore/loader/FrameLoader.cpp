@@ -4341,8 +4341,12 @@ void FrameLoader::loadItem(HistoryItem& item, HistoryItem* fromItem, FrameLoadTy
 
     if (frame().document() && frame().document()->settings().navigationAPIEnabled() && fromItem && SecurityOrigin::create(item.url())->isSameOriginAs(SecurityOrigin::create(fromItem->url()))) {
         if (RefPtr domWindow = frame().document()->domWindow()) {
-            if (!domWindow->protectedNavigation()->dispatchTraversalNavigateEvent(item))
-                return;
+            if (RefPtr navigation = domWindow->protectedNavigation(); navigation->frame()) {
+                navigation->dispatchTraversalNavigateEvent(item);
+                // In case the event detached the frame.
+                if (!navigation->frame())
+                    return;
+            }
         }
     }
 

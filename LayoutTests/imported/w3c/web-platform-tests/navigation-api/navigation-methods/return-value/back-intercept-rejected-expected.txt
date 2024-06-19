@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT back() promise rejection with rejected intercept() Test timed out
+FAIL back() promise rejection with rejected intercept() assert_unreached: Should have rejected: undefined Reached unreachable code
 

@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT traverseTo() and intercept() with a fulfilled promise Test timed out
+PASS traverseTo() and intercept() with a fulfilled promise
 

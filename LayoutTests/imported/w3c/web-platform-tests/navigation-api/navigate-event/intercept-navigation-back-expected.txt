@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT event.intercept() can intercept navigation.back() Test timed out
+PASS event.intercept() can intercept navigation.back()
 
