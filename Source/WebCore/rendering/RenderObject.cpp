@@ -565,10 +565,11 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
     return true;
 }
 
-void RenderObject::clearNeedsLayout(EverHadSkippedContentLayout everHadSkippedContentLayout)
+void RenderObject::clearNeedsLayout(HadSkippedLayout hadSkippedLayout)
 {
+    // FIXME: Consider not setting the "ever had layout" bit to true when "hadSkippedLayout"
     setEverHadLayout();
-    setEverHadSkippedContentLayout(everHadSkippedContentLayout == EverHadSkippedContentLayout::Yes);
+    setHadSkippedLayout(hadSkippedLayout == HadSkippedLayout::Yes);
 
     if (auto* renderElement = dynamicDowncast<RenderElement>(*this)) {
         renderElement->setAncestorLineBoxDirty(false);

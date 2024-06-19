@@ -508,10 +508,9 @@ public:
     bool beingDestroyed() const { return m_stateBitfields.hasFlag(StateFlag::BeingDestroyed); }
 
     bool everHadLayout() const { return m_stateBitfields.hasFlag(StateFlag::EverHadLayout); }
+    std::optional<bool> wasSkippedDuringLastLayoutDueToContentVisibility() const { return everHadLayout() ? std::make_optional(m_stateBitfields.hasFlag(StateFlag::WasSkippedDuringLastLayoutDueToContentVisibility)) : std::nullopt; }
 
     static ScrollAnchoringController* searchParentChainForScrollAnchoringController(const RenderObject&);
-
-    bool everHadSkippedContentLayout() const { return m_stateBitfields.hasFlag(StateFlag::EverHadSkippedContentLayout); }
 
     bool childrenInline() const { return m_stateBitfields.hasFlag(StateFlag::ChildrenInline); }
     virtual void setChildrenInline(bool b) { m_stateBitfields.setFlag(StateFlag::ChildrenInline, b); }
@@ -769,8 +768,8 @@ public:
 
     RenderElement* markContainingBlocksForLayout(RenderElement* layoutRoot = nullptr);
     void setNeedsLayout(MarkingBehavior = MarkContainingBlockChain);
-    enum class EverHadSkippedContentLayout { Yes, No };
-    void clearNeedsLayout(EverHadSkippedContentLayout = EverHadSkippedContentLayout::Yes);
+    enum class HadSkippedLayout { No, Yes };
+    void clearNeedsLayout(HadSkippedLayout = HadSkippedLayout::No);
     void setPreferredLogicalWidthsDirty(bool, MarkingBehavior = MarkContainingBlockChain);
     void invalidateContainerPreferredLogicalWidths();
     
@@ -1190,8 +1189,7 @@ private:
     void propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderLayerModelObject& repaintContainer, const LayoutRect& repaintRect) const;
 
     void setEverHadLayout() { m_stateBitfields.setFlag(StateFlag::EverHadLayout); }
-
-    void setEverHadSkippedContentLayout(bool b) { m_stateBitfields.setFlag(StateFlag::EverHadSkippedContentLayout, b); }
+    void setHadSkippedLayout(bool b) { m_stateBitfields.setFlag(StateFlag::WasSkippedDuringLastLayoutDueToContentVisibility, b); }
 
     bool hasRareData() const { return m_stateBitfields.hasFlag(StateFlag::HasRareData); }
 
@@ -1227,7 +1225,7 @@ private:
         ChildrenInline = 1 << 18,
         PaintContainmentApplies = 1 << 19,
         HasSVGTransform = 1 << 20,
-        EverHadSkippedContentLayout = 1 << 21,
+        WasSkippedDuringLastLayoutDueToContentVisibility = 1 << 21,
         CapturedInViewTransition = 1 << 22
     };
 

@@ -1185,7 +1185,7 @@ void RenderTable::recalcSections() const
     for (auto& section : childrenOfType<RenderTableSection>(const_cast<RenderTable&>(*this)))
         section.removeRedundantColumns();
 
-    ASSERT(selfNeedsLayout() || !everHadSkippedContentLayout());
+    ASSERT(selfNeedsLayout() || !wasSkippedDuringLastLayoutDueToContentVisibility() || *wasSkippedDuringLastLayoutDueToContentVisibility());
 
     m_needsSectionRecalc = false;
 }
