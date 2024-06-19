@@ -1653,9 +1653,8 @@ void GStreamerMediaEndpoint::processStats(const GValue* value)
 
     // Just check a single timestamp, inbound RTP for instance.
     if (!m_statsFirstDeliveredTimestamp && statsType == GST_WEBRTC_STATS_INBOUND_RTP) {
-        double timestamp;
-        if (gst_structure_get_double(structure, "timestamp", &timestamp)) {
-            auto ts = Seconds::fromMilliseconds(timestamp);
+        if (auto timestamp = gstStructureGet<double>(structure, "timestamp"_s)) {
+            auto ts = Seconds::fromMilliseconds(*timestamp);
             m_statsFirstDeliveredTimestamp = ts;
 
             if (!isStopped() && m_statsLogTimer.repeatInterval() != statsLogInterval(ts)) {

@@ -132,12 +132,11 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& 
 #endif
 
     if (areEncryptedCaps(caps.get())) {
-        int sampleRate, numberOfChannels;
         const auto* structure = gst_caps_get_structure(caps.get(), 0);
-        if (gst_structure_get_int(structure, "rate", &sampleRate))
-            configuration.sampleRate = sampleRate;
-        if (gst_structure_get_int(structure, "channels", &numberOfChannels))
-            configuration.numberOfChannels = numberOfChannels;
+        if (auto sampleRate = gstStructureGet<int>(structure, "rate"_s))
+            configuration.sampleRate = *sampleRate;
+        if (auto numberOfChannels = gstStructureGet<int>(structure, "channels"_s))
+            configuration.numberOfChannels = *numberOfChannels;
         return;
     }
 

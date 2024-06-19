@@ -178,9 +178,8 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
         return false;
     }
 
-    int payloadType;
-    if (gst_structure_get_int(structure.get(), "payload", &payloadType))
-        g_object_set(m_payloader.get(), "pt", payloadType, nullptr);
+    if (auto payloadType = gstStructureGet<int>(structure.get(), "payload"_s))
+        g_object_set(m_payloader.get(), "pt", *payloadType, nullptr);
 
     if (m_payloaderState) {
         g_object_set(m_payloader.get(), "seqnum-offset", m_payloaderState->seqnum, nullptr);

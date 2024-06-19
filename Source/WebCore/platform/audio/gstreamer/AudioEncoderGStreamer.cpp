@@ -232,14 +232,8 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::Descr
                 GstMappedBuffer buffer(header, GST_MAP_READ);
                 configuration.description = { { buffer.data(), buffer.size() } };
             }
-            int numberOfChannels;
-            if (gst_structure_get_int(structure, "channels", &numberOfChannels))
-                configuration.numberOfChannels = numberOfChannels;
-
-            int sampleRate;
-            if (gst_structure_get_int(structure, "rate", &sampleRate))
-                configuration.sampleRate = sampleRate;
-
+            configuration.numberOfChannels = gstStructureGet<int>(structure, "channels"_s);
+            configuration.sampleRate = gstStructureGet<int>(structure, "rate"_s);
             encoder->m_descriptionCallback(WTFMove(configuration));
         });
     }), new ThreadSafeWeakPtr { *this }, [](void* data, GClosure*) {

@@ -131,9 +131,8 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
         gst_structure_remove_field(structure.get(), "minptime");
     }
 
-    int payloadType;
-    if (gst_structure_get_int(structure.get(), "payload", &payloadType)) {
-        g_object_set(m_payloader.get(), "pt", payloadType, nullptr);
+    if (auto payloadType = gstStructureGet<int>(structure.get(), "payload"_s)) {
+        g_object_set(m_payloader.get(), "pt", *payloadType, nullptr);
         gst_structure_remove_field(structure.get(), "payload");
     }
 

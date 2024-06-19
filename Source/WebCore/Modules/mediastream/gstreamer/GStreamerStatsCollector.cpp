@@ -42,9 +42,8 @@ RTCStatsReport::Stats::Stats(Type type, const GstStructure* structure)
     : type(type)
     , id(String::fromLatin1(gst_structure_get_string(structure, "id")))
 {
-    double gstTimestamp;
-    if (gst_structure_get_double(structure, "timestamp", &gstTimestamp))
-        timestamp = gstTimestamp;
+    if (auto value = gstStructureGet<double>(structure, "timestamp"_s))
+        timestamp = *value;
 }
 
 RTCStatsReport::RtpStreamStats::RtpStreamStats(Type type, const GstStructure* structure)
@@ -53,9 +52,8 @@ RTCStatsReport::RtpStreamStats::RtpStreamStats(Type type, const GstStructure* st
     transportId = String::fromLatin1(gst_structure_get_string(structure, "transport-id"));
     codecId = String::fromLatin1(gst_structure_get_string(structure, "codec-id"));
 
-    unsigned gstSsrc;
-    if (gst_structure_get_uint(structure, "ssrc", &gstSsrc))
-        ssrc = gstSsrc;
+    if (auto value = gstStructureGet<unsigned>(structure, "ssrc"_s))
+        ssrc = *value;
 
     if (const char* gstKind = gst_structure_get_string(structure, "kind"))
         kind = String::fromLatin1(gstKind);
@@ -64,23 +62,16 @@ RTCStatsReport::RtpStreamStats::RtpStreamStats(Type type, const GstStructure* st
 RTCStatsReport::SentRtpStreamStats::SentRtpStreamStats(Type type, const GstStructure* structure)
     : RtpStreamStats(type, structure)
 {
-    uint64_t value;
-    if (gst_structure_get_uint64(structure, "packets-sent", &value))
-        packetsSent = value;
-    if (gst_structure_get_uint64(structure, "bytes-sent", &value))
-        bytesSent = value;
+    packetsSent = gstStructureGet<uint64_t>(structure, "packets-sent"_s);
+    bytesSent = gstStructureGet<uint64_t>(structure, "bytes-sent"_s);
 }
 
 RTCStatsReport::CodecStats::CodecStats(const GstStructure* structure)
     : Stats(Type::Codec, structure)
 {
-    unsigned value;
-    if (gst_structure_get_uint(structure, "payload-type", &value))
-        payloadType = value;
-    if (gst_structure_get_uint(structure, "clock-rate", &value))
-        clockRate = value;
-    if (gst_structure_get_uint(structure, "channels", &value))
-        channels = value;
+    payloadType = gstStructureGet<unsigned>(structure, "payload-type"_s);
+    clockRate = gstStructureGet<unsigned>(structure, "clock-rate"_s);
+    channels = gstStructureGet<unsigned>(structure, "channels"_s);
 
     if (const char* gstSdpFmtpLine = gst_structure_get_string(structure, "sdp-fmtp-line"))
         sdpFmtpLine = String::fromLatin1(gstSdpFmtpLine);
@@ -98,38 +89,26 @@ RTCStatsReport::ReceivedRtpStreamStats::ReceivedRtpStreamStats(Type type, const 
     GstStructure* rtpSourceStats;
     gst_structure_get(structure, "gst-rtpsource-stats", GST_TYPE_STRUCTURE, &rtpSourceStats, nullptr);
 
-    uint64_t gstPacketsReceived;
-    if (gst_structure_get_uint64(rtpSourceStats, "packets-received", &gstPacketsReceived))
-        packetsReceived = gstPacketsReceived;
+    packetsReceived = gstStructureGet<uint64_t>(rtpSourceStats, "packets-received"_s);
 
 #if GST_CHECK_VERSION(1, 22, 0)
-    int64_t gstPacketsLost;
-    if (gst_structure_get_int64(structure, "packets-lost", &gstPacketsLost))
-        packetsLost = gstPacketsLost;
+    packetsLost = gstStructureGet<int64_t>(structure, "packets-lost"_s);
 #else
-    unsigned gstPacketsLost;
-    if (gst_structure_get_uint(structure, "packets-lost", &gstPacketsLost))
-        packetsLost = gstPacketsLost;
+    packetsLost = gstStructureGet<unsigned>(structure, "packets-lost"_s);
 #endif
 
-    double gstJitter;
-    if (gst_structure_get_double(structure, "jitter", &gstJitter))
-        jitter = gstJitter;
+    jitter = gstStructureGet<double>(structure, "jitter"_s);
 }
 
 RTCStatsReport::RemoteInboundRtpStreamStats::RemoteInboundRtpStreamStats(const GstStructure* structure)
     : ReceivedRtpStreamStats(Type::RemoteInboundRtp, structure)
 {
-    double gstRoundTripTime;
-    if (gst_structure_get_double(structure, "round-trip-time", &gstRoundTripTime))
-        roundTripTime = gstRoundTripTime;
+    roundTripTime = gstStructureGet<double>(structure, "round-trip-time"_s);
 
     if (const char* gstLocalId = gst_structure_get_string(structure, "local-id"))
         localId = String::fromLatin1(gstLocalId);
 
-    double gstFractionLost;
-    if (gst_structure_get_double(structure, "fraction-lost", &gstFractionLost))
-        fractionLost = gstFractionLost;
+    fractionLost = gstStructureGet<double>(structure, "fraction-lost"_s);
 
     // FIXME:
     // stats.reportsReceived
@@ -139,9 +118,7 @@ RTCStatsReport::RemoteInboundRtpStreamStats::RemoteInboundRtpStreamStats(const G
 RTCStatsReport::RemoteOutboundRtpStreamStats::RemoteOutboundRtpStreamStats(const GstStructure* structure)
     : SentRtpStreamStats(Type::RemoteOutboundRtp, structure)
 {
-    double value;
-    if (gst_structure_get_double(structure, "remote-timestamp", &value))
-        remoteTimestamp = value;
+    remoteTimestamp = gstStructureGet<double>(structure, "remote-timestamp"_s);
 
     if (const char* gstLocalId = gst_structure_get_string(structure, "local-id"))
         localId = String::fromLatin1(gstLocalId);
@@ -156,50 +133,22 @@ RTCStatsReport::RemoteOutboundRtpStreamStats::RemoteOutboundRtpStreamStats(const
 RTCStatsReport::InboundRtpStreamStats::InboundRtpStreamStats(const GstStructure* structure, const GstStructure* additionalStats)
     : ReceivedRtpStreamStats(Type::InboundRtp, structure)
 {
-    uint64_t value;
-    if (gst_structure_get_uint64(structure, "bytes-received", &value))
-        bytesReceived = value;
-
-    if (gst_structure_get_uint64(structure, "packets-discarded", &value))
-        packetsDiscarded = value;
-
-    if (gst_structure_get_uint64(structure, "packets-duplicated", &value))
-        packetsDuplicated = value;
-
-    unsigned gstFirCount;
-    if (gst_structure_get_uint(structure, "fir-count", &gstFirCount))
-        firCount = gstFirCount;
-
-    unsigned gstPliCount;
-    if (gst_structure_get_uint(structure, "pli-count", &gstPliCount))
-        pliCount = gstPliCount;
-
-    unsigned gstNackCount;
-    if (gst_structure_get_uint(structure, "nack-count", &gstNackCount))
-        nackCount = gstNackCount;
-
-    uint64_t gstBytesReceived;
-    if (gst_structure_get_uint64(structure, "bytes-received", &gstBytesReceived))
-        bytesReceived = gstBytesReceived;
+    bytesReceived = gstStructureGet<uint64_t>(structure, "bytes-received"_s);
+    packetsDiscarded = gstStructureGet<uint64_t>(structure, "packets-discarded"_s);
+    packetsDuplicated = gstStructureGet<uint64_t>(structure, "packets-duplicated"_s);
+    firCount = gstStructureGet<unsigned>(structure, "fir-count"_s);
+    pliCount = gstStructureGet<unsigned>(structure, "pli-count"_s);
+    nackCount = gstStructureGet<unsigned>(structure, "nack-count"_s);
 
     decoderImplementation = "GStreamer"_s;
 
     if (!additionalStats)
         return;
 
-    uint64_t frames;
-    if (gst_structure_get_uint64(additionalStats, "frames-decoded", &frames))
-        framesDecoded = frames;
-
-    if (gst_structure_get_uint64(additionalStats, "frames-dropped", &frames))
-        framesDropped = frames;
-
-    unsigned size;
-    if (gst_structure_get_uint(additionalStats, "frame-width", &size))
-        frameWidth = size;
-
-    if (gst_structure_get_uint(additionalStats, "frame-height", &size))
-        frameHeight = size;
+    framesDecoded = gstStructureGet<uint64_t>(additionalStats, "frames-decoded"_s);
+    framesDropped = gstStructureGet<uint64_t>(additionalStats, "frames-dropped"_s);
+    frameWidth = gstStructureGet<unsigned>(additionalStats, "frame-width"_s);
+    frameHeight = gstStructureGet<unsigned>(additionalStats, "frame-height"_s);
 
     // FIXME:
     // stats.fractionLost =
@@ -216,17 +165,9 @@ RTCStatsReport::InboundRtpStreamStats::InboundRtpStreamStats(const GstStructure*
 RTCStatsReport::OutboundRtpStreamStats::OutboundRtpStreamStats(const GstStructure* structure, const GstStructure* additionalStats)
     : SentRtpStreamStats(Type::OutboundRtp, structure)
 {
-    unsigned gstFirCount;
-    if (gst_structure_get_uint(structure, "fir-count", &gstFirCount))
-        firCount = gstFirCount;
-
-    unsigned gstPliCount;
-    if (gst_structure_get_uint(structure, "pli-count", &gstPliCount))
-        pliCount = gstPliCount;
-
-    unsigned gstNackCount;
-    if (gst_structure_get_uint(structure, "nack-count", &gstNackCount))
-        nackCount = gstNackCount;
+    firCount = gstStructureGet<unsigned>(structure, "fir-count"_s);
+    pliCount = gstStructureGet<unsigned>(structure, "pli-count"_s);
+    nackCount = gstStructureGet<unsigned>(structure, "nack-count"_s);
 
     if (const char* gstRemoteId = gst_structure_get_string(structure, "remote-id"))
         remoteId = String::fromLatin1(gstRemoteId);
@@ -234,25 +175,16 @@ RTCStatsReport::OutboundRtpStreamStats::OutboundRtpStreamStats(const GstStructur
     if (!additionalStats)
         return;
 
-    uint64_t value;
-    if (gst_structure_get_uint64(additionalStats, "frames-sent", &value))
-        framesSent = value;
-    if (gst_structure_get_uint64(additionalStats, "frames-encoded", &value))
-        framesEncoded = value;
-
-    double bitrate;
-    if (gst_structure_get_double(additionalStats, "bitrate", &bitrate))
-        targetBitrate = bitrate;
+    framesSent = gstStructureGet<uint64_t>(additionalStats, "frames-sent"_s);
+    framesEncoded = gstStructureGet<uint64_t>(additionalStats, "frames-encoded"_s);
+    targetBitrate = gstStructureGet<double>(additionalStats, "bitrate"_s);
 }
 
 RTCStatsReport::PeerConnectionStats::PeerConnectionStats(const GstStructure* structure)
     : Stats(Type::PeerConnection, structure)
 {
-    int value;
-    if (gst_structure_get_int(structure, "data-channels-opened", &value))
-        dataChannelsOpened = value;
-    if (gst_structure_get_int(structure, "data-channels-closed", &value))
-        dataChannelsClosed = value;
+    dataChannelsOpened = gstStructureGet<int>(structure, "data-channels-opened"_s);
+    dataChannelsClosed = gstStructureGet<int>(structure, "data-channels-closed"_s);
 }
 
 RTCStatsReport::TransportStats::TransportStats(const GstStructure* structure)
@@ -297,13 +229,8 @@ RTCStatsReport::IceCandidateStats::IceCandidateStats(GstWebRTCStatsType statsTyp
     protocol = String::fromLatin1(gst_structure_get_string(structure, "protocol"));
     url = String::fromLatin1(gst_structure_get_string(structure, "url"));
 
-    unsigned gstPort;
-    if (gst_structure_get_uint(structure, "port", &gstPort))
-        port = gstPort;
-
-    unsigned gstPriority;
-    if (gst_structure_get_uint(structure, "priority", &gstPriority))
-        priority = gstPriority;
+    port = gstStructureGet<unsigned>(structure, "port"_s);
+    priority = gstStructureGet<unsigned>(structure, "priority"_s);
 
     auto gstIceCandidateType = String::fromLatin1(gst_structure_get_string(structure, "candidate-type"));
     candidateType = iceCandidateType(gstIceCandidateType);

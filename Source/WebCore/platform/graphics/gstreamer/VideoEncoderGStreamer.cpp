@@ -184,11 +184,7 @@ static std::optional<unsigned> retrieveTemporalIndex(const GRefPtr<GstSample>& s
         auto metaStructure = gst_custom_meta_get_structure(meta);
         RELEASE_ASSERT(metaStructure);
         GST_TRACE("Looking-up layer id in %" GST_PTR_FORMAT, metaStructure);
-        unsigned temporalLayerId;
-        if (!gst_structure_get_uint(metaStructure, "layer-id", &temporalLayerId))
-            return { };
-
-        return temporalLayerId;
+        return gstStructureGet<unsigned>(metaStructure, "layer-id"_s);
     }
     GST_TRACE("Retrieval of temporal index from encoded format %s is not yet supported.", gst_structure_get_name(structure));
 #endif
