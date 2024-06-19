@@ -517,6 +517,10 @@
 (allow mach-lookup
     (global-name "com.apple.system.libinfo.muser"))
 
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 180000)
+(allow mach-lookup (global-name "com.apple.duetactivityscheduler"))
+#endif
+
 (allow mach-task-name (target self))
 
 (deny process-info*)
