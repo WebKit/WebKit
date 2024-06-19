@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT traverseTo() promise rejections when detaching an iframe inside onnavigate (same-document) Test timed out
+PASS traverseTo() promise rejections when detaching an iframe inside onnavigate (same-document)
 

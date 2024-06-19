@@ -548,23 +548,29 @@ void Navigation::cleanupAPIMethodTracker(NavigationAPIMethodTracker* apiMethodTr
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#abort-the-ongoing-navigation
 void Navigation::abortOngoingNavigation(NavigateEvent& event)
 {
+    auto* globalObject = scriptExecutionContext()->globalObject();
+    if (!globalObject && m_ongoingAPIMethodTracker)
+        globalObject = m_ongoingAPIMethodTracker->committedPromise->globalObject();
+    ASSERT(globalObject);
+    if (!globalObject)
+        return;
+
     m_focusChangedDuringOnoingNavigation = false;
     m_suppressNormalScrollRestorationDuringOngoingNavigation = false;
 
     if (event.isBeingDispatched())
         event.preventDefault();
 
-    auto& globalObject = *scriptExecutionContext()->globalObject();
-    JSC::JSLockHolder locker(globalObject.vm());
+    JSC::JSLockHolder locker(globalObject->vm());
     auto exception = Exception(ExceptionCode::AbortError, "Navigation aborted"_s);
-    auto domException = createDOMException(globalObject, exception.isolatedCopy());
+    auto domException = createDOMException(*globalObject, exception.isolatedCopy());
 
     event.signal()->signalAbort(domException);
 
     m_ongoingNavigateEvent = nullptr;
 
     // FIXME: Fill in exception information.
-    dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, { }, 0, 0, { globalObject.vm(), domException }));
+    dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, { }, 0, 0, { globalObject->vm(), domException }));
 
     if (m_ongoingAPIMethodTracker)
         rejectFinishedPromise(m_ongoingAPIMethodTracker.get(), WTFMove(exception), domException);
@@ -636,7 +642,7 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
 
     // If the frame was detached in our event.
     if (!frame()) {
-        // FIXME: This should abort the old event, but we can't execute JS.
+        abortOngoingNavigation(event);
         return false;
     }
 
