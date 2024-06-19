@@ -1115,7 +1115,7 @@ private:
     void beginTransparencyLayers(GraphicsContext&, const LayerPaintingInfo&, const LayoutRect& dirtyRect);
 
     struct HitLayer {
-        RenderLayer* layer;
+        RenderLayer* layer { nullptr };
         double zOffset = 0;
     };
     HitLayer hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
