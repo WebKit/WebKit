@@ -830,11 +830,14 @@ IntRect ScrollView::rectToCopyOnScroll() const
 {
     IntRect scrollViewRect = convertToRootView(IntRect(0, 0, visibleWidth(), visibleHeight()));
     if (hasOverlayScrollbars()) {
-        int verticalScrollbarWidth = (verticalScrollbar() && !hasLayerForVerticalScrollbar()) ? verticalScrollbar()->width() : 0;
-        int horizontalScrollbarHeight = (horizontalScrollbar() && !hasLayerForHorizontalScrollbar()) ? horizontalScrollbar()->height() : 0;
-        
-        scrollViewRect.setWidth(scrollViewRect.width() - verticalScrollbarWidth);
-        scrollViewRect.setHeight(scrollViewRect.height() - horizontalScrollbarHeight);
+        if (verticalScrollbar() && !hasLayerForVerticalScrollbar()) {
+            if (shouldPlaceVerticalScrollbarOnLeft())
+                scrollViewRect.shiftXEdgeBy(verticalScrollbar()->width());
+            else
+                scrollViewRect.shiftMaxXEdgeBy(-verticalScrollbar()->width());
+        }
+        if (horizontalScrollbar() && !hasLayerForHorizontalScrollbar())
+            scrollViewRect.shiftMaxYEdgeBy(-horizontalScrollbar()->height());
     }
     return scrollViewRect;
 }
