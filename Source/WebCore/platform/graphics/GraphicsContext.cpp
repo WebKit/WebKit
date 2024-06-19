@@ -107,6 +107,15 @@ void GraphicsContext::unwindStateStack(unsigned count)
     }
 }
 
+FloatSize GraphicsContext::platformShadowOffset(const FloatSize& shadowOffset) const
+{
+#if USE(CG)
+    if (shadowsIgnoreTransforms())
+        return { shadowOffset.width(), -shadowOffset.height() };
+#endif
+    return shadowOffset;
+}
+
 void GraphicsContext::mergeLastChanges(const GraphicsContextState& state, const std::optional<GraphicsContextState>& lastDrawingState)
 {
     m_state.mergeLastChanges(state, lastDrawingState);

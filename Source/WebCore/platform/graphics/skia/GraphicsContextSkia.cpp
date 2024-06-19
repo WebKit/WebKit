@@ -444,11 +444,6 @@ sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowS
     if (!state.shadowsIgnoreTransforms())
         return SkImageFilters::DropShadowOnly(offset.width(), offset.height(), sigma, sigma, shadowColor, nullptr);
 
-    // When state.shadowsIgnoreTransforms() is true, the offset is in
-    // natural orientation for the Y axis, like CG. Convert that back to
-    // the Skia coordinate system.
-    offset.scale(1.0, -1.0);
-
     // Fast path: identity CTM doesn't need the transform compensation
     AffineTransform ctm = getCTM(GraphicsContext::IncludeDeviceScale::PossiblyIncludeDeviceScale);
     if (ctm.isIdentity())

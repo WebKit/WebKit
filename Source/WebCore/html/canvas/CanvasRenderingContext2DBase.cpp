@@ -1497,9 +1497,8 @@ void CanvasRenderingContext2DBase::applyShadow()
         return;
 
     if (shouldDrawShadows()) {
-        float width = state().shadowOffset.width();
-        float height = state().shadowOffset.height();
-        c->setDropShadow({ { width, -height }, state().shadowBlur, state().shadowColor, ShadowRadiusMode::Legacy });
+        auto shadowOffset = c->platformShadowOffset(state().shadowOffset);
+        c->setDropShadow({ shadowOffset, state().shadowBlur, state().shadowColor, ShadowRadiusMode::Legacy });
     } else
         c->setDropShadow({ { }, 0, Color::transparentBlack, ShadowRadiusMode::Legacy });
 }
