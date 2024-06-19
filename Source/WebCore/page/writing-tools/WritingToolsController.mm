@@ -26,7 +26,7 @@
 #if ENABLE(WRITING_TOOLS)
 
 #include "config.h"
-#include "UnifiedTextReplacementController.h"
+#include "WritingToolsController.h"
 
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -56,29 +56,29 @@ static constexpr auto defaultTextIteratorBehaviors = TextIteratorBehaviors {
 #endif
 };
 
-CharacterRange UnifiedTextReplacementController::characterRange(const SimpleRange& scope, const SimpleRange& range)
+CharacterRange WritingToolsController::characterRange(const SimpleRange& scope, const SimpleRange& range)
 {
     return WebCore::characterRange(scope, range, defaultTextIteratorBehaviors);
 }
 
-uint64_t UnifiedTextReplacementController::characterCount(const SimpleRange& range)
+uint64_t WritingToolsController::characterCount(const SimpleRange& range)
 {
     return WebCore::characterCount(range, defaultTextIteratorBehaviors);
 }
 
-SimpleRange UnifiedTextReplacementController::resolveCharacterRange(const SimpleRange& scope, CharacterRange range)
+SimpleRange WritingToolsController::resolveCharacterRange(const SimpleRange& scope, CharacterRange range)
 {
     return WebCore::resolveCharacterRange(scope, range, defaultTextIteratorBehaviors);
 }
 
-String UnifiedTextReplacementController::plainText(const SimpleRange& range)
+String WritingToolsController::plainText(const SimpleRange& range)
 {
     return WebCore::plainText(range, defaultTextIteratorBehaviors);
 }
 
-#pragma mark - UnifiedTextReplacementController implementation.
+#pragma mark - WritingToolsController implementation.
 
-UnifiedTextReplacementController::UnifiedTextReplacementController(Page& page)
+WritingToolsController::WritingToolsController(Page& page)
     : m_page(page)
 {
 }
@@ -107,9 +107,9 @@ static std::optional<SimpleRange> contextRangeForDocument(const Document& docume
     return selection.firstRange();
 }
 
-void UnifiedTextReplacementController::willBeginTextReplacementSession(const std::optional<UnifiedTextReplacement::Session>& session, CompletionHandler<void(const Vector<UnifiedTextReplacement::Context>&)>&& completionHandler)
+void WritingToolsController::willBeginTextReplacementSession(const std::optional<WritingTools::Session>& session, CompletionHandler<void(const Vector<WritingTools::Context>&)>&& completionHandler)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s)", session ? session->identifier.toString().utf8().data() : "");
+    RELEASE_LOG(UnifiedTextReplacement, "WritingToolsController::willBeginTextReplacementSession (%s)", session ? session->identifier.toString().utf8().data() : "");
 
     RefPtr document = this->document();
     if (!document) {
@@ -121,15 +121,15 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const std
     auto contextRange = contextRangeForDocument(*document);
 
     if (!contextRange) {
-        RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s) => no context range", session ? session->identifier.toString().utf8().data() : "");
+        RELEASE_LOG(UnifiedTextReplacement, "WritingToolsController::willBeginTextReplacementSession (%s) => no context range", session ? session->identifier.toString().utf8().data() : "");
         completionHandler({ });
         return;
     }
 
     auto selectedTextRange = document->selection().selection().firstRange();
 
-    if (session && session->correctionType == UnifiedTextReplacement::Session::CorrectionType::Spelling) {
-        ASSERT(session->replacementType == UnifiedTextReplacement::Session::ReplacementType::RichText);
+    if (session && session->correctionType == WritingTools::Session::CorrectionType::Spelling) {
+        ASSERT(session->replacementType == WritingTools::Session::ReplacementType::RichText);
 
         auto liveRange = createLiveRange(*selectedTextRange);
         m_states.set(session->identifier, RichTextState { liveRange, { } });
@@ -142,7 +142,7 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const std
     auto selectedTextCharacterRange = characterRange(*contextRange, *selectedTextRange);
 
     if (attributedStringFromRange.string.isEmpty())
-        RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s) => attributed string is empty", session ? session->identifier.toString().utf8().data() : "");
+        RELEASE_LOG(UnifiedTextReplacement, "WritingToolsController::willBeginTextReplacementSession (%s) => attributed string is empty", session ? session->identifier.toString().utf8().data() : "");
 
     if (!session) {
         completionHandler({ { WTF::UUID { 0 }, attributedStringFromRange, selectedTextCharacterRange } });
@@ -154,11 +154,11 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const std
     auto liveRange = createLiveRange(*contextRange);
 
     switch (session->replacementType) {
-    case UnifiedTextReplacement::Session::ReplacementType::PlainText:
+    case WritingTools::Session::ReplacementType::PlainText:
         m_states.set(session->identifier, PlainTextState { liveRange, 0 });
         break;
 
-    case UnifiedTextReplacement::Session::ReplacementType::RichText:
+    case WritingTools::Session::ReplacementType::RichText:
         m_states.set(session->identifier, RichTextState { liveRange, { } });
         break;
     }
@@ -170,7 +170,7 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const std
     // attributed string formed by the context range; the length of the entire context range
     // being equal to the length of the attributed string implies the range is valid.
     if (UNLIKELY(attributedStringCharacterCount != contextRangeCharacterCount)) {
-        RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s) => attributed string length (%u) != context range length (%llu)", session->identifier.toString().utf8().data(), attributedStringCharacterCount, contextRangeCharacterCount);
+        RELEASE_LOG_ERROR(UnifiedTextReplacement, "WritingToolsController::willBeginTextReplacementSession (%s) => attributed string length (%u) != context range length (%llu)", session->identifier.toString().utf8().data(), attributedStringCharacterCount, contextRangeCharacterCount);
         ASSERT_NOT_REACHED();
         completionHandler({ });
         return;
@@ -179,14 +179,14 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const std
     completionHandler({ { WTF::UUID { 0 }, attributedStringFromRange, selectedTextCharacterRange } });
 }
 
-void UnifiedTextReplacementController::didBeginTextReplacementSession(const UnifiedTextReplacement::Session& session, const Vector<UnifiedTextReplacement::Context>& contexts)
+void WritingToolsController::didBeginTextReplacementSession(const WritingTools::Session& session, const Vector<WritingTools::Context>& contexts)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::didBeginTextReplacementSession (%s) [received contexts: %zu]", session.identifier.toString().utf8().data(), contexts.size());
+    RELEASE_LOG(UnifiedTextReplacement, "WritingToolsController::didBeginTextReplacementSession (%s) [received contexts: %zu]", session.identifier.toString().utf8().data(), contexts.size());
 }
 
-void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplacements(const UnifiedTextReplacement::Session& session, const Vector<UnifiedTextReplacement::Replacement>& replacements, const UnifiedTextReplacement::Context& context, bool finished)
+void WritingToolsController::textReplacementSessionDidReceiveReplacements(const WritingTools::Session& session, const Vector<WritingTools::Replacement>& replacements, const WritingTools::Context& context, bool finished)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveReplacements (%s) [received replacements: %zu, finished: %d]", session.identifier.toString().utf8().data(), replacements.size(), finished);
+    RELEASE_LOG(UnifiedTextReplacement, "WritingToolsController::textReplacementSessionDidReceiveReplacements (%s) [received replacements: %zu, finished: %d]", session.identifier.toString().utf8().data(), replacements.size(), finished);
 
     RefPtr document = this->document();
     if (!document) {
@@ -199,7 +199,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
 
     document->selection().clear();
 
-    CheckedPtr state = stateForSession<UnifiedTextReplacement::Session::ReplacementType::PlainText>(session);
+    CheckedPtr state = stateForSession<WritingTools::Session::ReplacementType::PlainText>(session);
     if (!state) {
         ASSERT_NOT_REACHED();
         return;
@@ -236,9 +236,9 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
         document->selection().setSelection({ sessionRange });
 }
 
-void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForReplacement(const UnifiedTextReplacement::Session& session, UnifiedTextReplacement::Replacement::State newReplacementState, const UnifiedTextReplacement::Replacement& replacement, const UnifiedTextReplacement::Context&)
+void WritingToolsController::textReplacementSessionDidUpdateStateForReplacement(const WritingTools::Session& session, WritingTools::Replacement::State newReplacementState, const WritingTools::Replacement& replacement, const WritingTools::Context&)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForReplacement (%s) [new state: %hhu, replacement: %s]", session.identifier.toString().utf8().data(), enumToUnderlyingType(newReplacementState), replacement.identifier.toString().utf8().data());
+    RELEASE_LOG(UnifiedTextReplacement, "WritingToolsController::textReplacementSessionDidUpdateStateForReplacement (%s) [new state: %hhu, replacement: %s]", session.identifier.toString().utf8().data(), enumToUnderlyingType(newReplacementState), replacement.identifier.toString().utf8().data());
 
     RefPtr document = this->document();
     if (!document) {
@@ -246,7 +246,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
         return;
     }
 
-    CheckedPtr state = stateForSession<UnifiedTextReplacement::Session::ReplacementType::PlainText>(session);
+    CheckedPtr state = stateForSession<WritingTools::Session::ReplacementType::PlainText>(session);
     if (!state) {
         ASSERT_NOT_REACHED();
         return;
@@ -263,7 +263,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
     auto rangeToReplace = makeSimpleRange(node, marker);
 
     switch (newReplacementState) {
-    case UnifiedTextReplacement::Replacement::State::Active: {
+    case WritingTools::Replacement::State::Active: {
         document->selection().setSelection({ rangeToReplace });
         document->selection().revealSelection();
 
@@ -281,7 +281,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
         return;
     }
 
-    case UnifiedTextReplacement::Replacement::State::Reverted: {
+    case WritingTools::Replacement::State::Reverted: {
         auto data = std::get<DocumentMarker::UnifiedTextReplacementData>(marker.data());
 
         auto offsetRange = OffsetRange { marker.startOffset(), marker.endOffset() };
@@ -297,20 +297,20 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
     }
 }
 
-void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange(const UnifiedTextReplacement::Session& session, const AttributedString& attributedText, const CharacterRange& range, const UnifiedTextReplacement::Context& context, bool finished)
+void WritingToolsController::textReplacementSessionDidReceiveTextWithReplacementRange(const WritingTools::Session& session, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished)
 {
     auto hasAttributes = attributedText.attributes.containsIf([](const auto& rangeAndAttributeValues) {
         return !rangeAndAttributeValues.second.isEmpty();
     });
 
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) [range: %llu, %llu; has attributes: %d; finished: %d]", session.identifier.toString().utf8().data(), range.location, range.length, hasAttributes, finished);
+    RELEASE_LOG(UnifiedTextReplacement, "WritingToolsController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) [range: %llu, %llu; has attributes: %d; finished: %d]", session.identifier.toString().utf8().data(), range.location, range.length, hasAttributes, finished);
 
     auto contextTextCharacterCount = context.attributedText.string.length();
 
     // Precondition: the range is always relative to the context's attributed text, so by definition it must
     // be strictly less than the length of the attributed string.
     if (UNLIKELY(contextTextCharacterCount < range.location + range.length)) {
-        RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => trying to replace a range larger than the context range (context range length: %u, range.location %llu, range.length %llu)", session.identifier.toString().utf8().data(), contextTextCharacterCount, range.location, range.length);
+        RELEASE_LOG_ERROR(UnifiedTextReplacement, "WritingToolsController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => trying to replace a range larger than the context range (context range length: %u, range.location %llu, range.length %llu)", session.identifier.toString().utf8().data(), contextTextCharacterCount, range.location, range.length);
         ASSERT_NOT_REACHED();
         return;
     }
@@ -321,7 +321,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         return;
     }
 
-    CheckedPtr state = stateForSession<UnifiedTextReplacement::Session::ReplacementType::RichText>(session);
+    CheckedPtr state = stateForSession<WritingTools::Session::ReplacementType::RichText>(session);
     if (!state) {
         ASSERT_NOT_REACHED();
         return;
@@ -335,7 +335,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
     auto sessionRangeCharacterCount = characterCount(sessionRange);
 
     if (UNLIKELY(range.length + sessionRangeCharacterCount < contextTextCharacterCount)) {
-        RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => the range offset by the character count delta must have a non-negative size (context range length: %u, range.length %llu, session length: %llu)", session.identifier.toString().utf8().data(), contextTextCharacterCount, range.length, sessionRangeCharacterCount);
+        RELEASE_LOG_ERROR(UnifiedTextReplacement, "WritingToolsController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => the range offset by the character count delta must have a non-negative size (context range length: %u, range.length %llu, session length: %llu)", session.identifier.toString().utf8().data(), contextTextCharacterCount, range.length, sessionRangeCharacterCount);
         ASSERT_NOT_REACHED();
         return;
     }
@@ -361,9 +361,9 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
 }
 
 template<>
-void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction<UnifiedTextReplacement::Session::ReplacementType::PlainText>(const UnifiedTextReplacement::Session& session, UnifiedTextReplacement::EditAction action)
+void WritingToolsController::textReplacementSessionDidReceiveEditAction<WritingTools::Session::ReplacementType::PlainText>(const WritingTools::Session& session, WritingTools::EditAction action)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction<PlainText> (%s) [action: %hhu]", session.identifier.toString().utf8().data(), enumToUnderlyingType(action));
+    RELEASE_LOG(UnifiedTextReplacement, "WritingToolsController::textReplacementSessionDidReceiveEditAction<PlainText> (%s) [action: %hhu]", session.identifier.toString().utf8().data(), enumToUnderlyingType(action));
 
     RefPtr document = this->document();
     if (!document) {
@@ -371,7 +371,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditActio
         return;
     }
 
-    CheckedPtr state = stateForSession<UnifiedTextReplacement::Session::ReplacementType::PlainText>(session);
+    CheckedPtr state = stateForSession<WritingTools::Session::ReplacementType::PlainText>(session);
     if (!state) {
         ASSERT_NOT_REACHED();
         return;
@@ -394,10 +394,10 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditActio
 
         auto newState = [&] {
             switch (action) {
-            case UnifiedTextReplacement::EditAction::Undo:
+            case WritingTools::EditAction::Undo:
                 return DocumentMarker::UnifiedTextReplacementData::State::Reverted;
 
-            case UnifiedTextReplacement::EditAction::Redo:
+            case WritingTools::EditAction::Redo:
                 return DocumentMarker::UnifiedTextReplacementData::State::Pending;
 
             default:
@@ -418,32 +418,32 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditActio
 }
 
 template<>
-void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction<UnifiedTextReplacement::Session::ReplacementType::RichText>(const UnifiedTextReplacement::Session& session, UnifiedTextReplacement::EditAction action)
+void WritingToolsController::textReplacementSessionDidReceiveEditAction<WritingTools::Session::ReplacementType::RichText>(const WritingTools::Session& session, WritingTools::EditAction action)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction<RichText> (%s) [action: %hhu]", session.identifier.toString().utf8().data(), enumToUnderlyingType(action));
+    RELEASE_LOG(UnifiedTextReplacement, "WritingToolsController::textReplacementSessionDidReceiveEditAction<RichText> (%s) [action: %hhu]", session.identifier.toString().utf8().data(), enumToUnderlyingType(action));
 
-    CheckedPtr state = stateForSession<UnifiedTextReplacement::Session::ReplacementType::RichText>(session);
+    CheckedPtr state = stateForSession<WritingTools::Session::ReplacementType::RichText>(session);
     if (!state) {
         ASSERT_NOT_REACHED();
         return;
     }
 
     switch (action) {
-    case UnifiedTextReplacement::EditAction::Undo: {
+    case WritingTools::EditAction::Undo: {
         for (auto it = state->commands.rbegin(); it != state->commands.rend(); it++)
             (*it)->ensureComposition().unapply();
 
         break;
     }
 
-    case UnifiedTextReplacement::EditAction::Redo: {
+    case WritingTools::EditAction::Redo: {
         for (auto it = state->commands.begin(); it != state->commands.end(); it++)
             (*it)->ensureComposition().reapply();
 
         break;
     }
 
-    case UnifiedTextReplacement::EditAction::UndoAll: {
+    case WritingTools::EditAction::UndoAll: {
         for (auto it = state->commands.rbegin(); it != state->commands.rend(); it++)
             (*it)->ensureComposition().unapply();
 
@@ -454,29 +454,29 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditActio
     }
 }
 
-void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction(const UnifiedTextReplacement::Session& session, UnifiedTextReplacement::EditAction action)
+void WritingToolsController::textReplacementSessionDidReceiveEditAction(const WritingTools::Session& session, WritingTools::EditAction action)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction (%s) [action: %hhu]", session.identifier.toString().utf8().data(), enumToUnderlyingType(action));
+    RELEASE_LOG(UnifiedTextReplacement, "WritingToolsController::textReplacementSessionDidReceiveEditAction (%s) [action: %hhu]", session.identifier.toString().utf8().data(), enumToUnderlyingType(action));
 
     switch (session.replacementType) {
-    case UnifiedTextReplacement::Session::ReplacementType::PlainText: {
-        textReplacementSessionDidReceiveEditAction<UnifiedTextReplacement::Session::ReplacementType::PlainText>(session, action);
+    case WritingTools::Session::ReplacementType::PlainText: {
+        textReplacementSessionDidReceiveEditAction<WritingTools::Session::ReplacementType::PlainText>(session, action);
         break;
     }
 
-    case UnifiedTextReplacement::Session::ReplacementType::RichText: {
-        textReplacementSessionDidReceiveEditAction<UnifiedTextReplacement::Session::ReplacementType::RichText>(session, action);
+    case WritingTools::Session::ReplacementType::RichText: {
+        textReplacementSessionDidReceiveEditAction<WritingTools::Session::ReplacementType::RichText>(session, action);
         break;
     }
     }
 }
 
 template<>
-void UnifiedTextReplacementController::didEndTextReplacementSession<UnifiedTextReplacement::Session::ReplacementType::PlainText>(const UnifiedTextReplacement::Session& session, bool accepted)
+void WritingToolsController::didEndTextReplacementSession<WritingTools::Session::ReplacementType::PlainText>(const WritingTools::Session& session, bool accepted)
 {
     RefPtr document = this->document();
 
-    CheckedPtr state = stateForSession<UnifiedTextReplacement::Session::ReplacementType::PlainText>(session);
+    CheckedPtr state = stateForSession<WritingTools::Session::ReplacementType::PlainText>(session);
     if (!state) {
         ASSERT_NOT_REACHED();
         return;
@@ -503,17 +503,17 @@ void UnifiedTextReplacementController::didEndTextReplacementSession<UnifiedTextR
 }
 
 template<>
-void UnifiedTextReplacementController::didEndTextReplacementSession<UnifiedTextReplacement::Session::ReplacementType::RichText>(const UnifiedTextReplacement::Session& session, bool accepted)
+void WritingToolsController::didEndTextReplacementSession<WritingTools::Session::ReplacementType::RichText>(const WritingTools::Session& session, bool accepted)
 {
     if (accepted)
         return;
 
-    textReplacementSessionDidReceiveEditAction<UnifiedTextReplacement::Session::ReplacementType::RichText>(session, UnifiedTextReplacement::EditAction::Undo);
+    textReplacementSessionDidReceiveEditAction<WritingTools::Session::ReplacementType::RichText>(session, WritingTools::EditAction::Undo);
 }
 
-void UnifiedTextReplacementController::didEndTextReplacementSession(const UnifiedTextReplacement::Session& session, bool accepted)
+void WritingToolsController::didEndTextReplacementSession(const WritingTools::Session& session, bool accepted)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::didEndTextReplacementSession (%s) [accepted: %d]", session.identifier.toString().utf8().data(), accepted);
+    RELEASE_LOG(UnifiedTextReplacement, "WritingToolsController::didEndTextReplacementSession (%s) [accepted: %d]", session.identifier.toString().utf8().data(), accepted);
 
     RefPtr document = this->document();
     if (!document) {
@@ -522,11 +522,11 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const Unifie
     }
 
     switch (session.replacementType) {
-    case UnifiedTextReplacement::Session::ReplacementType::PlainText:
-        didEndTextReplacementSession<UnifiedTextReplacement::Session::ReplacementType::PlainText>(session, accepted);
+    case WritingTools::Session::ReplacementType::PlainText:
+        didEndTextReplacementSession<WritingTools::Session::ReplacementType::PlainText>(session, accepted);
         break;
-    case UnifiedTextReplacement::Session::ReplacementType::RichText:
-        didEndTextReplacementSession<UnifiedTextReplacement::Session::ReplacementType::RichText>(session, accepted);
+    case WritingTools::Session::ReplacementType::RichText:
+        didEndTextReplacementSession<WritingTools::Session::ReplacementType::RichText>(session, accepted);
         break;
     }
 
@@ -538,7 +538,7 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const Unifie
 
     m_page->chrome().client().removeTextAnimationForID(session.identifier);
 
-    if (session.correctionType != UnifiedTextReplacement::Session::CorrectionType::Spelling)
+    if (session.correctionType != WritingTools::Session::CorrectionType::Spelling)
         document->selection().setSelection({ *sessionRange });
 
     m_page->chrome().client().cleanUpTextAnimationsForSessionID(session.identifier);
@@ -546,7 +546,7 @@ void UnifiedTextReplacementController::didEndTextReplacementSession(const Unifie
     m_states.remove(session.identifier);
 }
 
-void UnifiedTextReplacementController::updateStateForSelectedReplacementIfNeeded()
+void WritingToolsController::updateStateForSelectedReplacementIfNeeded()
 {
     // Optimization: If there are no ongoing sessions, there is no need for any of this logic to
     // be executed, since there will be no relevant document markers anyways.
@@ -573,12 +573,12 @@ void UnifiedTextReplacementController::updateStateForSelectedReplacementIfNeeded
     auto& [node, marker] = *nodeAndMarker;
     auto data = std::get<DocumentMarker::UnifiedTextReplacementData>(marker.data());
 
-    m_page->chrome().client().textReplacementSessionUpdateStateForReplacementWithID(data.sessionID, UnifiedTextReplacement::Replacement::State::Active, data.replacementID);
+    m_page->chrome().client().textReplacementSessionUpdateStateForReplacementWithID(data.sessionID, WritingTools::Replacement::State::Active, data.replacementID);
 }
 
 #pragma mark - Private instance helper methods.
 
-std::optional<SimpleRange> UnifiedTextReplacementController::contextRangeForSessionWithID(const UnifiedTextReplacement::Session::ID& sessionID) const
+std::optional<SimpleRange> WritingToolsController::contextRangeForSessionWithID(const WritingTools::Session::ID& sessionID) const
 {
     auto it = m_states.find(sessionID);
     if (it == m_states.end())
@@ -593,8 +593,8 @@ std::optional<SimpleRange> UnifiedTextReplacementController::contextRangeForSess
     return makeSimpleRange(range);
 }
 
-template<UnifiedTextReplacement::Session::ReplacementType Type>
-UnifiedTextReplacementController::StateFromReplacementType<Type>::Value* UnifiedTextReplacementController::stateForSession(const UnifiedTextReplacement::Session& session)
+template<WritingTools::Session::ReplacementType Type>
+WritingToolsController::StateFromReplacementType<Type>::Value* WritingToolsController::stateForSession(const WritingTools::Session& session)
 {
     if (UNLIKELY(session.replacementType != Type)) {
         ASSERT_NOT_REACHED();
@@ -607,10 +607,10 @@ UnifiedTextReplacementController::StateFromReplacementType<Type>::Value* Unified
         return nullptr;
     }
 
-    return std::get_if<typename UnifiedTextReplacementController::StateFromReplacementType<Type>::Value>(&it->value);
+    return std::get_if<typename WritingToolsController::StateFromReplacementType<Type>::Value>(&it->value);
 }
 
-RefPtr<Document> UnifiedTextReplacementController::document() const
+RefPtr<Document> WritingToolsController::document() const
 {
     if (!m_page) {
         ASSERT_NOT_REACHED();
@@ -626,7 +626,7 @@ RefPtr<Document> UnifiedTextReplacementController::document() const
     return frame->document();
 }
 
-std::optional<std::tuple<Node&, DocumentMarker&>> UnifiedTextReplacementController::findReplacementMarkerByID(const SimpleRange& outerRange, const UnifiedTextReplacement::Replacement::ID& replacementID) const
+std::optional<std::tuple<Node&, DocumentMarker&>> WritingToolsController::findReplacementMarkerByID(const SimpleRange& outerRange, const WritingTools::Replacement::ID& replacementID) const
 {
     RefPtr document = this->document();
     if (!document) {
@@ -654,7 +654,7 @@ std::optional<std::tuple<Node&, DocumentMarker&>> UnifiedTextReplacementControll
     return std::nullopt;
 }
 
-std::optional<std::tuple<Node&, DocumentMarker&>> UnifiedTextReplacementController::findReplacementMarkerContainingRange(const SimpleRange& range) const
+std::optional<std::tuple<Node&, DocumentMarker&>> WritingToolsController::findReplacementMarkerContainingRange(const SimpleRange& range) const
 {
     RefPtr document = this->document();
     if (!document) {
@@ -685,7 +685,7 @@ std::optional<std::tuple<Node&, DocumentMarker&>> UnifiedTextReplacementControll
 }
 
 template<typename State>
-void UnifiedTextReplacementController::replaceContentsOfRangeInSessionInternal(State& state, const SimpleRange& range, WTF::Function<void()>&& replacementOperation)
+void WritingToolsController::replaceContentsOfRangeInSessionInternal(State& state, const SimpleRange& range, WTF::Function<void()>&& replacementOperation)
 {
     RefPtr document = this->document();
     if (!document) {
@@ -738,7 +738,7 @@ void UnifiedTextReplacementController::replaceContentsOfRangeInSessionInternal(S
     state.contextRange = updatedLiveRange;
 }
 
-void UnifiedTextReplacementController::replaceContentsOfRangeInSession(PlainTextState& state, const SimpleRange& range, const String& replacementText)
+void WritingToolsController::replaceContentsOfRangeInSession(PlainTextState& state, const SimpleRange& range, const String& replacementText)
 {
     replaceContentsOfRangeInSessionInternal(state, range, [&] {
         RefPtr document = this->document();
@@ -746,7 +746,7 @@ void UnifiedTextReplacementController::replaceContentsOfRangeInSession(PlainText
     });
 }
 
-void UnifiedTextReplacementController::replaceContentsOfRangeInSession(RichTextState& state, const SimpleRange& range, RefPtr<DocumentFragment>&& fragment, MatchStyle matchStyle)
+void WritingToolsController::replaceContentsOfRangeInSession(RichTextState& state, const SimpleRange& range, RefPtr<DocumentFragment>&& fragment, MatchStyle matchStyle)
 {
     OptionSet<ReplaceSelectionCommand::CommandOption> options { ReplaceSelectionCommand::PreventNesting, ReplaceSelectionCommand::SanitizeFragment, ReplaceSelectionCommand::SelectReplacement };
     if (matchStyle == MatchStyle::Yes)

@@ -121,7 +121,7 @@ struct TextRecognitionResult;
 struct TranslationContextMenuInfo;
 #endif
 
-namespace UnifiedTextReplacement {
+namespace WritingTools {
 enum class ReplacementBehavior : uint8_t;
 }
 
@@ -717,7 +717,7 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    WebCore::UnifiedTextReplacement::ReplacementBehavior unifiedTextReplacementBehavior() const;
+    WebCore::WritingTools::ReplacementBehavior unifiedTextReplacementBehavior() const;
 #endif
 
 #if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)

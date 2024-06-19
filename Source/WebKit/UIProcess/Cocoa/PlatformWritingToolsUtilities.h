@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-namespace UnifiedTextReplacement {
+namespace WritingTools {
 enum class EditAction : uint8_t;
 enum class ReplacementBehavior : uint8_t;
 enum class ReplacementState : uint8_t;
@@ -50,29 +50,29 @@ namespace WebKit {
 
 #pragma mark - Conversions from web types to platform types.
 
-PlatformWritingToolsBehavior convertToPlatformWritingToolsBehavior(WebCore::UnifiedTextReplacement::ReplacementBehavior);
+PlatformWritingToolsBehavior convertToPlatformWritingToolsBehavior(WebCore::WritingTools::ReplacementBehavior);
 
-WTTextSuggestionState convertToPlatformTextSuggestionState(WebCore::UnifiedTextReplacement::ReplacementState);
+WTTextSuggestionState convertToPlatformTextSuggestionState(WebCore::WritingTools::ReplacementState);
 
-RetainPtr<WTContext> convertToPlatformContext(const WebCore::UnifiedTextReplacement::Context&);
+RetainPtr<WTContext> convertToPlatformContext(const WebCore::WritingTools::Context&);
 
 #pragma mark - Conversions from platform types to web types.
 
-WebCore::UnifiedTextReplacement::ReplacementBehavior convertToWebWritingToolsBehavior(PlatformWritingToolsBehavior);
+WebCore::WritingTools::ReplacementBehavior convertToWebWritingToolsBehavior(PlatformWritingToolsBehavior);
 
-WebCore::UnifiedTextReplacement::ReplacementState convertToWebTextSuggestionState(WTTextSuggestionState);
+WebCore::WritingTools::ReplacementState convertToWebTextSuggestionState(WTTextSuggestionState);
 
-WebCore::UnifiedTextReplacement::EditAction convertToWebAction(WTAction);
+WebCore::WritingTools::EditAction convertToWebAction(WTAction);
 
-WebCore::UnifiedTextReplacement::SessionReplacementType convertToWebSessionType(WTSessionType);
+WebCore::WritingTools::SessionReplacementType convertToWebSessionType(WTSessionType);
 
-WebCore::UnifiedTextReplacement::SessionCorrectionType convertToWebCompositionSessionType(WTCompositionSessionType);
+WebCore::WritingTools::SessionCorrectionType convertToWebCompositionSessionType(WTCompositionSessionType);
 
-std::optional<WebCore::UnifiedTextReplacement::Context> convertToWebContext(WTContext *);
+std::optional<WebCore::WritingTools::Context> convertToWebContext(WTContext *);
 
-std::optional<WebCore::UnifiedTextReplacement::Session> convertToWebSession(WTSession *);
+std::optional<WebCore::WritingTools::Session> convertToWebSession(WTSession *);
 
-std::optional<WebCore::UnifiedTextReplacement::Replacement> convertToWebTextSuggestion(WTTextSuggestion *);
+std::optional<WebCore::WritingTools::Replacement> convertToWebTextSuggestion(WTTextSuggestion *);
 
 } // namespace WebKit
 

@@ -507,19 +507,19 @@ private:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::UnifiedTextReplacement::ReplacementID&, WebCore::IntRect selectionBoundsInRootView) final;
+    void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::SessionID&, const WebCore::WritingTools::ReplacementID&, WebCore::IntRect selectionBoundsInRootView) final;
 
-    void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::UnifiedTextReplacement::SessionID&, WebCore::UnifiedTextReplacement::ReplacementState, const WebCore::UnifiedTextReplacement::ReplacementID&) final;
+    void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::WritingTools::SessionID&, WebCore::WritingTools::ReplacementState, const WebCore::WritingTools::ReplacementID&) final;
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
-    void removeTextAnimationForID(const WebCore::UnifiedTextReplacement::SessionID&) final;
+    void removeTextAnimationForID(const WebCore::WritingTools::SessionID&) final;
 
-    void cleanUpTextAnimationsForSessionID(const WebCore::UnifiedTextReplacement::SessionID&) final;
+    void cleanUpTextAnimationsForSessionID(const WebCore::WritingTools::SessionID&) final;
 
-    void addSourceTextAnimation(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::CharacterRange&) final;
+    void addSourceTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&) final;
 
-    void addDestinationTextAnimation(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::CharacterRange&) final;
+    void addDestinationTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&) final;
 #endif
 
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };

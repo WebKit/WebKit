@@ -407,8 +407,8 @@ using CGGlyph = uint16_t
 using NSRect = CGRect
 
 #if ENABLE(WRITING_TOOLS)
-using WebCore::UnifiedTextReplacement::Replacement::ID = WTF::UUID
-using WebCore::UnifiedTextReplacement::Session::ID = WTF::UUID
+using WebCore::WritingTools::Replacement::ID = WTF::UUID
+using WebCore::WritingTools::Session::ID = WTF::UUID
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

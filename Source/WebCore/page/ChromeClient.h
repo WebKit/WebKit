@@ -157,7 +157,7 @@ enum class RouteSharingPolicy : uint8_t;
 
 enum class DidFilterLinkDecoration : bool { No, Yes };
 
-namespace UnifiedTextReplacement {
+namespace WritingTools {
 using SessionID = WTF::UUID;
 }
 
@@ -664,17 +664,17 @@ public:
     virtual double baseViewportLayoutSizeScaleFactor() const { return 1; }
 
 #if ENABLE(WRITING_TOOLS)
-    virtual void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const UnifiedTextReplacement::SessionID&, const UnifiedTextReplacement::ReplacementID&, IntRect) { }
+    virtual void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WritingTools::SessionID&, const WritingTools::ReplacementID&, IntRect) { }
 
-    virtual void textReplacementSessionUpdateStateForReplacementWithID(const UnifiedTextReplacement::SessionID&, UnifiedTextReplacement::ReplacementState, const UnifiedTextReplacement::ReplacementID&) { }
+    virtual void textReplacementSessionUpdateStateForReplacementWithID(const WritingTools::SessionID&, WritingTools::ReplacementState, const WritingTools::ReplacementID&) { }
 
-    virtual void removeTextAnimationForID(const UnifiedTextReplacement::SessionID&) { }
+    virtual void removeTextAnimationForID(const WritingTools::SessionID&) { }
 
-    virtual void cleanUpTextAnimationsForSessionID(const UnifiedTextReplacement::SessionID&) { }
+    virtual void cleanUpTextAnimationsForSessionID(const WritingTools::SessionID&) { }
 
-    virtual void addSourceTextAnimation(const UnifiedTextReplacement::SessionID&, const CharacterRange&) { }
+    virtual void addSourceTextAnimation(const WritingTools::SessionID&, const CharacterRange&) { }
 
-    virtual void addDestinationTextAnimation(const UnifiedTextReplacement::SessionID&, const CharacterRange&) { }
+    virtual void addDestinationTextAnimation(const WritingTools::SessionID&, const CharacterRange&) { }
 #endif
 
     WEBCORE_EXPORT virtual ~ChromeClient();

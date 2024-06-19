@@ -42,7 +42,7 @@ struct TextIndicatorData;
 
 enum class TextIndicatorOption : uint16_t;
 
-namespace UnifiedTextReplacement {
+namespace WritingTools {
 using SessionID = WTF::UUID;
 }
 
@@ -85,7 +85,7 @@ public:
 
 private:
     std::optional<WebCore::SimpleRange> contextRangeForTextAnimationType(const WTF::UUID&) const;
-    std::optional<WebCore::SimpleRange> contextRangeForSessionWithID(const WebCore::UnifiedTextReplacement::SessionID&) const;
+    std::optional<WebCore::SimpleRange> contextRangeForSessionWithID(const WebCore::WritingTools::SessionID&) const;
 
     RefPtr<WebCore::Document> document() const;
     WeakPtr<WebPage> m_webPage;

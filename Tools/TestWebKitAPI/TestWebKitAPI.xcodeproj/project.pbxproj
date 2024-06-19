@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -2056,7 +2056,7 @@
 		0746645822FF630500E3451A /* AccessibilityTestPlugin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTestPlugin.mm; sourceTree = "<group>"; };
 		07492B391DF8ADA400633DE1 /* enumerateMediaDevices.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = enumerateMediaDevices.html; sourceTree = "<group>"; };
 		07492B3A1DF8AE2D00633DE1 /* EnumerateMediaDevices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnumerateMediaDevices.cpp; sourceTree = "<group>"; };
-		074AD7092B604E7600FFA67B /* UnifiedTextReplacement.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UnifiedTextReplacement.mm; sourceTree = "<group>"; };
+		074AD7092B604E7600FFA67B /* WritingTools.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WritingTools.mm; sourceTree = "<group>"; };
 		075A9CF426177217006DFA3A /* MediaSessionCoordinatorTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSessionCoordinatorTest.mm; sourceTree = "<group>"; };
 		0766DD1F1A5AD5200023E3BB /* PendingAPIRequestURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PendingAPIRequestURL.cpp; sourceTree = "<group>"; };
 		076E507E1F45031E006E9F5A /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
@@ -4305,7 +4305,6 @@
 				CDE195B31CFE0ADE0053D256 /* TopContentInset.mm */,
 				5CB40B4D1F4B98BE007DC7B9 /* UIDelegate.mm */,
 				F4D2C66A2BCF9D8400DADC86 /* UnifiedPDFTests.mm */,
-				074AD7092B604E7600FFA67B /* UnifiedTextReplacement.mm */,
 				5C3A77A922F20B8A003827FF /* UploadDirectory.mm */,
 				7CC3E1FA197E234100BE6252 /* UserContentController.mm */,
 				7C882E031C80C624006BF731 /* UserContentWorld.mm */,
@@ -4412,6 +4411,7 @@
 				95A524942581A10D00461FE9 /* WKWebViewThemeColor.mm */,
 				953ABB3425C0D681004C8B73 /* WKWebViewUnderPageBackgroundColor.mm */,
 				07338E042B7433A400F949EB /* WritingSuggestions.mm */,
+				074AD7092B604E7600FFA67B /* WritingTools.mm */,
 				465A08FD280096F80028FD0E /* YoutubeReplacementPlugin.mm */,
 			);
 			name = "WebKit Cocoa";

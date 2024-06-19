@@ -2112,7 +2112,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         return;
     }
 
-    Vector<WebCore::UnifiedTextReplacement::Context> contextData;
+    Vector<WebCore::WritingTools::Context> contextData;
     for (WTContext *context in contexts) {
         auto webContext = WebKit::convertToWebContext(context);
         if (!webContext) {
@@ -2124,7 +2124,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     }
 
     // Don't animate smart replies, they are animated by UIKit/AppKit.
-    if (webSession->correctionType != WebCore::UnifiedTextReplacement::Session::CorrectionType::Spelling)
+    if (webSession->correctionType != WebCore::WritingTools::Session::CorrectionType::Spelling)
         [self beginWritingToolsAnimationForSessionWithUUID:session.uuid];
 
     _page->didBeginTextReplacementSession(*webSession, contextData);
@@ -2144,7 +2144,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         return;
     }
 
-    Vector<WebCore::UnifiedTextReplacement::Replacement> replacementData;
+    Vector<WebCore::WritingTools::Replacement> replacementData;
     for (WTTextSuggestion *suggestion in suggestions) {
         auto replacementDataItem = WebKit::convertToWebTextSuggestion(suggestion);
         if (!replacementDataItem) {
@@ -2258,7 +2258,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     [textViewDelegate proofreadingSessionWithUUID:session.uuid showDetailsForSuggestionWithUUID:replacementUUID relativeToRect:rect inView:view.get()];
 }
 
-- (void)_textReplacementSession:(NSUUID *)sessionUUID updateState:(WebCore::UnifiedTextReplacement::Replacement::State)state forReplacementWithUUID:(NSUUID *)replacementUUID
+- (void)_textReplacementSession:(NSUUID *)sessionUUID updateState:(WebCore::WritingTools::Replacement::State)state forReplacementWithUUID:(NSUUID *)replacementUUID
 {
     WTSession *session = [_unifiedTextReplacementSessions objectForKey:sessionUUID];
     if (!session)

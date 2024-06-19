@@ -32,7 +32,7 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
-namespace UnifiedTextReplacement {
+namespace WritingTools {
 
 enum class ReplacementBehavior : uint8_t {
     None,
@@ -107,7 +107,7 @@ struct Replacement {
     State state;
 };
 
-} // namespace UnifiedTextReplacement
+} // namespace WritingTools
 } // namespace WebCore
 
 #endif

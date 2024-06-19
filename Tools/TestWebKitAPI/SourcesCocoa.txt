@@ -93,7 +93,7 @@ Tests/WebKitCocoa/Copying.mm
 Tests/WebKitCocoa/CreateWebArchive.mm
 Tests/WebKitCocoa/CustomUserAgent.mm
 Tests/WebKitCocoa/DataDetection.mm
-Tests/WebKitCocoa/UnifiedTextReplacement.mm
+Tests/WebKitCocoa/WritingTools.mm
 Tests/WebKitCocoa/DecidePolicyForNavigationAction.mm
 Tests/WebKitCocoa/DeviceManagementRestrictions.mm
 Tests/WebKitCocoa/DeviceOrientation.mm

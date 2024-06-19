@@ -36,7 +36,7 @@
 namespace WebCore {
 class DocumentMarker;
 
-namespace UnifiedTextReplacement {
+namespace WritingTools {
 using ReplacementID = WTF::UUID;
 using SessionID = WTF::UUID;
 }
@@ -126,8 +126,8 @@ public:
         };
 
         String originalText;
-        UnifiedTextReplacement::ReplacementID replacementID;
-        UnifiedTextReplacement::SessionID sessionID;
+        WritingTools::ReplacementID replacementID;
+        WritingTools::SessionID sessionID;
         State state { State::Pending };
     };
 #endif

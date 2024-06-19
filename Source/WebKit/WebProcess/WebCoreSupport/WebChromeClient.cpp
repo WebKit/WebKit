@@ -1846,12 +1846,12 @@ void WebChromeClient::gamepadsRecentlyAccessed()
 
 #if ENABLE(WRITING_TOOLS)
 
-void WebChromeClient::textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::UnifiedTextReplacement::Session::ID& sessionID, const WebCore::UnifiedTextReplacement::Replacement::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
+void WebChromeClient::textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::Replacement::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
 {
     protectedPage()->textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(sessionID, replacementID, selectionBoundsInRootView);
 }
 
-void WebChromeClient::textReplacementSessionUpdateStateForReplacementWithID(const UnifiedTextReplacement::Session::ID& sessionID, UnifiedTextReplacement::Replacement::State state, const UnifiedTextReplacement::Replacement::ID& replacementID)
+void WebChromeClient::textReplacementSessionUpdateStateForReplacementWithID(const WritingTools::Session::ID& sessionID, WritingTools::Replacement::State state, const WritingTools::Replacement::ID& replacementID)
 {
     protectedPage()->textReplacementSessionUpdateStateForReplacementWithID(sessionID, state, replacementID);
 }
@@ -1860,22 +1860,22 @@ void WebChromeClient::textReplacementSessionUpdateStateForReplacementWithID(cons
 
 #if ENABLE(WRITING_TOOLS_UI)
 
-void WebChromeClient::removeTextAnimationForID(const UnifiedTextReplacement::Session::ID& sessionID)
+void WebChromeClient::removeTextAnimationForID(const WritingTools::Session::ID& sessionID)
 {
     protectedPage()->removeTextAnimationForID(sessionID);
 }
 
-void WebChromeClient::cleanUpTextAnimationsForSessionID(const UnifiedTextReplacement::Session::ID& sessionID)
+void WebChromeClient::cleanUpTextAnimationsForSessionID(const WritingTools::Session::ID& sessionID)
 {
     protectedPage()->cleanUpTextAnimationsForSessionID(sessionID);
 }
 
-void WebChromeClient::addSourceTextAnimation(const UnifiedTextReplacement::Session::ID& sessionID, const CharacterRange& range)
+void WebChromeClient::addSourceTextAnimation(const WritingTools::Session::ID& sessionID, const CharacterRange& range)
 {
     protectedPage()->addSourceTextAnimation(sessionID, range);
 }
 
-void WebChromeClient::addDestinationTextAnimation(const UnifiedTextReplacement::Session::ID& sessionID, const CharacterRange& range)
+void WebChromeClient::addDestinationTextAnimation(const WritingTools::Session::ID& sessionID, const CharacterRange& range)
 {
     protectedPage()->addDestinationTextAnimation(sessionID, range);
 }

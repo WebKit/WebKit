@@ -29,7 +29,7 @@
 
 #include "Range.h"
 #include "ReplaceSelectionCommand.h"
-#include "UnifiedTextReplacementTypes.h"
+#include "WritingToolsTypes.h"
 
 namespace WebCore {
 
@@ -41,32 +41,32 @@ class Page;
 
 struct SimpleRange;
 
-class UnifiedTextReplacementController final {
+class WritingToolsController final {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(UnifiedTextReplacementController);
+    WTF_MAKE_NONCOPYABLE(WritingToolsController);
 
 public:
-    explicit UnifiedTextReplacementController(Page&);
+    explicit WritingToolsController(Page&);
 
-    void willBeginTextReplacementSession(const std::optional<UnifiedTextReplacement::Session>&, CompletionHandler<void(const Vector<UnifiedTextReplacement::Context>&)>&&);
+    void willBeginTextReplacementSession(const std::optional<WritingTools::Session>&, CompletionHandler<void(const Vector<WritingTools::Context>&)>&&);
 
-    void didBeginTextReplacementSession(const UnifiedTextReplacement::Session&, const Vector<UnifiedTextReplacement::Context>&);
+    void didBeginTextReplacementSession(const WritingTools::Session&, const Vector<WritingTools::Context>&);
 
-    void textReplacementSessionDidReceiveReplacements(const UnifiedTextReplacement::Session&, const Vector<UnifiedTextReplacement::Replacement>&, const UnifiedTextReplacement::Context&, bool finished);
+    void textReplacementSessionDidReceiveReplacements(const WritingTools::Session&, const Vector<WritingTools::Replacement>&, const WritingTools::Context&, bool finished);
 
-    void textReplacementSessionDidUpdateStateForReplacement(const UnifiedTextReplacement::Session&, UnifiedTextReplacement::Replacement::State, const UnifiedTextReplacement::Replacement&, const UnifiedTextReplacement::Context&);
+    void textReplacementSessionDidUpdateStateForReplacement(const WritingTools::Session&, WritingTools::Replacement::State, const WritingTools::Replacement&, const WritingTools::Context&);
 
-    void didEndTextReplacementSession(const UnifiedTextReplacement::Session&, bool accepted);
+    void didEndTextReplacementSession(const WritingTools::Session&, bool accepted);
 
-    void textReplacementSessionDidReceiveTextWithReplacementRange(const UnifiedTextReplacement::Session&, const AttributedString&, const CharacterRange&, const UnifiedTextReplacement::Context&, bool finished);
+    void textReplacementSessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished);
 
-    void textReplacementSessionDidReceiveEditAction(const UnifiedTextReplacement::Session&, UnifiedTextReplacement::EditAction);
+    void textReplacementSessionDidReceiveEditAction(const WritingTools::Session&, WritingTools::EditAction);
 
     void updateStateForSelectedReplacementIfNeeded();
 
-    // FIXME: Refactor `TextAnimationController` in such a way so as to not explicitly depend on `UnifiedTextReplacementController`,
+    // FIXME: Refactor `TextAnimationController` in such a way so as to not explicitly depend on `WritingToolsController`,
     // and then remove this method after doing so.
-    std::optional<SimpleRange> contextRangeForSessionWithID(const UnifiedTextReplacement::Session::ID&) const;
+    std::optional<SimpleRange> contextRangeForSessionWithID(const WritingTools::Session::ID&) const;
 
 private:
     struct RichTextState : CanMakeCheckedPtr<RichTextState> {
@@ -97,16 +97,16 @@ private:
         int replacementLocationOffset { 0 };
     };
 
-    template<UnifiedTextReplacement::Session::ReplacementType Type>
+    template<WritingTools::Session::ReplacementType Type>
     struct StateFromReplacementType { };
 
     template<>
-    struct StateFromReplacementType<UnifiedTextReplacement::Session::ReplacementType::PlainText> {
+    struct StateFromReplacementType<WritingTools::Session::ReplacementType::PlainText> {
         using Value = PlainTextState;
     };
 
     template<>
-    struct StateFromReplacementType<UnifiedTextReplacement::Session::ReplacementType::RichText> {
+    struct StateFromReplacementType<WritingTools::Session::ReplacementType::RichText> {
         using Value = RichTextState;
     };
 
@@ -119,28 +119,28 @@ private:
     static uint64_t characterCount(const SimpleRange&);
     static String plainText(const SimpleRange&);
 
-    template<UnifiedTextReplacement::Session::ReplacementType Type>
-    StateFromReplacementType<Type>::Value* stateForSession(const UnifiedTextReplacement::Session&);
+    template<WritingTools::Session::ReplacementType Type>
+    StateFromReplacementType<Type>::Value* stateForSession(const WritingTools::Session&);
 
     std::optional<std::tuple<Node&, DocumentMarker&>> findReplacementMarkerContainingRange(const SimpleRange&) const;
-    std::optional<std::tuple<Node&, DocumentMarker&>> findReplacementMarkerByID(const SimpleRange& outerRange, const UnifiedTextReplacement::Replacement::ID&) const;
+    std::optional<std::tuple<Node&, DocumentMarker&>> findReplacementMarkerByID(const SimpleRange& outerRange, const WritingTools::Replacement::ID&) const;
 
     template<typename State>
     void replaceContentsOfRangeInSessionInternal(State&, const SimpleRange&, WTF::Function<void()>&&);
     void replaceContentsOfRangeInSession(PlainTextState&, const SimpleRange&, const String&);
     void replaceContentsOfRangeInSession(RichTextState&, const SimpleRange&, RefPtr<DocumentFragment>&&, MatchStyle);
 
-    template<UnifiedTextReplacement::Session::ReplacementType Type>
-    void textReplacementSessionDidReceiveEditAction(const UnifiedTextReplacement::Session&, UnifiedTextReplacement::EditAction);
+    template<WritingTools::Session::ReplacementType Type>
+    void textReplacementSessionDidReceiveEditAction(const WritingTools::Session&, WritingTools::EditAction);
 
-    template<UnifiedTextReplacement::Session::ReplacementType Type>
-    void didEndTextReplacementSession(const UnifiedTextReplacement::Session&, bool accepted);
+    template<WritingTools::Session::ReplacementType Type>
+    void didEndTextReplacementSession(const WritingTools::Session&, bool accepted);
 
     RefPtr<Document> document() const;
 
     SingleThreadWeakPtr<Page> m_page;
 
-    HashMap<UnifiedTextReplacement::Session::ID, std::variant<std::monostate, PlainTextState, RichTextState>> m_states;
+    HashMap<WritingTools::Session::ID, std::variant<std::monostate, PlainTextState, RichTextState>> m_states;
 };
 
 } // namespace WebKit

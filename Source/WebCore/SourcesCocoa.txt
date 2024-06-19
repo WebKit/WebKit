@@ -258,7 +258,7 @@ page/scrolling/mac/ScrollingTreeMac.mm
 page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreePluginScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm
-page/unified-text-replacement/UnifiedTextReplacementController.mm
+page/writing-tools/WritingToolsController.mm
 platform/VideoFrame.mm
 platform/animation/AcceleratedEffectStack.mm @no-unify
 platform/audio/AudioSession.cpp

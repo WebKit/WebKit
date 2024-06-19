@@ -216,7 +216,7 @@
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-#include "UnifiedTextReplacementController.h"
+#include "WritingToolsController.h"
 #endif
 
 #if ENABLE(WEBXR)
@@ -413,7 +413,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_badgeClient(WTFMove(pageConfiguration.badgeClient))
     , m_historyItemClient(WTFMove(pageConfiguration.historyItemClient))
 #if ENABLE(WRITING_TOOLS)
-    , m_unifiedTextReplacementController(makeUniqueRef<UnifiedTextReplacementController>(*this))
+    , m_writingToolsController(makeUniqueRef<WritingToolsController>(*this))
 #endif
 {
     updateTimerThrottlingState();
@@ -4853,49 +4853,49 @@ void Page::gamepadsRecentlyAccessed()
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-void Page::willBeginTextReplacementSession(const std::optional<UnifiedTextReplacement::Session>& session, CompletionHandler<void(const Vector<UnifiedTextReplacement::Context>&)>&& completionHandler)
+void Page::willBeginTextReplacementSession(const std::optional<WritingTools::Session>& session, CompletionHandler<void(const Vector<WritingTools::Context>&)>&& completionHandler)
 {
-    m_unifiedTextReplacementController->willBeginTextReplacementSession(session, WTFMove(completionHandler));
+    m_writingToolsController->willBeginTextReplacementSession(session, WTFMove(completionHandler));
 }
 
-void Page::didBeginTextReplacementSession(const UnifiedTextReplacement::Session& session, const Vector<UnifiedTextReplacement::Context>& contexts)
+void Page::didBeginTextReplacementSession(const WritingTools::Session& session, const Vector<WritingTools::Context>& contexts)
 {
-    m_unifiedTextReplacementController->didBeginTextReplacementSession(session, contexts);
+    m_writingToolsController->didBeginTextReplacementSession(session, contexts);
 }
 
-void Page::textReplacementSessionDidReceiveReplacements(const UnifiedTextReplacement::Session& session, const Vector<UnifiedTextReplacement::Replacement>& replacements, const UnifiedTextReplacement::Context& context, bool finished)
+void Page::textReplacementSessionDidReceiveReplacements(const WritingTools::Session& session, const Vector<WritingTools::Replacement>& replacements, const WritingTools::Context& context, bool finished)
 {
-    m_unifiedTextReplacementController->textReplacementSessionDidReceiveReplacements(session, replacements, context, finished);
+    m_writingToolsController->textReplacementSessionDidReceiveReplacements(session, replacements, context, finished);
 }
 
-void Page::textReplacementSessionDidUpdateStateForReplacement(const UnifiedTextReplacement::Session& session, UnifiedTextReplacement::Replacement::State state, const UnifiedTextReplacement::Replacement& replacement, const UnifiedTextReplacement::Context& context)
+void Page::textReplacementSessionDidUpdateStateForReplacement(const WritingTools::Session& session, WritingTools::Replacement::State state, const WritingTools::Replacement& replacement, const WritingTools::Context& context)
 {
-    m_unifiedTextReplacementController->textReplacementSessionDidUpdateStateForReplacement(session, state, replacement, context);
+    m_writingToolsController->textReplacementSessionDidUpdateStateForReplacement(session, state, replacement, context);
 }
 
-void Page::didEndTextReplacementSession(const UnifiedTextReplacement::Session& session, bool accepted)
+void Page::didEndTextReplacementSession(const WritingTools::Session& session, bool accepted)
 {
-    m_unifiedTextReplacementController->didEndTextReplacementSession(session, accepted);
+    m_writingToolsController->didEndTextReplacementSession(session, accepted);
 }
 
-void Page::textReplacementSessionDidReceiveTextWithReplacementRange(const UnifiedTextReplacement::Session& session, const AttributedString& attributedText, const CharacterRange& range, const UnifiedTextReplacement::Context& context, bool finished)
+void Page::textReplacementSessionDidReceiveTextWithReplacementRange(const WritingTools::Session& session, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished)
 {
-    m_unifiedTextReplacementController->textReplacementSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished);
+    m_writingToolsController->textReplacementSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished);
 }
 
 void Page::updateStateForSelectedReplacementIfNeeded()
 {
-    m_unifiedTextReplacementController->updateStateForSelectedReplacementIfNeeded();
+    m_writingToolsController->updateStateForSelectedReplacementIfNeeded();
 }
 
-std::optional<SimpleRange> Page::contextRangeForSessionWithID(const UnifiedTextReplacement::Session::ID& sessionID) const
+std::optional<SimpleRange> Page::contextRangeForSessionWithID(const WritingTools::Session::ID& sessionID) const
 {
-    return m_unifiedTextReplacementController->contextRangeForSessionWithID(sessionID);
+    return m_writingToolsController->contextRangeForSessionWithID(sessionID);
 }
 
-void Page::textReplacementSessionDidReceiveEditAction(const UnifiedTextReplacement::Session& session, UnifiedTextReplacement::EditAction action)
+void Page::textReplacementSessionDidReceiveEditAction(const WritingTools::Session& session, WritingTools::EditAction action)
 {
-    m_unifiedTextReplacementController->textReplacementSessionDidReceiveEditAction(session, action);
+    m_writingToolsController->textReplacementSessionDidReceiveEditAction(session, action);
 }
 #endif
 

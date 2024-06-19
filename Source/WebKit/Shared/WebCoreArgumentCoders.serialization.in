@@ -6412,68 +6412,68 @@ header: <WebCore/TextExtractionTypes.h>
 };
 
 #if ENABLE(WRITING_TOOLS)
-header: <WebCore/UnifiedTextReplacementTypes.h>
-[CustomHeader] enum class WebCore::UnifiedTextReplacement::ReplacementBehavior : uint8_t {
+header: <WebCore/WritingToolsTypes.h>
+[CustomHeader] enum class WebCore::WritingTools::ReplacementBehavior : uint8_t {
     None,
     Default,
     Limited,
     Complete
 };
 
-header: <WebCore/UnifiedTextReplacementTypes.h>
-[CustomHeader] enum class WebCore::UnifiedTextReplacement::EditAction : uint8_t {
+header: <WebCore/WritingToolsTypes.h>
+[CustomHeader] enum class WebCore::WritingTools::EditAction : uint8_t {
     Undo,
     Redo,
     UndoAll
 };
 
-header: <WebCore/UnifiedTextReplacementTypes.h>
-[CustomHeader] enum class WebCore::UnifiedTextReplacement::SessionReplacementType : uint8_t {
+header: <WebCore/WritingToolsTypes.h>
+[CustomHeader] enum class WebCore::WritingTools::SessionReplacementType : uint8_t {
     PlainText,
     RichText
 };
 
-header: <WebCore/UnifiedTextReplacementTypes.h>
-[CustomHeader] enum class WebCore::UnifiedTextReplacement::SessionCorrectionType : uint8_t {
+header: <WebCore/WritingToolsTypes.h>
+[CustomHeader] enum class WebCore::WritingTools::SessionCorrectionType : uint8_t {
     None,
     Grammar,
     Spelling
 };
 
-using WebCore::UnifiedTextReplacement::SessionID = WTF::UUID;
+using WebCore::WritingTools::SessionID = WTF::UUID;
 
-header: <WebCore/UnifiedTextReplacementTypes.h>
-[CustomHeader] struct WebCore::UnifiedTextReplacement::Session {
-    WebCore::UnifiedTextReplacement::SessionID identifier;
-    WebCore::UnifiedTextReplacement::SessionReplacementType replacementType;
-    WebCore::UnifiedTextReplacement::SessionCorrectionType correctionType;
+header: <WebCore/WritingToolsTypes.h>
+[CustomHeader] struct WebCore::WritingTools::Session {
+    WebCore::WritingTools::SessionID identifier;
+    WebCore::WritingTools::SessionReplacementType replacementType;
+    WebCore::WritingTools::SessionCorrectionType correctionType;
 };
 
-using WebCore::UnifiedTextReplacement::ContextID = WTF::UUID;
+using WebCore::WritingTools::ContextID = WTF::UUID;
 
-header: <WebCore/UnifiedTextReplacementTypes.h>
-[CustomHeader] struct WebCore::UnifiedTextReplacement::Context {
-    WebCore::UnifiedTextReplacement::ContextID identifier;
+header: <WebCore/WritingToolsTypes.h>
+[CustomHeader] struct WebCore::WritingTools::Context {
+    WebCore::WritingTools::ContextID identifier;
     WebCore::AttributedString attributedText;
     WebCore::CharacterRange range;
 };
 
-header: <WebCore/UnifiedTextReplacementTypes.h>
-[CustomHeader] enum class WebCore::UnifiedTextReplacement::ReplacementState : uint8_t {
+header: <WebCore/WritingToolsTypes.h>
+[CustomHeader] enum class WebCore::WritingTools::ReplacementState : uint8_t {
     Pending,
     Active,
     Reverted,
     Invalid
 };
 
-using WebCore::UnifiedTextReplacement::ReplacementID = WTF::UUID;
+using WebCore::WritingTools::ReplacementID = WTF::UUID;
 
-header: <WebCore/UnifiedTextReplacementTypes.h>
-[CustomHeader] struct WebCore::UnifiedTextReplacement::Replacement {
-    WebCore::UnifiedTextReplacement::ReplacementID identifier;
+header: <WebCore/WritingToolsTypes.h>
+[CustomHeader] struct WebCore::WritingTools::Replacement {
+    WebCore::WritingTools::ReplacementID identifier;
     WebCore::CharacterRange originalRange;
     String replacement;
-    WebCore::UnifiedTextReplacement::ReplacementState state;
+    WebCore::WritingTools::ReplacementState state;
 };
 #endif
 

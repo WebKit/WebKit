@@ -37,11 +37,11 @@
 #include <WebCore/SimpleRange.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TextIterator.h>
-#include <WebCore/UnifiedTextReplacementTypes.h>
+#include <WebCore/WritingToolsTypes.h>
 
 namespace WebKit {
 
-// This should mirror what is in UnifiedTextReplacementController, and eventually not be copied.
+// This should mirror what is in WritingToolsController, and eventually not be copied.
 static constexpr auto defaultTextAnimationControllerTextIteratorBehaviors = WebCore::TextIteratorBehaviors {
     WebCore::TextIteratorBehavior::EmitsObjectReplacementCharactersForImages,
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -77,7 +77,7 @@ RefPtr<WebCore::Document> TextAnimationController::document() const
 }
 
 // FIXME: This is a layering violation.
-std::optional<WebCore::SimpleRange> TextAnimationController::contextRangeForSessionWithID(const WebCore::UnifiedTextReplacement::Session::ID& sessionID) const
+std::optional<WebCore::SimpleRange> TextAnimationController::contextRangeForSessionWithID(const WebCore::WritingTools::Session::ID& sessionID) const
 {
     if (!m_webPage) {
         ASSERT_NOT_REACHED();

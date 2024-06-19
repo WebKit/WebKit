@@ -28,113 +28,113 @@
 #import "config.h"
 #import "PlatformWritingToolsUtilities.h"
 
-#import <WebCore/UnifiedTextReplacementTypes.h>
+#import <WebCore/WritingToolsTypes.h>
 
 namespace WebKit {
 
 #pragma mark - Conversions from web types to platform types.
 
-PlatformWritingToolsBehavior convertToPlatformWritingToolsBehavior(WebCore::UnifiedTextReplacement::ReplacementBehavior behavior)
+PlatformWritingToolsBehavior convertToPlatformWritingToolsBehavior(WebCore::WritingTools::ReplacementBehavior behavior)
 {
     switch (behavior) {
-    case WebCore::UnifiedTextReplacement::ReplacementBehavior::None:
+    case WebCore::WritingTools::ReplacementBehavior::None:
         return PlatformWritingToolsBehaviorNone;
 
-    case WebCore::UnifiedTextReplacement::ReplacementBehavior::Default:
+    case WebCore::WritingTools::ReplacementBehavior::Default:
         return PlatformWritingToolsBehaviorDefault;
 
-    case WebCore::UnifiedTextReplacement::ReplacementBehavior::Limited:
+    case WebCore::WritingTools::ReplacementBehavior::Limited:
         return PlatformWritingToolsBehaviorLimited;
 
-    case WebCore::UnifiedTextReplacement::ReplacementBehavior::Complete:
+    case WebCore::WritingTools::ReplacementBehavior::Complete:
         return PlatformWritingToolsBehaviorComplete;
     }
 }
 
-WTTextSuggestionState convertToPlatformTextSuggestionState(WebCore::UnifiedTextReplacement::Replacement::State state)
+WTTextSuggestionState convertToPlatformTextSuggestionState(WebCore::WritingTools::Replacement::State state)
 {
     switch (state) {
-    case WebCore::UnifiedTextReplacement::Replacement::State::Pending:
+    case WebCore::WritingTools::Replacement::State::Pending:
         return WTTextSuggestionStatePending;
-    case WebCore::UnifiedTextReplacement::Replacement::State::Active:
+    case WebCore::WritingTools::Replacement::State::Active:
         return WTTextSuggestionStateReviewing;
-    case WebCore::UnifiedTextReplacement::Replacement::State::Reverted:
+    case WebCore::WritingTools::Replacement::State::Reverted:
         return WTTextSuggestionStateRejected;
-    case WebCore::UnifiedTextReplacement::Replacement::State::Invalid:
+    case WebCore::WritingTools::Replacement::State::Invalid:
         return WTTextSuggestionStateInvalid;
     }
 }
 
-RetainPtr<WTContext> convertToPlatformContext(const WebCore::UnifiedTextReplacement::Context& contextData)
+RetainPtr<WTContext> convertToPlatformContext(const WebCore::WritingTools::Context& contextData)
 {
     return adoptNS([[WTContext alloc] initWithAttributedText:contextData.attributedText.nsAttributedString().get() range:NSMakeRange(contextData.range.location, contextData.range.length)]);
 }
 
 #pragma mark - Conversions from platform types to web types.
 
-WebCore::UnifiedTextReplacement::ReplacementBehavior convertToWebWritingToolsBehavior(PlatformWritingToolsBehavior behavior)
+WebCore::WritingTools::ReplacementBehavior convertToWebWritingToolsBehavior(PlatformWritingToolsBehavior behavior)
 {
     switch (behavior) {
     case PlatformWritingToolsBehaviorNone:
-        return WebCore::UnifiedTextReplacement::ReplacementBehavior::None;
+        return WebCore::WritingTools::ReplacementBehavior::None;
 
     case PlatformWritingToolsBehaviorDefault:
-        return WebCore::UnifiedTextReplacement::ReplacementBehavior::Default;
+        return WebCore::WritingTools::ReplacementBehavior::Default;
 
     case PlatformWritingToolsBehaviorLimited:
-        return WebCore::UnifiedTextReplacement::ReplacementBehavior::Limited;
+        return WebCore::WritingTools::ReplacementBehavior::Limited;
 
     case PlatformWritingToolsBehaviorComplete:
-        return WebCore::UnifiedTextReplacement::ReplacementBehavior::Complete;
+        return WebCore::WritingTools::ReplacementBehavior::Complete;
     }
 }
 
-WebCore::UnifiedTextReplacement::Replacement::State convertToWebTextSuggestionState(WTTextSuggestionState state)
+WebCore::WritingTools::Replacement::State convertToWebTextSuggestionState(WTTextSuggestionState state)
 {
     switch (state) {
     case WTTextSuggestionStatePending:
-        return WebCore::UnifiedTextReplacement::Replacement::State::Pending;
+        return WebCore::WritingTools::Replacement::State::Pending;
     case WTTextSuggestionStateReviewing:
-        return WebCore::UnifiedTextReplacement::Replacement::State::Active;
+        return WebCore::WritingTools::Replacement::State::Active;
     case WTTextSuggestionStateRejected:
-        return WebCore::UnifiedTextReplacement::Replacement::State::Reverted;
+        return WebCore::WritingTools::Replacement::State::Reverted;
     case WTTextSuggestionStateInvalid:
-        return WebCore::UnifiedTextReplacement::Replacement::State::Invalid;
+        return WebCore::WritingTools::Replacement::State::Invalid;
 
     // FIXME: Remove this default case once the WTTextSuggestionStateAccepted case is no longer in the build.
     default:
         ASSERT_NOT_REACHED();
-        return WebCore::UnifiedTextReplacement::Replacement::State::Invalid;
+        return WebCore::WritingTools::Replacement::State::Invalid;
     }
 }
 
-WebCore::UnifiedTextReplacement::EditAction convertToWebAction(WTAction action)
+WebCore::WritingTools::EditAction convertToWebAction(WTAction action)
 {
     switch (action) {
     case WTActionShowOriginal:
-        return WebCore::UnifiedTextReplacement::EditAction::Undo;
+        return WebCore::WritingTools::EditAction::Undo;
     case WTActionShowRewritten:
-        return WebCore::UnifiedTextReplacement::EditAction::Redo;
+        return WebCore::WritingTools::EditAction::Redo;
     case WTActionCompositionRestart:
-        return WebCore::UnifiedTextReplacement::EditAction::UndoAll;
+        return WebCore::WritingTools::EditAction::UndoAll;
     }
 }
 
-WebCore::UnifiedTextReplacement::Session::ReplacementType convertToWebSessionType(WTSessionType type)
+WebCore::WritingTools::Session::ReplacementType convertToWebSessionType(WTSessionType type)
 {
     switch (type) {
     case WTSessionTypeProofreading:
-        return WebCore::UnifiedTextReplacement::Session::ReplacementType::PlainText;
+        return WebCore::WritingTools::Session::ReplacementType::PlainText;
     case WTSessionTypeComposition:
-        return WebCore::UnifiedTextReplacement::Session::ReplacementType::RichText;
+        return WebCore::WritingTools::Session::ReplacementType::RichText;
     }
 }
 
-WebCore::UnifiedTextReplacement::Session::CorrectionType convertToWebCompositionSessionType(WTCompositionSessionType type)
+WebCore::WritingTools::Session::CorrectionType convertToWebCompositionSessionType(WTCompositionSessionType type)
 {
     switch (type) {
     case WTCompositionSessionTypeNone:
-        return WebCore::UnifiedTextReplacement::Session::CorrectionType::None;
+        return WebCore::WritingTools::Session::CorrectionType::None;
 
     // FIXME: Map these to specific `CorrectionType` types post-upstreaming.
     case WTCompositionSessionTypeMagic:
@@ -147,17 +147,17 @@ WebCore::UnifiedTextReplacement::Session::CorrectionType convertToWebComposition
     case WTCompositionSessionTypeList:
     case WTCompositionSessionTypeTable:
     case WTCompositionSessionTypeCompose:
-        return WebCore::UnifiedTextReplacement::Session::CorrectionType::Grammar;
+        return WebCore::WritingTools::Session::CorrectionType::Grammar;
 
     case WTCompositionSessionTypeSmartReply:
-        return WebCore::UnifiedTextReplacement::Session::CorrectionType::Spelling;
+        return WebCore::WritingTools::Session::CorrectionType::Spelling;
 
     default:
-        return WebCore::UnifiedTextReplacement::Session::CorrectionType::Grammar;
+        return WebCore::WritingTools::Session::CorrectionType::Grammar;
     }
 }
 
-std::optional<WebCore::UnifiedTextReplacement::Context> convertToWebContext(WTContext *context)
+std::optional<WebCore::WritingTools::Context> convertToWebContext(WTContext *context)
 {
     auto contextUUID = WTF::UUID::fromNSUUID(context.uuid);
     if (!contextUUID)
@@ -166,7 +166,7 @@ std::optional<WebCore::UnifiedTextReplacement::Context> convertToWebContext(WTCo
     return { { *contextUUID, WebCore::AttributedString::fromNSAttributedString(context.attributedText), { context.range } } };
 }
 
-std::optional<WebCore::UnifiedTextReplacement::Session> convertToWebSession(WTSession *session)
+std::optional<WebCore::WritingTools::Session> convertToWebSession(WTSession *session)
 {
     auto sessionUUID = WTF::UUID::fromNSUUID(session.uuid);
     if (!sessionUUID)
@@ -175,7 +175,7 @@ std::optional<WebCore::UnifiedTextReplacement::Session> convertToWebSession(WTSe
     return { { *sessionUUID, convertToWebSessionType(session.type), convertToWebCompositionSessionType(session.compositionSessionType) } };
 }
 
-std::optional<WebCore::UnifiedTextReplacement::Replacement> convertToWebTextSuggestion(WTTextSuggestion *suggestion)
+std::optional<WebCore::WritingTools::Replacement> convertToWebTextSuggestion(WTTextSuggestion *suggestion)
 {
     auto suggestionUUID = WTF::UUID::fromNSUUID(suggestion.uuid);
     if (!suggestionUUID)

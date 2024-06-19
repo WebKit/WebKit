@@ -27,6 +27,7 @@
 
 #if ENABLE(WRITING_TOOLS)
 
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestInputDelegate.h"
@@ -102,11 +103,11 @@
 
 @end
 
-@interface UnifiedTextReplacementWKWebView : TestWKWebView
+@interface WritingToolsWKWebView : TestWKWebView
 
 @end
 
-@implementation UnifiedTextReplacementWKWebView {
+@implementation WritingToolsWKWebView {
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<TestInputDelegate> _inputDelegate;
 #endif
@@ -237,11 +238,11 @@ static void checkColor(WebCore::CocoaColor *color, std::optional<ColorExpectatio
     EXPECT_LT(std::abs(expectation->alpha - observedAlpha), std::numeric_limits<CGFloat>::epsilon());
 }
 
-TEST(UnifiedTextReplacement, ProofreadingAcceptReject)
+TEST(WritingTools, ProofreadingAcceptReject)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>"]);
 
     constexpr unsigned start = 5;
     constexpr unsigned end = 9;
@@ -340,11 +341,11 @@ TEST(UnifiedTextReplacement, ProofreadingAcceptReject)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, ProofreadingWithStreamingSuggestions)
+TEST(WritingTools, ProofreadingWithStreamingSuggestions)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>AAAA BBBB CCCC DDDD</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>AAAA BBBB CCCC DDDD</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     NSString *originalText = @"AAAA BBBB CCCC DDDD";
@@ -372,11 +373,11 @@ TEST(UnifiedTextReplacement, ProofreadingWithStreamingSuggestions)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, ProofreadingWithLongReplacement)
+TEST(WritingTools, ProofreadingWithLongReplacement)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>I don't thin so. I didn't quite here him.</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>I don't thin so. I didn't quite here him.</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     NSString *originalText = @"I don't thin so. I didn't quite here him.";
@@ -410,11 +411,11 @@ TEST(UnifiedTextReplacement, ProofreadingWithLongReplacement)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, ProofreadingShowOriginal)
+TEST(WritingTools, ProofreadingShowOriginal)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>I don't thin so. I didn't quite here him.</p><p id='second'>Who's over they're. I could come their.</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>I don't thin so. I didn't quite here him.</p><p id='second'>Who's over they're. I could come their.</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     NSString *originalText = @"I don't thin so. I didn't quite here him.\n\nWho's over they're. I could come their.";
@@ -475,11 +476,11 @@ TEST(UnifiedTextReplacement, ProofreadingShowOriginal)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, ProofreadingRevert)
+TEST(WritingTools, ProofreadingRevert)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>Look, Ive been really invested on watchin all the dragon ball sagas, i think iv done a prety good job since now.</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>Look, Ive been really invested on watchin all the dragon ball sagas, i think iv done a prety good job since now.</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     NSString *originalText = @"Look, Ive been really invested on watchin all the dragon ball sagas, i think iv done a prety good job since now.";
@@ -515,11 +516,11 @@ TEST(UnifiedTextReplacement, ProofreadingRevert)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, ProofreadingRevertWithSuggestionAtEndOfText)
+TEST(WritingTools, ProofreadingRevertWithSuggestionAtEndOfText)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>Hey wanna go to the movies this weekend</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>Hey wanna go to the movies this weekend</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     NSString *originalText = @"Hey wanna go to the movies this weekend";
@@ -551,11 +552,11 @@ TEST(UnifiedTextReplacement, ProofreadingRevertWithSuggestionAtEndOfText)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, ProofreadingWithImage)
+TEST(WritingTools, ProofreadingWithImage)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable><p>AAAA BBBB</p><img src='sunset-in-cupertino-200px.png'></img><p>CCCC DDDD</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p>AAAA BBBB</p><img src='sunset-in-cupertino-200px.png'></img><p>CCCC DDDD</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     // FIXME: Figure out which one of these newline positions is correct, and fix the discrepency;
@@ -587,11 +588,11 @@ TEST(UnifiedTextReplacement, ProofreadingWithImage)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, Composition)
+TEST(WritingTools, Composition)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     constexpr unsigned start = 5;
@@ -664,11 +665,11 @@ TEST(UnifiedTextReplacement, Composition)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, CompositionRevert)
+TEST(WritingTools, CompositionRevert)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     __block bool finished = false;
@@ -698,11 +699,11 @@ TEST(UnifiedTextReplacement, CompositionRevert)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, CompositionWithAttributedStringAttributes)
+TEST(WritingTools, CompositionWithAttributedStringAttributes)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'><span style=\"color: blue\">AAAA</span> <span style=\"color: red\">BBBB</span> CCCC</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'><span style=\"color: blue\">AAAA</span> <span style=\"color: red\">BBBB</span> CCCC</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     constexpr unsigned start = 0;
@@ -825,11 +826,11 @@ TEST(UnifiedTextReplacement, CompositionWithAttributedStringAttributes)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, CompositionWithUnderline)
+TEST(WritingTools, CompositionWithUnderline)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable><a href='https://www.webkit.org'>Link</a><br><p>Text</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><a href='https://www.webkit.org'>Link</a><br><p>Text</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     __block bool finished = false;
@@ -852,11 +853,11 @@ TEST(UnifiedTextReplacement, CompositionWithUnderline)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, CompositionWithList)
+TEST(WritingTools, CompositionWithList)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable><p>Broccoli, peas, and carrots</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p>Broccoli, peas, and carrots</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     __block bool finished = false;
@@ -895,11 +896,11 @@ TEST(UnifiedTextReplacement, CompositionWithList)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, CompositionWithTextAttachment)
+TEST(WritingTools, CompositionWithTextAttachment)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable><p>Sunset in Cupertino</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p>Sunset in Cupertino</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     __block bool finished = false;
@@ -939,11 +940,11 @@ RetainPtr<_WKAttachment> synchronouslyInsertAttachmentWithFilename(TestWKWebView
     return attachment;
 }
 
-TEST(UnifiedTextReplacement, CompositionWithImageRoundTrip)
+TEST(WritingTools, CompositionWithImageRoundTrip)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<p>AAAA BBBB</p><img src='sunset-in-cupertino-200px.png'></img><p>CCCC DDDD</p>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<p>AAAA BBBB</p><img src='sunset-in-cupertino-200px.png'></img><p>CCCC DDDD</p>"]);
 
     [webView selectAll:nil];
 
@@ -969,11 +970,11 @@ TEST(UnifiedTextReplacement, CompositionWithImageRoundTrip)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, CompositionWithImageAttachmentRoundTrip)
+TEST(WritingTools, CompositionWithImageAttachmentRoundTrip)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<p>AAAA BBBB</p><img src='sunset-in-cupertino-200px.png'></img><p>CCCC DDDD</p>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete attachmentElementEnabled:YES]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<p>AAAA BBBB</p><img src='sunset-in-cupertino-200px.png'></img><p>CCCC DDDD</p>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete attachmentElementEnabled:YES]);
 
     [webView selectAll:nil];
 
@@ -1011,11 +1012,11 @@ TEST(UnifiedTextReplacement, CompositionWithImageAttachmentRoundTrip)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, CompositionWithNonImageAttachmentRoundTrip)
+TEST(WritingTools, CompositionWithNonImageAttachmentRoundTrip)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete attachmentElementEnabled:YES]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete attachmentElementEnabled:YES]);
 
     __auto_type modifySelection = ^(unsigned start, unsigned end) {
         NSString *modifySelectionJavascript = [NSString stringWithFormat:@""
@@ -1065,11 +1066,11 @@ TEST(UnifiedTextReplacement, CompositionWithNonImageAttachmentRoundTrip)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, CompositionWithSystemFont)
+TEST(WritingTools, CompositionWithSystemFont)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable><p style='font: -apple-system-body;'>Early morning in Cupertino</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p style='font: -apple-system-body;'>Early morning in Cupertino</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     __block bool finished = false;
@@ -1092,13 +1093,13 @@ TEST(UnifiedTextReplacement, CompositionWithSystemFont)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, CompositionWithMultipleChunks)
+TEST(WritingTools, CompositionWithMultipleChunks)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
     NSString *source = @"<html><head></head><body contenteditable dir=\"auto\" style=\"overflow-wrap: break-word; -webkit-nbsp-mode: space; line-break: after-white-space;\"><div>An NSAttributedString object manage character strings and associated sets of attributes (for example, font and kerning) that apply to individual characters or ranges of characters in the string. An association of characters and their attributes is called an attributed string. The cluster's two public classes, NSAttributedString and NSMutableAttributedString, declare the programmatic interface for read-only attbuted strings and modifiable attributed strings, respectively.</div><div><br></div><div>An attributed string identifies attributes by name, using an NSDictionary object to store a value under the specified name. You can assign any attribute name/value pair you wish to a range of characters—it is up to your application to interpret custom attributes (see Attributed String Programming Guide). If you are using attributed strings with the Core Text framework, you can also use the attribute keys defined by that framework</div></body></html>";
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:source]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:source]);
     [webView focusDocumentBodyAndSelectAll];
 
     __block bool finished = false;
@@ -1141,13 +1142,13 @@ TEST(UnifiedTextReplacement, CompositionWithMultipleChunks)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, CompositionWithTrailingNewlines)
+TEST(WritingTools, CompositionWithTrailingNewlines)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
     NSString *source = @"<body contenteditable id='first'><p style=\"margin: 0px;\">Hey wanna go to the movies this weekend</p><p style=\"margin: 0px;\"><br></p><p style=\"margin: 0px;\">A</p></body>";
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:source]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:source]);
     [webView focusDocumentBodyAndSelectAll];
 
     __auto_type modifySelection = ^{
@@ -1192,13 +1193,13 @@ TEST(UnifiedTextReplacement, CompositionWithTrailingNewlines)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, CompositionWithTrailingBreaks)
+TEST(WritingTools, CompositionWithTrailingBreaks)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
     NSString *source = @"<html><head></head><body contenteditable dir=\"auto\"><div><div>On Mar 5, 224, Bob wrote:</div><div><p>A</p></div><br></div></body></html>";
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:source]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:source]);
     [webView focusDocumentBodyAndSelectAll];
 
     __block bool finished = false;
@@ -1293,7 +1294,7 @@ static bool didInvokeUpdateState = false;
 
 @end
 
-TEST(UnifiedTextReplacement, RevealOffScreenSuggestionWhenActive)
+TEST(WritingTools, RevealOffScreenSuggestionWhenActive)
 {
     auto firstSuggestion = adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(0, 4) replacement:@"ZZZZ"]);
     auto secondSuggestion = adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(12, 4) replacement:@"YYYY"]);
@@ -1302,7 +1303,7 @@ TEST(UnifiedTextReplacement, RevealOffScreenSuggestionWhenActive)
     [suggestions addObject:firstSuggestion.get()];
     [suggestions addObject:secondSuggestion.get()];
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable style='font-size: 40px; line-height: 1000px;'><p id='first'>AAAA</p><p id='second'>BBBB</p><p id='third'>CCCC</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable style='font-size: 40px; line-height: 1000px;'><p id='first'>AAAA</p><p id='second'>BBBB</p><p id='third'>CCCC</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     NSString *originalText = @"AAAA\n\nBBBB\n\nCCCC";
@@ -1360,7 +1361,7 @@ TEST(UnifiedTextReplacement, RevealOffScreenSuggestionWhenActive)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, ShowDetailsForSuggestions)
+TEST(WritingTools, ShowDetailsForSuggestions)
 {
     auto firstSuggestion = adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(0, 4) replacement:@"ZZZZ"]);
     auto secondSuggestion = adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(10, 4) replacement:@"YYYY"]);
@@ -1369,7 +1370,7 @@ TEST(UnifiedTextReplacement, ShowDetailsForSuggestions)
     [suggestions addObject:firstSuggestion.get()];
     [suggestions addObject:secondSuggestion.get()];
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
 #if PLATFORM(MAC)
@@ -1449,9 +1450,9 @@ TEST(UnifiedTextReplacement, ShowDetailsForSuggestions)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, WantsInlineEditing)
+TEST(WritingTools, WantsInlineEditing)
 {
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable>Hello World</body>" writingToolsBehavior:PlatformWritingToolsBehaviorDefault]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable>Hello World</body>" writingToolsBehavior:PlatformWritingToolsBehaviorDefault]);
 
     [webView _setEditable:NO];
     EXPECT_FALSE([[webView writingToolsDelegate] wantsWritingToolsInlineEditing]);
@@ -1460,41 +1461,41 @@ TEST(UnifiedTextReplacement, WantsInlineEditing)
     EXPECT_TRUE([[webView writingToolsDelegate] wantsWritingToolsInlineEditing]);
 }
 
-TEST(UnifiedTextReplacement, AllowedInputOptionsNonEditable)
+TEST(WritingTools, AllowedInputOptionsNonEditable)
 {
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body></body>"]);
 
     EXPECT_EQ(PlatformWritingToolsAllowedInputOptionsPlainText | PlatformWritingToolsAllowedInputOptionsRichText | PlatformWritingToolsAllowedInputOptionsList | PlatformWritingToolsAllowedInputOptionsTable, [webView writingToolsAllowedInputOptionsForTesting]);
 }
 
-TEST(UnifiedTextReplacement, AllowedInputOptionsEditable)
+TEST(WritingTools, AllowedInputOptionsEditable)
 {
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body></body>"]);
     [webView _setEditable:YES];
     [webView focusDocumentBodyAndSelectAll];
 
     EXPECT_EQ(PlatformWritingToolsAllowedInputOptionsPlainText | PlatformWritingToolsAllowedInputOptionsRichText | PlatformWritingToolsAllowedInputOptionsList | PlatformWritingToolsAllowedInputOptionsTable, [webView writingToolsAllowedInputOptionsForTesting]);
 }
 
-TEST(UnifiedTextReplacement, AllowedInputOptionsRichText)
+TEST(WritingTools, AllowedInputOptionsRichText)
 {
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     EXPECT_EQ(PlatformWritingToolsAllowedInputOptionsPlainText | PlatformWritingToolsAllowedInputOptionsRichText | PlatformWritingToolsAllowedInputOptionsList | PlatformWritingToolsAllowedInputOptionsTable, [webView writingToolsAllowedInputOptionsForTesting]);
 }
 
-TEST(UnifiedTextReplacement, AllowedInputOptionsPlainText)
+TEST(WritingTools, AllowedInputOptionsPlainText)
 {
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable=\"plaintext-only\"></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable=\"plaintext-only\"></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     EXPECT_EQ(PlatformWritingToolsAllowedInputOptionsPlainText, [webView writingToolsAllowedInputOptionsForTesting]);
 }
 
-TEST(UnifiedTextReplacement, EphemeralSessionWithDifferingTextLengths)
+TEST(WritingTools, EphemeralSessionWithDifferingTextLengths)
 {
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<p>AAAA BBBB CCCC DDDD</p><img src='sunset-in-cupertino-200px.png'></img><p>CCCC DDDD</p>" writingToolsBehavior:PlatformWritingToolsBehaviorDefault]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<p>AAAA BBBB CCCC DDDD</p><img src='sunset-in-cupertino-200px.png'></img><p>CCCC DDDD</p>" writingToolsBehavior:PlatformWritingToolsBehaviorDefault]);
     [webView _setEditable:NO];
     [webView selectAll:nil];
 
@@ -1514,9 +1515,9 @@ TEST(UnifiedTextReplacement, EphemeralSessionWithDifferingTextLengths)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, EphemeralSession)
+TEST(WritingTools, EphemeralSession)
 {
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>This is the first sentence in a paragraph I want to rewrite. Only this sentence is selected.</p><p id='second'>This is the first sentence of the second paragraph. The previous sentence is selected, but this one is not.</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>This is the first sentence in a paragraph I want to rewrite. Only this sentence is selected.</p><p id='second'>This is the first sentence of the second paragraph. The previous sentence is selected, but this one is not.</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     NSString *setSelectionJavaScript = @""
@@ -1559,11 +1560,11 @@ TEST(UnifiedTextReplacement, EphemeralSession)
 
 #if ENABLE(WRITING_TOOLS_UI)
 
-TEST(UnifiedTextReplacement, TransparencyMarkersForInlineEditing)
+TEST(WritingTools, TransparencyMarkersForInlineEditing)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable>Early morning in Cupertino</body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable>Early morning in Cupertino</body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     auto waitForValue = [webView](NSUInteger expectedValue) {
@@ -1598,9 +1599,9 @@ TEST(UnifiedTextReplacement, TransparencyMarkersForInlineEditing)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, TransparencyMarkersUsingWKWebViewSPI)
+TEST(WritingTools, TransparencyMarkersUsingWKWebViewSPI)
 {
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<h1 id='title'>Title</h1><p id='content'>Early morning in Cupertino</p>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<h1 id='title'>Title</h1><p id='content'>Early morning in Cupertino</p>"]);
 
     auto waitForValue = [webView](NSUInteger expectedValue) {
         do {
@@ -1648,7 +1649,7 @@ static void expectScheduleShowAffordanceForSelectionRectCalled(bool expectation)
 #endif
 }
 
-TEST(UnifiedTextReplacement, APIWithBehaviorNone)
+TEST(WritingTools, APIWithBehaviorNone)
 {
     // If `PlatformWritingToolsBehaviorNone`, there should be no affordance, no context menu item, and no inline editing support.
 
@@ -1670,7 +1671,7 @@ TEST(UnifiedTextReplacement, APIWithBehaviorNone)
     }];
 #endif
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorNone]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorNone]);
     [webView setUIDelegate:delegate.get()];
 
     [webView focusDocumentBodyAndSelectAll];
@@ -1695,7 +1696,7 @@ TEST(UnifiedTextReplacement, APIWithBehaviorNone)
 #endif
 }
 
-TEST(UnifiedTextReplacement, APIWithBehaviorDefault)
+TEST(WritingTools, APIWithBehaviorDefault)
 {
     // If `PlatformWritingToolsBehaviorDefault` (or `Limited`), there should be a context menu item, but no affordance nor inline editing support.
 
@@ -1717,7 +1718,7 @@ TEST(UnifiedTextReplacement, APIWithBehaviorDefault)
     }];
 #endif
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorDefault]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorDefault]);
     [webView setUIDelegate:delegate.get()];
 
     [webView focusDocumentBodyAndSelectAll];
@@ -1742,7 +1743,7 @@ TEST(UnifiedTextReplacement, APIWithBehaviorDefault)
 #endif
 }
 
-TEST(UnifiedTextReplacement, APIWithBehaviorComplete)
+TEST(WritingTools, APIWithBehaviorComplete)
 {
     // If `PlatformWritingToolsBehaviorComplete`, there should be a context menu item, an affordance, and inline editing support.
 
@@ -1764,7 +1765,7 @@ TEST(UnifiedTextReplacement, APIWithBehaviorComplete)
     }];
 #endif
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete]);
     [webView setUIDelegate:delegate.get()];
 
     [webView focusDocumentBodyAndSelectAll];
@@ -1842,11 +1843,11 @@ static void waitForIsWritingToolsActiveToChange(TestWKWebView *webView, Function
     TestWebKitAPI::Util::run(&done);
 }
 
-TEST(UnifiedTextReplacement, IsWritingToolsActiveAPI)
+TEST(WritingTools, IsWritingToolsActiveAPI)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     EXPECT_FALSE([webView isWritingToolsActive]);
@@ -1864,9 +1865,9 @@ TEST(UnifiedTextReplacement, IsWritingToolsActiveAPI)
     EXPECT_FALSE([webView isWritingToolsActive]);
 }
 
-TEST(UnifiedTextReplacement, IsWritingToolsActiveAPIWithNoInlineEditing)
+TEST(WritingTools, IsWritingToolsActiveAPIWithNoInlineEditing)
 {
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     EXPECT_FALSE([webView isWritingToolsActive]);
@@ -1885,13 +1886,13 @@ TEST(UnifiedTextReplacement, IsWritingToolsActiveAPIWithNoInlineEditing)
 }
 
 #if PLATFORM(MAC)
-TEST(UnifiedTextReplacement, ShowAffordance)
+TEST(WritingTools, ShowAffordance)
 {
     InstanceMethodSwizzler swizzler(WTWritingTools.class, @selector(scheduleShowAffordanceForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
         didCallScheduleShowAffordanceForSelectionRect = true;
     }));
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete]);
     [webView focusDocumentBodyAndSelectAll];
 
     expectScheduleShowAffordanceForSelectionRectCalled(true);
@@ -1914,7 +1915,7 @@ TEST(UnifiedTextReplacement, ShowAffordance)
     expectScheduleShowAffordanceForSelectionRectCalled(true);
 }
 
-TEST(UnifiedTextReplacement, ShowAffordanceForMultipleLines)
+TEST(WritingTools, ShowAffordanceForMultipleLines)
 {
     static const Vector<WebCore::IntRect> expectedRects {
         { { 0, 0 }, { 0, 0 } },
@@ -1933,18 +1934,18 @@ TEST(UnifiedTextReplacement, ShowAffordanceForMultipleLines)
         count++;
     }));
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>AAAA BBBB CCCC</p><p>DDDD</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>AAAA BBBB CCCC</p><p>DDDD</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete]);
     [webView focusDocumentBodyAndSelectAll];
 
     expectScheduleShowAffordanceForSelectionRectCalled(true);
 }
 #endif
 
-TEST(UnifiedTextReplacement, SmartRepliesMatchStyle)
+TEST(WritingTools, SmartRepliesMatchStyle)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable style='font-size: 30px;'><p id='p'></p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable style='font-size: 30px;'><p id='p'></p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     NSString *setSelectionJavaScript = @""
@@ -1977,11 +1978,11 @@ TEST(UnifiedTextReplacement, SmartRepliesMatchStyle)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, ContextRangeFromCaretSelection)
+TEST(WritingTools, ContextRangeFromCaretSelection)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable id='p'><p>AAAA BBBB CCCC</p><p>XXXX YYYY ZZZZ</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable id='p'><p>AAAA BBBB CCCC</p><p>XXXX YYYY ZZZZ</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     NSString *setSelectionJavaScript = @""
@@ -2019,11 +2020,11 @@ TEST(UnifiedTextReplacement, ContextRangeFromCaretSelection)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, ContextRangeFromRangeSelection)
+TEST(WritingTools, ContextRangeFromRangeSelection)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable id='p'><p>AAAA BBBB CCCC</p><p>XXXX YYYY ZZZZ</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable id='p'><p>AAAA BBBB CCCC</p><p>XXXX YYYY ZZZZ</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     NSString *setSelectionJavaScript = @""
@@ -2061,12 +2062,12 @@ TEST(UnifiedTextReplacement, ContextRangeFromRangeSelection)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(UnifiedTextReplacement, SuggestedTextIsSelectedAfterSmartReply)
+TEST(WritingTools, SuggestedTextIsSelectedAfterSmartReply)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
     [session setCompositionSessionType:WTCompositionSessionTypeSmartReply];
 
-    auto webView = adoptNS([[UnifiedTextReplacementWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='p'>AAAA</p><p>BBBB</p></body>"]);
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='p'>AAAA</p><p>BBBB</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     NSString *setSelectionJavaScript = @""

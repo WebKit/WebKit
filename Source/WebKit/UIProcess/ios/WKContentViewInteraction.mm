@@ -4434,7 +4434,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(WRITING_TOOLS)
     if (action == @selector(_startWritingTools:))
-        return [self unifiedTextReplacementBehavior] != WebCore::UnifiedTextReplacement::ReplacementBehavior::None && [super canPerformAction:action withSender:sender];
+        return [self unifiedTextReplacementBehavior] != WebCore::WritingTools::ReplacementBehavior::None && [super canPerformAction:action withSender:sender];
 #endif
 
     if (action == @selector(paste:) || action == @selector(_pasteAsQuotation:) || action == @selector(_pasteAndMatchStyle:) || action == @selector(pasteAndMatchStyle:)) {
@@ -11782,7 +11782,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #if ENABLE(WRITING_TOOLS)
 
-- (WebCore::UnifiedTextReplacement::ReplacementBehavior)unifiedTextReplacementBehavior
+- (WebCore::WritingTools::ReplacementBehavior)unifiedTextReplacementBehavior
 {
     return _page->configuration().unifiedTextReplacementBehavior();
 }

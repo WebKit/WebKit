@@ -945,47 +945,47 @@ void WebPage::setMediaEnvironment(const String& mediaEnvironment)
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-void WebPage::willBeginTextReplacementSession(const std::optional<WebCore::UnifiedTextReplacement::Session>& session, CompletionHandler<void(const Vector<WebCore::UnifiedTextReplacement::Context>&)>&& completionHandler)
+void WebPage::willBeginTextReplacementSession(const std::optional<WebCore::WritingTools::Session>& session, CompletionHandler<void(const Vector<WebCore::WritingTools::Context>&)>&& completionHandler)
 {
     corePage()->willBeginTextReplacementSession(session, WTFMove(completionHandler));
 }
 
-void WebPage::didBeginTextReplacementSession(const WebCore::UnifiedTextReplacement::Session& session, const Vector<WebCore::UnifiedTextReplacement::Context>& contexts)
+void WebPage::didBeginTextReplacementSession(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::Context>& contexts)
 {
     corePage()->didBeginTextReplacementSession(session, contexts);
 }
 
-void WebPage::textReplacementSessionDidReceiveReplacements(const WebCore::UnifiedTextReplacement::Session& session, const Vector<WebCore::UnifiedTextReplacement::Replacement>& replacements, const WebCore::UnifiedTextReplacement::Context& context, bool finished)
+void WebPage::textReplacementSessionDidReceiveReplacements(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::Replacement>& replacements, const WebCore::WritingTools::Context& context, bool finished)
 {
     corePage()->textReplacementSessionDidReceiveReplacements(session, replacements, context, finished);
 }
 
-void WebPage::textReplacementSessionDidUpdateStateForReplacement(const WebCore::UnifiedTextReplacement::Session& session, WebCore::UnifiedTextReplacement::Replacement::State state, const WebCore::UnifiedTextReplacement::Replacement& replacement, const WebCore::UnifiedTextReplacement::Context& context)
+void WebPage::textReplacementSessionDidUpdateStateForReplacement(const WebCore::WritingTools::Session& session, WebCore::WritingTools::Replacement::State state, const WebCore::WritingTools::Replacement& replacement, const WebCore::WritingTools::Context& context)
 {
     corePage()->textReplacementSessionDidUpdateStateForReplacement(session, state, replacement, context);
 }
 
-void WebPage::didEndTextReplacementSession(const WebCore::UnifiedTextReplacement::Session& session, bool accepted)
+void WebPage::didEndTextReplacementSession(const WebCore::WritingTools::Session& session, bool accepted)
 {
     corePage()->didEndTextReplacementSession(session, accepted);
 }
 
-void WebPage::textReplacementSessionDidReceiveTextWithReplacementRange(const WebCore::UnifiedTextReplacement::Session& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebCore::UnifiedTextReplacement::Context& context, bool finished)
+void WebPage::textReplacementSessionDidReceiveTextWithReplacementRange(const WebCore::WritingTools::Session& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebCore::WritingTools::Context& context, bool finished)
 {
     corePage()->textReplacementSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished);
 }
 
-void WebPage::textReplacementSessionDidReceiveEditAction(const UnifiedTextReplacement::Session& session, WebCore::UnifiedTextReplacement::EditAction action)
+void WebPage::textReplacementSessionDidReceiveEditAction(const WritingTools::Session& session, WebCore::WritingTools::EditAction action)
 {
     corePage()->textReplacementSessionDidReceiveEditAction(session, action);
 }
 
-void WebPage::textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::UnifiedTextReplacement::Session::ID& sessionID, const WebCore::UnifiedTextReplacement::Replacement::ID& replacementID, WebCore::IntRect rect)
+void WebPage::textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::Replacement::ID& replacementID, WebCore::IntRect rect)
 {
     send(Messages::WebPageProxy::TextReplacementSessionShowInformationForReplacementWithIDRelativeToRect(sessionID, replacementID, rect));
 }
 
-void WebPage::textReplacementSessionUpdateStateForReplacementWithID(const WebCore::UnifiedTextReplacement::Session::ID& sessionID, WebCore::UnifiedTextReplacement::Replacement::State state, const WebCore::UnifiedTextReplacement::Replacement::ID& replacementID)
+void WebPage::textReplacementSessionUpdateStateForReplacementWithID(const WebCore::WritingTools::Session::ID& sessionID, WebCore::WritingTools::Replacement::State state, const WebCore::WritingTools::Replacement::ID& replacementID)
 {
     send(Messages::WebPageProxy::TextReplacementSessionUpdateStateForReplacementWithID(sessionID, state, replacementID));
 }

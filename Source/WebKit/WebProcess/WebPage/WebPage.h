@@ -314,7 +314,7 @@ namespace TextExtraction {
 struct Item;
 }
 
-namespace UnifiedTextReplacement {
+namespace WritingTools {
 enum class EditAction : uint8_t;
 enum class ReplacementState : uint8_t;
 
@@ -1751,9 +1751,9 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::UnifiedTextReplacement::ReplacementID&, WebCore::IntRect);
+    void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::SessionID&, const WebCore::WritingTools::ReplacementID&, WebCore::IntRect);
 
-    void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::UnifiedTextReplacement::SessionID&, WebCore::UnifiedTextReplacement::ReplacementState, const WebCore::UnifiedTextReplacement::ReplacementID&);
+    void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::WritingTools::SessionID&, WebCore::WritingTools::ReplacementState, const WebCore::WritingTools::ReplacementID&);
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
@@ -1763,11 +1763,11 @@ public:
     void addTextAnimationTypeForID(const WTF::UUID&, const WebKit::TextAnimationData&, const WebCore::TextIndicatorData&);
     // FIXME: try and combine these two and/or clarify why both are needed.
     // rdar://129882958 (Combine or clarify removeTextAnimationForID and cleanUpTextAnimationsForSessionID)
-    void removeTextAnimationForID(const WebCore::UnifiedTextReplacement::SessionID&);
-    void cleanUpTextAnimationsForSessionID(const WebCore::UnifiedTextReplacement::SessionID&);
+    void removeTextAnimationForID(const WebCore::WritingTools::SessionID&);
+    void cleanUpTextAnimationsForSessionID(const WebCore::WritingTools::SessionID&);
 
-    void addSourceTextAnimation(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::CharacterRange&);
-    void addDestinationTextAnimation(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::CharacterRange&);
+    void addSourceTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&);
+    void addDestinationTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&);
 
     void createTextIndicatorForRange(const WebCore::SimpleRange&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
     void createTextIndicatorForTextAnimationID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
@@ -2266,19 +2266,19 @@ private:
     void frameWasFocusedInAnotherProcess(WebCore::FrameIdentifier);
 
 #if ENABLE(WRITING_TOOLS)
-    void willBeginTextReplacementSession(const std::optional<WebCore::UnifiedTextReplacement::Session>&, CompletionHandler<void(const Vector<WebCore::UnifiedTextReplacement::Context>&)>&&);
+    void willBeginTextReplacementSession(const std::optional<WebCore::WritingTools::Session>&, CompletionHandler<void(const Vector<WebCore::WritingTools::Context>&)>&&);
 
-    void didBeginTextReplacementSession(const WebCore::UnifiedTextReplacement::Session&, const Vector<WebCore::UnifiedTextReplacement::Context>&);
+    void didBeginTextReplacementSession(const WebCore::WritingTools::Session&, const Vector<WebCore::WritingTools::Context>&);
 
-    void textReplacementSessionDidReceiveReplacements(const WebCore::UnifiedTextReplacement::Session&, const Vector<WebCore::UnifiedTextReplacement::Replacement>&, const WebCore::UnifiedTextReplacement::Context&, bool finished);
+    void textReplacementSessionDidReceiveReplacements(const WebCore::WritingTools::Session&, const Vector<WebCore::WritingTools::Replacement>&, const WebCore::WritingTools::Context&, bool finished);
 
-    void textReplacementSessionDidUpdateStateForReplacement(const WebCore::UnifiedTextReplacement::Session&, WebCore::UnifiedTextReplacement::ReplacementState, const WebCore::UnifiedTextReplacement::Replacement&, const WebCore::UnifiedTextReplacement::Context&);
+    void textReplacementSessionDidUpdateStateForReplacement(const WebCore::WritingTools::Session&, WebCore::WritingTools::ReplacementState, const WebCore::WritingTools::Replacement&, const WebCore::WritingTools::Context&);
 
-    void didEndTextReplacementSession(const WebCore::UnifiedTextReplacement::Session&, bool accepted);
+    void didEndTextReplacementSession(const WebCore::WritingTools::Session&, bool accepted);
 
-    void textReplacementSessionDidReceiveTextWithReplacementRange(const WebCore::UnifiedTextReplacement::Session&, const WebCore::AttributedString&, const WebCore::CharacterRange&, const WebCore::UnifiedTextReplacement::Context&, bool finished);
+    void textReplacementSessionDidReceiveTextWithReplacementRange(const WebCore::WritingTools::Session&, const WebCore::AttributedString&, const WebCore::CharacterRange&, const WebCore::WritingTools::Context&, bool finished);
 
-    void textReplacementSessionDidReceiveEditAction(const WebCore::UnifiedTextReplacement::Session&, WebCore::UnifiedTextReplacement::EditAction);
+    void textReplacementSessionDidReceiveEditAction(const WebCore::WritingTools::Session&, WebCore::WritingTools::EditAction);
 
     void updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool, CompletionHandler<void()>&&);
 #endif

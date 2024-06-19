@@ -157,7 +157,7 @@ struct PromisedAttachmentInfo;
 struct TranslationContextMenuInfo;
 #endif
 
-namespace UnifiedTextReplacement {
+namespace WritingTools {
 enum class EditAction : uint8_t;
 enum class ReplacementState : uint8_t;
 
@@ -745,9 +745,9 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    virtual void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::UnifiedTextReplacement::SessionID&, const WebCore::UnifiedTextReplacement::ReplacementID&, WebCore::IntRect selectionBoundsInRootView) = 0;
+    virtual void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::SessionID&, const WebCore::WritingTools::ReplacementID&, WebCore::IntRect selectionBoundsInRootView) = 0;
 
-    virtual void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::UnifiedTextReplacement::SessionID&, WebCore::UnifiedTextReplacement::ReplacementState, const WebCore::UnifiedTextReplacement::ReplacementID&) = 0;
+    virtual void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::WritingTools::SessionID&, WebCore::WritingTools::ReplacementState, const WebCore::WritingTools::ReplacementID&) = 0;
 
     virtual void unifiedTextReplacementActiveWillChange() = 0;
 

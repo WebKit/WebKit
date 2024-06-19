@@ -1664,7 +1664,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/text-extraction/TextExtraction.h
     page/text-extraction/TextExtractionTypes.h
 
-    page/unified-text-replacement/UnifiedTextReplacementTypes.h
+    page/writing-tools/WritingToolsTypes.h
 
     platform/AbortableTaskQueue.h
     platform/AudioSampleFormat.h
