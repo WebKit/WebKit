@@ -229,7 +229,7 @@ inline String DocumentMarker::description() const
 
 #if ENABLE(WRITING_TOOLS)
     if (auto* data = std::get_if<DocumentMarker::UnifiedTextReplacementData>(&m_data))
-        return makeString("('"_s, data->originalText, "', state: "_s, enumToUnderlyingType(data->state), ')');
+        return makeString("('"_s, data->originalText, "', state: "_s, std::to_underlying(data->state), ')');
 #endif
 
     return emptyString();

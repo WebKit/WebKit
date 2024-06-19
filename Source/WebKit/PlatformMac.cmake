@@ -1,4 +1,4 @@
-add_definitions("-ObjC++ -std=c++2a -D__STDC_WANT_LIB_EXT1__")
+add_definitions("-ObjC++ -std=c++2b -D__STDC_WANT_LIB_EXT1__")
 find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(CARBON_LIBRARY Carbon)
 find_library(CORESERVICES_LIBRARY CoreServices)

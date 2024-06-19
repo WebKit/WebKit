@@ -253,7 +253,7 @@ bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
         auto messageName = message->messageName();
         auto errorMessage = makeString("Unhandled error code 0x"_s, hex(kr), ", message '"_s, description(messageName), "' ("_s, messageName, ')');
         WebKit::logAndSetCrashLogMessage(errorMessage.utf8().data());
-        CRASH_WITH_INFO(kr, WTF::enumToUnderlyingType(messageName));
+        CRASH_WITH_INFO(kr, std::to_underlying(messageName));
     }
 }
 

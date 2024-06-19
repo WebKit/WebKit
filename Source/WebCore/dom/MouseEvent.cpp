@@ -90,7 +90,7 @@ MouseEvent::MouseEvent(enum EventInterfaceType eventInterface, const AtomString&
     const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, MouseButton button, unsigned short buttons,
     EventTarget* relatedTarget, double force, SyntheticClickType syntheticClickType, IsSimulated isSimulated, IsTrusted isTrusted)
     : MouseRelatedEvent(eventInterface, eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, screenLocation, windowLocation, movementX, movementY, modifiers, isSimulated, isTrusted)
-    , m_button(enumToUnderlyingType(button == MouseButton::None ? MouseButton::Left : button))
+    , m_button(std::to_underlying(button == MouseButton::None ? MouseButton::Left : button))
     , m_buttons(buttons)
     , m_syntheticClickType(button == MouseButton::None ? SyntheticClickType::NoTap : syntheticClickType)
     , m_buttonDown(button != MouseButton::None)
@@ -103,7 +103,7 @@ MouseEvent::MouseEvent(enum EventInterfaceType eventInterface, const AtomString&
     RefPtr<WindowProxy>&& view, int detail, const IntPoint& screenLocation, const IntPoint& clientLocation, double movementX, double movementY,
     OptionSet<Modifier> modifiers, MouseButton button, unsigned short buttons, SyntheticClickType syntheticClickType, EventTarget* relatedTarget)
     : MouseRelatedEvent(eventInterface, eventType, canBubble, isCancelable, isComposed, MonotonicTime::now(), WTFMove(view), detail, screenLocation, { }, movementX, movementY, modifiers, IsSimulated::No)
-    , m_button(enumToUnderlyingType(button == MouseButton::None ? MouseButton::Left : button))
+    , m_button(std::to_underlying(button == MouseButton::None ? MouseButton::Left : button))
     , m_buttons(buttons)
     , m_syntheticClickType(button == MouseButton::None ? SyntheticClickType::NoTap : syntheticClickType)
     , m_buttonDown(button != MouseButton::None)
@@ -114,9 +114,9 @@ MouseEvent::MouseEvent(enum EventInterfaceType eventInterface, const AtomString&
 
 MouseEvent::MouseEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, const MouseEventInit& initializer)
     : MouseRelatedEvent(eventInterface, eventType, initializer)
-    , m_button(initializer.button == enumToUnderlyingType(MouseButton::None) ? enumToUnderlyingType(MouseButton::Left) : initializer.button)
+    , m_button(initializer.button == std::to_underlying(MouseButton::None) ? std::to_underlying(MouseButton::Left) : initializer.button)
     , m_buttons(initializer.buttons)
-    , m_buttonDown(initializer.button != enumToUnderlyingType(MouseButton::None))
+    , m_buttonDown(initializer.button != std::to_underlying(MouseButton::None))
     , m_relatedTarget(initializer.relatedTarget)
 {
     initCoordinates({ initializer.clientX, initializer.clientY });
@@ -134,9 +134,9 @@ void MouseEvent::initMouseEvent(const AtomString& type, bool canBubble, bool can
 
     m_screenLocation = IntPoint(screenX, screenY);
     setModifierKeys(ctrlKey, altKey, shiftKey, metaKey);
-    m_button = button == enumToUnderlyingType(MouseButton::None) ? enumToUnderlyingType(MouseButton::Left) : button;
+    m_button = button == std::to_underlying(MouseButton::None) ? std::to_underlying(MouseButton::Left) : button;
     m_syntheticClickType = SyntheticClickType::NoTap;
-    m_buttonDown = button != enumToUnderlyingType(MouseButton::None);
+    m_buttonDown = button != std::to_underlying(MouseButton::None);
     m_relatedTarget = relatedTarget;
 
     initCoordinates(IntPoint(clientX, clientY));
@@ -161,7 +161,7 @@ MouseButton MouseEvent::button() const
 {
     static constexpr std::array mouseButtonCases { MouseButton::None, MouseButton::PointerHasNotChanged, MouseButton::Left, MouseButton::Middle, MouseButton::Right };
     const auto isKnownButton = WTF::anyOf(mouseButtonCases, [buttonValue = this->m_button](MouseButton button) {
-        return buttonValue == enumToUnderlyingType(button);
+        return buttonValue == std::to_underlying(button);
     });
     return isKnownButton ? static_cast<MouseButton>(m_button) : MouseButton::Other;
 }

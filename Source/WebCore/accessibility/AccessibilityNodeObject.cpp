@@ -2929,7 +2929,7 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
     if ((role == AccessibilityRole::LandmarkRegion || role == AccessibilityRole::Form) && !hasAccNameAttribute())
         role = AccessibilityRole::Unknown;
 
-    if (enumToUnderlyingType(role))
+    if (std::to_underlying(role))
         return role;
 
     return AccessibilityRole::Unknown;

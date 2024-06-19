@@ -87,7 +87,7 @@ NetworkProcessProxy::XPCEventHandler::XPCEventHandler(const NetworkProcessProxy&
 
 bool NetworkProcessProxy::sendXPCEndpointToProcess(AuxiliaryProcessProxy& process)
 {
-    RELEASE_LOG(Process, "%p - NetworkProcessProxy::sendXPCEndpointToProcess(%p) state = %d has connection = %d XPC endpoint message = %p", this, &process, enumToUnderlyingType(process.state()), process.hasConnection(), xpcEndpointMessage());
+    RELEASE_LOG(Process, "%p - NetworkProcessProxy::sendXPCEndpointToProcess(%p) state = %d has connection = %d XPC endpoint message = %p", this, &process, std::to_underlying(process.state()), process.hasConnection(), xpcEndpointMessage());
 
     if (process.state() != AuxiliaryProcessProxy::State::Running)
         return false;

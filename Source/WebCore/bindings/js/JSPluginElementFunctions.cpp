@@ -95,7 +95,7 @@ bool pluginElementCustomGetOwnPropertySlot(JSHTMLElement* element, JSGlobalObjec
     }
 
     if (slot.isVMInquiry()) {
-        slot.setValue(element, enumToUnderlyingType(JSC::PropertyAttribute::None), jsUndefined());
+        slot.setValue(element, std::to_underlying(JSC::PropertyAttribute::None), jsUndefined());
         return false; // Can't execute stuff below because they can call back into JS.
     }
 

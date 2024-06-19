@@ -223,16 +223,16 @@ static void cacheBaselineAlignedChildren(const RenderGrid& grid, GridTrackSizing
         uint32_t innerAxes = 0;
         CheckedPtr inner = dynamicDowncast<RenderGrid>(child);
 
-        if (axes & enumToUnderlyingType(GridAxis::GridColumnAxis)) {
+        if (axes & std::to_underlying(GridAxis::GridColumnAxis)) {
             if (inner && inner->isSubgridInParentDirection(GridTrackSizingDirection::ForRows))
-                innerAxes |= GridLayoutFunctions::isOrthogonalChild(grid, *child) ? enumToUnderlyingType(GridAxis::GridRowAxis) : enumToUnderlyingType(GridAxis::GridColumnAxis);
+                innerAxes |= GridLayoutFunctions::isOrthogonalChild(grid, *child) ? std::to_underlying(GridAxis::GridRowAxis) : std::to_underlying(GridAxis::GridColumnAxis);
             else if (grid.isBaselineAlignmentForChild(*child, GridAxis::GridColumnAxis))
                 algorithm.cacheBaselineAlignedItem(*child, GridAxis::GridColumnAxis, cachingRowSubgridsForRootGrid);
         }
 
-        if (axes & enumToUnderlyingType(GridAxis::GridRowAxis)) {
+        if (axes & std::to_underlying(GridAxis::GridRowAxis)) {
             if (inner && inner->isSubgridInParentDirection(GridTrackSizingDirection::ForColumns))
-                innerAxes |= GridLayoutFunctions::isOrthogonalChild(grid, *child) ? enumToUnderlyingType(GridAxis::GridColumnAxis) : enumToUnderlyingType(GridAxis::GridRowAxis);
+                innerAxes |= GridLayoutFunctions::isOrthogonalChild(grid, *child) ? std::to_underlying(GridAxis::GridColumnAxis) : std::to_underlying(GridAxis::GridRowAxis);
             else if (grid.isBaselineAlignmentForChild(*child, GridAxis::GridRowAxis))
                 algorithm.cacheBaselineAlignedItem(*child, GridAxis::GridRowAxis, cachingRowSubgridsForRootGrid);
         }
@@ -271,7 +271,7 @@ Vector<RenderBox*> RenderGrid::computeAspectRatioDependentAndBaselineItems()
         }
     };
 
-    cacheBaselineAlignedChildren(*this, m_trackSizingAlgorithm, enumToUnderlyingType(GridAxis::GridRowAxis) | enumToUnderlyingType(GridAxis::GridColumnAxis), computeOrthogonalAndDependentItems, !isSubgridRows());
+    cacheBaselineAlignedChildren(*this, m_trackSizingAlgorithm, std::to_underlying(GridAxis::GridRowAxis) | std::to_underlying(GridAxis::GridColumnAxis), computeOrthogonalAndDependentItems, !isSubgridRows());
     return dependentGridItems;
 }
 
@@ -667,7 +667,7 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
         algorithm.copyBaselineItemsCache(m_trackSizingAlgorithm, GridAxis::GridRowAxis);
     else {
         auto emptyCallback = [](RenderBox*) { };
-        cacheBaselineAlignedChildren(*this, algorithm, enumToUnderlyingType(GridAxis::GridRowAxis), emptyCallback, !isSubgridRows());
+        cacheBaselineAlignedChildren(*this, algorithm, std::to_underlying(GridAxis::GridRowAxis), emptyCallback, !isSubgridRows());
     }
 
     computeTrackSizesForIndefiniteSize(algorithm, GridTrackSizingDirection::ForColumns, &minLogicalWidth, &maxLogicalWidth);

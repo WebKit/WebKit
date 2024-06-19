@@ -47,7 +47,7 @@ void WebExtensionContext::addListener(WebPageProxyIdentifier identifier, WebExte
     if (!page)
         return;
 
-    RELEASE_LOG_DEBUG(Extensions, "Registered event listener for type %{public}hhu in %{public}@ world", enumToUnderlyingType(type), (NSString *)toDebugString(contentWorldType));
+    RELEASE_LOG_DEBUG(Extensions, "Registered event listener for type %{public}hhu in %{public}@ world", std::to_underlying(type), (NSString *)toDebugString(contentWorldType));
 
     if (!extension().backgroundContentIsPersistent() && isBackgroundPage(identifier))
         m_backgroundContentEventListeners.add(type);
@@ -64,7 +64,7 @@ void WebExtensionContext::removeListener(WebPageProxyIdentifier identifier, WebE
     if (!page)
         return;
 
-    RELEASE_LOG_DEBUG(Extensions, "Unregistered %{public}zu event listener(s) for type %{public}hhu in %{public}@ world", removedCount, enumToUnderlyingType(type), (NSString *)toDebugString(contentWorldType));
+    RELEASE_LOG_DEBUG(Extensions, "Unregistered %{public}zu event listener(s) for type %{public}hhu in %{public}@ world", removedCount, std::to_underlying(type), (NSString *)toDebugString(contentWorldType));
 
     if (!extension().backgroundContentIsPersistent() && isBackgroundPage(identifier)) {
         for (size_t i = 0; i < removedCount; ++i)

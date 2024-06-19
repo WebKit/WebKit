@@ -1943,7 +1943,7 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
 
     auto value = Inspector::Protocol::DOM::Node::create()
         .setNodeId(id)
-        .setNodeType(enumToUnderlyingType(node->nodeType()))
+        .setNodeType(std::to_underlying(node->nodeType()))
         .setNodeName(nodeName)
         .setLocalName(localName)
         .setNodeValue(nodeValue)

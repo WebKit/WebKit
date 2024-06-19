@@ -103,8 +103,8 @@ struct RuleFeatureSet {
     void registerContentAttribute(const AtomString&);
 
     bool usesHasPseudoClass() const;
-    bool usesMatchElement(MatchElement matchElement) const { return usedMatchElements[enumToUnderlyingType(matchElement)]; }
-    void setUsesMatchElement(MatchElement matchElement) { usedMatchElements[enumToUnderlyingType(matchElement)] = true; }
+    bool usesMatchElement(MatchElement matchElement) const { return usedMatchElements[std::to_underlying(matchElement)]; }
+    void setUsesMatchElement(MatchElement matchElement) { usedMatchElements[std::to_underlying(matchElement)] = true; }
 
     HashSet<AtomString> idsInRules;
     HashSet<AtomString> idsMatchingAncestorsInRules;

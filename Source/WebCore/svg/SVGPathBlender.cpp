@@ -327,7 +327,7 @@ static inline PathCoordinateMode coordinateModeOfCommand(const SVGPathSegType& t
         return AbsoluteCoordinates;
 
     // Odd number = relative command
-    if (enumToUnderlyingType(type) % 2)
+    if (std::to_underlying(type) % 2)
         return RelativeCoordinates;
 
     return AbsoluteCoordinates;
@@ -338,8 +338,8 @@ static inline bool isSegmentEqual(const SVGPathSegType& fromType, const SVGPathS
     if (fromType == toType && (fromType == SVGPathSegType::Unknown || fromType == SVGPathSegType::ClosePath))
         return true;
 
-    auto from = enumToUnderlyingType(fromType);
-    auto to = enumToUnderlyingType(toType);
+    auto from = std::to_underlying(fromType);
+    auto to = std::to_underlying(toType);
     if (fromMode == toMode)
         return from == to;
     if (fromMode == AbsoluteCoordinates)

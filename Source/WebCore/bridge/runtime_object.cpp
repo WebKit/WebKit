@@ -58,7 +58,7 @@ void RuntimeObject::finishCreation(VM& vm)
     ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->toPrimitiveSymbol,
         JSFunction::create(vm, globalObject(), 1, "[Symbol.toPrimitive]"_s, convertRuntimeObjectToPrimitive, ImplementationVisibility::Public),
-        enumToUnderlyingType(PropertyAttribute::DontEnum));
+        std::to_underlying(PropertyAttribute::DontEnum));
 }
 
 void RuntimeObject::destroy(JSCell* cell)
@@ -158,7 +158,7 @@ bool RuntimeObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexical
         // See if the instance has a field with the specified name.
         Field *aField = aClass->fieldNamed(propertyName, instance.get());
         if (aField) {
-            slot.setCustom(thisObject, enumToUnderlyingType(JSC::PropertyAttribute::DontDelete), fieldGetter);
+            slot.setCustom(thisObject, std::to_underlying(JSC::PropertyAttribute::DontDelete), fieldGetter);
             instance->end();
             return true;
         } else {

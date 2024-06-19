@@ -61,7 +61,7 @@ struct MangledName {
             "function"_s,
             "field"_s,
         };
-        return makeString(prefixes[WTF::enumToUnderlyingType(kind)], String::number(index));
+        return makeString(prefixes[std::to_underlying(kind)], String::number(index));
     }
 };
 
@@ -186,7 +186,7 @@ MangledName NameManglerVisitor::makeMangledName(const String& name, MangledName:
 {
     return MangledName {
         kind,
-        m_indexPerType[WTF::enumToUnderlyingType(kind)]++,
+        m_indexPerType[std::to_underlying(kind)]++,
         name
     };
 }

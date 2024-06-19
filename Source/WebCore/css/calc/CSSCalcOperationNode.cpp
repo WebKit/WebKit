@@ -46,7 +46,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSCalcOperationNode);
 
 // This is the result of the "To add two types type1 and type2, perform the following steps:" rules.
 
-static const CalculationCategory addSubtractResult[enumToUnderlyingType(CalculationCategory::Angle)][enumToUnderlyingType(CalculationCategory::Angle)] = {
+static const CalculationCategory addSubtractResult[std::to_underlying(CalculationCategory::Angle)][std::to_underlying(CalculationCategory::Angle)] = {
 //    CalculationCategory::Number         CalculationCategory::Length         CalculationCategory::Percent        CalculationCategory::PercentNumber  CalculationCategory::PercentLength
     { CalculationCategory::Number,        CalculationCategory::Other,         CalculationCategory::PercentNumber, CalculationCategory::PercentNumber, CalculationCategory::Other }, //         CalculationCategory::Number
     { CalculationCategory::Other,         CalculationCategory::Length,        CalculationCategory::PercentLength, CalculationCategory::Other,         CalculationCategory::PercentLength }, // CalculationCategory::Length
@@ -71,7 +71,7 @@ static CalculationCategory determineCategory(const CSSCalcExpressionNode& leftSi
     case CalcOperator::Add:
     case CalcOperator::Subtract:
         if (leftCategory < CalculationCategory::Angle && rightCategory < CalculationCategory::Angle)
-            return addSubtractResult[enumToUnderlyingType(leftCategory)][enumToUnderlyingType(rightCategory)];
+            return addSubtractResult[std::to_underlying(leftCategory)][std::to_underlying(rightCategory)];
         if (leftCategory == rightCategory)
             return leftCategory;
         return CalculationCategory::Other;
@@ -125,7 +125,7 @@ static CalculationCategory determineCategory(const Vector<Ref<CSSCalcExpressionN
             // At a + or - sub-expression, attempt to add the types of the left and right arguments.
             // If this returns failure, the entire calculation’s type is failure. Otherwise, the sub-expression’s type is the returned type.
             if (currentCategory < CalculationCategory::Angle && nextCategory < CalculationCategory::Angle)
-                currentCategory = addSubtractResult[enumToUnderlyingType(currentCategory)][enumToUnderlyingType(nextCategory)];
+                currentCategory = addSubtractResult[std::to_underlying(currentCategory)][std::to_underlying(nextCategory)];
             else if (currentCategory != nextCategory)
                 return CalculationCategory::Other;
             break;
@@ -223,8 +223,8 @@ static SortingCategory sortingCategoryForType(CSSUnitType unitType)
         SortingCategory::Other,         // UOther
     };
 
-    static_assert(ARRAY_SIZE(sortOrder) == enumToUnderlyingType(CalculationCategory::Other) + 1, "sortOrder size should match UnitCategory");
-    return sortOrder[enumToUnderlyingType(calcUnitCategory(unitType))];
+    static_assert(ARRAY_SIZE(sortOrder) == std::to_underlying(CalculationCategory::Other) + 1, "sortOrder size should match UnitCategory");
+    return sortOrder[std::to_underlying(calcUnitCategory(unitType))];
 }
 
 static SortingCategory sortingCategory(const CSSCalcExpressionNode& node)
@@ -350,7 +350,7 @@ static void sortChildren(Vector<Ref<CSSCalcExpressionNode>>& children)
             return codePointCompareLessThan(firstUnitString, secondUnitString);
         }
 
-        return enumToUnderlyingType(firstCategory) < enumToUnderlyingType(secondCategory);
+        return std::to_underlying(firstCategory) < std::to_underlying(secondCategory);
     });
 }
 

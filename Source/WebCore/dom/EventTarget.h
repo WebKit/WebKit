@@ -219,7 +219,7 @@ protected:
 
     virtual void eventListenersDidChange() { }
 
-    bool hasEventTargetFlag(EventTargetFlag flag) const { return weakPtrFactory().bitfield() & enumToUnderlyingType(flag); }
+    bool hasEventTargetFlag(EventTargetFlag flag) const { return weakPtrFactory().bitfield() & std::to_underlying(flag); }
     void setEventTargetFlag(EventTargetFlag, bool = true);
     void clearEventTargetFlag(EventTargetFlag flag) { setEventTargetFlag(flag, false); }
 

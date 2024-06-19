@@ -72,7 +72,7 @@ struct TextureKey {
     const Type* elementType;
     Texture::Kind kind;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Texture, WTF::enumToUnderlyingType(kind), 0, 0, bitwise_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Texture, std::to_underlying(kind), 0, 0, bitwise_cast<uintptr_t>(elementType)); }
 };
 
 struct TextureStorageKey {
@@ -80,7 +80,7 @@ struct TextureStorageKey {
     TexelFormat format;
     AccessMode access;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::TextureStorage, WTF::enumToUnderlyingType(kind), WTF::enumToUnderlyingType(format), WTF::enumToUnderlyingType(access), 0); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::TextureStorage, std::to_underlying(kind), std::to_underlying(format), std::to_underlying(access), 0); }
 };
 
 struct ReferenceKey {
@@ -89,7 +89,7 @@ struct ReferenceKey {
     AccessMode accessMode;
     bool isVectorComponent;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Reference, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), isVectorComponent, bitwise_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Reference, std::to_underlying(addressSpace), std::to_underlying(accessMode), isVectorComponent, bitwise_cast<uintptr_t>(elementType)); }
 };
 
 struct PointerKey {
@@ -97,7 +97,7 @@ struct PointerKey {
     AddressSpace addressSpace;
     AccessMode accessMode;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Pointer, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), 0, bitwise_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Pointer, std::to_underlying(addressSpace), std::to_underlying(accessMode), 0, bitwise_cast<uintptr_t>(elementType)); }
 };
 
 struct PrimitiveStructKey {

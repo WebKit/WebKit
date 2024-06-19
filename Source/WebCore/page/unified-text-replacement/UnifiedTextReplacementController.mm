@@ -238,7 +238,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
 
 void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForReplacement(const UnifiedTextReplacement::Session& session, UnifiedTextReplacement::Replacement::State newReplacementState, const UnifiedTextReplacement::Replacement& replacement, const UnifiedTextReplacement::Context&)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForReplacement (%s) [new state: %hhu, replacement: %s]", session.identifier.toString().utf8().data(), enumToUnderlyingType(newReplacementState), replacement.identifier.toString().utf8().data());
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForReplacement (%s) [new state: %hhu, replacement: %s]", session.identifier.toString().utf8().data(), std::to_underlying(newReplacementState), replacement.identifier.toString().utf8().data());
 
     RefPtr document = this->document();
     if (!document) {
@@ -363,7 +363,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
 template<>
 void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction<UnifiedTextReplacement::Session::ReplacementType::PlainText>(const UnifiedTextReplacement::Session& session, UnifiedTextReplacement::EditAction action)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction<PlainText> (%s) [action: %hhu]", session.identifier.toString().utf8().data(), enumToUnderlyingType(action));
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction<PlainText> (%s) [action: %hhu]", session.identifier.toString().utf8().data(), std::to_underlying(action));
 
     RefPtr document = this->document();
     if (!document) {
@@ -420,7 +420,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditActio
 template<>
 void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction<UnifiedTextReplacement::Session::ReplacementType::RichText>(const UnifiedTextReplacement::Session& session, UnifiedTextReplacement::EditAction action)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction<RichText> (%s) [action: %hhu]", session.identifier.toString().utf8().data(), enumToUnderlyingType(action));
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction<RichText> (%s) [action: %hhu]", session.identifier.toString().utf8().data(), std::to_underlying(action));
 
     CheckedPtr state = stateForSession<UnifiedTextReplacement::Session::ReplacementType::RichText>(session);
     if (!state) {
@@ -456,7 +456,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditActio
 
 void UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction(const UnifiedTextReplacement::Session& session, UnifiedTextReplacement::EditAction action)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction (%s) [action: %hhu]", session.identifier.toString().utf8().data(), enumToUnderlyingType(action));
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveEditAction (%s) [action: %hhu]", session.identifier.toString().utf8().data(), std::to_underlying(action));
 
     switch (session.replacementType) {
     case UnifiedTextReplacement::Session::ReplacementType::PlainText: {
