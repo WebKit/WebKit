@@ -8547,12 +8547,17 @@ void WebPageProxy::requestDOMPasteAccess(DOMPasteAccessCategory pasteAccessCateg
 {
     MESSAGE_CHECK_COMPLETION(m_legacyMainFrameProcess, !originIdentifier.isEmpty(), completionHandler(DOMPasteAccessResponse::DeniedForGesture));
 
+    auto requiresInteraction = DOMPasteRequiresInteraction::Yes;
     if (auto origin = SecurityOrigin::createFromString(originIdentifier); !origin->isOpaque()) {
         RefPtr frame = WebFrameProxy::webFrame(frameID);
         MESSAGE_CHECK_COMPLETION(m_legacyMainFrameProcess, frame && frame->page() == this, completionHandler(DOMPasteAccessResponse::DeniedForGesture));
 
-        auto originFromFrame = SecurityOrigin::create(frame->url());
-        MESSAGE_CHECK_COMPLETION(m_legacyMainFrameProcess, origin->isSameOriginDomain(originFromFrame), completionHandler(DOMPasteAccessResponse::DeniedForGesture));
+        for (RefPtr currentFrame = frame; currentFrame; currentFrame = currentFrame->parentFrame()) {
+            if (origin->isSameOriginDomain(SecurityOrigin::create(currentFrame->url()))) {
+                requiresInteraction = DOMPasteRequiresInteraction::No;
+                break;
+            }
+        }
 
         static constexpr auto recentlyRequestedDOMPasteOriginLimit = 10;
 
@@ -8571,7 +8576,7 @@ void WebPageProxy::requestDOMPasteAccess(DOMPasteAccessCategory pasteAccessCateg
         }
     }
 
-    m_pageClient->requestDOMPasteAccess(pasteAccessCategory, elementRect, originIdentifier, WTFMove(completionHandler));
+    m_pageClient->requestDOMPasteAccess(pasteAccessCategory, requiresInteraction, elementRect, originIdentifier, WTFMove(completionHandler));
 }
 
 // BackForwardList
