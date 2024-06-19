@@ -1397,6 +1397,9 @@ private:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     Ref<RemotePlayback> m_remote;
 #endif
+
+    bool m_isChangingReadyStateWhileSuspended { false };
+    Atomic<unsigned> m_remainingReadyStateChangedAttempts;
 };
 
 String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);
