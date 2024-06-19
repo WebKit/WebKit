@@ -1058,14 +1058,6 @@ compositing/visible-rect/  [ Skip ]
 
 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ Skip ]
 
-# WinCairo DRT doesn't support pixel dump yet
-webkit.org/b/215041 webgl/smell-test.html [ Skip ]
-webkit.org/b/215041 webgl/webgl-backing-store-size-update.html [ Skip ]
-webkit.org/b/215041 webgl/webgl-border.html [ Skip ]
-webkit.org/b/215041 webgl/webgl-box-shadow.html [ Skip ]
-webkit.org/b/215041 webgl/webgl-padding.html [ Skip ]
-webkit.org/b/215041 webgl/webgl-texture-image-buffer-reuse.html [ Skip ]
-
 ################################################################################
 ##########################   End Compositing Issues   ##########################
 ################################################################################
@@ -1579,11 +1571,14 @@ fast/forms/validation-message-minimum-font-size.html [ Skip ]
 fast/forms/validation-messages.html [ Skip ]
 fast/forms/visual-hebrew-text-field.html [ Skip ]
 
-fast/forms/implicit-submission.html [ Skip ] # Timeout
-fast/forms/select-script-onchange.html [ Skip ] # Timeout
-fast/forms/select/menulist-popup-crash.html [ Skip ] # Timeout
-fast/forms/select/optgroup-clicking.html [ Skip ] # Timeout
-fast/forms/select/select-show-picker.html [ Skip ] # Timeout
+# eventSender.keyDown() is blocked by the message loop of WebKit::WebPopupMenuProxyWin::showPopupMenu
+webkit.org/b/275285 fast/forms/implicit-submission.html [ Skip ] # Timeout
+webkit.org/b/275285 fast/forms/select-script-onchange.html [ Skip ] # Timeout
+webkit.org/b/275285 fast/forms/select/optgroup-clicking.html [ Skip ] # Timeout
+
+# WTR::TestInvocation::done should quit the message loop of WebKit::WebPopupMenuProxyWin::showPopupMenu
+webkit.org/b/275285 fast/forms/select/menulist-popup-crash.html [ Skip ] # Timeout
+webkit.org/b/275285 fast/forms/select/select-show-picker.html [ Skip ] # Timeout
 
 fast/frames [ Skip ]
 fast/hidpi [ Skip ]
@@ -1941,6 +1936,8 @@ webxr [ Skip ]
 [ Debug ] webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Skip ] # Slow
+
+[ Debug ] fast/canvas/webgl/webgl2-large-getbuffersubdata.html [ Skip ] # Slow
 
 # Needs JIT
 webkit.org/b/274059 webgl/2.0.0/conformance/uniforms/uniform-default-values.html [ Skip ] # Timeout
