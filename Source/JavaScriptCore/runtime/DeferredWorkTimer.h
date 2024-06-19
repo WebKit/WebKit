@@ -31,6 +31,8 @@
 #include <wtf/Deque.h>
 #include <wtf/FixedVector.h>
 #include <wtf/HashSet.h>
+#include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -44,24 +46,28 @@ class DeferredWorkTimer final : public JSRunLoopTimer {
 public:
     using Base = JSRunLoopTimer;
 
-    struct TicketData {
+    class TicketData : public CanMakeWeakPtr<TicketData>, public ThreadSafeRefCounted<TicketData>  {
     private:
         WTF_MAKE_TZONE_ALLOCATED(TicketData);
         WTF_MAKE_NONCOPYABLE(TicketData);
     public:
         inline TicketData(JSGlobalObject*, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies);
-        inline ~TicketData();
+        inline static Ref<TicketData> create(JSGlobalObject*, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies);
 
         inline VM& vm();
         JSObject* target();
+        inline bool hasValidTarget() const;
+        inline FixedVector<Weak<JSCell>>& dependencies();
+        inline JSObject* scriptExecutionOwner();
+        inline JSGlobalObject* globalObject();
 
-        void clearGlobalObject();
         inline void cancel();
-        bool isCancelled() const { return !scriptExecutionOwner.get() || !globalObject.get(); }
+        bool isCancelled() const { return !m_scriptExecutionOwner.get() || !m_globalObject.get() || !hasValidTarget(); }
 
-        FixedVector<Weak<JSCell>> dependencies;
-        Weak<JSObject> scriptExecutionOwner;
-        Weak<JSGlobalObject> globalObject;
+    private:
+        FixedVector<Weak<JSCell>> m_dependencies;
+        Weak<JSObject> m_scriptExecutionOwner;
+        Weak<JSGlobalObject> m_globalObject;
     };
 
     using Ticket = TicketData*;
@@ -96,13 +102,36 @@ private:
     bool m_shouldStopRunLoopWhenAllTicketsFinish { false };
     bool m_currentlyRunningTask { false };
     Deque<std::tuple<Ticket, Task>> m_tasks WTF_GUARDED_BY_LOCK(m_taskLock);
-    HashSet<std::unique_ptr<TicketData>> m_pendingTickets;
+    HashSet<Ref<TicketData>> m_pendingTickets;
 };
 
 inline JSObject* DeferredWorkTimer::TicketData::target()
 {
     ASSERT(!isCancelled());
-    return jsCast<JSObject*>(dependencies.last().get());
+    return jsCast<JSObject*>(m_dependencies.last().get());
+}
+
+inline bool DeferredWorkTimer::TicketData::hasValidTarget() const
+{
+    return !m_dependencies.isEmpty() && !!m_dependencies.last().get();
+}
+
+inline FixedVector<Weak<JSCell>>& DeferredWorkTimer::TicketData::dependencies()
+{
+    ASSERT(!isCancelled());
+    return m_dependencies;
+}
+
+inline JSObject* DeferredWorkTimer::TicketData::scriptExecutionOwner()
+{
+    ASSERT(!isCancelled());
+    return m_scriptExecutionOwner.get();
+}
+
+inline JSGlobalObject* DeferredWorkTimer::TicketData::globalObject()
+{
+    ASSERT(!isCancelled());
+    return m_globalObject.get();
 }
 
 } // namespace JSC

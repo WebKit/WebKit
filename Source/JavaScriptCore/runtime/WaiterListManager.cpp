@@ -234,7 +234,7 @@ void WaiterListManager::notifyWaiterImpl(const AbstractLocker& listLocker, Ref<W
         waiter->scheduleWorkAndClearTicket([resolveResult](DeferredWorkTimer::Ticket ticket) {
             JSPromise* promise = jsCast<JSPromise*>(ticket->target());
             JSGlobalObject* globalObject = promise->globalObject();
-            ASSERT(ticket->globalObject == globalObject);
+            ASSERT(ticket->globalObject() == globalObject);
             VM& vm = promise->vm();
             JSValue result = resolveResult == ResolveResult::Ok ? vm.smallStrings.okString() : vm.smallStrings.timedOutString();
             promise->resolve(globalObject, result);
@@ -315,8 +315,8 @@ void WaiterListManager::unregister(JSGlobalObject* globalObject)
         Locker listLocker { list->lock };
         list->removeIf(listLocker, [&](Waiter* waiter) {
             if (waiter->isAsync()) {
-                auto ticket = waiter->ticket(listLocker);
-                if (ticket->globalObject == globalObject) {
+                RefPtr<DeferredWorkTimer::TicketData> ticket = waiter->ticket(listLocker);
+                if (ticket && !ticket->isCancelled() && ticket->globalObject() == globalObject) {
                     dataLogLnIf(WaiterListsManagerInternal::verbose,
                         "<WaiterListManager> <Thread:", Thread::current(),
                         "> unregister JSGlobalObject is cancelling waiter=", *waiter,
@@ -357,7 +357,7 @@ void WaiterListManager::unregister(uint8_t* arrayPtr, size_t size)
                 // from the lists by this code. So, should we keep it in the list? No, in either
                 // case, we have to remove it since all lists associating to the SAB (about destructing)
                 // must be removed. This is because there may be a new SAB with a waiter at the same address.
-                // Therefore, we will let clearObjectsForTicket to handle this special case.
+                // Therefore, we will let `clearWeakTickets` to handle this special case.
                 if (!waiter->hasTimer(listLocker))
                     cancelAsyncWaiter(listLocker, waiter);
                 return true;
@@ -399,10 +399,10 @@ void Waiter::dump(PrintStream& out) const
     }
 
     out.print(", ticket=", RawPointer(m_ticket));
-    if (m_ticket) {
-        out.print(", m_ticket->globalObject=", RawPointer(m_ticket->globalObject.get()));
-        out.print(", m_ticket->target=", RawPointer(jsCast<JSObject*>(m_ticket->dependencies.last().get())));
-        out.print(", m_ticket->scriptExecutionOwner=", RawPointer(m_ticket->scriptExecutionOwner.get()));
+    if (m_ticket && !m_ticket->isCancelled()) {
+        out.print(", m_ticket->globalObject=", RawPointer(m_ticket->globalObject()));
+        out.print(", m_ticket->target=", RawPointer(jsCast<JSObject*>(m_ticket->dependencies().last().get())));
+        out.print(", m_ticket->scriptExecutionOwner=", RawPointer(m_ticket->scriptExecutionOwner()));
     }
 
     out.print(", m_timer=", RawPointer(m_timer.get()));
