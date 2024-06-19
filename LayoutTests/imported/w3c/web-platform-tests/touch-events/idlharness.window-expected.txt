@@ -4,14 +4,13 @@ PASS idl_test validation
 PASS Partial interface mixin GlobalEventHandlers: original interface mixin defined
 PASS Partial interface mixin GlobalEventHandlers: member names are unique
 PASS Partial interface UIEvent: member names are unique
+PASS Partial interface UIEvent[2]: member names are unique
+PASS Partial dictionary UIEventInit: member names are unique
 PASS Partial interface Document: member names are unique
 PASS Partial interface Document[2]: member names are unique
 PASS Partial interface Window: member names are unique
 PASS Document includes GlobalEventHandlers: member names are unique
 PASS Document includes DocumentAndElementEventHandlers: member names are unique
-PASS Document includes NonElementParentNode: member names are unique
-PASS Document includes ParentNode: member names are unique
-PASS Document includes XPathEvaluatorBase: member names are unique
 PASS HTMLElement includes GlobalEventHandlers: member names are unique
 PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
 PASS HTMLElement includes ElementContentEditable: member names are unique
@@ -22,10 +21,13 @@ PASS Window includes WindowOrWorkerGlobalScope: member names are unique
 PASS Window includes AnimationFrameProvider: member names are unique
 PASS Window includes WindowSessionStorage: member names are unique
 PASS Window includes WindowLocalStorage: member names are unique
+PASS Document includes NonElementParentNode: member names are unique
+PASS Document includes ParentNode: member names are unique
 PASS Element includes ParentNode: member names are unique
 PASS Element includes NonDocumentTypeChildNode: member names are unique
 PASS Element includes ChildNode: member names are unique
 PASS Element includes Slottable: member names are unique
+PASS Document includes XPathEvaluatorBase: member names are unique
 PASS Touch interface: existence and properties of interface object
 FAIL Touch interface object length assert_equals: wrong value for Touch.length expected 1 but got 0
 PASS Touch interface object name
@@ -40,31 +42,33 @@ PASS Touch interface: attribute clientX
 PASS Touch interface: attribute clientY
 PASS Touch interface: attribute pageX
 PASS Touch interface: attribute pageY
-FAIL Touch interface: attribute radiusX assert_true: The prototype object must have a property "radiusX" expected true got false
-FAIL Touch interface: attribute radiusY assert_true: The prototype object must have a property "radiusY" expected true got false
-FAIL Touch interface: attribute rotationAngle assert_true: The prototype object must have a property "rotationAngle" expected true got false
-FAIL Touch interface: attribute force assert_true: The prototype object must have a property "force" expected true got false
-FAIL Touch interface: attribute altitudeAngle assert_true: The prototype object must have a property "altitudeAngle" expected true got false
-FAIL Touch interface: attribute azimuthAngle assert_true: The prototype object must have a property "azimuthAngle" expected true got false
-FAIL Touch interface: attribute touchType assert_true: The prototype object must have a property "touchType" expected true got false
-FAIL Touch must be primary interface of new Touch({identifier: 1, target: document}) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-FAIL Stringification of new Touch({identifier: 1, target: document}) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "identifier" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "target" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "screenX" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "screenY" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "clientX" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "clientY" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "pageX" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "pageY" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "radiusX" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "radiusY" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "rotationAngle" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "force" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "altitudeAngle" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "azimuthAngle" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "touchType" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
-PASS TouchList interface: existence and properties of interface object
+PASS Touch interface: attribute radiusX
+PASS Touch interface: attribute radiusY
+PASS Touch interface: attribute rotationAngle
+PASS Touch interface: attribute force
+PASS Touch interface: attribute altitudeAngle
+PASS Touch interface: attribute azimuthAngle
+PASS Touch interface: attribute touchType
+PASS Touch must be primary interface of new Touch({identifier: 1, target: document})
+PASS Stringification of new Touch({identifier: 1, target: document})
+PASS Touch interface: new Touch({identifier: 1, target: document}) must inherit property "identifier" with the proper type
+PASS Touch interface: new Touch({identifier: 1, target: document}) must inherit property "target" with the proper type
+PASS Touch interface: new Touch({identifier: 1, target: document}) must inherit property "screenX" with the proper type
+PASS Touch interface: new Touch({identifier: 1, target: document}) must inherit property "screenY" with the proper type
+PASS Touch interface: new Touch({identifier: 1, target: document}) must inherit property "clientX" with the proper type
+PASS Touch interface: new Touch({identifier: 1, target: document}) must inherit property "clientY" with the proper type
+PASS Touch interface: new Touch({identifier: 1, target: document}) must inherit property "pageX" with the proper type
+PASS Touch interface: new Touch({identifier: 1, target: document}) must inherit property "pageY" with the proper type
+PASS Touch interface: new Touch({identifier: 1, target: document}) must inherit property "radiusX" with the proper type
+PASS Touch interface: new Touch({identifier: 1, target: document}) must inherit property "radiusY" with the proper type
+PASS Touch interface: new Touch({identifier: 1, target: document}) must inherit property "rotationAngle" with the proper type
+PASS Touch interface: new Touch({identifier: 1, target: document}) must inherit property "force" with the proper type
+PASS Touch interface: new Touch({identifier: 1, target: document}) must inherit property "altitudeAngle" with the proper type
+PASS Touch interface: new Touch({identifier: 1, target: document}) must inherit property "azimuthAngle" with the proper type
+PASS Touch interface: new Touch({identifier: 1, target: document}) must inherit property "touchType" with the proper type
+FAIL TouchList interface: existence and properties of interface object assert_throws_js: interface object didn't throw TypeError when called as a constructor function "function() {
+                new interface_object();
+            }" did not throw
 PASS TouchList interface object length
 PASS TouchList interface object name
 PASS TouchList interface: existence and properties of interface prototype object
