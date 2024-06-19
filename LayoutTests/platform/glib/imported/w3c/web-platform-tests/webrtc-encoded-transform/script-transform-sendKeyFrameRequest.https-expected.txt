@@ -1,0 +1,9 @@
+
+
+FAIL sendKeyFrameRequest resolves for video receiver, and throws for video sender assert_true: receiver should be set expected true got false
+FAIL sendKeyFrameRequest throws for audio sender/receiver assert_true: receiver should be set expected true got false
+PASS sendKeyFrameRequest throws for unused transforms
+FAIL sendKeyFrameRequest throws for unset transforms assert_true: receiver should be set expected true got false
+FAIL sendKeyFrameRequest rejects when the receiver is negotiated inactive, and resumes succeeding when negotiated back to active assert_true: receiver should be set expected true got false
+FAIL sendKeyFrameRequest rejects when the receiver is stopped assert_true: receiver should be set expected true got false
+

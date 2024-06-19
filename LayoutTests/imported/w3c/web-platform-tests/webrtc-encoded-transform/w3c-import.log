@@ -1,0 +1,44 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCRtpScriptTransform-bad-chunk-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCRtpScriptTransform-bad-chunk.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/helper.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/idlharness.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/routines.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/script-audio-transform-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/script-audio-transform.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/script-change-transform-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/script-change-transform.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/script-late-transform.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/script-metadata-transform-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-generateKeyFrame-simulcast.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-generateKeyFrame.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-generateKeyFrame.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-sendKeyFrameRequest.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-sendKeyFrameRequest.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/script-write-twice-transform-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/script-write-twice-transform.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-keys.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-buffer-source.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-in-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-readable.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform.html

@@ -3141,6 +3141,7 @@ fast/events/touch/ios/pointer-events-with-modifiers.html [ Skip ]
 
 webkit.org/b/191707 imported/w3c/web-platform-tests/webrtc/simplecall-no-ssrcs.https.html [ Skip ]
 webkit.org/b/191707 imported/w3c/web-platform-tests/webrtc/simplecall.https.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https.html [ Skip ]
 
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Pass Failure ]
 

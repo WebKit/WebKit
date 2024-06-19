@@ -7605,3 +7605,6 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-vrl-vrl.ht
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-getComputedStyle-002.html [ Failure ]
 
 # -- End: Anchor Positioning -- #
+
+# WebRTC Encoded Transform - Test Expectation - Crashes on 'mac-wk2' debug and gtk-wk2 / wpe-wk2
+webkit.org/b/275663 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-generateKeyFrame-simulcast.https.html [ Skip ]
