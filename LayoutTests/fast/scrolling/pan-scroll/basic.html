@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Pan scrolling");
+
+const LEFT_BUTTON = 0;
+const MIDDLE_BUTTON = 1;
+
+function waitForScrollPosition(condition) {
+    return new Promise(resolve => {
+        let listener = (event) => {
+            if (condition(window.document.documentElement.scrollLeft, window.document.documentElement.scrollTop)) {
+                event.target.removeEventListener('scroll', listener);
+                resolve();
+            }
+        }
+        window.addEventListener('scroll', listener);
+    });
+}
+
+onload = async () => {
+    window.jsTestIsAsync = true;
+
+    debug("Start pan scrolling");
+    window.eventSender?.mouseMoveTo(200, 200);
+    window.eventSender?.mouseDown(MIDDLE_BUTTON);
+    window.eventSender?.mouseUp(MIDDLE_BUTTON);
+
+    debug("Scroll down");
+    window.eventSender?.mouseMoveTo(200, 300);
+    await waitForScrollPosition((x, y) => !x && y > 300);
+
+    debug("Scroll right");
+    window.eventSender?.mouseMoveTo(300, 200);
+    await waitForScrollPosition((x, y) => x > 300 && y > 300);
+
+    debug("Scroll up left");
+    window.eventSender?.mouseMoveTo(100, 100);
+    await waitForScrollPosition((x, y) => !x && !y);
+
+    window.eventSender?.mouseDown(LEFT_BUTTON);
+    window.eventSender?.mouseUp(LEFT_BUTTON);
+    finishJSTest();
+};
+</script>
+<style>
+body {
+    width: 200vw;
+    height: 200vh;
+}
+</style>

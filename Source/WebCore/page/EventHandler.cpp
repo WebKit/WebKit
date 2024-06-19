@@ -1225,7 +1225,7 @@ void EventHandler::didPanScrollStop()
 void EventHandler::startPanScrolling(RenderElement& renderer)
 {
     CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer);
-    if (renderBox)
+    if (!renderBox)
         return;
     m_autoscrollController->startPanScrolling(*renderBox, lastKnownMousePosition());
     invalidateClick();
