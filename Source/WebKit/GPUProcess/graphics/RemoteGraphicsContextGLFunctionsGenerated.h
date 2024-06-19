@@ -960,13 +960,6 @@
         assertIsCurrent(workQueue());
         m_context->copyBufferSubData(readTarget, writeTarget, static_cast<GCGLintptr>(readOffset), static_cast<GCGLintptr>(writeOffset), static_cast<GCGLsizeiptr>(arg4));
     }
-    void getBufferSubData(uint32_t target, uint64_t offset, size_t dataSize, CompletionHandler<void(std::span<const uint8_t>)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        Vector<uint8_t, 4> data(dataSize, 0);
-        m_context->getBufferSubData(target, static_cast<GCGLintptr>(offset), data);
-        completionHandler(byteCast<uint8_t>(data.span()));
-    }
     void blitFramebuffer(int32_t srcX0, int32_t srcY0, int32_t srcX1, int32_t srcY1, int32_t dstX0, int32_t dstY0, int32_t dstX1, int32_t dstY1, uint32_t mask, uint32_t filter)
     {
         assertIsCurrent(workQueue());

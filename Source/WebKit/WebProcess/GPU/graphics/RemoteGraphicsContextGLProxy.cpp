@@ -289,6 +289,58 @@ void RemoteGraphicsContextGLProxy::simulateEventForTesting(SimulatedEventForTest
     }
 }
 
+void RemoteGraphicsContextGLProxy::getBufferSubData(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data)
+{
+    if (isContextLost())
+        return;
+
+    if (data.empty())
+        return;
+
+    static constexpr size_t getBufferSubDataInlineSizeLimit = 64 * KB; // NOTE: when changing, change the value in RemoteGraphicsContextGL too.
+    static constexpr size_t getBufferSubDataSharedMemorySizeLimit = 100 * MB;
+
+    if (data.size() > getBufferSubDataInlineSizeLimit) {
+        RefPtr<SharedMemory> replyBuffer = SharedMemory::allocate(std::min(data.size(), getBufferSubDataSharedMemorySizeLimit));
+        if (!replyBuffer)
+            goto inlineCase;
+        while (!data.empty()) {
+            auto handle = replyBuffer->createHandle(SharedMemory::Protection::ReadWrite);
+            if (!handle)
+                goto inlineCase;
+            auto transferSize = std::min(data.size(), getBufferSubDataSharedMemorySizeLimit);
+            auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetBufferSubDataSharedMemory(target, offset, transferSize, WTFMove(*handle)));
+            if (!sendResult.succeeded()) {
+                markContextLost();
+                return;
+            }
+            auto [valid] = sendResult.takeReply();
+            if (!valid)
+                return;
+            std::ranges::copy(replyBuffer->span().subspan(0, transferSize), data.begin());
+            data = data.subspan(transferSize);
+            offset += transferSize;
+        }
+        return;
+    }
+inlineCase:
+    while (data.size()) {
+        auto transferSize = std::min(data.size(), getBufferSubDataInlineSizeLimit);
+        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetBufferSubDataInline(target, offset, transferSize));
+        if (!sendResult.succeeded()) {
+            markContextLost();
+            return;
+        }
+        auto [inlineBuffer] = sendResult.takeReply();
+        if (inlineBuffer.empty())
+            return;
+        RELEASE_ASSERT(transferSize == inlineBuffer.size());
+        std::ranges::copy(inlineBuffer, data.begin());
+        data = data.subspan(transferSize);
+        offset += transferSize;
+    }
+}
+
 void RemoteGraphicsContextGLProxy::readPixels(IntRect rect, GCGLenum format, GCGLenum type, std::span<uint8_t> dataStore, GCGLint alignment, GCGLint rowLength)
 {
     if (isContextLost())

@@ -895,16 +895,31 @@ void GraphicsContextGLANGLE::bufferSubData(GCGLenum target, GCGLintptr offset, s
     GL_BufferSubData(target, offset, data.size(), data.data());
 }
 
+bool GraphicsContextGLANGLE::getBufferSubDataImpl(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data)
+{
+    void* ptr = GL_MapBufferRange(target, offset, data.size(), GraphicsContextGL::MAP_READ_BIT);
+    if (!ptr)
+        return false;
+    memcpy(data.data(), ptr, data.size());
+    if (!GL_UnmapBuffer(target))
+        addError(GCGLErrorCode::InvalidOperation);
+    return true;
+}
+
 void GraphicsContextGLANGLE::getBufferSubData(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data)
 {
     if (!makeContextCurrent())
         return;
-    void* ptr = GL_MapBufferRange(target, offset, data.size(), GraphicsContextGL::MAP_READ_BIT);
-    if (!ptr)
-        return;
-    memcpy(data.data(), ptr, data.size());
-    if (!GL_UnmapBuffer(target))
-        addError(GCGLErrorCode::InvalidOperation);
+
+    getBufferSubDataImpl(target, offset, data);
+}
+
+bool GraphicsContextGLANGLE::getBufferSubDataWithStatus(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data)
+{
+    if (!makeContextCurrent())
+        return false;
+
+    return getBufferSubDataImpl(target, offset, data);
 }
 
 void GraphicsContextGLANGLE::copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr size)

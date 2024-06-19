@@ -88,6 +88,7 @@ public:
 #endif
 
     void simulateEventForTesting(WebCore::GraphicsContextGLSimulatedEventForTesting) final;
+    void getBufferSubData(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data) final;
     void readPixels(WebCore::IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint alignment, GCGLint rowLength) final;
     void multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts) final;
     void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei> firstsCountsAndInstanceCounts) final;
@@ -248,7 +249,6 @@ public:
     GCGLboolean isVertexArray(PlatformGLObject arg0) final;
     void bindVertexArray(PlatformGLObject arg0) final;
     void copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr) final;
-    void getBufferSubData(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data) final;
     void blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) final;
     void framebufferTextureLayer(GCGLenum target, GCGLenum attachment, PlatformGLObject texture, GCGLint level, GCGLint layer) final;
     void invalidateFramebuffer(GCGLenum target, std::span<const GCGLenum> attachments) final;
@@ -405,8 +405,6 @@ private:
     void wasCreated(IPC::Semaphore&&, IPC::Semaphore&&, std::optional<RemoteGraphicsContextGLInitializationState>&&);
     void wasLost();
     void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, String&&);
-
-    void readPixelsSharedMemory(WebCore::IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data);
 
     void initialize(const RemoteGraphicsContextGLInitializationState&);
     void waitUntilInitialized();

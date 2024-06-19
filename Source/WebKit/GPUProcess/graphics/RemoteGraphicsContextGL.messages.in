@@ -50,6 +50,8 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable
 #endif
     void SimulateEventForTesting(enum:uint8_t WebCore::GraphicsContextGLSimulatedEventForTesting event)
+    void GetBufferSubDataInline(uint32_t target, uint64_t offset, size_t dataSize) -> (std::span<const uint8_t> data) Synchronous
+    void GetBufferSubDataSharedMemory(uint32_t target, uint64_t offset, size_t dataSize, WebCore::SharedMemory::Handle handle) -> (bool valid) Synchronous NotStreamEncodable
     void ReadPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type) -> (std::optional<WebCore::IntSize> readArea, std::span<const uint8_t> data) Synchronous
     void ReadPixelsSharedMemory(WebCore::IntRect rect, uint32_t format, uint32_t type, WebCore::SharedMemory::Handle handle) -> (std::optional<WebCore::IntSize> readArea) Synchronous NotStreamEncodable
     void MultiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> firstsAndCounts)
@@ -210,7 +212,6 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void IsVertexArray(uint32_t arg0) -> (bool returnValue) Synchronous
     void BindVertexArray(uint32_t arg0)
     void CopyBufferSubData(uint32_t readTarget, uint32_t writeTarget, uint64_t readOffset, uint64_t writeOffset, uint64_t arg4)
-    void GetBufferSubData(uint32_t target, uint64_t offset, size_t dataSize) -> (std::span<const uint8_t> data) Synchronous
     void BlitFramebuffer(int32_t srcX0, int32_t srcY0, int32_t srcX1, int32_t srcY1, int32_t dstX0, int32_t dstY0, int32_t dstX1, int32_t dstY1, uint32_t mask, uint32_t filter)
     void FramebufferTextureLayer(uint32_t target, uint32_t attachment, uint32_t texture, int32_t level, int32_t layer)
     void InvalidateFramebuffer(uint32_t target, std::span<const uint32_t> attachments)
