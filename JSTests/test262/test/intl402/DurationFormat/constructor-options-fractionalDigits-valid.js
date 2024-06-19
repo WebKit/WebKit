@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-Intl.DurationFormat
-description: Tests that the option localeMatcher is processed correctly.
+description: Tests that the option fractionalDigits is processed correctly.
 info: |
     Intl.DurationFormat ( [ locales [ , options ] ] )
     (...)

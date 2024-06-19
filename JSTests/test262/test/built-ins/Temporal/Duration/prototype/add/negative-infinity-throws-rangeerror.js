@@ -10,10 +10,9 @@ features: [Temporal]
 const fields = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds', 'microseconds', 'nanoseconds'];
 
 const instance = new Temporal.Duration(1, 2, 3, 4, 5, 6, 7, 987, 654, 321);
-const relativeTo = new Temporal.PlainDateTime(2000, 1, 1);
 
 fields.forEach((field) => {
-  assert.throws(RangeError, () => instance.add({ [field]: -Infinity }, { relativeTo }));
+  assert.throws(RangeError, () => instance.add({ [field]: -Infinity }));
 });
 
 let calls = 0;
@@ -26,6 +25,6 @@ const obj = {
 
 fields.forEach((field) => {
   calls = 0;
-  assert.throws(RangeError, () => instance.add({ [field]: obj }, { relativeTo }));
+  assert.throws(RangeError, () => instance.add({ [field]: obj }));
   assert.sameValue(calls, 1, "it fails after fetching the primitive value");
 });

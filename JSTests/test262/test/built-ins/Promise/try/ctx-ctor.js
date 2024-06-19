@@ -20,8 +20,8 @@ class SubPromise extends Promise {
 
 var instance = Promise.try.call(SubPromise, function () {});
 
-assert.sameValue(instance.promise.constructor, SubPromise);
-assert.sameValue(instance.promise instanceof SubPromise, true);
+assert.sameValue(instance.constructor, SubPromise);
+assert.sameValue(instance instanceof SubPromise, true);
 
 assert.sameValue(callCount, 1);
 assert.sameValue(typeof executor, 'function');

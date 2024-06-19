@@ -11,12 +11,12 @@ includes: [asyncHelpers.js, compareArray.js]
 
 var sentinel = { sentinel: true };
 
-asyncTest(
-  Promise.try(function () {
+asyncTest(function () {
+  return Promise.try(function () {
     assert.compareArray(
       Array.prototype.slice.call(arguments),
       [1, 2, Test262Error, sentinel]
     );
   }, 1, 2, Test262Error, sentinel)
-);
+});
 
