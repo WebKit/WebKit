@@ -43,6 +43,12 @@ public:
     Vector<SwitchClause>& clauses() { return m_clauses; }
     SwitchClause& defaultClause() { return m_defaultClause; }
 
+    bool isInsideLoop() const { return m_isInsideLoop; }
+    void setIsInsideLoop() { m_isInsideLoop = true;; }
+
+    bool isNestedInsideLoop() const { return m_isNestedInsideLoop; }
+    void setIsNestedInsideLoop() { m_isNestedInsideLoop = true; }
+
 private:
     SwitchStatement(SourceSpan span, AST::Expression::Ref&& value, AST::Attribute::List&& valueAttributes, Vector<SwitchClause>&& clauses, SwitchClause&& defaultClause)
         : Statement(span)
@@ -52,6 +58,8 @@ private:
         , m_defaultClause(WTFMove(defaultClause))
     { }
 
+    bool m_isInsideLoop { false };
+    bool m_isNestedInsideLoop { false };
     Expression::Ref m_value;
     Attribute::List m_valueAttributes;
     Vector<SwitchClause> m_clauses;

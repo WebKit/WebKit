@@ -2415,6 +2415,8 @@ void FunctionDefinitionWriter::visit(AST::LoopStatement& statement)
 {
     m_stringBuilder.append("while (true) {\n"_s);
     {
+        if (statement.containsSwitch())
+            m_stringBuilder.append("bool __continuing = false;\n"_s, m_indent);
         auto& continuing = statement.continuing();
         SetForScope continuingScope(m_continuing, continuing.has_value() ? &*continuing : nullptr);
 
@@ -2483,6 +2485,21 @@ void FunctionDefinitionWriter::visit(AST::SwitchStatement& statement)
         visitClause(clause);
     visitClause(statement.defaultClause(), true);
     m_stringBuilder.append('\n', m_indent, '}');
+    if (statement.isInsideLoop()) {
+        m_stringBuilder.append('\n', m_indent, "if (__continuing) {"_s);
+        {
+            auto scope = IndentationScope(m_indent);
+            visit(*m_continuing);
+        }
+        m_stringBuilder.append('\n', m_indent, '}');
+    } else if (statement.isNestedInsideLoop()) {
+        m_stringBuilder.append('\n', m_indent, "if (__continuing) {"_s);
+        {
+            auto scope = IndentationScope(m_indent);
+            m_stringBuilder.append('\n', m_indent, "break;"_s);
+        }
+        m_stringBuilder.append('\n', m_indent, '}');
+    }
 }
 
 void FunctionDefinitionWriter::visit(AST::BreakStatement&)
@@ -2490,8 +2507,13 @@ void FunctionDefinitionWriter::visit(AST::BreakStatement&)
     m_stringBuilder.append("break"_s);
 }
 
-void FunctionDefinitionWriter::visit(AST::ContinueStatement&)
+void FunctionDefinitionWriter::visit(AST::ContinueStatement& statement)
 {
+    if (statement.isFromSwitchToContinuing()) {
+        m_stringBuilder.append("__continuing = true;\n"_s);
+        m_stringBuilder.append(m_indent, "break"_s);
+        return;
+    }
     if (m_continuing) {
         visit(*m_continuing);
         m_stringBuilder.append(m_indent);
