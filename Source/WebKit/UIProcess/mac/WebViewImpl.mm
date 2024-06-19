@@ -164,6 +164,7 @@
 #import <pal/cocoa/RevealSoftLink.h>
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/cocoa/TranslationUIServicesSoftLink.h>
+#import <pal/cocoa/WritingToolsUISoftLink.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -2791,7 +2792,7 @@ void WebViewImpl::selectionDidChange()
         auto selectionRect = isRange ? m_page->editorState().postLayoutData->selectionBoundingRect : IntRect { };
 
         // The affordance will only show up if the selected range consists of >= 50 characters.
-        [WTWritingTools.sharedInstance scheduleShowAffordanceForSelectionRect:selectionRect ofView:m_view.getAutoreleased() forDelegate:(NSObject<WTWritingToolsDelegate> *)m_view.getAutoreleased()];
+        [[PAL::getWTWritingToolsClass() sharedInstance] scheduleShowAffordanceForSelectionRect:selectionRect ofView:m_view.getAutoreleased() forDelegate:(NSObject<WTWritingToolsDelegate> *)m_view.getAutoreleased()];
     }
 #endif
 
@@ -6468,7 +6469,7 @@ bool WebViewImpl::wantsCompleteUnifiedTextReplacementBehavior() const
 
 bool WebViewImpl::canHandleSwapCharacters() const
 {
-    return WTWritingToolsViewController.isAvailable && unifiedTextReplacementBehavior() != WebCore::WritingTools::ReplacementBehavior::None;
+    return [PAL::getWTWritingToolsViewControllerClass() isAvailable] && unifiedTextReplacementBehavior() != WebCore::WritingTools::ReplacementBehavior::None;
 }
 
 void WebViewImpl::handleContextMenuSwapCharacters(IntRect selectionBoundsInRootView)
@@ -6479,7 +6480,7 @@ void WebViewImpl::handleContextMenuSwapCharacters(IntRect selectionBoundsInRootV
     }
 
     auto view = m_view.get();
-    [WTWritingTools.sharedInstance showPanelForSelectionRect:selectionBoundsInRootView ofView:view.get() forDelegate:(NSObject<WTWritingToolsDelegate> *)view.get()];
+    [[PAL::getWTWritingToolsClass() sharedInstance] showPanelForSelectionRect:selectionBoundsInRootView ofView:view.get() forDelegate:(NSObject<WTWritingToolsDelegate> *)view.get()];
 }
 #endif
 

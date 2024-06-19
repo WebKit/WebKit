@@ -33,7 +33,7 @@
 #import "TextAnimationType.h"
 #import "WKTextAnimationType.h"
 #import "WebViewImpl.h"
-#import <pal/spi/cocoa/WritingToolsUISPI.h>
+#import <pal/cocoa/WritingToolsUISoftLink.h>
 
 @interface WKTextAnimationTypeEffectData : NSObject
 @property (nonatomic, strong, readonly) NSUUID *effectID;
@@ -65,10 +65,6 @@
 @interface WKTextAnimationManager () <_WTTextPreviewAsyncSource>
 @end
 
-@interface _WTReplaceDestinationTextEffect (WritingTools_Staging_128304889)
-@property (copy) void (^preCompletion)(void);
-@end
-
 @implementation WKTextAnimationManager {
     WeakPtr<WebKit::WebViewImpl> _webView;
     RetainPtr<NSMutableDictionary<NSUUID *, WKTextAnimationTypeEffectData *>> _chunkToEffect;
@@ -83,7 +79,7 @@
     _webView = webView;
     _chunkToEffect = adoptNS([[NSMutableDictionary alloc] init]);
 
-    _effectView = adoptNS([[_WTTextEffectView alloc] initWithAsyncSource:self]);
+    _effectView = adoptNS([PAL::alloc_WTTextEffectViewInstance() initWithAsyncSource:self]);
     [_effectView setFrame:webView.view().frame];
     [_webView->view() addSubview:_effectView.get()];
     return self;
@@ -92,16 +88,16 @@
 - (void)addTextAnimationTypeForID:(NSUUID *)uuid withData:(const WebKit::TextAnimationData&)data
 {
     RetainPtr<id<_WTTextEffect>> effect;
-    RetainPtr chunk = adoptNS([[_WTTextChunk alloc] initChunkWithIdentifier:uuid.UUIDString]);
+    RetainPtr chunk = adoptNS([PAL::alloc_WTTextChunkInstance() initChunkWithIdentifier:uuid.UUIDString]);
     switch (data.style) {
     case WebKit::TextAnimationType::Initial:
-        effect = adoptNS([[_WTSweepTextEffect alloc] initWithChunk:chunk.get() effectView:_effectView.get()]);
+        effect = adoptNS([PAL::alloc_WTSweepTextEffectInstance() initWithChunk:chunk.get() effectView:_effectView.get()]);
         break;
     case WebKit::TextAnimationType::Source:
-        effect = adoptNS([[_WTReplaceSourceTextEffect alloc] initWithChunk:chunk.get() effectView:_effectView.get()]);
+        effect = adoptNS([PAL::alloc_WTReplaceSourceTextEffectInstance() initWithChunk:chunk.get() effectView:_effectView.get()]);
         break;
     case WebKit::TextAnimationType::Final:
-        effect = adoptNS([[_WTReplaceDestinationTextEffect alloc] initWithChunk:chunk.get() effectView:_effectView.get()]);
+        effect = adoptNS([PAL::alloc_WTReplaceDestinationTextEffectInstance() initWithChunk:chunk.get() effectView:_effectView.get()]);
         if ([effect respondsToSelector:@selector(setPreCompletion:)] && [effect respondsToSelector:@selector(setCompletion:)]) {
             static_cast<_WTReplaceDestinationTextEffect *>(effect.get()).preCompletion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), remainingID = data.remainingRangeUUID] {
                 auto strongWebView = weakWebView.get();
@@ -192,7 +188,7 @@
         for (auto textRectInSnapshotCoordinates : indicatorData->textRectsInBoundingRectCoordinates) {
             CGRect textLineFrameInBoundingRectCoordinates = CGRectOffset(textRectInSnapshotCoordinates, snapshotRectInBoundingRectCoordinates.origin.x, snapshotRectInBoundingRectCoordinates.origin.y);
             textRectInSnapshotCoordinates.scale(indicatorData->contentImageScaleFactor);
-            [textPreviews addObject:adoptNS([[_WTTextPreview alloc] initWithSnapshotImage:adoptCF(CGImageCreateWithImageInRect(snapshotPlatformImage, textRectInSnapshotCoordinates)).get() presentationFrame:textLineFrameInBoundingRectCoordinates]).get()];
+            [textPreviews addObject:adoptNS([PAL::alloc_WTTextPreviewInstance() initWithSnapshotImage:adoptCF(CGImageCreateWithImageInRect(snapshotPlatformImage, textRectInSnapshotCoordinates)).get() presentationFrame:textLineFrameInBoundingRectCoordinates]).get()];
         }
 
         completionHandler(textPreviews.get());
@@ -213,7 +209,7 @@
         }
         auto bitmap = WebCore::ShareableBitmap::create(WTFMove(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
-        RetainPtr textPreview = adoptNS([[_WTTextPreview alloc] initWithSnapshotImage:cgImage.get() presentationFrame:rect]);
+        RetainPtr textPreview = adoptNS([PAL::alloc_WTTextPreviewInstance() initWithSnapshotImage:cgImage.get() presentationFrame:rect]);
         completionHandler(textPreview.get());
     });
 }
