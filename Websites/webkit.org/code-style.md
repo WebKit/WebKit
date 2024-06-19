@@ -573,6 +573,34 @@ for ( ; current; current = current->next) { }
 for ( ; current; current = current->next);
 ```
 
+[](#empty-braces-space) Any empty braces should contain a space.
+
+###### Right:
+
+```cpp
+void f() { }
+struct Unit { };
+union Unit { };
+class Unit { };
+enum Unit { };
+int x { };
+auto a = [] { };
+while (true) { }
+```
+
+###### Wrong:
+
+```cpp
+void f() {}
+struct Unit {};
+union Unit {};
+class Unit {};
+enum Unit {};
+int x {};
+auto a = [] {};
+while (true) {}
+```
+
 ### Null, false and zero
 
 [](#zero-null) In C++, the null pointer value should be written as `nullptr`. In C, it should be written as `NULL`. In Objective-C and Objective-C++, follow the guideline for C or C++, respectively, but use `nil` to represent a null Objective-C object.
