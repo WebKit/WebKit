@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
@@ -257,6 +257,8 @@ void SVGAnimationElement::beginElementAt(float offset)
 void SVGAnimationElement::endElementAt(float offset)
 {
     ASSERT(std::isfinite(offset));
+    if (activeState() == Inactive)
+        return;
     addInstanceTime(End, elapsed() + offset, SMILTimeWithOrigin::ScriptOrigin);
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -109,6 +109,8 @@ public:
     void dispatchPendingEvent(SMILEventSender*, const AtomString& eventType);
 
 protected:
+    enum ActiveState { Inactive, Active, Frozen };
+    ActiveState activeState() const { return m_activeState; }
     void setInactive() { m_activeState = Inactive; }
 
     bool rendererIsNeeded(const RenderStyle&) override { return false; }
@@ -174,7 +176,6 @@ private:
     void addTimeDependent(SVGSMILElement*);
     void removeTimeDependent(SVGSMILElement*);
 
-    enum ActiveState { Inactive, Active, Frozen };
     ActiveState determineActiveState(SMILTime elapsed) const;
     float calculateAnimationPercentAndRepeat(SMILTime elapsed, unsigned& repeat) const;
     SMILTime calculateNextProgressTime(SMILTime elapsed) const;
