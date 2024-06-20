@@ -554,16 +554,16 @@ namespace JSC { namespace DFG {
     /* Nodes for JSMap and JSSet */ \
     macro(MapHash, NodeResultInt32) \
     macro(NormalizeMapKey, NodeResultJS) \
-    macro(GetMapStorage, NodeResultJS) \
+    macro(MapKeyIndex, NodeResultInt32) \
+    macro(MapValueWithKeyIndex, NodeResultJS) \
     macro(MapIteratorNext, NodeResultBoolean) \
     macro(MapIteratorKey, NodeResultJS) \
     macro(MapIteratorValue, NodeResultJS) \
-    macro(GetMapKeyIndex, NodeResultInt32) \
-    macro(LoadMapValue, NodeResultJS) \
-    macro(GetMapIterationNext, NodeResultJS) \
-    macro(GetMapIterationEntry, NodeResultJS) \
-    macro(GetMapIterationEntryKey, NodeResultInt32) \
-    macro(GetMapIterationEntryValue, NodeResultJS) \
+    macro(MapStorage, NodeResultJS) \
+    macro(MapIterationNext, NodeResultJS) \
+    macro(MapIterationEntry, NodeResultJS) \
+    macro(MapIterationEntryKey, NodeResultInt32) \
+    macro(MapIterationEntryValue, NodeResultJS) \
     macro(SetAdd, NodeMustGenerate) \
     macro(MapSet, NodeMustGenerate | NodeHasVarArgs) \
     macro(MapOrSetDelete, NodeMustGenerate | NodeResultBoolean) \

@@ -1500,18 +1500,18 @@ public:
     void compileCallCustomAccessorGetter(Node*);
     void compileCallCustomAccessorSetter(Node*);
     void compileNormalizeMapKey(Node*);
-    void compileGetMapStorage(Node*);
+    template<typename MapOrSet>
+    ALWAYS_INLINE void compileGetMapIndexImpl(Node*);
+    void compileMapKeyIndex(Node*);
+    void compileMapValueWithKeyIndex(Node*);
     void compileMapIteratorNext(Node*);
     void compileMapIteratorKey(Node*);
     void compileMapIteratorValue(Node*);
-    void compileGetMapIterationNext(Node*);
-    void compileGetMapIterationEntry(Node*);
-    void compileGetMapIterationEntryKey(Node*);
-    void compileGetMapIterationEntryValue(Node*);
-    template<typename MapOrSet>
-    ALWAYS_INLINE void compileGetMapIndexImpl(Node*);
-    void compileGetMapKeyIndex(Node*);
-    void compileLoadMapValue(Node*);
+    void compileMapStorage(Node*);
+    void compileMapIterationNext(Node*);
+    void compileMapIterationEntry(Node*);
+    void compileMapIterationEntryKey(Node*);
+    void compileMapIterationEntryValue(Node*);
     void compileSetAdd(Node*);
     void compileMapSet(Node*);
     void compileMapOrSetDelete(Node*);
@@ -1931,10 +1931,10 @@ public:
     void speculateDateObject(Edge, GPRReg cell);
     void speculateMapObject(Edge);
     void speculateMapObject(Edge, GPRReg cell);
-    void speculateMapIteratorObject(Edge);
-    void speculateMapIteratorObject(Edge, GPRReg cell);
     void speculateSetObject(Edge);
     void speculateSetObject(Edge, GPRReg cell);
+    void speculateMapIteratorObject(Edge);
+    void speculateMapIteratorObject(Edge, GPRReg cell);
     void speculateSetIteratorObject(Edge);
     void speculateSetIteratorObject(Edge, GPRReg cell);
     void speculateWeakMapObject(Edge);

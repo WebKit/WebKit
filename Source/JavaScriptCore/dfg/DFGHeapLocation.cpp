@@ -230,10 +230,6 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("MapBucketNextLoc");
         return;
 
-    case MapStorageLoc:
-        out.print("MapStorageLoc");
-        return;
-
     case MapIteratorNextLoc:
         out.print("MapIteratorNextLoc");
         return;
@@ -244,6 +240,14 @@ void printInternal(PrintStream& out, LocationKind kind)
 
     case MapIteratorValueLoc:
         out.print("MapIteratorValueLoc");
+        return;
+
+    case MapStorageLoc:
+        out.print("MapStorageLoc");
+        return;
+
+    case MapIterationNextLoc:
+        out.print("MapIterationNextLoc");
         return;
 
     case MapIterationEntryLoc:
@@ -258,16 +262,16 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("MapIterationEntryValueLoc");
         return;
 
-    case MapIterationNextLoc:
-        out.print("MapIterationNextLoc");
-        return;
-
     case MapEntryKeyLoc:
         out.print("MapEntryKeyLoc");
         return;
 
     case MapEntryValueLoc:
         out.print("MapEntryValueLoc");
+        return;
+
+    case MapEntryValueWithKeyIndexLoc:
+        out.print("MapEntryValueWithKeyIndexLoc");
         return;
 
     case WeakMapGetLoc:

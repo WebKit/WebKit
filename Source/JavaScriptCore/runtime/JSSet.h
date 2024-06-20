@@ -60,7 +60,6 @@ public:
     bool isIteratorProtocolFastAndNonObservable();
     JSSet* clone(JSGlobalObject*, VM&, Structure*);
 
-    inline size_t gcSizeEstimateInBytes() const { return 0; }; // TODO: fix me
 private:
     JSSet(VM& vm, Structure* structure)
         : Base(vm, structure)

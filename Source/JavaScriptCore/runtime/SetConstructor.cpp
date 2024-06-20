@@ -108,6 +108,13 @@ JSC_DEFINE_HOST_FUNCTION(constructSet, (JSGlobalObject* globalObject, CallFrame*
     return JSValue::encode(set);
 }
 
+JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetStorage, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    ASSERT(jsDynamicCast<JSSet*>(callFrame->argument(0)));
+    JSSet* set = jsCast<JSSet*>(callFrame->uncheckedArgument(0));
+    return JSValue::encode(set->storageOrSentinel(getVM(globalObject)));
+}
+
 JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetIterationNext, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame->argument(0).isCell() && (callFrame->argument(1).isInt32()));
@@ -144,13 +151,6 @@ JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetIterationEntryKey, (JSGlobalObject* gl
 
     JSSet::Accessor* table = static_cast<JSSet::Accessor*>(jsCast<JSSet::Storage*>(cell));
     return JSValue::encode(table->getIterationEntryKey());
-}
-
-JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetStorage, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    ASSERT(jsDynamicCast<JSSet*>(callFrame->argument(0)));
-    JSSet* set = jsCast<JSSet*>(callFrame->uncheckedArgument(0));
-    return JSValue::encode(set->storageOrSentinel(getVM(globalObject)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(setPrivateFuncClone, (JSGlobalObject* globalObject, CallFrame* callFrame))

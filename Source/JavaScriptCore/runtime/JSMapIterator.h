@@ -98,7 +98,6 @@ public:
             setStorage(vm, newTable);
         return jsBoolean(false);
     }
-
     JSValue nextKey(VM& vm)
     {
         JSMap::Accessor::Entry entry = this->entry() - 1;
@@ -107,7 +106,6 @@ public:
         JSMap::Accessor* table = static_cast<JSMap::Accessor*>(jsCast<JSMap::Storage*>(storage));
         return table->getKey(entry);
     }
-
     JSValue nextValue(VM& vm)
     {
         JSMap::Accessor::Entry entry = this->entry() - 1;

@@ -143,10 +143,12 @@ namespace JSC {
     macro(JSMapValuesIntrinsic) \
     macro(JSMapKeysIntrinsic) \
     macro(JSMapEntriesIntrinsic) \
+    macro(JSMapStorageIntrinsic) \
     macro(JSMapIterationNextIntrinsic) \
     macro(JSMapIterationEntryIntrinsic) \
     macro(JSMapIterationEntryKeyIntrinsic) \
     macro(JSMapIterationEntryValueIntrinsic) \
+    macro(JSSetStorageIntrinsic) \
     macro(JSSetIterationNextIntrinsic) \
     macro(JSSetIterationEntryIntrinsic) \
     macro(JSSetIterationEntryKeyIntrinsic) \
@@ -155,8 +157,6 @@ namespace JSC {
     macro(JSMapIteratorValueIntrinsic) \
     macro(JSSetIteratorNextIntrinsic) \
     macro(JSSetIteratorKeyIntrinsic) \
-    macro(JSMapStorageIntrinsic) \
-    macro(JSSetStorageIntrinsic) \
     macro(JSSetHasIntrinsic) \
     macro(JSSetAddIntrinsic) \
     macro(JSSetDeleteIntrinsic) \

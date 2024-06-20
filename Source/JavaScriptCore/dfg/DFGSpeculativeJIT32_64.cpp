@@ -40,7 +40,6 @@
 #include "DirectArguments.h"
 #include "GetterSetter.h"
 #include "HasOwnPropertyCache.h"
-#include "HashMapImpl.h"
 #include "JSLexicalEnvironment.h"
 #include "JSPropertyNameEnumerator.h"
 #include "ObjectPrototype.h"
@@ -3805,7 +3804,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case GetMapKeyIndex: {
+    case MapKeyIndex: {
         SpeculateCellOperand map(this, node->child1());
         JSValueOperand key(this, node->child2());
         SpeculateInt32Operand hash(this, node->child3());
@@ -3825,14 +3824,14 @@ void SpeculativeJIT::compile(Node* node)
         flushRegisters();
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
-        auto operation = isMapObjectUse ? operationGetMapKeyIndex : operationGetSetKeyIndex;
+        auto operation = isMapObjectUse ? operationMapKeyIndex : operationSetKeyIndex;
         callOperation(operation, resultGPR, LinkableConstant::globalObject(*this, node), mapGPR, keyRegs, hashGPR);
         exceptionCheck();
         strictInt32Result(resultGPR, node);
         break;
     }
 
-    case LoadMapValue: {
+    case MapValueWithKeyIndex: {
         SpeculateCellOperand map(this, node->child1());
         SpeculateInt32Operand keyIndex(this, node->child2());
         GPRReg mapGPR = map.gpr();
@@ -3841,7 +3840,7 @@ void SpeculativeJIT::compile(Node* node)
         speculateMapObject(node->child1(), mapGPR);
 
         Jump notPresentInTable = branch32(Equal, keyIndexGPR, TrustedImm32(JSMap::Accessor::InvalidTableIndex));
-        callOperationWithSilentSpill(operationLoadMapValue, resultRegs, LinkableConstant::globalObject(*this, node), mapGPR, keyIndexGPR);
+        callOperationWithSilentSpill(operationMapValueWithKeyIndex, resultRegs, LinkableConstant::globalObject(*this, node), mapGPR, keyIndexGPR);
 
         notPresentInTable.link(this);
         moveValue(jsUndefined(), resultRegs);
@@ -3851,8 +3850,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case GetMapStorage:
-        compileGetMapStorage(node);
+    case MapStorage:
+        compileMapStorage(node);
         break;
 
     case MapIteratorNext:
@@ -3867,20 +3866,20 @@ void SpeculativeJIT::compile(Node* node)
         compileMapIteratorValue(node);
         break;
 
-    case GetMapIterationNext:
-        compileGetMapIterationNext(node);
+    case MapIterationNext:
+        compileMapIterationNext(node);
         break;
 
-    case GetMapIterationEntry:
-        compileGetMapIterationEntry(node);
+    case MapIterationEntry:
+        compileMapIterationEntry(node);
         break;
 
-    case GetMapIterationEntryKey:
-        compileGetMapIterationEntryKey(node);
+    case MapIterationEntryKey:
+        compileMapIterationEntryKey(node);
         break;
 
-    case GetMapIterationEntryValue:
-        compileGetMapIterationEntryValue(node);
+    case MapIterationEntryValue:
+        compileMapIterationEntryValue(node);
         break;
 
     case ExtractValueFromWeakMapGet:

@@ -273,13 +273,13 @@ inline CapabilityLevel canCompile(Node* node)
     case IsCellWithType:
     case MapHash:
     case NormalizeMapKey:
-    case GetMapKeyIndex:
-    case LoadMapValue:
-    case GetMapIterationNext:
-    case GetMapIterationEntry:
-    case GetMapIterationEntryKey:
-    case GetMapIterationEntryValue:
-    case GetMapStorage:
+    case MapKeyIndex:
+    case MapValueWithKeyIndex:
+    case MapIterationNext:
+    case MapIterationEntry:
+    case MapIterationEntryKey:
+    case MapIterationEntryValue:
+    case MapStorage:
     case MapIteratorNext:
     case MapIteratorKey:
     case MapIteratorValue:

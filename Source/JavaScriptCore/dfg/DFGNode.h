@@ -1985,12 +1985,12 @@ public:
         case ToObject:
         case CallNumberConstructor:
         case CallObjectConstructor:
+        case MapKeyIndex:
+        case MapValueWithKeyIndex:
         case MapIteratorKey:
         case MapIteratorValue:
-        case GetMapIterationEntryKey:
-        case GetMapIterationEntryValue:
-        case GetMapKeyIndex:
-        case LoadMapValue:
+        case MapIterationEntryKey:
+        case MapIterationEntryValue:
         case CallDOMGetter:
         case CallDOM:
         case ParseInt:
@@ -3402,9 +3402,9 @@ public:
         return m_opInfo.as<unsigned>();
     }
 
-    bool hasBucketOwnerType()
+    bool hasBucketOwnerType() // TODO: fixme
     {
-        return op() == GetMapIterationNext || op() == GetMapIterationEntry || op() == GetMapIterationEntryKey || op() == GetMapIterationEntryValue || op() == GetMapStorage;
+        return op() == MapIterationNext || op() == MapIterationEntry || op() == MapIterationEntryKey || op() == MapIterationEntryValue || op() == MapStorage;
     }
 
     unsigned numberOfBoundArguments()

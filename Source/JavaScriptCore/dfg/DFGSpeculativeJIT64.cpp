@@ -2552,7 +2552,7 @@ void SpeculativeJIT::compileGetMapIndexImpl(Node* node)
         break;
     }
     case CellUse: {
-        // Currently, Cell convers Object, String, Symbol, HeapBigInt, CellOther. See the definition of `SpecCell`.
+        // Currently, Cell covers Object, String, Symbol, HeapBigInt, CellOther. See the definition of `SpecCell`.
         // Since CellOther should not be used in JSMap/JSSet, here we don't check CellOther.
 
         // This check covers the case whether the target key and entryKey are the equivalent Cells, Objects or Symbols.
@@ -2640,7 +2640,7 @@ void SpeculativeJIT::compileGetMapIndexImpl(Node* node)
     if (!slowPathCases.empty()) {
         JIT_COMMENT(*this, "The slow path should call the operation.");
         slowPathCases.link(this);
-        auto operation = std::is_same<MapOrSet, JSMap>::value ? operationGetMapKeyIndex : operationGetSetKeyIndex;
+        auto operation = std::is_same<MapOrSet, JSMap>::value ? operationMapKeyIndex : operationSetKeyIndex;
         callOperationWithSilentSpill(operation, resultGPR, LinkableConstant::globalObject(*this, node), mapGPR, keyGPR, hashGPR);
         exceptionCheck();
         done.append(jump());
@@ -2654,7 +2654,7 @@ void SpeculativeJIT::compileGetMapIndexImpl(Node* node)
     strictInt32Result(resultGPR, node);
 }
 
-void SpeculativeJIT::compileGetMapKeyIndex(Node* node)
+void SpeculativeJIT::compileMapKeyIndex(Node* node)
 {
     if (node->child1().useKind() == MapObjectUse)
         compileGetMapIndexImpl<JSMap>(node);
@@ -2664,7 +2664,7 @@ void SpeculativeJIT::compileGetMapKeyIndex(Node* node)
         RELEASE_ASSERT_NOT_REACHED();
 }
 
-void SpeculativeJIT::compileLoadMapValue(Node* node)
+void SpeculativeJIT::compileMapValueWithKeyIndex(Node* node)
 {
     SpeculateCellOperand map(this, node->child1());
     SpeculateInt32Operand keyIndex(this, node->child2());
@@ -5436,17 +5436,17 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case GetMapKeyIndex:
-        compileGetMapKeyIndex(node);
+    case MapKeyIndex:
+        compileMapKeyIndex(node);
         break;
 
-    case LoadMapValue: {
-        compileLoadMapValue(node);
+    case MapValueWithKeyIndex: {
+        compileMapValueWithKeyIndex(node);
         break;
     }
 
-    case GetMapStorage:
-        compileGetMapStorage(node);
+    case MapStorage:
+        compileMapStorage(node);
         break;
 
     case MapIteratorNext:
@@ -5461,20 +5461,20 @@ void SpeculativeJIT::compile(Node* node)
         compileMapIteratorValue(node);
         break;
 
-    case GetMapIterationNext:
-        compileGetMapIterationNext(node);
+    case MapIterationNext:
+        compileMapIterationNext(node);
         break;
 
-    case GetMapIterationEntry:
-        compileGetMapIterationEntry(node);
+    case MapIterationEntry:
+        compileMapIterationEntry(node);
         break;
 
-    case GetMapIterationEntryKey:
-        compileGetMapIterationEntryKey(node);
+    case MapIterationEntryKey:
+        compileMapIterationEntryKey(node);
         break;
 
-    case GetMapIterationEntryValue:
-        compileGetMapIterationEntryValue(node);
+    case MapIterationEntryValue:
+        compileMapIterationEntryValue(node);
         break;
 
     case ExtractValueFromWeakMapGet:

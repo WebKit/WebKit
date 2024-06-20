@@ -12371,20 +12371,6 @@ void SpeculativeJIT::speculateMapObject(Edge edge)
     speculateMapObject(edge, operand.gpr());
 }
 
-void SpeculativeJIT::speculateMapIteratorObject(Edge edge, GPRReg cell)
-{
-    speculateCellType(edge, cell, SpecObjectOther, JSMapIteratorType);
-}
-
-void SpeculativeJIT::speculateMapIteratorObject(Edge edge)
-{
-    if (!needsTypeCheck(edge, SpecObjectOther))
-        return;
-
-    SpeculateCellOperand operand(this, edge);
-    speculateMapIteratorObject(edge, operand.gpr());
-}
-
 void SpeculativeJIT::speculateSetObject(Edge edge, GPRReg cell)
 {
     speculateCellType(edge, cell, SpecSetObject, JSSetType);
@@ -12397,6 +12383,20 @@ void SpeculativeJIT::speculateSetObject(Edge edge)
 
     SpeculateCellOperand operand(this, edge);
     speculateSetObject(edge, operand.gpr());
+}
+
+void SpeculativeJIT::speculateMapIteratorObject(Edge edge, GPRReg cell)
+{
+    speculateCellType(edge, cell, SpecObjectOther, JSMapIteratorType);
+}
+
+void SpeculativeJIT::speculateMapIteratorObject(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecObjectOther))
+        return;
+
+    SpeculateCellOperand operand(this, edge);
+    speculateMapIteratorObject(edge, operand.gpr());
 }
 
 void SpeculativeJIT::speculateSetIteratorObject(Edge edge, GPRReg cell)
@@ -12916,11 +12916,11 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
     case MapObjectUse:
         speculateMapObject(edge);
         break;
-    case MapIteratorObjectUse:
-        speculateMapIteratorObject(edge);
-        break;
     case SetObjectUse:
         speculateSetObject(edge);
+        break;
+    case MapIteratorObjectUse:
+        speculateMapIteratorObject(edge);
         break;
     case SetIteratorObjectUse:
         speculateSetIteratorObject(edge);
@@ -14354,7 +14354,7 @@ void SpeculativeJIT::compileNormalizeMapKey(Node* node)
     jsValueResult(resultRegs, node);
 }
 
-void SpeculativeJIT::compileGetMapStorage(Node* node)
+void SpeculativeJIT::compileMapStorage(Node* node)
 {
     SpeculateCellOperand map(this, node->child1());
     GPRReg mapGPR = map.gpr();
@@ -14369,7 +14369,7 @@ void SpeculativeJIT::compileGetMapStorage(Node* node)
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
-    callOperation(node->child1().useKind() == MapObjectUse ? operationGetMapStorage : operationGetSetStorage, resultRegs, LinkableConstant::globalObject(*this, node), mapGPR);
+    callOperation(node->child1().useKind() == MapObjectUse ? operationMapStorage : operationSetStorage, resultRegs, LinkableConstant::globalObject(*this, node), mapGPR);
     exceptionCheck();
     cellResult(resultRegs.payloadGPR(), node);
 }
@@ -14430,7 +14430,7 @@ void SpeculativeJIT::compileMapIteratorValue(Node* node)
     jsValueResult(resultRegs, node);
 }
 
-void SpeculativeJIT::compileGetMapIterationNext(Node* node)
+void SpeculativeJIT::compileMapIterationNext(Node* node)
 {
     SpeculateCellOperand mapStorage(this, node->child1());
     SpeculateInt32Operand entry(this, node->child2());
@@ -14442,14 +14442,14 @@ void SpeculativeJIT::compileGetMapIterationNext(Node* node)
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
     if (node->bucketOwnerType() == BucketOwnerType::Map)
-        callOperation(operationGetMapIterationNext, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR, entryGPR);
+        callOperation(operationMapIterationNext, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR, entryGPR);
     else
-        callOperation(operationGetSetIterationNext, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR, entryGPR);
+        callOperation(operationSetIterationNext, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR, entryGPR);
     exceptionCheck();
     cellResult(resultRegs.payloadGPR(), node);
 }
 
-void SpeculativeJIT::compileGetMapIterationEntry(Node* node)
+void SpeculativeJIT::compileMapIterationEntry(Node* node)
 {
     SpeculateCellOperand mapStorage(this, node->child1());
     GPRReg mapStorageGPR = mapStorage.gpr();
@@ -14458,14 +14458,14 @@ void SpeculativeJIT::compileGetMapIterationEntry(Node* node)
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
     if (node->bucketOwnerType() == BucketOwnerType::Map)
-        callOperation(operationGetMapIterationEntry, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR);
+        callOperation(operationMapIterationEntry, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR);
     else
-        callOperation(operationGetSetIterationEntry, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR);
+        callOperation(operationSetIterationEntry, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR);
     exceptionCheck();
     jsValueResult(resultRegs, node);
 }
 
-void SpeculativeJIT::compileGetMapIterationEntryKey(Node* node)
+void SpeculativeJIT::compileMapIterationEntryKey(Node* node)
 {
     SpeculateCellOperand mapStorage(this, node->child1());
     GPRReg mapStorageGPR = mapStorage.gpr();
@@ -14474,14 +14474,14 @@ void SpeculativeJIT::compileGetMapIterationEntryKey(Node* node)
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
     if (node->bucketOwnerType() == BucketOwnerType::Map)
-        callOperation(operationGetMapIterationEntryKey, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR);
+        callOperation(operationMapIterationEntryKey, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR);
     else
-        callOperation(operationGetSetIterationEntryKey, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR);
+        callOperation(operationSetIterationEntryKey, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR);
     exceptionCheck();
     jsValueResult(resultRegs, node);
 }
 
-void SpeculativeJIT::compileGetMapIterationEntryValue(Node* node)
+void SpeculativeJIT::compileMapIterationEntryValue(Node* node)
 {
     SpeculateCellOperand mapStorage(this, node->child1());
     GPRReg mapStorageGPR = mapStorage.gpr();
@@ -14489,7 +14489,7 @@ void SpeculativeJIT::compileGetMapIterationEntryValue(Node* node)
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
-    callOperation(operationGetMapIterationEntryValue, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR);
+    callOperation(operationMapIterationEntryValue, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR);
     exceptionCheck();
     jsValueResult(resultRegs, node);
 }

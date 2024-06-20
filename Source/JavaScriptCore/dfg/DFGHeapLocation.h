@@ -89,6 +89,7 @@ enum LocationKind {
     MapIterationEntryValueLoc,
     MapEntryKeyLoc,
     MapEntryValueLoc,
+    MapEntryValueWithKeyIndexLoc,
     WeakMapGetLoc,
     InternalFieldObjectLoc,
     DOMStateLoc,

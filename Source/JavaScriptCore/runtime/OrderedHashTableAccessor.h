@@ -79,6 +79,10 @@ struct SetTraits {
 template<typename Traits>
 class OrderedHashTable;
 
+namespace OrderedHashTableAccessorInternal {
+static constexpr bool verbose = false;
+}
+
 // ################ Non-Obsolete Table ################
 //
 //                      Count                                    Value(s)                                ValueType             WriteBarrier
@@ -456,13 +460,13 @@ public:
     {
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        dataLogLnIf(Options::dumpOrderedHashTable(), "<Rehash> Before: oldTable=", Dump(this, vm));
+        dataLogLnIf(OrderedHashTableAccessorInternal::verbose, "<Rehash> Before: oldTable=", Dump(this, vm));
 
         Accessor* newTable = copyImpl<UpdateDeletedEntries::Yes>(globalObject, this, newCapacity);
         RETURN_IF_EXCEPTION(scope, {});
 
         setNextTable(vm, newTable);
-        dataLogLnIf(Options::dumpOrderedHashTable(), "<Rehash> Rehashed: oldTable=", Dump(this, vm), "\nnewTable=", Dump(newTable, vm));
+        dataLogLnIf(OrderedHashTableAccessorInternal::verbose, "<Rehash> Rehashed: oldTable=", Dump(this, vm), "\nnewTable=", Dump(newTable, vm));
 
         if constexpr (update == SetOwnerStorage::Yes)
             setOwnerStorage(vm, owner, newTable);
@@ -473,14 +477,14 @@ public:
     {
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        dataLogLnIf(Options::dumpOrderedHashTable(), "<Clear> Before: oldTable=", Dump(this, vm));
+        dataLogLnIf(OrderedHashTableAccessorInternal::verbose, "<Clear> Before: oldTable=", Dump(this, vm));
 
         Accessor* newTable = tryCreate(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
 
         setClearedTableSentinel();
         setNextTable(vm, newTable);
-        dataLogLnIf(Options::dumpOrderedHashTable(), "<Clear> Cleared: oldTable=", Dump(this, vm), "\nnewTable=", Dump(newTable, vm));
+        dataLogLnIf(OrderedHashTableAccessorInternal::verbose, "<Clear> Cleared: oldTable=", Dump(this, vm), "\nnewTable=", Dump(newTable, vm));
 
         owner->m_storage.set(vm, owner, static_cast<Base*>(newTable));
     }
@@ -498,7 +502,7 @@ public:
         ASSERT(!isObsolete());
 
         if (!aliveEntryCount()) {
-            dataLogLnIf(Options::dumpOrderedHashTable(), "<Find> No alive entries in table=", RawPointer(this));
+            dataLogLnIf(OrderedHashTableAccessorInternal::verbose, "<Find> No alive entries in table=", RawPointer(this));
             return { JSValue(), 0, InvalidTableIndex, InvalidTableIndex };
         }
 
@@ -519,13 +523,13 @@ public:
             JSValue entryKey = getData(entryKeyIndex);
             // Fixme: Maybe we can compress the searching path by updating the chain with non-deleted entry.
             if (!isDeleted(vm, entryKey) && areKeysEqual(globalObject, normalizedKey, entryKey)) {
-                dataLogLnIf(Options::dumpOrderedHashTable(), "<Find> Found entry in the chain with bucketIndex=", bucketIndex, "  table=", RawPointer(this));
+                dataLogLnIf(OrderedHashTableAccessorInternal::verbose, "<Find> Found entry in the chain with bucketIndex=", bucketIndex, "  table=", RawPointer(this));
                 return { normalizedKey, hash, bucketIndex, entryKeyIndex };
             }
             keyIndexValue = getChain(entryKeyIndex + ChainOffset);
         }
 
-        dataLogLnIf(Options::dumpOrderedHashTable(), "<Find> Not found the entry in the chain with bucketIndex=", bucketIndex, "  table=", RawPointer(this));
+        dataLogLnIf(OrderedHashTableAccessorInternal::verbose, "<Find> Not found the entry in the chain with bucketIndex=", bucketIndex, "  table=", RawPointer(this));
         return { normalizedKey, hash, bucketIndex, InvalidTableIndex };
     }
 
@@ -548,14 +552,14 @@ public:
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
         ASSERT(!isObsolete());
-        dataLogLnIf(Options::dumpOrderedHashTable(), "<Add> Before: table=", Dump(this, vm));
+        dataLogLnIf(OrderedHashTableAccessorInternal::verbose, "<Add> Before: table=", Dump(this, vm));
 
         auto result = findKeyFunctor();
         RETURN_IF_EXCEPTION(scope, void());
 
         if (Accessor::isValidTableIndex(result.entryKeyIndex)) {
             Traits::template setValueDataIfNeeded(this, vm, result.entryKeyIndex + 1, value);
-            dataLogLnIf(Options::dumpOrderedHashTable(), "<Add> Found and set entryKeyIndex=", result.entryKeyIndex, " bucketIndex=", result.bucketIndex, " table=", Dump(this, vm));
+            dataLogLnIf(OrderedHashTableAccessorInternal::verbose, "<Add> Found and set entryKeyIndex=", result.entryKeyIndex, " bucketIndex=", result.bucketIndex, " table=", Dump(this, vm));
             return;
         }
 
@@ -581,7 +585,7 @@ public:
         table->addToChain(vm, result.bucketIndex, newEntryKeyIndex);
         table->setData(vm, newEntryKeyIndex, result.normalizedKey);
         Traits::template setValueDataIfNeeded(table, vm, newEntryKeyIndex + 1, value);
-        dataLogLnIf(Options::dumpOrderedHashTable(), "<Add> Added newEntry=", newEntry, " entryKeyIndex=", result.entryKeyIndex, " bucketIndex=", result.bucketIndex, " table=", Dump(table, vm));
+        dataLogLnIf(OrderedHashTableAccessorInternal::verbose, "<Add> Added newEntry=", newEntry, " entryKeyIndex=", result.entryKeyIndex, " bucketIndex=", result.bucketIndex, " table=", Dump(table, vm));
 
         if (UNLIKELY(rehashed))
             setOwnerStorage(vm, owner, table);
@@ -631,7 +635,7 @@ public:
 
         shrinkIfNeed(globalObject, owner);
         RETURN_IF_EXCEPTION(scope, false);
-        dataLogLnIf(Options::dumpOrderedHashTable(), "<Remove> Removed entryKeyIndex=", result.entryKeyIndex, " bucketIndex=", result.bucketIndex, " table=", Dump(this, vm));
+        dataLogLnIf(OrderedHashTableAccessorInternal::verbose, "<Remove> Removed entryKeyIndex=", result.entryKeyIndex, " bucketIndex=", result.bucketIndex, " table=", Dump(this, vm));
         return true;
     }
     ALWAYS_INLINE bool remove(JSGlobalObject* globalObject, HashTable* owner, JSValue key)

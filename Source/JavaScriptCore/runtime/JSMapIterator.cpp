@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #include "config.h"
@@ -84,9 +84,7 @@ JSC_DEFINE_HOST_FUNCTION(mapIteratorPrivateFuncMapIteratorNext, (JSGlobalObject 
     JSCell* cell = callFrame->uncheckedArgument(0).asCell();
     if (cell == vm.orderedHashTableSentinel())
         return JSValue::encode(cell);
-
-    JSMapIterator* iterator = jsCast<JSMapIterator*>(cell);
-    return JSValue::encode(iterator->nextTransition(vm));
+    return JSValue::encode(jsCast<JSMapIterator*>(cell)->nextTransition(vm));
 }
 
 JSC_DEFINE_HOST_FUNCTION(mapIteratorPrivateFuncMapIteratorKey, (JSGlobalObject * globalObject, CallFrame* callFrame))
@@ -97,9 +95,7 @@ JSC_DEFINE_HOST_FUNCTION(mapIteratorPrivateFuncMapIteratorKey, (JSGlobalObject *
     JSCell* cell = callFrame->uncheckedArgument(0).asCell();
     if (cell == vm.orderedHashTableSentinel())
         return JSValue::encode(cell);
-
-    JSMapIterator* iterator = jsCast<JSMapIterator*>(cell);
-    return JSValue::encode(iterator->nextKey(vm));
+    return JSValue::encode(jsCast<JSMapIterator*>(cell)->nextKey(vm));
 }
 
 JSC_DEFINE_HOST_FUNCTION(mapIteratorPrivateFuncMapIteratorValue, (JSGlobalObject * globalObject, CallFrame* callFrame))
@@ -110,9 +106,7 @@ JSC_DEFINE_HOST_FUNCTION(mapIteratorPrivateFuncMapIteratorValue, (JSGlobalObject
     JSCell* cell = callFrame->uncheckedArgument(0).asCell();
     if (cell == vm.orderedHashTableSentinel())
         return JSValue::encode(cell);
-
-    JSMapIterator* iterator = jsCast<JSMapIterator*>(cell);
-    return JSValue::encode(iterator->nextValue(vm));
+    return JSValue::encode(jsCast<JSMapIterator*>(cell)->nextValue(vm));
 }
 
 }

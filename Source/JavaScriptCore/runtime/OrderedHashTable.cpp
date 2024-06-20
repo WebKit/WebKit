@@ -41,7 +41,6 @@ void OrderedHashTable<Traits>::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN_WITH_MODIFIER(template<typename Traits>, OrderedHashTable<Traits>);
 
-// Explicit instantiation for specific Traits types
 template class OrderedHashTable<MapTraits>;
 template class OrderedHashTable<SetTraits>;
 

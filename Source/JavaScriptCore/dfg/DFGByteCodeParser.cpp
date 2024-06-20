@@ -3387,8 +3387,8 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             Node* key = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             Node* normalizedKey = addToGraph(NormalizeMapKey, key);
             Node* hash = addToGraph(MapHash, normalizedKey);
-            Node* keyIndex = addToGraph(GetMapKeyIndex, Edge(map, MapObjectUse), Edge(normalizedKey), Edge(hash));
-            Node* result = addToGraph(LoadMapValue, OpInfo(0), OpInfo(prediction), Edge(map, MapObjectUse), Edge(keyIndex));
+            Node* keyIndex = addToGraph(MapKeyIndex, Edge(map, MapObjectUse), Edge(normalizedKey), Edge(hash));
+            Node* result = addToGraph(MapValueWithKeyIndex, OpInfo(0), OpInfo(prediction), Edge(map, MapObjectUse), Edge(keyIndex));
             setResult(result);
             return CallOptimizationResult::Inlined;
         }
@@ -3404,9 +3404,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             Node* normalizedKey = addToGraph(NormalizeMapKey, key);
             Node* hash = addToGraph(MapHash, normalizedKey);
             UseKind useKind = intrinsic == JSSetHasIntrinsic ? SetObjectUse : MapObjectUse;
-            Node* keyIndex = addToGraph(GetMapKeyIndex, Edge(mapOrSet, useKind), Edge(normalizedKey), Edge(hash));
-            Node* isSentinel = addToGraph(SameValue, keyIndex, jsConstant(JSMap::Accessor::invalidTableIndex()));
-            Node* resultNode = addToGraph(LogicalNot, isSentinel);
+            Node* keyIndex = addToGraph(MapKeyIndex, Edge(mapOrSet, useKind), Edge(normalizedKey), Edge(hash));
+            Node* isInvalidIndex = addToGraph(SameValue, keyIndex, jsConstant(JSMap::Accessor::invalidTableIndex()));
+            Node* resultNode = addToGraph(LogicalNot, isInvalidIndex);
             setResult(resultNode);
             return CallOptimizationResult::Inlined;
         }
@@ -3502,7 +3502,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
 
             Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             addToGraph(Check, Edge(base, useKind));
-            Node* storage = addToGraph(GetMapStorage, Edge(base, useKind));
+            Node* storage = addToGraph(MapStorage, Edge(base, useKind));
 
             Node* kindNode = jsConstant(jsNumber(static_cast<uint32_t>(kind)));
 
@@ -3534,7 +3534,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             Node* storage = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             Node* entry = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
             BucketOwnerType type = intrinsic == JSSetIterationNextIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
-            Node* result = addToGraph(GetMapIterationNext, OpInfo(type), Edge(storage), Edge(entry));
+            Node* result = addToGraph(MapIterationNext, OpInfo(type), Edge(storage), Edge(entry));
             setResult(result);
             return CallOptimizationResult::Inlined;
         }
@@ -3546,7 +3546,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             insertChecks();
             Node* storage = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             BucketOwnerType type = intrinsic == JSSetIterationEntryIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
-            Node* result = addToGraph(GetMapIterationEntry, OpInfo(type), Edge(storage));
+            Node* result = addToGraph(MapIterationEntry, OpInfo(type), Edge(storage));
             setResult(result);
             return CallOptimizationResult::Inlined;
         }
@@ -3558,7 +3558,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             insertChecks();
             Node* storage = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             BucketOwnerType type = intrinsic == JSSetIterationEntryKeyIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
-            Node* result = addToGraph(GetMapIterationEntryKey, OpInfo(type), OpInfo(prediction), Edge(storage));
+            Node* result = addToGraph(MapIterationEntryKey, OpInfo(type), OpInfo(prediction), Edge(storage));
             setResult(result);
             return CallOptimizationResult::Inlined;
         }
@@ -3568,7 +3568,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
 
             insertChecks();
             Node* storage = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
-            Node* result = addToGraph(GetMapIterationEntryValue, OpInfo(BucketOwnerType::Map), OpInfo(prediction), Edge(storage));
+            Node* result = addToGraph(MapIterationEntryValue, OpInfo(BucketOwnerType::Map), OpInfo(prediction), Edge(storage));
             setResult(result);
             return CallOptimizationResult::Inlined;
         }
@@ -3614,7 +3614,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             insertChecks();
             Node* map = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             UseKind useKind = intrinsic == JSSetStorageIntrinsic ? SetObjectUse : MapObjectUse;
-            Node* storage = addToGraph(GetMapStorage, Edge(map, useKind));
+            Node* storage = addToGraph(MapStorage, Edge(map, useKind));
             setResult(storage);
             return CallOptimizationResult::Inlined;
         }
@@ -7114,7 +7114,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             if (shouldCompileAsGetById)
                 handleGetById(bytecode.m_dst, prediction, base, identifier, identifierNumber, getByStatus, AccessType::GetById, nextOpcodeIndex());
             else {
-                ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read); // <--
+                ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
                 // FIXME: We could consider making this not vararg, since it only uses three child
                 // slots.
                 // https://bugs.webkit.org/show_bug.cgi?id=184192

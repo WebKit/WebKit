@@ -322,11 +322,6 @@ inline JSArray* createTuple(JSGlobalObject* globalObject, Args&&... args)
     return constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), buffer);
 }
 
-inline JSArray* createEmptyTuple(JSGlobalObject* globalObject)
-{
-    return constructEmptyArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr));
-}
-
 inline OptionSet<CodeGenerationMode> JSGlobalObject::defaultCodeGenerationMode() const
 {
     OptionSet<CodeGenerationMode> codeGenerationMode;

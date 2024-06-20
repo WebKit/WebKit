@@ -1551,26 +1551,26 @@ private:
         case NormalizeMapKey:
             compileNormalizeMapKey();
             break;
-        case GetMapKeyIndex:
-            compileGetMapKeyIndex();
+        case MapKeyIndex:
+            compileMapKeyIndex();
             break;
-        case LoadMapValue:
-            compileLoadMapValue();
+        case MapValueWithKeyIndex:
+            compileMapValueWithKeyIndex();
             break;
-        case GetMapIterationNext:
-            compileGetMapIterationNext();
+        case MapIterationNext:
+            compileMapIterationNext();
             break;
-        case GetMapIterationEntry:
-            compileGetMapIterationEntry();
+        case MapIterationEntry:
+            compileMapIterationEntry();
             break;
-        case GetMapIterationEntryKey:
-            compileGetMapIterationEntryKey();
+        case MapIterationEntryKey:
+            compileMapIterationEntryKey();
             break;
-        case GetMapIterationEntryValue:
-            compileGetMapIterationEntryValue();
+        case MapIterationEntryValue:
+            compileMapIterationEntryValue();
             break;
-        case GetMapStorage:
-            compileGetMapStorage();
+        case MapStorage:
+            compileMapStorage();
             break;
         case MapIteratorNext:
             compileMapIteratorNext();
@@ -13959,7 +13959,7 @@ IGNORE_CLANG_WARNINGS_END
 
         // The slow path should call the operation.
         m_out.appendTo(slowPath, notPresentInTable);
-        auto operation = std::is_same<MapOrSet, JSMap>::value ? operationGetMapKeyIndex : operationGetSetKeyIndex;
+        auto operation = std::is_same<MapOrSet, JSMap>::value ? operationMapKeyIndex : operationSetKeyIndex;
         ValueFromBlock slowPathResult = m_out.anchor(vmCall(Int32, operation, weakPointer(globalObject), map, key, hash));
         m_out.jump(done);
 
@@ -13973,7 +13973,7 @@ IGNORE_CLANG_WARNINGS_END
         setInt32(m_out.phi(Int32, entryValueResult, slowPathResult, notPresentResult));
     }
 
-    void compileGetMapKeyIndex()
+    void compileMapKeyIndex()
     {
         if (m_node->child1().useKind() == MapObjectUse)
             compileGetMapIndexImpl<JSMap>();
@@ -13983,7 +13983,7 @@ IGNORE_CLANG_WARNINGS_END
             RELEASE_ASSERT_NOT_REACHED();
     }
 
-    void compileLoadMapValue()
+    void compileMapValueWithKeyIndex()
     {
         LBasicBlock presentInTable = m_out.newBlock();
         LBasicBlock notPresentInTable = m_out.newBlock();
@@ -14009,43 +14009,43 @@ IGNORE_CLANG_WARNINGS_END
         setJSValue(m_out.phi(Int64, notPresentResult, presentResult));
     }
 
-    void compileGetMapIterationNext()
+    void compileMapIterationNext()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue mapStorage = lowCell(m_node->child1());
         LValue entry = lowInt32(m_node->child2());
 
-        LValue result = vmCall(Int64, m_node->bucketOwnerType() == BucketOwnerType::Map ? operationGetMapIterationNext : operationGetSetIterationNext, weakPointer(globalObject), mapStorage, entry);
+        LValue result = vmCall(Int64, m_node->bucketOwnerType() == BucketOwnerType::Map ? operationMapIterationNext : operationSetIterationNext, weakPointer(globalObject), mapStorage, entry);
         setJSValue(result);
     }
 
-    void compileGetMapIterationEntry()
+    void compileMapIterationEntry()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue storage = lowCell(m_node->child1());
-        auto operation = m_node->bucketOwnerType() == BucketOwnerType::Map ? operationGetMapIterationEntry : operationGetSetIterationEntry;
+        auto operation = m_node->bucketOwnerType() == BucketOwnerType::Map ? operationMapIterationEntry : operationSetIterationEntry;
         LValue result = vmCall(Int64, operation, weakPointer(globalObject), storage);
         setJSValue(result);
     }
 
-    void compileGetMapIterationEntryKey()
+    void compileMapIterationEntryKey()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue storage = lowCell(m_node->child1());
-        auto operation = m_node->bucketOwnerType() == BucketOwnerType::Map ? operationGetMapIterationEntryKey : operationGetSetIterationEntryKey;
+        auto operation = m_node->bucketOwnerType() == BucketOwnerType::Map ? operationMapIterationEntryKey : operationSetIterationEntryKey;
         LValue result = vmCall(Int64, operation, weakPointer(globalObject), storage);
         setJSValue(result);
     }
 
-    void compileGetMapIterationEntryValue()
+    void compileMapIterationEntryValue()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue storage = lowCell(m_node->child1());
-        LValue result = vmCall(Int64, operationGetMapIterationEntryValue, weakPointer(globalObject), storage);
+        LValue result = vmCall(Int64, operationMapIterationEntryValue, weakPointer(globalObject), storage);
         setJSValue(result);
     }
 
-    void compileGetMapStorage()
+    void compileMapStorage()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
 
@@ -14057,7 +14057,7 @@ IGNORE_CLANG_WARNINGS_END
         else
             RELEASE_ASSERT_NOT_REACHED();
 
-        auto operation = m_node->child1().useKind() == MapObjectUse ? operationGetMapStorage : operationGetSetStorage;
+        auto operation = m_node->child1().useKind() == MapObjectUse ? operationMapStorage : operationSetStorage;
         LValue result = vmCall(Int64, operation, weakPointer(globalObject), map);
         setJSValue(result);
     }

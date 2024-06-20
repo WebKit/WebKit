@@ -1047,11 +1047,11 @@ private:
         case GetClosureVar:
         case GetInternalField:
         case GetFromArguments:
-        case LoadMapValue:
+        case MapValueWithKeyIndex:
         case MapIteratorKey:
         case MapIteratorValue:
-        case GetMapIterationEntryKey:
-        case GetMapIterationEntryValue:
+        case MapIterationEntryKey:
+        case MapIterationEntryValue:
         case ToObject:
         case CallNumberConstructor:
         case CallObjectConstructor:
@@ -1117,8 +1117,8 @@ private:
             break;
 
         case MapHash:
-        case GetMapIterationEntry:
-        case GetMapKeyIndex:
+        case MapIterationEntry:
+        case MapKeyIndex:
             setPrediction(SpecInt32Only);
             break;
 
@@ -1126,8 +1126,8 @@ private:
             setPrediction(SpecBoolean);
             break;
 
-        case GetMapStorage:
-        case GetMapIterationNext:
+        case MapStorage:
+        case MapIterationNext:
             setPrediction(SpecCellOther);
             break;
 

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "bytecode/SpeculatedType.h"
 #include "dfg/DFGNodeType.h"
 #if ENABLE(DFG_JIT)
 
@@ -1546,11 +1545,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case GetMapIterationEntryKey:
-    case GetMapIterationEntryValue:
+    case MapIterationEntryKey:
+    case MapIterationEntryValue:
     case MapIteratorKey:
     case MapIteratorValue:
-    case LoadMapValue:
+    case MapValueWithKeyIndex:
+    case ExtractValueFromWeakMapGet:
         makeHeapTopForNode(node);
         break;
 
@@ -1558,22 +1558,18 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case MapSet:
         break;
 
-    case GetMapIterationEntry:
-    case GetMapKeyIndex:
+    case MapIterationEntry:
+    case MapKeyIndex:
         setTypeForNode(node, SpecInt32Only);
         break;
 
-    case GetMapStorage:
-    case GetMapIterationNext:
+    case MapStorage:
+    case MapIterationNext:
         setTypeForNode(node, SpecCellOther);
         break;
 
     case MapIteratorNext:
         setTypeForNode(node, SpecBoolean);
-        break;
-
-    case ExtractValueFromWeakMapGet:
-        makeHeapTopForNode(node);
         break;
 
     case MapOrSetDelete:

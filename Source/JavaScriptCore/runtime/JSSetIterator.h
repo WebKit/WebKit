@@ -98,7 +98,6 @@ public:
             setStorage(vm, newTable);
         return jsBoolean(false);
     }
-
     JSValue nextKey(VM& vm)
     {
         JSSet::Accessor::Entry entry = this->entry() - 1;
@@ -162,7 +161,6 @@ private:
 
     JS_EXPORT_PRIVATE void finishCreation(JSGlobalObject*, JSSet*, IterationKind);
     void finishCreation(VM&);
-    JS_EXPORT_PRIVATE JSValue createPair(JSGlobalObject*, JSValue, JSValue);
     DECLARE_VISIT_CHILDREN;
 };
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSSetIterator);
