@@ -3589,6 +3589,13 @@ void SelectorCodeGenerator::generateElementAttributeValueExactMatching(Assembler
 
         LocalRegister valueStringImpl(m_registerAllocator);
         m_assembler.loadPtr(Assembler::Address(currentAttributeAddress, Attribute::valueMemoryOffset()), valueStringImpl);
+        {
+            LocalRegister valueLength(m_registerAllocator);
+            LocalRegister expectedValueLength(m_registerAllocator);
+            m_assembler.load32(Assembler::Address(expectedValueRegister, StringImpl::lengthMemoryOffset()), expectedValueLength);
+            m_assembler.load32(Assembler::Address(valueStringImpl, StringImpl::lengthMemoryOffset()), valueLength);
+            failureCases.append(m_assembler.branch32(Assembler::NotEqual, valueLength, expectedValueLength));
+        }
 
         FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
         functionCall.setFunctionAddress(operationEqualIgnoringASCIICaseNonNull);
@@ -3603,6 +3610,14 @@ void SelectorCodeGenerator::generateElementAttributeValueExactMatching(Assembler
         m_assembler.loadPtr(Assembler::Address(currentAttributeAddress, Attribute::valueMemoryOffset()), valueStringImpl);
 
         Assembler::Jump skipCaseInsensitiveComparison = m_assembler.branchPtr(Assembler::Equal, valueStringImpl, expectedValueRegister);
+        {
+            LocalRegister valueLength(m_registerAllocator);
+            LocalRegister expectedValueLength(m_registerAllocator);
+            m_assembler.load32(Assembler::Address(expectedValueRegister, StringImpl::lengthMemoryOffset()), expectedValueLength);
+            m_assembler.load32(Assembler::Address(valueStringImpl, StringImpl::lengthMemoryOffset()), valueLength);
+            failureCases.append(m_assembler.branch32(Assembler::NotEqual, valueLength, expectedValueLength));
+        }
+
         FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
         functionCall.setFunctionAddress(operationEqualIgnoringASCIICaseNonNull);
         functionCall.setTwoArguments(valueStringImpl, expectedValueRegister);
