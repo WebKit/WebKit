@@ -127,22 +127,11 @@ void XPCServiceEventHandler(xpc_connection_t peer)
 
     xpc_connection_set_target_queue(peer, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
     xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
-        xpc_type_t type = xpc_get_type(event);
-        if (type != XPC_TYPE_DICTIONARY) {
-            RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: Received unexpected XPC event type: %{public}s", xpc_type_get_name(type));
-            if (type == XPC_TYPE_ERROR) {
-                if (event == XPC_ERROR_CONNECTION_INVALID || event == XPC_ERROR_TERMINATION_IMMINENT) {
-                    RELEASE_LOG_FAULT(IPC, "Exiting: Received XPC event type: %{public}s", event == XPC_ERROR_CONNECTION_INVALID ? "XPC_ERROR_CONNECTION_INVALID" : "XPC_ERROR_TERMINATION_IMMINENT");
-                    // FIXME: Handle this case more gracefully.
-                    [[NSRunLoop mainRunLoop] performBlock:^{
-                        exitProcess(EXIT_FAILURE);
-                    }];
-                }
-            }
-            return;
-        }
 
-        handleXPCExitMessage(event);
+        handleXPCExitAndErrorMessage(event);
+
+        if (xpc_get_type(event) != XPC_TYPE_DICTIONARY)
+            return;
 
         auto* messageName = xpc_dictionary_get_string(event, "message-name");
         if (!messageName) {

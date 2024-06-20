@@ -53,12 +53,22 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-void handleXPCExitMessage(xpc_object_t event)
+void handleXPCExitAndErrorMessage(xpc_object_t event)
 {
-    if (xpc_get_type(event) == XPC_TYPE_DICTIONARY) {
+    xpc_type_t type = xpc_get_type(event);
+    if (type == XPC_TYPE_DICTIONARY) {
         auto* messageName = xpc_dictionary_get_string(event, messageNameKey);
         if (exitProcessMessage == messageName) {
             RELEASE_LOG_ERROR(IPC, "Received exit message, exiting now.");
+            terminateProcess(EXIT_FAILURE);
+        }
+        return;
+    }
+
+    RELEASE_LOG_ERROR(IPC, "Received unexpected XPC event type: %{public}s", xpc_type_get_name(type));
+    if (type == XPC_TYPE_ERROR) {
+        if (event == XPC_ERROR_CONNECTION_INVALID || event == XPC_ERROR_TERMINATION_IMMINENT) {
+            RELEASE_LOG_FAULT(IPC, "Exiting: Received XPC event type: %{public}s", event == XPC_ERROR_CONNECTION_INVALID ? "XPC_ERROR_CONNECTION_INVALID" : "XPC_ERROR_TERMINATION_IMMINENT");
             terminateProcess(EXIT_FAILURE);
         }
     }

@@ -52,7 +52,7 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
     // to capture client certificate credential.
     xpc_connection_set_event_handler(connection->xpcConnection(), ^(xpc_object_t event) {
 
-        handleXPCExitMessage(event);
+        handleXPCExitAndErrorMessage(event);
 
         callOnMainRunLoop([event = OSObjectPtr(event), weakThis = weakThis] {
             RELEASE_ASSERT(isMainRunLoop());
