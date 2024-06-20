@@ -6,7 +6,7 @@
 # latter in particular handles loading a bunch of shared CMake definitions
 # and loading the cross-compilation settings from CMAKE_TOOLCHAIN_FILE.
 
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.20)
 project(WebKit)
 
 # Remove this cmake_policy() after upgrading cmake_minimum_required() to 3.20.

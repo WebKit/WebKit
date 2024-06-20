@@ -443,7 +443,7 @@ int main() {
         #include <filesystem>
         int main() { std::filesystem::path p1(\"\"); std::filesystem::status(p1); }
     ")
-    set(CMAKE_REQUIRED_FLAGS "--std=c++2a")
+    set(CMAKE_REQUIRED_FLAGS "--std=c++2b")
     check_cxx_source_compiles("${FILESYSTEM_TEST_SOURCE}" STD_FILESYSTEM_IS_AVAILABLE)
     if (NOT STD_FILESYSTEM_IS_AVAILABLE)
         set(EXPERIMENTAL_FILESYSTEM_TEST_SOURCE "
@@ -469,7 +469,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND WTF_CPU_MIPS)
 endif ()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    set(CMAKE_REQUIRED_FLAGS "--std=c++2a")
+    set(CMAKE_REQUIRED_FLAGS "--std=c++2b")
 
     set(REMOVE_CVREF_TEST_SOURCE "
         #include <type_traits>
@@ -483,7 +483,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG)
-    set(COMPILE_C_AS_CXX "-xc++;-std=c++2a")
+    set(COMPILE_C_AS_CXX "-xc++;-std=c++2b")
 endif ()
 
 # FIXME: Enable pre-compiled headers for all ports <https://webkit.org/b/139438>
