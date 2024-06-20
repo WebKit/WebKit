@@ -34,11 +34,9 @@ static std::optional<Vector<uint8_t>> deriveBitsCryptoKit(const Vector<uint8_t>&
     if (baseKey.size() != ed25519KeySize || publicKey.size() != ed25519KeySize)
         return std::nullopt;
     auto rv = PAL::EdKey::deriveBits(PAL::EdKeyAgreementAlgorithm::x25519(), baseKey.span(), publicKey.span());
-    if (!rv.getErrorCode().isSuccess())
+    if (rv.errorCode != Cpp::ErrorCodes::Success)
         return std::nullopt;
-    if (!rv.getKeyBytes())
-        return std::nullopt;
-    return *rv.getKeyBytes();
+    return WTFMove(rv.result);
 }
 #endif
 static std::optional<Vector<uint8_t>> deriveBitsCoreCrypto(const Vector<uint8_t>& baseKey, const Vector<uint8_t>& publicKey)

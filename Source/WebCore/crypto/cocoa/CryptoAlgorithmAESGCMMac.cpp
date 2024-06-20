@@ -55,9 +55,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 static ExceptionOr<Vector<uint8_t>> encryptCryptoKitAESGCM(const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& plainText, const Vector<uint8_t>& additionalData, size_t desiredTagLengthInBytes)
 {
     auto rv = PAL::AesGcm::encrypt(key.span(), iv.span(), additionalData.span(), plainText.span(), desiredTagLengthInBytes);
-    if (!rv.getErrorCode().isSuccess())
+    if (rv.errorCode != Cpp::ErrorCodes::Success)
         return Exception { ExceptionCode::OperationError };
-    return WTFMove(*rv.getCipherText());
+    return WTFMove(rv.result);
 }
 #endif
 
