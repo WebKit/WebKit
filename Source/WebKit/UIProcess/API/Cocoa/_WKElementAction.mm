@@ -39,7 +39,7 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
 
-#if HAVE(SAFARI_SERVICES_FRAMEWORK)
+#if USE(SAFARI_SERVICES_FRAMEWORK)
 #import "SafariServicesSPI.h"
 SOFT_LINK_FRAMEWORK(SafariServices);
 SOFT_LINK_CLASS(SafariServices, SSReadingList);
@@ -111,7 +111,7 @@ static NSString * const webkitShowLinkPreviewsPreferenceChangedNotification = @"
         type:_WKElementActionTypeCustom assistant:nil]).autorelease();
 }
 
-#if HAVE(SAFARI_SERVICES_FRAMEWORK)
+#if USE(SAFARI_SERVICES_FRAMEWORK)
 static void addToReadingList(NSURL *targetURL, NSString *title)
 {
     if (!title || [title length] == 0)
@@ -160,7 +160,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
         break;
-#if HAVE(SAFARI_SERVICES_FRAMEWORK)
+#if USE(SAFARI_SERVICES_FRAMEWORK)
     case _WKElementActionTypeAddToReadingList:
         title = WEB_UI_STRING("Add to Reading List", "Title for Add to Reading List action button");
         handler = ^(WKActionSheetAssistant *, _WKActivatedElementInfo *actionInfo) {

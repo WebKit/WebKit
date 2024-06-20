@@ -58,7 +58,7 @@
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #endif
 
-#if HAVE(SAFARI_SERVICES_FRAMEWORK)
+#if USE(SAFARI_SERVICES_FRAMEWORK)
 #import "SafariServicesSPI.h"
 SOFT_LINK_FRAMEWORK(SafariServices)
 SOFT_LINK_CLASS(SafariServices, SSReadingList)
@@ -559,7 +559,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto defaultActions = adoptNS([[NSMutableArray alloc] init]);
     [self _appendOpenActionsForURL:targetURL actions:defaultActions.get() elementInfo:elementInfo];
 
-#if HAVE(SAFARI_SERVICES_FRAMEWORK)
+#if USE(SAFARI_SERVICES_FRAMEWORK)
     if ([getSSReadingListClass() supportsURL:targetURL])
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeAddToReadingList info:elementInfo assistant:self]];
 #endif
@@ -602,7 +602,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     } else if ([elementInfo imageURL])
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeShare info:elementInfo assistant:self]];
 
-#if HAVE(SAFARI_SERVICES_FRAMEWORK)
+#if USE(SAFARI_SERVICES_FRAMEWORK)
     if ([getSSReadingListClass() supportsURL:targetURL])
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeAddToReadingList info:elementInfo assistant:self]];
 #endif

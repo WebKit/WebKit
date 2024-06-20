@@ -434,11 +434,6 @@
 #define HAVE_SEC_ACCESS_CONTROL 1
 #endif
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
-/* FIXME: SafariServices.framework exists on macOS. It is only used by WebKit on iOS, so the behavior is correct, but the name is misleading. */
-#define HAVE_SAFARI_SERVICES_FRAMEWORK 1
-#endif
-
 #if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(WATCHOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
 #define HAVE_SAFE_BROWSING 1
 #endif
