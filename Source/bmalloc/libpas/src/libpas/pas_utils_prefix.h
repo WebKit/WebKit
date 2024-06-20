@@ -44,7 +44,7 @@ __PAS_BEGIN_EXTERN_C;
 #define __SUSPICIOUS__
 #define __BROKEN__
 
-#ifdef __OPTIMIZE__
+#if defined(__OPTIMIZE__) && !defined(WEBKIT_NO_INLINE_HINTS)
 #define __PAS_ALWAYS_INLINE_BUT_NOT_INLINE __attribute__((__always_inline__))
 #else
 #define __PAS_ALWAYS_INLINE_BUT_NOT_INLINE
