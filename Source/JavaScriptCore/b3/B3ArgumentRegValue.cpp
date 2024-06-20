@@ -34,7 +34,11 @@ ArgumentRegValue::~ArgumentRegValue() = default;
 
 void ArgumentRegValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
-    out.print(comma, m_reg);
+    out.print(comma, m_reg[0]);
+    if constexpr (is32Bit()) {
+        if (m_reg[1])
+            out.print(comma, m_reg[1]);
+    }
 }
 
 } } // namespace JSC::B3

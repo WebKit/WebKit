@@ -203,8 +203,9 @@ public:
                 VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
                 VALIDATE(!value->numChildren(), ("At ", *value));
                 VALIDATE(
-                    (value->as<ArgumentRegValue>()->argumentReg().isGPR() ? (value->type() == pointerType())
-                        : (value->type() == V128 || value->type() == Double))
+                    value->as<ArgumentRegValue>()->isGPPair() ? (value->type() == Int64) :
+                    value->as<ArgumentRegValue>()->argumentReg().isGPR() ? (value->type() == pointerType()) :
+                    (value->type() == V128 || value->type() == Double)
                     , ("At ", *value));
                 break;
             case Add:
