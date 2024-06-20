@@ -142,3 +142,7 @@ function runAnimationTest(expected) {
     else
         setTimeout(sampleAnimation, 50);
 }
+
+function getTransformToElement(rootElement, element) {
+    return element.getCTM().inverse().multiply(rootElement.getCTM());
+}

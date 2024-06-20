@@ -2,7 +2,10 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <!-- This should not crash (null renderer) -->
 <script>
-  document.createElementNS("http://www.w3.org/2000/svg","g").getTransformToElement();
+  try {
+    document.createElementNS("http://www.w3.org/2000/svg","g").getTransformToElement();
+  } catch(error) {
+  }
   if (window.testRunner)
     testRunner.dumpAsText();
 </script>
