@@ -302,7 +302,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForConstruct(VM& vm)
 }
 
 enum class ClosureMode : uint8_t { No, Yes };
-static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(VM&, ClosureMode closureMode)
+static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(VM&, ClosureMode closureMode, bool isTopTier)
 {
     // The callee is in regT0 (for JSVALUE32_64, the tag is in regT1).
     // The return address is on the stack, or in the link register. We will hence
@@ -359,7 +359,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(VM&, ClosureMod
 
     found.link(&jit);
     static_assert((CallSlot::offsetOfTarget() + sizeof(void*)) == static_cast<size_t>(CallSlot::offsetOfCodeBlock()));
-    jit.add32(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(GPRInfo::regT5, CallSlot::offsetOfCount()));
+    if (!isTopTier)
+        jit.add32(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(GPRInfo::regT5, CallSlot::offsetOfCount()));
     jit.loadPairPtr(CCallHelpers::Address(GPRInfo::regT5, CallSlot::offsetOfTarget()), GPRInfo::regT4, GPRInfo::regT5);
 
     jit.storePtr(GPRInfo::regT5, CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
@@ -400,12 +401,26 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(VM&, ClosureMod
 
 MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunk(VM& vm)
 {
-    return polymorphicThunkFor(vm, ClosureMode::No);
+    constexpr bool isTopTier = false;
+    return polymorphicThunkFor(vm, ClosureMode::No, isTopTier);
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForClosure(VM& vm)
 {
-    return polymorphicThunkFor(vm, ClosureMode::Yes);
+    constexpr bool isTopTier = false;
+    return polymorphicThunkFor(vm, ClosureMode::Yes, isTopTier);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicTopTierThunk(VM& vm)
+{
+    constexpr bool isTopTier = true;
+    return polymorphicThunkFor(vm, ClosureMode::No, isTopTier);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicTopTierThunkForClosure(VM& vm)
+{
+    constexpr bool isTopTier = true;
+    return polymorphicThunkFor(vm, ClosureMode::Yes, isTopTier);
 }
 
 enum ThunkEntryType { EnterViaCall, EnterViaJumpWithSavedTags, EnterViaJumpWithoutSavedTags };

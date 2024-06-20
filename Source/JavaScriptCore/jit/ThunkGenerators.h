@@ -50,6 +50,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> returnFromBaselineGenerator(VM&);
 
 MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunk(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForClosure(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicTopTierThunk(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicTopTierThunkForClosure(VM&);
 
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularCall(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForTailCall(VM&);

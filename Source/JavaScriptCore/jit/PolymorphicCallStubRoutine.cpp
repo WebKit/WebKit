@@ -71,10 +71,9 @@ void PolymorphicCallCase::dump(PrintStream& out) const
     out.print("<variant = ", m_variant, ", codeBlock = ", pointerDump(m_codeBlock), ">");
 }
 
-PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(unsigned headerSize, unsigned trailingSize, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, JSCell* owner, CallFrame* callerFrame, CallLinkInfo& callLinkInfo, const Vector<CallSlot, 16>& callSlots, UniqueArray<uint32_t>&& fastCounts, bool notUsingCounting, bool isClosureCall)
+PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(unsigned headerSize, unsigned trailingSize, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, JSCell* owner, CallFrame* callerFrame, CallLinkInfo& callLinkInfo, const Vector<CallSlot, 16>& callSlots, bool notUsingCounting, bool isClosureCall)
     : GCAwareJITStubRoutine(Type::PolymorphicCallStubRoutineType, code, owner)
     , ButterflyArray<PolymorphicCallStubRoutine, PolymorphicCallNode, CallSlot>(headerSize, trailingSize)
-    , m_fastCounts(WTFMove(fastCounts))
     , m_callLinkInfo(&callLinkInfo)
     , m_notUsingCounting(notUsingCounting)
     , m_isDataIC(m_callLinkInfo->isDataIC())
@@ -96,7 +95,7 @@ PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(unsigned headerSize, unsi
     }
 
     WTF::storeStoreFence();
-    bool isCodeImmutable = m_isDataIC;
+    bool isCodeImmutable = true;
     makeGCAware(vm, isCodeImmutable);
 }
 
@@ -151,11 +150,7 @@ CallEdgeList PolymorphicCallStubRoutine::edges() const
     CallEdgeList result;
     unsigned index = 0;
     forEachDependentCell([&](JSCell* cell) {
-        unsigned count = 0;
-        if (m_fastCounts)
-            count = m_fastCounts[index];
-        else
-            count = trailingSpan()[index].m_count;
+        unsigned count = trailingSpan()[index].m_count;
         result.append(CallEdge(CallVariant(cell), count));
         ++index;
     });

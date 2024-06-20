@@ -105,12 +105,12 @@ public:
             functor(trailingSpan()[i].m_calleeOrExecutable);
     }
 
-    static Ref<PolymorphicCallStubRoutine> create(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, JSCell* owner, CallFrame* callerFrame, CallLinkInfo& callLinkInfo, const Vector<CallSlot, 16>& callSlots, UniqueArray<uint32_t>&& fastCounts, bool notUsingCounting, bool isClosureCall)
+    static Ref<PolymorphicCallStubRoutine> create(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, JSCell* owner, CallFrame* callerFrame, CallLinkInfo& callLinkInfo, const Vector<CallSlot, 16>& callSlots, bool notUsingCounting, bool isClosureCall)
     {
-        return adoptRef(*createImpl(callSlots.size(), callSlots.size() + /* sentinel */ 1, code, vm, owner, callerFrame, callLinkInfo, callSlots, WTFMove(fastCounts), notUsingCounting, isClosureCall));
+        return adoptRef(*createImpl(callSlots.size(), callSlots.size() + /* sentinel */ 1, code, vm, owner, callerFrame, callLinkInfo, callSlots, notUsingCounting, isClosureCall));
     }
 
-    PolymorphicCallStubRoutine(unsigned headerSize, unsigned trailingSize, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, JSCell* owner, CallFrame* callerFrame, CallLinkInfo&, const Vector<CallSlot, 16>&, UniqueArray<uint32_t>&& fastCounts, bool notUsingCounting, bool isClosureCall);
+    PolymorphicCallStubRoutine(unsigned headerSize, unsigned trailingSize, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, JSCell* owner, CallFrame* callerFrame, CallLinkInfo&, const Vector<CallSlot, 16>&, bool notUsingCounting, bool isClosureCall);
 
     using ButterflyArray<PolymorphicCallStubRoutine, PolymorphicCallNode, CallSlot>::operator delete;
 
@@ -129,7 +129,6 @@ private:
 
     bool visitWeakImpl(VM&);
 
-    UniqueArray<uint32_t> m_fastCounts;
     CallLinkInfo* m_callLinkInfo { nullptr };
     bool m_notUsingCounting : 1 { false };
     bool m_isDataIC : 1 { false };
