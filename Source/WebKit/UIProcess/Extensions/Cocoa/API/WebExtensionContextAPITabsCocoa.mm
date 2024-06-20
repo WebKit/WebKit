@@ -606,7 +606,7 @@ void WebExtensionContext::tabsExecuteScript(WebPageProxyIdentifier webPageProxyI
 
         std::optional<SourcePair> scriptData;
         if (parameters.code)
-            scriptData = SourcePair { parameters.code.value(), std::nullopt };
+            scriptData = SourcePair { parameters.code.value(), URL { } };
         else {
             NSString *filePath = parameters.files.value().first();
             scriptData = sourcePairForResource(filePath, m_extension);

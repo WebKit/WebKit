@@ -92,13 +92,12 @@ std::optional<SourcePair> sourcePairForResource(String path, RefPtr<WebExtension
 SourcePairs getSourcePairsForParameters(const WebExtensionScriptInjectionParameters& parameters, RefPtr<WebExtension> extension)
 {
     if (parameters.files) {
-        SourcePairs sourcePairs;
-        for (auto& file : parameters.files.value())
-            sourcePairs.append(sourcePairForResource(file, extension));
-        return sourcePairs;
+        return WTF::compactMap(parameters.files.value(), [&](auto& file) -> std::optional<SourcePair> {
+            return sourcePairForResource(file, extension);
+        });
     }
 
-    return { SourcePair { parameters.code.value_or(parameters.function.value_or(parameters.css.value_or(""_s))), std::nullopt } };
+    return { SourcePair { parameters.code.value_or(parameters.function.value_or(parameters.css.value_or(""_s))), URL { } } };
 }
 
 class InjectionResultHolder : public RefCounted<InjectionResultHolder> {
@@ -117,7 +116,7 @@ public:
     InjectionResults results;
 };
 
-void executeScript(std::optional<SourcePairs> scriptPairs, WKWebView *webView, API::ContentWorld& executionWorld, WebExtensionTab& tab, const WebExtensionScriptInjectionParameters& parameters, WebExtensionContext& context, CompletionHandler<void(InjectionResults&&)>&& completionHandler)
+void executeScript(const SourcePairs& scriptPairs, WKWebView *webView, API::ContentWorld& executionWorld, WebExtensionTab& tab, const WebExtensionScriptInjectionParameters& parameters, WebExtensionContext& context, CompletionHandler<void(InjectionResults&&)>&& completionHandler)
 {
     auto injectionResults = InjectionResultHolder::create();
     auto aggregator = MainRunLoopCallbackAggregator::create([injectionResults, completionHandler = WTFMove(completionHandler)]() mutable {
@@ -150,11 +149,12 @@ void executeScript(std::optional<SourcePairs> scriptPairs, WKWebView *webView, A
                 [webView _callAsyncJavaScript:javaScript arguments:@{ @"arguments": arguments } inFrame:frameInfo inContentWorld:world completionHandler:makeBlockPtr([injectionResults, aggregator, frameInfo](id resultOfExecution, NSError *error) mutable {
                     injectionResults->results.append(toInjectionResultParameters(resultOfExecution, frameInfo, error.localizedDescription));
                 }).get()];
+
                 continue;
             }
 
-            for (auto& script : scriptPairs.value()) {
-                [webView _evaluateJavaScript:script.value().first withSourceURL:script.value().second.value_or(URL { }) inFrame:frameInfo inContentWorld:executionWorld->wrapper() completionHandler:makeBlockPtr([injectionResults, aggregator, frameInfo](id resultOfExecution, NSError *error) mutable {
+            for (auto& script : scriptPairs) {
+                [webView _evaluateJavaScript:script.first withSourceURL:script.second inFrame:frameInfo inContentWorld:executionWorld->wrapper() completionHandler:makeBlockPtr([injectionResults, aggregator, frameInfo](id resultOfExecution, NSError *error) mutable {
                     injectionResults->results.append(toInjectionResultParameters(resultOfExecution, frameInfo, error.localizedDescription));
                 }).get()];
             }
@@ -162,16 +162,13 @@ void executeScript(std::optional<SourcePairs> scriptPairs, WKWebView *webView, A
     }).get()];
 }
 
-void injectStyleSheets(SourcePairs styleSheetPairs, WKWebView *webView, API::ContentWorld& executionWorld, WebCore::UserStyleLevel styleLevel, WebCore::UserContentInjectedFrames injectedFrames, WebExtensionContext& context)
+void injectStyleSheets(const SourcePairs& styleSheetPairs, WKWebView *webView, API::ContentWorld& executionWorld, WebCore::UserStyleLevel styleLevel, WebCore::UserContentInjectedFrames injectedFrames, WebExtensionContext& context)
 {
     auto page = webView._page;
     auto pageID = page->webPageID();
 
     for (auto& styleSheet : styleSheetPairs) {
-        if (!styleSheet)
-            continue;
-
-        auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheet.value().first, styleSheet.value().second.value_or(URL { }), Vector<String> { }, Vector<String> { }, injectedFrames, styleLevel, pageID }, executionWorld);
+        auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheet.first, styleSheet.second, Vector<String> { }, Vector<String> { }, injectedFrames, styleLevel, pageID }, executionWorld);
 
         auto& controller = page.get()->userContentController();
         controller.addUserStyleSheet(userStyleSheet);
@@ -180,14 +177,14 @@ void injectStyleSheets(SourcePairs styleSheetPairs, WKWebView *webView, API::Con
     }
 }
 
-void removeStyleSheets(SourcePairs styleSheetPairs, WKWebView *webView,  WebCore::UserContentInjectedFrames injectedFrames, WebExtensionContext& context)
+void removeStyleSheets(const SourcePairs& styleSheetPairs, WKWebView *webView,  WebCore::UserContentInjectedFrames injectedFrames, WebExtensionContext& context)
 {
     UserStyleSheetVector styleSheetsToRemove;
     auto& dynamicallyInjectedUserStyleSheets = context.dynamicallyInjectedUserStyleSheets();
 
     for (auto& styleSheetContent : styleSheetPairs) {
         for (auto& userStyleSheet : dynamicallyInjectedUserStyleSheets) {
-            if (userStyleSheetMatchesContent(userStyleSheet, styleSheetContent.value(), injectedFrames)) {
+            if (userStyleSheetMatchesContent(userStyleSheet, styleSheetContent, injectedFrames)) {
                 styleSheetsToRemove.append(userStyleSheet);
                 auto& controller = webView._page.get()->userContentController();
                 controller.removeUserStyleSheet(userStyleSheet);
