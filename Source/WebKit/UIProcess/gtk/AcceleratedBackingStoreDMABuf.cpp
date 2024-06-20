@@ -544,12 +544,6 @@ void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID, const std::optional
         return;
     }
 
-    if (buffer->type() == Buffer::Type::EglImage) {
-        ensureGLContext();
-        gdk_gl_context_make_current(m_gdkGLContext.get());
-    }
-    buffer->didUpdateContents();
-
     m_pendingBuffer = buffer;
     gtk_widget_queue_draw(m_webPage.viewWidget());
 }
@@ -613,10 +607,13 @@ void AcceleratedBackingStoreDMABuf::update(const LayerTreeContext& context)
 
 bool AcceleratedBackingStoreDMABuf::prepareForRendering()
 {
-    if (m_gdkGLContext)
-        gdk_gl_context_make_current(m_gdkGLContext.get());
-
     if (m_pendingBuffer) {
+        if (m_pendingBuffer->type() == Buffer::Type::EglImage) {
+            ensureGLContext();
+            gdk_gl_context_make_current(m_gdkGLContext.get());
+        }
+        m_pendingBuffer->didUpdateContents();
+
         if (m_committedBuffer)
             m_webPage.legacyMainFrameProcess().send(Messages::AcceleratedSurfaceDMABuf::ReleaseBuffer(m_committedBuffer->id()), m_surfaceID);
         m_committedBuffer = WTFMove(m_pendingBuffer);
