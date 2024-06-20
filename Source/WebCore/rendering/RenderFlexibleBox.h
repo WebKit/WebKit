@@ -199,6 +199,7 @@ private:
     void maybeCacheChildMainIntrinsicSize(RenderBox& child, bool relayoutChildren);
     void adjustAlignmentForChild(RenderBox& child, LayoutUnit);
     ItemPosition alignmentForChild(const RenderBox& child) const;
+    inline OverflowAlignment overflowAlignmentForChild(const RenderBox& child) const;
     bool canComputePercentageFlexBasis(const RenderBox& child, const Length& flexBasis, UpdatePercentageHeightDescendants);
     bool childMainSizeIsDefinite(const RenderBox&, const Length& flexBasis);
     bool childCrossSizeIsDefinite(const RenderBox&, const Length& flexBasis);
