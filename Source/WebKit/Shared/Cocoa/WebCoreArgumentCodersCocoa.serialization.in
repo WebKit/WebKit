@@ -362,6 +362,13 @@ using WebCore::CocoaColor = NSColor;
 using WebCore::CocoaColor = PlatformColor;
 #endif
 
+#if HAVE(WK_SECURE_CODING_DATA_DETECTORS)
+DDScannerResult wrapped by CoreIPCDDScannerResult
+#if PLATFORM(MAC)
+WKDDActionContext wrapped by CoreIPCDDSecureActionContext
+#endif
+#endif
+
 #if USE(AVFOUNDATION)
 AVOutputContext wrapped by CoreIPCAVOutputContext
 #endif
