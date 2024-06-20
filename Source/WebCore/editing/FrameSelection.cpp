@@ -2534,11 +2534,13 @@ FloatRect FrameSelection::selectionBounds(ClipToVisibleContent clipToVisibleCont
     if (clipToVisibleContent == ClipToVisibleContent::No)
         return visibleSelectionRect;
 #else
-    auto& selection = renderView->selection();
-    auto visibleSelectionRect = selection.boundsClippedToVisibleContent();
+    auto textSelectionRect = RenderObject::absoluteTextRects(m_selection.range().value());
+    IntRect visibleSelectionRect;
+    for (auto rect : textSelectionRect)
+        visibleSelectionRect.unite(rect);
     
     if (clipToVisibleContent == ClipToVisibleContent::No)
-        return selection.bounds();
+        return visibleSelectionRect;
 #endif
     
     return intersection(visibleSelectionRect, renderView->frameView().visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect));
