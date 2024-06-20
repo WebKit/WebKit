@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: Worker failed to load. Refused to execute http://localhost:8800/workers/constructors/Worker/Worker-constructor.html as script because text/html is not a script MIME type.
+CONSOLE MESSAGE: Worker failed to load. Response is not 2xx
 
 PASS Test toString propagation exception.
 PASS Test recursive Worker creation.
