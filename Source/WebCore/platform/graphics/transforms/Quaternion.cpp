@@ -30,6 +30,17 @@
 
 namespace WebCore {
 
+Quaternion Quaternion::fromRotate3d(double x, double y, double z, double angle)
+{
+    double toLength = std::hypot(x, y, z);
+    if (std::abs(toLength) <= 0.00001)
+        return { 0, 0, 0, 1 };
+
+    angle = deg2rad(angle);
+    double scale = std::sin(0.5 * angle) / toLength;
+    return { scale * x, scale * y, scale * z, std::cos(0.5 * angle) };
+}
+
 // Perform a spherical linear interpolation between the two
 // passed quaternions with 0 <= t <= 1.
 

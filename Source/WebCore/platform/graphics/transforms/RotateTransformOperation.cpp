@@ -90,33 +90,15 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
         return RotateTransformOperation::create(vector.x(), vector.y(), vector.z(), WebCore::blend(fromAngle, toAngle, context), *outputType);
     }
 
-    // Create the 2 rotation matrices
-    TransformationMatrix fromT;
-    TransformationMatrix toT;
-    fromT.rotate3d((fromOp ? fromOp->m_x : 0),
-        (fromOp ? fromOp->m_y : 0),
-        (fromOp ? fromOp->m_z : 1),
-        (fromOp ? fromOp->m_angle : 0));
+    Quaternion fromQ = Quaternion::fromRotate3d((fromOp ? fromOp->m_x : 0), (fromOp ? fromOp->m_y : 0), (fromOp ? fromOp->m_z : 1), (fromOp ? fromOp->m_angle : 0));
+    Quaternion toQ = Quaternion::fromRotate3d((toOp ? toOp->m_x : 0), (toOp ? toOp->m_y : 0), (toOp ? toOp->m_z : 1), (toOp ? toOp->m_angle : 0));
 
-    toT.rotate3d((toOp ? toOp->m_x : 0),
-        (toOp ? toOp->m_y : 0),
-        (toOp ? toOp->m_z : 1),
-        (toOp ? toOp->m_angle : 0));
-    
-    // Blend them
-    toT.blend(fromT, context.progress, context.compositeOperation);
-    
-    // Extract the result as a quaternion
-    TransformationMatrix::Decomposed4Type decomp;
-    if (!toT.decompose4(decomp)) {
-        const RotateTransformOperation* usedOperation = context.progress > 0.5 ? this : fromOp;
-        return RotateTransformOperation::create(usedOperation->x(), usedOperation->y(), usedOperation->z(), usedOperation->angle(), TransformOperation::Type::Rotate3D);
-    }
-    
+    fromQ = fromQ.interpolate(toQ, context.progress, context.compositeOperation);
+
     // Convert that to Axis/Angle form
-    double x = decomp.quaternion.x;
-    double y = decomp.quaternion.y;
-    double z = decomp.quaternion.z;
+    double x = fromQ.x;
+    double y = fromQ.y;
+    double z = fromQ.z;
     double length = std::hypot(x, y, z);
     double angle = 0;
     
@@ -124,7 +106,7 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
         x /= length;
         y /= length;
         z /= length;
-        angle = rad2deg(acos(decomp.quaternion.w) * 2);
+        angle = rad2deg(acos(fromQ.w) * 2);
     } else {
         x = 0;
         y = 0;
