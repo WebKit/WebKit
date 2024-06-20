@@ -73,44 +73,53 @@ class NativeExecutable;
     macro(PolymorphicTopTierThunkForClosure, polymorphicTopTierThunkForClosure) \
     macro(ReturnFromBaseline, returnFromBaselineGenerator) \
     macro(ArityFixup, arityFixupGenerator) \
-    macro(GetByIdLoadOwnPropertyHandler, getByIdLoadOwnPropertyHandlerCodeGenerator) \
-    macro(GetByIdLoadPrototypePropertyHandler, getByIdLoadPrototypePropertyHandlerCodeGenerator) \
-    macro(GetByIdMissHandler, getByIdMissHandlerCodeGenerator) \
+    macro(GetByIdLoadOwnPropertyHandler, getByIdLoadOwnPropertyHandler) \
+    macro(GetByIdLoadPrototypePropertyHandler, getByIdLoadPrototypePropertyHandler) \
+    macro(GetByIdMissHandler, getByIdMissHandler) \
     macro(GetByIdCustomAccessorHandler, getByIdCustomAccessorHandler) \
     macro(GetByIdCustomValueHandler, getByIdCustomValueHandler) \
     macro(GetByIdGetterHandler, getByIdGetterHandler) \
     macro(GetByIdProxyObjectLoadHandler, getByIdProxyObjectLoadHandler) \
     macro(GetByIdModuleNamespaceLoadHandler, getByIdModuleNamespaceLoadHandler) \
-    macro(PutByIdReplaceHandler, putByIdReplaceHandlerCodeGenerator) \
-    macro(PutByIdTransitionNonAllocatingHandler, putByIdTransitionNonAllocatingHandlerCodeGenerator) \
-    macro(PutByIdTransitionNewlyAllocatingHandler, putByIdTransitionNewlyAllocatingHandlerCodeGenerator) \
-    macro(PutByIdTransitionReallocatingHandler, putByIdTransitionReallocatingHandlerCodeGenerator) \
+    macro(PutByIdReplaceHandler, putByIdReplaceHandler) \
+    macro(PutByIdTransitionNonAllocatingHandler, putByIdTransitionNonAllocatingHandler) \
+    macro(PutByIdTransitionNewlyAllocatingHandler, putByIdTransitionNewlyAllocatingHandler) \
+    macro(PutByIdTransitionReallocatingHandler, putByIdTransitionReallocatingHandler) \
     macro(PutByIdCustomAccessorHandler, putByIdCustomAccessorHandler) \
     macro(PutByIdCustomValueHandler, putByIdCustomValueHandler) \
     macro(PutByIdStrictSetterHandler, putByIdStrictSetterHandler) \
     macro(PutByIdSloppySetterHandler, putByIdSloppySetterHandler) \
     macro(InByIdHitHandler, inByIdHitHandler) \
     macro(InByIdMissHandler, inByIdMissHandler) \
+    macro(DeleteByIdDeleteHandler, deleteByIdDeleteHandler) \
+    macro(DeleteByIdDeleteNonConfigurableHandler, deleteByIdDeleteNonConfigurableHandler) \
+    macro(DeleteByIdDeleteMissHandler, deleteByIdDeleteMissHandler) \
     macro(InstanceOfHitHandler, instanceOfHitHandler) \
     macro(InstanceOfMissHandler, instanceOfMissHandler) \
-    macro(GetByValWithStringLoadOwnPropertyHandler, getByValWithStringLoadOwnPropertyHandlerCodeGenerator) \
-    macro(GetByValWithStringLoadPrototypePropertyHandler, getByValWithStringLoadPrototypePropertyHandlerCodeGenerator) \
-    macro(GetByValWithStringMissHandler, getByValWithStringMissHandlerCodeGenerator) \
-    macro(GetByValWithSymbolLoadOwnPropertyHandler, getByValWithSymbolLoadOwnPropertyHandlerCodeGenerator) \
-    macro(GetByValWithSymbolLoadPrototypePropertyHandler, getByValWithSymbolLoadPrototypePropertyHandlerCodeGenerator) \
-    macro(GetByValWithSymbolMissHandler, getByValWithSymbolMissHandlerCodeGenerator) \
-    macro(PutByValWithStringReplaceHandler, putByValWithStringReplaceHandlerCodeGenerator) \
-    macro(PutByValWithStringTransitionNonAllocatingHandler, putByValWithStringTransitionNonAllocatingHandlerCodeGenerator) \
-    macro(PutByValWithStringTransitionNewlyAllocatingHandler, putByValWithStringTransitionNewlyAllocatingHandlerCodeGenerator) \
-    macro(PutByValWithStringTransitionReallocatingHandler, putByValWithStringTransitionReallocatingHandlerCodeGenerator) \
-    macro(PutByValWithSymbolReplaceHandler, putByValWithSymbolReplaceHandlerCodeGenerator) \
-    macro(PutByValWithSymbolTransitionNonAllocatingHandler, putByValWithSymbolTransitionNonAllocatingHandlerCodeGenerator) \
-    macro(PutByValWithSymbolTransitionNewlyAllocatingHandler, putByValWithSymbolTransitionNewlyAllocatingHandlerCodeGenerator) \
-    macro(PutByValWithSymbolTransitionReallocatingHandler, putByValWithSymbolTransitionReallocatingHandlerCodeGenerator) \
+    macro(GetByValWithStringLoadOwnPropertyHandler, getByValWithStringLoadOwnPropertyHandler) \
+    macro(GetByValWithStringLoadPrototypePropertyHandler, getByValWithStringLoadPrototypePropertyHandler) \
+    macro(GetByValWithStringMissHandler, getByValWithStringMissHandler) \
+    macro(GetByValWithSymbolLoadOwnPropertyHandler, getByValWithSymbolLoadOwnPropertyHandler) \
+    macro(GetByValWithSymbolLoadPrototypePropertyHandler, getByValWithSymbolLoadPrototypePropertyHandler) \
+    macro(GetByValWithSymbolMissHandler, getByValWithSymbolMissHandler) \
+    macro(PutByValWithStringReplaceHandler, putByValWithStringReplaceHandler) \
+    macro(PutByValWithStringTransitionNonAllocatingHandler, putByValWithStringTransitionNonAllocatingHandler) \
+    macro(PutByValWithStringTransitionNewlyAllocatingHandler, putByValWithStringTransitionNewlyAllocatingHandler) \
+    macro(PutByValWithStringTransitionReallocatingHandler, putByValWithStringTransitionReallocatingHandler) \
+    macro(PutByValWithSymbolReplaceHandler, putByValWithSymbolReplaceHandler) \
+    macro(PutByValWithSymbolTransitionNonAllocatingHandler, putByValWithSymbolTransitionNonAllocatingHandler) \
+    macro(PutByValWithSymbolTransitionNewlyAllocatingHandler, putByValWithSymbolTransitionNewlyAllocatingHandler) \
+    macro(PutByValWithSymbolTransitionReallocatingHandler, putByValWithSymbolTransitionReallocatingHandler) \
     macro(InByValWithStringHitHandler, inByValWithStringHitHandler) \
     macro(InByValWithStringMissHandler, inByValWithStringMissHandler) \
     macro(InByValWithSymbolHitHandler, inByValWithSymbolHitHandler) \
     macro(InByValWithSymbolMissHandler, inByValWithSymbolMissHandler) \
+    macro(DeleteByValWithStringDeleteHandler, deleteByValWithStringDeleteHandler) \
+    macro(DeleteByValWithStringDeleteNonConfigurableHandler, deleteByValWithStringDeleteNonConfigurableHandler) \
+    macro(DeleteByValWithStringDeleteMissHandler, deleteByValWithStringDeleteMissHandler) \
+    macro(DeleteByValWithSymbolDeleteHandler, deleteByValWithSymbolDeleteHandler) \
+    macro(DeleteByValWithSymbolDeleteNonConfigurableHandler, deleteByValWithSymbolDeleteNonConfigurableHandler) \
+    macro(DeleteByValWithSymbolDeleteMissHandler, deleteByValWithSymbolDeleteMissHandler) \
 
 #if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
 #define JSC_FOR_EACH_YARR_JIT_BACKREFERENCES_THUNK(macro) \

@@ -1681,6 +1681,10 @@ Ref<InlineCacheHandler> InlineCacheHandler::createPreCompiled(Ref<InlineCacheHan
         result->u.s1.m_holder = accessCase.identifier().cell();
         break;
     }
+    case AccessCase::Delete: {
+        result->u.s2.m_newStructureID = accessCase.newStructureID();
+        break;
+    }
     case AccessCase::Transition: {
         result->u.s2.m_newStructureID = accessCase.newStructureID();
         result->u.s2.m_newSize = accessCase.newStructure()->outOfLineCapacity() * sizeof(JSValue);
@@ -4994,7 +4998,7 @@ static void loadHandlerImpl(VM&, CCallHelpers& jit, JSValueRegs baseJSR, JSValue
 
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
 template<bool ownProperty>
-static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadHandlerCodeGeneratorImpl(VM& vm)
+static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadHandlerImpl(VM& vm)
 {
     CCallHelpers jit;
 
@@ -5019,20 +5023,20 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadHandlerCodeGeneratorImpl
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "GetById Load handler"_s, "GetById Load handler");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnPropertyHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnPropertyHandler(VM& vm)
 {
     constexpr bool ownProperty = true;
-    return getByIdLoadHandlerCodeGeneratorImpl<ownProperty>(vm);
+    return getByIdLoadHandlerImpl<ownProperty>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypePropertyHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypePropertyHandler(VM& vm)
 {
     constexpr bool ownProperty = false;
-    return getByIdLoadHandlerCodeGeneratorImpl<ownProperty>(vm);
+    return getByIdLoadHandlerImpl<ownProperty>(vm);
 }
 
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandlerCodeGenerator(VM&)
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandler(VM&)
 {
     CCallHelpers jit;
 
@@ -5331,7 +5335,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdModuleNamespaceLoadHandler(VM&)
 }
 
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandlerCodeGenerator(VM&)
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandler(VM&)
 {
     CCallHelpers jit;
 
@@ -5427,7 +5431,7 @@ static void transitionHandlerImpl(VM& vm, CCallHelpers& jit, CCallHelpers::JumpL
 
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
 template<bool allocating, bool reallocating>
-static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionHandlerCodeGeneratorImpl(VM& vm)
+static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionHandlerImpl(VM& vm)
 {
     CCallHelpers jit;
 
@@ -5467,25 +5471,25 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionHandlerCodeGenerat
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "PutById Transition handler"_s, "PutById Transition handler");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNonAllocatingHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNonAllocatingHandler(VM& vm)
 {
     constexpr bool allocating = false;
     constexpr bool reallocating = false;
-    return putByIdTransitionHandlerCodeGeneratorImpl<allocating, reallocating>(vm);
+    return putByIdTransitionHandlerImpl<allocating, reallocating>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNewlyAllocatingHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNewlyAllocatingHandler(VM& vm)
 {
     constexpr bool allocating = true;
     constexpr bool reallocating = false;
-    return putByIdTransitionHandlerCodeGeneratorImpl<allocating, reallocating>(vm);
+    return putByIdTransitionHandlerImpl<allocating, reallocating>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionReallocatingHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionReallocatingHandler(VM& vm)
 {
     constexpr bool allocating = true;
     constexpr bool reallocating = true;
-    return putByIdTransitionHandlerCodeGeneratorImpl<allocating, reallocating>(vm);
+    return putByIdTransitionHandlerImpl<allocating, reallocating>(vm);
 }
 
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
@@ -5702,6 +5706,76 @@ MacroAssemblerCodeRef<JITThunkPtrTag> inByIdMissHandler(VM& vm)
     return inByIdInHandlerImpl<hit>(vm);
 }
 
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdDeleteHandler(VM&)
+{
+    CCallHelpers jit;
+
+    using BaselineJITRegisters::DelById::baseJSR;
+    using BaselineJITRegisters::DelById::scratch1GPR;
+    using BaselineJITRegisters::DelById::scratch2GPR;
+    using BaselineJITRegisters::DelById::scratch3GPR;
+    using BaselineJITRegisters::DelById::resultJSR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    CCallHelpers::JumpList fallThrough;
+
+    fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseJSR.payloadGPR(), scratch1GPR));
+
+    jit.load32(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfOffset()), scratch1GPR);
+    jit.moveTrustedValue(JSValue(), JSValueRegs { scratch3GPR });
+    jit.storeProperty(JSValueRegs { scratch3GPR }, baseJSR.payloadGPR(), scratch1GPR, scratch2GPR);
+    jit.transfer32(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfNewStructureID()), CCallHelpers::Address(baseJSR.payloadGPR(), JSCell::structureIDOffset()));
+
+    jit.move(MacroAssembler::TrustedImm32(true), resultJSR.payloadGPR());
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    fallThrough.link(&jit);
+    InlineCacheCompiler::emitDataICJumpNextHandler(jit);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DeleteById handler"_s, "DeleteById handler");
+}
+
+template<bool returnValue>
+static MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdIgnoreHandlerImpl(VM&)
+{
+    CCallHelpers jit;
+
+    using BaselineJITRegisters::DelById::baseJSR;
+    using BaselineJITRegisters::DelById::scratch1GPR;
+    using BaselineJITRegisters::DelById::resultJSR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    CCallHelpers::JumpList fallThrough;
+
+    fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseJSR.payloadGPR(), scratch1GPR));
+
+    jit.move(MacroAssembler::TrustedImm32(returnValue), resultJSR.payloadGPR());
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    fallThrough.link(&jit);
+    InlineCacheCompiler::emitDataICJumpNextHandler(jit);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DeleteById handler"_s, "DeleteById handler");
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdDeleteNonConfigurableHandler(VM& vm)
+{
+    constexpr bool resultValue = false;
+    return deleteByIdIgnoreHandlerImpl<resultValue>(vm);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdDeleteMissHandler(VM& vm)
+{
+    constexpr bool resultValue = true;
+    return deleteByIdIgnoreHandlerImpl<resultValue>(vm);
+}
+
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
 template<bool hit>
 static MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfHandlerImpl(VM&)
@@ -5745,7 +5819,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfMissHandler(VM& vm)
 }
 
 template<bool ownProperty, bool isSymbol>
-static MacroAssemblerCodeRef<JITThunkPtrTag> getByValLoadHandlerCodeGeneratorImpl(VM& vm)
+static MacroAssemblerCodeRef<JITThunkPtrTag> getByValLoadHandlerImpl(VM& vm)
 {
     CCallHelpers jit;
 
@@ -5772,36 +5846,36 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValLoadHandlerCodeGeneratorImp
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "GetByVal Load handler"_s, "GetByVal Load handler");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringLoadOwnPropertyHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringLoadOwnPropertyHandler(VM& vm)
 {
     constexpr bool ownProperty = true;
     constexpr bool isSymbol = false;
-    return getByValLoadHandlerCodeGeneratorImpl<ownProperty, isSymbol>(vm);
+    return getByValLoadHandlerImpl<ownProperty, isSymbol>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringLoadPrototypePropertyHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringLoadPrototypePropertyHandler(VM& vm)
 {
     constexpr bool ownProperty = false;
     constexpr bool isSymbol = false;
-    return getByValLoadHandlerCodeGeneratorImpl<ownProperty, isSymbol>(vm);
+    return getByValLoadHandlerImpl<ownProperty, isSymbol>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolLoadOwnPropertyHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolLoadOwnPropertyHandler(VM& vm)
 {
     constexpr bool ownProperty = true;
     constexpr bool isSymbol = true;
-    return getByValLoadHandlerCodeGeneratorImpl<ownProperty, isSymbol>(vm);
+    return getByValLoadHandlerImpl<ownProperty, isSymbol>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolLoadPrototypePropertyHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolLoadPrototypePropertyHandler(VM& vm)
 {
     constexpr bool ownProperty = false;
     constexpr bool isSymbol = true;
-    return getByValLoadHandlerCodeGeneratorImpl<ownProperty, isSymbol>(vm);
+    return getByValLoadHandlerImpl<ownProperty, isSymbol>(vm);
 }
 
 template<bool isSymbol>
-static MacroAssemblerCodeRef<JITThunkPtrTag> getByValMissHandlerCodeGeneratorImpl(VM&)
+static MacroAssemblerCodeRef<JITThunkPtrTag> getByValMissHandlerImpl(VM&)
 {
     CCallHelpers jit;
 
@@ -5829,20 +5903,20 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValMissHandlerCodeGeneratorImp
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "GetByVal Miss handler"_s, "GetByVal Miss handler");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringMissHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringMissHandler(VM& vm)
 {
     constexpr bool isSymbol = false;
-    return getByValMissHandlerCodeGeneratorImpl<isSymbol>(vm);
+    return getByValMissHandlerImpl<isSymbol>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolMissHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolMissHandler(VM& vm)
 {
     constexpr bool isSymbol = true;
-    return getByValMissHandlerCodeGeneratorImpl<isSymbol>(vm);
+    return getByValMissHandlerImpl<isSymbol>(vm);
 }
 
 template<bool isSymbol>
-static MacroAssemblerCodeRef<JITThunkPtrTag> putByValReplaceHandlerCodeGeneratorImpl(VM&)
+static MacroAssemblerCodeRef<JITThunkPtrTag> putByValReplaceHandlerImpl(VM&)
 {
     CCallHelpers jit;
 
@@ -5872,20 +5946,20 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValReplaceHandlerCodeGenerator
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "PutByVal Replace handler"_s, "PutByVal Replace handler");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringReplaceHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringReplaceHandler(VM& vm)
 {
     constexpr bool isSymbol = false;
-    return putByValReplaceHandlerCodeGeneratorImpl<isSymbol>(vm);
+    return putByValReplaceHandlerImpl<isSymbol>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolReplaceHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolReplaceHandler(VM& vm)
 {
     constexpr bool isSymbol = true;
-    return putByValReplaceHandlerCodeGeneratorImpl<isSymbol>(vm);
+    return putByValReplaceHandlerImpl<isSymbol>(vm);
 }
 
 template<bool allocating, bool reallocating, bool isSymbol>
-static MacroAssemblerCodeRef<JITThunkPtrTag> putByValTransitionHandlerCodeGeneratorImpl(VM& vm)
+static MacroAssemblerCodeRef<JITThunkPtrTag> putByValTransitionHandlerImpl(VM& vm)
 {
     CCallHelpers jit;
 
@@ -5944,52 +6018,52 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValTransitionHandlerCodeGenera
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "PutByVal Transition handler"_s, "PutByVal Transition handler");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionNonAllocatingHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionNonAllocatingHandler(VM& vm)
 {
     constexpr bool allocating = false;
     constexpr bool reallocating = false;
     constexpr bool isSymbol = false;
-    return putByValTransitionHandlerCodeGeneratorImpl<allocating, reallocating, isSymbol>(vm);
+    return putByValTransitionHandlerImpl<allocating, reallocating, isSymbol>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionNonAllocatingHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionNonAllocatingHandler(VM& vm)
 {
     constexpr bool allocating = false;
     constexpr bool reallocating = false;
     constexpr bool isSymbol = true;
-    return putByValTransitionHandlerCodeGeneratorImpl<allocating, reallocating, isSymbol>(vm);
+    return putByValTransitionHandlerImpl<allocating, reallocating, isSymbol>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionNewlyAllocatingHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionNewlyAllocatingHandler(VM& vm)
 {
     constexpr bool allocating = true;
     constexpr bool reallocating = false;
     constexpr bool isSymbol = false;
-    return putByValTransitionHandlerCodeGeneratorImpl<allocating, reallocating, isSymbol>(vm);
+    return putByValTransitionHandlerImpl<allocating, reallocating, isSymbol>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionNewlyAllocatingHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionNewlyAllocatingHandler(VM& vm)
 {
     constexpr bool allocating = true;
     constexpr bool reallocating = false;
     constexpr bool isSymbol = true;
-    return putByValTransitionHandlerCodeGeneratorImpl<allocating, reallocating, isSymbol>(vm);
+    return putByValTransitionHandlerImpl<allocating, reallocating, isSymbol>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionReallocatingHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionReallocatingHandler(VM& vm)
 {
     constexpr bool allocating = true;
     constexpr bool reallocating = true;
     constexpr bool isSymbol = false;
-    return putByValTransitionHandlerCodeGeneratorImpl<allocating, reallocating, isSymbol>(vm);
+    return putByValTransitionHandlerImpl<allocating, reallocating, isSymbol>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionReallocatingHandlerCodeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionReallocatingHandler(VM& vm)
 {
     constexpr bool allocating = true;
     constexpr bool reallocating = true;
     constexpr bool isSymbol = true;
-    return putByValTransitionHandlerCodeGeneratorImpl<allocating, reallocating, isSymbol>(vm);
+    return putByValTransitionHandlerImpl<allocating, reallocating, isSymbol>(vm);
 }
 
 template<bool hit, bool isSymbol>
@@ -6046,6 +6120,109 @@ MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithSymbolMissHandler(VM& vm)
     constexpr bool hit = false;
     constexpr bool isSymbol = true;
     return inByValInHandlerImpl<hit, isSymbol>(vm);
+}
+
+template<bool isSymbol>
+static MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValDeleteHandlerImpl(VM&)
+{
+    CCallHelpers jit;
+
+    using BaselineJITRegisters::DelByVal::baseJSR;
+    using BaselineJITRegisters::DelByVal::propertyJSR;
+    using BaselineJITRegisters::DelByVal::scratch1GPR;
+    using BaselineJITRegisters::DelByVal::scratch2GPR;
+    using BaselineJITRegisters::DelByVal::scratch3GPR;
+    using BaselineJITRegisters::DelByVal::resultJSR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    CCallHelpers::JumpList fallThrough;
+
+    fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseJSR.payloadGPR(), scratch1GPR));
+    fallThrough.append(InlineCacheCompiler::emitDataICCheckUid(jit, isSymbol, propertyJSR, scratch1GPR));
+
+    jit.load32(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfOffset()), scratch1GPR);
+    jit.moveTrustedValue(JSValue(), JSValueRegs { scratch3GPR });
+    jit.storeProperty(JSValueRegs { scratch3GPR }, baseJSR.payloadGPR(), scratch1GPR, scratch2GPR);
+    jit.transfer32(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfNewStructureID()), CCallHelpers::Address(baseJSR.payloadGPR(), JSCell::structureIDOffset()));
+
+    jit.move(MacroAssembler::TrustedImm32(true), resultJSR.payloadGPR());
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    fallThrough.link(&jit);
+    InlineCacheCompiler::emitDataICJumpNextHandler(jit);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DeleteByVal handler"_s, "DeleteByVal handler");
+}
+
+template<bool returnValue, bool isSymbol>
+static MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValIgnoreHandlerImpl(VM&)
+{
+    CCallHelpers jit;
+
+    using BaselineJITRegisters::DelByVal::baseJSR;
+    using BaselineJITRegisters::DelByVal::propertyJSR;
+    using BaselineJITRegisters::DelByVal::scratch1GPR;
+    using BaselineJITRegisters::DelByVal::resultJSR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    CCallHelpers::JumpList fallThrough;
+
+    fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseJSR.payloadGPR(), scratch1GPR));
+    fallThrough.append(InlineCacheCompiler::emitDataICCheckUid(jit, isSymbol, propertyJSR, scratch1GPR));
+
+    jit.move(MacroAssembler::TrustedImm32(returnValue), resultJSR.payloadGPR());
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    fallThrough.link(&jit);
+    InlineCacheCompiler::emitDataICJumpNextHandler(jit);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DeleteByVal handler"_s, "DeleteByVal handler");
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithStringDeleteHandler(VM& vm)
+{
+    constexpr bool isSymbol = false;
+    return deleteByValDeleteHandlerImpl<isSymbol>(vm);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithStringDeleteNonConfigurableHandler(VM& vm)
+{
+    constexpr bool isSymbol = false;
+    constexpr bool resultValue = false;
+    return deleteByValIgnoreHandlerImpl<resultValue, isSymbol>(vm);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithStringDeleteMissHandler(VM& vm)
+{
+    constexpr bool isSymbol = false;
+    constexpr bool resultValue = true;
+    return deleteByValIgnoreHandlerImpl<resultValue, isSymbol>(vm);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteHandler(VM& vm)
+{
+    constexpr bool isSymbol = true;
+    return deleteByValDeleteHandlerImpl<isSymbol>(vm);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteNonConfigurableHandler(VM& vm)
+{
+    constexpr bool isSymbol = true;
+    constexpr bool resultValue = false;
+    return deleteByValIgnoreHandlerImpl<resultValue, isSymbol>(vm);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteMissHandler(VM& vm)
+{
+    constexpr bool isSymbol = true;
+    constexpr bool resultValue = true;
+    return deleteByValIgnoreHandlerImpl<resultValue, isSymbol>(vm);
 }
 
 AccessGenerationResult InlineCacheCompiler::compileHandler(const GCSafeConcurrentJSLocker&, PolymorphicAccess& poly, CodeBlock* codeBlock, Ref<AccessCase>&& accessCase)
@@ -6420,6 +6597,42 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                 break;
             }
 
+            case AccessType::DeleteByIdStrict:
+            case AccessType::DeleteByIdSloppy: {
+                switch (accessCase.m_type) {
+                case AccessCase::Delete:
+                case AccessCase::DeleteNonConfigurable:
+                case AccessCase::DeleteMiss: {
+                    ASSERT(!accessCase.viaGlobalProxy());
+                    collectConditions(accessCase, watchedConditions, checkingConditions);
+                    if (checkingConditions.isEmpty()) {
+                        CommonJITThunkID thunkID = CommonJITThunkID::DeleteByIdDeleteHandler;
+                        switch (accessCase.m_type) {
+                        case AccessCase::Delete:
+                            thunkID = CommonJITThunkID::DeleteByIdDeleteHandler;
+                            break;
+                        case AccessCase::DeleteNonConfigurable:
+                            thunkID = CommonJITThunkID::DeleteByIdDeleteNonConfigurableHandler;
+                            break;
+                        case AccessCase::DeleteMiss:
+                            thunkID = CommonJITThunkID::DeleteByIdDeleteMissHandler;
+                            break;
+                        default:
+                            break;
+                        }
+                        auto code = vm.getCTIStub(thunkID).retagged<JITStubRoutinePtrTag>();
+                        auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
+                        connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
+                        return finishPreCompiledCodeGeneration(WTFMove(stub));
+                    }
+                    break;
+                }
+                default:
+                    break;
+                }
+                break;
+            }
+
             case AccessType::InstanceOf: {
                 switch (accessCase.m_type) {
                 case AccessCase::InstanceOfHit:
@@ -6570,6 +6783,42 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                             code = vm.getCTIStub(accessCase.m_type == AccessCase::InHit ? CommonJITThunkID::InByValWithSymbolHitHandler : CommonJITThunkID::InByValWithSymbolMissHandler).retagged<JITStubRoutinePtrTag>();
                         else
                             code = vm.getCTIStub(accessCase.m_type == AccessCase::InHit ? CommonJITThunkID::InByValWithStringHitHandler : CommonJITThunkID::InByValWithStringMissHandler).retagged<JITStubRoutinePtrTag>();
+                        auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
+                        connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
+                        return finishPreCompiledCodeGeneration(WTFMove(stub));
+                    }
+                    break;
+                }
+                default:
+                    break;
+                }
+                break;
+            }
+
+            case AccessType::DeleteByValStrict:
+            case AccessType::DeleteByValSloppy: {
+                switch (accessCase.m_type) {
+                case AccessCase::Delete:
+                case AccessCase::DeleteNonConfigurable:
+                case AccessCase::DeleteMiss: {
+                    ASSERT(!accessCase.viaGlobalProxy());
+                    collectConditions(accessCase, watchedConditions, checkingConditions);
+                    if (checkingConditions.isEmpty()) {
+                        CommonJITThunkID thunkID = CommonJITThunkID::DeleteByValWithStringDeleteHandler;
+                        switch (accessCase.m_type) {
+                        case AccessCase::Delete:
+                            thunkID = accessCase.uid()->isSymbol() ? CommonJITThunkID::DeleteByValWithSymbolDeleteHandler : CommonJITThunkID::DeleteByValWithStringDeleteHandler;
+                            break;
+                        case AccessCase::DeleteNonConfigurable:
+                            thunkID = accessCase.uid()->isSymbol() ? CommonJITThunkID::DeleteByValWithSymbolDeleteNonConfigurableHandler : CommonJITThunkID::DeleteByValWithStringDeleteNonConfigurableHandler;
+                            break;
+                        case AccessCase::DeleteMiss:
+                            thunkID = accessCase.uid()->isSymbol() ? CommonJITThunkID::DeleteByValWithSymbolDeleteMissHandler : CommonJITThunkID::DeleteByValWithStringDeleteMissHandler;
+                            break;
+                        default:
+                            break;
+                        }
+                        auto code = vm.getCTIStub(thunkID).retagged<JITStubRoutinePtrTag>();
                         auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
                         connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
                         return finishPreCompiledCodeGeneration(WTFMove(stub));
@@ -6777,44 +7026,53 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> InlineCacheCompiler::compileGetByIdD
 }
 
 #else
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnPropertyHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypePropertyHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandlerCodeGenerator(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnPropertyHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypePropertyHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomAccessorHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomValueHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdGetterHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdProxyObjectLoadHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdModuleNamespaceLoadHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNonAllocatingHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNewlyAllocatingHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionReallocatingHandlerCodeGenerator(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNonAllocatingHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionNewlyAllocatingHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionReallocatingHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdCustomAccessorHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdCustomValueHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdStrictSetterHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdSloppySetterHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> inByIdHitHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> inByIdMissHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdDeleteHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdDeleteNonConfigurableHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByIdDeleteMissHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfHitHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfMissHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringLoadOwnPropertyHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringLoadPrototypePropertyHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringMissHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolLoadOwnPropertyHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolLoadPrototypePropertyHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolMissHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringReplaceHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionNonAllocatingHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionNewlyAllocatingHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionReallocatingHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolReplaceHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionNonAllocatingHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionNewlyAllocatingHandlerCodeGenerator(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionReallocatingHandlerCodeGenerator(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringLoadOwnPropertyHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringLoadPrototypePropertyHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringMissHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolLoadOwnPropertyHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolLoadPrototypePropertyHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolMissHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringReplaceHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionNonAllocatingHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionNewlyAllocatingHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionReallocatingHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolReplaceHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionNonAllocatingHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionNewlyAllocatingHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionReallocatingHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithStringHitHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithStringMissHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithSymbolHitHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithSymbolMissHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithStringDeleteHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithStringDeleteNonConfigurableHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithStringDeleteMissHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteNonConfigurableHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteMissHandler(VM&) { return { }; }
 AccessGenerationResult InlineCacheCompiler::compileHandler(const GCSafeConcurrentJSLocker&, PolymorphicAccess&, CodeBlock*, Ref<AccessCase>&&) { return { }; }
 #endif
 
