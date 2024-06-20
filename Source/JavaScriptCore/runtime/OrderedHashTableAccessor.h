@@ -79,8 +79,6 @@ struct SetTraits {
 template<typename Traits>
 class OrderedHashTable;
 
-// Note that only ChainTable stores the real JSValues and the others are used as unsigned integer number wrapped in JSValue.
-//
 // ################ Non-Obsolete Table ################
 //
 //                      Count                                    Value(s)                                ValueType             WriteBarrier
@@ -90,7 +88,7 @@ class OrderedHashTable;
 //                         1          | Capacity                                                        | TableSize           | NO
 //                         1          | IterationEntry                                                  | Entry               | NO
 //                    BucketCount     | HashTable:  { <BucketIndex, ChainStartEntry>, ... }             | <TableIndex, Entry> | NO
-//  TableEnd  -> Capacity * EntrySize | DataTable:  { <Entry_0, Data_0>, <Entry_0 + 1, Data_1>, ... }   | <Entry, JSValue>    | Yes
+//  TableEnd  -> Capacity * EntrySize | DataTable:  { <Entry_0, Data_0>, <Entry_0 + 1, Data_1>, ... }   | <Entry, JSValue>    | Yes for Key and Value
 //
 // ################ Obsolete Table from Rehash ################
 //
@@ -112,6 +110,8 @@ class OrderedHashTable;
 //                         1          | Capacity                                                        | TableSize           | NO
 //                         1          | IterationEntry                                                  | Entry               | NO
 //  TableEnd  ->          ...         | NotUsed                                                         | ...
+//
+// Note that only the DataTable stores the real JSValues and the others are used as unsigned integer number wrapped in JSValue.
 //
 // The table is initialized with empty JSValues.
 // 1. Found an empty entry while iterating the hash table means the current bucket is not taken by any chain.
@@ -135,6 +135,7 @@ public:
     // TODO: [2, 4] It seems [1, 8] is faster.
     static constexpr uint8_t LoadFactor = 1;
     static constexpr uint8_t InitialCapacity = 8;
+    static constexpr uint8_t ExpandFactor = 2;
 
     static_assert(EntrySize == MapTraits::EntrySize || EntrySize == SetTraits::EntrySize);
 
@@ -213,7 +214,7 @@ public:
     }
 
     template<IndexType type = IndexType::Any>
-    ALWAYS_INLINE void setWithWriteBarrier(VM& vm, TableIndex index, JSValue value)
+    ALWAYS_INLINE void setWithWriteBarrier(VM& vm, TableIndex index, JSValue value) // TODO: inplace replacement
     {
         ASSERT(!hasDouble(indexingType()) && isValidIndex<type>(index));
         ASSERT(type == IndexType::Data || index == aliveEntryCountIndex());
@@ -271,12 +272,8 @@ public:
     ALWAYS_INLINE static TableIndex bucketIndex(TableIndex hashTableStartIndex, TableSize bucketCount, TableSize hash) { return hashTableStartIndex + (hash & (bucketCount - 1)); }
     ALWAYS_INLINE TableIndex bucketIndex(TableSize hash) { return hashTableStartIndex() + (hash & (bucketCount() - 1)); }
 
-    ALWAYS_INLINE JSValue getChainStartEntry(TableIndex index) { return get<IndexType::Bucket>(index); }
-    ALWAYS_INLINE void setChainStartEntry(TableIndex index, Entry entry)
-    {
-        ASSERT(isValidEntry(entry));
-        return set<IndexType::Bucket>(index, entry);
-    }
+    ALWAYS_INLINE JSValue getChainStartKeyIndex(TableIndex index) { return get<IndexType::Bucket>(index); }
+    ALWAYS_INLINE void setChainStartKeyIndex(TableIndex index, TableIndex keyIndex) { return set<IndexType::Bucket>(index, keyIndex); }
 
     /* -------------------------------- Data table -------------------------------- */
     ALWAYS_INLINE static TableSize dataTableSize(TableSize capacity) { return capacity * EntrySize; }
@@ -296,12 +293,11 @@ public:
 
     ALWAYS_INLINE void deleteData(VM& vm, TableIndex index) { return set<IndexType::Data>(vm, index, vm.orderedHashTableDeletedValue()); }
 
-    ALWAYS_INLINE void addToChain(VM& vm, TableIndex bucketIndex, Entry newChainStartEntry, TableIndex newChainStartEntryKeyIndex)
+    ALWAYS_INLINE void addToChain(VM& vm, TableIndex bucketIndex, TableIndex newChainStartKeyIndex)
     {
-        JSValue prevChainStartEntry = getChainStartEntry(bucketIndex);
-        setChainStartEntry(bucketIndex, newChainStartEntry);
-        TableIndex newChainStartEntryChainIndex = newChainStartEntryKeyIndex + ChainOffset;
-        setChain(vm, newChainStartEntryChainIndex, prevChainStartEntry);
+        JSValue prevChainStartKeyIndex = getChainStartKeyIndex(bucketIndex);
+        setChainStartKeyIndex(bucketIndex, newChainStartKeyIndex);
+        setChain(vm, newChainStartKeyIndex + ChainOffset, prevChainStartKeyIndex);
     }
 
     ALWAYS_INLINE static TableIndex dataStartIndex(TableIndex dataTableStartIndex, Entry entry)
@@ -315,7 +311,7 @@ public:
         return isValidEntry((index - dataTableStartIndex() - (EntrySize - 1)) / EntrySize);
     }
 
-    /* -------------------------------- Overall table -------------------------------- */
+    /* -------------------------------- Entire table -------------------------------- */
     ALWAYS_INLINE static constexpr TableSize tableSize(TableSize capacity)
     {
         TableSize result = 4 /* AliveEntryCount, DeletedEntryCount, Capacity, and IterationEntry */
@@ -404,38 +400,36 @@ public:
         Accessor* newTable = tryCreate(globalObject, baseTable->aliveEntryCount(), 0, newCapacity);
         RETURN_IF_EXCEPTION(scope, nullptr);
 
-        TableSize newEntry = 0;
-        TableIndex baseDataTableStartIndex = baseTable->dataTableStartIndex();
-        TableIndex baseDeletedEntriesIndex = 0;
-        TableIndex baseDeletedEntriesStartIndex = baseTable->deletedEntriesStartIndex();
-        TableIndex newDataTableStartIndex = newTable->dataTableStartIndex();
+        TableIndex baseEntryKeyIndex = baseTable->dataTableStartIndex() - EntrySize;
+        TableIndex baseDeletedEntriesIndex = baseTable->deletedEntriesStartIndex();
+
+        TableIndex newEntryKeyIndex = newTable->dataTableStartIndex() - EntrySize;
         TableIndex newHashTableStartIndex = newTable->hashTableStartIndex();
         TableIndex newBucketCount = newTable->bucketCount();
+
         for (Entry baseEntry = 0; baseEntry < baseUsedCapacity; ++baseEntry) {
-            TableIndex baseEntryKeyIndex = dataStartIndex(baseDataTableStartIndex, baseEntry);
+            baseEntryKeyIndex += EntrySize;
             JSValue baseKey = baseTable->getData(baseEntryKeyIndex);
             ASSERT(!baseKey.isEmpty());
 
             // Step 1: Copy DataTable only for the alive entries.
             if (isDeleted(vm, baseKey)) {
                 if constexpr (update == UpdateDeletedEntries::Yes)
-                    baseTable->setDeletedEntry(baseDeletedEntriesStartIndex + baseDeletedEntriesIndex++, baseEntry);
+                    baseTable->setDeletedEntry(baseDeletedEntriesIndex++, baseEntry);
                 continue;
             }
 
-            // Step 2: Copy the key and value from the base table to the new table->
-            TableIndex newEntryKeyIndex = dataStartIndex(newDataTableStartIndex, newEntry);
+            // Step 2: Copy the key and value from the base table to the new table.
+            newEntryKeyIndex += EntrySize;
             newTable->setData(vm, newEntryKeyIndex, baseKey);
             Traits::template copyValueDataIfNeeded(vm, baseTable, baseEntryKeyIndex + 1, newTable, newEntryKeyIndex + 1);
 
-            // Step 3: Compute for the hash value and add to the chain in the new table-> Note that the
+            // Step 3: Compute for the hash value and add to the chain in the new table. Note that the
             // key stored in the base table is already normalized.
             TableSize hash = jsMapHash(globalObject, vm, baseKey);
             RETURN_IF_EXCEPTION(scope, nullptr);
             TableIndex newBucketIndex = bucketIndex(newHashTableStartIndex, newBucketCount, hash);
-            newTable->addToChain(vm, newBucketIndex, newEntry, newEntryKeyIndex);
-
-            ++newEntry;
+            newTable->addToChain(vm, newBucketIndex, newEntryKeyIndex);
         }
 
         return newTable;
@@ -491,65 +485,21 @@ public:
         owner->m_storage.set(vm, owner, static_cast<Base*>(newTable));
     }
 
-    ALWAYS_INLINE bool has(JSGlobalObject* globalObject, JSValue key)
-    {
-        VM& vm = getVM(globalObject);
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        ASSERT(!isObsolete());
-
-        if (!aliveEntryCount())
-            return false;
-
-        key = normalizeMapKey(key);
-        TableSize hash = jsMapHash(globalObject, vm, key);
-        RETURN_IF_EXCEPTION(scope, {});
-
-        TableIndex bucketIndex = this->bucketIndex(hash);
-        JSValue entry = getChainStartEntry(bucketIndex);
-        TableIndex dataTableStartIndex = this->dataTableStartIndex();
-        while (!entry.isEmpty()) {
-            TableIndex entryKeyIndex = dataStartIndex(dataTableStartIndex, toNumber(entry));
-            JSValue entryKey = getData(entryKeyIndex);
-            if (!isDeleted(vm, entryKey) && areKeysEqual(globalObject, key, entryKey))
-                return true;
-            entry = getChain(entryKeyIndex + ChainOffset);
-        }
-
-        return false;
-    }
-
-    ALWAYS_INLINE bool has(JSGlobalObject* globalObject, JSValue normalizedKey, uint32_t hash)
-    {
-        ASSERT(!isObsolete() && normalizeMapKey(normalizedKey) == normalizedKey);
-        VM& vm = getVM(globalObject);
-
-        if (!aliveEntryCount())
-            return false;
-
-        TableIndex bucketIndex = this->bucketIndex(hash);
-        JSValue entry = getChainStartEntry(bucketIndex);
-        TableIndex dataTableStartIndex = this->dataTableStartIndex();
-        while (!entry.isEmpty()) {
-            TableIndex entryKeyIndex = dataStartIndex(dataTableStartIndex, toNumber(entry));
-            JSValue entryKey = getData(entryKeyIndex);
-            if (!isDeleted(vm, entryKey) && areKeysEqual(globalObject, normalizedKey, entryKey))
-                return true;
-            entry = getChain(entryKeyIndex + ChainOffset);
-        }
-
-        return false;
-    }
-
-    // Return normalizedKey, bucketIndex, entryKeyIndex
-    ALWAYS_INLINE std::tuple<JSValue, TableIndex, TableIndex> find(JSGlobalObject* globalObject, JSValue key)
+    struct FindResult { // TODO: Should return the slots of the target entry.
+        JSValue normalizedKey;
+        uint32_t hash;
+        TableIndex bucketIndex;
+        TableIndex entryKeyIndex;
+    };
+    ALWAYS_INLINE FindResult find(JSGlobalObject* globalObject, JSValue key)
     {
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
         ASSERT(!isObsolete());
 
         if (!aliveEntryCount()) {
-            dataLogLnIf(Options::dumpOrderedHashTable(), "<Find> No entries in table=", RawPointer(this));
-            return { JSValue(), InvalidTableIndex, InvalidTableIndex };
+            dataLogLnIf(Options::dumpOrderedHashTable(), "<Find> No alive entries in table=", RawPointer(this));
+            return { JSValue(), 0, InvalidTableIndex, InvalidTableIndex };
         }
 
         key = normalizeMapKey(key);
@@ -557,28 +507,26 @@ public:
         RETURN_IF_EXCEPTION(scope, {});
         return find(globalObject, key, hash);
     }
-
-    // Return normalizedKey, bucketIndex, entryKeyIndex
-    ALWAYS_INLINE std::tuple<JSValue, TableIndex, TableIndex> find(JSGlobalObject* globalObject, JSValue normalizedKey, TableSize hash)
+    ALWAYS_INLINE FindResult find(JSGlobalObject* globalObject, JSValue normalizedKey, TableSize hash)
     {
         VM& vm = getVM(globalObject);
         TableIndex bucketIndex = this->bucketIndex(hash);
         ASSERT(!isObsolete() && normalizeMapKey(normalizedKey) == normalizedKey);
 
-        JSValue entry = getChainStartEntry(bucketIndex);
-        TableIndex dataTableStartIndex = this->dataTableStartIndex();
-        while (!entry.isEmpty()) {
-            TableIndex entryKeyIndex = dataStartIndex(dataTableStartIndex, toNumber(entry));
+        JSValue keyIndexValue = getChainStartKeyIndex(bucketIndex);
+        while (!keyIndexValue.isEmpty()) {
+            TableIndex entryKeyIndex = toNumber(keyIndexValue);
             JSValue entryKey = getData(entryKeyIndex);
+            // Fixme: Maybe we can compress the searching path by updating the chain with non-deleted entry.
             if (!isDeleted(vm, entryKey) && areKeysEqual(globalObject, normalizedKey, entryKey)) {
-                dataLogLnIf(Options::dumpOrderedHashTable(), "<Find> Found entry=", entry, " in the chain with bucketIndex=", bucketIndex, "  table=", RawPointer(this));
-                return { normalizedKey, bucketIndex, entryKeyIndex };
+                dataLogLnIf(Options::dumpOrderedHashTable(), "<Find> Found entry in the chain with bucketIndex=", bucketIndex, "  table=", RawPointer(this));
+                return { normalizedKey, hash, bucketIndex, entryKeyIndex };
             }
-            entry = getChain(entryKeyIndex + ChainOffset);
+            keyIndexValue = getChain(entryKeyIndex + ChainOffset);
         }
 
         dataLogLnIf(Options::dumpOrderedHashTable(), "<Find> Not found the entry in the chain with bucketIndex=", bucketIndex, "  table=", RawPointer(this));
-        return { normalizedKey, bucketIndex, InvalidTableIndex };
+        return { normalizedKey, hash, bucketIndex, InvalidTableIndex };
     }
 
     ALWAYS_INLINE Accessor* expandIfNeeded(JSGlobalObject* globalObject, HashTable* owner)
@@ -588,7 +536,7 @@ public:
         if (usedCapacity() < currentCapacity)
             return this;
 
-        TableSize newCapacity = currentCapacity << 1;
+        TableSize newCapacity = currentCapacity << ExpandFactor;
         if (deletedEntryCount() >= (currentCapacity >> 1))
             newCapacity = currentCapacity; // No need to expanded. Just clear the deleted entries.
         return rehash<SetOwnerStorage::No>(globalObject, owner, newCapacity);
@@ -602,41 +550,41 @@ public:
         ASSERT(!isObsolete());
         dataLogLnIf(Options::dumpOrderedHashTable(), "<Add> Before: table=", Dump(this, vm));
 
-        auto [normalizedKey, bucketIndex, entryKeyIndex] = findKeyFunctor();
+        auto result = findKeyFunctor();
         RETURN_IF_EXCEPTION(scope, void());
 
-        if (Accessor::isValidTableIndex(entryKeyIndex)) {
-            Traits::template setValueDataIfNeeded(this, vm, entryKeyIndex + 1, value);
-            dataLogLnIf(Options::dumpOrderedHashTable(), "<Add> Found and set entryKeyIndex=", entryKeyIndex, " bucketIndex=", bucketIndex, " table=", Dump(this, vm));
-        } else {
-            Accessor* table = expandIfNeeded(globalObject, owner);
-            RETURN_IF_EXCEPTION(scope, void());
-
-            Entry newEntry = table->usedCapacity();
-            TableIndex newEntryKeyIndex = dataStartIndex(table->dataTableStartIndex(), newEntry);
-            table->incrementAliveEntryCount();
-
-            bool isFirstAliveEntry = normalizedKey.isEmpty();
-            if (isFirstAliveEntry)
-                normalizedKey = normalizeMapKey(key);
-
-            bool rehashed = this != table;
-            if (rehashed || isFirstAliveEntry) {
-                ASSERT(normalizeMapKey(key) == normalizedKey);
-                TableSize hash = jsMapHash(globalObject, vm, normalizedKey);
-                RETURN_IF_EXCEPTION(scope, void());
-                bucketIndex = table->bucketIndex(hash);
-            }
-
-            ASSERT(table->isValidIndex<IndexType::Bucket>(bucketIndex));
-            table->addToChain(vm, bucketIndex, newEntry, newEntryKeyIndex);
-            table->setData(vm, newEntryKeyIndex, normalizedKey);
-            Traits::template setValueDataIfNeeded(table, vm, newEntryKeyIndex + 1, value);
-            dataLogLnIf(Options::dumpOrderedHashTable(), "<Add> Added newEntry=", newEntry, " entryKeyIndex=", entryKeyIndex, " bucketIndex=", bucketIndex, " table=", Dump(table, vm));
-
-            if (rehashed)
-                setOwnerStorage(vm, owner, table);
+        if (Accessor::isValidTableIndex(result.entryKeyIndex)) {
+            Traits::template setValueDataIfNeeded(this, vm, result.entryKeyIndex + 1, value);
+            dataLogLnIf(Options::dumpOrderedHashTable(), "<Add> Found and set entryKeyIndex=", result.entryKeyIndex, " bucketIndex=", result.bucketIndex, " table=", Dump(this, vm));
+            return;
         }
+
+        Accessor* table = expandIfNeeded(globalObject, owner);
+        RETURN_IF_EXCEPTION(scope, void());
+
+        Entry newEntry = table->usedCapacity();
+        TableIndex newEntryKeyIndex = dataStartIndex(table->dataTableStartIndex(), newEntry);
+        table->incrementAliveEntryCount();
+
+        bool firstAliveEntry = result.normalizedKey.isEmpty();
+        if (UNLIKELY(firstAliveEntry)) {
+            result.normalizedKey = normalizeMapKey(key);
+            result.hash = jsMapHash(globalObject, vm, result.normalizedKey);
+            RETURN_IF_EXCEPTION(scope, void());
+        }
+
+        bool rehashed = this != table;
+        if (UNLIKELY(rehashed || firstAliveEntry))
+            result.bucketIndex = table->bucketIndex(result.hash);
+
+        ASSERT(table->isValidIndex<IndexType::Bucket>(result.bucketIndex) && normalizeMapKey(key) == result.normalizedKey);
+        table->addToChain(vm, result.bucketIndex, newEntryKeyIndex);
+        table->setData(vm, newEntryKeyIndex, result.normalizedKey);
+        Traits::template setValueDataIfNeeded(table, vm, newEntryKeyIndex + 1, value);
+        dataLogLnIf(Options::dumpOrderedHashTable(), "<Add> Added newEntry=", newEntry, " entryKeyIndex=", result.entryKeyIndex, " bucketIndex=", result.bucketIndex, " table=", Dump(table, vm));
+
+        if (UNLIKELY(rehashed))
+            setOwnerStorage(vm, owner, table);
     }
     ALWAYS_INLINE void add(JSGlobalObject* globalObject, HashTable* owner, JSValue key, JSValue value)
     {
@@ -670,20 +618,20 @@ public:
         auto scope = DECLARE_THROW_SCOPE(vm);
         ASSERT(!isObsolete());
 
-        auto [_, bucketIndex, entryKeyIndex] = findKeyFunctor();
+        auto result = findKeyFunctor();
         RETURN_IF_EXCEPTION(scope, false);
 
-        if (!Accessor::isValidTableIndex(entryKeyIndex))
+        if (!Accessor::isValidTableIndex(result.entryKeyIndex))
             return false;
 
-        deleteData(vm, entryKeyIndex);
-        Traits::template deleteValueDataIfNeeded(this, vm, entryKeyIndex + 1);
+        deleteData(vm, result.entryKeyIndex);
+        Traits::template deleteValueDataIfNeeded(this, vm, result.entryKeyIndex + 1);
         incrementDeletedEntryCount();
         decrementAliveEntryCount();
 
         shrinkIfNeed(globalObject, owner);
         RETURN_IF_EXCEPTION(scope, false);
-        dataLogLnIf(Options::dumpOrderedHashTable(), "<Remove> Removed entryKeyIndex=", entryKeyIndex, " bucketIndex=", bucketIndex, " table=", Dump(this, vm));
+        dataLogLnIf(Options::dumpOrderedHashTable(), "<Remove> Removed entryKeyIndex=", result.entryKeyIndex, " bucketIndex=", result.bucketIndex, " table=", Dump(this, vm));
         return true;
     }
     ALWAYS_INLINE bool remove(JSGlobalObject* globalObject, HashTable* owner, JSValue key)

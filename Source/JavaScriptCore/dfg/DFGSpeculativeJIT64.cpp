@@ -2482,20 +2482,20 @@ void SpeculativeJIT::compileGetMapIndexImpl(Node* node)
 
     GPRTemporary butterflyOrStorage(this);
     GPRTemporary bucketIndexOrDeletedValue(this);
-    GPRTemporary bucketCountOrEntryKeyIndex(this);
+    GPRTemporary bucketCount(this);
     GPRTemporary dataTableStartIndex(this);
     GPRTemporary result(this);
 
-    JSValueRegsTemporary entry(this);
+    JSValueRegsTemporary entryKeyIndex(this);
     JSValueRegsTemporary entryKey(this);
 
     GPRReg butterflyOrStorageGPR = butterflyOrStorage.gpr();
-    GPRReg bucketCountOrEntryKeyIndexGPR = bucketCountOrEntryKeyIndex.gpr();
     GPRReg bucketIndexOrDeletedValueGPR = bucketIndexOrDeletedValue.gpr();
-    GPRReg dataTableStartIndexGPR = dataTableStartIndex.gpr();
+    GPRReg bucketCountGPR = bucketCount.gpr();
     GPRReg resultGPR = result.gpr();
 
-    JSValueRegs entryRegs = entry.regs();
+    JSValueRegs entryKeyIndexRegs = entryKeyIndex.regs();
+    GPRReg entryKeyIndexGPR = entryKeyIndexRegs.payloadGPR();
     JSValueRegs entryKeyRegs = entryKey.regs();
     GPRReg entryKeyGPR = entryKeyRegs.payloadGPR();
 
@@ -2514,15 +2514,14 @@ void SpeculativeJIT::compileGetMapIndexImpl(Node* node)
 
     JIT_COMMENT(*this, "Compute the bucketCount = Capacity / LoadFactor and bucketIndex = hashTableStartIndex + (hash & bucketCount - 1).");
     addPtr(TrustedImm32(JSImmutableButterfly::offsetOfData()), butterflyOrStorageGPR);
-    ASSERT(MapOrSet::Accessor::LoadFactor == 1);
-    load32(Address(butterflyOrStorageGPR, MapOrSet::Accessor::capacityIndex() * sizeof(uint64_t)), bucketCountOrEntryKeyIndexGPR);
-    sub32(bucketCountOrEntryKeyIndexGPR, TrustedImm32(1), bucketIndexOrDeletedValueGPR);
+    static_assert(MapOrSet::Accessor::LoadFactor == 1);
+    load32(Address(butterflyOrStorageGPR, MapOrSet::Accessor::capacityIndex() * sizeof(uint64_t)), bucketCountGPR);
+    sub32(bucketCountGPR, TrustedImm32(1), bucketIndexOrDeletedValueGPR);
     and32(hashGPR, bucketIndexOrDeletedValueGPR);
     add32(TrustedImm32(MapOrSet::Accessor::hashTableStartIndex()), bucketIndexOrDeletedValueGPR);
 
-    JIT_COMMENT(*this, "Get the chainStartEntry JSValue and compute the dataTableStartIndex = hashTableStartIndex + bucketCount.");
-    loadValue(BaseIndex(butterflyOrStorageGPR, bucketIndexOrDeletedValueGPR, TimesEight), entryRegs);
-    add32(TrustedImm32(MapOrSet::Accessor::hashTableStartIndex()), bucketCountOrEntryKeyIndexGPR, dataTableStartIndexGPR);
+    JIT_COMMENT(*this, "Get the entryKeyIndex JSValue.");
+    loadValue(BaseIndex(butterflyOrStorageGPR, bucketIndexOrDeletedValueGPR, TimesEight), entryKeyIndexRegs);
     loadLinkableConstant(LinkableConstant(*this, vm().orderedHashTableDeletedValue()), bucketIndexOrDeletedValueGPR);
 
     JIT_COMMENT(*this, "Try to find the matched entryKey in the chain located in the bucketIndex.");
@@ -2531,12 +2530,11 @@ void SpeculativeJIT::compileGetMapIndexImpl(Node* node)
     JumpList presentInTable;
     JumpList slowPathCases;
     JumpList loopAround;
-    notPresentInTable.append(branchIfEmpty(entryRegs));
+    notPresentInTable.append(branchIfEmpty(entryKeyIndexRegs));
 
-    JIT_COMMENT(*this, "Compute the entryKeyIndex = dataTableStartIndex + entry * EntrySize and get the entryKey JSValue.");
-    mul32(TrustedImm32(MapOrSet::Accessor::EntrySize), entryRegs.payloadGPR(), bucketCountOrEntryKeyIndexGPR);
-    add32(dataTableStartIndexGPR, bucketCountOrEntryKeyIndexGPR);
-    loadValue(BaseIndex(butterflyOrStorageGPR, bucketCountOrEntryKeyIndexGPR, TimesEight), entryKeyRegs);
+    JIT_COMMENT(*this, "Get the entryKey JSValue.");
+    zeroExtend32ToWord(entryKeyIndexGPR, entryKeyIndexGPR);
+    loadValue(BaseIndex(butterflyOrStorageGPR, entryKeyIndexGPR, TimesEight), entryKeyRegs);
 
     JIT_COMMENT(*this, "Check wether the current entryKey is a deleted one.");
     loopAround.append(branch64(Equal, entryKeyGPR, bucketIndexOrDeletedValueGPR));
@@ -2630,13 +2628,13 @@ void SpeculativeJIT::compileGetMapIndexImpl(Node* node)
 
     JIT_COMMENT(*this, "The current entryKey doesn't match the target key. Then, get the next entry in the chain and continue.");
     loopAround.link(this);
-    add32(TrustedImm32(MapOrSet::Accessor::ChainOffset), bucketCountOrEntryKeyIndexGPR);
-    loadValue(BaseIndex(butterflyOrStorageGPR, bucketCountOrEntryKeyIndexGPR, TimesEight), entryRegs);
+    add32(TrustedImm32(MapOrSet::Accessor::ChainOffset), entryKeyIndexGPR);
+    loadValue(BaseIndex(butterflyOrStorageGPR, entryKeyIndexGPR, TimesEight), entryKeyIndexRegs);
     jump().linkTo(loop, this);
 
     JIT_COMMENT(*this, "Found a matched entryKey.");
     presentInTable.link(this);
-    move(bucketCountOrEntryKeyIndexGPR, resultGPR);
+    move(entryKeyIndexGPR, resultGPR);
     done.append(jump());
 
     if (!slowPathCases.empty()) {

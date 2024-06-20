@@ -63,7 +63,8 @@ public:
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         if (Accessor* table = static_cast<Accessor*>(m_storage.get())) {
-            TableIndex entryKeyIndex = std::get<2>(findKeyFunctor(table));
+            auto result = findKeyFunctor(table);
+            TableIndex entryKeyIndex = result.entryKeyIndex;
             RETURN_IF_EXCEPTION(scope, {});
 
             if (!Accessor::isValidTableIndex(entryKeyIndex))
@@ -81,21 +82,27 @@ public:
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        if (Accessor* table = static_cast<Accessor*>(m_storage.get()))
-            RELEASE_AND_RETURN(scope, std::get<2>(table->find(globalObject, key, hash)));
+        if (Accessor* table = static_cast<Accessor*>(m_storage.get())) {
+            auto result = table->find(globalObject, key, hash);
+            RELEASE_AND_RETURN(scope, result.entryKeyIndex);
+        }
         return Accessor::InvalidTableIndex;
     }
 
     ALWAYS_INLINE bool has(JSGlobalObject* globalObject, JSValue key)
     {
-        if (Accessor* table = static_cast<Accessor*>(m_storage.get()))
-            return table->has(globalObject, key);
+        if (Accessor* table = static_cast<Accessor*>(m_storage.get())) {
+            auto result = table->find(globalObject, key);
+            return result.entryKeyIndex != Accessor::InvalidTableIndex;
+        }
         return false;
     }
     ALWAYS_INLINE bool has(JSGlobalObject* globalObject, JSValue normalizedKey, uint32_t hash)
     {
-        if (Accessor* table = static_cast<Accessor*>(m_storage.get()))
-            return table->has(globalObject, normalizedKey, hash);
+        if (Accessor* table = static_cast<Accessor*>(m_storage.get())) {
+            auto result = table->find(globalObject, normalizedKey, hash);
+            return result.entryKeyIndex != Accessor::InvalidTableIndex;
+        }
         return false;
     }
 
@@ -104,7 +111,7 @@ public:
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        Accessor* table = materialize(globalObject);
+        Accessor* table = materializeIfNeeded(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
 
         RELEASE_AND_RETURN(scope, table->add(globalObject, this, key, value));
@@ -114,7 +121,7 @@ public:
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        Accessor* table = materialize(globalObject);
+        Accessor* table = materializeIfNeeded(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
 
         RELEASE_AND_RETURN(scope, table->addNormalized(globalObject, this, key, value, hash));
@@ -164,7 +171,7 @@ public:
             table->clear(globalObject, this);
     }
 
-    ALWAYS_INLINE Accessor* materialize(JSGlobalObject* globalObject)
+    ALWAYS_INLINE Accessor* materializeIfNeeded(JSGlobalObject* globalObject)
     {
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);

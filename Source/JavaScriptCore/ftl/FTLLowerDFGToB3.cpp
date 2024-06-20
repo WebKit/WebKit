@@ -13827,25 +13827,24 @@ IGNORE_CLANG_WARNINGS_END
         // Compute the bucketCount = Capacity / LoadFactor and bucketIndex = hashTableStartIndex + (hash & bucketCount - 1).
         LBasicBlock lastNext = m_out.appendTo(indexSetUp, loopStart);
         LValue butterflyStorage = toButterfly(butterfly);
-        ASSERT(MapOrSet::Accessor::LoadFactor == 1);
+        static_assert(MapOrSet::Accessor::LoadFactor == 1);
         LValue bucketCount = m_out.load32(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterflyStorage, m_out.constIntPtr(MapOrSet::Accessor::capacityIndex())));
         LValue bucketIndex = m_out.add(m_out.constInt32(MapOrSet::Accessor::hashTableStartIndex()), m_out.bitAnd(hash, m_out.sub(bucketCount, m_out.int32One)));
 
-        // Get the chainStartEntry JSValue and compute the dataTableStartIndex = hashTableStartIndex + bucketCount.
-        ValueFromBlock entryStart = m_out.anchor(m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterflyStorage, m_out.zeroExt(bucketIndex, Int64))));
-        LValue dataTableStartIndex = m_out.add(m_out.constInt32(MapOrSet::Accessor::hashTableStartIndex()), bucketCount);
-        LValue entrySize = m_out.constInt32(MapOrSet::Accessor::EntrySize);
+        // Get the entryKeyIndex JSValue.
+        ValueFromBlock entryKeyIndexStart = m_out.anchor(m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterflyStorage, m_out.zeroExt(bucketIndex, Int64))));
         m_out.jump(loopStart);
 
         // Try to find the matched entryKey in the chain located in the bucketIndex.
         m_out.appendTo(loopStart, notEmptyEntry);
-        LValue entry = m_out.phi(Int64, entryStart);
-        m_out.branch(m_out.isZero64(entry), unsure(notPresentInTable), unsure(notEmptyEntry));
+        LValue entryKeyIndexValue = m_out.phi(Int64, entryKeyIndexStart);
+        m_out.branch(m_out.isZero64(entryKeyIndexValue), unsure(notPresentInTable), unsure(notEmptyEntry));
 
-        // Compute the entryKeyIndex = dataTableStartIndex + entry * EntrySize and get the entryKey JSValue.
+        // Get the entryKey JSValue.
         m_out.appendTo(notEmptyEntry, notDeletedKey);
-        LValue entryKeyIndex = m_out.add(dataTableStartIndex, m_out.mul(entrySize, m_out.castToInt32(entry)));
+        LValue entryKeyIndex = m_out.castToInt32(entryKeyIndexValue);
         LValue entryKey = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterflyStorage, m_out.zeroExt(entryKeyIndex, Int64)));
+
         // Check wether the current entryKey is a deleted one.
         m_out.branch(m_out.equal(entryKey,  weakPointer(vm().orderedHashTableDeletedValue())), unsure(loopAround), unsure(notDeletedKey));
 
@@ -13950,7 +13949,7 @@ IGNORE_CLANG_WARNINGS_END
         m_out.appendTo(loopAround, presentInTable);
         LValue entryChainIndex = m_out.add(m_out.constInt32(MapOrSet::Accessor::ChainOffset), entryKeyIndex);
         LValue nextEntry = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterflyStorage, m_out.zeroExt(entryChainIndex, Int64)));
-        m_out.addIncomingToPhi(entry, m_out.anchor(nextEntry));
+        m_out.addIncomingToPhi(entryKeyIndexValue, m_out.anchor(nextEntry));
         m_out.jump(loopStart);
 
         // Found a matched entryKey.
