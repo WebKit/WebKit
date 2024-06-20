@@ -6436,8 +6436,6 @@ webkit.org/b/231264 fast/events/ios/rotation/layout-viewport-during-rotation.htm
 
 webkit.org/b/231269 fast/events/ios/rotation/safari-like-rotation.html [ Failure ]
 
-webkit.org/b/231315 fast/events/ios/rotation/safe-area-insets-during-safari-type-rotation.html [ Pass Timeout Failure ]
-
 webkit.org/b/230987 fast/events/ios/viewport-shrink-to-fit-allows-double-tap.html [ Pass Timeout ]
 
 webkit.org/b/232568 fast/events/ios/viewport-device-width-allows-double-tap-zoom-out.html [ Pass Timeout ]
@@ -7262,3 +7260,6 @@ fast/images/text-recognition/ios/select-word-in-image-overlay-inside-link.html [
 webkit.org/b/271916 media/track/track-in-band-layout.html [ Failure ]
 
 webkit.org/b/274766 [ Debug ] http/wpt/webauthn/public-key-credential-get-success-u2f.https.html [ Failure ]
+
+#webkit.org/b/231315 fast/events/ios/rotation/safe-area-insets-during-safari-type-rotation.html [ Pass Timeout Failure ]
+webkit.org/b/275696 fast/events/ios/rotation/safe-area-insets-during-safari-type-rotation.html [ Failure ] # uncomment above after this is resolved
