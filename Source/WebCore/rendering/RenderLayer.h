@@ -1263,6 +1263,8 @@ private:
     bool m_hasNotIsolatedBlendingDescendants : 1;
     bool m_hasNotIsolatedBlendingDescendantsStatusDirty : 1;
     bool m_repaintRectsValid : 1;
+    bool m_haveClientSizeAtLastLayout : 1 { false };
+    bool m_haveContentBoxSizeAtLastLayout : 1 { false };
 
     RenderLayerModelObject& m_renderer;
 
@@ -1295,6 +1297,9 @@ private:
 
     // The layer's width/height
     IntSize m_layerSize;
+
+    LayoutSize m_clientSizeAtLastLayout; // Valid if m_haveClientSizeAtLastLayout is true.
+    IntSize m_contentBoxSizeAtLastLayout; // Valid if m_haveContentBoxSizeAtLastLayout is true.
 
     std::unique_ptr<ClipRectsCache> m_clipRectsCache;
 

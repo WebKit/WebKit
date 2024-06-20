@@ -1,0 +1,82 @@
+ 
+ 
+ 
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 2
+        (GraphicsLayer
+          (position 18.00 10.00)
+          (bounds 110.00 110.00)
+          (drawsContent 1)
+          (children 2
+            (GraphicsLayer
+              (offsetFromRenderer width=5 height=5)
+              (position 5.00 5.00)
+              (bounds 100.00 85.00)
+              (clips 1)
+              (children 1
+                (GraphicsLayer
+                  (offsetFromRenderer width=5 height=5)
+                  (anchor 0.00 0.00)
+                  (bounds 200.00 85.00)
+                  (drawsContent 1)
+                )
+              )
+            )
+            (GraphicsLayer
+              (position 5.00 5.00)
+              (bounds 100.00 100.00)
+              (clips 1)
+              (children 1
+                (GraphicsLayer
+                  (position 0.00 85.00)
+                  (bounds 100.00 15.00)
+                  (drawsContent 1)
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 18.00 370.00)
+          (bounds 11.00 110.00)
+          (drawsContent 1)
+          (children 2
+            (GraphicsLayer
+              (offsetFromRenderer width=5 height=5)
+              (position 5.00 5.00)
+              (bounds 1.00 85.00)
+              (clips 1)
+              (children 1
+                (GraphicsLayer
+                  (offsetFromRenderer width=5 height=5)
+                  (anchor 0.00 0.00)
+                  (bounds 4.00 85.00)
+                  (drawsContent 1)
+                )
+              )
+            )
+            (GraphicsLayer
+              (position 5.00 5.00)
+              (bounds 1.00 100.00)
+              (clips 1)
+              (children 1
+                (GraphicsLayer
+                  (position 0.00 85.00)
+                  (bounds 1.00 15.00)
+                  (drawsContent 1)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

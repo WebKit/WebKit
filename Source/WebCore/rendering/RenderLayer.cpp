@@ -1720,15 +1720,31 @@ bool RenderLayer::updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* flags
     auto layerRect = computeLayerPositionAndIntegralSize(renderer());
     auto localPoint = layerRect.location();
 
-    if (IntSize newSize(layerRect.width().toInt(), layerRect.height().toInt()); newSize != size()) {
+    auto newSize = flooredIntSize(layerRect.size());
+    if (newSize != size()) {
         setSize(newSize);
 
         if (flags && renderer().hasNonVisibleOverflow())
             flags->add(ContainingClippingLayerChangedSize);
+    }
 
-        // Trigger RenderLayerCompositor::requiresCompositingForFrame() which depends on the contentBoxRect size.
-        if (compositor().hasCompositedWidgetContents(renderer()))
+    if (auto* box = renderBox(); box && box->scrollsOverflow()) {
+        auto clientSize = LayoutSize { box->clientWidth(), box->clientHeight() };
+        if (!m_haveClientSizeAtLastLayout || m_clientSizeAtLastLayout != clientSize) {
             setNeedsPostLayoutCompositingUpdate();
+            m_clientSizeAtLastLayout = clientSize;
+            m_haveClientSizeAtLastLayout = true;
+        }
+    }
+
+    if (compositor().hasCompositedWidgetContents(renderer())) {
+        auto snappedContentBoxSize = snappedIntRect(renderBox()->contentBoxRect()).size();
+
+        if (!m_haveContentBoxSizeAtLastLayout || m_contentBoxSizeAtLastLayout != snappedContentBoxSize) {
+            setNeedsPostLayoutCompositingUpdate();
+            m_contentBoxSizeAtLastLayout = snappedContentBoxSize;
+            m_haveContentBoxSizeAtLastLayout = true;
+        }
     }
 
     if (!renderer().isOutOfFlowPositioned()) {
@@ -5528,8 +5544,6 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
 #if PLATFORM(IOS_FAMILY) && ENABLE(TOUCH_EVENTS)
     if (diff == StyleDifference::RecompositeLayer || diff >= StyleDifference::LayoutPositionedMovementOnly)
         renderer().document().invalidateRenderingDependentRegions();
-#else
-    UNUSED_PARAM(diff);
 #endif
 }
 

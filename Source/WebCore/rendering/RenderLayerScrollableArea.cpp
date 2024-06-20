@@ -501,9 +501,28 @@ bool RenderLayerScrollableArea::scrollsOverflow() const
 bool RenderLayerScrollableArea::canUseCompositedScrolling() const
 {
     auto& renderer = m_layer.renderer();
+
     bool isVisible = renderer.style().usedVisibility() == Visibility::Visible;
-    if (renderer.settings().asyncOverflowScrollingEnabled())
-        return isVisible && scrollsOverflow() && !m_layer.isInsideSVGForeignObject();
+    if (renderer.settings().asyncOverflowScrollingEnabled()) {
+        if (!isVisible)
+            return false;
+
+        auto* box = dynamicDowncast<RenderBox>(renderer);
+        if (!box)
+            return false;
+
+        if (!scrollsOverflow())
+            return false;
+
+        // This roundToInt() matches hasHorizontalOverflow()/hasVerticalOverflow(), but RenderLayer::size() is a truncate.
+        if (!roundToInt(box->clientWidth()) || !roundToInt(box->clientHeight()))
+            return false;
+
+        if (m_layer.isInsideSVGForeignObject())
+            return false;
+
+        return true;
+    }
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(OVERFLOW_SCROLLING_TOUCH)
     return isVisible && scrollsOverflow() && renderer.style().useTouchOverflowScrolling();
