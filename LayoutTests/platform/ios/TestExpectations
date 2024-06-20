@@ -3708,11 +3708,6 @@ webkit.org/b/240579 http/tests/workers/service/getnotifications.html [ Skip ]
 webkit.org/b/240579 http/tests/push-api [ Skip ]
 webkit.org/b/240579 http/wpt/push-api [ Skip ]
 
-# These tests finish with unfired UI script callbacks, causing crashes. See webkit.org/b/236794
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-047.html
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-048.html
-imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html
-
 webkit.org/b/240670 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html [ Pass Crash ]
 
 webkit.org/b/227845 [ Debug ] webaudio/audioworket-out-of-memory.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
