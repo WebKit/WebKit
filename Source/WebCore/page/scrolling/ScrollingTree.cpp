@@ -646,6 +646,19 @@ void ScrollingTree::clearLatchedNode()
     m_latchingController.clearLatchedNode();
 }
 
+RefPtr<ScrollingTreeScrollingNode> ScrollingTree::enclosingScrollingNode(const ScrollingTreeNode& node) const
+{
+    RefPtr parentNode = node.parent();
+    while (parentNode) {
+        if (auto scrollingNode = dynamicDowncast<ScrollingTreeScrollingNode>(parentNode))
+            return scrollingNode;
+
+        parentNode = parentNode->parent();
+    }
+
+    return nullptr;
+}
+
 float ScrollingTree::mainFrameTopContentInset() const
 {
     Locker locker { m_treeStateLock };

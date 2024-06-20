@@ -185,6 +185,9 @@ public:
     std::optional<ScrollingNodeID> latchedNodeID() const;
     WEBCORE_EXPORT void clearLatchedNode();
 
+    // Excludes the argument node.
+    RefPtr<ScrollingTreeScrollingNode> enclosingScrollingNode(const ScrollingTreeNode&) const;
+
     bool hasFixedOrSticky() const { return !!m_fixedOrStickyNodeCount; }
     void fixedOrStickyNodeAdded() { ++m_fixedOrStickyNodeCount; }
     void fixedOrStickyNodeRemoved()

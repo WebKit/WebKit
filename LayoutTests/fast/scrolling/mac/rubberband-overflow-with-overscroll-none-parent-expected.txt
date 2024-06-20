@@ -1,0 +1,8 @@
+
+Pulling down in the overflow should rubberband it.
+PASS sawOverflowScrollWithNegativeOffset became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Contents
+

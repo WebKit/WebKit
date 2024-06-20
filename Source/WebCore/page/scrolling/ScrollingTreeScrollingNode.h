@@ -186,8 +186,10 @@ protected:
     PlatformWheelEvent eventForPropagation(const PlatformWheelEvent&) const;
     ScrollPropagationInfo computeScrollPropagation(const FloatSize&) const;
     bool overscrollBehaviorAllowsRubberBand() const { return m_scrollableAreaParameters.horizontalOverscrollBehavior != OverscrollBehavior::None ||  m_scrollableAreaParameters.verticalOverscrollBehavior != OverscrollBehavior::None; }
-    bool shouldRubberBand(const PlatformWheelEvent&, EventTargeting) const;
+    bool mayRubberBand(const PlatformWheelEvent&, EventTargeting) const;
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
+
+    bool canScrollOrRubberbandWithEvent(const PlatformWheelEvent&) const;
 
     std::unique_ptr<ScrollingTreeScrollingNodeDelegate> m_delegate;
 

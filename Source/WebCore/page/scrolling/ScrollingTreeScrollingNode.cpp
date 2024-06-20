@@ -134,14 +134,53 @@ bool ScrollingTreeScrollingNode::isLatchedNode() const
     return scrollingTree().latchedNodeID() == scrollingNodeID();
 }
 
-bool ScrollingTreeScrollingNode::shouldRubberBand(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting) const
+bool ScrollingTreeScrollingNode::canScrollOrRubberbandWithEvent(const PlatformWheelEvent& wheelEvent) const
 {
-    // We always rubber-band the latched node, or the root node.
-    // The stateless wheel event doesn't trigger rubber-band.
-    // Also rubberband when we should block scroll propagation
-    // at this node, which has overscroll behavior that is not none.
+    if (eventCanScrollContents(wheelEvent))
+        return true;
+
+    if (wheelEvent.delta().width() && allowsHorizontalScrolling() && horizontalScrollElasticity() != ScrollElasticity::None)
+        return true;
+
+    if (wheelEvent.delta().height() && allowsVerticalScrolling() && verticalScrollElasticity() != ScrollElasticity::None)
+        return true;
+
+    return false;
+}
+
+bool ScrollingTreeScrollingNode::mayRubberBand(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting) const
+{
+    if (wheelEvent.isNonGestureEvent())
+        return false;
+
+    if (isLatchedNode())
+        return true;
+
+    if (eventTargeting == EventTargeting::NodeOnly)
+        return true;
+
+    auto isRootOrChildOfNonOverscrollingNode = [&]() {
+        if (isRootNode())
+            return true;
+
+        RefPtr enclosingScrollingNode = scrollingTree().enclosingScrollingNode(*this);
+        if (!enclosingScrollingNode)
+            return true;
+
+        if (wheelEvent.shouldConsultDelta() && !enclosingScrollingNode->canScrollOrRubberbandWithEvent(wheelEvent))
+            return true;
+
+        return false;
+    };
+
+    if (isRootOrChildOfNonOverscrollingNode())
+        return true;
+
     auto scrollPropagationInfo = computeScrollPropagation(wheelEvent.delta());
-    return (isLatchedNode() || eventTargeting == EventTargeting::NodeOnly || (isRootNode() && !wheelEvent.isNonGestureEvent()) || ( scrollPropagationInfo.shouldBlockScrollPropagation && scrollPropagationInfo.isHandled && overscrollBehaviorAllowsRubberBand()));
+    if (scrollPropagationInfo.shouldBlockScrollPropagation && scrollPropagationInfo.isHandled && overscrollBehaviorAllowsRubberBand())
+        return true;
+
+    return false;
 }
 
 bool ScrollingTreeScrollingNode::canHandleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting) const
@@ -153,7 +192,7 @@ bool ScrollingTreeScrollingNode::canHandleWheelEvent(const PlatformWheelEvent& w
     if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin)
         return true;
 
-    if (shouldRubberBand(wheelEvent, eventTargeting))
+    if (mayRubberBand(wheelEvent, eventTargeting))
         return true;
 
     return eventCanScrollContents(wheelEvent);
