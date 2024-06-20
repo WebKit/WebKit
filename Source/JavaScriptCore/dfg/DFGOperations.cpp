@@ -4182,7 +4182,7 @@ JSC_DEFINE_JIT_OPERATION(operationMapValueWithKeyIndex, EncodedJSValue, (JSGloba
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue value = jsCast<JSMap*>(map)->getValueWithKeyIndex(keyIndex);
+    JSValue value = jsCast<JSMap*>(map)->get(keyIndex);
     OPERATION_RETURN(scope, JSValue::encode(value));
 }
 

@@ -26,11 +26,25 @@
 #pragma once
 
 #include "ExceptionExpectation.h"
-#include "HashMapImpl.h"
+#include "ExceptionHelpers.h"
+#include "JSCJSValue.h"
+#include "JSObject.h"
 #include "JSCJSValueInlines.h"
 #include "VMTrapsInlines.h"
 
 namespace JSC {
+
+ALWAYS_INLINE bool areKeysEqual(JSGlobalObject*, JSValue, JSValue);
+
+// Note that normalization is inlined in DFG's NormalizeMapKey.
+// Keep in sync with the implementation of DFG and FTL normalization.
+ALWAYS_INLINE JSValue normalizeMapKey(JSValue key);
+ALWAYS_INLINE uint32_t wangsInt64Hash(uint64_t key);
+ALWAYS_INLINE uint32_t jsMapHash(JSBigInt*);
+ALWAYS_INLINE uint32_t jsMapHash(JSGlobalObject*, VM&, JSValue);
+ALWAYS_INLINE uint32_t shouldShrink(uint32_t capacity, uint32_t keyCount);
+ALWAYS_INLINE uint32_t shouldRehash(uint32_t capacity, uint32_t keyCount, uint32_t deleteCount);
+ALWAYS_INLINE uint32_t nextCapacity(uint32_t capacity, uint32_t keyCount);
 
 ALWAYS_INLINE bool areKeysEqual(JSGlobalObject* globalObject, JSValue a, JSValue b)
 {

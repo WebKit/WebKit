@@ -1026,8 +1026,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/GetVM.h
     runtime/GlobalExecutable.h
     runtime/GlobalObjectMethodTable.h
-    runtime/HashMapImpl.h
-    runtime/HashMapImplInlines.h
+    runtime/HashMapHelper.h
     runtime/Identifier.h
     runtime/IdentifierInlines.h
     runtime/ImplementationVisibility.h

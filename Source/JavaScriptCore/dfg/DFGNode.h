@@ -3402,7 +3402,7 @@ public:
         return m_opInfo.as<unsigned>();
     }
 
-    bool hasBucketOwnerType() // TODO: fixme
+    bool hasBucketOwnerType()
     {
         return op() == MapIterationNext || op() == MapIterationEntry || op() == MapIterationEntryKey || op() == MapIterationEntryValue || op() == MapStorage;
     }

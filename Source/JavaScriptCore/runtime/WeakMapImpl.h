@@ -27,11 +27,16 @@
 #pragma once
 
 #include "ExceptionHelpers.h"
-#include "HashMapImpl.h"
+#include "HashMapHelper.h"
 #include "JSObject.h"
 #include <wtf/MallocPtr.h>
 
 namespace JSC {
+
+enum class HashTableType {
+    Key,
+    KeyValue
+};
 
 struct WeakMapBucketDataKey {
     static const HashTableType Type = HashTableType::Key;

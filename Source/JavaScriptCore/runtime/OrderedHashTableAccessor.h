@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "HashMapImplInlines.h"
+#include "HashMapHelper.h"
 #include "JSImmutableButterfly.h"
 #include "JSObject.h"
 
@@ -155,7 +155,6 @@ public:
 
     ALWAYS_INLINE static bool isDeleted(VM& vm, JSValue value) { return value.isCell() && value.asCell() == vm.orderedHashTableDeletedValue(); }
     ALWAYS_INLINE bool isValidEntry(Entry entry) const { return entry < usedCapacity(); }
-    ALWAYS_INLINE bool isValidEntry(JSValue entry) const { return !entry.isEmpty() && entry.isNumber() && toNumber(entry) < usedCapacity(); }
     ALWAYS_INLINE static bool isValidValueData(VM& vm, JSValue value) { return !value.isEmpty() && !isDeleted(vm, value); }
     ALWAYS_INLINE static bool isValidTableIndex(TableIndex index) { return index != InvalidTableIndex; }
     ALWAYS_INLINE static JSValue invalidTableIndex() { return toJSValue(InvalidTableIndex); }

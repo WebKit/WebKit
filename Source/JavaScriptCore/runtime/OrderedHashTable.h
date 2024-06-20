@@ -56,27 +56,6 @@ public:
         RELEASE_AND_RETURN(scope, clone(globalObject, base));
     }
 
-    template<typename FindKeyFunctor>
-    ALWAYS_INLINE JSValue getValue(JSGlobalObject* globalObject, const FindKeyFunctor& findKeyFunctor)
-    {
-        VM& vm = getVM(globalObject);
-        auto scope = DECLARE_THROW_SCOPE(vm);
-
-        if (Accessor* table = static_cast<Accessor*>(m_storage.get())) {
-            auto result = findKeyFunctor(table);
-            TableIndex entryKeyIndex = result.entryKeyIndex;
-            RETURN_IF_EXCEPTION(scope, {});
-
-            if (!Accessor::isValidTableIndex(entryKeyIndex))
-                return {};
-
-            JSValue value = Traits::template getValueData(table, entryKeyIndex);
-            ASSERT(table->isValidValueData(vm, value));
-            return value;
-        }
-        return {};
-    }
-
     ALWAYS_INLINE TableIndex getKeyIndex(JSGlobalObject* globalObject, JSValue key, uint32_t hash)
     {
         VM& vm = getVM(globalObject);
@@ -205,29 +184,47 @@ public:
     {
     }
 
+    template<typename FindKeyFunctor>
+    ALWAYS_INLINE JSValue getImpl(JSGlobalObject* globalObject, const FindKeyFunctor& findKeyFunctor)
+    {
+        VM& vm = getVM(globalObject);
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        if (Accessor* table = static_cast<Accessor*>(m_storage.get())) {
+            auto result = findKeyFunctor(table);
+            TableIndex entryKeyIndex = result.entryKeyIndex;
+            RETURN_IF_EXCEPTION(scope, {});
+
+            if (!Accessor::isValidTableIndex(entryKeyIndex))
+                return {};
+
+            JSValue value = MapTraits::template getValueData(table, entryKeyIndex);
+            ASSERT(table->isValidValueData(vm, value));
+            return value;
+        }
+        return {};
+    }
     JSValue get(JSGlobalObject* globalObject, JSValue key)
     {
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        JSValue result = getValue(globalObject, [&](Accessor* table) ALWAYS_INLINE_LAMBDA {
+        JSValue result = getImpl(globalObject, [&](Accessor* table) ALWAYS_INLINE_LAMBDA {
             return table->find(globalObject, key);
         });
         RETURN_IF_EXCEPTION(scope, {});
         return result.isEmpty() ? jsUndefined() : result;
     }
-
     JSValue get(JSGlobalObject* globalObject, JSValue key, uint32_t hash)
     {
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        JSValue result = getValue(globalObject, [&](Accessor* table) ALWAYS_INLINE_LAMBDA {
+        JSValue result = getImpl(globalObject, [&](Accessor* table) ALWAYS_INLINE_LAMBDA {
             return table->find(globalObject, key, hash);
         });
         RETURN_IF_EXCEPTION(scope, {});
         return result.isEmpty() ? jsUndefined() : result;
     }
-
-    JSValue getValueWithKeyIndex(TableIndex keyIndex)
+    JSValue get(TableIndex keyIndex)
     {
         ASSERT(m_storage);
         Accessor* table = static_cast<Accessor*>(m_storage.get());
