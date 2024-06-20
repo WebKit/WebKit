@@ -7766,20 +7766,6 @@ WebRTCH264LowLatencyEncoderEnabled:
       default: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
-WebRTCH264SimulcastEnabled:
-  type: bool
-  status: internal
-  category: media
-  humanReadableName: "WebRTC H264 Simulcast"
-  humanReadableDescription: "Enable WebRTC H264 Simulcast"
-  webcoreBinding: DeprecatedGlobalSettings
-  condition: ENABLE(WEB_RTC)
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-
 WebRTCH265CodecEnabled:
   type: bool
   status: stable

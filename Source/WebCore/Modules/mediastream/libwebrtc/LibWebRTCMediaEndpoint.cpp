@@ -80,9 +80,6 @@ LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& p
 {
     ASSERT(isMainThread());
     ASSERT(client.factory());
-
-    if (DeprecatedGlobalSettings::webRTCH264SimulcastEnabled())
-        webrtc::field_trial::InitFieldTrialsFromString("WebRTC-H264Simulcast/Enabled/");
 }
 
 void LibWebRTCMediaEndpoint::restartIce()
