@@ -153,7 +153,8 @@ function initialRadialGradientCanvasImageDataAsObject(length) {
 async function fullCanvasHash(data) {
     if (!data)
         data = fullTextCanvasImageData();
-    return await digestMessage(data.data);
+    //return await digestMessage(data.data);
+    return `${data.data.join(",")}`;
 }
 </script>
 </body>
