@@ -354,7 +354,7 @@ RefPtr<FilterImage> CSSFilter::apply(FilterImage* sourceImage, FilterResults& re
     return result;
 }
 
-FilterStyleVector CSSFilter::createFilterStyles(const FilterStyle& sourceStyle) const
+FilterStyleVector CSSFilter::createFilterStyles(GraphicsContext& context, const FilterStyle& sourceStyle) const
 {
     ASSERT(supportedFilterRenderingModes().contains(FilterRenderingMode::GraphicsContext));
 
@@ -365,7 +365,7 @@ FilterStyleVector CSSFilter::createFilterStyles(const FilterStyle& sourceStyle) 
         if (function->filterType() == FilterEffect::Type::SourceGraphic)
             continue;
 
-        auto result = function->createFilterStyles(*this, lastStyle);
+        auto result = function->createFilterStyles(context, *this, lastStyle);
         if (result.isEmpty())
             return { };
 

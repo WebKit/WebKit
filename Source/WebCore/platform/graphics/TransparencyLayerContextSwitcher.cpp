@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-TransparencyLayerContextSwitcher::TransparencyLayerContextSwitcher(const FloatRect& sourceImageRect, RefPtr<Filter>&& filter)
+TransparencyLayerContextSwitcher::TransparencyLayerContextSwitcher(GraphicsContext& destinationContext, const FloatRect& sourceImageRect, RefPtr<Filter>&& filter)
     : GraphicsContextSwitcher(WTFMove(filter))
 {
     if (m_filter)
-        m_filterStyles = m_filter->createFilterStyles(sourceImageRect);
+        m_filterStyles = m_filter->createFilterStyles(destinationContext, sourceImageRect);
 }
 
 void TransparencyLayerContextSwitcher::beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect&, const FloatRect& clipRect)

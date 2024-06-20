@@ -326,12 +326,12 @@ RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage, FilterResults& re
     return stack.takeLast();
 }
 
-FilterStyleVector SVGFilter::createFilterStyles(const Filter&, const FilterStyle& sourceStyle) const
+FilterStyleVector SVGFilter::createFilterStyles(GraphicsContext& context, const Filter&, const FilterStyle& sourceStyle) const
 {
-    return createFilterStyles(sourceStyle);
+    return createFilterStyles(context, sourceStyle);
 }
 
-FilterStyleVector SVGFilter::createFilterStyles(const FilterStyle& sourceStyle) const
+FilterStyleVector SVGFilter::createFilterStyles(GraphicsContext& context, const FilterStyle& sourceStyle) const
 {
     ASSERT(!m_expression.isEmpty());
     ASSERT(supportedFilterRenderingModes().contains(FilterRenderingMode::GraphicsContext));
@@ -347,7 +347,7 @@ FilterStyleVector SVGFilter::createFilterStyles(const FilterStyle& sourceStyle) 
             continue;
         
         ASSERT(effect->numberOfImageInputs() == 1);
-        auto style = effect->createFilterStyle(*this, lastStyle, geometry);
+        auto style = effect->createFilterStyle(context, *this, lastStyle, geometry);
 
         lastStyle = style;
         styles.append(style);

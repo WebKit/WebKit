@@ -39,10 +39,6 @@ RefPtr<CanvasLayerContextSwitcher> CanvasLayerContextSwitcher::create(CanvasRend
     if (!effectiveDrawingContext)
         return nullptr;
 
-    // FIXME: Disable GraphicsContext filters for now. The CG coordinates need to be flipped before applying the style.
-    if (filter)
-        filter->setFilterRenderingModes(filter->filterRenderingModes() - FilterRenderingMode::GraphicsContext);
-
     auto targetSwitcher = GraphicsContextSwitcher::create(*effectiveDrawingContext, bounds, context.colorSpace(), WTFMove(filter));
     if (!targetSwitcher)
         return nullptr;

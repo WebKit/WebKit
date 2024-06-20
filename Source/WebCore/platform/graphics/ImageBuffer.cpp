@@ -351,7 +351,7 @@ RefPtr<NativeImage> ImageBuffer::filteredNativeImage(Filter& filter, Function<vo
     std::unique_ptr<GraphicsContextSwitcher> targetSwitcher;
 
     if (filter.filterRenderingModes().contains(FilterRenderingMode::GraphicsContext)) {
-        targetSwitcher = makeUnique<TransparencyLayerContextSwitcher>(FloatRect { { }, logicalSize() }, &filter);
+        targetSwitcher = makeUnique<TransparencyLayerContextSwitcher>(context(), FloatRect { { }, logicalSize() }, &filter);
         if (!targetSwitcher)
             return nullptr;
         targetSwitcher->beginDrawSourceImage(context());

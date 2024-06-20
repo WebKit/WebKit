@@ -33,7 +33,7 @@ namespace WebCore {
 class TransparencyLayerContextSwitcher : public GraphicsContextSwitcher {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TransparencyLayerContextSwitcher(const FloatRect &sourceImageRect, RefPtr<Filter>&&);
+    TransparencyLayerContextSwitcher(GraphicsContext& destinationContext, const FloatRect &sourceImageRect, RefPtr<Filter>&&);
 
 private:
     void beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect, const FloatRect& clipRect) override;

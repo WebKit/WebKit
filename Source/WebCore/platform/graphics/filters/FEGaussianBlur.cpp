@@ -185,7 +185,7 @@ std::unique_ptr<FilterEffectApplier> FEGaussianBlur::createSoftwareApplier() con
     return FilterEffectApplier::create<FEGaussianBlurSoftwareApplier>(*this);
 }
 
-std::optional<GraphicsStyle> FEGaussianBlur::createGraphicsStyle(const Filter& filter) const
+std::optional<GraphicsStyle> FEGaussianBlur::createGraphicsStyle(GraphicsContext&, const Filter& filter) const
 {
     auto radius = calculateUnscaledKernelSize(filter.resolvedSize({ m_stdX, m_stdY }));
     return GraphicsGaussianBlur { radius };

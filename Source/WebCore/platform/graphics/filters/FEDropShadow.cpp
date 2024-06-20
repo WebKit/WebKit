@@ -25,6 +25,7 @@
 #include "FEDropShadowSoftwareApplier.h"
 #include "FEGaussianBlur.h"
 #include "Filter.h"
+#include "GraphicsContext.h"
 #include <wtf/text/TextStream.h>
 
 #if USE(SKIA)
@@ -149,11 +150,11 @@ OptionSet<FilterRenderingMode> FEDropShadow::supportedFilterRenderingModes() con
     return modes;
 }
 
-std::optional<GraphicsStyle> FEDropShadow::createGraphicsStyle(const Filter& filter) const
+std::optional<GraphicsStyle> FEDropShadow::createGraphicsStyle(GraphicsContext& context, const Filter& filter) const
 {
     ASSERT(m_stdX == m_stdY);
 
-    auto offset = filter.resolvedSize({ m_dx, m_dy });
+    auto offset = filter.resolvedSize(context.platformShadowOffset({ m_dx, m_dy }));
     auto radius = FEGaussianBlur::calculateUnscaledKernelSize(filter.resolvedSize({ m_stdX, m_stdY }));
 
     return GraphicsDropShadow { offset, static_cast<float>(radius.width()), m_shadowColor, ShadowRadiusMode::Default, m_shadowOpacity };
