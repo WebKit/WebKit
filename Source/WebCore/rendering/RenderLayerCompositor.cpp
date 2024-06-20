@@ -1269,7 +1269,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
             // If we have to make a layer for this child, make one now so we can have a contents layer
             // (since we need to ensure that the -ve z-order child renders underneath our contents).
-            if (!willBeComposited && currentState.subtreeIsCompositing) {
+            if (!willBeComposited && currentState.subtreeIsCompositing && canBeComposited(layer)) {
                 layer.setIndirectCompositingReason(IndirectCompositingReason::BackgroundLayer);
                 layerWillComposite();
                 overlapMap.confirmSpeculativeCompositingContainer();
@@ -1279,7 +1279,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         if (didSpeculativelyPushOverlapContainer) {
             if (overlapMap.maybePopSpeculativeCompositingContainer())
                 didPushOverlapContainer = false;
-            else if (!willBeComposited) {
+            else if (!willBeComposited && canBeComposited(layer)) {
                 layer.setIndirectCompositingReason(IndirectCompositingReason::BackgroundLayer);
                 layerWillComposite();
             }
