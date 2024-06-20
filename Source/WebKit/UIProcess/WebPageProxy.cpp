@@ -11228,7 +11228,9 @@ bool WebPageProxy::willHandleHorizontalScrollEvents() const
 
 void WebPageProxy::updateWebsitePolicies(WebsitePoliciesData&& websitePolicies)
 {
-    send(Messages::WebPage::UpdateWebsitePolicies(websitePolicies));
+    forEachWebContentProcess([&] (auto& process, auto pageID) {
+        process.send(Messages::WebPage::UpdateWebsitePolicies(websitePolicies), pageID);
+    });
 }
 
 void WebPageProxy::notifyUserScripts()

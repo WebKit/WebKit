@@ -2984,4 +2984,21 @@ TEST(SiteIsolation, AdvancedPrivacyProtectionsHideScreenMetricsFromBindings)
     EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"screen.availTop" inFrame:[childFrame info]] intValue]);
 }
 
+TEST(SiteIsolation, UpdateWebpagePreferences)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://b.com/frame'></iframe>"_s } },
+        { "/frame"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto preferences = adoptNS([WKWebpagePreferences new]);
+    [preferences _setCustomUserAgent:@"Custom UserAgent"];
+    [webView _updateWebpagePreferences:preferences.get()];
+    while (![[webView objectByEvaluatingJavaScript:@"navigator.userAgent" inFrame:[[webView firstChildFrame] info]] isEqualToString:@"Custom UserAgent"])
+        Util::spinRunLoop();
+}
+
 }
