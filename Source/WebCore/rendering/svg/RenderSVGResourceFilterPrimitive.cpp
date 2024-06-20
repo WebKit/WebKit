@@ -28,6 +28,7 @@
 
 #include "RenderSVGResourceFilter.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
