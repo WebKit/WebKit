@@ -35,7 +35,7 @@ public:
     static void resolveCycles(RenderElement&, SVGResources&);
 
 private:
-    SVGResourcesCycleSolver() { }
+    SVGResourcesCycleSolver() = default;
 
     static bool resourceContainsCycles(LegacyRenderSVGResourceContainer&, SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer>& activeResources, SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer>& acyclicResources);
     static void breakCycle(LegacyRenderSVGResourceContainer&, SVGResources&);

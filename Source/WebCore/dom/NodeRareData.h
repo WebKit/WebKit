@@ -218,7 +218,7 @@ public:
     Vector<std::unique_ptr<MutationObserverRegistration>> registry;
     WeakHashSet<MutationObserverRegistration> transientRegistry;
 
-    NodeMutationObserverData() { }
+    NodeMutationObserverData() = default;
 };
 
 DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(NodeRareData);

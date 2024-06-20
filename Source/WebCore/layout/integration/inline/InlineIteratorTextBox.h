@@ -60,7 +60,7 @@ public:
 
 class TextBoxIterator : public LeafBoxIterator {
 public:
-    TextBoxIterator() { }
+    TextBoxIterator() = default;
     TextBoxIterator(Box::PathVariant&&);
     TextBoxIterator(const Box&);
 
