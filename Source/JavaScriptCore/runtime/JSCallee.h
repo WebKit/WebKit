@@ -78,6 +78,7 @@ public:
     void setScope(VM& vm, JSScope* scope)
     {
         m_scope.set(vm, this, scope);
+        RELEASE_ASSERT(scope->globalObject() == globalObject()); // FIXME make ASSERT
     }
 
     DECLARE_EXPORT_INFO;

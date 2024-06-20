@@ -198,6 +198,7 @@ private:
     static JSFunction* createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
     {
         JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm)) JSFunction(vm, executable, scope, structure);
+        RELEASE_ASSERT(scope->globalObject() == function->globalObject()); // FIXME make ASSERT
         ASSERT(function->structure()->globalObject());
         function->finishCreation(vm);
         return function;

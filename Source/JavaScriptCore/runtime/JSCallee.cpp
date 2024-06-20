@@ -36,6 +36,7 @@ JSCallee::JSCallee(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     : Base(vm, structure)
     , m_scope(globalObject, WriteBarrierEarlyInit)
 {
+    RELEASE_ASSERT(m_scope->globalObject() == globalObject); // FIXME make ASSERT
 }
 
 JSCallee::JSCallee(VM& vm, JSScope* scope, Structure* structure)
