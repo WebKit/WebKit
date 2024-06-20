@@ -142,7 +142,7 @@ void DrawGlyphsRecorder::recordInitialColors()
     m_initialStrokeColor = CGContextGetStrokeColorAsColor(cgContext);
 }
 
-void DrawGlyphsRecorder::prepareInternalContext(const Font& font, FontSmoothingMode smoothingMode)
+void DrawGlyphsRecorder::prepareInternalContext(const Font& font, FontSmoothingMode smoothingMode, const FloatPoint& startPoint)
 {
     ASSERT(CGAffineTransformIsIdentity(CTFontGetMatrix(font.platformData().ctFont())));
 
@@ -152,6 +152,8 @@ void DrawGlyphsRecorder::prepareInternalContext(const Font& font, FontSmoothingM
     m_originalTextMatrix = computeOverallTextMatrix(font);
     if (font.platformData().orientation() == FontOrientation::Vertical)
         m_originalTextMatrix = computeVerticalTextMatrix(font, m_originalTextMatrix);
+
+    m_originalStartPoint = startPoint;
 
     auto& contextState = m_owner.state();
     populateInternalState(contextState);
@@ -165,6 +167,7 @@ void DrawGlyphsRecorder::concludeInternalContext()
     updateFillBrush(m_originalState.fillBrush);
     updateStrokeBrush(m_originalState.strokeBrush);
     updateShadow(m_originalState.dropShadow, m_originalState.ignoreTransforms ? ShadowsIgnoreTransforms::Yes : ShadowsIgnoreTransforms::No);
+    m_startPointOffset = { };
 }
 
 void DrawGlyphsRecorder::updateFillColor(CGColorRef fillColor)
@@ -362,6 +365,11 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
     } else
         advances = computeHorizontalAdvancesFromPositions(positions, count, textMatrix);
 
+    if (!m_startPointOffset)
+        m_startPointOffset = m_originalStartPoint - FloatPoint(advances.initialPosition);
+    advances.initialPosition.x += m_startPointOffset->width();
+    advances.initialPosition.y += m_startPointOffset->height();
+
     m_owner.drawGlyphsAndCacheResources(font, glyphs, advances.advances.data(), count, advances.initialPosition, m_smoothingMode);
 
     m_owner.concatCTM(inverseCTMFixup);
@@ -452,7 +460,7 @@ void DrawGlyphsRecorder::drawOTSVGRun(const Font& font, const GlyphBufferGlyph* 
 
 void DrawGlyphsRecorder::drawNonOTSVGRun(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
-    prepareInternalContext(font, smoothingMode);
+    prepareInternalContext(font, smoothingMode, startPoint);
     FontCascade::drawGlyphs(m_internalContext, font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
     concludeInternalContext();
 }
@@ -509,7 +517,7 @@ void DrawGlyphsRecorder::drawNativeText(CTFontRef font, CGFloat fontSize, CTLine
     m_owner.translate(lineRect.origin.x, lineRect.origin.y + lineRect.size.height);
     m_owner.scale(FloatSize(1, -1));
 
-    prepareInternalContext(Font::create(FontPlatformData(font, fontSize)), FontSmoothingMode::SubpixelAntialiased);
+    prepareInternalContext(Font::create(FontPlatformData(font, fontSize)), FontSmoothingMode::SubpixelAntialiased, { });
     CGContextSetTextPosition(m_internalContext->platformContext(), 0, 0);
     CTLineDraw(line, m_internalContext->platformContext());
     concludeInternalContext();
