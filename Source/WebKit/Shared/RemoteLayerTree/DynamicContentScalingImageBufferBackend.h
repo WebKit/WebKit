@@ -28,6 +28,7 @@
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 
 #include "ImageBufferBackendHandleSharing.h"
+#include <WebCore/GraphicsContextCG.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageBufferCGBackend.h>
 #include <wtf/IsoMalloc.h>
