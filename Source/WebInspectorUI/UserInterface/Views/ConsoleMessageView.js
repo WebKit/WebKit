@@ -28,7 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
+WI.ConsoleMessageView = class ConsoleMessageView extends WI.ConsoleEntryView
 {
     constructor(message)
     {
@@ -67,28 +67,30 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         } else if (this._message.type === WI.ConsoleMessage.MessageType.StartGroup || this._message.type === WI.ConsoleMessage.MessageType.StartGroupCollapsed)
             this._element.classList.add("console-group-title");
 
-        switch (this._message.level) {
-        case WI.ConsoleMessage.MessageLevel.Log:
-            this._element.classList.add("console-log-level");
-            this._element.setAttribute("data-labelprefix", WI.UIString("Log: "));
-            break;
-        case WI.ConsoleMessage.MessageLevel.Info:
-            this._element.classList.add("console-info-level");
-            this._element.setAttribute("data-labelprefix", WI.UIString("Info: "));
-            break;
-        case WI.ConsoleMessage.MessageLevel.Debug:
-            this._element.classList.add("console-debug-level");
-            this._element.setAttribute("data-labelprefix", WI.UIString("Debug: "));
-            break;
-        case WI.ConsoleMessage.MessageLevel.Warning:
-            this._element.classList.add("console-warning-level");
-            this._element.setAttribute("data-labelprefix", WI.UIString("Warning: "));
-            break;
-        case WI.ConsoleMessage.MessageLevel.Error:
-            this._element.classList.add("console-error-level");
-            this._element.setAttribute("data-labelprefix", WI.UIString("Error: "));
-            break;
-        }
+        this.setMessageLevel(this._message.level);
+
+        // switch (this._message.level) {
+        // case WI.ConsoleMessage.MessageLevel.Log:
+        //     this._element.classList.add("console-log-level");
+        //     this._element.setAttribute("data-labelprefix", WI.UIString("Log: "));
+        //     break;
+        // case WI.ConsoleMessage.MessageLevel.Info:
+        //     this._element.classList.add("console-info-level");
+        //     this._element.setAttribute("data-labelprefix", WI.UIString("Info: "));
+        //     break;
+        // case WI.ConsoleMessage.MessageLevel.Debug:
+        //     this._element.classList.add("console-debug-level");
+        //     this._element.setAttribute("data-labelprefix", WI.UIString("Debug: "));
+        //     break;
+        // case WI.ConsoleMessage.MessageLevel.Warning:
+        //     this._element.classList.add("console-warning-level");
+        //     this._element.setAttribute("data-labelprefix", WI.UIString("Warning: "));
+        //     break;
+        // case WI.ConsoleMessage.MessageLevel.Error:
+        //     this._element.classList.add("console-error-level");
+        //     this._element.setAttribute("data-labelprefix", WI.UIString("Error: "));
+        //     break;
+        // }
 
         // FIXME: The location link should include stack trace information.
         this._appendLocationLink();
