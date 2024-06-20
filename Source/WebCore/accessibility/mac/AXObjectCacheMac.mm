@@ -595,28 +595,29 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
     }
 }
 
-static void addTextMarkerFor(NSMutableDictionary *change, AXCoreObject& object, const VisiblePosition& position)
+static void addTextMarkerForVisiblePosition(NSMutableDictionary *change, AXObjectCache& cache, const VisiblePosition& position)
 {
-    if (position.isNull())
-        return;
+    ASSERT(!position.isNull());
 
-    if (RetainPtr marker = textMarkerForVisiblePosition(object.axObjectCache(), position))
+    if (RetainPtr marker = textMarkerForVisiblePosition(&cache, position))
         [change setObject:(__bridge id)marker.get() forKey:NSAccessibilityTextChangeValueStartMarker];
 }
 
-static void addTextMarkerFor(NSMutableDictionary* change, AXCoreObject& object, HTMLTextFormControlElement& textControl)
+static void addFirstTextMarker(NSMutableDictionary *change, AXObjectCache& cache, AccessibilityObject& object)
 {
-    if (auto textMarker = [object.wrapper() textMarkerForFirstPositionInTextControl:textControl])
-        [change setObject:bridge_id_cast(textMarker.get()) forKey:NSAccessibilityTextChangeValueStartMarker];
+    TextMarkerData textMarkerData { cache.treeID(), object.objectID(), nullptr, 0 };
+    auto rawTextMarkerData = textMarkerData.toRawTextMarkerData();
+    auto textMarkerDataRef = adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&rawTextMarkerData, sizeof(rawTextMarkerData)));
+    [change setObject:bridge_id_cast(textMarkerDataRef.get()) forKey:NSAccessibilityTextChangeValueStartMarker];
 }
 
-template <typename TextMarkerTargetType>
-static NSDictionary *textReplacementChangeDictionary(AXCoreObject& object, AXTextEditType type, const String& string, TextMarkerTargetType& markerTarget)
+static NSDictionary *textReplacementChangeDictionary(AXObjectCache& cache, AccessibilityObject& object, AXTextEditType type, const String& string, const VisiblePosition& visiblePosition = { })
 {
     NSString *text = (NSString *)string;
     NSUInteger length = [text length];
     if (!length)
         return nil;
+
     auto change = adoptNS([[NSMutableDictionary alloc] initWithCapacity:4]);
     [change setObject:@(platformEditTypeForWebCoreEditType(type)) forKey:NSAccessibilityTextEditType];
     if (length > AXValueChangeTruncationLength) {
@@ -624,7 +625,11 @@ static NSDictionary *textReplacementChangeDictionary(AXCoreObject& object, AXTex
         text = [text substringToIndex:AXValueChangeTruncationLength];
     }
     [change setObject:text forKey:NSAccessibilityTextChangeValue];
-    addTextMarkerFor(change.get(), object, markerTarget);
+
+    if (!visiblePosition.isNull())
+        addTextMarkerForVisiblePosition(change.get(), cache, visiblePosition);
+    else
+        addFirstTextMarker(change.get(), cache, object);
     return change.autorelease();
 }
 
@@ -670,16 +675,16 @@ void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject*
 #endif
 
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
-    if (NSDictionary *change = textReplacementChangeDictionary(*object, deletionType, deletedText, position))
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *object, deletionType, deletedText, position))
         [changes addObject:change];
-    if (NSDictionary *change = textReplacementChangeDictionary(*object, insertionType, insertedText, position))
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *object, insertionType, insertedText, position))
         [changes addObject:change];
 
     if (RefPtr root = rootWebArea())
         postUserInfoForChanges(*root, *object, changes.get());
 }
 
-void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, const String& deletedText, const String& insertedText, HTMLTextFormControlElement& textControl)
+void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, const String& deletedText, const String& insertedText)
 {
     if (!object)
         object = rootWebArea();
@@ -693,9 +698,9 @@ void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(Access
 #endif
 
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
-    if (NSDictionary *change = textReplacementChangeDictionary(*object, AXTextEditTypeDelete, deletedText, textControl))
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *object, AXTextEditTypeDelete, deletedText, { }))
         [changes addObject:change];
-    if (NSDictionary *change = textReplacementChangeDictionary(*object, AXTextEditTypeInsert, insertedText, textControl))
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *object, AXTextEditTypeInsert, insertedText, { }))
         [changes addObject:change];
 
     if (RefPtr root = rootWebArea())

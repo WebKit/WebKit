@@ -144,7 +144,7 @@ void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject*
         postPlatformNotification(*object, AXValueChanged);
 }
 
-void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, const String&, const String&, HTMLTextFormControlElement&)
+void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, const String&, const String&)
 {
     if (object)
         postPlatformNotification(*object, AXValueChanged);

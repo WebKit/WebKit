@@ -189,7 +189,7 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
     }
 }
 
-void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* coreObject, const String& deletedText, const String& insertedText, HTMLTextFormControlElement&)
+void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* coreObject, const String& deletedText, const String& insertedText)
 {
     if (!coreObject)
         coreObject = rootWebArea();

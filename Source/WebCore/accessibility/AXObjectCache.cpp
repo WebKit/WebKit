@@ -2196,7 +2196,7 @@ void AXObjectCache::postTextReplacementNotificationForTextControl(HTMLTextFormCo
         object = object->observableObject();
     }
 
-    postTextReplacementPlatformNotificationForTextControl(object, deletedText, insertedText, textControl);
+    postTextReplacementPlatformNotificationForTextControl(object, deletedText, insertedText);
 #else
     nodeTextChangePlatformNotification(object, textChangeForEditType(AXTextEditTypeDelete), 0, deletedText);
     nodeTextChangePlatformNotification(object, textChangeForEditType(AXTextEditTypeInsert), 0, insertedText);
