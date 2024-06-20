@@ -1,22 +1,6 @@
 
-FAIL history.pushState(): simple case assert_throws_dom: function "() => {
-      history[method](new SharedArrayBuffer(), "dummy title");
-    }" did not throw
-FAIL history.pushState(): is interleaved correctly assert_throws_dom: function "() => {
-      history[method]([
-        { get x() { getter1Called = true; return 5; } },
-        new SharedArrayBuffer(),
-        { get x() { getter2Called = true; return 5; } }
-      ], "dummy title");
-    }" did not throw
-FAIL history.replaceState(): simple case assert_throws_dom: function "() => {
-      history[method](new SharedArrayBuffer(), "dummy title");
-    }" did not throw
-FAIL history.replaceState(): is interleaved correctly assert_throws_dom: function "() => {
-      history[method]([
-        { get x() { getter1Called = true; return 5; } },
-        new SharedArrayBuffer(),
-        { get x() { getter2Called = true; return 5; } }
-      ], "dummy title");
-    }" did not throw
+PASS history.pushState(): simple case
+PASS history.pushState(): is interleaved correctly
+PASS history.replaceState(): simple case
+PASS history.replaceState(): is interleaved correctly
 

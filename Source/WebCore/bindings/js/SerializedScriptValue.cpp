@@ -1961,9 +1961,9 @@ private:
                 if (!addToObjectPoolIfNotDupe<ArrayBufferTag, ResizableArrayBufferTag, SharedArrayBufferTag>(obj))
                     return true;
                 
-                if (arrayBuffer->isShared() && m_context == SerializationContext::WorkerPostMessage) {
+                if (arrayBuffer->isShared() && (m_context == SerializationContext::WorkerPostMessage || m_forStorage == SerializationForStorage::Yes)) {
                     // https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializeinternal
-                    if (!JSC::Options::useSharedArrayBuffer()) {
+                    if (!JSC::Options::useSharedArrayBuffer() || m_forStorage == SerializationForStorage::Yes) {
                         code = SerializationReturnCode::DataCloneError;
                         return true;
                     }

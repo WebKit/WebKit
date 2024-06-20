@@ -1,3 +1,4 @@
-FAIL: Timed out waiting for notifyDone to be called
 
+PASS reload() with an unserializable state (WritableStream)
+PASS reload() with an unserializable state (SharedArrayBuffer)
 
