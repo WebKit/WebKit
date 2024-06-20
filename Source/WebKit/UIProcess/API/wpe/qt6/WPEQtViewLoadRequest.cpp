@@ -35,15 +35,18 @@
 
   \sa {WPEView::loadingChanged()}{WPEView.loadingChanged()}
 */
-WPEQtViewLoadRequest::WPEQtViewLoadRequest(const WPEQtViewLoadRequestPrivate& d)
-    : d_ptr(new WPEQtViewLoadRequestPrivate(d))
+WPEQtViewLoadRequest::WPEQtViewLoadRequest(const QUrl& url, WPEQtView::LoadStatus loadStatus, const QString& errorString)
+    : d_ptr(new WPEQtViewLoadRequestPrivate(url, loadStatus, errorString))
 {
-
 }
 
 WPEQtViewLoadRequest::~WPEQtViewLoadRequest()
 {
+}
 
+bool WPEQtViewLoadRequest::event(QEvent* ev)
+{
+    return QObject::event(ev);
 }
 
 /*!

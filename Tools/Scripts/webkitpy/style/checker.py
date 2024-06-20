@@ -157,7 +157,10 @@ _PATH_RULES_SPECIFIER = [
     ([
         # The WPEQtViewLoadRequest class uses Qt naming conventions (d_ptr).
         os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt5', 'WPEQtViewLoadRequest.h'),
-        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEQtViewLoadRequest.h')],
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEQtViewLoadRequest.h'),
+
+        # The WPEQtView class uses Qt naming conventions (d_ptr).
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEQtView.h')],
      ["-readability/naming/underscores"]),
 
     ([

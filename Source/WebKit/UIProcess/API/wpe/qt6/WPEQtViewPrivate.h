@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2018, 2019, 2024 Igalia S.L
- * Copyright (C) 2018, 2019 Zodiac Inflight Innovations
+ * Copyright (C) 2024 Igalia S.L
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,28 +19,22 @@
 
 #pragma once
 
-#include "WPEQtView.h"
+#include <QSize>
+#include <QUrl>
+#include <wpe/webkit.h>
+#include <wtf/glib/GRefPtr.h>
 
-class WPEQtViewLoadRequestPrivate;
-
-class QT_WPE_EXPORT WPEQtViewLoadRequest : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(QUrl url READ url)
-    Q_PROPERTY(WPEQtView::LoadStatus status READ status)
-    Q_PROPERTY(QString errorString READ errorString)
-
+class WPEQtViewPrivate {
 public:
-    explicit WPEQtViewLoadRequest(const QUrl&, WPEQtView::LoadStatus, const QString& errorString);
-    virtual ~WPEQtViewLoadRequest();
+    WPEQtViewPrivate() { }
+    ~WPEQtViewPrivate() { }
 
-    QUrl url() const;
-    WPEQtView::LoadStatus status() const;
-    QString errorString() const;
-
-protected:
-    bool event(QEvent*) override;
-
-private:
-    Q_DECLARE_PRIVATE(WPEQtViewLoadRequest)
-    QScopedPointer<WPEQtViewLoadRequestPrivate> d_ptr;
+    GRefPtr<WebKitWebView> m_webView;
+    QUrl m_url;
+    QString m_html;
+    QUrl m_baseUrl;
+    QSize m_size;
+    bool m_errorOccured { false };
 };
+
+Q_DECLARE_METATYPE(WPEQtViewPrivate)

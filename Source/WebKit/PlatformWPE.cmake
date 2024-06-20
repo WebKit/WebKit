@@ -576,6 +576,7 @@ if (ENABLE_WPE_QT_API)
         )
         target_compile_definitions(qtwpe PUBLIC
             QT_NO_KEYWORDS=1
+            QT_WPE_LIBRARY
         )
         target_link_libraries(qtwpe
             PUBLIC
