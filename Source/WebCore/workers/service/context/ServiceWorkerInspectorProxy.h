@@ -48,7 +48,7 @@ public:
 
     void serviceWorkerTerminated();
 
-    void connectToWorker(Inspector::FrontendChannel&);
+    void connectToWorker(Inspector::FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false);
     void disconnectFromWorker(Inspector::FrontendChannel&);
     void sendMessageToWorker(String&&);
     void sendMessageFromWorkerToFrontend(String&&);

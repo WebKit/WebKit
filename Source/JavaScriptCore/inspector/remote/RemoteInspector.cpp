@@ -34,6 +34,7 @@
 #include "RemoteInspectorConstants.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/Logging.h>
 
 namespace Inspector {
 
@@ -64,6 +65,12 @@ void RemoteInspector::registerTarget(RemoteControllableTarget* target)
 
     auto targetIdentifier = nextAvailableTargetIdentifier();
     target->setTargetIdentifier(targetIdentifier);
+
+    if (target->type() == Inspector::RemoteControllableTarget::Type::ServiceWorker) {
+        WTFLogAlways("-------------------------------------");
+        WTFLogAlways("RemoteInspector::registerTarget");
+        WTFLogAlways("targetIdentifier: %d", targetIdentifier);
+    }
 
     {
         auto result = m_targetMap.set(targetIdentifier, target);
@@ -118,6 +125,13 @@ bool RemoteInspector::updateTargetMap(RemoteControllableTarget* target)
     ASSERT(m_mutex.isLocked());
 
     auto targetIdentifier = target->targetIdentifier();
+
+    if (target->type() == Inspector::RemoteControllableTarget::Type::ServiceWorker) {
+        WTFLogAlways("-------------------------------------");
+        WTFLogAlways("RemoteInspector::updateTargetMap");
+        WTFLogAlways("targetIdentifier: %d", targetIdentifier);
+    }
+
     if (!targetIdentifier)
         return false;
 
@@ -190,6 +204,10 @@ void RemoteInspector::setupFailed(TargetID targetIdentifier)
 void RemoteInspector::setupCompleted(TargetID targetIdentifier)
 {
     Locker locker { m_mutex };
+
+    WTFLogAlways("----------------------------------------");
+    WTFLogAlways("RemoteInspector::setupCompleted");
+    WTFLogAlways("targetIdentifier: %d", targetIdentifier);
 
     m_pausedAutomaticInspectionCandidates.remove(targetIdentifier);
 }

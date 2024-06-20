@@ -100,6 +100,9 @@ void RemoteInspectionTarget::pauseWaitingForAutomaticInspection()
     ASSERT(allowsInspectionByPolicy());
     ASSERT(automaticInspectionAllowed());
 
+    WTFLogAlways("-------------------------------------");
+    WTFLogAlways("RemoteInspectionTarget::pauseWaitingForAutomaticInspection()");
+
     while (RemoteInspector::singleton().waitingForAutomaticInspection(targetIdentifier())) {
         if (RunLoop::cycle(JSGlobalObjectDebugger::runLoopMode()) == RunLoop::CycleResult::Stop)
             break;
@@ -108,6 +111,9 @@ void RemoteInspectionTarget::pauseWaitingForAutomaticInspection()
 
 void RemoteInspectionTarget::unpauseForInitializedInspector()
 {
+    WTFLogAlways("-------------------------------------");
+    WTFLogAlways("RemoteInspectionTarget::unpauseForInitializedInspector");
+
     RemoteInspector::singleton().setupCompleted(targetIdentifier());
 }
 

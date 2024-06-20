@@ -179,6 +179,13 @@ void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*
     {
         Locker locker { m_mutex };
 
+        NSLog(@"-------------------------------------");
+        NSLog(@"RemoteInspector::updateAutomaticInspectionCandidate (target)");
+        NSLog(@"m_automaticInspectionEnabled: %s", m_automaticInspectionEnabled ? "YES" : "NO");
+        NSLog(@"TARGET NAME: %s", target->name().utf8().data());
+        NSLog(@"URL: %s", target->url().utf8().data());
+        NSLog(@"targetIdentifier: %d", target->targetIdentifier());
+
         if (!updateTargetMap(target))
             return;
 
@@ -220,7 +227,11 @@ void RemoteInspector::sendAutomaticInspectionCandidateMessage(TargetID targetID)
     ASSERT(m_relayConnection);
     ASSERT(m_pausedAutomaticInspectionCandidates.contains(targetID));
 
-    NSDictionary *details = @{ WIRTargetIdentifierKey: @(targetID) };
+    NSString *debuggableTypeString = debuggableTypeStringForTarget(targetID);
+    NSDictionary *details = @{
+        WIRTargetIdentifierKey: @(targetID),
+        WIRTypeKey: debuggableTypeString,
+    };
     m_relayConnection->sendMessage(WIRAutomaticInspectionCandidateMessage, details);
 }
 
@@ -344,6 +355,38 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
             sendAutomaticInspectionCandidateMessage(targetID);
     } else
         pushListingsSoon();
+}
+
+NSString* RemoteInspector::debuggableTypeStringForTarget(TargetID targetIdentifier)
+{
+    auto findResult = m_targetMap.find(targetIdentifier);
+    if (findResult == m_targetMap.end())
+        return nullptr;
+
+    RemoteControllableTarget* target = findResult->value;
+
+    switch (target->type()) {
+    case RemoteControllableTarget::Type::ITML:
+        return WIRTypeITML;
+        break;
+    case RemoteControllableTarget::Type::JavaScript:
+        return WIRTypeJavaScript;
+        break;
+    case RemoteControllableTarget::Type::Page:
+        return WIRTypePage;
+        break;
+    case RemoteControllableTarget::Type::ServiceWorker:
+        return WIRTypeServiceWorker;
+        break;
+    case RemoteControllableTarget::Type::WebPage:
+        return WIRTypeWebPage;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return nullptr;
 }
 
 #pragma mark - Proxy Application Information
@@ -592,6 +635,10 @@ void RemoteInspector::pushListingsSoon()
 
 void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
 {
+    NSLog(@"-------------------------------------");
+    NSLog(@"RemoteInspector::receivedSetupMessage (userInfo)");
+    NSLog(@"%@", userInfo);
+
     NSNumber *targetIdentifierNumber = userInfo[WIRTargetIdentifierKey];
     BAIL_IF_UNEXPECTED_TYPE(targetIdentifierNumber, [NSNumber class]);
 

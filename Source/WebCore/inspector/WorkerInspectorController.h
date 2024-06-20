@@ -53,7 +53,7 @@ public:
 
     void workerTerminating();
 
-    void connectFrontend();
+    void connectFrontend(bool isAutomaticInspection, bool immediatelyPause, Function<void()>&& frontendInitializedCallback = { });
     void disconnectFrontend(Inspector::DisconnectReason);
 
     void dispatchMessageFromFrontend(const String&);
@@ -63,7 +63,7 @@ public:
     bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const override { return true; }
     Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
     Inspector::InspectorEvaluateHandler evaluateHandler() const override;
-    void frontendInitialized() override { }
+    void frontendInitialized() final;
     WTF::Stopwatch& executionStopwatch() const override;
     JSC::Debugger* debugger() override;
     JSC::VM& vm() override;
@@ -86,6 +86,9 @@ private:
     WorkerOrWorkletGlobalScope& m_globalScope;
     std::unique_ptr<Inspector::FrontendChannel> m_forwardingChannel;
     bool m_didCreateLazyAgents { false };
+    bool m_isAutomaticInspection { false };
+    bool m_pauseAfterInitialization { false };
+    Function<void()> m_frontendInitializedCallback;
 };
 
 } // namespace WebCore

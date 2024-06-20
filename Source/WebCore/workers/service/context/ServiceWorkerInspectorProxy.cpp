@@ -56,13 +56,17 @@ void ServiceWorkerInspectorProxy::serviceWorkerTerminated()
     m_channel = nullptr;
 }
 
-void ServiceWorkerInspectorProxy::connectToWorker(FrontendChannel& channel)
+void ServiceWorkerInspectorProxy::connectToWorker(FrontendChannel& channel, bool isAutomaticConnection, bool immediatelyPause)
 {
+    WTFLogAlways("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    WTFLogAlways("ServiceWorkerInspectorProxy::connectToWorker");
     m_channel = &channel;
 
     SWContextManager::singleton().setAsInspected(m_serviceWorkerThreadProxy.identifier(), true);
-    m_serviceWorkerThreadProxy.thread().runLoop().postDebuggerTask([] (ScriptExecutionContext& context) {
-        downcast<WorkerGlobalScope>(context).inspectorController().connectFrontend();
+    m_serviceWorkerThreadProxy.thread().runLoop().postDebuggerTask([isAutomaticConnection, immediatelyPause, &serviceWorkerThreadProxy = m_serviceWorkerThreadProxy] (ScriptExecutionContext& context) {
+        downcast<WorkerGlobalScope>(context).inspectorController().connectFrontend(isAutomaticConnection, immediatelyPause, [&serviceWorkerThreadProxy = serviceWorkerThreadProxy]() {
+            serviceWorkerThreadProxy.serviceWorkerDebuggable().unpauseForInitializedInspector();
+        });
     });
 }
 

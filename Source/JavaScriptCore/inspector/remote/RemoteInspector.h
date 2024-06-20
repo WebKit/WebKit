@@ -195,6 +195,8 @@ private:
     void setPendingMainThreadInitialization(bool pendingInitialization);
     void setupXPCConnectionIfNeeded();
     void updateFromGlobalNotifyState() WTF_REQUIRES_LOCK(m_mutex);
+
+    NSString* debuggableTypeStringForTarget(TargetID targetIdentifier);
 #endif
 #if USE(GLIB)
     void setupConnection(Ref<SocketConnection>&&);

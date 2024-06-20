@@ -41,9 +41,11 @@ ServiceWorkerDebuggable::ServiceWorkerDebuggable(ServiceWorkerThreadProxy& servi
 {
 }
 
-void ServiceWorkerDebuggable::connect(FrontendChannel& channel, bool, bool)
+void ServiceWorkerDebuggable::connect(FrontendChannel& channel, bool isAutomaticInspection, bool immediatelyPause)
 {
-    m_serviceWorkerThreadProxy.inspectorProxy().connectToWorker(channel);
+    WTFLogAlways("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    WTFLogAlways("ServiceWorkerDebuggable::connect()");
+    m_serviceWorkerThreadProxy.inspectorProxy().connectToWorker(channel, isAutomaticInspection, immediatelyPause);
 }
 
 void ServiceWorkerDebuggable::disconnect(FrontendChannel& channel)
@@ -54,6 +56,14 @@ void ServiceWorkerDebuggable::disconnect(FrontendChannel& channel)
 void ServiceWorkerDebuggable::dispatchMessageFromRemote(String&& message)
 {
     m_serviceWorkerThreadProxy.inspectorProxy().sendMessageToWorker(WTFMove(message));
+}
+
+void ServiceWorkerDebuggable::pauseWaitingForAutomaticInspection()
+{
+    WTFLogAlways("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    WTFLogAlways("ServiceWorkerDebuggable::pauseWaitingForAutomaticInspection()");
+
+    RemoteInspectionTarget::pauseWaitingForAutomaticInspection();
 }
 
 } // namespace WebCore

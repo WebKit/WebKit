@@ -116,7 +116,10 @@ void WorkerInspectorProxy::connectToWorkerInspectorController(PageChannel& chann
     m_pageChannel = &channel;
 
     m_workerThread->runLoop().postDebuggerTask([] (ScriptExecutionContext& context) {
-        downcast<WorkerGlobalScope>(context).inspectorController().connectFrontend();
+        bool isAutomaticInspection = false;
+        bool immediatelyPause = false;
+
+        downcast<WorkerGlobalScope>(context).inspectorController().connectFrontend(isAutomaticInspection, immediatelyPause);
     });
 }
 
