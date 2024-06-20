@@ -30,7 +30,7 @@
                 c = window.internals.shadowRoot(video).querySelector('c');
                 testExpected("getComputedStyle(i).fontStyle", "italic");
                 testExpected("getComputedStyle(b).fontWeight", "700");
-                testExpected("getComputedStyle(u).textDecoration", "underline");
+                testExpected("getComputedStyle(u).textDecorationLine", "underline");
                 testExpected("getComputedStyle(c).display", "none");
                 endTest();
             }

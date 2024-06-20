@@ -176,7 +176,7 @@ PASS [["delete",""],["inserttext","a"]] "foo<i>[bar]</i>baz" queryCommandValue("
 PASS [["delete",""],["inserttext","a"]] "foo<s>[bar]</s>baz": execCommand("delete", false, "") return value
 PASS [["delete",""],["inserttext","a"]] "foo<s>[bar]</s>baz": execCommand("inserttext", false, "a") return value
 PASS [["delete",""],["inserttext","a"]] "foo<s>[bar]</s>baz" checks for modifications to non-editable content
-FAIL [["delete",""],["inserttext","a"]] "foo<s>[bar]</s>baz" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<s>a</s>baz" but got "foo<span style=\"text-decoration:line-through\">a</span>baz"
+FAIL [["delete",""],["inserttext","a"]] "foo<s>[bar]</s>baz" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<s>a</s>baz" but got "foo<span style=\"text-decoration-line:line-through\">a</span>baz"
 PASS [["delete",""],["inserttext","a"]] "foo<s>[bar]</s>baz" queryCommandIndeterm("delete") before
 PASS [["delete",""],["inserttext","a"]] "foo<s>[bar]</s>baz" queryCommandState("delete") before
 PASS [["delete",""],["inserttext","a"]] "foo<s>[bar]</s>baz" queryCommandValue("delete") before
@@ -224,7 +224,7 @@ PASS [["delete",""],["inserttext","a"]] "foo<sup>[bar]</sup>baz" queryCommandVal
 PASS [["delete",""],["inserttext","a"]] "foo<u>[bar]</u>baz": execCommand("delete", false, "") return value
 PASS [["delete",""],["inserttext","a"]] "foo<u>[bar]</u>baz": execCommand("inserttext", false, "a") return value
 PASS [["delete",""],["inserttext","a"]] "foo<u>[bar]</u>baz" checks for modifications to non-editable content
-FAIL [["delete",""],["inserttext","a"]] "foo<u>[bar]</u>baz" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<u>a</u>baz" but got "foo<span style=\"text-decoration:underline\">a</span>baz"
+FAIL [["delete",""],["inserttext","a"]] "foo<u>[bar]</u>baz" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<u>a</u>baz" but got "foo<span style=\"text-decoration-line:underline\">a</span>baz"
 PASS [["delete",""],["inserttext","a"]] "foo<u>[bar]</u>baz" queryCommandIndeterm("delete") before
 PASS [["delete",""],["inserttext","a"]] "foo<u>[bar]</u>baz" queryCommandState("delete") before
 PASS [["delete",""],["inserttext","a"]] "foo<u>[bar]</u>baz" queryCommandValue("delete") before
@@ -880,7 +880,7 @@ PASS [["delete",""],["inserttext","a"]] "foo<i>[bar</i>baz]" queryCommandValue("
 PASS [["delete",""],["inserttext","a"]] "foo<s>[bar</s>baz]": execCommand("delete", false, "") return value
 PASS [["delete",""],["inserttext","a"]] "foo<s>[bar</s>baz]": execCommand("inserttext", false, "a") return value
 PASS [["delete",""],["inserttext","a"]] "foo<s>[bar</s>baz]" checks for modifications to non-editable content
-FAIL [["delete",""],["inserttext","a"]] "foo<s>[bar</s>baz]" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<s>a</s>" but got "foo<span style=\"text-decoration:line-through\">a</span>"
+FAIL [["delete",""],["inserttext","a"]] "foo<s>[bar</s>baz]" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<s>a</s>" but got "foo<span style=\"text-decoration-line:line-through\">a</span>"
 PASS [["delete",""],["inserttext","a"]] "foo<s>[bar</s>baz]" queryCommandIndeterm("delete") before
 PASS [["delete",""],["inserttext","a"]] "foo<s>[bar</s>baz]" queryCommandState("delete") before
 PASS [["delete",""],["inserttext","a"]] "foo<s>[bar</s>baz]" queryCommandValue("delete") before
@@ -928,7 +928,7 @@ PASS [["delete",""],["inserttext","a"]] "foo<sup>[bar</sup>baz]" queryCommandVal
 PASS [["delete",""],["inserttext","a"]] "foo<u>[bar</u>baz]": execCommand("delete", false, "") return value
 PASS [["delete",""],["inserttext","a"]] "foo<u>[bar</u>baz]": execCommand("inserttext", false, "a") return value
 PASS [["delete",""],["inserttext","a"]] "foo<u>[bar</u>baz]" checks for modifications to non-editable content
-FAIL [["delete",""],["inserttext","a"]] "foo<u>[bar</u>baz]" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<u>a</u>" but got "foo<span style=\"text-decoration:underline\">a</span>"
+FAIL [["delete",""],["inserttext","a"]] "foo<u>[bar</u>baz]" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<u>a</u>" but got "foo<span style=\"text-decoration-line:underline\">a</span>"
 PASS [["delete",""],["inserttext","a"]] "foo<u>[bar</u>baz]" queryCommandIndeterm("delete") before
 PASS [["delete",""],["inserttext","a"]] "foo<u>[bar</u>baz]" queryCommandState("delete") before
 PASS [["delete",""],["inserttext","a"]] "foo<u>[bar</u>baz]" queryCommandValue("delete") before

@@ -341,7 +341,7 @@ String ShorthandSerializer::serialize()
     case CSSPropertyListStyle:
     case CSSPropertyOutline:
     case CSSPropertyTextEmphasis:
-    case CSSPropertyWebkitTextDecoration:
+    case CSSPropertyTextDecoration:
     case CSSPropertyWebkitTextStroke:
         return serializeLonghandsOmittingInitialValues();
     case CSSPropertyBorderColor:
@@ -392,7 +392,6 @@ String ShorthandSerializer::serialize()
     case CSSPropertyWebkitColumnBreakInside:
         return serializeBreakInside();
     case CSSPropertyTextDecorationSkip:
-    case CSSPropertyTextDecoration:
     case CSSPropertyWebkitBackgroundSize:
     case CSSPropertyWebkitPerspective:
     case CSSPropertyWebkitTextOrientation:

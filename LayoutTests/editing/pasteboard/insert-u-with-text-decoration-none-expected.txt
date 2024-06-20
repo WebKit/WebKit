@@ -17,7 +17,9 @@ Content to insert:
 After insertion:
 | <div>
 |   contenteditable=""
-|   "hello "
+|   <span>
+|     style="text-decoration: none;"
+|     "hello "
 |   <span>
 |     style="text-decoration: line-through;"
 |     "world<#selection-caret>"

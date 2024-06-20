@@ -24,7 +24,7 @@ PASS letterSpacing should be applied to first-letter pseudo elements.
 PASS margin should be applied to first-letter pseudo elements.
 PASS padding should be applied to first-letter pseudo elements.
 PASS opacity should be applied to first-letter pseudo elements.
-FAIL textDecoration should be applied to first-letter pseudo elements. assert_equals: expected "overline wavy rgb(10, 20, 30)" but got "none"
+PASS textDecoration should be applied to first-letter pseudo elements.
 PASS textJustify should be applied to first-letter pseudo elements.
 PASS textShadow should be applied to first-letter pseudo elements.
 PASS textTransform should be applied to first-letter pseudo elements.

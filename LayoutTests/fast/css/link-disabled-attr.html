@@ -51,15 +51,14 @@ shouldBeNonNull("link.sheet");
 link.sheet.disabled = true;
 shouldBeTrue("link.disabled");
 shouldBeTrue("link.sheet.disabled");
-shouldBeEqualToString("getComputedStyle(testElement).textDecoration", "none");
+shouldBeEqualToString("getComputedStyle(testElement).textDecorationLine", "none");
 
 link.disabled = false;
 shouldBeFalse("link.disabled");
 shouldBeFalse("link.sheet.disabled");
-shouldBeEqualToString("getComputedStyle(testElement).textDecoration", "line-through");
+shouldBeEqualToString("getComputedStyle(testElement).textDecorationLine", "line-through");
 
 link.sheet.disabled = false;
-
 
 // An alternate stylesheet defaults to disabled when its title does not
 // match the preferred set.

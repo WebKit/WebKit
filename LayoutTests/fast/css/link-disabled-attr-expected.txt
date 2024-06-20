@@ -11,10 +11,10 @@ sheet
 PASS link.sheet is non-null.
 FAIL link.disabled should be true. Was false.
 PASS link.sheet.disabled is true
-PASS getComputedStyle(testElement).textDecoration is "none"
+PASS getComputedStyle(testElement).textDecorationLine is "none"
 PASS link.disabled is false
 FAIL link.sheet.disabled should be false. Was true.
-FAIL getComputedStyle(testElement).textDecoration should be line-through. Was none.
+FAIL getComputedStyle(testElement).textDecorationLine should be line-through. Was none.
 altsheet
 FAIL link.disabled should be true. Was false.
 PASS link.sheet is non-null.

@@ -108,6 +108,7 @@ private:
     Ref<CSSValue> fontVariantShorthandValue() const;
     RefPtr<CSSValue> textWrapShorthandValue(const RenderStyle&) const;
     RefPtr<CSSValue> whiteSpaceShorthandValue(const RenderStyle&) const;
+    Ref<CSSValueList> textDecorationShorthandValue(const RenderStyle&) const;
 
     RefPtr<Element> m_element;
     std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier;

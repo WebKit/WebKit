@@ -3128,6 +3128,7 @@ RefPtr<CSSValue> consumeWebkitBoxShadow(CSSParserTokenRange& range, const CSSPar
     return consumeShadow(range, context, true);
 }
 
+// FIXME: this should store the value in canonical order, not author written order.
 RefPtr<CSSValue> consumeTextDecorationLine(CSSParserTokenRange& range)
 {
     CSSValueID id = range.peek().id();

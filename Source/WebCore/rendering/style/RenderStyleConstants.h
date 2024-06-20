@@ -654,6 +654,7 @@ enum class TextTransform : uint8_t {
 };
 constexpr auto maxTextTransformValue = TextTransform::FullWidth;
 
+// none | [ underline || overline || line-through || blink ]
 enum class TextDecorationLine : uint8_t {
     Underline     = 1 << 0,
     Overline      = 1 << 1,

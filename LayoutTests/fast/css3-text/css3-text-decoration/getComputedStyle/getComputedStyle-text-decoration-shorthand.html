@@ -35,7 +35,7 @@
 
             debug('Initial values:');
             shouldBeNull("e.style.getPropertyCSSValue('-webkit-text-decoration')");
-            testComputedStyle("webkitTextDecoration", "-webkit-text-decoration", "none solid rgb(0, 0, 0)");
+            testComputedStyle("webkitTextDecoration", "-webkit-text-decoration", "rgb(0, 0, 0)");
             shouldBe("checkComputedStyleValue('webkitTextDecoration', '-webkit-text-decoration')", "true");
             debug('');
 
@@ -43,7 +43,7 @@
             e.style.webkitTextDecoration = "underline overline line-through blink";
             testElementStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "underline overline line-through blink");
             testComputedStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "underline overline line-through");
-            testComputedStyle("webkitTextDecoration", "-webkit-text-decoration", "underline overline line-through solid rgb(0, 0, 0)");
+            testComputedStyle("webkitTextDecoration", "-webkit-text-decoration", "underline overline line-through rgb(0, 0, 0)");
             shouldBe("checkComputedStyleValue('webkitTextDecoration', '-webkit-text-decoration')", "true");
             debug('');
 
@@ -58,7 +58,7 @@
 
             debug('Omitting text decoration line resets to its initial value "none" ("-webkit-text-decoration: navy dotted;"):');
             e.style.webkitTextDecoration = "navy dotted";
-            testComputedStyle("webkitTextDecoration", "-webkit-text-decoration", "none dotted rgb(0, 0, 128)");
+            testComputedStyle("webkitTextDecoration", "-webkit-text-decoration", "dotted rgb(0, 0, 128)");
             testComputedStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "none");
             testComputedStyle("webkitTextDecorationStyle", "-webkit-text-decoration-style", "dotted");
             testComputedStyle("webkitTextDecorationColor", "-webkit-text-decoration-color", "rgb(0, 0, 128)");
@@ -69,10 +69,10 @@
             e.style.cssText = "text-decoration: underline overline line-through blink";
             testElementStyle("textDecoration", "text-decoration", "underline overline line-through blink");
             testElementStyle("textDecorationLine", "text-decoration-line", "underline overline line-through blink");
-            testElementStyle("textDecorationThickness", "text-decoration-thickness", "");
-            testElementStyle("textDecorationStyle", "text-decoration-style", "");
-            testElementStyle("textDecorationColor", "text-decoration-color", "");
-            testComputedStyle("textDecoration", "text-decoration", "underline overline line-through");
+            testElementStyle("textDecorationThickness", "text-decoration-thickness", "auto");
+            testElementStyle("textDecorationStyle", "text-decoration-style", "solid");
+            testElementStyle("textDecorationColor", "text-decoration-color", "currentcolor");
+            testComputedStyle("textDecoration", "text-decoration", "underline overline line-through rgb(0, 0, 0)");
             testComputedStyle("textDecorationLine", "text-decoration-line", "underline overline line-through");
             testComputedStyle("textDecorationThickness", "text-decoration-thickness", "auto");
             testComputedStyle("textDecorationStyle", "text-decoration-style", "solid");
@@ -87,7 +87,7 @@
             testElementStyle("textDecorationThickness", "text-decoration-thickness", "auto");
             testElementStyle("textDecorationStyle", "text-decoration-style", "solid");
             testElementStyle("textDecorationColor", "text-decoration-color", "currentcolor");
-            testComputedStyle("textDecoration", "text-decoration", "none");
+            testComputedStyle("textDecoration", "text-decoration", "rgb(0, 0, 0)");
             testComputedStyle("textDecorationLine", "text-decoration-line", "none");
             testComputedStyle("textDecorationThickness", "text-decoration-thickness", "auto");
             testComputedStyle("textDecorationStyle", "text-decoration-style", "solid");
@@ -102,7 +102,7 @@
             testElementStyle("textDecorationThickness", "text-decoration-thickness", "auto");
             testElementStyle("textDecorationStyle", "text-decoration-style", "solid");
             testElementStyle("textDecorationColor", "text-decoration-color", "currentcolor");
-            testComputedStyle("textDecoration", "text-decoration", "underline overline line-through");
+            testComputedStyle("textDecoration", "text-decoration", "underline overline line-through rgb(0, 0, 0)");
             testComputedStyle("textDecorationLine", "text-decoration-line", "underline overline line-through");
             testComputedStyle("textDecorationThickness", "text-decoration-thickness", "auto");
             testComputedStyle("textDecorationStyle", "text-decoration-style", "solid");
@@ -112,12 +112,12 @@
 
             debug('Setting CSS3 longhands to values not backwards compatibile with CSS2.1 ("text-decoration-line: underline overline line-through blink; text-decoration-thickness: 16px; text-decoration-style: dotted; text-decoration-color: blue;"):');
             e.style.cssText = "text-decoration-line: underline overline line-through blink; text-decoration-thickness: 16px; text-decoration-style: dotted; text-decoration-color: blue;";
-            testElementStyle("textDecoration", "text-decoration", "underline overline line-through blink");
+            testElementStyle("textDecoration", "text-decoration", "underline overline line-through blink 16px dotted blue");
             testElementStyle("textDecorationLine", "text-decoration-line", "underline overline line-through blink");
             testElementStyle("textDecorationThickness", "text-decoration-thickness", "16px");
             testElementStyle("textDecorationStyle", "text-decoration-style", "dotted");
             testElementStyle("textDecorationColor", "text-decoration-color", "blue");
-            testComputedStyle("textDecoration", "text-decoration", "underline overline line-through");
+            testComputedStyle("textDecoration", "text-decoration", "underline overline line-through 16px dotted rgb(0, 0, 255)");
             testComputedStyle("textDecorationLine", "text-decoration-line", "underline overline line-through");
             testComputedStyle("textDecorationThickness", "text-decoration-thickness", "16px");
             testComputedStyle("textDecorationStyle", "text-decoration-style", "dotted");
