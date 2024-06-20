@@ -1031,7 +1031,7 @@ CONSTANT_FUNCTION(Dot)
     ConstantValue result = zeroValue(resultType);
     for (auto& element : product.toVector().elements)
         CALL_MOVE(result, Add, resultType,  { result, element });
-    return { { result } };
+    return { result };
 }
 
 CONSTANT_FUNCTION(Dot4U8Packed)

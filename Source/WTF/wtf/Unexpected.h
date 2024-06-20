@@ -27,71 +27,19 @@
 
 #pragma once
 
-/*
-    unexpected synopsis
-
-namespace std {
-namespace experimental {
-inline namespace fundamentals_v3 {
-    // ?.?.3, Unexpected object type
-    template <class E>
-      class unexpected;
-
-    // ?.?.4, Unexpected relational operators
-    template <class E>
-        constexpr bool
-        operator==(const unexpected<E>&, const unexpected<E>&);
-    template <class E>
-        constexpr bool
-        operator!=(const unexpected<E>&, const unexpected<E>&);
-
-    template <class E>
-    class unexpected {
-    public:
-        unexpected() = delete;
-        template <class U = E>
-          constexpr explicit unexpected(E&&);
-        constexpr const E& value() const &;
-        constexpr E& value() &;
-        constexpr E&& value() &&;
-        constexpr E const&& value() const&&;
-    private:
-        E val; // exposition only
-    };
-
-}}}
-
-*/
-
-#include <cstdlib>
+#include <expected>
+#include <type_traits>
 #include <utility>
-#include <wtf/StdLibExtras.h>
 
-namespace std {
-namespace experimental {
-inline namespace fundamentals_v3 {
-
-template<class E>
-class unexpected {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    unexpected() = delete;
-    template <class U = E>
-    constexpr explicit unexpected(U&& u) : val(std::forward<U>(u)) { }
-    constexpr const E& value() const & { return val; }
-    constexpr E& value() & { return val; }
-    constexpr E&& value() && { return WTFMove(val); }
-    constexpr const E&& value() const && { return WTFMove(val); }
-
-private:
-    E val;
-};
-
-template<class E> constexpr bool operator==(const unexpected<E>& lhs, const unexpected<E>& rhs) { return lhs.value() == rhs.value(); }
-
-}}} // namespace std::experimental::fundamentals_v3
-
-template<class E> using Unexpected = std::experimental::unexpected<E>;
+namespace WTF {
+template<class E> using Unexpected = std::unexpected<E>;
 
 // Not in the std::expected spec, but useful to work around lack of C++17 deduction guides.
-template<class E> constexpr Unexpected<std::decay_t<E>> makeUnexpected(E&& v) { return Unexpected<typename std::decay<E>::type>(std::forward<E>(v)); }
+template<class E> constexpr Unexpected<std::decay_t<E>> makeUnexpected(E&& v)
+{
+    return Unexpected<typename std::decay<E>::type>(std::forward<E>(v));
+}
+}
+
+using WTF::Unexpected;
+using WTF::makeUnexpected;
