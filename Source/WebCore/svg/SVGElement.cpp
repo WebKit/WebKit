@@ -457,6 +457,7 @@ static inline bool isSVGLayerAwareElement(const SVGElement& element)
     case SVG::clipPath:
     case SVG::defs:
     case SVG::ellipse:
+    case SVG::filter:
     case SVG::foreignObject:
     case SVG::g:
     case SVG::image:

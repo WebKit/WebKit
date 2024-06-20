@@ -39,6 +39,7 @@
 #include "RenderSVGBlock.h"
 #include "RenderSVGModelObject.h"
 #include "RenderSVGResourceClipper.h"
+#include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceLinearGradient.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
@@ -47,6 +48,7 @@
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "SVGClipPathElement.h"
+#include "SVGFilterElement.h"
 #include "SVGGraphicsElement.h"
 #include "SVGMarkerElement.h"
 #include "SVGMaskElement.h"
@@ -470,6 +472,30 @@ RenderSVGResourceClipper* RenderLayerModelObject::svgClipperResourceFromStyle() 
 
     if (auto* svgElement = dynamicDowncast<SVGElement>(this->element()))
         document().addPendingSVGResource(referenceClipPathOperation->fragment(), *svgElement);
+
+    return nullptr;
+}
+
+RenderSVGResourceFilter* RenderLayerModelObject::svgFilterResourceFromStyle() const
+{
+    if (!document().settings().layerBasedSVGEngineEnabled())
+        return nullptr;
+
+    const auto& operations = style().filter();
+    if (operations.size() != 1)
+        return nullptr;
+
+    RefPtr referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(operations.at(0));
+    if (!referenceFilterOperation)
+        return nullptr;
+
+    if (RefPtr referencedFilterElement = ReferencedSVGResources::referencedFilterElement(treeScopeForSVGReferences(), *referenceFilterOperation)) {
+        if (auto* referencedFilterRenderer = dynamicDowncast<RenderSVGResourceFilter>(referencedFilterElement->renderer()))
+            return referencedFilterRenderer;
+    }
+
+    if (auto* svgElement = dynamicDowncast<SVGElement>(this->element()))
+        document().addPendingSVGResource(referenceFilterOperation->fragment(), *svgElement);
 
     return nullptr;
 }

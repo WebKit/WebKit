@@ -25,6 +25,7 @@
 #include "DocumentInlines.h"
 #include "FEConvolveMatrix.h"
 #include "NodeName.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include <wtf/IsoMallocInlines.h>

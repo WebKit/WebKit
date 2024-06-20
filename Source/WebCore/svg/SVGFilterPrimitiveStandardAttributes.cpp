@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +24,9 @@
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 #include "FilterEffect.h"
+#include "LegacyRenderSVGResourceFilterPrimitive.h"
 #include "NodeName.h"
+#include "RenderSVGResourceFilterPrimitive.h"
 #include "SVGElementInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -103,8 +105,7 @@ void SVGFilterPrimitiveStandardAttributes::primitiveAttributeChanged(const Quali
     if (effect && !setFilterEffectAttribute(*effect, attribute))
         return;
 
-    if (CheckedPtr renderer = this->renderer())
-        static_cast<LegacyRenderSVGResourceFilterPrimitive&>(*renderer).markFilterEffectForRepaint(effect.get());
+    markFilterEffectForRepaint();
 }
 
 void SVGFilterPrimitiveStandardAttributes::primitiveAttributeOnChildChanged(const Element& child, const QualifiedName& attribute)
@@ -115,16 +116,47 @@ void SVGFilterPrimitiveStandardAttributes::primitiveAttributeOnChildChanged(cons
     if (effect && !setFilterEffectAttributeFromChild(*effect, child, attribute))
         return;
 
-    if (CheckedPtr renderer = this->renderer())
-        static_cast<LegacyRenderSVGResourceFilterPrimitive&>(*renderer).markFilterEffectForRepaint(effect.get());
+    markFilterEffectForRepaint();
+}
+
+void SVGFilterPrimitiveStandardAttributes::markFilterEffectForRepaint()
+{
+    CheckedPtr renderer = this->renderer();
+    if (!renderer)
+        return;
+
+    if (auto* filterPrimitiveRenderer = dynamicDowncast<RenderSVGResourceFilterPrimitive>(renderer.get())) {
+        filterPrimitiveRenderer->markFilterEffectForRepaint(m_effect.get());
+        return;
+    }
+
+    if (auto* filterPrimitiveRenderer = dynamicDowncast<LegacyRenderSVGResourceFilterPrimitive>(renderer.get())) {
+        filterPrimitiveRenderer->markFilterEffectForRepaint(m_effect.get());
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFilterPrimitiveStandardAttributes::markFilterEffectForRebuild()
 {
-    if (CheckedPtr renderer = this->renderer())
-        static_cast<LegacyRenderSVGResourceFilterPrimitive&>(*renderer).markFilterEffectForRebuild();
+    CheckedPtr renderer = this->renderer();
+    if (!renderer)
+        return;
 
     m_effect = nullptr;
+
+    if (auto* filterPrimitiveRenderer = dynamicDowncast<RenderSVGResourceFilterPrimitive>(renderer.get())) {
+        filterPrimitiveRenderer->markFilterEffectForRebuild();
+        return;
+    }
+
+    if (auto* filterPrimitiveRenderer = dynamicDowncast<LegacyRenderSVGResourceFilterPrimitive>(renderer.get())) {
+        filterPrimitiveRenderer->markFilterEffectForRebuild();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(const QualifiedName& attrName)
@@ -149,6 +181,9 @@ void SVGFilterPrimitiveStandardAttributes::childrenChanged(const ChildChange& ch
 
 RenderPtr<RenderElement> SVGFilterPrimitiveStandardAttributes::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGResourceFilterPrimitive>(*this, WTFMove(style));
+
     return createRenderer<LegacyRenderSVGResourceFilterPrimitive>(*this, WTFMove(style));
 }
 
@@ -170,10 +205,10 @@ void SVGFilterPrimitiveStandardAttributes::invalidateFilterPrimitiveParent(SVGEl
         return;
 
     CheckedPtr renderer = parent->renderer();
-    if (!renderer || !renderer->isRenderSVGResourceFilterPrimitive())
+    if (!renderer || !renderer->isRenderOrLegacyRenderSVGResourceFilterPrimitive())
         return;
 
     downcast<SVGElement>(*parent).updateSVGRendererForElementChange();
 }
 
-}
+} // namespace WebCore

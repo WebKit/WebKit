@@ -28,6 +28,7 @@
 
 #include "LegacyRenderSVGResourceFilter.h"
 #include "NodeName.h"
+#include "RenderSVGResourceFilter.h"
 #include "SVGElementInlines.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
@@ -124,11 +125,20 @@ void SVGFilterElement::childrenChanged(const ChildChange& change)
     if (change.source == ChildChange::Source::Parser)
         return;
 
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (auto* filterRenderer = dynamicDowncast<RenderSVGResourceFilter>(renderer()))
+            filterRenderer->invalidateFilter();
+        return;
+    }
+
     updateSVGRendererForElementChange();
 }
 
 RenderPtr<RenderElement> SVGFilterElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGResourceFilter>(*this, WTFMove(style));
+
     return createRenderer<LegacyRenderSVGResourceFilter>(*this, WTFMove(style));
 }
 

@@ -522,7 +522,7 @@ void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceCont
 void writeSVGContainer(TextStream& ts, const LegacyRenderSVGContainer& container, OptionSet<RenderAsTextFlag> behavior)
 {
     // Currently RenderSVGResourceFilterPrimitive has no meaningful output.
-    if (container.isRenderSVGResourceFilterPrimitive())
+    if (container.isRenderOrLegacyRenderSVGResourceFilterPrimitive())
         return;
     writeStandardPrefix(ts, container, behavior);
     writePositionAndStyle(ts, container, behavior);

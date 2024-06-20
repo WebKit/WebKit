@@ -121,7 +121,7 @@ void SVGFELightElement::svgAttributeChanged(const QualifiedName& attrName)
             return;
 
         CheckedPtr renderer = parent->renderer();
-        if (!renderer || !renderer->isRenderSVGResourceFilterPrimitive())
+        if (!renderer || !renderer->isRenderOrLegacyRenderSVGResourceFilterPrimitive())
             return;
 
         if (auto* lightingElement = dynamicDowncast<SVGFEDiffuseLightingElement>(*parent)) {

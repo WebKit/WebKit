@@ -37,6 +37,7 @@
 #include "GraphicsContextSwitcher.h"
 #include "LegacyRenderSVGResourceFilter.h"
 #include "Logging.h"
+#include "RenderSVGShape.h"
 #include "RenderStyleInlines.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -145,8 +146,13 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
         expandedDirtyRect.expand(flippedOutsets);
     }
 
-    // Calculate targetBoundingBox since it will be used if the filter is created.
-    targetBoundingBox = intersection(filterBoxRect, expandedDirtyRect);
+    if (is<RenderSVGShape>(renderer))
+        targetBoundingBox = enclosingLayoutRect(renderer.objectBoundingBox());
+    else {
+        // Calculate targetBoundingBox since it will be used if the filter is created.
+        targetBoundingBox = intersection(filterBoxRect, expandedDirtyRect);
+    }
+
     if (targetBoundingBox.isEmpty())
         return nullptr;
 
@@ -160,11 +166,13 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
         return nullptr;
 
     auto& filter = *m_filter;
+    auto filterRegion = m_targetBoundingBox;
 
-    // For CSSFilter, filterRegion = targetBoundingBox + filter->outsets()
-    auto filterRegion = targetBoundingBox;
-    if (filter.hasFilterThatMovesPixels())
+    if (filter.hasFilterThatMovesPixels()) {
+        // For CSSFilter, filterRegion = targetBoundingBox + filter->outsets()
         filterRegion.expand(toLayoutBoxExtent(outsets));
+    } else if (auto* shape = dynamicDowncast<RenderSVGShape>(renderer))
+        filterRegion = shape->currentSVGLayoutRect();
 
     if (filterRegion.isEmpty())
         return nullptr;
@@ -175,6 +183,8 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
         m_filterRegion = filterRegion;
         hasUpdatedBackingStore = true;
     }
+
+    filter.setFilterRegion(m_filterRegion);
 
     if (!filter.hasFilterThatMovesPixels())
         m_repaintRect = dirtyRect;
@@ -187,10 +197,15 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     }
 
     resetDirtySourceRect();
-    filter.setFilterRegion(m_filterRegion);
 
-    if (!m_targetSwitcher || hasUpdatedBackingStore)
-        m_targetSwitcher = GraphicsContextSwitcher::create(context, m_targetBoundingBox, DestinationColorSpace::SRGB(), { &filter });
+    if (!m_targetSwitcher || hasUpdatedBackingStore) {
+        FloatRect sourceImageRect;
+        if (is<RenderSVGShape>(renderer))
+            sourceImageRect = renderer.strokeBoundingBox();
+        else
+            sourceImageRect = m_targetBoundingBox;
+        m_targetSwitcher = GraphicsContextSwitcher::create(context, sourceImageRect, DestinationColorSpace::SRGB(), { &filter });
+    }
 
     if (!m_targetSwitcher)
         return nullptr;

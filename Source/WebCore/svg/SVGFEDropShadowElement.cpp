@@ -23,6 +23,7 @@
 
 #include "NodeName.h"
 #include "RenderStyle.h"
+#include "SVGFilter.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGRenderStyle.h"

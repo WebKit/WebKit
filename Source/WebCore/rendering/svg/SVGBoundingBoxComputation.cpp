@@ -31,6 +31,7 @@
 #include "RenderSVGInline.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResourceClipper.h"
+#include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGRoot.h"
@@ -256,8 +257,12 @@ void SVGBoundingBoxComputation::adjustBoxForClippingAndEffects(const SVGBounding
         }
     }
 
-    // FIXME: Implement filter support.
-    UNUSED_PARAM(includeFilter);
+    if (includeFilter) {
+        if (auto* referencedFilterRenderer = m_renderer->svgFilterResourceFromStyle()) {
+            auto repaintRectCalculation = options.contains(DecorationOption::CalculateFastRepaintRect) ? RepaintRectCalculation::Fast : RepaintRectCalculation::Accurate;
+            box.intersect(referencedFilterRenderer->resourceBoundingBox(m_renderer, repaintRectCalculation));
+        }
+    }
 
     if (options.contains(DecorationOption::IncludeClippers)) {
         if (CheckedPtr referencedClipperRenderer = m_renderer->svgClipperResourceFromStyle()) {
