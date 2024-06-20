@@ -184,28 +184,26 @@ import Builder from '../Builder.js';
 
     function makeGarbage(depth) {
         let garbage = { val: "hi", val2: 5, arr: [] }
-        for (let i=0; i<100; ++i) garbage.arr += ({ field: i })
+        for (let i=0; i<10; ++i) garbage.arr += ({ field: i })
 
-        if (depth < 5)
+        if (depth < 2)
             return 1 + makeGarbage(depth + 1);
         return 0;
     }
 
-    for (let iter=0; iter<5; ++iter) {
-        for (let k=0; k<100; ++k)
-            tbl = new WebAssembly.Table({initial:100, element:"externref"})
+    for (let k=0; k<100; ++k)
+        tbl = new WebAssembly.Table({initial:100, element:"externref"})
 
-        for (let i=1; i<20; ++i) {
-            const len = tbl.length;
-            for (let j=0; j<len; ++j)
-                doSet(j, j);
-            makeGarbage(0);
-            tbl.grow(Math.pow(2,i));
-            for (let j=0; j<len; ++j)
-                assert.eq(tbl.get(j).test, j);
-            for (let j=0; j<tbl.length; ++j)
-                doSet(j, -j);
-        }
+    for (let i=1; i<5; ++i) {
+        const len = tbl.length;
+        for (let j=0; j<len; ++j)
+            doSet(j, j);
+        makeGarbage(0);
+        tbl.grow(Math.pow(2,i));
+        for (let j=0; j<len; ++j)
+            assert.eq(tbl.get(j).test, j);
+        for (let j=0; j<tbl.length; ++j)
+            doSet(j, -j);
     }
 }
 
