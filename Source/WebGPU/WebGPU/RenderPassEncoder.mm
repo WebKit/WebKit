@@ -361,7 +361,7 @@ void RenderPassEncoder::runVertexBufferValidation(uint32_t vertexCount, uint32_t
 
     auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
     for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
-        Checked<int64_t, WTF::RecordOverflow> strideCount = 0;
+        Checked<uint64_t, WTF::RecordOverflow> strideCount = 0;
         switch (bufferData.stepMode) {
         case WGPUVertexStepMode_Vertex:
             strideCount = checkedSum<uint32_t>(firstVertex, vertexCount);
@@ -387,7 +387,9 @@ void RenderPassEncoder::runVertexBufferValidation(uint32_t vertexCount, uint32_t
         auto it = m_vertexBuffers.find(bufferIndex);
         RELEASE_ASSERT(it != m_vertexBuffers.end());
         auto bufferSize = it->value.size;
-        if ((strideCount.value() - 1) * bufferData.stride + bufferData.lastStride > bufferSize) {
+        auto strideSize = checkedProduct<uint64_t>((strideCount.value() - 1), bufferData.stride);
+        auto requiredSize = checkedSum<uint64_t>(strideSize.value(), bufferData.lastStride);
+        if (strideSize.hasOverflowed() || requiredSize.hasOverflowed() || requiredSize.value() > bufferSize) {
             makeInvalid([NSString stringWithFormat:@"Buffer[%d] fails: (strideCount(%llu) - 1) * bufferData.stride(%llu) + bufferData.lastStride(%llu) > bufferSize(%llu)", bufferIndex, strideCount.value(), bufferData.stride,  bufferData.lastStride, bufferSize]);
             return;
         }
@@ -451,9 +453,13 @@ NSString* RenderPassEncoder::errorValidatingDrawIndexed() const
 
 void RenderPassEncoder::incrementDrawCount(uint32_t drawCalls)
 {
-    m_drawCount += drawCalls;
-    if (m_drawCount > m_maxDrawCount)
+    auto checkedDrawCount = checkedSum<uint64_t>(m_drawCount, drawCalls);
+    if (checkedDrawCount.hasOverflowed() || checkedDrawCount > m_maxDrawCount) {
         makeInvalid(@"m_drawCount > m_maxDrawCount");
+        return;
+    }
+
+    m_drawCount = checkedDrawCount;
 }
 
 bool RenderPassEncoder::issuedDrawCall() const
@@ -525,7 +531,12 @@ bool RenderPassEncoder::executePreDrawCommands(const Buffer* indirectBuffer)
         if (pfragmentOffsets && pfragmentOffsets->size()) {
             auto& fragmentOffsets = *pfragmentOffsets;
             auto startIndex = pipelineLayout.fragmentOffsetForBindGroup(bindGroupIndex);
-            memcpySpan(m_fragmentDynamicOffsets.mutableSpan().subspan(startIndex + RenderBundleEncoder::startIndexForFragmentDynamicOffsets, fragmentOffsets.size()), fragmentOffsets.span());
+            auto startIndexWithOffset = checkedSum<size_t>(startIndex, RenderBundleEncoder::startIndexForFragmentDynamicOffsets);
+            if (startIndexWithOffset.hasOverflowed() || startIndexWithOffset >= m_fragmentDynamicOffsets.size()) {
+                makeInvalid(@"Invalid offset calculation");
+                return false;
+            }
+            memcpySpan(m_fragmentDynamicOffsets.mutableSpan().subspan(startIndexWithOffset, fragmentOffsets.size()), fragmentOffsets.span());
         }
     }
 
@@ -605,8 +616,9 @@ RenderPassEncoder::IndexCall RenderPassEncoder::clampIndexBufferToValidValues(ui
     if (!apiIndexBuffer->indirectBufferRequiresRecomputation(firstIndex, indexCount, minVertexCount, minInstanceCount, indexType))
         return IndexCall::IndirectDraw;
 
-    NSUInteger indexCountInBytes = static_cast<NSUInteger>(indexSizeInBytes) * indexCount;
-    if (indexCountInBytes + indexBufferOffsetInBytes > indexBuffer.length)
+    auto indexCountInBytes = checkedProduct<NSUInteger>(indexSizeInBytes, indexCount);
+    auto indexCountPlusOffsetInBytes = checkedSum<NSUInteger>(indexCountInBytes, indexBufferOffsetInBytes);
+    if (indexCountInBytes.hasOverflowed() || indexCountPlusOffsetInBytes.hasOverflowed() || indexCountPlusOffsetInBytes > indexBuffer.length)
         return IndexCall::Skip;
     id<MTLBuffer> indexedIndirectBuffer = apiIndexBuffer->indirectIndexedBuffer();
     MTLDrawIndexedPrimitivesIndirectArguments indirectArguments {
@@ -710,15 +722,21 @@ void RenderPassEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount,
     RETURN_IF_FINISHED();
 
     auto indexSizeInBytes = (m_indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t));
-    auto firstIndexOffsetInBytes = firstIndex * indexSizeInBytes;
-    auto indexBufferOffsetInBytes = m_indexBufferOffset + firstIndexOffsetInBytes;
+    auto firstIndexOffsetInBytes = checkedProduct<uint64_t>(firstIndex, indexSizeInBytes);
+    auto indexBufferOffsetInBytes = checkedSum<uint64_t>(m_indexBufferOffset, firstIndexOffsetInBytes);
+    if (firstIndexOffsetInBytes.hasOverflowed() || indexBufferOffsetInBytes.hasOverflowed()) {
+        makeInvalid(@"Invalid offset to drawIndexed");
+        return;
+    }
 
     if (NSString* error = errorValidatingDrawIndexed()) {
         makeInvalid(error);
         return;
     }
 
-    if (firstIndexOffsetInBytes + indexCount * indexSizeInBytes > m_indexBufferSize) {
+    auto indexCountInBytes = checkedProduct<NSUInteger>(indexSizeInBytes, indexCount);
+    auto lastIndexOffset = checkedSum<NSUInteger>(firstIndexOffsetInBytes, indexCountInBytes);
+    if (indexCountInBytes.hasOverflowed() || lastIndexOffset.hasOverflowed() ||  lastIndexOffset.value() > m_indexBufferSize) {
         makeInvalid(@"Values to drawIndexed are invalid");
         return;
     }
@@ -766,7 +784,8 @@ void RenderPassEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint64
         return;
     }
 
-    if (indirectBuffer.initialSize() < indirectOffset + sizeof(MTLDrawIndexedPrimitivesIndirectArguments)) {
+    auto checkedIndirectOffset = checkedSum<uint64_t>(indirectOffset, sizeof(MTLDrawIndexedPrimitivesIndirectArguments));
+    if (checkedIndirectOffset.hasOverflowed() || indirectBuffer.initialSize() < checkedIndirectOffset) {
         makeInvalid(@"drawIndexedIndirect: validation failed");
         return;
     }
@@ -796,7 +815,8 @@ void RenderPassEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t indi
         return;
     }
 
-    if (indirectBuffer.initialSize() < indirectOffset + sizeof(MTLDrawPrimitivesIndirectArguments)) {
+    auto checkedIndirectOffset = checkedSum<uint64_t>(indirectOffset, sizeof(MTLDrawPrimitivesIndirectArguments));
+    if (checkedIndirectOffset.hasOverflowed() || indirectBuffer.initialSize() < checkedIndirectOffset) {
         makeInvalid(@"drawIndirect: validation failed");
         return;
     }
@@ -1108,6 +1128,9 @@ NSString* RenderPassEncoder::errorValidatingPipeline(const RenderPipeline& pipel
     if (!colorDepthStencilTargetsMatch(pipeline))
         return @"setPipeline: color and depth targets from pass do not match pipeline";
 
+    if (sumOverflows<uint64_t>(pipeline.pipelineLayout().sizeOfFragmentDynamicOffsets(), RenderBundleEncoder::startIndexForFragmentDynamicOffsets))
+        return @"setPipeline: invalid size of fragmentDynamicOffsets";
+
     return nil;
 }
 
@@ -1135,7 +1158,7 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
 void RenderPassEncoder::setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 {
     RETURN_IF_FINISHED();
-    if (x + width > m_renderTargetWidth || y + height > m_renderTargetHeight) {
+    if (sumOverflows<uint32_t>(x, width) || x + width > m_renderTargetWidth || sumOverflows<uint32_t>(y, height) || y + height > m_renderTargetHeight) {
         makeInvalid();
         return;
     }
