@@ -347,10 +347,11 @@ void JSModuleNamespaceObject::overrideExports(JSGlobalObject* globalObject, cons
         if (iter(globalObject, name, value)) {
             auto* moduleNamespaceObject = pair.value.moduleRecord->getModuleNamespace(globalObject);
             RETURN_IF_EXCEPTION(scope, void());
-            auto* moduleEnvironment = pair.value.moduleRecord->moduleEnvironment();
             bool putResult = false;
             moduleNamespaceObject->m_isOverridingValue = true;
-            symbolTablePutTouchWatchpointSet(moduleEnvironment, globalObject, name, value, false, true, putResult);
+            if (JSModuleEnvironment* moduleEnvironment = pair.value.moduleRecord->moduleEnvironmentMayBeNull()) {
+                symbolTablePutTouchWatchpointSet(moduleEnvironment, globalObject, name, value, false, true, putResult);
+            }
             JSC::PutPropertySlot putter = JSC::PutPropertySlot(moduleNamespaceObject, false);
             moduleNamespaceObject->put(moduleNamespaceObject, globalObject, name, value, putter);
             moduleNamespaceObject->m_isOverridingValue = false;
@@ -381,11 +382,11 @@ bool JSModuleNamespaceObject::overrideExportValue(JSGlobalObject* globalObject, 
     auto* moduleNamespaceObject = record->getModuleNamespace(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
 
-    JSModuleEnvironment* moduleEnvironment = record->moduleEnvironment();
-
     bool putResult = false;
     moduleNamespaceObject->m_isOverridingValue = true;
-    symbolTablePutTouchWatchpointSet(moduleEnvironment, globalObject, resolution.localName, value, false, true, putResult);
+    if (JSModuleEnvironment* moduleEnvironment = record->moduleEnvironmentMayBeNull()) {
+        symbolTablePutTouchWatchpointSet(moduleEnvironment, globalObject, resolution.localName, value, false, true, putResult);
+    }
     JSC::PutPropertySlot putter = JSC::PutPropertySlot(moduleNamespaceObject, false);
     putResult = moduleNamespaceObject->put(moduleNamespaceObject, globalObject, name, value, putter);
     moduleNamespaceObject->m_isOverridingValue = false;
