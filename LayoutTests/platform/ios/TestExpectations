@@ -3291,8 +3291,6 @@ webkit.org/b/207858 fast/canvas/webgl/uninitialized-test.html [ Pass Failure ]
 webkit.org/b/207858 fast/canvas/webgl/oes-texture-float-linear.html [ Pass Failure ]
 webkit.org/b/207858 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Pass Failure ]
 
-webkit.org/b/208023 fast/text/international/system-language/declarative-language.html [ Failure ]
-
 webkit.org/b/204312 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg [ Failure Pass ]
 
 webkit.org/b/209257 svg/as-object/object-box-sizing-no-width-height.html [ Pass Failure ]
@@ -7263,3 +7261,5 @@ webkit.org/b/274766 [ Debug ] http/wpt/webauthn/public-key-credential-get-succes
 fast/events/ios/rotation/safe-area-insets-during-safari-type-rotation.html [ Failure ]
 fast/events/ios/rotation/layout-viewport-during-rotation.html [ Failure ]
 fast/events/ios/rotation/safari-like-rotation.html [ Failure ]
+
+webkit.org/b/275713 fast/text/international/system-language/declarative-language.html [ Failure ]
