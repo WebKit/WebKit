@@ -301,7 +301,7 @@ public:
     CTFontRef ctFont() const;
 #endif
 
-#if PLATFORM(WIN) || PLATFORM(COCOA)
+#if PLATFORM(COCOA)
     bool isSystemFont() const { return m_isSystemFont; }
 #endif
 
@@ -398,7 +398,7 @@ private:
 #endif
 
 #if PLATFORM(WIN)
-    void platformDataInit(HFONT, float size, WCHAR* faceName);
+    void platformDataInit(HFONT, float size);
 #endif
 
 #if USE(FREETYPE) && USE(CAIRO)
@@ -439,7 +439,9 @@ private:
     bool m_syntheticOblique { false };
     bool m_isColorBitmapFont { false };
     bool m_isHashTableDeletedValue { false };
+#if PLATFORM(COCOA)
     bool m_isSystemFont { false };
+#endif
     bool m_hasVariations { false };
     // The values above are common to all ports
 

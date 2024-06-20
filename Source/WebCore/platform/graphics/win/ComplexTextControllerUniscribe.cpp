@@ -254,13 +254,6 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
             float offsetX = offsets[k].du / cLogicalScale;
             float offsetY = offsets[k].dv / cLogicalScale;
 
-            // Match AppKit's rules for the integer vs. non-integer rendering modes.
-            if (!font->platformData().isSystemFont()) {
-                advance = roundf(advance);
-                offsetX = roundf(offsetX);
-                offsetY = roundf(offsetY);
-            }
-
             baseAdvances.append({ advance, 0 });
             origins.append({ offsetX, offsetY });
         }
