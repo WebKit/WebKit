@@ -48,13 +48,6 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
     _WKContentSecurityPolicyModeForExtensionManifestV3
 } WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
-typedef NS_ENUM(NSUInteger, _WKUnifiedTextReplacementBehavior) {
-    _WKUnifiedTextReplacementBehaviorNone = 0,
-    _WKUnifiedTextReplacementBehaviorDefault,
-    _WKUnifiedTextReplacementBehaviorLimited,
-    _WKUnifiedTextReplacementBehaviorComplete
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
 @class WKWebView;
 @class _WKApplicationManifest;
 @class _WKVisitedLinkStore;

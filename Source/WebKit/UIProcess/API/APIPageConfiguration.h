@@ -383,8 +383,8 @@ public:
     void setAllowsInlinePredictions(bool allows) { m_data.allowsInlinePredictions = allows; }
 
 #if ENABLE(WRITING_TOOLS)
-    WebCore::WritingTools::Behavior unifiedTextReplacementBehavior() const { return m_data.unifiedTextReplacementBehavior; }
-    void setUnifiedTextReplacementBehavior(WebCore::WritingTools::Behavior behavior) { m_data.unifiedTextReplacementBehavior = behavior; }
+    WebCore::WritingTools::Behavior writingToolsBehavior() const { return m_data.writingToolsBehavior; }
+    void setWritingToolsBehavior(WebCore::WritingTools::Behavior behavior) { m_data.writingToolsBehavior = behavior; }
 #endif
 
     void setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking value) { m_data.shouldRelaxThirdPartyCookieBlocking = value; }
@@ -587,7 +587,7 @@ private:
         bool scrollToTextFragmentMarkingEnabled { true };
 
 #if ENABLE(WRITING_TOOLS)
-        WebCore::WritingTools::Behavior unifiedTextReplacementBehavior { WebCore::WritingTools::Behavior::Default };
+        WebCore::WritingTools::Behavior writingToolsBehavior { WebCore::WritingTools::Behavior::Default };
 #endif
 
         WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };

@@ -166,7 +166,7 @@ enum class ReplacementBehavior : uint8_t;
 - (void)_didUpdateCandidateListVisibility:(BOOL)visible;
 
 #if ENABLE(WRITING_TOOLS)
-- (BOOL)_web_wantsCompleteUnifiedTextReplacementBehavior;
+- (BOOL)_web_wantsWritingToolsInlineEditing;
 #endif
 
 @end
@@ -717,12 +717,12 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    WebCore::WritingTools::Behavior unifiedTextReplacementBehavior() const;
+    WebCore::WritingTools::Behavior writingToolsBehavior() const;
 #endif
 
 #if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
-    bool canHandleSwapCharacters() const;
-    void handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView);
+    bool canHandleContextMenuWritingTools() const;
+    void handleContextMenuWritingTools(WebCore::IntRect selectionBoundsInRootView);
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
@@ -744,10 +744,6 @@ public:
 #if HAVE(INLINE_PREDICTIONS)
     void setInlinePredictionsEnabled(bool enabled) { m_inlinePredictionsEnabled = enabled; }
     bool inlinePredictionsEnabled() const { return m_inlinePredictionsEnabled; }
-#endif
-
-#if ENABLE(WRITING_TOOLS)
-    bool wantsCompleteUnifiedTextReplacementBehavior() const;
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)

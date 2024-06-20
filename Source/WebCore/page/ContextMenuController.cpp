@@ -647,10 +647,10 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
 #endif
         break;
 
-    case ContextMenuItemTagSwapCharacters:
+    case ContextMenuItemTagWritingTools:
 #if ENABLE(WRITING_TOOLS)
         if (RefPtr view = frame->view())
-            m_client->handleSwapCharacters(view->contentsToRootView(enclosingIntRect(frame->selection().selectionBounds())));
+            m_client->handleWritingTools(view->contentsToRootView(enclosingIntRect(frame->selection().selectionBounds())));
 #endif
         break;
 
@@ -1045,8 +1045,8 @@ void ContextMenuController::populate()
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-        ContextMenuItem swapCharactersItem(ContextMenuItemType::Action, ContextMenuItemTagSwapCharacters, contextMenuItemTagSwapCharacters());
-        appendItem(swapCharactersItem, m_contextMenu.get());
+        ContextMenuItem writingToolsItem(ContextMenuItemType::Action, ContextMenuItemTagWritingTools, contextMenuItemTagWritingTools());
+        appendItem(writingToolsItem, m_contextMenu.get());
 #endif
 
 #if !PLATFORM(GTK)
@@ -1800,7 +1800,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
         case ContextMenuItemTagLookUpImage:
         case ContextMenuItemTagTranslate:
-        case ContextMenuItemTagSwapCharacters:
+        case ContextMenuItemTagWritingTools:
             break;
     }
 

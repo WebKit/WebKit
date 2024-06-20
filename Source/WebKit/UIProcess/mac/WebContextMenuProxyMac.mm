@@ -627,8 +627,8 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
     case ContextMenuItemTagTranslate:
         return _WKMenuItemIdentifierTranslate;
 
-    case ContextMenuItemTagSwapCharacters:
-        return _WKMenuItemIdentifierSwapCharacters;
+    case ContextMenuItemTagWritingTools:
+        return _WKMenuItemIdentifierWritingTools;
 
     case ContextMenuItemTagCopySubject:
         return _WKMenuItemIdentifierCopySubject;
@@ -750,9 +750,9 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    if (!page()->canHandleSwapCharacters() || isPopover) {
+    if (!page()->canHandleContextMenuWritingTools() || isPopover) {
         filteredItems.removeAllMatching([] (auto& item) {
-            return item.action() == ContextMenuItemTagSwapCharacters;
+            return item.action() == ContextMenuItemTagWritingTools;
         });
     }
 #endif

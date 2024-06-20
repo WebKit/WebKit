@@ -234,13 +234,13 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
-    HandleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView)
+    HandleContextMenuWritingTools(WebCore::IntRect selectionBoundsInRootView)
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    TextReplacementSessionShowInformationForReplacementWithIDRelativeToRect(struct WebCore::WritingTools::Session::ID sessionID, struct WebCore::WritingTools::TextSuggestion::ID replacementID, WebCore::IntRect selectionBoundsInRootView)
+    ProofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(struct WebCore::WritingTools::Session::ID sessionID, struct WebCore::WritingTools::TextSuggestion::ID replacementID, WebCore::IntRect selectionBoundsInRootView)
 
-    TextReplacementSessionUpdateStateForReplacementWithID(struct WebCore::WritingTools::Session::ID sessionID, enum:uint8_t WebCore::WritingTools::TextSuggestion::State state, struct WebCore::WritingTools::TextSuggestion::ID replacementID)
+    ProofreadingSessionUpdateStateForSuggestionWithID(struct WebCore::WritingTools::Session::ID sessionID, enum:uint8_t WebCore::WritingTools::TextSuggestion::State state, struct WebCore::WritingTools::TextSuggestion::ID replacementID)
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

@@ -309,8 +309,8 @@ private:
 #endif
 
 #if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
-    bool canHandleSwapCharacters() const override;
-    void handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView) override;
+    bool canHandleContextMenuWritingTools() const override;
+    void handleContextMenuWritingTools(WebCore::IntRect selectionBoundsInRootView) override;
 #endif
 
 #if ENABLE(DATA_DETECTION)

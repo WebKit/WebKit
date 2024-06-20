@@ -1233,7 +1233,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #if ENABLE(WRITING_TOOLS)
-- (BOOL)_web_wantsCompleteUnifiedTextReplacementBehavior
+- (BOOL)_web_wantsWritingToolsInlineEditing
 {
     return [self wantsWritingToolsInlineEditing];
 }

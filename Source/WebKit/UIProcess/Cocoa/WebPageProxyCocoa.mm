@@ -863,14 +863,14 @@ void WebPageProxy::handleContextMenuTranslation(const TranslationContextMenuInfo
 
 #if ENABLE(WRITING_TOOLS)
 
-bool WebPageProxy::canHandleSwapCharacters() const
+bool WebPageProxy::canHandleContextMenuWritingTools() const
 {
-    return protectedPageClient()->canHandleSwapCharacters();
+    return protectedPageClient()->canHandleContextMenuWritingTools();
 }
 
-void WebPageProxy::handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView)
+void WebPageProxy::handleContextMenuWritingTools(WebCore::IntRect selectionBoundsInRootView)
 {
-    protectedPageClient()->handleContextMenuSwapCharacters(selectionBoundsInRootView);
+    protectedPageClient()->handleContextMenuWritingTools(selectionBoundsInRootView);
 }
 
 #endif // ENABLE(WRITING_TOOLS)
@@ -1149,49 +1149,49 @@ bool WebPageProxy::shouldDeactivateMediaCapability() const
 
 #if ENABLE(WRITING_TOOLS)
 
-void WebPageProxy::setUnifiedTextReplacementActive(bool active)
+void WebPageProxy::setWritingToolsActive(bool active)
 {
-    if (m_isUnifiedTextReplacementActive == active)
+    if (m_isWritingToolsActive == active)
         return;
 
-    protectedPageClient()->unifiedTextReplacementActiveWillChange();
-    m_isUnifiedTextReplacementActive = active;
-    protectedPageClient()->unifiedTextReplacementActiveDidChange();
+    protectedPageClient()->writingToolsActiveWillChange();
+    m_isWritingToolsActive = active;
+    protectedPageClient()->writingToolsActiveDidChange();
 }
 
-void WebPageProxy::willBeginTextReplacementSession(const std::optional<WebCore::WritingTools::Session>& session, CompletionHandler<void(const Vector<WebCore::WritingTools::Context>&)>&& completionHandler)
+void WebPageProxy::willBeginWritingToolsSession(const std::optional<WebCore::WritingTools::Session>& session, CompletionHandler<void(const Vector<WebCore::WritingTools::Context>&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebPage::WillBeginTextReplacementSession(session), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPage::WillBeginWritingToolsSession(session), WTFMove(completionHandler));
 }
 
-void WebPageProxy::didBeginTextReplacementSession(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::Context>& contexts)
+void WebPageProxy::didBeginWritingToolsSession(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::Context>& contexts)
 {
-    send(Messages::WebPage::DidBeginTextReplacementSession(session, contexts));
+    send(Messages::WebPage::DidBeginWritingToolsSession(session, contexts));
 }
 
-void WebPageProxy::textReplacementSessionDidReceiveReplacements(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::TextSuggestion>& replacements, const WebCore::WritingTools::Context& context, bool finished)
+void WebPageProxy::proofreadingSessionDidReceiveSuggestions(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::TextSuggestion>& suggestions, const WebCore::WritingTools::Context& context, bool finished)
 {
-    send(Messages::WebPage::TextReplacementSessionDidReceiveReplacements(session, replacements, context, finished));
+    send(Messages::WebPage::ProofreadingSessionDidReceiveSuggestions(session, suggestions, context, finished));
 }
 
-void WebPageProxy::textReplacementSessionDidUpdateStateForReplacement(const WebCore::WritingTools::Session& session, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion& replacement, const WebCore::WritingTools::Context& context)
+void WebPageProxy::proofreadingSessionDidUpdateStateForSuggestion(const WebCore::WritingTools::Session& session, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion& suggestion, const WebCore::WritingTools::Context& context)
 {
-    send(Messages::WebPage::TextReplacementSessionDidUpdateStateForReplacement(session, state, replacement, context));
+    send(Messages::WebPage::ProofreadingSessionDidUpdateStateForSuggestion(session, state, suggestion, context));
 }
 
-void WebPageProxy::didEndTextReplacementSession(const WebCore::WritingTools::Session& session, bool accepted)
+void WebPageProxy::didEndWritingToolsSession(const WebCore::WritingTools::Session& session, bool accepted)
 {
-    send(Messages::WebPage::DidEndTextReplacementSession(session, accepted));
+    send(Messages::WebPage::DidEndWritingToolsSession(session, accepted));
 }
 
-void WebPageProxy::textReplacementSessionDidReceiveTextWithReplacementRange(const WebCore::WritingTools::Session& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebCore::WritingTools::Context& context, bool finished)
+void WebPageProxy::compositionSessionDidReceiveTextWithReplacementRange(const WebCore::WritingTools::Session& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebCore::WritingTools::Context& context, bool finished)
 {
-    send(Messages::WebPage::TextReplacementSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished));
+    send(Messages::WebPage::CompositionSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished));
 }
 
-void WebPageProxy::textReplacementSessionDidReceiveEditAction(const WebCore::WritingTools::Session& session, WebCore::WritingTools::Action action)
+void WebPageProxy::writingToolsSessionDidReceiveAction(const WebCore::WritingTools::Session& session, WebCore::WritingTools::Action action)
 {
-    send(Messages::WebPage::TextReplacementSessionDidReceiveEditAction(session, action));
+    send(Messages::WebPage::WritingToolsSessionDidReceiveAction(session, action));
 }
 
 #endif // ENABLE(WRITING_TOOLS)
@@ -1261,18 +1261,18 @@ void WebPageProxy::removeTextAnimationForID(const WTF::UUID& uuid)
 
 #if ENABLE(WRITING_TOOLS)
 
-void WebPageProxy::textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
+void WebPageProxy::proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
 {
     MESSAGE_CHECK(sessionID.isValid());
 
-    protectedPageClient()->textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(sessionID, replacementID, selectionBoundsInRootView);
+    protectedPageClient()->proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(sessionID, replacementID, selectionBoundsInRootView);
 }
 
-void WebPageProxy::textReplacementSessionUpdateStateForReplacementWithID(const WebCore::WritingTools::Session::ID& sessionID, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion::ID& replacementID)
+void WebPageProxy::proofreadingSessionUpdateStateForSuggestionWithID(const WebCore::WritingTools::Session::ID& sessionID, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion::ID& replacementID)
 {
     MESSAGE_CHECK(sessionID.isValid());
 
-    protectedPageClient()->textReplacementSessionUpdateStateForReplacementWithID(sessionID, state, replacementID);
+    protectedPageClient()->proofreadingSessionUpdateStateForSuggestionWithID(sessionID, state, replacementID);
 }
 
 #endif // ENABLE(WRITING_TOOLS)

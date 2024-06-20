@@ -48,21 +48,21 @@ class WritingToolsController final {
 public:
     explicit WritingToolsController(Page&);
 
-    void willBeginTextReplacementSession(const std::optional<WritingTools::Session>&, CompletionHandler<void(const Vector<WritingTools::Context>&)>&&);
+    void willBeginWritingToolsSession(const std::optional<WritingTools::Session>&, CompletionHandler<void(const Vector<WritingTools::Context>&)>&&);
 
-    void didBeginTextReplacementSession(const WritingTools::Session&, const Vector<WritingTools::Context>&);
+    void didBeginWritingToolsSession(const WritingTools::Session&, const Vector<WritingTools::Context>&);
 
-    void textReplacementSessionDidReceiveReplacements(const WritingTools::Session&, const Vector<WritingTools::TextSuggestion>&, const WritingTools::Context&, bool finished);
+    void proofreadingSessionDidReceiveSuggestions(const WritingTools::Session&, const Vector<WritingTools::TextSuggestion>&, const WritingTools::Context&, bool finished);
 
-    void textReplacementSessionDidUpdateStateForReplacement(const WritingTools::Session&, WritingTools::TextSuggestion::State, const WritingTools::TextSuggestion&, const WritingTools::Context&);
+    void proofreadingSessionDidUpdateStateForSuggestion(const WritingTools::Session&, WritingTools::TextSuggestion::State, const WritingTools::TextSuggestion&, const WritingTools::Context&);
 
-    void didEndTextReplacementSession(const WritingTools::Session&, bool accepted);
+    void didEndWritingToolsSession(const WritingTools::Session&, bool accepted);
 
-    void textReplacementSessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished);
+    void compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished);
 
-    void textReplacementSessionDidReceiveEditAction(const WritingTools::Session&, WritingTools::Action);
+    void writingToolsSessionDidReceiveAction(const WritingTools::Session&, WritingTools::Action);
 
-    void updateStateForSelectedReplacementIfNeeded();
+    void updateStateForSelectedSuggestionIfNeeded();
 
     // FIXME: Refactor `TextAnimationController` in such a way so as to not explicitly depend on `WritingToolsController`,
     // and then remove this method after doing so.
@@ -131,10 +131,10 @@ private:
     void replaceContentsOfRangeInSession(CompositionState&, const SimpleRange&, RefPtr<DocumentFragment>&&, MatchStyle);
 
     template<WritingTools::Session::Type Type>
-    void textReplacementSessionDidReceiveEditAction(const WritingTools::Session&, WritingTools::Action);
+    void writingToolsSessionDidReceiveAction(const WritingTools::Session&, WritingTools::Action);
 
     template<WritingTools::Session::Type Type>
-    void didEndTextReplacementSession(const WritingTools::Session&, bool accepted);
+    void didEndWritingToolsSession(const WritingTools::Session&, bool accepted);
 
     RefPtr<Document> document() const;
 

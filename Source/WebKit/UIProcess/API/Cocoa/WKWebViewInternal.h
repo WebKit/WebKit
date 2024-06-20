@@ -248,8 +248,8 @@ struct PerWebProcessState {
     CocoaEdgeInsets _maximumViewportInset;
 
 #if ENABLE(WRITING_TOOLS)
-    RetainPtr<NSMapTable<NSUUID *, WTTextSuggestion *>> _unifiedTextReplacementSessionReplacements;
-    RetainPtr<NSMapTable<NSUUID *, WTSession *>> _unifiedTextReplacementSessions;
+    RetainPtr<NSMapTable<NSUUID *, WTTextSuggestion *>> _writingToolsTextSuggestions;
+    RetainPtr<NSMapTable<NSUUID *, WTSession *>> _writingToolsSessions;
 #endif
 
 #if PLATFORM(MAC)
@@ -402,9 +402,9 @@ struct PerWebProcessState {
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-- (void)_textReplacementSession:(NSUUID *)sessionUUID showInformationForReplacementWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect;
+- (void)_proofreadingSessionWithUUID:(NSUUID *)sessionUUID showDetailsForSuggestionWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect;
 
-- (void)_textReplacementSession:(NSUUID *)sessionUUID updateState:(WebCore::WritingTools::TextSuggestionState)state forReplacementWithUUID:(NSUUID *)replacementUUID;
+- (void)_proofreadingSessionWithUUID:(NSUUID *)sessionUUID updateState:(WebCore::WritingTools::TextSuggestionState)state forSuggestionWithUUID:(NSUUID *)replacementUUID;
 
 #if PLATFORM(MAC)
 - (NSWritingToolsAllowedInputOptions)writingToolsAllowedInputOptions;

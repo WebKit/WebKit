@@ -504,9 +504,9 @@ String contextMenuItemTagTranslate(const String& selectedString)
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-String contextMenuItemTagSwapCharacters()
+String contextMenuItemTagWritingTools()
 {
-    return WEB_UI_STRING("Swap characters", "Swap characters context menu item");
+    return WEB_UI_STRING("Writing Tools", "Writing Tools context menu item");
 }
 #endif
 

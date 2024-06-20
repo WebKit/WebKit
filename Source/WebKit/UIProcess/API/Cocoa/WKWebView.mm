@@ -442,8 +442,8 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    _unifiedTextReplacementSessions = [NSMapTable strongToWeakObjectsMapTable];
-    _unifiedTextReplacementSessionReplacements = [NSMapTable strongToWeakObjectsMapTable];
+    _writingToolsSessions = [NSMapTable strongToWeakObjectsMapTable];
+    _writingToolsTextSuggestions = [NSMapTable strongToWeakObjectsMapTable];
 #endif
 }
 
@@ -2065,7 +2065,11 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 - (BOOL)isWritingToolsActive
 {
-    return [self _isUnifiedTextReplacementActive];
+#if ENABLE(WRITING_TOOLS)
+    return _page->isWritingToolsActive();
+#else
+    return NO;
+#endif
 }
 
 #pragma mark - WTWritingToolsDelegate conformance
@@ -2090,11 +2094,11 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     auto webSession = WebKit::convertToWebSession(session);
 
     if (session) {
-        [_unifiedTextReplacementSessions setObject:session forKey:session.uuid];
-        _page->setUnifiedTextReplacementActive(true);
+        [_writingToolsSessions setObject:session forKey:session.uuid];
+        _page->setWritingToolsActive(true);
     }
 
-    _page->willBeginTextReplacementSession(webSession, [completion = makeBlockPtr(completion)](const auto& contextData) {
+    _page->willBeginWritingToolsSession(webSession, [completion = makeBlockPtr(completion)](const auto& contextData) {
         auto contexts = [NSMutableArray arrayWithCapacity:contextData.size()];
         for (auto& context : contextData) {
             auto platformContext = WebKit::convertToPlatformContext(context);
@@ -2127,7 +2131,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     if (webSession->compositionType != WebCore::WritingTools::Session::CompositionType::SmartReply)
         [self beginWritingToolsAnimationForSessionWithUUID:session.uuid];
 
-    _page->didBeginTextReplacementSession(*webSession, contextData);
+    _page->didBeginWritingToolsSession(*webSession, contextData);
 }
 
 - (void)proofreadingSession:(WTSession *)session didReceiveSuggestions:(NSArray<WTTextSuggestion *> *)suggestions processedRange:(NSRange)range inContext:(WTContext *)context finished:(BOOL)finished
@@ -2154,10 +2158,10 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
         replacementData.append(*replacementDataItem);
 
-        [_unifiedTextReplacementSessionReplacements setObject:suggestion forKey:suggestion.uuid];
+        [_writingToolsTextSuggestions setObject:suggestion forKey:suggestion.uuid];
     }
 
-    _page->textReplacementSessionDidReceiveReplacements(*webSession, replacementData, *webContext, finished);
+    _page->proofreadingSessionDidReceiveSuggestions(*webSession, replacementData, *webContext, finished);
 }
 
 - (void)proofreadingSession:(WTSession *)session didUpdateState:(WTTextSuggestionState)state forSuggestionWithUUID:(NSUUID *)suggestionUUID inContext:(WTContext *)context
@@ -2176,7 +2180,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
     auto webTextSuggestionState = WebKit::convertToWebTextSuggestionState(state);
 
-    WTTextSuggestion *suggestion = [_unifiedTextReplacementSessionReplacements objectForKey:suggestionUUID];
+    WTTextSuggestion *suggestion = [_writingToolsTextSuggestions objectForKey:suggestionUUID];
     if (!suggestion) {
         ASSERT_NOT_REACHED();
         return;
@@ -2188,7 +2192,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         return;
     }
 
-    _page->textReplacementSessionDidUpdateStateForReplacement(*webSession, webTextSuggestionState, *webTextSuggestion, *webContext);
+    _page->proofreadingSessionDidUpdateStateForSuggestion(*webSession, webTextSuggestionState, *webTextSuggestion, *webContext);
 }
 
 - (void)didEndWritingToolsSession:(WTSession *)session accepted:(BOOL)accepted
@@ -2199,12 +2203,12 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         return;
     }
 
-    [_unifiedTextReplacementSessions removeObjectForKey:session.uuid];
-    [_unifiedTextReplacementSessionReplacements removeAllObjects];
+    [_writingToolsSessions removeObjectForKey:session.uuid];
+    [_writingToolsTextSuggestions removeAllObjects];
 
-    _page->setUnifiedTextReplacementActive(false);
+    _page->setWritingToolsActive(false);
 
-    _page->didEndTextReplacementSession(*webSession, accepted);
+    _page->didEndWritingToolsSession(*webSession, accepted);
 }
 
 - (void)compositionSession:(WTSession *)session didReceiveText:(NSAttributedString *)attributedText replacementRange:(NSRange)range inContext:(WTContext *)context finished:(BOOL)finished
@@ -2221,7 +2225,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         return;
     }
 
-    _page->textReplacementSessionDidReceiveTextWithReplacementRange(*webSession, WebCore::AttributedString::fromNSAttributedString(attributedText), { range }, *webContext, finished);
+    _page->compositionSessionDidReceiveTextWithReplacementRange(*webSession, WebCore::AttributedString::fromNSAttributedString(attributedText), { range }, *webContext, finished);
 }
 
 - (void)writingToolsSession:(WTSession *)session didReceiveAction:(WTAction)action
@@ -2232,15 +2236,15 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         return;
     }
 
-    _page->textReplacementSessionDidReceiveEditAction(*webSession, WebKit::convertToWebAction(action));
+    _page->writingToolsSessionDidReceiveAction(*webSession, WebKit::convertToWebAction(action));
 }
 
 
 #pragma mark - WTTextViewDelegate invoking methods
 
-- (void)_textReplacementSession:(NSUUID *)sessionUUID showInformationForReplacementWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect
+- (void)_proofreadingSessionWithUUID:(NSUUID *)sessionUUID showDetailsForSuggestionWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect
 {
-    WTSession *session = [_unifiedTextReplacementSessions objectForKey:sessionUUID];
+    WTSession *session = [_writingToolsSessions objectForKey:sessionUUID];
     if (!session)
         return;
 
@@ -2258,9 +2262,9 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     [textViewDelegate proofreadingSessionWithUUID:session.uuid showDetailsForSuggestionWithUUID:replacementUUID relativeToRect:rect inView:view.get()];
 }
 
-- (void)_textReplacementSession:(NSUUID *)sessionUUID updateState:(WebCore::WritingTools::TextSuggestion::State)state forReplacementWithUUID:(NSUUID *)replacementUUID
+- (void)_proofreadingSessionWithUUID:(NSUUID *)sessionUUID updateState:(WebCore::WritingTools::TextSuggestion::State)state forSuggestionWithUUID:(NSUUID *)replacementUUID
 {
-    WTSession *session = [_unifiedTextReplacementSessions objectForKey:sessionUUID];
+    WTSession *session = [_writingToolsSessions objectForKey:sessionUUID];
     if (!session)
         return;
 
@@ -4680,15 +4684,6 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
     _page->numberOfVisibilityAdjustmentRects([completion = makeBlockPtr(completion)](uint64_t count) {
         completion(static_cast<NSUInteger>(count));
     });
-}
-
-- (BOOL)_isUnifiedTextReplacementActive
-{
-#if ENABLE(WRITING_TOOLS)
-    return _page->isUnifiedTextReplacementActive();
-#else
-    return NO;
-#endif
 }
 
 @end

@@ -2787,7 +2787,7 @@ void WebViewImpl::selectionDidChange()
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    if (wantsCompleteUnifiedTextReplacementBehavior()) {
+    if ([m_view _web_wantsWritingToolsInlineEditing]) {
         auto isRange = m_page->editorState().hasPostLayoutData() && m_page->editorState().selectionIsRange;
         auto selectionRect = isRange ? m_page->editorState().postLayoutData->selectionBoundingRect : IntRect { };
 
@@ -6453,28 +6453,16 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
 
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
-#if ENABLE(WRITING_TOOLS)
-WebCore::WritingTools::Behavior WebViewImpl::unifiedTextReplacementBehavior() const
-{
-    return m_page->configuration().unifiedTextReplacementBehavior();
-}
-
-bool WebViewImpl::wantsCompleteUnifiedTextReplacementBehavior() const
-{
-    return [m_view _web_wantsCompleteUnifiedTextReplacementBehavior];
-}
-#endif
-
 #if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
 
-bool WebViewImpl::canHandleSwapCharacters() const
+bool WebViewImpl::canHandleContextMenuWritingTools() const
 {
-    return [PAL::getWTWritingToolsViewControllerClass() isAvailable] && unifiedTextReplacementBehavior() != WebCore::WritingTools::Behavior::None;
+    return [PAL::getWTWritingToolsViewControllerClass() isAvailable] && m_page->configuration().writingToolsBehavior() != WebCore::WritingTools::Behavior::None;
 }
 
-void WebViewImpl::handleContextMenuSwapCharacters(IntRect selectionBoundsInRootView)
+void WebViewImpl::handleContextMenuWritingTools(IntRect selectionBoundsInRootView)
 {
-    if (!canHandleSwapCharacters()) {
+    if (!canHandleContextMenuWritingTools()) {
         ASSERT_NOT_REACHED();
         return;
     }

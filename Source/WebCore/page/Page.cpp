@@ -4853,39 +4853,39 @@ void Page::gamepadsRecentlyAccessed()
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-void Page::willBeginTextReplacementSession(const std::optional<WritingTools::Session>& session, CompletionHandler<void(const Vector<WritingTools::Context>&)>&& completionHandler)
+void Page::willBeginWritingToolsSession(const std::optional<WritingTools::Session>& session, CompletionHandler<void(const Vector<WritingTools::Context>&)>&& completionHandler)
 {
-    m_writingToolsController->willBeginTextReplacementSession(session, WTFMove(completionHandler));
+    m_writingToolsController->willBeginWritingToolsSession(session, WTFMove(completionHandler));
 }
 
-void Page::didBeginTextReplacementSession(const WritingTools::Session& session, const Vector<WritingTools::Context>& contexts)
+void Page::didBeginWritingToolsSession(const WritingTools::Session& session, const Vector<WritingTools::Context>& contexts)
 {
-    m_writingToolsController->didBeginTextReplacementSession(session, contexts);
+    m_writingToolsController->didBeginWritingToolsSession(session, contexts);
 }
 
-void Page::textReplacementSessionDidReceiveReplacements(const WritingTools::Session& session, const Vector<WritingTools::TextSuggestion>& replacements, const WritingTools::Context& context, bool finished)
+void Page::proofreadingSessionDidReceiveSuggestions(const WritingTools::Session& session, const Vector<WritingTools::TextSuggestion>& suggestions, const WritingTools::Context& context, bool finished)
 {
-    m_writingToolsController->textReplacementSessionDidReceiveReplacements(session, replacements, context, finished);
+    m_writingToolsController->proofreadingSessionDidReceiveSuggestions(session, suggestions, context, finished);
 }
 
-void Page::textReplacementSessionDidUpdateStateForReplacement(const WritingTools::Session& session, WritingTools::TextSuggestion::State state, const WritingTools::TextSuggestion& replacement, const WritingTools::Context& context)
+void Page::proofreadingSessionDidUpdateStateForSuggestion(const WritingTools::Session& session, WritingTools::TextSuggestion::State state, const WritingTools::TextSuggestion& suggestion, const WritingTools::Context& context)
 {
-    m_writingToolsController->textReplacementSessionDidUpdateStateForReplacement(session, state, replacement, context);
+    m_writingToolsController->proofreadingSessionDidUpdateStateForSuggestion(session, state, suggestion, context);
 }
 
-void Page::didEndTextReplacementSession(const WritingTools::Session& session, bool accepted)
+void Page::didEndWritingToolsSession(const WritingTools::Session& session, bool accepted)
 {
-    m_writingToolsController->didEndTextReplacementSession(session, accepted);
+    m_writingToolsController->didEndWritingToolsSession(session, accepted);
 }
 
-void Page::textReplacementSessionDidReceiveTextWithReplacementRange(const WritingTools::Session& session, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished)
+void Page::compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session& session, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished)
 {
-    m_writingToolsController->textReplacementSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished);
+    m_writingToolsController->compositionSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished);
 }
 
-void Page::updateStateForSelectedReplacementIfNeeded()
+void Page::updateStateForSelectedSuggestionIfNeeded()
 {
-    m_writingToolsController->updateStateForSelectedReplacementIfNeeded();
+    m_writingToolsController->updateStateForSelectedSuggestionIfNeeded();
 }
 
 std::optional<SimpleRange> Page::contextRangeForSessionWithID(const WritingTools::Session::ID& sessionID) const
@@ -4893,9 +4893,9 @@ std::optional<SimpleRange> Page::contextRangeForSessionWithID(const WritingTools
     return m_writingToolsController->contextRangeForSessionWithID(sessionID);
 }
 
-void Page::textReplacementSessionDidReceiveEditAction(const WritingTools::Session& session, WritingTools::Action action)
+void Page::writingToolsSessionDidReceiveAction(const WritingTools::Session& session, WritingTools::Action action)
 {
-    m_writingToolsController->textReplacementSessionDidReceiveEditAction(session, action);
+    m_writingToolsController->writingToolsSessionDidReceiveAction(session, action);
 }
 #endif
 

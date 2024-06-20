@@ -945,49 +945,49 @@ void WebPage::setMediaEnvironment(const String& mediaEnvironment)
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-void WebPage::willBeginTextReplacementSession(const std::optional<WebCore::WritingTools::Session>& session, CompletionHandler<void(const Vector<WebCore::WritingTools::Context>&)>&& completionHandler)
+void WebPage::willBeginWritingToolsSession(const std::optional<WebCore::WritingTools::Session>& session, CompletionHandler<void(const Vector<WebCore::WritingTools::Context>&)>&& completionHandler)
 {
-    corePage()->willBeginTextReplacementSession(session, WTFMove(completionHandler));
+    corePage()->willBeginWritingToolsSession(session, WTFMove(completionHandler));
 }
 
-void WebPage::didBeginTextReplacementSession(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::Context>& contexts)
+void WebPage::didBeginWritingToolsSession(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::Context>& contexts)
 {
-    corePage()->didBeginTextReplacementSession(session, contexts);
+    corePage()->didBeginWritingToolsSession(session, contexts);
 }
 
-void WebPage::textReplacementSessionDidReceiveReplacements(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::TextSuggestion>& replacements, const WebCore::WritingTools::Context& context, bool finished)
+void WebPage::proofreadingSessionDidReceiveSuggestions(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::TextSuggestion>& suggestions, const WebCore::WritingTools::Context& context, bool finished)
 {
-    corePage()->textReplacementSessionDidReceiveReplacements(session, replacements, context, finished);
+    corePage()->proofreadingSessionDidReceiveSuggestions(session, suggestions, context, finished);
 }
 
-void WebPage::textReplacementSessionDidUpdateStateForReplacement(const WebCore::WritingTools::Session& session, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion& replacement, const WebCore::WritingTools::Context& context)
+void WebPage::proofreadingSessionDidUpdateStateForSuggestion(const WebCore::WritingTools::Session& session, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion& suggestion, const WebCore::WritingTools::Context& context)
 {
-    corePage()->textReplacementSessionDidUpdateStateForReplacement(session, state, replacement, context);
+    corePage()->proofreadingSessionDidUpdateStateForSuggestion(session, state, suggestion, context);
 }
 
-void WebPage::didEndTextReplacementSession(const WebCore::WritingTools::Session& session, bool accepted)
+void WebPage::didEndWritingToolsSession(const WebCore::WritingTools::Session& session, bool accepted)
 {
-    corePage()->didEndTextReplacementSession(session, accepted);
+    corePage()->didEndWritingToolsSession(session, accepted);
 }
 
-void WebPage::textReplacementSessionDidReceiveTextWithReplacementRange(const WebCore::WritingTools::Session& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebCore::WritingTools::Context& context, bool finished)
+void WebPage::compositionSessionDidReceiveTextWithReplacementRange(const WebCore::WritingTools::Session& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebCore::WritingTools::Context& context, bool finished)
 {
-    corePage()->textReplacementSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished);
+    corePage()->compositionSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished);
 }
 
-void WebPage::textReplacementSessionDidReceiveEditAction(const WritingTools::Session& session, WebCore::WritingTools::Action action)
+void WebPage::writingToolsSessionDidReceiveAction(const WritingTools::Session& session, WebCore::WritingTools::Action action)
 {
-    corePage()->textReplacementSessionDidReceiveEditAction(session, action);
+    corePage()->writingToolsSessionDidReceiveAction(session, action);
 }
 
-void WebPage::textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect rect)
+void WebPage::proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect rect)
 {
-    send(Messages::WebPageProxy::TextReplacementSessionShowInformationForReplacementWithIDRelativeToRect(sessionID, replacementID, rect));
+    send(Messages::WebPageProxy::ProofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(sessionID, replacementID, rect));
 }
 
-void WebPage::textReplacementSessionUpdateStateForReplacementWithID(const WebCore::WritingTools::Session::ID& sessionID, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion::ID& replacementID)
+void WebPage::proofreadingSessionUpdateStateForSuggestionWithID(const WebCore::WritingTools::Session::ID& sessionID, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion::ID& replacementID)
 {
-    send(Messages::WebPageProxy::TextReplacementSessionUpdateStateForReplacementWithID(sessionID, state, replacementID));
+    send(Messages::WebPageProxy::ProofreadingSessionUpdateStateForSuggestionWithID(sessionID, state, replacementID));
 }
 
 #endif

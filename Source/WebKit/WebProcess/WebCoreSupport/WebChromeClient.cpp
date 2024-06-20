@@ -1846,14 +1846,14 @@ void WebChromeClient::gamepadsRecentlyAccessed()
 
 #if ENABLE(WRITING_TOOLS)
 
-void WebChromeClient::textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
+void WebChromeClient::proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
 {
-    protectedPage()->textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(sessionID, replacementID, selectionBoundsInRootView);
+    protectedPage()->proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(sessionID, replacementID, selectionBoundsInRootView);
 }
 
-void WebChromeClient::textReplacementSessionUpdateStateForReplacementWithID(const WritingTools::Session::ID& sessionID, WritingTools::TextSuggestion::State state, const WritingTools::TextSuggestion::ID& replacementID)
+void WebChromeClient::proofreadingSessionUpdateStateForSuggestionWithID(const WritingTools::Session::ID& sessionID, WritingTools::TextSuggestion::State state, const WritingTools::TextSuggestion::ID& replacementID)
 {
-    protectedPage()->textReplacementSessionUpdateStateForReplacementWithID(sessionID, state, replacementID);
+    protectedPage()->proofreadingSessionUpdateStateForSuggestionWithID(sessionID, state, replacementID);
 }
 
 #endif

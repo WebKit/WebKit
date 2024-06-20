@@ -780,19 +780,19 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    WillBeginTextReplacementSession(std::optional<WebCore::WritingTools::Session> session) -> (Vector<WebCore::WritingTools::Context> contexts)
+    WillBeginWritingToolsSession(std::optional<WebCore::WritingTools::Session> session) -> (Vector<WebCore::WritingTools::Context> contexts)
 
-    DidBeginTextReplacementSession(struct WebCore::WritingTools::Session session, Vector<WebCore::WritingTools::Context> contexts)
+    DidBeginWritingToolsSession(struct WebCore::WritingTools::Session session, Vector<WebCore::WritingTools::Context> contexts)
 
-    TextReplacementSessionDidReceiveReplacements(struct WebCore::WritingTools::Session session, Vector<WebCore::WritingTools::TextSuggestion> replacements, struct WebCore::WritingTools::Context context, bool finished)
+    ProofreadingSessionDidReceiveSuggestions(struct WebCore::WritingTools::Session session, Vector<WebCore::WritingTools::TextSuggestion> suggestions, struct WebCore::WritingTools::Context context, bool finished)
 
-    TextReplacementSessionDidUpdateStateForReplacement(struct WebCore::WritingTools::Session session, enum:uint8_t WebCore::WritingTools::TextSuggestion::State state, struct WebCore::WritingTools::TextSuggestion replacement, struct WebCore::WritingTools::Context context)
+    ProofreadingSessionDidUpdateStateForSuggestion(struct WebCore::WritingTools::Session session, enum:uint8_t WebCore::WritingTools::TextSuggestion::State state, struct WebCore::WritingTools::TextSuggestion suggestion, struct WebCore::WritingTools::Context context)
 
-    DidEndTextReplacementSession(struct WebCore::WritingTools::Session session, bool accepted)
+    DidEndWritingToolsSession(struct WebCore::WritingTools::Session session, bool accepted)
 
-    TextReplacementSessionDidReceiveTextWithReplacementRange(struct WebCore::WritingTools::Session session, struct WebCore::AttributedString attributedText, struct WebCore::CharacterRange range, struct WebCore::WritingTools::Context context, bool finished);
+    CompositionSessionDidReceiveTextWithReplacementRange(struct WebCore::WritingTools::Session session, struct WebCore::AttributedString attributedText, struct WebCore::CharacterRange range, struct WebCore::WritingTools::Context context, bool finished);
 
-    TextReplacementSessionDidReceiveEditAction(struct WebCore::WritingTools::Session session, enum:uint8_t WebCore::WritingTools::Action action);
+    WritingToolsSessionDidReceiveAction(struct WebCore::WritingTools::Session session, enum:uint8_t WebCore::WritingTools::Action action);
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)

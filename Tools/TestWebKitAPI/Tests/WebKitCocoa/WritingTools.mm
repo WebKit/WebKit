@@ -1687,7 +1687,7 @@ TEST(WritingTools, APIWithBehaviorNone)
     [webView mouseUpAtPoint:NSMakePoint(10, 10) withFlags:0 eventType:NSEventTypeRightMouseUp];
     TestWebKitAPI::Util::run(&gotProposedMenu);
 
-    NSMenuItem *writingToolsMenuItem = [proposedMenu itemWithIdentifier:_WKMenuItemIdentifierSwapCharacters];
+    NSMenuItem *writingToolsMenuItem = [proposedMenu itemWithIdentifier:_WKMenuItemIdentifierWritingTools];
     EXPECT_NULL(writingToolsMenuItem);
 #endif
 
@@ -1734,7 +1734,7 @@ TEST(WritingTools, APIWithBehaviorDefault)
     [webView mouseUpAtPoint:NSMakePoint(10, 10) withFlags:0 eventType:NSEventTypeRightMouseUp];
     TestWebKitAPI::Util::run(&gotProposedMenu);
 
-    NSMenuItem *writingToolsMenuItem = [proposedMenu itemWithIdentifier:_WKMenuItemIdentifierSwapCharacters];
+    NSMenuItem *writingToolsMenuItem = [proposedMenu itemWithIdentifier:_WKMenuItemIdentifierWritingTools];
     EXPECT_NOT_NULL(writingToolsMenuItem);
 #endif
 
@@ -1781,7 +1781,7 @@ TEST(WritingTools, APIWithBehaviorComplete)
     [webView mouseUpAtPoint:NSMakePoint(10, 10) withFlags:0 eventType:NSEventTypeRightMouseUp];
     TestWebKitAPI::Util::run(&gotProposedMenu);
 
-    NSMenuItem *writingToolsMenuItem = [proposedMenu itemWithIdentifier:_WKMenuItemIdentifierSwapCharacters];
+    NSMenuItem *writingToolsMenuItem = [proposedMenu itemWithIdentifier:_WKMenuItemIdentifierWritingTools];
     EXPECT_NOT_NULL(writingToolsMenuItem);
 #endif
 

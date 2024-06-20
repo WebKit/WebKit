@@ -740,18 +740,18 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
-    virtual bool canHandleSwapCharacters() const = 0;
-    virtual void handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView) = 0;
+    virtual bool canHandleContextMenuWritingTools() const = 0;
+    virtual void handleContextMenuWritingTools(WebCore::IntRect selectionBoundsInRootView) = 0;
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    virtual void textReplacementSessionShowInformationForReplacementWithIDRelativeToRect(const WebCore::WritingTools::SessionID&, const WebCore::WritingTools::TextSuggestionID&, WebCore::IntRect selectionBoundsInRootView) = 0;
+    virtual void proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::SessionID&, const WebCore::WritingTools::TextSuggestionID&, WebCore::IntRect selectionBoundsInRootView) = 0;
 
-    virtual void textReplacementSessionUpdateStateForReplacementWithID(const WebCore::WritingTools::SessionID&, WebCore::WritingTools::TextSuggestionState, const WebCore::WritingTools::TextSuggestionID&) = 0;
+    virtual void proofreadingSessionUpdateStateForSuggestionWithID(const WebCore::WritingTools::SessionID&, WebCore::WritingTools::TextSuggestionState, const WebCore::WritingTools::TextSuggestionID&) = 0;
 
-    virtual void unifiedTextReplacementActiveWillChange() = 0;
+    virtual void writingToolsActiveWillChange() = 0;
 
-    virtual void unifiedTextReplacementActiveDidChange() = 0;
+    virtual void writingToolsActiveDidChange() = 0;
 #endif
 
 #if ENABLE(DATA_DETECTION)

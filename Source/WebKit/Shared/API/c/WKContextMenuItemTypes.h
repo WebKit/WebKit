@@ -133,7 +133,7 @@ enum {
     kWKContextMenuItemTagRevealImage,
     kWKContextMenuItemTagTranslate,
     kWKContextMenuItemTagCopyCroppedImage,
-    kWKContextMenuItemTagSwapCharacters,
+    kWKContextMenuItemTagWritingTools,
     kWKContextMenuItemTagCopyLinkToHighlight,
     kWKContextMenuItemBaseApplicationTag = 10000
 };

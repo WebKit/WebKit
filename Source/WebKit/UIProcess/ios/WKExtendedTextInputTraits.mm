@@ -132,12 +132,12 @@
     self.selectionHighlightColor = nil;
 
 #if ENABLE(WRITING_TOOLS)
-    [self restoreDefaultUnifiedTextReplacementBehaviorValue];
+    [self restoreDefaultWritingToolsBehaviorValue];
 #endif
 }
 
 #if ENABLE(WRITING_TOOLS)
-- (void)restoreDefaultUnifiedTextReplacementBehaviorValue
+- (void)restoreDefaultWritingToolsBehaviorValue
 {
     self.writingToolsBehavior = UIWritingToolsBehaviorLimited;
 }

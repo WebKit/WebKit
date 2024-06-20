@@ -1097,14 +1097,14 @@ void PageClientImpl::handleContextMenuTranslation(const TranslationContextMenuIn
 
 #if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
 
-bool PageClientImpl::canHandleSwapCharacters() const
+bool PageClientImpl::canHandleContextMenuWritingTools() const
 {
-    return m_impl->canHandleSwapCharacters();
+    return m_impl->canHandleContextMenuWritingTools();
 }
 
-void PageClientImpl::handleContextMenuSwapCharacters(IntRect selectionBoundsInRootView)
+void PageClientImpl::handleContextMenuWritingTools(IntRect selectionBoundsInRootView)
 {
-    m_impl->handleContextMenuSwapCharacters(selectionBoundsInRootView);
+    m_impl->handleContextMenuWritingTools(selectionBoundsInRootView);
 }
 
 #endif

@@ -1423,8 +1423,8 @@
 /* Label for the support with Apple Pay button. */
 "Support with Apple Pay" = "Support with Apple Pay";
 
-/* Swap characters context menu item */
-"Swap characters" = "Swap characters";
+/* Writing Tools context menu item */
+"Writing Tools" = "Writing Tools";
 
 /* File Upload alert sheet camera button string for taking only photos */
 "Take Photo (file upload action sheet)" = "Take Photo";

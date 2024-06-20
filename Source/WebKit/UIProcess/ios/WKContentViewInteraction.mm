@@ -4434,7 +4434,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(WRITING_TOOLS)
     if (action == @selector(_startWritingTools:))
-        return [self unifiedTextReplacementBehavior] != WebCore::WritingTools::Behavior::None && [super canPerformAction:action withSender:sender];
+        return _page->configuration().writingToolsBehavior() != WebCore::WritingTools::Behavior::None && [super canPerformAction:action withSender:sender];
 #endif
 
     if (action == @selector(paste:) || action == @selector(_pasteAsQuotation:) || action == @selector(_pasteAndMatchStyle:) || action == @selector(pasteAndMatchStyle:)) {
@@ -6929,7 +6929,8 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    [self _updateTextInputTraitsForUnifiedTextReplacement:traits];
+    auto behavior = WebKit::convertToPlatformWritingToolsBehavior(_page->configuration().writingToolsBehavior());
+    [traits setWritingToolsBehavior:behavior];
 #endif
 
     [self _updateTextInputTraitsForInteractionTintColor];
@@ -11780,15 +11781,6 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #endif
 
-#if ENABLE(WRITING_TOOLS)
-
-- (WebCore::WritingTools::Behavior)unifiedTextReplacementBehavior
-{
-    return _page->configuration().unifiedTextReplacementBehavior();
-}
-
-#endif
-
 #if HAVE(UIFINDINTERACTION)
 
 - (void)find:(id)sender
@@ -13240,12 +13232,6 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 - (void)writingToolsSession:(WTSession *)session didReceiveAction:(WTAction)action
 {
     [_webView writingToolsSession:session didReceiveAction:action];
-}
-
-- (void)_updateTextInputTraitsForUnifiedTextReplacement:(id<UITextInputTraits>)traits
-{
-    auto behavior = WebKit::convertToPlatformWritingToolsBehavior([self unifiedTextReplacementBehavior]);
-    [traits setWritingToolsBehavior:behavior];
 }
 
 #endif

@@ -130,7 +130,7 @@ class EmptyContextMenuClient final : public ContextMenuClient {
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    void handleSwapCharacters(IntRect) final { };
+    void handleWritingTools(IntRect) final { };
 #endif
 
 #if PLATFORM(GTK)

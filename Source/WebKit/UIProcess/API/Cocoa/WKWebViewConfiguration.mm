@@ -563,12 +563,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (void)setWritingToolsBehavior:(PlatformWritingToolsBehavior)writingToolsBehavior
 {
-    _pageConfiguration->setUnifiedTextReplacementBehavior(WebKit::convertToWebWritingToolsBehavior(writingToolsBehavior));
+    _pageConfiguration->setWritingToolsBehavior(WebKit::convertToWebWritingToolsBehavior(writingToolsBehavior));
 }
 
 - (PlatformWritingToolsBehavior)writingToolsBehavior
 {
-    return WebKit::convertToPlatformWritingToolsBehavior(_pageConfiguration->unifiedTextReplacementBehavior());
+    return WebKit::convertToPlatformWritingToolsBehavior(_pageConfiguration->writingToolsBehavior());
 }
 
 #endif // ENABLE(WRITING_TOOLS)
