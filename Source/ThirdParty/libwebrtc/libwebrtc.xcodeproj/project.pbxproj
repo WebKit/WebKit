@@ -3309,11 +3309,11 @@
 		449467C82AE05DA200A9FED0 /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
 		449467CA2AE05DA200A9FED0 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
 		449467D12AE05DC000A9FED0 /* rtp_packetizer_av1_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 449467D02AE05DBF00A9FED0 /* rtp_packetizer_av1_fuzzer.cc */; };
-		44A402A92AB0BFB000463B4B /* libvpx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4105EB83212E01D2008C0C20 /* libvpx.a */; };
+		44A402A92AB0BFB000463B4B /* libvpx_webkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4105EB83212E01D2008C0C20 /* libvpx_webkit.a */; };
 		44ABBE942AC63F43006B44DD /* sdp_integration_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE872AC63EF3006B44DD /* sdp_integration_fuzzer.cc */; };
 		44ABBE962AC64024006B44DD /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
 		44C20E8D2AB39FA80046C6A8 /* vpx_dec_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 448D48412AB0BEBA0065014C /* vpx_dec_fuzzer.cc */; };
-		44C20E8F2AB39FA80046C6A8 /* libvpx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4105EB83212E01D2008C0C20 /* libvpx.a */; };
+		44C20E8F2AB39FA80046C6A8 /* libvpx_webkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4105EB83212E01D2008C0C20 /* libvpx_webkit.a */; };
 		44D88AC52AF04946005C956E /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
 		44D88AC72AF04946005C956E /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
 		44D88AD02AF049A1005C956E /* h264_depacketizer_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44D88ACF2AF049A1005C956E /* h264_depacketizer_fuzzer.cc */; };
@@ -4740,7 +4740,7 @@
 		DD77E21127FB766800DC90C0 /* span.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1FD27FB766800DC90C0 /* span.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD77E21427FB766800DC90C0 /* variant.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1FF27FB766800DC90C0 /* variant.h */; };
 		DD77E21527FB766800DC90C0 /* variant.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1FF27FB766800DC90C0 /* variant.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDEBB4CA24C01A0D00ADBD44 /* libaom.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDEBB11924C0187400ADBD44 /* libaom.a */; };
+		DDEBB4CA24C01A0D00ADBD44 /* libaom_webkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDEBB11924C0187400ADBD44 /* libaom_webkit.a */; };
 		DDF309A027C59451006A526F /* async_dns_resolver.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3099727C59450006A526F /* async_dns_resolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DDF309A127C59451006A526F /* video_track_source_proxy_factory.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3099827C59450006A526F /* video_track_source_proxy_factory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DDF309A227C59451006A526F /* priority.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3099927C59450006A526F /* priority.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -5827,7 +5827,7 @@
 		4102F6E92127345F006AE8D7 /* rtp_packet_to_send.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = rtp_packet_to_send.cc; sourceTree = "<group>"; };
 		4102F6EA2127345F006AE8D7 /* rtp_video_header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rtp_video_header.h; sourceTree = "<group>"; };
 		4105EB67212E01C2008C0C20 /* elf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = elf.h; sourceTree = "<group>"; };
-		4105EB83212E01D2008C0C20 /* libvpx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvpx.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		4105EB83212E01D2008C0C20 /* libvpx_webkit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvpx_webkit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4105EB99212E02CB008C0C20 /* vpx_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vpx_config.c; sourceTree = "<group>"; };
 		4105EB9A212E02CB008C0C20 /* vpx_scale_rtcd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vpx_scale_rtcd.h; sourceTree = "<group>"; };
 		4105EB9B212E02CC008C0C20 /* vp8_rtcd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vp8_rtcd.h; sourceTree = "<group>"; };
@@ -9580,8 +9580,8 @@
 		5C0073451E552CA20042215A /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		5C0884891E4A978C00403995 /* libsrtp.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libsrtp.xcconfig; sourceTree = "<group>"; };
 		5C08848A1E4A978C00403995 /* libyuv.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libyuv.xcconfig; sourceTree = "<group>"; };
-		5C0884D11E4A97E300403995 /* libsrtp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsrtp.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		5C0884DE1E4A980100403995 /* libyuv.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libyuv.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C0884D11E4A97E300403995 /* libsrtp_webkit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsrtp_webkit.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C0884DE1E4A980100403995 /* libyuv_webkit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libyuv_webkit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C0885141E4A99D200403995 /* aes_icm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes_icm.h; sourceTree = "<group>"; };
 		5C0885151E4A99D200403995 /* aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes.h; sourceTree = "<group>"; };
 		5C0885161E4A99D200403995 /* alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alloc.h; sourceTree = "<group>"; };
@@ -9785,7 +9785,7 @@
 		5C4B47D71E42C01C002651C8 /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
 		5C4B47E81E42C066002651C8 /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
 		5C4B48451E42C0F4002651C8 /* dsa_asn1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsa_asn1.c; sourceTree = "<group>"; };
-		5C4B4A8E1E42C336002651C8 /* libopus.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libopus.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C4B4A8E1E42C336002651C8 /* libopus_webkit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libopus_webkit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C4B4A8F1E42C431002651C8 /* opus.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = opus.xcconfig; sourceTree = "<group>"; };
 		5C4B4A931E42C52D002651C8 /* analysis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = analysis.c; sourceTree = "<group>"; };
 		5C4B4A941E42C52D002651C8 /* analysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = analysis.h; sourceTree = "<group>"; };
@@ -9856,7 +9856,7 @@
 		5C4B4D591E4323D4002651C8 /* scale.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scale.cc; sourceTree = "<group>"; };
 		5C4B4D5A1E4323D4002651C8 /* video_common.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = video_common.cc; sourceTree = "<group>"; };
 		5C5F408F1E978FD200D94279 /* SigProc_FIX_sse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SigProc_FIX_sse.h; sourceTree = "<group>"; };
-		5C63FC601E418411002CA531 /* libboringssl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libboringssl.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C63FC601E418411002CA531 /* libboringssl_webkit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libboringssl_webkit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C85C4CA1E5780DD00D097B1 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		5CD284611E6A57F40094FDC8 /* i420_buffer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = i420_buffer.cc; sourceTree = "<group>"; };
 		5CD284621E6A57F40094FDC8 /* i420_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = i420_buffer.h; sourceTree = "<group>"; };
@@ -10681,7 +10681,7 @@
 		CDC1F47325CF69E40084CA16 /* opus_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opus_types.h; sourceTree = "<group>"; };
 		CDC1F47425CF69E40084CA16 /* opus_defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opus_defines.h; sourceTree = "<group>"; };
 		CDC1F47525CF69E40084CA16 /* opus_projection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opus_projection.h; sourceTree = "<group>"; };
-		CDEBB11924C0187400ADBD44 /* libwebm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libwebm.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDEBB11924C0187400ADBD44 /* libwebm_webkit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libwebm_webkit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDEBB11E24C0189600ADBD44 /* libwebm.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = libwebm.xcconfig; sourceTree = "<group>"; };
 		CDEBB40524C0191A00ADBD44 /* reader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = reader.h; sourceTree = "<group>"; };
 		CDEBB40624C0191A00ADBD44 /* status.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = status.h; sourceTree = "<group>"; };
@@ -10859,7 +10859,7 @@
 		DD77E1FA27FB766800DC90C0 /* optional.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = optional.h; sourceTree = "<group>"; };
 		DD77E1FD27FB766800DC90C0 /* span.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = span.h; sourceTree = "<group>"; };
 		DD77E1FF27FB766800DC90C0 /* variant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = variant.h; sourceTree = "<group>"; };
-		DDEBB11924C0187400ADBD44 /* libaom.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libaom.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDEBB11924C0187400ADBD44 /* libaom_webkit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libaom_webkit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDEBB11E24C0189600ADBD44 /* libaom.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = libaom.xcconfig; sourceTree = "<group>"; };
 		DDF308E327C56D15006A526F /* options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = options.h; sourceTree = "<group>"; };
 		DDF308E427C56D15006A526F /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
@@ -11204,7 +11204,7 @@
 		DDF30BDC27C5A4C3006A526F /* clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clock.h; sourceTree = "<group>"; };
 		DDF30BE627C5A4D8006A526F /* video_loopback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = video_loopback.h; sourceTree = "<group>"; };
 		DDF30BE727C5A4D9006A526F /* video_quality_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = video_quality_test.h; sourceTree = "<group>"; };
-		DDF30D0627C5C003006A526F /* libabsl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libabsl.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDF30D0627C5C003006A526F /* libabsl_webkit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libabsl_webkit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDF30D0B27C5C01A006A526F /* libabsl.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = libabsl.xcconfig; sourceTree = "<group>"; };
 		DDF30D8127C5C454006A526F /* audio_frame_processor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio_frame_processor.h; sourceTree = "<group>"; };
 		DDF30D8427C5C6BC006A526F /* audio_network_adaptor_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio_network_adaptor_config.h; sourceTree = "<group>"; };
@@ -11295,7 +11295,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				44A402A92AB0BFB000463B4B /* libvpx.a in Frameworks */,
+				44A402A92AB0BFB000463B4B /* libvpx_webkit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11335,7 +11335,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				44C20E8F2AB39FA80046C6A8 /* libvpx.a in Frameworks */,
+				44C20E8F2AB39FA80046C6A8 /* libvpx_webkit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11420,7 +11420,7 @@
 				5C0073111E5513E70042215A /* CoreMedia.framework in Frameworks */,
 				5C0073121E5513E70042215A /* CoreVideo.framework in Frameworks */,
 				5C316D8B1E66333C008BE64D /* Foundation.framework in Frameworks */,
-				DDEBB4CA24C01A0D00ADBD44 /* libaom.a in Frameworks */,
+				DDEBB4CA24C01A0D00ADBD44 /* libaom_webkit.a in Frameworks */,
 				5C0073141E5514020042215A /* VideoToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -20498,15 +20498,15 @@
 			isa = PBXGroup;
 			children = (
 				41F77D16215BE45E00E72967 /* yasm */,
-				DDF30D0627C5C003006A526F /* libabsl.a */,
-				DDEBB11924C0187400ADBD44 /* libaom.a */,
-				5C63FC601E418411002CA531 /* libboringssl.a */,
-				5C4B4A8E1E42C336002651C8 /* libopus.a */,
-				5C0884D11E4A97E300403995 /* libsrtp.a */,
-				4105EB83212E01D2008C0C20 /* libvpx.a */,
-				CDEBB11924C0187400ADBD44 /* libwebm.a */,
+				DDF30D0627C5C003006A526F /* libabsl_webkit.a */,
+				DDEBB11924C0187400ADBD44 /* libaom_webkit.a */,
+				5C63FC601E418411002CA531 /* libboringssl_webkit.a */,
+				5C4B4A8E1E42C336002651C8 /* libopus_webkit.a */,
+				5C0884D11E4A97E300403995 /* libsrtp_webkit.a */,
+				4105EB83212E01D2008C0C20 /* libvpx_webkit.a */,
+				CDEBB11924C0187400ADBD44 /* libwebm_webkit.a */,
 				FB39D0D11200F0E300088E69 /* libwebrtc.dylib */,
-				5C0884DE1E4A980100403995 /* libyuv.a */,
+				5C0884DE1E4A980100403995 /* libyuv_webkit.a */,
 				4469C10C2B5F24C500E32E5A /* h264_bitstream_parser_fuzzer */,
 				44D88ACC2AF04946005C956E /* h264_depacketizer_fuzzer */,
 				44D88ADF2AF04AA1005C956E /* h265_depacketizer_fuzzer */,
@@ -23306,7 +23306,7 @@
 			);
 			name = vpx;
 			productName = vpx;
-			productReference = 4105EB83212E01D2008C0C20 /* libvpx.a */;
+			productReference = 4105EB83212E01D2008C0C20 /* libvpx_webkit.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		41F77D15215BE45E00E72967 /* yasm */ = {
@@ -23625,7 +23625,7 @@
 			);
 			name = srtp;
 			productName = srtp;
-			productReference = 5C0884D11E4A97E300403995 /* libsrtp.a */;
+			productReference = 5C0884D11E4A97E300403995 /* libsrtp_webkit.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		5C0884D21E4A980100403995 /* yuv */ = {
@@ -23645,7 +23645,7 @@
 			);
 			name = yuv;
 			productName = yuv;
-			productReference = 5C0884DE1E4A980100403995 /* libyuv.a */;
+			productReference = 5C0884DE1E4A980100403995 /* libyuv_webkit.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		5C4B490E1E42C336002651C8 /* opus */ = {
@@ -23664,7 +23664,7 @@
 			);
 			name = opus;
 			productName = opus;
-			productReference = 5C4B4A8E1E42C336002651C8 /* libopus.a */;
+			productReference = 5C4B4A8E1E42C336002651C8 /* libopus_webkit.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		5C63FA7A1E418411002CA531 /* boringssl */ = {
@@ -23683,7 +23683,7 @@
 			);
 			name = boringssl;
 			productName = boringssl;
-			productReference = 5C63FC601E418411002CA531 /* libboringssl.a */;
+			productReference = 5C63FC601E418411002CA531 /* libboringssl_webkit.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		CDEBB11824C0187400ADBD44 /* webm */ = {
@@ -23700,7 +23700,7 @@
 			);
 			name = webm;
 			productName = webm;
-			productReference = CDEBB11924C0187400ADBD44 /* libwebm.a */;
+			productReference = CDEBB11924C0187400ADBD44 /* libwebm_webkit.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		DDEBB11824C0187400ADBD44 /* aom */ = {
@@ -23717,7 +23717,7 @@
 			);
 			name = aom;
 			productName = aom;
-			productReference = DDEBB11924C0187400ADBD44 /* libaom.a */;
+			productReference = DDEBB11924C0187400ADBD44 /* libaom_webkit.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		DDF30D0527C5C003006A526F /* absl */ = {
@@ -23739,7 +23739,7 @@
 			);
 			name = absl;
 			productName = absl;
-			productReference = DDF30D0627C5C003006A526F /* libabsl.a */;
+			productReference = DDF30D0627C5C003006A526F /* libabsl_webkit.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		FB39D0D01200F0E300088E69 /* libwebrtc */ = {

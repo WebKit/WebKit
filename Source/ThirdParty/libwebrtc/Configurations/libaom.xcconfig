@@ -23,7 +23,7 @@
 
 #include "BaseTarget-libaom.xcconfig"
 
-PRODUCT_NAME = aom;
+PRODUCT_NAME = aom_webkit;
 
 COMBINE_HIDPI_IMAGES = NO;
 
