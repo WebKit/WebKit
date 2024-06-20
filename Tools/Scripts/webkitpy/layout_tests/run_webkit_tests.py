@@ -133,6 +133,8 @@ def parse_args(args):
             help="Enable (disable) an experimental feature (--experimental-feature FeatureName[=true|false])"),
         optparse.make_option("--no-enable-all-experimental-features", action="store_false", default=True, dest="enable_all_experimental_features",
             help="Don't enable all experimental features in WebKitTestRunner"),
+        optparse.make_option("--allow-any-certificate-for-allowed-hosts", action="store_true", default=False,
+            help="Allows any HTTPS certificate for an allowed host."),
     ]))
 
     option_group_definitions.append(("WebKit Options", [
