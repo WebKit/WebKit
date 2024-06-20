@@ -116,12 +116,6 @@ void VideoPresentationInterfaceContext::hasVideoChanged(bool hasVideo)
         m_manager->hasVideoChanged(m_contextId, hasVideo);
 }
 
-void VideoPresentationInterfaceContext::documentVisibilityChanged(bool isDocumentVisible)
-{
-    if (m_manager)
-        m_manager->documentVisibilityChanged(m_contextId, isDocumentVisible);
-}
-
 void VideoPresentationInterfaceContext::videoDimensionsChanged(const FloatSize& videoDimensions)
 {
     if (m_manager)
@@ -525,12 +519,6 @@ void VideoPresentationManager::hasVideoChanged(PlaybackSessionContextIdentifier 
 {
     if (m_page)
         m_page->send(Messages::VideoPresentationManagerProxy::SetHasVideo(contextId, hasVideo));
-}
-
-void VideoPresentationManager::documentVisibilityChanged(PlaybackSessionContextIdentifier contextId, bool isDocumentVisibile)
-{
-    if (m_page)
-        m_page->send(Messages::VideoPresentationManagerProxy::SetDocumentVisibility(contextId, isDocumentVisibile));
 }
 
 void VideoPresentationManager::videoDimensionsChanged(PlaybackSessionContextIdentifier contextId, const FloatSize& videoDimensions)

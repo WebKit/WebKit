@@ -943,15 +943,6 @@ void VideoPresentationManagerProxy::setHasVideo(PlaybackSessionContextIdentifier
         interface->hasVideoChanged(hasVideo);
 }
 
-void VideoPresentationManagerProxy::setDocumentVisibility(PlaybackSessionContextIdentifier contextId, bool isDocumentVisible)
-{
-    if (m_mockVideoPresentationModeEnabled)
-        return;
-
-    if (auto* interface = findInterface(contextId))
-        interface->documentVisibilityChanged(isDocumentVisible);
-}
-
 void VideoPresentationManagerProxy::setVideoDimensions(PlaybackSessionContextIdentifier contextId, const FloatSize& videoDimensions)
 {
     auto& [model, interface] = ensureModelAndInterface(contextId);

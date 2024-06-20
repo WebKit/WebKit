@@ -103,7 +103,6 @@ public:
 private:
     // VideoPresentationModelClient
     void hasVideoChanged(bool) override;
-    void documentVisibilityChanged(bool) override;
 
     // CheckedPtr interface
     uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
@@ -179,7 +178,6 @@ protected:
 
     // Interface to VideoPresentationInterfaceContext
     void hasVideoChanged(PlaybackSessionContextIdentifier, bool hasVideo);
-    void documentVisibilityChanged(PlaybackSessionContextIdentifier, bool isDocumentVisible);
     void videoDimensionsChanged(PlaybackSessionContextIdentifier, const WebCore::FloatSize&);
     void setPlayerIdentifier(PlaybackSessionContextIdentifier, std::optional<WebCore::MediaPlayerIdentifier>);
 

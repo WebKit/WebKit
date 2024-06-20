@@ -556,28 +556,8 @@ void VideoPresentationInterfaceMac::requestHideAndExitPiP()
     if (!model)
         return;
 
-    if (m_documentIsVisible) {
-        model->requestFullscreenMode(m_mode & ~HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
-        model->willExitPictureInPicture();
-    } else {
-        auto callback = [this, model] () {
-            model->requestFullscreenMode(m_mode & ~HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
-            model->willExitPictureInPicture();
-        };
-        setDocumentBecameVisibleCallback(WTFMove(callback));
-    }
-
-}
-
-void VideoPresentationInterfaceMac::documentVisibilityChanged(bool isDocumentVisible)
-{
-    bool documentWasVisible = m_documentIsVisible;
-    m_documentIsVisible = isDocumentVisible;
-
-    if (!documentWasVisible && m_documentIsVisible && m_documentBecameVisibleCallback) {
-        m_documentBecameVisibleCallback();
-        m_documentBecameVisibleCallback = nullptr;
-    }
+    model->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
+    model->willExitPictureInPicture();
 }
 
 #if !LOG_DISABLED
