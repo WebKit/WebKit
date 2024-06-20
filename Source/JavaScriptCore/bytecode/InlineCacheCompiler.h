@@ -369,6 +369,8 @@ public:
 
     static void emitDataICPrologue(CCallHelpers&);
     static void emitDataICEpilogue(CCallHelpers&);
+    static CCallHelpers::Jump emitDataICCheckStructure(CCallHelpers&, GPRReg baseGPR, GPRReg scratchGPR);
+    static CCallHelpers::JumpList emitDataICCheckUid(CCallHelpers&, bool isSymbol, JSValueRegs, GPRReg scratchGPR);
     static void emitDataICJumpNextHandler(CCallHelpers&);
 
     bool useHandlerIC() const;
@@ -435,6 +437,24 @@ MacroAssemblerCodeRef<JITThunkPtrTag> inByIdHitHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> inByIdMissHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfHitHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfMissHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringLoadOwnPropertyHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringLoadPrototypePropertyHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithStringMissHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolLoadOwnPropertyHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolLoadPrototypePropertyHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithSymbolMissHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringReplaceHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionNonAllocatingHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionNewlyAllocatingHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithStringTransitionReallocatingHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolReplaceHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionNonAllocatingHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionNewlyAllocatingHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> putByValWithSymbolTransitionReallocatingHandlerCodeGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithStringHitHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithStringMissHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithSymbolHitHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> inByValWithSymbolMissHandler(VM&);
 
 } // namespace JSC
 

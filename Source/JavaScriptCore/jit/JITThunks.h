@@ -91,6 +91,24 @@ class NativeExecutable;
     macro(InByIdMissHandler, inByIdMissHandler) \
     macro(InstanceOfHitHandler, instanceOfHitHandler) \
     macro(InstanceOfMissHandler, instanceOfMissHandler) \
+    macro(GetByValWithStringLoadOwnPropertyHandler, getByValWithStringLoadOwnPropertyHandlerCodeGenerator) \
+    macro(GetByValWithStringLoadPrototypePropertyHandler, getByValWithStringLoadPrototypePropertyHandlerCodeGenerator) \
+    macro(GetByValWithStringMissHandler, getByValWithStringMissHandlerCodeGenerator) \
+    macro(GetByValWithSymbolLoadOwnPropertyHandler, getByValWithSymbolLoadOwnPropertyHandlerCodeGenerator) \
+    macro(GetByValWithSymbolLoadPrototypePropertyHandler, getByValWithSymbolLoadPrototypePropertyHandlerCodeGenerator) \
+    macro(GetByValWithSymbolMissHandler, getByValWithSymbolMissHandlerCodeGenerator) \
+    macro(PutByValWithStringReplaceHandler, putByValWithStringReplaceHandlerCodeGenerator) \
+    macro(PutByValWithStringTransitionNonAllocatingHandler, putByValWithStringTransitionNonAllocatingHandlerCodeGenerator) \
+    macro(PutByValWithStringTransitionNewlyAllocatingHandler, putByValWithStringTransitionNewlyAllocatingHandlerCodeGenerator) \
+    macro(PutByValWithStringTransitionReallocatingHandler, putByValWithStringTransitionReallocatingHandlerCodeGenerator) \
+    macro(PutByValWithSymbolReplaceHandler, putByValWithSymbolReplaceHandlerCodeGenerator) \
+    macro(PutByValWithSymbolTransitionNonAllocatingHandler, putByValWithSymbolTransitionNonAllocatingHandlerCodeGenerator) \
+    macro(PutByValWithSymbolTransitionNewlyAllocatingHandler, putByValWithSymbolTransitionNewlyAllocatingHandlerCodeGenerator) \
+    macro(PutByValWithSymbolTransitionReallocatingHandler, putByValWithSymbolTransitionReallocatingHandlerCodeGenerator) \
+    macro(InByValWithStringHitHandler, inByValWithStringHitHandler) \
+    macro(InByValWithStringMissHandler, inByValWithStringMissHandler) \
+    macro(InByValWithSymbolHitHandler, inByValWithSymbolHitHandler) \
+    macro(InByValWithSymbolMissHandler, inByValWithSymbolMissHandler) \
 
 #if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
 #define JSC_FOR_EACH_YARR_JIT_BACKREFERENCES_THUNK(macro) \

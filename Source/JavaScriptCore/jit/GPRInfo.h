@@ -48,28 +48,25 @@ static constexpr GPRReg InvalidGPRReg { GPRReg::InvalidGPRReg };
 #if USE(JSVALUE64)
 class JSValueRegs {
 public:
-    constexpr JSValueRegs()
-        : m_gpr(InvalidGPRReg)
-    {
-    }
-    
+    constexpr JSValueRegs() = default;
+
     constexpr explicit JSValueRegs(GPRReg gpr)
         : m_gpr(gpr)
     {
     }
     
-    static JSValueRegs payloadOnly(GPRReg gpr)
+    static constexpr JSValueRegs payloadOnly(GPRReg gpr)
     {
         return JSValueRegs(gpr);
     }
     
-    static JSValueRegs withTwoAvailableRegs(GPRReg gpr, GPRReg)
+    static constexpr JSValueRegs withTwoAvailableRegs(GPRReg gpr, GPRReg)
     {
         return JSValueRegs(gpr);
     }
     
-    bool operator!() const { return m_gpr == InvalidGPRReg; }
-    explicit operator bool() const { return m_gpr != InvalidGPRReg; }
+    constexpr bool operator!() const { return m_gpr == InvalidGPRReg; }
+    explicit constexpr operator bool() const { return m_gpr != InvalidGPRReg; }
 
     friend constexpr bool operator==(const JSValueRegs&, const JSValueRegs&) = default;
 
@@ -88,7 +85,7 @@ public:
     void dump(PrintStream&) const;
     
     // Intentionally public to make JSValueRegs usable for template parameters.
-    GPRReg m_gpr;
+    GPRReg m_gpr { InvalidGPRReg };
 };
 
 class JSValueSource {
@@ -167,12 +164,8 @@ private:
 #if USE(JSVALUE32_64)
 class JSValueRegs {
 public:
-    constexpr JSValueRegs()
-        : m_tagGPR(InvalidGPRReg)
-        , m_payloadGPR(InvalidGPRReg)
-    {
-    }
-    
+    constexpr JSValueRegs() = default;
+
     constexpr JSValueRegs(GPRReg tagGPR, GPRReg payloadGPR)
         : m_tagGPR(tagGPR)
         , m_payloadGPR(payloadGPR)
@@ -189,8 +182,8 @@ public:
         return JSValueRegs(InvalidGPRReg, payloadGPR);
     }
     
-    bool operator!() const { return !static_cast<bool>(*this); }
-    explicit operator bool() const
+    constexpr bool operator!() const { return !static_cast<bool>(*this); }
+    explicit constexpr operator bool() const
     {
         return static_cast<GPRReg>(m_tagGPR) != InvalidGPRReg
             || static_cast<GPRReg>(m_payloadGPR) != InvalidGPRReg;
@@ -226,8 +219,8 @@ public:
     void dump(PrintStream&) const;
     
     // Intentionally public to make JSValueRegs usable for template parameters.
-    GPRReg m_tagGPR;
-    GPRReg m_payloadGPR;
+    GPRReg m_tagGPR { InvalidGPRReg };
+    GPRReg m_payloadGPR { InvalidGPRReg };
 };
 
 class JSValueSource {
