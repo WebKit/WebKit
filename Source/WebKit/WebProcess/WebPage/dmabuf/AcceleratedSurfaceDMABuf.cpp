@@ -34,6 +34,7 @@
 #include "WebProcess.h"
 #include <WebCore/GLFence.h>
 #include <WebCore/PlatformDisplay.h>
+#include <WebCore/Region.h>
 #include <WebCore/ShareableBitmap.h>
 #include <array>
 #include <epoxy/egl.h>
@@ -602,7 +603,7 @@ void AcceleratedSurfaceDMABuf::willRenderFrame()
         WTFLogAlways("AcceleratedSurfaceDMABuf was unable to construct a complete framebuffer");
 }
 
-void AcceleratedSurfaceDMABuf::didRenderFrame()
+void AcceleratedSurfaceDMABuf::didRenderFrame(const std::optional<WebCore::Region>& damage)
 {
     if (!m_target)
         return;
@@ -613,7 +614,7 @@ void AcceleratedSurfaceDMABuf::didRenderFrame()
         glFlush();
 
     m_target->didRenderFrame();
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(m_target->id()), m_id);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(m_target->id(), damage), m_id);
 }
 
 void AcceleratedSurfaceDMABuf::releaseBuffer(uint64_t targetID)

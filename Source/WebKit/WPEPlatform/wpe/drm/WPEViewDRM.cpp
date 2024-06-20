@@ -387,7 +387,7 @@ static gboolean wpeViewDRMRequestUpdate(WPEViewDRM* view, GError** error)
     return wpeViewDRMCommitLegacy(WPE_VIEW_DRM(view), *drmBuffer, error);
 }
 
-static gboolean wpeViewDRMRenderBuffer(WPEView* view, WPEBuffer* buffer, GError** error)
+static gboolean wpeViewDRMRenderBuffer(WPEView* view, WPEBuffer* buffer, const WPERectangle*, guint, GError** error)
 {
     auto* drmBuffer = static_cast<WPE::DRM::Buffer*>(wpe_buffer_get_user_data(buffer));
     if (!drmBuffer) {

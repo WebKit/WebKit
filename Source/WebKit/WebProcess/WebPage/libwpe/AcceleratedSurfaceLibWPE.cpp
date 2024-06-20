@@ -106,7 +106,7 @@ void AcceleratedSurfaceLibWPE::willRenderFrame()
     wpe_renderer_backend_egl_target_frame_will_render(m_backend);
 }
 
-void AcceleratedSurfaceLibWPE::didRenderFrame()
+void AcceleratedSurfaceLibWPE::didRenderFrame(const std::optional<WebCore::Region>&)
 {
     ASSERT(m_backend);
     wpe_renderer_backend_egl_target_frame_rendered(m_backend);

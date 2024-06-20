@@ -56,7 +56,7 @@ public:
     void initialize() override;
     void finalize() override;
     void willRenderFrame() override;
-    void didRenderFrame() override;
+    void didRenderFrame(const std::optional<WebCore::Region>&) override;
 
 private:
     AcceleratedSurfaceLibWPE(WebPage&, Client&);

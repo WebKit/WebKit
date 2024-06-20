@@ -476,6 +476,8 @@ public:
 
     virtual void setContentsNeedsDisplay() { };
 
+    virtual void markDamageRectsUnreliable() { };
+
     // The tile phase is relative to the GraphicsLayer bounds.
     virtual void setContentsTilePhase(const FloatSize& p) { m_contentsTilePhase = p; }
     FloatSize contentsTilePhase() const { return m_contentsTilePhase; }

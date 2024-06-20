@@ -5245,6 +5245,21 @@ ProcessSwapOnCrossSiteNavigationEnabled:
       "PLATFORM(PLAYSTATION)": false
       default: true
 
+PropagateDamagingInformation:
+   type: bool
+   status: testable
+   category: dom
+   humanReadableName: "Propagate Damaging Information"
+   humanReadableDescription: "Propagate Damaging Information"
+   condition: USE(COORDINATED_GRAPHICS)
+   defaultValue:
+     WebCore:
+       default: false
+     WebKitLegacy:
+       default: false
+     WebKit:
+       default: false
+
 PunchOutWhiteBackgroundsInDarkMode:
   type: bool
   status: embedder
@@ -6809,6 +6824,21 @@ UnifiedPDFEnabled:
       default: false
     WebCore:
       default: false
+
+UnifyDamagedRegions:
+   type: bool
+   status: testable
+   category: dom
+   humanReadableName: "Unify Damaged Regions"
+   humanReadableDescription: "Unify Damaged Regions"
+   condition: USE(COORDINATED_GRAPHICS)
+   defaultValue:
+     WebCore:
+       default: false
+     WebKitLegacy:
+       default: false
+     WebKit:
+       default: false
 
 UpgradeKnownHostsToHTTPSEnabled:
   type: bool

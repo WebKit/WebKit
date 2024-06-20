@@ -31,7 +31,7 @@
 #include "AcceleratedSurfaceDMABufMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
-#include <WebCore/IntRect.h>
+#include <WebCore/Region.h>
 #include <WebCore/ShareableBitmap.h>
 #include <wpe/wpe-platform.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -124,7 +124,7 @@ void AcceleratedBackingStoreDMABuf::didDestroyBuffer(uint64_t id)
         m_bufferIDs.remove(buffer.get());
 }
 
-void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID)
+void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID, const std::optional<WebCore::Region>& damage)
 {
     ASSERT(!m_pendingBuffer);
     auto* buffer = m_buffers.get(bufferID);
@@ -133,9 +133,24 @@ void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID)
         return;
     }
 
+    // Rely on the layout of IntRect matching that of WPERectangle
+    // to pass directly a pointer below instead of using copies.
+    static_assert(sizeof(WebCore::IntRect) == sizeof(WPERectangle));
+
+    Vector<WebCore::IntRect, 1> damageRects;
+    if (damage) {
+        if (damage->isEmpty())
+            damageRects.append({ 0, 0, 0, 0 });
+        else
+            damageRects = damage->rects();
+    }
+
+    ASSERT(damageRects.size() <= std::numeric_limits<guint>::max());
+    const auto* rects = damageRects.size() ? reinterpret_cast<const WPERectangle*>(damageRects.data()) : nullptr;
+
     m_pendingBuffer = buffer;
     GUniqueOutPtr<GError> error;
-    if (!wpe_view_render_buffer(m_wpeView.get(), m_pendingBuffer.get(), &error.outPtr())) {
+    if (!wpe_view_render_buffer(m_wpeView.get(), m_pendingBuffer.get(), rects, damageRects.size(), &error.outPtr())) {
         g_warning("Failed to render frame: %s", error->message);
         frameDone();
     }

@@ -123,6 +123,7 @@ public:
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
     void setContentsNeedsDisplay() override;
+    void markDamageRectsUnreliable() override;
     void deviceOrPageScaleFactorChanged() override;
     void flushCompositingState(const FloatRect&) override;
     void flushCompositingStateForThisLayerOnly() override;
@@ -233,6 +234,7 @@ private:
     Nicosia::PlatformLayer::LayerID m_id;
     GraphicsLayerTransform m_layerTransform;
     TransformationMatrix m_cachedInverseTransform;
+    TransformationMatrix m_cachedCombinedTransform;
     FloatSize m_pixelAlignmentOffset;
     FloatSize m_adjustedSize;
     FloatPoint m_adjustedPosition;
@@ -255,6 +257,7 @@ private:
         bool completeLayer { false };
         Vector<FloatRect> rects;
     } m_needsDisplay;
+    bool m_damagedRectsAreUnreliable { false };
 
     RefPtr<Image> m_compositedImage;
     RefPtr<NativeImage> m_compositedNativeImage;

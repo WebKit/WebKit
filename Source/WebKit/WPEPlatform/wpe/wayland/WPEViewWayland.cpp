@@ -729,7 +729,7 @@ const struct wl_callback_listener frameListener = {
     }
 };
 
-static gboolean wpeViewWaylandRenderBuffer(WPEView* view, WPEBuffer* buffer, GError** error)
+static gboolean wpeViewWaylandRenderBuffer(WPEView* view, WPEBuffer* buffer, const WPERectangle* damageRects, guint nDamageRects, GError** error)
 {
     auto* wlBuffer = createWaylandBuffer(view, buffer, error);
     if (!wlBuffer)
@@ -739,12 +739,11 @@ static gboolean wpeViewWaylandRenderBuffer(WPEView* view, WPEBuffer* buffer, GEr
     priv->buffer = buffer;
 
     auto* wlSurface = wpe_view_wayland_get_wl_surface(WPE_VIEW_WAYLAND(view));
+    auto* wlCompositor = wpe_display_wayland_get_wl_compositor(WPE_DISPLAY_WAYLAND(wpe_view_get_display(view)));
+
     if (priv->pendingOpaqueRegion.dirty) {
         struct wl_region* region = nullptr;
-
         if (!priv->pendingOpaqueRegion.rects.isEmpty()) {
-            auto* display = WPE_DISPLAY_WAYLAND(wpe_view_get_display(view));
-            auto* wlCompositor = wpe_display_wayland_get_wl_compositor(display);
             region = wl_compositor_create_region(wlCompositor);
             if (region) {
                 for (const auto& rect : priv->pendingOpaqueRegion.rects)
@@ -761,7 +760,13 @@ static gboolean wpeViewWaylandRenderBuffer(WPEView* view, WPEBuffer* buffer, GEr
     }
 
     wl_surface_attach(wlSurface, wlBuffer, 0, 0);
-    wl_surface_damage(wlSurface, 0, 0, wpe_view_get_width(view), wpe_view_get_height(view));
+    if (nDamageRects && LIKELY(wl_compositor_get_version(wlCompositor) >= 4)) {
+        ASSERT(damageRects);
+        for (unsigned i = 0; i < nDamageRects; ++i)
+            wl_surface_damage_buffer(wlSurface, damageRects[i].x, damageRects[i].y, damageRects[i].width, damageRects[i].height);
+    } else
+        wl_surface_damage(wlSurface, 0, 0, INT32_MAX, INT32_MAX);
+
     priv->frameCallback = wl_surface_frame(wlSurface);
     wl_callback_add_listener(priv->frameCallback, &frameListener, view);
     wl_surface_commit(wlSurface);
