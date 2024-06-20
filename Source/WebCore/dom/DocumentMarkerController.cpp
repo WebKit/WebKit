@@ -55,7 +55,7 @@ inline bool DocumentMarkerController::possiblyHasMarkers(OptionSet<DocumentMarke
 DocumentMarkerController::DocumentMarkerController(Document& document)
     : m_document(document)
     , m_fadeAnimationTimer(*this, &DocumentMarkerController::fadeAnimationTimerFired)
-    , m_unifiedTextReplacementAnimationTimer(*this, &DocumentMarkerController::unifiedTextReplacementAnimationTimerFired)
+    , m_writingToolsTextSuggestionAnimationTimer(*this, &DocumentMarkerController::writingToolsTextSuggestionAnimationTimerFired)
 {
 }
 
@@ -66,7 +66,7 @@ void DocumentMarkerController::detach()
     m_markers.clear();
     m_possiblyExistingMarkerTypes = { };
     m_fadeAnimationTimer.stop();
-    m_unifiedTextReplacementAnimationTimer.stop();
+    m_writingToolsTextSuggestionAnimationTimer.stop();
 }
 
 auto DocumentMarkerController::collectTextRanges(const SimpleRange& range) -> Vector<TextRange>
@@ -263,7 +263,7 @@ static bool shouldInsertAsSeparateMarker(const DocumentMarker& marker)
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    case DocumentMarker::Type::UnifiedTextReplacement:
+    case DocumentMarker::Type::WritingToolsTextSuggestion:
         return true;
 #endif
     case DocumentMarker::Type::TransparentContent:
@@ -347,9 +347,9 @@ void DocumentMarkerController::addMarker(Node& node, DocumentMarker&& newMarker)
         renderer->repaint();
 
 #if ENABLE(WRITING_TOOLS)
-    if (newMarker.type() == DocumentMarker::Type::UnifiedTextReplacement) {
-        if (!m_unifiedTextReplacementAnimationTimer.isActive())
-            m_unifiedTextReplacementAnimationTimer.startRepeating(1_s / markerAnimationFrameRate);
+    if (newMarker.type() == DocumentMarker::Type::WritingToolsTextSuggestion) {
+        if (!m_writingToolsTextSuggestionAnimationTimer.isActive())
+            m_writingToolsTextSuggestionAnimationTimer.startRepeating(1_s / markerAnimationFrameRate);
     }
 #endif
 
@@ -612,8 +612,8 @@ void DocumentMarkerController::removeMarkers(OptionSet<DocumentMarker::Type> typ
         removedMarkerTypes = removedMarkerTypes & removeMarkersFromList(m_markers.find(node), types, filter);
 
 #if ENABLE(WRITING_TOOLS)
-    if (removedMarkerTypes.contains(DocumentMarker::Type::UnifiedTextReplacement))
-        m_unifiedTextReplacementAnimationTimer.stop();
+    if (removedMarkerTypes.contains(DocumentMarker::Type::WritingToolsTextSuggestion))
+        m_writingToolsTextSuggestionAnimationTimer.stop();
 #endif
 
     m_possiblyExistingMarkerTypes.remove(removedMarkerTypes);
@@ -763,10 +763,10 @@ void DocumentMarkerController::dismissMarkers(OptionSet<DocumentMarker::Type> ty
         m_fadeAnimationTimer.startRepeating(1_s / markerAnimationFrameRate);
 }
 
-void DocumentMarkerController::unifiedTextReplacementAnimationTimerFired()
+void DocumentMarkerController::writingToolsTextSuggestionAnimationTimerFired()
 {
 #if ENABLE(WRITING_TOOLS)
-    forEachOfTypes({ DocumentMarker::Type::UnifiedTextReplacement }, [](Node& node, RenderedDocumentMarker&) {
+    forEachOfTypes({ DocumentMarker::Type::WritingToolsTextSuggestion }, [](Node& node, RenderedDocumentMarker&) {
         if (CheckedPtr renderer = node.renderer())
             renderer->repaint();
         return false;

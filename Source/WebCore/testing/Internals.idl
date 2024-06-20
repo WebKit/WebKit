@@ -632,7 +632,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     boolean hasDictationAlternativesMarker(long from, long length);
     boolean hasCorrectionIndicatorMarker(long from, long length);
 #if defined(ENABLE_WRITING_TOOLS) && ENABLE_WRITING_TOOLS
-    boolean hasUnifiedTextReplacementMarker(long from, long length);
+    boolean hasWritingToolsTextSuggestionMarker(long from, long length);
 #endif
     undefined setContinuousSpellCheckingEnabled(boolean enabled);
     undefined setAutomaticQuoteSubstitutionEnabled(boolean enabled);

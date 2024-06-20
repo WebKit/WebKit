@@ -48,7 +48,7 @@ struct MarkedText : public CanMakeCheckedPtr<MarkedText> {
         GrammarError,
         Correction,
 #if ENABLE(WRITING_TOOLS)
-        UnifiedTextReplacement,
+        WritingToolsTextSuggestion,
 #endif
         SpellingError,
         TextMatch,

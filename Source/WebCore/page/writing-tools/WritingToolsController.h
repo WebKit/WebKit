@@ -27,9 +27,9 @@
 
 #if ENABLE(WRITING_TOOLS)
 
-#include "Range.h"
-#include "ReplaceSelectionCommand.h"
-#include "WritingToolsTypes.h"
+#import "Range.h"
+#import "ReplaceSelectionCommand.h"
+#import "WritingToolsTypes.h"
 
 namespace WebCore {
 

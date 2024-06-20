@@ -296,18 +296,18 @@ TEST(WritingTools, ProofreadingAcceptReject)
 
         modifySelection(0, 0);
 
-        NSString *hasFirstUnifiedTextReplacementMarker = [webView stringByEvaluatingJavaScript:@"internals.hasUnifiedTextReplacementMarker(0, 4);"];
-        EXPECT_WK_STREQ("1", hasFirstUnifiedTextReplacementMarker);
+        NSString *hasFirstMarker = [webView stringByEvaluatingJavaScript:@"internals.hasWritingToolsTextSuggestionMarker(0, 4);"];
+        EXPECT_WK_STREQ("1", hasFirstMarker);
 
-        NSString *firstReplacementOriginalString = [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('p').childNodes[0].firstChild, 'unifiedtextreplacement', 0);"];
+        NSString *firstReplacementOriginalString = [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('p').childNodes[0].firstChild, 'writingtoolstextsuggestion', 0);"];
         EXPECT_WK_STREQ(@"('AAAA', state: 0)", firstReplacementOriginalString);
 
         modifySelection(0, 0);
 
-        NSString *hasSecondUnifiedTextReplacementMarker = [webView stringByEvaluatingJavaScript:@"internals.hasUnifiedTextReplacementMarker(10, 4);"];
-        EXPECT_WK_STREQ("1", hasSecondUnifiedTextReplacementMarker);
+        NSString *hasSecondMarker = [webView stringByEvaluatingJavaScript:@"internals.hasWritingToolsTextSuggestionMarker(10, 4);"];
+        EXPECT_WK_STREQ("1", hasSecondMarker);
 
-        NSString *secondReplacementOriginalString = [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('p').childNodes[0].firstChild, 'unifiedtextreplacement', 1);"];
+        NSString *secondReplacementOriginalString = [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('p').childNodes[0].firstChild, 'writingtoolstextsuggestion', 1);"];
         EXPECT_WK_STREQ(@"('CCCC', state: 0)", secondReplacementOriginalString);
 
         EXPECT_WK_STREQ(@"ZZZZ BBBB YYYY", [webView contentsAsString]);
@@ -317,18 +317,18 @@ TEST(WritingTools, ProofreadingAcceptReject)
         EXPECT_WK_STREQ(@"ZZZZ", selectionAfterReviewing);
 
         [[webView writingToolsDelegate] proofreadingSession:session.get() didUpdateState:WTTextSuggestionStateRejected forSuggestionWithUUID:[secondSuggestion uuid] inContext:contexts.firstObject];
-        NSString *hasSecondUnifiedTextReplacementMarkerAfterStateUpdate = [webView stringByEvaluatingJavaScript:@"internals.hasUnifiedTextReplacementMarker(10, 4);"];
-        EXPECT_WK_STREQ("0", hasSecondUnifiedTextReplacementMarkerAfterStateUpdate);
+        NSString *hasSecondMarkerAfterStateUpdate = [webView stringByEvaluatingJavaScript:@"internals.hasWritingToolsTextSuggestionMarker(10, 4);"];
+        EXPECT_WK_STREQ("0", hasSecondMarkerAfterStateUpdate);
 
         EXPECT_WK_STREQ(@"ZZZZ BBBB CCCC", [webView contentsAsString]);
 
         [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
 
-        NSString *hasFirstUnifiedTextReplacementMarkerAfterEnding = [webView stringByEvaluatingJavaScript:@"internals.hasUnifiedTextReplacementMarker(0, 4);"];
-        EXPECT_WK_STREQ("0", hasFirstUnifiedTextReplacementMarkerAfterEnding);
+        NSString *hasFirstMarkerAfterEnding = [webView stringByEvaluatingJavaScript:@"internals.hasWritingToolsTextSuggestionMarker(0, 4);"];
+        EXPECT_WK_STREQ("0", hasFirstMarkerAfterEnding);
 
-        NSString *hasSecondUnifiedTextReplacementMarkerAfterEnding = [webView stringByEvaluatingJavaScript:@"internals.hasUnifiedTextReplacementMarker(10, 4);"];
-        EXPECT_WK_STREQ("0", hasSecondUnifiedTextReplacementMarkerAfterEnding);
+        NSString *hasSecondMarkerAfterEnding = [webView stringByEvaluatingJavaScript:@"internals.hasWritingToolsTextSuggestionMarker(10, 4);"];
+        EXPECT_WK_STREQ("0", hasSecondMarkerAfterEnding);
 
         EXPECT_WK_STREQ(@"ZZZZ BBBB CCCC", [webView contentsAsString]);
 
@@ -398,8 +398,8 @@ TEST(WritingTools, ProofreadingWithLongReplacement)
 
         [webView waitForNextPresentationUpdate];
 
-        EXPECT_WK_STREQ(@"('thin', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'unifiedtextreplacement', 0);"]);
-        EXPECT_WK_STREQ(@"('here', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'unifiedtextreplacement', 1);"]);
+        EXPECT_WK_STREQ(@"('thin', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'writingtoolstextsuggestion', 0);"]);
+        EXPECT_WK_STREQ(@"('here', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'writingtoolstextsuggestion', 1);"]);
 
         EXPECT_WK_STREQ(proofreadText, [webView contentsAsString]);
 
@@ -438,10 +438,10 @@ TEST(WritingTools, ProofreadingShowOriginal)
 
         [webView waitForNextPresentationUpdate];
 
-        EXPECT_WK_STREQ(@"('thin', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'unifiedtextreplacement', 0);"]);
-        EXPECT_WK_STREQ(@"('here', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'unifiedtextreplacement', 1);"]);
-        EXPECT_WK_STREQ(@"('they're', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('second').childNodes[0], 'unifiedtextreplacement', 0);"]);
-        EXPECT_WK_STREQ(@"('their', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('second').childNodes[0], 'unifiedtextreplacement', 1);"]);
+        EXPECT_WK_STREQ(@"('thin', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'writingtoolstextsuggestion', 0);"]);
+        EXPECT_WK_STREQ(@"('here', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'writingtoolstextsuggestion', 1);"]);
+        EXPECT_WK_STREQ(@"('they're', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('second').childNodes[0], 'writingtoolstextsuggestion', 0);"]);
+        EXPECT_WK_STREQ(@"('their', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('second').childNodes[0], 'writingtoolstextsuggestion', 1);"]);
 
         EXPECT_WK_STREQ(proofreadText, [webView contentsAsString]);
 
@@ -449,10 +449,10 @@ TEST(WritingTools, ProofreadingShowOriginal)
 
         [webView waitForNextPresentationUpdate];
 
-        EXPECT_WK_STREQ(@"('think', state: 2)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'unifiedtextreplacement', 0);"]);
-        EXPECT_WK_STREQ(@"('hear', state: 2)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'unifiedtextreplacement', 1);"]);
-        EXPECT_WK_STREQ(@"('there', state: 2)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('second').childNodes[0], 'unifiedtextreplacement', 0);"]);
-        EXPECT_WK_STREQ(@"('there', state: 2)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('second').childNodes[0], 'unifiedtextreplacement', 1);"]);
+        EXPECT_WK_STREQ(@"('think', state: 2)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'writingtoolstextsuggestion', 0);"]);
+        EXPECT_WK_STREQ(@"('hear', state: 2)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'writingtoolstextsuggestion', 1);"]);
+        EXPECT_WK_STREQ(@"('there', state: 2)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('second').childNodes[0], 'writingtoolstextsuggestion', 0);"]);
+        EXPECT_WK_STREQ(@"('there', state: 2)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('second').childNodes[0], 'writingtoolstextsuggestion', 1);"]);
 
         EXPECT_WK_STREQ(originalText, [webView contentsAsString]);
 
@@ -460,10 +460,10 @@ TEST(WritingTools, ProofreadingShowOriginal)
 
         [webView waitForNextPresentationUpdate];
 
-        EXPECT_WK_STREQ(@"('thin', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'unifiedtextreplacement', 0);"]);
-        EXPECT_WK_STREQ(@"('here', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'unifiedtextreplacement', 1);"]);
-        EXPECT_WK_STREQ(@"('they're', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('second').childNodes[0], 'unifiedtextreplacement', 0);"]);
-        EXPECT_WK_STREQ(@"('their', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('second').childNodes[0], 'unifiedtextreplacement', 1);"]);
+        EXPECT_WK_STREQ(@"('thin', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'writingtoolstextsuggestion', 0);"]);
+        EXPECT_WK_STREQ(@"('here', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'writingtoolstextsuggestion', 1);"]);
+        EXPECT_WK_STREQ(@"('they're', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('second').childNodes[0], 'writingtoolstextsuggestion', 0);"]);
+        EXPECT_WK_STREQ(@"('their', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('second').childNodes[0], 'writingtoolstextsuggestion', 1);"]);
 
         EXPECT_WK_STREQ(proofreadText, [webView contentsAsString]);
 

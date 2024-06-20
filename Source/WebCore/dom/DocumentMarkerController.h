@@ -124,7 +124,7 @@ private:
     void forEachOfTypes(OptionSet<DocumentMarker::Type>, Function<bool(Node&, RenderedDocumentMarker&)>&&);
 
     void fadeAnimationTimerFired();
-    void unifiedTextReplacementAnimationTimerFired();
+    void writingToolsTextSuggestionAnimationTimerFired();
 
     Ref<Document> protectedDocument() const;
 
@@ -134,7 +134,7 @@ private:
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 
     Timer m_fadeAnimationTimer;
-    Timer m_unifiedTextReplacementAnimationTimer;
+    Timer m_writingToolsTextSuggestionAnimationTimer;
 };
 
 

@@ -1066,7 +1066,7 @@ void TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarker(const MarkedText& 
     bounds.moveBy(m_paintRect.location());
 
 #if ENABLE(WRITING_TOOLS)
-    if (markedText.type == MarkedText::Type::UnifiedTextReplacement) {
+    if (markedText.type == MarkedText::Type::WritingToolsTextSuggestion) {
         drawUnifiedTextReplacementUnderline(m_paintInfo.context(), bounds,  m_renderer.frame().view()->size());
         return;
     }

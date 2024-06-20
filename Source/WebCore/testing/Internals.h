@@ -444,7 +444,7 @@ public:
     bool hasDictationAlternativesMarker(int from, int length);
     bool hasCorrectionIndicatorMarker(int from, int length);
 #if ENABLE(WRITING_TOOLS)
-    bool hasUnifiedTextReplacementMarker(int from, int length);
+    bool hasWritingToolsTextSuggestionMarker(int from, int length);
 #endif
     void setContinuousSpellCheckingEnabled(bool);
     void setAutomaticQuoteSubstitutionEnabled(bool);

@@ -214,8 +214,8 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
         case DocumentMarker::Type::CorrectionIndicator:
             return MarkedText::Type::Correction;
 #if ENABLE(WRITING_TOOLS)
-        case DocumentMarker::Type::UnifiedTextReplacement:
-            return MarkedText::Type::UnifiedTextReplacement;
+        case DocumentMarker::Type::WritingToolsTextSuggestion:
+            return MarkedText::Type::WritingToolsTextSuggestion;
 #endif
         case DocumentMarker::Type::TextMatch:
             return MarkedText::Type::TextMatch;
@@ -245,7 +245,7 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
             FALLTHROUGH;
         case DocumentMarker::Type::CorrectionIndicator:
 #if ENABLE(WRITING_TOOLS)
-        case DocumentMarker::Type::UnifiedTextReplacement:
+        case DocumentMarker::Type::WritingToolsTextSuggestion:
 #endif
         case DocumentMarker::Type::Replacement:
         case DocumentMarker::Type::DictationAlternatives:
@@ -290,8 +290,8 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
         case DocumentMarker::Type::Spelling:
         case DocumentMarker::Type::CorrectionIndicator:
 #if ENABLE(WRITING_TOOLS)
-        case DocumentMarker::Type::UnifiedTextReplacement:
-            if (marker->type() == DocumentMarker::Type::UnifiedTextReplacement && std::get<DocumentMarker::UnifiedTextReplacementData>(marker->data()).state != DocumentMarker::UnifiedTextReplacementData::State::Pending)
+        case DocumentMarker::Type::WritingToolsTextSuggestion:
+            if (marker->type() == DocumentMarker::Type::WritingToolsTextSuggestion && std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker->data()).state != DocumentMarker::WritingToolsTextSuggestionData::State::Accepted)
                 break;
 
             BFALLTHROUGH;

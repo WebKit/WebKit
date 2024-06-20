@@ -74,7 +74,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
     case MarkedText::Type::DictationPhraseWithAlternatives:
 #endif
 #if ENABLE(WRITING_TOOLS)
-    case MarkedText::Type::UnifiedTextReplacement:
+    case MarkedText::Type::WritingToolsTextSuggestion:
 #endif
     case MarkedText::Type::Unmarked:
         break;
