@@ -144,7 +144,7 @@ static void fallbackFontsForRunWithIterator(SingleThreadWeakHashSet<const Font>&
                 character = u_toupper(character);
 
             auto glyphData = fontCascade.glyphDataForCharacter(character, isRTL);
-            if (glyphData.glyph && glyphData.font && glyphData.font != &primaryFont) {
+            if (glyphData.isValid() && glyphData.font != &primaryFont) {
                 auto isNonSpacingMark = U_MASK(u_charType(character)) & U_GC_MN_MASK;
 
                 // https://drafts.csswg.org/css-text-3/#white-space-processing
