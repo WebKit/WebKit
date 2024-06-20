@@ -461,12 +461,6 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
     }
 
     // Host function signature: f(JSGlobalObject*, CallFrame*);
-#if CPU(X86_64) && OS(WINDOWS)
-    // Leave space for the callee parameter home addresses.
-    // At this point the stack is aligned to 16 bytes, but if this changes at some point, we need to emit code to align it.
-    jit.subPtr(CCallHelpers::TrustedImm32(4 * sizeof(int64_t)), CCallHelpers::stackPointerRegister);
-#endif
-
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
     jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, GPRInfo::argumentGPR2);
 
@@ -491,10 +485,6 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
             jit.call(CCallHelpers::Address(GPRInfo::argumentGPR2, InternalFunction::offsetOfNativeFunctionFor(kind)), HostFunctionPtrTag);
     }
 
-#if CPU(X86_64) && OS(WINDOWS)
-    jit.addPtr(CCallHelpers::TrustedImm32(4 * sizeof(int64_t)), CCallHelpers::stackPointerRegister);
-#endif
-
     // Check for an exception
 #if USE(JSVALUE64)
     jit.loadPtr(vm.addressOfException(), JSInterfaceJIT::regT2);
@@ -515,16 +505,10 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
 
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, GPRInfo::argumentGPR0);
     jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm.topCallFrame);
-#if OS(WINDOWS)
-    // Allocate space on stack for the 4 parameter registers.
-    jit.subPtr(JSInterfaceJIT::TrustedImm32(4 * sizeof(int64_t)), JSInterfaceJIT::stackPointerRegister);
-#endif
+
     jit.move(CCallHelpers::TrustedImmPtr(&vm), JSInterfaceJIT::argumentGPR0);
     jit.move(JSInterfaceJIT::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationVMHandleException)), JSInterfaceJIT::regT3);
     jit.call(JSInterfaceJIT::regT3, OperationPtrTag);
-#if OS(WINDOWS)
-    jit.addPtr(JSInterfaceJIT::TrustedImm32(4 * sizeof(int64_t)), JSInterfaceJIT::stackPointerRegister);
-#endif
 
     jit.jumpToExceptionHandler(vm);
 
@@ -579,11 +563,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM& vm)
     // We enter with fixup count in argumentGPR0
     // We have the guarantee that a0, a1, a2, t3, t4 and t5 (or t0 for Windows) are all distinct :-)
 #if USE(JSVALUE64)
-#if OS(WINDOWS)
-    const GPRReg extraTemp = JSInterfaceJIT::regT0;
-#else
     const GPRReg extraTemp = JSInterfaceJIT::regT5;
-#endif
+
     static_assert(noOverlap(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2, GPRInfo::regT3, GPRInfo::regT4, extraTemp));
 #if CPU(X86_64)
     jit.pop(JSInterfaceJIT::regT4);

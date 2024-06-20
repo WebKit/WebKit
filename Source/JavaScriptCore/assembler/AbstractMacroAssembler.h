@@ -296,6 +296,14 @@ public:
         {
         }
 
+#if OS(WINDOWS)
+        template<typename ReturnType, typename... Arguments>
+        explicit TrustedImmPtr(ReturnType(SYSV_ABI *value)(Arguments...))
+            : m_value(reinterpret_cast<void*>(value))
+        {
+        }
+#endif
+
         explicit constexpr TrustedImmPtr(std::nullptr_t)
         {
         }

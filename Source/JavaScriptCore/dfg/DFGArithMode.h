@@ -62,8 +62,8 @@ enum class UnaryType : uint32_t {
 #undef DFG_ARITH_UNARY_ENUM
 };
 
-using UnaryFunction = double(JIT_OPERATION_ATTRIBUTES*)(double);
-using UnaryOperation = OperationReturnType<double>(JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue);
+using UnaryFunction = double(JIT_OPERATION_ATTRIBUTES *)(double);
+using UnaryOperation = OperationReturnType<double>(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, EncodedJSValue);
 
 } // namespace Arith
 

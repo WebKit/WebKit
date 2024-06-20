@@ -56,8 +56,8 @@ extern "C" {
     void vmEntryToJavaScriptGateAfter(void);
 
     // WebCore calls these from SelectorCompiler, so they are not hidden like normal LLInt symbols.
-    JS_EXPORT_PRIVATE unsigned vmEntryToCSSJIT(uintptr_t, uintptr_t, uintptr_t, const void* codePtr);
-    JS_EXPORT_PRIVATE void vmEntryToCSSJITAfter(void);
+    JS_EXPORT_PRIVATE unsigned SYSV_ABI vmEntryToCSSJIT(uintptr_t, uintptr_t, uintptr_t, const void* codePtr);
+    JS_EXPORT_PRIVATE void SYSV_ABI vmEntryToCSSJITAfter(void);
 
     void llint_function_for_call_arity_checkUntagGateAfter(void);
     void llint_function_for_call_arity_checkTagGateAfter(void);

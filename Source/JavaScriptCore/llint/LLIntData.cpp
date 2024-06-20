@@ -45,7 +45,7 @@ Opcode g_opcodeMapWide32[numOpcodeIDs + numWasmOpcodeIDs] = { };
 extern "C" void SYSV_ABI llint_entry(void*, void*, void*);
 
 #if ENABLE(WEBASSEMBLY)
-extern "C" void wasm_entry(void*, void*, void*);
+extern "C" void SYSV_ABI wasm_entry(void*, void*, void*);
 #endif // ENABLE(WEBASSEMBLY)
 
 #endif // !ENABLE(C_LOOP)
@@ -61,7 +61,7 @@ extern "C" void returnFromLLIntTrampoline(void);
 #endif
 
 #if ENABLE(CSS_SELECTOR_JIT) && CPU(ARM64E) && !ENABLE(C_LOOP)
-extern "C" void vmEntryToCSSJITAfter(void);
+extern "C" void SYSV_ABI vmEntryToCSSJITAfter(void);
 JSC_ANNOTATE_JIT_OPERATION_RETURN(vmEntryToCSSJITAfter);
 #endif
 

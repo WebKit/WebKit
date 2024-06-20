@@ -38,7 +38,7 @@ class VM;
 #if ENABLE(C_LOOP)
 typedef OpcodeID LLIntCode;
 #else
-typedef void (*LLIntCode)();
+typedef void (SYSV_ABI *LLIntCode)();
 #endif
 
 namespace LLInt {

@@ -427,7 +427,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     Jump genericCase = branchIfNotEmpty(nextJSR);
 
     JumpList doneCases;
-#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
+#if CPU(ARM64) || CPU(X86_64)
     loadGlobalObject(argumentGPR0);
     emitGetVirtualRegister(bytecode.m_iterator, argumentGPR1);
     emitGetVirtualRegister(bytecode.m_iterable, argumentGPR2);

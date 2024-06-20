@@ -747,6 +747,13 @@ void Options::notifyOptionsChanged()
             Options::useFTLJIT() = false;
         }
 
+        // Windows: Building with ENABLE_DFG_JIT and disabling at runtime
+        // Windows: Building with ENABLE_YARR_JIT and disabling at runtime
+#if OS(WINDOWS)
+        Options::useDFGJIT() = false;
+        Options::useRegExpJIT() = false;
+#endif
+
         if (Options::dumpDisassembly()
             || Options::asyncDisassembly()
             || Options::dumpBaselineDisassembly()
@@ -1406,11 +1413,7 @@ bool canUseJITCage() { return false; }
 bool canUseHandlerIC()
 {
 #if CPU(X86_64)
-#if OS(WINDOWS)
-    return false;
-#else
     return true;
-#endif
 #elif CPU(ARM64)
     return !isIOS();
 #elif CPU(RISCV64)

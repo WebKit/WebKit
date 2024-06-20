@@ -206,15 +206,6 @@ namespace JSC {
             call(function, OperationPtrTag);
         }
 
-#if OS(WINDOWS) && CPU(X86_64)
-        Call appendCallWithUGPRPair(const CodePtr<CFunctionPtrTag> function)
-        {
-            Call functionCall = callWithUGPRPair(OperationPtrTag);
-            m_farCalls.append(FarCallRecord(functionCall, function.retagged<OperationPtrTag>()));
-            return functionCall;
-        }
-#endif
-
         template <typename Bytecode>
         void loadPtrFromMetadata(const Bytecode&, size_t offset, GPRReg);
 
@@ -734,45 +725,16 @@ namespace JSC {
             return appendCallSetJSValueResult<OperationType>(Address(GPRInfo::nonArgGPR0, target.offset), result);
         }
 
-#if OS(WINDOWS) && CPU(X86_64)
-        template<typename Type>
-        struct is64BitType {
-            static constexpr bool value = sizeof(Type) <= 8;
-        };
-
-        template<>
-        struct is64BitType<void> {
-            static constexpr bool value = true;
-        };
-
-        template<typename OperationType, typename... Args>
-        MacroAssembler::Call callOperation(OperationType operation, Args... args)
-        {
-            setupArguments<OperationType>(args...);
-            // x64 Windows cannot use standard call when the return type is larger than 64 bits.
-            if constexpr (is64BitType<typename FunctionTraits<OperationType>::ResultType>::value)
-                return appendCallWithExceptionCheck<OperationType>(operation);
-            updateTopCallFrame();
-            MacroAssembler::Call call = appendCallWithUGPRPair(operation);
-            exceptionCheck();
-            return call;
-        }
-#else // OS(WINDOWS) && CPU(X86_64)
         template<typename OperationType, typename... Args>
         MacroAssembler::Call callOperation(OperationType operation, Args... args)
         {
             setupArguments<OperationType>(args...);
             return appendCallWithExceptionCheck<OperationType>(operation);
         }
-#endif // OS(WINDOWS) && CPU(X86_64)
 
         template<typename OperationType, typename... Args>
         void callOperation(Address target, Args... args)
         {
-#if OS(WINDOWS) && CPU(X86_64)
-            // x64 Windows cannot use standard call when the return type is larger than 64 bits.
-            static_assert(is64BitType<typename FunctionTraits<OperationType>::ResultType>::value);
-#endif
             setupArgumentsForIndirectCall<OperationType>(target, args...);
             appendCallWithExceptionCheck<OperationType>(Address(GPRInfo::nonArgGPR0, target.offset));
         }
@@ -803,18 +765,6 @@ namespace JSC {
             return result;
         }
 
-#if OS(WINDOWS) && CPU(X86_64)
-        template<typename OperationType, typename... Args>
-        MacroAssembler::Call callOperationNoExceptionCheck(OperationType operation, Args... args)
-        {
-            setupArguments<OperationType>(args...);
-            updateTopCallFrame();
-            // x64 Windows cannot use standard call when the return type is larger than 64 bits.
-            if constexpr (is64BitType<typename FunctionTraits<OperationType>::ResultType>::value)
-                return appendCall(operation);
-            return appendCallWithUGPRPair(operation);
-        }
-#else // OS(WINDOWS) && CPU(X86_64)
         template<typename OperationType, typename... Args>
         MacroAssembler::Call callOperationNoExceptionCheck(OperationType operation, Args... args)
         {
@@ -822,7 +772,6 @@ namespace JSC {
             updateTopCallFrame();
             return appendCall(operation);
         }
-#endif // OS(WINDOWS) && CPU(X86_64)
 
         template<typename OperationType, typename... Args>
         MacroAssembler::Call callThrowOperationWithCallFrameRollback(OperationType operation, Args... args)

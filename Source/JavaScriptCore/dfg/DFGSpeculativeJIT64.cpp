@@ -1019,6 +1019,7 @@ void SpeculativeJIT::emitCall(Node* node)
     
     if (isDirect) {
         ASSERT(!m_graph.m_plan.isUnlinked());
+// FIXME: Could this be done after sysv_abi?
 #if !OS(WINDOWS)
         Edge calleeEdge = m_graph.child(node, 0);
         JSGlobalObject* calleeScope = nullptr;

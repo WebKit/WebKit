@@ -34,6 +34,6 @@ template<typename> struct BaseInstruction;
 struct JSOpcodeTraits;
 using JSInstruction = BaseInstruction<JSOpcodeTraits>;
 
-using SlowPathFunction = UGPRPair(JIT_OPERATION_ATTRIBUTES*)(CallFrame*, const JSInstruction*);
+using SlowPathFunction = UGPRPair(JIT_OPERATION_ATTRIBUTES *)(CallFrame*, const JSInstruction*);
 
 } // namespace JSC

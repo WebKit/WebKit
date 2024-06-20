@@ -397,7 +397,7 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationExceptionFuzzWithCallFrame, void, (V
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationRetrieveAndClearExceptionIfCatchable, JSCell*, (VM*));
 JSC_DECLARE_JIT_OPERATION(operationInstanceOfCustom, size_t, (JSGlobalObject*, EncodedJSValue encodedValue, JSObject* constructor, EncodedJSValue encodedHasInstance));
 
-#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
+#if CPU(ARM64) || CPU(X86_64)
 JSC_DECLARE_JIT_OPERATION(operationIteratorNextTryFast, UGPRPair, (JSGlobalObject*, JSArrayIterator*, JSArray*, void*));
 #endif
 

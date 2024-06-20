@@ -1209,30 +1209,12 @@ public:
         return Base::appendCall(function);
     }
 
-#if OS(WINDOWS) && CPU(X86_64)
-    JITCompiler::Call appendCallWithUGPRPair(const CodePtr<OperationPtrTag> function)
-    {
-        prepareForExternalCall();
-        emitStoreCodeOrigin(m_currentNode->origin.semantic);
-        return Base::appendCallWithUGPRPair(function);
-    }
-#endif
-
     void appendCall(Address address)
     {
         prepareForExternalCall();
         emitStoreCodeOrigin(m_currentNode->origin.semantic);
         Base::appendCall(address);
     }
-
-#if OS(WINDOWS) && CPU(X86_64)
-    void appendCallWithUGPRPair(Address address)
-    {
-        prepareForExternalCall();
-        emitStoreCodeOrigin(m_currentNode->origin.semantic);
-        Base::appendCallWithUGPRPair(address);
-    }
-#endif
 
     JITCompiler::Call appendOperationCall(const CodePtr<OperationPtrTag> function)
     {
@@ -1244,11 +1226,7 @@ public:
     // FIXME: We can remove this when we don't support MSVC since on clang-cl we could use systemV ABI for JIT operations.
     JITCompiler::Call appendCallSetResult(const CodePtr<OperationPtrTag> function, GPRReg result1, GPRReg result2)
     {
-#if OS(WINDOWS) && CPU(X86_64)
-        JITCompiler::Call call = appendCallWithUGPRPair(function);
-#else
         JITCompiler::Call call = appendCall(function);
-#endif
         setupResults(result1, result2);
         return call;
     }

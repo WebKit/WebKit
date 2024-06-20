@@ -1141,9 +1141,7 @@ ScratchRegisterAllocator InlineCacheCompiler::makeDefaultScratchAllocator(GPRReg
     return allocator;
 }
 
-#if CPU(X86_64) && OS(WINDOWS)
-static constexpr size_t prologueSizeInBytesDataIC = 5;
-#elif CPU(X86_64)
+#if CPU(X86_64)
 static constexpr size_t prologueSizeInBytesDataIC = 1;
 #elif CPU(ARM64E)
 static constexpr size_t prologueSizeInBytesDataIC = 8;
@@ -1166,11 +1164,7 @@ void InlineCacheCompiler::emitDataICPrologue(CCallHelpers& jit)
     size_t startOffset = jit.debugOffset();
 #endif
 
-#if CPU(X86_64) && OS(WINDOWS)
-    static_assert(maxFrameExtentForSlowPathCall);
-    jit.push(CCallHelpers::framePointerRegister);
-    jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     static_assert(!maxFrameExtentForSlowPathCall);
     jit.push(CCallHelpers::framePointerRegister);
 #elif CPU(ARM64)

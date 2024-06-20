@@ -3140,7 +3140,7 @@ JSC_DEFINE_JIT_OPERATION(operationInstanceOfCustom, size_t, (JSGlobalObject* glo
     OPERATION_RETURN(scope, 0);
 }
 
-#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
+#if CPU(ARM64) || CPU(X86_64)
 
 JSC_DEFINE_JIT_OPERATION(operationIteratorNextTryFast, UGPRPair, (JSGlobalObject* globalObject, JSArrayIterator* arrayIterator, JSArray* array, void* metadataPointer))
 {

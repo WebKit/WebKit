@@ -97,7 +97,7 @@ using namespace JSC;
 
 IGNORE_WARNINGS_BEGIN("frame-address")
 
-extern "C" void ctiMasmProbeTrampoline();
+extern "C" void SYSV_ABI ctiMasmProbeTrampoline();
 
 namespace JSC {
 

@@ -103,7 +103,7 @@ enum class SavedFPWidth {
 };
 
 class Context;
-typedef void (*Function)(Context&);
+typedef void SYSV_ABI (*Function)(Context&);
 
 } // namespace Probe
 

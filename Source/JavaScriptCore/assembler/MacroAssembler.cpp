@@ -47,7 +47,7 @@ void MacroAssembler::jitAssert(const ScopedLambda<Jump(void)>& functor)
     }
 }
 
-static void stdFunctionCallback(Probe::Context& context)
+static void SYSV_ABI stdFunctionCallback(Probe::Context& context)
 {
     auto func = context.arg<const Function<void(Probe::Context&)>*>();
     (*func)(context);

@@ -38,11 +38,7 @@
 
 namespace JSC {
 
-#if OS(WINDOWS) && CPU(X86_64)
-#define POKE_ARGUMENT_OFFSET 4
-#else
 #define POKE_ARGUMENT_OFFSET 0
-#endif
 
 class CallFrame;
 class Structure;
@@ -304,13 +300,8 @@ private:
             return ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke + 1>(*this);
         }
 
-#if OS(WINDOWS) && CPU(X86_64)
-        unsigned argCount(GPRReg) { return numGPRArgs + numFPRArgs; }
-        unsigned argCount(FPRReg) { return numGPRArgs + numFPRArgs; }
-#else
         unsigned argCount(GPRReg) { return numGPRArgs + extraGPRArgs; }
         unsigned argCount(FPRReg) { return numFPRArgs; }
-#endif
 
         // store GPR -> GPR assignments
         std::array<GPRReg, GPRInfo::numberOfRegisters> gprSources;
@@ -354,11 +345,10 @@ private:
 
         currentGPRArgument += extraGPRArgs;
         currentFPRArgument -= numCrossSources;
-#if !(OS(WINDOWS) && CPU(X86_64))
+
         IGNORE_WARNINGS_BEGIN("type-limits")
         ASSERT(currentGPRArgument >= GPRInfo::numberOfArgumentRegisters || currentFPRArgument >= FPRInfo::numberOfArgumentRegisters);
         IGNORE_WARNINGS_END
-#endif
 
         unsigned pokeOffset = POKE_ARGUMENT_OFFSET + extraPoke;
         pokeOffset += std::max(currentGPRArgument, numberOfGPArgumentRegisters) - numberOfGPArgumentRegisters;
@@ -401,22 +391,14 @@ private:
     {
         using InfoType = InfoTypeForReg<RegType>;
         unsigned numArgRegisters = InfoType::numberOfArgumentRegisters;
-#if OS(WINDOWS) && CPU(X86_64)
-        unsigned currentArgCount = argSourceRegs.argCount(arg) + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0);
-#else
         unsigned currentArgCount = argSourceRegs.argCount(arg);
-#endif
         if (currentArgCount < numArgRegisters) {
             auto updatedArgSourceRegs = argSourceRegs.pushRegArg(arg, InfoType::toArgumentRegister(currentArgCount));
             setupArgumentsImpl<OperationType>(updatedArgSourceRegs, args...);
             return;
         }
 
-#if OS(WINDOWS) && CPU(X86_64)
-        pokeForArgument(arg, numGPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0), numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-#else
         pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-#endif
         setupArgumentsImpl<OperationType>(argSourceRegs.addStackArg(arg), args...);
     }
 
@@ -568,22 +550,14 @@ private:
         // gross so it's probably better to do that marshalling before the call operation...
         static_assert(!std::is_floating_point<CURRENT_ARGUMENT_TYPE>::value, "We don't support immediate floats/doubles in setupArguments");
         auto numArgRegisters = GPRInfo::numberOfArgumentRegisters;
-#if OS(WINDOWS) && CPU(X86_64)
-        auto currentArgCount = numGPRArgs + numFPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0);
-#else
         auto currentArgCount = numGPRArgs + extraGPRArgs;
-#endif
         if (currentArgCount < numArgRegisters) {
             setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
             move(arg, GPRInfo::toArgumentRegister(currentArgCount));
             return;
         }
 
-#if OS(WINDOWS) && CPU(X86_64)
-        pokeForArgument(arg, numGPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0), numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-#else
         pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-#endif
         setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
     }
 
@@ -632,11 +606,7 @@ private:
     {
         static_assert(!std::is_floating_point<CURRENT_ARGUMENT_TYPE>::value, "We don't support immediate floats/doubles in setupArguments");
         auto numArgRegisters = GPRInfo::numberOfArgumentRegisters;
-#if OS(WINDOWS) && CPU(X86_64)
-        auto currentArgCount = numGPRArgs + numFPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0);
-#else
         auto currentArgCount = numGPRArgs + extraGPRArgs;
-#endif
         if (currentArgCount < numArgRegisters) {
             setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
             arg.materialize(*this, GPRInfo::toArgumentRegister(currentArgCount));
@@ -644,11 +614,7 @@ private:
         }
 
 
-#if OS(WINDOWS) && CPU(X86_64)
-        pokeForArgument(arg, numGPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0), numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-#else
         pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-#endif
         setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
     }
 
@@ -715,13 +681,6 @@ private:
         static_assert(!numCrossSources, "shouldn't be used on this architecture.");
 
         setupStubArgs<numFPRSources, FPRReg>(clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprDestinations), clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprSources));
-
-#if OS(WINDOWS) && CPU(X86_64)
-        if constexpr (std::is_same<RESULT_TYPE, UGPRPair>::value) {
-            unsigned pokeOffset = calculatePokeOffset(numGPRArgs + /* implicit first parameter */ 1, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-            addPtr(TrustedImm32(pokeOffset * sizeof(CPURegister)), stackPointerRegister, GPRInfo::argumentGPR0);
-        }
-#endif
     }
 
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename... Args>

@@ -441,7 +441,7 @@ static UGPRPair entryOSR(CodeBlock* codeBlock, const char*, EntryKind)
 #endif // ENABLE(JIT)
 
 #if LLINT_TRACING
-extern "C" void logWasmPrologue(uint64_t i, uint64_t* fp, uint64_t* sp)
+extern "C" void SYSV_ABI logWasmPrologue(uint64_t i, uint64_t* fp, uint64_t* sp)
 {
     if (!Options::traceLLIntExecution())
         return;
@@ -2684,7 +2684,7 @@ extern "C" UGPRPair SYSV_ABI llint_stack_check_at_vm_entry(VM* vm, Register* new
 }
 #endif
 
-extern "C" void llint_write_barrier_slow(CallFrame* callFrame, JSCell* cell)
+extern "C" void SYSV_ABI llint_write_barrier_slow(CallFrame* callFrame, JSCell* cell)
 {
     VM& vm = callFrame->codeBlock()->vm();
     vm.writeBarrier(cell);

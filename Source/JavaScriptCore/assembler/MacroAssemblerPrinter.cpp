@@ -171,7 +171,7 @@ void printMemory(PrintStream& out, Context& context)
         out.print("\n");
 }
 
-void printCallback(Probe::Context& probeContext)
+void SYSV_ABI printCallback(Probe::Context& probeContext)
 {
     auto& out = WTF::dataFile();
     PrintRecordList& list = *probeContext.arg<PrintRecordList*>();

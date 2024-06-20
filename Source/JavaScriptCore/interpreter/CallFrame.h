@@ -368,6 +368,14 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
 JS_EXPORT_PRIVATE bool isFromJSCode(void* returnAddress);
 
 #if USE(BUILTIN_FRAME_ADDRESS)
+#if OS(WINDOWS)
+// On Windows, __builtin_frame_address(1) doesn't work, it returns __builtin_frame_address(0)
+// We can't use __builtin_frame_address(0) either, as if the stack pointer is decremented
+// then __builtin_frame_address(0) points at the first empty home space.
+// Could be implemented on Windows with __builtin_stack_address() once implemented in clang,
+// as that returns the stack pointer at the time of function entry.
+#error "Not implemented on platform https://bugs.webkit.org/show_bug.cgi?id=275567"
+#else // !OS(WINDOWS)
 // FIXME (see rdar://72897291): Work around a Clang bug where __builtin_return_address()
 // sometimes gives us a signed pointer, and sometimes does not.
 #define DECLARE_CALL_FRAME(vm) \
@@ -375,6 +383,7 @@ JS_EXPORT_PRIVATE bool isFromJSCode(void* returnAddress);
         ASSERT(JSC::isFromJSCode(removeCodePtrTag<void*>(__builtin_return_address(0)))); \
         bitwise_cast<JSC::CallFrame*>(__builtin_frame_address(1)); \
     })
+#endif // !OS(WINDOWS)
 #else
 #define DECLARE_CALL_FRAME(vm) ((vm).topCallFrame)
 #endif

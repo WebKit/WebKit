@@ -1841,8 +1841,6 @@ void JIT::emit_op_enumerator_has_own_property(const JSInstruction* currentInstru
     emit_enumerator_has_propertyImpl(currentInstruction->as<OpEnumeratorHasOwnProperty>(), slow_path_enumerator_has_own_property);
 }
 
-#if !OS(WINDOWS)
-
 void JIT::emit_op_enumerator_get_by_val(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpEnumeratorGetByVal>();
@@ -2030,32 +2028,6 @@ void JIT::emitSlow_op_enumerator_put_by_val(const JSInstruction* currentInstruct
 {
     generatePutByValSlowCase(currentInstruction->as<OpEnumeratorPutByVal>(), iter);
 }
-
-#else
-
-void JIT::emit_op_enumerator_get_by_val(const JSInstruction*)
-{
-    JITSlowPathCall slowPathCall(this, slow_path_enumerator_get_by_val);
-    slowPathCall.call();
-}
-
-void JIT::emitSlow_op_enumerator_get_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-}
-
-void JIT::emit_op_enumerator_put_by_val(const JSInstruction*)
-{
-    JITSlowPathCall slowPathCall(this, slow_path_enumerator_put_by_val);
-    slowPathCall.call();
-}
-
-void JIT::emitSlow_op_enumerator_put_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-}
-
-#endif
 
 #elif USE(JSVALUE32_64)
 

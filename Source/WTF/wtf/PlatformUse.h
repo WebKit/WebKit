@@ -145,7 +145,17 @@
 
 /* FIXME: This name should be more specific if it is only for use with CallFrame* */
 /* Use __builtin_frame_address(1) to get CallFrame* */
-#if CPU(ARM64) || CPU(X86_64)
+/*
+Disabled on Windows as __builtin_frame_address(1) is unavailable, and cannot be recreated with 
+__builtin_frame_address(0) due to how the stack frame is grown. __builtin_frame_address(0) points at
+the current frame, and if the current function spills registers to the stack it's pointing at
+the first of four home spaces. Without knowing the size of the stack frame the compiler reserves 
+we can't walk back up to find the RBP at function entry.
+Could be implemented on Windows with __builtin_stack_address() once implemented in clang, as that
+returns the stack pointer at the time of function entry.
+https://bugs.webkit.org/show_bug.cgi?id=275567
+*/
+#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
 #define USE_BUILTIN_FRAME_ADDRESS 1
 #endif
 
