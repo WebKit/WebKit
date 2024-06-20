@@ -2058,6 +2058,7 @@
    {
       "emails" : [
          "david_choi5@apple.com",
+         "davidchoi1027@gmail.com",
          "djchoi@andrew.cmu.edu"
       ],
       "expertise" : "WebCore",
@@ -2065,7 +2066,8 @@
       "name" : "David Choi",
       "nicks" : [
          "RWDavid"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
