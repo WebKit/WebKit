@@ -499,10 +499,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         && resourceLoader.options().mode == FetchOptions::Mode::Navigate
         && webFrame
         && webFrame->frameLoaderClient()) {
-        // FIXME: Gather more parameters here like we have in WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction.
-        loadParameters.mainResourceNavigationDataForAnyFrame = webFrame->frameLoaderClient()->navigationActionData(resourceLoader.documentLoader()->triggeringAction(), request, { }, { }, { }, { }, { }, { });
-    }
-    if (loadParameters.mainResourceNavigationDataForAnyFrame) {
+        loadParameters.mainResourceNavigationForAnyFrame = true;
         if (auto documentLoader = resourceLoader.documentLoader()) {
             loadParameters.navigationID = documentLoader->navigationID();
             loadParameters.navigationRequester = documentLoader->triggeringAction().requester();

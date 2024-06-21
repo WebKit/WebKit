@@ -190,7 +190,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     , m_frameID(parameters.webFrameID)
     , m_pageID(parameters.webPageID)
     , m_webPageProxyID(parameters.webPageProxyID)
-    , m_isForMainResourceNavigationForAnyFrame(!!parameters.mainResourceNavigationDataForAnyFrame)
+    , m_isForMainResourceNavigationForAnyFrame(parameters.mainResourceNavigationForAnyFrame)
     , m_sourceOrigin(parameters.sourceOrigin)
 {
     auto request = parameters.request;
