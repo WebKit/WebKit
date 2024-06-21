@@ -449,10 +449,10 @@ TEST(WritingTools, ProofreadingShowOriginal)
 
         [webView waitForNextPresentationUpdate];
 
-        EXPECT_WK_STREQ(@"('think', state: 2)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'writingtoolstextsuggestion', 0);"]);
-        EXPECT_WK_STREQ(@"('hear', state: 2)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'writingtoolstextsuggestion', 1);"]);
-        EXPECT_WK_STREQ(@"('there', state: 2)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('second').childNodes[0], 'writingtoolstextsuggestion', 0);"]);
-        EXPECT_WK_STREQ(@"('there', state: 2)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('second').childNodes[0], 'writingtoolstextsuggestion', 1);"]);
+        EXPECT_WK_STREQ(@"('think', state: 1)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'writingtoolstextsuggestion', 0);"]);
+        EXPECT_WK_STREQ(@"('hear', state: 1)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'writingtoolstextsuggestion', 1);"]);
+        EXPECT_WK_STREQ(@"('there', state: 1)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('second').childNodes[0], 'writingtoolstextsuggestion', 0);"]);
+        EXPECT_WK_STREQ(@"('there', state: 1)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('second').childNodes[0], 'writingtoolstextsuggestion', 1);"]);
 
         EXPECT_WK_STREQ(originalText, [webView contentsAsString]);
 
