@@ -208,9 +208,9 @@
 
 namespace WebCore {
 
-static HashSet<SingleThreadWeakRef<Page>>& allPages()
+static HashSet<WeakRef<Page>>& allPages()
 {
-    static NeverDestroyed<HashSet<SingleThreadWeakRef<Page>>> set;
+    static NeverDestroyed<HashSet<WeakRef<Page>>> set;
     return set;
 }
 

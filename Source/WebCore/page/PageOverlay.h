@@ -131,7 +131,7 @@ private:
     void fadeAnimationTimerFired();
 
     Client& m_client;
-    SingleThreadWeakPtr<Page> m_page;
+    WeakPtr<Page> m_page;
 
     Timer m_fadeAnimationTimer;
     WallTime m_fadeAnimationStartTime;

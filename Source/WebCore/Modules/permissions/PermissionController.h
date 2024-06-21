@@ -47,7 +47,7 @@ public:
     WEBCORE_EXPORT static void setSharedController(Ref<PermissionController>&&);
     
     virtual ~PermissionController() = default;
-    virtual void query(ClientOrigin&&, PermissionDescriptor, const SingleThreadWeakPtr<Page>&, PermissionQuerySource, CompletionHandler<void(std::optional<PermissionState>)>&&) = 0;
+    virtual void query(ClientOrigin&&, PermissionDescriptor, const WeakPtr<Page>&, PermissionQuerySource, CompletionHandler<void(std::optional<PermissionState>)>&&) = 0;
     virtual void addObserver(PermissionObserver&) = 0;
     virtual void removeObserver(PermissionObserver&) = 0;
     virtual void permissionChanged(PermissionName, const SecurityOriginData&) = 0;
@@ -60,7 +60,7 @@ public:
     static Ref<DummyPermissionController> create() { return adoptRef(*new DummyPermissionController); }
 private:
     DummyPermissionController() = default;
-    void query(ClientOrigin&&, PermissionDescriptor, const SingleThreadWeakPtr<Page>&, PermissionQuerySource, CompletionHandler<void(std::optional<PermissionState>)>&& callback) final { callback({ }); }
+    void query(ClientOrigin&&, PermissionDescriptor, const WeakPtr<Page>&, PermissionQuerySource, CompletionHandler<void(std::optional<PermissionState>)>&& callback) final { callback({ }); }
     void addObserver(PermissionObserver&) final { }
     void removeObserver(PermissionObserver&) final { }
     void permissionChanged(PermissionName, const SecurityOriginData&) final { }

@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-MainThreadPermissionObserver::MainThreadPermissionObserver(ThreadSafeWeakPtr<PermissionStatus>&& permissionStatus, ScriptExecutionContextIdentifier contextIdentifier, PermissionState state, PermissionDescriptor descriptor, PermissionQuerySource source, SingleThreadWeakPtr<Page>&& page, ClientOrigin&& origin)
+MainThreadPermissionObserver::MainThreadPermissionObserver(ThreadSafeWeakPtr<PermissionStatus>&& permissionStatus, ScriptExecutionContextIdentifier contextIdentifier, PermissionState state, PermissionDescriptor descriptor, PermissionQuerySource source, WeakPtr<Page>&& page, ClientOrigin&& origin)
     : m_permissionStatus(WTFMove(permissionStatus))
     , m_contextIdentifier(contextIdentifier)
     , m_state(state)
