@@ -1709,5 +1709,10 @@
         assertIsCurrent(workQueue());
         m_context->disableFoveation();
     }
+    void framebufferDiscard(uint32_t target, std::span<const uint32_t>&& attachments)
+    {
+        assertIsCurrent(workQueue());
+        m_context->framebufferDiscard(target, attachments);
+    }
 #endif
 

@@ -730,6 +730,15 @@ void GraphicsContextGLCocoa::disableFoveation()
 #endif
 }
 
+#if ENABLE(WEBXR)
+void GraphicsContextGLCocoa::framebufferDiscard(GCGLenum target, std::span<const GCGLenum> attachments)
+{
+    if (!makeContextCurrent())
+        return;
+    GL_DiscardFramebufferEXT(target, attachments.size(), attachments.data());
+}
+#endif
+
 RetainPtr<id> GraphicsContextGLCocoa::newSharedEventWithMachPort(mach_port_t sharedEventSendRight)
 {
     return WebCore::newSharedEventWithMachPort(m_displayObj, sharedEventSendRight);
@@ -760,6 +769,7 @@ bool GraphicsContextGLCocoa::enableRequiredWebXRExtensionsImpl()
 {
     return enableExtension("GL_ANGLE_framebuffer_multisample"_s)
         && enableExtension("GL_ANGLE_framebuffer_blit"_s)
+        && enableExtension("GL_EXT_discard_framebuffer"_s)
         && enableExtension("GL_EXT_sRGB"_s)
         && enableExtension("GL_OES_EGL_image"_s)
         && enableExtension("GL_OES_rgb8_rgba8"_s)

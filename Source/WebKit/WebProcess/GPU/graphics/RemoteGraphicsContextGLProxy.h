@@ -374,6 +374,7 @@ public:
     bool addFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamples, std::span<const GCGLfloat> horizontalSamplesRight) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
     void enableFoveation(GCGLuint) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
     void disableFoveation() IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
+    void framebufferDiscard(GCGLenum target, std::span<const GCGLenum> attachments) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
 #endif
     // End of list used by generate-gpup-webgl script.
 

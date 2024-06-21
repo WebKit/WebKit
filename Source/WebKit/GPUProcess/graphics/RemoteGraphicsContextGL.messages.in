@@ -335,6 +335,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     [EnabledIf='webXREnabled()'] void AddFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const float> horizontalSamplesLeft, std::span<const float> verticalSamples, std::span<const float> horizontalSamplesRight) -> (bool returnValue) Synchronous
     [EnabledIf='webXREnabled()'] void EnableFoveation(uint32_t arg0)
     [EnabledIf='webXREnabled()'] void DisableFoveation()
+    [EnabledIf='webXREnabled()'] void FramebufferDiscard(uint32_t target, std::span<const uint32_t> attachments)
 #endif
 }
 

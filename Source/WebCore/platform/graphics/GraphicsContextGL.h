@@ -1618,6 +1618,9 @@ public:
     // GL_EXT_polygon_offset_clamp
     virtual void polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp) = 0;
 
+    // GL_EXT_discard_framebuffer
+    WEBCORE_EXPORT virtual void framebufferDiscard(GCGLenum, std::span<const GCGLenum>);
+
     // ========== Internal use for WebXR on WebGL1 contexts.
     virtual void renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
 

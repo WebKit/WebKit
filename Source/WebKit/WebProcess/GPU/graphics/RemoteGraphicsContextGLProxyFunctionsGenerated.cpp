@@ -3169,6 +3169,17 @@ void RemoteGraphicsContextGLProxy::disableFoveation()
         return;
     }
 }
+
+void RemoteGraphicsContextGLProxy::framebufferDiscard(GCGLenum target, std::span<const GCGLenum> attachments)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::FramebufferDiscard(target, attachments));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return;
+    }
+}
 #endif
 
 }

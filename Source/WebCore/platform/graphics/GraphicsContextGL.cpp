@@ -37,6 +37,7 @@
 #include "HostWindow.h"
 #include "Image.h"
 #include "ImageObserver.h"
+#include "NotImplemented.h"
 #include "PixelBuffer.h"
 #include "VideoFrame.h"
 
@@ -569,6 +570,11 @@ GCGLint GraphicsContextGL::getInternalformati(GCGLenum target, GCGLenum internal
     GCGLint value[1] { };
     getInternalformativ(target, internalformat, pname, value);
     return value[0];
+}
+
+void GraphicsContextGL::framebufferDiscard(GCGLenum, std::span<const GCGLenum>)
+{
+    notImplemented();
 }
 
 void GraphicsContextGL::setDrawingBufferColorSpace(const DestinationColorSpace&)
