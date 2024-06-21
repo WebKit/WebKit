@@ -63,7 +63,7 @@ public:
     void markForContentsSizeChanged() { m_needsUpdateContentsSize = true; }
 
 private:
-    SingleThreadWeakRef<Page> m_page;
+    WeakRef<Page> m_page;
     MonotonicTime m_expirationTime;
     std::unique_ptr<CachedFrame> m_cachedMainFrame;
 #if ENABLE(VIDEO)

@@ -74,7 +74,7 @@ private:
     void progressHeartbeatTimerFired();
     Ref<Page> protectedPage() const;
 
-    SingleThreadWeakRef<Page> m_page;
+    WeakRef<Page> m_page;
     UniqueRef<ProgressTrackerClient> m_client;
     RefPtr<LocalFrame> m_originatingProgressFrame;
     HashMap<ResourceLoaderIdentifier, std::unique_ptr<ProgressItem>> m_progressItems;

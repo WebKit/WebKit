@@ -72,7 +72,7 @@ private:
     Ref<Page> protectedPage() const;
     Ref<BackForwardClient> protectedClient() const;
 
-    SingleThreadWeakRef<Page> m_page;
+    WeakRef<Page> m_page;
     Ref<BackForwardClient> m_client;
 };
 

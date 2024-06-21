@@ -120,7 +120,7 @@ private:
 
     bool shouldAllowOpportunisticallyScheduledTasks() const;
 
-    SingleThreadWeakPtr<Page> m_page;
+    WeakPtr<Page> m_page;
     uint64_t m_imminentlyScheduledWorkCount { 0 };
     uint64_t m_runloopCountAfterBeingScheduled { 0 };
     MonotonicTime m_currentDeadline;

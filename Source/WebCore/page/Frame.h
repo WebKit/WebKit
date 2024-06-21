@@ -107,7 +107,7 @@ protected:
 private:
     virtual DOMWindow* virtualWindow() const = 0;
 
-    SingleThreadWeakPtr<Page> m_page;
+    WeakPtr<Page> m_page;
     const FrameIdentifier m_frameID;
     mutable FrameTree m_treeNode;
     Ref<WindowProxy> m_windowProxy;

@@ -58,7 +58,7 @@ private:
     void copySessionStorageNamespace(WebCore::Page&, WebCore::Page&) final;
 
     const String m_localStorageDatabasePath;
-    SingleThreadWeakHashMap<WebCore::Page, HashMap<WebCore::SecurityOriginData, RefPtr<WebCore::StorageNamespace>>> m_sessionStorageNamespaces;
+    WeakHashMap<WebCore::Page, HashMap<WebCore::SecurityOriginData, RefPtr<WebCore::StorageNamespace>>> m_sessionStorageNamespaces;
 };
 
 } // namespace WebKit

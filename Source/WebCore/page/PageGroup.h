@@ -45,7 +45,7 @@ public:
 
     WEBCORE_EXPORT static PageGroup* pageGroup(const String& groupName);
 
-    const SingleThreadWeakHashSet<Page>& pages() const { return m_pages; }
+    const WeakHashSet<Page>& pages() const { return m_pages; }
 
     void addPage(Page&);
     void removePage(Page&);
@@ -61,7 +61,7 @@ public:
 
 private:
     String m_name;
-    SingleThreadWeakHashSet<Page> m_pages;
+    WeakHashSet<Page> m_pages;
 
     unsigned m_identifier;
 

@@ -226,7 +226,7 @@ protected:
 
     virtual void willCommitTree() { }
 
-    SingleThreadWeakPtr<Page> m_page; // FIXME: ideally this would be a WeakRef but it gets nulled on async teardown.
+    WeakPtr<Page> m_page; // FIXME: ideally this would be a WeakRef but it gets nulled on async teardown.
 
 private:
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const LocalFrameView&) const;
