@@ -2469,7 +2469,7 @@ def handleCollectionFile(collection)
                     
                     $benchmark = path.basename
                     $benchmarkDirectory = path.dirname
-                    
+                    $skipModes = Set.new
                     $runCommandOptions = {}
                     $testSpecificRequiredOptions = []
                     eval entry["cmd"]
