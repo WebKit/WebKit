@@ -1687,6 +1687,12 @@ void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& in
         return;
     }
 
+    if (!m_player) {
+        ASSERT_NOT_REACHED("It should not be possible to enter loadResource without a valid m_player object");
+        mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
+        return;
+    }
+
     URL url = initialURL;
 #if PLATFORM(COCOA)
     if (url.protocolIsFile() && !frame->loader().willLoadMediaElementURL(url, *this)) {
