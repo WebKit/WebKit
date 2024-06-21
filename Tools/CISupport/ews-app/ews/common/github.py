@@ -227,7 +227,7 @@ class GitHubEWS(GitHub):
         repository_url = 'https://github.com/{}'.format(change.pr_project)
         hash_url = '{}/commit/{}'.format(repository_url, change.change_id)
 
-        comment = '\n\n| Misc | iOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
+        comment = '\n\n| Misc | iOS, visionOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
         comment += '\n| ----- | ---------------------- | ------- |  ----- |  --------- |'
 
         for row in self.STATUS_BUBBLE_ROWS:
