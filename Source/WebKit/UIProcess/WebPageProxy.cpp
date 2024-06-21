@@ -6387,9 +6387,9 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     }
 
     // FIXME: We ought to be able to know what site a navigation is to even before it commits, even for the first navigation.
-    if (frame->frameProcess().site().isEmpty() && m_preferences->siteIsolationEnabled()) {
+    if (m_preferences->siteIsolationEnabled()) {
         Site navigationSite(request.url());
-        if (!navigationSite.isEmpty())
+        if (!navigationSite.isEmpty() && frame->frameProcess().site() != navigationSite)
             frame->setProcess(m_browsingContextGroup->ensureProcessForSite(navigationSite, m_legacyMainFrameProcess, preferences()));
     }
 
