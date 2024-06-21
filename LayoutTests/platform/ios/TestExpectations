@@ -6423,7 +6423,8 @@ http/wpt/mediarecorder/video-rotation.html [ Pass Failure ]
 
 webkit.org/b/228604 [ Release ] http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure ]
 
-webkit.org/b/231962 editing/selection/modal-dialog-select-paragraph.html [ Failure ]
+# iOS does not support eventSender.mouse*
+webkit.org/b/231962 editing/selection/modal-dialog-select-paragraph.html [ WontFix ]
 
 # rdar://80393995 ([ iOS15 ] http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html is a constant timeout)
 http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html [ Timeout ]
