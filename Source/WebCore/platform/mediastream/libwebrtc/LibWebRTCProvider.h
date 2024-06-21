@@ -75,7 +75,6 @@ public:
     static void setRTCLogging(WTFLogLevel);
 
     virtual void setEnableWebRTCEncryption(bool);
-    virtual void setUseDTLS10(bool);
     virtual void disableNonLocalhostConnections();
 
     std::optional<RTCRtpCapabilities> receiverCapabilities(const String& kind) final;
@@ -149,7 +148,6 @@ private:
     std::optional<MediaCapabilitiesEncodingInfo> videoEncodingCapabilitiesOverride(const VideoConfiguration&) final;
 
     std::optional<bool> m_supportsVP9VTBForTesting { false };
-    bool m_useDTLS10 { false };
     bool m_disableNonLocalhostConnections { false };
     bool m_enableEnumeratingAllNetworkInterfaces { false };
     bool m_enableEnumeratingVisibleNetworkInterfaces { false };

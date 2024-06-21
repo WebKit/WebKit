@@ -1864,19 +1864,6 @@ void Internals::setEnableWebRTCEncryption(bool value)
 #endif
 }
 
-void Internals::setUseDTLS10(bool useDTLS10)
-{
-#if USE(LIBWEBRTC)
-    auto* document = contextDocument();
-    if (!document || !document->page())
-        return;
-    auto& rtcProvider = static_cast<LibWebRTCProvider&>(document->page()->webRTCProvider());
-    rtcProvider.setUseDTLS10(useDTLS10);
-#else
-    UNUSED_PARAM(useDTLS10);
-#endif
-}
-
 #endif // ENABLE(WEB_RTC)
 
 #if ENABLE(MEDIA_STREAM)

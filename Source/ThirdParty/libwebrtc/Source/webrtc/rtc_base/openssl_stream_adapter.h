@@ -66,12 +66,6 @@ class SSLCertChain;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// If `allow` has a value, its value determines if legacy TLS protocols are
-// allowed, overriding the default configuration.
-// If `allow` has no value, any previous override is removed and the default
-// configuration is restored.
-RTC_EXPORT void SetAllowLegacyTLSProtocols(const absl::optional<bool>& allow);
-
 class OpenSSLStreamAdapter final : public SSLStreamAdapter,
                                    public sigslot::has_slots<> {
  public:
@@ -252,9 +246,6 @@ class OpenSSLStreamAdapter final : public SSLStreamAdapter,
   // A 50-ms initial timeout ensures rapid setup on fast connections, but may
   // be too aggressive for low bandwidth links.
   int dtls_handshake_timeout_ms_ = 50;
-
-  // TODO(https://bugs.webrtc.org/10261): Completely remove this option in M84.
-  const bool support_legacy_tls_protocols_flag_;
 };
 
 /////////////////////////////////////////////////////////////////////////////

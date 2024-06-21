@@ -278,26 +278,6 @@ static long stream_ctrl(BIO* b, int cmd, long num, void* ptr) {
 // OpenSSLStreamAdapter
 /////////////////////////////////////////////////////////////////////////////
 
-static std::atomic<bool> g_use_legacy_tls_protocols_override(false);
-static std::atomic<bool> g_allow_legacy_tls_protocols(false);
-
-void SetAllowLegacyTLSProtocols(const absl::optional<bool>& allow) {
-  g_use_legacy_tls_protocols_override.store(allow.has_value());
-  if (allow.has_value())
-    g_allow_legacy_tls_protocols.store(allow.value());
-}
-
-bool ShouldAllowLegacyTLSProtocols() {
-  // WEBKIT_WEBRTC: Remove DTL10 optional support.
-  return g_use_legacy_tls_protocols_override.load()
-             ? g_allow_legacy_tls_protocols.load()
-#if defined(WEBRTC_WEBKIT_BUILD)
-             : !webrtc::field_trial::IsDisabled("WebRTC-LegacyTlsProtocols");
-#else
-             : webrtc::field_trial::IsEnabled("WebRTC-LegacyTlsProtocols");
-#endif
-}
-
 OpenSSLStreamAdapter::OpenSSLStreamAdapter(
     std::unique_ptr<StreamInterface> stream,
     absl::AnyInvocable<void(SSLHandshakeError)> handshake_error)
@@ -311,10 +291,7 @@ OpenSSLStreamAdapter::OpenSSLStreamAdapter(
       ssl_(nullptr),
       ssl_ctx_(nullptr),
       ssl_mode_(SSL_MODE_TLS),
-      ssl_max_version_(SSL_PROTOCOL_TLS_12),
-      // Default is to support legacy TLS protocols.
-      // This will be changed to default non-support in M82 or M83.
-      support_legacy_tls_protocols_flag_(ShouldAllowLegacyTLSProtocols()) {
+      ssl_max_version_(SSL_PROTOCOL_TLS_12) {
   stream_->SignalEvent.connect(this, &OpenSSLStreamAdapter::OnEvent);
 }
 
@@ -1036,37 +1013,10 @@ SSL_CTX* OpenSSLStreamAdapter::SetupSSLContext() {
     return nullptr;
   }
 
-  if (support_legacy_tls_protocols_flag_) {
-    // TODO(https://bugs.webrtc.org/10261): Completely remove this branch in
-    // M84.
-    SSL_CTX_set_min_proto_version(
-        ctx, ssl_mode_ == SSL_MODE_DTLS ? DTLS1_VERSION : TLS1_VERSION);
-    switch (ssl_max_version_) {
-      case SSL_PROTOCOL_TLS_10:
-        SSL_CTX_set_max_proto_version(
-            ctx, ssl_mode_ == SSL_MODE_DTLS ? DTLS1_VERSION : TLS1_VERSION);
-        break;
-      case SSL_PROTOCOL_TLS_11:
-        SSL_CTX_set_max_proto_version(
-            ctx, ssl_mode_ == SSL_MODE_DTLS ? DTLS1_VERSION : TLS1_1_VERSION);
-        break;
-      case SSL_PROTOCOL_TLS_12:
-      default:
-#if defined(WEBRTC_WEBKIT_BUILD)
-        SSL_CTX_set_min_proto_version(
-            ctx, ssl_mode_ == SSL_MODE_DTLS ? DTLS1_2_VERSION : TLS1_2_VERSION);
-#endif
-        SSL_CTX_set_max_proto_version(
-            ctx, ssl_mode_ == SSL_MODE_DTLS ? DTLS1_2_VERSION : TLS1_2_VERSION);
-        break;
-    }
-  } else {
-    // TODO(https://bugs.webrtc.org/10261): Make this the default in M84.
-    SSL_CTX_set_min_proto_version(
-        ctx, ssl_mode_ == SSL_MODE_DTLS ? DTLS1_2_VERSION : TLS1_2_VERSION);
-    SSL_CTX_set_max_proto_version(
-        ctx, ssl_mode_ == SSL_MODE_DTLS ? DTLS1_2_VERSION : TLS1_2_VERSION);
-  }
+  SSL_CTX_set_min_proto_version(
+      ctx, ssl_mode_ == SSL_MODE_DTLS ? DTLS1_2_VERSION : TLS1_2_VERSION);
+  SSL_CTX_set_max_proto_version(
+      ctx, ssl_mode_ == SSL_MODE_DTLS ? DTLS1_2_VERSION : TLS1_2_VERSION);
 
 #ifdef OPENSSL_IS_BORINGSSL
   // SSL_CTX_set_current_time_cb is only supported in BoringSSL.
