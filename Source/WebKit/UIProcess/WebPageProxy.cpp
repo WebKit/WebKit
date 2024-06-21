@@ -3091,6 +3091,8 @@ void WebPageProxy::clearEditorStateAfterPageTransition(EditorStateIdentifier ide
 
     internals().editorState = { };
     internals().editorState.identifier = identifier;
+    internals().editorState.postLayoutData = EditorState::PostLayoutData { };
+    internals().editorState.visualData = EditorState::VisualData { };
 
     protectedPageClient()->didClearEditorStateAfterPageTransition();
 }

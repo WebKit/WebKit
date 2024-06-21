@@ -1741,6 +1741,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self _updateTapHighlight];
 
+    if (_page->editorState().selectionIsNone && _lastSelectionDrawingInfo.type == WebKit::WKSelectionDrawingInfo::SelectionType::None)
+        return;
+
     _selectionNeedsUpdate = YES;
     [self _updateChangedSelection:YES];
 }
