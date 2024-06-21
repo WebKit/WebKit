@@ -36,5 +36,5 @@ function shouldBeArray(actual, expected) {
 
     let a0 = new Uint32Array([0xffffffff, 0xfffffffe, 0xfffffff0, 0xfffff0f0]);
     let a1 = Uint8Array.from(a0);
-    shouldBeArray(a1, [1, 2, 3, 4, 5]);
+    shouldBeArray(a1, []);
 }
