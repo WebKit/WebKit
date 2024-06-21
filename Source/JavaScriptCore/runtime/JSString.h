@@ -228,6 +228,7 @@ public:
     inline bool equal(JSGlobalObject*, JSString* other) const;
     GCOwnedDataScope<const String&> value(JSGlobalObject*) const;
     inline GCOwnedDataScope<const String&> tryGetValue(bool allocationAllowed = true) const;
+    GCOwnedDataScope<const String&> tryGetValueWithoutGC() const;
     const StringImpl* getValueImpl() const;
     const StringImpl* tryGetValueImpl() const;
     ALWAYS_INLINE unsigned length() const;
@@ -592,6 +593,7 @@ public:
     // If nullOrExecForOOM is null, resolveRope() will be do nothing in the event of an OOM error.
     // The rope value will remain a null string in that case.
     JS_EXPORT_PRIVATE const String& resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM) const;
+    JS_EXPORT_PRIVATE const String& resolveRopeWithoutGC() const;
 
     template<typename CharacterType>
     static void resolveToBuffer(JSString*, JSString*, JSString*, CharacterType* buffer, unsigned length, uint8_t* stackLimit);
@@ -632,7 +634,7 @@ private:
 
     friend JSValue jsStringFromRegisterArray(JSGlobalObject*, Register*, unsigned);
 
-    template<typename Function> const String& resolveRopeWithFunction(JSGlobalObject* nullOrGlobalObjectForOOM, Function&&) const;
+    template<bool reportAllocation, typename Function> const String& resolveRopeWithFunction(JSGlobalObject* nullOrGlobalObjectForOOM, Function&&) const;
     JS_EXPORT_PRIVATE AtomString resolveRopeToAtomString(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE RefPtr<AtomStringImpl> resolveRopeToExistingAtomString(JSGlobalObject*) const;
     template<typename CharacterType> void resolveRopeInternalNoSubstring(CharacterType*, uint8_t* stackLimit) const;

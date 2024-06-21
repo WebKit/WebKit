@@ -157,7 +157,8 @@ AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) c
 
     if (length() > maxLengthForOnStackResolve) {
         scope.release();
-        return convertToAtomString(resolveRopeWithFunction(globalObject, [&] (Ref<StringImpl>&& newImpl) {
+        constexpr bool reportAllocation = true;
+        return convertToAtomString(resolveRopeWithFunction<reportAllocation>(globalObject, [&] (Ref<StringImpl>&& newImpl) {
             return AtomStringImpl::add(newImpl.ptr());
         }));
     }
@@ -191,7 +192,8 @@ RefPtr<AtomStringImpl> JSRopeString::resolveRopeToExistingAtomString(JSGlobalObj
 
     if (length() > maxLengthForOnStackResolve) {
         RefPtr<AtomStringImpl> existingAtomString;
-        resolveRopeWithFunction(globalObject, [&] (Ref<StringImpl>&& newImpl) -> Ref<StringImpl> {
+        constexpr bool reportAllocation = true;
+        resolveRopeWithFunction<reportAllocation>(globalObject, [&] (Ref<StringImpl>&& newImpl) -> Ref<StringImpl> {
             existingAtomString = AtomStringImpl::lookUp(newImpl.ptr());
             if (existingAtomString)
                 return Ref { *existingAtomString };
@@ -221,7 +223,7 @@ RefPtr<AtomStringImpl> JSRopeString::resolveRopeToExistingAtomString(JSGlobalObj
     return existingAtomString;
 }
 
-template<typename Function>
+template<bool reportAllocation, typename Function>
 const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobalObjectForOOM, Function&& function) const
 {
     ASSERT(isRope());
@@ -246,7 +248,8 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
         uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
         resolveRopeInternalNoSubstring(buffer, stackLimit);
         convertToNonRope(function(newImpl.releaseNonNull()));
-        vm.heap.reportExtraMemoryAllocated(this, sizeToReport);
+        if constexpr (reportAllocation)
+            vm.heap.reportExtraMemoryAllocated(this, sizeToReport);
         return valueInternal();
     }
     
@@ -261,13 +264,23 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
     uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
     resolveRopeInternalNoSubstring(buffer, stackLimit);
     convertToNonRope(function(newImpl.releaseNonNull()));
-    vm.heap.reportExtraMemoryAllocated(this, sizeToReport);
+    if constexpr (reportAllocation)
+        vm.heap.reportExtraMemoryAllocated(this, sizeToReport);
     return valueInternal();
 }
 
 const String& JSRopeString::resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM) const
 {
-    return resolveRopeWithFunction(nullOrGlobalObjectForOOM, [] (Ref<StringImpl>&& newImpl) {
+    constexpr bool reportAllocation = true;
+    return resolveRopeWithFunction<reportAllocation>(nullOrGlobalObjectForOOM, [] (Ref<StringImpl>&& newImpl) {
+        return WTFMove(newImpl);
+    });
+}
+
+const String& JSRopeString::resolveRopeWithoutGC() const
+{
+    constexpr bool reportAllocation = false;
+    return resolveRopeWithFunction<reportAllocation>(nullptr, [] (Ref<StringImpl>&& newImpl) {
         return WTFMove(newImpl);
     });
 }
@@ -323,6 +336,15 @@ bool JSString::getStringPropertyDescriptor(JSGlobalObject* globalObject, Propert
     }
     
     return false;
+}
+
+GCOwnedDataScope<const String&> JSString::tryGetValueWithoutGC() const
+{
+    if (isRope()) {
+        // Pass nullptr for the JSGlobalObject so that resolveRope does not throw in the event of an OOM error.
+        return { this, static_cast<const JSRopeString*>(this)->resolveRopeWithoutGC() };
+    }
+    return { this, valueInternal() };
 }
 
 JSString* jsStringWithCacheSlowCase(VM& vm, StringImpl& stringImpl)
