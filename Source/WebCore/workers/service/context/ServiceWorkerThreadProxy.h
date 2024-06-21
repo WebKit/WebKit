@@ -132,9 +132,6 @@ private:
     uint64_t m_functionalEventTasksCounter { 0 };
     HashMap<uint64_t, CompletionHandler<void(bool)>> m_ongoingFunctionalEventTasks;
     HashMap<uint64_t, CompletionHandler<void(bool, std::optional<NotificationPayload>&&)>> m_ongoingNotificationPayloadFunctionalEventTasks;
-
-    // Accessed in worker thread.
-    HashMap<std::pair<SWServerConnectionIdentifier, FetchIdentifier>, Ref<ServiceWorkerFetch::Client>> m_ongoingFetchTasks;
 };
 
 } // namespace WebKit

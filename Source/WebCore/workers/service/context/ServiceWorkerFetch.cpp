@@ -158,7 +158,7 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
     });
 }
 
-void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalScope, ResourceRequest&& request, String&& referrer, FetchOptions&& options, FetchIdentifier fetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier)
+void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalScope, ResourceRequest&& request, String&& referrer, FetchOptions&& options, SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier)
 {
     auto requestHeaders = FetchHeaders::create(FetchHeaders::Guard::Immutable, HTTPHeaderMap { request.httpHeaderFields() });
 
@@ -212,7 +212,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
 
     auto event = FetchEvent::create(*globalScope.globalObject(), eventNames().fetchEvent, WTFMove(init), Event::IsTrusted::Yes);
     if (isServiceWorkerNavigationPreloadEnabled) {
-        client->setFetchEvent(event.copyRef());
+        globalScope.addFetchEvent({ connectionIdentifier, fetchIdentifier }, event.get());
         event->setNavigationPreloadIdentifier(fetchIdentifier);
     }
 

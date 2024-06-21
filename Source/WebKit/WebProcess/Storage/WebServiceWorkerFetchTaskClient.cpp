@@ -224,44 +224,6 @@ void WebServiceWorkerFetchTaskClient::setCancelledCallback(Function<void()>&& ca
     m_cancelledCallback = WTFMove(callback);
 }
 
-void WebServiceWorkerFetchTaskClient::setFetchEvent(Ref<WebCore::FetchEvent>&& event)
-{
-    m_event = WTFMove(event);
-
-    if (m_preloadResponse) {
-        m_event->navigationPreloadIsReady(ResourceResponse::fromCrossThreadData(WTFMove(*m_preloadResponse)));
-        m_preloadResponse = std::nullopt;
-        m_event = nullptr;
-        return;
-    }
-
-    if (!m_preloadError.isNull()) {
-        m_event->navigationPreloadFailed(WTFMove(m_preloadError));
-        m_event = nullptr;
-    }
-}
-
-void WebServiceWorkerFetchTaskClient::navigationPreloadIsReady(ResourceResponse::CrossThreadData&& response)
-{
-    if (!m_event) {
-        m_preloadResponse = WTFMove(response);
-        return;
-    }
-
-    m_event->navigationPreloadIsReady(ResourceResponse::fromCrossThreadData(WTFMove(response)));
-    m_event = nullptr;
-}
-
-void WebServiceWorkerFetchTaskClient::navigationPreloadFailed(ResourceError&& error)
-{
-    if (!m_event) {
-        m_preloadError = WTFMove(error);
-        return;
-    }
-    m_event->navigationPreloadFailed(WTFMove(error));
-    m_event = nullptr;
-}
-      
 void WebServiceWorkerFetchTaskClient::usePreload()
 {
     if (!m_connection)
@@ -299,7 +261,6 @@ void WebServiceWorkerFetchTaskClient::continueDidReceiveResponse()
 void WebServiceWorkerFetchTaskClient::cleanup()
 {
     m_connection = nullptr;
-    m_event = nullptr;
     ensureOnMainRunLoop([serviceWorkerIdentifier = m_serviceWorkerIdentifier, serverConnectionIdentifier = m_serverConnectionIdentifier, fetchIdentifier = m_fetchIdentifier] {
         if (auto* proxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier))
             proxy->removeFetch(serverConnectionIdentifier, fetchIdentifier);

@@ -26,9 +26,11 @@
 #pragma once
 
 #include "CookieStore.h"
+#include "FetchIdentifier.h"
 #include "NotificationClient.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerContextData.h"
+#include "ServiceWorkerFetch.h"
 #include "ServiceWorkerRegistration.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/MonotonicTime.h>
@@ -38,6 +40,7 @@ namespace WebCore {
 
 class DeferredPromise;
 class ExtendableEvent;
+class FetchEvent;
 class Page;
 class PushEvent;
 class ServiceWorkerClient;
@@ -110,6 +113,16 @@ public:
 
     CookieStore& cookieStore();
 
+    using FetchKey = std::pair<SWServerConnectionIdentifier, FetchIdentifier>;
+    void addFetchTask(FetchKey, Ref<ServiceWorkerFetch::Client>&&);
+    void addFetchEvent(FetchKey, FetchEvent&);
+    RefPtr<ServiceWorkerFetch::Client> fetchTask(FetchKey);
+    bool hasFetchTask() const;
+    void removeFetchTask(FetchKey);
+    RefPtr<ServiceWorkerFetch::Client> takeFetchTask(FetchKey);
+    void navigationPreloadFailed(FetchKey, ResourceError&&);
+    void navigationPreloadIsReady(FetchKey, ResourceResponse&&);
+
 private:
     ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, std::unique_ptr<WorkerClient>&&);
     void notifyServiceWorkerPageOfCreationIfNecessary();
@@ -142,6 +155,12 @@ private:
     MonotonicTime m_lastPushEventTime;
     bool m_consoleMessageReportingEnabled { false };
     RefPtr<CookieStore> m_cookieStore;
+
+    struct FetchTask {
+        RefPtr<ServiceWorkerFetch::Client> client;
+        std::variant<std::nullptr_t, Ref<FetchEvent>, UniqueRef<ResourceError>, UniqueRef<ResourceResponse>> navigationPreload;
+    };
+    HashMap<FetchKey, FetchTask> m_ongoingFetchTasks;
 };
 
 } // namespace WebCore

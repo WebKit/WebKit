@@ -234,11 +234,9 @@ void ServiceWorkerThreadProxy::startFetch(SWServerConnectionIdentifier connectio
             return;
         }
 
-        std::pair key { connectionIdentifier, fetchIdentifier };
-        ASSERT(!m_ongoingFetchTasks.contains(key));
-        m_ongoingFetchTasks.add(key, Ref { client });
+        downcast<ServiceWorkerGlobalScope>(context).addFetchTask({ connectionIdentifier, fetchIdentifier }, Ref { client });
 
-        thread().queueTaskToFireFetchEvent(WTFMove(client), WTFMove(request), WTFMove(referrer), WTFMove(options), fetchIdentifier, isServiceWorkerNavigationPreloadEnabled, WTFMove(clientIdentifier), WTFMove(resultingClientIdentifier));
+        thread().queueTaskToFireFetchEvent(WTFMove(client), WTFMove(request), WTFMove(referrer), WTFMove(options), connectionIdentifier, fetchIdentifier, isServiceWorkerNavigationPreloadEnabled, WTFMove(clientIdentifier), WTFMove(resultingClientIdentifier));
     }, WorkerRunLoop::defaultMode());
 }
 
@@ -246,12 +244,13 @@ void ServiceWorkerThreadProxy::cancelFetch(SWServerConnectionIdentifier connecti
 {
     RELEASE_LOG(ServiceWorker, "ServiceWorkerThreadProxy::cancelFetch %" PRIu64, fetchIdentifier.toUInt64());
 
-    postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, connectionIdentifier, fetchIdentifier] (auto&) {
-        auto client = m_ongoingFetchTasks.take({ connectionIdentifier, fetchIdentifier });
+    postTaskForModeToWorkerOrWorkletGlobalScope([protectedThis = Ref { *this }, connectionIdentifier, fetchIdentifier] (auto& context) {
+
+        auto client = downcast<ServiceWorkerGlobalScope>(context).takeFetchTask({ connectionIdentifier, fetchIdentifier });
         if (!client)
             return;
 
-        if (m_ongoingFetchTasks.isEmpty()) {
+        if (!downcast<ServiceWorkerGlobalScope>(context).hasFetchTask()) {
             callOnMainRunLoop([protectedThis] {
                 protectedThis->thread().stopFetchEventMonitoring();
             });
@@ -267,30 +266,25 @@ void ServiceWorkerThreadProxy::convertFetchToDownload(SWServerConnectionIdentifi
     RELEASE_LOG(ServiceWorker, "ServiceWorkerThreadProxy::convertFetchToDownload %" PRIu64, fetchIdentifier.toUInt64());
     ASSERT(!isMainThread());
 
-    postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, connectionIdentifier, fetchIdentifier] (auto&) {
-        auto client = m_ongoingFetchTasks.take({ connectionIdentifier, fetchIdentifier });
-        if (!client)
-            return;
-
-        client->convertFetchToDownload();
+    postTaskForModeToWorkerOrWorkletGlobalScope([connectionIdentifier, fetchIdentifier] (auto& context) {
+        if (auto client = downcast<ServiceWorkerGlobalScope>(context).takeFetchTask({ connectionIdentifier, fetchIdentifier }))
+            client->convertFetchToDownload();
     }, WorkerRunLoop::defaultMode());
 }
 
 void ServiceWorkerThreadProxy::navigationPreloadIsReady(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier, ResourceResponse&& response)
 {
     ASSERT(!isMainThread());
-    postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, connectionIdentifier, fetchIdentifier, responseData = response.crossThreadData()] (auto&) mutable {
-        if (auto client = m_ongoingFetchTasks.get({ connectionIdentifier, fetchIdentifier }))
-            client->navigationPreloadIsReady(WTFMove(responseData));
+    postTaskForModeToWorkerOrWorkletGlobalScope([connectionIdentifier, fetchIdentifier, responseData = response.crossThreadData()] (auto& context) mutable {
+        downcast<ServiceWorkerGlobalScope>(context).navigationPreloadIsReady({ connectionIdentifier, fetchIdentifier }, ResourceResponse::fromCrossThreadData(WTFMove(responseData)));
     }, WorkerRunLoop::defaultMode());
 }
 
 void ServiceWorkerThreadProxy::navigationPreloadFailed(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier, ResourceError&& error)
 {
     ASSERT(!isMainThread());
-    postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, connectionIdentifier, fetchIdentifier, error = WTFMove(error).isolatedCopy()] (auto&) mutable {
-        if (auto client = m_ongoingFetchTasks.get({ connectionIdentifier, fetchIdentifier }))
-            client->navigationPreloadFailed(WTFMove(error));
+    postTaskForModeToWorkerOrWorkletGlobalScope([connectionIdentifier, fetchIdentifier, error = WTFMove(error).isolatedCopy()] (auto& context) mutable {
+        downcast<ServiceWorkerGlobalScope>(context).navigationPreloadFailed({ connectionIdentifier, fetchIdentifier }, WTFMove(error));
     }, WorkerRunLoop::defaultMode());
 }
 
@@ -298,12 +292,9 @@ void ServiceWorkerThreadProxy::continueDidReceiveFetchResponse(SWServerConnectio
 {
     ASSERT(!isMainThread());
 
-    postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, connectionIdentifier, fetchIdentifier] (auto&) {
-        auto client = m_ongoingFetchTasks.get({ connectionIdentifier, fetchIdentifier });
-        if (!client)
-            return;
-
-        client->continueDidReceiveResponse();
+    postTaskForModeToWorkerOrWorkletGlobalScope([connectionIdentifier, fetchIdentifier] (auto& context) {
+        if (auto client = downcast<ServiceWorkerGlobalScope>(context).fetchTask({ connectionIdentifier, fetchIdentifier }))
+            client->continueDidReceiveResponse();
     }, WorkerRunLoop::defaultMode());
 }
 
@@ -311,9 +302,10 @@ void ServiceWorkerThreadProxy::removeFetch(SWServerConnectionIdentifier connecti
 {
     RELEASE_LOG(ServiceWorker, "ServiceWorkerThreadProxy::removeFetch %" PRIu64, fetchIdentifier.toUInt64());
 
-    postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, connectionIdentifier, fetchIdentifier] (auto&) {    m_ongoingFetchTasks.remove(std::make_pair(connectionIdentifier, fetchIdentifier));
+    postTaskForModeToWorkerOrWorkletGlobalScope([protectedThis = Ref { *this }, connectionIdentifier, fetchIdentifier] (auto& context) {
+        downcast<ServiceWorkerGlobalScope>(context).removeFetchTask({ connectionIdentifier, fetchIdentifier });
 
-        if (m_ongoingFetchTasks.isEmpty()) {
+        if (!downcast<ServiceWorkerGlobalScope>(context).hasFetchTask()) {
             callOnMainRunLoop([protectedThis] {
                 protectedThis->thread().stopFetchEventMonitoring();
             });

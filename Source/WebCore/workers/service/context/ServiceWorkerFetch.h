@@ -59,13 +59,10 @@ public:
     virtual void setCancelledCallback(Function<void()>&&) = 0;
     virtual void continueDidReceiveResponse() = 0;
     virtual void convertFetchToDownload() = 0;
-    virtual void setFetchEvent(Ref<FetchEvent>&&) = 0;
-    virtual void navigationPreloadIsReady(ResourceResponse::CrossThreadData&&) = 0;
-    virtual void navigationPreloadFailed(ResourceError&&) = 0;
     virtual void usePreload() = 0;
 };
 
-void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, ResourceRequest&&, String&& referrer, FetchOptions&&, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier);
+void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, ResourceRequest&&, String&& referrer, FetchOptions&&, SWServerConnectionIdentifier, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier);
 };
 
 } // namespace WebCore

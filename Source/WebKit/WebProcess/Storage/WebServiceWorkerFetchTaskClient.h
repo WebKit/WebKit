@@ -26,7 +26,6 @@
 #pragma once
 
 #include "Connection.h"
-#include <WebCore/FetchEvent.h>
 #include <WebCore/FetchLoader.h>
 #include <WebCore/FetchLoaderClient.h>
 #include <WebCore/NetworkLoadMetrics.h>
@@ -59,9 +58,6 @@ private:
     void continueDidReceiveResponse() final;
     void convertFetchToDownload() final;
     void setCancelledCallback(Function<void()>&&) final;
-    void setFetchEvent(Ref<WebCore::FetchEvent>&&);
-    void navigationPreloadIsReady(WebCore::ResourceResponse::CrossThreadData&&) final;
-    void navigationPreloadFailed(WebCore::ResourceError&&) final;
     void usePreload() final;
 
     void cleanup();
@@ -93,10 +89,7 @@ private:
     WebCore::NetworkLoadMetrics m_networkLoadMetrics;
     bool m_didFinish { false };
     bool m_isDownload { false };
-    RefPtr<WebCore::FetchEvent> m_event;
     Function<void()> m_cancelledCallback;
-    std::optional<WebCore::ResourceResponse::CrossThreadData> m_preloadResponse;
-    WebCore::ResourceError m_preloadError;
 };
 
 } // namespace WebKit

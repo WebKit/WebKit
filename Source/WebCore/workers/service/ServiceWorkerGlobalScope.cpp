@@ -30,10 +30,12 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "ExtendableEvent.h"
+#include "FetchEvent.h"
 #include "FrameLoader.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
+#include "Logging.h"
 #include "NotificationEvent.h"
 #include "PushEvent.h"
 #include "PushNotificationEvent.h"
@@ -140,6 +142,8 @@ Page* ServiceWorkerGlobalScope::serviceWorkerPage()
 
 void ServiceWorkerGlobalScope::skipWaiting(Ref<DeferredPromise>&& promise)
 {
+    RELEASE_LOG(ServiceWorker, "ServiceWorkerGlobalScope::skipWaiting for worker %" PRIu64, thread().identifier().toUInt64());
+
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_pendingSkipWaitingPromises.add(requestIdentifier, WTFMove(promise));
 
@@ -174,6 +178,7 @@ void ServiceWorkerGlobalScope::prepareForDestruction()
     // Make sure we destroy fetch events objects before the VM goes away, since their
     // destructor may access the VM.
     m_extendedEvents.clear();
+    m_ongoingFetchTasks.clear();
 
     WorkerGlobalScope::prepareForDestruction();
 }
@@ -269,6 +274,87 @@ CookieStore& ServiceWorkerGlobalScope::cookieStore()
     if (!m_cookieStore)
         m_cookieStore = CookieStore::create(this);
     return *m_cookieStore;
+}
+
+void ServiceWorkerGlobalScope::addFetchTask(FetchKey key, Ref<ServiceWorkerFetch::Client>&& client)
+{
+    ASSERT(!m_ongoingFetchTasks.contains(key));
+    m_ongoingFetchTasks.add(key, FetchTask { WTFMove(client), nullptr });
+}
+
+void ServiceWorkerGlobalScope::addFetchEvent(FetchKey key, FetchEvent& event)
+{
+    ASSERT(m_ongoingFetchTasks.contains(key));
+    auto iterator = m_ongoingFetchTasks.find(key);
+
+    bool isHandled = WTF::switchOn(iterator->value.navigationPreload, [] (std::nullptr_t) {
+        return false;
+    }, [] (Ref<FetchEvent>&) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }, [&event] (UniqueRef<ResourceResponse>& response) {
+        event.navigationPreloadIsReady(WTFMove(response.get()));
+        return true;
+    }, [&event] (UniqueRef<ResourceError>& error) {
+        event.navigationPreloadFailed(WTFMove(error.get()));
+        return true;
+    });
+
+    if (isHandled)
+        iterator->value.navigationPreload = nullptr;
+    else
+        iterator->value.navigationPreload = Ref { event };
+}
+
+void ServiceWorkerGlobalScope::removeFetchTask(FetchKey key)
+{
+    m_ongoingFetchTasks.remove(key);
+}
+
+RefPtr<ServiceWorkerFetch::Client> ServiceWorkerGlobalScope::fetchTask(FetchKey key)
+{
+    auto iterator = m_ongoingFetchTasks.find(key);
+    return iterator != m_ongoingFetchTasks.end() ? iterator->value.client.get() : nullptr;
+}
+
+RefPtr<ServiceWorkerFetch::Client> ServiceWorkerGlobalScope::takeFetchTask(FetchKey key)
+{
+    return m_ongoingFetchTasks.take(key).client;
+}
+
+bool ServiceWorkerGlobalScope::hasFetchTask() const
+{
+    return !m_ongoingFetchTasks.isEmpty();
+}
+
+void ServiceWorkerGlobalScope::navigationPreloadFailed(FetchKey key, ResourceError&& error)
+{
+    auto iterator = m_ongoingFetchTasks.find(key);
+    if (iterator == m_ongoingFetchTasks.end())
+        return;
+
+    if (std::holds_alternative<Ref<FetchEvent>>(iterator->value.navigationPreload)) {
+        std::get<Ref<FetchEvent>>(iterator->value.navigationPreload)->navigationPreloadFailed(WTFMove(error));
+        iterator->value.navigationPreload = nullptr;
+        return;
+    }
+
+    iterator->value.navigationPreload = makeUniqueRef<ResourceError>(WTFMove(error));
+}
+
+void ServiceWorkerGlobalScope::navigationPreloadIsReady(FetchKey key, ResourceResponse&& response)
+{
+    auto iterator = m_ongoingFetchTasks.find(key);
+    if (iterator == m_ongoingFetchTasks.end())
+        return;
+
+    if (std::holds_alternative<Ref<FetchEvent>>(iterator->value.navigationPreload)) {
+        std::get<Ref<FetchEvent>>(iterator->value.navigationPreload)->navigationPreloadIsReady(WTFMove(response));
+        iterator->value.navigationPreload = nullptr;
+        return;
+    }
+
+    iterator->value.navigationPreload = makeUniqueRef<ResourceResponse>(WTFMove(response));
 }
 
 } // namespace WebCore
