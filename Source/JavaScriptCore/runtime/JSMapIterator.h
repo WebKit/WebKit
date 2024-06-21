@@ -78,25 +78,63 @@ public:
 
     static JSMapIterator* createWithInitialValues(VM&, Structure*);
 
-    JSValue nextTransition(VM& vm)
+    struct NextResult {
+        JSValue key;
+        JSValue value;
+    };
+    ALWAYS_INLINE NextResult nextWithAdvance(VM& vm)
     {
         JSCell* storage = this->storage();
         JSCell* sentinel = vm.orderedHashTableSentinel();
         if (storage == sentinel)
-            return jsBoolean(true);
+            return { };
 
         JSMap::Accessor* table = static_cast<JSMap::Accessor*>(jsCast<JSMap::Storage*>(storage));
-        JSMap::Accessor::Entry entry = this->entry();
-        auto[newTable, nextEntry] = table->nextTransition(vm, entry);
-        if (!newTable) {
+        auto result = table->transitAndNext(vm, entry());
+        if (!result.table) {
             setStorage(vm, sentinel);
-            return jsBoolean(true);
+            return { };
         }
 
-        setEntry(vm, nextEntry + 1);
-        if (newTable != table)
-            setStorage(vm, newTable);
-        return jsBoolean(false);
+        setEntry(vm, result.entry + 1);
+        if (result.table != table)
+            setStorage(vm, result.table);
+        return { result.key, result.value };
+    }
+    bool next(JSGlobalObject* globalObject, JSValue& value)
+    {
+        auto result = nextWithAdvance(globalObject->vm());
+        if (result.key.isEmpty())
+            return false;
+
+        switch (kind()) {
+        case IterationKind::Values:
+            value = result.value;
+            break;
+        case IterationKind::Keys:
+            value = result.key;
+            break;
+        case IterationKind::Entries:
+            value = createTuple(globalObject, result.key, result.value);
+            break;
+        }
+        return true;
+    }
+    bool nextKeyValue(JSGlobalObject* globalObject, JSValue& key, JSValue& value)
+    {
+        auto result = nextWithAdvance(globalObject->vm());
+        if (result.key.isEmpty())
+            return false;
+
+        key = result.key;
+        value = result.value;
+        return true;
+    }
+
+    JSValue next(VM& vm)
+    {
+        auto result = nextWithAdvance(vm);
+        return result.key.isEmpty() ? jsBoolean(true) : jsBoolean(false);
     }
     JSValue nextKey(VM& vm)
     {
@@ -113,56 +151,6 @@ public:
         ASSERT_UNUSED(vm, storage != vm.orderedHashTableSentinel());
         JSMap::Accessor* table = static_cast<JSMap::Accessor*>(jsCast<JSMap::Storage*>(storage));
         return table->getValue(entry);
-    }
-
-    std::tuple<JSValue, JSValue> nextWithAdvance(VM& vm, JSMap::Accessor::Entry entry)
-    {
-        JSCell* storageCell = storage();
-        if (storageCell == vm.orderedHashTableSentinel())
-            return { };
-
-        JSMap::Accessor* table = static_cast<JSMap::Accessor*>(jsCast<JSMap::Storage*>(storageCell));
-        auto [newTable, nextKey, nextValue, nextEntry] = table->nextTransitionAll(vm, entry);
-        if (nextKey.isEmpty()) {
-            setStorage(vm, vm.orderedHashTableSentinel());
-            return { };
-        }
-
-        setEntry(vm, JSMap::Accessor::toNumber(nextEntry) + 1);
-        if (newTable != table)
-            setStorage(vm, newTable);
-        return { nextKey, nextValue };
-    }
-
-    bool next(JSGlobalObject* globalObject, JSValue& value)
-    {
-        auto [nextKey, nextValue] = nextWithAdvance(globalObject->vm(), entry());
-        if (nextKey.isEmpty())
-            return false;
-
-        switch (kind()) {
-        case IterationKind::Values:
-            value = nextValue;
-            break;
-        case IterationKind::Keys:
-            value = nextKey;
-            break;
-        case IterationKind::Entries:
-            value = createTuple(globalObject, nextKey, nextValue);
-            break;
-        }
-        return true;
-    }
-
-    bool nextKeyValue(JSGlobalObject* globalObject, JSValue& key, JSValue& value)
-    {
-        auto [nextKey, nextValue] = nextWithAdvance(globalObject->vm(), entry());
-        if (nextKey.isEmpty())
-            return false;
-
-        key = nextKey;
-        value = nextValue;
-        return true;
     }
 
     IterationKind kind() const { return static_cast<IterationKind>(internalField(Field::Kind).get().asUInt32AsAnyInt()); }

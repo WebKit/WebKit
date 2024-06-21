@@ -78,57 +78,28 @@ public:
 
     static JSSetIterator* createWithInitialValues(VM&, Structure*);
 
-    JSValue nextTransition(VM& vm)
-    {
-        JSCell* storage = this->storage();
-        JSCell* sentinel = vm.orderedHashTableSentinel();
-        if (storage == sentinel)
-            return jsBoolean(true);
-
-        JSSet::Accessor* table = static_cast<JSSet::Accessor*>(jsCast<JSSet::Storage*>(storage));
-        JSSet::Accessor::Entry entry = this->entry();
-        auto [newTable, nextEntry] = table->nextTransition(vm, entry);
-        if (!newTable) {
-            setStorage(vm, sentinel);
-            return jsBoolean(true);
-        }
-
-        setEntry(vm, nextEntry + 1);
-        if (newTable != table)
-            setStorage(vm, newTable);
-        return jsBoolean(false);
-    }
-    JSValue nextKey(VM& vm)
-    {
-        JSSet::Accessor::Entry entry = this->entry() - 1;
-        JSCell* storage = this->storage();
-        ASSERT_UNUSED(vm, storage != vm.orderedHashTableSentinel());
-        JSSet::Accessor* table = static_cast<JSSet::Accessor*>(jsCast<JSSet::Storage*>(storage));
-        return table->getKey(entry);
-    }
-
-    JSValue nextWithAdvance(VM& vm, JSSet::Accessor::Entry entry)
+    ALWAYS_INLINE JSValue nextWithAdvance(VM& vm)
     {
         JSCell* storageCell = storage();
         if (storageCell == vm.orderedHashTableSentinel())
             return { };
 
         JSSet::Accessor* table = static_cast<JSSet::Accessor*>(jsCast<JSSet::Storage*>(storageCell));
-        auto [newTable, nextKey, _, nextEntry] = table->nextTransitionAll(vm, entry);
-        if (nextKey.isEmpty()) {
+        auto result = table->transitAndNext(vm, entry());
+        if (!result.table) {
             setStorage(vm, vm.orderedHashTableSentinel());
             return { };
         }
 
-        setEntry(vm, JSSet::Accessor::toNumber(nextEntry) + 1);
-        if (newTable != table)
-            setStorage(vm, newTable);
-        return nextKey;
+        setEntry(vm, result.entry + 1);
+        if (result.table != table)
+            setStorage(vm, result.table);
+        return result.key;
     }
 
     bool next(JSGlobalObject* globalObject, JSValue& value)
     {
-        JSValue nextKey = nextWithAdvance(globalObject->vm(), entry());
+        JSValue nextKey = nextWithAdvance(globalObject->vm());
         if (nextKey.isEmpty())
             return false;
 
@@ -142,6 +113,20 @@ public:
             break;
         }
         return true;
+    }
+
+    JSValue next(VM& vm)
+    {
+        JSValue key = nextWithAdvance(vm);
+        return key.isEmpty() ? jsBoolean(true) : jsBoolean(false);
+    }
+    JSValue nextKey(VM& vm)
+    {
+        JSSet::Accessor::Entry entry = this->entry() - 1;
+        JSCell* storage = this->storage();
+        ASSERT_UNUSED(vm, storage != vm.orderedHashTableSentinel());
+        JSSet::Accessor* table = static_cast<JSSet::Accessor*>(jsCast<JSSet::Storage*>(storage));
+        return table->getKey(entry);
     }
 
     IterationKind kind() const { return static_cast<IterationKind>(internalField(Field::Kind).get().asUInt32AsAnyInt()); }

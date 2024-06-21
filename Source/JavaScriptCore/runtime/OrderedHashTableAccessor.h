@@ -32,24 +32,25 @@
 namespace JSC {
 
 struct MapTraits {
-    // DataTable:  { <Entry_0, Key_0>, <Entry_0 + 1, Val_0>, <Entry_0 + 2, Chain_0>, ... }
+    // DataTable:  [ Key_0, Val_0, NextInChain_0, Key_1, Val_1, NextKeyIndexInChain_1, ... ]
+    //             | <-------- Entry_0 -------> | <-------- Entry_1 -------> |
     static constexpr uint8_t EntrySize = 3;
 
     template<typename Accessor>
-    ALWAYS_INLINE static JSValue getValueData(Accessor* table, typename Accessor::TableIndex entryKeyIndex) { return table->getData(entryKeyIndex + 1); }
+    ALWAYS_INLINE static JSValue getValueData(Accessor* table, typename Accessor::TableIndex entryKeyIndex) { return table->getKeyOrValueData(entryKeyIndex + 1); }
 
     template<typename Accessor>
-    ALWAYS_INLINE static JSValue getValueDataIfNeeded(Accessor* table, typename Accessor::TableIndex entryValueIndex) { return table->getData(entryValueIndex); }
+    ALWAYS_INLINE static JSValue getValueDataIfNeeded(Accessor* table, typename Accessor::TableIndex entryValueIndex) { return table->getKeyOrValueData(entryValueIndex); }
 
     template<typename Accessor>
-    ALWAYS_INLINE static void setValueDataIfNeeded(Accessor* table, VM& vm, typename Accessor::TableIndex entryValueIndex, JSValue value) { table->setData(vm, entryValueIndex, value); }
+    ALWAYS_INLINE static void setValueDataIfNeeded(Accessor* table, VM& vm, typename Accessor::TableIndex entryValueIndex, JSValue value) { table->setKeyOrValueData(vm, entryValueIndex, value); }
 
     template<typename Accessor>
     ALWAYS_INLINE static void copyValueDataIfNeeded(VM& vm, Accessor* baseTable, typename Accessor::TableIndex baseEntryValueIndex, Accessor* newTable, typename Accessor::TableIndex newEntryValueIndex)
     {
-        JSValue baseValue = baseTable->getData(baseEntryValueIndex);
+        JSValue baseValue = baseTable->getKeyOrValueData(baseEntryValueIndex);
         ASSERT(baseTable->isValidValueData(vm, baseValue));
-        newTable->setData(vm, newEntryValueIndex, baseValue);
+        newTable->setKeyOrValueData(vm, newEntryValueIndex, baseValue);
     }
 
     template<typename Accessor>
@@ -57,23 +58,24 @@ struct MapTraits {
 };
 
 struct SetTraits {
-    // DataTable:  { <Entry_0, Key_0>, <Entry_0 + 1, Chain_0>, ... }
+    // DataTable:  [ Key_0, NextInChain_0, Key_1, NextKeyIndexInChain_1, ... ]
+    //             | <---- Entry_0 ----> | <---- Entry_1 ----> |
     static constexpr uint8_t EntrySize = 2;
 
     template<typename Accessor>
-    ALWAYS_INLINE static JSValue getValueData(Accessor* table, typename Accessor::TableIndex entryKeyIndex) { return table->getData(entryKeyIndex); }
+    ALWAYS_INLINE static JSValue getValueData(Accessor* table, typename Accessor::TableIndex entryKeyIndex) { return table->getKeyOrValueData(entryKeyIndex); }
 
     template<typename Accessor>
-    ALWAYS_INLINE static JSValue getValueDataIfNeeded(Accessor*, typename Accessor::TableIndex) { return {}; }
+    ALWAYS_INLINE static JSValue getValueDataIfNeeded(Accessor*, typename Accessor::TableIndex) { return { }; }
 
     template<typename Accessor>
-    ALWAYS_INLINE static void setValueDataIfNeeded(Accessor*, VM&, typename Accessor::TableIndex, JSValue) {}
+    ALWAYS_INLINE static void setValueDataIfNeeded(Accessor*, VM&, typename Accessor::TableIndex, JSValue) { }
 
     template<typename Accessor>
-    ALWAYS_INLINE static void copyValueDataIfNeeded(VM&, Accessor*, typename Accessor::TableIndex, Accessor*, typename Accessor::TableIndex) {}
+    ALWAYS_INLINE static void copyValueDataIfNeeded(VM&, Accessor*, typename Accessor::TableIndex, Accessor*, typename Accessor::TableIndex) { }
 
     template<typename Accessor>
-    ALWAYS_INLINE static void deleteValueDataIfNeeded(Accessor*, VM&, typename Accessor::TableIndex) {}
+    ALWAYS_INLINE static void deleteValueDataIfNeeded(Accessor*, VM&, typename Accessor::TableIndex) { }
 };
 
 template<typename Traits>
@@ -83,43 +85,64 @@ namespace OrderedHashTableAccessorInternal {
 static constexpr bool verbose = false;
 }
 
-// ################ Non-Obsolete Table ################
+// ################ NonObsolete Table ################
 //
-//                      Count                                    Value(s)                                ValueType             WriteBarrier
-//               --------------------------------------------------------------------------------------------------------------------------
-// TableStart ->           1          | AliveEntryCount                                                 | TableSize           | NO
-//                         1          | DeletedEntryCount                                               | TableSize           | NO
-//                         1          | Capacity                                                        | TableSize           | NO
-//                         1          | IterationEntry                                                  | Entry               | NO
-//                    BucketCount     | HashTable:  { <BucketIndex, ChainStartEntry>, ... }             | <TableIndex, Entry> | NO
-//  TableEnd  -> Capacity * EntrySize | DataTable:  { <Entry_0, Data_0>, <Entry_0 + 1, Data_1>, ... }   | <Entry, JSValue>    | Yes for Key and Value
+//                      Count                                    Value(s)                           ValueType                  WriteBarrier
+//               -------------------------------------------------------------------------------------------------------------------------------------
+// TableStart ->           1          | AliveEntryCount                                            | TableSize                | NO
+//                         1          | DeletedEntryCount                                          | TableSize                | NO
+//                         1          | Capacity                                                   | TableSize                | NO
+//                         1          | IterationEntry                                             | Entry                    | NO
+//                    BucketCount     | HashTable:  { <BucketIndex, ChainStartKeyIndex>, ... }     | <TableIndex, TableIndex> | NO
+//  TableEnd  -> Capacity * EntrySize | DataTable:  { <Entry_0, Data_0>, <Entry_1, Data_1>, ... }  | <TableIndex, JSValue>    | Yes (Key or Value)
 //
 // ################ Obsolete Table from Rehash ################
 //
-//                      Count                                    Value(s)                                ValueType             WriteBarrier
-//               --------------------------------------------------------------------------------------------------------------------------
-// TableStart ->           1          | NextTable                                                       | TableSize           | Yes
-//                         1          | DeletedEntryCount                                               | TableSize           | NO
-//                         1          | Capacity                                                        | TableSize           | NO
-//                         1          | IterationEntry                                                  | Entry               | NO
-//                  DeletedEntryCount | DeletedEntries: [DeletedEntry_i, ...]                           | Entry               | NO
-//  TableEnd  ->          ...         | NotUsed                                                         | ...
+//                      Count                                    Value(s)                            ValueType                  WriteBarrier
+//               -------------------------------------------------------------------------------------------------------------------------------------
+// TableStart ->           1          | NextTable                                                   | JSCell                   | Yes
+//                         1          | DeletedEntryCount                                           | TableSize                | NO
+//                         1          | Capacity                                                    | TableSize                | NO
+//                         1          | IterationEntry                                              | Entry                    | NO
+//                  DeletedEntryCount | DeletedEntries: [DeletedEntry_i, ...]                       | Entry                    | NO
+//  TableEnd  ->          ...         | NotUsed                                                     | ...
 //
 // ################ Obsolete Table from Clear ################
 //
-//                      Count                                    Value(s)                                ValueType             WriteBarrier
-//               --------------------------------------------------------------------------------------------------------------------------
-// TableStart ->           1          | NextTable                                                       | TableSize           | Yes
-//                         1          | ClearedTableSentinel                                            | TableSize           | NO
-//                         1          | Capacity                                                        | TableSize           | NO
-//                         1          | IterationEntry                                                  | Entry               | NO
-//  TableEnd  ->          ...         | NotUsed                                                         | ...
+//                      Count                                    Value(s)                            ValueType                  WriteBarrier
+//               -------------------------------------------------------------------------------------------------------------------------------------
+// TableStart ->           1          | NextTable                                                   | JSCell                   | Yes
+//                         1          | ClearedTableSentinel                                        | TableSize                | NO
+//                         1          | Capacity                                                    | TableSize                | NO
+//                         1          | IterationEntry                                              | Entry                    | NO
+//  TableEnd  ->          ...         | NotUsed                                                     | ...
 //
-// Note that only the DataTable stores the real JSValues and the others are used as unsigned integer number wrapped in JSValue.
 //
-// The table is initialized with empty JSValues.
-// 1. Found an empty entry while iterating the hash table means the current bucket is not taken by any chain.
-// 2. Found an empty entry while iterating the chain table means the index entry is the end of the chain.
+// This is based on the idea of CloseTable introduced in https://wiki.mozilla.org/User:Jorend/Deterministic_hash_tables.
+//
+// NonObsolete Table: A CloseTable flattened into a single array.
+//
+// - AliveEntryCount: The number of alive entries in the table.
+// - DeletedEntryCount: The number of deleted entries in the table.
+// - Capacity: The capacity of entries in the table.
+// - IterationEntry: The temporary index only used for iteration.
+// - HashTable: CloseTable is based on closed hashing. So, the each bucket in the HashTable points to the start EntryKeyIndex in the collision chain.
+// - DataTable: The actual data table holds the tuples of key, value, and NextKeyIndexInChain for each entry.
+//
+//      Iterator                                   Map/Set
+//          |                                         |
+//          v                                         v
+//    ObsoleteTable_0 --> ObsoleteTable_1 --> NonObsoleteTable_2
+//
+// Obsolete Table: Each rehash and clear would create a new table and update the obsolete one with additional info. Those info are used to
+// transit the iterator (pointing to the obsolete table) to the latest alive table.
+//
+// - NextTable: A transition from the obsolete tables to the latest and alive one.
+// - DeletedEntries: An array of the previously deleted entries used for updating iterator's index.
+// - ClearedTableSentinel: The sentinel to indicate whether the obsolete table is retired due to a clearance.
+//
+// Note that all elements in the JSImmutableButterfly are in JSValue type. However, only the key and value in the DataTable are real JSValues.
+// The others are used as unsigned integers wrapped by JSValue.
 template<typename Traits>
 class OrderedHashTableAccessor : public JSImmutableButterfly {
     using Base = JSImmutableButterfly;
@@ -136,7 +159,7 @@ public:
     static constexpr uint8_t EntrySize = Traits::EntrySize;
     static constexpr uint8_t ChainOffset = Traits::EntrySize - 1;
 
-    // TODO: [2, 4] It seems [1, 8] is faster.
+    // FIXME: Maybe try LoadFactor = 2 and InitialCapacity = 4.
     static constexpr uint8_t LoadFactor = 1;
     static constexpr uint8_t InitialCapacity = 8;
     static constexpr uint8_t ExpandFactor = 2;
@@ -215,9 +238,8 @@ public:
         ASSERT(!hasDouble(indexingType()) && isValidIndex<type>(index));
         OrderedHashTableTraits::set(slot<type>(index), number);
     }
-
     template<IndexType type = IndexType::Any>
-    ALWAYS_INLINE void setWithWriteBarrier(VM& vm, TableIndex index, JSValue value) // TODO: inplace replacement
+    ALWAYS_INLINE void setWithWriteBarrier(VM& vm, TableIndex index, JSValue value)
     {
         ASSERT(!hasDouble(indexingType()) && isValidIndex<type>(index));
         ASSERT(type == IndexType::Data || index == aliveEntryCountIndex());
@@ -288,11 +310,11 @@ public:
     ALWAYS_INLINE static TableSize dataTableEndIndex(TableSize capacity) { return dataTableStartIndex(capacity) + dataTableSize(capacity) - 1; }
     ALWAYS_INLINE TableSize dataTableEndIndex() const { return dataTableEndIndex(capacity()); }
 
-    ALWAYS_INLINE JSValue getData(TableIndex index) { return get<IndexType::Data>(index); }
-    ALWAYS_INLINE void setData(VM& vm, TableIndex index, JSValue value) { setWithWriteBarrier<IndexType::Data>(vm, index, value); }
+    ALWAYS_INLINE JSValue getKeyOrValueData(TableIndex index) { return get<IndexType::Data>(index); }
+    ALWAYS_INLINE void setKeyOrValueData(VM& vm, TableIndex index, JSValue value) { setWithWriteBarrier<IndexType::Data>(vm, index, value); }
 
-    ALWAYS_INLINE JSValue getChain(TableIndex index) { return get<IndexType::Chain>(index); }
-    ALWAYS_INLINE void setChain(VM& vm, TableIndex index, JSValue value) { return set<IndexType::Chain>(vm, index, value); }
+    ALWAYS_INLINE JSValue getChainData(TableIndex index) { return get<IndexType::Chain>(index); }
+    ALWAYS_INLINE void setChainData(VM& vm, TableIndex index, JSValue value) { return set<IndexType::Chain>(vm, index, value); }
 
     ALWAYS_INLINE void deleteData(VM& vm, TableIndex index) { return set<IndexType::Data>(vm, index, vm.orderedHashTableDeletedValue()); }
 
@@ -300,13 +322,10 @@ public:
     {
         JSValue prevChainStartKeyIndex = getChainStartKeyIndex(bucketIndex);
         setChainStartKeyIndex(bucketIndex, newChainStartKeyIndex);
-        setChain(vm, newChainStartKeyIndex + ChainOffset, prevChainStartKeyIndex);
+        setChainData(vm, newChainStartKeyIndex + ChainOffset, prevChainStartKeyIndex);
     }
 
-    ALWAYS_INLINE static TableIndex dataStartIndex(TableIndex dataTableStartIndex, Entry entry)
-    {
-        return dataTableStartIndex + entry * EntrySize;
-    }
+    ALWAYS_INLINE static TableIndex dataStartIndex(TableIndex dataTableStartIndex, Entry entry) { return dataTableStartIndex + entry * EntrySize; }
 
     ALWAYS_INLINE bool isValidChainIndex(TableIndex index) const
     {
@@ -314,7 +333,7 @@ public:
         return isValidEntry((index - dataTableStartIndex() - (EntrySize - 1)) / EntrySize);
     }
 
-    /* -------------------------------- Entire table -------------------------------- */
+    /* -------------------------------- OrderedHashTable -------------------------------- */
     ALWAYS_INLINE static constexpr TableSize tableSize(TableSize capacity)
     {
         TableSize result = 4 /* AliveEntryCount, DeletedEntryCount, Capacity, and IterationEntry */
@@ -412,7 +431,7 @@ public:
 
         for (Entry baseEntry = 0; baseEntry < baseUsedCapacity; ++baseEntry) {
             baseEntryKeyIndex += EntrySize;
-            JSValue baseKey = baseTable->getData(baseEntryKeyIndex);
+            JSValue baseKey = baseTable->getKeyOrValueData(baseEntryKeyIndex);
             ASSERT(!baseKey.isEmpty());
 
             // Step 1: Copy DataTable only for the alive entries.
@@ -424,7 +443,7 @@ public:
 
             // Step 2: Copy the key and value from the base table to the new table.
             newEntryKeyIndex += EntrySize;
-            newTable->setData(vm, newEntryKeyIndex, baseKey);
+            newTable->setKeyOrValueData(vm, newEntryKeyIndex, baseKey);
             Traits::template copyValueDataIfNeeded(vm, baseTable, baseEntryKeyIndex + 1, newTable, newEntryKeyIndex + 1);
 
             // Step 3: Compute for the hash value and add to the chain in the new table. Note that the
@@ -444,17 +463,17 @@ public:
         return static_cast<Base*>(newTable);
     }
 
-    ALWAYS_INLINE void setOwnerStorage(VM& vm, HashTable* owner, Accessor* newTable)
+    ALWAYS_INLINE void updateOwnerStorage(VM& vm, HashTable* owner, Accessor* newTable)
     {
         ASSERT(owner->m_storage.get() == this && nextTable() == newTable);
         owner->m_storage.set(vm, owner, static_cast<Base*>(newTable));
     }
 
-    enum class SetOwnerStorage : uint8_t {
+    enum class UpdateOwnerStorage : uint8_t {
         Yes,
         No
     };
-    template<SetOwnerStorage update>
+    template<UpdateOwnerStorage update>
     ALWAYS_INLINE Accessor* rehash(JSGlobalObject* globalObject, HashTable* owner, TableSize newCapacity)
     {
         VM& vm = getVM(globalObject);
@@ -462,13 +481,13 @@ public:
         dataLogLnIf(OrderedHashTableAccessorInternal::verbose, "<Rehash> Before: oldTable=", Dump(this, vm));
 
         Accessor* newTable = copyImpl<UpdateDeletedEntries::Yes>(globalObject, this, newCapacity);
-        RETURN_IF_EXCEPTION(scope, {});
+        RETURN_IF_EXCEPTION(scope, { });
 
         setNextTable(vm, newTable);
         dataLogLnIf(OrderedHashTableAccessorInternal::verbose, "<Rehash> Rehashed: oldTable=", Dump(this, vm), "\nnewTable=", Dump(newTable, vm));
 
-        if constexpr (update == SetOwnerStorage::Yes)
-            setOwnerStorage(vm, owner, newTable);
+        if constexpr (update == UpdateOwnerStorage::Yes)
+            updateOwnerStorage(vm, owner, newTable);
         return newTable;
     }
 
@@ -488,7 +507,7 @@ public:
         owner->m_storage.set(vm, owner, static_cast<Base*>(newTable));
     }
 
-    struct FindResult { // TODO: Should return the slots of the target entry.
+    struct FindResult {
         JSValue normalizedKey;
         uint32_t hash;
         TableIndex bucketIndex;
@@ -507,7 +526,7 @@ public:
 
         key = normalizeMapKey(key);
         TableSize hash = jsMapHash(globalObject, vm, key);
-        RETURN_IF_EXCEPTION(scope, {});
+        RETURN_IF_EXCEPTION(scope, { });
         return find(globalObject, key, hash);
     }
     ALWAYS_INLINE FindResult find(JSGlobalObject* globalObject, JSValue normalizedKey, TableSize hash)
@@ -519,13 +538,13 @@ public:
         JSValue keyIndexValue = getChainStartKeyIndex(bucketIndex);
         while (!keyIndexValue.isEmpty()) {
             TableIndex entryKeyIndex = toNumber(keyIndexValue);
-            JSValue entryKey = getData(entryKeyIndex);
+            JSValue entryKey = getKeyOrValueData(entryKeyIndex);
             // Fixme: Maybe we can compress the searching path by updating the chain with non-deleted entry.
             if (!isDeleted(vm, entryKey) && areKeysEqual(globalObject, normalizedKey, entryKey)) {
                 dataLogLnIf(OrderedHashTableAccessorInternal::verbose, "<Find> Found entry in the chain with bucketIndex=", bucketIndex, "  table=", RawPointer(this));
                 return { normalizedKey, hash, bucketIndex, entryKeyIndex };
             }
-            keyIndexValue = getChain(entryKeyIndex + ChainOffset);
+            keyIndexValue = getChainData(entryKeyIndex + ChainOffset);
         }
 
         dataLogLnIf(OrderedHashTableAccessorInternal::verbose, "<Find> Not found the entry in the chain with bucketIndex=", bucketIndex, "  table=", RawPointer(this));
@@ -542,7 +561,7 @@ public:
         TableSize newCapacity = currentCapacity << ExpandFactor;
         if (deletedEntryCount() >= (currentCapacity >> 1))
             newCapacity = currentCapacity; // No need to expanded. Just clear the deleted entries.
-        return rehash<SetOwnerStorage::No>(globalObject, owner, newCapacity);
+        return rehash<UpdateOwnerStorage::No>(globalObject, owner, newCapacity);
     }
 
     template<typename FindKeyFunctor>
@@ -582,12 +601,12 @@ public:
 
         ASSERT(table->isValidIndex<IndexType::Bucket>(result.bucketIndex) && normalizeMapKey(key) == result.normalizedKey);
         table->addToChain(vm, result.bucketIndex, newEntryKeyIndex);
-        table->setData(vm, newEntryKeyIndex, result.normalizedKey);
+        table->setKeyOrValueData(vm, newEntryKeyIndex, result.normalizedKey);
         Traits::template setValueDataIfNeeded(table, vm, newEntryKeyIndex + 1, value);
         dataLogLnIf(OrderedHashTableAccessorInternal::verbose, "<Add> Added newEntry=", newEntry, " entryKeyIndex=", result.entryKeyIndex, " bucketIndex=", result.bucketIndex, " table=", Dump(table, vm));
 
         if (UNLIKELY(rehashed))
-            setOwnerStorage(vm, owner, table);
+            updateOwnerStorage(vm, owner, table);
     }
     ALWAYS_INLINE void add(JSGlobalObject* globalObject, HashTable* owner, JSValue key, JSValue value)
     {
@@ -611,7 +630,7 @@ public:
             return;
         if (currentCapacity == InitialCapacity)
             return;
-        rehash<SetOwnerStorage::Yes>(globalObject, owner, currentCapacity >> 1);
+        rehash<UpdateOwnerStorage::Yes>(globalObject, owner, currentCapacity >> 1);
     }
 
     template<typename FindKeyFunctor>
@@ -651,31 +670,6 @@ public:
         });
     }
 
-    ALWAYS_INLINE JSValue getKey(Entry entry)
-    {
-        ASSERT(!isObsolete());
-        return getData(dataStartIndex(dataTableStartIndex(), entry));
-    }
-
-    ALWAYS_INLINE JSValue getValue(Entry entry)
-    {
-        ASSERT(!isObsolete() && EntrySize == 3);
-        return getData(dataStartIndex(dataTableStartIndex(), entry) + 1);
-    }
-
-    ALWAYS_INLINE JSCell* nextAndUpdateIterationEntry(VM& vm, Entry entry)
-    {
-        auto [newTable, nextEntry] = nextTransition(vm, entry);
-        if (!newTable)
-            return vm.orderedHashTableSentinel();
-        updateIterationEntry(nextEntry);
-        return newTable;
-    }
-
-    ALWAYS_INLINE JSValue getIterationEntry() { return toJSValue(iterationEntry()); }
-    ALWAYS_INLINE JSValue getIterationEntryKey() { return getKey(iterationEntry()); }
-    ALWAYS_INLINE JSValue getIterationEntryValue() { return getValue(iterationEntry()); }
-
     template<typename Functor>
     ALWAYS_INLINE Accessor* transit(const Functor& functor)
     {
@@ -689,9 +683,15 @@ public:
         }
         return table;
     }
-    ALWAYS_INLINE Accessor* transit(Entry& from)
+    struct TransitionResult {
+        Accessor* table;
+        Entry entry;
+        JSValue key;
+        JSValue value;
+    };
+    ALWAYS_INLINE TransitionResult transitAndNext(VM& vm, Entry from)
     {
-        return transit([&](Accessor* obsoleteTale) ALWAYS_INLINE_LAMBDA {
+        Accessor* table = transit([&](Accessor* obsoleteTale) ALWAYS_INLINE_LAMBDA {
             if (!from)
                 return;
 
@@ -706,48 +706,51 @@ public:
 
             TableIndex deletedEntriesStartIndex = obsoleteTale->deletedEntriesStartIndex();
             TableIndex deletedEntriesEnd = deletedEntriesStartIndex + deletedEntryCount;
-            TableSize tmpFrom = from;
+            TableSize fromCopy = from;
             for (TableIndex i = deletedEntriesStartIndex; i < deletedEntriesEnd; ++i) {
                 Entry deletedEntry = obsoleteTale->getDeletedEntry(i);
-                if (deletedEntry >= tmpFrom)
+                if (deletedEntry >= fromCopy)
                     break;
                 --from;
             }
         });
-    }
 
-    // This should be only used for iteration. And it should be guarded by the storage sentinel check.
-    ALWAYS_INLINE std::tuple<Accessor*, Entry> nextTransition(VM& vm, Entry from)
-    {
-        Accessor* table = transit(from);
-        TableSize usedCapacity = table->usedCapacity();
-        TableIndex dataTableStartIndex = table->dataTableStartIndex();
-        for (Entry entry = from; entry < usedCapacity; ++entry) {
-            TableIndex entryKeyIndex = dataStartIndex(dataTableStartIndex, entry);
-            JSValue key = table->getData(entryKeyIndex);
-            if (isDeleted(vm, key))
-                continue;
-            return { table, entry };
-        }
-        return {};
-    }
-    std::tuple<Accessor*, JSValue, JSValue, JSValue> nextTransitionAll(VM& vm, Entry from)
-    {
-        Accessor* table = transit(from);
         ASSERT(table && !table->isObsolete());
         TableSize usedCapacity = table->usedCapacity();
-        TableIndex dataTableStartIndex = table->dataTableStartIndex();
+        TableIndex entryKeyIndex = dataStartIndex(table->dataTableStartIndex(), from) - EntrySize;
         for (Entry entry = from; entry < usedCapacity; ++entry) {
-            TableIndex entryKeyIndex = dataStartIndex(dataTableStartIndex, entry);
-            JSValue key = table->getData(entryKeyIndex);
+            entryKeyIndex += EntrySize;
+            JSValue key = table->getKeyOrValueData(entryKeyIndex);
             if (isDeleted(vm, key))
                 continue;
 
             JSValue value = Traits::template getValueDataIfNeeded(table, entryKeyIndex + 1);
-            return { table, key, value, JSValue(entry) };
+            return { table, entry, key, value };
         }
-        return {};
+        return { };
     }
+
+    ALWAYS_INLINE JSValue getKey(Entry entry)
+    {
+        ASSERT(!isObsolete());
+        return getKeyOrValueData(dataStartIndex(dataTableStartIndex(), entry));
+    }
+    ALWAYS_INLINE JSValue getValue(Entry entry)
+    {
+        ASSERT(!isObsolete() && EntrySize == 3);
+        return getKeyOrValueData(dataStartIndex(dataTableStartIndex(), entry) + 1);
+    }
+    ALWAYS_INLINE JSCell* nextAndUpdateIterationEntry(VM& vm, Entry entry)
+    {
+        auto result = transitAndNext(vm, entry);
+        if (!result.table)
+            return vm.orderedHashTableSentinel();
+        updateIterationEntry(result.entry);
+        return result.table;
+    }
+    ALWAYS_INLINE JSValue getIterationEntry() { return toJSValue(iterationEntry()); }
+    ALWAYS_INLINE JSValue getIterationEntryKey() { return getKey(iterationEntry()); }
+    ALWAYS_INLINE JSValue getIterationEntryValue() { return getValue(iterationEntry()); }
 
     class Dump {
     public:

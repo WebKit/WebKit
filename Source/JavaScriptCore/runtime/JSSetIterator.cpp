@@ -85,7 +85,7 @@ JSC_DEFINE_HOST_FUNCTION(setIteratorPrivateFuncSetIteratorNext, (JSGlobalObject 
         return JSValue::encode(cell);
 
     JSSetIterator* iterator = jsCast<JSSetIterator*>(cell);
-    return JSValue::encode(iterator->nextTransition(vm));
+    return JSValue::encode(iterator->next(vm));
 }
 
 JSC_DEFINE_HOST_FUNCTION(setIteratorPrivateFuncSetIteratorKey, (JSGlobalObject * globalObject, CallFrame* callFrame))

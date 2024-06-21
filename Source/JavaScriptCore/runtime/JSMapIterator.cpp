@@ -84,7 +84,7 @@ JSC_DEFINE_HOST_FUNCTION(mapIteratorPrivateFuncMapIteratorNext, (JSGlobalObject 
     JSCell* cell = callFrame->uncheckedArgument(0).asCell();
     if (cell == vm.orderedHashTableSentinel())
         return JSValue::encode(cell);
-    return JSValue::encode(jsCast<JSMapIterator*>(cell)->nextTransition(vm));
+    return JSValue::encode(jsCast<JSMapIterator*>(cell)->next(vm));
 }
 
 JSC_DEFINE_HOST_FUNCTION(mapIteratorPrivateFuncMapIteratorKey, (JSGlobalObject * globalObject, CallFrame* callFrame))

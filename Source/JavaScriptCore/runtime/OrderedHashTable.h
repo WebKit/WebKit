@@ -85,7 +85,7 @@ public:
         return false;
     }
 
-    ALWAYS_INLINE void add(JSGlobalObject* globalObject, JSValue key, JSValue value = {})
+    ALWAYS_INLINE void add(JSGlobalObject* globalObject, JSValue key, JSValue value = { })
     {
         VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
@@ -161,7 +161,8 @@ public:
         Accessor* newTable = Accessor::tryCreate(globalObject);
         Storage* storage = static_cast<Storage*>(newTable);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        m_storage.set(getVM(globalObject), this, storage);
+
+        m_storage.set(vm, this, storage);
         return newTable;
     }
 
@@ -192,17 +193,16 @@ public:
 
         if (Accessor* table = static_cast<Accessor*>(m_storage.get())) {
             auto result = findKeyFunctor(table);
-            TableIndex entryKeyIndex = result.entryKeyIndex;
-            RETURN_IF_EXCEPTION(scope, {});
+            RETURN_IF_EXCEPTION(scope, { });
 
-            if (!Accessor::isValidTableIndex(entryKeyIndex))
-                return {};
+            if (!Accessor::isValidTableIndex(result.entryKeyIndex))
+                return { };
 
-            JSValue value = MapTraits::template getValueData(table, entryKeyIndex);
+            JSValue value = MapTraits::template getValueData(table, result.entryKeyIndex);
             ASSERT(table->isValidValueData(vm, value));
             return value;
         }
-        return {};
+        return { };
     }
     JSValue get(JSGlobalObject* globalObject, JSValue key)
     {
@@ -211,7 +211,7 @@ public:
         JSValue result = getImpl(globalObject, [&](Accessor* table) ALWAYS_INLINE_LAMBDA {
             return table->find(globalObject, key);
         });
-        RETURN_IF_EXCEPTION(scope, {});
+        RETURN_IF_EXCEPTION(scope, { });
         return result.isEmpty() ? jsUndefined() : result;
     }
     JSValue get(JSGlobalObject* globalObject, JSValue key, uint32_t hash)
@@ -221,14 +221,14 @@ public:
         JSValue result = getImpl(globalObject, [&](Accessor* table) ALWAYS_INLINE_LAMBDA {
             return table->find(globalObject, key, hash);
         });
-        RETURN_IF_EXCEPTION(scope, {});
+        RETURN_IF_EXCEPTION(scope, { });
         return result.isEmpty() ? jsUndefined() : result;
     }
     JSValue get(TableIndex keyIndex)
     {
         ASSERT(m_storage);
         Accessor* table = static_cast<Accessor*>(m_storage.get());
-        return table->getData(keyIndex + 1);
+        return table->getKeyOrValueData(keyIndex + 1);
     }
 
     static JSCell* createSentinel(VM& vm) { return Accessor::tryCreate(vm, 0); }
