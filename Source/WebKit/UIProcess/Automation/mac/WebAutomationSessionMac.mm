@@ -72,6 +72,7 @@ void WebAutomationSession::inspectBrowsingContext(const Inspector::Protocol::Aut
 
 #pragma mark AppKit Event Simulation Support
 
+static const NSInteger synthesizedMouseEventMagicEventNumber = 0;
 static const void *synthesizedAutomationEventAssociatedObjectKey = &synthesizedAutomationEventAssociatedObjectKey;
 
 void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArray *eventsToSend)
@@ -144,7 +145,7 @@ bool WebAutomationSession::wasEventSynthesizedForAutomation(NSEvent *event)
     case NSEventTypeRightMouseUp:
         // Use this as a backup for checking mouse events, which are frequently copied
         // and/or faked by AppKit, causing them to lose their associated object tag.
-        return event.eventNumber == WebAutomationSession::synthesizedMouseEventMagicEventNumber;
+        return event.eventNumber == synthesizedMouseEventMagicEventNumber;
     default:
         break;
     }
@@ -227,7 +228,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
 
     auto eventsToBeSent = adoptNS([[NSMutableArray alloc] init]);
 
-    NSInteger eventNumber = WebAutomationSession::synthesizedMouseEventMagicEventNumber;
+    NSInteger eventNumber = synthesizedMouseEventMagicEventNumber;
 
     switch (interaction) {
     case MouseInteraction::Move: {
