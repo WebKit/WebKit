@@ -816,7 +816,7 @@ static inline RetainPtr<ASCPublicKeyCredentialAssertionOptions> configureAsserti
     auto topOrigin = parentOrigin ? parentOrigin->toString() : nullString();
     auto clientDataJson = WebCore::buildClientDataJson(ClientDataType::Get, options.challenge, callerOrigin.securityOrigin(), scope, topOrigin);
     RetainPtr nsClientDataJSON = adoptNS([[NSData alloc] initWithBytes:clientDataJson->data() length:clientDataJson->byteLength()]);
-    auto assertionOptions = adoptNS([allocASCPublicKeyCredentialAssertionOptionsInstance() initWithKind:kind relyingPartyIdentifier:options.rpId clientDataJSON:nsClientDataJSON.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()]);
+    auto assertionOptions = adoptNS([allocASCPublicKeyCredentialAssertionOptionsInstance() initWithKind:kind relyingPartyIdentifier:options.rpId clientDataJSON:nsClientDataJSON.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get() origin:callerOrigin.toString()]);
     if (options.extensions) {
         if ([assertionOptions respondsToSelector:@selector(setExtensionsCBOR:)])
             [assertionOptions setExtensionsCBOR:toNSData(options.extensions->toCBOR()).get()];
