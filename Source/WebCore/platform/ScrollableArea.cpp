@@ -88,7 +88,7 @@ ScrollbarsController& ScrollableArea::scrollbarsController() const
 {
     if (!m_scrollbarsController)
         const_cast<ScrollableArea&>(*this).internalCreateScrollbarsController();
-
+    RELEASE_ASSERT(m_scrollbarsController);
     return *m_scrollbarsController.get();
 }
 

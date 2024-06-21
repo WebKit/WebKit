@@ -5605,8 +5605,10 @@ void LocalFrameView::setScrollingPerformanceTestingEnabled(bool scrollingPerform
 void LocalFrameView::createScrollbarsController()
 {
     auto* page = m_frame->page();
-    if (!page)
+    if (!page) {
+        ScrollView::createScrollbarsController();
         return;
+    }
 
     page->chrome().client().ensureScrollbarsController(*page, *this);
 }
