@@ -179,6 +179,19 @@ constexpr Seconds resetModelProcessCrashCountDelay { 30_s };
 constexpr unsigned maximumModelProcessRelaunchAttemptsBeforeKillingWebProcesses { 2 };
 #endif
 
+#if !PLATFORM(COCOA)
+String WebProcessPool::userAgentOverrideDirectory()
+{
+    return { };
+}
+
+String WebProcessPool::additionalUserAgentOverrideDirectoryForTesting()
+{
+    return { };
+}
+#endif
+
+
 Ref<WebProcessPool> WebProcessPool::create(API::ProcessPoolConfiguration& configuration)
 {
     InitializeWebKit2();
@@ -202,6 +215,24 @@ static HashSet<String, ASCIICaseInsensitiveHash>& globalURLSchemesWithCustomProt
 {
     static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> set;
     return set;
+}
+
+static UserAgentOverridesMap readUserAgentStringOverridesFromFile(const String& resourcePath, const String& additionalResourcePath)
+{
+    static NeverDestroyed overrides = [] {
+        return UserAgentOverridesMap { };
+    }();
+
+    if (!overrides->isEmpty())
+        return overrides.get();
+
+    overrides.get() = UserAgentStringOverrides::parseUserAgentOverrides(resourcePath);
+
+    if (!additionalResourcePath.isEmpty()) {
+        for (auto&& [mapKey, mapValue] : UserAgentStringOverrides::parseUserAgentOverrides(additionalResourcePath))
+            overrides->add(mapKey, mapValue);
+    }
+    return overrides.get();
 }
 
 bool WebProcessPool::globalDelaysWebProcessLaunchDefaultValue()
@@ -314,12 +345,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #endif
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    m_storageAccessUserAgentStringQuirksDataUpdateObserver = StorageAccessUserAgentStringQuirkController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
-        // FIXME: Filter by process's site when site isolation is enabled
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateStorageAccessUserAgentStringQuirks(StorageAccessUserAgentStringQuirkController::shared().cachedQuirks()));
-    });
-
     m_storageAccessPromptQuirksDataUpdateObserver = StorageAccessPromptQuirkController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get()) {
             HashSet<WebCore::RegistrableDomain> domainSet;
@@ -337,8 +362,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     });
     if (StorageAccessPromptQuirkController::shared().cachedQuirks().isEmpty())
         StorageAccessPromptQuirkController::shared().initialize();
-    if (StorageAccessUserAgentStringQuirkController::shared().cachedQuirks().isEmpty())
-        StorageAccessUserAgentStringQuirkController::shared().initialize();
 #endif
 
 }
@@ -988,6 +1011,10 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     parameters.memoryFootprintPollIntervalForTesting = m_configuration->memoryFootprintPollIntervalForTesting();
 
     parameters.memoryFootprintNotificationThresholds = m_configuration->memoryFootprintNotificationThresholds();
+
+    // FIXME: Filter by process's site when site isolation is enabled
+    if (auto resourceDirectory = userAgentOverrideDirectory(); !resourceDirectory.isEmpty())
+        parameters.userAgentStringQuirks = readUserAgentStringOverridesFromFile(resourceDirectory, additionalUserAgentOverrideDirectoryForTesting());
 
     // Add any platform specific parameters
     platformInitializeWebProcess(process, parameters);

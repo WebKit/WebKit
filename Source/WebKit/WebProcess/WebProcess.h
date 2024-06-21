@@ -42,6 +42,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/Timer.h>
+#include <WebCore/UserAgentStringOverrides.h>
 #include <pal/HysteresisActivity.h>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
@@ -221,7 +222,7 @@ public:
     void setHasStylusDevice(bool);
 #endif
 
-    void updateStorageAccessUserAgentStringQuirks(HashMap<WebCore::RegistrableDomain, String>&&);
+    void setUserAgentStringQuirks(WebCore::UserAgentOverridesMap&&);
 
     WebFrame* webFrame(WebCore::FrameIdentifier) const;
     void addWebFrame(WebCore::FrameIdentifier, WebFrame*);
@@ -839,6 +840,7 @@ private:
 
     HashMap<WebTransportSessionIdentifier, WeakPtr<WebTransportSession>> m_webTransportSessions;
     HashSet<WebCore::RegistrableDomain> m_domainsWithStorageAccessQuirks;
+    WebCore::UserAgentOverridesMap m_userAgentStringQuirks;
 };
 
 } // namespace WebKit

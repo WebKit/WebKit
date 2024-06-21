@@ -3489,6 +3489,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TransformStreamDefaultControllerBui
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TransformStreamDefaultControllerBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TransformStreamInternalsBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TransformStreamInternalsBuiltins.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/UserAgentStringOverridesGenerated.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/UserAgentStringOverrides.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/UserAgentParts.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/UserAgentParts.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/UserAgentScripts.h

@@ -35,6 +35,7 @@
 
 #include "WebProcessDataStoreParameters.h"
 #include <WebCore/CrossOriginMode.h>
+#include <WebCore/UserAgentStringOverrides.h>
 #include <wtf/HashMap.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RetainPtr.h>
@@ -276,7 +277,7 @@ struct WebProcessCreationParameters {
 
     String timeZoneOverride;
 
-    HashMap<WebCore::RegistrableDomain, String> storageAccessUserAgentStringQuirksData;
+    WebCore::UserAgentOverridesMap userAgentStringQuirks;
     HashSet<WebCore::RegistrableDomain> storageAccessPromptQuirksDomains;
 
     Seconds memoryFootprintPollIntervalForTesting;

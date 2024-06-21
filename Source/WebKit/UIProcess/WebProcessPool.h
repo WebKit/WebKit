@@ -576,6 +576,9 @@ private:
     void platformInitializeWebProcess(const WebProcessProxy&, WebProcessCreationParameters&);
     void platformInvalidateContext();
 
+    static String userAgentOverrideDirectory();
+    static String additionalUserAgentOverrideDirectoryForTesting();
+
     std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> processForNavigationInternal(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, const FrameInfoData&, Ref<WebsiteDataStore>&&);
     void prepareProcessForNavigation(Ref<WebProcessProxy>&&, WebPageProxy&, SuspendedPageProxy*, ASCIILiteral reason, const WebCore::RegistrableDomain&, const API::Navigation&, WebProcessProxy::LockdownMode, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&, unsigned previousAttemptsCount = 0);
 

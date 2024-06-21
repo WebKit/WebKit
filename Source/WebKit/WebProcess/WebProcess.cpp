@@ -103,6 +103,7 @@
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
+#include <WebCore/DocumentInlines.h>
 #include <WebCore/FontCache.h>
 #include <WebCore/FontCascade.h>
 #include <WebCore/FrameLoader.h>
@@ -138,6 +139,7 @@
 #include <WebCore/Settings.h>
 #include <WebCore/SharedWorkerContextManager.h>
 #include <WebCore/SharedWorkerThreadProxy.h>
+#include <WebCore/UserAgentStringOverrides.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <pal/Logging.h>
 #include <wtf/Algorithms.h>
@@ -632,7 +634,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
         prewarmGlobally();
 #endif
 
-    updateStorageAccessUserAgentStringQuirks(WTFMove(parameters.storageAccessUserAgentStringQuirksData));
+    setUserAgentStringQuirks(WTFMove(parameters.userAgentStringQuirks));
     updateDomainsWithStorageAccessQuirks(WTFMove(parameters.storageAccessPromptQuirksDomains));
 
 #if ENABLE(GAMEPAD)
@@ -871,9 +873,9 @@ WebPage* WebProcess::focusedWebPage() const
     return 0;
 }
 
-void WebProcess::updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&& userAgentStringQuirk)
+void WebProcess::setUserAgentStringQuirks(UserAgentOverridesMap&& userAgentStringQuirk)
 {
-    Quirks::updateStorageAccessUserAgentStringQuirks(WTFMove(userAgentStringQuirk));
+    m_userAgentStringQuirks = WTFMove(userAgentStringQuirk);
 }
     
 WebPage* WebProcess::webPage(PageIdentifier pageID) const
@@ -904,6 +906,10 @@ void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&
 #if OS(LINUX)
         RealTimeThreads::singleton().setEnabled(hasVisibleWebPage());
 #endif
+        if (auto* corePage = page->corePage()) {
+            if (RefPtr localFrame = dynamicDowncast<LocalFrame>(corePage->protectedMainFrame()); localFrame && localFrame->document())
+                localFrame->document()->quirks().setUserAgentStringQuirks(m_userAgentStringQuirks);
+        }
     } else
         result.iterator->value->reinitializeWebPage(WTFMove(parameters));
 
