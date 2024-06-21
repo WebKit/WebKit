@@ -313,15 +313,25 @@ bool WebExtensionContext::unload(NSError **outError)
     writeStateToStorage();
 
     unloadBackgroundWebView();
-    m_safeToLoadBackgroundContent = false;
-
     removeInjectedContent();
-    m_registeredScriptsMap.clear();
 
     invalidateStorage();
     unloadDeclarativeNetRequestState();
 
-    m_extensionController = nil;
+    m_actionsToPerformAfterBackgroundContentLoads.clear();
+    m_backgroundContentEventListeners.clear();
+    m_eventListenerPages.clear();
+    m_installReason = InstallReason::None;
+    m_previousVersion = nullString();
+    m_safeToLoadBackgroundContent = false;
+    m_backgroundContentLoadError = nil;
+
+    m_registeredScriptsMap.clear();
+    m_dynamicallyInjectedUserStyleSheets.clear();
+    m_injectedScriptsPerPatternMap.clear();
+    m_injectedStyleSheetsPerPatternMap.clear();
+
+    m_extensionController = nullptr;
     m_contentScriptWorld = nullptr;
 
     m_tabMap.clear();
@@ -338,8 +348,24 @@ bool WebExtensionContext::unload(NSError **outError)
     m_popupPageActionMap.clear();
 
     m_ports.clear();
+    m_pagePortMap.clear();
     m_portQueuedMessages.clear();
     m_nativePortMap.clear();
+
+    m_alarmMap.clear();
+
+    m_commands.clear();
+    m_populatedCommands = false;
+
+    m_menuItems.clear();
+    m_mainMenuItems.clear();
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    m_inspectorBackgroundPageMap.clear();
+    m_inspectorExtensionMap.clear();
+#endif
+
+    m_pendingPermissionRequests = 0;
 
     return true;
 }
@@ -3255,6 +3281,7 @@ void WebExtensionContext::unloadBackgroundWebView()
         return;
 
     m_backgroundContentIsLoaded = false;
+    m_unloadBackgroundWebViewTimer = nullptr;
 
     [m_backgroundWebView _close];
     m_backgroundWebView = nil;
@@ -3288,7 +3315,6 @@ void WebExtensionContext::scheduleBackgroundContentToUnload()
 {
     if (!m_backgroundWebView || extension().backgroundContentIsPersistent())
         return;
-
 
 #ifdef NDEBUG
     static const auto testRunnerDelayBeforeUnloading = 3_s;
@@ -3550,13 +3576,14 @@ void WebExtensionContext::didFailNavigation(WKWebView *webView, WKNavigation *, 
         return;
 
     m_backgroundContentLoadError = createError(Error::BackgroundContentFailedToLoad, nil, error);
+
+    unloadBackgroundWebView();
 }
 
 void WebExtensionContext::webViewWebContentProcessDidTerminate(WKWebView *webView)
 {
     if (webView == m_backgroundWebView) {
-        m_backgroundWebView = nil;
-        m_backgroundContentIsLoaded = false;
+        unloadBackgroundWebView();
 
         if (extension().backgroundContentIsPersistent())
             loadBackgroundWebView();
