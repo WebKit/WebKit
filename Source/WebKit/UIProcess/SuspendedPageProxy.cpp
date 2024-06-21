@@ -106,7 +106,7 @@ static const MessageNameSet& messageNamesToIgnoreWhileSuspended()
 
 SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&& browsingContextGroup, ShouldDelayClosingUntilFirstLayerFlush shouldDelayClosingUntilFirstLayerFlush)
     : m_page(page)
-    , m_webPageID(page.webPageID())
+    , m_webPageID(page.webPageIDInMainFrameProcess())
     , m_process(WTFMove(process))
     , m_mainFrame(WTFMove(mainFrame))
     , m_browsingContextGroup(WTFMove(browsingContextGroup))

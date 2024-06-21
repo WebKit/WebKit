@@ -407,7 +407,7 @@ void ProvisionalPageProxy::didCommitLoadForFrame(IPC::Connection& connection, Fr
             Site openerSite(openerFrame->url());
             Site openedSite(request.url());
             if (openerSite != openedSite) {
-                page->send(Messages::WebPage::LoadDidCommitInAnotherProcess(page->mainFrame()->frameID(), std::nullopt));
+                page->legacyMainFrameProcess().send(Messages::WebPage::LoadDidCommitInAnotherProcess(page->mainFrame()->frameID(), std::nullopt), page->webPageIDInMainFrameProcess());
                 m_browsingContextGroup->transitionPageToRemotePage(page, openerSite);
             }
         }

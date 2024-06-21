@@ -276,7 +276,7 @@ void ModelProcessProxy::didCreateContextForVisibilityPropagation(WebPageProxyIde
         RELEASE_LOG(Process, "ModelProcessProxy::didCreateContextForVisibilityPropagation() No WebPageProxy with this identifier");
         return;
     }
-    if (page->webPageID() == pageID) {
+    if (page->webPageIDInMainFrameProcess() == pageID) {
         page->didCreateContextInModelProcessForVisibilityPropagation(contextID);
         return;
     }

@@ -643,7 +643,7 @@ std::optional<DataOwnerType> WebPasteboardProxy::determineDataOwner(IPC::Connect
 
     std::optional<DataOwnerType> result;
     for (Ref page : process->pages()) {
-        if (page->webPageID() == *pageID) {
+        if (page->webPageIDInMainFrameProcess() == *pageID) {
             result = page->dataOwnerForPasteboard(intent);
             break;
         }

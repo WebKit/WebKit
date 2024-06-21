@@ -29,6 +29,7 @@
 #include "EditorState.h"
 #include "InputMethodState.h"
 #include "PageClientImpl.h"
+#include "WebProcessProxy.h"
 #include <WebCore/PlatformEvent.h>
 
 #if USE(ATK)
@@ -157,7 +158,7 @@ void WebPageProxy::preferredBufferFormatsDidChange()
     if (!view)
         return;
 
-    send(Messages::WebPage::PreferredBufferFormatsDidChange(preferredBufferFormats()));
+    legacyMainFrameProcess().send(Messages::WebPage::PreferredBufferFormatsDidChange(preferredBufferFormats()), webPageIDInMainFrameProcess());
 }
 #endif
 #endif

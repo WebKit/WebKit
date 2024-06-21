@@ -107,7 +107,7 @@ auto WebURLSchemeTask::willPerformRedirection(ResourceResponse&& response, Resou
             completionHandler(WTFMove(request));
     };
 
-    page->sendWithAsyncReply(Messages::WebPage::URLSchemeTaskWillPerformRedirection(m_urlSchemeHandler->identifier(), m_resourceLoaderID, response, request), WTFMove(innerCompletionHandler));
+    page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::URLSchemeTaskWillPerformRedirection(m_urlSchemeHandler->identifier(), m_resourceLoaderID, response, request), WTFMove(innerCompletionHandler), page->webPageIDInMainFrameProcess());
 
     return ExceptionType::None;
 }

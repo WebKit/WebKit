@@ -135,7 +135,7 @@ void ARKitCoordinator::startSession(WebPageProxy& page, WeakPtr<SessionEventClie
 
             m_state = Active {
                 .sessionEventClient = WTFMove(sessionEventClient),
-                .pageIdentifier = page.webPageID(),
+                .pageIdentifier = page.webPageIDInMainFrameProcess(),
                 .renderState = renderState,
                 .renderThread = Thread::create("ARKitCoordinator session renderer"_s, [this, renderState] { renderLoop(renderState); }),
             };
@@ -183,7 +183,7 @@ void ARKitCoordinator::endSessionIfExists(std::optional<WebCore::PageIdentifier>
 
 void ARKitCoordinator::endSessionIfExists(WebPageProxy& page)
 {
-    endSessionIfExists(page.webPageID());
+    endSessionIfExists(page.webPageIDInMainFrameProcess());
 }
 
 void ARKitCoordinator::scheduleAnimationFrame(WebPageProxy& page, PlatformXR::Device::RequestFrameCallback&& onFrameUpdateCallback)
@@ -195,7 +195,7 @@ void ARKitCoordinator::scheduleAnimationFrame(WebPageProxy& page, PlatformXR::De
             onFrameUpdateCallback({ });
         },
         [&](Active& active) {
-            if (active.pageIdentifier != page.webPageID()) {
+            if (active.pageIdentifier != page.webPageIDInMainFrameProcess()) {
                 RELEASE_LOG(XR, "ARKitCoordinator: trying to schedule frame update for session owned by another page");
                 return;
             }
@@ -218,7 +218,7 @@ void ARKitCoordinator::submitFrame(WebPageProxy& page)
             RELEASE_LOG(XR, "ARKitCoordinator: trying to submit frame update for an inactive session");
         },
         [&](Active& active) {
-            if (active.pageIdentifier != page.webPageID()) {
+            if (active.pageIdentifier != page.webPageIDInMainFrameProcess()) {
                 RELEASE_LOG(XR, "ARKitCoordinator: trying to submit frame update for session owned by another page");
                 return;
             }

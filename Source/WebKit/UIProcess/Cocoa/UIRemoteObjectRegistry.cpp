@@ -57,14 +57,14 @@ void UIRemoteObjectRegistry::sendInvocation(const RemoteObjectInvocation& invoca
     RemoteObjectRegistry::sendInvocation(invocation);
 }
 
-IPC::MessageSender& UIRemoteObjectRegistry::messageSender()
+auto UIRemoteObjectRegistry::messageSender() -> MessageSender
 {
-    return m_page.get();
+    return m_page->legacyMainFrameProcess();
 }
 
 uint64_t UIRemoteObjectRegistry::messageDestinationID()
 {
-    return protectedPage()->webPageID().toUInt64();
+    return protectedPage()->webPageIDInMainFrameProcess().toUInt64();
 }
 
 } // namespace WebKit

@@ -103,7 +103,7 @@ void ViewGestureController::disconnectFromProcess()
     if (!m_isConnectedToProcess)
         return;
 
-    m_webPageProxy.legacyMainFrameProcess().removeMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.webPageID());
+    m_webPageProxy.legacyMainFrameProcess().removeMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.webPageIDInMainFrameProcess());
     m_isConnectedToProcess = false;
 }
 
@@ -112,7 +112,7 @@ void ViewGestureController::connectToProcess()
     if (m_isConnectedToProcess)
         return;
 
-    m_webPageProxy.legacyMainFrameProcess().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.webPageID(), *this);
+    m_webPageProxy.legacyMainFrameProcess().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.webPageIDInMainFrameProcess(), *this);
     m_isConnectedToProcess = true;
 }
 
@@ -663,8 +663,10 @@ void ViewGestureController::requestRenderTreeSizeNotificationIfNeeded()
         return;
 
     auto threshold = m_snapshotRemovalTracker.renderTreeSizeThreshold();
-    auto* messageSender = m_webPageProxy.provisionalPageProxy() ? static_cast<IPC::MessageSender*>(m_webPageProxy.provisionalPageProxy()) : &m_webPageProxy;
-    messageSender->send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(threshold));
+    if (m_webPageProxy.provisionalPageProxy())
+        m_webPageProxy.provisionalPageProxy()->send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(threshold));
+    else
+        m_webPageProxy.legacyMainFrameProcess().send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(threshold), m_webPageProxy.webPageIDInMainFrameProcess());
 }
 
 FloatPoint ViewGestureController::scaledMagnificationOrigin(FloatPoint origin, double scale)
@@ -692,7 +694,7 @@ void ViewGestureController::didCollectGeometryForMagnificationGesture(FloatRect 
 void ViewGestureController::prepareMagnificationGesture(FloatPoint origin)
 {
     m_magnification = m_webPageProxy.pageScaleFactor();
-    m_webPageProxy.send(Messages::ViewGestureGeometryCollector::CollectGeometryForMagnificationGesture());
+    m_webPageProxy.legacyMainFrameProcess().send(Messages::ViewGestureGeometryCollector::CollectGeometryForMagnificationGesture(), m_webPageProxy.webPageIDInMainFrameProcess());
 
     m_initialMagnification = m_magnification;
     m_initialMagnificationOrigin = FloatPoint(origin);

@@ -720,7 +720,7 @@ void GPUProcessProxy::didCreateContextForVisibilityPropagation(WebPageProxyIdent
         RELEASE_LOG(Process, "GPUProcessProxy::didCreateContextForVisibilityPropagation() No WebPageProxy with this identifier");
         return;
     }
-    if (page->webPageID() == pageID) {
+    if (page->webPageIDInMainFrameProcess() == pageID) {
         page->didCreateContextInGPUProcessForVisibilityPropagation(contextID);
         return;
     }

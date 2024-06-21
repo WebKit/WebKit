@@ -112,7 +112,7 @@ void WebPageProxy::accentColorDidChange()
 
     WebCore::Color accentColor = pageClient().accentColor();
 
-    send(Messages::WebPage::SetAccentColor(accentColor));
+    legacyMainFrameProcess().send(Messages::WebPage::SetAccentColor(accentColor), webPageIDInMainFrameProcess());
 }
 
 OptionSet<WebCore::PlatformEvent::Modifier> WebPageProxy::currentStateOfModifierKeys()

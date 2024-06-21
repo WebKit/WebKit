@@ -68,7 +68,7 @@ void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDe
     if (!authorizationToken.isNull())
         m_validAuthorizationTokens.add(authorizationToken);
     if (RefPtr process = it->value->process())
-        process->send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, authorizationToken), m_page.webPageID());
+        process->send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, authorizationToken), m_page.webPageIDInMainFrameProcess());
 #else
     UNUSED_PARAM(allowed);
 #endif

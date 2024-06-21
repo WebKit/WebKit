@@ -111,7 +111,7 @@ UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(W
 
 UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy()
 {
-    protectedPage()->sendWithAsyncReply(Messages::WebPage::StopMediaCapture { MediaProducerMediaCaptureKind::EveryKind }, [] { });
+    protectedPage()->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::StopMediaCapture { MediaProducerMediaCaptureKind::EveryKind }, [] { }, protectedPage()->webPageIDInMainFrameProcess());
 #if ENABLE(MEDIA_STREAM)
     UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(page().protectedLegacyMainFrameProcess());
     proxies().remove(*this);
@@ -185,7 +185,7 @@ void UserMediaPermissionRequestManagerProxy::captureDevicesChanged(PermissionInf
     if (!page->hasRunningProcess())
         return;
 
-    page->send(Messages::WebPage::CaptureDevicesChanged());
+    page->legacyMainFrameProcess().send(Messages::WebPage::CaptureDevicesChanged(), page->webPageIDInMainFrameProcess());
 }
 #endif
 
@@ -247,7 +247,7 @@ void UserMediaPermissionRequestManagerProxy::denyRequest(UserMediaPermissionRequ
     }
 
 #if ENABLE(MEDIA_STREAM)
-    page->send(Messages::WebPage::UserMediaAccessWasDenied(request.userMediaID(), toWebCore(reason), message, invalidConstraint));
+    page->legacyMainFrameProcess().send(Messages::WebPage::UserMediaAccessWasDenied(request.userMediaID(), toWebCore(reason), message, invalidConstraint), page->webPageIDInMainFrameProcess());
 #else
     UNUSED_PARAM(reason);
     UNUSED_PARAM(invalidConstraint);
@@ -324,12 +324,12 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
         }
 #endif
 
-        page->sendWithAsyncReply(Messages::WebPage::UserMediaAccessWasGranted { request->userMediaID(), request->audioDevice(), request->videoDevice(), request->deviceIdentifierHashSalts(), WTFMove(handles) }, [this, weakThis = WTFMove(weakThis)] {
+        page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::UserMediaAccessWasGranted { request->userMediaID(), request->audioDevice(), request->videoDevice(), request->deviceIdentifierHashSalts(), WTFMove(handles) }, [this, weakThis = WTFMove(weakThis)] {
             if (!weakThis)
                 return;
             if (!--m_hasPendingCapture)
                 UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(this->page().protectedLegacyMainFrameProcess());
-        });
+        }, page->webPageIDInMainFrameProcess());
 
         processNextUserMediaRequestIfNeeded();
     });

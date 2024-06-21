@@ -84,11 +84,6 @@ public:
     WebPageProxy* page() const;
     RefPtr<WebPageProxy> protectedPage() const;
 
-    template<typename M> void send(M&&);
-    template<typename M> IPC::ConnectionSendSyncResult<M> sendSync(M&& message);
-    template<typename M, typename C> void sendWithAsyncReply(M&&, C&&);
-    template<typename M, typename C, typename RawValue> void sendWithAsyncReply(M&&, C&&, const ObjectIdentifierGenericBase<RawValue>&);
-
     void injectPageIntoNewProcess();
     void processDidTerminate(WebCore::ProcessIdentifier);
 
@@ -96,7 +91,9 @@ public:
 
     WebProcessProxy& process() { return m_process.get(); }
     Ref<WebProcessProxy> protectedProcess() const;
-    WebCore::PageIdentifier pageID() const { return m_webPageID; }
+    WebProcessProxy& siteIsolatedProcess() const { return m_process.get(); }
+    WebCore::PageIdentifier pageID() const { return m_webPageID; } // FIXME: Remove this in favor of identifierInSiteIsolatedProcess.
+    WebCore::PageIdentifier identifierInSiteIsolatedProcess() const { return m_webPageID; }
     const Site& site() const { return m_site; }
 
 private:
@@ -119,26 +116,5 @@ private:
     std::unique_ptr<RemotePageVisitedLinkStoreRegistration> m_visitedLinkStoreRegistration;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
 };
-
-template<typename M> void RemotePageProxy::send(M&& message)
-{
-    m_process->send(std::forward<M>(message), m_webPageID, { });
-}
-
-template<typename M>
-IPC::ConnectionSendSyncResult<M> RemotePageProxy::sendSync(M&& message)
-{
-    return m_process->sendSync(std::forward<M>(message), m_webPageID);
-}
-
-template<typename M, typename C> void RemotePageProxy::sendWithAsyncReply(M&& message, C&& completionHandler)
-{
-    sendWithAsyncReply(std::forward<M>(message), std::forward<C>(completionHandler), m_webPageID);
-}
-
-template<typename M, typename C, typename RawValue> void RemotePageProxy::sendWithAsyncReply(M&& message, C&& completionHandler, const ObjectIdentifierGenericBase<RawValue>& destinationID)
-{
-    m_process->sendWithAsyncReply(std::forward<M>(message), std::forward<C>(completionHandler), destinationID.toUInt64());
-}
 
 }
