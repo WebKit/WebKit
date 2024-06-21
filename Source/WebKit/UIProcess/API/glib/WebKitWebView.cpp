@@ -241,7 +241,58 @@ enum {
 
 static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
-class PageLoadStateObserver;
+class PageLoadStateObserver final : public PageLoadState::Observer {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    PageLoadStateObserver(WebKitWebView* webView)
+        : m_webView(webView)
+    {
+    }
+
+private:
+    void willChangeIsLoading() override
+    {
+        g_object_freeze_notify(G_OBJECT(m_webView));
+    }
+    void didChangeIsLoading() override;
+
+    void willChangeTitle() override
+    {
+        g_object_freeze_notify(G_OBJECT(m_webView));
+    }
+    void didChangeTitle() override;
+
+    void willChangeActiveURL() override;
+    void didChangeActiveURL() override;
+
+    void willChangeHasOnlySecureContent() override { }
+    void didChangeHasOnlySecureContent() override { }
+
+    void willChangeEstimatedProgress() override
+    {
+        g_object_freeze_notify(G_OBJECT(m_webView));
+    }
+    void didChangeEstimatedProgress() override
+    {
+        g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_ESTIMATED_LOAD_PROGRESS]);
+        g_object_thaw_notify(G_OBJECT(m_webView));
+    }
+
+    void willChangeCanGoBack() override { }
+    void didChangeCanGoBack() override { }
+    void willChangeCanGoForward() override { }
+    void didChangeCanGoForward() override { }
+    void willChangeNetworkRequestsInProgress() override { }
+    void didChangeNetworkRequestsInProgress() override { }
+    void willChangeCertificateInfo() override { }
+    void didChangeCertificateInfo() override { }
+    void willChangeWebProcessIsResponsive() override { }
+    void didChangeWebProcessIsResponsive() override { }
+    void didSwapWebProcesses() override { };
+
+    WebKitWebView* m_webView;
+};
+
 
 #if PLATFORM(WPE)
 static unsigned frameDisplayCallbackID;
@@ -388,6 +439,35 @@ static void webkitWebViewSetIsLoading(WebKitWebView* webView, bool isLoading)
     g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_IS_LOADING]);
 }
 
+void PageLoadStateObserver::didChangeIsLoading()
+{
+    webkitWebViewSetIsLoading(m_webView, getPage(m_webView).pageLoadState().isLoading());
+    g_object_thaw_notify(G_OBJECT(m_webView));
+}
+
+void PageLoadStateObserver::didChangeTitle()
+{
+    m_webView->priv->title = getPage(m_webView).pageLoadState().title().utf8();
+    g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_TITLE]);
+    g_object_thaw_notify(G_OBJECT(m_webView));
+}
+
+void PageLoadStateObserver::willChangeActiveURL()
+{
+    if (m_webView->priv->isActiveURIChangeBlocked)
+        return;
+    g_object_freeze_notify(G_OBJECT(m_webView));
+}
+
+void PageLoadStateObserver::didChangeActiveURL()
+{
+    if (m_webView->priv->isActiveURIChangeBlocked)
+        return;
+    m_webView->priv->activeURI = getPage(m_webView).pageLoadState().activeURL().utf8();
+    g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_URI]);
+    g_object_thaw_notify(G_OBJECT(m_webView));
+}
+
 void webkitWebViewIsPlayingAudioChanged(WebKitWebView* webView)
 {
     g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_IS_PLAYING_AUDIO]);
@@ -409,78 +489,6 @@ void webkitWebViewMediaCaptureStateDidChange(WebKitWebView* webView, WebCore::Me
         g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_DISPLAY_CAPTURE_STATE]);
 }
 
-class PageLoadStateObserver final : public PageLoadState::Observer {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    PageLoadStateObserver(WebKitWebView* webView)
-        : m_webView(webView)
-    {
-    }
-
-private:
-    void willChangeIsLoading() override
-    {
-        g_object_freeze_notify(G_OBJECT(m_webView));
-    }
-    void didChangeIsLoading() override
-    {
-        webkitWebViewSetIsLoading(m_webView, getPage(m_webView).pageLoadState().isLoading());
-        g_object_thaw_notify(G_OBJECT(m_webView));
-    }
-
-    void willChangeTitle() override
-    {
-        g_object_freeze_notify(G_OBJECT(m_webView));
-    }
-    void didChangeTitle() override
-    {
-        m_webView->priv->title = getPage(m_webView).pageLoadState().title().utf8();
-        g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_TITLE]);
-        g_object_thaw_notify(G_OBJECT(m_webView));
-    }
-
-    void willChangeActiveURL() override
-    {
-        if (m_webView->priv->isActiveURIChangeBlocked)
-            return;
-        g_object_freeze_notify(G_OBJECT(m_webView));
-    }
-    void didChangeActiveURL() override
-    {
-        if (m_webView->priv->isActiveURIChangeBlocked)
-            return;
-        m_webView->priv->activeURI = getPage(m_webView).pageLoadState().activeURL().utf8();
-        g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_URI]);
-        g_object_thaw_notify(G_OBJECT(m_webView));
-    }
-
-    void willChangeHasOnlySecureContent() override { }
-    void didChangeHasOnlySecureContent() override { }
-
-    void willChangeEstimatedProgress() override
-    {
-        g_object_freeze_notify(G_OBJECT(m_webView));
-    }
-    void didChangeEstimatedProgress() override
-    {
-        g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_ESTIMATED_LOAD_PROGRESS]);
-        g_object_thaw_notify(G_OBJECT(m_webView));
-    }
-
-    void willChangeCanGoBack() override { }
-    void didChangeCanGoBack() override { }
-    void willChangeCanGoForward() override { }
-    void didChangeCanGoForward() override { }
-    void willChangeNetworkRequestsInProgress() override { }
-    void didChangeNetworkRequestsInProgress() override { }
-    void willChangeCertificateInfo() override { }
-    void didChangeCertificateInfo() override { }
-    void willChangeWebProcessIsResponsive() override { }
-    void didChangeWebProcessIsResponsive() override { }
-    void didSwapWebProcesses() override { };
-
-    WebKitWebView* m_webView;
-};
 
 #if PLATFORM(WPE)
 WebKitWebViewClient::WebKitWebViewClient(WebKitWebView* webView)

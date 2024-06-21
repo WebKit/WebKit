@@ -206,7 +206,31 @@ private:
 
 typedef HashMap<String, RefPtr<WebKitURISchemeHandler> > URISchemeHandlerMap;
 
-class WebKitAutomationClient;
+#if ENABLE(REMOTE_INSPECTOR)
+class WebKitAutomationClient final : Inspector::RemoteInspector::Client {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit WebKitAutomationClient(WebKitWebContext* context)
+        : m_webContext(context)
+    {
+        Inspector::RemoteInspector::singleton().setClient(this);
+    }
+
+    ~WebKitAutomationClient()
+    {
+        Inspector::RemoteInspector::singleton().setClient(nullptr);
+    }
+
+private:
+    bool remoteAutomationAllowed() const override { return true; }
+
+    String browserName() const override;
+    String browserVersion() const override;
+    void requestAutomationSession(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities&) override;
+
+    WebKitWebContext* m_webContext;
+};
+#endif
 
 struct _WebKitWebContextPrivate {
 #if !ENABLE(2022_GLIB_API)
@@ -272,49 +296,29 @@ WEBKIT_DEFINE_FINAL_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT, GO
 std::unique_ptr<WebKitNotificationProvider> s_serviceWorkerNotificationProvider;
 
 #if ENABLE(REMOTE_INSPECTOR)
-class WebKitAutomationClient final : Inspector::RemoteInspector::Client {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit WebKitAutomationClient(WebKitWebContext* context)
-        : m_webContext(context)
-    {
-        Inspector::RemoteInspector::singleton().setClient(this);
-    }
+String WebKitAutomationClient::browserName() const
+{
+    if (!m_webContext->priv->automationSession)
+        return { };
 
-    ~WebKitAutomationClient()
-    {
-        Inspector::RemoteInspector::singleton().setClient(nullptr);
-    }
+    return webkitAutomationSessionGetBrowserName(m_webContext->priv->automationSession.get());
+}
 
-private:
-    bool remoteAutomationAllowed() const override { return true; }
+String WebKitAutomationClient::browserVersion() const
+{
+    if (!m_webContext->priv->automationSession)
+        return { };
 
-    String browserName() const override
-    {
-        if (!m_webContext->priv->automationSession)
-            return { };
+    return webkitAutomationSessionGetBrowserVersion(m_webContext->priv->automationSession.get());
+}
 
-        return webkitAutomationSessionGetBrowserName(m_webContext->priv->automationSession.get());
-    }
-
-    String browserVersion() const override
-    {
-        if (!m_webContext->priv->automationSession)
-            return { };
-
-        return webkitAutomationSessionGetBrowserVersion(m_webContext->priv->automationSession.get());
-    }
-
-    void requestAutomationSession(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities) override
-    {
-        ASSERT(!m_webContext->priv->automationSession);
-        m_webContext->priv->automationSession = adoptGRef(webkitAutomationSessionCreate(m_webContext, sessionIdentifier.utf8().data(), capabilities));
-        g_signal_emit(m_webContext, signals[AUTOMATION_STARTED], 0, m_webContext->priv->automationSession.get());
-        m_webContext->priv->processPool->setAutomationSession(&webkitAutomationSessionGetSession(m_webContext->priv->automationSession.get()));
-    }
-
-    WebKitWebContext* m_webContext;
-};
+void WebKitAutomationClient::requestAutomationSession(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
+{
+    ASSERT(!m_webContext->priv->automationSession);
+    m_webContext->priv->automationSession = adoptGRef(webkitAutomationSessionCreate(m_webContext, sessionIdentifier.utf8().data(), capabilities));
+    g_signal_emit(m_webContext, signals[AUTOMATION_STARTED], 0, m_webContext->priv->automationSession.get());
+    m_webContext->priv->processPool->setAutomationSession(&webkitAutomationSessionGetSession(m_webContext->priv->automationSession.get()));
+}
 
 void webkitWebContextWillCloseAutomationSession(WebKitWebContext* webContext)
 {
