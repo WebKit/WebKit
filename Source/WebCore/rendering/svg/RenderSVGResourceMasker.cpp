@@ -184,7 +184,7 @@ bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, c
     // Eventually adjust the mask image context according to the target objectBoundingBox.
     AffineTransform maskContentTransformation;
 
-    if (maskElement().maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+    if (protectedMaskElement()->maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         maskContentTransformation.translate(objectBoundingBox.location());
         maskContentTransformation.scale(objectBoundingBox.size());
     }

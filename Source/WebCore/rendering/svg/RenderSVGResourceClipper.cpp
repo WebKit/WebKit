@@ -82,7 +82,7 @@ RefPtr<SVGGraphicsElement> RenderSVGResourceClipper::shouldApplyPathClipping() c
 {
     if (currentClippingMode() == ClippingMode::MaskClipping)
         return nullptr;
-    return clipPathElement().shouldApplyPathClipping();
+    return protectedClipPathElement()->shouldApplyPathClipping();
 }
 
 void RenderSVGResourceClipper::applyPathClipping(GraphicsContext& context, const RenderLayerModelObject& targetRenderer, const FloatRect& objectBoundingBox, SVGGraphicsElement& graphicsElement)
