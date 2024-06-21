@@ -1788,6 +1788,4 @@ webkit.org/b/274852 imported/w3c/web-platform-tests/css/css-view-transitions/new
 
 webkit.org/b/273613 [ Ventura ] imported/w3c/web-platform-tests/css/css-view-transitions/no-painting-while-render-blocked.html [ Skip ]
 
-webkit.org/b/275709 [ Debug ] imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form.html [ Skip ]
-
 webkit.org/b/275758 [ x86_64 ] fast/webgpu/regression/repro_275111b.html [ Failure ]
