@@ -58,21 +58,22 @@ InlineLayoutUnit LineBoxVerticalAligner::computeLogicalHeightAndAlign(LineBox& l
             auto shouldUseSimplifiedAlignmentForInlineLevelBox = [&] {
                 if (inlineLevelBox.hasTextEmphasis())
                     return false;
+                // Baseline aligned, non-stretchy direct children are considered to be simple for now.
+                auto& layoutBox = inlineLevelBox.layoutBox();
+                if (&layoutBox.parent() != &rootInlineBox.layoutBox() || inlineLevelBox.verticalAlign().type != VerticalAlign::Baseline)
+                    return false;
+
                 if (inlineLevelBox.isAtomicInlineLevelBox()) {
-                    // Baseline aligned, non-stretchy direct children are considered to be simple for now.
-                    auto& layoutBox = inlineLevelBox.layoutBox();
-                    if (&layoutBox.parent() != &rootInlineBox.layoutBox() || inlineLevelBox.verticalAlign().type != VerticalAlign::Baseline)
-                        return false;
                     auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
                     return !inlineLevelBoxGeometry.marginBefore() && !inlineLevelBoxGeometry.marginAfter() && inlineLevelBoxGeometry.marginBoxHeight() <= rootInlineBox.layoutBounds().ascent;
                 }
                 if (inlineLevelBox.isLineBreakBox()) {
                     // Baseline aligned, non-stretchy line breaks e.g. <div><span><br></span></div> but not <div><span style="font-size: 100px;"><br></span></div>.
-                    return inlineLevelBox.verticalAlign().type == VerticalAlign::Baseline && inlineLevelBox.layoutBounds().ascent <= rootInlineBox.layoutBounds().ascent;
+                    return inlineLevelBox.layoutBounds().ascent <= rootInlineBox.layoutBounds().ascent;
                 }
                 if (inlineLevelBox.isInlineBox()) {
                     // Baseline aligned, non-stretchy inline boxes e.g. <div><span></span></div> but not <div><span style="font-size: 100px;"></span></div>.
-                    return inlineLevelBox.verticalAlign().type == VerticalAlign::Baseline && inlineLevelBox.layoutBounds() == rootInlineBox.layoutBounds();
+                    return inlineLevelBox.layoutBounds() == rootInlineBox.layoutBounds();
                 }
                 return false;
             };
