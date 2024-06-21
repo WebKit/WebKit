@@ -28,7 +28,6 @@
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 
 #include "ImageBufferBackendHandleSharing.h"
-#include <WebCore/GraphicsContextCG.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageBufferCGBackend.h>
 #include <wtf/IsoMalloc.h>
@@ -44,6 +43,7 @@ public:
     static std::unique_ptr<DynamicContentScalingImageBufferBackend> create(const Parameters&, const WebCore::ImageBufferCreationContext&);
 
     DynamicContentScalingImageBufferBackend(const Parameters&, const WebCore::ImageBufferCreationContext&, WebCore::RenderingMode);
+    ~DynamicContentScalingImageBufferBackend();
 
     WebCore::GraphicsContext& context() final;
     std::optional<ImageBufferBackendHandle> createBackendHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite) const final;
