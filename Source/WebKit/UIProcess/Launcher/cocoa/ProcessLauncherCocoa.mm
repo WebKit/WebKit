@@ -503,15 +503,13 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
 
 void ProcessLauncher::terminateProcess()
 {
-    if (m_isLaunching) {
-        terminateXPCConnection();
-        return;
-    }
+#if USE(EXTENSIONKIT)
+    if (m_process)
+        m_process->invalidate();
+#endif
 
-    if (!m_processID)
-        return;
+    terminateXPCConnection();
 
-    kill(m_processID, SIGKILL);
     m_processID = 0;
 }
 
@@ -532,7 +530,9 @@ void ProcessLauncher::terminateXPCConnection()
         return;
 
     xpc_connection_cancel(m_xpcConnection.get());
+#if !USE(EXTENSIONKIT)
     terminateWithReason(m_xpcConnection.get(), WebKit::ReasonCode::Invalidation, "ProcessLauncher::platformInvalidate");
+#endif
     m_xpcConnection = nullptr;
 }
 
