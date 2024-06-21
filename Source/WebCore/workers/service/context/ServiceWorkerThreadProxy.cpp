@@ -260,18 +260,6 @@ void ServiceWorkerThreadProxy::cancelFetch(SWServerConnectionIdentifier connecti
     }, WorkerRunLoop::defaultMode());
 }
 
-
-void ServiceWorkerThreadProxy::convertFetchToDownload(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier)
-{
-    RELEASE_LOG(ServiceWorker, "ServiceWorkerThreadProxy::convertFetchToDownload %" PRIu64, fetchIdentifier.toUInt64());
-    ASSERT(!isMainThread());
-
-    postTaskForModeToWorkerOrWorkletGlobalScope([connectionIdentifier, fetchIdentifier] (auto& context) {
-        if (auto client = downcast<ServiceWorkerGlobalScope>(context).takeFetchTask({ connectionIdentifier, fetchIdentifier }))
-            client->convertFetchToDownload();
-    }, WorkerRunLoop::defaultMode());
-}
-
 void ServiceWorkerThreadProxy::navigationPreloadIsReady(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier, ResourceResponse&& response)
 {
     ASSERT(!isMainThread());
@@ -285,16 +273,6 @@ void ServiceWorkerThreadProxy::navigationPreloadFailed(SWServerConnectionIdentif
     ASSERT(!isMainThread());
     postTaskForModeToWorkerOrWorkletGlobalScope([connectionIdentifier, fetchIdentifier, error = WTFMove(error).isolatedCopy()] (auto& context) mutable {
         downcast<ServiceWorkerGlobalScope>(context).navigationPreloadFailed({ connectionIdentifier, fetchIdentifier }, WTFMove(error));
-    }, WorkerRunLoop::defaultMode());
-}
-
-void ServiceWorkerThreadProxy::continueDidReceiveFetchResponse(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier)
-{
-    ASSERT(!isMainThread());
-
-    postTaskForModeToWorkerOrWorkletGlobalScope([connectionIdentifier, fetchIdentifier] (auto& context) {
-        if (auto client = downcast<ServiceWorkerGlobalScope>(context).fetchTask({ connectionIdentifier, fetchIdentifier }))
-            client->continueDidReceiveResponse();
     }, WorkerRunLoop::defaultMode());
 }
 

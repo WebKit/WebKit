@@ -178,7 +178,10 @@ void ServiceWorkerGlobalScope::prepareForDestruction()
     // Make sure we destroy fetch events objects before the VM goes away, since their
     // destructor may access the VM.
     m_extendedEvents.clear();
-    m_ongoingFetchTasks.clear();
+
+    auto ongoingFetchTasks = std::exchange(m_ongoingFetchTasks, { });
+    for (auto& task : ongoingFetchTasks.values())
+        task.client->contextIsStopping();
 
     WorkerGlobalScope::prepareForDestruction();
 }

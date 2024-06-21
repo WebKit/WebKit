@@ -56,6 +56,7 @@ struct ServiceWorkerContextData;
 namespace WebKit {
 
 class RemoteWorkerFrameLoaderClient;
+class WebServiceWorkerFetchTaskClient;
 class WebUserContentController;
 struct RemoteWorkerInitializationData;
 
@@ -94,6 +95,7 @@ private:
     void openWindow(WebCore::ServiceWorkerIdentifier, const URL&, OpenWindowCallback&&) final;
     void stop() final;
     void reportConsoleMessage(WebCore::ServiceWorkerIdentifier, MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) final;
+    void removeNavigationFetch(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier) final;
 
     // IPC messages.
     void updatePreferencesStore(WebPreferencesStore&&);
@@ -148,6 +150,9 @@ private:
     Ref<WebUserContentController> m_userContentController;
     std::optional<WebPreferencesStore> m_preferencesStore;
     Ref<WorkQueue> m_queue;
+
+    using FetchKey = std::pair<WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier>;
+    HashMap<FetchKey, Ref<WebServiceWorkerFetchTaskClient>> m_ongoingNavigationFetchTasks WTF_GUARDED_BY_CAPABILITY(m_queue.get());
 };
 
 } // namespace WebKit

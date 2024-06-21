@@ -248,14 +248,15 @@ void WebSWContextManagerConnection::cancelFetch(SWServerConnectionIdentifier ser
 
     if (auto serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxyFromBackgroundThread(serviceWorkerIdentifier))
         serviceWorkerThreadProxy->cancelFetch(serverConnectionIdentifier, fetchIdentifier);
+    m_ongoingNavigationFetchTasks.remove({ serverConnectionIdentifier, fetchIdentifier });
 }
 
 void WebSWContextManagerConnection::continueDidReceiveFetchResponse(SWServerConnectionIdentifier serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, FetchIdentifier fetchIdentifier)
 {
     assertIsCurrent(m_queue.get());
 
-    if (auto serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxyFromBackgroundThread(serviceWorkerIdentifier))
-        serviceWorkerThreadProxy->continueDidReceiveFetchResponse(serverConnectionIdentifier, fetchIdentifier);
+    if (auto task = m_ongoingNavigationFetchTasks.take({ serverConnectionIdentifier, fetchIdentifier }))
+        task->continueDidReceiveResponse();
 }
 
 void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, FetchIdentifier fetchIdentifier, ResourceRequest&& request, FetchOptions&& options, IPC::FormDataReference&& formData, String&& referrer, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier)
@@ -272,7 +273,10 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
         serviceWorkerThreadProxy->setLastNavigationWasAppInitiated(isAppInitiated);
     });
 
-    auto client = WebServiceWorkerFetchTaskClient::create(m_connectionToNetworkProcess.copyRef(), serviceWorkerIdentifier, serverConnectionIdentifier, fetchIdentifier, request.requester() == ResourceRequestRequester::Main);
+    bool needsContinueDidReceiveResponseMessage = request.requester() == ResourceRequestRequester::Main;
+    auto client = WebServiceWorkerFetchTaskClient::create(m_connectionToNetworkProcess.copyRef(), serviceWorkerIdentifier, serverConnectionIdentifier, fetchIdentifier, needsContinueDidReceiveResponseMessage);
+    if (needsContinueDidReceiveResponseMessage)
+        m_ongoingNavigationFetchTasks.add({ serverConnectionIdentifier, fetchIdentifier }, Ref { client });
 
     request.setHTTPBody(formData.takeData());
     serviceWorkerThreadProxy->startFetch(serverConnectionIdentifier, fetchIdentifier, WTFMove(client), WTFMove(request), WTFMove(referrer), WTFMove(options), isServiceWorkerNavigationPreloadEnabled, WTFMove(clientIdentifier), WTFMove(resultingClientIdentifier));
@@ -386,8 +390,8 @@ void WebSWContextManagerConnection::convertFetchToDownload(SWServerConnectionIde
 {
     assertIsCurrent(m_queue.get());
 
-    if (auto serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxyFromBackgroundThread(serviceWorkerIdentifier))
-        serviceWorkerThreadProxy->convertFetchToDownload(serverConnectionIdentifier, fetchIdentifier);
+    if (auto task = m_ongoingNavigationFetchTasks.take({ serverConnectionIdentifier, fetchIdentifier }))
+        task->convertFetchToDownload();
 }
 
 void WebSWContextManagerConnection::navigationPreloadIsReady(SWServerConnectionIdentifier serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, FetchIdentifier fetchIdentifier, ResourceResponse&& response)
@@ -605,6 +609,14 @@ void WebSWContextManagerConnection::setAsInspected(WebCore::ServiceWorkerIdentif
 void WebSWContextManagerConnection::reportConsoleMessage(WebCore::ServiceWorkerIdentifier identifier, MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
 {
     m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::ReportConsoleMessage { identifier, source, level, message, requestIdentifier }, 0);
+}
+
+void WebSWContextManagerConnection::removeNavigationFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier)
+{
+    m_queue->dispatch([protectedThis = Ref { *this }, serverConnectionIdentifier, fetchIdentifier] {
+        assertIsCurrent(protectedThis->m_queue.get());
+        protectedThis->m_ongoingNavigationFetchTasks.remove({ serverConnectionIdentifier, fetchIdentifier });
+    });
 }
 
 } // namespace WebCore

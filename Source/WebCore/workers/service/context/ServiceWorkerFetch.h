@@ -57,9 +57,8 @@ public:
     virtual void didNotHandle() = 0;
     virtual void cancel() = 0;
     virtual void setCancelledCallback(Function<void()>&&) = 0;
-    virtual void continueDidReceiveResponse() = 0;
-    virtual void convertFetchToDownload() = 0;
     virtual void usePreload() = 0;
+    virtual void contextIsStopping() = 0;
 };
 
 void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, ResourceRequest&&, String&& referrer, FetchOptions&&, SWServerConnectionIdentifier, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier);
