@@ -433,4 +433,8 @@ private:
     bool m_started { false };
 };
 
+#if !GST_CHECK_VERSION(1, 20, 0)
+GstBuffer* gst_buffer_new_memdup(gconstpointer data, gsize size);
+#endif
+
 #endif // USE(GSTREAMER)
