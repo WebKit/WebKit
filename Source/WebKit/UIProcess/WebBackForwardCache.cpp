@@ -48,10 +48,14 @@ WebBackForwardCache::~WebBackForwardCache()
     clear();
 }
 
-inline void WebBackForwardCache::removeOldestEntry()
+void WebBackForwardCache::removeOldestEntry()
 {
-    ASSERT(!m_itemsWithCachedPage.isEmpty());
-    removeEntry(*m_itemsWithCachedPage.first());
+    if (m_itemsWithCachedPage.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    if (auto first = m_itemsWithCachedPage.first())
+        removeEntry(*first);
 }
 
 void WebBackForwardCache::setCapacity(unsigned capacity)
@@ -158,6 +162,8 @@ void WebBackForwardCache::removeEntriesMatching(const Function<bool(WebBackForwa
 {
     Vector<Ref<WebBackForwardListItem>> itemsWithEntriesToClear;
     m_itemsWithCachedPage.removeAllMatching([&](auto& item) {
+        if (!item)
+            return true;
         if (matches(*item)) {
             itemsWithEntriesToClear.append(*item);
             return true;
@@ -173,8 +179,10 @@ void WebBackForwardCache::clear()
 {
     RELEASE_LOG(BackForwardCache, "WebBackForwardCache::clear");
     auto itemsWithCachedPage = WTFMove(m_itemsWithCachedPage);
-    for (auto& item : itemsWithCachedPage)
-        item->setBackForwardCacheEntry(nullptr);
+    for (auto& item : itemsWithCachedPage) {
+        if (item)
+            item->setBackForwardCacheEntry(nullptr);
+    }
 }
 
 void WebBackForwardCache::pruneToSize(unsigned newSize)
