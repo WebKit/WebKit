@@ -154,6 +154,9 @@ void WebExtensionAPIStorageArea::set(WebPage& page, NSDictionary *items, Ref<Web
     auto *serializedData = mapObjects(items, ^NSString *(NSString *key, id object) {
         ASSERT([object isKindOfClass:JSValue.class]);
 
+        if (((JSValue *)object).isUndefined)
+            return nil;
+
         if (keyWithError)
             return nil;
 
