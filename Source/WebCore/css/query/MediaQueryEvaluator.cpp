@@ -88,7 +88,7 @@ bool MediaQueryEvaluator::evaluate(const MediaQuery& query) const
         defaultStyle.setFontDescription(WTFMove(fontDescription));
         defaultStyle.fontCascade().update();
 
-        FeatureEvaluationContext context { *document, { *m_rootElementStyle, &defaultStyle, nullptr, document->renderView() }, nullptr };
+        FeatureEvaluationContext context { *document, { m_rootElementStyle, &defaultStyle, nullptr, document->renderView() }, nullptr };
         return evaluateCondition(*query.condition, context);
     }();
 

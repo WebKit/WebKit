@@ -76,7 +76,7 @@ BuilderState::BuilderState(Builder& builder, RenderStyle& style, BuilderContext&
     , m_styleMap(*this)
     , m_style(style)
     , m_context(WTFMove(context))
-    , m_cssToLengthConversionData(style, m_context)
+    , m_cssToLengthConversionData(&style, m_context)
 {
 }
 
@@ -135,7 +135,7 @@ RefPtr<StyleImage> BuilderState::createStyleImage(const CSSValue& value)
 
 std::optional<FilterOperations> BuilderState::createFilterOperations(const CSSValue& inValue)
 {
-    return WebCore::Style::createFilterOperations(document(), m_style, m_cssToLengthConversionData, inValue);
+    return WebCore::Style::createFilterOperations(document(), &m_style, m_cssToLengthConversionData, inValue);
 }
 
 bool BuilderState::isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiveValue& value)

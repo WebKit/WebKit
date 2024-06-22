@@ -1233,6 +1233,7 @@ dom/ScopedEventQueue.cpp
 dom/ScriptElement.cpp
 dom/ScriptElementCachedScriptFetcher.cpp
 dom/ScriptExecutionContext.cpp
+dom/ScriptExecutionContext+Color.cpp
 dom/ScriptRunner.cpp
 dom/ScriptableDocumentParser.cpp
 dom/ScriptedAnimationController.cpp
@@ -1391,6 +1392,7 @@ html/BaseDateAndTimeInputType.cpp
 html/BaseTextInputType.cpp
 html/ButtonInputType.cpp
 html/CanvasBase.cpp
+html/CanvasBase+Color.cpp
 html/CanvasNoiseInjection.cpp
 html/CheckboxInputType.cpp
 html/ColorInputType.cpp

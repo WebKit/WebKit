@@ -41,6 +41,7 @@
 #include "CSSPropertyParserWorkerSafe.h"
 #include "CSSStyleImageValue.h"
 #include "CachedImage.h"
+#include "CanvasBase+Color.h"
 #include "CanvasFilterContextSwitcher.h"
 #include "CanvasGradient.h"
 #include "CanvasLayerContextSwitcher.h"

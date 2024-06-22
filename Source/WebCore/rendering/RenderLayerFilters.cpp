@@ -122,17 +122,17 @@ void RenderLayerFilters::removeReferenceFilterClients()
 bool RenderLayerFilters::isIdentity(RenderElement& renderer)
 {
     const auto& operations = renderer.style().filter();
-    return CSSFilter::isIdentity(renderer, operations);
+    return CSSFilter::isIdentity(&renderer, operations);
 }
 
 IntOutsets RenderLayerFilters::calculateOutsets(RenderElement& renderer, const FloatRect& targetBoundingBox)
 {
     const auto& operations = renderer.style().filter();
-    
+
     if (!operations.hasFilterThatMovesPixels())
         return { };
 
-    return CSSFilter::calculateOutsets(renderer, operations, targetBoundingBox);
+    return CSSFilter::calculateOutsets(&renderer, operations, targetBoundingBox);
 }
 
 GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, GraphicsContext& context, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect, const LayoutRect& clipRect)
@@ -159,7 +159,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     if (!m_filter || m_targetBoundingBox != targetBoundingBox) {
         m_targetBoundingBox = targetBoundingBox;
         // FIXME: This rebuilds the entire effects chain even if the filter style didn't change.
-        m_filter = CSSFilter::create(renderer, renderer.style().filter(), m_preferredFilterRenderingModes, m_filterScale, m_targetBoundingBox, context);
+        m_filter = CSSFilter::create(&renderer, renderer.style().filter(), m_preferredFilterRenderingModes, m_filterScale, m_targetBoundingBox, context);
     }
 
     if (!m_filter)

@@ -31,7 +31,6 @@
 
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
-#include "CSSPropertyParserConsumer+Color.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "ColorConversion.h"
@@ -45,92 +44,6 @@
 #endif
 
 namespace WebCore {
-
-class CanvasStyleColorResolutionDelegate final : public CSSUnresolvedColorResolutionDelegate {
-public:
-    explicit CanvasStyleColorResolutionDelegate(Ref<HTMLCanvasElement> canvasElement)
-        : m_canvasElement { WTFMove(canvasElement) }
-    {
-    }
-
-    Color currentColor() const final;
-
-    Ref<HTMLCanvasElement> m_canvasElement;
-};
-
-using LazySlowPathColorParsingParameters = std::tuple<
-    CSSPropertyParserHelpers::CSSColorParsingOptions,
-    CSSUnresolvedColorResolutionContext,
-    std::optional<CanvasStyleColorResolutionDelegate>
->;
-
-Color CanvasStyleColorResolutionDelegate::currentColor() const
-{
-    if (!m_canvasElement->isConnected() || !m_canvasElement->inlineStyle())
-        return Color::black;
-
-    auto colorString = m_canvasElement->inlineStyle()->getPropertyValue(CSSPropertyColor);
-    auto color = CSSPropertyParserHelpers::parseColorRaw(WTFMove(colorString), m_canvasElement->cssParserContext(), [] {
-        return LazySlowPathColorParsingParameters { { }, { }, std::nullopt };
-    });
-    if (!color.isValid())
-        return Color::black;
-    return color;
-}
-
-static OptionSet<StyleColor::CSSColorType> allowedColorTypes(ScriptExecutionContext* scriptExecutionContext)
-{
-    if (scriptExecutionContext && scriptExecutionContext->isDocument())
-        return { StyleColor::CSSColorType::Absolute, StyleColor::CSSColorType::Current, StyleColor::CSSColorType::System };
-
-    // FIXME: All canvas types should support all color types, but currently
-    //        system colors are not thread safe so are disabled for non-document
-    //        based canvases.
-    return { StyleColor::CSSColorType::Absolute, StyleColor::CSSColorType::Current };
-}
-
-static LazySlowPathColorParsingParameters elementlessColorParsingParameters(ScriptExecutionContext* scriptExecutionContext)
-{
-    return {
-        CSSPropertyParserHelpers::CSSColorParsingOptions {
-            .allowedColorTypes = allowedColorTypes(scriptExecutionContext)
-        },
-        CSSUnresolvedColorResolutionContext {
-            .resolvedCurrentColor = Color::black
-        },
-        std::nullopt
-    };
-}
-
-static LazySlowPathColorParsingParameters colorParsingParameters(CanvasBase& canvasBase)
-{
-    RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(canvasBase);
-    if (!canvasElement)
-        return elementlessColorParsingParameters(canvasBase.scriptExecutionContext());
-
-    return {
-        CSSPropertyParserHelpers::CSSColorParsingOptions { },
-        CSSUnresolvedColorResolutionContext { },
-        CanvasStyleColorResolutionDelegate(canvasElement.releaseNonNull())
-    };
-}
-
-Color parseColor(const String& colorString, CanvasBase& canvasBase)
-{
-    return CSSPropertyParserHelpers::parseColorRaw(colorString, canvasBase.cssParserContext(), [&] {
-        return colorParsingParameters(canvasBase);
-    });
-}
-
-Color parseColor(const String& colorString, ScriptExecutionContext& scriptExecutionContext)
-{
-    // FIXME: Add constructor for CSSParserContext that takes a ScriptExecutionContext to allow preferences to be
-    //        checked correctly.
-
-    return CSSPropertyParserHelpers::parseColorRaw(colorString, CSSParserContext(HTMLStandardMode), [&] {
-        return elementlessColorParsingParameters(&scriptExecutionContext);
-    });
-}
 
 CanvasStyle::CanvasStyle(Color color)
     : m_style(color)

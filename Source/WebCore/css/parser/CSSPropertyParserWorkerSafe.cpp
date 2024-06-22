@@ -82,7 +82,7 @@ std::optional<CSSPropertyParserHelpers::FontRaw> CSSPropertyParserWorkerSafe::pa
     return CSSPropertyParserHelpers::consumeFontRaw(range, mode);
 }
 
-std::optional<FilterOperations> CSSPropertyParserWorkerSafe::parseFilterString(const Document& document, RenderStyle& style, const String& string, CSSParserMode mode)
+std::optional<FilterOperations> CSSPropertyParserWorkerSafe::parseFilterString(const ScriptExecutionContext& context, RenderStyle* style, const String& string, CSSParserMode mode)
 {
     CSSTokenizer tokenizer(string);
     CSSParserTokenRange range(tokenizer.tokenRange());
@@ -94,7 +94,7 @@ std::optional<FilterOperations> CSSPropertyParserWorkerSafe::parseFilterString(c
 
     CSSToLengthConversionData conversionData { style, nullptr, nullptr, nullptr };
 
-    return Style::createFilterOperations(document, style, conversionData, *parsedValue);
+    return Style::createFilterOperations(context, style, conversionData, *parsedValue);
 }
 
 static CSSParserMode parserMode(ScriptExecutionContext& context)

@@ -60,6 +60,11 @@ Color consumeColorRaw(CSSParserTokenRange&, const CSSParserContext&, const CSSCo
 // MARK: <color> parsing (raw)
 Color parseColorRawSlow(const String&, const CSSParserContext&, const CSSColorParsingOptions&, const CSSUnresolvedColorResolutionContext& = { });
 
+using ColorParsingParameters = std::tuple<
+    CSSPropertyParserHelpers::CSSColorParsingOptions,
+    CSSUnresolvedColorResolutionContext
+>;
+
 template<typename F> Color parseColorRaw(const String& string, const CSSParserContext& context, F&& lazySlowPathOptionsFunctor)
 {
     bool strict = !isQuirksModeBehavior(context.mode);
@@ -68,12 +73,24 @@ template<typename F> Color parseColorRaw(const String& string, const CSSParserCo
 
     // To avoid doing anything unnecessary before the fast path can run, callers bundle up
     // a functor to generate the slow path parameters.
-    auto [options, eagerResolutionContext, eagerResolutionDelegate] = lazySlowPathOptionsFunctor();
+    auto [options, eagerResolutionContext] = lazySlowPathOptionsFunctor();
 
-    // If a delegate is provided, hook it up to the context here. By having it live on the stack,
+    return parseColorRawSlow(string, context, options, eagerResolutionContext);
+}
+
+template<typename F> Color parseColorRawWithDelegate(const String& string, const CSSParserContext& context, F&& lazySlowPathOptionsWithDelegateFunctor)
+{
+    bool strict = !isQuirksModeBehavior(context.mode);
+    if (auto color = CSSParserFastPaths::parseSimpleColor(string, strict))
+        return *color;
+
+    // To avoid doing anything unnecessary before the fast path can run, callers bundle up
+    // a functor to generate the slow path parameters.
+    auto [options, eagerResolutionContext, eagerResolutionDelegate] = lazySlowPathOptionsWithDelegateFunctor();
+
+    // Hook the delegate up to the context here. By having it live on the stack,
     // we avoid allocating it.
-    if (eagerResolutionDelegate)
-        eagerResolutionContext.delegate = &eagerResolutionDelegate.value();
+    eagerResolutionContext.delegate = &eagerResolutionDelegate;
 
     return parseColorRawSlow(string, context, options, eagerResolutionContext);
 }

@@ -32,12 +32,12 @@ namespace WebCore {
 
 class CSSToLengthConversionData;
 class CSSValue;
-class Document;
 class RenderStyle;
+class ScriptExecutionContext;
 
 namespace Style {
 
-std::optional<FilterOperations> createFilterOperations(const Document&, RenderStyle&, const CSSToLengthConversionData&, const CSSValue&);
+std::optional<FilterOperations> createFilterOperations(const ScriptExecutionContext&, RenderStyle*, const CSSToLengthConversionData&, const CSSValue&);
 
 } // namespace Style
 
