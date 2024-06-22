@@ -51,7 +51,7 @@ a=extmap:1 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extension
 a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:mid
 a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id
 a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
-a=extmap:5 urn:ietf:params:rtp-hdrext:ssrc-audio-level
+a=extmap:5 urn:ietf:params:rtp-hdrext:ssrc-audio-level vad=on
 a=fmtp:96 minptime=10;useinbandfec=1
 a=recvonly
 a=fingerprint:sha-256 {fingerprint:OK}

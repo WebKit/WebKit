@@ -288,6 +288,8 @@ WARN_UNUSED_RETURN GRefPtr<GstCaps> capsFromRtpCapabilities(RefPtr<UniqueSSRCGen
 GstWebRTCRTPTransceiverDirection getDirectionFromSDPMedia(const GstSDPMedia*);
 WARN_UNUSED_RETURN GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia*);
 
+void setSsrcAudioLevelVadOn(GstStructure*);
+
 inline gboolean mapRtpBuffer(GstBuffer* buffer, GstRTPBuffer* rtpBuffer, GstMapFlags flags)
 {
     *rtpBuffer = GST_RTP_BUFFER_INIT;

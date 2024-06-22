@@ -601,11 +601,49 @@ GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia* media)
             gst_structure_filter_and_map_in_place(structure, reinterpret_cast<GstStructureFilterMapFunc>(+[](GQuark quark, GValue*, gpointer) -> gboolean {
                 return !g_str_has_prefix(g_quark_to_string(quark), "ssrc-");
             }), nullptr);
+            // Align with caps from RealtimeOutgoingAudioSourceGStreamer
+            setSsrcAudioLevelVadOn(structure);
         }
 
         gst_caps_append(caps.get(), formatCaps);
     }
     return caps;
+}
+
+void setSsrcAudioLevelVadOn(GstStructure* structure)
+{
+    unsigned totalFields = gst_structure_n_fields(structure);
+    for (unsigned i = 0; i < totalFields; i++) {
+        String fieldName = WTF::span(gst_structure_nth_field_name(structure, i));
+        if (!fieldName.startsWith("extmap-"_s))
+            continue;
+
+        const auto value = gst_structure_get_value(structure, fieldName.ascii().data());
+        if (!G_VALUE_HOLDS_STRING(value))
+            continue;
+
+        const char* uri = g_value_get_string(value);
+        if (!g_str_equal(uri, GST_RTP_HDREXT_BASE "ssrc-audio-level"))
+            continue;
+
+        GValue arrayValue G_VALUE_INIT;
+        gst_value_array_init(&arrayValue, 3);
+
+        GValue stringValue G_VALUE_INIT;
+        g_value_init(&stringValue, G_TYPE_STRING);
+
+        g_value_set_static_string(&stringValue, "");
+        gst_value_array_append_value(&arrayValue, &stringValue);
+
+        g_value_set_string(&stringValue, uri);
+        gst_value_array_append_value(&arrayValue, &stringValue);
+
+        g_value_set_static_string(&stringValue, "vad=on");
+        gst_value_array_append_and_take_value(&arrayValue, &stringValue);
+
+        gst_structure_remove_field(structure, fieldName.ascii().data());
+        gst_structure_take_value(structure, fieldName.ascii().data(), &arrayValue);
+    }
 }
 
 #undef GST_CAT_DEFAULT
