@@ -31,6 +31,7 @@ from webkitcorepy import Version, Timeout
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.systemhost import SystemHost
+from webkitpy.port.config import apple_additions
 from webkitpy.port.device import Device
 from webkitpy.xcode.device_type import DeviceType
 
@@ -550,6 +551,9 @@ class SimulatedDevice(object):
         self.platform = host.platform
 
         self.environment_extras = []
+
+        if apple_additions():
+            self.environment_extras.extend(apple_additions().environment_extras(udid))
 
         # Determine tear down behavior
         self.booted_by_script = False
