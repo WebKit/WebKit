@@ -1147,7 +1147,9 @@ static inline IntRect computeImageDataRect(const ImageBuffer& buffer, IntSize so
 
 void CanvasRenderingContext2DBase::fillInternal(const Path& path, CanvasFillRule windingRule)
 {
-    auto targetSwitcher = CanvasFilterContextSwitcher::create(*this, path.fastBoundingRect());
+    std::unique_ptr<CanvasFilterContextSwitcher> targetSwitcher;
+    if (!state().filterOperations.isEmpty())
+        targetSwitcher = CanvasFilterContextSwitcher::create(*this, path.fastBoundingRect());
 
     auto* c = effectiveDrawingContext();
     if (!c)
@@ -1188,7 +1190,9 @@ void CanvasRenderingContext2DBase::fillInternal(const Path& path, CanvasFillRule
 
 void CanvasRenderingContext2DBase::strokeInternal(const Path& path)
 {
-    auto targetSwitcher = CanvasFilterContextSwitcher::create(*this, inflatedStrokeRect(path.fastBoundingRect()));
+    std::unique_ptr<CanvasFilterContextSwitcher> targetSwitcher;
+    if (!state().filterOperations.isEmpty())
+        targetSwitcher = CanvasFilterContextSwitcher::create(*this, inflatedStrokeRect(path.fastBoundingRect()));
 
     auto* c = effectiveDrawingContext();
     if (!c)
