@@ -106,13 +106,14 @@ constexpr double gradientsPerDegreeDouble = 400.0 / 360.0;
 constexpr double degreesPerGradientDouble = 360.0 / 400.0;
 constexpr double turnsPerDegreeDouble = 1.0 / 360.0;
 constexpr double degreesPerTurnDouble = 360.0;
+constexpr double radiansPerTurnDouble = 2.0f * piDouble;
 
-constexpr inline double deg2rad(double d)  { return d * radiansPerDegreeDouble; }
-constexpr inline double rad2deg(double r)  { return r * degreesPerRadianDouble; }
-constexpr inline double deg2grad(double d) { return d * gradientsPerDegreeDouble; }
-constexpr inline double grad2deg(double g) { return g * degreesPerGradientDouble; }
-constexpr inline double deg2turn(double d) { return d * turnsPerDegreeDouble; }
-constexpr inline double turn2deg(double t) { return t * degreesPerTurnDouble; }
+constexpr double deg2rad(double d)  { return d * radiansPerDegreeDouble; }
+constexpr double rad2deg(double r)  { return r * degreesPerRadianDouble; }
+constexpr double deg2grad(double d) { return d * gradientsPerDegreeDouble; }
+constexpr double grad2deg(double g) { return g * degreesPerGradientDouble; }
+constexpr double deg2turn(double d) { return d * turnsPerDegreeDouble; }
+constexpr double turn2deg(double t) { return t * degreesPerTurnDouble; }
 
 
 // Note that these differ from the casting the double values above in their rounding errors.
@@ -124,22 +125,26 @@ constexpr float turnsPerDegreeFloat = 1.0f / 360.0f;
 constexpr float degreesPerTurnFloat = 360.0f;
 constexpr float radiansPerTurnFloat = 2.0f * piFloat;
 
-constexpr inline float deg2rad(float d)  { return d * radiansPerDegreeFloat; }
-constexpr inline float rad2deg(float r)  { return r * degreesPerRadianFloat; }
-constexpr inline float deg2grad(float d) { return d * gradientsPerDegreeFloat; }
-constexpr inline float grad2deg(float g) { return g * degreesPerGradientFloat; }
-constexpr inline float deg2turn(float d) { return d * turnsPerDegreeFloat; }
-constexpr inline float turn2deg(float t) { return t * degreesPerTurnFloat; }
+constexpr float deg2rad(float d)  { return d * radiansPerDegreeFloat; }
+constexpr float rad2deg(float r)  { return r * degreesPerRadianFloat; }
+constexpr float deg2grad(float d) { return d * gradientsPerDegreeFloat; }
+constexpr float grad2deg(float g) { return g * degreesPerGradientFloat; }
+constexpr float deg2turn(float d) { return d * turnsPerDegreeFloat; }
+constexpr float turn2deg(float t) { return t * degreesPerTurnFloat; }
 
-// Treat theses as conversions through the cannonical unit for angles, which is degrees.
-constexpr inline double rad2grad(double r) { return deg2grad(rad2deg(r)); }
-constexpr inline double grad2rad(double g) { return deg2rad(grad2deg(g)); }
-constexpr inline double turn2grad(double t) { return deg2grad(turn2deg(t)); }
-constexpr inline double grad2turn(double g) { return deg2turn(grad2deg(g)); }
-constexpr inline float rad2grad(float r) { return deg2grad(rad2deg(r)); }
-constexpr inline float grad2rad(float g) { return deg2rad(grad2deg(g)); }
-constexpr inline float turn2grad(float t) { return deg2grad(turn2deg(t)); }
-constexpr inline float grad2turn(float g) { return deg2turn(grad2deg(g)); }
+// Treat these as conversions through the canonical unit for angles, which is degrees.
+constexpr double rad2grad(double r) { return deg2grad(rad2deg(r)); }
+constexpr double grad2rad(double g) { return deg2rad(grad2deg(g)); }
+constexpr double turn2grad(double t) { return deg2grad(turn2deg(t)); }
+constexpr double grad2turn(double g) { return deg2turn(grad2deg(g)); }
+constexpr double turn2rad(double t) { return deg2rad(turn2deg(t)); }
+constexpr double rad2turn(double r) { return deg2turn(rad2deg(r)); }
+constexpr float rad2grad(float r) { return deg2grad(rad2deg(r)); }
+constexpr float grad2rad(float g) { return deg2rad(grad2deg(g)); }
+constexpr float turn2grad(float t) { return deg2grad(turn2deg(t)); }
+constexpr float grad2turn(float g) { return deg2turn(grad2deg(g)); }
+constexpr float turn2rad(float t) { return deg2rad(turn2deg(t)); }
+constexpr float rad2turn(float r) { return deg2turn(rad2deg(r)); }
 
 inline double roundTowardsPositiveInfinity(double value) { return std::floor(value + 0.5); }
 inline float roundTowardsPositiveInfinity(float value) { return std::floor(value + 0.5f); }

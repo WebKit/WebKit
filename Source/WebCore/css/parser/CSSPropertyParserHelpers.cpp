@@ -31,6 +31,7 @@
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParser.h"
 #include "CSSPropertyParserConsumer+Angle.h"
+#include "CSSPropertyParserConsumer+AngleDefinitions.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+Color.h"
 #include "CSSPropertyParserConsumer+ColorInterpolationMethod.h"
@@ -44,6 +45,7 @@
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
 #include "CSSPropertyParserConsumer+Percent.h"
+#include "CSSPropertyParserConsumer+PercentDefinitions.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+RawResolver.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
@@ -552,7 +554,7 @@ static RefPtr<CSSPrimitiveValue> consumeDeprecatedGradientPointValue(CSSParserTo
     return result;
 }
 
-static std::optional<std::pair<Ref<CSSValue>, Ref<CSSValue>>> consumeDeprecatedGradientPoint(CSSParserTokenRange& range)
+static std::optional<CSSGradientDeprecatedPoint> consumeDeprecatedGradientPoint(CSSParserTokenRange& range)
 {
     auto x = consumeDeprecatedGradientPointValue(range, true);
     if (!x)
@@ -562,7 +564,7 @@ static std::optional<std::pair<Ref<CSSValue>, Ref<CSSValue>>> consumeDeprecatedG
     if (!y)
         return std::nullopt;
 
-    return std::make_pair(x.releaseNonNull(), y.releaseNonNull());
+    return { { x.releaseNonNull(), y.releaseNonNull() } };
 }
 
 // Used to parse colors for -webkit-gradient(...).
@@ -633,14 +635,9 @@ static RefPtr<CSSValue> consumeDeprecatedLinearGradient(CSSParserTokenRange& ran
     if (!stops)
         return nullptr;
 
-    auto& [firstX, firstY] = *first;
-    auto& [secondX, secondY] = *second;
-
     return CSSDeprecatedLinearGradientValue::create({
-            WTFMove(firstX),
-            WTFMove(firstY),
-            WTFMove(secondX),
-            WTFMove(secondY)
+            WTFMove(*first),
+            WTFMove(*second),
         },
         CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Premultiplied),
         WTFMove(*stops)
@@ -649,6 +646,10 @@ static RefPtr<CSSValue> consumeDeprecatedLinearGradient(CSSParserTokenRange& ran
 
 static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& range, const CSSParserContext& context)
 {
+    constexpr auto radiusConsumeOptions = CSSPropertyParserOptions {
+        .valueRange = ValueRange::NonNegative
+    };
+
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
@@ -659,7 +660,7 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& ran
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto firstRadius = consumeNumber(range, ValueRange::NonNegative);
+    auto firstRadius = MetaConsumer<NumberRaw>::consume(range, { }, radiusConsumeOptions);
     if (!firstRadius)
         return nullptr;
 
@@ -673,7 +674,7 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& ran
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto secondRadius = consumeNumber(range, ValueRange::NonNegative);
+    auto secondRadius = MetaConsumer<NumberRaw>::consume(range, { }, radiusConsumeOptions);
     if (!secondRadius)
         return nullptr;
 
@@ -681,16 +682,11 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& ran
     if (!stops)
         return nullptr;
 
-    auto& [firstX, firstY] = *first;
-    auto& [secondX, secondY] = *second;
-
     return CSSDeprecatedRadialGradientValue::create({
-            WTFMove(firstX),
-            WTFMove(firstY),
-            WTFMove(secondX),
-            WTFMove(secondY),
-            firstRadius.releaseNonNull(),
-            secondRadius.releaseNonNull()
+            WTFMove(*first),
+            WTFMove(*second),
+            WTFMove(*firstRadius),
+            WTFMove(*secondRadius)
         },
         CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Premultiplied),
         WTFMove(*stops)
@@ -834,9 +830,14 @@ static RefPtr<CSSValue> consumePrefixedRadialGradient(CSSParserTokenRange& range
     if (!stops)
         return nullptr;
 
-    auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Premultiplied);
-    return CSSPrefixedRadialGradientValue::create({ WTFMove(gradientBox), WTFMove(position) },
-        repeating, colorInterpolationMethod, WTFMove(*stops));
+    return CSSPrefixedRadialGradientValue::create({
+            WTFMove(gradientBox),
+            WTFMove(position)
+        },
+        repeating,
+        CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Premultiplied),
+        WTFMove(*stops)
+    );
 }
 
 static CSSGradientColorInterpolationMethod computeGradientColorInterpolationMethod(std::optional<ColorInterpolationMethod> parsedColorInterpolationMethod, const CSSGradientColorStopList& stops)
@@ -984,15 +985,15 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
                 data.gradientBox = CSSRadialGradientValue::Shape { CSSRadialGradientValue::ShapeKeyword::Circle, WTFMove(position) };
             else {
                 bool validSize = WTF::switchOn(WTFMove(*size),
-                    [&] (CSSRadialGradientValue::ExtentKeyword&& extent) -> bool {
+                    [&](CSSRadialGradientValue::ExtentKeyword&& extent) -> bool {
                         data.gradientBox = CSSRadialGradientValue::CircleOfExtent { WTFMove(extent), WTFMove(position) };
                         return true;
                     },
-                    [&] (Ref<CSSPrimitiveValue>&& length) -> bool {
+                    [&](Ref<CSSPrimitiveValue>&& length) -> bool {
                         data.gradientBox = CSSRadialGradientValue::CircleOfLength { WTFMove(length), WTFMove(position) };
                         return true;
                     },
-                    [&] (std::pair<Ref<CSSPrimitiveValue>, Ref<CSSPrimitiveValue>>&&) -> bool {
+                    [&](std::pair<Ref<CSSPrimitiveValue>, Ref<CSSPrimitiveValue>>&&) -> bool {
                         return false;
                     }
                 );
@@ -1045,7 +1046,12 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
         }
     }
 
-    return CSSRadialGradientValue::create(WTFMove(data), repeating, computedColorInterpolationMethod, WTFMove(*stops));
+    return CSSRadialGradientValue::create(
+        WTFMove(data),
+        repeating,
+        computedColorInterpolationMethod,
+        WTFMove(*stops)
+    );
 }
 
 static RefPtr<CSSValue> consumePrefixedLinearGradient(CSSParserTokenRange& range, const CSSParserContext& context, CSSGradientRepeat repeating)
@@ -1103,8 +1109,14 @@ static RefPtr<CSSValue> consumePrefixedLinearGradient(CSSParserTokenRange& range
 
     std::optional<CSSPrefixedLinearGradientValue::GradientLine> gradientLine;
 
-    if (auto angle = consumeAngle(range, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow)) {
-        gradientLine = CSSPrefixedLinearGradientValue::Angle { angle.releaseNonNull() };
+    const auto angleConsumeOptions = CSSPropertyParserOptions {
+        .parserMode = context.mode,
+        .unitless = UnitlessQuirk::Forbid,
+        .unitlessZero = UnitlessZeroQuirk::Allow
+    };
+
+    if (auto angle = MetaConsumer<AngleRaw>::consume(range, { }, angleConsumeOptions)) {
+        gradientLine = WTF::switchOn(WTFMove(*angle), [](auto&& value) -> CSSPrefixedLinearGradientValue::GradientLine { return value; });
         if (!consumeCommaIncludingWhitespace(range))
             return nullptr;
     } else if (auto keywordGradientLine = consumeKeywordGradientLine(range)) {
@@ -1117,12 +1129,10 @@ static RefPtr<CSSValue> consumePrefixedLinearGradient(CSSParserTokenRange& range
     if (!stops)
         return nullptr;
 
-    auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Premultiplied);
-
     return CSSPrefixedLinearGradientValue::create(
         CSSPrefixedLinearGradientValue::Data { gradientLine.value_or(std::monostate { }) },
         repeating,
-        colorInterpolationMethod,
+        CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Premultiplied),
         WTFMove(*stops)
     );
 }
@@ -1191,8 +1201,14 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& range, const 
 
     std::optional<CSSLinearGradientValue::GradientLine> gradientLine;
 
-    if (auto angle = consumeAngle(range, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow))
-        gradientLine = CSSLinearGradientValue::Angle { angle.releaseNonNull() };
+    const auto angleConsumeOptions = CSSPropertyParserOptions {
+        .parserMode = context.mode,
+        .unitless = UnitlessQuirk::Forbid,
+        .unitlessZero = UnitlessZeroQuirk::Allow
+    };
+
+    if (auto angle = MetaConsumer<AngleRaw>::consume(range, { }, angleConsumeOptions))
+        gradientLine = WTF::switchOn(WTFMove(*angle), [](auto&& value) -> CSSLinearGradientValue::GradientLine { return value; });
     else if (range.peek().id() == CSSValueTo) {
         auto keywordGradientLine = consumeKeywordGradientLine(range);
         if (!keywordGradientLine)
@@ -1240,12 +1256,20 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const C
             return nullptr;
     }
 
-    RefPtr<CSSPrimitiveValue> angle;
+    CSSConicGradientValue::Angle angle = std::monostate { };
+
     if (consumeIdent<CSSValueFrom>(range)) {
         // FIXME: Unlike linear-gradient, conic-gradients are not specified to allow unitless 0 angles - https://www.w3.org/TR/css-images-4/#valdef-conic-gradient-angle.
-        angle = consumeAngle(range, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
-        if (!angle)
+        const auto angleConsumeOptions = CSSPropertyParserOptions {
+            .parserMode = context.mode,
+            .unitless = UnitlessQuirk::Forbid,
+            .unitlessZero = UnitlessZeroQuirk::Allow
+        };
+
+        auto angleValue = MetaConsumer<AngleRaw>::consume(range, { }, angleConsumeOptions);
+        if (!angleValue)
             return nullptr;
+        angle = WTF::switchOn(WTFMove(*angleValue), [](auto&& value) -> CSSConicGradientValue::Angle { return value; });
     }
 
     std::optional<CSSGradientPosition> position;
@@ -1256,13 +1280,13 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const C
         position = CSSGradientPosition { WTFMove(positionCoordinate->x), WTFMove(positionCoordinate->y) };
     }
 
-    if ((angle || position) && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
+    if ((!std::holds_alternative<std::monostate>(angle) || position) && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
         colorInterpolationMethod = consumeColorInterpolationMethod(range);
         if (!colorInterpolationMethod)
             return nullptr;
     }
 
-    if (angle || position || colorInterpolationMethod) {
+    if (!std::holds_alternative<std::monostate>(angle) || position || colorInterpolationMethod) {
         if (!consumeCommaIncludingWhitespace(range))
             return nullptr;
     }
@@ -1274,7 +1298,7 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const C
     auto computedColorInterpolationMethod = computeGradientColorInterpolationMethod(colorInterpolationMethod, *stops);
 
     return CSSConicGradientValue::create({
-            CSSConicGradientValue::Angle { WTFMove(angle) },
+            WTFMove(angle),
             WTFMove(position)
         },
         repeating,

@@ -71,6 +71,7 @@ class CSSPrimitiveValue final : public CSSValue {
 public:
     static constexpr bool isLength(CSSUnitType);
     static double computeDegrees(CSSUnitType, double angle);
+    static double computeRadians(CSSUnitType, double angle);
 
     // FIXME: Some of these use primitiveUnitType() and some use primitiveType(). Many that use primitiveUnitType() are likely broken with calc().
     bool isAngle() const { return unitCategory(primitiveType()) == CSSUnitCategory::Angle; }
@@ -346,6 +347,23 @@ inline double CSSPrimitiveValue::computeDegrees(CSSUnitType type, double angle)
         return grad2deg(angle);
     case CSSUnitType::CSS_TURN:
         return turn2deg(angle);
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
+inline double CSSPrimitiveValue::computeRadians(CSSUnitType type, double angle)
+{
+    switch (type) {
+    case CSSUnitType::CSS_DEG:
+        return deg2rad(angle);
+    case CSSUnitType::CSS_RAD:
+        return angle;
+    case CSSUnitType::CSS_GRAD:
+        return grad2rad(angle);
+    case CSSUnitType::CSS_TURN:
+        return turn2rad(angle);
     default:
         ASSERT_NOT_REACHED();
         return 0;

@@ -120,6 +120,12 @@ LengthRaw evaluateCalc(const UnevaluatedCalc<LengthRaw>&, const CSSCalcSymbolTab
 ResolutionRaw evaluateCalc(const UnevaluatedCalc<ResolutionRaw>&, const CSSCalcSymbolTable&);
 TimeRaw evaluateCalc(const UnevaluatedCalc<TimeRaw>&, const CSSCalcSymbolTable&);
 
+template<typename T>
+auto evaluateCalc(const T& component, const CSSCalcSymbolTable&) -> T
+{
+    return component;
+}
+
 template<typename... Ts>
 auto evaluateCalc(const std::variant<Ts...>& component, const CSSCalcSymbolTable& symbolTable) -> TypesMinusUnevaluatedCalcType<Ts...>
 {
@@ -134,12 +140,6 @@ auto evaluateCalc(const std::optional<std::variant<Ts...>>& component, const CSS
     if (component)
         return evaluateCalc(*component, symbolTable);
     return std::nullopt;
-}
-
-template<typename T>
-auto evaluateCalc(const T& component, const CSSCalcSymbolTable&) -> T
-{
-    return component;
 }
 
 } // namespace WebCore
