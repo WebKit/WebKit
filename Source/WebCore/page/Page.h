@@ -142,7 +142,6 @@ class Element;
 class FocusController;
 class FormData;
 class Frame;
-class GraphicsContext;
 class HTMLElement;
 class HTMLImageElement;
 class HTMLMediaElement;
@@ -269,7 +268,6 @@ enum class DisabledAdaptations : uint8_t;
 enum class DocumentClass : uint16_t;
 enum class EventTrackingRegionsEventType : uint8_t;
 enum class FindOption : uint16_t;
-enum class FilterRenderingMode : uint8_t;
 enum class LayoutMilestone : uint16_t;
 enum class LoginStatusAuthenticationType : uint8_t;
 enum class PlatformMediaSessionPlaybackControlsPurpose : uint8_t;
@@ -742,8 +740,6 @@ public:
     float textAutosizingWidth() const { return m_textAutosizingWidth; }
     void setTextAutosizingWidth(float textAutosizingWidth) { m_textAutosizingWidth = textAutosizingWidth; }
     WEBCORE_EXPORT void recomputeTextAutoSizingInAllFrames();
-
-    OptionSet<FilterRenderingMode> preferredFilterRenderingModes(const GraphicsContext&) const;
 
     const FloatBoxExtent& fullscreenInsets() const LIFETIME_BOUND { return m_fullscreenInsets; }
     WEBCORE_EXPORT void setFullscreenInsets(const FloatBoxExtent&);

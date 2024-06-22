@@ -48,6 +48,7 @@
 #include "CSSTokenizer.h"
 #include "CachedImage.h"
 #include "CanvasDrawImageSizing.h"
+#include "CanvasBase+Color.h"
 #include "CanvasFilterContextSwitcher.h"
 #include "CanvasFontKerning.h"
 #include "CanvasFontStretch.h"

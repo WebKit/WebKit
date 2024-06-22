@@ -339,7 +339,7 @@ std::optional<CSSToLengthConversionData> SVGLengthContext::cssConversionData() c
         parentStyle = renderer->parentStyle();
 
     return CSSToLengthConversionData {
-        *currentStyle,
+        currentStyle,
         rootStyle,
         parentStyle,
         protect(element->document().renderView()),

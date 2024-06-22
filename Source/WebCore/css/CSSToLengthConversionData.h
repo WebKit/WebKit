@@ -49,8 +49,8 @@ public:
     CSSToLengthConversionData(const CSSToLengthConversionData&);
     CSSToLengthConversionData(CSSToLengthConversionData&&);
 
-    explicit CSSToLengthConversionData(const Style::ComputedStyle&, Style::BuilderState&);
-    explicit CSSToLengthConversionData(const Style::ComputedStyle&, const Style::ComputedStyle* rootStyle, const Style::ComputedStyle* parentStyle, const RenderView*, const Element* elementForContainerUnitResolution);
+    explicit CSSToLengthConversionData(const Style::ComputedStyle*, Style::BuilderState&);
+    explicit CSSToLengthConversionData(const Style::ComputedStyle*, const Style::ComputedStyle* rootStyle, const Style::ComputedStyle* parentStyle, const RenderView*, const Element* elementForContainerUnitResolution);
 
     WEBCORE_EXPORT ~CSSToLengthConversionData();
 

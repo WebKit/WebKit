@@ -92,6 +92,7 @@ class EventLoopTaskGroup;
 class EventTarget;
 class FontLoadRequest;
 class GraphicsClient;
+class GraphicsContext;
 class MessagePort;
 class NotificationClient;
 class PublicURLManager;
@@ -105,6 +106,7 @@ class WeakPtrImplWithEventTargetData;
 class WebCoreOpaqueRoot;
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class CrossOriginMode : bool;
+enum class FilterRenderingMode : uint8_t;
 enum class LoadedFromOpaqueSource : bool;
 enum class NoiseInjectionPolicy : uint8_t;
 enum class ReasonForSuspension : uint8_t;
@@ -218,6 +220,8 @@ public:
 
     enum class CallStackPosition : bool { BottomMost, TopMost };
     URL currentSourceURL(CallStackPosition = CallStackPosition::BottomMost) const;
+
+    OptionSet<FilterRenderingMode> preferredFilterRenderingModes(const GraphicsContext&) const;
 
     // Called from the constructor and destructors of ActiveDOMObject.
     void didCreateActiveDOMObject(ActiveDOMObject&);

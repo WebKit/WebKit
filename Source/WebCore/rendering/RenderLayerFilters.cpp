@@ -149,12 +149,12 @@ IntOutsets RenderLayerFilters::calculateOutsets(RenderElement& renderer, const F
     if (!filter.hasFilterThatMovesPixels())
         return { };
 
-    return CSSFilterRenderer::calculateOutsets(renderer, filter, targetBoundingBox);
+    return CSSFilterRenderer::calculateOutsets(&renderer, filter, targetBoundingBox);
 }
 
 GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, GraphicsContext& context, OptionSet<PaintBehavior> paintBehavior, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect, const LayoutRect& clipRect, NOESCAPE const Function<void(GraphicsContext&)>& applyAdditionalDestinationClip)
 {
-    auto preferredFilterRenderingModes = renderer.page().preferredFilterRenderingModes(context);
+    auto preferredFilterRenderingModes = protect(renderer.document())->preferredFilterRenderingModes(context);
     auto outsets = calculateOutsets(renderer, filterBoxRect);
 
     auto dirtyFilterRegion = dirtyRect;
@@ -218,7 +218,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
             renderingOptions.add(FilterRenderingOption::FastAndLowQuality);
         if (usesSVGUserSpace)
             renderingOptions.add(FilterRenderingOption::ApplyToSVGRenderer);
-        m_filter = CSSFilterRenderer::create(renderer, renderer.style().filter(), geometry, preferredFilterRenderingModes, renderingOptions, context);
+        m_filter = CSSFilterRenderer::create(&renderer, renderer.style().filter(), geometry, preferredFilterRenderingModes, renderingOptions, context);
         m_lastUnclampedFilterScale = filterScale;
         hasUpdatedBackingStore = true;
     } else if (!usesSVGUserSpace && filterRegion != m_filter->filterRegion()) {

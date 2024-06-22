@@ -35,6 +35,7 @@
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
+#include "CSSFilter.h"
 #include "CSSFontSelector.h"
 #include "CSSParserContext.h"
 #include "CSSPropertyParserConsumer+Font.h"
@@ -147,6 +148,45 @@ RefPtr<ImageBuffer> OffscreenCanvasRenderingContext2D::transferToImageBuffer()
     willUpdateEntireContents();
     clearCanvas();
     return result;
+}
+
+std::optional<Style::Filter> OffscreenCanvasRenderingContext2D::setFilterStringWithoutUpdatingStyle(const String& filterString)
+{
+    auto& context = *canvasBase().scriptExecutionContext();
+    if (!context.settingsValues().canvasFiltersEnabled)
+        return std::nullopt;
+
+    auto parserContext = CSSParserContext(strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
+    return CSSPropertyParserHelpers::parseFilterValueListOrNoneRaw(filterString, parserContext, nullptr);
+}
+
+RefPtr<Filter> OffscreenCanvasRenderingContext2D::createFilter(const FloatRect& bounds) const
+{
+    if (bounds.isEmpty())
+        return nullptr;
+
+    auto* drawingContext = effectiveDrawingContext();
+    if (!drawingContext)
+        return nullptr;
+
+    auto& context = *canvasBase().scriptExecutionContext();
+    auto preferredFilterRenderingModes = context.preferredFilterRenderingModes(*drawingContext);
+    auto filter = CSSFilter::create(nullptr, state().filterOperations, preferredFilterRenderingModes, { 1, 1 }, bounds, *drawingContext);
+    if (!filter)
+        return nullptr;
+
+    auto outsets = calculateFilterOutsets(bounds);
+
+    filter->setFilterRegion(bounds + outsets);
+    return filter;
+}
+
+IntOutsets OffscreenCanvasRenderingContext2D::calculateFilterOutsets(const FloatRect& bounds) const
+{
+    if (state().filterOperations.isEmpty())
+        return { };
+
+    return CSSFilter::calculateOutsets(nullptr, state().filterOperations, bounds);
 }
 
 AtomString OffscreenCanvasRenderingContext2D::inheritedLanguage() const

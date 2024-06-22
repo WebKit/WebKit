@@ -88,7 +88,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(BuilderState);
 BuilderState::BuilderState(ComputedStyle& style, BuilderContext&& context)
     : m_style(style)
     , m_context(WTF::move(context))
-    , m_cssToLengthConversionData(style, *this)
+    , m_cssToLengthConversionData(&style, *this)
 {
 }
 

@@ -30,6 +30,7 @@
 #include "CanvasStyle.h"
 #include "ExceptionOr.h"
 #include "Gradient.h"
+#include "ScriptExecutionContext+Color.h"
 
 namespace WebCore {
 
@@ -70,7 +71,7 @@ ExceptionOr<void> CanvasGradient::addColorStop(ScriptExecutionContext& scriptExe
     if (!(value >= 0 && value <= 1))
         return Exception { ExceptionCode::IndexSizeError };
 
-    auto color = parseColor(colorString, scriptExecutionContext);
+    auto color = parseColor(colorString, &scriptExecutionContext);
     if (!color.isValid())
         return Exception { ExceptionCode::SyntaxError };
 

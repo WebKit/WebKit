@@ -72,9 +72,6 @@ private:
     Variant<Color, Ref<CanvasGradient>, Ref<CanvasPattern>> m_style;
 };
 
-Color parseColor(const String& colorString, CanvasBase&);
-Color parseColor(const String& colorString, ScriptExecutionContext&);
-
 inline CanvasStyle::CanvasStyle(Color color)
     : m_style(WTF::move(color))
 {
