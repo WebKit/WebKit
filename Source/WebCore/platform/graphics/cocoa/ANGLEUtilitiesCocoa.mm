@@ -142,8 +142,8 @@ RetainPtr<MTLRasterizationRateMap> newRasterizationRateMap(GCGLDisplay display, 
     descriptor_spi.minFactor  = 0.01;
 
     constexpr MTLSize maxSampleCount { 256, 256, 1 };
-    RetainPtr<MTLRasterizationRateLayerDescriptor> layerDescriptorLeft = [[MTLRasterizationRateLayerDescriptor alloc] initWithSampleCount:maxSampleCount];
-    RetainPtr<MTLRasterizationRateLayerDescriptor> layerDescriptorRight = [[MTLRasterizationRateLayerDescriptor alloc] initWithSampleCount:maxSampleCount];
+    RetainPtr<MTLRasterizationRateLayerDescriptor> layerDescriptorLeft = adoptNS([[MTLRasterizationRateLayerDescriptor alloc] initWithSampleCount:maxSampleCount]);
+    RetainPtr<MTLRasterizationRateLayerDescriptor> layerDescriptorRight = adoptNS([[MTLRasterizationRateLayerDescriptor alloc] initWithSampleCount:maxSampleCount]);
 
     if (horizontalSamplesLeft.size() > maxSampleCount.width || horizontalSamplesRight.size() > maxSampleCount.width || verticalSamples.size() > maxSampleCount.height || !layerDescriptorLeft.get() || !layerDescriptorRight.get())
         return nullptr;
