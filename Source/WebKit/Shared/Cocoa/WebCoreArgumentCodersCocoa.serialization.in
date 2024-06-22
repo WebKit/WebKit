@@ -354,14 +354,6 @@ enum class WebCore::PlatformCALayerLayerType : uint8_t {
     LayerTypeHost,
 };
 
-#if USE(APPKIT)
-using WebCore::CocoaColor = NSColor;
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-using WebCore::CocoaColor = PlatformColor;
-#endif
-
 #if HAVE(WK_SECURE_CODING_DATA_DETECTORS)
 DDScannerResult wrapped by CoreIPCDDScannerResult
 #if PLATFORM(MAC)
@@ -390,7 +382,6 @@ NSValue wrapped by CoreIPCNSValue
 NSURLCredential wrapped by CoreIPCNSURLCredential
 NSPersonNameComponents wrapped by CoreIPCPersonNameComponents
 NSDateComponents wrapped by CoreIPCDateComponents
-PlatformColor wrapped by CoreIPCColor
 NSData wrapped by CoreIPCData
 NSURL wrapped by CoreIPCURL
 NSNull wrapped by CoreIPCNull
@@ -405,8 +396,12 @@ NSDictionary wrapped by CoreIPCDictionary
 NSPresentationIntent wrapped by CoreIPCPresentationIntent
 
 #if PLATFORM(MAC)
-using NSColor = PlatformColor
 using CGDirectDisplayID = uint32_t
+using WebCore::CocoaColor = NSColor;
+NSColor wrapped by CoreIPCColor
+#else
+using WebCore::CocoaColor = UIColor;
+UIColor wrapped by CoreIPCColor
 #endif
 
 using CFTimeInterval = double
