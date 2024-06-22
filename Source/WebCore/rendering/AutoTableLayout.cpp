@@ -683,6 +683,16 @@ void AutoTableLayout::layout()
         }
     }
 
+    if (available > 0 && numAutoEmptyCellsOnly && nEffCols == numAutoEmptyCellsOnly) {
+        // All columns in this table are empty with 'width: auto'.
+        auto equalWidthForColumns = available / numAutoEmptyCellsOnly;
+        for (size_t i = 0; i < nEffCols; ++i) {
+            auto& column = m_layoutStruct[i];
+            column.computedLogicalWidth = equalWidthForColumns;
+            available -= column.computedLogicalWidth;
+        }
+    }
+
     // If we have overallocated, reduce every cell according to the difference between desired width and minwidth
     // this seems to produce to the pixel exact results with IE. Wonder if some of this also holds for width distributing.
     if (available < 0) {
