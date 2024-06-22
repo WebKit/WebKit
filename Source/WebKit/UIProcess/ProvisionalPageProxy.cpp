@@ -215,8 +215,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
     Ref protectedProcess = this->protectedProcess();
     if (page().preferences().siteIsolationEnabled()) {
         RegistrableDomain navigationDomain(m_request.url());
-        if (m_page->openerFrame())
-            mainFrameIdentifier = m_page->mainFrame()->frameID();
+        mainFrameIdentifier = m_page->mainFrame()->frameID();
         if (auto existingRemotePageProxy = m_browsingContextGroup->takeRemotePageInProcessForProvisionalPage(page(), protectedProcess)) {
             m_webPageID = existingRemotePageProxy->pageID();
             m_mainFrame = existingRemotePageProxy->page()->mainFrame();
@@ -308,7 +307,7 @@ void ProvisionalPageProxy::didCreateMainFrame(FrameIdentifier frameID)
     ASSERT(!m_mainFrame);
 
     RefPtr<WebFrameProxy> previousMainFrame = m_page->mainFrame();
-    if (m_page->openerFrame() && page().preferences().siteIsolationEnabled()) {
+    if (page().preferences().siteIsolationEnabled()) {
         ASSERT(m_page->mainFrame()->frameID() == frameID);
         m_mainFrame = m_page->mainFrame();
     } else

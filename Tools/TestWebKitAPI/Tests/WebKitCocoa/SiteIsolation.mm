@@ -3001,4 +3001,25 @@ TEST(SiteIsolation, UpdateWebpagePreferences)
         Util::spinRunLoop();
 }
 
+TEST(SiteIsolation, MainFrameRedirectBetweenExistingProcesses)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "hi"_s } },
+        { "/webkit_redirect"_s, { 302, { { "Location"_s, "https://example.com/redirected"_s } }, "redirecting..."_s } },
+        { "/redirected"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"window.length"] intValue], 1);
+    auto pidBefore = [webView _webProcessIdentifier];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://webkit.org/webkit_redirect"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"window.length"] intValue], 0);
+    EXPECT_EQ([webView _webProcessIdentifier], pidBefore);
+}
+
 }
