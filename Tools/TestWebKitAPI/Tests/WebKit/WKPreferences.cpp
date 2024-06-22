@@ -75,13 +75,8 @@ TEST(WebKit, WKPreferencesDefaults)
     EXPECT_TRUE(WKPreferencesGetJavaScriptEnabled(preference));
     EXPECT_TRUE(WKPreferencesGetLoadsImagesAutomatically(preference));
     EXPECT_TRUE(WKPreferencesGetLocalStorageEnabled(preference));
-#if PLATFORM(GTK) || PLATFORM(WPE)
-    EXPECT_TRUE(WKPreferencesGetShouldPrintBackgrounds(preference));
-    EXPECT_FALSE(WKPreferencesGetJavaScriptCanOpenWindowsAutomatically(preference));
-#else
     EXPECT_FALSE(WKPreferencesGetShouldPrintBackgrounds(preference));
     EXPECT_TRUE(WKPreferencesGetJavaScriptCanOpenWindowsAutomatically(preference));
-#endif
     EXPECT_TRUE(WKPreferencesGetHyperlinkAuditingEnabled(preference));
     EXPECT_WK_STREQ(expectedStandardFontFamily, adoptWK(WKPreferencesCopyStandardFontFamily(preference)));
     EXPECT_WK_STREQ(expectedFixedFontFamily, adoptWK(WKPreferencesCopyFixedFontFamily(preference)));
