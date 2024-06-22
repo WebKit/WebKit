@@ -216,8 +216,8 @@ public:
         return uses(other.payloadGPR()) || uses(other.tagGPR());
     }
 
-    void dump(PrintStream&) const;
-    
+    JS_EXPORT_PRIVATE void dump(PrintStream&) const;
+
     // Intentionally public to make JSValueRegs usable for template parameters.
     GPRReg m_tagGPR { InvalidGPRReg };
     GPRReg m_payloadGPR { InvalidGPRReg };
@@ -483,8 +483,9 @@ public:
     static constexpr GPRReg nonPreservedNonReturnGPR = ARMRegisters::r5;
     static constexpr GPRReg nonPreservedNonArgumentGPR0 = ARMRegisters::r5;
     static constexpr GPRReg nonPreservedNonArgumentGPR1 = ARMRegisters::r4;
+    static constexpr GPRReg nonPreservedNonArgumentGPR2 = ARMRegisters::r9;
 
-    static constexpr GPRReg handlerGPR = GPRInfo::nonPreservedNonArgumentGPR1;
+    static constexpr GPRReg handlerGPR = GPRInfo::nonPreservedNonArgumentGPR2;
 
     static constexpr GPRReg wasmScratchGPR0 = regT5;
     static constexpr GPRReg wasmScratchGPR1 = regT6;
@@ -1032,6 +1033,7 @@ preferredArgumentJSR()
 
 template<typename RegisterBank, auto... registers>
 struct StaticScratchRegisterAllocator {
+    static_assert(noOverlap(registers...));
     static constexpr size_t countRegisters(JSValueRegs)
     {
 #if USE(JSVALUE32_64)

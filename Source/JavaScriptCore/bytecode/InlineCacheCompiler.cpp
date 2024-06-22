@@ -438,6 +438,7 @@ static bool forInBy(AccessCase::AccessType type)
     return false;
 }
 
+#if CPU(ADDRESS64)
 static bool isStateless(AccessCase::AccessType type)
 {
     switch (type) {
@@ -559,6 +560,7 @@ static bool isStateless(AccessCase::AccessType type)
 
     return false;
 }
+#endif
 
 static bool doesJSCalls(AccessCase::AccessType type)
 {
