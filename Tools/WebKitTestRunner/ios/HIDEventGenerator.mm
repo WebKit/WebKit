@@ -616,7 +616,7 @@ static InterpolationType interpolationFromString(NSString *string)
     for (NSUInteger index = 0; index < touchCount; ++index)
         locations[index] = location;
     
-    [self touchDownAtPoints:&locations[0] touchCount:touchCount];
+    [self touchDownAtPoints:locations.data() touchCount:touchCount];
 }
 
 - (void)touchDown:(CGPoint)location
@@ -652,7 +652,7 @@ static InterpolationType interpolationFromString(NSString *string)
     for (NSUInteger index = 0; index < touchCount; ++index)
         locations[index] = location;
     
-    [self liftUpAtPoints:&locations[0] touchCount:touchCount];
+    [self liftUpAtPoints:locations.data() touchCount:touchCount];
 }
 
 - (void)liftUp:(CGPoint)location
@@ -681,7 +681,7 @@ static InterpolationType interpolationFromString(NSString *string)
 
             nextLocations[i] = calculateNextCurveLocation(startLocations[i], newLocations[i], interval);
         }
-        [self _updateTouchPoints:&nextLocations[0] count:touchCount];
+        [self _updateTouchPoints:nextLocations.data() count:touchCount];
 
         delayBetweenMove(eventIndex++, elapsed);
     }
