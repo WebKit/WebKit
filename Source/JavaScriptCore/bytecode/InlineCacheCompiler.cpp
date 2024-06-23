@@ -1683,7 +1683,8 @@ Ref<InlineCacheHandler> InlineCacheHandler::createPreCompiled(Ref<InlineCacheHan
         result->u.s1.m_holder = accessCase.identifier().cell();
         break;
     }
-    case AccessCase::Delete: {
+    case AccessCase::Delete:
+    case AccessCase::SetPrivateBrand: {
         result->u.s2.m_newStructureID = accessCase.newStructureID();
         break;
     }
@@ -1716,6 +1717,9 @@ Ref<InlineCacheHandler> InlineCacheHandler::createPreCompiled(Ref<InlineCacheHan
         auto& derived = accessCase.as<ModuleNamespaceAccessCase>();
         result->u.s3.m_moduleNamespaceObject = derived.moduleNamespaceObject();
         result->u.s3.m_moduleVariableSlot = &derived.moduleEnvironment()->variableAt(derived.scopeOffset());
+        break;
+    }
+    case AccessCase::CheckPrivateBrand: {
         break;
     }
     default:
@@ -6227,6 +6231,58 @@ MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteMissHandler(VM&
     return deleteByValIgnoreHandlerImpl<resultValue, isSymbol>(vm);
 }
 
+MacroAssemblerCodeRef<JITThunkPtrTag> checkPrivateBrandHandler(VM&)
+{
+    CCallHelpers jit;
+
+    using BaselineJITRegisters::PrivateBrand::baseJSR;
+    using BaselineJITRegisters::PrivateBrand::propertyJSR;
+    using BaselineJITRegisters::PrivateBrand::scratch1GPR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    CCallHelpers::JumpList fallThrough;
+
+    constexpr bool isSymbol = true;
+    fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseJSR.payloadGPR(), scratch1GPR));
+    fallThrough.append(InlineCacheCompiler::emitDataICCheckUid(jit, isSymbol, propertyJSR, scratch1GPR));
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    fallThrough.link(&jit);
+    InlineCacheCompiler::emitDataICJumpNextHandler(jit);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "CheckPrivateBrand handler"_s, "CheckPrivateBrand handler");
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> setPrivateBrandHandler(VM&)
+{
+    CCallHelpers jit;
+
+    using BaselineJITRegisters::PrivateBrand::baseJSR;
+    using BaselineJITRegisters::PrivateBrand::propertyJSR;
+    using BaselineJITRegisters::PrivateBrand::scratch1GPR;
+
+    InlineCacheCompiler::emitDataICPrologue(jit);
+
+    CCallHelpers::JumpList fallThrough;
+
+    constexpr bool isSymbol = true;
+    fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseJSR.payloadGPR(), scratch1GPR));
+    fallThrough.append(InlineCacheCompiler::emitDataICCheckUid(jit, isSymbol, propertyJSR, scratch1GPR));
+
+    jit.transfer32(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfNewStructureID()), CCallHelpers::Address(baseJSR.payloadGPR(), JSCell::structureIDOffset()));
+    InlineCacheCompiler::emitDataICEpilogue(jit);
+    jit.ret();
+
+    fallThrough.link(&jit);
+    InlineCacheCompiler::emitDataICJumpNextHandler(jit);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "SetPrivateBrand handler"_s, "SetPrivateBrand handler");
+}
+
 AccessGenerationResult InlineCacheCompiler::compileHandler(const GCSafeConcurrentJSLocker&, PolymorphicAccess& poly, CodeBlock* codeBlock, Ref<AccessCase>&& accessCase)
 {
     SuperSamplerScope superSamplerScope(false);
@@ -6455,27 +6511,21 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                 }
                 case AccessCase::ProxyObjectLoad: {
                     ASSERT(!accessCase.viaGlobalProxy());
-                    collectConditions(accessCase, watchedConditions, checkingConditions);
-                    if (checkingConditions.isEmpty()) {
-                        auto code = vm.getCTIStub(CommonJITThunkID::GetByIdProxyObjectLoadHandler).retagged<JITStubRoutinePtrTag>();
-                        auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
-                        connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
-                        return finishPreCompiledCodeGeneration(WTFMove(stub));
-                    }
-                    break;
+                    ASSERT(accessCase.conditionSet().isEmpty());
+                    auto code = vm.getCTIStub(CommonJITThunkID::GetByIdProxyObjectLoadHandler).retagged<JITStubRoutinePtrTag>();
+                    auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
+                    connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), { }, WTFMove(additionalWatchpointSets));
+                    return finishPreCompiledCodeGeneration(WTFMove(stub));
                 }
                 case AccessCase::IntrinsicGetter:
                     break;
                 case AccessCase::ModuleNamespaceLoad: {
                     ASSERT(!accessCase.viaGlobalProxy());
-                    collectConditions(accessCase, watchedConditions, checkingConditions);
-                    if (checkingConditions.isEmpty()) {
-                        auto code = vm.getCTIStub(CommonJITThunkID::GetByIdModuleNamespaceLoadHandler).retagged<JITStubRoutinePtrTag>();
-                        auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
-                        connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
-                        return finishPreCompiledCodeGeneration(WTFMove(stub));
-                    }
-                    break;
+                    ASSERT(accessCase.conditionSet().isEmpty());
+                    auto code = vm.getCTIStub(CommonJITThunkID::GetByIdModuleNamespaceLoadHandler).retagged<JITStubRoutinePtrTag>();
+                    auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
+                    connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), { }, WTFMove(additionalWatchpointSets));
+                    return finishPreCompiledCodeGeneration(WTFMove(stub));
                 }
                 default:
                     break;
@@ -6493,14 +6543,12 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                 switch (accessCase.m_type) {
                 case AccessCase::Replace: {
                     ASSERT(canBeViaGlobalProxy(accessCase.m_type));
+                    ASSERT(accessCase.conditionSet().isEmpty());
                     if (!accessCase.viaGlobalProxy()) {
-                        collectConditions(accessCase, watchedConditions, checkingConditions);
-                        if (checkingConditions.isEmpty()) {
-                            auto code = vm.getCTIStub(CommonJITThunkID::PutByIdReplaceHandler).retagged<JITStubRoutinePtrTag>();
-                            auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
-                            connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
-                            return finishPreCompiledCodeGeneration(WTFMove(stub));
-                        }
+                        auto code = vm.getCTIStub(CommonJITThunkID::PutByIdReplaceHandler).retagged<JITStubRoutinePtrTag>();
+                        auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
+                        connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), { }, { });
+                        return finishPreCompiledCodeGeneration(WTFMove(stub));
                     }
                     break;
                 }
@@ -6606,28 +6654,25 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                 case AccessCase::DeleteNonConfigurable:
                 case AccessCase::DeleteMiss: {
                     ASSERT(!accessCase.viaGlobalProxy());
-                    collectConditions(accessCase, watchedConditions, checkingConditions);
-                    if (checkingConditions.isEmpty()) {
-                        CommonJITThunkID thunkID = CommonJITThunkID::DeleteByIdDeleteHandler;
-                        switch (accessCase.m_type) {
-                        case AccessCase::Delete:
-                            thunkID = CommonJITThunkID::DeleteByIdDeleteHandler;
-                            break;
-                        case AccessCase::DeleteNonConfigurable:
-                            thunkID = CommonJITThunkID::DeleteByIdDeleteNonConfigurableHandler;
-                            break;
-                        case AccessCase::DeleteMiss:
-                            thunkID = CommonJITThunkID::DeleteByIdDeleteMissHandler;
-                            break;
-                        default:
-                            break;
-                        }
-                        auto code = vm.getCTIStub(thunkID).retagged<JITStubRoutinePtrTag>();
-                        auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
-                        connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
-                        return finishPreCompiledCodeGeneration(WTFMove(stub));
+                    ASSERT(accessCase.conditionSet().isEmpty());
+                    CommonJITThunkID thunkID = CommonJITThunkID::DeleteByIdDeleteHandler;
+                    switch (accessCase.m_type) {
+                    case AccessCase::Delete:
+                        thunkID = CommonJITThunkID::DeleteByIdDeleteHandler;
+                        break;
+                    case AccessCase::DeleteNonConfigurable:
+                        thunkID = CommonJITThunkID::DeleteByIdDeleteNonConfigurableHandler;
+                        break;
+                    case AccessCase::DeleteMiss:
+                        thunkID = CommonJITThunkID::DeleteByIdDeleteMissHandler;
+                        break;
+                    default:
+                        break;
                     }
-                    break;
+                    auto code = vm.getCTIStub(thunkID).retagged<JITStubRoutinePtrTag>();
+                    auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
+                    connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), { }, WTFMove(additionalWatchpointSets));
+                    return finishPreCompiledCodeGeneration(WTFMove(stub));
                 }
                 default:
                     break;
@@ -6655,7 +6700,8 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                 break;
             }
 
-            case AccessType::GetByVal: {
+            case AccessType::GetByVal:
+            case AccessType::GetPrivateName: {
                 switch (accessCase.m_type) {
                 case AccessCase::GetGetter:
                 case AccessCase::Load: {
@@ -6720,18 +6766,16 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                 switch (accessCase.m_type) {
                 case AccessCase::Replace: {
                     ASSERT(canBeViaGlobalProxy(accessCase.m_type));
+                    ASSERT(accessCase.conditionSet().isEmpty());
                     if (!accessCase.viaGlobalProxy()) {
-                        collectConditions(accessCase, watchedConditions, checkingConditions);
-                        if (checkingConditions.isEmpty()) {
-                            MacroAssemblerCodeRef<JITStubRoutinePtrTag> code;
-                            if (accessCase.uid()->isSymbol())
-                                code = vm.getCTIStub(CommonJITThunkID::PutByValWithSymbolReplaceHandler).retagged<JITStubRoutinePtrTag>();
-                            else
-                                code = vm.getCTIStub(CommonJITThunkID::PutByValWithStringReplaceHandler).retagged<JITStubRoutinePtrTag>();
-                            auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
-                            connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
-                            return finishPreCompiledCodeGeneration(WTFMove(stub));
-                        }
+                        MacroAssemblerCodeRef<JITStubRoutinePtrTag> code;
+                        if (accessCase.uid()->isSymbol())
+                            code = vm.getCTIStub(CommonJITThunkID::PutByValWithSymbolReplaceHandler).retagged<JITStubRoutinePtrTag>();
+                        else
+                            code = vm.getCTIStub(CommonJITThunkID::PutByValWithStringReplaceHandler).retagged<JITStubRoutinePtrTag>();
+                        auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
+                        connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), { }, WTFMove(additionalWatchpointSets));
+                        return finishPreCompiledCodeGeneration(WTFMove(stub));
                     }
                     break;
                 }
@@ -6773,7 +6817,9 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                 break;
             }
 
-            case AccessType::InByVal: {
+            case AccessType::InByVal:
+            case AccessType::HasPrivateBrand:
+            case AccessType::HasPrivateName: {
                 switch (accessCase.m_type) {
                 case AccessCase::InHit:
                 case AccessCase::InMiss: {
@@ -6804,28 +6850,54 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                 case AccessCase::DeleteNonConfigurable:
                 case AccessCase::DeleteMiss: {
                     ASSERT(!accessCase.viaGlobalProxy());
-                    collectConditions(accessCase, watchedConditions, checkingConditions);
-                    if (checkingConditions.isEmpty()) {
-                        CommonJITThunkID thunkID = CommonJITThunkID::DeleteByValWithStringDeleteHandler;
-                        switch (accessCase.m_type) {
-                        case AccessCase::Delete:
-                            thunkID = accessCase.uid()->isSymbol() ? CommonJITThunkID::DeleteByValWithSymbolDeleteHandler : CommonJITThunkID::DeleteByValWithStringDeleteHandler;
-                            break;
-                        case AccessCase::DeleteNonConfigurable:
-                            thunkID = accessCase.uid()->isSymbol() ? CommonJITThunkID::DeleteByValWithSymbolDeleteNonConfigurableHandler : CommonJITThunkID::DeleteByValWithStringDeleteNonConfigurableHandler;
-                            break;
-                        case AccessCase::DeleteMiss:
-                            thunkID = accessCase.uid()->isSymbol() ? CommonJITThunkID::DeleteByValWithSymbolDeleteMissHandler : CommonJITThunkID::DeleteByValWithStringDeleteMissHandler;
-                            break;
-                        default:
-                            break;
-                        }
-                        auto code = vm.getCTIStub(thunkID).retagged<JITStubRoutinePtrTag>();
-                        auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
-                        connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
-                        return finishPreCompiledCodeGeneration(WTFMove(stub));
+                    ASSERT(accessCase.conditionSet().isEmpty());
+                    CommonJITThunkID thunkID = CommonJITThunkID::DeleteByValWithStringDeleteHandler;
+                    switch (accessCase.m_type) {
+                    case AccessCase::Delete:
+                        thunkID = accessCase.uid()->isSymbol() ? CommonJITThunkID::DeleteByValWithSymbolDeleteHandler : CommonJITThunkID::DeleteByValWithStringDeleteHandler;
+                        break;
+                    case AccessCase::DeleteNonConfigurable:
+                        thunkID = accessCase.uid()->isSymbol() ? CommonJITThunkID::DeleteByValWithSymbolDeleteNonConfigurableHandler : CommonJITThunkID::DeleteByValWithStringDeleteNonConfigurableHandler;
+                        break;
+                    case AccessCase::DeleteMiss:
+                        thunkID = accessCase.uid()->isSymbol() ? CommonJITThunkID::DeleteByValWithSymbolDeleteMissHandler : CommonJITThunkID::DeleteByValWithStringDeleteMissHandler;
+                        break;
+                    default:
+                        break;
                     }
+                    auto code = vm.getCTIStub(thunkID).retagged<JITStubRoutinePtrTag>();
+                    auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
+                    connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), { }, WTFMove(additionalWatchpointSets));
+                    return finishPreCompiledCodeGeneration(WTFMove(stub));
+                }
+                default:
                     break;
+                }
+                break;
+            }
+
+            case AccessType::CheckPrivateBrand:
+            case AccessType::SetPrivateBrand: {
+                switch (accessCase.m_type) {
+                case AccessCase::CheckPrivateBrand:
+                case AccessCase::SetPrivateBrand: {
+                    ASSERT(!accessCase.viaGlobalProxy());
+                    ASSERT(accessCase.conditionSet().isEmpty());
+                    CommonJITThunkID thunkID = CommonJITThunkID::CheckPrivateBrandHandler;
+                    switch (accessCase.m_type) {
+                    case AccessCase::CheckPrivateBrand:
+                        thunkID = CommonJITThunkID::CheckPrivateBrandHandler;
+                        break;
+                    case AccessCase::SetPrivateBrand:
+                        thunkID = CommonJITThunkID::SetPrivateBrandHandler;
+                        break;
+                    default:
+                        break;
+                    }
+                    auto code = vm.getCTIStub(thunkID).retagged<JITStubRoutinePtrTag>();
+                    auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
+                    connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), { }, WTFMove(additionalWatchpointSets));
+                    return finishPreCompiledCodeGeneration(WTFMove(stub));
                 }
                 default:
                     break;
@@ -7075,6 +7147,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithStringDeleteMissHandler(VM&
 MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteNonConfigurableHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteMissHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> checkPrivateBrandHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> setPrivateBrandHandler(VM&) { return { }; }
 AccessGenerationResult InlineCacheCompiler::compileHandler(const GCSafeConcurrentJSLocker&, PolymorphicAccess&, CodeBlock*, Ref<AccessCase>&&) { return { }; }
 #endif
 

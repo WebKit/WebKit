@@ -464,6 +464,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithStringDeleteMissHandler(VM&
 MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteNonConfigurableHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteMissHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> checkPrivateBrandHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> setPrivateBrandHandler(VM&);
 
 } // namespace JSC
 

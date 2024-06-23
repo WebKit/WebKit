@@ -120,6 +120,8 @@ class NativeExecutable;
     macro(DeleteByValWithSymbolDeleteHandler, deleteByValWithSymbolDeleteHandler) \
     macro(DeleteByValWithSymbolDeleteNonConfigurableHandler, deleteByValWithSymbolDeleteNonConfigurableHandler) \
     macro(DeleteByValWithSymbolDeleteMissHandler, deleteByValWithSymbolDeleteMissHandler) \
+    macro(CheckPrivateBrandHandler, checkPrivateBrandHandler) \
+    macro(SetPrivateBrandHandler, setPrivateBrandHandler) \
 
 #if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
 #define JSC_FOR_EACH_YARR_JIT_BACKREFERENCES_THUNK(macro) \
