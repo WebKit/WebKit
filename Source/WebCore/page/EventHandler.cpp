@@ -2785,9 +2785,11 @@ void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node*
             if (auto lastElementUnderMouse = m_lastElementUnderMouse)
                 lastElementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventNames.mouseoutEvent, 0, m_elementUnderMouse.get());
 
-            for (auto& chain : leftElementsChain) {
-                if (hasCapturingMouseLeaveListener || chain->hasEventListeners(eventNames.pointerleaveEvent) || chain->hasEventListeners(eventNames.mouseleaveEvent))
-                    chain->dispatchMouseEvent(platformMouseEvent, eventNames.mouseleaveEvent, 0, m_elementUnderMouse.get());
+            if (m_lastElementUnderMouse && m_lastElementUnderMouse->isConnected()) {
+                for (auto& chain : leftElementsChain) {
+                    if (hasCapturingMouseLeaveListener || chain->hasEventListeners(eventNames.pointerleaveEvent) || chain->hasEventListeners(eventNames.mouseleaveEvent))
+                        chain->dispatchMouseEvent(platformMouseEvent, eventNames.mouseleaveEvent, 0, m_elementUnderMouse.get());
+                }
             }
 
             if (auto elementUnderMouse = m_elementUnderMouse)

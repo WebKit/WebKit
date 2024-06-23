@@ -1,4 +1,5 @@
 
+
 PASS Setup event listeners and wait for load
 FAIL Removing an element at mousedown assert_true: Removing an element at mousedown: Some events should've been fired after mousedown expected true got false
 FAIL Removing an element at mouseup assert_true: Removing an element at mouseup: Some events should've been fired after mousedown expected true got false
