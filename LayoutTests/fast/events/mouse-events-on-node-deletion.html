@@ -1,0 +1,86 @@
+    <!DOCTYPE HTML>
+    <script src="../../resources/js-test.js"></script>
+    <style>
+        .box {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            height: 100px;
+            width: 100px;
+        }
+
+        #outer {
+            background-color: grey;
+        }
+
+        #inner {
+            background-color: red;
+        }
+    </style>
+
+    <div id="outer" class="box">
+        <div id="inner" class="box"></div>
+    </div>
+
+    <div id="console"></div>
+
+    <script>
+        description("Verifies that mouse events are not fired on deleted nodes");
+
+        var eventLog = "";
+
+        function eventLogger(event) {
+            if (event.eventPhase == Event.AT_TARGET) {
+                eventLog += event.currentTarget.id + " received " + event.type + " ";
+            }
+        }
+
+        function clearLog() {
+            eventLog = "";
+        }
+
+        function init() {
+            var outer = document.getElementById("outer");
+            var inner = document.getElementById("inner");
+
+            ["mouseenter", "mouseleave", "mouseover", "mouseout"].forEach(function(event) {
+                outer.addEventListener(event, eventLogger);
+                inner.addEventListener(event, eventLogger);
+            });
+
+            inner.addEventListener("click", function () {
+                outer.removeChild(inner);
+                eventLog += "removed inner ";
+            });
+        }
+
+        init();
+
+        if (window.eventSender) {
+            eventSender.mouseMoveTo(30, 30);
+            shouldBeEqualToString("eventLog", "outer received mouseover outer received mouseenter ");
+            clearLog();
+
+            eventSender.mouseMoveTo(130, 130);
+            shouldBeEqualToString("eventLog", "outer received mouseout inner received mouseover inner received mouseenter ");
+            clearLog();
+
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+
+            shouldBeEqualToString("eventLog", "removed inner ");
+            clearLog();
+
+            eventSender.mouseMoveTo(30, 30);
+            shouldBeEqualToString("eventLog", "outer received mouseover outer received mouseenter ");
+            clearLog();
+
+            eventSender.mouseMoveTo(0, 0);
+            shouldBeEqualToString("eventLog", "outer received mouseout outer received mouseleave ");
+            clearLog();
+
+        } else {
+            debug("This test requires eventSender");
+        }
+    </script>
+

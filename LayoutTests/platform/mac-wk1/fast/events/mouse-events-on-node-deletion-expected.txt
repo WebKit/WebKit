@@ -1,0 +1,14 @@
+Verifies that mouse events are not fired on deleted nodes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS eventLog is "outer received mouseover outer received mouseenter "
+PASS eventLog is "outer received mouseout inner received mouseover inner received mouseenter "
+PASS eventLog is "removed inner "
+PASS eventLog is "outer received mouseover outer received mouseenter "
+PASS eventLog is "outer received mouseout outer received mouseleave "
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
