@@ -34,6 +34,7 @@
 #include "Options.h"
 #include "PerfLog.h"
 #include "WasmCallee.h"
+#include "YarrJIT.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
@@ -94,6 +95,15 @@ void LinkBuffer::logJITCodeForPerf(CodeRef<LinkBufferPtrTag>& codeRef, ASCIILite
     case Profile::WasmBBQ: {
         if (m_ownerUID)
             out.print(makeString(static_cast<Wasm::Callee*>(m_ownerUID)->indexOrName()));
+        else
+            dumpSimpleName(out, simpleName);
+        break;
+    }
+#endif
+#if ENABLE(YARR_JIT)
+    case Profile::YarrJIT: {
+        if (m_ownerUID)
+            static_cast<Yarr::YarrCodeBlock*>(m_ownerUID)->dumpSimpleName(out);
         else
             dumpSimpleName(out, simpleName);
         break;

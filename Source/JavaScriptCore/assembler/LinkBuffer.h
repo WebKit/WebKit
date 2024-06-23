@@ -31,8 +31,7 @@
 #define DUMP_CODE 0
 
 #define GLOBAL_THUNK_ID reinterpret_cast<void*>(static_cast<intptr_t>(-1))
-#define REGEXP_CODE_ID reinterpret_cast<void*>(static_cast<intptr_t>(-2))
-#define CSS_CODE_ID reinterpret_cast<void*>(static_cast<intptr_t>(-3))
+#define CSS_CODE_ID reinterpret_cast<void*>(static_cast<intptr_t>(-2))
 
 #include "JITCompilationEffort.h"
 #include "MacroAssembler.h"

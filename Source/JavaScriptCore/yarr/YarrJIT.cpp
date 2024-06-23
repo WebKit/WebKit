@@ -4770,7 +4770,7 @@ public:
             });
         }
 
-        LinkBuffer linkBuffer(m_jit, REGEXP_CODE_ID, LinkBuffer::Profile::YarrJIT, JITCompilationCanFail);
+        LinkBuffer linkBuffer(m_jit, &codeBlock, LinkBuffer::Profile::YarrJIT, JITCompilationCanFail);
         if (linkBuffer.didFailToAllocate()) {
             codeBlock.setFallBackWithFailureReason(JITFailureReason::ExecutableMemoryAllocationFailure);
             return;
@@ -5246,7 +5246,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> areCanonicallyEquivalentThunkGenerator(VM&
     jit.emitFunctionEpilogue();
     jit.ret();
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::YarrJIT);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
 
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, nullptr, "YARR areCanonicallyEquivalent call");
 }
@@ -5334,6 +5334,14 @@ void jitCompileInlinedTest(StackCheck* m_compilationThreadStackChecker, StringVi
     yarrGenerator.compileInline(boyerMooreData);
 }
 #endif
+
+void YarrCodeBlock::dumpSimpleName(PrintStream& out) const
+{
+    if (m_regExp)
+        RegExp::dumpToStream(m_regExp, out);
+    else
+        out.print("unspecified");
+}
 
 }}
 

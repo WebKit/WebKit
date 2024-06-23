@@ -238,7 +238,7 @@ private:
     Vector<UniqueRef<BoyerMooreBitmap::Map>> m_maps;
 };
 
-class YarrCodeBlock : public YarrBoyerMooreData {
+class YarrCodeBlock final : public YarrBoyerMooreData {
     struct InlineStats {
         InlineStats()
             : m_insnCount(0)
@@ -281,7 +281,9 @@ public:
     using YarrJITCodeMatchOnly8 = UGPRPair (*)(const LChar* input, UCPURegister start, UCPURegister length, void*, MatchingContextHolder*) YARR_CALL;
     using YarrJITCodeMatchOnly16 = UGPRPair (*)(const UChar* input, UCPURegister start, UCPURegister length, void*, MatchingContextHolder*) YARR_CALL;
 
-    YarrCodeBlock() = default;
+    YarrCodeBlock(RegExp* regExp)
+        : m_regExp(regExp)
+    { }
 
     void setFallBackWithFailureReason(JITFailureReason failureReason) { m_failureReason = failureReason; }
     std::optional<JITFailureReason> failureReason() { return m_failureReason; }
@@ -419,6 +421,8 @@ public:
         clearMaps();
     }
 
+    void dumpSimpleName(PrintStream&) const;
+
 private:
     MacroAssemblerCodeRef<Yarr8BitPtrTag> m_ref8;
     MacroAssemblerCodeRef<Yarr16BitPtrTag> m_ref16;
@@ -426,6 +430,7 @@ private:
     MacroAssemblerCodeRef<YarrMatchOnly16BitPtrTag> m_matchOnly16;
     InlineStats m_matchOnly8Stats;
     InlineStats m_matchOnly16Stats;
+    RegExp* m_regExp { nullptr };
 
     bool m_usesPatternContextBuffer { false };
     std::optional<JITFailureReason> m_failureReason;
