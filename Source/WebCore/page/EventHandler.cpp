@@ -2781,13 +2781,13 @@ void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node*
                 leftElementsChain.shrink(leftElementsChain.size() - i);
                 enteredElementsChain.shrink(enteredElementsChain.size() - i);
             }
-              
+
             if (auto lastElementUnderMouse = m_lastElementUnderMouse) {
-                if(lastElementUnderMouse->isInDocumentTree()) 
+                if (lastElementUnderMouse->isInDocumentTree())
                     lastElementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventNames.mouseoutEvent, 0, m_elementUnderMouse.get());
             }
 
-            if(m_lastElementUnderMouse && m_lastElementUnderMouse->isInDocumentTree()) {
+            if (m_lastElementUnderMouse && m_lastElementUnderMouse->isInDocumentTree()) {
                 for (auto& chain : leftElementsChain) {
                     if (hasCapturingMouseLeaveListener || chain->hasEventListeners(eventNames.pointerleaveEvent) || chain->hasEventListeners(eventNames.mouseleaveEvent))
                         chain->dispatchMouseEvent(platformMouseEvent, eventNames.mouseleaveEvent, 0, m_elementUnderMouse.get());
