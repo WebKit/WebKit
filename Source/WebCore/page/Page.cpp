@@ -351,6 +351,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_speechRecognitionProvider((WTFMove(pageConfiguration.speechRecognitionProvider)))
     , m_mediaRecorderProvider((WTFMove(pageConfiguration.mediaRecorderProvider)))
     , m_webRTCProvider(WTFMove(pageConfiguration.webRTCProvider))
+    , m_rtcController(RTCController::create())
     , m_domTimerAlignmentInterval(DOMTimer::defaultAlignmentInterval())
     , m_domTimerAlignmentIntervalIncreaseTimer(*this, &Page::domTimerAlignmentIntervalIncreaseTimerFired)
     , m_activityState(pageInitialActivityState())
@@ -3924,7 +3925,7 @@ void Page::disableICECandidateFiltering()
 {
     m_shouldEnableICECandidateFilteringByDefault = false;
 #if ENABLE(WEB_RTC)
-    m_rtcController.disableICECandidateFilteringForAllOrigins();
+    m_rtcController->disableICECandidateFilteringForAllOrigins();
 #endif
 }
 
@@ -3932,14 +3933,14 @@ void Page::enableICECandidateFiltering()
 {
     m_shouldEnableICECandidateFilteringByDefault = true;
 #if ENABLE(WEB_RTC)
-    m_rtcController.enableICECandidateFiltering();
+    m_rtcController->enableICECandidateFiltering();
 #endif
 }
 
 void Page::didChangeMainDocument()
 {
 #if ENABLE(WEB_RTC)
-    m_rtcController.reset(m_shouldEnableICECandidateFilteringByDefault);
+    m_rtcController->reset(m_shouldEnableICECandidateFilteringByDefault);
 #endif
     m_pointerCaptureController->reset();
 

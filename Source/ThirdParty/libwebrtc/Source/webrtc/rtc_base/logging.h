@@ -512,11 +512,6 @@ class LogMessage {
   static void LogToDebug(LoggingSeverity min_sev);
   static LoggingSeverity GetLogToDebug();
 
-#if defined(WEBRTC_WEBKIT_BUILD)
-  typedef void (*LogOutputCallback)(LoggingSeverity severity, const char*);
-  static void SetLogOutput(LoggingSeverity min_sev, LogOutputCallback);
-#endif
-
   // Sets whether logs will be directed to stderr in debug mode.
   static void SetLogToStderr(bool log_to_stderr);
   // Stream: Any non-blocking stream interface.

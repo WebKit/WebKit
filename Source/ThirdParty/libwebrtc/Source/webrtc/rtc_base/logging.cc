@@ -192,17 +192,6 @@ LogMessage::LogMessage(const char* file,
   }
 }
 
-#if defined(WEBRTC_WEBKIT_BUILD)
-static LogMessage::LogOutputCallback g_log_output_callback = nullptr;
-void LogMessage::SetLogOutput(LoggingSeverity min_sev, LogOutputCallback callback)
-{
-    g_dbg_sev = min_sev;
-    webrtc::MutexLock lock(&GetLoggingLock());
-    UpdateMinLogSeverity();
-    g_log_output_callback = callback;
-}
-#endif
-
 #if defined(WEBRTC_ANDROID)
 LogMessage::LogMessage(const char* file,
                        int line,
@@ -444,11 +433,6 @@ void LogMessage::OutputToDebug(const LogLineRef& log_line) {
     }
   }
 #endif  // WEBRTC_ANDROID
-#if defined(WEBRTC_WEBKIT_BUILD)
-  if (g_log_output_callback) {
-    g_log_output_callback(log_line.severity(), msg_str.c_str());
-  }
-#endif
   if (log_to_stderr) {
     fprintf(stderr, "%s", msg_str.c_str());
     fflush(stderr);

@@ -176,10 +176,22 @@ static rtc::LoggingSeverity computeLogLevel(WTFLogLevel level)
     return rtc::LS_NONE;
 }
 
+static LibWebRTCLogSink& getRTCLogSink()
+{
+    static LazyNeverDestroyed<LibWebRTCLogSink> logSink;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        LibWebRTCLogSink::LogCallback callback = [] (auto&& severity, auto&& message) {
+            doReleaseLogging(severity, message.c_str());
+        };
+        logSink.construct(WTFMove(callback));
+    });
+    return logSink.get();
+}
+
 void LibWebRTCProvider::setRTCLogging(WTFLogLevel level)
 {
-    auto rtcLevel = computeLogLevel(level);
-    rtc::LogMessage::SetLogOutput(rtcLevel, (rtcLevel == rtc::LS_NONE) ? nullptr : doReleaseLogging);
+    getRTCLogSink().start(computeLogLevel(level));
 }
 
 static void initializePeerConnectionFactoryAndThreads(PeerConnectionFactoryAndThreads& factoryAndThreads)

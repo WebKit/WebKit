@@ -74,16 +74,6 @@ rtc::Thread& NetworkRTCProvider::rtcNetworkThread()
     return *networkThread.get();
 }
 
-#if !RELEASE_LOG_DISABLED
-static void doReleaseLogging(rtc::LoggingSeverity severity, const char* message)
-{
-    if (severity == rtc::LS_ERROR)
-        RELEASE_LOG_ERROR(WebRTC, "LibWebRTC error: %" PUBLIC_LOG_STRING, message);
-    else
-        RELEASE_LOG(WebRTC, "LibWebRTC message: %" PUBLIC_LOG_STRING, message);
-}
-#endif
-
 NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection)
     : m_connection(&connection)
     , m_ipcConnection(connection.connection())
@@ -97,9 +87,6 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
 #if PLATFORM(COCOA)
     if (auto* session = static_cast<NetworkSessionCocoa*>(connection.networkSession()))
         m_applicationBundleIdentifier = session->sourceApplicationBundleIdentifier().utf8();
-#endif
-#if !RELEASE_LOG_DISABLED
-    rtc::LogMessage::SetLogOutput(WebKit2LogWebRTC.state == WTFLogChannelState::On ? rtc::LS_INFO : rtc::LS_WARNING, doReleaseLogging);
 #endif
 }
 

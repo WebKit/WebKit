@@ -416,7 +416,7 @@ public:
     PointerLockController& pointerLockController() { return m_pointerLockController.get(); }
 #endif
     WebRTCProvider& webRTCProvider() { return m_webRTCProvider.get(); }
-    RTCController& rtcController() { return m_rtcController; }
+    RTCController& rtcController() { return m_rtcController.get(); }
     WEBCORE_EXPORT void disableICECandidateFiltering();
     WEBCORE_EXPORT void enableICECandidateFiltering();
     bool shouldEnableICECandidateFilteringByDefault() const { return m_shouldEnableICECandidateFilteringByDefault; }
@@ -1274,7 +1274,7 @@ private:
 
     UniqueRef<MediaRecorderProvider> m_mediaRecorderProvider;
     UniqueRef<WebRTCProvider> m_webRTCProvider;
-    RTCController m_rtcController;
+    Ref<RTCController> m_rtcController;
 
     PlatformDisplayID m_displayID { 0 };
     std::optional<FramesPerSecond> m_displayNominalFramesPerSecond;
