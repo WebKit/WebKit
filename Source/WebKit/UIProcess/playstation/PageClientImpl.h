@@ -164,8 +164,6 @@ private:
     UnixFileDescriptor hostFileDescriptor() override;
 #endif
 
-    void didClearEditorStateAfterPageTransition() final { }
-
     PlayStationWebView& m_view;
 };
 

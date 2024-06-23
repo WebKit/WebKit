@@ -1543,7 +1543,6 @@ public:
     void flushPendingIntrinsicContentSizeUpdate();
     void updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize&);
 
-    void clearEditorStateAfterPageTransition();
     void scheduleFullEditorStateUpdate();
 
     bool userIsInteracting() const { return m_userIsInteracting; }

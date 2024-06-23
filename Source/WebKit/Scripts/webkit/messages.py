@@ -1069,7 +1069,6 @@ def headers_for_type(type):
         'WebKit::ContentWorldIdentifier': ['"ContentWorldShared.h"'],
         'WebKit::DocumentEditingContextRequest': ['"DocumentEditingContext.h"'],
         'WebKit::DrawingAreaIdentifier': ['"DrawingAreaInfo.h"'],
-        'WebKit::EditorStateIdentifier': ['"IdentifierTypes.h"'],
         'WebKit::FindDecorationStyle': ['"WebFindOptions.h"'],
         'WebKit::FindOptions': ['"WebFindOptions.h"'],
         'WebKit::GestureRecognizerState': ['"GestureTypes.h"'],

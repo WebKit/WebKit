@@ -3096,17 +3096,6 @@ void WebPageProxy::setMaintainsInactiveSelection(bool newValue)
     m_maintainsInactiveSelection = newValue;
 }
 
-void WebPageProxy::clearEditorStateAfterPageTransition(EditorStateIdentifier identifier)
-{
-    if (identifier < internals().editorState.identifier)
-        return;
-
-    internals().editorState = { };
-    internals().editorState.identifier = identifier;
-
-    protectedPageClient()->didClearEditorStateAfterPageTransition();
-}
-
 void WebPageProxy::scheduleFullEditorStateUpdate()
 {
     if (!hasRunningProcess())

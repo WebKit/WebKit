@@ -1741,6 +1741,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self _updateTapHighlight];
 
+    if (_page->editorState().selectionIsNone && _lastSelectionDrawingInfo.type == WebKit::WKSelectionDrawingInfo::SelectionType::None)
+        return;
+
     _selectionNeedsUpdate = YES;
     [self _updateChangedSelection:YES];
 }
@@ -8235,12 +8238,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     for (auto block : std::exchange(_actionsToPerformAfterEditorStateUpdate, { }))
         block();
-}
-
-- (void)_didClearEditorStateAfterPageTransition
-{
-    _cachedSelectedTextRange = nil;
-    _lastSelectionDrawingInfo = { };
 }
 
 - (void)_updateInitialWritingDirectionIfNecessary
