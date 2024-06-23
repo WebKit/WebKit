@@ -179,7 +179,7 @@ static MediaTrackConstraintSetMap convertToInternalForm(ConstraintSetType setTyp
     set(result, setType, MediaConstraintType::Torch, constraintSet.torch);
 
     set(result, setType, MediaConstraintType::BackgroundBlur, constraintSet.backgroundBlur);
-    set(result, setType, MediaConstraintType::PowerEfficientPixelFormat, constraintSet.powerEfficientPixelFormat);
+    set(result, setType, MediaConstraintType::PowerEfficient, constraintSet.powerEfficient);
     return result;
 }
 

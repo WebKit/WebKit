@@ -71,7 +71,7 @@ bool RealtimeMediaSourceSupportedConstraints::supportsConstraint(MediaConstraint
         return supportsTorch();
     case MediaConstraintType::BackgroundBlur:
         return supportsBackgroundBlur();
-    case MediaConstraintType::PowerEfficientPixelFormat:
+    case MediaConstraintType::PowerEfficient:
         return false;
     }
 

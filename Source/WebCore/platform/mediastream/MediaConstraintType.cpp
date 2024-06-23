@@ -70,8 +70,8 @@ String convertToString(MediaConstraintType type)
         return "torch"_s;
     case MediaConstraintType::BackgroundBlur:
         return "backgroundBlur"_s;
-    case MediaConstraintType::PowerEfficientPixelFormat:
-        return "powerEfficientPixelFormat"_s;
+    case MediaConstraintType::PowerEfficient:
+        return "powerEfficient"_s;
     }
 
     ASSERT_NOT_REACHED();

@@ -13,14 +13,14 @@ promise_test(async (test) => {
         video.srcObject.getVideoTracks()[0].stop();
     });
 
-    video.srcObject = await navigator.mediaDevices.getUserMedia({ video: { powerEfficientPixelFormat: false, facingMode: "environment" } });
+    video.srcObject = await navigator.mediaDevices.getUserMedia({ video: { powerEfficient: false, facingMode: "environment" } });
     const track = video.srcObject.getVideoTracks()[0];
 
     assert_equals(track.getSettings().width, 640);
     assert_equals(track.getSettings().height, 480);
 
-    assert_equals(undefined, track.getSettings().powerEfficientPixelFormat);
-    assert_equals(undefined, track.getCapabilities().powerEfficientPixelFormat);
+    assert_equals(undefined, track.getSettings().powerEfficient);
+    assert_equals(undefined, track.getCapabilities().powerEfficient);
 
     await video.play();
 
@@ -33,14 +33,14 @@ promise_test(async (test) => {
         video.srcObject.getVideoTracks()[0].stop();
     });
 
-    video.srcObject = await navigator.mediaDevices.getUserMedia({ video: { powerEfficientPixelFormat: true, facingMode: "environment" } });
+    video.srcObject = await navigator.mediaDevices.getUserMedia({ video: { powerEfficient: true, facingMode: "environment" } });
     const track = video.srcObject.getVideoTracks()[0];
 
     assert_equals(track.getSettings().width, 640);
     assert_equals(track.getSettings().height, 360);
 
-    assert_equals(undefined, track.getSettings().powerEfficientPixelFormat);
-    assert_equals(undefined, track.getCapabilities().powerEfficientPixelFormat);
+    assert_equals(undefined, track.getSettings().powerEfficient);
+    assert_equals(undefined, track.getCapabilities().powerEfficient);
 
     await video.play();
 
@@ -55,7 +55,7 @@ promise_test(async (test) => {
         stream2.getVideoTracks()[0].stop();
     });
 
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { powerEfficientPixelFormat: true, facingMode: "environment" } });
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { powerEfficient: true, facingMode: "environment" } });
 
     const stream2 = stream.clone();
     await stream2.getVideoTracks()[0].applyConstraints({ width: 1000 });

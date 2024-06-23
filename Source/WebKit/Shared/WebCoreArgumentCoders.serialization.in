@@ -2293,7 +2293,7 @@ struct WebCore::MediaStreamRequest {
     std::optional<WebCore::DoubleConstraint> m_zoom;
     std::optional<WebCore::BooleanConstraint> m_torch;
     std::optional<WebCore::BooleanConstraint> m_backgroundBlur;
-    std::optional<WebCore::BooleanConstraint> m_powerEfficientPixelFormat;
+    std::optional<WebCore::BooleanConstraint> m_powerEfficient;
 }
 #endif
 

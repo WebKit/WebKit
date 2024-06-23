@@ -606,7 +606,7 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::BackgroundBlur:
-    case MediaConstraintType::PowerEfficientPixelFormat:
+    case MediaConstraintType::PowerEfficient:
     case MediaConstraintType::Unknown:
         break;
     }
@@ -653,7 +653,7 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::BackgroundBlur:
-    case MediaConstraintType::PowerEfficientPixelFormat:
+    case MediaConstraintType::PowerEfficient:
     case MediaConstraintType::Unknown:
         break;
     }
@@ -703,7 +703,7 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::BackgroundBlur:
-    case MediaConstraintType::PowerEfficientPixelFormat:
+    case MediaConstraintType::PowerEfficient:
     case MediaConstraintType::Unknown:
         break;
     }
@@ -730,7 +730,7 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
 
         return constraint.fitnessDistance(capabilities.torch());
     case MediaConstraintType::BackgroundBlur:
-    case MediaConstraintType::PowerEfficientPixelFormat:
+    case MediaConstraintType::PowerEfficient:
         return 0;
     case MediaConstraintType::Width:
     case MediaConstraintType::Height:
@@ -938,7 +938,7 @@ void RealtimeMediaSource::applyConstraint(MediaConstraintType constraintType, co
         // FIXME: Implement support, https://bugs.webkit.org/show_bug.cgi?id=275491
         break;
     }
-    case MediaConstraintType::PowerEfficientPixelFormat: {
+    case MediaConstraintType::PowerEfficient: {
         ASSERT(constraint.isBoolean());
         // FIXME: Implement support, https://bugs.webkit.org/show_bug.cgi?id=275491
         break;
@@ -994,7 +994,7 @@ std::optional<MediaConstraintType> RealtimeMediaSource::selectSettings(const Med
         if (!supportsConstraint(constraintType))
             return false;
 
-        if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom || constraintType == MediaConstraintType::PowerEfficientPixelFormat) {
+        if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom || constraintType == MediaConstraintType::PowerEfficient) {
             candidates.set(constraintType, constraint);
             return false;
         }
@@ -1039,7 +1039,7 @@ std::optional<MediaConstraintType> RealtimeMediaSource::selectSettings(const Med
 
         advancedConstraint.forEach([&](auto constraintType, const MediaConstraint& constraint) {
 
-            if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom || constraintType == MediaConstraintType::PowerEfficientPixelFormat)
+            if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom || constraintType == MediaConstraintType::PowerEfficient)
                 return;
 
             distance = fitnessDistance(constraintType, constraint);
@@ -1112,7 +1112,7 @@ bool RealtimeMediaSource::supportsConstraint(MediaConstraintType constraintType)
         return capabilities.supportsTorch();
     case MediaConstraintType::BackgroundBlur:
         return capabilities.supportsBackgroundBlur();
-    case MediaConstraintType::PowerEfficientPixelFormat:
+    case MediaConstraintType::PowerEfficient:
         return deviceType() == CaptureDevice::DeviceType::Camera;
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
@@ -1166,7 +1166,7 @@ std::optional<MediaConstraintType> RealtimeMediaSource::hasAnyInvalidConstraint(
         case MediaConstraintType::Zoom:
         case MediaConstraintType::Torch:
         case MediaConstraintType::BackgroundBlur:
-        case MediaConstraintType::PowerEfficientPixelFormat:
+        case MediaConstraintType::PowerEfficient:
         case MediaConstraintType::Unknown:
             m_fitnessScore += distance ? 1 : 2;
             break;
@@ -1229,7 +1229,7 @@ RealtimeMediaSource::VideoPresetConstraints RealtimeMediaSource::extractVideoPre
         }
     }
 
-    if (auto contraint = constraints.powerEfficientPixelFormat())
+    if (auto contraint = constraints.powerEfficient())
         contraint->getExact(result.shouldPreferPowerEfficiency) || contraint->getIdeal(result.shouldPreferPowerEfficiency);
 
     return result;
