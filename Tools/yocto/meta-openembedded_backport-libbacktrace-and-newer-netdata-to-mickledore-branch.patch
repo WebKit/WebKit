@@ -26,6 +26,14 @@ index 609e55f4a..46fa81866 100644
 -COMPATIBLE_HOST:riscv64 = "null"
 +# libunwind does not support RISCV32 yet
  COMPATIBLE_HOST:riscv32 = "null"
+diff --git a/sources/meta-openembedded/meta-webserver/recipes-webadmin/netdata/netdata/apps_groups.conf b/sources/meta-openembedded/meta-webserver/recipes-webadmin/netdata/netdata/apps_groups.conf
+new file mode 100644
+index 000000000..630afe443
+--- /dev/null
++++ b/sources/meta-openembedded/meta-webserver/recipes-webadmin/netdata/netdata/apps_groups.conf
+@@ -0,0 +1,2 @@
++cog: cog
++wpe: WPEWebProcess WPENetworkProcess
 diff --git a/sources/meta-openembedded/meta-webserver/recipes-webadmin/netdata/netdata/netdata.service b/sources/meta-openembedded/meta-webserver/recipes-webadmin/netdata/netdata/netdata.service
 index ca13f7287..b13abad11 100644
 --- a/sources/meta-openembedded/meta-webserver/recipes-webadmin/netdata/netdata/netdata.service
@@ -45,13 +53,13 @@ index ca13f7287..b13abad11 100644
  [Install]
  WantedBy=multi-user.target
 diff --git a/sources/meta-openembedded/meta-webserver/recipes-webadmin/netdata/netdata_1.36.1.bb b/sources/meta-openembedded/meta-webserver/recipes-webadmin/netdata/netdata_1.44.3.bb
-similarity index 76%
+similarity index 75%
 rename from meta-webserver/recipes-webadmin/netdata/netdata_1.36.1.bb
 rename to meta-webserver/recipes-webadmin/netdata/netdata_1.44.3.bb
-index 52d99e770..700c6b234 100644
+index 52d99e770..27cc5c705 100644
 --- a/sources/meta-openembedded/meta-webserver/recipes-webadmin/netdata/netdata_1.36.1.bb
 +++ b/sources/meta-openembedded/meta-webserver/recipes-webadmin/netdata/netdata_1.44.3.bb
-@@ -5,19 +5,18 @@ HOMEPAGE = "https://github.com/netdata/netdata/"
+@@ -5,19 +5,19 @@ HOMEPAGE = "https://github.com/netdata/netdata/"
  LICENSE = "GPL-3.0-only"
  LIC_FILES_CHKSUM = "file://LICENSE;md5=fc9b848046ef54b5eaee6071947abd24"
  
@@ -62,6 +70,7 @@ index 52d99e770..700c6b234 100644
 +SRC_URI = "\
 +    https://github.com/${BPN}/${BPN}/releases/download/v${PV}/${BPN}-v${PV}.tar.gz \
 +    file://netdata.conf \
++    file://apps_groups.conf \
 +    file://netdata.service \
  "
 -SRC_URI[sha256sum] = "f4a1233112b55e07e2862ffda0416255f0aa4c8e2b16929b76fa7ad6b69fd931"
@@ -79,7 +88,7 @@ index 52d99e770..700c6b234 100644
  
  S = "${WORKDIR}/${BPN}-v${PV}"
  
-@@ -41,10 +40,10 @@ SYSTEMD_AUTO_ENABLE:${PN} = "enable"
+@@ -41,10 +41,10 @@ SYSTEMD_AUTO_ENABLE:${PN} = "enable"
  USERADD_PACKAGES = "${PN}"
  USERADD_PARAM:${PN} = "--system --no-create-home --home-dir ${localstatedir}/run/netdata --user-group netdata"
  
@@ -94,7 +103,15 @@ index 52d99e770..700c6b234 100644
  
  # ebpf doesn't compile (or detect) the cross compilation well
  EXTRA_OECONF += "--disable-ebpf"
-@@ -79,4 +78,4 @@ do_install:append() {
+@@ -62,6 +62,7 @@ do_install:append() {
+ 
+     # Install default netdata.conf
+     install -d ${D}${sysconfdir}/netdata
++    install -m 0644 ${WORKDIR}/apps_groups.conf ${D}${sysconfdir}/netdata/
+     install -m 0644 ${WORKDIR}/netdata.conf ${D}${sysconfdir}/netdata/
+     sed -i -e 's,@@sysconfdir,${sysconfdir},g' ${D}${sysconfdir}/netdata/netdata.conf
+     sed -i -e 's,@@libdir,${libexecdir},g' ${D}${sysconfdir}/netdata/netdata.conf
+@@ -79,4 +80,4 @@ do_install:append() {
  
  FILES:${PN} += "${localstatedir}/cache/netdata/ ${localstatedir}/lib/netdata/"
  
