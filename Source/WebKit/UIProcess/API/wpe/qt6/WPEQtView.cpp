@@ -72,7 +72,14 @@ bool WPEQtView::event(QEvent* ev)
 void WPEQtView::geometryChange(const QRectF& newGeometry, const QRectF&)
 {
     Q_D(WPEQtView);
-    d->m_size = newGeometry.size().toSize();
+
+    auto newSize = newGeometry.size().toSize();
+    if (newSize.width() <= 0 || newSize.height() <= 0) {
+        qWarning() << "WPEQtView::geometryChange(), ignoring invalid resize to new size " << newSize << " keeping old size " << d->m_size;
+        return;
+    }
+
+    d->m_size = newSize;
     if (!d->m_webView)
         return;
 

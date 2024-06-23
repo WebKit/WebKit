@@ -33,7 +33,7 @@ public:
     QUrl m_url;
     QString m_html;
     QUrl m_baseUrl;
-    QSize m_size;
+    QSize m_size { 800, 600 };
     bool m_errorOccured { false };
 };
 
