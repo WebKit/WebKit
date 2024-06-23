@@ -2136,9 +2136,17 @@ std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> WebProcessPo
     if (!sourceURL.isValid()
         || !targetURL.isValid()
         || sourceURL.isEmpty()
-        || (siteIsolationEnabled ? targetSite.matches(sourceURL) : targetSite.domain().matches(sourceURL))
-        || (sourceURL.protocolIsAbout() && (!sourceProcess->hasCommittedAnyMeaningfulProvisionalLoads() || sourceProcess->registrableDomain().matches(targetURL))))
+        || (siteIsolationEnabled ? targetSite.matches(sourceURL) : targetSite.domain().matches(sourceURL)))
         return { WTFMove(sourceProcess), nullptr, "Navigation is same-site"_s };
+
+    if (sourceURL.protocolIsAbout()) {
+        if (sourceProcess->registrableDomain().matches(targetURL))
+            return { WTFMove(sourceProcess), nullptr, "Navigation is treated as same-site"_s };
+        // With site isolation enabled, this condition is not enough to indicate the web process can be reused;
+        // we may also need to consider whether the process is used or in use by other sites.
+        if (!siteIsolationEnabled && !sourceProcess->hasCommittedAnyMeaningfulProvisionalLoads())
+            return { WTFMove(sourceProcess), nullptr, "Navigation is treated as same-site"_s };
+    }
 
     auto reason = "Navigation is cross-site"_s;
     
