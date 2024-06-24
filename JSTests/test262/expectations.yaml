@@ -5,8 +5,6 @@ test/annexB/language/comments/single-line-html-close-first-line-2.js:
   raw: Expected uncaught exception with name 'Test262Error' but given exception class is not defined
 test/annexB/language/comments/single-line-html-close-first-line-3.js:
   raw: Expected uncaught exception with name 'Test262Error' but given exception class is not defined
-test/annexB/language/eval-code/direct/script-decl-lex-no-collision.js:
-  default: "SyntaxError: Can't create duplicate variable: 'test262Fn'"
 test/annexB/language/function-code/block-decl-func-skip-arguments.js:
   default: 'Test262Error: Expected SameValue(«function arguments() {}», «[object Arguments]») to be true'
 test/built-ins/AsyncFromSyncIteratorPrototype/next/for-await-iterator-next-rejected-promise-close.js:
