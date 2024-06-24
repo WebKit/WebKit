@@ -22,6 +22,7 @@ set(WPEPlatformWayland_SOURCES
 set(WPEPlatformWayland_INSTALLED_HEADERS
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/wpe-wayland.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEDisplayWayland.h
+    ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEMonitorWayland.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEViewWayland.h
 )
 
