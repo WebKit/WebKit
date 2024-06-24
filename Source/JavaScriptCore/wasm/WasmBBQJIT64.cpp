@@ -3104,7 +3104,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addBranchCast(ControlData& data, Expres
 
 int BBQJIT::alignedFrameSize(int frameSize) const
 {
-    return WTF::roundUpToMultipleOf(stackAlignmentBytes(), frameSize);
+    return WTF::roundUpToMultipleOf<stackAlignmentBytes()>(frameSize);
 }
 
 void BBQJIT::restoreWebAssemblyGlobalState()
@@ -4565,7 +4565,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& origin
     ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
 
     CallInformation callInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
-    Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), callInfo.headerAndArgumentStackSizeInBytes);
+    Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callInfo.headerAndArgumentStackSizeInBytes);
     m_maxCalleeStackSize = std::max<int>(calleeStackSize, m_maxCalleeStackSize);
 
     GPRReg calleePtr;

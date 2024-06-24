@@ -216,7 +216,7 @@ RefPtr<JSEntrypointCallee> LLIntPlan::tryCreateInterpretedJSToWasmCallee(unsigne
         RegisterAtOffsetList savedResultRegisters = wasmFrameConvention.computeResultsOffsetList();
         size_t totalFrameSize = wasmFrameConvention.headerAndArgumentStackSizeInBytes;
         totalFrameSize += savedResultRegisters.sizeOfAreaInBytes();
-        totalFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), totalFrameSize);
+        totalFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(totalFrameSize);
 
         metadata.append(JSEntrypointInterpreterCalleeMetadata::FrameSize);
         metadata.append(static_cast<JSEntrypointInterpreterCalleeMetadata>(safeCast<int8_t>(totalFrameSize / 8)));

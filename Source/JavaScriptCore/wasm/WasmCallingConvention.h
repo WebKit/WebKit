@@ -324,7 +324,7 @@ public:
         fpArgumentCount = 0;
 
         uint32_t stackResults = numberOfStackResults(signature) * sizeof(Register);
-        uint32_t stackCountAligned = WTF::roundUpToMultipleOf(stackAlignmentBytes(), std::max(stackArgs, stackResults));
+        uint32_t stackCountAligned = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(std::max(stackArgs, stackResults));
         size_t resultStackOffset = headerSize + stackCountAligned - stackResults;
         Vector<ArgumentLocation, 1> results(signature.returnCount());
         for (size_t i = 0; i < signature.returnCount(); ++i) {
@@ -603,7 +603,7 @@ public:
         fpArgumentCount = 0;
 
         uint32_t stackResults = numberOfStackResults(signature) * sizeof(Register);
-        uint32_t stackCountAligned = WTF::roundUpToMultipleOf(stackAlignmentBytes(), std::max(stackArgs, stackResults));
+        uint32_t stackCountAligned = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(std::max(stackArgs, stackResults));
         size_t resultStackOffset = headerSize + stackCountAligned - stackResults;
         Vector<ArgumentLocation, 1> results(signature.returnCount());
         for (size_t i = 0; i < signature.returnCount(); ++i) {

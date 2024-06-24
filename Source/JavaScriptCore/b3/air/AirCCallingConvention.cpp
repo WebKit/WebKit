@@ -100,7 +100,7 @@ Vector<Arg> computeCCallingConvention(Code& code, CCallValue* value)
     unsigned stackOffset = 0;
     for (unsigned i = 1; i < value->numChildren(); ++i)
         marshallCCallArgument(result, gpArgumentCount, fpArgumentCount, stackOffset, value->child(i));
-    code.requestCallArgAreaSizeInBytes(WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset));
+    code.requestCallArgAreaSizeInBytes(WTF::roundUpToMultipleOf<stackAlignmentBytes()>(stackOffset));
     return result;
 }
 

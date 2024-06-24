@@ -168,7 +168,7 @@ unsigned ScratchRegisterAllocator::preserveRegistersToStackForCall(AssemblyHelpe
     unsigned byteSizeOfSetRegisters = usedRegisters.byteSizeOfSetRegisters();
     unsigned stackOffset = byteSizeOfSetRegisters;
     stackOffset += extraBytesAtTopOfStack;
-    stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset);
+    stackOffset = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(stackOffset);
     jit.subPtr(
         MacroAssembler::TrustedImm32(stackOffset),
         MacroAssembler::stackPointerRegister);
@@ -251,7 +251,7 @@ void ScratchRegisterAllocator::restoreRegistersFromStackForCall(AssemblyHelpers&
 
     unsigned stackOffset = byteSizeOfSetRegisters;
     stackOffset += extraBytesAtTopOfStack;
-    stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset);
+    stackOffset = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(stackOffset);
 
     ASSERT(offset == byteSizeOfSetRegisters);
     RELEASE_ASSERT(stackOffset == numberOfStackBytesUsedForRegisterPreservation);

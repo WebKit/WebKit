@@ -160,7 +160,7 @@ public:
     {
         m_callArgAreaSize = std::max(
             m_callArgAreaSize,
-            static_cast<unsigned>(WTF::roundUpToMultipleOf(stackAlignmentBytes(), size)));
+            static_cast<unsigned>(WTF::roundUpToMultipleOf<stackAlignmentBytes()>(size)));
     }
 
     unsigned frameSize() const

@@ -3034,7 +3034,7 @@ int BBQJIT::alignedFrameSize(int frameSize) const
 {
     // On armv7 account for misalignment due to of saved {FP, PC}
     constexpr int misalignment = 4 + 4;
-    return WTF::roundUpToMultipleOf(stackAlignmentBytes(), frameSize + misalignment) - misalignment;
+    return WTF::roundUpToMultipleOf<stackAlignmentBytes()>(frameSize + misalignment) - misalignment;
 }
 
 void BBQJIT::restoreWebAssemblyGlobalState()
@@ -3457,7 +3457,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& origin
     ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
 
     CallInformation callInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
-    Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), callInfo.headerAndArgumentStackSizeInBytes);
+    Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callInfo.headerAndArgumentStackSizeInBytes);
     m_maxCalleeStackSize = std::max<int>(calleeStackSize, m_maxCalleeStackSize);
 
     GPRReg calleePtr;
