@@ -45,7 +45,7 @@ ThreadSpecificAssemblerData& threadSpecificAssemblerData()
     return *threadSpecificAssemblerDataPtr;
 }
 
-#if CPU(ARM64E)
+#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
 static ThreadSpecificAssemblerHashes* threadSpecificAssemblerHashesPtr;
 ThreadSpecificAssemblerHashes& threadSpecificAssemblerHashes()
 {
@@ -57,7 +57,7 @@ ThreadSpecificAssemblerHashes& threadSpecificAssemblerHashes()
         });
     return *threadSpecificAssemblerHashesPtr;
 }
-#endif // CPU(ARM64E)
+#endif // ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
 
 #endif // ENABLE(ASSEMBLER)
 

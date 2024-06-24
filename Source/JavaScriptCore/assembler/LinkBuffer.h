@@ -390,7 +390,7 @@ private:
     void* m_ownerUID { nullptr };
 #if ENABLE(BRANCH_COMPACTION)
     AssemblerData m_assemblerStorage;
-#if CPU(ARM64E)
+#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
     AssemblerHashes m_assemblerHashesStorage;
 #endif
     bool m_shouldPerformBranchCompaction { true };
