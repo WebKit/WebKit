@@ -551,7 +551,6 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
     auto* globalObject = scriptExecutionContext()->globalObject();
     if (!globalObject && m_ongoingAPIMethodTracker)
         globalObject = m_ongoingAPIMethodTracker->committedPromise->globalObject();
-    ASSERT(globalObject);
     if (!globalObject)
         return;
 
