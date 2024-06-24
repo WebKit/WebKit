@@ -7253,3 +7253,5 @@ fast/events/ios/rotation/safari-like-rotation.html [ Failure ]
 webkit.org/b/275713 fast/text/international/system-language/declarative-language.html [ Failure ]
 
 webkit.org/b/275709 [ Debug ] imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form.html [ Skip ]
+
+webkit.org/b/275822 [ Debug ] imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-userInitiated.html [ Skip ]
