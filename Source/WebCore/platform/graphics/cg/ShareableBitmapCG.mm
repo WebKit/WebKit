@@ -165,14 +165,14 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
     ref(); // Balanced by deref in releaseBitmapContextData.
 
     m_releaseBitmapContextDataCalled = false;
-    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(data(), size().width(), size().height(), bitsPerComponent, bytesPerRow, m_configuration.platformColorSpace(), m_configuration.bitmapInfo(), releaseBitmapContextData, this));
+    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(mutableSpan().data(), size().width(), size().height(), bitsPerComponent, bytesPerRow, m_configuration.platformColorSpace(), m_configuration.bitmapInfo(), releaseBitmapContextData, this));
     if (!bitmapContext) {
         // When CGBitmapContextCreateWithData fails and returns null, it will only
         // call the release callback in some circumstances <rdar://82228446>. We
         // work around this by recording whether it was called, and calling it
         // ourselves if needed.
         if (!m_releaseBitmapContextDataCalled)
-            releaseBitmapContextData(this, this->data());
+            releaseBitmapContextData(this, this->mutableSpan().data());
         return nullptr;
     }
     ASSERT(!m_releaseBitmapContextDataCalled);
@@ -220,11 +220,11 @@ RetainPtr<CGImageRef> ShareableBitmap::makeCGImageCopy()
 
 RetainPtr<CGImageRef> ShareableBitmap::makeCGImage(ShouldInterpolate shouldInterpolate)
 {
-    verifyImageBufferIsBigEnough(data(), sizeInBytes());
+    verifyImageBufferIsBigEnough(span());
 
-    auto dataProvider = adoptCF(CGDataProviderCreateWithData(this, data(), sizeInBytes(), [](void* typelessBitmap, const void* typelessData, size_t) {
+    auto dataProvider = adoptCF(CGDataProviderCreateWithData(this, mutableSpan().data(), sizeInBytes(), [](void* typelessBitmap, const void* typelessData, size_t) {
         auto* bitmap = static_cast<ShareableBitmap*>(typelessBitmap);
-        ASSERT_UNUSED(typelessData, bitmap->data() == typelessData);
+        ASSERT_UNUSED(typelessData, bitmap->span().data() == typelessData);
         bitmap->deref();
     }));
 
@@ -256,7 +256,7 @@ RetainPtr<CGImageRef> ShareableBitmap::createCGImage(CGDataProviderRef dataProvi
 void ShareableBitmap::releaseBitmapContextData(void* typelessBitmap, void* typelessData)
 {
     ShareableBitmap* bitmap = static_cast<ShareableBitmap*>(typelessBitmap);
-    ASSERT_UNUSED(typelessData, bitmap->data() == typelessData);
+    ASSERT_UNUSED(typelessData, bitmap->span().data() == typelessData);
     bitmap->m_releaseBitmapContextDataCalled = true;
     bitmap->deref(); // Balanced by ref in createGraphicsContext.
 }

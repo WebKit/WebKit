@@ -159,7 +159,8 @@ public:
     IntSize size() const { return m_configuration.size(); }
     IntRect bounds() const { return IntRect(IntPoint(), size()); }
 
-    WEBCORE_EXPORT void* data() const;
+    WEBCORE_EXPORT std::span<const uint8_t> span() const;
+    WEBCORE_EXPORT std::span<uint8_t> mutableSpan();
     size_t bytesPerRow() const { return m_configuration.bytesPerRow(); }
     size_t sizeInBytes() const { return m_configuration.sizeInBytes(); }
 

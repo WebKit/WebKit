@@ -53,10 +53,10 @@ CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& 
     return cairo_format_stride_for_width(cairoFormat, size.width());
 }
 
-static inline RefPtr<cairo_surface_t> createSurfaceFromData(void* data, const IntSize& size)
+static inline RefPtr<cairo_surface_t> createSurfaceFromData(uint8_t* data, const IntSize& size)
 {
     const int stride = cairo_format_stride_for_width(cairoFormat, size.width());
-    return adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(data), cairoFormat, size.width(), size.height(), stride));
+    return adoptRef(cairo_image_surface_create_for_data(data, cairoFormat, size.width(), size.height(), stride));
 }
 
 std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
@@ -72,7 +72,7 @@ void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, 
 
 void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const IntPoint& dstPoint, const IntRect& srcRect)
 {
-    RefPtr<cairo_surface_t> surface = createSurfaceFromData(data(), size());
+    RefPtr<cairo_surface_t> surface = createSurfaceFromData(mutableSpan().data(), size());
     cairo_surface_set_device_scale(surface.get(), scaleFactor, scaleFactor);
     FloatRect destRect(dstPoint, srcRect.size());
 
@@ -83,12 +83,12 @@ void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const I
 
 RefPtr<cairo_surface_t> ShareableBitmap::createPersistentCairoSurface()
 {
-    return createSurfaceFromData(data(), size());
+    return createSurfaceFromData(mutableSpan().data(), size());
 }
 
 RefPtr<cairo_surface_t> ShareableBitmap::createCairoSurface()
 {
-    RefPtr<cairo_surface_t> image = createSurfaceFromData(data(), size());
+    RefPtr<cairo_surface_t> image = createSurfaceFromData(mutableSpan().data(), size());
 
     ref(); // Balanced by deref in releaseSurfaceData.
     static cairo_user_data_key_t dataKey;

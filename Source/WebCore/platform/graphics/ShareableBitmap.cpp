@@ -168,9 +168,14 @@ ShareableBitmap::ShareableBitmap(ShareableBitmapConfiguration configuration, Ref
 {
 }
 
-void* ShareableBitmap::data() const
+std::span<const uint8_t> ShareableBitmap::span() const
 {
-    return m_sharedMemory->mutableSpan().data();
+    return m_sharedMemory->span();
+}
+
+std::span<uint8_t> ShareableBitmap::mutableSpan()
+{
+    return m_sharedMemory->mutableSpan();
 }
 
 } // namespace WebCore

@@ -76,7 +76,7 @@ void ImageBufferBackend::convertToLuminanceMask()
     putPixelBuffer(*pixelBuffer, sourceRect, IntPoint::zero(), AlphaPremultiplication::Premultiplied);
 }
 
-void ImageBufferBackend::getPixelBuffer(const IntRect& sourceRect, void* sourceData, PixelBuffer& destinationPixelBuffer)
+void ImageBufferBackend::getPixelBuffer(const IntRect& sourceRect, const uint8_t* sourceData, PixelBuffer& destinationPixelBuffer)
 {
     IntRect backendRect { { }, size() };
     auto sourceRectClipped = intersection(backendRect, sourceRect);
@@ -95,7 +95,7 @@ void ImageBufferBackend::getPixelBuffer(const IntRect& sourceRect, void* sourceD
     ConstPixelBufferConversionView source {
         { AlphaPremultiplication::Premultiplied, convertToPixelFormat(pixelFormat()), colorSpace() },
         sourceBytesPerRow,
-        static_cast<uint8_t*>(sourceData) + sourceRectClipped.y() * sourceBytesPerRow + sourceRectClipped.x() * 4
+        sourceData + sourceRectClipped.y() * sourceBytesPerRow + sourceRectClipped.x() * 4
     };
     unsigned destinationBytesPerRow = static_cast<unsigned>(4u * sourceRect.width());
     PixelBufferConversionView destination {
@@ -107,7 +107,7 @@ void ImageBufferBackend::getPixelBuffer(const IntRect& sourceRect, void* sourceD
     convertImagePixels(source, destination, destinationRect.size());
 }
 
-void ImageBufferBackend::putPixelBuffer(const PixelBuffer& sourcePixelBuffer, const IntRect& sourceRect, const IntPoint& destinationPoint, AlphaPremultiplication destinationAlphaFormat, void* destinationData)
+void ImageBufferBackend::putPixelBuffer(const PixelBuffer& sourcePixelBuffer, const IntRect& sourceRect, const IntPoint& destinationPoint, AlphaPremultiplication destinationAlphaFormat, uint8_t* destinationData)
 {
     IntRect backendRect { { }, size() };
     auto sourceRectClipped = intersection({ IntPoint::zero(), sourcePixelBuffer.size() }, sourceRect);
@@ -133,7 +133,7 @@ void ImageBufferBackend::putPixelBuffer(const PixelBuffer& sourcePixelBuffer, co
     PixelBufferConversionView destination {
         { destinationAlphaFormat, convertToPixelFormat(pixelFormat()), colorSpace() },
         destinationBytesPerRow,
-        static_cast<uint8_t*>(destinationData) + destinationRect.y() * destinationBytesPerRow + destinationRect.x() * 4
+        destinationData + destinationRect.y() * destinationBytesPerRow + destinationRect.x() * 4
     };
 
     convertImagePixels(source, destination, destinationRect.size());

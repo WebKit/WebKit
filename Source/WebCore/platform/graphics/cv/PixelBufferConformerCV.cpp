@@ -101,7 +101,7 @@ static const void* CVPixelBufferGetBytePointerCallback(void* refcon)
 
     size_t byteLength = CVPixelBufferGetBytesPerRow(info->pixelBuffer.get()) * CVPixelBufferGetHeight(info->pixelBuffer.get());
 
-    verifyImageBufferIsBigEnough(address, byteLength);
+    verifyImageBufferIsBigEnough({ static_cast<const uint8_t*>(address), byteLength });
     RELEASE_LOG_INFO(Media, "CVPixelBufferGetBytePointerCallback() returning bytePointer: %p, size: %zu", address, byteLength);
     return address;
 }

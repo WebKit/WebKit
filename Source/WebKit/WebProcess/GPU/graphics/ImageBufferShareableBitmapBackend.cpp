@@ -152,12 +152,12 @@ RefPtr<NativeImage> ImageBufferShareableBitmapBackend::createNativeImageReferenc
 
 void ImageBufferShareableBitmapBackend::getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination)
 {
-    ImageBufferBackend::getPixelBuffer(srcRect, m_bitmap->data(), destination);
+    ImageBufferBackend::getPixelBuffer(srcRect, m_bitmap->span().data(), destination);
 }
 
 void ImageBufferShareableBitmapBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, m_bitmap->data());
+    ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, m_bitmap->mutableSpan().data());
 }
 
 String ImageBufferShareableBitmapBackend::debugDescription() const

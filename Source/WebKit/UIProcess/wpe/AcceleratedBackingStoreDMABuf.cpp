@@ -106,10 +106,9 @@ void AcceleratedBackingStoreDMABuf::didCreateBufferSHM(uint64_t id, WebCore::Sha
         return;
 
     auto size = bitmap->size();
-    const auto* data = bitmap->data();
-    auto dataSize = bitmap->sizeInBytes();
+    auto data = bitmap->span();
     auto stride = bitmap->bytesPerRow();
-    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(data, dataSize, [](gpointer userData) {
+    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(data.data(), data.size(), [](gpointer userData) {
         delete static_cast<WebCore::ShareableBitmap*>(userData);
     }, bitmap.leakRef()));
 
