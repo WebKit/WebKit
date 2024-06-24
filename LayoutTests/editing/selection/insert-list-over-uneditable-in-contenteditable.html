@@ -1,0 +1,10 @@
+<!doctype HTML>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/assert-selection.js"></script>
+<script>
+test(() => assert_selection('<div contenteditable><p>^line1<button contenteditable="false">hello</button></p><p>line2|</p></div>',
+  'insertUnorderedList',
+  '<div contenteditable><p><ul><li>^line1</li></ul><button contenteditable="false">hello</button></p><p><ul><li>line2|</li></ul></p></div>'),
+  'No time out when inserting a list over selected paragraphs that has a non-editable child element');
+</script>

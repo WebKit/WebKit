@@ -1,0 +1,3 @@
+
+PASS No time out when inserting a list over selected paragraphs that has a non-editable child element
+
