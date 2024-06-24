@@ -1,5 +1,6 @@
 // Copyright 2015 The Chromium Authors. All rights reserved.
 // Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+// Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -47,13 +48,17 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParserConsumer+Angle.h"
 #include "CSSPropertyParserConsumer+Color.h"
+#include "CSSPropertyParserConsumer+Ident.h"
+#include "CSSPropertyParserConsumer+Image.h"
 #include "CSSPropertyParserConsumer+Integer.h"
 #include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+List.h"
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+Percent.h"
+#include "CSSPropertyParserConsumer+Position.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
 #include "CSSPropertyParserConsumer+Time.h"
+#include "CSSPropertyParserConsumer+URL.h"
 #include "CSSPropertyParsing.h"
 #include "CSSQuadValue.h"
 #include "CSSTokenizer.h"

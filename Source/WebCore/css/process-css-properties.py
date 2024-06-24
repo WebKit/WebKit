@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 #
 # Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -3972,13 +3973,17 @@ class GenerateCSSPropertyParsing:
                     "CSSPropertyParserConsumer+Color.h",
                     "CSSPropertyParserConsumer+Ident.h",
                     "CSSPropertyParserConsumer+Integer.h",
+                    "CSSPropertyParserConsumer+Image.h",
                     "CSSPropertyParserConsumer+Length.h",
                     "CSSPropertyParserConsumer+List.h",
                     "CSSPropertyParserConsumer+Number.h",
                     "CSSPropertyParserConsumer+Percent.h",
+                    "CSSPropertyParserConsumer+Position.h",
                     "CSSPropertyParserConsumer+Primitives.h",
                     "CSSPropertyParserConsumer+Resolution.h",
+                    "CSSPropertyParserConsumer+String.h",
                     "CSSPropertyParserConsumer+Time.h",
+                    "CSSPropertyParserConsumer+URL.h",
                     "CSSPropertyParserWorkerSafe.h",
                     "CSSValuePool.h",
                     "DeprecatedGlobalSettings.h",
