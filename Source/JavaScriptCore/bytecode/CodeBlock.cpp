@@ -2215,11 +2215,33 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
             }
             jitData->invalidate();
         }
+
         if (!jitCode()->isUnlinked()) {
-            if (!jitCode()->dfgCommon()->invalidateLinkedCode()) {
-                // We've already been invalidated.
-                RELEASE_ASSERT(this != replacement() || (vm.heap.currentThreadIsDoingGCWork() && !vm.heap.isMarked(ownerExecutable())));
-                return;
+            // Invalidate CodeBlock only when we are currently executing this CodeBlock. Otherwise, we don't care.
+            auto isCurrentlyExecuting = [&](CodeBlock* codeBlock) -> bool {
+                // Now we are in the OSR exit ramp. This means we do not need to invalidate CodeBlock if the current frame is executing this CodeBlock.
+                // Still, if CodeBlock exists in upper callstack, we need to invalidate code. This means, we can skip the first frame safely here.
+                bool skipFirstFrame = false;
+                if (reason == Profiler::JettisonDueToOSRExit)
+                    skipFirstFrame = true;
+
+                bool result = false;
+                StackVisitor::visit(vm.topCallFrame, vm, [&](StackVisitor& visitor) {
+                    if (visitor->codeBlock() == codeBlock) {
+                        result = true;
+                        return IterationStatus::Done;
+                    }
+                    return IterationStatus::Continue;
+                }, skipFirstFrame);
+                return result;
+            };
+
+            if (isCurrentlyExecuting(this)) {
+                if (!jitCode()->dfgCommon()->invalidateLinkedCode()) {
+                    // We've already been invalidated.
+                    RELEASE_ASSERT(this != replacement() || (vm.heap.currentThreadIsDoingGCWork() && !vm.heap.isMarked(ownerExecutable())));
+                    return;
+                }
             }
         }
     }
@@ -2276,46 +2298,6 @@ JSGlobalObject* CodeBlock::globalObjectFor(CodeOrigin codeOrigin)
         return nullptr;
     return inlineCallFrame->baselineCodeBlock->globalObject();
 }
-
-class RecursionCheckFunctor {
-public:
-    RecursionCheckFunctor(CallFrame* startCallFrame, CodeBlock* codeBlock, unsigned depthToCheck)
-        : m_startCallFrame(startCallFrame)
-        , m_codeBlock(codeBlock)
-        , m_depthToCheck(depthToCheck)
-        , m_foundStartCallFrame(false)
-        , m_didRecurse(false)
-    { }
-
-    IterationStatus operator()(StackVisitor& visitor) const
-    {
-        CallFrame* currentCallFrame = visitor->callFrame();
-
-        if (currentCallFrame == m_startCallFrame)
-            m_foundStartCallFrame = true;
-
-        if (m_foundStartCallFrame) {
-            if (visitor->codeBlock() == m_codeBlock) {
-                m_didRecurse = true;
-                return IterationStatus::Done;
-            }
-
-            if (!m_depthToCheck--)
-                return IterationStatus::Done;
-        }
-
-        return IterationStatus::Continue;
-    }
-
-    bool didRecurse() const { return m_didRecurse; }
-
-private:
-    CallFrame* const m_startCallFrame;
-    CodeBlock* const m_codeBlock;
-    mutable unsigned m_depthToCheck;
-    mutable bool m_foundStartCallFrame;
-    mutable bool m_didRecurse;
-};
 
 void CodeBlock::noticeIncomingCall(JSCell* caller)
 {
