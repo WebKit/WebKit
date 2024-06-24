@@ -1067,7 +1067,7 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
     if (result.hasException() || !element())
         return result;
 
-    if (auto* cache = element()->document().existingAXObjectCache())
+    if (CheckedPtr cache = element()->document().existingAXObjectCache())
         cache->valueChanged(*element());
 
     return result;

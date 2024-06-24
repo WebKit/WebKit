@@ -194,7 +194,7 @@ HTMLSelectElement& RenderMenuList::selectElement() const
 
 void RenderMenuList::didAttachChild(RenderObject& child, RenderObject*)
 {
-    if (AXObjectCache* cache = document().existingAXObjectCache())
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->childrenChanged(this, &child);
 }
 
@@ -438,7 +438,7 @@ void RenderMenuList::didUpdateActiveOption(int optionIndex)
     if (!AXObjectCache::accessibilityEnabled())
         return;
 
-    auto* axCache = document().existingAXObjectCache();
+    CheckedPtr axCache = document().existingAXObjectCache();
     if (!axCache)
         return;
 

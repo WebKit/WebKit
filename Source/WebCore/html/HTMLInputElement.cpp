@@ -1089,7 +1089,7 @@ void HTMLInputElement::setChecked(bool isChecked, WasSetByJavaScript wasCheckedB
     // RenderTextView), but it's not possible to do it at the moment
     // because of the way the code is structured.
     if (auto* renderer = this->renderer()) {
-        if (auto* cache = renderer->document().existingAXObjectCache())
+        if (CheckedPtr cache = renderer->document().existingAXObjectCache())
             cache->checkedStateChanged(*this);
     }
 }
@@ -1105,7 +1105,7 @@ void HTMLInputElement::setIndeterminate(bool newValue)
     if (auto* renderer = this->renderer(); renderer && renderer->style().hasUsedAppearance())
         renderer->repaint();
 
-    if (auto* cache = document().existingAXObjectCache())
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->valueChanged(*this);
 }
 
@@ -1538,7 +1538,7 @@ void HTMLInputElement::setAutoFilledAndObscured(bool autoFilledAndObscured)
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::WebKitAutofillAndObscured, autoFilledAndObscured);
     m_isAutoFilledAndObscured = autoFilledAndObscured;
 
-    if (auto* cache = document().existingAXObjectCache())
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->onTextSecurityChanged(*this);
 }
 
@@ -1553,7 +1553,7 @@ void HTMLInputElement::setShowAutoFillButton(AutoFillButtonType autoFillButtonTy
     updateInnerTextElementEditability();
     invalidateStyleForSubtree();
 
-    if (auto* cache = document().existingAXObjectCache())
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->autofillTypeChanged(*this);
 }
 

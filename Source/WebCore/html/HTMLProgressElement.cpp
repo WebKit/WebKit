@@ -139,7 +139,7 @@ void HTMLProgressElement::didElementStateChange()
     if (RenderProgress* renderer = renderProgress())
         renderer->updateFromElement();
 
-    if (auto* cache = document().existingAXObjectCache())
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->valueChanged(*this);
 }
 

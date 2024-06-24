@@ -275,7 +275,7 @@ void ValidatedFormListedElement::updateValidity()
             }
         }
 
-        if (auto* cache = element.document().existingAXObjectCache())
+        if (CheckedPtr cache = element.document().existingAXObjectCache())
             cache->onValidityChange(element);
     }
 
