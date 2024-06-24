@@ -155,6 +155,16 @@ JS_EXPORT JSObjectRef JSObjectMakeArrayBufferWithBytesNoCopy(JSContextRef ctx, v
 
 /*!
  @function
+ @abstract           Returns a boolean value indicating whether or not a JavaScript value is a detached Typed Array object.
+ @param ctx          The execution context to use.
+ @param objectRef    The JSObjectRef whose Typed Array type data pointer to obtain.
+ @param exception    A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+ @result             A boolean value indicating whether or not objectRef is a detached Typed Array object.
+ */
+JS_EXPORT bool JSObjectIsDetachedBuffer(JSContextRef ctx, JSObjectRef objectRef, JSValueRef* exception) JSC_API_AVAILABLE(macos(10.12), ios(10.0));
+
+/*!
+ @function
  @abstract         Returns a pointer to the data buffer that serves as the backing store for a JavaScript Typed Array object.
  @param object     The Array Buffer object whose internal backing store pointer to return.
  @param exception  A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.

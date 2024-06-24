@@ -262,6 +262,22 @@ void* JSObjectGetTypedArrayBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSV
     return nullptr;
 }
 
+bool JSObjectIsDetachedBuffer(JSContextRef ctx, JSObjectRef objectRef, JSValueRef* exception)
+{
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+    JSObject* object = toJS(objectRef);
+
+    JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(object);
+    if (!thisObject) {
+        setException(ctx, exception, createTypeError(globalObject, "JSObjectIsDetachedBuffer expects object to be an Array Buffer object"_s));
+        return false;
+    }
+
+    return thisObject->impl()->isDetached();
+}
+
 size_t JSObjectGetTypedArrayLength(JSContextRef, JSObjectRef objectRef, JSValueRef*)
 {
     JSObject* object = toJS(objectRef);
