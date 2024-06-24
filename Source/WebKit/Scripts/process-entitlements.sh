@@ -296,6 +296,7 @@ function notify_entitlements()
             "com.apple.accessibility.cache.switch.control"
             "com.apple.accessibility.cache.vot"
             "com.apple.accessibility.cache.zoom"
+            "com.apple.coreservices.launchservices.session.*"
         )
 
         for NOTIFICATION in ${FORWARDED_NOTIFICATIONS[*]}; do
@@ -676,7 +677,12 @@ fi
 rm -f "${WK_PROCESSED_XCENT_FILE}"
 plistbuddy Clear dict
 
-# Simulator entitlements should be added to Resources/ios/XPCService-ios-simulator.entitlements
+# Simulator entitlements should be added to one or more of:
+#
+#  - Resources/ios/XPCService-embedded-simulator.entitlements
+#  - Shared/AuxiliaryProcessExtensions/GPUProcessExtension.entitlements
+#  - Shared/AuxiliaryProcessExtensions/NetworkingProcessExtension.entitlements
+#  - Shared/AuxiliaryProcessExtensions/WebContentProcessExtension.entitlements
 if [[ "${WK_PLATFORM_NAME}" =~ .*simulator ]]
 then
     exit 0
