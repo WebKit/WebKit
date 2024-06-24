@@ -692,6 +692,8 @@ GCGLExternalImage GraphicsContextGLCocoa::createExternalImage(ExternalImageSourc
 
 void GraphicsContextGLCocoa::bindExternalImage(GCGLenum target, GCGLExternalImage image)
 {
+    if (!makeContextCurrent())
+        return;
     EGLImage eglImage = EGL_NO_IMAGE_KHR;
     if (image) {
         eglImage = m_eglImages.get(image);
@@ -715,6 +717,8 @@ bool GraphicsContextGLCocoa::addFoveation(IntSize physicalSizeLeft, IntSize phys
 void GraphicsContextGLCocoa::enableFoveation(GCGLuint fbo)
 {
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
+    if (!makeContextCurrent())
+        return;
     GL_BindMetalRasterizationRateMapANGLE(fbo, m_rasterizationRateMap[PlatformXR::Layout::Shared].get());
     GL_Enable(GL::VARIABLE_RASTERIZATION_RATE_ANGLE);
 #else
@@ -725,6 +729,8 @@ void GraphicsContextGLCocoa::enableFoveation(GCGLuint fbo)
 void GraphicsContextGLCocoa::disableFoveation()
 {
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
+    if (!makeContextCurrent())
+        return;
     GL_Disable(GL::VARIABLE_RASTERIZATION_RATE_ANGLE);
     GL_BindMetalRasterizationRateMapANGLE(0, nullptr);
 #endif
