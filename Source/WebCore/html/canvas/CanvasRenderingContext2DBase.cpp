@@ -2331,14 +2331,13 @@ void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, Option
         dirtyRect.unite(shadowRect);
     }
 
-    // Inflate dirty rect to cover antialiasing on image buffers.
-    if (effectiveDrawingContext()->shouldAntialias())
-        dirtyRect.inflate(1);
-
     // FIXME: This does not apply the clip because we have no way of reading the clip out of the GraphicsContext.
     if (m_dirtyRect.contains(dirtyRect))
         canvasBase().didDraw(std::nullopt, shouldApplyPostProcessing);
     else {
+        // Inflate dirty rect to cover antialiasing on image buffers.
+        if (effectiveDrawingContext()->shouldAntialias())
+            dirtyRect.inflate(1);
 #if USE(COORDINATED_GRAPHICS)
         // In COORDINATED_GRAPHICS graphics layer is tiled and tiling logic handles dirty rects
         // internally and thus no unification of rects is needed here because that causes
