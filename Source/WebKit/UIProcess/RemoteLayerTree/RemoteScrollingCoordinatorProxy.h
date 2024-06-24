@@ -117,7 +117,7 @@ public:
     const RemoteLayerTreeHost* layerTreeHost() const;
     WebPageProxy& webPageProxy() const { return m_webPageProxy; }
 
-    std::optional<WebCore::RequestedScrollData> commitScrollingTreeState(const RemoteScrollingCoordinatorTransaction&, std::optional<WebCore::LayerHostingContextIdentifier> = std::nullopt);
+    std::optional<WebCore::RequestedScrollData> commitScrollingTreeState(IPC::Connection&, const RemoteScrollingCoordinatorTransaction&, std::optional<WebCore::LayerHostingContextIdentifier> = std::nullopt);
 
     bool hasFixedOrSticky() const { return m_scrollingTree->hasFixedOrSticky(); }
     bool hasScrollableMainFrame() const;

@@ -295,7 +295,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
             return;
         }
 #endif
-        requestedScroll = webPageProxy->scrollingCoordinatorProxy()->commitScrollingTreeState(scrollingTreeTransaction, layerTreeTransaction.remoteContextHostedIdentifier());
+        requestedScroll = webPageProxy->scrollingCoordinatorProxy()->commitScrollingTreeState(connection, scrollingTreeTransaction, layerTreeTransaction.remoteContextHostedIdentifier());
 #endif
     };
 

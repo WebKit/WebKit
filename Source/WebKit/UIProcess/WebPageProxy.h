@@ -1494,7 +1494,7 @@ public:
     void setDragCaretRect(const WebCore::IntRect&);
 #if PLATFORM(COCOA)
     void startDrag(const WebCore::DragItem&, WebCore::ShareableBitmapHandle&& dragImageHandle);
-    void setPromisedDataForImage(const String& pasteboardName, WebCore::SharedMemoryHandle&& imageHandle, const String& filename, const String& extension,
+    void setPromisedDataForImage(IPC::Connection&, const String& pasteboardName, WebCore::SharedMemoryHandle&& imageHandle, const String& filename, const String& extension,
         const String& title, const String& url, const String& visibleURL, WebCore::SharedMemoryHandle&& archiveHandle, const String& originIdentifier);
 #endif
 #if PLATFORM(GTK)
@@ -2720,7 +2720,7 @@ private:
 
     // Keyboard handling
 #if PLATFORM(COCOA)
-    void executeSavedCommandBySelector(const String& selector, CompletionHandler<void(bool)>&&);
+    void executeSavedCommandBySelector(IPC::Connection&, const String& selector, CompletionHandler<void(bool)>&&);
 #endif
 
 #if PLATFORM(GTK)

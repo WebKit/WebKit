@@ -71,7 +71,7 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/text/StringConcatenate.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, legacyMainFrameProcess().connection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &connection)
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(m_legacyMainFrameProcess, url), m_legacyMainFrameProcess->connection())
 #define MESSAGE_CHECK_WITH_RETURN_VALUE(assertion, returnValue) MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, process().connection(), returnValue)
 
@@ -248,7 +248,7 @@ bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
 
 #if ENABLE(DRAG_SUPPORT)
 
-void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, SharedMemory::Handle&& imageHandle, const String& filename, const String& extension,
+void WebPageProxy::setPromisedDataForImage(IPC::Connection& connection, const String& pasteboardName, SharedMemory::Handle&& imageHandle, const String& filename, const String& extension,
     const String& title, const String& url, const String& visibleURL, SharedMemory::Handle&& archiveHandle, const String& originIdentifier)
 {
     MESSAGE_CHECK_URL(url);
@@ -344,7 +344,7 @@ void WebPageProxy::registerUIProcessAccessibilityTokens(std::span<const uint8_t>
     legacyMainFrameProcess().send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::executeSavedCommandBySelector(const String& selector, CompletionHandler<void(bool)>&& completionHandler)
+void WebPageProxy::executeSavedCommandBySelector(IPC::Connection& connection, const String& selector, CompletionHandler<void(bool)>&& completionHandler)
 {
     MESSAGE_CHECK(isValidKeypressCommandName(selector));
 

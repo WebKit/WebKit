@@ -30,6 +30,7 @@
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
+#import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import "WKWebViewFindStringFindDelegate.h"
@@ -38,6 +39,7 @@
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
@@ -59,15 +61,19 @@ static void enableSiteIsolation(WKWebViewConfiguration *configuration)
     }
 }
 
-static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(const HTTPServer& server, CGRect rect = CGRectZero)
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(RetainPtr<WKWebViewConfiguration> configuration, CGRect rect = CGRectZero)
 {
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
-    auto configuration = server.httpsProxyConfiguration();
-    enableSiteIsolation(configuration);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:rect configuration:configuration]);
+    enableSiteIsolation(configuration.get());
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:rect configuration:configuration.get()]);
     webView.get().navigationDelegate = navigationDelegate.get();
     return { WTFMove(webView), WTFMove(navigationDelegate) };
+}
+
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(const HTTPServer& server, CGRect rect = CGRectZero)
+{
+    return siteIsolatedViewAndDelegate(server.httpsProxyConfiguration(), rect);
 }
 
 static bool processStillRunning(pid_t pid)
@@ -3020,6 +3026,48 @@ TEST(SiteIsolation, MainFrameRedirectBetweenExistingProcesses)
     [navigationDelegate waitForDidFinishNavigation];
     EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"window.length"] intValue], 0);
     EXPECT_EQ([webView _webProcessIdentifier], pidBefore);
+}
+
+TEST(SiteIsolation, URLSchemeTask)
+{
+    HTTPServer server({
+        { "/example"_s, { ""_s } },
+        { "/webkit"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        if ([task.request.URL.path isEqualToString:@"/example"])
+            respond(task, "<iframe src='customscheme://webkit.org/webkit'></iframe>");
+        else if ([task.request.URL.path isEqualToString:@"/webkit"]) {
+            respond(task, "<script>"
+                "var xhr = new XMLHttpRequest();"
+                "xhr.open('GET', '/fetched');"
+                "xhr.onreadystatechange = function () {"
+                    "if (xhr.readyState == xhr.DONE) { alert(xhr.responseURL + ' ' + xhr.responseText) }"
+                "};"
+                "xhr.send();"
+            "</script>");
+        } else if ([task.request.URL.path isEqualToString:@"/fetched"]) {
+            auto newRequest = adoptNS([[NSURLRequest alloc] initWithURL:[NSURL URLWithString:@"customscheme://webkit.org/redirected"]]);
+            [(id<WKURLSchemeTaskPrivate>)task _willPerformRedirection:adoptNS([NSURLResponse new]).get() newRequest:newRequest.get() completionHandler:^(NSURLRequest *request) {
+                respond(task, "hi");
+            }];
+        } else
+            EXPECT_TRUE(false);
+    };
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"customscheme"];
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"customscheme://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "customscheme://webkit.org/redirected hi");
+    checkFrameTreesInProcesses(webView.get(), {
+        { "customscheme://example.com"_s,
+            { { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "customscheme://webkit.org"_s } }
+        },
+    });
 }
 
 }

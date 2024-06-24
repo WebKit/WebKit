@@ -68,7 +68,7 @@ ResourceRequest WebURLSchemeTask::request() const
     return m_request;
 }
 
-auto WebURLSchemeTask::willPerformRedirection(ResourceResponse&& response, ResourceRequest&& request,  Function<void(ResourceRequest&&)>&& completionHandler) -> ExceptionType
+auto WebURLSchemeTask::willPerformRedirection(ResourceResponse&& response, ResourceRequest&& request, Function<void(ResourceRequest&&)>&& completionHandler) -> ExceptionType
 {
     ASSERT(RunLoop::isMain());
 
@@ -96,7 +96,7 @@ auto WebURLSchemeTask::willPerformRedirection(ResourceResponse&& response, Resou
     }
 
     auto page = WebProcessProxy::webPage(m_pageProxyID);
-    if (!page)
+    if (!page || !m_process)
         return ExceptionType::None;
 
     m_waitingForRedirectCompletionHandlerCallback = true;
@@ -107,7 +107,7 @@ auto WebURLSchemeTask::willPerformRedirection(ResourceResponse&& response, Resou
             completionHandler(WTFMove(request));
     };
 
-    page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::URLSchemeTaskWillPerformRedirection(m_urlSchemeHandler->identifier(), m_resourceLoaderID, response, request), WTFMove(innerCompletionHandler), page->webPageIDInMainFrameProcess());
+    m_process->sendWithAsyncReply(Messages::WebPage::URLSchemeTaskWillPerformRedirection(m_urlSchemeHandler->identifier(), m_resourceLoaderID, response, request), WTFMove(innerCompletionHandler), page->webPageIDInMainFrameProcess());
 
     return ExceptionType::None;
 }

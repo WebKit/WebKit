@@ -761,7 +761,7 @@ void WebPageProxy::registerUIProcessAccessibilityTokens(std::span<const uint8_t>
     legacyMainFrameProcess().send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::executeSavedCommandBySelector(const String&, CompletionHandler<void(bool)>&& completionHandler)
+void WebPageProxy::executeSavedCommandBySelector(IPC::Connection&, const String&, CompletionHandler<void(bool)>&& completionHandler)
 {
     notImplemented();
     completionHandler(false);
@@ -1636,7 +1636,7 @@ FloatSize WebPageProxy::viewLayoutSize() const
 
 #if ENABLE(DRAG_SUPPORT)
 
-void WebPageProxy::setPromisedDataForImage(const String&, SharedMemory::Handle&&, const String&, const String&, const String&, const String&, const String&, SharedMemory::Handle&&, const String&)
+void WebPageProxy::setPromisedDataForImage(IPC::Connection&, const String&, SharedMemory::Handle&&, const String&, const String&, const String&, const String&, const String&, SharedMemory::Handle&&, const String&)
 {
     notImplemented();
 }
