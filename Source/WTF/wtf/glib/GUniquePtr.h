@@ -124,15 +124,14 @@ public:
     typedef T* GUniqueOutPtr::*UnspecifiedBoolType;
     operator UnspecifiedBoolType() const { return m_ptr ? &GUniqueOutPtr::m_ptr : 0; }
 
-private:
-    void reset()
+    void reset(T* newPtr = nullptr)
     {
-        if (m_ptr) {
+        if (m_ptr)
             GUniquePtr<T> deletePtr(m_ptr);
-            m_ptr = nullptr;
-        }
+        m_ptr = newPtr;
     }
 
+private:
     T* m_ptr;
 };
 

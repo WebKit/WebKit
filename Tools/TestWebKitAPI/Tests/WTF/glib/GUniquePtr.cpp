@@ -190,6 +190,18 @@ TEST(WTF_GUniquePtr, OutPtr)
     }
     ASSERT_STREQ(actual.str().c_str(), takeLogStr().c_str());
     actual.str("");
+
+    {
+        GUniqueOutPtr<char> a;
+        returnOutChar(&a.outPtr());
+        actual << "g_free(" << a.get() << ");";
+        a.reset(g_strdup("b"));
+        ASSERT_STREQ(actual.str().c_str(), takeLogStr().c_str());
+        actual.str("");
+        actual << "g_free(" << a.get() << ");";
+    }
+    ASSERT_STREQ(actual.str().c_str(), takeLogStr().c_str());
+    actual.str("");
 }
 
 } // namespace TestWebKitAPI
