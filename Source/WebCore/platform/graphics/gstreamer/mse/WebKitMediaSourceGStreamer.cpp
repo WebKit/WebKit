@@ -213,12 +213,12 @@ static GRefPtr<GstElement> findPipeline(GRefPtr<GstElement> element)
 static void dumpPipeline(ASCIILiteral description, const RefPtr<Stream>& stream)
 {
 #ifdef GST_DISABLE_GST_DEBUG
-    [[maybe_unused]] fileNamePattern;
+    [[maybe_unused]] description;
     [[maybe_unused]] stream;
 #else
-    auto fileName = makeString("playback-pipeline-"_s, stream->track->stringId(), '-', description);
-    GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(findPipeline(GRefPtr<GstElement>(GST_ELEMENT(stream->source))).get()),
-        GST_DEBUG_GRAPH_SHOW_ALL, fileName.utf8().data());
+    auto pipeline = findPipeline(GRefPtr<GstElement>(GST_ELEMENT(stream->source)));
+    auto fileName = makeString(span(GST_OBJECT_NAME(pipeline.get())), '-', stream->track->stringId(), '-', description);
+    GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, fileName.utf8().data());
 #endif
 }
 
@@ -597,9 +597,8 @@ static void webKitMediaSrcLoop(void* userData)
         GST_TRACE_OBJECT(pad, "Pushing buffer downstream: %" GST_PTR_FORMAT, buffer.get());
         GstFlowReturn result = gst_pad_push(pad, buffer.leakRef());
         if (result != GST_FLOW_OK && result != GST_FLOW_FLUSHING) {
-            GST_ERROR_OBJECT(pad, "Pushing buffer returned %s", gst_flow_get_name(result));
-            dumpPipeline("pushing-buffer-failed"_s, stream);
             gst_pad_pause_task(pad);
+            GST_ELEMENT_ERROR(stream->source, CORE, PAD, ("Failed to push buffer"), ("gst_pad_push() returned %s", gst_flow_get_name(result)));
         } else if (pushingFirstBuffer) {
             GST_DEBUG_OBJECT(pad, "First buffer on this pad was pushed (ret = %s).", gst_flow_get_name(result));
             dumpPipeline("first-frame-after"_s, stream);
