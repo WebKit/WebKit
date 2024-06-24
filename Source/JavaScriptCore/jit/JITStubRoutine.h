@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(JIT)
-
 #include "ExecutableAllocator.h"
 #include "MacroAssemblerCodeRef.h"
 #include "StructureID.h"
@@ -62,10 +60,12 @@ public:
     enum class Type : uint8_t {
         JITStubRoutineType,
         GCAwareJITStubRoutineType,
-        PolymorphicAccessJITStubRoutineType,
         PolymorphicCallStubRoutineType,
+#if ENABLE(JIT)
+        PolymorphicAccessJITStubRoutineType,
         MarkingGCAwareJITStubRoutineType,
         GCAwareJITStubRoutineWithExceptionHandlerType,
+#endif
     };
 
     friend class GCAwareJITStubRoutine;
@@ -166,5 +166,3 @@ protected:
     (adoptRef(new JITStubRoutine(FINALIZE_CODE_FOR((codeBlock), (patchBuffer), (resultPtrTag), (simpleName), __VA_ARGS__))))
 
 } // namespace JSC
-
-#endif // ENABLE(JIT)

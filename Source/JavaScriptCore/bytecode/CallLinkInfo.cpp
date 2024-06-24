@@ -83,13 +83,11 @@ CallLinkInfo::~CallLinkInfo()
 
 void CallLinkInfo::clearStub()
 {
-#if ENABLE(JIT)
     if (!stub())
         return;
 
     m_stub->clearCallNodesFor(this);
     m_stub = nullptr;
-#endif
 }
 
 void CallLinkInfo::unlinkOrUpgradeImpl(VM& vm, CodeBlock* oldCodeBlock, CodeBlock* newCodeBlock)
@@ -202,15 +200,11 @@ void CallLinkInfo::visitWeak(VM& vm)
         break;
     case Mode::Polymorphic: {
         if (stub()) {
-#if ENABLE(JIT)
             if (!stub()->visitWeak(vm)) {
                 dataLogLnIf(Options::verboseOSR(), "At ", codeOrigin(), ", ", RawPointer(this), ": clearing call stub to ", listDump(stub()->variants()), ", stub routine ", RawPointer(stub()), ".");
                 unlinkOrUpgrade(vm, nullptr, nullptr);
                 m_clearedByGC = true;
             }
-#else
-            RELEASE_ASSERT_NOT_REACHED();
-#endif
         }
         break;
     }
@@ -257,6 +251,8 @@ void CallLinkInfo::revertCallToStub()
     } else {
 #if ENABLE(JIT)
         MacroAssembler::repatchPointer(u.codeIC.m_calleeLocation, nullptr);
+#else
+        RELEASE_ASSERT_NOT_REACHED();
 #endif
     }
 }
@@ -271,9 +267,6 @@ void DataOnlyCallLinkInfo::initialize(VM& vm, CodeBlock* owner, CallType callTyp
     m_codeOrigin = codeOrigin;
     m_callType = callType;
     m_mode = static_cast<unsigned>(Mode::Init);
-    // If JIT is disabled, we should not support dynamically generated call IC.
-    if (!Options::useJIT())
-        disallowStubs();
     if (UNLIKELY(!Options::useLLIntICs()))
         setVirtualCall(vm);
 }
@@ -343,6 +336,34 @@ JSGlobalObject* CallLinkInfo::globalObjectForSlowPath(JSCell* owner)
 #endif
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+void CallLinkInfo::setStub(Ref<PolymorphicCallStubRoutine>&& newStub)
+{
+    clearStub();
+    m_stub = WTFMove(newStub);
+
+    m_callee.clear();
+
+    if (isDataIC()) {
+        *bitwise_cast<uintptr_t*>(m_callee.slot()) = polymorphicCalleeMask;
+        u.dataIC.m_codeBlock = nullptr; // PolymorphicCallStubRoutine will set CodeBlock inside it.
+        u.dataIC.m_monomorphicCallDestination = m_stub->code().code().retagged<JSEntryPtrTag>();
+    } else {
+#if ENABLE(JIT)
+        MacroAssembler::repatchNearCall(static_cast<OptimizingCallLinkInfo*>(this)->m_callLocation, CodeLocationLabel<JSEntryPtrTag>(m_stub->code().code().retagged<JSEntryPtrTag>()));
+        MacroAssembler::repatchPointer(u.codeIC.m_codeBlockLocation, nullptr);
+        MacroAssembler::repatchPointer(u.codeIC.m_calleeLocation, bitwise_cast<void*>(polymorphicCalleeMask));
+#else
+        RELEASE_ASSERT_NOT_REACHED();
+#endif
+    }
+
+    // The call link info no longer has a call cache apart from the jump to the polymorphic call stub.
+    if (isOnList())
+        remove();
+
+    m_mode = static_cast<unsigned>(Mode::Polymorphic);
 }
 
 #if ENABLE(JIT)
@@ -441,34 +462,6 @@ void CallLinkInfo::emitDataICFastPath(CCallHelpers& jit)
 void CallLinkInfo::emitTailCallDataICFastPath(CCallHelpers& jit, ScopedLambda<void()>&& prepareForTailCall)
 {
     emitFastPathImpl(nullptr, jit, UseDataIC::Yes, true, WTFMove(prepareForTailCall));
-}
-
-void CallLinkInfo::setStub(Ref<PolymorphicCallStubRoutine>&& newStub)
-{
-    clearStub();
-    m_stub = WTFMove(newStub);
-
-    m_callee.clear();
-
-    if (isDataIC()) {
-        *bitwise_cast<uintptr_t*>(m_callee.slot()) = polymorphicCalleeMask;
-        u.dataIC.m_codeBlock = nullptr; // PolymorphicCallStubRoutine will set CodeBlock inside it.
-        u.dataIC.m_monomorphicCallDestination = m_stub->code().code().retagged<JSEntryPtrTag>();
-    } else {
-#if ENABLE(JIT)
-        MacroAssembler::repatchNearCall(static_cast<OptimizingCallLinkInfo*>(this)->m_callLocation, CodeLocationLabel<JSEntryPtrTag>(m_stub->code().code().retagged<JSEntryPtrTag>()));
-        MacroAssembler::repatchPointer(u.codeIC.m_codeBlockLocation, nullptr);
-        MacroAssembler::repatchPointer(u.codeIC.m_calleeLocation, bitwise_cast<void*>(polymorphicCalleeMask));
-#else
-        RELEASE_ASSERT_NOT_REACHED();
-#endif
-    }
-
-    // The call link info no longer has a call cache apart from the jump to the polymorphic call stub.
-    if (isOnList())
-        remove();
-
-    m_mode = static_cast<unsigned>(Mode::Polymorphic);
 }
 
 void CallLinkInfo::emitFastPath(CCallHelpers& jit, CompileTimeCallLinkInfo callLinkInfo)

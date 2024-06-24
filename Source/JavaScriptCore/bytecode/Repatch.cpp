@@ -55,6 +55,7 @@
 #include "JSWebAssembly.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyModule.h"
+#include "LLIntData.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "ModuleNamespaceAccessCase.h"
@@ -73,6 +74,205 @@
 #include <wtf/StringPrintStream.h>
 
 namespace JSC {
+
+static void linkSlowFor(VM& vm, CallLinkInfo& callLinkInfo)
+{
+    if (callLinkInfo.type() == CallLinkInfo::Type::Optimizing)
+        callLinkInfo.setVirtualCall(vm);
+}
+
+void linkMonomorphicCall(VM& vm, JSCell* owner, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock, JSObject* callee, CodePtr<JSEntryPtrTag> codePtr)
+{
+    ASSERT(!callLinkInfo.stub());
+
+    CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner); // WebAssembly -> JS stubs don't have a valid CodeBlock.
+    ASSERT(owner);
+
+    ASSERT(!callLinkInfo.isLinked());
+    callLinkInfo.setMonomorphicCallee(vm, owner, callee, calleeCodeBlock, codePtr);
+    callLinkInfo.setLastSeenCallee(vm, owner, callee);
+
+    if (shouldDumpDisassemblyFor(callerCodeBlock))
+        dataLog("Linking call in ", FullCodeOrigin(callerCodeBlock, callLinkInfo.codeOrigin()), " to ", pointerDump(calleeCodeBlock), ", entrypoint at ", codePtr, "\n");
+
+    if (calleeCodeBlock)
+        calleeCodeBlock->linkIncomingCall(owner, &callLinkInfo);
+
+    if (callLinkInfo.specializationKind() == CodeForCall)
+        return;
+    linkSlowFor(vm, callLinkInfo);
+}
+
+CodePtr<JSEntryPtrTag> jsToWasmICCodePtr(CodeSpecializationKind kind, JSObject* callee)
+{
+#if ENABLE(WEBASSEMBLY)
+    if (!callee)
+        return nullptr;
+    if (kind != CodeForCall)
+        return nullptr;
+    if (auto* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(callee))
+        return wasmFunction->jsCallEntrypoint();
+#else
+    UNUSED_PARAM(kind);
+    UNUSED_PARAM(callee);
+#endif
+    return nullptr;
+}
+
+void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkInfo& callLinkInfo, CallVariant newVariant)
+{
+    // During execution of linkPolymorphicCall, we strongly assume that we never do GC.
+    // GC jettisons CodeBlocks, changes CallLinkInfo etc. and breaks assumption done before and after this call.
+    DeferGCForAWhile deferGCForAWhile(vm);
+
+    if (!newVariant) {
+        callLinkInfo.setVirtualCall(vm);
+        return;
+    }
+
+    CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner); // WebAssembly -> JS stubs don't have a valid CodeBlock.
+    ASSERT(owner);
+#if ENABLE(WEBASSEMBLY)
+    bool isWebAssembly = owner->inherits<JSWebAssemblyModule>();
+#else
+    bool isWebAssembly = false;
+#endif
+    bool isTailCall = callLinkInfo.isTailCall();
+
+    bool isClosureCall = false;
+    CallVariantList list;
+    if (PolymorphicCallStubRoutine* stub = callLinkInfo.stub()) {
+        list = stub->variants();
+        isClosureCall = stub->isClosureCall();
+    } else if (JSObject* oldCallee = callLinkInfo.callee())
+        list = CallVariantList { CallVariant(oldCallee) };
+
+    list = variantListWithVariant(list, newVariant);
+
+    // If there are any closure calls then it makes sense to treat all of them as closure calls.
+    // This makes switching on callee cheaper. It also produces profiling that's easier on the DFG;
+    // the DFG doesn't really want to deal with a combination of closure and non-closure callees.
+    if (!isClosureCall) {
+        for (CallVariant variant : list)  {
+            if (variant.isClosureCall()) {
+                list = despecifiedVariantList(list);
+                isClosureCall = true;
+                break;
+            }
+        }
+    }
+
+    if (isClosureCall)
+        callLinkInfo.setHasSeenClosure();
+
+    // If we are over the limit, just use a normal virtual call.
+    unsigned maxPolymorphicCallVariantListSize;
+    if (isWebAssembly)
+        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSizeForWebAssemblyToJS();
+    else if (callerCodeBlock->jitType() == JITCode::topTierJIT())
+        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSizeForTopTier();
+    else
+        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSize();
+
+    // We use list.size() instead of callSlots.size() because we respect CallVariant size for now.
+    if (list.size() > maxPolymorphicCallVariantListSize) {
+        callLinkInfo.setVirtualCall(vm);
+        return;
+    }
+
+    Vector<CallSlot, 16> callSlots;
+
+    // Figure out what our cases are.
+    for (CallVariant variant : list) {
+        CodeBlock* codeBlock = nullptr;
+        if (variant.executable() && !variant.executable()->isHostFunction()) {
+            ExecutableBase* executable = variant.executable();
+            codeBlock = jsCast<FunctionExecutable*>(executable)->codeBlockForCall();
+            // If we cannot handle a callee, because we don't have a CodeBlock,
+            // assume that it's better for this whole thing to be a virtual call.
+            if (!codeBlock) {
+                callLinkInfo.setVirtualCall(vm);
+                return;
+            }
+        }
+
+        JSCell* caseValue = nullptr;
+        if (isClosureCall) {
+            caseValue = variant.executable();
+            // FIXME: We could add a fast path for InternalFunction with closure call.
+            // https://bugs.webkit.org/show_bug.cgi?id=179311
+            if (!caseValue)
+                continue;
+        } else {
+            if (auto* function = variant.function())
+                caseValue = function;
+            else
+                caseValue = variant.internalFunction();
+        }
+
+        CallSlot slot;
+
+        CodePtr<JSEntryPtrTag> codePtr;
+        if (variant.executable()) {
+            ASSERT(variant.executable()->hasJITCodeForCall());
+
+            codePtr = jsToWasmICCodePtr(callLinkInfo.specializationKind(), variant.function());
+            if (!codePtr) {
+                ArityCheckMode arityCheck = ArityCheckNotRequired;
+                if (codeBlock) {
+                    ASSERT(!variant.executable()->isHostFunction());
+                    if ((callFrame->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.isVarargs()))
+                        arityCheck = MustCheckArity;
+
+                }
+                codePtr = variant.executable()->generatedJITCodeForCall()->addressForCall(arityCheck);
+                slot.m_arityCheckMode = arityCheck;
+            }
+        } else {
+            ASSERT(variant.internalFunction());
+            codePtr = vm.getCTIInternalFunctionTrampolineFor(CodeForCall);
+        }
+
+        slot.m_index = callSlots.size();
+        slot.m_target = codePtr;
+        slot.m_codeBlock = codeBlock;
+        slot.m_calleeOrExecutable = caseValue;
+
+        callSlots.append(WTFMove(slot));
+    }
+
+    bool notUsingCounting = isWebAssembly || callerCodeBlock->jitType() == JITCode::topTierJIT();
+    if (callSlots.isEmpty())
+        notUsingCounting = true;
+
+    CallFrame* callerFrame = nullptr;
+    if (!isTailCall)
+        callerFrame = callFrame->callerFrame();
+
+    MacroAssemblerCodeRef<JITStubRoutinePtrTag> code;
+#if ENABLE(JIT)
+    if (Options::useJIT()) {
+        CommonJITThunkID jitThunk = CommonJITThunkID::PolymorphicThunkForClosure;
+        if (notUsingCounting)
+            jitThunk = isClosureCall ? CommonJITThunkID::PolymorphicTopTierThunkForClosure : CommonJITThunkID::PolymorphicTopTierThunk;
+        else
+            jitThunk = isClosureCall ? CommonJITThunkID::PolymorphicThunkForClosure : CommonJITThunkID::PolymorphicThunk;
+        code = vm.getCTIStub(jitThunk).retagged<JITStubRoutinePtrTag>();
+    }
+#endif
+    if (!code) {
+        if (isClosureCall)
+            code = LLInt::getCodeRef<JITStubRoutinePtrTag>(llint_polymorphic_closure_call_trampoline);
+        else
+            code = LLInt::getCodeRef<JITStubRoutinePtrTag>(llint_polymorphic_normal_call_trampoline);
+    }
+
+    auto stubRoutine = PolymorphicCallStubRoutine::create(WTFMove(code), vm, owner, callerFrame, callLinkInfo, callSlots, notUsingCounting, isClosureCall);
+
+    // If there had been a previous stub routine, that one will die as soon as the GC runs and sees
+    // that it's no longer on stack.
+    callLinkInfo.setStub(WTFMove(stubRoutine));
+}
 
 #if ENABLE(JIT)
 
@@ -98,54 +298,7 @@ static ECMAMode ecmaModeFor(PutByKind putByKind)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static void linkSlowFor(VM& vm, CallLinkInfo& callLinkInfo)
-{
-    if (callLinkInfo.type() == CallLinkInfo::Type::Optimizing)
-        callLinkInfo.setVirtualCall(vm);
-}
-#endif
 
-void linkMonomorphicCall(VM& vm, JSCell* owner, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock, JSObject* callee, CodePtr<JSEntryPtrTag> codePtr)
-{
-    ASSERT(!callLinkInfo.stub());
-
-    CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner); // WebAssembly -> JS stubs don't have a valid CodeBlock.
-    ASSERT(owner);
-
-    ASSERT(!callLinkInfo.isLinked());
-    callLinkInfo.setMonomorphicCallee(vm, owner, callee, calleeCodeBlock, codePtr);
-    callLinkInfo.setLastSeenCallee(vm, owner, callee);
-
-    if (shouldDumpDisassemblyFor(callerCodeBlock))
-        dataLog("Linking call in ", FullCodeOrigin(callerCodeBlock, callLinkInfo.codeOrigin()), " to ", pointerDump(calleeCodeBlock), ", entrypoint at ", codePtr, "\n");
-
-    if (calleeCodeBlock)
-        calleeCodeBlock->linkIncomingCall(owner, &callLinkInfo);
-
-#if ENABLE(JIT)
-    if (callLinkInfo.specializationKind() == CodeForCall && callLinkInfo.allowStubs())
-        return;
-    linkSlowFor(vm, callLinkInfo);
-#endif
-}
-
-CodePtr<JSEntryPtrTag> jsToWasmICCodePtr(CodeSpecializationKind kind, JSObject* callee)
-{
-#if ENABLE(WEBASSEMBLY)
-    if (!callee)
-        return nullptr;
-    if (kind != CodeForCall)
-        return nullptr;
-    if (auto* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(callee))
-        return wasmFunction->jsCallEntrypoint();
-#else
-    UNUSED_PARAM(kind);
-    UNUSED_PARAM(callee);
-#endif
-    return nullptr;
-}
-
-#if ENABLE(JIT)
 
 void ftlThunkAwareRepatchCall(CodeBlock* codeBlock, CodeLocationCall<JSInternalPtrTag> call, CodePtr<CFunctionPtrTag> newCalleeFunction)
 {
@@ -1825,150 +1978,6 @@ void linkDirectCall(DirectCallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock
     callLinkInfo.setCallTarget(jsCast<FunctionCodeBlock*>(calleeCodeBlock), CodeLocationLabel<JSEntryPtrTag>(codePtr));
     if (calleeCodeBlock)
         calleeCodeBlock->linkIncomingCall(callLinkInfo.owner(), &callLinkInfo);
-}
-
-void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkInfo& callLinkInfo, CallVariant newVariant)
-{
-    RELEASE_ASSERT(callLinkInfo.allowStubs());
-
-    // During execution of linkPolymorphicCall, we strongly assume that we never do GC.
-    // GC jettisons CodeBlocks, changes CallLinkInfo etc. and breaks assumption done before and after this call.
-    DeferGCForAWhile deferGCForAWhile(vm);
-    
-    if (!newVariant) {
-        callLinkInfo.setVirtualCall(vm);
-        return;
-    }
-
-    CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner); // WebAssembly -> JS stubs don't have a valid CodeBlock.
-    ASSERT(owner);
-#if ENABLE(WEBASSEMBLY)
-    bool isWebAssembly = owner->inherits<JSWebAssemblyModule>();
-#else
-    bool isWebAssembly = false;
-#endif
-    bool isTailCall = callLinkInfo.isTailCall();
-
-    bool isClosureCall = false;
-    CallVariantList list;
-    if (PolymorphicCallStubRoutine* stub = callLinkInfo.stub()) {
-        list = stub->variants();
-        isClosureCall = stub->isClosureCall();
-    } else if (JSObject* oldCallee = callLinkInfo.callee())
-        list = CallVariantList { CallVariant(oldCallee) };
-    
-    list = variantListWithVariant(list, newVariant);
-
-    // If there are any closure calls then it makes sense to treat all of them as closure calls.
-    // This makes switching on callee cheaper. It also produces profiling that's easier on the DFG;
-    // the DFG doesn't really want to deal with a combination of closure and non-closure callees.
-    if (!isClosureCall) {
-        for (CallVariant variant : list)  {
-            if (variant.isClosureCall()) {
-                list = despecifiedVariantList(list);
-                isClosureCall = true;
-                break;
-            }
-        }
-    }
-
-    if (isClosureCall)
-        callLinkInfo.setHasSeenClosure();
-
-    // If we are over the limit, just use a normal virtual call.
-    unsigned maxPolymorphicCallVariantListSize;
-    if (isWebAssembly)
-        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSizeForWebAssemblyToJS();
-    else if (callerCodeBlock->jitType() == JITCode::topTierJIT())
-        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSizeForTopTier();
-    else
-        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSize();
-
-    // We use list.size() instead of callSlots.size() because we respect CallVariant size for now.
-    if (list.size() > maxPolymorphicCallVariantListSize) {
-        callLinkInfo.setVirtualCall(vm);
-        return;
-    }
-
-    Vector<CallSlot, 16> callSlots;
-    
-    // Figure out what our cases are.
-    for (CallVariant variant : list) {
-        CodeBlock* codeBlock = nullptr;
-        if (variant.executable() && !variant.executable()->isHostFunction()) {
-            ExecutableBase* executable = variant.executable();
-            codeBlock = jsCast<FunctionExecutable*>(executable)->codeBlockForCall();
-            // If we cannot handle a callee, because we don't have a CodeBlock,
-            // assume that it's better for this whole thing to be a virtual call.
-            if (!codeBlock) {
-                callLinkInfo.setVirtualCall(vm);
-                return;
-            }
-        }
-
-        JSCell* caseValue = nullptr;
-        if (isClosureCall) {
-            caseValue = variant.executable();
-            // FIXME: We could add a fast path for InternalFunction with closure call.
-            // https://bugs.webkit.org/show_bug.cgi?id=179311
-            if (!caseValue)
-                continue;
-        } else {
-            if (auto* function = variant.function())
-                caseValue = function;
-            else
-                caseValue = variant.internalFunction();
-        }
-
-        CallSlot slot;
-
-        CodePtr<JSEntryPtrTag> codePtr;
-        if (variant.executable()) {
-            ASSERT(variant.executable()->hasJITCodeForCall());
-
-            codePtr = jsToWasmICCodePtr(callLinkInfo.specializationKind(), variant.function());
-            if (!codePtr) {
-                ArityCheckMode arityCheck = ArityCheckNotRequired;
-                if (codeBlock) {
-                    ASSERT(!variant.executable()->isHostFunction());
-                    if ((callFrame->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.isVarargs()))
-                        arityCheck = MustCheckArity;
-
-                }
-                codePtr = variant.executable()->generatedJITCodeForCall()->addressForCall(arityCheck);
-                slot.m_arityCheckMode = arityCheck;
-            }
-        } else {
-            ASSERT(variant.internalFunction());
-            codePtr = vm.getCTIInternalFunctionTrampolineFor(CodeForCall);
-        }
-
-        slot.m_index = callSlots.size();
-        slot.m_target = codePtr;
-        slot.m_codeBlock = codeBlock;
-        slot.m_calleeOrExecutable = caseValue;
-
-        callSlots.append(WTFMove(slot));
-    }
-
-    bool notUsingCounting = isWebAssembly || callerCodeBlock->jitType() == JITCode::topTierJIT();
-    if (callSlots.isEmpty())
-        notUsingCounting = true;
-
-    CallFrame* callerFrame = nullptr;
-    if (!isTailCall)
-        callerFrame = callFrame->callerFrame();
-
-    CommonJITThunkID jitThunk = CommonJITThunkID::PolymorphicThunkForClosure;
-    if (notUsingCounting)
-        jitThunk = isClosureCall ? CommonJITThunkID::PolymorphicTopTierThunkForClosure : CommonJITThunkID::PolymorphicTopTierThunk;
-    else
-        jitThunk = isClosureCall ? CommonJITThunkID::PolymorphicThunkForClosure : CommonJITThunkID::PolymorphicThunk;
-    auto stubRoutine = PolymorphicCallStubRoutine::create(vm.getCTIStub(jitThunk).retagged<JITStubRoutinePtrTag>(), vm, owner, callerFrame, callLinkInfo, callSlots, notUsingCounting, isClosureCall);
-
-    // If there had been a previous stub routine, that one will die as soon as the GC runs and sees
-    // that it's no longer on stack.
-    callLinkInfo.setStub(WTFMove(stubRoutine));
 }
 
 void resetGetBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, GetByKind kind)

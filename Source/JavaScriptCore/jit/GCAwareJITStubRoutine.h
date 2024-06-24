@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(JIT)
-
 #include "DFGCodeOriginPool.h"
 #include "JITStubRoutine.h"
 #include "JSObject.h"
@@ -91,6 +89,8 @@ protected:
     bool m_isCodeImmutable : 1 { false };
     bool m_isInSharedJITStubSet : 1 { false };
 };
+
+#if ENABLE(JIT)
 
 class PolymorphicAccessJITStubRoutine : public GCAwareJITStubRoutine {
 public:
@@ -234,6 +234,6 @@ Ref<PolymorphicAccessJITStubRoutine> createICJITStubRoutine(
 
 Ref<PolymorphicAccessJITStubRoutine> createPreCompiledICJITStubRoutine(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&);
 
-} // namespace JSC
-
 #endif // ENABLE(JIT)
+
+} // namespace JSC

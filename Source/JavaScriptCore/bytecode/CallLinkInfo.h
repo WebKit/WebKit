@@ -142,13 +142,6 @@ public:
     bool isDataIC() const { return useDataIC() == UseDataIC::Yes; }
     UseDataIC useDataIC() const { return static_cast<UseDataIC>(m_useDataIC); }
 
-    bool allowStubs() const { return m_allowStubs; }
-
-    void disallowStubs()
-    {
-        m_allowStubs = false;
-    }
-
     void setMonomorphicCallee(VM&, JSCell*, JSObject* callee, CodeBlock*, CodePtr<JSEntryPtrTag>);
     void clearCallee();
     JSObject* callee();
@@ -160,9 +153,7 @@ public:
     void setExecutableDuringCompilation(ExecutableBase*);
     ExecutableBase* executable();
     
-#if ENABLE(JIT)
     void setStub(Ref<PolymorphicCallStubRoutine>&&);
-#endif
     void clearStub();
 
     void setVirtualCall(VM&);
@@ -171,11 +162,7 @@ public:
 
     PolymorphicCallStubRoutine* stub() const
     {
-#if ENABLE(JIT)
         return m_stub.get();
-#else
-        return nullptr;
-#endif
     }
 
     bool seenOnce()
@@ -264,12 +251,10 @@ public:
         return OBJECT_OFFSETOF(CallLinkInfo, u) + OBJECT_OFFSETOF(UnionType, dataIC.m_monomorphicCallDestination);
     }
 
-#if ENABLE(JIT)
     static constexpr ptrdiff_t offsetOfStub()
     {
         return OBJECT_OFFSETOF(CallLinkInfo, m_stub);
     }
-#endif
 
     uint32_t slowPathCount()
     {
@@ -282,13 +267,9 @@ public:
     void forEachDependentCell(const Functor& functor) const
     {
         if (isLinked()) {
-            if (stub()) {
-#if ENABLE(JIT)
+            if (stub())
                 stub()->forEachDependentCell(functor);
-#else
-                RELEASE_ASSERT_NOT_REACHED();
-#endif
-            } else
+            else
                 functor(m_callee.get());
         }
         if (haveLastSeenCallee())
@@ -327,7 +308,6 @@ protected:
     bool m_hasSeenClosure : 1 { false };
     bool m_clearedByGC : 1 { false };
     bool m_clearedByVirtual : 1 { false };
-    bool m_allowStubs : 1 { true };
     unsigned m_callType : 4 { CallType::None }; // CallType
     unsigned m_useDataIC : 1; // UseDataIC
     unsigned m_type : 1; // Type
@@ -353,9 +333,7 @@ protected:
 
     WriteBarrier<JSObject> m_callee;
     WriteBarrier<JSObject> m_lastSeenCallee;
-#if ENABLE(JIT)
     RefPtr<PolymorphicCallStubRoutine> m_stub;
-#endif
     JSCell* m_owner { nullptr };
     CodeOrigin m_codeOrigin { };
 };

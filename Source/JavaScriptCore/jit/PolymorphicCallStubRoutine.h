@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(JIT)
-
 #include "CallEdge.h"
 #include "CallLinkInfoBase.h"
 #include "CallVariant.h"
@@ -123,7 +121,6 @@ public:
     bool isClosureCall() const { return m_isClosureCall; }
 
 private:
-    template<typename Visitor> void markRequiredObjectsInternalImpl(Visitor&);
     void markRequiredObjectsImpl(AbstractSlotVisitor&);
     void markRequiredObjectsImpl(SlotVisitor&);
 
@@ -136,5 +133,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // ENABLE(JIT)

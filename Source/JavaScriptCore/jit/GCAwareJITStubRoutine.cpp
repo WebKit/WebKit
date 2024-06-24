@@ -26,8 +26,6 @@
 #include "config.h"
 #include "GCAwareJITStubRoutine.h"
 
-#if ENABLE(JIT)
-
 #include "AccessCase.h"
 #include "CacheableIdentifierInlines.h"
 #include "CodeBlock.h"
@@ -49,9 +47,9 @@ GCAwareJITStubRoutine::GCAwareJITStubRoutine(Type type, const MacroAssemblerCode
 
 void GCAwareJITStubRoutine::makeGCAware(VM& vm, bool isCodeImmutable)
 {
+    m_isCodeImmutable = isCodeImmutable;
     vm.heap.m_jitStubRoutines->add(this);
     m_isGCAware = true;
-    m_isCodeImmutable = isCodeImmutable;
 }
 
 void GCAwareJITStubRoutine::observeZeroRefCountImpl()
@@ -90,6 +88,7 @@ bool GCAwareJITStubRoutine::removeDeadOwners(VM& vm)
     if (m_owner)
         return !vm.heap.isMarked(m_owner);
 
+#if ENABLE(JIT)
     if (m_isInSharedJITStubSet) {
         auto& owners = static_cast<PolymorphicAccessJITStubRoutine*>(this)->m_owners;
         owners.removeAllIf([&](auto pair) {
@@ -102,9 +101,12 @@ bool GCAwareJITStubRoutine::removeDeadOwners(VM& vm)
         }
         return false;
     }
+#endif
 
     return false;
 }
+
+#if ENABLE(JIT)
 
 PolymorphicAccessJITStubRoutine::PolymorphicAccessJITStubRoutine(Type type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, FixedVector<Ref<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, JSCell* owner)
     : GCAwareJITStubRoutine(type, code, owner)
@@ -294,7 +296,6 @@ Ref<PolymorphicAccessJITStubRoutine> createPreCompiledICJITStubRoutine(const Mac
     return adoptRef(*new PolymorphicAccessJITStubRoutine(JITStubRoutine::Type::PolymorphicAccessJITStubRoutineType, code, vm, { }, { }, nullptr));
 }
 
-} // namespace JSC
-
 #endif // ENABLE(JIT)
 
+} // namespace JSC

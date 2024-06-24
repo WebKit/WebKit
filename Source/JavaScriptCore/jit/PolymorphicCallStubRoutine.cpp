@@ -26,9 +26,6 @@
 #include "config.h"
 #include "PolymorphicCallStubRoutine.h"
 
-#if ENABLE(JIT)
-
-#include "AccessCase.h"
 #include "CachedCall.h"
 #include "CallLinkInfo.h"
 #include "CodeBlock.h"
@@ -181,21 +178,12 @@ bool PolymorphicCallStubRoutine::visitWeakImpl(VM& vm)
     return isStillLive;
 }
 
-template<typename Visitor>
-ALWAYS_INLINE void PolymorphicCallStubRoutine::markRequiredObjectsInternalImpl(Visitor& visitor)
+void PolymorphicCallStubRoutine::markRequiredObjectsImpl(AbstractSlotVisitor&)
 {
-    forEachDependentCell([&](JSCell* cell) {
-        visitor.appendUnbarriered(cell);
-    });
 }
 
-void PolymorphicCallStubRoutine::markRequiredObjectsImpl(AbstractSlotVisitor& visitor)
+void PolymorphicCallStubRoutine::markRequiredObjectsImpl(SlotVisitor&)
 {
-    markRequiredObjectsInternalImpl(visitor);
-}
-void PolymorphicCallStubRoutine::markRequiredObjectsImpl(SlotVisitor& visitor)
-{
-    markRequiredObjectsInternalImpl(visitor);
 }
 
 void PolymorphicCallStubRoutine::destroy(PolymorphicCallStubRoutine* derived)
@@ -204,5 +192,3 @@ void PolymorphicCallStubRoutine::destroy(PolymorphicCallStubRoutine* derived)
 }
 
 } // namespace JSC
-
-#endif // ENABLE(JIT)

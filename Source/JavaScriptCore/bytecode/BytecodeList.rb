@@ -1417,6 +1417,8 @@ op :llint_default_call_trampoline
 op :llint_virtual_call_trampoline
 op :llint_virtual_construct_trampoline
 op :llint_virtual_tail_call_trampoline
+op :llint_polymorphic_normal_call_trampoline
+op :llint_polymorphic_closure_call_trampoline
 op :checkpoint_osr_exit_from_inlined_call_trampoline
 op :checkpoint_osr_exit_trampoline
 op :normal_osr_exit_trampoline

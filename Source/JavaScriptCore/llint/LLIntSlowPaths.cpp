@@ -623,6 +623,25 @@ extern "C" UGPRPair SYSV_ABI llint_virtual_call(CallFrame* calleeFrame, CallLink
     return encodeResult(callTarget, nullptr);
 }
 
+extern "C" UGPRPair SYSV_ABI llint_polymorphic_call(CallFrame* calleeFrame, CallLinkInfo* callLinkInfo)
+{
+    JSCell* owner = callLinkInfo->ownerForSlowPath(calleeFrame);
+    VM& vm = owner->vm();
+    NativeCallFrameTracer tracer(vm, calleeFrame);
+    sanitizeStackForVM(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSCell* calleeAsFunctionCell;
+    calleeFrame->setCodeBlock(nullptr);
+    void* callTarget = virtualForWithFunction(vm, owner, calleeFrame, callLinkInfo, calleeAsFunctionCell);
+    if (UNLIKELY(scope.exception()))
+        return encodeResult(callTarget, bitwise_cast<void*>(&vm));
+    linkPolymorphicCall(vm, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
+    ensureStillAliveHere(owner);
+    if (UNLIKELY(scope.exception()))
+        return encodeResult(callTarget, bitwise_cast<void*>(&vm));
+    return encodeResult(callTarget, nullptr);
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_new_object)
 {
     LLINT_BEGIN();
