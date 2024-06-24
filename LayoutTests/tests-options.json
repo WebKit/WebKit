@@ -2456,6 +2456,114 @@
     "imported/w3c/web-platform-tests/dom/traversal/TreeWalker.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/editing/run/backcolor.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/bold.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/caret-navigation-around-line-break.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/createlink.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/delete-list-items-in-table-cell.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/delete.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/fontname.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/fontsize.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/forecolor.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/formatblock.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/forwarddelete.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/hilitecolor.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/indent.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/insert-list-items-in-table-cell.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/inserthorizontalrule.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/inserthtml.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/insertimage.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/insertlinebreak.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/insertorderedlist.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/insertparagraph.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/inserttext.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/insertunorderedlist.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/italic.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/justifycenter.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/justifyfull.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/justifyleft.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/justifyright.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/misc.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/multitest.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/outdent.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/removeformat.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/strikethrough.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/subscript.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/superscript.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/underline.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/run/unlink.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/encoding/api-invalid-label.html": [
         "slow"
     ],
