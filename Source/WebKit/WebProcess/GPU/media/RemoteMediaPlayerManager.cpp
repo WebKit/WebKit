@@ -232,7 +232,7 @@ bool RemoteMediaPlayerManager::supportsKeySystem(MediaPlayerEnums::MediaEngineId
 
 void RemoteMediaPlayerManager::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (const auto& player = m_players.get(ObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
+    if (RefPtr player = m_players.get(ObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())).get())
         player->didReceiveMessage(connection, decoder);
 }
 
