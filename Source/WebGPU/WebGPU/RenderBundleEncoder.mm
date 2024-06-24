@@ -571,10 +571,7 @@ std::pair<uint32_t, uint32_t> RenderBundleEncoder::computeMininumVertexInstanceC
     uint32_t minInstanceCount = invalidVertexInstanceCount;
     auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
     for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
-        if (bufferIndex >= m_vertexBuffers.size())
-            continue;
-        auto& vertexBuffer = m_vertexBuffers[bufferIndex];
-        auto bufferSize = vertexBuffer.size;
+        auto bufferSize = bufferIndex < m_vertexBuffers.size() ? m_vertexBuffers[bufferIndex].size : 0;
         auto stride = bufferData.stride;
         auto lastStride = bufferData.lastStride;
         if (!stride)

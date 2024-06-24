@@ -583,8 +583,7 @@ std::pair<uint32_t, uint32_t> RenderPassEncoder::computeMininumVertexInstanceCou
     auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
     for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
         auto it = m_vertexBuffers.find(bufferIndex);
-        RELEASE_ASSERT(it != m_vertexBuffers.end());
-        auto bufferSize = it->value.buffer.length;
+        auto bufferSize = it == m_vertexBuffers.end() ? 0 : it->value.buffer.length;
         auto stride = bufferData.stride;
         auto lastStride = bufferData.lastStride;
         if (!stride)
