@@ -150,7 +150,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         (id)kSecAttrComment : webCryptoMasterKeyKeychainComment(),
         (id)kSecAttrLabel : localizedItemName,
         (id)kSecAttrAccount : masterKeyAccountNameForCurrentApplication(),
-        (id)kSecValueData : [NSData dataWithBytes:base64EncodedMasterKeyData.data() length:base64EncodedMasterKeyData.size()],
+        (id)kSecValueData : toNSData(base64EncodedMasterKeyData).autorelease(),
     };
 
     status = SecItemAdd((CFDictionaryRef)attributes, nullptr);
@@ -252,8 +252,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     auto dictionary = @{
         versionKey: [NSNumber numberWithUnsignedInteger:currentSerializationVersion],
-        wrappedKEKKey: [NSData dataWithBytes:wrappedKEK.data() length:wrappedKEK.size()],
-        encryptedKeyKey: [NSData dataWithBytes:encryptedKey.data() length:encryptedKey.size()],
+        wrappedKEKKey: toNSData(wrappedKEK).autorelease(),
+        encryptedKeyKey: toNSData(encryptedKey).autorelease(),
         tagKey: [NSData dataWithBytes:tag length:tagLength]
     };
 

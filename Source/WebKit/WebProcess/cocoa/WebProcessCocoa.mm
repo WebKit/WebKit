@@ -214,8 +214,7 @@ void WebProcess::bindAccessibilityFrameWithData(WebCore::FrameIdentifier frameID
         m_accessibilityRemoteFrameTokenCache = adoptNS([[NSMutableDictionary alloc] init]);
 
     auto frameInt = frameID.object().toUInt64();
-    NSData *nsData = [NSData dataWithBytes:data.data() length:data.size()];
-    [m_accessibilityRemoteFrameTokenCache setObject:nsData forKey:@(frameInt)];
+    [m_accessibilityRemoteFrameTokenCache setObject:toNSData(data).get() forKey:@(frameInt)];
 }
 
 id WebProcess::accessibilityFocusedUIElement()

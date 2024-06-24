@@ -33,6 +33,7 @@
 #import <WebCore/WebAuthenticationConstants.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 #import "AppAttestInternalSoftLink.h"
 #import "LocalAuthenticationSoftLink.h"
@@ -54,11 +55,6 @@ static inline String bundleName()
 }
 #endif
 } // namespace
-
-static inline RetainPtr<NSData> toNSData(const Vector<uint8_t>& data)
-{
-    return adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
-}
 
 LocalConnection::~LocalConnection()
 {

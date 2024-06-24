@@ -46,6 +46,7 @@
 #import <pal/crypto/CryptoDigest.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -129,15 +130,10 @@ static inline Vector<uint8_t> aaguidVector()
     return aaguidVector;
 }
 
-static inline RetainPtr<NSData> toNSData(const Vector<uint8_t>& data)
-{
-    return adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
-}
-
 static inline RetainPtr<NSData> toNSData(ArrayBuffer* buffer)
 {
     ASSERT(buffer);
-    return adoptNS([[NSData alloc] initWithBytes:buffer->data() length:buffer->byteLength()]);
+    return WTF::toNSData(buffer->span());
 }
 
 static inline Ref<ArrayBuffer> toArrayBuffer(NSData *data)
@@ -791,9 +787,7 @@ void LocalAuthenticator::deleteDuplicateCredential() const
     m_existingCredentials.findIf([creationOptions] (auto& credential) {
         auto* userHandle = credential->userHandle();
         ASSERT(userHandle);
-        if (userHandle->byteLength() != creationOptions.user.id.length())
-            return false;
-        if (memcmp(userHandle->data(), creationOptions.user.id.data(), userHandle->byteLength()))
+        if (!equalSpans(userHandle->span(), creationOptions.user.id.span()))
             return false;
 
         NSDictionary *query = @{

@@ -45,6 +45,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/URL.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 
@@ -328,7 +329,7 @@ void WebPushDaemon::injectEncryptedPushMessageForTesting(PushClientConnection& c
         }
 
         auto bytes = message.utf8();
-        RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytes:bytes.data() length: bytes.length()]);
+        RetainPtr data = toNSData(bytes.span());
 
         id obj = [NSJSONSerialization JSONObjectWithData:data.get() options:0 error:nullptr];
         if (!obj || ![obj isKindOfClass:[NSDictionary class]]) {

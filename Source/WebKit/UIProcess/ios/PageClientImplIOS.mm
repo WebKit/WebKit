@@ -76,6 +76,7 @@
 #import <WebCore/ValidationBubble.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 #define MESSAGE_CHECK(assertion) do { \
     if (auto webView = this->webView()) { \
@@ -400,8 +401,7 @@ void PageClientImpl::executeUndoRedo(UndoOrRedo undoOrRedo)
 
 void PageClientImpl::accessibilityWebProcessTokenReceived(std::span<const uint8_t> data, WebCore::FrameIdentifier, pid_t)
 {
-    NSData *remoteToken = [NSData dataWithBytes:data.data() length:data.size()];
-    [contentView() _setAccessibilityWebProcessToken:remoteToken];
+    [contentView() _setAccessibilityWebProcessToken:toNSData(data).get()];
 }
 
 bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent& event, bool isCharEvent)
@@ -839,8 +839,7 @@ void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntR
 
 void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t> dataReference)
 {
-    RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytes:dataReference.data() length:dataReference.size()]);
-    [webView() _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:suggestedFilename data:data.get()];
+    [webView() _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:suggestedFilename data:toNSData(dataReference).get()];
 }
 
 void PageClientImpl::scrollingNodeScrollViewWillStartPanGesture(ScrollingNodeID)

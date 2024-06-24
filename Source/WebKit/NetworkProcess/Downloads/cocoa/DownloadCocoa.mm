@@ -47,7 +47,7 @@ void Download::resume(std::span<const uint8_t> resumeData, const String& path, S
         return;
     }
     auto& cocoaSession = static_cast<NetworkSessionCocoa&>(*networkSession);
-    auto nsData = adoptNS([[NSData alloc] initWithBytes:resumeData.data() length:resumeData.size()]);
+    RetainPtr nsData = toNSData(resumeData);
 
     NSMutableDictionary *dictionary = [NSPropertyListSerialization propertyListWithData:nsData.get() options:NSPropertyListMutableContainersAndLeaves format:0 error:nullptr];
     [dictionary setObject:static_cast<NSString*>(path) forKey:@"NSURLSessionResumeInfoLocalPath"];

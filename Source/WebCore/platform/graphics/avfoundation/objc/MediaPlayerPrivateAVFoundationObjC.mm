@@ -2151,7 +2151,7 @@ static void fulfillRequestWithKeyData(AVAssetResourceLoadingRequest *request, Ar
         ASSERT(start <= std::numeric_limits<int>::max());
         ASSERT(end <= std::numeric_limits<int>::max());
         auto requestedKeyData = keyData->slice(static_cast<int>(start), static_cast<int>(end));
-        RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:requestedKeyData->data() length:requestedKeyData->byteLength()]);
+        RetainPtr nsData = toNSData(requestedKeyData->span());
         [dataRequest respondWithData:nsData.get()];
     }
 

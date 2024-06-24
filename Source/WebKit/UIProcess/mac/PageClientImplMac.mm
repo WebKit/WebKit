@@ -82,6 +82,7 @@
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
@@ -582,7 +583,7 @@ void PageClientImpl::setTextIndicatorAnimationProgress(float progress)
 
 void PageClientImpl::accessibilityWebProcessTokenReceived(std::span<const uint8_t> data, WebCore::FrameIdentifier frameID, pid_t pid)
 {
-    m_impl->setAccessibilityWebProcessToken([NSData dataWithBytes:data.data() length:data.size()], frameID, pid);
+    m_impl->setAccessibilityWebProcessToken(toNSData(data).get(), frameID, pid);
 }
     
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)

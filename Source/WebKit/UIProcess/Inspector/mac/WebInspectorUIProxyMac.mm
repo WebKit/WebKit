@@ -406,7 +406,7 @@ void WebInspectorUIProxy::showSavePanel(NSWindow *frontendWindow, NSURL *platfor
             auto decodedData = base64Decode(contentString, { Base64DecodeOption::ValidatePadding });
             if (!decodedData)
                 return;
-            auto dataContent = adoptNS([[NSData alloc] initWithBytes:decodedData->data() length:decodedData->size()]);
+            RetainPtr dataContent = toNSData(decodedData->span());
             [dataContent writeToURL:actualURL atomically:YES];
         } else
             [[controller content] writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];

@@ -144,7 +144,7 @@ void WebSocketTask::sendString(std::span<const uint8_t> utf8String, CompletionHa
 
 void WebSocketTask::sendData(std::span<const uint8_t> data, CompletionHandler<void()>&& callback)
 {
-    auto nsData = adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
+    RetainPtr nsData = toNSData(data);
     auto message = adoptNS([[NSURLSessionWebSocketMessage alloc] initWithData:nsData.get()]);
     [m_task sendMessage:message.get() completionHandler:makeBlockPtr([callback = WTFMove(callback)](NSError * _Nullable) mutable {
         callback();
@@ -156,7 +156,7 @@ void WebSocketTask::close(int32_t code, const String& reason)
     if (code == WebCore::ThreadableWebSocketChannel::CloseEventCodeNotSpecified)
         code = NSURLSessionWebSocketCloseCodeInvalid;
     auto utf8 = reason.utf8();
-    auto nsData = adoptNS([[NSData alloc] initWithBytes:utf8.data() length:utf8.length()]);
+    RetainPtr nsData = toNSData(utf8.span());
     if ([m_task respondsToSelector:@selector(_sendCloseCode:reason:)]) {
         [m_task _sendCloseCode:(NSURLSessionWebSocketCloseCode)code reason:nsData.get()];
         return;

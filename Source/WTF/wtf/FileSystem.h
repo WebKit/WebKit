@@ -170,7 +170,7 @@ WTF_EXPORT_PRIVATE bool flushFile(PlatformFileHandle);
 // Returns number of bytes actually read if successful, -1 otherwise.
 WTF_EXPORT_PRIVATE int64_t writeToFile(PlatformFileHandle, std::span<const uint8_t> data);
 // Returns number of bytes actually written if successful, -1 otherwise.
-WTF_EXPORT_PRIVATE int64_t readFromFile(PlatformFileHandle, void* data, size_t length);
+WTF_EXPORT_PRIVATE int64_t readFromFile(PlatformFileHandle, std::span<uint8_t> data);
 
 WTF_EXPORT_PRIVATE PlatformFileHandle openAndLockFile(const String&, FileOpenMode, OptionSet<FileLockMode> = FileLockMode::Exclusive);
 WTF_EXPORT_PRIVATE void unlockAndCloseFile(PlatformFileHandle);

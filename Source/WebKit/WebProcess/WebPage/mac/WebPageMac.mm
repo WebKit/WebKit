@@ -440,8 +440,8 @@ void WebPage::updateRemotePageAccessibilityOffset(WebCore::FrameIdentifier frame
 
 void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, std::span<const uint8_t> elementToken)
 {
-    NSData *elementTokenData = [NSData dataWithBytes:elementToken.data() length:elementToken.size()];
-    auto remoteElement = elementTokenData.length ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:elementTokenData]) : nil;
+    RetainPtr elementTokenData = toNSData(elementToken);
+    auto remoteElement = [elementTokenData length] ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:elementTokenData.get()]) : nil;
 
     createMockAccessibilityElement(pid);
     [accessibilityRemoteObject() setRemoteParent:remoteElement.get()];
@@ -449,10 +449,10 @@ void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, std::span<const 
 
 void WebPage::registerUIProcessAccessibilityTokens(std::span<const uint8_t> elementToken, std::span<const uint8_t> windowToken)
 {
-    NSData *elementTokenData = [NSData dataWithBytes:elementToken.data() length:elementToken.size()];
-    NSData *windowTokenData = [NSData dataWithBytes:windowToken.data() length:windowToken.size()];
-    auto remoteElement = elementTokenData.length ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:elementTokenData]) : nil;
-    auto remoteWindow = windowTokenData.length ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:windowTokenData]) : nil;
+    RetainPtr elementTokenData = toNSData(elementToken);
+    RetainPtr windowTokenData = toNSData(windowToken);
+    auto remoteElement = [elementTokenData length] ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:elementTokenData.get()]) : nil;
+    auto remoteWindow = [windowTokenData length] ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:windowTokenData.get()]) : nil;
 
     [remoteElement setWindowUIElement:remoteWindow.get()];
     [remoteElement setTopLevelUIElement:remoteWindow.get()];

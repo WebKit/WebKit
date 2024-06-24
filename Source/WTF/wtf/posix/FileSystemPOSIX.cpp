@@ -144,10 +144,10 @@ int64_t writeToFile(PlatformFileHandle handle, std::span<const uint8_t> data)
     return -1;
 }
 
-int64_t readFromFile(PlatformFileHandle handle, void* data, size_t length)
+int64_t readFromFile(PlatformFileHandle handle, std::span<uint8_t> data)
 {
     do {
-        auto bytesRead = read(handle, data, length);
+        auto bytesRead = read(handle, data.data(), data.size());
         if (bytesRead >= 0)
             return bytesRead;
     } while (errno == EINTR);

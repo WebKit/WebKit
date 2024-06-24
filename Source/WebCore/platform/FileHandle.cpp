@@ -106,7 +106,7 @@ int FileHandle::read(void* data, int length)
     if (!open())
         return -1;
 
-    return FileSystem::readFromFile(m_fileHandle, data, length);
+    return FileSystem::readFromFile(m_fileHandle, { static_cast<uint8_t*>(data), static_cast<size_t>(length) });
 }
 
 int FileHandle::write(std::span<const uint8_t> data)

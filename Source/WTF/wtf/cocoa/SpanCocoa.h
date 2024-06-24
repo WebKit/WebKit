@@ -36,6 +36,14 @@ inline std::span<const uint8_t> span(NSData *data)
     return { static_cast<const uint8_t*>(data.bytes), data.length };
 }
 
+#ifdef __OBJC__
+inline RetainPtr<NSData> toNSData(std::span<const uint8_t> span)
+{
+    return adoptNS([[NSData alloc] initWithBytes:span.data() length:span.size()]);
+}
+#endif
+
 } // namespace WTF
 
 using WTF::span;
+using WTF::toNSData;

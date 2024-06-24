@@ -116,7 +116,7 @@ void CcidConnection::transact(Vector<uint8_t>&& data, DataReceivedCallback&& cal
     [m_smartCard beginSessionWithReply:makeBlockPtr([this, data = WTFMove(data), callback = WTFMove(callback)] (BOOL success, NSError *error) mutable {
         if (!success)
             return;
-        [m_smartCard transmitRequest:adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]).autorelease() reply:makeBlockPtr([this, callback = WTFMove(callback)](NSData * _Nullable nsResponse, NSError * _Nullable error) mutable {
+        [m_smartCard transmitRequest:toNSData(data).autorelease() reply:makeBlockPtr([this, callback = WTFMove(callback)](NSData * _Nullable nsResponse, NSError * _Nullable error) mutable {
             [m_smartCard endSession];
             callOnMainRunLoop([response = makeVector(nsResponse), callback = WTFMove(callback)] () mutable {
                 callback(WTFMove(response));

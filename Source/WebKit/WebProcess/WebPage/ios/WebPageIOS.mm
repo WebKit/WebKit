@@ -676,8 +676,7 @@ void WebPage::registerRemoteFrameAccessibilityTokens(pid_t, std::span<const uint
 
 void WebPage::registerUIProcessAccessibilityTokens(std::span<const uint8_t> elementToken, std::span<const uint8_t>)
 {
-    NSData *elementTokenData = [NSData dataWithBytes:elementToken.data() length:elementToken.size()];
-    [m_mockAccessibilityElement setRemoteTokenData:elementTokenData];
+    [m_mockAccessibilityElement setRemoteTokenData:toNSData(elementToken).get()];
 }
 
 void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&& completionHandler)

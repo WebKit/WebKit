@@ -80,6 +80,7 @@
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/text/TextStream.h>
 
 #if USE(QUICK_LOOK)
@@ -739,8 +740,7 @@ void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t>
 
 void WebPageProxy::relayAccessibilityNotification(const String& notificationName, std::span<const uint8_t> data)
 {
-    NSData *notificationData = [NSData dataWithBytes:data.data() length:data.size()];
-    protectedPageClient()->relayAccessibilityNotification(notificationName, notificationData);
+    protectedPageClient()->relayAccessibilityNotification(notificationName, toNSData(data).get());
 }
 
 void WebPageProxy::assistiveTechnologyMakeFirstResponder()

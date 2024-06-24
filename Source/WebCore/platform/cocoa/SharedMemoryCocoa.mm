@@ -35,6 +35,7 @@
 #import <mach/vm_map.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/RefPtr.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/cocoa/MachVMSPI.h>
 
 #if HAVE(MACH_MEMORY_ENTRY)
@@ -230,8 +231,7 @@ WTF::MachSendRight SharedMemory::createSendRight(Protection protection) const
 
 RetainPtr<NSData> SharedMemory::toNSData() const
 {
-    auto span = this->span();
-    return adoptNS([[NSData alloc] initWithBytes:span.data() length:span.size()]);
+    return WTF::toNSData(span());
 }
 
 } // namespace WebCore

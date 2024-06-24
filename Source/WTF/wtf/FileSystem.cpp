@@ -267,7 +267,7 @@ bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle& targ
     });
 
     do {
-        int readBytes = readFromFile(source, buffer.data(), bufferSize);
+        int readBytes = readFromFile(source, buffer.mutableSpan());
 
         if (readBytes < 0)
             return false;
@@ -510,7 +510,7 @@ std::optional<Salt> readOrMakeSalt(const String& path)
     if (FileSystem::fileExists(path)) {
         auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
         Salt salt;
-        auto bytesRead = static_cast<std::size_t>(FileSystem::readFromFile(file, salt.data(), salt.size()));
+        auto bytesRead = static_cast<std::size_t>(FileSystem::readFromFile(file, salt));
         FileSystem::closeFile(file);
         if (bytesRead == salt.size())
             return salt;
@@ -549,7 +549,7 @@ std::optional<Vector<uint8_t>> readEntireFile(PlatformFileHandle handle)
     size_t totalBytesRead = 0;
     int bytesRead;
 
-    while ((bytesRead = FileSystem::readFromFile(handle, buffer.data() + totalBytesRead, bytesToRead - totalBytesRead)) > 0)
+    while ((bytesRead = FileSystem::readFromFile(handle, buffer.mutableSpan().subspan(totalBytesRead))) > 0)
         totalBytesRead += bytesRead;
 
     if (totalBytesRead != bytesToRead)

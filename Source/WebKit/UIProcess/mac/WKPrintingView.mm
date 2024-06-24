@@ -39,6 +39,7 @@
 #import <WebCore/LocalDefaultSystemAppearance.h>
 #import <WebCore/ShareableBitmap.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 #import "PDFKitSoftLink.h"
 
@@ -586,7 +587,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(!_printedPagesData.isEmpty()); // Prepared by knowsPageRange:
 
     if (!_printedPagesPDFDocument) {
-        RetainPtr<NSData> pdfData = adoptNS([[NSData alloc] initWithBytes:_printedPagesData.data() length:_printedPagesData.size()]);
+        RetainPtr pdfData = toNSData(_printedPagesData.span());
         _printedPagesPDFDocument = adoptNS([WebKit::allocPDFDocumentInstance() initWithData:pdfData.get()]);
 
         unsigned pageCount = [_printedPagesPDFDocument pageCount];
