@@ -9,12 +9,12 @@
     description("Test for cookie blocking when web workers import cross-site scripts.");
     jsTestIsAsync = true;
 
-    const partitionHost = "127.0.0.1:8000";
-    const thirdPartyOrigin = "http://localhost:8000";
+    const partitionHost = "127.0.0.1:8443";
+    const thirdPartyOrigin = "https://localhost:8443";
     const thirdPartyBaseUrl = thirdPartyOrigin + "/resourceLoadStatistics/resources";
     const firstPartyCookieName = "firstPartyCookie";
     const subPathToSetFirstPartyCookie = "/set-cookie.py?name=" + firstPartyCookieName + "&value=value";
-    const returnUrl = "http://127.0.0.1:8000/resourceLoadStatistics/blocking-in-web-worker-script-import.html";
+    const returnUrl = "https://127.0.0.1:8443/resourceLoadStatistics/blocking-in-web-worker-script-import.https.html";
     const subPathToGetCookies = "/get-cookies.py?name1=" + firstPartyCookieName;
 
     function openIframe(url, onLoadHandler) {
@@ -51,7 +51,7 @@
                 break;
             case "#step3":
                 document.location.hash = "step4";
-                let w1 = new Worker("resources/worker-importing-localhost-script.js");
+                let w1 = new Worker("resources/secure-worker-importing-localhost-script.js");
                 w1.onmessage = receiveMessage;
                 w1.postMessage("shouldReceiveCookies=true");
                 break;
@@ -64,7 +64,7 @@
                 });
                 break;
             case "#step5":
-                let w2 = new Worker("resources/worker-importing-localhost-script.js");
+                let w2 = new Worker("resources/secure-worker-importing-localhost-script.js");
                 w2.onmessage = receiveMessage;
                 w2.postMessage("shouldNotReceiveCookies");
                 break;
