@@ -547,6 +547,9 @@ static GSourceFuncs s_keyRepeatSourceFuncs = {
 
 void WaylandSeat::handleKeyEvent(uint32_t time, uint32_t key, uint32_t state, bool fromRepeat)
 {
+    if (!m_keyboard.view)
+        return;
+
     auto beginTime = MonotonicTime::now().secondsSinceEpoch();
 
     auto* keymap = WPE_KEYMAP_XKB(m_keymap.get());
@@ -600,6 +603,9 @@ void WaylandSeat::handleKeyEvent(uint32_t time, uint32_t key, uint32_t state, bo
         static_cast<WPEModifiers>(eventModifiers), key, keyval);
     wpe_view_event(m_keyboard.view.get(), event);
     wpe_event_unref(event);
+
+    if (!m_keyboard.view)
+        return;
 
     auto* xkbKeymap = wpe_keymap_xkb_get_xkb_keymap(keymap);
     if (!xkb_keymap_key_repeats(xkbKeymap, key))
