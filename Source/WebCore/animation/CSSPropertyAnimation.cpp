@@ -2649,7 +2649,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyWrapperSVGPaint);
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyWrapperVisitedAffectedSVGPaint);
 class PropertyWrapperVisitedAffectedSVGPaint : public AnimationPropertyWrapperBase {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(PropertyWrapperVisitedAffectedVGPaint);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(PropertyWrapperVisitedAffectedSVGPaint);
 public:
     PropertyWrapperVisitedAffectedSVGPaint(CSSPropertyID property, SVGPaintType (RenderStyle::*paintTypeGetter)() const, const StyleColor& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const StyleColor&), SVGPaintType (RenderStyle::*visitedPaintTypeGetter)() const, const StyleColor& (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const StyleColor&))
         : AnimationPropertyWrapperBase(property)
@@ -2682,7 +2682,7 @@ private:
     }
 #endif
 };
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyWrapperVisitedAffectedVGPaint);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyWrapperVisitedAffectedSVGPaint);
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyWrapperFontWeight);
 class PropertyWrapperFontWeight final : public PropertyWrapper<FontSelectionValue> {

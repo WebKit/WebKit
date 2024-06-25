@@ -54,6 +54,8 @@ namespace Wasm {
 
 // This class is fast allocated (instead of using TZone) because
 // the subclass JSEntrypointInterpreterCalleeMetadata is variable-sized
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Callee);
+
 class Callee : public NativeCallee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Callee);
 public:
@@ -88,6 +90,8 @@ private:
 protected:
     FixedVector<HandlerInfo> m_exceptionHandlers;
 };
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JITCallee);
 
 class JITCallee : public Callee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JITCallee);
@@ -126,11 +130,15 @@ protected:
 #endif
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointCallee);
+
 class JSEntrypointCallee : public Callee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSEntrypointCallee);
 protected:
     JS_EXPORT_PRIVATE JSEntrypointCallee(Wasm::CompilationMode mode) : Callee(mode) { }
 };
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointJITCallee);
 
 class JSEntrypointJITCallee final : public JSEntrypointCallee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSEntrypointJITCallee);
@@ -404,6 +412,8 @@ public:
     RefPtr<Wasm::Callee> m_replacementCallee { nullptr };
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WasmToJSCallee);
+
 class WasmToJSCallee final : public Callee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(WasmToJSCallee);
 public:
@@ -425,6 +435,9 @@ private:
 };
 
 #if ENABLE(JIT)
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSToWasmICCallee);
+
 class JSToWasmICCallee final : public JITCallee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSToWasmICCallee);
 public:
@@ -451,6 +464,8 @@ struct WasmCodeOrigin {
     unsigned functionIndex;
     unsigned moduleIndex;
 };
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OptimizingJITCallee);
 
 class OptimizingJITCallee : public JITCallee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(OptimizingJITCallee);
@@ -485,6 +500,8 @@ private:
 
 constexpr int32_t stackCheckUnset = 0;
 constexpr int32_t stackCheckNotNeeded = -1;
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OSREntryCallee);
 
 class OSREntryCallee final : public OptimizingJITCallee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(OSREntryCallee);
@@ -533,6 +550,8 @@ private:
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OMGCallee);
+
 class OMGCallee final : public OptimizingJITCallee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(OMGCallee);
 public:
@@ -554,6 +573,8 @@ private:
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
 
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BBQCallee);
 
 class BBQCallee final : public OptimizingJITCallee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BBQCallee);
@@ -644,6 +665,8 @@ private:
 #endif
 
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(IPIntCallee);
+
 class IPIntCallee final : public Callee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(IPIntCallee);
     friend class JSC::LLIntOffsetsExtractor;
@@ -715,6 +738,8 @@ public:
 
     IPIntTierUpCounter m_tierUpCounter;
 };
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LLIntCallee);
 
 class LLIntCallee final : public Callee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LLIntCallee);
