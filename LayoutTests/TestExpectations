@@ -7609,3 +7609,6 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-getComputedStyle-
 
 # WebRTC Encoded Transform - Test Expectation - Crashes on 'mac-wk2' debug and gtk-wk2 / wpe-wk2
 webkit.org/b/275663 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-generateKeyFrame-simulcast.https.html [ Skip ]
+
+# Skip until https://bugs.webkit.org/show_bug.cgi?id=275835 is done
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/disclosure-styles.html [ Skip ]
