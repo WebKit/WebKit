@@ -1105,8 +1105,6 @@ webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transfor
 
 webkit.org/b/211836 imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Failure Pass ]
 
-webkit.org/b/212893 http/tests/navigation/page-cache-video.html [ Failure Pass ]
-
 webkit.org/b/213386 fast/images/low-memory-decode.html [ Timeout ]
 
 webkit.org/b/214801 fast/forms/datalist/datalist-show-hide.html [ Failure Pass ]
