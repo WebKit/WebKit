@@ -5,18 +5,8 @@ function testOne(operation)
 {
     var context = document.getElementById(operation).getContext('2d');
 
-    context.fillStyle = "red";
-    context.fillRect(0, 0, 1000, 1000);
-
-    context.moveTo(0, 0);
-    context.lineTo(0, 1000);
-    context.lineTo(1000, 1000);
-    context.lineTo(1000, 0);
-    context.closePath();
-    context[operation]();
-
     context.fillStyle = "green";
-    context.fill();
+    context.fillRect(0, 0, 1000, 1000);
 }
 function test()
 {

@@ -12,14 +12,6 @@
     ctx.fillStyle = "red";
     ctx.fillText("B", 0, 100);
     ctx.fillStyle = "green";
-    canvas.parentNode.removeChild(canvas);
-    if (window.testRunner)
-        testRunner.waitUntilDone();
-    setTimeout(function()
-    {
-        ctx.fillText("A", 0, 100);
-        document.body.appendChild(canvas);
-        if (window.testRunner)
-            testRunner.notifyDone();
-    }, 50);
+    ctx.fillText("A", 0, 100);
 </script>
+

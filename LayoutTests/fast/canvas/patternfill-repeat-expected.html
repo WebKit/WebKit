@@ -12,32 +12,57 @@
     i.src = "resources/apple.gif";
     i.onload = function() {
         var ctx = document.getElementsByTagName('canvas')[0].getContext('2d');
-        var p;
     
+        var w = i.width;
+        var h = i.height;
     	//ctx.strokeWidth(1.0);
-    	p = ctx.createPattern(i, "repeat");
-    	ctx.fillStyle = p;
     	ctx.translate(10, 10);
-    	ctx.fillRect(0, 0, 150, 150);
-    
-    	px = ctx.createPattern(i, "repeat-x");
-    	ctx.fillStyle = px;
+	ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, 150, 150);
+        ctx.clip();
+    	ctx.drawImage(i, 0, 0);
+        ctx.drawImage(i, 0, h);
+        ctx.drawImage(i, 0, 2*h);
+        ctx.drawImage(i, w, 0);
+        ctx.drawImage(i, w, h);
+        ctx.drawImage(i, w, 2*h);
+        ctx.drawImage(i, 2*w, 0);
+        ctx.drawImage(i, 2*w, h);
+        ctx.drawImage(i, 2*w, 2*h);
+        ctx.restore();
+
     	ctx.translate(0, 160);
-    	ctx.fillRect(0, 0, 150, 150);
-    
-    	pn = ctx.createPattern(i, "no-repeat");
-    	ctx.fillStyle = pn;
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, 150, 150);
+        ctx.clip();
+        ctx.drawImage(i, 0, 0);
+        ctx.drawImage(i, w, 0);
+        ctx.drawImage(i, 2*w, 0);
+        ctx.restore();
+ 
     	ctx.translate(160, 0);
-    	ctx.fillRect(0, 0, 150, 150);
+        ctx.save()
+        ctx.beginPath();
+        ctx.rect(0, 0, 150, 150);
+        ctx.clip();
+        ctx.drawImage(i, 0, 0);
+        ctx.restore();
     
-    	py = ctx.createPattern(i, "repeat-y");
-    	ctx.fillStyle = py;
     	ctx.translate(0, -160);
-    	ctx.fillRect(0, 0, 150, 150);
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, 150, 150);
+        ctx.clip();
+        ctx.drawImage(i, 0, 0);
+        ctx.drawImage(i, 0, h);
+        ctx.drawImage(i, 0, 2*h);
+        ctx.restore();
     	
     	if (window.testRunner)
     	    testRunner.notifyDone();
-   		}
+    }
    }
   </script>
  </head>
