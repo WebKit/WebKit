@@ -587,8 +587,17 @@ void LocalFrameViewLayoutContext::pushLayoutState(RenderElement& root)
 
 bool LocalFrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged)
 {
+    if (renderer.element()) {
+        WTF_ALWAYS_LOG("pushLayoutState: " << renderer.element());
+    }
+    
     // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
     auto* layoutState = this->layoutState();
+    
+    if (layoutState)
+        WTF_ALWAYS_LOG("layoutState->blockStartTrimming() " << layoutState->blockStartTrimming());
+    
+    
     if (!layoutState || !needsFullRepaint() || layoutState->isPaginated() || renderer.enclosingFragmentedFlow()
         || layoutState->lineGrid() || (renderer.style().lineGrid() != RenderStyle::initialLineGrid() && renderer.isRenderBlockFlow())) {
         m_layoutStateStack.append(makeUnique<RenderLayoutState>(m_layoutStateStack
@@ -596,6 +605,7 @@ bool LocalFrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const Lay
             , offset
             , pageHeight
             , pageHeightChanged
+            , layoutState ? layoutState->blockStartTrimming() : false
             , layoutState ? layoutState->lineClamp() : std::nullopt
             , layoutState ? layoutState->textBoxTrim() : RenderLayoutState::TextBoxTrim()));
         return true;

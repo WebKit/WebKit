@@ -475,6 +475,11 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     }();
     const RenderStyle& styleToUse = style();
     do {
+        WTF_ALWAYS_LOG("RenderBlockFlow::layoutBlock | " << this->m_node);
+        
+        if (element() && WTF::equalIgnoringASCIICase(element()->idForStyleResolution(), "1b"_s))
+            WTF_ALWAYS_LOG("found it");
+        
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || styleToUse.isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged);
 
         preparePaginationBeforeBlockLayout(relayoutChildren);
@@ -545,6 +550,8 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     {
         // FIXME: This could be removed once relayoutForPagination() either stop recursing or we manage to
         // re-order them.
+        WTF_ALWAYS_LOG("RenderBlockFlow::layoutBlock inner | " << this->m_node);
+
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || styleToUse.isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged);
 
         if (oldHeight != newHeight) {
@@ -769,6 +776,7 @@ void TextBoxTrimmer::adjustTextBoxTrimAfterLayout()
 
 void RenderBlockFlow::layoutInFlowChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, LayoutUnit& maxFloatLogicalBottom)
 {
+    WTF_ALWAYS_LOG("RenderBlockFlow::layoutInFlowChildren | " << this->m_node);
     if (!firstChild()) {
         auto logicalHeight = borderAndPaddingBefore() + borderAndPaddingAfter() + scrollbarLogicalHeight();
         if (hasLineIfEmpty())
@@ -781,11 +789,15 @@ void RenderBlockFlow::layoutInFlowChildren(bool relayoutChildren, LayoutUnit& re
         return;
     }
 
+    WTF_ALWAYS_LOG("RenderBlockFlow::layoutInFlowChildren after return 1 | " << this->m_node);
+
     if (childrenInline()) {
         auto textBoxTrimmer = TextBoxTrimmer { *this, this };
         layoutInlineChildren(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         return;
     }
+    
+    WTF_ALWAYS_LOG("RenderBlockFlow::layoutInFlowChildren after return 2 | " << this->m_node);
 
     {
         // With block children, there's no way to tell what the last formatted line is until after we finished laying out the subtree.
@@ -826,18 +838,25 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
 
     auto hasMarginTrimState = false;
     auto updateMarginTrimStateIfNeeded = [&] {
-        auto containingBlockTrimmingState = layoutState->blockStartTrimming();
-        if (style().marginTrim().contains(MarginTrimType::BlockStart))
-            layoutState->pushBlockStartTrimming(true);
-        else if (!marginInfo.canCollapseMarginBeforeWithChildren() && containingBlockTrimmingState)
-            layoutState->pushBlockStartTrimming(false);
-        else if (marginInfo.canCollapseMarginBeforeWithChildren() && containingBlockTrimmingState)
-            layoutState->pushBlockStartTrimming(containingBlockTrimmingState.value());
+//        auto containingBlockTrimmingState = layoutState->blockStartTrimming();
+        if (style().marginTrim().contains(MarginTrimType::BlockStart)) {
+            WTF_ALWAYS_LOG(this->m_node << " | setBlockStartTrimming: true");
+            layoutState->setBlockStartTrimming(true);
+        }
+//        else if (!marginInfo.canCollapseMarginBeforeWithChildren() && containingBlockTrimmingState) {
+//            WTF_ALWAYS_LOG(this->m_node << " | setBlockStartTrimming: false | 1");
+//            layoutState->setBlockStartTrimming(false);
+//        }
+//        else if (marginInfo.canCollapseMarginBeforeWithChildren() && containingBlockTrimmingState) {
+//            WTF_ALWAYS_LOG(this->m_node << " | setBlockStartTrimming: " << containingBlockTrimmingState);
+//            layoutState->setBlockStartTrimming(containingBlockTrimmingState);
+//        }
         else
             return;
         hasMarginTrimState = true;
     };
 
+    WTF_ALWAYS_LOG("RenderBlockFlow::layoutBlockChildren | " << this->m_node);
     updateMarginTrimStateIfNeeded();
 
     // Fieldsets need to find their legend and position it inside the border of the object.
@@ -848,9 +867,14 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
     LayoutUnit previousFloatLogicalBottom;
     maxFloatLogicalBottom = 0;
 
+    WTF_ALWAYS_LOG("Child Box");
+    
     RenderBox* next = firstChildBox();
 
     while (next) {
+        
+        WTF_ALWAYS_LOG(next->m_node);
+        
         RenderBox& child = *next;
         next = child.nextSiblingBox();
 
@@ -902,8 +926,8 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
     // Now do the handling of the bottom of the block, adding in our bottom border/padding and
     // determining the correct collapsed bottom margin information.
     handleAfterSideOfBlock(beforeEdge, afterEdge, marginInfo);
-    if (hasMarginTrimState)
-        layoutState->popBlockStartTrimming();
+//    if (hasMarginTrimState)
+//        layoutState->popBlockStartTrimming();
 }
 
 
@@ -952,6 +976,19 @@ void RenderBlockFlow::trimBlockEndChildrenMargins()
             // We hit another type of block child that doesn't apply to our search. We can just
             // end the search since nothing before this block can affect the bottom margin of the outer one we are trimming for.
             break;
+    }
+}
+
+void RenderBlockFlow::markAllDecendantsWithMarginTrim(RenderBox* box)
+{
+
+    if (box && box->isBlockContainer()) {
+        WTF_ALWAYS_LOG(box->m_node);
+
+        box->setNeedsLayout(MarkOnlyThis);
+
+        for (auto* child = box->firstChild(); child; child = child->nextSibling())
+            markAllDecendantsWithMarginTrim(dynamicDowncast<RenderBox>(child));
     }
 }
 
@@ -1106,10 +1143,10 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
     if (marginInfo.atBeforeSideOfBlock() && !child.isSelfCollapsingBlock()) {
         marginInfo.setAtBeforeSideOfBlock(false);
 
-        if (auto* layoutState = frame().view()->layoutContext().layoutState(); layoutState && layoutState->blockStartTrimming()) {
-            layoutState->popBlockStartTrimming();
-            layoutState->pushBlockStartTrimming(false);
-        }
+//        if (auto* layoutState = frame().view()->layoutContext().layoutState(); layoutState && layoutState->blockStartTrimming()) {
+//            WTF_ALWAYS_LOG(this->m_node << " | setBlockStartTrimming: false | 2");
+//            layoutState->setBlockStartTrimming(false);
+//        }
     }
     // Now place the child in the correct left position
     determineLogicalLeftPositionForChild(child, ApplyLayoutDelta);
@@ -1375,10 +1412,12 @@ std::optional<LayoutUnit> RenderBlockFlow::selfCollapsingMarginBeforeWithClear(R
 
 LayoutUnit RenderBlockFlow::collapseMarginsWithChildInfo(RenderBox* child, RenderObject* prevSibling, MarginInfo& marginInfo)
 {
+    WTF_ALWAYS_LOG("RenderBlockFlow::collapseMarginsWithChildInfo");
     bool childIsSelfCollapsing = child ? child->isSelfCollapsingBlock() : false;
     bool beforeQuirk = child ? hasMarginBeforeQuirk(*child) : false;
     bool afterQuirk = child ? hasMarginAfterQuirk(*child) : false;
     auto trimChildBlockMargins = [&]() {
+        WTF_ALWAYS_LOG("trimChildBlockMargins");
         auto childBlockFlow = dynamicDowncast<RenderBlockFlow>(child);
         if (childBlockFlow)
             childBlockFlow->setMaxMarginBeforeValues(0_lu, 0_lu);
@@ -1392,9 +1431,12 @@ LayoutUnit RenderBlockFlow::collapseMarginsWithChildInfo(RenderBox* child, Rende
             setTrimmedMarginForChild(*child, MarginTrimType::BlockEnd);
         }
     };
-    if (frame().view()->layoutContext().layoutState()->blockStartTrimming().value_or(false)) {
+    if (frame().view()->layoutContext().layoutState()->blockStartTrimming()) {
         ASSERT(marginInfo.atBeforeSideOfBlock());
+        WTF_ALWAYS_LOG(child->m_node);
         trimChildBlockMargins();
+    } else {
+        WTF_ALWAYS_LOG("Failed " << child->m_node);
     }
 
     // Get the four margin values for the child and cache them.
@@ -2353,6 +2395,9 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
         parentBlock->markAllDescendantsWithFloatsForLayout();
         parentBlock->markSiblingsWithFloatsForLayout();
     }
+
+    if (!this->style().marginTrim().isEmpty())
+        this->markAllDecendantsWithMarginTrim(this);
 
     if (diff == StyleDifference::Layout && selfNeedsLayout() && childrenInline()) {
         for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance())

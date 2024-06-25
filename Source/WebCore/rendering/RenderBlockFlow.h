@@ -288,6 +288,7 @@ public:
 
     void removeFloatingObjects();
     void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = nullptr, bool inLayout = true);
+    void markAllDecendantsWithMarginTrim(RenderBox* box = nullptr);
     void markSiblingsWithFloatsForLayout(RenderBox* floatToRemove = nullptr);
 
     const FloatingObjectSet* floatingObjectSet() const { return m_floatingObjects ? &m_floatingObjects->set() : nullptr; }

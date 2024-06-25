@@ -62,10 +62,10 @@ public:
         , m_layoutDeltaXSaturated(false)
         , m_layoutDeltaYSaturated(false)
 #endif
-        , m_blockStartTrimming(Vector<bool>(0))
+        , m_blockStartTrimming(false)
     {
     }
-    RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<LineClamp>, std::optional<TextBoxTrim>);
+    RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, bool blockStartTrimming, std::optional<LineClamp>, std::optional<TextBoxTrim>);
     explicit RenderLayoutState(RenderElement&);
 
     bool isPaginated() const { return m_isPaginated; }
@@ -113,12 +113,8 @@ public:
     void addTextBoxTrimEnd(const RenderBlockFlow& targetInlineFormattingContext);
     void resetTextBoxTrim() { m_textBoxTrim = { }; }
 
-    void pushBlockStartTrimming(bool blockStartTrimming) { m_blockStartTrimming.append(blockStartTrimming); }
-    std::optional<bool> blockStartTrimming() const { return m_blockStartTrimming.isEmpty() ? std::nullopt : std::optional(m_blockStartTrimming.last()); }
-    void popBlockStartTrimming() 
-    {
-        m_blockStartTrimming.removeLast(); 
-    }
+    void setBlockStartTrimming(bool blockStartTrimming) { m_blockStartTrimming = blockStartTrimming; }
+    bool blockStartTrimming() const { return m_blockStartTrimming; }
 
 private:
     void computeOffsets(const RenderLayoutState& ancestor, RenderBox&, LayoutSize offset);
@@ -138,7 +134,7 @@ private:
     bool m_layoutDeltaXSaturated : 1;
     bool m_layoutDeltaYSaturated : 1;
 #endif
-    Vector<bool> m_blockStartTrimming;
+    bool m_blockStartTrimming;
 
     // The current line grid that we're snapping to and the offset of the start of the grid.
     SingleThreadWeakPtr<RenderBlockFlow> m_lineGrid;

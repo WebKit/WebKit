@@ -2949,6 +2949,8 @@ bool RenderBlock::updateFragmentRangeForBoxChild(const RenderBox& box) const
 
 void RenderBlock::setTrimmedMarginForChild(RenderBox &child, MarginTrimType marginTrimType)
 {
+    WTF_ALWAYS_LOG("setTrimmedMarginForChild: " << child.m_node << " " << marginTrimType);
+    
     switch (marginTrimType) {
     case MarginTrimType::BlockStart:
         setMarginBeforeForChild(child, 0_lu);
