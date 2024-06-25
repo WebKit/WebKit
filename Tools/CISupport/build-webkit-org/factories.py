@@ -288,6 +288,7 @@ class DownloadAndPerfTestFactory(Factory):
 class SmartPointerStaticAnalyzerFactory(Factory):
     def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None, **kwargs):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
+        self.addStep(PrintClangVersion())
         self.addStep(ScanBuildSmartPointer())
 
 

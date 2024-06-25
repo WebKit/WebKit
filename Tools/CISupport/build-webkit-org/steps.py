@@ -2002,6 +2002,29 @@ class SetPermissions(master.MasterShellCommandNewStyle):
         super().__init__(**kwargs)
 
 
+class PrintClangVersion(shell.ShellCommandNewStyle):
+    name = 'print-clang-version'
+    haltOnFailure = False
+    flunkOnFailure = False
+    warnOnFailure = False
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+        self.command = ['../llvm-project/build/bin/clang', '--version']
+        rc = yield super().run()
+        return defer.returnValue(rc)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {'step': 'Failed to print clang version'}
+        log_text = self.log_observer.getStdout()
+        match = re.search('(.*clang version.+) (\\(.+?\\))', log_text)
+        if match:
+            return {'step': match.group(0)}
+
+
 class ShowIdentifier(shell.ShellCommandNewStyle):
     name = 'show-identifier'
     identifier_re = '^Identifier: (.*)$'
