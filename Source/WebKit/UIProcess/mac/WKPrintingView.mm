@@ -298,7 +298,7 @@ static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&&
             view->_printingCallbackCondition.notifyOne();
         }
     };
-    _expectedPrintCallback = _webFrame->page()->drawPagesToPDF(_webFrame.get(), printInfo, firstPage - 1, lastPage - firstPage + 1, WTFMove(callback));
+    _expectedPrintCallback = _webFrame->page()->drawPagesToPDF(*_webFrame, printInfo, firstPage - 1, lastPage - firstPage + 1, WTFMove(callback));
     context->view = self;
     context->callbackID = _expectedPrintCallback;
 }
@@ -545,7 +545,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                     std::unique_ptr<IPCCallbackContext> contextDeleter(context);
                     pageDidDrawToImage(WTFMove(imageHandle), context);
                 };
-                _latestExpectedPreviewCallback = _webFrame->page()->drawRectToImage(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]), scaledPrintingRect, imageSize, WTFMove(callback));
+                _latestExpectedPreviewCallback = _webFrame->page()->drawRectToImage(*_webFrame, WebKit::PrintInfo([_printOperation.get() printInfo]), scaledPrintingRect, imageSize, WTFMove(callback));
                 _expectedPreviewCallbacks.add(_latestExpectedPreviewCallback, scaledPrintingRect);
 
                 context->view = self;
