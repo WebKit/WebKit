@@ -370,11 +370,21 @@ JS_EXPORT_PRIVATE bool isFromJSCode(void* returnAddress);
 #if USE(BUILTIN_FRAME_ADDRESS)
 #if OS(WINDOWS)
 // On Windows, __builtin_frame_address(1) doesn't work, it returns __builtin_frame_address(0)
-// We can't use __builtin_frame_address(0) either, as if the stack pointer is decremented
-// then __builtin_frame_address(0) points at the first empty home space.
-// Could be implemented on Windows with __builtin_stack_address() once implemented in clang,
-// as that returns the stack pointer at the time of function entry.
-#error "Not implemented on platform https://bugs.webkit.org/show_bug.cgi?id=275567"
+// We can't use __builtin_frame_address(0) either, as on Windows it points at the space after
+// function's local variables on the stack instead of before like other platforms.
+// Instead we use _AddressOfReturnAddress(), and clobber rbp so it should be the first parameter
+// saved by the currrent function.
+#define DECLARE_CALL_FRAME(vm) \
+    ({ \
+        asm volatile( \
+            "" \
+            : /* no outputs */ \
+            : /* no inputs */ \
+            : "rbp" /* clobber rbp */ \
+        ); \
+        ASSERT(JSC::isFromJSCode(removeCodePtrTag<void*>(__builtin_return_address(0)))); \
+        bitwise_cast<JSC::CallFrame*>(*((uintptr_t**) _AddressOfReturnAddress() - 1)); \
+    })
 #else // !OS(WINDOWS)
 // FIXME (see rdar://72897291): Work around a Clang bug where __builtin_return_address()
 // sometimes gives us a signed pointer, and sometimes does not.
