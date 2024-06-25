@@ -37,9 +37,12 @@ class RenderSVGResourceFilterPrimitive final : public RenderSVGHiddenContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceFilterPrimitive);
 public:
     RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes&, RenderStyle&&);
+    SVGFilterPrimitiveStandardAttributes& filterPrimitiveElement() const;
 
     void markFilterEffectForRepaint(FilterEffect*);
     void markFilterEffectForRebuild();
+
+    void styleDidChange(StyleDifference, const RenderStyle*) override;
 };
 
 } // namespace WebCore
