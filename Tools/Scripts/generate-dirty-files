@@ -108,8 +108,11 @@ def find_project_results(args, project, file_list, results_data):
         # Map filename to issues for each bug type
         file_dict = results_data.get(CHECKER_MAP[bug_type], {})
         if not file_name in file_dict:
-            file_dict[file_name] = []
-        file_dict[file_name].append(issue_hash)
+            file_dict[file_name] = {}
+
+        # Map issue to its report path
+        if not issue_hash in file_dict[file_name]:
+            file_dict[file_name][issue_hash] = result_file
         results_data[CHECKER_MAP[bug_type]] = file_dict
 
         output_file_name = os.path.abspath(f'{args.output_dir}/{project}/{CHECKER_MAP[bug_type]}Issues')

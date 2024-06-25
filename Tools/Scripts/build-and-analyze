@@ -95,6 +95,12 @@ def make_analyzer_flags(output_dir, args):
             'max-nodes={}'.format(args.analyzer_budget_max_nodes),
         ])
 
+    if args.only_smart_pointers:
+        analyzer_flags.extend([
+            '-analyzer-config',
+            'verbose-report-filename=true',
+        ])
+
     return ' '.join(analyzer_flags)
 
 

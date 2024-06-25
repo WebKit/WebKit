@@ -83,14 +83,13 @@ def find_diff(args, file1, file2):
     return set(diff_new_from_baseline), set(diff_baseline_from_new)
 
 
-def create_filtered_results_dir(args, project, issues, category='StaticAnalyzerRegressions'):
+def create_filtered_results_dir(args, project, result_paths, category='StaticAnalyzerRegressions'):
     # Create symlinks to new issues only so that we can run scan-build to generate new index.html files
-    path_to_reports = os.path.abspath(f'{args.build_output}/{category}/{project}/StaticAnalyzerReports')
-    subprocess.run(['mkdir', '-p', path_to_reports])
-    for issue_hash in issues:
-        report = f"report-{issue_hash[:6]}.html"
-        path_to_report = f'{args.build_output}/StaticAnalyzer/{project}/StaticAnalyzerReports/{report}'
-        path_to_report_new = os.path.join(path_to_reports, report)
+    prefix_path = os.path.abspath(f'{args.build_output}/{category}/{project}/StaticAnalyzerReports')
+    subprocess.run(['mkdir', '-p', prefix_path])
+    for path_to_report in result_paths:
+        report = path_to_report.split('/')[-1]
+        path_to_report_new = os.path.join(prefix_path, report)
         subprocess.run(['ln', '-s', os.path.abspath(path_to_report), path_to_report_new])
     print('\n')
     path_to_project = f'{args.build_output}/{category}/{project}'
@@ -99,6 +98,7 @@ def create_filtered_results_dir(args, project, issues, category='StaticAnalyzerR
 
 def compare_project_results_to_expectations(args, new_path, project):
     unexpected_issues_total = set()
+    unexpected_result_paths_total = set()
     unexpected_buggy_files = set()
     unexpected_clean_files = set()
     project_results_passes = {}
@@ -113,10 +113,14 @@ def compare_project_results_to_expectations(args, new_path, project):
 
         # Get unexpected issues per checker
         unexpected_issues = set()
+        unexpected_result_paths = set()
+
         with open(f'{new_path}/issues_per_file.json') as f:
             issues_per_file = json.load(f)
         for file_name in buggy_files:
-            unexpected_issues.update(issues_per_file[checker][file_name])
+            unexpected_issues.update(list(issues_per_file[checker][file_name].keys()))
+            unexpected_result_paths.update(list(issues_per_file[checker][file_name].values()))
+        unexpected_result_paths_total.update(unexpected_result_paths)
         unexpected_issues_total.update(unexpected_issues)
 
         # Set up JSON object
@@ -146,7 +150,7 @@ def compare_project_results_to_expectations(args, new_path, project):
             print(f'    No unexpected results!')
 
     if unexpected_issues_total and args.scan_build:
-        create_filtered_results_dir(args, project, unexpected_issues_total, STATIC_ANALYZER_UNEXPECTED)
+        create_filtered_results_dir(args, project, unexpected_result_paths_total, STATIC_ANALYZER_UNEXPECTED)
 
     return unexpected_buggy_files, unexpected_clean_files, unexpected_issues_total, project_results_passes, project_results_failures
 
