@@ -354,6 +354,8 @@ private:
     const String& spatialTrackingLabel() const final;
 #endif
 
+    void scheduleVisibleContentRectUpdate() final;
+
     RetainPtr<WKContentView> contentView() const { return m_contentView.get(); }
 
     WeakObjCPtr<WKContentView> m_contentView;

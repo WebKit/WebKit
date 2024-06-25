@@ -291,6 +291,7 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
     }
 #endif
 
+    m_page->prepareToEnterElementFullScreen();
     m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.ptr(), element, m_element->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), mode, WTFMove(mediaDetails));
 
     if (mode == WebCore::HTMLMediaElementEnums::VideoFullscreenModeInWindow) {
@@ -308,6 +309,7 @@ void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)
     else
         ALWAYS_LOG(LOGIDENTIFIER, "null");
 
+    m_page->prepareToExitElementFullScreen();
     m_page->injectedBundleFullScreenClient().exitFullScreenForElement(m_page.ptr(), element, m_inWindowFullScreenMode);
 
     if (m_inWindowFullScreenMode) {
@@ -513,7 +515,7 @@ void WebFullScreenManager::close()
         return;
     m_closing = true;
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_page->injectedBundleFullScreenClient().closeFullScreen(m_page.ptr());
+    m_page->closeFullScreen();
     invalidate();
     m_closing = false;
 }

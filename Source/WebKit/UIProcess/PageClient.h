@@ -787,6 +787,8 @@ public:
 #endif
 
     virtual void hasActiveNowPlayingSessionChanged(bool) { }
+
+    virtual void scheduleVisibleContentRectUpdate() { }
 };
 
 } // namespace WebKit

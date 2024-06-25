@@ -3086,6 +3086,8 @@ private:
     void recentGamepadAccessStateChanged(PAL::HysteresisState);
 #endif
 
+    void setAllowsLayoutViewportHeightExpansion(bool);
+
     struct Internals;
     Internals& internals() { return m_internals; }
     const Internals& internals() const { return m_internals; }

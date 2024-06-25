@@ -9991,6 +9991,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_lastObservedStateWasBackground = false;
 #endif
 
+    internals().allowsLayoutViewportHeightExpansion = true;
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     protectedPageClient()->mediaSessionManager().removeAllPlaybackTargetPickerClients(internals());
 #endif
@@ -14378,6 +14380,15 @@ void WebPageProxy::setPermissionLevelForTesting(const String& origin, bool allow
 void WebPageProxy::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSession)
 {
     protectedPageClient()->hasActiveNowPlayingSessionChanged(hasActiveNowPlayingSession);
+}
+
+void WebPageProxy::setAllowsLayoutViewportHeightExpansion(bool value)
+{
+    if (internals().allowsLayoutViewportHeightExpansion == value)
+        return;
+
+    internals().allowsLayoutViewportHeightExpansion = value;
+    pageClient().scheduleVisibleContentRectUpdate();
 }
 
 } // namespace WebKit

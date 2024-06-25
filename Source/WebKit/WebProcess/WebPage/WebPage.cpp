@@ -5225,7 +5225,24 @@ void WebPage::isInFullscreenChanged(IsInFullscreenMode isInFullscreenMode)
 #endif
 }
 
-#endif
+void WebPage::closeFullScreen()
+{
+    setAllowsLayoutViewportHeightExpansion(true);
+
+    injectedBundleFullScreenClient().closeFullScreen(this);
+}
+
+void WebPage::prepareToEnterElementFullScreen()
+{
+    setAllowsLayoutViewportHeightExpansion(false);
+}
+
+void WebPage::prepareToExitElementFullScreen()
+{
+    setAllowsLayoutViewportHeightExpansion(true);
+}
+
+#endif // ENABLE(FULLSCREEN_API)
 
 void WebPage::addConsoleMessage(FrameIdentifier frameID, MessageSource messageSource, MessageLevel messageLevel, const String& message, std::optional<WebCore::ResourceLoaderIdentifier> requestID)
 {
@@ -7618,6 +7635,8 @@ void WebPage::didCommitLoad(WebFrame* frame)
     m_loadCommitTime = WallTime::now();
 #endif
 
+    setAllowsLayoutViewportHeightExpansion(true);
+
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     if (coreFrame->isMainFrame() && !usesEphemeralSession()) {
         if (RefPtr loader = coreFrame->document()->loader(); loader
@@ -9730,6 +9749,15 @@ void WebPage::setPermissionLevelForTesting(const String& origin, bool allowed)
     UNUSED_PARAM(origin);
     UNUSED_PARAM(allowed);
 #endif
+}
+
+void WebPage::setAllowsLayoutViewportHeightExpansion(bool value)
+{
+    if (m_allowsLayoutViewportHeightExpansion == value)
+        return;
+
+    m_allowsLayoutViewportHeightExpansion = value;
+    send(Messages::WebPageProxy::SetAllowsLayoutViewportHeightExpansion(value));
 }
 
 void WebPage::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSession)

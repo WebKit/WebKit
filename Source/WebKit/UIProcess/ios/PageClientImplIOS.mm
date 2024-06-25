@@ -1248,6 +1248,11 @@ const String& PageClientImpl::spatialTrackingLabel() const
 }
 #endif
 
+void PageClientImpl::scheduleVisibleContentRectUpdate()
+{
+    [webView() _scheduleVisibleContentRectUpdate];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

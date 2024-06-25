@@ -327,6 +327,8 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     HashMap<WebCore::RegistrableDomain, OptionSet<WebCore::WindowProxyProperty>> windowOpenerAccessedProperties;
 #endif
 
+    bool allowsLayoutViewportHeightExpansion { true };
+
     explicit Internals(WebPageProxy&);
 
     SpeechSynthesisData& speechSynthesisData();

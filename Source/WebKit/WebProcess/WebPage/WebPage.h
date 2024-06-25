@@ -542,7 +542,13 @@ public:
 
     enum class IsInFullscreenMode : bool { No, Yes };
     void isInFullscreenChanged(IsInFullscreenMode);
+
+    void prepareToEnterElementFullScreen();
+    void prepareToExitElementFullScreen();
+    void closeFullScreen();
 #endif
+
+    void setAllowsLayoutViewportHeightExpansion(bool);
 
     void addConsoleMessage(WebCore::FrameIdentifier, MessageSource, MessageLevel, const String&, std::optional<WebCore::ResourceLoaderIdentifier> = std::nullopt);
     void enqueueSecurityPolicyViolationEvent(WebCore::FrameIdentifier, WebCore::SecurityPolicyViolationEventInit&&);
@@ -2780,6 +2786,8 @@ private:
 #if HAVE(APP_ACCENT_COLORS)
     bool m_appUsesCustomAccentColor { false };
 #endif
+
+    bool m_allowsLayoutViewportHeightExpansion { true };
 
     WeakPtr<WebCore::Node, WebCore::WeakPtrImplWithEventTargetData> m_lastNodeBeforeWritingSuggestions;
 

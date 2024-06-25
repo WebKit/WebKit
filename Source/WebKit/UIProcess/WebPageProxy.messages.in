@@ -649,4 +649,6 @@ CreateAppHighlightInSelectedRange)
 #endif
 
     HasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSessionChanged)
+
+    SetAllowsLayoutViewportHeightExpansion(bool newValue)
 }
