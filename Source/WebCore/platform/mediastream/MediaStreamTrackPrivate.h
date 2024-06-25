@@ -157,7 +157,8 @@ public:
     void initializeSettings(RealtimeMediaSourceSettings&& settings) { m_settings = WTFMove(settings); }
     void initializeCapabilities(RealtimeMediaSourceCapabilities&& capabilities) { m_capabilities = WTFMove(capabilities); }
 
-    UniqueRef<MediaStreamTrackDataHolder> toDataHolder();
+    enum class ShouldClone : bool { No, Yes };
+    UniqueRef<MediaStreamTrackDataHolder> toDataHolder(ShouldClone = ShouldClone::No);
 
 private:
     MediaStreamTrackPrivate(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id, std::function<void(Function<void()>&&)>&&);

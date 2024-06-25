@@ -1,0 +1,36 @@
+<html>
+<body>
+<script src="../../resources/gc.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+promise_test(async test => {
+    const worker = new Worker(URL.createObjectURL(new Blob([`
+        self.onmessage = e => {
+            self.onmessage = null;
+
+            const track = e.data;
+            const clone = track.clone();
+            const deviceId = clone.getSettings().deviceId;
+
+            [][deviceId];  // Atomize it.
+
+            self.deviceId = deviceId;
+            self.postMessage("PASS");
+        };
+    `])));
+
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+
+    const track = stream.getAudioTracks()[0];
+    worker.postMessage(track, [track]);
+
+    assert_equals(await new Promise(resolve => worker.onmessage = e => resolve(e.data)), "PASS");
+
+    worker.terminate();
+
+    gc();
+}, "Get deviceId on worker cloned track");
+</script>
+</body>
+</html>
