@@ -62,6 +62,7 @@ UIProcess/API/C/WKUserScriptRef.cpp
 UIProcess/API/C/WKWebsiteDataStoreRef.cpp
 UIProcess/API/C/mac/WKPagePrivateMac.mm
 UIProcess/API/Cocoa/WKBackForwardListItem.mm
+UIProcess/API/Cocoa/WKBrowsingContextController.mm
 UIProcess/API/Cocoa/WKDownload.mm
 UIProcess/API/Cocoa/WKFrameInfo.mm
 UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm
@@ -103,6 +104,7 @@ UIProcess/UserMediaPermissionRequestManagerProxy.cpp
 UIProcess/ViewGestureController.cpp
 UIProcess/VisitedLinkStore.cpp
 UIProcess/WebAuthentication/AuthenticatorManager.cpp
+UIProcess/WebBackForwardCache.cpp
 UIProcess/WebBackForwardCacheEntry.cpp
 UIProcess/WebBackForwardList.cpp
 UIProcess/WebFrameProxy.cpp
@@ -124,6 +126,7 @@ UIProcess/mac/WKImmediateActionController.mm
 UIProcess/mac/WebContextMenuProxyMac.mm
 UIProcess/mac/WebViewImpl.mm
 WebProcess/Automation/WebAutomationSessionProxy.cpp
+WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp
 WebProcess/Extensions/Bindings/JSWebExtensionWrapper.cpp
 WebProcess/FullScreen/WebFullScreenManager.cpp
 WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp
@@ -151,6 +154,7 @@ WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp
 WebProcess/InjectedBundle/InjectedBundle.cpp
 WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp
 WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp
+WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp
 WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp
 WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp
 WebProcess/InjectedBundle/mac/InjectedBundleMac.mm
@@ -167,6 +171,7 @@ WebProcess/Network/WebTransportSession.cpp
 WebProcess/Network/webrtc/LibWebRTCNetworkManager.cpp
 WebProcess/Network/webrtc/LibWebRTCProvider.cpp
 WebProcess/Network/webrtc/LibWebRTCSocket.cpp
+WebProcess/Network/webrtc/WebMDNSRegister.cpp
 WebProcess/Notifications/WebNotificationManager.cpp
 WebProcess/Plugins/PDF/PDFIncrementalLoader.mm
 WebProcess/Plugins/PDF/PDFPlugin.mm
@@ -178,7 +183,6 @@ WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm
 WebProcess/Plugins/WebPluginInfoProvider.cpp
 WebProcess/Storage/WebSWClientConnection.cpp
 WebProcess/Storage/WebSWContextManagerConnection.cpp
-WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp
 WebProcess/Storage/WebServiceWorkerProvider.cpp
 WebProcess/UserContent/WebUserContentController.cpp
 WebProcess/WebCoreSupport/SessionStateConversion.cpp
@@ -187,6 +191,7 @@ WebProcess/WebCoreSupport/WebChromeClient.cpp
 WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp
 WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp
 WebProcess/WebCoreSupport/WebLocalFrameLoaderClient.cpp
+WebProcess/WebCoreSupport/WebRemoteFrameClient.cpp
 WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp
 WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp
 WebProcess/WebCoreSupport/mac/WebDragClientMac.mm
@@ -214,6 +219,7 @@ WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm
 WebProcess/WebPage/mac/WebPageMac.mm
 WebProcess/WebProcess.cpp
 WebProcess/WebSleepDisablerClient.cpp
+WebProcess/WebStorage/StorageAreaMap.cpp
 WebProcess/cocoa/TextTrackRepresentationCocoa.mm
 WebProcess/cocoa/VideoPresentationManager.mm
 WebProcess/cocoa/WebProcessCocoa.mm

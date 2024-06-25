@@ -44,12 +44,14 @@ GPUProcess/graphics/WebGPU/RemoteTexture.cpp
 GPUProcess/graphics/WebGPU/RemoteTextureView.cpp
 GPUProcess/graphics/WebGPU/WebGPUObjectHeap.cpp
 GPUProcess/mac/LocalAudioSessionRoutingArbitrator.cpp
+GPUProcess/media/RemoteAudioDestinationManager.cpp
 GPUProcess/media/RemoteAudioHardwareListenerProxy.cpp
 GPUProcess/media/RemoteAudioSessionProxy.cpp
 GPUProcess/media/RemoteAudioSessionProxyManager.cpp
 GPUProcess/media/RemoteAudioSourceProviderProxy.cpp
 GPUProcess/media/RemoteAudioTrackProxy.cpp
 GPUProcess/media/RemoteAudioTrackProxy.h
+GPUProcess/media/RemoteCDMFactoryProxy.cpp
 GPUProcess/media/RemoteCDMInstanceProxy.cpp
 GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp
 GPUProcess/media/RemoteImageDecoderAVFProxy.cpp
@@ -75,22 +77,30 @@ GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp
 JSWebExtensionAPIAction.mm
 JSWebExtensionAPIAlarms.mm
 JSWebExtensionAPICommands.mm
+JSWebExtensionAPICookies.mm
+JSWebExtensionAPIDeclarativeNetRequest.mm
 JSWebExtensionAPIDevTools.mm
 JSWebExtensionAPIDevToolsExtensionPanel.mm
+JSWebExtensionAPIDevToolsInspectedWindow.mm
 JSWebExtensionAPIDevToolsNetwork.mm
 JSWebExtensionAPIDevToolsPanels.mm
 JSWebExtensionAPIEvent.mm
+JSWebExtensionAPIExtension.mm
+JSWebExtensionAPILocalization.mm
 JSWebExtensionAPIMenus.mm
 JSWebExtensionAPINamespace.mm
 JSWebExtensionAPINotifications.mm
 JSWebExtensionAPIPermissions.mm
 JSWebExtensionAPIPort.mm
 JSWebExtensionAPIRuntime.mm
+JSWebExtensionAPIScripting.mm
 JSWebExtensionAPIStorage.mm
 JSWebExtensionAPIStorageArea.mm
 JSWebExtensionAPITabs.mm
 JSWebExtensionAPIWebNavigation.mm
+JSWebExtensionAPIWebNavigationEvent.mm
 JSWebExtensionAPIWebPageNamespace.mm
+JSWebExtensionAPIWebPageRuntime.mm
 JSWebExtensionAPIWebRequest.mm
 JSWebExtensionAPIWebRequestEvent.mm
 JSWebExtensionAPIWindows.mm
@@ -137,6 +147,7 @@ NetworkProcess/cache/NetworkCacheEntry.cpp
 NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp
 NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp
 NetworkProcess/cache/NetworkCacheStorage.cpp
+NetworkProcess/cocoa/NetworkDataTaskCocoa.mm
 NetworkProcess/cocoa/NetworkProcessCocoa.mm
 NetworkProcess/cocoa/NetworkSessionCocoa.mm
 NetworkProcess/cocoa/NetworkTaskCocoa.mm
@@ -187,6 +198,7 @@ Shared/API/c/WKUserContentURLPattern.cpp
 Shared/API/c/cf/WKErrorCF.cpp
 Shared/API/c/cf/WKStringCF.mm
 Shared/API/c/cf/WKURLCF.mm
+Shared/API/c/cg/WKImageCG.cpp
 Shared/API/c/mac/WKObjCTypeWrapperRef.mm
 Shared/API/c/mac/WKURLRequestNS.mm
 Shared/API/c/mac/WKURLResponseNS.mm
@@ -251,6 +263,7 @@ UIProcess/API/APIDownloadClient.h
 UIProcess/API/APIHTTPCookieStore.cpp
 UIProcess/API/APIInspectorExtension.cpp
 UIProcess/API/APINavigationClient.h
+UIProcess/API/APIPageConfiguration.cpp
 UIProcess/API/APIWebAuthenticationAssertionResponse.cpp
 UIProcess/API/APIWebAuthenticationAssertionResponse.h
 UIProcess/API/C/WKAuthenticationChallenge.cpp
@@ -389,6 +402,7 @@ UIProcess/Cocoa/VideoPresentationManagerProxy.mm
 UIProcess/Cocoa/WKEditCommand.mm
 UIProcess/Cocoa/WKSafeBrowsingWarning.mm
 UIProcess/Cocoa/WKShareSheet.mm
+UIProcess/Cocoa/WebInspectorPreferenceObserver.mm
 UIProcess/Cocoa/WebPagePreferencesLockdownModeObserver.mm
 UIProcess/Cocoa/WebPageProxyCocoa.mm
 UIProcess/Cocoa/WebProcessPoolCocoa.mm
@@ -404,6 +418,7 @@ UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIDeclarativeNetRequestCocoa.
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIEventCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIRuntimeCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIScriptingCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPITabsCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionActionCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionContextCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionControllerCocoa.mm
@@ -438,6 +453,7 @@ UIProcess/Notifications/WebNotificationManagerMessageHandler.cpp
 UIProcess/Notifications/WebNotificationManagerProxy.cpp
 UIProcess/PDF/WKPDFHUDView.mm
 UIProcess/PageLoadState.cpp
+UIProcess/ProcessAssertion.cpp
 UIProcess/ProcessThrottler.cpp
 UIProcess/ProvisionalFrameProxy.cpp
 UIProcess/ProvisionalPageProxy.cpp
@@ -452,7 +468,6 @@ UIProcess/RemoteLayerTree/mac/RemoteScrollingCoordinatorProxyMac.mm
 UIProcess/RemoteLayerTree/mac/RemoteScrollingTreeMac.mm
 UIProcess/RemotePageDrawingAreaProxy.cpp
 UIProcess/RemotePageProxy.cpp
-UIProcess/RemotePageProxy.h
 UIProcess/RemotePageVisitedLinkStoreRegistration.h
 UIProcess/SpeechRecognitionPermissionManager.cpp
 UIProcess/SpeechRecognitionServer.cpp
@@ -465,6 +480,7 @@ UIProcess/ViewGestureController.cpp
 UIProcess/ViewSnapshotStore.cpp
 UIProcess/WebAuthentication/Authenticator.cpp
 UIProcess/WebAuthentication/AuthenticatorManager.cpp
+UIProcess/WebAuthentication/AuthenticatorTransportService.cpp
 UIProcess/WebAuthentication/Cocoa/HidConnection.mm
 UIProcess/WebAuthentication/Cocoa/LocalConnection.mm
 UIProcess/WebAuthentication/Cocoa/NfcService.mm
@@ -473,6 +489,7 @@ UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm
 UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm
 UIProcess/WebAuthentication/Mock/MockHidConnection.cpp
 UIProcess/WebAuthentication/Mock/MockLocalConnection.mm
+UIProcess/WebAuthentication/Mock/MockNfcService.mm
 UIProcess/WebAuthentication/Virtual/VirtualHidConnection.cpp
 UIProcess/WebAuthentication/Virtual/VirtualLocalConnection.mm
 UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp
@@ -543,6 +560,9 @@ WebProcess/Extensions/API/Cocoa/WebExtensionAPIStorageAreaCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIStorageCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPITabsCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIWebNavigationEventCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIWebRequestEventCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIWindowsCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIWindowsEventCocoa.mm
 WebProcess/Extensions/Bindings/Cocoa/JSWebExtensionWrapperCocoa.mm
 WebProcess/Extensions/Bindings/JSWebExtensionWrapper.h
 WebProcess/Extensions/WebExtensionContextProxy.cpp
@@ -574,6 +594,7 @@ WebProcess/GPU/graphics/WebGPU/RemotePresentationContextProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteQueueProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteRenderBundleEncoderProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteRenderPassEncoderProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteTextureProxy.cpp
 WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp
 WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBitmapBackend.cpp
 WebProcess/GPU/graphics/cocoa/RemoteGraphicsContextGLProxyCocoa.mm
