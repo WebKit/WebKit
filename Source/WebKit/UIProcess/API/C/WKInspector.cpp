@@ -92,7 +92,7 @@ void WKInspectorShowResources(WKInspectorRef inspectorRef)
 
 void WKInspectorShowMainResourceForFrame(WKInspectorRef inspectorRef, WKFrameRef frameRef)
 {
-    toImpl(inspectorRef)->showMainResourceForFrame(toImpl(frameRef));
+    toImpl(inspectorRef)->showMainResourceForFrame(toImpl(frameRef)->frameID());
 }
 
 bool WKInspectorIsAttached(WKInspectorRef inspectorRef)

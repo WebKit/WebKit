@@ -186,7 +186,7 @@ void WebFrameProxy::navigateServiceWorkerClient(WebCore::ScriptExecutionContextI
         return;
     }
 
-    protectedPage()->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::NavigateServiceWorkerClient { documentIdentifier, url }, [this, protectedThis = Ref { *this }, url, callback = WTFMove(callback)](auto result) mutable {
+    protectedPage()->sendWithAsyncReplyToProcessContainingFrame(frameID(), Messages::WebPage::NavigateServiceWorkerClient { documentIdentifier, url }, CompletionHandler<void(WebCore::ScheduleLocationChangeResult)> { [this, protectedThis = Ref { *this }, url, callback = WTFMove(callback)](auto result) mutable {
         switch (result) {
         case WebCore::ScheduleLocationChangeResult::Stopped:
             callback({ }, { });
@@ -206,7 +206,7 @@ void WebFrameProxy::navigateServiceWorkerClient(WebCore::ScriptExecutionContextI
             m_navigateCallback = WTFMove(callback);
             return;
         }
-    }, protectedPage()->webPageIDInMainFrameProcess());
+    } });
 }
 
 void WebFrameProxy::bindAccessibilityFrameWithData(std::span<const uint8_t> data)
@@ -214,20 +214,20 @@ void WebFrameProxy::bindAccessibilityFrameWithData(std::span<const uint8_t> data
     if (!m_page)
         return;
 
-    m_page->legacyMainFrameProcess().send(Messages::WebProcess::BindAccessibilityFrameWithData(m_frameID, data), m_page->webPageIDInMainFrameProcess());
+    m_page->sendToProcessContainingFrame(m_frameID, Messages::WebProcess::BindAccessibilityFrameWithData(m_frameID, data));
 }
 
 void WebFrameProxy::loadURL(const URL& url, const String& referrer)
 {
     if (RefPtr page = m_page.get())
-        page->legacyMainFrameProcess().send(Messages::WebPage::LoadURLInFrame(url, referrer, m_frameID), page->webPageIDInMainFrameProcess());
+        page->sendToProcessContainingFrame(m_frameID, Messages::WebPage::LoadURLInFrame(url, referrer, m_frameID));
 }
 
 void WebFrameProxy::loadData(std::span<const uint8_t> data, const String& type, const String& encodingName, const URL& baseURL)
 {
     ASSERT(!isMainFrame());
     if (RefPtr page = m_page.get())
-        page->legacyMainFrameProcess().send(Messages::WebPage::LoadDataInFrame(data, type, encodingName, baseURL, m_frameID), page->webPageIDInMainFrameProcess());
+        page->sendToProcessContainingFrame(m_frameID, Messages::WebPage::LoadDataInFrame(data, type, encodingName, baseURL, m_frameID));
 }
     
 bool WebFrameProxy::canProvideSource() const
@@ -393,7 +393,7 @@ bool WebFrameProxy::didHandleContentFilterUnblockNavigation(const ResourceReques
 void WebFrameProxy::collapseSelection()
 {
     if (RefPtr page = m_page.get())
-        page->legacyMainFrameProcess().send(Messages::WebPage::CollapseSelectionInFrame(m_frameID), page->webPageIDInMainFrameProcess());
+        page->sendToProcessContainingFrame(frameID(), Messages::WebPage::CollapseSelectionInFrame(m_frameID));
 }
 #endif
 

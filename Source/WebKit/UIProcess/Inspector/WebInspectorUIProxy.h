@@ -165,7 +165,7 @@ public:
 
     void showConsole();
     void showResources();
-    void showMainResourceForFrame(WebFrameProxy*);
+    void showMainResourceForFrame(WebCore::FrameIdentifier);
     void openURLExternally(const String& url);
     void revealFileExternally(const String& path);
 

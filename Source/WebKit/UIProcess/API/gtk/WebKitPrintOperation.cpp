@@ -386,7 +386,7 @@ static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOp
 
     PrintInfo printInfo(priv->printJob.get(), printOperation->priv->printMode);
     auto& page = webkitWebViewGetPage(printOperation->priv->webView.get());
-    page.drawPagesForPrinting(webFrame, printInfo, [printOperation = GRefPtr<WebKitPrintOperation>(printOperation)](std::optional<WebCore::SharedMemory::Handle>&& data, WebCore::ResourceError&& error) mutable {
+    page.drawPagesForPrinting(*webFrame, printInfo, [printOperation = GRefPtr<WebKitPrintOperation>(printOperation)](std::optional<WebCore::SharedMemory::Handle>&& data, WebCore::ResourceError&& error) mutable {
         auto* priv = printOperation->priv;
         // When running synchronously, WebPageProxy::printFrame() calls endPrinting().
         if (priv->printMode == PrintInfo::PrintMode::Async && priv->webView)
@@ -481,7 +481,7 @@ static void webkitPrintOperationSendPagesToPrintPortal(WebKitPrintOperation* pri
 
     PrintInfo printInfo(priv->printJob.get(), printOperation->priv->printMode);
     auto& page = webkitWebViewGetPage(printOperation->priv->webView.get());
-    page.drawPagesForPrinting(webFrame, printInfo, [printOperation = GRefPtr<WebKitPrintOperation>(printOperation), token = *preparePrintResponse->token](std::optional<WebCore::SharedMemory::Handle>&& data, WebCore::ResourceError&& error) mutable {
+    page.drawPagesForPrinting(*webFrame, printInfo, [printOperation = GRefPtr<WebKitPrintOperation>(printOperation), token = *preparePrintResponse->token](std::optional<WebCore::SharedMemory::Handle>&& data, WebCore::ResourceError&& error) mutable {
         auto* priv = printOperation->priv;
         // When running synchronously, WebPageProxy::printFrame() calls endPrinting().
         if (priv->printMode == PrintInfo::PrintMode::Async && priv->webView)

@@ -268,14 +268,14 @@ void WebInspectorUIProxy::showResources()
     m_inspectedPage->legacyMainFrameProcess().send(Messages::WebInspector::ShowResources(), m_inspectedPage->webPageIDInMainFrameProcess());
 }
 
-void WebInspectorUIProxy::showMainResourceForFrame(WebFrameProxy* frame)
+void WebInspectorUIProxy::showMainResourceForFrame(WebCore::FrameIdentifier frameID)
 {
     if (!m_inspectedPage)
         return;
 
     createFrontendPage();
 
-    m_inspectedPage->legacyMainFrameProcess().send(Messages::WebInspector::ShowMainResourceForFrame(frame->frameID()), m_inspectedPage->webPageIDInMainFrameProcess());
+    m_inspectedPage->sendToProcessContainingFrame(frameID, Messages::WebInspector::ShowMainResourceForFrame(frameID));
 }
 
 void WebInspectorUIProxy::attachBottom()

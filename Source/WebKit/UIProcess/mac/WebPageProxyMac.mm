@@ -304,8 +304,12 @@ void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t>
 {
     if (!hasRunningProcess())
         return;
-    
-    protectedPageClient()->accessibilityWebProcessTokenReceived(data, frameID, legacyMainFrameProcess().connection()->remoteProcessID());
+
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return;
+
+    protectedPageClient()->accessibilityWebProcessTokenReceived(data, frameID, frame->process().connection()->remoteProcessID());
 }
 
 void WebPageProxy::makeFirstResponder()

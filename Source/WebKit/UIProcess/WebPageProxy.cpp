@@ -148,6 +148,7 @@
 #include "WebFullScreenManagerProxy.h"
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebImage.h"
+#include "WebInspectorMessages.h"
 #include "WebInspectorUIProxy.h"
 #include "WebInspectorUtilities.h"
 #include "WebKeyboardEvent.h"
@@ -11271,13 +11272,14 @@ IPC::Connection::AsyncReplyID WebPageProxy::drawPagesToPDF(WebFrameProxy& frame,
     return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPagesToPDF(frameID, printInfo, first, count),  toAPIDataSharedBufferCallback(WTFMove(callback)));
 }
 #elif PLATFORM(GTK)
-void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, ResourceError&&)>&& callback)
+void WebPageProxy::drawPagesForPrinting(WebFrameProxy& frame, const PrintInfo& printInfo, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, ResourceError&&)>&& callback)
 {
     m_isInPrintingMode = true;
+    auto frameID = frame.frameID();
     if (m_isPerformingDOMPrintOperation)
-        legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::DrawPagesForPrintingDuringDOMPrintOperation(frame->frameID(), printInfo), WTFMove(callback), webPageIDInMainFrameProcess(), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+        sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPagesForPrintingDuringDOMPrintOperation(frameID, printInfo), WTFMove(callback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
     else
-        legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::DrawPagesForPrinting(frame->frameID(), printInfo), WTFMove(callback), webPageIDInMainFrameProcess());
+        sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPagesForPrinting(frameID, printInfo), WTFMove(callback));
 }
 #endif
 
@@ -14077,6 +14079,22 @@ void WebPageProxy::sendToProcessContainingFrame(std::optional<FrameIdentifier> f
     );
 }
 
+template<typename M>
+IPC::ConnectionSendSyncResult<M> WebPageProxy::sendSyncToProcessContainingFrame(std::optional<FrameIdentifier> frameID, M&& message, const IPC::Timeout& timeout)
+{
+    return sendToWebPage(frameID,
+        [&message, &timeout] (auto& targetPage) {
+            return targetPage.siteIsolatedProcess().sendSync(std::forward<M>(message), targetPage.identifierInSiteIsolatedProcess(), timeout);
+        }
+    );
+}
+
+template<typename M>
+IPC::ConnectionSendSyncResult<M> WebPageProxy::sendSyncToProcessContainingFrame(std::optional<FrameIdentifier> frameID, M&& message)
+{
+    return sendSyncToProcessContainingFrame(frameID, std::forward<M>(message), 1_s);
+}
+
 #define INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(message) \
     template void WebPageProxy::sendToProcessContainingFrame<Messages::message>(std::optional<WebCore::FrameIdentifier>, Messages::message&&, OptionSet<IPC::SendOption>)
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
@@ -14085,31 +14103,40 @@ INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(RemoteScrollingCoordinator::Scrolli
 #endif
 INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::TakeScreenshot);
 INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::EvaluateJavaScriptFunction);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebInspector::ShowMainResourceForFrame);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::LoadURLInFrame);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::LoadDataInFrame);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebProcess::BindAccessibilityFrameWithData);
+#if PLATFORM(GTK)
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::CollapseSelectionInFrame);
+#endif
 #undef INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME
 
-#define INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(message) \
+#define INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(message) \
     template IPC::AsyncReplyID WebPageProxy::sendWithAsyncReplyToProcessContainingFrame<Messages::message, Messages::message::Reply>(std::optional<WebCore::FrameIdentifier>, Messages::message&&, Messages::message::Reply&&, OptionSet<IPC::SendOption>)
-INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::ComputeElementLayout);
-INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::GetComputedRole);
-INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::GetComputedLabel);
-INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::ResolveParentFrame);
-INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::SelectOptionElement);
-INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::ResolveChildFrameWithName);
-INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::SnapshotRectForScreenshot);
-INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::SetFilesForInputFileUpload);
-INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::ResolveChildFrameWithOrdinal);
-INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY(WebAutomationSessionProxy::ResolveChildFrameWithNodeHandle);
-#undef INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITH_REPLY
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::ComputeElementLayout);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::GetComputedRole);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::GetComputedLabel);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::ResolveParentFrame);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::SelectOptionElement);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::ResolveChildFrameWithName);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::SnapshotRectForScreenshot);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::SetFilesForInputFileUpload);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::ResolveChildFrameWithOrdinal);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::ResolveChildFrameWithNodeHandle);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::NavigateServiceWorkerClient);
+#if PLATFORM(IOS_FAMILY)
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::DrawToImage);
+INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebPage::DrawToPDFiOS);
+#endif
+#undef INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME
 
-template<typename M>
-IPC::ConnectionSendSyncResult<M> WebPageProxy::sendSyncToProcessContainingFrame(std::optional<FrameIdentifier> frameID, M&& message)
-{
-    return sendToWebPage(frameID,
-        [&message] (auto& targetPage) {
-            return targetPage.siteIsolatedProcess().sendSync(std::forward<M>(message), targetPage.identifierInSiteIsolatedProcess());
-        }
-    );
-}
+#define INSTANTIATE_SEND_SYNC_TO_PROCESS_CONTAINING_FRAME(message) \
+    template IPC::ConnectionSendSyncResult<Messages::message> WebPageProxy::sendSyncToProcessContainingFrame<Messages::message>(std::optional<WebCore::FrameIdentifier>, Messages::message&&, const IPC::Timeout&)
+#if PLATFORM(IOS_FAMILY)
+INSTANTIATE_SEND_SYNC_TO_PROCESS_CONTAINING_FRAME(WebPage::ComputePagesForPrintingiOS);
+#endif
+#undef INSTANTIATE_SEND_SYNC_TO_PROCESS_CONTAINING_FRAME
 
 void WebPageProxy::focusRemoteFrame(IPC::Connection& connection, WebCore::FrameIdentifier frameID)
 {
