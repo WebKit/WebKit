@@ -287,7 +287,7 @@ void ShadowBlur::clear()
     m_offset = FloatSize();
 }
 
-void ShadowBlur::blurLayerImage(unsigned char* imageData, const IntSize& size, int rowStride)
+void ShadowBlur::blurLayerImage(std::span<uint8_t> imageData, const IntSize& size, int rowStride)
 {
     const int channels[4] = { 3, 0, 1, 3 };
 
@@ -295,19 +295,19 @@ void ShadowBlur::blurLayerImage(unsigned char* imageData, const IntSize& size, i
     calculateLobes(lobes, m_blurRadius.width(), m_shadowsIgnoreTransforms);
 
     // First pass is horizontal.
-    int stride = 4;
+    size_t stride = 4;
     int delta = rowStride;
     int final = size.height();
     int dim = size.width();
 
     // Two stages: horizontal and vertical
     for (int pass = 0; pass < 2; ++pass) {
-        unsigned char* pixels = imageData;
+        auto pixels = imageData;
 
         if (!pass && !m_blurRadius.width())
             final = 0; // Do no work if horizonal blur is zero.
 
-        for (int j = 0; j < final; ++j, pixels += delta) {
+        for (int j = 0; j < final; ++j, pixels = pixels.subspan(delta)) {
             // For each step, we blur the alpha in a channel and store the result
             // in another channel for the subsequent step.
             // We use sliding window algorithm to accumulate the alpha values.
@@ -322,35 +322,35 @@ void ShadowBlur::blurLayerImage(unsigned char* imageData, const IntSize& size, i
                 int alpha1 = pixels[channels[step]];
                 int alpha2 = pixels[(dim - 1) * stride + channels[step]];
 
-                unsigned char* ptr = pixels + channels[step + 1];
-                unsigned char* prev = pixels + stride + channels[step];
-                unsigned char* next = pixels + ofs * stride + channels[step];
+                auto ptr = pixels.subspan(channels[step + 1]);
+                auto prev = pixels.subspan(stride + channels[step]);
+                auto next = pixels.subspan(ofs * stride + channels[step]);
 
                 int i;
                 int sum = side1 * alpha1 + alpha1;
                 int limit = (dim < side2 + 1) ? dim : side2 + 1;
 
-                for (i = 1; i < limit; ++i, prev += stride)
-                    sum += *prev;
+                for (i = 1; i < limit && prev.size() >= stride; ++i, prev = prev.subspan(stride))
+                    sum += prev.front();
 
                 if (limit <= side2)
                     sum += (side2 - limit + 1) * alpha2;
 
                 limit = (side1 < dim) ? side1 : dim;
-                for (i = 0; i < limit; ptr += stride, next += stride, ++i, ++ofs) {
-                    *ptr = (sum * invCount) >> blurSumShift;
-                    sum += ((ofs < dim) ? *next : alpha2) - alpha1;
+                for (i = 0; i < limit && ptr.size() >= stride && next.size() >= stride; ptr = ptr.subspan(stride), next = next.subspan(stride), ++i, ++ofs) {
+                    ptr[0] = (sum * invCount) >> blurSumShift;
+                    sum += ((ofs < dim) ? next.front() : alpha2) - alpha1;
                 }
 
-                prev = pixels + channels[step];
-                for (; ofs < dim; ptr += stride, prev += stride, next += stride, ++i, ++ofs) {
-                    *ptr = (sum * invCount) >> blurSumShift;
-                    sum += (*next) - (*prev);
+                prev = pixels.subspan(channels[step]);
+                for (; ofs < dim && ptr.size() >= stride && prev.size() >= stride && next.size() >= stride; ptr = ptr.subspan(stride), prev = prev.subspan(stride), next = next.subspan(stride), ++i, ++ofs) {
+                    ptr[0] = (sum * invCount) >> blurSumShift;
+                    sum += next.front() - prev.front();
                 }
 
-                for (; i < dim; ptr += stride, prev += stride, ++i) {
-                    *ptr = (sum * invCount) >> blurSumShift;
-                    sum += alpha2 - (*prev);
+                for (; i < dim && ptr.size() <= stride && prev.size() >= stride; ptr = ptr.subspan(stride), prev = prev.subspan(stride), ++i) {
+                    ptr[0] = (sum * invCount) >> blurSumShift;
+                    sum += alpha2 - prev.front();
                 }
             }
         }
@@ -897,7 +897,7 @@ void ShadowBlur::blurShadowBuffer(ImageBuffer& layerImage, const IntSize& templa
     if (!layerData)
         return;
 
-    blurLayerImage(layerData->bytes().data(), layerData->size(), layerData->size().width() * 4);
+    blurLayerImage(layerData->bytes(), layerData->size(), layerData->size().width() * 4);
     layerImage.putPixelBuffer(*layerData, blurRect);
 }
 
