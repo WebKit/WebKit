@@ -43,6 +43,7 @@
 #include "JSNavigationHistoryEntry.h"
 #include "MessagePort.h"
 #include "NavigateEvent.h"
+#include "NavigationActivation.h"
 #include "NavigationCurrentEntryChangeEvent.h"
 #include "NavigationDestination.h"
 #include "NavigationHistoryEntry.h"
@@ -114,6 +115,35 @@ void Navigation::initializeEntries(Ref<HistoryItem>&& currentItem, Vector<Ref<Hi
         m_entries.append(NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), WTFMove(item)));
 
     m_currentEntryIndex = getEntryIndexOfHistoryItem(m_entries, currentItem);
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigation-activation
+void Navigation::updateForActivation(HistoryItem* previousItem, std::optional<NavigationNavigationType> type)
+{
+    ASSERT(!m_activation);
+    if (hasEntriesAndEventsDisabled() || !type)
+        return;
+
+    ASSERT(m_currentEntryIndex);
+    if (currentEntry()->associatedHistoryItem().url().isAboutBlank())
+        return;
+
+    bool wasAboutBlank = previousItem && previousItem->url().isAboutBlank(); // FIXME: *Initial* about:blank
+    if (wasAboutBlank) // FIXME: For navigations on the initial about blank this should already be the type.
+        type = NavigationNavigationType::Replace;
+
+    bool isSameOrigin = frame()->document() && previousItem && SecurityOrigin::create(previousItem->url())->isSameOriginAs(frame()->document()->securityOrigin());
+    auto previousEntryIndex = previousItem ? getEntryIndexOfHistoryItem(m_entries, *previousItem) : std::nullopt;
+
+    RefPtr<NavigationHistoryEntry> previousEntry = nullptr;
+    if (previousEntryIndex && isSameOrigin)
+        previousEntry = m_entries.at(previousEntryIndex.value()).ptr();
+    if (type == NavigationNavigationType::Reload)
+        previousEntry = currentEntry();
+    else if (type == NavigationNavigationType::Replace && (isSameOrigin || wasAboutBlank))
+        previousEntry = NavigationHistoryEntry::create(scriptExecutionContext(), *previousItem);
+
+    m_activation = NavigationActivation::create(*type, *currentEntry(), WTFMove(previousEntry));
 }
 
 const Vector<Ref<NavigationHistoryEntry>>& Navigation::entries() const

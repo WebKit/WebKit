@@ -40,6 +40,7 @@ class FormState;
 class HistoryItem;
 class SerializedScriptValue;
 class NavigateEvent;
+class NavigationActivation;
 class NavigationDestination;
 
 enum class FrameLoadType : uint8_t;
@@ -120,6 +121,7 @@ public:
     const Vector<Ref<NavigationHistoryEntry>>& entries() const;
     NavigationHistoryEntry* currentEntry() const;
     NavigationTransition* transition() { return m_transition.get(); };
+    NavigationActivation* activation() { return m_activation.get(); };
 
     bool canGoBack() const;
     bool canGoForward() const;
@@ -142,6 +144,7 @@ public:
 
     void updateForNavigation(Ref<HistoryItem>&&, NavigationNavigationType);
     void updateForReactivation(Vector<Ref<HistoryItem>>& newHistoryItems, HistoryItem& reactivatedItem);
+    void updateForActivation(HistoryItem* previousItem, std::optional<NavigationNavigationType>);
 
 private:
     explicit Navigation(LocalDOMWindow&);
@@ -170,6 +173,7 @@ private:
 
     std::optional<size_t> m_currentEntryIndex;
     RefPtr<NavigationTransition> m_transition;
+    RefPtr<NavigationActivation> m_activation;
     Vector<Ref<NavigationHistoryEntry>> m_entries;
 
     RefPtr<NavigateEvent> m_ongoingNavigateEvent;

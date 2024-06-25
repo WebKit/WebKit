@@ -225,9 +225,10 @@ private:
 
 class ScheduledLocationChange : public ScheduledURLNavigation {
 public:
-    ScheduledLocationChange(Document& initiatingDocument, SecurityOrigin* securityOrigin, const URL& url, const String& referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, bool duringLoad, CompletionHandler<void(bool)>&& completionHandler)
+    ScheduledLocationChange(Document& initiatingDocument, SecurityOrigin* securityOrigin, const URL& url, const String& referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, bool duringLoad, NavigationHistoryBehavior navigationHandling, CompletionHandler<void(bool)>&& completionHandler)
         : ScheduledURLNavigation(initiatingDocument, 0.0, securityOrigin, url, referrer, lockHistory, lockBackForwardList, duringLoad, true)
         , m_completionHandler(WTFMove(completionHandler))
+        , m_navigationHistoryBehavior(navigationHandling)
     {
     }
 
@@ -247,6 +248,7 @@ public:
         frameLoadRequest.setLockBackForwardList(lockBackForwardList());
         frameLoadRequest.disableNavigationToInvalidURL();
         frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLs());
+        frameLoadRequest.setNavigationHistoryBehavior(m_navigationHistoryBehavior);
 
         auto completionHandler = std::exchange(m_completionHandler, nullptr);
         frame.changeLocation(WTFMove(frameLoadRequest));
@@ -255,6 +257,7 @@ public:
 
 private:
     CompletionHandler<void(bool)> m_completionHandler;
+    NavigationHistoryBehavior m_navigationHistoryBehavior;
 };
 
 class ScheduledRefresh : public ScheduledURLNavigation {
@@ -559,7 +562,7 @@ void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, S
     // This may happen when a frame changes the location of another frame.
     bool duringLoad = loader && !loader->stateMachine().committedFirstRealDocumentLoad();
 
-    schedule(makeUnique<ScheduledLocationChange>(initiatingDocument, &securityOrigin, url, referrer, lockHistory, lockBackForwardList, duringLoad, [completionHandler = WTFMove(completionHandler)] (bool hasStarted) mutable {
+    schedule(makeUnique<ScheduledLocationChange>(initiatingDocument, &securityOrigin, url, referrer, lockHistory, lockBackForwardList, duringLoad, historyHandling, [completionHandler = WTFMove(completionHandler)] (bool hasStarted) mutable {
         completionHandler(hasStarted ? ScheduleLocationChangeResult::Started : ScheduleLocationChangeResult::Stopped);
     }));
 }

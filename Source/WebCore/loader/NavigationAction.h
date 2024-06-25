@@ -50,6 +50,7 @@ class UIEventWithKeyState;
 
 enum class SyntheticClickType : uint8_t;
 enum class MouseButton : int8_t;
+enum class NavigationNavigationType : uint8_t;
 
 // NavigationAction should never hold a strong reference to the originating document either directly
 // or indirectly as doing so prevents its destruction even after navigating away from it because
@@ -146,6 +147,9 @@ public:
     bool isInitialFrameSrcLoad() const { return m_isInitialFrameSrcLoad; }
     void setIsInitialFrameSrcLoad(bool isInitialFrameSrcLoad) { m_isInitialFrameSrcLoad = isInitialFrameSrcLoad; }
 
+    std::optional<NavigationNavigationType> navigationAPIType() const { return m_navigationAPIType; }
+    void setNavigationAPIType(NavigationNavigationType navigationAPIType) { m_navigationAPIType = navigationAPIType; }
+
 private:
     // Do not add a strong reference to the originating document or a subobject that holds the
     // originating document. See comment above the class for more details.
@@ -161,6 +165,7 @@ private:
     ShouldReplaceDocumentIfJavaScriptURL m_shouldReplaceDocumentIfJavaScriptURL { ReplaceDocumentIfJavaScriptURL };
 
     NavigationType m_type;
+    std::optional<NavigationNavigationType> m_navigationAPIType;
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy;
     InitiatedByMainFrame m_initiatedByMainFrame;
 

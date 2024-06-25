@@ -816,14 +816,14 @@ void FrameLoader::didBeginDocument(bool dispatch)
     if (dispatch)
         dispatchDidClearWindowObjectsInAllWorlds();
 
-    updateNavigationAPIEntries();
-
     updateFirstPartyForCookies();
     document->initContentSecurityPolicy();
 
     Ref settings = frame->settings();
     document->cachedResourceLoader().setImagesEnabled(settings->areImagesEnabled());
     document->cachedResourceLoader().setAutoLoadImages(settings->loadsImagesAutomatically());
+
+    std::optional<NavigationNavigationType> navigationType;
 
     if (RefPtr documentLoader = m_documentLoader) {
         String dnsPrefetchControl = documentLoader->response().httpHeaderField(HTTPHeaderName::XDNSPrefetchControl);
@@ -862,7 +862,11 @@ void FrameLoader::didBeginDocument(bool dispatch)
             if (auto crossOriginOpenerPolicy = documentLoader->crossOriginOpenerPolicy())
                 document->setCrossOriginOpenerPolicy(WTFMove(*crossOriginOpenerPolicy));
         }
+
+        navigationType = m_documentLoader->triggeringAction().navigationAPIType();
     }
+
+    updateNavigationAPIEntries(navigationType);
 
     frame->checkedHistory()->restoreDocumentState();
 }
@@ -1521,6 +1525,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     action.setShouldReplaceDocumentIfJavaScriptURL(frameLoadRequest.shouldReplaceDocumentIfJavaScriptURL());
     action.setIsInitialFrameSrcLoad(frameLoadRequest.isInitialFrameSrcLoad());
     action.setNewFrameOpenerPolicy(frameLoadRequest.newFrameOpenerPolicy());
+    action.setNavigationAPIType(determineNavigationType(newLoadType, frameLoadRequest.navigationHistoryBehavior()));
     if (privateClickMeasurement && frame->isMainFrame())
         action.setPrivateClickMeasurement(WTFMove(*privateClickMeasurement));
 
@@ -1783,6 +1788,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
         RefPtr oldDocumentLoader = m_documentLoader;
         NavigationAction action { frame->protectedDocument().releaseNonNull(), loader->request(), InitiatedByMainFrame::Unknown, loader->isRequestFromClientOrUserInput(), policyChecker().loadType(), isFormSubmission };
+        action.setNavigationAPIType(determineNavigationType(type, NavigationHistoryBehavior::Auto));
         oldDocumentLoader->setTriggeringAction(WTFMove(action));
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
@@ -1809,6 +1815,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     setPolicyDocumentLoader(loader);
     if (loader->triggeringAction().isEmpty()) {
         NavigationAction action { frame->protectedDocument().releaseNonNull(), loader->request(), InitiatedByMainFrame::Unknown, loader->isRequestFromClientOrUserInput(), policyChecker().loadType(), isFormSubmission };
+        action.setNavigationAPIType(determineNavigationType(type, NavigationHistoryBehavior::Auto));
         loader->setTriggeringAction(WTFMove(action));
     }
 
@@ -1976,7 +1983,7 @@ void FrameLoader::reload(OptionSet<ReloadOption> options)
             return FrameLoadType::ReloadExpiredOnly;
         return FrameLoadType::Reload;
     };
-    
+
     loadWithDocumentLoader(loader.ptr(), frameLoadTypeForReloadOptions(options), { }, AllowNavigationToInvalidURL::Yes);
 }
 
@@ -4238,6 +4245,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* from
         auto action = NavigationAction { frame->protectedDocument().releaseNonNull(), documentLoader->request(), initiatedByMainFrame, documentLoader->isRequestFromClientOrUserInput(), loadType, false };
         action.setTargetBackForwardItem(item);
         action.setSourceBackForwardItem(fromItem);
+        action.setNavigationAPIType(determineNavigationType(loadType, NavigationHistoryBehavior::Auto));
         documentLoader->setTriggeringAction(WTFMove(action));
 
         documentLoader->setLastCheckedRequest(ResourceRequest());
@@ -4329,6 +4337,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* from
 
     action.setTargetBackForwardItem(item);
     action.setSourceBackForwardItem(fromItem);
+    action.setNavigationAPIType(determineNavigationType(loadType, NavigationHistoryBehavior::Auto));
 
     loadWithNavigationAction(request, WTFMove(action), loadType, { }, AllowNavigationToInvalidURL::Yes, shouldTreatAsContinuingLoad);
 }
@@ -4772,7 +4781,7 @@ RefPtr<DocumentLoader> FrameLoader::loaderForWebsitePolicies(CanIncludeCurrentDo
     return loader;
 }
 
-void FrameLoader::updateNavigationAPIEntries()
+void FrameLoader::updateNavigationAPIEntries(std::optional<NavigationNavigationType> navigationType)
 {
     if (!m_frame->document() || !m_frame->document()->settings().navigationAPIEnabled())
         return;
@@ -4811,7 +4820,9 @@ void FrameLoader::updateNavigationAPIEntries()
         }
     }
 
-    domWindow->protectedNavigation()->initializeEntries(*currentItem, entriesForNavigationAPI);
+    RefPtr navigation = domWindow->protectedNavigation();
+    navigation->initializeEntries(*currentItem, entriesForNavigationAPI);
+    navigation->updateForActivation(m_frame->history().previousItem(), navigationType);
 }
 
 } // namespace WebCore

@@ -1377,6 +1377,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/Location.idl
     page/NavigateEvent.idl
     page/Navigation.idl
+    page/NavigationActivation.idl
     page/NavigationCurrentEntryChangeEvent.idl
     page/NavigationDestination.idl
     page/NavigationHistoryEntry.idl

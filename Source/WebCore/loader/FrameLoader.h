@@ -93,6 +93,7 @@ enum class UsedLegacyTLS : bool;
 enum class WasPrivateRelayed : bool;
 enum class IsMainResource : bool { No, Yes };
 enum class ShouldUpdateAppInitiatedValue : bool { No, Yes };
+enum class NavigationNavigationType : uint8_t;
 
 struct WindowFeatures;
 
@@ -454,7 +455,7 @@ private:
     void clearProvisionalLoadForPolicyCheck();
     bool hasOpenedFrames() const;
 
-    void updateNavigationAPIEntries();
+    void updateNavigationAPIEntries(std::optional<NavigationNavigationType>);
     void updateRequestAndAddExtraFields(Frame&, ResourceRequest&, IsMainResource, FrameLoadType, ShouldUpdateAppInitiatedValue, IsServiceWorkerNavigationLoad, WillOpenInNewWindow, Document*);
 
     bool dispatchNavigateEvent(const URL& newURL, FrameLoadType, const NavigationAction&, NavigationHistoryBehavior, bool isSameDocument, FormState* = nullptr);

@@ -1449,6 +1449,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/Location.idl \
     $(WebCore)/page/NavigateEvent.idl \
     $(WebCore)/page/Navigation.idl \
+    $(WebCore)/page/NavigationActivation.idl \
     $(WebCore)/page/NavigationCurrentEntryChangeEvent.idl \
     $(WebCore)/page/NavigationDestination.idl \
     $(WebCore)/page/NavigationHistoryEntry.idl \

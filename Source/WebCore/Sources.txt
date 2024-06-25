@@ -1995,6 +1995,7 @@ page/MemoryRelease.cpp
 page/MouseEventWithHitTestResults.cpp
 page/NavigateEvent.cpp
 page/Navigation.cpp
+page/NavigationActivation.cpp
 page/NavigationCurrentEntryChangeEvent.cpp
 page/NavigationDestination.cpp
 page/NavigationHistoryEntry.cpp
@@ -3995,6 +3996,7 @@ JSMutationRecord.cpp
 JSNamedNodeMap.cpp
 JSNavigateEvent.cpp
 JSNavigation.cpp
+JSNavigationActivation.cpp
 JSNavigationCurrentEntryChangeEvent.cpp
 JSNavigationDestination.cpp
 JSNavigationHistoryEntry.cpp
