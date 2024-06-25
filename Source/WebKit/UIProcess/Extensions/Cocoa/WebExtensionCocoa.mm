@@ -1924,10 +1924,20 @@ void WebExtension::populateDeclarativeNetRequestPropertiesIfNeeded()
     }
 }
 
-WebExtension::DeclarativeNetRequestRulesetVector& WebExtension::declarativeNetRequestRulesets()
+const WebExtension::DeclarativeNetRequestRulesetVector& WebExtension::declarativeNetRequestRulesets()
 {
     populateDeclarativeNetRequestPropertiesIfNeeded();
     return m_declarativeNetRequestRulesets;
+}
+
+std::optional<WebExtension::DeclarativeNetRequestRulesetData> WebExtension::declarativeNetRequestRuleset(const String& identifier)
+{
+    for (auto& ruleset : declarativeNetRequestRulesets()) {
+        if (ruleset.rulesetID == identifier)
+            return ruleset;
+    }
+
+    return std::nullopt;
 }
 
 NSArray *WebExtension::InjectedContentData::expandedIncludeMatchPatternStrings() const

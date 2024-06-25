@@ -54,24 +54,36 @@ bool WebExtensionContext::isDeclarativeNetRequestMessageAllowed()
 void WebExtensionContext::declarativeNetRequestGetEnabledRulesets(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     Vector<String> enabledRulesets;
-    for (auto& ruleset : extension().declarativeNetRequestRulesets()) {
-        if (ruleset.enabled)
-            enabledRulesets.append(ruleset.rulesetID);
-    }
+    for (auto& identifier : m_enabledStaticRulesetIDs)
+        enabledRulesets.append(identifier);
 
     completionHandler(WTFMove(enabledRulesets));
 }
 
 void WebExtensionContext::loadDeclarativeNetRequestRulesetStateFromStorage()
 {
-    NSDictionary *savedRulesetState = objectForKey<NSDictionary>(m_state, declarativeNetRequestRulesetStateKey);
-    for (NSString *savedIdentifier in savedRulesetState) {
+    m_enabledStaticRulesetIDs.clear();
+
+    auto *savedRulesetState = objectForKey<NSDictionary>(m_state, declarativeNetRequestRulesetStateKey);
+    if (!savedRulesetState.count) {
+        // Populate with the default enabled state.
         for (auto& ruleset : extension().declarativeNetRequestRulesets()) {
-            if (ruleset.rulesetID == String(savedIdentifier)) {
-                ruleset.enabled = objectForKey<NSNumber>(savedRulesetState, savedIdentifier).boolValue;
-                break;
-            }
+            if (ruleset.enabled)
+                m_enabledStaticRulesetIDs.add(ruleset.rulesetID);
         }
+
+        return;
+    }
+
+    for (NSString *savedIdentifier in savedRulesetState) {
+        auto ruleset = extension().declarativeNetRequestRuleset(savedIdentifier);
+        if (!ruleset)
+            continue;
+
+        if (objectForKey<NSNumber>(savedRulesetState, savedIdentifier).boolValue)
+            m_enabledStaticRulesetIDs.add(savedIdentifier);
+        else
+            m_enabledStaticRulesetIDs.remove(savedIdentifier);
     }
 }
 
@@ -89,54 +101,37 @@ void WebExtensionContext::saveDeclarativeNetRequestRulesetStateToStorage(NSDicti
 void WebExtensionContext::clearDeclarativeNetRequestRulesetState()
 {
     [m_state removeObjectForKey:declarativeNetRequestRulesetStateKey];
+    m_enabledStaticRulesetIDs.clear();
 }
 
 WebExtensionContext::DeclarativeNetRequestValidatedRulesets WebExtensionContext::declarativeNetRequestValidateRulesetIdentifiers(const Vector<String>& rulesetIdentifiers)
 {
     WebExtension::DeclarativeNetRequestRulesetVector validatedRulesets;
 
-    WebExtension::DeclarativeNetRequestRulesetVector rulesets = extension().declarativeNetRequestRulesets();
-
-    for (auto identifier : rulesetIdentifiers) {
-        bool found = false;
-        for (auto ruleset : rulesets) {
-            if (ruleset.rulesetID == identifier) {
-                validatedRulesets.append(ruleset);
-                found = true;
-                break;
-            }
-        }
-
-        if (!found)
+    for (auto& identifier : rulesetIdentifiers) {
+        auto ruleset = extension().declarativeNetRequestRuleset(identifier);
+        if (!ruleset)
             return toWebExtensionError(@"declarativeNetRequest.updateEnabledRulesets()", nil, @"Failed to apply rules. Invalid ruleset id: %@.", (NSString *)identifier);
+
+        validatedRulesets.append(ruleset.value());
     }
 
     return WTFMove(validatedRulesets);
 }
 
-size_t WebExtensionContext::declarativeNetRequestEnabledRulesetCount()
-{
-    size_t count = 0;
-
-    for (auto& ruleset : extension().declarativeNetRequestRulesets()) {
-        if (ruleset.enabled)
-            ++count;
-    }
-
-    return count;
-}
-
 void WebExtensionContext::declarativeNetRequestToggleRulesets(const Vector<String>& rulesetIdentifiers, bool newValue, NSMutableDictionary *rulesetIdentifiersToEnabledState)
 {
     for (auto& identifier : rulesetIdentifiers) {
-        for (auto& ruleset : extension().declarativeNetRequestRulesets()) {
-            if (ruleset.rulesetID != identifier)
-                continue;
+        auto ruleset = extension().declarativeNetRequestRuleset(identifier);
+        if (!ruleset)
+            continue;
 
-            ruleset.enabled = newValue;
-            [rulesetIdentifiersToEnabledState setObject:@(newValue) forKey:ruleset.rulesetID];
-            break;
-        }
+        if (newValue)
+            m_enabledStaticRulesetIDs.add(identifier);
+        else
+            m_enabledStaticRulesetIDs.remove(identifier);
+
+        [rulesetIdentifiersToEnabledState setObject:@(newValue) forKey:identifier];
     }
 }
 

@@ -402,7 +402,6 @@ using namespace WebKit;
             declarativeNetRequestRuleURLTransformUsername: NSString.class,
         };
 
-
         if (transformDictionary && !validateDictionary(transformDictionary, nil, @[ ], keyToExpectedValueTypeInTransformDictionary, &exceptionString)) {
             if (outErrorString)
                 *outErrorString = [NSString stringWithFormat:@"Rule with id %ld is invalid. `redirect` specified an invalid `transform`. %@", (long)_ruleID, exceptionString];
@@ -422,7 +421,6 @@ using namespace WebKit;
             declarativeNetRequestRuleQueryTransformAddOrReplaceParams: @[ NSDictionary.class ],
             declarativeNetRequestRuleQueryTransformRemoveParams: @[ NSString.class ],
         };
-
 
         if (queryTransformDictionary && !validateDictionary(queryTransformDictionary, nil, @[ ], keyToExpectedValueTypeInQueryTransformDictionary, &exceptionString)) {
             if (outErrorString)

@@ -4242,6 +4242,7 @@ void WebExtensionContext::unloadDeclarativeNetRequestState()
     m_sessionRulesIDs.clear();
     m_dynamicRulesIDs.clear();
     m_matchedRules.clear();
+    m_enabledStaticRulesetIDs.clear();
 
     m_declarativeNetRequestDynamicRulesStore = nullptr;
     m_declarativeNetRequestSessionRulesStore = nullptr;
@@ -4389,7 +4390,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
 
     auto addStaticRulesets = [this, protectedThis = Ref { *this }, applyDeclarativeNetRequestRules = WTFMove(applyDeclarativeNetRequestRules), allJSONData = RetainPtr { allJSONData }] () mutable {
         for (auto& ruleset : extension().declarativeNetRequestRulesets()) {
-            if (!ruleset.enabled)
+            if (!m_enabledStaticRulesetIDs.contains(ruleset.rulesetID))
                 continue;
 
             auto *jsonData = extension().resourceDataForPath(ruleset.jsonPath);
@@ -4450,7 +4451,6 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
         addDynamicAndStaticRules();
     }).get()];
 }
-
 
 bool WebExtensionContext::handleContentRuleListNotificationForTab(WebExtensionTab& tab, const URL& url, WebCore::ContentRuleListResults::Result)
 {

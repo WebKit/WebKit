@@ -263,7 +263,8 @@ public:
     const CommandsVector& commands();
     bool hasCommands();
 
-    DeclarativeNetRequestRulesetVector& declarativeNetRequestRulesets();
+    const DeclarativeNetRequestRulesetVector& declarativeNetRequestRulesets();
+    std::optional<DeclarativeNetRequestRulesetData> declarativeNetRequestRuleset(const String&);
     bool hasContentModificationRules() { return !declarativeNetRequestRulesets().isEmpty(); }
 
     const InjectedContentVector& staticInjectedContents();
