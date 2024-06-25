@@ -109,11 +109,21 @@ CString CodeBlock::inferredName() const
         return "<eval>"_span;
     case FunctionCode:
         return jsCast<FunctionExecutable*>(ownerExecutable())->ecmaName().utf8();
-    case ModuleCode:
+    case ModuleCode: {
+#if USE(BUN_JSC_ADDITIONS)
+    if (m_ownerExecutable) {
+        auto *provider = ownerExecutable()->source().provider();
+        if (provider && !provider->sourceURL().isEmpty()) {
+            return provider->sourceURL().utf8();
+        }
+    }
+#endif
         return "<module>"_span;
-    default:
+    }
+    default: {
         CRASH();
         return ""_span;
+    }
     }
 }
 
