@@ -53,9 +53,4 @@ std::span<uint8_t> StreamConnectionBuffer::headerForTesting()
     return m_sharedMemory->mutableSpan().first(headerSize());
 }
 
-std::span<uint8_t> StreamConnectionBuffer::dataForTesting()
-{
-    return { data(), m_sharedMemory->size() - headerSize() };
-}
-
 }
