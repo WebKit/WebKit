@@ -3244,8 +3244,11 @@ auto OMGIRGenerator::addArrayFill(uint32_t typeIndex, ExpressionType arrayref, E
 
     Value* resultValue;
     if (!elementType.unpacked().isV128()) {
+        Value* valueGPR = get(value);
+        if (value->type().isFloat())
+            valueGPR = m_currentBlock->appendNew<Value>(m_proc, BitwiseCast, origin(), valueGPR);
         resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmArrayFill,
-            instanceValue(), get(arrayref), get(offset), get(value), get(size));
+            instanceValue(), get(arrayref), get(offset), valueGPR, get(size));
     } else {
         Value* lane0 = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorExtractLane, B3::Int64, SIMDLane::i64x2, SIMDSignMode::None, uint8_t { 0 }, get(value));
         Value* lane1 = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorExtractLane, B3::Int64, SIMDLane::i64x2, SIMDSignMode::None, uint8_t { 1 }, get(value));

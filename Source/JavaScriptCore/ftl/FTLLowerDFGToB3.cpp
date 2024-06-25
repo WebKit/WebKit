@@ -12455,10 +12455,9 @@ IGNORE_CLANG_WARNINGS_END
         WebAssemblyFunction* wasmFunction = node->castOperand<WebAssemblyFunction*>();
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
 
-        const auto& typeDefinition = Wasm::TypeInformation::get(wasmFunction->typeIndex()).expand();
-        const auto& signature = *typeDefinition.as<Wasm::FunctionSignature>();
+        const auto& signature = Wasm::TypeInformation::getFunctionSignature(wasmFunction->typeIndex());
         const Wasm::WasmCallingConvention& wasmCC = Wasm::wasmCallingConvention();
-        Wasm::CallInformation wasmCallInfo = wasmCC.callInformationFor(typeDefinition);
+        Wasm::CallInformation wasmCallInfo = wasmCC.callInformationFor(signature);
 
         RegisterAtOffsetList savedResultRegisters = wasmCallInfo.computeResultsOffsetList();
         unsigned totalFrameSize = wasmCallInfo.headerAndArgumentStackSizeInBytes;

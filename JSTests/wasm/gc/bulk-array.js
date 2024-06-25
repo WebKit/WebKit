@@ -1,4 +1,3 @@
-//@ skip
 //@ runWebAssemblySuite("--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true")
 
 import * as assert from "../assert.js";

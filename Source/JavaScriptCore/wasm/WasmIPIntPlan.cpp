@@ -91,7 +91,7 @@ void IPIntPlan::compileFunction(uint32_t functionIndex)
 {
     const auto& function = m_moduleInformation->functions[functionIndex];
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
-    const TypeDefinition& signature = TypeInformation::get(typeIndex);
+    const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
     unsigned functionIndexSpace = m_moduleInformation->importFunctionTypeIndices.size() + functionIndex;
     ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace) == typeIndex);
 

@@ -160,7 +160,6 @@ MacroAssembler::Jump PatchpointSpecial::generate(Inst& inst, CCallHelpers& jit, 
     offset += value->numChildren();
 
     StackmapGenerationParams params(value, reps, context);
-    JIT_COMMENT(jit, "Patchpoint body start, with arg value reps: ", listDump(reps));
 
     for (unsigned i = value->numGPScratchRegisters; i--;)
         params.m_gpScratch.append(inst.args[offset++].gpr());

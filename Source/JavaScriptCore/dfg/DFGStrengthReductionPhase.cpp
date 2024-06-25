@@ -1257,10 +1257,9 @@ private:
                 auto* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(function);
                 if (!wasmFunction)
                     break;
-                const auto& typeDefinition = Wasm::TypeInformation::get(wasmFunction->typeIndex()).expand();
-                const auto& signature = *typeDefinition.as<Wasm::FunctionSignature>();
+                const auto& signature = Wasm::TypeInformation::getFunctionSignature(wasmFunction->typeIndex());
                 const Wasm::WasmCallingConvention& wasmCC = Wasm::wasmCallingConvention();
-                Wasm::CallInformation wasmCallInfo = wasmCC.callInformationFor(typeDefinition);
+                Wasm::CallInformation wasmCallInfo = wasmCC.callInformationFor(signature);
                 if (wasmCallInfo.argumentsOrResultsIncludeV128)
                     break;
 
