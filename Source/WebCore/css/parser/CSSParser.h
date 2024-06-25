@@ -38,6 +38,7 @@ class Color;
 class Element;
 class ImmutableStyleProperties;
 class MutableStyleProperties;
+class StyleColor;
 class StyleRuleBase;
 class StyleRuleKeyframe;
 class StyleSheetContents;
@@ -78,6 +79,7 @@ public:
     WEBCORE_EXPORT static Color parseColor(const String&, const CSSParserContext&);
     // FIXME: All callers are not getting the right Settings for parsing due to lack of CSSParserContext and should switch to the parseColor function above.
     WEBCORE_EXPORT static Color parseColorWithoutContext(const String&, bool strict = false);
+    static std::optional<StyleColor> parseColorOrCurrentColorWithoutContext(const String&, bool strict = false);
     static Color parseSystemColor(StringView);
     static std::optional<SRGBA<uint8_t>> parseNamedColor(StringView);
     static std::optional<SRGBA<uint8_t>> parseHexColor(StringView);

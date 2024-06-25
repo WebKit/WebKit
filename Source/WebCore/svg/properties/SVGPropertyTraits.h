@@ -29,6 +29,7 @@
 #include "FloatRect.h"
 #include "QualifiedName.h"
 #include "SVGParserUtilities.h"
+#include "StyleColor.h"
 
 namespace WebCore {
 
@@ -47,12 +48,9 @@ template<>
 struct SVGPropertyTraits<Color> {
     static Color initialValue() { return Color(); }
     static Color fromString(const String& string) { return CSSParser::parseColorWithoutContext(string.trim(deprecatedIsSpaceOrNewline)); }
-    static std::optional<Color> parse(const QualifiedName&, const String& string)
+    static std::optional<StyleColor> parse(const String& string)
     {
-        Color color = CSSParser::parseColorWithoutContext(string.trim(deprecatedIsSpaceOrNewline));
-        if (!color.isValid())
-            return std::nullopt;
-        return color;
+        return CSSParser::parseColorOrCurrentColorWithoutContext(string.trim(deprecatedIsSpaceOrNewline));
     }
     static String toString(const Color& type) { return serializationForHTML(type); }
 };

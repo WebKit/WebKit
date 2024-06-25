@@ -113,6 +113,21 @@ Color CSSParser::parseColorWithoutContext(const String& string, bool strict)
     return color(parseSingleValue(CSSPropertyColor, string, strictCSSParserContext()));
 }
 
+std::optional<StyleColor> CSSParser::parseColorOrCurrentColorWithoutContext(const String& string, bool strict)
+{
+    if (auto color = CSSParserFastPaths::parseSimpleColor(string, strict))
+        return *color;
+    // FIXME: Unclear why we want to ignore the boolean argument "strict" and always pass strictCSSParserContext here.
+    auto value = parseSingleValue(CSSPropertyColor, string, strictCSSParserContext());
+    if (!value)
+        return std::nullopt;
+    if (value->isColor())
+        return value->color();
+    if (value->valueID() == CSSValueCurrentcolor)
+        return StyleColor();
+    return std::nullopt;
+}
+
 Color CSSParser::parseSystemColor(StringView string)
 {
     auto keyword = cssValueKeywordID(string);
