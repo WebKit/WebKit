@@ -1177,7 +1177,9 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
     case TokenType::ParenLeft:
     case TokenType::And:
     case TokenType::Star: {
-        return parseVariableUpdatingStatement();
+        PARSE(variableUpdatingStatement, VariableUpdatingStatement);
+        CONSUME_TYPE(Semicolon);
+        return { variableUpdatingStatement };
     }
     case TokenType::KeywordFor: {
         // FIXME: Handle attributes attached to statement.
