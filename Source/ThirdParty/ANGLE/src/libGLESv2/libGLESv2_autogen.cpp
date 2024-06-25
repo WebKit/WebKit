@@ -4119,6 +4119,29 @@ void GL_APIENTRY glBufferStorageEXT(GLenum target,
     return GL_BufferStorageEXT(target, size, data, flags);
 }
 
+// GL_EXT_clear_texture
+void GL_APIENTRY
+glClearTexImageEXT(GLuint texture, GLint level, GLenum format, GLenum type, const void *data)
+{
+    return GL_ClearTexImageEXT(texture, level, format, type, data);
+}
+
+void GL_APIENTRY glClearTexSubImageEXT(GLuint texture,
+                                       GLint level,
+                                       GLint xoffset,
+                                       GLint yoffset,
+                                       GLint zoffset,
+                                       GLsizei width,
+                                       GLsizei height,
+                                       GLsizei depth,
+                                       GLenum format,
+                                       GLenum type,
+                                       const void *data)
+{
+    return GL_ClearTexSubImageEXT(texture, level, xoffset, yoffset, zoffset, width, height, depth,
+                                  format, type, data);
+}
+
 // GL_EXT_clip_control
 void GL_APIENTRY glClipControlEXT(GLenum origin, GLenum depth)
 {
@@ -5136,6 +5159,8 @@ void GL_APIENTRY glBlendBarrierKHR()
     return GL_BlendBarrierKHR();
 }
 
+// GL_KHR_blend_equation_advanced_coherent
+
 // GL_KHR_debug
 void GL_APIENTRY glDebugMessageCallbackKHR(GLDEBUGPROCKHR callback, const void *userParam)
 {
@@ -6034,6 +6059,18 @@ void GL_APIENTRY glTextureFoveationParametersQCOM(GLuint texture,
 {
     return GL_TextureFoveationParametersQCOM(texture, layer, focalPoint, focalX, focalY, gainX,
                                              gainY, foveaArea);
+}
+
+// GL_QCOM_tiled_rendering
+void GL_APIENTRY glEndTilingQCOM(GLbitfield preserveMask)
+{
+    return GL_EndTilingQCOM(preserveMask);
+}
+
+void GL_APIENTRY
+glStartTilingQCOM(GLuint x, GLuint y, GLuint width, GLuint height, GLbitfield preserveMask)
+{
+    return GL_StartTilingQCOM(x, y, width, height, preserveMask);
 }
 
 #if defined(ANGLE_ENABLE_GL_DESKTOP_FRONTEND)

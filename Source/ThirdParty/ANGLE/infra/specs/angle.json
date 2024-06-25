@@ -2035,7 +2035,8 @@
             "device_os_type": "userdebug",
             "device_type": "flame",
             "os": "Android",
-            "pool": "chromium.tests.gpu"
+            "pool": "chromium.tests.gpu",
+            "temp_band": "<30"
           },
           "hard_timeout": 7200,
           "io_timeout": 300,
@@ -2066,7 +2067,8 @@
             "device_os_type": "userdebug",
             "device_type": "flame",
             "os": "Android",
-            "pool": "chromium.tests.gpu"
+            "pool": "chromium.tests.gpu",
+            "temp_band": "<30"
           },
           "hard_timeout": 7200,
           "io_timeout": 300,
@@ -2097,7 +2099,8 @@
             "device_os_type": "userdebug",
             "device_type": "flame",
             "os": "Android",
-            "pool": "chromium.tests.gpu"
+            "pool": "chromium.tests.gpu",
+            "temp_band": "<30"
           },
           "hard_timeout": 7200,
           "io_timeout": 300,
@@ -2727,7 +2730,8 @@
             "device_os_type": "userdebug",
             "device_type": "oriole",
             "os": "Android",
-            "pool": "chromium.tests.gpu"
+            "pool": "chromium.tests.gpu",
+            "temp_band": "<30"
           },
           "hard_timeout": 7200,
           "io_timeout": 300,
@@ -2759,7 +2763,8 @@
             "device_os_type": "userdebug",
             "device_type": "oriole",
             "os": "Android",
-            "pool": "chromium.tests.gpu"
+            "pool": "chromium.tests.gpu",
+            "temp_band": "<30"
           },
           "hard_timeout": 7200,
           "io_timeout": 300,
@@ -2791,7 +2796,8 @@
             "device_os_type": "userdebug",
             "device_type": "oriole",
             "os": "Android",
-            "pool": "chromium.tests.gpu"
+            "pool": "chromium.tests.gpu",
+            "temp_band": "<30"
           },
           "hard_timeout": 7200,
           "io_timeout": 300,

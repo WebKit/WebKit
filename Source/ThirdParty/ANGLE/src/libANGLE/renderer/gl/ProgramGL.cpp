@@ -377,10 +377,10 @@ void ProgramGL::linkJobImpl(const gl::Extensions &extensions)
                 const auto &shaderOutputs = fragmentShader->activeOutputVariables;
                 for (const auto &output : shaderOutputs)
                 {
-                    // TODO(http://anglebug.com/1085) This could be cleaner if the transformed names
-                    // would be set correctly in ShaderVariable::mappedName. This would require some
-                    // refactoring in the translator. Adding a mapped name dictionary for builtins
-                    // into the symbol table would be one fairly clean way to do it.
+                    // TODO(http://anglebug.com/40644593) This could be cleaner if the transformed
+                    // names would be set correctly in ShaderVariable::mappedName. This would
+                    // require some refactoring in the translator. Adding a mapped name dictionary
+                    // for builtins into the symbol table would be one fairly clean way to do it.
                     if (output.name == "gl_SecondaryFragColorEXT")
                     {
                         mFunctions->bindFragDataLocationIndexed(mProgramID, 0, 0,

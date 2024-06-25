@@ -240,7 +240,7 @@ angle::Result MemoryObjectVk::createImage(ContextVk *contextVk,
             UNREACHABLE();
     }
 
-    // TODO(jmadill, spang): Memory sub-allocation. http://anglebug.com/2162
+    // TODO(jmadill, spang): Memory sub-allocation. http://anglebug.com/40096464
     ASSERT(offset == 0);
     ASSERT(externalMemoryRequirements.size == mSize);
 

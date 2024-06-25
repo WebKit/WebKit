@@ -364,7 +364,7 @@ angle::Result ProgramVk::load(const gl::Context *context,
 {
     ContextVk *contextVk = vk::GetImpl(context);
 
-    // TODO: parallelize program load.  http://anglebug.com/8297
+    // TODO: parallelize program load.  http://anglebug.com/41488637
     *loadTaskOut = {};
 
     return getExecutable()->load(contextVk, mState.isSeparable(), stream, resultOut);

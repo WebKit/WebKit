@@ -90,6 +90,6 @@ Name IdGen::createNewName(std::initializer_list<const char *> baseNames)
 
 Name IdGen::createNewName()
 {
-    // TODO(anglebug.com/5505): refactor this later.
+    // TODO(anglebug.com/40096755): refactor this later.
     return createNewName<int>(0, nullptr, [](int) { return kEmptyImmutableString; });
 }

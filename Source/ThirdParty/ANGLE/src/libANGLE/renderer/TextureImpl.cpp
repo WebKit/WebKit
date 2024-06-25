@@ -134,6 +134,27 @@ angle::Result TextureImpl::setBuffer(const gl::Context *context, GLenum internal
     return angle::Result::Stop;
 }
 
+angle::Result TextureImpl::clearImage(const gl::Context *context,
+                                      GLint level,
+                                      GLenum format,
+                                      GLenum type,
+                                      const uint8_t *data)
+{
+    UNREACHABLE();
+    return angle::Result::Stop;
+}
+
+angle::Result TextureImpl::clearSubImage(const gl::Context *context,
+                                         GLint level,
+                                         const gl::Box &area,
+                                         GLenum format,
+                                         GLenum type,
+                                         const uint8_t *data)
+{
+    UNREACHABLE();
+    return angle::Result::Stop;
+}
+
 GLint TextureImpl::getMemorySize() const
 {
     return 0;

@@ -62,7 +62,7 @@ Config::Config()
       optimalOrientation(0),
       colorComponentType(EGL_COLOR_COMPONENT_TYPE_FIXED_EXT),
       recordable(EGL_FALSE),
-      framebufferTarget(EGL_FALSE),  // TODO: http://anglebug.com/4208
+      framebufferTarget(EGL_FALSE),  // TODO: http://anglebug.com/42262839
       yInverted(EGL_FALSE)
 {}
 

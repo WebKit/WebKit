@@ -169,7 +169,7 @@ void main()
 
 TEST_P(TransformFeedbackTest, ZeroSizedViewport)
 {
-    // http://anglebug.com/5154
+    // http://anglebug.com/42263715
     ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     // Set the program's transform feedback varyings (just gl_Position)
@@ -251,7 +251,7 @@ TEST_P(TransformFeedbackTest, QueryActiveNoXfbDrawThenXfbBeginEnd)
 // old position)
 TEST_P(TransformFeedbackTest, BufferRebinding)
 {
-    // http://anglebug.com/5154
+    // http://anglebug.com/42263715
     ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     glDisable(GL_DEPTH_TEST);
@@ -328,10 +328,10 @@ TEST_P(TransformFeedbackTest, BufferRebinding)
 // afterward.
 TEST_P(TransformFeedbackTest, RecordAndDraw)
 {
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
-    // Fails on Mac GL drivers. http://anglebug.com/4992
+    // Fails on Mac GL drivers. http://anglebug.com/42263565
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -403,13 +403,13 @@ TEST_P(TransformFeedbackTest, RecordAndDraw)
 // Test that transform feedback can cover multiple render passes.
 TEST_P(TransformFeedbackTest, SpanMultipleRenderPasses)
 {
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
-    // Fails on Mac GL drivers. http://anglebug.com/4992
+    // Fails on Mac GL drivers. http://anglebug.com/42263565
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
-    // anglebug.com/5429
+    // anglebug.com/42263967
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -496,13 +496,13 @@ TEST_P(TransformFeedbackTest, SpanMultipleRenderPasses)
 // Test that uploading data to buffer that's in use then using it for transform feedback works.
 TEST_P(TransformFeedbackTest, UseAsUBOThenUpdateThenCapture)
 {
-    // http://anglebug.com/5833
+    // http://anglebug.com/42264370
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsQualcomm());
 
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
-    // Fails on Mac GL drivers. http://anglebug.com/4992
+    // Fails on Mac GL drivers. http://anglebug.com/42263565
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     const std::array<uint32_t, 12> kInitialData = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
@@ -658,13 +658,13 @@ void TransformFeedbackTest::midRecordOpDoesNotContributeTest(std::function<void(
 TEST_P(TransformFeedbackTest, ClearWhileRecordingDoesNotContribute)
 {
 
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
-    // Fails on Mac GL drivers. http://anglebug.com/4992
+    // Fails on Mac GL drivers. http://anglebug.com/42263565
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
-    // anglebug.com/5434
+    // anglebug.com/42263973
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
     auto clear = []() {
@@ -698,13 +698,13 @@ TEST_P(TransformFeedbackTest, ClearWhileRecordingDoesNotContribute)
 TEST_P(TransformFeedbackTest, CopyWhileRecordingDoesNotContribute)
 {
 
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
-    // Fails on Mac GL drivers. http://anglebug.com/4992
+    // Fails on Mac GL drivers. http://anglebug.com/42263565
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
-    // anglebug.com/5434
+    // anglebug.com/42263973
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
     auto copy = []() {
@@ -735,13 +735,13 @@ TEST_P(TransformFeedbackTest, CopyWhileRecordingDoesNotContribute)
 // Test that blit in the middle of rendering doesn't contribute to transform feedback.
 TEST_P(TransformFeedbackTest, BlitWhileRecordingDoesNotContribute)
 {
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
-    // Fails on Mac GL drivers. http://anglebug.com/4992
+    // Fails on Mac GL drivers. http://anglebug.com/42263565
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
-    // anglebug.com/5434
+    // anglebug.com/42263973
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
     auto blit = []() {
@@ -841,7 +841,7 @@ TEST_P(TransformFeedbackTest, DISABLED_TooSmallBuffers)
 // Test that buffer binding happens only on the current transform feedback object
 TEST_P(TransformFeedbackTest, BufferBinding)
 {
-    // http://anglebug.com/5154
+    // http://anglebug.com/42263715
     ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     // Reset any state
@@ -905,7 +905,7 @@ TEST_P(TransformFeedbackTest, BufferBinding)
 // Test that we can capture varyings only used in the vertex shader.
 TEST_P(TransformFeedbackTest, VertexOnly)
 {
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     constexpr char kVS[] =
@@ -973,7 +973,7 @@ TEST_P(TransformFeedbackTest, VertexOnly)
 // the vertex shader.
 TEST_P(TransformFeedbackTest, InactiveStructureVarying)
 {
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     constexpr char kVS[] =
@@ -1045,7 +1045,7 @@ TEST_P(TransformFeedbackTest, InactiveStructureVarying)
 // Test that multiple paused transform feedbacks do not generate errors or crash
 TEST_P(TransformFeedbackTest, MultiplePaused)
 {
-    // Crashes on Mac Intel GL drivers. http://anglebug.com/4992
+    // Crashes on Mac Intel GL drivers. http://anglebug.com/42263565
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     const size_t drawSize = 1024;
@@ -1142,7 +1142,7 @@ TEST_P(TransformFeedbackTest, MultiContext)
 
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL());
 
-    // Flaky on Win Intel Vulkan. http://anglebug.com/4497
+    // Flaky on Win Intel Vulkan. http://anglebug.com/40644725
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     EGLint contextAttributes[] = {
@@ -1316,10 +1316,10 @@ void main(void)
 // Test that when two vec2s are packed into the same register, we can still capture both of them.
 TEST_P(TransformFeedbackTest, PackingBug)
 {
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
-    // TODO(anglebug.com/5360): Timing out on ARM-based Apple DTKs.
+    // TODO(anglebug.com/40096747): Timing out on ARM-based Apple DTKs.
     ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     // TODO(jmadill): With points and rasterizer discard?
@@ -1451,9 +1451,9 @@ TEST_P(TransformFeedbackTest, OptimizedVaryings)
 // Test an edge case where two varyings are unreferenced in the frag shader.
 TEST_P(TransformFeedbackTest, TwoUnreferencedInFragShader)
 {
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
-    // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
+    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
     ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     // TODO(jmadill): With points and rasterizer discard?
@@ -1521,13 +1521,13 @@ TEST_P(TransformFeedbackTest, TwoUnreferencedInFragShader)
 // glBeginTransformFeedback is called
 TEST_P(TransformFeedbackTest, OffsetResetOnBeginTransformFeedback)
 {
-    // http://anglebug.com/5069
+    // http://anglebug.com/42263637
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac() && IsAMD());
 
-    // http://anglebug.com/5069
+    // http://anglebug.com/42263637
     ANGLE_SKIP_TEST_IF(IsNexus5X() && IsOpenGLES());
 
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     constexpr char kVS[] =
@@ -1702,7 +1702,7 @@ TEST_P(TransformFeedbackLifetimeTest, DeletedBuffer)
 
     glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
 
-    // TODO(jmadill): Remove this when http://anglebug.com/1351 is fixed.
+    // TODO(jmadill): Remove this when http://anglebug.com/42260357 is fixed.
     glBindVertexArray(0);
     drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
     glBindVertexArray(1);
@@ -1828,7 +1828,7 @@ TEST_P(TransformFeedbackTestES31, CaptureOutboundElement)
 TEST_P(TransformFeedbackTestES31, DifferentArrayElementVaryings)
 {
     // When transform feedback extension is used, capturing array elements is not supported.
-    // http://anglebug.com/4140
+    // http://anglebug.com/42262773
     ANGLE_SKIP_TEST_IF(IsVulkan() &&
                        !getEGLWindow()->isFeatureEnabled(Feature::EmulateTransformFeedback));
 
@@ -1895,7 +1895,7 @@ TEST_P(TransformFeedbackTestES31, DifferentArrayElementVaryings)
 TEST_P(TransformFeedbackTestES31, DifferentArrayElementVaryingsNonZeroIndex)
 {
     // When transform feedback extension is used, capturing array elements is not supported.
-    // http://anglebug.com/4140
+    // http://anglebug.com/42262773
     ANGLE_SKIP_TEST_IF(IsVulkan() &&
                        !getEGLWindow()->isFeatureEnabled(Feature::EmulateTransformFeedback));
 
@@ -1961,7 +1961,7 @@ TEST_P(TransformFeedbackTestES31, DifferentArrayElementVaryingsNonZeroIndex)
 // Test transform feedback varying for base-level members of struct.
 TEST_P(TransformFeedbackTestES31, StructMemberVaryings)
 {
-    // Remove this when http://anglebug.com/4140 is fixed.
+    // Remove this when http://anglebug.com/42262773 is fixed.
     ANGLE_SKIP_TEST_IF(IsVulkan());
 
     constexpr char kVS[] = R"(#version 310 es
@@ -2174,7 +2174,7 @@ TEST_P(TransformFeedbackTest, NonExistentTransformFeedbackVarying)
 // nonexistent varying is prefixed with "gl_".
 TEST_P(TransformFeedbackTest, NonExistentTransformFeedbackVaryingWithGLPrefix)
 {
-    // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
+    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
     ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     std::vector<std::string> tfVaryings;
@@ -2189,7 +2189,7 @@ TEST_P(TransformFeedbackTest, NonExistentTransformFeedbackVaryingWithGLPrefix)
 // GLSL ES.
 TEST_P(TransformFeedbackTest, VaryingReservedOpenGLName)
 {
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     constexpr char kVS[] =
@@ -2277,7 +2277,7 @@ TEST_P(TransformFeedbackTest, NoTransformFeedbackVaryingsInUse)
 // Test that you can pause transform feedback without drawing first.
 TEST_P(TransformFeedbackTest, SwitchProgramBeforeDraw)
 {
-    // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
+    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
     ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     std::vector<std::string> tfVaryings;
@@ -2523,7 +2523,7 @@ void VerifyVertexFloats(const GLfloat *mapPtrFloat,
 // Tests that stopping XFB works as expected.
 TEST_P(TransformFeedbackTest, Overrun)
 {
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     const std::vector<GLfloat> vertices = {
@@ -2552,10 +2552,10 @@ TEST_P(TransformFeedbackTest, Overrun)
 // Similar to the overrun test but with Pause instead of End.
 TEST_P(TransformFeedbackTest, OverrunWithPause)
 {
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
-    // Fails on Mac Intel GL drivers. http://anglebug.com/4992
+    // Fails on Mac Intel GL drivers. http://anglebug.com/42263565
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     const std::vector<GLfloat> vertices = {
@@ -2586,13 +2586,13 @@ TEST_P(TransformFeedbackTest, OverrunWithPause)
 // Similar to the overrun test but with Pause instead of End.
 TEST_P(TransformFeedbackTest, OverrunWithPauseAndResume)
 {
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     // Fails on Adreno Pixel 2 GL drivers. Not a supported configuration.
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAdreno() && IsAndroid());
 
-    // Fails on Windows Intel GL drivers. http://anglebug.com/4697
+    // Fails on Windows Intel GL drivers. http://anglebug.com/42263296
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
 
     const std::vector<GLfloat> vertices = {
@@ -2627,19 +2627,19 @@ TEST_P(TransformFeedbackTest, OverrunWithPauseAndResume)
 // Similar to the overrun Pause/Resume test but with more than one Pause and Resume.
 TEST_P(TransformFeedbackTest, OverrunWithMultiplePauseAndResume)
 {
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     // Fails on Adreno Pixel 2 GL drivers. Not a supported configuration.
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAdreno() && IsAndroid());
 
-    // Fails on Windows Intel GL drivers. http://anglebug.com/4697
+    // Fails on Windows Intel GL drivers. http://anglebug.com/42263296
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
 
-    // Fails on Mac AMD GL drivers. http://anglebug.com/4775
+    // Fails on Mac AMD GL drivers. http://anglebug.com/40644736
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsMac());
 
-    // Crashes on Mac Intel GL drivers. http://anglebug.com/4992
+    // Crashes on Mac Intel GL drivers. http://anglebug.com/42263565
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     const std::vector<GLfloat> vertices = {
@@ -2677,7 +2677,7 @@ TEST_P(TransformFeedbackTest, OverrunWithMultiplePauseAndResume)
 TEST_P(TransformFeedbackTest, EndThenBindNewBufferAndRestart)
 {
 
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     // Set the program's transform feedback varyings (just gl_Position)
@@ -2759,7 +2759,7 @@ TEST_P(TransformFeedbackTest, EndThenBindNewBufferAndRestart)
 // feedback buffers, as they were not "dirty".
 TEST_P(TransformFeedbackTest, DrawWithoutTransformFeedbackThenWith)
 {
-    // Fails on Mac Intel GL drivers. http://anglebug.com/4992
+    // Fails on Mac Intel GL drivers. http://anglebug.com/42263565
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     constexpr char kVS[] =
@@ -3090,15 +3090,15 @@ class TransformFeedbackTestES32 : public TransformFeedbackTest
 // queries works.
 TEST_P(TransformFeedbackTestES32, PrimitivesWrittenAndGenerated)
 {
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     // No VK_EXT_transform_feedback support on the following configurations.
-    // http://anglebug.com/5435
+    // http://anglebug.com/42263974
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAMD() && IsWindows());
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsNVIDIA() && IsWindows7());
 
-    // http://anglebug.com/5539
+    // http://anglebug.com/42264074
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsLinux());
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -3244,11 +3244,11 @@ TEST_P(TransformFeedbackTestES32, PrimitivesWrittenAndGenerated)
 TEST_P(TransformFeedbackTestES32, PrimitivesGeneratedVsRasterizerDiscard)
 {
     // No pipelineStatisticsQuery or VK_EXT_transform_feedback support on the following
-    // configurations.  http://anglebug.com/5435
+    // configurations.  http://anglebug.com/42263974
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAMD() && IsWindows());
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsNVIDIA() && IsWindows7());
 
-    // http://anglebug.com/5539
+    // http://anglebug.com/42264074
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsLinux());
 
     glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
@@ -3382,11 +3382,11 @@ TEST_P(TransformFeedbackTestES32, PrimitivesGeneratedVsRasterizerDiscard)
 TEST_P(TransformFeedbackTestES32, MultiPrimitivesGeneratedVsRasterizerDiscard)
 {
     // No pipelineStatisticsQuery or VK_EXT_transform_feedback support on the following
-    // configurations.  http://anglebug.com/5435
+    // configurations.  http://anglebug.com/42263974
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAMD() && IsWindows());
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsNVIDIA() && IsWindows7());
 
-    // http://anglebug.com/5539
+    // http://anglebug.com/42264074
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsLinux());
 
     ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
@@ -3433,11 +3433,11 @@ TEST_P(TransformFeedbackTestES32, MultiPrimitivesGeneratedVsRasterizerDiscard)
 TEST_P(TransformFeedbackTestES32, PrimitivesGeneratedVsRasterizerDiscardAndFramebufferChange)
 {
     // No pipelineStatisticsQuery or VK_EXT_transform_feedback support on the following
-    // configurations.  http://anglebug.com/5435
+    // configurations.  http://anglebug.com/42263974
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAMD() && IsWindows());
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsNVIDIA() && IsWindows7());
 
-    // http://anglebug.com/5539
+    // http://anglebug.com/42264074
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsLinux());
 
     glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
@@ -3595,11 +3595,11 @@ TEST_P(TransformFeedbackTestES32, PrimitivesGeneratedVsRasterizerDiscardAndFrame
 TEST_P(TransformFeedbackTestES32, PrimitivesGeneratedVsIndirectDraw)
 {
     // No pipelineStatisticsQuery or VK_EXT_transform_feedback support on the following
-    // configurations.  http://anglebug.com/5435
+    // configurations.  http://anglebug.com/42263974
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAMD() && IsWindows());
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsNVIDIA() && IsWindows7());
 
-    // http://anglebug.com/5539
+    // http://anglebug.com/42264074
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsLinux());
 
     GLBuffer indirectBuffer;
@@ -3690,9 +3690,9 @@ TEST_P(TransformFeedbackTestIOBlocks, Interleaved)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_io_blocks"));
 
-    // http://anglebug.com/5488
+    // http://anglebug.com/42264025
     ANGLE_SKIP_TEST_IF(IsQualcomm() && IsOpenGLES());
-    // http://anglebug.com/5493
+    // http://anglebug.com/42264031
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsVulkan());
 
     constexpr char kVS[] = R"(#version 310 es
@@ -3797,13 +3797,13 @@ TEST_P(TransformFeedbackTestIOBlocks, Separate)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_io_blocks"));
 
-    // http://anglebug.com/5487
+    // http://anglebug.com/42264024
     ANGLE_SKIP_TEST_IF(IsLinux() && (IsIntel() || IsAMD()) && IsOpenGL());
 
-    // http://anglebug.com/5488
+    // http://anglebug.com/42264025
     ANGLE_SKIP_TEST_IF(IsQualcomm() && IsOpenGLES());
 
-    // http://anglebug.com/5493
+    // http://anglebug.com/42264031
     ANGLE_SKIP_TEST_IF(IsLinux() && (IsAMD() || IsARM()) && IsVulkan());
 
     constexpr char kVS[] = R"(#version 310 es

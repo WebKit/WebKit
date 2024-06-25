@@ -149,7 +149,7 @@ class RendererGL : angle::NonCopyable
 
     angle::FeaturesGL mFeatures;
 
-    // Workaround for anglebug.com/4267
+    // Workaround for anglebug.com/40644715
     bool mNeedsFlushBeforeDeleteTextures;
 };
 

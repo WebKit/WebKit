@@ -19,7 +19,7 @@ declare_args() {
   if (!build_with_chromium && is_android) {
     assert(
         !is_official_build,
-        "is_official_build not supported by ANGLE for Android (https://anglebug.com/7381)")
+        "is_official_build not supported by ANGLE for Android (https://anglebug.com/42265853)")
   }
 }
 
@@ -144,6 +144,9 @@ template("angle_common_test_utils") {
     data_deps = []
     if (angle_enable_vulkan_validation_layers) {
       data_deps += [ "$angle_root/src/common/vulkan:vulkan_validation_layers" ]
+    }
+    if (angle_enable_vulkan_api_dump_layer) {
+      data_deps += [ "$angle_root/src/common/vulkan:lunarg_vulkantools" ]
     }
   }
 }
@@ -515,7 +518,7 @@ if (build_angle_perftests) {
 
 if (build_angle_trace_tests) {
   angle_test("angle_trace_tests") {
-    # http://anglebug.com/6009: Traces with long shaders are hitting string literal
+    # http://anglebug.com/42264541: Traces with long shaders are hitting string literal
     # limit in MSVC, so only compile them when using clang
     assert(is_clang, "angle trace tests require clang")
 

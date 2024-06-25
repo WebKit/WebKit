@@ -975,7 +975,7 @@ void SerializeShader(const gl::Context *context,
     SerializeCompiledShaderState(json, shader->getCompiledState());
     json->addScalar("Handle", shader->getHandle().value);
     // TODO: implement MEC context validation only after all contexts have been initialized
-    // http://anglebug.com/8029
+    // http://anglebug.com/42266488
     // json->addScalar("RefCount", shader->getRefCount());
     json->addScalar("FlaggedForDeletion", shader->isFlaggedForDeletion());
     // Do not serialize mType because it is already serialized in SerializeCompiledShaderState.
@@ -1122,7 +1122,7 @@ void SerializeProgram(JsonSerializer *json,
     json->addScalar("IsLinked", program->isLinked());
     json->addScalar("IsFlaggedForDeletion", program->isFlaggedForDeletion());
     // TODO: implement MEC context validation only after all contexts have been initialized
-    // http://anglebug.com/8029
+    // http://anglebug.com/42266488
     // json->addScalar("RefCount", program->getRefCount());
     json->addScalar("ID", program->id().value);
 
@@ -1289,7 +1289,7 @@ Result SerializeTextureData(JsonSerializer *json,
         {
             if (format.compressed)
             {
-                // TODO: Read back compressed data. http://anglebug.com/6177
+                // TODO: Read back compressed data. http://anglebug.com/42264702
                 json->addCString(label.str(), "compressed texel data");
             }
             else

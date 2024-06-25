@@ -385,7 +385,7 @@ constexpr const ImmutableString yuv_2_rgb("yuv_2_rgb");
 
 // TODO(oetuaho): Would be nice to make this a class instead of a namespace so that we could friend
 // this from TVariable. Now symbol constructors taking an id have to be public even though they're
-// not supposed to be accessible from outside of here. http://anglebug.com/2390
+// not supposed to be accessible from outside of here. http://anglebug.com/42261100
 namespace BuiltInVariable
 {
 
@@ -2408,7 +2408,7 @@ constexpr const TVariable *p_io_00E00E00E[3] = {&BuiltInVariable::kpt_io_00E,
 
 // TODO(oetuaho): Would be nice to make this a class instead of a namespace so that we could friend
 // this from TFunction. Now symbol constructors taking an id have to be public even though they're
-// not supposed to be accessible from outside of here. http://anglebug.com/2390
+// not supposed to be accessible from outside of here. http://anglebug.com/42261100
 namespace Func
 {
 

@@ -107,7 +107,7 @@ angle::Result FramebufferWgpu::clear(const gl::Context *context, GLbitfield mask
     bool clearColor   = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_COLOR_BUFFER_BIT));
     bool clearDepth   = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_DEPTH_BUFFER_BIT));
     bool clearStencil = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_STENCIL_BUFFER_BIT));
-    // TODO(anglebug.com/8582): support clearing depth and stencil buffers.
+    // TODO(anglebug.com/42267012): support clearing depth and stencil buffers.
     ASSERT(!clearDepth && !clearStencil && clearColor);
 
     ContextWgpu *contextWgpu             = GetImplAs<ContextWgpu>(context);

@@ -55,6 +55,7 @@
         'os_type': 'android',
         'mixins': [
           'gpu_pixel_4_stable',
+          'temp_band_below_30C',
           'timeout_120m',
         ],
         'test_suites': {
@@ -75,6 +76,7 @@
         'os_type': 'android',
         'mixins': [
           'gpu_pixel_6_stable',
+          'temp_band_below_30C',
           'timeout_120m',
         ],
         'test_suites': {

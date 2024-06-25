@@ -1524,7 +1524,7 @@ bool TranslatorMSL::translate(TIntermBlock *root,
     }
 
     // TODO: refactor the code in TranslatorMSL to not issue raw function calls.
-    // http://anglebug.com/6059#c2
+    // http://anglebug.com/42264589#comment3
     mValidateASTOptions.validateNoRawFunctionCalls = false;
     // A validation error is generated in this backend due to bool uniforms.
     mValidateASTOptions.validatePrecision = false;

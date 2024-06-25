@@ -161,6 +161,10 @@ constexpr state::ExtendedDirtyBits kPixelLocalStorageEXTEnableDisableExtendedDir
 constexpr state::DirtyObjects kPixelLocalStorageEXTEnableDisableDirtyObjects{
     state::DIRTY_OBJECT_DRAW_FRAMEBUFFER};
 
+constexpr state::DirtyBits kTilingDirtyBits{state::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING};
+constexpr state::ExtendedDirtyBits kTilingExtendedDirtyBits{};
+constexpr state::DirtyObjects kTilingDirtyObjects{state::DIRTY_OBJECT_DRAW_FRAMEBUFFER};
+
 egl::ShareGroup *AllocateOrGetShareGroup(egl::Display *display, const gl::Context *shareContext)
 {
     if (shareContext)
@@ -1235,7 +1239,7 @@ void Context::deleteSemaphore(SemaphoreID semaphore)
 void Context::loseContext(GraphicsResetStatus current, GraphicsResetStatus other)
 {
     // TODO(geofflang): mark the rest of the share group lost. Requires access to the entire share
-    // group from a context. http://anglebug.com/3379
+    // group from a context. http://anglebug.com/42262046
     markContextLost(current);
 }
 
@@ -1468,6 +1472,7 @@ void Context::bindReadFramebuffer(FramebufferID framebufferHandle)
 
 void Context::bindDrawFramebuffer(FramebufferID framebufferHandle)
 {
+    endTilingImplicit();
     Framebuffer *framebuffer = mState.mFramebufferManager->checkFramebufferAllocation(
         mImplementation.get(), this, framebufferHandle);
     mState.setDrawFramebufferBinding(framebuffer);
@@ -3632,7 +3637,7 @@ void Context::beginTransformFeedback(PrimitiveMode primitiveMode)
     ASSERT(transformFeedback != nullptr);
     ASSERT(!transformFeedback->isPaused());
 
-    // TODO: http://anglebug.com/7232: Handle PPOs
+    // TODO: http://anglebug.com/42265705: Handle PPOs
     ANGLE_CONTEXT_TRY(transformFeedback->begin(this, primitiveMode, mState.getProgram()));
     mStateCache.onActiveTransformFeedbackChange(this);
 }
@@ -3765,8 +3770,8 @@ Extensions Context::generateSupportedExtensions() const
         supportedExtensions.textureBufferEXT        = false;
         supportedExtensions.textureBufferOES        = false;
 
-        // TODO(http://anglebug.com/2775): Multisample arrays could be supported on ES 3.0 as well
-        // once 2D multisample texture extension is exposed there.
+        // TODO(http://anglebug.com/42261478): Multisample arrays could be supported on ES 3.0 as
+        // well once 2D multisample texture extension is exposed there.
         supportedExtensions.textureStorageMultisample2dArrayOES = false;
     }
 
@@ -3917,7 +3922,7 @@ void Context::initCaps()
     Caps *caps = mState.getMutableCaps();
     *caps      = mImplementation->getNativeCaps();
 
-    // TODO (http://anglebug.com/6010): mSupportedExtensions should not be modified here
+    // TODO (http://anglebug.com/42264543): mSupportedExtensions should not be modified here
     mSupportedExtensions = generateSupportedExtensions();
 
     if (!mDisplay->getFrontendFeatures().allowCompressedFormats.enabled)
@@ -5774,7 +5779,7 @@ void *Context::mapBufferRange(BufferBinding target,
         return nullptr;
     }
 
-    // TODO: (anglebug.com/7821): Modify return value in entry point layer
+    // TODO: (anglebug.com/42266294): Modify return value in entry point layer
     angle::FrameCaptureShared *frameCaptureShared = getShareGroup()->getFrameCaptureShared();
     if (frameCaptureShared->enabled())
     {
@@ -9350,6 +9355,16 @@ void Context::onUniformBlockBindingUpdated(GLuint uniformBlockIndex)
     mStateCache.onUniformBufferStateChange(this);
 }
 
+void Context::endTilingImplicit()
+{
+    if (getMutablePrivateState()->isTiledRendering())
+    {
+        ANGLE_PERF_WARNING(getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
+                           "Implicitly ending tiled rendering due to framebuffer state change");
+        getMutablePrivateState()->setTiledRendering(false);
+    }
+}
+
 void Context::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message)
 {
     switch (index)
@@ -9674,11 +9689,17 @@ void Context::finishImmutable() const
     ANGLE_CONTEXT_TRY(mImplementation->finish(this));
 }
 
-void Context::beginPerfMonitor(GLuint monitor) {}
+void Context::beginPerfMonitor(GLuint monitor)
+{
+    getMutablePrivateState()->setPerfMonitorActive(true);
+}
 
 void Context::deletePerfMonitors(GLsizei n, GLuint *monitors) {}
 
-void Context::endPerfMonitor(GLuint monitor) {}
+void Context::endPerfMonitor(GLuint monitor)
+{
+    getMutablePrivateState()->setPerfMonitorActive(false);
+}
 
 void Context::genPerfMonitors(GLsizei n, GLuint *monitors)
 {
@@ -9937,6 +9958,66 @@ void Context::textureFoveationParameters(TextureID texturePacked,
     texture->setFocalPoint(layer, focalPoint, focalX, focalY, gainX, gainY, foveaArea);
 }
 
+void Context::endTiling(GLbitfield preserveMask)
+{
+    ANGLE_CONTEXT_TRY(mImplementation->endTiling(this, preserveMask));
+    getMutablePrivateState()->setTiledRendering(false);
+}
+
+void Context::startTiling(GLuint x, GLuint y, GLuint width, GLuint height, GLbitfield preserveMask)
+{
+    ANGLE_CONTEXT_TRY(syncDirtyObjects(kTilingDirtyObjects, Command::Other));
+    ANGLE_CONTEXT_TRY(syncDirtyBits(kTilingDirtyBits, kTilingExtendedDirtyBits, Command::Other));
+    ANGLE_CONTEXT_TRY(
+        mImplementation->startTiling(this, Rectangle(x, y, width, height), preserveMask));
+    getMutablePrivateState()->setTiledRendering(true);
+}
+
+void Context::clearTexImage(TextureID texturePacked,
+                            GLint level,
+                            GLenum format,
+                            GLenum type,
+                            const void *data)
+{
+    Texture *texture = getTexture(texturePacked);
+
+    // Sync the texture's state directly. EXT_clear_texture does not require that the texture is
+    // bound.
+    if (texture->hasAnyDirtyBit())
+    {
+        ANGLE_CONTEXT_TRY(texture->syncState(this, Command::Other));
+    }
+
+    ANGLE_CONTEXT_TRY(
+        texture->clearImage(this, level, format, type, static_cast<const uint8_t *>(data)));
+}
+
+void Context::clearTexSubImage(TextureID texturePacked,
+                               GLint level,
+                               GLint xoffset,
+                               GLint yoffset,
+                               GLint zoffset,
+                               GLsizei width,
+                               GLsizei height,
+                               GLsizei depth,
+                               GLenum format,
+                               GLenum type,
+                               const void *data)
+{
+    Texture *texture = getTexture(texturePacked);
+
+    // Sync the texture's state directly. EXT_clear_texture does not require that the texture is
+    // bound.
+    if (texture->hasAnyDirtyBit())
+    {
+        ANGLE_CONTEXT_TRY(texture->syncState(this, Command::Other));
+    }
+
+    Box area(xoffset, yoffset, zoffset, width, height, depth);
+    ANGLE_CONTEXT_TRY(texture->clearSubImage(this, level, area, format, type,
+                                             static_cast<const uint8_t *>(data)));
+}
+
 void Context::bindMetalRasterizationRateMap(GLuint renderbufferHandle, GLMTLRasterizationRateMapANGLE map)
 {
     Renderbuffer *renderbuffer = getRenderbuffer({renderbufferHandle});
@@ -10124,6 +10205,19 @@ GLenum ErrorSet::getGraphicsResetStatus(rx::ContextImpl *contextImpl)
     }
 
     return ToGLenum(mResetStatus);
+}
+
+GLenum ErrorSet::getErrorForCapture() const
+{
+    if (mErrors.empty())
+    {
+        return GL_NO_ERROR;
+    }
+    else
+    {
+        // Return the error without clearing it
+        return *mErrors.begin();
+    }
 }
 
 // StateCache implementation.

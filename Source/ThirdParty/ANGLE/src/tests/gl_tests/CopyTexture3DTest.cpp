@@ -936,7 +936,7 @@ TEST_P(Texture3DCopy, IntFormats)
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
     // Vulkan multiplies source by 255 unconditionally, which is wrong for signed integer formats.
-    // http://anglebug.com/4741
+    // http://anglebug.com/42263339
     ANGLE_SKIP_TEST_IF(IsVulkan());
 
     constexpr char kFS[] =
@@ -1062,7 +1062,7 @@ TEST_P(Texture3DCopy, UintFormats)
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
     // Vulkan multiplies source by 255 unconditionally, which is wrong for non-8-bit integer
-    // formats.  http://anglebug.com/4741
+    // formats.  http://anglebug.com/42263339
     ANGLE_SKIP_TEST_IF(IsVulkan());
 
     constexpr char kFS[] =
@@ -1316,7 +1316,7 @@ TEST_P(Texture2DArrayCopy, UnsignedByteFormats)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
-    // Flay on Windows D3D11. http://anglebug.com/2896
+    // Flay on Windows D3D11. http://anglebug.com/40644660
     ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D11());
 
     testUnsignedByteFormats(GL_TEXTURE_2D_ARRAY);
@@ -1338,7 +1338,7 @@ TEST_P(Texture2DArrayCopy, IntFormats)
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
     // Vulkan multiplies source by 255 unconditionally, which is wrong for signed integer formats.
-    // http://anglebug.com/4741
+    // http://anglebug.com/42263339
     ANGLE_SKIP_TEST_IF(IsVulkan());
 
     constexpr char kFS[] =
@@ -1368,7 +1368,7 @@ TEST_P(Texture2DArrayCopy, UintFormats)
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
     // Vulkan multiplies source by 255 unconditionally, which is wrong for non-8-bit integer
-    // formats.  http://anglebug.com/4741
+    // formats.  http://anglebug.com/42263339
     ANGLE_SKIP_TEST_IF(IsVulkan());
 
     constexpr char kFS[] =

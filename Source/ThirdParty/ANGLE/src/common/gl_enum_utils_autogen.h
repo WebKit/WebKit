@@ -29,6 +29,7 @@ enum class GLESEnum
     Boolean,
     Buffer,
     BufferAccessARB,
+    BufferBitQCOM,
     BufferPNameARB,
     BufferPointerNameARB,
     BufferStorageMask,

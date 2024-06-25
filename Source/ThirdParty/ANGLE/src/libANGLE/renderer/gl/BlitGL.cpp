@@ -213,7 +213,7 @@ angle::Result UnbindAttachment(const gl::Context *context,
                                GLenum attachment)
 {
     // Always use framebufferTexture2D as a workaround for an Nvidia driver bug. See
-    // https://anglebug.com/5536 and FeaturesGL.alwaysUnbindFramebufferTexture2D
+    // https://anglebug.com/42264072 and FeaturesGL.alwaysUnbindFramebufferTexture2D
     ANGLE_GL_TRY(context,
                  functions->framebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, 0, 0));
 

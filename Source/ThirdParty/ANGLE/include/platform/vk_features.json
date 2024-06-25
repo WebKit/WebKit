@@ -42,7 +42,7 @@
             "description": [
                 "The point size range reported from the API is inconsistent with the actual behavior"
             ],
-            "issue": "http://anglebug.com/2970"
+            "issue": "http://anglebug.com/40644663"
         },
         {
             "name": "supports_depth_clamp_zero_one",
@@ -50,7 +50,7 @@
             "description": [
                 "VkDevice supports the VK_EXT_depth_clamp_zero_one extension"
             ],
-            "issue": "http://anglebug.com/3970"
+            "issue": "http://anglebug.com/40096643"
         },
         {
             "name": "clamp_frag_depth",
@@ -58,7 +58,7 @@
             "description": [
                 "gl_FragDepth is not clamped when rendering to a floating point depth buffer without VK_EXT_depth_clamp_zero_one"
             ],
-            "issue": "http://anglebug.com/3970"
+            "issue": "http://anglebug.com/40096643"
         },
         {
             "name": "mutable_mipmap_texture_upload",
@@ -66,7 +66,7 @@
             "description": [
                 "Enable uploading the previously defined mutable mipmap texture."
             ],
-            "issue": "https://anglebug.com/7308"
+            "issue": "https://anglebug.com/42265782"
         },
         {
             "name": "use_vma_for_image_suballocation",
@@ -158,7 +158,7 @@
             "description": [
                 "VkDevice supports the VK_KHR_external_fence_fd extension"
             ],
-            "issue": "http://anglebug.com/2517"
+            "issue": "http://anglebug.com/42261226"
         },
         {
             "name": "supports_android_native_fence_sync",
@@ -166,7 +166,7 @@
             "description": [
                 "VkDevice supports the EGL_ANDROID_native_fence_sync extension"
             ],
-            "issue": "http://anglebug.com/2517"
+            "issue": "http://anglebug.com/42261226"
         },
         {
             "name": "supports_image_cube_array",
@@ -174,7 +174,7 @@
             "description": [
                 "VkDevice supports the imageCubeArray feature properly"
             ],
-            "issue": "http://anglebug.com/3584"
+            "issue": "http://anglebug.com/42262247"
         },
         {
             "name": "supports_pipeline_statistics_query",
@@ -182,7 +182,7 @@
             "description": [
                 "VkDevice supports the pipelineStatisticsQuery feature"
             ],
-            "issue": "http://anglebug.com/5430"
+            "issue": "http://anglebug.com/42263969"
         },
         {
             "name": "supports_shader_stencil_export",
@@ -204,7 +204,7 @@
             "description": [
                 "Emulate transform feedback as the VK_EXT_transform_feedback is not present."
             ],
-            "issue": "http://anglebug.com/3205"
+            "issue": "http://anglebug.com/42261881"
         },
         {
             "name": "supports_transform_feedback_extension",
@@ -212,7 +212,7 @@
             "description": [
                 "Transform feedback uses the VK_EXT_transform_feedback extension."
             ],
-            "issue": "http://anglebug.com/3206"
+            "issue": "http://anglebug.com/42261882"
         },
         {
             "name": "supports_geometry_streams_capability",
@@ -220,7 +220,7 @@
             "description": [
                 "Implementation supports the GeometryStreams SPIR-V capability."
             ],
-            "issue": "http://anglebug.com/3206"
+            "issue": "http://anglebug.com/42261882"
         },
         {
             "name": "supports_index_type_uint8",
@@ -228,7 +228,7 @@
             "description": [
                 "VkDevice supports the VK_EXT_index_type_uint8 extension"
             ],
-            "issue": "http://anglebug.com/4405"
+            "issue": "http://anglebug.com/42263031"
         },
         {
             "name": "supports_custom_border_color",
@@ -236,7 +236,7 @@
             "description": [
                 "VkDevice supports the VK_EXT_custom_border_color extension"
             ],
-            "issue": "http://anglebug.com/3577"
+            "issue": "http://anglebug.com/42262239"
         },
         {
             "name": "supports_multi_draw_indirect",
@@ -244,7 +244,7 @@
             "description": [
                 "VkDevice supports the multiDrawIndirect extension"
             ],
-            "issue": "http://anglebug.com/6439"
+            "issue": "http://anglebug.com/42264951"
         },
         {
             "name": "supports_depth_stencil_resolve",
@@ -252,7 +252,7 @@
             "description": [
                 "VkDevice supports the VK_KHR_depth_stencil_resolve extension"
             ],
-            "issue": "http://anglebug.com/4836"
+            "issue": "http://anglebug.com/40644740"
         },
         {
             "name": "supports_depth_stencil_independent_resolve_none",
@@ -261,7 +261,7 @@
                 "VkDevice supports the VK_KHR_depth_stencil_resolve ",
                 "extension with the independentResolveNone feature"
             ],
-            "issue": "http://anglebug.com/7551"
+            "issue": "http://anglebug.com/42266019"
         },
         {
             "name": "supports_multisampled_render_to_single_sampled",
@@ -269,7 +269,7 @@
             "description": [
                 "VkDevice supports the VK_EXT_multisampled_render_to_single_sampled extension"
             ],
-            "issue": "http://anglebug.com/4836"
+            "issue": "http://anglebug.com/40644740"
         },
         {
             "name": "prefer_MSRTSS_flag_by_default",
@@ -277,7 +277,7 @@
             "description": [
                 "Enable MSRTSS for each image initialization if available"
             ],
-            "issue": "http://anglebug.com/8622"
+            "issue": "http://anglebug.com/42267057"
         },
         {
             "name": "supports_multiview",
@@ -285,7 +285,7 @@
             "description": [
                 "VkDevice supports the VK_KHR_multiview extension"
             ],
-            "issue": "http://anglebug.com/6048"
+            "issue": "http://anglebug.com/42264577"
         },
         {
             "name": "force_D16_tex_filter",
@@ -294,7 +294,7 @@
                 "VK_FORMAT_D16_UNORM does not support VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT, ",
                 "which prevents OES_depth_texture from being supported."
             ],
-            "issue": "http://anglebug.com/3452"
+            "issue": "http://anglebug.com/42262115"
         },
         {
             "name": "disable_flipping_blit_with_command",
@@ -302,7 +302,7 @@
             "description": [
                 "vkCmdBlitImage with flipped coordinates blits incorrectly."
             ],
-            "issue": "http://anglebug.com/3498"
+            "issue": "http://anglebug.com/42262161"
         },
         {
             "name": "per_frame_window_size_query",
@@ -310,7 +310,7 @@
             "description": [
                 "Vulkan swapchain is not returning VK_ERROR_OUT_OF_DATE when window resizing"
             ],
-            "issue": "http://anglebug.com/3623, http://anglebug.com/3624, http://anglebug.com/3625"
+            "issue": "http://anglebug.com/40096601, http://anglebug.com/42262286, http://anglebug.com/42262287"
         },
         {
             "name": "pad_buffers_to_max_vertex_attrib_stride",
@@ -323,7 +323,7 @@
                 "This workaround limits GL_MAX_VERTEX_ATTRIB_STRIDE to a maximum value and ",
                 "pads up every buffer allocation size to be a multiple of the maximum stride."
             ],
-            "issue": "http://anglebug.com/4428"
+            "issue": "http://anglebug.com/42263049"
         },
         {
             "name": "supports_external_memory_dma_buf_and_modifiers",
@@ -332,7 +332,7 @@
                 "VkDevice supports the VK_EXT_external_memory_dma_buf and VK_EXT_image_drm_format_modifier ",
                 "extensions"
             ],
-            "issue": "http://anglebug.com/6248"
+            "issue": "http://anglebug.com/42264767"
         },
         {
             "name": "supports_external_memory_host",
@@ -347,7 +347,7 @@
             "description": [
                 "Fill new allocations with non-zero values to flush out errors."
             ],
-            "issue": "http://anglebug.com/4384"
+            "issue": "http://anglebug.com/42263010"
         },
         {
             "name": "log_memory_report_callbacks",
@@ -377,7 +377,7 @@
             "description": [
                 "Persistently map buffer memory to reduce map/unmap IOCTL overhead."
             ],
-            "issue": "http://anglebug.com/2162"
+            "issue": "http://anglebug.com/40096464"
         },
         {
             "name": "enable_pre_rotate_surfaces",
@@ -385,7 +385,7 @@
             "description": [
                 "Enable Android pre-rotation for landscape applications"
             ],
-            "issue": "http://anglebug.com/3502"
+            "issue": "http://anglebug.com/42262166"
         },
         {
             "name": "enable_precision_qualifiers",
@@ -393,7 +393,7 @@
             "description": [
                 "Enable precision qualifiers in shaders"
             ],
-            "issue": "http://anglebug.com/3078"
+            "issue": "http://anglebug.com/42261756"
         },
         {
             "name": "varyings_require_matching_precision_in_spirv",
@@ -402,7 +402,7 @@
                 "Add additional SPIR-V instructions to make sure precision ",
                 "between shader stages match with each other"
             ],
-            "issue": "http://anglebug.com/7488"
+            "issue": "http://anglebug.com/42265957"
         },
         {
             "name": "prefer_aggregate_barrier_calls",
@@ -411,7 +411,7 @@
                 "Single barrier call is preferred over multiple calls with ",
                 "fine grained pipeline stage dependency information"
             ],
-            "issue": "http://anglebug.com/4633"
+            "issue": "http://anglebug.com/42263239"
         },
         {
             "name": "prefer_skipping_invalidate_for_emulated_formats",
@@ -420,7 +420,7 @@
                 "Skipping invalidate is preferred for emulated formats that have extra channels over ",
                 "re-clearing the image"
             ],
-            "issue": "http://anglebug.com/6860"
+            "issue": "http://anglebug.com/42265353"
         },
         {
             "name": "async_command_queue",
@@ -428,7 +428,7 @@
             "description": [
                 "Use CommandQueue worker thread to dispatch work to GPU."
             ],
-            "issue": "http://anglebug.com/4324"
+            "issue": "http://anglebug.com/42262955"
         },
         {
             "name": "slow_async_command_queue_for_testing",
@@ -436,7 +436,7 @@
             "description": [
                 "Artificially slow down async command queue for threading testing"
             ],
-            "issue": "https://anglebug.com/6574"
+            "issue": "https://anglebug.com/40644850"
         },
         {
             "name": "supports_shader_float16",
@@ -445,7 +445,7 @@
                 "VkDevice supports the VK_KHR_shader_float16_int8 extension ",
                 "and has the shaderFloat16 feature"
             ],
-            "issue": "http://anglebug.com/4551"
+            "issue": "http://anglebug.com/42263158"
         },
         {
             "name": "allow_GenerateMipmap_with_compute",
@@ -454,7 +454,7 @@
                 "Use the compute path to generate mipmaps on devices that meet the minimum requirements, ",
                 "and the performance is better."
             ],
-            "issue": "http://anglebug.com/4551"
+            "issue": "http://anglebug.com/42263158"
         },
         {
             "name": "supports_render_pass_store_op_none",
@@ -462,7 +462,7 @@
             "description": [
                 "VkDevice supports VK_QCOM_render_pass_store_ops extension."
             ],
-            "issue": "http://anglebug.com/5055"
+            "issue": "http://anglebug.com/42263622"
         },
         {
             "name": "supports_render_pass_load_store_op_none",
@@ -470,7 +470,7 @@
             "description": [
                 "VkDevice supports VK_EXT_load_store_op_none extension."
             ],
-            "issue": "http://anglebug.com/5371"
+            "issue": "http://anglebug.com/42263911"
         },
         {
             "name": "disallow_mixed_depth_stencil_load_op_none_and_load",
@@ -479,7 +479,7 @@
                 "Disallow use of LOAD_OP_NONE for only one of the depth or stencil aspects of a ",
                 "depth/stencil attachment"
             ],
-            "issue": "http://anglebug.com/7370"
+            "issue": "http://anglebug.com/42265841"
         },
         {
             "name": "supports_depth_clip_control",
@@ -487,7 +487,7 @@
             "description": [
                 "VkDevice supports VK_EXT_depth_clip_control extension."
             ],
-            "issue": "http://anglebug.com/5421"
+            "issue": "http://anglebug.com/42263960"
         },
         {
             "name": "supports_primitive_topology_list_restart",
@@ -495,7 +495,7 @@
             "description": [
                 "VkDevice supports VK_EXT_primitive_topology_list_restart extension."
             ],
-            "issue": "http://anglebug.com/3832"
+            "issue": "http://anglebug.com/42262476"
         },
         {
             "name": "supports_blend_operation_advanced",
@@ -503,7 +503,15 @@
             "description": [
                 "VkDevice supports VK_EXT_blend_operation_advanced extension."
             ],
-            "issue": "http://anglebug.com/3586"
+            "issue": "http://anglebug.com/42262249"
+        },
+        {
+            "name": "supports_blend_operation_advanced_coherent",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_blend_operation_advanced_coherent extension."
+            ],
+            "issue": "http://anglebug.com/42262258"
         },
         {
             "name": "force_max_uniform_buffer_size_16KB",
@@ -520,7 +528,7 @@
                 "Enable VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT by default for ICDs ",
                 "that support VK_KHR_image_format_list"
             ],
-            "issue": "http://anglebug.com/5281"
+            "issue": "http://anglebug.com/40644776"
         },
         {
             "name": "allow_multisampled_render_to_texture_emulation",
@@ -528,7 +536,7 @@
             "description": [
                 "Allow emulation of EXT_multisampled_render_to_texture"
             ],
-            "issue": "http://anglebug.com/8291"
+            "issue": "http://anglebug.com/42266725"
         },
         {
             "name": "enable_multisampled_render_to_texture",
@@ -536,7 +544,7 @@
             "description": [
                 "Expose EXT_multisampled_render_to_texture"
             ],
-            "issue": "http://anglebug.com/4937"
+            "issue": "http://anglebug.com/40644747"
         },
         {
             "name": "wait_idle_before_swapchain_recreation",
@@ -545,7 +553,7 @@
                 "Before passing an oldSwapchain to VkSwapchainCreateInfoKHR, wait for queue to be idle. ",
                 "Works around a bug on platforms which destroy oldSwapchain in vkCreateSwapchainKHR."
             ],
-            "issue": "http://anglebug.com/5061"
+            "issue": "http://anglebug.com/42263629"
         },
         {
             "name": "force_texture_lod_offset_1",
@@ -612,7 +620,7 @@
             "description": [
                 "Emulate 90-degree prerotation."
             ],
-            "issue": "http://anglebug.com/4901"
+            "issue": "http://anglebug.com/42263477"
         },
         {
             "name": "emulated_prerotation_180",
@@ -620,7 +628,7 @@
             "description": [
                 "Emulate 180-degree prerotation."
             ],
-            "issue": "http://anglebug.com/4901"
+            "issue": "http://anglebug.com/42263477"
         },
         {
             "name": "emulated_prerotation_270",
@@ -628,7 +636,7 @@
             "description": [
                 "Emulate 270-degree prerotation."
             ],
-            "issue": "http://anglebug.com/4901"
+            "issue": "http://anglebug.com/42263477"
         },
         {
             "name": "prefer_driver_uniform_over_spec_const",
@@ -636,7 +644,7 @@
             "description": [
                 "Prefer using driver uniforms instead of specialization constants."
             ],
-            "issue": "http://anglebug.com/7406"
+            "issue": "http://anglebug.com/42265878"
         },
         {
             "name": "expose_non_conformant_extensions_and_versions",
@@ -644,7 +652,7 @@
             "description": [
                 "Expose GLES versions and extensions that are not conformant."
             ],
-            "issue": "http://anglebug.com/5375"
+            "issue": "http://anglebug.com/42263914"
         },
         {
             "name": "emulate_R32f_image_atomic_exchange",
@@ -652,7 +660,7 @@
             "description": [
                 "Emulate r32f images with r32ui to support imageAtomicExchange."
             ],
-            "issue": "http://anglebug.com/5535"
+            "issue": "http://anglebug.com/42264071"
         },
         {
             "name": "force_fragment_shader_precision_highp_to_mediump",
@@ -676,7 +684,7 @@
             "description": [
                 "Return a default descriptor count for external formats."
             ],
-            "issue": "http://anglebug.com/6141"
+            "issue": "http://anglebug.com/42264669"
         },
         {
             "name": "supports_protected_memory",
@@ -684,7 +692,7 @@
             "description": [
                 "VkDevice supports protected memory"
             ],
-            "issue": "http://anglebug.com/3965"
+            "issue": "http://anglebug.com/42262605"
         },
         {
             "name": "supports_host_query_reset",
@@ -692,7 +700,7 @@
             "description": [
                 "VkDevice supports VK_EXT_host_query_reset extension"
             ],
-            "issue": "http://anglebug.com/6692"
+            "issue": "http://anglebug.com/42265186"
         },
         {
             "name": "supports_pipeline_creation_feedback",
@@ -700,7 +708,7 @@
             "description": [
                 "VkDevice supports VK_EXT_pipeline_creation_feedback extension"
             ],
-            "issue": "http://anglebug.com/5881"
+            "issue": "http://anglebug.com/42264422"
         },
         {
             "name": "supports_primitives_generated_query",
@@ -708,7 +716,7 @@
             "description": [
                 "VkDevice supports VK_EXT_primitives_generated_query extension"
             ],
-            "issue": "http://anglebug.com/5430"
+            "issue": "http://anglebug.com/42263969"
         },
         {
             "name": "supports_surface_capabilities2_extension",
@@ -744,7 +752,7 @@
             "description": [
                 "Override surface format GL_RGB8 to GL_RGBA8"
             ],
-            "issue": "http://anglebug.com/6651"
+            "issue": "http://anglebug.com/42265147"
         },
         {
             "name": "supports_shared_presentable_image_extension",
@@ -789,7 +797,7 @@
                 "Bypass deferredFlush with calling swapbuffers on flush or finish when in Shared ",
                 "Present mode"
             ],
-            "issue": "http://anglebug.com/6878"
+            "issue": "http://anglebug.com/42265370"
         },
         {
             "name": "emulate_dithering",
@@ -797,7 +805,7 @@
             "description": [
                 "Emulate OpenGL dithering"
             ],
-            "issue": "http://anglebug.com/6755"
+            "issue": "http://anglebug.com/42265248"
         },
         {
             "name": "round_output_after_dithering",
@@ -805,7 +813,7 @@
             "description": [
                 "Round output after dithering to workaround a driver bug that rounds the output up"
             ],
-            "issue": "http://anglebug.com/6953"
+            "issue": "http://anglebug.com/42265429"
         },
         {
             "name": "adjust_clear_color_precision",
@@ -821,7 +829,7 @@
             "description": [
                 "Emulate GL_KHR_blend_equation_advanced"
             ],
-            "issue": "http://anglebug.com/3586"
+            "issue": "http://anglebug.com/42262249"
         },
         {
             "name": "double_depth_bias_constant_factor",
@@ -845,7 +853,7 @@
             "description": [
                 "Force submit updates to immutable textures"
             ],
-            "issue": "http://anglebug.com/6929"
+            "issue": "http://anglebug.com/42265407"
         },
         {
             "name": "supports_SPIRV_1_4",
@@ -861,7 +869,7 @@
             "description": [
                 "Retain debug info in SPIR-V blob."
             ],
-            "issue": "http://anglebug.com/5901"
+            "issue": "http://anglebug.com/42264443"
         },
         {
             "name": "warm_up_pipeline_cache_at_link",
@@ -869,7 +877,7 @@
             "description": [
                 "Warm up the Vulkan pipeline cache at link time"
             ],
-            "issue": "http://anglebug.com/5881"
+            "issue": "http://anglebug.com/42264422"
         },
         {
             "name": "prefer_device_local_memory_host_visible",
@@ -877,7 +885,7 @@
             "description": [
                 "Prefer adding HOST_VISIBLE flag for DEVICE_LOCAL memory when picking memory types"
             ],
-            "issue": "http://anglebug.com/7047"
+            "issue": "http://anglebug.com/42265516"
         },
         {
             "name": "supports_extended_dynamic_state",
@@ -885,7 +893,7 @@
             "description": [
                 "VkDevice supports VK_EXT_extended_dynamic_state extension"
             ],
-            "issue": "http://anglebug.com/5906"
+            "issue": "http://anglebug.com/42264446"
         },
         {
             "name": "use_vertex_input_binding_stride_dynamic_state",
@@ -893,7 +901,7 @@
             "description": [
                 "Use the Vertex Input Bininding Stride dynamic state from VK_EXT_extended_dynamic_state"
             ],
-            "issue": "http://anglebug.com/5906"
+            "issue": "http://anglebug.com/42264446"
         },
         {
             "name": "use_cull_mode_dynamic_state",
@@ -901,7 +909,7 @@
             "description": [
                 "Use the Cull Mode dynamic state from VK_EXT_extended_dynamic_state"
             ],
-            "issue": "http://anglebug.com/5906"
+            "issue": "http://anglebug.com/42264446"
         },
         {
             "name": "use_front_face_dynamic_state",
@@ -909,7 +917,7 @@
             "description": [
                 "Use the Front Face dynamic state from VK_EXT_extended_dynamic_state"
             ],
-            "issue": "http://anglebug.com/5906"
+            "issue": "http://anglebug.com/42264446"
         },
         {
             "name": "use_depth_test_enable_dynamic_state",
@@ -917,7 +925,7 @@
             "description": [
                 "Use the Depth Test Enable dynamic state from VK_EXT_extended_dynamic_state"
             ],
-            "issue": "http://anglebug.com/5906"
+            "issue": "http://anglebug.com/42264446"
         },
         {
             "name": "use_depth_write_enable_dynamic_state",
@@ -925,7 +933,7 @@
             "description": [
                 "Use the Depth Write Enable dynamic state from VK_EXT_extended_dynamic_state"
             ],
-            "issue": "http://anglebug.com/5906"
+            "issue": "http://anglebug.com/42264446"
         },
         {
             "name": "use_depth_compare_op_dynamic_state",
@@ -933,7 +941,7 @@
             "description": [
                 "Use the Depth Compare Op dynamic state from VK_EXT_extended_dynamic_state"
             ],
-            "issue": "http://anglebug.com/5906"
+            "issue": "http://anglebug.com/42264446"
         },
         {
             "name": "use_stencil_test_enable_dynamic_state",
@@ -941,7 +949,7 @@
             "description": [
                 "Use the Stencil Test Enable dynamic state from VK_EXT_extended_dynamic_state"
             ],
-            "issue": "http://anglebug.com/5906"
+            "issue": "http://anglebug.com/42264446"
         },
         {
             "name": "use_stencil_op_dynamic_state",
@@ -949,7 +957,7 @@
             "description": [
                 "Use the Stencil Op dynamic state from VK_EXT_extended_dynamic_state"
             ],
-            "issue": "http://anglebug.com/5906"
+            "issue": "http://anglebug.com/42264446"
         },
         {
             "name": "supports_extended_dynamic_state2",
@@ -957,7 +965,7 @@
             "description": [
                 "VkDevice supports VK_EXT_extended_dynamic_state2 extension"
             ],
-            "issue": "http://anglebug.com/5906"
+            "issue": "http://anglebug.com/42264446"
         },
         {
             "name": "use_primitive_restart_enable_dynamic_state",
@@ -965,7 +973,7 @@
             "description": [
                 "Use the Primitive Restart Enable dynamic state from VK_EXT_extended_dynamic_state2"
             ],
-            "issue": "http://anglebug.com/5906"
+            "issue": "http://anglebug.com/42264446"
         },
         {
             "name": "use_rasterizer_discard_enable_dynamic_state",
@@ -973,7 +981,7 @@
             "description": [
                 "Use the Rasterizer Discard Enable dynamic state from VK_EXT_extended_dynamic_state2"
             ],
-            "issue": "http://anglebug.com/5906"
+            "issue": "http://anglebug.com/42264446"
         },
         {
             "name": "use_depth_bias_enable_dynamic_state",
@@ -981,7 +989,7 @@
             "description": [
                 "Use the Depth Bias Enable dynamic state from VK_EXT_extended_dynamic_state2"
             ],
-            "issue": "http://anglebug.com/5906"
+            "issue": "http://anglebug.com/42264446"
         },
         {
             "name": "supports_logic_op_dynamic_state",
@@ -989,7 +997,7 @@
             "description": [
                 "VkDevice supports the logicOp feature of VK_EXT_extended_dynamic_state2 extension"
             ],
-            "issue": "http://anglebug.com/3862"
+            "issue": "http://anglebug.com/42262506"
         },
         {
             "name": "supports_fragment_shading_rate",
@@ -997,7 +1005,7 @@
             "description": [
                 "VkDevice supports VK_KHR_fragment_shading_rate extension"
             ],
-            "issue": "http://anglebug.com/7172"
+            "issue": "http://anglebug.com/42265647"
         },
         {
             "name": "supports_foveated_rendering",
@@ -1005,7 +1013,7 @@
             "description": [
                 "Use VK_KHR_fragment_shading_rate extension to implement QCOM foveated rendering extensions"
             ],
-            "issue": "http://anglebug.com/8484"
+            "issue": "http://anglebug.com/42266906"
         },
         {
             "name": "supports_fragment_shader_pixel_interlock",
@@ -1022,7 +1030,7 @@
                 "Explicitly enable per-sample shading if the fragment shader contains the ",
                 "sample qualifier"
             ],
-            "issue": "http://anglebug.com/6876"
+            "issue": "http://anglebug.com/42265369"
         },
         {
             "name": "explicitly_cast_mediump_float_to_16_bit",
@@ -1046,7 +1054,7 @@
             "description": [
                 "VkDevice supports VK_EXT_image_2d_view_of_3d"
             ],
-            "issue": "https://anglebug.com/7320"
+            "issue": "https://anglebug.com/42265794"
         },
         {
             "name": "supports_sampler_2d_view_of_3d",
@@ -1054,7 +1062,7 @@
             "description": [
                 "VkDevice supports the sampler2DViewOf3D feature of VK_EXT_image_2d_view_of_3d"
             ],
-            "issue": "https://anglebug.com/7320"
+            "issue": "https://anglebug.com/42265794"
         },
         {
             "name": "supports_imageless_framebuffer",
@@ -1062,7 +1070,7 @@
             "description": [
                 "VkDevice supports VK_KHR_imageless_framebuffer extension"
             ],
-            "issue": "http://anglebug.com/7553"
+            "issue": "http://anglebug.com/42266021"
         },
         {
             "name": "prefer_linear_filter_for_YUV",
@@ -1070,7 +1078,7 @@
             "description": [
                 "Prefer to use VK_FILTER_LINEAR for VkSamplerYcbcrConversion"
             ],
-            "issue": "https://anglebug.com/7382"
+            "issue": "https://anglebug.com/42265854"
         },
         {
             "name": "supports_yuv_target",
@@ -1086,7 +1094,7 @@
                 "Work around a driver bug where 0 in stencil write mask static state would make the ",
                 "corresponding dynamic state malfunction in the presence of discard or alpha to coverage"
             ],
-            "issue": "http://anglebug.com/7556"
+            "issue": "http://anglebug.com/42266024"
         },
         {
             "name": "map_unspecified_color_space_to_pass_through",
@@ -1102,7 +1110,7 @@
             "description": [
                 "Platform supports setting frame timestamp surface attribute"
             ],
-            "issue": "https://anglebug.com/7489"
+            "issue": "https://anglebug.com/42265958"
         },
         {
             "name": "supports_rasterization_order_attachment_access",
@@ -1110,7 +1118,7 @@
             "description": [
                 "VkDevice supports VK_EXT_rasterization_order_attachment_access extension"
             ],
-            "issue": "https://anglebug.com/7604"
+            "issue": "https://anglebug.com/42266070"
         },
         {
             "name": "egl_colorspace_attribute_passthrough",
@@ -1118,7 +1126,7 @@
             "description": [
                 "Support passthrough of EGL colorspace attribute values"
             ],
-            "issue": "https://anglebug.com/7319"
+            "issue": "https://anglebug.com/42265792"
         },
         {
             "name": "supports_pipeline_robustness",
@@ -1126,7 +1134,7 @@
             "description": [
                 "VkDevice supports VK_EXT_pipeline_robustness extension"
             ],
-            "issue": "https://anglebug.com/5845"
+            "issue": "https://anglebug.com/42264383"
         },
         {
             "name": "supports_vertex_input_dynamic_state",
@@ -1134,7 +1142,7 @@
             "description": [
                 "VkDevice supports VK_EXT_vertex_input_dynamic_state extension"
             ],
-            "issue": "https://anglebug.com/7162"
+            "issue": "https://anglebug.com/42265637"
         },
         {
             "name": "supports_color_write_enable",
@@ -1142,7 +1150,7 @@
             "description": [
                 "VkDevice supports VK_EXT_color_write_enable extension"
             ],
-            "issue": "https://anglebug.com/7161"
+            "issue": "https://anglebug.com/42265636"
         },
         {
             "name": "supports_presentation",
@@ -1164,7 +1172,7 @@
             "description": [
                 "VkDevice supports the VK_EXT_graphics_pipeline_library extension"
             ],
-            "issue": "https://anglebug.com/7369"
+            "issue": "https://anglebug.com/42265839"
         },
         {
             "name": "prefer_monolithic_pipelines_over_libraries",
@@ -1172,7 +1180,7 @@
             "description": [
                 "Whether monolithic pipelines perform significantly better than libraries"
             ],
-            "issue": "https://anglebug.com/7369"
+            "issue": "https://anglebug.com/42265839"
         },
         {
             "name": "slow_down_monolithic_pipeline_creation_for_testing",
@@ -1180,7 +1188,7 @@
             "description": [
                 "Artificially slow down async monolithic pipeline creation for threading testing"
             ],
-            "issue": "https://anglebug.com/7369"
+            "issue": "https://anglebug.com/42265839"
         },
         {
             "name": "disable_pipeline_cache_load_for_testing",
@@ -1188,7 +1196,7 @@
             "description": [
                 "Disable loading the pipeline cache from the blob cache for testing"
             ],
-            "issue": "https://anglebug.com/8417"
+            "issue": "https://anglebug.com/42266842"
         },
         {
             "name": "sync_monolithic_pipelines_to_blob_cache",
@@ -1198,7 +1206,7 @@
                 "VK_EXT_graphics_pipeline_library is in use.  Otherwise the libraries are stored ",
                 "only, and monolithic pipelines are recreated on every run"
             ],
-            "issue": "https://anglebug.com/7369"
+            "issue": "https://anglebug.com/42265839"
         },
         {
             "name": "merge_program_pipeline_caches_to_global_cache",
@@ -1208,7 +1216,7 @@
                 "pipeline into the monolithic pipeline cache.  Only useful on platforms where ",
                 "monolithic pipelines can reuse blobs from partial pipelines"
             ],
-            "issue": "https://anglebug.com/7369"
+            "issue": "https://anglebug.com/42265839"
         },
         {
             "name": "has_effective_pipeline_cache_serialization",
@@ -1218,7 +1226,7 @@
                 "On some implementations, pipeline cache serialization returns no data, so there ",
                 "is no benefit to serializing it"
             ],
-            "issue": "https://anglebug.com/7369"
+            "issue": "https://anglebug.com/42265839"
         },
         {
             "name": "enable_async_pipeline_cache_compression",
@@ -1226,7 +1234,7 @@
             "description": [
                 "Enable compressing pipeline cache in a thread."
             ],
-            "issue": "http://anglebug.com/4722"
+            "issue": "http://anglebug.com/42263322"
         },
         {
             "name": "supports_pipeline_protected_access",
@@ -1234,7 +1242,7 @@
             "description": [
                 "VkDevice supports the VK_EXT_pipeline_protected_access extension"
             ],
-            "issue": "https://anglebug.com/7714"
+            "issue": "https://anglebug.com/42266183"
         },
         {
             "name": "supports_mixed_read_write_depth_stencil_layouts",
@@ -1242,7 +1250,15 @@
             "description": [
                 "VkDevice supports the mixed read and write depth/stencil layouts introduced by VK_KHR_maintenance2"
             ],
-            "issue": "https://anglebug.com/7899"
+            "issue": "https://anglebug.com/42266364"
+        },
+        {
+            "name": "supports_maintenance5",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_maintenance5 extension"
+            ],
+            "issue": "https://anglebug.com/42267038"
         },
         {
             "name": "supports_surface_maintenance1",
@@ -1250,7 +1266,7 @@
             "description": [
                 "VkDevice supports the VK_EXT_surface_maintenance1 extension"
             ],
-            "issue": "https://anglebug.com/7847"
+            "issue": "https://anglebug.com/42266319"
         },
         {
             "name": "supports_swapchain_maintenance1",
@@ -1258,7 +1274,7 @@
             "description": [
                 "VkDevice supports the VK_EXT_surface_maintenance1 and VK_EXT_swapchain_maintenance1 extensions"
             ],
-            "issue": "https://anglebug.com/7847"
+            "issue": "https://anglebug.com/42266319"
         },
         {
             "name": "supports_get_memory_requirements2",
@@ -1266,7 +1282,7 @@
             "description": [
                 "VkDevice supports the VK_KHR_get_memory_requirements2 extension"
             ],
-            "issue": "https://anglebug.com/4830"
+            "issue": "https://anglebug.com/40644738"
         },
         {
             "name": "supports_bind_memory2",
@@ -1274,7 +1290,7 @@
             "description": [
                 "VkDevice supports the VK_KHR_bind_memory2 extension"
             ],
-            "issue": "https://anglebug.com/4966"
+            "issue": "https://anglebug.com/42263540"
         },
         {
             "name": "supports_sampler_mirror_clamp_to_edge",
@@ -1337,7 +1353,7 @@
             "description": [
                 "Limit sample count to 2 to save memory on low end devices."
             ],
-            "issue": "http://anglebug.com/8162"
+            "issue": "http://anglebug.com/42266602"
         },
         {
             "name": "supports_full_screen_exclusive",
@@ -1345,7 +1361,7 @@
             "description": [
                 "VkDevice supports the VK_EXT_full_screen_exclusive extension"
             ],
-            "issue": "http://anglebug.com/8215"
+            "issue": "http://anglebug.com/42266652"
         },
         {
             "name": "force_disable_full_screen_exclusive",
@@ -1353,7 +1369,7 @@
             "description": [
                 "Device needs VK_EXT_full_screen_exclusive explicitly disabled"
             ],
-            "issue": "http://anglebug.com/8215"
+            "issue": "http://anglebug.com/42266652"
         },
         {
             "name": "supports_portability_enumeration",
@@ -1361,7 +1377,7 @@
             "description": [
                 "Vulkan supports VK_KHR_portability_enumeration extension"
             ],
-            "issue": "http://anglebug.com/8229"
+            "issue": "http://anglebug.com/42266666"
         },
         {
             "name": "enable_portability_enumeration",
@@ -1369,7 +1385,7 @@
             "description": [
                 "Enable use of VK_KHR_portability_enumeration extension"
             ],
-            "issue": "http://anglebug.com/8229"
+            "issue": "http://anglebug.com/42266666"
         },
         {
             "name": "supports_timeline_semaphore",
@@ -1406,7 +1422,7 @@
             "description": [
                 "Expose the GL_KHR_parallel_shader_compile extension"
             ],
-            "issue": "http://anglebug.com/8297"
+            "issue": "http://anglebug.com/41488637"
         },
         {
             "name": "prefer_host_cached_for_non_static_buffer_usage",
@@ -1446,7 +1462,7 @@
                 "On some drivers, the OpSelect SPIR-V instruction with arguments with mismatching ",
                 "RelaxedPrecision decoration causes a crash"
             ],
-            "issue": "http://anglebug.com/8503"
+            "issue": "http://anglebug.com/41493495"
         },
         {
             "name": "disable_depth_stencil_resolve_through_attachment",
@@ -1454,7 +1470,7 @@
             "description": [
                 "On some drivers, using a depth/stencil resolve attachment results in errors"
             ],
-            "issue": "http://anglebug.com/8658"
+            "issue": "http://anglebug.com/42267095"
         },
         {
             "name": "limit_max_storage_buffer_size",
@@ -1496,7 +1512,7 @@
             "description": [
                 "Enable non-semantic info inside shader module via VK_KHR_shader_non_semantic_info extension"
             ],
-            "issue": "http://anglebug.com/8549"
+            "issue": "http://anglebug.com/42266976"
         },
         {
             "name": "supports_8_bit_storage_buffer",
@@ -1504,7 +1520,7 @@
             "description": [
                 "VkDevice supports the VK_KHR_8bit_storage extension and has the storageBuffer8BitAccess feature"
             ],
-            "issue": "http://anglebug.com/8676"
+            "issue": "http://anglebug.com/42267113"
         },
         {
             "name": "supports_8_bit_uniform_and_storage_buffer",
@@ -1512,7 +1528,7 @@
             "description": [
                 "VkDevice supports the VK_KHR_8bit_storage extension and has the uniformAndStorageBuffer8BitAccess feature"
             ],
-            "issue": "http://anglebug.com/8676"
+            "issue": "http://anglebug.com/42267113"
         },
         {
             "name": "supports_8_bit_push_constant",
@@ -1520,7 +1536,7 @@
             "description": [
                 "VkDevice supports the VK_KHR_8bit_storage extension and has the storagePushConstant8 feature"
             ],
-            "issue": "http://anglebug.com/8676"
+            "issue": "http://anglebug.com/42267113"
         },
         {
             "name": "supports_16_bit_storage_buffer",
@@ -1528,7 +1544,7 @@
             "description": [
                 "VkDevice supports the VK_KHR_16bit_storage extension and has the storageBuffer16BitAccess feature"
             ],
-            "issue": "http://anglebug.com/8676"
+            "issue": "http://anglebug.com/42267113"
         },
         {
             "name": "supports_16_bit_uniform_and_storage_buffer",
@@ -1536,7 +1552,7 @@
             "description": [
                 "VkDevice supports the VK_KHR_16bit_storage extension and has the uniformAndStorageBuffer16BitAccess feature"
             ],
-            "issue": "http://anglebug.com/8676"
+            "issue": "http://anglebug.com/42267113"
         },
         {
             "name": "supports_16_bit_push_constant",
@@ -1544,7 +1560,7 @@
             "description": [
                 "VkDevice supports the VK_KHR_16bit_storage extension and has the storagePushConstant16 feature"
             ],
-            "issue": "http://anglebug.com/8676"
+            "issue": "http://anglebug.com/42267113"
         },
         {
             "name": "supports_16_bit_input_output",
@@ -1552,7 +1568,7 @@
             "description": [
                 "VkDevice supports the VK_KHR_16bit_storage extension and has the storageInputOutput16 feature"
             ],
-            "issue": "http://anglebug.com/8676"
+            "issue": "http://anglebug.com/42267113"
         },
         {
             "name": "use_vkEvent_for_image_barrier",

@@ -325,7 +325,7 @@ void OutputTextureFunctionArgumentList(TInfoSinkBase &out,
         {
             ASSERT(outputType == SH_HLSL_4_1_OUTPUT);
             // A bug in the D3D compiler causes some nested sampling operations to fail.
-            // See http://anglebug.com/1923
+            // See http://anglebug.com/42260714
             // TODO(jmadill): Reinstate the const keyword when possible.
             out << /*"const"*/ "uint samplerIndex";
         }
@@ -544,8 +544,7 @@ void OutputTextureSizeFunctionBody(TInfoSinkBase &out,
     }
     else if (IsSamplerBuffer(textureFunction.sampler))
     {
-        out << "    uint width;\n"
-            << "    " << textureReference << ".GetDimensions(width);\n";
+        out << "    uint width;\n" << "    " << textureReference << ".GetDimensions(width);\n";
     }
     else
     {

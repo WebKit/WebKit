@@ -79,7 +79,7 @@ MTLResourceOptions resourceOptionsForStorageMode(MTLStorageMode storageMode)
         case MTLStorageModeMemoryless:
             return MTLResourceStorageModeMemoryless;
         default:
-            // TODO(http://anglebug.com/8012): Remove me once hacked SDKs are fixed.
+            // TODO(http://anglebug.com/42266474): Remove me once hacked SDKs are fixed.
             UNREACHABLE();
             return MTLResourceStorageModeShared;
     }

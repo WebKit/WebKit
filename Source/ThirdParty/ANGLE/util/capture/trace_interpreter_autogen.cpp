@@ -1221,6 +1221,19 @@ CallCapture ParseCallCapture(const Token &nameToken,
             ParseParameters<std::remove_pointer<PFNGLCLEARSTENCILPROC>::type>(paramTokens, strings);
         return CallCapture(EntryPoint::GLClearStencil, std::move(params));
     }
+    if (strcmp(nameToken, "glClearTexImageEXT") == 0)
+    {
+        ParamBuffer params = ParseParameters<std::remove_pointer<PFNGLCLEARTEXIMAGEEXTPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::GLClearTexImageEXT, std::move(params));
+    }
+    if (strcmp(nameToken, "glClearTexSubImageEXT") == 0)
+    {
+        ParamBuffer params =
+            ParseParameters<std::remove_pointer<PFNGLCLEARTEXSUBIMAGEEXTPROC>::type>(paramTokens,
+                                                                                     strings);
+        return CallCapture(EntryPoint::GLClearTexSubImageEXT, std::move(params));
+    }
     if (strcmp(nameToken, "glClientActiveTexture") == 0)
     {
         ParamBuffer params =
@@ -2113,6 +2126,12 @@ CallCapture ParseCallCapture(const Token &nameToken,
         ParamBuffer params =
             ParseParameters<std::remove_pointer<PFNGLENDQUERYEXTPROC>::type>(paramTokens, strings);
         return CallCapture(EntryPoint::GLEndQueryEXT, std::move(params));
+    }
+    if (strcmp(nameToken, "glEndTilingQCOM") == 0)
+    {
+        ParamBuffer params = ParseParameters<std::remove_pointer<PFNGLENDTILINGQCOMPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::GLEndTilingQCOM, std::move(params));
     }
     if (strcmp(nameToken, "glEndTransformFeedback") == 0)
     {
@@ -5304,6 +5323,12 @@ CallCapture ParseCallCapture(const Token &nameToken,
             ParseParameters<std::remove_pointer<PFNGLSIGNALSEMAPHOREEXTPROC>::type>(paramTokens,
                                                                                     strings);
         return CallCapture(EntryPoint::GLSignalSemaphoreEXT, std::move(params));
+    }
+    if (strcmp(nameToken, "glStartTilingQCOM") == 0)
+    {
+        ParamBuffer params = ParseParameters<std::remove_pointer<PFNGLSTARTTILINGQCOMPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::GLStartTilingQCOM, std::move(params));
     }
     if (strcmp(nameToken, "glStencilFunc") == 0)
     {

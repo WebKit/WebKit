@@ -723,6 +723,10 @@ EXPORTS
     ; GL_EXT_buffer_storage
     glBufferStorageEXT
 
+    ; GL_EXT_clear_texture
+    glClearTexImageEXT
+    glClearTexSubImageEXT
+
     ; GL_EXT_clip_control
     glClipControlEXT
 
@@ -995,6 +999,8 @@ EXPORTS
     ; GL_KHR_blend_equation_advanced
     glBlendBarrierKHR
 
+    ; GL_KHR_blend_equation_advanced_coherent
+
     ; GL_KHR_debug
     glDebugMessageCallbackKHR
     glDebugMessageControlKHR
@@ -1257,6 +1263,10 @@ EXPORTS
 
     ; GL_QCOM_texture_foveated
     glTextureFoveationParametersQCOM
+
+    ; GL_QCOM_tiled_rendering
+    glEndTilingQCOM
+    glStartTilingQCOM
 
     ; EGL 1.0
     EGL_ChooseConfig

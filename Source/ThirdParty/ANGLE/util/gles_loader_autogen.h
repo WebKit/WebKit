@@ -615,6 +615,8 @@
 #define glGetFragDataIndexEXT l_glGetFragDataIndexEXT
 #define glGetProgramResourceLocationIndexEXT l_glGetProgramResourceLocationIndexEXT
 #define glBufferStorageEXT l_glBufferStorageEXT
+#define glClearTexImageEXT l_glClearTexImageEXT
+#define glClearTexSubImageEXT l_glClearTexSubImageEXT
 #define glClipControlEXT l_glClipControlEXT
 #define glCopyImageSubDataEXT l_glCopyImageSubDataEXT
 #define glGetObjectLabelEXT l_glGetObjectLabelEXT
@@ -824,6 +826,8 @@
 #define glFramebufferFoveationParametersQCOM l_glFramebufferFoveationParametersQCOM
 #define glShadingRateQCOM l_glShadingRateQCOM
 #define glTextureFoveationParametersQCOM l_glTextureFoveationParametersQCOM
+#define glEndTilingQCOM l_glEndTilingQCOM
+#define glStartTilingQCOM l_glStartTilingQCOM
 #define glDrawTexfOES l_glDrawTexfOES
 #define glDrawTexfvOES l_glDrawTexfvOES
 #define glDrawTexiOES l_glDrawTexiOES
@@ -1502,6 +1506,8 @@ ANGLE_UTIL_EXPORT extern PFNGLGETFRAGDATAINDEXEXTPROC l_glGetFragDataIndexEXT;
 ANGLE_UTIL_EXPORT extern PFNGLGETPROGRAMRESOURCELOCATIONINDEXEXTPROC
     l_glGetProgramResourceLocationIndexEXT;
 ANGLE_UTIL_EXPORT extern PFNGLBUFFERSTORAGEEXTPROC l_glBufferStorageEXT;
+ANGLE_UTIL_EXPORT extern PFNGLCLEARTEXIMAGEEXTPROC l_glClearTexImageEXT;
+ANGLE_UTIL_EXPORT extern PFNGLCLEARTEXSUBIMAGEEXTPROC l_glClearTexSubImageEXT;
 ANGLE_UTIL_EXPORT extern PFNGLCLIPCONTROLEXTPROC l_glClipControlEXT;
 ANGLE_UTIL_EXPORT extern PFNGLCOPYIMAGESUBDATAEXTPROC l_glCopyImageSubDataEXT;
 ANGLE_UTIL_EXPORT extern PFNGLGETOBJECTLABELEXTPROC l_glGetObjectLabelEXT;
@@ -1717,6 +1723,8 @@ ANGLE_UTIL_EXPORT extern PFNGLFRAMEBUFFERFOVEATIONPARAMETERSQCOMPROC
     l_glFramebufferFoveationParametersQCOM;
 ANGLE_UTIL_EXPORT extern PFNGLSHADINGRATEQCOMPROC l_glShadingRateQCOM;
 ANGLE_UTIL_EXPORT extern PFNGLTEXTUREFOVEATIONPARAMETERSQCOMPROC l_glTextureFoveationParametersQCOM;
+ANGLE_UTIL_EXPORT extern PFNGLENDTILINGQCOMPROC l_glEndTilingQCOM;
+ANGLE_UTIL_EXPORT extern PFNGLSTARTTILINGQCOMPROC l_glStartTilingQCOM;
 ANGLE_UTIL_EXPORT extern PFNGLDRAWTEXFOESPROC l_glDrawTexfOES;
 ANGLE_UTIL_EXPORT extern PFNGLDRAWTEXFVOESPROC l_glDrawTexfvOES;
 ANGLE_UTIL_EXPORT extern PFNGLDRAWTEXIOESPROC l_glDrawTexiOES;

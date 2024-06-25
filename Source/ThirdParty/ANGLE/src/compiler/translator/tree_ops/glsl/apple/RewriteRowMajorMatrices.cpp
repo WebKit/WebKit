@@ -854,7 +854,7 @@ class RewriteRowMajorMatricesTraverser : public TIntermTraverser
         //     temp = (x = 2)
         //     if (x == 1 && a.b[temp].etc.M = transpose(value))
         //
-        // See http://anglebug.com/3829.
+        // See http://anglebug.com/42262472.
         //
         TIntermTyped *baseExpression =
             new TIntermSymbol(mInterfaceBlockMap->at(&symbol->variable()));

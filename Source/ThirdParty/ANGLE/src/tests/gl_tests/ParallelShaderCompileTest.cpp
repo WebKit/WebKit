@@ -424,11 +424,11 @@ class ParallelShaderCompileTestES31 : public ParallelShaderCompileTest
 // Test to compile and link many computing programs in parallel.
 TEST_P(ParallelShaderCompileTestES31, LinkAndDispatchManyPrograms)
 {
-    // Flaky on Win NVIDIA D3D11. http://anglebug.com/3359
-    // Suspectable to the flakyness of http://anglebug.com/3349.
+    // Flaky on Win NVIDIA D3D11. http://anglebug.com/40096580
+    // Suspectable to the flakyness of http://anglebug.com/40096579.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D11());
 
-    // TODO(http://anglebug.com/5656): Fails on Linux+Intel+OpenGL
+    // TODO(http://anglebug.com/42264192): Fails on Linux+Intel+OpenGL
     ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsOpenGL());
 
     ANGLE_SKIP_TEST_IF(!ensureParallelShaderCompileExtensionAvailable());

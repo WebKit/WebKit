@@ -257,3 +257,47 @@ functions in the same order:
  * `sh::Compile()` translates the given shader.
  * `sh::Destruct()` destroys the given translator.
  * `sh::Finalize()` shuts down the translator library and must be called only once from each process using the translator.
+
+## OpenCL Support
+
+A few GN args are needed to enable OpenCL runtime code to be built in the ANGLE lib(s).
+
+`args.gn`
+```
+# Global enable flag for OpenCL support
+angle_enable_cl = true
+
+# Enable the Vulkan backend
+angle_enable_vulkan = true
+
+# Enable the CL backend (i.e. passthrough) if needed
+angle_enable_cl_passthrough = false  // or true
+```
+
+### OpenCL artifacts
+
+The two main artifacts generated here are `OpenCL_ANGLE` and `GLESv2`:
+
+- `OpenCL_ANGLE` : Acts as a loader for CL entrypoints from the `GLESv2` library and populates it's
+API dispatch table with them.
+- `GLESv2` : Is the ANGLE library itself that also includes the OpenCL entrypoints/runtime when
+`angle_enable_cl = true`.
+
+Additional `Vulkan-backend` artifacts
+
+- `clspv_core_shared` : clspv as a shared library to compile OpenCL C source over a
+[C API](https://github.com/google/clspv/blob/main/docs/C_API.md) used by the `GLESv2` library.
+
+### OpenCL Usage
+
+ANGLE's OpenCL implementation acts no different from any other OpenCL ICD. Applications can either link to an
+existing system OpenCL-ICD-Loader, or it can link directly to the `OpenCL_ANGLE` via its exported OpenCL
+entrypoints.
+
+If using an existing system OpenCL-ICD-Loader, then make sure `OpenCL_ANGLE` can be found by the OpenCL-ICD-Loader,
+see [OpenCL-ICD-Loader](https://github.com/KhronosGroup/OpenCL-ICD-Loader) for details on this.
+
+In both cases, `OpenCL_ANGLE` works by using `LoadLibrary/dlopen` on the `GLESv2` library to build the OpenCL
+dispatch table using the entrypoints/symbols from `GLESv2` library. From then on, that API dispatch table is either
+given to the system ICD Loader, or if app is linked directly to the `OpenCL_ANGLE` lib, it just uses its
+singular dispatch table to forward onto `GLESv2` OpenCL entrypoints.

@@ -425,6 +425,13 @@ void CapturedTest::frame4()
     // Draw shaders & program created before capture
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
     EXPECT_PIXEL_EQ(108, 108, 0, 0, 255, 255);
+
+    // Add an invalid call so it shows up in capture as a comment.
+    // This is unrelated to the rest of the frame, but needs a home.
+    GLuint nonExistentBinding = 666;
+    GLuint nonExistentTexture = 777;
+    glBindTexture(nonExistentBinding, nonExistentTexture);
+    glGetError();
 }
 
 // Test captured by capture_tests.py

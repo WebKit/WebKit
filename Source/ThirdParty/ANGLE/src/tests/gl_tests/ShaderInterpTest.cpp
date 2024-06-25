@@ -77,7 +77,7 @@ void main()
 )";
 
     // iOS chokes on the "smooth" qualifier.
-    // TODO(anglebug.com/5491): Add shader compiler workaround that omits "smooth".
+    // TODO(anglebug.com/42264029): Add shader compiler workaround that omits "smooth".
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     ANGLE_GL_PROGRAM(program, vertSrc, fragSrc);
@@ -95,7 +95,7 @@ void main()
 // Test that uninterpolated "Flat" interpolation works correctly
 TEST_P(ShaderInterpTest, Flat)
 {
-    // TODO: anglebug.com/4085
+    // TODO: anglebug.com/42262721
     // No vendors currently support VK_EXT_provoking_vertex, which is necessary for conformant flat
     // shading. SwiftShader does technically support this extension, but as it has not yet been
     // ratified by Khronos, the vulkan validation layers do not recognize the create info struct,

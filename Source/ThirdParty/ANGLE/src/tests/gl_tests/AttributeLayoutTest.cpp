@@ -450,7 +450,7 @@ void AttributeLayoutTest::GetTestCases(void)
     if (es3)
     {
         mTestCases.push_back({SInt(M0, 0, 40, mCoord), UInt(M0, 16, 40, mColor)});
-        // Fails on Nexus devices (anglebug.com/2641)
+        // Fails on Nexus devices (anglebug.com/42261348)
         if (!IsNexus5X())
             mTestCases.push_back({NormSInt(M0, 0, 40, mCoord), NormUInt(M0, 16, 40, mColor)});
     }

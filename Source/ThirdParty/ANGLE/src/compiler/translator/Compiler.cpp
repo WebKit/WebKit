@@ -773,7 +773,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
 
     // For now, rewrite pixel local storage before collecting variables or any operations on images.
     //
-    // TODO(anglebug.com/7279):
+    // TODO(anglebug.com/40096838):
     //   Should this actually run after collecting variables?
     //   Do we need more introspection?
     //   Do we want to hide rewritten shader image uniforms from glGetActiveUniform?
@@ -919,8 +919,8 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         return false;
     }
 
-    // anglebug.com/7484: The ESSL spec has a bug with images as function arguments. The recommended
-    // workaround is to inline functions that accept image arguments.
+    // anglebug.com/42265954: The ESSL spec has a bug with images as function arguments. The
+    // recommended workaround is to inline functions that accept image arguments.
     if (mShaderVersion >= 310 && !MonomorphizeUnsupportedFunctions(
                                      this, root, &mSymbolTable, compileOptions,
                                      UnsupportedFunctionArgsBitSet{UnsupportedFunctionArgs::Image}))

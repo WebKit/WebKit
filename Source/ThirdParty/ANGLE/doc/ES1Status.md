@@ -13,9 +13,9 @@ ANGLE passes GLES1's `MustPass`, however there are known missing features.
 | [Two-sided lighting][lighting]       | Unimplemented                                | None        |
 | [Matrix palette][matrix]             | Unimplemented (optional)                     | None        |
 
-[lines]: http://anglebug.com/7950
-[lighting]: http://anglebug.com/7702
-[matrix]: http://anglebug.com/7951
+[lines]: http://anglebug.com/42266418
+[lighting]: http://anglebug.com/42266170
+[matrix]: http://anglebug.com/42266419
 
 ### Notes [1]
 * Logic op is implemented through the `ANGLE_logic_op` or `EXT_framebuffer_fetch` extensions.

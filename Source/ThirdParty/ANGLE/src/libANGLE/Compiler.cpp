@@ -32,7 +32,7 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
       mOutputType(mImplementation->getTranslatorOutputType()),
       mResources()
 {
-    // TODO(http://anglebug.com/3819): Update for GL version specific validation
+    // TODO(http://anglebug.com/42262462): Update for GL version specific validation
     ASSERT(state.getClientMajorVersion() == 1 || state.getClientMajorVersion() == 2 ||
            state.getClientMajorVersion() == 3 || state.getClientMajorVersion() == 4);
 

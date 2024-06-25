@@ -1026,7 +1026,7 @@ void Display::setupDisplayPlatform(rx::DisplayImpl *impl)
     SafeDelete(mImplementation);
     mImplementation = impl;
 
-    // TODO(anglebug.com/7365): Remove PlatformMethods.
+    // TODO(anglebug.com/42265835): Remove PlatformMethods.
     const angle::PlatformMethods *platformMethods =
         reinterpret_cast<const angle::PlatformMethods *>(
             mAttributeMap.get(EGL_PLATFORM_ANGLE_PLATFORM_METHODS_ANGLEX, 0));
@@ -1928,7 +1928,7 @@ Error Display::destroyContext(Thread *thread, gl::Context *context)
 
         // Make the context current, so we can release resources belong to the context, and then
         // when context is released from the current, it will be destroyed.
-        // TODO(http://www.anglebug.com/6322): Don't require a Context to be current in order to
+        // TODO(http://www.anglebug.com/42264840): Don't require a Context to be current in order to
         // destroy it.
         ANGLE_TRY(makeCurrent(thread, currentContext, nullptr, nullptr, context));
         ANGLE_TRY(
@@ -2351,7 +2351,7 @@ void Display::initializeFrontendFeatures()
     ANGLE_FEATURE_CONDITION(&mFrontendFeatures, loseContextOnOutOfMemory, true);
     ANGLE_FEATURE_CONDITION(&mFrontendFeatures, allowCompressedFormats, true);
 
-    // Togglable until work on the extension is complete - anglebug.com/7279.
+    // Togglable until work on the extension is complete - anglebug.com/40096838.
     ANGLE_FEATURE_CONDITION(&mFrontendFeatures, emulatePixelLocalStorage, true);
 
     ANGLE_FEATURE_CONDITION(&mFrontendFeatures, forceMinimumMaxVertexAttributes, false);

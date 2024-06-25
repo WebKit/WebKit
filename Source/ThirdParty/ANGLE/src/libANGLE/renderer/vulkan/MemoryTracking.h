@@ -122,6 +122,20 @@ class MemoryReport final : angle::NonCopyable
     angle::HashMap<uint64_t, int> mUniqueIDCounts;
 };
 }  // namespace vk
+}  // namespace rx
+
+// Introduce std::hash for MemoryAllocInfoMapKey.
+namespace std
+{
+template <>
+struct hash<rx::vk::MemoryAllocInfoMapKey>
+{
+    size_t operator()(const rx::vk::MemoryAllocInfoMapKey &key) const { return key.hash(); }
+};
+}  // namespace std
+
+namespace rx
+{
 
 // Memory tracker for allocations and deallocations, which is used in vk::Renderer.
 class MemoryAllocationTracker : angle::NonCopyable
@@ -207,15 +221,5 @@ class MemoryAllocationTracker : angle::NonCopyable
     std::unordered_map<angle::BacktraceInfo, MemoryAllocInfoMap> mMemoryAllocationRecord;
 };
 }  // namespace rx
-
-// Introduce std::hash for MemoryAllocInfoMapKey.
-namespace std
-{
-template <>
-struct hash<rx::vk::MemoryAllocInfoMapKey>
-{
-    size_t operator()(const rx::vk::MemoryAllocInfoMapKey &key) const { return key.hash(); }
-};
-}  // namespace std
 
 #endif  // LIBANGLE_RENDERER_VULKAN_MEMORYTRACKING_H_

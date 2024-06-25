@@ -105,6 +105,7 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
     gl::Extents getExtents() const;
     gl::Extents getRotatedExtents() const;
     gl::LevelIndex getLevelIndex() const { return mLevelIndexGL; }
+    gl::LevelIndex getLevelIndexForImage(const vk::ImageHelper &image) const;
     uint32_t getLayerIndex() const { return mLayerIndex; }
     uint32_t getLayerCount() const { return mLayerCount; }
     bool is3DImage() const { return getOwnerOfData()->getType() == VK_IMAGE_TYPE_3D; }
@@ -183,11 +184,17 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
 
     UniqueSerial mImageSiblingSerial;
 
-    // Which subresource of the image is used as render target.  For single-layer render targets,
-    // |mLayerIndex| will contain the layer index and |mLayerCount| will be 1.  For layered render
-    // targets, |mLayerIndex| will be 0 and |mLayerCount| will be the number of layers in the image
-    // (or level depth, if image is 3D).  Note that blit and other functions that read or write to
-    // the render target always use layer 0, so this works out for users of |getLayerIndex()|.
+    // Which subresource of the image is used as render target.
+    //
+    // |mLevelIndexGL| applies to the level index of mImage unless there is a resolve attachment,
+    // in which case |mLevelIndexGL| applies to the mResolveImage since mImage is always
+    // single-level.
+    //
+    // For single-layer render targets, |mLayerIndex| will contain the layer index and |mLayerCount|
+    // will be 1.  For layered render targets, |mLayerIndex| will be 0 and |mLayerCount| will be the
+    // number of layers in the image (or level depth, if image is 3D).  Note that blit and other
+    // functions that read or write to the render target always use layer 0, so this works out for
+    // users of |getLayerIndex()|.
     gl::LevelIndex mLevelIndexGL;
     uint32_t mLayerIndex;
     uint32_t mLayerCount;

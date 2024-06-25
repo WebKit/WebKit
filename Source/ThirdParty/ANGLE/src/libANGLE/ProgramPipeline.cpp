@@ -681,7 +681,7 @@ bool ProgramPipeline::linkVaryings()
         previousShaderType = shaderType;
     }
 
-    // TODO: http://anglebug.com/3571 and http://anglebug.com/3572
+    // TODO: http://anglebug.com/42262233 and http://anglebug.com/42262234
     // Need to move logic of validating builtin varyings inside the for-loop above.
     // This is because the built-in symbols `gl_ClipDistance` and `gl_CullDistance`
     // can be redeclared in Geometry or Tessellation shaders as well.

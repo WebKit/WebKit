@@ -199,7 +199,7 @@ TEST_P(GeometryShaderTestES32, CreateAndAttachGeometryShader)
 
 // Verify that Geometry Shader can be compiled when geometry shader array input size
 // is set after shader input variables.
-// http://anglebug.com/7125 GFXBench Car Chase uses this pattern
+// http://anglebug.com/42265598 GFXBench Car Chase uses this pattern
 TEST_P(GeometryShaderTest, DeferredSetOfArrayInputSize)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
@@ -239,7 +239,7 @@ TEST_P(GeometryShaderTest, GeometryShaderImplementationDependentLimits)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
 
-    // http://anglebug.com/5510
+    // http://anglebug.com/42264048
     ANGLE_SKIP_TEST_IF(IsIntel() && IsVulkan() && IsLinux());
 
     const std::map<GLenum, int> limits = {{GL_MAX_FRAMEBUFFER_LAYERS_EXT, 256},
@@ -277,7 +277,7 @@ TEST_P(GeometryShaderTest, CombinedResourceLimits)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
 
-    // See http://anglebug.com/2261.
+    // See http://anglebug.com/42260977.
     ANGLE_SKIP_TEST_IF(IsAndroid());
 
     const std::map<GLenum, int> limits = {{GL_MAX_UNIFORM_BUFFER_BINDINGS, 48},
@@ -1304,7 +1304,7 @@ void GeometryShaderTest::layeredFramebufferClearTest(GLenum colorTarget)
 TEST_P(GeometryShaderTest, LayeredFramebufferClear3DColor)
 {
     // Mesa considers the framebuffer with mixed 3D and 2D array attachments to be incomplete.
-    // http://anglebug.com/5463
+    // http://anglebug.com/42264003
     ANGLE_SKIP_TEST_IF((IsAMD() || IsIntel()) && IsOpenGL() && IsLinux());
 
     layeredFramebufferClearTest(GL_TEXTURE_3D);
@@ -1386,7 +1386,7 @@ void GeometryShaderTest::layeredFramebufferPreRenderClearTest(GLenum colorTarget
 TEST_P(GeometryShaderTest, LayeredFramebufferPreRenderClear3DColor)
 {
     // Mesa considers the framebuffer with mixed 3D and 2D array attachments to be incomplete.
-    // http://anglebug.com/5463
+    // http://anglebug.com/42264003
     ANGLE_SKIP_TEST_IF((IsAMD() || IsIntel()) && IsOpenGL() && IsLinux());
 
     layeredFramebufferPreRenderClearTest(GL_TEXTURE_3D, false);
@@ -1396,7 +1396,7 @@ TEST_P(GeometryShaderTest, LayeredFramebufferPreRenderClear3DColor)
 TEST_P(GeometryShaderTest, LayeredFramebufferPreRenderDoubleClear3DColor)
 {
     // Mesa considers the framebuffer with mixed 3D and 2D array attachments to be incomplete.
-    // http://anglebug.com/5463
+    // http://anglebug.com/42264003
     ANGLE_SKIP_TEST_IF((IsAMD() || IsIntel()) && IsOpenGL() && IsLinux());
 
     layeredFramebufferPreRenderClearTest(GL_TEXTURE_3D, true);
@@ -1418,7 +1418,8 @@ void GeometryShaderTest::layeredFramebufferMidRenderClearTest(GLenum colorTarget
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
 
-    // Vulkan's draw path for clear doesn't support layered framebuffers.  http://anglebug.com/5453
+    // Vulkan's draw path for clear doesn't support layered framebuffers.
+    // http://anglebug.com/42263992
     ANGLE_SKIP_TEST_IF(IsVulkan());
 
     const GLColor kColor0InitColor(10, 20, 30, 40);
@@ -1484,7 +1485,7 @@ void GeometryShaderTest::layeredFramebufferMidRenderClearTest(GLenum colorTarget
 TEST_P(GeometryShaderTest, LayeredFramebufferMidRenderClear3DColor)
 {
     // Mesa considers the framebuffer with mixed 3D and 2D array attachments to be incomplete.
-    // http://anglebug.com/5463
+    // http://anglebug.com/42264003
     ANGLE_SKIP_TEST_IF((IsAMD() || IsIntel()) && IsOpenGL() && IsLinux());
 
     layeredFramebufferMidRenderClearTest(GL_TEXTURE_3D);

@@ -2450,7 +2450,7 @@ ANGLE_INSTANTIATE_TEST_ES2(D3DTextureTest);
 ANGLE_INSTANTIATE_TEST_ES2(D3DTextureClearTest);
 ANGLE_INSTANTIATE_TEST_ES2(D3DTextureYUVTest);
 ANGLE_INSTANTIATE_TEST_ES3(D3DTextureTestES3);
-// D3D Debug device reports an error. http://anglebug.com/3513
+// D3D Debug device reports an error. http://anglebug.com/40096593
 // ANGLE_INSTANTIATE_TEST(D3DTextureTestMS, ES2_D3D11());
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(D3DTextureTestMS);
 }  // namespace angle

@@ -29,7 +29,7 @@ TEST_P(DiscardFramebufferEXTTest, DefaultFramebuffer)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_discard_framebuffer"));
 
-    // TODO: fix crash issue. http://anglebug.com/4141
+    // TODO: fix crash issue. http://anglebug.com/42262774
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     // These should succeed on the default framebuffer
@@ -119,7 +119,7 @@ TEST_P(DiscardFramebufferEXTTest, NonDefaultFramebuffer)
 TEST_P(DiscardFramebufferEXTTest, ClearDepthThenDrawWithoutDepthTestThenDiscard)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_discard_framebuffer"));
-    // TODO: fix crash issue. http://anglebug.com/4141
+    // TODO: fix crash issue. http://anglebug.com/42262774
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::UniformColor());
@@ -154,7 +154,7 @@ TEST_P(DiscardFramebufferEXTTest, ClearDepthThenDrawWithoutDepthTestThenDiscard)
 TEST_P(DiscardFramebufferEXTTest, ClearDepthThenDrawWithDepthTestThenDiscard)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_discard_framebuffer"));
-    // http://anglebug.com/4914
+    // http://anglebug.com/42263489
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsIntel() && IsWindows());
 
     GLTexture texture;

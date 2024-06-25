@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 354
+#define ANGLE_SH_VERSION 355
 
 enum ShShaderSpec
 {
@@ -138,8 +138,8 @@ struct ShPixelLocalStorageOptions
     // Or do we need to manually pack and unpack from r32i/r32ui?
     bool supportsNativeRGBA8ImageFormats = false;
 
-    // anglebug.com/7792 -- Metal [[raster_order_group()]] does not work for read_write textures on
-    // AMD when the render pass doesn't have a color attachment on slot 0. To work around this we
+    // anglebug.com/42266263 -- Metal [[raster_order_group()]] does not work for read_write textures
+    // on AMD when the render pass doesn't have a color attachment on slot 0. To work around this we
     // attach one of the PLS textures to GL_COLOR_ATTACHMENT0, if there isn't one already.
     bool renderPassNeedsAMDRasterOrderGroupsWorkaround = false;
 };
@@ -342,7 +342,7 @@ struct ShCompileOptions
     // targeted to workaround a bug in NVIDIA D3D driver where the return value from
     // RWByteAddressBuffer.InterlockedAdd does not get resolved when used in the .yzw components of
     // a RWByteAddressBuffer.Store operation. Only has an effect on HLSL translation.
-    // http://anglebug.com/3246
+    // http://anglebug.com/42261924
     uint64_t forceAtomicValueResolution : 1;
 
     // Rewrite gl_BaseVertex and gl_BaseInstance as uniform int
@@ -421,9 +421,9 @@ struct ShCompileOptions
     // causing the comparison to fail.
     uint64_t castMediumpFloatTo16Bit : 1;
 
-    // anglebug.com/7527: packUnorm4x8 fails on Pixel 4 if it is not passed a highp vec4.
-    // TODO(anglebug.com/7527): This workaround is currently only applied for pixel local storage.
-    // We may want to apply it generally.
+    // anglebug.com/42265995: packUnorm4x8 fails on Pixel 4 if it is not passed a highp vec4.
+    // TODO(anglebug.com/42265995): This workaround is currently only applied for pixel local
+    // storage. We may want to apply it generally.
     uint64_t passHighpToPackUnormSnormBuiltins : 1;
 
     // Use an integer uniform to pass a bitset of enabled clip distances.

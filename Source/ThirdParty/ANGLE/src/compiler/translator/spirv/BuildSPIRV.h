@@ -527,7 +527,7 @@ class SPIRVBuilder : angle::NonCopyable
     std::vector<spirv::IdRef> mNullConstants;
 
     // List of type pointers that are already defined.
-    // TODO: if all users call getTypeData(), move to SpirvTypeData.  http://anglebug.com/4889
+    // TODO: if all users call getTypeData(), move to SpirvTypeData.  http://anglebug.com/40096715
     angle::HashMap<SpirvIdAndStorageClass, spirv::IdRef, SpirvIdAndStorageClassHash>
         mTypePointerIdMap;
 

@@ -1206,7 +1206,7 @@ void main()
 
     bool hasImageGLColorspaceExt() const
     {
-        // Possible GLES driver bug on Pixel2 devices: http://anglebug.com/5321
+        // Possible GLES driver bug on Pixel2 devices: http://anglebug.com/42263865
         if (IsPixel2() && IsOpenGLES())
         {
             return false;
@@ -4654,6 +4654,9 @@ TEST_P(ImageTestES3, AHBImportReleaseStress)
 
     glFinish();
 
+    GLPerfMonitor monitor;
+    glBeginPerfMonitorAMD(monitor);
+
     const uint64_t initialPendingSubmissionGarbageObjects =
         getPerfCounters().pendingSubmissionGarbageObjects;
 
@@ -4679,6 +4682,8 @@ TEST_P(ImageTestES3, AHBImportReleaseStress)
         eglDestroyImageKHR(getEGLWindow()->getDisplay(), ahbImage);
         destroyAndroidHardwareBuffer(ahb);
     }
+
+    glEndPerfMonitorAMD(monitor);
 
     EXPECT_LE(getPerfCounters().pendingSubmissionGarbageObjects,
               initialPendingSubmissionGarbageObjects + 10);
@@ -5086,7 +5091,7 @@ TEST_P(ImageTestES3, SourceAHBMipTarget2DMipGenerateMipmap)
 // Create a depth format AHB backed EGL image and verify that the image's aspect is honored
 TEST_P(ImageTest, SourceAHBTarget2DDepth)
 {
-    // TODO - Support for depth formats in AHB is missing (http://anglebug.com/4818)
+    // TODO - Support for depth formats in AHB is missing (http://anglebug.com/42263405)
     ANGLE_SKIP_TEST_IF(true);
 
     EGLWindow *window = getEGLWindow();
@@ -5167,7 +5172,8 @@ TEST_P(ImageTest, Source2DTargetRenderbuffer_Colorspace)
 {
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
     ANGLE_SKIP_TEST_IF(!hasImageGLColorspaceExt());
-    // Need to add support for VK_KHR_image_format_list to Renderbuffer: http://anglebug.com/5281
+    // Need to add support for VK_KHR_image_format_list to Renderbuffer:
+    // http://anglebug.com/40644776
     ANGLE_SKIP_TEST_IF(IsVulkan());
     Source2DTargetRenderbuffer_helper(kColorspaceAttribs);
 }
@@ -5253,7 +5259,8 @@ TEST_P(ImageTest, SourceNativeClientBufferTargetRenderbuffer_Colorspace)
     ANGLE_SKIP_TEST_IF(!IsAndroid());
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
     ANGLE_SKIP_TEST_IF(!hasImageGLColorspaceExt());
-    // Need to add support for VK_KHR_image_format_list to Renderbuffer: http://anglebug.com/5281
+    // Need to add support for VK_KHR_image_format_list to Renderbuffer:
+    // http://anglebug.com/40644776
     ANGLE_SKIP_TEST_IF(IsVulkan());
     SourceNativeClientBufferTargetRenderbuffer_helper(kColorspaceAttribs);
 }
@@ -5405,7 +5412,8 @@ TEST_P(ImageTest, SourceCubeTargetRenderbuffer_Colorspace)
 {
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
     ANGLE_SKIP_TEST_IF(!hasImageGLColorspaceExt());
-    // Need to add support for VK_KHR_image_format_list to Renderbuffer: http://anglebug.com/5281
+    // Need to add support for VK_KHR_image_format_list to Renderbuffer:
+    // http://anglebug.com/40644776
     ANGLE_SKIP_TEST_IF(IsVulkan());
     SourceCubeTargetRenderbuffer_helper(kColorspaceAttribs);
 }
@@ -5415,7 +5423,7 @@ void ImageTest::SourceCubeTargetRenderbuffer_helper(const EGLint *attribs)
     EGLWindow *window = getEGLWindow();
     ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !hasCubemapExt());
 
-    // http://anglebug.com/3145
+    // http://anglebug.com/42261821
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsIntel() && IsFuchsia());
 
     for (EGLenum faceIdx = 0; faceIdx < 6; faceIdx++)
@@ -5576,7 +5584,8 @@ TEST_P(ImageTest, Source3DTargetRenderbuffer_Colorspace)
 {
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
     ANGLE_SKIP_TEST_IF(!hasImageGLColorspaceExt());
-    // Need to add support for VK_KHR_image_format_list to Renderbuffer: http://anglebug.com/5281
+    // Need to add support for VK_KHR_image_format_list to Renderbuffer:
+    // http://anglebug.com/40644776
     ANGLE_SKIP_TEST_IF(IsVulkan());
     Source3DTargetRenderbuffer_helper(colorspace3DAttribs);
 }
@@ -5585,7 +5594,7 @@ void ImageTest::Source3DTargetRenderbuffer_helper(EGLint *attribs)
 {
     // Qualcom drivers appear to always bind the 0 layer of the source 3D texture when the
     // target is a renderbuffer. They work correctly when the target is a 2D texture.
-    // http://anglebug.com/2745
+    // http://anglebug.com/42261453
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
     EGLWindow *window = getEGLWindow();
@@ -5821,7 +5830,8 @@ TEST_P(ImageTest, SourceRenderbufferTargetRenderbuffer_Colorspace)
 {
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 && !IsGLExtensionEnabled("GL_EXT_sRGB"));
     ANGLE_SKIP_TEST_IF(!hasImageGLColorspaceExt());
-    // Need to add support for VK_KHR_image_format_list to Renderbuffer: http://anglebug.com/5281
+    // Need to add support for VK_KHR_image_format_list to Renderbuffer:
+    // http://anglebug.com/40644776
     ANGLE_SKIP_TEST_IF(IsVulkan());
     SourceRenderbufferTargetRenderbuffer_helper(kColorspaceAttribs);
 }
@@ -5905,11 +5915,11 @@ TEST_P(ImageTest, MipLevels)
     // Driver returns OOM in read pixels, some internal error.
     ANGLE_SKIP_TEST_IF(IsOzone() && IsOpenGLES());
     // Also fails on NVIDIA Shield TV bot.
-    // http://anglebug.com/3850
+    // http://anglebug.com/42262494
     ANGLE_SKIP_TEST_IF(IsNVIDIAShield() && IsOpenGLES());
     // On Vulkan, the clear operation in the loop is optimized with a render pass loadOp=Clear.  On
     // Linux/Intel, that operation is mistakenly clearing the rest of the mips to 0.
-    // http://anglebug.com/3284
+    // http://anglebug.com/42261962
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsLinux() && IsIntel());
 
     EGLWindow *window = getEGLWindow();
@@ -6005,7 +6015,7 @@ TEST_P(ImageTest, MipLevels)
 TEST_P(ImageTest, Respecification)
 {
     // Respecification of textures that does not change the size of the level attached to the EGL
-    // image does not cause orphaning on Qualcomm devices. http://anglebug.com/2744
+    // image does not cause orphaning on Qualcomm devices. http://anglebug.com/42261452
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
     ANGLE_SKIP_TEST_IF(IsOzone() && IsOpenGLES());
 
@@ -6122,7 +6132,7 @@ TEST_P(ImageTest, RespecificationWithFBO)
 TEST_P(ImageTest, RespecificationOfOtherLevel)
 {
     // Respecification of textures that does not change the size of the level attached to the EGL
-    // image does not cause orphaning on Qualcomm devices. http://anglebug.com/2744
+    // image does not cause orphaning on Qualcomm devices. http://anglebug.com/42261452
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
     // It is undefined what happens to the mip 0 of the dest texture after it is orphaned. Some

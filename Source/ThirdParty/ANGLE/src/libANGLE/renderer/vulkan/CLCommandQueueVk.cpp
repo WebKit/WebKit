@@ -525,7 +525,7 @@ angle::Result CLCommandQueueVk::flush()
 
     // Non-blocking finish
     // TODO: Ideally we should try to find better impl. to avoid spawning a submit-thread/Task here
-    // https://anglebug.com/8669
+    // https://anglebug.com/42267107
     std::shared_ptr<angle::WaitableEvent> asyncEvent =
         getPlatform()->postMultiThreadWorkerTask(std::make_shared<CLAsyncFinishTask>(this));
     ASSERT(asyncEvent != nullptr);
@@ -714,7 +714,7 @@ angle::Result CLCommandQueueVk::processWaitlist(const cl::EventPtrs &waitEvents)
                 // We cannot use a barrier in these cases, therefore defer the event
                 // handling till submission time
                 // TODO: Perhaps we could utilize VkEvents here instead and have GPU wait(s)
-                // https://anglebug.com/8670
+                // https://anglebug.com/42267109
                 mDependantEvents.push_back(event);
             }
             else if (event->getCommandQueue() == &mCommandQueue && !insertedBarrier)

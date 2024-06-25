@@ -136,7 +136,7 @@ for dep in "${third_party_deps[@]}" "${delete_only_deps[@]}"; do
     rm -rf "$dep"
 done
 
-# Remove cruft from any previous bad rolls (https://anglebug.com/8352)
+# Remove cruft from any previous bad rolls (https://anglebug.com/42266781)
 extra_third_party_removal_patterns=(
    "*/_gclient_*"
 )

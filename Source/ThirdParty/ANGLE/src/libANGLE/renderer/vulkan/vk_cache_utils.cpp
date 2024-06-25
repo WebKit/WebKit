@@ -754,8 +754,11 @@ void InitializeDefaultSubpassSelfDependencies(
         renderer->getFeatures().supportsRasterizationOrderAttachmentAccess.enabled;
     const bool hasBlendOperationAdvanced =
         renderer->getFeatures().supportsBlendOperationAdvanced.enabled;
+    const bool hasCoherentBlendOperationAdvanced =
+        renderer->getFeatures().supportsBlendOperationAdvancedCoherent.enabled;
 
-    if (hasRasterizationOrderAttachmentAccess && !hasBlendOperationAdvanced)
+    if (hasRasterizationOrderAttachmentAccess &&
+        (!hasBlendOperationAdvanced || hasCoherentBlendOperationAdvanced))
     {
         // No need to specify a subpass dependency if VK_EXT_rasterization_order_attachment_access
         // is enabled, as that extension makes this subpass dependency implicit.
@@ -777,7 +780,7 @@ void InitializeDefaultSubpassSelfDependencies(
         dependency->dstStageMask |= VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
         dependency->dstAccessMask |= VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
     }
-    if (renderer->getFeatures().supportsBlendOperationAdvanced.enabled)
+    if (hasBlendOperationAdvanced && !hasCoherentBlendOperationAdvanced)
     {
         dependency->dstAccessMask |= VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT;
     }
@@ -4258,7 +4261,7 @@ bool operator==(const AttachmentOpsArray &lhs, const AttachmentOpsArray &rhs)
 
 // DescriptorSetLayoutDesc implementation.
 DescriptorSetLayoutDesc::DescriptorSetLayoutDesc()
-    : mDescriptorSetLayoutBindings{}, mImmutableSamplers{}
+    : mImmutableSamplers{}, mDescriptorSetLayoutBindings{}
 {}
 
 DescriptorSetLayoutDesc::~DescriptorSetLayoutDesc() = default;
@@ -4308,34 +4311,49 @@ void DescriptorSetLayoutDesc::update(uint32_t bindingIndex,
     ASSERT(count < std::numeric_limits<uint16_t>::max());
     ASSERT(bindingIndex < std::numeric_limits<uint16_t>::max());
 
-    PackedDescriptorSetBinding packedBinding = {};
+    if (bindingIndex >= mDescriptorSetLayoutBindings.size())
+    {
+        PackedDescriptorSetBinding invalid = {};
+        invalid.type                       = PackedDescriptorSetBinding::kInvalidType;
+        mDescriptorSetLayoutBindings.resize(bindingIndex + 1, invalid);
+    }
+
+    PackedDescriptorSetBinding &packedBinding = mDescriptorSetLayoutBindings[bindingIndex];
     SetBitField(packedBinding.type, descriptorType);
     SetBitField(packedBinding.count, count);
     SetBitField(packedBinding.stages, stages);
-    SetBitField(packedBinding.bindingIndex, bindingIndex);
     SetBitField(packedBinding.hasImmutableSampler, 0);
 
     if (immutableSampler)
     {
+        if (bindingIndex >= mImmutableSamplers.size())
+        {
+            mImmutableSamplers.resize(bindingIndex + 1);
+        }
+
         ASSERT(count == 1);
         SetBitField(packedBinding.hasImmutableSampler, 1);
-        mImmutableSamplers.push_back(immutableSampler->getHandle());
+        mImmutableSamplers[bindingIndex] = immutableSampler->getHandle();
     }
-
-    mDescriptorSetLayoutBindings.push_back(std::move(packedBinding));
 }
 
 void DescriptorSetLayoutDesc::unpackBindings(DescriptorSetLayoutBindingVector *bindings) const
 {
-    size_t immutableSamplersIndex = 0;
-
     // Unpack all valid descriptor set layout bindings
-    for (const PackedDescriptorSetBinding &packedBinding : mDescriptorSetLayoutBindings)
+    for (size_t bindingIndex = 0; bindingIndex < mDescriptorSetLayoutBindings.size();
+         ++bindingIndex)
     {
+        const PackedDescriptorSetBinding &packedBinding =
+            mDescriptorSetLayoutBindings[bindingIndex];
+        if (packedBinding.type == PackedDescriptorSetBinding::kInvalidType)
+        {
+            continue;
+        }
+
         ASSERT(packedBinding.count != 0);
 
         VkDescriptorSetLayoutBinding binding = {};
-        binding.binding                      = static_cast<uint32_t>(packedBinding.bindingIndex);
+        binding.binding                      = static_cast<uint32_t>(bindingIndex);
         binding.descriptorCount              = packedBinding.count;
         binding.descriptorType               = static_cast<VkDescriptorType>(packedBinding.type);
         binding.stageFlags = static_cast<VkShaderStageFlags>(packedBinding.stages);
@@ -4343,7 +4361,7 @@ void DescriptorSetLayoutDesc::unpackBindings(DescriptorSetLayoutBindingVector *b
         if (packedBinding.hasImmutableSampler)
         {
             ASSERT(packedBinding.count == 1);
-            binding.pImmutableSamplers = &mImmutableSamplers[immutableSamplersIndex++];
+            binding.pImmutableSamplers = &mImmutableSamplers[bindingIndex];
         }
 
         bindings->push_back(binding);

@@ -65,6 +65,7 @@ struct ExternalContextState
     bool sampleCoverageInvert;
     GLenum blendEquationRgb;
     GLenum blendEquationAlpha;
+    bool enableBlendEquationAdvancedCoherent;
 
     bool enableDither;
     GLenum polygonMode;
@@ -213,6 +214,7 @@ class StateManagerGL final : angle::NonCopyable
     void setBlendColor(const gl::ColorF &blendColor);
     void setBlendFuncs(const gl::BlendStateExt &blendStateExt);
     void setBlendEquations(const gl::BlendStateExt &blendStateExt);
+    void setBlendAdvancedCoherent(bool enabled);
     void setColorMask(bool red, bool green, bool blue, bool alpha);
     void setSampleAlphaToCoverageEnabled(bool enabled);
     void setSampleCoverageEnabled(bool enabled);
@@ -489,6 +491,7 @@ class StateManagerGL final : angle::NonCopyable
 
     gl::ColorF mBlendColor;
     gl::BlendStateExt mBlendStateExt;
+    bool mBlendAdvancedCoherent;
     const bool mIndependentBlendStates;
 
     bool mSampleAlphaToCoverageEnabled;

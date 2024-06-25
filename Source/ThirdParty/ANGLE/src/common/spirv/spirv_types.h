@@ -72,7 +72,7 @@ using LiteralString     = const char *;
 // Note: In ANGLE's use cases, all literals fit in 32 bits.
 using LiteralContextDependentNumber = LiteralInteger;
 // TODO(syoussefi): To be made stronger when generating SPIR-V from the translator.
-// http://anglebug.com/4889
+// http://anglebug.com/40096715
 using LiteralExtInstInteger = LiteralInteger;
 
 struct PairLiteralIntegerIdRef

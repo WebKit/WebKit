@@ -41,9 +41,11 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         // --------------------------
         map["GL_EXT_base_instance"] = enableableExtension(&Extensions::baseInstanceEXT);
         map["GL_KHR_blend_equation_advanced"] = esOnlyExtension(&Extensions::blendEquationAdvancedKHR);
+        map["GL_KHR_blend_equation_advanced_coherent"] = esOnlyExtension(&Extensions::blendEquationAdvancedCoherentKHR);
         map["GL_EXT_blend_func_extended"] = enableableExtension(&Extensions::blendFuncExtendedEXT);
         map["GL_EXT_blend_minmax"] = enableableExtension(&Extensions::blendMinmaxEXT);
         map["GL_EXT_buffer_storage"] = enableableExtension(&Extensions::bufferStorageEXT);
+        map["GL_EXT_clear_texture"] = enableableExtension(&Extensions::clearTextureEXT);
         map["GL_EXT_clip_control"] = enableableExtension(&Extensions::clipControlEXT);
         map["GL_EXT_clip_cull_distance"] = enableableExtension(&Extensions::clipCullDistanceEXT);
         map["GL_APPLE_clip_distance"] = enableableExtension(&Extensions::clipDistanceAPPLE);
@@ -208,6 +210,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_OES_texture_storage_multisample_2d_array"] = enableableExtension(&Extensions::textureStorageMultisample2dArrayOES);
         map["GL_EXT_texture_type_2_10_10_10_REV"] = enableableExtension(&Extensions::textureType2101010REVEXT);
         map["GL_ANGLE_texture_usage"] = enableableExtension(&Extensions::textureUsageANGLE);
+        map["GL_QCOM_tiled_rendering"] = enableableExtension(&Extensions::tiledRenderingQCOM);
         map["GL_ANGLE_translated_shader_source"] = esOnlyExtension(&Extensions::translatedShaderSourceANGLE);
         map["GL_EXT_unpack_subimage"] = enableableExtension(&Extensions::unpackSubimageEXT);
         map["GL_OES_vertex_array_object"] = enableableExtension(&Extensions::vertexArrayObjectOES);

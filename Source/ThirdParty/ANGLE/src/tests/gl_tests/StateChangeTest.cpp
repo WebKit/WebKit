@@ -83,7 +83,7 @@ class StateChangeTestES31 : public StateChangeTest
 // Ensure that CopyTexImage2D syncs framebuffer changes.
 TEST_P(StateChangeTest, CopyTexImage2DSync)
 {
-    // TODO(geofflang): Fix on Linux AMD drivers (http://anglebug.com/1291)
+    // TODO(geofflang): Fix on Linux AMD drivers (http://anglebug.com/42260302)
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
 
     glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
@@ -184,7 +184,7 @@ TEST_P(StateChangeTest, FramebufferIncompleteWithTexStorage)
 // Test that caching works when color attachments change with CompressedTexImage2D.
 TEST_P(StateChangeTestES3, FramebufferIncompleteWithCompressedTex)
 {
-    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/3853
+    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/42262497
     ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
 
     glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
@@ -419,9 +419,9 @@ void main (void)
 TEST_P(StateChangeTestES3, DrawPausedXfbThenNonXfbLines)
 {
     // glTransformFeedbackVaryings for program2 returns GL_INVALID_OPERATION on both Linux and
-    // windows.  http://anglebug.com/4265
+    // windows.  http://anglebug.com/42262893
     ANGLE_SKIP_TEST_IF(IsIntel() && IsOpenGL());
-    // http://anglebug.com/5388
+    // http://anglebug.com/42263928
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsDesktopOpenGL());
 
     std::vector<std::string> tfVaryings = {"gl_Position"};
@@ -1175,9 +1175,9 @@ void main()
 // Tests that changing an active program invalidates the sampler metadata properly.
 TEST_P(StateChangeTestES3, SamplerMetadataUpdateOnSetProgram)
 {
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
-    // TODO(anglebug.com/5491) Appears as though there's something wrong with textureSize on iOS
+    // TODO(anglebug.com/42264029) Appears as though there's something wrong with textureSize on iOS
     // unrelated to switching programs.
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
     GLVertexArray vertexArray;
@@ -1387,7 +1387,7 @@ class StateChangeTestWebGL2 : public ANGLETest<StateChangeTestWebGL2Params>
 //    MTL_DEBUG_LAYER_VALIDATE_UNRETAINED_RESOURCES=4 \
 //    angle_end2end_tests ...
 //
-// See anglebug.com/6923.
+// See anglebug.com/42265402.
 
 TEST_P(StateChangeTestWebGL2, InvalidateThenDrawFBO)
 {
@@ -1519,7 +1519,7 @@ TEST_P(LineLoopStateChangeTest, DrawElementsThenDrawArrays)
 // Draw line loop using a drawArrays followed by an hourglass with drawElements.
 TEST_P(LineLoopStateChangeTest, DrawArraysThenDrawElements)
 {
-    // http://anglebug.com/2856: Seems to fail on older drivers and pass on newer.
+    // http://anglebug.com/40644657: Seems to fail on older drivers and pass on newer.
     // Tested failing on 18.3.3 and passing on 18.9.2.
     ANGLE_SKIP_TEST_IF(IsAMD() && IsVulkan() && IsWindows());
 
@@ -1843,7 +1843,7 @@ void SimpleStateChangeTest::simpleDrawWithColor(const GLColor &color)
 // frame.
 TEST_P(SimpleStateChangeTest, DrawArraysThenDrawElements)
 {
-    // http://anglebug.com/4121
+    // http://anglebug.com/40644706
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGLES());
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
@@ -2247,7 +2247,7 @@ TEST_P(SimpleStateChangeTest, DrawElementsUBYTEX2ThenDrawElementsUSHORT)
 // verify all the rendering results are the same.
 TEST_P(SimpleStateChangeTest, DrawRepeatUnalignedVboChange)
 {
-    // http://anglebug.com/4470
+    // http://anglebug.com/42263089
     ANGLE_SKIP_TEST_IF(isSwiftshader() && (IsWindows() || IsLinux()));
 
     const int kRepeat = 2;
@@ -2756,7 +2756,7 @@ void SimpleStateChangeTest::updateTextureBoundToFramebufferHelper(UpdateFunc upd
 // Tests that TexSubImage updates are flushed before rendering.
 TEST_P(SimpleStateChangeTest, TexSubImageOnTextureBoundToFrambuffer)
 {
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
     auto updateFunc = [](GLenum textureBinding, GLTexture *tex, GLint x, GLint y,
                          const GLColor &color) {
@@ -2800,7 +2800,7 @@ TEST_P(SimpleStateChangeTest, CopyTexSubImageOnTextureBoundToFrambuffer)
 // target.
 TEST_P(SimpleStateChangeTestES3, ReadFramebufferDrawFramebufferDifferentAttachments)
 {
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
     GLRenderbuffer drawColorBuffer;
@@ -2978,7 +2978,7 @@ TEST_P(SimpleStateChangeTestES3, InvalidateThenGenerateMipmapsThenBlend)
 // Tests that invalidate then upload works
 TEST_P(SimpleStateChangeTestES3, InvalidateThenUploadThenBlend)
 {
-    // http://anglebug.com/4870
+    // http://anglebug.com/42263445
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
     // Create the framebuffer that will be invalidated
@@ -3014,7 +3014,7 @@ TEST_P(SimpleStateChangeTestES3, InvalidateThenUploadThenBlend)
 // Tests that invalidate then sub upload works
 TEST_P(SimpleStateChangeTestES3, InvalidateThenSubUploadThenBlend)
 {
-    // http://anglebug.com/4870
+    // http://anglebug.com/42263445
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
     // Create the framebuffer that will be invalidated
@@ -3052,7 +3052,7 @@ TEST_P(SimpleStateChangeTestES31, InvalidateThenStorageWriteThenBlend)
 {
     // Fails on AMD OpenGL Windows. This configuration isn't maintained.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsOpenGL());
-    // http://anglebug.com/5387
+    // http://anglebug.com/42263927
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsDesktopOpenGL());
 
     constexpr char kCS[] = R"(#version 310 es
@@ -3538,7 +3538,7 @@ TEST_P(SimpleStateChangeTest, RedefineFramebufferTexture)
 // Trips a bug in the Vulkan back-end where a Texture wouldn't transition correctly.
 TEST_P(SimpleStateChangeTest, DrawAndClearTextureRepeatedly)
 {
-    // Fails on 431.02 driver. http://anglebug.com/3748
+    // Fails on 431.02 driver. http://anglebug.com/40644697
     ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsVulkan());
 
     // Fails on AMD OpenGL Windows. This configuration isn't maintained.
@@ -4030,7 +4030,7 @@ TEST_P(SimpleStateChangeTest, ChangeFramebufferSizeBetweenTwoDraws)
 // Tries to relink a program in use and use it again to draw something else.
 TEST_P(SimpleStateChangeTest, RelinkProgram)
 {
-    // http://anglebug.com/4121
+    // http://anglebug.com/40644706
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGLES());
     const GLuint program = glCreateProgram();
 
@@ -4385,7 +4385,7 @@ void main()
 // reordered w.r.t the calls.
 TEST_P(SimpleStateChangeTestES31, DrawWithImageTextureThenDrawAgain)
 {
-    // http://anglebug.com/5593
+    // http://anglebug.com/42264124
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     GLint maxFragmentImageUniforms;
@@ -4478,9 +4478,9 @@ void main()
 // draw call works correctly.  This requires a barrier in between the draw calls.
 TEST_P(SimpleStateChangeTestES31, DrawWithTextureThenDrawWithImage)
 {
-    // http://anglebug.com/5593
+    // http://anglebug.com/42264124
     ANGLE_SKIP_TEST_IF(IsD3D11());
-    // http://anglebug.com/5686
+    // http://anglebug.com/42264222
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsDesktopOpenGL());
 
     GLint maxFragmentImageUniforms;
@@ -4907,7 +4907,7 @@ void main()
 // call works correctly.  This requires an implicit barrier in between the calls.
 TEST_P(SimpleStateChangeTestES31, DrawThenSampleWithCompute)
 {
-    // TODO(anglebug.com/5649): Test is failing since it was introduced on Linux AMD GLES
+    // TODO(anglebug.com/42264185): Test is failing since it was introduced on Linux AMD GLES
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsLinux());
 
     constexpr GLsizei kSize = 1;
@@ -4982,7 +4982,7 @@ void main()
 // In the Vulkan backend, the clear is deferred and should be flushed correctly.
 TEST_P(SimpleStateChangeTestES31, ClearThenSampleWithCompute)
 {
-    // http://anglebug.com/5687
+    // http://anglebug.com/42264223
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsDesktopOpenGL());
 
     constexpr GLsizei kSize = 1;
@@ -5058,7 +5058,7 @@ void main()
 // it in a dispatch call works correctly.  This requires an implicit barrier in between the calls.
 TEST_P(SimpleStateChangeTestES31, TransformFeedbackThenReadWithCompute)
 {
-    // http://anglebug.com/5687
+    // http://anglebug.com/42264223
     ANGLE_SKIP_TEST_IF(IsAMD() && IsVulkan());
 
     constexpr GLsizei kBufferSize = sizeof(float) * 4 * 6;
@@ -5605,7 +5605,7 @@ TEST_P(ValidationStateChangeTest, MapImmutablePersistentBufferThenVAPAndDraw)
 // Tests that changing a vertex binding with glVertexAttribDivisor updates the mapped buffer check.
 TEST_P(ValidationStateChangeTestES31, MapBufferAndDrawWithDivisor)
 {
-    // Seems to trigger a GL error in some edge cases. http://anglebug.com/2755
+    // Seems to trigger a GL error in some edge cases. http://anglebug.com/42261462
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsNVIDIA());
 
     // Initialize program and set up state.
@@ -5940,7 +5940,7 @@ TEST_P(WebGL2ValidationStateChangeTest, DrawFramebufferNegativeAPI)
 // Tests various state change effects on draw framebuffer validation with MRT.
 TEST_P(WebGL2ValidationStateChangeTest, MultiAttachmentDrawFramebufferNegativeAPI)
 {
-    // Crashes on 64-bit Android.  http://anglebug.com/3878
+    // Crashes on 64-bit Android.  http://anglebug.com/42262522
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
 
     // Set up a program that writes to two outputs: one int and one float.
@@ -6181,7 +6181,7 @@ void main()
 // Tests negative API state change cases with Transform Feedback bindings.
 TEST_P(WebGL2ValidationStateChangeTest, TransformFeedbackNegativeAPI)
 {
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    // TODO(anglebug.com/40096690) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     constexpr char kFS[] = R"(#version 300 es
@@ -6286,7 +6286,7 @@ void main()
 TEST_P(WebGL2ValidationStateChangeTest, SamplerFormatCache)
 {
     // Crashes in depth data upload due to lack of support for GL_UNSIGNED_INT data when
-    // DEPTH_COMPONENT24 is emulated with D32_S8X24.  http://anglebug.com/3880
+    // DEPTH_COMPONENT24 is emulated with D32_S8X24.  http://anglebug.com/42262525
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsWindows() && IsAMD());
 
     constexpr char kFS[] = R"(#version 300 es
@@ -6763,7 +6763,7 @@ TEST_P(SimpleStateChangeTest, FboLateCullFaceBackCWState)
 // binding back to the previous buffer.
 TEST_P(SimpleStateChangeTest, RebindTranslatedAttribute)
 {
-    // http://anglebug.com/5379
+    // http://anglebug.com/42263918
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsVulkan());
 
     constexpr char kVS[] = R"(attribute vec4 a_position;
@@ -7427,7 +7427,7 @@ TEST_P(RobustBufferAccessWebGL2ValidationStateChangeTest, BindZeroSizeBufferThen
     // SwiftShader does not currently support robustness.
     ANGLE_SKIP_TEST_IF(isSwiftshader());
 
-    // http://anglebug.com/4872
+    // http://anglebug.com/42263447
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsVulkan());
 
     // no intent to follow up on this failure.
@@ -7442,7 +7442,7 @@ TEST_P(RobustBufferAccessWebGL2ValidationStateChangeTest, BindZeroSizeBufferThen
     // Mali does not support robustness now.
     ANGLE_SKIP_TEST_IF(IsARM());
 
-    // TODO(anglebug.com/5491)
+    // TODO(anglebug.com/42264029)
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     std::vector<GLubyte> data(48, 1);

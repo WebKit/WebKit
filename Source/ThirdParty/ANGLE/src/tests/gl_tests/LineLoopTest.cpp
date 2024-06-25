@@ -249,7 +249,7 @@ TEST_P(LineLoopTestES3, UseAsUBOThenUpdateThenLineLoopUByteIndexBuffer)
 // Test that uploading data to buffer that's in use then using it for line loop elements works.
 TEST_P(LineLoopTestES3, UseAsUBOThenUpdateThenLineLoopUShortIndexBuffer)
 {
-    // http://anglebug.com/5833
+    // http://anglebug.com/42264370
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsQualcomm());
 
     // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
@@ -281,7 +281,7 @@ TEST_P(LineLoopTestES3, UseAsUBOThenUpdateThenLineLoopUIntIndexBuffer)
         return;
     }
 
-    // http://anglebug.com/5833
+    // http://anglebug.com/42264370
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsQualcomm());
 
     // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
@@ -590,7 +590,7 @@ class LineLoopIndirectTest : public LineLoopTest
 TEST_P(LineLoopIndirectTest, UByteIndexIndirectBuffer)
 {
     // Old drivers buggy with optimized ConvertIndexIndirectLineLoop shader.
-    // http://anglebug.com/4720
+    // http://anglebug.com/40096699
     ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsVulkan());
 
     // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
@@ -605,7 +605,7 @@ TEST_P(LineLoopIndirectTest, UByteIndexIndirectBuffer)
 TEST_P(LineLoopIndirectTest, UShortIndexIndirectBuffer)
 {
     // Old drivers buggy with optimized ConvertIndexIndirectLineLoop shader.
-    // http://anglebug.com/4720
+    // http://anglebug.com/40096699
     ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsVulkan());
 
     // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
@@ -620,11 +620,11 @@ TEST_P(LineLoopIndirectTest, UShortIndexIndirectBuffer)
 // Test that uploading data to buffer that's in use then using it for line loop elements works.
 TEST_P(LineLoopIndirectTest, UseAsUBOThenUpdateThenUByteIndexIndirectBuffer)
 {
-    // http://anglebug.com/5833
+    // http://anglebug.com/42264370
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsQualcomm());
 
     // Old drivers buggy with optimized ConvertIndexIndirectLineLoop shader.
-    // http://anglebug.com/4720
+    // http://anglebug.com/40096699
     ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsVulkan());
 
     // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
@@ -639,11 +639,11 @@ TEST_P(LineLoopIndirectTest, UseAsUBOThenUpdateThenUByteIndexIndirectBuffer)
 // Test that uploading data to buffer that's in use then using it for line loop elements works.
 TEST_P(LineLoopIndirectTest, UseAsUBOThenUpdateThenUShortIndexIndirectBuffer)
 {
-    // http://anglebug.com/5833
+    // http://anglebug.com/42264370
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsQualcomm());
 
     // Old drivers buggy with optimized ConvertIndexIndirectLineLoop shader.
-    // http://anglebug.com/4720
+    // http://anglebug.com/40096699
     ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsVulkan());
 
     // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details

@@ -2478,7 +2478,7 @@ bool OutputHLSL::visitDeclaration(Visit visit, TIntermDeclaration *node)
                     // Temporarily disable shadred memory initialization. It is very slow for D3D11
                     // drivers to compile a compute shader if we add code to initialize a
                     // groupshared array variable with a large array size. And maybe produce
-                    // incorrect result. See http://anglebug.com/3226.
+                    // incorrect result. See http://anglebug.com/40644676.
                     if (declarator->getQualifier() != EvqShared)
                     {
                         out << " = " + zeroInitializer(symbol->getType());

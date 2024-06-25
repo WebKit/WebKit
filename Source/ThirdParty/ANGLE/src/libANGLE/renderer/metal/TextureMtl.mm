@@ -1605,7 +1605,7 @@ angle::Result TextureMtl::generateMipmap(const gl::Context *context)
 
     if (!avoidGPUPath && caps.writable && mState.getType() == gl::TextureType::_3D)
     {
-        // http://anglebug.com/4921.
+        // http://anglebug.com/42263496.
         // Use compute for 3D mipmap generation.
         ANGLE_TRY(ensureLevelViewsWithinBaseMaxCreated());
         ANGLE_TRY(contextMtl->getDisplay()->getUtils().generateMipmapCS(

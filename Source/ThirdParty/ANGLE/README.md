@@ -61,6 +61,37 @@ to other shading languages, and to optionally apply shader modifications to work
 quirks in the native graphics drivers. The translator targets Desktop GLSL, Vulkan GLSL, Direct3D
 HLSL, and even ESSL for native GLES2 platforms.
 
+### OpenCL Implementation
+
+In addition to OpenGL ES, ANGLE also provides an optional `OpenCL` runtime built into the same
+output GLES lib.
+
+This work/effort is currently **work-in-progress/experimental**.
+
+This work provides the same benefits as the OpenGL implementation, having OpenCL APIs be
+translated to other HW-supported APIs available on that platform.
+
+### Level of OpenCL support via backing renderers
+
+|             |  Vulkan     |  OpenCL     |
+|-------------|:-----------:|:-----------:|
+| OpenCL 1.0  | in progress | in progress |
+| OpenCL 1.1  | in progress | in progress |
+| OpenCL 1.2  | in progress | in progress |
+| OpenCL 3.0  | in progress | in progress |
+
+Each supported backing renderer above ends up being an OpenCL `Platform` for the user to choose from.
+
+The `OpenCL` backend is a "passthrough" implementation which does not perform any API translation
+at all, instead forwarding API calls to other OpenCL driver(s)/implementation(s).
+
+OpenCL also has an online compiler component to it that is used to compile `OpenCL C` source code at runtime
+(similarly to GLES and GLSL). Depending on the chosen backend(s), compiler implementations may vary. Below is
+a list of renderers and what OpenCL C compiler implementation is used for each:
+
+- `Vulkan` : [clspv](https://github.com/google/clspv/tree/main)
+- `OpenCL` : Compiler is part of the native driver
+
 ## Sources
 
 ANGLE repository is hosted by Chromium project and can be

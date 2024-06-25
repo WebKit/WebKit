@@ -1317,7 +1317,7 @@ namespace vk_gl
 //   If the image was created with VkImageCreateInfo::samples equal to VK_SAMPLE_COUNT_1_BIT, the
 //   instruction must: have MS = 0.
 //
-// This restriction was tracked in http://anglebug.com/4196 and Khronos-private Vulkan
+// This restriction was tracked in http://anglebug.com/42262827 and Khronos-private Vulkan
 // specification issue https://gitlab.khronos.org/vulkan/vulkan/issues/1925.
 //
 // In addition, the Vulkan back-end will not support sample counts of 32 or 64, since there are no

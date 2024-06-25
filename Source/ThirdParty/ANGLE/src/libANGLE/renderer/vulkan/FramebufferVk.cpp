@@ -2864,7 +2864,7 @@ angle::Result FramebufferVk::createNewFramebuffer(
                                      ? &info.renderTarget->getResolveImageForRenderPass()
                                      : &info.renderTarget->getImageForRenderPass();
 
-        const gl::LevelIndex level = info.renderTarget->getLevelIndex();
+        const gl::LevelIndex level = info.renderTarget->getLevelIndexForImage(*image);
         const uint32_t layerCount  = info.renderTarget->getLayerCount();
         const gl::Extents extents  = image->getLevelExtents2D(image->toVkLevel(level));
 
@@ -3044,7 +3044,7 @@ angle::Result FramebufferVk::clearWithDraw(
         // TODO: implement clear of layered framebuffers.  UtilsVk::clearFramebuffer should add a
         // geometry shader that is instanced layerCount times (or loops layerCount times), each time
         // selecting a different layer.
-        // http://anglebug.com/5453
+        // http://anglebug.com/42263992
         ASSERT(mCurrentFramebufferDesc.isMultiview() || colorRenderTarget->getLayerCount() == 1);
 
         ANGLE_TRY(contextVk->getUtils().clearFramebuffer(contextVk, this, params));

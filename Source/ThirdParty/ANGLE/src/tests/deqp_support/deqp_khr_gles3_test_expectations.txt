@@ -7,20 +7,20 @@
 // For now we only log Vulkan test expectations. More back-ends can follow as we need them.
 
 // Depth/stencil related failures due to Vulkan driver bugs.
-3683 VULKAN PIXEL4ORXL : KHR-GLES3.packed_depth_stencil.clear_buffer.depth32f_stencil8 = FAIL
+42262342 VULKAN PIXEL4ORXL : KHR-GLES3.packed_depth_stencil.clear_buffer.depth32f_stencil8 = FAIL
 
 // Texture related failure on Pixel 4.
-8616 VULKAN PIXEL4ORXL : KHR-GLES3.texture_lod_basic.lod_selection = FAIL
+42267050 VULKAN PIXEL4ORXL : KHR-GLES3.texture_lod_basic.lod_selection = FAIL
 
 341780527 VULKAN PIXEL4ORXL : KHR-GLES3.clip_distance.coverage = FAIL
 
 // Test bug - fails in ASAN
-6678 VULKAN ANDROID : KHR-GLES3.packed_pixels.varied_rectangle.* = SKIP
-6678 VULKAN NVIDIA : KHR-GLES3.packed_pixels.varied_rectangle.r8_snorm = SKIP
-6678 VULKAN NVIDIA : KHR-GLES3.packed_pixels.varied_rectangle.rg8_snorm = SKIP
-6678 VULKAN NVIDIA : KHR-GLES3.packed_pixels.varied_rectangle.rgba8_snorm = SKIP
+42265173 VULKAN ANDROID : KHR-GLES3.packed_pixels.varied_rectangle.* = SKIP
+42265173 VULKAN NVIDIA : KHR-GLES3.packed_pixels.varied_rectangle.r8_snorm = SKIP
+42265173 VULKAN NVIDIA : KHR-GLES3.packed_pixels.varied_rectangle.rg8_snorm = SKIP
+42265173 VULKAN NVIDIA : KHR-GLES3.packed_pixels.varied_rectangle.rgba8_snorm = SKIP
 
-5976 LINUX VULKAN NVIDIA : KHR-GLES3.shaders.indexing.tmp_array.vertexid = FAIL
+42264508 LINUX VULKAN NVIDIA : KHR-GLES3.shaders.indexing.tmp_array.vertexid = FAIL
 
 341780527 LINUX VULKAN NVIDIA : KHR-GLES3.clip_distance.coverage = FAIL
 341780527 LINUX VULKAN NVIDIA : KHR-GLES3.cull_distance.functional = FAIL
@@ -34,69 +34,69 @@
 // Fails only with SwiftShader:
 
 // These only fail on Android
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_dynamic_loop_write_static_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_dynamic_loop_write_static_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_dynamic_write_static_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_dynamic_write_static_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_static_loop_write_static_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_static_loop_write_static_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_static_write_dynamic_loop_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_static_write_dynamic_loop_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_static_write_dynamic_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_static_write_dynamic_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_static_write_static_loop_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_static_write_static_loop_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_dynamic_loop_write_static_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_dynamic_loop_write_static_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_dynamic_write_static_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_dynamic_write_static_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_static_loop_write_static_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_static_loop_write_static_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_static_write_dynamic_loop_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_static_write_dynamic_loop_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_static_write_dynamic_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_static_write_dynamic_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_static_write_static_loop_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_static_write_static_loop_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_dynamic_loop_write_static_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_dynamic_loop_write_static_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_dynamic_write_static_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_dynamic_write_static_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_loop_write_static_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_loop_write_static_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_write_dynamic_loop_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_write_dynamic_loop_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_write_dynamic_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_write_dynamic_read_vertex = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_write_static_loop_read_fragment = FAIL
-4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_write_static_loop_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_dynamic_loop_write_static_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_dynamic_loop_write_static_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_dynamic_write_static_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_dynamic_write_static_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_static_loop_write_static_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_static_loop_write_static_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_static_write_dynamic_loop_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_static_write_dynamic_loop_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_static_write_dynamic_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_static_write_dynamic_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_static_write_static_loop_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat2x4_static_write_static_loop_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_dynamic_loop_write_static_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_dynamic_loop_write_static_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_dynamic_write_static_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_dynamic_write_static_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_static_loop_write_static_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_static_loop_write_static_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_static_write_dynamic_loop_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_static_write_dynamic_loop_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_static_write_dynamic_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_static_write_dynamic_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_static_write_static_loop_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat3x4_static_write_static_loop_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_dynamic_loop_write_static_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_dynamic_loop_write_static_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_dynamic_write_static_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_dynamic_write_static_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_loop_write_static_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_loop_write_static_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_write_dynamic_loop_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_write_dynamic_loop_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_write_dynamic_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_write_dynamic_read_vertex = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_write_static_loop_read_fragment = FAIL
+42262656 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_write_static_loop_read_vertex = FAIL
 341780527 SWIFTSHADER : KHR-GLES3.clip_distance.coverage = FAIL
 341780527 SWIFTSHADER : KHR-GLES3.clip_distance.functional = FAIL
 341780527 SWIFTSHADER : KHR-GLES3.cull_distance.functional = FAIL
 
 // https://gitlab.khronos.org/opengl/API/-/issues/180
-8048 VULKAN NVIDIA : KHR-GLES3.packed_pixels.pbo_rectangle.r8_snorm = SKIP
-8048 VULKAN NVIDIA : KHR-GLES3.packed_pixels.pbo_rectangle.rg8_snorm = SKIP
-8048 VULKAN NVIDIA : KHR-GLES3.packed_pixels.pbo_rectangle.rgba8_snorm = SKIP
-8048 VULKAN NVIDIA : KHR-GLES3.packed_pixels.rectangle.r8_snorm = SKIP
-8048 VULKAN NVIDIA : KHR-GLES3.packed_pixels.rectangle.rg8_snorm = SKIP
-8048 VULKAN NVIDIA : KHR-GLES3.packed_pixels.rectangle.rgba8_snorm = SKIP
-8048 VULKAN ANDROID : KHR-GLES3.packed_pixels.pbo_rectangle.r8_snorm = SKIP
-8048 VULKAN ANDROID : KHR-GLES3.packed_pixels.pbo_rectangle.rg8_snorm = SKIP
-8048 VULKAN ANDROID : KHR-GLES3.packed_pixels.pbo_rectangle.rgba8_snorm = SKIP
-8048 VULKAN ANDROID : KHR-GLES3.packed_pixels.rectangle.r8_snorm = SKIP
-8048 VULKAN ANDROID : KHR-GLES3.packed_pixels.rectangle.rg8_snorm = SKIP
-8048 VULKAN ANDROID : KHR-GLES3.packed_pixels.rectangle.rgba8_snorm = SKIP
+40096882 VULKAN NVIDIA : KHR-GLES3.packed_pixels.pbo_rectangle.r8_snorm = SKIP
+40096882 VULKAN NVIDIA : KHR-GLES3.packed_pixels.pbo_rectangle.rg8_snorm = SKIP
+40096882 VULKAN NVIDIA : KHR-GLES3.packed_pixels.pbo_rectangle.rgba8_snorm = SKIP
+40096882 VULKAN NVIDIA : KHR-GLES3.packed_pixels.rectangle.r8_snorm = SKIP
+40096882 VULKAN NVIDIA : KHR-GLES3.packed_pixels.rectangle.rg8_snorm = SKIP
+40096882 VULKAN NVIDIA : KHR-GLES3.packed_pixels.rectangle.rgba8_snorm = SKIP
+40096882 VULKAN ANDROID : KHR-GLES3.packed_pixels.pbo_rectangle.r8_snorm = SKIP
+40096882 VULKAN ANDROID : KHR-GLES3.packed_pixels.pbo_rectangle.rg8_snorm = SKIP
+40096882 VULKAN ANDROID : KHR-GLES3.packed_pixels.pbo_rectangle.rgba8_snorm = SKIP
+40096882 VULKAN ANDROID : KHR-GLES3.packed_pixels.rectangle.r8_snorm = SKIP
+40096882 VULKAN ANDROID : KHR-GLES3.packed_pixels.rectangle.rg8_snorm = SKIP
+40096882 VULKAN ANDROID : KHR-GLES3.packed_pixels.rectangle.rgba8_snorm = SKIP
 
 // New failures with latest dEQP roll (2020-04-28)
-4593 SWIFTSHADER : KHR-GLES3.core.nearest_edge.offset_left = FAIL
+42263198 SWIFTSHADER : KHR-GLES3.core.nearest_edge.offset_left = FAIL
 
-6678 UBSAN : KHR-GLES3.core.internalformat.texture2d.*half_float* = SKIP
-6678 UBSAN : KHR-GLES3.packed_pixels.* = SKIP
-6678 UBSAN : KHR-GLES3.copy_tex_image_conversions.required.* = SKIP
+42265173 UBSAN : KHR-GLES3.core.internalformat.texture2d.*half_float* = SKIP
+42265173 UBSAN : KHR-GLES3.packed_pixels.* = SKIP
+42265173 UBSAN : KHR-GLES3.copy_tex_image_conversions.required.* = SKIP
 
 // Samsung Galaxy S23
-8157 GALAXYS23 VULKAN : KHR-GLES3.shaders.function.global_variable_aliasing_fragment = SKIP
+42266598 GALAXYS23 VULKAN : KHR-GLES3.shaders.function.global_variable_aliasing_fragment = SKIP
 341780527 GALAXYS22 VULKAN : KHR-GLES3.clip_distance.coverage = FAIL
 341780527 GALAXYS22 VULKAN : KHR-GLES3.cull_distance.functional = FAIL
 341780527 GALAXYS23 VULKAN : KHR-GLES3.clip_distance.coverage = FAIL
@@ -107,12 +107,12 @@ b/328156792 PINEAPPLE VULKAN : KHR-GLES3.copy_tex_image_conversions.required.* =
 b/328156792 PINEAPPLE VULKAN : KHR-GLES3.shaders.function.global_variable_aliasing_fragment = SKIP
 
 // Mali G710
-8212 MALIG710 VULKAN : KHR-GLES3.number_parsing.* = FAIL
+42266649 MALIG710 VULKAN : KHR-GLES3.number_parsing.* = FAIL
 
 // The newly added cases are failing
-8636 ANDROID : KHR-GLES3.framebuffer_blit.framebuffer_blit_functionality_multisampled_to_singlesampled_blit = FAIL
-8636 LINUX : KHR-GLES3.framebuffer_blit.framebuffer_blit_functionality_multisampled_to_singlesampled_blit = FAIL
-8636 WIN : KHR-GLES3.framebuffer_blit.framebuffer_blit_functionality_multisampled_to_singlesampled_blit = FAIL
+42267072 ANDROID : KHR-GLES3.framebuffer_blit.framebuffer_blit_functionality_multisampled_to_singlesampled_blit = FAIL
+42267072 LINUX : KHR-GLES3.framebuffer_blit.framebuffer_blit_functionality_multisampled_to_singlesampled_blit = FAIL
+42267072 WIN : KHR-GLES3.framebuffer_blit.framebuffer_blit_functionality_multisampled_to_singlesampled_blit = FAIL
 b/332383430 PIXEL6 VULKAN : KHR-GLES3.texture_lod_bias.texture_lod_bias_all = FAIL
 
 // Flaky timeout

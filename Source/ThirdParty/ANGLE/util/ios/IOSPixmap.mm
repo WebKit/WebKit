@@ -9,7 +9,7 @@
 #include "util/ios/IOSPixmap.h"
 
 // TODO(jdarpinian): find out the native iOS pixmap type and implement this
-// http://anglebug.com/5485
+// http://anglebug.com/42264022
 OSPixmap *CreateOSPixmap()
 {
     return nullptr;

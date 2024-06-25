@@ -162,6 +162,7 @@ angle_end2end_tests_sources = [
   "gl_tests/TextureRectangleTest.cpp",
   "gl_tests/TextureTest.cpp",
   "gl_tests/TextureUploadFormatTest.cpp",
+  "gl_tests/TiledRenderingTest.cpp",
   "gl_tests/TimerQueriesTest.cpp",
   "gl_tests/TransformFeedbackTest.cpp",
   "gl_tests/UniformBufferTest.cpp",

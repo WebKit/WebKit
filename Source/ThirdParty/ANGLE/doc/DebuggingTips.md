@@ -137,6 +137,38 @@ variable (set in OS-specific manner):
 * 0: Turned off/disabled (default)
 * 1: Turned on/enabled
 
+## Enable Vulkan Call Logging
+
+ANGLE can output Vulkan api call information including detailed parameter info and state. Vulkan
+call logging will be enabled when the following GN arg is set:
+```
+angle_enable_vulkan_api_dump_layer = true
+```
+
+By default Vulkan call logging goes to stdout, or logcat on Android. Vulkan call logging can be
+used with trace event and debug marker output as shown in [enabling general logging](#enabling-general-logging)
+ and [enabling Debug-Utils markers](#enabling-debug-utils-markers)
+
+### Vulkan Call Logging on Desktop
+
+For Vulkan call logging output to a file, set
+the environment variable VK_APIDUMP_LOG_FILENAME to the correct location.
+
+To show only Vulkan api calls without verbose parameter details set the environment variable
+VK_APIDUMP_DETAILED to `false`
+
+### Vulkan Call Logging on Android
+
+For Vulkan call logging to a file on Android, specify the filename with an Android debug property that is
+automatically deleted at the next reboot::
+```
+adb shell setprop debug.apidump.log_filename /data/data/[PACKAGE_NAME, i.e., com.android.angle.test for angle_trace_tests]/api_dump.txt
+```
+
+Similarly, detailed parameter output can be controlled by the following Android debug properties:
+```
+adb shell setprop debug.apidump.detailed false
+```
 
 ## Running ANGLE under GAPID on Linux
 

@@ -9,6 +9,8 @@
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
+#include "common/mathutil.h"
+
 using namespace angle;
 
 namespace
@@ -206,7 +208,7 @@ TEST_P(MultisampledRenderToTextureTest, RenderbufferParameterCheck)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
 
-    // Linux Intel Vulkan returns 0 for GL_MAX_INTEGER_SAMPLES http://anglebug.com/5988
+    // Linux Intel Vulkan returns 0 for GL_MAX_INTEGER_SAMPLES http://anglebug.com/42264519
     ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsVulkan());
 
     GLRenderbuffer renderbuffer;
@@ -467,7 +469,7 @@ TEST_P(MultisampledRenderToTextureTest, FramebufferCompleteness)
     EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     // D3D backend doesn't implement multisampled render to texture renderbuffers correctly.
-    // http://anglebug.com/3107
+    // http://anglebug.com/42261786
     ANGLE_SKIP_TEST_IF(IsD3D());
 
     if (getClientMajorVersion() >= 3)
@@ -546,7 +548,7 @@ TEST_P(MultisampledRenderToTextureTest, UnsizedTextureFormatSampleMissmatch)
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_texture_rg"));
 
-    // Test failure introduced by Apple's changes (anglebug.com/5505)
+    // Test failure introduced by Apple's changes (anglebug.com/40096755)
     ANGLE_SKIP_TEST_IF(IsMetal() && IsAMD());
 
     GLsizei samples = 0;
@@ -919,6 +921,130 @@ TEST_P(MultisampledRenderToTextureTest, 2DColorDepthMultisampleDrawTest)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+// Draw test using color attachment with multiple levels.
+TEST_P(MultisampledRenderToTextureTest, MultipleLevelsMultisampleDraw2DColor)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+
+    constexpr GLsizei kSize        = 256;
+    const GLuint desiredLevelCount = gl::log2(kSize) + 1;
+    const std::vector<GLColor> greenColor(kSize * kSize, GLColor::green);
+
+    // Create texture to be used as color attachment
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    // Initialize all levels
+    for (GLuint level = 0; level < desiredLevelCount; level++)
+    {
+        GLsizei levelSize = kSize >> level;
+        glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, levelSize, levelSize, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, greenColor.data());
+    }
+
+    GLFramebuffer FBO;
+    GLFramebuffer readFbo;
+
+    // Multisample draw and verify with each level
+    for (GLuint currentLevel = 0; currentLevel < desiredLevelCount; currentLevel++)
+    {
+        GLsizei currentLevelSize = kSize >> currentLevel;
+
+        // Attach a texture level as color attachment
+        glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+        glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                                             texture, currentLevel, 4);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Draw blue color
+        glViewport(0, 0, currentLevelSize, currentLevelSize);
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+        glUseProgram(program);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+        ASSERT_GL_NO_ERROR();
+
+        // Verify blue color
+        glBindFramebuffer(GL_FRAMEBUFFER, readFbo);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture,
+                               currentLevel);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+        EXPECT_PIXEL_COLOR_EQ(currentLevelSize / 2, currentLevelSize / 2, GLColor::blue);
+    }
+}
+
+// Draw test using color attachment with multiple levels and multiple render targets.
+TEST_P(MultisampledRenderToTextureES3Test, MultipleLevelsMultisampleMRTDraw2DColor)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_draw_buffers"));
+
+    constexpr GLsizei kSize        = 256;
+    const GLuint desiredLevelCount = gl::log2(kSize) + 1;
+    const std::vector<GLColor> greenColor(kSize * kSize, GLColor::green);
+
+    // Create texture to be used as color attachment
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    // Initialize all levels
+    for (GLuint level = 0; level < desiredLevelCount; level++)
+    {
+        GLsizei levelSize = kSize >> level;
+        glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, levelSize, levelSize, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, greenColor.data());
+    }
+
+    // Multisample MRT draw and verify
+    const std::string frag = R"(#extension GL_EXT_draw_buffers : enable
+        precision highp float;
+        uniform mediump vec4 u_color;
+        void main()
+        {
+            gl_FragData[0] = u_color;
+            gl_FragData[1] = u_color;
+        })";
+    ANGLE_GL_PROGRAM(mrtProgram, essl1_shaders::vs::Simple(), frag.c_str());
+    glUseProgram(mrtProgram);
+    GLint colorUniformLocation = glGetUniformLocation(mrtProgram, "u_color");
+    ASSERT_NE(colorUniformLocation, -1);
+    glUniform4f(colorUniformLocation, 1.0f, 1.0f, 0.0f, 1.0f);
+
+    // Attach texture level 0 and 1 as color attachment
+    GLFramebuffer FBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                                         texture, 0, 4);
+    glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D,
+                                         texture, 1, 4);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw yellow color to both attachments
+    glViewport(0, 0, kSize, kSize);
+    constexpr GLenum kDrawBuffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, kDrawBuffers);
+    ASSERT_GL_NO_ERROR();
+    drawQuad(mrtProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify yellow color in common render area of both attachments
+    GLFramebuffer readFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, readFbo);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    // Verify level 0
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_PIXEL_COLOR_EQ((kSize >> 1) - 1, (kSize >> 1) - 1, GLColor::yellow);
+
+    // Verify level 1
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 1);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_PIXEL_COLOR_EQ((kSize >> 1) - 1, (kSize >> 1) - 1, GLColor::yellow);
+}
+
 void MultisampledRenderToTextureES3Test::readPixelsTestCommon(bool useRenderbuffer)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
@@ -967,7 +1093,7 @@ TEST_P(MultisampledRenderToTextureES3Test, ReadPixelsTest)
 TEST_P(MultisampledRenderToTextureES3Test, RenderbufferReadPixelsTest)
 {
     // D3D backend doesn't implement multisampled render to texture renderbuffers correctly.
-    // http://anglebug.com/3107
+    // http://anglebug.com/42261786
     ANGLE_SKIP_TEST_IF(IsD3D());
 
     readPixelsTestCommon(true);
@@ -1779,7 +1905,7 @@ void MultisampledRenderToTextureES3Test::drawCopyDrawAttachDepthStencilClearThen
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
     constexpr GLsizei kSize = 64;
 
-    // http://anglebug.com/4935
+    // http://anglebug.com/42263509
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     setupCopyTexProgram();
@@ -2178,7 +2304,7 @@ TEST_P(MultisampledRenderToTextureES3Test, RenderbufferDepthStencilClearDrawCopy
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
 
-    // http://anglebug.com/5096
+    // http://anglebug.com/42263663
     ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsVulkan());
 
     constexpr GLsizei kSize = 64;
@@ -2267,7 +2393,7 @@ TEST_P(MultisampledRenderToTextureES3Test, RenderbufferDepthStencilDrawCopyClear
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
 
-    // http://anglebug.com/5096
+    // http://anglebug.com/42263663
     ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsVulkan());
 
     constexpr GLsizei kSize = 64;
@@ -2370,7 +2496,7 @@ TEST_P(MultisampledRenderToTextureES3Test, RenderbufferClearThenBlitDepthStencil
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
 
     // D3D backend doesn't implement multisampled render to texture renderbuffers correctly.
-    // http://anglebug.com/3107
+    // http://anglebug.com/42261786
     ANGLE_SKIP_TEST_IF(IsD3D());
 
     constexpr GLsizei kSize = 64;
@@ -2481,7 +2607,7 @@ TEST_P(MultisampledRenderToTextureES3Test, RenderbufferDrawThenBlitDepthStencil)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
 
-    // http://anglebug.com/5096
+    // http://anglebug.com/42263663
     ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsVulkan());
 
     constexpr GLsizei kSize = 64;
@@ -2590,10 +2716,10 @@ TEST_P(MultisampledRenderToTextureES3Test, RenderbufferDrawThenBlitDepthStencilO
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
 
-    // http://anglebug.com/5096
+    // http://anglebug.com/42263663
     ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsVulkan());
 
-    // http://anglebug.com/5110
+    // http://anglebug.com/42263677
     ANGLE_SKIP_TEST_IF(IsD3D());
 
     constexpr GLsizei kSize = 64;
@@ -3471,7 +3597,7 @@ TEST_P(MultisampledRenderToTextureTest, DrawNonMultisampledThenMultisampled)
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
     constexpr GLsizei kSize = 64;
 
-    // http://anglebug.com/4935
+    // http://anglebug.com/42263509
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     // Texture attachment to the two framebuffers.
@@ -3790,7 +3916,7 @@ TEST_P(MultisampledRenderToTextureES31Test, DrawCopyThenBlendAllAttachmentsMixed
 // Same as DrawCopyThenBlendAllAttachmentsMixed but with renderbuffers.
 TEST_P(MultisampledRenderToTextureES31Test, RenderbufferDrawCopyThenBlendAllAttachmentsMixed)
 {
-    // Linux Intel Vulkan returns 0 for GL_MAX_INTEGER_SAMPLES http://anglebug.com/5988
+    // Linux Intel Vulkan returns 0 for GL_MAX_INTEGER_SAMPLES http://anglebug.com/42264519
     ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsVulkan());
 
     drawCopyThenBlendAllAttachmentsMixed(true);
@@ -3804,7 +3930,7 @@ void MultisampledRenderToTextureES3Test::renderbufferUnresolveColorAndDepthStenc
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture2"));
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_draw_buffers"));
 
-    // http://anglebug.com/5096
+    // http://anglebug.com/42263663
     ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsVulkan());
 
     constexpr GLsizei kSize = 64;

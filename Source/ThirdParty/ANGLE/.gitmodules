@@ -195,6 +195,10 @@
 	path = third_party/glslang/src
 	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/glslang
 	gclient-condition = not build_with_chromium
+[submodule "third_party/lunarg-vulkantools/src"]
+	path = third_party/lunarg-vulkantools/src
+	url = https://chromium.googlesource.com/external/github.com/LunarG/VulkanTools
+	gclient-condition = not build_with_chromium
 [submodule "third_party/spirv-cross/src"]
 	path = third_party/spirv-cross/src
 	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Cross

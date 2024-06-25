@@ -125,7 +125,7 @@ void DisplayVkXcb::checkConfigSupport(egl::Config *config)
     }
 
     // TODO(geofflang): Test for native support and modify the config accordingly.
-    // http://anglebug.com/2692
+    // http://anglebug.com/42261400
 
     // Find the screen the window was created on:
     xcb_screen_iterator_t screenIterator = xcb_setup_roots_iterator(xcb_get_setup(mXcbConnection));

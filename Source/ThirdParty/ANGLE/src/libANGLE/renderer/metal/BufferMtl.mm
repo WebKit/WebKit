@@ -552,7 +552,7 @@ angle::Result BufferMtl::setDataImpl(const gl::Context *context,
     if (target == gl::BufferBinding::Uniform)
     {
         // This doesn't work! A buffer can be allocated on ARRAY_BUFFER and used in UNIFORM_BUFFER
-        // TODO(anglebug.com/7585)
+        // TODO(anglebug.com/42266052)
         adjustedSize = roundUpPow2(adjustedSize, (size_t)16);
     }
 

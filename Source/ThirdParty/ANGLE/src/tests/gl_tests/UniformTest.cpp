@@ -327,7 +327,7 @@ class UniformTest : public ANGLETest<>
 
     void testSetUp() override
     {
-        // TODO(anglebug.com/5505): asserting with latest direct-to-Metal compiler
+        // TODO(anglebug.com/40096755): asserting with latest direct-to-Metal compiler
         // changes. Must skip all tests explicitly.
         // if (IsMetal())
         //    return;

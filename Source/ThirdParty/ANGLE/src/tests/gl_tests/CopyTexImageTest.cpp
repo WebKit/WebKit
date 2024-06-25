@@ -594,7 +594,7 @@ TEST_P(CopyTexImageTest, CopyTexSubImageToNonCubeCompleteDestination)
     }
 }
 
-// Deleting textures after copying to them. http://anglebug.com/4267
+// Deleting textures after copying to them. http://anglebug.com/40644715
 TEST_P(CopyTexImageTest, DeleteAfterCopyingToTextures)
 {
     GLTexture texture;
@@ -645,11 +645,11 @@ TEST_P(CopyTexImageTest, DeleteAfterCopyingToTextures)
 TEST_P(CopyTexImageTest, CopyTexSubImageFrom3DTexureOES)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_3D"));
-    // TODO(anglebug.com/3801)
+    // TODO(anglebug.com/42262446)
     // Seems to fail on D3D11 Windows.
     ANGLE_SKIP_TEST_IF(IsD3D11() && IsWindows());
 
-    // http://anglebug.com/4927
+    // http://anglebug.com/42263501
     ANGLE_SKIP_TEST_IF((IsPixel2() || IsNexus5X()) && IsOpenGLES());
 
     constexpr GLsizei kDepth = 6;
@@ -953,7 +953,7 @@ TEST_P(CopyTexImageTestES3, 2DArraySubImage)
 // GL_TEXTURE_2D.
 TEST_P(CopyTexImageTestES3, CopyTexSubImageFromTexture3D)
 {
-    // TODO(anglebug.com/3801)
+    // TODO(anglebug.com/42262446)
     // Seems to fail on D3D11 Windows.
     ANGLE_SKIP_TEST_IF(IsD3D11() && IsWindows());
 
@@ -989,7 +989,7 @@ TEST_P(CopyTexImageTestES3, CopyTexSubImageFromTexture3D)
 // Test that copying from a non-zero base texture works.
 TEST_P(CopyTexImageTestES3, CopyTexSubImageFromNonZeroBase)
 {
-    // http://anglebug.com/5000
+    // http://anglebug.com/40644750
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
 
     constexpr GLsizei kTexSize = 4;
@@ -1043,7 +1043,7 @@ TEST_P(CopyTexImageTestES3, CopyTexSubImageFromNonZeroBase)
 // Test that copying into a non-zero base texture works.
 TEST_P(CopyTexImageTestES3, CopyTexSubImageToNonZeroBase)
 {
-    // http://anglebug.com/5000
+    // http://anglebug.com/40644750
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
 
     constexpr GLsizei kTexSize = 4;
@@ -1224,7 +1224,7 @@ TEST_P(CopyTexImageTestES3, 3DSubImageRawTextureData)
 // Test glCopyTexSubImage3D with initialized texture data that was drawn to
 TEST_P(CopyTexImageTestES3, 3DSubImageDrawTextureData)
 {
-    // TODO(anglebug.com/3801)
+    // TODO(anglebug.com/42262446)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D11());
 
     GLFramebuffer fbo;
@@ -1271,10 +1271,10 @@ TEST_P(CopyTexImageTestES3, 3DSubImageDrawTextureData)
 // Test glCopyTexSubImage3D with mismatched texture formats
 TEST_P(CopyTexImageTestES3, 3DSubImageDrawMismatchedTextureTypes)
 {
-    // TODO(anglebug.com/3801)
+    // TODO(anglebug.com/42262446)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D11());
 
-    // TODO(anglebug.com/5491)
+    // TODO(anglebug.com/42264029)
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     GLFramebuffer fbo;

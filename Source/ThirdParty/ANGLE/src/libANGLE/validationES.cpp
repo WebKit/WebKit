@@ -689,7 +689,7 @@ void SetRobustLengthParam(const GLsizei *length, GLsizei value)
     {
         // Currently we modify robust length parameters in the validation layer. We should be only
         // doing this in the Context instead.
-        // TODO(http://anglebug.com/4406): Remove when possible.
+        // TODO(http://anglebug.com/42263032): Remove when possible.
         *const_cast<GLsizei *>(length) = value;
     }
 }
@@ -1035,7 +1035,7 @@ bool ValidMipLevel(const Context *context, TextureType type, GLint level)
         case TextureType::_2DArray:
         case TextureType::_2DMultisample:
         case TextureType::_2DMultisampleArray:
-            // TODO(http://anglebug.com/2775): It's a bit unclear what the "maximum allowable
+            // TODO(http://anglebug.com/42261478): It's a bit unclear what the "maximum allowable
             // level-of-detail" for multisample textures should be. Could maybe make it zero.
             maxDimension = caps.max2DTextureSize;
             break;
@@ -1175,7 +1175,7 @@ bool ValidCompressedImageSize(const Context *context,
 
     if (formatInfo.paletted)
     {
-        // TODO(http://anglebug.com/7688): multi-level paletted images
+        // TODO(http://anglebug.com/42266155): multi-level paletted images
         if (level != 0)
         {
             return false;
@@ -3812,8 +3812,8 @@ bool ValidateCopyImageSubDataBase(const Context *context,
     bool fillsEntireMip               = false;
     gl::Texture *dstTexture           = context->getTexture({dstName});
     gl::TextureTarget dstTargetPacked = gl::PackParam<gl::TextureTarget>(dstTarget);
-    // TODO(http://anglebug.com/5643): Some targets (e.g., GL_TEXTURE_CUBE_MAP, GL_RENDERBUFFER) are
-    // unsupported when used with compressed formats due to gl::PackParam() returning
+    // TODO(http://anglebug.com/42264179): Some targets (e.g., GL_TEXTURE_CUBE_MAP, GL_RENDERBUFFER)
+    // are unsupported when used with compressed formats due to gl::PackParam() returning
     // TextureTarget::InvalidEnum.
     if (dstTargetPacked != gl::TextureTarget::InvalidEnum)
     {

@@ -323,8 +323,20 @@ bool IsFormatEmulated(GLenum target);
 #define EXPECT_PIXEL_16UI(x, y, r, g, b, a) \
     EXPECT_PIXEL_EQ_HELPER(x, y, r, g, b, a, GLushort, GL_RGBA, GL_UNSIGNED_SHORT)
 
+#define EXPECT_PIXEL_32UI(x, y, r, g, b, a) \
+    EXPECT_PIXEL_EQ_HELPER(x, y, r, g, b, a, GLuint, GL_RGBA_INTEGER, GL_UNSIGNED_INT)
+
+#define EXPECT_PIXEL_32I(x, y, r, g, b, a) \
+    EXPECT_PIXEL_EQ_HELPER(x, y, r, g, b, a, GLint, GL_RGBA_INTEGER, GL_INT)
+
 #define EXPECT_PIXEL_16UI_COLOR(x, y, color) \
     EXPECT_PIXEL_16UI(x, y, color.R, color.G, color.B, color.A)
+
+#define EXPECT_PIXEL_32UI_COLOR(x, y, color) \
+    EXPECT_PIXEL_32UI(x, y, color.R, color.G, color.B, color.A)
+
+#define EXPECT_PIXEL_32I_COLOR(x, y, color) \
+    EXPECT_PIXEL_32I(x, y, color.R, color.G, color.B, color.A)
 
 // TODO(jmadill): Figure out how we can use GLColor's nice printing with EXPECT_NEAR.
 #define EXPECT_PIXEL_COLOR_NEAR(x, y, angleColor, abs_error) \

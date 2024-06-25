@@ -39,14 +39,14 @@ struct FrontendFeatures : FeatureSetBase
         "disableProgramBinary",
         FeatureCategory::FrontendFeatures,
         "Disable support for GL_OES_get_program_binary",
-        &members, "http://anglebug.com/5007"
+        &members, "http://anglebug.com/42263580"
     };
 
     FeatureInfo disableDrawBuffersIndexed = {
         "disableDrawBuffersIndexed",
         FeatureCategory::FrontendFeatures,
         "Disable support for OES_draw_buffers_indexed and EXT_draw_buffers_indexed",
-        &members, "http://anglebug.com/7724"
+        &members, "http://anglebug.com/42266194"
     };
 
     FeatureInfo disableAnisotropicFiltering = {
@@ -74,21 +74,21 @@ struct FrontendFeatures : FeatureSetBase
         "forceDepthAttachmentInitOnClear",
         FeatureCategory::FrontendWorkarounds,
         "Force depth attachment initialization on clear ops",
-        &members, "https://anglebug.com/7246"
+        &members, "https://anglebug.com/42265720"
     };
 
     FeatureInfo enableCaptureLimits = {
         "enableCaptureLimits",
         FeatureCategory::FrontendFeatures,
         "Set the context limits like frame capturing was enabled",
-        &members, "http://anglebug.com/5750"
+        &members, "http://anglebug.com/42264287"
     };
 
     FeatureInfo forceRobustResourceInit = {
         "forceRobustResourceInit",
         FeatureCategory::FrontendFeatures,
         "Force-enable robust resource init",
-        &members, "http://anglebug.com/6041"
+        &members, "http://anglebug.com/42264571"
     };
 
     FeatureInfo forceInitShaderVariables = {
@@ -102,7 +102,7 @@ struct FrontendFeatures : FeatureSetBase
         "enableProgramBinaryForCapture",
         FeatureCategory::FrontendFeatures,
         "Even if FrameCapture is enabled, enable GL_OES_get_program_binary",
-        &members, "http://anglebug.com/5658"
+        &members, "http://anglebug.com/42264193"
     };
 
     FeatureInfo forceGlErrorChecking = {
@@ -116,28 +116,28 @@ struct FrontendFeatures : FeatureSetBase
         "emulatePixelLocalStorage",
         FeatureCategory::FrontendFeatures,
         "Emulate ANGLE_shader_pixel_local_storage using shader images",
-        &members, "http://anglebug.com/7279"
+        &members, "http://anglebug.com/40096838"
     };
 
     FeatureInfo cacheCompiledShader = {
         "cacheCompiledShader",
         FeatureCategory::FrontendFeatures,
         "Enable to cache compiled shaders",
-        &members, "http://anglebug.com/7036"
+        &members, "http://anglebug.com/42265509"
     };
 
     FeatureInfo dumpShaderSource = {
         "dumpShaderSource",
         FeatureCategory::FrontendFeatures,
         "Write shader source to temp directory",
-        &members, "http://anglebug.com/7760"
+        &members, "http://anglebug.com/42266231"
     };
 
     FeatureInfo enableShaderSubstitution = {
         "enableShaderSubstitution",
         FeatureCategory::FrontendWorkarounds,
         "Check the filesystem for shaders to use instead of those provided through glShaderSource",
-        &members, "http://anglebug.com/7761"
+        &members, "http://anglebug.com/42266232"
     };
 
     FeatureInfo disableProgramCaching = {
@@ -151,35 +151,35 @@ struct FrontendFeatures : FeatureSetBase
         "dumpTranslatedShaders",
         FeatureCategory::FrontendFeatures,
         "Write translated shaders to temp directory",
-        &members, "http://anglebug.com/8280"
+        &members, "http://anglebug.com/40644912"
     };
 
     FeatureInfo enableTranslatedShaderSubstitution = {
         "enableTranslatedShaderSubstitution",
         FeatureCategory::FrontendWorkarounds,
         "Check the filesystem for translated shaders to use instead of the shader translator's",
-        &members, "http://anglebug.com/8280"
+        &members, "http://anglebug.com/40644912"
     };
 
     FeatureInfo compileJobIsThreadSafe = {
         "compileJobIsThreadSafe",
         FeatureCategory::FrontendFeatures,
         "If false, parts of the compile job cannot be parallelized",
-        &members, "http://anglebug.com/8297"
+        &members, "http://anglebug.com/41488637"
     };
 
     FeatureInfo linkJobIsThreadSafe = {
         "linkJobIsThreadSafe",
         FeatureCategory::FrontendFeatures,
         "If false, parts of the link job cannot be parallelized",
-        &members, "http://anglebug.com/8297"
+        &members, "http://anglebug.com/41488637"
     };
 
     FeatureInfo alwaysRunLinkSubJobsThreaded = {
         "alwaysRunLinkSubJobsThreaded",
         FeatureCategory::FrontendFeatures,
         "If true, sub tasks of the link job are always threaded, regardless of GL_KHR_parallel_shader_compile",
-        &members, "http://anglebug.com/8417"
+        &members, "http://anglebug.com/42266842"
     };
 
     FeatureInfo uncurrentEglSurfaceUponSurfaceDestroy = {

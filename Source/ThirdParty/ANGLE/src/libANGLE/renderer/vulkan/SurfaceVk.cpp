@@ -1711,7 +1711,7 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
     }
 
     // TODO: Once EGL_SWAP_BEHAVIOR_PRESERVED_BIT is supported, the contents of the old swapchain
-    // need to carry over to the new one.  http://anglebug.com/2942
+    // need to carry over to the new one.  http://anglebug.com/42261637
     VkSwapchainKHR newSwapChain = VK_NULL_HANDLE;
     ANGLE_VK_TRY(context, vkCreateSwapchainKHR(device, &swapchainInfo, nullptr, &newSwapChain));
     mSwapchain            = newSwapChain;
@@ -2620,7 +2620,7 @@ angle::Result WindowSurfaceVk::doDeferredAcquireNextImageWithUsableSwapchain(
 
     {
         // Note: TRACE_EVENT0 is put here instead of inside the function to workaround this issue:
-        // http://anglebug.com/2927
+        // http://anglebug.com/42261625
         ANGLE_TRACE_EVENT0("gpu.angle", "acquireNextSwapchainImage");
 
         // Get the next available swapchain image.

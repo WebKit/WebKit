@@ -387,7 +387,7 @@ angle::Result Buffer11::getData(const gl::Context *context, const uint8_t **outD
 {
     if (mSize == 0)
     {
-        // TODO(http://anglebug.com/2840): This ensures that we don't crash or assert in robust
+        // TODO(http://anglebug.com/42261543): This ensures that we don't crash or assert in robust
         // buffer access behavior mode if there are buffers without any data. However, technically
         // it should still be possible to draw, with fetches from this buffer returning zero.
         return angle::Result::Stop;

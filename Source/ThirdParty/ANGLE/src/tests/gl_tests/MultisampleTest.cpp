@@ -60,9 +60,9 @@ class MultisampleTestES32 : public MultisampleTest
 // Test point rendering on a multisampled surface.  GLES2 section 3.3.1.
 TEST_P(MultisampleTest, Point)
 {
-    // http://anglebug.com/3470
+    // http://anglebug.com/42262135
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsNVIDIAShield() && IsOpenGLES());
-    // http://anglebug.com/5727
+    // http://anglebug.com/42264264
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     constexpr char kPointsVS[] = R"(precision highp float;
@@ -121,7 +121,7 @@ void main()
 TEST_P(MultisampleTest, Line)
 {
     ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
-    // http://anglebug.com/5727
+    // http://anglebug.com/42264264
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
@@ -167,9 +167,9 @@ TEST_P(MultisampleTest, Line)
 // Test polygon rendering on a multisampled surface.  GLES2 section 3.5.3.
 TEST_P(MultisampleTest, Triangle)
 {
-    // http://anglebug.com/3470
+    // http://anglebug.com/42262135
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsNVIDIAShield() && IsOpenGLES());
-    // http://anglebug.com/5727
+    // http://anglebug.com/42264264
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
@@ -210,11 +210,11 @@ TEST_P(MultisampleTest, Triangle)
 TEST_P(MultisampleTest, ContentPresevedAfterInterruption)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_rgb8_rgba8"));
-    // http://anglebug.com/3470
+    // http://anglebug.com/42262135
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsNVIDIAShield() && IsOpenGLES());
-    // http://anglebug.com/4609
+    // http://anglebug.com/42263216
     ANGLE_SKIP_TEST_IF(IsD3D11());
-    // http://anglebug.com/5727
+    // http://anglebug.com/42264264
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
@@ -291,7 +291,7 @@ TEST_P(MultisampleTest, ContentPresevedAfterInterruption)
 // Test that alpha to coverage is enabled works properly along with early fragment test.
 TEST_P(MultisampleTest, AlphaToSampleCoverage)
 {
-    // http://anglebug.com/5727
+    // http://anglebug.com/42264264
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     constexpr char kFS[] =

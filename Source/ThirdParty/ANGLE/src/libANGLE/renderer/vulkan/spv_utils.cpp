@@ -592,7 +592,7 @@ void AssignTransformFeedbackQualifiers(const gl::ProgramExecutable &programExecu
         // Note: capturing individual array elements using the Vulkan transform feedback extension
         // is currently not supported due to limitations in the extension.
         // ANGLE supports capturing the whole array.
-        // http://anglebug.com/4140
+        // http://anglebug.com/42262773
         if (usesExtension && tfVarying.isArray() && tfVarying.arrayIndex != GL_INVALID_INDEX)
         {
             continue;
@@ -718,7 +718,7 @@ void AssignInterfaceBlockBindings(const SpvSourceOptions &options,
     {
         const gl::InterfaceBlock &block = blocks[blockIndex];
 
-        // TODO: http://anglebug.com/4523: All blocks should be active
+        // TODO: http://anglebug.com/42263134: All blocks should be active
         const gl::ShaderBitSet activeShaders =
             programExecutable.getLinkedShaderStages() & block.activeShaders();
         if (activeShaders.none())
@@ -776,7 +776,7 @@ void AssignImageBindings(const SpvSourceOptions &options,
     {
         const gl::LinkedUniform &imageUniform = uniforms[uniformIndex];
 
-        // TODO: http://anglebug.com/4523: All uniforms should be active
+        // TODO: http://anglebug.com/42263134: All uniforms should be active
         const gl::ShaderBitSet activeShaders =
             programExecutable.getLinkedShaderStages() & imageUniform.activeShaders();
         if (activeShaders.none())
@@ -833,7 +833,7 @@ void AssignTextureBindings(const SpvSourceOptions &options,
     {
         const gl::LinkedUniform &samplerUniform = uniforms[uniformIndex];
 
-        // TODO: http://anglebug.com/4523: All uniforms should be active
+        // TODO: http://anglebug.com/42263134: All uniforms should be active
         const gl::ShaderBitSet activeShaders =
             programExecutable.getLinkedShaderStages() & samplerUniform.activeShaders();
         if (activeShaders.none())

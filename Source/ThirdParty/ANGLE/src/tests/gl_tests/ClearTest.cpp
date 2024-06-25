@@ -167,6 +167,19 @@ class ClearTestRGB : public ANGLETest<>
 class ClearTestRGB_ES3 : public ClearTestRGB
 {};
 
+class ClearTextureEXTTest : public ANGLETest<>
+{
+  protected:
+    ClearTextureEXTTest()
+    {
+        setWindowWidth(128);
+        setWindowHeight(128);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+    }
+};
+
 // Each int parameter can have three values: don't clear, clear, or masked clear.  The bool
 // parameter controls scissor.
 using MaskedScissoredClearVariationsTestParams =
@@ -499,10 +512,10 @@ TEST_P(ClearTest, TextureUploadAndRGBA8Framebuffer)
 // have a correct behavior after.
 TEST_P(ClearTest, ChangeFramebufferAttachmentFromRGBAtoRGB)
 {
-    // http://anglebug.com/2689
+    // http://anglebug.com/40096508
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsAdreno() && IsOpenGLES());
 
-    // http://anglebug.com/5165
+    // http://anglebug.com/40644765
     ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL() && IsIntel());
 
     ANGLE_GL_PROGRAM(program, angle::essl1_shaders::vs::Simple(),
@@ -879,7 +892,7 @@ TEST_P(ClearTestES3, ClearMultipleAttachmentsFollowedBySpecificOne)
 // done in a single render pass.
 TEST_P(ClearTestES3, ClearMultipleAttachmentsIndividually)
 {
-    // http://anglebug.com/4855
+    // http://anglebug.com/40096714
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     constexpr uint32_t kSize             = 16;
@@ -1120,10 +1133,10 @@ TEST_P(ClearTestES3, MaskedIndexedClearMultipleAttachments)
 // and the relevant internal shaders.
 TEST_P(ClearTestES3, MaskedClearHeterogeneousAttachments)
 {
-    // http://anglebug.com/4855
+    // http://anglebug.com/40096714
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
-    // TODO(anglebug.com/5491)
+    // TODO(anglebug.com/42264029)
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     constexpr uint32_t kSize                              = 16;
@@ -1239,16 +1252,16 @@ TEST_P(ClearTestES3, MaskedClearHeterogeneousAttachments)
 // and the relevant internal shaders.
 TEST_P(ClearTestES3, ScissoredClearHeterogeneousAttachments)
 {
-    // http://anglebug.com/4855
+    // http://anglebug.com/40096714
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
-    // http://anglebug.com/5116
+    // http://anglebug.com/42263682
     ANGLE_SKIP_TEST_IF(IsWindows() && (IsOpenGL() || IsD3D11()) && IsAMD());
 
-    // http://anglebug.com/5237
+    // http://anglebug.com/42263790
     ANGLE_SKIP_TEST_IF(IsWindows7() && IsD3D11() && IsNVIDIA());
 
-    // TODO(anglebug.com/5491)
+    // TODO(anglebug.com/42264029)
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     constexpr uint32_t kSize                              = 16;
@@ -1515,7 +1528,7 @@ TEST_P(ClearTestES3, MixedSRGBClear)
 // flush or finish after ClearBufferfv or each draw.
 TEST_P(ClearTestES3, RepeatedClear)
 {
-    // Fails on 431.02 driver. http://anglebug.com/3748
+    // Fails on 431.02 driver. http://anglebug.com/40644697
     ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsVulkan());
     ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
@@ -1704,7 +1717,7 @@ void MaskedScissoredClearTestBase::maskedScissoredColorDepthStencilClear(
     const MaskedScissoredClearVariationsTestParams &params)
 {
     // Flaky on Android Nexus 5x and Pixel 2, possible Qualcomm driver bug.
-    // TODO(jmadill): Re-enable when possible. http://anglebug.com/2548
+    // TODO(jmadill): Re-enable when possible. http://anglebug.com/42261257
     ANGLE_SKIP_TEST_IF(IsOpenGLES() && IsAndroid());
 
     const int w      = getWindowWidth();
@@ -2085,7 +2098,7 @@ TEST_P(ClearTest, DrawThenInceptionScissorClears)
 // assert.
 TEST_P(ClearTestES3, ClearDisabledNonZeroAttachmentNoAssert)
 {
-    // http://anglebug.com/4612
+    // http://anglebug.com/40644728
     ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
 
     GLFramebuffer fb;
@@ -2117,9 +2130,9 @@ TEST_P(ClearTestES3, ClearDisabledNonZeroAttachmentNoAssert)
 // stencil works.
 TEST_P(ClearTestES3, ClearMaxAttachments)
 {
-    // http://anglebug.com/4612
+    // http://anglebug.com/40644728
     ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
-    // http://anglebug.com/5397
+    // http://anglebug.com/42263935
     ANGLE_SKIP_TEST_IF(IsAMD() && IsD3D11());
 
     constexpr GLsizei kSize = 16;
@@ -2206,7 +2219,7 @@ TEST_P(ClearTestES3, ClearMaxAttachments)
 // stencil after a draw call works.
 TEST_P(ClearTestES3, ClearMaxAttachmentsAfterDraw)
 {
-    // http://anglebug.com/4612
+    // http://anglebug.com/40644728
     ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
 
     constexpr GLsizei kSize = 16;
@@ -2388,7 +2401,7 @@ TEST_P(ClearTestES3, ClearThenMixedMaskedClear)
 // Test that clearing stencil after a draw call works.
 TEST_P(ClearTestES3, ClearStencilAfterDraw)
 {
-    // http://anglebug.com/4612
+    // http://anglebug.com/40644728
     ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
 
     constexpr GLsizei kSize = 16;
@@ -2493,7 +2506,7 @@ TEST_P(ClearTestES3, ClearStencilAfterDraw)
 // Test that mid-render pass clearing of mixed used and unused color attachments works.
 TEST_P(ClearTestES3, MixedRenderPassClearMixedUsedUnusedAttachments)
 {
-    // http://anglebug.com/4612
+    // http://anglebug.com/40644728
     ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
 
     constexpr GLsizei kSize = 16;
@@ -3545,6 +3558,295 @@ TEST_P(ClearTestES3, RepeatedStencilClearWithBlitAfterClearAndDrawInBetween)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test basic functionality of clearing a 2D texture with GL_EXT_clear_texture
+TEST_P(ClearTextureEXTTest, Clear2D)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clear_texture"));
+
+    // Create a 16x16 texture with no data.
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Clear the entire texture
+    glClearTexImageEXT(tex, 0, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Clear each corner to a different color
+    glClearTexSubImageEXT(tex, 0, 0, 0, 0, 8, 8, 1, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glClearTexSubImageEXT(tex, 0, 8, 0, 0, 8, 8, 1, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::blue);
+    glClearTexSubImageEXT(tex, 0, 0, 8, 0, 8, 8, 1, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::cyan);
+    glClearTexSubImageEXT(tex, 0, 8, 8, 0, 8, 8, 1, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::yellow);
+
+    EXPECT_PIXEL_COLOR_EQ(4, 4, GLColor::transparentBlack);
+    EXPECT_PIXEL_COLOR_EQ(12, 4, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(4, 12, GLColor::cyan);
+    EXPECT_PIXEL_COLOR_EQ(12, 12, GLColor::yellow);
+}
+
+// Test that luminance alpha textures are cleared correctly with GL_EXT_clear_texture. Regression
+// test for emulated luma formats.
+TEST_P(ClearTextureEXTTest, Luma)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clear_texture"));
+
+    // Create a 16x16 texture with no data.
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+
+    // Clear the entire texture to transparent black and test
+    GLubyte luminmanceClearValue = 192;
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, 16, 16, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE,
+                 nullptr);
+    glClearTexImageEXT(tex, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, &luminmanceClearValue);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(
+        0, 0, GLColor(luminmanceClearValue, luminmanceClearValue, luminmanceClearValue, 255));
+
+    GLubyte lumaClearValue[2] = {128, 64};
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, 16, 16, 0, GL_LUMINANCE_ALPHA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glClearTexImageEXT(tex, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, &lumaClearValue);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(
+        0, 0, GLColor(lumaClearValue[0], lumaClearValue[0], lumaClearValue[0], lumaClearValue[1]));
+}
+
+// Test that interleaving glClearTexImageEXT and glTexSubImage2D calls produces the correct texture
+// data
+TEST_P(ClearTextureEXTTest, InterleavedUploads)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clear_texture"));
+
+    // Create a 16x16 texture with no data.
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+
+    // Clear the entire texture to transparent black and test
+    glClearTexImageEXT(tex, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);
+
+    // TexSubImage a corner
+    std::vector<GLColor> redBlock(8 * 8, GLColor::red);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 8, 8, GL_RGBA, GL_UNSIGNED_BYTE, redBlock.data());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Clear and tex sub image together
+    glClearTexSubImageEXT(tex, 0, 0, 0, 0, 8, 16, 1, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::blue);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 8, 8, GL_RGBA, GL_UNSIGNED_BYTE, redBlock.data());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(0, (getWindowHeight() * 3) / 4, GLColor::blue);
+}
+
+// Test clearing integer textures with GL_EXT_clear_texture
+TEST_P(ClearTextureEXTTest, IntegerTexture)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clear_texture"));
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+
+    GLColor32I rgba32iTestValue(-128, 256, -512, 1024);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32I, 16, 16, 0, GL_RGBA_INTEGER, GL_INT, nullptr);
+    glClearTexImageEXT(tex, 0, GL_RGBA_INTEGER, GL_INT, &rgba32iTestValue);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_32I_COLOR(0, 0, rgba32iTestValue);
+
+    GLColor32UI rgba32uiTestValue(128, 256, 512, 1024);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32UI, 16, 16, 0, GL_RGBA_INTEGER, GL_UNSIGNED_INT,
+                 nullptr);
+    glClearTexImageEXT(tex, 0, GL_RGBA_INTEGER, GL_UNSIGNED_INT, &rgba32uiTestValue);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_32UI_COLOR(0, 0, rgba32uiTestValue);
+}
+
+// Test clearing depth textures with GL_EXT_clear_texture
+TEST_P(ClearTextureEXTTest, DepthTexture)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clear_texture"));
+
+    GLTexture colorTex;
+    glBindTexture(GL_TEXTURE_2D, colorTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glClearTexImageEXT(colorTex, 0, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::red);
+
+    GLTexture depthTex;
+    glBindTexture(GL_TEXTURE_2D, depthTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 16, 16, 0, GL_DEPTH_COMPONENT,
+                 GL_UNSIGNED_INT, nullptr);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTex, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTex, 0);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::Blue());
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
+    const GLuint depthClearZero = 0;
+    const GLuint depthClearOne  = std::numeric_limits<GLuint>::max();
+
+    // Draw doesn't pass the depth test. Texture has 0.0.
+    glClearTexImageEXT(depthTex, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, &depthClearZero);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Draw passes the depth test. Texture has 1.0.
+    glClearTexImageEXT(depthTex, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, &depthClearOne);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    // Left side passes, right side fails
+    glClearTexImageEXT(colorTex, 0, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::red);
+    glClearTexSubImageEXT(depthTex, 0, 0, 0, 0, 8, 16, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT,
+                          &depthClearZero);
+    glClearTexSubImageEXT(depthTex, 0, 8, 0, 0, 8, 16, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT,
+                          &depthClearOne);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+    EXPECT_PIXEL_COLOR_EQ(4, 8, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(12, 8, GLColor::blue);
+}
+
+// Test clearing different sets of cube map texture faces with GL_EXT_clear_texture
+TEST_P(ClearTextureEXTTest, ClearCubeFaces)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clear_texture"));
+
+    // Create a 16x16 texture with no data.
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
+    for (size_t i = 0; i < 6; i++)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, 16, 16, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, nullptr);
+    }
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    // Clear the entire texture
+    glClearTexImageEXT(tex, 0, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::red);
+    for (size_t i = 0; i < 6; i++)
+    {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, tex, 0);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    }
+
+    // Clear different ranges of faces to different colors:
+
+    // [0, 1] -> green
+    glClearTexSubImageEXT(tex, 0, 0, 0, 0, 16, 16, 2, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::green);
+
+    // [1, 2] -> blue (partially overlaps previous clear)
+    glClearTexSubImageEXT(tex, 0, 0, 0, 1, 16, 16, 2, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::blue);
+
+    // [3, 5] -> cyan
+    glClearTexSubImageEXT(tex, 0, 0, 0, 3, 16, 16, 3, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::cyan);
+
+    // Test the colors
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + 0,
+                           tex, 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + 1,
+                           tex, 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + 2,
+                           tex, 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + 3,
+                           tex, 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::cyan);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + 4,
+                           tex, 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::cyan);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + 5,
+                           tex, 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::cyan);
+}
+
+// Test validation of GL_EXT_clear_texture
+TEST_P(ClearTextureEXTTest, Validation)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clear_texture"));
+
+    // Texture 0 is invalid
+    glClearTexImageEXT(0, 0, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::red);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    GLTexture tex2D;
+    glBindTexture(GL_TEXTURE_2D, tex2D);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    // Out of bounds
+    glClearTexSubImageEXT(tex2D, 0, 1, 0, 0, 16, 16, 1, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::green);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glClearTexSubImageEXT(tex2D, 0, 0, 1, 0, 16, 16, 1, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::green);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glClearTexSubImageEXT(tex2D, 1, 0, 0, 0, 16, 16, 1, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::green);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glClearTexSubImageEXT(tex2D, 0, 0, 0, 1, 16, 16, 1, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::green);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glClearTexSubImageEXT(tex2D, 0, 0, 0, 0, 16, 16, 2, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::green);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // Negative offsets
+    glClearTexSubImageEXT(tex2D, 0, 4, 4, 0, -2, -2, 1, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::green);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    GLTexture texCube;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texCube);
+
+    // First and third cube faces are specified
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 0, 0, GL_RGBA, 16, 16, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 2, 0, GL_RGBA, 16, 16, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+
+    // Unspecified cube face
+    glClearTexSubImageEXT(texCube, 0, 0, 0, 1, 16, 16, 1, GL_RGBA, GL_UNSIGNED_BYTE,
+                          &GLColor::green);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // Cube range with an unspecified face
+    glClearTexSubImageEXT(texCube, 0, 0, 0, 0, 16, 16, 3, GL_RGBA, GL_UNSIGNED_BYTE,
+                          &GLColor::green);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     ClearTest,
     ES3_VULKAN().enable(Feature::ForceFallbackFormat),
@@ -3600,5 +3902,7 @@ ANGLE_INSTANTIATE_TEST(ClearTestRGB,
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ClearTestRGB_ES3);
 ANGLE_INSTANTIATE_TEST(ClearTestRGB_ES3, ES3_D3D11(), ES3_VULKAN(), ES3_METAL());
+
+ANGLE_INSTANTIATE_TEST_ES3(ClearTextureEXTTest);
 
 }  // anonymous namespace

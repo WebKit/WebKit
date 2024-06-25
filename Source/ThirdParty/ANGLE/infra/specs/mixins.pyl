@@ -89,6 +89,7 @@
                                                  'device_type': 's5e9925',
                                                  'os': 'Android'}}},
   'swarming_containment_auto': {'swarming': {'containment_type': 'AUTO'}},
+  'temp_band_below_30C': {'swarming': {'dimensions': {'temp_band': '<30'}}},
   'timeout_120m': {'swarming': {'hard_timeout': 7200, 'io_timeout': 300}},
   'timeout_15m': {'swarming': {'hard_timeout': 900, 'io_timeout': 900}},
   'win10_gce_gpu_pool': { 'swarming': { 'dimensions': { 'cpu': 'x86-64',

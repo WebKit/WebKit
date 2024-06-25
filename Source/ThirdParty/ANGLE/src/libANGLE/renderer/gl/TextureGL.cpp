@@ -156,6 +156,7 @@ TextureGL::TextureGL(const gl::TextureState &state, GLuint id)
       mAppliedSampler(state.getSamplerState()),
       mAppliedBaseLevel(state.getEffectiveBaseLevel()),
       mAppliedMaxLevel(state.getEffectiveMaxLevel()),
+      mAppliedDepthStencilTextureMode(state.getDepthStencilTextureMode()),
       mTextureID(id)
 {
     mLevelInfo.resize(GetMaxLevelInfoCountForTextureType(getType()));
@@ -1485,6 +1486,47 @@ angle::Result TextureGL::generateMipmap(const gl::Context *context)
     return angle::Result::Continue;
 }
 
+angle::Result TextureGL::clearImage(const gl::Context *context,
+                                    GLint level,
+                                    GLenum format,
+                                    GLenum type,
+                                    const uint8_t *data)
+{
+    ContextGL *contextGL              = GetImplAs<ContextGL>(context);
+    const FunctionsGL *functions      = GetFunctionsGL(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+
+    nativegl::TexSubImageFormat texSubImageFormat =
+        nativegl::GetTexSubImageFormat(functions, features, format, type);
+
+    ANGLE_GL_TRY(context, functions->clearTexImage(mTextureID, level, texSubImageFormat.format,
+                                                   texSubImageFormat.type, data));
+
+    contextGL->markWorkSubmitted();
+    return angle::Result::Continue;
+}
+
+angle::Result TextureGL::clearSubImage(const gl::Context *context,
+                                       GLint level,
+                                       const gl::Box &area,
+                                       GLenum format,
+                                       GLenum type,
+                                       const uint8_t *data)
+{
+    ContextGL *contextGL              = GetImplAs<ContextGL>(context);
+    const FunctionsGL *functions      = GetFunctionsGL(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+
+    nativegl::TexSubImageFormat texSubImageFormat =
+        nativegl::GetTexSubImageFormat(functions, features, format, type);
+    ANGLE_GL_TRY(context, functions->clearTexSubImage(
+                              mTextureID, level, area.x, area.y, area.z, area.width, area.height,
+                              area.depth, texSubImageFormat.format, texSubImageFormat.type, data));
+
+    contextGL->markWorkSubmitted();
+    return angle::Result::Continue;
+}
+
 angle::Result TextureGL::bindTexImage(const gl::Context *context, egl::Surface *surface)
 {
     ASSERT(getType() == gl::TextureType::_2D || getType() == gl::TextureType::Rectangle);
@@ -1574,74 +1616,98 @@ angle::Result TextureGL::syncState(const gl::Context *context,
         switch (dirtyBit)
         {
             case gl::Texture::DIRTY_BIT_MIN_FILTER:
-                mAppliedSampler.setMinFilter(mState.getSamplerState().getMinFilter());
-                ANGLE_GL_TRY(context, functions->texParameteri(
-                                          nativegl::GetTextureBindingTarget(getType()),
-                                          GL_TEXTURE_MIN_FILTER, mAppliedSampler.getMinFilter()));
+                if (mAppliedSampler.setMinFilter(mState.getSamplerState().getMinFilter()))
+                {
+                    ANGLE_GL_TRY(context,
+                                 functions->texParameteri(
+                                     nativegl::GetTextureBindingTarget(getType()),
+                                     GL_TEXTURE_MIN_FILTER, mAppliedSampler.getMinFilter()));
+                }
                 break;
             case gl::Texture::DIRTY_BIT_MAG_FILTER:
-                mAppliedSampler.setMagFilter(mState.getSamplerState().getMagFilter());
-                ANGLE_GL_TRY(context, functions->texParameteri(
-                                          nativegl::GetTextureBindingTarget(getType()),
-                                          GL_TEXTURE_MAG_FILTER, mAppliedSampler.getMagFilter()));
+                if (mAppliedSampler.setMagFilter(mState.getSamplerState().getMagFilter()))
+                {
+                    ANGLE_GL_TRY(context,
+                                 functions->texParameteri(
+                                     nativegl::GetTextureBindingTarget(getType()),
+                                     GL_TEXTURE_MAG_FILTER, mAppliedSampler.getMagFilter()));
+                }
                 break;
             case gl::Texture::DIRTY_BIT_WRAP_S:
-                mAppliedSampler.setWrapS(mState.getSamplerState().getWrapS());
-                ANGLE_GL_TRY(context, functions->texParameteri(
-                                          nativegl::GetTextureBindingTarget(getType()),
-                                          GL_TEXTURE_WRAP_S, mAppliedSampler.getWrapS()));
+                if (mAppliedSampler.setWrapS(mState.getSamplerState().getWrapS()))
+                {
+                    ANGLE_GL_TRY(context, functions->texParameteri(
+                                              nativegl::GetTextureBindingTarget(getType()),
+                                              GL_TEXTURE_WRAP_S, mAppliedSampler.getWrapS()));
+                }
                 break;
             case gl::Texture::DIRTY_BIT_WRAP_T:
-                mAppliedSampler.setWrapT(mState.getSamplerState().getWrapT());
-                ANGLE_GL_TRY(context, functions->texParameteri(
-                                          nativegl::GetTextureBindingTarget(getType()),
-                                          GL_TEXTURE_WRAP_T, mAppliedSampler.getWrapT()));
+                if (mAppliedSampler.setWrapT(mState.getSamplerState().getWrapT()))
+                {
+                    ANGLE_GL_TRY(context, functions->texParameteri(
+                                              nativegl::GetTextureBindingTarget(getType()),
+                                              GL_TEXTURE_WRAP_T, mAppliedSampler.getWrapT()));
+                }
                 break;
             case gl::Texture::DIRTY_BIT_WRAP_R:
-                mAppliedSampler.setWrapR(mState.getSamplerState().getWrapR());
-                ANGLE_GL_TRY(context, functions->texParameteri(
-                                          nativegl::GetTextureBindingTarget(getType()),
-                                          GL_TEXTURE_WRAP_R, mAppliedSampler.getWrapR()));
+                if (mAppliedSampler.setWrapR(mState.getSamplerState().getWrapR()))
+                {
+                    ANGLE_GL_TRY(context, functions->texParameteri(
+                                              nativegl::GetTextureBindingTarget(getType()),
+                                              GL_TEXTURE_WRAP_R, mAppliedSampler.getWrapR()));
+                }
                 break;
             case gl::Texture::DIRTY_BIT_MAX_ANISOTROPY:
-                mAppliedSampler.setMaxAnisotropy(mState.getSamplerState().getMaxAnisotropy());
-                ANGLE_GL_TRY(context,
-                             functions->texParameterf(nativegl::GetTextureBindingTarget(getType()),
-                                                      GL_TEXTURE_MAX_ANISOTROPY_EXT,
-                                                      mAppliedSampler.getMaxAnisotropy()));
+                if (mAppliedSampler.setMaxAnisotropy(mState.getSamplerState().getMaxAnisotropy()))
+                {
+                    ANGLE_GL_TRY(context, functions->texParameterf(
+                                              nativegl::GetTextureBindingTarget(getType()),
+                                              GL_TEXTURE_MAX_ANISOTROPY_EXT,
+                                              mAppliedSampler.getMaxAnisotropy()));
+                }
                 break;
             case gl::Texture::DIRTY_BIT_MIN_LOD:
-                mAppliedSampler.setMinLod(mState.getSamplerState().getMinLod());
-                ANGLE_GL_TRY(context, functions->texParameterf(
-                                          nativegl::GetTextureBindingTarget(getType()),
-                                          GL_TEXTURE_MIN_LOD, mAppliedSampler.getMinLod()));
+                if (mAppliedSampler.setMinLod(mState.getSamplerState().getMinLod()))
+                {
+                    ANGLE_GL_TRY(context, functions->texParameterf(
+                                              nativegl::GetTextureBindingTarget(getType()),
+                                              GL_TEXTURE_MIN_LOD, mAppliedSampler.getMinLod()));
+                }
                 break;
             case gl::Texture::DIRTY_BIT_MAX_LOD:
-                mAppliedSampler.setMaxLod(mState.getSamplerState().getMaxLod());
-                ANGLE_GL_TRY(context, functions->texParameterf(
-                                          nativegl::GetTextureBindingTarget(getType()),
-                                          GL_TEXTURE_MAX_LOD, mAppliedSampler.getMaxLod()));
+                if (mAppliedSampler.setMaxLod(mState.getSamplerState().getMaxLod()))
+                {
+                    ANGLE_GL_TRY(context, functions->texParameterf(
+                                              nativegl::GetTextureBindingTarget(getType()),
+                                              GL_TEXTURE_MAX_LOD, mAppliedSampler.getMaxLod()));
+                }
                 break;
             case gl::Texture::DIRTY_BIT_COMPARE_MODE:
-                mAppliedSampler.setCompareMode(mState.getSamplerState().getCompareMode());
-                ANGLE_GL_TRY(context,
-                             functions->texParameteri(nativegl::GetTextureBindingTarget(getType()),
-                                                      GL_TEXTURE_COMPARE_MODE,
-                                                      mAppliedSampler.getCompareMode()));
+                if (mAppliedSampler.setCompareMode(mState.getSamplerState().getCompareMode()))
+                {
+                    ANGLE_GL_TRY(context,
+                                 functions->texParameteri(
+                                     nativegl::GetTextureBindingTarget(getType()),
+                                     GL_TEXTURE_COMPARE_MODE, mAppliedSampler.getCompareMode()));
+                }
                 break;
             case gl::Texture::DIRTY_BIT_COMPARE_FUNC:
-                mAppliedSampler.setCompareFunc(mState.getSamplerState().getCompareFunc());
-                ANGLE_GL_TRY(context,
-                             functions->texParameteri(nativegl::GetTextureBindingTarget(getType()),
-                                                      GL_TEXTURE_COMPARE_FUNC,
-                                                      mAppliedSampler.getCompareFunc()));
+                if (mAppliedSampler.setCompareFunc(mState.getSamplerState().getCompareFunc()))
+                {
+                    ANGLE_GL_TRY(context,
+                                 functions->texParameteri(
+                                     nativegl::GetTextureBindingTarget(getType()),
+                                     GL_TEXTURE_COMPARE_FUNC, mAppliedSampler.getCompareFunc()));
+                }
                 break;
             case gl::Texture::DIRTY_BIT_SRGB_DECODE:
-                mAppliedSampler.setSRGBDecode(mState.getSamplerState().getSRGBDecode());
-                ANGLE_GL_TRY(context,
-                             functions->texParameteri(nativegl::GetTextureBindingTarget(getType()),
-                                                      GL_TEXTURE_SRGB_DECODE_EXT,
-                                                      mAppliedSampler.getSRGBDecode()));
+                if (mAppliedSampler.setSRGBDecode(mState.getSamplerState().getSRGBDecode()))
+                {
+                    ANGLE_GL_TRY(context,
+                                 functions->texParameteri(
+                                     nativegl::GetTextureBindingTarget(getType()),
+                                     GL_TEXTURE_SRGB_DECODE_EXT, mAppliedSampler.getSRGBDecode()));
+                }
                 break;
             case gl::Texture::DIRTY_BIT_BORDER_COLOR:
             {
@@ -1674,30 +1740,32 @@ angle::Result TextureGL::syncState(const gl::Context *context,
                     borderColor.colorF.green = borderColor.colorF.alpha;
                 }
 
-                mAppliedSampler.setBorderColor(borderColor);
-                switch (borderColor.type)
+                if (mAppliedSampler.setBorderColor(borderColor))
                 {
-                    case angle::ColorGeneric::Type::Float:
-                        ANGLE_GL_TRY(context,
-                                     functions->texParameterfv(
-                                         nativegl::GetTextureBindingTarget(getType()),
-                                         GL_TEXTURE_BORDER_COLOR, &borderColor.colorF.red));
-                        break;
-                    case angle::ColorGeneric::Type::Int:
-                        ANGLE_GL_TRY(context,
-                                     functions->texParameterIiv(
-                                         nativegl::GetTextureBindingTarget(getType()),
-                                         GL_TEXTURE_BORDER_COLOR, &borderColor.colorI.red));
-                        break;
-                    case angle::ColorGeneric::Type::UInt:
-                        ANGLE_GL_TRY(context,
-                                     functions->texParameterIuiv(
-                                         nativegl::GetTextureBindingTarget(getType()),
-                                         GL_TEXTURE_BORDER_COLOR, &borderColor.colorUI.red));
-                        break;
-                    default:
-                        UNREACHABLE();
-                        break;
+                    switch (borderColor.type)
+                    {
+                        case angle::ColorGeneric::Type::Float:
+                            ANGLE_GL_TRY(context,
+                                         functions->texParameterfv(
+                                             nativegl::GetTextureBindingTarget(getType()),
+                                             GL_TEXTURE_BORDER_COLOR, &borderColor.colorF.red));
+                            break;
+                        case angle::ColorGeneric::Type::Int:
+                            ANGLE_GL_TRY(context,
+                                         functions->texParameterIiv(
+                                             nativegl::GetTextureBindingTarget(getType()),
+                                             GL_TEXTURE_BORDER_COLOR, &borderColor.colorI.red));
+                            break;
+                        case angle::ColorGeneric::Type::UInt:
+                            ANGLE_GL_TRY(context,
+                                         functions->texParameterIuiv(
+                                             nativegl::GetTextureBindingTarget(getType()),
+                                             GL_TEXTURE_BORDER_COLOR, &borderColor.colorUI.red));
+                            break;
+                        default:
+                            UNREACHABLE();
+                            break;
+                    }
                 }
                 break;
             }
@@ -1724,16 +1792,22 @@ angle::Result TextureGL::syncState(const gl::Context *context,
                                                   &mAppliedSwizzle.swizzleAlpha));
                 break;
             case gl::Texture::DIRTY_BIT_BASE_LEVEL:
-                mAppliedBaseLevel = mState.getEffectiveBaseLevel();
-                ANGLE_GL_TRY(context,
-                             functions->texParameteri(nativegl::GetTextureBindingTarget(getType()),
-                                                      GL_TEXTURE_BASE_LEVEL, mAppliedBaseLevel));
+                if (mAppliedBaseLevel != mState.getEffectiveBaseLevel())
+                {
+                    mAppliedBaseLevel = mState.getEffectiveBaseLevel();
+                    ANGLE_GL_TRY(context, functions->texParameteri(
+                                              nativegl::GetTextureBindingTarget(getType()),
+                                              GL_TEXTURE_BASE_LEVEL, mAppliedBaseLevel));
+                }
                 break;
             case gl::Texture::DIRTY_BIT_MAX_LEVEL:
-                mAppliedMaxLevel = mState.getEffectiveMaxLevel();
-                ANGLE_GL_TRY(context,
-                             functions->texParameteri(nativegl::GetTextureBindingTarget(getType()),
-                                                      GL_TEXTURE_MAX_LEVEL, mAppliedMaxLevel));
+                if (mAppliedMaxLevel != mState.getEffectiveMaxLevel())
+                {
+                    mAppliedMaxLevel = mState.getEffectiveMaxLevel();
+                    ANGLE_GL_TRY(context, functions->texParameteri(
+                                              nativegl::GetTextureBindingTarget(getType()),
+                                              GL_TEXTURE_MAX_LEVEL, mAppliedMaxLevel));
+                }
                 break;
             case gl::Texture::DIRTY_BIT_DEPTH_STENCIL_TEXTURE_MODE:
             {
@@ -1747,9 +1821,14 @@ angle::Result TextureGL::syncState(const gl::Context *context,
                 const GLenum mode = (getBaseLevelInfo().sourceFormat != GL_DEPTH_STENCIL)
                                         ? GL_DEPTH_COMPONENT
                                         : mState.getDepthStencilTextureMode();
-                ANGLE_GL_TRY(context,
-                             functions->texParameteri(nativegl::GetTextureBindingTarget(getType()),
-                                                      GL_DEPTH_STENCIL_TEXTURE_MODE, mode));
+
+                if (mAppliedDepthStencilTextureMode != mode)
+                {
+                    mAppliedDepthStencilTextureMode = mode;
+                    ANGLE_GL_TRY(context, functions->texParameteri(
+                                              nativegl::GetTextureBindingTarget(getType()),
+                                              GL_DEPTH_STENCIL_TEXTURE_MODE, mode));
+                }
                 break;
             }
             case gl::Texture::DIRTY_BIT_USAGE:
@@ -1966,7 +2045,7 @@ angle::Result TextureGL::syncTextureStateSwizzle(const gl::Context *context,
                                                  const FunctionsGL *functions,
                                                  GLenum name,
                                                  GLenum value,
-                                                 GLenum *outValue)
+                                                 GLenum *currentlyAppliedValue)
 {
     const LevelInfoGL &levelInfo = getBaseLevelInfo();
     GLenum resultSwizzle         = value;
@@ -2077,8 +2156,11 @@ angle::Result TextureGL::syncTextureStateSwizzle(const gl::Context *context,
         }
     }
 
-    *outValue = resultSwizzle;
-    ANGLE_GL_TRY(context, functions->texParameteri(ToGLenum(getType()), name, resultSwizzle));
+    if (*currentlyAppliedValue != resultSwizzle)
+    {
+        *currentlyAppliedValue = resultSwizzle;
+        ANGLE_GL_TRY(context, functions->texParameteri(ToGLenum(getType()), name, resultSwizzle));
+    }
 
     return angle::Result::Continue;
 }

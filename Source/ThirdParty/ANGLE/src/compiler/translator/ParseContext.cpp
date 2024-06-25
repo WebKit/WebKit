@@ -2311,14 +2311,14 @@ void TParseContext::checkPixelLocalStorageBindingIsValid(const TSourceLoc &locat
     if (type.isArray())
     {
         // PLS is not allowed in arrays.
-        // TODO(anglebug.com/7279): Consider allowing this once more backends are implemented.
+        // TODO(anglebug.com/40096838): Consider allowing this once more backends are implemented.
         error(location, "pixel local storage handles cannot be aggregated in arrays", "array");
     }
     else if (layoutQualifier.binding < 0)
     {
         error(location, "pixel local storage requires a binding index", "layout qualifier");
     }
-    // TODO(anglebug.com/7279):
+    // TODO(anglebug.com/40096838):
     // else if (binding >= GL_MAX_LOCAL_STORAGE_PLANES_ANGLE)
     // {
     // }

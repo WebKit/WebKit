@@ -146,6 +146,18 @@ class VulkanPerformanceCounterTest : public ANGLETest<>
 
     static constexpr GLsizei kOpsTestSize = 16;
 
+    void testSetUp() override
+    {
+        glGenPerfMonitorsAMD(1, &monitor);
+        glBeginPerfMonitorAMD(monitor);
+    }
+
+    void testTearDown() override
+    {
+        glEndPerfMonitorAMD(monitor);
+        glDeletePerfMonitorsAMD(1, &monitor);
+    }
+
     void setupForColorOpsTest(GLFramebuffer *framebuffer, GLTexture *texture)
     {
         // Setup the framebuffer
@@ -416,6 +428,7 @@ class VulkanPerformanceCounterTest : public ANGLETest<>
                !isFeatureEnabled(Feature::DisableDepthStencilResolveThroughAttachment);
     }
 
+    GLuint monitor;
     CounterNameToIndexMap mIndexMap;
 };
 
@@ -2914,7 +2927,7 @@ TEST_P(VulkanPerformanceCounterTest, DepthStencilInvalidateDrawDisable)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
 
-    // http://anglebug.com/6857
+    // http://anglebug.com/40096809
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsVulkan());
 
     angle::VulkanPerfCounters expected;
@@ -4228,7 +4241,7 @@ TEST_P(VulkanPerformanceCounterTest, DepthStencilTextureClearAndLoad)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
 
-    // TODO: http://anglebug.com/5329 Flaky test
+    // TODO: http://anglebug.com/42263870 Flaky test
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
 
     uint64_t expectedDepthClearCount   = getPerfCounters().depthLoadOpClears + 1;
@@ -4341,7 +4354,7 @@ TEST_P(VulkanPerformanceCounterTest, RenderToTextureDepthStencilTextureShouldNot
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
 
-    // http://anglebug.com/5083
+    // http://anglebug.com/42263651
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
 
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture2"));
@@ -4458,9 +4471,9 @@ TEST_P(VulkanPerformanceCounterTest, RenderToTextureDepthStencilTextureShouldNot
 // depth/stencil data.
 TEST_P(VulkanPerformanceCounterTest, RenderToTextureDepthStencilRenderbufferShouldNotLoad)
 {
-    // http://anglebug.com/5083
+    // http://anglebug.com/42263651
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
-    // http://anglebug.com/5380
+    // http://anglebug.com/42263920
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsVulkan());
 
     // http://crbug.com/1134286
@@ -4587,7 +4600,7 @@ TEST_P(VulkanPerformanceCounterTest, RenderToTextureDepthStencilRenderbufferShou
 // invalidated.
 TEST_P(VulkanPerformanceCounterTest, RenderToTextureInvalidate)
 {
-    // http://anglebug.com/5083
+    // http://anglebug.com/42263651
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
 
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
@@ -4718,7 +4731,7 @@ TEST_P(VulkanPerformanceCounterTest, RenderToTextureInvalidate)
 // unused but not invalidated.
 TEST_P(VulkanPerformanceCounterTest, RenderToTextureUninitializedAndUnusedDepthStencil)
 {
-    // http://anglebug.com/5083
+    // http://anglebug.com/42263651
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
 
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
@@ -6567,7 +6580,7 @@ TEST_P(VulkanPerformanceCounterTest, DrawThenInceptionScissorClears)
     EXPECT_COLOR_OP_COUNTERS(getPerfCounters(), expected);
 
     // Expect rpCount+1, color(Clears+0, Loads+1, LoadNones+0, Stores+1, StoreNones+0)
-    // TODO: Optimize scissored clears to use loadOp = CLEAR. anglebug.com/5194
+    // TODO: Optimize scissored clears to use loadOp = CLEAR. anglebug.com/42263754
     setExpectedCountersForColorOps(getPerfCounters(), 1, 0, 1, 0, 1, 0, &expected);
 
     // Draw small concentric squares using scissor.

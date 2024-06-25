@@ -487,7 +487,7 @@ void ValidateAST::validateExpressionTypeBinary(TIntermBinary *node)
             if (!expectedType.isArray())
             {
                 // TODO: Validate matrix column selection and vector component selection.
-                // http://anglebug.com/2733
+                // http://anglebug.com/42261441
                 break;
             }
 
@@ -529,7 +529,7 @@ void ValidateAST::validateExpressionTypeBinary(TIntermBinary *node)
         }
         break;
         default:
-            // TODO: Validate other expressions. http://anglebug.com/2733
+            // TODO: Validate other expressions. http://anglebug.com/42261441
             break;
     }
 

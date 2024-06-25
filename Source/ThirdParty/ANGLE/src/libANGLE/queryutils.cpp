@@ -3300,6 +3300,16 @@ bool GetQueryParameterInfo(const State &glState,
             *numParams = 1;
             return true;
         }
+        case GL_BLEND_ADVANCED_COHERENT_KHR:
+        {
+            if (clientMajorVersion < 2 || !extensions.blendEquationAdvancedCoherentKHR)
+            {
+                return false;
+            }
+            *type      = GL_INT;
+            *numParams = 1;
+            return true;
+        }
         case GL_MAX_VIEWPORT_DIMS:
         {
             *type      = GL_INT;

@@ -188,7 +188,7 @@ inline bool GetGPUTestSystemInfo(SystemInfo **sysInfo)
             // high-performance GPU for tests.
             // We can call the generic GPU info collector which selects the
             // non-Intel GPU as the active one on dual-GPU machines.
-            // See https://anglebug.com/3701.
+            // See https://anglebug.com/40096612.
             if (IsMac())
             {
                 GetDualGPUInfo(sSystemInfo);

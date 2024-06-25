@@ -60,7 +60,7 @@ class VulkanDescriptorSetTest : public ANGLETest<>
 TEST_P(VulkanDescriptorSetTest, AtomicCounterReadLimitedDescriptorPool)
 {
     // Skipping test while we work on enabling atomic counter buffer support in th D3D renderer.
-    // http://anglebug.com/1729
+    // http://anglebug.com/42260658
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     // Must be before program creation to limit the descriptor pool sizes when creating the pipeline

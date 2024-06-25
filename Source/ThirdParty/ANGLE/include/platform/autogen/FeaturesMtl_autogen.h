@@ -231,7 +231,7 @@ struct FeaturesMtl : FeatureSetBase
         "multisampleColorFormatShaderReadWorkaround",
         FeatureCategory::MetalWorkarounds,
         "Add shaderRead usage to some multisampled texture formats",
-        &members, "http://anglebug.com/7049"
+        &members, "http://anglebug.com/42265518"
     };
 
     FeatureInfo copyIOSurfaceToNonIOSurfaceForReadOptimization = {
@@ -239,98 +239,98 @@ struct FeaturesMtl : FeatureSetBase
         FeatureCategory::MetalWorkarounds,
         "some GPUs are faster to read an IOSurface texture by first copying the texture to a "
         "non-IOSurface texture",
-        &members, "http://anglebug.com/7117 http://anglebug.com/7573"
+        &members, "http://anglebug.com/40096835 http://anglebug.com/40096850"
     };
 
     FeatureInfo copyTextureToBufferForReadOptimization = {
         "copyTextureToBufferForReadOptimization",
         FeatureCategory::MetalWorkarounds,
         "some GPUs are faster to read a texture by first copying the texture to a buffer",
-        &members, "http://anglebug.com/7117"
+        &members, "http://anglebug.com/40096835"
     };
 
     FeatureInfo limitMaxDrawBuffersForTesting = {
         "limitMaxDrawBuffersForTesting",
         FeatureCategory::MetalFeatures,
         "Used to check the backend works when the device's advertized limit is less than the code's limit",
-        &members, "http://anglebug.com/7280"
+        &members, "http://anglebug.com/42265754"
     };
 
     FeatureInfo limitMaxColorTargetBitsForTesting = {
         "limitMaxColorTargetBitsForTesting",
         FeatureCategory::MetalFeatures,
         "Metal iOS has a limit on the number of color target bits per pixel.",
-        &members, "http://anglebug.com/7280"
+        &members, "http://anglebug.com/42265754"
     };
 
     FeatureInfo preemptivelyStartProvokingVertexCommandBuffer = {
         "preemptivelyStartProvokingVertexCommandBuffer",
         FeatureCategory::MetalFeatures,
         "AMD Metal Drivers appear to have a bug this works around",
-        &members, "http://anglebug.com/7635"
+        &members, "http://anglebug.com/42266101"
     };
 
     FeatureInfo uploadDataToIosurfacesWithStagingBuffers = {
         "uploadDataToIosurfacesWithStagingBuffers",
         FeatureCategory::MetalWorkarounds,
         "When uploading data to IOSurface-backed textures, use a staging buffer.",
-        &members, "http://anglebug.com/7573"
+        &members, "http://anglebug.com/40096850"
     };
 
     FeatureInfo alwaysUseStagedBufferUpdates = {
         "alwaysUseStagedBufferUpdates",
         FeatureCategory::MetalFeatures,
         "Always update buffers by copying the data to a staging buffer and then blitting it to the actual buffer",
-        &members, "http://anglebug.com/7544"
+        &members, "http://anglebug.com/40644888"
     };
 
     FeatureInfo useShadowBuffersWhenAppropriate = {
         "useShadowBuffersWhenAppropriate",
         FeatureCategory::MetalFeatures,
         "On some architectures using a shadow buffer can be faster for certain size buffers",
-        &members, "http://anglebug.com/7544"
+        &members, "http://anglebug.com/40644888"
     };
 
     FeatureInfo alwaysUseManagedStorageModeForBuffers = {
         "alwaysUseManagedStorageModeForBuffers",
         FeatureCategory::MetalFeatures,
         "Metal buffers can be managed, shared, or private. Sometimes managed is fastest",
-        &members, "http://anglebug.com/7544"
+        &members, "http://anglebug.com/40644888"
     };
 
     FeatureInfo alwaysUseSharedStorageModeForBuffers = {
         "alwaysUseSharedStorageModeForBuffers",
         FeatureCategory::MetalFeatures,
         "Metal buffers can be managed, shared, or private. Sometimes shared is fastest",
-        &members, "http://anglebug.com/7544"
+        &members, "http://anglebug.com/40644888"
     };
 
     FeatureInfo preferCpuForBuffersubdata = {
         "preferCpuForBuffersubdata",
         FeatureCategory::MetalFeatures,
         "Makes bufferSubData always update via CPU",
-        &members, "http://anglebug.com/7544"
+        &members, "http://anglebug.com/40644888"
     };
 
     FeatureInfo disableProgrammableBlending = {
         "disableProgrammableBlending",
         FeatureCategory::MetalFeatures,
         "Disable programmable blending in order to test read_write pixel local storage textures",
-        &members, "http://anglebug.com/7279"
+        &members, "http://anglebug.com/40096838"
     };
 
     FeatureInfo disableRWTextureTier2Support = {
         "disableRWTextureTier2Support",
         FeatureCategory::MetalFeatures,
         "Disable tier2 read_write textures in order to test tier1 support",
-        &members, "http://anglebug.com/7279"
+        &members, "http://anglebug.com/40096838"
     };
 
     FeatureInfo disableRasterOrderGroups = {
         "disableRasterOrderGroups",
         FeatureCategory::MetalFeatures,
         "Disable raster order groups in order to test pixel local storage memory barriers",
-        &members, "http://anglebug.com/7279"
+        &members, "http://anglebug.com/40096838"
     };
 
     FeatureInfo enableInMemoryMtlLibraryCache = {
@@ -358,7 +358,7 @@ struct FeaturesMtl : FeatureSetBase
         "disableStagedInitializationOfPackedTextureFormats",
         FeatureCategory::MetalFeatures,
         "Staged GPU upload of some packed texture formats such as RGB9_E5 fail on Intel GPUs.",
-        &members, "http://anglebug.com/8092"
+        &members, "http://anglebug.com/40644905"
     };
 
     FeatureInfo compileMetalShaders = {
@@ -397,7 +397,7 @@ struct FeaturesMtl : FeatureSetBase
         "disableMetalOnNvidia",
         FeatureCategory::MetalFeatures,
         "NVIDIA GPUs are unsupported due to scarcity of the hardware.",
-        &members, "http://anglebug.com/8170"
+        &members, "http://anglebug.com/42266609"
     };
 
     FeatureInfo flushAfterStreamVertexData = {
@@ -411,21 +411,21 @@ struct FeaturesMtl : FeatureSetBase
         "requireGpuFamily2",
         FeatureCategory::MetalFeatures,
         "Mac GPU Family 2 is required to support all the features of OpenGL ES 2.0",
-        &members, "http://anglebug.com/7952"
+        &members, "http://anglebug.com/40096869"
     };
 
     FeatureInfo requireMsl21 = {
         "requireMsl21",
         FeatureCategory::MetalFeatures,
         "MSL 2.1 is required to support all the features of OpenGL ES 2.0",
-        &members, "http://anglebug.com/8258"
+        &members, "http://anglebug.com/42266694"
     };
 
     FeatureInfo rescopeGlobalVariables = {
         "rescopeGlobalVariables",
         FeatureCategory::MetalFeatures,
         "Rescope global variables that are only used in one function to be function-local.",
-        &members, "http://anglebug.com/8311"
+        &members, "http://anglebug.com/42266744"
     };
 
     FeatureInfo alwaysResolveMultisampleRenderBuffers = {

@@ -1896,6 +1896,58 @@ angle::Result Texture::generateMipmap(Context *context)
     return angle::Result::Continue;
 }
 
+angle::Result Texture::clearImage(Context *context,
+                                  GLint level,
+                                  GLenum format,
+                                  GLenum type,
+                                  const uint8_t *data)
+{
+    ANGLE_TRY(mTexture->clearImage(context, level, format, type, data));
+
+    ANGLE_TRY(handleMipmapGenerationHint(context, level));
+
+    ImageIndexIterator it = ImageIndexIterator::MakeGeneric(
+        mState.mType, level, level + 1, ImageIndex::kEntireLevel, ImageIndex::kEntireLevel);
+    while (it.hasNext())
+    {
+        const ImageIndex index = it.next();
+        setInitState(GL_NONE, index, InitState::Initialized);
+    }
+
+    onStateChange(angle::SubjectMessage::ContentsChanged);
+
+    return angle::Result::Continue;
+}
+
+angle::Result Texture::clearSubImage(Context *context,
+                                     GLint level,
+                                     const Box &area,
+                                     GLenum format,
+                                     GLenum type,
+                                     const uint8_t *data)
+{
+    const ImageIndexIterator allImagesIterator = ImageIndexIterator::MakeGeneric(
+        mState.mType, level, level + 1, area.z, area.z + area.depth);
+
+    ImageIndexIterator initImagesIterator = allImagesIterator;
+    while (initImagesIterator.hasNext())
+    {
+        const ImageIndex index     = initImagesIterator.next();
+        const Box cubeFlattenedBox = index.getType() == TextureType::CubeMap
+                                         ? Box(area.x, area.y, 0, area.width, area.height, 1)
+                                         : area;
+        ANGLE_TRY(ensureSubImageInitialized(context, index, cubeFlattenedBox));
+    }
+
+    ANGLE_TRY(mTexture->clearSubImage(context, level, area, format, type, data));
+
+    ANGLE_TRY(handleMipmapGenerationHint(context, level));
+
+    onStateChange(angle::SubjectMessage::ContentsChanged);
+
+    return angle::Result::Continue;
+}
+
 angle::Result Texture::bindTexImageFromSurface(Context *context, egl::Surface *surface)
 {
     ASSERT(surface);
@@ -1978,7 +2030,7 @@ angle::Result Texture::releaseTexImageInternal(Context *context)
     {
         // Notify the surface
         egl::Error eglErr = mBoundSurface->releaseTexImageFromTexture(context);
-        // TODO(jmadill): Remove this once refactor is complete. http://anglebug.com/3041
+        // TODO(jmadill): Remove this once refactor is complete. http://anglebug.com/42261727
         if (eglErr.isError())
         {
             context->handleError(GL_INVALID_OPERATION, "Error releasing tex image from texture",

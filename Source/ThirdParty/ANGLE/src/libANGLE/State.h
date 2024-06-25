@@ -179,8 +179,9 @@ enum ExtendedDirtyBitType
     EXTENDED_DIRTY_BIT_SHADING_RATE,                  // QCOM_shading_rate
     EXTENDED_DIRTY_BIT_LOGIC_OP_ENABLED,              // ANGLE_logic_op
     EXTENDED_DIRTY_BIT_LOGIC_OP,                      // ANGLE_logic_op
-    EXTENDED_DIRTY_BIT_FOVEATED_RENDERING,            // QCOM_framebuffer_foveated/QCOM_texture_foveated
+    EXTENDED_DIRTY_BIT_BLEND_ADVANCED_COHERENT,       // KHR_blend_operation_advanced_coherent
     EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE,   // ANGLE_variable_rasterization_rate_metal
+
     EXTENDED_DIRTY_BIT_INVALID,
     EXTENDED_DIRTY_BIT_MAX = EXTENDED_DIRTY_BIT_INVALID,
 };
@@ -405,6 +406,10 @@ class PrivateState : angle::NonCopyable
     bool isDitherEnabled() const { return mRasterizer.dither; }
     void setDither(bool enabled);
 
+    // GL_KHR_blend_equation_advanced_coherent
+    void setBlendAdvancedCoherent(bool enabled);
+    bool isBlendAdvancedCoherentEnabled() const { return mBlendAdvancedCoherent; }
+
     // GL_CHROMIUM_bind_generates_resource
     bool isBindGeneratesResourceEnabled() const { return mBindGeneratesResource; }
 
@@ -562,6 +567,10 @@ class PrivateState : angle::NonCopyable
     void setVertexAttribu(GLuint index, const GLuint values[4]);
     void setVertexAttribi(GLuint index, const GLint values[4]);
 
+    // QCOM_tiled_rendering
+    void setTiledRendering(bool tiledRendering) { mTiledRendering = tiledRendering; }
+    bool isTiledRendering() const { return mTiledRendering; }
+
     // Debug state
     const Debug &getDebug() const { return mDebug; }
     Debug &getDebug() { return mDebug; }
@@ -601,6 +610,9 @@ class PrivateState : angle::NonCopyable
 
     const state::DirtyObjects &getDirtyObjects() const { return mDirtyObjects; }
     void clearDirtyObjects() { mDirtyObjects.reset(); }
+
+    void setPerfMonitorActive(bool active) { mIsPerfMonitorActive = active; }
+    bool isPerfMonitorActive() const { return mIsPerfMonitorActive; }
 
   private:
     bool hasConstantColor(GLenum sourceRGB, GLenum destRGB) const;
@@ -676,6 +688,9 @@ class PrivateState : angle::NonCopyable
     bool mMultiSampling;
     bool mSampleAlphaToOne;
 
+    // GL_KHR_blend_equation_advanced_coherent
+    bool mBlendAdvancedCoherent;
+
     GLenum mCoverageModulation;
 
     // GL_EXT_sRGB_write_control
@@ -730,6 +745,12 @@ class PrivateState : angle::NonCopyable
 
     // GL_ARM_shader_framebuffer_fetch
     bool mFetchPerSample;
+
+    // Whether perf monitoring is enabled through GL_AMD_performance_monitor.
+    bool mIsPerfMonitorActive;
+
+    // QCOM_tiled_rendering
+    bool mTiledRendering;
 
     const bool mBindGeneratesResource;
     const bool mClientArraysEnabled;
@@ -1287,6 +1308,10 @@ class State : angle::NonCopyable
     }
     const ColorF &getBlendColor() const { return mPrivateState.getBlendColor(); }
     bool isStencilTestEnabled() const { return mPrivateState.isStencilTestEnabled(); }
+    bool isBlendAdvancedCoherentEnabled() const
+    {
+        return mPrivateState.isBlendAdvancedCoherentEnabled();
+    }
     bool isStencilWriteEnabled() const { return mPrivateState.isStencilWriteEnabled(); }
     GLint getStencilRef() const { return mPrivateState.getStencilRef(); }
     GLint getStencilBackRef() const { return mPrivateState.getStencilBackRef(); }
@@ -1408,6 +1433,7 @@ class State : angle::NonCopyable
     }
     bool isLogicOpEnabled() const { return mPrivateState.isLogicOpEnabled(); }
     LogicalOperation getLogicOp() const { return mPrivateState.getLogicOp(); }
+    bool isPerfMonitorActive() const { return mPrivateState.isPerfMonitorActive(); }
     const Debug &getDebug() const { return mPrivateState.getDebug(); }
     Debug &getDebug() { return mPrivateState.getDebug(); }
     bool getEnableFeature(GLenum feature) const { return mPrivateState.getEnableFeature(feature); }

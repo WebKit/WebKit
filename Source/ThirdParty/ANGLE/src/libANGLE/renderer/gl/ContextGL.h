@@ -279,6 +279,11 @@ class ContextGL : public ContextImpl
 
     void framebufferFetchBarrier() override;
 
+    angle::Result startTiling(const gl::Context *context,
+                              const gl::Rectangle &area,
+                              GLbitfield preserveMask) override;
+    angle::Result endTiling(const gl::Context *context, GLbitfield preserveMask) override;
+
     void setMaxShaderCompilerThreads(GLuint count) override;
 
     void invalidateTexture(gl::TextureType target) override;

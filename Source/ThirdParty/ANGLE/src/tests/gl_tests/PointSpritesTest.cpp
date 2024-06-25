@@ -396,7 +396,7 @@ void main(void)
 // spites.
 TEST_P(PointSpritesTest, PointSpriteAlternatingDrawTypes)
 {
-    // TODO(anglebug.com/4349): Investigate possible ARM driver bug.
+    // TODO(anglebug.com/42262976): Investigate possible ARM driver bug.
     ANGLE_SKIP_TEST_IF(IsFuchsia() && IsARM() && IsVulkan());
 
     GLfloat pointSizeRange[2] = {};
@@ -451,17 +451,17 @@ void main()
 TEST_P(PointSpritesTest, PointSizeAboveMaxIsClamped)
 {
     // Failed on NVIDIA GeForce GTX 1080 - no pixels from the point were detected in the
-    // framebuffer. http://anglebug.com/2111
+    // framebuffer. http://anglebug.com/42260857
     ANGLE_SKIP_TEST_IF(IsD3D9());
 
     // Failed on AMD OSX and Windows trybots - no pixels from the point were detected in the
-    // framebuffer. http://anglebug.com/2113
+    // framebuffer. http://anglebug.com/42260859
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
 
-    // TODO(anglebug.com/5491)
+    // TODO(anglebug.com/42264029)
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
-    // TODO(anglebug.com/6800)
+    // TODO(anglebug.com/40096805)
     ANGLE_SKIP_TEST_IF(IsMetal() && IsAMD());
 
     GLfloat pointSizeRange[2] = {};

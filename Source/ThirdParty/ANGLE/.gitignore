@@ -70,6 +70,7 @@
 /third_party/libunwind/src
 /third_party/llvm-build
 /third_party/llvm/src
+/third_party/lunarg-vulkantools/src
 /third_party/markupsafe
 /third_party/meson
 /third_party/nasm

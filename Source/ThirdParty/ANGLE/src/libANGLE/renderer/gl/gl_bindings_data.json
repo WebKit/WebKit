@@ -886,5 +886,11 @@
     "GL_MESA_framebuffer_flip_y":
     [
         "FramebufferParameteriMESA"
+    ],
+
+    "GL_QCOM_tiled_rendering":
+    [
+        "StartTilingQCOM",
+        "EndTilingQCOM"
     ]
 }

@@ -1845,7 +1845,9 @@ angle::Result UtilsVk::setupComputeProgram(
     ANGLE_TRY(renderer->getPipelineCache(contextVk, &pipelineCache));
     ANGLE_TRY(programAndPipelines->program.getOrCreateComputePipeline(
         contextVk, &programAndPipelines->pipelines, &pipelineCache, pipelineLayout.get(),
-        contextVk->getComputePipelineFlags(), PipelineSource::Utils, &pipeline, nullptr, nullptr));
+        vk::GetComputePipelineOptions(contextVk->pipelineRobustness(),
+                                      contextVk->pipelineProtectedAccess()),
+        PipelineSource::Utils, &pipeline, nullptr, nullptr));
     commandBufferHelper->retainResource(pipeline);
 
     vk::OutsideRenderPassCommandBuffer *commandBuffer = &commandBufferHelper->getCommandBuffer();
@@ -2596,7 +2598,7 @@ angle::Result UtilsVk::clearImage(ContextVk *contextVk,
     // cannot be taken if AHARDWAREBUFFER_USAGE_GPU_FRAMEBUFFER hasn't been specified, even if the
     // format is renderable.
     //
-    // http://anglebug.com/6151
+    // http://anglebug.com/42264676
     if (!vk::FormatHasNecessaryFeature(renderer, dstActualFormat.id, dst->getTilingMode(),
                                        VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT))
     {

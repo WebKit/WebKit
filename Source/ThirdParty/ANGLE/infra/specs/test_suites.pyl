@@ -146,7 +146,7 @@
       'angle_deqp_gles2_gl_tests': {
         'args': [
           '--use-angle=gl',
-          # Flaky crashes. See http://anglebug.com/6570
+          # Flaky crashes. See http://anglebug.com/42265067
           '--flaky-retries=2',
         ],
         'merge': {
@@ -184,7 +184,7 @@
       'angle_deqp_gles2_metal_tests': {
         'args': [
           '--use-angle=metal',
-          # Flaky crashes. http://anglebug.com/6570
+          # Flaky crashes. http://anglebug.com/42265067
           '--flaky-retries=2',
         ],
         'merge': {
@@ -435,7 +435,7 @@
       'angle_deqp_gles3_gl_tests': {
         'args': [
           '--use-angle=gl',
-          # Flaky crashes. See http://anglebug.com/6570
+          # Flaky crashes. See http://anglebug.com/42265067
           '--flaky-retries=2',
         ],
         'merge': {
@@ -476,7 +476,7 @@
       'angle_deqp_gles3_metal_tests': {
         'args': [
           '--use-angle=metal',
-          # Flaky crashes. http://anglebug.com/6570
+          # Flaky crashes. http://anglebug.com/42265067
           '--flaky-retries=2',
         ],
         'merge': {
@@ -1379,7 +1379,7 @@
       'angle_end2end_tests': {
         'args': [
           '--gtest_filter=*Vulkan_SwiftShader*',
-          # Flaky retries enabled on ASAN/TSAN. http://anglebug.com/7772
+          # Flaky retries enabled on ASAN/TSAN. http://anglebug.com/42266243
           '--flaky-retries=2',
         ],
         'use_isolated_scripts_api': True,

@@ -2266,7 +2266,7 @@ bool IsShortCircuitNeeded(TIntermOperator *node)
     // TODO: experiment with the performance of OpLogicalAnd/Or vs short-circuit based on the
     // complexity of the right hand side expression.  We could potentially only allow
     // OpLogicalAnd/Or if the right hand side is a constant or an access chain and have more complex
-    // expressions be placed inside an if block.  http://anglebug.com/4889
+    // expressions be placed inside an if block.  http://anglebug.com/40096715
     return node->getChildNode(1)->getAsTyped()->hasSideEffects();
 }
 
@@ -2782,12 +2782,12 @@ spirv::IdRef OutputSPIRVTraverser::visitOperator(TIntermOperator *node, spirv::I
             extendScalarToVector = false;
             break;
         case EOpPackDouble2x32:
-            // TODO: support desktop GLSL.  http://anglebug.com/6197
+            // TODO: support desktop GLSL.  http://anglebug.com/42264721
             UNIMPLEMENTED();
             break;
 
         case EOpUnpackDouble2x32:
-            // TODO: support desktop GLSL.  http://anglebug.com/6197
+            // TODO: support desktop GLSL.  http://anglebug.com/42264721
             UNIMPLEMENTED();
             extendScalarToVector = false;
             break;
@@ -2830,7 +2830,7 @@ spirv::IdRef OutputSPIRVTraverser::visitOperator(TIntermOperator *node, spirv::I
             break;
 
         case EOpFtransform:
-            // TODO: support desktop GLSL.  http://anglebug.com/6197
+            // TODO: support desktop GLSL.  http://anglebug.com/42264721
             UNIMPLEMENTED();
             break;
 
@@ -2933,14 +2933,14 @@ spirv::IdRef OutputSPIRVTraverser::visitOperator(TIntermOperator *node, spirv::I
         case EOpNoise2:
         case EOpNoise3:
         case EOpNoise4:
-            // TODO: support desktop GLSL.  http://anglebug.com/6197
+            // TODO: support desktop GLSL.  http://anglebug.com/42264721
             UNIMPLEMENTED();
             break;
 
         case EOpAnyInvocation:
         case EOpAllInvocations:
         case EOpAllInvocationsEqual:
-            // TODO: support desktop GLSL.  http://anglebug.com/6197
+            // TODO: support desktop GLSL.  http://anglebug.com/42264721
             break;
 
         default:
@@ -4139,7 +4139,7 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
     // OpImageSample*Dref* instructions produce a scalar.  EXT_shadow_samplers in ESSL introduces
     // similar functions but which return a scalar.
     //
-    // TODO: For desktop GLSL, the result must be turned into a vec4.  http://anglebug.com/6197.
+    // TODO: For desktop GLSL, the result must be turned into a vec4.  http://anglebug.com/42264721.
 
     return result;
 }
@@ -4317,7 +4317,7 @@ spirv::IdRef OutputSPIRVTraverser::castBasicType(spirv::IdRef value,
             break;
 
         default:
-            // TODO: support desktop GLSL.  http://anglebug.com/6197
+            // TODO: support desktop GLSL.  http://anglebug.com/42264721
             UNIMPLEMENTED();
     }
 
@@ -5904,7 +5904,7 @@ bool OutputSPIRVTraverser::visitAggregate(Visit visit, TIntermAggregate *node)
 
         case EOpEmitStreamVertex:
         case EOpEndStreamPrimitive:
-            // TODO: support desktop GLSL.  http://anglebug.com/6197
+            // TODO: support desktop GLSL.  http://anglebug.com/42264721
             UNIMPLEMENTED();
             break;
 

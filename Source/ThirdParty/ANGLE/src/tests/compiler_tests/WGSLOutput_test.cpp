@@ -40,7 +40,7 @@ class WGSLOutputTest : public MatchOutputCodeTest
 TEST_F(WGSLOutputTest, BasicTranslation)
 {
     const std::string &shaderString =
-        R"(#version 300 es
+        R"(#version 310 es
         precision highp float;
 
         out vec4 outColor;
@@ -48,6 +48,8 @@ TEST_F(WGSLOutputTest, BasicTranslation)
         struct Foo {
             float x;
             float y;
+            vec3 multiArray[2][3];
+            mat3 aMatrix;
         };
 
         void doFoo(Foo foo, float zw);
@@ -75,31 +77,37 @@ TEST_F(WGSLOutputTest, BasicTranslation)
         })";
     const std::string &outputString =
         R"(
-FAKE_DECLARATION;
+_uoutColor : vec4<f32>;
 
-FAKE_DECLARATION;
+struct _uFoo
+{
+  _ux : f32,
+  _uy : f32,
+  _umultiArray : array<array<vec3<f32>, 3>, 2>,
+  _uaMatrix : mat3x3<f32>,
+};
 
-fn _udoFoo(FAKE_FUNCTION_PARAMETER, FAKE_FUNCTION_PARAMETER);
+fn _udoFoo(_ufoo : _uFoo, _uzw : f32);
 
-fn _udoFoo(FAKE_FUNCTION_PARAMETER, FAKE_FUNCTION_PARAMETER)
+fn _udoFoo(_ufoo : _uFoo, _uzw : f32)
 {
   ;
   ;
 }
 
-fn _ureturnFoo(FAKE_FUNCTION_PARAMETER) -> _uFoo
+fn _ureturnFoo(_ufoo : _uFoo) -> _uFoo
 {
   ;
 }
 
-fn _ureturnFloat(FAKE_FUNCTION_PARAMETER) -> f32
+fn _ureturnFloat(_ux : f32) -> f32
 {
   ;
 }
 
 fn _umain()
 {
-  FAKE_DECLARATION;
+  _ufoo : _uFoo;
   ;
   ;
   ;

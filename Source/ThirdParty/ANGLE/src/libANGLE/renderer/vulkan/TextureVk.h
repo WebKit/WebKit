@@ -353,14 +353,8 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                         bool selfOwned,
                         UniqueSerial siblingSerial);
 
-    vk::ImageViewHelper &getImageViews()
-    {
-        return mMultisampledImageViews[gl::RenderToTextureImageIndex::Default];
-    }
-    const vk::ImageViewHelper &getImageViews() const
-    {
-        return mMultisampledImageViews[gl::RenderToTextureImageIndex::Default];
-    }
+    vk::ImageViewHelper &getImageViews() { return mImageView; }
+    const vk::ImageViewHelper &getImageViews() const { return mImageView; }
 
     // Redefine a mip level of the texture.  If the new size and format don't match the allocated
     // image, the image may be released.  When redefining a mip of a multi-level image, updates are
@@ -586,22 +580,28 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     uint32_t mEGLImageLevelOffset;
 
     // If multisampled rendering to texture, an intermediate multisampled image is created for use
-    // as renderpass color attachment.  An array of images and image views are used based on the
-    // number of samples used with multisampled rendering to texture.  Index 0 corresponds to the
-    // non-multisampled-render-to-texture usage of the texture.
-
+    // as renderpass color attachment. A map of an array of images and image views are used where -
+    //
+    // The map is keyed based on the number of samples used with multisampled rendering to texture.
+    // Index 0 corresponds to the non-multisampled-render-to-texture usage of the texture.
     // - index 0: Unused.  See description of |mImage|.
     // - index N: intermediate multisampled image used for multisampled rendering to texture with
-    //   1 << N samples
-    gl::RenderToTextureImageMap<vk::ImageHelper> mMultisampledImages;
-
-    // |ImageViewHelper| contains all the current views for the Texture. The views are always owned
-    // by the Texture and are not shared like |mImage|. They also have different lifetimes and can
-    // be reallocated independently of |mImage| on state changes.
+    //            1 << N samples
     //
-    // - index 0: views for the texture's image (regardless of |mOwnsImage|).
-    // - index N: views for mMultisampledImages[N]
-    gl::RenderToTextureImageMap<vk::ImageViewHelper> mMultisampledImageViews;
+    // Each element in the array corresponds to a mip-level
+    //
+    // - mMultisampledImages[N][M]: intermediate multisampled image with 1 << N samples
+    //                              for level index M
+    using MultiSampleImages = gl::RenderToTextureImageMap<gl::TexLevelArray<vk::ImageHelper>>;
+    std::unique_ptr<MultiSampleImages> mMultisampledImages;
+
+    // If multisampled rendering to texture, contains views for mMultisampledImages.
+    //
+    // - index 0: Unused.  See description of |mImageView|.
+    // - mMultisampledImageViews[N][M]: views for mMultisampledImages[N][M]
+    using MultiSampleImageViews =
+        gl::RenderToTextureImageMap<gl::TexLevelArray<vk::ImageViewHelper>>;
+    std::unique_ptr<MultiSampleImageViews> mMultisampledImageViews;
 
     // Texture buffers create texel buffer views instead.  |BufferViewHelper| contains the views
     // corresponding to the attached buffer range.
@@ -610,7 +610,8 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     // Render targets stored as array of vector of vectors
     //
     // - First dimension: index N contains render targets with views from mMultisampledImageViews[N]
-    // - Second dimension: level
+    // - Second dimension: level M contains render targets with views from
+    // mMultisampledImageViews[N][M]
     // - Third dimension: layer
     gl::RenderToTextureImageMap<std::vector<RenderTargetVector>> mSingleLayerRenderTargets;
     // Multi-layer render targets stored as a hash map.  This is used for layered attachments
@@ -625,6 +626,9 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     // dynamically allocated as the texture can release ownership for example and it can be
     // transferred to another |TextureVk|.
     vk::ImageHelper *mImage;
+    // The view is always owned by the Texture and is not shared like |mImage|. It also has
+    // different lifetimes and can be reallocated independently of |mImage| on state changes.
+    vk::ImageViewHelper mImageView;
 
     // |mSampler| contains the relevant Vulkan sampler states representing the OpenGL Texture
     // sampling states for the Texture.

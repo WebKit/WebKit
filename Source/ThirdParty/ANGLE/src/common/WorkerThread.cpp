@@ -188,7 +188,7 @@ void AsyncWorkerPool::threadLoop()
         // in traces.
         (*closure)();
         // Release shared_ptr<Closure> before notifying the event to allow for destructor based
-        // dependencies (example: anglebug.com/8661)
+        // dependencies (example: anglebug.com/42267099)
         task.second.reset();
         waitable->markAsReady();
     }

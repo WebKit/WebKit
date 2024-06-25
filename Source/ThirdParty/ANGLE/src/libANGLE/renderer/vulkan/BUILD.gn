@@ -69,6 +69,9 @@ config("angle_vulkan_backend_config") {
   if (angle_enable_vulkan_validation_layers) {
     defines += [ "ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS" ]
   }
+  if (angle_enable_vulkan_api_dump_layer) {
+    defines += [ "ANGLE_ENABLE_VULKAN_API_DUMP_LAYER" ]
+  }
 
   defines += [ "ANGLE_ENABLE_VULKAN_SHARED_RING_BUFFER_CMD_ALLOC=" +
                "${angle_enable_vulkan_shared_ring_buffer_cmd_alloc}" ]
@@ -151,6 +154,10 @@ template("angle_vulkan_backend_template") {
     if (angle_enable_vulkan_validation_layers) {
       defines += [ "ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT" ]
       data_deps += [ "$angle_root/src/common/vulkan:vulkan_validation_layers" ]
+    }
+
+    if (angle_enable_vulkan_api_dump_layer) {
+      data_deps += [ "$angle_root/src/common/vulkan:lunarg_vulkantools" ]
     }
 
     if (is_linux || is_chromeos) {

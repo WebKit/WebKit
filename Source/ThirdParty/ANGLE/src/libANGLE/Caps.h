@@ -143,7 +143,7 @@ struct Limitations
     bool noVertexAttributeAliasing = false;
 
     // Renderer doesn't support GL_TEXTURE_COMPARE_MODE=GL_NONE on a shadow sampler.
-    // TODO(http://anglebug.com/5231): add validation code to front-end.
+    // TODO(http://anglebug.com/42263785): add validation code to front-end.
     bool noShadowSamplerCompareModeNone = false;
 
     // PVRTC1 textures must be squares.

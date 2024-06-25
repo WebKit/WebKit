@@ -400,7 +400,7 @@ TEST_P(AtomicCounterBufferTest31, OffsetNotAllSpecifiedWithSameValue)
 TEST_P(AtomicCounterBufferTest31, AtomicCounterReadCompute)
 {
     // Skipping due to a bug on the Adreno OpenGLES Android driver.
-    // http://anglebug.com/2925
+    // http://anglebug.com/42261624
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsAdreno() && IsOpenGLES());
 
     constexpr char kComputeShaderSource[] = R"(#version 310 es
@@ -429,7 +429,7 @@ void main()
 TEST_P(AtomicCounterBufferTest31, AtomicCounterRead)
 {
     // Skipping test while we work on enabling atomic counter buffer support in th D3D renderer.
-    // http://anglebug.com/1729
+    // http://anglebug.com/42260658
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     constexpr char kFS[] =
@@ -466,7 +466,7 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterRead)
 TEST_P(AtomicCounterBufferTest31, DependentAtomicCounterBufferChange)
 {
     // Skipping test while we work on enabling atomic counter buffer support in th D3D renderer.
-    // http://anglebug.com/1729
+    // http://anglebug.com/42260658
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     constexpr char kFS[] =
@@ -512,11 +512,11 @@ TEST_P(AtomicCounterBufferTest31, DependentAtomicCounterBufferChange)
 TEST_P(AtomicCounterBufferTest31, AtomicCounterBufferRangeRead)
 {
     // Skipping due to a bug on the Qualcomm driver.
-    // http://anglebug.com/3726
+    // http://anglebug.com/42262383
     ANGLE_SKIP_TEST_IF(IsNexus5X() && IsOpenGLES());
 
     // Skipping test while we work on enabling atomic counter buffer support in th D3D renderer.
-    // http://anglebug.com/1729
+    // http://anglebug.com/42260658
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     constexpr char kFS[] =
@@ -564,7 +564,7 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterBufferRangeRead)
 TEST_P(AtomicCounterBufferTest31, AtomicCounterBufferRepeatedBindUnbind)
 {
     // Skipping test while we work on enabling atomic counter buffer support in th D3D renderer.
-    // http://anglebug.com/1729
+    // http://anglebug.com/42260658
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     constexpr char kFS[] =
@@ -727,13 +727,13 @@ void main()
 TEST_P(AtomicCounterBufferTest31, AtomicCounterArrayOfArray)
 {
     // Fails on D3D.  Some counters are double-incremented while some are untouched, hinting at a
-    // bug in index translation.  http://anglebug.com/3783
+    // bug in index translation.  http://anglebug.com/42262427
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
-    // Nvidia's OpenGL driver fails to compile the shader.  http://anglebug.com/3791
+    // Nvidia's OpenGL driver fails to compile the shader.  http://anglebug.com/42262434
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsNVIDIA());
 
-    // Intel's Windows OpenGL driver crashes in this test.  http://anglebug.com/3791
+    // Intel's Windows OpenGL driver crashes in this test.  http://anglebug.com/42262434
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
 
     constexpr char kCS[] = R"(#version 310 es

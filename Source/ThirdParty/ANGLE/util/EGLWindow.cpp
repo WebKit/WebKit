@@ -564,7 +564,7 @@ EGLContext EGLWindow::createContext(EGLContext share, EGLint *extraAttributes)
             contextAttributes.push_back(mConfigParams.debug ? EGL_TRUE : EGL_FALSE);
         }
 
-        // TODO (http://anglebug.com/5809)
+        // TODO (http://anglebug.com/42264345)
         // Mesa does not allow EGL_CONTEXT_OPENGL_NO_ERROR_KHR for GLES1.
         if (hasKHRCreateContextNoError && mConfigParams.noError)
         {

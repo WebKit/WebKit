@@ -122,6 +122,7 @@ class ErrorSet : angle::NonCopyable
     bool isContextLost() const { return mContextLost.load(std::memory_order_relaxed) != 0; }
     GLenum getGraphicsResetStatus(rx::ContextImpl *contextImpl);
     GLenum getResetStrategy() const { return mResetStrategy; }
+    GLenum getErrorForCapture() const;
 
   private:
     void setContextLost();
@@ -781,6 +782,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     {
         return mTransformFeedbackMap;
     }
+    GLenum getErrorForCapture() const { return mErrors.getErrorForCapture(); }
 
     void onPreSwap();
 
@@ -907,6 +909,8 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
                                             MultisamplingMode mode);
 
     void onUniformBlockBindingUpdated(GLuint uniformBlockIndex);
+
+    void endTilingImplicit();
 
     State mState;
     bool mShared;

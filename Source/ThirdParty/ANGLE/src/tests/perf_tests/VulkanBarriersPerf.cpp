@@ -188,7 +188,7 @@ void VulkanBarriersPerfBenchmark::createTexture(uint32_t textureIndex,
     const auto &params = GetParam();
 
     // TODO(syoussefi): compressed copy using vkCmdCopyImage not yet implemented in the vulkan
-    // backend. http://anglebug.com/2999
+    // backend. http://anglebug.com/42261682
 
     glBindTexture(GL_TEXTURE_2D, mTextures[textureIndex]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, params.kImageSizes[sizeIndex],

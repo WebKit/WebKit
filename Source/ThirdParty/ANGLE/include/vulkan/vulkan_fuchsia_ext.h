@@ -20,7 +20,7 @@
 // If this is not Fuchsia then define Fuchsia-specific types explicitly and include
 // vulkan_fuchsia.h to make it possible to compile the code on other platforms.
 //
-// TODO(https://anglebug.com/6040): Update all code to avoid dependencies on
+// TODO(https://anglebug.com/42264570): Update all code to avoid dependencies on
 // Fuchsia-specific types when compiling on other platforms. Then remove this header.
 #if !defined(ANGLE_PLATFORM_FUCHSIA)
 typedef uint32_t zx_handle_t;

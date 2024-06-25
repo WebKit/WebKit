@@ -38,7 +38,7 @@ ImmutableString TOutputESSL::translateTextureFunction(const ImmutableString &nam
     {
         if (option.takeVideoTextureAsExternalOES)
         {
-            // TODO(http://anglebug.com/3889): Implement external image situation.
+            // TODO(http://anglebug.com/42262534): Implement external image situation.
             UNIMPLEMENTED();
             return ImmutableString("");
         }

@@ -388,7 +388,7 @@ inline void LoadCompressedToNative(const ImageLoadContext &context, size_t width
     {
         // Note: this path should technically never be hit, but it is with the d3d backend.  Once
         // the issue is fixed, this path should be removed.
-        // http://anglebug.com/8345
+        // http://anglebug.com/42266773
         for (size_t z = 0; z < layers; ++z)
         {
             for (size_t y = 0; y < rows; ++y)

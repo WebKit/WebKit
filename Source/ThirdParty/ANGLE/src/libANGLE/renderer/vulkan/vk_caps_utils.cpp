@@ -584,8 +584,14 @@ void Renderer::ensureCapsInitialized() const
     // Vulkan requires advancedBlendMaxColorAttachments to be at least one, so we can support
     // advanced blend as long as the Vulkan extension is supported.  Otherwise, the extension is
     // emulated where possible.
+    // GL_EXT_blend_minmax is required for this extension, which is always enabled (hence omitted).
     mNativeExtensions.blendEquationAdvancedKHR = mFeatures.supportsBlendOperationAdvanced.enabled ||
                                                  mFeatures.emulateAdvancedBlendEquations.enabled;
+
+    mNativeExtensions.blendEquationAdvancedCoherentKHR =
+        mFeatures.supportsBlendOperationAdvancedCoherent.enabled ||
+        (mFeatures.emulateAdvancedBlendEquations.enabled &&
+         mFeatures.supportsShaderFramebufferFetch.enabled);
 
     // Enable EXT_unpack_subimage
     mNativeExtensions.unpackSubimageEXT = true;
@@ -763,9 +769,10 @@ void Renderer::ensureCapsInitialized() const
     // Note that Vulkan requires maxPerStageDescriptorStorageBuffers to be at least 4 (i.e. the same
     // as gl::IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_BUFFERS).
     // TODO(syoussefi): This should be conditioned to transform feedback extension not being
-    // present.  http://anglebug.com/3206.
+    // present.  http://anglebug.com/42261882.
     // TODO(syoussefi): If geometry shader is supported, emulation will be done at that stage, and
-    // so the reserved storage buffers should be accounted in that stage.  http://anglebug.com/3606
+    // so the reserved storage buffers should be accounted in that stage.
+    // http://anglebug.com/42262271
     static_assert(
         gl::IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_BUFFERS == 4,
         "Limit to ES2.0 if supported SSBO count < supporting transform feedback buffer count");
@@ -1211,7 +1218,7 @@ void Renderer::ensureCapsInitialized() const
     constexpr uint32_t kMaxCullDistancePerSpec                = 8;
     constexpr uint32_t kMaxCombinedClipAndCullDistancePerSpec = 8;
 
-    // TODO: http://anglebug.com/5466
+    // TODO: http://anglebug.com/42264006
     // After implementing EXT_geometry_shader, EXT_clip_cull_distance should be additionally
     // implemented to support the geometry shader. Until then, EXT_clip_cull_distance is enabled
     // only in the experimental cases.
@@ -1361,7 +1368,8 @@ EGLint ComputeMaximumPBufferPixels(const VkPhysicalDeviceProperties &physicalDev
     // from vkGetPhysicalDeviceImageFormatProperties for both the color and depth stencil format and
     // the exact image creation parameters that would be used to create the pbuffer. Because it is
     // always safe to return out-of-memory errors on pbuffer allocation, it's fine to simply return
-    // the number of pixels in a max width by max height pbuffer for now. http://anglebug.com/2622
+    // the number of pixels in a max width by max height pbuffer for now.
+    // http://anglebug.com/42261335
 
     // Storing the result of squaring a 32-bit unsigned int in a 64-bit unsigned int is safe.
     static_assert(std::is_same<decltype(physicalDeviceProperties.limits.maxImageDimension2D),

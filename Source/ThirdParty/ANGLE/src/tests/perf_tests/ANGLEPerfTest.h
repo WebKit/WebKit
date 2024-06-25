@@ -87,6 +87,7 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
     enum class RunTrialPolicy
     {
         FinishEveryStep,
+        RunContinuouslyWarmup,
         RunContinuously,
     };
 
@@ -152,6 +153,7 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
         std::vector<GLuint64> samples;
     };
     std::map<GLuint, CounterInfo> mPerfCounterInfo;
+    GLuint mPerfMonitor;
     std::vector<uint64_t> mProcessMemoryUsageKBSamples;
 };
 
@@ -231,13 +233,14 @@ class ANGLERenderTest : public ANGLEPerfTest
     bool mIsTimestampQueryAvailable;
     bool mEnableDebugCallback = true;
 
+    void startTest() override;
+    void finishTest() override;
+
   private:
     void SetUp() override;
     void TearDown() override;
 
     void step() override;
-    void startTest() override;
-    void finishTest() override;
     void computeGPUTime() override;
 
     void skipTestIfMissingExtensionPrerequisites();

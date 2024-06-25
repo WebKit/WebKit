@@ -4296,7 +4296,7 @@ angle::Result Renderer11::dispatchComputeIndirect(const gl::Context *context, GL
     // TODO(jie.a.chen@intel.com): num_groups_x,y,z have to be written into the driver constant
     // buffer for the built-in variable gl_NumWorkGroups. There is an opportunity for optimization
     // to use GPU->GPU copy instead.
-    // http://anglebug.com/2807
+    // http://anglebug.com/42261508
     ANGLE_TRY(storage->getData(context, &bufferData));
     const GLuint *groups = reinterpret_cast<const GLuint *>(bufferData + indirect);
     ANGLE_TRY(mStateManager.updateStateForCompute(context, groups[0], groups[1], groups[2]));

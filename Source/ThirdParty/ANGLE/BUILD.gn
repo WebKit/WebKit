@@ -1367,7 +1367,7 @@ config("shared_library_public_config") {
         # From //build/config/mac/BUILD.gn, this is only added for
         # component builds. However, since ANGLE always dynamically
         # links to libvulkan, it should be re-added for non-component
-        # builds. (anglebug.com/4455)
+        # builds. (anglebug.com/42263076)
         "-Wl,-rpath,@loader_path/.",
       ]
     }
@@ -1458,7 +1458,7 @@ template("angle_libGLESv2") {
           "src/libGLESv2/proc_table_glx_autogen.cpp",
         ]
       } else {
-        #TODO(http://anglebug.com/7533): Add CGL entry points for mac support
+        #TODO(http://anglebug.com/42266001): Add CGL entry points for mac support
       }
     }
 
@@ -1543,7 +1543,7 @@ angle_static_library("libGLESv2_static") {
         "src/libGLESv2/proc_table_glx_autogen.cpp",
       ]
     } else {
-      #TODO(http://anglebug.com/7533): Add CGL entry points for mac support
+      #TODO(http://anglebug.com/42266001): Add CGL entry points for mac support
     }
   }
   if (angle_enable_cl) {
@@ -1765,6 +1765,10 @@ if (is_android && symbol_level != 0) {
       }
     }
 
+    if (angle_enable_vulkan_api_dump_layer) {
+      sources += [ "$root_out_dir/libVkLayer_lunarg_api_dump$shlib_extension" ]
+    }
+
     script = rebase_path("${root_build_dir}/android/compress_symbols.py",
                          root_build_dir)
 
@@ -1777,6 +1781,10 @@ if (is_android && symbol_level != 0) {
       foreach(_layer, vulkan_validation_layers) {
         deps += [ "$angle_vulkan_validation_layers_dir:${_layer}" ]
       }
+    }
+
+    if (angle_enable_vulkan_api_dump_layer) {
+      deps += [ "$angle_lunarg_vulkantools_dir:VkLayer_lunarg_api_dump" ]
     }
 
     outputs = [ "$root_out_dir/lib.compressed/{{source_file_part}}" ]

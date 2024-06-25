@@ -65,6 +65,7 @@ per-file third_party/jsoncpp=*
 per-file third_party/libc++/src=*
 per-file third_party/libc++abi/src=*
 per-file third_party/libunwind/src=*
+per-file third_party/lunarg-vulkantools/src=*
 per-file third_party/markupsafe=*
 per-file third_party/mesa/src=*
 per-file third_party/meson=*

@@ -13,7 +13,7 @@
 {
   'angle_end2end_tests': {
     'modifications': {
-      # anglebug.com/7874 suspecting device lost caused by multiprocess
+      # anglebug.com/40644897 suspecting device lost caused by multiprocess
       'win10-x64-exp-intel': {
         'args': [
           '--max-processes=1',
@@ -44,7 +44,7 @@
   },
   'angle_restricted_trace_gold_tests': {
     'modifications': {
-      # anglebug.com/5415 flaky 4x8 pixel artifacts on Win Intel
+      # anglebug.com/42263955 flaky 4x8 pixel artifacts on Win Intel
       'win10-x64-exp-intel': {
         'args': [
           '--flaky-retries=1',
@@ -59,7 +59,7 @@
   },
   'angle_trace_interpreter_tests': {
     'remove_from': [
-      # TODO: Implement on Android. http://anglebug.com/7777
+      # TODO: Implement on Android. http://anglebug.com/42266248
       'android-arm64-pixel4',
     ],
   },
@@ -85,7 +85,7 @@
   },
   'angle_white_box_tests': {
     'modifications': {
-      # anglebug.com/7874 suspecting device lost caused by multiprocess
+      # anglebug.com/40644897 suspecting device lost caused by multiprocess
       'win10-x64-exp-intel': {
         'args': [
           '--max-processes=1',

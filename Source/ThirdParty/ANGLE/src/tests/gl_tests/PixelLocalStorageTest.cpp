@@ -4457,7 +4457,7 @@ TEST_P(PixelLocalStorageValidationTest, BeginPixelLocalStorageANGLE_pls_planes)
     }
 }
 
-// TODO(anglebug.com/7279): Block feedback loops
+// TODO(anglebug.com/40096838): Block feedback loops
 // Check glBeginPixelLocalStorageANGLE validates feedback loops as specified.
 // TEST_P(PixelLocalStorageValidationTest, BeginPixelLocalStorageANGLE_feedback_loops)
 // {
@@ -5222,12 +5222,12 @@ TEST_P(PixelLocalStorageValidationTest, BannedCommands)
     // INVALID_OPERATION is generated if a draw is issued with a fragment shader that accesses a
     // texture bound to pixel local storage.
     //
-    // TODO(anglebug.com/7279).
+    // TODO(anglebug.com/40096838).
 
     // INVALID_OPERATION is generated if a draw is issued with a fragment shader that has a
     // pixel local uniform bound to an inactive pixel local storage plane.
     //
-    // TODO(anglebug.com/7279).
+    // TODO(anglebug.com/40096838).
 
     // INVALID_OPERATION is generated if a draw is issued with a fragment shader that does _not_
     // have a pixel local uniform bound to an _active_ pixel local storage plane (i.e., the
@@ -5238,14 +5238,14 @@ TEST_P(PixelLocalStorageValidationTest, BannedCommands)
     // storage plane, even if the application code does not access it during a particular shader
     // invocation.
     //
-    // TODO(anglebug.com/7279).
+    // TODO(anglebug.com/40096838).
 
     // INVALID_OPERATION is generated if a draw is issued with a fragment shader that has a
     // pixel local storage uniform whose format layout qualifier does not identically match the
     // internalformat of its associated pixel local storage plane on the current draw
     // framebuffer, as enumerated in Table X.3.
     //
-    // TODO(anglebug.com/7279).
+    // TODO(anglebug.com/40096838).
 
     ASSERT_GL_NO_ERROR();
 }
@@ -5573,7 +5573,7 @@ TEST_P(PixelLocalStorageCompilerTest, LayoutQualifiers)
         "ERROR: 0:11: 'layout qualifier' : pixel local storage requires a format specifier"));
     EXPECT_TRUE(log.has(
         "ERROR: 0:12: 'layout qualifier' : pixel local storage requires a format specifier"));
-    // TODO(anglebug.com/7279): "PLS binding greater than gl_MaxPixelLocalStoragePlanesANGLE".
+    // TODO(anglebug.com/40096838): "PLS binding greater than gl_MaxPixelLocalStoragePlanesANGLE".
     EXPECT_TRUE(
         log.has("ERROR: 0:12: 'layout qualifier' : pixel local storage requires a binding index"));
 
@@ -6200,8 +6200,8 @@ class PixelLocalStorageTestPreES3 : public ANGLETest<>
 
 // Check that GL_ANGLE_shader_pixel_local_storage is not advertised before ES 3.1.
 //
-// TODO(anglebug.com/7279): we can relax the min supported version once the implementation details
-// are inside ANGLE.
+// TODO(anglebug.com/40096838): we can relax the min supported version once the implementation
+// details are inside ANGLE.
 TEST_P(PixelLocalStorageTestPreES3, UnsupportedClientVersion)
 {
     EXPECT_FALSE(EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));

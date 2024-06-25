@@ -788,7 +788,7 @@ void StateManager9::setColorMask(const gl::Framebuffer *framebuffer,
     // Apparently some ATI cards have a bug where a draw with a zero color write mask can cause
     // later draws to have incorrect results. Instead, set a nonzero color write mask but modify the
     // blend state so that no drawing is done.
-    // http://anglebug.com/169
+    // http://anglebug.com/42260632
     if (colorMask == 0 && mUsingZeroColorMaskWorkaround)
     {
         IDirect3DDevice9 *device = mRenderer9->getDevice();

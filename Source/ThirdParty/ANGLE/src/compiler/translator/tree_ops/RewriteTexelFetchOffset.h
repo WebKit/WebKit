@@ -10,7 +10,7 @@
 // - From: texelFetchOffset(sampler, Position, lod, offset)
 // - To: texelFetch(sampler, Position+offset, lod)
 //
-// See http://anglebug.com/1469
+// See http://anglebug.com/42260457
 
 #ifndef COMPILER_TRANSLATOR_TREEOPS_REWRITE_TEXELFETCHOFFSET_H_
 #define COMPILER_TRANSLATOR_TREEOPS_REWRITE_TEXELFETCHOFFSET_H_

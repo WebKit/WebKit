@@ -25,7 +25,7 @@ class CLMemoryVk : public CLMemoryImpl
   public:
     ~CLMemoryVk() override;
 
-    // TODO: http://anglebug.com/8587
+    // TODO: http://anglebug.com/42267017
     angle::Result createSubBuffer(const cl::Buffer &buffer,
                                   cl::MemFlags flags,
                                   size_t size,

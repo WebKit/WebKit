@@ -27,11 +27,6 @@ namespace
 // Limit decompressed vulkan pipelines to 10MB per program.
 static constexpr size_t kMaxLocalPipelineCacheSize = 10 * 1024 * 1024;
 
-uint8_t GetGraphicsProgramIndex(ProgramTransformOptions transformOptions)
-{
-    return gl::bitCast<uint8_t, ProgramTransformOptions>(transformOptions);
-}
-
 bool ValidateTransformedSpirV(vk::Context *context,
                               const gl::ShaderBitSet &linkedShaderStages,
                               const ShaderInterfaceVariableInfoMap &variableInfoMap,
@@ -700,7 +695,9 @@ ProgramExecutableVk::ProgramExecutableVk(const gl::ProgramExecutable *executable
     : ProgramExecutableImpl(executable),
       mImmutableSamplersMaxDescriptorCount(1),
       mUniformBufferDescriptorType(VK_DESCRIPTOR_TYPE_MAX_ENUM),
-      mDynamicUniformDescriptorOffsets{}
+      mDynamicUniformDescriptorOffsets{},
+      mValidGraphicsPermutations{},
+      mValidComputePermutations{}
 {
     mDescriptorSets.fill(VK_NULL_HANDLE);
     for (std::shared_ptr<DefaultUniformBlockVk> &defaultBlock : mDefaultUniformBlocks)
@@ -721,6 +718,14 @@ void ProgramExecutableVk::destroy(const gl::Context *context)
 
 void ProgramExecutableVk::resetLayout(ContextVk *contextVk)
 {
+    if (!mPipelineLayout.valid())
+    {
+        ASSERT(mValidGraphicsPermutations.none());
+        ASSERT(mValidComputePermutations.none());
+
+        return;
+    }
+
     waitForPostLinkTasksImpl(contextVk);
 
     for (auto &descriptorSetLayout : mDescriptorSetLayouts)
@@ -745,26 +750,23 @@ void ProgramExecutableVk::resetLayout(ContextVk *contextVk)
     // Initialize with an invalid BufferSerial
     mCurrentDefaultUniformBufferSerial = vk::BufferSerial();
 
-    for (CompleteGraphicsPipelineCache &pipelines : mCompleteGraphicsPipelines)
+    for (size_t index : mValidGraphicsPermutations)
     {
-        pipelines.release(contextVk);
-    }
-    for (ShadersGraphicsPipelineCache &pipelines : mShadersGraphicsPipelines)
-    {
-        pipelines.release(contextVk);
-    }
-    for (vk::PipelineHelper &pipeline : mComputePipelines)
-    {
-        pipeline.release(contextVk);
-    }
+        mCompleteGraphicsPipelines[index].release(contextVk);
+        mShadersGraphicsPipelines[index].release(contextVk);
 
-    // Program infos and pipeline layout must be released after pipelines are; they might be having
-    // pending jobs that are referencing them.
-    for (ProgramInfo &programInfo : mGraphicsProgramInfos)
+        // Program infos and pipeline layout must be released after pipelines are; they might be
+        // having pending jobs that are referencing them.
+        mGraphicsProgramInfos[index].release(contextVk);
+    }
+    mValidGraphicsPermutations.reset();
+
+    for (size_t index : mValidComputePermutations)
     {
-        programInfo.release(contextVk);
+        mComputePipelines[index].release(contextVk);
     }
     mComputeProgramInfo.release(contextVk);
+    mValidComputePermutations.reset();
 
     mPipelineLayout.reset();
 
@@ -961,7 +963,7 @@ angle::Result ProgramExecutableVk::getPipelineCacheWarmUpTasks(
         {
             // Add a placeholder entry in GraphicsPipelineCache
             transformOptions.surfaceRotation   = surfaceRotation;
-            const uint8_t programIndex         = GetGraphicsProgramIndex(transformOptions);
+            const uint8_t programIndex         = transformOptions.permutationIndex;
             vk::PipelineHelper *pipelineHelper = nullptr;
             if (subset == vk::GraphicsPipelineSubset::Complete)
             {
@@ -1023,7 +1025,10 @@ angle::Result ProgramExecutableVk::prepareForWarmUpPipelineCache(
     if (isCompute)
     {
         // Initialize compute program.
-        ANGLE_TRY(initComputeProgram(context, &mComputeProgramInfo, mVariableInfoMap));
+        vk::ComputePipelineOptions pipelineOptions =
+            vk::GetComputePipelineOptions(pipelineRobustness, pipelineProtectedAccess);
+        ANGLE_TRY(
+            initComputeProgram(context, &mComputeProgramInfo, mVariableInfoMap, pipelineOptions));
 
         *isComputeOut = true;
         return angle::Result::Continue;
@@ -1501,7 +1506,7 @@ angle::Result ProgramExecutableVk::initGraphicsShaderPrograms(
 {
     ASSERT(mExecutable->hasLinkedShaderStage(gl::ShaderType::Vertex));
 
-    const uint8_t programIndex                = GetGraphicsProgramIndex(transformOptions);
+    const uint8_t programIndex                = transformOptions.permutationIndex;
     ProgramInfo &programInfo                  = mGraphicsProgramInfos[programIndex];
     const gl::ShaderBitSet linkedShaderStages = mExecutable->getLinkedShaderStages();
     gl::ShaderType lastPreFragmentStage       = gl::GetLastPreFragmentStage(linkedShaderStages);
@@ -1552,7 +1557,7 @@ angle::Result ProgramExecutableVk::createGraphicsPipelineImpl(
     // be the call to `vkCreateGraphicsPipelines`
 
     // Make sure program index is within range
-    const uint8_t programIndex = GetGraphicsProgramIndex(transformOptions);
+    const uint8_t programIndex = transformOptions.permutationIndex;
     ASSERT(programIndex >= 0 && programIndex < ProgramTransformOptions::kPermutationCount);
 
     // Make sure the shader modules for all linked shader stages are valid.
@@ -1596,7 +1601,7 @@ angle::Result ProgramExecutableVk::getGraphicsPipeline(ContextVk *contextVk,
 
     ANGLE_TRY(initGraphicsShaderPrograms(contextVk, transformOptions));
 
-    const uint8_t programIndex = GetGraphicsProgramIndex(transformOptions);
+    const uint8_t programIndex = transformOptions.permutationIndex;
 
     *descPtrOut  = nullptr;
     *pipelineOut = nullptr;
@@ -1669,7 +1674,7 @@ angle::Result ProgramExecutableVk::linkGraphicsPipelineLibraries(
     vk::PipelineHelper **pipelineOut)
 {
     ProgramTransformOptions transformOptions = getTransformOptions(contextVk, desc);
-    const uint8_t programIndex               = GetGraphicsProgramIndex(transformOptions);
+    const uint8_t programIndex               = transformOptions.permutationIndex;
 
     ANGLE_TRY(mCompleteGraphicsPipelines[programIndex].linkLibraries(
         contextVk, pipelineCache, desc, getPipelineLayout(), vertexInputPipeline, shadersPipeline,
@@ -1698,20 +1703,12 @@ angle::Result ProgramExecutableVk::getOrCreateComputePipeline(
 {
     ASSERT(mExecutable->hasLinkedShaderStage(gl::ShaderType::Compute));
 
-    ANGLE_TRY(initComputeProgram(context, &mComputeProgramInfo, mVariableInfoMap));
-
-    vk::ComputePipelineFlags pipelineFlags = {};
-    if (pipelineRobustness == vk::PipelineRobustness::Robust)
-    {
-        pipelineFlags.set(vk::ComputePipelineFlag::Robust);
-    }
-    if (pipelineProtectedAccess == vk::PipelineProtectedAccess::Protected)
-    {
-        pipelineFlags.set(vk::ComputePipelineFlag::Protected);
-    }
+    vk::ComputePipelineOptions pipelineOptions =
+        vk::GetComputePipelineOptions(pipelineRobustness, pipelineProtectedAccess);
+    ANGLE_TRY(initComputeProgram(context, &mComputeProgramInfo, mVariableInfoMap, pipelineOptions));
 
     return mComputeProgramInfo.getShaderProgram().getOrCreateComputePipeline(
-        context, &mComputePipelines, pipelineCache, getPipelineLayout(), pipelineFlags, source,
+        context, &mComputePipelines, pipelineCache, getPipelineLayout(), pipelineOptions, source,
         pipelineOut, nullptr, nullptr);
 }
 

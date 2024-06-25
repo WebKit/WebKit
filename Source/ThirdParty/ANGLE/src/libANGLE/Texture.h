@@ -577,6 +577,18 @@ class Texture final : public RefCountObject<TextureID>,
 
     angle::Result generateMipmap(Context *context);
 
+    angle::Result clearImage(Context *context,
+                             GLint level,
+                             GLenum format,
+                             GLenum type,
+                             const uint8_t *data);
+    angle::Result clearSubImage(Context *context,
+                                GLint level,
+                                const Box &area,
+                                GLenum format,
+                                GLenum type,
+                                const uint8_t *data);
+
     void onBindAsImageTexture();
 
     egl::Surface *getBoundSurface() const;

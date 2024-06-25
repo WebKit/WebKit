@@ -1685,7 +1685,7 @@ TEST_P(VertexAttributeTest, DrawArraysWithByteAtOffset1)
 // draw.
 TEST_P(VertexAttributeTest, DrawArraysWithShortBufferOffsetNotMultipleOf4)
 {
-    // http://anglebug.com/5399
+    // http://anglebug.com/42263937
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
 
     initBasicProgram();
@@ -3956,16 +3956,16 @@ TEST_P(VertexAttributeTestES31, MismatchingSignsChangingProgramType)
 // don't allow vertex attribute aliasing.  This test excludes matrix types.
 TEST_P(VertexAttributeTest, AliasingVectorAttribLocations)
 {
-    // http://anglebug.com/5180
+    // http://anglebug.com/42263740
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL());
 
-    // http://anglebug.com/3466
+    // http://anglebug.com/42262130
     ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
-    // http://anglebug.com/3467
+    // http://anglebug.com/42262131
     ANGLE_SKIP_TEST_IF(IsD3D());
 
-    // TODO(anglebug.com/5491): iOS GLSL compiler rejects attribute aliasing.
+    // TODO(anglebug.com/42264029): iOS GLSL compiler rejects attribute aliasing.
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     // This test needs 10 total attributes. All backends support this except some old Android
@@ -4122,16 +4122,16 @@ void main()
 // don't allow vertex attribute aliasing.  This test includes matrix types.
 TEST_P(VertexAttributeTest, AliasingMatrixAttribLocations)
 {
-    // http://anglebug.com/5180
+    // http://anglebug.com/42263740
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL());
 
-    // http://anglebug.com/3466
+    // http://anglebug.com/42262130
     ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
-    // http://anglebug.com/3467
+    // http://anglebug.com/42262131
     ANGLE_SKIP_TEST_IF(IsD3D());
 
-    // TODO(anglebug.com/5491): iOS GLSL compiler rejects attribute aliasing.
+    // TODO(anglebug.com/42264029): iOS GLSL compiler rejects attribute aliasing.
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     // This test needs 16 total attributes. All backends support this except some old Android
@@ -4362,16 +4362,16 @@ void main()
 // Test that aliasing attribute locations work with differing precisions.
 TEST_P(VertexAttributeTest, AliasingVectorAttribLocationsDifferingPrecisions)
 {
-    // http://anglebug.com/5180
+    // http://anglebug.com/42263740
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL());
 
-    // http://anglebug.com/3466
+    // http://anglebug.com/42262130
     ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
-    // http://anglebug.com/3467
+    // http://anglebug.com/42262131
     ANGLE_SKIP_TEST_IF(IsD3D());
 
-    // TODO(anglebug.com/5491): iOS GLSL compiler rejects attribute aliasing.
+    // TODO(anglebug.com/42264029): iOS GLSL compiler rejects attribute aliasing.
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     constexpr char kVS[] = R"(attribute vec4 position;
@@ -4974,16 +4974,16 @@ TEST_P(VertexAttributeTestES3, UnusedAttribsMEC)
 // Tests the vertex attrib aliasing part. Note that aliasing works with es 100 shaders.
 TEST_P(VertexAttributeTest, AliasingAttribNaming)
 {
-    // http://anglebug.com/5180
+    // http://anglebug.com/42263740
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL());
 
-    // http://anglebug.com/3466
+    // http://anglebug.com/42262130
     ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
-    // http://anglebug.com/3467
+    // http://anglebug.com/42262131
     ANGLE_SKIP_TEST_IF(IsD3D());
 
-    // TODO(anglebug.com/5491): iOS GLSL compiler rejects attribute aliasing.
+    // TODO(anglebug.com/42264029): iOS GLSL compiler rejects attribute aliasing.
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     // This test needs 16 total attributes. All backends support this except some old Android
@@ -5118,16 +5118,16 @@ void main()
 // Test that a particular vertex attribute naming does not affect the functionality.
 TEST_P(VertexAttributeTestES3, AttribNaming)
 {
-    // http://anglebug.com/5180
+    // http://anglebug.com/42263740
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL());
 
-    // http://anglebug.com/3466
+    // http://anglebug.com/42262130
     ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
-    // http://anglebug.com/3467
+    // http://anglebug.com/42262131
     ANGLE_SKIP_TEST_IF(IsD3D());
 
-    // TODO(anglebug.com/5491): iOS GLSL compiler rejects attribute aliasing.
+    // TODO(anglebug.com/42264029): iOS GLSL compiler rejects attribute aliasing.
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     // This test needs roughly 16 total attributes. All backends support this except some old
@@ -5212,7 +5212,7 @@ void main(void)
     EXPECT_PIXEL_COLOR_NEAR(0, 0, expected, 1);
 }
 
-// VAO emulation fails on Mac but is not used on Mac in the wild. http://anglebug.com/5577
+// VAO emulation fails on Mac but is not used on Mac in the wild. http://anglebug.com/40096758
 #if !defined(__APPLE__)
 #    define EMULATED_VAO_CONFIGS                                       \
         ES2_OPENGL().enable(Feature::SyncVertexArraysToDefault),       \
