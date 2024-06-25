@@ -520,8 +520,8 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
-    AddTextAnimationTypeForID(WTF::UUID uuid, struct WebKit::TextAnimationData styleData, struct WebCore::TextIndicatorData indicatorData)
-    removeTextAnimationForID(WTF::UUID uuid)
+    AddTextAnimationForAnimationID(WTF::UUID uuid, struct WebKit::TextAnimationData styleData, struct WebCore::TextIndicatorData indicatorData)
+    RemoveTextAnimationForAnimationID(WTF::UUID uuid)
 #endif
 
 CreateAppHighlightInSelectedRange)

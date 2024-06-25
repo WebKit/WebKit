@@ -668,9 +668,13 @@ public:
 
     virtual void proofreadingSessionUpdateStateForSuggestionWithID(const WritingTools::SessionID&, WritingTools::TextSuggestionState, const WritingTools::TextSuggestionID&) { }
 
-    virtual void removeTextAnimationForID(const WritingTools::SessionID&) { }
+    virtual void removeTextAnimationForAnimationID(const WTF::UUID&) { }
 
-    virtual void cleanUpTextAnimationsForSessionID(const WritingTools::SessionID&) { }
+    virtual void removeTransparentMarkersForSessionID(const WritingTools::SessionID&) { }
+
+    virtual void removeInitialTextAnimation(const WritingTools::SessionID&) { }
+
+    virtual void addInitialTextAnimation(const WritingTools::SessionID&) { }
 
     virtual void addSourceTextAnimation(const WritingTools::SessionID&, const CharacterRange&) { }
 

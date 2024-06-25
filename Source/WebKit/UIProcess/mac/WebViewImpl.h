@@ -747,8 +747,8 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
-    void addTextAnimationTypeForID(WTF::UUID, const WebKit::TextAnimationData&);
-    void removeTextAnimationForID(WTF::UUID);
+    void addTextAnimationForAnimationID(WTF::UUID, const WebKit::TextAnimationData&);
+    void removeTextAnimationForAnimationID(WTF::UUID);
 #endif
 
 #if HAVE(INLINE_PREDICTIONS)

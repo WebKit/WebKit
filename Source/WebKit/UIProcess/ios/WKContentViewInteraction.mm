@@ -11754,7 +11754,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #if ENABLE(WRITING_TOOLS_UI)
 
-- (void)addTextAnimationTypeForID:(NSUUID *)uuid withStyleType:(WKTextAnimationType)styleType
+- (void)addTextAnimationForAnimationID:(NSUUID *)uuid withStyleType:(WKTextAnimationType)styleType
 {
     if (!_page->preferences().textAnimationsEnabled())
         return;
@@ -11762,10 +11762,10 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     if (!_textAnimationManager)
         _textAnimationManager = adoptNS([WebKit::allocWKSTextAnimationManagerInstance() initWithDelegate:self]);
 
-    [_textAnimationManager addTextAnimationTypeForID:uuid withStyleType:styleType];
+    [_textAnimationManager addTextAnimationForAnimationID:uuid withStyleType:styleType];
 }
 
-- (void)removeTextAnimationForID:(NSUUID *)uuid
+- (void)removeTextAnimationForAnimationID:(NSUUID *)uuid
 {
     if (!_page->preferences().textAnimationsEnabled())
         return;
@@ -11773,7 +11773,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     if (!_textAnimationManager)
         return;
 
-    [_textAnimationManager removeTextAnimationForID:uuid];
+    [_textAnimationManager removeTextAnimationForAnimationID:uuid];
 }
 
 #endif

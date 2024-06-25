@@ -1860,14 +1860,24 @@ void WebChromeClient::proofreadingSessionUpdateStateForSuggestionWithID(const Wr
 
 #if ENABLE(WRITING_TOOLS_UI)
 
-void WebChromeClient::removeTextAnimationForID(const WritingTools::Session::ID& sessionID)
+void WebChromeClient::removeTextAnimationForAnimationID(const WTF::UUID& animationID)
 {
-    protectedPage()->removeTextAnimationForID(sessionID);
+    protectedPage()->removeTextAnimationForAnimationID(animationID);
 }
 
-void WebChromeClient::cleanUpTextAnimationsForSessionID(const WritingTools::Session::ID& sessionID)
+void WebChromeClient::removeTransparentMarkersForSessionID(const WritingTools::Session::ID& sessionID)
 {
-    protectedPage()->cleanUpTextAnimationsForSessionID(sessionID);
+    protectedPage()->removeTransparentMarkersForSessionID(sessionID);
+}
+
+void WebChromeClient::removeInitialTextAnimation(const WritingTools::Session::ID& sessionID)
+{
+    protectedPage()->removeInitialTextAnimation(sessionID);
+}
+
+void WebChromeClient::addInitialTextAnimation(const WritingTools::Session::ID& sessionID)
+{
+    protectedPage()->addInitialTextAnimation(sessionID);
 }
 
 void WebChromeClient::addSourceTextAnimation(const WritingTools::Session::ID& sessionID, const CharacterRange& range)

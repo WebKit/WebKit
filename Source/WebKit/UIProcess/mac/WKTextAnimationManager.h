@@ -38,8 +38,8 @@ class WebViewImpl;
 @interface WKTextAnimationManager : NSObject
 
 - (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)view;
-- (void)addTextAnimationTypeForID:(NSUUID *)uuid withData:(const WebKit::TextAnimationData&)data;
-- (void)removeTextAnimationForID:(NSUUID *)uuid;
+- (void)addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebKit::TextAnimationData&)data;
+- (void)removeTextAnimationForAnimationID:(NSUUID *)uuid;
 
 - (BOOL)hasActiveTextAnimationType;
 

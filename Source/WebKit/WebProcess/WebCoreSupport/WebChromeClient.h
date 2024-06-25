@@ -513,9 +513,13 @@ private:
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
-    void removeTextAnimationForID(const WebCore::WritingTools::SessionID&) final;
+    void removeTextAnimationForAnimationID(const WTF::UUID&) final;
 
-    void cleanUpTextAnimationsForSessionID(const WebCore::WritingTools::SessionID&) final;
+    void removeInitialTextAnimation(const WebCore::WritingTools::SessionID&) final;
+
+    void addInitialTextAnimation(const WebCore::WritingTools::SessionID&) final;
+
+    void removeTransparentMarkersForSessionID(const WebCore::WritingTools::SessionID&) final;
 
     void addSourceTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&) final;
 

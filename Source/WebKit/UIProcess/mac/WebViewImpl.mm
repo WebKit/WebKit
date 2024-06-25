@@ -4606,7 +4606,7 @@ void WebViewImpl::removeTextPlaceholder(NSTextPlaceholder *placeholder, bool wil
 }
 
 #if ENABLE(WRITING_TOOLS_UI)
-void WebViewImpl::addTextAnimationTypeForID(WTF::UUID uuid, const WebKit::TextAnimationData& data)
+void WebViewImpl::addTextAnimationForAnimationID(WTF::UUID uuid, const WebKit::TextAnimationData& data)
 {
     if (!m_page->preferences().textAnimationsEnabled())
         return;
@@ -4614,15 +4614,15 @@ void WebViewImpl::addTextAnimationTypeForID(WTF::UUID uuid, const WebKit::TextAn
     if (!m_TextAnimationTypeManager)
         m_TextAnimationTypeManager = adoptNS([[WKTextAnimationManager alloc] initWithWebViewImpl:*this]);
 
-    [m_TextAnimationTypeManager addTextAnimationTypeForID:uuid withData:data];
+    [m_TextAnimationTypeManager addTextAnimationForAnimationID:uuid withData:data];
 }
 
-void WebViewImpl::removeTextAnimationForID(WTF::UUID uuid)
+void WebViewImpl::removeTextAnimationForAnimationID(WTF::UUID uuid)
 {
     if (!m_page->preferences().textAnimationsEnabled())
         return;
 
-    [m_TextAnimationTypeManager removeTextAnimationForID:uuid];
+    [m_TextAnimationTypeManager removeTextAnimationForAnimationID:uuid];
 }
 #endif
 

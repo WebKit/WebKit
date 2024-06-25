@@ -100,8 +100,8 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
-    void addTextAnimationTypeForID(const WTF::UUID&, const WebKit::TextAnimationData&) final;
-    void removeTextAnimationForID(const WTF::UUID&) final;
+    void addTextAnimationForAnimationID(const WTF::UUID&, const WebKit::TextAnimationData&) final;
+    void removeTextAnimationForAnimationID(const WTF::UUID&) final;
 #endif
 
     void microphoneCaptureWillChange() final;

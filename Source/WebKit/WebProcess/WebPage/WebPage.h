@@ -1759,12 +1759,13 @@ public:
     void enableSourceTextAnimationAfterElementWithID(const String&, const WTF::UUID&);
     void enableTextAnimationTypeForElementWithID(const String&, const WTF::UUID&);
 
-    void addTextAnimationTypeForID(const WTF::UUID&, const WebKit::TextAnimationData&, const WebCore::TextIndicatorData&);
-    // FIXME: try and combine these two and/or clarify why both are needed.
-    // rdar://129882958 (Combine or clarify removeTextAnimationForID and cleanUpTextAnimationsForSessionID)
-    void removeTextAnimationForID(const WebCore::WritingTools::SessionID&);
-    void cleanUpTextAnimationsForSessionID(const WebCore::WritingTools::SessionID&);
+    void addTextAnimationForAnimationID(const WTF::UUID&, const WebKit::TextAnimationData&, const WebCore::TextIndicatorData&);
 
+    void removeTextAnimationForAnimationID(const WTF::UUID&);
+    void removeTransparentMarkersForSessionID(const WebCore::WritingTools::SessionID&);
+
+    void removeInitialTextAnimation(const WebCore::WritingTools::SessionID&);
+    void addInitialTextAnimation(const WebCore::WritingTools::SessionID&);
     void addSourceTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&);
     void addDestinationTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&);
 

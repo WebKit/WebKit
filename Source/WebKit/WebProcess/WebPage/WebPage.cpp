@@ -9152,20 +9152,31 @@ void WebPage::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&& comp
 
 #if ENABLE(WRITING_TOOLS_UI)
 
-void WebPage::addTextAnimationTypeForID(const WTF::UUID& uuid, const WebKit::TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData)
+void WebPage::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebKit::TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData)
 {
-    send(Messages::WebPageProxy::AddTextAnimationTypeForID(uuid, styleData, indicatorData));
+    send(Messages::WebPageProxy::AddTextAnimationForAnimationID(uuid, styleData, indicatorData));
 }
 
-void WebPage::removeTextAnimationForID(const WTF::UUID& uuid)
+void WebPage::removeTextAnimationForAnimationID(const WTF::UUID& uuid)
 {
-    send(Messages::WebPageProxy::removeTextAnimationForID(uuid));
+    send(Messages::WebPageProxy::RemoveTextAnimationForAnimationID(uuid));
 }
 
-void WebPage::cleanUpTextAnimationsForSessionID(const WTF::UUID& uuid)
+void WebPage::removeTransparentMarkersForSessionID(const WTF::UUID& uuid)
 {
-    m_textAnimationController->cleanUpTextAnimationsForSessionID(uuid);
+    m_textAnimationController->removeTransparentMarkersForSessionID(uuid);
 }
+
+void WebPage::removeInitialTextAnimation(const WTF::UUID& uuid)
+{
+    m_textAnimationController->removeInitialTextAnimation(uuid);
+}
+
+void WebPage::addInitialTextAnimation(const WTF::UUID& uuid)
+{
+    m_textAnimationController->addInitialTextAnimation(uuid);
+}
+
 
 void WebPage::addSourceTextAnimation(const WTF::UUID& uuid, const CharacterRange& range)
 {

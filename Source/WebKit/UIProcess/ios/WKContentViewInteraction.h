@@ -846,8 +846,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)clearTextIndicator:(WebCore::TextIndicatorDismissalAnimation)animation;
 
 #if ENABLE(WRITING_TOOLS_UI)
-- (void)addTextAnimationTypeForID:(NSUUID *)uuid withStyleType:(WKTextAnimationType)styleType;
-- (void)removeTextAnimationForID:(NSUUID *)uuid;
+- (void)addTextAnimationForAnimationID:(NSUUID *)uuid withStyleType:(WKTextAnimationType)styleType;
+- (void)removeTextAnimationForAnimationID:(NSUUID *)uuid;
 #endif
 
 @property (nonatomic, readonly) BOOL _shouldUseContextMenus;

@@ -85,7 +85,7 @@
     return self;
 }
 
-- (void)addTextAnimationTypeForID:(NSUUID *)uuid withData:(const WebKit::TextAnimationData&)data
+- (void)addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebKit::TextAnimationData&)data
 {
     RetainPtr<id<_WTTextEffect>> effect;
     RetainPtr chunk = adoptNS([PAL::alloc_WTTextChunkInstance() initChunkWithIdentifier:uuid.UUIDString]);
@@ -118,7 +118,7 @@
     [_chunkToEffect setObject:effectData.get() forKey:uuid];
 }
 
-- (void)removeTextAnimationForID:(NSUUID *)uuid
+- (void)removeTextAnimationForAnimationID:(NSUUID *)uuid
 {
     RetainPtr effectData = [_chunkToEffect objectForKey:uuid];
     if (effectData) {
@@ -148,7 +148,7 @@
     for (NSUUID *chunkID in [_chunkToEffect allKeys]) {
         RetainPtr effectData = [_chunkToEffect objectForKey:chunkID];
         if ([effectData type] == WebKit::TextAnimationType::Initial)
-            [self addTextAnimationTypeForID:chunkID withData: { WebKit::TextAnimationType::Initial, WTF::UUID(WTF::UUID::emptyValue) }];
+            [self addTextAnimationForAnimationID:chunkID withData: { WebKit::TextAnimationType::Initial, WTF::UUID(WTF::UUID::emptyValue) }];
     }
 }
 

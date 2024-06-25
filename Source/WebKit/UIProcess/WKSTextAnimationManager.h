@@ -32,8 +32,8 @@
 @interface WKSTextAnimationManager : NSObject
 
 - (instancetype)initWithDelegate:(id <WKSTextAnimationSourceDelegate>)delegate NS_DESIGNATED_INITIALIZER;
-- (void)addTextAnimationTypeForID:(NSUUID *)uuid withStyleType:(WKTextAnimationType)styleType;
-- (void)removeTextAnimationForID:(NSUUID *)uuid;
+- (void)addTextAnimationForAnimationID:(NSUUID *)uuid withStyleType:(WKTextAnimationType)styleType;
+- (void)removeTextAnimationForAnimationID:(NSUUID *)uuid;
 @end
 
 #endif // ENABLE(WRITING_TOOLS)

@@ -69,9 +69,11 @@ class TextAnimationController final {
 public:
     explicit TextAnimationController(WebPage&);
 
-    void cleanUpTextAnimationsForSessionID(const WTF::UUID& sessionUUID);
+    void removeTransparentMarkersForSessionID(const WTF::UUID& sessionUUID);
     void removeTransparentMarkersForTextAnimationID(const WTF::UUID&);
 
+    void removeInitialTextAnimation(const WTF::UUID& sessionUUID);
+    void addInitialTextAnimation(const WTF::UUID& sessionUUID);
     void addSourceTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&);
     void addDestinationTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&);
 
@@ -84,12 +86,14 @@ public:
     void enableTextAnimationTypeForElementWithID(const String& elementID, const WTF::UUID&);
 
 private:
-    std::optional<WebCore::SimpleRange> contextRangeForTextAnimationType(const WTF::UUID&) const;
+    std::optional<WebCore::SimpleRange> contextRangeForTextAnimationID(const WTF::UUID&) const;
     std::optional<WebCore::SimpleRange> contextRangeForSessionWithID(const WebCore::WritingTools::SessionID&) const;
 
     RefPtr<WebCore::Document> document() const;
     WeakPtr<WebPage> m_webPage;
 
+    // All of these HashMap keys are SessionIDs
+    HashMap<WTF::UUID, WTF::UUID> m_initialAnimations;
     HashMap<WTF::UUID, Vector<TextAnimationState>> m_activeTextAnimations;
     HashMap<WTF::UUID, WebCore::CharacterRange> m_alreadyReplacedRanges;
     HashMap<WTF::UUID, std::optional<TextAnimationUnstyledRangeData>> m_unstyledRanges;

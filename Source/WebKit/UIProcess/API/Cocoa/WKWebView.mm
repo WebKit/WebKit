@@ -1801,26 +1801,26 @@ static inline WKTextAnimationType toWKTextAnimationType(WebKit::TextAnimationTyp
 }
 
 #if ENABLE(WRITING_TOOLS_UI)
-- (void)_addTextAnimationTypeForID:(NSUUID *)nsUUID withData:(const WebKit::TextAnimationData&)data
+- (void)_addTextAnimationForAnimationID:(NSUUID *)nsUUID withData:(const WebKit::TextAnimationData&)data
 {
 #if PLATFORM(IOS_FAMILY)
-    [_contentView addTextAnimationTypeForID:nsUUID withStyleType:toWKTextAnimationType(data.style)];
+    [_contentView addTextAnimationForAnimationID:nsUUID withStyleType:toWKTextAnimationType(data.style)];
 #elif PLATFORM(MAC)
     auto uuid = WTF::UUID::fromNSUUID(nsUUID);
     if (!uuid)
         return;
-    _impl->addTextAnimationTypeForID(*uuid, data);
+    _impl->addTextAnimationForAnimationID(*uuid, data);
 #endif
 }
-- (void)_removeTextAnimationForID:(NSUUID *)nsUUID
+- (void)_removeTextAnimationForAnimationID:(NSUUID *)nsUUID
 {
 #if PLATFORM(IOS_FAMILY)
-    [_contentView removeTextAnimationForID:nsUUID];
+    [_contentView removeTextAnimationForAnimationID:nsUUID];
 #elif PLATFORM(MAC)
     auto uuid = WTF::UUID::fromNSUUID(nsUUID);
     if (!uuid)
         return;
-    _impl->removeTextAnimationForID(*uuid);
+    _impl->removeTextAnimationForAnimationID(*uuid);
 #endif
 }
 #endif
@@ -2127,10 +2127,6 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         contextData.append(*webContext);
     }
 
-    // Don't animate smart replies, they are animated by UIKit/AppKit.
-    if (webSession->compositionType != WebCore::WritingTools::Session::CompositionType::SmartReply)
-        [self beginWritingToolsAnimationForSessionWithUUID:session.uuid];
-
     _page->didBeginWritingToolsSession(*webSession, contextData);
 }
 
@@ -2274,43 +2270,6 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         return;
 
     [textViewDelegate proofreadingSessionWithUUID:session.uuid updateState:WebKit::convertToPlatformTextSuggestionState(state) forSuggestionWithUUID:replacementUUID];
-}
-
-
-#pragma mark - Writing Tools Animation
-
-- (void)beginWritingToolsAnimationForSessionWithUUID:(NSUUID *)sessionUUID
-{
-#if ENABLE(WRITING_TOOLS_UI)
-#if PLATFORM(MAC)
-    auto uuid = WTF::UUID::fromNSUUID(sessionUUID);
-    if (!uuid) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    _impl->addTextAnimationTypeForID(*uuid, { WebKit::TextAnimationType::Initial, WTF::UUID(WTF::UUID::emptyValue) });
-#else
-    [_contentView addTextAnimationTypeForID:sessionUUID withStyleType:WKTextAnimationTypeInitial];
-#endif
-#endif // ENABLE(WRITING_TOOLS_UI)
-}
-
-- (void)endWritingToolsAnimationForSessionWithUUID:(NSUUID *)sessionUUID
-{
-#if ENABLE(WRITING_TOOLS_UI)
-#if PLATFORM(MAC)
-    auto uuid = WTF::UUID::fromNSUUID(sessionUUID);
-    if (!uuid) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    _impl->removeTextAnimationForID(*uuid);
-#else
-    [_contentView removeTextAnimationForID:sessionUUID];
-#endif
-#endif // ENABLE(WRITING_TOOLS_UI)
 }
 
 #endif
@@ -3096,9 +3055,9 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     _page->enableSourceTextAnimationAfterElementWithID(elementID, *uuid);
 
 #if PLATFORM(IOS_FAMILY)
-    [_contentView addTextAnimationTypeForID:nsUUID.get() withStyleType:WKTextAnimationTypeInitial];
+    [_contentView addTextAnimationForAnimationID:nsUUID.get() withStyleType:WKTextAnimationTypeInitial];
 #elif PLATFORM(MAC)
-    _impl->addTextAnimationTypeForID(*uuid, { WebKit::TextAnimationType::Initial, WTF::UUID(WTF::UUID::emptyValue) });
+    _impl->addTextAnimationForAnimationID(*uuid, { WebKit::TextAnimationType::Initial, WTF::UUID(WTF::UUID::emptyValue) });
 #endif
     return nsUUID.get();
 #else // ENABLE(WRITING_TOOLS_UI)
@@ -3118,9 +3077,9 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     _page->enableTextAnimationTypeForElementWithID(elementID, *uuid);
 
 #if PLATFORM(IOS_FAMILY)
-    [_contentView addTextAnimationTypeForID:nsUUID.get() withStyleType:WKTextAnimationTypeFinal];
+    [_contentView addTextAnimationForAnimationID:nsUUID.get() withStyleType:WKTextAnimationTypeFinal];
 #elif PLATFORM(MAC)
-    _impl->addTextAnimationTypeForID(*uuid, { WebKit::TextAnimationType::Final, WTF::UUID(WTF::UUID::emptyValue) });
+    _impl->addTextAnimationForAnimationID(*uuid, { WebKit::TextAnimationType::Final, WTF::UUID(WTF::UUID::emptyValue) });
 #endif
     return nsUUID.get();
 #else // ENABLE(WRITING_TOOLS_UI)
@@ -3132,12 +3091,12 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 {
 #if ENABLE(WRITING_TOOLS_UI)
 #if PLATFORM(IOS_FAMILY)
-    [_contentView removeTextAnimationForID:nsUUID];
+    [_contentView removeTextAnimationForAnimationID:nsUUID];
 #elif PLATFORM(MAC)
     auto uuid = WTF::UUID::fromNSUUID(nsUUID);
     if (!uuid)
         return;
-    _impl->removeTextAnimationForID(*uuid);
+    _impl->removeTextAnimationForAnimationID(*uuid);
 #endif
 #endif // ENABLE(WRITING_TOOLS_UI)
 }

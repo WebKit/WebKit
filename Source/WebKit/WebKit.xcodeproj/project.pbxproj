@@ -10447,6 +10447,7 @@
 			isa = PBXGroup;
 			children = (
 				0214701A2995D2FE0077AFD6 /* DrawingAreaCocoa.mm */,
+				442C116B2C06ACB1004C67CA /* TextAnimationController.h */,
 				442C116A2C06AC48004C67CA /* TextAnimationController.mm */,
 				2D9CD5ED21FA503F0029ACFA /* TextCheckingControllerProxy.h */,
 				2D9CD5EB21FA503F0029ACFA /* TextCheckingControllerProxy.messages.in */,
@@ -13776,7 +13777,6 @@
 				2DEE709D2755A46800FBF864 /* MomentumEventDispatcher.h */,
 				7C387433172F5615001BD88A /* PageBanner.cpp */,
 				7CF47FF917275C57008ACB91 /* PageBanner.h */,
-				442C116B2C06ACB1004C67CA /* TextAnimationController.h */,
 				2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */,
 				2D819B9A186275B3001F03D1 /* ViewGestureGeometryCollector.h */,
 				2D819B9B186275B3001F03D1 /* ViewGestureGeometryCollector.messages.in */,

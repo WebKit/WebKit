@@ -203,6 +203,10 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
 void WritingToolsController::didBeginWritingToolsSession(const WritingTools::Session& session, const Vector<WritingTools::Context>& contexts)
 {
     RELEASE_LOG(WritingTools, "WritingToolsController::didBeginWritingToolsSession (%s) [received contexts: %zu]", session.identifier.toString().utf8().data(), contexts.size());
+
+    // Don't animate smart replies, they are animated by UIKit/AppKit.
+    if (session.compositionType != WebCore::WritingTools::Session::CompositionType::SmartReply)
+        m_page->chrome().client().addInitialTextAnimation(session.identifier);
 }
 
 void WritingToolsController::proofreadingSessionDidReceiveSuggestions(const WritingTools::Session& session, const Vector<WritingTools::TextSuggestion>& suggestions, const WritingTools::Context& context, bool finished)
@@ -215,8 +219,7 @@ void WritingToolsController::proofreadingSessionDidReceiveSuggestions(const Writ
         return;
     }
 
-    // FIXME: Text indicator styles are not used within this method, so is this still needed?
-    m_page->chrome().client().removeTextAnimationForID(session.identifier);
+    m_page->chrome().client().removeInitialTextAnimation(session.identifier);
 
     document->selection().clear();
 
@@ -362,7 +365,7 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
         return;
     }
 
-    m_page->chrome().client().removeTextAnimationForID(session.identifier);
+    m_page->chrome().client().removeInitialTextAnimation(session.identifier);
 
     document->selection().clear();
 
@@ -586,7 +589,7 @@ void WritingToolsController::didEndWritingToolsSession(const WritingTools::Sessi
         return;
     }
 
-    m_page->chrome().client().removeTextAnimationForID(session.identifier);
+    m_page->chrome().client().removeInitialTextAnimation(session.identifier);
 
     // At this point, the selection will be the replaced text, which is the desired behavior for
     // Smart Reply sessions. However, for others, the entire session context range should be selected.
@@ -594,7 +597,7 @@ void WritingToolsController::didEndWritingToolsSession(const WritingTools::Sessi
     if (session.compositionType != WritingTools::Session::CompositionType::SmartReply)
         document->selection().setSelection({ *sessionRange });
 
-    m_page->chrome().client().cleanUpTextAnimationsForSessionID(session.identifier);
+    m_page->chrome().client().removeTransparentMarkersForSessionID(session.identifier);
 
     m_states.remove(session.identifier);
 }
