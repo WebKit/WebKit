@@ -339,22 +339,10 @@ static void wpeDisplayWaylandInitializeDRMDeviceFromEGL(WPEDisplayWayland* displ
         priv->drmRenderNode = eglQueryDeviceStringEXT(eglDevice, EGL_DRM_RENDER_NODE_FILE_EXT);
 }
 
-static gboolean wpeDisplayWaylandConnect(WPEDisplay* display, GError** error)
+static gboolean wpeDisplayWaylandSetup(WPEDisplayWayland* display, GError** error)
 {
-    auto* displayWayland = WPE_DISPLAY_WAYLAND(display);
-    auto* priv = displayWayland->priv;
-    if (priv->wlDisplay) {
-        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "Wayland display is already connected");
-        return FALSE;
-    }
-
-    priv->wlDisplay = wl_display_connect(nullptr);
-    if (!priv->wlDisplay) {
-        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "Failed to connect to default Wayland display");
-        return FALSE;
-    }
-
-    priv->eventSource = wpeDisplayWaylandCreateEventSource(displayWayland);
+    auto* priv = display->priv;
+    priv->eventSource = wpeDisplayWaylandCreateEventSource(display);
 
     auto* registry = wl_display_get_registry(priv->wlDisplay);
     wl_registry_add_listener(registry, &registryListener, display);
@@ -367,7 +355,7 @@ static gboolean wpeDisplayWaylandConnect(WPEDisplay* display, GError** error)
     if (priv->xdgWMBase)
         xdg_wm_base_add_listener(priv->xdgWMBase, &xdgWMBaseListener, nullptr);
     if (priv->wlSeat) {
-        priv->wlCursor = makeUnique<WPE::WaylandCursor>(displayWayland);
+        priv->wlCursor = makeUnique<WPE::WaylandCursor>(display);
         priv->wlSeat->startListening();
     }
 
@@ -392,9 +380,27 @@ static gboolean wpeDisplayWaylandConnect(WPEDisplay* display, GError** error)
     }
 
     if (priv->drmDevice.isNull())
-        wpeDisplayWaylandInitializeDRMDeviceFromEGL(displayWayland);
+        wpeDisplayWaylandInitializeDRMDeviceFromEGL(display);
 
     return TRUE;
+}
+
+static gboolean wpeDisplayWaylandConnect(WPEDisplay* display, GError** error)
+{
+    auto* displayWayland = WPE_DISPLAY_WAYLAND(display);
+    auto* priv = displayWayland->priv;
+    if (priv->wlDisplay) {
+        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "Wayland display is already connected");
+        return FALSE;
+    }
+
+    priv->wlDisplay = wl_display_connect(nullptr);
+    if (!priv->wlDisplay) {
+        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "Failed to connect to default Wayland display");
+        return FALSE;
+    }
+
+    return wpeDisplayWaylandSetup(displayWayland, error);
 }
 
 static WPEView* wpeDisplayWaylandCreateView(WPEDisplay* display)
@@ -587,7 +593,7 @@ gboolean wpe_display_wayland_connect(WPEDisplayWayland* display, const char* nam
         return FALSE;
     }
 
-    return TRUE;
+    return wpeDisplayWaylandSetup(display, error);
 }
 
 /**
