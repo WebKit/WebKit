@@ -559,13 +559,14 @@ bool MediaPlayerPrivateMediaFoundation::endSession()
 
 bool MediaPlayerPrivateMediaFoundation::startCreateMediaSource(const String& url)
 {
-    if (FAILED(MFCreateSourceResolver(&m_sourceResolver)))
+    COMPtr<IMFSourceResolver> sourceResolver;
+    if (FAILED(MFCreateSourceResolver(&sourceResolver)))
         return false;
 
     COMPtr<IUnknown> cancelCookie;
     Vector<wchar_t> urlSource = url.wideCharacters();
 
-    auto callback = adoptCOM(new AsyncCallback([this, weakThis = m_weakThis, sourceResolver = m_sourceResolver](IMFAsyncResult* asyncResult) {
+    auto callback = adoptCOM(new AsyncCallback([this, weakThis = m_weakThis, sourceResolver](IMFAsyncResult* asyncResult) {
         MF_OBJECT_TYPE objectType;
         COMPtr<IUnknown> source;
 
@@ -594,7 +595,7 @@ bool MediaPlayerPrivateMediaFoundation::startCreateMediaSource(const String& url
         });
     }));
 
-    if (FAILED(m_sourceResolver->BeginCreateObjectFromURL(urlSource.data(), MF_RESOLUTION_MEDIASOURCE, nullptr, &cancelCookie, callback.get(), nullptr)))
+    if (FAILED(sourceResolver->BeginCreateObjectFromURL(urlSource.data(), MF_RESOLUTION_MEDIASOURCE, nullptr, &cancelCookie, callback.get(), nullptr)))
         return false;
 
     return true;

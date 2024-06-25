@@ -148,7 +148,6 @@ private:
     mutable Lock m_cachedNaturalSizeLock;
 
     COMPtr<IMFMediaSession> m_mediaSession;
-    COMPtr<IMFSourceResolver> m_sourceResolver;
     COMPtr<IMFMediaSource> m_mediaSource;
     COMPtr<IMFTopology> m_topology;
     COMPtr<IMFPresentationDescriptor> m_sourcePD;
