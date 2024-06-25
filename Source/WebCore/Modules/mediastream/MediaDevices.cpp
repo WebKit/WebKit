@@ -151,10 +151,26 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
     bool isUserGesturePriviledged = false;
 
     if (audioConstraints.isValid) {
+        if (audioConstraints.hasDisallowedRequiredConstraintForDeviceSelection(MediaConstraints::DeviceType::Microphone)) {
+            // Asynchronous rejection.
+            callOnMainThread([promise = WTFMove(promise)] () mutable {
+                promise.reject(Exception { ExceptionCode::TypeError, "A required constraint."_s });
+
+            });
+            return;
+        }
         isUserGesturePriviledged |= computeUserGesturePriviledge(GestureAllowedRequest::Microphone);
         audioConstraints.setDefaultAudioConstraints();
     }
     if (videoConstraints.isValid) {
+        if (videoConstraints.hasDisallowedRequiredConstraintForDeviceSelection(MediaConstraints::DeviceType::Camera)) {
+            // Asynchronous rejection.
+            callOnMainThread([promise = WTFMove(promise)] () mutable {
+                promise.reject(Exception { ExceptionCode::TypeError, "A required constraint."_s });
+
+            });
+            return;
+        }
         isUserGesturePriviledged |= computeUserGesturePriviledge(GestureAllowedRequest::Camera);
         videoConstraints.setDefaultVideoConstraints();
     }

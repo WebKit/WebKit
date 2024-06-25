@@ -1,0 +1,17 @@
+
+PASS Mandatory video disallowed constraint whiteBalanceMode
+PASS Mandatory video disallowed constraint zoom
+PASS Mandatory video disallowed constraint torch
+PASS Mandatory video disallowed constraint backgroundBlur
+PASS Mandatory video disallowed constraint powerEfficient
+PASS Mandatory video allowed constraint width
+PASS Mandatory video allowed constraint height
+PASS Mandatory video allowed constraint aspectRatio
+PASS Mandatory video allowed constraint frameRate
+PASS Mandatory video allowed constraint facingMode
+PASS Mandatory audio allowed constraint volume
+PASS Mandatory audio allowed constraint sampleRate
+PASS Mandatory audio allowed constraint sampleSize
+PASS Mandatory audio allowed constraint echoCancellation
+PASS Mandatory constraint groupId and deviceId
+

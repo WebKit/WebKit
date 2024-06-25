@@ -728,6 +728,27 @@ MediaConstraints MediaConstraints::isolatedCopy() const
     return { crossThreadCopy(mandatoryConstraints), crossThreadCopy(advancedConstraints), isValid };
 }
 
+static bool isAllowedRequiredConstraintForDeviceSelection(MediaConstraints::DeviceType deviceType, MediaConstraintType type)
+{
+    // https://w3c.github.io/mediacapture-main/#dfn-allowed-required-constraints-for-device-selection
+    if (type <= MediaConstraintType::GroupId)
+        return true;
+
+    if (deviceType == MediaConstraints::DeviceType::Microphone)
+        return true;
+
+    return deviceType == MediaConstraints::DeviceType::Microphone || type == MediaConstraintType::DisplaySurface || type == MediaConstraintType::LogicalSurface;
+}
+
+bool MediaConstraints::hasDisallowedRequiredConstraintForDeviceSelection(DeviceType deviceType) const
+{
+    bool result = false;
+    mandatoryConstraints.forEach([&] (auto type, const MediaConstraint& constraint) mutable {
+        result |= !isAllowedRequiredConstraintForDeviceSelection(deviceType, type) && constraint.isRequired();
+    });
+    return result;
+}
+
 }
 
 #endif // ENABLE(MEDIA_STREAM)

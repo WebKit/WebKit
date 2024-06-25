@@ -44,6 +44,12 @@ namespace WebCore {
 class MediaConstraint {
 public:
     enum class DataType : uint8_t { Integer, Double, Boolean, String };
+    explicit MediaConstraint(DataType dataType)
+        : m_dataType(dataType)
+    {
+    }
+
+    virtual ~MediaConstraint() = default;
 
     bool isInt() const { return m_dataType == DataType::Integer; }
     bool isDouble() const { return m_dataType == DataType::Double; }
@@ -54,10 +60,7 @@ public:
 
     void log(MediaConstraintType) const;
 
-    explicit MediaConstraint(DataType dataType)
-        : m_dataType(dataType)
-    {
-    }
+    virtual bool isRequired() const { return false; }
 
 private:
     DataType m_dataType { DataType::Integer };
@@ -360,6 +363,8 @@ protected:
         }
     }
 
+    bool isRequired() const final { return !!m_min || !!m_max || !!m_exact; }
+
     std::optional<ValueType> m_min;
     std::optional<ValueType> m_max;
     std::optional<ValueType> m_exact;
@@ -492,7 +497,9 @@ private:
         , m_ideal(WTFMove(ideal))
     {
     }
-    
+
+    bool isRequired() const final { return !!m_exact; }
+
     std::optional<bool> m_exact;
     std::optional<bool> m_ideal;
 };
@@ -574,7 +581,9 @@ private:
         , m_ideal(WTFMove(ideal))
     {
     }
-    
+
+    bool isRequired() const final { return !m_exact.isEmpty(); }
+
     Vector<String> m_exact;
     Vector<String> m_ideal;
 };
@@ -684,6 +693,9 @@ struct MediaConstraints {
     bool isValid { false };
 
     MediaConstraints isolatedCopy() const;
+
+    enum class DeviceType : bool { Camera, Microphone };
+    bool hasDisallowedRequiredConstraintForDeviceSelection(DeviceType) const;
 };
 
 } // namespace WebCore
