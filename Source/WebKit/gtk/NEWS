@@ -1,4 +1,21 @@
 ================
+WebKitGTK 2.45.4
+================
+
+What's new in WebKitGTK 2.45.4?
+
+  - Enable offscreen canvas by default in production builds too.
+  - Fix video flickering with DMA-BUF sink.
+  - Fix movement delta on mouse events in GTK3.
+  - Fix accelerated images dissapearing after scrolling.
+  - Bubblewrap sandbox no longer kills auxiliary process when UI process terminates.
+  - Fix rendering of shadows with several compositing operators.
+  - Implement FEDropShadow and FEComponentTransfer filters using Skia.
+  - Undeprecate webkit_back_forward_list_item_get_title().
+  - Undeprecate console message API and make it available in 2022 API.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.45.3
 ================
 
