@@ -99,17 +99,25 @@ class NativeExecutable;
     macro(GetByValWithStringLoadOwnPropertyHandler, getByValWithStringLoadOwnPropertyHandler) \
     macro(GetByValWithStringLoadPrototypePropertyHandler, getByValWithStringLoadPrototypePropertyHandler) \
     macro(GetByValWithStringMissHandler, getByValWithStringMissHandler) \
+    macro(GetByValWithStringCustomAccessorHandler, getByValWithStringCustomAccessorHandler) \
+    macro(GetByValWithStringCustomValueHandler, getByValWithStringCustomValueHandler) \
     macro(GetByValWithSymbolLoadOwnPropertyHandler, getByValWithSymbolLoadOwnPropertyHandler) \
     macro(GetByValWithSymbolLoadPrototypePropertyHandler, getByValWithSymbolLoadPrototypePropertyHandler) \
     macro(GetByValWithSymbolMissHandler, getByValWithSymbolMissHandler) \
+    macro(GetByValWithSymbolCustomAccessorHandler, getByValWithSymbolCustomAccessorHandler) \
+    macro(GetByValWithSymbolCustomValueHandler, getByValWithSymbolCustomValueHandler) \
     macro(PutByValWithStringReplaceHandler, putByValWithStringReplaceHandler) \
     macro(PutByValWithStringTransitionNonAllocatingHandler, putByValWithStringTransitionNonAllocatingHandler) \
     macro(PutByValWithStringTransitionNewlyAllocatingHandler, putByValWithStringTransitionNewlyAllocatingHandler) \
     macro(PutByValWithStringTransitionReallocatingHandler, putByValWithStringTransitionReallocatingHandler) \
+    macro(PutByValWithStringCustomAccessorHandler, putByValWithStringCustomAccessorHandler) \
+    macro(PutByValWithStringCustomValueHandler, putByValWithStringCustomValueHandler) \
     macro(PutByValWithSymbolReplaceHandler, putByValWithSymbolReplaceHandler) \
     macro(PutByValWithSymbolTransitionNonAllocatingHandler, putByValWithSymbolTransitionNonAllocatingHandler) \
     macro(PutByValWithSymbolTransitionNewlyAllocatingHandler, putByValWithSymbolTransitionNewlyAllocatingHandler) \
     macro(PutByValWithSymbolTransitionReallocatingHandler, putByValWithSymbolTransitionReallocatingHandler) \
+    macro(PutByValWithSymbolCustomAccessorHandler, putByValWithSymbolCustomAccessorHandler) \
+    macro(PutByValWithSymbolCustomValueHandler, putByValWithSymbolCustomValueHandler) \
     macro(InByValWithStringHitHandler, inByValWithStringHitHandler) \
     macro(InByValWithStringMissHandler, inByValWithStringMissHandler) \
     macro(InByValWithSymbolHitHandler, inByValWithSymbolHitHandler) \
