@@ -464,7 +464,22 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self _updateTextSuggestions];
 
-    if (![UIKeyboard isInHardwareKeyboardMode] && !(activationType == WebCore::DataListSuggestionActivationType::IndicatorClicked || activationType == WebCore::DataListSuggestionActivationType::DataListMayHaveChanged))
+    bool shouldShowOrUpdateSugggestions = [&] {
+#if USE(UICONTEXTMENU)
+        if (_suggestionsContextMenuPresenter)
+            return true;
+#endif
+
+        if ([UIKeyboard isInHardwareKeyboardMode])
+            return true;
+
+        if (activationType == WebCore::DataListSuggestionActivationType::IndicatorClicked || activationType == WebCore::DataListSuggestionActivationType::DataListMayHaveChanged)
+            return true;
+
+        return false;
+    }();
+
+    if (!shouldShowOrUpdateSugggestions)
         return;
 
     [self _showSuggestions];
