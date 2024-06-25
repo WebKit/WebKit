@@ -522,6 +522,8 @@ private:
     void addDestinationTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&) final;
 #endif
 
+    void hasActiveNowPlayingSessionChanged(bool) final;
+
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
 

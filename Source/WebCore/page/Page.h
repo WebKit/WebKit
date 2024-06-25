@@ -1167,6 +1167,10 @@ public:
     WEBCORE_EXPORT std::optional<SimpleRange> contextRangeForSessionWithID(const WritingTools::SessionID&) const;
 #endif
 
+    bool hasActiveNowPlayingSession() const { return m_hasActiveNowPlayingSession; }
+    void hasActiveNowPlayingSessionChanged();
+    void activeNowPlayingSessionUpdateTimerFired();
+
 private:
     explicit Page(PageConfiguration&&);
 
@@ -1573,6 +1577,9 @@ private:
 #if ENABLE(WRITING_TOOLS)
     UniqueRef<WritingToolsController> m_writingToolsController;
 #endif
+
+    bool m_hasActiveNowPlayingSession { false };
+    Timer m_activeNowPlayingSessionUpdateTimer;
 }; // class Page
 
 inline Page* Frame::page() const

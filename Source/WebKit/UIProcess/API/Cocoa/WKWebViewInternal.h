@@ -440,6 +440,8 @@ struct PerWebProcessState {
 - (WKPageRef)_pageForTesting;
 - (NakedPtr<WebKit::WebPageProxy>)_page;
 
+@property (nonatomic, setter=_setHasActiveNowPlayingSession:) BOOL _hasActiveNowPlayingSession;
+
 @end
 
 RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails&);

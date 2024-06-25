@@ -9601,6 +9601,12 @@ String HTMLMediaElement::localizedSourceType() const
     return { };
 }
 
+void HTMLMediaElement::isActiveNowPlayingSessionChanged()
+{
+    if (RefPtr page = protectedDocument()->protectedPage())
+        page->hasActiveNowPlayingSessionChanged();
+}
+
 #if HAVE(SPATIAL_TRACKING_LABEL)
 void HTMLMediaElement::updateSpatialTrackingLabel()
 {

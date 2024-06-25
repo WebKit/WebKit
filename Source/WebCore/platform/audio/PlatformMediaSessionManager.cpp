@@ -892,6 +892,17 @@ void PlatformMediaSessionManager::nowPlayingMetadataChanged(const NowPlayingMeta
     });
 }
 
+bool PlatformMediaSessionManager::hasActiveNowPlayingSessionInGroup(MediaSessionGroupIdentifier mediaSessionGroupIdentifier)
+{
+    bool hasActiveNowPlayingSession = false;
+
+    forEachSessionInGroup(mediaSessionGroupIdentifier, [&](auto& session) {
+        hasActiveNowPlayingSession |= session.isActiveNowPlayingSession();
+    });
+
+    return hasActiveNowPlayingSession;
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& PlatformMediaSessionManager::logChannel() const
 {

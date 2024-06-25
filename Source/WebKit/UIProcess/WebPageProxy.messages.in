@@ -647,4 +647,6 @@ CreateAppHighlightInSelectedRange)
 #if ENABLE(GAMEPAD)
     GamepadsRecentlyAccessed()
 #endif
+
+    HasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSessionChanged)
 }

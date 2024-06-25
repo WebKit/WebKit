@@ -44,12 +44,6 @@ class AudioCaptureSource;
 }
 
 namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PlatformMediaSession> : std::true_type { };
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AudioCaptureSource> : std::true_type { };
-}
-
-namespace WTF {
 class MediaTime;
 }
 
@@ -127,7 +121,8 @@ public:
 };
 
 class PlatformMediaSession
-    : public CanMakeWeakPtr<PlatformMediaSession>
+    : public CanMakeCheckedPtr<PlatformMediaSession>
+    , public CanMakeWeakPtr<PlatformMediaSession>
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     , public MediaPlaybackTargetClient
 #endif
@@ -136,6 +131,7 @@ class PlatformMediaSession
 #endif
 {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlatformMediaSession);
 public:
     static std::unique_ptr<PlatformMediaSession> create(PlatformMediaSessionManager&, PlatformMediaSessionClient&);
 
@@ -251,6 +247,9 @@ public:
 
     MediaSessionIdentifier mediaSessionIdentifier() const { return m_mediaSessionIdentifier; }
 
+    bool isActiveNowPlayingSession() const { return m_isActiveNowPlayingSession; }
+    void setActiveNowPlayingSession(bool);
+
 #if !RELEASE_LOG_DISABLED
     virtual String description() const;
 #endif
@@ -277,6 +276,7 @@ private:
     bool m_isPlayingToWirelessPlaybackTarget { false };
     bool m_hasPlayedAudiblySinceLastInterruption { false };
     bool m_preparingToPlay { false };
+    bool m_isActiveNowPlayingSession { false };
 
     friend class PlatformMediaSessionManager;
 };
@@ -327,6 +327,8 @@ public:
     virtual bool isNowPlayingEligible() const { return false; }
     virtual std::optional<NowPlayingInfo> nowPlayingInfo() const;
     virtual WeakPtr<PlatformMediaSession> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSession>>&, PlatformMediaSession::PlaybackControlsPurpose) { return nullptr; }
+
+    virtual void isActiveNowPlayingSessionChanged() = 0;
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& logger() const = 0;

@@ -1882,4 +1882,9 @@ void WebChromeClient::addDestinationTextAnimation(const WritingTools::Session::I
 
 #endif
 
+void WebChromeClient::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSession)
+{
+    protectedPage()->hasActiveNowPlayingSessionChanged(hasActiveNowPlayingSession);
+}
+
 } // namespace WebKit

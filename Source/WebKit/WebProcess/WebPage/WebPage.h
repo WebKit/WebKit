@@ -1779,6 +1779,8 @@ public:
 
     void takeSnapshotForTargetedElement(WebCore::ElementIdentifier, WebCore::ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
 
+    void hasActiveNowPlayingSessionChanged(bool);
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 

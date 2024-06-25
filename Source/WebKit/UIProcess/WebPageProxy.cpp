@@ -6505,6 +6505,8 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     if (frame->isMainFrame() && preferences().textExtractionEnabled())
         prepareTextExtractionSupportIfNeeded();
 #endif
+
+    protectedPageClient->hasActiveNowPlayingSessionChanged(false);
 }
 
 void WebPageProxy::setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&& completionHandler)
@@ -10058,6 +10060,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
     m_nowPlayingMetadataObservers.clear();
     m_nowPlayingMetadataObserverForTesting = nullptr;
+
+    protectedPageClient()->hasActiveNowPlayingSessionChanged(false);
 }
 
 void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason terminationReason)
@@ -14366,6 +14370,11 @@ void WebPageProxy::setPermissionLevelForTesting(const String& origin, bool allow
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPage::SetPermissionLevelForTesting(origin, allowed), pageID);
     });
+}
+
+void WebPageProxy::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSession)
+{
+    protectedPageClient()->hasActiveNowPlayingSessionChanged(hasActiveNowPlayingSession);
 }
 
 } // namespace WebKit

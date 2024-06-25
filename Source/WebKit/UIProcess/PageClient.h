@@ -785,6 +785,8 @@ public:
     };
     virtual void setGamepadsRecentlyAccessed(GamepadsRecentlyAccessed) { }
 #endif
+
+    virtual void hasActiveNowPlayingSessionChanged(bool) { }
 };
 
 } // namespace WebKit

@@ -9721,6 +9721,11 @@ void WebPage::setPermissionLevelForTesting(const String& origin, bool allowed)
 #endif
 }
 
+void WebPage::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSession)
+{
+    send(Messages::WebPageProxy::HasActiveNowPlayingSessionChanged(hasActiveNowPlayingSession));
+}
+
 } // namespace WebKit
 
 #undef WEBPAGE_RELEASE_LOG

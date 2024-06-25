@@ -317,4 +317,14 @@ void PageClientImplCocoa::setGamepadsRecentlyAccessed(GamepadsRecentlyAccessed g
 }
 #endif
 
+void PageClientImplCocoa::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSession)
+{
+    if ([m_webView _hasActiveNowPlayingSession] == hasActiveNowPlayingSession)
+        return;
+
+    [m_webView willChangeValueForKey:@"_hasActiveNowPlayingSession"];
+    [m_webView _setHasActiveNowPlayingSession:hasActiveNowPlayingSession];
+    [m_webView didChangeValueForKey:@"_hasActiveNowPlayingSession"];
 }
+
+} // namespace WebKit

@@ -2486,6 +2486,8 @@ public:
     bool isEditingCommandEnabledForTesting(const String&);
     void setPermissionLevelForTesting(const String& origin, bool allowed);
 
+    void hasActiveNowPlayingSessionChanged(bool);
+
 private:
     std::optional<Vector<uint8_t>> getWebCryptoMasterKey();
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

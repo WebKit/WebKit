@@ -196,6 +196,8 @@ public:
     WEBCORE_EXPORT void addNowPlayingMetadataObserver(const NowPlayingMetadataObserver&);
     WEBCORE_EXPORT void removeNowPlayingMetadataObserver(const NowPlayingMetadataObserver&);
 
+    bool hasActiveNowPlayingSessionInGroup(MediaSessionGroupIdentifier);
+
 protected:
     friend class PlatformMediaSession;
     static std::unique_ptr<PlatformMediaSessionManager> create();

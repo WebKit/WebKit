@@ -233,6 +233,8 @@ public:
 
     MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const final;
 
+    void isActiveNowPlayingSessionChanged() final;
+
 // DOM API
 // error state
     WEBCORE_EXPORT MediaError* error() const;

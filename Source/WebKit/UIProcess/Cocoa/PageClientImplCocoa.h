@@ -131,6 +131,8 @@ public:
     void setGamepadsRecentlyAccessed(GamepadsRecentlyAccessed) final;
 #endif
 
+    void hasActiveNowPlayingSessionChanged(bool) final;
+
 protected:
     RetainPtr<WKWebView> webView() const { return m_webView.get(); }
 
@@ -138,4 +140,4 @@ protected:
     std::unique_ptr<WebCore::AlternativeTextUIController> m_alternativeTextUIController;
 };
 
-}
+} // namespace WebKit

@@ -677,6 +677,8 @@ public:
     virtual void addDestinationTextAnimation(const WritingTools::SessionID&, const CharacterRange&) { }
 #endif
 
+    virtual void hasActiveNowPlayingSessionChanged(bool) { }
+
     WEBCORE_EXPORT virtual ~ChromeClient();
 
 protected:

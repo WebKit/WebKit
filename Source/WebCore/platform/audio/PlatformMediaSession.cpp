@@ -27,6 +27,7 @@
 #include "PlatformMediaSession.h"
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+
 #include "HTMLMediaElement.h"
 #include "Logging.h"
 #include "MediaPlayer.h"
@@ -479,6 +480,15 @@ WeakPtr<PlatformMediaSession> PlatformMediaSession::selectBestMediaSession(const
     return client().selectBestMediaSession(sessions, purpose);
 }
 
+void PlatformMediaSession::setActiveNowPlayingSession(bool isActiveNowPlayingSession)
+{
+    if (isActiveNowPlayingSession == m_isActiveNowPlayingSession)
+        return;
+
+    m_isActiveNowPlayingSession = isActiveNowPlayingSession;
+    client().isActiveNowPlayingSessionChanged();
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger& PlatformMediaSession::logger() const
 {
@@ -511,6 +521,6 @@ std::optional<NowPlayingInfo> PlatformMediaSessionClient::nowPlayingInfo() const
     return { };
 }
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
