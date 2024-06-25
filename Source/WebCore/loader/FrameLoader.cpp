@@ -3438,7 +3438,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
 
     if (request.requesterSecurityOrigin().isSameOriginDomain(frame->document()->securityOrigin())) {
         if (!dispatchNavigateEvent(url, loadType, action, request.navigationHistoryBehavior(), false, formState.get()))
-            return;
+            return completionHandler();
     }
 
     // must grab this now, since this load may stop the previous load and clear this flag
