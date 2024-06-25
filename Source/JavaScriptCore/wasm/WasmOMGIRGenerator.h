@@ -43,7 +43,7 @@
 #include <wtf/Box.h>
 #include <wtf/Expected.h>
 
-extern "C" void dumpProcedure(void*);
+extern "C" void SYSV_ABI dumpProcedure(void*);
 
 namespace JSC {
 

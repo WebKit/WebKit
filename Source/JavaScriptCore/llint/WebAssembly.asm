@@ -31,10 +31,8 @@ if HAVE_FAST_TLS
     const WTF_WASM_CONTEXT_KEY = constexpr WTF_WASM_CONTEXT_KEY
 end
 
-if X86_64
+if X86_64 or X86_64_WIN
     const NumberOfWasmArgumentJSRs = 6
-elsif X86_64_WIN
-    const NumberOfWasmArgumentJSRs = 4
 elsif ARM64 or ARM64E or RISCV64
     const NumberOfWasmArgumentJSRs = 8
 elsif ARMv7
@@ -50,14 +48,10 @@ const NumberOfWasmArguments = NumberOfWasmArgumentJSRs + NumberOfWasmArgumentFPR
 # All callee saves must match the definition in WasmCallee.cpp
 
 # These must match the definition in GPRInfo.h
-if X86_64 or ARM64 or ARM64E or RISCV64
+if X86_64 or X86_64_WIN or ARM64 or ARM64E or RISCV64
     const wasmInstance = csr0
     const memoryBase = csr3
     const boundsCheckingSize = csr4
-elsif X86_64_WIN
-    const wasmInstance = csr0
-    const memoryBase = csr5
-    const boundsCheckingSize = csr6
 elsif ARMv7
     const wasmInstance = csr0
     const memoryBase = invalidGPR
@@ -67,10 +61,8 @@ else
 end
 
 # This must match the definition in LowLevelInterpreter.asm
-if X86_64
+if X86_64 or X86_64_WIN
     const PB = csr2
-elsif X86_64_WIN
-    const PB = csr4
 elsif ARM64 or ARM64E or RISCV64
     const PB = csr7
 elsif ARMv7
@@ -91,11 +83,6 @@ macro forEachArgumentJSR(fn)
         fn(2 * 8, wa2, wa3)
         fn(4 * 8, wa4, wa5)
         fn(6 * 8, wa6, wa7)
-    elsif X86_64_WIN
-        fn(0 * 8, wa0)
-        fn(1 * 8, wa1)
-        fn(2 * 8, wa2)
-        fn(3 * 8, wa3)
     elsif JSVALUE64
         fn(0 * 8, wa0)
         fn(1 * 8, wa1)
@@ -259,14 +246,9 @@ macro preserveCalleeSavesUsedByWasm()
     subp CalleeSaveSpaceStackAligned, sp
     if ARM64 or ARM64E
         storepairq wasmInstance, PB, -16[cfr]
-    elsif X86_64 or RISCV64
+    elsif X86_64 or X86_64_WIN or RISCV64
         storep PB, -0x8[cfr]
         storep wasmInstance, -0x10[cfr]
-    elsif X86_64_WIN
-        # On Windows, ws1 = csr2 so we need to save / restore it
-        storep PB, -0x8[cfr]
-        storep wasmInstance, -0x10[cfr]
-        storep ws1, -0x18[cfr]
     elsif ARMv7
         storep PB, -4[cfr]
         storep wasmInstance, -8[cfr]
@@ -281,14 +263,9 @@ macro restoreCalleeSavesUsedByWasm()
     # to be observable within the same Wasm module.
     if ARM64 or ARM64E
         loadpairq -16[cfr], wasmInstance, PB
-    elsif X86_64 or RISCV64
+    elsif X86_64 or X86_64_WIN or RISCV64
         loadp -0x8[cfr], PB
         loadp -0x10[cfr], wasmInstance
-    elsif X86_64_WIN
-        # On Windows, ws1 = csr2 so we need to save / restore it
-        loadp -0x8[cfr], PB
-        loadp -0x10[cfr], wasmInstance
-        loadp -0x18[cfr], ws1
     elsif ARMv7
         loadp -4[cfr], PB
         loadp -8[cfr], wasmInstance
