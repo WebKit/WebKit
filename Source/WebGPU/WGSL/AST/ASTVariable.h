@@ -78,9 +78,7 @@ public:
     Expression* maybeReferenceType() { return m_referenceType; }
     const Type* storeType() const
     {
-        if (m_type)
-            return m_type->inferredType();
-        return m_initializer->inferredType();
+        return m_storeType;
     }
 
     std::optional<AddressSpace> addressSpace() const { return m_addressSpace; }
@@ -106,6 +104,10 @@ private:
         , m_role(role)
     {
         ASSERT(m_type || m_initializer);
+        if (m_type)
+            m_storeType = m_type->inferredType();
+        else
+            m_storeType = m_initializer->inferredType();
     }
 
     Identifier m_name;
@@ -121,6 +123,7 @@ private:
     Expression::Ptr m_referenceType { nullptr };
 
     // Computed properties
+    const Type* m_storeType { nullptr };
     std::optional<AddressSpace> m_addressSpace;
     std::optional<AccessMode> m_accessMode;
 

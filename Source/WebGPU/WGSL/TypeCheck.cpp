@@ -642,6 +642,8 @@ void TypeChecker::visit(AST::Variable& variable)
     if (variable.flavor() != AST::VariableFlavor::Const || result == m_types.bottomType())
         value = nullptr;
 
+    variable.m_storeType = result;
+
     if (variable.flavor() == AST::VariableFlavor::Var) {
         result = m_types.referenceType(*variable.addressSpace(), result, *variable.accessMode());
         auto* typeName = variable.maybeTypeName();
