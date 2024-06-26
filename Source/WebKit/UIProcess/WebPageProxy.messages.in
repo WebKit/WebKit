@@ -239,7 +239,7 @@ messages -> WebPageProxy {
 #if ENABLE(WRITING_TOOLS)
     ProofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(struct WebCore::WritingTools::Session::ID sessionID, struct WebCore::WritingTools::TextSuggestion::ID replacementID, WebCore::IntRect selectionBoundsInRootView)
 
-    ProofreadingSessionUpdateStateForSuggestionWithID(struct WebCore::WritingTools::Session::ID sessionID, enum:uint8_t WebCore::WritingTools::TextSuggestion::State state, struct WebCore::WritingTools::TextSuggestion::ID replacementID)
+    ProofreadingSessionUpdateStateForSuggestionWithID(struct WebCore::WritingTools::Session::ID sessionID, enum:uint8_t WebCore::WritingTools::TextSuggestionState state, struct WebCore::WritingTools::TextSuggestion::ID replacementID)
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
@@ -465,7 +465,7 @@ messages -> WebPageProxy {
     ShowPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier contextId, WebCore::FloatRect pickerLocation, bool hasVideo)
     PlaybackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier contextId, OptionSet<WebCore::MediaProducerMediaState> mediaState)
     SetMockMediaPlaybackTargetPickerEnabled(bool enabled)
-    SetMockMediaPlaybackTargetPickerState(String name, enum:uint8_t WebCore::MediaPlaybackTargetContext::MockState pickerState)
+    SetMockMediaPlaybackTargetPickerState(String name, enum:uint8_t WebCore::MediaPlaybackTargetContextMockState pickerState)
     MockMediaPlaybackTargetPickerDismissPopup()
 #endif
 

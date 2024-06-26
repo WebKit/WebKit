@@ -615,6 +615,10 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
             for (NSDictionary *argument in arguments) {
                 if (![argument isKindOfClass:NSDictionary.class])
                     continue;
+                if (NSString *enumName = argument[@"enum"]) {
+                    [typesNeedingDescriptions addObject:enumName];
+                    continue;
+                }
                 [typesNeedingDescriptions addObject:argument[@"type"]];
             }
         }

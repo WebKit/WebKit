@@ -8255,3 +8255,32 @@ struct WebCore::WrappedCryptoKey {
 #if PLATFORM(IOS_FAMILY)
 using WebCore::RenderThemeIOS::CSSValueToSystemColorMap = HashMap<WebCore::CSSValueKey, WebCore::Color>
 #endif
+
+enum class WebCore::WorkerThreadMode : bool
+enum class WebCore::WillContinueLoading : bool
+
+#if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
+header: <WebCore/CDMPrivate.h>
+[Nested] enum class WebCore::CDMPrivate::LocalStorageAccess : bool
+[Nested] enum class WebCore::CDMInstance::AllowPersistentState : bool
+[Nested] enum class WebCore::CDMInstance::SuccessValue : bool
+[Nested] enum class WebCore::CDMInstance::AllowDistinctiveIdentifiers : bool
+#endif
+
+#if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
+using WebCore::LegacyCDMSessionClient::MediaKeyErrorCode = unsigned short
+#endif
+
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+# FIXME: This should be an OptionSet<LoadOption>
+using WebCore::PlatformMediaResourceLoader::LoadOptions = unsigned
+enum class WebCore::ShouldContinuePolicyCheck : bool
+#endif
+
+#if ENABLE(GAMEPAD)
+enum class WebCore::EventMakesGamepadsVisible : bool
+#endif
+
+enum class WebCore::WillInternallyHandleFailure : bool
+enum class WebCore::ApplyTrackingPrevention : bool
+enum class WebCore::ShouldSample : bool
