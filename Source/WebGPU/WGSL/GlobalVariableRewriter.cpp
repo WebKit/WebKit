@@ -62,6 +62,7 @@ public:
     void visit(AST::AssignmentStatement&) override;
     void visit(AST::VariableStatement&) override;
     void visit(AST::PhonyAssignmentStatement&) override;
+    void visit(AST::CompoundAssignmentStatement&) override;
 
     void visit(AST::Expression&) override;
 
@@ -361,6 +362,13 @@ void RewriteGlobalVariables::visit(AST::CompoundStatement& statement)
         m_shaderModule.insert(statement.statements(), insertion.index + offset, AST::Statement::Ref(*insertion.statement));
         ++offset;
     }
+}
+
+void RewriteGlobalVariables::visit(AST::CompoundAssignmentStatement& statement)
+{
+    Packing lhsPacking = pack(Packing::Either, statement.leftExpression());
+    ASSERT(lhsPacking != Packing::Either);
+    pack(lhsPacking, statement.rightExpression());
 }
 
 void RewriteGlobalVariables::visit(AST::AssignmentStatement& statement)
