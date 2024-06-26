@@ -79,10 +79,14 @@ namespace Instanceof {
 
 namespace JFalse {
     static constexpr JSValueRegs valueJSR { JSRInfo::jsRegT32 };
+    static constexpr GPRReg scratch1GPR { GPRInfo::regT5 };
+    static_assert(noOverlap(valueJSR, scratch1GPR));
 }
 
 namespace JTrue {
     static constexpr JSValueRegs valueJSR { JSRInfo::jsRegT32 };
+    static constexpr GPRReg scratch1GPR { GPRInfo::regT5 };
+    static_assert(noOverlap(valueJSR, scratch1GPR));
 }
 
 namespace Throw {

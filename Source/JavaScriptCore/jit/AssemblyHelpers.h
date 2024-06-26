@@ -721,8 +721,7 @@ public:
     Jump branchIfOther(JSValueRegs regs, GPRReg tempGPR)
     {
 #if USE(JSVALUE64)
-        move(regs.gpr(), tempGPR);
-        and64(TrustedImm32(~JSValue::UndefinedTag), tempGPR);
+        and64(TrustedImm32(~JSValue::UndefinedTag), regs.gpr(), tempGPR);
         return branch64(Equal, tempGPR, TrustedImm64(JSValue::ValueNull));
 #else
         or32(TrustedImm32(1), regs.tagGPR(), tempGPR);
@@ -733,8 +732,7 @@ public:
     Jump branchIfNotOther(JSValueRegs regs, GPRReg tempGPR)
     {
 #if USE(JSVALUE64)
-        move(regs.gpr(), tempGPR);
-        and64(TrustedImm32(~JSValue::UndefinedTag), tempGPR);
+        and64(TrustedImm32(~JSValue::UndefinedTag), regs.gpr(), tempGPR);
         return branch64(NotEqual, tempGPR, TrustedImm64(JSValue::ValueNull));
 #else
         or32(TrustedImm32(1), regs.tagGPR(), tempGPR);
@@ -897,8 +895,8 @@ public:
             and64(gpr, tempGPR);
             return branch64(Equal, tempGPR, TrustedImm32(JSValue::BigInt32Tag));
         }
-        move(gpr, tempGPR);
-        and64(TrustedImm64(JSValue::BigInt32Mask), tempGPR);
+
+        and64(TrustedImm64(JSValue::BigInt32Mask), gpr, tempGPR);
         return branch64(Equal, tempGPR, TrustedImm32(JSValue::BigInt32Tag));
     }
     Jump branchIfNotBigInt32(GPRReg gpr, GPRReg tempGPR, TagRegistersMode mode = HaveTagRegisters)
@@ -910,8 +908,7 @@ public:
             and64(gpr, tempGPR);
             return branch64(NotEqual, tempGPR, TrustedImm32(JSValue::BigInt32Tag));
         }
-        move(gpr, tempGPR);
-        and64(TrustedImm64(JSValue::BigInt32Mask), tempGPR);
+        and64(TrustedImm64(JSValue::BigInt32Mask), gpr, tempGPR);
         return branch64(NotEqual, tempGPR, TrustedImm32(JSValue::BigInt32Tag));
     }
     Jump branchIfBigInt32(JSValueRegs regs, GPRReg tempGPR, TagRegistersMode mode = HaveTagRegisters)
@@ -1622,10 +1619,9 @@ public:
     void boxInt32(GPRReg intGPR, JSValueRegs boxedRegs, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
-        if (mode == DoNotHaveTagRegisters) {
-            move(intGPR, boxedRegs.gpr());
-            or64(TrustedImm64(JSValue::NumberTag), boxedRegs.gpr());
-        } else
+        if (mode == DoNotHaveTagRegisters)
+            or64(TrustedImm64(JSValue::NumberTag), intGPR, boxedRegs.gpr());
+        else
             or64(GPRInfo::numberTagRegister, intGPR, boxedRegs.gpr());
 #else
         UNUSED_PARAM(mode);
@@ -1990,12 +1986,13 @@ public:
         storePtr(TrustedImmPtr(nullptr), Address(resultGPR, JSObject::butterflyOffset()));
     }
 
-    JumpList branchIfValue(VM&, JSValueRegs, GPRReg scratch, GPRReg scratchIfShouldCheckMasqueradesAsUndefined, FPRReg, FPRReg, bool shouldCheckMasqueradesAsUndefined, std::variant<JSGlobalObject*, GPRReg>, bool negateResult);
-    JumpList branchIfTruthy(VM& vm, JSValueRegs value, GPRReg scratch, GPRReg scratchIfShouldCheckMasqueradesAsUndefined, FPRReg scratchFPR0, FPRReg scratchFPR1, bool shouldCheckMasqueradesAsUndefined, std::variant<JSGlobalObject*, GPRReg> globalObject)
+    enum LazyGlobalObjectLoadTag { LazyBaselineGlobalObject };
+    JumpList branchIfValue(VM&, JSValueRegs, GPRReg scratch, GPRReg scratchIfShouldCheckMasqueradesAsUndefined, FPRReg, FPRReg, bool shouldCheckMasqueradesAsUndefined, std::variant<JSGlobalObject*, GPRReg, LazyGlobalObjectLoadTag>, bool negateResult);
+    JumpList branchIfTruthy(VM& vm, JSValueRegs value, GPRReg scratch, GPRReg scratchIfShouldCheckMasqueradesAsUndefined, FPRReg scratchFPR0, FPRReg scratchFPR1, bool shouldCheckMasqueradesAsUndefined, std::variant<JSGlobalObject*, GPRReg, LazyGlobalObjectLoadTag> globalObject)
     {
         return branchIfValue(vm, value, scratch, scratchIfShouldCheckMasqueradesAsUndefined, scratchFPR0, scratchFPR1, shouldCheckMasqueradesAsUndefined, globalObject, false);
     }
-    JumpList branchIfFalsey(VM& vm, JSValueRegs value, GPRReg scratch, GPRReg scratchIfShouldCheckMasqueradesAsUndefined, FPRReg scratchFPR0, FPRReg scratchFPR1, bool shouldCheckMasqueradesAsUndefined, std::variant<JSGlobalObject*, GPRReg> globalObject)
+    JumpList branchIfFalsey(VM& vm, JSValueRegs value, GPRReg scratch, GPRReg scratchIfShouldCheckMasqueradesAsUndefined, FPRReg scratchFPR0, FPRReg scratchFPR1, bool shouldCheckMasqueradesAsUndefined, std::variant<JSGlobalObject*, GPRReg, LazyGlobalObjectLoadTag> globalObject)
     {
         return branchIfValue(vm, value, scratch, scratchIfShouldCheckMasqueradesAsUndefined, scratchFPR0, scratchFPR1, shouldCheckMasqueradesAsUndefined, globalObject, true);
     }
