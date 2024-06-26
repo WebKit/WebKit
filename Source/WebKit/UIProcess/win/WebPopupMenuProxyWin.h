@@ -140,6 +140,7 @@ private:
     GDIObject<HBITMAP> m_bmp;
     HWND m_popup { nullptr };
     WebCore::IntRect m_windowRect;
+    WebCore::IntSize m_clientSize;
 
     float m_itemHeight { 0 };
     int m_scrollOffset { 0 };
