@@ -57,9 +57,6 @@
 # TESTS PASSING
 #////////////////////////////////////////////////////////////////////////////////////////
 
-animations/missing-values-first-keyframe.html [ Pass ]
-animations/missing-values-last-keyframe.html [ Pass ]
-
 # RSA-PSS tests are for now skipped on all ports, so we for now explicitly enable the passing ones here.
 crypto/subtle/ecdh-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey.html [ Pass ]
 crypto/subtle/ecdh-import-pkcs8-key-p384-validate-ecprivatekey-parameters-publickey.html [ Pass ]
