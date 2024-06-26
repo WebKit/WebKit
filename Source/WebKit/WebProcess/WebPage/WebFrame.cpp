@@ -42,6 +42,7 @@
 #include "PluginView.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WebAutomationSession.h"
 #include "WebChromeClient.h"
 #include "WebContextMenu.h"
 #include "WebCoreArgumentCoders.h"
@@ -1258,18 +1259,23 @@ WebCore::HandleUserInputEventResult WebFrame::handleMouseEvent(const WebMouseEve
             coreLocalFrame->eventHandler().invalidateClick();
         return coreLocalFrame->eventHandler().handleMouseReleaseEvent(platformMouseEvent);
 
-    case PlatformEvent::Type::MouseMoved:
+    case PlatformEvent::Type::MouseMoved: {
 #if PLATFORM(COCOA)
+        // FIXME <https://webkit.org/b/275500>: Find a way to properly ensure that automated events get delivered into an unfocused window.
+        bool isEventSynthesized = false;
+#if PLATFORM(MAC)
+        isEventSynthesized = platformMouseEvent.eventNumber() == WebAutomationSession::synthesizedMouseEventMagicEventNumber;
+#endif
         // We need to do a full, normal hit test during this mouse event if the page is active or if a mouse
         // button is currently pressed. It is possible that neither of those things will be true since on
         // Lion when legacy scrollbars are enabled, WebKit receives mouse events all the time. If it is one
         // of those cases where the page is not active and the mouse is not pressed, then we can fire a more
         // efficient scrollbars-only version of the event.
-        if (!(page()->corePage()->focusController().isActive() || (mouseEvent.button() != WebMouseEventButton::None)))
+        if (!isEventSynthesized && !page()->corePage()->focusController().isActive() && mouseEvent.button() == WebMouseEventButton::None)
             return coreLocalFrame->eventHandler().passMouseMovedEventToScrollbars(platformMouseEvent);
-#endif
+#endif // PLATFORM(COCOA)
         return coreLocalFrame->eventHandler().mouseMoved(platformMouseEvent);
-
+    }
     case PlatformEvent::Type::MouseForceChanged:
     case PlatformEvent::Type::MouseForceDown:
     case PlatformEvent::Type::MouseForceUp:

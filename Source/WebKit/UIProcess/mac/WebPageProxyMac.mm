@@ -49,6 +49,7 @@
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKQuickLookPreviewController.h"
 #import "WKSharingServicePickerDelegate.h"
+#import "WebAutomationSession.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebPageMessages.h"
 #import "WebPageProxyInternals.h"
@@ -371,6 +372,10 @@ bool WebPageProxy::shouldDelayWindowOrderingForEvent(const WebKit::WebMouseEvent
 
 bool WebPageProxy::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& event)
 {
+    // FIXME <https://webkit.org/b/275500>: Find a way to properly ensure that automated events get delivered into an unfocused window.
+    if (eventNumber == WebAutomationSession::synthesizedMouseEventMagicEventNumber)
+        return true;
+
     if (!hasRunningProcess())
         return false;
 
