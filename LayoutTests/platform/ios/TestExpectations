@@ -6874,9 +6874,6 @@ webkit.org/b/271018 imported/w3c/web-platform-tests/svg/painting/reftests/marker
 
 webkit.org/b/271178 media/now-playing-webaudio.html [ Pass Failure ]
 
-# rdar://124971386 (REGRESSION (iOS 17.4): 2 imported WPT css-box/margin-trim/computed-margin-values layout tests are consistently failing.)
-imported/w3c/web-platform-tests/css/css-box/margin-trim/computed-margin-values/block-container-block-start-child-with-border.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-box/margin-trim/computed-margin-values/block-container-block-start-self-collapsing-nested.html [ Pass Failure ]
 # rdar://124987637 (REGRESSION (iOS 17.4): 7 imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-*.html layout tests are flaky/consistent ImageOnlyFailures.)
 imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-048.html
 imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-049.html
