@@ -3582,7 +3582,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
     NUM_FAILURES_TO_DISPLAY_IN_STATUS = 5
 
     def __init__(self, **kwargs):
-        super().__init__(logEnviron=False, sigtermTime=10, timeout=2 * 60 * 60, **kwargs)
+        super().__init__(logEnviron=False, sigtermTime=10, timeout=3 * 60 * 60, **kwargs)
         self.binaryFailures = []
         self.stressTestFailures = []
         self.flaky = {}
