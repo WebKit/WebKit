@@ -76,6 +76,7 @@ public:
     void visit(AST::Function&) override;
     void visit(AST::Structure&) override;
     void visit(AST::Variable&) override;
+    void visit(AST::ConstAssert&) override;
 
     void visit(const Type*, AST::Expression&);
     void visit(const Type*, AST::CallExpression&);
@@ -739,6 +740,11 @@ bool FunctionDefinitionWriter::emitPackedVector(const Types::Vector& vector)
 void FunctionDefinitionWriter::visit(AST::Variable& variable)
 {
     serializeVariable(variable);
+}
+
+void FunctionDefinitionWriter::visit(AST::ConstAssert&)
+{
+    // const_assert should not generate any code
 }
 
 void FunctionDefinitionWriter::visitGlobal(AST::Variable& variable)
