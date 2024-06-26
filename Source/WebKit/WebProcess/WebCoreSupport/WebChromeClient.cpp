@@ -1748,6 +1748,11 @@ URL WebChromeClient::allowedQueryParametersForAdvancedPrivacyProtections(const U
     return protectedPage()->allowedQueryParametersForAdvancedPrivacyProtections(url);
 }
 
+void WebChromeClient::didAddOrRemoveViewportConstrainedObjects()
+{
+    protectedPage()->didAddOrRemoveViewportConstrainedObjects();
+}
+
 #if ENABLE(TEXT_AUTOSIZING)
 
 void WebChromeClient::textAutosizingUsesIdempotentModeChanged()

@@ -463,6 +463,7 @@ static const Seconds maximumLayerVolatilityTimerInterval { 2_s };
 
 #if PLATFORM(IOS_FAMILY)
 static constexpr Seconds updateFocusedElementInformationDebounceInterval { 100_ms };
+static constexpr Seconds updateLayoutViewportHeightExpansionTimerInterval { 25_ms };
 #endif
 
 #define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
@@ -623,6 +624,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_limitsNavigationsToAppBoundDomains(parameters.limitsNavigationsToAppBoundDomains)
 #endif
     , m_lastNavigationWasAppInitiated(parameters.lastNavigationWasAppInitiated)
+#if PLATFORM(IOS_FAMILY)
+    , m_updateLayoutViewportHeightExpansionTimer(*this, &WebPage::updateLayoutViewportHeightExpansionTimerFired, updateLayoutViewportHeightExpansionTimerInterval)
+#endif
 #if ENABLE(APP_HIGHLIGHTS)
     , m_appHighlightsVisible(parameters.appHighlightsVisible)
 #endif
@@ -5230,19 +5234,19 @@ void WebPage::isInFullscreenChanged(IsInFullscreenMode isInFullscreenMode)
 
 void WebPage::closeFullScreen()
 {
-    setAllowsLayoutViewportHeightExpansion(true);
+    removeReasonsToDisallowLayoutViewportHeightExpansion(DisallowLayoutViewportHeightExpansionReason::ElementFullScreen);
 
     injectedBundleFullScreenClient().closeFullScreen(this);
 }
 
 void WebPage::prepareToEnterElementFullScreen()
 {
-    setAllowsLayoutViewportHeightExpansion(false);
+    addReasonsToDisallowLayoutViewportHeightExpansion(DisallowLayoutViewportHeightExpansionReason::ElementFullScreen);
 }
 
 void WebPage::prepareToExitElementFullScreen()
 {
-    setAllowsLayoutViewportHeightExpansion(true);
+    removeReasonsToDisallowLayoutViewportHeightExpansion(DisallowLayoutViewportHeightExpansionReason::ElementFullScreen);
 }
 
 #endif // ENABLE(FULLSCREEN_API)
@@ -7638,7 +7642,10 @@ void WebPage::didCommitLoad(WebFrame* frame)
     m_loadCommitTime = WallTime::now();
 #endif
 
-    setAllowsLayoutViewportHeightExpansion(true);
+#if PLATFORM(IOS_FAMILY)
+    m_updateLayoutViewportHeightExpansionTimer.stop();
+#endif
+    removeReasonsToDisallowLayoutViewportHeightExpansion(m_disallowLayoutViewportHeightExpansionReasons);
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     if (coreFrame->isMainFrame() && !usesEphemeralSession()) {
@@ -9754,13 +9761,38 @@ void WebPage::setPermissionLevelForTesting(const String& origin, bool allowed)
 #endif
 }
 
-void WebPage::setAllowsLayoutViewportHeightExpansion(bool value)
+void WebPage::didAddOrRemoveViewportConstrainedObjects()
 {
-    if (m_allowsLayoutViewportHeightExpansion == value)
+    if (!m_page->settings().layoutViewportHeightExpansionFactor())
         return;
 
-    m_allowsLayoutViewportHeightExpansion = value;
-    send(Messages::WebPageProxy::SetAllowsLayoutViewportHeightExpansion(value));
+#if PLATFORM(IOS_FAMILY)
+    m_updateLayoutViewportHeightExpansionTimer.restart();
+#endif
+}
+
+void WebPage::addReasonsToDisallowLayoutViewportHeightExpansion(OptionSet<DisallowLayoutViewportHeightExpansionReason> reasons)
+{
+    bool wasEmpty = m_disallowLayoutViewportHeightExpansionReasons.isEmpty();
+    m_disallowLayoutViewportHeightExpansionReasons.add(reasons);
+
+    if (!m_page->settings().layoutViewportHeightExpansionFactor())
+        return;
+
+    if (wasEmpty && !m_disallowLayoutViewportHeightExpansionReasons.isEmpty())
+        send(Messages::WebPageProxy::SetAllowsLayoutViewportHeightExpansion(false));
+}
+
+void WebPage::removeReasonsToDisallowLayoutViewportHeightExpansion(OptionSet<DisallowLayoutViewportHeightExpansionReason> reasons)
+{
+    bool wasEmpty = m_disallowLayoutViewportHeightExpansionReasons.isEmpty();
+    m_disallowLayoutViewportHeightExpansionReasons.remove(reasons);
+
+    if (!m_page->settings().layoutViewportHeightExpansionFactor())
+        return;
+
+    if (!wasEmpty && m_disallowLayoutViewportHeightExpansionReasons.isEmpty())
+        send(Messages::WebPageProxy::SetAllowsLayoutViewportHeightExpansion(true));
 }
 
 void WebPage::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSession)

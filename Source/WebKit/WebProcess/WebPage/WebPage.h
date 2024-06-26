@@ -440,6 +440,11 @@ class WebExtensionControllerProxy;
 class PlatformXRSystemProxy;
 #endif
 
+enum class DisallowLayoutViewportHeightExpansionReason : uint8_t {
+    ElementFullScreen       = 1 << 0,
+    LargeContainer          = 1 << 1,
+};
+
 using SnapshotOptions = uint32_t;
 using WKEventModifiers = uint32_t;
 
@@ -547,8 +552,6 @@ public:
     void prepareToExitElementFullScreen();
     void closeFullScreen();
 #endif
-
-    void setAllowsLayoutViewportHeightExpansion(bool);
 
     void addConsoleMessage(WebCore::FrameIdentifier, MessageSource, MessageLevel, const String&, std::optional<WebCore::ResourceLoaderIdentifier> = std::nullopt);
     void enqueueSecurityPolicyViolationEvent(WebCore::FrameIdentifier, WebCore::SecurityPolicyViolationEventInit&&);
@@ -1657,6 +1660,8 @@ public:
     void setAppHighlightsVisibility(const WebCore::HighlightVisibility);
 #endif
 
+    void didAddOrRemoveViewportConstrainedObjects();
+
 #if PLATFORM(IOS_FAMILY)
     void dispatchWheelEventWithoutScrolling(WebCore::FrameIdentifier, const WebWheelEvent&, CompletionHandler<void(bool)>&&);
 #endif
@@ -1860,6 +1865,13 @@ private:
 #if ENABLE(VIEWPORT_RESIZING)
     void shrinkToFitContent(ZoomToInitialScale = ZoomToInitialScale::No);
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+    void updateLayoutViewportHeightExpansionTimerFired();
+#endif
+
+    void addReasonsToDisallowLayoutViewportHeightExpansion(OptionSet<DisallowLayoutViewportHeightExpansionReason>);
+    void removeReasonsToDisallowLayoutViewportHeightExpansion(OptionSet<DisallowLayoutViewportHeightExpansionReason>);
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
     void requestDragStart(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, OptionSet<WebCore::DragSourceAction> allowedActionsMask);
@@ -2786,7 +2798,10 @@ private:
     bool m_appUsesCustomAccentColor { false };
 #endif
 
-    bool m_allowsLayoutViewportHeightExpansion { true };
+    OptionSet<DisallowLayoutViewportHeightExpansionReason> m_disallowLayoutViewportHeightExpansionReasons;
+#if PLATFORM(IOS_FAMILY)
+    WebCore::DeferrableOneShotTimer m_updateLayoutViewportHeightExpansionTimer;
+#endif
 
     WeakPtr<WebCore::Node, WebCore::WeakPtrImplWithEventTargetData> m_lastNodeBeforeWritingSuggestions;
 

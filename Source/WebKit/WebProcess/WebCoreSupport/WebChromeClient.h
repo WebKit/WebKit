@@ -467,6 +467,8 @@ private:
     void textAutosizingUsesIdempotentModeChanged() final;
 #endif
 
+    void didAddOrRemoveViewportConstrainedObjects() final;
+
 #if ENABLE(META_VIEWPORT)
     double baseViewportLayoutSizeScaleFactor() const final;
 #endif
