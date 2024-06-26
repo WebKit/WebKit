@@ -1252,16 +1252,16 @@ void MediaPlayerPrivateGStreamer::videoSinkCapsChanged(GstPad* videoSinkPad)
     });
 }
 
-void MediaPlayerPrivateGStreamer::handleTextSample(GstSample* sample, const char* streamId)
+void MediaPlayerPrivateGStreamer::handleTextSample(GRefPtr<GstSample>&& sample, const String& streamId)
 {
     for (auto& track : m_textTracks.values()) {
-        if (!strcmp(track->stringId().string().utf8().data(), streamId)) {
-            track->handleSample(sample);
+        if (track->stringId() == streamId) {
+            track->handleSample(WTFMove(sample));
             return;
         }
     }
 
-    GST_WARNING_OBJECT(m_pipeline.get(), "Got sample with unknown stream ID %s.", streamId);
+    GST_WARNING_OBJECT(m_pipeline.get(), "Got sample with unknown stream ID %s.", streamId.utf8().data());
 }
 
 MediaTime MediaPlayerPrivateGStreamer::platformDuration() const

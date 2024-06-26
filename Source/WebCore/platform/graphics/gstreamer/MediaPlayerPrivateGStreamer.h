@@ -232,7 +232,7 @@ public:
     void flushCurrentBuffer();
 #endif
 
-    void handleTextSample(GstSample*, const char* streamId);
+    void handleTextSample(GRefPtr<GstSample>&&, const String& streamId);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }

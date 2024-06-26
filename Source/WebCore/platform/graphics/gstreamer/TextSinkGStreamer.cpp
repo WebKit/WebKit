@@ -42,7 +42,7 @@ using namespace WebCore;
 struct _WebKitTextSinkPrivate {
     GRefPtr<GstElement> appSink;
     ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer> mediaPlayerPrivate;
-    const char* streamId { nullptr };
+    GUniquePtr<char> streamId;
 };
 
 #define webkit_text_sink_parent_class parent_class
@@ -54,24 +54,23 @@ static void webkitTextSinkHandleSample(WebKitTextSink* self, GRefPtr<GstSample>&
     auto* priv = self->priv;
     if (!priv->streamId) {
         auto pad = adoptGRef(gst_element_get_static_pad(priv->appSink.get(), "sink"));
-        auto streamStartEvent = adoptGRef(gst_pad_get_sticky_event(pad.get(), GST_EVENT_STREAM_START, 0));
-
-        if (streamStartEvent)
-            gst_event_parse_stream_start(streamStartEvent.get(), &priv->streamId);
+        priv->streamId.reset(gst_pad_get_stream_id(pad.get()));
     }
 
-    if (priv->streamId) {
-        // Player private methods that interact with WebCore must run from the main thread. Things can be destroyed before that
-        // code runs, including the text sink and priv, so pass everything in a safe way.
-        callOnMainThread([mediaPlayerPrivate = ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>(priv->mediaPlayerPrivate), streamId = priv->streamId, sample = WTFMove(sample)] {
-            RefPtr player = mediaPlayerPrivate.get();
-            if (!player)
-                return;
-            player->handleTextSample(sample.get(), streamId);
-        });
+    if (UNLIKELY(!priv->streamId)) {
+        GST_WARNING_OBJECT(self, "Unable to handle sample with no stream start event.");
         return;
     }
-    GST_WARNING_OBJECT(self, "Unable to handle sample with no stream start event.");
+
+    // Player private methods that interact with WebCore must run from the main thread. Things can
+    // be destroyed before that code runs, including the text sink and priv, so pass everything in a
+    // safe way.
+    callOnMainThread([mediaPlayerPrivate = ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>(priv->mediaPlayerPrivate), streamId = String::fromUTF8(priv->streamId.get()), sample = WTFMove(sample)]() mutable {
+        RefPtr player = mediaPlayerPrivate.get();
+        if (!player)
+            return;
+        player->handleTextSample(WTFMove(sample), streamId);
+    });
 }
 
 static void webkitTextSinkConstructed(GObject* object)

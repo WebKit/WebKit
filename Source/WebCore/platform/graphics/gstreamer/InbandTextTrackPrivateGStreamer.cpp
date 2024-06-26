@@ -83,11 +83,11 @@ void InbandTextTrackPrivateGStreamer::tagsChanged(GRefPtr<GstTagList>&& tags)
     });
 }
 
-void InbandTextTrackPrivateGStreamer::handleSample(GRefPtr<GstSample> sample)
+void InbandTextTrackPrivateGStreamer::handleSample(GRefPtr<GstSample>&& sample)
 {
     {
         Locker locker { m_sampleMutex };
-        m_pendingSamples.append(sample);
+        m_pendingSamples.append(WTFMove(sample));
     }
 
     RefPtr<InbandTextTrackPrivateGStreamer> protectedThis(this);
@@ -104,8 +104,7 @@ void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()
         m_pendingSamples.swap(samples);
     }
 
-    for (size_t i = 0; i < samples.size(); ++i) {
-        GRefPtr<GstSample> sample = samples[i];
+    for (auto& sample : samples) {
         GstBuffer* buffer = gst_sample_get_buffer(sample.get());
         if (!buffer) {
             GST_WARNING("Track %d got sample with no buffer.", m_index);
