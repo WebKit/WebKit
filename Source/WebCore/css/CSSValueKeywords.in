@@ -1621,6 +1621,7 @@ no-preference
 // prefers-contrast
 more
 less
+custom
 // no-preference
 
 // prefers-color-scheme, font-palette

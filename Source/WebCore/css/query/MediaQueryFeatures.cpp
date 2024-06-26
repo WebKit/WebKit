@@ -503,7 +503,7 @@ const FeatureSchema& prefersContrast()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "prefers-contrast"_s,
-        FixedVector { CSSValueNoPreference, CSSValueMore, CSSValueLess },
+        FixedVector { CSSValueNoPreference, CSSValueMore, CSSValueLess, CSSValueCustom },
         [](auto& context) {
             bool userPrefersContrast = [&] {
                 Ref frame = *context.document->frame();
