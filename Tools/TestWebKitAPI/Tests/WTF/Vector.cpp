@@ -44,6 +44,11 @@ TEST(WTF_Vector, Basic)
     EXPECT_EQ(nullptr, intVector.data());
     EXPECT_EQ(0U, intVector.size());
     EXPECT_EQ(0U, intVector.capacity());
+
+    auto intSpan = intVector.span();
+    EXPECT_EQ(nullptr, intSpan.data());
+    EXPECT_EQ(0U, intSpan.size());
+    EXPECT_EQ(0U, intSpan.size_bytes());
 }
 
 TEST(WTF_Vector, ZeroSize)
@@ -53,6 +58,23 @@ TEST(WTF_Vector, ZeroSize)
     EXPECT_EQ(nullptr, intVector.data());
     EXPECT_EQ(0U, intVector.size());
     EXPECT_EQ(0U, intVector.capacity());
+
+    auto intSpan = intVector.span();
+    EXPECT_EQ(nullptr, intSpan.data());
+    EXPECT_EQ(0U, intSpan.size());
+    EXPECT_EQ(0U, intSpan.size_bytes());
+
+    intVector.append(0);
+    intVector.removeLast();
+    EXPECT_TRUE(intVector.isEmpty());
+    EXPECT_NE(nullptr, intVector.data());
+    EXPECT_EQ(0U, intVector.size());
+    EXPECT_NE(0U, intVector.capacity());
+
+    auto intSpanExpanded = intVector.span();
+    EXPECT_NE(nullptr, intSpanExpanded.data());
+    EXPECT_EQ(0U, intSpanExpanded.size());
+    EXPECT_EQ(0U, intSpanExpanded.size_bytes());
 }
 
 TEST(WTF_Vector, Iterator)
