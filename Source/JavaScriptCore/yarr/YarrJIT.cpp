@@ -67,7 +67,7 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationAreCanonicallyEquivalent, bool, (uns
 static constexpr GPRReg areCanonicallyEquivalentCharArgReg = ARM64Registers::x6;
 static constexpr GPRReg areCanonicallyEquivalentPattCharArgReg = ARM64Registers::x7;
 static constexpr GPRReg areCanonicallyEquivalentCanonicalModeArgReg = ARM64Registers::x10;
-#elif CPU(X86_64) && !OS(WINDOWS)
+#elif CPU(X86_64)
 static constexpr GPRReg areCanonicallyEquivalentCharArgReg = X86Registers::eax;
 static constexpr GPRReg areCanonicallyEquivalentPattCharArgReg = X86Registers::r9;
 static constexpr GPRReg areCanonicallyEquivalentCanonicalModeArgReg = X86Registers::r13;
@@ -4389,14 +4389,8 @@ class YarrGenerator final : public YarrJITInfo {
         if (m_pattern.m_saveInitialStartValue)
             pushInEnter(X86Registers::ebx);
 
-#if OS(WINDOWS)
-        pushInEnter(X86Registers::edi);
-#endif
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
         if (m_containsNestedSubpatterns) {
-#if OS(WINDOWS)
-            pushInEnter(X86Registers::esi);
-#endif
             pushInEnter(X86Registers::r12);
         }
 #endif
@@ -4408,12 +4402,6 @@ class YarrGenerator final : public YarrJITInfo {
         } else if (m_pattern.hasDuplicateNamedCaptureGroups())
             pushInEnter(X86Registers::r14);
 
-#if OS(WINDOWS)
-        if (m_compileMode == JITCompileMode::IncludeSubpatterns)
-            m_jit.loadPtr(MacroAssembler::Address(MacroAssembler::framePointerRegister, 6 * sizeof(void*)), m_regs.output);
-        // rcx is the pointer to the allocated space for result in x64 Windows.
-        pushInEnter(X86Registers::ecx);
-#endif
 #elif CPU(ARM64)
         UNUSED_VARIABLE(pushInEnter);
         if (!Options::useJITCage())
@@ -4452,14 +4440,6 @@ class YarrGenerator final : public YarrJITInfo {
 #endif
 
 #if CPU(X86_64)
-#if OS(WINDOWS)
-        // Store the return value in the allocated space pointed by rcx.
-        ASSERT(noOverlap(X86Registers::ecx, m_regs.returnRegister, m_regs.returnRegister2));
-        m_jit.pop(X86Registers::ecx);
-        m_jit.store64(m_regs.returnRegister, MacroAssembler::Address(X86Registers::ecx));
-        m_jit.store64(m_regs.returnRegister2, MacroAssembler::Address(X86Registers::ecx, sizeof(void*)));
-        m_jit.move(X86Registers::ecx, m_regs.returnRegister);
-#endif
         if (mayCall()) {
             m_jit.pop(X86Registers::r15);
             m_jit.pop(X86Registers::r14);
@@ -4470,13 +4450,7 @@ class YarrGenerator final : public YarrJITInfo {
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
         if (m_containsNestedSubpatterns) {
             m_jit.pop(X86Registers::r12);
-#if OS(WINDOWS)
-            m_jit.pop(X86Registers::esi);
-#endif
         }
-#endif
-#if OS(WINDOWS)
-        m_jit.pop(X86Registers::edi);
 #endif
 
         if (m_pattern.m_saveInitialStartValue)
@@ -4663,11 +4637,7 @@ public:
             functionChecks<YarrCodeBlock::YarrJITCode16>();
             functionChecks<YarrCodeBlock::YarrJITCodeMatchOnly8>();
             functionChecks<YarrCodeBlock::YarrJITCodeMatchOnly16>();
-#if CPU(X86_64) && OS(WINDOWS)
-            // matchingContext is the 5th argument, it is found on the stack.
-            MacroAssembler::RegisterID matchingContext = m_regs.regT1;
-            m_jit.loadPtr(MacroAssembler::Address(MacroAssembler::framePointerRegister, 7 * sizeof(void*)), matchingContext);
-#elif CPU(ARM_THUMB2)
+#if CPU(ARM_THUMB2)
             // Not enough argument registers: try to load the 5th argument from the stack
             MacroAssembler::RegisterID matchingContext = m_regs.regT1;
 
@@ -5192,7 +5162,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> areCanonicallyEquivalentThunkGenerator(VM&
         pushCount -= 2;
         jit.popPair(GPRInfo::toRegister(pushCount), GPRInfo::toRegister(pushCount + 1));
     };
-#elif CPU(X86_64) && !OS(WINDOWS)
+#elif CPU(X86_64)
     constexpr unsigned registersToSave = 7;
 
     constexpr GPRReg callerSaves[registersToSave] = {
@@ -5222,7 +5192,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> areCanonicallyEquivalentThunkGenerator(VM&
 #if CPU(ARM64)
     while (pushCount < registersToSave)
         pushCallerSavePair();
-#elif CPU(X86_64) && !OS(WINDOWS)
+#elif CPU(X86_64)
     while (pushCount < registersToSave)
         pushCallerSave();
 #endif
@@ -5236,7 +5206,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> areCanonicallyEquivalentThunkGenerator(VM&
         popCallerSavePair();
 
     jit.move(ARM64Registers::ip0, areCanonicallyEquivalentCharArgReg);
-#elif CPU(X86_64) && !OS(WINDOWS)
+#elif CPU(X86_64)
     while (pushCount)
         popCallerSave();
 #endif
@@ -5312,7 +5282,7 @@ void jitCompile(YarrPattern& pattern, StringView patternString, CharSize charSiz
 }
 
 #if ENABLE(YARR_JIT_REGEXP_TEST_INLINE)
-#if !(CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)) || CPU(RISCV64))
+#if !(CPU(ARM64) || CPU(X86_64) || CPU(RISCV64))
 #error "No support for inlined JIT'ing of RegExp.test for this CPU / OS combination."
 #endif
 

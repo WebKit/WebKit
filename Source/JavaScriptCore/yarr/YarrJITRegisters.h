@@ -81,7 +81,6 @@ public:
     static constexpr MacroAssembler::TrustedImm32 supplementaryPlanesBase = MacroAssembler::TrustedImm32(0x10000);
     static constexpr MacroAssembler::TrustedImm32 surrogateTagMask = MacroAssembler::TrustedImm32(0xfffffc00);
 #elif CPU(X86_64)
-#if !OS(WINDOWS)
     // Argument registers
     static constexpr GPRReg input = X86Registers::edi;
     static constexpr GPRReg index = X86Registers::esi;
@@ -90,32 +89,14 @@ public:
     static constexpr GPRReg matchingContext = X86Registers::r8;
     static constexpr GPRReg freelistRegister = X86Registers::r8; // Loaded from the MatchingContextHolder in the prologue.
     static constexpr GPRReg freelistSizeRegister = X86Registers::r9; // Only used during initialization.
-#else
-    // If the return value doesn't fit in 64bits, its destination is pointed by rcx and the parameters are shifted.
-    // http://msdn.microsoft.com/en-us/library/7572ztz4.aspx
-    static_assert(sizeof(MatchResult) > sizeof(void*), "MatchResult does not fit in 64bits");
-    static constexpr GPRReg input = X86Registers::edx;
-    static constexpr GPRReg index = X86Registers::r8;
-    static constexpr GPRReg length = X86Registers::r9;
-    static constexpr GPRReg output = X86Registers::r10;
-#endif
 
     // Scratch registers
     static constexpr GPRReg regT0 = X86Registers::eax;
-#if !OS(WINDOWS)
     static constexpr GPRReg regT1 = X86Registers::r9;
     static constexpr GPRReg regT2 = X86Registers::r10;
-#else
-    static constexpr GPRReg regT1 = X86Registers::ecx;
-    static constexpr GPRReg regT2 = X86Registers::edi;
-#endif
 
     static constexpr GPRReg initialStart = X86Registers::ebx;
-#if !OS(WINDOWS)
     static constexpr GPRReg remainingMatchCount = X86Registers::r12;
-#else
-    static constexpr GPRReg remainingMatchCount = X86Registers::esi;
-#endif
     static constexpr GPRReg regUnicodeInputAndTrail = X86Registers::r13;
     static constexpr GPRReg unicodeAndSubpatternIdTemp = X86Registers::r14;
     static constexpr GPRReg endOfStringAddress = X86Registers::r15;
@@ -179,10 +160,6 @@ public:
         ASSERT(noOverlap(input, index, length, output, regT0, regT1));
         ASSERT(noOverlap(returnRegister, returnRegister2));
         ASSERT(noOverlap(index, output, returnRegister));
-
-#if CPU(X86_64) && OS(WINDOWS)
-        ASSERT(noOverlap(X86Registers::ecx, returnRegister, m_regs.returnRegister2));
-#endif
 #endif
     }
 
