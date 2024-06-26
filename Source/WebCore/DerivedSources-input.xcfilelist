@@ -1779,6 +1779,7 @@ $(PROJECT_DIR)/page/IntersectionObserverEntry.idl
 $(PROJECT_DIR)/page/Location.idl
 $(PROJECT_DIR)/page/NavigateEvent.idl
 $(PROJECT_DIR)/page/Navigation.idl
+$(PROJECT_DIR)/page/NavigationActivation.idl
 $(PROJECT_DIR)/page/NavigationCurrentEntryChangeEvent.idl
 $(PROJECT_DIR)/page/NavigationDestination.idl
 $(PROJECT_DIR)/page/NavigationHistoryEntry.idl
