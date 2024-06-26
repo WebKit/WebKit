@@ -407,7 +407,7 @@ void WebPopupMenuProxyWin::calculatePositionAndSize(const IntRect& rect)
     int clientInsetLeftInDevicePixel = m_data.m_clientInsetLeft * deviceScaleFactor;
     int clientInsetRightInDevicePixel = m_data.m_clientInsetRight * deviceScaleFactor;
     // The popup should be at least as wide as the control on the page
-    popupWidth = std::max(rectInScreenCoords.width() - clientInsetLeftInDevicePixel - clientInsetRightInDevicePixel, popupRect.width());
+    popupWidth = std::max(rectInScreenCoords.width() - clientInsetLeftInDevicePixel - clientInsetRightInDevicePixel, popupWidth);
     popupRect.setWidth(popupWidth);
 
     // Adjust X
