@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKTextManipulationConfiguration.h>
 #import <WebKit/_WKTextManipulationDelegate.h>
@@ -3850,6 +3851,42 @@ TEST(TextManipulation, CompleteTextManipulationReplacesShadowDOMContent)
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.getElementById('host').shadowRoot.textContent"], "world");
+}
+
+TEST(TextManipulation, CompleteTextManipulationDoesNotFillAutoFilledField)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><body><input id='textField'></body>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    Util::run(&done);
+
+    Vector<RetainPtr<_WKTextManipulationItem>> items;
+    done = false;
+    [delegate setItemCallback:[&] (_WKTextManipulationItem *item) {
+        items.append(item);
+        done = true;
+    }];
+
+    [webView stringByEvaluatingJavaScript:@"document.getElementById('textField').value = 'foo'"];
+    Util::run(&done);
+
+    [webView stringByEvaluatingJavaScript:@"internals.setAutofilled(document.getElementById('textField'), true)"];
+
+    done = false;
+    auto item = createItem([items[0] identifier], { { [items[0] tokens][0].identifier, @"bar" } });
+    [webView _completeTextManipulationForItems:@[item.get()] completion:^(NSArray<NSError *> *) {
+        done = true;
+    }];
+    Util::run(&done);
+
+    EXPECT_WK_STREQ("foo", [webView stringByEvaluatingJavaScript:@"document.getElementById('textField').value"]);
 }
 
 TEST(TextManipulation, TextManipulationTokenDebugDescription)
