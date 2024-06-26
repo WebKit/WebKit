@@ -353,11 +353,19 @@ static inline bool isCrossPlatformRequest(const Vector<AuthenticatorTransport>& 
     });
 }
 
+static inline bool allowsHybrid(const Vector<AuthenticatorTransport>& transports)
+{
+    return transports.isEmpty() || transports.containsIf([](auto transport) {
+        return transport == AuthenticatorTransport::Hybrid || transport == AuthenticatorTransport::Cable;
+    });
+}
+
 RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const PublicKeyCredentialRequestOptions &options, const WebCore::SecurityOriginData& callerOrigin, const std::optional<WebCore::SecurityOriginData>& parentOrigin)
 {
     RetainPtr<NSMutableArray<ASAuthorizationRequest *>> requests = adoptNS([[NSMutableArray alloc] init]);
     RetainPtr<NSMutableArray<ASAuthorizationPlatformPublicKeyCredentialDescriptor *>> platformAllowedCredentials = adoptNS([[NSMutableArray alloc] init]);
     RetainPtr<NSMutableArray<ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor *>> crossPlatformAllowedCredentials = adoptNS([[NSMutableArray alloc] init]);
+    bool allowHybrid = options.allowCredentials.isEmpty();
     for (auto credential : options.allowCredentials) {
         if (isPlatformRequest(credential.transports))
             [platformAllowedCredentials addObject:adoptNS([allocASAuthorizationPlatformPublicKeyCredentialDescriptorInstance() initWithCredentialID:toNSData(credential.id).get()]).get()];
@@ -369,6 +377,9 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
             }
             [crossPlatformAllowedCredentials addObject:adoptNS([allocASAuthorizationSecurityKeyPublicKeyCredentialDescriptorInstance() initWithCredentialID:toNSData(credential.id).get() transports:transports.get()]).get()];
         }
+
+        if (!allowHybrid && allowsHybrid(credential.transports))
+            allowHybrid = true;
     }
     RetainPtr clientData = adoptNS([allocASPublicKeyCredentialClientDataInstance() initWithChallenge:toNSData(options.challenge).get() origin:callerOrigin.toString()]);
     if (parentOrigin) {
@@ -390,6 +401,9 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
         }
 
         request.get().userVerificationPreference = toASUserVerificationPreference(options.userVerification).get();
+
+        if (!allowHybrid)
+            request.get().shouldShowHybridTransport = false;
 
         AUTHENTICATOR_COORDINATOR_ASSERTION_REQUEST_ADDITIONS
 
