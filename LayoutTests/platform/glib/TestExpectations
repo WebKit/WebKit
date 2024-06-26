@@ -1219,6 +1219,8 @@ media/now-playing-status-for-video-conference-web-page.html [ Pass Timeout ]
 webkit.org/b/271050 [ Debug ] http/tests/navigation/page-cache-video.html [ Pass Crash ]
 webkit.org/b/212893 [ Release ] http/tests/navigation/page-cache-video.html [ Failure Pass ]
 
+webkit.org/b/187804 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3315,7 +3317,6 @@ webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright.html [ ImageOnl
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-sequencemode-append-buffer.html [ Failure ]
 webkit.org/b/197711 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html [ Failure ]
 webkit.org/b/214349 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Crash Failure Timeout Pass ]
-webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure ]
 
 webkit.org/b/223965 http/tests/contentextensions/block-cookies-in-csp-report.py [ Crash ]
 webkit.org/b/223965 http/tests/contentextensions/block-csp-report.py [ Crash ]
