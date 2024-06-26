@@ -42,6 +42,7 @@
 #include "B3LowerMacros.h"
 #include "B3LowerMacrosAfterOptimizations.h"
 #include "B3LowerToAir.h"
+#include "B3LowerInt64.h"
 #include "B3MoveConstants.h"
 #include "B3OptimizeAssociativeExpressionTrees.h"
 #include "B3Procedure.h"
@@ -101,6 +102,10 @@ void generateToAir(Procedure& procedure)
         // FIXME: Explore better "quick mode" optimizations.
         reduceStrength(procedure);
     }
+
+#if USE(JSVALUE32_64)
+    lowerInt64(procedure);
+#endif
 
     // This puts the IR in quirks mode.
     lowerMacros(procedure);

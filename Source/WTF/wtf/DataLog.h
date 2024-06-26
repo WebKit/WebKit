@@ -27,6 +27,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <type_traits>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 
