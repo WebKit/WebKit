@@ -54,6 +54,17 @@ video:fullscreen {
     -webkit-cursor-visibility: auto-hide;
 }
 
+#if defined(WTF_PLATFORM_APPLETV) && WTF_PLATFORM_APPLETV
+video:fullscreen {
+    /*
+     * FIXME: Adding !important improves compatibility when placing video elements in element
+     * fullscreen on tvOS, but we should add an -internal pseudo-class to contain styles that are
+     * specific to video using element fullscreen.
+     */
+    object-fit: contain !important;
+}
+#endif
+
 img:fullscreen {
     width: auto;
     height: 100%;
