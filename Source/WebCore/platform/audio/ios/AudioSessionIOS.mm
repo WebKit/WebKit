@@ -385,6 +385,8 @@ void AudioSessionIOS::updateSpatialExperience()
         case AudioSession::SoundStageSize::Large:
             return AVAudioSessionSoundStageSizeLarge;
         };
+        ASSERT_NOT_REACHED();
+        return AVAudioSessionSoundStageSizeAutomatic;
     }();
     NSError *error = nil;
     AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];

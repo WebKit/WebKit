@@ -507,8 +507,10 @@ PlaybackSessionManagerProxy::~PlaybackSessionManagerProxy()
 void PlaybackSessionManagerProxy::invalidate()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_page->legacyMainFrameProcess().removeMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), m_page->webPageIDInMainFrameProcess());
-    m_page = nullptr;
+    if (RefPtr page = m_page.get()) {
+        page->legacyMainFrameProcess().removeMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), m_page->webPageIDInMainFrameProcess());
+        m_page = nullptr;
+    }
 
     auto contextMap = WTFMove(m_contextMap);
     m_clientCounts.clear();
@@ -525,7 +527,7 @@ PlaybackSessionManagerProxy::ModelInterfaceTuple PlaybackSessionManagerProxy::cr
 
     RefPtr<PlatformPlaybackSessionInterface> interface;
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    if (m_page->preferences().linearMediaPlayerEnabled())
+    if (RefPtr page = m_page.get(); page->preferences().linearMediaPlayerEnabled())
         interface = PlaybackSessionInterfaceLMK::create(model);
     else
         interface = PlaybackSessionInterfaceAVKit::create(model);
@@ -582,7 +584,8 @@ void PlaybackSessionManagerProxy::setUpPlaybackControlsManagerWithID(PlaybackSes
     ensureInterface(m_controlsManagerContextId).ensureControlsManager();
     addClientForContext(m_controlsManagerContextId);
 
-    m_page->videoControlsManagerDidChange();
+    if (RefPtr page = m_page.get())
+        page->videoControlsManagerDidChange();
 }
 
 void PlaybackSessionManagerProxy::clearPlaybackControlsManager()
@@ -592,7 +595,9 @@ void PlaybackSessionManagerProxy::clearPlaybackControlsManager()
 
     removeClientForContext(m_controlsManagerContextId);
     m_controlsManagerContextId = { };
-    m_page->videoControlsManagerDidChange();
+
+    if (RefPtr page = m_page.get())
+        page->videoControlsManagerDidChange();
 }
 
 void PlaybackSessionManagerProxy::currentTimeChanged(PlaybackSessionContextIdentifier contextId, double currentTime, double hostTime)
@@ -600,8 +605,8 @@ void PlaybackSessionManagerProxy::currentTimeChanged(PlaybackSessionContextIdent
     ensureModel(contextId).currentTimeChanged(currentTime);
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    if (m_page)
-        m_page->didChangeCurrentTime(contextId);
+    if (RefPtr page = m_page.get())
+        page->didChangeCurrentTime(contextId);
 #endif
 }
 
@@ -682,8 +687,8 @@ void PlaybackSessionManagerProxy::rateChanged(PlaybackSessionContextIdentifier c
     ensureModel(contextId).rateChanged(playbackState, rate, defaultPlaybackRate);
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    if (m_page)
-        m_page->didChangePlaybackRate(contextId);
+    if (RefPtr page = m_page.get())
+        page->didChangePlaybackRate(contextId);
 #endif
 }
 
@@ -707,8 +712,8 @@ void PlaybackSessionManagerProxy::supportsLinearMediaPlayerChanged(PlaybackSessi
 void PlaybackSessionManagerProxy::handleControlledElementIDResponse(PlaybackSessionContextIdentifier contextId, String identifier) const
 {
 #if PLATFORM(MAC)
-    if (contextId == m_controlsManagerContextId)
-        m_page->handleControlledElementIDResponse(identifier);
+    if (RefPtr page = m_page.get(); contextId == m_controlsManagerContextId)
+        page->handleControlledElementIDResponse(identifier);
 #else
     UNUSED_PARAM(contextId);
     UNUSED_PARAM(identifier);
@@ -720,119 +725,140 @@ void PlaybackSessionManagerProxy::handleControlledElementIDResponse(PlaybackSess
 
 void PlaybackSessionManagerProxy::play(PlaybackSessionContextIdentifier contextId)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::Play(contextId), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::Play(contextId), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::pause(PlaybackSessionContextIdentifier contextId)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::Pause(contextId), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::Pause(contextId), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::togglePlayState(PlaybackSessionContextIdentifier contextId)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::TogglePlayState(contextId), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::TogglePlayState(contextId), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::beginScrubbing(PlaybackSessionContextIdentifier contextId)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::BeginScrubbing(contextId), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::BeginScrubbing(contextId), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::endScrubbing(PlaybackSessionContextIdentifier contextId)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::EndScrubbing(contextId), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::EndScrubbing(contextId), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::seekToTime(PlaybackSessionContextIdentifier contextId, double time, double toleranceBefore, double toleranceAfter)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SeekToTime(contextId, time, toleranceBefore, toleranceAfter), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SeekToTime(contextId, time, toleranceBefore, toleranceAfter), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::fastSeek(PlaybackSessionContextIdentifier contextId, double time)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::FastSeek(contextId, time), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::FastSeek(contextId, time), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::beginScanningForward(PlaybackSessionContextIdentifier contextId)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::BeginScanningForward(contextId), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::BeginScanningForward(contextId), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::beginScanningBackward(PlaybackSessionContextIdentifier contextId)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::BeginScanningBackward(contextId), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::BeginScanningBackward(contextId), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::endScanning(PlaybackSessionContextIdentifier contextId)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::EndScanning(contextId), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::EndScanning(contextId), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::setDefaultPlaybackRate(PlaybackSessionContextIdentifier contextId, double defaultPlaybackRate)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SetDefaultPlaybackRate(contextId, defaultPlaybackRate), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SetDefaultPlaybackRate(contextId, defaultPlaybackRate), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::setPlaybackRate(PlaybackSessionContextIdentifier contextId, double playbackRate)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SetPlaybackRate(contextId, playbackRate), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SetPlaybackRate(contextId, playbackRate), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::selectAudioMediaOption(PlaybackSessionContextIdentifier contextId, uint64_t index)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SelectAudioMediaOption(contextId, index), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SelectAudioMediaOption(contextId, index), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::selectLegibleMediaOption(PlaybackSessionContextIdentifier contextId, uint64_t index)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SelectLegibleMediaOption(contextId, index), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SelectLegibleMediaOption(contextId, index), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::togglePictureInPicture(PlaybackSessionContextIdentifier contextId)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::TogglePictureInPicture(contextId), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::TogglePictureInPicture(contextId), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::enterFullscreen(PlaybackSessionContextIdentifier contextId)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::EnterFullscreen(contextId), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::EnterFullscreen(contextId), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::exitFullscreen(PlaybackSessionContextIdentifier contextId)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::ExitFullscreen(contextId), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::ExitFullscreen(contextId), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::toggleInWindow(PlaybackSessionContextIdentifier contextId)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::ToggleInWindow(contextId), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::ToggleInWindow(contextId), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::toggleMuted(PlaybackSessionContextIdentifier contextId)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::ToggleMuted(contextId), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::ToggleMuted(contextId), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::setMuted(PlaybackSessionContextIdentifier contextId, bool muted)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SetMuted(contextId, muted), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SetMuted(contextId, muted), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::setVolume(PlaybackSessionContextIdentifier contextId, double volume)
 {
-    m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SetVolume(contextId, volume), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SetVolume(contextId, volume), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::setPlayingOnSecondScreen(PlaybackSessionContextIdentifier contextId, bool value)
 {
-    if (m_page)
-        m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SetPlayingOnSecondScreen(contextId, value), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SetPlayingOnSecondScreen(contextId, value), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::sendRemoteCommand(PlaybackSessionContextIdentifier contextId, WebCore::PlatformMediaSession::RemoteControlCommandType command, const WebCore::PlatformMediaSession::RemoteCommandArgument& argument)
 {
-    if (m_page)
-        m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SendRemoteCommand(contextId, command, argument), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SendRemoteCommand(contextId, command, argument), page->webPageIDInMainFrameProcess());
 }
 
 void PlaybackSessionManagerProxy::setVideoReceiverEndpoint(PlaybackSessionContextIdentifier contextId, const WebCore::VideoReceiverEndpoint& endpoint)
@@ -859,7 +885,13 @@ void PlaybackSessionManagerProxy::setVideoReceiverEndpoint(PlaybackSessionContex
     ALWAYS_LOG(LOGIDENTIFIER);
     WebCore::MediaPlayerIdentifier playerIdentifier = *interface->playerIdentifier();
 
-    Ref process = m_page->protectedLegacyMainFrameProcess();
+    RefPtr page = m_page.get();
+    if (!page) {
+        ALWAYS_LOG(LOGIDENTIFIER, "no page");
+        return;
+    }
+
+    Ref process = page->protectedLegacyMainFrameProcess();
     WebCore::ProcessIdentifier processIdentifier = process->coreProcessIdentifier();
 
     Ref gpuProcess = process->processPool().ensureProtectedGPUProcess();
@@ -882,7 +914,11 @@ void PlaybackSessionManagerProxy::setVideoReceiverEndpoint(PlaybackSessionContex
 void PlaybackSessionManagerProxy::uncacheVideoReceiverEndpoint(PlaybackSessionContextIdentifier contextId)
 {
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    Ref process = m_page->protectedLegacyMainFrameProcess();
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    Ref process = page->protectedLegacyMainFrameProcess();
     WebCore::ProcessIdentifier processIdentifier = process->coreProcessIdentifier();
 
     Ref gpuProcess = process->processPool().ensureProtectedGPUProcess();
@@ -904,8 +940,8 @@ void PlaybackSessionManagerProxy::uncacheVideoReceiverEndpoint(PlaybackSessionCo
 #if HAVE(SPATIAL_TRACKING_LABEL)
 void PlaybackSessionManagerProxy::setSpatialTrackingLabel(PlaybackSessionContextIdentifier contextId, const String& label)
 {
-    if (m_page)
-        m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SetSpatialTrackingLabel(contextId, label), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SetSpatialTrackingLabel(contextId, label), page->webPageIDInMainFrameProcess());
 }
 #endif
 
@@ -923,8 +959,8 @@ void PlaybackSessionManagerProxy::removeNowPlayingMetadataObserver(PlaybackSessi
 
 void PlaybackSessionManagerProxy::setSoundStageSize(PlaybackSessionContextIdentifier contextId, WebCore::AudioSessionSoundStageSize size)
 {
-    if (m_page)
-        m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SetSoundStageSize(contextId, size), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::SetSoundStageSize(contextId, size), page->webPageIDInMainFrameProcess());
 }
 
 bool PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabled()
@@ -938,8 +974,8 @@ bool PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabled()
 
 void PlaybackSessionManagerProxy::requestControlledElementID()
 {
-    if (m_controlsManagerContextId)
-        m_page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::HandleControlledElementIDRequest(m_controlsManagerContextId), m_page->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_page.get(); m_controlsManagerContextId)
+        page->legacyMainFrameProcess().send(Messages::PlaybackSessionManager::HandleControlledElementIDRequest(m_controlsManagerContextId), page->webPageIDInMainFrameProcess());
 }
 
 PlatformPlaybackSessionInterface* PlaybackSessionManagerProxy::controlsManagerInterface()
