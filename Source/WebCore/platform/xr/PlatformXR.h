@@ -380,6 +380,7 @@ public:
 
     virtual void initializeTrackingAndRendering(const WebCore::SecurityOriginData&, SessionMode, const FeatureList&) = 0;
     virtual void shutDownTrackingAndRendering() = 0;
+    virtual void didCompleteShutdownTriggeredBySystem() { }
     TrackingAndRenderingClient* trackingAndRenderingClient() const { return m_trackingAndRenderingClient.get(); }
     void setTrackingAndRenderingClient(WeakPtr<TrackingAndRenderingClient>&& client) { m_trackingAndRenderingClient = WTFMove(client); }
 

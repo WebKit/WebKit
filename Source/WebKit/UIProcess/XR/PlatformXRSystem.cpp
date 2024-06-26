@@ -167,24 +167,40 @@ void PlatformXRSystem::shutDownTrackingAndRendering()
 
     if (auto* xrCoordinator = PlatformXRSystem::xrCoordinator())
         xrCoordinator->endSessionIfExists(m_page);
+    setImmersiveSessionState(ImmersiveSessionState::SessionEndingFromWebContent);
 }
 
 void PlatformXRSystem::requestFrame(CompletionHandler<void(PlatformXR::FrameData&&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    MESSAGE_CHECK(m_immersiveSessionState == ImmersiveSessionState::SessionRunning);
+    MESSAGE_CHECK(m_immersiveSessionState == ImmersiveSessionState::SessionRunning || m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromSystem);
+    if (m_immersiveSessionState != ImmersiveSessionState::SessionRunning) {
+        completionHandler({ });
+        return;
+    }
 
     if (auto* xrCoordinator = PlatformXRSystem::xrCoordinator())
         xrCoordinator->scheduleAnimationFrame(m_page, WTFMove(completionHandler));
+    else
+        completionHandler({ });
 }
 
 void PlatformXRSystem::submitFrame()
 {
     ASSERT(RunLoop::isMain());
-    MESSAGE_CHECK(m_immersiveSessionState == ImmersiveSessionState::SessionRunning);
+    MESSAGE_CHECK(m_immersiveSessionState == ImmersiveSessionState::SessionRunning || m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromSystem);
+    if (m_immersiveSessionState != ImmersiveSessionState::SessionRunning)
+        return;
 
     if (auto* xrCoordinator = PlatformXRSystem::xrCoordinator())
         xrCoordinator->submitFrame(m_page);
+}
+
+void PlatformXRSystem::didCompleteShutdownTriggeredBySystem()
+{
+    ASSERT(RunLoop::isMain());
+    MESSAGE_CHECK(m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromSystem);
+    setImmersiveSessionState(ImmersiveSessionState::Idle);
 }
 
 void PlatformXRSystem::sessionDidEnd(XRDeviceIdentifier deviceIdentifier)
@@ -196,7 +212,11 @@ void PlatformXRSystem::sessionDidEnd(XRDeviceIdentifier deviceIdentifier)
 
         protectedThis->m_page.legacyMainFrameProcess().send(Messages::PlatformXRSystemProxy::SessionDidEnd(deviceIdentifier), protectedThis->m_page.webPageIDInMainFrameProcess());
         protectedThis->m_immersiveSessionActivity = nullptr;
-        protectedThis->invalidateImmersiveSessionState();
+        // If this is called when the session is running, the ending of the session is triggered by the system side
+        // and we should set the state to SessionEndingFromSystem. We expect the web process to send a
+        // didCompleteShutdownTriggeredBySystem message later when it has ended the XRSession, which will
+        // reset the session state to Idle.
+        protectedThis->invalidateImmersiveSessionState(protectedThis->m_immersiveSessionState == ImmersiveSessionState::SessionRunning ? ImmersiveSessionState::SessionEndingFromSystem : ImmersiveSessionState::Idle);
     });
 }
 
@@ -216,14 +236,14 @@ void PlatformXRSystem::setImmersiveSessionState(ImmersiveSessionState state)
     m_immersiveSessionState = state;
 }
 
-void PlatformXRSystem::invalidateImmersiveSessionState()
+void PlatformXRSystem::invalidateImmersiveSessionState(ImmersiveSessionState nextSessionState)
 {
     ASSERT(RunLoop::isMain());
 
     m_immersiveSessionMode = std::nullopt;
     m_immersiveSessionSecurityOriginData = std::nullopt;
     m_immersiveSessionGrantedFeatures = std::nullopt;
-    setImmersiveSessionState(ImmersiveSessionState::Idle);
+    setImmersiveSessionState(nextSessionState);
 }
 
 bool PlatformXRSystem::webXREnabled() const
