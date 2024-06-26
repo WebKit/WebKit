@@ -508,6 +508,8 @@ public:
     uint64_t navigationID() const { return m_navigationID; }
     WEBCORE_EXPORT void setNavigationID(uint64_t);
 
+    bool isInitialAboutBlank() const { return m_isInitialAboutBlank; }
+
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
 
@@ -748,6 +750,7 @@ private:
     bool m_isLoadingMultipartContent { false };
     bool m_isContinuingLoadAfterProvisionalLoadStarted { false };
     bool m_isInFinishedLoadingOfEmptyDocument { false };
+    bool m_isInitialAboutBlank { false };
 
     // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadDispatched are roughly the same
     // and should be merged.

@@ -29,6 +29,7 @@
 #include "AbortController.h"
 #include "CallbackResult.h"
 #include "DOMFormData.h"
+#include "DocumentLoader.h"
 #include "ErrorEvent.h"
 #include "EventNames.h"
 #include "Exception.h"
@@ -415,6 +416,8 @@ ExceptionOr<void> Navigation::updateCurrentEntry(UpdateCurrentEntryOptions&& opt
 bool Navigation::hasEntriesAndEventsDisabled() const
 {
     if (!window()->document() || !window()->document()->isFullyActive())
+        return true;
+    if (window()->document()->loader() && window()->document()->loader()->isInitialAboutBlank())
         return true;
     if (window()->securityOrigin() && window()->securityOrigin()->isOpaque())
         return true;
