@@ -160,9 +160,11 @@ private:
     CGFloat _nonZeroStatusBarHeight;
     std::optional<UIInterfaceOrientationMask> _supportedOrientations;
     BOOL _isShowingMenu;
+#if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
+    BOOL _shouldHideCustomControls;
+#endif
 #if PLATFORM(VISION)
     RetainPtr<WKExtrinsicButton> _moreActionsButton;
-    BOOL _shouldHideCustomControls;
     BOOL _isInteractingWithSystemChrome;
 #endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
@@ -200,8 +202,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _playbackClient.setParent(self);
     _valid = YES;
     _isShowingMenu = NO;
-#if PLATFORM(VISION)
+#if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
     _shouldHideCustomControls = NO;
+#endif
+#if PLATFORM(VISION)
     _isInteractingWithSystemChrome = NO;
 #endif
 
@@ -373,9 +377,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (auto page = [self._webView _page])
         isPiPEnabled = page->preferences().pictureInPictureAPIEnabled() && page->preferences().allowsPictureInPictureMediaPlayback();
     bool isPiPSupported = playbackSessionModel && playbackSessionModel->isPictureInPictureSupported();
-#if PLATFORM(VISION)
+#if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
     [_cancelButton setHidden:_shouldHideCustomControls];
+#endif
 
+#if PLATFORM(VISION)
     bool isDimmingEnabled = false;
     if (auto page = [self._webView _page])
         isDimmingEnabled = page->preferences().fullscreenSceneDimmingEnabled();
@@ -456,7 +462,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }];
 }
 
-#if PLATFORM(VISION)
+#if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
 
 - (void)hideCustomControls:(BOOL)hidden
 {
@@ -466,6 +472,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _shouldHideCustomControls = hidden;
     [self videoControlsManagerDidChange];
 }
+
+#endif
+
+#if PLATFORM(VISION)
 
 - (void)_didBeginInteractionWithSystemChrome:(NSNotificationCenter *)notification
 {

@@ -274,13 +274,15 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
 #if ENABLE(VIDEO)
     updateMainVideoElement();
 
-#if PLATFORM(VISION)
+#if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
     if (m_mainVideoElement) {
         bool fullscreenElementIsVideoElement = is<HTMLVideoElement>(element);
 
         auto mainVideoElementSize = [&]() -> FloatSize {
+#if PLATFORM(VISION)
             if (!fullscreenElementIsVideoElement && element->document().quirks().shouldDisableFullscreenVideoAspectRatioAdaptiveSizing())
                 return { };
+#endif
             return FloatSize(m_mainVideoElement->videoWidth(), m_mainVideoElement->videoHeight());
         }();
 

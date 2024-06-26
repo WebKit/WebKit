@@ -942,7 +942,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     [_fullscreenViewController setModalPresentationCapturesStatusBarAppearance:YES];
     [_fullscreenViewController setDelegate:self];
     _fullscreenViewController.get().view.frame = _rootViewController.get().view.bounds;
-#if PLATFORM(VISION)
+#if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
     [_fullscreenViewController hideCustomControls:manager->isVideoElement()];
 #endif
     [self _updateLocationInfo];
