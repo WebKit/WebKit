@@ -2,17 +2,15 @@
 <html>
 <head>
     <style>
-
-        #result {
-          opacity: 0; /* hide from pixel test */
-        }
-
         #box {
             position: absolute;
             height: 100px;
             width: 100px;
             background-color: green;
-            -webkit-animation: anim1 0.1s ease 0s forwards;
+         }
+
+        .running {
+            animation: anim1 0.1s ease 0s forwards;
          }
 
          #correctposition {
@@ -20,69 +18,73 @@
              height: 100px;
              width: 100px;
              background-color: red;
-             -webkit-transform: translate3d(50px, 200px, 0);
+             transform: translate3d(50px, 200px, 0);
          }
 
-         @-webkit-keyframes anim1 {
+         @keyframes anim1 {
            from {
-             -webkit-transform: translate3d(100px, 0, 0);
+             transform: translate3d(100px, 0, 0);
            }
            to {
-             -webkit-transform: translate3d(200px, 0, 0);
+             transform: translate3d(200px, 0, 0);
            }
          }
 
-         @-webkit-keyframes anim2 {
+         @keyframes anim2 {
            from {
-             -webkit-transform: translate3d(50px, 0, 0);
+             transform: translate3d(50px, 0, 0);
            }
            to {
-             -webkit-transform: translate3d(50px, 200px, 0);
+             transform: translate3d(50px, 200px, 0);
            }
          }
     </style>
     <script>
-
+        'use strict';
         var box;
         var expectedValue = "matrix(1, 0, 0, 1, 50, 200)";
-        
+
         function testState()
         {
             var result = document.getElementById("result");
-            var computedValue = window.getComputedStyle(box).webkitTransform;
+            var computedValue = window.getComputedStyle(box).transform;
 
             if (computedValue == expectedValue)
                 result.innerHTML = "PASS - final state was " + expectedValue;
             else
                 result.innerHTML = "FAIL - final state was " + computedValue + " expected " + expectedValue;
 
-            if (window.testRunner)
-                testRunner.notifyDone();
+            requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                });
+            });
         }
 
         function swapAnim()
         {
             // remove this listener
-            box.removeEventListener("webkitAnimationEnd", swapAnim);
+            box.removeEventListener("animationend", swapAnim);
             // add the test listener
-            box.addEventListener("webkitAnimationEnd", testState, false);
+            box.addEventListener("animationend", testState, false);
             // change the animation
-            box.style.webkitAnimation = "anim2 0.1s ease 0s forwards";
+            box.style.animation = "anim2 0.1s ease 0s forwards";
         }
-        
+
         function setup()
         {
             box = document.getElementById("box");
-            document.addEventListener("webkitAnimationEnd", swapAnim, false);
+            document.addEventListener("animationend", swapAnim, false);
+            // start the animation
+            box.classList.add('running');
         }
-        
+
         if (window.testRunner) {
-            testRunner.dumpAsText(true);
             testRunner.waitUntilDone();
         }
 
         window.addEventListener("load", setup, false);
-        
     </script>
 </head>
 <body>

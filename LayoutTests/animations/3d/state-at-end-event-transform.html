@@ -1,6 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -26,47 +24,48 @@
     }
 
     #container.moved .hardware {
-      -webkit-animation: move 300ms linear;
+      animation: move 300ms linear;
     }
 
     .hardware {
-      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
     }
 
-    @-webkit-keyframes move {
-      from { -webkit-transform: translate3d(0, 0, 0); }
-      to   { -webkit-transform: translate3d(300px, 0, 0); }
+    @keyframes move {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(300px, 0, 0); }
     }
    </style>
    <script type="text/javascript" charset="utf-8">
-
+    'use strict';
     function testEnded()
     {
-      if (window.testRunner)
-        testRunner.notifyDone();
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          if (window.testRunner)
+            testRunner.notifyDone();
+        });
+      });
     }
-    
+
     function startTest()
     {
       if (window.testRunner)
         testRunner.waitUntilDone();
 
-      document.getElementById('tester').addEventListener('webkitAnimationEnd', testEnded, false);
+      document.getElementById('tester').addEventListener('animationend', testEnded, false);
       document.getElementById('container').className = 'moved';
     }
-    
+
     window.addEventListener('load', startTest, false);
    </script>
 </head>
 <body>
 
-  <p>At the end of the test the green box should obscure the red box.</p>
+  <!-- At the end of the test the green box should obscure the red box. -->
   <div id="container">
     <div class="indicator box"></div>
     <div id="tester" class="hardware box"></div>
-  </div>
-
-  <div id="result">
   </div>
 
 </body>
