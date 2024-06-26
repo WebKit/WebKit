@@ -5886,6 +5886,9 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
 - (WKFormAccessoryView *)formAccessoryView
 {
+#if PLATFORM(APPLETV)
+    return nil;
+#else
     if (WebKit::defaultAlternateFormControlDesignEnabled())
         return nil;
 
@@ -5893,6 +5896,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
         _formAccessoryView = adoptNS([[WKFormAccessoryView alloc] initWithInputAssistantItem:self.inputAssistantItem delegate:self]);
 
     return _formAccessoryView.get();
+#endif
 }
 
 - (void)accessoryOpen
