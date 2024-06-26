@@ -321,7 +321,7 @@ void LLIntPlan::didCompleteCompilation()
 
     unsigned functionCount = m_wasmInternalFunctions.size();
     if (!m_callees && functionCount) {
-        if (UNLIKELY(Options::dumpGeneratedWasmBytecodes())) {
+        if (UNLIKELY(Options::dumpGeneratedWebAssemblyBytecodes())) {
             for (unsigned i = 0; i < functionCount; ++i)
                 BytecodeDumper::dumpBlock(m_wasmInternalFunctions[i].get(), m_moduleInformation, WTF::dataFile());
         }

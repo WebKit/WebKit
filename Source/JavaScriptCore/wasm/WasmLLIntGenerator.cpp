@@ -424,7 +424,7 @@ private:
         if (UNLIKELY(!m_jsNullConstant.isValid())) {
             m_jsNullConstant = VirtualRegister(FirstConstantRegisterIndex + m_codeBlock->m_constants.size());
             m_codeBlock->m_constants.append(JSValue::encode(jsNull()));
-            if (UNLIKELY(Options::dumpGeneratedWasmBytecodes()))
+            if (UNLIKELY(Options::dumpGeneratedWebAssemblyBytecodes()))
                 m_codeBlock->m_constantTypes.append(Types::Externref);
         }
         return m_jsNullConstant;
@@ -435,7 +435,7 @@ private:
         if (UNLIKELY(!m_zeroConstant.isValid())) {
             m_zeroConstant = VirtualRegister(FirstConstantRegisterIndex + m_codeBlock->m_constants.size());
             m_codeBlock->m_constants.append(0);
-            if (UNLIKELY(Options::dumpGeneratedWasmBytecodes()))
+            if (UNLIKELY(Options::dumpGeneratedWebAssemblyBytecodes()))
                 m_codeBlock->m_constantTypes.append(Types::I32);
         }
         return m_zeroConstant;
@@ -971,7 +971,7 @@ auto LLIntGenerator::addConstantWithoutPush(Type type, int64_t value) -> Express
     if (!result.isNewEntry)
         return result.iterator->value;
     m_codeBlock->m_constants.append(value);
-    if (UNLIKELY(Options::dumpGeneratedWasmBytecodes()))
+    if (UNLIKELY(Options::dumpGeneratedWebAssemblyBytecodes()))
         m_codeBlock->m_constantTypes.append(type);
     return source;
 }

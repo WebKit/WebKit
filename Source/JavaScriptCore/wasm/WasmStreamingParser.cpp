@@ -75,7 +75,7 @@ NEVER_INLINE auto WARN_UNUSED_RETURN StreamingParser::fail(Args... args) -> Stat
 static void dumpWasmSource(const Vector<uint8_t>& source)
 {
     static int count = 0;
-    const char* file = Options::dumpWasmSourceFileName();
+    const char* file = Options::dumpWebAssemblySourceFileName();
     if (!file)
         return;
     auto fileHandle = FileSystem::openFile(WTF::makeString(span(file), (count++), ".wasm"_s),
@@ -99,9 +99,9 @@ StreamingParser::StreamingParser(ModuleInformation& info, StreamingParserClient&
     dataLogLnIf(WasmStreamingParserInternal::verbose, "starting validation");
 
 #if ASSERT_ENABLED
-    dataLogLnIf(!!Options::dumpWasmSourceFileName(), "Wasm streaming parser created, capturing source.");
+    dataLogLnIf(!!Options::dumpWebAssemblySourceFileName(), "Wasm streaming parser created, capturing source.");
 #else
-    dataLogLnIf(!!Options::dumpWasmSourceFileName(), "Wasm streaming parser created, but we can only dump source in debug builds.");
+    dataLogLnIf(!!Options::dumpWebAssemblySourceFileName(), "Wasm streaming parser created, but we can only dump source in debug builds.");
 #endif
 }
 
@@ -281,7 +281,7 @@ auto StreamingParser::consumeVarUInt32(std::span<const uint8_t> bytes, size_t& o
 auto StreamingParser::addBytes(std::span<const uint8_t> bytes, IsEndOfStream isEndOfStream) -> State
 {
 #if ASSERT_ENABLED
-    if (Options::dumpWasmSourceFileName()) {
+    if (Options::dumpWebAssemblySourceFileName()) {
         m_buffer.append(bytes);
 
         if (isEndOfStream == IsEndOfStream::Yes) {

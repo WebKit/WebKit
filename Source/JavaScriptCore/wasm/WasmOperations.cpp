@@ -267,7 +267,7 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
 
 inline bool shouldJIT(unsigned functionIndex)
 {
-    if (!Options::wasmFunctionIndexRangeToCompile().isInRange(functionIndex))
+    if (!Options::webAssemblyFunctionIndexRangeToCompile().isInRange(functionIndex))
         return false;
     return true;
 }

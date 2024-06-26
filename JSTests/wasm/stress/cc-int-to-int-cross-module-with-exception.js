@@ -1,7 +1,7 @@
 //@ skip
 //@ skip unless $isWasmPlatform
 //@ requireOptions("--useJITCage=0") # temporary workaround for rdar://127308350
-//@ runDefaultWasm("-m", "--wasmFunctionIndexRangeToCompile=0:5", "--useOMGJIT=0", "--useInterpretedJSEntryWrappers=1")
+//@ runDefaultWasm("-m", "--webAssemblyFunctionIndexRangeToCompile=0:5", "--useOMGJIT=0", "--useInterpretedJSEntryWrappers=1")
 
 // This tests will use more than the 600M that $memoryLimited devices are capped
 // at due JSCTEST_memoryLimit. Skip it to avoid the crash as a result of exceeding

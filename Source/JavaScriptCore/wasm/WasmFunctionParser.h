@@ -490,7 +490,7 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
 
         m_currentOpcode = static_cast<OpType>(op);
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-        if (UNLIKELY(Options::dumpWasmOpcodeStatistics()))
+        if (UNLIKELY(Options::dumpWebAssemblyOpcodeStatistics()))
             WasmOpcodeCounter::singleton().increment(m_currentOpcode);
 #endif
 
@@ -2661,7 +2661,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         ExtAtomicOpType op = static_cast<ExtAtomicOpType>(extOp);
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-        if (UNLIKELY(Options::dumpWasmOpcodeStatistics()))
+        if (UNLIKELY(Options::dumpWebAssemblyOpcodeStatistics()))
             WasmOpcodeCounter::singleton().increment(op);
 #endif
 
@@ -3448,7 +3448,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         constexpr bool isReachable = true;
 
         ExtSIMDOpType op = static_cast<ExtSIMDOpType>(extOp);
-        if (UNLIKELY(Options::dumpWasmOpcodeStatistics()))
+        if (UNLIKELY(Options::dumpWebAssemblyOpcodeStatistics()))
             WasmOpcodeCounter::singleton().increment(op);
 
         switch (op) {
@@ -3805,7 +3805,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 
         ExtGCOpType op = static_cast<ExtGCOpType>(extOp);
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-        if (UNLIKELY(Options::dumpWasmOpcodeStatistics()))
+        if (UNLIKELY(Options::dumpWebAssemblyOpcodeStatistics()))
             WasmOpcodeCounter::singleton().increment(op);
 #endif
 

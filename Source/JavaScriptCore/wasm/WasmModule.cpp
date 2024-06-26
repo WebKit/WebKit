@@ -78,7 +78,7 @@ static Plan::CompletionTask makeValidationCallback(Module::AsyncValidationCallba
 {
     return createSharedTask<Plan::CallbackType>([callback = WTFMove(callback)] (Plan& plan) {
         ASSERT(!plan.hasWork());
-        if (Options::useWasmIPInt())
+        if (Options::useWebAssemblyIPInt())
             callback->run(makeValidationResult(static_cast<IPIntPlan&>(plan)));
         else
             callback->run(makeValidationResult(static_cast<LLIntPlan&>(plan)));
@@ -87,7 +87,7 @@ static Plan::CompletionTask makeValidationCallback(Module::AsyncValidationCallba
 
 Module::ValidationResult Module::validateSync(VM& vm, Vector<uint8_t>&& source)
 {
-    if (Options::useWasmIPInt()) {
+    if (Options::useWebAssemblyIPInt()) {
         Ref<IPIntPlan> plan = adoptRef(*new IPIntPlan(vm, WTFMove(source), CompilerMode::Validation, Plan::dontFinalize()));
         Wasm::ensureWorklist().enqueue(plan.get());
         plan->waitForCompletion();
@@ -101,7 +101,7 @@ Module::ValidationResult Module::validateSync(VM& vm, Vector<uint8_t>&& source)
 
 void Module::validateAsync(VM& vm, Vector<uint8_t>&& source, Module::AsyncValidationCallback&& callback)
 {
-    if (Options::useWasmIPInt()) {
+    if (Options::useWebAssemblyIPInt()) {
         Ref<Plan> plan = adoptRef(*new IPIntPlan(vm, WTFMove(source), CompilerMode::Validation, makeValidationCallback(WTFMove(callback))));
         Wasm::ensureWorklist().enqueue(WTFMove(plan));
     } else {
@@ -121,9 +121,9 @@ Ref<CalleeGroup> Module::getOrCreateCalleeGroup(VM& vm, MemoryMode mode)
     // FIXME: We might want to back off retrying at some point:
     // https://bugs.webkit.org/show_bug.cgi?id=170607
     if (!calleeGroup || (calleeGroup->compilationFinished() && !calleeGroup->runnable())) {
-        if (Options::useWasmIPInt())
+        if (Options::useWebAssemblyIPInt())
             m_calleeGroups[static_cast<uint8_t>(mode)] = calleeGroup = CalleeGroup::createFromIPInt(vm, mode, const_cast<ModuleInformation&>(moduleInformation()), m_ipintCallees.copyRef());
-        else if (Options::useWasmLLInt())
+        else if (Options::useWebAssemblyLLInt())
             m_calleeGroups[static_cast<uint8_t>(mode)] = calleeGroup = CalleeGroup::createFromLLInt(vm, mode, const_cast<ModuleInformation&>(moduleInformation()), m_llintCallees.copyRef());
         else
             m_calleeGroups[static_cast<uint8_t>(mode)] = calleeGroup = CalleeGroup::createFromLLInt(vm, mode, const_cast<ModuleInformation&>(moduleInformation()), nullptr);

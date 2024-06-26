@@ -80,14 +80,14 @@ static inline bool shouldJIT(Wasm::IPIntCallee* callee, RequiredWasmJIT required
         if (!Options::useOMGJIT() || !Wasm::OMGPlan::ensureGlobalOMGAllowlist().containsWasmFunction(callee->functionIndex()))
             return false;
     } else {
-        if (Options::wasmIPIntTiersUpToBBQ()
+        if (Options::webAssemblyIPIntTiersUpToBBQ()
             && (!Options::useBBQJIT() || !Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(callee->functionIndex())))
             return false;
-        if (!Options::wasmIPIntTiersUpToOMG()
+        if (!Options::webAssemblyIPIntTiersUpToOMG()
             && (!Options::useOMGJIT() || !Wasm::OMGPlan::ensureGlobalOMGAllowlist().containsWasmFunction(callee->functionIndex())))
             return false;
     }
-    if (!Options::wasmFunctionIndexRangeToCompile().isInRange(callee->functionIndex()))
+    if (!Options::webAssemblyFunctionIndexRangeToCompile().isInRange(callee->functionIndex()))
         return false;
     return true;
 }
@@ -128,7 +128,7 @@ static inline bool jitCompileAndSetHeuristics(Wasm::IPIntCallee* callee, Wasm::I
     if (compile) {
         uint32_t functionIndex = callee->functionIndex();
         RefPtr<Wasm::Plan> plan;
-        if (Options::wasmIPIntTiersUpToBBQ() && Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(functionIndex))
+        if (Options::webAssemblyIPIntTiersUpToBBQ() && Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(functionIndex))
             plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
         else // No need to check OMG allow list: if we didn't want to compile this function, shouldJIT should have returned false.
             plan = adoptRef(*new Wasm::OMGPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), functionIndex, callee->hasExceptionHandlers(), memoryMode, Wasm::Plan::dontFinalize()));
@@ -152,7 +152,7 @@ WASM_IPINT_EXTERN_CPP_DECL(prologue_osr, CallFrame* callFrame)
         WASM_RETURN_TWO(nullptr, nullptr);
     }
 
-    if (!Options::useWasmIPIntPrologueOSR())
+    if (!Options::useWebAssemblyIPIntPrologueOSR())
         WASM_RETURN_TWO(nullptr, nullptr);
 
     dataLogLnIf(Options::verboseOSR(), *callee, ": Entered prologue_osr with tierUpCounter = ", callee->tierUpCounter());
@@ -167,7 +167,7 @@ WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint32_t pc, uint64_t
     Wasm::IPIntCallee* callee = IPINT_CALLEE();
     Wasm::IPIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
 
-    if (!Options::useWebAssemblyOSR() || !Options::useWasmIPIntLoopOSR() || !shouldJIT(callee, RequiredWasmJIT::OMG)) {
+    if (!Options::useWebAssemblyOSR() || !Options::useWebAssemblyIPIntLoopOSR() || !shouldJIT(callee, RequiredWasmJIT::OMG)) {
         ipint_extern_prologue_osr(instance, callFrame);
         WASM_RETURN_TWO(nullptr, nullptr);
     }
@@ -182,7 +182,7 @@ WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint32_t pc, uint64_t
     unsigned loopOSREntryBytecodeOffset = pc;
     const auto& osrEntryData = tierUpCounter.osrEntryDataForLoop(loopOSREntryBytecodeOffset);
 
-    if (Options::wasmIPIntTiersUpToBBQ() && Options::useBBQJIT()) {
+    if (Options::webAssemblyIPIntTiersUpToBBQ() && Options::useBBQJIT()) {
         if (!jitCompileAndSetHeuristics(callee, instance))
             WASM_RETURN_TWO(nullptr, nullptr);
 
@@ -291,7 +291,7 @@ WASM_IPINT_EXTERN_CPP_DECL(epilogue_osr, CallFrame* callFrame)
         callee->tierUpCounter().deferIndefinitely();
         WASM_RETURN_TWO(nullptr, nullptr);
     }
-    if (!Options::useWasmIPIntEpilogueOSR())
+    if (!Options::useWebAssemblyIPIntEpilogueOSR())
         WASM_RETURN_TWO(nullptr, nullptr);
 
     dataLogLnIf(Options::verboseOSR(), *callee, ": Entered epilogue_osr with tierUpCounter = ", callee->tierUpCounter());
