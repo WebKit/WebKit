@@ -80,6 +80,8 @@ void VideoPresentationModelVideoElement::cleanVideoListeners()
         return;
     for (auto& eventName : observedEventNames())
         m_videoElement->removeEventListener(eventName, m_videoListener, false);
+    for (auto& eventName : documentObservedEventNames())
+        m_videoElement->document().removeEventListener(eventName, m_videoListener, false);
 }
 
 void VideoPresentationModelVideoElement::setVideoElement(HTMLVideoElement* videoElement)
@@ -102,6 +104,8 @@ void VideoPresentationModelVideoElement::setVideoElement(HTMLVideoElement* video
         for (auto& eventName : observedEventNames())
             m_videoElement->addEventListener(eventName, m_videoListener, false);
         m_isListening = true;
+        for (auto& eventName : documentObservedEventNames())
+            m_videoElement->document().addEventListener(eventName, m_videoListener, false);
     }
 
     updateForEventName(eventNameAll());
@@ -119,6 +123,9 @@ void VideoPresentationModelVideoElement::updateForEventName(const WTF::AtomStrin
         setHasVideo(m_videoElement);
         setVideoDimensions(m_videoElement ? FloatSize(m_videoElement->videoWidth(), m_videoElement->videoHeight()) : FloatSize());
     }
+
+    if (all || eventName == eventNames().visibilitychangeEvent)
+        documentVisibilityChanged();
 
     if (all
         || eventName == eventNames().loadedmetadataEvent || eventName == eventNames().loadstartEvent) {
@@ -139,6 +146,24 @@ void VideoPresentationModelVideoElement::updateForEventName(const WTF::AtomStrin
             return std::nullopt;
         }());
     }
+}
+
+void VideoPresentationModelVideoElement::documentVisibilityChanged()
+{
+    RefPtr videoElement = m_videoElement;
+
+    if (!videoElement)
+        return;
+
+    bool isDocumentVisible = !videoElement->document().hidden();
+
+    if (isDocumentVisible == m_documentIsVisible)
+        return;
+
+    m_documentIsVisible = isDocumentVisible;
+
+    for (auto& client : copyToVector(m_clients))
+        client->documentVisibilityChanged(m_documentIsVisible);
 }
 
 void VideoPresentationModelVideoElement::willExitFullscreen()
@@ -242,6 +267,12 @@ void VideoPresentationModelVideoElement::setVideoLayerGravity(MediaPlayer::Video
 std::span<const AtomString> VideoPresentationModelVideoElement::observedEventNames()
 {
     static NeverDestroyed names = std::array { eventNames().resizeEvent, eventNames().loadstartEvent, eventNames().loadedmetadataEvent };
+    return names.get();
+}
+
+std::span<const AtomString> VideoPresentationModelVideoElement::documentObservedEventNames()
+{
+    static NeverDestroyed names = std::array { eventNames().visibilitychangeEvent };
     return names.get();
 }
 

@@ -228,6 +228,7 @@ private:
     void setInlineRect(PlaybackSessionContextIdentifier, const WebCore::FloatRect& inlineRect, bool visible);
     void setHasVideoContentLayer(PlaybackSessionContextIdentifier, bool value);
     void setHasVideo(PlaybackSessionContextIdentifier, bool);
+    void setDocumentVisibility(PlaybackSessionContextIdentifier, bool);
     void setVideoDimensions(PlaybackSessionContextIdentifier, const WebCore::FloatSize&);
     void enterFullscreen(PlaybackSessionContextIdentifier);
     void exitFullscreen(PlaybackSessionContextIdentifier, WebCore::FloatRect finalRect, CompletionHandler<void(bool)>&&);

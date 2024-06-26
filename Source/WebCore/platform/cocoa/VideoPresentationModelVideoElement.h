@@ -114,10 +114,12 @@ private:
     void didExitPictureInPicture() final;
 
     static std::span<const AtomString> observedEventNames();
+    static std::span<const AtomString> documentObservedEventNames();
     const AtomString& eventNameAll();
     friend class VideoListener;
     void updateForEventName(const AtomString&);
     void cleanVideoListeners();
+    void documentVisibilityChanged();
 
     Ref<VideoListener> m_videoListener;
     RefPtr<HTMLVideoElement> m_videoElement;
@@ -125,6 +127,7 @@ private:
     bool m_isListening { false };
     HashSet<CheckedPtr<VideoPresentationModelClient>> m_clients;
     bool m_hasVideo { false };
+    bool m_documentIsVisible { true };
     FloatSize m_videoDimensions;
     FloatRect m_videoFrame;
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;

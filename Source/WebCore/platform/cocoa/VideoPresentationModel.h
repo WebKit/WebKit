@@ -128,6 +128,7 @@ public:
     virtual void willExitPictureInPicture() { }
     virtual void didExitPictureInPicture() { }
     virtual void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>) { }
+    virtual void documentVisibilityChanged(bool) { }
 };
 
 } // namespace WebCore

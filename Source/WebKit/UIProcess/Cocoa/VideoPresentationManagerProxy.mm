@@ -255,6 +255,15 @@ void VideoPresentationModelContext::setPlayerLayer(RetainPtr<WebAVPlayerLayer>&&
     [m_playerLayer setVideoDimensions:m_videoDimensions];
 }
 
+void VideoPresentationManagerProxy::setDocumentVisibility(PlaybackSessionContextIdentifier contextId, bool isDocumentVisible)
+{
+    if (m_mockVideoPresentationModeEnabled)
+        return;
+
+    if (RefPtr interface = findInterface(contextId))
+        interface->documentVisibilityChanged(isDocumentVisible);
+}
+
 void VideoPresentationModelContext::setVideoDimensions(const WebCore::FloatSize& videoDimensions)
 {
     if (m_videoDimensions == videoDimensions)

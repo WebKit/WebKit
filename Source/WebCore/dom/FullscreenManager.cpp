@@ -137,15 +137,9 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
     // FIXME: Align prefixed and unprefixed code paths if possible.
     bool isFromPrefixedAPI = !promise;
     if (isFromPrefixedAPI) {
-        if (!UserGestureIndicator::processingUserGesture()) {
-            ERROR_LOG(identifier, "!processingUserGesture; failing.");
-            failedPreflights(WTFMove(element), WTFMove(promise));
-            completionHandler(false);
-            return;
-        }
         // We do not allow pressing the Escape key as a user gesture to enter fullscreen since this is the key
         // to exit fullscreen.
-        if (UserGestureIndicator::currentUserGesture()->gestureType() == UserGestureType::EscapeKey) {
+        if (UserGestureIndicator::processingUserGesture() && UserGestureIndicator::currentUserGesture()->gestureType() == UserGestureType::EscapeKey) {
             ERROR_LOG(identifier, "Current gesture is EscapeKey; failing.");
             document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, "The Escape key may not be used as a user gesture to enter fullscreen"_s);
             failedPreflights(WTFMove(element), WTFMove(promise));
@@ -210,7 +204,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
 
         // Don't allow fullscreen if document is hidden.
         auto document = protectedDocument();
-        if (document->hidden()) {
+        if (document->hidden() && mode != HTMLMediaElementEnums::VideoFullscreenModeInWindow) {
             ERROR_LOG(identifier, "task - document hidden; failing.");
             failedPreflights(WTFMove(element), WTFMove(promise));
             completionHandler(false);
@@ -272,7 +266,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
             }
 
             auto page = this->page();
-            if (!page || this->document().hidden() || m_pendingFullscreenElement != element.ptr() || !element->isConnected()) {
+            if (!page || (this->document().hidden() && mode != HTMLMediaElementEnums::VideoFullscreenModeInWindow) || m_pendingFullscreenElement != element.ptr() || !element->isConnected()) {
                 ERROR_LOG(identifier, "task - page, document, or element mismatch; failing.");
                 failedPreflights(WTFMove(element), WTFMove(promise));
                 completionHandler(false);
