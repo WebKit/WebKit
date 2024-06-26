@@ -300,7 +300,9 @@ class TestImporter(object):
             if parent in paths_to_skip_new_directories:
                 if parent != rel_path:
                     to_skip = parent / rel_path.relative_to(parent).parts[0]
-                    if not to_skip.is_dir():
+                    full_to_skip = str(self.source_directory / to_skip)
+                    assert self.filesystem.exists(full_to_skip)
+                    if not self.filesystem.isdir(full_to_skip):
                         # Files directly under skip-new-directories _are_ imported.
                         assert rel_path == to_skip
                         return False
