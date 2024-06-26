@@ -305,7 +305,14 @@ void AttributeValidator::visit(AST::Structure& structure)
         }
 
         unsigned currentSize = UNLIKELY(size.hasOverflowed()) ? std::numeric_limits<unsigned>::max() : size.value();
-        unsigned offset = UNLIKELY(size.hasOverflowed()) ? currentSize : WTF::roundUpToMultipleOf(*fieldAlignment, currentSize);
+        unsigned offset;
+        if (UNLIKELY(size.hasOverflowed()))
+            offset = currentSize;
+        else {
+            CheckedUint32 checkedOffset = WTF::roundUpToMultipleOf(*fieldAlignment, static_cast<uint64_t>(currentSize));
+            offset = UNLIKELY(checkedOffset.hasOverflowed()) ? std::numeric_limits<unsigned>::max() : checkedOffset.value();
+        }
+
         member.m_offset = offset;
 
         alignment = std::max(alignment, *fieldAlignment);
