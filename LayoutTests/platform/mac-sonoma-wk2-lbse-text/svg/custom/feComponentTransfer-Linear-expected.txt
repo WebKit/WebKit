@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (1,1) size 648x418
+  RenderSVGTransformableContainer {g} at (1,1) size 648x418
+layer at (0,0) size 450x300 backgroundClip at (0.50,0.50) size 648.50x419
+  RenderSVGViewportContainer {svg} at (-1,-1) size 450x300
+layer at (1,1) size 648x418 backgroundClip at (25,8.31) size 750x500 clip at (25,8.31) size 750x500
+  RenderSVGRect {rect} at (1,1) size 648x418 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=648.00] [height=418.00]
+layer at (1,1) size 648x418 backgroundClip at (25,8.31) size 750x500 clip at (25,8.31) size 750x500
+  RenderSVGTransformableContainer {g} at (1,1) size 648x418
+layer at (1,1) size 648x418 backgroundClip at (25,8.31) size 750x500 clip at (25,8.31) size 750x500
+  RenderSVGRect {rect} at (0,0) size 648x418 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=648.00] [height=418.00]
+layer at (20,10) size 580x40 backgroundClip at (25,8.31) size 750x500 clip at (25,8.31) size 750x500
+  RenderSVGRect {rect} at (19,9) size 580x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=10.00] [width=580.00] [height=40.00]
+layer at (20,54.91) size 102x18 backgroundClip at (25,8.31) size 750x500 clip at (25,8.31) size 750x500
+  RenderSVGText {text} at (19,53) size 102x20 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 102x19
+      chunk 1 text run 1 at (20.00,70.00) startOffset 0 endOffset 14 width 101.86: "type: identity"
+layer at (20,110) size 580x40 backgroundClip at (25,8.31) size 750x500 clip at (25,8.31) size 750x500
+  RenderSVGRect {rect} at (19,109) size 580x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=110.00] [width=580.00] [height=40.00]
+layer at (20,154.91) size 459x18 backgroundClip at (25,8.31) size 750x500 clip at (25,8.31) size 750x500
+  RenderSVGText {text} at (19,153) size 459x20 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 459x19
+      chunk 1 text run 1 at (20.00,170.00) startOffset 0 endOffset 61 width 458.61: "type: linear slope=1 intercept=0 -- Result should be identity"
+layer at (20,210) size 580x40 backgroundClip at (25,8.31) size 750x500 clip at (25,8.31) size 750x500
+  RenderSVGRect {rect} at (19,209) size 580x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=210.00] [width=580.00] [height=40.00]
+layer at (20,254.91) size 477x18 backgroundClip at (25,8.31) size 750x500 clip at (25,8.31) size 750x500
+  RenderSVGText {text} at (19,253) size 477x20 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 477x19
+      chunk 1 text run 1 at (20.00,270.00) startOffset 0 endOffset 63 width 476.81: "type: linear slope=-1 intercept=0 -- Should invert the gradient"
+layer at (20,310) size 580x40 backgroundClip at (25,8.31) size 750x500 clip at (25,8.31) size 750x500
+  RenderSVGRect {rect} at (19,309) size 580x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=310.00] [width=580.00] [height=40.00]
+layer at (20,354.91) size 606x18 backgroundClip at (25,8.31) size 750x500 clip at (25,8.31) size 750x500
+  RenderSVGText {text} at (19,353) size 606x20 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 606x19
+      chunk 1 text run 1 at (20.00,370.00) startOffset 0 endOffset 79 width 605.80: "type: linear slope=0.5 intercept=0.25 -- Result should be less extreme gradient"
