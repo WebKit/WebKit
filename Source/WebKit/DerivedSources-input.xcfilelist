@@ -654,6 +654,7 @@ $(PROJECT_DIR)/WebProcess/WebPage/ViewUpdateDispatcher.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/VisitedLinkTableController.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/WebFrame.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/WebPage.messages.in
+$(PROJECT_DIR)/WebProcess/WebPage/WebPageTesting.messages.in
 $(PROJECT_DIR)/WebProcess/WebProcess.messages.in
 $(PROJECT_DIR)/WebProcess/WebStorage/StorageAreaMap.messages.in
 $(PROJECT_DIR)/WebProcess/XR/PlatformXRSystemProxy.messages.in

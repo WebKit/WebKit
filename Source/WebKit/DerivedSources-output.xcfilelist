@@ -505,6 +505,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPageMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPageMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPageProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPageProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPageTestingMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPageTestingMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPageUpdatePreferences.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPasteboardProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPasteboardProxyMessages.h

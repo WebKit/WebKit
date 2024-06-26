@@ -40,6 +40,7 @@
 #import "WKContentViewInteraction.h"
 #import "WKPreferencesInternal.h"
 #import "WebPageProxy.h"
+#import "WebPageProxyTesting.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import "WebViewImpl.h"
@@ -330,7 +331,8 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_setDefersLoadingForTesting:(BOOL)defersLoading
 {
-    _page->setDefersLoadingForTesting(defersLoading);
+    if (auto* pageForTesting = _page->pageForTesting())
+        pageForTesting->setDefersLoading(defersLoading);
 }
 
 - (void)_setShareSheetCompletesImmediatelyWithResolutionForTesting:(BOOL)resolved
@@ -396,7 +398,8 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (nsIndex)
         index = nsIndex.unsignedIntValue;
 
-    _page->setIndexOfGetDisplayMediaDeviceSelectedForTesting(index);
+    if (auto* pageForTesting = _page->pageForTesting())
+        pageForTesting->setIndexOfGetDisplayMediaDeviceSelectedForTesting(index);
 #endif
 }
 
@@ -406,7 +409,8 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (!_page)
         return;
 
-    _page->setSystemCanPromptForGetDisplayMediaForTesting(!!canPrompt);
+    if (auto* pageForTesting = _page->pageForTesting())
+        pageForTesting->setSystemCanPromptForGetDisplayMediaForTesting(!!canPrompt);
 #endif
 }
 
@@ -493,42 +497,66 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_setPrivateClickMeasurementOverrideTimerForTesting:(BOOL)overrideTimer completionHandler:(void(^)(void))completionHandler
 {
-    _page->setPrivateClickMeasurementOverrideTimerForTesting(overrideTimer, [completionHandler = makeBlockPtr(completionHandler)] {
+    auto* pageForTesting = _page->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler();
+
+    pageForTesting->setPrivateClickMeasurementOverrideTimer(overrideTimer, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
 
 - (void)_setPrivateClickMeasurementAttributionReportURLsForTesting:(NSURL *)sourceURL destinationURL:(NSURL *)destinationURL completionHandler:(void(^)(void))completionHandler
 {
-    _page->setPrivateClickMeasurementAttributionReportURLsForTesting(sourceURL, destinationURL, [completionHandler = makeBlockPtr(completionHandler)] {
+    auto* pageForTesting = _page->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler();
+
+    pageForTesting->setPrivateClickMeasurementAttributionReportURLs(sourceURL, destinationURL, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
 
 - (void)_setPrivateClickMeasurementAttributionTokenPublicKeyURLForTesting:(NSURL *)url completionHandler:(void(^)(void))completionHandler
 {
-    _page->setPrivateClickMeasurementTokenPublicKeyURLForTesting(url, [completionHandler = makeBlockPtr(completionHandler)] {
+    auto* pageForTesting = _page->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler();
+
+    pageForTesting->setPrivateClickMeasurementTokenPublicKeyURL(url, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
 
 - (void)_setPrivateClickMeasurementAttributionTokenSignatureURLForTesting:(NSURL *)url completionHandler:(void(^)(void))completionHandler
 {
-    _page->setPrivateClickMeasurementTokenSignatureURLForTesting(url, [completionHandler = makeBlockPtr(completionHandler)] {
+    auto* pageForTesting = _page->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler();
+
+    pageForTesting->setPrivateClickMeasurementTokenSignatureURL(url, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
 
 - (void)_setPrivateClickMeasurementAppBundleIDForTesting:(NSString *)appBundleID completionHandler:(void(^)(void))completionHandler
 {
-    _page->setPrivateClickMeasurementAppBundleIDForTesting(appBundleID, [completionHandler = makeBlockPtr(completionHandler)] {
+    auto* pageForTesting = _page->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler();
+
+    pageForTesting->setPrivateClickMeasurementAppBundleID(appBundleID, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
 
 - (void)_dumpPrivateClickMeasurement:(void(^)(NSString *))completionHandler
 {
-    _page->dumpPrivateClickMeasurement([completionHandler = makeBlockPtr(completionHandler)](const String& privateClickMeasurement) {
+    auto* pageForTesting = _page->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler({ });
+
+    pageForTesting->dumpPrivateClickMeasurement([completionHandler = makeBlockPtr(completionHandler)](const String& privateClickMeasurement) {
         completionHandler(privateClickMeasurement);
     });
 }
@@ -597,7 +625,11 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_isLayerTreeFrozenForTesting:(void (^)(BOOL frozen))completionHandler
 {
-    _page->isLayerTreeFrozen([completionHandler = makeBlockPtr(completionHandler)](bool isFrozen) {
+    auto* pageForTesting = _page->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler(false);
+
+    pageForTesting->isLayerTreeFrozen([completionHandler = makeBlockPtr(completionHandler)](bool isFrozen) {
         completionHandler(isFrozen);
     });
 }

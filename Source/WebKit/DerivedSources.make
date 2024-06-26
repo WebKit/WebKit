@@ -261,6 +261,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/WebPage/ViewGestureGeometryCollector \
 	WebProcess/WebPage/DrawingArea \
 	WebProcess/WebPage/WebPage \
+	WebProcess/WebPage/WebPageTesting \
 	WebProcess/WebPage/VisitedLinkTableController \
 	WebProcess/WebPage/Cocoa/TextCheckingControllerProxy \
 	WebProcess/WebPage/ViewUpdateDispatcher \

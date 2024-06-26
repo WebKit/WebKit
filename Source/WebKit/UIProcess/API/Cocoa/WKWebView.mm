@@ -101,6 +101,7 @@
 #import "WebPageGroup.h"
 #import "WebPageInspectorController.h"
 #import "WebPageProxy.h"
+#import "WebPageProxyTesting.h"
 #import "WebPreferences.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
@@ -2940,7 +2941,8 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_setStatisticsCrossSiteLoadWithLinkDecorationForTesting:(NSString *)fromHost withToHost:(NSString *)toHost withWasFiltered:(BOOL)wasFiltered withCompletionHandler:(void(^)(void))completionHandler
 {
-    _page->setCrossSiteLoadWithLinkDecorationForTesting(URL { fromHost }, URL { toHost }, wasFiltered, makeBlockPtr(completionHandler));
+    if (auto* pageForTesting = _page->pageForTesting())
+        pageForTesting->setCrossSiteLoadWithLinkDecorationForTesting(URL { fromHost }, URL { toHost }, wasFiltered, makeBlockPtr(completionHandler));
 }
 
 - (_WKMediaMutedState)_mediaMutedState

@@ -137,6 +137,7 @@
 #include "WebPageMessages.h"
 #include "WebPageOverlay.h"
 #include "WebPageProxyMessages.h"
+#include "WebPageTesting.h"
 #include "WebPaymentCoordinator.h"
 #include "WebPerformanceLoggingClient.h"
 #include "WebPluginInfoProvider.h"
@@ -535,6 +536,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_viewSize(parameters.viewSize)
     , m_layerHostingMode(parameters.layerHostingMode)
     , m_drawingArea(DrawingArea::create(*this, parameters))
+    , m_webPageTesting(makeUnique<WebPageTesting>(*this))
     , m_mainFrame(WebFrame::create(*this, parameters.remotePageParameters ? parameters.remotePageParameters->frameTreeParameters.frameID : (parameters.mainFrameIdentifier ? *parameters.mainFrameIdentifier : WebCore::FrameIdentifier::generate())))
     , m_drawingAreaType(parameters.drawingAreaType)
     , m_alwaysShowsHorizontalScroller { parameters.alwaysShowsHorizontalScroller }
@@ -1774,21 +1776,6 @@ void WebPage::setBaseWritingDirection(WritingDirection direction)
 
     frame->editor().setBaseWritingDirection(direction);
 }
-
-void WebPage::isEditingCommandEnabled(const String& commandName, CompletionHandler<void(bool)>&& completionHandler)
-{
-    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
-    if (!frame)
-        return completionHandler(false);
-
-#if ENABLE(PDF_PLUGIN)
-    if (auto* pluginView = focusedPluginViewForFrame(*frame))
-        return completionHandler(pluginView->isEditingCommandEnabled(commandName));
-#endif
-
-    Editor::Command command = frame->editor().command(commandName);
-    completionHandler(command.isSupported() && command.isEnabled());
-}
     
 void WebPage::clearMainFrameName()
 {
@@ -1891,6 +1878,7 @@ void WebPage::close()
 #endif
 
     m_drawingArea = nullptr;
+    m_webPageTesting = nullptr;
     m_page = nullptr;
 
     bool isRunningModal = m_isRunningModal;
@@ -2211,11 +2199,6 @@ void WebPage::stopLoadingDueToProcessSwap()
 bool WebPage::defersLoading() const
 {
     return m_page->defersLoading();
-}
-
-void WebPage::setDefersLoading(bool defersLoading)
-{
-    m_page->setDefersLoading(defersLoading);
 }
 
 void WebPage::reload(uint64_t navigationID, OptionSet<WebCore::ReloadOption> reloadOptions, SandboxExtension::Handle&& sandboxExtensionHandle)
@@ -3305,11 +3288,6 @@ void WebPage::unfreezeLayerTree(LayerTreeFreezeReason reason)
     m_layerTreeFreezeReasons.remove(reason);
     WEBPAGE_RELEASE_LOG(ProcessSuspension, "unfreezeLayerTree: Removing a reason to freeze layer tree (reason=%d, new=%d, old=%d)", static_cast<unsigned>(reason), m_layerTreeFreezeReasons.toRaw(), oldReasons);
     updateDrawingAreaLayerTreeFreezeState();
-}
-
-void WebPage::isLayerTreeFrozen(CompletionHandler<void(bool)>&& completionHandler)
-{
-    completionHandler(!!m_layerTreeFreezeReasons);
 }
 
 void WebPage::updateDrawingAreaLayerTreeFreezeState()
@@ -8020,14 +7998,6 @@ void WebPage::postSynchronousMessageForTesting(const String& messageName, API::O
         returnData = nullptr;
 }
 
-void WebPage::clearWheelEventTestMonitor()
-{
-    if (!m_page)
-        return;
-
-    m_page->clearWheelEventTestMonitor();
-}
-
 void WebPage::setShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocument)
 {
     if (!m_drawingArea)
@@ -9349,13 +9319,6 @@ void WebPage::removeTextPlaceholder(const ElementContext& placeholder, Completio
 }
 #endif
 
-#if ENABLE(NOTIFICATIONS)
-void WebPage::clearNotificationPermissionState()
-{
-    static_cast<WebNotificationClient&>(WebCore::NotificationController::from(m_page.get())->client()).clearNotificationPermissionState();
-}
-#endif
-
 void WebPage::generateTestReport(String&& message, String&& group)
 {
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
@@ -9749,16 +9712,6 @@ void WebPage::updateLastNodeBeforeWritingSuggestions(const KeyboardEvent& event)
 
     if (RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame())
         m_lastNodeBeforeWritingSuggestions = frame->editor().nodeBeforeWritingSuggestions();
-}
-
-void WebPage::setPermissionLevelForTesting(const String& origin, bool allowed)
-{
-#if ENABLE(NOTIFICATIONS)
-    notificationPermissionRequestManager()->setPermissionLevelForTesting(origin, allowed);
-#else
-    UNUSED_PARAM(origin);
-    UNUSED_PARAM(allowed);
-#endif
 }
 
 void WebPage::didAddOrRemoveViewportConstrainedObjects()

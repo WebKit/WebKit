@@ -453,6 +453,7 @@ class WebPageGroup;
 class WebPageInjectedBundleClient;
 class WebPageInspectorController;
 class WebPageProxyMessageReceiverRegistration;
+class WebPageProxyTesting;
 class WebPopupMenuProxy;
 class WebPopupMenuProxyClient;
 class WebPreferences;
@@ -1160,8 +1161,6 @@ public:
     void addActivityStateUpdateCompletionHandler(CompletionHandler<void()>&&);
 #endif // PLATFORM(COCOA)
 
-    void dispatchActivityStateUpdateForTesting();
-
     void changeFontAttributes(WebCore::FontAttributeChanges&&);
     void changeFont(WebCore::FontChanges&&);
 
@@ -1752,8 +1751,6 @@ public:
     void setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle>);
     std::optional<WebCore::ScrollbarOverlayStyle> overlayScrollbarStyle() const { return m_scrollbarOverlayStyle; }
 
-    void isLayerTreeFrozen(CompletionHandler<void(bool)>&&);
-
     // When the state of the window changes such that the WebPage needs immediate update, the UIProcess sends a new
     // ActivityStateChangeID to the WebProcess through the SetActivityState message. The UIProcess will wait till it
     // receives a CommitLayerTree which has an ActivityStateChangeID equal to or greater than the one it sent.
@@ -1896,8 +1893,6 @@ public:
     void didChangeBackgroundColor();
     void didLayoutForCustomContentProvider();
 
-    // For testing
-    void clearWheelEventTestMonitor();
     void callAfterNextPresentationUpdate(CompletionHandler<void()>&&);
 
     void didReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>);
@@ -1994,8 +1989,6 @@ public:
 
     const WebPreferencesStore& preferencesStore() const;
 
-    void setDefersLoadingForTesting(bool);
-
     bool isPageOpenedByDOMShowingInitialEmptyDocument() const;
 
     WebCore::IntRect syncRootViewToScreen(const WebCore::IntRect& viewRect);
@@ -2040,19 +2033,6 @@ public:
     void contentFilterDidBlockLoadForFrameShared(Ref<WebProcessProxy>&&, const WebCore::ContentFilterUnblockHandler&, WebCore::FrameIdentifier);
 #endif
     void handleMessageShared(const Ref<WebProcessProxy>&, const String& messageName, const WebKit::UserData&);
-
-    void dumpPrivateClickMeasurement(CompletionHandler<void(const String&)>&&);
-    void clearPrivateClickMeasurement(CompletionHandler<void()>&&);
-    void setPrivateClickMeasurementOverrideTimerForTesting(bool value, CompletionHandler<void()>&&);
-    void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
-    void setPrivateClickMeasurementEphemeralMeasurementForTesting(bool value, CompletionHandler<void()>&&);
-    void simulatePrivateClickMeasurementSessionRestart(CompletionHandler<void()>&&);
-    void setPrivateClickMeasurementTokenPublicKeyURLForTesting(const URL&, CompletionHandler<void()>&&);
-    void setPrivateClickMeasurementTokenSignatureURLForTesting(const URL&, CompletionHandler<void()>&&);
-    void setPrivateClickMeasurementAttributionReportURLsForTesting(const URL& sourceURL, const URL& destinationURL, CompletionHandler<void()>&&);
-    void markPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
-    void setPCMFraudPreventionValuesForTesting(const String& unlinkableToken, const String& secretToken, const String& signature, const String& keyID, CompletionHandler<void()>&&);
-    void setPrivateClickMeasurementAppBundleIDForTesting(const String& appBundleIDForTesting, CompletionHandler<void()>&&);
 
 #if ENABLE(SPEECH_SYNTHESIS)
     void speechSynthesisVoiceList(CompletionHandler<void(Vector<WebSpeechSynthesisVoice>&&)>&&);
@@ -2230,11 +2210,6 @@ public:
     void clearUserMediaPermissionRequestHistory(WebCore::PermissionName);
 #endif
 
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    void setIndexOfGetDisplayMediaDeviceSelectedForTesting(std::optional<unsigned>);
-    void setSystemCanPromptForGetDisplayMediaForTesting(bool);
-#endif
-
 #if PLATFORM(MAC)
     void changeUniversalAccessZoomFocus(const WebCore::IntRect&, const WebCore::IntRect&);
 
@@ -2408,7 +2383,6 @@ public:
     void resetMediaCapability();
     void updateMediaCapability();
 #endif
-    void setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&&);
 
     void requestTargetedElement(const API::TargetedElementRequest&, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&&);
     void takeSnapshotForTargetedElement(const API::TargetedElementInfo&, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
@@ -2472,6 +2446,8 @@ public:
     template<typename M> IPC::ConnectionSendSyncResult<M> sendSyncToProcessContainingFrame(std::optional<WebCore::FrameIdentifier>, M&&);
     template<typename M> IPC::ConnectionSendSyncResult<M> sendSyncToProcessContainingFrame(std::optional<WebCore::FrameIdentifier>, M&&, const IPC::Timeout&);
 
+    void forEachWebContentProcess(Function<void(WebProcessProxy&, WebCore::PageIdentifier)>&&);
+
 #if HAVE(SPATIAL_TRACKING_LABEL)
     void setDefaultSpatialTrackingLabel(const String&);
     const String& defaultSpatialTrackingLabel() const;
@@ -2486,10 +2462,12 @@ public:
     void didAdjustVisibilityWithSelectors(Vector<String>&&);
     BrowsingContextGroup& browsingContextGroup() const { return m_browsingContextGroup; }
 
-    bool isEditingCommandEnabledForTesting(const String&);
-    void setPermissionLevelForTesting(const String& origin, bool allowed);
+    WebPageProxyTesting* pageForTesting() const { return m_pageForTesting.get(); }
 
     void hasActiveNowPlayingSessionChanged(bool);
+
+    void updateActivityState();
+    void dispatchActivityStateChange();
 
 private:
     std::optional<Vector<uint8_t>> getWebCryptoMasterKey();
@@ -2505,15 +2483,12 @@ private:
     bool attachmentElementEnabled();
     bool modelElementEnabled();
 
-    void forEachWebContentProcess(Function<void(WebProcessProxy&, WebCore::PageIdentifier)>&&);
-
     bool shouldForceForegroundPriorityForClientNavigation() const;
 
     bool canCreateFrame(WebCore::FrameIdentifier) const;
 
     RefPtr<API::Navigation> goToBackForwardItem(WebBackForwardListItem&, WebCore::FrameLoadType);
 
-    void updateActivityState();
     void updateActivityState(OptionSet<WebCore::ActivityState> flagsToUpdate);
     void updateThrottleState();
     void updateHiddenPageThrottlingAutoIncreases();
@@ -2914,7 +2889,6 @@ private:
 
     API::DiagnosticLoggingClient* effectiveDiagnosticLoggingClient(WebCore::ShouldSample);
 
-    void dispatchActivityStateChange();
     void viewDidLeaveWindow();
     void viewDidEnterWindow();
 
@@ -3628,6 +3602,8 @@ private:
 #if ENABLE(GAMEPAD)
     PAL::HysteresisActivity m_recentGamepadAccessHysteresis;
 #endif
+
+    std::unique_ptr<WebPageProxyTesting> m_pageForTesting;
 };
 
 } // namespace WebKit

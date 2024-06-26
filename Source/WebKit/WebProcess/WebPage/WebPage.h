@@ -378,6 +378,7 @@ class WebOpenPanelResultListener;
 class WebPageGroupProxy;
 class WebPageInspectorTargetController;
 class WebPageOverlay;
+class WebPageTesting;
 class WebPaymentCoordinator;
 class WebPopupMenu;
 class WebRemoteObjectRegistry;
@@ -684,7 +685,6 @@ public:
     Ref<API::Array> trackedRepaintRects();
 
     void executeEditingCommand(const String& commandName, const String& argument);
-    void isEditingCommandEnabled(const String& commandName, CompletionHandler<void(bool)>&&);
     void clearMainFrameName();
     void sendClose();
 
@@ -750,7 +750,6 @@ public:
     void stopLoading();
     void stopLoadingDueToProcessSwap();
     bool defersLoading() const;
-    void setDefersLoading(bool deferLoading);
 
     void enterAcceleratedCompositingMode(WebCore::Frame&, WebCore::GraphicsLayer*);
     void exitAcceleratedCompositingMode(WebCore::Frame&);
@@ -1016,8 +1015,6 @@ public:
     void unfreezeLayerTree(LayerTreeFreezeReason);
 
     void updateFrameSize(WebCore::FrameIdentifier, WebCore::IntSize);
-
-    void isLayerTreeFrozen(CompletionHandler<void(bool)>&&);
 
     void markLayersVolatile(CompletionHandler<void(bool)>&& completionHandler = { });
     void cancelMarkLayersVolatile();
@@ -1793,16 +1790,14 @@ public:
 
     void hasActiveNowPlayingSessionChanged(bool);
 
+    OptionSet<LayerTreeFreezeReason> layerTreeFreezeReasons() const { return m_layerTreeFreezeReasons; }
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
     void constructFrameTree(WebFrame& parent, const FrameTreeCreationParameters&);
 
     void updateThrottleState();
-
-#if ENABLE(NOTIFICATIONS)
-    void clearNotificationPermissionState();
-#endif
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const override;
@@ -2205,8 +2200,6 @@ private:
     void playbackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier);
 #endif
 
-    void clearWheelEventTestMonitor();
-
     void setShouldScaleViewToFitDocument(bool);
 
     void pageStoppedScrolling();
@@ -2333,8 +2326,6 @@ private:
 
     void frameNameWasChangedInAnotherProcess(WebCore::FrameIdentifier, const String& frameName);
 
-    void setPermissionLevelForTesting(const String& origin, bool allowed);
-
     WebCore::PageIdentifier m_identifier;
 
     RefPtr<WebCore::Page> m_page;
@@ -2342,6 +2333,8 @@ private:
     WebCore::IntSize m_viewSize;
     LayerHostingMode m_layerHostingMode;
     std::unique_ptr<DrawingArea> m_drawingArea;
+
+    std::unique_ptr<WebPageTesting> m_webPageTesting;
 
     Ref<WebFrame> m_mainFrame;
 

@@ -51,10 +51,6 @@ messages -> WebPage LegacyReceiver {
     MouseEvent(WebCore::FrameIdentifier frameID, WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtensionHandle>> sandboxExtensions)
     SetLastKnownMousePosition(WebCore::FrameIdentifier frameID, WebCore::IntPoint eventPoint, WebCore::IntPoint globalPoint);
 
-#if ENABLE(NOTIFICATIONS)
-    ClearNotificationPermissionState()
-#endif
-
 #if PLATFORM(IOS_FAMILY)
     SetSceneIdentifier(String sceneIdentifier)
     SetViewportConfigurationViewLayoutSize(WebCore::FloatSize size, double scaleFactor, double minimumEffectiveDeviceWidth)
@@ -452,8 +448,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SwipeAnimationDidStart()
     SwipeAnimationDidEnd()
 
-    IsLayerTreeFrozen() -> (bool isFrozen)
-
     # Printing.
     BeginPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo)
     BeginPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
@@ -622,7 +616,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidLosePointerLock()
 #endif
 
-    ClearWheelEventTestMonitor()
     SetShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocument)
 
     SetUserInterfaceLayoutDirection(uint32_t direction)
@@ -656,8 +649,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
     GetTextFragmentMatch() -> (String match)
-
-    SetDefersLoading(bool defersLoading)
 
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
     ZoomPDFIn(WebKit::PDFPluginIdentifier identifier)
@@ -820,8 +811,4 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     LoadAndDecodeImage(WebCore::ResourceRequest request, std::optional<WebCore::FloatSize> sizeConstraint) -> (std::variant<WebCore::ResourceError, Ref<WebCore::ShareableBitmap>> result)
 
     FrameNameWasChangedInAnotherProcess(WebCore::FrameIdentifier frameID, String frameName)
-
-    IsEditingCommandEnabled(String commandName) -> (bool result) Synchronous
-
-    SetPermissionLevelForTesting(String origin, bool allowed)
 }
