@@ -687,6 +687,9 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
         @"MachSendRight",
         @"CGBitmapInfo",
         @"NSParagraphStyle",
+#if ENABLE(DATA_DETECTION) && !HAVE(WK_SECURE_CODING_DATA_DETECTORS)
+        @"DDScannerResult",
+#endif
 #if PLATFORM(MAC)
 #if !HAVE(WK_SECURE_CODING_DATA_DETECTORS)
         @"WKDDActionContext",
