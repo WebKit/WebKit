@@ -49,7 +49,10 @@ static constexpr auto multipleOf4(auto input)
 }
 static uint64_t maxBufferSize(id<MTLDevice> device)
 {
-    auto result = std::max<uint64_t>(defaultMaxBufferSize, std::min<uint64_t>(INT_MAX, device.maxBufferLength / 10));
+    constexpr uint64_t oneGigabyte = 1024 * 1024 * 1024;
+    auto clampedBufferLength = std::min<uint64_t>(oneGigabyte, device.maxBufferLength);
+    auto oneTenthMaxBufferLength = device.maxBufferLength / 10;
+    auto result = std::max<uint64_t>(defaultMaxBufferSize, std::min<uint64_t>(INT_MAX, std::max<uint64_t>(oneTenthMaxBufferLength, clampedBufferLength)));
     return multipleOf4(result);
 }
 
