@@ -107,6 +107,7 @@ WEBCORE_EXPORT std::optional<SimpleRange> wordRangeFromPosition(const VisiblePos
 WEBCORE_EXPORT VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position);
 WEBCORE_EXPORT void charactersAroundPosition(const VisiblePosition&, char32_t& oneAfter, char32_t& oneBefore, char32_t& twoBefore);
 WEBCORE_EXPORT std::optional<SimpleRange> rangeExpandedAroundPositionByCharacters(const VisiblePosition&, int numberOfCharactersToExpand);
+WEBCORE_EXPORT std::optional<SimpleRange> rangeExpandedAroundRangeByCharacters(const VisibleSelection&, uint64_t numberOfCharactersToExpandBackwards, uint64_t numberOfCharactersToExpandForwards);
 WEBCORE_EXPORT std::optional<SimpleRange> rangeExpandedByCharactersInDirectionAtWordBoundary(const VisiblePosition&, int numberOfCharactersToExpand, SelectionDirection);
 enum class WithinWordBoundary : bool { No, Yes };
 WEBCORE_EXPORT std::pair<VisiblePosition, WithinWordBoundary> wordBoundaryForPositionWithoutCrossingLine(const VisiblePosition&);

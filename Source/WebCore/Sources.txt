@@ -1342,6 +1342,7 @@ editing/VisibleUnits.cpp
 editing/WebContentReader.cpp
 editing/WebCorePasteboardFileReader.cpp
 editing/WrapContentsInDummySpanCommand.cpp
+editing/WritingToolsCompositionCommand.cpp
 editing/markup.cpp
 fileapi/AsyncFileStream.cpp
 fileapi/Blob.cpp

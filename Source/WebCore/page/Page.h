@@ -100,6 +100,7 @@ class BadgeClient;
 class BroadcastChannelRegistry;
 class CacheStorageProvider;
 class Chrome;
+class CompositeEditCommand;
 class ContextMenuController;
 class CookieJar;
 class CryptoClient;
@@ -110,6 +111,7 @@ class DiagnosticLoggingClient;
 class DragCaretController;
 class DragController;
 class EditorClient;
+class EditCommandComposition;
 class ElementTargetingController;
 class Element;
 class FocusController;
@@ -1163,6 +1165,9 @@ public:
     WEBCORE_EXPORT void writingToolsSessionDidReceiveAction(const WritingTools::Session&, WritingTools::Action);
 
     WEBCORE_EXPORT void updateStateForSelectedSuggestionIfNeeded();
+
+    void respondToUnappliedWritingToolsEditing(EditCommandComposition*);
+    void respondToReappliedWritingToolsEditing(EditCommandComposition*);
 
     WEBCORE_EXPORT std::optional<SimpleRange> contextRangeForSessionWithID(const WritingTools::SessionID&) const;
 #endif

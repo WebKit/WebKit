@@ -588,6 +588,186 @@ TEST(WritingTools, ProofreadingWithImage)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(WritingTools, CompositionWithUndoAfterEnding)
+{
+    auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>Hey do you wanna go see a movie this weekend</p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    __block bool finished = false;
+
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        EXPECT_WK_STREQ(@"Hey do you wanna go see a movie this weekend", contexts.firstObject.attributedText.string);
+
+        __auto_type rewrite = ^(NSString *rewrittenText) {
+            [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
+
+            auto attributedText = adoptNS([[NSAttributedString alloc] initWithString:rewrittenText]);
+
+            [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 44) inContext:contexts.firstObject finished:NO];
+
+            [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 44) inContext:contexts.firstObject finished:YES];
+
+            EXPECT_WK_STREQ(rewrittenText, [webView contentsAsStringWithoutNBSP]);
+        };
+
+        rewrite(@"A");
+
+        [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
+
+        [webView _synchronouslyExecuteEditCommand:@"Undo" argument:@""];
+        EXPECT_WK_STREQ(@"Hey do you wanna go see a movie this weekend", [webView contentsAsStringWithoutNBSP]);
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
+TEST(WritingTools, CompositionWithUndo)
+{
+    auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>Hey do you wanna go see a movie this weekend</p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    __block bool finished = false;
+
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        EXPECT_WK_STREQ(@"Hey do you wanna go see a movie this weekend", contexts.firstObject.attributedText.string);
+
+        __auto_type rewrite = ^(NSString *rewrittenText) {
+            [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
+
+            auto attributedText = adoptNS([[NSAttributedString alloc] initWithString:rewrittenText]);
+
+            [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 44) inContext:contexts.firstObject finished:NO];
+
+            [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 44) inContext:contexts.firstObject finished:YES];
+
+            EXPECT_WK_STREQ(rewrittenText, [webView contentsAsStringWithoutNBSP]);
+        };
+
+        rewrite(@"A");
+        rewrite(@"B");
+        rewrite(@"C");
+
+        [webView _synchronouslyExecuteEditCommand:@"Undo" argument:@""];
+        EXPECT_WK_STREQ(@"B", [webView contentsAsStringWithoutNBSP]);
+
+        [webView _synchronouslyExecuteEditCommand:@"Undo" argument:@""];
+        EXPECT_WK_STREQ(@"A", [webView contentsAsStringWithoutNBSP]);
+
+        [webView _synchronouslyExecuteEditCommand:@"Redo" argument:@""];
+        EXPECT_WK_STREQ(@"B", [webView contentsAsStringWithoutNBSP]);
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
+TEST(WritingTools, CompositionWithMultipleUndosAndRestarts)
+{
+    auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>Hey do you wanna go see a movie this weekend</p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    __block bool finished = false;
+
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        EXPECT_WK_STREQ(@"Hey do you wanna go see a movie this weekend", contexts.firstObject.attributedText.string);
+
+        __auto_type rewrite = ^(NSString *rewrittenText) {
+            [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
+
+            auto attributedText = adoptNS([[NSAttributedString alloc] initWithString:rewrittenText]);
+
+            [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 44) inContext:contexts.firstObject finished:NO];
+
+            [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 44) inContext:contexts.firstObject finished:YES];
+
+            EXPECT_WK_STREQ(rewrittenText, [webView contentsAsStringWithoutNBSP]);
+        };
+
+        rewrite(@"A");
+        rewrite(@"B");
+
+        [webView _synchronouslyExecuteEditCommand:@"Undo" argument:@""];
+        EXPECT_WK_STREQ(@"A", [webView contentsAsStringWithoutNBSP]);
+
+        rewrite(@"C");
+
+        [webView _synchronouslyExecuteEditCommand:@"Undo" argument:@""];
+        EXPECT_WK_STREQ(@"A", [webView contentsAsStringWithoutNBSP]);
+
+        rewrite(@"D");
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
+TEST(WritingTools, CompositionWithUndoAndRestart)
+{
+    auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>Hey do you wanna go see a movie this weekend</p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    __block bool finished = false;
+
+    NSString *originalText = @"Hey do you wanna go see a movie this weekend";
+
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
+
+        __auto_type rewrite = ^(NSString *rewrittenText) {
+            [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
+
+            auto attributedText = adoptNS([[NSAttributedString alloc] initWithString:rewrittenText]);
+
+            [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 44) inContext:contexts.firstObject finished:NO];
+
+            [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 44) inContext:contexts.firstObject finished:YES];
+
+            EXPECT_WK_STREQ(rewrittenText, [webView contentsAsStringWithoutNBSP]);
+        };
+
+        rewrite(@"A");
+        rewrite(@"B");
+
+        [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionShowOriginal];
+        EXPECT_WK_STREQ(originalText, [webView contentsAsStringWithoutNBSP]);
+
+        [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionShowRewritten];
+        EXPECT_WK_STREQ(@"B", [webView contentsAsStringWithoutNBSP]);
+
+        [webView _synchronouslyExecuteEditCommand:@"Undo" argument:@""];
+        EXPECT_WK_STREQ(@"A", [webView contentsAsStringWithoutNBSP]);
+
+        rewrite(@"C");
+
+        [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:NO];
+        EXPECT_WK_STREQ(originalText, [webView contentsAsStringWithoutNBSP]);
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
 TEST(WritingTools, Composition)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
@@ -653,11 +833,9 @@ TEST(WritingTools, Composition)
 
         EXPECT_WK_STREQ(@"AAAA ZZZZX YYY", [webView contentsAsStringWithoutNBSP]);
 
-        [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
-
         [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
 
-        EXPECT_WK_STREQ(@"AAAA BBBB CCCC", [webView contentsAsStringWithoutNBSP]);
+        EXPECT_WK_STREQ(@"AAAA ZZZZX YYY", [webView contentsAsStringWithoutNBSP]);
 
         finished = true;
     }];
@@ -688,6 +866,10 @@ TEST(WritingTools, CompositionRevert)
         [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(5, 4) inContext:contexts.firstObject finished:YES];
 
         EXPECT_WK_STREQ(@"AAAA ZZZZ CCCC", [webView contentsAsStringWithoutNBSP]);
+
+        [webView _synchronouslyExecuteEditCommand:@"Undo" argument:@""];
+
+        EXPECT_WK_STREQ(@"AAAA BBBB CCCC", [webView contentsAsStringWithoutNBSP]);
 
         [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:NO];
 
@@ -1130,11 +1312,9 @@ TEST(WritingTools, CompositionWithMultipleChunks)
 
         EXPECT_WK_STREQ(result, [webView contentsAsStringWithoutNBSP]);
 
-        [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
-
         [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
 
-        EXPECT_WK_STREQ(originalText, [webView contentsAsStringWithoutNBSP]);
+        EXPECT_WK_STREQ(result, [webView contentsAsStringWithoutNBSP]);
 
         finished = true;
     }];
@@ -2005,6 +2185,8 @@ TEST(WritingTools, ContextRangeFromCaretSelection)
 
         EXPECT_WK_STREQ(@"AAAA BBBB CCCC\n\nXXXX YYYY ZZZZ", contexts.firstObject.attributedText.string);
 
+        [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
+
         RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@""]);
 
         [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 5) inContext:contexts.firstObject finished:YES];
@@ -2046,6 +2228,8 @@ TEST(WritingTools, ContextRangeFromRangeSelection)
         EXPECT_EQ(1UL, contexts.count);
 
         EXPECT_WK_STREQ(@"AAAA BBBB CCCC", contexts.firstObject.attributedText.string);
+
+        [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
 
         RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@""]);
 

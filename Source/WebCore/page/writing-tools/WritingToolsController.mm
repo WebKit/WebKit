@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-#pragma mark - Static utility helper methods.
+#pragma mark - Overloaded TextIterator-based static functions.
 
 // To maintain consistency between the traversals of `TextIterator` and `HTMLConverter` within the controller,
 // all the WebCore functions which rely on `TextIterator` must use the matching behaviors.
@@ -83,12 +83,7 @@ String WritingToolsController::plainText(const SimpleRange& range)
     return WebCore::plainText(range, defaultTextIteratorBehaviors);
 }
 
-#pragma mark - WritingToolsController implementation.
-
-WritingToolsController::WritingToolsController(Page& page)
-    : m_page(page)
-{
-}
+#pragma mark - Static utility helper methods.
 
 static std::optional<SimpleRange> contextRangeForDocument(const Document& document)
 {
@@ -119,6 +114,15 @@ static std::optional<SimpleRange> contextRangeForDocument(const Document& docume
     return selection.firstRange();
 }
 
+#pragma mark - WritingToolsController implementation.
+
+WritingToolsController::WritingToolsController(Page& page)
+    : m_page(page)
+{
+}
+
+#pragma mark - Delegate methods.
+
 void WritingToolsController::willBeginWritingToolsSession(const std::optional<WritingTools::Session>& session, CompletionHandler<void(const Vector<WritingTools::Context>&)>&& completionHandler)
 {
     RELEASE_LOG(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s)", session ? session->identifier.toString().utf8().data() : "");
@@ -146,8 +150,7 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
 
         ASSERT(session->type == WritingTools::Session::Type::Composition);
 
-        auto liveRange = createLiveRange(*selectedTextRange);
-        m_states.set(session->identifier, CompositionState { liveRange, { } });
+        m_states.set(session->identifier, CompositionState { { }, { WritingToolsCompositionCommand::create(Ref { *document }, *selectedTextRange) } });
 
         completionHandler({ { WTF::UUID { 0 }, AttributedString::fromNSAttributedString(adoptNS([[NSAttributedString alloc] initWithString:@""])), CharacterRange { 0, 0 } } });
         return;
@@ -172,15 +175,17 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
 
     ASSERT(!m_states.contains(session->identifier));
 
-    auto liveRange = createLiveRange(*contextRange);
-
     switch (session->type) {
     case WritingTools::Session::Type::Proofreading:
-        m_states.set(session->identifier, ProofreadingState { liveRange, 0 });
+        m_states.set(session->identifier, ProofreadingState { createLiveRange(*contextRange), 0 });
         break;
 
     case WritingTools::Session::Type::Composition:
-        m_states.set(session->identifier, CompositionState { liveRange, { } });
+        // A sentinel command is always initially created to represent the initial state;
+        // the command itself is never applied or unapplied.
+        //
+        // The range associated with each command is the resulting context range after the command is applied.
+        m_states.set(session->identifier, CompositionState { { }, { WritingToolsCompositionCommand::create(Ref { *document }, *contextRange) } });
         break;
     }
 
@@ -337,11 +342,7 @@ void WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion(cons
 
 void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session& session, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished)
 {
-    auto hasAttributes = std::ranges::any_of(attributedText.attributes, [](auto& rangeAndAttributeValues) {
-        return !rangeAndAttributeValues.second.isEmpty();
-    });
-
-    RELEASE_LOG(WritingTools, "WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange (%s) [range: %llu, %llu; has attributes: %d; finished: %d]", session.identifier.toString().utf8().data(), range.location, range.length, hasAttributes, finished);
+    RELEASE_LOG(WritingTools, "WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange (%s) [range: %llu, %llu; finished: %d]", session.identifier.toString().utf8().data(), range.location, range.length, finished);
 
     auto contextTextCharacterCount = context.attributedText.string.length();
 
@@ -369,7 +370,8 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
     document->selection().clear();
 
-    auto sessionRange = makeSimpleRange(state->contextRange);
+    // The current session context range is always the range associated with the most recently applied command.
+    auto sessionRange = state->reappliedCommands.last()->endingContextRange();
     auto sessionRangeCharacterCount = characterCount(sessionRange);
 
     if (UNLIKELY(range.length + sessionRangeCharacterCount < contextTextCharacterCount)) {
@@ -385,12 +387,6 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
     auto adjustedCharacterRange = CharacterRange { range.location, range.length + characterCountDelta };
     auto resolvedRange = resolveCharacterRange(sessionRange, adjustedCharacterRange);
 
-    RefPtr fragment = createFragment(*document->frame(), attributedText.nsAttributedString().get(), { FragmentCreationOptions::NoInterchangeNewlines, FragmentCreationOptions::SanitizeMarkup });
-    if (!fragment) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
     m_page->chrome().client().addSourceTextAnimation(session.identifier, range);
 
     // Prefer using any attributes that `attributedText` may have; however, if it has none,
@@ -399,7 +395,9 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
     // This will always be the case for Smart Replies, which creates it's own attributed text
     // without WebKit providing the attributes.
 
-    replaceContentsOfRangeInSession(*state, resolvedRange, WTFMove(fragment), hasAttributes ? MatchStyle::No : MatchStyle::Yes);
+    auto commandState = finished ? WritingToolsCompositionCommand::State::Complete : WritingToolsCompositionCommand::State::InProgress;
+
+    replaceContentsOfRangeInSession(*state, resolvedRange, attributedText, commandState);
 
     m_page->chrome().client().addDestinationTextAnimation(session.identifier, adjustedCharacterRange);
 }
@@ -466,39 +464,23 @@ void WritingToolsController::writingToolsSessionDidReceiveAction<WritingTools::S
 {
     RELEASE_LOG(WritingTools, "WritingToolsController::writingToolsSessionDidReceiveAction<Composition> (%s) [action: %hhu]", session.identifier.toString().utf8().data(), enumToUnderlyingType(action));
 
-    CheckedPtr state = stateForSession<WritingTools::Session::Type::Composition>(session);
-    if (!state) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    // In composition sessions, text can be received in "chunks", and is therefore stored as a stack
-    // of EditCommand's. When showing the original content, or when restarting, the commands are undone
-    // starting from the last one. Likewise, when showing the rewritten content, the commands are redone
-    // preserving the original order.
+    // Smart reply composition sessions never send any actions to the delegate.
+    ASSERT(session.compositionType != WritingTools::Session::CompositionType::SmartReply);
 
     switch (action) {
     case WritingTools::Action::ShowOriginal: {
-        for (const auto& command : state->commands | std::views::reverse)
-            command->ensureComposition().unapply();
-
-        break;
+        showOriginalCompositionForSession(session);
+        return;
     }
 
     case WritingTools::Action::ShowRewritten: {
-        for (const auto& command : state->commands)
-            command->ensureComposition().reapply();
-
-        break;
+        showRewrittenCompositionForSession(session);
+        return;
     }
 
     case WritingTools::Action::Restart: {
-        for (const auto& command : state->commands | std::views::reverse)
-            command->ensureComposition().unapply();
-
-        state->commands.clear();
-
-        break;
+        restartCompositionForSession(session);
+        return;
     }
     }
 }
@@ -602,6 +584,8 @@ void WritingToolsController::didEndWritingToolsSession(const WritingTools::Sessi
     m_states.remove(session.identifier);
 }
 
+#pragma mark - Methods invoked via editing.
+
 void WritingToolsController::updateStateForSelectedSuggestionIfNeeded()
 {
     // Optimization: If there are no ongoing sessions, there is no need for any of this logic to
@@ -635,6 +619,41 @@ void WritingToolsController::updateStateForSelectedSuggestionIfNeeded()
     m_page->chrome().client().proofreadingSessionUpdateStateForSuggestionWithID(data.sessionID, WritingTools::TextSuggestion::State::Reviewing, data.suggestionID);
 }
 
+static bool appliedCommandIsWritingToolsCommand(const Vector<Ref<WritingToolsCompositionCommand>>& commands, EditCommandComposition* composition)
+{
+    return std::ranges::any_of(commands, [composition](const auto& command) {
+        return &command->ensureComposition() == composition;
+    });
+}
+
+void WritingToolsController::respondToUnappliedEditing(EditCommandComposition* composition)
+{
+    for (auto& value : m_states.values()) {
+        auto* state = std::get_if<CompositionState>(&value);
+        if (!state)
+            continue;
+
+        if (!appliedCommandIsWritingToolsCommand(state->reappliedCommands, composition))
+            continue;
+
+        state->unappliedCommands.append(state->reappliedCommands.takeLast());
+    }
+}
+
+void WritingToolsController::respondToReappliedEditing(EditCommandComposition* composition)
+{
+    for (auto& value : m_states.values()) {
+        auto* state = std::get_if<CompositionState>(&value);
+        if (!state)
+            continue;
+
+        if (!appliedCommandIsWritingToolsCommand(state->unappliedCommands, composition))
+            continue;
+
+        state->reappliedCommands.append(state->unappliedCommands.takeLast());
+    }
+}
+
 #pragma mark - Private instance helper methods.
 
 std::optional<SimpleRange> WritingToolsController::contextRangeForSessionWithID(const WritingTools::Session::ID& sessionID) const
@@ -644,12 +663,12 @@ std::optional<SimpleRange> WritingToolsController::contextRangeForSessionWithID(
         return std::nullopt;
 
     auto range = WTF::switchOn(it->value,
-        [](std::monostate) -> Ref<Range> { RELEASE_ASSERT_NOT_REACHED(); },
-        [](const ProofreadingState& state) { return state.contextRange; },
-        [](const CompositionState& state) { return state.contextRange; }
+        [](std::monostate) -> SimpleRange { RELEASE_ASSERT_NOT_REACHED(); },
+        [](const ProofreadingState& state) { return makeSimpleRange(state.contextRange); },
+        [](const CompositionState& state) { return state.reappliedCommands.last()->endingContextRange(); }
     );
 
-    return makeSimpleRange(range);
+    return range;
 }
 
 template<WritingTools::Session::Type Type>
@@ -683,6 +702,66 @@ RefPtr<Document> WritingToolsController::document() const
     }
 
     return frame->document();
+}
+
+void WritingToolsController::showOriginalCompositionForSession(const WritingTools::Session& session)
+{
+    CheckedPtr state = stateForSession<WritingTools::Session::Type::Composition>(session);
+    if (!state) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto& stack = state->reappliedCommands;
+
+    // Ensure that the sentinel command is never undone or removed from the stack.
+    while (stack.size() > 1) {
+        auto oldSize = stack.size();
+
+        // Each call to `unapply` indirectly results in a call to `respondToUnappliedEditing`, which decrements the size of the stack.
+        stack.last()->ensureComposition().unapply();
+
+        RELEASE_ASSERT(oldSize > stack.size());
+    }
+}
+
+void WritingToolsController::showRewrittenCompositionForSession(const WritingTools::Session& session)
+{
+    CheckedPtr state = stateForSession<WritingTools::Session::Type::Composition>(session);
+    if (!state) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto& stack = state->unappliedCommands;
+
+    while (!stack.isEmpty()) {
+        auto oldSize = stack.size();
+
+        // Each call to `reapply` indirectly results in a call to `respondToReappliedEditing`, which decrements the size of the stack.
+        stack.last()->ensureComposition().reapply();
+
+        RELEASE_ASSERT(oldSize > stack.size());
+    }
+}
+
+void WritingToolsController::restartCompositionForSession(const WritingTools::Session& session)
+{
+    RefPtr document = this->document();
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    CheckedPtr state = stateForSession<WritingTools::Session::Type::Composition>(session);
+    if (!state) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    // The stack will never be empty as the sentinel command always exists.
+    auto currentContextRange = state->reappliedCommands.last()->endingContextRange();
+    state->reappliedCommands.append(WritingToolsCompositionCommand::create(Ref { *document }, currentContextRange));
 }
 
 std::optional<std::tuple<Node&, DocumentMarker&>> WritingToolsController::findTextSuggestionMarkerByID(const SimpleRange& outerRange, const WritingTools::TextSuggestion::ID& textSuggestionID) const
@@ -743,87 +822,44 @@ std::optional<std::tuple<Node&, DocumentMarker&>> WritingToolsController::findTe
     return std::nullopt;
 }
 
-template<typename State>
-void WritingToolsController::replaceContentsOfRangeInSessionInternal(State& state, const SimpleRange& range, WTF::Function<void()>&& replacementOperation)
+void WritingToolsController::replaceContentsOfRangeInSession(ProofreadingState& state, const SimpleRange& range, const String& replacementText)
 {
     RefPtr document = this->document();
-    if (!document) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
 
     auto sessionRange = makeSimpleRange(state.contextRange);
+
     auto sessionRangeCount = characterCount(sessionRange);
     auto resolvedCharacterRange = characterRange(sessionRange, range);
 
     document->selection().setSelection({ range });
 
-    replacementOperation();
+    document->editor().replaceSelectionWithText(replacementText, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, EditAction::InsertReplacement);
 
-    auto selectedTextRange = document->selection().selection().firstRange();
-    if (!selectedTextRange) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
+    auto selection = document->selection().selection();
 
-    auto extendedPosition = [](const BoundaryPoint& point, uint64_t characterCount, SelectionDirection direction) {
-        auto visiblePosition = VisiblePosition { makeContainerOffsetPosition(point) };
-
-        for (uint64_t i = 0; i < characterCount; ++i) {
-            auto nextVisiblePosition = positionOfNextBoundaryOfGranularity(visiblePosition, TextGranularity::CharacterGranularity, direction);
-            if (nextVisiblePosition.isNull())
-                break;
-
-            visiblePosition = nextVisiblePosition;
-        }
-
-        return visiblePosition;
-    };
-
-    auto extendedSelection = [extendedPosition](const SimpleRange& range, uint64_t charactersToExtendBackwards, uint64_t charactersToExtendForwards) {
-        auto start = extendedPosition(range.start, charactersToExtendBackwards, SelectionDirection::Backward);
-        auto end = extendedPosition(range.end, charactersToExtendForwards, SelectionDirection::Forward);
-
-        return makeSimpleRange(start, end);
-    };
-
-    auto newSessionRange = extendedSelection(*selectedTextRange, resolvedCharacterRange.location, sessionRangeCount - (resolvedCharacterRange.location + resolvedCharacterRange.length));
+    auto newSessionRange = rangeExpandedAroundRangeByCharacters(selection, resolvedCharacterRange.location, sessionRangeCount - (resolvedCharacterRange.location + resolvedCharacterRange.length));
     if (!newSessionRange) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    auto updatedLiveRange = createLiveRange(*newSessionRange);
-    state.contextRange = updatedLiveRange;
+    state.contextRange = createLiveRange(*newSessionRange);
 }
 
-void WritingToolsController::replaceContentsOfRangeInSession(ProofreadingState& state, const SimpleRange& range, const String& replacementText)
+void WritingToolsController::replaceContentsOfRangeInSession(CompositionState& state, const SimpleRange& range, const AttributedString& replacementText, WritingToolsCompositionCommand::State commandState)
 {
-    replaceContentsOfRangeInSessionInternal(state, range, [&] {
-        RefPtr document = this->document();
-        document->editor().replaceSelectionWithText(replacementText, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, EditAction::InsertReplacement);
+    RefPtr fragment = createFragment(*document()->frame(), replacementText.nsAttributedString().get(), { FragmentCreationOptions::NoInterchangeNewlines, FragmentCreationOptions::SanitizeMarkup });
+    if (!fragment) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto hasAttributes = std::ranges::any_of(replacementText.attributes, [](auto& rangeAndAttributeValues) {
+        return !rangeAndAttributeValues.second.isEmpty();
     });
-}
+    auto matchStyle = hasAttributes ? WritingToolsCompositionCommand::MatchStyle::No : WritingToolsCompositionCommand::MatchStyle::Yes;
 
-void WritingToolsController::replaceContentsOfRangeInSession(CompositionState& state, const SimpleRange& range, RefPtr<DocumentFragment>&& fragment, MatchStyle matchStyle)
-{
-    OptionSet<ReplaceSelectionCommand::CommandOption> options { ReplaceSelectionCommand::PreventNesting, ReplaceSelectionCommand::SanitizeFragment, ReplaceSelectionCommand::SelectReplacement };
-    if (matchStyle == MatchStyle::Yes)
-        options.add(ReplaceSelectionCommand::MatchStyle);
-
-    replaceContentsOfRangeInSessionInternal(state, range, [&] {
-        RefPtr document = this->document();
-
-        auto selection = document->selection().selection();
-        if (selection.isNone() || !selection.isContentEditable())
-            return;
-
-        auto command = WebCore::ReplaceSelectionCommand::create(Ref { *document }, WTFMove(fragment), options, WebCore::EditAction::InsertReplacement);
-        command->apply();
-
-        // The commands are stored in the state in case the original contents need to be used again.
-        state.commands.append(command);
-    });
+    state.reappliedCommands.last()->replaceContentsOfRangeWithFragment(WTFMove(fragment), range, matchStyle, commandState);
 }
 
 } // namespace WebKit

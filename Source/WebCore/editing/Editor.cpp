@@ -1280,6 +1280,9 @@ void Editor::unappliedEditing(EditCommandComposition& composition)
     updateEditorUINowIfScheduled();
 
     m_alternativeTextController->respondToUnappliedEditing(&composition);
+#if ENABLE(WRITING_TOOLS)
+    protectedDocument()->page()->respondToUnappliedWritingToolsEditing(&composition);
+#endif
 
     m_lastEditCommand = nullptr;
     if (auto* client = this->client())
@@ -1303,6 +1306,10 @@ void Editor::reappliedEditing(EditCommandComposition& composition)
     dispatchInputEvents(composition.startingRootEditableElement(), composition.endingRootEditableElement(), "historyRedo"_s, IsInputMethodComposing::No);
     
     updateEditorUINowIfScheduled();
+
+#if ENABLE(WRITING_TOOLS)
+    protectedDocument()->page()->respondToReappliedWritingToolsEditing(&composition);
+#endif
 
     m_lastEditCommand = nullptr;
     if (auto* client = this->client())

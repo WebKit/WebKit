@@ -28,11 +28,13 @@
 #if ENABLE(WRITING_TOOLS)
 
 #import "Range.h"
-#import "ReplaceSelectionCommand.h"
+#import "WritingToolsCompositionCommand.h"
 #import "WritingToolsTypes.h"
 
 namespace WebCore {
 
+class CompositeEditCommand;
+class EditCommandComposition;
 class Document;
 class DocumentFragment;
 class DocumentMarker;
@@ -64,6 +66,9 @@ public:
 
     void updateStateForSelectedSuggestionIfNeeded();
 
+    void respondToUnappliedEditing(EditCommandComposition*);
+    void respondToReappliedEditing(EditCommandComposition*);
+
     // FIXME: Refactor `TextAnimationController` in such a way so as to not explicitly depend on `WritingToolsController`,
     // and then remove this method after doing so.
     std::optional<SimpleRange> contextRangeForSessionWithID(const WritingTools::Session::ID&) const;
@@ -73,14 +78,15 @@ private:
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(CompositionState);
 
-        CompositionState(const Ref<Range>& contextRange, const Vector<Ref<ReplaceSelectionCommand>>& commands)
-            : contextRange(contextRange)
-            , commands(commands)
+        CompositionState(const Vector<Ref<WritingToolsCompositionCommand>>& unappliedCommands, const Vector<Ref<WritingToolsCompositionCommand>>& reappliedCommands)
+            : unappliedCommands(unappliedCommands)
+            , reappliedCommands(reappliedCommands)
         {
         }
 
-        Ref<Range> contextRange;
-        Vector<Ref<ReplaceSelectionCommand>> commands;
+        // These two vectors should never have the same command in both of them.
+        Vector<Ref<WritingToolsCompositionCommand>> unappliedCommands;
+        Vector<Ref<WritingToolsCompositionCommand>> reappliedCommands;
     };
 
     struct ProofreadingState : CanMakeCheckedPtr<ProofreadingState> {
@@ -110,10 +116,6 @@ private:
         using Value = CompositionState;
     };
 
-    enum MatchStyle : bool {
-        No, Yes
-    };
-
     static CharacterRange characterRange(const SimpleRange& scope, const SimpleRange&);
     static SimpleRange resolveCharacterRange(const SimpleRange& scope, CharacterRange);
     static uint64_t characterCount(const SimpleRange&);
@@ -125,10 +127,12 @@ private:
     std::optional<std::tuple<Node&, DocumentMarker&>> findTextSuggestionMarkerContainingRange(const SimpleRange&) const;
     std::optional<std::tuple<Node&, DocumentMarker&>> findTextSuggestionMarkerByID(const SimpleRange& outerRange, const WritingTools::TextSuggestion::ID&) const;
 
-    template<typename State>
-    void replaceContentsOfRangeInSessionInternal(State&, const SimpleRange&, WTF::Function<void()>&&);
     void replaceContentsOfRangeInSession(ProofreadingState&, const SimpleRange&, const String&);
-    void replaceContentsOfRangeInSession(CompositionState&, const SimpleRange&, RefPtr<DocumentFragment>&&, MatchStyle);
+    void replaceContentsOfRangeInSession(CompositionState&, const SimpleRange&, const AttributedString&, WritingToolsCompositionCommand::State);
+
+    void showOriginalCompositionForSession(const WritingTools::Session&);
+    void showRewrittenCompositionForSession(const WritingTools::Session&);
+    void restartCompositionForSession(const WritingTools::Session&);
 
     template<WritingTools::Session::Type Type>
     void writingToolsSessionDidReceiveAction(const WritingTools::Session&, WritingTools::Action);
