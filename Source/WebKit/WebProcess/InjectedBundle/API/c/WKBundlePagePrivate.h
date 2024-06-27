@@ -47,7 +47,6 @@ enum RenderTreeExternalRepresentationFlags {
 };
 typedef uint32_t RenderTreeExternalRepresentationBehavior;
 
-WK_EXPORT void WKBundlePageStopLoading(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageSetDefersLoading(WKBundlePageRef page, bool defersLoading) WK_C_API_DEPRECATED;
 WK_EXPORT void WKBundlePageClearMainFrameName(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageClose(WKBundlePageRef page);

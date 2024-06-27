@@ -359,6 +359,9 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         auto messageBodyDictionary = dictionaryValue(messageBody);
         m_pixelResultIsPending = booleanValue(messageBodyDictionary, "PixelResultIsPending");
         if (!m_pixelResultIsPending) {
+            // Postpone page load stop if pixel result is still pending since
+            // cancelled image loads will paint as broken images.
+            WKPageStopLoading(TestController::singleton().mainWebView()->page());
             m_pixelResult = static_cast<WKImageRef>(value(messageBodyDictionary, "PixelResult"));
             ASSERT(!m_pixelResult || m_dumpPixels);
         }
@@ -688,6 +691,9 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 
     if (WKStringIsEqualToUTF8CString(messageName, "DumpBackForwardList"))
         return postPageMessage("DumpBackForwardList");
+
+    if (WKStringIsEqualToUTF8CString(messageName, "StopLoading"))
+        return WKPageStopLoading(TestController::singleton().mainWebView()->page());
 
     ASSERT_NOT_REACHED();
 }

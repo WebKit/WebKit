@@ -221,8 +221,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
             m_state = Idle;
             m_dumpPixels = false;
             m_pixelResultIsPending = false;
-            // Needed for pixel result pending mode, otherwise a no-op.
-            InjectedBundle::page()->stopLoading();
 
             setlocale(LC_ALL, "");
             InjectedBundle::singleton().testRunner()->removeAllWebNotificationPermissions();
@@ -402,10 +400,6 @@ void InjectedBundle::done(bool forceRepaint)
 
     m_useWorkQueue = false;
 
-    // Postpone page load stop if pixel result is still pending since
-    // cancelled image loads will paint as broken images.
-    if (!m_pixelResultIsPending)
-        page()->stopLoading();
     setTopLoadingFrame(0);
 
     m_accessibilityController->resetToConsistentState();

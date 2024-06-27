@@ -343,11 +343,6 @@ InjectedBundlePage::~InjectedBundlePage()
     bundlePageMap().remove(m_page);
 }
 
-void InjectedBundlePage::stopLoading()
-{
-    WKBundlePageStopLoading(m_page);
-}
-
 void InjectedBundlePage::prepare()
 {
     WKBundlePageClearMainFrameName(m_page);

@@ -954,7 +954,7 @@ void TestRunner::queueLoadHTMLString(JSStringRef content, JSStringRef baseURL, J
 
 void TestRunner::stopLoading()
 {
-    WKBundlePageStopLoading(page());
+    postPageMessage("StopLoading");
 }
 
 void TestRunner::queueReload()

@@ -353,11 +353,6 @@ void WKAccessibilitySetForceInitialFrameCaching(bool shouldForce)
     WebCore::AXObjectCache::setForceInitialFrameCaching(shouldForce);
 }
 
-void WKBundlePageStopLoading(WKBundlePageRef pageRef)
-{
-    WebKit::toImpl(pageRef)->stopLoading();
-}
-
 void WKBundlePageSetDefersLoading(WKBundlePageRef, bool)
 {
 }
