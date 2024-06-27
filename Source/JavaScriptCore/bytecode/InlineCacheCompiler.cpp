@@ -1235,16 +1235,14 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdSlowPathCodeGenerator(VM& vm
     using SlowOperation = decltype(operationGetByIdOptimize);
 
     using BaselineJITRegisters::GetById::baseJSR;
-    using BaselineJITRegisters::GetById::globalObjectGPR;
     using BaselineJITRegisters::GetById::stubInfoGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
-    jit.setupArguments<SlowOperation>(baseJSR, globalObjectGPR, stubInfoGPR);
-    static_assert(preferredArgumentGPR<SlowOperation, 2>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.setupArguments<SlowOperation>(baseJSR, stubInfoGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 1>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
     jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
@@ -1265,16 +1263,14 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdWithThisSlowPathCodeGenerato
 
     using BaselineJITRegisters::GetByIdWithThis::baseJSR;
     using BaselineJITRegisters::GetByIdWithThis::thisJSR;
-    using BaselineJITRegisters::GetByIdWithThis::globalObjectGPR;
     using BaselineJITRegisters::GetByIdWithThis::stubInfoGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
-    jit.setupArguments<SlowOperation>(baseJSR, thisJSR, globalObjectGPR, stubInfoGPR);
-    static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.setupArguments<SlowOperation>(baseJSR, thisJSR, stubInfoGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 2>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
     jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
@@ -1295,7 +1291,6 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValSlowPathCodeGenerator(VM& v
 
     using BaselineJITRegisters::GetByVal::baseJSR;
     using BaselineJITRegisters::GetByVal::propertyJSR;
-    using BaselineJITRegisters::GetByVal::globalObjectGPR;
     using BaselineJITRegisters::GetByVal::stubInfoGPR;
     using BaselineJITRegisters::GetByVal::profileGPR;
 
@@ -1303,9 +1298,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValSlowPathCodeGenerator(VM& v
 
     // Call slow operation
     jit.prepareCallOperation(vm);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
-    jit.setupArguments<SlowOperation>(baseJSR, propertyJSR, globalObjectGPR, stubInfoGPR, profileGPR);
-    static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.setupArguments<SlowOperation>(baseJSR, propertyJSR, stubInfoGPR, profileGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 2>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
     jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
@@ -1326,16 +1320,14 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getPrivateNameSlowPathCodeGenerator
 
     using BaselineJITRegisters::PrivateBrand::baseJSR;
     using BaselineJITRegisters::PrivateBrand::propertyJSR;
-    using BaselineJITRegisters::PrivateBrand::globalObjectGPR;
     using BaselineJITRegisters::PrivateBrand::stubInfoGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
-    jit.setupArguments<SlowOperation>(baseJSR, propertyJSR, globalObjectGPR, stubInfoGPR);
-    static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.setupArguments<SlowOperation>(baseJSR, propertyJSR, stubInfoGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 2>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
     jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
@@ -1358,7 +1350,6 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithThisSlowPathCodeGenerat
     using BaselineJITRegisters::GetByValWithThis::baseJSR;
     using BaselineJITRegisters::GetByValWithThis::propertyJSR;
     using BaselineJITRegisters::GetByValWithThis::thisJSR;
-    using BaselineJITRegisters::GetByValWithThis::globalObjectGPR;
     using BaselineJITRegisters::GetByValWithThis::stubInfoGPR;
     using BaselineJITRegisters::GetByValWithThis::profileGPR;
 
@@ -1366,9 +1357,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithThisSlowPathCodeGenerat
 
     // Call slow operation
     jit.prepareCallOperation(vm);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
-    jit.setupArguments<SlowOperation>(baseJSR, propertyJSR, thisJSR, globalObjectGPR, stubInfoGPR, profileGPR);
-    static_assert(preferredArgumentGPR<SlowOperation, 4>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.setupArguments<SlowOperation>(baseJSR, propertyJSR, thisJSR, stubInfoGPR, profileGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
     jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
@@ -1390,16 +1380,14 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdSlowPathCodeGenerator(VM& vm
 
     using BaselineJITRegisters::PutById::baseJSR;
     using BaselineJITRegisters::PutById::valueJSR;
-    using BaselineJITRegisters::PutById::globalObjectGPR;
     using BaselineJITRegisters::PutById::stubInfoGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
-    jit.setupArguments<SlowOperation>(valueJSR, baseJSR, globalObjectGPR, stubInfoGPR);
-    static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.setupArguments<SlowOperation>(valueJSR, baseJSR, stubInfoGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 2>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
     jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
@@ -1423,14 +1411,12 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValSlowPathCodeGenerator(VM& v
     using BaselineJITRegisters::PutByVal::valueJSR;
     using BaselineJITRegisters::PutByVal::profileGPR;
     using BaselineJITRegisters::PutByVal::stubInfoGPR;
-    using BaselineJITRegisters::PutByVal::globalObjectGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
-    jit.setupArguments<SlowOperatoin>(baseJSR, propertyJSR, valueJSR, globalObjectGPR, stubInfoGPR, profileGPR);
+    jit.setupArguments<SlowOperatoin>(baseJSR, propertyJSR, valueJSR, stubInfoGPR, profileGPR);
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 #if CPU(ARM_THUMB2)
     // ARMv7 clobbers metadataTable register. Thus we need to restore them back here.
@@ -1455,16 +1441,14 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfSlowPathCodeGenerator(VM&
 
     using BaselineJITRegisters::Instanceof::valueJSR;
     using BaselineJITRegisters::Instanceof::protoJSR;
-    using BaselineJITRegisters::Instanceof::globalObjectGPR;
     using BaselineJITRegisters::Instanceof::stubInfoGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
-    jit.setupArguments<SlowOperation>(valueJSR, protoJSR, globalObjectGPR, stubInfoGPR);
-    static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.setupArguments<SlowOperation>(valueJSR, protoJSR, stubInfoGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 2>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
     jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
@@ -1484,16 +1468,14 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> delByIdSlowPathCodeGenerator(VM& vm
     using SlowOperation = decltype(operationDeleteByIdStrictOptimize);
 
     using BaselineJITRegisters::DelById::baseJSR;
-    using BaselineJITRegisters::DelById::globalObjectGPR;
     using BaselineJITRegisters::DelById::stubInfoGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
-    jit.setupArguments<SlowOperation>(baseJSR, globalObjectGPR, stubInfoGPR);
-    static_assert(preferredArgumentGPR<SlowOperation, 2>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.setupArguments<SlowOperation>(baseJSR, stubInfoGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 1>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
     jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
@@ -1514,16 +1496,14 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> delByValSlowPathCodeGenerator(VM& v
 
     using BaselineJITRegisters::DelByVal::baseJSR;
     using BaselineJITRegisters::DelByVal::propertyJSR;
-    using BaselineJITRegisters::DelByVal::globalObjectGPR;
     using BaselineJITRegisters::DelByVal::stubInfoGPR;
 
     InlineCacheCompiler::emitDataICPrologue(jit);
 
     // Call slow operation
     jit.prepareCallOperation(vm);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), globalObjectGPR);
-    jit.setupArguments<SlowOperation>(baseJSR, propertyJSR, globalObjectGPR, stubInfoGPR);
-    static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
+    jit.setupArguments<SlowOperation>(baseJSR, propertyJSR, stubInfoGPR);
+    static_assert(preferredArgumentGPR<SlowOperation, 2>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
     jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
@@ -1814,7 +1794,7 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
                             jit.move(CCallHelpers::TrustedImmPtr(asObject(prototype)), baseForAccessGPR);
                         } else {
                             ASSERT(useHandlerIC());
-                            jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), baseForAccessGPR);
+                            jit.loadPtr(CCallHelpers::Address(m_stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfGlobalObject()), baseForAccessGPR);
                             switch (structure->typeInfo().type()) {
                             case StringType:
                                 jit.loadPtr(CCallHelpers::Address(baseForAccessGPR, JSGlobalObject::offsetOfStringPrototype()), baseForAccessGPR);
@@ -3332,7 +3312,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
                 CCallHelpers::Jump shouldNotThrowError = jit.branchIfNotType(scratchGPR, NullSetterFunctionType);
                 // We replace setter with this AccessCase's JSGlobalObject::nullSetterStrictFunction, which will throw an error with the right JSGlobalObject.
                 if (useHandlerIC()) {
-                    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), scratchGPR);
+                    jit.loadPtr(CCallHelpers::Address(m_stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfGlobalObject()), scratchGPR);
                     jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfNullSetterStrictFunction()), scratchGPR);
                 } else
                     jit.move(CCallHelpers::TrustedImmPtr(m_globalObject->nullSetterStrictFunction()), scratchGPR);
@@ -4023,7 +4003,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
     switch (accessCase.m_type) {
     case AccessCase::ProxyObjectHas: {
         if (useHandlerIC()) {
-            jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), scratchGPR);
+            jit.loadPtr(CCallHelpers::Address(m_stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfGlobalObject()), scratchGPR);
             jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfPerformProxyObjectHasFunction()), scratchGPR);
         } else
             jit.move(CCallHelpers::TrustedImmPtr(m_globalObject->performProxyObjectHasFunction()), scratchGPR);
@@ -4031,7 +4011,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
     }
     case AccessCase::ProxyObjectLoad: {
         if (useHandlerIC()) {
-            jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), scratchGPR);
+            jit.loadPtr(CCallHelpers::Address(m_stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfGlobalObject()), scratchGPR);
             jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfPerformProxyObjectGetFunction()), scratchGPR);
         } else
             jit.move(CCallHelpers::TrustedImmPtr(m_globalObject->performProxyObjectGetFunction()), scratchGPR);
@@ -4039,7 +4019,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
     }
     case AccessCase::IndexedProxyObjectLoad: {
         if (useHandlerIC()) {
-            jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), scratchGPR);
+            jit.loadPtr(CCallHelpers::Address(m_stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfGlobalObject()), scratchGPR);
             jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfPerformProxyObjectGetByValFunction()), scratchGPR);
         } else
             jit.move(CCallHelpers::TrustedImmPtr(m_globalObject->performProxyObjectGetByValFunction()), scratchGPR);
@@ -4047,7 +4027,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
     }
     case AccessCase::ProxyObjectStore: {
         if (useHandlerIC()) {
-            jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), scratchGPR);
+            jit.loadPtr(CCallHelpers::Address(m_stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfGlobalObject()), scratchGPR);
             if (ecmaMode.isStrict())
                 jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfPerformProxyObjectSetStrictFunction()), scratchGPR);
             else
@@ -5282,7 +5262,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdProxyObjectLoadHandler(VM&)
     jit.storeCell(baseJSR.payloadGPR(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
     jit.transferPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfHolder()), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
     jit.storeCell(baseJSR.payloadGPR(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), scratch1GPR);
+    jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfGlobalObject()), scratch1GPR);
     jit.loadPtr(CCallHelpers::Address(scratch1GPR, JSGlobalObject::offsetOfPerformProxyObjectGetFunction()), scratch1GPR);
     jit.storeCell(scratch1GPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
 
@@ -5611,7 +5591,7 @@ static void setterHandlerImpl(VM&, CCallHelpers& jit, JSValueRegs baseJSR, JSVal
     if constexpr (isStrict) {
         CCallHelpers::Jump shouldNotThrowError = jit.branchIfNotType(scratch1GPR, NullSetterFunctionType);
         // We replace setter with this AccessCase's JSGlobalObject::nullSetterStrictFunction, which will throw an error with the right JSGlobalObject.
-        jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), scratch1GPR);
+        jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfGlobalObject()), scratch1GPR);
         jit.loadPtr(CCallHelpers::Address(scratch1GPR, JSGlobalObject::offsetOfNullSetterStrictFunction()), scratch1GPR);
         shouldNotThrowError.link(&jit);
     }

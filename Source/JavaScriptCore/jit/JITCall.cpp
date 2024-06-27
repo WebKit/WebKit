@@ -398,7 +398,6 @@ void JIT::emitSlow_op_iterator_open(const JSInstruction*, Vector<SlowCaseEntry>:
 
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::stubInfoGPR;
-    using BaselineJITRegisters::GetById::globalObjectGPR;
 
     JumpList notObject;
     notObject.append(branchIfNotCell(baseJSR));
@@ -519,7 +518,6 @@ void JIT::emitSlow_op_iterator_next(const JSInstruction*, Vector<SlowCaseEntry>:
 {
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::resultJSR;
-    using BaselineJITRegisters::GetById::globalObjectGPR;
     using BaselineJITRegisters::GetById::stubInfoGPR;
 
     linkAllSlowCases(iter);

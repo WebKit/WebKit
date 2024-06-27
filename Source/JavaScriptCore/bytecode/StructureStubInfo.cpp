@@ -575,6 +575,7 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(VM& vm, CodeBloc
     accessType = unlinkedStubInfo.accessType;
     doneLocation = unlinkedStubInfo.doneLocation;
     m_identifier = unlinkedStubInfo.m_identifier;
+    m_globalObject = codeBlock->globalObject();
     callSiteIndex = CallSiteIndex(BytecodeIndex(unlinkedStubInfo.bytecodeIndex.offset()));
     codeOrigin = CodeOrigin(unlinkedStubInfo.bytecodeIndex);
     if (Options::useHandlerIC())
@@ -767,6 +768,10 @@ void StructureStubInfo::initializeFromDFGUnlinkedStructureStubInfo(CodeBlock* co
     m_identifier = unlinkedStubInfo.m_identifier;
     callSiteIndex = unlinkedStubInfo.callSiteIndex;
     codeOrigin = unlinkedStubInfo.codeOrigin;
+    if (codeOrigin.inlineCallFrame())
+        m_globalObject = baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame())->globalObject();
+    else
+        m_globalObject = codeBlock->globalObject();
     replaceHandler(codeBlock, InlineCacheHandler::createNonHandlerSlowPath(unlinkedStubInfo.slowPathStartLocation));
     slowPathStartLocation = unlinkedStubInfo.slowPathStartLocation;
 
@@ -801,8 +806,6 @@ void StructureStubInfo::replaceHandler(CodeBlock* codeBlock, Ref<InlineCacheHand
         m_handler->addOwner(codeBlock);
     } else
         m_handler = WTFMove(handler);
-
-    m_codePtr = m_handler->callTarget();
 }
 
 void StructureStubInfo::prependHandler(CodeBlock* codeBlock, Ref<InlineCacheHandler>&& handler, bool isMegamorphic)
@@ -814,7 +817,6 @@ void StructureStubInfo::prependHandler(CodeBlock* codeBlock, Ref<InlineCacheHand
     handler->setNext(WTFMove(m_handler));
     m_handler = WTFMove(handler);
     m_handler->addOwner(codeBlock);
-    m_codePtr = m_handler->callTarget();
 }
 
 void StructureStubInfo::rewireStubAsJumpInAccess(CodeBlock* codeBlock, InlineCacheHandler& handler)
@@ -836,7 +838,6 @@ void StructureStubInfo::resetStubAsJumpInAccess(CodeBlock* codeBlock)
             cursor = cursor->next();
         }
         m_handler = InlineCacheCompiler::generateSlowPathHandler(codeBlock->vm(), accessType);
-        m_codePtr = m_handler->callTarget();
         return;
     }
     auto handler = InlineCacheHandler::createNonHandlerSlowPath(slowPathStartLocation);

@@ -4396,12 +4396,12 @@ private:
                     slowPathCall = callOperation(
                         *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                         exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), resultGPR,
-                        baseGPR, propertyGPR, thisValueGPR, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), stubInfoGPR, CCallHelpers::TrustedImmPtr(nullptr)).call();
+                        baseGPR, propertyGPR, thisValueGPR, stubInfoGPR, CCallHelpers::TrustedImmPtr(nullptr)).call();
                 } else {
                     slowPathCall = callOperation(
                         *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                         exceptions.get(), operationGetByValWithThisOptimize, resultGPR,
-                        baseGPR, propertyGPR, thisValueGPR, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), CCallHelpers::TrustedImmPtr(generator->stubInfo()), CCallHelpers::TrustedImmPtr(nullptr)).call();
+                        baseGPR, propertyGPR, thisValueGPR, CCallHelpers::TrustedImmPtr(generator->stubInfo()), CCallHelpers::TrustedImmPtr(nullptr)).call();
                 }
                 jit.jump().linkTo(done, &jit);
 
@@ -4546,12 +4546,12 @@ private:
                         slowPathCall = callOperation(
                             *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                             exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), resultGPR,
-                            baseGPR, propertyGPR, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), stubInfoGPR).call();
+                            baseGPR, propertyGPR, stubInfoGPR).call();
                     } else {
                         slowPathCall = callOperation(
                             *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                             exceptions.get(), operationGetPrivateNameOptimize, resultGPR,
-                            baseGPR, propertyGPR, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
+                            baseGPR, propertyGPR, CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
                     }
                     jit.jump().linkTo(done, &jit);
 
@@ -4701,12 +4701,12 @@ private:
                     slowPathCall = callOperation(
                         *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                         exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), InvalidGPRReg,
-                        baseGPR, brandGPR, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), stubInfoGPR).call();
+                        baseGPR, brandGPR, stubInfoGPR).call();
                 } else {
                     slowPathCall = callOperation(
                         *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                         exceptions.get(), appropriatePrivateAccessFunction(accessType), InvalidGPRReg,
-                        baseGPR, brandGPR, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
+                        baseGPR, brandGPR, CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
                 }
                 jit.jump().linkTo(done, &jit);
 
@@ -4918,12 +4918,12 @@ private:
                     slowPathCall = callOperation(
                         *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                         exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), InvalidGPRReg,
-                        baseGPR, propertyGPR, valueGPR, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), stubInfoGPR, CCallHelpers::TrustedImmPtr(nullptr)).call();
+                        baseGPR, propertyGPR, valueGPR, stubInfoGPR, CCallHelpers::TrustedImmPtr(nullptr)).call();
                 } else {
                     slowPathCall = callOperation(
                         *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                         exceptions.get(), operation, InvalidGPRReg,
-                        baseGPR, propertyGPR, valueGPR, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), CCallHelpers::TrustedImmPtr(generator->stubInfo()), CCallHelpers::TrustedImmPtr(nullptr)).call();
+                        baseGPR, propertyGPR, valueGPR, CCallHelpers::TrustedImmPtr(generator->stubInfo()), CCallHelpers::TrustedImmPtr(nullptr)).call();
                 }
                 jit.jump().linkTo(done, &jit);
 
@@ -5277,12 +5277,12 @@ private:
                             slowPathCall = callOperation(
                                 *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                                 exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), InvalidGPRReg,
-                                params[1].gpr(), params[0].gpr(), CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), stubInfoGPR).call();
+                                params[1].gpr(), params[0].gpr(), stubInfoGPR).call();
                         } else {
                             slowPathCall = callOperation(
                                 *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                                 exceptions.get(), operation, InvalidGPRReg,
-                                params[1].gpr(), params[0].gpr(), CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
+                                params[1].gpr(), params[0].gpr(), CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
                         }
                         jit.jump().linkTo(done, &jit);
 
@@ -6180,12 +6180,12 @@ IGNORE_CLANG_WARNINGS_END
                         slowPathCall = callOperation(
                             *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                             exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), resultGPR,
-                            baseGPR, propertyGPR, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), stubInfoGPR, CCallHelpers::TrustedImmPtr(nullptr)).call();
+                            baseGPR, propertyGPR, stubInfoGPR, CCallHelpers::TrustedImmPtr(nullptr)).call();
                     } else {
                         slowPathCall = callOperation(
                             *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                             exceptions.get(), operationGetByValOptimize, resultGPR,
-                            baseGPR, propertyGPR, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), CCallHelpers::TrustedImmPtr(generator->stubInfo()), CCallHelpers::TrustedImmPtr(nullptr)).call();
+                            baseGPR, propertyGPR, CCallHelpers::TrustedImmPtr(generator->stubInfo()), CCallHelpers::TrustedImmPtr(nullptr)).call();
                     }
                     jit.jump().linkTo(done, &jit);
 
@@ -6573,12 +6573,12 @@ IGNORE_CLANG_WARNINGS_END
                         slowPathCall = callOperation(
                             *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                             exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), InvalidGPRReg,
-                            baseGPR, propertyGPR, valueGPR, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), stubInfoGPR, CCallHelpers::TrustedImmPtr(nullptr)).call();
+                            baseGPR, propertyGPR, valueGPR, stubInfoGPR, CCallHelpers::TrustedImmPtr(nullptr)).call();
                     } else {
                         slowPathCall = callOperation(
                             *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                             exceptions.get(), operation, InvalidGPRReg,
-                            baseGPR, propertyGPR, valueGPR, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), CCallHelpers::TrustedImmPtr(generator->stubInfo()), CCallHelpers::TrustedImmPtr(nullptr)).call();
+                            baseGPR, propertyGPR, valueGPR, CCallHelpers::TrustedImmPtr(generator->stubInfo()), CCallHelpers::TrustedImmPtr(nullptr)).call();
                     }
                     jit.jump().linkTo(done, &jit);
 
@@ -6999,12 +6999,12 @@ IGNORE_CLANG_WARNINGS_END
                                 slowPathCall = callOperation(
                                     *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                                     exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), returnGPR,
-                                    base, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), stubInfoGPR).call();
+                                    base, stubInfoGPR).call();
                             } else {
                                 slowPathCall = callOperation(
                                     *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                                     exceptions.get(), optimizationFunction, returnGPR,
-                                    base, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
+                                    base, CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
                             }
                         } else {
                             if (Options::useDataICInFTL()) {
@@ -7013,12 +7013,12 @@ IGNORE_CLANG_WARNINGS_END
                                 slowPathCall = callOperation(
                                     *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                                     exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), returnGPR,
-                                    base, subscript, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), stubInfoGPR).call();
+                                    base, subscript, stubInfoGPR).call();
                             } else {
                                 slowPathCall = callOperation(
                                     *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                                     exceptions.get(), optimizationFunction, returnGPR,
-                                    base, subscript, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
+                                    base, subscript, CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
                             }
                         }
                         jit.jump().linkTo(done, &jit);
@@ -14427,12 +14427,12 @@ IGNORE_CLANG_WARNINGS_END
                                 slowPathCall = callOperation(
                                     *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                     exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), returnGPR,
-                                    base, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), stubInfoGPR).call();
+                                    base, stubInfoGPR).call();
                             } else {
                                 slowPathCall = callOperation(
                                     *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                     exceptions.get(), optimizationFunction, returnGPR,
-                                    base, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
+                                    base, CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
                             }
                         } else if constexpr (type == AccessType::InByVal) {
                             if (Options::useDataICInFTL()) {
@@ -14441,12 +14441,12 @@ IGNORE_CLANG_WARNINGS_END
                                 slowPathCall = callOperation(
                                     *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                     exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), returnGPR,
-                                    base, subscript, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), stubInfoGPR, CCallHelpers::TrustedImmPtr(nullptr)).call();
+                                    base, subscript, stubInfoGPR, CCallHelpers::TrustedImmPtr(nullptr)).call();
                             } else {
                                 slowPathCall = callOperation(
                                     *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                     exceptions.get(), optimizationFunction, returnGPR,
-                                    base, subscript, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), CCallHelpers::TrustedImmPtr(generator->stubInfo()), CCallHelpers::TrustedImmPtr(nullptr)).call();
+                                    base, subscript, CCallHelpers::TrustedImmPtr(generator->stubInfo()), CCallHelpers::TrustedImmPtr(nullptr)).call();
                             }
                         } else {
                             if (Options::useDataICInFTL()) {
@@ -14455,12 +14455,12 @@ IGNORE_CLANG_WARNINGS_END
                                 slowPathCall = callOperation(
                                     *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                     exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), returnGPR,
-                                    base, subscript, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), stubInfoGPR).call();
+                                    base, subscript, stubInfoGPR).call();
                             } else {
                                 slowPathCall = callOperation(
                                     *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                     exceptions.get(), optimizationFunction, returnGPR,
-                                    base, subscript, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
+                                    base, subscript, CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
                             }
                         }
                         jit.jump().linkTo(done, &jit);
@@ -14981,12 +14981,12 @@ IGNORE_CLANG_WARNINGS_END
                             slowPathCall = callOperation(
                                 *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                 exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), resultGPR,
-                                valueGPR, prototypeGPR, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), stubInfoGPR).call();
+                                valueGPR, prototypeGPR, stubInfoGPR).call();
                         } else {
                             slowPathCall = callOperation(
                                 *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                 exceptions.get(), optimizationFunction, resultGPR,
-                                valueGPR, prototypeGPR, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
+                                valueGPR, prototypeGPR, CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
                         }
                         jit.jump().linkTo(done, &jit);
 
@@ -15773,12 +15773,12 @@ IGNORE_CLANG_WARNINGS_END
                     slowPathCall = callOperation(
                         *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                         exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), InvalidGPRReg,
-                        baseGPR, propertyGPR, valueGPR, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), stubInfoGPR, CCallHelpers::TrustedImmPtr(nullptr)).call();
+                        baseGPR, propertyGPR, valueGPR, stubInfoGPR, CCallHelpers::TrustedImmPtr(nullptr)).call();
                 } else {
                     slowPathCall = callOperation(
                         *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                         exceptions.get(), operation, InvalidGPRReg,
-                        baseGPR, propertyGPR, valueGPR, CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), CCallHelpers::TrustedImmPtr(generator->stubInfo()), CCallHelpers::TrustedImmPtr(nullptr)).call();
+                        baseGPR, propertyGPR, valueGPR, CCallHelpers::TrustedImmPtr(generator->stubInfo()), CCallHelpers::TrustedImmPtr(nullptr)).call();
                 }
                 jit.jump().linkTo(done, &jit);
 
@@ -17245,12 +17245,12 @@ IGNORE_CLANG_WARNINGS_END
                             slowPathCall = callOperation(
                                 *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                 exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), params[0].gpr(),
-                                params[1].gpr(), CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), stubInfoGPR).call();
+                                params[1].gpr(), stubInfoGPR).call();
                         } else {
                             slowPathCall = callOperation(
                                 *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                 exceptions.get(), optimizationFunction, params[0].gpr(),
-                                params[1].gpr(), CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
+                                params[1].gpr(), CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
                         }
                         jit.jump().linkTo(done, &jit);
 
@@ -17335,12 +17335,12 @@ IGNORE_CLANG_WARNINGS_END
                             slowPathCall = callOperation(
                                 *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                 exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), params[0].gpr(),
-                                params[1].gpr(), params[2].gpr(), CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), stubInfoGPR).call();
+                                params[1].gpr(), params[2].gpr(), stubInfoGPR).call();
                         } else {
                             slowPathCall = callOperation(
                                 *state, params.unavailableRegisters(), jit, semanticNodeOrigin,
                                 exceptions.get(), optimizationFunction, params[0].gpr(),
-                                params[1].gpr(), params[2].gpr(), CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
+                                params[1].gpr(), params[2].gpr(), CCallHelpers::TrustedImmPtr(generator->stubInfo())).call();
                         }
                         jit.jump().linkTo(done, &jit);
 
