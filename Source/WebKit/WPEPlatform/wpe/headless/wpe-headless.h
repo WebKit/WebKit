@@ -28,6 +28,7 @@
 #define __WPE_HEADLESS_H_INSIDE__
 
 #include <wpe/headless/WPEDisplayHeadless.h>
+#include <wpe/headless/WPEToplevelHeadless.h>
 #include <wpe/headless/WPEViewHeadless.h>
 
 #undef __WPE_HEADLESS_H_INSIDE__

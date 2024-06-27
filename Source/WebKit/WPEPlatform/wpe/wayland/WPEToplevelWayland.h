@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,34 +22,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __WPE_PLATFORM_H__
-#define __WPE_PLATFORM_H__
 
-#define __WPE_PLATFORM_H_INSIDE__
+#ifndef WPEToplevelWayland_h
+#define WPEToplevelWayland_h
 
-#include <wpe/WPEEnumTypes.h>
-#include <wpe/WPEEvent.h>
-#include <wpe/WPEBuffer.h>
-#include <wpe/WPEBufferDMABuf.h>
-#include <wpe/WPEBufferDMABufFormats.h>
-#include <wpe/WPEBufferSHM.h>
-#include <wpe/WPEColor.h>
-#include <wpe/WPEConfig.h>
-#include <wpe/WPEDefines.h>
-#include <wpe/WPEDisplay.h>
-#include <wpe/WPEEGLError.h>
-#include <wpe/WPEInputMethodContext.h>
-#include <wpe/WPEKeymap.h>
-#include <wpe/WPEKeyUnicode.h>
-#include <wpe/WPEKeymapXKB.h>
-#include <wpe/WPEKeysyms.h>
-#include <wpe/WPEKeysyms.h>
-#include <wpe/WPEMonitor.h>
-#include <wpe/WPERectangle.h>
-#include <wpe/WPEToplevel.h>
-#include <wpe/WPEVersion.h>
-#include <wpe/WPEView.h>
+#if !defined(__WPE_WAYLAND_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#error "Only <wpe/wayland/wpe-wayland.h> can be included directly."
+#endif
 
-#undef __WPE_PLATFORM_H_INSIDE__
+#include <glib-object.h>
+#include <wayland-client.h>
+#include <wpe/wpe-platform.h>
+#include <wpe/wayland/WPEDisplayWayland.h>
 
-#endif /* __WPE_PLATFORM_H__ */
+G_BEGIN_DECLS
+
+#define WPE_TYPE_TOPLEVEL_WAYLAND (wpe_toplevel_wayland_get_type())
+WPE_API G_DECLARE_FINAL_TYPE (WPEToplevelWayland, wpe_toplevel_wayland, WPE, TOPLEVEL_WAYLAND, WPEToplevel)
+
+WPE_API WPEToplevel       *wpe_toplevel_wayland_new            (WPEDisplayWayland  *display);
+WPE_API struct wl_surface *wpe_toplevel_wayland_get_wl_surface (WPEToplevelWayland *toplevel);
+
+G_END_DECLS
+
+#endif /* WPEToplevelWayland_h */

@@ -32,6 +32,7 @@
 
 #include <glib-object.h>
 #include <wpe/WPEDefines.h>
+#include <wpe/WPEToplevel.h>
 
 G_BEGIN_DECLS
 
@@ -49,50 +50,27 @@ struct _WPEViewClass
 {
     GObjectClass parent_class;
 
-    gboolean                (* render_buffer)                 (WPEView            *view,
-                                                               WPEBuffer          *buffer,
-                                                               const WPERectangle *damage_rects,
-                                                               guint               n_damage_rects,
-                                                               GError            **error);
-    WPEMonitor             *(* get_monitor)                   (WPEView            *view);
-    gboolean                (* resize)                        (WPEView            *view,
-                                                               int                 width,
-                                                               int                 height);
-    gboolean                (* set_fullscreen)                (WPEView            *view,
-                                                               gboolean            fullscreen);
-    gboolean                (* set_maximized)                 (WPEView            *view,
-                                                               gboolean            maximized);
-    WPEBufferDMABufFormats *(* get_preferred_dma_buf_formats) (WPEView            *view);
-    void                    (* set_cursor_from_name)          (WPEView            *view,
-                                                               const char         *name);
-    void                    (* set_cursor_from_bytes)         (WPEView            *view,
-                                                               GBytes             *bytes,
-                                                               guint               width,
-                                                               guint               height,
-                                                               guint               stride,
-                                                               guint               hotspot_x,
-                                                               guint               hotspot_y);
-    void                    (* set_opaque_rectangles)         (WPEView            *view,
-                                                               WPERectangle       *rects,
-                                                               guint               n_rects);
-    gboolean                (* can_be_mapped)                 (WPEView            *view);
+    gboolean (* render_buffer)         (WPEView            *view,
+                                        WPEBuffer          *buffer,
+                                        const WPERectangle *damage_rects,
+                                        guint               n_damage_rects,
+                                        GError            **error);
+    void     (* set_cursor_from_name)  (WPEView            *view,
+                                        const char         *name);
+    void     (* set_cursor_from_bytes) (WPEView            *view,
+                                        GBytes             *bytes,
+                                        guint               width,
+                                        guint               height,
+                                        guint               stride,
+                                        guint               hotspot_x,
+                                        guint               hotspot_y);
+    void     (* set_opaque_rectangles) (WPEView            *view,
+                                        WPERectangle       *rects,
+                                        guint               n_rects);
+    gboolean (* can_be_mapped)         (WPEView            *view);
 
     gpointer padding[32];
 };
-
-/**
- * WPEViewState:
- * @WPE_VIEW_STATE_NONE: the view is in normal state
- * @WPE_VIEW_STATE_FULLSCREEN: the view is fullscreen
- * @WPE_VIEW_STATE_MAXIMIZED: the view is maximized
- *
- * The current state of the view.
- */
-typedef enum {
-    WPE_VIEW_STATE_NONE = 0,
-    WPE_VIEW_STATE_FULLSCREEN = (1 << 0),
-    WPE_VIEW_STATE_MAXIMIZED = (1 << 1)
-} WPEViewState;
 
 #define WPE_VIEW_ERROR (wpe_view_error_quark())
 
@@ -110,18 +88,16 @@ WPE_API GQuark                  wpe_view_error_quark                   (void);
 
 WPE_API WPEView                *wpe_view_new                           (WPEDisplay         *display);
 WPE_API WPEDisplay             *wpe_view_get_display                   (WPEView            *view);
+WPE_API WPEToplevel            *wpe_view_get_toplevel                  (WPEView            *view);
+WPE_API void                    wpe_view_set_toplevel                  (WPEView            *view,
+                                                                        WPEToplevel        *toplevel);
 WPE_API int                     wpe_view_get_width                     (WPEView            *view);
 WPE_API int                     wpe_view_get_height                    (WPEView            *view);
 WPE_API void                    wpe_view_closed                        (WPEView            *view);
-WPE_API gboolean                wpe_view_resize                        (WPEView            *view,
-                                                                        int                 width,
-                                                                        int                 height);
 WPE_API void                    wpe_view_resized                       (WPEView            *view,
                                                                         int                 width,
                                                                         int                 height);
 WPE_API gdouble                 wpe_view_get_scale                     (WPEView            *view);
-WPE_API void                    wpe_view_scale_changed                 (WPEView            *view,
-                                                                        gdouble             scale);
 WPE_API gboolean                wpe_view_get_visible                   (WPEView            *view);
 WPE_API void                    wpe_view_set_visible                   (WPEView            *view,
                                                                         gboolean            visible);
@@ -137,14 +113,8 @@ WPE_API void                    wpe_view_set_cursor_from_bytes         (WPEView 
                                                                         guint               stride,
                                                                         guint               hotspot_x,
                                                                         guint               hotspot_y);
-WPE_API WPEViewState            wpe_view_get_state                     (WPEView            *view);
-WPE_API void                    wpe_view_state_changed                 (WPEView            *view,
-                                                                        WPEViewState        state);
+WPE_API WPEToplevelState        wpe_view_get_toplevel_state            (WPEView            *view);
 WPE_API WPEMonitor             *wpe_view_get_monitor                   (WPEView            *view);
-WPE_API gboolean                wpe_view_fullscreen                    (WPEView            *view);
-WPE_API gboolean                wpe_view_unfullscreen                  (WPEView            *view);
-WPE_API gboolean                wpe_view_maximize                      (WPEView            *view);
-WPE_API gboolean                wpe_view_unmaximize                    (WPEView            *view);
 WPE_API gboolean                wpe_view_render_buffer                 (WPEView            *view,
                                                                         WPEBuffer          *buffer,
                                                                         const WPERectangle *damage_rects,

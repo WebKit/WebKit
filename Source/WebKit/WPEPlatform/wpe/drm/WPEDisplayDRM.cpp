@@ -32,6 +32,7 @@
 #include "WPEDisplayDRMPrivate.h"
 #include "WPEExtensions.h"
 #include "WPEMonitorDRMPrivate.h"
+#include "WPEToplevelDRM.h"
 #include "WPEViewDRM.h"
 #include <fcntl.h>
 #include <gio/gio.h>
@@ -308,6 +309,10 @@ static WPEView* wpeDisplayDRMCreateView(WPEDisplay* display)
 {
     auto* displayDRM = WPE_DISPLAY_DRM(display);
     auto* view = wpe_view_drm_new(displayDRM);
+
+    GRefPtr<WPEToplevel> toplevel = adoptGRef(wpe_toplevel_drm_new(displayDRM));
+    wpe_view_set_toplevel(view, toplevel.get());
+
     displayDRM->priv->seat->setView(view);
     return view;
 }

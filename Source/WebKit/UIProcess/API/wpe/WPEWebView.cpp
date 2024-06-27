@@ -110,10 +110,13 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
         m_wpeView = adoptGRef(wpe_view_new(display));
         m_size.setWidth(wpe_view_get_width(m_wpeView.get()));
         m_size.setHeight(wpe_view_get_height(m_wpeView.get()));
+        m_pageProxy->setIntrinsicDeviceScaleFactor(wpe_view_get_scale(m_wpeView.get()));
 
-        m_viewStateFlags = { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsInWindow };
+        m_viewStateFlags = { WebCore::ActivityState::WindowIsActive };
         if (wpe_view_get_mapped(m_wpeView.get()))
             m_viewStateFlags.add(WebCore::ActivityState::IsVisible);
+        if (wpe_view_get_toplevel(m_wpeView.get()))
+            m_viewStateFlags.add(WebCore::ActivityState::IsInWindow);
 
         if (auto* monitor = wpe_view_get_monitor(m_wpeView.get()))
             m_displayID = wpe_monitor_get_id(monitor);
@@ -142,7 +145,6 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
             auto& webView = *reinterpret_cast<View*>(userData);
             webView.setSize(WebCore::IntSize(wpe_view_get_width(view), wpe_view_get_height(view)));
         }), this);
-        page().setIntrinsicDeviceScaleFactor(wpe_view_get_scale(m_wpeView.get()));
         g_signal_connect(m_wpeView.get(), "notify::scale", G_CALLBACK(+[](WPEView* view, GParamSpec*, gpointer userData) {
             auto& webView = *reinterpret_cast<View*>(userData);
             webView.page().setIntrinsicDeviceScaleFactor(wpe_view_get_scale(view));
@@ -150,6 +152,23 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
         g_signal_connect(m_wpeView.get(), "notify::monitor", G_CALLBACK(+[](WPEView*, GParamSpec*, gpointer userData) {
             auto& webView = *reinterpret_cast<View*>(userData);
             webView.updateDisplayID();
+        }), this);
+        g_signal_connect(m_wpeView.get(), "notify::toplevel", G_CALLBACK(+[](WPEView* view, GParamSpec*, gpointer userData) {
+            auto& webView = *reinterpret_cast<View*>(userData);
+
+            OptionSet<WebCore::ActivityState> flagsToUpdate { WebCore::ActivityState::IsInWindow };
+            if (wpe_view_get_toplevel(view)) {
+                if (webView.m_viewStateFlags.contains(WebCore::ActivityState::IsInWindow))
+                    return;
+
+                webView.m_viewStateFlags.add(WebCore::ActivityState::IsInWindow);
+            } else {
+                if (!webView.m_viewStateFlags.contains(WebCore::ActivityState::IsInWindow))
+                    return;
+
+                webView.m_viewStateFlags.remove(WebCore::ActivityState::IsInWindow);
+            }
+            webView.page().activityStateDidChange(flagsToUpdate);
         }), this);
         g_signal_connect_after(m_wpeView.get(), "event", G_CALLBACK(+[](WPEView* view, WPEEvent* event, gpointer userData) -> gboolean {
             auto& webView = *reinterpret_cast<View*>(userData);
@@ -242,22 +261,22 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
             webView.m_inputMethodFilter.notifyFocusedOut();
             webView.page().activityStateDidChange(flagsToUpdate);
         }), this);
-        g_signal_connect(m_wpeView.get(), "state-changed", G_CALLBACK(+[](WPEView* view, WPEViewState previousState, gpointer userData) {
+        g_signal_connect(m_wpeView.get(), "toplevel-state-changed", G_CALLBACK(+[](WPEView* view, WPEToplevelState previousState, gpointer userData) {
             auto& webView = *reinterpret_cast<View*>(userData);
-            auto state = wpe_view_get_state(view);
+            auto state = wpe_view_get_toplevel_state(view);
             uint32_t changedMask = state ^ previousState;
-            if (changedMask & WPE_VIEW_STATE_FULLSCREEN) {
+            if (changedMask & WPE_TOPLEVEL_STATE_FULLSCREEN) {
                 switch (webView.m_fullscreenState) {
                 case WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen:
-                    if (state & WPE_VIEW_STATE_FULLSCREEN)
+                    if (state & WPE_TOPLEVEL_STATE_FULLSCREEN)
                         webView.didEnterFullScreen();
                     break;
                 case WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen:
-                    if (!(state & WPE_VIEW_STATE_FULLSCREEN))
+                    if (!(state & WPE_TOPLEVEL_STATE_FULLSCREEN))
                         webView.didExitFullScreen();
                     break;
                 case WebFullScreenManagerProxy::FullscreenState::InFullscreen:
-                    if (!(state & WPE_VIEW_STATE_FULLSCREEN) && webView.isFullScreen())
+                    if (!(state & WPE_TOPLEVEL_STATE_FULLSCREEN) && webView.isFullScreen())
                         webView.requestExitFullScreen();
                     break;
                 case WebFullScreenManagerProxy::FullscreenState::NotInFullscreen:
@@ -667,6 +686,11 @@ void View::willEnterFullScreen()
 }
 
 #if ENABLE(WPE_PLATFORM)
+static bool viewToplevelIsFullScreen(WPEToplevel* toplevel)
+{
+    return toplevel && (wpe_toplevel_get_state(toplevel) & WPE_TOPLEVEL_STATE_FULLSCREEN);
+}
+
 void View::enterFullScreen()
 {
     ASSERT(m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen);
@@ -675,14 +699,16 @@ void View::enterFullScreen()
     if (m_client->enterFullScreen(*this))
         return;
 
-    if (wpe_view_get_state(m_wpeView.get()) & WPE_VIEW_STATE_FULLSCREEN) {
+    auto* toplevel = wpe_view_get_toplevel(m_wpeView.get());
+    if (viewToplevelIsFullScreen(toplevel)) {
         m_viewWasAlreadyInFullScreen = true;
         didEnterFullScreen();
         return;
     }
 
     m_viewWasAlreadyInFullScreen = false;
-    wpe_view_fullscreen(m_wpeView.get());
+    if (toplevel)
+        wpe_toplevel_fullscreen(toplevel);
 }
 
 void View::didEnterFullScreen()
@@ -714,12 +740,14 @@ void View::exitFullScreen()
     if (m_client->exitFullScreen(*this))
         return;
 
-    if (!(wpe_view_get_state(m_wpeView.get()) & WPE_VIEW_STATE_FULLSCREEN) || m_viewWasAlreadyInFullScreen) {
+    auto* toplevel = wpe_view_get_toplevel(m_wpeView.get());
+    if (!viewToplevelIsFullScreen(toplevel) || m_viewWasAlreadyInFullScreen) {
         didExitFullScreen();
         return;
     }
 
-    wpe_view_unfullscreen(m_wpeView.get());
+    if (toplevel)
+        wpe_toplevel_unfullscreen(toplevel);
 }
 
 void View::didExitFullScreen()

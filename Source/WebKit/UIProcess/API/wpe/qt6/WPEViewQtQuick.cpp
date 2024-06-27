@@ -84,12 +84,6 @@ static gboolean wpeViewQtQuickRenderBuffer(WPEView* view, WPEBuffer* buffer, GEr
     return TRUE;
 }
 
-static gboolean wpeViewQtQuickResize(WPEView* view, int width, int height)
-{
-    wpe_view_resized(view, width, height);
-    return TRUE;
-}
-
 static void wpe_view_qtquick_class_init(WPEViewQtQuickClass* viewQtQuickClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(viewQtQuickClass);
@@ -97,7 +91,6 @@ static void wpe_view_qtquick_class_init(WPEViewQtQuickClass* viewQtQuickClass)
 
     WPEViewClass* viewClass = WPE_VIEW_CLASS(viewQtQuickClass);
     viewClass->render_buffer = wpeViewQtQuickRenderBuffer;
-    viewClass->resize = wpeViewQtQuickResize;
 }
 
 WPEView* wpe_view_qtquick_new(WPEDisplayQtQuick* display)

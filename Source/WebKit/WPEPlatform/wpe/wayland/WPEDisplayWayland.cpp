@@ -32,6 +32,7 @@
 #include "WPEInputMethodContextWaylandV1.h"
 #include "WPEInputMethodContextWaylandV3.h"
 #include "WPEMonitorWaylandPrivate.h"
+#include "WPEToplevelWayland.h"
 #include "WPEViewWayland.h"
 #include "WPEWaylandCursor.h"
 #include "WPEWaylandSeat.h"
@@ -405,11 +406,14 @@ static gboolean wpeDisplayWaylandConnect(WPEDisplay* display, GError** error)
 
 static WPEView* wpeDisplayWaylandCreateView(WPEDisplay* display)
 {
-    auto* priv = WPE_DISPLAY_WAYLAND(display)->priv;
-    if (!priv->wlDisplay || !priv->wlCompositor)
-        return nullptr;
+    auto* displayWayland = WPE_DISPLAY_WAYLAND(display);
+    auto* view = wpe_view_wayland_new(displayWayland);
 
-    return wpe_view_wayland_new(WPE_DISPLAY_WAYLAND(display));
+    // FIXME: create the toplevel conditionally.
+    GRefPtr<WPEToplevel> toplevel = adoptGRef(wpe_toplevel_wayland_new(displayWayland));
+    wpe_view_set_toplevel(view, toplevel.get());
+
+    return view;
 }
 
 static WPEInputMethodContext* wpeDisplayWaylandCreateInputMethodContext(WPEDisplay* display)

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WPEViewHeadless.h"
 
+#include "WPEToplevelHeadless.h"
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
@@ -62,9 +63,24 @@ static void wpeViewHeadlessConstructed(GObject* object)
 {
     G_OBJECT_CLASS(wpe_view_headless_parent_class)->constructed(object);
 
-    wpe_view_map(WPE_VIEW(object));
+    auto* view = WPE_VIEW(object);
+    g_signal_connect(view, "notify::toplevel", G_CALLBACK(+[](WPEView* view, GParamSpec*, gpointer) {
+        auto* toplevel = wpe_view_get_toplevel(view);
+        if (!toplevel) {
+            wpe_view_unmap(view);
+            return;
+        }
 
-    auto* priv = WPE_VIEW_HEADLESS(object)->priv;
+        int width;
+        int height;
+        wpe_toplevel_get_size(toplevel, &width, &height);
+        if (width && height)
+            wpe_view_resized(view, width, height);
+
+        wpe_view_map(view);
+    }), nullptr);
+
+    auto* priv = WPE_VIEW_HEADLESS(view)->priv;
     priv->frameSource = adoptGRef(g_source_new(&frameSourceFuncs, sizeof(GSource)));
     g_source_set_priority(priv->frameSource.get(), RunLoopSourcePriority::RunLoopTimer);
     g_source_set_name(priv->frameSource.get(), "WPE headless frame timer");
@@ -113,24 +129,6 @@ static gboolean wpeViewHeadlessRenderBuffer(WPEView* view, WPEBuffer* buffer, co
     return TRUE;
 }
 
-static gboolean wpeViewHeadlessResize(WPEView* view, int width, int height)
-{
-    wpe_view_resized(view, width, height);
-    return TRUE;
-}
-
-static gboolean wpeViewHeadlessSetFullscreen(WPEView* view, gboolean fullscreen)
-{
-    auto state = wpe_view_get_state(view);
-    if (fullscreen)
-        state = static_cast<WPEViewState>(state | WPE_VIEW_STATE_FULLSCREEN);
-    else
-        state = static_cast<WPEViewState>(state & ~WPE_VIEW_STATE_FULLSCREEN);
-    wpe_view_state_changed(view, state);
-
-    return TRUE;
-}
-
 static void wpe_view_headless_class_init(WPEViewHeadlessClass* viewHeadlessClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(viewHeadlessClass);
@@ -139,8 +137,6 @@ static void wpe_view_headless_class_init(WPEViewHeadlessClass* viewHeadlessClass
 
     WPEViewClass* viewClass = WPE_VIEW_CLASS(viewHeadlessClass);
     viewClass->render_buffer = wpeViewHeadlessRenderBuffer;
-    viewClass->resize = wpeViewHeadlessResize;
-    viewClass->set_fullscreen = wpeViewHeadlessSetFullscreen;
 }
 
 /**

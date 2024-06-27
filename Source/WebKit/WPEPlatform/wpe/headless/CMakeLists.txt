@@ -3,12 +3,14 @@ configure_file(wpe-platform-headless-uninstalled.pc.in ${CMAKE_BINARY_DIR}/wpe-p
 
 set(WPEPlatformHeadless_SOURCES
     ${WEBKIT_DIR}/WPEPlatform/wpe/headless/WPEDisplayHeadless.cpp
+    ${WEBKIT_DIR}/WPEPlatform/wpe/headless/WPEToplevelHeadless.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/headless/WPEViewHeadless.cpp
 )
 
 set(WPEPlatformHeadless_INSTALLED_HEADERS
     ${WEBKIT_DIR}/WPEPlatform/wpe/headless/wpe-headless.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/headless/WPEDisplayHeadless.h
+    ${WEBKIT_DIR}/WPEPlatform/wpe/headless/WPEToplevelHeadless.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/headless/WPEViewHeadless.h
 )
 

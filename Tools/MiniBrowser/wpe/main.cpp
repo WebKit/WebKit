@@ -157,20 +157,24 @@ static gboolean wpeViewEventCallback(WPEView* view, WPEEvent* event, WebKitWebVi
         }
 
         if (keyval == WPE_KEY_Up) {
-            if (wpe_view_get_state(view) & WPE_VIEW_STATE_MAXIMIZED)
-                wpe_view_unmaximize(view);
-            else
-                wpe_view_maximize(view);
-            return TRUE;
+            if (auto* toplevel = wpe_view_get_toplevel(view)) {
+                if (wpe_toplevel_get_state(toplevel) & WPE_TOPLEVEL_STATE_MAXIMIZED)
+                    wpe_toplevel_unmaximize(toplevel);
+                else
+                    wpe_toplevel_maximize(toplevel);
+                return TRUE;
+            }
         }
     }
 
     if (keyval == WPE_KEY_F11) {
-        if (wpe_view_get_state(view) & WPE_VIEW_STATE_FULLSCREEN)
-            wpe_view_unfullscreen(view);
-        else
-            wpe_view_fullscreen(view);
-        return TRUE;
+        if (auto* toplevel = wpe_view_get_toplevel(view)) {
+            if (wpe_toplevel_get_state(toplevel) & WPE_TOPLEVEL_STATE_FULLSCREEN)
+                wpe_toplevel_unfullscreen(toplevel);
+            else
+                wpe_toplevel_fullscreen(toplevel);
+            return TRUE;
+        }
     }
 
     return FALSE;

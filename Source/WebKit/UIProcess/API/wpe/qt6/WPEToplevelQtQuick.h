@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,34 +22,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __WPE_PLATFORM_H__
-#define __WPE_PLATFORM_H__
 
-#define __WPE_PLATFORM_H_INSIDE__
+#ifndef WPEToplevelQtQuick_h
+#define WPEToplevelQtQuick_h
 
-#include <wpe/WPEEnumTypes.h>
-#include <wpe/WPEEvent.h>
-#include <wpe/WPEBuffer.h>
-#include <wpe/WPEBufferDMABuf.h>
-#include <wpe/WPEBufferDMABufFormats.h>
-#include <wpe/WPEBufferSHM.h>
-#include <wpe/WPEColor.h>
-#include <wpe/WPEConfig.h>
-#include <wpe/WPEDefines.h>
-#include <wpe/WPEDisplay.h>
-#include <wpe/WPEEGLError.h>
-#include <wpe/WPEInputMethodContext.h>
-#include <wpe/WPEKeymap.h>
-#include <wpe/WPEKeyUnicode.h>
-#include <wpe/WPEKeymapXKB.h>
-#include <wpe/WPEKeysyms.h>
-#include <wpe/WPEKeysyms.h>
-#include <wpe/WPEMonitor.h>
-#include <wpe/WPERectangle.h>
-#include <wpe/WPEToplevel.h>
-#include <wpe/WPEVersion.h>
-#include <wpe/WPEView.h>
+#include "WPEDisplayQtQuick.h"
 
-#undef __WPE_PLATFORM_H_INSIDE__
+G_BEGIN_DECLS
 
-#endif /* __WPE_PLATFORM_H__ */
+#define WPE_TYPE_TOPLEVEL_QTQUICK (wpe_toplevel_qtquick_get_type())
+G_DECLARE_FINAL_TYPE (WPEToplevelQtQuick, wpe_toplevel_qtquick, WPE, TOPLEVEL_QTQUICK, WPEToplevel)
+
+WPEToplevel *wpe_toplevel_qtquick_new (WPEDisplayQtQuick *display);
+
+G_END_DECLS
+
+#endif /* WPEToplevelQtQuick_h */

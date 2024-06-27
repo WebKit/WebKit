@@ -29,6 +29,7 @@
 #include "DRMUniquePtr.h"
 #include "WPEDisplayDRMPrivate.h"
 #include "WPEMonitorDRMPrivate.h"
+#include "WPEToplevelDRM.h"
 #include "WPEViewDRMPrivate.h"
 #include <drm_fourcc.h>
 #include <glib-unix.h>
@@ -52,7 +53,6 @@ enum class UpdateFlags : uint8_t {
  *
  */
 struct _WPEViewDRMPrivate {
-    drmModeModeInfo mode;
     Seconds refreshDuration;
     std::optional<uint32_t> modeBlob;
     GRefPtr<WPEBuffer> pendingBuffer;
@@ -70,20 +70,26 @@ static void wpeViewDRMConstructed(GObject* object)
 {
     G_OBJECT_CLASS(wpe_view_drm_parent_class)->constructed(object);
 
-    auto* view = WPE_VIEW_DRM(object);
-    auto* priv = view->priv;
-    auto* display = WPE_DISPLAY_DRM(wpe_view_get_display(WPE_VIEW(view)));
-    auto* monitor = wpeDisplayDRMGetMonitor(display);
+    auto* view = WPE_VIEW(object);
+    g_signal_connect(view, "notify::toplevel", G_CALLBACK(+[](WPEView* view, GParamSpec*, gpointer) {
+        auto* toplevel = wpe_view_get_toplevel(view);
+        if (!toplevel) {
+            wpe_view_unmap(view);
+            return;
+        }
 
-    auto* mode = wpeMonitorDRMGetMode(WPE_MONITOR_DRM(monitor));
-    double scale = wpe_monitor_get_scale(monitor);
-    auto* wpeView = WPE_VIEW(view);
-    wpe_view_resized(wpeView, mode->hdisplay / scale, mode->vdisplay / scale);
-    wpe_view_scale_changed(wpeView, scale);
-    wpe_view_state_changed(wpeView, WPE_VIEW_STATE_FULLSCREEN);
-    wpe_view_map(wpeView);
+        int width;
+        int height;
+        wpe_toplevel_get_size(toplevel, &width, &height);
+        if (width && height)
+            wpe_view_resized(view, width, height);
 
-    priv->refreshDuration = Seconds(1 / (wpe_monitor_get_refresh_rate(monitor) / 1000.));
+        wpe_view_map(view);
+    }), nullptr);
+
+    auto* display = WPE_DISPLAY_DRM(wpe_view_get_display(view));
+    auto* priv = WPE_VIEW_DRM(view)->priv;
+    priv->refreshDuration = Seconds(1 / (wpe_monitor_get_refresh_rate(wpeDisplayDRMGetMonitor(display)) / 1000.));
 
     int fd = gbm_device_get_fd(wpe_display_drm_get_device(display));
     priv->eventContext.version = DRM_EVENT_CONTEXT_VERSION;
@@ -421,11 +427,6 @@ static gboolean wpeViewDRMRenderBuffer(WPEView* view, WPEBuffer* buffer, const W
     return FALSE;
 }
 
-static WPEMonitor* wpeViewDRMGetMonitor(WPEView* view)
-{
-    return wpeDisplayDRMGetMonitor(WPE_DISPLAY_DRM(wpe_view_get_display(view)));
-}
-
 static void wpeViewDRMSetCursorFromName(WPEView* view, const char* name)
 {
     if (auto* cursor = wpeDisplayDRMGetCursor(WPE_DISPLAY_DRM(wpe_view_get_display(view))))
@@ -515,7 +516,6 @@ static void wpe_view_drm_class_init(WPEViewDRMClass* viewDRMClass)
 
     WPEViewClass* viewClass = WPE_VIEW_CLASS(viewDRMClass);
     viewClass->render_buffer = wpeViewDRMRenderBuffer;
-    viewClass->get_monitor = wpeViewDRMGetMonitor;
     viewClass->set_cursor_from_name = wpeViewDRMSetCursorFromName;
     viewClass->set_cursor_from_bytes = wpeViewDRMSetCursorFromBytes;
 }

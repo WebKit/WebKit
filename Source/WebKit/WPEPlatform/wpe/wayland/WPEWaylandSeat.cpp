@@ -29,6 +29,7 @@
 #include "WPEDisplayWaylandPrivate.h"
 #include "WPEKeymapXKB.h"
 #include "WPEKeysyms.h"
+#include "WPEToplevelWaylandPrivate.h"
 #include <linux/input.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
@@ -57,12 +58,15 @@ const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
         if (!surface)
             return;
 
-        auto* view = wl_surface_get_user_data(surface);
-        if (!WPE_IS_VIEW(view))
+        auto* toplevel = wl_surface_get_user_data(surface);
+        if (!WPE_IS_TOPLEVEL(toplevel))
             return;
 
+        auto* toplevelWayland = WPE_TOPLEVEL_WAYLAND(toplevel);
+        wpeToplevelWaylandSetHasPointer(toplevelWayland, true);
+
         auto& seat = *static_cast<WaylandSeat*>(data);
-        seat.m_pointer.view.reset(WPE_VIEW(view));
+        seat.m_pointer.toplevel.reset(toplevelWayland);
         seat.m_pointer.x = wl_fixed_to_double(x);
         seat.m_pointer.y = wl_fixed_to_double(y);
         seat.m_pointer.modifiers = 0;
@@ -71,30 +75,28 @@ const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
 
         seat.updateCursor();
 
-        auto* event = wpe_event_pointer_move_new(WPE_EVENT_POINTER_ENTER, seat.m_pointer.view.get(), seat.m_pointer.source, 0,
-            seat.modifiers(), seat.m_pointer.x, seat.m_pointer.y, 0, 0);
-        wpe_view_event(seat.m_pointer.view.get(), event);
-        wpe_event_unref(event);
+        if (GRefPtr<WPEView> view = wpeToplevelWaylandGetVisibleViewUnderPointer(seat.m_pointer.toplevel.get()))
+            seat.emitPointerEnter(view.get());
     },
     // leave
     [](void* data, struct wl_pointer*, uint32_t /*serial*/, struct wl_surface*)
     {
         auto& seat = *static_cast<WaylandSeat*>(data);
-        if (!seat.m_pointer.view)
+        if (!seat.m_pointer.toplevel)
             return;
 
-        auto* event = wpe_event_pointer_move_new(WPE_EVENT_POINTER_LEAVE, seat.m_pointer.view.get(), seat.m_pointer.source, 0,
-            seat.modifiers(), -1, -1, 0, 0);
-        wpe_view_event(seat.m_pointer.view.get(), event);
-        wpe_event_unref(event);
+        GRefPtr<WPEView> view = wpeToplevelWaylandGetVisibleViewUnderPointer(seat.m_pointer.toplevel.get());
+        wpeToplevelWaylandSetHasPointer(seat.m_pointer.toplevel.get(), false);
+        seat.m_pointer.toplevel = nullptr;
 
-        seat.m_pointer.view = nullptr;
+        if (view)
+            seat.emitPointerLeave(view.get());
     },
     // motion
     [](void* data, struct wl_pointer*, uint32_t time, wl_fixed_t fixedX, wl_fixed_t fixedY)
     {
         auto& seat = *static_cast<WaylandSeat*>(data);
-        if (!seat.m_pointer.view)
+        if (!seat.m_pointer.toplevel)
             return;
 
         double x = wl_fixed_to_double(fixedX);
@@ -105,16 +107,20 @@ const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
         seat.m_pointer.time = time;
         seat.m_pointer.x = x;
         seat.m_pointer.y = y;
-        auto* event = wpe_event_pointer_move_new(WPE_EVENT_POINTER_MOVE, seat.m_pointer.view.get(), seat.m_pointer.source, time,
-            seat.modifiers(), x, y, deltaX, deltaY);
-        wpe_view_event(seat.m_pointer.view.get(), event);
+
+        GRefPtr<WPEView> view = wpeToplevelWaylandGetVisibleViewUnderPointer(seat.m_pointer.toplevel.get());
+        if (!view)
+            return;
+
+        auto* event = wpe_event_pointer_move_new(WPE_EVENT_POINTER_MOVE, view.get(), seat.m_pointer.source, time, seat.modifiers(), x, y, deltaX, deltaY);
+        wpe_view_event(view.get(), event);
         wpe_event_unref(event);
     },
     // button
     [](void* data, struct wl_pointer*, uint32_t /*serial*/, uint32_t time, uint32_t button, uint32_t state)
     {
         auto& seat = *static_cast<WaylandSeat*>(data);
-        if (!seat.m_pointer.view)
+        if (!seat.m_pointer.toplevel)
             return;
 
         switch (button) {
@@ -156,17 +162,22 @@ const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
             seat.m_pointer.modifiers &= ~buttonModifiers;
 
         seat.m_pointer.time = time;
-        unsigned pressCount = state ? wpe_view_compute_press_count(seat.m_pointer.view.get(), seat.m_pointer.x, seat.m_pointer.y, button, time) : 0;
-        auto* event = wpe_event_pointer_button_new(state ? WPE_EVENT_POINTER_DOWN : WPE_EVENT_POINTER_UP, seat.m_pointer.view.get(), seat.m_pointer.source,
+
+        GRefPtr<WPEView> view = wpeToplevelWaylandGetVisibleViewUnderPointer(seat.m_pointer.toplevel.get());
+        if (!view)
+            return;
+
+        unsigned pressCount = state ? wpe_view_compute_press_count(view.get(), seat.m_pointer.x, seat.m_pointer.y, button, time) : 0;
+        auto* event = wpe_event_pointer_button_new(state ? WPE_EVENT_POINTER_DOWN : WPE_EVENT_POINTER_UP, view.get(), seat.m_pointer.source,
             time, seat.modifiers(), button, seat.m_pointer.x, seat.m_pointer.y, pressCount);
-        wpe_view_event(seat.m_pointer.view.get(), event);
+        wpe_view_event(view.get(), event);
         wpe_event_unref(event);
     },
     // axis
     [](void* data, struct wl_pointer*, uint32_t time, uint32_t axis, wl_fixed_t value)
     {
         auto& seat = *static_cast<WaylandSeat*>(data);
-        if (!seat.m_pointer.view)
+        if (!seat.m_pointer.toplevel)
             return;
 
         switch (axis) {
@@ -186,7 +197,7 @@ const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
     [](void* data, struct wl_pointer*)
     {
         auto& seat = *static_cast<WaylandSeat*>(data);
-        if (!seat.m_pointer.view)
+        if (!seat.m_pointer.toplevel)
             return;
 
         seat.flushScrollEvent();
@@ -195,7 +206,7 @@ const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
     [](void* data, struct wl_pointer*, uint32_t source)
     {
         auto& seat = *static_cast<WaylandSeat*>(data);
-        if (!seat.m_pointer.view)
+        if (!seat.m_pointer.toplevel)
             return;
 
         switch (source) {
@@ -215,7 +226,7 @@ const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
     [](void* data, struct wl_pointer*, uint32_t time, uint32_t axis)
     {
         auto& seat = *static_cast<WaylandSeat*>(data);
-        if (!seat.m_pointer.view)
+        if (!seat.m_pointer.toplevel)
             return;
 
         switch (axis) {
@@ -234,7 +245,7 @@ const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
     [](void* data, struct wl_pointer*, uint32_t axis, int32_t value)
     {
         auto& seat = *static_cast<WaylandSeat*>(data);
-        if (!seat.m_pointer.view)
+        if (!seat.m_pointer.toplevel)
             return;
 
         switch (axis) {
@@ -251,7 +262,7 @@ const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
     [](void* data, struct wl_pointer*, uint32_t axis, int32_t value)
     {
         auto& seat = *static_cast<WaylandSeat*>(data);
-        if (!seat.m_pointer.view)
+        if (!seat.m_pointer.toplevel)
             return;
 
         switch (axis) {
@@ -285,38 +296,45 @@ const struct wl_keyboard_listener WaylandSeat::s_keyboardListener = {
         if (!surface)
             return;
 
-        auto* view = wl_surface_get_user_data(surface);
-        if (!WPE_IS_VIEW(view))
+        auto* toplevel = wl_surface_get_user_data(surface);
+        if (!WPE_IS_TOPLEVEL(toplevel))
             return;
 
+        auto* toplevelWayland = WPE_TOPLEVEL_WAYLAND(toplevel);
+        wpeToplevelWaylandSetIsFocused(toplevelWayland, true);
+
         auto& seat = *static_cast<WaylandSeat*>(data);
-        seat.m_keyboard.view.reset(WPE_VIEW(view));
+        seat.m_keyboard.toplevel.reset(toplevelWayland);
         seat.m_keyboard.repeat.key = 0;
 
-        wpe_view_focus_in(seat.m_keyboard.view.get());
+        if (GRefPtr<WPEView> view = wpeToplevelWaylandGetVisibleFocusedView(toplevelWayland))
+            wpe_view_focus_in(view.get());
     },
     // leave
     [](void* data, struct wl_keyboard*, uint32_t /*serial*/, struct wl_surface*)
     {
         auto& seat = *static_cast<WaylandSeat*>(data);
-        if (!seat.m_keyboard.view)
+        if (!seat.m_keyboard.toplevel)
             return;
 
         if (seat.m_keyboard.repeat.source)
             g_source_set_ready_time(seat.m_keyboard.repeat.source.get(), -1);
 
-        GRefPtr<WPEView> view = seat.m_keyboard.view.get();
-        seat.m_keyboard.view = nullptr;
+        GRefPtr<WPEView> view = wpeToplevelWaylandGetVisibleFocusedView(seat.m_keyboard.toplevel.get());
+        wpeToplevelWaylandSetIsFocused(seat.m_keyboard.toplevel.get(), false);
+
+        seat.m_keyboard.toplevel = nullptr;
         seat.m_keyboard.repeat.key = 0;
         seat.m_keyboard.repeat.deadline = { };
 
-        wpe_view_focus_out(view.get());
+        if (view)
+            wpe_view_focus_out(view.get());
     },
     // key
     [](void* data, struct wl_keyboard*, uint32_t /*serial*/, uint32_t time, uint32_t key, uint32_t state)
     {
         auto& seat = *static_cast<WaylandSeat*>(data);
-        if (!seat.m_keyboard.view)
+        if (!seat.m_keyboard.toplevel)
             return;
 
         seat.m_keyboard.time = time;
@@ -330,20 +348,24 @@ const struct wl_keyboard_listener WaylandSeat::s_keyboardListener = {
         xkb_state_update_mask(xkbState, depressedMods, latchedMods, lockedMods, group, 0, 0);
         seat.m_keyboard.modifiers = wpe_keymap_get_modifiers(seat.m_keymap.get());
 
-        if (!seat.m_keyboard.view)
+        if (!seat.m_keyboard.toplevel)
             return;
 
-        if (seat.m_keyboard.capsLockUpEvent.key) {
+        if (!seat.m_keyboard.capsLockUpEvent.key)
+            return;
+
+        if (GRefPtr<WPEView> view = wpeToplevelWaylandGetVisibleFocusedView(seat.m_keyboard.toplevel.get())) {
             if (seat.m_keyboard.modifiers & WPE_MODIFIER_KEYBOARD_CAPS_LOCK)
                 seat.m_keyboard.capsLockUpEvent.modifiers |= WPE_MODIFIER_KEYBOARD_CAPS_LOCK;
             else
                 seat.m_keyboard.capsLockUpEvent.modifiers &= ~WPE_MODIFIER_KEYBOARD_CAPS_LOCK;
-            auto* event = wpe_event_keyboard_new(WPE_EVENT_KEYBOARD_KEY_UP, seat.m_keyboard.view.get(), seat.m_keyboard.source, seat.m_keyboard.capsLockUpEvent.time,
+
+            auto* event = wpe_event_keyboard_new(WPE_EVENT_KEYBOARD_KEY_UP, view.get(), seat.m_keyboard.source, seat.m_keyboard.capsLockUpEvent.time,
                 static_cast<WPEModifiers>(seat.m_keyboard.capsLockUpEvent.modifiers), seat.m_keyboard.capsLockUpEvent.key, seat.m_keyboard.capsLockUpEvent.keyval);
-            seat.m_keyboard.capsLockUpEvent = { };
-            wpe_view_event(seat.m_keyboard.view.get(), event);
+            wpe_view_event(view.get(), event);
             wpe_event_unref(event);
         }
+        seat.m_keyboard.capsLockUpEvent = { };
     },
     // repeat_info
     [](void* data, struct wl_keyboard*, int32_t rate, int32_t delay)
@@ -361,41 +383,48 @@ const struct wl_touch_listener WaylandSeat::s_touchListener = {
         if (!surface)
             return;
 
-        auto* view = wl_surface_get_user_data(surface);
-        if (!WPE_IS_VIEW(view))
+        auto* toplevel = wl_surface_get_user_data(surface);
+        if (!WPE_IS_TOPLEVEL(toplevel))
             return;
 
         auto& seat = *static_cast<WaylandSeat*>(data);
-        seat.m_touch.view.reset(WPE_VIEW(view));
+        seat.m_touch.toplevel.reset(WPE_TOPLEVEL_WAYLAND(toplevel));
 
         auto addResult = seat.m_touch.points.add(id, std::pair<double, double>(wl_fixed_to_double(x), wl_fixed_to_double(y)));
-        auto* event = wpe_event_touch_new(WPE_EVENT_TOUCH_DOWN, seat.m_touch.view.get(), seat.m_touch.source, time, seat.modifiers(),
+
+        GRefPtr<WPEView> view = wpeToplevelWaylandGetVisibleFocusedView(seat.m_touch.toplevel.get());
+        if (!view)
+            return;
+
+        auto* event = wpe_event_touch_new(WPE_EVENT_TOUCH_DOWN, view.get(), seat.m_touch.source, time, seat.modifiers(),
             id, addResult.iterator->value.first, addResult.iterator->value.second);
-        wpe_view_event(seat.m_touch.view.get(), event);
+        wpe_view_event(view.get(), event);
         wpe_event_unref(event);
     },
     // up
     [](void* data, struct wl_touch*, uint32_t, uint32_t time, int32_t id)
     {
         auto& seat = *static_cast<WaylandSeat*>(data);
-        if (!seat.m_touch.view)
+        if (!seat.m_touch.toplevel)
             return;
 
         const auto& iter = seat.m_touch.points.find(id);
         if (iter == seat.m_touch.points.end())
             return;
 
-        auto* event = wpe_event_touch_new(WPE_EVENT_TOUCH_UP, seat.m_touch.view.get(), seat.m_touch.source, time, seat.modifiers(),
-            id, iter->value.first, iter->value.second);
-        wpe_view_event(seat.m_touch.view.get(), event);
-        wpe_event_unref(event);
+        if (GRefPtr<WPEView> view = wpeToplevelWaylandGetVisibleFocusedView(seat.m_touch.toplevel.get())) {
+            auto* event = wpe_event_touch_new(WPE_EVENT_TOUCH_UP, view.get(), seat.m_touch.source, time, seat.modifiers(),
+                id, iter->value.first, iter->value.second);
+            wpe_view_event(view.get(), event);
+            wpe_event_unref(event);
+        }
         seat.m_touch.points.remove(id);
     },
     // motion
     [](void* data, struct wl_touch*, uint32_t time, int32_t id, wl_fixed_t x, wl_fixed_t y)
     {
         auto& seat = *static_cast<WaylandSeat*>(data);
-        if (!seat.m_touch.view)
+        if (!seat.m_touch.toplevel)
             return;
 
         auto iter = seat.m_touch.points.find(id);
@@ -404,9 +433,13 @@ const struct wl_touch_listener WaylandSeat::s_touchListener = {
 
         iter->value = { wl_fixed_to_double(x), wl_fixed_to_double(y) };
 
-        auto* event = wpe_event_touch_new(WPE_EVENT_TOUCH_MOVE, seat.m_touch.view.get(), seat.m_touch.source, time, seat.modifiers(),
+        GRefPtr<WPEView> view = wpeToplevelWaylandGetVisibleFocusedView(seat.m_touch.toplevel.get());
+        if (!view)
+            return;
+
+        auto* event = wpe_event_touch_new(WPE_EVENT_TOUCH_MOVE, view.get(), seat.m_touch.source, time, seat.modifiers(),
             id, iter->value.first, iter->value.second);
-        wpe_view_event(seat.m_touch.view.get(), event);
+        wpe_view_event(view.get(), event);
         wpe_event_unref(event);
     },
     // frame
@@ -417,14 +450,16 @@ const struct wl_touch_listener WaylandSeat::s_touchListener = {
     [](void* data, struct wl_touch*)
     {
         auto& seat = *static_cast<WaylandSeat*>(data);
-        if (!seat.m_touch.view)
+        if (!seat.m_touch.toplevel)
             return;
 
-        for (const auto& iter : seat.m_touch.points) {
-            auto* event = wpe_event_touch_new(WPE_EVENT_TOUCH_CANCEL, seat.m_touch.view.get(), seat.m_touch.source, 0, seat.modifiers(),
-                iter.key, iter.value.first, iter.value.second);
-            wpe_view_event(seat.m_touch.view.get(), event);
-            wpe_event_unref(event);
+        if (GRefPtr<WPEView> view = wpeToplevelWaylandGetVisibleFocusedView(seat.m_touch.toplevel.get())) {
+            for (const auto& iter : seat.m_touch.points) {
+                auto* event = wpe_event_touch_new(WPE_EVENT_TOUCH_CANCEL, view.get(), seat.m_touch.source, 0, seat.modifiers(),
+                    iter.key, iter.value.first, iter.value.second);
+                wpe_view_event(view.get(), event);
+                wpe_event_unref(event);
+            }
         }
 
         seat.m_touch.points.clear();
@@ -496,8 +531,25 @@ void WaylandSeat::setCursor(struct wl_surface* surface, int32_t hotspotX, int32_
 
 void WaylandSeat::updateCursor()
 {
-    if (auto* cursor = wpeDisplayWaylandGetCursor(WPE_DISPLAY_WAYLAND(wpe_view_get_display(m_pointer.view.get()))))
+    if (auto* cursor = wpeDisplayWaylandGetCursor(WPE_DISPLAY_WAYLAND(wpe_toplevel_get_display(WPE_TOPLEVEL(m_pointer.toplevel.get())))))
         cursor->update();
+}
+
+void WaylandSeat::emitPointerEnter(WPEView* view) const
+{
+    if (!m_pointer.toplevel)
+        return;
+
+    auto* event = wpe_event_pointer_move_new(WPE_EVENT_POINTER_ENTER, view, m_pointer.source, 0, modifiers(), m_pointer.x, m_pointer.y, 0, 0);
+    wpe_view_event(view, event);
+    wpe_event_unref(event);
+}
+
+void WaylandSeat::emitPointerLeave(WPEView* view) const
+{
+    auto* event = wpe_event_pointer_move_new(WPE_EVENT_POINTER_LEAVE, view, m_pointer.source, 0, modifiers(), -1, -1, 0, 0);
+    wpe_view_event(view, event);
+    wpe_event_unref(event);
 }
 
 WPEModifiers WaylandSeat::modifiers() const
@@ -512,18 +564,20 @@ WPEModifiers WaylandSeat::modifiers() const
 
 void WaylandSeat::flushScrollEvent()
 {
-    WPEEvent* event = nullptr;
-    if (m_pointer.frame.valueX || m_pointer.frame.valueY) {
-        event = wpe_event_scroll_new(m_pointer.view.get(), m_pointer.frame.source, m_pointer.time, modifiers(), m_pointer.frame.valueX, m_pointer.frame.valueY,
-            FALSE, FALSE, m_pointer.x, m_pointer.y);
-    } else if (m_pointer.frame.isStop || m_pointer.frame.deltaX || m_pointer.frame.deltaY) {
-        event = wpe_event_scroll_new(m_pointer.view.get(), m_pointer.frame.source, m_pointer.time, modifiers(), m_pointer.frame.deltaX, m_pointer.frame.deltaY,
-            TRUE, m_pointer.frame.isStop && !m_pointer.frame.deltaX && !m_pointer.frame.deltaY, m_pointer.x, m_pointer.y);
-    }
+    if (GRefPtr<WPEView> view = wpeToplevelWaylandGetVisibleViewUnderPointer(m_pointer.toplevel.get())) {
+        WPEEvent* event = nullptr;
+        if (m_pointer.frame.valueX || m_pointer.frame.valueY) {
+            event = wpe_event_scroll_new(view.get(), m_pointer.frame.source, m_pointer.time, modifiers(), m_pointer.frame.valueX, m_pointer.frame.valueY,
+                FALSE, FALSE, m_pointer.x, m_pointer.y);
+        } else if (m_pointer.frame.isStop || m_pointer.frame.deltaX || m_pointer.frame.deltaY) {
+            event = wpe_event_scroll_new(view.get(), m_pointer.frame.source, m_pointer.time, modifiers(), m_pointer.frame.deltaX, m_pointer.frame.deltaY,
+                TRUE, m_pointer.frame.isStop && !m_pointer.frame.deltaX && !m_pointer.frame.deltaY, m_pointer.x, m_pointer.y);
+        }
 
-    if (event) {
-        wpe_view_event(m_pointer.view.get(), event);
-        wpe_event_unref(event);
+        if (event) {
+            wpe_view_event(view.get(), event);
+            wpe_event_unref(event);
+        }
     }
 
     m_pointer.frame = { };
@@ -547,7 +601,11 @@ static GSourceFuncs s_keyRepeatSourceFuncs = {
 
 void WaylandSeat::handleKeyEvent(uint32_t time, uint32_t key, uint32_t state, bool fromRepeat)
 {
-    if (!m_keyboard.view)
+    if (!m_keyboard.toplevel)
+        return;
+
+    GRefPtr<WPEView> view = wpeToplevelWaylandGetVisibleFocusedView(m_keyboard.toplevel.get());
+    if (!view)
         return;
 
     auto beginTime = MonotonicTime::now().secondsSinceEpoch();
@@ -599,12 +657,12 @@ void WaylandSeat::handleKeyEvent(uint32_t time, uint32_t key, uint32_t state, bo
         break;
     }
 
-    auto* event = wpe_event_keyboard_new(state ? WPE_EVENT_KEYBOARD_KEY_DOWN : WPE_EVENT_KEYBOARD_KEY_UP, m_keyboard.view.get(), m_keyboard.source, time,
+    auto* event = wpe_event_keyboard_new(state ? WPE_EVENT_KEYBOARD_KEY_DOWN : WPE_EVENT_KEYBOARD_KEY_UP, view.get(), m_keyboard.source, time,
         static_cast<WPEModifiers>(eventModifiers), key, keyval);
-    wpe_view_event(m_keyboard.view.get(), event);
+    wpe_view_event(view.get(), event);
     wpe_event_unref(event);
 
-    if (!m_keyboard.view)
+    if (!m_keyboard.toplevel || !wpeToplevelWaylandGetVisibleFocusedView(m_keyboard.toplevel.get()))
         return;
 
     auto* xkbKeymap = wpe_keymap_xkb_get_xkb_keymap(keymap);

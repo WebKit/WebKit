@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WPEDisplayQtQuick.h"
 
+#include "WPEToplevelQtQuick.h"
 #include "WPEViewQtQuick.h"
 
 #include <epoxy/egl.h>
@@ -94,7 +95,13 @@ static gboolean wpeDisplayQtQuickConnect(WPEDisplay* display, GError** error)
 
 static WPEView* wpeDisplayQtQuickCreateView(WPEDisplay* display)
 {
-    return wpe_view_qtquick_new(WPE_DISPLAY_QTQUICK(display));
+    auto* displayQt = WPE_DISPLAY_QTQUICK(display);
+    auto* view = wpe_view_qtquick_new(displayQt);
+
+    GRefPtr<WPEToplevel> toplevel = adoptGRef(wpe_toplevel_qtquick_new(displayQt));
+    wpe_view_set_toplevel(view, toplevel.get());
+
+    return view;
 }
 
 static gpointer wpeDisplayQtQuickGetEGLDisplay(WPEDisplay* display, GError**)

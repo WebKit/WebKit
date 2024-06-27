@@ -172,14 +172,16 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/parameter_name", "-readability/naming/acronym"]),
 
     ([
-        # The WPEViewQtQuick / WPEDisplayQtQuick follow GLib API conventions.
+        # The WPE QtQuick files follow GLib API conventions.
         os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEViewQtQuick.h'),
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEToplevelQtQuick.h'),
         os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEDisplayQtQuick.h')],
      ["-build/header_guard", "-readability/naming/underscores", "-readability/parameter_name", "-whitespace/declaration", "-whitespace/parens"]),
 
     ([
-        # The WPEViewQtQuick / WPEDisplayQtQuick follow GLib API conventions.
+        # The WPE QtQuick files follow GLib API conventions.
         os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEViewQtQuick.cpp'),
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEToplevelQtQuick.cpp'),
         os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEDisplayQtQuick.cpp')],
      ["-build/include_order", "-whitespace/parens"]),
 

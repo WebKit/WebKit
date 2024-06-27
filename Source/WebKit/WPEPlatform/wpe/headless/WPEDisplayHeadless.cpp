@@ -28,6 +28,7 @@
 
 #include "WPEBufferDMABufFormats.h"
 #include "WPEExtensions.h"
+#include "WPEToplevelHeadless.h"
 #include "WPEViewHeadless.h"
 #include <gio/gio.h>
 #include <wtf/glib/GRefPtr.h>
@@ -55,7 +56,10 @@ static gboolean wpeDisplayHeadlessConnect(WPEDisplay*, GError**)
 
 static WPEView* wpeDisplayHeadlessCreateView(WPEDisplay* display)
 {
-    return wpe_view_headless_new(WPE_DISPLAY_HEADLESS(display));
+    auto* view = wpe_view_headless_new(WPE_DISPLAY_HEADLESS(display));
+    GRefPtr<WPEToplevel> toplevel = adoptGRef(wpe_toplevel_headless_new(WPE_DISPLAY_HEADLESS(display)));
+    wpe_view_set_toplevel(view, toplevel.get());
+    return view;
 }
 
 #if USE(LIBDRM)
