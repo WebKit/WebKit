@@ -1266,8 +1266,14 @@ static Ref<CSSValue> valueForScrollbarGutter(const ScrollbarGutter& gutter)
     return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueStable), CSSPrimitiveValue::create(CSSValueBothEdges));
 }
 
-static Ref<CSSValueList> valueForTextBoxEdge(const TextBoxEdge& textBoxEdge)
+static Ref<CSSValue> valueForTextBoxEdge(const TextBoxEdge& textBoxEdge)
 {
+    if (textBoxEdge.over == TextBoxEdgeType::Leading && textBoxEdge.under == TextBoxEdgeType::Leading)
+        return createConvertingToCSSValueID(textBoxEdge.over);
+
+    if (textBoxEdge.under == TextBoxEdgeType::Text)
+        return createConvertingToCSSValueID(textBoxEdge.over);
+
     return CSSValueList::createSpaceSeparated(createConvertingToCSSValueID(textBoxEdge.over),
         createConvertingToCSSValueID(textBoxEdge.under));
 }
