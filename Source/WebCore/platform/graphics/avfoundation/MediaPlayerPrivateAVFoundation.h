@@ -277,9 +277,6 @@ protected:
 
     virtual bool isHLS() const { return false; }
 
-    static bool isUnsupportedMIMEType(const String&);
-    static const HashSet<String>& staticMIMETypeList();
-
     void updateStates();
 
     void setHasVideo(bool);
