@@ -7248,3 +7248,5 @@ fast/events/ios/rotation/layout-viewport-during-rotation.html [ Failure ]
 fast/events/ios/rotation/safari-like-rotation.html [ Failure ]
 
 webkit.org/b/275713 fast/text/international/system-language/declarative-language.html [ Failure ]
+
+webkit.org/b/275963 [ x86_64 ] svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Failure ]
