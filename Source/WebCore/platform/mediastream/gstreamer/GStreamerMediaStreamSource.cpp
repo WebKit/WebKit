@@ -632,6 +632,7 @@ struct _WebKitMediaStreamSrcPrivate {
     GUniquePtr<GstFlowCombiner> flowCombiner;
     Atomic<unsigned> audioPadCounter;
     Atomic<unsigned> videoPadCounter;
+    unsigned groupId;
 };
 
 enum {
@@ -766,6 +767,7 @@ static void webkitMediaStreamSrcConstructed(GObject* object)
 
     priv->mediaStreamObserver = makeUnique<WebKitMediaStreamObserver>(GST_ELEMENT_CAST(self));
     priv->flowCombiner = GUniquePtr<GstFlowCombiner>(gst_flow_combiner_new());
+    priv->groupId = gst_util_group_id_next();
 
     // https://bugs.webkit.org/show_bug.cgi?id=214150
     ASSERT(GST_OBJECT_REFCOUNT(self) == 1);
@@ -1038,7 +1040,7 @@ void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPr
     data->sourceType = track->source().type();
     data->collection = webkitMediaStreamSrcCreateStreamCollection(self);
     data->streamStartEvent = adoptGRef(gst_event_new_stream_start(gst_stream_get_stream_id(stream)));
-    gst_event_set_group_id(data->streamStartEvent.get(), 1);
+    gst_event_set_group_id(data->streamStartEvent.get(), self->priv->groupId);
     gst_event_set_stream(data->streamStartEvent.get(), stream);
 
     GRefPtr stickyStreamStartEvent = data->streamStartEvent;
