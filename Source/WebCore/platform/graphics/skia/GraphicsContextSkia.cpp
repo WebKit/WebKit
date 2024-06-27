@@ -286,6 +286,10 @@ void GraphicsContextSkia::drawNativeImageInternal(NativeImage& nativeImage, cons
     paint.setBlendMode(toSkiaBlendMode(options.compositeOperator(), options.blendMode()));
     bool inExtraTransparencyLayer = false;
     if (hasDropShadow()) {
+        if (image->isTextureBacked() && renderingMode() == RenderingMode::Unaccelerated) {
+            // When drawing GPU-backed image on CPU-backed canvas with filter, we need to convert image to CPU-backed one.
+            image = image->makeRasterImage();
+        }
         inExtraTransparencyLayer = drawOutsetShadow(paint, [&](const SkPaint& paint) {
             m_canvas.drawImageRect(image, normalizedSrcRect, normalizedDestRect, toSkSamplingOptions(m_state.imageInterpolationQuality()), &paint, { });
         });

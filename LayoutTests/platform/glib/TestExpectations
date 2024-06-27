@@ -1458,15 +1458,7 @@ webkit.org/b/272582 fast/canvas/canvas-strokeRect-alpha-shadow.html [ Failure ]
 webkit.org/b/272582 fast/canvas/canvas-strokeRect-gradient-shadow.html [ Failure ]
 webkit.org/b/274513 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-canvas.html [ ImageOnlyFailure ]
 
-webkit.org/b/274830 [ Release ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w.html [ Failure ]
-webkit.org/b/274830 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.alpha.html [ Failure ]
-webkit.org/b/274830 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.alpha.worker.html [ Failure ]
-webkit.org/b/274830 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.basic.html [ Failure ]
-webkit.org/b/274830 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.basic.worker.html [ Failure ]
-webkit.org/b/274830 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.scale.html [ Failure ]
-webkit.org/b/274830 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.scale.worker.html [ Failure ]
-webkit.org/b/274830 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.transparent.2.html [ Failure ]
-webkit.org/b/274830 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.transparent.2.worker.html [ Failure ]
+webkit.org/b/275898 [ Release ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w.html [ Failure ]
 webkit.org/b/273766 fast/canvas/canvas-scale-shadowBlur.html [ Failure ]
 
 # Minor reftest image differences introduced with skia.
