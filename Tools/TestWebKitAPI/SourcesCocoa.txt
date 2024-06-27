@@ -46,6 +46,7 @@ cocoa/TestWKWebViewConfiguration.mm
 cocoa/UserMediaCaptureUIDelegate.mm
 
 Tests/WebKitCocoa/AVFoundationPreference.mm
+Tests/WebKitCocoa/AdaptiveImageGlyph.mm
 Tests/WebKitCocoa/AdditionalReadAccessAllowedURLs.mm
 Tests/WebKitCocoa/AdditionalSupportedImageTypes.mm
 Tests/WebKitCocoa/AlwaysRevalidatedURLSchemes.mm
@@ -350,7 +351,6 @@ Tests/WebKitCocoa/WKWebsiteDatastore.mm
 Tests/WebKitCocoa/WebContentProcessDidTerminate.mm
 Tests/WebKitCocoa/WebCryptoMasterKey.mm
 Tests/WebKitCocoa/WebLocks.mm
-Tests/WebKitCocoa/WebMultiRepresentationHEICAttachmentTests.mm
 Tests/WebKitCocoa/WebProcessKillIDBCleanup.mm
 Tests/WebKitCocoa/WebProcessTerminate.mm
 Tests/WebKitCocoa/WebPushDaemon.mm

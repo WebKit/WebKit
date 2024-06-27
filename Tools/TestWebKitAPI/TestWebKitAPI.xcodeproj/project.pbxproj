@@ -1140,6 +1140,7 @@
 		E55999F72B476C2F00A3719F /* FullscreenLayoutParameters.mm in Sources */ = {isa = PBXBuildFile; fileRef = E55999F62B476C2F00A3719F /* FullscreenLayoutParameters.mm */; };
 		E57B44C129ABFB3B006069DE /* qr-code.png in Copy Resources */ = {isa = PBXBuildFile; fileRef = E57B44C029ABFAA4006069DE /* qr-code.png */; };
 		E589183C252BC90A0041DED5 /* DateTimeInputsAccessoryViewTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = E589183B252BC90A0041DED5 /* DateTimeInputsAccessoryViewTests.mm */; };
+		E59CF8232C2D1EAE00891383 /* adaptive-image-glyph.heic in Copy Resources */ = {isa = PBXBuildFile; fileRef = E59CF8222C2D1E3700891383 /* adaptive-image-glyph.heic */; };
 		E5AA42F2259128AE00410A3D /* UserInterfaceIdiomUpdate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5AA42F1259128AE00410A3D /* UserInterfaceIdiomUpdate.mm */; };
 		E5AA8D1D25151CC60051CC45 /* DateInputTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5AA8D1C25151CC60051CC45 /* DateInputTests.mm */; };
 		EB230D41245E813F00C66AD1 /* IDBCheckpointWAL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = EB230D3D245E722E00C66AD1 /* IDBCheckpointWAL.html */; };
@@ -1518,6 +1519,7 @@
 				55A81800218102210004A39A /* 400x400-green.png in Copy Resources */,
 				379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */,
 				F4A7CE7A2662D86C00228685 /* active-touch-events.html in Copy Resources */,
+				E59CF8232C2D1EAE00891383 /* adaptive-image-glyph.heic in Copy Resources */,
 				725C3EF322058A5B007C36FC /* AdditionalSupportedImageTypes.html in Copy Resources */,
 				4C453A44294A469500D91D2B /* Ahem-10000A.ttf in Copy Resources */,
 				1C2B81871C8925A000A5529F /* Ahem.ttf in Copy Resources */,
@@ -3513,9 +3515,10 @@
 		E55999F62B476C2F00A3719F /* FullscreenLayoutParameters.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FullscreenLayoutParameters.mm; sourceTree = "<group>"; };
 		E57B44C029ABFAA4006069DE /* qr-code.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "qr-code.png"; sourceTree = "<group>"; };
 		E589183B252BC90A0041DED5 /* DateTimeInputsAccessoryViewTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DateTimeInputsAccessoryViewTests.mm; sourceTree = "<group>"; };
+		E59CF8222C2D1E3700891383 /* adaptive-image-glyph.heic */ = {isa = PBXFileReference; lastKnownFileType = file; path = "adaptive-image-glyph.heic"; sourceTree = "<group>"; };
 		E5AA42F1259128AE00410A3D /* UserInterfaceIdiomUpdate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UserInterfaceIdiomUpdate.mm; sourceTree = "<group>"; };
 		E5AA8D1C25151CC60051CC45 /* DateInputTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DateInputTests.mm; sourceTree = "<group>"; };
-		E5F67D662B637F9200CC30DE /* WebMultiRepresentationHEICAttachmentTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebMultiRepresentationHEICAttachmentTests.mm; sourceTree = "<group>"; };
+		E5F67D662B637F9200CC30DE /* AdaptiveImageGlyph.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AdaptiveImageGlyph.mm; sourceTree = "<group>"; };
 		EB0E04122B7C228D00EFFB94 /* ProcessInfo.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessInfo.mm; sourceTree = "<group>"; };
 		EB230D3D245E722E00C66AD1 /* IDBCheckpointWAL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IDBCheckpointWAL.html; sourceTree = "<group>"; };
 		EB230D3E245E726300C66AD1 /* IDBCheckpointWAL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IDBCheckpointWAL.mm; sourceTree = "<group>"; };
@@ -4047,6 +4050,7 @@
 				57C6244D2346BCFA00383FE7 /* _WKWebAuthenticationPanel.mm */,
 				0746645822FF630500E3451A /* AccessibilityTestPlugin.mm */,
 				0746645722FF62D000E3451A /* AccessibilityTestSupportProtocol.h */,
+				E5F67D662B637F9200CC30DE /* AdaptiveImageGlyph.mm */,
 				37E7DD631EA06FF2009B396D /* AdditionalReadAccessAllowedURLs.mm */,
 				37E7DD661EA071F3009B396D /* AdditionalReadAccessAllowedURLsPlugin.mm */,
 				37E7DD651EA0715B009B396D /* AdditionalReadAccessAllowedURLsProtocol.h */,
@@ -4328,7 +4332,6 @@
 				57A79856224AB34E00A7F6F1 /* WebCryptoMasterKey.mm */,
 				5C973F5B1F58EF0A00359C27 /* WebGLPolicy.mm */,
 				46061545275824B400AB613D /* WebLocks.mm */,
-				E5F67D662B637F9200CC30DE /* WebMultiRepresentationHEICAttachmentTests.mm */,
 				51714EB61CF8C7A4004723C4 /* WebProcessKillIDBCleanup.mm */,
 				C1D8EE212028E8E3008EB141 /* WebProcessTerminate.mm */,
 				5C157A022717C3B100ED5280 /* WebPushDaemon.mm */,
@@ -4809,6 +4812,7 @@
 				72F21E9728C9214C007BF315 /* 100x100-red.jp2 */,
 				55A817FE218101DF0004A39A /* 100x100-red.tga */,
 				55A817FD218101DF0004A39A /* 400x400-green.png */,
+				E59CF8222C2D1E3700891383 /* adaptive-image-glyph.heic */,
 				F4CFCDD9249FC9D900527482 /* Ahem.ttf */,
 				46C1EA9725758805005E409E /* alert.html */,
 				C25CCA0C1E5140E50026CB8A /* AllAhem.svg */,
