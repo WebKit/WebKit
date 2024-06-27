@@ -280,6 +280,9 @@ void FetchBodyOwner::blobLoadingSucceeded()
     }
 
     m_body->loadingSucceeded(contentType());
+    if (!m_blobLoader)
+        return;
+
     finishBlobLoading();
 }
 
@@ -318,6 +321,12 @@ void FetchBodyOwner::BlobLoader::didFail(const ResourceError&)
     // didFail might be called within FetchLoader::start call.
     if (loader->isStarted())
         owner.blobLoadingFailed();
+}
+
+void FetchBodyOwner::BlobLoader::didSucceed(const NetworkLoadMetrics&)
+{
+    Ref protectedOwner = Ref { owner };
+    protectedOwner->blobLoadingSucceeded();
 }
 
 ExceptionOr<RefPtr<ReadableStream>> FetchBodyOwner::readableStream(JSC::JSGlobalObject& state)

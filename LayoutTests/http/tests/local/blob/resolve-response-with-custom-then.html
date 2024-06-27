@@ -1,0 +1,25 @@
+<body>
+<p>Test passes if the load succeeds.</p>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    setTimeout(() => testRunner.notifyDone(), 500);
+}
+
+const f = document.body.appendChild(document.createElement('iframe'));
+f.srcdoc = `<script>
+    function fetchBlob() {
+        Object.prototype.__defineGetter__('then', (r) => {
+            window.frameElement.remove();
+            $vm.edenGC();
+            location = r;
+        });
+        const response = new Response(new Blob(['/dne.html']));
+        response.blob();
+    }
+    setTimeout(fetchBlob);
+</` + `script>`;
+
+</script>
+</body>
