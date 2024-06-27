@@ -6205,34 +6205,18 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValCustomHandlerImpl(VM& vm)
 
     InlineCacheCompiler::emitDataICPrologue(jit);
 
-    auto usedRegisters = RegisterSetBuilder::stubUnavailableRegisters();
-    usedRegisters.add(profileGPR, IgnoreVectors);
-    ScratchRegisterAllocator allocator(usedRegisters);
-    allocator.lock(baseJSR);
-    allocator.lock(valueJSR);
-    allocator.lock(propertyJSR);
-    allocator.lock(stubInfoGPR);
-    allocator.lock(scratch1GPR);
-    allocator.lock(scratch2GPR);
-    allocator.lock(GPRInfo::handlerGPR);
-
-    GPRReg scratch3GPR = allocator.allocateScratchGPR();
-    GPRReg scratch4GPR = allocator.allocateScratchGPR();
-
-    auto preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
-
     CCallHelpers::JumpList fallThrough;
 
     fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseJSR.payloadGPR(), scratch1GPR));
     fallThrough.append(InlineCacheCompiler::emitDataICCheckUid(jit, isSymbol, propertyJSR, scratch1GPR));
 
-    customSetterHandlerImpl<isAccessor>(vm, jit, baseJSR, valueJSR, stubInfoGPR, scratch1GPR, scratch2GPR, scratch3GPR, scratch4GPR);
-    allocator.restoreReusedRegistersByPopping(jit, preservedState);
+    // At this point, we will not go to slow path, so clobbering the other registers are fine.
+    // We use propertyJSR and profileGPR for scratch register purpose.
+    customSetterHandlerImpl<isAccessor>(vm, jit, baseJSR, valueJSR, stubInfoGPR, scratch1GPR, scratch2GPR, propertyJSR.payloadGPR(), profileGPR);
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
     fallThrough.link(&jit);
-    allocator.restoreReusedRegistersByPopping(jit, preservedState);
     InlineCacheCompiler::emitDataICJumpNextHandler(jit);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
