@@ -4135,6 +4135,7 @@ RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange& range, const CSS
     if (isUASheetBehavior(context.mode)) {
         auto internalKeyword = consumeIdent<
             CSSValueInternalDisclosureClosed,
+            CSSValueInternalDisclosureOpen,
             CSSValueInternalSimplifiedChineseInformal,
             CSSValueInternalSimplifiedChineseFormal,
             CSSValueInternalTraditionalChineseInformal,

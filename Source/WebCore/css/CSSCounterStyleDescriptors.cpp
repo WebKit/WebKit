@@ -301,6 +301,7 @@ bool CSSCounterStyleDescriptors::areSymbolsValidForSystem(CSSCounterStyleDescrip
     case System::Extends:
         return !symbols.size() && !additiveSymbols.size();
     case System::DisclosureClosed:
+    case System::DisclosureOpen:
         return true;
     default:
         ASSERT_NOT_REACHED();
@@ -436,6 +437,7 @@ String CSSCounterStyleDescriptors::systemCSSText() const
     case System::TraditionalChineseFormal:
     case System::EthiopicNumeric:
     case System::DisclosureClosed:
+    case System::DisclosureOpen:
         return emptyString();
     }
     return emptyString();

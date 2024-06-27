@@ -1666,6 +1666,7 @@ symbolic
 additive
 // fixed
 -internal-disclosure-closed
+-internal-disclosure-open
 -internal-simplified-chinese-informal
 -internal-simplified-chinese-formal
 -internal-traditional-chinese-informal

@@ -29,6 +29,7 @@
 #include "CSSCounterStyleDescriptors.h"
 #include "CSSCounterStyleRegistry.h"
 #include <cmath>
+#include <wtf/Assertions.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -237,9 +238,44 @@ static String counterForSystemCJK(int number, const std::array<UChar, 17>& table
     return std::span<const UChar> { characters, length };
 }
 
-String CSSCounterStyle::counterForSystemDisclosureClosed(TextDirection textDirection)
+String CSSCounterStyle::counterForSystemDisclosureClosed(TextFlow textFlow)
 {
-    return textDirection == TextDirection::LTR ? span(blackRightPointingSmallTriangle) : span(blackLeftPointingSmallTriangle);
+    switch (textFlow) {
+    case TextFlow::InlineEastBlockSouth:
+    case TextFlow::InlineEastBlockNorth:
+        return span(blackRightPointingSmallTriangle);
+    case TextFlow::InlineWestBlockSouth:
+    case TextFlow::InlineWestBlockNorth:
+        return span(blackLeftPointingSmallTriangle);
+    case TextFlow::InlineSouthBlockEast:
+    case TextFlow::InlineNorthBlockEast:
+        return span(blackDownPointingSmallTriangle);
+    case TextFlow::InlineSouthBlockWest:
+    case TextFlow::InlineNorthBlockWest:
+        return span(blackUpPointingSmallTriangle);
+    }
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+String CSSCounterStyle::counterForSystemDisclosureOpen(TextFlow textFlow)
+{
+    switch (textFlow) {
+    case TextFlow::InlineEastBlockSouth:
+    case TextFlow::InlineWestBlockSouth:
+        return span(blackDownPointingSmallTriangle);
+    case TextFlow::InlineEastBlockNorth:
+    case TextFlow::InlineWestBlockNorth:
+        return span(blackUpPointingSmallTriangle);
+    case TextFlow::InlineSouthBlockEast:
+    case TextFlow::InlineSouthBlockWest:
+        return span(blackRightPointingSmallTriangle);
+    case TextFlow::InlineNorthBlockEast:
+    case TextFlow::InlineNorthBlockWest:
+        return span(blackLeftPointingSmallTriangle);
+    }
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 String CSSCounterStyle::counterForSystemSimplifiedChineseInformal(int value)
@@ -332,7 +368,7 @@ String CSSCounterStyle::counterForSystemEthiopicNumeric(unsigned value)
     return std::span<const UChar> { buffer, length };
 }
 
-String CSSCounterStyle::initialRepresentation(int value, TextDirection textDirection) const
+String CSSCounterStyle::initialRepresentation(int value, TextFlow textFlow) const
 {
     unsigned absoluteValue = std::abs(value);
     switch (system()) {
@@ -349,7 +385,9 @@ String CSSCounterStyle::initialRepresentation(int value, TextDirection textDirec
     case CSSCounterStyleDescriptors::System::Fixed:
         return counterForSystemFixed(value);
     case CSSCounterStyleDescriptors::System::DisclosureClosed:
-        return counterForSystemDisclosureClosed(textDirection);
+        return counterForSystemDisclosureClosed(textFlow);
+    case CSSCounterStyleDescriptors::System::DisclosureOpen:
+        return counterForSystemDisclosureOpen(textFlow);
     case CSSCounterStyleDescriptors::System::SimplifiedChineseInformal:
         return CSSCounterStyle::counterForSystemSimplifiedChineseInformal(value);
     case CSSCounterStyleDescriptors::System::SimplifiedChineseFormal:
@@ -368,26 +406,26 @@ String CSSCounterStyle::initialRepresentation(int value, TextDirection textDirec
     return { };
 }
 
-String CSSCounterStyle::fallbackText(int value, TextDirection textDirection)
+String CSSCounterStyle::fallbackText(int value, TextFlow textFlow)
 {
     if (m_isFallingBack || !fallback().get()) {
         m_isFallingBack = false;
-        return CSSCounterStyleRegistry::decimalCounter()->text(value, textDirection);
+        return CSSCounterStyleRegistry::decimalCounter()->text(value, textFlow);
     }
     m_isFallingBack = true;
-    auto fallbackText = fallback()->text(value, textDirection);
+    auto fallbackText = fallback()->text(value, textFlow);
     m_isFallingBack = false;
     return fallbackText;
 }
 
-String CSSCounterStyle::text(int value, TextDirection textDirection)
+String CSSCounterStyle::text(int value, TextFlow textFlow)
 {
     if (!isInRange(value))
-        return fallbackText(value, textDirection);
+        return fallbackText(value, textFlow);
 
-    auto result = initialRepresentation(value, textDirection);
+    auto result = initialRepresentation(value, textFlow);
     if (result.isNull())
-        return fallbackText(value, textDirection);
+        return fallbackText(value, textFlow);
     applyPadSymbols(result, value);
     if (shouldApplyNegativeSymbols(value))
         applyNegativeSymbols(result);
@@ -430,6 +468,7 @@ bool CSSCounterStyle::isInRange(int value) const
         case CSSCounterStyleDescriptors::System::Numeric:
         case CSSCounterStyleDescriptors::System::Fixed:
         case CSSCounterStyleDescriptors::System::DisclosureClosed:
+        case CSSCounterStyleDescriptors::System::DisclosureOpen:
             return true;
         case CSSCounterStyleDescriptors::System::Alphabetic:
         case CSSCounterStyleDescriptors::System::Symbolic:

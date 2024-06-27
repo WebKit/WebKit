@@ -271,7 +271,7 @@
 }
 
 @counter-style disclosure-open {
-    system: cyclic;
+    system: -internal-disclosure-open;
     suffix: " ";
     /* for symbols, see normative text */
     symbols: "\25BE";
