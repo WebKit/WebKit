@@ -185,6 +185,7 @@ Tests/WebKitCocoa/NavigationAction.mm
 Tests/WebKitCocoa/NetworkProcess.mm
 Tests/WebKitCocoa/NetworkProcessCrashNonPersistentDataStore.mm
 Tests/WebKitCocoa/NoPauseWhenSwitchingTabs.mm
+Tests/WebKitCocoa/NoResumeSoundPlayedToTheEndAfterThePageBecomesVisible.mm
 Tests/WebKitCocoa/NotificationAPI.mm
 Tests/WebKitCocoa/NowPlaying.mm
 Tests/WebKitCocoa/NowPlayingControlsTests.mm

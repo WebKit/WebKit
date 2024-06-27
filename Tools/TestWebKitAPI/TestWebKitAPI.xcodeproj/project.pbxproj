@@ -52,6 +52,7 @@
 		0721D4592838296C00A95853 /* start-offset.ts in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0721D4582838295400A95853 /* start-offset.ts */; };
 		07492B3B1DF8B14C00633DE1 /* EnumerateMediaDevices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07492B3A1DF8AE2D00633DE1 /* EnumerateMediaDevices.cpp */; };
 		07492B3C1DF8B86600633DE1 /* enumerateMediaDevices.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 07492B391DF8ADA400633DE1 /* enumerateMediaDevices.html */; };
+		07492B3C1DF8B86600633EQ1 /* playable-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 07492B391DF8ADA400633DQ1 /* playable-audio.html */; };
 		074994421EA5034B000DA44D /* invalidDeviceIDHashSalts in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4A410F4D19AF7BEF002EBAB4 /* invalidDeviceIDHashSalts */; };
 		074994421EA5034B000DA44E /* getUserMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4A410F4D19AF7BEF002EBAB5 /* getUserMedia.html */; };
 		074994421EA5034B000DA44F /* ondevicechange.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4A410F4D19AF7BEF002EBAB6 /* ondevicechange.html */; };
@@ -1875,6 +1876,7 @@
 				9B7D740F1F8378770006C432 /* paste-rtfd.html in Copy Resources */,
 				3FCC4FE81EC4E8CA0076E37C /* PictureInPictureDelegate.html in Copy Resources */,
 				F415086D1DA040C50044BE9B /* play-audio-on-click.html in Copy Resources */,
+				07492B3C1DF8B86600633EQ1 /* playable-audio.html in Copy Resources */,
 				0EBBCC661FFF9E0C00FA42AB /* pop-up-check.html in Copy Resources */,
 				465C23AF2640C3FE00F2FC7F /* postMessage-regularly.html in Copy Resources */,
 				46FD40382A6B3E6800A1B210 /* postMessage-various-types.html in Copy Resources */,
@@ -2058,6 +2060,7 @@
 		0746645722FF62D000E3451A /* AccessibilityTestSupportProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityTestSupportProtocol.h; sourceTree = "<group>"; };
 		0746645822FF630500E3451A /* AccessibilityTestPlugin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTestPlugin.mm; sourceTree = "<group>"; };
 		07492B391DF8ADA400633DE1 /* enumerateMediaDevices.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = enumerateMediaDevices.html; sourceTree = "<group>"; };
+		07492B391DF8ADA400633DQ1 /* playable-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = playable-audio.html; sourceTree = "<group>"; };
 		07492B3A1DF8AE2D00633DE1 /* EnumerateMediaDevices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnumerateMediaDevices.cpp; sourceTree = "<group>"; };
 		074AD7092B604E7600FFA67B /* WritingTools.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WritingTools.mm; sourceTree = "<group>"; };
 		075A9CF426177217006DFA3A /* MediaSessionCoordinatorTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSessionCoordinatorTest.mm; sourceTree = "<group>"; };
@@ -2072,6 +2075,7 @@
 		079D45F12A2A6BBE003830C7 /* Viewport.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Viewport.mm; sourceTree = "<group>"; };
 		07C046C91E42573E007201E7 /* CARingBufferTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CARingBufferTest.cpp; sourceTree = "<group>"; };
 		07CC7DFD2266330800E39181 /* MediaBufferingPolicy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaBufferingPolicy.mm; sourceTree = "<group>"; };
+		07CC7DFD2266330800E39281 /* NoResumeSoundPlayedToTheEndAfterThePageBecomesVisible.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NoResumeSoundPlayedToTheEndAfterThePageBecomesVisible.mm; sourceTree = "<group>"; };
 		07CD32F52065B5420064A4BE /* AVFoundationPreference.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationPreference.mm; sourceTree = "<group>"; };
 		07CD32F72065B72A0064A4BE /* video.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = video.html; sourceTree = "<group>"; };
 		07CE1CF21F06A7E000BF89F5 /* GetUserMediaNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetUserMediaNavigation.mm; sourceTree = "<group>"; };
@@ -4213,6 +4217,7 @@
 				5C8BC798218CF3E900813886 /* NetworkProcess.mm */,
 				5CAE4637201937CD0051610F /* NetworkProcessCrashNonPersistentDataStore.mm */,
 				CDCFFEC022E268D500DF4223 /* NoPauseWhenSwitchingTabs.mm */,
+				07CC7DFD2266330800E39281 /* NoResumeSoundPlayedToTheEndAfterThePageBecomesVisible.mm */,
 				46A80F25264C29D400EEF20D /* NotificationAPI.mm */,
 				CD2D0D19213465560018C784 /* NowPlaying.mm */,
 				2ECFF5541D9B12F800B55394 /* NowPlayingControlsTests.mm */,
@@ -5597,6 +5602,7 @@
 				41848F4324891815000E2588 /* open-window-with-file-url-with-host.html */,
 				1CB2F27D24F883BE000A5BC1 /* orthogonal-flow-available-size.html */,
 				83148B08202AC76800BADE99 /* override-builtins-test.html */,
+				07492B391DF8ADA400633DQ1 /* playable-audio.html */,
 				0EBBCC651FFF9DCE00FA42AB /* pop-up-check.html */,
 				F6FDDDD514241C48004F1729 /* push-state.html */,
 				E57B44C029ABFAA4006069DE /* qr-code.png */,
