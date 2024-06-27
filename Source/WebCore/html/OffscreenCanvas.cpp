@@ -149,13 +149,11 @@ void OffscreenCanvas::setHeight(unsigned newHeight)
 
 void OffscreenCanvas::setSize(const IntSize& newSize)
 {
-    auto oldWidth = width();
-    auto oldHeight = height();
     CanvasBase::setSize(newSize);
     reset();
 
     if (RefPtr context = dynamicDowncast<GPUBasedCanvasRenderingContext>(m_context.get()))
-        context->reshape(width(), height(), oldWidth, oldHeight);
+        context->reshape();
 }
 
 #if ENABLE(WEBGL)

@@ -841,25 +841,18 @@ RefPtr<ImageBuffer> WebGLRenderingContextBase::transferToImageBuffer()
     return buffer;
 }
 
-void WebGLRenderingContextBase::reshape(int width, int height, int oldWidth, int oldHeight)
+void WebGLRenderingContextBase::reshape()
 {
     if (isContextLost())
         return;
 
-    if (width == oldWidth && height == oldHeight)
+    auto newSize = clampedCanvasSize();
+    if (newSize == m_defaultFramebuffer->size())
         return;
-
-    // This is an approximation because at WebGLRenderingContext level we don't
-    // know if the underlying FBO uses textures or renderbuffers.
-    GCGLint maxSize = std::min(m_maxTextureSize, m_maxRenderbufferSize);
-    GCGLint maxWidth = std::min(maxSize, m_maxViewportDims[0]);
-    GCGLint maxHeight = std::min(maxSize, m_maxViewportDims[1]);
-    width = std::clamp(width, 1, maxWidth);
-    height = std::clamp(height, 1, maxHeight);
 
     // We don't have to mark the canvas as dirty, since the newly created image buffer will also start off
     // clear (and this matches what reshape will do).
-    m_defaultFramebuffer->reshape({ width, height });
+    m_defaultFramebuffer->reshape(newSize);
 
     auto& textureUnit = m_textureUnits[m_activeTextureUnit];
     m_context->bindTexture(GraphicsContextGL::TEXTURE_2D, objectOrZero(textureUnit.texture2DBinding.get()));
@@ -873,7 +866,7 @@ int WebGLRenderingContextBase::drawingBufferWidth() const
     if (isContextLost())
         return 0;
 
-    return m_context->getInternalFramebufferSize().width();
+    return m_defaultFramebuffer->size().width();
 }
 
 int WebGLRenderingContextBase::drawingBufferHeight() const
@@ -881,7 +874,7 @@ int WebGLRenderingContextBase::drawingBufferHeight() const
     if (isContextLost())
         return 0;
 
-    return m_context->getInternalFramebufferSize().height();
+    return m_defaultFramebuffer->size().height();
 }
 
 void WebGLRenderingContextBase::setDrawingBufferColorSpace(PredefinedColorSpace colorSpace)
@@ -5368,7 +5361,9 @@ void WebGLRenderingContextBase::synthesizeLostContextGLError(GCGLenum error, ASC
 
 IntSize WebGLRenderingContextBase::clampedCanvasSize()
 {
-    IntSize canvasSize { static_cast<int>(canvasBase().width()), static_cast<int>(canvasBase().height()) };
+    auto canvasSize = canvasBase().size();
+    int maxDim = std::min(m_maxTextureSize, m_maxRenderbufferSize);
+    canvasSize.clampToMaximumSize({ maxDim, maxDim });
     return canvasSize.constrainedBetween({ 1, 1 }, { m_maxViewportDims[0], m_maxViewportDims[1] });
 }
 

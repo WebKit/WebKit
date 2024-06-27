@@ -63,7 +63,7 @@ public:
     bool needsPreparationForDisplay() const override { return true; }
     void prepareForDisplay() override;
     ImageBufferPixelFormat pixelFormat() const override;
-    void reshape(int width, int height, int oldWidth, int oldHeight) override;
+    void reshape() override;
 
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) override;

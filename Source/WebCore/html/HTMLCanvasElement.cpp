@@ -603,7 +603,7 @@ void HTMLCanvasElement::reset()
 
     if (m_context) {
         if (auto* context = dynamicDowncast<GPUBasedCanvasRenderingContext>(*m_context))
-            context->reshape(width(), height(), oldSize.width(), oldSize.height());
+            context->reshape();
     }
 
     if (CheckedPtr canvasRenderer = dynamicDowncast<RenderHTMLCanvas>(renderer())) {

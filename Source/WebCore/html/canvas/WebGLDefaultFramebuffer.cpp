@@ -52,6 +52,11 @@ WebGLDefaultFramebuffer::WebGLDefaultFramebuffer(WebGLRenderingContextBase& cont
     }
 }
 
+IntSize WebGLDefaultFramebuffer::size() const
+{
+    return m_context.protectedGraphicsContextGL()->getInternalFramebufferSize();
+}
+
 void WebGLDefaultFramebuffer::reshape(IntSize size)
 {
     m_context.protectedGraphicsContextGL()->reshape(size.width(), size.height());
