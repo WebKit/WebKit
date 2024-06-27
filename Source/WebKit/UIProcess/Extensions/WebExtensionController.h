@@ -173,6 +173,9 @@ public:
     void resourceLoadDidReceiveResponse(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceResponse&);
     void resourceLoadDidCompleteWithError(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceResponse&, const WebCore::ResourceError&);
 
+    bool isShowingActionPopup() { return m_showingActionPopup; };
+    void setShowingActionPopup(bool isOpen) { m_showingActionPopup = isOpen; };
+
 #ifdef __OBJC__
     _WKWebExtensionController *wrapper() const { return (_WKWebExtensionController *)API::ObjectImpl<API::Object::Type::WebExtensionController>::wrapper(); }
     _WKWebExtensionControllerDelegatePrivate *delegate() const { return (_WKWebExtensionControllerDelegatePrivate *)wrapper().delegate; }
@@ -253,6 +256,7 @@ private:
 #else
     bool m_testingMode : 1 { true };
 #endif
+    bool m_showingActionPopup { false };
 
     std::unique_ptr<WebCore::Timer> m_purgeOldMatchedRulesTimer;
     std::unique_ptr<HTTPCookieStoreObserver> m_cookieStoreObserver;

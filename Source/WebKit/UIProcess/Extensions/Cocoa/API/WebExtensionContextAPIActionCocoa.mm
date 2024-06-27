@@ -166,6 +166,11 @@ void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std
         return;
     }
 
+    if (extensionController()->isShowingActionPopup()) {
+        completionHandler(toWebExtensionError(apiName, nil, @"another popup is already open"));
+        return;
+    }
+
     RefPtr<WebExtensionWindow> window;
     RefPtr<WebExtensionTab> tab;
 
