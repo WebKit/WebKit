@@ -270,8 +270,9 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
         sandboxExtensionHandle = WTFMove(handle);
     }
 
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Load(url, WTFMove(sandboxExtensionHandle), contentType, keySystem, m_player.get()->requiresRemotePlayback()), [weakThis = WeakPtr { *this }, this](auto&& configuration) {
-        if (!weakThis)
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Load(url, WTFMove(sandboxExtensionHandle), contentType, keySystem, m_player.get()->requiresRemotePlayback()), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&& configuration) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         auto player = m_player.get();
@@ -1007,8 +1008,9 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
     if (m_remoteEngineIdentifier == MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE
         || (platformStrategies()->mediaStrategy().mockMediaSourceEnabled() && m_remoteEngineIdentifier == MediaPlayerEnums::MediaEngineIdentifier::MockMSE)) {
         auto identifier = RemoteMediaSourceIdentifier::generate();
-        connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, DeprecatedGlobalSettings::webMParserEnabled(), identifier), [weakThis = WeakPtr { *this }, this](RemoteMediaPlayerConfiguration&& configuration) {
-            if (!weakThis)
+        connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, DeprecatedGlobalSettings::webMParserEnabled(), identifier), [weakThis = ThreadSafeWeakPtr { *this }, this](RemoteMediaPlayerConfiguration&& configuration) {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
 
             auto player = m_player.get();
@@ -1023,8 +1025,9 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
         return;
     }
 
-    callOnMainRunLoop([weakThis = WeakPtr { *this }, this] {
-        if (!weakThis)
+    callOnMainRunLoop([weakThis = ThreadSafeWeakPtr { *this }, this] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         auto player = m_player.get();
@@ -1040,8 +1043,9 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
 #if ENABLE(MEDIA_STREAM)
 void MediaPlayerPrivateRemote::load(MediaStreamPrivate&)
 {
-    callOnMainRunLoop([weakThis = WeakPtr { *this }, this] {
-        if (!weakThis)
+    callOnMainRunLoop([weakThis = ThreadSafeWeakPtr { *this }, this] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         auto player = m_player.get();
@@ -1584,9 +1588,11 @@ void MediaPlayerPrivateRemote::setPreferredDynamicRangeMode(WebCore::DynamicRang
 
 bool MediaPlayerPrivateRemote::performTaskAtTime(WTF::Function<void()>&& task, const MediaTime& mediaTime)
 {
-    auto asyncReplyHandler = [weakThis = WeakPtr { *this }, task = WTFMove(task)](std::optional<MediaTime> currentTime) mutable {
-        if (!weakThis || !currentTime)
+    auto asyncReplyHandler = [weakThis = ThreadSafeWeakPtr { *this }, task = WTFMove(task)](std::optional<MediaTime> currentTime) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !currentTime)
             return;
+
         task();
     };
 
@@ -1708,9 +1714,9 @@ void MediaPlayerPrivateRemote::requestHostingContextID(LayerHostingContextIDCall
     }
 
     m_layerHostingContextIDRequests.append(WTFMove(completionHandler));
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::RequestHostingContextID(), [weakThis = WeakPtr { this }] (auto contextID) {
-        if (weakThis)
-            weakThis->setLayerHostingContextID(contextID);
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::RequestHostingContextID(), [weakThis = ThreadSafeWeakPtr { *this }] (auto contextID) {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->setLayerHostingContextID(contextID);
     }, m_id);
 }
 

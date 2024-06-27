@@ -83,7 +83,7 @@ struct MediaTimeUpdateData {
 class MediaPlayerPrivateRemote final
     : public WebCore::MediaPlayerPrivateInterface
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaPlayerPrivateRemote, WTF::DestructionThread::Main>
-    , public IPC::MessageReceiver
+    , private IPC::MessageReceiver
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
