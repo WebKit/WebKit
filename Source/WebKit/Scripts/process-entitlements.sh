@@ -204,17 +204,24 @@ function notify_entitlements()
 
         # Keep in sync with the list in WebProcessPool::registerNotificationObservers.
         FORWARDED_NOTIFICATIONS=(
+            "_AXNotification_AXSAppValidatingTestingPreference"
+            "_AXNotification_IsAXValidationRunnerCollectingValidations"
             "_AXNotification_shouldPerformValidationsAtRuntime"
             "_NS_ctasd"
             "AppleDatePreferencesChangedNotification"
             "AppleLanguagePreferencesChangedNotification"
+            "AppleMeasurementSystemPreferencesChangedNotification"
             "AppleNumberPreferencesChangedNotification"
+            "AppleTemperatureUnitPreferencesChangedNotification"
             "AppleTextBehaviorPreferencesChangedNotification"
             "AppleTimePreferencesChangedNotification"
+            "CPHomeCountryCodeChanged.Internal"
+            "GSEventHardwareKeyboardAttached"
             "LetterFeedbackEnabled.notification"
             "PhoneticFeedbackEnabled.notification"
             "QuickTypePredictionFeedbackEnabled.notification"
             "com.apple.CFPreferences._domainsChangedExternally"
+            "com.apple.LaunchServices.database"
             "com.apple.WebKit.LibraryPathDiagnostics"
             "com.apple.WebKit.deleteAllCode"
             "com.apple.WebKit.dumpGCHeap"
@@ -230,7 +237,9 @@ function notify_entitlements()
             "com.apple.WebKit.showMemoryCache"
             "com.apple.WebKit.showPaintOrderTree"
             "com.apple.WebKit.showRenderTree"
+            "com.apple.accessibility.api"
             "com.apple.accessibility.defaultrouteforcall"
+            "com.apple.accessibility.wob.status"
             "com.apple.analyticsd.running"
             "com.apple.coreaudio.list_components"
             "com.apple.distnote.locale_changed"
@@ -270,6 +279,10 @@ function notify_entitlements()
 
         # Keep in sync with the !PLATFORM(MAC) list in WebProcessPool::registerNotificationObservers.
         EMBEDDED_FORWARDED_NOTIFICATIONS=(
+            "com.apple.ManagedConfiguration.profileListChanged"
+            "com.apple.managedconfiguration.passcodechanged"
+            "com.apple.managedconfiguration.restrictionchanged"
+            "com.apple.managedconfiguration.settingschanged"
             "com.apple.mobile.usermanagerd.foregrounduser_changed"
             "com.apple.mobile.keybagd.lock_status"
             "com.apple.mobile.keybagd.user_changed"
@@ -277,25 +290,34 @@ function notify_entitlements()
 
         # WebContent registers for these notifications but they are only posted in-process.
         NON_FORWARDED_NOTIFICATIONS=(
+            # FIXME: Remove AX cache notifications once wildcard syntax is supported everywhere. See rdar://130683194.
             "com.apple.accessibility.cache.app.ax"
             "com.apple.accessibility.cache.ast"
             "com.apple.accessibility.cache.automation.localized.lookup"
             "com.apple.accessibility.cache.ax"
+            "com.apple.accessibility.cache.captioning"
+            "com.apple.accessibility.cache.differentiate.without.color"
             "com.apple.accessibility.cache.enhance.background.contrast"
             "com.apple.accessibility.cache.enhance.text.legibility"
             "com.apple.accessibility.cache.enhance.text.legibilitycom.apple.WebKit.WebContent"
             "com.apple.accessibility.cache.guided.access"
             "com.apple.accessibility.cache.guided.access.via.mdm"
             "com.apple.accessibility.cache.hearing.aid.paired"
+            "com.apple.accessibility.cache.internal.reportvalidationerrors"
             "com.apple.accessibility.cache.invert.colors"
             "com.apple.accessibility.cache.invert.colorscom.apple.WebKit.WebContent"
             "com.apple.accessibility.cache.loc.caption.mode.enabled"
+            "com.apple.accessibility.cache.mono.audio"
+            "com.apple.accessibility.cache.quick.speak"
             "com.apple.accessibility.cache.reduce.motion"
+            "com.apple.accessibility.cache.reduce.motion.reduce.slide.transitions"
             "com.apple.accessibility.cache.reduce.motioncom.apple.WebKit.WebContent"
+            "com.apple.accessibility.cache.speak.this"
             "com.apple.accessibility.cache.speech.settings.disabled.by.mc"
             "com.apple.accessibility.cache.switch.control"
             "com.apple.accessibility.cache.vot"
             "com.apple.accessibility.cache.zoom"
+            "com.apple.accessibility.cache.*"
             "com.apple.coreservices.launchservices.session.*"
         )
 
