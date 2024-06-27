@@ -2189,8 +2189,10 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
             return completionHandler(nullptr);
         }
 
-        if (WKStringIsEqualToUTF8CString(subMessageName, "WaitForDeferredMouseEvents"))
+        if (WKStringIsEqualToUTF8CString(subMessageName, "WaitForDeferredMouseEvents")) {
+            WKPageFlushDeferredDidReceiveMouseEventForTesting(mainWebView()->page());
             return completionHandler(nullptr);
+        }
 
 #if PLATFORM(MAC)
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseForceClick")) {

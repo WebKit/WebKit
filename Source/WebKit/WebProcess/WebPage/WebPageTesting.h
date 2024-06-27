@@ -59,6 +59,8 @@ private:
 
     void clearWheelEventTestMonitor();
 
+    void flushDeferredDidReceiveMouseEvent(CompletionHandler<void()>&&);
+
     const WebCore::PageIdentifier m_identifier;
     WeakRef<WebPage> m_page;
 };

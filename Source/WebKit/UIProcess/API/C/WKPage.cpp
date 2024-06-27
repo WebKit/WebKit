@@ -3296,3 +3296,9 @@ void WKPageSetPermissionLevelForTesting(WKPageRef pageRef, WKStringRef origin, b
     if (auto* pageForTesting = toImpl(pageRef)->pageForTesting())
         pageForTesting->setPermissionLevel(toImpl(origin)->string(), allowed);
 }
+
+void WKPageFlushDeferredDidReceiveMouseEventForTesting(WKPageRef pageRef)
+{
+    if (auto* pageForTesting = toImpl(pageRef)->pageForTesting())
+        pageForTesting->flushDeferredDidReceiveMouseEvent();
+}

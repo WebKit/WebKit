@@ -216,6 +216,8 @@ WK_EXPORT void WKPageExecuteCommandForTesting(WKPageRef pageRef, WKStringRef com
 WK_EXPORT bool WKPageIsEditingCommandEnabledForTesting(WKPageRef page, WKStringRef command);
 WK_EXPORT void WKPageSetPermissionLevelForTesting(WKPageRef page, WKStringRef origin, bool allowed);
 
+WK_EXPORT void WKPageFlushDeferredDidReceiveMouseEventForTesting(WKPageRef page);
+
 #ifdef __cplusplus
 }
 #endif
