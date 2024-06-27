@@ -50,6 +50,7 @@ class CallLinkInfo;
 class ClonedArguments;
 class CodeBlock;
 class DirectArguments;
+class InlineCacheHandler;
 class JSArray;
 class JSBoundFunction;
 class JSCell;
@@ -387,6 +388,8 @@ JSC_DECLARE_JIT_OPERATION(operationPutToScope, void, (JSGlobalObject*, const JSI
 
 JSC_DECLARE_JIT_OPERATION(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity, char*, (VM*, JSObject*));
 JSC_DECLARE_JIT_OPERATION(operationReallocateButterflyToGrowPropertyStorage, char*, (VM*, JSObject*, size_t newSize));
+
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationReallocateButterflyAndTransition, void, (VM*, JSObject*, const InlineCacheHandler*, EncodedJSValue));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWriteBarrierSlowPath, void, (VM*, JSCell*));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationOSRWriteBarrier, void, (VM*, JSCell*));

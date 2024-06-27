@@ -5357,7 +5357,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandler(VM&)
 
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
 template<bool allocating, bool reallocating>
-static void transitionHandlerImpl(VM& vm, CCallHelpers& jit, CCallHelpers::JumpList& failAndIgnore, JSValueRegs baseJSR, JSValueRegs valueJSR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR, GPRReg scratch4GPR)
+static void transitionHandlerImpl(VM& vm, CCallHelpers& jit, CCallHelpers::JumpList& allocationFailure, JSValueRegs baseJSR, JSValueRegs valueJSR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR, GPRReg scratch4GPR)
 {
     if constexpr (!allocating) {
         JIT_COMMENT(jit, "storeProperty");
@@ -5367,7 +5367,7 @@ static void transitionHandlerImpl(VM& vm, CCallHelpers& jit, CCallHelpers::JumpL
     } else {
         JIT_COMMENT(jit, "allocating");
         jit.load32(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfNewSize()), scratch1GPR);
-        jit.emitAllocateVariableSized(scratch2GPR, vm.auxiliarySpace(), scratch1GPR, scratch4GPR, scratch3GPR, failAndIgnore);
+        jit.emitAllocateVariableSized(scratch2GPR, vm.auxiliarySpace(), scratch1GPR, scratch4GPR, scratch3GPR, allocationFailure);
 
         if constexpr (reallocating) {
             JIT_COMMENT(jit, "reallocating");
@@ -5438,22 +5438,24 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionHandlerImpl(VM& vm
     InlineCacheCompiler::emitDataICPrologue(jit);
 
     CCallHelpers::JumpList fallThrough;
-    CCallHelpers::JumpList failAndIgnore;
+    CCallHelpers::JumpList allocationFailure;
 
     fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseJSR.payloadGPR(), scratch1GPR));
 
-    transitionHandlerImpl<allocating, reallocating>(vm, jit, failAndIgnore, baseJSR, valueJSR, scratch1GPR, scratch2GPR, scratch3GPR, scratch4GPR);
+    transitionHandlerImpl<allocating, reallocating>(vm, jit, allocationFailure, baseJSR, valueJSR, scratch1GPR, scratch2GPR, scratch3GPR, scratch4GPR);
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
-    if (!failAndIgnore.empty()) {
-        JIT_COMMENT(jit, "failAndIgnore");
-        failAndIgnore.link(&jit);
-        // Make sure that the inline cache optimization code knows that we are taking slow path because
-        // of something that isn't patchable. The slow path will decrement "countdown" and will only
-        // patch things if the countdown reaches zero. We increment the slow path count here to ensure
-        // that the slow path does not try to patch.
-        jit.add8(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCountdown()));
+    if (!allocationFailure.empty()) {
+        ASSERT(allocating);
+        allocationFailure.link(&jit);
+        jit.makeSpaceOnStackForCCall();
+        jit.setupArguments<decltype(operationReallocateButterflyAndTransition)>(CCallHelpers::TrustedImmPtr(&vm), baseJSR.payloadGPR(), GPRInfo::handlerGPR, valueJSR);
+        jit.prepareCallOperation(vm);
+        jit.callOperation<OperationPtrTag>(operationReallocateButterflyAndTransition);
+        jit.reclaimSpaceOnStackForCCall();
+        InlineCacheCompiler::emitDataICEpilogue(jit);
+        jit.ret();
     }
 
     fallThrough.link(&jit);
@@ -6073,44 +6075,30 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValTransitionHandlerImpl(VM& v
     InlineCacheCompiler::emitDataICPrologue(jit);
 
     CCallHelpers::JumpList fallThrough;
-    CCallHelpers::JumpList failAndIgnore;
-
-    auto usedRegisters = RegisterSetBuilder::stubUnavailableRegisters();
-    usedRegisters.add(profileGPR, IgnoreVectors);
-    ScratchRegisterAllocator allocator(usedRegisters);
-    allocator.lock(baseJSR);
-    allocator.lock(valueJSR);
-    allocator.lock(propertyJSR);
-    allocator.lock(stubInfoGPR);
-    allocator.lock(scratch1GPR);
-    allocator.lock(scratch2GPR);
-    allocator.lock(GPRInfo::handlerGPR);
-
-    GPRReg scratch3GPR = allocator.allocateScratchGPR();
-    GPRReg scratch4GPR = allocator.allocateScratchGPR();
-
-    auto preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+    CCallHelpers::JumpList allocationFailure;
 
     fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseJSR.payloadGPR(), scratch1GPR));
     fallThrough.append(InlineCacheCompiler::emitDataICCheckUid(jit, isSymbol, propertyJSR, scratch1GPR));
 
-    transitionHandlerImpl<allocating, reallocating>(vm, jit, failAndIgnore, baseJSR, valueJSR, scratch1GPR, scratch2GPR, scratch3GPR, scratch4GPR);
-    allocator.restoreReusedRegistersByPopping(jit, preservedState);
+    // At this point, we will not go to slow path, so clobbering the other registers are fine.
+    // We use propertyJSR and profileGPR for scratch register purpose.
+    transitionHandlerImpl<allocating, reallocating>(vm, jit, allocationFailure, baseJSR, valueJSR, scratch1GPR, scratch2GPR, propertyJSR.payloadGPR(), profileGPR);
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
-    if (!failAndIgnore.empty()) {
-        JIT_COMMENT(jit, "failAndIgnore");
-        failAndIgnore.link(&jit);
-        // Make sure that the inline cache optimization code knows that we are taking slow path because
-        // of something that isn't patchable. The slow path will decrement "countdown" and will only
-        // patch things if the countdown reaches zero. We increment the slow path count here to ensure
-        // that the slow path does not try to patch.
-        jit.add8(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCountdown()));
+    if (!allocationFailure.empty()) {
+        ASSERT(allocating);
+        allocationFailure.link(&jit);
+        jit.makeSpaceOnStackForCCall();
+        jit.setupArguments<decltype(operationReallocateButterflyAndTransition)>(CCallHelpers::TrustedImmPtr(&vm), baseJSR.payloadGPR(), GPRInfo::handlerGPR, valueJSR);
+        jit.prepareCallOperation(vm);
+        jit.callOperation<OperationPtrTag>(operationReallocateButterflyAndTransition);
+        jit.reclaimSpaceOnStackForCCall();
+        InlineCacheCompiler::emitDataICEpilogue(jit);
+        jit.ret();
     }
 
     fallThrough.link(&jit);
-    allocator.restoreReusedRegistersByPopping(jit, preservedState);
     InlineCacheCompiler::emitDataICJumpNextHandler(jit);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::InlineCache);
@@ -6186,7 +6174,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValCustomHandlerImpl(VM& vm)
     fallThrough.append(InlineCacheCompiler::emitDataICCheckUid(jit, isSymbol, propertyJSR, scratch1GPR));
 
     // At this point, we will not go to slow path, so clobbering the other registers are fine.
-    // We use propertyJSR and profileGPR for scratch register purpose.
+    // We use propertyJSR for scratch register purpose.
     customSetterHandlerImpl<isAccessor>(vm, jit, baseJSR, valueJSR, stubInfoGPR, scratch1GPR, scratch2GPR, propertyJSR.payloadGPR());
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();

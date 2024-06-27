@@ -217,6 +217,12 @@ public:
     static constexpr ptrdiff_t offsetOfModuleVariableSlot() { return OBJECT_OFFSETOF(InlineCacheHandler, u.s3.m_moduleVariableSlot); }
     static constexpr ptrdiff_t offsetOfCallLinkInfos() { return Base::offsetOfData(); }
 
+    StructureID structureID() const { return m_structureID; }
+    PropertyOffset offset() const { return m_offset; }
+    size_t newSize() const { return u.s2.m_newSize; }
+    size_t oldSize() const { return u.s2.m_oldSize; }
+    StructureID newStructureID() const { return u.s2.m_newStructureID; }
+
 private:
     InlineCacheHandler()
         : Base(0)

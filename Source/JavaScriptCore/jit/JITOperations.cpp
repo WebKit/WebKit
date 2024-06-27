@@ -42,6 +42,7 @@
 #include "FrameTracers.h"
 #include "GetterSetter.h"
 #include "ICStats.h"
+#include "InlineCacheCompiler.h"
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITExceptions.h"
@@ -4460,6 +4461,28 @@ JSC_DEFINE_JIT_OPERATION(operationReallocateButterflyToGrowPropertyStorage, char
     Butterfly* result = object->allocateMoreOutOfLineStorage(vm, object->structure()->outOfLineCapacity(), newSize);
     object->nukeStructureAndSetButterfly(vm, object->structureID(), result);
     OPERATION_RETURN(scope, reinterpret_cast<char*>(result));
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationReallocateButterflyAndTransition, void, (VM* vmPointer, JSObject* baseObject, const InlineCacheHandler* handler, EncodedJSValue encodedValue))
+{
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    size_t newSize = handler->newSize() / sizeof(JSValue);
+    size_t oldSize = handler->oldSize() / sizeof(JSValue);
+    PropertyOffset offset = handler->offset();
+    Structure* oldStructure = handler->structureID().decode();
+    Structure* newStructure = handler->newStructureID().decode();
+
+    ASSERT(oldStructure == baseObject->structure());
+    Butterfly* newButterfly = baseObject->allocateMoreOutOfLineStorage(vm, oldSize, newSize);
+    baseObject->nukeStructureAndSetButterfly(vm, StructureID::encode(oldStructure), newButterfly);
+    baseObject->putDirectOffset(vm, offset, JSValue::decode(encodedValue));
+    baseObject->setStructure(vm, newStructure);
+
+    ensureStillAliveHere(oldStructure);
+    ensureStillAliveHere(newStructure);
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationOSRWriteBarrier, void, (VM* vmPointer, JSCell* cell))
