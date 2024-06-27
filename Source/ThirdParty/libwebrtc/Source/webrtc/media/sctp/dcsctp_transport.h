@@ -17,6 +17,7 @@
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/environment/environment.h"
 #include "api/task_queue/task_queue_base.h"
 #include "media/sctp/sctp_transport_internal.h"
 #include "net/dcsctp/public/dcsctp_options.h"
@@ -27,6 +28,7 @@
 #include "p2p/base/packet_transport_internal.h"
 #include "rtc_base/containers/flat_map.h"
 #include "rtc_base/copy_on_write_buffer.h"
+#include "rtc_base/network/received_packet.h"
 #include "rtc_base/random.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
@@ -39,12 +41,12 @@ class DcSctpTransport : public cricket::SctpTransportInternal,
                         public dcsctp::DcSctpSocketCallbacks,
                         public sigslot::has_slots<> {
  public:
-  DcSctpTransport(rtc::Thread* network_thread,
+  DcSctpTransport(const Environment& env,
+                  rtc::Thread* network_thread,
+                  rtc::PacketTransportInternal* transport);
+  DcSctpTransport(const Environment& env,
+                  rtc::Thread* network_thread,
                   rtc::PacketTransportInternal* transport,
-                  Clock* clock);
-  DcSctpTransport(rtc::Thread* network_thread,
-                  rtc::PacketTransportInternal* transport,
-                  Clock* clock,
                   std::unique_ptr<dcsctp::DcSctpSocketFactory> socket_factory);
   ~DcSctpTransport() override;
 
@@ -64,6 +66,9 @@ class DcSctpTransport : public cricket::SctpTransportInternal,
   int max_message_size() const override;
   absl::optional<int> max_outbound_streams() const override;
   absl::optional<int> max_inbound_streams() const override;
+  size_t buffered_amount(int sid) const override;
+  size_t buffered_amount_low_threshold(int sid) const override;
+  void SetBufferedAmountLowThreshold(int sid, size_t bytes) override;
   void set_debug_name_for_testing(const char* debug_name) override;
 
  private:
@@ -75,6 +80,7 @@ class DcSctpTransport : public cricket::SctpTransportInternal,
   dcsctp::TimeMs TimeMillis() override;
   uint32_t GetRandomInt(uint32_t low, uint32_t high) override;
   void OnTotalBufferedAmountLow() override;
+  void OnBufferedAmountLow(dcsctp::StreamID stream_id) override;
   void OnMessageReceived(dcsctp::DcSctpMessage message) override;
   void OnError(dcsctp::ErrorKind error, absl::string_view message) override;
   void OnAborted(dcsctp::ErrorKind error, absl::string_view message) override;
@@ -94,17 +100,12 @@ class DcSctpTransport : public cricket::SctpTransportInternal,
   void DisconnectTransportSignals();
   void OnTransportWritableState(rtc::PacketTransportInternal* transport);
   void OnTransportReadPacket(rtc::PacketTransportInternal* transport,
-                             const char* data,
-                             size_t length,
-                             const int64_t& /* packet_time_us */,
-                             int flags);
-  void OnTransportClosed(rtc::PacketTransportInternal* transport);
-
+                             const rtc::ReceivedPacket& packet);
   void MaybeConnectSocket();
 
   rtc::Thread* network_thread_;
   rtc::PacketTransportInternal* transport_;
-  Clock* clock_;
+  Environment env_;
   Random random_;
 
   std::unique_ptr<dcsctp::DcSctpSocketFactory> socket_factory_;

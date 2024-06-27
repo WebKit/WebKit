@@ -139,7 +139,6 @@ class GlobalSimulatedTimeController : public TimeController {
   void AdvanceTime(TimeDelta duration) override;
 
   // Advances time by `duration`and do not run delayed tasks in the meantime.
-  // Runs any pending tasks at the end.
   // Useful for simulating contention on destination queues.
   void SkipForwardBy(TimeDelta duration);
 

@@ -342,7 +342,7 @@ class SrtpTransportTest : public ::testing::Test, public sigslot::has_slots<> {
   TransportObserver rtp_sink2_;
 
   int sequence_number_ = 0;
-  webrtc::test::ScopedKeyValueConfig field_trials_;
+  test::ScopedKeyValueConfig field_trials_;
 };
 
 class SrtpTransportTestWithExternalAuth
@@ -423,6 +423,68 @@ TEST_F(SrtpTransportTest, TestSetParamsKeyTooShort) {
   EXPECT_FALSE(srtp_transport1_->SetRtcpParams(
       rtc::kSrtpAes128CmSha1_80, kTestKey1, kTestKeyLen - 1, extension_ids,
       rtc::kSrtpAes128CmSha1_80, kTestKey1, kTestKeyLen - 1, extension_ids));
+}
+
+TEST_F(SrtpTransportTest, RemoveSrtpReceiveStream) {
+  test::ScopedKeyValueConfig field_trials(
+      "WebRTC-SrtpRemoveReceiveStream/Enabled/");
+  auto srtp_transport =
+      std::make_unique<SrtpTransport>(/*rtcp_mux_enabled=*/true, field_trials);
+  auto rtp_packet_transport = std::make_unique<rtc::FakePacketTransport>(
+      "fake_packet_transport_loopback");
+
+  bool asymmetric = false;
+  rtp_packet_transport->SetDestination(rtp_packet_transport.get(), asymmetric);
+  srtp_transport->SetRtpPacketTransport(rtp_packet_transport.get());
+
+  TransportObserver rtp_sink;
+
+  std::vector<int> extension_ids;
+  EXPECT_TRUE(srtp_transport->SetRtpParams(
+      rtc::kSrtpAeadAes128Gcm, kTestKeyGcm128_1, kTestKeyGcm128Len,
+      extension_ids, rtc::kSrtpAeadAes128Gcm, kTestKeyGcm128_1,
+      kTestKeyGcm128Len, extension_ids));
+
+  RtpDemuxerCriteria demuxer_criteria;
+  uint32_t ssrc = 0x1;  // SSRC of kPcmuFrame
+  demuxer_criteria.ssrcs().insert(ssrc);
+  EXPECT_TRUE(
+      srtp_transport->RegisterRtpDemuxerSink(demuxer_criteria, &rtp_sink));
+
+  // Create a packet and try to send it three times.
+  size_t rtp_len = sizeof(kPcmuFrame);
+  size_t packet_size = rtp_len + rtc::rtp_auth_tag_len(rtc::kCsAeadAes128Gcm);
+  rtc::Buffer rtp_packet_buffer(packet_size);
+  char* rtp_packet_data = rtp_packet_buffer.data<char>();
+  memcpy(rtp_packet_data, kPcmuFrame, rtp_len);
+
+  // First attempt will succeed.
+  rtc::CopyOnWriteBuffer first_try(rtp_packet_data, rtp_len, packet_size);
+  EXPECT_TRUE(srtp_transport->SendRtpPacket(&first_try, rtc::PacketOptions(),
+                                            cricket::PF_SRTP_BYPASS));
+  EXPECT_EQ(rtp_sink.rtp_count(), 1);
+
+  // Second attempt will be rejected by libSRTP as a replay attack
+  // (srtp_err_status_replay_fail) since the sequence number was already seen.
+  // Hence the packet never reaches the sink.
+  rtc::CopyOnWriteBuffer second_try(rtp_packet_data, rtp_len, packet_size);
+  EXPECT_TRUE(srtp_transport->SendRtpPacket(&second_try, rtc::PacketOptions(),
+                                            cricket::PF_SRTP_BYPASS));
+  EXPECT_EQ(rtp_sink.rtp_count(), 1);
+
+  // Reset the sink.
+  EXPECT_TRUE(srtp_transport->UnregisterRtpDemuxerSink(&rtp_sink));
+  EXPECT_TRUE(
+      srtp_transport->RegisterRtpDemuxerSink(demuxer_criteria, &rtp_sink));
+
+  // Third attempt will succeed again since libSRTP does not remember seeing
+  // the sequence number after the reset.
+  rtc::CopyOnWriteBuffer third_try(rtp_packet_data, rtp_len, packet_size);
+  EXPECT_TRUE(srtp_transport->SendRtpPacket(&third_try, rtc::PacketOptions(),
+                                            cricket::PF_SRTP_BYPASS));
+  EXPECT_EQ(rtp_sink.rtp_count(), 2);
+  // Clear the sink to clean up.
+  srtp_transport->UnregisterRtpDemuxerSink(&rtp_sink);
 }
 
 }  // namespace webrtc

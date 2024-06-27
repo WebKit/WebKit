@@ -12,6 +12,14 @@
 
 namespace webrtc {
 
+AudioLevel::AudioLevel() : voice_activity_(false), audio_level_(0) {}
+
+AudioLevel::AudioLevel(bool voice_activity, int audio_level)
+    : voice_activity_(voice_activity), audio_level_(audio_level) {
+  RTC_CHECK_GE(audio_level, 0);
+  RTC_CHECK_LE(audio_level, 127);
+}
+
 RTPHeaderExtension::RTPHeaderExtension()
     : hasTransmissionTimeOffset(false),
       transmissionTimeOffset(0),
@@ -19,9 +27,6 @@ RTPHeaderExtension::RTPHeaderExtension()
       absoluteSendTime(0),
       hasTransportSequenceNumber(false),
       transportSequenceNumber(0),
-      hasAudioLevel(false),
-      voiceActivity(false),
-      audioLevel(0),
       hasVideoRotation(false),
       videoRotation(kVideoRotation_0),
       hasVideoContentType(false),

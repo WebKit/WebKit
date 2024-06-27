@@ -179,7 +179,6 @@ class RTCPReceiver final {
   class RegisteredSsrcs {
    public:
     static constexpr size_t kMediaSsrcIndex = 0;
-    static constexpr size_t kMaxSsrcs = 3;
     // Initializes the set of registered local SSRCS by extracting them from the
     // provided `config`. The `disable_sequence_checker` flag is a workaround
     // to be able to use a sequence checker without breaking downstream
@@ -194,7 +193,7 @@ class RTCPReceiver final {
 
    private:
     RTC_NO_UNIQUE_ADDRESS CustomSequenceChecker packet_sequence_checker_;
-    absl::InlinedVector<uint32_t, kMaxSsrcs> ssrcs_
+    absl::InlinedVector<uint32_t, kMaxSimulcastStreams> ssrcs_
         RTC_GUARDED_BY(packet_sequence_checker_);
   };
 
@@ -343,6 +342,9 @@ class RTCPReceiver final {
   void HandleTransportFeedback(const rtcp::CommonHeader& rtcp_block,
                                PacketInformation* packet_information)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(rtcp_receiver_lock_);
+  bool HandleCongestionControlFeedback(const rtcp::CommonHeader& rtcp_block,
+                                       PacketInformation* packet_information)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(rtcp_receiver_lock_);
 
   bool RtcpRrTimeoutLocked(Timestamp now)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(rtcp_receiver_lock_);
@@ -352,6 +354,7 @@ class RTCPReceiver final {
 
   Clock* const clock_;
   const bool receiver_only_;
+  const bool enable_congestion_controller_feedback_;
   ModuleRtpRtcp* const rtp_rtcp_;
   // The set of registered local SSRCs.
   RegisteredSsrcs registered_ssrcs_;

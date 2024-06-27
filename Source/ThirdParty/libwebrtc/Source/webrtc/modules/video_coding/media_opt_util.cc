@@ -13,13 +13,16 @@
 #include <math.h>
 
 #include <algorithm>
+#include <memory>
 
+#include "api/field_trials_view.h"
 #include "modules/video_coding/fec_rate_table.h"
 #include "modules/video_coding/internal_defines.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/rate_control_settings.h"
 #include "rtc_base/numerics/safe_conversions.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 // Max value of loss rates in off-line model
@@ -80,9 +83,10 @@ int VCMProtectionMethod::MaxFramesFec() const {
   return 1;
 }
 
-VCMNackFecMethod::VCMNackFecMethod(int64_t lowRttNackThresholdMs,
+VCMNackFecMethod::VCMNackFecMethod(const FieldTrialsView& field_trials,
+                                   int64_t lowRttNackThresholdMs,
                                    int64_t highRttNackThresholdMs)
-    : VCMFecMethod(),
+    : VCMFecMethod(field_trials),
       _lowRttNackMs(lowRttNackThresholdMs),
       _highRttNackMs(highRttNackThresholdMs),
       _maxFramesFec(1) {
@@ -244,9 +248,8 @@ bool VCMNackMethod::UpdateParameters(
   return true;
 }
 
-VCMFecMethod::VCMFecMethod()
-    : VCMProtectionMethod(),
-      rate_control_settings_(RateControlSettings::ParseFromFieldTrials()) {
+VCMFecMethod::VCMFecMethod(const FieldTrialsView& field_trials)
+    : rate_control_settings_(field_trials) {
   _type = kFec;
 }
 
@@ -489,8 +492,9 @@ bool VCMFecMethod::UpdateParameters(const VCMProtectionParameters* parameters) {
 
   return true;
 }
-VCMLossProtectionLogic::VCMLossProtectionLogic(int64_t nowMs)
-    : _currentParameters(),
+VCMLossProtectionLogic::VCMLossProtectionLogic(const Environment& env)
+    : env_(env),
+      _currentParameters(),
       _rtt(0),
       _lossPr(0.0f),
       _bitRate(0.0f),
@@ -507,7 +511,7 @@ VCMLossProtectionLogic::VCMLossProtectionLogic(int64_t nowMs)
       _codecWidth(704),
       _codecHeight(576),
       _numLayers(1) {
-  Reset(nowMs);
+  Reset(env_.clock().CurrentTime().ms());
 }
 
 VCMLossProtectionLogic::~VCMLossProtectionLogic() {
@@ -524,10 +528,11 @@ void VCMLossProtectionLogic::SetMethod(
       _selectedMethod.reset(new VCMNackMethod());
       break;
     case kFec:
-      _selectedMethod.reset(new VCMFecMethod());
+      _selectedMethod = std::make_unique<VCMFecMethod>(env_.field_trials());
       break;
     case kNackFec:
-      _selectedMethod.reset(new VCMNackFecMethod(kLowRttNackMs, -1));
+      _selectedMethod = std::make_unique<VCMNackFecMethod>(env_.field_trials(),
+                                                           kLowRttNackMs, -1);
       break;
     case kNone:
       _selectedMethod.reset();

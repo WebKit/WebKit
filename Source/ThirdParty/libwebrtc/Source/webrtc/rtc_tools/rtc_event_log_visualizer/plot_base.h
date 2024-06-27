@@ -19,11 +19,9 @@
 #include "absl/base/attributes.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
-#include "rtc_base/ignore_wundef.h"
 
-RTC_PUSH_IGNORING_WUNDEF()
+// Generated at build-time by the protobuf compiler.
 #include "rtc_tools/rtc_event_log_visualizer/proto/chart.pb.h"
-RTC_POP_IGNORING_WUNDEF()
 
 namespace webrtc {
 

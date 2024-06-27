@@ -13,6 +13,7 @@
 #include <cstddef>
 #include <vector>
 
+#include "api/video_codecs/video_encoder.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -63,6 +64,25 @@ TEST(SvcConfig, NumSpatialLayersWithScalabilityMode) {
                           Field(&SpatialLayer::numberOfTemporalLayers, 3),
                           Field(&SpatialLayer::numberOfTemporalLayers, 3)));
   EXPECT_EQ(codec.GetScalabilityMode(), ScalabilityMode::kL3T3_KEY);
+}
+
+TEST(SvcConfig, UpdatesInterLayerPredModeBasedOnScalabilityMode) {
+  VideoCodec codec;
+  codec.codecType = kVideoCodecVP9;
+  codec.width = 1280;
+  codec.height = 720;
+  codec.SetScalabilityMode(ScalabilityMode::kL3T3_KEY);
+
+  std::vector<SpatialLayer> spatial_layers = GetVp9SvcConfig(codec);
+  EXPECT_EQ(codec.VP9()->interLayerPred, InterLayerPredMode::kOnKeyPic);
+
+  codec.SetScalabilityMode(ScalabilityMode::kL3T3);
+  spatial_layers = GetVp9SvcConfig(codec);
+  EXPECT_EQ(codec.VP9()->interLayerPred, InterLayerPredMode::kOn);
+
+  codec.SetScalabilityMode(ScalabilityMode::kS3T3);
+  spatial_layers = GetVp9SvcConfig(codec);
+  EXPECT_EQ(codec.VP9()->interLayerPred, InterLayerPredMode::kOff);
 }
 
 TEST(SvcConfig, NumSpatialLayersLimitedWithScalabilityMode) {
@@ -154,7 +174,7 @@ TEST(SvcConfig, AlwaysSendsAtLeastOneLayerPortrait) {
 
 TEST(SvcConfig, EnforcesMinimalRequiredParity) {
   const size_t max_num_spatial_layers = 3;
-  const size_t kOddSize = 1023;
+  const int kOddSize = 1023;
 
   std::vector<SpatialLayer> spatial_layers =
       GetSvcConfig(kOddSize, kOddSize, 30,

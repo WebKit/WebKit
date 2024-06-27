@@ -10,6 +10,7 @@
 
 #include "stats/test/rtc_test_stats.h"
 
+#include "api/stats/attribute.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -17,60 +18,25 @@ namespace webrtc {
 WEBRTC_RTCSTATS_IMPL(RTCTestStats,
                      RTCStats,
                      "test-stats",
-                     &m_bool,
-                     &m_int32,
-                     &m_uint32,
-                     &m_int64,
-                     &m_uint64,
-                     &m_double,
-                     &m_string,
-                     &m_sequence_bool,
-                     &m_sequence_int32,
-                     &m_sequence_uint32,
-                     &m_sequence_int64,
-                     &m_sequence_uint64,
-                     &m_sequence_double,
-                     &m_sequence_string,
-                     &m_map_string_uint64,
-                     &m_map_string_double)
+                     AttributeInit("mBool", &m_bool),
+                     AttributeInit("mInt32", &m_int32),
+                     AttributeInit("mUint32", &m_uint32),
+                     AttributeInit("mInt64", &m_int64),
+                     AttributeInit("mUint64", &m_uint64),
+                     AttributeInit("mDouble", &m_double),
+                     AttributeInit("mString", &m_string),
+                     AttributeInit("mSequenceBool", &m_sequence_bool),
+                     AttributeInit("mSequenceInt32", &m_sequence_int32),
+                     AttributeInit("mSequenceUint32", &m_sequence_uint32),
+                     AttributeInit("mSequenceInt64", &m_sequence_int64),
+                     AttributeInit("mSequenceUint64", &m_sequence_uint64),
+                     AttributeInit("mSequenceDouble", &m_sequence_double),
+                     AttributeInit("mSequenceString", &m_sequence_string),
+                     AttributeInit("mMapStringUint64", &m_map_string_uint64),
+                     AttributeInit("mMapStringDouble", &m_map_string_double))
 
 RTCTestStats::RTCTestStats(const std::string& id, Timestamp timestamp)
-    : RTCStats(id, timestamp),
-      m_bool("mBool"),
-      m_int32("mInt32"),
-      m_uint32("mUint32"),
-      m_int64("mInt64"),
-      m_uint64("mUint64"),
-      m_double("mDouble"),
-      m_string("mString"),
-      m_sequence_bool("mSequenceBool"),
-      m_sequence_int32("mSequenceInt32"),
-      m_sequence_uint32("mSequenceUint32"),
-      m_sequence_int64("mSequenceInt64"),
-      m_sequence_uint64("mSequenceUint64"),
-      m_sequence_double("mSequenceDouble"),
-      m_sequence_string("mSequenceString"),
-      m_map_string_uint64("mMapStringUint64"),
-      m_map_string_double("mMapStringDouble") {}
-
-RTCTestStats::RTCTestStats(const RTCTestStats& other)
-    : RTCStats(other.id(), other.timestamp()),
-      m_bool(other.m_bool),
-      m_int32(other.m_int32),
-      m_uint32(other.m_uint32),
-      m_int64(other.m_int64),
-      m_uint64(other.m_uint64),
-      m_double(other.m_double),
-      m_string(other.m_string),
-      m_sequence_bool(other.m_sequence_bool),
-      m_sequence_int32(other.m_sequence_int32),
-      m_sequence_uint32(other.m_sequence_uint32),
-      m_sequence_int64(other.m_sequence_int64),
-      m_sequence_uint64(other.m_sequence_uint64),
-      m_sequence_double(other.m_sequence_double),
-      m_sequence_string(other.m_sequence_string),
-      m_map_string_uint64(other.m_map_string_uint64),
-      m_map_string_double(other.m_map_string_double) {}
+    : RTCStats(id, timestamp) {}
 
 RTCTestStats::~RTCTestStats() {}
 

@@ -132,7 +132,7 @@ class RTC_EXPORT DxgiDuplicatorController {
 
   // scoped_refptr<DxgiDuplicatorController> accesses private AddRef() and
   // Release() functions.
-  friend class rtc::scoped_refptr<DxgiDuplicatorController>;
+  friend class webrtc::scoped_refptr<DxgiDuplicatorController>;
 
   // A private constructor to ensure consumers to use
   // DxgiDuplicatorController::Instance().

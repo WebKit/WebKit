@@ -14,7 +14,7 @@
 #include <memory>
 #include <utility>
 
-#include "api/task_queue/default_task_queue_factory.h"
+#include "api/environment/environment_factory.h"
 #include "api/test/create_frame_generator.h"
 #include "api/video_codecs/video_decoder_factory_template.h"
 #include "api/video_codecs/video_decoder_factory_template_dav1d_adapter.h"
@@ -171,6 +171,7 @@ absl::optional<RtpGeneratorOptions> ParseRtpGeneratorOptionsFromFile(
 
 RtpGenerator::RtpGenerator(const RtpGeneratorOptions& options)
     : options_(options),
+      env_(CreateEnvironment()),
       video_encoder_factory_(
           std::make_unique<webrtc::VideoEncoderFactoryTemplate<
               webrtc::LibvpxVp8EncoderTemplateAdapter,
@@ -183,9 +184,7 @@ RtpGenerator::RtpGenerator(const RtpGeneratorOptions& options)
               webrtc::Dav1dDecoderTemplateAdapter>>()),
       video_bitrate_allocator_factory_(
           CreateBuiltinVideoBitrateAllocatorFactory()),
-      event_log_(std::make_unique<RtcEventLogNull>()),
-      call_(Call::Create(CallConfig(event_log_.get()))),
-      task_queue_(CreateDefaultTaskQueueFactory()) {
+      call_(Call::Create(CallConfig(env_))) {
   constexpr int kMinBitrateBps = 30000;    // 30 Kbps
   constexpr int kMaxBitrateBps = 2500000;  // 2.5 Mbps
 
@@ -246,11 +245,11 @@ RtpGenerator::RtpGenerator(const RtpGeneratorOptions& options)
     // Setup the fake video stream for this.
     std::unique_ptr<test::FrameGeneratorCapturer> frame_generator =
         std::make_unique<test::FrameGeneratorCapturer>(
-            Clock::GetRealTimeClock(),
+            &env_.clock(),
             test::CreateSquareFrameGenerator(send_config.video_width,
                                              send_config.video_height,
                                              absl::nullopt, absl::nullopt),
-            send_config.video_fps, *task_queue_);
+            send_config.video_fps, env_.task_queue_factory());
     frame_generator->Init();
 
     VideoSendStream* video_send_stream = call_->CreateVideoSendStream(

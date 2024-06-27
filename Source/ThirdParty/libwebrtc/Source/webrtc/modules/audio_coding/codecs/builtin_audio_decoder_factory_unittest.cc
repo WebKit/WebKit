@@ -146,7 +146,7 @@ TEST(AudioDecoderFactoryTest, CreateOpus) {
   for (int hz : {8000, 16000, 32000, 48000}) {
     for (int channels : {0, 1, 2, 3}) {
       for (std::string stereo : {"XX", "0", "1", "2"}) {
-        SdpAudioFormat::Parameters params;
+        CodecParameterMap params;
         if (stereo != "XX") {
           params["stereo"] = stereo;
         }

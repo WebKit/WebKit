@@ -83,7 +83,10 @@ rtc_library("task_queue_test") {
 rtc_library("default_task_queue_factory") {
   visibility = [ "*" ]
   if (!is_ios && !is_android) {
-    poisonous = [ "default_task_queue" ]
+    # Internally webrtc shouldn't rely on any specific TaskQueue implementation
+    # and should create TaskQueue using TaskQueueFactory interface.
+    # TaskQueueFactory interface can be propagated with Environment.
+    poisonous = [ "environment_construction" ]
   }
   sources = [ "default_task_queue_factory.h" ]
   deps = [
@@ -109,7 +112,7 @@ rtc_library("default_task_queue_factory") {
   } else if (is_mac || is_ios) {
     sources += [ "default_task_queue_factory_gcd.cc" ]
     deps += [ "../../rtc_base:rtc_task_queue_gcd" ]
-  } else if (is_win && current_os != "winuwp") {
+  } else if (is_win && current_os != "winuwp" && !build_with_chromium) {
     sources += [ "default_task_queue_factory_win.cc" ]
     deps += [ "../../rtc_base:rtc_task_queue_win" ]
   } else {
@@ -156,7 +159,6 @@ if (rtc_include_tests) {
       ":pending_task_safety_flag",
       "../../rtc_base:logging",
       "../../rtc_base:rtc_event",
-      "../../rtc_base:rtc_task_queue",
       "../../rtc_base:task_queue_for_test",
       "../../test:test_support",
     ]

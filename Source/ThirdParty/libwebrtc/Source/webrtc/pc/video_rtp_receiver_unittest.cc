@@ -94,7 +94,7 @@ class VideoRtpReceiverTest : public testing::Test {
              [&]() { receiver_->SetMediaChannel(media_channel); });
   }
 
-  webrtc::VideoTrackSourceInterface* Source() {
+  VideoTrackSourceInterface* Source() {
     return receiver_->streams()[0]->FindVideoTrack("receiver")->GetSource();
   }
 

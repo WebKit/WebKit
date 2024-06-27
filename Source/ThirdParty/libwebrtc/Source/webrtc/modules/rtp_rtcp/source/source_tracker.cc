@@ -29,12 +29,17 @@ void SourceTracker::OnFrameDelivered(RtpPacketInfos packet_infos) {
   }
 
   Timestamp now = clock_->CurrentTime();
-  worker_thread_->PostTask(
-      SafeTask(worker_safety_.flag(),
-               [this, packet_infos = std::move(packet_infos), now]() {
-                 RTC_DCHECK_RUN_ON(worker_thread_);
-                 OnFrameDeliveredInternal(now, packet_infos);
-               }));
+  if (worker_thread_->IsCurrent()) {
+    RTC_DCHECK_RUN_ON(worker_thread_);
+    OnFrameDeliveredInternal(now, packet_infos);
+  } else {
+    worker_thread_->PostTask(
+        SafeTask(worker_safety_.flag(),
+                 [this, packet_infos = std::move(packet_infos), now]() {
+                   RTC_DCHECK_RUN_ON(worker_thread_);
+                   OnFrameDeliveredInternal(now, packet_infos);
+                 }));
+  }
 }
 
 void SourceTracker::OnFrameDeliveredInternal(

@@ -70,7 +70,7 @@
         'os_type':
         'linux',
         'mixins': [
-          'linux-bionic', 'x86-64', 'fuchsia-gtest-output',
+          'linux-jammy', 'x86-64', 'fuchsia-gtest-output',
           'resultdb-gtest-json-format'
         ],
         'test_suites': {
@@ -79,14 +79,14 @@
       },
       'Linux (more configs)': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'more_configs_tests',
         },
       },
       'Linux Asan': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'linux_tests',
         },
@@ -103,7 +103,7 @@
       },
       'Linux Tsan v2': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           # TODO(crbug.com/webrtc/14568): Using 'linux_tests'
           # fails on "ThreadSanitizer: data race on vptr (ctor/dtor vs
@@ -113,21 +113,21 @@
       },
       'Linux UBSan': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'linux_tests',
         },
       },
       'Linux UBSan vptr': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'linux_tests',
         },
       },
       'Linux32 Debug': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'desktop_tests',
         },
@@ -135,7 +135,7 @@
       'Linux32 Debug (ARM)': {},
       'Linux32 Release': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'desktop_tests',
         },
@@ -144,7 +144,7 @@
       'Linux64 Builder': {},
       'Linux64 Debug': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'linux_tests',
         },
@@ -152,9 +152,9 @@
       'Linux64 Debug (ARM)': {},
       'Linux64 Release': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
-          'isolated_scripts': 'linux_desktop_tests_with_video_capture',
+          'isolated_scripts': 'linux_tests',
         },
       },
       'Linux64 Release (ARM)': {},
@@ -178,14 +178,12 @@
         'os_type': 'mac',
         'mixins': ['mac_12_x64', 'resultdb-json-format'],
         'test_suites': {
-          'isolated_scripts': 'desktop_tests_with_video_capture',
+          'isolated_scripts': 'desktop_tests',
         },
       },
       'MacARM64 M1 Release': {
         'os_type': 'mac',
         'mixins': ['mac_12_arm64', 'mac-m1-cpu', 'resultdb-json-format'],
-        # TODO(b/228171565): Replace desktop_tests by desktop_tests_with_video_capture when
-        # there is a camera available for the baremetal m1 machines.
         'test_suites': {
           'isolated_scripts': 'desktop_tests',
         },
@@ -225,12 +223,12 @@
         'os_type': 'win',
         'mixins': ['win10', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
-          'isolated_scripts': 'desktop_tests_with_video_capture',
+          'isolated_scripts': 'desktop_tests',
         },
       },
       'iOS Debug (simulator)': {
         'mixins': [
-          'mac_12_x64', 'chromium-tester-service-account', 'mac_toolchain',
+          'mac_13_x64', 'chromium-tester-service-account', 'mac_toolchain',
           'has_native_resultdb_integration', 'out_dir_arg', 'webrtc-xctest'
         ],
         'test_suites': {
@@ -267,7 +265,7 @@
         'os_type':
         'linux',
         'mixins': [
-          'linux-bionic', 'x86-64', 'perf-pool-vm', 'timeout-3h',
+          'linux-jammy', 'x86-64', 'perf-pool-vm', 'timeout-3h',
           'resultdb-gtest-json-format', 'fuchsia-gtest-output', 'perf-output'
         ],
         'test_suites': {
@@ -324,7 +322,7 @@
     'machines': {
       'iOS64 Debug': {
         'mixins': [
-          'ios-device-16.6', 'webrtc-xctest', 'chrome-tester-service-account',
+          'ios-device-16.7', 'webrtc-xctest', 'chrome-tester-service-account',
           'xcode_15_main', 'mac_toolchain', 'has_native_resultdb_integration',
           'out_dir_arg'
         ],
@@ -347,7 +345,7 @@
       },
       'iOS64 Release': {
         'mixins': [
-          'ios-device-16.6', 'webrtc-xctest', 'chrome-tester-service-account',
+          'ios-device-16.7', 'webrtc-xctest', 'chrome-tester-service-account',
           'xcode_15_main', 'mac_toolchain', 'has_native_resultdb_integration',
           'out_dir_arg'
         ],
@@ -422,7 +420,7 @@
         'os_type':
         'linux',
         'mixins': [
-          'linux-bionic', 'x86-64', 'fuchsia-gtest-output',
+          'linux-jammy', 'x86-64', 'fuchsia-gtest-output',
           'resultdb-gtest-json-format'
         ],
         'test_suites': {
@@ -433,7 +431,7 @@
       'ios_compile_arm64_rel': {},
       'ios_dbg_simulator': {
         'mixins': [
-          'mac_12_x64', 'chromium-tester-service-account', 'mac_toolchain',
+          'mac_13_x64', 'chromium-tester-service-account', 'mac_toolchain',
           'has_native_resultdb_integration', 'out_dir_arg', 'webrtc-xctest'
         ],
         'test_suites': {
@@ -442,7 +440,7 @@
       },
       'linux_asan': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'linux_tests',
         },
@@ -457,7 +455,7 @@
         'os_type':
         'linux',
         'mixins': [
-          'linux-bionic', 'x86-64', 'resultdb-json-format',
+          'linux-jammy', 'x86-64', 'resultdb-json-format',
           'isolate_profile_data'
         ],
         'test_suites': {
@@ -466,7 +464,7 @@
       },
       'linux_dbg': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'linux_tests',
         },
@@ -474,14 +472,14 @@
       'linux_libfuzzer_rel': {},
       'linux_memcheck': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'linux_tests',
         },
       },
       'linux_more_configs': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'more_configs_tests',
         },
@@ -498,14 +496,14 @@
       },
       'linux_rel': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'linux_desktop_tests_tryserver',
         },
       },
       'linux_tsan2': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           # TODO(crbug.com/webrtc/14568): Using 'linux_tests'
           # fails on "ThreadSanitizer: data race on vptr (ctor/dtor vs
@@ -515,28 +513,28 @@
       },
       'linux_ubsan': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'linux_tests',
         },
       },
       'linux_ubsan_vptr': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-focal', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'linux_tests',
         },
       },
       'linux_x86_dbg': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'desktop_tests',
         },
       },
       'linux_x86_rel': {
         'os_type': 'linux',
-        'mixins': ['linux-bionic', 'x86-64', 'resultdb-json-format'],
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
         'test_suites': {
           'isolated_scripts': 'desktop_tests',
         },
@@ -574,10 +572,22 @@
       'mac_rel_m1': {
         'os_type': 'mac',
         'mixins': ['mac_12_arm64', 'mac-m1-cpu', 'resultdb-json-format'],
-        # TODO(b/228171565): Replace desktop_tests by desktop_tests_tryserver when
-        # there is a camera available for the baremetal-try m1 machines.
         'test_suites': {
           'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'win11_debug': {
+        'os_type': 'win',
+        'mixins': ['win11', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'win11_release': {
+        'os_type': 'win',
+        'mixins': ['win11', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests_tryserver',
         },
       },
       'win_asan': {

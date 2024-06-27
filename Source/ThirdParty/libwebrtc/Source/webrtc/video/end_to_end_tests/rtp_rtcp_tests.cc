@@ -12,7 +12,6 @@
 
 #include "api/test/simulated_network.h"
 #include "call/fake_network_pipe.h"
-#include "call/simulated_network.h"
 #include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
@@ -21,6 +20,7 @@
 #include "rtc_base/task_queue_for_test.h"
 #include "test/call_test.h"
 #include "test/gtest.h"
+#include "test/network/simulated_network.h"
 #include "test/rtcp_packet_parser.h"
 #include "test/video_test_constants.h"
 
@@ -142,6 +142,7 @@ void RtpRtcpEndToEndTest::TestRtpStatePreservation(
 
    private:
     std::vector<VideoStream> CreateEncoderStreams(
+        const FieldTrialsView& /*field_trials*/,
         int frame_width,
         int frame_height,
         const VideoEncoderConfig& encoder_config) override {
@@ -467,7 +468,9 @@ TEST_F(RtpRtcpEndToEndTest, DISABLED_TestFlexfecRtpStatePreservation) {
   static constexpr int kFrameRate = 15;
 
   test::FunctionVideoEncoderFactory encoder_factory(
-      []() { return VP8Encoder::Create(); });
+      [](const Environment& env, const SdpVideoFormat& format) {
+        return CreateVp8Encoder(env);
+      });
 
   SendTask(task_queue(), [&]() {
     CreateCalls();

@@ -104,8 +104,7 @@ float VoiceActivityDetectorWrapper::Analyze(AudioFrameView<const float> frame) {
   }
   // Resample the first channel of `frame`.
   RTC_DCHECK_EQ(frame.samples_per_channel(), frame_size_);
-  resampler_.Resample(frame.channel(0).data(), frame_size_,
-                      resampled_buffer_.data(), resampled_buffer_.size());
+  resampler_.Resample(frame.channel(0), resampled_buffer_);
 
   return vad_->Analyze(resampled_buffer_);
 }

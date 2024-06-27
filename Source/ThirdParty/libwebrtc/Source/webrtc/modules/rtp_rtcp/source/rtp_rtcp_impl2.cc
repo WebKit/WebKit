@@ -53,8 +53,8 @@ RTCPSender::Configuration AddRtcpSendEvaluationCallback(
 
 RtpPacketHistory::PaddingMode GetPaddingMode(
     const FieldTrialsView* field_trials) {
-  if (field_trials &&
-      field_trials->IsEnabled("WebRTC-PaddingMode-RecentLargePacket")) {
+  if (!field_trials ||
+      !field_trials->IsDisabled("WebRTC-PaddingMode-RecentLargePacket")) {
     return RtpPacketHistory::PaddingMode::kRecentLargePacket;
   }
   return RtpPacketHistory::PaddingMode::kPriority;
@@ -340,27 +340,45 @@ bool ModuleRtpRtcpImpl2::OnSendingRtpFrame(uint32_t timestamp,
   return true;
 }
 
-bool ModuleRtpRtcpImpl2::TrySendPacket(std::unique_ptr<RtpPacketToSend> packet,
-                                       const PacedPacketInfo& pacing_info) {
+bool ModuleRtpRtcpImpl2::CanSendPacket(const RtpPacketToSend& packet) const {
   RTC_DCHECK(rtp_sender_);
   RTC_DCHECK_RUN_ON(&rtp_sender_->sequencing_checker);
   if (!rtp_sender_->packet_generator.SendingMedia()) {
     return false;
   }
-  if (packet->packet_type() == RtpPacketMediaType::kPadding &&
-      packet->Ssrc() == rtp_sender_->packet_generator.SSRC() &&
+  if (packet.packet_type() == RtpPacketMediaType::kPadding &&
+      packet.Ssrc() == rtp_sender_->packet_generator.SSRC() &&
       !rtp_sender_->sequencer.CanSendPaddingOnMediaSsrc()) {
     // New media packet preempted this generated padding packet, discard it.
     return false;
   }
-  bool is_flexfec =
-      packet->packet_type() == RtpPacketMediaType::kForwardErrorCorrection &&
-      packet->Ssrc() == rtp_sender_->packet_generator.FlexfecSsrc();
-  if (!is_flexfec) {
-    rtp_sender_->sequencer.Sequence(*packet);
-  }
+  return true;
+}
 
+void ModuleRtpRtcpImpl2::AssignSequenceNumber(RtpPacketToSend& packet) {
+  RTC_DCHECK_RUN_ON(&rtp_sender_->sequencing_checker);
+  bool is_flexfec =
+      packet.packet_type() == RtpPacketMediaType::kForwardErrorCorrection &&
+      packet.Ssrc() == rtp_sender_->packet_generator.FlexfecSsrc();
+  if (!is_flexfec) {
+    rtp_sender_->sequencer.Sequence(packet);
+  }
+}
+
+void ModuleRtpRtcpImpl2::SendPacket(std::unique_ptr<RtpPacketToSend> packet,
+                                    const PacedPacketInfo& pacing_info) {
+  RTC_DCHECK_RUN_ON(&rtp_sender_->sequencing_checker);
+  RTC_DCHECK(CanSendPacket(*packet));
   rtp_sender_->packet_sender.SendPacket(std::move(packet), pacing_info);
+}
+
+bool ModuleRtpRtcpImpl2::TrySendPacket(std::unique_ptr<RtpPacketToSend> packet,
+                                       const PacedPacketInfo& pacing_info) {
+  if (!packet || !CanSendPacket(*packet)) {
+    return false;
+  }
+  AssignSequenceNumber(*packet);
+  SendPacket(std::move(packet), pacing_info);
   return true;
 }
 

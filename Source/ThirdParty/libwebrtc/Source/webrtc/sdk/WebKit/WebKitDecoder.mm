@@ -154,7 +154,8 @@ public:
 
 private:
     std::vector<SdpVideoFormat> GetSupportedFormats() const final;
-    std::unique_ptr<VideoDecoder> CreateVideoDecoder(const SdpVideoFormat& format) final;
+    std::unique_ptr<VideoDecoder> Create(const Environment& environment, const SdpVideoFormat& format) final;
+    CodecSupport QueryCodecSupport(const SdpVideoFormat&, bool reference_scaling) const final;
 
     std::unique_ptr<VideoDecoderFactory> m_internalFactory;
 };
@@ -275,14 +276,20 @@ std::vector<SdpVideoFormat> RemoteVideoDecoderFactory::GetSupportedFormats() con
     return m_internalFactory->GetSupportedFormats();
 }
 
-std::unique_ptr<VideoDecoder> RemoteVideoDecoderFactory::CreateVideoDecoder(const SdpVideoFormat& format)
+RemoteVideoDecoderFactory::CodecSupport RemoteVideoDecoderFactory::QueryCodecSupport(const SdpVideoFormat& format, bool reference_scaling) const {
+    CodecSupport codec_support;
+    codec_support.is_supported = format.IsCodecInList(GetSupportedFormats());
+    return codec_support;
+}
+
+std::unique_ptr<VideoDecoder> RemoteVideoDecoderFactory::Create(const Environment& environment, const SdpVideoFormat& format)
 {
     if (!videoDecoderCallbacks().createCallback)
-        return m_internalFactory->CreateVideoDecoder(format);
+        return m_internalFactory->Create(environment, format);
 
     auto createdDecoder = videoDecoderCallbacks().createCallback(format);
     if (!createdDecoder.value)
-        return m_internalFactory->CreateVideoDecoder(format);
+        return m_internalFactory->Create(environment, format);
 
     if (createdDecoder.isWebRTCVideoDecoder)
         return std::unique_ptr<VideoDecoder> { static_cast<VideoDecoder*>(createdDecoder.value) };
@@ -290,7 +297,7 @@ std::unique_ptr<VideoDecoder> RemoteVideoDecoderFactory::CreateVideoDecoder(cons
     auto decoder = std::make_unique<RemoteVideoDecoder>(createdDecoder.value, format.name == "VP9");
     if (!decoder->isVP9())
         return decoder;
-    return webrtc::CreateVideoDecoderSoftwareFallbackWrapper(m_internalFactory->CreateVideoDecoder(format), std::move(decoder));
+    return webrtc::CreateVideoDecoderSoftwareFallbackWrapper(environment, m_internalFactory->Create(environment, format), std::move(decoder));
 }
 
 std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitH265 supportsH265, WebKitVP9 supportsVP9, WebKitVP9VTB supportsVP9VTB, WebKitAv1 supportsAv1)

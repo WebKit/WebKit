@@ -23,7 +23,6 @@
 #include "api/test/metrics/metric.h"
 #include "api/test/simulated_network.h"
 #include "call/call.h"
-#include "call/simulated_network.h"
 #include "rtc_base/event.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "test/call_test.h"

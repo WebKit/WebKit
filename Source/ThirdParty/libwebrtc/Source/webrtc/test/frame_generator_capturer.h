@@ -15,6 +15,7 @@
 #include <memory>
 
 #include "absl/types/optional.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/test/frame_generator_interface.h"
 #include "api/video/color_space.h"
@@ -23,7 +24,6 @@
 #include "api/video/video_sink_interface.h"
 #include "api/video/video_source_interface.h"
 #include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/task_queue.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
@@ -106,9 +106,7 @@ class FrameGeneratorCapturer : public TestVideoCapturer {
 
   int64_t first_frame_capture_time_;
 
-  // Must be the last field, so it will be deconstructed first as tasks
-  // in the TaskQueue access other fields of the instance of this class.
-  rtc::TaskQueue task_queue_;
+  std::unique_ptr<TaskQueueBase, TaskQueueDeleter> task_queue_;
 };
 }  // namespace test
 }  // namespace webrtc

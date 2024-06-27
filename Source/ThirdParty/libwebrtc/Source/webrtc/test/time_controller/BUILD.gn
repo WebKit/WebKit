@@ -24,6 +24,7 @@ rtc_library("time_controller") {
   ]
 
   deps = [
+    "../../api:field_trials_view",
     "../../api:sequence_checker",
     "../../api:time_controller",
     "../../api/task_queue",
@@ -57,10 +58,10 @@ if (rtc_include_tests) {
       ":time_controller",
       "../:test_support",
       "../../api:time_controller",
+      "../../api/task_queue",
       "../../api/units:time_delta",
       "../../rtc_base:macromagic",
       "../../rtc_base:rtc_event",
-      "../../rtc_base:rtc_task_queue",
       "../../rtc_base:task_queue_for_test",
       "../../rtc_base:threading",
       "../../rtc_base/synchronization:mutex",

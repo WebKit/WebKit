@@ -22,6 +22,20 @@ AudioFrame::AudioFrame() {
   static_assert(sizeof(data_) == kMaxDataSizeBytes, "kMaxDataSizeBytes");
 }
 
+AudioFrame::AudioFrame(int sample_rate_hz,
+                       size_t num_channels,
+                       ChannelLayout layout /*= CHANNEL_LAYOUT_UNSUPPORTED*/)
+    : samples_per_channel_(SampleRateToDefaultChannelSize(sample_rate_hz)),
+      sample_rate_hz_(sample_rate_hz),
+      num_channels_(num_channels),
+      channel_layout_(layout == CHANNEL_LAYOUT_UNSUPPORTED
+                          ? GuessChannelLayout(num_channels)
+                          : layout) {
+  RTC_DCHECK_LE(num_channels_, kMaxConcurrentChannels);
+  RTC_DCHECK_GT(sample_rate_hz_, 0);
+  RTC_DCHECK_GT(samples_per_channel_, 0u);
+}
+
 void AudioFrame::Reset() {
   ResetWithoutMuting();
   muted_ = true;
@@ -51,6 +65,7 @@ void AudioFrame::UpdateFrame(uint32_t timestamp,
                              SpeechType speech_type,
                              VADActivity vad_activity,
                              size_t num_channels) {
+  RTC_CHECK_LE(num_channels, kMaxConcurrentChannels);
   timestamp_ = timestamp;
   samples_per_channel_ = samples_per_channel;
   sample_rate_hz_ = sample_rate_hz;
@@ -76,6 +91,16 @@ void AudioFrame::CopyFrom(const AudioFrame& src) {
   if (this == &src)
     return;
 
+  if (muted_ && !src.muted()) {
+    // TODO: bugs.webrtc.org/5647 - Since the default value for `muted_` is
+    // false and `data_` may still be uninitialized (because we don't initialize
+    // data_ as part of construction), we clear the full buffer here before
+    // copying over new values. If we don't, msan might complain in some tests.
+    // Consider locking down construction, avoiding the default constructor and
+    // prefering construction that initializes all state.
+    memset(data_, 0, kMaxDataSizeBytes);
+  }
+
   timestamp_ = src.timestamp_;
   elapsed_time_ms_ = src.elapsed_time_ms_;
   ntp_time_ms_ = src.ntp_time_ms_;
@@ -89,11 +114,10 @@ void AudioFrame::CopyFrom(const AudioFrame& src) {
   channel_layout_ = src.channel_layout_;
   absolute_capture_timestamp_ms_ = src.absolute_capture_timestamp_ms();
 
-  const size_t length = samples_per_channel_ * num_channels_;
-  RTC_CHECK_LE(length, kMaxDataSizeSamples);
-  if (!src.muted()) {
-    memcpy(data_, src.data(), sizeof(int16_t) * length);
-    muted_ = false;
+  auto data = src.data_view();
+  RTC_CHECK_LE(data.size(), kMaxDataSizeSamples);
+  if (!muted_ && !data.empty()) {
+    memcpy(&data_[0], &data[0], sizeof(int16_t) * data.size());
   }
 }
 
@@ -110,17 +134,56 @@ int64_t AudioFrame::ElapsedProfileTimeMs() const {
 }
 
 const int16_t* AudioFrame::data() const {
-  return muted_ ? empty_data() : data_;
+  return muted_ ? zeroed_data().begin() : data_;
 }
 
-// TODO(henrik.lundin) Can we skip zeroing the buffer?
-// See https://bugs.chromium.org/p/webrtc/issues/detail?id=5647.
+rtc::ArrayView<const int16_t> AudioFrame::data_view() const {
+  const auto samples = samples_per_channel_ * num_channels_;
+  // If you get a nullptr from `data_view()`, it's likely because the
+  // samples_per_channel_ and/or num_channels_ haven't been properly set.
+  // Since `data_view()` returns an rtc::ArrayView<>, we inherit the behavior
+  // in ArrayView when the view size is 0 that ArrayView<>::data() will always
+  // return nullptr. So, even when an AudioFrame is muted and we want to
+  // return `zeroed_data()`, if samples_per_channel_ or  num_channels_ is 0,
+  // the view will point to nullptr.
+  return muted_ ? zeroed_data().subview(0, samples)
+                : rtc::ArrayView<const int16_t>(&data_[0], samples);
+}
+
 int16_t* AudioFrame::mutable_data() {
+  // TODO: bugs.webrtc.org/5647 - Can we skip zeroing the buffer?
+  // Consider instead if we should rather zero the buffer when `muted_` is set
+  // to `true`.
   if (muted_) {
     memset(data_, 0, kMaxDataSizeBytes);
     muted_ = false;
   }
   return data_;
+}
+
+rtc::ArrayView<int16_t> AudioFrame::mutable_data(size_t samples_per_channel,
+                                                 size_t num_channels) {
+  const size_t total_samples = samples_per_channel * num_channels;
+  RTC_CHECK_LE(total_samples, kMaxDataSizeSamples);
+  RTC_CHECK_LE(num_channels, kMaxConcurrentChannels);
+  // Sanity check for valid argument values during development.
+  // If `samples_per_channel` is < `num_channels` but larger than 0,
+  // then chances are the order of arguments is incorrect.
+  RTC_DCHECK((samples_per_channel == 0 && num_channels == 0) ||
+             num_channels <= samples_per_channel)
+      << "samples_per_channel=" << samples_per_channel
+      << "num_channels=" << num_channels;
+
+  // TODO: bugs.webrtc.org/5647 - Can we skip zeroing the buffer?
+  // Consider instead if we should rather zero the whole buffer when `muted_` is
+  // set to `true`.
+  if (muted_) {
+    memset(data_, 0, total_samples * sizeof(int16_t));
+    muted_ = false;
+  }
+  samples_per_channel_ = samples_per_channel;
+  num_channels_ = num_channels;
+  return rtc::ArrayView<int16_t>(&data_[0], total_samples);
 }
 
 void AudioFrame::Mute() {
@@ -131,10 +194,35 @@ bool AudioFrame::muted() const {
   return muted_;
 }
 
+void AudioFrame::SetLayoutAndNumChannels(ChannelLayout layout,
+                                         size_t num_channels) {
+  channel_layout_ = layout;
+  num_channels_ = num_channels;
+#if RTC_DCHECK_IS_ON
+  // Do a sanity check that the layout and num_channels match.
+  // If this lookup yield 0u, then the layout is likely CHANNEL_LAYOUT_DISCRETE.
+  auto expected_num_channels = ChannelLayoutToChannelCount(layout);
+  if (expected_num_channels) {  // If expected_num_channels is 0
+    RTC_DCHECK_EQ(expected_num_channels, num_channels_);
+  }
+#endif
+  RTC_CHECK_LE(samples_per_channel_ * num_channels_, kMaxDataSizeSamples);
+}
+
+void AudioFrame::SetSampleRateAndChannelSize(int sample_rate) {
+  sample_rate_hz_ = sample_rate;
+  // We could call `AudioProcessing::GetFrameSize()` here, but that requires
+  // adding a dependency on the ":audio_processing" build target, which can
+  // complicate the dependency tree. Some refactoring is probably in order to
+  // get some consistency around this since there are many places across the
+  // code that assume this default buffer size.
+  samples_per_channel_ = SampleRateToDefaultChannelSize(sample_rate_hz_);
+}
+
 // static
-const int16_t* AudioFrame::empty_data() {
+rtc::ArrayView<const int16_t> AudioFrame::zeroed_data() {
   static int16_t* null_data = new int16_t[kMaxDataSizeSamples]();
-  return &null_data[0];
+  return rtc::ArrayView<const int16_t>(null_data, kMaxDataSizeSamples);
 }
 
 }  // namespace webrtc

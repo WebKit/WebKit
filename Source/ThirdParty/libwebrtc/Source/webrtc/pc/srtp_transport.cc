@@ -37,86 +37,6 @@ SrtpTransport::SrtpTransport(bool rtcp_mux_enabled,
                              const FieldTrialsView& field_trials)
     : RtpTransport(rtcp_mux_enabled), field_trials_(field_trials) {}
 
-RTCError SrtpTransport::SetSrtpSendKey(const cricket::CryptoParams& params) {
-  if (send_params_) {
-    LOG_AND_RETURN_ERROR(
-        webrtc::RTCErrorType::UNSUPPORTED_OPERATION,
-        "Setting the SRTP send key twice is currently unsupported.");
-  }
-  if (recv_params_ && recv_params_->crypto_suite != params.crypto_suite) {
-    LOG_AND_RETURN_ERROR(
-        webrtc::RTCErrorType::UNSUPPORTED_OPERATION,
-        "The send key and receive key must have the same cipher suite.");
-  }
-
-  send_crypto_suite_ = rtc::SrtpCryptoSuiteFromName(params.crypto_suite);
-  if (*send_crypto_suite_ == rtc::kSrtpInvalidCryptoSuite) {
-    return RTCError(RTCErrorType::INVALID_PARAMETER,
-                    "Invalid SRTP crypto suite");
-  }
-
-  int send_key_len, send_salt_len;
-  if (!rtc::GetSrtpKeyAndSaltLengths(*send_crypto_suite_, &send_key_len,
-                                     &send_salt_len)) {
-    return RTCError(RTCErrorType::INVALID_PARAMETER,
-                    "Could not get lengths for crypto suite(s):"
-                    " send crypto_suite ");
-  }
-
-  send_key_ = rtc::ZeroOnFreeBuffer<uint8_t>(send_key_len + send_salt_len);
-  if (!ParseKeyParams(params.key_params, send_key_.data(), send_key_.size())) {
-    return RTCError(RTCErrorType::INVALID_PARAMETER,
-                    "Failed to parse the crypto key params");
-  }
-
-  if (!MaybeSetKeyParams()) {
-    return RTCError(RTCErrorType::INVALID_PARAMETER,
-                    "Failed to set the crypto key params");
-  }
-  send_params_ = params;
-  return RTCError::OK();
-}
-
-RTCError SrtpTransport::SetSrtpReceiveKey(const cricket::CryptoParams& params) {
-  if (recv_params_) {
-    LOG_AND_RETURN_ERROR(
-        webrtc::RTCErrorType::UNSUPPORTED_OPERATION,
-        "Setting the SRTP send key twice is currently unsupported.");
-  }
-  if (send_params_ && send_params_->crypto_suite != params.crypto_suite) {
-    LOG_AND_RETURN_ERROR(
-        webrtc::RTCErrorType::UNSUPPORTED_OPERATION,
-        "The send key and receive key must have the same cipher suite.");
-  }
-
-  recv_crypto_suite_ = rtc::SrtpCryptoSuiteFromName(params.crypto_suite);
-  if (*recv_crypto_suite_ == rtc::kSrtpInvalidCryptoSuite) {
-    return RTCError(RTCErrorType::INVALID_PARAMETER,
-                    "Invalid SRTP crypto suite");
-  }
-
-  int recv_key_len, recv_salt_len;
-  if (!rtc::GetSrtpKeyAndSaltLengths(*recv_crypto_suite_, &recv_key_len,
-                                     &recv_salt_len)) {
-    return RTCError(RTCErrorType::INVALID_PARAMETER,
-                    "Could not get lengths for crypto suite(s):"
-                    " recv crypto_suite ");
-  }
-
-  recv_key_ = rtc::ZeroOnFreeBuffer<uint8_t>(recv_key_len + recv_salt_len);
-  if (!ParseKeyParams(params.key_params, recv_key_.data(), recv_key_.size())) {
-    return RTCError(RTCErrorType::INVALID_PARAMETER,
-                    "Failed to parse the crypto key params");
-  }
-
-  if (!MaybeSetKeyParams()) {
-    return RTCError(RTCErrorType::INVALID_PARAMETER,
-                    "Failed to set the crypto key params");
-  }
-  recv_params_ = params;
-  return RTCError::OK();
-}
-
 bool SrtpTransport::SendRtpPacket(rtc::CopyOnWriteBuffer* packet,
                                   const rtc::PacketOptions& options,
                                   int flags) {
@@ -198,44 +118,47 @@ bool SrtpTransport::SendRtcpPacket(rtc::CopyOnWriteBuffer* packet,
   return SendPacket(/*rtcp=*/true, packet, options, flags);
 }
 
-void SrtpTransport::OnRtpPacketReceived(rtc::CopyOnWriteBuffer packet,
-                                        int64_t packet_time_us) {
+void SrtpTransport::OnRtpPacketReceived(const rtc::ReceivedPacket& packet) {
   TRACE_EVENT0("webrtc", "SrtpTransport::OnRtpPacketReceived");
   if (!IsSrtpActive()) {
     RTC_LOG(LS_WARNING)
         << "Inactive SRTP transport received an RTP packet. Drop it.";
     return;
   }
-  char* data = packet.MutableData<char>();
-  int len = rtc::checked_cast<int>(packet.size());
+
+  rtc::CopyOnWriteBuffer payload(packet.payload());
+  char* data = payload.MutableData<char>();
+  int len = rtc::checked_cast<int>(payload.size());
   if (!UnprotectRtp(data, len, &len)) {
     // Limit the error logging to avoid excessive logs when there are lots of
     // bad packets.
     const int kFailureLogThrottleCount = 100;
     if (decryption_failure_count_ % kFailureLogThrottleCount == 0) {
       RTC_LOG(LS_ERROR) << "Failed to unprotect RTP packet: size=" << len
-                        << ", seqnum=" << ParseRtpSequenceNumber(packet)
-                        << ", SSRC=" << ParseRtpSsrc(packet)
+                        << ", seqnum=" << ParseRtpSequenceNumber(payload)
+                        << ", SSRC=" << ParseRtpSsrc(payload)
                         << ", previous failure count: "
                         << decryption_failure_count_;
     }
     ++decryption_failure_count_;
     return;
   }
-  packet.SetSize(len);
-  DemuxPacket(std::move(packet), packet_time_us);
+  payload.SetSize(len);
+  DemuxPacket(std::move(payload),
+              packet.arrival_time().value_or(Timestamp::MinusInfinity()),
+              packet.ecn());
 }
 
-void SrtpTransport::OnRtcpPacketReceived(rtc::CopyOnWriteBuffer packet,
-                                         int64_t packet_time_us) {
+void SrtpTransport::OnRtcpPacketReceived(const rtc::ReceivedPacket& packet) {
   TRACE_EVENT0("webrtc", "SrtpTransport::OnRtcpPacketReceived");
   if (!IsSrtpActive()) {
     RTC_LOG(LS_WARNING)
         << "Inactive SRTP transport received an RTCP packet. Drop it.";
     return;
   }
-  char* data = packet.MutableData<char>();
-  int len = rtc::checked_cast<int>(packet.size());
+  rtc::CopyOnWriteBuffer payload(packet.payload());
+  char* data = payload.MutableData<char>();
+  int len = rtc::checked_cast<int>(payload.size());
   if (!UnprotectRtcp(data, len, &len)) {
     int type = -1;
     cricket::GetRtcpType(data, len, &type);
@@ -243,8 +166,9 @@ void SrtpTransport::OnRtcpPacketReceived(rtc::CopyOnWriteBuffer packet,
                       << ", type=" << type;
     return;
   }
-  packet.SetSize(len);
-  SendRtcpPacketReceived(&packet, packet_time_us);
+  payload.SetSize(len);
+  SendRtcpPacketReceived(
+      &payload, packet.arrival_time() ? packet.arrival_time()->us() : -1);
 }
 
 void SrtpTransport::OnNetworkRouteChanged(
@@ -517,6 +441,21 @@ void SrtpTransport::MaybeUpdateWritableState() {
     writable_ = writable;
     SendWritableState(writable_);
   }
+}
+
+bool SrtpTransport::UnregisterRtpDemuxerSink(RtpPacketSinkInterface* sink) {
+  if (recv_session_ &&
+      field_trials_.IsEnabled("WebRTC-SrtpRemoveReceiveStream")) {
+    // Remove the SSRCs explicitly registered with the demuxer
+    // (via SDP negotiation) from the SRTP session.
+    for (const auto ssrc : GetSsrcsForSink(sink)) {
+      if (!recv_session_->RemoveSsrcFromSession(ssrc)) {
+        RTC_LOG(LS_WARNING)
+            << "Could not remove SSRC " << ssrc << " from SRTP session.";
+      }
+    }
+  }
+  return RtpTransport::UnregisterRtpDemuxerSink(sink);
 }
 
 }  // namespace webrtc

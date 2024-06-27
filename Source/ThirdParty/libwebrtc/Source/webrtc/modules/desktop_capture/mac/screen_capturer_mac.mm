@@ -178,8 +178,11 @@ void ScreenCapturerMac::Start(Callback* callback) {
   RTC_DCHECK(thread_checker_.IsCurrent());
   RTC_DCHECK(!callback_);
   RTC_DCHECK(callback);
-  TRACE_EVENT_INSTANT1(
-      "webrtc", "ScreenCapturermac::Start", "target display id ", current_display_);
+  TRACE_EVENT_INSTANT1("webrtc",
+                       "ScreenCapturermac::Start",
+                       TRACE_EVENT_SCOPE_GLOBAL,
+                       "target display id ",
+                       current_display_);
 
   callback_ = callback;
   // Start and operate CGDisplayStream handler all from capture thread.
@@ -439,6 +442,10 @@ void ScreenCapturerMac::ScreenConfigurationChanged() {
 
 bool ScreenCapturerMac::RegisterRefreshAndMoveHandlers() {
   RTC_DCHECK(thread_checker_.IsCurrent());
+  if (!desktop_frame_provider_.allow_iosurface()) {
+    return true;
+  }
+
   desktop_config_ = desktop_config_monitor_->desktop_configuration();
   for (const auto& config : desktop_config_.displays) {
     size_t pixel_width = config.pixel_bounds.width();

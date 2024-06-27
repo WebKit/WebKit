@@ -28,7 +28,7 @@ TEST(AecDumper, APICallsDoNotCrash) {
 
   {
     std::unique_ptr<webrtc::AecDump> aec_dump =
-        webrtc::AecDumpFactory::Create(filename, -1, &file_writer_queue);
+        webrtc::AecDumpFactory::Create(filename, -1, file_writer_queue.Get());
 
     constexpr int kNumChannels = 1;
     constexpr int kNumSamplesPerChannel = 160;
@@ -63,7 +63,7 @@ TEST(AecDumper, WriteToFile) {
 
   {
     std::unique_ptr<webrtc::AecDump> aec_dump =
-        webrtc::AecDumpFactory::Create(filename, -1, &file_writer_queue);
+        webrtc::AecDumpFactory::Create(filename, -1, file_writer_queue.Get());
 
     constexpr int kNumChannels = 1;
     constexpr int kNumSamplesPerChannel = 160;

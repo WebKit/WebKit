@@ -20,6 +20,7 @@
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/units/time_delta.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/chunk/reconfig_chunk.h"
 #include "net/dcsctp/packet/parameter/incoming_ssn_reset_request_parameter.h"
@@ -80,7 +81,7 @@ class StreamResetHandler {
         reconfig_timer_(timer_manager->CreateTimer(
             "re-config",
             absl::bind_front(&StreamResetHandler::OnReconfigTimerExpiry, this),
-            TimerOptions(DurationMs(0)))),
+            TimerOptions(webrtc::TimeDelta::Zero()))),
         next_outgoing_req_seq_nbr_(
             handover_state
                 ? ReconfigRequestSN(handover_state->tx.next_reset_req_sn)
@@ -211,7 +212,7 @@ class StreamResetHandler {
   void HandleResponse(const ParameterDescriptor& descriptor);
 
   // Expiration handler for the Reconfig timer.
-  absl::optional<DurationMs> OnReconfigTimerExpiry();
+  webrtc::TimeDelta OnReconfigTimerExpiry();
 
   const absl::string_view log_prefix_;
   Context* ctx_;

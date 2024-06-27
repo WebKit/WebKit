@@ -13,8 +13,8 @@
 
 #include <string>
 
+#include "api/audio/audio_device.h"
 #include "api/make_ref_counted.h"
-#include "modules/audio_device/include/audio_device.h"
 #include "test/gmock.h"
 
 namespace webrtc {

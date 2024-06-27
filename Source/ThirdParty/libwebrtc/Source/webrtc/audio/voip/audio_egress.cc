@@ -13,6 +13,7 @@
 #include <utility>
 #include <vector>
 
+#include "api/sequence_checker.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {
@@ -25,12 +26,17 @@ AudioEgress::AudioEgress(RtpRtcpInterface* rtp_rtcp,
       audio_coding_(AudioCodingModule::Create()),
       encoder_queue_(task_queue_factory->CreateTaskQueue(
           "AudioEncoder",
-          TaskQueueFactory::Priority::NORMAL)) {
+          TaskQueueFactory::Priority::NORMAL)),
+      encoder_queue_checker_(encoder_queue_.get()) {
   audio_coding_->RegisterTransportCallback(this);
 }
 
 AudioEgress::~AudioEgress() {
   audio_coding_->RegisterTransportCallback(nullptr);
+
+  // Delete first to ensure that there are no running tasks when the other
+  // members are destroyed.
+  encoder_queue_ = nullptr;
 }
 
 bool AudioEgress::IsSending() const {
@@ -73,9 +79,9 @@ void AudioEgress::SendAudioData(std::unique_ptr<AudioFrame> audio_frame) {
   RTC_DCHECK_GT(audio_frame->samples_per_channel_, 0);
   RTC_DCHECK_LE(audio_frame->num_channels_, 8);
 
-  encoder_queue_.PostTask(
+  encoder_queue_->PostTask(
       [this, audio_frame = std::move(audio_frame)]() mutable {
-        RTC_DCHECK_RUN_ON(&encoder_queue_);
+        RTC_DCHECK_RUN_ON(&encoder_queue_checker_);
         if (!rtp_rtcp_->SendingMedia()) {
           return;
         }
@@ -112,7 +118,7 @@ int32_t AudioEgress::SendData(AudioFrameType frame_type,
                               uint32_t timestamp,
                               const uint8_t* payload_data,
                               size_t payload_size) {
-  RTC_DCHECK_RUN_ON(&encoder_queue_);
+  RTC_DCHECK_RUN_ON(&encoder_queue_checker_);
 
   rtc::ArrayView<const uint8_t> payload(payload_data, payload_size);
 
@@ -175,8 +181,8 @@ bool AudioEgress::SendTelephoneEvent(int dtmf_event, int duration_ms) {
 }
 
 void AudioEgress::SetMute(bool mute) {
-  encoder_queue_.PostTask([this, mute] {
-    RTC_DCHECK_RUN_ON(&encoder_queue_);
+  encoder_queue_->PostTask([this, mute] {
+    RTC_DCHECK_RUN_ON(&encoder_queue_checker_);
     encoder_context_.mute_ = mute;
   });
 }

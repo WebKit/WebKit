@@ -22,8 +22,10 @@ rtc_library("rtc_event_log") {
     "..:libjingle_logging_api",
     "../../rtc_base:checks",
     "../../rtc_base:timeutils",
+    "../environment",
     "../task_queue",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/base:nullability" ]
 }
 
 rtc_library("rtc_event_log_factory") {
@@ -35,11 +37,13 @@ rtc_library("rtc_event_log_factory") {
 
   deps = [
     ":rtc_event_log",
-    "../../rtc_base:checks",
+    "..:field_trials_view",
     "../../rtc_base/system:rtc_export",
-    "../../system_wrappers:field_trial",
+    "../environment",
     "../task_queue",
   ]
+
+  absl_deps = [ "//third_party/abseil-cpp/absl/base:nullability" ]
 
   if (rtc_enable_protobuf) {
     defines = [ "WEBRTC_ENABLE_RTC_EVENT_LOG" ]

@@ -14,8 +14,8 @@
 #include <utility>
 
 #include "absl/strings/match.h"
-#include "api/async_resolver_factory.h"
-#include "api/call/call_factory_interface.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "api/fec_controller.h"
 #include "api/ice_transport_interface.h"
 #include "api/network_state_predictor.h"
@@ -27,13 +27,13 @@
 #include "call/audio_state.h"
 #include "call/rtp_transport_controller_send_factory.h"
 #include "media/base/media_engine.h"
-#include "p2p/base/basic_async_resolver_factory.h"
 #include "p2p/base/basic_packet_socket_factory.h"
 #include "p2p/base/default_ice_transport_factory.h"
 #include "p2p/base/port_allocator.h"
 #include "p2p/client/basic_port_allocator.h"
 #include "pc/audio_track.h"
 #include "pc/local_audio_source.h"
+#include "pc/media_factory.h"
 #include "pc/media_stream.h"
 #include "pc/media_stream_proxy.h"
 #include "pc/media_stream_track_proxy.h"
@@ -78,7 +78,10 @@ CreateModularPeerConnectionFactory(
 // Static
 rtc::scoped_refptr<PeerConnectionFactory> PeerConnectionFactory::Create(
     PeerConnectionFactoryDependencies dependencies) {
-  auto context = ConnectionContext::Create(&dependencies);
+  auto context = ConnectionContext::Create(
+      CreateEnvironment(std::move(dependencies.trials),
+                        std::move(dependencies.task_queue_factory)),
+      &dependencies);
   if (!context) {
     return nullptr;
   }
@@ -89,7 +92,6 @@ PeerConnectionFactory::PeerConnectionFactory(
     rtc::scoped_refptr<ConnectionContext> context,
     PeerConnectionFactoryDependencies* dependencies)
     : context_(context),
-      task_queue_factory_(std::move(dependencies->task_queue_factory)),
       event_log_factory_(std::move(dependencies->event_log_factory)),
       fec_controller_factory_(std::move(dependencies->fec_controller_factory)),
       network_state_predictor_factory_(
@@ -101,18 +103,24 @@ PeerConnectionFactory::PeerConnectionFactory(
           (dependencies->transport_controller_send_factory)
               ? std::move(dependencies->transport_controller_send_factory)
               : std::make_unique<RtpTransportControllerSendFactory>()),
-      metronome_(std::move(dependencies->metronome)) {}
+      decode_metronome_(std::move(dependencies->decode_metronome)),
+      encode_metronome_(std::move(dependencies->encode_metronome)) {}
 
 PeerConnectionFactory::PeerConnectionFactory(
     PeerConnectionFactoryDependencies dependencies)
-    : PeerConnectionFactory(ConnectionContext::Create(&dependencies),
-                            &dependencies) {}
+    : PeerConnectionFactory(
+          ConnectionContext::Create(
+              CreateEnvironment(std::move(dependencies.trials),
+                                std::move(dependencies.task_queue_factory)),
+              &dependencies),
+          &dependencies) {}
 
 PeerConnectionFactory::~PeerConnectionFactory() {
   RTC_DCHECK_RUN_ON(signaling_thread());
   worker_thread()->BlockingCall([this] {
     RTC_DCHECK_RUN_ON(worker_thread());
-    metronome_ = nullptr;
+    decode_metronome_ = nullptr;
+    encode_metronome_ = nullptr;
   });
 }
 
@@ -126,14 +134,14 @@ RtpCapabilities PeerConnectionFactory::GetRtpSenderCapabilities(
   RTC_DCHECK_RUN_ON(signaling_thread());
   switch (kind) {
     case cricket::MEDIA_TYPE_AUDIO: {
-      cricket::AudioCodecs cricket_codecs;
+      cricket::Codecs cricket_codecs;
       cricket_codecs = media_engine()->voice().send_codecs();
       auto extensions =
           GetDefaultEnabledRtpHeaderExtensions(media_engine()->voice());
       return ToRtpCapabilities(cricket_codecs, extensions);
     }
     case cricket::MEDIA_TYPE_VIDEO: {
-      cricket::VideoCodecs cricket_codecs;
+      cricket::Codecs cricket_codecs;
       cricket_codecs = media_engine()->video().send_codecs(context_->use_rtx());
       auto extensions =
           GetDefaultEnabledRtpHeaderExtensions(media_engine()->video());
@@ -153,14 +161,14 @@ RtpCapabilities PeerConnectionFactory::GetRtpReceiverCapabilities(
   RTC_DCHECK_RUN_ON(signaling_thread());
   switch (kind) {
     case cricket::MEDIA_TYPE_AUDIO: {
-      cricket::AudioCodecs cricket_codecs;
+      cricket::Codecs cricket_codecs;
       cricket_codecs = media_engine()->voice().recv_codecs();
       auto extensions =
           GetDefaultEnabledRtpHeaderExtensions(media_engine()->voice());
       return ToRtpCapabilities(cricket_codecs, extensions);
     }
     case cricket::MEDIA_TYPE_VIDEO: {
-      cricket::VideoCodecs cricket_codecs =
+      cricket::Codecs cricket_codecs =
           media_engine()->video().recv_codecs(context_->use_rtx());
       auto extensions =
           GetDefaultEnabledRtpHeaderExtensions(media_engine()->video());
@@ -205,6 +213,23 @@ PeerConnectionFactory::CreatePeerConnectionOrError(
     PeerConnectionDependencies dependencies) {
   RTC_DCHECK_RUN_ON(signaling_thread());
 
+  EnvironmentFactory env_factory(context_->env());
+
+  // Field trials active for this PeerConnection is the first of:
+  // a) Specified in the PeerConnectionDependencies
+  // b) Specified in the PeerConnectionFactoryDependencies
+  // c) Created as default by the EnvironmentFactory.
+  env_factory.Set(std::move(dependencies.trials));
+
+  if (event_log_factory_ != nullptr) {
+    worker_thread()->BlockingCall([&] {
+      Environment env_for_rtc_event_log = env_factory.Create();
+      env_factory.Set(event_log_factory_->Create(env_for_rtc_event_log));
+    });
+  }
+
+  const Environment env = env_factory.Create();
+
   // Set internal defaults if optional dependencies are not set.
   if (!dependencies.cert_generator) {
     dependencies.cert_generator =
@@ -212,11 +237,10 @@ PeerConnectionFactory::CreatePeerConnectionOrError(
                                                        network_thread());
   }
   if (!dependencies.allocator) {
-    const FieldTrialsView* trials =
-        dependencies.trials ? dependencies.trials.get() : &field_trials();
     dependencies.allocator = std::make_unique<cricket::BasicPortAllocator>(
         context_->default_network_manager(), context_->default_socket_factory(),
-        configuration.turn_customizer, /*relay_port_factory=*/nullptr, trials);
+        configuration.turn_customizer, /*relay_port_factory=*/nullptr,
+        &env.field_trials());
     dependencies.allocator->SetPortRange(
         configuration.port_allocator_config.min_port,
         configuration.port_allocator_config.max_port);
@@ -232,19 +256,13 @@ PeerConnectionFactory::CreatePeerConnectionOrError(
   dependencies.allocator->SetNetworkIgnoreMask(options().network_ignore_mask);
   dependencies.allocator->SetVpnList(configuration.vpn_list);
 
-  std::unique_ptr<RtcEventLog> event_log =
-      worker_thread()->BlockingCall([this] { return CreateRtcEventLog_w(); });
-
-  const FieldTrialsView* trials =
-      dependencies.trials ? dependencies.trials.get() : &field_trials();
   std::unique_ptr<Call> call =
-      worker_thread()->BlockingCall([this, &event_log, trials, &configuration] {
-        return CreateCall_w(event_log.get(), *trials, configuration);
+      worker_thread()->BlockingCall([this, &env, &configuration] {
+        return CreateCall_w(env, configuration);
       });
 
-  auto result = PeerConnection::Create(context_, options_, std::move(event_log),
-                                       std::move(call), configuration,
-                                       std::move(dependencies));
+  auto result = PeerConnection::Create(env, context_, options_, std::move(call),
+                                       configuration, std::move(dependencies));
   if (!result.ok()) {
     return result.MoveError();
   }
@@ -285,23 +303,12 @@ rtc::scoped_refptr<AudioTrackInterface> PeerConnectionFactory::CreateAudioTrack(
   return AudioTrackProxy::Create(signaling_thread(), track);
 }
 
-std::unique_ptr<RtcEventLog> PeerConnectionFactory::CreateRtcEventLog_w() {
-  RTC_DCHECK_RUN_ON(worker_thread());
-
-  auto encoding_type = RtcEventLog::EncodingType::NewFormat;
-  if (field_trials().IsDisabled("WebRTC-RtcEventLogNewFormat"))
-    encoding_type = RtcEventLog::EncodingType::Legacy;
-  return event_log_factory_ ? event_log_factory_->Create(encoding_type)
-                            : std::make_unique<RtcEventLogNull>();
-}
-
 std::unique_ptr<Call> PeerConnectionFactory::CreateCall_w(
-    RtcEventLog* event_log,
-    const FieldTrialsView& field_trials,
+    const Environment& env,
     const PeerConnectionInterface::RTCConfiguration& configuration) {
   RTC_DCHECK_RUN_ON(worker_thread());
 
-  CallConfig call_config(event_log, network_thread());
+  CallConfig call_config(env, network_thread());
   if (!media_engine() || !context_->call_factory()) {
     return nullptr;
   }
@@ -314,7 +321,7 @@ std::unique_ptr<Call> PeerConnectionFactory::CreateCall_w(
   FieldTrialParameter<DataRate> max_bandwidth("max",
                                               DataRate::KilobitsPerSec(2000));
   ParseFieldTrial({&min_bandwidth, &start_bandwidth, &max_bandwidth},
-                  field_trials.Lookup("WebRTC-PcFactoryDefaultBitrates"));
+                  env.field_trials().Lookup("WebRTC-PcFactoryDefaultBitrates"));
 
   call_config.bitrate_config.min_bitrate_bps =
       rtc::saturated_cast<int>(min_bandwidth->bps());
@@ -324,7 +331,6 @@ std::unique_ptr<Call> PeerConnectionFactory::CreateCall_w(
       rtc::saturated_cast<int>(max_bandwidth->bps());
 
   call_config.fec_controller_factory = fec_controller_factory_.get();
-  call_config.task_queue_factory = task_queue_factory_.get();
   call_config.network_state_predictor_factory =
       network_state_predictor_factory_.get();
   call_config.neteq_factory = neteq_factory_.get();
@@ -337,10 +343,10 @@ std::unique_ptr<Call> PeerConnectionFactory::CreateCall_w(
     RTC_LOG(LS_INFO) << "Using default network controller factory";
   }
 
-  call_config.trials = &field_trials;
   call_config.rtp_transport_controller_send_factory =
       transport_controller_send_factory_.get();
-  call_config.metronome = metronome_.get();
+  call_config.decode_metronome = decode_metronome_.get();
+  call_config.encode_metronome = encode_metronome_.get();
   call_config.pacer_burst_interval = configuration.pacer_burst_interval;
   return context_->call_factory()->CreateCall(call_config);
 }

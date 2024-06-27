@@ -113,7 +113,7 @@ void RunFineBufferTest(int frame_size_in_samples) {
   {
     InSequence s;
     for (int j = 0; j < kNumberOfUpdateBufferCalls - 1; ++j) {
-      EXPECT_CALL(audio_device_buffer, SetRecordedBuffer(_, kSamplesPer10Ms))
+      EXPECT_CALL(audio_device_buffer, SetRecordedBuffer(_, kSamplesPer10Ms, _))
           .WillOnce(VerifyInputBuffer(j, kChannels * kSamplesPer10Ms))
           .RetiresOnSaturation();
     }

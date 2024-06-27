@@ -268,7 +268,7 @@ public:
 
     virtual std::vector<webrtc::SdpVideoFormat> ConfigureSupportedDecoder()
     {
-        return { webrtc::SdpVideoFormat(Name()) };
+        return { sdpVideoFormat() };
     }
 
     static GRefPtr<GstElementFactory> GstDecoderFactory(const char* capsStr)
@@ -297,6 +297,7 @@ public:
     virtual webrtc::VideoCodecType CodecType() = 0;
     const char* ImplementationName() const override { return "GStreamer"; }
     virtual const gchar* Name() = 0;
+    virtual webrtc::SdpVideoFormat sdpVideoFormat() = 0;
 
 protected:
     GRefPtr<GstCaps> m_caps;
@@ -347,7 +348,8 @@ public:
         return m_caps.get();
     }
     const gchar* Caps() final { return "video/x-h264"; }
-    const gchar* Name() final { return cricket::kH264CodecName; }
+    const gchar* Name() final { return "h264"; }
+    webrtc::SdpVideoFormat sdpVideoFormat() final { return webrtc::SdpVideoFormat::H264(); }
     webrtc::VideoCodecType CodecType() final { return webrtc::kVideoCodecH264; }
 
     std::vector<webrtc::SdpVideoFormat> ConfigureSupportedDecoder() final
@@ -360,16 +362,18 @@ class VP8Decoder : public GStreamerWebRTCVideoDecoder {
 public:
     VP8Decoder() { }
     const gchar* Caps() final { return "video/x-vp8"; }
-    const gchar* Name() final { return cricket::kVp8CodecName; }
+    const gchar* Name() final { return "vp8"; }
+    webrtc::SdpVideoFormat sdpVideoFormat() final { return webrtc::SdpVideoFormat::VP8(); }
+
     webrtc::VideoCodecType CodecType() final { return webrtc::kVideoCodecVP8; }
-    static std::unique_ptr<webrtc::VideoDecoder> Create()
+    static std::unique_ptr<webrtc::VideoDecoder> Create(const webrtc::Environment& environment)
     {
         auto factory = GstDecoderFactory("video/x-vp8");
         if (factory) {
             const auto* factoryName = GST_OBJECT_NAME(GST_OBJECT(factory.get()));
             if (!g_strcmp0(factoryName, "vp8dec") || !g_strcmp0(factoryName, "vp8alphadecodebin")) {
                 GST_INFO("Our best GStreamer VP8 decoder is vp8dec, better use the one from LibWebRTC");
-                return std::unique_ptr<webrtc::VideoDecoder>(new webrtc::LibvpxVp8Decoder());
+                return std::unique_ptr<webrtc::VideoDecoder>(new webrtc::LibvpxVp8Decoder(environment));
             }
         }
 
@@ -384,7 +388,9 @@ public:
         , m_isSupportingVP9Profile2(isSupportingVP9Profile2) { };
 
     const gchar* Caps() final { return "video/x-vp9"; }
-    const gchar* Name() final { return cricket::kVp9CodecName; }
+    const gchar* Name() final { return "vp9"; }
+    webrtc::SdpVideoFormat sdpVideoFormat() final { return webrtc::SdpVideoFormat::VP9Profile0(); }
+
     webrtc::VideoCodecType CodecType() final { return webrtc::kVideoCodecVP9; }
     static std::unique_ptr<webrtc::VideoDecoder> Create()
     {
@@ -395,9 +401,9 @@ public:
     {
         std::vector<webrtc::SdpVideoFormat> formats;
         if (m_isSupportingVP9Profile0)
-            formats.push_back(webrtc::SdpVideoFormat(cricket::kVp9CodecName, { { "profile-id", "0" } }));
+            formats.push_back(webrtc::SdpVideoFormat::VP9Profile0());
         if (m_isSupportingVP9Profile2)
-            formats.push_back(webrtc::SdpVideoFormat(cricket::kVp9CodecName, { { "profile-id", "2" } }));
+            formats.push_back(webrtc::SdpVideoFormat::VP9Profile2());
         return formats;
     }
 private:
@@ -405,23 +411,17 @@ private:
     bool m_isSupportingVP9Profile2;
 };
 
-std::unique_ptr<webrtc::VideoDecoder> GStreamerVideoDecoderFactory::CreateVideoDecoder(const webrtc::SdpVideoFormat& format)
+std::unique_ptr<webrtc::VideoDecoder> GStreamerVideoDecoderFactory::Create(const webrtc::Environment& environment, const webrtc::SdpVideoFormat& format)
 {
-    webrtc::VideoDecoder* dec;
-
-    if (format.name == cricket::kH264CodecName)
-        dec = new H264Decoder();
-    else if (format.name == cricket::kVp8CodecName)
-        return VP8Decoder::Create();
-    else if (format.name == cricket::kVp9CodecName)
+    if (format == webrtc::SdpVideoFormat::H264())
+        return std::unique_ptr<webrtc::VideoDecoder>(new H264Decoder());
+    else if (format == webrtc::SdpVideoFormat::VP8())
+        return VP8Decoder::Create(environment);
+    else if (format == webrtc::SdpVideoFormat::VP9Profile0() || format == webrtc::SdpVideoFormat::VP9Profile2())
         return VP9Decoder::Create();
-    else {
-        GST_ERROR("Could not create decoder for %s", format.name.c_str());
 
-        return nullptr;
-    }
-
-    return std::unique_ptr<webrtc::VideoDecoder>(dec);
+    GST_ERROR("Could not create decoder for %s", format.name.c_str());
+    return nullptr;
 }
 
 GStreamerVideoDecoderFactory::GStreamerVideoDecoderFactory(bool isSupportingVP9Profile0, bool isSupportingVP9Profile2)

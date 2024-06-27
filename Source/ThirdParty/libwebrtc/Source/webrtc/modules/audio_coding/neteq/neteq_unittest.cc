@@ -31,7 +31,6 @@
 #include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/include/rtcp_statistics.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "rtc_base/ignore_wundef.h"
 #include "rtc_base/message_digest.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/strings/string_builder.h"
@@ -77,12 +76,13 @@ TEST_F(NetEqDecodingTest, MAYBE_TestOpusBitExactness) {
       webrtc::test::ResourcePath("audio_coding/neteq_opus", "rtp");
 
   const std::string output_checksum =
-      "fec6827bb9ee0b21770bbbb4a3a6f8823bf537dc|"
-      "3610cc7be4b3407b9c273b1299ab7f8f47cca96b";
+      "434bdc4ec08546510ee903d001c8be1a01c44e24|"
+      "4336be0091e2faad7a194c16ee0a05e727325727|"
+      "cefd2de4adfa8f6a9b66a3639ad63c2f6779d0cd";
 
   const std::string network_stats_checksum =
-      "3d043e47e5f4bb81d37e7bce8c44bf802965c853|"
-      "076662525572dba753b11578330bd491923f7f5e";
+      "5f2c8e3dff9cff55dd7a9f4167939de001566d95|"
+      "80ab17c17da030d4f2dfbf314ac44aacdadd7f0c";
 
   DecodeAndCompare(input_rtp_file, output_checksum, network_stats_checksum,
                    absl::GetFlag(FLAGS_gen_ref));
@@ -99,11 +99,11 @@ TEST_F(NetEqDecodingTest, MAYBE_TestOpusDtxBitExactness) {
       webrtc::test::ResourcePath("audio_coding/neteq_opus_dtx", "rtp");
 
   const std::string output_checksum =
-      "b3c4899eab5378ef5e54f2302948872149f6ad5e|"
-      "589e975ec31ea13f302457fea1425be9380ffb96";
+      "7eddce841cbfa500964c91cdae78b01b9f448948|"
+      "5d13affec87bf4cc8c7667f0cd0d25e1ad09c7c3";
 
   const std::string network_stats_checksum =
-      "dc8447b9fee1a21fd5d1f4045d62b982a3fb0215";
+      "92b0fdcbf8bb9354d40140b7312f2fb76a078555";
 
   DecodeAndCompare(input_rtp_file, output_checksum, network_stats_checksum,
                    absl::GetFlag(FLAGS_gen_ref));
@@ -165,7 +165,7 @@ TEST_F(NetEqDecodingTest, LongCngWithNegativeClockDrift) {
   const double kDriftFactor = 1000.0 / (1000.0 + 25.0);
   const double kNetworkFreezeTimeMs = 0.0;
   const bool kGetAudioDuringFreezeRecovery = false;
-  const int kDelayToleranceMs = 20;
+  const int kDelayToleranceMs = 60;
   const int kMaxTimeToSpeechMs = 100;
   LongCngWithClockDrift(kDriftFactor, kNetworkFreezeTimeMs,
                         kGetAudioDuringFreezeRecovery, kDelayToleranceMs,
@@ -495,7 +495,7 @@ TEST_F(NetEqDecodingTest, DiscardDuplicateCng) {
   timestamp += kCngPeriodSamples;
   uint32_t first_speech_timestamp = timestamp;
   // Insert speech again.
-  for (int i = 0; i < 3; ++i) {
+  for (int i = 0; i < 4; ++i) {
     PopulateRtpInfo(seq_no, timestamp, &rtp_info);
     ASSERT_EQ(0, neteq_->InsertPacket(rtp_info, payload));
     ++seq_no;
@@ -700,8 +700,7 @@ TEST_F(NetEqDecodingTestWithMutedState, MutedStateOldPacket) {
   for (int i = 0; i < 5; ++i) {
     InsertPacket(kSamples * (i - 1000));
   }
-  EXPECT_FALSE(GetAudioReturnMuted());
-  EXPECT_EQ(AudioFrame::kNormalSpeech, out_frame_.speech_type_);
+  GetAudioUntilNormal();
 }
 
 // Verifies that NetEq doesn't enter muted state when CNG mode is active and the

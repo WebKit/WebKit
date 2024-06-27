@@ -29,12 +29,6 @@ rtc_source_set("sequence_numbers") {
   sources = [ "sequence_numbers.h" ]
 }
 
-rtc_source_set("str_join") {
-  deps = [ "../../../rtc_base:stringutils" ]
-  sources = [ "str_join.h" ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
-}
-
 if (rtc_include_tests) {
   rtc_library("dcsctp_common_unittests") {
     testonly = true
@@ -43,7 +37,6 @@ if (rtc_include_tests) {
     deps = [
       ":math",
       ":sequence_numbers",
-      ":str_join",
       "../../../api:array_view",
       "../../../rtc_base:checks",
       "../../../rtc_base:gunit_helpers",
@@ -52,7 +45,6 @@ if (rtc_include_tests) {
     sources = [
       "math_test.cc",
       "sequence_numbers_test.cc",
-      "str_join_test.cc",
     ]
   }
 }

@@ -18,13 +18,13 @@
 #import "sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.h"
 #import "sdk/objc/helpers/RTCCameraPreviewView.h"
 
+#include "api/audio/audio_processing.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/enable_media.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
 #include "api/task_queue/default_task_queue_factory.h"
-#include "media/engine/webrtc_media_engine.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "sdk/objc/native/api/video_capturer.h"
 #include "sdk/objc/native/api/video_decoder_factory.h"
 #include "sdk/objc/native/api/video_encoder_factory.h"
@@ -118,20 +118,15 @@ void ObjCCallClient::CreatePeerConnectionFactory() {
   dependencies.worker_thread = worker_thread_.get();
   dependencies.signaling_thread = signaling_thread_.get();
   dependencies.task_queue_factory = webrtc::CreateDefaultTaskQueueFactory();
-  cricket::MediaEngineDependencies media_deps;
-  media_deps.task_queue_factory = dependencies.task_queue_factory.get();
-  media_deps.audio_encoder_factory = webrtc::CreateBuiltinAudioEncoderFactory();
-  media_deps.audio_decoder_factory = webrtc::CreateBuiltinAudioDecoderFactory();
-  media_deps.video_encoder_factory = webrtc::ObjCToNativeVideoEncoderFactory(
+  dependencies.audio_encoder_factory = webrtc::CreateBuiltinAudioEncoderFactory();
+  dependencies.audio_decoder_factory = webrtc::CreateBuiltinAudioDecoderFactory();
+  dependencies.video_encoder_factory = webrtc::ObjCToNativeVideoEncoderFactory(
       [[RTC_OBJC_TYPE(RTCDefaultVideoEncoderFactory) alloc] init]);
-  media_deps.video_decoder_factory = webrtc::ObjCToNativeVideoDecoderFactory(
+  dependencies.video_decoder_factory = webrtc::ObjCToNativeVideoDecoderFactory(
       [[RTC_OBJC_TYPE(RTCDefaultVideoDecoderFactory) alloc] init]);
-  media_deps.audio_processing = webrtc::AudioProcessingBuilder().Create();
-  dependencies.media_engine = cricket::CreateMediaEngine(std::move(media_deps));
-  RTC_LOG(LS_INFO) << "Media engine created: " << dependencies.media_engine.get();
-  dependencies.call_factory = webrtc::CreateCallFactory();
-  dependencies.event_log_factory =
-      std::make_unique<webrtc::RtcEventLogFactory>(dependencies.task_queue_factory.get());
+  dependencies.audio_processing = webrtc::AudioProcessingBuilder().Create();
+  webrtc::EnableMedia(dependencies);
+  dependencies.event_log_factory = std::make_unique<webrtc::RtcEventLogFactory>();
   pcf_ = webrtc::CreateModularPeerConnectionFactory(std::move(dependencies));
   RTC_LOG(LS_INFO) << "PeerConnectionFactory created: " << pcf_.get();
 }

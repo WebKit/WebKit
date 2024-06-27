@@ -24,6 +24,7 @@
 #include "api/test/peer_network_dependencies.h"
 #include "api/test/simulated_network.h"
 #include "api/test/time_controller.h"
+#include "api/units/data_rate.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/network.h"
 #include "rtc_base/network_constants.h"
@@ -160,6 +161,26 @@ bool AbslParseFlag(absl::string_view text, TimeMode* mode, std::string* error);
 // `mode`.
 std::string AbslUnparseFlag(TimeMode mode);
 
+// The construction-time configuration options for NetworkEmulationManager.
+struct NetworkEmulationManagerConfig {
+  // The mode of the underlying time controller.
+  TimeMode time_mode = TimeMode::kRealTime;
+  // The mode that determines the set of metrics to collect into
+  // `EmulatedNetworkStats` and `EmulatedNetworkNodeStats`.
+  EmulatedNetworkStatsGatheringMode stats_gathering_mode =
+      EmulatedNetworkStatsGatheringMode::kDefault;
+  // Field trials that can alter the behavior of NetworkEmulationManager.
+  const FieldTrialsView* field_trials = nullptr;
+  // If this flag is set, NetworkEmulationManager ignores the sizes of peers'
+  // DTLS handshake packets when determining when to let the packets through
+  // a constrained emulated network. Actual hanshake's packet size is ignored
+  // and a hardcoded fake size is used to compute packet's use of link capacity.
+  // This is useful for tests that require deterministic packets scheduling
+  // timing-wise even when the sizes of DTLS hadshake packets are not
+  // deterministic. This mode make sense only together with the simulated time.
+  bool fake_dtls_handshake_sizes = false;
+};
+
 // Provides an API for creating and configuring emulated network layer.
 // All objects returned by this API are owned by NetworkEmulationManager itself
 // and will be deleted when manager will be deleted.
@@ -180,6 +201,7 @@ class NetworkEmulationManager {
       // values.
       Builder& config(BuiltInNetworkBehaviorConfig config);
       Builder& delay_ms(int queue_delay_ms);
+      Builder& capacity(DataRate link_capacity);
       Builder& capacity_kbps(int link_capacity_kbps);
       Builder& capacity_Mbps(int link_capacity_Mbps);
       Builder& loss(double loss_rate);

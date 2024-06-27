@@ -38,6 +38,7 @@ rtc_library("emulated_network") {
     "traffic_route.h",
   ]
   deps = [
+    "../..//test/network:simulated_network",
     "../../api:array_view",
     "../../api:field_trials_view",
     "../../api:network_emulation_manager_api",
@@ -47,6 +48,7 @@ rtc_library("emulated_network") {
     "../../api:simulated_network_api",
     "../../api:time_controller",
     "../../api/numerics",
+    "../../api/task_queue",
     "../../api/task_queue:pending_task_safety_flag",
     "../../api/test/network_emulation",
     "../../api/transport:stun_types",
@@ -54,7 +56,7 @@ rtc_library("emulated_network") {
     "../../api/units:data_size",
     "../../api/units:time_delta",
     "../../api/units:timestamp",
-    "../../call:simulated_network",
+    "../../p2p:basic_packet_socket_factory",
     "../../p2p:p2p_server_utils",
     "../../p2p:rtc_p2p",
     "../../rtc_base:async_packet_socket",
@@ -67,7 +69,6 @@ rtc_library("emulated_network") {
     "../../rtc_base:random",
     "../../rtc_base:rtc_base_tests_utils",
     "../../rtc_base:rtc_event",
-    "../../rtc_base:rtc_task_queue",
     "../../rtc_base:safe_minmax",
     "../../rtc_base:socket",
     "../../rtc_base:socket_address",
@@ -76,6 +77,7 @@ rtc_library("emulated_network") {
     "../../rtc_base:task_queue_for_test",
     "../../rtc_base:threading",
     "../../rtc_base/memory:always_valid_pointer",
+    "../../rtc_base/network:received_packet",
     "../../rtc_base/synchronization:mutex",
     "../../rtc_base/system:no_unique_address",
     "../../rtc_base/task_utils:repeating_task",
@@ -86,26 +88,10 @@ rtc_library("emulated_network") {
   ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/base:nullability",
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
-  ]
-}
-
-rtc_library("network_emulation_unittest") {
-  testonly = true
-  sources = [ "network_emulation_unittest.cc" ]
-  deps = [
-    ":emulated_network",
-    "../:test_support",
-    "../../api:simulated_network_api",
-    "../../api/units:time_delta",
-    "../../call:simulated_network",
-    "../../rtc_base:gunit_helpers",
-    "../../rtc_base:logging",
-    "../../rtc_base:rtc_event",
-    "../../rtc_base:task_queue_for_test",
-    "../../rtc_base/synchronization:mutex",
   ]
 }
 
@@ -116,17 +102,18 @@ if (rtc_include_tests && !build_with_chromium) {
     deps = [
       ":emulated_network",
       "../:test_support",
-      "../../api:callfactory_api",
+      "../..//test/network:simulated_network",
+      "../../api:enable_media_with_defaults",
       "../../api:libjingle_peerconnection_api",
       "../../api:scoped_refptr",
       "../../api:simulated_network_api",
       "../../api/rtc_event_log:rtc_event_log_factory",
       "../../api/task_queue:default_task_queue_factory",
       "../../api/transport:field_trial_based_config",
-      "../../call:simulated_network",
       "../../media:rtc_audio_video",
-      "../../media:rtc_media_engine_defaults",
       "../../modules/audio_device:test_audio_device_module",
+      "../../p2p:basic_packet_socket_factory",
+      "../../p2p:basic_port_allocator",
       "../../p2p:rtc_p2p",
       "../../pc:pc_test_utils",
       "../../pc:peerconnection_wrapper",
@@ -144,9 +131,9 @@ rtc_library("cross_traffic_unittest") {
   deps = [
     ":emulated_network",
     "../:test_support",
+    "../..//test/network:simulated_network",
     "../../api:network_emulation_manager_api",
     "../../api:simulated_network_api",
-    "../../call:simulated_network",
     "../../rtc_base:logging",
     "../../rtc_base:network_constants",
     "../../rtc_base:rtc_event",
@@ -159,6 +146,26 @@ rtc_library("cross_traffic_unittest") {
 }
 
 if (rtc_include_tests) {
+  rtc_library("network_emulation_unittest") {
+    testonly = true
+    sources = [ "network_emulation_unittest.cc" ]
+    deps = [
+      ":emulated_network",
+      "../:test_support",
+      "../..//test/network:simulated_network",
+      "../../api:create_time_controller",
+      "../../api:simulated_network_api",
+      "../../api/task_queue:task_queue",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../rtc_base:gunit_helpers",
+      "../../rtc_base:logging",
+      "../../rtc_base:rtc_event",
+      "../../rtc_base:task_queue_for_test",
+      "../../rtc_base/synchronization:mutex",
+    ]
+  }
+
   rtc_library("feedback_generator") {
     testonly = true
     sources = [
@@ -167,9 +174,9 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":emulated_network",
+      "../..//test/network:simulated_network",
       "../../api/transport:network_control",
       "../../api/transport:test_feedback_generator_interface",
-      "../../call:simulated_network",
       "../../rtc_base:checks",
       "../time_controller",
     ]
@@ -193,7 +200,47 @@ if (rtc_include_tests) {
         ":feedback_generator_unittest",
         ":network_emulation_pc_unittest",
         ":network_emulation_unittest",
+        ":simulated_network_unittest",
       ]
     }
+  }
+}
+
+rtc_library("simulated_network") {
+  sources = [
+    "simulated_network.cc",
+    "simulated_network.h",
+  ]
+  deps = [
+    "../../api:sequence_checker",
+    "../../api:simulated_network_api",
+    "../../api/units:data_rate",
+    "../../api/units:data_size",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:checks",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:race_checker",
+    "../../rtc_base:random",
+    "../../rtc_base/synchronization:mutex",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("simulated_network_unittest") {
+    testonly = true
+    sources = [ "simulated_network_unittest.cc" ]
+    deps = [
+      ":simulated_network",
+      "../:test_support",
+      "../../api:simulated_network_api",
+      "../../api/units:data_rate",
+      "../../api/units:data_size",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "//testing/gtest",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/algorithm:container" ]
   }
 }

@@ -141,13 +141,12 @@ void NackRequester::ProcessNacks() {
   }
 }
 
-int NackRequester::OnReceivedPacket(uint16_t seq_num, bool is_keyframe) {
+int NackRequester::OnReceivedPacket(uint16_t seq_num) {
   RTC_DCHECK_RUN_ON(worker_thread_);
-  return OnReceivedPacket(seq_num, is_keyframe, false);
+  return OnReceivedPacket(seq_num, false);
 }
 
 int NackRequester::OnReceivedPacket(uint16_t seq_num,
-                                    bool is_keyframe,
                                     bool is_recovered) {
   RTC_DCHECK_RUN_ON(worker_thread_);
   // TODO(philipel): When the packet includes information whether it is
@@ -158,8 +157,6 @@ int NackRequester::OnReceivedPacket(uint16_t seq_num,
 
   if (!initialized_) {
     newest_seq_num_ = seq_num;
-    if (is_keyframe)
-      keyframe_list_.insert(seq_num);
     initialized_ = true;
     return 0;
   }
@@ -181,15 +178,6 @@ int NackRequester::OnReceivedPacket(uint16_t seq_num,
       UpdateReorderingStatistics(seq_num);
     return nacks_sent_for_packet;
   }
-
-  // Keep track of new keyframes.
-  if (is_keyframe)
-    keyframe_list_.insert(seq_num);
-
-  // And remove old ones so we don't accumulate keyframes.
-  auto it = keyframe_list_.lower_bound(seq_num - kMaxPacketAge);
-  if (it != keyframe_list_.begin())
-    keyframe_list_.erase(keyframe_list_.begin(), it);
 
   if (is_recovered) {
     recovered_list_.insert(seq_num);
@@ -225,8 +213,6 @@ void NackRequester::ClearUpTo(uint16_t seq_num) {
   // thread.
   RTC_DCHECK_RUN_ON(worker_thread_);
   nack_list_.erase(nack_list_.begin(), nack_list_.lower_bound(seq_num));
-  keyframe_list_.erase(keyframe_list_.begin(),
-                       keyframe_list_.lower_bound(seq_num));
   recovered_list_.erase(recovered_list_.begin(),
                         recovered_list_.lower_bound(seq_num));
 }
@@ -236,25 +222,6 @@ void NackRequester::UpdateRtt(int64_t rtt_ms) {
   rtt_ = TimeDelta::Millis(rtt_ms);
 }
 
-bool NackRequester::RemovePacketsUntilKeyFrame() {
-  // Called on worker_thread_.
-  while (!keyframe_list_.empty()) {
-    auto it = nack_list_.lower_bound(*keyframe_list_.begin());
-
-    if (it != nack_list_.begin()) {
-      // We have found a keyframe that actually is newer than at least one
-      // packet in the nack list.
-      nack_list_.erase(nack_list_.begin(), it);
-      return true;
-    }
-
-    // If this keyframe is so old it does not remove any packets from the list,
-    // remove it from the list of keyframes and try the next keyframe.
-    keyframe_list_.erase(keyframe_list_.begin());
-  }
-  return false;
-}
-
 void NackRequester::AddPacketsToNack(uint16_t seq_num_start,
                                      uint16_t seq_num_end) {
   // Called on worker_thread_.
@@ -262,22 +229,13 @@ void NackRequester::AddPacketsToNack(uint16_t seq_num_start,
   auto it = nack_list_.lower_bound(seq_num_end - kMaxPacketAge);
   nack_list_.erase(nack_list_.begin(), it);
 
-  // If the nack list is too large, remove packets from the nack list until
-  // the latest first packet of a keyframe. If the list is still too large,
-  // clear it and request a keyframe.
   uint16_t num_new_nacks = ForwardDiff(seq_num_start, seq_num_end);
   if (nack_list_.size() + num_new_nacks > kMaxNackPackets) {
-    while (RemovePacketsUntilKeyFrame() &&
-           nack_list_.size() + num_new_nacks > kMaxNackPackets) {
-    }
-
-    if (nack_list_.size() + num_new_nacks > kMaxNackPackets) {
-      nack_list_.clear();
-      RTC_LOG(LS_WARNING) << "NACK list full, clearing NACK"
-                             " list and requesting keyframe.";
-      keyframe_request_sender_->RequestKeyFrame();
-      return;
-    }
+    nack_list_.clear();
+    RTC_LOG(LS_WARNING) << "NACK list full, clearing NACK"
+                           " list and requesting keyframe.";
+    keyframe_request_sender_->RequestKeyFrame();
+    return;
   }
 
   for (uint16_t seq_num = seq_num_start; seq_num != seq_num_end; ++seq_num) {

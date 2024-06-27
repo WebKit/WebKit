@@ -37,14 +37,13 @@ class PeerConnectionSVCIntegrationTest
       : PeerConnectionIntegrationBaseTest(SdpSemantics::kUnifiedPlan) {}
 
   RTCError SetCodecPreferences(
-      rtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver,
+      rtc::scoped_refptr<RtpTransceiverInterface> transceiver,
       absl::string_view codec_name) {
-    webrtc::RtpCapabilities capabilities =
-        caller()->pc_factory()->GetRtpSenderCapabilities(
+    RtpCapabilities capabilities =
+        caller()->pc_factory()->GetRtpReceiverCapabilities(
             cricket::MEDIA_TYPE_VIDEO);
     std::vector<RtpCodecCapability> codecs;
-    for (const webrtc::RtpCodecCapability& codec_capability :
-         capabilities.codecs) {
+    for (const RtpCodecCapability& codec_capability : capabilities.codecs) {
       if (codec_capability.name == codec_name)
         codecs.push_back(codec_capability);
     }
@@ -55,8 +54,8 @@ class PeerConnectionSVCIntegrationTest
 TEST_F(PeerConnectionSVCIntegrationTest, AddTransceiverAcceptsL1T1) {
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
-  webrtc::RtpTransceiverInit init;
-  webrtc::RtpEncodingParameters encoding_parameters;
+  RtpTransceiverInit init;
+  RtpEncodingParameters encoding_parameters;
   encoding_parameters.scalability_mode = "L1T1";
   init.send_encodings.push_back(encoding_parameters);
   auto transceiver_or_error =
@@ -67,8 +66,8 @@ TEST_F(PeerConnectionSVCIntegrationTest, AddTransceiverAcceptsL1T1) {
 TEST_F(PeerConnectionSVCIntegrationTest, AddTransceiverAcceptsL3T3) {
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
-  webrtc::RtpTransceiverInit init;
-  webrtc::RtpEncodingParameters encoding_parameters;
+  RtpTransceiverInit init;
+  RtpEncodingParameters encoding_parameters;
   encoding_parameters.scalability_mode = "L3T3";
   init.send_encodings.push_back(encoding_parameters);
   auto transceiver_or_error =
@@ -80,33 +79,32 @@ TEST_F(PeerConnectionSVCIntegrationTest,
        AddTransceiverRejectsUnknownScalabilityMode) {
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
-  webrtc::RtpTransceiverInit init;
-  webrtc::RtpEncodingParameters encoding_parameters;
+  RtpTransceiverInit init;
+  RtpEncodingParameters encoding_parameters;
   encoding_parameters.scalability_mode = "FOOBAR";
   init.send_encodings.push_back(encoding_parameters);
   auto transceiver_or_error =
       caller()->pc()->AddTransceiver(caller()->CreateLocalVideoTrack(), init);
   EXPECT_FALSE(transceiver_or_error.ok());
   EXPECT_EQ(transceiver_or_error.error().type(),
-            webrtc::RTCErrorType::UNSUPPORTED_OPERATION);
+            RTCErrorType::UNSUPPORTED_OPERATION);
 }
 
 TEST_F(PeerConnectionSVCIntegrationTest, SetParametersAcceptsL1T3WithVP8) {
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
 
-  webrtc::RtpCapabilities capabilities =
-      caller()->pc_factory()->GetRtpSenderCapabilities(
+  RtpCapabilities capabilities =
+      caller()->pc_factory()->GetRtpReceiverCapabilities(
           cricket::MEDIA_TYPE_VIDEO);
   std::vector<RtpCodecCapability> vp8_codec;
-  for (const webrtc::RtpCodecCapability& codec_capability :
-       capabilities.codecs) {
+  for (const RtpCodecCapability& codec_capability : capabilities.codecs) {
     if (codec_capability.name == cricket::kVp8CodecName)
       vp8_codec.push_back(codec_capability);
   }
 
-  webrtc::RtpTransceiverInit init;
-  webrtc::RtpEncodingParameters encoding_parameters;
+  RtpTransceiverInit init;
+  RtpEncodingParameters encoding_parameters;
   init.send_encodings.push_back(encoding_parameters);
   auto transceiver_or_error =
       caller()->pc()->AddTransceiver(caller()->CreateLocalVideoTrack(), init);
@@ -114,32 +112,11 @@ TEST_F(PeerConnectionSVCIntegrationTest, SetParametersAcceptsL1T3WithVP8) {
   auto transceiver = transceiver_or_error.MoveValue();
   EXPECT_TRUE(transceiver->SetCodecPreferences(vp8_codec).ok());
 
-  webrtc::RtpParameters parameters = transceiver->sender()->GetParameters();
+  RtpParameters parameters = transceiver->sender()->GetParameters();
   ASSERT_EQ(parameters.encodings.size(), 1u);
   parameters.encodings[0].scalability_mode = "L1T3";
   auto result = transceiver->sender()->SetParameters(parameters);
   EXPECT_TRUE(result.ok());
-}
-
-TEST_F(PeerConnectionSVCIntegrationTest, SetParametersRejectsL3T3WithVP8) {
-  ASSERT_TRUE(CreatePeerConnectionWrappers());
-  ConnectFakeSignaling();
-
-  webrtc::RtpTransceiverInit init;
-  webrtc::RtpEncodingParameters encoding_parameters;
-  init.send_encodings.push_back(encoding_parameters);
-  auto transceiver_or_error =
-      caller()->pc()->AddTransceiver(caller()->CreateLocalVideoTrack(), init);
-  ASSERT_TRUE(transceiver_or_error.ok());
-  auto transceiver = transceiver_or_error.MoveValue();
-  EXPECT_TRUE(SetCodecPreferences(transceiver, cricket::kVp8CodecName).ok());
-
-  webrtc::RtpParameters parameters = transceiver->sender()->GetParameters();
-  ASSERT_EQ(parameters.encodings.size(), 1u);
-  parameters.encodings[0].scalability_mode = "L3T3";
-  auto result = transceiver->sender()->SetParameters(parameters);
-  EXPECT_FALSE(result.ok());
-  EXPECT_EQ(result.type(), webrtc::RTCErrorType::INVALID_MODIFICATION);
 }
 
 TEST_F(PeerConnectionSVCIntegrationTest,
@@ -147,8 +124,8 @@ TEST_F(PeerConnectionSVCIntegrationTest,
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
 
-  webrtc::RtpTransceiverInit init;
-  webrtc::RtpEncodingParameters encoding_parameters;
+  RtpTransceiverInit init;
+  RtpEncodingParameters encoding_parameters;
   init.send_encodings.push_back(encoding_parameters);
   auto transceiver_or_error =
       caller()->pc()->AddTransceiver(caller()->CreateLocalVideoTrack(), init);
@@ -159,7 +136,7 @@ TEST_F(PeerConnectionSVCIntegrationTest,
   caller()->CreateAndSetAndSignalOffer();
   ASSERT_TRUE_WAIT(SignalingStateStable(), kDefaultTimeout);
 
-  webrtc::RtpParameters parameters = transceiver->sender()->GetParameters();
+  RtpParameters parameters = transceiver->sender()->GetParameters();
   ASSERT_EQ(parameters.encodings.size(), 1u);
   parameters.encodings[0].scalability_mode = "L1T3";
   auto result = transceiver->sender()->SetParameters(parameters);
@@ -171,8 +148,8 @@ TEST_F(PeerConnectionSVCIntegrationTest,
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
 
-  webrtc::RtpTransceiverInit init;
-  webrtc::RtpEncodingParameters encoding_parameters;
+  RtpTransceiverInit init;
+  RtpEncodingParameters encoding_parameters;
   init.send_encodings.push_back(encoding_parameters);
   auto transceiver_or_error =
       caller()->pc()->AddTransceiver(caller()->CreateLocalVideoTrack(), init);
@@ -183,7 +160,7 @@ TEST_F(PeerConnectionSVCIntegrationTest,
   caller()->CreateAndSetAndSignalOffer();
   ASSERT_TRUE_WAIT(SignalingStateStable(), kDefaultTimeout);
 
-  webrtc::RtpParameters parameters = transceiver->sender()->GetParameters();
+  RtpParameters parameters = transceiver->sender()->GetParameters();
   ASSERT_EQ(parameters.encodings.size(), 1u);
   parameters.encodings[0].scalability_mode = "L3T3";
   auto result = transceiver->sender()->SetParameters(parameters);
@@ -195,8 +172,8 @@ TEST_F(PeerConnectionSVCIntegrationTest,
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
 
-  webrtc::RtpTransceiverInit init;
-  webrtc::RtpEncodingParameters encoding_parameters;
+  RtpTransceiverInit init;
+  RtpEncodingParameters encoding_parameters;
   init.send_encodings.push_back(encoding_parameters);
   auto transceiver_or_error =
       caller()->pc()->AddTransceiver(caller()->CreateLocalVideoTrack(), init);
@@ -207,12 +184,12 @@ TEST_F(PeerConnectionSVCIntegrationTest,
   caller()->CreateAndSetAndSignalOffer();
   ASSERT_TRUE_WAIT(SignalingStateStable(), kDefaultTimeout);
 
-  webrtc::RtpParameters parameters = transceiver->sender()->GetParameters();
+  RtpParameters parameters = transceiver->sender()->GetParameters();
   ASSERT_EQ(parameters.encodings.size(), 1u);
   parameters.encodings[0].scalability_mode = "L3T3";
   auto result = transceiver->sender()->SetParameters(parameters);
   EXPECT_FALSE(result.ok());
-  EXPECT_EQ(result.type(), webrtc::RTCErrorType::INVALID_MODIFICATION);
+  EXPECT_EQ(result.type(), RTCErrorType::INVALID_MODIFICATION);
 }
 
 TEST_F(PeerConnectionSVCIntegrationTest,
@@ -220,8 +197,8 @@ TEST_F(PeerConnectionSVCIntegrationTest,
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
 
-  webrtc::RtpTransceiverInit init;
-  webrtc::RtpEncodingParameters encoding_parameters;
+  RtpTransceiverInit init;
+  RtpEncodingParameters encoding_parameters;
   init.send_encodings.push_back(encoding_parameters);
   auto transceiver_or_error =
       caller()->pc()->AddTransceiver(caller()->CreateLocalVideoTrack(), init);
@@ -232,28 +209,28 @@ TEST_F(PeerConnectionSVCIntegrationTest,
   caller()->CreateAndSetAndSignalOffer();
   ASSERT_TRUE_WAIT(SignalingStateStable(), kDefaultTimeout);
 
-  webrtc::RtpParameters parameters = transceiver->sender()->GetParameters();
+  RtpParameters parameters = transceiver->sender()->GetParameters();
   ASSERT_EQ(parameters.encodings.size(), 1u);
   parameters.encodings[0].scalability_mode = "FOOBAR";
   auto result = transceiver->sender()->SetParameters(parameters);
   EXPECT_FALSE(result.ok());
-  EXPECT_EQ(result.type(), webrtc::RTCErrorType::INVALID_MODIFICATION);
+  EXPECT_EQ(result.type(), RTCErrorType::INVALID_MODIFICATION);
 }
 
 TEST_F(PeerConnectionSVCIntegrationTest, FallbackToL1Tx) {
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
 
-  webrtc::RtpTransceiverInit init;
-  webrtc::RtpEncodingParameters encoding_parameters;
+  RtpTransceiverInit init;
+  RtpEncodingParameters encoding_parameters;
   init.send_encodings.push_back(encoding_parameters);
   auto transceiver_or_error =
       caller()->pc()->AddTransceiver(caller()->CreateLocalVideoTrack(), init);
   ASSERT_TRUE(transceiver_or_error.ok());
   auto caller_transceiver = transceiver_or_error.MoveValue();
 
-  webrtc::RtpCapabilities capabilities =
-      caller()->pc_factory()->GetRtpSenderCapabilities(
+  RtpCapabilities capabilities =
+      caller()->pc_factory()->GetRtpReceiverCapabilities(
           cricket::MEDIA_TYPE_VIDEO);
   std::vector<RtpCodecCapability> send_codecs = capabilities.codecs;
   // Only keep VP9 in the caller
@@ -267,8 +244,7 @@ TEST_F(PeerConnectionSVCIntegrationTest, FallbackToL1Tx) {
   caller_transceiver->SetCodecPreferences(send_codecs);
 
   // L3T3 should be supported by VP9
-  webrtc::RtpParameters parameters =
-      caller_transceiver->sender()->GetParameters();
+  RtpParameters parameters = caller_transceiver->sender()->GetParameters();
   ASSERT_EQ(parameters.encodings.size(), 1u);
   parameters.encodings[0].scalability_mode = "L3T3";
   auto result = caller_transceiver->sender()->SetParameters(parameters);

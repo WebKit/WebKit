@@ -33,20 +33,19 @@ const rtc::SocketAddress client_addr("1.2.3.4", 1234);
 
 class StunServerTest : public ::testing::Test {
  public:
-  StunServerTest() : ss_(new rtc::VirtualSocketServer()), network_(ss_.get()) {
+  StunServerTest() : ss_(new rtc::VirtualSocketServer()) {
+    ss_->SetMessageQueue(&main_thread);
     server_.reset(
         new StunServer(rtc::AsyncUDPSocket::Create(ss_.get(), server_addr)));
     client_.reset(new rtc::TestClient(
         absl::WrapUnique(rtc::AsyncUDPSocket::Create(ss_.get(), client_addr))));
-
-    network_.Start();
   }
-  ~StunServerTest() override { network_.Stop(); }
 
   void Send(const StunMessage& msg) {
     rtc::ByteBufferWriter buf;
     msg.Write(&buf);
-    Send(buf.Data(), static_cast<int>(buf.Length()));
+    Send(reinterpret_cast<const char*>(buf.Data()),
+         static_cast<int>(buf.Length()));
   }
   void Send(const char* buf, int len) {
     client_->SendTo(buf, len, server_addr);
@@ -57,7 +56,7 @@ class StunServerTest : public ::testing::Test {
     std::unique_ptr<rtc::TestClient::Packet> packet =
         client_->NextPacket(rtc::TestClient::kTimeoutMs);
     if (packet) {
-      rtc::ByteBufferReader buf(packet->buf, packet->size);
+      rtc::ByteBufferReader buf(packet->buf);
       msg = new StunMessage();
       msg->Read(&buf);
     }
@@ -67,7 +66,6 @@ class StunServerTest : public ::testing::Test {
  private:
   rtc::AutoThread main_thread;
   std::unique_ptr<rtc::VirtualSocketServer> ss_;
-  rtc::Thread network_;
   std::unique_ptr<StunServer> server_;
   std::unique_ptr<rtc::TestClient> client_;
 };

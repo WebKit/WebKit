@@ -24,13 +24,15 @@ namespace {
 std::unique_ptr<SimulcastTestFixture> CreateSpecificSimulcastTestFixture() {
   std::unique_ptr<VideoEncoderFactory> encoder_factory =
       std::make_unique<FunctionVideoEncoderFactory>(
-          []() { return H264Encoder::Create(); });
+          [](const Environment& env, const SdpVideoFormat& format) {
+            return CreateH264Encoder(env);
+          });
   std::unique_ptr<VideoDecoderFactory> decoder_factory =
       std::make_unique<FunctionVideoDecoderFactory>(
           []() { return H264Decoder::Create(); });
   return CreateSimulcastTestFixture(std::move(encoder_factory),
                                     std::move(decoder_factory),
-                                    SdpVideoFormat("H264"));
+                                    SdpVideoFormat::H264());
 }
 }  // namespace
 

@@ -23,9 +23,9 @@
 #include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/audio/audio_device_defines.h"
 #include "api/units/time_delta.h"
 #include "modules/audio_device/audio_device_name.h"
-#include "modules/audio_device/include/audio_device_defines.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/string_utils.h"
 

@@ -21,6 +21,7 @@
 #import "components/video_frame_buffer/RTCCVPixelBuffer.h"
 #import "helpers.h"
 #import "helpers/scoped_cftyperef.h"
+#import "modules/video_coding/include/video_error_codes.h"
 #import "nalu_rewriter.h"
 #import "rtc_base/bitstream_reader.h"
 #import "rtc_base/checks.h"

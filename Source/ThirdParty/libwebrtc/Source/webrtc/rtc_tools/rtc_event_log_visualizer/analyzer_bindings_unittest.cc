@@ -10,7 +10,6 @@
 
 #include "rtc_tools/rtc_event_log_visualizer/analyzer_bindings.h"
 
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -26,49 +25,86 @@
 #include "rtc_tools/rtc_event_log_visualizer/proto/chart.pb.h"
 #endif
 
-TEST(RtcEventLogAnalyzerBindingsTest, ProducesCharts) {
-  constexpr int kInputBufferSize = 1'000'000;
-  constexpr int kOutputBufferSize = 1'000'000;
-  std::unique_ptr<char[]> input = std::make_unique<char[]>(kInputBufferSize);
-  std::unique_ptr<char[]> output = std::make_unique<char[]>(kOutputBufferSize);
+class RtcEventLogAnalyzerBindingsTest : public ::testing::Test {
+  void SetUp() override {
+    // Read an RTC event log to a char buffer.
+    std::string file_name = webrtc::test::ResourcePath(
+        "rtc_event_log/rtc_event_log_500kbps", "binarypb");
+    webrtc::FileWrapper file = webrtc::FileWrapper::OpenReadOnly(file_name);
+    ASSERT_TRUE(file.is_open());
 
-  // Read an RTC event log to a char buffer.
-  std::string file_name = webrtc::test::ResourcePath(
-      "rtc_event_log/rtc_event_log_500kbps", "binarypb");
-  webrtc::FileWrapper file = webrtc::FileWrapper::OpenReadOnly(file_name);
-  ASSERT_TRUE(file.is_open());
-  int64_t file_size = file.FileSize();
-  ASSERT_LE(file_size, kInputBufferSize);
-  ASSERT_GT(file_size, 0);
-  size_t input_size = file.Read(input.get(), static_cast<size_t>(file_size));
-  ASSERT_EQ(static_cast<size_t>(file_size), input_size);
+    absl::optional<size_t> file_size = file.FileSize();
+    ASSERT_TRUE(file_size.has_value());
+    constexpr size_t kMaxFileSize = 1'000'000;
+    ASSERT_GT(*file_size, 0u);
+    ASSERT_LE(*file_size, kMaxFileSize);
+
+    event_log_contents_.resize(*file_size);
+    size_t read_size =
+        file.Read(event_log_contents_.data(), event_log_contents_.size());
+    ASSERT_EQ(*file_size, read_size);
+  }
+
+ protected:
+  std::vector<char> event_log_contents_;
+};
+
+TEST_F(RtcEventLogAnalyzerBindingsTest, OutgoingBitrateChart) {
+  uint32_t kMaxOutputSize = 1'000'000;
+  std::vector<char> output(kMaxOutputSize);
 
   // Call analyzer.
-  uint32_t output_size = kOutputBufferSize;
-  char selection[] = "outgoing_bitrate,network_delay_feedback";
+  char selection[] = "outgoing_bitrate";
   size_t selection_size = strlen(selection);
-  analyze_rtc_event_log(input.get(), input_size, selection, selection_size,
-                        output.get(), &output_size);
+  uint32_t output_size = output.size();
+  analyze_rtc_event_log(event_log_contents_.data(), event_log_contents_.size(),
+                        selection, selection_size, output.data(), &output_size);
   ASSERT_GT(output_size, 0u);
 
   // Parse output as charts.
   webrtc::analytics::ChartCollection collection;
   bool success =
-      collection.ParseFromArray(output.get(), static_cast<int>(output_size));
+      collection.ParseFromArray(output.data(), static_cast<int>(output_size));
   ASSERT_TRUE(success);
-  EXPECT_EQ(collection.charts().size(), 2);
-  std::vector<std::string> chart_titles;
-  for (const auto& chart : collection.charts()) {
-    chart_titles.push_back(chart.title());
-  }
-  EXPECT_THAT(chart_titles,
-              ::testing::UnorderedElementsAre(
-                  "Outgoing RTP bitrate",
-                  "Outgoing network delay (based on per-packet feedback)"));
-  std::vector<std::string> chart_ids;
-  for (const auto& chart : collection.charts()) {
-    chart_ids.push_back(chart.id());
-  }
-  EXPECT_THAT(chart_ids, ::testing::UnorderedElementsAre(
-                             "outgoing_bitrate", "network_delay_feedback"));
+  ASSERT_EQ(collection.charts().size(), 1);
+  EXPECT_EQ(collection.charts(0).title(), "Outgoing RTP bitrate");
+  EXPECT_EQ(collection.charts(0).id(), "outgoing_bitrate");
+}
+
+TEST_F(RtcEventLogAnalyzerBindingsTest, NetWorkDelayFeedbackChart) {
+  uint32_t kMaxOutputSize = 1'000'000;
+  std::vector<char> output(kMaxOutputSize);
+
+  // Call analyzer.
+  char selection[] = "network_delay_feedback";
+  size_t selection_size = strlen(selection);
+  uint32_t output_size = output.size();
+  analyze_rtc_event_log(event_log_contents_.data(), event_log_contents_.size(),
+                        selection, selection_size, output.data(), &output_size);
+  ASSERT_GT(output_size, 0u);
+
+  // Parse output as charts.
+  webrtc::analytics::ChartCollection collection;
+  bool success =
+      collection.ParseFromArray(output.data(), static_cast<int>(output_size));
+  ASSERT_TRUE(success);
+  ASSERT_EQ(collection.charts().size(), 1);
+  EXPECT_EQ(collection.charts(0).title(),
+            "Outgoing network delay (based on per-packet feedback)");
+  EXPECT_EQ(collection.charts(0).id(), "network_delay_feedback");
+}
+
+TEST_F(RtcEventLogAnalyzerBindingsTest, OutputbufferTooSmall) {
+  uint32_t kMaxOutputSize = 100;
+  std::vector<char> output(kMaxOutputSize);
+
+  // Call analyzer.
+  char selection[] = "outgoing_bitrate";
+  size_t selection_size = strlen(selection);
+  uint32_t output_size = output.size();
+  analyze_rtc_event_log(event_log_contents_.data(), event_log_contents_.size(),
+                        selection, selection_size, output.data(), &output_size);
+
+  // No output since the buffer is too small.
+  ASSERT_EQ(output_size, 0u);
 }

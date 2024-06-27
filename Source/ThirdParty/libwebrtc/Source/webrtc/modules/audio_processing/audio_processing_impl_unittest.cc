@@ -16,9 +16,9 @@
 #include <tuple>
 
 #include "absl/types/optional.h"
+#include "api/audio/audio_processing.h"
 #include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/optionally_built_submodule_creators.h"
 #include "modules/audio_processing/test/audio_processing_builder_for_testing.h"
 #include "modules/audio_processing/test/echo_canceller_test_tools.h"
@@ -48,7 +48,7 @@ class MockInitialize : public AudioProcessingImpl {
   }
 
   MOCK_METHOD(void, AddRef, (), (const, override));
-  MOCK_METHOD(rtc::RefCountReleaseStatus, Release, (), (const, override));
+  MOCK_METHOD(RefCountReleaseStatus, Release, (), (const, override));
 };
 
 // Creates MockEchoControl instances and provides a raw pointer access to

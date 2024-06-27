@@ -15,6 +15,7 @@
 #include <stdint.h>
 
 #include "absl/base/attributes.h"
+#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 
 namespace webrtc {
@@ -24,33 +25,12 @@ namespace webrtc {
 // than a class.
 class AudioFrameOperations {
  public:
-  // Add samples in `frame_to_add` with samples in `result_frame`
-  // putting the results in `results_frame`.  The fields
-  // `vad_activity_` and `speech_type_` of the result frame are
-  // updated. If `result_frame` is empty (`samples_per_channel_`==0),
-  // the samples in `frame_to_add` are added to it.  The number of
-  // channels and number of samples per channel must match except when
-  // `result_frame` is empty.
-  static void Add(const AudioFrame& frame_to_add, AudioFrame* result_frame);
-
-  // `frame.num_channels_` will be updated. This version checks for sufficient
-  // buffer size and that `num_channels_` is mono. Use UpmixChannels
-  // instead. TODO(bugs.webrtc.org/8649): remove.
-  ABSL_DEPRECATED("bugs.webrtc.org/8649")
-  static int MonoToStereo(AudioFrame* frame);
-
-  // `frame.num_channels_` will be updated. This version checks that
-  // `num_channels_` is stereo. Use DownmixChannels
-  // instead. TODO(bugs.webrtc.org/8649): remove.
-  ABSL_DEPRECATED("bugs.webrtc.org/8649")
-  static int StereoToMono(AudioFrame* frame);
-
   // Downmixes 4 channels `src_audio` to stereo `dst_audio`. This is an in-place
   // operation, meaning `src_audio` and `dst_audio` may point to the same
   // buffer.
-  static void QuadToStereo(const int16_t* src_audio,
+  static void QuadToStereo(rtc::ArrayView<const int16_t> src_audio,
                            size_t samples_per_channel,
-                           int16_t* dst_audio);
+                           rtc::ArrayView<int16_t> dst_audio);
 
   // `frame.num_channels_` will be updated. This version checks that
   // `num_channels_` is 4 channels.
@@ -60,11 +40,11 @@ class AudioFrameOperations {
   // This is an in-place operation, meaning `src_audio` and `dst_audio`
   // may point to the same buffer. Supported channel combinations are
   // Stereo to Mono, Quad to Mono, and Quad to Stereo.
-  static void DownmixChannels(const int16_t* src_audio,
+  static void DownmixChannels(rtc::ArrayView<const int16_t> src_audio,
                               size_t src_channels,
                               size_t samples_per_channel,
                               size_t dst_channels,
-                              int16_t* dst_audio);
+                              rtc::ArrayView<int16_t> dst_audio);
 
   // `frame.num_channels_` will be updated. This version checks that
   // `num_channels_` and `dst_channels` are valid and performs relevant downmix.
@@ -93,11 +73,6 @@ class AudioFrameOperations {
 
   // Zero out contents of frame.
   static void Mute(AudioFrame* frame);
-
-  // Halve samples in `frame`.
-  static void ApplyHalfGain(AudioFrame* frame);
-
-  static int Scale(float left, float right, AudioFrame* frame);
 
   static int ScaleWithSat(float scale, AudioFrame* frame);
 };

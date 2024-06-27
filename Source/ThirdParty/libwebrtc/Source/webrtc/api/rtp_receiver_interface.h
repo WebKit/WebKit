@@ -15,17 +15,19 @@
 #define API_RTP_RECEIVER_INTERFACE_H_
 
 #include <string>
+#include <utility>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "api/crypto/frame_decryptor_interface.h"
 #include "api/dtls_transport_interface.h"
 #include "api/frame_transformer_interface.h"
 #include "api/media_stream_interface.h"
 #include "api/media_types.h"
+#include "api/ref_count.h"
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
 #include "api/transport/rtp/rtp_source.h"
-#include "rtc_base/ref_count.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -44,7 +46,8 @@ class RtpReceiverObserverInterface {
   virtual ~RtpReceiverObserverInterface() {}
 };
 
-class RTC_EXPORT RtpReceiverInterface : public rtc::RefCountInterface {
+class RTC_EXPORT RtpReceiverInterface : public webrtc::RefCountInterface,
+                                        public FrameTransformerHost {
  public:
   virtual rtc::scoped_refptr<MediaStreamTrackInterface> track() const = 0;
 
@@ -111,11 +114,21 @@ class RTC_EXPORT RtpReceiverInterface : public rtc::RefCountInterface {
   // Sets a frame transformer between the depacketizer and the decoder to enable
   // client code to transform received frames according to their own processing
   // logic.
+  // TODO: bugs.webrtc.org/15929 - add [[deprecated("Use SetFrameTransformer")]]
+  // when usage in Chrome is removed
   virtual void SetDepacketizerToDecoderFrameTransformer(
-      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer);
+      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) {
+    SetFrameTransformer(std::move(frame_transformer));
+  }
+
 #if defined(WEBRTC_WEBKIT_BUILD)
   virtual void GenerateKeyFrame() { }
 #endif
+
+  // Default implementation of SetFrameTransformer.
+  // TODO: bugs.webrtc.org/15929 - Make pure virtual.
+  void SetFrameTransformer(
+      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) override;
 
  protected:
   ~RtpReceiverInterface() override = default;

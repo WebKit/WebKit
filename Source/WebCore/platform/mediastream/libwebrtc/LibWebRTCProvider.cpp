@@ -42,7 +42,6 @@
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
 
-#include <webrtc/api/async_resolver_factory.h>
 #include <webrtc/api/audio_codecs/builtin_audio_decoder_factory.h>
 #include <webrtc/api/audio_codecs/builtin_audio_encoder_factory.h>
 #include <webrtc/api/create_peerconnection_factory.h>
@@ -120,13 +119,12 @@ public:
         return nullptr;
     }
 
-    rtc::AsyncPacketSocket* CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::ProxyInfo& info, const std::string& name, const rtc::PacketSocketTcpOptions& options)
+    rtc::AsyncPacketSocket* CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::PacketSocketTcpOptions& options) final
     {
-        return m_socketFactory->CreateClientTcpSocket(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections), remoteAddress, info, name, options);
+        return m_socketFactory->CreateClientTcpSocket(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections), remoteAddress, options);
     }
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    rtc::AsyncResolverInterface* CreateAsyncResolver() final { return m_socketFactory->CreateAsyncResolver(); }
-ALLOW_DEPRECATED_DECLARATIONS_END
+
+    std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAsyncDnsResolver() final { return m_socketFactory->CreateAsyncDnsResolver(); }
 
 private:
     bool m_disableNonLocalhostConnections { false };

@@ -18,11 +18,13 @@
 #include <type_traits>
 #include <utility>
 
+#include "absl/base/nullability.h"
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/audio/audio_frame.h"
+#include "api/task_queue/task_queue_base.h"
 #include "common_audio/audio_converter.h"
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_processing/aec_dump/aec_dump_factory.h"
@@ -2082,9 +2084,10 @@ void AudioProcessingImpl::UpdateRecommendedInputVolumeLocked() {
   capture_.recommended_input_volume = capture_.applied_input_volume;
 }
 
-bool AudioProcessingImpl::CreateAndAttachAecDump(absl::string_view file_name,
-                                                 int64_t max_log_size_bytes,
-                                                 rtc::TaskQueue* worker_queue) {
+bool AudioProcessingImpl::CreateAndAttachAecDump(
+    absl::string_view file_name,
+    int64_t max_log_size_bytes,
+    absl::Nonnull<TaskQueueBase*> worker_queue) {
   std::unique_ptr<AecDump> aec_dump =
       AecDumpFactory::Create(file_name, max_log_size_bytes, worker_queue);
   if (!aec_dump) {
@@ -2095,9 +2098,10 @@ bool AudioProcessingImpl::CreateAndAttachAecDump(absl::string_view file_name,
   return true;
 }
 
-bool AudioProcessingImpl::CreateAndAttachAecDump(FILE* handle,
-                                                 int64_t max_log_size_bytes,
-                                                 rtc::TaskQueue* worker_queue) {
+bool AudioProcessingImpl::CreateAndAttachAecDump(
+    FILE* handle,
+    int64_t max_log_size_bytes,
+    absl::Nonnull<TaskQueueBase*> worker_queue) {
   std::unique_ptr<AecDump> aec_dump =
       AecDumpFactory::Create(handle, max_log_size_bytes, worker_queue);
   if (!aec_dump) {
@@ -2377,7 +2381,7 @@ void AudioProcessingImpl::InitializeGainController2() {
       !UseApmVadSubModule(config_, gain_controller2_experiment_params_);
   submodules_.gain_controller2 = std::make_unique<GainController2>(
       config_.gain_controller2, input_volume_controller_config,
-      proc_fullband_sample_rate_hz(), num_proc_channels(), use_internal_vad);
+      proc_fullband_sample_rate_hz(), num_output_channels(), use_internal_vad);
   submodules_.gain_controller2->SetCaptureOutputUsed(
       capture_.capture_output_used);
 }

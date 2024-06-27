@@ -32,14 +32,17 @@ rtc_library("audio_codecs_api") {
     "..:array_view",
     "..:bitrate_allocation",
     "..:make_ref_counted",
+    "..:ref_count",
     "..:scoped_refptr",
     "../../api:field_trials_view",
+    "../../api:rtp_parameters",
     "../../rtc_base:buffer",
     "../../rtc_base:checks",
     "../../rtc_base:event_tracer",
     "../../rtc_base:refcount",
     "../../rtc_base:sanitizer",
     "../../rtc_base/system:rtc_export",
+    "../units:data_rate",
     "../units:time_delta",
   ]
   absl_deps = [

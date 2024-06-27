@@ -97,6 +97,14 @@ class SrtpSession {
   // been set.
   bool IsExternalAuthActive() const;
 
+  // Removes a SSRC from the underlying libSRTP session.
+  // Note: this should only be done for SSRCs that are received.
+  // Removing SSRCs that were sent and then reusing them leads to
+  // cryptographic weaknesses described in
+  // https://www.rfc-editor.org/rfc/rfc3711#section-8
+  // https://www.rfc-editor.org/rfc/rfc7714#section-8.4
+  bool RemoveSsrcFromSession(uint32_t ssrc);
+
  private:
   bool DoSetKey(int type,
                 int crypto_suite,

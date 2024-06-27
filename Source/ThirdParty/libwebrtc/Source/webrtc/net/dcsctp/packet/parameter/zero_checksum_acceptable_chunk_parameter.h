@@ -19,13 +19,14 @@
 #include "api/array_view.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
 #include "net/dcsctp/packet/tlv_trait.h"
+#include "net/dcsctp/public/types.h"
 
 namespace dcsctp {
 
-// https://datatracker.ietf.org/doc/draft-tuexen-tsvwg-sctp-zero-checksum/
+// https://datatracker.ietf.org/doc/draft-ietf-tsvwg-sctp-zero-checksum/
 struct ZeroChecksumAcceptableChunkParameterConfig : ParameterConfig {
   static constexpr int kType = 0x8001;
-  static constexpr size_t kHeaderSize = 4;
+  static constexpr size_t kHeaderSize = 8;
   static constexpr size_t kVariableLengthAlignment = 0;
 };
 
@@ -36,13 +37,22 @@ class ZeroChecksumAcceptableChunkParameter
   static constexpr int kType =
       ZeroChecksumAcceptableChunkParameterConfig::kType;
 
-  ZeroChecksumAcceptableChunkParameter() {}
+  explicit ZeroChecksumAcceptableChunkParameter(
+      ZeroChecksumAlternateErrorDetectionMethod error_detection_method)
+      : error_detection_method_(error_detection_method) {}
 
   static absl::optional<ZeroChecksumAcceptableChunkParameter> Parse(
       rtc::ArrayView<const uint8_t> data);
 
   void SerializeTo(std::vector<uint8_t>& out) const override;
   std::string ToString() const override;
+
+  ZeroChecksumAlternateErrorDetectionMethod error_detection_method() const {
+    return error_detection_method_;
+  }
+
+ private:
+  ZeroChecksumAlternateErrorDetectionMethod error_detection_method_;
 };
 
 }  // namespace dcsctp

@@ -57,7 +57,6 @@ struct CallClientConfig {
   // The number of bites that can be sent in one burst is pacer_burst_interval *
   // current bwe. 40ms is the default Chrome setting.
   TimeDelta pacer_burst_interval = TimeDelta::Millis(40);
-  const FieldTrialsView* field_trials = nullptr;
 };
 
 struct PacketStreamConfig {

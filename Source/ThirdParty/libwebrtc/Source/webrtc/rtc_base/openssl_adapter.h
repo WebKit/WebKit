@@ -37,14 +37,6 @@
 
 namespace rtc {
 
-namespace webrtc_openssl_adapter_internal {
-
-// Local definition, since absl::StrJoin is not allow-listed. Declared in header
-// file only for unittests.
-std::string StrJoin(const std::vector<std::string>& list, char delimiter);
-
-}  // namespace webrtc_openssl_adapter_internal
-
 class OpenSSLAdapter final : public SSLAdapter {
  public:
   static bool InitializeSSL();

@@ -22,10 +22,10 @@
 #include "absl/functional/any_invocable.h"
 #include "absl/types/optional.h"
 #include "api/priority.h"
+#include "api/ref_count.h"
 #include "api/rtc_error.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/copy_on_write_buffer.h"
-#include "rtc_base/ref_count.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -116,7 +116,7 @@ class DataChannelObserver {
   virtual ~DataChannelObserver() = default;
 };
 
-class RTC_EXPORT DataChannelInterface : public rtc::RefCountInterface {
+class RTC_EXPORT DataChannelInterface : public RefCountInterface {
  public:
   // C++ version of: https://www.w3.org/TR/webrtc/#idl-def-rtcdatachannelstate
   // Unlikely to change, but keep in sync with DataChannel.java:State and

@@ -161,8 +161,9 @@ VCMEncodedFrame* VCMReceiver::FrameForDecoding(uint16_t max_wait_time_ms,
     return NULL;
   }
   frame->SetRenderTime(render_time_ms);
-  TRACE_EVENT_ASYNC_STEP1("webrtc", "Video", frame->RtpTimestamp(),
-                          "SetRenderTS", "render_time", frame->RenderTimeMs());
+  TRACE_EVENT_ASYNC_STEP_INTO1("webrtc", "Video", frame->RtpTimestamp(),
+                               "SetRenderTS", "render_time",
+                               frame->RenderTimeMs());
   return frame;
 }
 

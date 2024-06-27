@@ -10,6 +10,7 @@
 
 #include "modules/congestion_controller/include/receive_side_congestion_controller.h"
 
+#include "api/environment/environment_factory.h"
 #include "api/test/network_emulation/create_cross_traffic.h"
 #include "api/test/network_emulation/cross_traffic.h"
 #include "api/units/data_rate.h"
@@ -41,11 +42,11 @@ TEST(ReceiveSideCongestionControllerTest, SendsRembWithAbsSendTime) {
   MockFunction<void(std::vector<std::unique_ptr<rtcp::RtcpPacket>>)>
       feedback_sender;
   MockFunction<void(uint64_t, std::vector<uint32_t>)> remb_sender;
-  SimulatedClock clock_(123456);
+  SimulatedClock clock(123456);
 
   ReceiveSideCongestionController controller(
-      &clock_, feedback_sender.AsStdFunction(), remb_sender.AsStdFunction(),
-      nullptr);
+      CreateEnvironment(&clock), feedback_sender.AsStdFunction(),
+      remb_sender.AsStdFunction(), nullptr);
 
   RtpHeaderExtensionMap extensions;
   extensions.Register<AbsoluteSendTime>(1);
@@ -58,8 +59,8 @@ TEST(ReceiveSideCongestionControllerTest, SendsRembWithAbsSendTime) {
       .Times(AtLeast(1));
 
   for (int i = 0; i < 10; ++i) {
-    clock_.AdvanceTime(kPayloadSize / kInitialBitrate);
-    Timestamp now = clock_.CurrentTime();
+    clock.AdvanceTime(kPayloadSize / kInitialBitrate);
+    Timestamp now = clock.CurrentTime();
     packet.SetExtension<AbsoluteSendTime>(AbsoluteSendTime::To24Bits(now));
     packet.set_arrival_time(now);
     controller.OnReceivedPacket(packet, MediaType::VIDEO);
@@ -71,11 +72,11 @@ TEST(ReceiveSideCongestionControllerTest,
   MockFunction<void(std::vector<std::unique_ptr<rtcp::RtcpPacket>>)>
       feedback_sender;
   MockFunction<void(uint64_t, std::vector<uint32_t>)> remb_sender;
-  SimulatedClock clock_(123456);
+  SimulatedClock clock(123456);
 
   ReceiveSideCongestionController controller(
-      &clock_, feedback_sender.AsStdFunction(), remb_sender.AsStdFunction(),
-      nullptr);
+      CreateEnvironment(&clock), feedback_sender.AsStdFunction(),
+      remb_sender.AsStdFunction(), nullptr);
   EXPECT_CALL(remb_sender, Call(123, _));
   controller.SetMaxDesiredReceiveBitrate(DataRate::BitsPerSec(123));
 }

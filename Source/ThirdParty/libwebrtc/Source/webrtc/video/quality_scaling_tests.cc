@@ -87,13 +87,14 @@ class ScalingObserver : public test::SendTest {
                   bool expect_scaling)
       : SendTest(expect_scaling ? kTimeout * 4 : kTimeout),
         encoder_factory_(
-            [](const SdpVideoFormat& format) -> std::unique_ptr<VideoEncoder> {
+            [](const Environment& env,
+               const SdpVideoFormat& format) -> std::unique_ptr<VideoEncoder> {
               if (format.name == "VP8")
-                return VP8Encoder::Create();
+                return CreateVp8Encoder(env);
               if (format.name == "VP9")
-                return VP9Encoder::Create();
+                return CreateVp9Encoder(env);
               if (format.name == "H264")
-                return H264Encoder::Create();
+                return CreateH264Encoder(env);
               RTC_DCHECK_NOTREACHED() << format.name;
               return nullptr;
             }),

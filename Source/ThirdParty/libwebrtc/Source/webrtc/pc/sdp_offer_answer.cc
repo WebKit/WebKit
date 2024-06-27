@@ -77,17 +77,11 @@ using cricket::SimulcastLayerList;
 using cricket::StreamParams;
 using cricket::TransportInfo;
 
-using cricket::LOCAL_PORT_TYPE;
-using cricket::PRFLX_PORT_TYPE;
-using cricket::RELAY_PORT_TYPE;
-using cricket::STUN_PORT_TYPE;
-
 namespace webrtc {
 
 namespace {
 
-typedef webrtc::PeerConnectionInterface::RTCOfferAnswerOptions
-    RTCOfferAnswerOptions;
+typedef PeerConnectionInterface::RTCOfferAnswerOptions RTCOfferAnswerOptions;
 
 // Error messages
 const char kInvalidSdp[] = "Invalid session description.";
@@ -105,7 +99,7 @@ const char kSdpWithoutIceUfragPwd[] =
     "Called with SDP without ice-ufrag and ice-pwd.";
 const char kSdpWithoutDtlsFingerprint[] =
     "Called with SDP without DTLS fingerprint.";
-const char kSdpWithoutSdesCrypto[] = "Called with SDP without SDES crypto.";
+const char kSdpWithoutCrypto[] = "Called with SDP without crypto setup.";
 
 const char kSessionError[] = "Session error code: ";
 const char kSessionErrorDesc[] = "Session error description: ";
@@ -277,7 +271,7 @@ bool MediaSectionsHaveSameCount(const SessionDescription& desc1,
                                 const SessionDescription& desc2) {
   return desc1.contents().size() == desc2.contents().size();
 }
-// Checks that each non-rejected content has SDES crypto keys or a DTLS
+// Checks that each non-rejected content has a DTLS
 // fingerprint, unless it's in a BUNDLE group, in which case only the
 // BUNDLE-tag section (first media section/description in the BUNDLE group)
 // needs a ufrag and pwd. Mismatches, such as replying with a DTLS fingerprint
@@ -291,9 +285,6 @@ RTCError VerifyCrypto(const SessionDescription* desc,
     if (content_info.rejected) {
       continue;
     }
-#if !defined(WEBRTC_FUCHSIA)
-    RTC_CHECK(dtls_enabled) << "SDES protocol is only allowed in Fuchsia";
-#endif
     const std::string& mid = content_info.name;
     auto it = bundle_groups_by_mid.find(mid);
     const cricket::ContentGroup* bundle =
@@ -319,10 +310,7 @@ RTCError VerifyCrypto(const SessionDescription* desc,
                              kSdpWithoutDtlsFingerprint);
       }
     } else {
-      if (media->cryptos().empty()) {
-        LOG_AND_RETURN_ERROR(RTCErrorType::INVALID_PARAMETER,
-                             kSdpWithoutSdesCrypto);
-      }
+      LOG_AND_RETURN_ERROR(RTCErrorType::INVALID_PARAMETER, kSdpWithoutCrypto);
     }
   }
   return RTCError::OK();
@@ -566,22 +554,9 @@ RTCError ValidatePayloadTypes(const cricket::SessionDescription& description) {
       continue;
     }
     const auto type = media_description->type();
-    if (type == cricket::MEDIA_TYPE_AUDIO) {
-      RTC_DCHECK(media_description->as_audio());
-      for (const auto& codec : media_description->as_audio()->codecs()) {
-        if (!cricket::UsedPayloadTypes::IsIdValid(
-                codec, media_description->rtcp_mux())) {
-          LOG_AND_RETURN_ERROR(
-              RTCErrorType::INVALID_PARAMETER,
-              "The media section with MID='" + content.mid() +
-                  "' used an invalid payload type " + rtc::ToString(codec.id) +
-                  " for codec '" + codec.name + ", rtcp-mux:" +
-                  (media_description->rtcp_mux() ? "enabled" : "disabled"));
-        }
-      }
-    } else if (type == cricket::MEDIA_TYPE_VIDEO) {
-      RTC_DCHECK(media_description->as_video());
-      for (const auto& codec : media_description->as_video()->codecs()) {
+    if (type == cricket::MEDIA_TYPE_AUDIO ||
+        type == cricket::MEDIA_TYPE_VIDEO) {
+      for (const auto& codec : media_description->codecs()) {
         if (!cricket::UsedPayloadTypes::IsIdValid(
                 codec, media_description->rtcp_mux())) {
           LOG_AND_RETURN_ERROR(
@@ -834,8 +809,8 @@ std::string GenerateRtcpCname() {
 }
 
 // Check if we can send `new_stream` on a PeerConnection.
-bool CanAddLocalMediaStream(webrtc::StreamCollectionInterface* current_streams,
-                            webrtc::MediaStreamInterface* new_stream) {
+bool CanAddLocalMediaStream(StreamCollectionInterface* current_streams,
+                            MediaStreamInterface* new_stream) {
   if (!new_stream || !current_streams) {
     return false;
   }
@@ -847,7 +822,7 @@ bool CanAddLocalMediaStream(webrtc::StreamCollectionInterface* current_streams,
   return true;
 }
 
-rtc::scoped_refptr<webrtc::DtlsTransport> LookupDtlsTransportByMid(
+rtc::scoped_refptr<DtlsTransport> LookupDtlsTransportByMid(
     rtc::Thread* network_thread,
     JsepTransportController* controller,
     const std::string& mid) {
@@ -1415,7 +1390,9 @@ void SdpOfferAnswerHandler::Initialize(
           pc_->trials());
 
   if (pc_->options()->disable_encryption) {
-    webrtc_session_desc_factory_->SetSdesPolicy(cricket::SEC_DISABLED);
+    RTC_LOG(LS_INFO)
+        << "Disabling encryption. This should only be done in tests.";
+    webrtc_session_desc_factory_->SetInsecureForTesting();
   }
 
   webrtc_session_desc_factory_->set_enable_encrypted_rtp_header_extensions(
@@ -1888,8 +1865,8 @@ RTCError SdpOfferAnswerHandler::ApplyLocalDescription(
       if (audio_content->rejected) {
         RemoveSenders(cricket::MEDIA_TYPE_AUDIO);
       } else {
-        const cricket::AudioContentDescription* audio_desc =
-            audio_content->media_description()->as_audio();
+        const cricket::MediaContentDescription* audio_desc =
+            audio_content->media_description();
         UpdateLocalSenders(audio_desc->streams(), audio_desc->type());
       }
     }
@@ -1900,8 +1877,8 @@ RTCError SdpOfferAnswerHandler::ApplyLocalDescription(
       if (video_content->rejected) {
         RemoveSenders(cricket::MEDIA_TYPE_VIDEO);
       } else {
-        const cricket::VideoContentDescription* video_desc =
-            video_content->media_description()->as_video();
+        const cricket::MediaContentDescription* video_desc =
+            video_content->media_description();
         UpdateLocalSenders(video_desc->streams(), video_desc->type());
       }
     }
@@ -2010,8 +1987,11 @@ RTCError SdpOfferAnswerHandler::ReplaceRemoteDescription(
   const cricket::SessionDescription* session_desc =
       remote_description()->description();
 
+  const auto* local = local_description();
+
   // NOTE: This will perform a BlockingCall() to the network thread.
-  return transport_controller_s()->SetRemoteDescription(sdp_type, session_desc);
+  return transport_controller_s()->SetRemoteDescription(
+      sdp_type, local ? local->description() : nullptr, session_desc);
 }
 
 void SdpOfferAnswerHandler::ApplyRemoteDescription(
@@ -2092,24 +2072,16 @@ void SdpOfferAnswerHandler::ApplyRemoteDescription(
   if (operation->unified_plan()) {
     ApplyRemoteDescriptionUpdateTransceiverState(operation->type());
   }
-
-  const cricket::AudioContentDescription* audio_desc =
-      GetFirstAudioContentDescription(remote_description()->description());
-  const cricket::VideoContentDescription* video_desc =
-      GetFirstVideoContentDescription(remote_description()->description());
-
-  // Check if the descriptions include streams, just in case the peer supports
-  // MSID, but doesn't indicate so with "a=msid-semantic".
-  if (remote_description()->description()->msid_supported() ||
-      (audio_desc && !audio_desc->streams().empty()) ||
-      (video_desc && !video_desc->streams().empty())) {
-    remote_peer_supports_msid_ = true;
-  }
+  remote_peer_supports_msid_ =
+      remote_description()->description()->msid_signaling() !=
+      cricket::kMsidSignalingNotUsed;
 
   if (!operation->unified_plan()) {
     PlanBUpdateSendersAndReceivers(
-        GetFirstAudioContent(remote_description()->description()), audio_desc,
-        GetFirstVideoContent(remote_description()->description()), video_desc);
+        GetFirstAudioContent(remote_description()->description()),
+        GetFirstAudioContentDescription(remote_description()->description()),
+        GetFirstVideoContent(remote_description()->description()),
+        GetFirstVideoContentDescription(remote_description()->description()));
   }
 
   if (operation->type() == SdpType::kAnswer) {
@@ -3578,8 +3550,7 @@ RTCError SdpOfferAnswerHandler::ValidateSessionDescription(
 
   // Verify crypto settings.
   std::string crypto_error;
-  if (webrtc_session_desc_factory_->SdesPolicy() == cricket::SEC_REQUIRED ||
-      pc_->dtls_enabled()) {
+  if (pc_->dtls_enabled()) {
     RTCError crypto_error = VerifyCrypto(
         sdesc->description(), pc_->dtls_enabled(), bundle_groups_by_mid);
     if (!crypto_error.ok()) {
@@ -3605,10 +3576,9 @@ RTCError SdpOfferAnswerHandler::ValidateSessionDescription(
     return error;
   }
 
-  // TODO(crbug.com/1459124): remove killswitch after rollout.
+  // Validate the SSRC groups.
   error = ValidateSsrcGroups(*sdesc->description());
-  if (!error.ok() &&
-      !pc_->trials().IsDisabled("WebRTC-PreventSsrcGroupsWithUnexpectedSize")) {
+  if (!error.ok()) {
     return error;
   }
 
@@ -4326,11 +4296,13 @@ void SdpOfferAnswerHandler::GetOptionsForUnifiedPlanOffer(
             GetMediaDescriptionOptionsForRejectedData(mid));
       } else {
         const auto data_mid = pc_->sctp_mid();
-        RTC_CHECK(data_mid);
-        if (mid == data_mid.value()) {
+        if (data_mid.has_value() && mid == data_mid.value()) {
           session_options->media_description_options.push_back(
               GetMediaDescriptionOptionsForActiveData(mid));
         } else {
+          if (!data_mid.has_value()) {
+            RTC_LOG(LS_ERROR) << "Datachannel transport not available: " << mid;
+          }
           session_options->media_description_options.push_back(
               GetMediaDescriptionOptionsForRejectedData(mid));
         }
@@ -4932,13 +4904,15 @@ RTCError SdpOfferAnswerHandler::PushdownTransportDescription(
   if (source == cricket::CS_LOCAL) {
     const SessionDescriptionInterface* sdesc = local_description();
     RTC_DCHECK(sdesc);
-    return transport_controller_s()->SetLocalDescription(type,
-                                                         sdesc->description());
+    const auto* remote = remote_description();
+    return transport_controller_s()->SetLocalDescription(
+        type, sdesc->description(), remote ? remote->description() : nullptr);
   } else {
     const SessionDescriptionInterface* sdesc = remote_description();
     RTC_DCHECK(sdesc);
-    return transport_controller_s()->SetRemoteDescription(type,
-                                                          sdesc->description());
+    const auto* local = local_description();
+    return transport_controller_s()->SetRemoteDescription(
+        type, local ? local->description() : nullptr, sdesc->description());
   }
 }
 
@@ -5366,44 +5340,40 @@ bool SdpOfferAnswerHandler::UpdatePayloadTypeDemuxingState(
       // Ignore transceivers that are not receiving.
       continue;
     }
-    switch (content_info.media_description()->type()) {
-      case cricket::MediaType::MEDIA_TYPE_AUDIO: {
-        if (!mid_header_extension_missing_audio) {
-          mid_header_extension_missing_audio =
-              !ContentHasHeaderExtension(content_info, RtpExtension::kMidUri);
-        }
-        const cricket::AudioContentDescription* audio_desc =
-            content_info.media_description()->as_audio();
-        for (const cricket::AudioCodec& audio : audio_desc->codecs()) {
-          if (payload_types->audio_payload_types.count(audio.id)) {
+    const cricket::MediaType media_type =
+        content_info.media_description()->type();
+    if (media_type == cricket::MediaType::MEDIA_TYPE_AUDIO ||
+        media_type == cricket::MediaType::MEDIA_TYPE_VIDEO) {
+      if (media_type == cricket::MediaType::MEDIA_TYPE_AUDIO &&
+          !mid_header_extension_missing_audio) {
+        mid_header_extension_missing_audio =
+            !ContentHasHeaderExtension(content_info, RtpExtension::kMidUri);
+      } else if (media_type == cricket::MEDIA_TYPE_VIDEO &&
+                 !mid_header_extension_missing_video) {
+        mid_header_extension_missing_video =
+            !ContentHasHeaderExtension(content_info, RtpExtension::kMidUri);
+      }
+      const cricket::MediaContentDescription* media_desc =
+          content_info.media_description();
+      for (const cricket::Codec& codec : media_desc->codecs()) {
+        if (media_type == cricket::MediaType::MEDIA_TYPE_AUDIO) {
+          if (payload_types->audio_payload_types.count(codec.id)) {
             // Two m= sections are using the same payload type, thus demuxing
             // by payload type is not possible.
-            payload_types->pt_demuxing_possible_audio = false;
+            if (media_type == cricket::MediaType::MEDIA_TYPE_AUDIO) {
+              payload_types->pt_demuxing_possible_audio = false;
+            }
           }
-          payload_types->audio_payload_types.insert(audio.id);
-        }
-        break;
-      }
-      case cricket::MediaType::MEDIA_TYPE_VIDEO: {
-        if (!mid_header_extension_missing_video) {
-          mid_header_extension_missing_video =
-              !ContentHasHeaderExtension(content_info, RtpExtension::kMidUri);
-        }
-        const cricket::VideoContentDescription* video_desc =
-            content_info.media_description()->as_video();
-        for (const cricket::VideoCodec& video : video_desc->codecs()) {
-          if (payload_types->video_payload_types.count(video.id)) {
+          payload_types->audio_payload_types.insert(codec.id);
+        } else if (media_type == cricket::MEDIA_TYPE_VIDEO) {
+          if (payload_types->video_payload_types.count(codec.id)) {
             // Two m= sections are using the same payload type, thus demuxing
             // by payload type is not possible.
             payload_types->pt_demuxing_possible_video = false;
           }
-          payload_types->video_payload_types.insert(video.id);
+          payload_types->video_payload_types.insert(codec.id);
         }
-        break;
       }
-      default:
-        // Ignore data channels.
-        continue;
     }
   }
 

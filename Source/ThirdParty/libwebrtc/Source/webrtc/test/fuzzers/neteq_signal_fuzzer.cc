@@ -179,7 +179,6 @@ void FuzzOneInputTest(const uint8_t* data, size_t size) {
   // Configure NetEq and the NetEqTest object.
   NetEqTest::Callbacks callbacks;
   NetEq::Config config;
-  config.enable_post_decode_vad = true;
   config.enable_fast_accelerate = true;
   auto codecs = NetEqTest::StandardDecoderMap();
   // rate_types contains the payload types that will be used for encoding.

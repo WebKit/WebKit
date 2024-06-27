@@ -54,10 +54,8 @@
 #include "logging/rtc_event_log/events/rtc_event_video_send_stream_config.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
-#include "rtc_base/ignore_wundef.h"
 
 // Files generated at build-time by the protobuf compiler.
-RTC_PUSH_IGNORING_WUNDEF()
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/logging/rtc_event_log/rtc_event_log.pb.h"
 #include "external/webrtc/webrtc/logging/rtc_event_log/rtc_event_log2.pb.h"
@@ -65,7 +63,6 @@ RTC_PUSH_IGNORING_WUNDEF()
 #include "logging/rtc_event_log/rtc_event_log.pb.h"
 #include "logging/rtc_event_log/rtc_event_log2.pb.h"
 #endif
-RTC_POP_IGNORING_WUNDEF()
 
 namespace webrtc {
 
@@ -74,12 +71,15 @@ enum PacketDirection { kIncomingPacket = 0, kOutgoingPacket };
 enum class LoggedMediaType : uint8_t { kUnknown, kAudio, kVideo };
 
 struct LoggedPacketInfo {
+  static LoggedPacketInfo CreateEmptyForTesting() { return LoggedPacketInfo(); }
+
   LoggedPacketInfo(const LoggedRtpPacket& rtp,
                    LoggedMediaType media_type,
                    bool rtx,
                    Timestamp capture_time);
   LoggedPacketInfo(const LoggedPacketInfo&);
   ~LoggedPacketInfo();
+
   int64_t log_time_ms() const { return log_packet_time.ms(); }
   int64_t log_time_us() const { return log_packet_time.us(); }
   uint32_t ssrc;
@@ -117,6 +117,12 @@ struct LoggedPacketInfo {
   // time, and this is instead calculated as the difference in reported receive
   // time between this packet and the last packet in the same feedback message.
   TimeDelta feedback_hold_duration = TimeDelta::MinusInfinity();
+
+ private:
+  LoggedPacketInfo()
+      : capture_time(Timestamp::MinusInfinity()),
+        log_packet_time(Timestamp::MinusInfinity()),
+        reported_send_time(Timestamp::MinusInfinity()) {}
 };
 
 struct InferredRouteChangeEvent {

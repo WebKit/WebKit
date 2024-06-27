@@ -27,6 +27,7 @@
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "modules/audio_coding/neteq/expand_uma_logger.h"
 #include "modules/audio_coding/neteq/packet.h"
+#include "modules/audio_coding/neteq/packet_buffer.h"
 #include "modules/audio_coding/neteq/random_vector.h"
 #include "modules/audio_coding/neteq/statistics_calculator.h"
 #include "rtc_base/synchronization/mutex.h"
@@ -46,9 +47,7 @@ class Expand;
 class Merge;
 class NackTracker;
 class Normal;
-class PacketBuffer;
 class RedPayloadSplitter;
-class PostDecodeVad;
 class PreemptiveExpand;
 class RandomVector;
 class SyncBuffer;
@@ -134,7 +133,7 @@ class NetEqImpl : public webrtc::NetEq {
 
   int GetAudio(
       AudioFrame* audio_frame,
-      bool* muted,
+      bool* muted = nullptr,
       int* current_sample_rate_hz = nullptr,
       absl::optional<Operation> action_override = absl::nullopt) override;
 
@@ -170,13 +169,6 @@ class NetEqImpl : public webrtc::NetEq {
   NetEqLifetimeStatistics GetLifetimeStatistics() const override;
 
   NetEqOperationsAndState GetOperationsAndState() const override;
-
-  // Enables post-decode VAD. When enabled, GetAudio() will return
-  // kOutputVADPassive when the signal contains no speech.
-  void EnableVad() override;
-
-  // Disables post-decode VAD.
-  void DisableVad() override;
 
   absl::optional<uint32_t> GetPlayoutTimestamp() const override;
 
@@ -215,10 +207,15 @@ class NetEqImpl : public webrtc::NetEq {
                            rtc::ArrayView<const uint8_t> payload)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
+  // Returns true if the payload type changed (this should be followed by
+  // resetting various state). Returns false if the current payload type is
+  // unknown or equal to `payload_type`.
+  bool MaybeChangePayloadType(uint8_t payload_type)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+
   // Delivers 10 ms of audio data. The data is written to `audio_frame`.
   // Returns 0 on success, otherwise an error code.
   int GetAudioInternal(AudioFrame* audio_frame,
-                       bool* muted,
                        absl::optional<Operation> action_override)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
@@ -336,6 +333,9 @@ class NetEqImpl : public webrtc::NetEq {
   NetEqNetworkStatistics CurrentNetworkStatisticsInternal() const
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
+  NetEqController::PacketArrivedInfo ToPacketArrivedInfo(
+      const Packet& packet) const RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+
   Clock* const clock_;
 
   mutable Mutex mutex_;
@@ -350,7 +350,6 @@ class NetEqImpl : public webrtc::NetEq {
       RTC_GUARDED_BY(mutex_);
   const std::unique_ptr<TimestampScaler> timestamp_scaler_
       RTC_GUARDED_BY(mutex_);
-  const std::unique_ptr<PostDecodeVad> vad_ RTC_GUARDED_BY(mutex_);
   const std::unique_ptr<ExpandFactory> expand_factory_ RTC_GUARDED_BY(mutex_);
   const std::unique_ptr<AccelerateFactory> accelerate_factory_
       RTC_GUARDED_BY(mutex_);
@@ -391,8 +390,6 @@ class NetEqImpl : public webrtc::NetEq {
   std::unique_ptr<NackTracker> nack_ RTC_GUARDED_BY(mutex_);
   bool nack_enabled_ RTC_GUARDED_BY(mutex_);
   const bool enable_muted_state_ RTC_GUARDED_BY(mutex_);
-  AudioFrame::VADActivity last_vad_activity_ RTC_GUARDED_BY(mutex_) =
-      AudioFrame::kVadPassive;
   std::unique_ptr<TickTimer::Stopwatch> generated_noise_stopwatch_
       RTC_GUARDED_BY(mutex_);
   std::vector<RtpPacketInfo> last_decoded_packet_infos_ RTC_GUARDED_BY(mutex_);

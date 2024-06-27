@@ -27,9 +27,11 @@ namespace webrtc {
 class DecisionLogic : public NetEqController {
  public:
   DecisionLogic(NetEqController::Config config);
-  DecisionLogic(NetEqController::Config config,
-                std::unique_ptr<DelayManager> delay_manager,
-                std::unique_ptr<BufferLevelFilter> buffer_level_filter);
+  DecisionLogic(
+      NetEqController::Config config,
+      std::unique_ptr<DelayManager> delay_manager,
+      std::unique_ptr<BufferLevelFilter> buffer_level_filter,
+      std::unique_ptr<PacketArrivalHistory> packet_arrival_history = nullptr);
 
   ~DecisionLogic() override;
 
@@ -154,16 +156,16 @@ class DecisionLogic : public NetEqController {
   struct Config {
     Config();
 
-    bool enable_stable_delay_mode = false;
-    bool combine_concealment_decision = false;
+    bool enable_stable_delay_mode = true;
+    bool combine_concealment_decision = true;
     int deceleration_target_level_offset_ms = 85;
     int packet_history_size_ms = 2000;
-    absl::optional<int> cng_timeout_ms;
+    absl::optional<int> cng_timeout_ms = 1000;
   };
   Config config_;
   std::unique_ptr<DelayManager> delay_manager_;
   std::unique_ptr<BufferLevelFilter> buffer_level_filter_;
-  PacketArrivalHistory packet_arrival_history_;
+  std::unique_ptr<PacketArrivalHistory> packet_arrival_history_;
   const TickTimer* tick_timer_;
   int sample_rate_khz_;
   size_t output_size_samples_;

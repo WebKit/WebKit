@@ -35,9 +35,18 @@ class SignalingRoute {
   // The `munge_offer` callback is used to modify an offer between its creation
   // and set local description. This behavior is forbidden according to the spec
   // but available here in order to allow test coverage on corner cases.
-  // The `exchange_finished` callback is called with the answer produced after
-  // SDP negotations has completed.
+  // `callee_remote_description_set` is invoked when callee has applied the
+  // offer but not yet created an answer. The purpose is to allow tests to
+  // modify transceivers created from the offer.  The `exchange_finished`
+  // callback is called with the answer produced after SDP negotations has
+  // completed.
   // TODO(srte): Handle lossy links.
+  void NegotiateSdp(
+      std::function<void(SessionDescriptionInterface* offer)> munge_offer,
+      std::function<void(SessionDescriptionInterface* offer)> modify_offer,
+      std::function<void()> callee_remote_description_set,
+      std::function<void(const SessionDescriptionInterface& answer)>
+          exchange_finished);
   void NegotiateSdp(
       std::function<void(SessionDescriptionInterface* offer)> munge_offer,
       std::function<void(SessionDescriptionInterface* offer)> modify_offer,
@@ -45,6 +54,10 @@ class SignalingRoute {
           exchange_finished);
   void NegotiateSdp(
       std::function<void(SessionDescriptionInterface* offer)> modify_offer,
+      std::function<void(const SessionDescriptionInterface& answer)>
+          exchange_finished);
+  void NegotiateSdp(
+      std::function<void()> remote_description_set,
       std::function<void(const SessionDescriptionInterface& answer)>
           exchange_finished);
   void NegotiateSdp(

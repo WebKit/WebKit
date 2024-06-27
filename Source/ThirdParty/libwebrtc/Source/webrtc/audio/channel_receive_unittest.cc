@@ -11,11 +11,12 @@
 #include "audio/channel_receive.h"
 
 #include "absl/strings/escaping.h"
+#include "api/audio/audio_device.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/crypto/frame_decryptor_interface.h"
 #include "api/task_queue/default_task_queue_factory.h"
+#include "api/test/mock_frame_transformer.h"
 #include "logging/rtc_event_log/mock/mock_rtc_event_log.h"
-#include "modules/audio_device/include/audio_device.h"
 #include "modules/audio_device/include/mock_audio_device.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/receiver_report.h"
@@ -224,6 +225,41 @@ TEST_F(ChannelReceiveTest, CaptureStartTimeBecomesValid) {
   channel->ReceivedRTCPPacket(rtcp_packet_2.data(), rtcp_packet_2.size());
 
   EXPECT_NE(ProbeCaptureStartNtpTime(*channel), -1);
+}
+
+TEST_F(ChannelReceiveTest, SettingFrameTransformer) {
+  auto channel = CreateTestChannelReceive();
+
+  rtc::scoped_refptr<MockFrameTransformer> mock_frame_transformer =
+      rtc::make_ref_counted<MockFrameTransformer>();
+
+  EXPECT_CALL(*mock_frame_transformer, RegisterTransformedFrameCallback);
+  channel->SetDepacketizerToDecoderFrameTransformer(mock_frame_transformer);
+
+  // Must start playout, otherwise packet is discarded.
+  channel->StartPlayout();
+
+  RtpPacketReceived packet = CreateRtpPacket();
+
+  // Receive one RTP packet, this should be transformed.
+  EXPECT_CALL(*mock_frame_transformer, Transform);
+  channel->OnRtpPacket(packet);
+}
+
+TEST_F(ChannelReceiveTest, SettingFrameTransformerMultipleTimes) {
+  auto channel = CreateTestChannelReceive();
+
+  rtc::scoped_refptr<MockFrameTransformer> mock_frame_transformer =
+      rtc::make_ref_counted<MockFrameTransformer>();
+
+  EXPECT_CALL(*mock_frame_transformer, RegisterTransformedFrameCallback);
+  channel->SetDepacketizerToDecoderFrameTransformer(mock_frame_transformer);
+
+  // Set the same transformer again, shouldn't cause any additional callback
+  // registration calls.
+  EXPECT_CALL(*mock_frame_transformer, RegisterTransformedFrameCallback)
+      .Times(0);
+  channel->SetDepacketizerToDecoderFrameTransformer(mock_frame_transformer);
 }
 
 }  // namespace

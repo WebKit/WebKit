@@ -16,7 +16,6 @@
 #include "absl/strings/string_view.h"
 #include "api/test/create_frame_generator.h"
 #include "call/call.h"
-#include "call/simulated_network.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
 #include "rtc_base/logging.h"
@@ -178,13 +177,13 @@ class BitrateEstimatorTest : public test::CallTest {
       RTC_DCHECK_EQ(1, test_->GetVideoEncoderConfig()->number_of_streams);
       frame_generator_capturer_ =
           std::make_unique<test::FrameGeneratorCapturer>(
-              test->clock_,
+              &test->env().clock(),
               test::CreateSquareFrameGenerator(
                   test::VideoTestConstants::kDefaultWidth,
                   test::VideoTestConstants::kDefaultHeight, absl::nullopt,
                   absl::nullopt),
               test::VideoTestConstants::kDefaultFramerate,
-              *test->task_queue_factory_);
+              test->env().task_queue_factory());
       frame_generator_capturer_->Init();
       frame_generator_capturer_->Start();
       send_stream_->SetSource(frame_generator_capturer_.get(),

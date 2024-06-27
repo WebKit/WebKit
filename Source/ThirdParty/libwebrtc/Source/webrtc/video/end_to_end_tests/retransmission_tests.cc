@@ -16,7 +16,6 @@
 #include "api/test/video/function_video_encoder_factory.h"
 #include "api/units/time_delta.h"
 #include "call/fake_network_pipe.h"
-#include "call/simulated_network.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "rtc_base/event.h"
@@ -25,6 +24,7 @@
 #include "test/call_test.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
+#include "test/network/simulated_network.h"
 #include "test/rtcp_packet_parser.h"
 #include "test/video_test_constants.h"
 
@@ -316,7 +316,7 @@ void RetransmissionEndToEndTest::ReceivesPliAndRecovers(int rtp_history_ms) {
     void OnFrame(const VideoFrame& video_frame) override {
       MutexLock lock(&mutex_);
       if (received_pli_ &&
-          video_frame.timestamp() > highest_dropped_timestamp_) {
+          video_frame.rtp_timestamp() > highest_dropped_timestamp_) {
         observation_complete_.Set();
       }
       if (!received_pli_)
@@ -372,7 +372,10 @@ void RetransmissionEndToEndTest::DecodesRetransmittedFrame(bool enable_rtx,
               enable_rtx ? test::VideoTestConstants::kSendRtxSsrcs[0]
                          : test::VideoTestConstants::kVideoSendSsrcs[0]),
           retransmission_payload_type_(GetPayloadType(enable_rtx, enable_red)),
-          encoder_factory_([]() { return VP8Encoder::Create(); }),
+          encoder_factory_(
+              [](const Environment& env, const SdpVideoFormat& format) {
+                return CreateVp8Encoder(env);
+              }),
           marker_bits_observed_(0),
           retransmitted_timestamp_(0) {}
 
@@ -412,7 +415,7 @@ void RetransmissionEndToEndTest::DecodesRetransmittedFrame(bool enable_rtx,
       EXPECT_EQ(kVideoRotation_90, frame.rotation());
       {
         MutexLock lock(&mutex_);
-        if (frame.timestamp() == retransmitted_timestamp_)
+        if (frame.rtp_timestamp() == retransmitted_timestamp_)
           observation_complete_.Set();
       }
       orig_renderer_->OnFrame(frame);
@@ -469,7 +472,7 @@ void RetransmissionEndToEndTest::DecodesRetransmittedFrame(bool enable_rtx,
       send_config->encoder_settings.encoder_factory = &encoder_factory_;
       send_config->rtp.payload_name = "VP8";
       encoder_config->codec_type = kVideoCodecVP8;
-      (*receive_configs)[0].decoders[0].video_format = SdpVideoFormat("VP8");
+      (*receive_configs)[0].decoders[0].video_format = SdpVideoFormat::VP8();
     }
 
     void OnFrameGeneratorCapturerCreated(

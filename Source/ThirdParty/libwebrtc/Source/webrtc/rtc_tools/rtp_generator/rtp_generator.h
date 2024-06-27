@@ -16,9 +16,8 @@
 #include <vector>
 
 #include "api/call/transport.h"
+#include "api/environment/environment.h"
 #include "api/media_types.h"
-#include "api/rtc_event_log/rtc_event_log.h"
-#include "api/task_queue/task_queue_factory.h"
 #include "api/video/builtin_video_bitrate_allocator_factory.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_factory.h"
@@ -104,18 +103,17 @@ class RtpGenerator final : public webrtc::Transport {
   test::RtpPacket DataToRtpPacket(const uint8_t* packet, size_t packet_len);
 
   const RtpGeneratorOptions options_;
+  const Environment env_;
   std::unique_ptr<VideoEncoderFactory> video_encoder_factory_;
   std::unique_ptr<VideoDecoderFactory> video_decoder_factory_;
   std::unique_ptr<VideoBitrateAllocatorFactory>
       video_bitrate_allocator_factory_;
-  std::unique_ptr<RtcEventLog> event_log_;
   std::unique_ptr<Call> call_;
   std::unique_ptr<test::RtpFileWriter> rtp_dump_writer_;
   std::vector<std::unique_ptr<test::FrameGeneratorCapturer>> frame_generators_;
   std::vector<VideoSendStream*> video_send_streams_;
   std::vector<uint32_t> durations_ms_;
   uint32_t start_ms_ = 0;
-  std::unique_ptr<TaskQueueFactory> task_queue_;
 };
 
 }  // namespace webrtc

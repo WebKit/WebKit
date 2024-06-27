@@ -10,6 +10,7 @@
 
 #include "audio/channel_receive_frame_transformer_delegate.h"
 
+#include <string>
 #include <utility>
 
 #include "rtc_base/buffer.h"
@@ -22,10 +23,12 @@ class TransformableIncomingAudioFrame
  public:
   TransformableIncomingAudioFrame(rtc::ArrayView<const uint8_t> payload,
                                   const RTPHeader& header,
-                                  uint32_t ssrc)
+                                  uint32_t ssrc,
+                                  const std::string& codec_mime_type)
       : payload_(payload.data(), payload.size()),
         header_(header),
-        ssrc_(ssrc) {}
+        ssrc_(ssrc),
+        codec_mime_type_(codec_mime_type) {}
   ~TransformableIncomingAudioFrame() override = default;
   rtc::ArrayView<const uint8_t> GetData() const override { return payload_; }
 
@@ -45,6 +48,7 @@ class TransformableIncomingAudioFrame
   }
   Direction GetDirection() const override { return Direction::kReceiver; }
 
+  std::string GetMimeType() const override { return codec_mime_type_; }
   const absl::optional<uint16_t> SequenceNumber() const override {
     return header_.sequenceNumber;
   }
@@ -57,14 +61,27 @@ class TransformableIncomingAudioFrame
   const RTPHeader& Header() const { return header_; }
 
   FrameType Type() const override {
-    return header_.extension.voiceActivity ? FrameType::kAudioFrameSpeech
-                                           : FrameType::kAudioFrameCN;
+    if (!header_.extension.audio_level()) {
+      // Audio level extension not set.
+      return FrameType::kAudioFrameCN;
+    }
+    return header_.extension.audio_level()->voice_activity()
+               ? FrameType::kAudioFrameSpeech
+               : FrameType::kAudioFrameCN;
+  }
+
+  absl::optional<uint8_t> AudioLevel() const override {
+    if (header_.extension.audio_level()) {
+      return header_.extension.audio_level()->level();
+    }
+    return absl::nullopt;
   }
 
  private:
   rtc::Buffer payload_;
   RTPHeader header_;
   uint32_t ssrc_;
+  std::string codec_mime_type_;
 };
 }  // namespace
 
@@ -92,10 +109,16 @@ void ChannelReceiveFrameTransformerDelegate::Reset() {
 void ChannelReceiveFrameTransformerDelegate::Transform(
     rtc::ArrayView<const uint8_t> packet,
     const RTPHeader& header,
-    uint32_t ssrc) {
+    uint32_t ssrc,
+    const std::string& codec_mime_type) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  frame_transformer_->Transform(
-      std::make_unique<TransformableIncomingAudioFrame>(packet, header, ssrc));
+  if (short_circuit_) {
+    receive_frame_callback_(packet, header);
+  } else {
+    frame_transformer_->Transform(
+        std::make_unique<TransformableIncomingAudioFrame>(packet, header, ssrc,
+                                                          codec_mime_type));
+  }
 }
 
 void ChannelReceiveFrameTransformerDelegate::OnTransformedFrame(
@@ -105,6 +128,14 @@ void ChannelReceiveFrameTransformerDelegate::OnTransformedFrame(
       [delegate = std::move(delegate), frame = std::move(frame)]() mutable {
         delegate->ReceiveFrame(std::move(frame));
       });
+}
+
+void ChannelReceiveFrameTransformerDelegate::StartShortCircuiting() {
+  rtc::scoped_refptr<ChannelReceiveFrameTransformerDelegate> delegate(this);
+  channel_receive_thread_->PostTask([delegate = std::move(delegate)]() mutable {
+    RTC_DCHECK_RUN_ON(&delegate->sequence_checker_);
+    delegate->short_circuit_ = true;
+  });
 }
 
 void ChannelReceiveFrameTransformerDelegate::ReceiveFrame(
@@ -138,4 +169,11 @@ void ChannelReceiveFrameTransformerDelegate::ReceiveFrame(
   // originally from this receiver.
   receive_frame_callback_(frame->GetData(), header);
 }
+
+rtc::scoped_refptr<FrameTransformerInterface>
+ChannelReceiveFrameTransformerDelegate::FrameTransformer() {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  return frame_transformer_;
+}
+
 }  // namespace webrtc

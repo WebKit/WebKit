@@ -15,12 +15,10 @@
 
 #include "api/field_trials_view.h"
 #include "api/sequence_checker.h"
-#include "api/transport/field_trial_based_config.h"
 #include "api/video/encoded_image.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/timing/timing.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/memory/always_valid_pointer.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -175,12 +173,10 @@ namespace {
 
 class VideoCodingModuleImpl : public VideoCodingModule {
  public:
-  explicit VideoCodingModuleImpl(Clock* clock,
-                                 const FieldTrialsView* field_trials)
-      : VideoCodingModule(),
-        field_trials_(field_trials),
-        timing_(new VCMTiming(clock, *field_trials_)),
-        receiver_(clock, timing_.get(), *field_trials_) {}
+  explicit VideoCodingModuleImpl(const Environment& env)
+      : env_(env),
+        timing_(&env_.clock(), env_.field_trials()),
+        receiver_(&env_.clock(), &timing_, env_.field_trials()) {}
 
   ~VideoCodingModuleImpl() override = default;
 
@@ -234,21 +230,18 @@ class VideoCodingModuleImpl : public VideoCodingModule {
   }
 
  private:
-  AlwaysValidPointer<const FieldTrialsView, FieldTrialBasedConfig>
-      field_trials_;
+  const Environment env_;
   SequenceChecker construction_thread_;
-  const std::unique_ptr<VCMTiming> timing_;
+  VCMTiming timing_;
   vcm::VideoReceiver receiver_;
 };
 }  // namespace
 
 // DEPRECATED.  Create method for current interface, will be removed when the
 // new jitter buffer is in place.
-VideoCodingModule* VideoCodingModule::Create(
-    Clock* clock,
-    const FieldTrialsView* field_trials) {
-  RTC_DCHECK(clock);
-  return new VideoCodingModuleImpl(clock, field_trials);
+std::unique_ptr<VideoCodingModule> VideoCodingModule::CreateDeprecated(
+    const Environment& env) {
+  return std::make_unique<VideoCodingModuleImpl>(env);
 }
 
 }  // namespace webrtc

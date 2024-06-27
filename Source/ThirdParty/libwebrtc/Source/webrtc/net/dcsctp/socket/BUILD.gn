@@ -11,6 +11,7 @@ import("../../../webrtc.gni")
 rtc_source_set("context") {
   sources = [ "context.h" ]
   deps = [
+    "../../../api/units:time_delta",
     "../common:internal_types",
     "../packet:sctp_packet",
     "../public:socket",
@@ -23,6 +24,7 @@ rtc_library("heartbeat_handler") {
   deps = [
     ":context",
     "../../../api:array_view",
+    "../../../api/units:time_delta",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
     "../packet:bounded_io",
@@ -48,11 +50,12 @@ rtc_library("stream_reset_handler") {
   deps = [
     ":context",
     "../../../api:array_view",
+    "../../../api/units:time_delta",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
+    "../../../rtc_base:stringutils",
     "../../../rtc_base/containers:flat_set",
     "../common:internal_types",
-    "../common:str_join",
     "../packet:chunk",
     "../packet:parameter",
     "../packet:sctp_packet",
@@ -97,6 +100,7 @@ rtc_library("transmission_control_block") {
     ":stream_reset_handler",
     "../../../api:array_view",
     "../../../api/task_queue:task_queue",
+    "../../../api/units:time_delta",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
     "../../../rtc_base:stringutils",
@@ -136,7 +140,6 @@ rtc_library("dcsctp_socket") {
     "../../../api:make_ref_counted",
     "../../../api:refcountedbase",
     "../../../api:scoped_refptr",
-    "../../../api:sequence_checker",
     "../../../api/task_queue:task_queue",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
@@ -174,6 +177,7 @@ rtc_library("dcsctp_socket") {
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
+    "//third_party/abseil-cpp/absl/types:variant",
   ]
 }
 
@@ -232,7 +236,6 @@ if (rtc_include_tests) {
       "../../../api/task_queue",
       "../../../api/task_queue:pending_task_safety_flag",
       "../../../api/units:time_delta",
-      "../../../call:simulated_network",
       "../../../rtc_base:checks",
       "../../../rtc_base:copy_on_write_buffer",
       "../../../rtc_base:gunit_helpers",

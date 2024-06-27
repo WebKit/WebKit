@@ -87,6 +87,8 @@ bool Dav1dDecoder::Configure(const Settings& settings) {
   s.n_threads = std::max(2, settings.number_of_cores());
   s.max_frame_delay = 1;   // For low latency decoding.
   s.all_layers = 0;        // Don't output a frame for every spatial layer.
+  // Limit max frame size to avoid OOM'ing fuzzers. crbug.com/325284120.
+  s.frame_size_limit = 16384 * 16384;
   s.operating_point = 31;  // Decode all operating points.
 
   return dav1d_open(&context_, &s) == 0;
@@ -184,7 +186,7 @@ int32_t Dav1dDecoder::Decode(const EncodedImage& encoded_image,
   VideoFrame decoded_frame =
       VideoFrame::Builder()
           .set_video_frame_buffer(wrapped_buffer)
-          .set_timestamp_rtp(encoded_image.RtpTimestamp())
+          .set_rtp_timestamp(encoded_image.RtpTimestamp())
           .set_ntp_time_ms(encoded_image.ntp_time_ms_)
           .set_color_space(encoded_image.ColorSpace())
           .build();

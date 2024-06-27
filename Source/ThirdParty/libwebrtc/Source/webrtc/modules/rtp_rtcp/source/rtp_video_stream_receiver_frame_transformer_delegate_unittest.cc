@@ -17,6 +17,7 @@
 
 #include "absl/memory/memory.h"
 #include "api/call/transport.h"
+#include "api/test/mock_frame_transformer.h"
 #include "api/test/mock_transformable_video_frame.h"
 #include "api/units/timestamp.h"
 #include "call/video_receive_stream.h"
@@ -24,7 +25,6 @@
 #include "rtc_base/event.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "test/mock_frame_transformer.h"
 
 namespace webrtc {
 namespace {
@@ -347,6 +347,29 @@ TEST(RtpVideoStreamReceiverFrameTransformerDelegateTest,
   untransformed_frame->SetId(frame_id);
   delegate1->TransformFrame(std::move(untransformed_frame));
   rtc::ThreadManager::ProcessAllMessageQueuesForTesting();
+}
+
+TEST(RtpVideoStreamReceiverFrameTransformerDelegateTest,
+     ShortCircuitingSkipsTransform) {
+  rtc::AutoThread main_thread_;
+  TestRtpVideoFrameReceiver receiver;
+  auto mock_frame_transformer =
+      rtc::make_ref_counted<NiceMock<MockFrameTransformer>>();
+  SimulatedClock clock(0);
+  auto delegate =
+      rtc::make_ref_counted<RtpVideoStreamReceiverFrameTransformerDelegate>(
+          &receiver, &clock, mock_frame_transformer, rtc::Thread::Current(),
+          1111);
+  delegate->Init();
+
+  delegate->StartShortCircuiting();
+  rtc::ThreadManager::ProcessAllMessageQueuesForTesting();
+
+  // Will not call the actual transformer.
+  EXPECT_CALL(*mock_frame_transformer, Transform).Times(0);
+  // Will pass the frame straight to the reciever.
+  EXPECT_CALL(receiver, ManageFrame);
+  delegate->TransformFrame(CreateRtpFrameObject());
 }
 
 }  // namespace

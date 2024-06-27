@@ -42,21 +42,23 @@ rtc_library("call_interfaces") {
     ":rtp_interfaces",
     ":video_stream_api",
     "../api:fec_controller_api",
-    "../api:field_trials_view",
     "../api:frame_transformer_interface",
     "../api:network_state_predictor_api",
-    "../api:rtc_error",
     "../api:rtp_headers",
     "../api:rtp_parameters",
     "../api:rtp_sender_interface",
     "../api:scoped_refptr",
     "../api:transport_api",
     "../api/adaptation:resource_adaptation_api",
+    "../api/audio:audio_device",
     "../api/audio:audio_frame_processor",
     "../api/audio:audio_mixer_api",
+    "../api/audio:audio_processing",
+    "../api/audio:audio_processing_statistics",
     "../api/audio_codecs:audio_codecs_api",
     "../api/crypto:frame_encryptor_interface",
     "../api/crypto:options",
+    "../api/environment",
     "../api/metronome",
     "../api/neteq:neteq_api",
     "../api/task_queue",
@@ -65,8 +67,6 @@ rtc_library("call_interfaces") {
     "../modules/async_audio_processing",
     "../modules/audio_device",
     "../modules/audio_processing",
-    "../modules/audio_processing:api",
-    "../modules/audio_processing:audio_processing_statistics",
     "../modules/rtp_rtcp",
     "../modules/rtp_rtcp:rtp_rtcp_format",
     "../rtc_base:audio_format_to_string",
@@ -111,20 +111,20 @@ rtc_library("rtp_interfaces") {
   deps = [
     "../api:array_view",
     "../api:fec_controller_api",
-    "../api:field_trials_view",
     "../api:frame_transformer_interface",
     "../api:network_state_predictor_api",
     "../api:rtp_headers",
     "../api:rtp_parameters",
     "../api/crypto:options",
-    "../api/rtc_event_log",
+    "../api/environment",
+    "../api/transport:bandwidth_estimation_settings",
     "../api/transport:bitrate_settings",
     "../api/transport:network_control",
+    "../api/units:time_delta",
     "../api/units:timestamp",
     "../common_video:frame_counts",
     "../modules/rtp_rtcp:rtp_rtcp_format",
     "../rtc_base:checks",
-    "../rtc_base:rtc_task_queue",
     "../rtc_base:stringutils",
   ]
   absl_deps = [
@@ -186,6 +186,7 @@ rtc_library("rtp_sender") {
     "../api:rtp_parameters",
     "../api:sequence_checker",
     "../api:transport_api",
+    "../api/environment",
     "../api/rtc_event_log",
     "../api/task_queue:pending_task_safety_flag",
     "../api/task_queue:task_queue",
@@ -219,7 +220,6 @@ rtc_library("rtp_sender") {
     "../rtc_base:race_checker",
     "../rtc_base:random",
     "../rtc_base:rate_limiter",
-    "../rtc_base:rtc_task_queue",
     "../rtc_base:timeutils",
     "../rtc_base/synchronization:mutex",
     "../rtc_base/task_utils:repeating_task",
@@ -275,8 +275,8 @@ rtc_library("bitrate_allocator") {
 rtc_library("call") {
   sources = [
     "call.cc",
-    "call_factory.cc",
-    "call_factory.h",
+    "create_call.cc",
+    "create_call.h",
     "degraded_call.cc",
     "degraded_call.h",
     "flexfec_receive_stream_impl.cc",
@@ -296,7 +296,6 @@ rtc_library("call") {
     ":version",
     ":video_stream_api",
     "../api:array_view",
-    "../api:callfactory_api",
     "../api:fec_controller_api",
     "../api:field_trials_view",
     "../api:rtp_headers",
@@ -326,7 +325,6 @@ rtc_library("call") {
     "../rtc_base:macromagic",
     "../rtc_base:rate_limiter",
     "../rtc_base:rtc_event",
-    "../rtc_base:rtc_task_queue",
     "../rtc_base:safe_minmax",
     "../rtc_base:stringutils",
     "../rtc_base:threading",
@@ -338,6 +336,7 @@ rtc_library("call") {
     "../system_wrappers",
     "../system_wrappers:field_trial",
     "../system_wrappers:metrics",
+    "../test/network:simulated_network",
     "../video",
     "../video:decode_synchronizer",
     "../video/config:encoder_config",
@@ -401,24 +400,9 @@ rtc_library("video_stream_api") {
 }
 
 rtc_library("simulated_network") {
-  sources = [
-    "simulated_network.cc",
-    "simulated_network.h",
-  ]
-  deps = [
-    "../api:sequence_checker",
-    "../api:simulated_network_api",
-    "../api/units:data_rate",
-    "../api/units:data_size",
-    "../api/units:time_delta",
-    "../api/units:timestamp",
-    "../rtc_base:checks",
-    "../rtc_base:macromagic",
-    "../rtc_base:race_checker",
-    "../rtc_base:random",
-    "../rtc_base/synchronization:mutex",
-  ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  # TODO(bugs.webrtc.org/14525): Remove target and directly depend on test/network:simulated_network.
+  sources = [ "simulated_network.h" ]
+  deps = [ "../test/network:simulated_network" ]
 }
 
 rtc_source_set("simulated_packet_receiver") {
@@ -436,7 +420,6 @@ rtc_library("fake_network") {
   ]
   deps = [
     ":call_interfaces",
-    ":simulated_network",
     ":simulated_packet_receiver",
     "../api:rtp_parameters",
     "../api:sequence_checker",
@@ -449,6 +432,7 @@ rtc_library("fake_network") {
     "../rtc_base:macromagic",
     "../rtc_base/synchronization:mutex",
     "../system_wrappers",
+    "../test/network:simulated_network",
   ]
 }
 
@@ -482,12 +466,13 @@ if (rtc_include_tests) {
         "../api:array_view",
         "../api:create_frame_generator",
         "../api:mock_audio_mixer",
+        "../api:mock_frame_transformer",
         "../api:rtp_headers",
         "../api:rtp_parameters",
         "../api:transport_api",
         "../api/audio_codecs:builtin_audio_decoder_factory",
-        "../api/rtc_event_log",
-        "../api/task_queue:default_task_queue_factory",
+        "../api/environment",
+        "../api/environment:environment_factory",
         "../api/test/video:function_video_factory",
         "../api/transport:field_trial_based_config",
         "../api/units:timestamp",
@@ -526,7 +511,6 @@ if (rtc_include_tests) {
         "../test:fake_video_codecs",
         "../test:field_trial",
         "../test:frame_generator_capturer",
-        "../test:mock_frame_transformer",
         "../test:mock_transport",
         "../test:run_loop",
         "../test:scoped_key_value_config",
@@ -563,12 +547,12 @@ if (rtc_include_tests) {
         ":video_stream_api",
         "../api:rtc_event_log_output_file",
         "../api:simulated_network_api",
+        "../api/audio:audio_device",
         "../api/audio_codecs:builtin_audio_encoder_factory",
         "../api/numerics",
         "../api/rtc_event_log",
         "../api/rtc_event_log:rtc_event_log_factory",
         "../api/task_queue",
-        "../api/task_queue:default_task_queue_factory",
         "../api/task_queue:pending_task_safety_flag",
         "../api/test/metrics:global_metrics_logger_and_exporter",
         "../api/test/metrics:metric",
@@ -608,6 +592,7 @@ if (rtc_include_tests) {
         "../test:test_support",
         "../test:video_test_common",
         "../test:video_test_constants",
+        "../test/network:simulated_network",
         "../video",
         "../video/config:encoder_config",
         "//testing/gtest",
@@ -635,6 +620,7 @@ if (rtc_include_tests) {
       "../api/crypto:options",
       "../api/transport:bitrate_settings",
       "../modules/pacing",
+      "../modules/rtp_rtcp",
       "../rtc_base:network_route",
       "../rtc_base:rate_limiter",
       "../rtc_base/network:sent_packet",
@@ -664,13 +650,9 @@ if (rtc_include_tests) {
   rtc_library("fake_network_pipe_unittests") {
     testonly = true
 
-    sources = [
-      "fake_network_pipe_unittest.cc",
-      "simulated_network_unittest.cc",
-    ]
+    sources = [ "fake_network_pipe_unittest.cc" ]
     deps = [
       ":fake_network",
-      ":simulated_network",
       "../api:simulated_network_api",
       "../api/units:data_rate",
       "../api/units:time_delta",
@@ -679,6 +661,7 @@ if (rtc_include_tests) {
       "../rtc_base:checks",
       "../system_wrappers",
       "../test:test_support",
+      "../test/network:simulated_network",
       "//testing/gtest",
     ]
     absl_deps = [ "//third_party/abseil-cpp/absl/algorithm:container" ]

@@ -16,7 +16,6 @@
 #include "api/video/builtin_video_bitrate_allocator_factory.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "call/fake_network_pipe.h"
-#include "call/simulated_network.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl2.h"
 #include "rtc_base/rate_limiter.h"
 #include "rtc_base/synchronization/mutex.h"
@@ -26,6 +25,7 @@
 #include "test/fake_encoder.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
+#include "test/network/simulated_network.h"
 #include "test/rtcp_packet_parser.h"
 #include "test/rtp_rtcp_observer.h"
 #include "test/video_encoder_proxy_factory.h"
@@ -317,9 +317,10 @@ TEST_F(BandwidthEndToEndTest, ReportsSetEncoderRates) {
   class EncoderRateStatsTest : public test::EndToEndTest,
                                public test::FakeEncoder {
    public:
-    explicit EncoderRateStatsTest(TaskQueueBase* task_queue)
+    explicit EncoderRateStatsTest(const Environment& env,
+                                  TaskQueueBase* task_queue)
         : EndToEndTest(test::VideoTestConstants::kDefaultTimeout),
-          FakeEncoder(Clock::GetRealTimeClock()),
+          FakeEncoder(env),
           task_queue_(task_queue),
           send_stream_(nullptr),
           encoder_factory_(this),
@@ -398,7 +399,7 @@ TEST_F(BandwidthEndToEndTest, ReportsSetEncoderRates) {
     test::VideoEncoderProxyFactory encoder_factory_;
     std::unique_ptr<VideoBitrateAllocatorFactory> bitrate_allocator_factory_;
     uint32_t bitrate_kbps_ RTC_GUARDED_BY(mutex_);
-  } test(task_queue());
+  } test(env(), task_queue());
 
   RunBaseTest(&test);
 }

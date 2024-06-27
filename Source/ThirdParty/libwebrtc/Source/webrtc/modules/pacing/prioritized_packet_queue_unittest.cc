@@ -10,6 +10,7 @@
 
 #include "modules/pacing/prioritized_packet_queue.h"
 
+#include <memory>
 #include <utility>
 
 #include "api/units/time_delta.h"
@@ -26,15 +27,36 @@ constexpr uint32_t kDefaultSsrc = 123;
 constexpr int kDefaultPayloadSize = 789;
 
 std::unique_ptr<RtpPacketToSend> CreatePacket(RtpPacketMediaType type,
-                                              uint16_t sequence_number,
+                                              uint16_t seq,
                                               uint32_t ssrc = kDefaultSsrc,
                                               bool is_key_frame = false) {
   auto packet = std::make_unique<RtpPacketToSend>(/*extensions=*/nullptr);
   packet->set_packet_type(type);
   packet->SetSsrc(ssrc);
-  packet->SetSequenceNumber(sequence_number);
+  packet->SetSequenceNumber(seq);
   packet->SetPayloadSize(kDefaultPayloadSize);
   packet->set_is_key_frame(is_key_frame);
+  return packet;
+}
+
+std::unique_ptr<RtpPacketToSend> CreateRetransmissionPacket(
+    RtpPacketMediaType original_type,
+    uint16_t seq,
+    uint32_t ssrc = kDefaultSsrc) {
+  auto packet = std::make_unique<RtpPacketToSend>(/*extensions=*/nullptr);
+  packet->set_packet_type(original_type);
+  packet->set_packet_type(RtpPacketMediaType::kRetransmission);
+  RTC_DCHECK(packet->packet_type() == RtpPacketMediaType::kRetransmission);
+  if (original_type == RtpPacketMediaType::kVideo) {
+    RTC_DCHECK(packet->original_packet_type() ==
+               RtpPacketToSend::OriginalType::kVideo);
+  } else {
+    RTC_DCHECK(packet->original_packet_type() ==
+               RtpPacketToSend::OriginalType::kAudio);
+  }
+  packet->SetSsrc(ssrc);
+  packet->SetSequenceNumber(seq);
+  packet->SetPayloadSize(kDefaultPayloadSize);
   return packet;
 }
 
@@ -49,16 +71,40 @@ TEST(PrioritizedPacketQueue, ReturnsPacketsInPrioritizedOrder) {
   queue.Push(now, CreatePacket(RtpPacketMediaType::kVideo, /*seq=*/2));
   queue.Push(now, CreatePacket(RtpPacketMediaType::kForwardErrorCorrection,
                                /*seq=*/3));
-  queue.Push(now, CreatePacket(RtpPacketMediaType::kRetransmission, /*seq=*/4));
-  queue.Push(now, CreatePacket(RtpPacketMediaType::kAudio, /*seq=*/5));
+  queue.Push(now,
+             CreateRetransmissionPacket(RtpPacketMediaType::kVideo, /*seq=*/4));
+  queue.Push(now,
+             CreateRetransmissionPacket(RtpPacketMediaType::kAudio, /*seq=*/5));
+  queue.Push(now, CreatePacket(RtpPacketMediaType::kAudio, /*seq=*/6));
 
   // Packets should be returned in high to low order.
-  EXPECT_EQ(queue.Pop()->SequenceNumber(), 5);
+  EXPECT_EQ(queue.Pop()->SequenceNumber(), 6);
+  // Audio and video retransmission has same prio, but video was enqueued first.
   EXPECT_EQ(queue.Pop()->SequenceNumber(), 4);
+  EXPECT_EQ(queue.Pop()->SequenceNumber(), 5);
   // Video and FEC prioritized equally - but video was enqueued first.
   EXPECT_EQ(queue.Pop()->SequenceNumber(), 2);
   EXPECT_EQ(queue.Pop()->SequenceNumber(), 3);
   EXPECT_EQ(queue.Pop()->SequenceNumber(), 1);
+}
+
+TEST(PrioritizedPacketQueue,
+     PrioritizeAudioRetransmissionBeforeVideoRetransmissionIfConfigured) {
+  Timestamp now = Timestamp::Zero();
+  PrioritizedPacketQueue queue(now, /*prioritize_audio_retransmission=*/true);
+
+  // Add packets in low to high packet order.
+  queue.Push(now, CreatePacket(RtpPacketMediaType::kVideo, /*seq=*/3));
+  queue.Push(now,
+             CreateRetransmissionPacket(RtpPacketMediaType::kVideo, /*seq=*/4));
+  queue.Push(now,
+             CreateRetransmissionPacket(RtpPacketMediaType::kAudio, /*seq=*/5));
+  queue.Push(now, CreatePacket(RtpPacketMediaType::kAudio, /*seq=*/6));
+
+  // Packets should be returned in high to low order.
+  EXPECT_EQ(queue.Pop()->SequenceNumber(), 6);
+  EXPECT_EQ(queue.Pop()->SequenceNumber(), 5);
+  EXPECT_EQ(queue.Pop()->SequenceNumber(), 4);
 }
 
 TEST(PrioritizedPacketQueue, ReturnsEqualPrioPacketsInRoundRobinOrder) {
@@ -251,6 +297,26 @@ TEST(PrioritizedPacketQueue, ReportsLeadingPacketEnqueueTime) {
             Timestamp::MinusInfinity());
 }
 
+TEST(PrioritizedPacketQueue, ReportsLeadingPacketEnqueueTimeForRetransmission) {
+  PrioritizedPacketQueue queue(/*creation_time=*/Timestamp::Zero(),
+                               /*prioritize_audio_retransmission=*/true);
+  EXPECT_EQ(queue.LeadingPacketEnqueueTimeForRetransmission(),
+            Timestamp::PlusInfinity());
+
+  queue.Push(Timestamp::Millis(10),
+             CreateRetransmissionPacket(RtpPacketMediaType::kVideo, /*seq=*/1));
+  queue.Push(Timestamp::Millis(11),
+             CreateRetransmissionPacket(RtpPacketMediaType::kAudio, /*seq=*/2));
+  EXPECT_EQ(queue.LeadingPacketEnqueueTimeForRetransmission(),
+            Timestamp::Millis(10));
+  queue.Pop();  // Pop audio retransmission since it has higher prio.
+  EXPECT_EQ(queue.LeadingPacketEnqueueTimeForRetransmission(),
+            Timestamp::Millis(10));
+  queue.Pop();  // Pop video retransmission.
+  EXPECT_EQ(queue.LeadingPacketEnqueueTimeForRetransmission(),
+            Timestamp::PlusInfinity());
+}
+
 TEST(PrioritizedPacketQueue,
      PushAndPopUpdatesSizeInPacketsPerRtpPacketMediaType) {
   Timestamp now = Timestamp::Zero();
@@ -272,7 +338,7 @@ TEST(PrioritizedPacketQueue,
                 RtpPacketMediaType::kVideo)],
             1);
 
-  queue.Push(now, CreatePacket(RtpPacketMediaType::kRetransmission, 3));
+  queue.Push(now, CreateRetransmissionPacket(RtpPacketMediaType::kVideo, 3));
   EXPECT_EQ(queue.SizeInPacketsPerRtpPacketMediaType()[static_cast<size_t>(
                 RtpPacketMediaType::kRetransmission)],
             1);
@@ -326,6 +392,8 @@ TEST(PrioritizedPacketQueue, ClearsPackets) {
   // Remove all of them.
   queue.RemovePacketsForSsrc(kSsrc);
   EXPECT_TRUE(queue.Empty());
+  queue.RemovePacketsForSsrc(kSsrc);
+  EXPECT_TRUE(queue.Empty());
 }
 
 TEST(PrioritizedPacketQueue, ClearPacketsAffectsOnlySpecifiedSsrc) {
@@ -338,16 +406,16 @@ TEST(PrioritizedPacketQueue, ClearPacketsAffectsOnlySpecifiedSsrc) {
   // ensuring they are first in line.
   queue.Push(
       now, CreatePacket(RtpPacketMediaType::kAudio, /*seq=*/1, kRemovingSsrc));
-  queue.Push(now, CreatePacket(RtpPacketMediaType::kRetransmission, /*seq=*/2,
-                               kRemovingSsrc));
+  queue.Push(now, CreateRetransmissionPacket(RtpPacketMediaType::kVideo,
+                                             /*seq=*/2, kRemovingSsrc));
 
   // Add a video packet and a retransmission for the SSRC that will remain.
   // The retransmission packets now both have pointers to their respective qeues
   // from the same prio level.
   queue.Push(now,
              CreatePacket(RtpPacketMediaType::kVideo, /*seq=*/3, kStayingSsrc));
-  queue.Push(now, CreatePacket(RtpPacketMediaType::kRetransmission, /*seq=*/4,
-                               kStayingSsrc));
+  queue.Push(now, CreateRetransmissionPacket(RtpPacketMediaType::kVideo,
+                                             /*seq=*/4, kStayingSsrc));
 
   EXPECT_EQ(queue.SizeInPackets(), 4);
 
@@ -411,6 +479,89 @@ TEST(PrioritizedPacketQueue, ReportsKeyframePackets) {
 
   EXPECT_FALSE(queue.HasKeyframePackets(kVideoSsrc1));
   EXPECT_FALSE(queue.HasKeyframePackets(kVideoSsrc2));
+}
+
+TEST(PrioritizedPacketQueue, PacketsDroppedIfNotPulledWithinTttl) {
+  Timestamp now = Timestamp::Zero();
+  PacketQueueTTL ttls;
+  ttls.audio_retransmission = TimeDelta::Millis(200);
+  PrioritizedPacketQueue queue(now, /*prioritize_audio_retransmission=*/true,
+                               ttls);
+
+  queue.Push(now,
+             CreateRetransmissionPacket(RtpPacketMediaType::kAudio, /*seq=*/1));
+  now += ttls.audio_retransmission + TimeDelta::Millis(1);
+  EXPECT_EQ(queue.SizeInPackets(), 1);
+  queue.Push(now,
+             CreateRetransmissionPacket(RtpPacketMediaType::kAudio, /*seq=*/2));
+  EXPECT_EQ(queue.SizeInPackets(), 1);
+  EXPECT_EQ(queue.Pop()->SequenceNumber(), 2);
+}
+
+TEST(PrioritizedPacketQueue, DontSendPacketsAfterTttl) {
+  Timestamp now = Timestamp::Zero();
+  PacketQueueTTL ttls;
+  ttls.audio_retransmission = TimeDelta::Millis(200);
+  PrioritizedPacketQueue queue(now, /*prioritize_audio_retransmission=*/true,
+                               ttls);
+
+  queue.Push(now,
+             CreateRetransmissionPacket(RtpPacketMediaType::kAudio, /*seq=*/1));
+  now += ttls.audio_retransmission + TimeDelta::Millis(1);
+  EXPECT_EQ(queue.SizeInPackets(), 1);
+  queue.Push(now, CreatePacket(RtpPacketMediaType::kVideo, /*seq=*/2));
+  queue.Push(now, CreatePacket(RtpPacketMediaType::kAudio, /*seq=*/3));
+  // Expect the old packet to have been removed since it was not popped in time.
+  EXPECT_EQ(queue.SizeInPackets(), 3);
+  EXPECT_EQ(queue.Pop()->SequenceNumber(), 3);
+  EXPECT_EQ(queue.SizeInPackets(), 1);
+  EXPECT_EQ(queue.Pop()->SequenceNumber(), 2);
+  EXPECT_EQ(queue.SizeInPackets(), 0);
+}
+
+TEST(PrioritizedPacketQueue, SendsNewVideoPacketAfterPurgingLastOldRtxPacket) {
+  Timestamp now = Timestamp::Zero();
+  PacketQueueTTL ttls;
+  ttls.video_retransmission = TimeDelta::Millis(400);
+  PrioritizedPacketQueue queue(now, /*prioritize_audio_retransmission=*/true,
+                               ttls);
+
+  queue.Push(now,
+             CreateRetransmissionPacket(RtpPacketMediaType::kVideo, /*seq=*/1));
+  now += ttls.video_retransmission + TimeDelta::Millis(1);
+  queue.Push(now, CreatePacket(RtpPacketMediaType::kAudio, /*seq=*/2));
+  EXPECT_EQ(queue.SizeInPackets(), 2);
+  // Expect the audio packet to be send and the video retransmission packet to
+  // be dropped since it is old.
+  EXPECT_EQ(queue.Pop()->SequenceNumber(), 2);
+  EXPECT_EQ(queue.SizeInPackets(), 0);
+
+  queue.Push(now, CreatePacket(RtpPacketMediaType::kVideo, /*seq=*/3));
+  EXPECT_EQ(queue.SizeInPackets(), 1);
+  EXPECT_EQ(queue.Pop()->SequenceNumber(), 3);
+  EXPECT_EQ(queue.SizeInPackets(), 0);
+}
+
+TEST(PrioritizedPacketQueue,
+     SendsPacketsAfterTttlIfPrioHigherThanPushedPackets) {
+  Timestamp now = Timestamp::Zero();
+  PacketQueueTTL ttls;
+  ttls.audio_retransmission = TimeDelta::Millis(200);
+  PrioritizedPacketQueue queue(now, /*prioritize_audio_retransmission=*/true,
+                               ttls);
+
+  queue.Push(now,
+             CreateRetransmissionPacket(RtpPacketMediaType::kAudio, /*seq=*/1));
+  now += ttls.audio_retransmission + TimeDelta::Millis(1);
+  EXPECT_EQ(queue.SizeInPackets(), 1);
+  queue.Push(now, CreatePacket(RtpPacketMediaType::kVideo, /*seq=*/2));
+
+  // This test just show that TTL is not enforced strictly. If a new audio
+  // packet had been queued before a packet was popped, the audio retransmission
+  // packet would have been dropped.
+  EXPECT_EQ(queue.SizeInPackets(), 2);
+  EXPECT_EQ(queue.Pop()->SequenceNumber(), 1);
+  EXPECT_EQ(queue.SizeInPackets(), 1);
 }
 
 }  // namespace webrtc

@@ -396,12 +396,6 @@ TEST(VideoRtpDepacketizerH264Test, TruncationJustAfterSingleStapANalu) {
   EXPECT_FALSE(depacketizer.Parse(rtc::CopyOnWriteBuffer(kPayload)));
 }
 
-TEST(VideoRtpDepacketizerH264Test, ShortSpsPacket) {
-  const uint8_t kPayload[] = {0x27, 0x80, 0x00};
-  VideoRtpDepacketizerH264 depacketizer;
-  EXPECT_TRUE(depacketizer.Parse(rtc::CopyOnWriteBuffer(kPayload)));
-}
-
 TEST(VideoRtpDepacketizerH264Test, SeiPacket) {
   const uint8_t kPayload[] = {
       kSei,                   // F=0, NRI=0, Type=6.
@@ -419,6 +413,38 @@ TEST(VideoRtpDepacketizerH264Test, SeiPacket) {
   EXPECT_EQ(h264.nalus[0].type, static_cast<H264::NaluType>(kSei));
   EXPECT_EQ(h264.nalus[0].sps_id, -1);
   EXPECT_EQ(h264.nalus[0].pps_id, -1);
+}
+
+TEST(VideoRtpDepacketizerH264Test, ShortSpsPacket) {
+  const uint8_t kPayload[] = {0x27, 0x80, 0x00};
+  VideoRtpDepacketizerH264 depacketizer;
+  EXPECT_FALSE(depacketizer.Parse(rtc::CopyOnWriteBuffer(kPayload)));
+}
+
+TEST(VideoRtpDepacketizerH264Test, BadSps) {
+  const uint8_t kPayload[] = {
+      kSps, 0x42, 0x41, 0x2a, 0xd3, 0x93, 0xd3, 0x3b  // Payload.
+  };
+  VideoRtpDepacketizerH264 depacketizer;
+  EXPECT_FALSE(depacketizer.Parse(rtc::CopyOnWriteBuffer(kPayload)));
+}
+
+TEST(VideoRtpDepacketizerH264Test, BadPps) {
+  const uint8_t kPayload[] = {
+      kPps,
+      0x00  // Payload.
+  };
+  VideoRtpDepacketizerH264 depacketizer;
+  EXPECT_FALSE(depacketizer.Parse(rtc::CopyOnWriteBuffer(kPayload)));
+}
+
+TEST(VideoRtpDepacketizerH264Test, BadSlice) {
+  const uint8_t kPayload[] = {
+      kIdr,
+      0xc0  // Payload.
+  };
+  VideoRtpDepacketizerH264 depacketizer;
+  EXPECT_FALSE(depacketizer.Parse(rtc::CopyOnWriteBuffer(kPayload)));
 }
 
 }  // namespace

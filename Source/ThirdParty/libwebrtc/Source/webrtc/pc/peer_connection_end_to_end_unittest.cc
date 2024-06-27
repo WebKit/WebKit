@@ -319,8 +319,7 @@ struct AudioEncoderUnicornSparklesRainbow {
   using Config = webrtc::AudioEncoderL16::Config;
   static absl::optional<Config> SdpToConfig(webrtc::SdpAudioFormat format) {
     if (absl::EqualsIgnoreCase(format.name, "UnicornSparklesRainbow")) {
-      const webrtc::SdpAudioFormat::Parameters expected_params = {
-          {"num_horns", "1"}};
+      const webrtc::CodecParameterMap expected_params = {{"num_horns", "1"}};
       EXPECT_EQ(expected_params, format.parameters);
       format.parameters.clear();
       format.name = "L16";
@@ -356,8 +355,7 @@ struct AudioDecoderUnicornSparklesRainbow {
   using Config = webrtc::AudioDecoderL16::Config;
   static absl::optional<Config> SdpToConfig(webrtc::SdpAudioFormat format) {
     if (absl::EqualsIgnoreCase(format.name, "UnicornSparklesRainbow")) {
-      const webrtc::SdpAudioFormat::Parameters expected_params = {
-          {"num_horns", "1"}};
+      const webrtc::CodecParameterMap expected_params = {{"num_horns", "1"}};
       EXPECT_EQ(expected_params, format.parameters);
       format.parameters.clear();
       format.name = "L16";

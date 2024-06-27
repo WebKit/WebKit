@@ -23,8 +23,10 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 
+using ::testing::Gt;
 using ::testing::IsEmpty;
 using ::testing::NiceMock;
+using ::testing::SizeIs;
 
 namespace webrtc {
 namespace test {
@@ -213,6 +215,42 @@ TEST(ProbeControllerTest, ProbesOnMaxAllocatedBitrateIncreaseOnlyWhenInAlr) {
   EXPECT_TRUE(probes.empty());
 }
 
+TEST(ProbeControllerTest, ProbesOnMaxAllocatedBitrateLimitedByCurrentBwe) {
+  ProbeControllerFixture fixture(
+      "WebRTC-Bwe-ProbingConfiguration/"
+      "alloc_current_bwe_limit:1.5/");
+  ASSERT_TRUE(kMaxBitrate > 1.5 * kStartBitrate);
+  std::unique_ptr<ProbeController> probe_controller =
+      fixture.CreateController();
+  ASSERT_THAT(
+      probe_controller->OnNetworkAvailability({.network_available = true}),
+      IsEmpty());
+  auto probes = probe_controller->SetBitrates(
+      kMinBitrate, kStartBitrate, kMaxBitrate, fixture.CurrentTime());
+  probes = probe_controller->SetEstimatedBitrate(
+      kStartBitrate, BandwidthLimitedCause::kDelayBasedLimited,
+      fixture.CurrentTime());
+
+  // Wait long enough to time out exponential probing.
+  fixture.AdvanceTime(kExponentialProbingTimeout);
+  probes = probe_controller->Process(fixture.CurrentTime());
+  EXPECT_TRUE(probes.empty());
+
+  // Probe when in alr.
+  probe_controller->SetAlrStartTimeMs(fixture.CurrentTime().ms());
+  probes = probe_controller->OnMaxTotalAllocatedBitrate(kMaxBitrate,
+                                                        fixture.CurrentTime());
+  EXPECT_EQ(probes.size(), 1u);
+  EXPECT_EQ(probes.at(0).target_data_rate, 1.5 * kStartBitrate);
+
+  // Continue probing if probe succeeds.
+  probes = probe_controller->SetEstimatedBitrate(
+      1.5 * kStartBitrate, BandwidthLimitedCause::kDelayBasedLimited,
+      fixture.CurrentTime());
+  EXPECT_EQ(probes.size(), 1u);
+  EXPECT_GT(probes.at(0).target_data_rate, 1.5 * kStartBitrate);
+}
+
 TEST(ProbeControllerTest, CanDisableProbingOnMaxTotalAllocatedBitrateIncrease) {
   ProbeControllerFixture fixture(
       "WebRTC-Bwe-ProbingConfiguration/"
@@ -289,7 +327,58 @@ TEST(ProbeControllerTest, TestExponentialProbing) {
   EXPECT_EQ(probes[0].target_data_rate.bps(), 2 * 1800);
 }
 
-TEST(ProbeControllerTest, TestExponentialProbingTimeout) {
+TEST(ProbeControllerTest, ExponentialProbingStopIfMaxBitrateLow) {
+  ProbeControllerFixture fixture(
+      "WebRTC-Bwe-ProbingConfiguration/abort_further:true/");
+  std::unique_ptr<ProbeController> probe_controller =
+      fixture.CreateController();
+  ASSERT_THAT(
+      probe_controller->OnNetworkAvailability({.network_available = true}),
+      IsEmpty());
+  auto probes = probe_controller->SetBitrates(
+      kMinBitrate, kStartBitrate, kMaxBitrate, fixture.CurrentTime());
+  ASSERT_THAT(probes, SizeIs(Gt(0)));
+
+  // Repeated probe normally is sent when estimated bitrate climbs above
+  // 0.7 * 6 * kStartBitrate = 1260. But since max bitrate is low, expect
+  // exponential probing to stop.
+  probes = probe_controller->SetBitrates(kMinBitrate, kStartBitrate,
+                                         /*max_bitrate=*/kStartBitrate,
+                                         fixture.CurrentTime());
+  EXPECT_THAT(probes, IsEmpty());
+
+  probes = probe_controller->SetEstimatedBitrate(
+      DataRate::BitsPerSec(1800), BandwidthLimitedCause::kDelayBasedLimited,
+      fixture.CurrentTime());
+  EXPECT_THAT(probes, IsEmpty());
+}
+
+TEST(ProbeControllerTest, ExponentialProbingStopIfMaxAllocatedBitrateLow) {
+  ProbeControllerFixture fixture(
+      "WebRTC-Bwe-ProbingConfiguration/abort_further:true/");
+  std::unique_ptr<ProbeController> probe_controller =
+      fixture.CreateController();
+  ASSERT_THAT(
+      probe_controller->OnNetworkAvailability({.network_available = true}),
+      IsEmpty());
+  auto probes = probe_controller->SetBitrates(
+      kMinBitrate, kStartBitrate, kMaxBitrate, fixture.CurrentTime());
+  ASSERT_THAT(probes, SizeIs(Gt(0)));
+
+  // Repeated probe normally is sent when estimated bitrate climbs above
+  // 0.7 * 6 * kStartBitrate = 1260. But since allocated bitrate i slow, expect
+  // exponential probing to stop.
+  probes = probe_controller->OnMaxTotalAllocatedBitrate(kStartBitrate,
+                                                        fixture.CurrentTime());
+  EXPECT_THAT(probes, IsEmpty());
+
+  probes = probe_controller->SetEstimatedBitrate(
+      DataRate::BitsPerSec(1800), BandwidthLimitedCause::kDelayBasedLimited,
+      fixture.CurrentTime());
+  EXPECT_THAT(probes, IsEmpty());
+}
+
+TEST(ProbeControllerTest, RepeatedInitialProbingIgnoreLowMaxAllocatedbitrate) {
   ProbeControllerFixture fixture;
   std::unique_ptr<ProbeController> probe_controller =
       fixture.CreateController();
@@ -298,14 +387,103 @@ TEST(ProbeControllerTest, TestExponentialProbingTimeout) {
       IsEmpty());
   auto probes = probe_controller->SetBitrates(
       kMinBitrate, kStartBitrate, kMaxBitrate, fixture.CurrentTime());
-  // Advance far enough to cause a time out in waiting for probing result.
-  fixture.AdvanceTime(kExponentialProbingTimeout);
-  probes = probe_controller->Process(fixture.CurrentTime());
+  ASSERT_THAT(probes, SizeIs(Gt(0)));
+  probe_controller->EnableRepeatedInitialProbing(true);
+
+  // Repeated probe is sent when estimated bitrate climbs above
+  // 0.7 * 6 * kStartBitrate = 1260. During the initial probe, we ignore the
+  // allocation limit and probe up to the max.
+  probes = probe_controller->OnMaxTotalAllocatedBitrate(kStartBitrate,
+                                                        fixture.CurrentTime());
+  EXPECT_THAT(probes, IsEmpty());
 
   probes = probe_controller->SetEstimatedBitrate(
       DataRate::BitsPerSec(1800), BandwidthLimitedCause::kDelayBasedLimited,
       fixture.CurrentTime());
-  EXPECT_TRUE(probes.empty());
+  EXPECT_EQ(probes.size(), 1u);
+  EXPECT_EQ(probes[0].target_data_rate.bps(), 2 * 1800);
+
+  probes = probe_controller->SetEstimatedBitrate(
+      probes[0].target_data_rate, BandwidthLimitedCause::kDelayBasedLimited,
+      fixture.CurrentTime());
+  EXPECT_EQ(probes.size(), 1u);
+}
+
+TEST(ProbeControllerTest, InitialProbingToLowMaxAllocatedbitrate) {
+  ProbeControllerFixture fixture;
+  std::unique_ptr<ProbeController> probe_controller =
+      fixture.CreateController();
+  ASSERT_THAT(
+      probe_controller->OnNetworkAvailability({.network_available = true}),
+      IsEmpty());
+  auto probes = probe_controller->SetBitrates(
+      kMinBitrate, kStartBitrate, kMaxBitrate, fixture.CurrentTime());
+  ASSERT_THAT(probes, SizeIs(Gt(0)));
+
+  // Repeated probe is sent when estimated bitrate climbs above
+  // 0.7 * 6 * kStartBitrate = 1260.
+  probes = probe_controller->OnMaxTotalAllocatedBitrate(kStartBitrate,
+                                                        fixture.CurrentTime());
+  EXPECT_THAT(probes, IsEmpty());
+
+  // If the inital probe result is received, a new probe is sent at 2x the
+  // needed max bitrate.
+  probes = probe_controller->SetEstimatedBitrate(
+      DataRate::BitsPerSec(1800), BandwidthLimitedCause::kDelayBasedLimited,
+      fixture.CurrentTime());
+  ASSERT_EQ(probes.size(), 1u);
+  EXPECT_EQ(probes[0].target_data_rate.bps(), 2 * kStartBitrate.bps());
+}
+
+TEST(ProbeControllerTest, InitialProbingTimeout) {
+  ProbeControllerFixture fixture;
+  std::unique_ptr<ProbeController> probe_controller =
+      fixture.CreateController();
+  ASSERT_THAT(
+      probe_controller->OnNetworkAvailability({.network_available = true}),
+      IsEmpty());
+  auto probes = probe_controller->SetBitrates(
+      kMinBitrate, kStartBitrate, kMaxBitrate, fixture.CurrentTime());
+  EXPECT_THAT(probes, SizeIs(Gt(0)));
+  // Advance far enough to cause a time out in waiting for probing result.
+  fixture.AdvanceTime(kExponentialProbingTimeout);
+  probes = probe_controller->Process(fixture.CurrentTime());
+  EXPECT_THAT(probes, IsEmpty());
+  probes = probe_controller->SetEstimatedBitrate(
+      DataRate::BitsPerSec(1800), BandwidthLimitedCause::kDelayBasedLimited,
+      fixture.CurrentTime());
+  EXPECT_THAT(probes, IsEmpty());
+}
+
+TEST(ProbeControllerTest, RepeatedInitialProbingSendsNewProbeAfterTimeout) {
+  ProbeControllerFixture fixture;
+  std::unique_ptr<ProbeController> probe_controller =
+      fixture.CreateController();
+  probe_controller->EnableRepeatedInitialProbing(true);
+  ASSERT_THAT(
+      probe_controller->OnNetworkAvailability({.network_available = true}),
+      IsEmpty());
+  auto probes = probe_controller->SetBitrates(
+      kMinBitrate, kStartBitrate, kMaxBitrate, fixture.CurrentTime());
+  EXPECT_THAT(probes, SizeIs(Gt(0)));
+  Timestamp start_time = fixture.CurrentTime();
+  Timestamp last_probe_time = fixture.CurrentTime();
+  while (fixture.CurrentTime() < start_time + TimeDelta::Seconds(5)) {
+    fixture.AdvanceTime(TimeDelta::Millis(100));
+    probes = probe_controller->Process(fixture.CurrentTime());
+    if (!probes.empty()) {
+      // Expect a probe every second.
+      EXPECT_EQ(fixture.CurrentTime() - last_probe_time,
+                TimeDelta::Seconds(1.1));
+      last_probe_time = fixture.CurrentTime();
+    } else {
+      EXPECT_LT(fixture.CurrentTime() - last_probe_time,
+                TimeDelta::Seconds(1.1));
+    }
+  }
+  fixture.AdvanceTime(TimeDelta::Seconds(1));
+  // After 5s, repeated initial probing stops.
+  EXPECT_THAT(probe_controller->Process(fixture.CurrentTime()), IsEmpty());
 }
 
 TEST(ProbeControllerTest, RequestProbeInAlr) {

@@ -157,7 +157,8 @@ std::vector<SdpVideoFormat> ObjCVideoEncoderFactory::GetImplementations() const 
   return GetSupportedFormats();
 }
 
-std::unique_ptr<VideoEncoder> ObjCVideoEncoderFactory::CreateVideoEncoder(
+std::unique_ptr<VideoEncoder> ObjCVideoEncoderFactory::Create(
+    const Environment& environment,
     const SdpVideoFormat &format) {
   RTCVideoCodecInfo *info = [[RTCVideoCodecInfo alloc] initWithNativeSdpVideoFormat:format];
   id<RTCVideoEncoder> encoder = [encoder_factory_ createEncoder:info];

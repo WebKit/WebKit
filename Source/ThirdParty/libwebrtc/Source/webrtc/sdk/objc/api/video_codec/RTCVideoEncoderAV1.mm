@@ -15,12 +15,13 @@
 #import "RTCVideoEncoderAV1.h"
 #import "RTCWrappedNativeVideoEncoder.h"
 
+#include "api/environment/environment_factory.h"
 #include "modules/video_coding/codecs/av1/libaom_av1_encoder.h"
 
 @implementation RTCVideoEncoderAV1
 
 + (id<RTCVideoEncoder>)av1Encoder {
-  std::unique_ptr<webrtc::VideoEncoder> nativeEncoder(webrtc::CreateLibaomAv1Encoder());
+  std::unique_ptr<webrtc::VideoEncoder> nativeEncoder(webrtc::CreateLibaomAv1Encoder(webrtc::EnvironmentFactory().Create()));
   if (nativeEncoder == nullptr) {
     return nil;
   }

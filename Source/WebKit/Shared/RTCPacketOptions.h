@@ -31,9 +31,11 @@
 #include <wtf/Forward.h>
 
 ALLOW_COMMA_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 #include <webrtc/rtc_base/async_packet_socket.h>
 
+ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_COMMA_END
 
 namespace WebKit {

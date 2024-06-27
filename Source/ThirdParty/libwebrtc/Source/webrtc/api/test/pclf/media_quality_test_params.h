@@ -17,6 +17,7 @@
 
 #include "api/async_dns_resolver.h"
 #include "api/audio/audio_mixer.h"
+#include "api/audio/audio_processing.h"
 #include "api/fec_controller.h"
 #include "api/field_trials_view.h"
 #include "api/rtc_event_log/rtc_event_log_factory_interface.h"
@@ -24,7 +25,6 @@
 #include "api/transport/network_control.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_factory.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "p2p/base/port_allocator.h"
 #include "rtc_base/network.h"
 #include "rtc_base/rtc_certificate_generator.h"
@@ -49,8 +49,6 @@ struct PeerConnectionFactoryComponents {
   std::unique_ptr<NetworkControllerFactoryInterface> network_controller_factory;
   std::unique_ptr<NetEqFactory> neteq_factory;
 
-  // Will be passed to MediaEngineInterface, that will be used in
-  // PeerConnectionFactory.
   std::unique_ptr<VideoEncoderFactory> video_encoder_factory;
   std::unique_ptr<VideoDecoderFactory> video_decoder_factory;
   rtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory;
@@ -138,6 +136,7 @@ struct Params {
   // provided into VideoEncoder::SetRates(...).
   double video_encoder_bitrate_multiplier = 1.0;
 
+  PeerConnectionFactoryInterface::Options peer_connection_factory_options;
   PeerConnectionInterface::RTCConfiguration rtc_configuration;
   PeerConnectionInterface::RTCOfferAnswerOptions rtc_offer_answer_options;
   BitrateSettings bitrate_settings;

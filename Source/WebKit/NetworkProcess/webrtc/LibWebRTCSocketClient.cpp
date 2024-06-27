@@ -46,7 +46,9 @@ LibWebRTCSocketClient::LibWebRTCSocketClient(WebCore::LibWebRTCSocketIdentifier 
 {
     ASSERT(m_socket);
 
-    m_socket->SignalReadPacket.connect(this, &LibWebRTCSocketClient::signalReadPacket);
+    m_socket->RegisterReceivedPacketCallback([this](auto* socket, auto& packet) {
+        signalReadPacket(socket, packet.payload().data(), packet.payload().size(), packet.source_address(), packet.arrival_time()->us_or(0));
+    });
     m_socket->SignalSentPacket.connect(this, &LibWebRTCSocketClient::signalSentPacket);
     m_socket->SubscribeCloseEvent(this, [this](rtc::AsyncPacketSocket* socket, int error) {
         signalClose(socket, error);
@@ -81,6 +83,7 @@ void LibWebRTCSocketClient::close()
     UNUSED_PARAM(result);
     RELEASE_LOG_ERROR_IF(result, Network, "LibWebRTCSocketClient::close (ID=%" PRIu64 ") failed with error %d", m_identifier.toUInt64(), m_socket->GetError());
 
+    m_socket->DeregisterReceivedPacketCallback();
     m_rtcProvider.takeSocket(m_identifier);
 }
 
@@ -92,7 +95,7 @@ void LibWebRTCSocketClient::setOption(int option, int value)
     RELEASE_LOG_ERROR_IF(result, Network, "LibWebRTCSocketClient::setOption(%d, %d) (ID=%" PRIu64 ") failed with error %d", option, value, m_identifier.toUInt64(), m_socket->GetError());
 }
 
-void LibWebRTCSocketClient::signalReadPacket(rtc::AsyncPacketSocket* socket, const char* value, size_t length, const rtc::SocketAddress& address, const rtc::PacketTime& packetTime)
+void LibWebRTCSocketClient::signalReadPacket(rtc::AsyncPacketSocket* socket, const unsigned char* value, size_t length, const rtc::SocketAddress& address, int64_t packetTime)
 {
     ASSERT_UNUSED(socket, m_socket.get() == socket);
     std::span data(byteCast<uint8_t>(value), length);

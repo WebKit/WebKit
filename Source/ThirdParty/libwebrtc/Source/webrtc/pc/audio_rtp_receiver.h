@@ -117,9 +117,8 @@ class AudioRtpReceiver : public ObserverInterface,
 
   std::vector<RtpSource> GetSources() const override;
   int AttachmentId() const override { return attachment_id_; }
-  void SetDepacketizerToDecoderFrameTransformer(
-      rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer)
-      override;
+  void SetFrameTransformer(
+      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) override;
 
  private:
   void RestartMediaChannel(absl::optional<uint32_t> ssrc)

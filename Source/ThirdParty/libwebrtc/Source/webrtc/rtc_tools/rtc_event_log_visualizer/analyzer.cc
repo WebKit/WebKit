@@ -28,6 +28,7 @@
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/dtls_transport_interface.h"
+#include "api/environment/environment_factory.h"
 #include "api/function_view.h"
 #include "api/media_types.h"
 #include "api/network_state_predictor.h"
@@ -66,6 +67,7 @@
 #include "rtc_base/numerics/sequence_number_unwrapper.h"
 #include "rtc_base/rate_statistics.h"
 #include "rtc_base/strings/string_builder.h"
+#include "rtc_tools/rtc_event_log_visualizer/analyze_audio.h"
 #include "rtc_tools/rtc_event_log_visualizer/analyzer_common.h"
 #include "rtc_tools/rtc_event_log_visualizer/log_simulation.h"
 #include "rtc_tools/rtc_event_log_visualizer/plot_base.h"
@@ -238,7 +240,9 @@ TimeSeries CreateRtcpTypeTimeSeries(const std::vector<T>& rtcp_list,
 
 const char kUnknownEnumValue[] = "unknown";
 
+// TODO(tommi): This should be "host".
 const char kIceCandidateTypeLocal[] = "local";
+// TODO(tommi): This should be "srflx".
 const char kIceCandidateTypeStun[] = "stun";
 const char kIceCandidateTypePrflx[] = "prflx";
 const char kIceCandidateTypeRelay[] = "relay";
@@ -257,17 +261,18 @@ const char kNetworkTypeWifi[] = "wifi";
 const char kNetworkTypeVpn[] = "vpn";
 const char kNetworkTypeCellular[] = "cellular";
 
-std::string GetIceCandidateTypeAsString(webrtc::IceCandidateType type) {
+absl::string_view GetIceCandidateTypeAsString(IceCandidateType type) {
   switch (type) {
-    case webrtc::IceCandidateType::kLocal:
+    case IceCandidateType::kHost:
       return kIceCandidateTypeLocal;
-    case webrtc::IceCandidateType::kStun:
+    case IceCandidateType::kSrflx:
       return kIceCandidateTypeStun;
-    case webrtc::IceCandidateType::kPrflx:
+    case IceCandidateType::kPrflx:
       return kIceCandidateTypePrflx;
-    case webrtc::IceCandidateType::kRelay:
+    case IceCandidateType::kRelay:
       return kIceCandidateTypeRelay;
     default:
+      RTC_DCHECK_NOTREACHED();
       return kUnknownEnumValue;
   }
 }
@@ -323,18 +328,15 @@ std::string GetCandidatePairLogDescriptionAsString(
   // and a remote relay candidate using TCP as the relay protocol on a cell
   // network, when the candidate pair communicates over UDP using IPv4.
   rtc::StringBuilder ss;
-  std::string local_candidate_type =
-      GetIceCandidateTypeAsString(config.local_candidate_type);
-  std::string remote_candidate_type =
-      GetIceCandidateTypeAsString(config.remote_candidate_type);
-  if (config.local_candidate_type == webrtc::IceCandidateType::kRelay) {
-    local_candidate_type +=
-        "(" + GetProtocolAsString(config.local_relay_protocol) + ")";
+  ss << GetIceCandidateTypeAsString(config.local_candidate_type);
+
+  if (config.local_candidate_type == IceCandidateType::kRelay) {
+    ss << "(" << GetProtocolAsString(config.local_relay_protocol) << ")";
   }
-  ss << local_candidate_type << ":"
-     << GetNetworkTypeAsString(config.local_network_type) << ":"
+
+  ss << ":" << GetNetworkTypeAsString(config.local_network_type) << ":"
      << GetAddressFamilyAsString(config.local_address_family) << "->"
-     << remote_candidate_type << ":"
+     << GetIceCandidateTypeAsString(config.remote_candidate_type) << ":"
      << GetAddressFamilyAsString(config.remote_address_family) << "@"
      << GetProtocolAsString(config.candidate_pair_protocol);
   return ss.Release();
@@ -428,6 +430,22 @@ struct PacketLossSummary {
   Timestamp base_time = Timestamp::MinusInfinity();
 };
 
+float GetHighestSeqNumber(const webrtc::rtcp::ReportBlock& block) {
+  return block.extended_high_seq_num();
+}
+
+float GetFractionLost(const webrtc::rtcp::ReportBlock& block) {
+  return static_cast<double>(block.fraction_lost()) / 256 * 100;
+}
+
+float GetCumulativeLost(const webrtc::rtcp::ReportBlock& block) {
+  return block.cumulative_lost();
+}
+
+float DelaySinceLastSr(const webrtc::rtcp::ReportBlock& block) {
+  return static_cast<double>(block.delay_since_last_sr()) / 65536;
+}
+
 }  // namespace
 
 EventLogAnalyzer::EventLogAnalyzer(const ParsedRtcEventLog& log,
@@ -489,6 +507,201 @@ class BitrateObserver : public RemoteBitrateObserver {
   uint32_t last_bitrate_bps_;
   bool bitrate_updated_;
 };
+
+void EventLogAnalyzer::InitializeMapOfNamedGraphs(bool show_detector_state,
+                                                  bool show_alr_state,
+                                                  bool show_link_capacity) {
+  plots_.RegisterPlot("incoming_packet_sizes", [this](Plot* plot) {
+    this->CreatePacketGraph(webrtc::kIncomingPacket, plot);
+  });
+
+  plots_.RegisterPlot("outgoing_packet_sizes", [this](Plot* plot) {
+    this->CreatePacketGraph(webrtc::kOutgoingPacket, plot);
+  });
+  plots_.RegisterPlot("incoming_rtcp_types", [this](Plot* plot) {
+    this->CreateRtcpTypeGraph(webrtc::kIncomingPacket, plot);
+  });
+  plots_.RegisterPlot("outgoing_rtcp_types", [this](Plot* plot) {
+    this->CreateRtcpTypeGraph(webrtc::kOutgoingPacket, plot);
+  });
+  plots_.RegisterPlot("incoming_packet_count", [this](Plot* plot) {
+    this->CreateAccumulatedPacketsGraph(webrtc::kIncomingPacket, plot);
+  });
+  plots_.RegisterPlot("outgoing_packet_count", [this](Plot* plot) {
+    this->CreateAccumulatedPacketsGraph(webrtc::kOutgoingPacket, plot);
+  });
+  plots_.RegisterPlot("incoming_packet_rate", [this](Plot* plot) {
+    this->CreatePacketRateGraph(webrtc::kIncomingPacket, plot);
+  });
+  plots_.RegisterPlot("outgoing_packet_rate", [this](Plot* plot) {
+    this->CreatePacketRateGraph(webrtc::kOutgoingPacket, plot);
+  });
+  plots_.RegisterPlot("total_incoming_packet_rate", [this](Plot* plot) {
+    this->CreateTotalPacketRateGraph(webrtc::kIncomingPacket, plot);
+  });
+  plots_.RegisterPlot("total_outgoing_packet_rate", [this](Plot* plot) {
+    this->CreateTotalPacketRateGraph(webrtc::kOutgoingPacket, plot);
+  });
+  plots_.RegisterPlot("audio_playout",
+                      [this](Plot* plot) { this->CreatePlayoutGraph(plot); });
+
+  plots_.RegisterPlot("neteq_set_minimum_delay", [this](Plot* plot) {
+    this->CreateNetEqSetMinimumDelay(plot);
+  });
+
+  plots_.RegisterPlot("incoming_audio_level", [this](Plot* plot) {
+    this->CreateAudioLevelGraph(webrtc::kIncomingPacket, plot);
+  });
+  plots_.RegisterPlot("outgoing_audio_level", [this](Plot* plot) {
+    this->CreateAudioLevelGraph(webrtc::kOutgoingPacket, plot);
+  });
+  plots_.RegisterPlot("incoming_sequence_number_delta", [this](Plot* plot) {
+    this->CreateSequenceNumberGraph(plot);
+  });
+  plots_.RegisterPlot("incoming_delay", [this](Plot* plot) {
+    this->CreateIncomingDelayGraph(plot);
+  });
+  plots_.RegisterPlot("incoming_loss_rate", [this](Plot* plot) {
+    this->CreateIncomingPacketLossGraph(plot);
+  });
+  plots_.RegisterPlot("incoming_bitrate", [this](Plot* plot) {
+    this->CreateTotalIncomingBitrateGraph(plot);
+  });
+  plots_.RegisterPlot(
+      "outgoing_bitrate", [this, show_detector_state, show_alr_state,
+                           show_link_capacity](Plot* plot) {
+        this->CreateTotalOutgoingBitrateGraph(
+            plot, show_detector_state, show_alr_state, show_link_capacity);
+      });
+  plots_.RegisterPlot("incoming_stream_bitrate", [this](Plot* plot) {
+    this->CreateStreamBitrateGraph(webrtc::kIncomingPacket, plot);
+  });
+  plots_.RegisterPlot("outgoing_stream_bitrate", [this](Plot* plot) {
+    this->CreateStreamBitrateGraph(webrtc::kOutgoingPacket, plot);
+  });
+  plots_.RegisterPlot("incoming_layer_bitrate_allocation", [this](Plot* plot) {
+    this->CreateBitrateAllocationGraph(webrtc::kIncomingPacket, plot);
+  });
+  plots_.RegisterPlot("outgoing_layer_bitrate_allocation", [this](Plot* plot) {
+    this->CreateBitrateAllocationGraph(webrtc::kOutgoingPacket, plot);
+  });
+  plots_.RegisterPlot("simulated_receiveside_bwe", [this](Plot* plot) {
+    this->CreateReceiveSideBweSimulationGraph(plot);
+  });
+  plots_.RegisterPlot("simulated_sendside_bwe", [this](Plot* plot) {
+    this->CreateSendSideBweSimulationGraph(plot);
+  });
+  plots_.RegisterPlot("simulated_goog_cc", [this](Plot* plot) {
+    this->CreateGoogCcSimulationGraph(plot);
+  });
+  plots_.RegisterPlot("outgoing_twcc_loss", [this](Plot* plot) {
+    this->CreateOutgoingTWCCLossRateGraph(plot);
+  });
+  plots_.RegisterPlot("network_delay_feedback", [this](Plot* plot) {
+    this->CreateNetworkDelayFeedbackGraph(plot);
+  });
+  plots_.RegisterPlot("fraction_loss_feedback", [this](Plot* plot) {
+    this->CreateFractionLossGraph(plot);
+  });
+  plots_.RegisterPlot("incoming_timestamps", [this](Plot* plot) {
+    this->CreateTimestampGraph(webrtc::kIncomingPacket, plot);
+  });
+  plots_.RegisterPlot("outgoing_timestamps", [this](Plot* plot) {
+    this->CreateTimestampGraph(webrtc::kOutgoingPacket, plot);
+  });
+
+  plots_.RegisterPlot("incoming_rtcp_fraction_lost", [this](Plot* plot) {
+    this->CreateSenderAndReceiverReportPlot(
+        webrtc::kIncomingPacket, GetFractionLost,
+        "Fraction lost (incoming RTCP)", "Loss rate (percent)", plot);
+  });
+  plots_.RegisterPlot("outgoing_rtcp_fraction_lost", [this](Plot* plot) {
+    this->CreateSenderAndReceiverReportPlot(
+        webrtc::kOutgoingPacket, GetFractionLost,
+        "Fraction lost (outgoing RTCP)", "Loss rate (percent)", plot);
+  });
+
+  plots_.RegisterPlot("incoming_rtcp_cumulative_lost", [this](Plot* plot) {
+    this->CreateSenderAndReceiverReportPlot(
+        webrtc::kIncomingPacket, GetCumulativeLost,
+        "Cumulative lost packets (incoming RTCP)", "Packets", plot);
+  });
+  plots_.RegisterPlot("outgoing_rtcp_cumulative_lost", [this](Plot* plot) {
+    this->CreateSenderAndReceiverReportPlot(
+        webrtc::kOutgoingPacket, GetCumulativeLost,
+        "Cumulative lost packets (outgoing RTCP)", "Packets", plot);
+  });
+
+  plots_.RegisterPlot("incoming_rtcp_highest_seq_number", [this](Plot* plot) {
+    this->CreateSenderAndReceiverReportPlot(
+        webrtc::kIncomingPacket, GetHighestSeqNumber,
+        "Highest sequence number (incoming RTCP)", "Sequence number", plot);
+  });
+  plots_.RegisterPlot("outgoing_rtcp_highest_seq_number", [this](Plot* plot) {
+    this->CreateSenderAndReceiverReportPlot(
+        webrtc::kOutgoingPacket, GetHighestSeqNumber,
+        "Highest sequence number (outgoing RTCP)", "Sequence number", plot);
+  });
+
+  plots_.RegisterPlot("incoming_rtcp_delay_since_last_sr", [this](Plot* plot) {
+    this->CreateSenderAndReceiverReportPlot(
+        webrtc::kIncomingPacket, DelaySinceLastSr,
+        "Delay since last received sender report (incoming RTCP)", "Time (s)",
+        plot);
+  });
+  plots_.RegisterPlot("outgoing_rtcp_delay_since_last_sr", [this](Plot* plot) {
+    this->CreateSenderAndReceiverReportPlot(
+        webrtc::kOutgoingPacket, DelaySinceLastSr,
+        "Delay since last received sender report (outgoing RTCP)", "Time (s)",
+        plot);
+  });
+
+  plots_.RegisterPlot(
+      "pacer_delay", [this](Plot* plot) { this->CreatePacerDelayGraph(plot); });
+
+  plots_.RegisterPlot("audio_encoder_bitrate", [this](Plot* plot) {
+    CreateAudioEncoderTargetBitrateGraph(this->parsed_log_, this->config_,
+                                         plot);
+  });
+  plots_.RegisterPlot("audio_encoder_frame_length", [this](Plot* plot) {
+    CreateAudioEncoderFrameLengthGraph(this->parsed_log_, this->config_, plot);
+  });
+  plots_.RegisterPlot("audio_encoder_packet_loss", [this](Plot* plot) {
+    CreateAudioEncoderPacketLossGraph(this->parsed_log_, this->config_, plot);
+  });
+  plots_.RegisterPlot("audio_encoder_fec", [this](Plot* plot) {
+    CreateAudioEncoderEnableFecGraph(this->parsed_log_, this->config_, plot);
+  });
+  plots_.RegisterPlot("audio_encoder_dtx", [this](Plot* plot) {
+    CreateAudioEncoderEnableDtxGraph(this->parsed_log_, this->config_, plot);
+  });
+  plots_.RegisterPlot("audio_encoder_num_channels", [this](Plot* plot) {
+    CreateAudioEncoderNumChannelsGraph(this->parsed_log_, this->config_, plot);
+  });
+
+  plots_.RegisterPlot("ice_candidate_pair_config", [this](Plot* plot) {
+    this->CreateIceCandidatePairConfigGraph(plot);
+  });
+  plots_.RegisterPlot("ice_connectivity_check", [this](Plot* plot) {
+    this->CreateIceConnectivityCheckGraph(plot);
+  });
+  plots_.RegisterPlot("dtls_transport_state", [this](Plot* plot) {
+    this->CreateDtlsTransportStateGraph(plot);
+  });
+  plots_.RegisterPlot("dtls_writable_state", [this](Plot* plot) {
+    this->CreateDtlsWritableStateGraph(plot);
+  });
+}
+
+void EventLogAnalyzer::CreateGraphsByName(const std::vector<std::string>& names,
+                                          PlotCollection* collection) {
+  for (const auto& plot : plots_) {
+    if (absl::c_find(names, plot.label) != names.end()) {
+      Plot* output = collection->AppendNewPlot(plot.label);
+      plot.plot_func(output);
+    }
+  }
+}
 
 void EventLogAnalyzer::CreatePacketGraph(PacketDirection direction,
                                          Plot* plot) {
@@ -740,11 +953,12 @@ void EventLogAnalyzer::CreateAudioLevelGraph(PacketDirection direction,
     TimeSeries time_series(GetStreamName(parsed_log_, direction, stream.ssrc),
                            LineStyle::kLine);
     for (auto& packet : stream.packet_view) {
-      if (packet.header.extension.hasAudioLevel) {
+      if (packet.header.extension.audio_level()) {
         float x = config_.GetCallTimeSec(packet.log_time());
         // The audio level is stored in -dBov (so e.g. -10 dBov is stored as 10)
         // Here we convert it to dBov.
-        float y = static_cast<float>(-packet.header.extension.audioLevel);
+        float y =
+            static_cast<float>(-packet.header.extension.audio_level()->level());
         time_series.points.emplace_back(TimeSeriesPoint(x, y));
       }
     }
@@ -1437,11 +1651,10 @@ void EventLogAnalyzer::CreateSendSideBweSimulationGraph(Plot* plot) {
   TimeDelta process_interval = factory.GetProcessInterval();
   // TODO(holmer): Log the call config and use that here instead.
   static const uint32_t kDefaultStartBitrateBps = 300000;
-  NetworkControllerConfig cc_config;
+  NetworkControllerConfig cc_config(CreateEnvironment(&null_event_log));
   cc_config.constraints.at_time = Timestamp::Micros(clock.TimeInMicroseconds());
   cc_config.constraints.starting_rate =
       DataRate::BitsPerSec(kDefaultStartBitrateBps);
-  cc_config.event_log = &null_event_log;
   auto goog_cc = factory.Create(cc_config);
 
   TimeSeries time_series("Delay-based estimate", LineStyle::kStep,
@@ -1638,7 +1851,7 @@ void EventLogAnalyzer::CreateReceiveSideBweSimulationGraph(Plot* plot) {
   SimulatedClock clock(0);
   RembInterceptor remb_interceptor;
   ReceiveSideCongestionController rscc(
-      &clock, [](auto...) {},
+      CreateEnvironment(&clock), [](auto...) {},
       absl::bind_front(&RembInterceptor::SendRemb, &remb_interceptor), nullptr);
   // TODO(holmer): Log the call config and use that here instead.
   // static const uint32_t kDefaultStartBitrateBps = 300000;

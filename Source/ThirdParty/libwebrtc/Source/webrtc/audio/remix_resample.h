@@ -17,6 +17,8 @@
 namespace webrtc {
 namespace voe {
 
+// Note: The RemixAndResample methods assume 10ms buffer sizes.
+
 // Upmix or downmix and resample the audio to `dst_frame`. Expects `dst_frame`
 // to have its sample rate and channels members set to the desired values.
 // Updates the `samples_per_channel_` member accordingly.

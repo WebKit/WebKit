@@ -364,7 +364,7 @@ void NetworkRTCUDPSocketCocoaConnections::setupNWConnection(nw_connection_t nwCo
     }).get());
 
     processUDPData(nwConnection, Ref  { connectionStateTracker }, 0, [identifier = m_identifier, connection = m_connection.copyRef(), ip = remoteAddress.ipaddr(), port = remoteAddress.port()](std::span<const uint8_t> message) mutable {
-        connection->send(Messages::LibWebRTCNetwork::SignalReadPacket { identifier, message, RTCNetwork::IPAddress(ip), port, rtc::TimeMillis() * 1000 }, 0);
+        connection->send(Messages::LibWebRTCNetwork::SignalReadPacket { identifier, message, RTCNetwork::IPAddress(ip), port, rtc::TimeMicros() }, 0);
     });
 
     nw_connection_start(nwConnection);

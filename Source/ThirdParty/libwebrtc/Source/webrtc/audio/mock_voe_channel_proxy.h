@@ -113,7 +113,9 @@ class MockChannelSend : public voe::ChannelSendInterface {
  public:
   MOCK_METHOD(void,
               SetEncoder,
-              (int payload_type, std::unique_ptr<AudioEncoder> encoder),
+              (int payload_type,
+               const SdpAudioFormat& encoder_format,
+               std::unique_ptr<AudioEncoder> encoder),
               (override));
   MOCK_METHOD(
       void,

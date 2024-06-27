@@ -27,7 +27,6 @@
 #include "api/test/simulated_network.h"
 #include "api/test/time_controller.h"
 #include "api/video_codecs/vp9_profile.h"
-#include "call/simulated_network.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
 #include "modules/video_coding/svc/scalability_mode_util.h"
 #include "rtc_base/containers/flat_map.h"
@@ -35,6 +34,7 @@
 #include "test/field_trial.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/network/simulated_network.h"
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer.h"
 #include "test/pc/e2e/network_quality_metrics_reporter.h"
 #include "test/testsupport/file_utils.h"
@@ -160,10 +160,9 @@ std::string SvcTestNameGenerator(
 // encoder and decoder level.
 class SvcVideoQualityAnalyzer : public DefaultVideoQualityAnalyzer {
  public:
-  using SpatialTemporalLayerCounts =
-      webrtc::flat_map<int, webrtc::flat_map<int, int>>;
+  using SpatialTemporalLayerCounts = flat_map<int, flat_map<int, int>>;
 
-  explicit SvcVideoQualityAnalyzer(webrtc::Clock* clock)
+  explicit SvcVideoQualityAnalyzer(Clock* clock)
       : DefaultVideoQualityAnalyzer(clock,
                                     test::GetGlobalMetricsLogger(),
                                     DefaultVideoQualityAnalyzerOptions{
@@ -211,7 +210,7 @@ class SvcVideoQualityAnalyzer : public DefaultVideoQualityAnalyzer {
     // Extract the scalability mode reported in the stats.
     auto outbound_stats = report->GetStatsOfType<RTCOutboundRtpStreamStats>();
     for (const auto& stat : outbound_stats) {
-      if (stat->scalability_mode.is_defined()) {
+      if (stat->scalability_mode.has_value()) {
         reported_scalability_mode_ = *stat->scalability_mode;
       }
     }
@@ -315,9 +314,9 @@ TEST_P(SvcTest, ScalabilityModeSupported) {
   if (UseDependencyDescriptor()) {
     trials += "WebRTC-DependencyDescriptorAdvertised/Enabled/";
   }
-  webrtc::test::ScopedFieldTrials override_trials(AppendFieldTrials(trials));
+  test::ScopedFieldTrials override_trials(AppendFieldTrials(trials));
   std::unique_ptr<NetworkEmulationManager> network_emulation_manager =
-      CreateNetworkEmulationManager(webrtc::TimeMode::kSimulated);
+      CreateNetworkEmulationManager({.time_mode = TimeMode::kSimulated});
   auto analyzer = std::make_unique<SvcVideoQualityAnalyzer>(
       network_emulation_manager->time_controller()->GetClock());
   SvcVideoQualityAnalyzer* analyzer_ptr = analyzer.get();
@@ -337,10 +336,9 @@ TEST_P(SvcTest, ScalabilityModeSupported) {
         RtpEncodingParameters parameters;
         parameters.scalability_mode = SvcTestParameters().scalability_mode;
         video.encoding_params.push_back(parameters);
-        alice->AddVideoConfig(
-            std::move(video),
-            CreateScreenShareFrameGenerator(
-                video, ScreenShareConfig(TimeDelta::Seconds(5))));
+        auto generator = CreateScreenShareFrameGenerator(
+            video, ScreenShareConfig(TimeDelta::Seconds(5)));
+        alice->AddVideoConfig(std::move(video), std::move(generator));
         alice->SetVideoCodecs({video_codec_config});
       },
       [](PeerConfigurer* bob) {}, std::move(analyzer));
@@ -456,6 +454,7 @@ INSTANTIATE_TEST_SUITE_P(
         Values(UseDependencyDescriptor::Disabled,
                UseDependencyDescriptor::Enabled)),
     SvcTestNameGenerator);
+#endif
 
 INSTANTIATE_TEST_SUITE_P(
     SvcTestAV1,
@@ -475,16 +474,17 @@ INSTANTIATE_TEST_SUITE_P(
                 SvcTestParameters::Create(kAv1CodecName, "L2T3h"),
                 SvcTestParameters::Create(kAv1CodecName, "L2T3_KEY"),
                 // SvcTestParameters::Create(kAv1CodecName, "L2T3_KEY_SHIFT"),
-                SvcTestParameters::Create(kAv1CodecName, "L3T1"),
-                SvcTestParameters::Create(kAv1CodecName, "L3T1h"),
-                SvcTestParameters::Create(kAv1CodecName, "L3T1_KEY"),
-                SvcTestParameters::Create(kAv1CodecName, "L3T2"),
-                SvcTestParameters::Create(kAv1CodecName, "L3T2h"),
-                SvcTestParameters::Create(kAv1CodecName, "L3T2_KEY"),
+                // TODO(bugs.webrtc.org/15666): Investigate and reenable AV1
+                // L3 tests. SvcTestParameters::Create(kAv1CodecName, "L3T1"),
+                // SvcTestParameters::Create(kAv1CodecName, "L3T1h"),
+                // SvcTestParameters::Create(kAv1CodecName, "L3T1_KEY"),
+                // SvcTestParameters::Create(kAv1CodecName, "L3T2"),
+                // SvcTestParameters::Create(kAv1CodecName, "L3T2h"),
+                // SvcTestParameters::Create(kAv1CodecName, "L3T2_KEY"),
                 // SvcTestParameters::Create(kAv1CodecName, "L3T2_KEY_SHIFT"),
-                SvcTestParameters::Create(kAv1CodecName, "L3T3"),
-                SvcTestParameters::Create(kAv1CodecName, "L3T3h"),
-                SvcTestParameters::Create(kAv1CodecName, "L3T3_KEY"),
+                // SvcTestParameters::Create(kAv1CodecName, "L3T3"),
+                // SvcTestParameters::Create(kAv1CodecName, "L3T3h"),
+                // SvcTestParameters::Create(kAv1CodecName, "L3T3_KEY"),
                 // SvcTestParameters::Create(kAv1CodecName, "L3T3_KEY_SHIFT"),
                 SvcTestParameters::Create(kAv1CodecName, "S2T1"),
                 SvcTestParameters::Create(kAv1CodecName, "S2T1h"),
@@ -492,16 +492,16 @@ INSTANTIATE_TEST_SUITE_P(
                 SvcTestParameters::Create(kAv1CodecName, "S2T2h"),
                 SvcTestParameters::Create(kAv1CodecName, "S2T3"),
                 SvcTestParameters::Create(kAv1CodecName, "S2T3h"),
-                SvcTestParameters::Create(kAv1CodecName, "S3T1"),
-                SvcTestParameters::Create(kAv1CodecName, "S3T1h"),
-                SvcTestParameters::Create(kAv1CodecName, "S3T2"),
-                SvcTestParameters::Create(kAv1CodecName, "S3T2h"),
-                SvcTestParameters::Create(kAv1CodecName, "S3T3"),
-                SvcTestParameters::Create(kAv1CodecName, "S3T3h"),
+                // TODO(bugs.webrtc.org/15666): Investigate and reenable AV1
+                // S3 tests.
+                // SvcTestParameters::Create(kAv1CodecName, "S3T1"),
+                // SvcTestParameters::Create(kAv1CodecName, "S3T1h"),
+                // SvcTestParameters::Create(kAv1CodecName, "S3T2"),
+                // SvcTestParameters::Create(kAv1CodecName, "S3T2h"),
+                // SvcTestParameters::Create(kAv1CodecName, "S3T3"),
+                // SvcTestParameters::Create(kAv1CodecName, "S3T3h"),
             }),
             Values(UseDependencyDescriptor::Enabled)),
     SvcTestNameGenerator);
-
-#endif
 
 }  // namespace webrtc

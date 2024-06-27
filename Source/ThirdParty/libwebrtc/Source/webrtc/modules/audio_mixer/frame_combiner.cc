@@ -20,13 +20,13 @@
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/audio/audio_processing.h"
 #include "api/rtp_packet_info.h"
 #include "api/rtp_packet_infos.h"
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_mixer/audio_frame_manipulator.h"
 #include "modules/audio_mixer/audio_mixer_impl.h"
 #include "modules/audio_processing/include/audio_frame_view.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"

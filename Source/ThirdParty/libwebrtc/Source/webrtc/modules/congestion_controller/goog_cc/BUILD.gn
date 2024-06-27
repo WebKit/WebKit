@@ -209,7 +209,6 @@ rtc_library("send_side_bwe") {
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
     "../../../rtc_base/experiments:field_trial_parser",
-    "../../../system_wrappers:field_trial",
     "../../../system_wrappers:metrics",
     "../../remote_bitrate_estimator",
   ]
@@ -339,6 +338,8 @@ if (rtc_include_tests) {
         ":send_side_bwe",
         "../../../api:field_trials_view",
         "../../../api:network_state_predictor_api",
+        "../../../api/environment",
+        "../../../api/environment:environment_factory",
         "../../../api/rtc_event_log",
         "../../../api/test/network_emulation",
         "../../../api/test/network_emulation:create_cross_traffic",

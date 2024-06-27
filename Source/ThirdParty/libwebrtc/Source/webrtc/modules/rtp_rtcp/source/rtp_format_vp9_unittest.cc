@@ -186,6 +186,11 @@ class RtpPacketizerVp9Test : public ::testing::Test {
   }
 };
 
+TEST_F(RtpPacketizerVp9Test, EmptyPayload) {
+  RTPVideoHeader video_header;
+  VideoRtpDepacketizerVp9::ParseRtpPayload({}, &video_header);
+}
+
 TEST_F(RtpPacketizerVp9Test, TestEqualSizedMode_OnePacket) {
   const size_t kFrameSize = 25;
   const size_t kPacketSize = 26;

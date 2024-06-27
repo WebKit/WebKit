@@ -13,7 +13,7 @@
 
 #include <alsa/asoundlib.h>
 
-#include "modules/audio_device/include/audio_device.h"
+#include "api/audio/audio_device.h"
 #include "modules/audio_device/linux/alsasymboltable_linux.h"
 #include "rtc_base/synchronization/mutex.h"
 

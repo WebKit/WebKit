@@ -10,8 +10,10 @@
 
 #include "test/network/emulated_network_manager.h"
 
+#include <functional>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "absl/memory/memory.h"
 #include "p2p/base/basic_packet_socket_factory.h"

@@ -146,6 +146,8 @@
         'dummy_audio_file_devices_no_protobuf':
         'dummy_audio_file_devices_no_protobuf_android_arm',
         'rtti_no_sctp': 'rtti_no_sctp_android_arm',
+	'disable_trace_events': 'disable_trace_events_android_arm',
+        'perfetto': 'perfetto_android_arm',
       },
       'android_arm_rel': 'android_release_bot_arm',
       'android_compile_arm64_dbg': 'android_debug_static_bot_arm64',
@@ -183,6 +185,8 @@
         'dummy_audio_file_devices_no_protobuf':
         'dummy_audio_file_devices_no_protobuf_x64',
         'rtti_no_sctp': 'rtti_no_sctp_x64',
+        'disable_trace_events': 'disable_trace_events_x64',
+        'perfetto': 'perfetto_x64',
       },
       'linux_msan': 'msan_clang_release_bot_x64',
       'linux_rel': 'release_bot_x64',
@@ -202,6 +206,8 @@
       'mac_rel_m1': 'release_bot_arm64',
 
       # Windows
+      'win11_debug': 'win_clang_debug_bot_x64',
+      'win11_release': 'win_clang_release_bot_x64',
       'win_asan': 'win_asan_clang_release_bot_x64',
       'win_compile_x64_clang_dbg': 'win_clang_debug_bot_x64',
       'win_compile_x64_clang_rel': 'win_clang_release_bot_x64',
@@ -216,6 +222,8 @@
         'dummy_audio_file_devices_no_protobuf':
         'dummy_audio_file_devices_no_protobuf_x86',
         'rtti_no_sctp': 'rtti_no_sctp_no_unicode_win_x86',
+        'disable_trace_events': 'disable_trace_events_x86',
+        'perfetto': 'perfetto_x86',
       },
     }
   },
@@ -227,18 +235,65 @@
   'configs': {
     'android_asan_shared_release_bot_arm':
     ['android', 'asan', 'clang', 'pure_release_bot', 'arm'],
-    'android_debug_static_bot_arm': ['android', 'debug_static_bot', 'arm'],
-    'android_debug_static_bot_arm64': ['android', 'debug_static_bot', 'arm64'],
-    'android_debug_static_bot_x64': ['android', 'debug_static_bot', 'x64'],
-    'android_debug_static_bot_x86': ['android', 'debug_static_bot', 'x86'],
+    'android_debug_static_bot_arm': [
+      'android',
+      'debug_static_bot',
+      'arm',
+      'h265',
+    ],
+    'android_debug_static_bot_arm64': [
+      'android',
+      'debug_static_bot',
+      'arm64',
+      'h265',
+    ],
+    'android_debug_static_bot_x64': [
+      'android',
+      'debug_static_bot',
+      'x64',
+      'h265',
+    ],
+    'android_debug_static_bot_x86': [
+      'android',
+      'debug_static_bot',
+      'x86',
+      'h265',
+    ],
     'android_pure_release_bot_arm': ['android', 'pure_release_bot', 'arm'],
     'android_pure_release_bot_arm64': ['android', 'pure_release_bot', 'arm64'],
-    'android_release_bot_arm': ['android', 'release_bot', 'arm'],
-    'android_release_bot_arm64': ['android', 'release_bot', 'arm64'],
-    'android_release_bot_x64': ['android', 'release_bot', 'x64'],
-    'android_release_bot_x86': ['android', 'release_bot', 'x86'],
-    'asan_lsan_clang_release_bot_x64':
-    ['asan', 'lsan', 'clang', 'openh264', 'pure_release_bot', 'x64', 'h265'],
+    'android_release_bot_arm': [
+      'android',
+      'release_bot',
+      'arm',
+      'h265',
+    ],
+    'android_release_bot_arm64': [
+      'android',
+      'release_bot',
+      'arm64',
+      'h265',
+    ],
+    'android_release_bot_x64': [
+      'android',
+      'release_bot',
+      'x64',
+      'h265',
+    ],
+    'android_release_bot_x86': [
+      'android',
+      'release_bot',
+      'x86',
+      'h265',
+     ],
+    'asan_lsan_clang_release_bot_x64': [
+      'asan',
+      'lsan',
+      'clang',
+      'openh264',
+      'pure_release_bot',
+      'x64',
+      'h265',
+    ],
     'bwe_test_logging_android_arm':
     ['android', 'debug_static_bot', 'arm', 'bwe_test_logging'],
     'bwe_test_logging_x64': ['debug_bot', 'x64', 'bwe_test_logging'],
@@ -253,6 +308,12 @@
     'debug_bot_arm64': ['openh264', 'debug_bot', 'arm64', 'h265'],
     'debug_bot_x64': ['openh264', 'debug_bot', 'x64', 'h265'],
     'debug_bot_x86': ['openh264', 'debug_bot', 'x86', 'h265'],
+    'disable_trace_events_android_arm':
+    ['android', 'arm', 'disable_trace_events', 'release_bot'],
+    'disable_trace_events_x64':
+    ['x64', 'disable_trace_events', 'release_bot'],
+    'disable_trace_events_x86':
+    ['x86', 'disable_trace_events', 'release_bot'],
     'dummy_audio_file_devices_no_protobuf_android_arm': [
       'android', 'debug_static_bot', 'arm', 'dummy_audio_file_devices',
       'no_protobuf'
@@ -295,6 +356,9 @@
     'msan_clang_release_bot_x64':
     ['msan', 'clang', 'openh264', 'pure_release_bot', 'x64', 'h265'],
     'no_h264_debug_bot_x86': ['debug_bot', 'x86'],
+    'perfetto_android_arm': [ 'android', 'arm', 'perfetto', 'release_bot'],
+    'perfetto_x64': [ 'x64', 'perfetto', 'release_bot'],
+    'perfetto_x86': [ 'x86', 'perfetto', 'release_bot'],
     'pure_release_bot_x64': ['openh264', 'pure_release_bot', 'x64', 'h265'],
     'pure_release_bot_x86': ['openh264', 'pure_release_bot', 'x86', 'h265'],
     'release_bot_arm': ['openh264', 'release_bot', 'arm', 'h265'],
@@ -402,6 +466,9 @@
     'debug_static_bot': {
       'mixins': ['debug', 'minimal_symbols', 'reclient', 'strict_field_trials'],
     },
+    'disable_trace_events': {
+      'gn_args': 'rtc_disable_trace_events=true',
+    },
     'dummy_audio_file_devices': {
       'gn_args': 'rtc_use_dummy_audio_file_devices=true',
     },
@@ -451,6 +518,9 @@
     'partial_code_coverage_instrumentation': {
       'gn_args':
       'coverage_instrumentation_input_file="//.code-coverage/files_to_instrument.txt"'
+    },
+    'perfetto': {
+      'gn_args': 'rtc_use_perfetto=true',
     },
     # The 'pure_release_bot' configuration is for release bots that are doing a
     # 100% release build without DCHECKs while 'release_bot' is a partial

@@ -79,6 +79,9 @@ void RTCIceTransport::onStateChanged(RTCIceTransportState state)
             return;
 
         m_transportState = state;
+        if (m_transportState == RTCIceTransportState::Failed)
+            m_selectedCandidatePair = { };
+
         if (auto connection = this->connection())
             connection->processIceTransportStateChange(*this);
     });

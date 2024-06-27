@@ -52,6 +52,8 @@ using ::testing::Pair;
 using ::testing::Return;
 using ::testing::SizeIs;
 using ::testing::UnorderedElementsAre;
+using ::webrtc::TimeDelta;
+using ::webrtc::Timestamp;
 
 constexpr uint32_t kArwnd = 100000;
 constexpr uint32_t kMaxMtu = 1191;
@@ -74,12 +76,12 @@ class RetransmissionQueueTest : public testing::Test {
         }),
         timer_(timer_manager_.CreateTimer(
             "test/t3_rtx",
-            []() { return absl::nullopt; },
-            TimerOptions(options_.rto_initial))) {}
+            []() { return TimeDelta::Zero(); },
+            TimerOptions(options_.rto_initial.ToTimeDelta()))) {}
 
-  std::function<SendQueue::DataToSend(TimeMs, size_t)> CreateChunk(
+  std::function<SendQueue::DataToSend(Timestamp, size_t)> CreateChunk(
       OutgoingMessageId message_id) {
-    return [this, message_id](TimeMs now, size_t max_size) {
+    return [this, message_id](Timestamp now, size_t max_size) {
       return SendQueue::DataToSend(message_id,
                                    gen_.Ordered({1, 2, 3, 4}, "BE"));
     };
@@ -127,10 +129,10 @@ class RetransmissionQueueTest : public testing::Test {
   MockDcSctpSocketCallbacks callbacks_;
   DcSctpOptions options_;
   DataGenerator gen_;
-  TimeMs now_ = TimeMs(0);
+  Timestamp now_ = Timestamp::Zero();
   FakeTimeoutManager timeout_manager_;
   TimerManager timer_manager_;
-  NiceMock<MockFunction<void(DurationMs rtt_ms)>> on_rtt_;
+  NiceMock<MockFunction<void(TimeDelta rtt_ms)>> on_rtt_;
   NiceMock<MockFunction<void()>> on_clear_retransmission_counter_;
   NiceMock<MockSendQueue> producer_;
   std::unique_ptr<Timer> timer_;
@@ -146,7 +148,7 @@ TEST_F(RetransmissionQueueTest, SendOneChunk) {
   RetransmissionQueue queue = CreateQueue();
   EXPECT_CALL(producer_, Produce)
       .WillOnce(CreateChunk(OutgoingMessageId(0)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_THAT(GetSentPacketTSNs(queue), testing::ElementsAre(TSN(10)));
 
@@ -159,7 +161,7 @@ TEST_F(RetransmissionQueueTest, SendOneChunkAndAck) {
   RetransmissionQueue queue = CreateQueue();
   EXPECT_CALL(producer_, Produce)
       .WillOnce(CreateChunk(OutgoingMessageId(0)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_THAT(GetSentPacketTSNs(queue), testing::ElementsAre(TSN(10)));
 
@@ -175,7 +177,7 @@ TEST_F(RetransmissionQueueTest, SendThreeChunksAndAckTwo) {
       .WillOnce(CreateChunk(OutgoingMessageId(0)))
       .WillOnce(CreateChunk(OutgoingMessageId(1)))
       .WillOnce(CreateChunk(OutgoingMessageId(2)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_THAT(GetSentPacketTSNs(queue),
               testing::ElementsAre(TSN(10), TSN(11), TSN(12)));
@@ -198,7 +200,7 @@ TEST_F(RetransmissionQueueTest, AckWithGapBlocksFromRFC4960Section334) {
       .WillOnce(CreateChunk(OutgoingMessageId(5)))
       .WillOnce(CreateChunk(OutgoingMessageId(6)))
       .WillOnce(CreateChunk(OutgoingMessageId(7)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_THAT(GetSentPacketTSNs(queue),
               testing::ElementsAre(TSN(10), TSN(11), TSN(12), TSN(13), TSN(14),
@@ -229,7 +231,7 @@ TEST_F(RetransmissionQueueTest, ResendPacketsWhenNackedThreeTimes) {
       .WillOnce(CreateChunk(OutgoingMessageId(5)))
       .WillOnce(CreateChunk(OutgoingMessageId(6)))
       .WillOnce(CreateChunk(OutgoingMessageId(7)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_THAT(GetSentPacketTSNs(queue),
               testing::ElementsAre(TSN(10), TSN(11), TSN(12), TSN(13), TSN(14),
@@ -241,7 +243,7 @@ TEST_F(RetransmissionQueueTest, ResendPacketsWhenNackedThreeTimes) {
   // Send 18
   EXPECT_CALL(producer_, Produce)
       .WillOnce(CreateChunk(OutgoingMessageId(8)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
   EXPECT_THAT(GetSentPacketTSNs(queue), testing::ElementsAre(TSN(18)));
 
   // Ack 12, 14-15, 17-18
@@ -262,7 +264,7 @@ TEST_F(RetransmissionQueueTest, ResendPacketsWhenNackedThreeTimes) {
   // Send 19
   EXPECT_CALL(producer_, Produce)
       .WillOnce(CreateChunk(OutgoingMessageId(9)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
   EXPECT_THAT(GetSentPacketTSNs(queue), testing::ElementsAre(TSN(19)));
 
   // Ack 12, 14-15, 17-19
@@ -274,7 +276,7 @@ TEST_F(RetransmissionQueueTest, ResendPacketsWhenNackedThreeTimes) {
   // Send 20
   EXPECT_CALL(producer_, Produce)
       .WillOnce(CreateChunk(OutgoingMessageId(10)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
   EXPECT_THAT(GetSentPacketTSNs(queue), testing::ElementsAre(TSN(20)));
 
   // Ack 12, 14-15, 17-20
@@ -321,16 +323,16 @@ TEST_F(RetransmissionQueueTest, RestartsT3RtxOnRetransmitFirstOutstandingTSN) {
       .WillOnce(CreateChunk(OutgoingMessageId(0)))
       .WillOnce(CreateChunk(OutgoingMessageId(1)))
       .WillOnce(CreateChunk(OutgoingMessageId(2)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
-  static constexpr TimeMs kStartTime(100000);
+  static constexpr Timestamp kStartTime = Timestamp::Seconds(100);
   now_ = kStartTime;
 
   EXPECT_THAT(GetSentPacketTSNs(queue),
               testing::ElementsAre(TSN(10), TSN(11), TSN(12)));
 
   // Ack 10, 12, after 100ms.
-  now_ += DurationMs(100);
+  now_ += TimeDelta::Millis(100);
   queue.HandleSack(
       now_, SackChunk(TSN(10), kArwnd, {SackChunk::GapAckBlock(2, 2)}, {}));
 
@@ -342,22 +344,22 @@ TEST_F(RetransmissionQueueTest, RestartsT3RtxOnRetransmitFirstOutstandingTSN) {
   // Send 13
   EXPECT_CALL(producer_, Produce)
       .WillOnce(CreateChunk(OutgoingMessageId(3)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
   EXPECT_THAT(GetSentPacketTSNs(queue), testing::ElementsAre(TSN(13)));
 
   // Ack 10, 12-13, after 100ms.
-  now_ += DurationMs(100);
+  now_ += TimeDelta::Millis(100);
   queue.HandleSack(
       now_, SackChunk(TSN(10), kArwnd, {SackChunk::GapAckBlock(2, 3)}, {}));
 
   // Send 14
   EXPECT_CALL(producer_, Produce)
       .WillOnce(CreateChunk(OutgoingMessageId(4)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
   EXPECT_THAT(GetSentPacketTSNs(queue), testing::ElementsAre(TSN(14)));
 
   // Ack 10, 12-14, after 100 ms.
-  now_ += DurationMs(100);
+  now_ += TimeDelta::Millis(100);
   queue.HandleSack(
       now_, SackChunk(TSN(10), kArwnd, {SackChunk::GapAckBlock(2, 4)}, {}));
 
@@ -383,11 +385,11 @@ TEST_F(RetransmissionQueueTest, RestartsT3RtxOnRetransmitFirstOutstandingTSN) {
 
   // Verify that the timer was really restarted when fast-retransmitting. The
   // timeout is `options_.rto_initial`, so advance the time just before that.
-  now_ += options_.rto_initial - DurationMs(1);
+  now_ += options_.rto_initial.ToTimeDelta() - TimeDelta::Millis(1);
   EXPECT_FALSE(timeout_manager_.GetNextExpiredTimeout().has_value());
 
   // And ensure it really is running.
-  now_ += DurationMs(1);
+  now_ += TimeDelta::Millis(1);
   ASSERT_HAS_VALUE_AND_ASSIGN(TimeoutID timeout,
                               timeout_manager_.GetNextExpiredTimeout());
   // An expired timeout has to be handled (asserts validate this).
@@ -397,15 +399,15 @@ TEST_F(RetransmissionQueueTest, RestartsT3RtxOnRetransmitFirstOutstandingTSN) {
 TEST_F(RetransmissionQueueTest, CanOnlyProduceTwoPacketsButWantsToSendThree) {
   RetransmissionQueue queue = CreateQueue();
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         return SendQueue::DataToSend(OutgoingMessageId(0),
                                      gen_.Ordered({1, 2, 3, 4}, "BE"));
       })
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         return SendQueue::DataToSend(OutgoingMessageId(1),
                                      gen_.Ordered({1, 2, 3, 4}, "BE"));
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   std::vector<std::pair<TSN, Data>> chunks_to_send =
       queue.GetChunksToSend(now_, 1000);
@@ -420,11 +422,11 @@ TEST_F(RetransmissionQueueTest, CanOnlyProduceTwoPacketsButWantsToSendThree) {
 TEST_F(RetransmissionQueueTest, RetransmitsOnT3Expiry) {
   RetransmissionQueue queue = CreateQueue();
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         return SendQueue::DataToSend(OutgoingMessageId(0),
                                      gen_.Ordered({1, 2, 3, 4}, "BE"));
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_FALSE(queue.ShouldSendForwardTsn(now_));
   std::vector<std::pair<TSN, Data>> chunks_to_send =
@@ -459,12 +461,12 @@ TEST_F(RetransmissionQueueTest, LimitedRetransmissionOnlyWithRfc3758Support) {
   RetransmissionQueue queue =
       CreateQueue(/*supports_partial_reliability=*/false);
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         SendQueue::DataToSend dts(kMessageId, gen_.Ordered({1, 2, 3, 4}, "BE"));
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_FALSE(queue.ShouldSendForwardTsn(now_));
   std::vector<std::pair<TSN, Data>> chunks_to_send =
@@ -488,12 +490,12 @@ TEST_F(RetransmissionQueueTest, LimitedRetransmissionOnlyWithRfc3758Support) {
 TEST_F(RetransmissionQueueTest, LimitsRetransmissionsAsUdp) {
   RetransmissionQueue queue = CreateQueue();
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         SendQueue::DataToSend dts(kMessageId, gen_.Ordered({1, 2, 3, 4}, "BE"));
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_FALSE(queue.ShouldSendForwardTsn(now_));
   std::vector<std::pair<TSN, Data>> chunks_to_send =
@@ -529,12 +531,12 @@ TEST_F(RetransmissionQueueTest, LimitsRetransmissionsAsUdp) {
 TEST_F(RetransmissionQueueTest, LimitsRetransmissionsToThreeSends) {
   RetransmissionQueue queue = CreateQueue();
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         SendQueue::DataToSend dts(kMessageId, gen_.Ordered({1, 2, 3, 4}, "BE"));
         dts.max_retransmissions = MaxRetransmits(3);
         return dts;
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_FALSE(queue.ShouldSendForwardTsn(now_));
   std::vector<std::pair<TSN, Data>> chunks_to_send =
@@ -577,16 +579,16 @@ TEST_F(RetransmissionQueueTest, RetransmitsWhenSendBufferIsFullT3Expiry) {
   static constexpr size_t kCwnd = 1200;
   queue.set_cwnd(kCwnd);
   EXPECT_EQ(queue.cwnd(), kCwnd);
-  EXPECT_EQ(queue.outstanding_bytes(), 0u);
-  EXPECT_EQ(queue.outstanding_items(), 0u);
+  EXPECT_EQ(queue.unacked_bytes(), 0u);
+  EXPECT_EQ(queue.unacked_items(), 0u);
 
   std::vector<uint8_t> payload(1000);
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([this, payload](TimeMs, size_t) {
+      .WillOnce([this, payload](Timestamp, size_t) {
         return SendQueue::DataToSend(OutgoingMessageId(0),
                                      gen_.Ordered(payload, "BE"));
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   std::vector<std::pair<TSN, Data>> chunks_to_send =
       queue.GetChunksToSend(now_, 1500);
@@ -594,8 +596,8 @@ TEST_F(RetransmissionQueueTest, RetransmitsWhenSendBufferIsFullT3Expiry) {
   EXPECT_THAT(queue.GetChunkStatesForTesting(),
               ElementsAre(Pair(TSN(9), State::kAcked),  //
                           Pair(TSN(10), State::kInFlight)));
-  EXPECT_EQ(queue.outstanding_bytes(), payload.size() + DataChunk::kHeaderSize);
-  EXPECT_EQ(queue.outstanding_items(), 1u);
+  EXPECT_EQ(queue.unacked_bytes(), payload.size() + DataChunk::kHeaderSize);
+  EXPECT_EQ(queue.unacked_items(), 1u);
 
   // Will force chunks to be retransmitted
   queue.HandleT3RtxTimerExpiry();
@@ -603,8 +605,8 @@ TEST_F(RetransmissionQueueTest, RetransmitsWhenSendBufferIsFullT3Expiry) {
   EXPECT_THAT(queue.GetChunkStatesForTesting(),
               ElementsAre(Pair(TSN(9), State::kAcked),  //
                           Pair(TSN(10), State::kToBeRetransmitted)));
-  EXPECT_EQ(queue.outstanding_bytes(), 0u);
-  EXPECT_EQ(queue.outstanding_items(), 0u);
+  EXPECT_EQ(queue.unacked_bytes(), 0u);
+  EXPECT_EQ(queue.unacked_items(), 0u);
 
   std::vector<std::pair<TSN, Data>> chunks_to_rtx =
       queue.GetChunksToSend(now_, 1500);
@@ -612,30 +614,30 @@ TEST_F(RetransmissionQueueTest, RetransmitsWhenSendBufferIsFullT3Expiry) {
   EXPECT_THAT(queue.GetChunkStatesForTesting(),
               ElementsAre(Pair(TSN(9), State::kAcked),  //
                           Pair(TSN(10), State::kInFlight)));
-  EXPECT_EQ(queue.outstanding_bytes(), payload.size() + DataChunk::kHeaderSize);
-  EXPECT_EQ(queue.outstanding_items(), 1u);
+  EXPECT_EQ(queue.unacked_bytes(), payload.size() + DataChunk::kHeaderSize);
+  EXPECT_EQ(queue.unacked_items(), 1u);
 }
 
 TEST_F(RetransmissionQueueTest, ProducesValidForwardTsn) {
   RetransmissionQueue queue = CreateQueue();
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         SendQueue::DataToSend dts(kMessageId, gen_.Ordered({1, 2, 3, 4}, "B"));
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
       })
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         SendQueue::DataToSend dts(kMessageId, gen_.Ordered({5, 6, 7, 8}, ""));
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
       })
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         SendQueue::DataToSend dts(kMessageId,
                                   gen_.Ordered({9, 10, 11, 12}, ""));
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   // Send and ack first chunk (TSN 10)
   std::vector<std::pair<TSN, Data>> chunks_to_send =
@@ -675,23 +677,23 @@ TEST_F(RetransmissionQueueTest, ProducesValidForwardTsn) {
 TEST_F(RetransmissionQueueTest, ProducesValidForwardTsnWhenFullySent) {
   RetransmissionQueue queue = CreateQueue();
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         SendQueue::DataToSend dts(kMessageId, gen_.Ordered({1, 2, 3, 4}, "B"));
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
       })
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         SendQueue::DataToSend dts(kMessageId, gen_.Ordered({5, 6, 7, 8}, ""));
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
       })
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         SendQueue::DataToSend dts(kMessageId,
                                   gen_.Ordered({9, 10, 11, 12}, "E"));
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   // Send and ack first chunk (TSN 10)
   std::vector<std::pair<TSN, Data>> chunks_to_send =
@@ -729,7 +731,7 @@ TEST_F(RetransmissionQueueTest, ProducesValidForwardTsnWhenFullySent) {
 TEST_F(RetransmissionQueueTest, ProducesValidIForwardTsn) {
   RetransmissionQueue queue = CreateQueue(/*use_message_interleaving=*/true);
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         DataGeneratorOptions opts;
         opts.stream_id = StreamID(1);
         SendQueue::DataToSend dts(OutgoingMessageId(42),
@@ -737,7 +739,7 @@ TEST_F(RetransmissionQueueTest, ProducesValidIForwardTsn) {
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
       })
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         DataGeneratorOptions opts;
         opts.stream_id = StreamID(2);
         SendQueue::DataToSend dts(OutgoingMessageId(43),
@@ -745,7 +747,7 @@ TEST_F(RetransmissionQueueTest, ProducesValidIForwardTsn) {
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
       })
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         DataGeneratorOptions opts;
         opts.stream_id = StreamID(3);
         SendQueue::DataToSend dts(OutgoingMessageId(44),
@@ -753,7 +755,7 @@ TEST_F(RetransmissionQueueTest, ProducesValidIForwardTsn) {
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
       })
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         DataGeneratorOptions opts;
         opts.stream_id = StreamID(4);
         SendQueue::DataToSend dts(OutgoingMessageId(45),
@@ -761,7 +763,7 @@ TEST_F(RetransmissionQueueTest, ProducesValidIForwardTsn) {
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   std::vector<std::pair<TSN, Data>> chunks_to_send =
       queue.GetChunksToSend(now_, 1000);
@@ -850,21 +852,21 @@ TEST_F(RetransmissionQueueTest, ProducesValidIForwardTsn) {
 TEST_F(RetransmissionQueueTest, MeasureRTT) {
   RetransmissionQueue queue = CreateQueue(/*use_message_interleaving=*/true);
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         SendQueue::DataToSend dts(OutgoingMessageId(0),
                                   gen_.Ordered({1, 2, 3, 4}, "B"));
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   std::vector<std::pair<TSN, Data>> chunks_to_send =
       queue.GetChunksToSend(now_, 1000);
   EXPECT_THAT(chunks_to_send, ElementsAre(Pair(TSN(10), _)));
 
-  now_ = now_ + DurationMs(123);
+  now_ = now_ + TimeDelta::Millis(123);
 
-  EXPECT_CALL(on_rtt_, Call(DurationMs(123))).Times(1);
+  EXPECT_CALL(on_rtt_, Call(TimeDelta::Millis(123))).Times(1);
   queue.HandleSack(now_, SackChunk(TSN(10), kArwnd, {}, {}));
 }
 
@@ -888,7 +890,7 @@ TEST_F(RetransmissionQueueTest, ValidateCumTsnAckOnInflightData) {
       .WillOnce(CreateChunk(OutgoingMessageId(5)))
       .WillOnce(CreateChunk(OutgoingMessageId(6)))
       .WillOnce(CreateChunk(OutgoingMessageId(7)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_THAT(GetSentPacketTSNs(queue),
               testing::ElementsAre(TSN(10), TSN(11), TSN(12), TSN(13), TSN(14),
@@ -918,7 +920,7 @@ TEST_F(RetransmissionQueueTest, HandleGapAckBlocksMatchingNoInflightData) {
       .WillOnce(CreateChunk(OutgoingMessageId(5)))
       .WillOnce(CreateChunk(OutgoingMessageId(6)))
       .WillOnce(CreateChunk(OutgoingMessageId(7)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_THAT(GetSentPacketTSNs(queue),
               testing::ElementsAre(TSN(10), TSN(11), TSN(12), TSN(13), TSN(14),
@@ -965,7 +967,7 @@ TEST_F(RetransmissionQueueTest, GapAckBlocksDoNotMoveCumTsnAck) {
       .WillOnce(CreateChunk(OutgoingMessageId(5)))
       .WillOnce(CreateChunk(OutgoingMessageId(6)))
       .WillOnce(CreateChunk(OutgoingMessageId(7)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_THAT(GetSentPacketTSNs(queue),
               testing::ElementsAre(TSN(10), TSN(11), TSN(12), TSN(13), TSN(14),
@@ -995,14 +997,14 @@ TEST_F(RetransmissionQueueTest, StaysWithinAvailableSize) {
   // See SctpPacketTest::ReturnsCorrectSpaceAvailableToStayWithinMTU for the
   // magic numbers in this test.
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([this](TimeMs, size_t size) {
+      .WillOnce([this](Timestamp, size_t size) {
         EXPECT_EQ(size, 1176 - DataChunk::kHeaderSize);
 
         std::vector<uint8_t> payload(183);
         return SendQueue::DataToSend(OutgoingMessageId(0),
                                      gen_.Ordered(payload, "BE"));
       })
-      .WillOnce([this](TimeMs, size_t size) {
+      .WillOnce([this](Timestamp, size_t size) {
         EXPECT_EQ(size, 976 - DataChunk::kHeaderSize);
 
         std::vector<uint8_t> payload(957);
@@ -1018,23 +1020,23 @@ TEST_F(RetransmissionQueueTest, StaysWithinAvailableSize) {
 TEST_F(RetransmissionQueueTest, AccountsNackedAbandonedChunksAsNotOutstanding) {
   RetransmissionQueue queue = CreateQueue();
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         SendQueue::DataToSend dts(kMessageId, gen_.Ordered({1, 2, 3, 4}, "B"));
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
       })
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         SendQueue::DataToSend dts(kMessageId, gen_.Ordered({5, 6, 7, 8}, ""));
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
       })
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         SendQueue::DataToSend dts(kMessageId,
                                   gen_.Ordered({9, 10, 11, 12}, ""));
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   // Send and ack first chunk (TSN 10)
   std::vector<std::pair<TSN, Data>> chunks_to_send =
@@ -1046,8 +1048,8 @@ TEST_F(RetransmissionQueueTest, AccountsNackedAbandonedChunksAsNotOutstanding) {
                           Pair(TSN(10), State::kInFlight),  //
                           Pair(TSN(11), State::kInFlight),  //
                           Pair(TSN(12), State::kInFlight)));
-  EXPECT_EQ(queue.outstanding_bytes(), (16 + 4) * 3u);
-  EXPECT_EQ(queue.outstanding_items(), 3u);
+  EXPECT_EQ(queue.unacked_bytes(), (16 + 4) * 3u);
+  EXPECT_EQ(queue.unacked_items(), 3u);
 
   // Mark the message as lost.
   EXPECT_CALL(producer_, Discard(StreamID(1), kMessageId)).Times(1);
@@ -1060,21 +1062,21 @@ TEST_F(RetransmissionQueueTest, AccountsNackedAbandonedChunksAsNotOutstanding) {
                           Pair(TSN(10), State::kAbandoned),  //
                           Pair(TSN(11), State::kAbandoned),  //
                           Pair(TSN(12), State::kAbandoned)));
-  EXPECT_EQ(queue.outstanding_bytes(), 0u);
-  EXPECT_EQ(queue.outstanding_items(), 0u);
+  EXPECT_EQ(queue.unacked_bytes(), 0u);
+  EXPECT_EQ(queue.unacked_items(), 0u);
 
   // Now ACK those, one at a time.
   queue.HandleSack(now_, SackChunk(TSN(10), kArwnd, {}, {}));
-  EXPECT_EQ(queue.outstanding_bytes(), 0u);
-  EXPECT_EQ(queue.outstanding_items(), 0u);
+  EXPECT_EQ(queue.unacked_bytes(), 0u);
+  EXPECT_EQ(queue.unacked_items(), 0u);
 
   queue.HandleSack(now_, SackChunk(TSN(11), kArwnd, {}, {}));
-  EXPECT_EQ(queue.outstanding_bytes(), 0u);
-  EXPECT_EQ(queue.outstanding_items(), 0u);
+  EXPECT_EQ(queue.unacked_bytes(), 0u);
+  EXPECT_EQ(queue.unacked_items(), 0u);
 
   queue.HandleSack(now_, SackChunk(TSN(12), kArwnd, {}, {}));
-  EXPECT_EQ(queue.outstanding_bytes(), 0u);
-  EXPECT_EQ(queue.outstanding_items(), 0u);
+  EXPECT_EQ(queue.unacked_bytes(), 0u);
+  EXPECT_EQ(queue.unacked_items(), 0u);
 }
 
 TEST_F(RetransmissionQueueTest, ExpireFromSendQueueWhenPartiallySent) {
@@ -1082,21 +1084,21 @@ TEST_F(RetransmissionQueueTest, ExpireFromSendQueueWhenPartiallySent) {
   DataGeneratorOptions options;
   options.stream_id = StreamID(17);
   options.mid = MID(42);
-  TimeMs test_start = now_;
+  Timestamp test_start = now_;
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([&](TimeMs, size_t) {
+      .WillOnce([&](Timestamp, size_t) {
         SendQueue::DataToSend dts(kMessageId,
                                   gen_.Ordered({1, 2, 3, 4}, "B", options));
-        dts.expires_at = TimeMs(test_start + DurationMs(10));
+        dts.expires_at = Timestamp(test_start + TimeDelta::Millis(10));
         return dts;
       })
-      .WillOnce([&](TimeMs, size_t) {
+      .WillOnce([&](Timestamp, size_t) {
         SendQueue::DataToSend dts(kMessageId,
                                   gen_.Ordered({5, 6, 7, 8}, "", options));
-        dts.expires_at = TimeMs(test_start + DurationMs(10));
+        dts.expires_at = Timestamp(test_start + TimeDelta::Millis(10));
         return dts;
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   std::vector<std::pair<TSN, Data>> chunks_to_send =
       queue.GetChunksToSend(now_, 24);
@@ -1104,7 +1106,7 @@ TEST_F(RetransmissionQueueTest, ExpireFromSendQueueWhenPartiallySent) {
 
   EXPECT_CALL(producer_, Discard(StreamID(17), kMessageId))
       .WillOnce(Return(true));
-  now_ += DurationMs(100);
+  now_ += TimeDelta::Millis(100);
 
   EXPECT_THAT(queue.GetChunksToSend(now_, 24), IsEmpty());
 
@@ -1118,38 +1120,38 @@ TEST_F(RetransmissionQueueTest, ExpireFromSendQueueWhenPartiallySent) {
 
 TEST_F(RetransmissionQueueTest, ExpireCorrectMessageFromSendQueue) {
   RetransmissionQueue queue = CreateQueue();
-  TimeMs test_start = now_;
+  Timestamp test_start = now_;
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([&](TimeMs, size_t) {
+      .WillOnce([&](Timestamp, size_t) {
         SendQueue::DataToSend dts(
             OutgoingMessageId(42),
             gen_.Ordered({1, 2, 3, 4}, "BE", {.mid = MID(0)}));
-        dts.expires_at = TimeMs(test_start + DurationMs(10));
+        dts.expires_at = Timestamp(test_start + TimeDelta::Millis(10));
         return dts;
       })
-      .WillOnce([&](TimeMs, size_t) {
+      .WillOnce([&](Timestamp, size_t) {
         SendQueue::DataToSend dts(
             OutgoingMessageId(43),
             gen_.Ordered({1, 2, 3, 4}, "BE", {.mid = MID(1)}));
-        dts.expires_at = TimeMs(test_start + DurationMs(10));
+        dts.expires_at = Timestamp(test_start + TimeDelta::Millis(10));
         return dts;
       })
       // Stream reset - MID reset to zero again.
-      .WillOnce([&](TimeMs, size_t) {
+      .WillOnce([&](Timestamp, size_t) {
         SendQueue::DataToSend dts(
             OutgoingMessageId(44),
             gen_.Ordered({1, 2, 3, 4}, "B", {.mid = MID(0)}));
-        dts.expires_at = TimeMs(test_start + DurationMs(10));
+        dts.expires_at = Timestamp(test_start + TimeDelta::Millis(10));
         return dts;
       })
-      .WillOnce([&](TimeMs, size_t) {
+      .WillOnce([&](Timestamp, size_t) {
         SendQueue::DataToSend dts(
             OutgoingMessageId(44),
             gen_.Ordered({5, 6, 7, 8}, "", {.mid = MID(0)}));
-        dts.expires_at = TimeMs(test_start + DurationMs(10));
+        dts.expires_at = Timestamp(test_start + TimeDelta::Millis(10));
         return dts;
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
   EXPECT_CALL(producer_, Discard(StreamID(1), OutgoingMessageId(44)))
       .WillOnce(Return(true));
 
@@ -1160,7 +1162,7 @@ TEST_F(RetransmissionQueueTest, ExpireCorrectMessageFromSendQueue) {
   EXPECT_THAT(queue.GetChunksToSend(now_, 24),
               ElementsAre(Pair(TSN(12), Field(&Data::mid, MID(0)))));
 
-  now_ += DurationMs(100);
+  now_ += TimeDelta::Millis(100);
   EXPECT_THAT(queue.GetChunksToSend(now_, 24), IsEmpty());
 
   EXPECT_THAT(
@@ -1176,7 +1178,7 @@ TEST_F(RetransmissionQueueTest, ExpireCorrectMessageFromSendQueue) {
 TEST_F(RetransmissionQueueTest, LimitsRetransmissionsOnlyWhenNackedThreeTimes) {
   RetransmissionQueue queue = CreateQueue();
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         SendQueue::DataToSend dts(kMessageId, gen_.Ordered({1, 2, 3, 4}, "BE"));
         dts.max_retransmissions = MaxRetransmits(0);
         return dts;
@@ -1184,7 +1186,7 @@ TEST_F(RetransmissionQueueTest, LimitsRetransmissionsOnlyWhenNackedThreeTimes) {
       .WillOnce(CreateChunk(OutgoingMessageId(0)))
       .WillOnce(CreateChunk(OutgoingMessageId(1)))
       .WillOnce(CreateChunk(OutgoingMessageId(2)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_FALSE(queue.ShouldSendForwardTsn(now_));
 
@@ -1246,7 +1248,7 @@ TEST_F(RetransmissionQueueTest, AbandonsRtxLimit2WhenNackedNineTimes) {
   // This is a fairly long test.
   RetransmissionQueue queue = CreateQueue();
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([this](TimeMs, size_t) {
+      .WillOnce([this](Timestamp, size_t) {
         SendQueue::DataToSend dts(kMessageId, gen_.Ordered({1, 2, 3, 4}, "BE"));
         dts.max_retransmissions = MaxRetransmits(2);
         return dts;
@@ -1260,7 +1262,7 @@ TEST_F(RetransmissionQueueTest, AbandonsRtxLimit2WhenNackedNineTimes) {
       .WillOnce(CreateChunk(OutgoingMessageId(6)))
       .WillOnce(CreateChunk(OutgoingMessageId(7)))
       .WillOnce(CreateChunk(OutgoingMessageId(8)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_FALSE(queue.ShouldSendForwardTsn(now_));
 
@@ -1386,17 +1388,17 @@ TEST_F(RetransmissionQueueTest, CwndRecoversWhenAcking) {
 
   std::vector<uint8_t> payload(1000);
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([this, payload](TimeMs, size_t) {
+      .WillOnce([this, payload](Timestamp, size_t) {
         return SendQueue::DataToSend(OutgoingMessageId(0),
                                      gen_.Ordered(payload, "BE"));
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   std::vector<std::pair<TSN, Data>> chunks_to_send =
       queue.GetChunksToSend(now_, 1500);
   EXPECT_THAT(chunks_to_send, ElementsAre(Pair(TSN(10), _)));
   size_t serialized_size = payload.size() + DataChunk::kHeaderSize;
-  EXPECT_EQ(queue.outstanding_bytes(), serialized_size);
+  EXPECT_EQ(queue.unacked_bytes(), serialized_size);
 
   queue.HandleSack(now_, SackChunk(TSN(10), kArwnd, {}, {}));
 
@@ -1414,12 +1416,12 @@ TEST_F(RetransmissionQueueTest, OnlySendsLargePacketsOnLargeCongestionWindow) {
   // Fill the congestion window almost - leaving 500 bytes.
   size_t chunk_size = intial_cwnd - 500;
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([chunk_size, this](TimeMs, size_t) {
+      .WillOnce([chunk_size, this](Timestamp, size_t) {
         return SendQueue::DataToSend(
             OutgoingMessageId(0),
             gen_.Ordered(std::vector<uint8_t>(chunk_size), "BE"));
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_TRUE(queue.can_send_data());
   std::vector<std::pair<TSN, Data>> chunks_to_send =
@@ -1433,7 +1435,7 @@ TEST_F(RetransmissionQueueTest, OnlySendsLargePacketsOnLargeCongestionWindow) {
   queue.HandleSack(now_, SackChunk(TSN(10), kArwnd, {}, {}));
 
   EXPECT_TRUE(queue.can_send_data());
-  EXPECT_EQ(queue.outstanding_bytes(), 0u);
+  EXPECT_EQ(queue.unacked_bytes(), 0u);
   EXPECT_EQ(queue.cwnd(), intial_cwnd + kMaxMtu);
 }
 
@@ -1447,12 +1449,12 @@ TEST_F(RetransmissionQueueTest, AllowsSmallFragmentsOnSmallCongestionWindow) {
   // Fill the congestion window almost - leaving 500 bytes.
   size_t chunk_size = intial_cwnd - 500;
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([chunk_size, this](TimeMs, size_t) {
+      .WillOnce([chunk_size, this](Timestamp, size_t) {
         return SendQueue::DataToSend(
             OutgoingMessageId(0),
             gen_.Ordered(std::vector<uint8_t>(chunk_size), "BE"));
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_TRUE(queue.can_send_data());
   std::vector<std::pair<TSN, Data>> chunks_to_send =
@@ -1467,7 +1469,7 @@ TEST_F(RetransmissionQueueTest, ReadyForHandoverWhenHasNoOutstandingData) {
   RetransmissionQueue queue = CreateQueue();
   EXPECT_CALL(producer_, Produce)
       .WillOnce(CreateChunk(OutgoingMessageId(0)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   EXPECT_THAT(GetSentPacketTSNs(queue), SizeIs(1));
   EXPECT_EQ(
@@ -1490,7 +1492,7 @@ TEST_F(RetransmissionQueueTest, ReadyForHandoverWhenNothingToRetransmit) {
       .WillOnce(CreateChunk(OutgoingMessageId(5)))
       .WillOnce(CreateChunk(OutgoingMessageId(6)))
       .WillOnce(CreateChunk(OutgoingMessageId(7)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
   EXPECT_THAT(GetSentPacketTSNs(queue), SizeIs(8));
   EXPECT_EQ(
       queue.GetHandoverReadiness(),
@@ -1503,7 +1505,7 @@ TEST_F(RetransmissionQueueTest, ReadyForHandoverWhenNothingToRetransmit) {
   // Send 18
   EXPECT_CALL(producer_, Produce)
       .WillOnce(CreateChunk(OutgoingMessageId(8)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
   EXPECT_THAT(GetSentPacketTSNs(queue), SizeIs(1));
 
   // Ack 12, 14-15, 17-18
@@ -1515,7 +1517,7 @@ TEST_F(RetransmissionQueueTest, ReadyForHandoverWhenNothingToRetransmit) {
   // Send 19
   EXPECT_CALL(producer_, Produce)
       .WillOnce(CreateChunk(OutgoingMessageId(9)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
   EXPECT_THAT(GetSentPacketTSNs(queue), SizeIs(1));
 
   // Ack 12, 14-15, 17-19
@@ -1527,7 +1529,7 @@ TEST_F(RetransmissionQueueTest, ReadyForHandoverWhenNothingToRetransmit) {
   // Send 20
   EXPECT_CALL(producer_, Produce)
       .WillOnce(CreateChunk(OutgoingMessageId(10)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
   EXPECT_THAT(GetSentPacketTSNs(queue), SizeIs(1));
 
   // Ack 12, 14-15, 17-20
@@ -1563,7 +1565,7 @@ TEST_F(RetransmissionQueueTest, HandoverTest) {
   EXPECT_CALL(producer_, Produce)
       .WillOnce(CreateChunk(OutgoingMessageId(0)))
       .WillOnce(CreateChunk(OutgoingMessageId(1)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
   EXPECT_THAT(GetSentPacketTSNs(queue), SizeIs(2));
   queue.HandleSack(now_, SackChunk(TSN(11), kArwnd, {}, {}));
 
@@ -1574,7 +1576,7 @@ TEST_F(RetransmissionQueueTest, HandoverTest) {
       .WillOnce(CreateChunk(OutgoingMessageId(2)))
       .WillOnce(CreateChunk(OutgoingMessageId(3)))
       .WillOnce(CreateChunk(OutgoingMessageId(4)))
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
   EXPECT_THAT(GetSentPacketTSNs(*handedover_queue),
               testing::ElementsAre(TSN(12), TSN(13), TSN(14)));
 
@@ -1592,27 +1594,27 @@ TEST_F(RetransmissionQueueTest, CanAlwaysSendOnePacket) {
   std::vector<uint8_t> payload(mtu - 100);
 
   EXPECT_CALL(producer_, Produce)
-      .WillOnce([this, payload](TimeMs, size_t) {
+      .WillOnce([this, payload](Timestamp, size_t) {
         return SendQueue::DataToSend(OutgoingMessageId(0),
                                      gen_.Ordered(payload, "B"));
       })
-      .WillOnce([this, payload](TimeMs, size_t) {
+      .WillOnce([this, payload](Timestamp, size_t) {
         return SendQueue::DataToSend(OutgoingMessageId(0),
                                      gen_.Ordered(payload, ""));
       })
-      .WillOnce([this, payload](TimeMs, size_t) {
+      .WillOnce([this, payload](Timestamp, size_t) {
         return SendQueue::DataToSend(OutgoingMessageId(0),
                                      gen_.Ordered(payload, ""));
       })
-      .WillOnce([this, payload](TimeMs, size_t) {
+      .WillOnce([this, payload](Timestamp, size_t) {
         return SendQueue::DataToSend(OutgoingMessageId(0),
                                      gen_.Ordered(payload, ""));
       })
-      .WillOnce([this, payload](TimeMs, size_t) {
+      .WillOnce([this, payload](Timestamp, size_t) {
         return SendQueue::DataToSend(OutgoingMessageId(0),
                                      gen_.Ordered(payload, "E"));
       })
-      .WillRepeatedly([](TimeMs, size_t) { return absl::nullopt; });
+      .WillRepeatedly([](Timestamp, size_t) { return absl::nullopt; });
 
   // Produce all chunks and put them in the retransmission queue.
   std::vector<std::pair<TSN, Data>> chunks_to_send =

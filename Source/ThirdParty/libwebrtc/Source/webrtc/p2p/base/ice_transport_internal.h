@@ -304,17 +304,28 @@ class RTC_EXPORT IceTransportInternal : public rtc::PacketTransportInternal {
     return absl::nullopt;
   }
 
-  sigslot::signal1<IceTransportInternal*> SignalGatheringState;
+  void AddGatheringStateCallback(
+      const void* removal_tag,
+      absl::AnyInvocable<void(IceTransportInternal*)> callback);
+  void RemoveGatheringStateCallback(const void* removal_tag);
 
   // Handles sending and receiving of candidates.
   sigslot::signal2<IceTransportInternal*, const Candidate&>
       SignalCandidateGathered;
 
-  sigslot::signal2<IceTransportInternal*, const IceCandidateErrorEvent&>
-      SignalCandidateError;
+  void SetCandidateErrorCallback(
+      absl::AnyInvocable<void(IceTransportInternal*,
+                              const IceCandidateErrorEvent&)> callback) {
+    RTC_DCHECK(!candidate_error_callback_);
+    candidate_error_callback_ = std::move(callback);
+  }
 
-  sigslot::signal2<IceTransportInternal*, const Candidates&>
-      SignalCandidatesRemoved;
+  void SetCandidatesRemovedCallback(
+      absl::AnyInvocable<void(IceTransportInternal*, const Candidates&)>
+          callback) {
+    RTC_DCHECK(!candidates_removed_callback_);
+    candidates_removed_callback_ = std::move(callback);
+  }
 
   // Deprecated by PacketTransportInternal::SignalNetworkRouteChanged.
   // This signal occurs when there is a change in the way that packets are
@@ -324,8 +335,12 @@ class RTC_EXPORT IceTransportInternal : public rtc::PacketTransportInternal {
   // SignalNetworkRouteChanged.
   sigslot::signal2<IceTransportInternal*, const Candidate&> SignalRouteChange;
 
-  sigslot::signal1<const cricket::CandidatePairChangeEvent&>
-      SignalCandidatePairChanged;
+  void SetCandidatePairChangeCallback(
+      absl::AnyInvocable<void(const cricket::CandidatePairChangeEvent&)>
+          callback) {
+    RTC_DCHECK(!candidate_pair_change_callback_);
+    candidate_pair_change_callback_ = std::move(callback);
+  }
 
   // Invoked when there is conflict in the ICE role between local and remote
   // agents.
@@ -366,12 +381,27 @@ class RTC_EXPORT IceTransportInternal : public rtc::PacketTransportInternal {
   }
 
  protected:
+  void SendGatheringStateEvent() {
+    gathering_state_callback_list_.Send(this);
+  }
+
   webrtc::CallbackList<IceTransportInternal*,
                        const StunDictionaryView&,
                        rtc::ArrayView<uint16_t>>
       dictionary_view_updated_callback_list_;
   webrtc::CallbackList<IceTransportInternal*, const StunDictionaryWriter&>
       dictionary_writer_synced_callback_list_;
+
+  webrtc::CallbackList<IceTransportInternal*> gathering_state_callback_list_;
+
+  absl::AnyInvocable<void(IceTransportInternal*, const IceCandidateErrorEvent&)>
+      candidate_error_callback_;
+
+  absl::AnyInvocable<void(IceTransportInternal*, const Candidates&)>
+      candidates_removed_callback_;
+
+  absl::AnyInvocable<void(const cricket::CandidatePairChangeEvent&)>
+      candidate_pair_change_callback_;
 };
 
 }  // namespace cricket

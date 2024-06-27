@@ -57,6 +57,10 @@ void StunRequestManager::Send(StunRequest* request) {
 void StunRequestManager::SendDelayed(StunRequest* request, int delay) {
   RTC_DCHECK_RUN_ON(thread_);
   RTC_DCHECK_EQ(this, request->manager());
+  RTC_DCHECK(!request->AuthenticationRequired() ||
+             request->msg()->integrity() !=
+                 StunMessage::IntegrityStatus::kNotSet)
+      << "Sending request w/o integrity!";
   auto [iter, was_inserted] =
       requests_.emplace(request->id(), absl::WrapUnique(request));
   RTC_DCHECK(was_inserted);
@@ -104,15 +108,23 @@ bool StunRequestManager::CheckResponse(StunMessage* msg) {
   StunRequest* request = iter->second.get();
 
   // Now that we know the request, we can see if the response is
-  // integrity-protected or not.
-  // For some tests, the message integrity is not set in the request.
-  // Complain, and then don't check.
+  // integrity-protected or not. Some requests explicitly disables
+  // integrity checks using SetAuthenticationRequired.
+  // TODO(chromium:1177125): Remove below!
+  // And we suspect that for some tests, the message integrity is not set in the
+  // request. Complain, and then don't check.
   bool skip_integrity_checking =
       (request->msg()->integrity() == StunMessage::IntegrityStatus::kNotSet);
-  if (skip_integrity_checking) {
+  if (!request->AuthenticationRequired()) {
+    // This is a STUN_BINDING to from stun_port.cc or
+    // the initial (unauthenticated) TURN_ALLOCATE_REQUEST.
+  } else if (skip_integrity_checking) {
+    // TODO(chromium:1177125): Remove below!
     // This indicates lazy test writing (not adding integrity attribute).
     // Complain, but only in debug mode (while developing).
-    RTC_DLOG(LS_ERROR)
+    RTC_LOG(LS_ERROR)
+        << "CheckResponse called on a passwordless request. Fix test!";
+    RTC_DCHECK(false)
         << "CheckResponse called on a passwordless request. Fix test!";
   } else {
     if (msg->integrity() == StunMessage::IntegrityStatus::kNotSet) {
@@ -190,7 +202,8 @@ bool StunRequestManager::CheckResponse(const char* data, size_t size) {
 
   // Parse the STUN message and continue processing as usual.
 
-  rtc::ByteBufferReader buf(data, size);
+  rtc::ByteBufferReader buf(
+      rtc::MakeArrayView(reinterpret_cast<const uint8_t*>(data), size));
   std::unique_ptr<StunMessage> response(iter->second->msg_->CreateNew());
   if (!response->Read(&buf)) {
     RTC_LOG(LS_WARNING) << "Failed to read STUN response "

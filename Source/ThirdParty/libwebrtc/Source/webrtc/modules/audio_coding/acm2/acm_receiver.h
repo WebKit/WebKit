@@ -94,7 +94,9 @@ class AcmReceiver {
   // Return value             : 0 if OK.
   //                           -1 if NetEq returned an error.
   //
-  int GetAudio(int desired_freq_hz, AudioFrame* audio_frame, bool* muted);
+  int GetAudio(int desired_freq_hz,
+               AudioFrame* audio_frame,
+               bool* muted = nullptr);
 
   // Replace the current set of decoders with the specified set.
   void SetCodecs(const std::map<int, SdpAudioFormat>& codecs);

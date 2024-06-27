@@ -358,20 +358,18 @@ PROXY_CONSTMETHOD0(rtc::scoped_refptr<RtpReceiverInterface>, receiver)
 PROXY_CONSTMETHOD0(bool, stopped)
 PROXY_CONSTMETHOD0(bool, stopping)
 PROXY_CONSTMETHOD0(RtpTransceiverDirection, direction)
-PROXY_METHOD1(webrtc::RTCError, SetDirectionWithError, RtpTransceiverDirection)
+PROXY_METHOD1(RTCError, SetDirectionWithError, RtpTransceiverDirection)
 PROXY_CONSTMETHOD0(absl::optional<RtpTransceiverDirection>, current_direction)
 PROXY_CONSTMETHOD0(absl::optional<RtpTransceiverDirection>, fired_direction)
-PROXY_METHOD0(webrtc::RTCError, StopStandard)
+PROXY_METHOD0(RTCError, StopStandard)
 PROXY_METHOD0(void, StopInternal)
-PROXY_METHOD1(webrtc::RTCError,
-              SetCodecPreferences,
-              rtc::ArrayView<RtpCodecCapability>)
+PROXY_METHOD1(RTCError, SetCodecPreferences, rtc::ArrayView<RtpCodecCapability>)
 PROXY_CONSTMETHOD0(std::vector<RtpCodecCapability>, codec_preferences)
 PROXY_CONSTMETHOD0(std::vector<RtpHeaderExtensionCapability>,
                    GetHeaderExtensionsToNegotiate)
 PROXY_CONSTMETHOD0(std::vector<RtpHeaderExtensionCapability>,
                    GetNegotiatedHeaderExtensions)
-PROXY_METHOD1(webrtc::RTCError,
+PROXY_METHOD1(RTCError,
               SetHeaderExtensionsToNegotiate,
               rtc::ArrayView<const RtpHeaderExtensionCapability>)
 END_PROXY_MAP(RtpTransceiver)

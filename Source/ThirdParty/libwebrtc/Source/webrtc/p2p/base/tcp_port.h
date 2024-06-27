@@ -22,6 +22,7 @@
 #include "p2p/base/port.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/containers/flat_map.h"
+#include "rtc_base/network/received_packet.h"
 
 namespace cricket {
 
@@ -101,10 +102,7 @@ class TCPPort : public Port {
 
   // Receives packet signal from the local TCP Socket.
   void OnReadPacket(rtc::AsyncPacketSocket* socket,
-                    const char* data,
-                    size_t size,
-                    const rtc::SocketAddress& remote_addr,
-                    const int64_t& packet_time_us);
+                    const rtc::ReceivedPacket& packet);
 
   void OnSentPacket(rtc::AsyncPacketSocket* socket,
                     const rtc::SentPacket& sent_packet) override;
@@ -170,10 +168,7 @@ class TCPConnection : public Connection, public sigslot::has_slots<> {
   void OnConnect(rtc::AsyncPacketSocket* socket);
   void OnClose(rtc::AsyncPacketSocket* socket, int error);
   void OnReadPacket(rtc::AsyncPacketSocket* socket,
-                    const char* data,
-                    size_t size,
-                    const rtc::SocketAddress& remote_addr,
-                    const int64_t& packet_time_us);
+                    const rtc::ReceivedPacket& packet);
   void OnReadyToSend(rtc::AsyncPacketSocket* socket);
   void OnDestroyed(Connection* c);
 

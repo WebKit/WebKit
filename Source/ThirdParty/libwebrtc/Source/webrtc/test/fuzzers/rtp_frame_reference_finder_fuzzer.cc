@@ -23,7 +23,7 @@ class DataReader {
 
   template <typename T>
   void CopyTo(T* object) {
-    static_assert(std::is_pod<T>(), "");
+    static_assert(std::is_trivial_v<T> && std::is_standard_layout_v<T>, "");
     uint8_t* destination = reinterpret_cast<uint8_t*>(object);
     size_t object_size = sizeof(T);
     size_t num_bytes = std::min(size_ - offset_, object_size);

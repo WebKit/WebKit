@@ -42,6 +42,7 @@
       },
       'slow_peer_connection_unittests': {},
       'svc_tests': {
+        'remove_mixins': ['walleye'],
         'mixins': ['shards-8', 'crosshatch'],
       },
       'system_wrappers_unittests': {},
@@ -54,6 +55,9 @@
       'webrtc_nonparallel_tests': {},
     },
     'android_tests_tryserver_specific': {
+      'video_codec_perf_tests': {
+        'mixins': ['shards-2', 'quick-perf-tests'],
+      },
       'webrtc_perf_tests': {
         'mixins': ['quick-perf-tests'],
       }
@@ -95,13 +99,12 @@
       'shared_screencast_stream_test': {},
     },
     'desktop_tests_try_server_specific': {
-      'video_capture_tests': {
-        'mixins': ['baremetal-try-pool'],
-      },
       'video_codec_perf_tests': {
+        'remove_mixins': ['resultdb-json-format'],
         'mixins': ['quick-perf-tests', 'resultdb-gtest-json-format'],
       },
       'webrtc_perf_tests': {
+        'remove_mixins': ['resultdb-json-format'],
         'mixins': ['quick-perf-tests', 'resultdb-gtest-json-format'],
       }
     },
@@ -155,14 +158,13 @@
       'system_wrappers_unittests': {},
       'test_support_unittests': {},
       'tools_unittests': {},
-      'video_capture_tests': {},
       'video_engine_tests': {
         'mixins': ['shards-4'],
       },
     },
     'ios_simulator_tests': {
       'apprtcmobile_tests': {
-        'mixins': ['xcode_parallelization']
+        'mixins': ['xcodebuild_sim_runner']
       },
       'audio_decoder_unittests': {},
       'common_audio_unittests': {},
@@ -181,10 +183,10 @@
         'mixins': ['shards-6'],
       },
       'sdk_framework_unittests': {
-        'mixins': ['xcode_parallelization']
+        'mixins': ['xcodebuild_sim_runner']
       },
       'sdk_unittests': {
-        'mixins': ['xcode_parallelization']
+        'mixins': ['xcodebuild_sim_runner']
       },
       'svc_tests': {
         'mixins': ['shards-4', 'cores-12'],
@@ -192,7 +194,6 @@
       'system_wrappers_unittests': {},
       'test_support_unittests': {},
       'tools_unittests': {},
-      'video_capture_tests': {},
       'video_engine_tests': {
         'mixins': ['shards-4'],
       },
@@ -231,11 +232,6 @@
         ],
       },
     },
-    'video_capture_tests': {
-      'video_capture_tests': {
-        'mixins': ['baremetal-pool'],
-      }
-    },
   },
 
   ##############################################################################
@@ -250,19 +246,10 @@
       'desktop_tests',
       'desktop_tests_try_server_specific',
     ],
-    'desktop_tests_with_video_capture': [
-      'desktop_tests',
-      'video_capture_tests',
-    ],
     'linux_desktop_tests_tryserver': [
       'desktop_tests',
       'desktop_tests_linux_specific',
       'desktop_tests_try_server_specific',
-    ],
-    'linux_desktop_tests_with_video_capture': [
-      'desktop_tests',
-      'desktop_tests_linux_specific',
-      'video_capture_tests',
     ],
     'linux_tests': [
       'desktop_tests',
@@ -277,9 +264,9 @@
     'ios_simulator_tests_matrix': {
       'ios_simulator_tests': {
         'variants': [
-          'SIM_IPHONE_X_14_5',
           'SIM_IPHONE_X_15_5',
-          'SIM_IPHONE_X_16_2',
+          'SIM_IPHONE_X_16_4',
+          'SIM_IPHONE_14_17_4',
         ],
       },
     },

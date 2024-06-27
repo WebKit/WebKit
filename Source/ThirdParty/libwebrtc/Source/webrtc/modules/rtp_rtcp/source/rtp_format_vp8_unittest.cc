@@ -21,6 +21,18 @@ namespace {
 
 constexpr RtpPacketizer::PayloadSizeLimits kNoSizeLimits;
 
+TEST(RtpPacketizerVp8Test, EmptyPayload) {
+  RTPVideoHeaderVP8 hdr_info;
+  hdr_info.InitRTPVideoHeaderVP8();
+  hdr_info.pictureId = 200;
+  RtpFormatVp8TestHelper helper(&hdr_info, /*payload_len=*/30);
+
+  RtpPacketizer::PayloadSizeLimits limits;
+  limits.max_payload_len = 12;  // Small enough to produce 4 packets.
+  RtpPacketizerVp8 packetizer({}, limits, hdr_info);
+  EXPECT_EQ(packetizer.NumPackets(), 0u);
+}
+
 TEST(RtpPacketizerVp8Test, ResultPacketsAreAlmostEqualSize) {
   RTPVideoHeaderVP8 hdr_info;
   hdr_info.InitRTPVideoHeaderVP8();

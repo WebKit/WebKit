@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "modules/audio_device/include/audio_device.h"
+#include "api/audio/audio_device.h"
 
 #include <algorithm>
 #include <cstring>

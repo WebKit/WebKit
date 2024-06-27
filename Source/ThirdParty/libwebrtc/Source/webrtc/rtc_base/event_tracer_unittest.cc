@@ -50,16 +50,16 @@ class TestStatistics {
 namespace webrtc {
 
 TEST(EventTracerTest, EventTracerDisabled) {
-  { TRACE_EVENT0("test", "EventTracerDisabled"); }
+  { TRACE_EVENT0("webrtc-test", "EventTracerDisabled"); }
   EXPECT_FALSE(TestStatistics::Get()->Count());
   TestStatistics::Get()->Reset();
 }
 
-#if RTC_TRACE_EVENTS_ENABLED
+#if RTC_TRACE_EVENTS_ENABLED && !defined(RTC_USE_PERFETTO)
 TEST(EventTracerTest, ScopedTraceEvent) {
   SetupEventTracer(
       [](const char* /*name*/) {
-        return reinterpret_cast<const unsigned char*>("test");
+        return reinterpret_cast<const unsigned char*>("webrtc-test");
       },
       [](char /*phase*/, const unsigned char* /*category_enabled*/,
          const char* /*name*/, unsigned long long /*id*/, int /*num_args*/,

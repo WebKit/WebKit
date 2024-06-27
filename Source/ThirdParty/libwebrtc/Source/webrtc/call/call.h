@@ -24,7 +24,6 @@
 #include "call/call_config.h"
 #include "call/flexfec_receive_stream.h"
 #include "call/packet_receiver.h"
-#include "call/rtp_transport_controller_send_interface.h"
 #include "call/video_receive_stream.h"
 #include "call/video_send_stream.h"
 #include "rtc_base/copy_on_write_buffer.h"
@@ -57,11 +56,6 @@ class Call {
   };
 
   static std::unique_ptr<Call> Create(const CallConfig& config);
-  static std::unique_ptr<Call> Create(
-      const CallConfig& config,
-      Clock* clock,
-      std::unique_ptr<RtpTransportControllerSendInterface>
-          transportControllerSend);
 
   virtual AudioSendStream* CreateAudioSendStream(
       const AudioSendStream::Config& config) = 0;

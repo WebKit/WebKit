@@ -18,6 +18,8 @@
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/video_codecs/video_codec.h"
@@ -62,6 +64,7 @@ VideoCodec DefaultCodecSettings() {
   codec_settings.height = kHeight;
   codec_settings.maxFramerate = kFramerate;
   codec_settings.maxBitrate = 1000;
+  codec_settings.startBitrate = 1;
   codec_settings.qpMax = 63;
   return codec_settings;
 }
@@ -133,8 +136,9 @@ class TestAv1Decoder {
 };
 
 TEST(LibaomAv1Test, EncodeDecode) {
+  const Environment env = CreateEnvironment();
   TestAv1Decoder decoder(0);
-  std::unique_ptr<VideoEncoder> encoder = CreateLibaomAv1Encoder();
+  std::unique_ptr<VideoEncoder> encoder = CreateLibaomAv1Encoder(env);
   VideoCodec codec_settings = DefaultCodecSettings();
   ASSERT_EQ(encoder->InitEncode(&codec_settings, DefaultEncoderSettings()),
             WEBRTC_VIDEO_CODEC_OK);
@@ -215,7 +219,8 @@ TEST_P(LibaomAv1SvcTest, EncodeAndDecodeAllDecodeTargets) {
   size_t num_decode_targets =
       svc_controller->DependencyStructure().num_decode_targets;
 
-  std::unique_ptr<VideoEncoder> encoder = CreateLibaomAv1Encoder();
+  std::unique_ptr<VideoEncoder> encoder =
+      CreateLibaomAv1Encoder(CreateEnvironment());
   VideoCodec codec_settings = DefaultCodecSettings();
   codec_settings.SetScalabilityMode(GetParam().GetScalabilityMode());
   ASSERT_EQ(encoder->InitEncode(&codec_settings, DefaultEncoderSettings()),
@@ -286,7 +291,8 @@ TEST_P(LibaomAv1SvcTest, SetRatesMatchMeasuredBitrate) {
                           kv.second.bps());
   }
 
-  std::unique_ptr<VideoEncoder> encoder = CreateLibaomAv1Encoder();
+  std::unique_ptr<VideoEncoder> encoder =
+      CreateLibaomAv1Encoder(CreateEnvironment());
   ASSERT_TRUE(encoder);
   VideoCodec codec_settings = DefaultCodecSettings();
   codec_settings.SetScalabilityMode(param.GetScalabilityMode());
@@ -350,7 +356,8 @@ INSTANTIATE_TEST_SUITE_P(
            SvcTestParam{"L3T1", /*num_frames_to_generate=*/3},
            SvcTestParam{"L3T3", /*num_frames_to_generate=*/8},
            SvcTestParam{"S2T1", /*num_frames_to_generate=*/3},
-           SvcTestParam{"S3T3", /*num_frames_to_generate=*/8},
+           // TODO: bugs.webrtc.org/15715 - Re-enable once AV1 is fixed.
+           // SvcTestParam{"S3T3", /*num_frames_to_generate=*/8},
            SvcTestParam{"L2T2", /*num_frames_to_generate=*/4},
            SvcTestParam{"L2T2_KEY", /*num_frames_to_generate=*/4},
            SvcTestParam{"L2T2_KEY_SHIFT",

@@ -16,6 +16,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/net_helpers.h"
+#include "rtc_base/thread.h"
 
 namespace {
 

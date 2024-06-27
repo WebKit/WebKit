@@ -126,7 +126,9 @@ absl::optional<SctpPacket> SctpPacket::Parse(rtc::ArrayView<const uint8_t> data,
       std::vector<uint8_t>(data.begin(), data.end());
 
   if (options.disable_checksum_verification ||
-      (options.enable_zero_checksum && common_header.checksum == 0u)) {
+      (options.zero_checksum_alternate_error_detection_method !=
+           ZeroChecksumAlternateErrorDetectionMethod::None() &&
+       common_header.checksum == 0u)) {
     // https://www.ietf.org/archive/id/draft-tuexen-tsvwg-sctp-zero-checksum-01.html#section-4.3:
     // If an end point has sent the Zero Checksum Acceptable Chunk Parameter in
     // an INIT or INIT ACK chunk, it MUST accept SCTP packets using an incorrect

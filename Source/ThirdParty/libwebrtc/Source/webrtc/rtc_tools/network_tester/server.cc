@@ -9,6 +9,7 @@
  */
 
 #include "rtc_base/null_socket_server.h"
+#include "rtc_base/thread.h"
 #include "rtc_tools/network_tester/test_controller.h"
 
 int main(int /*argn*/, char* /*argv*/[]) {

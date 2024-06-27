@@ -14,8 +14,8 @@
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/audio/audio_processing.h"
 #include "modules/audio_processing/audio_buffer.h"
-#include "modules/audio_processing/include/audio_processing.h"
 
 namespace webrtc {
 namespace test {

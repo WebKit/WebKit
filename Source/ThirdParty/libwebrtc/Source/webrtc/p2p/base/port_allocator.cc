@@ -11,13 +11,13 @@
 #include "p2p/base/port_allocator.h"
 
 #include <iterator>
+#include <optional>
 #include <set>
 #include <utility>
 
 #include "absl/strings/string_view.h"
 #include "p2p/base/ice_credentials_iterator.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 
 namespace cricket {
 
@@ -68,8 +68,7 @@ PortAllocatorSession::PortAllocatorSession(absl::string_view content_name,
       content_name_(content_name),
       component_(component),
       ice_ufrag_(ice_ufrag),
-      ice_pwd_(ice_pwd),
-      tiebreaker_(0) {
+      ice_pwd_(ice_pwd) {
   // Pooled sessions are allowed to be created with empty content name,
   // component, ufrag and password.
   RTC_DCHECK(ice_ufrag.empty() == ice_pwd.empty());
@@ -101,7 +100,7 @@ PortAllocator::PortAllocator()
       step_delay_(kDefaultStepDelay),
       allow_tcp_listen_(true),
       candidate_filter_(CF_ALL),
-      tiebreaker_(0) {
+      tiebreaker_(rtc::CreateRandomId64()) {
   // The allocator will be attached to a thread in Initialize.
   thread_checker_.Detach();
 }
@@ -189,19 +188,11 @@ bool PortAllocator::SetConfiguration(
     PortAllocatorSession* pooled_session =
         CreateSessionInternal("", 0, iceCredentials.ufrag, iceCredentials.pwd);
     pooled_session->set_pooled(true);
-    pooled_session->set_ice_tiebreaker(tiebreaker_);
     pooled_session->StartGettingPorts();
     pooled_sessions_.push_back(
         std::unique_ptr<PortAllocatorSession>(pooled_session));
   }
   return true;
-}
-
-void PortAllocator::SetIceTiebreaker(uint64_t tiebreaker) {
-  tiebreaker_ = tiebreaker;
-  for (auto& pooled_session : pooled_sessions_) {
-    pooled_session->set_ice_tiebreaker(tiebreaker_);
-  }
 }
 
 std::unique_ptr<PortAllocatorSession> PortAllocator::CreateSession(
@@ -213,7 +204,6 @@ std::unique_ptr<PortAllocatorSession> PortAllocator::CreateSession(
   auto session = std::unique_ptr<PortAllocatorSession>(
       CreateSessionInternal(content_name, component, ice_ufrag, ice_pwd));
   session->SetCandidateFilter(candidate_filter());
-  session->set_ice_tiebreaker(tiebreaker_);
   return session;
 }
 
@@ -312,8 +302,7 @@ Candidate PortAllocator::SanitizeCandidate(const Candidate& c) const {
   // For a local host candidate, we need to conceal its IP address candidate if
   // the mDNS obfuscation is enabled.
   bool use_hostname_address =
-      (c.type() == LOCAL_PORT_TYPE || c.type() == PRFLX_PORT_TYPE) &&
-      MdnsObfuscationEnabled();
+      (c.is_local() || c.is_prflx()) && MdnsObfuscationEnabled();
   // If adapter enumeration is disabled or host candidates are disabled,
   // clear the raddr of STUN candidates to avoid local address leakage.
   bool filter_stun_related_address =
@@ -326,9 +315,9 @@ Candidate PortAllocator::SanitizeCandidate(const Candidate& c) const {
   // Sanitize related_address when using MDNS.
   bool filter_prflx_related_address = MdnsObfuscationEnabled();
   bool filter_related_address =
-      ((c.type() == STUN_PORT_TYPE && filter_stun_related_address) ||
-       (c.type() == RELAY_PORT_TYPE && filter_turn_related_address) ||
-       (c.type() == PRFLX_PORT_TYPE && filter_prflx_related_address));
+      ((c.is_stun() && filter_stun_related_address) ||
+       (c.is_relay() && filter_turn_related_address) ||
+       (c.is_prflx() && filter_prflx_related_address));
   return c.ToSanitizedCopy(use_hostname_address, filter_related_address);
 }
 

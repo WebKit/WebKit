@@ -17,6 +17,8 @@
 #include <memory>
 #include <string>
 
+#include "api/environment/environment.h"
+#include "api/task_queue/task_queue_factory.h"
 #include "api/video/video_content_type.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "modules/video_coding/include/video_codec_interface.h"
@@ -47,8 +49,8 @@ void WriteCounter(unsigned char* payload, uint32_t counter) {
 
 }  // namespace
 
-FakeEncoder::FakeEncoder(Clock* clock)
-    : clock_(clock),
+FakeEncoder::FakeEncoder(const Environment& env)
+    : env_(env),
       num_initializations_(0),
       callback_(nullptr),
       max_target_bitrate_kbps_(-1),
@@ -141,7 +143,7 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
     EncodedImage encoded;
     encoded.SetEncodedData(buffer);
 
-    encoded.SetRtpTimestamp(input_image.timestamp());
+    encoded.SetRtpTimestamp(input_image.rtp_timestamp());
     encoded._frameType = frame_info.keyframe ? VideoFrameType::kVideoFrameKey
                                              : VideoFrameType::kVideoFrameDelta;
     encoded._encodedWidth = simulcast_streams[i].width;
@@ -309,8 +311,8 @@ const VideoCodec& FakeEncoder::config() const {
   return config_;
 }
 
-FakeH264Encoder::FakeH264Encoder(Clock* clock)
-    : FakeEncoder(clock), idr_counter_(0) {}
+FakeH264Encoder::FakeH264Encoder(const Environment& env)
+    : FakeEncoder(env), idr_counter_(0) {}
 
 CodecSpecificInfo FakeH264Encoder::EncodeHook(
     EncodedImage& encoded_image,
@@ -361,8 +363,8 @@ CodecSpecificInfo FakeH264Encoder::EncodeHook(
   return codec_specific;
 }
 
-DelayedEncoder::DelayedEncoder(Clock* clock, int delay_ms)
-    : test::FakeEncoder(clock), delay_ms_(delay_ms) {
+DelayedEncoder::DelayedEncoder(const Environment& env, int delay_ms)
+    : test::FakeEncoder(env), delay_ms_(delay_ms) {
   // The encoder could be created on a different thread than
   // it is being used on.
   sequence_checker_.Detach();
@@ -383,10 +385,8 @@ int32_t DelayedEncoder::Encode(const VideoFrame& input_image,
 }
 
 MultithreadedFakeH264Encoder::MultithreadedFakeH264Encoder(
-    Clock* clock,
-    TaskQueueFactory* task_queue_factory)
-    : test::FakeH264Encoder(clock),
-      task_queue_factory_(task_queue_factory),
+    const Environment& env)
+    : test::FakeH264Encoder(env),
       current_queue_(0),
       queue1_(nullptr),
       queue2_(nullptr) {
@@ -399,9 +399,9 @@ int32_t MultithreadedFakeH264Encoder::InitEncode(const VideoCodec* config,
                                                  const Settings& settings) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
 
-  queue1_ = task_queue_factory_->CreateTaskQueue(
+  queue1_ = env_.task_queue_factory().CreateTaskQueue(
       "Queue 1", TaskQueueFactory::Priority::NORMAL);
-  queue2_ = task_queue_factory_->CreateTaskQueue(
+  queue2_ = env_.task_queue_factory().CreateTaskQueue(
       "Queue 2", TaskQueueFactory::Priority::NORMAL);
 
   return FakeH264Encoder::InitEncode(config, settings);

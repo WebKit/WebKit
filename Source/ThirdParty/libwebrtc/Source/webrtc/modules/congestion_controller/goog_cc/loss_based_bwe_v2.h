@@ -62,6 +62,9 @@ class LossBasedBweV2 {
   // Returns true if loss based BWE is ready to be used in the start phase.
   bool ReadyToUseInStartPhase() const;
 
+  // Returns true if loss based BWE can be used in the start phase.
+  bool UseInStartPhase() const;
+
   // Returns `DataRate::PlusInfinity` if no BWE can be calculated.
   Result GetLossBasedResult() const;
 
@@ -71,6 +74,7 @@ class LossBasedBweV2 {
       rtc::ArrayView<const PacketResult> packet_results,
       DataRate delay_based_estimate,
       bool in_alr);
+  bool PaceAtLossBasedEstimate() const;
 
   // For unit testing only.
   void SetBandwidthEstimate(DataRate bandwidth_estimate);
@@ -83,6 +87,8 @@ class LossBasedBweV2 {
 
   struct Config {
     double bandwidth_rampup_upper_bound_factor = 0.0;
+    double bandwidth_rampup_upper_bound_factor_in_hold = 0;
+    double bandwidth_rampup_hold_threshold = 0;
     double rampup_acceleration_max_factor = 0.0;
     TimeDelta rampup_acceleration_maxout_time = TimeDelta::Zero();
     std::vector<double> candidate_factors;
@@ -111,9 +117,6 @@ class LossBasedBweV2 {
     double max_increase_factor = 0.0;
     TimeDelta delayed_increase_window = TimeDelta::Zero();
     bool not_increase_if_inherent_loss_less_than_average_loss = false;
-    double high_loss_rate_threshold = 1.0;
-    DataRate bandwidth_cap_at_high_loss_rate = DataRate::MinusInfinity();
-    double slope_of_bwe_high_loss_func = 1000.0;
     bool not_use_acked_rate_in_alr = false;
     bool use_in_start_phase = false;
     int min_num_observations = 0;
@@ -121,6 +124,8 @@ class LossBasedBweV2 {
     double hold_duration_factor = 0.0;
     bool use_byte_loss_rate = false;
     TimeDelta padding_duration = TimeDelta::Zero();
+    bool bound_best_candidate = false;
+    bool pace_at_loss_based_estimate = false;
   };
 
   struct Derivatives {
@@ -152,6 +157,12 @@ class LossBasedBweV2 {
     Timestamp padding_timestamp = Timestamp::MinusInfinity();
   };
 
+  struct HoldInfo {
+    Timestamp timestamp = Timestamp::MinusInfinity();
+    TimeDelta duration = TimeDelta::Zero();
+    DataRate rate = DataRate::PlusInfinity();
+  };
+
   static absl::optional<Config> CreateConfig(
       const FieldTrialsView* key_value_config);
   bool IsConfigValid() const;
@@ -180,7 +191,6 @@ class LossBasedBweV2 {
 
   // Returns false if no observation was created.
   bool PushBackObservation(rtc::ArrayView<const PacketResult> packet_results);
-  void UpdateResult();
   bool IsEstimateIncreasingWhenLossLimited(DataRate old_estimate,
                                            DataRate new_estimate);
   bool IsInLossLimitedState() const;
@@ -204,8 +214,7 @@ class LossBasedBweV2 {
   DataRate max_bitrate_ = DataRate::PlusInfinity();
   DataRate delay_based_estimate_ = DataRate::PlusInfinity();
   LossBasedBweV2::Result loss_based_result_ = LossBasedBweV2::Result();
-  Timestamp last_hold_timestamp_ = Timestamp::MinusInfinity();
-  TimeDelta hold_duration_ = TimeDelta::Zero();
+  HoldInfo last_hold_info_ = HoldInfo();
   PaddingInfo last_padding_info_ = PaddingInfo();
 };
 

@@ -29,6 +29,8 @@ using ::testing::ElementsAre;
 using ::testing::IsEmpty;
 using ::testing::SizeIs;
 using ::testing::UnorderedElementsAre;
+using ::webrtc::TimeDelta;
+using ::webrtc::Timestamp;
 
 constexpr size_t kArwnd = 10000;
 constexpr TSN kInitialTSN(11);
@@ -42,8 +44,8 @@ class DataTrackerTest : public testing::Test {
         }),
         timer_(timer_manager_.CreateTimer(
             "test/delayed_ack",
-            []() { return absl::nullopt; },
-            TimerOptions(DurationMs(0)))),
+            []() { return TimeDelta::Zero(); },
+            TimerOptions(TimeDelta::Zero()))),
         tracker_(
             std::make_unique<DataTracker>("log: ", timer_.get(), kInitialTSN)) {
   }
@@ -71,7 +73,7 @@ class DataTrackerTest : public testing::Test {
     tracker_->RestoreFromState(state);
   }
 
-  TimeMs now_ = TimeMs(0);
+  Timestamp now_ = Timestamp::Zero();
   FakeTimeoutManager timeout_manager_;
   TimerManager timer_manager_;
   std::unique_ptr<Timer> timer_;
@@ -782,6 +784,17 @@ TEST_F(DataTrackerTest, DoesNotAcceptGapsWithDuplicateData) {
 
   EXPECT_TRUE(tracker_->Observe(TSN(12)));
   EXPECT_FALSE(tracker_->Observe(TSN(12)));
+}
+
+TEST_F(DataTrackerTest, NotReadyForHandoverWhenHavingTsnGaps) {
+  tracker_->Observe(TSN(10));
+  tracker_->Observe(TSN(12));
+  EXPECT_EQ(tracker_->GetHandoverReadiness(),
+            HandoverReadinessStatus().Add(
+                HandoverUnreadinessReason::kDataTrackerTsnBlocksPending));
+
+  tracker_->Observe(TSN(11));
+  EXPECT_EQ(tracker_->GetHandoverReadiness(), HandoverReadinessStatus());
 }
 
 }  // namespace

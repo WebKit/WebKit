@@ -29,6 +29,8 @@
 
 namespace webrtc {
 
+using CodecParameterMap = std::map<std::string, std::string>;
+
 // These structures are intended to mirror those defined by:
 // http://draft.ortc.org/#rtcrtpdictionaries*
 // Contains everything specified as of 2017 Jan 24.
@@ -165,6 +167,8 @@ struct RTC_EXPORT RtpCodec {
            parameters == o.parameters;
   }
   bool operator!=(const RtpCodec& o) const { return !(*this == o); }
+  bool IsResiliencyCodec() const;
+  bool IsMediaCodec() const;
 };
 
 // RtpCodecCapability is to RtpCodecParameters as RtpCapabilities is to

@@ -14,13 +14,14 @@
 #import "RTCVideoDecoderVP8.h"
 #import "RTCWrappedNativeVideoDecoder.h"
 
+#include "api/environment/environment_factory.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 
 @implementation RTCVideoDecoderVP8
 
 + (id<RTCVideoDecoder>)vp8Decoder {
   return [[RTCWrappedNativeVideoDecoder alloc]
-      initWithNativeDecoder:std::unique_ptr<webrtc::VideoDecoder>(webrtc::VP8Decoder::Create())];
+          initWithNativeDecoder:std::unique_ptr<webrtc::VideoDecoder>(webrtc::CreateVp8Decoder(webrtc::EnvironmentFactory().Create()))];
 }
 
 @end

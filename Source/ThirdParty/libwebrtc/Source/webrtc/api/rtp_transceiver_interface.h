@@ -18,12 +18,12 @@
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/media_types.h"
+#include "api/ref_count.h"
 #include "api/rtp_parameters.h"
 #include "api/rtp_receiver_interface.h"
 #include "api/rtp_sender_interface.h"
 #include "api/rtp_transceiver_direction.h"
 #include "api/scoped_refptr.h"
-#include "rtc_base/ref_count.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -58,7 +58,7 @@ struct RTC_EXPORT RtpTransceiverInit final {
 //
 // WebRTC specification for RTCRtpTransceiver, the JavaScript analog:
 // https://w3c.github.io/webrtc-pc/#dom-rtcrtptransceiver
-class RTC_EXPORT RtpTransceiverInterface : public rtc::RefCountInterface {
+class RTC_EXPORT RtpTransceiverInterface : public webrtc::RefCountInterface {
  public:
   // Media type of the transceiver. Any sender(s)/receiver(s) will have this
   // type as well.

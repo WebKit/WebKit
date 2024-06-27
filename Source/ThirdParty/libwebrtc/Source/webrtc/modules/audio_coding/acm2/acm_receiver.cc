@@ -50,11 +50,7 @@ std::unique_ptr<NetEq> CreateNetEq(
 
 AcmReceiver::Config::Config(
     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory)
-    : clock(*Clock::GetRealTimeClock()), decoder_factory(decoder_factory) {
-  // Post-decode VAD is disabled by default in NetEq, however, Audio
-  // Conference Mixer relies on VAD decisions and fails without them.
-  neteq_config.enable_post_decode_vad = true;
-}
+    : clock(*Clock::GetRealTimeClock()), decoder_factory(decoder_factory) {}
 
 AcmReceiver::Config::Config(const Config&) = default;
 AcmReceiver::Config::~Config() = default;
@@ -155,8 +151,6 @@ int AcmReceiver::InsertPacket(const RTPHeader& rtp_header,
 int AcmReceiver::GetAudio(int desired_freq_hz,
                           AudioFrame* audio_frame,
                           bool* muted) {
-  RTC_DCHECK(muted);
-
   int current_sample_rate_hz = 0;
   if (neteq_->GetAudio(audio_frame, muted, &current_sample_rate_hz) !=
       NetEq::kOK) {
@@ -216,7 +210,7 @@ int AcmReceiver::GetAudio(int desired_freq_hz,
          sizeof(int16_t) * audio_frame->samples_per_channel_ *
              audio_frame->num_channels_);
 
-  call_stats_.DecodedByNetEq(audio_frame->speech_type_, *muted);
+  call_stats_.DecodedByNetEq(audio_frame->speech_type_, audio_frame->muted());
   return 0;
 }
 

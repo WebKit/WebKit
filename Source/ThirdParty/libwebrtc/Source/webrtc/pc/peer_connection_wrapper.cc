@@ -339,8 +339,7 @@ bool PeerConnectionWrapper::IsIceConnected() {
   return observer()->ice_connected_;
 }
 
-rtc::scoped_refptr<const webrtc::RTCStatsReport>
-PeerConnectionWrapper::GetStats() {
+rtc::scoped_refptr<const RTCStatsReport> PeerConnectionWrapper::GetStats() {
   auto callback = rtc::make_ref_counted<MockRTCStatsCollectorCallback>();
   pc()->GetStats(callback.get());
   EXPECT_TRUE_WAIT(callback->called(), kDefaultTimeout);

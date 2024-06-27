@@ -48,6 +48,7 @@ using ::testing::Property;
 using ::testing::Return;
 using ::testing::SizeIs;
 using ::testing::UnorderedElementsAre;
+using ::webrtc::TimeDelta;
 using ResponseResult = ReconfigurationResponseParameter::Result;
 using SkippedStream = AnyForwardTsnChunk::SkippedStream;
 
@@ -57,7 +58,7 @@ constexpr TSN kPeerInitialTsn = MockContext::PeerInitialTsn();
 constexpr ReconfigRequestSN kPeerInitialReqSn =
     ReconfigRequestSN(*kPeerInitialTsn);
 constexpr uint32_t kArwnd = 131072;
-constexpr DurationMs kRto = DurationMs(250);
+constexpr TimeDelta kRto = TimeDelta::Millis(250);
 
 constexpr std::array<uint8_t, 4> kShortPayload = {1, 2, 3, 4};
 
@@ -97,25 +98,23 @@ class StreamResetHandlerTest : public testing::Test {
         }),
         delayed_ack_timer_(timer_manager_.CreateTimer(
             "test/delayed_ack",
-            []() { return absl::nullopt; },
-            TimerOptions(DurationMs(0)))),
+            []() { return TimeDelta::Zero(); },
+            TimerOptions(TimeDelta::Zero()))),
         t3_rtx_timer_(timer_manager_.CreateTimer(
             "test/t3_rtx",
-            []() { return absl::nullopt; },
-            TimerOptions(DurationMs(0)))),
+            []() { return TimeDelta::Zero(); },
+            TimerOptions(TimeDelta::Zero()))),
         data_tracker_(std::make_unique<DataTracker>("log: ",
                                                     delayed_ack_timer_.get(),
                                                     kPeerInitialTsn)),
-        reasm_(std::make_unique<ReassemblyQueue>("log: ",
-                                                 kPeerInitialTsn,
-                                                 kArwnd)),
+        reasm_(std::make_unique<ReassemblyQueue>("log: ", kArwnd)),
         retransmission_queue_(std::make_unique<RetransmissionQueue>(
             "",
             &callbacks_,
             kMyInitialTsn,
             kArwnd,
             producer_,
-            [](DurationMs rtt_ms) {},
+            [](TimeDelta rtt) {},
             []() {},
             *t3_rtx_timer_,
             DcSctpOptions())),
@@ -129,8 +128,8 @@ class StreamResetHandlerTest : public testing::Test {
     EXPECT_CALL(ctx_, current_rto).WillRepeatedly(Return(kRto));
   }
 
-  void AdvanceTime(DurationMs duration) {
-    callbacks_.AdvanceTime(kRto);
+  void AdvanceTime(TimeDelta duration) {
+    callbacks_.AdvanceTime(duration);
     for (;;) {
       absl::optional<TimeoutID> timeout_id = callbacks_.GetNextExpiredTimeout();
       if (!timeout_id.has_value()) {
@@ -200,12 +199,11 @@ class StreamResetHandlerTest : public testing::Test {
     data_tracker_ = std::make_unique<DataTracker>(
         "log: ", delayed_ack_timer_.get(), kPeerInitialTsn);
     data_tracker_->RestoreFromState(state);
-    reasm_ =
-        std::make_unique<ReassemblyQueue>("log: ", kPeerInitialTsn, kArwnd);
+    reasm_ = std::make_unique<ReassemblyQueue>("log: ", kArwnd);
     reasm_->RestoreFromState(state);
     retransmission_queue_ = std::make_unique<RetransmissionQueue>(
-        "", &callbacks_, kMyInitialTsn, kArwnd, producer_,
-        [](DurationMs rtt_ms) {}, []() {}, *t3_rtx_timer_, DcSctpOptions(),
+        "", &callbacks_, kMyInitialTsn, kArwnd, producer_, [](TimeDelta rtt) {},
+        []() {}, *t3_rtx_timer_, DcSctpOptions(),
         /*supports_partial_reliability=*/true,
         /*use_message_interleaving=*/false);
     retransmission_queue_->RestoreFromState(state);

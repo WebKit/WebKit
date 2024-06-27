@@ -56,7 +56,7 @@ private:
     void setOption(int option, int value) final;
     void sendTo(std::span<const uint8_t>, const rtc::SocketAddress&, const rtc::PacketOptions&) final;
 
-    void signalReadPacket(rtc::AsyncPacketSocket*, const char*, size_t, const rtc::SocketAddress&, const rtc::PacketTime&);
+    void signalReadPacket(rtc::AsyncPacketSocket*, const unsigned char*, size_t, const rtc::SocketAddress&, int64_t);
     void signalSentPacket(rtc::AsyncPacketSocket*, const rtc::SentPacket&);
     void signalAddressReady(rtc::AsyncPacketSocket*, const rtc::SocketAddress&);
     void signalConnect(rtc::AsyncPacketSocket*);

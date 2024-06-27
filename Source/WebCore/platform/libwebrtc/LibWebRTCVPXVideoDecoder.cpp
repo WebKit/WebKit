@@ -42,6 +42,7 @@
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
 
+#include <webrtc/api/environment/environment_factory.h>
 #include <webrtc/modules/video_coding/codecs/vp8/include/vp8.h>
 #include <webrtc/modules/video_coding/codecs/vp9/include/vp9.h>
 #include <webrtc/sdk/WebKit/WebKitDecoder.h>
@@ -160,7 +161,7 @@ static UniqueRef<webrtc::VideoDecoder> createInternalDecoder(LibWebRTCVPXVideoDe
 {
     switch (type) {
     case LibWebRTCVPXVideoDecoder::Type::VP8:
-        return makeUniqueRefFromNonNullUniquePtr(webrtc::VP8Decoder::Create());
+        return makeUniqueRefFromNonNullUniquePtr(webrtc::CreateVp8Decoder(webrtc::EnvironmentFactory().Create()));
     case LibWebRTCVPXVideoDecoder::Type::VP9:
         return makeUniqueRefFromNonNullUniquePtr(webrtc::VP9Decoder::Create());
     case LibWebRTCVPXVideoDecoder::Type::VP9_P2:

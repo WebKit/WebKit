@@ -47,9 +47,8 @@ constexpr double EncoderBitrateAdjuster::kDefaultUtilizationFactor;
 EncoderBitrateAdjuster::EncoderBitrateAdjuster(
     const VideoCodec& codec_settings,
     const FieldTrialsView& field_trials)
-    : utilize_bandwidth_headroom_(
-          RateControlSettings::ParseFromKeyValueConfig(&field_trials)
-              .BitrateAdjusterCanUseNetworkHeadroom()),
+    : utilize_bandwidth_headroom_(RateControlSettings(field_trials)
+                                      .BitrateAdjusterCanUseNetworkHeadroom()),
       frames_since_layout_change_(0),
       min_bitrates_bps_{},
       frame_size_pixels_{},

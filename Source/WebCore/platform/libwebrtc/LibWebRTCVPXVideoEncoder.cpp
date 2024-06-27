@@ -73,6 +73,7 @@ private:
     VideoEncoder::PostTaskCallback m_postTaskCallback;
     UniqueRef<webrtc::VideoEncoder> m_internalEncoder;
     int64_t m_timestamp { 0 };
+    int64_t m_timestampOffset { 0 };
     std::optional<uint64_t> m_duration;
     bool m_isClosed { false };
     uint64_t m_width { 0 };
@@ -144,14 +145,14 @@ static UniqueRef<webrtc::VideoEncoder> createInternalEncoder(LibWebRTCVPXVideoEn
 {
     switch (type) {
     case LibWebRTCVPXVideoEncoder::Type::VP8:
-        return makeUniqueRefFromNonNullUniquePtr(webrtc::VP8Encoder::Create());
+        return makeUniqueRefFromNonNullUniquePtr(webrtc::CreateVp8Encoder(webrtc::EnvironmentFactory().Create()));
     case LibWebRTCVPXVideoEncoder::Type::VP9:
-        return makeUniqueRefFromNonNullUniquePtr(webrtc::VP9Encoder::Create());
+        return makeUniqueRefFromNonNullUniquePtr(webrtc::CreateVp9Encoder(webrtc::EnvironmentFactory().Create()));
     case LibWebRTCVPXVideoEncoder::Type::VP9_P2:
-        return makeUniqueRefFromNonNullUniquePtr(webrtc::VP9Encoder::Create(cricket::CreateVideoCodec(webrtc::SdpVideoFormat { cricket::kVp9CodecName, { { "profile-id", "2" } } } )));
+        return makeUniqueRefFromNonNullUniquePtr(webrtc::CreateVp9Encoder(webrtc::EnvironmentFactory().Create(), { webrtc::VP9Profile::kProfile2 }));
 #if ENABLE(AV1)
     case LibWebRTCVPXVideoEncoder::Type::AV1:
-        return makeUniqueRefFromNonNullUniquePtr(webrtc::CreateLibaomAv1Encoder());
+        return makeUniqueRefFromNonNullUniquePtr(webrtc::CreateLibaomAv1Encoder(webrtc::EnvironmentFactory().Create()));
 #endif
     }
 }
@@ -239,6 +240,8 @@ void LibWebRTCVPXInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame,
     if (!m_isInitialized)
         return;
 
+    if (rawFrame.timestamp + m_timestampOffset <= 0)
+        m_timestampOffset = 1 - rawFrame.timestamp;
     m_timestamp = rawFrame.timestamp;
     m_duration = rawFrame.duration;
 
@@ -250,7 +253,7 @@ void LibWebRTCVPXInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame,
     if (m_width != static_cast<size_t>(frameBuffer->width()) || m_height != static_cast<size_t>(frameBuffer->height()))
         frameBuffer = frameBuffer->Scale(m_width, m_height);
 
-    webrtc::VideoFrame frame { frameBuffer, webrtc::kVideoRotation_0, rawFrame.timestamp };
+    webrtc::VideoFrame frame { frameBuffer, webrtc::kVideoRotation_0, rawFrame.timestamp + m_timestampOffset };
     auto error = m_internalEncoder->Encode(frame, &frameTypes);
 
     if (!m_hasEncoded)

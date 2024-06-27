@@ -24,7 +24,9 @@
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/audio/audio_device.h"
 #include "api/audio/audio_mixer.h"
+#include "api/audio/audio_processing.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
@@ -50,8 +52,6 @@
 #include "api/video_codecs/video_encoder_factory_template_libvpx_vp9_adapter.h"
 #include "api/video_codecs/video_encoder_factory_template_open_h264_adapter.h"
 #include "media/base/codec.h"
-#include "modules/audio_device/include/audio_device.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "p2p/base/port_allocator.h"
 #include "pc/peer_connection.h"
 #include "pc/peer_connection_proxy.h"
@@ -64,6 +64,7 @@
 #include "rtc_base/rtc_certificate_generator.h"
 #include "rtc_base/string_encode.h"
 #include "rtc_base/thread.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 #ifdef WEBRTC_ANDROID
 #include "pc/test/android_test_initializer.h"
@@ -80,6 +81,7 @@ using RTCConfiguration = PeerConnectionInterface::RTCConfiguration;
 using RTCOfferAnswerOptions = PeerConnectionInterface::RTCOfferAnswerOptions;
 using ::testing::Bool;
 using ::testing::Combine;
+using ::testing::StartsWith;
 using ::testing::Values;
 
 namespace {
@@ -343,8 +345,7 @@ TEST_P(PeerConnectionSignalingStateTest, CreateOffer) {
   } else {
     std::string error;
     ASSERT_FALSE(wrapper->CreateOffer(RTCOfferAnswerOptions(), &error));
-    EXPECT_PRED_FORMAT2(AssertStartsWith, error,
-                        "CreateOffer called when PeerConnection is closed.");
+    EXPECT_EQ(error, "CreateOffer called when PeerConnection is closed.");
   }
 }
 
@@ -379,9 +380,9 @@ TEST_P(PeerConnectionSignalingStateTest, SetLocalOffer) {
 
     std::string error;
     ASSERT_FALSE(wrapper->SetLocalDescription(std::move(offer), &error));
-    EXPECT_PRED_FORMAT2(
-        AssertStartsWith, error,
-        "Failed to set local offer sdp: Called in wrong state:");
+    EXPECT_THAT(
+        error,
+        StartsWith("Failed to set local offer sdp: Called in wrong state:"));
   }
 }
 
@@ -398,9 +399,9 @@ TEST_P(PeerConnectionSignalingStateTest, SetLocalPrAnswer) {
   } else {
     std::string error;
     ASSERT_FALSE(wrapper->SetLocalDescription(std::move(pranswer), &error));
-    EXPECT_PRED_FORMAT2(
-        AssertStartsWith, error,
-        "Failed to set local pranswer sdp: Called in wrong state:");
+    EXPECT_THAT(
+        error,
+        StartsWith("Failed to set local pranswer sdp: Called in wrong state:"));
   }
 }
 
@@ -416,9 +417,9 @@ TEST_P(PeerConnectionSignalingStateTest, SetLocalAnswer) {
   } else {
     std::string error;
     ASSERT_FALSE(wrapper->SetLocalDescription(std::move(answer), &error));
-    EXPECT_PRED_FORMAT2(
-        AssertStartsWith, error,
-        "Failed to set local answer sdp: Called in wrong state:");
+    EXPECT_THAT(
+        error,
+        StartsWith("Failed to set local answer sdp: Called in wrong state:"));
   }
 }
 
@@ -435,9 +436,9 @@ TEST_P(PeerConnectionSignalingStateTest, SetRemoteOffer) {
   } else {
     std::string error;
     ASSERT_FALSE(wrapper->SetRemoteDescription(std::move(offer), &error));
-    EXPECT_PRED_FORMAT2(
-        AssertStartsWith, error,
-        "Failed to set remote offer sdp: Called in wrong state:");
+    EXPECT_THAT(
+        error,
+        StartsWith("Failed to set remote offer sdp: Called in wrong state:"));
   }
 }
 
@@ -454,9 +455,10 @@ TEST_P(PeerConnectionSignalingStateTest, SetRemotePrAnswer) {
   } else {
     std::string error;
     ASSERT_FALSE(wrapper->SetRemoteDescription(std::move(pranswer), &error));
-    EXPECT_PRED_FORMAT2(
-        AssertStartsWith, error,
-        "Failed to set remote pranswer sdp: Called in wrong state:");
+    EXPECT_THAT(
+        error,
+        StartsWith(
+            "Failed to set remote pranswer sdp: Called in wrong state:"));
   }
 }
 
@@ -472,9 +474,9 @@ TEST_P(PeerConnectionSignalingStateTest, SetRemoteAnswer) {
   } else {
     std::string error;
     ASSERT_FALSE(wrapper->SetRemoteDescription(std::move(answer), &error));
-    EXPECT_PRED_FORMAT2(
-        AssertStartsWith, error,
-        "Failed to set remote answer sdp: Called in wrong state:");
+    EXPECT_THAT(
+        error,
+        StartsWith("Failed to set remote answer sdp: Called in wrong state:"));
   }
 }
 
@@ -896,8 +898,8 @@ TEST_P(PeerConnectionSignalingTest, UnsupportedContentType) {
       "m=bogus 9 FOO 0 8\r\n"
       "c=IN IP4 0.0.0.0\r\n"
       "a=mid:bogusmid\r\n";
-  std::unique_ptr<webrtc::SessionDescriptionInterface> remote_description =
-      webrtc::CreateSessionDescription(SdpType::kOffer, sdp, nullptr);
+  std::unique_ptr<SessionDescriptionInterface> remote_description =
+      CreateSessionDescription(SdpType::kOffer, sdp, nullptr);
 
   EXPECT_TRUE(caller->SetRemoteDescription(std::move(remote_description)));
 
@@ -977,20 +979,17 @@ TEST_P(PeerConnectionSignalingTest, ReceiveFlexFec) {
       "a=ssrc-group:FEC-FR 1224551896 1953032773\r\n"
       "a=ssrc:1224551896 cname:/exJcmhSLpyu9FgV\r\n"
       "a=ssrc:1953032773 cname:/exJcmhSLpyu9FgV\r\n";
-  std::unique_ptr<webrtc::SessionDescriptionInterface> remote_description =
-      webrtc::CreateSessionDescription(SdpType::kOffer, sdp, nullptr);
+  std::unique_ptr<SessionDescriptionInterface> remote_description =
+      CreateSessionDescription(SdpType::kOffer, sdp, nullptr);
 
   EXPECT_TRUE(caller->SetRemoteDescription(std::move(remote_description)));
 
   auto answer = caller->CreateAnswer();
   ASSERT_EQ(answer->description()->contents().size(), 1u);
-  ASSERT_NE(
-      answer->description()->contents()[0].media_description()->as_video(),
-      nullptr);
+  ASSERT_NE(answer->description()->contents()[0].media_description(), nullptr);
   auto codecs = answer->description()
                     ->contents()[0]
                     .media_description()
-                    ->as_video()
                     ->codecs();
   ASSERT_EQ(codecs.size(), 2u);
   EXPECT_EQ(codecs[1].name, "flexfec-03");
@@ -1033,20 +1032,17 @@ TEST_P(PeerConnectionSignalingTest, ReceiveFlexFecReoffer) {
       "a=ssrc-group:FEC-FR 1224551896 1953032773\r\n"
       "a=ssrc:1224551896 cname:/exJcmhSLpyu9FgV\r\n"
       "a=ssrc:1953032773 cname:/exJcmhSLpyu9FgV\r\n";
-  std::unique_ptr<webrtc::SessionDescriptionInterface> remote_description =
-      webrtc::CreateSessionDescription(SdpType::kOffer, sdp, nullptr);
+  std::unique_ptr<SessionDescriptionInterface> remote_description =
+      CreateSessionDescription(SdpType::kOffer, sdp, nullptr);
 
   EXPECT_TRUE(caller->SetRemoteDescription(std::move(remote_description)));
 
   auto answer = caller->CreateAnswer();
   ASSERT_EQ(answer->description()->contents().size(), 1u);
-  ASSERT_NE(
-      answer->description()->contents()[0].media_description()->as_video(),
-      nullptr);
+  ASSERT_NE(answer->description()->contents()[0].media_description(), nullptr);
   auto codecs = answer->description()
                     ->contents()[0]
                     .media_description()
-                    ->as_video()
                     ->codecs();
   ASSERT_EQ(codecs.size(), 2u);
   EXPECT_EQ(codecs[1].name, "flexfec-03");
@@ -1059,7 +1055,6 @@ TEST_P(PeerConnectionSignalingTest, ReceiveFlexFecReoffer) {
   auto offer_codecs = offer->description()
                           ->contents()[0]
                           .media_description()
-                          ->as_video()
                           ->codecs();
   auto flexfec_it = std::find_if(
       offer_codecs.begin(), offer_codecs.end(),
@@ -1104,8 +1099,8 @@ TEST_P(PeerConnectionSignalingTest, MidAttributeMaxLength) {
       "a=rtcp-fb:102 nack\r\n"
       "a=rtcp-fb:102 nack pli\r\n"
       "a=ssrc:1224551896 cname:/exJcmhSLpyu9FgV\r\n";
-  std::unique_ptr<webrtc::SessionDescriptionInterface> remote_description =
-      webrtc::CreateSessionDescription(SdpType::kOffer, sdp, nullptr);
+  std::unique_ptr<SessionDescriptionInterface> remote_description =
+      CreateSessionDescription(SdpType::kOffer, sdp, nullptr);
 
   EXPECT_FALSE(caller->SetRemoteDescription(std::move(remote_description)));
 }
@@ -1339,8 +1334,8 @@ TEST_F(PeerConnectionSignalingUnifiedPlanTest, RtxReofferApt) {
       "a=rtcp-fb:102 nack\r\n"
       "a=rtcp-fb:102 nack pli\r\n"
       "a=ssrc:1224551896 cname:/exJcmhSLpyu9FgV\r\n";
-  std::unique_ptr<webrtc::SessionDescriptionInterface> remote_description =
-      webrtc::CreateSessionDescription(SdpType::kOffer, sdp, nullptr);
+  std::unique_ptr<SessionDescriptionInterface> remote_description =
+      CreateSessionDescription(SdpType::kOffer, sdp, nullptr);
 
   EXPECT_TRUE(callee->SetRemoteDescription(std::move(remote_description)));
 
@@ -1353,7 +1348,6 @@ TEST_F(PeerConnectionSignalingUnifiedPlanTest, RtxReofferApt) {
   auto codecs = reoffer->description()
                     ->contents()[0]
                     .media_description()
-                    ->as_video()
                     ->codecs();
   ASSERT_GT(codecs.size(), 2u);
   EXPECT_EQ(codecs[0].name, "VP8");

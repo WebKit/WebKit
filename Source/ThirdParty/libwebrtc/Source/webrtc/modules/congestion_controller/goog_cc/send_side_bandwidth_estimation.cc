@@ -33,7 +33,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
-#include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -67,21 +66,18 @@ const size_t kNumUmaRampupMetrics =
 
 const char kBweLosExperiment[] = "WebRTC-BweLossExperiment";
 
-bool BweLossExperimentIsEnabled() {
-  std::string experiment_string =
-      webrtc::field_trial::FindFullName(kBweLosExperiment);
-  // The experiment is enabled iff the field trial string begins with "Enabled".
-  return absl::StartsWith(experiment_string, "Enabled");
+bool BweLossExperimentIsEnabled(const FieldTrialsView& field_trials) {
+  return field_trials.IsEnabled(kBweLosExperiment);
 }
 
-bool ReadBweLossExperimentParameters(float* low_loss_threshold,
+bool ReadBweLossExperimentParameters(const FieldTrialsView& field_trials,
+                                     float* low_loss_threshold,
                                      float* high_loss_threshold,
                                      uint32_t* bitrate_threshold_kbps) {
   RTC_DCHECK(low_loss_threshold);
   RTC_DCHECK(high_loss_threshold);
   RTC_DCHECK(bitrate_threshold_kbps);
-  std::string experiment_string =
-      webrtc::field_trial::FindFullName(kBweLosExperiment);
+  std::string experiment_string = field_trials.Lookup(kBweLosExperiment);
   int parsed_values =
       sscanf(experiment_string.c_str(), "Enabled-%f,%f,%u", low_loss_threshold,
              high_loss_threshold, bitrate_threshold_kbps);
@@ -113,14 +109,6 @@ bool ReadBweLossExperimentParameters(float* low_loss_threshold,
 }
 }  // namespace
 
-LinkCapacityTracker::LinkCapacityTracker()
-    : tracking_rate("rate", TimeDelta::Seconds(10)) {
-  ParseFieldTrial({&tracking_rate},
-                  field_trial::FindFullName("WebRTC-Bwe-LinkCapacity"));
-}
-
-LinkCapacityTracker::~LinkCapacityTracker() {}
-
 void LinkCapacityTracker::UpdateDelayBasedEstimate(
     Timestamp at_time,
     DataRate delay_based_bitrate) {
@@ -145,7 +133,8 @@ void LinkCapacityTracker::OnRateUpdate(absl::optional<DataRate> acknowledged,
   DataRate acknowledged_target = std::min(*acknowledged, target);
   if (acknowledged_target.bps() > capacity_estimate_bps_) {
     TimeDelta delta = at_time - last_link_capacity_update_;
-    double alpha = delta.IsFinite() ? exp(-(delta / tracking_rate.Get())) : 0;
+    double alpha =
+        delta.IsFinite() ? exp(-(delta / TimeDelta::Seconds(10))) : 0;
     capacity_estimate_bps_ = alpha * capacity_estimate_bps_ +
                              (1 - alpha) * acknowledged_target.bps<double>();
   }
@@ -203,9 +192,9 @@ TimeDelta RttBasedBackoff::CorrectedRtt() const {
 RttBasedBackoff::~RttBasedBackoff() = default;
 
 SendSideBandwidthEstimation::SendSideBandwidthEstimation(
-    const FieldTrialsView* key_value_config,
-    RtcEventLog* event_log)
-    : rtt_backoff_(key_value_config),
+    const FieldTrialsView* key_value_config, RtcEventLog* event_log)
+    : key_value_config_(key_value_config),
+      rtt_backoff_(key_value_config),
       lost_packets_since_last_loss_update_(0),
       expected_packets_since_last_loss_update_(0),
       current_target_(DataRate::Zero()),
@@ -234,15 +223,15 @@ SendSideBandwidthEstimation::SendSideBandwidthEstimation(
       high_loss_threshold_(kDefaultHighLossThreshold),
       bitrate_threshold_(kDefaultBitrateThreshold),
       loss_based_bandwidth_estimator_v1_(key_value_config),
-      loss_based_bandwidth_estimator_v2_(key_value_config),
+      loss_based_bandwidth_estimator_v2_(new LossBasedBweV2(key_value_config)),
       loss_based_state_(LossBasedState::kDelayBasedEstimate),
       disable_receiver_limit_caps_only_("Disabled") {
   RTC_DCHECK(event_log);
-  if (BweLossExperimentIsEnabled()) {
+  if (BweLossExperimentIsEnabled(*key_value_config_)) {
     uint32_t bitrate_threshold_kbps;
-    if (ReadBweLossExperimentParameters(&low_loss_threshold_,
-                                        &high_loss_threshold_,
-                                        &bitrate_threshold_kbps)) {
+    if (ReadBweLossExperimentParameters(
+            *key_value_config_, &low_loss_threshold_, &high_loss_threshold_,
+            &bitrate_threshold_kbps)) {
       RTC_LOG(LS_INFO) << "Enabled BweLossExperiment with parameters "
                        << low_loss_threshold_ << ", " << high_loss_threshold_
                        << ", " << bitrate_threshold_kbps;
@@ -252,7 +241,7 @@ SendSideBandwidthEstimation::SendSideBandwidthEstimation(
   ParseFieldTrial({&disable_receiver_limit_caps_only_},
                   key_value_config->Lookup("WebRTC-Bwe-ReceiverLimitCapsOnly"));
   if (LossBasedBandwidthEstimatorV2Enabled()) {
-    loss_based_bandwidth_estimator_v2_.SetMinMaxBitrate(
+    loss_based_bandwidth_estimator_v2_->SetMinMaxBitrate(
         min_bitrate_configured_, max_bitrate_configured_);
   }
 }
@@ -281,6 +270,11 @@ void SendSideBandwidthEstimation::OnRouteChange() {
   uma_update_state_ = kNoUpdate;
   uma_rtt_state_ = kNoUpdate;
   last_rtc_event_log_ = Timestamp::MinusInfinity();
+  if (LossBasedBandwidthEstimatorV2Enabled() &&
+      loss_based_bandwidth_estimator_v2_->UseInStartPhase()) {
+    loss_based_bandwidth_estimator_v2_.reset(
+        new LossBasedBweV2(key_value_config_));
+  }
 }
 
 void SendSideBandwidthEstimation::SetBitrates(
@@ -315,8 +309,8 @@ void SendSideBandwidthEstimation::SetMinMaxBitrate(DataRate min_bitrate,
   } else {
     max_bitrate_configured_ = kDefaultMaxBitrate;
   }
-  loss_based_bandwidth_estimator_v2_.SetMinMaxBitrate(min_bitrate_configured_,
-                                                      max_bitrate_configured_);
+  loss_based_bandwidth_estimator_v2_->SetMinMaxBitrate(min_bitrate_configured_,
+                                                       max_bitrate_configured_);
 }
 
 int SendSideBandwidthEstimation::GetMinBitrate() const {
@@ -371,7 +365,7 @@ void SendSideBandwidthEstimation::SetAcknowledgedRate(
         *acknowledged_rate, at_time);
   }
   if (LossBasedBandwidthEstimatorV2Enabled()) {
-    loss_based_bandwidth_estimator_v2_.SetAcknowledgedBitrate(
+    loss_based_bandwidth_estimator_v2_->SetAcknowledgedBitrate(
         *acknowledged_rate);
   }
 }
@@ -386,7 +380,7 @@ void SendSideBandwidthEstimation::UpdateLossBasedEstimator(
         report.packet_feedbacks, report.feedback_time);
   }
   if (LossBasedBandwidthEstimatorV2Enabled()) {
-    loss_based_bandwidth_estimator_v2_.UpdateBandwidthEstimate(
+    loss_based_bandwidth_estimator_v2_->UpdateBandwidthEstimate(
         report.packet_feedbacks, delay_based_limit_, in_alr);
     UpdateEstimate(report.feedback_time);
   }
@@ -492,7 +486,7 @@ void SendSideBandwidthEstimation::UpdateEstimate(Timestamp at_time) {
   // We trust the REMB and/or delay-based estimate during the first 2 seconds if
   // we haven't had any packet loss reported, to allow startup bitrate probing.
   if (last_fraction_loss_ == 0 && IsInStartPhase(at_time) &&
-      !loss_based_bandwidth_estimator_v2_.ReadyToUseInStartPhase()) {
+      !loss_based_bandwidth_estimator_v2_->ReadyToUseInStartPhase()) {
     DataRate new_bitrate = current_target_;
     // TODO(srte): We should not allow the new_bitrate to be larger than the
     // receiver limit here.
@@ -534,7 +528,7 @@ void SendSideBandwidthEstimation::UpdateEstimate(Timestamp at_time) {
 
   if (LossBasedBandwidthEstimatorV2ReadyForUse()) {
     LossBasedBweV2::Result result =
-        loss_based_bandwidth_estimator_v2_.GetLossBasedResult();
+        loss_based_bandwidth_estimator_v2_->GetLossBasedResult();
     loss_based_state_ = result.state;
     UpdateTargetBitrate(result.bandwidth_estimate, at_time);
     return;
@@ -695,13 +689,17 @@ bool SendSideBandwidthEstimation::LossBasedBandwidthEstimatorV1ReadyForUse()
 }
 
 bool SendSideBandwidthEstimation::LossBasedBandwidthEstimatorV2Enabled() const {
-  return loss_based_bandwidth_estimator_v2_.IsEnabled();
+  return loss_based_bandwidth_estimator_v2_->IsEnabled();
 }
 
 bool SendSideBandwidthEstimation::LossBasedBandwidthEstimatorV2ReadyForUse()
     const {
-  return LossBasedBandwidthEstimatorV2Enabled() &&
-         loss_based_bandwidth_estimator_v2_.IsReady();
+  return loss_based_bandwidth_estimator_v2_->IsReady();
+}
+
+bool SendSideBandwidthEstimation::PaceAtLossBasedEstimate() const {
+  return LossBasedBandwidthEstimatorV2ReadyForUse() &&
+         loss_based_bandwidth_estimator_v2_->PaceAtLossBasedEstimate();
 }
 
 }  // namespace webrtc

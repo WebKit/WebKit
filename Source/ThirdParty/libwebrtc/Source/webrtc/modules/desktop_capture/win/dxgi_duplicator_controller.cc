@@ -500,6 +500,13 @@ bool DxgiDuplicatorController::EnsureFrameCaptured(Context* context,
     // ensure the video adapter has time to update the screen.
     webrtc::SleepMs(ms_per_frame);
   }
+  // When capturing multiple monitors, we need to update the captured region to
+  // prevent flickering by re-setting context. See
+  // https://crbug.com/webrtc/15718 for details.
+  if (shared_frame != target) {
+    context->Reset();
+    Setup(context);
+  }
   return true;
 }
 

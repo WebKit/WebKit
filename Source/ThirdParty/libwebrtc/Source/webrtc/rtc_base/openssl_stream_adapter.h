@@ -148,7 +148,7 @@ class OpenSSLStreamAdapter final : public SSLStreamAdapter,
     SSL_CLOSED       // Clean close
   };
 
-  void OnEvent(StreamInterface* stream, int events, int err);
+  void OnEvent(int events, int err);
 
   void PostEvent(int events, int err);
   void SetTimeout(int delay_ms);
@@ -223,6 +223,10 @@ class OpenSSLStreamAdapter final : public SSLStreamAdapter,
   // Our key and certificate.
 #ifdef OPENSSL_IS_BORINGSSL
   std::unique_ptr<BoringSSLIdentity> identity_;
+  // We check and store the `WebRTC-PermuteTlsClientHello` field trial config in
+  // the constructor for convenience to allow tests to apply different
+  // configurations across instances.
+  const bool permute_extension_;
 #else
   std::unique_ptr<OpenSSLIdentity> identity_;
 #endif

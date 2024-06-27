@@ -252,6 +252,10 @@ class RTPSenderVideo : public RTPVideoFrameSenderInterface {
 
   const rtc::scoped_refptr<RTPSenderVideoFrameTransformerDelegate>
       frame_transformer_delegate_;
+
+  // Whether to do two-pass packetization for AV1 which leads to a set of
+  // packets with more even size distribution.
+  const bool enable_av1_even_split_;
 };
 
 }  // namespace webrtc

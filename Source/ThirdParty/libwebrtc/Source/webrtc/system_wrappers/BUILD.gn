@@ -31,7 +31,6 @@ rtc_library("system_wrappers") {
   defines = []
   libs = []
   deps = [
-    ":field_trial",
     "../api:array_view",
     "../api/units:timestamp",
     "../modules:module_api_public",

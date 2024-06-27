@@ -19,11 +19,11 @@
 #include "absl/strings/match.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/pacing/bitrate_prober.h"
-#include "modules/pacing/interval_budget.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -44,8 +44,6 @@ bool IsEnabled(const FieldTrialsView& field_trials, absl::string_view key) {
 
 }  // namespace
 
-const TimeDelta PacingController::kMaxExpectedQueueLength =
-    TimeDelta::Millis(2000);
 const TimeDelta PacingController::kPausedProcessInterval =
     kCongestedPacketInterval;
 const TimeDelta PacingController::kMinSleepTime = TimeDelta::Millis(1);
@@ -57,11 +55,13 @@ const TimeDelta PacingController::kMaxEarlyProbeProcessing =
 
 PacingController::PacingController(Clock* clock,
                                    PacketSender* packet_sender,
-                                   const FieldTrialsView& field_trials)
+                                   const FieldTrialsView& field_trials,
+                                   Configuration configuration)
     : clock_(clock),
       packet_sender_(packet_sender),
       field_trials_(field_trials),
       drain_large_queues_(
+          configuration.drain_large_queues &&
           !IsDisabled(field_trials_, "WebRTC-Pacer-DrainQueue")),
       send_padding_if_silent_(
           IsEnabled(field_trials_, "WebRTC-Pacer-PadInSilence")),
@@ -71,9 +71,10 @@ PacingController::PacingController(Clock* clock,
       fast_retransmissions_(
           IsEnabled(field_trials_, "WebRTC-Pacer-FastRetransmissions")),
       keyframe_flushing_(
+          configuration.keyframe_flushing ||
           IsEnabled(field_trials_, "WebRTC-Pacer-KeyframeFlushing")),
       transport_overhead_per_packet_(DataSize::Zero()),
-      send_burst_interval_(TimeDelta::Zero()),
+      send_burst_interval_(configuration.send_burst_interval),
       last_timestamp_(clock_->CurrentTime()),
       paused_(false),
       media_debt_(DataSize::Zero()),
@@ -86,9 +87,11 @@ PacingController::PacingController(Clock* clock,
       last_process_time_(clock->CurrentTime()),
       last_send_time_(last_process_time_),
       seen_first_packet_(false),
-      packet_queue_(/*creation_time=*/last_process_time_),
+      packet_queue_(/*creation_time=*/last_process_time_,
+                    configuration.prioritize_audio_retransmission,
+                    configuration.packet_queue_ttl),
       congested_(false),
-      queue_time_limit_(kMaxExpectedQueueLength),
+      queue_time_limit_(configuration.queue_time_limit),
       account_for_audio_(false),
       include_overhead_(false),
       circuit_breaker_threshold_(1 << 16) {
@@ -247,6 +250,10 @@ void PacingController::SetTransportOverhead(DataSize overhead_per_packet) {
 
 void PacingController::SetSendBurstInterval(TimeDelta burst_interval) {
   send_burst_interval_ = burst_interval;
+}
+
+void PacingController::SetAllowProbeWithoutMediaPacket(bool allow) {
+  prober_.SetAllowProbeWithoutMediaPacket(allow);
 }
 
 TimeDelta PacingController::ExpectedQueueTime() const {
@@ -710,8 +717,7 @@ Timestamp PacingController::NextUnpacedSendTime() const {
   }
   if (fast_retransmissions_) {
     Timestamp leading_retransmission_send_time =
-        packet_queue_.LeadingPacketEnqueueTime(
-            RtpPacketMediaType::kRetransmission);
+        packet_queue_.LeadingPacketEnqueueTimeForRetransmission();
     if (leading_retransmission_send_time.IsFinite()) {
       return leading_retransmission_send_time;
     }

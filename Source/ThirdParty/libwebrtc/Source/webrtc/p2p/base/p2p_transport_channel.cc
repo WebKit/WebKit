@@ -28,14 +28,12 @@
 #include "api/field_trials_view.h"
 #include "api/units/time_delta.h"
 #include "logging/rtc_event_log/ice_logger.h"
-#include "p2p/base/basic_async_resolver_factory.h"
 #include "p2p/base/basic_ice_controller.h"
 #include "p2p/base/connection.h"
 #include "p2p/base/connection_info.h"
 #include "p2p/base/port.h"
 #include "p2p/base/wrapping_active_ice_controller.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/crc32.h"
 #include "rtc_base/experiments/struct_parameters_parser.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/logging.h"
@@ -47,7 +45,13 @@
 #include "rtc_base/trace_event.h"
 #include "system_wrappers/include/metrics.h"
 
+namespace cricket {
 namespace {
+using ::webrtc::IceCandidateType;
+using ::webrtc::RTCError;
+using ::webrtc::RTCErrorType;
+using ::webrtc::SafeTask;
+using ::webrtc::TimeDelta;
 
 cricket::PortInterface::CandidateOrigin GetOrigin(
     cricket::PortInterface* port,
@@ -93,14 +97,7 @@ rtc::RouteEndpoint CreateRouteEndpointFromCandidate(
                             uses_turn);
 }
 
-using ::webrtc::RTCError;
-using ::webrtc::RTCErrorType;
-using ::webrtc::SafeTask;
-using ::webrtc::TimeDelta;
-
 }  // unnamed namespace
-
-namespace cricket {
 
 bool IceCredentialsChanged(absl::string_view old_ufrag,
                            absl::string_view old_pwd,
@@ -117,25 +114,11 @@ std::unique_ptr<P2PTransportChannel> P2PTransportChannel::Create(
     absl::string_view transport_name,
     int component,
     webrtc::IceTransportInit init) {
-  // TODO(bugs.webrtc.org/12598): Remove pragma and fallback once
-  // async_resolver_factory is gone
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  if (init.async_resolver_factory()) {
-    return absl::WrapUnique(new P2PTransportChannel(
-        transport_name, component, init.port_allocator(), nullptr,
-        std::make_unique<webrtc::WrappingAsyncDnsResolverFactory>(
-            init.async_resolver_factory()),
-        init.event_log(), init.ice_controller_factory(),
-        init.active_ice_controller_factory(), init.field_trials()));
-#pragma clang diagnostic pop
-  } else {
-    return absl::WrapUnique(new P2PTransportChannel(
-        transport_name, component, init.port_allocator(),
-        init.async_dns_resolver_factory(), nullptr, init.event_log(),
-        init.ice_controller_factory(), init.active_ice_controller_factory(),
-        init.field_trials()));
-  }
+  return absl::WrapUnique(new P2PTransportChannel(
+      transport_name, component, init.port_allocator(),
+      init.async_dns_resolver_factory(), nullptr, init.event_log(),
+      init.ice_controller_factory(), init.active_ice_controller_factory(),
+      init.field_trials()));
 }
 
 P2PTransportChannel::P2PTransportChannel(
@@ -179,7 +162,7 @@ P2PTransportChannel::P2PTransportChannel(
       error_(0),
       remote_ice_mode_(ICEMODE_FULL),
       ice_role_(ICEROLE_UNKNOWN),
-      tiebreaker_(0),
+      ice_tiebreaker_(0),
       gathering_state_(kIceGatheringNew),
       weak_ping_interval_(GetWeakPingIntervalInFieldTrial(field_trials)),
       config_(RECEIVING_TIMEOUT,
@@ -341,7 +324,7 @@ void P2PTransportChannel::SetIceTiebreaker(uint64_t tiebreaker) {
     return;
   }
 
-  tiebreaker_ = tiebreaker;
+  ice_tiebreaker_ = tiebreaker;
 }
 
 IceTransportState P2PTransportChannel::GetState() const {
@@ -884,21 +867,7 @@ void P2PTransportChannel::MaybeStartGathering() {
                             ice_parameters_.ufrag, ice_parameters_.pwd)) {
     if (gathering_state_ != kIceGatheringGathering) {
       gathering_state_ = kIceGatheringGathering;
-      SignalGatheringState(this);
-    }
-
-    if (!allocator_sessions_.empty()) {
-      IceRestartState state;
-      if (writable()) {
-        state = IceRestartState::CONNECTED;
-      } else if (IsGettingPorts()) {
-        state = IceRestartState::CONNECTING;
-      } else {
-        state = IceRestartState::DISCONNECTED;
-      }
-      RTC_HISTOGRAM_ENUMERATION("WebRTC.PeerConnection.IceRestartState",
-                                static_cast<int>(state),
-                                static_cast<int>(IceRestartState::MAX_VALUE));
+      SendGatheringStateEvent();
     }
 
     for (const auto& session : allocator_sessions_) {
@@ -914,7 +883,6 @@ void P2PTransportChannel::MaybeStartGathering() {
                                       ice_parameters_.ufrag,
                                       ice_parameters_.pwd);
     if (pooled_session) {
-      pooled_session->set_ice_tiebreaker(tiebreaker_);
       AddAllocatorSession(std::move(pooled_session));
       PortAllocatorSession* raw_pooled_session =
           allocator_sessions_.back().get();
@@ -931,7 +899,6 @@ void P2PTransportChannel::MaybeStartGathering() {
       AddAllocatorSession(allocator_->CreateSession(
           transport_name(), component(), ice_parameters_.ufrag,
           ice_parameters_.pwd));
-      allocator_sessions_.back()->set_ice_tiebreaker(tiebreaker_);
       allocator_sessions_.back()->StartGettingPorts();
     }
   }
@@ -959,7 +926,7 @@ void P2PTransportChannel::OnPortReady(PortAllocatorSession* session,
   // if one is pending.
 
   port->SetIceRole(ice_role_);
-  port->SetIceTiebreaker(tiebreaker_);
+  port->SetIceTiebreaker(ice_tiebreaker_);
   ports_.push_back(port);
   port->SignalUnknownAddress.connect(this,
                                      &P2PTransportChannel::OnUnknownAddress);
@@ -996,7 +963,9 @@ void P2PTransportChannel::OnCandidateError(
     PortAllocatorSession* session,
     const IceCandidateErrorEvent& event) {
   RTC_DCHECK(network_thread_ == rtc::Thread::Current());
-  SignalCandidateError(this, event);
+  if (candidate_error_callback_) {
+    candidate_error_callback_(this, event);
+  }
 }
 
 void P2PTransportChannel::OnCandidatesAllocationDone(
@@ -1012,7 +981,7 @@ void P2PTransportChannel::OnCandidatesAllocationDone(
   gathering_state_ = kIceGatheringComplete;
   RTC_LOG(LS_INFO) << "P2PTransportChannel: " << transport_name()
                    << ", component " << component() << " gathering complete";
-  SignalGatheringState(this);
+  SendGatheringStateEvent();
 }
 
 // Handle stun packets
@@ -1102,8 +1071,8 @@ void P2PTransportChannel::OnUnknownAddress(PortInterface* port,
     // candidate.
     remote_candidate = Candidate(
         component(), ProtoToString(proto), address, remote_candidate_priority,
-        remote_username, remote_password, PRFLX_PORT_TYPE, remote_generation,
-        "", network_id, network_cost);
+        remote_username, remote_password, IceCandidateType::kPrflx,
+        remote_generation, "", network_id, network_cost);
     if (proto == PROTO_TCP) {
       remote_candidate.set_tcptype(TCPTYPE_ACTIVE_STR);
     }
@@ -1111,8 +1080,7 @@ void P2PTransportChannel::OnUnknownAddress(PortInterface* port,
     // From RFC 5245, section-7.2.1.3:
     // The foundation of the candidate is set to an arbitrary value, different
     // from the foundation for all other remote candidates.
-    remote_candidate.set_foundation(
-        rtc::ToString(rtc::ComputeCrc32(remote_candidate.id())));
+    remote_candidate.ComputePrflxFoundation();
   }
 
   // RFC5245, the agent constructs a pair whose local candidate is equal to
@@ -1442,11 +1410,13 @@ bool P2PTransportChannel::CreateConnection(PortInterface* port,
   }
 
   if (ice_field_trials_.skip_relay_to_non_relay_connections) {
-    if ((port->Type() != remote_candidate.type()) &&
-        (port->Type() == RELAY_PORT_TYPE ||
-         remote_candidate.type() == RELAY_PORT_TYPE)) {
+    IceCandidateType port_type = port->Type();
+    if ((port_type != remote_candidate.type()) &&
+        (port_type == IceCandidateType::kRelay ||
+         remote_candidate.is_relay())) {
       RTC_LOG(LS_INFO) << ToString() << ": skip creating connection "
-                       << port->Type() << " to " << remote_candidate.type();
+                       << webrtc::IceCandidateTypeToString(port_type) << " to "
+                       << remote_candidate.type_name();
       return false;
     }
   }
@@ -1721,7 +1691,7 @@ void P2PTransportChannel::OnStartedPinging() {
   regathering_controller_->Start();
 }
 
-bool P2PTransportChannel::IsPortPruned(const Port* port) const {
+bool P2PTransportChannel::IsPortPruned(const PortInterface* port) const {
   RTC_DCHECK_RUN_ON(network_thread_);
   return !absl::c_linear_search(ports_, port);
 }
@@ -1735,9 +1705,9 @@ bool P2PTransportChannel::PresumedWritable(const Connection* conn) const {
   RTC_DCHECK_RUN_ON(network_thread_);
   return (conn->write_state() == Connection::STATE_WRITE_INIT &&
           config_.presume_writable_when_fully_relayed &&
-          conn->local_candidate().type() == RELAY_PORT_TYPE &&
-          (conn->remote_candidate().type() == RELAY_PORT_TYPE ||
-           conn->remote_candidate().type() == PRFLX_PORT_TYPE));
+          conn->local_candidate().is_relay() &&
+          (conn->remote_candidate().is_relay() ||
+           conn->remote_candidate().is_prflx()));
 }
 
 void P2PTransportChannel::UpdateState() {
@@ -1784,19 +1754,18 @@ bool P2PTransportChannel::PruneConnections(
 rtc::NetworkRoute P2PTransportChannel::ConfigureNetworkRoute(
     const Connection* conn) {
   RTC_DCHECK_RUN_ON(network_thread_);
-  return {
-      .connected = ReadyToSend(conn),
-      .local = CreateRouteEndpointFromCandidate(
-          /* local= */ true, conn->local_candidate(),
-          /* uses_turn= */
-          conn->port()->Type() == RELAY_PORT_TYPE),
-      .remote = CreateRouteEndpointFromCandidate(
-          /* local= */ false, conn->remote_candidate(),
-          /* uses_turn= */ conn->remote_candidate().type() == RELAY_PORT_TYPE),
-      .last_sent_packet_id = last_sent_packet_id_,
-      .packet_overhead =
-          conn->local_candidate().address().ipaddr().overhead() +
-          GetProtocolOverhead(conn->local_candidate().protocol())};
+  return {.connected = ReadyToSend(conn),
+          .local = CreateRouteEndpointFromCandidate(
+              /* local= */ true, conn->local_candidate(),
+              /* uses_turn= */
+              conn->port()->Type() == IceCandidateType::kRelay),
+          .remote = CreateRouteEndpointFromCandidate(
+              /* local= */ false, conn->remote_candidate(),
+              /* uses_turn= */ conn->remote_candidate().is_relay()),
+          .last_sent_packet_id = last_sent_packet_id_,
+          .packet_overhead =
+              conn->local_candidate().address().ipaddr().overhead() +
+              GetProtocolOverhead(conn->local_candidate().protocol())};
 }
 
 void P2PTransportChannel::SwitchSelectedConnection(
@@ -1869,8 +1838,9 @@ void P2PTransportChannel::SwitchSelectedConnectionInternal(
     } else {
       pair_change.estimated_disconnected_time_ms = 0;
     }
-
-    SignalCandidatePairChanged(pair_change);
+    if (candidate_pair_change_callback_) {
+      candidate_pair_change_callback_(pair_change);
+    }
   }
 
   ++selected_candidate_pair_changes_;
@@ -2200,7 +2170,9 @@ void P2PTransportChannel::OnCandidatesRemoved(
     candidate.set_transport_name(transport_name());
     candidates_to_remove.push_back(candidate);
   }
-  SignalCandidatesRemoved(this, candidates_to_remove);
+  if (candidates_removed_callback_) {
+    candidates_removed_callback_(this, candidates_to_remove);
+  }
 }
 
 void P2PTransportChannel::PruneAllPorts() {
@@ -2240,17 +2212,14 @@ void P2PTransportChannel::OnReadPacket(Connection* connection,
     last_data_received_ms_ =
         std::max(last_data_received_ms_, connection->last_data_received());
 
-    SignalReadPacket(
-        this, reinterpret_cast<const char*>(packet.payload().data()),
-        packet.payload().size(),
-        packet.arrival_time() ? packet.arrival_time()->us() : -1, 0);
+    NotifyPacketReceived(packet);
 
-  // May need to switch the sending connection based on the receiving media
-  // path if this is the controlled side.
-  if (ice_role_ == ICEROLE_CONTROLLED && connection != selected_connection_) {
-    ice_controller_->OnImmediateSwitchRequest(IceSwitchReason::DATA_RECEIVED,
-                                              connection);
-  }
+    // May need to switch the sending connection based on the receiving media
+    // path if this is the controlled side.
+    if (ice_role_ == ICEROLE_CONTROLLED && connection != selected_connection_) {
+      ice_controller_->OnImmediateSwitchRequest(IceSwitchReason::DATA_RECEIVED,
+                                                connection);
+    }
 }
 
 void P2PTransportChannel::OnSentPacket(const rtc::SentPacket& sent_packet) {
@@ -2304,7 +2273,7 @@ Candidate P2PTransportChannel::SanitizeRemoteCandidate(
   bool use_hostname_address = absl::EndsWith(c.address().hostname(), LOCAL_TLD);
   // Remove the address for prflx remote candidates. See
   // https://w3c.github.io/webrtc-stats/#dom-rtcicecandidatestats.
-  use_hostname_address |= c.type() == PRFLX_PORT_TYPE;
+  use_hostname_address |= c.is_prflx();
   return c.ToSanitizedCopy(use_hostname_address,
                            false /* filter_related_address */);
 }

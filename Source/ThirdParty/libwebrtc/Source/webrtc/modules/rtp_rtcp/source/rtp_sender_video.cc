@@ -42,7 +42,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/trace_event.h"
 
 namespace webrtc {
 
@@ -159,7 +158,9 @@ RTPSenderVideo::RTPSenderVideo(const Config& config)
                     config.frame_transformer,
                     rtp_sender_->SSRC(),
                     config.task_queue_factory)
-              : nullptr) {
+              : nullptr),
+      enable_av1_even_split_(
+          config.field_trials->IsEnabled("WebRTC-Video-AV1EvenPayloadSizes")) {
   if (frame_transformer_delegate_)
     frame_transformer_delegate_->Init();
 }
@@ -464,9 +465,6 @@ bool RTPSenderVideo::SendVideo(int payload_type,
                                RTPVideoHeader video_header,
                                TimeDelta expected_retransmission_time,
                                std::vector<uint32_t> csrcs) {
-  TRACE_EVENT_ASYNC_STEP1(
-      "webrtc", "Video", capture_time.ms_or(0), "Send", "type",
-      std::string(VideoFrameTypeToString(video_header.frame_type)));
   RTC_CHECK_RUNS_SERIALIZED(&send_checker_);
 
   if (video_header.frame_type == VideoFrameType::kEmptyFrame)
@@ -642,8 +640,8 @@ bool RTPSenderVideo::SendVideo(int payload_type,
            "one is required since require_frame_encryptor is set";
   }
 
-  std::unique_ptr<RtpPacketizer> packetizer =
-      RtpPacketizer::Create(codec_type, payload, limits, video_header);
+  std::unique_ptr<RtpPacketizer> packetizer = RtpPacketizer::Create(
+      codec_type, payload, limits, video_header, enable_av1_even_split_);
 
   const size_t num_packets = packetizer->NumPackets();
 
@@ -743,8 +741,6 @@ bool RTPSenderVideo::SendVideo(int payload_type,
     send_allocation_ = SendVideoLayersAllocation::kDontSend;
   }
 
-  TRACE_EVENT_ASYNC_END1("webrtc", "Video", capture_time.ms_or(0), "timestamp",
-                         rtp_timestamp);
   return true;
 }
 
@@ -805,9 +801,6 @@ uint8_t RTPSenderVideo::GetTemporalId(const RTPVideoHeader& header) {
       return vp9.temporal_idx;
     }
     uint8_t operator()(const RTPVideoHeaderH264&) { return kNoTemporalIdx; }
-#ifdef WEBRTC_USE_H265
-    uint8_t operator()(const RTPVideoHeaderH265&) { return kNoTemporalIdx; }
-#endif
     uint8_t operator()(const RTPVideoHeaderLegacyGeneric&) {
       return kNoTemporalIdx;
     }

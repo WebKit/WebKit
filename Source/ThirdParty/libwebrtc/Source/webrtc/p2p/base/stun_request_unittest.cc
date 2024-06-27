@@ -79,7 +79,9 @@ class StunRequestThunker : public StunRequest {
  public:
   StunRequestThunker(StunRequestManager& manager, StunRequestTest* test)
       : StunRequest(manager, CreateStunMessage(STUN_BINDING_REQUEST)),
-        test_(test) {}
+        test_(test) {
+    SetAuthenticationRequired(false);
+  }
 
   std::unique_ptr<StunMessage> CreateResponseMessage(StunMessageType type) {
     return CreateStunMessage(type, msg());

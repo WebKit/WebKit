@@ -16,7 +16,6 @@
 
 #include "absl/memory/memory.h"
 #include "api/async_dns_resolver.h"
-#include "api/wrapping_async_dns_resolver.h"
 #include "p2p/base/async_stun_tcp_socket.h"
 #include "rtc_base/async_dns_resolver.h"
 #include "rtc_base/async_tcp_socket.h"
@@ -87,8 +86,6 @@ AsyncListenSocket* BasicPacketSocketFactory::CreateServerTcpSocket(
 AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
     const SocketAddress& local_address,
     const SocketAddress& remote_address,
-    const ProxyInfo& proxy_info,
-    const std::string& user_agent,
     const PacketSocketTcpOptions& tcp_options) {
   Socket* socket =
       socket_factory_->CreateSocket(local_address.family(), SOCK_STREAM);
@@ -118,16 +115,6 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
   if (socket->SetOption(Socket::OPT_NODELAY, 1) != 0) {
     RTC_LOG(LS_ERROR) << "Setting TCP_NODELAY option failed with error "
                       << socket->GetError();
-  }
-
-  // If using a proxy, wrap the socket in a proxy socket.
-  if (proxy_info.type == PROXY_SOCKS5) {
-    socket = new AsyncSocksProxySocket(
-        socket, proxy_info.address, proxy_info.username, proxy_info.password);
-  } else if (proxy_info.type == PROXY_HTTPS) {
-    socket =
-        new AsyncHttpsProxySocket(socket, user_agent, proxy_info.address,
-                                  proxy_info.username, proxy_info.password);
   }
 
   // Assert that at most one TLS option is used.
@@ -179,10 +166,6 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
   }
 
   return tcp_socket;
-}
-
-AsyncResolverInterface* BasicPacketSocketFactory::CreateAsyncResolver() {
-  return new AsyncResolver();
 }
 
 std::unique_ptr<webrtc::AsyncDnsResolverInterface>

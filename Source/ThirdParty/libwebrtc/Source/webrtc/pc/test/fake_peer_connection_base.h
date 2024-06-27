@@ -177,6 +177,8 @@ class FakePeerConnectionBase : public PeerConnectionInternal {
       rtc::scoped_refptr<SetRemoteDescriptionObserverInterface> observer)
       override {}
 
+  bool ShouldFireNegotiationNeededEvent(uint32_t event_id) { return true; }
+
   RTCConfiguration GetConfiguration() override { return RTCConfiguration(); }
 
   RTCError SetConfiguration(
@@ -196,6 +198,9 @@ class FakePeerConnectionBase : public PeerConnectionInternal {
   RTCError SetBitrate(const BitrateSettings& bitrate) override {
     return RTCError(RTCErrorType::UNSUPPORTED_OPERATION, "Not implemented");
   }
+
+  void ReconfigureBandwidthEstimation(
+      const BandwidthEstimationSettings& settings) override {}
 
   void SetAudioPlayout(bool playout) override {}
 
@@ -225,6 +230,8 @@ class FakePeerConnectionBase : public PeerConnectionInternal {
   }
 
   absl::optional<bool> can_trickle_ice_candidates() { return absl::nullopt; }
+
+  void AddAdaptationResource(rtc::scoped_refptr<Resource> resource) {}
 
   bool StartRtcEventLog(std::unique_ptr<RtcEventLogOutput> output,
                         int64_t output_period_ms) override {
@@ -363,7 +370,7 @@ class FakePeerConnectionBase : public PeerConnectionInternal {
   const FieldTrialsView& trials() const override { return field_trials_; }
 
  protected:
-  webrtc::test::ScopedKeyValueConfig field_trials_;
+  test::ScopedKeyValueConfig field_trials_;
 };
 
 }  // namespace webrtc

@@ -49,9 +49,16 @@ class RtpPacketToSend : public RtpPacket {
   webrtc::Timestamp capture_time() const { return capture_time_; }
   void set_capture_time(webrtc::Timestamp time) { capture_time_ = time; }
 
-  void set_packet_type(RtpPacketMediaType type) { packet_type_ = type; }
+  void set_packet_type(RtpPacketMediaType type);
+
   absl::optional<RtpPacketMediaType> packet_type() const {
     return packet_type_;
+  }
+
+  enum class OriginalType { kAudio, kVideo };
+  // Original type does not change if packet type is changed to kRetransmission.
+  absl::optional<OriginalType> original_packet_type() const {
+    return original_packet_type_;
   }
 
   // If this is a retransmission, indicates the sequence number of the original
@@ -63,6 +70,11 @@ class RtpPacketToSend : public RtpPacket {
   absl::optional<uint16_t> retransmitted_sequence_number() const {
     return retransmitted_sequence_number_;
   }
+
+  // If this is a retransmission, indicates the SSRC of the original
+  // media packet that this packet represents.
+  void set_original_ssrc(uint32_t ssrc) { original_ssrc_ = ssrc; }
+  absl::optional<uint32_t> original_ssrc() const { return original_ssrc_; }
 
   void set_allow_retransmission(bool allow_retransmission) {
     allow_retransmission_ = allow_retransmission;
@@ -129,10 +141,21 @@ class RtpPacketToSend : public RtpPacket {
   absl::optional<TimeDelta> time_in_send_queue() const {
     return time_in_send_queue_;
   }
+  // A sequence number guaranteed to be monotically increasing by one for all
+  // packets where transport feedback is expected.
+  absl::optional<int64_t> transport_sequence_number() const {
+    return transport_sequence_number_;
+  }
+  void set_transport_sequence_number(int64_t transport_sequence_number) {
+    transport_sequence_number_ = transport_sequence_number;
+  }
 
  private:
   webrtc::Timestamp capture_time_ = webrtc::Timestamp::Zero();
   absl::optional<RtpPacketMediaType> packet_type_;
+  absl::optional<OriginalType> original_packet_type_;
+  absl::optional<uint32_t> original_ssrc_;
+  absl::optional<int64_t> transport_sequence_number_;
   bool allow_retransmission_ = false;
   absl::optional<uint16_t> retransmitted_sequence_number_;
   rtc::scoped_refptr<rtc::RefCountedBase> additional_data_;

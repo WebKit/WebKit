@@ -15,6 +15,7 @@
 #include <memory>
 #include <utility>
 
+#include "api/environment/environment_factory.h"
 #include "api/transport/network_control.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
@@ -46,11 +47,10 @@ void LogBasedNetworkControllerSimulation::HandleStateUpdate(
 
 void LogBasedNetworkControllerSimulation::ProcessUntil(Timestamp to_time) {
   if (last_process_.IsInfinite()) {
-    NetworkControllerConfig config;
+    NetworkControllerConfig config(CreateEnvironment(&null_event_log_));
     config.constraints.at_time = to_time;
     config.constraints.min_data_rate = DataRate::KilobitsPerSec(30);
     config.constraints.starting_rate = DataRate::KilobitsPerSec(300);
-    config.event_log = &null_event_log_;
     controller_ = factory_->Create(config);
   }
   if (last_process_.IsInfinite() ||

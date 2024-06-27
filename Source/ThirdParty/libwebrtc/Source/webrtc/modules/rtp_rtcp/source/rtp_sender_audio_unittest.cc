@@ -39,7 +39,7 @@ using ::testing::ElementsAreArray;
 class LoopbackTransportTest : public webrtc::Transport {
  public:
   LoopbackTransportTest() {
-    receivers_extensions_.Register<AudioLevel>(kAudioLevelExtensionId);
+    receivers_extensions_.Register<AudioLevelExtension>(kAudioLevelExtensionId);
     receivers_extensions_.Register<AbsoluteCaptureTimeExtension>(
         kAbsoluteCaptureTimeExtensionId);
   }
@@ -102,7 +102,7 @@ TEST_F(RtpSenderAudioTest, SendAudio) {
 
 TEST_F(RtpSenderAudioTest, SendAudioWithAudioLevelExtension) {
   const uint8_t kAudioLevel = 0x5a;
-  rtp_module_->RegisterRtpHeaderExtension(AudioLevel::Uri(),
+  rtp_module_->RegisterRtpHeaderExtension(AudioLevelExtension::Uri(),
                                           kAudioLevelExtensionId);
 
   const char payload_name[] = "PAYLOAD_NAME";
@@ -121,12 +121,11 @@ TEST_F(RtpSenderAudioTest, SendAudioWithAudioLevelExtension) {
   auto sent_payload = transport_.last_sent_packet().payload();
   EXPECT_THAT(sent_payload, ElementsAreArray(payload));
   // Verify AudioLevel extension.
-  bool voice_activity;
-  uint8_t audio_level;
-  EXPECT_TRUE(transport_.last_sent_packet().GetExtension<AudioLevel>(
-      &voice_activity, &audio_level));
-  EXPECT_EQ(kAudioLevel, audio_level);
-  EXPECT_FALSE(voice_activity);
+  AudioLevel audio_level;
+  EXPECT_TRUE(transport_.last_sent_packet().GetExtension<AudioLevelExtension>(
+      &audio_level));
+  EXPECT_EQ(kAudioLevel, audio_level.level());
+  EXPECT_FALSE(audio_level.voice_activity());
 }
 
 TEST_F(RtpSenderAudioTest, SendAudioWithoutAbsoluteCaptureTime) {
@@ -220,6 +219,21 @@ TEST_F(RtpSenderAudioTest, CheckMarkerBitForTelephoneEvents) {
 
   // Marker Bit should be set to 0 for rest of the packets.
   EXPECT_FALSE(transport_.last_sent_packet().Marker());
+}
+
+TEST_F(RtpSenderAudioTest, SendsCsrcs) {
+  const char payload_name[] = "audio";
+  const uint8_t payload_type = 127;
+  ASSERT_EQ(0, rtp_sender_audio_->RegisterAudioPayload(
+                   payload_name, payload_type, 48000, 0, 1500));
+  uint8_t payload[] = {47, 11, 32, 93, 89};
+
+  std::vector<uint32_t> csrcs({123, 456, 789});
+
+  ASSERT_TRUE(rtp_sender_audio_->SendAudio(
+      {.payload = payload, .payload_id = payload_type, .csrcs = csrcs}));
+
+  EXPECT_EQ(transport_.last_sent_packet().Csrcs(), csrcs);
 }
 
 }  // namespace webrtc

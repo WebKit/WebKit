@@ -11,16 +11,17 @@
 #include <bitset>
 #include <string>
 
+#include "absl/base/nullability.h"
 #include "absl/memory/memory.h"
+#include "api/audio/audio_processing.h"
 #include "api/audio/echo_canceller3_factory.h"
 #include "api/audio/echo_detector_creator.h"
 #include "api/task_queue/default_task_queue_factory.h"
+#include "api/task_queue/task_queue_base.h"
 #include "modules/audio_processing/aec_dump/aec_dump_factory.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/test/audio_processing_builder_for_testing.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/numerics/safe_minmax.h"
-#include "rtc_base/task_queue.h"
 #include "system_wrappers/include/field_trial.h"
 #include "test/fuzzers/audio_processing_fuzzer_helper.h"
 #include "test/fuzzers/fuzz_data_helper.h"
@@ -33,9 +34,10 @@ const std::string kFieldTrialNames[] = {
     "WebRTC-Aec3ShortHeadroomKillSwitch",
 };
 
-rtc::scoped_refptr<AudioProcessing> CreateApm(test::FuzzDataHelper* fuzz_data,
-                                              std::string* field_trial_string,
-                                              rtc::TaskQueue* worker_queue) {
+rtc::scoped_refptr<AudioProcessing> CreateApm(
+    test::FuzzDataHelper* fuzz_data,
+    std::string* field_trial_string,
+    absl::Nonnull<TaskQueueBase*> worker_queue) {
   // Parse boolean values for optionally enabling different
   // configurable public components of APM.
   bool use_ts = fuzz_data->ReadOrDefaultValue(true);
@@ -134,9 +136,10 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   // for field_trial.h. Hence it's created here and not in CreateApm.
   std::string field_trial_string = "";
 
-  rtc::TaskQueue worker_queue(GetTaskQueueFactory()->CreateTaskQueue(
-      "rtc-low-prio", rtc::TaskQueue::Priority::LOW));
-  auto apm = CreateApm(&fuzz_data, &field_trial_string, &worker_queue);
+  std::unique_ptr<TaskQueueBase, TaskQueueDeleter> worker_queue =
+      GetTaskQueueFactory()->CreateTaskQueue("rtc-low-prio",
+                                             TaskQueueFactory::Priority::LOW);
+  auto apm = CreateApm(&fuzz_data, &field_trial_string, worker_queue.get());
 
   if (apm) {
     FuzzAudioProcessing(&fuzz_data, std::move(apm));
