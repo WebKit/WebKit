@@ -33,23 +33,24 @@ class LinuxChromeDriver(LinuxBrowserDriver):
     browser_name = 'chrome'
     process_search_list = ['chromium', 'chromium-browser', 'chrome', 'google-chrome']
 
+    def prepare_env(self, config):
+        super().prepare_env(config)
+        self._default_browser_arguments = ['--start-maximized', '--disable-extensions', '--no-first-run', '--no-default-browser-check']
+
     def launch_url(self, url, options, browser_build_path, browser_path):
-        self._default_browser_arguments = ['--temp-profile', '--start-maximized',
-                                   '--homepage', url]
-        super(LinuxChromeDriver, self).launch_url(url, options, browser_build_path, browser_path)
+        self._default_browser_arguments += ['--homepage', url]
+        super().launch_url(url, options, browser_build_path, browser_path)
 
     def launch_driver(self, url, options, browser_build_path):
         from selenium import webdriver
         from selenium.webdriver.chrome.options import Options
         options = Options()
-        options.add_argument("--disable-web-security")
-        options.add_argument("--user-data-dir")
-        options.add_argument("--disable-extensions")
-        options.add_argument("--start-maximized")
+        for option_switch in self._default_browser_arguments:
+            options.add_argument(option_switch)
         if browser_build_path:
             binary_path = os.path.join(browser_build_path, 'chromium-browser')
             options.binary_location = binary_path
         driver_executable = self.webdriver_binary_path
         driver = webdriver.Chrome(chrome_options=options, executable_path=driver_executable)
-        super(LinuxChromeDriver, self).launch_webdriver(url, driver)
+        super().launch_webdriver(url, driver)
         return driver
