@@ -46,11 +46,11 @@
 #import <pal/cf/AudioToolboxSoftLink.h>
 #import <pal/cf/CoreMediaSoftLink.h>
 
+namespace WebCore {
+
 #if ENABLE(VORBIS)
 constexpr uint32_t kAudioFormatVorbis = 'vorb';
 #endif
-
-namespace WebCore {
 
 #if ENABLE(OPUS) || ENABLE(VORBIS)
 
