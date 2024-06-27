@@ -1637,7 +1637,9 @@ std::optional<SimpleRange> AccessibilityObject::rangeForCharacterRange(const Cha
 
 VisiblePositionRange AccessibilityObject::lineRangeForPosition(const VisiblePosition& visiblePosition) const
 {
-    return { startOfLine(visiblePosition), endOfLine(visiblePosition) };
+    VisiblePosition startPosition = startOfLine(visiblePosition);
+    VisiblePosition endPosition = nextLineEndPosition(startPosition);
+    return { startPosition, endPosition };
 }
 
 #if PLATFORM(MAC)
