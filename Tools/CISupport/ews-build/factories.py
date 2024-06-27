@@ -229,11 +229,12 @@ class iOSTestsFactory(TestFactory):
 
 
 class visionOSBuildFactory(BuildFactory):
-    pass
+    branches = [r'main']
 
 
 class visionOSEmbeddedBuildFactory(BuildFactory):
     skipUpload = True
+    branches = [r'main']
 
 
 class visionOSTestsFactory(TestFactory):
