@@ -56,7 +56,7 @@ PAS_IGNORE_CLANG_WARNINGS_BEGIN("qualifier-requires-header")
 PAS_BEGIN_EXTERN_C;
 
 #if defined(__has_include)
-#if __has_include(<WebKitAdditions/pas_utils_additions.h>)
+#if __has_include(<WebKitAdditions/pas_utils_additions.h>) && !PAS_ENABLE_TESTING
 #include <WebKitAdditions/pas_utils_additions.h>
 #endif
 #endif
