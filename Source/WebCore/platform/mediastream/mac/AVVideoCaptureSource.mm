@@ -795,18 +795,24 @@ void AVVideoCaptureSource::setFrameRateAndZoomWithPreset(double requestedFrameRa
     setSessionSizeFrameRateAndZoom();
 }
 
-static bool isSameFrameRateRange(AVFrameRateRange* a, AVFrameRateRange* b)
+static bool isFrameRateMatching(double frameRate, AVCaptureDevice* device)
 {
-    return a.minFrameRate == b.minFrameRate && a.maxFrameRate == b.maxFrameRate && !PAL::CMTimeCompare(a.minFrameDuration, b.minFrameDuration) && !PAL::CMTimeCompare(a.maxFrameDuration, b.maxFrameDuration);
+    auto activeVideoMinFrameDuration = device.activeVideoMinFrameDuration;
+    auto activeVideoMaxFrameDuration = device.activeVideoMaxFrameDuration;
+    if (CMTIME_IS_INVALID(activeVideoMinFrameDuration) || CMTIME_IS_INVALID(activeVideoMaxFrameDuration))
+        return false;
+
+    auto frameDuration = PAL::CMTimeMake(1, frameRate);
+    return PAL::CMTimeCompare(frameDuration, activeVideoMinFrameDuration) >= 0 && PAL::CMTimeCompare(frameDuration, activeVideoMaxFrameDuration) <= 0;
 }
 
-bool AVVideoCaptureSource::areSettingsMatching(AVFrameRateRange* frameRateRange) const
+bool AVVideoCaptureSource::areSettingsMatching() const
 {
     return m_appliedPreset && m_appliedPreset->format() == m_currentPreset->format() &&
 #if PLATFORM(IOS_FAMILY)
         device().videoZoomFactor == m_currentZoom &&
 #endif
-        isSameFrameRateRange(m_appliedFrameRateRange.get(), frameRateRange);
+        isFrameRateMatching(m_currentFrameRate, device());
 }
 
 void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
@@ -824,10 +830,7 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
 #endif
     );
 
-    auto* frameRateRange = frameDurationForFrameRate(m_currentFrameRate);
-    ASSERT(frameRateRange);
-
-    if (areSettingsMatching(frameRateRange)) {
+    if (areSettingsMatching()) {
         ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, " settings already match");
         return;
     }
@@ -851,6 +854,8 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
         [m_videoOutput setVideoSettings:settingsDictionary];
 #endif
 
+        auto* frameRateRange = frameDurationForFrameRate(m_currentFrameRate);
+        ASSERT(frameRateRange);
         if (frameRateRange) {
             m_currentFrameRate = clampTo(m_currentFrameRate, frameRateRange.minFrameRate, frameRateRange.maxFrameRate);
 
@@ -874,7 +879,6 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
         }
 #endif
 
-        m_appliedFrameRateRange = frameRateRange;
         m_appliedPreset = m_currentPreset;
     } @catch(NSException *exception) {
         ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "error configuring device ", exception.name, ", reason : ", exception.reason);
