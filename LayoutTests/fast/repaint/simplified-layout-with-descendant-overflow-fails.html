@@ -1,0 +1,60 @@
+<style>
+div {
+  width: 20px;
+  height: 20px;
+  background-color: green;
+}
+
+.descendant {
+  transform: translateY(20px);
+}
+
+.transform {
+  transform: translate(0px);
+}
+</style>
+PASS if green boxes are aligned.
+<div class=transform>
+  <div style="position: relative;">
+    <div class=descendant></div>
+  </div>
+</div>
+<div class=transform style="margin-top: 20px;">
+  <div>
+    <div class=descendant></div>
+  </div>
+</div>
+<div class=transform style="margin-top: 20px;">
+  <div class=descendant></div>
+</div>
+<pre id=repaints></pre>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  [...document.getElementsByClassName("transform")].forEach(translateThis => {
+    translateThis.style.transform = "translate(100px)";
+  });
+
+  await UIHelper.renderingUpdate();
+
+  if (window.internals) {
+    repaints.innerHTML = window.internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+  }
+  
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

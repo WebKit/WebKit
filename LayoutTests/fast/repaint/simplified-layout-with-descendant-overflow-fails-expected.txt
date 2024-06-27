@@ -1,0 +1,18 @@
+PASS if green boxes are aligned.
+(repaint rects
+  (rect 8 26 20 20)
+  (rect 108 26 20 20)
+  (rect 8 26 20 20)
+  (rect 108 26 20 20)
+  (rect 8 46 20 20)
+  (rect 108 46 20 20)
+  (rect 8 66 20 20)
+  (rect 108 66 20 20)
+  (rect 8 86 20 20)
+  (rect 108 86 20 20)
+  (rect 8 106 20 20)
+  (rect 108 106 20 20)
+  (rect 8 126 20 20)
+  (rect 108 126 20 20)
+)
+

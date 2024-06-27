@@ -1019,8 +1019,19 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
             return;
         }
 
-        auto mayNeedRepaintRectUpdate = canUseSimplifiedRepaintPass == CanUseSimplifiedRepaintPass::No || renderer().didVisitDuringLastLayout();
-        if (!mayNeedRepaintRectUpdate)
+        auto mayNeedRepaintRectUpdate = [&] {
+            if (canUseSimplifiedRepaintPass == CanUseSimplifiedRepaintPass::No)
+                return true;
+            if (!renderer().didVisitDuringLastLayout())
+                return false;
+            if (auto* renderBox = this->renderBox(); renderBox && renderBox->hasRenderOverflow() && renderBox->hasTransformRelatedProperty()) {
+                // Disable optimization for subtree when dealing with overflow as RenderLayer is not sized to enclose overflow.
+                // FIXME: This should check if transform related property has changed.
+                canUseSimplifiedRepaintPass = CanUseSimplifiedRepaintPass::No;
+            }
+            return true;
+        };
+        if (!mayNeedRepaintRectUpdate())
             return;
 
         // FIXME: Paint offset cache does not work with RenderLayers as there is not a 1-to-1
