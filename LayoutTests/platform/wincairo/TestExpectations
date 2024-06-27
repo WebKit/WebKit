@@ -3774,6 +3774,7 @@ compositing/visibility/layer-visible-content.html [ Skip ]
 compositing/visibility/root-visibility-toggle.html [ Skip ]
 compositing/visibility/visibility-change-in-subframe.html [ Skip ]
 compositing/visibility/visibility-image-layers-dynamic.html [ Skip ]
+css3/filters/backdrop/resource-use-change-size-from-zero.html [ Skip ]
 css3/filters/filtered-compositing-descendant.html [ Skip ]
 
 compositing/animation/repaint-after-clearing-shared-backing.html [ ImageOnlyFailure ]
