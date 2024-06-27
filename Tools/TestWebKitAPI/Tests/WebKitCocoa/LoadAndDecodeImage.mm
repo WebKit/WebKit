@@ -53,6 +53,7 @@ TEST(WebKit, LoadAndDecodeImage)
         { "/terminate"_s, { HTTPResponse::Behavior::TerminateConnectionAfterReceivingResponse } },
         { "/test_png"_s, { pngData() } },
         { "/test_gif"_s, { gifData() } },
+        { "/redirect"_s, { 302, { { "Location"_s, "/test_png"_s } }, "redirecting..."_s } },
         { "/not_image"_s, { "this is not an image"_s } }
     };
     auto webView = adoptNS([WKWebView new]);
@@ -61,7 +62,7 @@ TEST(WebKit, LoadAndDecodeImage)
         __block RetainPtr<Util::PlatformImage> image;
         __block RetainPtr<NSError> error;
         __block bool done { false };
-        [webView _loadAndDecodeImage:server.request(requestPath) constrainedToSize:size completionHandler:^(Util::PlatformImage *imageResult, NSError *errorResult) {
+        [webView _loadAndDecodeImage:server.request(requestPath) constrainedToSize:size maximumBytesFromNetwork:std::numeric_limits<size_t>::max() completionHandler:^(Util::PlatformImage *imageResult, NSError *errorResult) {
             image = imageResult;
             error = errorResult;
             done = true;
@@ -93,6 +94,44 @@ TEST(WebKit, LoadAndDecodeImage)
     auto result5 = imageOrError("/test_gif"_s);
     EXPECT_EQ(result5->get().size.height, 64);
     EXPECT_EQ(result5->get().size.width, 52);
+
+    auto result6 = imageOrError("/redirect"_s);
+    EXPECT_EQ(result2->get().size.height, 174);
+    EXPECT_EQ(result2->get().size.width, 215);
+
+    HTTPServer tlsServer { {
+        { "/"_s, { pngData() } },
+    }, HTTPServer::Protocol::Https };
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    __block bool done { false };
+    [webView _loadAndDecodeImage:tlsServer.request() constrainedToSize:CGSizeZero maximumBytesFromNetwork:36541 completionHandler:^(Util::PlatformImage *image, NSError *error) {
+        EXPECT_EQ(image.size.height, 174);
+        EXPECT_EQ(image.size.width, 215);
+        EXPECT_NULL(error);
+        done = true;
+    }];
+    Util::run(&done);
+
+    done = false;
+    [webView _loadAndDecodeImage:tlsServer.request() constrainedToSize:CGSizeZero maximumBytesFromNetwork:36540 completionHandler:^(Util::PlatformImage *image, NSError *error) {
+        EXPECT_NULL(image);
+        EXPECT_EQ(error.code, NSURLErrorDataLengthExceedsMaximum);
+        EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+        done = true;
+    }];
+    Util::run(&done);
+
+    done = false;
+    [webView _loadAndDecodeImage:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://127.0.0.1:1/"]] constrainedToSize:CGSizeZero maximumBytesFromNetwork:std::numeric_limits<size_t>::max() completionHandler:^(Util::PlatformImage *image, NSError *error) {
+        EXPECT_NULL(image);
+        EXPECT_EQ(error.code, 103);
+        EXPECT_WK_STREQ(error.domain, "WebKitErrorDomain");
+        done = true;
+    }];
+    Util::run(&done);
 }
 
 }

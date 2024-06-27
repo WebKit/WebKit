@@ -861,6 +861,7 @@ def headers_for_type(type):
         'WebCore::FontPlatformDataAttributes': ['<WebCore/FontPlatformData.h>'],
         'WebCore::FontCustomPlatformSerializedData': ['<WebCore/FontPlatformData.h>'],
         'WebCore::FontSmoothingMode': ['<WebCore/GraphicsTypes.h>'],
+        'WebCore::FragmentedSharedBuffer': ['<WebCore/SharedBuffer.h>'],
         'WebCore::FrameIdentifierID': ['"GeneratedSerializers.h"'],
         'WebCore::FrameLoadType': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::GenericCueData': ['<WebCore/InbandGenericCue.h>'],
