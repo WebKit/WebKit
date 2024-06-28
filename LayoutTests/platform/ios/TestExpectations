@@ -7254,3 +7254,5 @@ webkit.org/b/275713 fast/text/international/system-language/declarative-language
 [ x86_64 ] imported/w3c/web-platform-tests/svg/import/metadata-example-01-t-manual.svg [ Failure ]
 [ x86_64 ] svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Failure ]
 [ x86_64 ] svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
+
+webkit.org/b/275962 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/no-referrer-dynamic-url-censored.html [ Failure ]
