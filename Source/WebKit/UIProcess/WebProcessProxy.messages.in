@@ -34,8 +34,8 @@ messages -> WebProcessProxy LegacyReceiver {
     GetNetworkProcessConnection() -> (struct WebKit::NetworkProcessConnectionInfo connectionInfo) Synchronous
 
 #if ENABLE(GPU_PROCESS)
-    CreateGPUProcessConnection(IPC::ConnectionHandle connectionHandle) AllowedWhenWaitingForSyncReply
-    GPUProcessConnectionDidBecomeUnresponsive()
+    CreateGPUProcessConnection(WebKit::GPUProcessConnectionIdentifier identifier, IPC::ConnectionHandle connectionHandle) AllowedWhenWaitingForSyncReply
+    GPUProcessConnectionDidBecomeUnresponsive(WebKit::GPUProcessConnectionIdentifier identifier)
 #endif
 
 #if ENABLE(MODEL_PROCESS)

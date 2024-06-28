@@ -34,6 +34,7 @@
 #include "DisplayLinkObserverID.h"
 #include "DownloadID.h"
 #include "DrawingAreaInfo.h"
+#include "GPUProcessConnectionIdentifier.h"
 #include "GeneratedSerializers.h"
 #include "GeolocationIdentifier.h"
 #include "GraphicsContextGLIdentifier.h"
@@ -531,6 +532,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::DownloadID));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::DrawingAreaIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::GeolocationIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::GPUProcessConnectionIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::GraphicsContextGLIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::IPCConnectionTesterIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::IPCStreamTesterIdentifier));
@@ -673,6 +675,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::DownloadID"_s,
         "WebKit::DrawingAreaIdentifier"_s,
         "WebKit::GeolocationIdentifier"_s,
+        "WebKit::GPUProcessConnectionIdentifier"_s,
         "WebKit::GraphicsContextGLIdentifier"_s,
         "WebKit::IPCConnectionTesterIdentifier"_s,
         "WebKit::IPCStreamTesterIdentifier"_s,

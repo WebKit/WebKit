@@ -29,6 +29,7 @@
 
 #include "AudioMediaStreamTrackRendererInternalUnitIdentifier.h"
 #include "Connection.h"
+#include "GPUProcessConnectionIdentifier.h"
 #include "GraphicsContextGLIdentifier.h"
 #include "MediaOverridesForTesting.h"
 #include "MessageReceiverMap.h"
@@ -72,7 +73,8 @@ class GPUProcessConnection : public ThreadSafeRefCountedAndCanMakeThreadSafeWeak
 public:
     static Ref<GPUProcessConnection> create(Ref<IPC::Connection>&&);
     ~GPUProcessConnection();
-    
+    GPUProcessConnectionIdentifier identifier() const { return m_identifier; }
+
     IPC::Connection& connection() { return m_connection.get(); }
     Ref<IPC::Connection> protectedConnection() { return m_connection; }
     IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
@@ -156,6 +158,7 @@ private:
     // The connection from the web process to the GPU process.
     Ref<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
+    GPUProcessConnectionIdentifier m_identifier { GPUProcessConnectionIdentifier::generate() };
     bool m_hasInitialized { false };
     RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
 #if HAVE(AUDIT_TOKEN)

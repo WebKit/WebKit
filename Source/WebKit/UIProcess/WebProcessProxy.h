@@ -28,6 +28,7 @@
 #include "APIUserInitiatedAction.h"
 #include "AuxiliaryProcessProxy.h"
 #include "BackgroundProcessResponsivenessTimer.h"
+#include "GPUProcessConnectionIdentifier.h"
 #include "GPUProcessPreferencesForWebProcess.h"
 #include "MessageReceiverMap.h"
 #include "NetworkProcessPreferencesForWebProcess.h"
@@ -571,8 +572,8 @@ private:
     void getNetworkProcessConnection(CompletionHandler<void(NetworkProcessConnectionInfo&&)>&&);
 
 #if ENABLE(GPU_PROCESS)
-    void createGPUProcessConnection(IPC::Connection::Handle&&);
-    void gpuProcessConnectionDidBecomeUnresponsive();
+    void createGPUProcessConnection(GPUProcessConnectionIdentifier, IPC::Connection::Handle&&);
+    void gpuProcessConnectionDidBecomeUnresponsive(GPUProcessConnectionIdentifier);
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -778,6 +779,7 @@ private:
 #endif
     mutable String m_environmentIdentifier;
 #if ENABLE(GPU_PROCESS)
+    GPUProcessConnectionIdentifier m_gpuProcessConnectionIdentifier;
     mutable std::optional<GPUProcessPreferencesForWebProcess> m_preferencesForGPUProcess;
 #endif
     mutable std::optional<NetworkProcessPreferencesForWebProcess> m_preferencesForNetworkProcess;

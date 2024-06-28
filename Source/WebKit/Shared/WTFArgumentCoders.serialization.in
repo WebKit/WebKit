@@ -185,6 +185,7 @@ template: enum class WebCore::IDBDatabaseConnectionIdentifierType
 template: enum class WebCore::WebLockIdentifierType
 template: enum class WebCore::WebSocketIdentifierType
 template: enum class WebCore::WorkerFileSystemStorageConnectionCallbackIdentifierType
+template: enum class WebKit::GPUProcessConnectionIdentifierType
 template: enum class WebKit::GraphicsContextGLIdentifierType
 template: enum class WebKit::LegacyCustomProtocolIDType
 template: enum class WebKit::LibWebRTCResolverIdentifierType

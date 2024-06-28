@@ -1065,7 +1065,7 @@ void WebProcessProxy::getNetworkProcessConnection(CompletionHandler<void(Network
 
 #if ENABLE(GPU_PROCESS)
 
-void WebProcessProxy::createGPUProcessConnection(IPC::Connection::Handle&& connectionIdentifier)
+void WebProcessProxy::createGPUProcessConnection(GPUProcessConnectionIdentifier identifier, IPC::Connection::Handle&& connectionHandle)
 {
     WebKit::GPUProcessConnectionParameters parameters;
 #if HAVE(TASK_IDENTITY_TOKEN)
@@ -1080,11 +1080,15 @@ void WebProcessProxy::createGPUProcessConnection(IPC::Connection::Handle&& conne
     parameters.ignoreInvalidMessageForTesting = ignoreInvalidMessageForTesting();
 #endif
     parameters.isLockdownModeEnabled = lockdownMode() == WebProcessProxy::LockdownMode::Enabled;
-    protectedProcessPool()->createGPUProcessConnection(*this, WTFMove(connectionIdentifier), WTFMove(parameters));
+    ASSERT(!m_gpuProcessConnectionIdentifier.isValid());
+    m_gpuProcessConnectionIdentifier = identifier;
+    protectedProcessPool()->createGPUProcessConnection(*this, WTFMove(connectionHandle), WTFMove(parameters));
 }
 
-void WebProcessProxy::gpuProcessConnectionDidBecomeUnresponsive()
+void WebProcessProxy::gpuProcessConnectionDidBecomeUnresponsive(GPUProcessConnectionIdentifier identifier)
 {
+    if (identifier != m_gpuProcessConnectionIdentifier)
+        return;
     WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "gpuProcessConnectionDidBecomeUnresponsive");
     if (RefPtr process = protectedProcessPool()->gpuProcess())
         process->childConnectionDidBecomeUnresponsive();
@@ -1099,7 +1103,7 @@ void WebProcessProxy::gpuProcessDidFinishLaunching()
 void WebProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
 {
     WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "gpuProcessExited: reason=%" PUBLIC_LOG_STRING, processTerminationReasonToString(reason).characters());
-
+    m_gpuProcessConnectionIdentifier = { };
     for (Ref page : pages())
         page->gpuProcessExited(reason);
 }

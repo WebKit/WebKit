@@ -1353,13 +1353,14 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
         auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
         if (!connectionIdentifiers)
             CRASH();
-        protectedParentProcessConnection()->send(Messages::WebProcessProxy::CreateGPUProcessConnection(WTFMove(connectionIdentifiers->client)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+
         Ref gpuConnection = IPC::Connection::createServerConnection(WTFMove(connectionIdentifiers->server));
 #if ENABLE(IPC_TESTING_API)
         if (gpuConnection->ignoreInvalidMessageForTesting())
             gpuConnection->setIgnoreInvalidMessageForTesting();
 #endif
         m_gpuProcessConnection = GPUProcessConnection::create(WTFMove(gpuConnection));
+        protectedParentProcessConnection()->send(Messages::WebProcessProxy::CreateGPUProcessConnection(m_gpuProcessConnection->identifier(),  WTFMove(connectionIdentifiers->client)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
         for (auto& page : m_pageMap.values()) {
             // If page is null, then it is currently being constructed.
             if (page)
@@ -1388,7 +1389,7 @@ void WebProcess::gpuProcessConnectionClosed()
 void WebProcess::gpuProcessConnectionDidBecomeUnresponsive()
 {
     ASSERT(m_gpuProcessConnection);
-    parentProcessConnection()->send(Messages::WebProcessProxy::GPUProcessConnectionDidBecomeUnresponsive(), 0);
+    parentProcessConnection()->send(Messages::WebProcessProxy::GPUProcessConnectionDidBecomeUnresponsive(m_gpuProcessConnection->identifier()), 0);
 }
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
