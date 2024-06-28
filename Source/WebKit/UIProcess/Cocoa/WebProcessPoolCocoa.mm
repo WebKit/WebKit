@@ -700,90 +700,19 @@ void WebProcessPool::registerNotificationObservers()
     m_weakObserver = adoptNS([[WKProcessPoolWeakObserver alloc] initWithWeakPtr:*this]);
 
 #if ENABLE(NOTIFY_BLOCKING)
+#define WK_NOTIFICATION_COMMENT(...)
+#define WK_NOTIFICATION(name) name ## _s,
     const Vector<ASCIILiteral> notificationMessages = {
-        // Keep in sync with notify_entitlements() in process-entitlements.sh.
-        // FORWARDED_NOTIFICATIONS
-        "_AXNotification_AXSAppValidatingTestingPreference"_s,
-        "_AXNotification_IsAXValidationRunnerCollectingValidations"_s,
-        "_AXNotification_shouldPerformValidationsAtRuntime"_s,
-        "_NS_ctasd"_s,
-        "AppleDatePreferencesChangedNotification"_s,
-        "AppleLanguagePreferencesChangedNotification"_s,
-        "AppleMeasurementSystemPreferencesChangedNotification"_s,
-        "AppleNumberPreferencesChangedNotification"_s,
-        "AppleTemperatureUnitPreferencesChangedNotification"_s,
-        "AppleTextBehaviorPreferencesChangedNotification"_s,
-        "AppleTimePreferencesChangedNotification"_s,
-        "CPHomeCountryCodeChanged.Internal"_s,
-        "GSEventHardwareKeyboardAttached"_s,
-        "LetterFeedbackEnabled.notification"_s,
-        "PhoneticFeedbackEnabled.notification"_s,
-        "QuickTypePredictionFeedbackEnabled.notification"_s,
-        "com.apple.CFPreferences._domainsChangedExternally"_s,
-        "com.apple.LaunchServices.database"_s,
-        "com.apple.WebKit.LibraryPathDiagnostics"_s,
-        "com.apple.WebKit.deleteAllCode"_s,
-        "com.apple.WebKit.dumpGCHeap"_s,
-        "com.apple.WebKit.dumpUntrackedMallocs"_s,
-        "com.apple.WebKit.fullGC"_s,
-        "com.apple.WebKit.logMemStats"_s,
-        "com.apple.WebKit.logPageState"_s,
-        "com.apple.WebKit.showAllDocuments"_s,
-        "com.apple.WebKit.showBackForwardCache"_s,
-        "com.apple.WebKit.showGraphicsLayerTree"_s,
-        "com.apple.WebKit.showLayerTree"_s,
-        "com.apple.WebKit.showLayoutTree"_s,
-        "com.apple.WebKit.showMemoryCache"_s,
-        "com.apple.WebKit.showPaintOrderTree"_s,
-        "com.apple.WebKit.showRenderTree"_s,
-        "com.apple.accessibility.api"_s,
-        "com.apple.accessibility.defaultrouteforcall"_s,
-        "com.apple.accessibility.wob.status"_s,
-        "com.apple.analyticsd.running"_s,
-        "com.apple.coreaudio.list_components"_s,
-        "com.apple.distnote.locale_changed"_s,
-        "com.apple.language.changed"_s,
-        "com.apple.mediaaccessibility.audibleMediaSettingsChanged"_s,
-        "com.apple.mediaaccessibility.captionAppearanceSettingsChanged"_s,
-        "com.apple.powerlog.state_changed"_s,
-        "com.apple.system.logging.prefschanged"_s,
-        "com.apple.system.lowpowermode"_s,
-        "com.apple.system.networkd.settings"_s,
-        "com.apple.system.timezone"_s,
-        "com.apple.webinspectord.automatic_inspection_enabled"_s,
-        "com.apple.webinspectord.available"_s,
-        "com.apple.zoomwindow"_s,
-        "org.WebKit.lowMemory"_s,
-        "org.WebKit.lowMemory.begin"_s,
-        "org.WebKit.lowMemory.end"_s,
-        "org.WebKit.memoryWarning"_s,
-        "org.WebKit.memoryWarning.begin"_s,
-        "org.WebKit.memoryWarning.end"_s,
-
+#include "Resources/cocoa/NotificationAllowList/ForwardedNotifications.def"
 #if PLATFORM(MAC)
-        // MACOS_FORWARDED_NOTIFICATIONS
-        "com.apple.sessionagent.screenLockUIIsHidden"_s,
-        "com.apple.sessionagent.screenLockUIIsShowing"_s,
-        "com.apple.sessionagent.screenLockUIIsShown"_s,
-        "com.apple.sessionagent.shieldWindowIsShowing"_s,
-        "com.apple.sessionagent.shieldWindowLowered"_s,
-        "com.apple.sessionagent.shieldWindowRaised"_s,
-        "com.apple.system.DirectoryService.InvalidateCache"_s,
-        "com.apple.system.DirectoryService.InvalidateCache.group"_s,
-        "com.apple.system.DirectoryService.InvalidateCache.host"_s,
-        "com.apple.system.DirectoryService.InvalidateCache.service"_s,
-        "com.apple.system.DirectoryService.InvalidateCache.user"_s,
+#include "Resources/cocoa/NotificationAllowList/MacForwardedNotifications.def"
 #else
-        // EMBEDDED_FORWARDED_NOTIFICATIONS
-        "com.apple.ManagedConfiguration.profileListChanged"_s,
-        "com.apple.managedconfiguration.passcodechanged"_s,
-        "com.apple.managedconfiguration.restrictionchanged"_s,
-        "com.apple.managedconfiguration.settingschanged"_s,
-        "com.apple.mobile.usermanagerd.foregrounduser_changed"_s,
-        "com.apple.mobile.keybagd.lock_status"_s,
-        "com.apple.mobile.keybagd.user_changed"_s,
+#include "Resources/cocoa/NotificationAllowList/EmbeddedForwardedNotifications.def"
 #endif
     };
+#undef WK_NOTIFICATION
+#undef WK_NOTIFICATION_COMMENT
+
     m_notifyTokens = WTF::compactMap(notificationMessages, [weakThis = WeakPtr { *this }](const ASCIILiteral& message) -> std::optional<int> {
         int notifyToken = 0;
         auto queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);

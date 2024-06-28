@@ -8083,6 +8083,11 @@
 		EBA8D3B027A5E33F00CB7900 /* MockPushServiceConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MockPushServiceConnection.mm; sourceTree = "<group>"; };
 		EBA8D3B127A5E33F00CB7900 /* PushServiceConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PushServiceConnection.mm; sourceTree = "<group>"; };
 		EBE0B837294BDD65004FA3BE /* com.apple.WebKit.webpushd.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.webpushd.sb.in; sourceTree = "<group>"; };
+		EBF4E32B2C2E0E7D00FAC85C /* EmbeddedForwardedNotifications.def */ = {isa = PBXFileReference; lastKnownFileType = text; path = EmbeddedForwardedNotifications.def; sourceTree = "<group>"; };
+		EBF4E32C2C2E0E7D00FAC85C /* ForwardedNotifications.def */ = {isa = PBXFileReference; lastKnownFileType = text; path = ForwardedNotifications.def; sourceTree = "<group>"; };
+		EBF4E32D2C2E0E7D00FAC85C /* MacForwardedNotifications.def */ = {isa = PBXFileReference; lastKnownFileType = text; path = MacForwardedNotifications.def; sourceTree = "<group>"; };
+		EBF4E32E2C2E0E7D00FAC85C /* NonForwardedNotifications.def */ = {isa = PBXFileReference; lastKnownFileType = text; path = NonForwardedNotifications.def; sourceTree = "<group>"; };
+		EBF4E32F2C2E105A00FAC85C /* NotificationAllowLists.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; path = NotificationAllowLists.xcfilelist; sourceTree = "<group>"; };
 		ECA680D31E6904B500731D20 /* ExtraPrivateSymbolsForTAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtraPrivateSymbolsForTAPI.h; sourceTree = "<group>"; };
 		ECBFC1DB1E6A4D66000300C7 /* ExtraPublicSymbolsForTAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtraPublicSymbolsForTAPI.h; sourceTree = "<group>"; };
 		F036978715F4BF0500C3A80E /* WebColorPicker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorPicker.cpp; sourceTree = "<group>"; };
@@ -8713,6 +8718,7 @@
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				EBF4E3292C2E0E0B00FAC85C /* cocoa */,
 				372887982000AA3700F4EF5D /* ios */,
 				6BE969BF1E54D452008B7483 /* ResourceLoadStatistics */,
 				A78CCDD5193AC9E3005ECC25 /* SandboxProfiles */,
@@ -15706,6 +15712,27 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
+		EBF4E3292C2E0E0B00FAC85C /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				EBF4E32A2C2E0E1D00FAC85C /* NotificationAllowList */,
+			);
+			name = cocoa;
+			path = Resources/cocoa;
+			sourceTree = "<group>";
+		};
+		EBF4E32A2C2E0E1D00FAC85C /* NotificationAllowList */ = {
+			isa = PBXGroup;
+			children = (
+				EBF4E32B2C2E0E7D00FAC85C /* EmbeddedForwardedNotifications.def */,
+				EBF4E32C2C2E0E7D00FAC85C /* ForwardedNotifications.def */,
+				EBF4E32D2C2E0E7D00FAC85C /* MacForwardedNotifications.def */,
+				EBF4E32E2C2E0E7D00FAC85C /* NonForwardedNotifications.def */,
+				EBF4E32F2C2E105A00FAC85C /* NotificationAllowLists.xcfilelist */,
+			);
+			path = NotificationAllowList;
+			sourceTree = "<group>";
+		};
 		F48EC3512B75837200D1B886 /* TextExtraction */ = {
 			isa = PBXGroup;
 			children = (
@@ -18229,6 +18256,9 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+				"$(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/NotificationAllowLists.xcfilelist",
+			);
 			inputPaths = (
 				"$(SRCROOT)/Scripts/process-entitlements.sh",
 			);
@@ -18390,6 +18420,9 @@
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			inputFileListPaths = (
+				"$(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/NotificationAllowLists.xcfilelist",
 			);
 			inputPaths = (
 				"$(SRCROOT)/Scripts/process-entitlements.sh",
@@ -18684,6 +18717,9 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+				"$(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/NotificationAllowLists.xcfilelist",
+			);
 			inputPaths = (
 				"$(SRCROOT)/Scripts/process-entitlements.sh",
 			);
@@ -18700,6 +18736,9 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+				"$(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/NotificationAllowLists.xcfilelist",
+			);
 			inputPaths = (
 				"$(SRCROOT)/Scripts/process-entitlements.sh",
 			);
@@ -18715,6 +18754,9 @@
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			inputFileListPaths = (
+				"$(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/NotificationAllowLists.xcfilelist",
 			);
 			inputPaths = (
 				"$(SRCROOT)/Scripts/process-entitlements.sh",
@@ -19019,6 +19061,7 @@
 			files = (
 			);
 			inputFileListPaths = (
+				"$(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/NotificationAllowLists.xcfilelist",
 			);
 			inputPaths = (
 				"$(SRCROOT)/Scripts/process-entitlements.sh",
@@ -19039,6 +19082,7 @@
 			files = (
 			);
 			inputFileListPaths = (
+				"$(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/NotificationAllowLists.xcfilelist",
 			);
 			inputPaths = (
 				"$(SRCROOT)/Scripts/process-entitlements.sh",
@@ -19059,6 +19103,7 @@
 			files = (
 			);
 			inputFileListPaths = (
+				"$(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/NotificationAllowLists.xcfilelist",
 			);
 			inputPaths = (
 				"$(SRCROOT)/Scripts/process-entitlements.sh",
@@ -19079,6 +19124,7 @@
 			files = (
 			);
 			inputFileListPaths = (
+				"$(PROJECT_DIR)/Resources/cocoa/NotificationAllowList/NotificationAllowLists.xcfilelist",
 			);
 			inputPaths = (
 				"$(SRCROOT)/Scripts/process-entitlements.sh",

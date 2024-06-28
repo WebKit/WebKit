@@ -416,7 +416,13 @@ sandbox-profiles-ios : $(SANDBOX_PROFILES_IOS)
 
 all : $(SANDBOX_PROFILES_WITHOUT_WEBPUSHD) $(WEBPUSHD_SANDBOX_PROFILE) $(SANDBOX_PROFILES_IOS)
 
-%.sb : %.sb.in
+NOTIFICATION_ALLOW_LISTS = \
+	Resources/cocoa/NotificationAllowList/EmbeddedForwardedNotifications.def \
+	Resources/cocoa/NotificationAllowList/ForwardedNotifications.def \
+	Resources/cocoa/NotificationAllowList/MacForwardedNotifications.def \
+	Resources/cocoa/NotificationAllowList/NonForwardedNotifications.def
+
+%.sb : %.sb.in $(NOTIFICATION_ALLOW_LISTS)
 	@echo Pre-processing $* sandbox profile...
 	grep -o '^[^;]*' $< | $(CC) $(SANITIZE_FLAGS) $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(SANDBOX_DEFINES) $(TEXT_PREPROCESSOR_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) $(EXTERNAL_FLAGS) -include "wtf/Platform.h" - > $@.tmp
 	$(WebKit2)/Scripts/compile-sandbox.sh $@.tmp $* $(SDK_NAME) $(SANDBOX_IMPORT_DIR)
