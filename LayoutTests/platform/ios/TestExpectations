@@ -7248,15 +7248,16 @@ fast/events/ios/rotation/safari-like-rotation.html [ Failure ]
 
 webkit.org/b/275713 fast/text/international/system-language/declarative-language.html [ Failure ]
 
-# webkit.org/b/275963 -- these tests have slight differences on x86_64 and arm64
-# they've been re-baselined to pass on arm64, so we expect failure on x86_64
-[ x86_64 ] imported/w3c/web-platform-tests/svg/import/metadata-example-01-t-manual.svg [ Failure ]
-[ x86_64 ] svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Failure ]
-[ x86_64 ] svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
+# these tests have slight differences in iOS simulator when run on a x86_64 vs arm64 Mac
+webkit.org/b/276005 [ x86_64 ] webgl/1.0.x/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Failure ]
+webkit.org/b/276005 [ x86_64 ] webgl/2.0.y/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Failure ]
+webkit.org/b/276005 [ x86_64 ] webgl/2.0.y/conformance2/textures/canvas/tex-2d-rgba16f-rgba-float.html [ Failure ]
+webkit.org/b/276006 [ x86_64 ] imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-002.html [ ImageOnlyFailure ]
+webkit.org/b/276006 [ x86_64 ] imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-002.html [ ImageOnlyFailure ]
+webkit.org/b/276006 [ x86_64 ] imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-002.html [ ImageOnlyFailure ]
+# these specifically are baselined to pass on arm64, so we expect failure on x86_64
+webkit.org/b/275963 [ x86_64 ] imported/w3c/web-platform-tests/svg/import/metadata-example-01-t-manual.svg [ Failure ]
+webkit.org/b/275963 [ x86_64 ] svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Failure ]
+webkit.org/b/275963 [ x86_64 ] svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
 
 webkit.org/b/275962 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/no-referrer-dynamic-url-censored.html [ Failure ]
-
-# webkit.org/b/276005 -- these tests fail on iOS simulator when run on x86_64 Macs
-[ x86_64 ] webgl/1.0.x/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Failure ]
-[ x86_64 ] webgl/2.0.y/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Failure ]
-[ x86_64 ] webgl/2.0.y/conformance2/textures/canvas/tex-2d-rgba16f-rgba-float.html [ Failure ]
