@@ -85,6 +85,7 @@ class NativeExecutable;
     macro(PutByIdTransitionNonAllocatingHandler, putByIdTransitionNonAllocatingHandler) \
     macro(PutByIdTransitionNewlyAllocatingHandler, putByIdTransitionNewlyAllocatingHandler) \
     macro(PutByIdTransitionReallocatingHandler, putByIdTransitionReallocatingHandler) \
+    macro(PutByIdTransitionReallocatingOutOfLineHandler, putByIdTransitionReallocatingOutOfLineHandler) \
     macro(PutByIdCustomAccessorHandler, putByIdCustomAccessorHandler) \
     macro(PutByIdCustomValueHandler, putByIdCustomValueHandler) \
     macro(PutByIdStrictSetterHandler, putByIdStrictSetterHandler) \
@@ -112,6 +113,7 @@ class NativeExecutable;
     macro(PutByValWithStringTransitionNonAllocatingHandler, putByValWithStringTransitionNonAllocatingHandler) \
     macro(PutByValWithStringTransitionNewlyAllocatingHandler, putByValWithStringTransitionNewlyAllocatingHandler) \
     macro(PutByValWithStringTransitionReallocatingHandler, putByValWithStringTransitionReallocatingHandler) \
+    macro(PutByValWithStringTransitionReallocatingOutOfLineHandler, putByValWithStringTransitionReallocatingOutOfLineHandler) \
     macro(PutByValWithStringCustomAccessorHandler, putByValWithStringCustomAccessorHandler) \
     macro(PutByValWithStringCustomValueHandler, putByValWithStringCustomValueHandler) \
     macro(PutByValWithStringStrictSetterHandler, putByValWithStringStrictSetterHandler) \
@@ -120,6 +122,7 @@ class NativeExecutable;
     macro(PutByValWithSymbolTransitionNonAllocatingHandler, putByValWithSymbolTransitionNonAllocatingHandler) \
     macro(PutByValWithSymbolTransitionNewlyAllocatingHandler, putByValWithSymbolTransitionNewlyAllocatingHandler) \
     macro(PutByValWithSymbolTransitionReallocatingHandler, putByValWithSymbolTransitionReallocatingHandler) \
+    macro(PutByValWithSymbolTransitionReallocatingOutOfLineHandler, putByValWithSymbolTransitionReallocatingOutOfLineHandler) \
     macro(PutByValWithSymbolCustomAccessorHandler, putByValWithSymbolCustomAccessorHandler) \
     macro(PutByValWithSymbolCustomValueHandler, putByValWithSymbolCustomValueHandler) \
     macro(PutByValWithSymbolStrictSetterHandler, putByValWithSymbolStrictSetterHandler) \
