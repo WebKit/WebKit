@@ -1,11 +1,11 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: expected 1 but got 0
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: expected 1 but got 2
 
 
-Harness Error (FAIL), message = Unhandled rejection: assert_equals: expected 1 but got 0
+Harness Error (FAIL), message = Unhandled rejection: assert_equals: expected 1 but got 2
 
 TIMEOUT navigate() with an unserializable state inside onpagehide throws "DataCloneError", not "InvalidStateError" Test timed out
 
-Harness Error (FAIL), message = Unhandled rejection: assert_equals: expected 1 but got 0
+Harness Error (FAIL), message = Unhandled rejection: assert_equals: expected 1 but got 2
 
 TIMEOUT navigate() with an unserializable state inside onpagehide throws "DataCloneError", not "InvalidStateError" Test timed out
 
