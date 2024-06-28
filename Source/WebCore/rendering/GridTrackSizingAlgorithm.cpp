@@ -918,7 +918,7 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minSizeForChild(RenderBox& child) c
         const GridSpan& span = m_algorithm.m_renderGrid->gridSpanForChild(child, direction());
 
         LayoutUnit maxBreadth;
-        auto allTracks = m_algorithm.tracks(direction());
+        const auto& allTracks = m_algorithm.tracks(direction());
         bool allFixed = true;
         for (auto trackPosition : span) {
             const auto& trackSize = allTracks[trackPosition].cachedTrackSize();
