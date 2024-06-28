@@ -26,12 +26,12 @@ if (window.testRunner) {
     element = document.querySelector("input");
 
     await UIHelper.activateElementAndWaitForInputSession(element);
-    await UIHelper.typeCharacter("a");
 
-    await UIHelper.animationFrame();
-    await UIHelper.ensureStablePresentationUpdate();
-
-    results.textContent = element.value + "\n";
+    do {
+        await UIHelper.typeCharacter("a");
+        await UIHelper.animationFrame();
+        await UIHelper.ensureStablePresentationUpdate();
+    } while (element.value === "")
 
     if (window.internals)
        results.textContent += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
@@ -39,7 +39,7 @@ if (window.testRunner) {
     if (window.testRunner)
         testRunner.dumpAsText();
 
-    await UIHelper.waitForInputSessionToDismiss();
+    document.activeElement.blur();
 
     if (window.testRunner)
         testRunner.notifyDone();
