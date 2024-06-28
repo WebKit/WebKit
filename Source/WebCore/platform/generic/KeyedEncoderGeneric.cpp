@@ -39,9 +39,9 @@ std::unique_ptr<KeyedEncoder> KeyedEncoder::encoder()
 
 void KeyedEncoderGeneric::encodeString(const String& key)
 {
-    auto result = key.tryGetUTF8([&](std::span<const char> span) -> bool {
+    auto result = key.tryGetUTF8([&](std::span<const char8_t> span) -> bool {
         m_encoder << span.size();
-        m_encoder.encodeFixedLengthData(spanReinterpretCast<const uint8_t>(span));
+        m_encoder.encodeFixedLengthData(byteCast<uint8_t>(span));
         return true;
     });
     RELEASE_ASSERT(result);

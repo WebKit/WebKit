@@ -31,6 +31,7 @@
 #include <wtf/HashTraits.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WTF {
 
@@ -64,6 +65,7 @@ public:
     WTF_EXPORT_PRIVATE CString(const char*);
     WTF_EXPORT_PRIVATE CString(std::span<const char>);
     CString(std::span<const uint8_t>);
+    CString(std::span<const char8_t> characters) : CString(byteCast<uint8_t>(characters)) { }
     CString(CStringBuffer* buffer) : m_buffer(buffer) { }
     WTF_EXPORT_PRIVATE static CString newUninitialized(size_t length, char*& characterBuffer);
     CString(HashTableDeletedValueType) : m_buffer(HashTableDeletedValue) { }
