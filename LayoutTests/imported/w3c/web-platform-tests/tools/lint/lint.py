@@ -394,10 +394,12 @@ def check_parsed(repo_root: Text, path: Text, f: IO[bytes]) -> List[rules.Error]
     if source_file.root is None:
         return [rules.ParseFailed.error(path)]
 
-    if source_file.type == "manual" and not source_file.name_is_manual:
+    test_type = source_file.type
+
+    if test_type == "manual" and not source_file.name_is_manual:
         errors.append(rules.ContentManual.error(path))
 
-    if source_file.type == "visual" and not source_file.name_is_visual:
+    if test_type == "visual" and not source_file.name_is_visual:
         errors.append(rules.ContentVisual.error(path))
 
     about_blank_parts = urlsplit("about:blank")
@@ -428,6 +430,10 @@ def check_parsed(repo_root: Text, path: Text, f: IO[bytes]) -> List[rules.Error]
             errors.append(rules.NonexistentRef.error(path,
                                                      (reference_rel, href)))
 
+    if source_file.reftest_nodes:
+        if test_type not in ("print-reftest", "reftest"):
+            errors.append(rules.ReferenceInOtherType.error(path, (test_type,)))
+
     if len(source_file.timeout_nodes) > 1:
         errors.append(rules.MultipleTimeout.error(path))
 
@@ -450,7 +456,6 @@ def check_parsed(repo_root: Text, path: Text, f: IO[bytes]) -> List[rules.Error]
 
     testharnessreport_nodes: List[ElementTree.Element] = []
     if source_file.testharness_nodes:
-        test_type = source_file.manifest_items()[0]
         if test_type not in ("testharness", "manual"):
             errors.append(rules.TestharnessInOtherType.error(path, (test_type,)))
         if len(source_file.testharness_nodes) > 1:
@@ -470,6 +475,9 @@ def check_parsed(repo_root: Text, path: Text, f: IO[bytes]) -> List[rules.Error]
 
     testdriver_vendor_nodes: List[ElementTree.Element] = []
     if source_file.testdriver_nodes:
+        if test_type != "testharness":
+            errors.append(rules.TestdriverInUnsupportedType.error(path, (test_type,)))
+
         if len(source_file.testdriver_nodes) > 1:
             errors.append(rules.MultipleTestdriver.error(path))
 
@@ -603,7 +611,7 @@ def check_global_metadata(value: bytes) -> Iterable[Tuple[Type[rules.Rule], Tupl
 
 
 def check_script_metadata(repo_root: Text, path: Text, f: IO[bytes]) -> List[rules.Error]:
-    if path.endswith((".worker.js", ".any.js")):
+    if path.endswith((".window.js", ".worker.js", ".any.js")):
         meta_re = js_meta_re
         broken_metadata = broken_js_metadata
     elif path.endswith(".py"):
@@ -614,7 +622,7 @@ def check_script_metadata(repo_root: Text, path: Text, f: IO[bytes]) -> List[rul
 
     done = False
     errors = []
-    for idx, line in enumerate(f):
+    for line_no, line in enumerate(f, 1):
         assert isinstance(line, bytes), line
 
         m = meta_re.match(line)
@@ -622,29 +630,32 @@ def check_script_metadata(repo_root: Text, path: Text, f: IO[bytes]) -> List[rul
             key, value = m.groups()
             if key == b"global":
                 for rule_class, context in check_global_metadata(value):
-                    errors.append(rule_class.error(path, context, idx + 1))
+                    errors.append(rule_class.error(path, context, line_no))
             elif key == b"timeout":
                 if value != b"long":
                     errors.append(rules.UnknownTimeoutMetadata.error(path,
-                                                                     line_no=idx + 1))
+                                                                     line_no=line_no))
             elif key == b"variant":
                 if is_variant_malformed(value.decode()):
                     value = f"{path} `META: variant=...` value"
-                    errors.append(rules.MalformedVariant.error(path, (value,), idx + 1))
-            elif key not in (b"title", b"script", b"quic"):
-                errors.append(rules.UnknownMetadata.error(path,
-                                                          line_no=idx + 1))
+                    errors.append(rules.MalformedVariant.error(path, (value,), line_no))
+            elif key == b"script":
+                if value == b"/resources/testharness.js":
+                    errors.append(rules.MultipleTestharness.error(path, line_no=line_no))
+                elif value == b"/resources/testharnessreport.js":
+                    errors.append(rules.MultipleTestharnessReport.error(path, line_no=line_no))
+            elif key not in (b"title", b"quic"):
+                errors.append(rules.UnknownMetadata.error(path, line_no=line_no))
         else:
             done = True
 
         if done:
             if meta_re.match(line):
-                errors.append(rules.StrayMetadata.error(path, line_no=idx + 1))
+                errors.append(rules.StrayMetadata.error(path, line_no=line_no))
             elif meta_re.search(line):
-                errors.append(rules.IndentedMetadata.error(path,
-                                                           line_no=idx + 1))
+                errors.append(rules.IndentedMetadata.error(path, line_no=line_no))
             elif broken_metadata.search(line):
-                errors.append(rules.BrokenMetadata.error(path, line_no=idx + 1))
+                errors.append(rules.BrokenMetadata.error(path, line_no=line_no))
 
     return errors
 
