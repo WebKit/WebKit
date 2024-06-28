@@ -1409,6 +1409,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     if (WKStringIsEqualToUTF8CString(messageName, "IsCommandEnabled"))
         return adoptWK(WKBooleanCreate(WKPageIsEditingCommandEnabledForTesting(TestController::singleton().mainWebView()->page(), stringValue(messageBody))));
 
+    if (WKStringIsEqualToUTF8CString(messageName, "ForceRepaint")) {
+        WKPageForceRepaintForTesting(TestController::singleton().mainWebView()->page());
+        return nullptr;
+    }
+
     ASSERT_NOT_REACHED();
     return nullptr;
 }

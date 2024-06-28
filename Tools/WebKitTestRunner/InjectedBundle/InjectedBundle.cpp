@@ -732,6 +732,11 @@ WKRetainPtr<WKStringRef> InjectedBundle::backgroundFetchState(WKStringRef identi
     return static_cast<WKStringRef>(result);
 }
 
+void InjectedBundle::forceRepaint()
+{
+    postSynchronousPageMessage("ForceRepaint");
+}
+
 void InjectedBundle::textDidChangeInTextField()
 {
     m_testRunner->textDidChangeInTextFieldCallback();

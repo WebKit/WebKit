@@ -152,6 +152,8 @@ public:
     WKRetainPtr<WKStringRef> lastUpdatedBackgroundFetchIdentifier() const;
     WKRetainPtr<WKStringRef> backgroundFetchState(WKStringRef);
 
+    void forceRepaint();
+
 private:
     InjectedBundle() = default;
     ~InjectedBundle();

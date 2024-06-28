@@ -712,7 +712,7 @@ void InjectedBundlePage::dump(bool forceRepaint)
     if (forceRepaint) {
         // Force a paint before dumping. This matches DumpRenderTree on Windows. (DumpRenderTree on Mac
         // does this at a slightly different time.) See <http://webkit.org/b/55469> for details.
-        WKBundlePageForceRepaint(m_page);
+        injectedBundle.forceRepaint();
     }
     WKBundlePageFlushPendingEditorStateUpdate(m_page);
 
@@ -1630,10 +1630,8 @@ void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
 
     injectedBundle.setTopLoadingFrame(nullptr);
 
-    if (injectedBundle.testRunner()->shouldDisplayOnLoadFinish()) {
-        if (auto page = InjectedBundle::singleton().page())
-            WKBundlePageForceRepaint(page->page());
-    }
+    if (injectedBundle.testRunner()->shouldDisplayOnLoadFinish())
+        injectedBundle.forceRepaint();
 
     if (injectedBundle.testRunner()->shouldWaitUntilDone())
         return;

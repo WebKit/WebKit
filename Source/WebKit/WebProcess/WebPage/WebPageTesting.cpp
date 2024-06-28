@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPageTesting.h"
 
+#include "DrawingArea.h"
 #include "NotificationPermissionRequestManager.h"
 #include "PluginView.h"
 #include "WebNotificationClient.h"
@@ -106,6 +107,12 @@ void WebPageTesting::clearWheelEventTestMonitor()
 void WebPageTesting::flushDeferredDidReceiveMouseEvent(CompletionHandler<void()>&& completionHandler)
 {
     m_page->flushDeferredDidReceiveMouseEvent();
+    completionHandler();
+}
+
+void WebPageTesting::updateRenderingWithForcedRepaint(CompletionHandler<void()>&& completionHandler)
+{
+    m_page->updateRenderingWithForcedRepaintWithoutCallback();
     completionHandler();
 }
 

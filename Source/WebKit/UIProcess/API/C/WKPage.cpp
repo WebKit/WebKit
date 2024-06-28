@@ -3302,3 +3302,9 @@ void WKPageFlushDeferredDidReceiveMouseEventForTesting(WKPageRef pageRef)
     if (auto* pageForTesting = toImpl(pageRef)->pageForTesting())
         pageForTesting->flushDeferredDidReceiveMouseEvent();
 }
+
+void WKPageForceRepaintForTesting(WKPageRef pageRef)
+{
+    if (auto* pageForTesting = toImpl(pageRef)->pageForTesting())
+        pageForTesting->updateRenderingWithForcedRepaint();
+}

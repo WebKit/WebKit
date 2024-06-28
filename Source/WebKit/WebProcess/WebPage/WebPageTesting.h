@@ -61,6 +61,8 @@ private:
 
     void flushDeferredDidReceiveMouseEvent(CompletionHandler<void()>&&);
 
+    void updateRenderingWithForcedRepaint(CompletionHandler<void()>&&);
+
     const WebCore::PageIdentifier m_identifier;
     WeakRef<WebPage> m_page;
 };

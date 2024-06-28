@@ -198,7 +198,14 @@ void WebPageProxyTesting::setSystemCanPromptForGetDisplayMediaForTesting(bool ca
 void WebPageProxyTesting::flushDeferredDidReceiveMouseEvent()
 {
     m_page->forEachWebContentProcess([](auto& webProcess, auto pageID) {
-        [[maybe_unused]] auto sendResult = webProcess.sendSync(Messages::WebPageTesting::FlushDeferredDidReceiveMouseEvent(), pageID, Seconds::infinity());
+        webProcess.sendSync(Messages::WebPageTesting::FlushDeferredDidReceiveMouseEvent(), pageID, Seconds::infinity());
+    });
+}
+
+void WebPageProxyTesting::updateRenderingWithForcedRepaint()
+{
+    m_page->forEachWebContentProcess([](auto& webProcess, auto pageID) {
+        webProcess.sendSync(Messages::WebPageTesting::UpdateRenderingWithForcedRepaint(), pageID, Seconds::infinity());
     });
 }
 

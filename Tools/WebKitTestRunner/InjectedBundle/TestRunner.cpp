@@ -90,13 +90,13 @@ static WKBundlePageRef page()
 
 void TestRunner::display()
 {
-    WKBundlePageForceRepaint(page());
+    postSynchronousPageMessage("ForceRepaint");
 }
 
 void TestRunner::displayAndTrackRepaints()
 {
     auto page = WTR::page();
-    WKBundlePageForceRepaint(page);
+    postSynchronousPageMessage("ForceRepaint");
     WKBundlePageSetTracksRepaints(page, true);
     WKBundlePageResetTrackedRepaints(page);
 }

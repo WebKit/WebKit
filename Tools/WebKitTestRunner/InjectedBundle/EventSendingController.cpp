@@ -342,8 +342,6 @@ void EventSendingController::scheduleAsynchronousKeyDown(JSStringRef key)
 
 void EventSendingController::mouseScrollBy(int x, int y)
 {
-    WKBundlePageForceRepaint(InjectedBundle::singleton().page()->page()); // Triggers a scrolling tree commit.
-
     auto body = adoptWK(WKMutableDictionaryCreate());
     setValue(body, "SubMessage", "MouseScrollBy");
     setValue(body, "X", adoptWK(WKDoubleCreate(x)));
@@ -394,8 +392,6 @@ void EventSendingController::mouseScrollByWithWheelAndMomentumPhases(int x, int 
         m_sentWheelPhaseEndOrCancel = true;
     if (momentum == 3 /* kCGMomentumScrollPhaseEnd */)
         m_sentWheelMomentumPhaseEnd = true;
-
-    WKBundlePageForceRepaint(InjectedBundle::singleton().page()->page()); // Triggers a scrolling tree commit.
 
     auto body = adoptWK(WKMutableDictionaryCreate());
     setValue(body, "SubMessage", "MouseScrollByWithWheelAndMomentumPhases");

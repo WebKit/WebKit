@@ -1922,11 +1922,13 @@ void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         }
         
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseScrollBy")) {
+            WKPageForceRepaintForTesting(m_mainWebView->page());
             m_eventSenderProxy->mouseScrollBy(doubleValue(dictionary, "X"), doubleValue(dictionary, "Y"));
             return;
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseScrollByWithWheelAndMomentumPhases")) {
+            WKPageForceRepaintForTesting(m_mainWebView->page());
             auto x = doubleValue(dictionary, "X");
             auto y = doubleValue(dictionary, "Y");
             auto phase = uint64Value(dictionary, "Phase");
