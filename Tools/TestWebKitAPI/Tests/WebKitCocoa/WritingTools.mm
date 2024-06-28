@@ -33,6 +33,7 @@
 #import "TestInputDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
+#import "UIKitSPIForTesting.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/ColorCocoa.h>
