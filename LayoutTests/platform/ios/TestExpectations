@@ -7255,6 +7255,8 @@ webkit.org/b/276005 [ x86_64 ] webgl/2.0.y/conformance2/textures/canvas/tex-2d-r
 webkit.org/b/276006 [ x86_64 ] imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-002.html [ ImageOnlyFailure ]
 webkit.org/b/276006 [ x86_64 ] imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-002.html [ ImageOnlyFailure ]
 webkit.org/b/276006 [ x86_64 ] imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-002.html [ ImageOnlyFailure ]
+webkit.org/b/276013 [ x86_64 ] webgl/1.0.x/conformance/glsl/bugs/sampler-array-using-loop-index.html [ Failure ]
+webkit.org/b/276013 [ x86_64 ] webgl/2.0.y/conformance/glsl/bugs/sampler-array-using-loop-index.html [ Failure ]
 # these specifically are baselined to pass on arm64, so we expect failure on x86_64
 webkit.org/b/275963 [ x86_64 ] imported/w3c/web-platform-tests/svg/import/metadata-example-01-t-manual.svg [ Failure ]
 webkit.org/b/275963 [ x86_64 ] svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Failure ]
