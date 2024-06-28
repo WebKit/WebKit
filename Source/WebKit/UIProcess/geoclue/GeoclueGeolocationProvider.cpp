@@ -29,6 +29,7 @@
 #include <WebCore/GeolocationPositionData.h>
 #include <gio/gio.h>
 #include <glib/gi18n-lib.h>
+#include <wtf/glib/Application.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -400,15 +401,8 @@ void GeoclueGeolocationProvider::setupGeoclueClient(GRefPtr<GDBusProxy>&& proxy)
 
     // Geoclue2 requires the client to provide a desktop ID for security
     // reasons, which should identify the application requesting the location.
-    // We use the application ID configured for the default GApplication, and
-    // also fallback to our old behavior of using g_get_prgname().
-    const char* applicationID = nullptr;
-    if (auto* defaultApplication = g_application_get_default())
-        applicationID = g_application_get_application_id(defaultApplication);
-    if (!applicationID)
-        applicationID = g_get_prgname();
     g_dbus_proxy_call(m_geoclue.client.get(), "org.freedesktop.DBus.Properties.Set",
-        g_variant_new("(ssv)", "org.freedesktop.GeoClue2.Client", "DesktopId", g_variant_new_string(applicationID)),
+        g_variant_new("(ssv)", "org.freedesktop.GeoClue2.Client", "DesktopId", g_variant_new_string(WTF::applicationID().data())),
         G_DBUS_CALL_FLAGS_NONE, -1, nullptr, [](GObject* manager, GAsyncResult* result, gpointer userData) {
             GUniqueOutPtr<GError> error;
             GRefPtr<GVariant> returnValue = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(manager), result, &error.outPtr()));

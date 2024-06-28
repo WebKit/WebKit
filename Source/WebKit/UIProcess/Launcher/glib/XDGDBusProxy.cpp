@@ -31,6 +31,7 @@
 #include <WebCore/PlatformDisplay.h>
 #include <gio/gunixinputstream.h>
 #include <wtf/UniStdExtras.h>
+#include <wtf/glib/Application.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
@@ -74,12 +75,8 @@ std::optional<CString> XDGDBusProxy::dbusSessionProxy(const char* baseDirectory,
     });
 
 #if ENABLE(MEDIA_SESSION)
-    if (auto* app = g_application_get_default()) {
-        if (const char* appID = g_application_get_application_id(app)) {
-            auto mprisSessionID = makeString("--own=org.mpris.MediaPlayer2."_s, WTF::span(appID), ".Sandboxed.*"_s);
-            m_args.append(mprisSessionID.ascii().data());
-        }
-    }
+    auto mprisSessionID = makeString("--own=org.mpris.MediaPlayer2."_s, WTF::applicationID().span(), ".Sandboxed.*"_s);
+    m_args.append(mprisSessionID.ascii().data());
 #endif
 
     if (allowPortals == AllowPortals::Yes)

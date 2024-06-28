@@ -40,6 +40,7 @@
 #include <wtf/Seconds.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UUID.h>
+#include <wtf/glib/Application.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/Sandbox.h>
@@ -361,14 +362,13 @@ void NotificationService::processCapabilities(GVariant* variant)
     }
 }
 
-static const char* applicationIcon(const char* applicationID)
+static const char* applicationIcon()
 {
     static std::optional<CString> appIcon;
 #if HAVE(GDESKTOPAPPINFO)
     if (!appIcon) {
-        appIcon = [applicationID]() -> CString {
-            if (!applicationID)
-                return { };
+        appIcon = []() -> CString {
+            const char* applicationID = WTF::applicationID().data();
 
 #if PLATFORM(GTK)
             if (auto* iconTheme = gtk_icon_theme_get_for_display(gdk_display_get_default())) {
@@ -458,14 +458,9 @@ bool NotificationService::showNotification(const WebNotification& notification, 
             g_variant_builder_add(&actionsBuilder, "s", _("Acknowledge"));
         }
 
-        const char* applicationID = nullptr;
-        if (auto* app = g_application_get_default())
-            applicationID = g_application_get_application_id(app);
-
         GVariantBuilder hintsBuilder;
         g_variant_builder_init(&hintsBuilder, G_VARIANT_TYPE("a{sv}"));
-        if (applicationID)
-            g_variant_builder_add(&hintsBuilder, "{sv}", "desktop-entry", g_variant_new_string(applicationID));
+        g_variant_builder_add(&hintsBuilder, "{sv}", "desktop-entry", g_variant_new_string(WTF::applicationID().data()));
         if (m_capabilities.contains(Capabilities::Persistence) && notification.isPersistentNotification())
             g_variant_builder_add(&hintsBuilder, "{sv}", "resident", g_variant_new_boolean(TRUE));
         if (resources && m_capabilities.contains(Capabilities::IconStatic)) {
@@ -481,7 +476,7 @@ bool NotificationService::showNotification(const WebNotification& notification, 
         if (m_capabilities.contains(Capabilities::Body))
             body = notification.body().utf8();
 
-        const char* appIcon = applicationIcon(applicationID);
+        const char* appIcon = applicationIcon();
 
         g_dbus_proxy_call(m_proxy.get(), "Notify", g_variant_new(
             "(susssasa{sv}i)",

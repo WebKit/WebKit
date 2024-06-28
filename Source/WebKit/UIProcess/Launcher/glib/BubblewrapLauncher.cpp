@@ -31,6 +31,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/UUID.h>
 #include <wtf/UniStdExtras.h>
+#include <wtf/glib/Application.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -125,33 +126,6 @@ int argumentsToFileDescriptor(const Vector<CString>& args, const char* name)
     return memfd;
 }
 
-static String effectiveApplicationId()
-{
-    if (auto* app = g_application_get_default()) {
-        if (const char* appID = g_application_get_application_id(app))
-            return String::fromUTF8(appID);
-    }
-
-    const char* programName = g_get_prgname();
-    if (programName && g_application_id_is_valid(programName))
-        return String::fromUTF8(programName);
-
-    // There must be some id for xdg-desktop-portal to function.
-    // xdg-desktop-portal uses this id for permissions.
-    // This creates a somewhat reliable id based on the executable path
-    // which will avoid potentially gaining permissions from another app
-    // and won't flood xdg-desktop-portal with new ids.
-    if (auto executablePath = FileSystem::currentExecutablePath(); !executablePath.isNull()) {
-        GUniquePtr<char> digest(g_compute_checksum_for_data(G_CHECKSUM_SHA256, reinterpret_cast<const uint8_t*>(executablePath.data()), executablePath.length()));
-        return makeString("org.webkit.app-"_s, span(digest.get()));
-    }
-
-    // If it is not possible to obtain the executable path, generate
-    // a random identifier as a fallback.
-    auto uuid = WTF::UUID::createVersion4Weak();
-    return makeString("org.webkit.app-"_s, uuid.toString());
-}
-
 static void createBwrapInfo(GSubprocessLauncher* launcher, Vector<CString>& args, const char* instanceID)
 {
     // This is the hardcoded path expected in xdg-desktop-portal's xdp_app_info_load_bwrap_info() used
@@ -182,7 +156,7 @@ static int createFlatpakInfo(const char* instanceID)
 
     if (!data.get()) {
         GUniquePtr<GKeyFile> keyFile(g_key_file_new());
-        g_key_file_set_string(keyFile.get(), "Application", "name", effectiveApplicationId().utf8().data());
+        g_key_file_set_string(keyFile.get(), "Application", "name", WTF::applicationID().data());
         g_key_file_set_string(keyFile.get(), "Instance", "instance-id", instanceID);
         data->reset(g_key_file_to_data(keyFile.get(), &size, nullptr));
     }
