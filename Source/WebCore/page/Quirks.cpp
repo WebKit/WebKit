@@ -365,6 +365,16 @@ bool Quirks::shouldAvoidUsingIOS13ForGmail() const
 #endif
 }
 
+// mail.google.com rdar://128360054
+// FIXME (rdar://130624461): Remove this quirk once Gmail adopts the `writingsuggestions` attribute.
+bool Quirks::shouldDisableWritingSuggestionsByDefault() const
+{
+    if (!needsQuirks())
+        return false;
+    auto& url = m_document->topDocument().url();
+    return url.host() == "mail.google.com"_s;
+}
+
 void Quirks::updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&& userAgentStringQuirks)
 {
     auto& quirks = updatableStorageAccessUserAgentStringQuirks();

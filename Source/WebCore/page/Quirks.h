@@ -98,6 +98,7 @@ public:
     WEBCORE_EXPORT bool needsYouTubeMouseOutQuirk() const;
 
     WEBCORE_EXPORT bool shouldAvoidUsingIOS13ForGmail() const;
+    WEBCORE_EXPORT bool shouldDisableWritingSuggestionsByDefault() const;
 
     WEBCORE_EXPORT static void updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&&);
     WEBCORE_EXPORT String storageAccessUserAgentStringQuirkForDomain(const URL&);
