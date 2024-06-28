@@ -1021,8 +1021,6 @@ void SpeculativeJIT::emitCall(Node* node)
     
     if (isDirect) {
         ASSERT(!m_graph.m_plan.isUnlinked());
-// FIXME: Could this be done after sysv_abi?
-#if !OS(WINDOWS)
         Edge calleeEdge = m_graph.child(node, 0);
         JSGlobalObject* calleeScope = nullptr;
         if (JSValue calleeValue = m_state.forNode(calleeEdge).value()) {
@@ -1087,7 +1085,6 @@ void SpeculativeJIT::emitCall(Node* node)
             jsValueResult(resultGPR, m_currentNode, DataFormatJS, UseChildrenCalledExplicitly);
             return;
         }
-#endif
 
         auto* callLinkInfo = jitCode()->common.m_directCallLinkInfos.add(m_currentNode->origin.semantic, DirectCallLinkInfo::UseDataIC::No, m_graph.m_codeBlock, executable);
         callLinkInfo->setCallType(callType);
