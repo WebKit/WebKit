@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -223,6 +223,8 @@ enum RTCCodecType {
     required DOMString  kind;
 };
 
+// https://w3c.github.io/webrtc-stats/#dom-rtcaudiosourcestats
+
 [
     JSGenerateToJSObject
 ] dictionary RTCAudioSourceStats : RTCMediaSourceStats {
@@ -231,10 +233,6 @@ enum RTCCodecType {
     double totalSamplesDuration;
     double echoReturnLoss;
     double echoReturnLossEnhancement;
-    double droppedSamplesDuration;
-    unsigned long droppedSamplesEvents;
-    double totalCaptureDelay;
-    unsigned long long totalSamplesCaptured;
 };
 
 [
