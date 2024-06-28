@@ -84,6 +84,7 @@ public:
         virtual bool isJITEnabled() const { return true; }
         virtual bool shouldEnableSharedArrayBuffer() const { return false; }
         virtual bool shouldEnableLockdownMode() const { return false; }
+        virtual bool shouldDisableJITCage() const { return false; }
 #if PLATFORM(COCOA)
         virtual RefPtr<XPCEventHandler> xpcEventHandler() const { return nullptr; }
 #endif

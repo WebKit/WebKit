@@ -41,6 +41,7 @@
 #import "WebProcessPool.h"
 #import <WebCore/ActivityState.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <pal/spi/ios/MobileGestaltSPI.h>
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Scope.h>
@@ -263,6 +264,15 @@ std::optional<Vector<SandboxExtension::Handle>> WebProcessProxy::fontdMachExtens
         return std::nullopt;
     return SandboxExtension::createHandlesForMachLookup({ "com.apple.fonts"_s }, auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
 }
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebProcessProxyCocoaAdditions.mm>)
+#import <WebKitAdditions/WebProcessProxyCocoaAdditions.mm>
+#else
+bool WebProcessProxy::shouldDisableJITCage() const
+{
+    return false;
+}
+#endif
 
 }
 

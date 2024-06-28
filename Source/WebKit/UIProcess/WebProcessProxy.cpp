@@ -1011,7 +1011,12 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 {
     return false;
 }
-#endif
+
+bool WebProcessProxy::shouldDisableJITCage() const
+{
+    return false;
+}
+#endif // !PLATFORM(COCOA)
 
 bool WebProcessProxy::hasProvisionalPageWithID(WebPageProxyIdentifier pageID) const
 {
