@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,6 @@ WEBCORE_EXPORT HashSet<String> RequiredMIMETypesFromUTI(const String&);
 RetainPtr<CFStringRef> mimeTypeFromUTITree(CFStringRef);
 WEBCORE_EXPORT String UTIFromMIMEType(const String&);
 bool isDeclaredUTI(const String&);
-WEBCORE_EXPORT String UTIFromTag(const String& tagClass, const String& tag, const String& conformingToUTI);
 WEBCORE_EXPORT void setImageSourceAllowableTypes(const Vector<String>&);
 
 } // namespace WebCore

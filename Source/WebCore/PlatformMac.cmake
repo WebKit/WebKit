@@ -305,7 +305,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/PathCG.cpp
     platform/graphics/cg/PatternCG.cpp
     platform/graphics/cg/TransformationMatrixCG.cpp
-    platform/graphics/cg/UTIRegistry.cpp
+    platform/graphics/cg/UTIRegistry.mm
 
     platform/graphics/cocoa/CMUtilities.mm
     platform/graphics/cocoa/FloatRectCocoa.mm

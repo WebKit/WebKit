@@ -23,18 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "UTIRegistry.h"
+#import "config.h"
+#import "UTIRegistry.h"
 
 #if USE(CG)
 
-#include "MIMETypeRegistry.h"
-#include "UTIUtilities.h"
-#include <ImageIO/ImageIO.h>
-#include <wtf/HashSet.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/RobinHoodHashSet.h>
+#import "MIMETypeRegistry.h"
+#import "UTIUtilities.h"
+#import <ImageIO/ImageIO.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <wtf/HashSet.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/RobinHoodHashSet.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -138,9 +139,14 @@ String MIMETypeForImageType(const String& uti)
 
 String preferredExtensionForImageType(const String& uti)
 {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return adoptCF(UTTypeCopyPreferredTagWithClass(uti.createCFString().get(), kUTTagClassFilenameExtension)).get();
-ALLOW_DEPRECATED_DECLARATIONS_END
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    String oldExtension = adoptCF(UTTypeCopyPreferredTagWithClass(uti.createCFString().get(), kUTTagClassFilenameExtension)).get();
+    ALLOW_DEPRECATED_DECLARATIONS_END
+
+    auto *type = [UTType typeWithIdentifier:uti];
+    String extension = type.preferredFilenameExtension;
+    RELEASE_ASSERT(oldExtension == extension);
+    return extension;
 }
 
 Vector<String> allowableImageTypes()
