@@ -61,6 +61,7 @@ static gboolean printVersion;
 static GHashTable* openViews;
 #if ENABLE_WPE_PLATFORM
 static gboolean useWPEPlatformAPI;
+static const char* defaultWindowTitle = "WPEWebKit MiniBrowser";
 #endif
 
 static const GOptionEntry commandLineOptions[] =
@@ -179,6 +180,20 @@ static gboolean wpeViewEventCallback(WPEView* view, WPEEvent* event, WebKitWebVi
 
     return FALSE;
 }
+
+static void webViewTitleChanged(WebKitWebView* webView, GParamSpec*, WPEView* view)
+{
+    const char* title = webkit_web_view_get_title(webView);
+    if (!title)
+        title = defaultWindowTitle;
+    char* privateTitle = nullptr;
+    if (webkit_web_view_is_controlled_by_automation(webView))
+        privateTitle = g_strdup_printf("[Automation] %s", title);
+    else if (webkit_network_session_is_ephemeral(webkit_web_view_get_network_session(webView)))
+        privateTitle = g_strdup_printf("[Private] %s", title);
+    wpe_toplevel_set_title(wpe_view_get_toplevel(view), privateTitle ? privateTitle : title);
+    g_free(privateTitle);
+}
 #endif
 
 static WebKitWebView* createWebViewForAutomationCallback(WebKitAutomationSession*, WebKitWebView* view)
@@ -258,6 +273,14 @@ static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationActi
         "settings", webkit_web_view_get_settings(webView),
         "user-content-manager", webkit_web_view_get_user_content_manager(webView),
         nullptr));
+
+#if ENABLE_WPE_PLATFORM
+    if (auto* wpeView = webkit_web_view_get_wpe_view(newWebView)) {
+        g_signal_connect(wpeView, "event", G_CALLBACK(wpeViewEventCallback), newWebView);
+        wpe_toplevel_set_title(wpe_view_get_toplevel(wpeView), defaultWindowTitle);
+        g_signal_connect(newWebView, "notify::title", G_CALLBACK(webViewTitleChanged), wpeView);
+    }
+#endif
 
     g_signal_connect(newWebView, "create", G_CALLBACK(createWebView), user_data);
     g_signal_connect(newWebView, "close", G_CALLBACK(webViewClose), user_data);
@@ -450,8 +473,11 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
     }
 
 #if ENABLE_WPE_PLATFORM
-    if (auto* wpeView = webkit_web_view_get_wpe_view(webView))
+    if (auto* wpeView = webkit_web_view_get_wpe_view(webView)) {
         g_signal_connect(wpeView, "event", G_CALLBACK(wpeViewEventCallback), webView);
+        wpe_toplevel_set_title(wpe_view_get_toplevel(wpeView), defaultWindowTitle);
+        g_signal_connect(webView, "notify::title", G_CALLBACK(webViewTitleChanged), wpeView);
+    }
 #endif
 
     openViews = g_hash_table_new_full(nullptr, nullptr, g_object_unref, nullptr);

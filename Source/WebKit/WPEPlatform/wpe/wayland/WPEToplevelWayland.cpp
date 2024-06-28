@@ -520,6 +520,17 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
     }
 };
 
+static const char* defaultTitle()
+{
+    if (const char* title = g_get_application_name())
+        return title;
+
+    if (const char* title = g_get_prgname())
+        return title;
+
+    return nullptr;
+}
+
 static void wpeToplevelWaylandConstructed(GObject *object)
 {
     G_OBJECT_CLASS(wpe_toplevel_wayland_parent_class)->constructed(object);
@@ -536,7 +547,8 @@ static void wpeToplevelWaylandConstructed(GObject *object)
         if (auto* xdgToplevel = xdg_surface_get_toplevel(priv->xdgSurface)) {
             priv->xdgToplevel = xdgToplevel;
             xdg_toplevel_add_listener(priv->xdgToplevel, &xdgToplevelListener, object);
-            xdg_toplevel_set_title(priv->xdgToplevel, "WPEDMABuf"); // FIXME
+            const char* title = defaultTitle();
+            xdg_toplevel_set_title(priv->xdgToplevel, title ? title : "");
             wl_surface_commit(priv->wlSurface);
         }
     }
@@ -647,6 +659,35 @@ static WPEBufferDMABufFormats* wpeToplevelWaylandGetPreferredDMABufFormats(WPETo
     return priv->preferredDMABufFormats.get();
 }
 
+static void wpeToplevelWaylandSetTitle(WPEToplevel* toplevel, const char* title)
+{
+    auto* priv = WPE_TOPLEVEL_WAYLAND(toplevel)->priv;
+    if (!priv->xdgToplevel)
+        return;
+
+    if (!title || !*title) {
+        xdg_toplevel_set_title(priv->xdgToplevel, "");
+        return;
+    }
+
+    static constexpr size_t wlMaxTitleSize = 4083; // 4096 minus header, string argument length and NUL byte.
+    auto titleLength = strlen(title);
+    auto minTitleLength = std::min<size_t>(titleLength, wlMaxTitleSize);
+    const char* end = nullptr;
+    GUniquePtr<char> validTitle;
+    if (g_utf8_validate(title, minTitleLength, &end)) {
+        if (end == title + titleLength) {
+            xdg_toplevel_set_title(priv->xdgToplevel, title);
+            return;
+        }
+
+        validTitle.reset(g_strndup(title, end - title));
+    } else
+        validTitle.reset(g_utf8_make_valid(title, minTitleLength));
+
+    xdg_toplevel_set_title(priv->xdgToplevel, validTitle.get());
+}
+
 static void wpe_toplevel_wayland_class_init(WPEToplevelWaylandClass* toplevelWaylandClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(toplevelWaylandClass);
@@ -659,6 +700,7 @@ static void wpe_toplevel_wayland_class_init(WPEToplevelWaylandClass* toplevelWay
     toplevelClass->set_fullscreen = wpeToplevelWaylandSetFullscreen;
     toplevelClass->set_maximized = wpeToplevelWaylandSetMaximized;
     toplevelClass->get_preferred_dma_buf_formats = wpeToplevelWaylandGetPreferredDMABufFormats;
+    toplevelClass->set_title = wpeToplevelWaylandSetTitle;
 }
 
 static bool regionsEqual(WPERectangle* rectsA, unsigned rectsACount, WPERectangle* rectsB, unsigned rectsBCount)
