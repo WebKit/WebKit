@@ -34,6 +34,7 @@
 #import <UIFoundation/NSAdaptiveImageGlyph.h>
 #import <UIFoundation/NSAttributedString_Private.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <WebCore/FontCocoa.h>
 #import <WebKit/WebKitPrivate.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 
@@ -394,6 +395,64 @@ TEST(AdaptiveImageGlyph, InsertAndRemoveWKAttachments)
     EXPECT_FALSE(removedPNGAttachmentInfo.shouldPreserveFidelity);
 }
 
+TEST(AdaptiveImageGlyph, InsertWKAttachmentsOnPaste)
+{
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+
+    RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
+
+    RetainPtr font = [WebCore::CocoaFont systemFontOfSize:16];
+
+    RetainPtr attributedString = [NSAttributedString attributedStringWithAdaptiveImageGlyph:adaptiveImageGlyph.get() attributes:@{ NSFontAttributeName : font.get() }];
+
+#if PLATFORM(MAC)
+    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+    [pasteboard clearContents];
+    [pasteboard writeObjects:@[ attributedString.get() ]];
+#else
+    auto item = adoptNS([[NSItemProvider alloc] init]);
+    [item registerObject:attributedString.get() visibility:NSItemProviderRepresentationVisibilityAll];
+    [UIPasteboard generalPasteboard].itemProviders = @[ item.get() ];
+#endif
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAttachmentElementEnabled:YES];
+
+    auto webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    [webView _setEditable:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<body></body>"];
+    [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
+
+    [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+    [webView waitForNextPresentationUpdate];
+
+    auto attachmentSortFunction = ^(_WKAttachment *a, _WKAttachment *b) {
+        return [a.info.contentType compare:b.info.contentType];
+    };
+
+    auto insertedAttachments = [[webView insertedAttachments] sortedArrayUsingComparator:attachmentSortFunction];
+    EXPECT_EQ(insertedAttachments.count, 2U);
+    EXPECT_EQ([[webView removedAttachments] count], 0U);
+
+    auto heicAttachment = [insertedAttachments objectAtIndex:0];
+    auto heicAttachmentInfo = heicAttachment.info;
+    EXPECT_WK_STREQ(heicAttachmentInfo.contentType, "image/heic");
+    EXPECT_TRUE([heicAttachmentInfo.name containsString:@"heic"]);
+    EXPECT_EQ(heicAttachmentInfo.data.length, 23499U);
+    EXPECT_TRUE(heicAttachmentInfo.shouldPreserveFidelity);
+
+    auto pngAttachment = [insertedAttachments objectAtIndex:1];
+    auto pngAttachmentInfo =  pngAttachment.info;
+    EXPECT_WK_STREQ(pngAttachmentInfo.contentType, "image/png");
+    EXPECT_TRUE([pngAttachmentInfo.name containsString:@"dog in a spacesuit"]);
+    EXPECT_EQ(pngAttachmentInfo.data.length, 42126U);
+    EXPECT_FALSE(pngAttachmentInfo.shouldPreserveFidelity);
+
+    EXPECT_TRUE([[webView stringByEvaluatingJavaScript:@"document.querySelector('source').attachmentIdentifier"] isEqualToString:heicAttachment.uniqueIdentifier]);
+    EXPECT_TRUE([[webView stringByEvaluatingJavaScript:@"document.querySelector('img').attachmentIdentifier"] isEqualToString:pngAttachment.uniqueIdentifier]);
+}
+
 TEST(AdaptiveImageGlyph, InsertMultiple)
 {
     auto webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 800)]);
@@ -594,11 +653,7 @@ TEST(AdaptiveImageGlyph, DropAdaptiveImageGlyphAsText)
     RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
     RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
 
-#if PLATFORM(MAC)
-    RetainPtr font = [NSFont systemFontOfSize:36];
-#else
-    RetainPtr font = [UIFont systemFontOfSize:36];
-#endif
+    RetainPtr font = [WebCore::CocoaFont systemFontOfSize:36];
 
     RetainPtr attributedString = [NSAttributedString attributedStringWithAdaptiveImageGlyph:adaptiveImageGlyph.get() attributes:@{ NSFontAttributeName : font.get() }];
     RetainPtr RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ }];
@@ -630,11 +685,7 @@ TEST(AdaptiveImageGlyph, DropAdaptiveImageGlyphAsSticker)
     RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
     RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
 
-#if PLATFORM(MAC)
-    RetainPtr font = [NSFont systemFontOfSize:36];
-#else
-    RetainPtr font = [UIFont systemFontOfSize:36];
-#endif
+    RetainPtr font = [WebCore::CocoaFont systemFontOfSize:36];
 
     RetainPtr attributedString = [NSAttributedString attributedStringWithAdaptiveImageGlyph:adaptiveImageGlyph.get() attributes:@{ NSFontAttributeName : font.get() }];
     RetainPtr RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ }];

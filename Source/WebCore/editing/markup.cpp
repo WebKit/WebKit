@@ -30,6 +30,7 @@
 #include "markup.h"
 
 #include "ArchiveResource.h"
+#include "AttachmentAssociatedElement.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
@@ -63,6 +64,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "HTMLPictureElement.h"
+#include "HTMLSourceElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
@@ -611,6 +613,9 @@ void StyledMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const E
         }
     } else if (RefPtr imgElement = dynamicDowncast<HTMLImageElement>(element)) {
         if (RefPtr attachment = imgElement->attachmentElement())
+            appendAttribute(out, element, { webkitattachmentidAttr, AtomString { attachment->uniqueIdentifier() } }, namespaces);
+    } else if (RefPtr sourceElement = dynamicDowncast<HTMLSourceElement>(element)) {
+        if (RefPtr attachment = sourceElement->attachmentElement())
             appendAttribute(out, element, { webkitattachmentidAttr, AtomString { attachment->uniqueIdentifier() } }, namespaces);
     }
 #else
@@ -1174,19 +1179,25 @@ static void restoreAttachmentElementsInFragment(DocumentFragment& fragment)
         attachment->removeAttribute(webkitattachmentbloburlAttr);
     }
 
-    Vector<Ref<HTMLImageElement>> images;
-    for (auto& image : descendantsOfType<HTMLImageElement>(fragment))
-        images.append(image);
+    Vector<Ref<AttachmentAssociatedElement>> attachmentAssociatedElements;
 
-    for (auto& image : images) {
-        auto attachmentIdentifier = image->attributeWithoutSynchronization(webkitattachmentidAttr);
+    for (auto& image : descendantsOfType<HTMLImageElement>(fragment))
+        attachmentAssociatedElements.append(image);
+
+    for (auto& source : descendantsOfType<HTMLSourceElement>(fragment))
+        attachmentAssociatedElements.append(source);
+
+    for (auto& attachmentAssociatedElement : attachmentAssociatedElements) {
+        Ref element = attachmentAssociatedElement->asHTMLElement();
+
+        auto attachmentIdentifier = element->attributeWithoutSynchronization(webkitattachmentidAttr);
         if (attachmentIdentifier.isEmpty())
             continue;
 
         auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, *ownerDocument);
         attachment->setUniqueIdentifier(attachmentIdentifier);
-        image->setAttachmentElement(WTFMove(attachment));
-        image->removeAttribute(webkitattachmentidAttr);
+        attachmentAssociatedElement->setAttachmentElement(WTFMove(attachment));
+        element->removeAttribute(webkitattachmentidAttr);
     }
 #else
     UNUSED_PARAM(fragment);
