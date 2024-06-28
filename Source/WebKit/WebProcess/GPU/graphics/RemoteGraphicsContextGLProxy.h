@@ -360,6 +360,7 @@ public:
     void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, std::span<GCGLint> params) final;
     void setDrawingBufferColorSpace(const WebCore::DestinationColorSpace&) final;
     RefPtr<WebCore::PixelBuffer> drawingBufferToPixelBuffer(WebCore::GraphicsContextGLFlipY) final;
+    void drawingBufferToPixelBuffer(WebCore::GraphicsContextGLFlipY, RefPtr<WebCore::PixelBuffer>&&) final;
 
 #if ENABLE(WEBXR)
     GCGLExternalImage createExternalImage(WebCore::GraphicsContextGL::ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;

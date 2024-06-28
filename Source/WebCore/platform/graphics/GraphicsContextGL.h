@@ -1655,6 +1655,7 @@ public:
     virtual RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) = 0;
 #endif
     virtual RefPtr<PixelBuffer> drawingBufferToPixelBuffer(FlipY) = 0;
+    virtual void drawingBufferToPixelBuffer(FlipY, RefPtr<PixelBuffer>&&) = 0;
 
     using SimulatedEventForTesting = GraphicsContextGLSimulatedEventForTesting;
     virtual void simulateEventForTesting(SimulatedEventForTesting) = 0;

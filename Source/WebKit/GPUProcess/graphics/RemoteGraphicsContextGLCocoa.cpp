@@ -43,6 +43,8 @@
 
 namespace WebKit {
 
+using namespace WebCore;
+
 #if ENABLE(VIDEO)
 void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::SharedVideoFrame&& frame, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&& completionHandler)
 {

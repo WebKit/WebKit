@@ -347,6 +347,7 @@ public:
     void simulateEventForTesting(SimulatedEventForTesting) override;
     void drawSurfaceBufferToImageBuffer(SurfaceBuffer, ImageBuffer&) override;
     RefPtr<PixelBuffer> drawingBufferToPixelBuffer(FlipY) override;
+    void drawingBufferToPixelBuffer(FlipY, RefPtr<WebCore::PixelBuffer>&&) override;
 
     RefPtr<PixelBuffer> readRenderingResultsForPainting();
 
@@ -395,6 +396,7 @@ protected:
     RefPtr<PixelBuffer> readRenderingResults();
     virtual RefPtr<PixelBuffer> readCompositedResults() = 0;
     RefPtr<PixelBuffer> readPixelsForPaintResults();
+    void updatePixelsForPaintResults(RefPtr<PixelBuffer>&&);
 
     bool reshapeFBOs(const IntSize&);
     void prepareTexture();

@@ -50,6 +50,7 @@ public:
     std::span<uint8_t> bytes() const { return m_bytes; }
 
     virtual bool isByteArrayPixelBuffer() const { return false; }
+    virtual bool isShareablePixelBuffer() const { return false; }
     virtual RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const = 0;
 
     bool setRange(std::span<const uint8_t> data, size_t byteOffset);

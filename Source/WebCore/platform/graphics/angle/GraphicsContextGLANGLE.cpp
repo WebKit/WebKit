@@ -257,6 +257,16 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::readPixelsForPaintResults()
     auto pixelBuffer = ByteArrayPixelBuffer::tryCreate(format, getInternalFramebufferSize());
     if (!pixelBuffer)
         return nullptr;
+
+    updatePixelsForPaintResults(pixelBuffer);
+    return pixelBuffer;
+}
+
+void GraphicsContextGLANGLE::updatePixelsForPaintResults(RefPtr<PixelBuffer>&& pixelBuffer)
+{
+    if (pixelBuffer->size() != getInternalFramebufferSize())
+        return;
+
     ScopedBufferBinding scopedPixelPackBufferReset(GL_PIXEL_PACK_BUFFER, 0, m_isForWebGL2);
     setPackParameters(1, 0);
     GL_ReadnPixelsRobustANGLE(0, 0, pixelBuffer->size().width(), pixelBuffer->size().height(), GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer->bytes().size(), nullptr, nullptr, nullptr, pixelBuffer->bytes().data());
@@ -268,7 +278,6 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::readPixelsForPaintResults()
     if (!contextAttributes().alpha)
         wipeAlphaChannelFromPixels(pixelBuffer->size().width(), pixelBuffer->size().height(), pixelBuffer->bytes().data());
 #endif
-    return pixelBuffer;
 }
 
 void GraphicsContextGLANGLE::validateAttributes()
@@ -3285,9 +3294,18 @@ void GraphicsContextGLANGLE::withBufferAsNativeImage(SurfaceBuffer source, Funct
 
 RefPtr<PixelBuffer> GraphicsContextGLANGLE::drawingBufferToPixelBuffer(FlipY flipY)
 {
+    RefPtr<PixelBuffer> pixelBuffer { };
+    drawingBufferToPixelBuffer(flipY, WTFMove(pixelBuffer));
+    return pixelBuffer;
+}
+
+void GraphicsContextGLANGLE::drawingBufferToPixelBuffer(FlipY flipY, RefPtr<PixelBuffer>&& result)
+{
     // Reading premultiplied alpha would involve unpremultiplying, which is lossy.
-    if (contextAttributes().premultipliedAlpha)
-        return nullptr;
+    if (contextAttributes().premultipliedAlpha) {
+        result = nullptr;
+        return;
+    }
     auto results = readRenderingResultsForPainting();
     if (flipY == FlipY::Yes && results && !results->size().isEmpty()) {
         ASSERT(results->format().pixelFormat == PixelFormat::RGBA8 || results->format().pixelFormat == PixelFormat::BGRA8);
@@ -3303,7 +3321,6 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::drawingBufferToPixelBuffer(FlipY fli
             memcpy(top, temp.get(), rowStride);
         }
     }
-    return results;
 }
 
 RefPtr<PixelBuffer> GraphicsContextGLANGLE::readRenderingResultsForPainting()

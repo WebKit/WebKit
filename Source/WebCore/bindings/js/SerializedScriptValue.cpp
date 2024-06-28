@@ -65,6 +65,7 @@
 #include "JSWebCodecsEncodedVideoChunk.h"
 #include "JSWebCodecsVideoFrame.h"
 #include "ScriptExecutionContext.h"
+#include "ShareablePixelBuffer.h"
 #include "SharedBuffer.h"
 #include "WebCodecsEncodedAudioChunk.h"
 #include "WebCodecsEncodedVideoChunk.h"

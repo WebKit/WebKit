@@ -26,10 +26,9 @@
 #include "config.h"
 #include "ShareablePixelBuffer.h"
 
-#include <WebCore/SharedMemory.h>
+#include "SharedMemory.h"
 
-namespace WebKit {
-using namespace WebCore;
+namespace WebCore {
 
 RefPtr<ShareablePixelBuffer> ShareablePixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size)
 {
@@ -45,6 +44,15 @@ RefPtr<ShareablePixelBuffer> ShareablePixelBuffer::tryCreate(const PixelBufferFo
     return adoptRef(new ShareablePixelBuffer(format, size, sharedMemory.releaseNonNull()));
 }
 
+std::optional<Ref<ShareablePixelBuffer>> ShareablePixelBuffer::create(const PixelBufferFormat& format, const IntSize& size)
+{
+    auto sharedBuffer = ShareablePixelBuffer::tryCreate(format, size);
+    std::optional<Ref<ShareablePixelBuffer>> result;
+    if (sharedBuffer)
+        result = sharedBuffer.releaseNonNull();
+    return result;
+}
+
 ShareablePixelBuffer::ShareablePixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<SharedMemory>&& data)
     : PixelBuffer(format, size, data->mutableSpan())
     , m_data(WTFMove(data))
@@ -57,4 +65,4 @@ RefPtr<PixelBuffer> ShareablePixelBuffer::createScratchPixelBuffer(const IntSize
     return ShareablePixelBuffer::tryCreate(m_format, size);
 }
 
-} // namespace WebKit
+} // namespace WebCore

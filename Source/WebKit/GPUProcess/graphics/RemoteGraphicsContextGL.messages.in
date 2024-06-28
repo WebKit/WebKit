@@ -322,7 +322,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void RenderbufferStorageMultisampleANGLE(uint32_t target, int32_t samples, uint32_t internalformat, int32_t width, int32_t height)
     void GetInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, size_t paramsSize) -> (std::span<const int32_t> params) Synchronous
     void SetDrawingBufferColorSpace(WebCore::DestinationColorSpace arg0)
-    void DrawingBufferToPixelBuffer(enum:bool WebCore::GraphicsContextGLFlipY arg0) -> (RefPtr<WebCore::PixelBuffer> returnValue) Synchronous
+    void DrawingBufferToPixelBuffer(enum:bool WebCore::GraphicsContextGLFlipY arg0, RefPtr<WebCore::PixelBuffer> pixelBuffer) -> (bool returnValue) Synchronous
 #if ENABLE(WEBXR)
     [EnabledIf='webXREnabled()'] void CreateExternalImage(uint32_t externalImage, WebCore::GraphicsContextGL::ExternalImageSource arg0, uint32_t internalFormat, int32_t layer) NotStreamEncodable
     [EnabledIf='webXREnabled()'] void DeleteExternalImage(uint32_t handle)

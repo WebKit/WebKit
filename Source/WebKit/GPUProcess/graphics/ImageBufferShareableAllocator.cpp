@@ -27,9 +27,9 @@
 #include "ImageBufferShareableAllocator.h"
 
 #include "ImageBufferShareableBitmapBackend.h"
-#include "ShareablePixelBuffer.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/ShareablePixelBuffer.h>
 
 #if ENABLE(GPU_PROCESS)
 

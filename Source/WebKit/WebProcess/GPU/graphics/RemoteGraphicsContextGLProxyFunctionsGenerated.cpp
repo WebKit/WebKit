@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "RemoteGraphicsContextGLProxy.h"
+#include <WebCore/ShareablePixelBuffer.h>
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
@@ -3047,17 +3048,25 @@ void RemoteGraphicsContextGLProxy::setDrawingBufferColorSpace(const WebCore::Des
     }
 }
 
+void RemoteGraphicsContextGLProxy::drawingBufferToPixelBuffer(WebCore::GraphicsContextGLFlipY, RefPtr<WebCore::PixelBuffer>&&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 RefPtr<WebCore::PixelBuffer> RemoteGraphicsContextGLProxy::drawingBufferToPixelBuffer(WebCore::GraphicsContextGLFlipY arg0)
 {
     if (isContextLost())
         return { };
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::DrawingBufferToPixelBuffer(arg0));
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+    auto pixelBuffer = ShareablePixelBuffer::tryCreate(format, WebCore::IntSize(m_currentWidth, m_currentHeight));
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::DrawingBufferToPixelBuffer(arg0, WTFMove(pixelBuffer)));
     if (!sendResult.succeeded()) {
         markContextLost();
         return { };
     }
-    auto& [returnValue] = sendResult.reply();
-    return returnValue;
+
+    auto [success] = sendResult.reply();
+    return success ? pixelBuffer : nullptr;
 }
 
 #if ENABLE(WEBXR)

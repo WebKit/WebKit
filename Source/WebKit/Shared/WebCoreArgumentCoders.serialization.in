@@ -3046,6 +3046,7 @@ enum class WebCore::WindRule : bool;
 
 [AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::PixelBuffer subclasses {
     WebCore::ByteArrayPixelBuffer
+    WebCore::ShareablePixelBuffer
 }
 
 header: <WebCore/RenderStyleConstants.h>
@@ -7327,6 +7328,11 @@ enum class WebCore::RepaintRectCalculation : bool;
     WebCore::PixelBufferFormat format();
     WebCore::IntSize size();
     std::span<const uint8_t> span();
+}
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ShareablePixelBuffer {
+    WebCore::PixelBufferFormat format();
+    WebCore::IntSize size();
 }
 
 #if ENABLE(WEB_AUTHN)

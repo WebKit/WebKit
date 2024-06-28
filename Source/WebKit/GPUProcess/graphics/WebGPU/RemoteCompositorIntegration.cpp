@@ -34,6 +34,7 @@
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUCompositorIntegration.h>
+#include <WebCore/WebGPUTextureFormat.h>
 
 #if PLATFORM(COCOA)
 #define MESSAGE_CHECK(assertion) do { \

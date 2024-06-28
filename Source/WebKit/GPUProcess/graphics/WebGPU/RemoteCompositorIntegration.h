@@ -48,6 +48,7 @@ class ImageBuffer;
 
 namespace WebCore::WebGPU {
 class CompositorIntegration;
+enum class TextureFormat : uint8_t;
 }
 
 namespace IPC {

@@ -25,26 +25,30 @@
 
 #pragma once
 
-#include <WebCore/PixelBuffer.h>
+#include "PixelBuffer.h"
 
 namespace WebCore {
 class SharedMemory;
-}
 
-namespace WebKit {
-
-class ShareablePixelBuffer : public WebCore::PixelBuffer {
+class ShareablePixelBuffer : public PixelBuffer {
 public:
-    static RefPtr<ShareablePixelBuffer> tryCreate(const WebCore::PixelBufferFormat&, const WebCore::IntSize&);
+    WEBCORE_EXPORT static RefPtr<ShareablePixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
+    WEBCORE_EXPORT static std::optional<Ref<ShareablePixelBuffer>> create(const PixelBufferFormat&, const IntSize&);
 
-    WebCore::SharedMemory& data() const { return m_data.get(); }
+    SharedMemory& data() const { return m_data.get(); }
 
-    RefPtr<WebCore::PixelBuffer> createScratchPixelBuffer(const WebCore::IntSize&) const override;
+    RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const override;
 
 private:
-    ShareablePixelBuffer(const WebCore::PixelBufferFormat&, const WebCore::IntSize&, Ref<WebCore::SharedMemory>&&);
+    ShareablePixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<SharedMemory>&&);
 
-    Ref<WebCore::SharedMemory> m_data;
+    bool isShareablePixelBuffer() const override { return true; }
+
+    Ref<SharedMemory> m_data;
 };
 
-} // namespace WebKit
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ShareablePixelBuffer)
+    static bool isType(const WebCore::PixelBuffer& pixelBuffer) { return pixelBuffer.isShareablePixelBuffer(); }
+SPECIALIZE_TYPE_TRAITS_END()

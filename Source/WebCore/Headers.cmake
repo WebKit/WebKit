@@ -2065,6 +2065,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ScreenDataOverrides.h
     platform/graphics/ShareableBitmap.h
     platform/graphics/ShareableBitmapHandle.h
+    platform/graphics/ShareablePixelBuffer.h
     platform/graphics/ShouldLocalizeAxisNames.h
     platform/graphics/SourceBrush.h
     platform/graphics/SourceBrushLogicalGradient.h
