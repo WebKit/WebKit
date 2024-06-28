@@ -70,6 +70,7 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
     self.cancellable = YES;
     self.cancellationHandler = makeBlockPtr([weakSelf = WeakObjCPtr<WKDownloadProgress> { self }] () mutable {
         ensureOnMainRunLoop([weakSelf = WTFMove(weakSelf)] {
+            WTFLogAlways("CHRIS: Calling performCancel from cancelation handler");
             [weakSelf performCancel];
         });
     }).get();
@@ -119,6 +120,8 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
     float fraction = (total > 0) ? (float)completed / (float)total : -1;
     auto xattrContents = adoptNS([[NSString alloc] initWithFormat:@"%.3f", fraction]);
 
+    WTFLogAlways("CHRIS: _updateProgressExtendedAttributeOnProgressFile, total=%llu, completed=%llu, fraction=%g", total, completed, fraction);
+
     setxattr(self.fileURL.fileSystemRepresentation, "com.apple.progress.fractionCompleted", xattrContents.get().UTF8String, [xattrContents.get() lengthOfBytesUsingEncoding:NSUTF8StringEncoding], 0, 0);
 }
 
@@ -139,10 +142,12 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
         ASSERT([value isKindOfClass:[NSNumber class]]);
         int64_t expectedByteCount = value.get().longLongValue;
         self.totalUnitCount = (expectedByteCount <= 0) ? -1 : expectedByteCount;
+        WTFLogAlways("CHRIS: observeValueForKeyPath: totalUnitCount=%lld", (int64_t)self.totalUnitCount);
     } else if (context == WKDownloadProgressBytesReceivedContext) {
         RetainPtr<NSNumber> value = static_cast<NSNumber *>(change[NSKeyValueChangeNewKey]);
         ASSERT([value isKindOfClass:[NSNumber class]]);
         self.completedUnitCount = value.get().longLongValue;
+        WTFLogAlways("CHRIS: observeValueForKeyPath: completedUnitCount=%lld", (int64_t)self.completedUnitCount);
     } else
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 }
