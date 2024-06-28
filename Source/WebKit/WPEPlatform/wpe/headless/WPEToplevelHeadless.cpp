@@ -36,6 +36,13 @@ struct _WPEToplevelHeadlessPrivate {
 };
 WEBKIT_DEFINE_FINAL_TYPE(WPEToplevelHeadless, wpe_toplevel_headless, WPE_TYPE_TOPLEVEL, WPEToplevel)
 
+static void wpeToplevelHeadlessConstructed(GObject* object)
+{
+    G_OBJECT_CLASS(wpe_toplevel_headless_parent_class)->constructed(object);
+
+    wpe_toplevel_state_changed(WPE_TOPLEVEL(object), WPE_TOPLEVEL_STATE_ACTIVE);
+}
+
 static gboolean wpeToplevelHeadlessResize(WPEToplevel* toplevel, int width, int height)
 {
     wpe_toplevel_resized(toplevel, width, height);
@@ -61,6 +68,9 @@ static gboolean wpeToplevelHeadlessSetFullscreen(WPEToplevel* toplevel, gboolean
 
 static void wpe_toplevel_headless_class_init(WPEToplevelHeadlessClass* toplevelHeadlessClass)
 {
+    GObjectClass* objectClass = G_OBJECT_CLASS(toplevelHeadlessClass);
+    objectClass->constructed = wpeToplevelHeadlessConstructed;
+
     WPEToplevelClass* toplevelClass = WPE_TOPLEVEL_CLASS(toplevelHeadlessClass);
     toplevelClass->resize = wpeToplevelHeadlessResize;
     toplevelClass->set_fullscreen = wpeToplevelHeadlessSetFullscreen;

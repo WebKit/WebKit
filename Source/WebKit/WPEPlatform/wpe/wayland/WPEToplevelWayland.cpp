@@ -328,6 +328,9 @@ const struct xdg_toplevel_listener xdgToplevelListener = {
             case XDG_TOPLEVEL_STATE_MAXIMIZED:
                 pendingState |= WPE_TOPLEVEL_STATE_MAXIMIZED;
                 break;
+            case XDG_TOPLEVEL_STATE_ACTIVATED:
+                pendingState |= WPE_TOPLEVEL_STATE_ACTIVE;
+                break;
             default:
                 break;
             }

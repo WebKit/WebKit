@@ -49,7 +49,7 @@ static void wpeToplevelDRMConstructed(GObject* object)
     double scale = wpe_monitor_get_scale(monitor);
     wpe_toplevel_resized(toplevel, mode->hdisplay / scale, mode->vdisplay / scale);
     wpe_toplevel_scale_changed(toplevel, scale);
-    wpe_toplevel_state_changed(toplevel, WPE_TOPLEVEL_STATE_FULLSCREEN);
+    wpe_toplevel_state_changed(toplevel, static_cast<WPEToplevelState>(WPE_TOPLEVEL_STATE_FULLSCREEN | WPE_TOPLEVEL_STATE_ACTIVE));
 }
 
 static WPEMonitor* wpeToplevelDRMGetMonitor(WPEToplevel* toplevel)
