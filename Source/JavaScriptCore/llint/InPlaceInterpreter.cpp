@@ -120,19 +120,6 @@ do { \
     RELEASE_ASSERT_WITH_MESSAGE((char*)(untaggedPtr) - (char*)(untaggedBase) == opcode * 64, #name); \
 } while (false);
 
-#if CPU(ADDRESS64)
-#define VALIDATE_JS_TO_WASM_WRAPPER_ENTRY(opcode, name) \
-do { \
-    void* base = reinterpret_cast<void*>(js_to_wasm_wrapper_entry_interp_LoadI32_validate); \
-    void* ptr = reinterpret_cast<void*>(js_to_wasm_wrapper_entry_interp_ ## name ## _validate); \
-    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr(); \
-    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr(); \
-    RELEASE_ASSERT_WITH_MESSAGE((char*)(untaggedPtr) - (char*)(untaggedBase) == ((opcode) * 8 * 4), (#name)); \
-} while (false);
-#else
-#define VALIDATE_JS_TO_WASM_WRAPPER_ENTRY(opcode, name)
-#endif
-
 void initialize()
 {
 #if !ENABLE(C_LOOP) && ((CPU(ADDRESS64) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))) || (CPU(ADDRESS32) && CPU(ARM_THUMB2)))
@@ -140,14 +127,6 @@ void initialize()
     FOR_EACH_IPINT_0xFC_TRUNC_OPCODE(VALIDATE_IPINT_0xFC_OPCODE);
     FOR_EACH_IPINT_SIMD_OPCODE(VALIDATE_IPINT_SIMD_OPCODE);
     FOR_EACH_IPINT_ATOMIC_OPCODE(VALIDATE_IPINT_ATOMIC_OPCODE);
-
-    if (Options::useInterpretedJSEntryWrappers()) {
-        FOR_EACH_JS_TO_WASM_WRAPPER_METADATA_OPCODE(VALIDATE_JS_TO_WASM_WRAPPER_ENTRY);
-        // Label after last defined opcode
-        VALIDATE_JS_TO_WASM_WRAPPER_ENTRY(static_cast<int>(Wasm::JSEntrypointInterpreterCalleeMetadata::InvalidRegister), invalidop);
-        // This is the label representing the farthest possible dispatch jump
-        VALIDATE_JS_TO_WASM_WRAPPER_ENTRY(static_cast<int>(Wasm::JSEntrypointInterpreterCalleeMetadata::OpcodeMask) + 1, afterops);
-    }
 
     FOR_EACH_IPINT_ARGUMINT_OPCODE(VALIDATE_IPINT_ARGUMINT_OPCODE);
     FOR_EACH_IPINT_SLOW_PATH(VALIDATE_IPINT_SLOW_PATH);

@@ -1,4 +1,4 @@
-//@ skip
+//@skip
 //@ requireOptions("--useInterpretedJSEntryWrappers=1", "--useWebAssemblyTailCalls=1")
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
