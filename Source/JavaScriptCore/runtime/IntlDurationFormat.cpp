@@ -401,17 +401,19 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
             break;
         }
 
+        auto style = unitData.style();
+
         // 3.k. If style is "2-digit", then
         //     i. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2F).
         skeletonBuilder.append(" integer-width/"_s, WTF::ICU::majorVersion() >= 67 ? '*' : '+'); // Prior to ICU 67, use the symbol + instead of *.
-        if (unitData.style() == IntlDurationFormat::UnitStyle::TwoDigit)
+        if (style == IntlDurationFormat::UnitStyle::TwoDigit)
             skeletonBuilder.append("00"_s);
         else
             skeletonBuilder.append('0');
 
         // 3.l. If value is not 0 or display is not "auto", then
         value = purifyNaN(value);
-        if (value != 0 || unitData.display() != IntlDurationFormat::Display::Auto) {
+        if (value || unitData.display() != IntlDurationFormat::Display::Auto || style == IntlDurationFormat::UnitStyle::TwoDigit || style ==  IntlDurationFormat::UnitStyle::Numeric) {
             auto formatToString = [&](UFormattedNumber* formattedNumber) -> String {
                 auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -466,37 +468,40 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                 return formattedNumber;
             };
 
-            switch (unitData.style()) {
+            switch (style) {
             // 3.l.i. If style is "2-digit" or "numeric", then
             case IntlDurationFormat::UnitStyle::TwoDigit:
             case IntlDurationFormat::UnitStyle::Numeric: {
-                auto formattedNumber = formatDouble(skeletonBuilder.toString());
-                RETURN_IF_EXCEPTION(scope, { });
+                // https://tc39.es/proposal-intl-duration-format/#sec-formatnumericunits
+                ASSERT(unit == TemporalUnit::Hour || unit == TemporalUnit::Minute || unit == TemporalUnit::Second);
 
-                auto formatted = formatToString(formattedNumber.get());
-                RETURN_IF_EXCEPTION(scope, { });
+                double secondsValue = duration[TemporalUnit::Second];
+                if (durationFormat->units()[static_cast<unsigned>(TemporalUnit::Millisecond)].style() == IntlDurationFormat::UnitStyle::Numeric)
+                    secondsValue = secondsValue + duration[TemporalUnit::Millisecond] / 1000.0 + duration[TemporalUnit::Microsecond] / 1000000.0 + duration[TemporalUnit::Nanosecond] / 1000000000.0;
 
-                elements.append({ ElementType::Element, unit, WTFMove(formatted), value, WTFMove(formattedNumber) });
+                bool needsFormatHours = duration[TemporalUnit::Hour] || durationFormat->units()[static_cast<unsigned>(TemporalUnit::Hour)].display() != IntlDurationFormat::Display::Auto;
+                bool needsFormatSeconds = secondsValue || durationFormat->units()[static_cast<unsigned>(TemporalUnit::Second)].display() != IntlDurationFormat::Display::Auto;
+                bool needsFormatMinutes = (needsFormatHours && needsFormatSeconds) || duration[TemporalUnit::Minute] || durationFormat->units()[static_cast<unsigned>(TemporalUnit::Minute)].display() != IntlDurationFormat::Display::Auto;
 
-                if (unit == TemporalUnit::Hour || unit == TemporalUnit::Minute) {
-                    IntlDurationFormat::UnitData nextUnit;
-                    double nextValue = 0;
-                    if (unit == TemporalUnit::Hour) {
-                        nextUnit = durationFormat->units()[static_cast<unsigned>(TemporalUnit::Minute)];
-                        nextValue = duration[TemporalUnit::Minute];
-                    } else {
-                        nextUnit = durationFormat->units()[static_cast<unsigned>(TemporalUnit::Second)];
-                        nextValue = duration[TemporalUnit::Second];
-                        if (durationFormat->units()[static_cast<unsigned>(TemporalUnit::Millisecond)].style() == IntlDurationFormat::UnitStyle::Numeric)
-                            nextValue = nextValue + duration[TemporalUnit::Millisecond] / 1000.0 + duration[TemporalUnit::Microsecond] / 1000000.0 + duration[TemporalUnit::Nanosecond] / 1000000000.0;
-                    }
+                bool needsFormat = (unit == TemporalUnit::Hour && needsFormatHours) || (unit == TemporalUnit::Minute && needsFormatMinutes) || (unit == TemporalUnit::Second && needsFormatSeconds);
+                bool needsSeparator = (unit == TemporalUnit::Hour && needsFormatMinutes) || (unit == TemporalUnit::Minute && needsFormatSeconds);
 
-                    if (nextValue != 0 || nextUnit.display() != IntlDurationFormat::Display::Auto) {
-                        if (separator.isNull())
-                            separator = retrieveSeparator(durationFormat->dataLocaleWithExtensions(), durationFormat->numberingSystem());
-                        elements.append({ ElementType::Literal, unit, separator, value, nullptr });
-                    }
+                if (needsFormat) {
+                    auto formattedNumber = formatDouble(skeletonBuilder.toString());
+                    RETURN_IF_EXCEPTION(scope, { });
+
+                    auto formatted = formatToString(formattedNumber.get());
+                    RETURN_IF_EXCEPTION(scope, { });
+
+                    elements.append({ ElementType::Element, unit, WTFMove(formatted), value, WTFMove(formattedNumber) });
                 }
+
+                if (needsSeparator) {
+                    if (separator.isNull())
+                        separator = retrieveSeparator(durationFormat->dataLocaleWithExtensions(), durationFormat->numberingSystem());
+                    elements.append({ ElementType::Literal, unit, separator, value, nullptr });
+                }
+
                 break;
             }
             // 3.l.ii. Else
@@ -505,12 +510,12 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
             case IntlDurationFormat::UnitStyle::Narrow: {
                 skeletonBuilder.append(" measure-unit/duration-"_s);
                 skeletonBuilder.append(String(temporalUnitSingularPropertyName(vm, unit).uid()));
-                if (unitData.style() == IntlDurationFormat::UnitStyle::Long)
+                if (style == IntlDurationFormat::UnitStyle::Long)
                     skeletonBuilder.append(" unit-width-full-name"_s);
-                else if (unitData.style() == IntlDurationFormat::UnitStyle::Short)
+                else if (style == IntlDurationFormat::UnitStyle::Short)
                     skeletonBuilder.append(" unit-width-short"_s);
                 else {
-                    ASSERT(unitData.style() == IntlDurationFormat::UnitStyle::Narrow);
+                    ASSERT(style == IntlDurationFormat::UnitStyle::Narrow);
                     skeletonBuilder.append(" unit-width-narrow"_s);
                 }
 
