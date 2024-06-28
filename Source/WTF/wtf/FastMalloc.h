@@ -138,6 +138,8 @@ WTF_EXPORT_PRIVATE void fastEnableMiniMode();
 
 WTF_EXPORT_PRIVATE void fastDisableScavenger();
 
+WTF_EXPORT_PRIVATE void forceEnablePGM();
+
 class ForbidMallocUseForCurrentThreadScope {
 public:
 #if ASSERT_ENABLED

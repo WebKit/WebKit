@@ -870,6 +870,11 @@ void fastDisableScavenger()
     bmalloc::api::disableScavenger();
 }
 
+void forceEnablePGM()
+{
+    bmalloc::api::forceEnablePGM();
+}
+
 } // namespace WTF
 
 #endif // USE(SYSTEM_MALLOC)

@@ -127,6 +127,7 @@ static PAS_ALWAYS_INLINE bool pas_probabilistic_guard_malloc_should_call_pgm(voi
 }
 
 extern PAS_API void pas_probabilistic_guard_malloc_initialize_pgm(void);
+extern PAS_API void pas_probabilistic_guard_malloc_initialize_pgm_as_enabled(void);
 pas_large_map_entry pas_probabilistic_guard_malloc_return_as_large_map_entry(uintptr_t mem);
 
 PAS_END_EXTERN_C;

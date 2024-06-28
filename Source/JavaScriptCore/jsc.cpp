@@ -95,6 +95,7 @@
 #include <type_traits>
 #include <wtf/CPUTime.h>
 #include <wtf/CommaPrinter.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/MemoryPressureHandler.h>
@@ -3901,6 +3902,9 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "  --options                  Dumps all JSC VM options and exits\n");
     fprintf(stderr, "  --dumpOptions              Dumps all non-default JSC VM options before continuing\n");
     fprintf(stderr, "  --<jsc VM option>=<value>  Sets the specified JSC VM option\n");
+#if PLATFORM(COCOA)
+    fprintf(stderr, "  --crash-vm=<value>         Crash VM on startup due to PGM failure. Options PGMOOBLowerGuardPage, PGMOOBUpperGuardPage, or PGMUAF (For Testing Purposes).\n");
+#endif
     fprintf(stderr, "  --destroy-vm               Destroy VM before exiting\n");
     fprintf(stderr, "  --can-block-is-false       Make main thread's Atomics.wait throw\n");
     fprintf(stderr, "\n");
@@ -3919,6 +3923,33 @@ static bool isMJSFile(char *filename)
 
     return false;
 }
+
+#if PLATFORM(COCOA)
+static NEVER_INLINE void crashPGMUAF()
+{
+    WTF::forceEnablePGM();
+    char* result = static_cast<char*>(fastMalloc(10000000));
+    fastFree(result);
+    *result = 'a';
+}
+
+static NEVER_INLINE void crashPGMUpperGuardPage()
+{
+    WTF::forceEnablePGM();
+    size_t allocSize = getpagesize() * 10000;
+    char* result = static_cast<char*>(fastMalloc(10000000));
+    result = result + allocSize;
+    *result = 'a';
+}
+
+static NEVER_INLINE void crashPGMLowerGuardPage()
+{
+    WTF::forceEnablePGM();
+    char* result = static_cast<char*>(fastMalloc(10000000));
+    result = result - getpagesize();
+    *result = 'a';
+}
+#endif
 
 void CommandLine::parseArguments(int argc, char** argv)
 {
@@ -4045,6 +4076,14 @@ void CommandLine::parseArguments(int argc, char** argv)
             m_dumpSamplingProfilerData = true;
             continue;
         }
+#if PLATFORM(COCOA)
+        if (!strcmp(arg, "--crash-vm=PGMOOBLowerGuardPage"))
+            crashPGMLowerGuardPage();
+        if (!strcmp(arg, "--crash-vm=PGMOOBUpperGuardPage"))
+            crashPGMUpperGuardPage();
+        if (!strcmp(arg, "--crash-vm=PGMUAF"))
+            crashPGMUAF();
+#endif
         if (!strcmp(arg, "--destroy-vm")) {
             m_destroyVM = true;
             continue;
