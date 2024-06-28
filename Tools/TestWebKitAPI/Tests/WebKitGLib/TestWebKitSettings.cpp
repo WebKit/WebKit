@@ -288,10 +288,16 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_media_stream(settings, FALSE);
     g_assert_false(webkit_settings_get_enable_media_stream(settings));
 
-    // By default, WebRTC is disabled
+    // WebRTC is only enabled by default when using the GStreamer-based implementation
+#if USE(GSTREAMER_WEBRTC)
+    g_assert_true(webkit_settings_get_enable_webrtc(settings));
+    webkit_settings_set_enable_webrtc(settings, FALSE);
+    g_assert_false(webkit_settings_get_enable_webrtc(settings));
+#else
     g_assert_false(webkit_settings_get_enable_webrtc(settings));
     webkit_settings_set_enable_webrtc(settings, TRUE);
     g_assert_true(webkit_settings_get_enable_webrtc(settings));
+#endif
 
     // By default, SpatialNavigation is disabled
     g_assert_false(webkit_settings_get_enable_spatial_navigation(settings));
@@ -457,13 +463,26 @@ void testWebKitFeatures(Test* test, gconstpointer)
     g_assert(wasEnabled != webkit_settings_get_feature_enabled(settings.get(), feature));
 
     // Check that enabled status is the same as the declared default.
-    // FIXME(255779): Some defaults are overriden in code and out of sync with UnifiedWebPreferences.yaml
-#if 0
     for (gsize i = 0; i < allFeaturesCount; i++) {
         auto* feature = webkit_feature_list_get(allFeatures, i);
+        const auto identifier = String::fromUTF8(webkit_feature_get_identifier(feature));
+
+        // FIXME: During initialization this is changed depending on
+        // available hardware support, so the default is not guaranteed to
+        // match. It might be possible to try and write a function like
+        // WebKit::defaultForceCompositingModeEnabled() to provide the
+        // default value for the feature flag.
+        if (identifier == "ForceCompositingMode"_s)
+            continue;
+
+        // FIXME: This is enabled in UnifiedWebPreferences.yaml, but the
+        // actual value ends up being disabled without an obvious reason.
+        // Needs investigating.
+        if (identifier == "GrammarAndSpellingPseudoElements"_s)
+            continue;
+
         g_assert(webkit_settings_get_feature_enabled(settings.get(), feature) == webkit_feature_get_default_value(feature));
     }
-#endif
 }
 
 void testWebKitSettingsApplyFromConfigFile(Test* test, gconstpointer)
@@ -493,7 +512,11 @@ void testWebKitSettingsApplyFromConfigFile(Test* test, gconstpointer)
 
     // Check default values of settings, before applying key_file settings.
     g_assert_true(webkit_settings_get_enable_webaudio(settings.get()));
+#if USE(GSTREAMER_WEBRTC)
+    g_assert_true(webkit_settings_get_enable_webrtc(settings.get()));
+#else
     g_assert_false(webkit_settings_get_enable_webrtc(settings.get()));
+#endif
     CString defaultUserAgent = webkit_settings_get_user_agent(settings.get());
 
     // Loading settings from a file that contains an unknown setting should raise an error.
