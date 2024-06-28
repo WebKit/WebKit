@@ -351,6 +351,11 @@ void BlendingKeyframes::analyzeKeyframe(const BlendingKeyframe& keyframe)
         }
     };
 
+    auto analyzeDiscreteTransformInterval = [&] {
+        if (!m_hasDiscreteTransformInterval && keyframe.animatesProperty(CSSPropertyTransform))
+            m_hasDiscreteTransformInterval = style->transform().containsNonInvertibleMatrix({ });
+    };
+
     auto analyzeExplicitlyInheritedKeyframeProperty = [&] {
         if (!m_hasExplicitlyInheritedKeyframeProperty)
             m_hasExplicitlyInheritedKeyframeProperty = style->hasExplicitlyInheritedProperties();
@@ -365,6 +370,7 @@ void BlendingKeyframes::analyzeKeyframe(const BlendingKeyframe& keyframe)
     };
 
     analyzeSizeDependentTransform();
+    analyzeDiscreteTransformInterval();
     analyzeExplicitlyInheritedKeyframeProperty();
     analyzeKeyframeForExplicitProperties();
 }

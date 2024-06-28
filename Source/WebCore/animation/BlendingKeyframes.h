@@ -128,6 +128,7 @@ public:
 
     bool hasWidthDependentTransform() const { return m_hasWidthDependentTransform; }
     bool hasHeightDependentTransform() const { return m_hasHeightDependentTransform; }
+    bool hasDiscreteTransformInterval() const { return m_hasDiscreteTransformInterval; }
     bool hasExplicitlyInheritedKeyframeProperty() const { return m_hasExplicitlyInheritedKeyframeProperty; }
 
 private:
@@ -144,6 +145,7 @@ private:
     bool m_containsCSSVariableReferences { false };
     bool m_hasWidthDependentTransform { false };
     bool m_hasHeightDependentTransform { false };
+    bool m_hasDiscreteTransformInterval { false };
     bool m_hasExplicitlyInheritedKeyframeProperty { false };
 };
 

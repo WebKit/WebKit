@@ -85,10 +85,14 @@ bool TransformOperations::isInvertible(const LayoutSize& size) const
     return transform.isInvertible();
 }
 
+bool TransformOperations::containsNonInvertibleMatrix(const LayoutSize& boxSize) const
+{
+    return (hasTransformOfType<TransformOperation::Type::Matrix>() || hasTransformOfType<TransformOperation::Type::Matrix3D>()) && !isInvertible(boxSize);
+}
+
 bool TransformOperations::shouldFallBackToDiscreteAnimation(const TransformOperations& from, const LayoutSize& boxSize) const
 {
-    return (from.hasTransformOfType<TransformOperation::Type::Matrix>() || hasTransformOfType<TransformOperation::Type::Matrix>())
-        && (!from.isInvertible(boxSize) || !isInvertible(boxSize));
+    return from.containsNonInvertibleMatrix(boxSize) || containsNonInvertibleMatrix(boxSize);
 }
 
 TransformOperations TransformOperations::blend(const TransformOperations& from, const BlendingContext& context, const LayoutSize& boxSize, std::optional<unsigned> prefixLength) const

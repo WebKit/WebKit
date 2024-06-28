@@ -77,6 +77,7 @@ public:
 
     bool isInvertible(const LayoutSize&) const;
 
+    bool containsNonInvertibleMatrix(const LayoutSize&) const;
     bool shouldFallBackToDiscreteAnimation(const TransformOperations&, const LayoutSize&) const;
 
     Ref<TransformOperation> createBlendedMatrixOperationFromOperationsSuffix(const TransformOperations& from, unsigned start, const BlendingContext&, const LayoutSize& referenceBoxSize) const;

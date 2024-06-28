@@ -1474,6 +1474,13 @@ public:
     {
     }
 
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation compositeOperation) const override
+    {
+        if (compositeOperation == CompositeOperation::Replace)
+            return !this->value(to).shouldFallBackToDiscreteAnimation(this->value(from), { });
+        return true;
+    }
+
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
     {
         destination.setTransform(blendFunc(this->value(from), this->value(to), context));

@@ -1627,6 +1627,9 @@ bool KeyframeEffect::canBeAccelerated() const
     if (m_animatesSizeAndSizeDependentTransform)
         return false;
 
+    if (m_blendingKeyframes.hasDiscreteTransformInterval())
+        return false;
+
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     if (threadedAnimationResolutionEnabled())
         return true;
