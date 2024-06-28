@@ -59,6 +59,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MainThread.h>
 #import <wtf/NativePromise.h>
 #import <wtf/SoftLinking.h>
