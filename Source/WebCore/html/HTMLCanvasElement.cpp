@@ -780,7 +780,7 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
     if (document().settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logCanvasRead(document());
 
-    RefPtr pixelBuffer = dynamicDowncast<ByteArrayPixelBuffer>(context->drawingBufferToPixelBuffer(GraphicsContextGL::FlipY::Yes));
+    RefPtr pixelBuffer = context->drawingBufferToPixelBuffer();
     if (!pixelBuffer)
         return nullptr;
 

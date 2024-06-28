@@ -1395,7 +1395,7 @@ public:
     virtual void bufferData(GCGLenum target, std::span<const uint8_t> data, GCGLenum usage) = 0;
     virtual void bufferSubData(GCGLenum target, GCGLintptr offset, std::span<const uint8_t> data) = 0;
 
-    virtual void readPixels(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint alignment, GCGLint rowLength) = 0;
+    virtual void readPixels(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint packAlignment, GCGLint packRowLength, GCGLboolean packReverseRowOrder) = 0;
     virtual void readPixelsBufferObject(IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset, GCGLint alignment, GCGLint rowLength) = 0;
 
     virtual void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type,  std::span<const uint8_t> pixels) = 0;
@@ -1654,7 +1654,6 @@ public:
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     virtual RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) = 0;
 #endif
-    virtual RefPtr<PixelBuffer> drawingBufferToPixelBuffer(FlipY) = 0;
 
     using SimulatedEventForTesting = GraphicsContextGLSimulatedEventForTesting;
     virtual void simulateEventForTesting(SimulatedEventForTesting) = 0;

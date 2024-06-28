@@ -258,7 +258,7 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::readPixelsForPaintResults()
     if (!pixelBuffer)
         return nullptr;
     ScopedBufferBinding scopedPixelPackBufferReset(GL_PIXEL_PACK_BUFFER, 0, m_isForWebGL2);
-    setPackParameters(1, 0);
+    setPackParameters(1, 0, false);
     GL_ReadnPixelsRobustANGLE(0, 0, pixelBuffer->size().width(), pixelBuffer->size().height(), GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer->bytes().size(), nullptr, nullptr, nullptr, pixelBuffer->bytes().data());
     // FIXME: Rendering to GL_RGB textures with a IOSurface bound to the texture image leaves
     // the alpha in the IOSurface in incorrect state. Also ANGLE GL_ReadPixels will in some
@@ -533,21 +533,21 @@ void GraphicsContextGLANGLE::clearDepth(GCGLclampf depth)
     GL_ClearDepthf(static_cast<float>(depth));
 }
 
-void GraphicsContextGLANGLE::readPixels(IntRect rect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint alignment, GCGLint rowLength)
+void GraphicsContextGLANGLE::readPixels(IntRect rect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint alignment, GCGLint rowLength, GCGLboolean reverseRowOrder)
 {
     if (!makeContextCurrent())
         return;
     ScopedBufferBinding scopedPixelPackBufferReset(GL_PIXEL_PACK_BUFFER, 0, m_isForWebGL2);
-    setPackParameters(alignment, rowLength);
+    setPackParameters(alignment, rowLength, reverseRowOrder);
     readPixelsImpl(rect, format, type, data.size(), data.data(), false);
 }
 
-std::optional<IntSize> GraphicsContextGLANGLE::readPixelsWithStatus(IntRect rect, GCGLenum format, GCGLenum type, std::span<uint8_t> data)
+std::optional<IntSize> GraphicsContextGLANGLE::readPixelsWithStatus(IntRect rect, GCGLenum format, GCGLenum type, GCGLboolean reverseRowOrder, std::span<uint8_t> data)
 {
     if (!makeContextCurrent())
         return std::nullopt;
     ScopedBufferBinding scopedPixelPackBufferReset(GL_PIXEL_PACK_BUFFER, 0, m_isForWebGL2);
-    setPackParameters(1, 0); // Used for tight packing read only.
+    setPackParameters(1, 0, reverseRowOrder); // Used for tight packing read only.
     return readPixelsImpl(rect, format, type, data.size(), data.data(), false);
 }
 
@@ -555,7 +555,7 @@ void GraphicsContextGLANGLE::readPixelsBufferObject(IntRect rect, GCGLenum forma
 {
     if (!makeContextCurrent())
         return;
-    setPackParameters(alignment, rowLength);
+    setPackParameters(alignment, rowLength, false);
     readPixelsImpl(rect, format, type, 0, reinterpret_cast<uint8_t*>(offset), true);
 }
 
@@ -3337,7 +3337,7 @@ GCGLenum GraphicsContextGLANGLE::adjustWebGL1TextureInternalFormat(GCGLenum inte
     return internalformat;
 }
 
-void GraphicsContextGLANGLE::setPackParameters(GCGLint alignment, GCGLint rowLength)
+void GraphicsContextGLANGLE::setPackParameters(GCGLint alignment, GCGLint rowLength, GCGLboolean reverseRowOrder)
 {
     if (m_packAlignment != alignment) {
         GL_PixelStorei(GL_PACK_ALIGNMENT, alignment);
@@ -3346,6 +3346,10 @@ void GraphicsContextGLANGLE::setPackParameters(GCGLint alignment, GCGLint rowLen
     if (m_packRowLength != rowLength) {
         GL_PixelStorei(GL_PACK_ROW_LENGTH, rowLength);
         m_packRowLength = rowLength;
+    }
+    if (m_packReverseRowOrder != reverseRowOrder) {
+        GL_PixelStorei(GL_PACK_REVERSE_ROW_ORDER_ANGLE, reverseRowOrder);
+        m_packReverseRowOrder = reverseRowOrder;
     }
 }
 

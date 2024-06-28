@@ -613,6 +613,7 @@ void WebGLRenderingContextBase::initializeContextState()
     ADD_VALUES_TO_SET(m_supportedTexImageSourceInternalFormats, supportedFormatsES2);
     ADD_VALUES_TO_SET(m_supportedTexImageSourceFormats, supportedFormatsES2);
     ADD_VALUES_TO_SET(m_supportedTexImageSourceTypes, supportedTypesES2);
+    m_packReverseRowOrderSupported = enableSupportedExtension("GL_ANGLE_reverse_row_order"_s);
 }
 
 void WebGLRenderingContextBase::initializeDefaultObjects()
@@ -807,12 +808,42 @@ RefPtr<ImageBuffer> WebGLRenderingContextBase::surfaceBufferToImageBuffer(Surfac
     return buffer;
 }
 
-RefPtr<PixelBuffer> WebGLRenderingContextBase::drawingBufferToPixelBuffer(GraphicsContextGL::FlipY flipY)
+RefPtr<ByteArrayPixelBuffer> WebGLRenderingContextBase::drawingBufferToPixelBuffer()
 {
     if (isContextLost())
         return nullptr;
+    if (m_attributes.premultipliedAlpha)
+        return nullptr;
     clearIfComposited(CallerTypeOther);
-    return m_context->drawingBufferToPixelBuffer(flipY);
+    auto size = m_defaultFramebuffer->size();
+    if (size.isEmpty())
+        return nullptr;
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+    auto pixelBuffer = ByteArrayPixelBuffer::tryCreate(format, size);
+    if (!pixelBuffer)
+        return nullptr;
+    ScopedWebGLRestoreFramebuffer restoreFramebuffer { *this };
+    m_context->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_defaultFramebuffer->object());
+    // WebGL2 pixel pack buffer is disabled by the GraphicsContextGL implementation.
+    const IntRect rect { { }, size };
+    const GCGLint packAlignment = 1;
+    const GCGLint packRowLength = 0;
+    const GCGLboolean packReverseRowOrder = m_packReverseRowOrderSupported;
+    m_context->readPixels(rect, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE, pixelBuffer->bytes(), packAlignment, packRowLength, packReverseRowOrder);
+
+    if (!packReverseRowOrder) {
+        // Flip the rows for backends that do not support ANGLE_pack_reverse_row_order.
+        const size_t rowStride = 4 * rect.width();
+        uint8_t* top = pixelBuffer->bytes().data();
+        uint8_t* bottom = top + (rect.height() - 1) * rowStride;
+        std::unique_ptr<uint8_t[]> temp(new uint8_t[rowStride]);
+        for (; top < bottom; top += rowStride, bottom -= rowStride) {
+            memcpy(temp.get(), bottom, rowStride);
+            memcpy(bottom, top, rowStride);
+            memcpy(top, temp.get(), rowStride);
+        }
+    }
+    return pixelBuffer;
 }
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
@@ -2997,7 +3028,8 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     }
     clearIfComposited(CallerTypeOther);
     std::span data { static_cast<uint8_t*>(pixels.baseAddress()) + packSizes->initialSkipBytes, packSizes->imageBytes };
-    m_context->readPixels(rect, format, type, data, m_packParameters.alignment, m_packParameters.rowLength);
+    const bool packReverseRowOrder = false;
+    m_context->readPixels(rect, format, type, data, m_packParameters.alignment, m_packParameters.rowLength, packReverseRowOrder);
 }
 
 void WebGLRenderingContextBase::renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)

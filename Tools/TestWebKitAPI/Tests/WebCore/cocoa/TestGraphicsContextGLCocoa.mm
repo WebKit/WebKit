@@ -138,7 +138,7 @@ static ::testing::AssertionResult changeContextContents(TestedGraphicsContextGLC
     auto sampleAt = context.getInternalFramebufferSize();
     sampleAt.contract(2, 3);
     sampleAt.clampNegativeToZero();
-    context.readPixels({ sampleAt.width(), sampleAt.height(), 1, 1 }, WebCore::GraphicsContextGL::RGBA, WebCore::GraphicsContextGL::UNSIGNED_BYTE, gotValues, 4, 0);
+    context.readPixels({ sampleAt.width(), sampleAt.height(), 1, 1 }, WebCore::GraphicsContextGL::RGBA, WebCore::GraphicsContextGL::UNSIGNED_BYTE, gotValues, 4, 0, false);
     WebCore::Color got { WebCore::SRGBA<uint8_t> { gotValues[0], gotValues[1], gotValues[2], gotValues[3] } };
     if (got != expected)
         return ::testing::AssertionFailure() << "Failed to verify draw to context. Got: " << got << ", expected: " << expected << ".";
@@ -511,7 +511,7 @@ TEST_P(AnyContextAttributeTest, PrepareFailureWorks)
     } else {
         ASSERT_FALSE(changeContextContents(*context, 1));
         uint32_t gotValue = 0;
-        context->readPixels({ 0, 0, 1, 1 }, WebCore::GraphicsContextGL::RGBA, WebCore::GraphicsContextGL::UNSIGNED_BYTE, { reinterpret_cast<uint8_t*>(&gotValue), 4 }, 4, 0);
+        context->readPixels({ 0, 0, 1, 1 }, WebCore::GraphicsContextGL::RGBA, WebCore::GraphicsContextGL::UNSIGNED_BYTE, { reinterpret_cast<uint8_t*>(&gotValue), 4 }, 4, 0, false);
         EXPECT_EQ(0u, gotValue);
         EXPECT_EQ(GCGLErrorCode::InvalidFramebufferOperation, context->getErrors());
     }

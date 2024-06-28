@@ -323,7 +323,7 @@ void RemoteGraphicsContextGL::getBufferSubDataSharedMemory(uint32_t target, uint
     completionHandler(validBufferData);
 }
 
-void RemoteGraphicsContextGL::readPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type, CompletionHandler<void(std::optional<WebCore::IntSize>, std::span<const uint8_t>)>&& completionHandler)
+void RemoteGraphicsContextGL::readPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type, bool packReverseRowOrder, CompletionHandler<void(std::optional<WebCore::IntSize>, std::span<const uint8_t>)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     static constexpr size_t readPixelsInlineSizeLimit = 64 * KB; // NOTE: when changing, change the value in RemoteGraphicsContextGLProxy too.
@@ -342,7 +342,7 @@ void RemoteGraphicsContextGL::readPixelsInline(WebCore::IntRect rect, uint32_t f
     }
     std::optional<WebCore::IntSize> readArea;
     if (pixels.size() == replyImageBytes)
-        readArea = m_context->readPixelsWithStatus(rect, format, type, pixels);
+        readArea = m_context->readPixelsWithStatus(rect, format, type, packReverseRowOrder, pixels);
     else
         m_context->addError(GCGLErrorCode::OutOfMemory);
     if (!readArea) {
@@ -353,14 +353,14 @@ void RemoteGraphicsContextGL::readPixelsInline(WebCore::IntRect rect, uint32_t f
 }
 
 
-void RemoteGraphicsContextGL::readPixelsSharedMemory(WebCore::IntRect rect, uint32_t format, uint32_t type, SharedMemory::Handle handle, CompletionHandler<void(std::optional<WebCore::IntSize>)>&& completionHandler)
+void RemoteGraphicsContextGL::readPixelsSharedMemory(WebCore::IntRect rect, uint32_t format, uint32_t type, bool packReverseRowOrder, SharedMemory::Handle handle, CompletionHandler<void(std::optional<WebCore::IntSize>)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     std::optional<WebCore::IntSize> readArea;
 
     handle.setOwnershipOfMemory(m_sharedResourceCache->resourceOwner(), WebKit::MemoryLedger::Default);
     if (auto buffer = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadWrite))
-        readArea = m_context->readPixelsWithStatus(rect, format, type, buffer->mutableSpan());
+        readArea = m_context->readPixelsWithStatus(rect, format, type, packReverseRowOrder, buffer->mutableSpan());
     else
         m_context->addError(GCGLErrorCode::InvalidOperation);
 

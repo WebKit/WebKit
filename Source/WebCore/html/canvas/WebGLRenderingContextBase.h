@@ -86,6 +86,7 @@ class AbstractLocker;
 namespace WebCore {
 
 class ANGLEInstancedArrays;
+class ByteArrayPixelBuffer;
 class EXTBlendMinMax;
 class EXTClipControl;
 class EXTColorBufferFloat;
@@ -441,7 +442,7 @@ public:
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
 
-    RefPtr<PixelBuffer> drawingBufferToPixelBuffer(GraphicsContextGL::FlipY);
+    RefPtr<ByteArrayPixelBuffer> drawingBufferToPixelBuffer();
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer);
 #endif
@@ -1057,7 +1058,7 @@ private:
 #endif
 
     bool m_isSuspended { false };
-
+    bool m_packReverseRowOrderSupported { false };
     // The ordinal number of when the context was last active (drew, read pixels).
     uint64_t m_activeOrdinal { 0 };
     WeakPtrFactory<WebGLRenderingContextBase> m_contextObjectWeakPtrFactory;

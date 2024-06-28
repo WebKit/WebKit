@@ -89,7 +89,7 @@ public:
 
     void simulateEventForTesting(WebCore::GraphicsContextGLSimulatedEventForTesting) final;
     void getBufferSubData(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data) final;
-    void readPixels(WebCore::IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint alignment, GCGLint rowLength) final;
+    void readPixels(WebCore::IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint alignment, GCGLint rowLength, GCGLboolean packReverseRowOrder) final;
     void multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts) final;
     void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei> firstsCountsAndInstanceCounts) final;
     void multiDrawElementsANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei> countsAndOffsets, GCGLenum type) final;
@@ -359,7 +359,6 @@ public:
     void renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
     void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, std::span<GCGLint> params) final;
     void setDrawingBufferColorSpace(const WebCore::DestinationColorSpace&) final;
-    RefPtr<WebCore::PixelBuffer> drawingBufferToPixelBuffer(WebCore::GraphicsContextGLFlipY) final;
 
 #if ENABLE(WEBXR)
     GCGLExternalImage createExternalImage(WebCore::GraphicsContextGL::ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;

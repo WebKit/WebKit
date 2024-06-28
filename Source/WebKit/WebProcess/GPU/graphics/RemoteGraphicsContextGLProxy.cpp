@@ -341,7 +341,7 @@ inlineCase:
     }
 }
 
-void RemoteGraphicsContextGLProxy::readPixels(IntRect rect, GCGLenum format, GCGLenum type, std::span<uint8_t> dataStore, GCGLint alignment, GCGLint rowLength)
+void RemoteGraphicsContextGLProxy::readPixels(IntRect rect, GCGLenum format, GCGLenum type, std::span<uint8_t> dataStore, GCGLint alignment, GCGLint rowLength, GCGLboolean packReverseRowOrder)
 {
     if (isContextLost())
         return;
@@ -393,7 +393,7 @@ void RemoteGraphicsContextGLProxy::readPixels(IntRect rect, GCGLenum format, GCG
         auto handle = replyBuffer->createHandle(SharedMemory::Protection::ReadWrite);
         if (!handle)
             goto inlineCase;
-        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadPixelsSharedMemory(rect, format, type, WTFMove(*handle)));
+        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadPixelsSharedMemory(rect, format, type, packReverseRowOrder, WTFMove(*handle)));
         if (!sendResult.succeeded()) {
             markContextLost();
             return;
@@ -405,7 +405,7 @@ void RemoteGraphicsContextGLProxy::readPixels(IntRect rect, GCGLenum format, GCG
         return;
     }
 inlineCase:
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadPixelsInline(rect, format, type));
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadPixelsInline(rect, format, type, packReverseRowOrder));
     if (!sendResult.succeeded()) {
         markContextLost();
         return;

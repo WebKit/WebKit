@@ -3047,19 +3047,6 @@ void RemoteGraphicsContextGLProxy::setDrawingBufferColorSpace(const WebCore::Des
     }
 }
 
-RefPtr<WebCore::PixelBuffer> RemoteGraphicsContextGLProxy::drawingBufferToPixelBuffer(WebCore::GraphicsContextGLFlipY arg0)
-{
-    if (isContextLost())
-        return { };
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::DrawingBufferToPixelBuffer(arg0));
-    if (!sendResult.succeeded()) {
-        markContextLost();
-        return { };
-    }
-    auto& [returnValue] = sendResult.reply();
-    return returnValue;
-}
-
 #if ENABLE(WEBXR)
 GCGLExternalImage RemoteGraphicsContextGLProxy::createExternalImage(WebCore::GraphicsContextGL::ExternalImageSource&& arg0, GCGLenum internalFormat, GCGLint layer)
 {
