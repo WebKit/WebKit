@@ -53,6 +53,10 @@
 #include <wtf/cocoa/Entitlements.h>
 #endif
 
+#if USE(GLIB_EVENT_LOOP)
+#include <wtf/glib/RunLoopSourcePriority.h>
+#endif
+
 namespace WebCore {
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY) && !USE(GSTREAMER)
@@ -146,6 +150,12 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, AtomString&&
     , m_emitFrameTimer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
     , m_deviceOrientation { VideoFrameRotation::None }
 {
+#if USE(GLIB_EVENT_LOOP)
+    // Make sure run loop dispatcher sources are higher priority.
+    m_emitFrameTimer.setPriority(RunLoopSourcePriority::RunLoopDispatcher + 1);
+    m_emitFrameTimer.setName("[MockRealtimeVideoSource] Generate frame"_s);
+#endif
+
     allMockRealtimeVideoSource().add(*this);
 
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(persistentID());
