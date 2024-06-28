@@ -1951,7 +1951,6 @@ webkit.org/b/274059 webgl/max-active-contexts-webglcontextlost-prevent-default.h
 
 webkit.org/b/268988 fast/events/key-events-in-input-button.html [ Failure ]
 
-webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Failure ]
 animations/shadow-host-child-change.html [ Skip ]
 css1/font_properties/font_family.html [ Failure Pass ]
 css2.1/t1503-c522-font-family-00-b.html [ Failure Pass ]
