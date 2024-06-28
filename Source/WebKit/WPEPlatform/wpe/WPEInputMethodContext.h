@@ -41,6 +41,7 @@ G_BEGIN_DECLS
 WPE_DECLARE_DERIVABLE_TYPE (WPEInputMethodContext, wpe_input_method_context, WPE, INPUT_METHOD_CONTEXT, GObject)
 
 typedef struct _WPEDisplay WPEDisplay;
+typedef struct _WPEEvent WPEEvent;
 typedef struct _WPEView WPEView;
 
 /**
@@ -133,6 +134,8 @@ struct _WPEInputMethodContextClass
                                      gchar                 **text,
                                      GList                 **underlines,
                                      guint                 *cursor_offset);
+    gboolean (* filter_key_event)   (WPEInputMethodContext *context,
+			                         WPEEvent              *event);
     void     (* focus_in)           (WPEInputMethodContext *context);
     void     (* focus_out)          (WPEInputMethodContext *context);
     void     (* set_cursor_area)    (WPEInputMethodContext *context,
@@ -157,6 +160,8 @@ WPE_API void                     wpe_input_method_context_get_preedit_string (WP
                                                                               char                    **text,
                                                                               GList                   **underlines,
                                                                               guint                   *cursor_offset);
+WPE_API gboolean                 wpe_input_method_context_filter_key_event   (WPEInputMethodContext   *context,
+                                                                              WPEEvent                *event);
 WPE_API void                     wpe_input_method_context_focus_in           (WPEInputMethodContext   *context);
 WPE_API void                     wpe_input_method_context_focus_out          (WPEInputMethodContext   *context);
 WPE_API void                     wpe_input_method_context_set_cursor_area    (WPEInputMethodContext   *context,

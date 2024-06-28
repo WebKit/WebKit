@@ -108,6 +108,7 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
 #if ENABLE(WPE_PLATFORM)
     if (display) {
         m_wpeView = adoptGRef(wpe_view_new(display));
+        m_inputMethodFilter.setUseWPEPlatformEvents(true);
         m_size.setWidth(wpe_view_get_width(m_wpeView.get()));
         m_size.setHeight(wpe_view_get_height(m_wpeView.get()));
         m_pageProxy->setIntrinsicDeviceScaleFactor(wpe_view_get_scale(m_wpeView.get()));
@@ -198,15 +199,18 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
                     preferences.setResourceUsageOverlayVisible(!preferences.resourceUsageOverlayVisible());
                     return TRUE;
                 }
-                // FIXME: input methods
-                webView.page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, String(), webView.m_keyAutoRepeatHandler.keyPress(wpe_event_keyboard_get_keycode(event))));
+                auto filterResult = webView.m_inputMethodFilter.filterKeyEvent(event);
+                if (!filterResult.handled)
+                    webView.page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, filterResult.keyText, webView.m_keyAutoRepeatHandler.keyPress(wpe_event_keyboard_get_keycode(event))));
                 return TRUE;
             }
-            case WPE_EVENT_KEYBOARD_KEY_UP:
-                // FIXME: input methods
+            case WPE_EVENT_KEYBOARD_KEY_UP: {
                 webView.m_keyAutoRepeatHandler.keyRelease();
-                webView.page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, String(), false));
+                auto filterResult = webView.m_inputMethodFilter.filterKeyEvent(event);
+                if (!filterResult.handled)
+                    webView.page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, String(), false));
                 return TRUE;
+            }
             case WPE_EVENT_TOUCH_DOWN:
                 // FIXME: gestures
 #if ENABLE(TOUCH_EVENTS)

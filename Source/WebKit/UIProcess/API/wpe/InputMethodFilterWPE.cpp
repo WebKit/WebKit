@@ -24,6 +24,10 @@
 #include <WebCore/IntRect.h>
 #include <wpe/wpe.h>
 
+#if ENABLE(WPE_PLATFORM)
+#include <wpe/wpe-platform.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -34,7 +38,14 @@ IntRect InputMethodFilter::platformTransformCursorRectToViewCoordinates(const In
 
 bool InputMethodFilter::platformEventKeyIsKeyPress(PlatformEventKey* event) const
 {
-    return event->pressed;
+#if ENABLE(WPE_PLATFORM)
+    if (m_useWPEPlatformEvents) {
+        auto* wpe_platform_event = static_cast<WPEEvent*>(event);
+        return wpe_event_get_event_type(wpe_platform_event) == WPE_EVENT_KEYBOARD_KEY_DOWN;
+    }
+#endif
+    auto* wpe_event = static_cast<struct wpe_input_keyboard_event*>(event);
+    return wpe_event->pressed;
 }
 
 } // namespace WebKit

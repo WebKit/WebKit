@@ -411,6 +411,27 @@ void wpe_input_method_context_get_preedit_string(WPEInputMethodContext* context,
 }
 
 /**
+ * wpe_input_method_context_filter_key_event:
+ * @context: a #WPEInputMethodContext
+ * @event: the key event
+ *
+ * Allow an input method to internally handle key press and release
+ * events. If this function returns %TRUE, then no further processing
+ * should be done for this key event.
+ *
+ * Returns: %TRUE if the input method handled the key event.
+ **/
+gboolean wpe_input_method_context_filter_key_event(WPEInputMethodContext* context, WPEEvent* event)
+{
+    g_return_val_if_fail(WPE_IS_INPUT_METHOD_CONTEXT(context), false);
+
+    auto* imeClass = WPE_INPUT_METHOD_CONTEXT_GET_CLASS(context);
+    if (imeClass->filter_key_event)
+        return imeClass->filter_key_event(context, event);
+    return FALSE;
+}
+
+/**
  * wpe_input_method_context_focus_in:
  * @context: a #WPEInputMethodContext
  *

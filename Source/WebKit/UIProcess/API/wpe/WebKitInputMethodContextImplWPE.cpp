@@ -138,6 +138,13 @@ static void webkitInputMethodContextImplWPEGetPreedit(WebKitInputMethodContext* 
         *cursorOffset = clampTo<unsigned>(offset);
 }
 
+static gboolean webkitInputMethodContextImplWPEFilterKeyEvent(WebKitInputMethodContext* context, void* keyEvent)
+{
+    auto* priv = WEBKIT_INPUT_METHOD_CONTEXT_IMPL_WPE(context)->priv;
+    auto* wpeEvent = static_cast<WPEEvent*>(keyEvent);
+    return wpe_input_method_context_filter_key_event(priv->context.get(), wpeEvent);
+}
+
 static void webkitInputMethodContextImplWPENotifyFocusIn(WebKitInputMethodContext* context)
 {
     auto* priv = WEBKIT_INPUT_METHOD_CONTEXT_IMPL_WPE(context)->priv;
@@ -172,6 +179,7 @@ static void webkit_input_method_context_impl_wpe_class_init(WebKitInputMethodCon
 {
     auto* imClass = WEBKIT_INPUT_METHOD_CONTEXT_CLASS(klass);
     imClass->get_preedit = webkitInputMethodContextImplWPEGetPreedit;
+    imClass->filter_key_event = webkitInputMethodContextImplWPEFilterKeyEvent;
     imClass->notify_focus_in = webkitInputMethodContextImplWPENotifyFocusIn;
     imClass->notify_focus_out = webkitInputMethodContextImplWPENotifyFocusOut;
     imClass->notify_cursor_area = webkitInputMethodContextImplWPENotifyCursorArea;
