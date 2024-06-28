@@ -74,8 +74,9 @@ static void wpeViewQtQuickDispose(GObject* object)
     G_OBJECT_CLASS(wpe_view_qtquick_parent_class)->dispose(object);
 }
 
-static gboolean wpeViewQtQuickRenderBuffer(WPEView* view, WPEBuffer* buffer, GError**)
+static gboolean wpeViewQtQuickRenderBuffer(WPEView* view, WPEBuffer* buffer, const WPERectangle*, guint, GError**)
 {
+    // TODO: Add support for damage rects.
     auto* priv = WPE_VIEW_QTQUICK(view)->priv;
     priv->pendingBuffer = buffer;
     priv->bufferUpdateRequested = true;
