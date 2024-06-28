@@ -42,6 +42,7 @@
 #include "RenderListMarker.h"
 #include "RenderMathMLBlock.h"
 #include "RenderSVGBlock.h"
+#include "RenderSVGForeignObject.h"
 #include "RenderStyleInlines.h"
 #include "RenderTable.h"
 #include "RenderTextControl.h"
@@ -53,19 +54,9 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-bool canUseForLineLayout(const RenderBlockFlow& flow)
+bool canUseForLineLayout(const RenderBlockFlow& rootContainer)
 {
-    if (!flow.firstChild()) {
-        // Non-SVG code does not call into layoutInlineChildren with no children anymore.
-        ASSERT(is<RenderSVGBlock>(flow));
-        return false;
-    }
-    for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
-        auto& child = *walker.current();
-        if (child.isRenderSVGInlineText() || child.isRenderSVGInline())
-            return false;
-    }
-    return true;
+    return !is<RenderSVGBlock>(rootContainer) || rootContainer.isRenderOrLegacyRenderSVGForeignObject();
 }
 
 bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)
