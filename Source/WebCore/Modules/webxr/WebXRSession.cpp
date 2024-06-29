@@ -120,7 +120,7 @@ ExceptionOr<void> WebXRSession::updateRenderState(const XRRenderStateInit& newSt
 
     // 3. If newState's baseLayer was created with an XRSession other than session,
     //    throw an InvalidStateError and abort these steps.
-    if (newState.baseLayer && &newState.baseLayer->session() != this)
+    if (newState.baseLayer && newState.baseLayer->session() != this)
         return Exception { ExceptionCode::InvalidStateError };
 
     // 4. If newState's inlineVerticalFieldOfView is set and session is an immersive session,
