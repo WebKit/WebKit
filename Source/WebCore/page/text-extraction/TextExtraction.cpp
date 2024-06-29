@@ -251,6 +251,12 @@ enum class SkipExtraction : bool {
     SelfAndSubtree
 };
 
+static bool shouldTreatAsPasswordField(const Element* element)
+{
+    RefPtr input = dynamicDowncast<HTMLInputElement>(element);
+    return input && input->hasEverBeenPasswordField();
+}
+
 static inline std::variant<SkipExtraction, ItemData, URL, Editable> extractItemData(Node& node, TraversalContext& context)
 {
     CheckedPtr renderer = node.renderer();
@@ -261,6 +267,9 @@ static inline std::variant<SkipExtraction, ItemData, URL, Editable> extractItemD
         return { SkipExtraction::Self };
 
     if (RefPtr textNode = dynamicDowncast<Text>(node)) {
+        if (shouldTreatAsPasswordField(textNode->shadowHost()))
+            return { SkipExtraction::Self };
+
         if (auto iterator = context.visibleText.find(textNode); iterator != context.visibleText.end()) {
             auto& [textContent, selectedRange] = iterator->value;
             return { TextItemData { { }, selectedRange, textContent, { } } };
@@ -297,7 +306,7 @@ static inline std::variant<SkipExtraction, ItemData, URL, Editable> extractItemD
         return { Editable {
             labelText(*control),
             input ? input->placeholder() : nullString(),
-            input && input->isSecureField(),
+            shouldTreatAsPasswordField(element.get()),
             element->document().activeElement() == control
         } };
     }
