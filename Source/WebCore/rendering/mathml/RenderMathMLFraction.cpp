@@ -248,6 +248,11 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutPoint denominatorLocation(horizontalOffset(denominator(), element().denominatorAlignment()), verticalOffset);
     denominator().setLocation(denominatorLocation);
 
+    if (numerator().isOutOfFlowPositioned())
+        numerator().containingBlock()->insertPositionedObject(numerator());
+    if (denominator().isOutOfFlowPositioned())
+        denominator().containingBlock()->insertPositionedObject(denominator());
+
     verticalOffset += denominator().logicalHeight(); // This is the bottom of our renderer.
     setLogicalHeight(verticalOffset);
 

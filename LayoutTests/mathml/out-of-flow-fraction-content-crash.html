@@ -1,0 +1,24 @@
+<style>
+* {
+  position: absolute; 
+}
+#htmlvar00008 {
+  -webkit-user-modify: read-write-plaintext-only;
+}
+</style>
+PASS if no crash or assert.
+<div id="htmlvar00003"><span id="htmlvar00007">content</div>
+<div id="htmlvar00008">
+<div id="htmlvar00024"></div>
+<div id="htmlvar00027">
+<math><mfrac><mi></mi><mi><mi id=foo></div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+htmlvar00007.append("foo");
+document.getElementById("foo").appendChild(htmlvar00003);
+htmlvar00024.appendChild(htmlvar00027);
+window.find("foo",true,true,false,false);
+document.execCommand("insertHTML", "");
+</script>
