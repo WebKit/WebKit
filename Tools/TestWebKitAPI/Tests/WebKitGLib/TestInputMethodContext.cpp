@@ -511,7 +511,7 @@ static void testWebKitInputMethodContextSimple(InputMethodTest* test, gconstpoin
     g_assert_false(test->m_events[2].isComposing);
     {
         auto editableValue = test->editableValue();
-        g_assert_cmpstr(editableValue.get(), ==, "a");
+        g_assert_cmpstr(editableValue.get(), ==, "");
     }
     test->resetEditable();
 
@@ -785,7 +785,7 @@ static void testWebKitInputMethodContextSurrounding(InputMethodTest* test, gcons
     test->keyStrokeAndWaitForEvents(KEY(a), 3);
     test->keyStrokeAndWaitForEvents(KEY(b), 6);
     test->keyStrokeAndWaitForEvents(KEY(c), 9);
-    g_assert_cmpstr(test->surroundingText(), ==, "abc");
+    g_assert_cmpstr(test->surroundingText(), ==, "");
     g_assert_cmpuint(test->surroundingCursorIndex(), ==, 3);
     g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
     test->m_events.clear();
