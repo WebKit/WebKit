@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -466,13 +466,13 @@ String RenderCounter::originalText() const
     RefPtr child = m_counterNode.get();
     int value = child->actsAsReset() ? child->value() : child->countInParent();
 
-    auto counterText = [this](int value) {
-        if (this->m_counter.listStyleType().type == ListStyleType::Type::None)
+    auto counterText = [&](int value) {
+        if (m_counter.listStyleType().type == ListStyleType::Type::None)
             return emptyString();
 
-        if (this->m_counter.listStyleType().type == ListStyleType::Type::CounterStyle) {
-            ASSERT(this->counterStyle());
-            return this->counterStyle()->text(value, makeTextFlow(this->style().writingMode(), this->style().direction()));
+        if (m_counter.listStyleType().type == ListStyleType::Type::CounterStyle) {
+            ASSERT(counterStyle());
+            return counterStyle()->text(value, makeTextFlow(style().writingMode(), style().direction()));
         }
 
         ASSERT_NOT_REACHED();
