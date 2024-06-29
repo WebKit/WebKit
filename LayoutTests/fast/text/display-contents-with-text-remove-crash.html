@@ -1,0 +1,16 @@
+<style>
+*:last-of-type {
+  display: contents;
+}
+</style>PASS if no crash or assert.<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.designMode = "on";
+window.find("A",false,false,true,false,false,true);
+document.execCommand("backColor",false,"red");
+document.execCommand("selectAll",false,null);
+document.execCommand("indent",false,null);
+window.find("A",false,false,true,false,false,true);
+document.execCommand("forwardDelete",false,null);
+</script>
