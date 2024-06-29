@@ -256,7 +256,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         int statusCode = [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0;
         if (statusCode != 304) {
             bool isMainResourceLoad = m_handle->firstRequest().requester() == ResourceRequestRequester::Main;
-            adjustMIMETypeIfNecessary([r _CFURLResponse], isMainResourceLoad);
+            adjustMIMETypeIfNecessary([r _CFURLResponse], isMainResourceLoad ? IsMainResourceLoad::Yes : IsMainResourceLoad::No, IsNoSniffSet::No);
         }
 
         if ([m_handle->firstRequest().nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) _propertyForKey:@"ForceHTMLMIMEType"])
