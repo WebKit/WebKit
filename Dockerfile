@@ -22,7 +22,6 @@ RUN wget https://apt.llvm.org/llvm.sh && \
     ./llvm.sh ${LLVM_VERSION}
 
 RUN install_packages \
-    cmake \
     curl \
     file \
     git \
@@ -67,6 +66,15 @@ RUN mkdir /icu && \
     CFLAGS="${DEFAULT_CFLAGS} $CFLAGS" CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS" ./runConfigureICU Linux/clang --enable-static --disable-shared --with-data-packaging=static --disable-samples --disable-debug --enable-release && \
     make -j$(nproc) && \
     make install
+
+# WebKit has a minimum cmake version of 3.20
+ADD https://github.com/Kitware/CMake/releases/download/v3.29.6/cmake-3.29.6.tar.gz /cmake.tar.gz
+RUN --mount=type=tmpfs,target=/cmakebuild install_packages libssl-dev && tar -xf /cmake.tar.gz -C /cmakebuild && \
+    cd /cmakebuild/cmake-3.29.6 && \
+    ./configure && \
+    make -j$(nproc) && \
+    make install && \
+    rm -rf /cmakebuild/cmake-3.29.6 /cmake.tar.gz
 
 ENV WEBKIT_OUT_DIR=/webkitbuild
 RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc /output/include/unicode
