@@ -112,7 +112,7 @@ More details can be found in the :pull:`original PR <3317>`.
 .. note::
 
     in a future major release of pytest we will introduce class based markers,
-    at which point markers will no longer be limited to instances of :py:class:`~pytest.Mark`.
+    at which point markers will no longer be limited to instances of :py:class:`~_pytest.mark.Mark`.
 
 
 cache plugin integrated into the core
@@ -227,7 +227,8 @@ to use strings:
 
 
     @pytest.mark.skipif("sys.version_info >= (3,3)")
-    def test_function(): ...
+    def test_function():
+        ...
 
 During test function setup the skipif condition is evaluated by calling
 ``eval('sys.version_info >= (3,0)', namespace)``.  The namespace contains
@@ -261,7 +262,8 @@ configuration value which you might have added:
 .. code-block:: python
 
     @pytest.mark.skipif("not config.getvalue('db')")
-    def test_function(): ...
+    def test_function():
+        ...
 
 The equivalent with "boolean conditions" is:
 

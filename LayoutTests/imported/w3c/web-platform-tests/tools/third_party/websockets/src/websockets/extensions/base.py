@@ -38,7 +38,6 @@ class Extension:
             PayloadTooBig: if decoding the payload exceeds ``max_size``.
 
         """
-        raise NotImplementedError
 
     def encode(self, frame: frames.Frame) -> frames.Frame:
         """
@@ -51,7 +50,6 @@ class Extension:
             Frame: Encoded frame.
 
         """
-        raise NotImplementedError
 
 
 class ClientExtensionFactory:
@@ -71,7 +69,6 @@ class ClientExtensionFactory:
             List[ExtensionParameter]: Parameters to send to the server.
 
         """
-        raise NotImplementedError
 
     def process_response_params(
         self,
@@ -94,7 +91,6 @@ class ClientExtensionFactory:
             NegotiationError: if parameters aren't acceptable.
 
         """
-        raise NotImplementedError
 
 
 class ServerExtensionFactory:
@@ -130,4 +126,3 @@ class ServerExtensionFactory:
                 the client aren't acceptable.
 
         """
-        raise NotImplementedError

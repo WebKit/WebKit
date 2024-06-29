@@ -33,8 +33,8 @@ class WebSocketURI:
     port: int
     path: str
     query: str
-    username: Optional[str] = None
-    password: Optional[str] = None
+    username: Optional[str]
+    password: Optional[str]
 
     @property
     def resource_name(self) -> str:

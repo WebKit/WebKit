@@ -1,4 +1,4 @@
-from typing import final
+from _pytest.compat import final
 
 
 @final

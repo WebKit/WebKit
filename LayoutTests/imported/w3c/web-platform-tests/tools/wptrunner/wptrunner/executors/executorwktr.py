@@ -172,9 +172,9 @@ def _convert_exception(test, exception, errors):
     """Converts our TimeoutError and CrashError exceptions into test results.
     """
     if isinstance(exception, TimeoutError):
-        return (test.make_result("EXTERNAL-TIMEOUT", errors), [])
+        return (test.result_cls("EXTERNAL-TIMEOUT", errors), [])
     if isinstance(exception, CrashError):
-        return (test.make_result("CRASH", errors), [])
+        return (test.result_cls("CRASH", errors), [])
     raise exception
 
 
@@ -245,7 +245,7 @@ class WKTRTestharnessExecutor(TestharnessExecutor):
 
             errors = self.protocol.wktr_errors.read_errors()
             if not text:
-                return (test.make_result("ERROR", errors), [])
+                return (test.result_cls("ERROR", errors), [])
 
             output = None
             output_prefix = "CONSOLE MESSAGE: WPTRUNNER OUTPUT:"
@@ -255,10 +255,10 @@ class WKTRTestharnessExecutor(TestharnessExecutor):
                     if output is None:
                         output = line[len(output_prefix):]
                     else:
-                        return (test.make_result("ERROR", "multiple wptrunner outputs"), [])
+                        return (test.result_cls("ERROR", "multiple wptrunner outputs"), [])
 
             if output is None:
-                return (test.make_result("ERROR", "no wptrunner output"), [])
+                return (test.result_cls("ERROR", "no wptrunner output"), [])
 
             return self.convert_result(test, json.loads(output))
         except BaseException as exception:

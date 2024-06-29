@@ -1,10 +1,10 @@
-# mypy: allow-untyped-defs
 import os
 import shutil
 import sys
 import types
 from typing import List
 
+import pytest
 from _pytest.config import Config
 from _pytest.config import ExitCode
 from _pytest.config import PytestPluginManager
@@ -13,7 +13,6 @@ from _pytest.main import Session
 from _pytest.monkeypatch import MonkeyPatch
 from _pytest.pathlib import import_path
 from _pytest.pytester import Pytester
-import pytest
 
 
 @pytest.fixture
@@ -46,10 +45,7 @@ class TestPytestPluginInteractions:
             kwargs=dict(pluginmanager=config.pluginmanager)
         )
         config.pluginmanager._importconftest(
-            conf,
-            importmode="prepend",
-            rootpath=pytester.path,
-            consider_namespace_packages=False,
+            conf, importmode="prepend", rootpath=pytester.path
         )
         # print(config.pluginmanager.get_plugins())
         res = config.hook.pytest_myhook(xyz=10)
@@ -78,10 +74,7 @@ class TestPytestPluginInteractions:
         """
         )
         config.pluginmanager._importconftest(
-            p,
-            importmode="prepend",
-            rootpath=pytester.path,
-            consider_namespace_packages=False,
+            p, importmode="prepend", rootpath=pytester.path
         )
         assert config.option.test123
 
@@ -104,40 +97,6 @@ class TestPytestPluginInteractions:
         config._ensure_unconfigure()
         config.pluginmanager.register(A())
         assert len(values) == 2
-
-    @pytest.mark.skipif(
-        not sys.platform.startswith("win"),
-        reason="requires a case-insensitive file system",
-    )
-    def test_conftestpath_case_sensitivity(self, pytester: Pytester) -> None:
-        """Unit test for issue #9765."""
-        config = pytester.parseconfig()
-        pytester.makepyfile(**{"tests/conftest.py": ""})
-
-        conftest = pytester.path.joinpath("tests/conftest.py")
-        conftest_upper_case = pytester.path.joinpath("TESTS/conftest.py")
-
-        mod = config.pluginmanager._importconftest(
-            conftest,
-            importmode="prepend",
-            rootpath=pytester.path,
-            consider_namespace_packages=False,
-        )
-        plugin = config.pluginmanager.get_plugin(str(conftest))
-        assert plugin is mod
-
-        mod_uppercase = config.pluginmanager._importconftest(
-            conftest_upper_case,
-            importmode="prepend",
-            rootpath=pytester.path,
-            consider_namespace_packages=False,
-        )
-        plugin_uppercase = config.pluginmanager.get_plugin(str(conftest_upper_case))
-        assert plugin_uppercase is mod_uppercase
-
-        # No str(conftestpath) normalization so conftest should be imported
-        # twice and modules should be different objects
-        assert mod is not mod_uppercase
 
     def test_hook_tracing(self, _config_for_test: Config) -> None:
         pytestpm = _config_for_test.pluginmanager  # fully initialized with plugins
@@ -182,18 +141,12 @@ class TestPytestPluginInteractions:
         conftest2 = pytester.path.joinpath("tests/subdir/conftest.py")
 
         config.pluginmanager._importconftest(
-            conftest1,
-            importmode="prepend",
-            rootpath=pytester.path,
-            consider_namespace_packages=False,
+            conftest1, importmode="prepend", rootpath=pytester.path
         )
         ihook_a = session.gethookproxy(pytester.path / "tests")
         assert ihook_a is not None
         config.pluginmanager._importconftest(
-            conftest2,
-            importmode="prepend",
-            rootpath=pytester.path,
-            consider_namespace_packages=False,
+            conftest2, importmode="prepend", rootpath=pytester.path
         )
         ihook_b = session.gethookproxy(pytester.path / "tests")
         assert ihook_a is not ihook_b
@@ -289,12 +242,8 @@ class TestPytestPluginManager:
         mod = types.ModuleType("temp")
         mod.__dict__["pytest_plugins"] = ["pytest_p1", "pytest_p2"]
         pytestpm.consider_module(mod)
-        p1 = pytestpm.get_plugin("pytest_p1")
-        assert p1 is not None
-        assert p1.__name__ == "pytest_p1"
-        p2 = pytestpm.get_plugin("pytest_p2")
-        assert p2 is not None
-        assert p2.__name__ == "pytest_p2"
+        assert pytestpm.get_plugin("pytest_p1").__name__ == "pytest_p1"
+        assert pytestpm.get_plugin("pytest_p2").__name__ == "pytest_p2"
 
     def test_consider_module_import_module(
         self, pytester: Pytester, _config_for_test: Config
@@ -387,7 +336,6 @@ class TestPytestPluginManager:
         len2 = len(pytestpm.get_plugins())
         assert len1 == len2
         plugin1 = pytestpm.get_plugin("pytest_hello")
-        assert plugin1 is not None
         assert plugin1.__name__.endswith("pytest_hello")
         plugin2 = pytestpm.get_plugin("pytest_hello")
         assert plugin2 is plugin1
@@ -399,11 +347,10 @@ class TestPytestPluginManager:
         pytest.raises(ImportError, pytestpm.import_plugin, "pytest_qweqwex.y")
 
         pytester.syspathinsert()
-        pytester.mkpydir("pkg").joinpath("plug.py").write_text("x=3", encoding="utf-8")
+        pytester.mkpydir("pkg").joinpath("plug.py").write_text("x=3")
         pluginname = "pkg.plug"
         pytestpm.import_plugin(pluginname)
         mod = pytestpm.get_plugin("pkg.plug")
-        assert mod is not None
         assert mod.x == 3
 
     def test_consider_conftest_deps(
@@ -412,15 +359,13 @@ class TestPytestPluginManager:
         pytestpm: PytestPluginManager,
     ) -> None:
         mod = import_path(
-            pytester.makepyfile("pytest_plugins='xyz'"),
-            root=pytester.path,
-            consider_namespace_packages=False,
+            pytester.makepyfile("pytest_plugins='xyz'"), root=pytester.path
         )
         with pytest.raises(ImportError):
-            pytestpm.consider_conftest(mod, registration_name="unused")
+            pytestpm.consider_conftest(mod)
 
 
-class TestPytestPluginManagerBootstrapping:
+class TestPytestPluginManagerBootstrapming:
     def test_preparse_args(self, pytestpm: PytestPluginManager) -> None:
         pytest.raises(
             ImportError, lambda: pytestpm.consider_preparse(["xyz", "-p", "hello123"])
@@ -446,7 +391,7 @@ class TestPytestPluginManagerBootstrapping:
         assert len(l2) == len(l1)
         assert 42 not in l2
 
-    def test_plugin_prevent_register_unregistered_already_registered(
+    def test_plugin_prevent_register_unregistered_alredy_registered(
         self, pytestpm: PytestPluginManager
     ) -> None:
         pytestpm.register(42, name="abc")

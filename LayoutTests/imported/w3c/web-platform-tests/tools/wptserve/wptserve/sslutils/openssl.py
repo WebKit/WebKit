@@ -6,8 +6,7 @@ import random
 import shutil
 import subprocess
 import tempfile
-from datetime import datetime, timedelta, timezone
-from email.utils import parsedate_to_datetime
+from datetime import datetime, timedelta
 
 # Amount of time beyond the present to consider certificates "expired." This
 # allows certificates to be proactively re-generated in the "buffer" period
@@ -311,10 +310,13 @@ class OpenSSLEnvironment:
                                    "-noout",
                                    "-enddate",
                                    "-in", cert_path).decode("utf8").split("=", 1)[1].strip()
-            # openssl outputs an RFC 822 date
-            end_date = parsedate_to_datetime(end_date_str)
+            # Not sure if this works in other locales
+            end_date = datetime.strptime(end_date_str, "%b %d %H:%M:%S %Y %Z")
             time_buffer = timedelta(**CERT_EXPIRY_BUFFER)
-            if end_date < datetime.now(timezone.utc) + time_buffer:
+            # Because `strptime` does not account for time zone offsets, it is
+            # always in terms of UTC, so the current time should be calculated
+            # accordingly.
+            if end_date < datetime.utcnow() + time_buffer:
                 return False
 
         #TODO: check the key actually signed the cert.

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import http
 import logging
 from typing import List, NewType, Optional, Tuple, Union
 
@@ -8,7 +7,6 @@ from typing import List, NewType, Optional, Tuple, Union
 __all__ = [
     "Data",
     "LoggerLike",
-    "StatusLike",
     "Origin",
     "Subprotocol",
     "ExtensionName",
@@ -30,11 +28,6 @@ Data = Union[str, bytes]
 
 LoggerLike = Union[logging.Logger, logging.LoggerAdapter]
 """Types accepted where a :class:`~logging.Logger` is expected."""
-
-
-StatusLike = Union[http.HTTPStatus, int]
-"""
-Types accepted where an :class:`~http.HTTPStatus` is expected."""
 
 
 Origin = NewType("Origin", str)

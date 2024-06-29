@@ -28,8 +28,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import absolute_import
+import struct
 
-from pywebsocket3 import common
+from mod_pywebsocket import common
+from mod_pywebsocket import stream
 
 
 def web_socket_do_extra_handshake(request):

@@ -25,6 +25,7 @@ content_types = utils.invert_dict({
     "text/plain": ["txt", "md"],
     "text/vtt": ["vtt"],
     "video/mp4": ["mp4", "m4v"],
+    "video/ogg": ["ogg", "ogv"],
     "video/webm": ["webm"],
 })
 

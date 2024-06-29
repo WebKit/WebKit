@@ -52,6 +52,7 @@ pytest and other test systems
 
    existingtestsuite
    unittest
+   nose
    xunit_setup
 
 pytest development environment

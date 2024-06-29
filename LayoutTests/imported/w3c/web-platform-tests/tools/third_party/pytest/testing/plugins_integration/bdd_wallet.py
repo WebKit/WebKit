@@ -1,4 +1,3 @@
-# mypy: allow-untyped-defs
 from pytest_bdd import given
 from pytest_bdd import scenario
 from pytest_bdd import then

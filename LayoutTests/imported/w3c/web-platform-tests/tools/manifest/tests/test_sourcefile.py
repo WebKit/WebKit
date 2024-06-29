@@ -42,8 +42,6 @@ def items(s):
     "crashtests/foo.html.ini",
     "css/common/test.html",
     "css/CSS2/archive/test.html",
-    "css/WEB_FEATURES.yml",
-    "css/META.yml",
 ])
 def test_name_is_non_test(rel_path):
     s = create(rel_path)

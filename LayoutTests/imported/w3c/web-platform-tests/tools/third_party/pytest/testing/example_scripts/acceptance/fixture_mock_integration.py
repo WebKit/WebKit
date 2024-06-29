@@ -1,10 +1,7 @@
-# mypy: allow-untyped-defs
 """Reproduces issue #3774"""
-
 from unittest import mock
 
 import pytest
-
 
 config = {"mykey": "ORIGINAL"}
 

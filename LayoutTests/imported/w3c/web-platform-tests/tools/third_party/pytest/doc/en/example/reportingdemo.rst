@@ -9,7 +9,7 @@ Here is a nice run of several failures and how ``pytest`` presents things:
 
     assertion $ pytest failure_demo.py
     =========================== test session starts ============================
-    platform linux -- Python 3.x.y, pytest-8.x.y, pluggy-1.x.y
+    platform linux -- Python 3.x.y, pytest-7.x.y, pluggy-1.x.y
     rootdir: /home/sweet/project/assertion
     collected 44 items
 
@@ -80,7 +80,6 @@ Here is a nice run of several failures and how ``pytest`` presents things:
         def test_eq_text(self):
     >       assert "spam" == "eggs"
     E       AssertionError: assert 'spam' == 'eggs'
-    E
     E         - eggs
     E         + spam
 
@@ -92,7 +91,6 @@ Here is a nice run of several failures and how ``pytest`` presents things:
         def test_eq_similar_text(self):
     >       assert "foo 1 bar" == "foo 2 bar"
     E       AssertionError: assert 'foo 1 bar' == 'foo 2 bar'
-    E
     E         - foo 2 bar
     E         ?     ^
     E         + foo 1 bar
@@ -106,7 +104,6 @@ Here is a nice run of several failures and how ``pytest`` presents things:
         def test_eq_multiline_text(self):
     >       assert "foo\nspam\nbar" == "foo\neggs\nbar"
     E       AssertionError: assert 'foo\nspam\nbar' == 'foo\neggs\nbar'
-    E
     E           foo
     E         - eggs
     E         + spam
@@ -122,7 +119,6 @@ Here is a nice run of several failures and how ``pytest`` presents things:
             b = "1" * 100 + "b" + "2" * 100
     >       assert a == b
     E       AssertionError: assert '111111111111...2222222222222' == '111111111111...2222222222222'
-    E
     E         Skipping 90 identical leading characters in diff, use -v to show
     E         Skipping 91 identical trailing characters in diff, use -v to show
     E         - 1111111111b222222222
@@ -140,9 +136,9 @@ Here is a nice run of several failures and how ``pytest`` presents things:
             b = "1\n" * 100 + "b" + "2\n" * 100
     >       assert a == b
     E       AssertionError: assert '1\n1\n1\n1\n...n2\n2\n2\n2\n' == '1\n1\n1\n1\n...n2\n2\n2\n2\n'
-    E
     E         Skipping 190 identical leading characters in diff, use -v to show
     E         Skipping 191 identical trailing characters in diff, use -v to show
+    E           1
     E           1
     E           1
     E           1
@@ -158,9 +154,8 @@ Here is a nice run of several failures and how ``pytest`` presents things:
         def test_eq_list(self):
     >       assert [0, 1, 2] == [0, 1, 3]
     E       assert [0, 1, 2] == [0, 1, 3]
-    E
     E         At index 2 diff: 2 != 3
-    E         Use -v to get more diff
+    E         Use -v to get the full diff
 
     failure_demo.py:63: AssertionError
     ______________ TestSpecialisedExplanations.test_eq_list_long _______________
@@ -172,9 +167,8 @@ Here is a nice run of several failures and how ``pytest`` presents things:
             b = [0] * 100 + [2] + [3] * 100
     >       assert a == b
     E       assert [0, 0, 0, 0, 0, 0, ...] == [0, 0, 0, 0, 0, 0, ...]
-    E
     E         At index 100 diff: 1 != 2
-    E         Use -v to get more diff
+    E         Use -v to get the full diff
 
     failure_demo.py:68: AssertionError
     _________________ TestSpecialisedExplanations.test_eq_dict _________________
@@ -184,15 +178,15 @@ Here is a nice run of several failures and how ``pytest`` presents things:
         def test_eq_dict(self):
     >       assert {"a": 0, "b": 1, "c": 0} == {"a": 0, "b": 2, "d": 0}
     E       AssertionError: assert {'a': 0, 'b': 1, 'c': 0} == {'a': 0, 'b': 2, 'd': 0}
-    E
     E         Omitting 1 identical items, use -vv to show
     E         Differing items:
     E         {'b': 1} != {'b': 2}
     E         Left contains 1 more item:
     E         {'c': 0}
     E         Right contains 1 more item:
-    E         {'d': 0}
-    E         Use -v to get more diff
+    E         {'d': 0}...
+    E
+    E         ...Full output truncated (2 lines hidden), use '-vv' to show
 
     failure_demo.py:71: AssertionError
     _________________ TestSpecialisedExplanations.test_eq_set __________________
@@ -201,16 +195,16 @@ Here is a nice run of several failures and how ``pytest`` presents things:
 
         def test_eq_set(self):
     >       assert {0, 10, 11, 12} == {0, 20, 21}
-    E       assert {0, 10, 11, 12} == {0, 20, 21}
-    E
+    E       AssertionError: assert {0, 10, 11, 12} == {0, 20, 21}
     E         Extra items in the left set:
     E         10
     E         11
     E         12
     E         Extra items in the right set:
     E         20
-    E         21
-    E         Use -v to get more diff
+    E         21...
+    E
+    E         ...Full output truncated (2 lines hidden), use '-vv' to show
 
     failure_demo.py:74: AssertionError
     _____________ TestSpecialisedExplanations.test_eq_longer_list ______________
@@ -220,9 +214,8 @@ Here is a nice run of several failures and how ``pytest`` presents things:
         def test_eq_longer_list(self):
     >       assert [1, 2] == [1, 2, 3]
     E       assert [1, 2] == [1, 2, 3]
-    E
     E         Right contains one more item: 3
-    E         Use -v to get more diff
+    E         Use -v to get the full diff
 
     failure_demo.py:77: AssertionError
     _________________ TestSpecialisedExplanations.test_in_list _________________
@@ -242,15 +235,15 @@ Here is a nice run of several failures and how ``pytest`` presents things:
             text = "some multiline\ntext\nwhich\nincludes foo\nand a\ntail"
     >       assert "foo" not in text
     E       AssertionError: assert 'foo' not in 'some multil...nand a\ntail'
-    E
     E         'foo' is contained here:
     E           some multiline
     E           text
     E           which
     E           includes foo
     E         ?          +++
-    E           and a
-    E           tail
+    E           and a...
+    E
+    E         ...Full output truncated (2 lines hidden), use '-vv' to show
 
     failure_demo.py:84: AssertionError
     ___________ TestSpecialisedExplanations.test_not_in_text_single ____________
@@ -261,7 +254,6 @@ Here is a nice run of several failures and how ``pytest`` presents things:
             text = "single foo line"
     >       assert "foo" not in text
     E       AssertionError: assert 'foo' not in 'single foo line'
-    E
     E         'foo' is contained here:
     E           single foo line
     E         ?        +++
@@ -275,7 +267,6 @@ Here is a nice run of several failures and how ``pytest`` presents things:
             text = "head " * 50 + "foo " + "tail " * 20
     >       assert "foo" not in text
     E       AssertionError: assert 'foo' not in 'head head h...l tail tail '
-    E
     E         'foo' is contained here:
     E           head head foo tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail
     E         ?           +++
@@ -289,7 +280,6 @@ Here is a nice run of several failures and how ``pytest`` presents things:
             text = "head " * 50 + "f" * 70 + "tail " * 20
     >       assert "f" * 70 not in text
     E       AssertionError: assert 'fffffffffff...ffffffffffff' not in 'head head h...l tail tail '
-    E
     E         'ffffffffffffffffff...fffffffffffffffffff' is contained here:
     E           head head fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffftail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail
     E         ?           ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -317,9 +307,9 @@ Here is a nice run of several failures and how ``pytest`` presents things:
     E         ['b']
     E
     E         Drill down into differing attribute b:
-    E           b: 'b' != 'c'
-    E           - c
-    E           + b
+    E           b: 'b' != 'c'...
+    E
+    E         ...Full output truncated (3 lines hidden), use '-vv' to show
 
     failure_demo.py:108: AssertionError
     ________________ TestSpecialisedExplanations.test_eq_attrs _________________
@@ -344,9 +334,9 @@ Here is a nice run of several failures and how ``pytest`` presents things:
     E         ['b']
     E
     E         Drill down into differing attribute b:
-    E           b: 'b' != 'c'
-    E           - c
-    E           + b
+    E           b: 'b' != 'c'...
+    E
+    E         ...Full output truncated (3 lines hidden), use '-vv' to show
 
     failure_demo.py:120: AssertionError
     ______________________________ test_attribute ______________________________
@@ -445,7 +435,7 @@ Here is a nice run of several failures and how ``pytest`` presents things:
     self = <failure_demo.TestRaises object at 0xdeadbeef0020>
 
         def test_tupleerror(self):
-    >       a, b = [1]  # noqa: F841
+    >       a, b = [1]  # NOQA
     E       ValueError: not enough values to unpack (expected 2, got 1)
 
     failure_demo.py:175: ValueError
@@ -467,7 +457,7 @@ Here is a nice run of several failures and how ``pytest`` presents things:
     self = <failure_demo.TestRaises object at 0xdeadbeef0022>
 
         def test_some_error(self):
-    >       if namenotexi:  # noqa: F821
+    >       if namenotexi:  # NOQA
     E       NameError: name 'namenotexi' is not defined
 
     failure_demo.py:183: NameError
@@ -683,7 +673,7 @@ Here is a nice run of several failures and how ``pytest`` presents things:
     FAILED failure_demo.py::TestSpecialisedExplanations::test_eq_list - asser...
     FAILED failure_demo.py::TestSpecialisedExplanations::test_eq_list_long - ...
     FAILED failure_demo.py::TestSpecialisedExplanations::test_eq_dict - Asser...
-    FAILED failure_demo.py::TestSpecialisedExplanations::test_eq_set - assert...
+    FAILED failure_demo.py::TestSpecialisedExplanations::test_eq_set - Assert...
     FAILED failure_demo.py::TestSpecialisedExplanations::test_eq_longer_list
     FAILED failure_demo.py::TestSpecialisedExplanations::test_in_list - asser...
     FAILED failure_demo.py::TestSpecialisedExplanations::test_not_in_text_multiline

@@ -14,18 +14,21 @@ The semantics are:
 - ident evaluates to True of False according to a provided matcher function.
 - or/and/not evaluate according to the usual boolean semantics.
 """
-
 import ast
-import dataclasses
 import enum
 import re
 import types
 from typing import Callable
 from typing import Iterator
 from typing import Mapping
-from typing import NoReturn
 from typing import Optional
 from typing import Sequence
+from typing import TYPE_CHECKING
+
+import attr
+
+if TYPE_CHECKING:
+    from typing import NoReturn
 
 
 __all__ = [
@@ -44,9 +47,8 @@ class TokenType(enum.Enum):
     EOF = "end of input"
 
 
-@dataclasses.dataclass(frozen=True)
+@attr.s(frozen=True, slots=True, auto_attribs=True)
 class Token:
-    __slots__ = ("type", "value", "pos")
     type: TokenType
     value: str
     pos: int
@@ -115,7 +117,7 @@ class Scanner:
             self.reject((type,))
         return None
 
-    def reject(self, expected: Sequence[TokenType]) -> NoReturn:
+    def reject(self, expected: Sequence[TokenType]) -> "NoReturn":
         raise ParseError(
             self.current.pos + 1,
             "expected {}; got {}".format(
@@ -133,7 +135,7 @@ IDENT_PREFIX = "$"
 
 def expression(s: Scanner) -> ast.Expression:
     if s.accept(TokenType.EOF):
-        ret: ast.expr = ast.Constant(False)
+        ret: ast.expr = ast.NameConstant(False)
     else:
         ret = expr(s)
         s.accept(TokenType.EOF, reject=True)

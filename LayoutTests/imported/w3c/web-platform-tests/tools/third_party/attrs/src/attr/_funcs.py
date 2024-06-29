@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: MIT
 
+from __future__ import absolute_import, division, print_function
 
 import copy
 
-from ._compat import PY_3_9_PLUS, get_generic_base
+from ._compat import iteritems
 from ._make import NOTHING, _obj_setattr, fields
 from .exceptions import AttrsAttributeNotFoundError
 
@@ -17,13 +18,13 @@ def asdict(
     value_serializer=None,
 ):
     """
-    Return the *attrs* attribute values of *inst* as a dict.
+    Return the ``attrs`` attribute values of *inst* as a dict.
 
-    Optionally recurse into other *attrs*-decorated classes.
+    Optionally recurse into other ``attrs``-decorated classes.
 
-    :param inst: Instance of an *attrs*-decorated class.
+    :param inst: Instance of an ``attrs``-decorated class.
     :param bool recurse: Recurse into classes that are also
-        *attrs*-decorated.
+        ``attrs``-decorated.
     :param callable filter: A callable whose return code determines whether an
         attribute or element is included (``True``) or dropped (``False``).  Is
         called with the `attrs.Attribute` as the first argument and the
@@ -41,7 +42,7 @@ def asdict(
 
     :rtype: return type of *dict_factory*
 
-    :raise attrs.exceptions.NotAnAttrsClassError: If *cls* is not an *attrs*
+    :raise attr.exceptions.NotAnAttrsClassError: If *cls* is not an ``attrs``
         class.
 
     ..  versionadded:: 16.0.0 *dict_factory*
@@ -72,25 +73,19 @@ def asdict(
                 )
             elif isinstance(v, (tuple, list, set, frozenset)):
                 cf = v.__class__ if retain_collection_types is True else list
-                items = [
-                    _asdict_anything(
-                        i,
-                        is_key=False,
-                        filter=filter,
-                        dict_factory=dict_factory,
-                        retain_collection_types=retain_collection_types,
-                        value_serializer=value_serializer,
-                    )
-                    for i in v
-                ]
-                try:
-                    rv[a.name] = cf(items)
-                except TypeError:
-                    if not issubclass(cf, tuple):
-                        raise
-                    # Workaround for TypeError: cf.__new__() missing 1 required
-                    # positional argument (which appears, for a namedturle)
-                    rv[a.name] = cf(*items)
+                rv[a.name] = cf(
+                    [
+                        _asdict_anything(
+                            i,
+                            is_key=False,
+                            filter=filter,
+                            dict_factory=dict_factory,
+                            retain_collection_types=retain_collection_types,
+                            value_serializer=value_serializer,
+                        )
+                        for i in v
+                    ]
+                )
             elif isinstance(v, dict):
                 df = dict_factory
                 rv[a.name] = df(
@@ -112,7 +107,7 @@ def asdict(
                             value_serializer=value_serializer,
                         ),
                     )
-                    for kk, vv in v.items()
+                    for kk, vv in iteritems(v)
                 )
             else:
                 rv[a.name] = v
@@ -184,7 +179,7 @@ def _asdict_anything(
                     value_serializer=value_serializer,
                 ),
             )
-            for kk, vv in val.items()
+            for kk, vv in iteritems(val)
         )
     else:
         rv = val
@@ -202,13 +197,13 @@ def astuple(
     retain_collection_types=False,
 ):
     """
-    Return the *attrs* attribute values of *inst* as a tuple.
+    Return the ``attrs`` attribute values of *inst* as a tuple.
 
-    Optionally recurse into other *attrs*-decorated classes.
+    Optionally recurse into other ``attrs``-decorated classes.
 
-    :param inst: Instance of an *attrs*-decorated class.
+    :param inst: Instance of an ``attrs``-decorated class.
     :param bool recurse: Recurse into classes that are also
-        *attrs*-decorated.
+        ``attrs``-decorated.
     :param callable filter: A callable whose return code determines whether an
         attribute or element is included (``True``) or dropped (``False``).  Is
         called with the `attrs.Attribute` as the first argument and the
@@ -222,7 +217,7 @@ def astuple(
 
     :rtype: return type of *tuple_factory*
 
-    :raise attrs.exceptions.NotAnAttrsClassError: If *cls* is not an *attrs*
+    :raise attr.exceptions.NotAnAttrsClassError: If *cls* is not an ``attrs``
         class.
 
     ..  versionadded:: 16.2.0
@@ -247,26 +242,22 @@ def astuple(
                 )
             elif isinstance(v, (tuple, list, set, frozenset)):
                 cf = v.__class__ if retain is True else list
-                items = [
-                    astuple(
-                        j,
-                        recurse=True,
-                        filter=filter,
-                        tuple_factory=tuple_factory,
-                        retain_collection_types=retain,
+                rv.append(
+                    cf(
+                        [
+                            astuple(
+                                j,
+                                recurse=True,
+                                filter=filter,
+                                tuple_factory=tuple_factory,
+                                retain_collection_types=retain,
+                            )
+                            if has(j.__class__)
+                            else j
+                            for j in v
+                        ]
                     )
-                    if has(j.__class__)
-                    else j
-                    for j in v
-                ]
-                try:
-                    rv.append(cf(items))
-                except TypeError:
-                    if not issubclass(cf, tuple):
-                        raise
-                    # Workaround for TypeError: cf.__new__() missing 1 required
-                    # positional argument (which appears, for a namedturle)
-                    rv.append(cf(*items))
+                )
             elif isinstance(v, dict):
                 df = v.__class__ if retain is True else dict
                 rv.append(
@@ -287,7 +278,7 @@ def astuple(
                             if has(vv.__class__)
                             else vv,
                         )
-                        for kk, vv in v.items()
+                        for kk, vv in iteritems(v)
                     )
                 )
             else:
@@ -300,48 +291,28 @@ def astuple(
 
 def has(cls):
     """
-    Check whether *cls* is a class with *attrs* attributes.
+    Check whether *cls* is a class with ``attrs`` attributes.
 
     :param type cls: Class to introspect.
     :raise TypeError: If *cls* is not a class.
 
     :rtype: bool
     """
-    attrs = getattr(cls, "__attrs_attrs__", None)
-    if attrs is not None:
-        return True
-
-    # No attrs, maybe it's a specialized generic (A[str])?
-    generic_base = get_generic_base(cls)
-    if generic_base is not None:
-        generic_attrs = getattr(generic_base, "__attrs_attrs__", None)
-        if generic_attrs is not None:
-            # Stick it on here for speed next time.
-            cls.__attrs_attrs__ = generic_attrs
-        return generic_attrs is not None
-    return False
+    return getattr(cls, "__attrs_attrs__", None) is not None
 
 
 def assoc(inst, **changes):
     """
     Copy *inst* and apply *changes*.
 
-    This is different from `evolve` that applies the changes to the arguments
-    that create the new instance.
-
-    `evolve`'s behavior is preferable, but there are `edge cases`_ where it
-    doesn't work. Therefore `assoc` is deprecated, but will not be removed.
-
-    .. _`edge cases`: https://github.com/python-attrs/attrs/issues/251
-
-    :param inst: Instance of a class with *attrs* attributes.
+    :param inst: Instance of a class with ``attrs`` attributes.
     :param changes: Keyword changes in the new copy.
 
     :return: A copy of inst with *changes* incorporated.
 
-    :raise attrs.exceptions.AttrsAttributeNotFoundError: If *attr_name*
-        couldn't be found on *cls*.
-    :raise attrs.exceptions.NotAnAttrsClassError: If *cls* is not an *attrs*
+    :raise attr.exceptions.AttrsAttributeNotFoundError: If *attr_name* couldn't
+        be found on *cls*.
+    :raise attr.exceptions.NotAnAttrsClassError: If *cls* is not an ``attrs``
         class.
 
     ..  deprecated:: 17.1.0
@@ -349,79 +320,57 @@ def assoc(inst, **changes):
         This function will not be removed du to the slightly different approach
         compared to `attrs.evolve`.
     """
+    import warnings
+
+    warnings.warn(
+        "assoc is deprecated and will be removed after 2018/01.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     new = copy.copy(inst)
     attrs = fields(inst.__class__)
-    for k, v in changes.items():
+    for k, v in iteritems(changes):
         a = getattr(attrs, k, NOTHING)
         if a is NOTHING:
-            msg = f"{k} is not an attrs attribute on {new.__class__}."
-            raise AttrsAttributeNotFoundError(msg)
+            raise AttrsAttributeNotFoundError(
+                "{k} is not an attrs attribute on {cl}.".format(
+                    k=k, cl=new.__class__
+                )
+            )
         _obj_setattr(new, k, v)
     return new
 
 
-def evolve(*args, **changes):
+def evolve(inst, **changes):
     """
-    Create a new instance, based on the first positional argument with
-    *changes* applied.
+    Create a new instance, based on *inst* with *changes* applied.
 
-    :param inst: Instance of a class with *attrs* attributes.
+    :param inst: Instance of a class with ``attrs`` attributes.
     :param changes: Keyword changes in the new copy.
 
     :return: A copy of inst with *changes* incorporated.
 
     :raise TypeError: If *attr_name* couldn't be found in the class
         ``__init__``.
-    :raise attrs.exceptions.NotAnAttrsClassError: If *cls* is not an *attrs*
+    :raise attr.exceptions.NotAnAttrsClassError: If *cls* is not an ``attrs``
         class.
 
-    .. versionadded:: 17.1.0
-    .. deprecated:: 23.1.0
-       It is now deprecated to pass the instance using the keyword argument
-       *inst*. It will raise a warning until at least April 2024, after which
-       it will become an error. Always pass the instance as a positional
-       argument.
+    ..  versionadded:: 17.1.0
     """
-    # Try to get instance by positional argument first.
-    # Use changes otherwise and warn it'll break.
-    if args:
-        try:
-            (inst,) = args
-        except ValueError:
-            msg = f"evolve() takes 1 positional argument, but {len(args)} were given"
-            raise TypeError(msg) from None
-    else:
-        try:
-            inst = changes.pop("inst")
-        except KeyError:
-            msg = "evolve() missing 1 required positional argument: 'inst'"
-            raise TypeError(msg) from None
-
-        import warnings
-
-        warnings.warn(
-            "Passing the instance per keyword argument is deprecated and "
-            "will stop working in, or after, April 2024.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-
     cls = inst.__class__
     attrs = fields(cls)
     for a in attrs:
         if not a.init:
             continue
         attr_name = a.name  # To deal with private attributes.
-        init_name = a.alias
+        init_name = attr_name if attr_name[0] != "_" else attr_name[1:]
         if init_name not in changes:
             changes[init_name] = getattr(inst, attr_name)
 
     return cls(**changes)
 
 
-def resolve_types(
-    cls, globalns=None, localns=None, attribs=None, include_extras=True
-):
+def resolve_types(cls, globalns=None, localns=None, attribs=None):
     """
     Resolve any strings and forward annotations in type annotations.
 
@@ -440,14 +389,10 @@ def resolve_types(
     :param Optional[dict] localns: Dictionary containing local variables.
     :param Optional[list] attribs: List of attribs for the given class.
         This is necessary when calling from inside a ``field_transformer``
-        since *cls* is not an *attrs* class yet.
-    :param bool include_extras: Resolve more accurately, if possible.
-        Pass ``include_extras`` to ``typing.get_hints``, if supported by the
-        typing module. On supported Python versions (3.9+), this resolves the
-        types more accurately.
+        since *cls* is not an ``attrs`` class yet.
 
     :raise TypeError: If *cls* is not a class.
-    :raise attrs.exceptions.NotAnAttrsClassError: If *cls* is not an *attrs*
+    :raise attr.exceptions.NotAnAttrsClassError: If *cls* is not an ``attrs``
         class and you didn't pass any attribs.
     :raise NameError: If types cannot be resolved because of missing variables.
 
@@ -457,7 +402,6 @@ def resolve_types(
 
     ..  versionadded:: 20.1.0
     ..  versionadded:: 21.1.0 *attribs*
-    ..  versionadded:: 23.1.0 *include_extras*
 
     """
     # Since calling get_type_hints is expensive we cache whether we've
@@ -465,12 +409,7 @@ def resolve_types(
     if getattr(cls, "__attrs_types_resolved__", None) != cls:
         import typing
 
-        kwargs = {"globalns": globalns, "localns": localns}
-
-        if PY_3_9_PLUS:
-            kwargs["include_extras"] = include_extras
-
-        hints = typing.get_type_hints(cls, **kwargs)
+        hints = typing.get_type_hints(cls, globalns=globalns, localns=localns)
         for field in fields(cls) if attribs is None else attribs:
             if field.name in hints:
                 # Since fields have been frozen we must work around it.

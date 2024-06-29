@@ -19,7 +19,7 @@ class TestPatternMatching:
         """
 
         @dec
-        class C:
+        class C(object):
             a = attr.ib()
 
         assert ("a",) == C.__match_args__

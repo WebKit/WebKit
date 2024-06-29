@@ -168,7 +168,7 @@ Now we'll get feedback on a bad argument:
 
 
 If you need to provide more detailed error messages, you can use the
-``type`` parameter and raise :exc:`pytest.UsageError`:
+``type`` parameter and raise ``pytest.UsageError``:
 
 .. code-block:: python
 
@@ -232,7 +232,7 @@ directory with the above conftest.py:
 
     $ pytest
     =========================== test session starts ============================
-    platform linux -- Python 3.x.y, pytest-8.x.y, pluggy-1.x.y
+    platform linux -- Python 3.x.y, pytest-7.x.y, pluggy-1.x.y
     rootdir: /home/sweet/project
     collected 0 items
 
@@ -296,7 +296,7 @@ and when running it will see a skipped "slow" test:
 
     $ pytest -rs    # "-rs" means report details on the little 's'
     =========================== test session starts ============================
-    platform linux -- Python 3.x.y, pytest-8.x.y, pluggy-1.x.y
+    platform linux -- Python 3.x.y, pytest-7.x.y, pluggy-1.x.y
     rootdir: /home/sweet/project
     collected 2 items
 
@@ -312,7 +312,7 @@ Or run it including the ``slow`` marked test:
 
     $ pytest --runslow
     =========================== test session starts ============================
-    platform linux -- Python 3.x.y, pytest-8.x.y, pluggy-1.x.y
+    platform linux -- Python 3.x.y, pytest-7.x.y, pluggy-1.x.y
     rootdir: /home/sweet/project
     collected 2 items
 
@@ -342,7 +342,7 @@ Example:
     def checkconfig(x):
         __tracebackhide__ = True
         if not hasattr(x, "config"):
-            pytest.fail(f"not configured: {x}")
+            pytest.fail("not configured: {}".format(x))
 
 
     def test_something():
@@ -376,7 +376,6 @@ this to make sure unexpected exception types aren't hidden:
 .. code-block:: python
 
     import operator
-
     import pytest
 
 
@@ -387,7 +386,7 @@ this to make sure unexpected exception types aren't hidden:
     def checkconfig(x):
         __tracebackhide__ = operator.methodcaller("errisinstance", ConfigException)
         if not hasattr(x, "config"):
-            raise ConfigException(f"not configured: {x}")
+            raise ConfigException("not configured: {}".format(x))
 
 
     def test_something():
@@ -456,7 +455,7 @@ which will add the string to the test header accordingly:
 
     $ pytest
     =========================== test session starts ============================
-    platform linux -- Python 3.x.y, pytest-8.x.y, pluggy-1.x.y
+    platform linux -- Python 3.x.y, pytest-7.x.y, pluggy-1.x.y
     project deps: mylib-1.1
     rootdir: /home/sweet/project
     collected 0 items
@@ -484,7 +483,7 @@ which will add info only when run with "--v":
 
     $ pytest -v
     =========================== test session starts ============================
-    platform linux -- Python 3.x.y, pytest-8.x.y, pluggy-1.x.y -- $PYTHON_PREFIX/bin/python
+    platform linux -- Python 3.x.y, pytest-7.x.y, pluggy-1.x.y -- $PYTHON_PREFIX/bin/python
     cachedir: .pytest_cache
     info1: did you know that ...
     did you?
@@ -499,7 +498,7 @@ and nothing when run plainly:
 
     $ pytest
     =========================== test session starts ============================
-    platform linux -- Python 3.x.y, pytest-8.x.y, pluggy-1.x.y
+    platform linux -- Python 3.x.y, pytest-7.x.y, pluggy-1.x.y
     rootdir: /home/sweet/project
     collected 0 items
 
@@ -538,7 +537,7 @@ Now we can profile which test functions execute the slowest:
 
     $ pytest --durations=3
     =========================== test session starts ============================
-    platform linux -- Python 3.x.y, pytest-8.x.y, pluggy-1.x.y
+    platform linux -- Python 3.x.y, pytest-7.x.y, pluggy-1.x.y
     rootdir: /home/sweet/project
     collected 3 items
 
@@ -566,7 +565,6 @@ an ``incremental`` marker which is to be used on classes:
     # content of conftest.py
 
     from typing import Dict, Tuple
-
     import pytest
 
     # store history of failures per test class name and per index in parametrize (if parametrize used)
@@ -610,7 +608,7 @@ an ``incremental`` marker which is to be used on classes:
                 test_name = _test_failed_incremental[cls_name].get(parametrize_index, None)
                 # if name found, test has failed for the combination of class name & test name
                 if test_name is not None:
-                    pytest.xfail(f"previous test failed ({test_name})")
+                    pytest.xfail("previous test failed ({})".format(test_name))
 
 
 These two hook implementations work together to abort incremental-marked
@@ -644,7 +642,7 @@ If we run this:
 
     $ pytest -rx
     =========================== test session starts ============================
-    platform linux -- Python 3.x.y, pytest-8.x.y, pluggy-1.x.y
+    platform linux -- Python 3.x.y, pytest-7.x.y, pluggy-1.x.y
     rootdir: /home/sweet/project
     collected 4 items
 
@@ -660,33 +658,9 @@ If we run this:
     E       assert 0
 
     test_step.py:11: AssertionError
-    ================================ XFAILURES =================================
-    ______________________ TestUserHandling.test_deletion ______________________
-
-    item = <Function test_deletion>
-
-        def pytest_runtest_setup(item):
-            if "incremental" in item.keywords:
-                # retrieve the class name of the test
-                cls_name = str(item.cls)
-                # check if a previous test has failed for this class
-                if cls_name in _test_failed_incremental:
-                    # retrieve the index of the test (if parametrize is used in combination with incremental)
-                    parametrize_index = (
-                        tuple(item.callspec.indices.values())
-                        if hasattr(item, "callspec")
-                        else ()
-                    )
-                    # retrieve the name of the first test function to fail for this class name and index
-                    test_name = _test_failed_incremental[cls_name].get(parametrize_index, None)
-                    # if name found, test has failed for the combination of class name & test name
-                    if test_name is not None:
-    >                   pytest.xfail(f"previous test failed ({test_name})")
-    E                   _pytest.outcomes.XFailed: previous test failed (test_modification)
-
-    conftest.py:47: XFailed
     ========================= short test summary info ==========================
-    XFAIL test_step.py::TestUserHandling::test_deletion - reason: previous test failed (test_modification)
+    XFAIL test_step.py::TestUserHandling::test_deletion
+      reason: previous test failed (test_modification)
     ================== 1 failed, 2 passed, 1 xfailed in 0.12s ==================
 
 We'll see that ``test_deletion`` was not executed because ``test_modification``
@@ -716,7 +690,7 @@ Here is an example for making a ``db`` fixture available in a directory:
         pass
 
 
-    @pytest.fixture(scope="package")
+    @pytest.fixture(scope="session")
     def db():
         return DB()
 
@@ -751,14 +725,14 @@ We can run this:
 
     $ pytest
     =========================== test session starts ============================
-    platform linux -- Python 3.x.y, pytest-8.x.y, pluggy-1.x.y
+    platform linux -- Python 3.x.y, pytest-7.x.y, pluggy-1.x.y
     rootdir: /home/sweet/project
     collected 7 items
 
-    a/test_db.py F                                                       [ 14%]
-    a/test_db2.py F                                                      [ 28%]
-    b/test_error.py E                                                    [ 42%]
-    test_step.py .Fx.                                                    [100%]
+    test_step.py .Fx.                                                    [ 57%]
+    a/test_db.py F                                                       [ 71%]
+    a/test_db2.py F                                                      [ 85%]
+    b/test_error.py E                                                    [100%]
 
     ================================== ERRORS ==================================
     _______________________ ERROR at setup of test_root ________________________
@@ -770,39 +744,39 @@ We can run this:
 
     /home/sweet/project/b/test_error.py:1
     ================================= FAILURES =================================
-    _________________________________ test_a1 __________________________________
-
-    db = <conftest.DB object at 0xdeadbeef0002>
-
-        def test_a1(db):
-    >       assert 0, db  # to show value
-    E       AssertionError: <conftest.DB object at 0xdeadbeef0002>
-    E       assert 0
-
-    a/test_db.py:2: AssertionError
-    _________________________________ test_a2 __________________________________
-
-    db = <conftest.DB object at 0xdeadbeef0002>
-
-        def test_a2(db):
-    >       assert 0, db  # to show value
-    E       AssertionError: <conftest.DB object at 0xdeadbeef0002>
-    E       assert 0
-
-    a/test_db2.py:2: AssertionError
     ____________________ TestUserHandling.test_modification ____________________
 
-    self = <test_step.TestUserHandling object at 0xdeadbeef0003>
+    self = <test_step.TestUserHandling object at 0xdeadbeef0002>
 
         def test_modification(self):
     >       assert 0
     E       assert 0
 
     test_step.py:11: AssertionError
+    _________________________________ test_a1 __________________________________
+
+    db = <conftest.DB object at 0xdeadbeef0003>
+
+        def test_a1(db):
+    >       assert 0, db  # to show value
+    E       AssertionError: <conftest.DB object at 0xdeadbeef0003>
+    E       assert 0
+
+    a/test_db.py:2: AssertionError
+    _________________________________ test_a2 __________________________________
+
+    db = <conftest.DB object at 0xdeadbeef0003>
+
+        def test_a2(db):
+    >       assert 0, db  # to show value
+    E       AssertionError: <conftest.DB object at 0xdeadbeef0003>
+    E       assert 0
+
+    a/test_db2.py:2: AssertionError
     ========================= short test summary info ==========================
+    FAILED test_step.py::TestUserHandling::test_modification - assert 0
     FAILED a/test_db.py::test_a1 - AssertionError: <conftest.DB object at 0x7...
     FAILED a/test_db2.py::test_a2 - AssertionError: <conftest.DB object at 0x...
-    FAILED test_step.py::TestUserHandling::test_modification - assert 0
     ERROR b/test_error.py::test_root
     ============= 3 failed, 2 passed, 1 xfailed, 1 error in 0.12s ==============
 
@@ -828,20 +802,20 @@ case we just write some information out to a ``failures`` file:
 
     # content of conftest.py
 
+    import pytest
     import os.path
 
-    import pytest
 
-
-    @pytest.hookimpl(wrapper=True, tryfirst=True)
+    @pytest.hookimpl(tryfirst=True, hookwrapper=True)
     def pytest_runtest_makereport(item, call):
         # execute all other hooks to obtain the report object
-        rep = yield
+        outcome = yield
+        rep = outcome.get_result()
 
         # we only look at actual failing test calls, not setup/teardown
         if rep.when == "call" and rep.failed:
             mode = "a" if os.path.exists("failures") else "w"
-            with open("failures", mode, encoding="utf-8") as f:
+            with open("failures", mode) as f:
                 # let's also access a fixture for the fun of it
                 if "tmp_path" in item.fixturenames:
                     extra = " ({})".format(item.funcargs["tmp_path"])
@@ -849,8 +823,6 @@ case we just write some information out to a ``failures`` file:
                     extra = ""
 
                 f.write(rep.nodeid + extra + "\n")
-
-        return rep
 
 
 if you then have failing tests:
@@ -871,7 +843,7 @@ and run them:
 
     $ pytest test_module.py
     =========================== test session starts ============================
-    platform linux -- Python 3.x.y, pytest-8.x.y, pluggy-1.x.y
+    platform linux -- Python 3.x.y, pytest-7.x.y, pluggy-1.x.y
     rootdir: /home/sweet/project
     collected 2 items
 
@@ -918,23 +890,20 @@ here is a little example implemented via a local plugin:
 .. code-block:: python
 
     # content of conftest.py
-    from typing import Dict
+
     import pytest
-    from pytest import StashKey, CollectReport
-
-    phase_report_key = StashKey[Dict[str, CollectReport]]()
 
 
-    @pytest.hookimpl(wrapper=True, tryfirst=True)
+    @pytest.hookimpl(tryfirst=True, hookwrapper=True)
     def pytest_runtest_makereport(item, call):
         # execute all other hooks to obtain the report object
-        rep = yield
+        outcome = yield
+        rep = outcome.get_result()
 
-        # store test results for each phase of a call, which can
+        # set a report attribute for each phase of a call, which can
         # be "setup", "call", "teardown"
-        item.stash.setdefault(phase_report_key, {})[rep.when] = rep
 
-        return rep
+        setattr(item, "rep_" + rep.when, rep)
 
 
     @pytest.fixture
@@ -942,11 +911,11 @@ here is a little example implemented via a local plugin:
         yield
         # request.node is an "item" because we use the default
         # "function" scope
-        report = request.node.stash[phase_report_key]
-        if report["setup"].failed:
-            print("setting up a test failed or skipped", request.node.nodeid)
-        elif ("call" not in report) or report["call"].failed:
-            print("executing test failed or skipped", request.node.nodeid)
+        if request.node.rep_setup.failed:
+            print("setting up a test failed!", request.node.nodeid)
+        elif request.node.rep_setup.passed:
+            if request.node.rep_call.failed:
+                print("executing test failed", request.node.nodeid)
 
 
 if you then have failing tests:
@@ -980,12 +949,12 @@ and run it:
 
     $ pytest -s test_module.py
     =========================== test session starts ============================
-    platform linux -- Python 3.x.y, pytest-8.x.y, pluggy-1.x.y
+    platform linux -- Python 3.x.y, pytest-7.x.y, pluggy-1.x.y
     rootdir: /home/sweet/project
     collected 3 items
 
-    test_module.py Esetting up a test failed or skipped test_module.py::test_setup_fails
-    Fexecuting test failed or skipped test_module.py::test_call_fails
+    test_module.py Esetting up a test failed! test_module.py::test_setup_fails
+    Fexecuting test failed test_module.py::test_call_fails
     F
 
     ================================== ERRORS ==================================
@@ -1097,7 +1066,6 @@ like ``pytest-timeout`` they must be imported explicitly and passed on to pytest
 
     # contents of app_main.py
     import sys
-
     import pytest_timeout  # Third party plugin
 
     if len(sys.argv) > 1 and sys.argv[1] == "--pytest":
@@ -1115,4 +1083,4 @@ application with standard ``pytest`` command-line options:
 
 .. code-block:: bash
 
-    ./app_main --pytest --verbose --tb=long --junit=xml=results.xml test-suite/
+    ./app_main --pytest --verbose --tb=long --junitxml=results.xml test-suite/

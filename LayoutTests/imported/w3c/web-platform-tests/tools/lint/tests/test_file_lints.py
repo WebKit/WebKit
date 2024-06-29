@@ -347,47 +347,9 @@ def test_multiple_testharnessreport():
             ]
 
 
-def test_testdriver_in_unsupported():
-    code = b"""
-<html xmlns="http://www.w3.org/1999/xhtml">
-<link rel="match" href="test-ref.html"/>
-<script src="/resources/testdriver.js"></script>
-<script src="/resources/testdriver-vendor.js"></script>
-</html>
-"""
-    error_map = check_with_files(code)
-
-    for (filename, (errors, kind)) in error_map.items():
-        check_errors(errors)
-
-        if kind in ["web-lax", "web-strict"]:
-            assert errors == [
-                (
-                    "NON-EXISTENT-REF",
-                    "Reference test with a non-existent 'match' relationship reference: "
-                    "'test-ref.html'",
-                    filename,
-                    None,
-                ),
-                (
-                    "TESTDRIVER-IN-UNSUPPORTED-TYPE",
-                    "testdriver.js included in a reftest test, which doesn't support "
-                    "testdriver.js",
-                    filename,
-                    None,
-                ),
-            ]
-        elif kind == "python":
-            assert errors == [
-                ("PARSE-FAILED", "Unable to parse file", filename, 2),
-            ]
-
-
 def test_early_testdriver_vendor():
     code = b"""
 <html xmlns="http://www.w3.org/1999/xhtml">
-<script src="/resources/testharness.js"></script>
-<script src="/resources/testharnessreport.js"></script>
 <script src="/resources/testdriver-vendor.js"></script>
 <script src="/resources/testdriver.js"></script>
 </html>
@@ -707,41 +669,6 @@ def test_late_timeout():
             ]
 
 
-def test_reference_in_non_reference():
-    code = b"""
-<html xmlns="http://www.w3.org/1999/xhtml">
-<link rel="match" href="test-ref.html"/>
-<script src="/resources/testharness.js"></script>
-<script src="/resources/testharnessreport.js"></script>
-</html>
-"""
-    error_map = check_with_files(code)
-
-    for (filename, (errors, kind)) in error_map.items():
-        check_errors(errors)
-
-        if kind in ["web-lax", "web-strict"]:
-            assert errors == [
-                (
-                    "NON-EXISTENT-REF",
-                    "Reference test with a non-existent 'match' relationship reference: "
-                    "'test-ref.html'",
-                    filename,
-                    None,
-                ),
-                (
-                    "REFERENCE-IN-OTHER-TYPE",
-                    "Reference link included in a testharness test",
-                    filename,
-                    None,
-                ),
-            ]
-        elif kind == "python":
-            assert errors == [
-                ("PARSE-FAILED", "Unable to parse file", filename, 2),
-            ]
-
-
 def test_print_function():
     error_map = check_with_files(b"def foo():\n  print('function')\n")
 
@@ -1048,8 +975,6 @@ def test_css_missing_file_tentative():
     (b"""// META: foobar\n""", (1, "BROKEN-METADATA")),
     (b"""// META: foo=bar\n""", (1, "UNKNOWN-METADATA")),
     (b"""// META: timeout=bar\n""", (1, "UNKNOWN-TIMEOUT-METADATA")),
-    (b"""// META: script=/resources/testharness.js""", (1, "MULTIPLE-TESTHARNESS")),
-    (b"""// META: script=/resources/testharnessreport.js""", (1, "MULTIPLE-TESTHARNESSREPORT")),
 ])
 def test_script_metadata(filename, input, error):
     errors = check_file_contents("", filename, io.BytesIO(input))
@@ -1066,10 +991,6 @@ def test_script_metadata(filename, input, error):
             "MALFORMED-VARIANT": (
                 f"{filename} `META: variant=...` value must be a non empty "
                 "string and start with '?' or '#'"),
-            "MULTIPLE-TESTHARNESS": (
-                "More than one `<script src='/resources/testharness.js'>`"),
-            "MULTIPLE-TESTHARNESSREPORT": (
-                "More than one `<script src='/resources/testharnessreport.js'>`"),
         }
         assert errors == [
             (kind,
