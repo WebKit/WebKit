@@ -67,6 +67,7 @@ rtc_library("video_frame") {
     ":video_rtp_headers",
     "..:array_view",
     "..:make_ref_counted",
+    "..:ref_count",
     "..:rtp_packet_info",
     "..:scoped_refptr",
     "..:video_track_source_constraints",
@@ -138,6 +139,7 @@ rtc_source_set("render_resolution") {
 rtc_source_set("resolution") {
   visibility = [ "*" ]
   public = [ "resolution.h" ]
+  deps = [ "../../rtc_base/system:rtc_export" ]
 }
 
 rtc_library("encoded_image") {

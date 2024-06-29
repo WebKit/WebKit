@@ -123,8 +123,8 @@ private:
     void flattenWithTransform(const TransformationMatrix&, bool* wasClamped);
     void applyAccumulatedOffset();
 
-    bool shouldFlattenBefore(TransformAccumulation accumulate);
-    bool shouldFlattenAfter(TransformAccumulation accumulate);
+    bool shouldFlattenBefore(TransformAccumulation accumulate = FlattenTransform);
+    bool shouldFlattenAfter(TransformAccumulation accumulate = FlattenTransform);
     
     TransformDirection inverseDirection() const;
 

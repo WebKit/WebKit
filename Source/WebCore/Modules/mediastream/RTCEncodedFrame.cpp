@@ -40,10 +40,8 @@ RTCEncodedFrame::RTCEncodedFrame(Ref<RTCRtpTransformableFrame>&& frame)
 
 RefPtr<JSC::ArrayBuffer> RTCEncodedFrame::data() const
 {
-    if (!m_data) {
-        auto data = m_frame->data();
-        m_data = JSC::ArrayBuffer::create(data.data(), data.size());
-    }
+    if (!m_data)
+        m_data = JSC::ArrayBuffer::create(m_frame->data());
     return m_data;
 }
 

@@ -70,11 +70,6 @@ GetterSetterAccessCase::GetterSetterAccessCase(const GetterSetterAccessCase& oth
     m_domAttribute = other.m_domAttribute;
 }
 
-Ref<AccessCase> GetterSetterAccessCase::cloneImpl() const
-{
-    return adoptRef(*new GetterSetterAccessCase(*this));
-}
-
 JSObject* GetterSetterAccessCase::tryGetAlternateBaseImpl() const
 {
     if (auto* object = customSlotBase())
@@ -86,8 +81,6 @@ void GetterSetterAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma, Ind
 {
     Base::dumpImpl(out, comma, indent);
     out.print(comma, "customSlotBase = ", RawPointer(customSlotBase()));
-    if (callLinkInfo())
-        out.print(comma, "callLinkInfo = ", RawPointer(callLinkInfo()));
     out.print(comma, "customAccessor = ", RawPointer(m_customAccessor.taggedPtr()));
 }
 

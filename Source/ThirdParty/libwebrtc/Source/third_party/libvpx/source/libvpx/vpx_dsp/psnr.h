@@ -26,7 +26,7 @@ typedef struct vpx_psnr_pkt PSNR_STATS;
 
 /*!\brief Converts SSE to PSNR
  *
- * Converts sum of squared errros (SSE) to peak signal-to-noise ratio (PNSR).
+ * Converts sum of squared errros (SSE) to peak signal-to-noise ratio (PSNR).
  *
  * \param[in]    samples       Number of samples
  * \param[in]    peak          Max sample value

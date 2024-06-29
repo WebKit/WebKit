@@ -137,3 +137,9 @@ endif ()
 list(APPEND WTF_LIBRARIES
     Threads::Threads
 )
+
+if (USE_LIBBACKTRACE)
+    list(APPEND WTF_LIBRARIES
+        LIBBACKTRACE::LIBBACKTRACE
+    )
+endif ()

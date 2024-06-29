@@ -447,7 +447,7 @@ static INLINE void idct8_low1_neon(int16x8_t *in, int16x8_t *out,
   out[7] = step1;
 }
 
-void av1_round_shift_array_16_neon(int16x8_t *arr, int size, int bit) {
+static void round_shift_array_16_neon(int16x8_t *arr, int size, int bit) {
   assert(!(size % 4));
   if (!bit) return;
   const int16x8_t dup_bits_n_16x8 = vdupq_n_s16((int16_t)(-bit));
@@ -3661,7 +3661,7 @@ static INLINE void lowbd_inv_txfm2d_add_v_identity_neon(
       round_shift_for_rect(cur_a, cur_a, buf_size_nonzero_w);
     }
     row_txfm(cur_a, cur_a, INV_COS_BIT);
-    av1_round_shift_array_16_neon(cur_a, txfm_size_col, -shift[0]);
+    round_shift_array_16_neon(cur_a, txfm_size_col, -shift[0]);
     if (lr_flip == 1) {
       for (int j = 0; j < buf_size_w_div8; ++j) {
         flip_buf_ud_neon(&cur_a[j * 8], 8);
@@ -3736,8 +3736,7 @@ static INLINE void lowbd_inv_txfm2d_add_h_identity_neon(
   }
   for (int j = 0; j < buf_size_w_div8; ++j) {
     col_txfm(&b[j * txfm_size_row], &b[j * txfm_size_row], INV_COS_BIT);
-    av1_round_shift_array_16_neon(&b[j * txfm_size_row], txfm_size_row,
-                                  -shift[1]);
+    round_shift_array_16_neon(&b[j * txfm_size_row], txfm_size_row, -shift[1]);
   }
   if (txfm_size_col >= 16) {
     for (int i = 0; i < (txfm_size_col >> 4); i++) {
@@ -4112,7 +4111,7 @@ static INLINE void lowbd_inv_txfm2d_add_no_identity_neon(
       round_shift_for_rect(cur_a, cur_a, buf_size_nonzero_w);
     }
     row_txfm(cur_a, cur_a, INV_COS_BIT);
-    av1_round_shift_array_16_neon(cur_a, txfm_size_col, -shift[0]);
+    round_shift_array_16_neon(cur_a, txfm_size_col, -shift[0]);
     if (lr_flip == 1) {
       for (int j = 0; j < buf_size_w_div8; ++j) {
         flip_buf_ud_neon(&cur_a[j * 8], 8);
@@ -4130,8 +4129,7 @@ static INLINE void lowbd_inv_txfm2d_add_no_identity_neon(
   }
   for (int j = 0; j < buf_size_w_div8; ++j) {
     col_txfm(&b[j * txfm_size_row], &b[j * txfm_size_row], INV_COS_BIT);
-    av1_round_shift_array_16_neon(&b[j * txfm_size_row], txfm_size_row,
-                                  -shift[1]);
+    round_shift_array_16_neon(&b[j * txfm_size_row], txfm_size_row, -shift[1]);
   }
 
   if (txfm_size_col >= 16) {

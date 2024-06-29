@@ -10,14 +10,13 @@
  */
 
 #include "third_party/googletest/src/googletest/include/gtest/gtest.h"
+
+#include "av1/common/seg_common.h"
+#include "av1/decoder/decodemv.h"
+#include "av1/encoder/bitstream.h"
 #include "test/acm_random.h"
 
 using libaom_test::ACMRandom;
-
-extern "C" {
-int av1_neg_interleave(int x, int ref, int max);
-int av1_neg_deinterleave(int diff, int ref, int max);
-}
 
 namespace {
 
@@ -28,8 +27,6 @@ struct Segment {
 };
 
 Segment GenerateSegment(int seed) {
-  static const int MAX_SEGMENTS = 8;
-
   ACMRandom rnd_(seed);
 
   Segment segment;

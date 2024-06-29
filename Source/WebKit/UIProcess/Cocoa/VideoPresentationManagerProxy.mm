@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
+#import "APIPageConfiguration.h"
 #import "APIUIClient.h"
 #import "DrawingAreaProxy.h"
 #import "GPUProcessProxy.h"
@@ -72,7 +73,7 @@
 #import <BrowserEngineKit/BELayerHierarchyHostingView.h>
 #endif
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_page->process().connection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_page->legacyMainFrameProcess().connection())
 
 @interface WKLayerHostView : PlatformView
 @property (nonatomic, assign) uint32_t contextID;
@@ -254,6 +255,15 @@ void VideoPresentationModelContext::setPlayerLayer(RetainPtr<WebAVPlayerLayer>&&
     [m_playerLayer setVideoDimensions:m_videoDimensions];
 }
 
+void VideoPresentationManagerProxy::setDocumentVisibility(PlaybackSessionContextIdentifier contextId, bool isDocumentVisible)
+{
+    if (m_mockVideoPresentationModeEnabled)
+        return;
+
+    if (RefPtr interface = findInterface(contextId))
+        interface->documentVisibilityChanged(isDocumentVisible);
+}
+
 void VideoPresentationModelContext::setVideoDimensions(const WebCore::FloatSize& videoDimensions)
 {
     if (m_videoDimensions == videoDimensions)
@@ -296,6 +306,13 @@ void VideoPresentationModelContext::setVideoLayerGravity(WebCore::MediaPlayerEnu
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, gravity);
     if (m_manager)
         m_manager->setVideoLayerGravity(m_contextId, gravity);
+}
+
+void VideoPresentationModelContext::setVideoFullscreenFrame(WebCore::FloatRect frame)
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, frame);
+    if (m_manager)
+        m_manager->setVideoFullscreenFrame(m_contextId, frame);
 }
 
 void VideoPresentationModelContext::fullscreenModeChanged(WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
@@ -446,6 +463,18 @@ void VideoPresentationModelContext::willExitPictureInPicture()
     });
 }
 
+void VideoPresentationModelContext::setRequiresTextTrackRepresentation(bool requiresTextTrackRepresentation)
+{
+    if (RefPtr manager = m_manager.get())
+        manager->setRequiresTextTrackRepresentation(m_contextId, requiresTextTrackRepresentation);
+}
+
+void VideoPresentationModelContext::setTextTrackRepresentationBounds(const IntRect& bounds)
+{
+    if (RefPtr manager = m_manager.get())
+        manager->setTextTrackRepresentationBounds(m_contextId, bounds);
+}
+
 #if !RELEASE_LOG_DISABLED
 const void* VideoPresentationModelContext::logIdentifier() const
 {
@@ -480,7 +509,7 @@ VideoPresentationManagerProxy::VideoPresentationManagerProxy(WebPageProxy& page,
     , m_playbackSessionManagerProxy(playbackSessionManagerProxy)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_page->process().addMessageReceiver(Messages::VideoPresentationManagerProxy::messageReceiverName(), m_page->webPageID(), *this);
+    m_page->legacyMainFrameProcess().addMessageReceiver(Messages::VideoPresentationManagerProxy::messageReceiverName(), m_page->webPageIDInMainFrameProcess(), *this);
 }
 
 VideoPresentationManagerProxy::~VideoPresentationManagerProxy()
@@ -495,7 +524,7 @@ void VideoPresentationManagerProxy::invalidate()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     if (m_page) {
-        m_page->process().removeMessageReceiver(Messages::VideoPresentationManagerProxy::messageReceiverName(), m_page->webPageID());
+        m_page->legacyMainFrameProcess().removeMessageReceiver(Messages::VideoPresentationManagerProxy::messageReceiverName(), m_page->webPageIDInMainFrameProcess());
         m_page = nullptr;
     }
 
@@ -564,7 +593,9 @@ void VideoPresentationManagerProxy::applicationDidBecomeActive()
 void VideoPresentationManagerProxy::requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier contextId, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&& callback)
 {
     if (m_page)
-        m_page->sendWithAsyncReply(Messages::VideoPresentationManager::RequestRouteSharingPolicyAndContextUID(contextId), WTFMove(callback));
+        m_page->legacyMainFrameProcess().sendWithAsyncReply(Messages::VideoPresentationManager::RequestRouteSharingPolicyAndContextUID(contextId), WTFMove(callback), m_page->webPageIDInMainFrameProcess());
+    else
+        callback({ }, { });
 }
 
 VideoPresentationManagerProxy::ModelInterfaceTuple VideoPresentationManagerProxy::createModelAndInterface(PlaybackSessionContextIdentifier contextId)
@@ -695,7 +726,7 @@ void VideoPresentationManagerProxy::requestBitmapImageForCurrentTime(PlaybackSes
         return;
     }
 
-    gpuProcess->requestBitmapImageForCurrentTime(m_page->process().coreProcessIdentifier(), playerIdentifier, WTFMove(completionHandler));
+    gpuProcess->requestBitmapImageForCurrentTime(m_page->legacyMainFrameProcess().coreProcessIdentifier(), playerIdentifier, WTFMove(completionHandler));
 }
 
 void VideoPresentationManagerProxy::addVideoInPictureInPictureDidChangeObserver(const VideoInPictureInPictureDidChangeObserver& observer)
@@ -744,7 +775,7 @@ PlatformLayerContainer VideoPresentationManagerProxy::createLayerWithID(Playback
     }
 
     if (m_page)
-        m_page->send(Messages::VideoPresentationManager::EnsureUpdatedVideoDimensions(contextId, nativeSize));
+        m_page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::EnsureUpdatedVideoDimensions(contextId, nativeSize), m_page->webPageIDInMainFrameProcess());
 
     return model->playerLayer();
 }
@@ -779,7 +810,7 @@ RetainPtr<WKLayerHostView> VideoPresentationManagerProxy::createLayerHostViewWit
 
 #if USE(EXTENSIONKIT)
     RefPtr page = m_page.get();
-    if (RefPtr gpuProcess = page ? page->process().processPool().gpuProcess() : nullptr) {
+    if (RefPtr gpuProcess = page ? page->configuration().processPool().gpuProcess() : nullptr) {
         RetainPtr handle = LayerHostingContext::createHostingHandle(gpuProcess->processID(), videoLayerID);
         [view->_hostingView setHandle:handle.get()];
     } else
@@ -842,7 +873,7 @@ RetainPtr<WKVideoView> VideoPresentationManagerProxy::createViewWithID(PlaybackS
     }
 
     if (m_page)
-        m_page->send(Messages::VideoPresentationManager::EnsureUpdatedVideoDimensions(contextId, nativeSize));
+        m_page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::EnsureUpdatedVideoDimensions(contextId, nativeSize), m_page->webPageIDInMainFrameProcess());
 
     return model->videoView();
 }
@@ -1105,6 +1136,18 @@ void VideoPresentationManagerProxy::preparedToExitFullscreen(PlaybackSessionCont
     ensureInterface(contextId).preparedToExitFullscreen();
 }
 
+void VideoPresentationManagerProxy::setRequiresTextTrackRepresentation(PlaybackSessionContextIdentifier contextId , bool requiresTextTrackRepresentation)
+{
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::SetRequiresTextTrackRepresentation(contextId, requiresTextTrackRepresentation), m_page->webPageIDInMainFrameProcess());
+}
+
+void VideoPresentationManagerProxy::setTextTrackRepresentationBounds(PlaybackSessionContextIdentifier contextId , const IntRect& bounds)
+{
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::SetTextTrackRepresentationBounds(contextId, bounds), m_page->webPageIDInMainFrameProcess());
+}
+
 void VideoPresentationManagerProxy::textTrackRepresentationUpdate(PlaybackSessionContextIdentifier contextId, ShareableBitmap::Handle&& textTrack)
 {
     auto bitmap = ShareableBitmap::create(WTFMove(textTrack));
@@ -1149,25 +1192,25 @@ void VideoPresentationManagerProxy::requestCloseAllMediaPresentations(PlaybackSe
 void VideoPresentationManagerProxy::requestFullscreenMode(PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
 {
     if (m_page)
-        m_page->send(Messages::VideoPresentationManager::RequestFullscreenMode(contextId, mode, finishedWithMedia));
+        m_page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::RequestFullscreenMode(contextId, mode, finishedWithMedia), m_page->webPageIDInMainFrameProcess());
 }
 
 void VideoPresentationManagerProxy::requestUpdateInlineRect(PlaybackSessionContextIdentifier contextId)
 {
     if (m_page)
-        m_page->send(Messages::VideoPresentationManager::RequestUpdateInlineRect(contextId));
+        m_page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::RequestUpdateInlineRect(contextId), m_page->webPageIDInMainFrameProcess());
 }
 
 void VideoPresentationManagerProxy::requestVideoContentLayer(PlaybackSessionContextIdentifier contextId)
 {
     if (m_page)
-        m_page->send(Messages::VideoPresentationManager::RequestVideoContentLayer(contextId));
+        m_page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::RequestVideoContentLayer(contextId), m_page->webPageIDInMainFrameProcess());
 }
 
 void VideoPresentationManagerProxy::returnVideoContentLayer(PlaybackSessionContextIdentifier contextId)
 {
     if (m_page)
-        m_page->send(Messages::VideoPresentationManager::ReturnVideoContentLayer(contextId));
+        m_page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::ReturnVideoContentLayer(contextId), m_page->webPageIDInMainFrameProcess());
 }
 
 void VideoPresentationManagerProxy::returnVideoView(PlaybackSessionContextIdentifier contextId)
@@ -1192,14 +1235,14 @@ void VideoPresentationManagerProxy::didSetupFullscreen(PlaybackSessionContextIde
     enterFullscreen(contextId);
 #else
     if (m_page)
-        m_page->send(Messages::VideoPresentationManager::DidSetupFullscreen(contextId));
+        m_page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::DidSetupFullscreen(contextId), m_page->webPageIDInMainFrameProcess());
 #endif
 }
 
 void VideoPresentationManagerProxy::willExitFullscreen(PlaybackSessionContextIdentifier contextId)
 {
     if (m_page)
-        m_page->send(Messages::VideoPresentationManager::WillExitFullscreen(contextId));
+        m_page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::WillExitFullscreen(contextId), m_page->webPageIDInMainFrameProcess());
 }
 
 void VideoPresentationManagerProxy::didExitFullscreen(PlaybackSessionContextIdentifier contextId)
@@ -1207,7 +1250,7 @@ void VideoPresentationManagerProxy::didExitFullscreen(PlaybackSessionContextIden
     if (!m_page)
         return;
 
-    m_page->send(Messages::VideoPresentationManager::DidExitFullscreen(contextId));
+    m_page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::DidExitFullscreen(contextId), m_page->webPageIDInMainFrameProcess());
 
 #if PLATFORM(IOS_FAMILY)
     if (ensureInterface(contextId).changingStandbyOnly()) {
@@ -1228,7 +1271,7 @@ void VideoPresentationManagerProxy::didEnterFullscreen(PlaybackSessionContextIde
     if (!size.isEmpty())
         optionalSize = size;
 
-    m_page->send(Messages::VideoPresentationManager::DidEnterFullscreen(contextId, optionalSize));
+    m_page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::DidEnterFullscreen(contextId, optionalSize), m_page->webPageIDInMainFrameProcess());
 
 #if PLATFORM(IOS_FAMILY)
     if (ensureInterface(contextId).changingStandbyOnly())
@@ -1240,7 +1283,7 @@ void VideoPresentationManagerProxy::didEnterFullscreen(PlaybackSessionContextIde
 void VideoPresentationManagerProxy::failedToEnterFullscreen(PlaybackSessionContextIdentifier contextId)
 {
     if (m_page)
-        m_page->send(Messages::VideoPresentationManager::FailedToEnterFullscreen(contextId));
+        m_page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::FailedToEnterFullscreen(contextId), m_page->webPageIDInMainFrameProcess());
 }
 
 void VideoPresentationManagerProxy::didCleanupFullscreen(PlaybackSessionContextIdentifier contextId)
@@ -1269,7 +1312,7 @@ void VideoPresentationManagerProxy::didCleanupFullscreen(PlaybackSessionContextI
         model->setLayerHostView(nullptr);
     }
 
-    page->send(Messages::VideoPresentationManager::DidCleanupFullscreen(contextId));
+    page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::DidCleanupFullscreen(contextId), m_page->webPageIDInMainFrameProcess());
 
     if (!hasMode(HTMLMediaElementEnums::VideoFullscreenModeInWindow)) {
         interface->setMode(HTMLMediaElementEnums::VideoFullscreenModeNone, false);
@@ -1295,7 +1338,7 @@ void VideoPresentationManagerProxy::setVideoLayerFrame(PlaybackSessionContextIde
         [hostingUpdateCoordinator addLayerHierarchyHostingView:view->_hostingView.get()];
         OSObjectPtr<xpc_object_t> xpcRepresentationHostingCoordinator = [hostingUpdateCoordinator createXPCRepresentation];
         fenceSendRight = MachSendRight::adopt(xpc_dictionary_copy_mach_send(xpcRepresentationHostingCoordinator.get(), machPortKey));
-        m_page->send(Messages::VideoPresentationManager::SetVideoLayerFrameFenced(contextId, frame, WTFMove(fenceSendRight)));
+        m_page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::SetVideoLayerFrameFenced(contextId, frame, WTFMove(fenceSendRight)), m_page->webPageIDInMainFrameProcess());
         [hostingUpdateCoordinator commit];
         return;
     }
@@ -1307,25 +1350,32 @@ void VideoPresentationManagerProxy::setVideoLayerFrame(PlaybackSessionContextIde
         fenceSendRight = drawingArea->createFence();
 #endif
 
-    m_page->send(Messages::VideoPresentationManager::SetVideoLayerFrameFenced(contextId, frame, WTFMove(fenceSendRight)));
+    m_page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::SetVideoLayerFrameFenced(contextId, frame, WTFMove(fenceSendRight)), m_page->webPageIDInMainFrameProcess());
 }
 
 void VideoPresentationManagerProxy::setVideoLayerGravity(PlaybackSessionContextIdentifier contextId, WebCore::MediaPlayerEnums::VideoGravity gravity)
 {
+    // FIXME: gravity should be sent as an enum instead of an unsigned.
     if (m_page)
-        m_page->send(Messages::VideoPresentationManager::SetVideoLayerGravityEnum(contextId, (unsigned)gravity));
+        m_page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::SetVideoLayerGravityEnum(contextId, (unsigned)gravity), m_page->webPageIDInMainFrameProcess());
+}
+
+void VideoPresentationManagerProxy::setVideoFullscreenFrame(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect frame)
+{
+    if (RefPtr page = m_page.get())
+        page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::SetVideoFullscreenFrame(contextId, frame), m_page->webPageIDInMainFrameProcess());
 }
 
 void VideoPresentationManagerProxy::fullscreenModeChanged(PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     if (m_page)
-        m_page->send(Messages::VideoPresentationManager::FullscreenModeChanged(contextId, mode));
+        m_page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::FullscreenModeChanged(contextId, mode), m_page->webPageIDInMainFrameProcess());
 }
 
 void VideoPresentationManagerProxy::fullscreenMayReturnToInline(PlaybackSessionContextIdentifier contextId)
 {
     if (m_page)
-        m_page->send(Messages::VideoPresentationManager::FullscreenMayReturnToInline(contextId, m_page->isViewVisible()));
+        m_page->legacyMainFrameProcess().send(Messages::VideoPresentationManager::FullscreenMayReturnToInline(contextId, m_page->isViewVisible()), m_page->webPageIDInMainFrameProcess());
 }
 
 #endif

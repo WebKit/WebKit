@@ -160,6 +160,8 @@ void ShareGroupVk::onDestroy(const egl::Display *display)
     DisplayVk *displayVk   = vk::GetImpl(display);
     vk::Renderer *renderer = displayVk->getRenderer();
 
+    mRefCountedEventsGarbageRecycler.destroy(renderer);
+
     for (std::unique_ptr<vk::BufferPool> &pool : mDefaultBufferPools)
     {
         if (pool)

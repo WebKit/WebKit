@@ -8,7 +8,7 @@ layer at (0,-17.42) size 271x98 backgroundClip at (0,0) size 933.11x1036.80 clip
   RenderSVGTransformableContainer {g} at (0,-17.42) size 271x97.42
 layer at (179,35.58) size 92x18
   RenderSVGText {text} at (179,53) size 92x19 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 93x19
+    RenderSVGInlineText {#text} at (0,0) size 92x19
       chunk 1 (middle anchor) text run 1 at (179.00,50.00) startOffset 0 endOffset 12 width 92.00: "Mask Regions"
 layer at (0,0) size 100x81
   RenderSVGHiddenContainer {defs} at (0,17.42) size 100x80

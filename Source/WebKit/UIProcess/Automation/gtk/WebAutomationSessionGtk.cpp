@@ -103,7 +103,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     }
 }
 
-OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(unsigned modifiers)
+OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(WebPageProxy&, unsigned modifiers)
 {
     OptionSet<WebEventModifier> webModifiers;
 
@@ -356,10 +356,10 @@ static std::optional<String> base64EncodedPNGData(cairo_surface_t* surface)
     if (!surface)
         return std::nullopt;
 
-    Vector<unsigned char> pngData;
+    Vector<uint8_t> pngData;
     cairo_surface_write_to_png_stream(surface, [](void* userData, const unsigned char* data, unsigned length) -> cairo_status_t {
-        auto* pngData = static_cast<Vector<unsigned char>*>(userData);
-        pngData->append(std::span { data, length });
+        auto* pngData = static_cast<Vector<uint8_t>*>(userData);
+        pngData->append(std::span { reinterpret_cast<const uint8_t*>(data), length });
         return CAIRO_STATUS_SUCCESS;
     }, &pngData);
 

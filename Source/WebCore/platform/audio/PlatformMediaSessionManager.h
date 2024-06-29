@@ -74,8 +74,8 @@ public:
     WEBCORE_EXPORT static bool shouldEnableVP9Decoder();
     WEBCORE_EXPORT static void setShouldEnableVP8Decoder(bool);
     WEBCORE_EXPORT static bool shouldEnableVP8Decoder();
-    WEBCORE_EXPORT static void setShouldEnableVP9SWDecoder(bool);
-    WEBCORE_EXPORT static bool shouldEnableVP9SWDecoder();
+    WEBCORE_EXPORT static void setSWVPDecodersAlwaysEnabled(bool);
+    WEBCORE_EXPORT static bool swVPDecodersAlwaysEnabled();
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
@@ -196,6 +196,8 @@ public:
     WEBCORE_EXPORT void addNowPlayingMetadataObserver(const NowPlayingMetadataObserver&);
     WEBCORE_EXPORT void removeNowPlayingMetadataObserver(const NowPlayingMetadataObserver&);
 
+    bool hasActiveNowPlayingSessionInGroup(MediaSessionGroupIdentifier);
+
 protected:
     friend class PlatformMediaSession;
     static std::unique_ptr<PlatformMediaSessionManager> create();
@@ -233,6 +235,11 @@ private:
     virtual void updateSessionState() { }
 
     Vector<WeakPtr<PlatformMediaSession>> sessionsMatching(const Function<bool(const PlatformMediaSession&)>&) const;
+
+#if !RELEASE_LOG_DISABLED
+    void scheduleStateLog();
+    void dumpSessionStates();
+#endif
 
     SessionRestrictions m_restrictions[static_cast<unsigned>(PlatformMediaSession::MediaType::WebAudio) + 1];
     mutable Vector<WeakPtr<PlatformMediaSession>> m_sessions;
@@ -273,7 +280,7 @@ private:
 #if ENABLE(VP9)
     static bool m_vp9DecoderEnabled;
     static bool m_vp8DecoderEnabled;
-    static bool m_vp9SWDecoderEnabled;
+    static bool m_swVPDecodersAlwaysEnabled;
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
@@ -281,6 +288,7 @@ private:
 #endif
 
 #if !RELEASE_LOG_DISABLED
+    UniqueRef<Timer> m_stateLogTimer;
     Ref<AggregateLogger> m_logger;
 #endif
 };

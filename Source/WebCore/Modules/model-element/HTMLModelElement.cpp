@@ -230,7 +230,7 @@ void HTMLModelElement::dataReceived(CachedResource& resource, const SharedBuffer
     m_data.append(buffer);
 }
 
-void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
+void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     auto invalidateResourceHandleAndUpdateRenderer = [&] {
         m_resource->removeClient(*this);

@@ -73,7 +73,7 @@ bool HTMLOutputElement::supportsFocus() const
 void HTMLOutputElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == HTMLNames::forAttr && m_forTokens)
-        m_forTokens->associatedAttributeValueChanged(newValue);
+        m_forTokens->associatedAttributeValueChanged();
     HTMLFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 

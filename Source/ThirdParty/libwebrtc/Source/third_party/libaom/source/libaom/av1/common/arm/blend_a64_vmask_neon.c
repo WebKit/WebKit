@@ -78,7 +78,7 @@ void aom_blend_a64_vmask_neon(uint8_t *dst, uint32_t dst_stride,
 
       uint8x8_t blend = alpha_blend_a64_u8x8(m, s0, s1);
 
-      store_unaligned_u8_4x2(dst, dst_stride, blend);
+      store_u8x4_strided_x2(dst, dst_stride, blend);
 
       mask += 2;
       src0 += 2 * src0_stride;
@@ -97,7 +97,7 @@ void aom_blend_a64_vmask_neon(uint8_t *dst, uint32_t dst_stride,
 
       uint8x8_t blend = alpha_blend_a64_u8x8(m, s0, s1);
 
-      store_unaligned_u8_2x2(dst, dst_stride, blend);
+      store_u8x2_strided_x2(dst, dst_stride, blend);
 
       mask += 2;
       src0 += 2 * src0_stride;

@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (0,6) size 784x369
-      RenderSVGText {text} at (5,3) size 346x46 contains 1 chunk(s)
+      RenderSVGText {text} at (5,4) size 346x45 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 346x45
           chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 21 width 345.37: "Test of 'text-anchor'"
       RenderSVGPath {line} at (374,125) size 2x250 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=225.00] [y1=75.00] [x2=225.00] [y2=225.00]
-      RenderSVGContainer {g} at (0,138) size 784x223
-        RenderSVGText {text} at (-3,82) size 473x135 contains 1 chunk(s)
+      RenderSVGContainer {g} at (0,138) size 784x224
+        RenderSVGText {text} at (-3,83) size 473x134 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 228x34
             chunk 1 (end anchor) text run 1 at (-2.40,110.00) startOffset 0 endOffset 17 width 227.40: "Begin with \"end\","
           RenderSVGTSpan {tspan} at (27,50) size 401x34

@@ -13,11 +13,11 @@
 #include "src/core/SkSLTypeShared.h"
 #include "src/core/SkTraceEvent.h"
 #include "src/gpu/PipelineUtils.h"
-#include "src/gpu/graphite/AttachmentTypes.h"
 #include "src/gpu/graphite/Attribute.h"
 #include "src/gpu/graphite/ContextUtils.h"
 #include "src/gpu/graphite/GraphicsPipelineDesc.h"
 #include "src/gpu/graphite/Log.h"
+#include "src/gpu/graphite/RenderPassDesc.h"
 #include "src/gpu/graphite/RendererProvider.h"
 #include "src/gpu/graphite/RuntimeEffectDictionary.h"
 #include "src/gpu/graphite/vk/VulkanCaps.h"
@@ -522,7 +522,7 @@ static VkPipelineLayout setup_pipeline_layout(const VulkanSharedContext* sharedC
         skia_private::TArray<DescriptorData> textureSamplerDescs(numTextureSamplers);
         for (int i = 0; i < numTextureSamplers; i++) {
             textureSamplerDescs.push_back({DescriptorType::kCombinedTextureSampler,
-                                            /*descCount=*/1,
+                                            /*count=*/1,
                                             /*bindingIdx=*/i,
                                             PipelineStageFlags::kFragmentShader});
         }
@@ -550,7 +550,7 @@ static VkPipelineLayout setup_pipeline_layout(const VulkanSharedContext* sharedC
 
     VkResult result;
     VkPipelineLayout layout;
-    VULKAN_CALL_RESULT(sharedContext->interface(),
+    VULKAN_CALL_RESULT(sharedContext,
                        result,
                        CreatePipelineLayout(sharedContext->device(),
                                             &layoutCreateInfo,
@@ -751,7 +751,7 @@ sk_sp<VulkanGraphicsPipeline> VulkanGraphicsPipeline::Make(
     VkResult result;
     {
         TRACE_EVENT0_ALWAYS("skia.shaders", "VkCreateGraphicsPipeline");
-        VULKAN_CALL_RESULT(sharedContext->interface(),
+        VULKAN_CALL_RESULT(sharedContext,
                            result,
                            CreateGraphicsPipelines(sharedContext->device(),
                                                    pipelineCache,
@@ -954,7 +954,7 @@ sk_sp<VulkanGraphicsPipeline> VulkanGraphicsPipeline::MakeLoadMSAAPipeline(
     {
         TRACE_EVENT0_ALWAYS("skia.shaders", "CreateGraphicsPipeline");
         SkASSERT(pipelineCache != VK_NULL_HANDLE);
-        VULKAN_CALL_RESULT(sharedContext->interface(),
+        VULKAN_CALL_RESULT(sharedContext,
                            result,
                            CreateGraphicsPipelines(sharedContext->device(),
                                                    pipelineCache,

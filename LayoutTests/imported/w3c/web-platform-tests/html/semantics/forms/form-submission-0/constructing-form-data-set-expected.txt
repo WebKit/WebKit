@@ -8,6 +8,7 @@
 
 
 
+
   close  button  reset  submit
 
 PASS FormData constructor always produces UTF-8 _charset_ value.
@@ -22,4 +23,5 @@ PASS "formData" IDL attribute should have entries for form-associated elements i
 PASS Entries added to "formData" IDL attribute should be submitted.
 PASS Entries added to the "formdata" IDL attribute shouldn't be newline normalized in the resulting FormData
 PASS The constructed FormData object should not contain an entry for the submit button that was used to submit the form.
+PASS The constructed FormData object should not contain an entry for the image submit button that was used to submit the form.
 

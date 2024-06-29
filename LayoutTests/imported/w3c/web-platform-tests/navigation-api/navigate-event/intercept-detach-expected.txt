@@ -1,6 +1,3 @@
 
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT event.intercept() throws if used on an event from a detached iframe Test timed out
+PASS event.intercept() throws if used on an event from a detached iframe
 

@@ -14,7 +14,7 @@
 #include "test/i420_video_source.h"
 #include "test/util.h"
 #include "test/y4m_video_source.h"
-#include "vpx/vpx_codec.h"
+#include "vpx/vpx_encoder.h"
 
 namespace {
 
@@ -260,6 +260,27 @@ class DatarateTestLarge
         << " The datarate for the file missed the target!";
   }
 
+  virtual void MultiThreadsPSNRTest() {
+    denoiser_on_ = 0;
+    cfg_.rc_buf_initial_sz = 500;
+    cfg_.rc_dropframe_thresh = 0;
+    cfg_.rc_max_quantizer = 56;
+    cfg_.rc_end_usage = VPX_CBR;
+    cfg_.g_threads = 4;
+    init_flags_ = VPX_CODEC_USE_PSNR;
+
+    ::libvpx_test::I420VideoSource video("desktop_office1.1280_720-020.yuv",
+                                         1280, 720, 30, 1, 0, 30);
+    cfg_.rc_target_bitrate = 1000;
+    ResetModel();
+    ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+    ASSERT_GE(cfg_.rc_target_bitrate, effective_datarate_ * 0.5)
+        << " The datarate for the file exceeds the target!";
+
+    ASSERT_LE(cfg_.rc_target_bitrate, file_datarate_ * 2.0)
+        << " The datarate for the file missed the target!";
+  }
+
   vpx_codec_pts_t last_pts_;
   int64_t bits_in_buffer_model_;
   double timebase_;
@@ -323,6 +344,8 @@ TEST_P(DatarateTestRealTime, ChangingDropFrameThresh) {
 TEST_P(DatarateTestRealTime, DropFramesMultiThreads) {
   DropFramesMultiThreadsTest();
 }
+
+TEST_P(DatarateTestRealTime, MultiThreadsPSNR) { MultiThreadsPSNRTest(); }
 
 TEST_P(DatarateTestRealTime, RegionOfInterest) {
   denoiser_on_ = 0;

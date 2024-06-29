@@ -106,7 +106,7 @@ static String vectorToHexString(const Vector<uint8_t>& vec)
 
 String KeyHandle::idAsString() const
 {
-    return makeString("[", vectorToHexString(m_id), "]");
+    return makeString('[', vectorToHexString(m_id), ']');
 }
 
 KeyStoreIDType keyStoreBaseNextID()

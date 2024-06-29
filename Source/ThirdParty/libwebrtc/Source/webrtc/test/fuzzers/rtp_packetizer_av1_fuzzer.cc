@@ -37,9 +37,12 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   VideoFrameType frame_type = fuzz_input.SelectOneOf(kFrameTypes);
 
   // Main function under test: RtpPacketizerAv1's constructor.
+  // "even distribution" is transitional and still exercises the other code path
+  // so does not require another fuzzer.
   RtpPacketizerAv1 packetizer(fuzz_input.ReadByteArray(fuzz_input.BytesLeft()),
                               limits, frame_type,
-                              /*is_last_frame_in_picture=*/true);
+                              /*is_last_frame_in_picture=*/true,
+                              /*even_distribution=*/true);
 
   size_t num_packets = packetizer.NumPackets();
   if (num_packets == 0) {

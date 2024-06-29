@@ -258,7 +258,7 @@ public:
 
     bool isExpired() const;
 
-    void cancelLoad();
+    void cancelLoad(LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
     bool wasCanceled() const;
     bool errorOccurred() const { return m_status == LoadError || m_status == DecodeError; }
     bool loadFailedOrCanceled() const;
@@ -344,7 +344,7 @@ private:
 
     void decodedDataDeletionTimerFired();
 
-    virtual void checkNotify(const NetworkLoadMetrics&);
+    virtual void checkNotify(const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
     virtual bool mayTryReplaceEncodedData() const { return false; }
 
     Seconds freshnessLifetime(const ResourceResponse&) const;

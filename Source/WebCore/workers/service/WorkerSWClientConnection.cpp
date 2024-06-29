@@ -124,7 +124,7 @@ void WorkerSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin,
     callOnMainThread([thread = m_thread, requestIdentifier, topOrigin = crossThreadCopy(WTFMove(topOrigin)), clientURL = crossThreadCopy(clientURL)]() mutable {
         auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection.matchRegistration(WTFMove(topOrigin), clientURL, [thread = WTFMove(thread), requestIdentifier](std::optional<ServiceWorkerRegistrationData>&& result) mutable {
-            thread->runLoop().postTaskForMode([requestIdentifier, result = WTFMove(result)] (auto& scope) mutable {
+            thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(WTFMove(result))] (auto& scope) mutable {
                 auto callback = downcast<WorkerGlobalScope>(scope).swClientConnection().m_matchRegistrationRequests.take(requestIdentifier);
                 callback(WTFMove(result));
             }, WorkerRunLoop::defaultMode());

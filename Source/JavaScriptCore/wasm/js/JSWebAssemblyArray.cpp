@@ -33,6 +33,7 @@
 #include "TypeError.h"
 #include "WasmFormat.h"
 #include "WasmTypeDefinition.h"
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
@@ -123,7 +124,7 @@ void JSWebAssemblyArray::fill(uint32_t offset, uint64_t value, uint32_t size)
     if (m_elementType.type.is<Wasm::PackedType>()) {
         switch (m_elementType.type.as<Wasm::PackedType>()) {
         case Wasm::PackedType::I8:
-            memset(m_payload8.data() + offset, static_cast<uint8_t>(value), size);
+            memsetSpan(m_payload8.mutableSpan().subspan(offset, size), static_cast<uint8_t>(value));
             return;
         case Wasm::PackedType::I16:
             std::fill(m_payload16.begin() + offset, m_payload16.begin() + offset + size, static_cast<uint16_t>(value));
@@ -158,7 +159,7 @@ void JSWebAssemblyArray::copy(JSWebAssemblyArray& dst, uint32_t dstOffset, uint3
         // If the ranges overlap then copy to a tmp buffer first.
         if (&dst == this && dstOffset <= srcOffset + size && srcOffset <= dstOffset + size) {
             FixedVector<uint64_t> tmpCopy(size);
-            std::copy(m_payload64.begin() + srcOffset, m_payload64.begin() + srcOffset + size, tmpCopy.data());
+            std::copy(m_payload64.begin() + srcOffset, m_payload64.begin() + srcOffset + size, tmpCopy.mutableSpan().data());
             for (size_t i = 0; i < size; i++)
                 dst.set(dstOffset + i, tmpCopy[i]);
         } else {
@@ -171,7 +172,7 @@ void JSWebAssemblyArray::copy(JSWebAssemblyArray& dst, uint32_t dstOffset, uint3
     if (m_elementType.type.is<Wasm::PackedType>()) {
         switch (m_elementType.type.as<Wasm::PackedType>()) {
         case Wasm::PackedType::I8:
-            memmove(dst.m_payload8.data() + dstOffset, m_payload8.data() + srcOffset, size);
+            memmove(dst.m_payload8.mutableSpan().subspan(dstOffset).data(), m_payload8.span().subspan(srcOffset).data(), size);
             return;
         case Wasm::PackedType::I16:
             std::copy(m_payload16.begin() + srcOffset, m_payload16.begin() + srcOffset + size, dst.m_payload16.begin() + dstOffset);

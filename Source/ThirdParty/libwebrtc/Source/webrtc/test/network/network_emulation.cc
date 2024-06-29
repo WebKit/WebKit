@@ -10,14 +10,22 @@
 
 #include "test/network/network_emulation.h"
 
-#include <algorithm>
-#include <limits>
-#include <memory>
-#include <utility>
+#include <stdint.h>
 
+#include <algorithm>
+#include <functional>
+#include <limits>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "absl/base/nullability.h"
 #include "absl/types/optional.h"
 #include "api/numerics/samples_stats_counter.h"
 #include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/test/network_emulation/network_emulation_interfaces.h"
 #include "api/test/network_emulation_manager.h"
 #include "api/units/data_size.h"
@@ -47,6 +55,17 @@ EmulatedNetworkIncomingStats GetOverallIncomingStats(
     builder.AddIncomingStats(entry.second);
   }
   return builder.Build();
+}
+
+bool IsDtlsHandshakePacket(const uint8_t* payload, size_t payload_size) {
+  if (payload_size < 14) {
+    return false;
+  }
+  // https://tools.ietf.org/html/rfc6347#section-4.1
+  // https://tools.ietf.org/html/rfc6347#section-4.2.2
+  // https://tools.ietf.org/html/rfc5246#section-7.4
+  return payload[0] == 22 &&
+         (payload[13] == 1 || payload[13] == 2 || payload[13] == 11);
 }
 
 }  // namespace
@@ -309,13 +328,49 @@ EmulatedNetworkNodeStats EmulatedNetworkNodeStatsBuilder::Build() const {
   return stats_;
 }
 
+size_t LinkEmulation::GetPacketSizeForEmulation(
+    const EmulatedIpPacket& packet) const {
+  if (fake_dtls_handshake_sizes_ &&
+      IsDtlsHandshakePacket(packet.data.cdata(), packet.data.size())) {
+    // DTLS handshake packets can not have deterministic size unless
+    // the OpenSSL/BoringSSL is configured to have deterministic random,
+    // which is hard. The workaround is - conditionally ignore the actual
+    // size and hardcode the value order of typical handshake packet size.
+    return 1000;
+  }
+  return packet.ip_packet_size();
+}
+
+LinkEmulation::LinkEmulation(
+    Clock* clock,
+    absl::Nonnull<TaskQueueBase*> task_queue,
+    std::unique_ptr<NetworkBehaviorInterface> network_behavior,
+    EmulatedNetworkReceiverInterface* receiver,
+    EmulatedNetworkStatsGatheringMode stats_gathering_mode,
+    bool fake_dtls_handshake_sizes)
+    : clock_(clock),
+      task_queue_(task_queue),
+      network_behavior_(std::move(network_behavior)),
+      receiver_(receiver),
+      fake_dtls_handshake_sizes_(fake_dtls_handshake_sizes),
+      stats_builder_(stats_gathering_mode) {
+  task_queue_->PostTask([&]() {
+    RTC_DCHECK_RUN_ON(task_queue_);
+    network_behavior_->RegisterDeliveryTimeChangedCallback([&]() {
+      RTC_DCHECK_RUN_ON(task_queue_);
+      UpdateProcessSchedule();
+    });
+  });
+}
+
 void LinkEmulation::OnPacketReceived(EmulatedIpPacket packet) {
   task_queue_->PostTask([this, packet = std::move(packet)]() mutable {
     RTC_DCHECK_RUN_ON(task_queue_);
 
     uint64_t packet_id = next_packet_id_++;
-    bool sent = network_behavior_->EnqueuePacket(PacketInFlightInfo(
-        packet.ip_packet_size(), packet.arrival_time.us(), packet_id));
+    bool sent = network_behavior_->EnqueuePacket(
+        PacketInFlightInfo(GetPacketSizeForEmulation(packet),
+                           packet.arrival_time.us(), packet_id));
     if (sent) {
       packets_.emplace_back(StoredPacket{.id = packet_id,
                                          .sent_time = clock_->CurrentTime(),
@@ -324,28 +379,8 @@ void LinkEmulation::OnPacketReceived(EmulatedIpPacket packet) {
     }
     if (process_task_.Running())
       return;
-    absl::optional<int64_t> next_time_us =
-        network_behavior_->NextDeliveryTimeUs();
-    if (!next_time_us)
-      return;
-    Timestamp current_time = clock_->CurrentTime();
-    process_task_ = RepeatingTaskHandle::DelayedStart(
-        task_queue_->Get(),
-        std::max(TimeDelta::Zero(),
-                 Timestamp::Micros(*next_time_us) - current_time),
-        [this]() {
-          RTC_DCHECK_RUN_ON(task_queue_);
-          Timestamp current_time = clock_->CurrentTime();
-          Process(current_time);
-          absl::optional<int64_t> next_time_us =
-              network_behavior_->NextDeliveryTimeUs();
-          if (!next_time_us) {
-            process_task_.Stop();
-            return TimeDelta::Zero();  // This is ignored.
-          }
-          RTC_DCHECK_GE(*next_time_us, current_time.us());
-          return Timestamp::Micros(*next_time_us) - current_time;
-        });
+
+    UpdateProcessSchedule();
   });
 }
 
@@ -370,7 +405,7 @@ void LinkEmulation::Process(Timestamp at_time) {
     packet->removed = true;
     stats_builder_.AddPacketTransportTime(
         clock_->CurrentTime() - packet->sent_time,
-        packet->packet.ip_packet_size());
+        GetPacketSizeForEmulation(packet->packet));
 
     if (delivery_info.receive_time_us != PacketDeliveryInfo::kNotReceived) {
       packet->packet.arrival_time =
@@ -383,7 +418,36 @@ void LinkEmulation::Process(Timestamp at_time) {
   }
 }
 
-NetworkRouterNode::NetworkRouterNode(rtc::TaskQueue* task_queue)
+void LinkEmulation::UpdateProcessSchedule() {
+  RTC_DCHECK_RUN_ON(task_queue_);
+  if (process_task_.Running()) {
+    process_task_.Stop();
+  };
+  absl::optional<int64_t> next_time_us =
+      network_behavior_->NextDeliveryTimeUs();
+  if (!next_time_us)
+    return;
+  Timestamp current_time = clock_->CurrentTime();
+  process_task_ = RepeatingTaskHandle::DelayedStart(
+      task_queue_,
+      std::max(TimeDelta::Zero(),
+               Timestamp::Micros(*next_time_us) - current_time),
+      [this]() {
+        RTC_DCHECK_RUN_ON(task_queue_);
+        Timestamp current_time = clock_->CurrentTime();
+        Process(current_time);
+        absl::optional<int64_t> next_time_us =
+            network_behavior_->NextDeliveryTimeUs();
+        if (!next_time_us) {
+          process_task_.Stop();
+          return TimeDelta::Zero();  // This is ignored.
+        }
+        RTC_DCHECK_GE(*next_time_us, current_time.us());
+        return Timestamp::Micros(*next_time_us) - current_time;
+      });
+}
+
+NetworkRouterNode::NetworkRouterNode(absl::Nonnull<TaskQueueBase*> task_queue)
     : task_queue_(task_queue) {}
 
 void NetworkRouterNode::OnPacketReceived(EmulatedIpPacket packet) {
@@ -459,15 +523,17 @@ void NetworkRouterNode::SetFilter(
 
 EmulatedNetworkNode::EmulatedNetworkNode(
     Clock* clock,
-    rtc::TaskQueue* task_queue,
+    absl::Nonnull<TaskQueueBase*> task_queue,
     std::unique_ptr<NetworkBehaviorInterface> network_behavior,
-    EmulatedNetworkStatsGatheringMode stats_gathering_mode)
+    EmulatedNetworkStatsGatheringMode stats_gathering_mode,
+    bool fake_dtls_handshake_sizes)
     : router_(task_queue),
       link_(clock,
             task_queue,
             std::move(network_behavior),
             &router_,
-            stats_gathering_mode) {}
+            stats_gathering_mode,
+            fake_dtls_handshake_sizes) {}
 
 void EmulatedNetworkNode::OnPacketReceived(EmulatedIpPacket packet) {
   link_.OnPacketReceived(std::move(packet));
@@ -510,10 +576,11 @@ EmulatedEndpointImpl::Options::Options(
           config.allow_receive_packets_with_different_dest_ip),
       log_name(ip.ToString() + " (" + config.name.value_or("") + ")") {}
 
-EmulatedEndpointImpl::EmulatedEndpointImpl(const Options& options,
-                                           bool is_enabled,
-                                           rtc::TaskQueue* task_queue,
-                                           Clock* clock)
+EmulatedEndpointImpl::EmulatedEndpointImpl(
+    const Options& options,
+    bool is_enabled,
+    absl::Nonnull<TaskQueueBase*> task_queue,
+    Clock* clock)
     : options_(options),
       is_enabled_(is_enabled),
       clock_(clock),

@@ -1,0 +1,7 @@
+
+FAIL anchor-position-borders-002 assert_array_equals: expected property 0 to be 23 but got 711 (expected array [23, 17, 792, 57] got [711, 26, 742, 57])
+FAIL anchor-position-borders-002 1 assert_array_equals: expected property 0 to be 31 but got 705 (expected array [31, 79, 786, 119] got [705, 88, 736, 119])
+FAIL anchor-position-borders-002 2 assert_array_equals: expected property 0 to be 8 but got 705 (expected array [8, 141, 792, 208] got [705, 155, 736, 186])
+FAIL anchor-position-borders-002 3 assert_array_equals: expected property 0 to be 31 but got 705 (expected array [31, 215, 786, 255] got [705, 224, 736, 255])
+FAIL anchor-position-borders-002 4 assert_array_equals: expected property 0 to be 31 but got 699 (expected array [31, 282, 786, 349] got [699, 296, 730, 327])
+

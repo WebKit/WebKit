@@ -19,12 +19,12 @@ layer at (0,0) size 800x600
         RenderText {#text} at (14,14) size 715x53
           text run at (14,14) width 715: "Should see \"foo\" and \"bar\" each in a separate red box. Note that the \"foo\""
           text run at (14,41) width 197: "text is really \"foo \". "
-          text run at (210,41) width 64: "There "
-        RenderInline {B} at (273,41) size 51x26
-          RenderText {#text} at (273,41) size 51x26
-            text run at (273,41) width 51: "must"
-        RenderText {#text} at (323,41) size 319x26
-          text run at (323,41) width 319: " be a space at the end of the line."
+          text run at (211,41) width 63: "There "
+        RenderInline {B} at (274,41) size 50x26
+          RenderText {#text} at (274,41) size 50x26
+            text run at (274,41) width 50: "must"
+        RenderText {#text} at (324,41) size 318x26
+          text run at (324,41) width 318: " be a space at the end of the line."
       RenderBlock {DIV} at (0,106) size 784x110
         RenderBlock {DIV} at (0,0) size 784x55 [border: (2px solid #FF0000)]
           RenderText {#text} at (14,14) size 38x26

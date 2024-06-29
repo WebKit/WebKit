@@ -77,11 +77,11 @@ static bool isAllowedByPermissionsPolicy(const Document& document, PermissionNam
 {
     switch (name) {
     case PermissionName::Camera:
-        return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Camera, document, LogPermissionsPolicyFailure::No);
+        return PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Camera, document, PermissionsPolicy::ShouldReportViolation::No);
     case PermissionName::Geolocation:
-        return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Geolocation, document, LogPermissionsPolicyFailure::No);
+        return PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Geolocation, document, PermissionsPolicy::ShouldReportViolation::No);
     case PermissionName::Microphone:
-        return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, document, LogPermissionsPolicyFailure::No);
+        return PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Microphone, document, PermissionsPolicy::ShouldReportViolation::No);
     default:
         return true;
     }
@@ -136,13 +136,16 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
         return; 
     }
 
-    JSC::VM& vm = context->globalObject()->vm();
+    auto& vm = context->globalObject()->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto permissionDescriptor = convert<IDLDictionary<PermissionDescriptor>>(*context->globalObject(), permissionDescriptorValue.get());
-    if (UNLIKELY(scope.exception())) {
+
+    auto permissionDescriptorConversionResult = convert<IDLDictionary<PermissionDescriptor>>(*context->globalObject(), permissionDescriptorValue.get());
+    if (UNLIKELY(permissionDescriptorConversionResult.hasException(scope))) {
         promise.reject(Exception { ExceptionCode::ExistingExceptionError });
         return;
     }
+
+    auto permissionDescriptor = permissionDescriptorConversionResult.releaseReturnValue();
 
     RefPtr origin = context->securityOrigin();
     auto originData = origin ? origin->data() : SecurityOriginData { };

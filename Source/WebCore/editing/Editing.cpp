@@ -118,7 +118,7 @@ static bool isEditableToAccessibility(const Node& node)
     ASSERT(AXObjectCache::accessibilityEnabled());
     ASSERT(node.document().existingAXObjectCache());
 
-    if (auto* cache = node.document().existingAXObjectCache())
+    if (CheckedPtr cache = node.document().existingAXObjectCache())
         return cache->rootAXEditableElement(&node);
 
     return false;
@@ -175,7 +175,7 @@ Element* editableRootForPosition(const Position& position, EditableType editable
 
     switch (editableType) {
     case HasEditableAXRole:
-        if (auto* cache = node->document().existingAXObjectCache())
+        if (CheckedPtr cache = node->document().existingAXObjectCache())
             return const_cast<Element*>(cache->rootAXEditableElement(node.get()));
         FALLTHROUGH;
     case ContentIsEditable:

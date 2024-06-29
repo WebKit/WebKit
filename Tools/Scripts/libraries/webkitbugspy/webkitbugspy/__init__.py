@@ -20,9 +20,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
+
+if sys.version_info < (3, 6):
+    raise ImportError("webkitbugspy requires Python 3.6 or above")
+
 import logging
 import os
-import sys
 
 log = logging.getLogger('webkitbugspy')
 
@@ -46,7 +50,7 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(0, 14, 1)
+version = Version(0, 15, 0)
 
 from .user import User
 from .issue import Issue

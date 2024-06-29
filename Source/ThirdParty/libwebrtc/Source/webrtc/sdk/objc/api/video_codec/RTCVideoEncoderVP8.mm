@@ -14,13 +14,14 @@
 #import "RTCVideoEncoderVP8.h"
 #import "RTCWrappedNativeVideoEncoder.h"
 
+#include "api/environment/environment_factory.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 
 @implementation RTCVideoEncoderVP8
 
 + (id<RTCVideoEncoder>)vp8Encoder {
   return [[RTCWrappedNativeVideoEncoder alloc]
-      initWithNativeEncoder:std::unique_ptr<webrtc::VideoEncoder>(webrtc::VP8Encoder::Create())];
+          initWithNativeEncoder:std::unique_ptr<webrtc::VideoEncoder>(webrtc::CreateVp8Encoder(webrtc::EnvironmentFactory().Create()))];
 }
 
 @end

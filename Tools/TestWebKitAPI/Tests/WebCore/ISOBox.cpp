@@ -46,7 +46,7 @@ TEST(ISOBox, ISOProtectionSchemeInfoBox)
     ASSERT_TRUE(sinfArray);
     ASSERT_EQ(97UL, sinfArray->size());
 
-    auto view = JSC::DataView::create(ArrayBuffer::create(sinfArray->data(), sinfArray->size()), 0, sinfArray->size());
+    auto view = JSC::DataView::create(ArrayBuffer::create(*sinfArray), 0, sinfArray->size());
 
     ISOProtectionSchemeInfoBox sinfBox;
     ASSERT_TRUE(sinfBox.read(view));
@@ -82,7 +82,7 @@ TEST(ISOBox, ISOFairPlayStreamingPsshBox)
     ASSERT_TRUE(psshArray);
     ASSERT_EQ(176UL, psshArray->size());
 
-    auto view = JSC::DataView::create(ArrayBuffer::create(psshArray->data(), psshArray->size()), 0, psshArray->size());
+    auto view = JSC::DataView::create(ArrayBuffer::create(*psshArray), 0, psshArray->size());
 
     ISOFairPlayStreamingPsshBox psshBox;
 

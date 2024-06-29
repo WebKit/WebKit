@@ -52,6 +52,7 @@ public:
         instance->startListeningForIPC();
         return instance;
     }
+    ~RemoteDisplayListRecorder();
 
     void stopListeningForIPC();
 
@@ -87,6 +88,7 @@ public:
     void drawSystemImage(Ref<WebCore::SystemImage>, const WebCore::FloatRect&);
     void drawPattern(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize& spacing, WebCore::ImagePaintingOptions);
     void beginTransparencyLayer(float opacity);
+    void beginTransparencyLayerWithCompositeMode(WebCore::CompositeMode);
     void endTransparencyLayer();
     void drawRect(const WebCore::FloatRect&, float borderThickness);
     void drawLine(const WebCore::FloatPoint& point1, const WebCore::FloatPoint& point2);
@@ -169,6 +171,7 @@ private:
     Ref<WebCore::ImageBuffer> m_imageBuffer;
     WebCore::RenderingResourceIdentifier m_imageBufferIdentifier;
     RefPtr<RemoteRenderingBackend> m_renderingBackend;
+    Ref<RemoteSharedResourceCache> m_sharedResourceCache;
     std::unique_ptr<WebCore::ControlFactory> m_controlFactory;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     std::unique_ptr<SharedVideoFrameReader> m_sharedVideoFrameReader;

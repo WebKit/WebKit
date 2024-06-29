@@ -35,8 +35,7 @@ header: <WebCore/Pasteboard.h>
 #if !(PLATFORM(GTK) || PLATFORM(WIN))
     RefPtr<WebCore::SharedBuffer> resourceData;
     String resourceMIMEType;
-    Vector<String> clientTypes;
-    Vector<RefPtr<WebCore::SharedBuffer>> clientData;
+    Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>> clientTypesAndData;
 #endif
     String suggestedName;
     WebCore::FloatSize imageSize;
@@ -53,8 +52,7 @@ header: <WebCore/Pasteboard.h>
     RefPtr<WebCore::SharedBuffer> dataInAttributedStringFormat;
     String dataInHTMLFormat;
     String dataInStringFormat;
-    Vector<String> clientTypes;
-    Vector<RefPtr<WebCore::SharedBuffer>> clientData;
+    Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>> clientTypesAndData;
 #endif
 #if PLATFORM(GTK)
     String contentOrigin;

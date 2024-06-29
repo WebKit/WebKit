@@ -80,7 +80,7 @@ public:
     template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, span()); }
 
 private:
-    std::span<const LChar> span() const { return { reinterpret_cast<const LChar*>(&m_buffer[0]), m_length }; }
+    std::span<const LChar> span() const { return { byteCast<LChar>(&m_buffer[0]), m_length }; }
 
     NumberToStringBuffer m_buffer;
     unsigned m_length;
@@ -106,7 +106,7 @@ public:
     }
 
     unsigned length() const { return m_length; }
-    const LChar* buffer() const { return reinterpret_cast<const LChar*>(&m_buffer[0]); }
+    const LChar* buffer() const { return byteCast<LChar>(&m_buffer[0]); }
     std::span<const LChar> span() const { return { buffer(), length() }; }
 
 private:
@@ -141,7 +141,7 @@ public:
     } 
 
     unsigned length() const { return m_length; }
-    const LChar* buffer() const { return reinterpret_cast<const LChar*>(&m_buffer[0]); }
+    const LChar* buffer() const { return byteCast<LChar>(&m_buffer[0]); }
     std::span<const LChar> span() const { return { buffer(), length() }; }
 
 private:

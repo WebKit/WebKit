@@ -587,6 +587,7 @@ angle::Result BufferVk::handleDeviceLocalBufferMap(ContextVk *contextVk,
     vk::Renderer *renderer = contextVk->getRenderer();
     ANGLE_TRY(
         allocStagingBuffer(contextVk, vk::MemoryCoherency::CachedPreferCoherent, size, mapPtr));
+    ANGLE_TRY(mStagingBuffer.flush(renderer));
 
     // Copy data from device local buffer to host visible staging buffer.
     VkBufferCopy copyRegion = {mBuffer.getOffset() + offset, mStagingBuffer.getOffset(), size};
@@ -1274,10 +1275,13 @@ bool BufferVk::shouldRedefineStorage(vk::Renderer *renderer,
     }
     else
     {
-        size_t alignment   = renderer->getDefaultBufferAlignment();
-        size_t sizeInBytes = roundUpPow2(size, kBufferSizeGranularity);
-        size_t alignedSize = roundUp(sizeInBytes, alignment);
-        if (alignedSize != mBuffer.getSize())
+        size_t paddedBufferSize =
+            (renderer->getFeatures().padBuffersToMaxVertexAttribStride.enabled)
+                ? (size + static_cast<size_t>(renderer->getMaxVertexAttribStride()))
+                : size;
+        size_t sizeInBytes = roundUpPow2(paddedBufferSize, kBufferSizeGranularity);
+        size_t alignedSize = roundUp(sizeInBytes, renderer->getDefaultBufferAlignment());
+        if (alignedSize > mBuffer.getSize())
         {
             return true;
         }

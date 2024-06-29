@@ -521,11 +521,7 @@ class Framebuffer final : public angle::ObserverInterface,
                           bool isMultiview,
                           GLsizei samples);
 
-    void markDrawAttachmentsInitialized(bool color, bool depth, bool stencil);
-    void markBufferInitialized(GLenum bufferType, GLint bufferIndex);
-    angle::Result ensureBufferInitialized(const Context *context,
-                                          GLenum bufferType,
-                                          GLint bufferIndex);
+    void markAttachmentsInitialized(const DrawBufferMask &color, bool depth, bool stencil);
 
     // Checks that we have a partially masked clear:
     // * some color channels are masked out
@@ -548,6 +544,8 @@ class Framebuffer final : public angle::ObserverInterface,
     angle::Result syncAttachmentState(const Context *context,
                                       Command command,
                                       const FramebufferAttachment *attachment) const;
+
+    void markDrawAttachmentsNeedInit(size_t count, const GLenum *attachments);
 
     FramebufferState mState;
     rx::FramebufferImpl *mImpl;

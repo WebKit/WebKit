@@ -179,15 +179,6 @@ void VideoLayerManagerObjC::updateVideoFullscreenInlineImage(PlatformImagePtr im
 
 #endif
 
-bool VideoLayerManagerObjC::requiresTextTrackRepresentation() const
-{
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    return m_videoFullscreenLayer;
-#else
-    return false;
-#endif
-}
-
 void VideoLayerManagerObjC::syncTextTrackBounds()
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)

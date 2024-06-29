@@ -96,12 +96,12 @@ AudioSourceProviderGStreamer::AudioSourceProviderGStreamer(MediaStreamTrackPriva
 {
     initializeAudioSourceProviderDebugCategory();
     registerWebKitGStreamerElements();
-    const char* pipelineNamePrefix = "";
+    auto pipelineNamePrefix = ""_s;
 #if USE(GSTREAMER_WEBRTC)
     if (m_captureSource->source().isIncomingAudioSource())
-        pipelineNamePrefix = "incoming-";
+        pipelineNamePrefix = "incoming-"_s;
 #endif
-    auto pipelineName = makeString(pipelineNamePrefix, "WebAudioProvider_MediaStreamTrack_", source.id());
+    auto pipelineName = makeString(pipelineNamePrefix, "WebAudioProvider_MediaStreamTrack_"_s, source.id());
     m_pipeline = gst_element_factory_make("pipeline", pipelineName.utf8().data());
     registerActivePipeline(m_pipeline);
     GST_DEBUG_OBJECT(m_pipeline.get(), "MediaStream WebAudio provider created");

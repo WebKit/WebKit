@@ -43,6 +43,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-propagation-stopped.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-reenter.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-single-activation-behavior.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-target-moved.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-target-removed.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-throwing.html
@@ -92,8 +93,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/mouse-event-retarget.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/no-focus-events-at-clicking-editable-content-in-link.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/passive-by-default.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/pointer-event-document-move.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/preventDefault-during-activation-behavior.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/relatedTarget.window.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/remove-all-listeners.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/replace-event-listener-null-browsing-context-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/shadow-relatedTarget.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/webkit-animation-end-event.html

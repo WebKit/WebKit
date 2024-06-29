@@ -38,13 +38,13 @@ rootSVGElement.appendChild(rect);
 
 // Setup animation test
 function sample1() {
-    expectTranslationMatrix("rootSVGElement.getTransformToElement(rect)", "0", "0");
+    expectTranslationMatrix("getTransformToElement(rootSVGElement, rect)", "0", "0");
 }
 function sample2() {
-    expectTranslationMatrix("rootSVGElement.getTransformToElement(rect)", "-100", "-100");
+    expectTranslationMatrix("getTransformToElement(rootSVGElement, rect)", "-100", "-100");
 }
 function sample3() {
-    expectTranslationMatrix("rootSVGElement.getTransformToElement(rect)", "-200", "-200");
+    expectTranslationMatrix("getTransformToElement(rootSVGElement, rect)", "-200", "-200");
 }
 
 function executeTest() {

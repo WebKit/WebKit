@@ -224,7 +224,7 @@ Worklist::Worklist()
     : m_lock(Box<Lock>::create())
     , m_planEnqueued(AutomaticThreadCondition::create())
 {
-    unsigned numberOfCompilationThreads = Options::useConcurrentJIT() ? Options::numberOfWasmCompilerThreads() : 1;
+    unsigned numberOfCompilationThreads = Options::useConcurrentJIT() ? Options::numberOfWebAssemblyCompilerThreads() : 1;
     Locker locker { *m_lock };
     m_threads = Vector<Ref<Thread>>(numberOfCompilationThreads, [&](size_t) {
         return Worklist::Thread::create(locker, *this);

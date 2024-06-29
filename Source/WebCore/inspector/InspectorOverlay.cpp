@@ -1071,7 +1071,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         font.update(nullptr);
 
         auto viewportRect = pageView->visualViewportRect();
-        TextRun viewportTextRun(makeString(viewportRect.width() / pageZoomFactor, "px", ' ', multiplicationSign, ' ', viewportRect.height() / pageZoomFactor, "px"));
+        TextRun viewportTextRun(makeString(viewportRect.width() / pageZoomFactor, "px"_s, ' ', multiplicationSign, ' ', viewportRect.height() / pageZoomFactor, "px"_s));
 
         const float margin = 4;
         const float padding = 2;

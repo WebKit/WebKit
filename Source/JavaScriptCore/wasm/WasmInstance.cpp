@@ -52,9 +52,11 @@ Instance::Instance(VM& vm, JSGlobalObject* globalObject, Ref<Module>&& module)
     , m_passiveDataSegments(m_module->moduleInformation().dataSegmentsCount())
     , m_tags(m_module->moduleInformation().exceptionIndexSpaceSize())
 {
-    ASSERT(static_cast<ptrdiff_t>(Instance::offsetOfCachedMemory() + sizeof(void*)) == Instance::offsetOfCachedBoundsCheckingSize());
-    for (unsigned i = 0; i < m_numImportFunctions; ++i)
-        new (importFunctionInfo(i)) ImportFunctionInfo();
+    static_assert(static_cast<ptrdiff_t>(Instance::offsetOfCachedMemory() + sizeof(void*)) == Instance::offsetOfCachedBoundsCheckingSize());
+    for (unsigned i = 0; i < m_numImportFunctions; ++i) {
+        auto* info = new (importFunctionInfo(i)) ImportFunctionInfo();
+        info->callLinkInfo.initialize(vm, nullptr, CallLinkInfo::CallType::Call, CodeOrigin { });
+    }
     m_globals = bitwise_cast<Global::Value*>(bitwise_cast<char*>(this) + offsetOfGlobalPtr(m_numImportFunctions, m_module->moduleInformation().tableCount(), 0));
     memset(bitwise_cast<char*>(m_globals), 0, m_module->moduleInformation().globalCount() * sizeof(Global::Value));
     for (unsigned i = 0; i < m_module->moduleInformation().globals.size(); ++i) {
@@ -88,7 +90,11 @@ Ref<Instance> Instance::create(VM& vm, JSGlobalObject* globalObject, Ref<Module>
     return adoptRef(*new (NotNull, fastMalloc(allocationSize(module->moduleInformation().importFunctionCount(), module->moduleInformation().tableCount(), module->moduleInformation().globalCount()))) Instance(vm, globalObject, WTFMove(module)));
 }
 
-Instance::~Instance() = default;
+Instance::~Instance()
+{
+    for (unsigned i = 0; i < m_numImportFunctions; ++i)
+        importFunctionInfo(i)->~ImportFunctionInfo();
+}
 
 size_t Instance::extraMemoryAllocated() const
 {

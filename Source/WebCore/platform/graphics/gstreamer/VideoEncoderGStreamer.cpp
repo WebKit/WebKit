@@ -22,7 +22,6 @@
 
 #if ENABLE(WEB_CODECS) && USE(GSTREAMER)
 
-#include "GStreamerCodecUtilities.h"
 #include "GStreamerCommon.h"
 #include "GStreamerElementHarness.h"
 #include "GStreamerRegistryScanner.h"
@@ -185,11 +184,7 @@ static std::optional<unsigned> retrieveTemporalIndex(const GRefPtr<GstSample>& s
         auto metaStructure = gst_custom_meta_get_structure(meta);
         RELEASE_ASSERT(metaStructure);
         GST_TRACE("Looking-up layer id in %" GST_PTR_FORMAT, metaStructure);
-        unsigned temporalLayerId;
-        if (!gst_structure_get_uint(metaStructure, "layer-id", &temporalLayerId))
-            return { };
-
-        return temporalLayerId;
+        return gstStructureGet<unsigned>(metaStructure, "layer-id"_s);
     }
     GST_TRACE("Retrieval of temporal index from encoded format %s is not yet supported.", gst_structure_get_name(structure));
 #endif
@@ -237,7 +232,7 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(VideoEncoder::Descr
 
             if (header) {
                 GstMappedBuffer buffer(header, GST_MAP_READ);
-                configuration.description = { { buffer.data(), buffer.size() } };
+                configuration.description = Vector<uint8_t> { std::span { buffer.data(), buffer.size() } };
             }
             encoder->m_descriptionCallback(WTFMove(configuration));
         });
@@ -253,7 +248,7 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(VideoEncoder::Descr
 
         static std::once_flag onceFlag;
         std::call_once(onceFlag, [this] {
-            m_harness->dumpGraph("video-encoder");
+            m_harness->dumpGraph("video-encoder"_s);
         });
 
         std::optional<unsigned> temporalIndex;

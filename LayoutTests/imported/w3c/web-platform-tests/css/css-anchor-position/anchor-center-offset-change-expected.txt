@@ -1,0 +1,4 @@
+
+FAIL Anchored initially have the same width as the anchor assert_equals: expected 0 but got 100
+FAIL Increase the height of the anchor to move the anchor-center offset assert_equals: expected 50 but got 200
+

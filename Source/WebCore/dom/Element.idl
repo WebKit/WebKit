@@ -42,8 +42,8 @@
     sequence<DOMString> getAttributeNames();
     [DOMJIT=ReadDOM, ImplementedAs=getAttributeForBindings] DOMString? getAttribute([AtomString] DOMString qualifiedName);
     [ImplementedAs=getAttributeNSForBindings] DOMString? getAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
-    [CEReactions=Needed] undefined setAttribute([AtomString] DOMString qualifiedName, [AtomString] DOMString value);
-    [CEReactions=Needed] undefined setAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString qualifiedName, [AtomString] DOMString value);
+    [CEReactions=Needed] undefined setAttribute([AtomString] DOMString qualifiedName, (TrustedType or [AtomString] DOMString) value);
+    [CEReactions=Needed] undefined setAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString qualifiedName, (TrustedType or [AtomString] DOMString) value);
     [CEReactions=Needed, ImplementedAs=removeAttributeForBindings] undefined removeAttribute([AtomString] DOMString qualifiedName);
     [CEReactions=Needed, ImplementedAs=removeAttributeNSForBindings] undefined removeAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
     [CEReactions=Needed] boolean toggleAttribute([AtomString] DOMString qualifiedName, optional boolean force);
@@ -106,3 +106,5 @@ Element includes NonDocumentTypeChildNode;
 Element includes ParentNode;
 Element includes Slotable;
 Element includes InnerHTML;
+
+typedef (TrustedHTML or TrustedScript or TrustedScriptURL) TrustedType;

@@ -66,7 +66,7 @@ Ref<WebPageProxy> WebPageInspectorController::protectedInspectedPage()
 
 void WebPageInspectorController::init()
 {
-    String pageTargetId = WebPageInspectorTarget::toTargetID(m_inspectedPage->webPageID());
+    String pageTargetId = WebPageInspectorTarget::toTargetID(m_inspectedPage->webPageIDInMainFrameProcess());
     createInspectorTarget(pageTargetId, Inspector::InspectorTargetType::Page);
 }
 

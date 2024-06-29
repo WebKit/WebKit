@@ -59,9 +59,12 @@ public:
             if (!tile.hasDirtyRect())
                 continue;
             repainted = true;
+            float deviceScaleFactor = m_owner.deviceScaleFactor();
             auto& dirtyRect = tile.dirtyRect();
-            tileUpdate.dirtyRect = dirtyRect;
-            auto image = m_owner.createImageBuffer(dirtyRect.size());
+            IntRect scaledDirtyRect = dirtyRect;
+            scaledDirtyRect.scale(deviceScaleFactor);
+            tileUpdate.dirtyRect = scaledDirtyRect;
+            auto image = m_owner.createImageBuffer(dirtyRect.size(), deviceScaleFactor);
             auto& context = image->context();
             context.translate(-dirtyRect.x(), -dirtyRect.y());
             m_owner.paintGraphicsLayerContents(context, dirtyRect);
@@ -92,6 +95,9 @@ public:
 
     // TiledBacking override
     void setClient(TiledBackingClient*) final { }
+    PlatformLayerIdentifier layerIdentifier() const final { return m_owner.primaryLayerID(); }
+    TileGridIdentifier primaryGridIdentifier() const final { return TileGridIdentifier { 0 }; }
+    std::optional<TileGridIdentifier> secondaryGridIdentifier() const final { return { }; }
     void setVisibleRect(const FloatRect&) final { }
     FloatRect visibleRect() const final { return { }; };
     void setLayoutViewportRect(std::optional<FloatRect>) final { }
@@ -469,7 +475,7 @@ static bool filtersCanBeComposited(const FilterOperations& filters)
 {
     if (!filters.size())
         return false;
-    for (const auto& filterOperation : filters.operations()) {
+    for (const auto& filterOperation : filters) {
         if (filterOperation->type() == FilterOperation::Type::Reference)
             return false;
     }
@@ -584,6 +590,7 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
         update.background.color = backgroundColor();
         if (drawsContent() && contentsAreVisible()) {
             update.background.hasBackingStore = true;
+            update.background.backingStoreSize = WebCore::expandedIntSize(size() * deviceScaleFactor());
             if (m_tiledBacking->paintAndFlush(update)) {
                 incrementRepaintCount();
                 update.changes.add(WCLayerChange::RepaintCount);
@@ -632,9 +639,9 @@ TiledBacking* GraphicsLayerWC::tiledBacking() const
     return m_tiledBacking->tiledBacking();
 }
 
-RefPtr<WebCore::ImageBuffer> GraphicsLayerWC::createImageBuffer(WebCore::FloatSize size)
+RefPtr<WebCore::ImageBuffer> GraphicsLayerWC::createImageBuffer(WebCore::FloatSize size, float deviceScaleFactor)
 {
-    return m_observer->createImageBuffer(size);
+    return m_observer->createImageBuffer(size, deviceScaleFactor);
 }
 
 static inline bool accumulatesTransform(const GraphicsLayerWC& layer)

@@ -30,9 +30,9 @@ using libaom_test::ACMRandom;
 using std::make_tuple;
 using std::tuple;
 
-typedef void (*SgrFunc)(const uint8_t *dat8, int width, int height, int stride,
-                        int eps, const int *xqd, uint8_t *dst8, int dst_stride,
-                        int32_t *tmpbuf, int bit_depth, int highbd);
+typedef int (*SgrFunc)(const uint8_t *dat8, int width, int height, int stride,
+                       int eps, const int *xqd, uint8_t *dst8, int dst_stride,
+                       int32_t *tmpbuf, int bit_depth, int highbd);
 
 // Test parameter list:
 //  <tst_fun_>
@@ -89,9 +89,10 @@ class AV1SelfguidedFilterTest
           int h = AOMMIN(pu_height, height - k);
           uint8_t *input_p = input + k * stride + j;
           uint8_t *output_p = output + k * out_stride + j;
-          av1_apply_selfguided_restoration_c(input_p, w, h, stride, eps, xqd,
-                                             output_p, out_stride, tmpbuf, 8,
-                                             0);
+          const int ret_c = av1_apply_selfguided_restoration_c(
+              input_p, w, h, stride, eps, xqd, output_p, out_stride, tmpbuf, 8,
+              0);
+          ASSERT_EQ(ret_c, 0);
         }
     }
     aom_usec_timer_mark(&ref_timer);
@@ -106,8 +107,9 @@ class AV1SelfguidedFilterTest
           int h = AOMMIN(pu_height, height - k);
           uint8_t *input_p = input + k * stride + j;
           uint8_t *output_p = output + k * out_stride + j;
-          tst_fun_(input_p, w, h, stride, eps, xqd, output_p, out_stride,
-                   tmpbuf, 8, 0);
+          const int ret_tst = tst_fun_(input_p, w, h, stride, eps, xqd,
+                                       output_p, out_stride, tmpbuf, 8, 0);
+          ASSERT_EQ(ret_tst, 0);
         }
     }
     aom_usec_timer_mark(&tst_timer);
@@ -179,11 +181,13 @@ class AV1SelfguidedFilterTest
           uint8_t *input_p = input + k * stride + j;
           uint8_t *output_p = output + k * out_stride + j;
           uint8_t *output2_p = output2 + k * out_stride + j;
-          tst_fun_(input_p, w, h, stride, eps, xqd, output_p, out_stride,
-                   tmpbuf, 8, 0);
-          av1_apply_selfguided_restoration_c(input_p, w, h, stride, eps, xqd,
-                                             output2_p, out_stride, tmpbuf, 8,
-                                             0);
+          const int ret_tst = tst_fun_(input_p, w, h, stride, eps, xqd,
+                                       output_p, out_stride, tmpbuf, 8, 0);
+          ASSERT_EQ(ret_tst, 0);
+          const int ret_c = av1_apply_selfguided_restoration_c(
+              input_p, w, h, stride, eps, xqd, output2_p, out_stride, tmpbuf, 8,
+              0);
+          ASSERT_EQ(ret_c, 0);
         }
 
       for (j = 0; j < test_h; ++j)

@@ -70,20 +70,6 @@ extern uint32_t OD_DIVU_SMALL_CONSTS[OD_DIVU_DMAX][2];
 #define OD_ARG_NONNULL(x)
 #endif
 
-/** Copy n elements of memory from src to dst. The 0* term provides
-    compile-time type checking  */
-#if !defined(OVERRIDE_OD_COPY)
-#define OD_COPY(dst, src, n) \
-  (memcpy((dst), (src), sizeof(*(dst)) * (n) + 0 * ((dst) - (src))))
-#endif
-
-/** Copy n elements of memory from src to dst, allowing overlapping regions.
-    The 0* term provides compile-time type checking */
-#if !defined(OVERRIDE_OD_MOVE)
-# define OD_MOVE(dst, src, n) \
- (memmove((dst), (src), sizeof(*(dst))*(n) + 0*((dst) - (src)) ))
-#endif
-
 /*All of these macros should expect floats as arguments.*/
 # define OD_SIGNMASK(a) (-((a) < 0))
 # define OD_FLIPSIGNI(a, b) (((a) + OD_SIGNMASK(b)) ^ OD_SIGNMASK(b))

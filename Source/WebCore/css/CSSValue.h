@@ -71,6 +71,7 @@ public:
 
     String cssText() const;
 
+    bool isAnchorValue() const { return m_classType == AnchorClass; }
     bool isAspectRatioValue() const { return m_classType == AspectRatioClass; }
     bool isBackgroundRepeatValue() const { return m_classType == BackgroundRepeatClass; }
     bool isBorderImageSliceValue() const { return m_classType == BorderImageSliceClass; }
@@ -236,6 +237,7 @@ protected:
         StepsTimingFunctionClass,
 
         // Other non-list classes.
+        AnchorClass,
         AspectRatioClass,
         BackgroundRepeatClass,
         BorderImageSliceClass,

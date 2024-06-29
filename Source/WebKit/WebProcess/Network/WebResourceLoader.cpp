@@ -260,7 +260,7 @@ void WebResourceLoader::didFailServiceWorkerLoad(const ResourceError& error)
         if (m_coreLoader->options().destination != FetchOptions::Destination::EmptyString || error.isGeneral())
             document->addConsoleMessage(MessageSource::JS, MessageLevel::Error, error.localizedDescription());
         if (m_coreLoader->options().destination != FetchOptions::Destination::EmptyString)
-            document->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Cannot load ", error.failingURL().string(), "."));
+            document->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Cannot load "_s, error.failingURL().string(), '.'));
     }
 
     didFailResourceLoad(error);

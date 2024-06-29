@@ -60,7 +60,11 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         if (!this._style)
             return;
 
-        this.element.addEventListener("focus", () => { this.focused = true; }, true);
+        this.element.addEventListener("focus", () => {
+            if (!this._suppressBlur)
+                this.focused = true;
+        }, true);
+
         this.element.addEventListener("blur", (event) => {
             let focusedElement = event.relatedTarget;
             if (focusedElement && this.element.contains(focusedElement))

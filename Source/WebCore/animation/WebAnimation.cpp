@@ -1379,14 +1379,15 @@ void WebAnimation::tick()
         m_effect->animationDidTick();
 }
 
-void WebAnimation::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, std::optional<Seconds> startTime)
+OptionSet<AnimationImpact> WebAnimation::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, std::optional<Seconds> startTime)
 {
     if (!m_shouldSkipUpdatingFinishedStateWhenResolving)
         updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
     m_shouldSkipUpdatingFinishedStateWhenResolving = false;
 
     if (auto keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect.get()))
-        keyframeEffect->apply(targetStyle, resolutionContext, startTime);
+        return keyframeEffect->apply(targetStyle, resolutionContext, startTime);
+    return { };
 }
 
 void WebAnimation::setSuspended(bool isSuspended)

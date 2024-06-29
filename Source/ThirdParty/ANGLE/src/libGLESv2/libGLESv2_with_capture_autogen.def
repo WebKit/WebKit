@@ -723,6 +723,10 @@ EXPORTS
     ; GL_EXT_buffer_storage
     glBufferStorageEXT
 
+    ; GL_EXT_clear_texture
+    glClearTexImageEXT
+    glClearTexSubImageEXT
+
     ; GL_EXT_clip_control
     glClipControlEXT
 
@@ -995,6 +999,8 @@ EXPORTS
     ; GL_KHR_blend_equation_advanced
     glBlendBarrierKHR
 
+    ; GL_KHR_blend_equation_advanced_coherent
+
     ; GL_KHR_debug
     glDebugMessageCallbackKHR
     glDebugMessageControlKHR
@@ -1014,6 +1020,13 @@ EXPORTS
     glMaxShaderCompilerThreadsKHR
 
     ; GL_KHR_robust_buffer_access_behavior
+
+    ; GL_KHR_robustness
+    glGetGraphicsResetStatusKHR
+    glGetnUniformfvKHR
+    glGetnUniformivKHR
+    glGetnUniformuivKHR
+    glReadnPixelsKHR
 
     ; GL_KHR_texture_compression_astc_hdr
 
@@ -1126,6 +1139,8 @@ EXPORTS
     glGetProgramBinaryOES
     glProgramBinaryOES
 
+    ; GL_OES_gpu_shader5
+
     ; GL_OES_mapbuffer
     glGetBufferPointervOES
     glMapBufferOES
@@ -1166,6 +1181,9 @@ EXPORTS
     ; GL_OES_standard_derivatives
 
     ; GL_OES_surfaceless_context
+
+    ; GL_OES_tessellation_shader
+    glPatchParameteriOES
 
     ; GL_OES_texture_3D
     glCompressedTexImage3DOES
@@ -1245,6 +1263,10 @@ EXPORTS
 
     ; GL_QCOM_texture_foveated
     glTextureFoveationParametersQCOM
+
+    ; GL_QCOM_tiled_rendering
+    glEndTilingQCOM
+    glStartTilingQCOM
 
     ; EGL 1.0
     EGL_ChooseConfig
@@ -1336,6 +1358,9 @@ EXPORTS
 
     ; EGL_ANGLE_metal_shared_event_sync
     EGL_CopyMetalSharedEventANGLE
+
+    ; EGL_ANGLE_no_error
+    EGL_SetValidationEnabledANGLE
 
     ; EGL_ANGLE_power_preference
     EGL_ForceGPUSwitchANGLE

@@ -130,6 +130,7 @@ public:
 
     void setEvalEnabled(bool, const String& errorMessage = String());
     void setWebAssemblyEnabled(bool, const String& errorMessage = String());
+    void setRequiresTrustedTypes(bool);
 
     static bool canAccessFromCurrentOrigin(LocalFrame*, Document& accessingDocument);
     WEBCORE_EXPORT bool canExecuteScripts(ReasonForCallingCanExecuteScripts);

@@ -23,7 +23,14 @@
 #if PLATFORM(COCOA)
 
 [WebKitSecureCodingClass=NSURLProtectionSpace.class, SupportWKKeyedCoder] webkit_secure_coding NSURLProtectionSpace {
-    __nsurlprotectionspace_proto_plist: Dictionary
+    __nsurlprotectionspace_proto_plist: Dictionary?
+    host: String?
+    port: Number?
+    type: Number?
+    realm: String?
+    scheme: Number?
+    trust: SecTrustRef?
+    distnames: Array<Data>?
 }
 
 #endif // PLATFORM(COCOA)

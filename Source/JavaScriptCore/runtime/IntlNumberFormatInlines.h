@@ -359,7 +359,7 @@ inline IntlMathematicalValue toIntlMathematicalValue(JSGlobalObject* globalObjec
     if (!primitive.isString())
         RELEASE_AND_RETURN(scope, IntlMathematicalValue { primitive.toNumber(globalObject) });
 
-    String string = asString(primitive)->value(globalObject);
+    auto string = asString(primitive)->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, IntlMathematicalValue::parseString(globalObject, WTFMove(string)));

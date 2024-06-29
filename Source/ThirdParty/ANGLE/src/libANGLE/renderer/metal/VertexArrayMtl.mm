@@ -405,7 +405,9 @@ angle::Result VertexArrayMtl::setupDraw(const gl::Context *glContext,
             const gl::VertexBinding &binding = bindings[attrib.bindingIndex];
 
             bool attribEnabled = attrib.enabled;
-            if (attribEnabled && !mCurrentArrayBuffers[v] && !mCurrentArrayInlineDataPointers[v])
+            if (attribEnabled &&
+                !(mCurrentArrayBuffers[v] && mCurrentArrayBuffers[v]->getCurrentBuffer()) &&
+                !mCurrentArrayInlineDataPointers[v])
             {
                 // Disable it to avoid crash.
                 attribEnabled = false;
@@ -451,7 +453,24 @@ angle::Result VertexArrayMtl::setupDraw(const gl::Context *glContext,
                     desc.layouts[bufferIdx].stepRate     = binding.getDivisor();
                 }
 
-                desc.layouts[bufferIdx].stride = mCurrentArrayBufferStrides[v];
+                // Metal does not allow the sum of the buffer binding
+                // offset and the vertex layout stride to be greater
+                // than the buffer length.
+                // In OpenGL, this is valid only when a draw call accesses just
+                // one vertex, so just replace the stride with the format size.
+                uint32_t stride = mCurrentArrayBufferStrides[v];
+                if (mCurrentArrayBuffers[v])
+                {
+                    const size_t length = mCurrentArrayBuffers[v]->getCurrentBuffer()->size();
+                    const size_t offset = mCurrentArrayBufferOffsets[v];
+                    ASSERT(offset < length);
+                    if (length - offset < stride)
+                    {
+                        stride = mCurrentArrayBufferFormats[v]->actualAngleFormat().pixelBytes;
+                        ASSERT(stride % mtl::kVertexAttribBufferStrideAlignment == 0);
+                    }
+                }
+                desc.layouts[bufferIdx].stride = stride;
             }
         }  // for (v)
     }
@@ -476,7 +495,7 @@ angle::Result VertexArrayMtl::setupDraw(const gl::Context *glContext,
                 cmdEncoder->setVertexBuffer(mCurrentArrayBuffers[v]->getCurrentBuffer(),
                                             bufferOffset, bufferIdx);
             }
-            else
+            else if (mCurrentArrayInlineDataPointers[v])
             {
                 // No buffer specified, use the client memory directly as inline constant data
                 ASSERT(mCurrentArrayInlineDataSizes[v] <= mInlineDataMaxSize);

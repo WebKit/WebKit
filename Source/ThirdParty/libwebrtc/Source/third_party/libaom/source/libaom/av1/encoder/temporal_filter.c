@@ -463,12 +463,12 @@ static void tf_build_predictor(const YV12_BUFFER_CONFIG *ref_frame,
 // Returns:
 //   Nothing will be returned. But the content to which `accum` and `pred`
 //   point will be modified.
-void tf_apply_temporal_filter_self(const YV12_BUFFER_CONFIG *ref_frame,
-                                   const MACROBLOCKD *mbd,
-                                   const BLOCK_SIZE block_size,
-                                   const int mb_row, const int mb_col,
-                                   const int num_planes, uint32_t *accum,
-                                   uint16_t *count) {
+static void tf_apply_temporal_filter_self(const YV12_BUFFER_CONFIG *ref_frame,
+                                          const MACROBLOCKD *mbd,
+                                          const BLOCK_SIZE block_size,
+                                          const int mb_row, const int mb_col,
+                                          const int num_planes, uint32_t *accum,
+                                          uint16_t *count) {
   // Block information.
   const int mb_height = block_size_high[block_size];
   const int mb_width = block_size_wide[block_size];
@@ -564,9 +564,10 @@ static INLINE void compute_square_diff(const uint8_t *ref, const int ref_offset,
 // Returns:
 //   Nothing will be returned. But the content to which `luma_sse_sum` points
 //   will be modified.
-void compute_luma_sq_error_sum(uint32_t *square_diff, uint32_t *luma_sse_sum,
-                               int block_height, int block_width,
-                               int ss_x_shift, int ss_y_shift) {
+static void compute_luma_sq_error_sum(uint32_t *square_diff,
+                                      uint32_t *luma_sse_sum, int block_height,
+                                      int block_width, int ss_x_shift,
+                                      int ss_y_shift) {
   for (int i = 0; i < block_height; ++i) {
     for (int j = 0; j < block_width; ++j) {
       for (int ii = 0; ii < (1 << ss_y_shift); ++ii) {
@@ -1443,26 +1444,24 @@ int av1_is_temporal_filter_on(const AV1EncoderConfig *oxcf) {
   return oxcf->algo_cfg.arnr_max_frames > 0 && oxcf->gf_cfg.lag_in_frames > 1;
 }
 
-void av1_tf_info_alloc(TEMPORAL_FILTER_INFO *tf_info, const AV1_COMP *cpi) {
+bool av1_tf_info_alloc(TEMPORAL_FILTER_INFO *tf_info, const AV1_COMP *cpi) {
   const AV1EncoderConfig *oxcf = &cpi->oxcf;
   tf_info->is_temporal_filter_on = av1_is_temporal_filter_on(oxcf);
-  if (tf_info->is_temporal_filter_on == 0) return;
+  if (tf_info->is_temporal_filter_on == 0) return true;
 
   const AV1_COMMON *cm = &cpi->common;
   const SequenceHeader *const seq_params = cm->seq_params;
-  int ret;
   for (int i = 0; i < TF_INFO_BUF_COUNT; ++i) {
-    ret = aom_realloc_frame_buffer(
-        &tf_info->tf_buf[i], oxcf->frm_dim_cfg.width, oxcf->frm_dim_cfg.height,
-        seq_params->subsampling_x, seq_params->subsampling_y,
-        seq_params->use_highbitdepth, cpi->oxcf.border_in_pixels,
-        cm->features.byte_alignment, NULL, NULL, NULL,
-        cpi->image_pyramid_levels, 0);
-    if (ret) {
-      aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
-                         "Failed to allocate tf_info");
+    if (aom_realloc_frame_buffer(
+            &tf_info->tf_buf[i], oxcf->frm_dim_cfg.width,
+            oxcf->frm_dim_cfg.height, seq_params->subsampling_x,
+            seq_params->subsampling_y, seq_params->use_highbitdepth,
+            cpi->oxcf.border_in_pixels, cm->features.byte_alignment, NULL, NULL,
+            NULL, cpi->alloc_pyramid, 0)) {
+      return false;
     }
   }
+  return true;
 }
 
 void av1_tf_info_free(TEMPORAL_FILTER_INFO *tf_info) {

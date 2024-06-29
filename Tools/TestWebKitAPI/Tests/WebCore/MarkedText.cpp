@@ -63,9 +63,9 @@ std::ostream& operator<<(std::ostream& os, MarkedText::Type type)
     case MarkedText::Type::AppHighlight:
         return os << "AppHighlight";
 #endif
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    case MarkedText::Type::UnifiedTextReplacement:
-        return os << "UnifiedTextReplacement";
+#if ENABLE(WRITING_TOOLS)
+    case MarkedText::Type::WritingToolsTextSuggestion:
+        return os << "WritingToolsTextSuggestion";
 #endif
     case MarkedText::Type::TransparentContent:
         return os << "TransparentContent";

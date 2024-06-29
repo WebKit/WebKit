@@ -153,7 +153,7 @@ void TextTrackPrivateRemote::addDataCue(MediaTime&& start, MediaTime&& end, std:
 {
     ASSERT(hasOneClient());
     notifyMainThreadClient([&](auto& client) {
-        downcast<InbandTextTrackPrivateClient>(client).addDataCue(WTFMove(start), WTFMove(end), data.data(), data.size());
+        downcast<InbandTextTrackPrivateClient>(client).addDataCue(WTFMove(start), WTFMove(end), data);
     });
 }
 

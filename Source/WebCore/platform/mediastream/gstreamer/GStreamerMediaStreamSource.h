@@ -52,7 +52,7 @@ struct _WebKitMediaStreamSrcClass {
 
 GstElement* webkitMediaStreamSrcNew();
 void webkitMediaStreamSrcSetStream(WebKitMediaStreamSrc*, WebCore::MediaStreamPrivate*, bool isVideoPlayer);
-void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc*, WebCore::MediaStreamTrackPrivate*, bool onlyTrack, bool consumerIsVideoPlayer = false);
+void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc*, WebCore::MediaStreamTrackPrivate*, bool consumerIsVideoPlayer = false);
 void webkitMediaStreamSrcConfigureAudioTracks(WebKitMediaStreamSrc*, float volume, bool isMuted, bool isPlaying);
 void webkitMediaStreamSrcSignalEndOfStream(WebKitMediaStreamSrc*);
 

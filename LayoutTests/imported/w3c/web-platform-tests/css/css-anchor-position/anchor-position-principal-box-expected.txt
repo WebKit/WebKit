@@ -1,0 +1,3 @@
+
+FAIL anchor-name should only apply to elements which generate a principal box assert_equals: #anchored is positioned against #inner expected 100 but got 0
+

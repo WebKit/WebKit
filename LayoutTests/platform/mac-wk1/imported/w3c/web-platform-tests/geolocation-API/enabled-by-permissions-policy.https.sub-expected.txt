@@ -1,8 +1,8 @@
 CONSOLE MESSAGE: Blocked https://127.0.0.1:9443/resources/testdriver.js from asking for credentials because it is a cross-origin request.
-CONSOLE MESSAGE: Permission policy 'Geolocation' check failed for element with origin 'https://127.0.0.1:9443' and allow attribute ''.
+CONSOLE MESSAGE: Permission policy 'Geolocation' check failed for document with origin 'https://127.0.0.1:9443'.
 
 
 PASS Permissions-Policy header geolocation=* allows the top-level document.
 PASS Permissions-Policy header geolocation=* allows same-origin iframes.
-FAIL Permissions-Policy header geolocation=* allows cross-origin iframes. assert_true: geolocation expected true got false
+PASS Permissions-Policy header geolocation=* allows cross-origin iframes.
 

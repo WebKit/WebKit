@@ -25,7 +25,7 @@
 
 messages -> RemoteLegacyCDMSession NotRefCounted {
     SendMessage(RefPtr<WebCore::SharedBuffer> message, String destinationURL)
-    SendError(enum:uint8_t WebCore::LegacyCDMSessionClient::MediaKeyErrorCode errorCode, uint32_t systemCode)
+    SendError(WebCore::LegacyCDMSessionClient::MediaKeyErrorCode errorCode, uint32_t systemCode)
 }
 
 #endif

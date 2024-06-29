@@ -115,12 +115,7 @@ String CSSSelectorList::selectorsText() const
 
 void CSSSelectorList::buildSelectorsText(StringBuilder& stringBuilder) const
 {
-    const CSSSelector* firstSubselector = first();
-    for (const CSSSelector* subSelector = firstSubselector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-        if (subSelector != firstSubselector)
-            stringBuilder.append(", "_s);
-        stringBuilder.append(subSelector->selectorText());
-    }
+    stringBuilder.append(interleave(*this, [](auto& subSelector) { return subSelector.selectorText(); }, ", "_s));
 }
 
 template <typename Functor>

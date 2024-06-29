@@ -265,4 +265,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGElement)
     static bool isType(const WebCore::EventTarget& eventTarget) { return eventTarget.isNode() && static_cast<const WebCore::Node&>(eventTarget).isSVGElement(); }
     static bool isType(const WebCore::Node& node) { return node.isSVGElement(); }
 SPECIALIZE_TYPE_TRAITS_END()
-

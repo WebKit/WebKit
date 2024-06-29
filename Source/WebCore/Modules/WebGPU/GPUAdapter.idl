@@ -27,7 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    Exposed=(Window,DedicatedWorker),
+    Exposed=(Window,Worker),
     SecureContext
 ]
 interface GPUAdapter {
@@ -35,6 +35,7 @@ interface GPUAdapter {
     [SameObject] readonly attribute GPUSupportedFeatures features;
     [SameObject] readonly attribute GPUSupportedLimits limits;
     readonly attribute boolean isFallbackAdapter;
+    [SameObject] readonly attribute GPUAdapterInfo info;
 
     [CallWith=CurrentScriptExecutionContext] Promise<GPUDevice> requestDevice(optional GPUDeviceDescriptor descriptor);
     Promise<GPUAdapterInfo> requestAdapterInfo(optional sequence<DOMString> unmaskHints = []);

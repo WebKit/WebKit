@@ -119,7 +119,7 @@ void PDFPluginAnnotation::updateGeometry()
 bool PDFPluginAnnotation::handleEvent(Event& event)
 {
     if (event.type() == eventNames().blurEvent || event.type() == eventNames().changeEvent) {
-        m_plugin->setActiveAnnotation(0);
+        m_plugin->setActiveAnnotation({ nullptr });
         return true;
     }
 

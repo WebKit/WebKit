@@ -133,6 +133,12 @@ ALWAYS_INLINE void SlotVisitor::append(Iterator begin, Iterator end)
         append(*it);
 }
 
+ALWAYS_INLINE void SlotVisitor::appendValues(std::span<const WriteBarrier<Unknown>> barriers)
+{
+    for (auto& barrier : barriers)
+        append(barrier);
+}
+
 ALWAYS_INLINE void SlotVisitor::appendValues(const WriteBarrierBase<Unknown>* barriers, size_t count)
 {
     for (size_t i = 0; i < count; ++i)

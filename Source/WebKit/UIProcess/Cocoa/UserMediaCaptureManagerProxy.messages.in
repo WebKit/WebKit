@@ -36,6 +36,7 @@ messages -> UserMediaCaptureManagerProxy NotRefCounted {
     EndProducingData(WebCore::RealtimeMediaSourceIdentifier sourceID)
     SetShouldApplyRotation(WebCore::RealtimeMediaSourceIdentifier sourceID, bool shouldApplyRotation)
     SetIsInBackground(WebCore::RealtimeMediaSourceIdentifier sourceID, bool isInBackground)
+    IsPowerEfficient(WebCore::RealtimeMediaSourceIdentifier sourceID) -> (bool isPowerEfficient) Synchronous
 }
 
 #endif

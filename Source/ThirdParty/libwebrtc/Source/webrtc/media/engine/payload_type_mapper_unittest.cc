@@ -126,7 +126,7 @@ TEST_F(PayloadTypeMapperTest, ToAudioCodec) {
 
   if (opt_payload_type && opt_audio_codec) {
     int payload_type = *opt_payload_type;
-    const AudioCodec& codec = *opt_audio_codec;
+    const Codec& codec = *opt_audio_codec;
 
     EXPECT_EQ(codec.id, payload_type);
     EXPECT_EQ(codec.name, format.name);

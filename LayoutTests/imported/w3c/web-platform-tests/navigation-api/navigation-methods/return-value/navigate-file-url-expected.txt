@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: Not allowed to load local resource: /
 
-FAIL navigate() to a file: URL assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT navigate() to a file: URL Test timed out
 

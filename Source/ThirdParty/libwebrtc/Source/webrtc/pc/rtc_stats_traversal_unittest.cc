@@ -47,7 +47,7 @@ class RTCStatsTraversalTest : public ::testing::Test {
     for (const RTCStats* start_node : start_nodes) {
       start_ids.push_back(start_node->id());
     }
-    result_ = webrtc::TakeReferencedStats(initial_report_, start_ids);
+    result_ = ::webrtc::TakeReferencedStats(initial_report_, start_ids);
   }
 
   void EXPECT_VISITED(const RTCStats* stats) {

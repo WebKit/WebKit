@@ -269,7 +269,7 @@ auto SectionParser::parseResizableLimits(uint32_t& initial, std::optional<uint32
     WASM_PARSER_FAIL_IF(!parseVarUInt32(initial), "can't parse resizable limits initial page count"_s);
 
     isShared = flags == 0x3;
-    WASM_PARSER_FAIL_IF(isShared && !Options::useWasmFaultSignalHandler(), "shared memory is not enabled"_s);
+    WASM_PARSER_FAIL_IF(isShared && !Options::useWebAssemblyFaultSignalHandler(), "shared memory is not enabled"_s);
 
     if (flags) {
         uint32_t maximumInt;
@@ -1410,7 +1410,7 @@ auto SectionParser::parseCustom() -> PartialResult
         if (nameSection)
             m_info->nameSection = WTFMove(*nameSection);
         else
-            dataLogLnIf(Options::dumpWasmWarnings(), "Could not parse name section: ", nameSection.error());
+            dataLogLnIf(Options::dumpWebAssemblyWarnings(), "Could not parse name section: ", nameSection.error());
     } else if (section.name == branchHintsName) {
         BranchHintsSectionParser branchHintsSectionParser(section.payload, m_info);
         branchHintsSectionParser.parse();

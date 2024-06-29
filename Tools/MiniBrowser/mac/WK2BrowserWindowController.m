@@ -856,6 +856,8 @@ static BOOL isJavaScriptURL(NSURL *url)
             | _WKWebsiteNetworkConnectionIntegrityPolicySanitizeLookalikeCharacters;
     }();
 
+    preferences.allowsContentJavaScript = NSApplication.sharedApplication.browserAppDelegate.settingsController.allowsContentJavascript;
+
     if (navigationAction._canHandleRequest) {
         decisionHandler(WKNavigationActionPolicyAllow, preferences);
         return;

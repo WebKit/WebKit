@@ -42,8 +42,6 @@ class LocalFrameView;
 class RenderBlock;
 class RenderBlockFlow;
 class RenderBox;
-class RenderObject;
-class RenderElement;
 class RenderLayoutState;
 class RenderView;
 namespace Layout {
@@ -137,6 +135,8 @@ public:
     void setBoxNeedsTransformUpdateAfterContainerLayout(RenderBox&, RenderBlock& container);
     Vector<SingleThreadWeakPtr<RenderBox>> takeBoxesNeedingTransformUpdateAfterContainerLayout(RenderBlock&);
 
+    RenderElement::LayoutIdentifier layoutIdentifier() const { return m_layoutIdentifier; }
+
 private:
     friend class LayoutScope;
     friend class LayoutStateMaintainer;
@@ -184,6 +184,8 @@ private:
     Timer m_layoutTimer;
     Timer m_postLayoutTaskTimer;
     SingleThreadWeakPtr<RenderElement> m_subtreeLayoutRoot;
+    // Note that arithmetic overflow is perfectly acceptable as long as we use this only for repaint optimization.
+    RenderElement::LayoutIdentifier m_layoutIdentifier : 12 { 0 };
 
     bool m_layoutSchedulingIsEnabled { true };
     bool m_firstLayout { true };

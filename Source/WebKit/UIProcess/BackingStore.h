@@ -34,6 +34,11 @@
 
 #if USE(CAIRO) || PLATFORM(GTK)
 #include <WebCore/RefPtrCairo.h>
+#elif USE(SKIA)
+class SkCanvas;
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/core/SkSurface.h>
+IGNORE_CLANG_WARNINGS_END
 #endif
 
 namespace WebCore {
@@ -47,7 +52,7 @@ struct UpdateInfo;
 typedef struct _cairo cairo_t;
 using PlatformPaintContextPtr = cairo_t*;
 #elif USE(SKIA)
-using PlatformPaintContextPtr = void*;
+using PlatformPaintContextPtr = SkCanvas*;
 #endif
 
 class BackingStore {
@@ -68,14 +73,13 @@ private:
 
     WebCore::IntSize m_size;
     float m_deviceScaleFactor { 1 };
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || USE(CAIRO)
     RefPtr<cairo_surface_t> m_surface;
     RefPtr<cairo_surface_t> m_scrollSurface;
-#else
-    WebCore::PlatformImagePtr m_surface;
-    WebCore::PlatformImagePtr m_scrollSurface;
-#endif
     PAL::HysteresisActivity m_scrolledHysteresis;
+#elif USE(SKIA)
+    sk_sp<SkSurface> m_surface;
+#endif
 };
 
 } // namespace WebKit

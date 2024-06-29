@@ -43,14 +43,14 @@
 @interface WKLinearMediaPlayerDelegate : NSObject <WKSLinearMediaPlayerDelegate>
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithModel:(WebKit::PlaybackSessionModel&)model;
+- (instancetype)initWithModel:(WebCore::PlaybackSessionModel&)model;
 @end
 
 @implementation WKLinearMediaPlayerDelegate {
-    WeakPtr<WebKit::PlaybackSessionModel> _model;
+    WeakPtr<WebCore::PlaybackSessionModel> _model;
 }
 
-- (instancetype)initWithModel:(WebKit::PlaybackSessionModel&)model
+- (instancetype)initWithModel:(WebCore::PlaybackSessionModel&)model
 {
     self = [super init];
     if (!self)
@@ -110,6 +110,15 @@
 
     model->seekToTime(destination);
     return destination;
+}
+
+- (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player seekThumbnailToTime:(NSTimeInterval)time
+{
+    // FIXME: The intent of this method is to seek the contents of LinearMediaPlayer's thumbnailLayer,
+    // which LMPlayableViewController displays in a popover when scrubbing. Since we don't currently
+    // provide a thumbnail layer, fast seek the main content instead.
+    if (auto model = _model.get())
+        model->fastSeek(time);
 }
 
 - (void)linearMediaPlayerBeginScrubbing:(WKSLinearMediaPlayer *)player
@@ -208,7 +217,7 @@
 
 namespace WebKit {
 
-Ref<PlaybackSessionInterfaceLMK> PlaybackSessionInterfaceLMK::create(PlaybackSessionModel& model)
+Ref<PlaybackSessionInterfaceLMK> PlaybackSessionInterfaceLMK::create(WebCore::PlaybackSessionModel& model)
 {
     Ref interface = adoptRef(*new PlaybackSessionInterfaceLMK(model));
     interface->initialize();
@@ -225,7 +234,7 @@ static WebCore::NowPlayingMetadataObserver nowPlayingMetadataObserver(PlaybackSe
     };
 }
 
-PlaybackSessionInterfaceLMK::PlaybackSessionInterfaceLMK(PlaybackSessionModel& model)
+PlaybackSessionInterfaceLMK::PlaybackSessionInterfaceLMK(WebCore::PlaybackSessionModel& model)
     : PlaybackSessionInterfaceIOS { model }
     , m_player { adoptNS([allocWKSLinearMediaPlayerInstance() init]) }
     , m_playerDelegate { adoptNS([[WKLinearMediaPlayerDelegate alloc] initWithModel:model]) }
@@ -258,14 +267,14 @@ void PlaybackSessionInterfaceLMK::currentTimeChanged(double currentTime, double)
     [m_player setRemainingTime:std::max([m_player duration] - currentTime, 0.0)];
 }
 
-void PlaybackSessionInterfaceLMK::rateChanged(OptionSet<PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double)
+void PlaybackSessionInterfaceLMK::rateChanged(OptionSet<WebCore::PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double)
 {
     [m_player setSelectedPlaybackRate:playbackRate];
-    if (!playbackState.contains(PlaybackSessionModel::PlaybackState::Stalled))
-        [m_player setPlaybackRate:playbackState.contains(PlaybackSessionModel::PlaybackState::Playing) ? playbackRate : 0];
+    if (!playbackState.contains(WebCore::PlaybackSessionModel::PlaybackState::Stalled))
+        [m_player setPlaybackRate:playbackState.contains(WebCore::PlaybackSessionModel::PlaybackState::Playing) ? playbackRate : 0];
 }
 
-void PlaybackSessionInterfaceLMK::seekableRangesChanged(const TimeRanges& timeRanges, double, double)
+void PlaybackSessionInterfaceLMK::seekableRangesChanged(const WebCore::TimeRanges& timeRanges, double, double)
 {
     RetainPtr seekableRanges = adoptNS([[NSMutableArray alloc] initWithCapacity:timeRanges.length()]);
     for (unsigned i = 0; i < timeRanges.length(); ++i) {
@@ -284,7 +293,7 @@ void PlaybackSessionInterfaceLMK::canPlayFastReverseChanged(bool canPlayFastReve
     [m_player setCanScanBackward:canPlayFastReverse];
 }
 
-void PlaybackSessionInterfaceLMK::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
+void PlaybackSessionInterfaceLMK::audioMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex)
 {
     RetainPtr audioTracks = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
     for (auto& option : options) {
@@ -296,7 +305,7 @@ void PlaybackSessionInterfaceLMK::audioMediaSelectionOptionsChanged(const Vector
     audioMediaSelectionIndexChanged(selectedIndex);
 }
 
-void PlaybackSessionInterfaceLMK::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
+void PlaybackSessionInterfaceLMK::legibleMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t selectedIndex)
 {
     RetainPtr legibleTracks = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
     for (auto& option : options) {
@@ -330,6 +339,27 @@ void PlaybackSessionInterfaceLMK::mutedChanged(bool muted)
 void PlaybackSessionInterfaceLMK::volumeChanged(double volume)
 {
     [m_player setVolume:volume];
+}
+
+void PlaybackSessionInterfaceLMK::supportsLinearMediaPlayerChanged(bool supportsLinearMediaPlayer)
+{
+    if (supportsLinearMediaPlayer)
+        return;
+
+    switch ([m_player presentationState]) {
+    case WKSLinearMediaPresentationStateEnteringFullscreen:
+    case WKSLinearMediaPresentationStateFullscreen:
+        // If the player is in (or is entering) fullscreen but the current media engine does not
+        // support LinearMediaPlayer, exit fullscreen.
+        if (m_playbackSessionModel)
+            m_playbackSessionModel->exitFullscreen();
+        break;
+    case WKSLinearMediaPresentationStateInline:
+    case WKSLinearMediaPresentationStateExitingFullscreen:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void PlaybackSessionInterfaceLMK::startObservingNowPlayingMetadata()

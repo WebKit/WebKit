@@ -60,15 +60,13 @@ void AXObjectCache::handleScrolledToAnchor(const Node* anchorNode)
 {
     // The anchor node may not be accessible. Post the notification for the
     // first accessible object.
-    postPlatformNotification(AccessibilityObject::firstAccessibleObjectFromNode(anchorNode), AXScrolledToAnchor);
+    if (RefPtr object = AccessibilityObject::firstAccessibleObjectFromNode(anchorNode))
+        postPlatformNotification(*object, AXScrolledToAnchor);
 }
 
-void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification notification)
+void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNotification notification)
 {
-    if (!obj)
-        return;
-
-    Document* document = obj->document();
+    Document* document = object.document();
     if (!document)
         return;
 
@@ -117,10 +115,10 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification n
     // negate the AXID so we know that the caller is passing the ID of an
     // element, not the index of a child element.
 
-    ASSERT(obj->objectID().toUInt64() >= 1);
-    ASSERT(obj->objectID().toUInt64() <= std::numeric_limits<LONG>::max());
+    ASSERT(object.objectID().toUInt64() >= 1);
+    ASSERT(object.objectID().toUInt64() <= std::numeric_limits<LONG>::max());
 
-    NotifyWinEvent(msaaEvent, page->chrome().platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(obj->objectID().toUInt64()));
+    NotifyWinEvent(msaaEvent, page->chrome().platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(object.objectID().toUInt64()));
 }
 
 void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&)
@@ -155,13 +153,10 @@ void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node* newFocuse
     if (!page || !page->chrome().platformPageClient())
         return;
 
-    auto* focusedObject = focusedObjectForPage(page);
-    if (!focusedObject)
-        return;
-
-    ASSERT(!focusedObject->accessibilityIsIgnored());
-
-    postPlatformNotification(focusedObject, AXFocusedUIElementChanged);
+    if (RefPtr focusedObject = focusedObjectForPage(page)) {
+        ASSERT(!focusedObject->accessibilityIsIgnored());
+        postPlatformNotification(*focusedObject, AXFocusedUIElementChanged);
+    }
 }
 
 void AXObjectCache::platformPerformDeferredCacheUpdate()

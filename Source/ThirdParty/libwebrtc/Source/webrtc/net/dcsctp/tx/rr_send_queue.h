@@ -56,7 +56,6 @@ class RRSendQueue : public SendQueue {
  public:
   RRSendQueue(absl::string_view log_prefix,
               DcSctpSocketCallbacks* callbacks,
-              size_t buffer_size,
               size_t mtu,
               StreamPriority default_priority,
               size_t total_buffered_amount_low_threshold);
@@ -71,12 +70,13 @@ class RRSendQueue : public SendQueue {
   // time should be in `now`. Note that it's the responsibility of the caller to
   // ensure that the buffer is not full (by calling `IsFull`) before adding
   // messages to it.
-  void Add(TimeMs now,
+  void Add(webrtc::Timestamp now,
            DcSctpMessage message,
            const SendOptions& send_options = {});
 
   // Implementation of `SendQueue`.
-  absl::optional<DataToSend> Produce(TimeMs now, size_t max_size) override;
+  absl::optional<DataToSend> Produce(webrtc::Timestamp now,
+                                     size_t max_size) override;
   bool Discard(StreamID stream_id, OutgoingMessageId message_id) override;
   void PrepareResetStream(StreamID streams) override;
   bool HasStreamsReadyToBeReset() const override;
@@ -104,7 +104,7 @@ class RRSendQueue : public SendQueue {
   struct MessageAttributes {
     IsUnordered unordered;
     MaxRetransmits max_retransmissions;
-    TimeMs expires_at;
+    webrtc::Timestamp expires_at;
     LifecycleId lifecycle_id;
   };
 
@@ -154,7 +154,7 @@ class RRSendQueue : public SendQueue {
     void Add(DcSctpMessage message, MessageAttributes attributes);
 
     // Implementing `StreamScheduler::StreamProducer`.
-    absl::optional<SendQueue::DataToSend> Produce(TimeMs now,
+    absl::optional<SendQueue::DataToSend> Produce(webrtc::Timestamp now,
                                                   size_t max_size) override;
     size_t bytes_to_send_in_next_message() const override;
 
@@ -265,12 +265,11 @@ class RRSendQueue : public SendQueue {
   OutgoingStream& GetOrCreateStreamInfo(StreamID stream_id);
   absl::optional<DataToSend> Produce(
       std::map<StreamID, OutgoingStream>::iterator it,
-      TimeMs now,
+      webrtc::Timestamp now,
       size_t max_size);
 
   const absl::string_view log_prefix_;
   DcSctpSocketCallbacks& callbacks_;
-  const size_t buffer_size_;
   const StreamPriority default_priority_;
   OutgoingMessageId current_message_id = OutgoingMessageId(0);
   StreamScheduler scheduler_;

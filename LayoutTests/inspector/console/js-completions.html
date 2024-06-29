@@ -3,30 +3,43 @@
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
+let objectWithMixedPropertyKinds = Object.assign(Object.create(null), {
+    1: 42,
+    2: 42,
+    10: 42,
+    20: 42,
+    aa: 42,
+    ab: 42,
+    Aa: 42,
+    Ab: 42,
+    __aa__: 42,
+    __ab__: 42
+});
+
 function test()
 {
+    const generateJSCompletions = (options = {}) => new Promise((resolve, reject) => {
+        let mockCompletionController = {
+            mode: null,
+            updateCompletions: (completions) => {
+                resolve(completions);
+            },
+        };
+
+        let defaultCompletions = options.defaultCompletions || [];
+        let baseString = options.baseString || "";
+        let prefix = options.prefix || "";
+        let suffix = options.suffix || "";
+        const forced = true;
+        WI.javaScriptRuntimeCompletionProvider.completionControllerCompletionsNeeded(mockCompletionController, defaultCompletions, baseString, prefix, suffix, forced);
+    });
+
     let suite = InspectorTest.createAsyncSuite("console.jsCompletions");
 
     suite.addTestCase({
         name: "console.jsCompletions.variableCompletions",
         description: "Test that the JavaScript completions for variables and its cache work as expected.",
         async test() {
-            const generateJSCompletions = () => new Promise((resolve, reject) => {
-                let mockCompletionController = {
-                    mode: null,
-                    updateCompletions: (completions) => {
-                        resolve(completions);
-                    },
-                };
-
-                const defaultCompletions = [];
-                const baseString = "";
-                const prefix = "";
-                const suffix = "";
-                const forced = true;
-                WI.javaScriptRuntimeCompletionProvider.completionControllerCompletionsNeeded(mockCompletionController, defaultCompletions, baseString, prefix, suffix, forced);
-            });
-
             let completionsBeforeEvaluating = await generateJSCompletions();
             InspectorTest.expectFalse(completionsBeforeEvaluating.includes("myVariable"), "Completions should not contain myVariable by default.");
 
@@ -49,6 +62,44 @@ function test()
             let completionsAfterDeletingAndClearing = await generateJSCompletions();
             InspectorTest.expectNotShallowEqual(completionsAfterDeletingAndClearing, completionsAfterDeletingBeforeClearing, "Completions should change after cache is cleared.");
             InspectorTest.expectFalse(completionsAfterDeletingAndClearing.includes("myVariable"), "Completions should not contain myVariable after it's deleted by code run in console.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "console.jsCompletions.completionOrdering",
+        description: "Test that the JavaScript completions are ordered correctly.",
+        async test() {
+            const outputCompletions = async (options) => {
+                InspectorTest.log(`Completions with options=${JSON.stringify(options)} and experimentalShowCaseSensitiveAutocomplete=${WI.settings.experimentalShowCaseSensitiveAutocomplete.value}:`);
+                InspectorTest.json(await generateJSCompletions(options));
+                InspectorTest.log("");
+            };
+
+            WI.settings.experimentalShowCaseSensitiveAutocomplete.value = false;
+            WI.javaScriptRuntimeCompletionProvider.clearCachedPropertyNames();
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds.", prefix: ""}));
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds.", prefix: "a"}));
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds.", prefix: "A"}));
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds.", prefix: "_"}));
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds[", prefix: ""}));
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds[", prefix: "1"}));
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds[", prefix: "\"a"}));
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds[", prefix: "\"A"}));
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds[", prefix: "\"_"}));
+
+            WI.settings.experimentalShowCaseSensitiveAutocomplete.value = true;
+            WI.javaScriptRuntimeCompletionProvider.clearCachedPropertyNames();
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds.", prefix: ""}));
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds.", prefix: "a"}));
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds.", prefix: "A"}));
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds.", prefix: "_"}));
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds[", prefix: ""}));
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds[", prefix: "1"}));
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds[", prefix: "\"a"}));
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds[", prefix: "\"A"}));
+            await outputCompletions(({baseString: "objectWithMixedPropertyKinds[", prefix: "\"_"}));
+
+            WI.settings.experimentalShowCaseSensitiveAutocomplete.reset();
         }
     });
 

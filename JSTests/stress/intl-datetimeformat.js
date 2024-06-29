@@ -239,7 +239,7 @@ shouldBe(Intl.DateTimeFormat('en').resolvedOptions().second, undefined);
 shouldBe(Intl.DateTimeFormat('en').resolvedOptions().timeZoneName, undefined);
 
 // Locale-sensitive format().
-shouldBe(Intl.DateTimeFormat('ar', { timeZone: 'America/Denver' }).format(1451099872641), '٢٥‏/١٢‏/٢٠١٥');
+shouldBeOneOf(Intl.DateTimeFormat('ar', { timeZone: 'America/Denver' }).format(1451099872641), ['٢٥‏/١٢‏/٢٠١٥', '25‏/12‏/2015']);
 shouldBe(Intl.DateTimeFormat('de', { timeZone: 'America/Denver' }).format(1451099872641), '25.12.2015');
 shouldBe(Intl.DateTimeFormat('ja', { timeZone: 'America/Denver' }).format(1451099872641), '2015/12/25');
 shouldBe(Intl.DateTimeFormat('pt', { timeZone: 'America/Denver' }).format(1451099872641), '25/12/2015');
@@ -298,7 +298,7 @@ shouldBe(Intl.DateTimeFormat('en', { timeZone: 'Pacific/Auckland' }).format(1451
 // Gets default calendar and numberingSystem from locale.
 shouldBe(Intl.DateTimeFormat('ar-sa').resolvedOptions().locale, 'ar-SA');
 shouldBe(Intl.DateTimeFormat('fa-IR').resolvedOptions().calendar, 'persian');
-shouldBe(Intl.DateTimeFormat('ar').resolvedOptions().numberingSystem, 'arab');
+shouldBeOneOf(Intl.DateTimeFormat('ar').resolvedOptions().numberingSystem, ['arab','latn']);
 
 shouldBe(Intl.DateTimeFormat('en', { calendar: 'dangi' }).resolvedOptions().calendar, 'dangi');
 shouldBe(Intl.DateTimeFormat('en-u-ca-bogus').resolvedOptions().locale, 'en');

@@ -1,0 +1,24 @@
+<style>
+     canvas {
+         width: 700px;
+         height: 400px;
+     }
+ </style>
+ <body>
+    <h3>This tests multiple layers are drawn to the canvas.</h3>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 700;
+        canvas.height = 400;
+
+        ctx.fillStyle = 'Beige';
+        ctx.fillRect(120, 120, 200, 200);
+        ctx.fillRect(20, 20, 200, 200);
+
+        ctx.fillStyle = 'Salmon';
+        ctx.fillRect(480, 120, 200, 200);
+        ctx.fillRect(360, 20, 200, 200);
+    </script>
+</body>

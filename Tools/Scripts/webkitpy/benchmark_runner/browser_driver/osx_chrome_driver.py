@@ -86,6 +86,7 @@ class OSXChromeBetaDriver(OSXChromeDriverBase):
     def launch_args_with_url(self, url):
         return super(OSXChromeBetaDriver, self).launch_args_with_url(url) + ['--enable-field-trial-config']
 
+
 class OSXChromeDevDriver(OSXChromeDriverBase):
     process_name = 'Google Chrome Dev'
     browser_name = 'chrome-dev'
@@ -97,6 +98,19 @@ class OSXChromeDevDriver(OSXChromeDriverBase):
 
     def launch_args_with_url(self, url):
         return super(OSXChromeDevDriver, self).launch_args_with_url(url) + ['--enable-field-trial-config']
+
+
+class OSXChromeForTestingDriver(OSXChromeDriverBase):
+    process_name = 'Google Chrome for Testing'
+    browser_name = 'chrome-for-testing'
+    app_name = 'Google Chrome for Testing.app'
+    bundle_id = 'com.google.chrome.for.testing'
+
+    def _set_chrome_binary_location(self, options, browser_build_path):
+        set_binary_location_impl(options, browser_build_path, self.app_name, self.process_name)
+
+    def launch_args_with_url(self, url):
+        return super(OSXChromeForTestingDriver, self).launch_args_with_url(url) + ['--enable-field-trial-config']
 
 
 class OSXChromiumDriver(OSXChromeDriverBase):

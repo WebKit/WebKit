@@ -1,0 +1,254 @@
+
+FAIL .target 1 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+  </div>
+width expected 5 but got 0
+FAIL .target 2 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+  </div>
+height expected 7 but got 0
+FAIL .target 3 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+  </div>
+width expected 5 but got 0
+FAIL .target 4 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+  </div>
+height expected 7 but got 0
+FAIL .target 5 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+  </div>
+width expected 5 but got 0
+FAIL .target 6 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+  </div>
+height expected 7 but got 0
+FAIL .target 7 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+  </div>
+height expected 5 but got 0
+FAIL .target 8 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+  </div>
+width expected 7 but got 0
+FAIL .target 9 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+  </div>
+height expected 5 but got 0
+FAIL .target 10 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+  </div>
+width expected 7 but got 0
+FAIL .target 11 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+  </div>
+height expected 5 but got 0
+FAIL .target 12 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+  </div>
+width expected 7 but got 0
+

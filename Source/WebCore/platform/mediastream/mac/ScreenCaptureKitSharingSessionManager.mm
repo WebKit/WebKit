@@ -285,7 +285,7 @@ void ScreenCaptureKitSharingSessionManager::completeDeviceSelection(SCContentFil
         break;
     }
     case SCContentFilterTypeDisplay:
-        device = CaptureDevice(String::number(contentFilter.displayInfo.display.displayID), CaptureDevice::DeviceType::Screen, makeString("Screen "), emptyString(), true);
+        device = CaptureDevice(String::number(contentFilter.displayInfo.display.displayID), CaptureDevice::DeviceType::Screen, "Screen "_str, emptyString(), true);
         break;
     case SCContentFilterTypeNothing:
     case SCContentFilterTypeAppsAndWindowsPinnedToDisplay:

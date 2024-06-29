@@ -60,7 +60,7 @@ RefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExec
 {
     if (RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(context)) {
         WorkerRunLoop& runLoop = workerGlobalScope->thread().runLoop();
-        return WorkerThreadableWebSocketChannel::create(*workerGlobalScope, client, makeString("webSocketChannelMode", runLoop.createUniqueId()), provider);
+        return WorkerThreadableWebSocketChannel::create(*workerGlobalScope, client, makeString("webSocketChannelMode"_s, runLoop.createUniqueId()), provider);
     }
 
     return create(downcast<Document>(context), client, provider);

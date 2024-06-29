@@ -193,7 +193,7 @@ WI.OverrideDeviceSettingsPopover = class OverrideDeviceSettingsPopover extends W
 
             userAgentValueInput = userAgentValue.appendChild(document.createElement("input"));
             userAgentValueInput.spellcheck = false;
-            userAgentValueInput.value = userAgentValueInput.placeholder = WI.deviceSettingsManager.overridenDeviceUserAgent || WI.deviceSettingsManager.deviceUserAgent;;
+            userAgentValueInput.value = userAgentValueInput.placeholder = WI.deviceSettingsManager.overridenDeviceUserAgent || WI.deviceSettingsManager.deviceUserAgent;
             userAgentValueInput.addEventListener("change", (inputEvent) => {
                WI.deviceSettingsManager.overrideUserAgent(userAgentValueInput.value, true);
             });

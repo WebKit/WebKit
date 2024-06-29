@@ -1,4 +1,5 @@
 //@ skip if $memoryLimited
+//@ skip unless $isSIMDPlatform
 asyncTestStart(1);
 let context = {
     env: globalThis,

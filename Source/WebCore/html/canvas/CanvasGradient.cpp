@@ -68,20 +68,12 @@ Ref<CanvasGradient> CanvasGradient::create(const FloatPoint& centerPoint, float 
 
 CanvasGradient::~CanvasGradient() = default;
 
-ExceptionOr<void> CanvasGradient::addColorStop(double value, const String& colorString)
+ExceptionOr<void> CanvasGradient::addColorStop(ScriptExecutionContext& scriptExecutionContext, double value, const String& colorString)
 {
     if (!(value >= 0 && value <= 1))
         return Exception { ExceptionCode::IndexSizeError };
 
-    // Treat currentColor as black, as required by the standard.
-    Color color;
-    if (isCurrentColorString(colorString))
-        color = Color::black;
-    else if (m_context)
-        color = parseColor(colorString, m_context->canvasBase());
-    else
-        color = parseColor(colorString);
-
+    auto color = parseColor(colorString, scriptExecutionContext);
     if (!color.isValid())
         return Exception { ExceptionCode::SyntaxError };
 

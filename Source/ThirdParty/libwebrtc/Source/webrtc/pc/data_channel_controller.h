@@ -54,6 +54,9 @@ class DataChannelController : public SctpDataChannelControllerInterface,
   void RemoveSctpDataStream(StreamId sid) override;
   void OnChannelStateChanged(SctpDataChannel* channel,
                              DataChannelInterface::DataState state) override;
+  size_t buffered_amount(StreamId sid) const override;
+  size_t buffered_amount_low_threshold(StreamId sid) const override;
+  void SetBufferedAmountLowThreshold(StreamId sid, size_t bytes) override;
 
   // Implements DataChannelSink.
   void OnDataReceived(int channel_id,
@@ -63,6 +66,7 @@ class DataChannelController : public SctpDataChannelControllerInterface,
   void OnChannelClosed(int channel_id) override;
   void OnReadyToSend() override;
   void OnTransportClosed(RTCError error) override;
+  void OnBufferedAmountLow(int channel_id) override;
 
   // Called as part of destroying the owning PeerConnection.
   void PrepareForShutdown();
@@ -125,7 +129,7 @@ class DataChannelController : public SctpDataChannelControllerInterface,
   // will still be unassigned upon return, but will be assigned later.
   // If the pool has been exhausted or a sid has already been reserved, an
   // error will be returned.
-  RTCError ReserveOrAllocateSid(StreamId& sid,
+  RTCError ReserveOrAllocateSid(absl::optional<StreamId>& sid,
                                 absl::optional<rtc::SSLRole> fallback_ssl_role)
       RTC_RUN_ON(network_thread());
 

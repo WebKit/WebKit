@@ -77,7 +77,7 @@ private:
 
 bool SerializationTestSender::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Decoder*)>&& completionHandler) const
 {
-    auto decoder = IPC::Decoder::create({ encoder->buffer(), encoder->bufferSize() }, encoder->releaseAttachments());
+    auto decoder = IPC::Decoder::create(encoder->span(), encoder->releaseAttachments());
     ASSERT(decoder);
 
     completionHandler(decoder.get());
@@ -1096,9 +1096,22 @@ TEST(IPCSerialization, Basic)
     auto components = personNameComponentsForTesting();
     runTestNS({ components.get().phoneticRepresentation });
     runTestNS({ components.get() });
+    components.get().namePrefix = nil;
+    runTestNS({ components.get() });
+    components.get().givenName = nil;
+    runTestNS({ components.get() });
+    components.get().middleName = nil;
+    runTestNS({ components.get() });
+    components.get().familyName = nil;
+    runTestNS({ components.get() });
+    components.get().nickname = nil;
+    runTestNS({ components.get() });
 
 #if USE(PASSKIT) && !PLATFORM(WATCHOS)
     // CNPhoneNumber
+    // Digits must be non-null at init-time, but countryCode can be null.
+    // However, Contacts will calculate a default country code if you pass in a null one,
+    // so testing encode/decode of such an instance is pointless.
     RetainPtr<CNPhoneNumber> phoneNumber = [PAL::getCNPhoneNumberClass() phoneNumberWithDigits:@"4085551234" countryCode:@"us"];
     runTestNS({ phoneNumber.get() });
 
@@ -1109,7 +1122,18 @@ TEST(IPCSerialization, Basic)
     runTestNS({ address.get() });
 
     // PKContact
-    runTestNS({ pkContactForTesting().get() });
+    auto pkContact = pkContactForTesting();
+    runTestNS({ pkContact.get() });
+    pkContact.get().name = nil;
+    runTestNS({ pkContact.get() });
+    pkContact.get().postalAddress = nil;
+    runTestNS({ pkContact.get() });
+    pkContact.get().phoneNumber = nil;
+    runTestNS({ pkContact.get() });
+    pkContact.get().emailAddress = nil;
+    runTestNS({ pkContact.get() });
+    pkContact.get().supplementarySubLocality = nil;
+    runTestNS({ pkContact.get() });
 #endif // USE(PASSKIT) && !PLATFORM(WATCHOS)
 
 

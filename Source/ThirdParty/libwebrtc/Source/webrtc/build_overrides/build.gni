@@ -34,6 +34,9 @@ ubsan_vptr_ignorelist_path =
 # so we just ignore that assert. See https://crbug.com/648948 for more info.
 ignore_elf32_limitations = true
 
+perfetto_build_with_embedder = true
+enable_perfetto_trace_processor = true
+
 # Use bundled hermetic Xcode installation maintainted by Chromium,
 # except for local iOS builds where it's unsupported.
 # Allow for mac cross compile on linux machines.
@@ -52,6 +55,8 @@ declare_args() {
   # purposes. In any case, it doesn't depend on //third_party/perfetto which
   # is used for base tracing, so this feature is disabled.
   enable_base_tracing = false
+
+  # TODO(b/336718643): Remove use_perfetto_client_library_flag.
   use_perfetto_client_library = false
   use_perfetto_trace_processor = false
 

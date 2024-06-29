@@ -90,8 +90,8 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         }
 
         for (let section of this._sections) {
-            if (section.highlightProperty(property))
-                return;
+            section.deselectProperties();
+            section.highlightProperty(property);
         }
     }
 

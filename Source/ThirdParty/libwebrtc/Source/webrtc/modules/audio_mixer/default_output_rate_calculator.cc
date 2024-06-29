@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <iterator>
 
-#include "modules/audio_processing/include/audio_processing.h"
+#include "api/audio/audio_processing.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

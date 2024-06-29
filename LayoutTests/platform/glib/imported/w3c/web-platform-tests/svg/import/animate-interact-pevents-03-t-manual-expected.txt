@@ -6,12 +6,12 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (25,23) size 750x469
       RenderSVGContainer {g} at (57,23) size 686x43
         RenderSVGText {text} at (67,14) size 346x14 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,1) size 98x12
+          RenderSVGTSpan {tspan} at (0,1) size 98x13
             RenderSVGInlineText {#text} at (0,1) size 98x12
               chunk 1 (middle anchor) text run 1 at (67.49,25.00) startOffset 0 endOffset 22 width 97.29: "Testing pointer-events"
           RenderSVGInlineText {#text} at (97,0) size 248x14
             chunk 1 (middle anchor) text run 1 at (164.78,25.00) startOffset 0 endOffset 44 width 247.74: " - pale RED rect should appear on mouseover."
-        RenderSVGText {text} at (34,27) size 412x13 contains 1 chunk(s)
+        RenderSVGText {text} at (34,28) size 412x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 411x12
             chunk 1 (middle anchor) text run 1 at (34.50,37.00) startOffset 0 endOffset 96 width 411.00: "2nd and 3rd columns represent respectively rects with no fill/stroke and transparent fill/stroke"
       RenderSVGContainer {g} at (25,75) size 750x417 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]

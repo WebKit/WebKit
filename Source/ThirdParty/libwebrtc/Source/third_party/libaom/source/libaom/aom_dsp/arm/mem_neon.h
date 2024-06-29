@@ -56,15 +56,8 @@ static INLINE uint16x8x4_t vld1q_u16_x4(const uint16_t *ptr) {
 
 #elif defined(__GNUC__) && !defined(__clang__)  // GCC 64-bit.
 #if __GNUC__ < 8
-
 static INLINE uint8x16x2_t vld1q_u8_x2(const uint8_t *ptr) {
   uint8x16x2_t res = { { vld1q_u8(ptr + 0 * 16), vld1q_u8(ptr + 1 * 16) } };
-  return res;
-}
-
-static INLINE uint16x8x4_t vld1q_u16_x4(const uint16_t *ptr) {
-  uint16x8x4_t res = { { vld1q_u16(ptr + 0 * 8), vld1q_u16(ptr + 1 * 8),
-                         vld1q_u16(ptr + 2 * 8), vld1q_u16(ptr + 3 * 8) } };
   return res;
 }
 #endif  // __GNUC__ < 8
@@ -76,6 +69,15 @@ static INLINE uint8x16x3_t vld1q_u8_x3(const uint8_t *ptr) {
   return res;
 }
 #endif  // __GNUC__ < 9
+
+// vld1q_u16_x4 is defined from GCC 8.5.0 and onwards.
+#if ((__GNUC__ << 8) | __GNUC_MINOR__) < 0x805
+static INLINE uint16x8x4_t vld1q_u16_x4(const uint16_t *ptr) {
+  uint16x8x4_t res = { { vld1q_u16(ptr + 0 * 8), vld1q_u16(ptr + 1 * 8),
+                         vld1q_u16(ptr + 2 * 8), vld1q_u16(ptr + 3 * 8) } };
+  return res;
+}
+#endif  // ((__GNUC__ << 8) | __GNUC_MINOR__) < 0x805
 #endif  // defined(__GNUC__) && !defined(__clang__)
 
 static INLINE void store_u8_8x2(uint8_t *s, ptrdiff_t p, const uint8x8_t s0,
@@ -90,23 +92,31 @@ static INLINE uint8x16_t load_u8_8x2(const uint8_t *s, ptrdiff_t p) {
   return vcombine_u8(vld1_u8(s), vld1_u8(s + p));
 }
 
-/* These intrinsics require immediate values, so we must use #defines
-   to enforce that. */
-#define load_u8_4x1(s, s0, lane)                                           \
-  do {                                                                     \
-    *(s0) = vreinterpret_u8_u32(                                           \
-        vld1_lane_u32((uint32_t *)(s), vreinterpret_u32_u8(*(s0)), lane)); \
-  } while (0)
-#define load_u16_2x1(s, s0, lane)                                           \
-  do {                                                                      \
-    *(s0) = vreinterpret_u16_u32(                                           \
-        vld1_lane_u32((uint32_t *)(s), vreinterpret_u32_u16(*(s0)), lane)); \
-  } while (0)
-
 // Load four bytes into the low half of a uint8x8_t, zero the upper half.
-static INLINE uint8x8_t load_u8_4x1_lane0(const uint8_t *p) {
+static INLINE uint8x8_t load_u8_4x1(const uint8_t *p) {
   uint8x8_t ret = vdup_n_u8(0);
-  load_u8_4x1(p, &ret, 0);
+  ret = vreinterpret_u8_u32(
+      vld1_lane_u32((const uint32_t *)p, vreinterpret_u32_u8(ret), 0));
+  return ret;
+}
+
+static INLINE uint8x8_t load_u8_4x2(const uint8_t *p, int stride) {
+  uint8x8_t ret = vdup_n_u8(0);
+  ret = vreinterpret_u8_u32(
+      vld1_lane_u32((const uint32_t *)p, vreinterpret_u32_u8(ret), 0));
+  p += stride;
+  ret = vreinterpret_u8_u32(
+      vld1_lane_u32((const uint32_t *)p, vreinterpret_u32_u8(ret), 1));
+  return ret;
+}
+
+static INLINE uint16x4_t load_u16_2x2(const uint16_t *p, int stride) {
+  uint16x4_t ret = vdup_n_u16(0);
+  ret = vreinterpret_u16_u32(
+      vld1_lane_u32((const uint32_t *)p, vreinterpret_u32_u16(ret), 0));
+  p += stride;
+  ret = vreinterpret_u16_u32(
+      vld1_lane_u32((const uint32_t *)p, vreinterpret_u32_u16(ret), 1));
   return ret;
 }
 
@@ -164,6 +174,16 @@ static INLINE void load_u8_8x4(const uint8_t *s, const ptrdiff_t p,
   *s3 = vld1_u8(s);
 }
 
+static INLINE void load_u8_8x3(const uint8_t *s, const ptrdiff_t p,
+                               uint8x8_t *const s0, uint8x8_t *const s1,
+                               uint8x8_t *const s2) {
+  *s0 = vld1_u8(s);
+  s += p;
+  *s1 = vld1_u8(s);
+  s += p;
+  *s2 = vld1_u8(s);
+}
+
 static INLINE void load_u16_4x4(const uint16_t *s, const ptrdiff_t p,
                                 uint16x4_t *const s0, uint16x4_t *const s1,
                                 uint16x4_t *const s2, uint16x4_t *const s3) {
@@ -209,6 +229,16 @@ static INLINE void load_u16_8x2(const uint16_t *s, const ptrdiff_t p,
   *s0 = vld1q_u16(s);
   s += p;
   *s1 = vld1q_u16(s);
+}
+
+static INLINE void load_u16_8x3(const uint16_t *s, const ptrdiff_t p,
+                                uint16x8_t *const s0, uint16x8_t *const s1,
+                                uint16x8_t *const s2) {
+  *s0 = vld1q_u16(s);
+  s += p;
+  *s1 = vld1q_u16(s);
+  s += p;
+  *s2 = vld1q_u16(s);
 }
 
 static INLINE void load_u16_8x4(const uint16_t *s, const ptrdiff_t p,
@@ -449,17 +479,15 @@ static INLINE void load_s16_4x4(const int16_t *s, ptrdiff_t p,
   *s3 = vld1_s16(s);
 }
 
-/* These intrinsics require immediate values, so we must use #defines
-   to enforce that. */
-#define store_u8_2x1(s, s0, lane)                                  \
-  do {                                                             \
-    vst1_lane_u16((uint16_t *)(s), vreinterpret_u16_u8(s0), lane); \
-  } while (0)
-
-#define store_u8_4x1(s, s0, lane)                                  \
-  do {                                                             \
-    vst1_lane_u32((uint32_t *)(s), vreinterpret_u32_u8(s0), lane); \
-  } while (0)
+static INLINE void load_s16_4x3(const int16_t *s, ptrdiff_t p,
+                                int16x4_t *const s0, int16x4_t *const s1,
+                                int16x4_t *const s2) {
+  *s0 = vld1_s16(s);
+  s += p;
+  *s1 = vld1_s16(s);
+  s += p;
+  *s2 = vld1_s16(s);
+}
 
 static INLINE void store_u8_8x8(uint8_t *s, ptrdiff_t p, const uint8x8_t s0,
                                 const uint8x8_t s1, const uint8x8_t s2,
@@ -495,7 +523,7 @@ static INLINE void store_u8_8x4(uint8_t *s, ptrdiff_t p, const uint8x8_t s0,
   vst1_u8(s, s3);
 }
 
-static INLINE void store_u8_8x16(uint8_t *s, ptrdiff_t p, const uint8x16_t s0,
+static INLINE void store_u8_16x4(uint8_t *s, ptrdiff_t p, const uint8x16_t s0,
                                  const uint8x16_t s1, const uint8x16_t s2,
                                  const uint8x16_t s3) {
   vst1q_u8(s, s0);
@@ -529,6 +557,16 @@ static INLINE void store_u16_8x8(uint16_t *s, ptrdiff_t dst_stride,
   vst1q_u16(s, s7);
 }
 
+static INLINE void store_u16_4x3(uint16_t *s, ptrdiff_t dst_stride,
+                                 const uint16x4_t s0, const uint16x4_t s1,
+                                 const uint16x4_t s2) {
+  vst1_u16(s, s0);
+  s += dst_stride;
+  vst1_u16(s, s1);
+  s += dst_stride;
+  vst1_u16(s, s2);
+}
+
 static INLINE void store_u16_4x4(uint16_t *s, ptrdiff_t dst_stride,
                                  const uint16x4_t s0, const uint16x4_t s1,
                                  const uint16x4_t s2, const uint16x4_t s3) {
@@ -546,6 +584,16 @@ static INLINE void store_u16_8x2(uint16_t *s, ptrdiff_t dst_stride,
   vst1q_u16(s, s0);
   s += dst_stride;
   vst1q_u16(s, s1);
+}
+
+static INLINE void store_u16_8x3(uint16_t *s, ptrdiff_t dst_stride,
+                                 const uint16x8_t s0, const uint16x8_t s1,
+                                 const uint16x8_t s2) {
+  vst1q_u16(s, s0);
+  s += dst_stride;
+  vst1q_u16(s, s1);
+  s += dst_stride;
+  vst1q_u16(s, s2);
 }
 
 static INLINE void store_u16_8x4(uint16_t *s, ptrdiff_t dst_stride,
@@ -593,21 +641,6 @@ static INLINE void store_s16_4x4(int16_t *s, ptrdiff_t dst_stride,
   s += dst_stride;
   vst1_s16(s, s3);
 }
-
-/* These intrinsics require immediate values, so we must use #defines
-   to enforce that. */
-#define store_s16_2x1(s, s0, lane)                                 \
-  do {                                                             \
-    vst1_lane_s32((int32_t *)(s), vreinterpret_s32_s16(s0), lane); \
-  } while (0)
-#define store_u16_2x1(s, s0, lane)                                  \
-  do {                                                              \
-    vst1_lane_u32((uint32_t *)(s), vreinterpret_u32_u16(s0), lane); \
-  } while (0)
-#define store_u16q_2x1(s, s0, lane)                                   \
-  do {                                                                \
-    vst1q_lane_u32((uint32_t *)(s), vreinterpretq_u32_u16(s0), lane); \
-  } while (0)
 
 static INLINE void store_s16_8x4(int16_t *s, ptrdiff_t dst_stride,
                                  const int16x8_t s0, const int16x8_t s1,
@@ -876,6 +909,16 @@ static INLINE void load_s16_8x4(const int16_t *s, ptrdiff_t p,
   *s3 = vld1q_s16(s);
 }
 
+static INLINE void load_s16_8x3(const int16_t *s, ptrdiff_t p,
+                                int16x8_t *const s0, int16x8_t *const s1,
+                                int16x8_t *const s2) {
+  *s0 = vld1q_s16(s);
+  s += p;
+  *s1 = vld1q_s16(s);
+  s += p;
+  *s2 = vld1q_s16(s);
+}
+
 // Load 2 sets of 4 bytes when alignment is not guaranteed.
 static INLINE uint8x8_t load_unaligned_u8(const uint8_t *buf, int stride) {
   uint32_t a;
@@ -980,36 +1023,6 @@ static INLINE void load_unaligned_u8_4x8(const uint8_t *buf, int stride,
   buf += 4 * stride;
   load_unaligned_u8_4x4(buf, stride, tu2, tu3);
 }
-
-/* These intrinsics require immediate values, so we must use #defines
-   to enforce that. */
-#define store_unaligned_u8_4x1(dst, src, lane)         \
-  do {                                                 \
-    uint32_t a;                                        \
-    a = vget_lane_u32(vreinterpret_u32_u8(src), lane); \
-    memcpy(dst, &a, 4);                                \
-  } while (0)
-
-#define store_unaligned_u8_2x1(dst, src, lane)         \
-  do {                                                 \
-    uint16_t a;                                        \
-    a = vget_lane_u16(vreinterpret_u16_u8(src), lane); \
-    memcpy(dst, &a, 2);                                \
-  } while (0)
-
-#define store_unaligned_u16_2x1(dst, src, lane)         \
-  do {                                                  \
-    uint32_t a;                                         \
-    a = vget_lane_u32(vreinterpret_u32_u16(src), lane); \
-    memcpy(dst, &a, 4);                                 \
-  } while (0)
-
-#define store_unaligned_u16_4x1(dst, src, lane)           \
-  do {                                                    \
-    uint64_t a;                                           \
-    a = vgetq_lane_u64(vreinterpretq_u64_u16(src), lane); \
-    memcpy(dst, &a, 8);                                   \
-  } while (0)
 
 static INLINE void load_u8_16x8(const uint8_t *s, ptrdiff_t p,
                                 uint8x16_t *const s0, uint8x16_t *const s1,
@@ -1192,32 +1205,111 @@ static INLINE void store_s16_to_tran_low(tran_low_t *buf, const int16x4_t a) {
   vst1q_s32(buf, v0);
 }
 
-static INLINE void store_unaligned_u8_2x2(uint8_t *dst, uint32_t dst_stride,
-                                          uint8x8_t src) {
-  store_unaligned_u8_2x1(dst, src, 0);
-  dst += dst_stride;
-  store_unaligned_u8_2x1(dst, src, 1);
+static INLINE uint8x8_t load_u8_gather_s16_x8(const uint8_t *src,
+                                              int16x8_t indices) {
+  // Recent Clang and GCC versions correctly identify that this zero-broadcast
+  // is redundant. Alternatively we could load and broadcast the zeroth element
+  // and then replace the other lanes, however this is slower than loading a
+  // single element without broadcast on some micro-architectures.
+  uint8x8_t ret = vdup_n_u8(0);
+  ret = vld1_lane_u8(src + vget_lane_s16(vget_low_s16(indices), 0), ret, 0);
+  ret = vld1_lane_u8(src + vget_lane_s16(vget_low_s16(indices), 1), ret, 1);
+  ret = vld1_lane_u8(src + vget_lane_s16(vget_low_s16(indices), 2), ret, 2);
+  ret = vld1_lane_u8(src + vget_lane_s16(vget_low_s16(indices), 3), ret, 3);
+  ret = vld1_lane_u8(src + vget_lane_s16(vget_high_s16(indices), 0), ret, 4);
+  ret = vld1_lane_u8(src + vget_lane_s16(vget_high_s16(indices), 1), ret, 5);
+  ret = vld1_lane_u8(src + vget_lane_s16(vget_high_s16(indices), 2), ret, 6);
+  ret = vld1_lane_u8(src + vget_lane_s16(vget_high_s16(indices), 3), ret, 7);
+  return ret;
 }
 
-static INLINE void store_unaligned_u8_4x2(uint8_t *dst, uint32_t dst_stride,
-                                          uint8x8_t src) {
-  store_unaligned_u8_4x1(dst, src, 0);
-  dst += dst_stride;
-  store_unaligned_u8_4x1(dst, src, 1);
+// The `lane` parameter here must be an immediate.
+#define store_u8_2x1_lane(dst, src, lane)                       \
+  do {                                                          \
+    uint16_t a = vget_lane_u16(vreinterpret_u16_u8(src), lane); \
+    memcpy(dst, &a, 2);                                         \
+  } while (0)
+
+#define store_u8_4x1_lane(dst, src, lane)                       \
+  do {                                                          \
+    uint32_t a = vget_lane_u32(vreinterpret_u32_u8(src), lane); \
+    memcpy(dst, &a, 4);                                         \
+  } while (0)
+
+#define store_u16_2x1_lane(dst, src, lane)                       \
+  do {                                                           \
+    uint32_t a = vget_lane_u32(vreinterpret_u32_u16(src), lane); \
+    memcpy(dst, &a, 4);                                          \
+  } while (0)
+
+#define store_u16_4x1_lane(dst, src, lane)                         \
+  do {                                                             \
+    uint64_t a = vgetq_lane_u64(vreinterpretq_u64_u16(src), lane); \
+    memcpy(dst, &a, 8);                                            \
+  } while (0)
+
+// Store the low 16-bits from a single vector.
+static INLINE void store_u8_2x1(uint8_t *dst, const uint8x8_t src) {
+  store_u8_2x1_lane(dst, src, 0);
 }
 
-static INLINE void store_unaligned_u16_2x2(uint16_t *dst, uint32_t dst_stride,
-                                           uint16x4_t src) {
-  store_unaligned_u16_2x1(dst, src, 0);
-  dst += dst_stride;
-  store_unaligned_u16_2x1(dst, src, 1);
+// Store the low 32-bits from a single vector.
+static INLINE void store_u8_4x1(uint8_t *dst, const uint8x8_t src) {
+  store_u8_4x1_lane(dst, src, 0);
 }
 
-static INLINE void store_unaligned_u16_4x2(uint16_t *dst, uint32_t dst_stride,
-                                           uint16x8_t src) {
-  store_unaligned_u16_4x1(dst, src, 0);
+// Store two blocks of 16-bits from a single vector.
+static INLINE void store_u8x2_strided_x2(uint8_t *dst, uint32_t dst_stride,
+                                         uint8x8_t src) {
+  store_u8_2x1_lane(dst, src, 0);
   dst += dst_stride;
-  store_unaligned_u16_4x1(dst, src, 1);
+  store_u8_2x1_lane(dst, src, 1);
 }
+
+// Store two blocks of 32-bits from a single vector.
+static INLINE void store_u8x4_strided_x2(uint8_t *dst, ptrdiff_t stride,
+                                         uint8x8_t src) {
+  store_u8_4x1_lane(dst, src, 0);
+  dst += stride;
+  store_u8_4x1_lane(dst, src, 1);
+}
+
+// Store four blocks of 32-bits from a single vector.
+static INLINE void store_u8x4_strided_x4(uint8_t *dst, ptrdiff_t stride,
+                                         uint8x16_t src) {
+  store_u8_4x1_lane(dst, vget_low_u8(src), 0);
+  dst += stride;
+  store_u8_4x1_lane(dst, vget_low_u8(src), 1);
+  dst += stride;
+  store_u8_4x1_lane(dst, vget_high_u8(src), 0);
+  dst += stride;
+  store_u8_4x1_lane(dst, vget_high_u8(src), 1);
+}
+
+// Store the low 32-bits from a single vector.
+static INLINE void store_u16_2x1(uint16_t *dst, const uint16x4_t src) {
+  store_u16_2x1_lane(dst, src, 0);
+}
+
+// Store two blocks of 32-bits from a single vector.
+static INLINE void store_u16x2_strided_x2(uint16_t *dst, uint32_t dst_stride,
+                                          uint16x4_t src) {
+  store_u16_2x1_lane(dst, src, 0);
+  dst += dst_stride;
+  store_u16_2x1_lane(dst, src, 1);
+}
+
+// Store two blocks of 64-bits from a single vector.
+static INLINE void store_u16x4_strided_x2(uint16_t *dst, uint32_t dst_stride,
+                                          uint16x8_t src) {
+  store_u16_4x1_lane(dst, src, 0);
+  dst += dst_stride;
+  store_u16_4x1_lane(dst, src, 1);
+}
+
+#undef store_u8_2x1_lane
+#undef store_u8_4x1_lane
+#undef store_u16_2x1_lane
+#undef store_u16_4x1_lane
 
 #endif  // AOM_AOM_DSP_ARM_MEM_NEON_H_

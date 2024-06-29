@@ -881,8 +881,10 @@ storage_qualifier
         $$ = new TStorageQualifierWrapper(EvqCentroid, @1);
     }
     | PATCH {
-        if (context->getShaderVersion() < 320 &&
-            !context->checkCanUseExtension(@1, TExtension::EXT_tessellation_shader))
+        constexpr std::array<TExtension, 2u> extensions{ { TExtension::OES_tessellation_shader,
+                                                           TExtension::EXT_tessellation_shader } };
+        if (context->getShaderVersion() < 320
+        && !context->checkCanUseOneOfExtensions(@1, extensions))
         {
             context->error(@1, "unsupported storage qualifier", "patch");
         }
@@ -1598,7 +1600,7 @@ selection_rest_statement
 // Note that we've diverged from the spec grammar here a bit for the sake of simplicity.
 // We're reusing compound_statement_with_scope instead of having separate rules for switch.
 switch_statement
-    : SWITCH LEFT_PAREN expression RIGHT_PAREN { context->incrSwitchNestingLevel(); } compound_statement_with_scope {
+    : SWITCH LEFT_PAREN expression RIGHT_PAREN { context->incrSwitchNestingLevel(@1); } compound_statement_with_scope {
         $$ = context->addSwitch($3, $6, @1);
         context->decrSwitchNestingLevel();
     }
@@ -1624,16 +1626,16 @@ condition
     ;
 
 iteration_statement
-    : WHILE LEFT_PAREN { context->symbolTable.push(); context->incrLoopNestingLevel(); } condition RIGHT_PAREN statement_no_new_scope {
+    : WHILE LEFT_PAREN { context->symbolTable.push(); context->incrLoopNestingLevel(@1); } condition RIGHT_PAREN statement_no_new_scope {
         context->symbolTable.pop();
         $$ = context->addLoop(ELoopWhile, 0, $4, 0, $6, @1);
         context->decrLoopNestingLevel();
     }
-    | DO { context->incrLoopNestingLevel(); } statement_with_scope WHILE LEFT_PAREN expression RIGHT_PAREN SEMICOLON {
+    | DO { context->incrLoopNestingLevel(@1); } statement_with_scope WHILE LEFT_PAREN expression RIGHT_PAREN SEMICOLON {
         $$ = context->addLoop(ELoopDoWhile, 0, $6, 0, $3, @4);
         context->decrLoopNestingLevel();
     }
-    | FOR LEFT_PAREN { context->symbolTable.push(); context->incrLoopNestingLevel(); } for_init_statement for_rest_statement RIGHT_PAREN statement_no_new_scope {
+    | FOR LEFT_PAREN { context->symbolTable.push(); context->incrLoopNestingLevel(@1); } for_init_statement for_rest_statement RIGHT_PAREN statement_no_new_scope {
         context->symbolTable.pop();
         $$ = context->addLoop(ELoopFor, $4, $5.node1, reinterpret_cast<TIntermTyped*>($5.node2), $7, @1);
         context->decrLoopNestingLevel();

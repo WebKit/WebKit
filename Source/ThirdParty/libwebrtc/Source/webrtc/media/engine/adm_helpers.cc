@@ -10,7 +10,7 @@
 
 #include "media/engine/adm_helpers.h"
 
-#include "modules/audio_device/include/audio_device.h"
+#include "api/audio/audio_device.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 

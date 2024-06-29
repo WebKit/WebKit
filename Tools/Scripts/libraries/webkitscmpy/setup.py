@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@ def readme():
 
 setup(
     name='webkitscmpy',
-    version='6.8.0',
+    version='7.0.0',
     description='Library designed to interact with git and svn repositories.',
     long_description=readme(),
     classifiers=[

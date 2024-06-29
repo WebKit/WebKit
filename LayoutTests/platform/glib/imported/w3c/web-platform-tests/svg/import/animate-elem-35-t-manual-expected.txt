@@ -20,13 +20,13 @@ layer at (0,0) size 800x600
               RenderSVGPath {polyline} at (209,171) size 92x93 [stroke={[type=SOLID] [color=#FF0000] [line cap=ROUND] [line join=ROUND] [dash array={90.00, 20.00, 5.00, 15.00}]}] [points="140 115 200 115 140 175 200 175"]
             RenderSVGContainer {use} at (209,314) size 92x92
               RenderSVGPath {polyline} at (209,314) size 92x92 [stroke={[type=SOLID] [color=#FF0000] [line cap=SQUARE] [line join=BEVEL] [dash array={90.00, 20.00, 5.00, 15.00}]}] [points="140 210 200 210 140 270 200 270"]
-          RenderSVGContainer {g} at (3,11) size 84x413
+          RenderSVGContainer {g} at (3,11) size 75x413
             RenderSVGPath {polyline} at (12,11) size 63x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=-50.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 10 50 10 10 40 50 40"]
-            RenderSVGPath {polyline} at (3,71) size 84x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=-30.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 50 50 50 10 80 50 80"]
+            RenderSVGPath {polyline} at (15,71) size 63x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=-30.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 50 50 50 10 80 50 80"]
             RenderSVGPath {polyline} at (3,131) size 72x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=-10.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 90 50 90 10 120 50 120"]
             RenderSVGPath {polyline} at (12,191) size 63x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 130 50 130 10 160 50 160"]
             RenderSVGPath {polyline} at (12,251) size 63x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=10.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 170 50 170 10 200 50 200"]
-            RenderSVGPath {polyline} at (3,311) size 84x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=30.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 210 50 210 10 240 50 240"]
+            RenderSVGPath {polyline} at (15,311) size 63x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=30.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 210 50 210 10 240 50 240"]
             RenderSVGPath {polyline} at (3,371) size 72x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=50.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 250 50 250 10 280 50 280"]
           RenderSVGContainer {g} at (87,11) size 63x53
             RenderSVGPath {polyline} at (87,11) size 63x53 [stroke={[type=SOLID] [color=#FF0000] [stroke width=5.00] [dash offset=-50.00] [dash array={5.00, 5.00, 20.00}]}] [points="60 10 100 10 60 40 100 40"]
@@ -65,10 +65,10 @@ layer at (0,0) size 800x600
                 RenderSVGPath {path} at (548,240) size 62x113 [fill={[type=SOLID] [color=#000000]}] [data="M 22.3 9.8 L 20 19.1 L 16.3 31.9 L 32.4 31.9 L 28.7 19 C 28.7 19 26.2 9.7 26.2 9.7 L 24.2 2.1 L 22.3 9.8 Z M 23.9 20.1 C 23.9 20.1 24.1 19.3 24.3 18.3 C 24.4 18.8 24.8 20.1 24.8 20.1 C 24.8 20.1 26.2 25 27.1 27.9 C 25.1 27.9 23.7 27.9 21.7 27.9 C 22.5 25 23.9 20.1 23.9 20.1 Z"]
         RenderSVGPath {path} at (714,20) size 71x417 [transform={m=((0.00,2.00)(-1.00,0.00)) t=(520.00,20.00)}] [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00] [dash array={5.00}]}] [data="M 15.2 5.4 C 5.5 10.1 1.1 18.8 2 31.7 C 16.8 63.8 140.9 -27.3 129.8 12 C 112.1 75.3 42.2 -8.8 15.2 5.4"]
       RenderSVGText {text} at (5,263) size 420x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 420x21
+        RenderSVGInlineText {#text} at (0,0) size 420x20
           chunk 1 text run 1 at (5.00,280.00) startOffset 0 endOffset 54 width 419.07: "Animation on: 'stroke-dasharray', 'stroke-dashoffset',"
       RenderSVGText {text} at (5,288) size 431x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 431x21
+        RenderSVGInlineText {#text} at (0,0) size 431x20
           chunk 1 text run 1 at (5.00,305.00) startOffset 0 endOffset 60 width 430.20: "'stroke-miterlimit', 'stroke-linecap' and 'stroke-linejoin'."
     RenderSVGContainer {g} at (16,518) size 388x60
       RenderSVGText {text} at (10,311) size 233x36 contains 1 chunk(s)
@@ -77,6 +77,6 @@ layer at (0,0) size 800x600
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGContainer {g} at (0,0) size 800x38
       RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
-      RenderSVGText {text} at (206,-1) size 68x24 contains 1 chunk(s)
+      RenderSVGText {text} at (206,0) size 68x23 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 68x23
           chunk 1 (middle anchor) text run 1 at (206.40,18.00) startOffset 0 endOffset 5 width 67.20: "DRAFT"

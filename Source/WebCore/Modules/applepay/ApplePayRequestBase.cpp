@@ -51,7 +51,7 @@ static ExceptionOr<Vector<String>> convertAndValidate(Document& document, unsign
     for (auto& supportedNetwork : supportedNetworks) {
         auto validatedNetwork = paymentCoordinator.validatedPaymentNetwork(document, version, supportedNetwork);
         if (!validatedNetwork)
-            return Exception { ExceptionCode::TypeError, makeString("\"", supportedNetwork, "\" is not a valid payment network.") };
+            return Exception { ExceptionCode::TypeError, makeString("\""_s, supportedNetwork, "\" is not a valid payment network."_s) };
         result.append(*validatedNetwork);
     }
 
@@ -61,7 +61,7 @@ static ExceptionOr<Vector<String>> convertAndValidate(Document& document, unsign
 ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document, unsigned version, const ApplePayRequestBase& request, const PaymentCoordinator& paymentCoordinator)
 {
     if (!version || !paymentCoordinator.supportsVersion(document, version))
-        return Exception { ExceptionCode::InvalidAccessError, makeString('"', version, "\" is not a supported version.") };
+        return Exception { ExceptionCode::InvalidAccessError, makeString('"', version, "\" is not a supported version."_s) };
 
     ApplePaySessionPaymentRequest result;
     result.setVersion(version);
@@ -125,6 +125,10 @@ ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document
 
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
     result.setApplePayLaterAvailability(request.applePayLaterAvailability);
+#endif
+
+#if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
+    result.setMerchantCategoryCode(request.merchantCategoryCode);
 #endif
 
     return WTFMove(result);

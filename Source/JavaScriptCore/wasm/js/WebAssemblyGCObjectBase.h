@@ -42,7 +42,7 @@ public:
 
     RefPtr<const Wasm::RTT> rtt() { return m_rtt; }
 
-    static ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WebAssemblyGCObjectBase, m_rtt); };
+    static constexpr ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WebAssemblyGCObjectBase, m_rtt); };
 
 protected:
     DECLARE_VISIT_CHILDREN;

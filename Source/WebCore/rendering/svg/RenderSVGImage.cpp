@@ -116,7 +116,7 @@ void RenderSVGImage::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this);
 
     updateImageViewport();
     setCurrentSVGLayoutRect(enclosingLayoutRect(m_objectBoundingBox));
@@ -213,7 +213,7 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
 
     FloatRect contentBoxRect = borderBoxRectEquivalent();
     FloatRect replacedContentRect(0, 0, image->width(), image->height());
-    imageElement().preserveAspectRatio().transformRect(contentBoxRect, replacedContentRect);
+    protectedImageElement()->preserveAspectRatio().transformRect(contentBoxRect, replacedContentRect);
 
     contentBoxRect.moveBy(paintOffset);
 
@@ -278,12 +278,13 @@ bool RenderSVGImage::updateImageViewport()
     m_objectBoundingBox = calculateObjectBoundingBox();
 
     bool updatedViewport = false;
-    URL imageSourceURL = document().completeURL(imageElement().imageSourceURL());
+    Ref imageElement = this->imageElement();
+    URL imageSourceURL = document().completeURL(imageElement->imageSourceURL());
 
     // Images with preserveAspectRatio=none should force non-uniform scaling. This can be achieved
     // by setting the image's container size to its intrinsic size.
     // See: http://www.w3.org/TR/SVG/single-page.html, 7.8 The ‘preserveAspectRatio’ attribute.
-    if (imageElement().preserveAspectRatio().align() == SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE) {
+    if (imageElement->preserveAspectRatio().align() == SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE) {
         if (CachedImage* cachedImage = imageResource().cachedImage()) {
             LayoutSize intrinsicSize = cachedImage->imageSizeForRenderer(nullptr, style().usedZoom());
             if (intrinsicSize != imageResource().imageSize(style().usedZoom())) {
@@ -326,7 +327,7 @@ void RenderSVGImage::repaintOrMarkForLayout(const IntRect* rect)
         layer()->contentChanged(ImageChanged);
 }
 
-void RenderSVGImage::notifyFinished(CachedResource& newImage, const NetworkLoadMetrics& metrics)
+void RenderSVGImage::notifyFinished(CachedResource& newImage, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     if (renderTreeBeingDestroyed())
         return;
@@ -340,7 +341,7 @@ void RenderSVGImage::notifyFinished(CachedResource& newImage, const NetworkLoadM
             layer()->contentChanged(ImageChanged);
     }
 
-    RenderSVGModelObject::notifyFinished(newImage, metrics);
+    RenderSVGModelObject::notifyFinished(newImage, metrics, loadWillContinueInAnotherProcess);
 }
 
 void RenderSVGImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
@@ -398,7 +399,8 @@ bool RenderSVGImage::bufferForeground(PaintInfo& paintInfo, const LayoutPoint& p
     paintForeground(bufferedInfo, paintOffset);
 
     destinationContext.concatCTM(absoluteTransform.inverse().value_or(AffineTransform()));
-    destinationContext.drawImageBuffer(*m_bufferedForeground.copyRef(), absoluteTargetRect);
+    RefPtr bufferedForeground = m_bufferedForeground.copyRef();
+    destinationContext.drawImageBuffer(*bufferedForeground, absoluteTargetRect);
     destinationContext.concatCTM(absoluteTransform);
 
     return true;

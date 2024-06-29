@@ -31,6 +31,7 @@
 #import "AuthenticatorManager.h"
 #import "WKASCAuthorizationPresenterDelegate.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 #import "AuthenticationServicesCoreSoftLink.h"
 
@@ -194,7 +195,7 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
 
             RetainPtr<NSData> userHandle;
             if (response->userHandle())
-                userHandle = adoptNS([[NSData alloc] initWithBytes:response->userHandle()->data() length:response->userHandle()->byteLength()]);
+                userHandle = toNSData(response->userHandle()->span());
 
             auto loginChoice = adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initWithName:response->name() displayName:response->displayName() userHandle:userHandle.get()]);
             [loginChoices addObject:loginChoice.get()];
@@ -211,7 +212,7 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
         for (auto& response : responses) {
             RetainPtr<NSData> userHandle;
             if (response->userHandle())
-                userHandle = adoptNS([[NSData alloc] initWithBytes:response->userHandle()->data() length:response->userHandle()->byteLength()]);
+                userHandle = toNSData(response->userHandle()->span());
 
             auto loginChoice = adoptNS([allocASCPlatformPublicKeyCredentialLoginChoiceInstance() initWithName:response->name() displayName:response->displayName() userHandle:userHandle.get()]);
             [m_context addLoginChoice:loginChoice.get()];

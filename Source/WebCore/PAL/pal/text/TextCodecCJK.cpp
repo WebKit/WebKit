@@ -255,7 +255,7 @@ String TextCodecCJK::eucJPDecode(std::span<const uint8_t> bytes, bool flush, boo
             return SawError::Yes;
         }
         if (isASCII(byte)) {
-            result.append(static_cast<char>(byte));
+            result.append(byteCast<char>(byte));
             return SawError::No;
         }
         if (byte == 0x8E || byte == 0x8F || (byte >= 0xA1 && byte <= 0xFE)) {
@@ -1177,7 +1177,7 @@ String TextCodecCJK::big5Decode(std::span<const uint8_t> bytes, bool flush, bool
             return SawError::Yes;
         }
         if (isASCII(byte)) {
-            result.append(static_cast<char>(byte));
+            result.append(byteCast<char>(byte));
             return SawError::No;
         }
         if (byte >= 0x81 && byte <= 0xFE) {

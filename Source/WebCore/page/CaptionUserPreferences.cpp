@@ -61,6 +61,11 @@ CaptionUserPreferences::CaptionUserPreferences(PageGroup& group)
 
 CaptionUserPreferences::~CaptionUserPreferences() = default;
 
+UniqueRef<CaptionUserPreferencesTestingModeToken> CaptionUserPreferences::createTestingModeToken()
+{
+    return makeUniqueRef<CaptionUserPreferencesTestingModeToken>(*this);
+}
+
 void CaptionUserPreferences::timerFired()
 {
     captionPreferencesChanged();

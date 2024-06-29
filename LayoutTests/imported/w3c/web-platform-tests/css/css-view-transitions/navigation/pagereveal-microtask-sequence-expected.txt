@@ -1,0 +1,8 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT
+  View transition promise reactions in incoming page should resolve before
+  the rendering continues (rAF, style/layout etc)
+ Test timed out
+

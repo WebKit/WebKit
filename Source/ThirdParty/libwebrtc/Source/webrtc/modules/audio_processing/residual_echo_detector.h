@@ -15,11 +15,11 @@
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/audio/audio_processing.h"
 #include "modules/audio_processing/echo_detector/circular_buffer.h"
 #include "modules/audio_processing/echo_detector/mean_variance_estimator.h"
 #include "modules/audio_processing/echo_detector/moving_max.h"
 #include "modules/audio_processing/echo_detector/normalized_covariance_estimator.h"
-#include "modules/audio_processing/include/audio_processing.h"
 
 namespace webrtc {
 

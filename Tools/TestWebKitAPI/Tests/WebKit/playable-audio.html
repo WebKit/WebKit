@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+    window.audioEl = window.document.createElement('audio');
+    window.audioEl.src = "video-with-audio.mp4";
+    window.audioEl.onended = audioEnded;
+
+    function audioEnded() {
+        try {
+            window.webkit.messageHandlers.testHandler.postMessage('audioEnded');
+        } catch(e) { }
+    }
+
+    function playAudio() {
+      try {
+        window.audioEl.play();
+        } catch(e) { }
+    }
+   </script>
+</head>
+<body>
+</body>
+</html>

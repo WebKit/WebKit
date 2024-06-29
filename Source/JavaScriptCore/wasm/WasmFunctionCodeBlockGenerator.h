@@ -95,7 +95,7 @@ public:
     ALWAYS_INLINE uint64_t getConstant(VirtualRegister reg) const { return m_constants[reg.toConstantIndex()]; }
     ALWAYS_INLINE Type getConstantType(VirtualRegister reg) const
     {
-        ASSERT(Options::dumpGeneratedWasmBytecodes());
+        ASSERT(Options::dumpGeneratedWebAssemblyBytecodes());
         return m_constantTypes[reg.toConstantIndex()];
     }
 

@@ -1,0 +1,3 @@
+
+FAIL Transition with anchor names defined in three different tree scopes assert_equals: expected 300 but got 0
+

@@ -278,9 +278,9 @@ export class ValidationTest extends GPUTest {
   getDeviceMismatchedBindingResource(bindingType) {
     switch (bindingType) {
       case 'uniformBuf':
-        return { buffer: this.getDeviceMismatchedStorageBuffer() };
-      case 'storageBuf':
         return { buffer: this.getDeviceMismatchedUniformBuffer() };
+      case 'storageBuf':
+        return { buffer: this.getDeviceMismatchedStorageBuffer() };
       case 'filtSamp':
         return this.mismatchedDevice.createSampler({ minFilter: 'linear' });
       case 'nonFiltSamp':

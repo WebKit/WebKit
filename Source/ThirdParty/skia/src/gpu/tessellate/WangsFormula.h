@@ -12,7 +12,7 @@
 #include "include/core/SkMatrix.h"
 #include "include/core/SkPoint.h"
 #include "include/core/SkTypes.h"
-#include "include/private/base/SkFloatBits.h"
+#include "src/base/SkFloatBits.h"
 #include "src/base/SkUtils.h"
 #include "src/base/SkVx.h"
 
@@ -62,7 +62,7 @@ AI int nextlog2(float x) {
         return 0;
     }
 
-    uint32_t bits = (uint32_t)SkFloat2Bits(x);
+    uint32_t bits = SkFloat2Bits(x);
     static constexpr uint32_t kDigitsAfterBinaryPoint = std::numeric_limits<float>::digits - 1;
 
     // The constant is a significand of all 1s -- 0b0'00000000'111'1111111111'111111111. So, if

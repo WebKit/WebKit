@@ -20,7 +20,8 @@
 
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
-#include "api/call/call_factory_interface.h"
+#include "api/audio/audio_device.h"
+#include "api/enable_media_with_defaults.h"
 #include "api/field_trials_view.h"
 #include "api/jsep.h"
 #include "api/media_stream_interface.h"
@@ -40,8 +41,6 @@
 #include "media/base/media_engine.h"
 #include "media/base/stream_params.h"
 #include "media/engine/webrtc_media_engine.h"
-#include "media/engine/webrtc_media_engine_defaults.h"
-#include "modules/audio_device/include/audio_device.h"
 #include "p2p/base/p2p_constants.h"
 #include "p2p/base/port_allocator.h"
 #include "p2p/base/transport_info.h"
@@ -84,13 +83,8 @@ PeerConnectionFactoryDependencies CreatePeerConnectionFactoryDependencies() {
   dependencies.signaling_thread = rtc::Thread::Current();
   dependencies.task_queue_factory = CreateDefaultTaskQueueFactory();
   dependencies.trials = std::make_unique<FieldTrialBasedConfig>();
-  cricket::MediaEngineDependencies media_deps;
-  media_deps.task_queue_factory = dependencies.task_queue_factory.get();
-  media_deps.adm = FakeAudioCaptureModule::Create();
-  media_deps.trials = dependencies.trials.get();
-  SetMediaEngineDefaults(&media_deps);
-  dependencies.media_engine = cricket::CreateMediaEngine(std::move(media_deps));
-  dependencies.call_factory = CreateCallFactory();
+  dependencies.adm = FakeAudioCaptureModule::Create();
+  EnableMediaWithDefaults(dependencies);
   dependencies.sctp_factory = std::make_unique<FakeSctpTransportFactory>();
   return dependencies;
 }

@@ -73,6 +73,10 @@ sub vpx_config($) {
 }
 
 sub specialize {
+  if (@_ <= 1) {
+    die "'specialize' must be called with a function name and at least one ",
+        "architecture ('C' is implied): \n@_\n";
+  }
   my $fn=$_[0];
   shift;
   foreach my $opt (@_) {
@@ -487,7 +491,7 @@ if ($opts{arch} eq 'x86') {
   @ALL_ARCHS = filter(qw/neon_asm neon/);
   arm;
 } elsif ($opts{arch} eq 'armv8' || $opts{arch} eq 'arm64' ) {
-  @ALL_ARCHS = filter(qw/neon neon_dotprod neon_i8mm/);
+  @ALL_ARCHS = filter(qw/neon neon_dotprod neon_i8mm sve sve2/);
   @REQUIRES = filter(qw/neon/);
   &require(@REQUIRES);
   arm;

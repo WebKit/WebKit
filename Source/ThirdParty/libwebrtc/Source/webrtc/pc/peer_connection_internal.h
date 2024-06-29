@@ -18,9 +18,9 @@
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/audio/audio_device.h"
 #include "api/peer_connection_interface.h"
 #include "call/call.h"
-#include "modules/audio_device/include/audio_device.h"
 #include "pc/jsep_transport_controller.h"
 #include "pc/peer_connection_message_handler.h"
 #include "pc/rtp_transceiver.h"

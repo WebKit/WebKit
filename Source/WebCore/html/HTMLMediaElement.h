@@ -233,6 +233,8 @@ public:
 
     MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const final;
 
+    void isActiveNowPlayingSessionChanged() final;
+
 // DOM API
 // error state
     WEBCORE_EXPORT MediaError* error() const;
@@ -311,7 +313,7 @@ public:
 #endif
 
     using HTMLMediaElementEnums::BufferingPolicy;
-    void setBufferingPolicy(BufferingPolicy);
+    WEBCORE_EXPORT void setBufferingPolicy(BufferingPolicy);
     WEBCORE_EXPORT BufferingPolicy bufferingPolicy() const;
     WEBCORE_EXPORT void purgeBufferedDataIfPossible();
 
@@ -440,6 +442,8 @@ public:
     void videoTrackSelectedChanged(VideoTrack&) final;
     void willRemoveVideoTrack(VideoTrack&) final;
 
+    void setTextTrackRepresentataionBounds(const IntRect&);
+    void setRequiresTextTrackRepresentation(bool);
     bool requiresTextTrackRepresentation() const;
     void setTextTrackRepresentation(TextTrackRepresentation*);
     void syncTextTrackBounds();
@@ -461,10 +465,14 @@ public:
     void playbackTargetPickerWasDismissed() override;
     bool hasWirelessPlaybackTargetAlternative() const;
     bool isWirelessPlaybackTargetDisabled() const;
+    void isWirelessPlaybackTargetDisabledChanged();
+    bool hasTargetAvailabilityListeners();
+    bool hasEnabledTargetAvailabilityListeners();
 #endif
 
     bool isPlayingToWirelessPlaybackTarget() const override { return m_isPlayingToWirelessTarget; };
     void setIsPlayingToWirelessTarget(bool);
+
     bool webkitCurrentPlaybackTargetIsWireless() const;
 
     void setPlayingOnSecondScreen(bool value);
@@ -730,6 +738,7 @@ protected:
     void mediaPlayerTimeChanged() final;
     void mediaPlayerVolumeChanged() final;
     void mediaPlayerMuteChanged() final;
+    void mediaPlayerSeeked(const MediaTime&) final;
     void mediaPlayerDurationChanged() final;
     void mediaPlayerRateChanged() final;
     void mediaPlayerPlaybackStateChanged() final;
@@ -861,6 +870,8 @@ private:
 
     FloatSize mediaPlayerVideoLayerSize() const final { return videoLayerSize(); }
     void mediaPlayerVideoLayerSizeDidChange(const FloatSize& size) final { m_videoLayerSize = size; }
+
+    MediaPlayerClientIdentifier mediaPlayerClientIdentifier() const final { return identifier(); }
 
     void pendingActionTimerFired();
     void progressEventTimerFired();
@@ -1257,6 +1268,7 @@ private:
     bool m_shouldVideoPlaybackRequireUserGesture : 1;
     bool m_volumeLocked : 1;
     bool m_cachedIsInVisibilityAdjustmentSubtree : 1 { false };
+    bool m_requiresTextTrackRepresentation : 1 { false };
 
     enum class ControlsState : uint8_t { None, Initializing, Ready, PartiallyDeinitialized };
     friend String convertEnumerationToString(HTMLMediaElement::ControlsState enumerationValue);
@@ -1339,6 +1351,7 @@ private:
 
     std::optional<RemotePlaybackConfiguration> m_remotePlaybackConfiguration;
 
+    bool m_wirelessPlaybackTargetDisabled { false };
     bool m_isPlayingToWirelessTarget { false };
     bool m_playingOnSecondScreen { false };
     bool m_removedBehaviorRestrictionsAfterFirstUserGesture { false };
@@ -1386,6 +1399,9 @@ private:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     Ref<RemotePlayback> m_remote;
 #endif
+
+    bool m_isChangingReadyStateWhileSuspended { false };
+    Atomic<unsigned> m_remainingReadyStateChangedAttempts;
 };
 
 String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);

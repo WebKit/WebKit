@@ -280,41 +280,34 @@ public:
     LayoutUnit minPreferredLogicalWidth() const override;
     LayoutUnit maxPreferredLogicalWidth() const override;
 
-    LayoutUnit overridingLogicalWidth() const;
-    LayoutUnit overridingLogicalHeight() const;
-    bool hasOverridingLogicalHeight() const;
-    bool hasOverridingLogicalWidth() const;
+    std::optional<LayoutUnit> overridingLogicalWidth() const;
+    std::optional<LayoutUnit> overridingLogicalHeight() const;
     void setOverridingLogicalHeight(LayoutUnit);
     void setOverridingLogicalWidth(LayoutUnit);
     void clearOverridingContentSize();
     void clearOverridingLogicalHeight();
     void clearOverridingLogicalWidth();
 
-    inline LayoutUnit overridingContentLogicalWidth() const;
-    inline LayoutUnit overridingContentLogicalHeight() const;
+    inline LayoutUnit overridingContentLogicalWidth(LayoutUnit overridingLogicalWidth) const;
+    inline LayoutUnit overridingContentLogicalHeight(LayoutUnit overridingLogicalHeight) const;
 
-    std::optional<LayoutUnit> overridingContainingBlockContentWidth() const override;
-    std::optional<LayoutUnit> overridingContainingBlockContentHeight() const override;
-    bool hasOverridingContainingBlockContentWidth() const override;
-    bool hasOverridingContainingBlockContentHeight() const override;
-    std::optional<LayoutUnit> overridingContainingBlockContentLogicalWidth() const;
-    std::optional<LayoutUnit> overridingContainingBlockContentLogicalHeight() const;
-    bool hasOverridingContainingBlockContentLogicalWidth() const;
-    bool hasOverridingContainingBlockContentLogicalHeight() const;
-    void setOverridingContainingBlockContentLogicalWidth(std::optional<LayoutUnit>);
-    void setOverridingContainingBlockContentLogicalHeight(std::optional<LayoutUnit>);
+    using ContainingBlockOverrideValue = std::optional<LayoutUnit>;
+    std::optional<ContainingBlockOverrideValue> overridingContainingBlockContentWidth(WritingMode) const;
+    std::optional<ContainingBlockOverrideValue> overridingContainingBlockContentHeight(WritingMode) const;
+    std::optional<ContainingBlockOverrideValue> overridingContainingBlockContentLogicalWidth() const;
+    std::optional<ContainingBlockOverrideValue> overridingContainingBlockContentLogicalHeight() const;
+    void setOverridingContainingBlockContentLogicalWidth(ContainingBlockOverrideValue);
+    void setOverridingContainingBlockContentLogicalHeight(ContainingBlockOverrideValue);
     void clearOverridingContainingBlockContentSize();
     void clearOverridingContainingBlockContentLogicalHeight();
 
     // These are currently only used by Flexbox code. In some cases we must layout flex items with a different main size
     // (the size in the main direction) than the one specified by the item in order to compute the value of flex basis, i.e.,
     // the initial main size of the flex item before the free space is distributed.
-    Length overridingLogicalHeightLength() const;
-    Length overridingLogicalWidthLength() const;
+    std::optional<Length> overridingLogicalHeightLength() const;
+    std::optional<Length> overridingLogicalWidthLength() const;
     void setOverridingLogicalHeightLength(const Length&);
     void setOverridingLogicalWidthLength(const Length&);
-    bool hasOverridingLogicalHeightLength() const;
-    bool hasOverridingLogicalWidthLength() const;
     void clearOverridingLogicalHeightLength();
     void clearOverridingLogicalWidthLength();
 
@@ -615,11 +608,6 @@ public:
         return nullptr;
     }
 
-    ShapeOutsideInfo* shapeOutsideInfo() const
-    {
-        return ShapeOutsideInfo::isEnabledFor(*this) ? ShapeOutsideInfo::info(*this) : nullptr;
-    }
-
     void markShapeOutsideDependentsForLayout()
     {
         if (isFloating())
@@ -650,6 +638,8 @@ public:
     void updateFloatPainterAfterSelfPaintingLayerChange();
 
     bool computeHasTransformRelatedProperty(const RenderStyle&) const;
+
+    ShapeOutsideInfo* shapeOutsideInfo() const;
 
 protected:
     RenderBox(Type, Element&, RenderStyle&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });
@@ -776,6 +766,9 @@ private:
     void clipContentForBorderRadius(GraphicsContext&, const LayoutPoint&, float);
 
     void addLayoutOverflow(const LayoutRect&, const LayoutRect& flippedClientRect);
+
+    ShapeOutsideInfo& ensureShapeOutsideInfo();
+    void removeShapeOutsideInfo();
 
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).

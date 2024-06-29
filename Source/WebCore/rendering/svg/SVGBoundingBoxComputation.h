@@ -84,7 +84,7 @@ private:
 
     void adjustBoxForClippingAndEffects(const DecorationOptions&, FloatRect& box, const DecorationOptions& optionsToCheckForFilters = filterBoundingBoxDecoration) const;
 
-    const RenderLayerModelObject& m_renderer;
+    SingleThreadWeakRef<const RenderLayerModelObject> m_renderer;
 };
 
 } // namespace WebCore

@@ -91,7 +91,7 @@ int WebKitGetLastLineBreakInBuffer(UChar *characters, int position, int length)
     unsigned lastBreakPos = position;
     unsigned breakPos = 0;
     CachedLineBreakIteratorFactory lineBreakIteratorFactory(StringView { std::span(characters, length) });
-    while (static_cast<int>(breakPos = nextBreakablePosition(lineBreakIteratorFactory, breakPos)) < position)
+    while (static_cast<int>(breakPos = BreakLines::nextBreakablePosition(lineBreakIteratorFactory, breakPos)) < position)
         lastBreakPos = breakPos++;
     return static_cast<int>(lastBreakPos) < position ? lastBreakPos : INT_MAX;
 }

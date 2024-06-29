@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include "APIPageConfiguration.h"
 #include "EditingRange.h"
 #include "RendererBufferFormat.h"
 #include "UserMessage.h"
@@ -48,7 +47,6 @@ namespace WebKit {
 class WebKitWebResourceLoadManager;
 }
 
-void webkitWebViewCreatePage(WebKitWebView*, Ref<API::PageConfiguration>&&);
 WebKit::WebPageProxy& webkitWebViewGetPage(WebKitWebView*);
 void webkitWebViewWillStartLoad(WebKitWebView*);
 void webkitWebViewLoadChanged(WebKitWebView*, WebKitLoadEvent);
@@ -58,7 +56,7 @@ void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView*, const char* failingURI
 void webkitWebViewGetLoadDecisionForIcon(WebKitWebView*, const WebCore::LinkIcon&, Function<void(bool)>&&);
 void webkitWebViewSetIcon(WebKitWebView*, const WebCore::LinkIcon&, API::Data&);
 #endif
-RefPtr<WebKit::WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView*, const WebCore::WindowFeatures&, WebKitNavigationAction*);
+RefPtr<WebKit::WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView*, Ref<API::PageConfiguration>&&, WebCore::WindowFeatures&&, WebKitNavigationAction*);
 void webkitWebViewReadyToShowPage(WebKitWebView*);
 void webkitWebViewRunAsModal(WebKitWebView*);
 void webkitWebViewClosePage(WebKitWebView*);

@@ -14,6 +14,7 @@
 #include "aom_dsp/aom_dsp_common.h"
 #include "aom_mem/aom_mem.h"
 #include "aom_ports/mem.h"
+#include "config/aom_dsp_rtcd.h"
 
 void aom_highbd_quantize_b_sse2(const tran_low_t *coeff_ptr, intptr_t count,
                                 const int16_t *zbin_ptr,

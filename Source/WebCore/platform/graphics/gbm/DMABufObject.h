@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2022 Metrological Group B.V.
- * Copyright (C) 2022 Igalia S.L.
+ * Copyright (C) 2022-2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,20 +39,17 @@
 
 namespace WebCore {
 
-struct DMABufObject {
+class DMABufObject {
     WTF_MAKE_NONCOPYABLE(DMABufObject);
 
-    DMABufObject(uintptr_t handle)
+public:
+    DMABufObject(DMABufObject&&) = default;
+
+    explicit DMABufObject(intptr_t handle)
         : handle(handle)
     { }
 
-    ~DMABufObject() = default;
-
-    DMABufObject(DMABufObject&&) = default;
     DMABufObject& operator=(DMABufObject&&) = default;
-
-    template<class Encoder> void encode(Encoder&) &&;
-    template<class Decoder> static std::optional<DMABufObject> decode(Decoder&);
 
     uintptr_t handle { 0 };
     DMABufFormat format { };
@@ -65,74 +62,26 @@ struct DMABufObject {
     std::array<uint32_t, DMABufFormat::c_maxPlanes> stride { 0, 0, 0, 0 };
     std::array<bool, DMABufFormat::c_maxPlanes> modifierPresent { false, false, false, false };
     std::array<uint64_t, DMABufFormat::c_maxPlanes> modifierValue { 0, 0, 0, 0 };
+
+private:
+    explicit DMABufObject(uintptr_t handle, DMABufFormat format, DMABufColorSpace colorSpace, uint32_t width, uint32_t height,
+        DMABufReleaseFlag releaseFlag, std::array<UnixFileDescriptor, DMABufFormat::c_maxPlanes>&& fd,
+        std::array<size_t, DMABufFormat::c_maxPlanes>&& offset, std::array<uint32_t, DMABufFormat::c_maxPlanes>&& stride,
+        std::array<bool, DMABufFormat::c_maxPlanes>&& modifierPresent, std::array<uint64_t, DMABufFormat::c_maxPlanes>&& modifierValue)
+            : handle(handle)
+            , format(format)
+            , colorSpace(colorSpace)
+            , width(width)
+            , height(height)
+            , releaseFlag(WTFMove(releaseFlag))
+            , fd(WTFMove(fd))
+            , offset(WTFMove(offset))
+            , stride(WTFMove(stride))
+            , modifierPresent(WTFMove(modifierPresent))
+            , modifierValue(WTFMove(modifierValue))
+    { }
+
+    friend struct IPC::ArgumentCoder<DMABufObject, void>;
 };
-
-template<class Encoder>
-void DMABufObject::encode(Encoder& encoder) &&
-{
-    encoder << handle << uint32_t(format.fourcc) << uint32_t(colorSpace) << width << height
-        << WTFMove(releaseFlag) << WTFMove(fd) << offset << stride << modifierPresent << modifierValue;
-}
-
-template<class Decoder>
-std::optional<DMABufObject> DMABufObject::decode(Decoder& decoder)
-{
-    auto handle = decoder.template decode<uintptr_t>();
-    if (!handle)
-        return std::nullopt;
-
-    auto fourcc = decoder.template decode<uint32_t>();
-    if (!fourcc)
-        return std::nullopt;
-
-    auto colorSpace = decoder.template decode<uint32_t>();
-    if (!colorSpace)
-        return std::nullopt;
-
-    auto width = decoder.template decode<uint32_t>();
-    if (!width)
-        return std::nullopt;
-
-    auto height = decoder.template decode<uint32_t>();
-    if (!height)
-        return std::nullopt;
-
-    auto releaseFlag = decoder.template decode<DMABufReleaseFlag>();
-    if (!releaseFlag)
-        return std::nullopt;
-
-    auto fd = decoder.template decode<std::array<UnixFileDescriptor, DMABufFormat::c_maxPlanes>>();
-    if (!fd)
-        return std::nullopt;
-
-    auto offset = decoder.template decode<std::array<size_t, DMABufFormat::c_maxPlanes>>();
-    if (!offset)
-        return std::nullopt;
-
-    auto stride = decoder.template decode<std::array<uint32_t, DMABufFormat::c_maxPlanes>>();
-    if (!stride)
-        return std::nullopt;
-
-    auto modifierPresent = decoder.template decode<std::array<bool, DMABufFormat::c_maxPlanes>>();
-    if (!modifierPresent)
-        return std::nullopt;
-
-    auto modifierValue = decoder.template decode<std::array<uint64_t, DMABufFormat::c_maxPlanes>>();
-    if (!modifierValue)
-        return std::nullopt;
-
-    DMABufObject dmabufObject(*handle);
-    dmabufObject.format = DMABufFormat::create(*fourcc);
-    dmabufObject.colorSpace = DMABufColorSpace { *colorSpace };
-    dmabufObject.width = *width;
-    dmabufObject.height = *height;
-    dmabufObject.releaseFlag = WTFMove(*releaseFlag);
-    dmabufObject.fd = WTFMove(*fd);
-    dmabufObject.offset = WTFMove(*offset);
-    dmabufObject.stride = WTFMove(*stride);
-    dmabufObject.modifierPresent = WTFMove(*modifierPresent);
-    dmabufObject.modifierValue = WTFMove(*modifierValue);
-    return dmabufObject;
-}
 
 } // namespace WebCore

@@ -9,15 +9,16 @@
 
         function startTest() {
             var video = document.querySelector('video');
-            video.addEventListener('playing', onplaying);
+            video.addEventListener('timeupdate', onplaybackstarted);
             video.addEventListener('pause', onpause);
             video.addEventListener('webkitcurrentplaybacktargetiswirelesschanged', oncurrentplaybacktargetiswirelesschanged);
             window.location = 'callback:loaded';
         }
 
-        function onplaying(event) {
+        function onplaybackstarted(event) {
             var video = event.target;
-            window.location = 'callback:playing';
+            if (video.currentTime > 0 && !video.paused)
+                window.location = 'callback:playing';
         }
 
         function onpause(event) {

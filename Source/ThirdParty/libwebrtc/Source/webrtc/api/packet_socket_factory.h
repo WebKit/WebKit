@@ -16,9 +16,7 @@
 #include <vector>
 
 #include "api/async_dns_resolver.h"
-#include "api/wrapping_async_dns_resolver.h"
 #include "rtc_base/async_packet_socket.h"
-#include "rtc_base/proxy_info.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
@@ -68,30 +66,10 @@ class RTC_EXPORT PacketSocketFactory {
   virtual AsyncPacketSocket* CreateClientTcpSocket(
       const SocketAddress& local_address,
       const SocketAddress& remote_address,
-      const ProxyInfo& proxy_info,
-      const std::string& user_agent,
       const PacketSocketTcpOptions& tcp_options) = 0;
 
-  // The AsyncResolverInterface is deprecated; users are encouraged
-  // to switch to the AsyncDnsResolverInterface.
-  // TODO(bugs.webrtc.org/12598): Remove once all downstream users
-  // are converted.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  [[deprecated]] virtual AsyncResolverInterface* CreateAsyncResolver() {
-    // Default implementation, so that downstream users can remove this
-    // immediately after changing to CreateAsyncDnsResolver
-    RTC_DCHECK_NOTREACHED();
-    return nullptr;
-  }
-
   virtual std::unique_ptr<webrtc::AsyncDnsResolverInterface>
-  CreateAsyncDnsResolver() {
-    // Default implementation, to aid in transition to AsyncDnsResolverInterface
-    return std::make_unique<webrtc::WrappingAsyncDnsResolver>(
-        CreateAsyncResolver());
-  }
-#pragma clang diagnostic pop
+  CreateAsyncDnsResolver() = 0;
 
  private:
   PacketSocketFactory(const PacketSocketFactory&) = delete;

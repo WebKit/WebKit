@@ -96,6 +96,7 @@ public:
     void append(const WriteBarrierStructureID&);
     void appendHidden(const WriteBarrierStructureID&);
     template<typename Iterator> void append(Iterator begin , Iterator end);
+    ALWAYS_INLINE void appendValues(std::span<const WriteBarrier<Unknown, RawValueTraits<Unknown>>>);
     ALWAYS_INLINE void appendValues(const WriteBarrierBase<Unknown, RawValueTraits<Unknown>>*, size_t count);
     ALWAYS_INLINE void appendValuesHidden(const WriteBarrierBase<Unknown, RawValueTraits<Unknown>>*, size_t count);
 

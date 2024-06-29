@@ -86,6 +86,11 @@ void PlatformXRSystemProxy::shutDownTrackingAndRendering()
     m_page.send(Messages::PlatformXRSystem::ShutDownTrackingAndRendering());
 }
 
+void PlatformXRSystemProxy::didCompleteShutdownTriggeredBySystem()
+{
+    m_page.send(Messages::PlatformXRSystem::DidCompleteShutdownTriggeredBySystem());
+}
+
 void PlatformXRSystemProxy::requestFrame(PlatformXR::Device::RequestFrameCallback&& callback)
 {
     m_page.sendWithAsyncReply(Messages::PlatformXRSystem::RequestFrame(), WTFMove(callback));

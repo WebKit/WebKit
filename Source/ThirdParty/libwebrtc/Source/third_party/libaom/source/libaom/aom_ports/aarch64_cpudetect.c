@@ -9,7 +9,11 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include "config/aom_config.h"
+
 #include "arm_cpudetect.h"
+
+#include "aom_ports/arm.h"
 
 #if defined(__APPLE__)
 #include <sys/sysctl.h>
@@ -104,12 +108,18 @@ static int arm_get_cpu_caps(void) {
 #define AOM_AARCH64_HWCAP_CRC32 (1 << 7)
 #define AOM_AARCH64_HWCAP_ASIMDDP (1 << 20)
 #define AOM_AARCH64_HWCAP_SVE (1 << 22)
+#define AOM_AARCH64_HWCAP2_SVE2 (1 << 1)
 #define AOM_AARCH64_HWCAP2_I8MM (1 << 13)
 
 static int arm_get_cpu_caps(void) {
   int flags = 0;
+#if HAVE_ARM_CRC32 || HAVE_NEON_DOTPROD || HAVE_SVE
   unsigned long hwcap = getauxval(AT_HWCAP);
+#endif
+#if HAVE_NEON_I8MM || HAVE_SVE2
   unsigned long hwcap2 = getauxval(AT_HWCAP2);
+#endif
+
 #if HAVE_NEON
   flags |= HAS_NEON;  // Neon is mandatory in Armv8.0-A.
 #endif  // HAVE_NEON
@@ -125,6 +135,9 @@ static int arm_get_cpu_caps(void) {
 #if HAVE_SVE
   if (hwcap & AOM_AARCH64_HWCAP_SVE) flags |= HAS_SVE;
 #endif  // HAVE_SVE
+#if HAVE_SVE2
+  if (hwcap2 & AOM_AARCH64_HWCAP2_SVE2) flags |= HAS_SVE2;
+#endif  // HAVE_SVE2
   return flags;
 }
 
@@ -183,6 +196,9 @@ int aom_arm_cpu_caps(void) {
   // Restrict flags: SVE assumes that FEAT_{DotProd,I8MM} are available.
   if (!(flags & HAS_NEON_DOTPROD)) flags &= ~HAS_SVE;
   if (!(flags & HAS_NEON_I8MM)) flags &= ~HAS_SVE;
+
+  // Restrict flags: SVE2 assumes that FEAT_SVE is available.
+  if (!(flags & HAS_SVE)) flags &= ~HAS_SVE2;
 
   return flags;
 }

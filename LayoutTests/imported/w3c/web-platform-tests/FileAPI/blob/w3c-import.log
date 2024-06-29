@@ -15,11 +15,14 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-array-buffer.any.js
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-bytes.any.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-constructor-dom.window.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-constructor-endings.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-constructor.any.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-in-worker.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-slice-overflow.any.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-slice.any.js
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-stream-byob-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-stream-sync-xhr-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-stream.any.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-text.any.js

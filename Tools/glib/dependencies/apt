@@ -111,6 +111,7 @@ PACKAGES=(
     libssl-dev
     libtool-bin
     libxml-libxml-perl
+    meson
     nasm
     python3-setuptools
     uuid-dev

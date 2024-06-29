@@ -78,7 +78,7 @@ public:
 
     ImplementationClass& wrapped() const { return m_wrapped; }
     Ref<ImplementationClass> protectedWrapped() const { return m_wrapped; }
-    static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSDOMWrapper, m_wrapped); }
+    static constexpr ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSDOMWrapper, m_wrapped); }
     constexpr static bool hasCustomPtrTraits() { return !std::is_same_v<PtrTraits, RawPtrTraits<ImplementationClass>>; };
     
 protected:

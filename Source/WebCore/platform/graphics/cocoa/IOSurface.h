@@ -46,7 +46,6 @@ namespace WebCore {
 
 class IOSurfacePool;
 
-enum class PixelFormat : uint8_t;
 enum class RenderingPurpose : uint8_t;
 enum class SetNonVolatileResult : uint8_t;
 
@@ -79,9 +78,9 @@ public:
         RGB10,
         RGB10A8,
 #endif
+        RGBA, // NOLINT
+        RGBX, // NOLINT
     };
-
-    WEBCORE_EXPORT static IOSurface::Format formatForPixelFormat(WebCore::PixelFormat);
 
     enum class AccessMode : uint32_t {
         ReadWrite = 0,

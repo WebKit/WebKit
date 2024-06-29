@@ -8,14 +8,14 @@
 </head>
 <body>
 <script>
-    const firstPartyOrigin = "http://localhost:8000";
+    const firstPartyOrigin = "https://localhost:8443";
     const firstPartyBaseUrl = firstPartyOrigin + "/resourceLoadStatistics/resources";
     const firstPartyCookieName = "firstPartyCookie";
     const thirdPartyCookieName = "thirdPartyCookie";
     const cookieValue = "value";
     const subPathToSetFirstPartyCookie = "/set-cookie.py?name=" + firstPartyCookieName + "&value=" + cookieValue;
     const returnUrl = firstPartyOrigin + "/resourceLoadStatistics/grandfathering.html";
-    const thirdPartyOrigin = "http://127.0.0.1:8000";
+    const thirdPartyOrigin = "https://127.0.0.1:8443";
     const thirdPartyBaseUrl = thirdPartyOrigin + "/resourceLoadStatistics/resources";
     const subPathToSetThirdPartyCookie = "/set-cookie.py?name=" + thirdPartyCookieName + "&value=" + cookieValue;
 

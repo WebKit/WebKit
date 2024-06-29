@@ -110,7 +110,7 @@ const uint16_t IntelGen11[] = {
     0x8A50, 0x8A51, 0x8A52, 0x8A53,          // icl_gt2
 
     // Elkhart Lake
-    0x4500, 0x4541, 0x4551, 0x4555, 0x4557, 0x4571,
+    0x4541, 0x4551, 0x4555, 0x4557, 0x4570, 0x4571,
 
     // Jasper Lake
     0x4E51, 0x4E55, 0x4E57, 0x4E61, 0x4E71};
@@ -121,23 +121,33 @@ const uint16_t IntelGen12[] = {
     0x4C8A, 0x4C8B, 0x4C90, 0x4C9A,  // rkl_gt1
 
     // Alder Lake
-    0x4683, 0x4693,                                                          // adl_gt05
-    0x4680, 0x4681, 0x4682, 0x4688, 0x4689, 0x4690, 0x4691, 0x4692,          // adl_gt1
+    0x468B,                                                                  // adl_gt05
+    0x4680, 0x4682, 0x4688, 0x468A, 0x4690, 0x4692, 0x4693,                  // adl_gt1
     0x4626, 0x4628, 0x462A, 0x46A0, 0x46A1, 0x46A2, 0x46A3, 0x46A6, 0x46A8,  // adl_gt2
     0x46AA, 0x46B0, 0x46B1, 0x46B2, 0x46B3, 0x46C0, 0x46C1, 0x46C2, 0x46C3,  // adl_gt2
-    0x46D0, 0x46D1, 0x46D2,                                                  // adl_n
+    0x46D0, 0x46D1, 0x46D2, 0x46D3, 0x46D4,                                  // adl_n
 
     // Tiger Lake
     0x9A60, 0x9A68, 0x9A70,                                          // tgl_gt1
     0x9A40, 0x9A49, 0x9A59, 0x9A78, 0x9AC0, 0x9AC9, 0x9AD9, 0x9AF8,  // tgl_gt2
 
-    // Raptop Lake
-    0xA780, 0xA781, 0xA782, 0xA783, 0xA788, 0xA789,  // rpl
-    0xA720, 0xA721, 0xA7A0, 0xA7A1, 0xA7A8, 0xA7A9,  // rpl_p
+    // Raptor Lake
+    0xA780, 0xA781, 0xA782, 0xA783, 0xA788, 0xA789, 0xA78A, 0xA78B,                  // rpl
+    0xA720, 0xA721, 0xA7A0, 0xA7A1, 0xA7A8, 0xA7A9, 0xA7AA, 0xA7AB, 0xA7AC, 0xA7AD,  // rpl_p
 
     // DG1
     0x4905, 0x4906, 0x4907, 0x4908, 0x4909};
 
+// The following is used to parse generic Vulkan driver versions.
+angle::VersionTriple ParseGenericVulkanDriverVersion(uint32_t driverVersion)
+{
+    // Generic Vulkan driver versions are built using the following format:
+    // (Major << 22) | (Minor << 12) | (Patch)
+    constexpr uint32_t kMinorVersionMask = angle::BitMask<uint32_t>(10);
+    constexpr uint32_t kPatchVersionMask = angle::BitMask<uint32_t>(12);
+    return angle::VersionTriple(driverVersion >> 22, (driverVersion >> 12) & kMinorVersionMask,
+                                driverVersion & kPatchVersionMask);
+}
 }  // anonymous namespace
 
 IntelDriverVersion::IntelDriverVersion(uint32_t buildNumber) : mBuildNumber(buildNumber) {}
@@ -305,14 +315,14 @@ IntelDriverVersion ParseIntelWindowsDriverVersion(uint32_t driverVersion)
 #endif
 }
 
-ARMDriverVersion ParseARMDriverVersion(uint32_t driverVersion)
+ARMDriverVersion ParseARMVulkanDriverVersion(uint32_t driverVersion)
 {
-    // ARM driver versions are built with the following macro:
-    // ((((uint32_t)(major)) << 22) | (((uint32_t)(minor)) << 12) | ((uint32_t)(patch)))
-    constexpr uint32_t kMinorVersionMask = angle::BitMask<uint32_t>(10);
-    constexpr uint32_t kPatchMask        = angle::BitMask<uint32_t>(12);
-    return ARMDriverVersion(driverVersion >> 22, (driverVersion >> 12) & kMinorVersionMask,
-                            driverVersion & kPatchMask);
+    return ParseGenericVulkanDriverVersion(driverVersion);
+}
+
+QualcommDriverVersion ParseQualcommVulkanDriverVersion(uint32_t driverVersion)
+{
+    return ParseGenericVulkanDriverVersion(driverVersion);
 }
 
 int GetAndroidSDKVersion()

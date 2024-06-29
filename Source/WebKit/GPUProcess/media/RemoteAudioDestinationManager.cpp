@@ -142,7 +142,7 @@ private:
         static_assert(std::atomic<UInt32>::is_always_lock_free, "Shared memory atomic usage assumes lock free primitives are used");
         if (m_frameCount) {
             RELEASE_ASSERT(m_frameCount->size() == sizeof(std::atomic<uint32_t>));
-            WTF::atomicExchangeAdd(static_cast<uint32_t*>(m_frameCount->data()), numberOfFrames);
+            WTF::atomicExchangeAdd(reinterpret_cast<uint32_t*>(m_frameCount->mutableSpan().data()), numberOfFrames);
         }
     }
 

@@ -186,9 +186,10 @@ void threadMain(uintptr_t threadIndex)
                     iso_allocate_common_primitive_with_alignment(
                         targetSize,
                         static_cast<uintptr_t>(1) << uniform_int_distribution<uintptr_t>(
-                            0, maxMemalignShift)(randomGenerator)));
+                            0, maxMemalignShift)(randomGenerator),
+                            pas_non_compact_allocation_mode));
             } else
-                ptr = static_cast<char*>(iso_allocate_common_primitive(targetSize));
+                ptr = static_cast<char*>(iso_allocate_common_primitive(targetSize, pas_non_compact_allocation_mode));
             
             for (uintptr_t i = targetSize; i--;)
                 ptr[i] = static_cast<char>(i + 42);

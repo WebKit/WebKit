@@ -480,7 +480,7 @@ struct ColorCount {
   int count;
 };
 
-int color_count_comp(const void *c1, const void *c2) {
+static int color_count_comp(const void *c1, const void *c2) {
   const struct ColorCount *color_count1 = (const struct ColorCount *)c1;
   const struct ColorCount *color_count2 = (const struct ColorCount *)c2;
   if (color_count1->count > color_count2->count) return -1;

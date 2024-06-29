@@ -29,7 +29,6 @@
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextControllerInternal.h"
-#import "WKConnectionInternal.h"
 #import "WKContentRuleListInternal.h"
 #import "WKContentRuleListStoreInternal.h"
 #import "WKContentWorldInternal.h"
@@ -115,7 +114,9 @@
 #import "_WKWebExtensionMessagePortInternal.h"
 #endif
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 static const size_t minimumObjectAlignment = alignof(std::aligned_storage<std::numeric_limits<size_t>::max()>::type);
+ALLOW_DEPRECATED_DECLARATIONS_END
 static_assert(minimumObjectAlignment >= alignof(void*), "Objects should always be at least pointer-aligned.");
 static const size_t maximumExtraSpaceForAlignment = minimumObjectAlignment - alignof(void*);
 
@@ -199,14 +200,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     case Type::BundlePage:
         wrapper = [WKWebProcessPlugInBrowserContextController alloc];
-        break;
-
-    case Type::Connection:
-        // While not actually a WKObject instance, WKConnection uses allocateWKObject to allocate extra space
-        // instead of using ObjectStorage because the wrapped C++ object is a subclass of WebConnection.
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        wrapper = allocateWKObject([WKConnection class], size);
-ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 
     case Type::DebuggableInfo:

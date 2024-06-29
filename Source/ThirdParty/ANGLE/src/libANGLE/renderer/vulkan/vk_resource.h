@@ -11,6 +11,7 @@
 #define LIBANGLE_RENDERER_VULKAN_RESOURCEVK_H_
 
 #include "common/FixedQueue.h"
+#include "common/SimpleMutex.h"
 #include "libANGLE/HandleAllocator.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
@@ -198,7 +199,7 @@ class SharedGarbageList final : angle::NonCopyable
         }
         else
         {
-            std::unique_lock<std::mutex> enqueueLock(mMutex);
+            std::unique_lock<angle::SimpleMutex> enqueueLock(mMutex);
             if (garbage.hasResourceUseSubmitted(renderer))
             {
                 addGarbageLocked(mSubmittedQueue, std::move(garbage));
@@ -232,7 +233,7 @@ class SharedGarbageList final : angle::NonCopyable
     // Number of bytes destroyed is returned.
     void cleanupSubmittedGarbage(Renderer *renderer)
     {
-        std::unique_lock<std::mutex> lock(mSubmittedQueueDequeueMutex);
+        std::unique_lock<angle::SimpleMutex> lock(mSubmittedQueueDequeueMutex);
         VkDeviceSize bytesDestroyed = 0;
         while (!mSubmittedQueue.empty())
         {
@@ -256,7 +257,7 @@ class SharedGarbageList final : angle::NonCopyable
     // around is expected to be cheap in general, so lock contention is not expected.
     void cleanupUnsubmittedGarbage(Renderer *renderer)
     {
-        std::unique_lock<std::mutex> enqueueLock(mMutex);
+        std::unique_lock<angle::SimpleMutex> enqueueLock(mMutex);
         size_t count            = mUnsubmittedQueue.size();
         VkDeviceSize bytesMoved = 0;
         for (size_t i = 0; i < count; i++)
@@ -285,7 +286,7 @@ class SharedGarbageList final : angle::NonCopyable
         // temporary storage.
         if (queue.size() >= queue.capacity() - 1)
         {
-            std::unique_lock<std::mutex> dequeueLock(mSubmittedQueueDequeueMutex);
+            std::unique_lock<angle::SimpleMutex> dequeueLock(mSubmittedQueueDequeueMutex);
             size_t newCapacity = queue.capacity() << 1;
             queue.updateCapacity(newCapacity);
         }
@@ -295,9 +296,9 @@ class SharedGarbageList final : angle::NonCopyable
     static constexpr size_t kInitialQueueCapacity = 64;
     // Protects both enqueue and dequeue of mUnsubmittedQueue, as well as enqueue of
     // mSubmittedQueue.
-    std::mutex mMutex;
+    angle::SimpleMutex mMutex;
     // Protect dequeue of mSubmittedQueue, which is expected to be more expensive.
-    std::mutex mSubmittedQueueDequeueMutex;
+    angle::SimpleMutex mSubmittedQueueDequeueMutex;
     // Holds garbage that all of use has been submitted to renderer.
     angle::FixedQueue<T> mSubmittedQueue;
     // Holds garbage with at least one of the queueSerials has not yet submitted to renderer.

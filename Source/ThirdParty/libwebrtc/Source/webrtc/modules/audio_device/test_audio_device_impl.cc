@@ -19,7 +19,6 @@
 #include "modules/audio_device/include/test_audio_device.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/task_queue.h"
 #include "rtc_base/task_utils/repeating_task.h"
 
 namespace webrtc {
@@ -59,11 +58,10 @@ TestAudioDevice::TestAudioDevice(
 }
 
 AudioDeviceGeneric::InitStatus TestAudioDevice::Init() {
-  task_queue_ =
-      std::make_unique<rtc::TaskQueue>(task_queue_factory_->CreateTaskQueue(
-          "TestAudioDeviceModuleImpl", TaskQueueFactory::Priority::NORMAL));
+  task_queue_ = task_queue_factory_->CreateTaskQueue(
+      "TestAudioDeviceModuleImpl", TaskQueueFactory::Priority::NORMAL);
 
-  RepeatingTaskHandle::Start(task_queue_->Get(), [this]() {
+  RepeatingTaskHandle::Start(task_queue_.get(), [this]() {
     ProcessAudio();
     return TimeDelta::Micros(process_interval_us_);
   });

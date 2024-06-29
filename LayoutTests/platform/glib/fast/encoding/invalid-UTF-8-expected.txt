@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,1) size 413x17
           text run at (0,1) width 413: "This tests the rendering of invalid UTF-8 sequences."
       RenderBlock {P} at (0,35) size 784x19
-        RenderText {#text} at (0,1) size 630x17
-          text run at (0,1) width 630: "The output should be: \"\x{442}??\x{442}\" (with black diamonds in place of question marks)."
+        RenderText {#text} at (0,1) size 628x17
+          text run at (0,1) width 628: "The output should be: \"\x{442}??\x{442}\" (with black diamonds in place of question marks)."
       RenderBlock {P} at (0,88) size 784x19
         RenderText {#text} at (0,1) size 50x17
           text run at (0,1) width 50: "\x{442}\x{FFFD}\x{FFFD}\x{442}"

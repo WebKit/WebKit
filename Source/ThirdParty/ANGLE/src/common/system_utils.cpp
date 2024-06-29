@@ -84,7 +84,7 @@ std::string GetEnvironmentVarOrUnCachedAndroidProperty(const char *variableName,
 // Look up a property and add it to the application's environment.
 // Adding to the env is a performance optimization, as getting properties is expensive.
 // This should only be used in non-Release paths, i.e. when using FrameCapture or DebugUtils.
-// It can cause race conditions in stress testing. See http://anglebug.com/6822
+// It can cause race conditions in stress testing. See http://anglebug.com/42265318
 std::string GetAndSetEnvironmentVarOrUnCachedAndroidProperty(const char *variableName,
                                                              const char *propertyName)
 {
@@ -243,7 +243,7 @@ std::string StripFilenameFromPath(const std::string &path)
 }
 
 #if defined(ANGLE_PLATFORM_APPLE)
-// https://anglebug.com/6479, similar to egl::GetCurrentThread() in libGLESv2/global_state.cpp
+// https://anglebug.com/42264979, similar to egl::GetCurrentThread() in libGLESv2/global_state.cpp
 uint64_t GetCurrentThreadUniqueId()
 {
     static std::atomic<uint64_t> globalThreadSerial;

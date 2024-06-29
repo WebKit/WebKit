@@ -23,6 +23,7 @@ rtc_library("audio_frame_operations") {
   ]
 
   deps = [
+    "../../api:array_view",
     "../../api/audio:audio_frame_api",
     "../../common_audio",
     "../../rtc_base:checks",

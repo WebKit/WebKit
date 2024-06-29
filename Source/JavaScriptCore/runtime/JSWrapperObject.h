@@ -51,8 +51,8 @@ public:
     JSValue internalValue() const;
     void setInternalValue(VM&, JSValue);
 
-    static ptrdiff_t internalValueOffset() { return offsetOfInternalField(static_cast<unsigned>(Field::WrappedValue)); }
-    static ptrdiff_t internalValueCellOffset()
+    static constexpr ptrdiff_t internalValueOffset() { return offsetOfInternalField(static_cast<unsigned>(Field::WrappedValue)); }
+    static constexpr ptrdiff_t internalValueCellOffset()
     {
 #if USE(JSVALUE64)
         return internalValueOffset();

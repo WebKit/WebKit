@@ -43,6 +43,9 @@ public:
     Statement::List& body() { return m_body; }
     std::optional<Continuing>& continuing() { return m_continuing; }
 
+    void setContainsSwitch() { m_containsSwitch = true; }
+    bool containsSwitch() const { return m_containsSwitch; }
+
 private:
     LoopStatement(SourceSpan span, Attribute::List&& attributes, Statement::List&& body, std::optional<Continuing>&& continuing)
         : Statement(span)
@@ -54,6 +57,8 @@ private:
     Attribute::List m_attributes;
     Statement::List m_body;
     std::optional<Continuing> m_continuing;
+
+    bool m_containsSwitch { false };
 };
 
 } // namespace WGSL::AST

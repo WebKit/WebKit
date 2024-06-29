@@ -122,6 +122,8 @@ public:
         Opus,
     };
 
+    using ConsumeFrameDataResult = std::variant<MediaTime, webm::Status>;
+
     class TrackData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -154,7 +156,8 @@ public:
 
         WebMParser& parser() const { return m_parser; }
 
-        virtual webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&)
+        using ConsumeFrameDataResult = WebMParser::ConsumeFrameDataResult;
+        virtual ConsumeFrameDataResult consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&)
         {
             ASSERT_NOT_REACHED();
             return webm::Status(webm::Status::kInvalidElementId);
@@ -221,7 +224,7 @@ public:
 
     private:
         ASCIILiteral logClassName() const { return "VideoTrackData"_s; }
-        webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&) final;
+        ConsumeFrameDataResult consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&) final;
         void resetCompletedFramesState() final;
         void processPendingMediaSamples(const MediaTime&);
         WTF::Deque<MediaSamplesBlock::MediaSampleItem> m_pendingMediaSamples;
@@ -244,7 +247,7 @@ public:
         ~AudioTrackData();
 
     private:
-        webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&) final;
+        ConsumeFrameDataResult consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&) final;
         void resetCompletedFramesState() final;
         ASCIILiteral logClassName() const { return "AudioTrackData"_s; }
 
@@ -296,6 +299,7 @@ private:
     bool m_initializationSegmentProcessed { false };
     uint32_t m_timescale { 1000 };
     uint64_t m_currentTimecode { 0 };
+    MediaTime m_currentDuration;
 
     State m_state { State::None };
 

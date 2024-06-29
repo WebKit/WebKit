@@ -1,0 +1,3 @@
+
+FAIL VT object created on the old Document is skipped before persisting in BFCache promise_test: Unhandled rejection with value: object "Error: Can't find variable: onpageswap"
+

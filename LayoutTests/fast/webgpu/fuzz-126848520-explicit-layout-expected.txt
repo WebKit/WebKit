@@ -1,5 +1,5 @@
      0                0
      8                0
-Buffer size is invalid
+buffer length(16) minus offset(0), (resourceOffset(0) + dynamicOffset(0)), is less than required bufferSize(1073741820)
 done
 

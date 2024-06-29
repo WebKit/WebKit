@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (71,64) size 663x422
       RenderSVGText {text} at (42,38) size 168x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 168x21
+        RenderSVGInlineText {#text} at (0,0) size 168x20
           chunk 1 (end anchor) text run 1 at (42.74,55.00) startOffset 0 endOffset 21 width 167.26: "animVal is read only:"
       RenderSVGContainer {g} at (400,66) size 334x420 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(500.00,0.00)}]
         RenderSVGRect {rect} at (700,66) size 34x34 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=60.00] [width=20.00] [height=20.00]
@@ -38,7 +38,7 @@ layer at (0,0) size 800x600
             chunk 1 text run 1 at (70.00,255.00) startOffset 0 endOffset 30 width 221.40: "SVGAnimatedPreserveAspectRatio"
       RenderSVGHiddenContainer {g} at (0,0) size 0x0
         RenderSVGText {text} at (0,-17) size 38x26 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 38x26
+          RenderSVGInlineText {#text} at (0,0) size 38x25
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 10.20: "a"
             chunk 1 text run 2 at (10.20,0.00) startOffset 1 endOffset 2 width 10.20: "b"
             chunk 1 text run 3 at (20.40,0.00) startOffset 2 endOffset 3 width 9.00: "c"

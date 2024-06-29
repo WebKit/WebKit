@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (24,20) size 669x376
-      RenderSVGText {text} at (75,12) size 308x28 contains 1 chunk(s)
+      RenderSVGText {text} at (75,12) size 308x27 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 308x27
           chunk 1 text run 1 at (75.00,34.00) startOffset 0 endOffset 26 width 307.20: "Lines drawn with commands:"
-      RenderSVGText {text} at (180,42) size 85x28 contains 1 chunk(s)
+      RenderSVGText {text} at (180,42) size 85x27 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 85x27
           chunk 1 text run 1 at (180.00,64.00) startOffset 0 endOffset 7 width 84.60: "m and z"
       RenderSVGContainer {g} at (24,114) size 669x282 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,-270.00)}]

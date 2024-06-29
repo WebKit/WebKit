@@ -83,7 +83,7 @@ void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerJobDataIdentifier&
 
     if (!result.error.isNull()) {
         // Invoke Reject Job Promise with job and TypeError.
-        server->rejectJob(job, ExceptionData { ExceptionCode::TypeError, makeString("Script URL ", job.scriptURL.string(), " fetch resulted in error: ", result.error.localizedDescription()) });
+        server->rejectJob(job, ExceptionData { ExceptionCode::TypeError, makeString("Script URL "_s, job.scriptURL.string(), " fetch resulted in error: "_s, result.error.localizedDescription()) });
 
         // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
         if (!newestWorker)

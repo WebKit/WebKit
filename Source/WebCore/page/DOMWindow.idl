@@ -84,8 +84,6 @@
     // the user agent
     readonly attribute Navigator navigator;
     [Replaceable, ImplementedAs=navigator] readonly attribute Navigator clientInformation;
-    // FIXME: This is specified to be [SecureContext]
-    [EnabledByQuirk=shouldEnableApplicationCache] readonly attribute DOMApplicationCache applicationCache;
 
     // user prompts
     undefined alert();

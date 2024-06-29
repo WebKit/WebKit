@@ -1,6 +1,7 @@
-CONSOLE MESSAGE: Permission policy 'Geolocation' check failed for element with origin 'https://127.0.0.1:9443' and allow attribute ';geolocation'.
 
 
-PASS Permissions-Policy allow="geolocation" allows same-origin relocation
-FAIL Permissions-Policy allow="geolocation" allows cross-origin relocation assert_true: geolocation expected true got false
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Permissions-Policy allow="geolocation" allows same-origin redirection Test timed out
+NOTRUN Permissions-Policy allow="geolocation" allows cross-origin redirection
 

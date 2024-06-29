@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (16,19) size 768x481
-      RenderSVGText {text} at (138,11) size 204x24 contains 1 chunk(s)
+    RenderSVGContainer {g} at (16,20) size 768x480
+      RenderSVGText {text} at (138,12) size 204x23 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 203x23
           chunk 1 (middle anchor) text run 1 at (138.90,30.00) startOffset 0 endOffset 22 width 202.20: "Rendering thin strokes"
-      RenderSVGPath {polyline} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000] [stroke width=0.00]}] [fill={[type=SOLID] [color=#000000]}] [points="30 50 30 300"]
+      RenderSVGPath {polyline} at (49,83) size 2x417 [stroke={[type=SOLID] [color=#000000] [stroke width=0.00]}] [fill={[type=SOLID] [color=#000000]}] [points="30 50 30 300"]
       RenderSVGPath {polyline} at (83,83) size 1x417 [stroke={[type=SOLID] [color=#000000] [stroke width=0.10]}] [fill={[type=SOLID] [color=#000000]}] [points="50 50 50 300"]
       RenderSVGPath {polyline} at (116,83) size 1x417 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20]}] [fill={[type=SOLID] [color=#000000]}] [points="70 50 70 300"]
       RenderSVGPath {polyline} at (149,83) size 2x417 [stroke={[type=SOLID] [color=#000000] [stroke width=0.30]}] [fill={[type=SOLID] [color=#000000]}] [points="90 50 90 300"]
@@ -19,11 +19,11 @@ layer at (0,0) size 800x600
       RenderSVGPath {polyline} at (349,83) size 2x417 [stroke={[type=SOLID] [color=#000000] [stroke width=0.90]}] [fill={[type=SOLID] [color=#000000]}] [points="210 50 210 300"]
       RenderSVGPath {polyline} at (382,83) size 3x417 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [points="230 50 230 300"]
       RenderSVGPath {polyline} at (415,83) size 3x417 [stroke={[type=SOLID] [color=#000000] [stroke width=1.10]}] [fill={[type=SOLID] [color=#000000]}] [points="250 50 250 300"]
-      RenderSVGPath {polyline} at (448,83) size 4x417 [stroke={[type=SOLID] [color=#000000] [stroke width=1.20]}] [fill={[type=SOLID] [color=#000000]}] [points="270 50 270 300"]
+      RenderSVGPath {polyline} at (449,83) size 2x417 [stroke={[type=SOLID] [color=#000000] [stroke width=1.20]}] [fill={[type=SOLID] [color=#000000]}] [points="270 50 270 300"]
       RenderSVGPath {polyline} at (482,83) size 3x417 [stroke={[type=SOLID] [color=#000000] [stroke width=1.30]}] [fill={[type=SOLID] [color=#000000]}] [points="290 50 290 300"]
       RenderSVGPath {polyline} at (515,83) size 3x417 [stroke={[type=SOLID] [color=#000000] [stroke width=1.40]}] [fill={[type=SOLID] [color=#000000]}] [points="310 50 310 300"]
       RenderSVGPath {polyline} at (548,83) size 4x417 [stroke={[type=SOLID] [color=#000000] [stroke width=1.50]}] [fill={[type=SOLID] [color=#000000]}] [points="330 50 330 300"]
-      RenderSVGPath {polyline} at (581,83) size 4x417 [stroke={[type=SOLID] [color=#000000] [stroke width=1.60]}] [fill={[type=SOLID] [color=#000000]}] [points="350 50 350 300"]
+      RenderSVGPath {polyline} at (582,83) size 3x417 [stroke={[type=SOLID] [color=#000000] [stroke width=1.60]}] [fill={[type=SOLID] [color=#000000]}] [points="350 50 350 300"]
       RenderSVGPath {polyline} at (615,83) size 4x417 [stroke={[type=SOLID] [color=#000000] [stroke width=1.70]}] [fill={[type=SOLID] [color=#000000]}] [points="370 50 370 300"]
       RenderSVGPath {polyline} at (648,83) size 4x417 [stroke={[type=SOLID] [color=#000000] [stroke width=1.80]}] [fill={[type=SOLID] [color=#000000]}] [points="390 50 390 300"]
       RenderSVGPath {polyline} at (681,83) size 4x417 [stroke={[type=SOLID] [color=#000000] [stroke width=1.90]}] [fill={[type=SOLID] [color=#000000]}] [points="410 50 410 300"]

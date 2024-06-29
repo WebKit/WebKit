@@ -17,6 +17,7 @@
 #include "absl/memory/memory.h"
 #include "modules/rtp_rtcp/source/rtp_descriptor_authentication.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {
@@ -119,9 +120,14 @@ void RtpVideoStreamReceiverFrameTransformerDelegate::Reset() {
 void RtpVideoStreamReceiverFrameTransformerDelegate::TransformFrame(
     std::unique_ptr<RtpFrameObject> frame) {
   RTC_DCHECK_RUN_ON(&network_sequence_checker_);
-  frame_transformer_->Transform(
-      std::make_unique<TransformableVideoReceiverFrame>(std::move(frame), ssrc_,
-                                                        receiver_));
+  if (short_circuit_) {
+    // Just pass the frame straight back.
+    receiver_->ManageFrame(std::move(frame));
+  } else {
+    frame_transformer_->Transform(
+        std::make_unique<TransformableVideoReceiverFrame>(std::move(frame),
+                                                          ssrc_, receiver_));
+  }
 }
 
 void RtpVideoStreamReceiverFrameTransformerDelegate::OnTransformedFrame(
@@ -132,6 +138,20 @@ void RtpVideoStreamReceiverFrameTransformerDelegate::OnTransformedFrame(
       [delegate = std::move(delegate), frame = std::move(frame)]() mutable {
         delegate->ManageFrame(std::move(frame));
       });
+}
+
+void RtpVideoStreamReceiverFrameTransformerDelegate::StartShortCircuiting() {
+  rtc::scoped_refptr<RtpVideoStreamReceiverFrameTransformerDelegate> delegate(
+      this);
+  network_thread_->PostTask([delegate = std::move(delegate)]() mutable {
+    delegate->StartShortCircuitingOnNetworkSequence();
+  });
+}
+
+void RtpVideoStreamReceiverFrameTransformerDelegate::
+    StartShortCircuitingOnNetworkSequence() {
+  RTC_DCHECK_RUN_ON(&network_sequence_checker_);
+  short_circuit_ = true;
 }
 
 void RtpVideoStreamReceiverFrameTransformerDelegate::ManageFrame(

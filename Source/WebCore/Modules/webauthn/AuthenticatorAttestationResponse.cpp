@@ -74,7 +74,7 @@ Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(R
 
 Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& attestationObject, AuthenticatorAttachment attachment, Vector<AuthenticatorTransport>&& transports)
 {
-    return create(ArrayBuffer::create(rawId.data(), rawId.size()), ArrayBuffer::create(attestationObject.data(), attestationObject.size()), attachment, WTFMove(transports));
+    return create(ArrayBuffer::create(rawId), ArrayBuffer::create(attestationObject), attachment, WTFMove(transports));
 }
 
 AuthenticatorAttestationResponse::AuthenticatorAttestationResponse(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& attestationObject, AuthenticatorAttachment attachment, Vector<AuthenticatorTransport>&& transports)
@@ -107,7 +107,7 @@ RefPtr<ArrayBuffer> AuthenticatorAttestationResponse::getAuthenticatorData() con
         return nullptr;
     }
     auto authData = it->second.getByteString();
-    return ArrayBuffer::tryCreate(authData.data(), authData.size());
+    return ArrayBuffer::tryCreate(authData);
 }
 
 int64_t AuthenticatorAttestationResponse::getPublicKeyAlgorithm() const
@@ -175,7 +175,7 @@ RefPtr<ArrayBuffer> AuthenticatorAttestationResponse::getPublicKey() const
         if (!peerKey)
             return nullptr;
         auto keySpki = peerKey->exportSpki(UseCryptoKit::No).releaseReturnValue();
-        return ArrayBuffer::tryCreate(keySpki.data(), keySpki.size());
+        return ArrayBuffer::tryCreate(keySpki);
     }
     default:
         break;

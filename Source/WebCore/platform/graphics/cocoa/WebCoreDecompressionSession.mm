@@ -379,7 +379,7 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
             auto durationInUs = duration.toTimeScale(1000000);
             DecodingPromise::Producer producer;
             auto promise = producer.promise();
-            m_videoDecoder->decode({ { reinterpret_cast<uint8_t*>(data), size }, true, presentationTimeInUs.timeValue(), durationInUs.timeValue() }, [weakThis = ThreadSafeWeakPtr { *this }, this, duration = PAL::toCMTime(duration), producer = WTFMove(producer)](String&&) {
+            m_videoDecoder->decode({ { byteCast<uint8_t>(data), size }, true, presentationTimeInUs.timeValue(), durationInUs.timeValue() }, [weakThis = ThreadSafeWeakPtr { *this }, this, duration = PAL::toCMTime(duration), producer = WTFMove(producer)](String&&) {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis || isInvalidated()) {
                     producer.reject(0);

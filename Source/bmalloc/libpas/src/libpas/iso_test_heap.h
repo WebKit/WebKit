@@ -38,9 +38,9 @@ PAS_BEGIN_EXTERN_C;
 PAS_API extern pas_heap iso_test_common_primitive_heap;
 PAS_API extern pas_intrinsic_heap_support iso_test_common_primitive_heap_support;
 
-PAS_API void* iso_test_allocate_common_primitive(size_t size);
-PAS_API void* iso_test_allocate(pas_heap_ref* heap_ref);
-PAS_API void* iso_test_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment);
+PAS_API void* iso_test_allocate_common_primitive(size_t size, pas_allocation_mode allocation_mode);
+PAS_API void* iso_test_allocate(pas_heap_ref* heap_ref, pas_allocation_mode allocation_mode);
+PAS_API void* iso_test_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment, pas_allocation_mode allocation_mode);
 PAS_API void iso_test_deallocate(void* ptr);
 PAS_API pas_heap* iso_test_heap_ref_get_heap(pas_heap_ref* heap_ref);
 

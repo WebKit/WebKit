@@ -53,7 +53,7 @@
 #include "TextPaintStyle.h"
 #include "TextPainter.h"
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 #include "GraphicsContextCG.h"
 #endif
 
@@ -394,7 +394,7 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
                 auto snappedPaintRect = snapRectToDevicePixelsWithWritingDirection(LayoutRect { m_paintRect }, m_document.deviceScaleFactor(), m_paintTextRun.ltr());
                 if (startOffset || endOffset != m_paintTextRun.length()) {
                     LayoutRect selectionRect = { m_paintRect.x(), m_paintRect.y(), m_paintRect.width(), m_paintRect.height() };
-                    fontCascade().adjustSelectionRectForText(m_paintTextRun, selectionRect, startOffset, endOffset);
+                    fontCascade().adjustSelectionRectForText(m_renderer.canUseSimplifiedTextMeasuring().value_or(false), m_paintTextRun, selectionRect, startOffset, endOffset);
                     snappedPaintRect = snapRectToDevicePixelsWithWritingDirection(selectionRect, m_document.deviceScaleFactor(), m_paintTextRun.ltr());
                 }
                 auto decorationPainter = createDecorationPainter(markedText, textDecorationSelectionClipOutRect);
@@ -473,7 +473,7 @@ void TextBoxPainter<TextBoxPath>::paintBackground(unsigned startOffset, unsigned
     auto selectionHeight = LayoutUnit { std::max(0.f, selectionBottom - selectionTop) };
     auto selectionRect = LayoutRect { LayoutUnit(m_paintRect.x()), LayoutUnit(m_paintRect.y() - deltaY), LayoutUnit(m_logicalRect.width()), selectionHeight };
     auto adjustedSelectionRect = selectionRect;
-    fontCascade().adjustSelectionRectForText(m_paintTextRun, adjustedSelectionRect, startOffset, endOffset);
+    fontCascade().adjustSelectionRectForText(m_renderer.canUseSimplifiedTextMeasuring().value_or(false), m_paintTextRun, adjustedSelectionRect, startOffset, endOffset);
     if (m_paintTextRun.length() == endOffset - startOffset) {
         // FIXME: We should reconsider re-measuring the content when non-whitespace runs are joined together (see webkit.org/b/251318).
         auto visualRight = std::max(adjustedSelectionRect.maxX(), selectionRect.maxX());
@@ -1045,7 +1045,7 @@ FloatRect LegacyTextBoxPainter::calculateUnionOfAllDocumentMarkerBounds(const Le
     return result;
 }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/TextBoxPainterAdditions.cpp>
@@ -1053,7 +1053,7 @@ FloatRect LegacyTextBoxPainter::calculateUnionOfAllDocumentMarkerBounds(const Le
 static void drawUnifiedTextReplacementUnderline(GraphicsContext&, const FloatRect&, IntSize) { }
 #endif
 
-#endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#endif // ENABLE(WRITING_TOOLS)
 
 template<typename TextBoxPath>
 void TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarker(const MarkedText& markedText)
@@ -1065,8 +1065,8 @@ void TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarker(const MarkedText& 
     auto bounds = calculateDocumentMarkerBounds(makeIterator(), markedText);
     bounds.moveBy(m_paintRect.location());
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    if (markedText.type == MarkedText::Type::UnifiedTextReplacement) {
+#if ENABLE(WRITING_TOOLS)
+    if (markedText.type == MarkedText::Type::WritingToolsTextSuggestion) {
         drawUnifiedTextReplacementUnderline(m_paintInfo.context(), bounds,  m_renderer.frame().view()->size());
         return;
     }
@@ -1117,16 +1117,13 @@ FloatRect TextBoxPainter<TextBoxPath>::computePaintRect(const LayoutPoint& paint
 FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator& textBox, const MarkedText& markedText)
 {
     auto& font = textBox->fontCascade();
-    auto ascent = font.metricsOfPrimaryFont().intAscent();
-    auto fontSize = std::min(std::max(font.size(), 10.0f), 40.0f);
-    auto y = ascent + 0.11035 * fontSize;
-    auto height = 0.13247 * fontSize;
+    auto [y, height] = DocumentMarkerController::markerYPositionAndHeightForFont(font);
 
     // Avoid measuring the text when the entire line box is selected as an optimization.
     if (markedText.startOffset || markedText.endOffset != textBox->selectableRange().clamp(textBox->end())) {
         auto run = textBox->textRun();
         auto selectionRect = LayoutRect { 0_lu, y, 0_lu, height };
-        font.adjustSelectionRectForText(run, selectionRect, markedText.startOffset, markedText.endOffset);
+        font.adjustSelectionRectForText(textBox->renderer().canUseSimplifiedTextMeasuring().value_or(false), run, selectionRect, markedText.startOffset, markedText.endOffset);
         return selectionRect;
     }
 

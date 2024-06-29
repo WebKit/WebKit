@@ -39,6 +39,7 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FrameSelection.h"
+#include "GCReachableRef.h"
 #include "HTMLBRElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
@@ -906,6 +907,9 @@ void HTMLTextFormControlElement::adjustInnerTextStyle(const RenderStyle& parentS
                 textBlockStyle.setUserModify(fromCSSValueID<UserModify>(*value));
         }
     }
+
+    if (parentStyle.fieldSizing() == FieldSizing::Content)
+        textBlockStyle.setLogicalMinWidth(Length { caretWidth(), LengthType::Fixed });
 
 #if PLATFORM(IOS_FAMILY)
     if (textBlockStyle.textSecurity() != TextSecurity::None && !textBlockStyle.isLeftToRightDirection()) {

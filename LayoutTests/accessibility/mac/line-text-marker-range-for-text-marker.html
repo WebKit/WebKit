@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="textcontrol" contenteditable="true">
+  First line of text
+  <span contenteditable="false"><br></span>
+  Second line of text
+</div>
+
+<script>
+let output = "This tests that when there are &lt;br&gt; elements with contenteditable=false in a contenteditable text area, we can get the correct range for a line.\n\n";
+
+if (window.accessibilityController) {
+  const textControl = accessibilityController.accessibleElementById("textcontrol");
+  const fullRange = textControl.textMarkerRangeForElement(textControl.childAtIndex(0));
+  const marker = textControl.startTextMarkerForTextMarkerRange(fullRange);
+  const range = textControl.lineTextMarkerRangeForTextMarker(marker);
+  var rangeStr = (textControl.stringForTextMarkerRange(range) + "").trim();
+  output += expect("rangeStr", '"First line of text"');
+  debug(output);
+  document.getElementById("textcontrol").hidden = true;
+}
+</script>
+</body>
+</html>

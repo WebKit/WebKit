@@ -108,7 +108,7 @@ std::vector<MetricValidationInfo> ToValidationInfo(
 TEST(PeerConnectionE2EQualityTestMetricNamesTest,
      ExportedMetricsHasCorrectNamesAndAnnotation) {
   std::unique_ptr<NetworkEmulationManager> network_emulation =
-      CreateNetworkEmulationManager(TimeMode::kSimulated);
+      CreateNetworkEmulationManager({.time_mode = TimeMode::kSimulated});
   DefaultMetricsLogger metrics_logger(
       network_emulation->time_controller()->GetClock());
   PeerConnectionE2EQualityTest fixture(
@@ -1124,7 +1124,7 @@ TEST(PeerConnectionE2EQualityTestMetricNamesTest,
 TEST(PeerConnectionE2EQualityTestMetricNamesTest,
      ExportedNetworkMetricsHaveCustomNetworkLabelIfSet) {
   std::unique_ptr<NetworkEmulationManager> network_emulation =
-      CreateNetworkEmulationManager(TimeMode::kSimulated);
+      CreateNetworkEmulationManager({.time_mode = TimeMode::kSimulated});
   DefaultMetricsLogger metrics_logger(
       network_emulation->time_controller()->GetClock());
   PeerConnectionE2EQualityTest fixture(

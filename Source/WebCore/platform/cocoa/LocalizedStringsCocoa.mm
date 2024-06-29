@@ -182,6 +182,16 @@ String contextMenuItemTagExitVideoEnhancedFullscreen()
 {
     return WEB_UI_STRING("Exit Picture in Picture", "menu item");
 }
+
+String contextMenuItemTagEnterVideoViewer()
+{
+    return WEB_UI_STRING("Enter Viewer", "Enter Video Viewer context menu item");
+}
+
+String contextMenuItemTagExitVideoViewer()
+{
+    return WEB_UI_STRING("Exit Viewer", "Exit Video Viewer context menu item");
+}
 #endif
 #endif // ENABLE(CONTEXT_MENUS)
 

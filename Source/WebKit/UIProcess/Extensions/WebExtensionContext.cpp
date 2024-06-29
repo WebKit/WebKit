@@ -117,7 +117,7 @@ bool WebExtensionContext::pageListensForEvent(const WebPageProxy& page, WebExten
     if (!found)
         return false;
 
-    return page.process().canSendMessage();
+    return page.legacyMainFrameProcess().canSendMessage();
 }
 
 WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventListenerTypeSet&& typeSet, ContentWorldTypeSet&& contentWorldTypeSet) const
@@ -145,7 +145,7 @@ WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventList
                 if (!hasAccessInPrivateBrowsing() && entry.key.sessionID().isEphemeral())
                     continue;
 
-                Ref process = entry.key.process();
+                Ref process = entry.key.legacyMainFrameProcess();
                 if (process->canSendMessage())
                     result.add(WTFMove(process));
             }

@@ -67,9 +67,9 @@ template<> std::optional<TestStandaloneEnumeration> parseEnumeration<TestStandal
     return parseEnumerationFromString<TestStandaloneEnumeration>(value.toWTFString(&lexicalGlobalObject));
 }
 
-template<> const char* expectedEnumerationValues<TestStandaloneEnumeration>()
+template<> ASCIILiteral expectedEnumerationValues<TestStandaloneEnumeration>()
 {
-    return "\"enumValue1\", \"enumValue2\"";
+    return "\"enumValue1\", \"enumValue2\""_s;
 }
 
 } // namespace WebCore

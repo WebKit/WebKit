@@ -58,9 +58,9 @@ endif()
 # passed to libtool.
 #
 # We set SO_FILE_VERSION = [c-a].a.r
-set(LT_CURRENT 10)
+set(LT_CURRENT 12)
 set(LT_REVISION 0)
-set(LT_AGE 7)
+set(LT_AGE 9)
 math(EXPR SO_VERSION "${LT_CURRENT} - ${LT_AGE}")
 set(SO_FILE_VERSION "${SO_VERSION}.${LT_AGE}.${LT_REVISION}")
 unset(LT_CURRENT)
@@ -374,6 +374,7 @@ file(WRITE "${AOM_GEN_SRC_DIR}/usage_exit.c"
 #
 if(ENABLE_EXAMPLES OR ENABLE_TESTS OR ENABLE_TOOLS)
   add_library(aom_common_app_util OBJECT ${AOM_COMMON_APP_UTIL_SOURCES})
+  add_library(aom_usage_exit OBJECT "${AOM_GEN_SRC_DIR}/usage_exit.c")
   set_property(TARGET ${example} PROPERTY FOLDER examples)
   if(CONFIG_AV1_DECODER)
     add_library(aom_decoder_app_util OBJECT ${AOM_DECODER_APP_UTIL_SOURCES})
@@ -508,10 +509,10 @@ if(CONFIG_AV1_ENCODER)
       # aom_entropy_optimizer.c won't work on macos, but dragging in all the
       # helper machinery allows the link to succeed.
       add_executable(aom_entropy_optimizer
-                     "${AOM_GEN_SRC_DIR}/usage_exit.c"
                      "${AOM_ROOT}/tools/aom_entropy_optimizer.c"
                      $<TARGET_OBJECTS:aom_common_app_util>
-                     $<TARGET_OBJECTS:aom_encoder_app_util>)
+                     $<TARGET_OBJECTS:aom_encoder_app_util>
+                     $<TARGET_OBJECTS:aom_usage_exit>)
 
       # Maintain a list of encoder tool targets.
       list(APPEND AOM_ENCODER_TOOL_TARGETS aom_entropy_optimizer)
@@ -661,12 +662,12 @@ endif()
 
 if(ENABLE_TOOLS)
   if(CONFIG_AV1_DECODER)
-    add_executable(dump_obu "${AOM_GEN_SRC_DIR}/usage_exit.c"
-                            "${AOM_ROOT}/tools/dump_obu.cc"
+    add_executable(dump_obu "${AOM_ROOT}/tools/dump_obu.cc"
                             "${AOM_ROOT}/tools/obu_parser.cc"
                             "${AOM_ROOT}/tools/obu_parser.h"
                             $<TARGET_OBJECTS:aom_common_app_util>
-                            $<TARGET_OBJECTS:aom_decoder_app_util>)
+                            $<TARGET_OBJECTS:aom_decoder_app_util>
+                            $<TARGET_OBJECTS:aom_usage_exit>)
 
     list(APPEND AOM_TOOL_TARGETS dump_obu)
     list(APPEND AOM_APP_TARGETS dump_obu)
@@ -825,7 +826,8 @@ if(BUILD_SHARED_LIBS)
   # Clang's AddressSanitizer documentation says "When linking shared libraries,
   # the AddressSanitizer run-time is not linked, so -Wl,-z,defs may cause link
   # errors (don't use it with AddressSanitizer)." See
-  # https://clang.llvm.org/docs/AddressSanitizer.html#usage.
+  # https://clang.llvm.org/docs/AddressSanitizer.html#usage. Similarly, see
+  # https://clang.llvm.org/docs/MemorySanitizer.html#usage.
   if(NOT WIN32
      AND NOT APPLE
      AND NOT (CMAKE_C_COMPILER_ID MATCHES "Clang" AND SANITIZE))
@@ -940,7 +942,7 @@ get_cmake_property(all_cmake_vars VARIABLES)
 foreach(var ${all_cmake_vars})
   if("${var}" MATCHES "SOURCES$\|_INTRIN_\|_ASM_"
      AND NOT "${var}" MATCHES "DOXYGEN\|LIBYUV\|_PKG_\|TEST"
-     AND NOT "${var}" MATCHES "_ASM_NASM\|_ASM_COMPILER_")
+     AND NOT "${var}" MATCHES "_ASM_NASM\|_ASM_COMPILER")
     list(APPEND aom_source_vars ${var})
   endif()
 endforeach()

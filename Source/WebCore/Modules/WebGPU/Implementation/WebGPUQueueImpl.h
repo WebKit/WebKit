@@ -71,8 +71,7 @@ private:
 
     void writeTexture(
         const ImageCopyTexture& destination,
-        const void* source,
-        size_t byteLength,
+        std::span<const uint8_t> source,
         const ImageDataLayout&,
         const Extent3D& size) final;
 
@@ -85,8 +84,7 @@ private:
 
     void writeTexture(
         const ImageCopyTexture& destination,
-        void* source,
-        size_t byteLength,
+        std::span<uint8_t> source,
         const ImageDataLayout&,
         const Extent3D& size) final;
 

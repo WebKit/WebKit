@@ -85,7 +85,7 @@ MediaKeySession::MediaKeySession(Document& document, WeakPtr<MediaKeys>&& keys, 
     // https://w3c.github.io/encrypted-media/#dom-mediakeys-createsession
     // W3C Editor's Draft 09 November 2016
     // createSession(), ctd.
-    ALWAYS_LOG(LOGIDENTIFIER, "sessionType(", sessionType, "), useDistinctiveIdentifier(", useDistinctiveIdentifier, ")");
+    ALWAYS_LOG(LOGIDENTIFIER, "sessionType("_s, sessionType, "), useDistinctiveIdentifier("_s, useDistinctiveIdentifier, ")"_s);
 
     // 3.1. Let the sessionId attribute be the empty string.
     // 3.2. Let the expiration attribute be NaN.

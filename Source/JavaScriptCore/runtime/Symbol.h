@@ -64,7 +64,7 @@ public:
     JSObject* toObject(JSGlobalObject*) const;
     double toNumber(JSGlobalObject*) const;
 
-    static ptrdiff_t offsetOfSymbolImpl()
+    static constexpr ptrdiff_t offsetOfSymbolImpl()
     {
         // PrivateName is just a Ref<SymbolImpl> which can just be used as a SymbolImpl*.
         return OBJECT_OFFSETOF(Symbol, m_privateName);

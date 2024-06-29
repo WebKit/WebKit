@@ -247,6 +247,17 @@ void TDirectiveHandler::handleExtension(const angle::pp::SourceLocation &loc,
                 iter->second = behaviorVal;
             }
         }
+        // OES_shader_io_blocks is implicitly enabled when OES_geometry_shader or
+        // OES_tessellation_shader is enabled.
+        else if (name == "GL_OES_geometry_shader" || name == "GL_OES_tessellation_shader")
+        {
+            constexpr char kIOBlocksOESName[] = "GL_OES_shader_io_blocks";
+            iter = mExtensionBehavior.find(GetExtensionByName(kIOBlocksOESName));
+            if (iter != mExtensionBehavior.end())
+            {
+                iter->second = behaviorVal;
+            }
+        }
         // GL_APPLE_clip_distance is implicitly enabled when GL_EXT_clip_cull_distance or
         // GL_ANGLE_clip_cull_distance are enabled.
         else if (name == "GL_EXT_clip_cull_distance" || name == "GL_ANGLE_clip_cull_distance")

@@ -48,48 +48,31 @@
 #if PLATFORM(IOS_FAMILY)
 @implementation _WKWebExtensionKeyCommand
 
-+ (instancetype)commandWithTitle:(NSString *)title image:(UIImage *)image input:(NSString *)input modifierFlags:(UIKeyModifierFlags)modifierFlags handler:(WebExtensionKeyCommandHandlerBlock)handler
++ (UIKeyCommand *)commandWithTitle:(NSString *)title image:(UIImage *)image input:(NSString *)input modifierFlags:(UIKeyModifierFlags)modifierFlags identifier:(NSString *)identifier
 {
     RELEASE_ASSERT(title);
     RELEASE_ASSERT(input);
-    RELEASE_ASSERT(handler);
+    RELEASE_ASSERT(identifier);
 
     auto *propertyList = @{
         @"title": title,
         @"activation": input,
+        @"identifier": identifier,
     };
 
-    auto *command = [self commandWithTitle:title image:image action:@selector(_performWithTarget:) input:input modifierFlags:modifierFlags propertyList:propertyList];
+    auto *command = [UIKeyCommand commandWithTitle:title image:image action:@selector(performWebExtensionCommandForKeyCommand:) input:input modifierFlags:modifierFlags propertyList:propertyList];
     if (!command)
         return nil;
-
-    command->_handler = [handler copy];
 
     return command;
 }
 
-- (id)copyWithZone:(NSZone *)zone
+- (void)performWebExtensionCommandForKeyCommand:(id)sender
 {
-    _WKWebExtensionKeyCommand *copy = [super copyWithZone:zone];
-    copy->_handler = [_handler copy];
-    return copy;
-}
+    // To be handled by the first responder instead of this class.
+    // This method exists just to make this symbol available.
 
-- (void)performWithSender:(id)sender target:(id)target
-{
-    [super performWithSender:sender target:self];
-}
-
-- (id)_resolvedTargetFromFirstTarget:(id)firstTarget sender:(id)sender
-{
-    return nil;
-}
-
-- (void)_performWithTarget:(id)target
-{
-    ASSERT(_handler);
-    if (_handler)
-        _handler();
+    // FIXME: Would put ASSERT_NOT_REACHED() here but some compilers are warning the function is "noreturn".
 }
 
 @end
@@ -245,10 +228,12 @@ UIKeyCommand *WebExtensionCommand::keyCommand() const
     if (activationKey().isEmpty())
         return nil;
 
-    return [_WKWebExtensionKeyCommand commandWithTitle:description() image:nil input:activationKey() modifierFlags:modifierFlags().toRaw() handler:makeBlockPtr([this, protectedThis = Ref { *this }]() mutable {
-        if (RefPtr context = extensionContext())
-            context->performCommand(const_cast<WebExtensionCommand&>(*this), WebExtensionContext::UserTriggered::Yes);
-    }).get()];
+    return [_WKWebExtensionKeyCommand commandWithTitle:description() image:nil input:activationKey() modifierFlags:modifierFlags().toRaw() identifier:identifier()];
+}
+
+bool WebExtensionCommand::matchesKeyCommand(UIKeyCommand *keyCommand) const
+{
+    return keyCommand.modifierFlags == modifierFlags().toRaw() && [keyCommand.input isEqual:activationKey()] && [keyCommand.propertyList[@"identifier"] isEqual:identifier()];
 }
 #endif
 

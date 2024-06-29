@@ -466,7 +466,7 @@ static INLINE void cnn_convolve_no_maxpool_padding_valid_layer2_avx2(
 // As per the layer config set by av1_intra_mode_cnn_partition_cnn_config,
 // the filter_width and filter_height are equal to 2 for layer >= 1. So
 // convolution happens at 2x2 for layer >= 1.
-void cnn_convolve_no_maxpool_padding_valid_2x2_avx2(
+static void cnn_convolve_no_maxpool_padding_valid_2x2_avx2(
     const float **input, int in_width, int in_height, int in_stride,
     const CNN_LAYER_CONFIG *const layer_config, float **output, int out_stride,
     int start_idx, const int cstep, const int channel_step) {

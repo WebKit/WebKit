@@ -11,12 +11,16 @@
 #include "test/network/network_emulation_manager.h"
 
 #include <algorithm>
+#include <functional>
 #include <memory>
+#include <utility>
+#include <vector>
 
+#include "api/field_trials_view.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "call/simulated_network.h"
 #include "test/network/emulated_turn_server.h"
+#include "test/network/simulated_network.h"
 #include "test/network/traffic_route.h"
 #include "test/time_controller/real_time_controller.h"
 #include "test/time_controller/simulated_time_controller.h"
@@ -30,10 +34,12 @@ constexpr uint32_t kMinIPv4Address = 0xC0A80000;
 // uint32_t representation of 192.168.255.255 address
 constexpr uint32_t kMaxIPv4Address = 0xC0A8FFFF;
 
-std::unique_ptr<TimeController> CreateTimeController(TimeMode mode) {
+std::unique_ptr<TimeController> CreateTimeController(
+    TimeMode mode,
+    const FieldTrialsView* field_trials) {
   switch (mode) {
     case TimeMode::kRealTime:
-      return std::make_unique<RealTimeController>();
+      return std::make_unique<RealTimeController>(field_trials);
     case TimeMode::kSimulated:
       // Using an offset of 100000 to get nice fixed width and readable
       // timestamps in typical test scenarios.
@@ -45,12 +51,13 @@ std::unique_ptr<TimeController> CreateTimeController(TimeMode mode) {
 }  // namespace
 
 NetworkEmulationManagerImpl::NetworkEmulationManagerImpl(
-    TimeMode mode,
-    EmulatedNetworkStatsGatheringMode stats_gathering_mode)
-    : time_mode_(mode),
-      stats_gathering_mode_(stats_gathering_mode),
-      time_controller_(CreateTimeController(mode)),
+    NetworkEmulationManagerConfig config)
+    : time_mode_(config.time_mode),
+      stats_gathering_mode_(config.stats_gathering_mode),
+      time_controller_(
+          CreateTimeController(config.time_mode, config.field_trials)),
       clock_(time_controller_->GetClock()),
+      fake_dtls_handshake_sizes_(config.fake_dtls_handshake_sizes),
       next_node_id_(1),
       next_ip4_address_(kMinIPv4Address),
       task_queue_(time_controller_->GetTaskQueueFactory()->CreateTaskQueue(
@@ -76,7 +83,8 @@ EmulatedNetworkNode* NetworkEmulationManagerImpl::CreateEmulatedNode(
 EmulatedNetworkNode* NetworkEmulationManagerImpl::CreateEmulatedNode(
     std::unique_ptr<NetworkBehaviorInterface> network_behavior) {
   auto node = std::make_unique<EmulatedNetworkNode>(
-      clock_, &task_queue_, std::move(network_behavior), stats_gathering_mode_);
+      clock_, task_queue_.Get(), std::move(network_behavior),
+      stats_gathering_mode_, fake_dtls_handshake_sizes_);
   EmulatedNetworkNode* out = node.get();
   task_queue_.PostTask([this, node = std::move(node)]() mutable {
     network_nodes_.push_back(std::move(node));
@@ -111,7 +119,7 @@ EmulatedEndpointImpl* NetworkEmulationManagerImpl::CreateEndpoint(
   auto node = std::make_unique<EmulatedEndpointImpl>(
       EmulatedEndpointImpl::Options(next_node_id_++, *ip, config,
                                     stats_gathering_mode_),
-      config.start_as_enabled, &task_queue_, clock_);
+      config.start_as_enabled, task_queue_.Get(), clock_);
   EmulatedEndpointImpl* out = node.get();
   endpoints_.push_back(std::move(node));
   return out;

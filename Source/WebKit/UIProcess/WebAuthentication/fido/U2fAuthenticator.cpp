@@ -190,7 +190,7 @@ void U2fAuthenticator::continueRegisterCommandAfterResponseReceived(ApduResponse
         m_retryTimer.startOneShot(Seconds::fromMilliseconds(retryTimeOutValueMs));
         return;
     default:
-        receiveRespond(ExceptionData { ExceptionCode::UnknownError, makeString("Unknown internal error. Error code: ", static_cast<unsigned>(apduResponse.status())) });
+        receiveRespond(ExceptionData { ExceptionCode::UnknownError, makeString("Unknown internal error. Error code: "_s, static_cast<unsigned>(apduResponse.status())) });
     }
 }
 
@@ -219,7 +219,7 @@ void U2fAuthenticator::continueBogusCommandExcludeCredentialsMatchAfterResponseR
         m_retryTimer.startOneShot(Seconds::fromMilliseconds(retryTimeOutValueMs));
         return;
     default:
-        receiveRespond(ExceptionData { ExceptionCode::UnknownError, makeString("Unknown internal error. Error code: ", static_cast<unsigned>(apduResponse.status())) });
+        receiveRespond(ExceptionData { ExceptionCode::UnknownError, makeString("Unknown internal error. Error code: "_s, static_cast<unsigned>(apduResponse.status())) });
     }
 }
 
@@ -237,7 +237,7 @@ void U2fAuthenticator::continueBogusCommandNoCredentialsAfterResponseReceived(Ap
         m_retryTimer.startOneShot(Seconds::fromMilliseconds(retryTimeOutValueMs));
         return;
     default:
-        receiveRespond(ExceptionData { ExceptionCode::UnknownError, makeString("Unknown internal error. Error code: ", static_cast<unsigned>(apduResponse.status())) });
+        receiveRespond(ExceptionData { ExceptionCode::UnknownError, makeString("Unknown internal error. Error code: "_s, static_cast<unsigned>(apduResponse.status())) });
     }
 }
 

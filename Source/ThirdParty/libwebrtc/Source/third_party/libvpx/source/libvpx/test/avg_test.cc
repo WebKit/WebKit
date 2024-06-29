@@ -719,6 +719,15 @@ INSTANTIATE_TEST_SUITE_P(
                       make_tuple(1024, &vp9_block_error_fp_neon)));
 #endif  // HAVE_NEON
 
+#if HAVE_SVE
+INSTANTIATE_TEST_SUITE_P(
+    SVE, BlockErrorTestFP,
+    ::testing::Values(make_tuple(16, &vp9_block_error_fp_sve),
+                      make_tuple(64, &vp9_block_error_fp_sve),
+                      make_tuple(256, &vp9_block_error_fp_sve),
+                      make_tuple(1024, &vp9_block_error_fp_sve)));
+#endif  // HAVE_SVE
+
 #if HAVE_MSA
 INSTANTIATE_TEST_SUITE_P(
     MSA, AverageTest,

@@ -37,7 +37,7 @@ namespace WebKit {
 Ref<WebCore::CacheStorageConnection> WebCacheStorageProvider::createCacheStorageConnection()
 {
     if (!m_connection)
-        m_connection = WebCacheStorageConnection::create(*this);
+        m_connection = WebCacheStorageConnection::create();
     return *m_connection;
 }
 

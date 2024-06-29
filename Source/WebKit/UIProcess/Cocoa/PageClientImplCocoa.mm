@@ -26,6 +26,8 @@
 #import "config.h"
 #import "PageClientImplCocoa.h"
 
+#import "TextAnimationType.h"
+#import "WKTextAnimationType.h"
 #import "WKWebViewInternal.h"
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -154,10 +156,15 @@ void PageClientImplCocoa::storeAppHighlight(const WebCore::AppHighlight &highlig
 }
 #endif // ENABLE(APP_HIGHLIGHTS)
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-void PageClientImplCocoa::removeTextIndicatorStyleForID(const WTF::UUID& uuid)
+#if ENABLE(WRITING_TOOLS_UI)
+void PageClientImplCocoa::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebKit::TextAnimationData& data)
 {
-    [m_webView _removeTextIndicatorStyleForID:uuid];
+    [m_webView _addTextAnimationForAnimationID:uuid withData:data];
+}
+
+void PageClientImplCocoa::removeTextAnimationForAnimationID(const WTF::UUID& uuid)
+{
+    [m_webView _removeTextAnimationForAnimationID:uuid];
 }
 #endif
 
@@ -279,16 +286,45 @@ WindowKind PageClientImplCocoa::windowKind()
     return WindowKind::Normal;
 }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-void PageClientImplCocoa::textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect selectionBoundsInRootView)
+#if ENABLE(WRITING_TOOLS)
+void PageClientImplCocoa::proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
 {
-    [m_webView _textReplacementSession:sessionUUID showInformationForReplacementWithUUID:replacementUUID relativeToRect:selectionBoundsInRootView];
+    [m_webView _proofreadingSessionWithUUID:sessionID showDetailsForSuggestionWithUUID:replacementID relativeToRect:selectionBoundsInRootView];
 }
 
-void PageClientImplCocoa::textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementDataState state, const WTF::UUID& replacementUUID)
+void PageClientImplCocoa::proofreadingSessionUpdateStateForSuggestionWithID(const WebCore::WritingTools::Session::ID& sessionID, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion::ID& replacementID)
 {
-    [m_webView _textReplacementSession:sessionUUID updateState:state forReplacementWithUUID:replacementUUID];
+    [m_webView _proofreadingSessionWithUUID:sessionID updateState:state forSuggestionWithUUID:replacementID];
+}
+
+static NSString *writingToolsActiveKey = @"writingToolsActive";
+
+void PageClientImplCocoa::writingToolsActiveWillChange()
+{
+    [m_webView willChangeValueForKey:writingToolsActiveKey];
+}
+
+void PageClientImplCocoa::writingToolsActiveDidChange()
+{
+    [m_webView didChangeValueForKey:writingToolsActiveKey];
 }
 #endif
 
+#if ENABLE(GAMEPAD)
+void PageClientImplCocoa::setGamepadsRecentlyAccessed(GamepadsRecentlyAccessed gamepadsRecentlyAccessed)
+{
+    [m_webView _setGamepadsRecentlyAccessed:(gamepadsRecentlyAccessed == GamepadsRecentlyAccessed::No) ? NO : YES];
 }
+#endif
+
+void PageClientImplCocoa::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSession)
+{
+    if ([m_webView _hasActiveNowPlayingSession] == hasActiveNowPlayingSession)
+        return;
+
+    [m_webView willChangeValueForKey:@"_hasActiveNowPlayingSession"];
+    [m_webView _setHasActiveNowPlayingSession:hasActiveNowPlayingSession];
+    [m_webView didChangeValueForKey:@"_hasActiveNowPlayingSession"];
+}
+
+} // namespace WebKit

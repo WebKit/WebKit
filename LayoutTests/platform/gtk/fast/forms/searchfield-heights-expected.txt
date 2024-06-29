@@ -29,8 +29,8 @@ layer at (11,129) size 57x6
       text run at (0,0) width 10: "mini"
 layer at (84,121) size 152x17
   RenderBlock {DIV} at (0,0) size 152x17
-    RenderText {#text} at (0,0) size 35x17
-      text run at (0,0) width 35: "small"
+    RenderText {#text} at (0,0) size 34x17
+      text run at (0,0) width 34: "small"
 layer at (261,111) size 283x31
   RenderBlock {DIV} at (0,0) size 283x31
     RenderText {#text} at (0,0) size 84x30

@@ -16,7 +16,7 @@ if (Intl.DurationFormat) {
             style: 'digital'
         });
         shouldBeOneOf(fmt.format({ years: 1, months: 2, weeks: 3, days: 4, hours: 10, minutes: 34, seconds: 33, milliseconds: 32 }), [
-            `1 yr, 2 mths, 3 wks, 4 days, 10.34.33`,
+            `1 yr, 2 mths, 3 wks, 4 days, 10.34.33,032`,
         ]);
     }
     {
@@ -24,7 +24,7 @@ if (Intl.DurationFormat) {
             style: 'digital'
         });
         shouldBeOneOf(fmt.format({ years: 1, months: 2, weeks: 3, days: 4, hours: 10, minutes: 34, seconds: 33, milliseconds: 32 }), [
-            `1 yr, 2 mths, 3 wks, 4 days, 10.34.33`,
+            `1 yr, 2 mths, 3 wks, 4 days, 10.34.33,032`,
         ]);
     }
     {
@@ -32,7 +32,7 @@ if (Intl.DurationFormat) {
             style: 'digital'
         });
         shouldBeOneOf(fmt.format({ years: 1, months: 2, weeks: 3, days: 4, hours: 10, minutes: 34, seconds: 33, milliseconds: 32 }), [
-            `一 yr, 二 mths, 三 wks, 四 days, 一〇:三四:三三`,
+            `一 yr, 二 mths, 三 wks, 四 days, 一〇:三四:三三,〇三二`,
         ]);
     }
     {
@@ -40,7 +40,7 @@ if (Intl.DurationFormat) {
             style: 'digital'
         });
         shouldBeOneOf(fmt.format({ years: 1, months: 2, weeks: 3, days: 4, hours: 10, minutes: 34, seconds: 33, milliseconds: 32 }), [
-            `1 yr, 2 mths, 3 wks, 4 days, 10:34:33`,
+            `1 yr, 2 mths, 3 wks, 4 days, 10:34:33.032`,
         ]);
     }
     {
@@ -48,7 +48,7 @@ if (Intl.DurationFormat) {
             style: 'digital'
         });
         shouldBeOneOf(fmt.format({ years: 1, months: 2, weeks: 3, days: 4, hours: 10, minutes: 34, seconds: 33, milliseconds: 32 }), [
-            `1 yr, 2 mths, 3 wks, 4 days, 10:34:33`,
+            `1 yr, 2 mths, 3 wks, 4 days, 10:34:33.032`,
         ]);
     }
     {
@@ -114,7 +114,7 @@ if (Intl.DurationFormat) {
         });
 
         shouldBeOneOf(fmt.format({ hours: 10, minutes: 10, milliseconds: 32}), [
-            `10:10:00`,
+            `10:10:00.032`,
         ]);
     }
     {

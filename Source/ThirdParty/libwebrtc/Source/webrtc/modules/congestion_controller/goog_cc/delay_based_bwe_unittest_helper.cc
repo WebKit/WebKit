@@ -26,6 +26,7 @@
 #include "modules/congestion_controller/goog_cc/probe_bitrate_estimator.h"
 #include "rtc_base/checks.h"
 #include "test/field_trial.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 constexpr size_t kMtu = 1200;
@@ -52,6 +53,7 @@ RtpStream::RtpStream(int fps, int bitrate_bps)
 // previous frame, no frame will be generated. The frame is split into
 // packets.
 int64_t RtpStream::GenerateFrame(int64_t time_now_us,
+                                 int64_t* next_sequence_number,
                                  std::vector<PacketResult>* packets) {
   if (time_now_us < next_rtp_time_) {
     return next_rtp_time_;
@@ -66,6 +68,7 @@ int64_t RtpStream::GenerateFrame(int64_t time_now_us,
     packet.sent_packet.send_time =
         Timestamp::Micros(time_now_us + kSendSideOffsetUs);
     packet.sent_packet.size = DataSize::Bytes(payload_size);
+    packet.sent_packet.sequence_number = (*next_sequence_number)++;
     packets->push_back(packet);
   }
   next_rtp_time_ = time_now_us + (1000000 + fps_ / 2) / fps_;
@@ -131,14 +134,15 @@ void StreamGenerator::SetBitrateBps(int bitrate_bps) {
 
 // TODO(holmer): Break out the channel simulation part from this class to make
 // it possible to simulate different types of channels.
-int64_t StreamGenerator::GenerateFrame(std::vector<PacketResult>* packets,
-                                       int64_t time_now_us) {
+int64_t StreamGenerator::GenerateFrame(int64_t time_now_us,
+                                       int64_t* next_sequence_number,
+                                       std::vector<PacketResult>* packets) {
   RTC_CHECK(packets != NULL);
   RTC_CHECK(packets->empty());
   RTC_CHECK_GT(capacity_, 0);
   auto it =
       std::min_element(streams_.begin(), streams_.end(), RtpStream::Compare);
-  (*it)->GenerateFrame(time_now_us, packets);
+  (*it)->GenerateFrame(time_now_us, next_sequence_number, packets);
   for (PacketResult& packet : *packets) {
     int capacity_bpus = capacity_ / 1000;
     int64_t required_network_time_us =
@@ -233,8 +237,8 @@ bool DelayBasedBweTest::GenerateAndProcessFrame(uint32_t ssrc,
   stream_generator_->SetBitrateBps(bitrate_bps);
   std::vector<PacketResult> packets;
 
-  int64_t next_time_us =
-      stream_generator_->GenerateFrame(&packets, clock_.TimeInMicroseconds());
+  int64_t next_time_us = stream_generator_->GenerateFrame(
+      clock_.TimeInMicroseconds(), &next_sequence_number_, &packets);
   if (packets.empty())
     return false;
 

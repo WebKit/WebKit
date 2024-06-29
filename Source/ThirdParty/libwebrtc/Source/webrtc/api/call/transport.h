@@ -15,8 +15,6 @@
 #include <stdint.h>
 
 #include "api/array_view.h"
-#include "api/ref_counted_base.h"
-#include "api/scoped_refptr.h"
 
 namespace webrtc {
 
@@ -27,12 +25,9 @@ struct PacketOptions {
   PacketOptions(const PacketOptions&);
   ~PacketOptions();
 
-  // A 16 bits positive id. Negative ids are invalid and should be interpreted
+  // Negative ids are invalid and should be interpreted
   // as packet_id not being set.
-  int packet_id = -1;
-  // Additional data bound to the RTP packet for use in application code,
-  // outside of WebRTC.
-  rtc::scoped_refptr<rtc::RefCountedBase> additional_data;
+  int64_t packet_id = -1;
   // Whether this is a retransmission of an earlier packet.
   bool is_retransmit = false;
   bool included_in_feedback = false;

@@ -10,13 +10,15 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkTypeface.h"
 #include "include/core/SkTypes.h"
+#include "src/base/SkUTF.h"
 #include "src/core/SkAdvancedTypefaceMetrics.h"
-#include "src/core/SkStrikeCache.h"
 #include "src/pdf/SkPDFGlyphUse.h"
 #include "src/pdf/SkPDFTypes.h"
 
+#include <cstdint>
 #include <vector>
 
+class SkGlyph;
 class SkPDFDocument;
 class SkString;
 
@@ -49,7 +51,8 @@ public:
 
     static bool IsMultiByte(SkAdvancedTypefaceMetrics::FontType type) {
         return type == SkAdvancedTypefaceMetrics::kType1CID_Font ||
-               type == SkAdvancedTypefaceMetrics::kTrueType_Font;
+               type == SkAdvancedTypefaceMetrics::kTrueType_Font ||
+               type == SkAdvancedTypefaceMetrics::kCFF_Font;
     }
 
     /** Returns true if this font encoding supports glyph IDs above 255.

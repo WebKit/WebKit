@@ -33,6 +33,7 @@
 
 #if USE(SKIA)
 #include "FontRenderOptions.h"
+#include "GLContext.h"
 #include "GLFence.h"
 #include "PlatformDisplay.h"
 #include <skia/core/SkCanvas.h>
@@ -43,6 +44,7 @@
 #include <skia/gpu/ganesh/SkSurfaceGanesh.h>
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
 #include <skia/gpu/ganesh/gl/GrGLDirectContext.h>
+#include <wtf/MainThread.h>
 
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
@@ -52,6 +54,7 @@
 #endif
 
 namespace Nicosia {
+using namespace WebCore;
 
 Lock Buffer::s_layersMemoryUsageLock;
 double Buffer::s_currentLayersMemoryUsage = 0.0;
@@ -142,7 +145,14 @@ AcceleratedBuffer::AcceleratedBuffer(sk_sp<SkSurface>&& surface, Flags flags)
     m_surface = WTFMove(surface);
 }
 
-AcceleratedBuffer::~AcceleratedBuffer() = default;
+AcceleratedBuffer::~AcceleratedBuffer()
+{
+    ensureOnMainThread([surface = WTFMove(m_surface), fence = WTFMove(m_fence)]() mutable {
+        PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent();
+        fence = nullptr;
+        surface = nullptr;
+    });
+}
 
 WebCore::IntSize AcceleratedBuffer::size() const
 {

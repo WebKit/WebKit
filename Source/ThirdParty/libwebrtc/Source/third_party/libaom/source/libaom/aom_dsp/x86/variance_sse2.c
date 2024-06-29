@@ -415,7 +415,6 @@ unsigned int aom_mse16x16_sse2(const uint8_t *src, int src_stride,
   DECL(8, opt);    \
   DECL(16, opt)
 
-DECLS(sse2);
 DECLS(ssse3);
 #undef DECLS
 #undef DECL
@@ -492,7 +491,6 @@ DECLS(ssse3);
   FN(4, 4, 4, 2, 2, opt, (int32_t), (int32_t))
 #endif
 
-FNS(sse2)
 FNS(ssse3)
 
 #undef FNS
@@ -510,7 +508,6 @@ FNS(ssse3)
   DECL(8, opt);    \
   DECL(16, opt)
 
-DECLS(sse2);
 DECLS(ssse3);
 #undef DECL
 #undef DECLS
@@ -591,7 +588,6 @@ DECLS(ssse3);
   FN(4, 4, 4, 2, 2, opt, (uint32_t), (int32_t))
 #endif
 
-FNS(sse2)
 FNS(ssse3)
 
 #undef FNS
@@ -710,8 +706,8 @@ void aom_highbd_comp_mask_pred_sse2(uint8_t *comp_pred8, const uint8_t *pred8,
   }
 }
 
-uint64_t aom_mse_4xh_16bit_sse2(uint8_t *dst, int dstride, uint16_t *src,
-                                int sstride, int h) {
+static uint64_t mse_4xh_16bit_sse2(uint8_t *dst, int dstride, uint16_t *src,
+                                   int sstride, int h) {
   uint64_t sum = 0;
   __m128i dst0_8x8, dst1_8x8, dst_16x8;
   __m128i src0_16x4, src1_16x4, src_16x8;
@@ -744,8 +740,8 @@ uint64_t aom_mse_4xh_16bit_sse2(uint8_t *dst, int dstride, uint16_t *src,
   return sum;
 }
 
-uint64_t aom_mse_8xh_16bit_sse2(uint8_t *dst, int dstride, uint16_t *src,
-                                int sstride, int h) {
+static uint64_t mse_8xh_16bit_sse2(uint8_t *dst, int dstride, uint16_t *src,
+                                   int sstride, int h) {
   uint64_t sum = 0;
   __m128i dst_8x8, dst_16x8;
   __m128i src_16x8;
@@ -781,8 +777,8 @@ uint64_t aom_mse_wxh_16bit_sse2(uint8_t *dst, int dstride, uint16_t *src,
   assert((w == 8 || w == 4) && (h == 8 || h == 4) &&
          "w=8/4 and h=8/4 must satisfy");
   switch (w) {
-    case 4: return aom_mse_4xh_16bit_sse2(dst, dstride, src, sstride, h);
-    case 8: return aom_mse_8xh_16bit_sse2(dst, dstride, src, sstride, h);
+    case 4: return mse_4xh_16bit_sse2(dst, dstride, src, sstride, h);
+    case 8: return mse_8xh_16bit_sse2(dst, dstride, src, sstride, h);
     default: assert(0 && "unsupported width"); return -1;
   }
 }

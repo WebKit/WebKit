@@ -34,9 +34,11 @@
 #include "ElementInlines.h"
 #include "ElementRareData.h"
 #include "FontCascade.h"
+#include "HTMLAttachmentElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLegendElement.h"
 #include "HTMLMeterElement.h"
@@ -350,6 +352,8 @@ static Node* firstNode(const BoundaryPoint& point)
 TextIterator::TextIterator(const SimpleRange& range, TextIteratorBehaviors behaviors)
     : m_behaviors(behaviors)
 {
+    ASSERT(!m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharacters) || !m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharactersForImages));
+
     range.start.protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
     m_startContainer = range.start.container.ptr();
@@ -772,7 +776,22 @@ bool TextIterator::handleReplacedElement()
 
     m_hasEmitted = true;
 
-    if (m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharacters)) {
+    auto shouldEmitObjectReplacementCharacter = [&] {
+        if (m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharacters))
+            return true;
+
+        if (m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharactersForImages) && is<HTMLImageElement>(m_currentNode.get()))
+            return true;
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+        if (m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharactersForAttachments) && is<HTMLAttachmentElement>(m_currentNode.get()))
+            return true;
+#endif
+
+        return false;
+    }();
+
+    if (shouldEmitObjectReplacementCharacter) {
         emitCharacter(objectReplacementCharacter, m_currentNode->protectedParentNode(), protectedCurrentNode(), 0, 1);
         // Don't process subtrees for embedded objects. If the text there is required,
         // it must be explicitly asked by specifying a range falling inside its boundaries.
@@ -1741,7 +1760,7 @@ static UStringSearch* createSearcher()
     // but it doesn't matter exactly what it is, since we don't perform any searches
     // without setting both the pattern and the text.
     UErrorCode status = U_ZERO_ERROR;
-    auto searchCollatorName = makeString(currentSearchLocaleID(), "@collation=search");
+    auto searchCollatorName = makeString(span(currentSearchLocaleID()), "@collation=search"_s);
     UStringSearch* searcher = usearch_open(&newlineCharacter, 1, &newlineCharacter, 1, searchCollatorName.utf8().data(), 0, &status);
     ASSERT(U_SUCCESS(status) || status == U_USING_FALLBACK_WARNING || status == U_USING_DEFAULT_WARNING);
     return searcher;

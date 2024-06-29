@@ -401,6 +401,177 @@ void test_finddir_dual_speed(
       ref_elapsed_time, elapsed_time, ref_elapsed_time / elapsed_time);
 }
 
+#define MAX_CDEF_BLOCK 256
+
+constexpr int kIterations = 100;
+
+using CDEFCopyRect8To16 = void (*)(uint16_t *dst, int dstride,
+                                   const uint8_t *src, int sstride, int width,
+                                   int height);
+
+using CDEFCopyRect8To16Param = std::tuple<CDEFCopyRect8To16, CDEFCopyRect8To16>;
+
+class CDEFCopyRect8to16Test
+    : public ::testing::TestWithParam<CDEFCopyRect8To16Param> {
+ public:
+  CDEFCopyRect8to16Test()
+      : rnd_(libaom_test::ACMRandom::DeterministicSeed()),
+        test_func_(GET_PARAM(0)), ref_func_(GET_PARAM(1)) {}
+  ~CDEFCopyRect8to16Test() override = default;
+  void SetUp() override {
+    src_ = reinterpret_cast<uint8_t *>(
+        aom_memalign(8, sizeof(uint8_t) * MAX_CDEF_BLOCK * MAX_CDEF_BLOCK));
+    ASSERT_NE(src_, nullptr);
+    ref_dst_ = reinterpret_cast<uint16_t *>(
+        aom_memalign(16, sizeof(uint16_t) * MAX_CDEF_BLOCK * MAX_CDEF_BLOCK));
+    ASSERT_NE(ref_dst_, nullptr);
+    test_dst_ = reinterpret_cast<uint16_t *>(
+        aom_memalign(16, sizeof(uint16_t) * MAX_CDEF_BLOCK * MAX_CDEF_BLOCK));
+    ASSERT_NE(test_dst_, nullptr);
+  }
+
+  void TearDown() override {
+    aom_free(src_);
+    aom_free(ref_dst_);
+    aom_free(test_dst_);
+  }
+
+  void test_copy_rect_8_to_16(CDEFCopyRect8To16 test_func,
+                              CDEFCopyRect8To16 ref_func) {
+    constexpr int stride = MAX_CDEF_BLOCK;
+    int error = 0;
+    for (int k = 0; k < kIterations && !error; k++) {
+      // This function operates on values of width that are either 4 or a
+      // multiple of 8. For height, generate a random value between 1 and 256,
+      // making sure it is even.
+      const int width = k == 0 ? 4 : (rnd_.Rand8() % 32 + 1) * 8;
+      const int height = k == 0 ? 4 : (rnd_.Rand8() % 128 + 1) * 2;
+      for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+          src_[i * stride + j] = rnd_.Rand8();
+        }
+      }
+
+      ref_func(ref_dst_, stride, src_, stride, width, height);
+      test_func(test_dst_, stride, src_, stride, width, height);
+
+      int i, j;
+      for (i = 0; i < height; i++) {
+        for (j = 0; j < width; j++) {
+          if (test_dst_[i * stride + j] != ref_dst_[i * stride + j]) {
+            error = 1;
+            break;
+          }
+        }
+        if (error) {
+          break;
+        }
+      }
+      EXPECT_EQ(0, error)
+          << "Error: CDEFCopyRect8to16Test, SIMD and C mismatch." << std::endl
+          << "First error at " << i << "," << j << " ("
+          << ref_dst_[i * stride + j] << " : " << test_dst_[i * stride + j]
+          << ") " << std::endl
+          << "width: " << width << std::endl
+          << "height: " << height << std::endl
+          << std::endl;
+    }
+  }
+
+ protected:
+  libaom_test::ACMRandom rnd_;
+  uint8_t *src_;
+  uint16_t *ref_dst_;
+  uint16_t *test_dst_;
+  CDEFCopyRect8To16 test_func_;
+  CDEFCopyRect8To16 ref_func_;
+};
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CDEFCopyRect8to16Test);
+
+using CDEFCopyRect16To16 = void (*)(uint16_t *dst, int dstride,
+                                    const uint16_t *src, int sstride, int width,
+                                    int height);
+
+using CDEFCopyRect16To16Param =
+    std::tuple<CDEFCopyRect16To16, CDEFCopyRect16To16>;
+
+class CDEFCopyRect16to16Test
+    : public ::testing::TestWithParam<CDEFCopyRect16To16Param> {
+ public:
+  CDEFCopyRect16to16Test()
+      : rnd_(libaom_test::ACMRandom::DeterministicSeed()),
+        test_func_(GET_PARAM(0)), ref_func_(GET_PARAM(1)) {}
+  ~CDEFCopyRect16to16Test() override = default;
+  void SetUp() override {
+    src_ = reinterpret_cast<uint16_t *>(
+        aom_memalign(16, sizeof(uint16_t) * MAX_CDEF_BLOCK * MAX_CDEF_BLOCK));
+    ASSERT_NE(src_, nullptr);
+    ref_dst_ = reinterpret_cast<uint16_t *>(
+        aom_memalign(16, sizeof(uint16_t) * MAX_CDEF_BLOCK * MAX_CDEF_BLOCK));
+    ASSERT_NE(ref_dst_, nullptr);
+    test_dst_ = reinterpret_cast<uint16_t *>(
+        aom_memalign(16, sizeof(uint16_t) * MAX_CDEF_BLOCK * MAX_CDEF_BLOCK));
+    ASSERT_NE(test_dst_, nullptr);
+  }
+
+  void TearDown() override {
+    aom_free(src_);
+    aom_free(ref_dst_);
+    aom_free(test_dst_);
+  }
+
+  void test_copy_rect_16_to_16(CDEFCopyRect16To16 test_func,
+                               CDEFCopyRect16To16 ref_func) {
+    constexpr int stride = MAX_CDEF_BLOCK;
+    int error = 0;
+    for (int k = 0; k < kIterations && !error; k++) {
+      // This function operates on values of width that are either 4 or a
+      // multiple of 8. For height, generate a random value between 1 and 256,
+      // making sure it is even.
+      const int width = k == 0 ? 4 : (rnd_.Rand8() % 32 + 1) * 8;
+      const int height = k == 0 ? 4 : (rnd_.Rand8() % 128 + 1) * 2;
+      for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+          src_[i * stride + j] = rnd_.Rand16();
+        }
+      }
+
+      ref_func(ref_dst_, stride, src_, stride, width, height);
+      test_func(test_dst_, stride, src_, stride, width, height);
+
+      int i, j;
+      for (i = 0; i < height; i++) {
+        for (j = 0; j < width; j++) {
+          if (test_dst_[i * stride + j] != ref_dst_[i * stride + j]) {
+            error = 1;
+            break;
+          }
+        }
+        if (error) {
+          break;
+        }
+      }
+      EXPECT_EQ(0, error)
+          << "Error: CDEFCopyRect16to16Test, SIMD and C mismatch." << std::endl
+          << "First error at " << i << "," << j << " ("
+          << ref_dst_[i * stride + j] << " : " << test_dst_[i * stride + j]
+          << ") " << std::endl
+          << "width: " << width << std::endl
+          << "height: " << height << std::endl
+          << std::endl;
+    }
+  }
+
+ protected:
+  libaom_test::ACMRandom rnd_;
+  uint16_t *src_;
+  uint16_t *ref_dst_;
+  uint16_t *test_dst_;
+  CDEFCopyRect16To16 test_func_;
+  CDEFCopyRect16To16 ref_func_;
+};
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CDEFCopyRect16to16Test);
+
 TEST_P(CDEFBlockTest, TestSIMDNoMismatch) {
   test_cdef(bsize, 1, cdef, ref_cdef, boundary, depth);
 }
@@ -433,9 +604,17 @@ TEST_P(CDEFFindDirDualSpeedTest, DISABLED_TestSpeed) {
   test_finddir_dual_speed(finddir, ref_finddir);
 }
 
+TEST_P(CDEFCopyRect8to16Test, TestSIMDNoMismatch) {
+  test_copy_rect_8_to_16(test_func_, ref_func_);
+}
+
+TEST_P(CDEFCopyRect16to16Test, TestSIMDNoMismatch) {
+  test_copy_rect_16_to_16(test_func_, ref_func_);
+}
+
 using std::make_tuple;
 
-#if (HAVE_SSE2 || HAVE_SSSE3 || HAVE_SSE4_1 || HAVE_AVX2 || HAVE_NEON)
+#if ((AOM_ARCH_X86 && HAVE_SSSE3) || HAVE_SSE4_1 || HAVE_AVX2 || HAVE_NEON)
 static const CdefFilterBlockFunctions kCdefFilterFuncC[] = {
   { &cdef_filter_8_0_c, &cdef_filter_8_1_c, &cdef_filter_8_2_c,
     &cdef_filter_8_3_c }
@@ -447,40 +626,7 @@ static const CdefFilterBlockFunctions kCdefFilterHighbdFuncC[] = {
 };
 #endif
 
-#if HAVE_SSE2
-static const CdefFilterBlockFunctions kCdefFilterFuncSse2[] = {
-  { &cdef_filter_8_0_sse2, &cdef_filter_8_1_sse2, &cdef_filter_8_2_sse2,
-    &cdef_filter_8_3_sse2 }
-};
-
-static const CdefFilterBlockFunctions kCdefFilterHighbdFuncSse2[] = {
-  { &cdef_filter_16_0_sse2, &cdef_filter_16_1_sse2, &cdef_filter_16_2_sse2,
-    &cdef_filter_16_3_sse2 }
-};
-
-INSTANTIATE_TEST_SUITE_P(
-    SSE2, CDEFBlockTest,
-    ::testing::Combine(::testing::ValuesIn(kCdefFilterFuncSse2),
-                       ::testing::ValuesIn(kCdefFilterFuncC),
-                       ::testing::Values(BLOCK_4X4, BLOCK_4X8, BLOCK_8X4,
-                                         BLOCK_8X8),
-                       ::testing::Range(0, 16), ::testing::Values(8)));
-INSTANTIATE_TEST_SUITE_P(
-    SSE2, CDEFBlockHighbdTest,
-    ::testing::Combine(::testing::ValuesIn(kCdefFilterHighbdFuncSse2),
-                       ::testing::ValuesIn(kCdefFilterHighbdFuncC),
-                       ::testing::Values(BLOCK_4X4, BLOCK_4X8, BLOCK_8X4,
-                                         BLOCK_8X8),
-                       ::testing::Range(0, 16), ::testing::Range(10, 13, 2)));
-INSTANTIATE_TEST_SUITE_P(SSE2, CDEFFindDirTest,
-                         ::testing::Values(make_tuple(&cdef_find_dir_sse2,
-                                                      &cdef_find_dir_c)));
-INSTANTIATE_TEST_SUITE_P(SSE2, CDEFFindDirDualTest,
-                         ::testing::Values(make_tuple(&cdef_find_dir_dual_sse2,
-                                                      &cdef_find_dir_dual_c)));
-#endif
-
-#if HAVE_SSSE3
+#if AOM_ARCH_X86 && HAVE_SSSE3
 static const CdefFilterBlockFunctions kCdefFilterFuncSsse3[] = {
   { &cdef_filter_8_0_ssse3, &cdef_filter_8_1_ssse3, &cdef_filter_8_2_ssse3,
     &cdef_filter_8_3_ssse3 }
@@ -511,6 +657,16 @@ INSTANTIATE_TEST_SUITE_P(SSSE3, CDEFFindDirTest,
 INSTANTIATE_TEST_SUITE_P(SSSE3, CDEFFindDirDualTest,
                          ::testing::Values(make_tuple(&cdef_find_dir_dual_ssse3,
                                                       &cdef_find_dir_dual_c)));
+
+INSTANTIATE_TEST_SUITE_P(
+    SSSE3, CDEFCopyRect8to16Test,
+    ::testing::Values(make_tuple(&cdef_copy_rect8_8bit_to_16bit_c,
+                                 &cdef_copy_rect8_8bit_to_16bit_ssse3)));
+
+INSTANTIATE_TEST_SUITE_P(
+    SSSE3, CDEFCopyRect16to16Test,
+    ::testing::Values(make_tuple(&cdef_copy_rect8_16bit_to_16bit_c,
+                                 &cdef_copy_rect8_16bit_to_16bit_ssse3)));
 #endif
 
 #if HAVE_SSE4_1
@@ -545,6 +701,16 @@ INSTANTIATE_TEST_SUITE_P(
     SSE4_1, CDEFFindDirDualTest,
     ::testing::Values(make_tuple(&cdef_find_dir_dual_sse4_1,
                                  &cdef_find_dir_dual_c)));
+
+INSTANTIATE_TEST_SUITE_P(
+    SSE4_1, CDEFCopyRect8to16Test,
+    ::testing::Values(make_tuple(&cdef_copy_rect8_8bit_to_16bit_c,
+                                 &cdef_copy_rect8_8bit_to_16bit_sse4_1)));
+
+INSTANTIATE_TEST_SUITE_P(
+    SSE4_1, CDEFCopyRect16to16Test,
+    ::testing::Values(make_tuple(&cdef_copy_rect8_16bit_to_16bit_c,
+                                 &cdef_copy_rect8_16bit_to_16bit_sse4_1)));
 #endif
 
 #if HAVE_AVX2
@@ -578,6 +744,16 @@ INSTANTIATE_TEST_SUITE_P(AVX2, CDEFFindDirTest,
 INSTANTIATE_TEST_SUITE_P(AVX2, CDEFFindDirDualTest,
                          ::testing::Values(make_tuple(&cdef_find_dir_dual_avx2,
                                                       &cdef_find_dir_dual_c)));
+
+INSTANTIATE_TEST_SUITE_P(
+    AVX2, CDEFCopyRect8to16Test,
+    ::testing::Values(make_tuple(&cdef_copy_rect8_8bit_to_16bit_c,
+                                 &cdef_copy_rect8_8bit_to_16bit_avx2)));
+
+INSTANTIATE_TEST_SUITE_P(
+    AVX2, CDEFCopyRect16to16Test,
+    ::testing::Values(make_tuple(&cdef_copy_rect8_16bit_to_16bit_c,
+                                 &cdef_copy_rect8_16bit_to_16bit_avx2)));
 #endif
 
 #if HAVE_NEON
@@ -611,33 +787,20 @@ INSTANTIATE_TEST_SUITE_P(NEON, CDEFFindDirTest,
 INSTANTIATE_TEST_SUITE_P(NEON, CDEFFindDirDualTest,
                          ::testing::Values(make_tuple(&cdef_find_dir_dual_neon,
                                                       &cdef_find_dir_dual_c)));
+
+INSTANTIATE_TEST_SUITE_P(
+    NEON, CDEFCopyRect8to16Test,
+    ::testing::Values(make_tuple(&cdef_copy_rect8_8bit_to_16bit_c,
+                                 &cdef_copy_rect8_8bit_to_16bit_neon)));
+
+INSTANTIATE_TEST_SUITE_P(
+    NEON, CDEFCopyRect16to16Test,
+    ::testing::Values(make_tuple(&cdef_copy_rect8_16bit_to_16bit_c,
+                                 &cdef_copy_rect8_16bit_to_16bit_neon)));
 #endif
 
 // Test speed for all supported architectures
-#if HAVE_SSE2
-INSTANTIATE_TEST_SUITE_P(
-    SSE2, CDEFSpeedTest,
-    ::testing::Combine(::testing::ValuesIn(kCdefFilterFuncSse2),
-                       ::testing::ValuesIn(kCdefFilterFuncC),
-                       ::testing::Values(BLOCK_4X4, BLOCK_4X8, BLOCK_8X4,
-                                         BLOCK_8X8),
-                       ::testing::Range(0, 16), ::testing::Values(8)));
-INSTANTIATE_TEST_SUITE_P(
-    SSE2, CDEFSpeedHighbdTest,
-    ::testing::Combine(::testing::ValuesIn(kCdefFilterHighbdFuncSse2),
-                       ::testing::ValuesIn(kCdefFilterHighbdFuncC),
-                       ::testing::Values(BLOCK_4X4, BLOCK_4X8, BLOCK_8X4,
-                                         BLOCK_8X8),
-                       ::testing::Range(0, 16), ::testing::Values(10)));
-INSTANTIATE_TEST_SUITE_P(SSE2, CDEFFindDirSpeedTest,
-                         ::testing::Values(make_tuple(&cdef_find_dir_sse2,
-                                                      &cdef_find_dir_c)));
-INSTANTIATE_TEST_SUITE_P(SSE2, CDEFFindDirDualSpeedTest,
-                         ::testing::Values(make_tuple(&cdef_find_dir_dual_sse2,
-                                                      &cdef_find_dir_dual_c)));
-#endif
-
-#if HAVE_SSSE3
+#if AOM_ARCH_X86 && HAVE_SSSE3
 INSTANTIATE_TEST_SUITE_P(
     SSSE3, CDEFSpeedTest,
     ::testing::Combine(::testing::ValuesIn(kCdefFilterFuncSsse3),

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(VIDEO)
+
 #include "ContentType.h"
 #include "MediaPromiseTypes.h"
 #include "PlatformMediaResourceLoader.h"
@@ -58,3 +60,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(VIDEO)

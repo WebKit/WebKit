@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+
+<div id="element">
+</div>
+<div id="element2">
+</div>
+
+<script>
+description('This test checks that we throw error when using Typed OM set() with a coalesced pair of values.')
+shouldThrow(
+    () => { 
+      var element = document.getElementById("element");
+      element.attributeStyleMap.set('width', CSSStyleValue.parse('border-bottom-left-radius', '30px'))
+    }, "'NotSupportedError: Invalid values'");
+shouldThrow(
+    () => { 
+      var element2 = document.getElementById("element2");
+      element2.attributeStyleMap.set('width', CSSStyleValue.parse('border-bottom-left-radius', '30px 10px'))
+    }, "'TypeError: Invalid values'");
+</script>
+</body>
+</html>

@@ -76,6 +76,8 @@ static gboolean enableITP;
 static gboolean exitAfterLoad;
 static gboolean webProcessCrashed;
 static gboolean printVersion;
+static char *configFile;
+static GSettings *interfaceSettings;
 
 #if !GTK_CHECK_VERSION(3, 98, 0)
 static gboolean enableSandbox;
@@ -179,6 +181,7 @@ static const GOptionEntry commandLineOptions[] =
     { "exit-after-load", 0, 0, G_OPTION_ARG_NONE, &exitAfterLoad, "Quit the browser after the load finishes", NULL },
     { "time-zone", 't', 0, G_OPTION_ARG_STRING, &timeZone, "Set time zone", "TIMEZONE" },
     { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WebKitGTK version", NULL },
+    { "config", 'C', 0, G_OPTION_ARG_FILENAME, &configFile, "Path to a configuration file", "PATH" },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
     { 0, 0, 0, 0, 0, 0, 0 }
 };
@@ -764,6 +767,34 @@ static void startup(GApplication *application)
         gtk_application_set_accels_for_action(GTK_APPLICATION(application), it[0], &it[1]);
 }
 
+static void colorSchemeChanged(GtkSettings *settings)
+{
+    gboolean useDarkMode = g_settings_get_enum(interfaceSettings, "color-scheme") == 1;
+    g_object_set(settings, "gtk-application-prefer-dark-theme", useDarkMode, NULL);
+}
+
+static void setupDarkMode(GtkSettings *settings)
+{
+    if (darkMode) {
+        g_object_set(settings, "gtk-application-prefer-dark-theme", TRUE, NULL);
+        return;
+    }
+
+    if (g_file_test("/.flatpak-info", G_FILE_TEST_EXISTS))
+        return;
+
+    g_autoptr(GSettingsSchema) schema = g_settings_schema_source_lookup(g_settings_schema_source_get_default(), "org.gnome.desktop.interface", TRUE);
+    if (!schema)
+        return;
+
+    if (!g_settings_schema_has_key(schema, "color-scheme"))
+        return;
+
+    interfaceSettings = g_settings_new("org.gnome.desktop.interface");
+    colorSchemeChanged(settings);
+    g_signal_connect_swapped(interfaceSettings, "changed::color-scheme", G_CALLBACK(colorSchemeChanged), settings);
+}
+
 static void activate(GApplication *application, WebKitSettings *webkitSettings)
 {
 #if GTK_CHECK_VERSION(3, 98, 0)
@@ -842,7 +873,6 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
     WebKitWebContext *webContext = g_object_new(WEBKIT_TYPE_WEB_CONTEXT,
         "website-data-manager", manager,
         "process-swap-on-cross-site-navigation-enabled", TRUE,
-        "use-system-appearance-for-scrollbars", FALSE,
         "time-zone-override", timeZone,
         NULL);
     g_object_unref(manager);
@@ -922,8 +952,7 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
     BrowserWindow *mainWindow = BROWSER_WINDOW(browser_window_new(NULL, webContext));
 #endif
     gtk_application_add_window(GTK_APPLICATION(application), GTK_WINDOW(mainWindow));
-    if (darkMode)
-        g_object_set(gtk_widget_get_settings(GTK_WIDGET(mainWindow)), "gtk-application-prefer-dark-theme", TRUE, NULL);
+    setupDarkMode(gtk_widget_get_settings(GTK_WIDGET(mainWindow)));
     if (fullScreen)
         browser_window_fullscreen(mainWindow);
 
@@ -997,6 +1026,7 @@ int main(int argc, char *argv[])
     webkit_settings_set_enable_developer_extras(webkitSettings, TRUE);
     webkit_settings_set_enable_webgl(webkitSettings, TRUE);
     webkit_settings_set_enable_media_stream(webkitSettings, TRUE);
+
     if (!addSettingsGroupToContext(context, webkitSettings))
         g_clear_object(&webkitSettings);
 
@@ -1010,6 +1040,25 @@ int main(int argc, char *argv[])
         return 1;
     }
     g_option_context_free(context);
+
+    if (configFile) {
+        g_autoptr(GFile) file = g_file_new_for_commandline_arg(configFile);
+        g_autofree char* configFilePath = g_file_get_path(file);
+
+        if (!g_file_query_exists(file, NULL)) {
+            g_printerr("%s: File does not exist: %s\n", g_get_prgname(), configFilePath);
+            return EXIT_FAILURE;
+        }
+
+        g_autoptr(GError) error = NULL;
+        g_autoptr(GKeyFile) keyFile = g_key_file_new();
+        if (!g_key_file_load_from_file(keyFile, configFilePath, G_KEY_FILE_NONE, &error) || !webkit_settings_apply_from_key_file(webkitSettings, keyFile, "websettings", &error)) {
+            g_printerr("%s: Cannot load configuration file: %s\n", g_get_prgname(), error->message);
+            return EXIT_FAILURE;
+        }
+
+        g_clear_pointer(&configFile, g_free);
+    }
 
     if (printVersion) {
         g_print("WebKitGTK %u.%u.%u",
@@ -1029,6 +1078,8 @@ int main(int argc, char *argv[])
     g_signal_connect(application, "activate", G_CALLBACK(activate), webkitSettings);
     g_application_run(G_APPLICATION(application), 0, NULL);
     g_object_unref(application);
+
+    g_clear_object(&interfaceSettings);
 
     return exitAfterLoad && webProcessCrashed ? 1 : 0;
 }

@@ -46,6 +46,10 @@ struct StreamsConfig {
   ~StreamsConfig();
   Timestamp at_time = Timestamp::PlusInfinity();
   absl::optional<bool> requests_alr_probing;
+  // If `enable_repeated_initial_probing` is set to true, Probes are sent
+  // periodically every 1s during the first 5s after the network becomes
+  // available. The probes ignores max_total_allocated_bitrate.
+  absl::optional<bool> enable_repeated_initial_probing;
   absl::optional<double> pacing_factor;
 
   // TODO(srte): Use BitrateAllocationLimits here.
@@ -170,9 +174,7 @@ struct TransportPacketsFeedback {
   ~TransportPacketsFeedback();
 
   Timestamp feedback_time = Timestamp::PlusInfinity();
-  Timestamp first_unacked_send_time = Timestamp::PlusInfinity();
   DataSize data_in_flight = DataSize::Zero();
-  DataSize prior_in_flight = DataSize::Zero();
   std::vector<PacketResult> packet_feedbacks;
 
   // Arrival times for messages without send time information.

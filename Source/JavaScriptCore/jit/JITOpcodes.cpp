@@ -476,10 +476,29 @@ void JIT::emit_op_jfalse(const JSInstruction* currentInstruction)
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
 
     using BaselineJITRegisters::JFalse::valueJSR;
+    using BaselineJITRegisters::JFalse::scratch1GPR;
 
     emitGetVirtualRegister(bytecode.m_condition, valueJSR);
+
+    JumpList fallThrough;
+#if USE(JSVALUE64)
+    // Quick fast path.
+    auto isNotBoolean = branchIfNotBoolean(valueJSR, scratch1GPR);
+    addJump(branchTest64(Zero, valueJSR.payloadGPR(), TrustedImm32(0x1)), target);
+    fallThrough.append(jump());
+
+    isNotBoolean.link(this);
+    auto isNotInt32 = branchIfNotInt32(valueJSR);
+    addJump(branchTest32(Zero, valueJSR.payloadGPR()), target);
+    fallThrough.append(jump());
+
+    isNotInt32.link(this);
+    addJump(branchIfOther(valueJSR, scratch1GPR), target);
+#endif
+
     nearCallThunk(CodeLocationLabel { vm().getCTIStub(valueIsFalseyGenerator).retaggedCode<NoPtrTag>() });
     addJump(branchTest32(NonZero, regT0), target);
+    fallThrough.link(this);
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::valueIsFalseyGenerator(VM& vm)
@@ -500,9 +519,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::valueIsFalseyGenerator(VM& vm)
 
     jit.tagReturnAddress();
 
-    loadGlobalObject(jit, globalObjectGPR);
     jit.move(TrustedImm32(1), regT0);
-    auto isFalsey = jit.branchIfFalsey(vm, valueJSR, scratch1GPR, scratch2GPR, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, globalObjectGPR);
+    auto isFalsey = jit.branchIfFalsey(vm, valueJSR, scratch1GPR, scratch2GPR, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, CCallHelpers::LazyBaselineGlobalObject);
     jit.move(TrustedImm32(0), regT0);
     isFalsey.link(&jit);
     jit.ret();
@@ -662,10 +680,29 @@ void JIT::emit_op_jtrue(const JSInstruction* currentInstruction)
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
 
     using BaselineJITRegisters::JTrue::valueJSR;
+    using BaselineJITRegisters::JFalse::scratch1GPR;
 
     emitGetVirtualRegister(bytecode.m_condition, valueJSR);
+
+    JumpList fallThrough;
+#if USE(JSVALUE64)
+    // Quick fast path.
+    auto isNotBoolean = branchIfNotBoolean(valueJSR, scratch1GPR);
+    addJump(branchTest64(NonZero, valueJSR.payloadGPR(), TrustedImm32(0x1)), target);
+    fallThrough.append(jump());
+
+    isNotBoolean.link(this);
+    auto isNotInt32 = branchIfNotInt32(valueJSR);
+    addJump(branchTest32(NonZero, valueJSR.payloadGPR()), target);
+    fallThrough.append(jump());
+
+    isNotInt32.link(this);
+    fallThrough.append(branchIfOther(valueJSR, scratch1GPR));
+#endif
+
     nearCallThunk(CodeLocationLabel { vm().getCTIStub(valueIsTruthyGenerator).retaggedCode<NoPtrTag>() });
     addJump(branchTest32(NonZero, regT0), target);
+    fallThrough.link(this);
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::valueIsTruthyGenerator(VM& vm)
@@ -686,9 +723,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::valueIsTruthyGenerator(VM& vm)
 
     jit.tagReturnAddress();
 
-    loadGlobalObject(jit, globalObjectGPR);
     jit.move(TrustedImm32(1), regT0);
-    auto isTruthy = jit.branchIfTruthy(vm, valueJSR, scratch1GPR, scratch2GPR, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, globalObjectGPR);
+    auto isTruthy = jit.branchIfTruthy(vm, valueJSR, scratch1GPR, scratch2GPR, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, CCallHelpers::LazyBaselineGlobalObject);
     jit.move(TrustedImm32(0), regT0);
     isTruthy.link(&jit);
     jit.ret();
@@ -1288,7 +1324,7 @@ void JIT::emit_op_switch_imm(const JSInstruction* currentInstruction)
     sub32(Imm32(unlinkedTable.m_min), jsRegT10.payloadGPR());
 
     addJump(branch32(AboveOrEqual, jsRegT10.payloadGPR(), Imm32(linkedTable.m_ctiOffsets.size())), defaultOffset);
-    move(TrustedImmPtr(linkedTable.m_ctiOffsets.data()), regT2);
+    move(TrustedImmPtr(linkedTable.m_ctiOffsets.mutableSpan().data()), regT2);
     loadPtr(BaseIndex(regT2, jsRegT10.payloadGPR(), ScalePtr), regT2);
     farJump(regT2, JSSwitchPtrTag);
 
@@ -1529,27 +1565,13 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
         jit.copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
         jit.prepareCallOperation(vm);
 
-#if OS(WINDOWS) && CPU(X86_64)
-        // On Windows, return values larger than 8 bytes are retuened via an implicit pointer passed as
-        // the first argument, and remaining arguments are shifted to the right. Make space for this.
-        static_assert(sizeof(UGPRPair) == 16, "Assumed by generated call site below");
-        jit.subPtr(MacroAssembler::TrustedImm32(16), MacroAssembler::stackPointerRegister);
-        jit.move(MacroAssembler::stackPointerRegister, JIT::argumentGPR0);
-        constexpr GPRReg vmPointerArgGPR { GPRInfo::argumentGPR1 };
-        constexpr GPRReg bytecodeIndexBitsArgGPR { GPRInfo::argumentGPR2 };
-#else
         constexpr GPRReg vmPointerArgGPR { GPRInfo::argumentGPR0 };
         constexpr GPRReg bytecodeIndexBitsArgGPR { GPRInfo::argumentGPR1 };
-#endif
+
         jit.move(TrustedImmPtr(&vm), vmPointerArgGPR);
         jit.move(TrustedImm32(0), bytecodeIndexBitsArgGPR);
 
         operationOptimizeCall = jit.call(OperationPtrTag);
-
-#if OS(WINDOWS) && CPU(X86_64)
-        jit.pop(GPRInfo::returnValueGPR); // targetPC
-        jit.pop(GPRInfo::returnValueGPR2); // dataBuffer (unused, but needs popping to restore stack)
-#endif
 
         skipOptimize.append(jit.branchTestPtr(Zero, returnValueGPR));
         jit.farJump(returnValueGPR, GPRInfo::callFrameRegister);

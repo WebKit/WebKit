@@ -27,11 +27,11 @@
 #pragma once
 
 #include "CompositeEditCommand.h"
+#include "DocumentFragment.h"
 #include "NodeTraversal.h"
 
 namespace WebCore {
 
-class DocumentFragment;
 class Range;
 class ReplacementFragment;
 

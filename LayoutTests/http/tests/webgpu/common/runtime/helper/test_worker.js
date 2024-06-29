@@ -17,12 +17,16 @@ function unregisterAllServiceWorkers() {
   });
 }
 
-// NOTE: This code runs on startup for any runtime with worker support. Here, we use that chance to
-// delete any leaked service workers, and register to clean up after ourselves at shutdown.
-unregisterAllServiceWorkers();
-window.addEventListener('beforeunload', () => {
+// Firefox has serviceWorkers disabled in private mode
+// and Servo does not support serviceWorkers yet.
+if ('serviceWorker' in navigator) {
+  // NOTE: This code runs on startup for any runtime with worker support. Here, we use that chance to
+  // delete any leaked service workers, and register to clean up after ourselves at shutdown.
   unregisterAllServiceWorkers();
-});
+  window.addEventListener('beforeunload', () => {
+    unregisterAllServiceWorkers();
+  });
+}
 
 class TestBaseWorker {
 

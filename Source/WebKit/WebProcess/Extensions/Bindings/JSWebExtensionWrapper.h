@@ -186,6 +186,12 @@ inline NSArray *toNSArray(JSContextRef context, JSValueRef value, Class containi
     return toNSObject(context, value, containingObjectsOfClass);
 }
 
+inline JSContext *toJSContext(JSContextRef context)
+{
+    ASSERT(context);
+    return [JSContext contextWithJSGlobalContextRef:JSContextGetGlobalContext(context)];
+}
+
 inline JSValue *toJSValue(JSContextRef context, JSValueRef value)
 {
     ASSERT(context);
@@ -193,7 +199,7 @@ inline JSValue *toJSValue(JSContextRef context, JSValueRef value)
     if (!value)
         return nil;
 
-    return [JSValue valueWithJSValueRef:value inContext:[JSContext contextWithJSGlobalContextRef:JSContextGetGlobalContext(context)]];
+    return [JSValue valueWithJSValueRef:value inContext:toJSContext(context)];
 }
 
 inline JSValue *toWindowObject(JSContextRef context, WebFrame& frame)
@@ -224,7 +230,7 @@ inline JSValueRef toJSValueRef(JSContextRef context, id object)
     if (JSValue *value = dynamic_objc_cast<JSValue>(object))
         return value.JSValueRef;
 
-    return [JSValue valueWithObject:object inContext:[JSContext contextWithJSGlobalContextRef:JSContextGetGlobalContext(context)]].JSValueRef;
+    return [JSValue valueWithObject:object inContext:toJSContext(context)].JSValueRef;
 }
 
 JSValueRef toJSValueRef(JSContextRef, NSString *, NullOrEmptyString = NullOrEmptyString::NullStringAsEmptyString);

@@ -175,11 +175,7 @@ protected:
 private:
     template<typename> friend class ThreadSafeWeakPtr;
     template<typename> friend class ThreadSafeWeakHashSet;
-#if COMPILER(MSVC)
-    ThreadSafeWeakPtrControlBlock& m_controlBlock { *new ThreadSafeWeakPtrControlBlock((T*)this) };
-#else
     ThreadSafeWeakPtrControlBlock& m_controlBlock { *new ThreadSafeWeakPtrControlBlock(static_cast<T*>(this)) };
-#endif
 };
 
 template<typename T>

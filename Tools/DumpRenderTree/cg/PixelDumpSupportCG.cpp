@@ -40,6 +40,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/SHA1.h>
+#include <wtf/Vector.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include <MobileCoreServices/UTCoreTypes.h>
@@ -89,10 +90,10 @@ void computeSHA1HashStringForBitmapContext(BitmapContext* context, char hashStri
     unsigned char* bitmapData = static_cast<unsigned char*>(CGBitmapContextGetData(bitmapContext));
     if ((CGBitmapContextGetBitmapInfo(bitmapContext) & kCGBitmapByteOrderMask) == kCGBitmapByteOrder32Big) {
         for (unsigned row = 0; row < pixelsHigh; row++) {
-            uint32_t buffer[pixelsWide];
+            Vector<uint32_t> buffer(pixelsWide);
             for (unsigned column = 0; column < pixelsWide; column++)
                 buffer[column] = OSReadLittleInt32(bitmapData, 4 * column);
-            sha1.addBytes(std::span { reinterpret_cast<const uint8_t*>(buffer), 4 * pixelsWide });
+            sha1.addBytes(asBytes(buffer.span()));
             bitmapData += bytesPerRow;
         }
     } else {

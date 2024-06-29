@@ -44,9 +44,9 @@ public:
     float getCurrentTime() const;
     ExceptionOr<float> getSimpleDuration() const;
 
-    void beginElement();
+    void beginElement() { beginElementAt(0); }
     void beginElementAt(float offset);
-    void endElement();
+    void endElement() { endElementAt(0); }
     void endElementAt(float offset);
 
     static bool isTargetAttributeCSSProperty(SVGElement*, const QualifiedName&);

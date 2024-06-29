@@ -461,7 +461,7 @@ private:
 };
 
 enum CanvasCompositingStrategy {
-    UnacceleratedCanvas,
+    CanvasPaintedToEnclosingLayer,
     CanvasPaintedToLayer,
     CanvasAsLayerContents
 };

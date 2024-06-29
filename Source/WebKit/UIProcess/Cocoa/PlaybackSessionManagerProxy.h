@@ -33,6 +33,7 @@
 #include <WebCore/PlatformPlaybackSessionInterface.h>
 #include <WebCore/PlaybackSessionModel.h>
 #include <WebCore/TimeRanges.h>
+#include <WebCore/VideoReceiverEndpoint.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -44,6 +45,7 @@ namespace WebKit {
 
 class WebPageProxy;
 class PlaybackSessionManagerProxy;
+class VideoReceiverEndpointMessage;
 
 class PlaybackSessionModelContext final: public RefCounted<PlaybackSessionModelContext>, public WebCore::PlaybackSessionModel  {
 public:
@@ -51,7 +53,7 @@ public:
     {
         return adoptRef(*new PlaybackSessionModelContext(manager, contextId));
     }
-    virtual ~PlaybackSessionModelContext() { }
+    virtual ~PlaybackSessionModelContext();
 
     // PlaybackSessionModel
     void addClient(WebCore::PlaybackSessionModelClient&) final;
@@ -75,8 +77,14 @@ public:
     void pictureInPictureSupportedChanged(bool);
     void pictureInPictureActiveChanged(bool);
     void isInWindowFullscreenActiveChanged(bool);
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    void supportsLinearMediaPlayerChanged(bool);
+#endif
 
     bool wirelessVideoPlaybackDisabled() const final { return m_wirelessVideoPlaybackDisabled; }
+    const WebCore::VideoReceiverEndpoint& videoReceiverEndpoint() { return m_videoReceiverEndpoint; }
+
+    void invalidate();
 
 private:
     friend class PlaybackSessionManagerProxy;
@@ -140,6 +148,12 @@ private:
     bool isPictureInPictureSupported() const final { return m_pictureInPictureSupported; }
     bool isPictureInPictureActive() const final { return m_pictureInPictureActive; }
     bool isInWindowFullscreenActive() const final { return m_isInWindowFullscreenActive; }
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    bool supportsLinearMediaPlayer() const final { return m_supportsLinearMediaPlayer; }
+#endif
+
+    WebCore::AudioSessionSoundStageSize soundStageSize() const final { return m_soundStageSize; }
+    void setSoundStageSize(WebCore::AudioSessionSoundStageSize) final;
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(const void* identifier) { m_logIdentifier = identifier; }
@@ -179,6 +193,11 @@ private:
     bool m_pictureInPictureSupported { false };
     bool m_pictureInPictureActive { false };
     bool m_isInWindowFullscreenActive { false };
+    WebCore::VideoReceiverEndpoint m_videoReceiverEndpoint;
+    WebCore::AudioSessionSoundStageSize m_soundStageSize { 0 };
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    bool m_supportsLinearMediaPlayer { false };
+#endif
 
 #if !RELEASE_LOG_DISABLED
     const void* m_logIdentifier { nullptr };
@@ -245,6 +264,9 @@ private:
     void volumeChanged(PlaybackSessionContextIdentifier, double volume);
     void pictureInPictureSupportedChanged(PlaybackSessionContextIdentifier, bool pictureInPictureSupported);
     void isInWindowFullscreenActiveChanged(PlaybackSessionContextIdentifier, bool isInWindow);
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    void supportsLinearMediaPlayerChanged(PlaybackSessionContextIdentifier, bool);
+#endif
 
     // Messages to PlaybackSessionManager
     void play(PlaybackSessionContextIdentifier);
@@ -276,6 +298,10 @@ private:
 #endif
     void addNowPlayingMetadataObserver(PlaybackSessionContextIdentifier, const WebCore::NowPlayingMetadataObserver&);
     void removeNowPlayingMetadataObserver(PlaybackSessionContextIdentifier, const WebCore::NowPlayingMetadataObserver&);
+    void setSoundStageSize(PlaybackSessionContextIdentifier, WebCore::AudioSessionSoundStageSize);
+
+    void uncacheVideoReceiverEndpoint(PlaybackSessionContextIdentifier);
+    void updateVideoControlsManager(PlaybackSessionContextIdentifier);
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(PlaybackSessionContextIdentifier, uint64_t);

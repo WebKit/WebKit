@@ -133,45 +133,47 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessStapAOrSingleNalu(
         SpsVuiRewriter::ParseResult result = SpsVuiRewriter::ParseAndRewriteSps(
             &payload_data[start_offset], end_offset - start_offset, &sps,
             nullptr, &output_buffer, SpsVuiRewriter::Direction::kIncoming);
+        switch (result) {
+          case SpsVuiRewriter::ParseResult::kFailure:
+            RTC_LOG(LS_WARNING) << "Failed to parse SPS NAL unit.";
+            return absl::nullopt;
+          case SpsVuiRewriter::ParseResult::kVuiRewritten:
+            if (modified_buffer) {
+              RTC_LOG(LS_WARNING)
+                  << "More than one H264 SPS NAL units needing "
+                     "rewriting found within a single STAP-A packet. "
+                     "Keeping the first and rewriting the last.";
+            }
 
-        if (result == SpsVuiRewriter::ParseResult::kVuiRewritten) {
-          if (modified_buffer) {
-            RTC_LOG(LS_WARNING)
-                << "More than one H264 SPS NAL units needing "
-                   "rewriting found within a single STAP-A packet. "
-                   "Keeping the first and rewriting the last.";
-          }
+            // Rewrite length field to new SPS size.
+            if (h264_header.packetization_type == kH264StapA) {
+              size_t length_field_offset =
+                  start_offset - (H264::kNaluTypeSize + kLengthFieldSize);
+              // Stap-A Length includes payload data and type header.
+              size_t rewritten_size =
+                  output_buffer.size() - start_offset + H264::kNaluTypeSize;
+              ByteWriter<uint16_t>::WriteBigEndian(
+                  &output_buffer[length_field_offset], rewritten_size);
+            }
 
-          // Rewrite length field to new SPS size.
-          if (h264_header.packetization_type == kH264StapA) {
-            size_t length_field_offset =
-                start_offset - (H264::kNaluTypeSize + kLengthFieldSize);
-            // Stap-A Length includes payload data and type header.
-            size_t rewritten_size =
-                output_buffer.size() - start_offset + H264::kNaluTypeSize;
-            ByteWriter<uint16_t>::WriteBigEndian(
-                &output_buffer[length_field_offset], rewritten_size);
-          }
+            parsed_payload->video_payload.SetData(output_buffer.data(),
+                                                  output_buffer.size());
+            // Append rest of packet.
+            parsed_payload->video_payload.AppendData(
+                &payload_data[end_offset],
+                nalu_length + kNalHeaderSize - end_offset);
 
-          parsed_payload->video_payload.SetData(output_buffer.data(),
-                                                output_buffer.size());
-          // Append rest of packet.
-          parsed_payload->video_payload.AppendData(
-              &payload_data[end_offset],
-              nalu_length + kNalHeaderSize - end_offset);
-
-          modified_buffer = true;
+            modified_buffer = true;
+            [[fallthrough]];
+          case SpsVuiRewriter::ParseResult::kVuiOk:
+            RTC_DCHECK(sps);
+            nalu.sps_id = sps->id;
+            parsed_payload->video_header.width = sps->width;
+            parsed_payload->video_header.height = sps->height;
+            parsed_payload->video_header.frame_type =
+                VideoFrameType::kVideoFrameKey;
+            break;
         }
-
-        if (sps) {
-          parsed_payload->video_header.width = sps->width;
-          parsed_payload->video_header.height = sps->height;
-          nalu.sps_id = sps->id;
-        } else {
-          RTC_LOG(LS_WARNING) << "Failed to parse SPS id from SPS slice.";
-        }
-        parsed_payload->video_header.frame_type =
-            VideoFrameType::kVideoFrameKey;
         break;
       }
       case H264::NaluType::kPps: {
@@ -185,6 +187,7 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessStapAOrSingleNalu(
         } else {
           RTC_LOG(LS_WARNING)
               << "Failed to parse PPS id and SPS id from PPS slice.";
+          return absl::nullopt;
         }
         break;
       }
@@ -200,6 +203,7 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessStapAOrSingleNalu(
         } else {
           RTC_LOG(LS_WARNING) << "Failed to parse PPS id from slice of type: "
                               << static_cast<int>(nalu.type);
+          return absl::nullopt;
         }
         break;
       }

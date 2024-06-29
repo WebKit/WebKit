@@ -587,7 +587,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         static constexpr int tableSizeMaskOffset = -2;
         static constexpr int keyCountOffset = -3;
         static constexpr int deletedCountOffset = -4;
-        static constexpr unsigned metadataSize = 4 * sizeof(unsigned);
+        static constexpr unsigned metadataSize = std::max(4 * sizeof(unsigned), alignof(ValueType));
 
         unsigned tableSize() const { return m_table ? reinterpret_cast_ptr<unsigned*>(m_table)[tableSizeOffset] : 0; }
         void setTableSize(unsigned size) const { ASSERT(m_table); reinterpret_cast_ptr<unsigned*>(m_table)[tableSizeOffset] = size; }
@@ -647,7 +647,9 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         if (!HashFunctions::safeToCompareToEmptyOrDeleted)
             return;
         ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         typename std::aligned_storage<sizeof(ValueType), std::alignment_of<ValueType>::value>::type deletedValueBuffer;
+        ALLOW_DEPRECATED_DECLARATIONS_END
         ValueType* deletedValuePtr = reinterpret_cast_ptr<ValueType*>(&deletedValueBuffer);
         ValueType& deletedValue = *deletedValuePtr;
         Traits::constructDeletedValue(deletedValue);

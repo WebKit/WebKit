@@ -27,8 +27,6 @@ UIProcess/API/glib/WebKitPlugin.cpp @no-unify
 
 UIProcess/API/gtk/WebKitPrintCustomWidget.cpp @no-unify
 
-WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.cpp @no-unify
-
 WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMDocument.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMElement.cpp @no-unify

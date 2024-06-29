@@ -27,6 +27,12 @@
 #import <WebKit/WKDataDetectorTypes.h>
 #import <WebKit/WKFoundation.h>
 
+#if TARGET_OS_IPHONE
+#import <UIKit/UIKit.h>
+#else
+#import <AppKit/AppKit.h>
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class WKPreferences;
@@ -90,6 +96,7 @@ typedef NS_OPTIONS(NSUInteger, WKAudiovisualMediaTypes) {
  which to initialize a web view.
  @helps Contains properties used to configure a @link WKWebView @/link.
  */
+WK_SWIFT_UI_ACTOR
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKWebViewConfiguration : NSObject <NSSecureCoding, NSCopying>
 
@@ -213,6 +220,24 @@ on the system setting.
  @param scheme The URL scheme to lookup.
  */
 - (nullable id <WKURLSchemeHandler>)urlSchemeHandlerForURLScheme:(NSString *)urlScheme WK_API_AVAILABLE(macos(10.13), ios(11.0));
+
+/*! @abstract A Boolean value indicating whether insertion of adaptive image glyphs is allowed.
+    @discussion The default value is `NO`. If `NO`, adaptive image glyphs are inserted as regular
+    images. If `YES`, they are inserted with the full adaptive sizing behavior.
+    */
+@property (nonatomic) BOOL supportsAdaptiveImageGlyph WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+#if (TARGET_OS_IOS && !TARGET_OS_VISION) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 180000
+/*! @abstract The preferred behavior of Writing Tools.
+    @discussion The default behavior is equivalent to `UIWritingToolsBehaviorLimited`.
+    */
+@property (nonatomic) UIWritingToolsBehavior writingToolsBehavior WK_API_AVAILABLE(ios(WK_IOS_TBA));
+#elif TARGET_OS_OSX && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
+/*! @abstract The preferred behavior of Writing Tools.
+    @discussion The default behavior is equivalent to `NSWritingToolsBehaviorLimited`.
+    */
+@property (nonatomic) NSWritingToolsBehavior writingToolsBehavior WK_API_AVAILABLE(macos(WK_MAC_TBA));
+#endif
 
 @end
 

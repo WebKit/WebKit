@@ -119,7 +119,7 @@ const uint8_t *OverlayState::getFontData() const
 
 def main():
     if len(sys.argv) == 2 and sys.argv[1] == 'inputs':
-        # disabled because of issues on Windows. http://anglebug.com/3892
+        # disabled because of issues on Windows. http://anglebug.com/42262538
         # print(font_file)
         return
     if len(sys.argv) == 2 and sys.argv[1] == 'outputs':

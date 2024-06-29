@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: Insufficient buffer size.
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: Texture is immutable.
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: Invalid enum provided.
+Test that messages output via KHR_debug extension are displayed in the JS console
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -61,7 +61,7 @@ public:
     JS_EXPORT_PRIVATE void addGlobalUpdate(Ref<CachedBytecode>);
     JS_EXPORT_PRIVATE void addFunctionUpdate(const UnlinkedFunctionExecutable*, CodeSpecializationKind, Ref<CachedBytecode>);
 
-    using ForEachUpdateCallback = Function<void(off_t, const void*, size_t)>;
+    using ForEachUpdateCallback = Function<void(off_t, std::span<const uint8_t>)>;
     JS_EXPORT_PRIVATE void commitUpdates(const ForEachUpdateCallback&) const;
 
     std::span<const uint8_t> span() const { return { data(), size() }; }

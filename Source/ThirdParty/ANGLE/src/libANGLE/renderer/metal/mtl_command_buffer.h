@@ -80,6 +80,9 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
 
     // Checks whether the last command buffer that uses the given resource has been committed or not
     bool resourceHasPendingWorks(const Resource *resource) const;
+    // Checks whether the last command buffer that uses the given resource (in a render encoder) has
+    // been committed or not
+    bool resourceHasPendingRenderWorks(const Resource *resource) const;
 
     bool isSerialCompleted(uint64_t serial) const;
     bool waitUntilSerialCompleted(uint64_t serial, uint64_t timeoutNs) const;
@@ -166,9 +169,9 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
 
     void present(id<CAMetalDrawable> presentationDrawable);
 
-    void setWriteDependency(const ResourceRef &resource);
-    void setReadDependency(const ResourceRef &resource);
-    void setReadDependency(Resource *resourcePtr);
+    void setWriteDependency(const ResourceRef &resource, bool isRenderCommand);
+    void setReadDependency(const ResourceRef &resource, bool isRenderCommand);
+    void setReadDependency(Resource *resourcePtr, bool isRenderCommand);
 
 #if ANGLE_MTL_EVENT_AVAILABLE
     // Queues the event and returns the current command buffer queue serial.
@@ -193,11 +196,16 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
 
   private:
     void set(id<MTLCommandBuffer> metalBuffer);
+
+    // This function returns either blit/compute encoder (if active) or render encoder.
+    // If both types of encoders are active (blit/compute and render), the former will be returned.
+    CommandEncoder *getPendingCommandEncoder();
+
     void cleanup();
 
     bool readyImpl() const;
     bool commitImpl();
-    void forceEndingCurrentEncoder();
+    void forceEndingAllEncoders();
 
     void setPendingEvents();
 #if ANGLE_MTL_EVENT_AVAILABLE
@@ -214,7 +222,11 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
 
     CommandQueue &mCmdQueue;
 
-    CommandEncoder *mActiveCommandEncoder = nullptr;
+    // Note: due to render command encoder being a deferred encoder, it can coexist with
+    // blit/compute encoder. When submitting, blit/compute encoder will be executed before the
+    // render encoder.
+    CommandEncoder *mActiveRenderEncoder        = nullptr;
+    CommandEncoder *mActiveBlitOrComputeEncoder = nullptr;
 
     uint64_t mQueueSerial = 0;
 
@@ -277,6 +289,8 @@ class CommandEncoder : public WrappedObject<id<MTLCommandEncoder>>, angle::NonCo
     virtual void insertDebugSignImpl(NSString *marker);
 
   private:
+    bool isRenderEncoder() const { return getType() == Type::RENDER; }
+
     const Type mType;
     CommandBuffer &mCmdBuffer;
 };

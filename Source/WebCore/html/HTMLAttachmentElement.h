@@ -83,7 +83,7 @@ public:
     String attachmentPath() const;
     RefPtr<Image> thumbnail() const { return m_thumbnail; }
     RefPtr<Image> icon() const { return m_icon; }
-    void requestIconWithSize(const FloatSize&);
+    void requestIconIfNeededWithSize(const FloatSize&);
     void requestWideLayoutIconIfNeeded();
     FloatSize iconSize() const { return m_iconSize; }
     void invalidateRendering();
@@ -110,7 +110,7 @@ private:
     void updateSaveButton(bool);
     void updateImage();
 
-    void setNeedsWideLayoutIconRequest();
+    void setNeedsIconRequest();
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool shouldSelectOnMouseDown() final {
@@ -152,7 +152,7 @@ private:
     RefPtr<HTMLElement> m_saveButton;
     mutable RefPtr<DOMRectReadOnly> m_saveButtonClientRect;
 
-    bool m_needsWideLayoutIconRequest { false };
+    bool m_needsIconRequest { true };
 
 #if ENABLE(SERVICE_CONTROLS)
     bool m_isImageMenuEnabled { false };

@@ -50,7 +50,10 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
           use_fec_(use_fec),
           screenshare_(screenshare),
           // This test uses NACK, so to send FEC we can't use a fake encoder.
-          encoder_factory_([]() { return VP8Encoder::Create(); }),
+          encoder_factory_(
+              [](const Environment& env, const SdpVideoFormat& format) {
+                return CreateVp8Encoder(env);
+              }),
           num_frames_received_(0) {}
 
    private:
@@ -107,7 +110,7 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
         send_config->encoder_settings.encoder_factory = &encoder_factory_;
         send_config->rtp.payload_name = "VP8";
         encoder_config->codec_type = kVideoCodecVP8;
-        (*receive_configs)[0].decoders[0].video_format = SdpVideoFormat("VP8");
+        (*receive_configs)[0].decoders[0].video_format = SdpVideoFormat::VP8();
         (*receive_configs)[0].rtp.red_payload_type =
             test::VideoTestConstants::kRedPayloadType;
         (*receive_configs)[0].rtp.ulpfec_payload_type =

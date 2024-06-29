@@ -11,7 +11,7 @@
 
 #include <emmintrin.h>  // SSE2
 
-#include "config/aom_dsp_rtcd.h"
+#include "config/av1_rtcd.h"
 #include "aom_dsp/x86/synonyms.h"
 
 static int64_t k_means_horizontal_sum_sse2(__m128i a) {

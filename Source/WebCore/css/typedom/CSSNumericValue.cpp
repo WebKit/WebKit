@@ -36,6 +36,7 @@
 #include "CSSCalcNegateNode.h"
 #include "CSSCalcOperationNode.h"
 #include "CSSCalcPrimitiveValueNode.h"
+#include "CSSCalcSymbolNode.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSMathClamp.h"
 #include "CSSMathInvert.h"
@@ -90,7 +91,7 @@ template<typename T> static ExceptionOr<Ref<CSSNumericValue>> convertToException
 static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcPrimitiveValueNode& root)
 {
     auto unit = root.primitiveType();
-    return convertToExceptionOrNumericValue(CSSUnitValue::create(root.doubleValue(unit), unit));
+    return convertToExceptionOrNumericValue(CSSUnitValue::create(root.doubleValue(unit, { }), unit));
 }
 
 static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcNegateNode& root)
@@ -103,6 +104,12 @@ static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcInvert
 {
     CSS_NUMERIC_RETURN_IF_EXCEPTION(child, CSSNumericValue::reifyMathExpression(root.child()));
     return convertToExceptionOrNumericValue(CSSMathInvert::create(WTFMove(child)));
+}
+
+static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcSymbolNode&)
+{
+    // CSS Typed OM doesn't currently support unresolved symbols.
+    return Exception { ExceptionCode::UnknownError };
 }
 
 static ExceptionOr<Vector<Ref<CSSNumericValue>>> reifyMathExpressions(const Vector<Ref<CSSCalcExpressionNode>>& nodes)
@@ -154,6 +161,8 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::reifyMathExpression(const CSS
         return WebCore::reifyMathExpression(downcast<CSSCalcNegateNode>(root));
     case CSSCalcExpressionNode::CssCalcInvert:
         return WebCore::reifyMathExpression(downcast<CSSCalcInvertNode>(root));
+    case CSSCalcExpressionNode::CssCalcSymbol:
+        return WebCore::reifyMathExpression(downcast<CSSCalcSymbolNode>(root));
     }
     ASSERT_NOT_REACHED();
     return Exception { ExceptionCode::SyntaxError };

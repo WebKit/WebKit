@@ -151,7 +151,7 @@ class BlitGL : angle::NonCopyable
                                     GLenum sizedInternalFormat);
 
     angle::Result clearFramebuffer(const gl::Context *context,
-                                   bool colorClear,
+                                   const gl::DrawBufferMask &colorAttachments,
                                    bool depthClear,
                                    bool stencilClear,
                                    FramebufferGL *source);

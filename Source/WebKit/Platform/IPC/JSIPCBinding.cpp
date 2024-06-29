@@ -30,6 +30,8 @@
 
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ObjectConstructor.h>
+#include <WebCore/DOMException.h>
+#include <WebCore/ExceptionData.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/RegistrableDomain.h>
@@ -194,20 +196,21 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, W
     return jsValueForDecodedArgumentRect(globalObject, value, "FloatRect"_s);
 }
 
-bool putJSValueForDecodedArgumentAtIndexOrArrayBufferIfUndefined(JSC::JSGlobalObject* globalObject, JSC::JSArray* array, unsigned index, JSC::JSValue value, std::span<const uint8_t> buffer)
+template<>
+JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, WebCore::ExceptionData&& exceptionData)
 {
-    auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
-
-    if (value.isUndefined()) {
-        auto arrayBuffer = JSC::ArrayBuffer::create(buffer);
-        if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode()))
-            value = JSC::JSArrayBuffer::create(Ref { globalObject->vm() }, structure, WTFMove(arrayBuffer));
-    }
-
-    array->putDirectIndex(globalObject, index, value);
-    RETURN_IF_EXCEPTION(scope, false);
-
-    return true;
+    auto& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto* object = JSC::constructEmptyObject(globalObject, globalObject->objectPrototype());
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    object->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsNontrivialString(vm, "ExceptionData"_s));
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    auto& message = exceptionData.message;
+    object->putDirect(vm, JSC::Identifier::fromString(vm, "message"_s), message.isNull() ? JSC::jsNull() : JSC::jsString(vm, message));
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    object->putDirect(vm, JSC::Identifier::fromString(vm, "code"_s), JSC::jsNontrivialString(vm, WebCore::DOMException::description(exceptionData.code).name));
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    return object;
 }
 
 }

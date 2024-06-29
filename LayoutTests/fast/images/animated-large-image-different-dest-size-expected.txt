@@ -1,0 +1,10 @@
+No blank drawing will happen for an animated image when it is dawn with different destinaton sizes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.imageBlankDrawCount(image) is <= 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

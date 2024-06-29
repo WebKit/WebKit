@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -23,6 +23,7 @@
 import json
 import os
 import re
+import shutil
 
 from webkitbugspy import Tracker, bugzilla, github, radar
 from webkitcorepy import decorators, string_utils
@@ -37,9 +38,7 @@ class Scm(ScmBase):
 
     @classmethod
     def executable(cls, program):
-        # TODO: Use shutil directly when Python 2.7 is removed
-        from whichcraft import which
-        path = which(program)
+        path = shutil.which(program)
         if path is None:
             raise OSError("Cannot find '{}' program".format(program))
         return os.path.realpath(path)

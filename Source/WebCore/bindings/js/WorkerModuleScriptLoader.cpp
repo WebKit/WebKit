@@ -98,9 +98,13 @@ void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourc
     }
 
     if (cspCheckFailed) {
-        protectedScriptLoader()->notifyError();
+        // FIXME: Always get the `ScriptExecutionContextIdentifier` of the `Document`.
+        ScriptExecutionContextIdentifier mainContext;
+        if (auto* document = dynamicDowncast<Document>(context))
+            mainContext = document->identifier();
+        protectedScriptLoader()->notifyError(mainContext);
         ASSERT(!m_failed);
-        notifyFinished();
+        notifyFinished(mainContext);
         ASSERT(m_failed);
         return;
     }
@@ -127,7 +131,7 @@ ReferrerPolicy WorkerModuleScriptLoader::referrerPolicy()
     return ReferrerPolicy::EmptyString;
 }
 
-void WorkerModuleScriptLoader::notifyFinished()
+void WorkerModuleScriptLoader::notifyFinished(ScriptExecutionContextIdentifier)
 {
     ASSERT(m_promise);
 

@@ -49,9 +49,7 @@ PhiChildren::PhiChildren(Procedure& proc)
     }
 }
 
-PhiChildren::~PhiChildren()
-{
-}
+PhiChildren::~PhiChildren() = default;
 
 } } // namespace JSC::B3
 

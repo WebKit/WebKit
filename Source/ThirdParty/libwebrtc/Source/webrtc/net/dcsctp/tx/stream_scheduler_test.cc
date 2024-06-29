@@ -19,9 +19,11 @@ namespace dcsctp {
 namespace {
 using ::testing::Return;
 using ::testing::StrictMock;
+using ::webrtc::Timestamp;
 
 constexpr size_t kMtu = 1000;
 constexpr size_t kPayloadSize = 4;
+constexpr Timestamp kNow = Timestamp::Zero();
 
 MATCHER_P(HasDataWithMid, mid, "") {
   if (!arg.has_value()) {
@@ -38,12 +40,12 @@ MATCHER_P(HasDataWithMid, mid, "") {
   return true;
 }
 
-std::function<absl::optional<SendQueue::DataToSend>(TimeMs, size_t)>
+std::function<absl::optional<SendQueue::DataToSend>(Timestamp, size_t)>
 CreateChunk(OutgoingMessageId message_id,
             StreamID sid,
             MID mid,
             size_t payload_size = kPayloadSize) {
-  return [sid, mid, payload_size, message_id](TimeMs now, size_t max_size) {
+  return [sid, mid, payload_size, message_id](Timestamp now, size_t max_size) {
     return SendQueue::DataToSend(
         message_id,
         Data(sid, SSN(0), mid, FSN(0), PPID(42),
@@ -56,8 +58,7 @@ std::map<StreamID, size_t> GetPacketCounts(StreamScheduler& scheduler,
                                            size_t packets_to_generate) {
   std::map<StreamID, size_t> packet_counts;
   for (size_t i = 0; i < packets_to_generate; ++i) {
-    absl::optional<SendQueue::DataToSend> data =
-        scheduler.Produce(TimeMs(0), kMtu);
+    absl::optional<SendQueue::DataToSend> data = scheduler.Produce(kNow, kMtu);
     if (data.has_value()) {
       ++packet_counts[data->data.stream_id];
     }
@@ -69,7 +70,7 @@ class MockStreamProducer : public StreamScheduler::StreamProducer {
  public:
   MOCK_METHOD(absl::optional<SendQueue::DataToSend>,
               Produce,
-              (TimeMs, size_t),
+              (Timestamp, size_t),
               (override));
   MOCK_METHOD(size_t, bytes_to_send_in_next_message, (), (const, override));
 };
@@ -100,7 +101,7 @@ class TestStream {
 TEST(StreamSchedulerTest, HasNoActiveStreams) {
   StreamScheduler scheduler("", kMtu);
 
-  EXPECT_EQ(scheduler.Produce(TimeMs(0), kMtu), absl::nullopt);
+  EXPECT_EQ(scheduler.Produce(kNow, kMtu), absl::nullopt);
 }
 
 // Stream properties can be set and retrieved
@@ -132,8 +133,8 @@ TEST(StreamSchedulerTest, CanProduceFromSingleStream) {
       scheduler.CreateStream(&producer, StreamID(1), StreamPriority(2));
   stream->MaybeMakeActive();
 
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(0)));
-  EXPECT_EQ(scheduler.Produce(TimeMs(0), kMtu), absl::nullopt);
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(0)));
+  EXPECT_EQ(scheduler.Produce(kNow, kMtu), absl::nullopt);
 }
 
 // Switches between two streams after every packet.
@@ -168,13 +169,13 @@ TEST(StreamSchedulerTest, WillRoundRobinBetweenStreams) {
       scheduler.CreateStream(&producer2, StreamID(2), StreamPriority(2));
   stream2->MaybeMakeActive();
 
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(100)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(200)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(101)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(201)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(102)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(202)));
-  EXPECT_EQ(scheduler.Produce(TimeMs(0), kMtu), absl::nullopt);
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(100)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(200)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(101)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(201)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(102)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(202)));
+  EXPECT_EQ(scheduler.Produce(kNow, kMtu), absl::nullopt);
 }
 
 // Switches between two streams after every packet, but keeps producing from the
@@ -232,15 +233,15 @@ TEST(StreamSchedulerTest, WillRoundRobinOnlyWhenFinishedProducingChunk) {
       scheduler.CreateStream(&producer2, StreamID(2), StreamPriority(2));
   stream2->MaybeMakeActive();
 
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(100)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(200)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(101)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(101)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(101)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(201)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(102)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(202)));
-  EXPECT_EQ(scheduler.Produce(TimeMs(0), kMtu), absl::nullopt);
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(100)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(200)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(101)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(101)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(101)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(201)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(102)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(202)));
+  EXPECT_EQ(scheduler.Produce(kNow, kMtu), absl::nullopt);
 }
 
 // Deactivates a stream before it has finished producing all packets.
@@ -259,12 +260,12 @@ TEST(StreamSchedulerTest, StreamsCanBeMadeInactive) {
       scheduler.CreateStream(&producer1, StreamID(1), StreamPriority(2));
   stream1->MaybeMakeActive();
 
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(100)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(101)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(100)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(101)));
 
   // ... but the stream is made inactive before it can be produced.
   stream1->MakeInactive();
-  EXPECT_EQ(scheduler.Produce(TimeMs(0), kMtu), absl::nullopt);
+  EXPECT_EQ(scheduler.Produce(kNow, kMtu), absl::nullopt);
 }
 
 // Resumes a paused stream - makes a stream active after inactivating it.
@@ -287,14 +288,14 @@ TEST(StreamSchedulerTest, SingleStreamCanBeResumed) {
       scheduler.CreateStream(&producer1, StreamID(1), StreamPriority(2));
   stream1->MaybeMakeActive();
 
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(100)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(101)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(100)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(101)));
 
   stream1->MakeInactive();
-  EXPECT_EQ(scheduler.Produce(TimeMs(0), kMtu), absl::nullopt);
+  EXPECT_EQ(scheduler.Produce(kNow, kMtu), absl::nullopt);
   stream1->MaybeMakeActive();
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(102)));
-  EXPECT_EQ(scheduler.Produce(TimeMs(0), kMtu), absl::nullopt);
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(102)));
+  EXPECT_EQ(scheduler.Produce(kNow, kMtu), absl::nullopt);
 }
 
 // Iterates between streams, where one is suddenly paused and later resumed.
@@ -330,15 +331,15 @@ TEST(StreamSchedulerTest, WillRoundRobinWithPausedStream) {
       scheduler.CreateStream(&producer2, StreamID(2), StreamPriority(2));
   stream2->MaybeMakeActive();
 
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(100)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(200)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(100)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(200)));
   stream1->MakeInactive();
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(201)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(202)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(201)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(202)));
   stream1->MaybeMakeActive();
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(101)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(102)));
-  EXPECT_EQ(scheduler.Produce(TimeMs(0), kMtu), absl::nullopt);
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(101)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(102)));
+  EXPECT_EQ(scheduler.Produce(kNow, kMtu), absl::nullopt);
 }
 
 // Verifies that packet counts are evenly distributed in round robin scheduling.
@@ -427,18 +428,18 @@ TEST(StreamSchedulerTest, WillDoFairQueuingWithSamePriority) {
   stream2->MaybeMakeActive();
 
   // t = 30
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(100)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(100)));
   // t = 60
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(101)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(101)));
   // t = 70
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(200)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(200)));
   // t = 90
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(102)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(102)));
   // t = 140
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(201)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(201)));
   // t = 210
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(202)));
-  EXPECT_EQ(scheduler.Produce(TimeMs(0), kMtu), absl::nullopt);
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(202)));
+  EXPECT_EQ(scheduler.Produce(kNow, kMtu), absl::nullopt);
 }
 
 // Will do weighted fair queuing with three streams having different priority.
@@ -492,24 +493,24 @@ TEST(StreamSchedulerTest, WillDoWeightedFairQueuingSameSizeDifferentPriority) {
   stream3->MaybeMakeActive();
 
   // t ~= 20
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(300)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(300)));
   // t ~= 40
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(301)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(301)));
   // t ~= 50
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(200)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(200)));
   // t ~= 60
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(302)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(302)));
   // t ~= 80
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(100)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(100)));
   // t ~= 100
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(201)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(201)));
   // t ~= 150
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(202)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(202)));
   // t ~= 160
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(101)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(101)));
   // t ~= 240
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(102)));
-  EXPECT_EQ(scheduler.Produce(TimeMs(0), kMtu), absl::nullopt);
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(102)));
+  EXPECT_EQ(scheduler.Produce(kNow, kMtu), absl::nullopt);
 }
 
 // Will do weighted fair queuing with three streams having different priority
@@ -586,24 +587,24 @@ TEST(StreamSchedulerTest, WillDoWeightedFairQueuingDifferentSizeAndPriority) {
   stream3->MaybeMakeActive();
 
   // t ~= 400
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(300)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(300)));
   // t ~= 1400
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(301)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(301)));
   // t ~= 2500
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(200)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(200)));
   // t ~= 2800
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(302)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(302)));
   // t ~= 4000
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(100)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(100)));
   // t ~= 5600
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(101)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(101)));
   // t ~= 6000
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(201)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(201)));
   // t ~= 7000
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(202)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(202)));
   // t ~= 11200
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(102)));
-  EXPECT_EQ(scheduler.Produce(TimeMs(0), kMtu), absl::nullopt);
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(102)));
+  EXPECT_EQ(scheduler.Produce(kNow, kMtu), absl::nullopt);
 }
 TEST(StreamSchedulerTest, WillDistributeWFQPacketsInTwoStreamsByPriority) {
   // A simple test with two streams of different priority, but sending packets
@@ -723,11 +724,11 @@ TEST(StreamSchedulerTest, SendLargeMessageWithSmallMtu) {
   auto stream2 =
       scheduler.CreateStream(&producer2, StreamID(2), StreamPriority(1));
   stream2->MaybeMakeActive();
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(0)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(1)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(1)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(0)));
-  EXPECT_EQ(scheduler.Produce(TimeMs(0), kMtu), absl::nullopt);
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(0)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(1)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(1)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(0)));
+  EXPECT_EQ(scheduler.Produce(kNow, kMtu), absl::nullopt);
 }
 
 // Sending large messages with large MTU will not fragment messages and will
@@ -756,9 +757,9 @@ TEST(StreamSchedulerTest, SendLargeMessageWithLargeMtu) {
   auto stream2 =
       scheduler.CreateStream(&producer2, StreamID(2), StreamPriority(1));
   stream2->MaybeMakeActive();
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(1)));
-  EXPECT_THAT(scheduler.Produce(TimeMs(0), kMtu), HasDataWithMid(MID(0)));
-  EXPECT_EQ(scheduler.Produce(TimeMs(0), kMtu), absl::nullopt);
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(1)));
+  EXPECT_THAT(scheduler.Produce(kNow, kMtu), HasDataWithMid(MID(0)));
+  EXPECT_EQ(scheduler.Produce(kNow, kMtu), absl::nullopt);
 }
 
 }  // namespace

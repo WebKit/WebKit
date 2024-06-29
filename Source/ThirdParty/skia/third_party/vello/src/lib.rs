@@ -18,8 +18,11 @@ mod ffi {
         DrawLeaf,
         DrawReduce,
         FineArea,
-        FineMsaa8,
         FineMsaa16,
+        FineMsaa8,
+        FineAreaR8,
+        FineMsaa16R8,
+        FineMsaa8R8,
         Flatten,
         PathCount,
         PathCountSetup,
@@ -223,6 +226,7 @@ mod ffi {
         );
         fn begin_clip(self: &mut Encoding, transform: Affine, path_iter: Pin<&mut PathIterator>);
         fn end_clip(self: &mut Encoding);
+        fn append(self: &mut Encoding, other: &Encoding);
         fn prepare_render(
             self: &Encoding,
             width: u32,
@@ -230,7 +234,7 @@ mod ffi {
             background: &Color,
         ) -> Box<RenderConfiguration>;
 
-        /// The resolved scene encoding metadata that can be used to initiate pipeline dispatches.
+        /// Resolved scene encoding metadata that can be used to initiate pipeline dispatches.
         type RenderConfiguration;
         fn config_uniform_buffer_size(self: &RenderConfiguration) -> usize;
         fn scene_buffer_size(self: &RenderConfiguration) -> usize;
@@ -239,9 +243,10 @@ mod ffi {
         fn workgroup_counts(self: &RenderConfiguration) -> DispatchInfo;
         fn buffer_sizes(self: &RenderConfiguration) -> BufferSizes;
 
-        /// Sample mask lookup table used in MSAA modes. This data is the same for all MSAAx16
-        /// renders and can be computed once.
+        /// Sample mask lookup tables used in MSAA modes. This data can be computed once and reused
+        /// across all renders.
         fn build_mask_lut_16() -> Vec<u8>;
+        fn build_mask_lut_8() -> Vec<u8>;
     }
 
     unsafe extern "C++" {
@@ -262,4 +267,8 @@ use {
 
 fn build_mask_lut_16() -> Vec<u8> {
     vello_encoding::make_mask_lut_16()
+}
+
+fn build_mask_lut_8() -> Vec<u8> {
+    vello_encoding::make_mask_lut()
 }

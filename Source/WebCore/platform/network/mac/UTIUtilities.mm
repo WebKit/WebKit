@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #import "config.h"
 #import "UTIUtilities.h"
 
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <wtf/HashSet.h>
 #import <wtf/Lock.h>
 #import <wtf/MainThread.h>
@@ -47,9 +48,8 @@ namespace WebCore {
 
 String MIMETypeFromUTI(const String& uti)
 {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return adoptCF(UTTypeCopyPreferredTagWithClass(uti.createCFString().get(), kUTTagClassMIMEType)).get();
-ALLOW_DEPRECATED_DECLARATIONS_END
+    RetainPtr type = [UTType typeWithIdentifier:uti];
+    return type.get().preferredMIMEType;
 }
 
 HashSet<String> RequiredMIMETypesFromUTI(const String& uti)
@@ -99,7 +99,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return nullptr;
 }
 
-static CFStringRef UTIFromUnknownMIMEType(StringView mimeType)
+static NSString *UTIFromUnknownMIMEType(StringView mimeType)
 {
     static constexpr std::pair<ComparableLettersLiteral, NSString *> typesArray[] = {
         { "model/usd", @"com.pixar.universal-scene-description-mobile" },
@@ -108,18 +108,16 @@ static CFStringRef UTIFromUnknownMIMEType(StringView mimeType)
         { "model/vnd.usdz+zip", @"com.pixar.universal-scene-description-mobile" },
     };
     static constexpr SortedArrayMap typesMap { typesArray };
-    return (__bridge CFStringRef)typesMap.get(mimeType, @"");
+    return typesMap.get(mimeType, @"");
 }
 
-struct UTIFromMIMETypeCachePolicy : TinyLRUCachePolicy<String, RetainPtr<CFStringRef>> {
+struct UTIFromMIMETypeCachePolicy : TinyLRUCachePolicy<String, RetainPtr<NSString>> {
 public:
-    static RetainPtr<CFStringRef> createValueForKey(const String& mimeType)
+    static RetainPtr<NSString> createValueForKey(const String& mimeType)
     {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        auto type = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType.createCFString().get(), 0));
-ALLOW_DEPRECATED_DECLARATIONS_END
-        if (type)
-            return type;
+        if (RetainPtr type = [UTType typeWithMIMEType:mimeType])
+            return type.get().identifier;
+
         return UTIFromUnknownMIMEType(mimeType);
     }
 
@@ -127,9 +125,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 };
 
 static Lock cacheUTIFromMIMETypeLock;
-static TinyLRUCache<String, RetainPtr<CFStringRef>, 16, UTIFromMIMETypeCachePolicy>& cacheUTIFromMIMEType() WTF_REQUIRES_LOCK(cacheUTIFromMIMETypeLock)
+static TinyLRUCache<String, RetainPtr<NSString>, 16, UTIFromMIMETypeCachePolicy>& cacheUTIFromMIMEType() WTF_REQUIRES_LOCK(cacheUTIFromMIMETypeLock)
 {
-    static NeverDestroyed<TinyLRUCache<String, RetainPtr<CFStringRef>, 16, UTIFromMIMETypeCachePolicy>> cache;
+    static NeverDestroyed<TinyLRUCache<String, RetainPtr<NSString>, 16, UTIFromMIMETypeCachePolicy>> cache;
     return cache;
 }
 
@@ -141,17 +139,8 @@ String UTIFromMIMEType(const String& mimeType)
 
 bool isDeclaredUTI(const String& UTI)
 {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return UTTypeIsDeclared(UTI.createCFString().get());
-ALLOW_DEPRECATED_DECLARATIONS_END
-}
-
-String UTIFromTag(const String& tagClass, const String& tag, const String& conformingToUTI)
-{
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    auto u = adoptCF(UTTypeCreatePreferredIdentifierForTag(tagClass.createCFString().get(), tag.createCFString().get(), conformingToUTI.createCFString().get()));
-ALLOW_DEPRECATED_DECLARATIONS_END
-    return u.get();
+    RetainPtr type = [UTType typeWithIdentifier:UTI];
+    return type.get().isDeclared;
 }
 
 void setImageSourceAllowableTypes(const Vector<String>& supportedImageTypes)

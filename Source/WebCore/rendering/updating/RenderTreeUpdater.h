@@ -77,6 +77,7 @@ private:
 
         bool didCreateOrDestroyChildRenderer { false };
         RenderObject* previousChildRenderer { nullptr };
+        bool hasPrecedingInFlowChild { false };
 
         Parent(ContainerNode& root);
         Parent(Element&, const Style::ElementUpdate*);
@@ -96,8 +97,8 @@ private:
     enum class TeardownType { Full, FullAfterSlotOrShadowRootChange, RendererUpdate, RendererUpdateCancelingAnimations };
     static void tearDownRenderers(Element&, TeardownType);
     static void tearDownRenderers(Element&, TeardownType, RenderTreeBuilder&);
-    enum class NeedsRepaint : bool { No, Yes };
-    static void tearDownTextRenderer(Text&, const ContainerNode* root, RenderTreeBuilder&, NeedsRepaint = NeedsRepaint::Yes);
+    enum class NeedsRepaintAndLayout : bool { No, Yes };
+    static void tearDownTextRenderer(Text&, const ContainerNode* root, RenderTreeBuilder&, NeedsRepaintAndLayout = NeedsRepaintAndLayout::Yes);
     static void tearDownLeftoverChildrenOfComposedTree(Element&, RenderTreeBuilder&);
     static void tearDownLeftoverPaginationRenderersIfNeeded(Element&, RenderTreeBuilder&);
 

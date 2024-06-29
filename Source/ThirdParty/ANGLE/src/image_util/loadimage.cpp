@@ -1776,7 +1776,7 @@ void LoadD32ToX8D24(const ImageLoadContext &context,
 
 // This conversion was added to support using a 32F depth buffer
 // as emulation for 16unorm depth buffer in Metal.
-// See https://anglebug.com/6597
+// See https://anglebug.com/42265093
 void LoadD16ToD32F(const ImageLoadContext &context,
                    size_t width,
                    size_t height,

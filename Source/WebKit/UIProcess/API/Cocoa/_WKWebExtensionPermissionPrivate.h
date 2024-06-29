@@ -26,5 +26,5 @@
 #import <WebKit/_WKWebExtensionPermission.h>
 
 /*! @abstract The `notifications` permission requests access to the `browser.notifications` APIs. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionNotifications;

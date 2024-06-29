@@ -492,7 +492,7 @@ void HTMLFormElement::attributeChanged(const QualifiedName& name, const AtomStri
         break;
     case AttributeNames::relAttr:
         if (m_relList)
-            m_relList->associatedAttributeValueChanged(newValue);
+            m_relList->associatedAttributeValueChanged();
         break;
     default:
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);

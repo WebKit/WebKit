@@ -1,4 +1,63 @@
 =================
+WPE WebKit 2.45.3
+=================
+
+What's new in WPE WebKit 2.45.3?
+
+  - Enable offscreen canvas by default.
+  - Enable ImageBitmap acceleration.
+  - Add support for accelerated offscreen canvas.
+  - Do not display WebGL front buffer before it's initialized.
+  - Add a new setting to enable or disable the 2D canvas acceleration (enabled by default).
+  - Add support for building QtWPE with Qt6.
+  - Fix several crashes and rendering issues.
+
+=================
+WPE WebKit 2.45.2
+=================
+
+What's new in WPE WebKit 2.45.2?
+
+  - Use Cairo on big-endian platforms for now, since Skia does not support them.
+  - Fix a crash in GIF image decoder.
+  - Revert the text scaling fix, since it caused several issues in some sites.
+  - Add new API to load settings from a config file.
+  - Fix several crashes and rendering issues.
+
+=================
+WPE WebKit 2.45.1
+=================
+
+What's new in WPE WebKit 2.45.1?
+
+  - Use Skia by default instead of Cairo for rendering. Cairo support may
+    still be built passing -DUSE_SKIA=OFF to CMake.
+  - Synchronize WebGL content using fences, where available.
+  - Disable the gst-libav AAC decoder.
+  - Support AXActiveElement and AXSelectedChildren for combo boxes,
+    lists and list boxes.
+  - Decrease input notifications for gamepad inputs.
+  - Make gamepads visible on axis movements, and not only on button presses.
+  - Improve DMA-BUF format negotiation and buffer allocation to facilitate
+    faster code paths in buffer handling.
+  - Make user scripts and style sheets visible in the Web Inspector.
+  - Make hole-punch media playback support video elements with rounded
+	corners.
+  - Enable by default building support for the MediaSession and WebCodecs APIs.
+  - Allow WebDriver connections to already running browsers.
+  - Support downloading files from the Web Inspector when using HTTP
+    remote connections.
+  - Replace build-time per-platform multimedia support option with quirks
+    applied at runtime. Automatic quirk detection is used by default, and
+    quirks may be overriden using the WEBKIT_GST_QUIRKS and
+    WEBKIT_GST_HOLE_PUNCH environment variables.
+  - Deprecate the WebKitWebView::insecure-content-detected signal.
+  - Fix mouse location in WebDriver when output device scaling is in effect.
+  - Fix touch input event propagation.
+  - Fix missing mouse cursor in the WPE Wayland platform support.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.43.1
 =================
 

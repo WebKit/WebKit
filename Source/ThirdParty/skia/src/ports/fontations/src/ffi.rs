@@ -809,18 +809,23 @@ fn num_color_stops(color_stops: &BridgeColorStops) -> usize {
     color_stops.num_stops
 }
 
-fn get_font_style(font_ref: &BridgeFontRef, style: &mut BridgeFontStyle) -> bool {
+#[allow(non_upper_case_globals)]
+fn get_font_style(
+    font_ref: &BridgeFontRef,
+    coords: &BridgeNormalizedCoords,
+    style: &mut BridgeFontStyle
+) -> bool {
     font_ref
         .with_font(|f| {
             let attrs = f.attributes();
-            let skia_weight = attrs.weight.value().round() as i32;
-            let skia_slant = match attrs.style {
+            let mut skia_weight = attrs.weight.value().round() as i32;
+            let mut skia_slant = match attrs.style {
                 Style::Normal => 0,
                 Style::Italic => 1,
                 _ => 2, /* kOblique_Slant */
             };
-            //1-9 map to 0.5, 0.625, 0.75, 0.875, 1.0, 1.125, 1.25, 1.5, 2.0
-            let skia_width = match attrs.stretch.ratio() {
+            //0.5, 0.625, 0.75, 0.875, 1.0, 1.125, 1.25, 1.5, 2.0 map to 1-9
+            let mut skia_width = match attrs.stretch.ratio() {
                 x if x <= 0.5625 => 1,
                 x if x <= 0.6875 => 2,
                 x if x <= 0.8125 => 3,
@@ -831,6 +836,36 @@ fn get_font_style(font_ref: &BridgeFontRef, style: &mut BridgeFontStyle) -> bool
                 x if x <= 1.7500 => 8,
                 _ => 9,
             };
+
+            const wght: Tag = Tag::new(b"wght");
+            const wdth: Tag = Tag::new(b"wdth");
+            const slnt: Tag = Tag::new(b"slnt");
+
+            for user_coord in coords.filtered_user_coords.iter() {
+                match user_coord.selector {
+                    wght => skia_weight = user_coord.value.round() as i32,
+                    // 50, 62.5, 75, 87.5, 100, 112.5, 125, 150, 200 map to 1-9
+                    wdth => skia_width = match user_coord.value {
+                        x if x <=  56.25 => 1,
+                        x if x <=  68.75 => 2,
+                        x if x <=  81.25 => 3,
+                        x if x <=  93.75 => 4,
+                        x if x <= 106.25 => 5,
+                        x if x <= 118.75 => 6,
+                        x if x <= 137.50 => 7,
+                        x if x <= 175.00 => 8,
+                        _ => 9,
+                    },
+                    slnt => skia_slant = if skia_slant == 1 /* kItalic_Slant */ {
+                                             skia_slant
+                                         } else if user_coord.value == 0.0 {
+                                             0 /* kUpright_Slant */
+                                         } else {
+                                             2 /* kOblique_Slant */
+                                         },
+                    _ => (),
+                }
+            }
 
             *style = BridgeFontStyle {
                 weight: skia_weight,
@@ -1110,25 +1145,26 @@ mod bitmap {
                         data: Some(BitmapPixelData::PngData(sbix_glyph.glyph_data.data())),
                         metrics: FfiBitmapMetrics {
                             bearing_x: glyf_left_side_bearing,
-                            inner_bearing_x: sbix_glyph.glyph_data.origin_offset_x() as f32,
                             bearing_y: glyf_bb.y_min as f32,
+                            inner_bearing_x: sbix_glyph.glyph_data.origin_offset_x() as f32,
                             inner_bearing_y: sbix_glyph.glyph_data.origin_offset_y() as f32,
-                            width: glyf_bb.x_max as f32 - glyf_bb.x_min as f32,
-                            height: glyf_bb.y_max as f32 - glyf_bb.y_min as f32,
                             ppem_x: sbix_glyph.ppem as f32,
                             ppem_y: sbix_glyph.ppem as f32,
                             placement_origin_bottom_left: true,
+                            advance: f32::NAN,
                         },
                     }));
                 } else if let Some(cblc_glyph) = cblc_glyph(font, glyph_id, Some(font_size)) {
-                    let (bearing_x, bearing_y) = match cblc_glyph.bitmap_data.metrics {
+                    let (bearing_x, bearing_y, advance) = match cblc_glyph.bitmap_data.metrics {
                         BitmapMetrics::Small(small_metrics) => (
                             small_metrics.bearing_x() as f32,
                             small_metrics.bearing_y() as f32,
+                            small_metrics.advance as f32,
                         ),
                         BitmapMetrics::Big(big_metrics) => (
                             big_metrics.hori_bearing_x() as f32,
                             big_metrics.hori_bearing_y() as f32,
+                            big_metrics.hori_advance as f32,
                         ),
                     };
                     if let BitmapContent::Data(BitmapDataFormat::Png, png_buffer) =
@@ -1137,13 +1173,14 @@ mod bitmap {
                         return Some(Box::new(BridgeBitmapGlyph {
                             data: Some(BitmapPixelData::PngData(png_buffer)),
                             metrics: FfiBitmapMetrics {
-                                bearing_x,
-                                bearing_y,
+                                bearing_x: 0.0,
+                                bearing_y: 0.0,
+                                inner_bearing_x: bearing_x,
+                                inner_bearing_y: bearing_y,
                                 ppem_x: cblc_glyph.ppem_x as f32,
                                 ppem_y: cblc_glyph.ppem_y as f32,
-                                width: f32::INFINITY,
-                                height: f32::INFINITY,
-                                ..Default::default()
+                                placement_origin_bottom_left: false,
+                                advance: advance,
                             },
                         }));
                     }
@@ -1267,6 +1304,7 @@ mod ffi {
         // those here from `inner_bearing_*` to account for CoreText behavior in
         // SBIX placement. Where the sbix originOffsetX/Y are applied only
         // within the bounds. Specified in font units.
+        // 0 for CBDT, CBLC.
         bearing_x: f32,
         bearing_y: f32,
         // Scale factors to scale image to 1em.
@@ -1275,16 +1313,12 @@ mod ffi {
         // Account for the fact that Sbix and CBDT/CBLC have a different origin
         // definition.
         placement_origin_bottom_left: bool,
-        // For SBIX, width and height in font units as determined from maximum x
-        // and y values from the corresponding contour glyph.  For CBDT, set to
-        // f32::INFINITY.
-        width: f32,
-        height: f32,
-        // For SBIX, specified as a pixel value, to be scaled by `ppem_*` as an
+        // Specified as a pixel value, to be scaled by `ppem_*` as an
         // offset applied to placing the image within the bounds rectangle.
-        // 0 for CBDT, CBLC.
         inner_bearing_x: f32,
         inner_bearing_y: f32,
+        // Some, but not all, bitmap glyphs have a special bitmap advance
+        advance: f32,
     }
 
     extern "Rust" {
@@ -1426,7 +1460,11 @@ mod ffi {
         fn next_color_stop(color_stops: &mut BridgeColorStops, stop: &mut ColorStop) -> bool;
         fn num_color_stops(color_stops: &BridgeColorStops) -> usize;
 
-        fn get_font_style(font_ref: &BridgeFontRef, font_style: &mut BridgeFontStyle) -> bool;
+        fn get_font_style(
+            font_ref: &BridgeFontRef,
+            coords: &BridgeNormalizedCoords,
+            font_style: &mut BridgeFontStyle
+        ) -> bool;
 
         // Additional low-level access functions needed for generateAdvancedMetrics().
         fn is_embeddable(font_ref: &BridgeFontRef) -> bool;

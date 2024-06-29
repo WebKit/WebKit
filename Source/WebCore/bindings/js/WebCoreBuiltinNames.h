@@ -205,6 +205,7 @@ namespace WebCore {
     macro(FileSystemFileHandle) \
     macro(FileSystemHandle) \
     macro(FileSystemSyncAccessHandle) \
+    macro(FragmentDirective) \
     macro(GainNode) \
     macro(GPU) \
     macro(GPUAdapter) \
@@ -528,7 +529,6 @@ namespace WebCore {
     macro(abortSteps) \
     macro(addAbortAlgorithmToSignal) \
     macro(appendFromJS) \
-    macro(applicationCache) \
     macro(associatedReadableByteStreamController) \
     macro(autoAllocateChunkSize) \
     macro(backingMap) \

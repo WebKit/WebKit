@@ -29,7 +29,7 @@
 namespace WebCore {
 using namespace JSC;
 
-template<> TestEmptyDictionary convertDictionary<TestEmptyDictionary>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> ConversionResult<IDLDictionary<TestEmptyDictionary>> convertDictionary<TestEmptyDictionary>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -37,7 +37,7 @@ template<> TestEmptyDictionary convertDictionary<TestEmptyDictionary>(JSGlobalOb
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
     if (UNLIKELY(!isNullOrUndefined && !object)) {
         throwTypeError(&lexicalGlobalObject, throwScope);
-        return { };
+        return ConversionResultException { };
     }
     TestEmptyDictionary result;
     return result;

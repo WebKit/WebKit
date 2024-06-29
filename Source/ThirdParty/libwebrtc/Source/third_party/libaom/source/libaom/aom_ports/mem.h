@@ -24,17 +24,13 @@
 #define DECLARE_ALIGNED(n, typ, val) typ val
 #endif
 
-/* Indicates that the usage of the specified variable has been audited to assure
- * that it's safe to use uninitialized. Silences 'may be used uninitialized'
- * warnings on gcc.
- */
-#if defined(__GNUC__) && __GNUC__
-#define UNINITIALIZED_IS_SAFE(x) x = x
+#if defined(__has_builtin)
+#define AOM_HAS_BUILTIN(x) __has_builtin(x)
 #else
-#define UNINITIALIZED_IS_SAFE(x) x
+#define AOM_HAS_BUILTIN(x) 0
 #endif
 
-#if HAVE_NEON && defined(_MSC_VER)
+#if !AOM_HAS_BUILTIN(__builtin_prefetch) && !defined(__GNUC__)
 #define __builtin_prefetch(x)
 #endif
 

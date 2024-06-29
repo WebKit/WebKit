@@ -248,9 +248,9 @@ RefPtr<CSSValue> FeatureParser::consumeValue(CSSParserTokenRange& range, const M
 
     if (RefPtr value = CSSPropertyParserHelpers::consumeInteger(range))
         return value;
-    if (RefPtr value = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::All))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeNumber(range))
         return value;
-    if (RefPtr value = CSSPropertyParserHelpers::consumeLength(range, HTMLStandardMode, ValueRange::All))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeLength(range, HTMLStandardMode))
         return value;
     if (RefPtr value = CSSPropertyParserHelpers::consumeResolution(range))
         return value;

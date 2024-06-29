@@ -13,6 +13,7 @@
 #include <stdio.h>
 
 #include "av1/common/common.h"
+#include "config/av1_rtcd.h"
 
 int64_t av1_highbd_block_error_sse2(const tran_low_t *coeff,
                                     const tran_low_t *dqcoeff,

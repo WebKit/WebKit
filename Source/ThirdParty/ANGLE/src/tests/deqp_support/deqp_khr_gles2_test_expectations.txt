@@ -4,13 +4,13 @@
 
 // See README.md for format.
 
-6678 UBSAN : KHR-GLES2.core.internalformat.texture2d.rgb_half_float_oes_rgb = SKIP
-6678 UBSAN : KHR-GLES2.core.internalformat.texture2d.rgb_half_float_oes_rgb_linear = SKIP
-6678 UBSAN : KHR-GLES2.core.internalformat.texture2d.rgba_half_float_oes_rgba = SKIP
-6678 UBSAN : KHR-GLES2.core.internalformat.texture2d.rgba_half_float_oes_rgba_linear = SKIP
+42265173 UBSAN : KHR-GLES2.core.internalformat.texture2d.rgb_half_float_oes_rgb = SKIP
+42265173 UBSAN : KHR-GLES2.core.internalformat.texture2d.rgb_half_float_oes_rgb_linear = SKIP
+42265173 UBSAN : KHR-GLES2.core.internalformat.texture2d.rgba_half_float_oes_rgba = SKIP
+42265173 UBSAN : KHR-GLES2.core.internalformat.texture2d.rgba_half_float_oes_rgba_linear = SKIP
 
-8402 VULKAN : KHR-GLES2.texture_3d.compressed_texture.negative_compressed_tex_image = FAIL
-8402 VULKAN : KHR-GLES2.texture_3d.compressed_texture.negative_compressed_tex_sub_image = FAIL
+42266826 VULKAN : KHR-GLES2.texture_3d.compressed_texture.negative_compressed_tex_image = FAIL
+42266826 VULKAN : KHR-GLES2.texture_3d.compressed_texture.negative_compressed_tex_sub_image = FAIL
 
 // Snapdragon 8 Gen3 Mobile Reference Device
 b/328156792 PINEAPPLE VULKAN : KHR-GLES2.texture_3d.* = SKIP

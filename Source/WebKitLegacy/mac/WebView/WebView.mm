@@ -2785,7 +2785,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         Ref<WebCore::HistoryItem> newItem = otherBackForward.itemAtIndex(i)->copy();
         if (i == 0)
             newItemToGoTo = newItem.ptr();
-        backForward.client().addItem(WTFMove(newItem));
+        backForward.client().addItem(_private->page->mainFrame().frameID(), WTFMove(newItem));
     }
 
     ASSERT(newItemToGoTo);
@@ -7427,7 +7427,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
     if (jsValue.isBoolean())
         return [NSAppleEventDescriptor descriptorWithBoolean:jsValue.asBoolean()];
     if (jsValue.isString())
-        return [NSAppleEventDescriptor descriptorWithString:asString(jsValue)->value(lexicalGlobalObject)];
+        return [NSAppleEventDescriptor descriptorWithString:asString(jsValue)->value(lexicalGlobalObject).data];
     if (jsValue.isNumber()) {
         double value = jsValue.asNumber();
         int intValue = value;

@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (155,63) size 184x18
             text run at (155,63) width 184: "Hypertext Markup Language"
         RenderBlock {RT} at (155,53) size 184x11
-          RenderText {#text} at (76,0) size 32x10
-            text run at (76,0) width 32: "HTML5"
+          RenderText {#text} at (77,0) size 30x10
+            text run at (77,0) width 30: "HTML5"
       RenderText {#text} at (339,63) size 31x18
         text run at (339,63) width 31: " and "
       RenderInline {RUBY} at (370,63) size 89x18

@@ -1,0 +1,4 @@
+
+FAIL When in the same layer, the last rule of each name wins assert_equals: expected 300 but got 999999
+FAIL When in different layers, the rule of each name in the highest layer wins assert_equals: expected 100 but got 300
+

@@ -34,6 +34,7 @@
 
 #if USE(SKIA)
 #include <skia/core/SkColorSpace.h>
+#include <skia/core/SkData.h>
 #endif
 
 #if PLATFORM(GTK)
@@ -75,6 +76,12 @@ template<> struct ArgumentCoder<sk_sp<SkColorSpace>> {
     static void encode(Encoder&, const sk_sp<SkColorSpace>&);
     static void encode(StreamConnectionEncoder&, const sk_sp<SkColorSpace>&);
     static std::optional<sk_sp<SkColorSpace>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<sk_sp<SkData>> {
+    static void encode(Encoder&, const sk_sp<SkData>&);
+    static void encode(StreamConnectionEncoder&, const sk_sp<SkData>&);
+    static std::optional<sk_sp<SkData>> decode(Decoder&);
 };
 #endif
 

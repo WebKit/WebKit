@@ -31,6 +31,7 @@
 #include "RemoteQueueMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
+#include <WebCore/SharedMemory.h>
 #include <WebCore/WebGPUQueue.h>
 
 namespace WebKit {
@@ -80,32 +81,42 @@ void RemoteQueue::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 void RemoteQueue::writeBuffer(
     WebGPUIdentifier buffer,
     WebCore::WebGPU::Size64 bufferOffset,
-    Vector<uint8_t>&& data)
+    std::optional<WebCore::SharedMemoryHandle>&& dataHandle,
+    CompletionHandler<void(bool)>&& completionHandler)
 {
+    auto data = dataHandle ? WebCore::SharedMemory::map(WTFMove(*dataHandle), WebCore::SharedMemory::Protection::ReadOnly) : nullptr;
     auto convertedBuffer = m_objectHeap->convertBufferFromBacking(buffer);
     ASSERT(convertedBuffer);
-    if (!convertedBuffer)
+    if (!convertedBuffer) {
+        completionHandler(false);
         return;
+    }
 
-    m_backing->writeBufferNoCopy(*convertedBuffer, bufferOffset, data.mutableSpan(), 0, std::nullopt);
+    m_backing->writeBufferNoCopy(*convertedBuffer, bufferOffset, data ? data->mutableSpan() : std::span<uint8_t> { }, 0, std::nullopt);
+    completionHandler(true);
 }
 
 void RemoteQueue::writeTexture(
     const WebGPU::ImageCopyTexture& destination,
-    Vector<uint8_t>&& data,
+    std::optional<WebCore::SharedMemoryHandle>&& dataHandle,
     const WebGPU::ImageDataLayout& dataLayout,
-    const WebGPU::Extent3D& size)
+    const WebGPU::Extent3D& size,
+    CompletionHandler<void(bool)>&& completionHandler)
 {
+    auto data = dataHandle ? WebCore::SharedMemory::map(WTFMove(*dataHandle), WebCore::SharedMemory::Protection::ReadOnly) : nullptr;
     auto convertedDestination = m_objectHeap->convertFromBacking(destination);
     ASSERT(convertedDestination);
     auto convertedDataLayout = m_objectHeap->convertFromBacking(dataLayout);
     ASSERT(convertedDestination);
     auto convertedSize = m_objectHeap->convertFromBacking(size);
     ASSERT(convertedSize);
-    if (!convertedDestination || !convertedDestination || !convertedSize)
+    if (!convertedDestination || !convertedDestination || !convertedSize) {
+        completionHandler(false);
         return;
+    }
 
-    m_backing->writeTexture(*convertedDestination, data.data(), data.size(), *convertedDataLayout, *convertedSize);
+    m_backing->writeTexture(*convertedDestination, data ? data->mutableSpan() : std::span<uint8_t> { }, *convertedDataLayout, *convertedSize);
+    completionHandler(true);
 }
 
 void RemoteQueue::copyExternalImageToTexture(

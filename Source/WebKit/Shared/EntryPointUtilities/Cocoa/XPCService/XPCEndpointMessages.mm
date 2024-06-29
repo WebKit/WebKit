@@ -58,15 +58,8 @@ static void handleVideoReceiverEndpointMessage(xpc_object_t message)
 
     auto endpointMessage = VideoReceiverEndpointMessage::decode(message);
 
-    auto webProcessConnection = GPUProcess::singleton().webProcessConnection(endpointMessage.processIdentifier());
-    if (!webProcessConnection)
-        return;
-
-    RefPtr mediaPlayer = webProcessConnection->remoteMediaPlayerManagerProxy().mediaPlayer(endpointMessage.playerIdentifier());
-    if (!mediaPlayer)
-        return;
-
-    mediaPlayer->setVideoReceiverEndpoint(endpointMessage.endpoint());
+    if (RefPtr webProcessConnection = GPUProcess::singleton().webProcessConnection(endpointMessage.processIdentifier()))
+        webProcessConnection->remoteMediaPlayerManagerProxy().handleVideoReceiverEndpointMessage(endpointMessage);
 }
 #endif
 

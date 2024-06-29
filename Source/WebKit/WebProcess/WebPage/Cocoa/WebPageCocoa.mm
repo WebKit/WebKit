@@ -95,10 +95,6 @@
 #import "WKProcessExtension.h"
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-#import "UnifiedTextReplacementController.h"
-#endif
-
 #define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
 
 #if PLATFORM(COCOA)
@@ -125,13 +121,20 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
 #if USE(LIBWEBRTC)
     LibWebRTCCodecs::setCallbacks(m_page->settings().webRTCPlatformCodecsInGPUProcessEnabled(), m_page->settings().webRTCRemoteVideoFrameEnabled());
     LibWebRTCCodecs::setWebRTCMediaPipelineAdditionalLoggingEnabled(m_page->settings().webRTCMediaPipelineAdditionalLoggingEnabled());
-#endif    
+#endif
+
 #if PLATFORM(MAC)
     // In order to be able to block launchd on macOS, we need to eagerly open up a connection to CARenderServer here.
-    // This is because PDF rendering on macOS requires access to CARenderServer, unless we're in Lockdown mode.
-    if (!WebProcess::singleton().isLockdownModeEnabled())
-        CARenderServerGetServerPort(nullptr);
+    // This is because PDF rendering on macOS requires access to CARenderServer, unless unified PDF is enabled.
+    // In Lockdown mode we always block access to CARenderServer.
+    bool pdfRenderingRequiresRenderServerAccess = true;
+#if ENABLE(UNIFIED_PDF)
+    pdfRenderingRequiresRenderServerAccess = !m_page->settings().unifiedPDFEnabled();
 #endif
+    if (pdfRenderingRequiresRenderServerAccess && !WebProcess::singleton().isLockdownModeEnabled())
+        CARenderServerGetServerPort(nullptr);
+#endif // PLATFORM(MAC)
+
 #if PLATFORM(IOS_FAMILY)
     setInsertionPointColor(parameters.insertionPointColor);
     setHardwareKeyboardState(parameters.hardwareKeyboardState);
@@ -272,7 +275,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + scaledAscent);
 
 #if PLATFORM(MAC)
-    auto attributedString = editingAttributedString(range, IncludeImages::No).nsAttributedString();
+    auto attributedString = editingAttributedString(range, { }).nsAttributedString();
     auto scaledAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[attributedString string]]);
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
     [attributedString enumerateAttributesInRange:NSMakeRange(0, [attributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
@@ -310,140 +313,28 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
     return dictionaryPopupInfo;
 }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-std::optional<WebCore::SimpleRange> WebPage::getRangeforUUID(const WTF::UUID& uuid)
+#if ENABLE(WRITING_TOOLS_UI)
+void WebPage::createTextIndicatorForTextAnimationID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
 {
-    auto range = m_unifiedTextReplacementController->contextRangeForSessionWithUUID(uuid);
-    if (range)
-        return range;
-
-    RefPtr liveRange = m_textIndicatorStyleEnablementRanges.get(uuid);
-    return WebCore::makeSimpleRange(liveRange);
+    m_textAnimationController->createTextIndicatorForTextAnimationID(uuid, WTFMove(completionHandler));
 }
 
-void WebPage::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
+void WebPage::updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
 {
-    auto sessionRange = getRangeforUUID(uuid);
-
-    if (!sessionRange) {
-        completionHandler(std::nullopt);
-        return;
-    }
-
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {
-        std::optional<TextIndicatorData> textIndicatorData;
-        constexpr OptionSet textIndicatorOptions {
-            TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
-            TextIndicatorOption::ExpandClipBeyondVisibleRect,
-            TextIndicatorOption::UseSelectionRectForSizing
-        };
-        if (auto textIndicator = TextIndicator::createWithRange(*sessionRange, textIndicatorOptions, TextIndicatorPresentationTransition::None, { }))
-            textIndicatorData = textIndicator->data();
-        completionHandler(WTFMove(textIndicatorData));
-        return;
-    }
-    completionHandler(std::nullopt);
+    m_textAnimationController->updateUnderlyingTextVisibilityForTextAnimationID(uuid, visible, WTFMove(completionHandler));
 }
 
-void WebPage::updateTextIndicatorStyleVisibilityForID(const WTF::UUID uuid, bool visible, CompletionHandler<void()>&& completionHandler)
+void WebPage::enableSourceTextAnimationAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
 {
-    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
-    if (!frame) {
-        ASSERT_NOT_REACHED();
-        completionHandler();
-        return;
-    }
-
-    RefPtr document = frame->document();
-    if (!document) {
-        ASSERT_NOT_REACHED();
-        completionHandler();
-        return;
-    }
-
-    auto sessionRange = getRangeforUUID(uuid);
-
-    if (!sessionRange) {
-        completionHandler();
-        return;
-    }
-
-    if (visible)
-        document->markers().removeMarkers(*sessionRange, { DocumentMarker::Type::TransparentContent });
-    else
-        document->markers().addMarker(*sessionRange, DocumentMarker::Type::TransparentContent);
-
-    completionHandler();
+    m_textAnimationController->enableSourceTextAnimationAfterElementWithID(elementID, uuid);
 }
 
-void WebPage::enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
+void WebPage::enableTextAnimationTypeForElementWithID(const String& elementID, const WTF::UUID& uuid)
 {
-    // FIXME: move the start of the range to be after the element with the ID listed.
-
-    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
-    if (!frame) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr document = frame->document();
-    if (!document) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr root = document->documentElement();
-    if (!root) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    VisibleSelection fullDocumentSelection(VisibleSelection::selectionFromContentsOfNode(root.get()));
-    auto simpleRange = fullDocumentSelection.range();
-    if (!simpleRange) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    m_textIndicatorStyleEnablementRanges.add(uuid, createLiveRange(*simpleRange));
+    m_textAnimationController->enableTextAnimationTypeForElementWithID(elementID, uuid);
 }
 
-void WebPage::enableTextIndicatorStyleForElementWithID(const String& elementID, const WTF::UUID& uuid)
-{
-    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
-    if (!frame) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr document = frame->document();
-    if (!document) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr root = document->documentElement();
-    if (!root) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr element = document->getElementById(elementID);
-    if (!element) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto elementRange = makeRangeSelectingNodeContents(*element);
-    if (elementRange.collapsed()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    m_textIndicatorStyleEnablementRanges.add(uuid, createLiveRange(elementRange));
-}
-
-#endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#endif // ENABLE(WRITING_TOOLS)
 
 void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& replacementEditingRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, InsertTextOptions&& options)
 {
@@ -583,7 +474,7 @@ void WebPage::accessibilityManageRemoteElementStatus(bool registerStatus, int pr
 #endif
 }
 
-void WebPage::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, std::span<const uint8_t> dataToken, CompletionHandler<void(std::span<const uint8_t>, int)>&& completionHandler)
+void WebPage::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, Vector<uint8_t> dataToken, CompletionHandler<void(Vector<uint8_t>, int)>&& completionHandler)
 {
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame) {
@@ -603,10 +494,10 @@ void WebPage::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::Fram
         return completionHandler({ }, 0);
     }
 
-    registerRemoteFrameAccessibilityTokens(processIdentifier, dataToken);
+    registerRemoteFrameAccessibilityTokens(processIdentifier, dataToken.span());
 
     // Get our remote token data and send back to the RemoteFrame.
-    completionHandler(span(accessibilityRemoteTokenData().get()), getpid());
+    completionHandler({ span(accessibilityRemoteTokenData().get()) }, getpid());
 }
 
 #if ENABLE(APPLE_PAY)
@@ -1053,130 +944,53 @@ void WebPage::setMediaEnvironment(const String& mediaEnvironment)
 }
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-void WebPage::willBeginTextReplacementSession(const WTF::UUID& uuid, WebUnifiedTextReplacementType type, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
+#if ENABLE(WRITING_TOOLS)
+void WebPage::willBeginWritingToolsSession(const std::optional<WebCore::WritingTools::Session>& session, CompletionHandler<void(const Vector<WebCore::WritingTools::Context>&)>&& completionHandler)
 {
-    m_unifiedTextReplacementController->willBeginTextReplacementSession(uuid, type, WTFMove(completionHandler));
+    corePage()->willBeginWritingToolsSession(session, WTFMove(completionHandler));
 }
 
-void WebPage::didBeginTextReplacementSession(const WTF::UUID& uuid, const Vector<WebUnifiedTextReplacementContextData>& contexts)
+void WebPage::didBeginWritingToolsSession(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::Context>& contexts)
 {
-    m_unifiedTextReplacementController->didBeginTextReplacementSession(uuid, contexts);
+    corePage()->didBeginWritingToolsSession(session, contexts);
 }
 
-void WebPage::textReplacementSessionDidReceiveReplacements(const WTF::UUID& uuid, const Vector<WebTextReplacementData>& replacements, const WebUnifiedTextReplacementContextData& context, bool finished)
+void WebPage::proofreadingSessionDidReceiveSuggestions(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::TextSuggestion>& suggestions, const WebCore::WritingTools::Context& context, bool finished)
 {
-    m_unifiedTextReplacementController->textReplacementSessionDidReceiveReplacements(uuid, replacements, context, finished);
+    corePage()->proofreadingSessionDidReceiveSuggestions(session, suggestions, context, finished);
 }
 
-void WebPage::textReplacementSessionDidUpdateStateForReplacement(const WTF::UUID& uuid, WebTextReplacementData::State state, const WebTextReplacementData& replacement, const WebUnifiedTextReplacementContextData& context)
+void WebPage::proofreadingSessionDidUpdateStateForSuggestion(const WebCore::WritingTools::Session& session, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion& suggestion, const WebCore::WritingTools::Context& context)
 {
-    m_unifiedTextReplacementController->textReplacementSessionDidUpdateStateForReplacement(uuid, state, replacement, context);
+    corePage()->proofreadingSessionDidUpdateStateForSuggestion(session, state, suggestion, context);
 }
 
-void WebPage::didEndTextReplacementSession(const WTF::UUID& uuid, bool accepted)
+void WebPage::didEndWritingToolsSession(const WebCore::WritingTools::Session& session, bool accepted)
 {
-    m_unifiedTextReplacementController->didEndTextReplacementSession(uuid, accepted);
+    corePage()->didEndWritingToolsSession(session, accepted);
 }
 
-void WebPage::textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID& uuid, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebUnifiedTextReplacementContextData& context)
+void WebPage::compositionSessionDidReceiveTextWithReplacementRange(const WebCore::WritingTools::Session& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebCore::WritingTools::Context& context, bool finished)
 {
-    m_unifiedTextReplacementController->textReplacementSessionDidReceiveTextWithReplacementRange(uuid, attributedText, range, context);
+    corePage()->compositionSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished);
 }
 
-void WebPage::textReplacementSessionDidReceiveEditAction(const WTF::UUID& uuid, WebKit::WebTextReplacementData::EditAction action)
+void WebPage::writingToolsSessionDidReceiveAction(const WritingTools::Session& session, WebCore::WritingTools::Action action)
 {
-    m_unifiedTextReplacementController->textReplacementSessionDidReceiveEditAction(uuid, action);
+    corePage()->writingToolsSessionDidReceiveAction(session, action);
 }
 
-void WebPage::textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect rect)
+void WebPage::proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect rect)
 {
-    send(Messages::WebPageProxy::TextReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(sessionUUID, replacementUUID, rect));
+    send(Messages::WebPageProxy::ProofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(sessionID, replacementID, rect));
 }
 
-void WebPage::textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementData::State state, const WTF::UUID& replacementUUID)
+void WebPage::proofreadingSessionUpdateStateForSuggestionWithID(const WebCore::WritingTools::Session::ID& sessionID, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion::ID& replacementID)
 {
-    send(Messages::WebPageProxy::TextReplacementSessionUpdateStateForReplacementWithUUID(sessionUUID, state, replacementUUID));
+    send(Messages::WebPageProxy::ProofreadingSessionUpdateStateForSuggestionWithID(sessionID, state, replacementID));
 }
 
 #endif
-
-std::optional<SimpleRange> WebPage::autocorrectionContextRange()
-{
-    // The algorithm this function uses is essentially:
-    //
-    // 1. Get the current start and end positions of the selection.
-    //
-    // 2. Ideally, the selection range will simply just be extended to the edges of the sentence each
-    //    position is part of. If this has enough words and characters, the algorithm is finished.
-    //
-    // 3. Otherwise, leave the end position alone, and start moving the start position backwards,
-    //    word-by-word, until the minimum word count / maximum context length has been reached.
-
-    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
-    if (!frame)
-        return std::nullopt;
-
-    VisiblePosition contextStartPosition;
-
-    VisiblePosition startPosition = frame->selection().selection().start();
-    VisiblePosition endPosition = frame->selection().selection().end();
-
-    constexpr unsigned minContextWordCount = 10;
-    constexpr unsigned maxContextLength = 100;
-
-    auto firstPositionInEditableContent = startOfEditableContent(startPosition);
-
-    // If the start position is at the very start of the editable content, we can't go back any more
-    // than that, so use the original start position if that is the case.
-    if (startPosition != firstPositionInEditableContent) {
-        // Otherwise, start going backwards to find an ideal start position.
-
-        contextStartPosition = startPosition;
-        unsigned totalContextLength = 0;
-
-        // Keep trying to go back as much as possible until the minimum word count or context length
-        // has been reached; and only go back word-by-word, so that the range doesn't cut off part
-        // of a word.
-        for (unsigned i = 0; i < minContextWordCount; ++i) {
-            auto previousPosition = startOfWord(positionOfNextBoundaryOfGranularity(contextStartPosition, TextGranularity::WordGranularity, SelectionDirection::Backward));
-            if (previousPosition.isNull())
-                break;
-
-            auto currentWordRange = makeSimpleRange(previousPosition, contextStartPosition);
-            if (currentWordRange) {
-                auto currentWord = WebCore::plainTextReplacingNoBreakSpace(*currentWordRange);
-                totalContextLength += currentWord.length();
-            }
-
-            if (totalContextLength >= maxContextLength)
-                break;
-
-            contextStartPosition = previousPosition;
-        }
-
-        // If the beginning of the sentence the original position is a part of is before the new start position,
-        // use that, since it will not cut off a sentence, and will provide at least equal or more context.
-        VisiblePosition sentenceContextStartPosition = startOfSentence(startPosition);
-        if (sentenceContextStartPosition.isNotNull() && sentenceContextStartPosition < contextStartPosition)
-            contextStartPosition = sentenceContextStartPosition;
-    }
-
-    // Otherwise, just use the original start position.
-    if (contextStartPosition.isNull())
-        contextStartPosition = startPosition;
-
-    // If the end position is at the very end of the editable content, we can't go forward any more
-    // than that, so use the original end position if that is the case.
-    if (endPosition != endOfEditableContent(endPosition)) {
-        // Otherwise, move the end position to the end of the sentence the original end position is part of, if applicable.
-        VisiblePosition nextPosition = endOfSentence(endPosition);
-        if (nextPosition.isNotNull() && nextPosition > endPosition)
-            endPosition = nextPosition;
-    }
-
-    return makeSimpleRange(contextStartPosition, endPosition);
-}
 
 } // namespace WebKit
 

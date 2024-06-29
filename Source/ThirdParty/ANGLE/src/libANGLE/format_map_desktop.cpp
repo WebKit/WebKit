@@ -11,7 +11,7 @@
 #include "formatutils.h"
 #include "renderer/gl/functionsgl_enums.h"
 
-// TODO(http://anglebug.com/3730): switch ANGLE to generate its own GL enum types from gl.xml
+// TODO(http://anglebug.com/42262388): switch ANGLE to generate its own GL enum types from gl.xml
 
 namespace gl
 {

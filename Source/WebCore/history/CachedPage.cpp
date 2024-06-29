@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CachedPage.h"
 
+#include "BackForwardController.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
@@ -36,6 +37,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
 #include "LocalFrameView.h"
+#include "Navigation.h"
 #include "Node.h"
 #include "Page.h"
 #include "PageTransitionEvent.h"
@@ -178,6 +180,12 @@ void CachedPage::restore(Page& page)
     if (m_needsUpdateContentsSize) {
         if (RefPtr frameView = mainFrame->virtualView())
             frameView->updateContentsSize();
+    }
+
+    if (auto& backForwardController = page.backForward(); page.settings().navigationAPIEnabled() && focusedDocument->domWindow() && backForwardController.currentItem()) {
+        Ref currentItem = *backForwardController.currentItem();
+        auto allItems = backForwardController.allItems();
+        focusedDocument->domWindow()->navigation().updateForReactivation(allItems, currentItem);
     }
 
     firePageShowEvent(page);

@@ -48,15 +48,25 @@ RemoteBarcodeDetector::RemoteBarcodeDetector(Ref<WebCore::ShapeDetection::Barcod
 
 RemoteBarcodeDetector::~RemoteBarcodeDetector() = default;
 
+Ref<WebCore::ShapeDetection::BarcodeDetector> RemoteBarcodeDetector::protectedBacking()
+{
+    return backing();
+}
+
+Ref<RemoteRenderingBackend> RemoteBarcodeDetector::protectedBackend()
+{
+    return m_backend.get();
+}
+
 void RemoteBarcodeDetector::detect(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedBarcode>&&)>&& completionHandler)
 {
-    auto sourceImage = m_backend->imageBuffer(renderingResourceIdentifier);
+    auto sourceImage = protectedBackend()->imageBuffer(renderingResourceIdentifier);
     if (!sourceImage) {
         completionHandler({ });
         return;
     }
 
-    m_backing->detect(*sourceImage, WTFMove(completionHandler));
+    protectedBacking()->detect(*sourceImage, WTFMove(completionHandler));
 }
 
 } // namespace WebKit

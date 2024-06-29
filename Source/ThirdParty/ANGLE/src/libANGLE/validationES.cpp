@@ -689,7 +689,7 @@ void SetRobustLengthParam(const GLsizei *length, GLsizei value)
     {
         // Currently we modify robust length parameters in the validation layer. We should be only
         // doing this in the Context instead.
-        // TODO(http://anglebug.com/4406): Remove when possible.
+        // TODO(http://anglebug.com/42263032): Remove when possible.
         *const_cast<GLsizei *>(length) = value;
     }
 }
@@ -815,7 +815,7 @@ bool ValidateTransformFeedbackPrimitiveMode(const Context *context,
     ASSERT(context);
 
     if ((!context->getExtensions().geometryShaderAny() ||
-         !context->getExtensions().tessellationShaderEXT) &&
+         !context->getExtensions().tessellationShaderAny()) &&
         context->getClientVersion() < ES_3_2)
     {
         // It is an invalid operation to call DrawArrays or DrawArraysInstanced with a draw mode
@@ -1035,7 +1035,7 @@ bool ValidMipLevel(const Context *context, TextureType type, GLint level)
         case TextureType::_2DArray:
         case TextureType::_2DMultisample:
         case TextureType::_2DMultisampleArray:
-            // TODO(http://anglebug.com/2775): It's a bit unclear what the "maximum allowable
+            // TODO(http://anglebug.com/42261478): It's a bit unclear what the "maximum allowable
             // level-of-detail" for multisample textures should be. Could maybe make it zero.
             maxDimension = caps.max2DTextureSize;
             break;
@@ -1175,7 +1175,7 @@ bool ValidCompressedImageSize(const Context *context,
 
     if (formatInfo.paletted)
     {
-        // TODO(http://anglebug.com/7688): multi-level paletted images
+        // TODO(http://anglebug.com/42266155): multi-level paletted images
         if (level != 0)
         {
             return false;
@@ -3020,6 +3020,7 @@ bool ValidateStateQuery(const Context *context,
         case GL_TEXTURE_BINDING_2D_ARRAY:
         case GL_TEXTURE_BINDING_2D_MULTISAMPLE:
             break;
+
         case GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY:
             if (!context->getExtensions().textureStorageMultisample2dArrayOES)
             {
@@ -3027,6 +3028,7 @@ bool ValidateStateQuery(const Context *context,
                 return false;
             }
             break;
+
         case GL_TEXTURE_BINDING_RECTANGLE_ANGLE:
             if (!context->getExtensions().textureRectangleANGLE)
             {
@@ -3034,6 +3036,7 @@ bool ValidateStateQuery(const Context *context,
                 return false;
             }
             break;
+
         case GL_TEXTURE_BINDING_EXTERNAL_OES:
             if (!context->getExtensions().EGLStreamConsumerExternalNV &&
                 !context->getExtensions().EGLImageExternalOES)
@@ -3042,6 +3045,7 @@ bool ValidateStateQuery(const Context *context,
                 return false;
             }
             break;
+
         case GL_TEXTURE_BUFFER_BINDING:
         case GL_TEXTURE_BINDING_BUFFER:
         case GL_TEXTURE_BUFFER_OFFSET_ALIGNMENT:
@@ -3078,8 +3082,8 @@ bool ValidateStateQuery(const Context *context,
                 ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kReadBufferNotAttached);
                 return false;
             }
+            break;
         }
-        break;
 
         case GL_PRIMITIVE_BOUNDING_BOX:
             if (!context->getExtensions().primitiveBoundingBoxAny())
@@ -3093,6 +3097,22 @@ bool ValidateStateQuery(const Context *context,
             if (!context->getExtensions().shadingRateQCOM)
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kExtensionNotEnabled);
+                return false;
+            }
+            break;
+
+        case GL_MULTISAMPLE_LINE_WIDTH_RANGE:
+            if (context->getClientVersion() < Version(3, 2))
+            {
+                ANGLE_VALIDATION_ERRORF(GL_INVALID_ENUM, kEnumNotSupported, pname);
+                return false;
+            }
+            break;
+
+        case GL_MULTISAMPLE_LINE_WIDTH_GRANULARITY:
+            if (context->getClientVersion() < Version(3, 2))
+            {
+                ANGLE_VALIDATION_ERRORF(GL_INVALID_ENUM, kEnumNotSupported, pname);
                 return false;
             }
             break;
@@ -3792,8 +3812,8 @@ bool ValidateCopyImageSubDataBase(const Context *context,
     bool fillsEntireMip               = false;
     gl::Texture *dstTexture           = context->getTexture({dstName});
     gl::TextureTarget dstTargetPacked = gl::PackParam<gl::TextureTarget>(dstTarget);
-    // TODO(http://anglebug.com/5643): Some targets (e.g., GL_TEXTURE_CUBE_MAP, GL_RENDERBUFFER) are
-    // unsupported when used with compressed formats due to gl::PackParam() returning
+    // TODO(http://anglebug.com/42264179): Some targets (e.g., GL_TEXTURE_CUBE_MAP, GL_RENDERBUFFER)
+    // are unsupported when used with compressed formats due to gl::PackParam() returning
     // TextureTarget::InvalidEnum.
     if (dstTargetPacked != gl::TextureTarget::InvalidEnum)
     {
@@ -4516,9 +4536,9 @@ void RecordDrawModeError(const Context *context, angle::EntryPoint entryPoint, P
             break;
 
         case PrimitiveMode::Patches:
-            if (!extensions.tessellationShaderEXT && context->getClientVersion() < ES_3_2)
+            if (!extensions.tessellationShaderAny() && context->getClientVersion() < ES_3_2)
             {
-                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kTessellationShaderExtensionNotEnabled);
+                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kTessellationShaderEXTNotEnabled);
                 return;
             }
             break;
@@ -6167,10 +6187,10 @@ bool ValidateGetProgramivBase(const Context *context,
         case GL_TESS_GEN_SPACING_EXT:
         case GL_TESS_GEN_VERTEX_ORDER_EXT:
         case GL_TESS_GEN_POINT_MODE_EXT:
-            if (!context->getExtensions().tessellationShaderEXT &&
+            if (!context->getExtensions().tessellationShaderAny() &&
                 context->getClientVersion() < ES_3_2)
             {
-                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kTessellationShaderExtensionNotEnabled);
+                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kTessellationShaderEXTNotEnabled);
                 return false;
             }
             if (!programObject->isLinked())

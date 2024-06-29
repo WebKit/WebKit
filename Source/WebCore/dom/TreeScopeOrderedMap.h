@@ -75,7 +75,7 @@ private:
     Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* getAll(const AtomString&, const TreeScope&, const KeyMatchingFunction&) const;
 
     struct MapEntry {
-        MapEntry() { }
+        MapEntry() = default;
         explicit MapEntry(Element* firstElement)
             : element(firstElement)
             , count(1)

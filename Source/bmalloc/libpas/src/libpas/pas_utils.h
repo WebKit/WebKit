@@ -46,6 +46,8 @@
 #include <stdint.h>
 #include <string.h>
 
+PAS_IGNORE_CLANG_WARNINGS_BEGIN("qualifier-requires-header")
+
 #include "pas_utils_prefix.h"
 
 #define PAS_BEGIN_EXTERN_C __PAS_BEGIN_EXTERN_C
@@ -54,7 +56,7 @@
 PAS_BEGIN_EXTERN_C;
 
 #if defined(__has_include)
-#if __has_include(<WebKitAdditions/pas_utils_additions.h>)
+#if __has_include(<WebKitAdditions/pas_utils_additions.h>) && !PAS_ENABLE_TESTING
 #include <WebKitAdditions/pas_utils_additions.h>
 #endif
 #endif
@@ -64,6 +66,7 @@ PAS_BEGIN_EXTERN_C;
 #define PAS_NEVER_INLINE __PAS_NEVER_INLINE
 #define PAS_NO_RETURN __PAS_NO_RETURN
 #define PAS_USED __attribute__((used))
+#define PAS_WARN_UNUSED_RETURN __attribute__((__warn_unused_result__))
 
 #define PAS_COLD /* FIXME: Need some way of triggering cold CC. */
 
@@ -1196,5 +1199,7 @@ enum cpp_initialization_t { cpp_initialization };
 } while (0)
 
 PAS_END_EXTERN_C;
+
+PAS_IGNORE_CLANG_WARNINGS_END // "qualifier-requires-header"
 
 #endif /* PAS_UTILS_H */

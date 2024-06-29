@@ -267,6 +267,8 @@ public:
 
     void createScrollbarsController() final;
 
+    FrameIdentifier rootFrameID() const final;
+
 private:
     bool hasHorizontalOverflow() const;
     bool hasVerticalOverflow() const;

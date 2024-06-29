@@ -48,7 +48,7 @@ void CachedResourceClient::removeAssociatedResource(CachedResource& resource)
 }
 #endif
 
-void CachedResourceClient::notifyFinished(CachedResource&, const NetworkLoadMetrics&)
+void CachedResourceClient::notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
 }
 

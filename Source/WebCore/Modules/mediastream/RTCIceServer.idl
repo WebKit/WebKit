@@ -31,6 +31,7 @@ enum RTCIceCredentialType {
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] dictionary RTCIceServer {
     required (DOMString or sequence<DOMString>) urls;
     DOMString username;

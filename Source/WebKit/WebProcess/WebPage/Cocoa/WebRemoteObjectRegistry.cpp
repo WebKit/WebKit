@@ -54,7 +54,7 @@ void WebRemoteObjectRegistry::close()
     }
 }
 
-IPC::MessageSender& WebRemoteObjectRegistry::messageSender()
+auto WebRemoteObjectRegistry::messageSender() -> MessageSender
 {
     return m_page.get();
 }

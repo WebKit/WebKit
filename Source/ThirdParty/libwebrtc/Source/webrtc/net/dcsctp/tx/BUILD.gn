@@ -11,6 +11,7 @@ import("../../../webrtc.gni")
 rtc_source_set("send_queue") {
   deps = [
     "../../../api:array_view",
+    "../../../api/units:timestamp",
     "../common:internal_types",
     "../packet:chunk",
     "../packet:data",
@@ -28,9 +29,9 @@ rtc_library("rr_send_queue") {
     "../../../api:array_view",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
+    "../../../rtc_base:stringutils",
     "../../../rtc_base/containers:flat_map",
     "../common:internal_types",
-    "../common:str_join",
     "../packet:data",
     "../public:socket",
     "../public:types",
@@ -53,9 +54,9 @@ rtc_library("stream_scheduler") {
     "../../../api:array_view",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
+    "../../../rtc_base:stringutils",
     "../../../rtc_base:strong_alias",
     "../../../rtc_base/containers:flat_set",
-    "../common:str_join",
     "../packet:chunk",
     "../packet:data",
     "../packet:sctp_packet",
@@ -89,6 +90,7 @@ rtc_library("retransmission_error_counter") {
 
 rtc_library("retransmission_timeout") {
   deps = [
+    "../../../api/units:time_delta",
     "../../../rtc_base:checks",
     "../public:types",
   ]
@@ -103,13 +105,15 @@ rtc_library("outstanding_data") {
     ":retransmission_timeout",
     ":send_queue",
     "../../../api:array_view",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
+    "../../../rtc_base:stringutils",
     "../../../rtc_base/containers:flat_set",
     "../common:internal_types",
     "../common:math",
     "../common:sequence_numbers",
-    "../common:str_join",
     "../packet:chunk",
     "../packet:data",
     "../public:socket",
@@ -138,7 +142,6 @@ rtc_library("retransmission_queue") {
     "../../../rtc_base:stringutils",
     "../common:math",
     "../common:sequence_numbers",
-    "../common:str_join",
     "../packet:chunk",
     "../packet:data",
     "../public:socket",
@@ -162,6 +165,7 @@ if (rtc_include_tests) {
     deps = [
       ":send_queue",
       "../../../api:array_view",
+      "../../../api/units:timestamp",
       "../../../test:test_support",
     ]
     absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]

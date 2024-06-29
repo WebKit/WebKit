@@ -46,14 +46,14 @@
 
 namespace WebCore {
 
-static const char* platformForUAString()
+static ASCIILiteral platformForUAString()
 {
 #if OS(MACOS)
-    return "Macintosh";
+    return "Macintosh"_s;
 #else
     if (chassisType() == WTF::ChassisType::Mobile)
-        return "Linux";
-    return "X11";
+        return "Linux"_s;
+    return "X11"_s;
 #endif
 }
 
@@ -65,7 +65,7 @@ static const String platformVersionForUAString()
 
     struct utsname name;
     uname(&name);
-    static NeverDestroyed<const String> uaOSVersion(makeString(name.sysname, ' ', name.machine));
+    static NeverDestroyed<const String> uaOSVersion(makeString(span(name.sysname), ' ', span(name.machine)));
     return uaOSVersion;
 #else
     // We will always claim to be Safari in Intel Mac OS X, since Safari without
@@ -83,9 +83,9 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
     if (quirks.contains(UserAgentQuirks::NeedsMacintoshPlatform))
         uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsMacintoshPlatform));
     else {
-        uaString.append(platformForUAString(), "; ");
+        uaString.append(platformForUAString(), "; "_s);
 #if defined(USER_AGENT_BRANDING)
-        uaString.append(USER_AGENT_BRANDING "; ");
+        uaString.append(USER_AGENT_BRANDING "; "_s);
 #endif
         uaString.append(platformVersionForUAString());
     }

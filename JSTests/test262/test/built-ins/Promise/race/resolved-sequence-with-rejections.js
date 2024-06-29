@@ -21,7 +21,7 @@ info: |
     Perform ? Invoke(nextPromise, "then", « resultCapability.[[Resolve]], resultCapability.[[Reject]] »).
 
 flags: [async]
-includes: [compareArray.js,promiseHelper.js]
+includes: [compareArray.js, promiseHelper.js]
 ---*/
 
 let a = new Promise((_, reject) => reject('a'));

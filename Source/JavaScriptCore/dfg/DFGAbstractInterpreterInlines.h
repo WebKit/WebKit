@@ -1450,7 +1450,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
             
     case ArithSqrt:
-        executeDoubleUnaryOpEffects(node, sqrt);
+        executeDoubleUnaryOpEffects(node, [](double value) -> double { return sqrt(value); });
         break;
 
     case ArithFRound:
@@ -4950,8 +4950,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         clobberWorld();
 
         WebAssemblyFunction* wasmFunction = node->castOperand<WebAssemblyFunction*>();
-        const auto& typeDefinition = Wasm::TypeInformation::get(wasmFunction->typeIndex()).expand();
-        const auto& signature = *typeDefinition.as<Wasm::FunctionSignature>();
+        const auto& signature = Wasm::TypeInformation::getFunctionSignature(wasmFunction->typeIndex());
         if (signature.returnsVoid()) {
             setConstant(node, jsUndefined());
             break;
@@ -5504,7 +5503,7 @@ FiltrationResult AbstractInterpreter<AbstractStateType>::filterClassInfo(
 }
 
 template<typename AbstractStateType>
-void AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects(Node* node, double(*equivalentFunction)(double))
+void AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects(Node* node, const auto& equivalentFunction)
 {
     JSValue child = forNode(node->child1()).value();
     if (std::optional<double> number = child.toNumberFromPrimitive()) {

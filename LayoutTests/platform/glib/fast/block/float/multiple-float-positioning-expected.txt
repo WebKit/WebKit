@@ -9,7 +9,7 @@ layer at (0,0) size 800x400
       RenderBlock {div} at (18,61) size 732x21 [border: (3px solid #FF0000)]
         RenderText {#text} at (3,3) size 490x14
           text run at (3,3) width 490: "error on line 16 at column 7: Extra content at the end of the document"
-          text run at (492,3) width 1: " "
+          text run at (493,3) width 0: " "
       RenderBlock {h3} at (18,100) size 732x23
         RenderText {#text} at (0,0) size 410x21
           text run at (0,0) width 410: "Below is a rendering of the page up to the first error."

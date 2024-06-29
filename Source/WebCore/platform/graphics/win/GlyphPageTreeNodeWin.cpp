@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
+bool GlyphPage::fill(std::span<const UChar> buffer)
 {
-    ASSERT(bufferLength == GlyphPage::size || bufferLength == 2 * GlyphPage::size);
+    ASSERT(buffer.size() == GlyphPage::size || buffer.size() == 2 * GlyphPage::size);
 
     const Font& font = this->font();
     bool haveGlyphs = false;
@@ -47,10 +47,10 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
     SelectObject(dc, font.platformData().hfont());
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=259205 Determine if the glyph is a color glyph or not.
-    if (bufferLength == GlyphPage::size) {
+    if (buffer.size() == GlyphPage::size) {
         WORD localGlyphBuffer[GlyphPage::size * 2];
-        DWORD result = GetGlyphIndices(dc, wcharFrom(buffer), bufferLength, localGlyphBuffer, GGI_MARK_NONEXISTING_GLYPHS);
-        bool success = result != GDI_ERROR && static_cast<unsigned>(result) == bufferLength;
+        DWORD result = GetGlyphIndices(dc, wcharFrom(buffer.data()), buffer.size(), localGlyphBuffer, GGI_MARK_NONEXISTING_GLYPHS);
+        bool success = result != GDI_ERROR && static_cast<unsigned>(result) == buffer.size();
 
         if (success) {
             for (unsigned i = 0; i < GlyphPage::size; i++) {
@@ -76,7 +76,7 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
             gcpResults.lStructSize = sizeof gcpResults;
             gcpResults.nGlyphs = 2;
             gcpResults.lpGlyphs = glyphs;
-            GetCharacterPlacement(dc, wcharFrom(buffer) + i * 2, 2, 0, &gcpResults, GCP_GLYPHSHAPE);
+            GetCharacterPlacement(dc, wcharFrom(buffer.data()) + i * 2, 2, 0, &gcpResults, GCP_GLYPHSHAPE);
             bool success = 1 == gcpResults.nGlyphs;
             if (success) {
                 auto glyph = glyphs[0];

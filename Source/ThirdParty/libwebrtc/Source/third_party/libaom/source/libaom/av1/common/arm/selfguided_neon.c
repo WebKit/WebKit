@@ -1124,10 +1124,10 @@ static void final_filter_fast_internal(uint16_t *A, int32_t *B,
   } while (h > 0);
 }
 
-void final_filter_internal(uint16_t *A, int32_t *B, const int buf_stride,
-                           int16_t *src, const int src_stride, int32_t *dst,
-                           const int dst_stride, const int width,
-                           const int height) {
+static void final_filter_internal(uint16_t *A, int32_t *B, const int buf_stride,
+                                  int16_t *src, const int src_stride,
+                                  int32_t *dst, const int dst_stride,
+                                  const int width, const int height) {
   int16x8_t s0;
   int32_t *B_tmp, *dst_ptr;
   uint16_t *A_tmp;
@@ -1449,11 +1449,11 @@ int av1_selfguided_restoration_neon(const uint8_t *dat8, int width, int height,
   return 0;
 }
 
-void av1_apply_selfguided_restoration_neon(const uint8_t *dat8, int width,
-                                           int height, int stride, int eps,
-                                           const int *xqd, uint8_t *dst8,
-                                           int dst_stride, int32_t *tmpbuf,
-                                           int bit_depth, int highbd) {
+int av1_apply_selfguided_restoration_neon(const uint8_t *dat8, int width,
+                                          int height, int stride, int eps,
+                                          const int *xqd, uint8_t *dst8,
+                                          int dst_stride, int32_t *tmpbuf,
+                                          int bit_depth, int highbd) {
   int32_t *flt0 = tmpbuf;
   int32_t *flt1 = flt0 + RESTORATION_UNITPELS_MAX;
   assert(width * height <= RESTORATION_UNITPELS_MAX);
@@ -1591,4 +1591,5 @@ void av1_apply_selfguided_restoration_neon(const uint8_t *dat8, int width,
       h--;
     } while (h > 0);
   }
+  return 0;
 }

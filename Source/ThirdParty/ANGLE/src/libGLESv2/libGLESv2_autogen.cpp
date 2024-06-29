@@ -4119,6 +4119,29 @@ void GL_APIENTRY glBufferStorageEXT(GLenum target,
     return GL_BufferStorageEXT(target, size, data, flags);
 }
 
+// GL_EXT_clear_texture
+void GL_APIENTRY
+glClearTexImageEXT(GLuint texture, GLint level, GLenum format, GLenum type, const void *data)
+{
+    return GL_ClearTexImageEXT(texture, level, format, type, data);
+}
+
+void GL_APIENTRY glClearTexSubImageEXT(GLuint texture,
+                                       GLint level,
+                                       GLint xoffset,
+                                       GLint yoffset,
+                                       GLint zoffset,
+                                       GLsizei width,
+                                       GLsizei height,
+                                       GLsizei depth,
+                                       GLenum format,
+                                       GLenum type,
+                                       const void *data)
+{
+    return GL_ClearTexSubImageEXT(texture, level, xoffset, yoffset, zoffset, width, height, depth,
+                                  format, type, data);
+}
+
 // GL_EXT_clip_control
 void GL_APIENTRY glClipControlEXT(GLenum origin, GLenum depth)
 {
@@ -5136,6 +5159,8 @@ void GL_APIENTRY glBlendBarrierKHR()
     return GL_BlendBarrierKHR();
 }
 
+// GL_KHR_blend_equation_advanced_coherent
+
 // GL_KHR_debug
 void GL_APIENTRY glDebugMessageCallbackKHR(GLDEBUGPROCKHR callback, const void *userParam)
 {
@@ -5229,6 +5254,45 @@ void GL_APIENTRY glMaxShaderCompilerThreadsKHR(GLuint count)
 }
 
 // GL_KHR_robust_buffer_access_behavior
+
+// GL_KHR_robustness
+GLenum GL_APIENTRY glGetGraphicsResetStatusKHR()
+{
+    return GL_GetGraphicsResetStatusKHR();
+}
+
+void GL_APIENTRY glGetnUniformfvKHR(GLuint program,
+                                    GLint location,
+                                    GLsizei bufSize,
+                                    GLfloat *params)
+{
+    return GL_GetnUniformfvKHR(program, location, bufSize, params);
+}
+
+void GL_APIENTRY glGetnUniformivKHR(GLuint program, GLint location, GLsizei bufSize, GLint *params)
+{
+    return GL_GetnUniformivKHR(program, location, bufSize, params);
+}
+
+void GL_APIENTRY glGetnUniformuivKHR(GLuint program,
+                                     GLint location,
+                                     GLsizei bufSize,
+                                     GLuint *params)
+{
+    return GL_GetnUniformuivKHR(program, location, bufSize, params);
+}
+
+void GL_APIENTRY glReadnPixelsKHR(GLint x,
+                                  GLint y,
+                                  GLsizei width,
+                                  GLsizei height,
+                                  GLenum format,
+                                  GLenum type,
+                                  GLsizei bufSize,
+                                  void *data)
+{
+    return GL_ReadnPixelsKHR(x, y, width, height, format, type, bufSize, data);
+}
 
 // GL_KHR_texture_compression_astc_hdr
 
@@ -5599,6 +5663,8 @@ void GL_APIENTRY glProgramBinaryOES(GLuint program,
     return GL_ProgramBinaryOES(program, binaryFormat, binary, length);
 }
 
+// GL_OES_gpu_shader5
+
 // GL_OES_mapbuffer
 void GL_APIENTRY glGetBufferPointervOES(GLenum target, GLenum pname, void **params)
 {
@@ -5687,6 +5753,12 @@ void GL_APIENTRY glMinSampleShadingOES(GLfloat value)
 // GL_OES_standard_derivatives
 
 // GL_OES_surfaceless_context
+
+// GL_OES_tessellation_shader
+void GL_APIENTRY glPatchParameteriOES(GLenum pname, GLint value)
+{
+    return GL_PatchParameteriOES(pname, value);
+}
 
 // GL_OES_texture_3D
 void GL_APIENTRY glCompressedTexImage3DOES(GLenum target,
@@ -5987,6 +6059,18 @@ void GL_APIENTRY glTextureFoveationParametersQCOM(GLuint texture,
 {
     return GL_TextureFoveationParametersQCOM(texture, layer, focalPoint, focalX, focalY, gainX,
                                              gainY, foveaArea);
+}
+
+// GL_QCOM_tiled_rendering
+void GL_APIENTRY glEndTilingQCOM(GLbitfield preserveMask)
+{
+    return GL_EndTilingQCOM(preserveMask);
+}
+
+void GL_APIENTRY
+glStartTilingQCOM(GLuint x, GLuint y, GLuint width, GLuint height, GLbitfield preserveMask)
+{
+    return GL_StartTilingQCOM(x, y, width, height, preserveMask);
 }
 
 #if defined(ANGLE_ENABLE_GL_DESKTOP_FRONTEND)

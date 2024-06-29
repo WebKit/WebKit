@@ -46,6 +46,9 @@ struct AppHighlight;
 
 namespace WebKit {
 
+struct TextAnimationData;
+enum class TextAnimationType : uint8_t;
+
 class PageClientImplCocoa : public PageClient {
 public:
     PageClientImplCocoa(WKWebView *);
@@ -96,8 +99,9 @@ public:
     void storeAppHighlight(const WebCore::AppHighlight&) final;
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    void removeTextIndicatorStyleForID(const WTF::UUID&) final;
+#if ENABLE(WRITING_TOOLS_UI)
+    void addTextAnimationForAnimationID(const WTF::UUID&, const WebKit::TextAnimationData&) final;
+    void removeTextAnimationForAnimationID(const WTF::UUID&) final;
 #endif
 
     void microphoneCaptureWillChange() final;
@@ -114,11 +118,20 @@ public:
 
     WindowKind windowKind() final;
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    void textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect selectionBoundsInRootView) final;
+#if ENABLE(WRITING_TOOLS)
+    void proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::SessionID&, const WebCore::WritingTools::TextSuggestionID&, WebCore::IntRect selectionBoundsInRootView) final;
 
-    void textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementDataState, const WTF::UUID& replacementUUID) final;
+    void proofreadingSessionUpdateStateForSuggestionWithID(const WebCore::WritingTools::SessionID&, WebCore::WritingTools::TextSuggestionState, const WTF::UUID& replacementUUID) final;
+
+    void writingToolsActiveWillChange() final;
+    void writingToolsActiveDidChange() final;
 #endif
+
+#if ENABLE(GAMEPAD)
+    void setGamepadsRecentlyAccessed(GamepadsRecentlyAccessed) final;
+#endif
+
+    void hasActiveNowPlayingSessionChanged(bool) final;
 
 protected:
     RetainPtr<WKWebView> webView() const { return m_webView.get(); }
@@ -127,4 +140,4 @@ protected:
     std::unique_ptr<WebCore::AlternativeTextUIController> m_alternativeTextUIController;
 };
 
-}
+} // namespace WebKit

@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 
+#include "api/audio/audio_processing.h"
 #include "modules/audio_processing/agc2/adaptive_digital_gain_controller.h"
 #include "modules/audio_processing/agc2/cpu_features.h"
 #include "modules/audio_processing/agc2/gain_applier.h"
@@ -24,7 +25,6 @@
 #include "modules/audio_processing/agc2/saturation_protector.h"
 #include "modules/audio_processing/agc2/speech_level_estimator.h"
 #include "modules/audio_processing/agc2/vad_wrapper.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 
 namespace webrtc {

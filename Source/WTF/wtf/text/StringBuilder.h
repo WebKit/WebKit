@@ -51,7 +51,7 @@ public:
     bool hasOverflowed() const { return m_length > String::MaxLength; }
     bool crashesOnOverflow() const { return m_shouldCrashOnOverflow; }
 
-    template<typename... StringTypes> void append(StringTypes...);
+    template<StringTypeAdaptable... StringTypes> void append(const StringTypes&...);
 
     // FIXME: We should keep these overloads only if optimizations make them more efficient than the single-argument form of the variadic append above.
     WTF_EXPORT_PRIVATE void append(std::span<const UChar>);
@@ -63,7 +63,7 @@ public:
     void append(const char*) = delete; // Pass ASCIILiteral or span instead.
     void append(UChar);
     void append(LChar);
-    void append(char character) { append(static_cast<LChar>(character)); }
+    void append(char character) { append(byteCast<LChar>(character)); }
 
     // FIXME: Add a StringTypeAdapter so we can append one string builder to another with variadic append.
     void append(const StringBuilder&);
@@ -83,9 +83,8 @@ public:
     UChar operator[](unsigned i) const;
 
     bool is8Bit() const;
-    template<typename CharacterType> const CharacterType* characters() const;
-    const LChar* characters8() const { return characters<LChar>(); }
-    const UChar* characters16() const { return characters<UChar>(); }
+    std::span<const LChar> span8() const { return { characters<LChar>(), length() }; }
+    std::span<const UChar> span16() const { return { characters<UChar>(), length() }; }
     template<typename CharacterType> std::span<const CharacterType> span() const { return std::span(characters<CharacterType>(), length()); }
     
     unsigned capacity() const;
@@ -99,6 +98,7 @@ public:
 
 private:
     static unsigned expandedCapacity(unsigned capacity, unsigned requiredCapacity);
+    template<typename CharacterType> const CharacterType* characters() const;
 
     template<typename AllocationCharacterType, typename CurrentCharacterType> void allocateBuffer(const CurrentCharacterType* currentCharacters, unsigned requiredCapacity);
     template<typename CharacterType> void reallocateBuffer(unsigned requiredCapacity);
@@ -111,7 +111,10 @@ private:
 
     WTF_EXPORT_PRIVATE void reifyString() const;
 
-    template<typename... StringTypeAdapters> void appendFromAdapters(StringTypeAdapters...);
+    void appendFromAdapters() { /* empty base case */ }
+    template<typename... StringTypeAdapters> void appendFromAdapters(const StringTypeAdapters&...);
+    template<typename StringTypeAdapter, typename... StringTypeAdapters> void appendFromAdaptersSlow(const StringTypeAdapter&, const StringTypeAdapters&...);
+    template<typename StringTypeAdapter> void appendFromAdapterSlow(const StringTypeAdapter&);
 
     mutable String m_string;
     RefPtr<StringImpl> m_buffer;
@@ -290,23 +293,47 @@ template<typename CharacterType> inline const CharacterType* StringBuilder::char
     return m_buffer->span<CharacterType>().data();
 }
 
-template<typename... StringTypeAdapters> void StringBuilder::appendFromAdapters(StringTypeAdapters... adapters)
+template<typename StringTypeAdapter> constexpr bool stringBuilderSlowPathRequiredForAdapter = requires(const StringTypeAdapter& adapter) {
+    { adapter.writeUsing(std::declval<StringBuilder&>) } -> std::same_as<void>;
+};
+template<typename... StringTypeAdapters> constexpr bool stringBuilderSlowPathRequired = (... || stringBuilderSlowPathRequiredForAdapter<StringTypeAdapters>);
+
+template<typename... StringTypeAdapters> void StringBuilder::appendFromAdapters(const StringTypeAdapters&... adapters)
 {
-    auto requiredLength = saturatedSum<uint32_t>(m_length, adapters.length()...);
-    if (is8Bit() && are8Bit(adapters...)) {
-        auto destination = extendBufferForAppendingLChar(requiredLength);
-        if (!destination)
-            return;
-        stringTypeAdapterAccumulator(destination, adapters...);
+    if constexpr (stringBuilderSlowPathRequired<StringTypeAdapters...>) {
+        appendFromAdaptersSlow(adapters...);
     } else {
-        auto destination = extendBufferForAppendingWithUpconvert(requiredLength);
-        if (!destination)
-            return;
-        stringTypeAdapterAccumulator(destination, adapters...);
+        auto requiredLength = saturatedSum<uint32_t>(m_length, adapters.length()...);
+        if (is8Bit() && are8Bit(adapters...)) {
+            auto destination = extendBufferForAppendingLChar(requiredLength);
+            if (!destination)
+                return;
+            stringTypeAdapterAccumulator(destination, adapters...);
+        } else {
+            auto destination = extendBufferForAppendingWithUpconvert(requiredLength);
+            if (!destination)
+                return;
+            stringTypeAdapterAccumulator(destination, adapters...);
+        }
     }
 }
 
-template<typename... StringTypes> void StringBuilder::append(StringTypes... strings)
+template<typename StringTypeAdapter> void StringBuilder::appendFromAdapterSlow(const StringTypeAdapter& adapter)
+{
+    if constexpr (stringBuilderSlowPathRequired<StringTypeAdapter>) {
+        adapter.writeUsing(*this);
+    } else {
+        appendFromAdapters(adapter);
+    }
+}
+
+template<typename StringTypeAdapter, typename... StringTypeAdapters> void StringBuilder::appendFromAdaptersSlow(const StringTypeAdapter& adapter, const StringTypeAdapters&... adapters)
+{
+    appendFromAdapterSlow(adapter);
+    appendFromAdapters(adapters...);
+}
+
+template<StringTypeAdaptable... StringTypes> void StringBuilder::append(const StringTypes&... strings)
 {
     appendFromAdapters(StringTypeAdapter<StringTypes>(strings)...);
 }

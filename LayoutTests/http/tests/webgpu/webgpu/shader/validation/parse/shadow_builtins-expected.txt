@@ -1,0 +1,81 @@
+
+PASS :function_param:
+PASS :shadow_hides_builtin:inject="none"
+PASS :shadow_hides_builtin:inject="function"
+PASS :shadow_hides_builtin:inject="sibling"
+PASS :shadow_hides_builtin:inject="module"
+PASS :shadow_hides_builtin_f16:inject="none"
+PASS :shadow_hides_builtin_f16:inject="function"
+PASS :shadow_hides_builtin_f16:inject="sibling"
+PASS :shadow_hides_builtin_f16:inject="module"
+PASS :shadow_hides_builtin_handle_type:inject="none"
+PASS :shadow_hides_builtin_handle_type:inject="function"
+PASS :shadow_hides_builtin_handle_type:inject="module"
+PASS :shadow_hides_builtin_texture:inject="none"
+PASS :shadow_hides_builtin_texture:inject="function"
+PASS :shadow_hides_builtin_texture:inject="sibling"
+PASS :shadow_hides_builtin_texture:inject="module"
+PASS :shadow_hides_builtin_atomic_type:inject="none"
+PASS :shadow_hides_builtin_atomic_type:inject="function"
+PASS :shadow_hides_builtin_atomic_type:inject="module"
+PASS :shadow_hides_builtin_atomic:inject="none"
+PASS :shadow_hides_builtin_atomic:inject="function"
+PASS :shadow_hides_builtin_atomic:inject="sibling"
+PASS :shadow_hides_builtin_atomic:inject="module"
+PASS :shadow_hides_builtin_barriers:inject="none"
+PASS :shadow_hides_builtin_barriers:inject="function"
+PASS :shadow_hides_builtin_barriers:inject="sibling"
+PASS :shadow_hides_builtin_barriers:inject="module"
+PASS :shadow_hides_access_mode:inject="none"
+PASS :shadow_hides_access_mode:inject="function"
+FAIL :shadow_hides_access_mode:inject="module" assert_unreached:
+  - VALIDATION FAILED: subcase: builtin="read"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    var<private> read : i32;
+
+    @group(0) @binding(0) var<storage, read> a: i32;
+
+    @compute @workgroup_size(1)
+    fn main() {
+
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/shadow_builtins.spec.js:994:24
+  - VALIDATION FAILED: subcase: builtin="read_write"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    var<private> read_write : i32;
+
+    @group(0) @binding(0) var<storage, read_write> a: i32;
+
+    @compute @workgroup_size(1)
+    fn main() {
+
+    }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/shadow_builtins.spec.js:994:24
+  - EXPECTATION FAILED: subcase: builtin="read"
+    Expected validation error
+      at (elided: below max severity)
+  - EXPECTATION FAILED: subcase: builtin="read_write"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: builtin="read"
+    OK
+  - INFO: subcase: builtin="read_write"
+    OK
+  - INFO: subcase: builtin="write"
+    OK
+ Reached unreachable code
+

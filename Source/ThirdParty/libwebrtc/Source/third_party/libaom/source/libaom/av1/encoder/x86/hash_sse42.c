@@ -12,6 +12,8 @@
 #include <stdint.h>
 #include <smmintrin.h>
 
+#include "config/av1_rtcd.h"
+
 // Byte-boundary alignment issues
 #define ALIGN_SIZE 8
 #define ALIGN_MASK (ALIGN_SIZE - 1)

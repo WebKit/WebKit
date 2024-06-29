@@ -45,6 +45,7 @@ struct gbm_bo;
 
 namespace WebCore {
 class IntRect;
+class Region;
 class ShareableBitmap;
 class ShareableBitmapHandle;
 }
@@ -78,7 +79,7 @@ private:
     void didCreateBuffer(uint64_t id, const WebCore::IntSize&, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier, DMABufRendererBufferFormat::Usage);
     void didCreateBufferSHM(uint64_t id, WebCore::ShareableBitmapHandle&&);
     void didDestroyBuffer(uint64_t id);
-    void frame(uint64_t id);
+    void frame(uint64_t id, const std::optional<WebCore::Region>&);
     void frameDone();
     void ensureGLContext();
     bool prepareForRendering();

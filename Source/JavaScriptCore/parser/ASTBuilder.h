@@ -882,7 +882,7 @@ public:
         return new (m_parserArena) CommaNode(location, node);
     }
 
-    CommaNode* appendToCommaExpr(const JSTokenLocation& location, ExpressionNode*, ExpressionNode* tail, ExpressionNode* next)
+    CommaNode* appendToCommaExpr(const JSTokenLocation& location, ExpressionNode* tail, ExpressionNode* next)
     {
         ASSERT(tail->isCommaNode());
         ASSERT(next);

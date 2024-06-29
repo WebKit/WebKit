@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ class Git(mocks.Subprocess):
     #     repositoryformatversion = 0
     # [branch "main"]
     #     remote = origin
-    # 	  merge = refs/heads/main
+    #     merge = refs/heads/main
     RE_SINGLE_TOP = re.compile(r'^\[\s*(?P<key>\S+)\s*\]')
     RE_MULTI_TOP = re.compile(r'^\[\s*(?P<keya>\S+) "(?P<keyb>\S+)"\s*\]')
     RE_ELEMENT = re.compile(r'^\s+(?P<key>\S+)\s*=\s*(?P<value>.*\S+)')
@@ -50,7 +50,7 @@ class Git(mocks.Subprocess):
         self, path='/.invalid-git', datafile=None,
         remote=None, tags=None,
         detached=None, default_branch='main',
-        git_svn=False, remotes=None,
+        git_svn=False, remotes=None, editor=None,
     ):
         self.path = path
         self.default_branch = default_branch
@@ -99,6 +99,11 @@ class Git(mocks.Subprocess):
 
         self.has_git_lfs = False
 
+        def editor_generator(*args, **kwargs):
+            if editor:
+                editor(args[3])
+            return mocks.ProcessCompletion(returncode=0)
+
         # If the directory provided actually exists, populate it
         if self.path != '/' and os.path.isdir(self.path):
             if not os.path.isdir(os.path.join(self.path, '.git')):
@@ -112,8 +117,9 @@ class Git(mocks.Subprocess):
                     '\tlogallrefupdates = true\n'
                     '\tignorecase = true\n'
                     '\tprecomposeunicode = true\n'
+                    '{editor}'
                     '[pull]\n'
-	                '\trebase = true\n'
+                    '\trebase = true\n'
                     '[remote "origin"]\n'
                     '\turl = {remote}\n'
                     '\tfetch = +refs/heads/*:refs/remotes/origin/*\n'
@@ -122,6 +128,7 @@ class Git(mocks.Subprocess):
                     '\tmerge = refs/heads/{branch}\n'.format(
                         remote=self.remote,
                         branch=self.default_branch,
+                        editor='\teditor = /bin/example -n -w\n' if editor else '',
                     ))
                 for name, url in (remotes or {}).items():
                     config.write(
@@ -249,8 +256,13 @@ nothing to commit, working tree clean
             ), mocks.Subprocess.Route(
                 self.executable, 'remote', 'add', re.compile(r'.+'),
                 cwd=self.path,
-                completion=mocks.ProcessCompletion(
+                generator=lambda *args, **kwargs: self.add_remote(args[3]),
+            ), mocks.Subprocess.Route(
+                self.executable, 'remote',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
+                    stdout='\n'.join(sorted(set([key.split('/')[0] for key in self.remotes.keys()]))),
                 ),
             ), mocks.Subprocess.Route(
                 self.executable, 'branch', '-a', '--format', '.+', '--merged', '.+',
@@ -421,22 +433,22 @@ nothing to commit, working tree clean
                 self.executable, 'checkout', '-b', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
-                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], create=True) else mocks.ProcessCompletion(returncode=1)
+                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], source=args[4] if len(args) > 4 else None, create=True) else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
                 self.executable, 'checkout', '-B', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
-                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], create=True, force=True) else mocks.ProcessCompletion(returncode=1)
+                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], source=args[4] if len(args) > 4 else None, create=False, force=True) else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
                 self.executable, 'checkout', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
-                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[2], create=False) else mocks.ProcessCompletion(returncode=1)
+                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[2], source=args[4] if len(args) > 4 else None, create=False) else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
                 self.executable, 'rebase', 'HEAD', re.compile(r'.+'), '--autostash',
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
-                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], create=False) else mocks.ProcessCompletion(returncode=1)
+                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], source=args[4] if len(args) > 4 else None, create=False) else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
                 self.executable, 'filter-branch', '-f', '--env-filter', re.compile(r'.*'), '--msg-filter',
                 cwd=self.path,
@@ -755,15 +767,17 @@ nothing to commit, working tree clean
             ), mocks.Subprocess.Route(
                 self.executable, 'lfs', 'install',
                 generator=lambda *args, **kwargs: self._configure_git_lfs(),
+            ), mocks.Subprocess.Route(
+                '/bin/example', '-n', '-w',
+                generator=editor_generator,
             ), *git_svn_routes
         )
 
     def __enter__(self):
         from mock import patch
+        from shutil import which
 
-        # TODO: Use shutil directly when Python 2.7 is removed
-        from whichcraft import which
-        self.patches.append(patch('whichcraft.which', lambda cmd: dict(git=self.executable).get(cmd, which(cmd))))
+        self.patches.append(patch('shutil.which', lambda cmd: dict(git=self.executable).get(cmd, which(cmd))))
         return super(Git, self).__enter__()
 
     @property
@@ -788,6 +802,9 @@ nothing to commit, working tree clean
                     return all_commits[head_index - difference]
                 return None
 
+        if something in self.commits.keys():
+            return self.commits[something][-1]
+
         something = str(something).replace('refs/remotes/', '')
         something = str(something).replace('remotes/', '')
         if '..' in something:
@@ -798,8 +815,6 @@ nothing to commit, working tree clean
 
         if something == 'HEAD':
             return self.head
-        if something in self.commits.keys():
-            return self.commits[something][-1]
         if something in self.tags.keys():
             return self.tags[something]
         if something in self.remotes.keys():
@@ -840,11 +855,17 @@ nothing to commit, working tree clean
                     result.add(branch)
         return result
 
-    def checkout(self, something, create=False, force=False):
-        if something in self.modified:
+    def checkout(self, something, source=None, create=False, force=False):
+        if not source or source.startswith('--'):
+            source = something
+        if source in self.modified:
             del self.modified[something]
             return mocks.ProcessCompletion(returncode=0, stdout='Updated 1 path from the index')
-        commit = self.find(something)
+
+        commit = self.find(source)
+        if commit and source in self.commits:
+            self.commits[something] = self.commits[source]
+
         if create:
             if commit:
                 if force:
@@ -1418,3 +1439,10 @@ nothing to commit, working tree clean
                 )
 
         return mocks.ProcessCompletion(returncode=0 if ancestor in self.rev_list(descendent)else 1)
+
+    def add_remote(self, name):
+        for existing in list(self.remotes.keys()):
+            remote, branch = existing.split('/', 1)
+            if remote == 'origin':
+                self.remotes['{}/{}'.format(name, branch)] = self.remotes[existing][:]
+        return mocks.ProcessCompletion(returncode=0)

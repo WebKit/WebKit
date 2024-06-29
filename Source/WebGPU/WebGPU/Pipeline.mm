@@ -30,7 +30,7 @@
 
 namespace WebGPU {
 
-std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, PipelineLayout* pipelineLayout, const String& untransformedEntryPoint, NSString *label, uint32_t constantCount, const WGPUConstantEntry* constants, NSError **error)
+std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, PipelineLayout* pipelineLayout, const String& untransformedEntryPoint, NSString *label, uint32_t constantCount, const WGPUConstantEntry* constants, BufferBindingSizesForPipeline& mininumBufferSizes, NSError **error)
 {
     // FIXME: Remove below line when https://bugs.webkit.org/show_bug.cgi?id=266774 is completed
     HashMap<String, WGSL::ConstantValue> wgslConstantValues;
@@ -56,9 +56,11 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
         wgslPipelineLayout = ShaderModule::convertPipelineLayout(*pipelineLayout);
 
     auto prepareResult = WGSL::prepare(*ast, entryPoint, wgslPipelineLayout ? &*wgslPipelineLayout : nullptr);
-    // FIXME: return the actual error
-    if (std::holds_alternative<WGSL::Error>(prepareResult))
+    if (std::holds_alternative<WGSL::Error>(prepareResult)) {
+        auto wgslError = std::get<WGSL::Error>(prepareResult);
+        *error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: wgslError.message() }];
         return std::nullopt;
+    }
 
     auto& result = std::get<WGSL::PrepareResult>(prepareResult);
     auto iterator = result.entryPoints.find(entryPoint);
@@ -73,7 +75,12 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
             continue;
 
         auto constantValue = WGSL::evaluate(*kvp.value.defaultValue, wgslConstantValues);
-        auto addResult = wgslConstantValues.add(kvp.key, constantValue);
+        if (!constantValue) {
+            if (error)
+                *error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: @"Failed to evaluate override value" }];
+            return std::nullopt;
+        }
+        auto addResult = wgslConstantValues.add(kvp.key, *constantValue);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }
 
@@ -136,18 +143,14 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
 
     if (pipelineLayout) {
         for (unsigned i = 0; i < pipelineLayout->numberOfBindGroupLayouts(); ++i) {
-            auto& bindGroupLayout = pipelineLayout->bindGroupLayout(i);
             auto& wgslBindGroupLayout = wgslPipelineLayout->bindGroupLayouts[i];
-
+            auto it = mininumBufferSizes.add(i, BufferBindingSizesForBindGroup()).iterator;
+            BufferBindingSizesForBindGroup& shaderBindingSizeForBuffer = it->value;
             for (unsigned i = 0; i < wgslBindGroupLayout.entries.size(); ++i) {
                 auto& wgslBindGroupLayoutEntry = wgslBindGroupLayout.entries[i];
-                auto it = bindGroupLayout.entries().find(wgslBindGroupLayoutEntry.binding);
-                RELEASE_ASSERT(it != bindGroupLayout.entries().end());
-                auto& bindGroupLayoutEntry = it->value;
-                if (auto* bufferBinding = std::get_if<WGPUBufferBindingLayout>(&bindGroupLayoutEntry.bindingLayout)) {
-                    auto& wgslBufferBinding = std::get<WGSL::BufferBindingLayout>(wgslBindGroupLayoutEntry.bindingMember);
-                    const_cast<WGPUBufferBindingLayout*>(bufferBinding)->minBindingSize = wgslBufferBinding.minBindingSize;
-                }
+                auto* wgslBufferBinding = std::get_if<WGSL::BufferBindingLayout>(&wgslBindGroupLayoutEntry.bindingMember);
+                if (wgslBufferBinding && wgslBufferBinding->minBindingSize)
+                    shaderBindingSizeForBuffer.set(wgslBindGroupLayoutEntry.binding, wgslBufferBinding->minBindingSize);
             }
         }
     }
@@ -172,31 +175,42 @@ id<MTLFunction> createFunction(id<MTLLibrary> library, const WGSL::Reflection::E
     return function;
 }
 
-bool validateBindGroup(BindGroup& bindGroup)
+NSString* errorValidatingBindGroup(const BindGroup& bindGroup, const BufferBindingSizesForBindGroup* mininumBufferSizes, const Vector<uint32_t>* dynamicOffsets)
 {
-    auto& bindGroupLayoutEntries = bindGroup.bindGroupLayout()->entries();
+    auto bindGroupLayout = bindGroup.bindGroupLayout();
+    if (!bindGroupLayout)
+        return nil;
+
+    auto& bindGroupLayoutEntries = bindGroupLayout->entries();
     for (const auto& resourceVector : bindGroup.resources()) {
         for (const auto& resource : resourceVector.resourceUsages) {
             auto bindingIndex = resource.binding;
-            auto* buffer = get_if<RefPtr<const Buffer>>(&resource.resource);
+            auto* buffer = get_if<RefPtr<Buffer>>(&resource.resource);
             if (!buffer)
                 continue;
 
             auto it = bindGroupLayoutEntries.find(bindingIndex);
-            RELEASE_ASSERT(it != bindGroupLayoutEntries.end());
+            if (it == bindGroupLayoutEntries.end())
+                return [NSString stringWithFormat:@"Buffer size is missing for binding at index %u bind group", bindingIndex];
 
-            auto* bufferBinding = get_if<WGPUBufferBindingLayout>(&it->value.bindingLayout);
-            if (!bufferBinding)
-                continue;
+            uint64_t bufferSize = 0;
+            if (auto* bufferBinding = get_if<WGPUBufferBindingLayout>(&it->value.bindingLayout))
+                bufferSize = bufferBinding->minBindingSize;
+            if (!bufferSize && mininumBufferSizes) {
+                if (auto bufferSizeIt = mininumBufferSizes->find(it->value.binding); bufferSizeIt != mininumBufferSizes->end())
+                    bufferSize = bufferSizeIt->value;
+            }
 
-            auto bufferSize = bufferBinding->minBindingSize;
             if (bufferSize && buffer->get()) {
-                if (buffer->get()->buffer().length < bufferSize)
-                    return false;
+                auto dynamicOffset = bindGroup.dynamicOffset(bindingIndex, dynamicOffsets);
+                auto totalOffset = resource.entryOffset + dynamicOffset;
+                auto mtlBufferLength = buffer->get()->buffer().length;
+                if (totalOffset > mtlBufferLength || (mtlBufferLength - totalOffset) < bufferSize)
+                    return [NSString stringWithFormat:@"buffer length(%zu) minus offset(%llu), (resourceOffset(%llu) + dynamicOffset(%u)), is less than required bufferSize(%llu)", mtlBufferLength, totalOffset, resource.entryOffset, dynamicOffset, bufferSize];
             }
         }
     }
-    return true;
+    return nil;
 }
 
 } // namespace WebGPU

@@ -10,11 +10,11 @@
 #ifndef CALL_AUDIO_STATE_H_
 #define CALL_AUDIO_STATE_H_
 
+#include "api/audio/audio_device.h"
 #include "api/audio/audio_mixer.h"
+#include "api/audio/audio_processing.h"
 #include "api/scoped_refptr.h"
 #include "modules/async_audio_processing/async_audio_processing.h"
-#include "modules/audio_device/include/audio_device.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "rtc_base/ref_count.h"
 
 namespace webrtc {

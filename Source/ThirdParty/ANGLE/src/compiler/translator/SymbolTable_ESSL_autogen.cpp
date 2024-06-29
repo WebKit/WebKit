@@ -385,7 +385,7 @@ constexpr const ImmutableString yuv_2_rgb("yuv_2_rgb");
 
 // TODO(oetuaho): Would be nice to make this a class instead of a namespace so that we could friend
 // this from TVariable. Now symbol constructors taking an id have to be public even though they're
-// not supposed to be accessible from outside of here. http://anglebug.com/2390
+// not supposed to be accessible from outside of here. http://anglebug.com/42261100
 namespace BuiltInVariable
 {
 
@@ -486,7 +486,8 @@ constexpr const TVariable kgl_InvocationIDTCS(
     BuiltInId::gl_InvocationIDTCS,
     BuiltInName::gl_InvocationID,
     SymbolType::BuiltIn,
-    std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+    std::array<TExtension, 2u>{
+        {TExtension::EXT_tessellation_shader, TExtension::OES_tessellation_shader}},
     StaticType::Get<EbtInt, EbpHigh, EvqInvocationID, 1, 1>());
 constexpr const TVariable kgl_InvocationIDTCSES3_2(
     BuiltInId::gl_InvocationIDTCSES3_2,
@@ -566,7 +567,8 @@ constexpr const TVariable kgl_PatchVerticesInTCS(
     BuiltInId::gl_PatchVerticesInTCS,
     BuiltInName::gl_PatchVerticesIn,
     SymbolType::BuiltIn,
-    std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+    std::array<TExtension, 2u>{
+        {TExtension::EXT_tessellation_shader, TExtension::OES_tessellation_shader}},
     StaticType::Get<EbtInt, EbpHigh, EvqPatchVerticesIn, 1, 1>());
 constexpr const TVariable kgl_PatchVerticesInTCSES3_2(
     BuiltInId::gl_PatchVerticesInTCSES3_2,
@@ -578,7 +580,8 @@ constexpr const TVariable kgl_PatchVerticesInTES(
     BuiltInId::gl_PatchVerticesInTES,
     BuiltInName::gl_PatchVerticesIn,
     SymbolType::BuiltIn,
-    std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+    std::array<TExtension, 2u>{
+        {TExtension::EXT_tessellation_shader, TExtension::OES_tessellation_shader}},
     StaticType::Get<EbtInt, EbpHigh, EvqPatchVerticesIn, 1, 1>());
 constexpr const TVariable kgl_PatchVerticesInTESES3_2(
     BuiltInId::gl_PatchVerticesInTESES3_2,
@@ -648,7 +651,8 @@ constexpr const TVariable kgl_PrimitiveIDTCS(
     BuiltInId::gl_PrimitiveIDTCS,
     BuiltInName::gl_PrimitiveID,
     SymbolType::BuiltIn,
-    std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+    std::array<TExtension, 2u>{
+        {TExtension::EXT_tessellation_shader, TExtension::OES_tessellation_shader}},
     StaticType::Get<EbtInt, EbpHigh, EvqPrimitiveID, 1, 1>());
 constexpr const TVariable kgl_PrimitiveIDTCSES3_2(
     BuiltInId::gl_PrimitiveIDTCSES3_2,
@@ -660,7 +664,8 @@ constexpr const TVariable kgl_PrimitiveIDTES(
     BuiltInId::gl_PrimitiveIDTES,
     BuiltInName::gl_PrimitiveID,
     SymbolType::BuiltIn,
-    std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+    std::array<TExtension, 2u>{
+        {TExtension::EXT_tessellation_shader, TExtension::OES_tessellation_shader}},
     StaticType::Get<EbtInt, EbpHigh, EvqPrimitiveID, 1, 1>());
 constexpr const TVariable kgl_PrimitiveIDTESES3_2(
     BuiltInId::gl_PrimitiveIDTESES3_2,
@@ -2403,7 +2408,7 @@ constexpr const TVariable *p_io_00E00E00E[3] = {&BuiltInVariable::kpt_io_00E,
 
 // TODO(oetuaho): Would be nice to make this a class instead of a namespace so that we could friend
 // this from TFunction. Now symbol constructors taking an id have to be public even though they're
-// not supposed to be accessible from outside of here. http://anglebug.com/2390
+// not supposed to be accessible from outside of here. http://anglebug.com/42261100
 namespace Func
 {
 
@@ -4580,7 +4585,7 @@ constexpr const TFunction fma_30B30B30B(BuiltInId::fma_Float4_Float4_Float4,
 constexpr const TFunction fmaExt_00B00B00B(
     BuiltInId::fmaExt_Float1_Float1_Float1,
     BuiltInName::fmaExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p00B00B00B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
@@ -4589,7 +4594,7 @@ constexpr const TFunction fmaExt_00B00B00B(
 constexpr const TFunction fmaExt_10B10B10B(
     BuiltInId::fmaExt_Float2_Float2_Float2,
     BuiltInName::fmaExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p10B10B10B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
@@ -4598,7 +4603,7 @@ constexpr const TFunction fmaExt_10B10B10B(
 constexpr const TFunction fmaExt_20B20B20B(
     BuiltInId::fmaExt_Float3_Float3_Float3,
     BuiltInName::fmaExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p20B20B20B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
@@ -4607,7 +4612,7 @@ constexpr const TFunction fmaExt_20B20B20B(
 constexpr const TFunction fmaExt_30B30B30B(
     BuiltInId::fmaExt_Float4_Float4_Float4,
     BuiltInName::fmaExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p30B30B30B,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
@@ -9992,7 +9997,7 @@ constexpr const TFunction textureGatherOffsets_00f20B00B10Dx4(
 constexpr const TFunction textureGatherOffsetsExt_00I10B10Dx4(
     BuiltInId::textureGatherOffsetsExt_Sampler2D1_Float2_4xInt2,
     BuiltInName::textureGatherOffsetsExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p00I10B10Dx400D,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
@@ -10001,7 +10006,7 @@ constexpr const TFunction textureGatherOffsetsExt_00I10B10Dx4(
 constexpr const TFunction textureGatherOffsetsExt_00R10B10Dx4(
     BuiltInId::textureGatherOffsetsExt_ISampler2D1_Float2_4xInt2,
     BuiltInName::textureGatherOffsetsExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p00R10B10Dx400D,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
@@ -10010,7 +10015,7 @@ constexpr const TFunction textureGatherOffsetsExt_00R10B10Dx4(
 constexpr const TFunction textureGatherOffsetsExt_00X10B10Dx4(
     BuiltInId::textureGatherOffsetsExt_USampler2D1_Float2_4xInt2,
     BuiltInName::textureGatherOffsetsExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p00X10B10Dx400D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
@@ -10019,7 +10024,7 @@ constexpr const TFunction textureGatherOffsetsExt_00X10B10Dx4(
 constexpr const TFunction textureGatherOffsetsExt_00L20B10Dx4(
     BuiltInId::textureGatherOffsetsExt_Sampler2DArray1_Float3_4xInt2,
     BuiltInName::textureGatherOffsetsExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p00L20B10Dx400D,
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
@@ -10028,7 +10033,7 @@ constexpr const TFunction textureGatherOffsetsExt_00L20B10Dx4(
 constexpr const TFunction textureGatherOffsetsExt_00U20B10Dx4(
     BuiltInId::textureGatherOffsetsExt_ISampler2DArray1_Float3_4xInt2,
     BuiltInName::textureGatherOffsetsExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p00U20B10Dx400D,
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
@@ -10037,7 +10042,7 @@ constexpr const TFunction textureGatherOffsetsExt_00U20B10Dx4(
 constexpr const TFunction textureGatherOffsetsExt_00a20B10Dx4(
     BuiltInId::textureGatherOffsetsExt_USampler2DArray1_Float3_4xInt2,
     BuiltInName::textureGatherOffsetsExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p00a20B10Dx400D,
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
@@ -10046,7 +10051,7 @@ constexpr const TFunction textureGatherOffsetsExt_00a20B10Dx4(
 constexpr const TFunction textureGatherOffsetsExt_00d10B00B10Dx4(
     BuiltInId::textureGatherOffsetsExt_Sampler2DShadow1_Float2_Float1_4xInt2,
     BuiltInName::textureGatherOffsetsExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p00d10B00B10Dx4,
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
@@ -10055,7 +10060,7 @@ constexpr const TFunction textureGatherOffsetsExt_00d10B00B10Dx4(
 constexpr const TFunction textureGatherOffsetsExt_00f20B00B10Dx4(
     BuiltInId::textureGatherOffsetsExt_Sampler2DArrayShadow1_Float3_Float1_4xInt2,
     BuiltInName::textureGatherOffsetsExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p00f20B00B10Dx4,
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
@@ -10118,7 +10123,7 @@ constexpr const TFunction textureGatherOffsets_00a20B10Dx400D(
 constexpr const TFunction textureGatherOffsetsExt_00I10B10Dx400D(
     BuiltInId::textureGatherOffsetsExt_Sampler2D1_Float2_4xInt2_Int1,
     BuiltInName::textureGatherOffsetsExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p00I10B10Dx400D,
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
@@ -10127,7 +10132,7 @@ constexpr const TFunction textureGatherOffsetsExt_00I10B10Dx400D(
 constexpr const TFunction textureGatherOffsetsExt_00R10B10Dx400D(
     BuiltInId::textureGatherOffsetsExt_ISampler2D1_Float2_4xInt2_Int1,
     BuiltInName::textureGatherOffsetsExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p00R10B10Dx400D,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
@@ -10136,7 +10141,7 @@ constexpr const TFunction textureGatherOffsetsExt_00R10B10Dx400D(
 constexpr const TFunction textureGatherOffsetsExt_00X10B10Dx400D(
     BuiltInId::textureGatherOffsetsExt_USampler2D1_Float2_4xInt2_Int1,
     BuiltInName::textureGatherOffsetsExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p00X10B10Dx400D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
@@ -10145,7 +10150,7 @@ constexpr const TFunction textureGatherOffsetsExt_00X10B10Dx400D(
 constexpr const TFunction textureGatherOffsetsExt_00L20B10Dx400D(
     BuiltInId::textureGatherOffsetsExt_Sampler2DArray1_Float3_4xInt2_Int1,
     BuiltInName::textureGatherOffsetsExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p00L20B10Dx400D,
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
@@ -10154,7 +10159,7 @@ constexpr const TFunction textureGatherOffsetsExt_00L20B10Dx400D(
 constexpr const TFunction textureGatherOffsetsExt_00U20B10Dx400D(
     BuiltInId::textureGatherOffsetsExt_ISampler2DArray1_Float3_4xInt2_Int1,
     BuiltInName::textureGatherOffsetsExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p00U20B10Dx400D,
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
@@ -10163,7 +10168,7 @@ constexpr const TFunction textureGatherOffsetsExt_00U20B10Dx400D(
 constexpr const TFunction textureGatherOffsetsExt_00a20B10Dx400D(
     BuiltInId::textureGatherOffsetsExt_USampler2DArray1_Float3_4xInt2_Int1,
     BuiltInName::textureGatherOffsetsExt,
-    std::array<TExtension, 1u>{{TExtension::EXT_gpu_shader5}},
+    std::array<TExtension, 2u>{{TExtension::EXT_gpu_shader5, TExtension::OES_gpu_shader5}},
     BuiltInParameters::p00a20B10Dx400D,
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
@@ -21664,8 +21669,9 @@ constexpr const TFunction groupMemoryBarrier_(
     false);
 constexpr const TFunction barrierTCS_(BuiltInId::barrierTCS,
                                       BuiltInName::barrierTCS,
-                                      std::array<TExtension, 1u>{
-                                          {TExtension::EXT_tessellation_shader}},
+                                      std::array<TExtension, 2u>{
+                                          {TExtension::EXT_tessellation_shader,
+                                           TExtension::OES_tessellation_shader}},
                                       BuiltInParameters::empty,
                                       0,
                                       StaticType::Get<EbtVoid, EbpUndefined, EvqGlobal, 1, 1>(),
@@ -22128,12 +22134,16 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<Spec::ESSL, 300, Shader::ALL, 0>(&uintBitsToFloat_30E),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&fma_00B00B00B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(&fmaExt_00B00B00B),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(&fmaExt_00B00B00B),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&fma_10B10B10B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(&fmaExt_10B10B10B),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(&fmaExt_10B10B10B),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&fma_20B20B20B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(&fmaExt_20B20B20B),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(&fmaExt_20B20B20B),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&fma_30B30B30B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(&fmaExt_30B30B30B),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(&fmaExt_30B30B30B),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, 0>(&frexp_00B00D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, 0>(&frexp_10B10D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, 0>(&frexp_20B20D),
@@ -22857,44 +22867,72 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureGatherOffsets_00I10B10Dx4),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(
         &textureGatherOffsetsExt_00I10B10Dx4),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(
+        &textureGatherOffsetsExt_00I10B10Dx4),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureGatherOffsets_00R10B10Dx4),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(
+        &textureGatherOffsetsExt_00R10B10Dx4),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(
         &textureGatherOffsetsExt_00R10B10Dx4),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureGatherOffsets_00X10B10Dx4),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(
         &textureGatherOffsetsExt_00X10B10Dx4),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(
+        &textureGatherOffsetsExt_00X10B10Dx4),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureGatherOffsets_00L20B10Dx4),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(
+        &textureGatherOffsetsExt_00L20B10Dx4),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(
         &textureGatherOffsetsExt_00L20B10Dx4),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureGatherOffsets_00U20B10Dx4),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(
         &textureGatherOffsetsExt_00U20B10Dx4),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(
+        &textureGatherOffsetsExt_00U20B10Dx4),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureGatherOffsets_00a20B10Dx4),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(
+        &textureGatherOffsetsExt_00a20B10Dx4),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(
         &textureGatherOffsetsExt_00a20B10Dx4),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureGatherOffsets_00d10B00B10Dx4),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(
         &textureGatherOffsetsExt_00d10B00B10Dx4),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(
+        &textureGatherOffsetsExt_00d10B00B10Dx4),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureGatherOffsets_00f20B00B10Dx4),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(
+        &textureGatherOffsetsExt_00f20B00B10Dx4),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(
         &textureGatherOffsetsExt_00f20B00B10Dx4),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureGatherOffsets_00I10B10Dx400D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(
         &textureGatherOffsetsExt_00I10B10Dx400D),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(
+        &textureGatherOffsetsExt_00I10B10Dx400D),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureGatherOffsets_00R10B10Dx400D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(
+        &textureGatherOffsetsExt_00R10B10Dx400D),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(
         &textureGatherOffsetsExt_00R10B10Dx400D),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureGatherOffsets_00X10B10Dx400D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(
         &textureGatherOffsetsExt_00X10B10Dx400D),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(
+        &textureGatherOffsetsExt_00X10B10Dx400D),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureGatherOffsets_00L20B10Dx400D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(
+        &textureGatherOffsetsExt_00L20B10Dx400D),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(
         &textureGatherOffsetsExt_00L20B10Dx400D),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureGatherOffsets_00U20B10Dx400D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(
         &textureGatherOffsetsExt_00U20B10Dx400D),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(
+        &textureGatherOffsetsExt_00U20B10Dx400D),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&textureGatherOffsets_00a20B10Dx400D),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_gpu_shader5)>(
+        &textureGatherOffsetsExt_00a20B10Dx400D),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(
         &textureGatherOffsetsExt_00a20B10Dx400D),
     Rule::Get<Spec::ESSL, 300, Shader::ALL, EXT_INDEX(EXT_YUV_target)>(&rgb_2_yuv_20B00H),
     Rule::Get<Spec::ESSL, 300, Shader::ALL, EXT_INDEX(EXT_YUV_target)>(&yuv_2_rgb_20B00H),
@@ -24807,6 +24845,8 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<Spec::ESSL, 320, Shader::TESS_CONTROL_EXT, 0>(&barrierTCSES3_2_),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
         &barrierTCS_),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(OES_tessellation_shader)>(
+        &barrierTCS_),
     Rule::Get<Spec::ESSL, 310, Shader::COMPUTE, 0>(&memoryBarrierShared_),
     Rule::Get<Spec::ESSL, 310, Shader::COMPUTE, 0>(&groupMemoryBarrier_),
     Rule::Get<Spec::ESSL, 320, Shader::GEOMETRY, 0>(&EmitVertexES3_2_),
@@ -24924,68 +24964,104 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&TableBase::m_gl_MaxTessControlInputComponentsES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_MaxTessControlInputComponents),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessControlInputComponents),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(
         &TableBase::m_gl_MaxTessControlOutputComponentsES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessControlOutputComponents),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_MaxTessControlOutputComponents),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(
         &TableBase::m_gl_MaxTessControlTextureImageUnitsES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_MaxTessControlTextureImageUnits),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessControlTextureImageUnits),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(
         &TableBase::m_gl_MaxTessControlUniformComponentsES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessControlUniformComponents),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_MaxTessControlUniformComponents),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(
         &TableBase::m_gl_MaxTessControlTotalOutputComponentsES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_MaxTessControlTotalOutputComponents),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessControlTotalOutputComponents),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&TableBase::m_gl_MaxTessControlImageUniformsES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_MaxTessControlImageUniforms),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessControlImageUniforms),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&TableBase::m_gl_MaxTessControlAtomicCountersES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessControlAtomicCounters),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_MaxTessControlAtomicCounters),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(
         &TableBase::m_gl_MaxTessControlAtomicCounterBuffersES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_MaxTessControlAtomicCounterBuffers),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessControlAtomicCounterBuffers),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&TableBase::m_gl_MaxTessPatchComponentsES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessPatchComponents),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_MaxTessPatchComponents),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&TableBase::m_gl_MaxPatchVerticesES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_MaxPatchVertices),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_MaxPatchVertices),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&TableBase::m_gl_MaxTessGenLevelES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessGenLevel),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_MaxTessGenLevel),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(
         &TableBase::m_gl_MaxTessEvaluationInputComponentsES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_MaxTessEvaluationInputComponents),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessEvaluationInputComponents),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(
         &TableBase::m_gl_MaxTessEvaluationOutputComponentsES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessEvaluationOutputComponents),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_MaxTessEvaluationOutputComponents),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(
         &TableBase::m_gl_MaxTessEvaluationTextureImageUnitsES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_MaxTessEvaluationTextureImageUnits),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessEvaluationTextureImageUnits),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(
         &TableBase::m_gl_MaxTessEvaluationUniformComponentsES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessEvaluationUniformComponents),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_MaxTessEvaluationUniformComponents),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(
         &TableBase::m_gl_MaxTessEvaluationImageUniformsES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_MaxTessEvaluationImageUniforms),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessEvaluationImageUniforms),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(
         &TableBase::m_gl_MaxTessEvaluationAtomicCountersES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_MaxTessEvaluationAtomicCounters),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessEvaluationAtomicCounters),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(
         &TableBase::m_gl_MaxTessEvaluationAtomicCounterBuffersES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_MaxTessEvaluationAtomicCounterBuffers),
+    Rule::Get<Spec::ESSL, 310, Shader::ALL, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_MaxTessEvaluationAtomicCounterBuffers),
     Rule::Get<Spec::ESSL, 320, Shader::ALL, 0>(&TableBase::m_gl_MaxSamplesES3_2),
     Rule::Get<Spec::ESSL, 300, Shader::ALL, EXT_INDEX(OES_sample_variables)>(
@@ -25046,7 +25122,11 @@ constexpr SymbolRule kRules[] = {
         &BuiltInVariable::kgl_PrimitiveIDGS),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
         &BuiltInVariable::kgl_PrimitiveIDTCS),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(OES_tessellation_shader)>(
+        &BuiltInVariable::kgl_PrimitiveIDTCS),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(EXT_tessellation_shader)>(
+        &BuiltInVariable::kgl_PrimitiveIDTES),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(OES_tessellation_shader)>(
         &BuiltInVariable::kgl_PrimitiveIDTES),
     Rule::Get<Spec::ESSL, 320, Shader::FRAGMENT, 0>(&BuiltInVariable::kgl_LayerES3_2),
     Rule::Get<Spec::ESSL, 320, Shader::GEOMETRY_EXT, 0>(&BuiltInVariable::kgl_LayerGSES3_2),
@@ -25080,7 +25160,11 @@ constexpr SymbolRule kRules[] = {
         &TableBase::m_gl_PositionGS),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_PositionTCS),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_PositionTCS),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_PositionTES),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_PositionTES),
     Rule::Get<Spec::ESSL, 100, Shader::VERTEX, 0>(&BuiltInVariable::kgl_PointSize),
     Rule::Get<Spec::ESSL, 300, Shader::VERTEX, 0>(&BuiltInVariable::kgl_PointSize300),
@@ -25134,6 +25218,8 @@ constexpr SymbolRule kRules[] = {
         &BuiltInVariable::kgl_InvocationID),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
         &BuiltInVariable::kgl_InvocationIDTCS),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(OES_tessellation_shader)>(
+        &BuiltInVariable::kgl_InvocationIDTCS),
     Rule::Get<Spec::ESSL, 320, Shader::GEOMETRY_EXT, 0>(&TableBase::m_gl_PerVertexES3_2),
     Rule::Get<Spec::ESSL, 320, Shader::TESS_CONTROL_EXT, 0>(&TableBase::m_gl_PerVertexTCSES3_2),
     Rule::Get<Spec::ESSL, 320, Shader::TESS_EVALUATION_EXT, 0>(&TableBase::m_gl_PerVertexTESES3_2),
@@ -25143,7 +25229,11 @@ constexpr SymbolRule kRules[] = {
         &TableBase::m_gl_PerVertex),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_PerVertexTCS),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_PerVertexTCS),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_PerVertexTES),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_PerVertexTES),
     Rule::Get<Spec::ESSL, 320, Shader::GEOMETRY_EXT, 0>(&TableBase::m_gl_inES3_2),
     Rule::Get<Spec::ESSL, 320, Shader::TESS_CONTROL_EXT, 0>(&TableBase::m_gl_inTCSES3_2),
@@ -25154,7 +25244,11 @@ constexpr SymbolRule kRules[] = {
         &TableBase::m_gl_in),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_inTCS),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_inTCS),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_inTES),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_inTES),
     Rule::Get<Spec::ESSL, 320, Shader::TESS_CONTROL_EXT, 0>(
         &BuiltInVariable::kgl_PatchVerticesInTCSES3_2),
@@ -25162,7 +25256,11 @@ constexpr SymbolRule kRules[] = {
         &BuiltInVariable::kgl_PatchVerticesInTESES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
         &BuiltInVariable::kgl_PatchVerticesInTCS),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(OES_tessellation_shader)>(
+        &BuiltInVariable::kgl_PatchVerticesInTCS),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(EXT_tessellation_shader)>(
+        &BuiltInVariable::kgl_PatchVerticesInTES),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(OES_tessellation_shader)>(
         &BuiltInVariable::kgl_PatchVerticesInTES),
     Rule::Get<Spec::ESSL, 320, Shader::TESS_CONTROL_EXT, 0>(
         &TableBase::m_gl_TessLevelOuterTCSES3_2),
@@ -25170,7 +25268,11 @@ constexpr SymbolRule kRules[] = {
         &TableBase::m_gl_TessLevelOuterTESES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_TessLevelOuterTCS),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_TessLevelOuterTCS),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_TessLevelOuterTES),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_TessLevelOuterTES),
     Rule::Get<Spec::ESSL, 320, Shader::TESS_CONTROL_EXT, 0>(
         &TableBase::m_gl_TessLevelInnerTCSES3_2),
@@ -25178,24 +25280,38 @@ constexpr SymbolRule kRules[] = {
         &TableBase::m_gl_TessLevelInnerTESES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_TessLevelInnerTCS),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_TessLevelInnerTCS),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_TessLevelInnerTES),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_TessLevelInnerTES),
     Rule::Get<Spec::ESSL, 320, Shader::TESS_CONTROL_EXT, 0>(&TableBase::m_gl_outTCSES3_2),
     Rule::Get<Spec::ESSL, 320, Shader::TESS_EVALUATION_EXT, 0>(&TableBase::m_gl_outTESES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_outTCS),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_outTCS),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_outTES),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_outTES),
     Rule::Get<Spec::ESSL, 320, Shader::TESS_CONTROL_EXT, 0>(&TableBase::m_gl_BoundingBoxTCSES3_2),
     Rule::Get<Spec::ESSL, 320, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_BoundingBoxTCS),
+    Rule::Get<Spec::ESSL, 320, Shader::TESS_CONTROL_EXT, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_BoundingBoxTCS),
     Rule::Get<Spec::ESSL, 320, Shader::TESS_CONTROL_EXT, 0>(
         &TableBase::m_gl_BoundingBoxEXTTCSES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
         &TableBase::m_gl_BoundingBoxEXTTCS),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(OES_tessellation_shader)>(
+        &TableBase::m_gl_BoundingBoxEXTTCS),
     Rule::Get<Spec::ESSL, 320, Shader::TESS_CONTROL_EXT, 0>(
         &TableBase::m_gl_BoundingBoxOESTCSES3_2),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(EXT_tessellation_shader)>(
+        &TableBase::m_gl_BoundingBoxOESTCS),
+    Rule::Get<Spec::ESSL, 310, Shader::TESS_CONTROL_EXT, EXT_INDEX(OES_tessellation_shader)>(
         &TableBase::m_gl_BoundingBoxOESTCS),
     Rule::Get<Spec::ESSL, 310, Shader::TESS_EVALUATION_EXT, 0>(&BuiltInVariable::kgl_TessCoord),
     Rule::Get<Spec::ESSL, 300, Shader::NOT_COMPUTE, EXT_INDEX(OVR_multiview)>(
@@ -27128,1397 +27244,1397 @@ constexpr uint16_t kMangledOffsets[] = {
     261,   // uintBitsToFloat_20E
     262,   // uintBitsToFloat_30E
     263,   // fma_00B00B00B
-    265,   // fma_10B10B10B
-    267,   // fma_20B20B20B
-    269,   // fma_30B30B30B
-    271,   // frexp_00B00D
-    272,   // frexp_10B10D
-    273,   // frexp_20B20D
-    274,   // frexp_30B30D
-    275,   // ldexp_00B00D
-    276,   // ldexp_10B10D
-    277,   // ldexp_20B20D
-    278,   // ldexp_30B30D
-    279,   // packSnorm2x16_10B
-    280,   // packHalf2x16_10B
-    281,   // unpackSnorm2x16_00E
-    282,   // unpackHalf2x16_00E
-    283,   // packUnorm2x16_10B
-    284,   // unpackUnorm2x16_00E
-    285,   // packUnorm4x8_30B
-    286,   // packSnorm4x8_30B
-    287,   // unpackUnorm4x8_00E
-    288,   // unpackSnorm4x8_00E
-    289,   // length_00B
-    290,   // length_10B
-    291,   // length_20B
-    292,   // length_30B
-    293,   // distance_00B00B
-    294,   // distance_10B10B
-    295,   // distance_20B20B
-    296,   // distance_30B30B
-    297,   // dot_00B00B
-    298,   // dot_10B10B
-    299,   // dot_20B20B
-    300,   // dot_30B30B
-    301,   // cross_20B20B
-    302,   // normalize_00B
-    303,   // normalize_10B
-    304,   // normalize_20B
-    305,   // normalize_30B
-    306,   // faceforward_00B00B00B
-    307,   // faceforward_10B10B10B
-    308,   // faceforward_20B20B20B
-    309,   // faceforward_30B30B30B
-    310,   // reflect_00B00B
-    311,   // reflect_10B10B
-    312,   // reflect_20B20B
-    313,   // reflect_30B30B
-    314,   // refract_00B00B00B
-    315,   // refract_10B10B00B
-    316,   // refract_20B20B00B
-    317,   // refract_30B30B00B
-    318,   // matrixCompMult_50B50B
-    319,   // matrixCompMult_A0BA0B
-    320,   // matrixCompMult_F0BF0B
-    321,   // matrixCompMult_90B90B
-    322,   // matrixCompMult_60B60B
-    323,   // matrixCompMult_D0BD0B
-    324,   // matrixCompMult_70B70B
-    325,   // matrixCompMult_E0BE0B
-    326,   // matrixCompMult_B0BB0B
-    327,   // outerProduct_10B10B
-    328,   // outerProduct_20B20B
-    329,   // outerProduct_30B30B
-    330,   // outerProduct_20B10B
-    331,   // outerProduct_10B20B
-    332,   // outerProduct_30B10B
-    333,   // outerProduct_10B30B
-    334,   // outerProduct_30B20B
-    335,   // outerProduct_20B30B
-    336,   // transpose_50B
-    337,   // transpose_A0B
-    338,   // transpose_F0B
-    339,   // transpose_60B
-    340,   // transpose_90B
-    341,   // transpose_70B
-    342,   // transpose_D0B
-    343,   // transpose_B0B
-    344,   // transpose_E0B
-    345,   // determinant_50B
-    346,   // determinant_A0B
-    347,   // determinant_F0B
-    348,   // inverse_50B
-    349,   // inverse_A0B
-    350,   // inverse_F0B
-    351,   // lessThan_10B10B
-    352,   // lessThan_20B20B
-    353,   // lessThan_30B30B
-    354,   // lessThan_10D10D
-    355,   // lessThan_20D20D
-    356,   // lessThan_30D30D
-    357,   // lessThan_10E10E
-    358,   // lessThan_20E20E
-    359,   // lessThan_30E30E
-    360,   // lessThanEqual_10B10B
-    361,   // lessThanEqual_20B20B
-    362,   // lessThanEqual_30B30B
-    363,   // lessThanEqual_10D10D
-    364,   // lessThanEqual_20D20D
-    365,   // lessThanEqual_30D30D
-    366,   // lessThanEqual_10E10E
-    367,   // lessThanEqual_20E20E
-    368,   // lessThanEqual_30E30E
-    369,   // greaterThan_10B10B
-    370,   // greaterThan_20B20B
-    371,   // greaterThan_30B30B
-    372,   // greaterThan_10D10D
-    373,   // greaterThan_20D20D
-    374,   // greaterThan_30D30D
-    375,   // greaterThan_10E10E
-    376,   // greaterThan_20E20E
-    377,   // greaterThan_30E30E
-    378,   // greaterThanEqual_10B10B
-    379,   // greaterThanEqual_20B20B
-    380,   // greaterThanEqual_30B30B
-    381,   // greaterThanEqual_10D10D
-    382,   // greaterThanEqual_20D20D
-    383,   // greaterThanEqual_30D30D
-    384,   // greaterThanEqual_10E10E
-    385,   // greaterThanEqual_20E20E
-    386,   // greaterThanEqual_30E30E
-    387,   // equal_10B10B
-    388,   // equal_20B20B
-    389,   // equal_30B30B
-    390,   // equal_10D10D
-    391,   // equal_20D20D
-    392,   // equal_30D30D
-    393,   // equal_10E10E
-    394,   // equal_20E20E
-    395,   // equal_30E30E
-    396,   // equal_10F10F
-    397,   // equal_20F20F
-    398,   // equal_30F30F
-    399,   // notEqual_10B10B
-    400,   // notEqual_20B20B
-    401,   // notEqual_30B30B
-    402,   // notEqual_10D10D
-    403,   // notEqual_20D20D
-    404,   // notEqual_30D30D
-    405,   // notEqual_10E10E
-    406,   // notEqual_20E20E
-    407,   // notEqual_30E30E
-    408,   // notEqual_10F10F
-    409,   // notEqual_20F20F
-    410,   // notEqual_30F30F
-    411,   // any_10F
-    412,   // any_20F
-    413,   // any_30F
-    414,   // all_10F
-    415,   // all_20F
-    416,   // all_30F
-    417,   // not_10F
-    418,   // not_20F
-    419,   // not_30F
-    420,   // bitfieldExtract_00D00D00D
-    421,   // bitfieldExtract_10D00D00D
-    422,   // bitfieldExtract_20D00D00D
-    423,   // bitfieldExtract_30D00D00D
-    424,   // bitfieldExtract_00E00D00D
-    425,   // bitfieldExtract_10E00D00D
-    426,   // bitfieldExtract_20E00D00D
-    427,   // bitfieldExtract_30E00D00D
-    428,   // bitfieldInsert_00D00D00D00D
-    429,   // bitfieldInsert_10D10D00D00D
-    430,   // bitfieldInsert_20D20D00D00D
-    431,   // bitfieldInsert_30D30D00D00D
-    432,   // bitfieldInsert_00E00E00D00D
-    433,   // bitfieldInsert_10E10E00D00D
-    434,   // bitfieldInsert_20E20E00D00D
-    435,   // bitfieldInsert_30E30E00D00D
-    436,   // bitfieldReverse_00D
-    437,   // bitfieldReverse_10D
-    438,   // bitfieldReverse_20D
-    439,   // bitfieldReverse_30D
-    440,   // bitfieldReverse_00E
-    441,   // bitfieldReverse_10E
-    442,   // bitfieldReverse_20E
-    443,   // bitfieldReverse_30E
-    444,   // bitCount_00D
-    445,   // bitCount_10D
-    446,   // bitCount_20D
-    447,   // bitCount_30D
-    448,   // bitCount_00E
-    449,   // bitCount_10E
-    450,   // bitCount_20E
-    451,   // bitCount_30E
-    452,   // findLSB_00D
-    453,   // findLSB_10D
-    454,   // findLSB_20D
-    455,   // findLSB_30D
-    456,   // findLSB_00E
-    457,   // findLSB_10E
-    458,   // findLSB_20E
-    459,   // findLSB_30E
-    460,   // findMSB_00D
-    461,   // findMSB_10D
-    462,   // findMSB_20D
-    463,   // findMSB_30D
-    464,   // findMSB_00E
-    465,   // findMSB_10E
-    466,   // findMSB_20E
-    467,   // findMSB_30E
-    468,   // uaddCarry_00E00E00E
-    469,   // uaddCarry_10E10E10E
-    470,   // uaddCarry_20E20E20E
-    471,   // uaddCarry_30E30E30E
-    472,   // usubBorrow_00E00E00E
-    473,   // usubBorrow_10E10E10E
-    474,   // usubBorrow_20E20E20E
-    475,   // usubBorrow_30E30E30E
-    476,   // umulExtended_00E00E00E00E
-    477,   // umulExtended_10E10E10E10E
-    478,   // umulExtended_20E20E20E20E
-    479,   // umulExtended_30E30E30E30E
-    480,   // imulExtended_00D00D00D00D
-    481,   // imulExtended_10D10D10D10D
-    482,   // imulExtended_20D20D20D20D
-    483,   // imulExtended_30D30D30D30D
-    484,   // texture2D_00I10B
-    485,   // texture2DProj_00I20B
-    486,   // texture2DProj_00I30B
-    487,   // textureCube_00K20B
-    488,   // texture3D_00J20B
-    489,   // texture3DProj_00J30B
-    490,   // shadow2DEXT_00d20B
-    491,   // shadow2DProjEXT_00d30B
-    492,   // texture2D_00M10B
-    494,   // texture2DProj_00M20B
-    496,   // texture2DProj_00M30B
-    498,   // texture2DRect_00O10B
-    499,   // texture2DRectProj_00O20B
-    500,   // texture2DRectProj_00O30B
-    501,   // texture2DGradEXT_00I10B10B10B
-    502,   // texture2DProjGradEXT_00I20B10B10B
-    503,   // texture2DProjGradEXT_00I30B10B10B
-    504,   // textureCubeGradEXT_00K20B20B20B
-    505,   // textureVideoWEBGL_00y10B
-    506,   // texture2D_00I10B00B
-    507,   // texture2DProj_00I20B00B
-    508,   // texture2DProj_00I30B00B
-    509,   // textureCube_00K20B00B
-    510,   // texture3D_00J20B00B
-    511,   // texture3DProj_00J30B00B
-    512,   // texture3DLod_00J20B00B
-    513,   // texture3DProjLod_00J30B00B
-    514,   // texture2DLod_00I10B00B
-    515,   // texture2DProjLod_00I20B00B
-    516,   // texture2DProjLod_00I30B00B
-    517,   // textureCubeLod_00K20B00B
-    518,   // texture2DLodEXT_00I10B00B
-    519,   // texture2DProjLodEXT_00I20B00B
-    520,   // texture2DProjLodEXT_00I30B00B
-    521,   // textureCubeLodEXT_00K20B00B
-    522,   // texture_00I10B
-    523,   // texture_00R10B
-    524,   // texture_00X10B
-    525,   // texture_00J20B
-    526,   // texture_00S20B
-    527,   // texture_00Y20B
-    528,   // texture_00K20B
-    529,   // texture_00T20B
-    530,   // texture_00Z20B
-    531,   // texture_00L20B
-    532,   // texture_00U20B
-    533,   // texture_00a20B
-    534,   // texture_00d20B
-    535,   // texture_00e30B
-    536,   // texture_00f30B
-    537,   // texture_00k30B
-    540,   // texture_00s30B
-    543,   // texture_00x30B
-    546,   // texture_00l30B00B
-    549,   // texture_00M10B
-    550,   // texture_00N10B
-    551,   // texture_00O10B
-    552,   // texture_00y10B
-    553,   // textureProj_00I20B
-    554,   // textureProj_00R20B
-    555,   // textureProj_00X20B
-    556,   // textureProj_00I30B
-    557,   // textureProj_00R30B
-    558,   // textureProj_00X30B
-    559,   // textureProj_00J30B
-    560,   // textureProj_00S30B
-    561,   // textureProj_00Y30B
-    562,   // textureProj_00d30B
-    563,   // textureProj_00M20B
-    564,   // textureProj_00M30B
-    565,   // textureProj_00N20B
-    566,   // textureProj_00N30B
-    567,   // textureProj_00O20B
-    568,   // textureProj_00O30B
-    569,   // textureLod_00I10B00B
-    570,   // textureLod_00R10B00B
-    571,   // textureLod_00X10B00B
-    572,   // textureLod_00J20B00B
-    573,   // textureLod_00S20B00B
-    574,   // textureLod_00Y20B00B
-    575,   // textureLod_00K20B00B
-    576,   // textureLod_00T20B00B
-    577,   // textureLod_00Z20B00B
-    578,   // textureLod_00L20B00B
-    579,   // textureLod_00U20B00B
-    580,   // textureLod_00a20B00B
-    581,   // textureLod_00d20B00B
-    582,   // textureLod_00k30B00B
-    585,   // textureLod_00s30B00B
-    588,   // textureLod_00x30B00B
-    591,   // textureSize_00I00D
-    592,   // textureSize_00R00D
-    593,   // textureSize_00X00D
-    594,   // textureSize_00J00D
-    595,   // textureSize_00S00D
-    596,   // textureSize_00Y00D
-    597,   // textureSize_00K00D
-    598,   // textureSize_00T00D
-    599,   // textureSize_00Z00D
-    600,   // textureSize_00L00D
-    601,   // textureSize_00U00D
-    602,   // textureSize_00a00D
-    603,   // textureSize_00d00D
-    604,   // textureSize_00e00D
-    605,   // textureSize_00f00D
-    606,   // textureSize_00k00D
-    609,   // textureSize_00s00D
-    612,   // textureSize_00x00D
-    615,   // textureSize_00l00D
-    618,   // textureSize_00j
-    621,   // textureSize_00r
-    624,   // textureSize_00w
-    627,   // textureSize_00P
-    629,   // textureSize_00V
-    631,   // textureSize_00b
-    633,   // textureSize_00Q
-    635,   // textureSize_00W
-    637,   // textureSize_00c
-    639,   // textureSize_00M00D
-    640,   // textureSize_00N00D
-    641,   // textureProjLod_00I20B00B
-    642,   // textureProjLod_00R20B00B
-    643,   // textureProjLod_00X20B00B
-    644,   // textureProjLod_00I30B00B
-    645,   // textureProjLod_00R30B00B
-    646,   // textureProjLod_00X30B00B
-    647,   // textureProjLod_00J30B00B
-    648,   // textureProjLod_00S30B00B
-    649,   // textureProjLod_00Y30B00B
-    650,   // textureProjLod_00d30B00B
-    651,   // texelFetch_00I10D00D
-    652,   // texelFetch_00R10D00D
-    653,   // texelFetch_00X10D00D
-    654,   // texelFetch_00J20D00D
-    655,   // texelFetch_00S20D00D
-    656,   // texelFetch_00Y20D00D
-    657,   // texelFetch_00L20D00D
-    658,   // texelFetch_00U20D00D
-    659,   // texelFetch_00a20D00D
-    660,   // texelFetch_00j00D
-    663,   // texelFetch_00r00D
-    666,   // texelFetch_00w00D
-    669,   // texelFetch_00P10D00D
-    671,   // texelFetch_00V10D00D
-    673,   // texelFetch_00b10D00D
-    675,   // texelFetch_00Q20D00D
-    677,   // texelFetch_00W20D00D
-    679,   // texelFetch_00c20D00D
-    681,   // texelFetch_00M10D00D
-    682,   // texelFetch_00N10D00D
-    683,   // textureGrad_00I10B10B10B
-    684,   // textureGrad_00R10B10B10B
-    685,   // textureGrad_00X10B10B10B
-    686,   // textureGrad_00J20B20B20B
-    687,   // textureGrad_00S20B20B20B
-    688,   // textureGrad_00Y20B20B20B
-    689,   // textureGrad_00K20B20B20B
-    690,   // textureGrad_00T20B20B20B
-    691,   // textureGrad_00Z20B20B20B
-    692,   // textureGrad_00d20B10B10B
-    693,   // textureGrad_00e30B20B20B
-    694,   // textureGrad_00L20B10B10B
-    695,   // textureGrad_00U20B10B10B
-    696,   // textureGrad_00a20B10B10B
-    697,   // textureGrad_00f30B10B10B
-    698,   // textureGrad_00k30B20B20B
-    701,   // textureGrad_00s30B20B20B
-    704,   // textureGrad_00x30B20B20B
-    707,   // textureProjGrad_00I20B10B10B
-    708,   // textureProjGrad_00R20B10B10B
-    709,   // textureProjGrad_00X20B10B10B
-    710,   // textureProjGrad_00I30B10B10B
-    711,   // textureProjGrad_00R30B10B10B
-    712,   // textureProjGrad_00X30B10B10B
-    713,   // textureProjGrad_00J30B20B20B
-    714,   // textureProjGrad_00S30B20B20B
-    715,   // textureProjGrad_00Y30B20B20B
-    716,   // textureProjGrad_00d30B10B10B
-    717,   // texture_00I10B00B
-    718,   // texture_00R10B00B
-    719,   // texture_00X10B00B
-    720,   // texture_00J20B00B
-    721,   // texture_00S20B00B
-    722,   // texture_00Y20B00B
-    723,   // texture_00K20B00B
-    724,   // texture_00T20B00B
-    725,   // texture_00Z20B00B
-    726,   // texture_00L20B00B
-    727,   // texture_00U20B00B
-    728,   // texture_00a20B00B
-    729,   // textureProj_00I20B00B
-    730,   // textureProj_00R20B00B
-    731,   // textureProj_00X20B00B
-    732,   // textureProj_00I30B00B
-    733,   // textureProj_00R30B00B
-    734,   // textureProj_00X30B00B
-    735,   // textureProj_00J30B00B
-    736,   // textureProj_00S30B00B
-    737,   // textureProj_00Y30B00B
-    738,   // texture_00d20B00B
-    739,   // texture_00e30B00B
-    740,   // textureProj_00d30B00B
-    741,   // texture_00k30B00B
-    744,   // texture_00s30B00B
-    747,   // texture_00x30B00B
-    750,   // texture_00M10B00B
-    751,   // textureProj_00M20B00B
-    752,   // textureProj_00M30B00B
-    753,   // texture_00N10B00B
-    754,   // textureProj_00N20B00B
-    755,   // textureProj_00N30B00B
-    756,   // textureOffset_00I10B10D
-    757,   // textureOffset_00R10B10D
-    758,   // textureOffset_00X10B10D
-    759,   // textureOffset_00J20B20D
-    760,   // textureOffset_00S20B20D
-    761,   // textureOffset_00Y20B20D
-    762,   // textureOffset_00d20B10D
-    763,   // textureOffset_00L20B10D
-    764,   // textureOffset_00U20B10D
-    765,   // textureOffset_00a20B10D
-    766,   // textureProjOffset_00I20B10D
-    767,   // textureProjOffset_00R20B10D
-    768,   // textureProjOffset_00X20B10D
-    769,   // textureProjOffset_00I30B10D
-    770,   // textureProjOffset_00R30B10D
-    771,   // textureProjOffset_00X30B10D
-    772,   // textureProjOffset_00J30B20D
-    773,   // textureProjOffset_00S30B20D
-    774,   // textureProjOffset_00Y30B20D
-    775,   // textureProjOffset_00d30B10D
-    776,   // textureLodOffset_00I10B00B10D
-    777,   // textureLodOffset_00R10B00B10D
-    778,   // textureLodOffset_00X10B00B10D
-    779,   // textureLodOffset_00J20B00B20D
-    780,   // textureLodOffset_00S20B00B20D
-    781,   // textureLodOffset_00Y20B00B20D
-    782,   // textureLodOffset_00d20B00B10D
-    783,   // textureLodOffset_00L20B00B10D
-    784,   // textureLodOffset_00U20B00B10D
-    785,   // textureLodOffset_00a20B00B10D
-    786,   // textureProjLodOffset_00I20B00B10D
-    787,   // textureProjLodOffset_00R20B00B10D
-    788,   // textureProjLodOffset_00X20B00B10D
-    789,   // textureProjLodOffset_00I30B00B10D
-    790,   // textureProjLodOffset_00R30B00B10D
-    791,   // textureProjLodOffset_00X30B00B10D
-    792,   // textureProjLodOffset_00J30B00B20D
-    793,   // textureProjLodOffset_00S30B00B20D
-    794,   // textureProjLodOffset_00Y30B00B20D
-    795,   // textureProjLodOffset_00d30B00B10D
-    796,   // texelFetchOffset_00I10D00D10D
-    797,   // texelFetchOffset_00R10D00D10D
-    798,   // texelFetchOffset_00X10D00D10D
-    799,   // texelFetchOffset_00J20D00D20D
-    800,   // texelFetchOffset_00S20D00D20D
-    801,   // texelFetchOffset_00Y20D00D20D
-    802,   // texelFetchOffset_00L20D00D10D
-    803,   // texelFetchOffset_00U20D00D10D
-    804,   // texelFetchOffset_00a20D00D10D
-    805,   // textureGradOffset_00I10B10B10B10D
-    806,   // textureGradOffset_00R10B10B10B10D
-    807,   // textureGradOffset_00X10B10B10B10D
-    808,   // textureGradOffset_00J20B20B20B20D
-    809,   // textureGradOffset_00S20B20B20B20D
-    810,   // textureGradOffset_00Y20B20B20B20D
-    811,   // textureGradOffset_00d20B10B10B10D
-    812,   // textureGradOffset_00L20B10B10B10D
-    813,   // textureGradOffset_00U20B10B10B10D
-    814,   // textureGradOffset_00a20B10B10B10D
-    815,   // textureGradOffset_00f30B10B10B10D
-    816,   // textureProjGradOffset_00I20B10B10B10D
-    817,   // textureProjGradOffset_00R20B10B10B10D
-    818,   // textureProjGradOffset_00X20B10B10B10D
-    819,   // textureProjGradOffset_00I30B10B10B10D
-    820,   // textureProjGradOffset_00R30B10B10B10D
-    821,   // textureProjGradOffset_00X30B10B10B10D
-    822,   // textureProjGradOffset_00J30B20B20B20D
-    823,   // textureProjGradOffset_00S30B20B20B20D
-    824,   // textureProjGradOffset_00Y30B20B20B20D
-    825,   // textureProjGradOffset_00d30B10B10B10D
-    826,   // textureOffset_00I10B10D00B
-    827,   // textureOffset_00R10B10D00B
-    828,   // textureOffset_00X10B10D00B
-    829,   // textureOffset_00J20B20D00B
-    830,   // textureOffset_00S20B20D00B
-    831,   // textureOffset_00Y20B20D00B
-    832,   // textureOffset_00d20B10D00B
-    833,   // textureOffset_00L20B10D00B
-    834,   // textureOffset_00U20B10D00B
-    835,   // textureOffset_00a20B10D00B
-    836,   // textureProjOffset_00I20B10D00B
-    837,   // textureProjOffset_00R20B10D00B
-    838,   // textureProjOffset_00X20B10D00B
-    839,   // textureProjOffset_00I30B10D00B
-    840,   // textureProjOffset_00R30B10D00B
-    841,   // textureProjOffset_00X30B10D00B
-    842,   // textureProjOffset_00J30B20D00B
-    843,   // textureProjOffset_00S30B20D00B
-    844,   // textureProjOffset_00Y30B20D00B
-    845,   // textureProjOffset_00d30B10D00B
-    846,   // textureGather_00I10B
-    847,   // textureGather_00R10B
-    848,   // textureGather_00X10B
-    849,   // textureGather_00I10B00D
-    850,   // textureGather_00R10B00D
-    851,   // textureGather_00X10B00D
-    852,   // textureGather_00L20B
-    853,   // textureGather_00U20B
-    854,   // textureGather_00a20B
-    855,   // textureGather_00L20B00D
-    856,   // textureGather_00U20B00D
-    857,   // textureGather_00a20B00D
-    858,   // textureGather_00K20B
-    859,   // textureGather_00T20B
-    860,   // textureGather_00Z20B
-    861,   // textureGather_00K20B00D
-    862,   // textureGather_00T20B00D
-    863,   // textureGather_00Z20B00D
-    864,   // textureGather_00k30B
-    867,   // textureGather_00s30B
-    870,   // textureGather_00x30B
-    873,   // textureGather_00k30B00D
-    876,   // textureGather_00s30B00D
-    879,   // textureGather_00x30B00D
-    882,   // textureGather_00l30B00B
-    885,   // textureGather_00d10B
-    886,   // textureGather_00d10B00B
-    887,   // textureGather_00f20B
-    888,   // textureGather_00f20B00B
-    889,   // textureGather_00e20B
-    890,   // textureGather_00e20B00B
-    891,   // textureGatherOffset_00I10B10D
-    892,   // textureGatherOffset_00R10B10D
-    893,   // textureGatherOffset_00X10B10D
-    894,   // textureGatherOffset_00L20B10D
-    895,   // textureGatherOffset_00U20B10D
-    896,   // textureGatherOffset_00a20B10D
-    897,   // textureGatherOffset_00d10B00B10D
-    898,   // textureGatherOffset_00f20B00B10D
-    899,   // textureGatherOffset_00I10B10D00D
-    900,   // textureGatherOffset_00R10B10D00D
-    901,   // textureGatherOffset_00X10B10D00D
-    902,   // textureGatherOffset_00L20B10D00D
-    903,   // textureGatherOffset_00U20B10D00D
-    904,   // textureGatherOffset_00a20B10D00D
-    905,   // textureGatherOffsets_00I10B10Dx4
-    907,   // textureGatherOffsets_00R10B10Dx4
-    909,   // textureGatherOffsets_00X10B10Dx4
-    911,   // textureGatherOffsets_00L20B10Dx4
-    913,   // textureGatherOffsets_00U20B10Dx4
-    915,   // textureGatherOffsets_00a20B10Dx4
-    917,   // textureGatherOffsets_00d10B00B10Dx4
-    919,   // textureGatherOffsets_00f20B00B10Dx4
-    921,   // textureGatherOffsets_00I10B10Dx400D
-    923,   // textureGatherOffsets_00R10B10Dx400D
-    925,   // textureGatherOffsets_00X10B10Dx400D
-    927,   // textureGatherOffsets_00L20B10Dx400D
-    929,   // textureGatherOffsets_00U20B10Dx400D
-    931,   // textureGatherOffsets_00a20B10Dx400D
-    933,   // rgb_2_yuv_20B00H
-    934,   // yuv_2_rgb_20B00H
-    935,   // dFdx_00B
-    937,   // dFdx_10B
-    939,   // dFdx_20B
-    941,   // dFdx_30B
-    943,   // dFdy_00B
-    945,   // dFdy_10B
-    947,   // dFdy_20B
-    949,   // dFdy_30B
-    951,   // fwidth_00B
-    953,   // fwidth_10B
-    955,   // fwidth_20B
-    957,   // fwidth_30B
-    959,   // interpolateAtCentroid_00B
-    961,   // interpolateAtCentroid_10B
-    963,   // interpolateAtCentroid_20B
-    965,   // interpolateAtCentroid_30B
-    967,   // interpolateAtSample_00B00D
-    969,   // interpolateAtSample_10B00D
-    971,   // interpolateAtSample_20B00D
-    973,   // interpolateAtSample_30B00D
-    975,   // interpolateAtOffset_00B10B
-    977,   // interpolateAtOffset_10B10B
-    979,   // interpolateAtOffset_20B10B
-    981,   // interpolateAtOffset_30B10B
-    983,   // atomicCounter_00G
-    984,   // atomicCounterIncrement_00G
-    985,   // atomicCounterDecrement_00G
-    986,   // atomicAdd_00E00E
-    987,   // atomicAdd_00D00D
-    988,   // atomicMin_00E00E
-    989,   // atomicMin_00D00D
-    990,   // atomicMax_00E00E
-    991,   // atomicMax_00D00D
-    992,   // atomicAnd_00E00E
-    993,   // atomicAnd_00D00D
-    994,   // atomicOr_00E00E
-    995,   // atomicOr_00D00D
-    996,   // atomicXor_00E00E
-    997,   // atomicXor_00D00D
-    998,   // atomicExchange_00E00E
-    999,   // atomicExchange_00D00D
-    1000,  // atomicCompSwap_00E00E00E
-    1001,  // atomicCompSwap_00D00D00D
-    1002,  // imageSize_00z
-    1003,  // imageSize_01K
-    1004,  // imageSize_01V
-    1005,  // imageSize_01A
-    1006,  // imageSize_01L
-    1007,  // imageSize_01W
-    1008,  // imageSize_01B
-    1009,  // imageSize_01M
-    1010,  // imageSize_01X
-    1011,  // imageSize_01C
-    1012,  // imageSize_01N
-    1013,  // imageSize_01Y
-    1014,  // imageSize_01H
-    1017,  // imageSize_01S
-    1020,  // imageSize_01d
-    1023,  // imageSize_01J
-    1026,  // imageSize_01U
-    1029,  // imageSize_01f
-    1032,  // imageStore_00z10D30B
-    1033,  // imageStore_01K10D30D
-    1034,  // imageStore_01V10D30E
-    1035,  // imageStore_01A20D30B
-    1036,  // imageStore_01L20D30D
-    1037,  // imageStore_01W20D30E
-    1038,  // imageStore_01B20D30B
-    1039,  // imageStore_01M20D30D
-    1040,  // imageStore_01X20D30E
-    1041,  // imageStore_01C20D30B
-    1042,  // imageStore_01N20D30D
-    1043,  // imageStore_01Y20D30E
-    1044,  // imageStore_01H20D30B
-    1047,  // imageStore_01S20D30D
-    1050,  // imageStore_01d20D30E
-    1053,  // imageStore_01J00D30B
-    1056,  // imageStore_01U00D30D
-    1059,  // imageStore_01f00D30E
-    1062,  // imageLoad_00z10D
-    1063,  // imageLoad_01K10D
-    1064,  // imageLoad_01V10D
-    1065,  // imageLoad_01A20D
-    1066,  // imageLoad_01L20D
-    1067,  // imageLoad_01W20D
-    1068,  // imageLoad_01B20D
-    1069,  // imageLoad_01M20D
-    1070,  // imageLoad_01X20D
-    1071,  // imageLoad_01C20D
-    1072,  // imageLoad_01N20D
-    1073,  // imageLoad_01Y20D
-    1074,  // imageLoad_01H20D
-    1077,  // imageLoad_01S20D
-    1080,  // imageLoad_01d20D
-    1083,  // imageLoad_01J00D
-    1086,  // imageLoad_01U00D
-    1089,  // imageLoad_01f00D
-    1092,  // imageAtomicAdd_00z10D00E
-    1094,  // imageAtomicAdd_01K10D00E
-    1096,  // imageAtomicAdd_01V10D00E
-    1098,  // imageAtomicAdd_01A20D00E
-    1100,  // imageAtomicAdd_01L20D00E
-    1102,  // imageAtomicAdd_01W20D00E
-    1104,  // imageAtomicAdd_01C20D00E
-    1106,  // imageAtomicAdd_01N20D00E
-    1108,  // imageAtomicAdd_01Y20D00E
-    1110,  // imageAtomicAdd_01J00D00E
-    1112,  // imageAtomicAdd_01U00D00E
-    1114,  // imageAtomicAdd_01f00D00E
-    1116,  // imageAtomicAdd_01B20D00E
-    1118,  // imageAtomicAdd_01M20D00E
-    1120,  // imageAtomicAdd_01X20D00E
-    1122,  // imageAtomicAdd_01H20D00E
-    1124,  // imageAtomicAdd_01S20D00E
-    1126,  // imageAtomicAdd_01d20D00E
-    1128,  // imageAtomicAdd_01D00D00E
-    1130,  // imageAtomicAdd_01O00D00E
-    1132,  // imageAtomicAdd_01Z00D00E
-    1134,  // imageAtomicAdd_01E10D00E
-    1136,  // imageAtomicAdd_01P10D00E
-    1138,  // imageAtomicAdd_01a10D00E
-    1140,  // imageAtomicAdd_01I10D00E
-    1142,  // imageAtomicAdd_01T10D00E
-    1144,  // imageAtomicAdd_01e10D00E
-    1146,  // imageAtomicAdd_01F10D00D00E
-    1148,  // imageAtomicAdd_01Q10D00D00E
-    1150,  // imageAtomicAdd_01b10D00D00E
-    1152,  // imageAtomicAdd_01G20D00D00E
-    1154,  // imageAtomicAdd_01R20D00D00E
-    1156,  // imageAtomicAdd_01c20D00D00E
-    1158,  // imageAtomicAdd_00z10D00D
-    1160,  // imageAtomicAdd_01K10D00D
-    1162,  // imageAtomicAdd_01V10D00D
-    1164,  // imageAtomicAdd_01A20D00D
-    1166,  // imageAtomicAdd_01L20D00D
-    1168,  // imageAtomicAdd_01W20D00D
-    1170,  // imageAtomicAdd_01C20D00D
-    1172,  // imageAtomicAdd_01N20D00D
-    1174,  // imageAtomicAdd_01Y20D00D
-    1176,  // imageAtomicAdd_01J00D00D
-    1178,  // imageAtomicAdd_01U00D00D
-    1180,  // imageAtomicAdd_01f00D00D
-    1182,  // imageAtomicAdd_01B20D00D
-    1184,  // imageAtomicAdd_01M20D00D
-    1186,  // imageAtomicAdd_01X20D00D
-    1188,  // imageAtomicAdd_01H20D00D
-    1190,  // imageAtomicAdd_01S20D00D
-    1192,  // imageAtomicAdd_01d20D00D
-    1194,  // imageAtomicAdd_01D00D00D
-    1196,  // imageAtomicAdd_01O00D00D
-    1198,  // imageAtomicAdd_01Z00D00D
-    1200,  // imageAtomicAdd_01E10D00D
-    1202,  // imageAtomicAdd_01P10D00D
-    1204,  // imageAtomicAdd_01a10D00D
-    1206,  // imageAtomicAdd_01I10D00D
-    1208,  // imageAtomicAdd_01T10D00D
-    1210,  // imageAtomicAdd_01e10D00D
-    1212,  // imageAtomicAdd_01F10D00D00D
-    1214,  // imageAtomicAdd_01Q10D00D00D
-    1216,  // imageAtomicAdd_01b10D00D00D
-    1218,  // imageAtomicAdd_01G20D00D00D
-    1220,  // imageAtomicAdd_01R20D00D00D
-    1222,  // imageAtomicAdd_01c20D00D00D
-    1224,  // imageAtomicMin_00z10D00E
-    1226,  // imageAtomicMin_01K10D00E
-    1228,  // imageAtomicMin_01V10D00E
-    1230,  // imageAtomicMin_01A20D00E
-    1232,  // imageAtomicMin_01L20D00E
-    1234,  // imageAtomicMin_01W20D00E
-    1236,  // imageAtomicMin_01C20D00E
-    1238,  // imageAtomicMin_01N20D00E
-    1240,  // imageAtomicMin_01Y20D00E
-    1242,  // imageAtomicMin_01J00D00E
-    1244,  // imageAtomicMin_01U00D00E
-    1246,  // imageAtomicMin_01f00D00E
-    1248,  // imageAtomicMin_01B20D00E
-    1250,  // imageAtomicMin_01M20D00E
-    1252,  // imageAtomicMin_01X20D00E
-    1254,  // imageAtomicMin_01H20D00E
-    1256,  // imageAtomicMin_01S20D00E
-    1258,  // imageAtomicMin_01d20D00E
-    1260,  // imageAtomicMin_01D00D00E
-    1262,  // imageAtomicMin_01O00D00E
-    1264,  // imageAtomicMin_01Z00D00E
-    1266,  // imageAtomicMin_01E10D00E
-    1268,  // imageAtomicMin_01P10D00E
-    1270,  // imageAtomicMin_01a10D00E
-    1272,  // imageAtomicMin_01I10D00E
-    1274,  // imageAtomicMin_01T10D00E
-    1276,  // imageAtomicMin_01e10D00E
-    1278,  // imageAtomicMin_01F10D00D00E
-    1280,  // imageAtomicMin_01Q10D00D00E
-    1282,  // imageAtomicMin_01b10D00D00E
-    1284,  // imageAtomicMin_01G20D00D00E
-    1286,  // imageAtomicMin_01R20D00D00E
-    1288,  // imageAtomicMin_01c20D00D00E
-    1290,  // imageAtomicMin_00z10D00D
-    1292,  // imageAtomicMin_01K10D00D
-    1294,  // imageAtomicMin_01V10D00D
-    1296,  // imageAtomicMin_01A20D00D
-    1298,  // imageAtomicMin_01L20D00D
-    1300,  // imageAtomicMin_01W20D00D
-    1302,  // imageAtomicMin_01C20D00D
-    1304,  // imageAtomicMin_01N20D00D
-    1306,  // imageAtomicMin_01Y20D00D
-    1308,  // imageAtomicMin_01J00D00D
-    1310,  // imageAtomicMin_01U00D00D
-    1312,  // imageAtomicMin_01f00D00D
-    1314,  // imageAtomicMin_01B20D00D
-    1316,  // imageAtomicMin_01M20D00D
-    1318,  // imageAtomicMin_01X20D00D
-    1320,  // imageAtomicMin_01H20D00D
-    1322,  // imageAtomicMin_01S20D00D
-    1324,  // imageAtomicMin_01d20D00D
-    1326,  // imageAtomicMin_01D00D00D
-    1328,  // imageAtomicMin_01O00D00D
-    1330,  // imageAtomicMin_01Z00D00D
-    1332,  // imageAtomicMin_01E10D00D
-    1334,  // imageAtomicMin_01P10D00D
-    1336,  // imageAtomicMin_01a10D00D
-    1338,  // imageAtomicMin_01I10D00D
-    1340,  // imageAtomicMin_01T10D00D
-    1342,  // imageAtomicMin_01e10D00D
-    1344,  // imageAtomicMin_01F10D00D00D
-    1346,  // imageAtomicMin_01Q10D00D00D
-    1348,  // imageAtomicMin_01b10D00D00D
-    1350,  // imageAtomicMin_01G20D00D00D
-    1352,  // imageAtomicMin_01R20D00D00D
-    1354,  // imageAtomicMin_01c20D00D00D
-    1356,  // imageAtomicMax_00z10D00E
-    1358,  // imageAtomicMax_01K10D00E
-    1360,  // imageAtomicMax_01V10D00E
-    1362,  // imageAtomicMax_01A20D00E
-    1364,  // imageAtomicMax_01L20D00E
-    1366,  // imageAtomicMax_01W20D00E
-    1368,  // imageAtomicMax_01C20D00E
-    1370,  // imageAtomicMax_01N20D00E
-    1372,  // imageAtomicMax_01Y20D00E
-    1374,  // imageAtomicMax_01J00D00E
-    1376,  // imageAtomicMax_01U00D00E
-    1378,  // imageAtomicMax_01f00D00E
-    1380,  // imageAtomicMax_01B20D00E
-    1382,  // imageAtomicMax_01M20D00E
-    1384,  // imageAtomicMax_01X20D00E
-    1386,  // imageAtomicMax_01H20D00E
-    1388,  // imageAtomicMax_01S20D00E
-    1390,  // imageAtomicMax_01d20D00E
-    1392,  // imageAtomicMax_01D00D00E
-    1394,  // imageAtomicMax_01O00D00E
-    1396,  // imageAtomicMax_01Z00D00E
-    1398,  // imageAtomicMax_01E10D00E
-    1400,  // imageAtomicMax_01P10D00E
-    1402,  // imageAtomicMax_01a10D00E
-    1404,  // imageAtomicMax_01I10D00E
-    1406,  // imageAtomicMax_01T10D00E
-    1408,  // imageAtomicMax_01e10D00E
-    1410,  // imageAtomicMax_01F10D00D00E
-    1412,  // imageAtomicMax_01Q10D00D00E
-    1414,  // imageAtomicMax_01b10D00D00E
-    1416,  // imageAtomicMax_01G20D00D00E
-    1418,  // imageAtomicMax_01R20D00D00E
-    1420,  // imageAtomicMax_01c20D00D00E
-    1422,  // imageAtomicMax_00z10D00D
-    1424,  // imageAtomicMax_01K10D00D
-    1426,  // imageAtomicMax_01V10D00D
-    1428,  // imageAtomicMax_01A20D00D
-    1430,  // imageAtomicMax_01L20D00D
-    1432,  // imageAtomicMax_01W20D00D
-    1434,  // imageAtomicMax_01C20D00D
-    1436,  // imageAtomicMax_01N20D00D
-    1438,  // imageAtomicMax_01Y20D00D
-    1440,  // imageAtomicMax_01J00D00D
-    1442,  // imageAtomicMax_01U00D00D
-    1444,  // imageAtomicMax_01f00D00D
-    1446,  // imageAtomicMax_01B20D00D
-    1448,  // imageAtomicMax_01M20D00D
-    1450,  // imageAtomicMax_01X20D00D
-    1452,  // imageAtomicMax_01H20D00D
-    1454,  // imageAtomicMax_01S20D00D
-    1456,  // imageAtomicMax_01d20D00D
-    1458,  // imageAtomicMax_01D00D00D
-    1460,  // imageAtomicMax_01O00D00D
-    1462,  // imageAtomicMax_01Z00D00D
-    1464,  // imageAtomicMax_01E10D00D
-    1466,  // imageAtomicMax_01P10D00D
-    1468,  // imageAtomicMax_01a10D00D
-    1470,  // imageAtomicMax_01I10D00D
-    1472,  // imageAtomicMax_01T10D00D
-    1474,  // imageAtomicMax_01e10D00D
-    1476,  // imageAtomicMax_01F10D00D00D
-    1478,  // imageAtomicMax_01Q10D00D00D
-    1480,  // imageAtomicMax_01b10D00D00D
-    1482,  // imageAtomicMax_01G20D00D00D
-    1484,  // imageAtomicMax_01R20D00D00D
-    1486,  // imageAtomicMax_01c20D00D00D
-    1488,  // imageAtomicAnd_00z10D00E
-    1490,  // imageAtomicAnd_01K10D00E
-    1492,  // imageAtomicAnd_01V10D00E
-    1494,  // imageAtomicAnd_01A20D00E
-    1496,  // imageAtomicAnd_01L20D00E
-    1498,  // imageAtomicAnd_01W20D00E
-    1500,  // imageAtomicAnd_01C20D00E
-    1502,  // imageAtomicAnd_01N20D00E
-    1504,  // imageAtomicAnd_01Y20D00E
-    1506,  // imageAtomicAnd_01J00D00E
-    1508,  // imageAtomicAnd_01U00D00E
-    1510,  // imageAtomicAnd_01f00D00E
-    1512,  // imageAtomicAnd_01B20D00E
-    1514,  // imageAtomicAnd_01M20D00E
-    1516,  // imageAtomicAnd_01X20D00E
-    1518,  // imageAtomicAnd_01H20D00E
-    1520,  // imageAtomicAnd_01S20D00E
-    1522,  // imageAtomicAnd_01d20D00E
-    1524,  // imageAtomicAnd_01D00D00E
-    1526,  // imageAtomicAnd_01O00D00E
-    1528,  // imageAtomicAnd_01Z00D00E
-    1530,  // imageAtomicAnd_01E10D00E
-    1532,  // imageAtomicAnd_01P10D00E
-    1534,  // imageAtomicAnd_01a10D00E
-    1536,  // imageAtomicAnd_01I10D00E
-    1538,  // imageAtomicAnd_01T10D00E
-    1540,  // imageAtomicAnd_01e10D00E
-    1542,  // imageAtomicAnd_01F10D00D00E
-    1544,  // imageAtomicAnd_01Q10D00D00E
-    1546,  // imageAtomicAnd_01b10D00D00E
-    1548,  // imageAtomicAnd_01G20D00D00E
-    1550,  // imageAtomicAnd_01R20D00D00E
-    1552,  // imageAtomicAnd_01c20D00D00E
-    1554,  // imageAtomicAnd_00z10D00D
-    1556,  // imageAtomicAnd_01K10D00D
-    1558,  // imageAtomicAnd_01V10D00D
-    1560,  // imageAtomicAnd_01A20D00D
-    1562,  // imageAtomicAnd_01L20D00D
-    1564,  // imageAtomicAnd_01W20D00D
-    1566,  // imageAtomicAnd_01C20D00D
-    1568,  // imageAtomicAnd_01N20D00D
-    1570,  // imageAtomicAnd_01Y20D00D
-    1572,  // imageAtomicAnd_01J00D00D
-    1574,  // imageAtomicAnd_01U00D00D
-    1576,  // imageAtomicAnd_01f00D00D
-    1578,  // imageAtomicAnd_01B20D00D
-    1580,  // imageAtomicAnd_01M20D00D
-    1582,  // imageAtomicAnd_01X20D00D
-    1584,  // imageAtomicAnd_01H20D00D
-    1586,  // imageAtomicAnd_01S20D00D
-    1588,  // imageAtomicAnd_01d20D00D
-    1590,  // imageAtomicAnd_01D00D00D
-    1592,  // imageAtomicAnd_01O00D00D
-    1594,  // imageAtomicAnd_01Z00D00D
-    1596,  // imageAtomicAnd_01E10D00D
-    1598,  // imageAtomicAnd_01P10D00D
-    1600,  // imageAtomicAnd_01a10D00D
-    1602,  // imageAtomicAnd_01I10D00D
-    1604,  // imageAtomicAnd_01T10D00D
-    1606,  // imageAtomicAnd_01e10D00D
-    1608,  // imageAtomicAnd_01F10D00D00D
-    1610,  // imageAtomicAnd_01Q10D00D00D
-    1612,  // imageAtomicAnd_01b10D00D00D
-    1614,  // imageAtomicAnd_01G20D00D00D
-    1616,  // imageAtomicAnd_01R20D00D00D
-    1618,  // imageAtomicAnd_01c20D00D00D
-    1620,  // imageAtomicOr_00z10D00E
-    1622,  // imageAtomicOr_01K10D00E
-    1624,  // imageAtomicOr_01V10D00E
-    1626,  // imageAtomicOr_01A20D00E
-    1628,  // imageAtomicOr_01L20D00E
-    1630,  // imageAtomicOr_01W20D00E
-    1632,  // imageAtomicOr_01C20D00E
-    1634,  // imageAtomicOr_01N20D00E
-    1636,  // imageAtomicOr_01Y20D00E
-    1638,  // imageAtomicOr_01J00D00E
-    1640,  // imageAtomicOr_01U00D00E
-    1642,  // imageAtomicOr_01f00D00E
-    1644,  // imageAtomicOr_01B20D00E
-    1646,  // imageAtomicOr_01M20D00E
-    1648,  // imageAtomicOr_01X20D00E
-    1650,  // imageAtomicOr_01H20D00E
-    1652,  // imageAtomicOr_01S20D00E
-    1654,  // imageAtomicOr_01d20D00E
-    1656,  // imageAtomicOr_01D00D00E
-    1658,  // imageAtomicOr_01O00D00E
-    1660,  // imageAtomicOr_01Z00D00E
-    1662,  // imageAtomicOr_01E10D00E
-    1664,  // imageAtomicOr_01P10D00E
-    1666,  // imageAtomicOr_01a10D00E
-    1668,  // imageAtomicOr_01I10D00E
-    1670,  // imageAtomicOr_01T10D00E
-    1672,  // imageAtomicOr_01e10D00E
-    1674,  // imageAtomicOr_01F10D00D00E
-    1676,  // imageAtomicOr_01Q10D00D00E
-    1678,  // imageAtomicOr_01b10D00D00E
-    1680,  // imageAtomicOr_01G20D00D00E
-    1682,  // imageAtomicOr_01R20D00D00E
-    1684,  // imageAtomicOr_01c20D00D00E
-    1686,  // imageAtomicOr_00z10D00D
-    1688,  // imageAtomicOr_01K10D00D
-    1690,  // imageAtomicOr_01V10D00D
-    1692,  // imageAtomicOr_01A20D00D
-    1694,  // imageAtomicOr_01L20D00D
-    1696,  // imageAtomicOr_01W20D00D
-    1698,  // imageAtomicOr_01C20D00D
-    1700,  // imageAtomicOr_01N20D00D
-    1702,  // imageAtomicOr_01Y20D00D
-    1704,  // imageAtomicOr_01J00D00D
-    1706,  // imageAtomicOr_01U00D00D
-    1708,  // imageAtomicOr_01f00D00D
-    1710,  // imageAtomicOr_01B20D00D
-    1712,  // imageAtomicOr_01M20D00D
-    1714,  // imageAtomicOr_01X20D00D
-    1716,  // imageAtomicOr_01H20D00D
-    1718,  // imageAtomicOr_01S20D00D
-    1720,  // imageAtomicOr_01d20D00D
-    1722,  // imageAtomicOr_01D00D00D
-    1724,  // imageAtomicOr_01O00D00D
-    1726,  // imageAtomicOr_01Z00D00D
-    1728,  // imageAtomicOr_01E10D00D
-    1730,  // imageAtomicOr_01P10D00D
-    1732,  // imageAtomicOr_01a10D00D
-    1734,  // imageAtomicOr_01I10D00D
-    1736,  // imageAtomicOr_01T10D00D
-    1738,  // imageAtomicOr_01e10D00D
-    1740,  // imageAtomicOr_01F10D00D00D
-    1742,  // imageAtomicOr_01Q10D00D00D
-    1744,  // imageAtomicOr_01b10D00D00D
-    1746,  // imageAtomicOr_01G20D00D00D
-    1748,  // imageAtomicOr_01R20D00D00D
-    1750,  // imageAtomicOr_01c20D00D00D
-    1752,  // imageAtomicXor_00z10D00E
-    1754,  // imageAtomicXor_01K10D00E
-    1756,  // imageAtomicXor_01V10D00E
-    1758,  // imageAtomicXor_01A20D00E
-    1760,  // imageAtomicXor_01L20D00E
-    1762,  // imageAtomicXor_01W20D00E
-    1764,  // imageAtomicXor_01C20D00E
-    1766,  // imageAtomicXor_01N20D00E
-    1768,  // imageAtomicXor_01Y20D00E
-    1770,  // imageAtomicXor_01J00D00E
-    1772,  // imageAtomicXor_01U00D00E
-    1774,  // imageAtomicXor_01f00D00E
-    1776,  // imageAtomicXor_01B20D00E
-    1778,  // imageAtomicXor_01M20D00E
-    1780,  // imageAtomicXor_01X20D00E
-    1782,  // imageAtomicXor_01H20D00E
-    1784,  // imageAtomicXor_01S20D00E
-    1786,  // imageAtomicXor_01d20D00E
-    1788,  // imageAtomicXor_01D00D00E
-    1790,  // imageAtomicXor_01O00D00E
-    1792,  // imageAtomicXor_01Z00D00E
-    1794,  // imageAtomicXor_01E10D00E
-    1796,  // imageAtomicXor_01P10D00E
-    1798,  // imageAtomicXor_01a10D00E
-    1800,  // imageAtomicXor_01I10D00E
-    1802,  // imageAtomicXor_01T10D00E
-    1804,  // imageAtomicXor_01e10D00E
-    1806,  // imageAtomicXor_01F10D00D00E
-    1808,  // imageAtomicXor_01Q10D00D00E
-    1810,  // imageAtomicXor_01b10D00D00E
-    1812,  // imageAtomicXor_01G20D00D00E
-    1814,  // imageAtomicXor_01R20D00D00E
-    1816,  // imageAtomicXor_01c20D00D00E
-    1818,  // imageAtomicXor_00z10D00D
-    1820,  // imageAtomicXor_01K10D00D
-    1822,  // imageAtomicXor_01V10D00D
-    1824,  // imageAtomicXor_01A20D00D
-    1826,  // imageAtomicXor_01L20D00D
-    1828,  // imageAtomicXor_01W20D00D
-    1830,  // imageAtomicXor_01C20D00D
-    1832,  // imageAtomicXor_01N20D00D
-    1834,  // imageAtomicXor_01Y20D00D
-    1836,  // imageAtomicXor_01J00D00D
-    1838,  // imageAtomicXor_01U00D00D
-    1840,  // imageAtomicXor_01f00D00D
-    1842,  // imageAtomicXor_01B20D00D
-    1844,  // imageAtomicXor_01M20D00D
-    1846,  // imageAtomicXor_01X20D00D
-    1848,  // imageAtomicXor_01H20D00D
-    1850,  // imageAtomicXor_01S20D00D
-    1852,  // imageAtomicXor_01d20D00D
-    1854,  // imageAtomicXor_01D00D00D
-    1856,  // imageAtomicXor_01O00D00D
-    1858,  // imageAtomicXor_01Z00D00D
-    1860,  // imageAtomicXor_01E10D00D
-    1862,  // imageAtomicXor_01P10D00D
-    1864,  // imageAtomicXor_01a10D00D
-    1866,  // imageAtomicXor_01I10D00D
-    1868,  // imageAtomicXor_01T10D00D
-    1870,  // imageAtomicXor_01e10D00D
-    1872,  // imageAtomicXor_01F10D00D00D
-    1874,  // imageAtomicXor_01Q10D00D00D
-    1876,  // imageAtomicXor_01b10D00D00D
-    1878,  // imageAtomicXor_01G20D00D00D
-    1880,  // imageAtomicXor_01R20D00D00D
-    1882,  // imageAtomicXor_01c20D00D00D
-    1884,  // imageAtomicExchange_00z10D00E
-    1886,  // imageAtomicExchange_01K10D00E
-    1888,  // imageAtomicExchange_01V10D00E
-    1890,  // imageAtomicExchange_01A20D00E
-    1892,  // imageAtomicExchange_01L20D00E
-    1894,  // imageAtomicExchange_01W20D00E
-    1896,  // imageAtomicExchange_01C20D00E
-    1898,  // imageAtomicExchange_01N20D00E
-    1900,  // imageAtomicExchange_01Y20D00E
-    1902,  // imageAtomicExchange_01J00D00E
-    1904,  // imageAtomicExchange_01U00D00E
-    1906,  // imageAtomicExchange_01f00D00E
-    1908,  // imageAtomicExchange_01B20D00E
-    1910,  // imageAtomicExchange_01M20D00E
-    1912,  // imageAtomicExchange_01X20D00E
-    1914,  // imageAtomicExchange_01H20D00E
-    1916,  // imageAtomicExchange_01S20D00E
-    1918,  // imageAtomicExchange_01d20D00E
-    1920,  // imageAtomicExchange_01D00D00E
-    1922,  // imageAtomicExchange_01O00D00E
-    1924,  // imageAtomicExchange_01Z00D00E
-    1926,  // imageAtomicExchange_01E10D00E
-    1928,  // imageAtomicExchange_01P10D00E
-    1930,  // imageAtomicExchange_01a10D00E
-    1932,  // imageAtomicExchange_01I10D00E
-    1934,  // imageAtomicExchange_01T10D00E
-    1936,  // imageAtomicExchange_01e10D00E
-    1938,  // imageAtomicExchange_01F10D00D00E
-    1940,  // imageAtomicExchange_01Q10D00D00E
-    1942,  // imageAtomicExchange_01b10D00D00E
-    1944,  // imageAtomicExchange_01G20D00D00E
-    1946,  // imageAtomicExchange_01R20D00D00E
-    1948,  // imageAtomicExchange_01c20D00D00E
-    1950,  // imageAtomicExchange_00z10D00D
-    1952,  // imageAtomicExchange_01K10D00D
-    1954,  // imageAtomicExchange_01V10D00D
-    1956,  // imageAtomicExchange_01A20D00D
-    1958,  // imageAtomicExchange_01L20D00D
-    1960,  // imageAtomicExchange_01W20D00D
-    1962,  // imageAtomicExchange_01C20D00D
-    1964,  // imageAtomicExchange_01N20D00D
-    1966,  // imageAtomicExchange_01Y20D00D
-    1968,  // imageAtomicExchange_01J00D00D
-    1970,  // imageAtomicExchange_01U00D00D
-    1972,  // imageAtomicExchange_01f00D00D
-    1974,  // imageAtomicExchange_01B20D00D
-    1976,  // imageAtomicExchange_01M20D00D
-    1978,  // imageAtomicExchange_01X20D00D
-    1980,  // imageAtomicExchange_01H20D00D
-    1982,  // imageAtomicExchange_01S20D00D
-    1984,  // imageAtomicExchange_01d20D00D
-    1986,  // imageAtomicExchange_01D00D00D
-    1988,  // imageAtomicExchange_01O00D00D
-    1990,  // imageAtomicExchange_01Z00D00D
-    1992,  // imageAtomicExchange_01E10D00D
-    1994,  // imageAtomicExchange_01P10D00D
-    1996,  // imageAtomicExchange_01a10D00D
-    1998,  // imageAtomicExchange_01I10D00D
-    2000,  // imageAtomicExchange_01T10D00D
-    2002,  // imageAtomicExchange_01e10D00D
-    2004,  // imageAtomicExchange_01F10D00D00D
-    2006,  // imageAtomicExchange_01Q10D00D00D
-    2008,  // imageAtomicExchange_01b10D00D00D
-    2010,  // imageAtomicExchange_01G20D00D00D
-    2012,  // imageAtomicExchange_01R20D00D00D
-    2014,  // imageAtomicExchange_01c20D00D00D
-    2016,  // imageAtomicExchange_00z10D00B
-    2018,  // imageAtomicExchange_01K10D00B
-    2020,  // imageAtomicExchange_01V10D00B
-    2022,  // imageAtomicExchange_01A20D00B
-    2024,  // imageAtomicExchange_01L20D00B
-    2026,  // imageAtomicExchange_01W20D00B
-    2028,  // imageAtomicExchange_01C20D00B
-    2030,  // imageAtomicExchange_01N20D00B
-    2032,  // imageAtomicExchange_01Y20D00B
-    2034,  // imageAtomicExchange_01J00D00B
-    2036,  // imageAtomicExchange_01U00D00B
-    2038,  // imageAtomicExchange_01f00D00B
-    2040,  // imageAtomicExchange_01B20D00B
-    2042,  // imageAtomicExchange_01M20D00B
-    2044,  // imageAtomicExchange_01X20D00B
-    2046,  // imageAtomicExchange_01H20D00B
-    2048,  // imageAtomicExchange_01S20D00B
-    2050,  // imageAtomicExchange_01d20D00B
-    2052,  // imageAtomicExchange_01D00D00B
-    2054,  // imageAtomicExchange_01O00D00B
-    2056,  // imageAtomicExchange_01Z00D00B
-    2058,  // imageAtomicExchange_01E10D00B
-    2060,  // imageAtomicExchange_01P10D00B
-    2062,  // imageAtomicExchange_01a10D00B
-    2064,  // imageAtomicExchange_01I10D00B
-    2066,  // imageAtomicExchange_01T10D00B
-    2068,  // imageAtomicExchange_01e10D00B
-    2070,  // imageAtomicExchange_01F10D00D00B
-    2072,  // imageAtomicExchange_01Q10D00D00B
-    2074,  // imageAtomicExchange_01b10D00D00B
-    2076,  // imageAtomicExchange_01G20D00D00B
-    2078,  // imageAtomicExchange_01R20D00D00B
-    2080,  // imageAtomicExchange_01c20D00D00B
-    2082,  // imageAtomicCompSwap_00z10D00E00E
-    2084,  // imageAtomicCompSwap_01K10D00E00E
-    2086,  // imageAtomicCompSwap_01V10D00E00E
-    2088,  // imageAtomicCompSwap_01A20D00E00E
-    2090,  // imageAtomicCompSwap_01L20D00E00E
-    2092,  // imageAtomicCompSwap_01W20D00E00E
-    2094,  // imageAtomicCompSwap_01C20D00E00E
-    2096,  // imageAtomicCompSwap_01N20D00E00E
-    2098,  // imageAtomicCompSwap_01Y20D00E00E
-    2100,  // imageAtomicCompSwap_01J00D00E00E
-    2102,  // imageAtomicCompSwap_01U00D00E00E
-    2104,  // imageAtomicCompSwap_01f00D00E00E
-    2106,  // imageAtomicCompSwap_01B20D00E00E
-    2108,  // imageAtomicCompSwap_01M20D00E00E
-    2110,  // imageAtomicCompSwap_01X20D00E00E
-    2112,  // imageAtomicCompSwap_01H20D00E00E
-    2114,  // imageAtomicCompSwap_01S20D00E00E
-    2116,  // imageAtomicCompSwap_01d20D00E00E
-    2118,  // imageAtomicCompSwap_01D00D00E00E
-    2120,  // imageAtomicCompSwap_01O00D00E00E
-    2122,  // imageAtomicCompSwap_01Z00D00E00E
-    2124,  // imageAtomicCompSwap_01E10D00E00E
-    2126,  // imageAtomicCompSwap_01P10D00E00E
-    2128,  // imageAtomicCompSwap_01a10D00E00E
-    2130,  // imageAtomicCompSwap_01I10D00E00E
-    2132,  // imageAtomicCompSwap_01T10D00E00E
-    2134,  // imageAtomicCompSwap_01e10D00E00E
-    2136,  // imageAtomicCompSwap_01F10D00D00E00E
-    2138,  // imageAtomicCompSwap_01Q10D00D00E00E
-    2140,  // imageAtomicCompSwap_01b10D00D00E00E
-    2142,  // imageAtomicCompSwap_01G20D00D00E00E
-    2144,  // imageAtomicCompSwap_01R20D00D00E00E
-    2146,  // imageAtomicCompSwap_01c20D00D00E00E
-    2148,  // imageAtomicCompSwap_00z10D00D00D
-    2150,  // imageAtomicCompSwap_01K10D00D00D
-    2152,  // imageAtomicCompSwap_01V10D00D00D
-    2154,  // imageAtomicCompSwap_01A20D00D00D
-    2156,  // imageAtomicCompSwap_01L20D00D00D
-    2158,  // imageAtomicCompSwap_01W20D00D00D
-    2160,  // imageAtomicCompSwap_01C20D00D00D
-    2162,  // imageAtomicCompSwap_01N20D00D00D
-    2164,  // imageAtomicCompSwap_01Y20D00D00D
-    2166,  // imageAtomicCompSwap_01J00D00D00D
-    2168,  // imageAtomicCompSwap_01U00D00D00D
-    2170,  // imageAtomicCompSwap_01f00D00D00D
-    2172,  // imageAtomicCompSwap_01B20D00D00D
-    2174,  // imageAtomicCompSwap_01M20D00D00D
-    2176,  // imageAtomicCompSwap_01X20D00D00D
-    2178,  // imageAtomicCompSwap_01H20D00D00D
-    2180,  // imageAtomicCompSwap_01S20D00D00D
-    2182,  // imageAtomicCompSwap_01d20D00D00D
-    2184,  // imageAtomicCompSwap_01D00D00D00D
-    2186,  // imageAtomicCompSwap_01O00D00D00D
-    2188,  // imageAtomicCompSwap_01Z00D00D00D
-    2190,  // imageAtomicCompSwap_01E10D00D00D
-    2192,  // imageAtomicCompSwap_01P10D00D00D
-    2194,  // imageAtomicCompSwap_01a10D00D00D
-    2196,  // imageAtomicCompSwap_01I10D00D00D
-    2198,  // imageAtomicCompSwap_01T10D00D00D
-    2200,  // imageAtomicCompSwap_01e10D00D00D
-    2202,  // imageAtomicCompSwap_01F10D00D00D00D
-    2204,  // imageAtomicCompSwap_01Q10D00D00D00D
-    2206,  // imageAtomicCompSwap_01b10D00D00D00D
-    2208,  // imageAtomicCompSwap_01G20D00D00D00D
-    2210,  // imageAtomicCompSwap_01R20D00D00D00D
-    2212,  // imageAtomicCompSwap_01c20D00D00D00D
-    2214,  // pixelLocalLoadANGLE_01g
-    2215,  // pixelLocalLoadANGLE_01h
-    2216,  // pixelLocalLoadANGLE_01i
-    2217,  // pixelLocalStoreANGLE_01g30B
-    2218,  // pixelLocalStoreANGLE_01h30D
-    2219,  // pixelLocalStoreANGLE_01i30E
-    2220,  // beginInvocationInterlockNV_
-    2221,  // endInvocationInterlockNV_
-    2222,  // beginFragmentShaderOrderingINTEL_
-    2223,  // beginInvocationInterlockARB_
-    2224,  // endInvocationInterlockARB_
-    2225,  // memoryBarrier_
-    2226,  // memoryBarrierAtomicCounter_
-    2227,  // memoryBarrierBuffer_
-    2228,  // memoryBarrierImage_
-    2229,  // barrier_
-    2232,  // memoryBarrierShared_
-    2233,  // groupMemoryBarrier_
-    2234,  // EmitVertex_
-    2237,  // EndPrimitive_
-    2240,  // subpassLoad_01j
-    2241,  // subpassLoad_01k
-    2242,  // subpassLoad_01l
-    2243,  // subpassLoad_01m00D
-    2244,  // subpassLoad_01n00D
-    2245,  // subpassLoad_01o00D
-    2246,  // numSamples_
-    2247,  // samplePosition_00E
-    2248,  // interpolateAtCenter_00B
-    2249,  // interpolateAtCenter_10B
-    2250,  // interpolateAtCenter_20B
-    2251,  // interpolateAtCenter_30B
-    2252,  // saturate_00B
-    2253,  // saturate_10B
-    2254,  // saturate_20B
-    2255,  // saturate_30B
-    2256,  // gl_DepthRangeParameters
-    2257,  // gl_DepthRange
-    2258,  // gl_NumSamples
-    2260,  // gl_MaxVertexAttribs
-    2261,  // gl_MaxVertexUniformVectors
-    2262,  // gl_MaxVertexTextureImageUnits
-    2263,  // gl_MaxCombinedTextureImageUnits
-    2264,  // gl_MaxTextureImageUnits
-    2265,  // gl_MaxFragmentUniformVectors
-    2266,  // gl_MaxVaryingVectors
-    2267,  // gl_MaxDrawBuffers
-    2268,  // gl_MaxDualSourceDrawBuffersEXT
-    2269,  // gl_MaxVertexOutputVectors
-    2270,  // gl_MaxFragmentInputVectors
-    2271,  // gl_MinProgramTexelOffset
-    2272,  // gl_MaxProgramTexelOffset
-    2273,  // gl_MaxImageUnits
-    2274,  // gl_MaxVertexImageUniforms
-    2275,  // gl_MaxFragmentImageUniforms
-    2276,  // gl_MaxComputeImageUniforms
-    2277,  // gl_MaxCombinedImageUniforms
-    2278,  // gl_MaxCombinedShaderOutputResources
-    2279,  // gl_MaxComputeWorkGroupCount
-    2280,  // gl_MaxComputeWorkGroupSize
-    2281,  // gl_MaxComputeUniformComponents
-    2282,  // gl_MaxComputeTextureImageUnits
-    2283,  // gl_MaxComputeAtomicCounters
-    2284,  // gl_MaxComputeAtomicCounterBuffers
-    2285,  // gl_MaxVertexAtomicCounters
-    2286,  // gl_MaxFragmentAtomicCounters
-    2287,  // gl_MaxCombinedAtomicCounters
-    2288,  // gl_MaxAtomicCounterBindings
-    2289,  // gl_MaxVertexAtomicCounterBuffers
-    2290,  // gl_MaxFragmentAtomicCounterBuffers
-    2291,  // gl_MaxCombinedAtomicCounterBuffers
-    2292,  // gl_MaxAtomicCounterBufferSize
-    2293,  // gl_MaxGeometryInputComponents
-    2296,  // gl_MaxGeometryOutputComponents
-    2299,  // gl_MaxGeometryImageUniforms
-    2302,  // gl_MaxGeometryTextureImageUnits
-    2305,  // gl_MaxGeometryOutputVertices
-    2308,  // gl_MaxGeometryTotalOutputComponents
-    2311,  // gl_MaxGeometryUniformComponents
-    2314,  // gl_MaxGeometryAtomicCounters
-    2317,  // gl_MaxGeometryAtomicCounterBuffers
-    2320,  // gl_MaxTessControlInputComponents
-    2322,  // gl_MaxTessControlOutputComponents
-    2324,  // gl_MaxTessControlTextureImageUnits
-    2326,  // gl_MaxTessControlUniformComponents
-    2328,  // gl_MaxTessControlTotalOutputComponents
-    2330,  // gl_MaxTessControlImageUniforms
-    2332,  // gl_MaxTessControlAtomicCounters
-    2334,  // gl_MaxTessControlAtomicCounterBuffers
-    2336,  // gl_MaxTessPatchComponents
-    2338,  // gl_MaxPatchVertices
-    2340,  // gl_MaxTessGenLevel
-    2342,  // gl_MaxTessEvaluationInputComponents
-    2344,  // gl_MaxTessEvaluationOutputComponents
-    2346,  // gl_MaxTessEvaluationTextureImageUnits
-    2348,  // gl_MaxTessEvaluationUniformComponents
-    2350,  // gl_MaxTessEvaluationImageUniforms
-    2352,  // gl_MaxTessEvaluationAtomicCounters
-    2354,  // gl_MaxTessEvaluationAtomicCounterBuffers
-    2356,  // gl_MaxSamples
-    2358,  // gl_MaxClipDistances
-    2361,  // gl_MaxCullDistances
-    2363,  // gl_MaxCombinedClipAndCullDistances
-    2365,  // gl_FragCoord
-    2367,  // gl_FrontFacing
-    2368,  // gl_PointCoord
-    2369,  // gl_FragColor
-    2370,  // gl_FragData
-    2371,  // gl_FragDepth
-    2372,  // gl_HelperInvocation
-    2373,  // gl_SecondaryFragColorEXT
-    2374,  // gl_SecondaryFragDataEXT
-    2375,  // gl_FragDepthEXT
-    2376,  // gl_LastFragData
-    2379,  // gl_LastFragColor
-    2380,  // gl_LastFragColorARM
-    2381,  // gl_PrimitiveID
-    2391,  // gl_Layer
-    2397,  // gl_SampleID
-    2399,  // gl_SamplePosition
-    2401,  // gl_SampleMaskIn
-    2403,  // gl_SampleMask
-    2405,  // gl_Position
-    2413,  // gl_PointSize
-    2415,  // gl_InstanceID
-    2416,  // Empty
-    2416,  // gl_VertexID
-    2417,  // Empty
-    2417,  // Empty
-    2417,  // gl_DrawID
-    2418,  // gl_BaseVertex
-    2419,  // gl_BaseInstance
-    2420,  // angle_BaseVertex
-    2421,  // angle_BaseInstance
-    2422,  // gl_ClipDistance
-    2425,  // gl_NumWorkGroups
-    2426,  // gl_WorkGroupSize
-    2427,  // gl_WorkGroupID
-    2428,  // gl_LocalInvocationID
-    2429,  // gl_GlobalInvocationID
-    2430,  // gl_LocalInvocationIndex
-    2431,  // gl_PrimitiveIDIn
-    2434,  // gl_InvocationID
-    2439,  // gl_PerVertex
-    2446,  // gl_in
-    2453,  // gl_PatchVerticesIn
-    2457,  // gl_TessLevelOuter
-    2461,  // gl_TessLevelInner
-    2465,  // gl_out
-    2469,  // gl_BoundingBox
-    2471,  // gl_BoundingBoxEXT
-    2473,  // gl_BoundingBoxOES
-    2475,  // gl_TessCoord
-    2476,  // gl_ViewID_OVR
-    2477,  // gl_CullDistance
+    266,   // fma_10B10B10B
+    269,   // fma_20B20B20B
+    272,   // fma_30B30B30B
+    275,   // frexp_00B00D
+    276,   // frexp_10B10D
+    277,   // frexp_20B20D
+    278,   // frexp_30B30D
+    279,   // ldexp_00B00D
+    280,   // ldexp_10B10D
+    281,   // ldexp_20B20D
+    282,   // ldexp_30B30D
+    283,   // packSnorm2x16_10B
+    284,   // packHalf2x16_10B
+    285,   // unpackSnorm2x16_00E
+    286,   // unpackHalf2x16_00E
+    287,   // packUnorm2x16_10B
+    288,   // unpackUnorm2x16_00E
+    289,   // packUnorm4x8_30B
+    290,   // packSnorm4x8_30B
+    291,   // unpackUnorm4x8_00E
+    292,   // unpackSnorm4x8_00E
+    293,   // length_00B
+    294,   // length_10B
+    295,   // length_20B
+    296,   // length_30B
+    297,   // distance_00B00B
+    298,   // distance_10B10B
+    299,   // distance_20B20B
+    300,   // distance_30B30B
+    301,   // dot_00B00B
+    302,   // dot_10B10B
+    303,   // dot_20B20B
+    304,   // dot_30B30B
+    305,   // cross_20B20B
+    306,   // normalize_00B
+    307,   // normalize_10B
+    308,   // normalize_20B
+    309,   // normalize_30B
+    310,   // faceforward_00B00B00B
+    311,   // faceforward_10B10B10B
+    312,   // faceforward_20B20B20B
+    313,   // faceforward_30B30B30B
+    314,   // reflect_00B00B
+    315,   // reflect_10B10B
+    316,   // reflect_20B20B
+    317,   // reflect_30B30B
+    318,   // refract_00B00B00B
+    319,   // refract_10B10B00B
+    320,   // refract_20B20B00B
+    321,   // refract_30B30B00B
+    322,   // matrixCompMult_50B50B
+    323,   // matrixCompMult_A0BA0B
+    324,   // matrixCompMult_F0BF0B
+    325,   // matrixCompMult_90B90B
+    326,   // matrixCompMult_60B60B
+    327,   // matrixCompMult_D0BD0B
+    328,   // matrixCompMult_70B70B
+    329,   // matrixCompMult_E0BE0B
+    330,   // matrixCompMult_B0BB0B
+    331,   // outerProduct_10B10B
+    332,   // outerProduct_20B20B
+    333,   // outerProduct_30B30B
+    334,   // outerProduct_20B10B
+    335,   // outerProduct_10B20B
+    336,   // outerProduct_30B10B
+    337,   // outerProduct_10B30B
+    338,   // outerProduct_30B20B
+    339,   // outerProduct_20B30B
+    340,   // transpose_50B
+    341,   // transpose_A0B
+    342,   // transpose_F0B
+    343,   // transpose_60B
+    344,   // transpose_90B
+    345,   // transpose_70B
+    346,   // transpose_D0B
+    347,   // transpose_B0B
+    348,   // transpose_E0B
+    349,   // determinant_50B
+    350,   // determinant_A0B
+    351,   // determinant_F0B
+    352,   // inverse_50B
+    353,   // inverse_A0B
+    354,   // inverse_F0B
+    355,   // lessThan_10B10B
+    356,   // lessThan_20B20B
+    357,   // lessThan_30B30B
+    358,   // lessThan_10D10D
+    359,   // lessThan_20D20D
+    360,   // lessThan_30D30D
+    361,   // lessThan_10E10E
+    362,   // lessThan_20E20E
+    363,   // lessThan_30E30E
+    364,   // lessThanEqual_10B10B
+    365,   // lessThanEqual_20B20B
+    366,   // lessThanEqual_30B30B
+    367,   // lessThanEqual_10D10D
+    368,   // lessThanEqual_20D20D
+    369,   // lessThanEqual_30D30D
+    370,   // lessThanEqual_10E10E
+    371,   // lessThanEqual_20E20E
+    372,   // lessThanEqual_30E30E
+    373,   // greaterThan_10B10B
+    374,   // greaterThan_20B20B
+    375,   // greaterThan_30B30B
+    376,   // greaterThan_10D10D
+    377,   // greaterThan_20D20D
+    378,   // greaterThan_30D30D
+    379,   // greaterThan_10E10E
+    380,   // greaterThan_20E20E
+    381,   // greaterThan_30E30E
+    382,   // greaterThanEqual_10B10B
+    383,   // greaterThanEqual_20B20B
+    384,   // greaterThanEqual_30B30B
+    385,   // greaterThanEqual_10D10D
+    386,   // greaterThanEqual_20D20D
+    387,   // greaterThanEqual_30D30D
+    388,   // greaterThanEqual_10E10E
+    389,   // greaterThanEqual_20E20E
+    390,   // greaterThanEqual_30E30E
+    391,   // equal_10B10B
+    392,   // equal_20B20B
+    393,   // equal_30B30B
+    394,   // equal_10D10D
+    395,   // equal_20D20D
+    396,   // equal_30D30D
+    397,   // equal_10E10E
+    398,   // equal_20E20E
+    399,   // equal_30E30E
+    400,   // equal_10F10F
+    401,   // equal_20F20F
+    402,   // equal_30F30F
+    403,   // notEqual_10B10B
+    404,   // notEqual_20B20B
+    405,   // notEqual_30B30B
+    406,   // notEqual_10D10D
+    407,   // notEqual_20D20D
+    408,   // notEqual_30D30D
+    409,   // notEqual_10E10E
+    410,   // notEqual_20E20E
+    411,   // notEqual_30E30E
+    412,   // notEqual_10F10F
+    413,   // notEqual_20F20F
+    414,   // notEqual_30F30F
+    415,   // any_10F
+    416,   // any_20F
+    417,   // any_30F
+    418,   // all_10F
+    419,   // all_20F
+    420,   // all_30F
+    421,   // not_10F
+    422,   // not_20F
+    423,   // not_30F
+    424,   // bitfieldExtract_00D00D00D
+    425,   // bitfieldExtract_10D00D00D
+    426,   // bitfieldExtract_20D00D00D
+    427,   // bitfieldExtract_30D00D00D
+    428,   // bitfieldExtract_00E00D00D
+    429,   // bitfieldExtract_10E00D00D
+    430,   // bitfieldExtract_20E00D00D
+    431,   // bitfieldExtract_30E00D00D
+    432,   // bitfieldInsert_00D00D00D00D
+    433,   // bitfieldInsert_10D10D00D00D
+    434,   // bitfieldInsert_20D20D00D00D
+    435,   // bitfieldInsert_30D30D00D00D
+    436,   // bitfieldInsert_00E00E00D00D
+    437,   // bitfieldInsert_10E10E00D00D
+    438,   // bitfieldInsert_20E20E00D00D
+    439,   // bitfieldInsert_30E30E00D00D
+    440,   // bitfieldReverse_00D
+    441,   // bitfieldReverse_10D
+    442,   // bitfieldReverse_20D
+    443,   // bitfieldReverse_30D
+    444,   // bitfieldReverse_00E
+    445,   // bitfieldReverse_10E
+    446,   // bitfieldReverse_20E
+    447,   // bitfieldReverse_30E
+    448,   // bitCount_00D
+    449,   // bitCount_10D
+    450,   // bitCount_20D
+    451,   // bitCount_30D
+    452,   // bitCount_00E
+    453,   // bitCount_10E
+    454,   // bitCount_20E
+    455,   // bitCount_30E
+    456,   // findLSB_00D
+    457,   // findLSB_10D
+    458,   // findLSB_20D
+    459,   // findLSB_30D
+    460,   // findLSB_00E
+    461,   // findLSB_10E
+    462,   // findLSB_20E
+    463,   // findLSB_30E
+    464,   // findMSB_00D
+    465,   // findMSB_10D
+    466,   // findMSB_20D
+    467,   // findMSB_30D
+    468,   // findMSB_00E
+    469,   // findMSB_10E
+    470,   // findMSB_20E
+    471,   // findMSB_30E
+    472,   // uaddCarry_00E00E00E
+    473,   // uaddCarry_10E10E10E
+    474,   // uaddCarry_20E20E20E
+    475,   // uaddCarry_30E30E30E
+    476,   // usubBorrow_00E00E00E
+    477,   // usubBorrow_10E10E10E
+    478,   // usubBorrow_20E20E20E
+    479,   // usubBorrow_30E30E30E
+    480,   // umulExtended_00E00E00E00E
+    481,   // umulExtended_10E10E10E10E
+    482,   // umulExtended_20E20E20E20E
+    483,   // umulExtended_30E30E30E30E
+    484,   // imulExtended_00D00D00D00D
+    485,   // imulExtended_10D10D10D10D
+    486,   // imulExtended_20D20D20D20D
+    487,   // imulExtended_30D30D30D30D
+    488,   // texture2D_00I10B
+    489,   // texture2DProj_00I20B
+    490,   // texture2DProj_00I30B
+    491,   // textureCube_00K20B
+    492,   // texture3D_00J20B
+    493,   // texture3DProj_00J30B
+    494,   // shadow2DEXT_00d20B
+    495,   // shadow2DProjEXT_00d30B
+    496,   // texture2D_00M10B
+    498,   // texture2DProj_00M20B
+    500,   // texture2DProj_00M30B
+    502,   // texture2DRect_00O10B
+    503,   // texture2DRectProj_00O20B
+    504,   // texture2DRectProj_00O30B
+    505,   // texture2DGradEXT_00I10B10B10B
+    506,   // texture2DProjGradEXT_00I20B10B10B
+    507,   // texture2DProjGradEXT_00I30B10B10B
+    508,   // textureCubeGradEXT_00K20B20B20B
+    509,   // textureVideoWEBGL_00y10B
+    510,   // texture2D_00I10B00B
+    511,   // texture2DProj_00I20B00B
+    512,   // texture2DProj_00I30B00B
+    513,   // textureCube_00K20B00B
+    514,   // texture3D_00J20B00B
+    515,   // texture3DProj_00J30B00B
+    516,   // texture3DLod_00J20B00B
+    517,   // texture3DProjLod_00J30B00B
+    518,   // texture2DLod_00I10B00B
+    519,   // texture2DProjLod_00I20B00B
+    520,   // texture2DProjLod_00I30B00B
+    521,   // textureCubeLod_00K20B00B
+    522,   // texture2DLodEXT_00I10B00B
+    523,   // texture2DProjLodEXT_00I20B00B
+    524,   // texture2DProjLodEXT_00I30B00B
+    525,   // textureCubeLodEXT_00K20B00B
+    526,   // texture_00I10B
+    527,   // texture_00R10B
+    528,   // texture_00X10B
+    529,   // texture_00J20B
+    530,   // texture_00S20B
+    531,   // texture_00Y20B
+    532,   // texture_00K20B
+    533,   // texture_00T20B
+    534,   // texture_00Z20B
+    535,   // texture_00L20B
+    536,   // texture_00U20B
+    537,   // texture_00a20B
+    538,   // texture_00d20B
+    539,   // texture_00e30B
+    540,   // texture_00f30B
+    541,   // texture_00k30B
+    544,   // texture_00s30B
+    547,   // texture_00x30B
+    550,   // texture_00l30B00B
+    553,   // texture_00M10B
+    554,   // texture_00N10B
+    555,   // texture_00O10B
+    556,   // texture_00y10B
+    557,   // textureProj_00I20B
+    558,   // textureProj_00R20B
+    559,   // textureProj_00X20B
+    560,   // textureProj_00I30B
+    561,   // textureProj_00R30B
+    562,   // textureProj_00X30B
+    563,   // textureProj_00J30B
+    564,   // textureProj_00S30B
+    565,   // textureProj_00Y30B
+    566,   // textureProj_00d30B
+    567,   // textureProj_00M20B
+    568,   // textureProj_00M30B
+    569,   // textureProj_00N20B
+    570,   // textureProj_00N30B
+    571,   // textureProj_00O20B
+    572,   // textureProj_00O30B
+    573,   // textureLod_00I10B00B
+    574,   // textureLod_00R10B00B
+    575,   // textureLod_00X10B00B
+    576,   // textureLod_00J20B00B
+    577,   // textureLod_00S20B00B
+    578,   // textureLod_00Y20B00B
+    579,   // textureLod_00K20B00B
+    580,   // textureLod_00T20B00B
+    581,   // textureLod_00Z20B00B
+    582,   // textureLod_00L20B00B
+    583,   // textureLod_00U20B00B
+    584,   // textureLod_00a20B00B
+    585,   // textureLod_00d20B00B
+    586,   // textureLod_00k30B00B
+    589,   // textureLod_00s30B00B
+    592,   // textureLod_00x30B00B
+    595,   // textureSize_00I00D
+    596,   // textureSize_00R00D
+    597,   // textureSize_00X00D
+    598,   // textureSize_00J00D
+    599,   // textureSize_00S00D
+    600,   // textureSize_00Y00D
+    601,   // textureSize_00K00D
+    602,   // textureSize_00T00D
+    603,   // textureSize_00Z00D
+    604,   // textureSize_00L00D
+    605,   // textureSize_00U00D
+    606,   // textureSize_00a00D
+    607,   // textureSize_00d00D
+    608,   // textureSize_00e00D
+    609,   // textureSize_00f00D
+    610,   // textureSize_00k00D
+    613,   // textureSize_00s00D
+    616,   // textureSize_00x00D
+    619,   // textureSize_00l00D
+    622,   // textureSize_00j
+    625,   // textureSize_00r
+    628,   // textureSize_00w
+    631,   // textureSize_00P
+    633,   // textureSize_00V
+    635,   // textureSize_00b
+    637,   // textureSize_00Q
+    639,   // textureSize_00W
+    641,   // textureSize_00c
+    643,   // textureSize_00M00D
+    644,   // textureSize_00N00D
+    645,   // textureProjLod_00I20B00B
+    646,   // textureProjLod_00R20B00B
+    647,   // textureProjLod_00X20B00B
+    648,   // textureProjLod_00I30B00B
+    649,   // textureProjLod_00R30B00B
+    650,   // textureProjLod_00X30B00B
+    651,   // textureProjLod_00J30B00B
+    652,   // textureProjLod_00S30B00B
+    653,   // textureProjLod_00Y30B00B
+    654,   // textureProjLod_00d30B00B
+    655,   // texelFetch_00I10D00D
+    656,   // texelFetch_00R10D00D
+    657,   // texelFetch_00X10D00D
+    658,   // texelFetch_00J20D00D
+    659,   // texelFetch_00S20D00D
+    660,   // texelFetch_00Y20D00D
+    661,   // texelFetch_00L20D00D
+    662,   // texelFetch_00U20D00D
+    663,   // texelFetch_00a20D00D
+    664,   // texelFetch_00j00D
+    667,   // texelFetch_00r00D
+    670,   // texelFetch_00w00D
+    673,   // texelFetch_00P10D00D
+    675,   // texelFetch_00V10D00D
+    677,   // texelFetch_00b10D00D
+    679,   // texelFetch_00Q20D00D
+    681,   // texelFetch_00W20D00D
+    683,   // texelFetch_00c20D00D
+    685,   // texelFetch_00M10D00D
+    686,   // texelFetch_00N10D00D
+    687,   // textureGrad_00I10B10B10B
+    688,   // textureGrad_00R10B10B10B
+    689,   // textureGrad_00X10B10B10B
+    690,   // textureGrad_00J20B20B20B
+    691,   // textureGrad_00S20B20B20B
+    692,   // textureGrad_00Y20B20B20B
+    693,   // textureGrad_00K20B20B20B
+    694,   // textureGrad_00T20B20B20B
+    695,   // textureGrad_00Z20B20B20B
+    696,   // textureGrad_00d20B10B10B
+    697,   // textureGrad_00e30B20B20B
+    698,   // textureGrad_00L20B10B10B
+    699,   // textureGrad_00U20B10B10B
+    700,   // textureGrad_00a20B10B10B
+    701,   // textureGrad_00f30B10B10B
+    702,   // textureGrad_00k30B20B20B
+    705,   // textureGrad_00s30B20B20B
+    708,   // textureGrad_00x30B20B20B
+    711,   // textureProjGrad_00I20B10B10B
+    712,   // textureProjGrad_00R20B10B10B
+    713,   // textureProjGrad_00X20B10B10B
+    714,   // textureProjGrad_00I30B10B10B
+    715,   // textureProjGrad_00R30B10B10B
+    716,   // textureProjGrad_00X30B10B10B
+    717,   // textureProjGrad_00J30B20B20B
+    718,   // textureProjGrad_00S30B20B20B
+    719,   // textureProjGrad_00Y30B20B20B
+    720,   // textureProjGrad_00d30B10B10B
+    721,   // texture_00I10B00B
+    722,   // texture_00R10B00B
+    723,   // texture_00X10B00B
+    724,   // texture_00J20B00B
+    725,   // texture_00S20B00B
+    726,   // texture_00Y20B00B
+    727,   // texture_00K20B00B
+    728,   // texture_00T20B00B
+    729,   // texture_00Z20B00B
+    730,   // texture_00L20B00B
+    731,   // texture_00U20B00B
+    732,   // texture_00a20B00B
+    733,   // textureProj_00I20B00B
+    734,   // textureProj_00R20B00B
+    735,   // textureProj_00X20B00B
+    736,   // textureProj_00I30B00B
+    737,   // textureProj_00R30B00B
+    738,   // textureProj_00X30B00B
+    739,   // textureProj_00J30B00B
+    740,   // textureProj_00S30B00B
+    741,   // textureProj_00Y30B00B
+    742,   // texture_00d20B00B
+    743,   // texture_00e30B00B
+    744,   // textureProj_00d30B00B
+    745,   // texture_00k30B00B
+    748,   // texture_00s30B00B
+    751,   // texture_00x30B00B
+    754,   // texture_00M10B00B
+    755,   // textureProj_00M20B00B
+    756,   // textureProj_00M30B00B
+    757,   // texture_00N10B00B
+    758,   // textureProj_00N20B00B
+    759,   // textureProj_00N30B00B
+    760,   // textureOffset_00I10B10D
+    761,   // textureOffset_00R10B10D
+    762,   // textureOffset_00X10B10D
+    763,   // textureOffset_00J20B20D
+    764,   // textureOffset_00S20B20D
+    765,   // textureOffset_00Y20B20D
+    766,   // textureOffset_00d20B10D
+    767,   // textureOffset_00L20B10D
+    768,   // textureOffset_00U20B10D
+    769,   // textureOffset_00a20B10D
+    770,   // textureProjOffset_00I20B10D
+    771,   // textureProjOffset_00R20B10D
+    772,   // textureProjOffset_00X20B10D
+    773,   // textureProjOffset_00I30B10D
+    774,   // textureProjOffset_00R30B10D
+    775,   // textureProjOffset_00X30B10D
+    776,   // textureProjOffset_00J30B20D
+    777,   // textureProjOffset_00S30B20D
+    778,   // textureProjOffset_00Y30B20D
+    779,   // textureProjOffset_00d30B10D
+    780,   // textureLodOffset_00I10B00B10D
+    781,   // textureLodOffset_00R10B00B10D
+    782,   // textureLodOffset_00X10B00B10D
+    783,   // textureLodOffset_00J20B00B20D
+    784,   // textureLodOffset_00S20B00B20D
+    785,   // textureLodOffset_00Y20B00B20D
+    786,   // textureLodOffset_00d20B00B10D
+    787,   // textureLodOffset_00L20B00B10D
+    788,   // textureLodOffset_00U20B00B10D
+    789,   // textureLodOffset_00a20B00B10D
+    790,   // textureProjLodOffset_00I20B00B10D
+    791,   // textureProjLodOffset_00R20B00B10D
+    792,   // textureProjLodOffset_00X20B00B10D
+    793,   // textureProjLodOffset_00I30B00B10D
+    794,   // textureProjLodOffset_00R30B00B10D
+    795,   // textureProjLodOffset_00X30B00B10D
+    796,   // textureProjLodOffset_00J30B00B20D
+    797,   // textureProjLodOffset_00S30B00B20D
+    798,   // textureProjLodOffset_00Y30B00B20D
+    799,   // textureProjLodOffset_00d30B00B10D
+    800,   // texelFetchOffset_00I10D00D10D
+    801,   // texelFetchOffset_00R10D00D10D
+    802,   // texelFetchOffset_00X10D00D10D
+    803,   // texelFetchOffset_00J20D00D20D
+    804,   // texelFetchOffset_00S20D00D20D
+    805,   // texelFetchOffset_00Y20D00D20D
+    806,   // texelFetchOffset_00L20D00D10D
+    807,   // texelFetchOffset_00U20D00D10D
+    808,   // texelFetchOffset_00a20D00D10D
+    809,   // textureGradOffset_00I10B10B10B10D
+    810,   // textureGradOffset_00R10B10B10B10D
+    811,   // textureGradOffset_00X10B10B10B10D
+    812,   // textureGradOffset_00J20B20B20B20D
+    813,   // textureGradOffset_00S20B20B20B20D
+    814,   // textureGradOffset_00Y20B20B20B20D
+    815,   // textureGradOffset_00d20B10B10B10D
+    816,   // textureGradOffset_00L20B10B10B10D
+    817,   // textureGradOffset_00U20B10B10B10D
+    818,   // textureGradOffset_00a20B10B10B10D
+    819,   // textureGradOffset_00f30B10B10B10D
+    820,   // textureProjGradOffset_00I20B10B10B10D
+    821,   // textureProjGradOffset_00R20B10B10B10D
+    822,   // textureProjGradOffset_00X20B10B10B10D
+    823,   // textureProjGradOffset_00I30B10B10B10D
+    824,   // textureProjGradOffset_00R30B10B10B10D
+    825,   // textureProjGradOffset_00X30B10B10B10D
+    826,   // textureProjGradOffset_00J30B20B20B20D
+    827,   // textureProjGradOffset_00S30B20B20B20D
+    828,   // textureProjGradOffset_00Y30B20B20B20D
+    829,   // textureProjGradOffset_00d30B10B10B10D
+    830,   // textureOffset_00I10B10D00B
+    831,   // textureOffset_00R10B10D00B
+    832,   // textureOffset_00X10B10D00B
+    833,   // textureOffset_00J20B20D00B
+    834,   // textureOffset_00S20B20D00B
+    835,   // textureOffset_00Y20B20D00B
+    836,   // textureOffset_00d20B10D00B
+    837,   // textureOffset_00L20B10D00B
+    838,   // textureOffset_00U20B10D00B
+    839,   // textureOffset_00a20B10D00B
+    840,   // textureProjOffset_00I20B10D00B
+    841,   // textureProjOffset_00R20B10D00B
+    842,   // textureProjOffset_00X20B10D00B
+    843,   // textureProjOffset_00I30B10D00B
+    844,   // textureProjOffset_00R30B10D00B
+    845,   // textureProjOffset_00X30B10D00B
+    846,   // textureProjOffset_00J30B20D00B
+    847,   // textureProjOffset_00S30B20D00B
+    848,   // textureProjOffset_00Y30B20D00B
+    849,   // textureProjOffset_00d30B10D00B
+    850,   // textureGather_00I10B
+    851,   // textureGather_00R10B
+    852,   // textureGather_00X10B
+    853,   // textureGather_00I10B00D
+    854,   // textureGather_00R10B00D
+    855,   // textureGather_00X10B00D
+    856,   // textureGather_00L20B
+    857,   // textureGather_00U20B
+    858,   // textureGather_00a20B
+    859,   // textureGather_00L20B00D
+    860,   // textureGather_00U20B00D
+    861,   // textureGather_00a20B00D
+    862,   // textureGather_00K20B
+    863,   // textureGather_00T20B
+    864,   // textureGather_00Z20B
+    865,   // textureGather_00K20B00D
+    866,   // textureGather_00T20B00D
+    867,   // textureGather_00Z20B00D
+    868,   // textureGather_00k30B
+    871,   // textureGather_00s30B
+    874,   // textureGather_00x30B
+    877,   // textureGather_00k30B00D
+    880,   // textureGather_00s30B00D
+    883,   // textureGather_00x30B00D
+    886,   // textureGather_00l30B00B
+    889,   // textureGather_00d10B
+    890,   // textureGather_00d10B00B
+    891,   // textureGather_00f20B
+    892,   // textureGather_00f20B00B
+    893,   // textureGather_00e20B
+    894,   // textureGather_00e20B00B
+    895,   // textureGatherOffset_00I10B10D
+    896,   // textureGatherOffset_00R10B10D
+    897,   // textureGatherOffset_00X10B10D
+    898,   // textureGatherOffset_00L20B10D
+    899,   // textureGatherOffset_00U20B10D
+    900,   // textureGatherOffset_00a20B10D
+    901,   // textureGatherOffset_00d10B00B10D
+    902,   // textureGatherOffset_00f20B00B10D
+    903,   // textureGatherOffset_00I10B10D00D
+    904,   // textureGatherOffset_00R10B10D00D
+    905,   // textureGatherOffset_00X10B10D00D
+    906,   // textureGatherOffset_00L20B10D00D
+    907,   // textureGatherOffset_00U20B10D00D
+    908,   // textureGatherOffset_00a20B10D00D
+    909,   // textureGatherOffsets_00I10B10Dx4
+    912,   // textureGatherOffsets_00R10B10Dx4
+    915,   // textureGatherOffsets_00X10B10Dx4
+    918,   // textureGatherOffsets_00L20B10Dx4
+    921,   // textureGatherOffsets_00U20B10Dx4
+    924,   // textureGatherOffsets_00a20B10Dx4
+    927,   // textureGatherOffsets_00d10B00B10Dx4
+    930,   // textureGatherOffsets_00f20B00B10Dx4
+    933,   // textureGatherOffsets_00I10B10Dx400D
+    936,   // textureGatherOffsets_00R10B10Dx400D
+    939,   // textureGatherOffsets_00X10B10Dx400D
+    942,   // textureGatherOffsets_00L20B10Dx400D
+    945,   // textureGatherOffsets_00U20B10Dx400D
+    948,   // textureGatherOffsets_00a20B10Dx400D
+    951,   // rgb_2_yuv_20B00H
+    952,   // yuv_2_rgb_20B00H
+    953,   // dFdx_00B
+    955,   // dFdx_10B
+    957,   // dFdx_20B
+    959,   // dFdx_30B
+    961,   // dFdy_00B
+    963,   // dFdy_10B
+    965,   // dFdy_20B
+    967,   // dFdy_30B
+    969,   // fwidth_00B
+    971,   // fwidth_10B
+    973,   // fwidth_20B
+    975,   // fwidth_30B
+    977,   // interpolateAtCentroid_00B
+    979,   // interpolateAtCentroid_10B
+    981,   // interpolateAtCentroid_20B
+    983,   // interpolateAtCentroid_30B
+    985,   // interpolateAtSample_00B00D
+    987,   // interpolateAtSample_10B00D
+    989,   // interpolateAtSample_20B00D
+    991,   // interpolateAtSample_30B00D
+    993,   // interpolateAtOffset_00B10B
+    995,   // interpolateAtOffset_10B10B
+    997,   // interpolateAtOffset_20B10B
+    999,   // interpolateAtOffset_30B10B
+    1001,  // atomicCounter_00G
+    1002,  // atomicCounterIncrement_00G
+    1003,  // atomicCounterDecrement_00G
+    1004,  // atomicAdd_00E00E
+    1005,  // atomicAdd_00D00D
+    1006,  // atomicMin_00E00E
+    1007,  // atomicMin_00D00D
+    1008,  // atomicMax_00E00E
+    1009,  // atomicMax_00D00D
+    1010,  // atomicAnd_00E00E
+    1011,  // atomicAnd_00D00D
+    1012,  // atomicOr_00E00E
+    1013,  // atomicOr_00D00D
+    1014,  // atomicXor_00E00E
+    1015,  // atomicXor_00D00D
+    1016,  // atomicExchange_00E00E
+    1017,  // atomicExchange_00D00D
+    1018,  // atomicCompSwap_00E00E00E
+    1019,  // atomicCompSwap_00D00D00D
+    1020,  // imageSize_00z
+    1021,  // imageSize_01K
+    1022,  // imageSize_01V
+    1023,  // imageSize_01A
+    1024,  // imageSize_01L
+    1025,  // imageSize_01W
+    1026,  // imageSize_01B
+    1027,  // imageSize_01M
+    1028,  // imageSize_01X
+    1029,  // imageSize_01C
+    1030,  // imageSize_01N
+    1031,  // imageSize_01Y
+    1032,  // imageSize_01H
+    1035,  // imageSize_01S
+    1038,  // imageSize_01d
+    1041,  // imageSize_01J
+    1044,  // imageSize_01U
+    1047,  // imageSize_01f
+    1050,  // imageStore_00z10D30B
+    1051,  // imageStore_01K10D30D
+    1052,  // imageStore_01V10D30E
+    1053,  // imageStore_01A20D30B
+    1054,  // imageStore_01L20D30D
+    1055,  // imageStore_01W20D30E
+    1056,  // imageStore_01B20D30B
+    1057,  // imageStore_01M20D30D
+    1058,  // imageStore_01X20D30E
+    1059,  // imageStore_01C20D30B
+    1060,  // imageStore_01N20D30D
+    1061,  // imageStore_01Y20D30E
+    1062,  // imageStore_01H20D30B
+    1065,  // imageStore_01S20D30D
+    1068,  // imageStore_01d20D30E
+    1071,  // imageStore_01J00D30B
+    1074,  // imageStore_01U00D30D
+    1077,  // imageStore_01f00D30E
+    1080,  // imageLoad_00z10D
+    1081,  // imageLoad_01K10D
+    1082,  // imageLoad_01V10D
+    1083,  // imageLoad_01A20D
+    1084,  // imageLoad_01L20D
+    1085,  // imageLoad_01W20D
+    1086,  // imageLoad_01B20D
+    1087,  // imageLoad_01M20D
+    1088,  // imageLoad_01X20D
+    1089,  // imageLoad_01C20D
+    1090,  // imageLoad_01N20D
+    1091,  // imageLoad_01Y20D
+    1092,  // imageLoad_01H20D
+    1095,  // imageLoad_01S20D
+    1098,  // imageLoad_01d20D
+    1101,  // imageLoad_01J00D
+    1104,  // imageLoad_01U00D
+    1107,  // imageLoad_01f00D
+    1110,  // imageAtomicAdd_00z10D00E
+    1112,  // imageAtomicAdd_01K10D00E
+    1114,  // imageAtomicAdd_01V10D00E
+    1116,  // imageAtomicAdd_01A20D00E
+    1118,  // imageAtomicAdd_01L20D00E
+    1120,  // imageAtomicAdd_01W20D00E
+    1122,  // imageAtomicAdd_01C20D00E
+    1124,  // imageAtomicAdd_01N20D00E
+    1126,  // imageAtomicAdd_01Y20D00E
+    1128,  // imageAtomicAdd_01J00D00E
+    1130,  // imageAtomicAdd_01U00D00E
+    1132,  // imageAtomicAdd_01f00D00E
+    1134,  // imageAtomicAdd_01B20D00E
+    1136,  // imageAtomicAdd_01M20D00E
+    1138,  // imageAtomicAdd_01X20D00E
+    1140,  // imageAtomicAdd_01H20D00E
+    1142,  // imageAtomicAdd_01S20D00E
+    1144,  // imageAtomicAdd_01d20D00E
+    1146,  // imageAtomicAdd_01D00D00E
+    1148,  // imageAtomicAdd_01O00D00E
+    1150,  // imageAtomicAdd_01Z00D00E
+    1152,  // imageAtomicAdd_01E10D00E
+    1154,  // imageAtomicAdd_01P10D00E
+    1156,  // imageAtomicAdd_01a10D00E
+    1158,  // imageAtomicAdd_01I10D00E
+    1160,  // imageAtomicAdd_01T10D00E
+    1162,  // imageAtomicAdd_01e10D00E
+    1164,  // imageAtomicAdd_01F10D00D00E
+    1166,  // imageAtomicAdd_01Q10D00D00E
+    1168,  // imageAtomicAdd_01b10D00D00E
+    1170,  // imageAtomicAdd_01G20D00D00E
+    1172,  // imageAtomicAdd_01R20D00D00E
+    1174,  // imageAtomicAdd_01c20D00D00E
+    1176,  // imageAtomicAdd_00z10D00D
+    1178,  // imageAtomicAdd_01K10D00D
+    1180,  // imageAtomicAdd_01V10D00D
+    1182,  // imageAtomicAdd_01A20D00D
+    1184,  // imageAtomicAdd_01L20D00D
+    1186,  // imageAtomicAdd_01W20D00D
+    1188,  // imageAtomicAdd_01C20D00D
+    1190,  // imageAtomicAdd_01N20D00D
+    1192,  // imageAtomicAdd_01Y20D00D
+    1194,  // imageAtomicAdd_01J00D00D
+    1196,  // imageAtomicAdd_01U00D00D
+    1198,  // imageAtomicAdd_01f00D00D
+    1200,  // imageAtomicAdd_01B20D00D
+    1202,  // imageAtomicAdd_01M20D00D
+    1204,  // imageAtomicAdd_01X20D00D
+    1206,  // imageAtomicAdd_01H20D00D
+    1208,  // imageAtomicAdd_01S20D00D
+    1210,  // imageAtomicAdd_01d20D00D
+    1212,  // imageAtomicAdd_01D00D00D
+    1214,  // imageAtomicAdd_01O00D00D
+    1216,  // imageAtomicAdd_01Z00D00D
+    1218,  // imageAtomicAdd_01E10D00D
+    1220,  // imageAtomicAdd_01P10D00D
+    1222,  // imageAtomicAdd_01a10D00D
+    1224,  // imageAtomicAdd_01I10D00D
+    1226,  // imageAtomicAdd_01T10D00D
+    1228,  // imageAtomicAdd_01e10D00D
+    1230,  // imageAtomicAdd_01F10D00D00D
+    1232,  // imageAtomicAdd_01Q10D00D00D
+    1234,  // imageAtomicAdd_01b10D00D00D
+    1236,  // imageAtomicAdd_01G20D00D00D
+    1238,  // imageAtomicAdd_01R20D00D00D
+    1240,  // imageAtomicAdd_01c20D00D00D
+    1242,  // imageAtomicMin_00z10D00E
+    1244,  // imageAtomicMin_01K10D00E
+    1246,  // imageAtomicMin_01V10D00E
+    1248,  // imageAtomicMin_01A20D00E
+    1250,  // imageAtomicMin_01L20D00E
+    1252,  // imageAtomicMin_01W20D00E
+    1254,  // imageAtomicMin_01C20D00E
+    1256,  // imageAtomicMin_01N20D00E
+    1258,  // imageAtomicMin_01Y20D00E
+    1260,  // imageAtomicMin_01J00D00E
+    1262,  // imageAtomicMin_01U00D00E
+    1264,  // imageAtomicMin_01f00D00E
+    1266,  // imageAtomicMin_01B20D00E
+    1268,  // imageAtomicMin_01M20D00E
+    1270,  // imageAtomicMin_01X20D00E
+    1272,  // imageAtomicMin_01H20D00E
+    1274,  // imageAtomicMin_01S20D00E
+    1276,  // imageAtomicMin_01d20D00E
+    1278,  // imageAtomicMin_01D00D00E
+    1280,  // imageAtomicMin_01O00D00E
+    1282,  // imageAtomicMin_01Z00D00E
+    1284,  // imageAtomicMin_01E10D00E
+    1286,  // imageAtomicMin_01P10D00E
+    1288,  // imageAtomicMin_01a10D00E
+    1290,  // imageAtomicMin_01I10D00E
+    1292,  // imageAtomicMin_01T10D00E
+    1294,  // imageAtomicMin_01e10D00E
+    1296,  // imageAtomicMin_01F10D00D00E
+    1298,  // imageAtomicMin_01Q10D00D00E
+    1300,  // imageAtomicMin_01b10D00D00E
+    1302,  // imageAtomicMin_01G20D00D00E
+    1304,  // imageAtomicMin_01R20D00D00E
+    1306,  // imageAtomicMin_01c20D00D00E
+    1308,  // imageAtomicMin_00z10D00D
+    1310,  // imageAtomicMin_01K10D00D
+    1312,  // imageAtomicMin_01V10D00D
+    1314,  // imageAtomicMin_01A20D00D
+    1316,  // imageAtomicMin_01L20D00D
+    1318,  // imageAtomicMin_01W20D00D
+    1320,  // imageAtomicMin_01C20D00D
+    1322,  // imageAtomicMin_01N20D00D
+    1324,  // imageAtomicMin_01Y20D00D
+    1326,  // imageAtomicMin_01J00D00D
+    1328,  // imageAtomicMin_01U00D00D
+    1330,  // imageAtomicMin_01f00D00D
+    1332,  // imageAtomicMin_01B20D00D
+    1334,  // imageAtomicMin_01M20D00D
+    1336,  // imageAtomicMin_01X20D00D
+    1338,  // imageAtomicMin_01H20D00D
+    1340,  // imageAtomicMin_01S20D00D
+    1342,  // imageAtomicMin_01d20D00D
+    1344,  // imageAtomicMin_01D00D00D
+    1346,  // imageAtomicMin_01O00D00D
+    1348,  // imageAtomicMin_01Z00D00D
+    1350,  // imageAtomicMin_01E10D00D
+    1352,  // imageAtomicMin_01P10D00D
+    1354,  // imageAtomicMin_01a10D00D
+    1356,  // imageAtomicMin_01I10D00D
+    1358,  // imageAtomicMin_01T10D00D
+    1360,  // imageAtomicMin_01e10D00D
+    1362,  // imageAtomicMin_01F10D00D00D
+    1364,  // imageAtomicMin_01Q10D00D00D
+    1366,  // imageAtomicMin_01b10D00D00D
+    1368,  // imageAtomicMin_01G20D00D00D
+    1370,  // imageAtomicMin_01R20D00D00D
+    1372,  // imageAtomicMin_01c20D00D00D
+    1374,  // imageAtomicMax_00z10D00E
+    1376,  // imageAtomicMax_01K10D00E
+    1378,  // imageAtomicMax_01V10D00E
+    1380,  // imageAtomicMax_01A20D00E
+    1382,  // imageAtomicMax_01L20D00E
+    1384,  // imageAtomicMax_01W20D00E
+    1386,  // imageAtomicMax_01C20D00E
+    1388,  // imageAtomicMax_01N20D00E
+    1390,  // imageAtomicMax_01Y20D00E
+    1392,  // imageAtomicMax_01J00D00E
+    1394,  // imageAtomicMax_01U00D00E
+    1396,  // imageAtomicMax_01f00D00E
+    1398,  // imageAtomicMax_01B20D00E
+    1400,  // imageAtomicMax_01M20D00E
+    1402,  // imageAtomicMax_01X20D00E
+    1404,  // imageAtomicMax_01H20D00E
+    1406,  // imageAtomicMax_01S20D00E
+    1408,  // imageAtomicMax_01d20D00E
+    1410,  // imageAtomicMax_01D00D00E
+    1412,  // imageAtomicMax_01O00D00E
+    1414,  // imageAtomicMax_01Z00D00E
+    1416,  // imageAtomicMax_01E10D00E
+    1418,  // imageAtomicMax_01P10D00E
+    1420,  // imageAtomicMax_01a10D00E
+    1422,  // imageAtomicMax_01I10D00E
+    1424,  // imageAtomicMax_01T10D00E
+    1426,  // imageAtomicMax_01e10D00E
+    1428,  // imageAtomicMax_01F10D00D00E
+    1430,  // imageAtomicMax_01Q10D00D00E
+    1432,  // imageAtomicMax_01b10D00D00E
+    1434,  // imageAtomicMax_01G20D00D00E
+    1436,  // imageAtomicMax_01R20D00D00E
+    1438,  // imageAtomicMax_01c20D00D00E
+    1440,  // imageAtomicMax_00z10D00D
+    1442,  // imageAtomicMax_01K10D00D
+    1444,  // imageAtomicMax_01V10D00D
+    1446,  // imageAtomicMax_01A20D00D
+    1448,  // imageAtomicMax_01L20D00D
+    1450,  // imageAtomicMax_01W20D00D
+    1452,  // imageAtomicMax_01C20D00D
+    1454,  // imageAtomicMax_01N20D00D
+    1456,  // imageAtomicMax_01Y20D00D
+    1458,  // imageAtomicMax_01J00D00D
+    1460,  // imageAtomicMax_01U00D00D
+    1462,  // imageAtomicMax_01f00D00D
+    1464,  // imageAtomicMax_01B20D00D
+    1466,  // imageAtomicMax_01M20D00D
+    1468,  // imageAtomicMax_01X20D00D
+    1470,  // imageAtomicMax_01H20D00D
+    1472,  // imageAtomicMax_01S20D00D
+    1474,  // imageAtomicMax_01d20D00D
+    1476,  // imageAtomicMax_01D00D00D
+    1478,  // imageAtomicMax_01O00D00D
+    1480,  // imageAtomicMax_01Z00D00D
+    1482,  // imageAtomicMax_01E10D00D
+    1484,  // imageAtomicMax_01P10D00D
+    1486,  // imageAtomicMax_01a10D00D
+    1488,  // imageAtomicMax_01I10D00D
+    1490,  // imageAtomicMax_01T10D00D
+    1492,  // imageAtomicMax_01e10D00D
+    1494,  // imageAtomicMax_01F10D00D00D
+    1496,  // imageAtomicMax_01Q10D00D00D
+    1498,  // imageAtomicMax_01b10D00D00D
+    1500,  // imageAtomicMax_01G20D00D00D
+    1502,  // imageAtomicMax_01R20D00D00D
+    1504,  // imageAtomicMax_01c20D00D00D
+    1506,  // imageAtomicAnd_00z10D00E
+    1508,  // imageAtomicAnd_01K10D00E
+    1510,  // imageAtomicAnd_01V10D00E
+    1512,  // imageAtomicAnd_01A20D00E
+    1514,  // imageAtomicAnd_01L20D00E
+    1516,  // imageAtomicAnd_01W20D00E
+    1518,  // imageAtomicAnd_01C20D00E
+    1520,  // imageAtomicAnd_01N20D00E
+    1522,  // imageAtomicAnd_01Y20D00E
+    1524,  // imageAtomicAnd_01J00D00E
+    1526,  // imageAtomicAnd_01U00D00E
+    1528,  // imageAtomicAnd_01f00D00E
+    1530,  // imageAtomicAnd_01B20D00E
+    1532,  // imageAtomicAnd_01M20D00E
+    1534,  // imageAtomicAnd_01X20D00E
+    1536,  // imageAtomicAnd_01H20D00E
+    1538,  // imageAtomicAnd_01S20D00E
+    1540,  // imageAtomicAnd_01d20D00E
+    1542,  // imageAtomicAnd_01D00D00E
+    1544,  // imageAtomicAnd_01O00D00E
+    1546,  // imageAtomicAnd_01Z00D00E
+    1548,  // imageAtomicAnd_01E10D00E
+    1550,  // imageAtomicAnd_01P10D00E
+    1552,  // imageAtomicAnd_01a10D00E
+    1554,  // imageAtomicAnd_01I10D00E
+    1556,  // imageAtomicAnd_01T10D00E
+    1558,  // imageAtomicAnd_01e10D00E
+    1560,  // imageAtomicAnd_01F10D00D00E
+    1562,  // imageAtomicAnd_01Q10D00D00E
+    1564,  // imageAtomicAnd_01b10D00D00E
+    1566,  // imageAtomicAnd_01G20D00D00E
+    1568,  // imageAtomicAnd_01R20D00D00E
+    1570,  // imageAtomicAnd_01c20D00D00E
+    1572,  // imageAtomicAnd_00z10D00D
+    1574,  // imageAtomicAnd_01K10D00D
+    1576,  // imageAtomicAnd_01V10D00D
+    1578,  // imageAtomicAnd_01A20D00D
+    1580,  // imageAtomicAnd_01L20D00D
+    1582,  // imageAtomicAnd_01W20D00D
+    1584,  // imageAtomicAnd_01C20D00D
+    1586,  // imageAtomicAnd_01N20D00D
+    1588,  // imageAtomicAnd_01Y20D00D
+    1590,  // imageAtomicAnd_01J00D00D
+    1592,  // imageAtomicAnd_01U00D00D
+    1594,  // imageAtomicAnd_01f00D00D
+    1596,  // imageAtomicAnd_01B20D00D
+    1598,  // imageAtomicAnd_01M20D00D
+    1600,  // imageAtomicAnd_01X20D00D
+    1602,  // imageAtomicAnd_01H20D00D
+    1604,  // imageAtomicAnd_01S20D00D
+    1606,  // imageAtomicAnd_01d20D00D
+    1608,  // imageAtomicAnd_01D00D00D
+    1610,  // imageAtomicAnd_01O00D00D
+    1612,  // imageAtomicAnd_01Z00D00D
+    1614,  // imageAtomicAnd_01E10D00D
+    1616,  // imageAtomicAnd_01P10D00D
+    1618,  // imageAtomicAnd_01a10D00D
+    1620,  // imageAtomicAnd_01I10D00D
+    1622,  // imageAtomicAnd_01T10D00D
+    1624,  // imageAtomicAnd_01e10D00D
+    1626,  // imageAtomicAnd_01F10D00D00D
+    1628,  // imageAtomicAnd_01Q10D00D00D
+    1630,  // imageAtomicAnd_01b10D00D00D
+    1632,  // imageAtomicAnd_01G20D00D00D
+    1634,  // imageAtomicAnd_01R20D00D00D
+    1636,  // imageAtomicAnd_01c20D00D00D
+    1638,  // imageAtomicOr_00z10D00E
+    1640,  // imageAtomicOr_01K10D00E
+    1642,  // imageAtomicOr_01V10D00E
+    1644,  // imageAtomicOr_01A20D00E
+    1646,  // imageAtomicOr_01L20D00E
+    1648,  // imageAtomicOr_01W20D00E
+    1650,  // imageAtomicOr_01C20D00E
+    1652,  // imageAtomicOr_01N20D00E
+    1654,  // imageAtomicOr_01Y20D00E
+    1656,  // imageAtomicOr_01J00D00E
+    1658,  // imageAtomicOr_01U00D00E
+    1660,  // imageAtomicOr_01f00D00E
+    1662,  // imageAtomicOr_01B20D00E
+    1664,  // imageAtomicOr_01M20D00E
+    1666,  // imageAtomicOr_01X20D00E
+    1668,  // imageAtomicOr_01H20D00E
+    1670,  // imageAtomicOr_01S20D00E
+    1672,  // imageAtomicOr_01d20D00E
+    1674,  // imageAtomicOr_01D00D00E
+    1676,  // imageAtomicOr_01O00D00E
+    1678,  // imageAtomicOr_01Z00D00E
+    1680,  // imageAtomicOr_01E10D00E
+    1682,  // imageAtomicOr_01P10D00E
+    1684,  // imageAtomicOr_01a10D00E
+    1686,  // imageAtomicOr_01I10D00E
+    1688,  // imageAtomicOr_01T10D00E
+    1690,  // imageAtomicOr_01e10D00E
+    1692,  // imageAtomicOr_01F10D00D00E
+    1694,  // imageAtomicOr_01Q10D00D00E
+    1696,  // imageAtomicOr_01b10D00D00E
+    1698,  // imageAtomicOr_01G20D00D00E
+    1700,  // imageAtomicOr_01R20D00D00E
+    1702,  // imageAtomicOr_01c20D00D00E
+    1704,  // imageAtomicOr_00z10D00D
+    1706,  // imageAtomicOr_01K10D00D
+    1708,  // imageAtomicOr_01V10D00D
+    1710,  // imageAtomicOr_01A20D00D
+    1712,  // imageAtomicOr_01L20D00D
+    1714,  // imageAtomicOr_01W20D00D
+    1716,  // imageAtomicOr_01C20D00D
+    1718,  // imageAtomicOr_01N20D00D
+    1720,  // imageAtomicOr_01Y20D00D
+    1722,  // imageAtomicOr_01J00D00D
+    1724,  // imageAtomicOr_01U00D00D
+    1726,  // imageAtomicOr_01f00D00D
+    1728,  // imageAtomicOr_01B20D00D
+    1730,  // imageAtomicOr_01M20D00D
+    1732,  // imageAtomicOr_01X20D00D
+    1734,  // imageAtomicOr_01H20D00D
+    1736,  // imageAtomicOr_01S20D00D
+    1738,  // imageAtomicOr_01d20D00D
+    1740,  // imageAtomicOr_01D00D00D
+    1742,  // imageAtomicOr_01O00D00D
+    1744,  // imageAtomicOr_01Z00D00D
+    1746,  // imageAtomicOr_01E10D00D
+    1748,  // imageAtomicOr_01P10D00D
+    1750,  // imageAtomicOr_01a10D00D
+    1752,  // imageAtomicOr_01I10D00D
+    1754,  // imageAtomicOr_01T10D00D
+    1756,  // imageAtomicOr_01e10D00D
+    1758,  // imageAtomicOr_01F10D00D00D
+    1760,  // imageAtomicOr_01Q10D00D00D
+    1762,  // imageAtomicOr_01b10D00D00D
+    1764,  // imageAtomicOr_01G20D00D00D
+    1766,  // imageAtomicOr_01R20D00D00D
+    1768,  // imageAtomicOr_01c20D00D00D
+    1770,  // imageAtomicXor_00z10D00E
+    1772,  // imageAtomicXor_01K10D00E
+    1774,  // imageAtomicXor_01V10D00E
+    1776,  // imageAtomicXor_01A20D00E
+    1778,  // imageAtomicXor_01L20D00E
+    1780,  // imageAtomicXor_01W20D00E
+    1782,  // imageAtomicXor_01C20D00E
+    1784,  // imageAtomicXor_01N20D00E
+    1786,  // imageAtomicXor_01Y20D00E
+    1788,  // imageAtomicXor_01J00D00E
+    1790,  // imageAtomicXor_01U00D00E
+    1792,  // imageAtomicXor_01f00D00E
+    1794,  // imageAtomicXor_01B20D00E
+    1796,  // imageAtomicXor_01M20D00E
+    1798,  // imageAtomicXor_01X20D00E
+    1800,  // imageAtomicXor_01H20D00E
+    1802,  // imageAtomicXor_01S20D00E
+    1804,  // imageAtomicXor_01d20D00E
+    1806,  // imageAtomicXor_01D00D00E
+    1808,  // imageAtomicXor_01O00D00E
+    1810,  // imageAtomicXor_01Z00D00E
+    1812,  // imageAtomicXor_01E10D00E
+    1814,  // imageAtomicXor_01P10D00E
+    1816,  // imageAtomicXor_01a10D00E
+    1818,  // imageAtomicXor_01I10D00E
+    1820,  // imageAtomicXor_01T10D00E
+    1822,  // imageAtomicXor_01e10D00E
+    1824,  // imageAtomicXor_01F10D00D00E
+    1826,  // imageAtomicXor_01Q10D00D00E
+    1828,  // imageAtomicXor_01b10D00D00E
+    1830,  // imageAtomicXor_01G20D00D00E
+    1832,  // imageAtomicXor_01R20D00D00E
+    1834,  // imageAtomicXor_01c20D00D00E
+    1836,  // imageAtomicXor_00z10D00D
+    1838,  // imageAtomicXor_01K10D00D
+    1840,  // imageAtomicXor_01V10D00D
+    1842,  // imageAtomicXor_01A20D00D
+    1844,  // imageAtomicXor_01L20D00D
+    1846,  // imageAtomicXor_01W20D00D
+    1848,  // imageAtomicXor_01C20D00D
+    1850,  // imageAtomicXor_01N20D00D
+    1852,  // imageAtomicXor_01Y20D00D
+    1854,  // imageAtomicXor_01J00D00D
+    1856,  // imageAtomicXor_01U00D00D
+    1858,  // imageAtomicXor_01f00D00D
+    1860,  // imageAtomicXor_01B20D00D
+    1862,  // imageAtomicXor_01M20D00D
+    1864,  // imageAtomicXor_01X20D00D
+    1866,  // imageAtomicXor_01H20D00D
+    1868,  // imageAtomicXor_01S20D00D
+    1870,  // imageAtomicXor_01d20D00D
+    1872,  // imageAtomicXor_01D00D00D
+    1874,  // imageAtomicXor_01O00D00D
+    1876,  // imageAtomicXor_01Z00D00D
+    1878,  // imageAtomicXor_01E10D00D
+    1880,  // imageAtomicXor_01P10D00D
+    1882,  // imageAtomicXor_01a10D00D
+    1884,  // imageAtomicXor_01I10D00D
+    1886,  // imageAtomicXor_01T10D00D
+    1888,  // imageAtomicXor_01e10D00D
+    1890,  // imageAtomicXor_01F10D00D00D
+    1892,  // imageAtomicXor_01Q10D00D00D
+    1894,  // imageAtomicXor_01b10D00D00D
+    1896,  // imageAtomicXor_01G20D00D00D
+    1898,  // imageAtomicXor_01R20D00D00D
+    1900,  // imageAtomicXor_01c20D00D00D
+    1902,  // imageAtomicExchange_00z10D00E
+    1904,  // imageAtomicExchange_01K10D00E
+    1906,  // imageAtomicExchange_01V10D00E
+    1908,  // imageAtomicExchange_01A20D00E
+    1910,  // imageAtomicExchange_01L20D00E
+    1912,  // imageAtomicExchange_01W20D00E
+    1914,  // imageAtomicExchange_01C20D00E
+    1916,  // imageAtomicExchange_01N20D00E
+    1918,  // imageAtomicExchange_01Y20D00E
+    1920,  // imageAtomicExchange_01J00D00E
+    1922,  // imageAtomicExchange_01U00D00E
+    1924,  // imageAtomicExchange_01f00D00E
+    1926,  // imageAtomicExchange_01B20D00E
+    1928,  // imageAtomicExchange_01M20D00E
+    1930,  // imageAtomicExchange_01X20D00E
+    1932,  // imageAtomicExchange_01H20D00E
+    1934,  // imageAtomicExchange_01S20D00E
+    1936,  // imageAtomicExchange_01d20D00E
+    1938,  // imageAtomicExchange_01D00D00E
+    1940,  // imageAtomicExchange_01O00D00E
+    1942,  // imageAtomicExchange_01Z00D00E
+    1944,  // imageAtomicExchange_01E10D00E
+    1946,  // imageAtomicExchange_01P10D00E
+    1948,  // imageAtomicExchange_01a10D00E
+    1950,  // imageAtomicExchange_01I10D00E
+    1952,  // imageAtomicExchange_01T10D00E
+    1954,  // imageAtomicExchange_01e10D00E
+    1956,  // imageAtomicExchange_01F10D00D00E
+    1958,  // imageAtomicExchange_01Q10D00D00E
+    1960,  // imageAtomicExchange_01b10D00D00E
+    1962,  // imageAtomicExchange_01G20D00D00E
+    1964,  // imageAtomicExchange_01R20D00D00E
+    1966,  // imageAtomicExchange_01c20D00D00E
+    1968,  // imageAtomicExchange_00z10D00D
+    1970,  // imageAtomicExchange_01K10D00D
+    1972,  // imageAtomicExchange_01V10D00D
+    1974,  // imageAtomicExchange_01A20D00D
+    1976,  // imageAtomicExchange_01L20D00D
+    1978,  // imageAtomicExchange_01W20D00D
+    1980,  // imageAtomicExchange_01C20D00D
+    1982,  // imageAtomicExchange_01N20D00D
+    1984,  // imageAtomicExchange_01Y20D00D
+    1986,  // imageAtomicExchange_01J00D00D
+    1988,  // imageAtomicExchange_01U00D00D
+    1990,  // imageAtomicExchange_01f00D00D
+    1992,  // imageAtomicExchange_01B20D00D
+    1994,  // imageAtomicExchange_01M20D00D
+    1996,  // imageAtomicExchange_01X20D00D
+    1998,  // imageAtomicExchange_01H20D00D
+    2000,  // imageAtomicExchange_01S20D00D
+    2002,  // imageAtomicExchange_01d20D00D
+    2004,  // imageAtomicExchange_01D00D00D
+    2006,  // imageAtomicExchange_01O00D00D
+    2008,  // imageAtomicExchange_01Z00D00D
+    2010,  // imageAtomicExchange_01E10D00D
+    2012,  // imageAtomicExchange_01P10D00D
+    2014,  // imageAtomicExchange_01a10D00D
+    2016,  // imageAtomicExchange_01I10D00D
+    2018,  // imageAtomicExchange_01T10D00D
+    2020,  // imageAtomicExchange_01e10D00D
+    2022,  // imageAtomicExchange_01F10D00D00D
+    2024,  // imageAtomicExchange_01Q10D00D00D
+    2026,  // imageAtomicExchange_01b10D00D00D
+    2028,  // imageAtomicExchange_01G20D00D00D
+    2030,  // imageAtomicExchange_01R20D00D00D
+    2032,  // imageAtomicExchange_01c20D00D00D
+    2034,  // imageAtomicExchange_00z10D00B
+    2036,  // imageAtomicExchange_01K10D00B
+    2038,  // imageAtomicExchange_01V10D00B
+    2040,  // imageAtomicExchange_01A20D00B
+    2042,  // imageAtomicExchange_01L20D00B
+    2044,  // imageAtomicExchange_01W20D00B
+    2046,  // imageAtomicExchange_01C20D00B
+    2048,  // imageAtomicExchange_01N20D00B
+    2050,  // imageAtomicExchange_01Y20D00B
+    2052,  // imageAtomicExchange_01J00D00B
+    2054,  // imageAtomicExchange_01U00D00B
+    2056,  // imageAtomicExchange_01f00D00B
+    2058,  // imageAtomicExchange_01B20D00B
+    2060,  // imageAtomicExchange_01M20D00B
+    2062,  // imageAtomicExchange_01X20D00B
+    2064,  // imageAtomicExchange_01H20D00B
+    2066,  // imageAtomicExchange_01S20D00B
+    2068,  // imageAtomicExchange_01d20D00B
+    2070,  // imageAtomicExchange_01D00D00B
+    2072,  // imageAtomicExchange_01O00D00B
+    2074,  // imageAtomicExchange_01Z00D00B
+    2076,  // imageAtomicExchange_01E10D00B
+    2078,  // imageAtomicExchange_01P10D00B
+    2080,  // imageAtomicExchange_01a10D00B
+    2082,  // imageAtomicExchange_01I10D00B
+    2084,  // imageAtomicExchange_01T10D00B
+    2086,  // imageAtomicExchange_01e10D00B
+    2088,  // imageAtomicExchange_01F10D00D00B
+    2090,  // imageAtomicExchange_01Q10D00D00B
+    2092,  // imageAtomicExchange_01b10D00D00B
+    2094,  // imageAtomicExchange_01G20D00D00B
+    2096,  // imageAtomicExchange_01R20D00D00B
+    2098,  // imageAtomicExchange_01c20D00D00B
+    2100,  // imageAtomicCompSwap_00z10D00E00E
+    2102,  // imageAtomicCompSwap_01K10D00E00E
+    2104,  // imageAtomicCompSwap_01V10D00E00E
+    2106,  // imageAtomicCompSwap_01A20D00E00E
+    2108,  // imageAtomicCompSwap_01L20D00E00E
+    2110,  // imageAtomicCompSwap_01W20D00E00E
+    2112,  // imageAtomicCompSwap_01C20D00E00E
+    2114,  // imageAtomicCompSwap_01N20D00E00E
+    2116,  // imageAtomicCompSwap_01Y20D00E00E
+    2118,  // imageAtomicCompSwap_01J00D00E00E
+    2120,  // imageAtomicCompSwap_01U00D00E00E
+    2122,  // imageAtomicCompSwap_01f00D00E00E
+    2124,  // imageAtomicCompSwap_01B20D00E00E
+    2126,  // imageAtomicCompSwap_01M20D00E00E
+    2128,  // imageAtomicCompSwap_01X20D00E00E
+    2130,  // imageAtomicCompSwap_01H20D00E00E
+    2132,  // imageAtomicCompSwap_01S20D00E00E
+    2134,  // imageAtomicCompSwap_01d20D00E00E
+    2136,  // imageAtomicCompSwap_01D00D00E00E
+    2138,  // imageAtomicCompSwap_01O00D00E00E
+    2140,  // imageAtomicCompSwap_01Z00D00E00E
+    2142,  // imageAtomicCompSwap_01E10D00E00E
+    2144,  // imageAtomicCompSwap_01P10D00E00E
+    2146,  // imageAtomicCompSwap_01a10D00E00E
+    2148,  // imageAtomicCompSwap_01I10D00E00E
+    2150,  // imageAtomicCompSwap_01T10D00E00E
+    2152,  // imageAtomicCompSwap_01e10D00E00E
+    2154,  // imageAtomicCompSwap_01F10D00D00E00E
+    2156,  // imageAtomicCompSwap_01Q10D00D00E00E
+    2158,  // imageAtomicCompSwap_01b10D00D00E00E
+    2160,  // imageAtomicCompSwap_01G20D00D00E00E
+    2162,  // imageAtomicCompSwap_01R20D00D00E00E
+    2164,  // imageAtomicCompSwap_01c20D00D00E00E
+    2166,  // imageAtomicCompSwap_00z10D00D00D
+    2168,  // imageAtomicCompSwap_01K10D00D00D
+    2170,  // imageAtomicCompSwap_01V10D00D00D
+    2172,  // imageAtomicCompSwap_01A20D00D00D
+    2174,  // imageAtomicCompSwap_01L20D00D00D
+    2176,  // imageAtomicCompSwap_01W20D00D00D
+    2178,  // imageAtomicCompSwap_01C20D00D00D
+    2180,  // imageAtomicCompSwap_01N20D00D00D
+    2182,  // imageAtomicCompSwap_01Y20D00D00D
+    2184,  // imageAtomicCompSwap_01J00D00D00D
+    2186,  // imageAtomicCompSwap_01U00D00D00D
+    2188,  // imageAtomicCompSwap_01f00D00D00D
+    2190,  // imageAtomicCompSwap_01B20D00D00D
+    2192,  // imageAtomicCompSwap_01M20D00D00D
+    2194,  // imageAtomicCompSwap_01X20D00D00D
+    2196,  // imageAtomicCompSwap_01H20D00D00D
+    2198,  // imageAtomicCompSwap_01S20D00D00D
+    2200,  // imageAtomicCompSwap_01d20D00D00D
+    2202,  // imageAtomicCompSwap_01D00D00D00D
+    2204,  // imageAtomicCompSwap_01O00D00D00D
+    2206,  // imageAtomicCompSwap_01Z00D00D00D
+    2208,  // imageAtomicCompSwap_01E10D00D00D
+    2210,  // imageAtomicCompSwap_01P10D00D00D
+    2212,  // imageAtomicCompSwap_01a10D00D00D
+    2214,  // imageAtomicCompSwap_01I10D00D00D
+    2216,  // imageAtomicCompSwap_01T10D00D00D
+    2218,  // imageAtomicCompSwap_01e10D00D00D
+    2220,  // imageAtomicCompSwap_01F10D00D00D00D
+    2222,  // imageAtomicCompSwap_01Q10D00D00D00D
+    2224,  // imageAtomicCompSwap_01b10D00D00D00D
+    2226,  // imageAtomicCompSwap_01G20D00D00D00D
+    2228,  // imageAtomicCompSwap_01R20D00D00D00D
+    2230,  // imageAtomicCompSwap_01c20D00D00D00D
+    2232,  // pixelLocalLoadANGLE_01g
+    2233,  // pixelLocalLoadANGLE_01h
+    2234,  // pixelLocalLoadANGLE_01i
+    2235,  // pixelLocalStoreANGLE_01g30B
+    2236,  // pixelLocalStoreANGLE_01h30D
+    2237,  // pixelLocalStoreANGLE_01i30E
+    2238,  // beginInvocationInterlockNV_
+    2239,  // endInvocationInterlockNV_
+    2240,  // beginFragmentShaderOrderingINTEL_
+    2241,  // beginInvocationInterlockARB_
+    2242,  // endInvocationInterlockARB_
+    2243,  // memoryBarrier_
+    2244,  // memoryBarrierAtomicCounter_
+    2245,  // memoryBarrierBuffer_
+    2246,  // memoryBarrierImage_
+    2247,  // barrier_
+    2251,  // memoryBarrierShared_
+    2252,  // groupMemoryBarrier_
+    2253,  // EmitVertex_
+    2256,  // EndPrimitive_
+    2259,  // subpassLoad_01j
+    2260,  // subpassLoad_01k
+    2261,  // subpassLoad_01l
+    2262,  // subpassLoad_01m00D
+    2263,  // subpassLoad_01n00D
+    2264,  // subpassLoad_01o00D
+    2265,  // numSamples_
+    2266,  // samplePosition_00E
+    2267,  // interpolateAtCenter_00B
+    2268,  // interpolateAtCenter_10B
+    2269,  // interpolateAtCenter_20B
+    2270,  // interpolateAtCenter_30B
+    2271,  // saturate_00B
+    2272,  // saturate_10B
+    2273,  // saturate_20B
+    2274,  // saturate_30B
+    2275,  // gl_DepthRangeParameters
+    2276,  // gl_DepthRange
+    2277,  // gl_NumSamples
+    2279,  // gl_MaxVertexAttribs
+    2280,  // gl_MaxVertexUniformVectors
+    2281,  // gl_MaxVertexTextureImageUnits
+    2282,  // gl_MaxCombinedTextureImageUnits
+    2283,  // gl_MaxTextureImageUnits
+    2284,  // gl_MaxFragmentUniformVectors
+    2285,  // gl_MaxVaryingVectors
+    2286,  // gl_MaxDrawBuffers
+    2287,  // gl_MaxDualSourceDrawBuffersEXT
+    2288,  // gl_MaxVertexOutputVectors
+    2289,  // gl_MaxFragmentInputVectors
+    2290,  // gl_MinProgramTexelOffset
+    2291,  // gl_MaxProgramTexelOffset
+    2292,  // gl_MaxImageUnits
+    2293,  // gl_MaxVertexImageUniforms
+    2294,  // gl_MaxFragmentImageUniforms
+    2295,  // gl_MaxComputeImageUniforms
+    2296,  // gl_MaxCombinedImageUniforms
+    2297,  // gl_MaxCombinedShaderOutputResources
+    2298,  // gl_MaxComputeWorkGroupCount
+    2299,  // gl_MaxComputeWorkGroupSize
+    2300,  // gl_MaxComputeUniformComponents
+    2301,  // gl_MaxComputeTextureImageUnits
+    2302,  // gl_MaxComputeAtomicCounters
+    2303,  // gl_MaxComputeAtomicCounterBuffers
+    2304,  // gl_MaxVertexAtomicCounters
+    2305,  // gl_MaxFragmentAtomicCounters
+    2306,  // gl_MaxCombinedAtomicCounters
+    2307,  // gl_MaxAtomicCounterBindings
+    2308,  // gl_MaxVertexAtomicCounterBuffers
+    2309,  // gl_MaxFragmentAtomicCounterBuffers
+    2310,  // gl_MaxCombinedAtomicCounterBuffers
+    2311,  // gl_MaxAtomicCounterBufferSize
+    2312,  // gl_MaxGeometryInputComponents
+    2315,  // gl_MaxGeometryOutputComponents
+    2318,  // gl_MaxGeometryImageUniforms
+    2321,  // gl_MaxGeometryTextureImageUnits
+    2324,  // gl_MaxGeometryOutputVertices
+    2327,  // gl_MaxGeometryTotalOutputComponents
+    2330,  // gl_MaxGeometryUniformComponents
+    2333,  // gl_MaxGeometryAtomicCounters
+    2336,  // gl_MaxGeometryAtomicCounterBuffers
+    2339,  // gl_MaxTessControlInputComponents
+    2342,  // gl_MaxTessControlOutputComponents
+    2345,  // gl_MaxTessControlTextureImageUnits
+    2348,  // gl_MaxTessControlUniformComponents
+    2351,  // gl_MaxTessControlTotalOutputComponents
+    2354,  // gl_MaxTessControlImageUniforms
+    2357,  // gl_MaxTessControlAtomicCounters
+    2360,  // gl_MaxTessControlAtomicCounterBuffers
+    2363,  // gl_MaxTessPatchComponents
+    2366,  // gl_MaxPatchVertices
+    2369,  // gl_MaxTessGenLevel
+    2372,  // gl_MaxTessEvaluationInputComponents
+    2375,  // gl_MaxTessEvaluationOutputComponents
+    2378,  // gl_MaxTessEvaluationTextureImageUnits
+    2381,  // gl_MaxTessEvaluationUniformComponents
+    2384,  // gl_MaxTessEvaluationImageUniforms
+    2387,  // gl_MaxTessEvaluationAtomicCounters
+    2390,  // gl_MaxTessEvaluationAtomicCounterBuffers
+    2393,  // gl_MaxSamples
+    2395,  // gl_MaxClipDistances
+    2398,  // gl_MaxCullDistances
+    2400,  // gl_MaxCombinedClipAndCullDistances
+    2402,  // gl_FragCoord
+    2404,  // gl_FrontFacing
+    2405,  // gl_PointCoord
+    2406,  // gl_FragColor
+    2407,  // gl_FragData
+    2408,  // gl_FragDepth
+    2409,  // gl_HelperInvocation
+    2410,  // gl_SecondaryFragColorEXT
+    2411,  // gl_SecondaryFragDataEXT
+    2412,  // gl_FragDepthEXT
+    2413,  // gl_LastFragData
+    2416,  // gl_LastFragColor
+    2417,  // gl_LastFragColorARM
+    2418,  // gl_PrimitiveID
+    2430,  // gl_Layer
+    2436,  // gl_SampleID
+    2438,  // gl_SamplePosition
+    2440,  // gl_SampleMaskIn
+    2442,  // gl_SampleMask
+    2444,  // gl_Position
+    2454,  // gl_PointSize
+    2456,  // gl_InstanceID
+    2457,  // Empty
+    2457,  // gl_VertexID
+    2458,  // Empty
+    2458,  // Empty
+    2458,  // gl_DrawID
+    2459,  // gl_BaseVertex
+    2460,  // gl_BaseInstance
+    2461,  // angle_BaseVertex
+    2462,  // angle_BaseInstance
+    2463,  // gl_ClipDistance
+    2466,  // gl_NumWorkGroups
+    2467,  // gl_WorkGroupSize
+    2468,  // gl_WorkGroupID
+    2469,  // gl_LocalInvocationID
+    2470,  // gl_GlobalInvocationID
+    2471,  // gl_LocalInvocationIndex
+    2472,  // gl_PrimitiveIDIn
+    2475,  // gl_InvocationID
+    2481,  // gl_PerVertex
+    2490,  // gl_in
+    2499,  // gl_PatchVerticesIn
+    2505,  // gl_TessLevelOuter
+    2511,  // gl_TessLevelInner
+    2517,  // gl_out
+    2523,  // gl_BoundingBox
+    2526,  // gl_BoundingBoxEXT
+    2529,  // gl_BoundingBoxOES
+    2532,  // gl_TessCoord
+    2533,  // gl_ViewID_OVR
+    2534,  // gl_CullDistance
 };
 
 using Ext = TExtension;
@@ -28573,8 +28689,8 @@ constexpr UnmangledEntry unmangled[] = {
      Shader::ALL},
     {"uintBitsToFloat", std::array<TExtension, 1>{{Ext::UNDEFINED}}, Ext::UNDEFINED, 300, 330,
      Shader::ALL},
-    {"fma", std::array<TExtension, 1>{{Ext::EXT_gpu_shader5}}, Ext::UNDEFINED, 310, -1,
-     Shader::ALL},
+    {"fma", std::array<TExtension, 2>{{Ext::EXT_gpu_shader5, Ext::OES_gpu_shader5}}, Ext::UNDEFINED,
+     310, -1, Shader::ALL},
     {"frexp", std::array<TExtension, 1>{{Ext::UNDEFINED}}, Ext::UNDEFINED, 310, 400, Shader::ALL},
     {"ldexp", std::array<TExtension, 1>{{Ext::UNDEFINED}}, Ext::UNDEFINED, 310, 400, Shader::ALL},
     {"packSnorm2x16", std::array<TExtension, 1>{{Ext::UNDEFINED}}, Ext::UNDEFINED, 300, 420,
@@ -28723,7 +28839,8 @@ constexpr UnmangledEntry unmangled[] = {
      Shader::ALL},
     {"textureGatherOffset", std::array<TExtension, 1>{{Ext::UNDEFINED}}, Ext::UNDEFINED, 310, 400,
      Shader::ALL},
-    {"textureGatherOffsets", std::array<TExtension, 1>{{Ext::EXT_gpu_shader5}}, Ext::UNDEFINED, 310,
+    {"textureGatherOffsets",
+     std::array<TExtension, 2>{{Ext::EXT_gpu_shader5, Ext::OES_gpu_shader5}}, Ext::UNDEFINED, 310,
      -1, Shader::ALL},
     {"rgb_2_yuv", std::array<TExtension, 1>{{Ext::EXT_YUV_target}}, Ext::UNDEFINED, 300, -1,
      Shader::ALL},
@@ -29359,10 +29476,12 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
         static_cast<TVariable *>(m_gl_MaxGeometryAtomicCounterBuffersES3_2)
             ->shareConstPointer(unionArray);
     }
-    m_gl_MaxTessControlInputComponents = new TVariable(
-        BuiltInId::gl_MaxTessControlInputComponents, BuiltInName::gl_MaxTessControlInputComponents,
-        SymbolType::BuiltIn, std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
-        StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
+    m_gl_MaxTessControlInputComponents =
+        new TVariable(BuiltInId::gl_MaxTessControlInputComponents,
+                      BuiltInName::gl_MaxTessControlInputComponents, SymbolType::BuiltIn,
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
+                      StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
         unionArray[0].setIConst(resources.MaxTessControlInputComponents);
@@ -29382,7 +29501,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_MaxTessControlOutputComponents =
         new TVariable(BuiltInId::gl_MaxTessControlOutputComponents,
                       BuiltInName::gl_MaxTessControlOutputComponents, SymbolType::BuiltIn,
-                      std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
                       StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
@@ -29404,7 +29524,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_MaxTessControlTextureImageUnits =
         new TVariable(BuiltInId::gl_MaxTessControlTextureImageUnits,
                       BuiltInName::gl_MaxTessControlTextureImageUnits, SymbolType::BuiltIn,
-                      std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
                       StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
@@ -29426,7 +29547,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_MaxTessControlUniformComponents =
         new TVariable(BuiltInId::gl_MaxTessControlUniformComponents,
                       BuiltInName::gl_MaxTessControlUniformComponents, SymbolType::BuiltIn,
-                      std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
                       StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
@@ -29448,7 +29570,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_MaxTessControlTotalOutputComponents =
         new TVariable(BuiltInId::gl_MaxTessControlTotalOutputComponents,
                       BuiltInName::gl_MaxTessControlTotalOutputComponents, SymbolType::BuiltIn,
-                      std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
                       StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
@@ -29467,10 +29590,12 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
         static_cast<TVariable *>(m_gl_MaxTessControlTotalOutputComponentsES3_2)
             ->shareConstPointer(unionArray);
     }
-    m_gl_MaxTessControlImageUniforms = new TVariable(
-        BuiltInId::gl_MaxTessControlImageUniforms, BuiltInName::gl_MaxTessControlImageUniforms,
-        SymbolType::BuiltIn, std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
-        StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
+    m_gl_MaxTessControlImageUniforms =
+        new TVariable(BuiltInId::gl_MaxTessControlImageUniforms,
+                      BuiltInName::gl_MaxTessControlImageUniforms, SymbolType::BuiltIn,
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
+                      StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
         unionArray[0].setIConst(resources.MaxTessControlImageUniforms);
@@ -29486,10 +29611,12 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
         static_cast<TVariable *>(m_gl_MaxTessControlImageUniformsES3_2)
             ->shareConstPointer(unionArray);
     }
-    m_gl_MaxTessControlAtomicCounters = new TVariable(
-        BuiltInId::gl_MaxTessControlAtomicCounters, BuiltInName::gl_MaxTessControlAtomicCounters,
-        SymbolType::BuiltIn, std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
-        StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
+    m_gl_MaxTessControlAtomicCounters =
+        new TVariable(BuiltInId::gl_MaxTessControlAtomicCounters,
+                      BuiltInName::gl_MaxTessControlAtomicCounters, SymbolType::BuiltIn,
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
+                      StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
         unionArray[0].setIConst(resources.MaxTessControlAtomicCounters);
@@ -29509,7 +29636,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_MaxTessControlAtomicCounterBuffers =
         new TVariable(BuiltInId::gl_MaxTessControlAtomicCounterBuffers,
                       BuiltInName::gl_MaxTessControlAtomicCounterBuffers, SymbolType::BuiltIn,
-                      std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
                       StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
@@ -29528,10 +29656,12 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
         static_cast<TVariable *>(m_gl_MaxTessControlAtomicCounterBuffersES3_2)
             ->shareConstPointer(unionArray);
     }
-    m_gl_MaxTessPatchComponents = new TVariable(
-        BuiltInId::gl_MaxTessPatchComponents, BuiltInName::gl_MaxTessPatchComponents,
-        SymbolType::BuiltIn, std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
-        StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
+    m_gl_MaxTessPatchComponents =
+        new TVariable(BuiltInId::gl_MaxTessPatchComponents, BuiltInName::gl_MaxTessPatchComponents,
+                      SymbolType::BuiltIn,
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
+                      StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
         unionArray[0].setIConst(resources.MaxTessPatchComponents);
@@ -29548,7 +29678,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     }
     m_gl_MaxPatchVertices = new TVariable(
         BuiltInId::gl_MaxPatchVertices, BuiltInName::gl_MaxPatchVertices, SymbolType::BuiltIn,
-        std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+        std::array<TExtension, 2u>{
+            {TExtension::EXT_tessellation_shader, TExtension::OES_tessellation_shader}},
         StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
@@ -29566,7 +29697,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     }
     m_gl_MaxTessGenLevel = new TVariable(
         BuiltInId::gl_MaxTessGenLevel, BuiltInName::gl_MaxTessGenLevel, SymbolType::BuiltIn,
-        std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+        std::array<TExtension, 2u>{
+            {TExtension::EXT_tessellation_shader, TExtension::OES_tessellation_shader}},
         StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
@@ -29585,7 +29717,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_MaxTessEvaluationInputComponents =
         new TVariable(BuiltInId::gl_MaxTessEvaluationInputComponents,
                       BuiltInName::gl_MaxTessEvaluationInputComponents, SymbolType::BuiltIn,
-                      std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
                       StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
@@ -29607,7 +29740,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_MaxTessEvaluationOutputComponents =
         new TVariable(BuiltInId::gl_MaxTessEvaluationOutputComponents,
                       BuiltInName::gl_MaxTessEvaluationOutputComponents, SymbolType::BuiltIn,
-                      std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
                       StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
@@ -29629,7 +29763,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_MaxTessEvaluationTextureImageUnits =
         new TVariable(BuiltInId::gl_MaxTessEvaluationTextureImageUnits,
                       BuiltInName::gl_MaxTessEvaluationTextureImageUnits, SymbolType::BuiltIn,
-                      std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
                       StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
@@ -29651,7 +29786,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_MaxTessEvaluationUniformComponents =
         new TVariable(BuiltInId::gl_MaxTessEvaluationUniformComponents,
                       BuiltInName::gl_MaxTessEvaluationUniformComponents, SymbolType::BuiltIn,
-                      std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
                       StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
@@ -29673,7 +29809,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_MaxTessEvaluationImageUniforms =
         new TVariable(BuiltInId::gl_MaxTessEvaluationImageUniforms,
                       BuiltInName::gl_MaxTessEvaluationImageUniforms, SymbolType::BuiltIn,
-                      std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
                       StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
@@ -29695,7 +29832,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_MaxTessEvaluationAtomicCounters =
         new TVariable(BuiltInId::gl_MaxTessEvaluationAtomicCounters,
                       BuiltInName::gl_MaxTessEvaluationAtomicCounters, SymbolType::BuiltIn,
-                      std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
                       StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
@@ -29717,7 +29855,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     m_gl_MaxTessEvaluationAtomicCounterBuffers =
         new TVariable(BuiltInId::gl_MaxTessEvaluationAtomicCounterBuffers,
                       BuiltInName::gl_MaxTessEvaluationAtomicCounterBuffers, SymbolType::BuiltIn,
-                      std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
                       StaticType::Get<EbtInt, EbpMedium, EvqConst, 1, 1>());
     {
         TConstantUnion *unionArray = new TConstantUnion[1];
@@ -29933,7 +30072,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     type_gl_TessLevelOuterTCS->realize();
     m_gl_TessLevelOuterTCS = new TVariable(
         BuiltInId::gl_TessLevelOuterTCS, BuiltInName::gl_TessLevelOuter, SymbolType::BuiltIn,
-        std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+        std::array<TExtension, 2u>{
+            {TExtension::EXT_tessellation_shader, TExtension::OES_tessellation_shader}},
         type_gl_TessLevelOuterTCS);
     TType *type_gl_TessLevelOuterTCSES3_2 = new TType(EbtFloat, EbpHigh, EvqTessLevelOuter, 1);
     type_gl_TessLevelOuterTCSES3_2->makeArray(4u);
@@ -29946,7 +30086,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     type_gl_TessLevelInnerTCS->realize();
     m_gl_TessLevelInnerTCS = new TVariable(
         BuiltInId::gl_TessLevelInnerTCS, BuiltInName::gl_TessLevelInner, SymbolType::BuiltIn,
-        std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+        std::array<TExtension, 2u>{
+            {TExtension::EXT_tessellation_shader, TExtension::OES_tessellation_shader}},
         type_gl_TessLevelInnerTCS);
     TType *type_gl_TessLevelInnerTCSES3_2 = new TType(EbtFloat, EbpHigh, EvqTessLevelInner, 1);
     type_gl_TessLevelInnerTCSES3_2->makeArray(2u);
@@ -29958,9 +30099,11 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     fields_gl_PerVertexTCS->push_back(new TField(new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1),
                                                  BuiltInName::gl_Position, zeroSourceLoc,
                                                  SymbolType::BuiltIn));
-    TInterfaceBlock *gl_PerVertexTCS = new TInterfaceBlock(
-        BuiltInId::gl_PerVertexTCS, BuiltInName::gl_PerVertex,
-        std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}}, fields_gl_PerVertexTCS);
+    TInterfaceBlock *gl_PerVertexTCS =
+        new TInterfaceBlock(BuiltInId::gl_PerVertexTCS, BuiltInName::gl_PerVertex,
+                            std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                        TExtension::OES_tessellation_shader}},
+                            fields_gl_PerVertexTCS);
     m_gl_PerVertexTCS                       = gl_PerVertexTCS;
     TFieldList *fields_gl_PerVertexTCSES3_2 = new TFieldList();
     fields_gl_PerVertexTCSES3_2->push_back(
@@ -29974,7 +30117,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     type_gl_inTCS->makeArray(resources.MaxPatchVertices);
     type_gl_inTCS->realize();
     m_gl_inTCS = new TVariable(BuiltInId::gl_inTCS, BuiltInName::gl_in, SymbolType::BuiltIn,
-                               std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                               std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                           TExtension::OES_tessellation_shader}},
                                type_gl_inTCS);
     TType *type_gl_inTCSES3_2 = new TType(gl_PerVertex, EvqPerVertexIn, TLayoutQualifier::Create());
     type_gl_inTCSES3_2->makeArray(resources.MaxPatchVertices);
@@ -29986,7 +30130,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     type_gl_outTCS->makeArray(resources.MaxPatchVertices);
     type_gl_outTCS->realize();
     m_gl_outTCS = new TVariable(BuiltInId::gl_outTCS, BuiltInName::gl_out, SymbolType::BuiltIn,
-                                std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                                std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                            TExtension::OES_tessellation_shader}},
                                 type_gl_outTCS);
     TType *type_gl_outTCSES3_2 =
         new TType(gl_PerVertex, EvqPerVertexOut, TLayoutQualifier::Create());
@@ -30000,7 +30145,9 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     type_gl_BoundingBoxTCS->realize();
     m_gl_BoundingBoxTCS = new TVariable(
         BuiltInId::gl_BoundingBoxTCS, BuiltInName::gl_BoundingBox, SymbolType::BuiltIn,
-        std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}}, type_gl_BoundingBoxTCS);
+        std::array<TExtension, 2u>{
+            {TExtension::EXT_tessellation_shader, TExtension::OES_tessellation_shader}},
+        type_gl_BoundingBoxTCS);
     TType *type_gl_BoundingBoxTCSES3_2 = new TType(EbtFloat, EbpHigh, EvqBoundingBox, 4);
     type_gl_BoundingBoxTCSES3_2->makeArray(2u);
     type_gl_BoundingBoxTCSES3_2->realize();
@@ -30013,7 +30160,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
                    zeroSourceLoc, SymbolType::BuiltIn));
     TInterfaceBlock *gl_PerVertexOutTcsBlock =
         new TInterfaceBlock(BuiltInId::gl_PerVertexOutTcsBlock, BuiltInName::gl_PerVertex,
-                            std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                            std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                        TExtension::OES_tessellation_shader}},
                             fields_gl_PerVertexOutTcsBlock);
     TFieldList *fields_gl_PerVertexOutTcsBlockES3_2 = new TFieldList();
     fields_gl_PerVertexOutTcsBlockES3_2->push_back(
@@ -30025,9 +30173,11 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     TType *type_gl_PositionTCS = new TType(EbtFloat, EbpHigh, EvqPosition, 4);
     type_gl_PositionTCS->setInterfaceBlock(gl_PerVertexOutTcsBlock);
     type_gl_PositionTCS->realize();
-    m_gl_PositionTCS = new TVariable(
-        BuiltInId::gl_PositionTCS, BuiltInName::gl_Position, SymbolType::BuiltIn,
-        std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}}, type_gl_PositionTCS);
+    m_gl_PositionTCS =
+        new TVariable(BuiltInId::gl_PositionTCS, BuiltInName::gl_Position, SymbolType::BuiltIn,
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
+                      type_gl_PositionTCS);
     TType *type_gl_PositionTCSES3_2 = new TType(EbtFloat, EbpHigh, EvqPosition, 4);
     type_gl_PositionTCSES3_2->setInterfaceBlock(gl_PerVertexOutTcsBlockES3_2);
     type_gl_PositionTCSES3_2->realize();
@@ -30039,7 +30189,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     type_gl_BoundingBoxEXTTCS->realize();
     m_gl_BoundingBoxEXTTCS = new TVariable(
         BuiltInId::gl_BoundingBoxEXTTCS, BuiltInName::gl_BoundingBoxEXT, SymbolType::BuiltIn,
-        std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+        std::array<TExtension, 2u>{
+            {TExtension::EXT_tessellation_shader, TExtension::OES_tessellation_shader}},
         type_gl_BoundingBoxEXTTCS);
     TType *type_gl_BoundingBoxEXTTCSES3_2 = new TType(EbtFloat, EbpHigh, EvqBoundingBox, 4);
     type_gl_BoundingBoxEXTTCSES3_2->makeArray(2u);
@@ -30052,7 +30203,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     type_gl_BoundingBoxOESTCS->realize();
     m_gl_BoundingBoxOESTCS = new TVariable(
         BuiltInId::gl_BoundingBoxOESTCS, BuiltInName::gl_BoundingBoxOES, SymbolType::BuiltIn,
-        std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+        std::array<TExtension, 2u>{
+            {TExtension::EXT_tessellation_shader, TExtension::OES_tessellation_shader}},
         type_gl_BoundingBoxOESTCS);
     TType *type_gl_BoundingBoxOESTCSES3_2 = new TType(EbtFloat, EbpHigh, EvqBoundingBox, 4);
     type_gl_BoundingBoxOESTCSES3_2->makeArray(2u);
@@ -30065,7 +30217,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     type_gl_TessLevelOuterTES->realize();
     m_gl_TessLevelOuterTES = new TVariable(
         BuiltInId::gl_TessLevelOuterTES, BuiltInName::gl_TessLevelOuter, SymbolType::BuiltIn,
-        std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+        std::array<TExtension, 2u>{
+            {TExtension::EXT_tessellation_shader, TExtension::OES_tessellation_shader}},
         type_gl_TessLevelOuterTES);
     TType *type_gl_TessLevelOuterTESES3_2 = new TType(EbtFloat, EbpHigh, EvqTessLevelOuter, 1);
     type_gl_TessLevelOuterTESES3_2->makeArray(4u);
@@ -30078,7 +30231,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     type_gl_TessLevelInnerTES->realize();
     m_gl_TessLevelInnerTES = new TVariable(
         BuiltInId::gl_TessLevelInnerTES, BuiltInName::gl_TessLevelInner, SymbolType::BuiltIn,
-        std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+        std::array<TExtension, 2u>{
+            {TExtension::EXT_tessellation_shader, TExtension::OES_tessellation_shader}},
         type_gl_TessLevelInnerTES);
     TType *type_gl_TessLevelInnerTESES3_2 = new TType(EbtFloat, EbpHigh, EvqTessLevelInner, 1);
     type_gl_TessLevelInnerTESES3_2->makeArray(2u);
@@ -30090,9 +30244,11 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     fields_gl_PerVertexTES->push_back(new TField(new TType(EbtFloat, EbpHigh, EvqPosition, 4, 1),
                                                  BuiltInName::gl_Position, zeroSourceLoc,
                                                  SymbolType::BuiltIn));
-    TInterfaceBlock *gl_PerVertexTES = new TInterfaceBlock(
-        BuiltInId::gl_PerVertexTES, BuiltInName::gl_PerVertex,
-        std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}}, fields_gl_PerVertexTES);
+    TInterfaceBlock *gl_PerVertexTES =
+        new TInterfaceBlock(BuiltInId::gl_PerVertexTES, BuiltInName::gl_PerVertex,
+                            std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                        TExtension::OES_tessellation_shader}},
+                            fields_gl_PerVertexTES);
     m_gl_PerVertexTES                       = gl_PerVertexTES;
     TFieldList *fields_gl_PerVertexTESES3_2 = new TFieldList();
     fields_gl_PerVertexTESES3_2->push_back(
@@ -30106,7 +30262,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     type_gl_inTES->makeArray(resources.MaxPatchVertices);
     type_gl_inTES->realize();
     m_gl_inTES = new TVariable(BuiltInId::gl_inTES, BuiltInName::gl_in, SymbolType::BuiltIn,
-                               std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                               std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                           TExtension::OES_tessellation_shader}},
                                type_gl_inTES);
     TType *type_gl_inTESES3_2 = new TType(gl_PerVertex, EvqPerVertexIn, TLayoutQualifier::Create());
     type_gl_inTESES3_2->makeArray(resources.MaxPatchVertices);
@@ -30118,7 +30275,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     type_gl_outTES->makeArray(resources.MaxPatchVertices);
     type_gl_outTES->realize();
     m_gl_outTES = new TVariable(BuiltInId::gl_outTES, BuiltInName::gl_out, SymbolType::BuiltIn,
-                                std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                                std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                            TExtension::OES_tessellation_shader}},
                                 type_gl_outTES);
     TType *type_gl_outTESES3_2 =
         new TType(gl_PerVertex, EvqPerVertexOut, TLayoutQualifier::Create());
@@ -30133,7 +30291,8 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
                    zeroSourceLoc, SymbolType::BuiltIn));
     TInterfaceBlock *gl_PerVertexOutTesBlock =
         new TInterfaceBlock(BuiltInId::gl_PerVertexOutTesBlock, BuiltInName::gl_PerVertex,
-                            std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}},
+                            std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                        TExtension::OES_tessellation_shader}},
                             fields_gl_PerVertexOutTesBlock);
     TFieldList *fields_gl_PerVertexOutTesBlockES3_2 = new TFieldList();
     fields_gl_PerVertexOutTesBlockES3_2->push_back(
@@ -30145,9 +30304,11 @@ void TSymbolTable::initializeBuiltInVariables(sh::GLenum shaderType,
     TType *type_gl_PositionTES = new TType(EbtFloat, EbpHigh, EvqPosition, 4);
     type_gl_PositionTES->setInterfaceBlock(gl_PerVertexOutTesBlock);
     type_gl_PositionTES->realize();
-    m_gl_PositionTES = new TVariable(
-        BuiltInId::gl_PositionTES, BuiltInName::gl_Position, SymbolType::BuiltIn,
-        std::array<TExtension, 1u>{{TExtension::EXT_tessellation_shader}}, type_gl_PositionTES);
+    m_gl_PositionTES =
+        new TVariable(BuiltInId::gl_PositionTES, BuiltInName::gl_Position, SymbolType::BuiltIn,
+                      std::array<TExtension, 2u>{{TExtension::EXT_tessellation_shader,
+                                                  TExtension::OES_tessellation_shader}},
+                      type_gl_PositionTES);
     TType *type_gl_PositionTESES3_2 = new TType(EbtFloat, EbpHigh, EvqPosition, 4);
     type_gl_PositionTESES3_2->setInterfaceBlock(gl_PerVertexOutTesBlockES3_2);
     type_gl_PositionTESES3_2->realize();

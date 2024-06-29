@@ -254,7 +254,7 @@ class MockPeerConnectionObserver : public PeerConnectionObserver {
 };
 
 class MockCreateSessionDescriptionObserver
-    : public webrtc::CreateSessionDescriptionObserver {
+    : public CreateSessionDescriptionObserver {
  public:
   MockCreateSessionDescriptionObserver()
       : called_(false),
@@ -266,7 +266,7 @@ class MockCreateSessionDescriptionObserver
     error_ = "";
     desc_.reset(desc);
   }
-  void OnFailure(webrtc::RTCError error) override {
+  void OnFailure(RTCError error) override {
     MutexLock lock(&mutex_);
     called_ = true;
     error_ = error.message();
@@ -295,8 +295,7 @@ class MockCreateSessionDescriptionObserver
   std::unique_ptr<SessionDescriptionInterface> desc_ RTC_GUARDED_BY(mutex_);
 };
 
-class MockSetSessionDescriptionObserver
-    : public webrtc::SetSessionDescriptionObserver {
+class MockSetSessionDescriptionObserver : public SetSessionDescriptionObserver {
  public:
   static rtc::scoped_refptr<MockSetSessionDescriptionObserver> Create() {
     return rtc::make_ref_counted<MockSetSessionDescriptionObserver>();
@@ -312,7 +311,7 @@ class MockSetSessionDescriptionObserver
     called_ = true;
     error_ = "";
   }
-  void OnFailure(webrtc::RTCError error) override {
+  void OnFailure(RTCError error) override {
     MutexLock lock(&mutex_);
     called_ = true;
     error_ = error.message();
@@ -375,14 +374,14 @@ class FakeSetRemoteDescriptionObserver
   absl::optional<RTCError> error_;
 };
 
-class MockDataChannelObserver : public webrtc::DataChannelObserver {
+class MockDataChannelObserver : public DataChannelObserver {
  public:
   struct Message {
     std::string data;
     bool binary;
   };
 
-  explicit MockDataChannelObserver(webrtc::DataChannelInterface* channel)
+  explicit MockDataChannelObserver(DataChannelInterface* channel)
       : channel_(channel) {
     channel_->RegisterObserver(this);
     states_.push_back(channel_->state());
@@ -419,12 +418,12 @@ class MockDataChannelObserver : public webrtc::DataChannelObserver {
   }
 
  private:
-  rtc::scoped_refptr<webrtc::DataChannelInterface> channel_;
+  rtc::scoped_refptr<DataChannelInterface> channel_;
   std::vector<DataChannelInterface::DataState> states_;
   std::vector<Message> messages_;
 };
 
-class MockStatsObserver : public webrtc::StatsObserver {
+class MockStatsObserver : public StatsObserver {
  public:
   MockStatsObserver() : called_(false), stats_() {}
   virtual ~MockStatsObserver() {}
@@ -576,7 +575,7 @@ class MockStatsObserver : public webrtc::StatsObserver {
 };
 
 // Helper class that just stores the report from the callback.
-class MockRTCStatsCollectorCallback : public webrtc::RTCStatsCollectorCallback {
+class MockRTCStatsCollectorCallback : public RTCStatsCollectorCallback {
  public:
   rtc::scoped_refptr<const RTCStatsReport> report() { return report_; }
 

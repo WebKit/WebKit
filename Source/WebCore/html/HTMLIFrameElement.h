@@ -31,6 +31,7 @@ namespace WebCore {
 class DOMTokenList;
 class LazyLoadFrameObserver;
 class RenderIFrame;
+class TrustedHTML;
 
 class HTMLIFrameElement final : public HTMLFrameElementBase {
     WTF_MAKE_ISO_ALLOCATED(HTMLIFrameElement);
@@ -43,10 +44,12 @@ public:
     String referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const final;
 
-    const PermissionsPolicy& permissionsPolicy() const;
-
+    PermissionsPolicy::PolicyDirective permissionsPolicyDirective() const;
     const AtomString& loadingForBindings() const;
     void setLoadingForBindings(const AtomString&);
+
+    String srcdoc() const;
+    ExceptionOr<void> setSrcdoc(std::variant<RefPtr<TrustedHTML>, String>&&);
 
     LazyLoadFrameObserver& lazyLoadFrameObserver();
 
@@ -74,7 +77,7 @@ private:
     bool isLazyLoadObserverActive() const final;
 
     std::unique_ptr<DOMTokenList> m_sandbox;
-    mutable std::optional<PermissionsPolicy> m_permissionsPolicy;
+    mutable std::optional<PermissionsPolicy::PolicyDirective> m_permissionsPolicyDirective;
 #if ENABLE(FULLSCREEN_API)
     bool m_IFrameFullscreenFlag { false };
 #endif

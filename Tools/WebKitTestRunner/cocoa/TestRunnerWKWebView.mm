@@ -34,6 +34,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPIForTesting.h"
@@ -48,7 +49,12 @@
 - (void)_scheduleVisibleContentRectUpdate;
 
 @end
+
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS(UIKit, UIEditMenuInteraction)
 #endif
+#endif // PLATFORM(IOS_FAMILY)
 
 struct CustomMenuActionInfo {
     RetainPtr<NSString> name;
@@ -499,8 +505,8 @@ IGNORE_WARNINGS_END
 {
     _overrideSafeAreaInsets = insets;
 
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+// FIXME: Likely we can remove this special case for watchOS.
+#if !PLATFORM(WATCHOS)
     [self _updateSafeAreaInsets];
 #endif
 }
@@ -640,8 +646,8 @@ static bool isQuickboardViewController(UIViewController *viewController)
 
     [UIView performWithoutAnimation:^{
         for (id<UIInteraction> interaction in self.contentView.interactions) {
-            if (auto *editMenuInteraction = dynamic_objc_cast<UIEditMenuInteraction>(interaction))
-                [editMenuInteraction dismissMenu];
+            if ([interaction isKindOfClass:getUIEditMenuInteractionClass()])
+                [(UIEditMenuInteraction *)interaction dismissMenu];
         }
     }];
 }

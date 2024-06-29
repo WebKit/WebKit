@@ -79,14 +79,14 @@ void WebContextMenuClient::handleTranslation(const WebCore::TranslationContextMe
 
 #endif // HAVE(TRANSLATION_UI_SERVICES)
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(WRITING_TOOLS)
 
-void WebContextMenuClient::handleSwapCharacters(WebCore::IntRect selectionBoundsInRootView)
+void WebContextMenuClient::handleWritingTools(WebCore::IntRect selectionBoundsInRootView)
 {
     if (!m_page)
         return;
 
-    m_page->send(Messages::WebPageProxy::HandleContextMenuSwapCharacters(selectionBoundsInRootView));
+    m_page->send(Messages::WebPageProxy::HandleContextMenuWritingTools(selectionBoundsInRootView));
 }
 
 #endif

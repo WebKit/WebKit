@@ -196,8 +196,8 @@ void webkit_cookie_manager_set_persistent_storage(WebKitCookieManager* manager, 
     if (sessionID.isEphemeral())
         return;
 
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager);
-    websiteDataStore.setCookiePersistentStorage(String::fromUTF8(filename), toSoupCookiePersistentStorageType(storage));
+    Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager);
+    websiteDataStore->setCookiePersistentStorage(String::fromUTF8(filename), toSoupCookiePersistentStorageType(storage));
 }
 
 /**
@@ -216,8 +216,8 @@ void webkit_cookie_manager_set_accept_policy(WebKitCookieManager* manager, WebKi
 {
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
 
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager);
-    websiteDataStore.setHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy));
+    Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager);
+    websiteDataStore->setHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy));
 }
 
 /**

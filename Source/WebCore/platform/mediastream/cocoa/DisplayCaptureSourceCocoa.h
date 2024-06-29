@@ -149,7 +149,7 @@ private:
     CaptureDevice::DeviceType deviceType() const { return m_capturer->deviceType(); }
     void endApplyingConstraints() final { commitConfiguration(); }
     IntSize computeResizedVideoFrameSize(IntSize desiredSize, IntSize actualSize) final;
-    void setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>) final;
+    void setSizeFrameRateAndZoom(const VideoPresetConstraints&) final;
     double observedFrameRate() const final;
 
     ASCIILiteral logClassName() const final { return "DisplayCaptureSourceCocoa"_s; }

@@ -397,8 +397,7 @@ TEST(RtpParametersConversionTest, ToRtcpFeedbackErrors) {
 }
 
 TEST(RtpParametersConversionTest, ToAudioRtpCodecCapability) {
-  cricket::AudioCodec cricket_codec =
-      cricket::CreateAudioCodec(50, "foo", 22222, 4);
+  cricket::Codec cricket_codec = cricket::CreateAudioCodec(50, "foo", 22222, 4);
   cricket_codec.params["foo"] = "bar";
   cricket_codec.feedback_params.Add(cricket::FeedbackParam("transport-cc"));
   RtpCodecCapability codec = ToRtpCodecCapability(cricket_codec);
@@ -416,7 +415,7 @@ TEST(RtpParametersConversionTest, ToAudioRtpCodecCapability) {
 }
 
 TEST(RtpParametersConversionTest, ToVideoRtpCodecCapability) {
-  cricket::VideoCodec cricket_codec = cricket::CreateVideoCodec(101, "VID");
+  cricket::Codec cricket_codec = cricket::CreateVideoCodec(101, "VID");
   cricket_codec.clockrate = 80000;
   cricket_codec.params["foo"] = "bar";
   cricket_codec.params["ANOTHER"] = "param";
@@ -464,8 +463,7 @@ TEST(RtpParametersConversionTest, ToRtpEncodingsWithMultipleStreamParams) {
 }
 
 TEST(RtpParametersConversionTest, ToAudioRtpCodecParameters) {
-  cricket::AudioCodec cricket_codec =
-      cricket::CreateAudioCodec(50, "foo", 22222, 4);
+  cricket::Codec cricket_codec = cricket::CreateAudioCodec(50, "foo", 22222, 4);
   cricket_codec.params["foo"] = "bar";
   cricket_codec.feedback_params.Add(cricket::FeedbackParam("transport-cc"));
   RtpCodecParameters codec = ToRtpCodecParameters(cricket_codec);
@@ -483,7 +481,7 @@ TEST(RtpParametersConversionTest, ToAudioRtpCodecParameters) {
 }
 
 TEST(RtpParametersConversionTest, ToVideoRtpCodecParameters) {
-  cricket::VideoCodec cricket_codec = cricket::CreateVideoCodec(101, "VID");
+  cricket::Codec cricket_codec = cricket::CreateVideoCodec(101, "VID");
   cricket_codec.clockrate = 80000;
   cricket_codec.params["foo"] = "bar";
   cricket_codec.params["ANOTHER"] = "param";
@@ -509,8 +507,7 @@ TEST(RtpParametersConversionTest, ToVideoRtpCodecParameters) {
 
 // An unknown feedback param should just be ignored.
 TEST(RtpParametersConversionTest, ToRtpCodecCapabilityUnknownFeedbackParam) {
-  cricket::AudioCodec cricket_codec =
-      cricket::CreateAudioCodec(50, "foo", 22222, 4);
+  cricket::Codec cricket_codec = cricket::CreateAudioCodec(50, "foo", 22222, 4);
   cricket_codec.params["foo"] = "bar";
   cricket_codec.feedback_params.Add({"unknown", "param"});
   cricket_codec.feedback_params.Add(cricket::FeedbackParam("transport-cc"));
@@ -525,21 +522,21 @@ TEST(RtpParametersConversionTest, ToRtpCodecCapabilityUnknownFeedbackParam) {
 // test that the result of ToRtpCodecCapability ends up in the result, and that
 // the "fec" list is assembled correctly.
 TEST(RtpParametersConversionTest, ToRtpCapabilities) {
-  cricket::VideoCodec vp8 = cricket::CreateVideoCodec(101, "VP8");
+  cricket::Codec vp8 = cricket::CreateVideoCodec(101, "VP8");
   vp8.clockrate = 90000;
 
-  cricket::VideoCodec red = cricket::CreateVideoCodec(102, "red");
+  cricket::Codec red = cricket::CreateVideoCodec(102, "red");
   red.clockrate = 90000;
 
-  cricket::VideoCodec ulpfec = cricket::CreateVideoCodec(103, "ulpfec");
+  cricket::Codec ulpfec = cricket::CreateVideoCodec(103, "ulpfec");
   ulpfec.clockrate = 90000;
 
-  cricket::VideoCodec flexfec = cricket::CreateVideoCodec(102, "flexfec-03");
+  cricket::Codec flexfec = cricket::CreateVideoCodec(102, "flexfec-03");
   flexfec.clockrate = 90000;
 
-  cricket::VideoCodec rtx = cricket::CreateVideoRtxCodec(014, 101);
+  cricket::Codec rtx = cricket::CreateVideoRtxCodec(014, 101);
 
-  cricket::VideoCodec rtx2 = cricket::CreateVideoRtxCodec(105, 109);
+  cricket::Codec rtx2 = cricket::CreateVideoRtxCodec(105, 109);
 
   RtpCapabilities capabilities =
       ToRtpCapabilities({vp8, ulpfec, rtx, rtx2}, {{"uri", 1}, {"uri2", 3}});
@@ -570,13 +567,13 @@ TEST(RtpParametersConversionTest, ToRtpCapabilities) {
 }
 
 TEST(RtpParametersConversionTest, ToRtpParameters) {
-  cricket::VideoCodec vp8 = cricket::CreateVideoCodec(101, "VP8");
+  cricket::Codec vp8 = cricket::CreateVideoCodec(101, "VP8");
   vp8.clockrate = 90000;
 
-  cricket::VideoCodec red = cricket::CreateVideoCodec(102, "red");
+  cricket::Codec red = cricket::CreateVideoCodec(102, "red");
   red.clockrate = 90000;
 
-  cricket::VideoCodec ulpfec = cricket::CreateVideoCodec(103, "ulpfec");
+  cricket::Codec ulpfec = cricket::CreateVideoCodec(103, "ulpfec");
   ulpfec.clockrate = 90000;
 
   cricket::StreamParamsVec streams;

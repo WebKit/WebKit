@@ -65,12 +65,12 @@ class FakePeriodicVideoSource final
     return wants_;
   }
 
-  void RemoveSink(rtc::VideoSinkInterface<webrtc::VideoFrame>* sink) override {
+  void RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) override {
     RTC_DCHECK(thread_checker_.IsCurrent());
     broadcaster_.RemoveSink(sink);
   }
 
-  void AddOrUpdateSink(rtc::VideoSinkInterface<webrtc::VideoFrame>* sink,
+  void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
                        const rtc::VideoSinkWants& wants) override {
     RTC_DCHECK(thread_checker_.IsCurrent());
     {

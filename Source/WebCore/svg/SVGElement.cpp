@@ -155,17 +155,17 @@ void SVGElement::reportAttributeParsingError(SVGParsingError error, const Qualif
     if (error == NoError)
         return;
 
-    String errorString = "<" + tagName() + "> attribute " + name.toString() + "=\"" + value + "\"";
+    auto errorString = makeString('<', tagName(), "> attribute "_s, name.toString(), "=\""_s, value, "\""_s);
     Ref document = this->document();
     CheckedRef extensions = document->svgExtensions();
 
     if (error == NegativeValueForbiddenError) {
-        extensions->reportError("Invalid negative value for " + errorString);
+        extensions->reportError(makeString("Invalid negative value for "_s, errorString));
         return;
     }
 
     if (error == ParsingAttributeFailedError) {
-        extensions->reportError("Invalid value for " + errorString);
+        extensions->reportError(makeString("Invalid value for "_s, errorString));
         return;
     }
 
@@ -457,6 +457,7 @@ static inline bool isSVGLayerAwareElement(const SVGElement& element)
     case SVG::clipPath:
     case SVG::defs:
     case SVG::ellipse:
+    case SVG::filter:
     case SVG::foreignObject:
     case SVG::g:
     case SVG::image:
@@ -1021,7 +1022,7 @@ void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     if (attrName == HTMLNames::classAttr) {
-        classAttributeChanged(className());
+        classAttributeChanged(className(), AttributeModificationReason::Directly);
         invalidateInstances();
         return;
     }
@@ -1046,12 +1047,12 @@ Node::InsertedIntoAncestorResult SVGElement::insertedIntoAncestor(InsertionType 
     else if (RefPtr parentElement = dynamicDowncast<SVGElement>(parentNode()); parentElement && &parentOfInsertedTree == parentNode())
         parentElement->updateRelativeLengthsInformationForChild(hasRelativeLengths(), *this);
 
+    hideNonce();
+
     if (needsPendingResourceHandling() && insertionType.connectedToDocument && !isInShadowTree()) {
         if (treeScopeForSVGReferences().isIdOfPendingSVGResource(getIdAttribute()))
             return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
     }
-
-    hideNonce();
 
     return InsertedIntoAncestorResult::Done;
 }

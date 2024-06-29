@@ -50,7 +50,7 @@ enum class PACKeyType {
     FOR_EACH_ADDITIONAL_WTF_PTRTAG(v) \
 
 enum PtrTag : uintptr_t {
-    NoPtrTag,
+    NoPtrTag = 0, // Note: We use the 0 tag for temporarily holding the return PC during JSC's arity fixup.
     CFunctionPtrTag,
 };
 
@@ -138,16 +138,7 @@ constexpr uintptr_t makePtrTagHash(const char (&str)[N])
 static_assert(static_cast<uintptr_t>(NoPtrTag) == static_cast<uintptr_t>(0));
 static_assert(static_cast<uintptr_t>(CFunctionPtrTag) == static_cast<uintptr_t>(1));
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable:4307)
-#endif
-
 FOR_EACH_ADDITIONAL_WTF_PTRTAG(WTF_DECLARE_PTRTAG)
-
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 
 struct PtrTagLookup {
     using TagForPtrFunc = const char* (*)(const void*);

@@ -26,22 +26,64 @@
 #include "config.h"
 #include "PaintRenderingContext2D.h"
 
+#include "CustomPaintCanvas.h"
+#include "DisplayListDrawingContext.h"
+#include "DisplayListRecorder.h"
+#include "DisplayListReplayer.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(PaintRenderingContext2D);
 
-std::unique_ptr<PaintRenderingContext2D> PaintRenderingContext2D::create(CanvasBase& canvas)
+std::unique_ptr<PaintRenderingContext2D> PaintRenderingContext2D::create(CustomPaintCanvas& canvas)
 {
     return std::unique_ptr<PaintRenderingContext2D>(new PaintRenderingContext2D(canvas));
 }
 
-PaintRenderingContext2D::PaintRenderingContext2D(CanvasBase& canvas)
+PaintRenderingContext2D::PaintRenderingContext2D(CustomPaintCanvas& canvas)
     : CanvasRenderingContext2DBase(canvas, { }, false)
 {
 }
 
 PaintRenderingContext2D::~PaintRenderingContext2D() = default;
+
+CustomPaintCanvas& PaintRenderingContext2D::canvas() const
+{
+    return downcast<CustomPaintCanvas>(canvasBase());
+}
+
+GraphicsContext* PaintRenderingContext2D::drawingContext() const
+{
+    if (!m_recordingContext)
+        m_recordingContext = makeUnique<DisplayList::DrawingContext>(canvasBase().size());
+    return &m_recordingContext->context();
+}
+
+GraphicsContext* PaintRenderingContext2D::existingDrawingContext() const
+{
+    return m_recordingContext ? &m_recordingContext->context() : nullptr;
+}
+
+AffineTransform PaintRenderingContext2D::baseTransform() const
+{
+    // The base transform of the display list.
+    // FIXME: this is actually correct, but the display list will not behave correctly with respect to
+    // playback. The GraphicsContext should be fixed to start at identity transform, and the
+    // device transform should be a separate concept that the display list or context2d cannot reset.
+    return { };
+}
+
+void PaintRenderingContext2D::replayDisplayList(GraphicsContext& target) const
+{
+    if (!m_recordingContext)
+        return;
+    auto& displayList = m_recordingContext->displayList();
+    if (displayList.isEmpty())
+        return;
+    DisplayList::Replayer replayer(target, displayList);
+    replayer.replay(FloatRect { { }, canvasBase().size() });
+    displayList.clear();
+}
 
 } // namespace WebCore

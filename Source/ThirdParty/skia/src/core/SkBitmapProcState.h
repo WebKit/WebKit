@@ -16,6 +16,7 @@
 #include "include/core/SkScalar.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkCPUTypes.h"
+#include "include/private/base/SkDebug.h"
 #include "include/private/base/SkFixed.h"
 #include "src/base/SkArenaAlloc.h"
 #include "src/core/SkMatrixPriv.h"
@@ -216,6 +217,8 @@ namespace SkOpts {
     // SkBitmapProcState optimized Shader, Sample, or Matrix procs.
     extern void (*S32_alpha_D32_filter_DX)(const SkBitmapProcState&,
                                            const uint32_t* xy, int count, SkPMColor*);
+    extern void (*S32_alpha_D32_filter_DXDY)(const SkBitmapProcState&,
+                                             const uint32_t* xy, int count, SkPMColor*);
 
     void Init_BitmapProcState();
 }  // namespace SkOpts

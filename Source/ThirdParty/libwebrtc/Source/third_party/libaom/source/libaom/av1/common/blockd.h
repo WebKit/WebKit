@@ -1142,7 +1142,7 @@ static INLINE TX_SIZE tx_size_from_tx_mode(BLOCK_SIZE bsize, TX_MODE tx_mode) {
     return largest_tx_size;
 }
 
-static const uint8_t mode_to_angle_map[] = {
+static const uint8_t mode_to_angle_map[INTRA_MODES] = {
   0, 90, 180, 45, 135, 113, 157, 203, 67, 0, 0, 0, 0,
 };
 

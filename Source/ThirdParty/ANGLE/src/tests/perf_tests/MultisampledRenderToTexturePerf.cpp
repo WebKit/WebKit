@@ -109,20 +109,20 @@ MultisampledRenderToTextureBenchmark::MultisampledRenderToTextureBenchmark()
 
     if (IsPixel4() && GetParam().eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE)
     {
-        skipTest("http://anglebug.com/5120 Fails on Pixel 4 GLES");
+        skipTest("http://anglebug.com/40096724 Fails on Pixel 4 GLES");
     }
 
     if (IsLinux() && IsAMD() &&
         GetParam().eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE &&
         GetParam().multiplePasses && GetParam().withDepthStencil)
     {
-        skipTest("http://anglebug.com/5380");
+        skipTest("http://anglebug.com/42263920");
     }
 
     if (IsLinux() && IsIntel() &&
         GetParam().eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE)
     {
-        skipTest("http://anglebug.com/6319");
+        skipTest("http://anglebug.com/42264836");
     }
 }
 

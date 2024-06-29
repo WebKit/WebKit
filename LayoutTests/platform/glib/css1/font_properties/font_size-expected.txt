@@ -65,13 +65,13 @@ layer at (0,0) size 785x2810
         RenderText {#text} at (0,0) size 276x15
           text run at (0,0) width 276: "This sentence should be smaller than unstyled text."
       RenderBlock {P} at (0,506) size 769x19
-        RenderText {#text} at (0,6) size 305x10
-          text run at (0,6) width 305: "This sentence should be very small, but the last word in the sentence should be "
-        RenderInline {SPAN} at (304,0) size 52x17
-          RenderText {#text} at (304,0) size 52x17
-            text run at (304,0) width 52: "medium"
-        RenderText {#text} at (355,6) size 3x10
-          text run at (355,6) width 3: "."
+        RenderText {#text} at (0,6) size 303x10
+          text run at (0,6) width 303: "This sentence should be very small, but the last word in the sentence should be "
+        RenderInline {SPAN} at (303,0) size 51x17
+          RenderText {#text} at (303,0) size 51x17
+            text run at (303,0) width 51: "medium"
+        RenderText {#text} at (354,6) size 2x10
+          text run at (354,6) width 2: "."
       RenderBlock {P} at (0,534) size 769x19
         RenderText {#text} at (0,5) size 327x11
           text run at (0,5) width 327: "This sentence should be rather small, but the last word in the sentence should be "
@@ -119,11 +119,11 @@ layer at (0,0) size 785x2810
           text run at (0,1) width 695: "This sentence should be half an inch"
           text run at (0,56) width 72: "tall."
       RenderBlock {P} at (0,1012) size 769x45
-        RenderText {#text} at (0,1) size 668x42
-          text run at (0,1) width 668: "This sentence should be one centimeter tall."
+        RenderText {#text} at (0,1) size 659x42
+          text run at (0,1) width 659: "This sentence should be one centimeter tall."
       RenderBlock {P} at (0,1094) size 769x45
-        RenderText {#text} at (0,1) size 673x42
-          text run at (0,1) width 673: "This sentence should be ten millimeters tall."
+        RenderText {#text} at (0,1) size 661x42
+          text run at (0,1) width 661: "This sentence should be ten millimeters tall."
       RenderBlock {P} at (0,1176) size 769x28
         RenderText {#text} at (0,0) size 430x26
           text run at (0,0) width 430: "This sentence should be eighteen points tall."
@@ -175,13 +175,13 @@ layer at (0,0) size 785x2810
                 RenderText {#text} at (0,0) size 276x15
                   text run at (0,0) width 276: "This sentence should be smaller than unstyled text."
               RenderBlock {P} at (4,145) size 747x19
-                RenderText {#text} at (0,6) size 305x10
-                  text run at (0,6) width 305: "This sentence should be very small, but the last word in the sentence should be "
-                RenderInline {SPAN} at (304,0) size 52x17
-                  RenderText {#text} at (304,0) size 52x17
-                    text run at (304,0) width 52: "medium"
-                RenderText {#text} at (355,6) size 3x10
-                  text run at (355,6) width 3: "."
+                RenderText {#text} at (0,6) size 303x10
+                  text run at (0,6) width 303: "This sentence should be very small, but the last word in the sentence should be "
+                RenderInline {SPAN} at (303,0) size 51x17
+                  RenderText {#text} at (303,0) size 51x17
+                    text run at (303,0) width 51: "medium"
+                RenderText {#text} at (354,6) size 2x10
+                  text run at (354,6) width 2: "."
               RenderBlock {P} at (4,173) size 747x19
                 RenderText {#text} at (0,5) size 327x11
                   text run at (0,5) width 327: "This sentence should be rather small, but the last word in the sentence should be "
@@ -229,11 +229,11 @@ layer at (0,0) size 785x2810
                   text run at (0,1) width 695: "This sentence should be half an inch"
                   text run at (0,56) width 72: "tall."
               RenderBlock {P} at (4,651) size 747x45
-                RenderText {#text} at (0,1) size 668x42
-                  text run at (0,1) width 668: "This sentence should be one centimeter tall."
+                RenderText {#text} at (0,1) size 659x42
+                  text run at (0,1) width 659: "This sentence should be one centimeter tall."
               RenderBlock {P} at (4,733) size 747x45
-                RenderText {#text} at (0,1) size 673x42
-                  text run at (0,1) width 673: "This sentence should be ten millimeters tall."
+                RenderText {#text} at (0,1) size 661x42
+                  text run at (0,1) width 661: "This sentence should be ten millimeters tall."
               RenderBlock {P} at (4,815) size 747x28
                 RenderText {#text} at (0,0) size 430x26
                   text run at (0,0) width 430: "This sentence should be eighteen points tall."

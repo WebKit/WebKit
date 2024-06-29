@@ -115,20 +115,18 @@ Vector<Ref<Element>> CustomElementDefaultARIA::elementsForAttribute(const Elemen
     if (it == m_map.end())
         return result;
     std::visit(WTF::makeVisitor([&](const AtomString& stringValue) {
-        SpaceSplitString idList { stringValue, SpaceSplitString::ShouldFoldCase::No };
-        result.reserveCapacity(idList.size());
         if (thisElement.isInTreeScope()) {
-            for (unsigned i = 0; i < idList.size(); ++i) {
-                if (RefPtr element = thisElement.treeScope().getElementById(idList[i]))
-                    result.append(element.releaseNonNull());
-            }
+            SpaceSplitString idList { stringValue, SpaceSplitString::ShouldFoldCase::No };
+            result = WTF::compactMap(idList, [&](auto& id) {
+                return thisElement.treeScope().getElementById(id);
+            });
         }
     }, [&](const WeakPtr<Element, WeakPtrImplWithEventTargetData>& weakElementValue) {
         RefPtr element = weakElementValue.get();
         if (element && isElementVisible(*element, thisElement))
             result.append(element.releaseNonNull());
     }, [&](const Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>& elements) {
-        result.reserveCapacity(elements.size());
+        result.reserveInitialCapacity(elements.size());
         for (auto& weakElement : elements) {
             if (RefPtr element = weakElement.get(); element && isElementVisible(*element, thisElement))
                 result.append(element.releaseNonNull());

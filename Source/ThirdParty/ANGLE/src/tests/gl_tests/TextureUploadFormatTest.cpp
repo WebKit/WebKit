@@ -240,7 +240,7 @@ TEST_P(TextureUploadFormatTest, All)
             case GL_DEPTH_STENCIL:
                 // Metal back-end requires swizzle feature to return (depth, 0, 0, 1) from sampling
                 // a depth texture.
-                // http://anglebug.com/5243
+                // http://anglebug.com/42263796
                 if (IsMetal() && !IsMetalTextureSwizzleAvailable())
                 {
                     // If texture swizzle is not supported, we should only compare the first

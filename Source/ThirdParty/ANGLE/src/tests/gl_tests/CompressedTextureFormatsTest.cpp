@@ -219,7 +219,7 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
 
         // Try a whole image update from a pixel unpack buffer.
         // Don't test non-emulated formats on Desktop GL.
-        // TODO(anglebug.com/6300): implement emulation on Desktop GL, then remove this check.
+        // TODO(anglebug.com/42264819): implement emulation on Desktop GL, then remove this check.
         if (!(IsDesktopOpenGL() && desc.mayBeEmulated()))
         {
             GLBuffer buffer;

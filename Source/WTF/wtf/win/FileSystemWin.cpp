@@ -275,26 +275,26 @@ bool flushFile(PlatformFileHandle)
     return false;
 }
 
-int64_t writeToFile(PlatformFileHandle handle, const void* data, size_t length)
+int64_t writeToFile(PlatformFileHandle handle, std::span<const uint8_t> data)
 {
     if (!isHandleValid(handle))
         return -1;
 
     DWORD bytesWritten;
-    bool success = WriteFile(handle, data, length, &bytesWritten, nullptr);
+    bool success = WriteFile(handle, data.data(), data.size(), &bytesWritten, nullptr);
 
     if (!success)
         return -1;
     return static_cast<int64_t>(bytesWritten);
 }
 
-int64_t readFromFile(PlatformFileHandle handle, void* data, size_t length)
+int64_t readFromFile(PlatformFileHandle handle, std::span<uint8_t> data)
 {
     if (!isHandleValid(handle))
         return -1;
 
     DWORD bytesRead;
-    bool success = ::ReadFile(handle, data, length, &bytesRead, nullptr);
+    bool success = ::ReadFile(handle, data.data(), data.size(), &bytesRead, nullptr);
 
     if (!success)
         return -1;

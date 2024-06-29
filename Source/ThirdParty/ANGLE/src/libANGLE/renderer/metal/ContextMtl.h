@@ -394,6 +394,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
     // Because this backend uses an intermediate representation for the rendering
     // commands, a render encoder can coexist with blit/compute command encoders.
+    // Note: the blit/compute commands will run before the pending render commands.
     mtl::BlitCommandEncoder *getBlitCommandEncoderWithoutEndingRenderEncoder();
     mtl::ComputeCommandEncoder *getComputeCommandEncoderWithoutEndingRenderEncoder();
 

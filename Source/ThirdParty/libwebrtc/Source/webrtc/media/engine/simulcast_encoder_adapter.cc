@@ -19,9 +19,9 @@
 #include <utility>
 
 #include "absl/algorithm/container.h"
+#include "absl/types/optional.h"
 #include "api/field_trials_view.h"
 #include "api/scoped_refptr.h"
-#include "api/transport/field_trial_based_config.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_codec_constants.h"
 #include "api/video/video_frame_buffer.h"
@@ -30,8 +30,10 @@
 #include "api/video_codecs/video_encoder_factory.h"
 #include "api/video_codecs/video_encoder_software_fallback_wrapper.h"
 #include "media/base/media_constants.h"
+#include "media/base/sdp_video_format_utils.h"
 #include "media/base/video_common.h"
 #include "modules/video_coding/include/video_error_codes.h"
+#include "modules/video_coding/include/video_error_codes_utils.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/rate_control_settings.h"
@@ -41,18 +43,6 @@ namespace {
 
 // Max qp for lowest spatial resolution when doing simulcast.
 const unsigned int kLowestResMaxQp = 45;
-
-absl::optional<unsigned int> GetScreenshareBoostedQpValue(
-    const webrtc::FieldTrialsView& field_trials) {
-  std::string experiment_group =
-      field_trials.Lookup("WebRTC-BoostedScreenshareQp");
-  unsigned int qp;
-  if (sscanf(experiment_group.c_str(), "%u", &qp) != 1)
-    return absl::nullopt;
-  qp = std::min(qp, 63u);
-  qp = std::max(qp, 1u);
-  return qp;
-}
 
 uint32_t SumStreamMaxBitrate(int streams, const webrtc::VideoCodec& codec) {
   uint32_t bitrate_sum = 0;
@@ -243,32 +233,25 @@ void SimulcastEncoderAdapter::StreamContext::OnDroppedFrame(
   parent_->OnDroppedFrame(stream_idx_);
 }
 
-SimulcastEncoderAdapter::SimulcastEncoderAdapter(VideoEncoderFactory* factory,
-                                                 const SdpVideoFormat& format)
-    : SimulcastEncoderAdapter(factory,
-                              nullptr,
-                              format,
-                              FieldTrialBasedConfig()) {}
-
 SimulcastEncoderAdapter::SimulcastEncoderAdapter(
-    VideoEncoderFactory* primary_factory,
-    VideoEncoderFactory* fallback_factory,
-    const SdpVideoFormat& format,
-    const FieldTrialsView& field_trials)
-    : inited_(0),
+    const Environment& env,
+    absl::Nonnull<VideoEncoderFactory*> primary_factory,
+    absl::Nullable<VideoEncoderFactory*> fallback_factory,
+    const SdpVideoFormat& format)
+    : env_(env),
+      inited_(0),
       primary_encoder_factory_(primary_factory),
       fallback_encoder_factory_(fallback_factory),
       video_format_(format),
       total_streams_count_(0),
       bypass_mode_(false),
       encoded_complete_callback_(nullptr),
-      experimental_boosted_screenshare_qp_(
-          GetScreenshareBoostedQpValue(field_trials)),
       boost_base_layer_quality_(
-          RateControlSettings::ParseFromKeyValueConfig(&field_trials)
-              .Vp8BoostBaseLayerQuality()),
-      prefer_temporal_support_on_base_layer_(field_trials.IsEnabled(
-          "WebRTC-Video-PreferTemporalSupportOnBaseLayer")) {
+          RateControlSettings(env_.field_trials()).Vp8BoostBaseLayerQuality()),
+      prefer_temporal_support_on_base_layer_(env_.field_trials().IsEnabled(
+          "WebRTC-Video-PreferTemporalSupportOnBaseLayer")),
+      per_layer_pli_(SupportsPerLayerPictureLossIndication(format.parameters)),
+      encoder_info_override_(env.field_trials()) {
   RTC_DCHECK(primary_factory);
 
   // The adapter is typically created on the worker thread, but operated on
@@ -357,11 +340,20 @@ int SimulcastEncoderAdapter::InitEncode(
   // If we only have a single active layer it is better to create an encoder
   // with only one configured layer than creating it with all-but-one disabled
   // layers because that way we control scaling.
+  // The use of the nonstandard x-google-per-layer-pli fmtp parameter also
+  // forces the use of SEA with separate encoders to support per-layer
+  // handling of PLIs.
   bool separate_encoders_needed =
       !encoder_context->encoder().GetEncoderInfo().supports_simulcast ||
-      active_streams_count == 1;
+      active_streams_count == 1 || per_layer_pli_;
+  RTC_LOG(LS_INFO) << "[SEA] InitEncode: total_streams_count: "
+                   << total_streams_count_
+                   << ", active_streams_count: " << active_streams_count
+                   << ", separate_encoders_needed: "
+                   << (separate_encoders_needed ? "true" : "false");
   // Singlecast or simulcast with simulcast-capable underlaying encoder.
   if (total_streams_count_ == 1 || !separate_encoders_needed) {
+    RTC_LOG(LS_INFO) << "[SEA] InitEncode: Single-encoder mode";
     int ret = encoder_context->encoder().InitEncode(&codec_, settings);
     if (ret >= 0) {
       stream_contexts_.emplace_back(
@@ -377,7 +369,8 @@ int SimulcastEncoderAdapter::InitEncode(
 
     encoder_context->Release();
     if (total_streams_count_ == 1) {
-      // Failed to initialize singlecast encoder.
+      RTC_LOG(LS_ERROR) << "[SEA] InitEncode: failed with error code: "
+                        << WebRtcVideoCodecErrorToString(ret);
       return ret;
     }
   }
@@ -405,10 +398,16 @@ int SimulcastEncoderAdapter::InitEncode(
         /*is_lowest_quality_stream=*/stream_idx == lowest_quality_stream_idx,
         /*is_highest_quality_stream=*/stream_idx == highest_quality_stream_idx);
 
+    RTC_LOG(LS_INFO) << "[SEA] Multi-encoder mode: initializing stream: "
+                     << stream_idx << ", active: "
+                     << (codec_.simulcastStream[stream_idx].active ? "true"
+                                                                   : "false");
     int ret = encoder_context->encoder().InitEncode(&stream_codec, settings);
     if (ret < 0) {
       encoder_context.reset();
       Release();
+      RTC_LOG(LS_ERROR) << "[SEA] InitEncode: failed with error code: "
+                        << WebRtcVideoCodecErrorToString(ret);
       return ret;
     }
 
@@ -489,7 +488,7 @@ int SimulcastEncoderAdapter::Encode(
 
     // Convert timestamp from RTP 90kHz clock.
     const Timestamp frame_timestamp =
-        Timestamp::Micros((1000 * input_image.timestamp()) / 90);
+        Timestamp::Micros((1000 * input_image.rtp_timestamp()) / 90);
 
     // If adapter is passed through and only one sw encoder does simulcast,
     // frame types for all streams should be passed to the encoder unchanged.
@@ -724,12 +723,11 @@ SimulcastEncoderAdapter::FetchOrCreateEncoderContext(
     cached_encoder_contexts_.erase(encoder_context_iter);
   } else {
     std::unique_ptr<VideoEncoder> primary_encoder =
-        primary_encoder_factory_->CreateVideoEncoder(video_format_);
+        primary_encoder_factory_->Create(env_, video_format_);
 
     std::unique_ptr<VideoEncoder> fallback_encoder;
     if (fallback_encoder_factory_ != nullptr) {
-      fallback_encoder =
-          fallback_encoder_factory_->CreateVideoEncoder(video_format_);
+      fallback_encoder = fallback_encoder_factory_->Create(env_, video_format_);
     }
 
     std::unique_ptr<VideoEncoder> encoder;
@@ -744,7 +742,7 @@ SimulcastEncoderAdapter::FetchOrCreateEncoderContext(
         encoder = std::move(primary_encoder);
       } else {
         encoder = CreateVideoEncoderSoftwareFallbackWrapper(
-            std::move(fallback_encoder), std::move(primary_encoder),
+            env_, std::move(fallback_encoder), std::move(primary_encoder),
             prefer_temporal_support);
       }
     } else if (fallback_encoder != nullptr) {
@@ -789,7 +787,8 @@ webrtc::VideoCodec SimulcastEncoderAdapter::MakeStreamCodec(
   // By default, `scalability_mode` comes from SimulcastStream when
   // SimulcastEncoderAdapter is used. This allows multiple encodings of L1Tx,
   // but SimulcastStream currently does not support multiple spatial layers.
-  ScalabilityMode scalability_mode = stream_params.GetScalabilityMode();
+  absl::optional<ScalabilityMode> scalability_mode =
+      stream_params.GetScalabilityMode();
   // To support the full set of scalability modes in the event that this is the
   // only active encoding, prefer VideoCodec::GetScalabilityMode() if all other
   // encodings are inactive.
@@ -802,18 +801,17 @@ webrtc::VideoCodec SimulcastEncoderAdapter::MakeStreamCodec(
       }
     }
     if (only_active_stream) {
-      scalability_mode = codec.GetScalabilityMode().value();
+      scalability_mode = codec.GetScalabilityMode();
     }
   }
-  codec_params.SetScalabilityMode(scalability_mode);
+  if (scalability_mode.has_value()) {
+    codec_params.SetScalabilityMode(*scalability_mode);
+  }
   // Settings that are based on stream/resolution.
   if (is_lowest_quality_stream) {
     // Settings for lowest spatial resolutions.
-    if (codec.mode == VideoCodecMode::kScreensharing) {
-      if (experimental_boosted_screenshare_qp_) {
-        codec_params.qpMax = *experimental_boosted_screenshare_qp_;
-      }
-    } else if (boost_base_layer_quality_) {
+    if (codec.mode == VideoCodecMode::kRealtimeVideo &&
+        boost_base_layer_quality_) {
       codec_params.qpMax = kLowestResMaxQp;
     }
   }

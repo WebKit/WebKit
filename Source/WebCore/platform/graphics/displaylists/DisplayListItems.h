@@ -686,6 +686,24 @@ private:
     float m_opacity;
 };
 
+class BeginTransparencyLayerWithCompositeMode {
+public:
+    static constexpr char name[] = "begin-transparency-layer-with-composite-mode";
+
+    explicit BeginTransparencyLayerWithCompositeMode(CompositeMode compositeMode)
+        : m_compositeMode(compositeMode)
+    {
+    }
+
+    CompositeMode compositeMode() const { return m_compositeMode; }
+
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+    void dump(TextStream&, OptionSet<AsTextFlag>) const;
+
+private:
+    CompositeMode m_compositeMode;
+};
+
 class EndTransparencyLayer {
 public:
     static constexpr char name[] = "end-transparency-layer";

@@ -29,6 +29,10 @@ PASS Script load (url:https://web-platform.test:9443/service-workers/service-wor
 PASS Script load (url:https://web-platform.test:9443/service-workers/service-worker/resources/sample?test27)
 PASS Script load (url:https://web-platform.test:9443/service-workers/service-worker/resources/sample?test28)
 PASS Script load (url:https://web-platform.test:9443/service-workers/service-worker/resources/sample?test29)
+PASS Module Script load (url:https://web-platform.test:9443/service-workers/service-worker/resources/sample?test_module)
+FAIL Module Script load (url:https://web-platform.test:9443/service-workers/service-worker/resources/sample?test_modulepreload) assert_equals: integrity of Module Script load (url:https://web-platform.test:9443/service-workers/service-worker/resources/sample?test_modulepreload) must be sha384-foobar. expected "sha384-foobar" but got ""
+FAIL Module Script load (url:https://web-platform.test:9443/service-workers/service-worker/resources/sample?test_moduleimport) assert_equals: integrity of Module Script load (url:https://web-platform.test:9443/service-workers/service-worker/resources/sample?test_moduleimport) must be sha384-foobar. expected "sha384-foobar" but got ""
+PASS Module Script load (url:https://web-platform.test:9443/service-workers/service-worker/resources/sample?test_moduleimportdynamic)
 PASS CSS load (url:https://web-platform.test:9443/service-workers/service-worker/resources/sample?test30)
 PASS CSS load (url:https://web-platform.test:9443/service-workers/service-worker/resources/sample?test31)
 PASS CSS load (url:https://web-platform.test:9443/service-workers/service-worker/resources/sample?test32)

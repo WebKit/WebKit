@@ -6,7 +6,7 @@
 <div></div>
 <!-- then add a bunch via script, as children to the first div, eventually pushing us over the limit -->
 <script>
-const doNotAutomaticallyCallLayerTree = true;
+window.doNotAutomaticallyCallLayerTree = true;
 
 window.addEventListener("load", () => {
     const firstDiv = document.querySelector("div");

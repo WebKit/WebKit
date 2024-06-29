@@ -56,6 +56,10 @@ private:
 
 class WebContentReader final : public FrameWebContentReader {
 public:
+#if PLATFORM(COCOA)
+    static constexpr auto placeholderAttachmentFilenamePrefix = "webkit-attachment-"_s;
+#endif
+
     WebContentReader(LocalFrame& frame, const SimpleRange& context, bool allowPlainText)
         : FrameWebContentReader(frame)
         , m_context(context)
@@ -135,7 +139,8 @@ struct FragmentAndResources {
 
 enum class FragmentCreationOptions : uint8_t {
     IgnoreResources = 1 << 0,
-    NoInterchangeNewlines = 1 << 1
+    NoInterchangeNewlines = 1 << 1,
+    SanitizeMarkup = 1 << 2
 };
 
 WEBCORE_EXPORT RefPtr<DocumentFragment> createFragment(LocalFrame&, NSAttributedString *, OptionSet<FragmentCreationOptions> = { });

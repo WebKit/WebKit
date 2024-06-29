@@ -1,0 +1,106 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-cssom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-in-layer-cascade-external-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-in-layer-cascade.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-in-layer.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-in-matching-media.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-in-non-matching-media.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-in-shadow-dom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-multiple-rules.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-opt-in-auto-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-opt-in-auto-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-opt-in-auto.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-opt-in-change-with-script.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-opt-in-none-in-new-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-opt-in-none-in-new.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-opt-in-none-in-old-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-opt-in-none-in-old.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-opt-in-none-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/chromium-paint-holding-timeout-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/chromium-paint-holding-timeout-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/chromium-paint-holding-timeout.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/hide-before-reveal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/mismatched-snapshot-containing-block-size-skips.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/navigation-auto-excludes-reload-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/navigation-auto-excludes-reload-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/navigation-auto-excludes-reload.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/no-view-transition-with-cross-origin-redirect-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/no-view-transition-with-cross-origin-redirect.sub-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/no-view-transition-with-cross-origin-redirect.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/old_vt_promises_bfcache.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/opt-in-removed-during-transition-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/opt-in-removed-during-transition-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/opt-in-removed-during-transition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/opt-in-without-frame-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-finished-promise-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-finished-promise-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-finished-promise.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-microtask-sequence.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-no-view-transition-new-opt-out.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-no-view-transition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-ready-promise-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-ready-promise-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-ready-promise.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-setup-transition-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-setup-transition-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-setup-transition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-updatecallbackdone-promise.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-with-view-transition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-fired-before-old-state-capture-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-fired-before-old-state-capture-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-fired-before-old-state-capture.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-in-hidden-doc-should-skip-transition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-long-delay.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-push-from-click.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-push-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-push-with-redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-replace-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-skip-transition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-traverse-navigation-no-bfcache.https.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/prerender-removed-during-navigation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/prerender-removed-during-navigation-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/prerender-removed-during-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/reload-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-and-nested-element-transition-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-and-nested-element-transition-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-and-nested-element-transition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe-cross-origin.sub-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe-cross-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe-with-startVT-on-main-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe-with-startVT-on-main-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe-with-startVT-on-main.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-no-opt-in-on-new-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-no-opt-in-on-new.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-no-opt-in-on-old-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-no-opt-in-on-old.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-no-opt-in-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-opt-in-removed-on-new-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-opt-in-removed-on-new.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-opt-in-removed-on-old-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-opt-in-removed-on-old.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/skip-outbound-vt-before-reveal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/transition-to-prerender-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/transition-to-prerender-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/transition-to-prerender.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/zero-named-elements.html

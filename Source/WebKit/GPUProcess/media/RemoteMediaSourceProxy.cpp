@@ -77,9 +77,7 @@ Ref<MediaTimePromise> RemoteMediaSourceProxy::waitForTarget(const SeekTarget& ta
     if (!connection)
         return MediaTimePromise::createAndReject(PlatformMediaError::IPCError);
 
-    return connection->connection().sendWithPromisedReply(Messages::MediaSourcePrivateRemoteMessageReceiver::ProxyWaitForTarget(target), m_identifier)->whenSettled(RunLoop::current(), [](auto&& result) {
-        return result ? MediaTimePromise::createAndSettle(WTFMove(*result)) : MediaTimePromise::createAndReject(PlatformMediaError::IPCError);
-    });
+    return connection->connection().sendWithPromisedReply<MediaPromiseConverter>(Messages::MediaSourcePrivateRemoteMessageReceiver::ProxyWaitForTarget(target), m_identifier);
 }
 
 Ref<MediaPromise> RemoteMediaSourceProxy::seekToTime(const MediaTime& time)
@@ -88,9 +86,7 @@ Ref<MediaPromise> RemoteMediaSourceProxy::seekToTime(const MediaTime& time)
     if (!connection)
         return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 
-    return connection->connection().sendWithPromisedReply(Messages::MediaSourcePrivateRemoteMessageReceiver::ProxySeekToTime(time), m_identifier)->whenSettled(RunLoop::current(), [](auto&& result) {
-        return result ? MediaPromise::createAndSettle(WTFMove(*result)) : MediaPromise::createAndReject(PlatformMediaError::IPCError);
-    });
+    return connection->connection().sendWithPromisedReply<MediaPromiseConverter>(Messages::MediaSourcePrivateRemoteMessageReceiver::ProxySeekToTime(time), m_identifier);
 }
 
 #if !RELEASE_LOG_DISABLED

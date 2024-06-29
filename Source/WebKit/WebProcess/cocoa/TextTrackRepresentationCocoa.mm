@@ -96,6 +96,15 @@ void WebTextTrackRepresentationCocoa::setHidden(bool hidden) const
     fullscreenManager->setTextTrackRepresentationIsHiddenForVideoElement(*videoElement, hidden);
 }
 
+void WebTextTrackRepresentationCocoa::setBounds(const WebCore::IntRect& bounds)
+{
+    if (m_bounds == bounds)
+        return;
+    m_bounds = bounds;
+    client().textTrackRepresentationBoundsChanged(bounds);
+}
+
+
 } // namespace WebKit
 
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)

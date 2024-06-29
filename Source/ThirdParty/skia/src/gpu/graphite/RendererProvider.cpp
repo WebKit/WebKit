@@ -10,6 +10,7 @@
 #include "include/core/SkPathTypes.h"
 #include "include/core/SkVertices.h"
 #include "src/gpu/graphite/Caps.h"
+#include "src/gpu/graphite/render/AnalyticBlurRenderStep.h"
 #include "src/gpu/graphite/render/AnalyticRRectRenderStep.h"
 #include "src/gpu/graphite/render/BitmapTextRenderStep.h"
 #include "src/gpu/graphite/render/CommonDepthStencilSettings.h"
@@ -77,9 +78,11 @@ RendererProvider::RendererProvider(const Caps* caps, StaticBufferManager* buffer
                                      DrawTypeFlags::kText);
     }
     fAnalyticRRect = makeFromStep(std::make_unique<AnalyticRRectRenderStep>(bufferManager),
-                                  DrawTypeFlags::kShape);
+                                  DrawTypeFlags::kSimpleShape);
     fPerEdgeAAQuad = makeFromStep(std::make_unique<PerEdgeAAQuadRenderStep>(bufferManager),
-                                  DrawTypeFlags::kShape);
+                                  DrawTypeFlags::kSimpleShape);
+    fAnalyticBlur = makeFromStep(std::make_unique<AnalyticBlurRenderStep>(),
+                                 DrawTypeFlags::kSimpleShape);
     for (PrimitiveType primType : {PrimitiveType::kTriangles, PrimitiveType::kTriangleStrip}) {
         for (bool color : {false, true}) {
             for (bool texCoords : {false, true}) {

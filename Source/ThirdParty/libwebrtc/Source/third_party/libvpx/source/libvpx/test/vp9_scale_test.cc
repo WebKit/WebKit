@@ -48,12 +48,11 @@ class ScaleTest : public VpxScaleBase,
   }
 
   void RunTest(INTERP_FILTER filter_type) {
-    static const int kNumSizesToTest = 20;
+    static const int kNumSizesToTest = 22;
     static const int kNumScaleFactorsToTest = 4;
-    static const int kSizesToTest[] = {
-      2,  4,  6,  8,  10, 12, 14, 16, 18,  20,
-      22, 24, 26, 28, 30, 32, 34, 68, 128, 134
-    };
+    static const int kSizesToTest[] = { 1,  2,  3,  4,  6,   8,  10, 12,
+                                        14, 16, 18, 20, 22,  24, 26, 28,
+                                        30, 32, 34, 68, 128, 134 };
     static const int kScaleFactors[] = { 1, 2, 3, 4 };
     for (int phase_scaler = 0; phase_scaler < 16; ++phase_scaler) {
       for (int h = 0; h < kNumSizesToTest; ++h) {

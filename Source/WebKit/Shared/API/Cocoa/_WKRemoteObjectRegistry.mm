@@ -32,7 +32,6 @@
 #import "RemoteObjectInvocation.h"
 #import "UIRemoteObjectRegistry.h"
 #import "UserData.h"
-#import "WKConnectionRef.h"
 #import "WKRemoteObject.h"
 #import "WKRemoteObjectCoder.h"
 #import "WKSharedAPICast.h"

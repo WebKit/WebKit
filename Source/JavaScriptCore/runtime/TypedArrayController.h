@@ -40,8 +40,8 @@ class JSGlobalObject;
 
 class JS_EXPORT TypedArrayController : public RefCounted<TypedArrayController> {
 public:
-    JS_EXPORT TypedArrayController() { }
-    virtual ~TypedArrayController() { }
+    JS_EXPORT TypedArrayController();
+    virtual ~TypedArrayController();
 
     JS_EXPORT virtual JSArrayBuffer* toJS(JSGlobalObject*, JSGlobalObject*, ArrayBuffer*) = 0;
     JS_EXPORT virtual void registerWrapper(JSGlobalObject*, ArrayBuffer*, JSArrayBuffer*) = 0;

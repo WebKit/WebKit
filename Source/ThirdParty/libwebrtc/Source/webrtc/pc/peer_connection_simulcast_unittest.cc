@@ -20,7 +20,9 @@
 #include "absl/algorithm/container.h"
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
+#include "api/audio/audio_device.h"
 #include "api/audio/audio_mixer.h"
+#include "api/audio/audio_processing.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/audio_codecs/opus_audio_decoder_factory.h"
@@ -50,8 +52,6 @@
 #include "media/base/media_constants.h"
 #include "media/base/rid_description.h"
 #include "media/base/stream_params.h"
-#include "modules/audio_device/include/audio_device.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "pc/channel_interface.h"
 #include "pc/peer_connection_wrapper.h"
 #include "pc/sdp_utils.h"
@@ -101,21 +101,6 @@ std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
 }
 
 }  // namespace cricket
-
-namespace {
-
-#if RTC_METRICS_ENABLED
-std::vector<SimulcastLayer> CreateLayers(int num_layers, bool active) {
-  rtc::UniqueStringGenerator rid_generator;
-  std::vector<std::string> rids;
-  for (int i = 0; i < num_layers; ++i) {
-    rids.push_back(rid_generator.GenerateString());
-  }
-  return webrtc::CreateLayers(rids, active);
-}
-#endif
-
-}  // namespace
 
 namespace webrtc {
 
@@ -213,16 +198,6 @@ class PeerConnectionSimulcastTests : public ::testing::Test {
  private:
   rtc::scoped_refptr<PeerConnectionFactoryInterface> pc_factory_;
 };
-
-#if RTC_METRICS_ENABLED
-// This class is used to test the metrics emitted for simulcast.
-class PeerConnectionSimulcastMetricsTests
-    : public PeerConnectionSimulcastTests,
-      public ::testing::WithParamInterface<int> {
- protected:
-  PeerConnectionSimulcastMetricsTests() { webrtc::metrics::Reset(); }
-};
-#endif
 
 // Validates that RIDs are supported arguments when adding a transceiver.
 TEST_F(PeerConnectionSimulcastTests, CanCreateTransceiverWithRid) {
@@ -603,27 +578,4 @@ TEST_F(PeerConnectionSimulcastTests, SimulcastSldModificationRejected) {
   EXPECT_TRUE(modified_offer);
   EXPECT_TRUE(local->SetLocalDescription(std::move(modified_offer)));
 }
-
-#if RTC_METRICS_ENABLED
-
-const int kMaxLayersInMetricsTest = 8;
-
-// Checks that the number of send encodings is logged in a metric.
-TEST_P(PeerConnectionSimulcastMetricsTests, NumberOfSendEncodingsIsLogged) {
-  auto local = CreatePeerConnectionWrapper();
-  auto num_layers = GetParam();
-  auto layers = ::CreateLayers(num_layers, true);
-  AddTransceiver(local.get(), layers);
-  EXPECT_EQ(1, metrics::NumSamples(
-                   "WebRTC.PeerConnection.Simulcast.NumberOfSendEncodings"));
-  EXPECT_EQ(1, metrics::NumEvents(
-                   "WebRTC.PeerConnection.Simulcast.NumberOfSendEncodings",
-                   num_layers));
-}
-
-INSTANTIATE_TEST_SUITE_P(NumberOfSendEncodings,
-                         PeerConnectionSimulcastMetricsTests,
-                         ::testing::Range(0, kMaxLayersInMetricsTest));
-#endif
-
 }  // namespace webrtc

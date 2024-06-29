@@ -30,7 +30,7 @@ enum TOperator : uint16_t
     // * They should not return arrays.
     // * They should not have out parameters.
     //
-    // DEPRECATED; DO NOT USE.  TODO: remove this.  http://anglebug.com/6059
+    // DEPRECATED; DO NOT USE.  TODO: remove this.  http://anglebug.com/42264589
     //
     EOpCallInternalRawFunction,
 

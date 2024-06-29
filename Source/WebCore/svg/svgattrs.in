@@ -2,11 +2,9 @@ namespace="SVG"
 namespaceURI="http://www.w3.org/2000/svg"
 attrsNullNamespace
 
-accent-height
 accumulate
 additive
 alignment-baseline
-alphabetic
 amplitude
 animate
 arabic-form
@@ -18,7 +16,6 @@ azimuth
 baseFrequency
 baseline-shift
 baseProfile
-bbox
 begin
 bias
 buffered-rendering
@@ -76,13 +73,11 @@ glyph-orientation-vertical
 glyphRef
 gradientTransform
 gradientUnits
-hanging
 height
 horiz-adv-x
 horiz-origin-x
 horiz-origin-y
 href
-ideographic
 image-rendering
 in
 in2
@@ -114,7 +109,6 @@ mask
 mask-type
 maskContentUnits
 maskUnits
-mathematical
 max
 media
 method
@@ -130,11 +124,8 @@ opacity
 operator
 order
 orient
-orientation
 origin
 overflow
-overline-position
-overline-thickness
 paint-order
 panose-1
 path
@@ -155,7 +146,6 @@ radius
 refX
 refY
 rel
-rendering-intent
 repeatCount
 repeatDur
 requiredExtensions
@@ -175,13 +165,9 @@ specularExponent
 spreadMethod
 startOffset
 stdDeviation
-stemh
-stemv
 stitchTiles
 stop-color
 stop-opacity
-strikethrough-position
-strikethrough-thickness
 stroke
 stroke-dasharray
 stroke-dashoffset
@@ -208,16 +194,9 @@ transform-origin
 type
 u1
 u2
-underline-position
-underline-thickness
 unicode
 unicode-bidi
-unicode-range
 units-per-em
-v-alphabetic
-v-hanging
-v-ideographic
-v-mathematical
 values
 vector-effect
 version
@@ -228,7 +207,6 @@ viewBox
 viewTarget
 visibility
 width
-widths
 word-spacing
 writing-mode
 x

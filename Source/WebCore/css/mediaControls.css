@@ -27,7 +27,7 @@
 @namespace "http://www.w3.org/1999/xhtml";
 
 /* media controls */
-::-webkit-media-controls {
+:is(audio, video)::-webkit-media-controls {
     width: inherit;
     height: inherit;
     position: relative;

@@ -48,6 +48,24 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_webrtc_pc_backend_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_pc_backend_debug
 
+class WebRTCLogObserver : public WebCoreLogObserver {
+public:
+    GstDebugCategory* debugCategory() const final
+    {
+        return webkit_webrtc_pc_backend_debug;
+    }
+    bool shouldEmitLogMessage(const WTFLogChannel& channel) const final
+    {
+        return g_str_has_prefix(channel.name, "WebRTC");
+    }
+};
+
+WebRTCLogObserver& webrtcLogObserverSingleton()
+{
+    static NeverDestroyed<WebRTCLogObserver> sharedInstance;
+    return sharedInstance;
+}
+
 static std::unique_ptr<PeerConnectionBackend> createGStreamerPeerConnectionBackend(RTCPeerConnection& peerConnection)
 {
     ensureGStreamerInitialized();
@@ -69,9 +87,21 @@ GStreamerPeerConnectionBackend::GStreamerPeerConnectionBackend(RTCPeerConnection
     , m_endpoint(GStreamerMediaEndpoint::create(*this))
 {
     disableICECandidateFiltering();
+
+    // PeerConnectionBackend relies on the Document logger, so to prevent duplicate messages in case
+    // more than one PeerConnection is created, we register a single observer.
+    auto& logObserver = webrtcLogObserverSingleton();
+    logObserver.addWatch(logger());
+
+    auto logIdentifier = makeString(hex(reinterpret_cast<uintptr_t>(this->logIdentifier())));
+    GST_INFO_OBJECT(m_endpoint->pipeline(), "WebCore logs identifier for this pipeline is: %s", logIdentifier.ascii().data());
 }
 
-GStreamerPeerConnectionBackend::~GStreamerPeerConnectionBackend() = default;
+GStreamerPeerConnectionBackend::~GStreamerPeerConnectionBackend()
+{
+    auto& logObserver = webrtcLogObserverSingleton();
+    logObserver.removeWatch(logger());
+}
 
 void GStreamerPeerConnectionBackend::suspend()
 {

@@ -32,5 +32,5 @@ PRODUCT_BUNDLE_NAME = NetworkingExtension;
 // For simulator builds, entitlements are added to a special __entitlements section on the binary rather than the signature.
 CODE_SIGN_ENTITLEMENTS[sdk=*simulator] = Shared/AuxiliaryProcessExtensions/NetworkingProcessExtension.entitlements;
 
-OTHER_LDFLAGS_YES_IOS_SINCE_18 = -Wl,-dyld_env,@$(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/dlsym.WebKit.Networking;
-OTHER_LDFLAGS[sdk=iphone*] = $(inherited) $(OTHER_LDFLAGS_$(USE_INTERNAL_SDK)$(WK_IOS_18));
+LD_ENVIRONMENT_YES_IOS_SINCE_18 = @$(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/dlsym.WebKit.Networking;
+LD_ENVIRONMENT[sdk=iphone*] = $(inherited) $(LD_ENVIRONMENT_$(USE_INTERNAL_SDK)$(WK_IOS_18));

@@ -493,7 +493,7 @@ GraphicsContextGLCVCocoa::GraphicsContextGLCVCocoa(GraphicsContextGLCocoa& owner
 
     const bool useTexture2D = m_owner.drawingBufferTextureTarget() == GL_TEXTURE_2D;
 
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if PLATFORM(MAC)
     if (!useTexture2D) {
         GL_RequestExtensionANGLE("GL_ANGLE_texture_rectangle");
         GL_RequestExtensionANGLE("GL_EXT_texture_format_BGRA8888");

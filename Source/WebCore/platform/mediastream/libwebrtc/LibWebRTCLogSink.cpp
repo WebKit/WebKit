@@ -27,8 +27,6 @@
 #include "LibWebRTCLogSink.h"
 
 #if USE(LIBWEBRTC)
-#include "LibWebRTCUtils.h"
-#include <wtf/MainThread.h>
 
 namespace WebCore {
 
@@ -39,41 +37,37 @@ LibWebRTCLogSink::LibWebRTCLogSink(LogCallback&& callback)
 
 LibWebRTCLogSink::~LibWebRTCLogSink()
 {
+    ASSERT(!m_loggingLevel);
 }
 
-static String toWebRTCLogLevel(rtc::LoggingSeverity severity)
+void LibWebRTCLogSink::logMessage(const std::string& message, rtc::LoggingSeverity severity)
 {
-    switch (severity) {
-    case rtc::LoggingSeverity::LS_VERBOSE:
-        return "verbose"_s;
-    case rtc::LoggingSeverity::LS_INFO:
-        return "info"_s;
-    case rtc::LoggingSeverity::LS_WARNING:
-        return "warning"_s;
-    case rtc::LoggingSeverity::LS_ERROR:
-        return "error"_s;
-    case rtc::LoggingSeverity::LS_NONE:
-        return "none"_s;
+    m_callback(severity, message);
+}
+
+void LibWebRTCLogSink::start(rtc::LoggingSeverity level)
+{
+    if (level == rtc::LoggingSeverity::LS_NONE) {
+        stop();
+        return;
     }
-    ASSERT_NOT_REACHED();
-    return ""_s;
-}
 
-void LibWebRTCLogSink::logMessage(const std::string& value, rtc::LoggingSeverity severity)
-{
-    ensureOnMainThread([weakThis = WeakPtr { *this }, message = fromStdString(value).isolatedCopy(), severity] () mutable {
-        if (weakThis)
-            weakThis->m_callback(toWebRTCLogLevel(severity), WTFMove(message));
-    });
-}
+    if (m_loggingLevel) {
+        if (*m_loggingLevel == level)
+            return;
+        rtc::LogMessage::RemoveLogToStream(this);
+    }
 
-void LibWebRTCLogSink::start()
-{
-    rtc::LogMessage::AddLogToStream(this, rtc::LoggingSeverity::LS_VERBOSE);
+    m_loggingLevel = level;
+    rtc::LogMessage::AddLogToStream(this, level);
 }
 
 void LibWebRTCLogSink::stop()
 {
+    if (!m_loggingLevel)
+        return;
+
+    m_loggingLevel = { };
     rtc::LogMessage::RemoveLogToStream(this);
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,6 +62,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
@@ -769,7 +770,7 @@ TEST(ServiceWorkers, ThirdPartyRestoredFromDisk)
     [messageHandler resetExpectedMessage:@"PASS: Registration was successful and service worker was activated"];
 
     String thirdPartyIframeURL = URL(server.requestWithLocalhost("/thirdPartyIframeWithSW.html"_s).URL).string();
-    String injectFrameScript = makeString("let frame = document.createElement('iframe'); frame.src = '", thirdPartyIframeURL, "'; document.body.append(frame);");
+    String injectFrameScript = makeString("let frame = document.createElement('iframe'); frame.src = '"_s, thirdPartyIframeURL, "'; document.body.append(frame);"_s);
     bool addedIframe = false;
     [webView evaluateJavaScript:(NSString *)injectFrameScript completionHandler: [&] (id, NSError *error) {
         EXPECT_TRUE(!error);
@@ -803,7 +804,7 @@ TEST(ServiceWorkers, ThirdPartyRestoredFromDisk)
     [messageHandler resetExpectedMessage:@"PASS: Registration already has an active worker"];
 
     String thirdPartyIframeURL2 = URL(server.requestWithLocalhost("/thirdPartyIframeWithSW2.html"_s).URL).string();
-    String injectFrameScript2 = makeString("let frame = document.createElement('iframe'); frame.src = '", thirdPartyIframeURL2, "'; document.body.append(frame);");
+    String injectFrameScript2 = makeString("let frame = document.createElement('iframe'); frame.src = '"_s, thirdPartyIframeURL2, "'; document.body.append(frame);"_s);
     addedIframe = false;
     [webView evaluateJavaScript:(NSString *)injectFrameScript2 completionHandler: [&] (id, NSError *error) {
         EXPECT_TRUE(!error);
@@ -1969,7 +1970,7 @@ TEST(ServiceWorkers, LockdownModeInServiceWorkerProcess)
     auto runJSCheck = [&](const String& jsToEvalInWorker) {
         bool finishedRunningScript = false;
         done = false;
-        String js = makeString("worker.postMessage('", jsToEvalInWorker,"');");
+        auto js = makeString("worker.postMessage('"_s, jsToEvalInWorker,"');"_s);
         [webView evaluateJavaScript:js completionHandler:[&] (id result, NSError *error) {
             EXPECT_NULL(error);
             finishedRunningScript = true;
@@ -2471,7 +2472,7 @@ static bool isTestServerTrust(SecTrustRef trust)
 
     auto chain = adoptCF(SecTrustCopyCertificateChain(trust));
     auto certificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), 0));
-    if (![adoptNS((NSString *)SecCertificateCopySubjectSummary(certificate)) isEqualToString:@"Me"])
+    if (![bridge_cast(adoptCF(SecCertificateCopySubjectSummary(certificate)).get()) isEqualToString:@"Me"])
         return false;
 
     return true;

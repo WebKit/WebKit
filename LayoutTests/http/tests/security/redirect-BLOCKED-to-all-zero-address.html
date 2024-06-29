@@ -1,0 +1,11 @@
+<html>
+<body>
+<iframe src="http://127.0.0.1:8000/resources/redirect.py?url=http://0.0.0.0:8000/security/resources/file-redirect-target.html"></iframe></br>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+</script>
+<p>This attempts to open a redirect link to the all-zeroes address, which should be blocked.</p>
+</body>
+</html>

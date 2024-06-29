@@ -2,4 +2,7 @@
 
 PASS Ensure the right attributes are modified.
 PASS Ensure the deleted attributes is modified.
+PASS Ensure toggleAttribute results in an empty attribute.
+PASS Ensure setAttribute results in right attribute value.
+PASS Ensure setAttributeNS results in right attribute value.
 

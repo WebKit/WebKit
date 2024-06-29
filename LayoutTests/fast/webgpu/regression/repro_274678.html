@@ -1,0 +1,25 @@
+<script>
+    globalThis.testRunner?.waitUntilDone();
+    const log = console.debug;
+function fuzz() {
+  o4=IPC.pageID;
+  o5=IPC.webPageProxyID;
+  let pair = IPC.createStreamClientConnection(14);
+  o17=pair[1];
+  IPC.sendMessage('GPU',0,IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name, [{type: 'uint64_t', value: 243}, {type: 'uint64_t', value: o5}, {type: 'uint64_t', value: o4}, {type: 'StreamServerConnectionHandle', value: o17}]);
+  o18=243;
+  pair = IPC.createStreamClientConnection(14);
+  o19=pair[0];
+  o20=pair[1];
+  o19.open();
+  IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRemoteGPU.name, [{type: 'uint64_t', value: 1000},{type: 'uint64_t', value:  o18},{type: 'StreamServerConnectionHandle', value: o20}]);
+  o19.sendSyncMessage(1000, IPC.messages.RemoteGPU_RequestAdapter.name, 0.1,[{type:'bool', value:1},{type:'bool', value:1},{type:'uint64_t', value:1001}]);
+  o19.sendSyncMessage(1001, IPC.messages.RemoteAdapter_RequestDevice.name, 0.1,[{type:'String', value:''},{type: 'Vector', value: []},{type:'Vector', value:[]},{type:'uint64_t', value:1002},{type:'uint64_t', value:1003}]);
+  o19.sendMessage(1002, IPC.messages.RemoteDevice_CreateBuffer.name, 0.1,[{type:'String', value:"pageUp:"},{type:'uint64_t', value:6969994},{type:'uint16_t', value:532},{type:'bool', value:0},{type:'uint64_t', value:1433}]);
+  o19.sendMessage(1433,IPC.messages.RemoteBuffer_Destroy.name,0.1,[]);
+  o19.sendWithAsyncReply(1433,IPC.messages.RemoteBuffer_MapAsync.name,0.1,[{type: 'uint8_t',value: 2},{type: 'uint64_t',value: 714},{type: 'bool',value: 0}],()=>{});
+  o19.sendMessage(1433,IPC.messages.RemoteBuffer_Copy.name,0.1,[{type: 'Vector',value: [[{type: 'uint8_t',value: 177}],[{type: 'uint8_t',value: 228}],[{type: 'uint8_t',value: 229}],[{type: 'uint8_t',value: 89}],[{type: 'uint8_t',value: 194}],[{type: 'uint8_t',value: 83}],[{type: 'uint8_t',value: 225}],[{type: 'uint8_t',value: 215}],[{type: 'uint8_t',value: 251}],[{type: 'uint8_t',value: 65}]]},{type: 'uint64_t',value: 5511920}]);
+}
+    globalThis.testRunner?.notifyDone();
+</script>
+<body onload='fuzz()'></body>

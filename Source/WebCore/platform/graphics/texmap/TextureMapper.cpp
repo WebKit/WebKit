@@ -1104,7 +1104,7 @@ RefPtr<BitmapTexture> TextureMapper::applyDropShadowFilter(RefPtr<BitmapTexture>
     return resultTexture;
 }
 
-RefPtr<BitmapTexture> TextureMapper::applySinglePassFilter(RefPtr<BitmapTexture>& sourceTexture, const RefPtr<const FilterOperation>& filter, bool shouldDefer)
+RefPtr<BitmapTexture> TextureMapper::applySinglePassFilter(RefPtr<BitmapTexture>& sourceTexture, const Ref<const FilterOperation>& filter, bool shouldDefer)
 {
     if (shouldDefer) {
         sourceTexture->setFilterOperation(filter.copyRef());
@@ -1119,7 +1119,7 @@ RefPtr<BitmapTexture> TextureMapper::applySinglePassFilter(RefPtr<BitmapTexture>
     TextureMapperShaderProgram::Options options = optionsForFilterType(filter->type());
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
-    prepareFilterProgram(program.get(), *filter);
+    prepareFilterProgram(program.get(), filter);
     FloatRect targetRect(FloatPoint::zero(), sourceTexture->size());
     drawTexturedQuadWithProgram(program.get(), sourceTexture->id(), { }, targetRect, TransformationMatrix(), 1);
 
@@ -1134,9 +1134,9 @@ RefPtr<BitmapTexture> TextureMapper::applyFilters(RefPtr<BitmapTexture>& sourceT
     RefPtr<BitmapTexture> previousSurface = currentSurface();
     RefPtr<BitmapTexture> surface = sourceTexture;
 
-    auto lastFilterIndex = filters.operations().size() - 1;
+    auto lastFilterIndex = filters.size() - 1;
     size_t i = 0;
-    for (const auto& filter : filters.operations()) {
+    for (const auto& filter : filters) {
         bool lastFilter = lastFilterIndex == i;
         surface = applyFilter(surface, filter, defersLastPass && lastFilter);
         ++i;
@@ -1146,7 +1146,7 @@ RefPtr<BitmapTexture> TextureMapper::applyFilters(RefPtr<BitmapTexture>& sourceT
     return surface;
 }
 
-RefPtr<BitmapTexture> TextureMapper::applyFilter(RefPtr<BitmapTexture>& sourceTexture, const RefPtr<const FilterOperation>& filter, bool defersLastPass)
+RefPtr<BitmapTexture> TextureMapper::applyFilter(RefPtr<BitmapTexture>& sourceTexture, const Ref<const FilterOperation>& filter, bool defersLastPass)
 {
     switch (filter->type()) {
     case FilterOperation::Type::Grayscale:
@@ -1159,9 +1159,9 @@ RefPtr<BitmapTexture> TextureMapper::applyFilter(RefPtr<BitmapTexture>& sourceTe
     case FilterOperation::Type::Opacity:
         return applySinglePassFilter(sourceTexture, filter, defersLastPass);
     case FilterOperation::Type::Blur:
-        return applyBlurFilter(sourceTexture, static_cast<const BlurFilterOperation&>(*filter));
+        return applyBlurFilter(sourceTexture, static_cast<const BlurFilterOperation&>(filter.get()));
     case FilterOperation::Type::DropShadow:
-        return applyDropShadowFilter(sourceTexture, static_cast<const DropShadowFilterOperation&>(*filter));
+        return applyDropShadowFilter(sourceTexture, static_cast<const DropShadowFilterOperation&>(filter.get()));
     default:
         ASSERT_NOT_REACHED();
         return nullptr;

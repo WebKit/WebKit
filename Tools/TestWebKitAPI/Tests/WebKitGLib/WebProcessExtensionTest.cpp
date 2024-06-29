@@ -315,8 +315,6 @@ static gboolean contextMenuCallback(WebKitWebPage* page, WebKitContextMenu* menu
     return FALSE;
 }
 
-#if !ENABLE(2022_GLIB_API)
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
 static void consoleMessageSentCallback(WebKitWebPage* webPage, WebKitConsoleMessage* consoleMessage)
 {
     g_assert_nonnull(consoleMessage);
@@ -332,8 +330,6 @@ static void consoleMessageSentCallback(WebKitWebPage* webPage, WebKitConsoleMess
         g_assert_true(JSC_IS_VALUE(result.get()));
     }
 }
-G_GNUC_END_IGNORE_DEPRECATIONS;
-#endif
 
 static void emitFormControlsAssociated(GDBusConnection* connection, const char* formIds)
 {
@@ -555,8 +551,8 @@ static void pageCreatedCallback(WebKitWebProcessExtension* extension, WebKitWebP
 #if !ENABLE(2022_GLIB_API)
     g_signal_connect(webPage, "form-controls-associated-for-frame", G_CALLBACK(formControlsAssociatedForFrameCallback), extension);
     g_signal_connect(webPage, "will-submit-form", G_CALLBACK(willSubmitFormDeprecatedCallback), extension);
-    g_signal_connect(webPage, "console-message-sent", G_CALLBACK(consoleMessageSentCallback), nullptr);
 #endif
+    g_signal_connect(webPage, "console-message-sent", G_CALLBACK(consoleMessageSentCallback), nullptr);
     g_signal_connect(webPage, "user-message-received", G_CALLBACK(pageMessageReceivedCallback), extension);
 
     auto* formManager = webkit_web_page_get_form_manager(webPage, nullptr);

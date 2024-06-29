@@ -1,24 +1,21 @@
 <!doctype html>
 <html>
 <meta charset="utf-8">
-<script src="/common/utils.js"></script>
-<script src="/common/get-host-info.sub.js"></script>
 <script>
 const SEARCH_PARAMS = new URL(location.href).searchParams;
-const ORIGIN1 = SEARCH_PARAMS.get('origin1') || '';
-const ORIGIN2 = SEARCH_PARAMS.get('origin2') || '';
-const WITH_HEADERS = !!SEARCH_PARAMS.has('with-headers');
-const TOKEN = token();
+const ORIGIN = SEARCH_PARAMS.get('origin') || '';
+const FRAME_ORIGIN = new URL(location.href).origin;
+const TOKEN = SEARCH_PARAMS.get('token') || '';
+const METHOD = SEARCH_PARAMS.get('method') || 'GET';
+const SEND_ON_EVENT = SEARCH_PARAMS.get('sendOn') || 'load';
+const MODE = SEARCH_PARAMS.get('mode') || 'cors';
+const DISALLOW_CROSS_ORIGIN = SEARCH_PARAMS.get('disallowCrossOrigin') || '';
+// CORS requests are allowed by this URL by default.
+const url = `${ORIGIN}/fetch/api/resources/stash-put.py?key=${TOKEN}&value=on&mode=${MODE}`
+    + `&frame_origin=${FRAME_ORIGIN}` + (DISALLOW_CROSS_ORIGIN ? `&disallow_cross_origin=1` : '');
 
-const url =
-    `${ORIGIN1}/fetch/api/resources/redirect.py?` +
-    `delay=500&` +
-    `allow_headers=foo&` +
-    `location=${ORIGIN2}/fetch/api/resources/stash-put.py?key=${TOKEN}%26value=on`;
-
-addEventListener('load', () => {
-  const headers = WITH_HEADERS ? {'foo': 'bar'} : undefined;
-  let p = fetch(url, {keepalive: true, headers});
+addEventListener(SEND_ON_EVENT, () => {
+  let p = fetch(url, {keepalive: true, method: METHOD, mode: MODE});
   window.parent.postMessage(TOKEN, '*');
 });
 </script>

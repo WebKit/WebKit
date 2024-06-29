@@ -31,8 +31,7 @@
 #define DUMP_CODE 0
 
 #define GLOBAL_THUNK_ID reinterpret_cast<void*>(static_cast<intptr_t>(-1))
-#define REGEXP_CODE_ID reinterpret_cast<void*>(static_cast<intptr_t>(-2))
-#define CSS_CODE_ID reinterpret_cast<void*>(static_cast<intptr_t>(-3))
+#define CSS_CODE_ID reinterpret_cast<void*>(static_cast<intptr_t>(-2))
 
 #include "JITCompilationEffort.h"
 #include "MacroAssembler.h"
@@ -391,7 +390,7 @@ private:
     void* m_ownerUID { nullptr };
 #if ENABLE(BRANCH_COMPACTION)
     AssemblerData m_assemblerStorage;
-#if CPU(ARM64E)
+#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
     AssemblerHashes m_assemblerHashesStorage;
 #endif
     bool m_shouldPerformBranchCompaction { true };
@@ -452,7 +451,7 @@ private:
     FINALIZE_CODE_IF(JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpRegExpDisassembly(), linkBufferReference, resultPtrTag, simpleName, dataLogFArgumentsForHeading)
 
 #define FINALIZE_WASM_CODE(linkBufferReference, resultPtrTag, simpleName, ...)  \
-    FINALIZE_CODE_IF((JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpWasmDisassembly()), linkBufferReference, resultPtrTag, simpleName, __VA_ARGS__)
+    FINALIZE_CODE_IF((JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpWebAssemblyDisassembly()), linkBufferReference, resultPtrTag, simpleName, __VA_ARGS__)
 
 #define FINALIZE_WASM_CODE_FOR_MODE(mode, linkBufferReference, resultPtrTag, simpleName, ...)  \
     FINALIZE_CODE_IF(shouldDumpDisassemblyFor(mode), linkBufferReference, resultPtrTag, simpleName, __VA_ARGS__)

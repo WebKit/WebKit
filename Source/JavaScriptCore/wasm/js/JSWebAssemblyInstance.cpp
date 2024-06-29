@@ -67,6 +67,11 @@ void JSWebAssemblyInstance::finishCreation(VM& vm)
     vm.heap.reportExtraMemoryAllocated(this, m_instance->extraMemoryAllocated());
 }
 
+JSWebAssemblyInstance::~JSWebAssemblyInstance()
+{
+    clearJSCallICs(*m_vm);
+}
+
 void JSWebAssemblyInstance::destroy(JSCell* cell)
 {
     static_cast<JSWebAssemblyInstance*>(cell)->JSWebAssemblyInstance::~JSWebAssemblyInstance();
@@ -132,13 +137,13 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
     // results, so that later when memory imports become available, the appropriate CalleeGroup can be used.
     // If LLInt is disabled, we instead defer compilation to module evaluation.
     // If the code is already compiled, e.g. the module was already instantiated before, we do not re-initialize.
-    if (Options::useWasmLLInt() && module()->moduleInformation().hasMemoryImport())
+    if (Options::useWebAssemblyLLInt() && module()->moduleInformation().hasMemoryImport())
         module()->module().copyInitialCalleeGroupToAllMemoryModes(memoryMode());
 
     for (unsigned importFunctionNum = 0; importFunctionNum < instance().numImportFunctions(); ++importFunctionNum) {
         auto* info = instance().importFunctionInfo(importFunctionNum);
         if (!info->targetInstance)
-            info->importFunctionStub = m_module->importFunctionStub(importFunctionNum);
+            info->importFunctionStub = m_module->module().importFunctionStub(importFunctionNum);
         else
             info->importFunctionStub = wasmCalleeGroup->wasmToWasmExitStub(importFunctionNum);
     }
@@ -235,6 +240,22 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, JSGlobalObject* 
     }
     
     return jsInstance;
+}
+
+void JSWebAssemblyInstance::clearJSCallICs(VM& vm)
+{
+    for (unsigned index = 0; index < instance().numImportFunctions(); ++index) {
+        auto* info = instance().importFunctionInfo(index);
+        info->callLinkInfo.unlinkOrUpgrade(vm, nullptr, nullptr);
+    }
+}
+
+void JSWebAssemblyInstance::finalizeUnconditionally(VM& vm, CollectionScope)
+{
+    for (unsigned index = 0; index < instance().numImportFunctions(); ++index) {
+        auto* info = instance().importFunctionInfo(index);
+        info->callLinkInfo.visitWeak(vm);
+    }
 }
 
 } // namespace JSC

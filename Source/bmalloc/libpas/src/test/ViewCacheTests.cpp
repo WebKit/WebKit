@@ -51,7 +51,7 @@ void testDisableViewCacheUsingBoundForNoViewCache()
 
     bmalloc_intrinsic_runtime_config.base.directory_size_bound_for_no_view_cache = UINT_MAX;
 
-    bmalloc_deallocate(bmalloc_allocate(42));
+    bmalloc_deallocate(bmalloc_allocate(42, pas_non_compact_allocation_mode));
 }
 
 void testEnableViewCacheAtSomeBoundForNoViewCache(unsigned bound)
@@ -60,7 +60,7 @@ void testEnableViewCacheAtSomeBoundForNoViewCache(unsigned bound)
 
     bmalloc_intrinsic_runtime_config.base.directory_size_bound_for_no_view_cache = bound;
 
-    void* ptr = bmalloc_allocate(42);
+    void* ptr = bmalloc_allocate(42, pas_non_compact_allocation_mode);
     pas_segregated_view view = pas_segregated_view_for_object(
         reinterpret_cast<uintptr_t>(ptr), &bmalloc_heap_config);
     pas_segregated_size_directory* theDirectory = pas_segregated_view_get_size_directory(view);
@@ -71,7 +71,7 @@ void testEnableViewCacheAtSomeBoundForNoViewCache(unsigned bound)
     views.insert(view);
 
     for (;;) {
-        ptr = bmalloc_allocate(42);
+        ptr = bmalloc_allocate(42, pas_non_compact_allocation_mode);
         view = pas_segregated_view_for_object(reinterpret_cast<uintptr_t>(ptr), &bmalloc_heap_config);
         pas_segregated_size_directory* directory = pas_segregated_view_get_size_directory(view);
 

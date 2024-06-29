@@ -88,6 +88,7 @@ private:
     void whenReady(CompletionHandler<void(WebCore::CaptureSourceError&&)>&& callback) final { m_proxy.whenReady(WTFMove(callback)); }
     WebCore::CaptureDevice::DeviceType deviceType() const final { return m_proxy.deviceType(); }
     bool interrupted() const final { return m_proxy.interrupted(); }
+    bool isPowerEfficient() const final { return m_proxy.isPowerEfficient(); }
 
 #if ENABLE(GPU_PROCESS)
     // GPUProcessConnection::Client

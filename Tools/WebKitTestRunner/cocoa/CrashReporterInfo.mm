@@ -71,7 +71,7 @@ void setCrashReportApplicationSpecificInformationToURL(WKURLRef url)
 {
     String testPath = testPathFromURL(url);
     if (!testPath.isNull()) {
-        auto message = makeString("CRASHING TEST: ", testPath);
+        auto message = makeString("CRASHING TEST: "_s, testPath);
         WTF::setCrashLogMessage(message.utf8().data());
     }
 }

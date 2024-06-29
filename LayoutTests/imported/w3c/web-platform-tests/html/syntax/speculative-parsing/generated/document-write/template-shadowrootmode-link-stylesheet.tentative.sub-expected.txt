@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <div><template shadowrootmode="closed"><link rel=stylesheet href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=4bdd6438-73b9-4b3d-a8c7-58b5e5aace62&amp;encodingcheck=&Gbreve;"></template></div>
+
+
+
+PASS Speculative parsing, document.write(): template-shadowrootmode-link-stylesheet
+

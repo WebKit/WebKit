@@ -102,10 +102,10 @@ JSC_DEFINE_HOST_FUNCTION(symbolConstructorFor, (JSGlobalObject* globalObject, Ca
 
     JSString* stringKey = callFrame->argument(0).toString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    String string = stringKey->value(globalObject);
+    auto string = stringKey->value(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    return JSValue::encode(Symbol::create(vm, vm.symbolRegistry().symbolForKey(WTFMove(string))));
+    return JSValue::encode(Symbol::create(vm, vm.symbolRegistry().symbolForKey(string)));
 }
 
 const ASCIILiteral SymbolKeyForTypeError { "Symbol.keyFor requires that the first argument be a symbol"_s };

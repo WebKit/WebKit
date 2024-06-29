@@ -700,7 +700,7 @@ void DirectiveParser::parseExtension(Token *token)
             {
                 mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1,
                                      token->location, token->text);
-                // This is just a warning on CHROME OS http://anglebug.com/4023
+                // This is just a warning on CHROME OS http://anglebug.com/42262661
 #if !defined(ANGLE_PLATFORM_CHROMEOS)
                 valid = false;
 #endif

@@ -42,13 +42,9 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JITThunks);
 
-JITThunks::JITThunks()
-{
-}
+JITThunks::JITThunks() = default;
 
-JITThunks::~JITThunks()
-{
-}
+JITThunks::~JITThunks() = default;
 
 void JITThunks::initialize(VM& vm)
 {

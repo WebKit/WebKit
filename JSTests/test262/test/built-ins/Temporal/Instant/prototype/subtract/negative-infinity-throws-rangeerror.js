@@ -9,7 +9,7 @@ features: [Temporal]
 
 const fields = ["hours", "minutes", "seconds", "milliseconds", "microseconds", "nanoseconds"];
 
-const instance = Temporal.Instant.fromEpochSeconds(10);
+const instance = Temporal.Instant.fromEpochMilliseconds(10_000);
 
 fields.forEach((field) => {
   assert.throws(RangeError, () => instance.subtract({ [field]: -Infinity }));

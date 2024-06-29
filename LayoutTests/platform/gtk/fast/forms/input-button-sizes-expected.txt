@@ -27,43 +27,43 @@ layer at (0,0) size 800x600
             text run at (0,0) width 38: "Test Button"
       RenderText {#text} at (204,4) size 5x17
         text run at (204,4) width 5: " "
-      RenderButton {INPUT} at (208,6) size 65x19 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-        RenderBlock (anonymous) at (8,4) size 49x10
-          RenderText at (0,0) size 49x10
-            text run at (0,0) width 49: "Test Button"
-      RenderText {#text} at (272,4) size 5x17
-        text run at (272,4) width 5: " "
-      RenderButton {INPUT} at (276,5) size 70x20 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderButton {INPUT} at (208,6) size 64x19 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderBlock (anonymous) at (8,4) size 48x10
+          RenderText at (0,0) size 48x10
+            text run at (0,0) width 48: "Test Button"
+      RenderText {#text} at (271,4) size 5x17
+        text run at (271,4) width 5: " "
+      RenderButton {INPUT} at (275,5) size 70x20 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,4) size 53x11
           RenderText at (0,0) size 53x11
             text run at (0,0) width 53: "Test Button"
-      RenderText {#text} at (345,4) size 5x17
-        text run at (345,4) width 5: " "
-      RenderButton {INPUT} at (349,4) size 71x21 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderText {#text} at (344,4) size 5x17
+        text run at (344,4) width 5: " "
+      RenderButton {INPUT} at (348,4) size 71x21 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,4) size 55x12
           RenderText at (0,0) size 55x12
             text run at (0,0) width 55: "Test Button"
-      RenderText {#text} at (419,4) size 5x17
-        text run at (419,4) width 5: " "
-      RenderButton {INPUT} at (423,3) size 77x23 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderText {#text} at (418,4) size 5x17
+        text run at (418,4) width 5: " "
+      RenderButton {INPUT} at (422,3) size 77x23 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,4) size 60x14
           RenderText at (0,0) size 60x14
             text run at (0,0) width 60: "Test Button"
-      RenderText {#text} at (499,4) size 5x17
-        text run at (499,4) width 5: " "
-      RenderButton {INPUT} at (503,2) size 84x24 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderText {#text} at (498,4) size 5x17
+        text run at (498,4) width 5: " "
+      RenderButton {INPUT} at (502,2) size 84x24 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,4) size 67x15
           RenderText at (0,0) size 67x15
             text run at (0,0) width 67: "Test Button"
-      RenderText {#text} at (586,4) size 5x17
-        text run at (586,4) width 5: " "
-      RenderButton {INPUT} at (590,1) size 88x25 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderText {#text} at (585,4) size 5x17
+        text run at (585,4) width 5: " "
+      RenderButton {INPUT} at (589,1) size 88x25 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,4) size 72x16
           RenderText at (0,0) size 72x16
             text run at (0,0) width 72: "Test Button"
-      RenderText {#text} at (677,4) size 5x17
-        text run at (677,4) width 5: " "
-      RenderButton {INPUT} at (681,0) size 90x26 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderText {#text} at (676,4) size 5x17
+        text run at (676,4) width 5: " "
+      RenderButton {INPUT} at (680,0) size 90x26 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,4) size 74x17
           RenderText at (0,0) size 74x17
             text run at (0,0) width 74: "Test Button"

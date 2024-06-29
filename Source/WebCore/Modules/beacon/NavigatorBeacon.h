@@ -55,7 +55,7 @@ private:
 
     static ASCIILiteral supplementName();
 
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
     void logError(const ResourceError&);
 
     Navigator& m_navigator;

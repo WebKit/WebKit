@@ -1,0 +1,198 @@
+
+PASS :precedence:expr="add_mul";decl="literal";strip_spaces=false
+PASS :precedence:expr="add_mul";decl="literal";strip_spaces=true
+PASS :precedence:expr="add_mul";decl="const";strip_spaces=false
+PASS :precedence:expr="add_mul";decl="const";strip_spaces=true
+PASS :precedence:expr="add_mul";decl="override";strip_spaces=false
+PASS :precedence:expr="add_mul";decl="override";strip_spaces=true
+PASS :precedence:expr="add_mul";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="add_mul";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="mul_add";decl="literal";strip_spaces=false
+PASS :precedence:expr="mul_add";decl="literal";strip_spaces=true
+PASS :precedence:expr="mul_add";decl="const";strip_spaces=false
+PASS :precedence:expr="mul_add";decl="const";strip_spaces=true
+PASS :precedence:expr="mul_add";decl="override";strip_spaces=false
+PASS :precedence:expr="mul_add";decl="override";strip_spaces=true
+PASS :precedence:expr="mul_add";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="mul_add";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="sub_neg";decl="literal";strip_spaces=false
+FAIL :precedence:expr="sub_neg";decl="literal";strip_spaces=true assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: -21524111
+       failed ->            xx
+     expected ==      0000000a
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    17:8: Expected a ;, but got a --
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :precedence:expr="sub_neg";decl="const";strip_spaces=false
+FAIL :precedence:expr="sub_neg";decl="const";strip_spaces=true assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: -21524111
+       failed ->            xx
+     expected ==      0000000a
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    17:8: Expected a ;, but got a --
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :precedence:expr="sub_neg";decl="override";strip_spaces=false
+FAIL :precedence:expr="sub_neg";decl="override";strip_spaces=true assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: -21524111
+       failed ->            xx
+     expected ==      0000000a
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    17:8: Expected a ;, but got a --
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :precedence:expr="sub_neg";decl="var%3Cprivate%3E";strip_spaces=false
+FAIL :precedence:expr="sub_neg";decl="var%3Cprivate%3E";strip_spaces=true assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 0.
+     Starting at index 0:
+       actual == 0x: -21524111
+       failed ->            xx
+     expected ==      0000000a
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    17:8: Expected a ;, but got a --
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :precedence:expr="neg_shl";decl="literal";strip_spaces=false
+PASS :precedence:expr="neg_shl";decl="literal";strip_spaces=true
+PASS :precedence:expr="neg_shl";decl="const";strip_spaces=false
+PASS :precedence:expr="neg_shl";decl="const";strip_spaces=true
+PASS :precedence:expr="neg_shl";decl="override";strip_spaces=false
+PASS :precedence:expr="neg_shl";decl="override";strip_spaces=true
+PASS :precedence:expr="neg_shl";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="neg_shl";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="neg_shr";decl="literal";strip_spaces=false
+PASS :precedence:expr="neg_shr";decl="literal";strip_spaces=true
+PASS :precedence:expr="neg_shr";decl="const";strip_spaces=false
+PASS :precedence:expr="neg_shr";decl="const";strip_spaces=true
+PASS :precedence:expr="neg_shr";decl="override";strip_spaces=false
+PASS :precedence:expr="neg_shr";decl="override";strip_spaces=true
+PASS :precedence:expr="neg_shr";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="neg_shr";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="neg_add";decl="literal";strip_spaces=false
+PASS :precedence:expr="neg_add";decl="literal";strip_spaces=true
+PASS :precedence:expr="neg_add";decl="const";strip_spaces=false
+PASS :precedence:expr="neg_add";decl="const";strip_spaces=true
+PASS :precedence:expr="neg_add";decl="override";strip_spaces=false
+PASS :precedence:expr="neg_add";decl="override";strip_spaces=true
+PASS :precedence:expr="neg_add";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="neg_add";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="neg_mul";decl="literal";strip_spaces=false
+PASS :precedence:expr="neg_mul";decl="literal";strip_spaces=true
+PASS :precedence:expr="neg_mul";decl="const";strip_spaces=false
+PASS :precedence:expr="neg_mul";decl="const";strip_spaces=true
+PASS :precedence:expr="neg_mul";decl="override";strip_spaces=false
+PASS :precedence:expr="neg_mul";decl="override";strip_spaces=true
+PASS :precedence:expr="neg_mul";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="neg_mul";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="neg_and";decl="literal";strip_spaces=false
+PASS :precedence:expr="neg_and";decl="literal";strip_spaces=true
+PASS :precedence:expr="neg_and";decl="const";strip_spaces=false
+PASS :precedence:expr="neg_and";decl="const";strip_spaces=true
+PASS :precedence:expr="neg_and";decl="override";strip_spaces=false
+PASS :precedence:expr="neg_and";decl="override";strip_spaces=true
+PASS :precedence:expr="neg_and";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="neg_and";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="neg_or";decl="literal";strip_spaces=false
+PASS :precedence:expr="neg_or";decl="literal";strip_spaces=true
+PASS :precedence:expr="neg_or";decl="const";strip_spaces=false
+PASS :precedence:expr="neg_or";decl="const";strip_spaces=true
+PASS :precedence:expr="neg_or";decl="override";strip_spaces=false
+PASS :precedence:expr="neg_or";decl="override";strip_spaces=true
+PASS :precedence:expr="neg_or";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="neg_or";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="neg_xor";decl="literal";strip_spaces=false
+PASS :precedence:expr="neg_xor";decl="literal";strip_spaces=true
+PASS :precedence:expr="neg_xor";decl="const";strip_spaces=false
+PASS :precedence:expr="neg_xor";decl="const";strip_spaces=true
+PASS :precedence:expr="neg_xor";decl="override";strip_spaces=false
+PASS :precedence:expr="neg_xor";decl="override";strip_spaces=true
+PASS :precedence:expr="neg_xor";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="neg_xor";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="comp_add";decl="literal";strip_spaces=false
+PASS :precedence:expr="comp_add";decl="literal";strip_spaces=true
+PASS :precedence:expr="comp_add";decl="const";strip_spaces=false
+PASS :precedence:expr="comp_add";decl="const";strip_spaces=true
+PASS :precedence:expr="comp_add";decl="override";strip_spaces=false
+PASS :precedence:expr="comp_add";decl="override";strip_spaces=true
+PASS :precedence:expr="comp_add";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="comp_add";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="mul_deref";decl="literal";strip_spaces=false
+PASS :precedence:expr="mul_deref";decl="literal";strip_spaces=true
+PASS :precedence:expr="mul_deref";decl="const";strip_spaces=false
+PASS :precedence:expr="mul_deref";decl="const";strip_spaces=true
+PASS :precedence:expr="mul_deref";decl="override";strip_spaces=false
+PASS :precedence:expr="mul_deref";decl="override";strip_spaces=true
+PASS :precedence:expr="mul_deref";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="mul_deref";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="not_and";decl="literal";strip_spaces=false
+PASS :precedence:expr="not_and";decl="literal";strip_spaces=true
+PASS :precedence:expr="not_and";decl="const";strip_spaces=false
+PASS :precedence:expr="not_and";decl="const";strip_spaces=true
+PASS :precedence:expr="not_and";decl="override";strip_spaces=false
+PASS :precedence:expr="not_and";decl="override";strip_spaces=true
+PASS :precedence:expr="not_and";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="not_and";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="not_or";decl="literal";strip_spaces=false
+PASS :precedence:expr="not_or";decl="literal";strip_spaces=true
+PASS :precedence:expr="not_or";decl="const";strip_spaces=false
+PASS :precedence:expr="not_or";decl="const";strip_spaces=true
+PASS :precedence:expr="not_or";decl="override";strip_spaces=false
+PASS :precedence:expr="not_or";decl="override";strip_spaces=true
+PASS :precedence:expr="not_or";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="not_or";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="eq_and";decl="literal";strip_spaces=false
+PASS :precedence:expr="eq_and";decl="literal";strip_spaces=true
+PASS :precedence:expr="eq_and";decl="const";strip_spaces=false
+PASS :precedence:expr="eq_and";decl="const";strip_spaces=true
+PASS :precedence:expr="eq_and";decl="override";strip_spaces=false
+PASS :precedence:expr="eq_and";decl="override";strip_spaces=true
+PASS :precedence:expr="eq_and";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="eq_and";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="and_eq";decl="literal";strip_spaces=false
+PASS :precedence:expr="and_eq";decl="literal";strip_spaces=true
+PASS :precedence:expr="and_eq";decl="const";strip_spaces=false
+PASS :precedence:expr="and_eq";decl="const";strip_spaces=true
+PASS :precedence:expr="and_eq";decl="override";strip_spaces=false
+PASS :precedence:expr="and_eq";decl="override";strip_spaces=true
+PASS :precedence:expr="and_eq";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="and_eq";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="eq_or";decl="literal";strip_spaces=false
+PASS :precedence:expr="eq_or";decl="literal";strip_spaces=true
+PASS :precedence:expr="eq_or";decl="const";strip_spaces=false
+PASS :precedence:expr="eq_or";decl="const";strip_spaces=true
+PASS :precedence:expr="eq_or";decl="override";strip_spaces=false
+PASS :precedence:expr="eq_or";decl="override";strip_spaces=true
+PASS :precedence:expr="eq_or";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="eq_or";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="or_eq";decl="literal";strip_spaces=false
+PASS :precedence:expr="or_eq";decl="literal";strip_spaces=true
+PASS :precedence:expr="or_eq";decl="const";strip_spaces=false
+PASS :precedence:expr="or_eq";decl="const";strip_spaces=true
+PASS :precedence:expr="or_eq";decl="override";strip_spaces=false
+PASS :precedence:expr="or_eq";decl="override";strip_spaces=true
+PASS :precedence:expr="or_eq";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="or_eq";decl="var%3Cprivate%3E";strip_spaces=true
+PASS :precedence:expr="add_swizzle";decl="literal";strip_spaces=false
+PASS :precedence:expr="add_swizzle";decl="literal";strip_spaces=true
+PASS :precedence:expr="add_swizzle";decl="const";strip_spaces=false
+PASS :precedence:expr="add_swizzle";decl="const";strip_spaces=true
+PASS :precedence:expr="add_swizzle";decl="override";strip_spaces=false
+PASS :precedence:expr="add_swizzle";decl="override";strip_spaces=true
+PASS :precedence:expr="add_swizzle";decl="var%3Cprivate%3E";strip_spaces=false
+PASS :precedence:expr="add_swizzle";decl="var%3Cprivate%3E";strip_spaces=true
+

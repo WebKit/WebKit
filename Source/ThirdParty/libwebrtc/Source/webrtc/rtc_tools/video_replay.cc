@@ -16,10 +16,12 @@
 
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
+#include "absl/strings/str_split.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "api/field_trials.h"
 #include "api/media_types.h"
-#include "api/rtc_event_log/rtc_event_log.h"
-#include "api/task_queue/default_task_queue_factory.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/test/video/function_video_decoder_factory.h"
 #include "api/transport/field_trial_based_config.h"
 #include "api/units/timestamp.h"
@@ -29,6 +31,7 @@
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "media/engine/internal_decoder_factory.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/source/rtp_dependency_descriptor_extension.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_util.h"
@@ -36,7 +39,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/string_to_number.h"
 #include "rtc_base/strings/json.h"
-#include "rtc_base/time_utils.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/call_config_utils.h"
@@ -102,14 +104,22 @@ ABSL_FLAG(uint32_t,
           webrtc::test::VideoTestConstants::kFlexfecSendSsrc,
           "Incoming FLEXFEC SSRC");
 
-// Flag for abs-send-time id.
-ABSL_FLAG(int, abs_send_time_id, -1, "RTP extension ID for abs-send-time");
-
-// Flag for transmission-offset id.
-ABSL_FLAG(int,
-          transmission_offset_id,
-          -1,
-          "RTP extension ID for transmission-offset");
+ABSL_FLAG(std::vector<std::string>,
+          ext_map,
+          {},
+          "RTP extension to ID map in the format of EXT1:ID,EXT2:ID,EXT3:ID"
+          " Known extensions are:\n"
+          "TOFF    - kTimestampOffsetUri\n"
+          "ABSSEND - kAbsSendTimeUri\n"
+          "ABSCAPT - kAbsoluteCaptureTimeUri\n"
+          "ROT     - kVideoRotationUri\n"
+          "CONT    - kVideoContentTypeUri\n"
+          "DD      - kDependencyDescriptorUri\n"
+          "LALOC   - kVideoLayersAllocationUri\n"
+          "TWCC    - kTransportSequenceNumberUri\n"
+          "TWCC2   - kTransportSequenceNumberV2Uri\n"
+          "DELAY   - kPlayoutDelayUri\n"
+          "COLOR   - kColorSpaceUri\n");
 
 // Flag for rtpdump input file.
 ABSL_FLAG(std::string, input_file, "", "input file");
@@ -179,10 +189,6 @@ bool ValidateOptionalPayloadType(int32_t payload_type) {
   return payload_type == -1 || ValidatePayloadType(payload_type);
 }
 
-bool ValidateRtpHeaderExtensionId(int32_t extension_id) {
-  return extension_id >= -1 && extension_id < 15;
-}
-
 bool ValidateInputFilenameNotEmpty(const std::string& string) {
   return !string.empty();
 }
@@ -218,7 +224,7 @@ class FileRenderPassthrough : public rtc::VideoSinkInterface<VideoFrame> {
       return;
 
     std::stringstream filename;
-    filename << basename_ << count_++ << "_" << video_frame.timestamp()
+    filename << basename_ << count_++ << "_" << video_frame.rtp_timestamp()
              << ".jpg";
 
     test::JpegFrameWriter frame_writer(filename.str());
@@ -478,26 +484,20 @@ class RtpReplayer final {
               bool simulated_time)
       : replay_config_path_(replay_config_path),
         rtp_dump_path_(rtp_dump_path),
-        field_trials_(std::move(field_trials)),
+        time_sim_(simulated_time
+                      ? std::make_unique<GlobalSimulatedTimeController>(
+                            Timestamp::Millis(1 << 30))
+                      : nullptr),
+        env_(CreateEnvironment(
+            std::move(field_trials),
+            time_sim_ ? time_sim_->GetTaskQueueFactory() : nullptr,
+            time_sim_ ? time_sim_->GetClock() : nullptr)),
         rtp_reader_(CreateRtpReader(rtp_dump_path_)) {
-    TaskQueueFactory* task_queue_factory;
-    if (simulated_time) {
-      time_sim_ = std::make_unique<GlobalSimulatedTimeController>(
-          Timestamp::Millis(1 << 30));
-      task_queue_factory = time_sim_->GetTaskQueueFactory();
-    } else {
-      task_queue_factory_ = CreateDefaultTaskQueueFactory(field_trials_.get()),
-      task_queue_factory = task_queue_factory_.get();
-    }
-    worker_thread_ =
-        std::make_unique<rtc::TaskQueue>(task_queue_factory->CreateTaskQueue(
-            "worker_thread", TaskQueueFactory::Priority::NORMAL));
+    worker_thread_ = env_.task_queue_factory().CreateTaskQueue(
+        "worker_thread", TaskQueueFactory::Priority::NORMAL);
     rtc::Event event;
     worker_thread_->PostTask([&]() {
-      CallConfig call_config(&event_log_);
-      call_config.trials = field_trials_.get();
-      call_config.task_queue_factory = task_queue_factory;
-      call_ = Call::Create(call_config);
+      call_ = Call::Create(CallConfig(env_));
 
       // Creation of the streams must happen inside a task queue because it is
       // resued as a worker thread.
@@ -548,6 +548,35 @@ class RtpReplayer final {
   }
 
  private:
+  RtpHeaderExtensionMap GetExtensionMapFromFlags() {
+    const std::map<std::string_view, absl::string_view> kKnownExtensions = {
+        {"TOFF", RtpExtension::kTimestampOffsetUri},
+        {"ABSSEND", RtpExtension::kAbsSendTimeUri},
+        {"ABSCAPT", RtpExtension::kAbsoluteCaptureTimeUri},
+        {"ROT", RtpExtension::kVideoRotationUri},
+        {"CONT", RtpExtension::kVideoContentTypeUri},
+        {"DD", RtpExtension::kDependencyDescriptorUri},
+        {"LALOC", RtpExtension::kVideoLayersAllocationUri},
+        {"TWCC", RtpExtension::kTransportSequenceNumberUri},
+        {"TWCC2", RtpExtension::kTransportSequenceNumberV2Uri},
+        {"DELAY", RtpExtension::kPlayoutDelayUri},
+        {"COLOR", RtpExtension::kColorSpaceUri},
+    };
+
+    RtpHeaderExtensionMap res;
+    for (const std::string& extension : absl::GetFlag(FLAGS_ext_map)) {
+      std::pair<std::string, std::string> ext = absl::StrSplit(extension, ':');
+      if (auto it = kKnownExtensions.find(ext.first);
+          it != kKnownExtensions.end()) {
+        res.RegisterByUri(std::stoi(ext.second), it->second);
+      } else {
+        RTC_DCHECK_NOTREACHED() << "Unknown extension \"" << ext.first << "\"";
+      }
+    }
+
+    return res;
+  }
+
   void ReplayPackets() {
     enum class Result { kOk, kUnknownSsrc, kParsingFailed };
     int64_t replay_start_ms = -1;
@@ -557,15 +586,7 @@ class RtpReplayer final {
     uint32_t start_timestamp = absl::GetFlag(FLAGS_start_timestamp);
     uint32_t stop_timestamp = absl::GetFlag(FLAGS_stop_timestamp);
 
-    RtpHeaderExtensionMap extensions;
-    if (absl::GetFlag(FLAGS_transmission_offset_id) != -1) {
-      extensions.RegisterByUri(absl::GetFlag(FLAGS_transmission_offset_id),
-                               RtpExtension::kTimestampOffsetUri);
-    }
-    if (absl::GetFlag(FLAGS_abs_send_time_id) != -1) {
-      extensions.RegisterByUri(absl::GetFlag(FLAGS_abs_send_time_id),
-                               RtpExtension::kAbsSendTimeUri);
-    }
+    RtpHeaderExtensionMap extensions = GetExtensionMapFromFlags();
 
     while (true) {
       int64_t now_ms = CurrentTimeMs();
@@ -609,15 +630,15 @@ class RtpReplayer final {
                                           Timestamp::Millis(CurrentTimeMs()));
         if (!received_packet.Parse(std::move(packet_buffer))) {
           result = Result::kParsingFailed;
-          return;
+        } else {
+          call_->Receiver()->DeliverRtpPacket(
+              MediaType::VIDEO, received_packet,
+              [&result](const RtpPacketReceived& parsed_packet) -> bool {
+                result = Result::kUnknownSsrc;
+                // No point in trying to demux again.
+                return false;
+              });
         }
-        call_->Receiver()->DeliverRtpPacket(
-            MediaType::VIDEO, received_packet,
-            [&result](const RtpPacketReceived& parsed_packet) -> bool {
-              result = Result::kUnknownSsrc;
-              // No point in trying to demux again.
-              return false;
-            });
         event.Set();
       });
       event.Wait(/*give_up_after=*/TimeDelta::Seconds(10));
@@ -655,10 +676,7 @@ class RtpReplayer final {
     }
   }
 
-  int64_t CurrentTimeMs() {
-    return time_sim_ ? time_sim_->GetClock()->TimeInMilliseconds()
-                     : rtc::TimeMillis();
-  }
+  int64_t CurrentTimeMs() { return env_.clock().CurrentTime().ms(); }
 
   void SleepOrAdvanceTime(int64_t duration_ms) {
     if (time_sim_) {
@@ -670,11 +688,9 @@ class RtpReplayer final {
 
   const std::string replay_config_path_;
   const std::string rtp_dump_path_;
-  RtcEventLogNull event_log_;
-  std::unique_ptr<FieldTrialsView> field_trials_;
   std::unique_ptr<GlobalSimulatedTimeController> time_sim_;
-  std::unique_ptr<TaskQueueFactory> task_queue_factory_;
-  std::unique_ptr<rtc::TaskQueue> worker_thread_;
+  Environment env_;
+  std::unique_ptr<TaskQueueBase, TaskQueueDeleter> worker_thread_;
   std::unique_ptr<Call> call_;
   std::unique_ptr<test::RtpFileReader> rtp_reader_;
   std::unique_ptr<StreamState> stream_state_;
@@ -704,10 +720,6 @@ int main(int argc, char* argv[]) {
       ValidateOptionalPayloadType(absl::GetFlag(FLAGS_ulpfec_payload_type)));
   RTC_CHECK(
       ValidateOptionalPayloadType(absl::GetFlag(FLAGS_flexfec_payload_type)));
-  RTC_CHECK(
-      ValidateRtpHeaderExtensionId(absl::GetFlag(FLAGS_abs_send_time_id)));
-  RTC_CHECK(ValidateRtpHeaderExtensionId(
-      absl::GetFlag(FLAGS_transmission_offset_id)));
   RTC_CHECK(ValidateInputFilenameNotEmpty(absl::GetFlag(FLAGS_input_file)));
   RTC_CHECK_GE(absl::GetFlag(FLAGS_extend_run_time_duration), 0);
 

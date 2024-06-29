@@ -26,7 +26,7 @@
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
 
 messages -> RemoteAudioSessionProxy NotRefCounted {
-    SetCategory(enum:uint8_t WebCore::AudioSession::CategoryType type, enum:uint8_t WebCore::AudioSession::Mode mode, enum:uint8_t WebCore::RouteSharingPolicy policy)
+    SetCategory(enum:uint8_t WebCore::AudioSessionCategory type, enum:uint8_t WebCore::AudioSessionMode mode, enum:uint8_t WebCore::RouteSharingPolicy policy)
     SetPreferredBufferSize(uint64_t preferredBufferSize)
     TryToSetActive(bool active) -> (bool suceeded) Synchronous
     SetIsPlayingToBluetoothOverride(std::optional<bool> value)
@@ -36,6 +36,9 @@ messages -> RemoteAudioSessionProxy NotRefCounted {
 
     BeginInterruptionRemote()
     EndInterruptionRemote(WebCore::AudioSession::MayResume flags)
+
+    SetSceneIdentifier(String sceneIdentifier)
+    SetSoundStageSize(enum:uint8_t WebCore::AudioSessionSoundStageSize size)
 }
 
 #endif

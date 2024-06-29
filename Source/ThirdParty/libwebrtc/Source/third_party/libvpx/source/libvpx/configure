@@ -102,6 +102,7 @@ all_platforms="${all_platforms} arm64-darwin-gcc"
 all_platforms="${all_platforms} arm64-darwin20-gcc"
 all_platforms="${all_platforms} arm64-darwin21-gcc"
 all_platforms="${all_platforms} arm64-darwin22-gcc"
+all_platforms="${all_platforms} arm64-darwin23-gcc"
 all_platforms="${all_platforms} arm64-linux-gcc"
 all_platforms="${all_platforms} arm64-win64-gcc"
 all_platforms="${all_platforms} arm64-win64-vs15"
@@ -165,6 +166,7 @@ all_platforms="${all_platforms} x86_64-darwin19-gcc"
 all_platforms="${all_platforms} x86_64-darwin20-gcc"
 all_platforms="${all_platforms} x86_64-darwin21-gcc"
 all_platforms="${all_platforms} x86_64-darwin22-gcc"
+all_platforms="${all_platforms} x86_64-darwin23-gcc"
 all_platforms="${all_platforms} x86_64-iphonesimulator-gcc"
 all_platforms="${all_platforms} x86_64-linux-gcc"
 all_platforms="${all_platforms} x86_64-linux-icc"
@@ -257,6 +259,8 @@ ARCH_EXT_LIST_AARCH64="
     neon
     neon_dotprod
     neon_i8mm
+    sve
+    sve2
 "
 
 ARCH_EXT_LIST_X86="
@@ -373,6 +377,7 @@ CMDLINE_SELECT="
     install_libs
     install_srcs
     debug
+    profile
     gprof
     gcov
     pic
@@ -642,7 +647,6 @@ process_toolchain() {
     if enabled gcc; then
         enabled werror && check_add_cflags -Werror
         check_add_cflags -Wall
-        check_add_cflags -Wdeclaration-after-statement
         check_add_cflags -Wdisabled-optimization
         check_add_cflags -Wextra-semi
         check_add_cflags -Wextra-semi-stmt
@@ -657,6 +661,7 @@ process_toolchain() {
         check_add_cflags -Wmissing-declarations
         check_add_cflags -Wmissing-prototypes
         check_add_cflags -Wshadow
+        check_add_cflags -Wstrict-prototypes
         check_add_cflags -Wuninitialized
         check_add_cflags -Wunreachable-code-aggressive
         check_add_cflags -Wunused
@@ -669,12 +674,15 @@ process_toolchain() {
         if enabled mips || [ -z "${INLINE}" ]; then
           enabled extra_warnings || check_add_cflags -Wno-unused-function
         fi
-        # Enforce c89 for c files. Don't be too strict about it though. Allow
-        # gnu extensions like "//" for comments.
-        check_cflags -std=gnu89 && add_cflags_only -std=gnu89
+        # Enforce C99 for C files. Allow GNU extensions.
+        check_cflags -std=gnu99 && add_cflags_only -std=gnu99
         # Avoid this warning for third_party C++ sources. Some reorganization
         # would be needed to apply this only to test/*.cc.
         check_cflags -Wshorten-64-to-32 && add_cflags_only -Wshorten-64-to-32
+
+        # Do not allow implicit vector type conversions on Clang builds (this
+        # is already the default on GCC builds).
+        check_add_cflags -flax-vector-conversions=none
 
         # Quiet gcc 6 vs 7 abi warnings:
         # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=77728

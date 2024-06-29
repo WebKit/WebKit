@@ -99,7 +99,7 @@ protected:
 
 private:
 
-    void remotePageProcessCrashed(WebCore::ProcessIdentifier) final;
+    void remotePageProcessDidTerminate(WebCore::ProcessIdentifier) final;
     void sizeDidChange() final;
     void deviceScaleFactorDidChange() final;
     void windowKindDidChange() final;
@@ -190,8 +190,6 @@ private:
     IPC::AsyncReplyID m_replyForUnhidingContent;
 
     unsigned m_countOfTransactionsWithNonEmptyLayerChanges { 0 };
-
-    HashMap<WebCore::ProcessIdentifier, WebCore::FrameIdentifier> m_commitsForFrameID;
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     Seconds m_acceleratedTimelineTimeOrigin;

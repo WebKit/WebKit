@@ -44,6 +44,7 @@
 #include "rtc_base/openssl_identity.h"
 #endif
 #include "rtc_base/openssl_utility.h"
+#include "rtc_base/strings/str_join.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/thread.h"
 
@@ -167,23 +168,6 @@ static void LogSslError() {
 namespace rtc {
 
 using ::webrtc::TimeDelta;
-
-namespace webrtc_openssl_adapter_internal {
-
-// Simple O(n^2) implementation is sufficient for current use case.
-std::string StrJoin(const std::vector<std::string>& list, char delimiter) {
-  RTC_CHECK(!list.empty());
-  StringBuilder sb;
-  sb << list[0];
-  for (size_t i = 1; i < list.size(); i++) {
-    sb.AppendFormat("%c", delimiter);
-    sb << list[i];
-  }
-  return sb.Release();
-}
-}  // namespace webrtc_openssl_adapter_internal
-
-using webrtc_openssl_adapter_internal::StrJoin;
 
 bool OpenSSLAdapter::InitializeSSL() {
   if (!SSL_library_init())
@@ -373,7 +357,7 @@ int OpenSSLAdapter::BeginSSL() {
   }
 
   if (!elliptic_curves_.empty()) {
-    SSL_set1_curves_list(ssl_, StrJoin(elliptic_curves_, ':').c_str());
+    SSL_set1_curves_list(ssl_, webrtc::StrJoin(elliptic_curves_, ":").c_str());
   }
 
   // Now that the initial config is done, transfer ownership of `bio` to the

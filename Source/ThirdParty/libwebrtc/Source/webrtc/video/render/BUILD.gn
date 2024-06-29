@@ -26,7 +26,6 @@ rtc_library("incoming_video_stream") {
     "../../rtc_base:event_tracer",
     "../../rtc_base:macromagic",
     "../../rtc_base:race_checker",
-    "../../rtc_base:rtc_task_queue",
   ]
 
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]

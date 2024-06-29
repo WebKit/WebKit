@@ -95,11 +95,7 @@ class RtpVideoSender : public RtpVideoSenderInterface,
   RtpVideoSender(const RtpVideoSender&) = delete;
   RtpVideoSender& operator=(const RtpVideoSender&) = delete;
 
-  // Sets the sending status of the rtp modules and appropriately sets the
-  // payload router to active if any rtp modules are active.
-  void SetActiveModules(const std::vector<bool>& active_modules)
-      RTC_LOCKS_EXCLUDED(mutex_) override;
-  void Stop() RTC_LOCKS_EXCLUDED(mutex_) override;
+  void SetSending(bool enabled) RTC_LOCKS_EXCLUDED(mutex_) override;
   bool IsActive() RTC_LOCKS_EXCLUDED(mutex_) override;
 
   void OnNetworkAvailability(bool network_available)
@@ -160,7 +156,7 @@ class RtpVideoSender : public RtpVideoSenderInterface,
 
  private:
   bool IsActiveLocked() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
-  void SetActiveModulesLocked(const std::vector<bool>& active_modules)
+  void SetActiveModulesLocked(bool sending)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
   void UpdateModuleSendingState() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
   void ConfigureProtection();
@@ -184,7 +180,6 @@ class RtpVideoSender : public RtpVideoSenderInterface,
   // transport task queue.
   mutable Mutex mutex_;
   bool active_ RTC_GUARDED_BY(mutex_);
-  bool registered_for_feedback_ RTC_GUARDED_BY(transport_checker_) = false;
 
   const std::unique_ptr<FecController> fec_controller_;
   bool fec_allowed_ RTC_GUARDED_BY(mutex_);
@@ -201,6 +196,7 @@ class RtpVideoSender : public RtpVideoSenderInterface,
   // rewrite the frame id), therefore `shared_frame_id` has to live in a place
   // where we are aware of all the different streams.
   int64_t shared_frame_id_ = 0;
+  const bool independent_frame_ids_;
   std::vector<RtpPayloadParams> params_ RTC_GUARDED_BY(mutex_);
 
   size_t transport_overhead_bytes_per_packet_ RTC_GUARDED_BY(mutex_);

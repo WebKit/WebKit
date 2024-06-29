@@ -32,11 +32,11 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/Lock.h>
+#include <wtf/MainThreadDispatcher.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
@@ -49,7 +49,7 @@ class PlatformMediaResourceClient : public ThreadSafeRefCounted<PlatformMediaRes
 public:
     virtual ~PlatformMediaResourceClient() = default;
 
-    // Those methods must be called on PlatformMediaResourceLoader::targetQueue()
+    // Those methods must be called on PlatformMediaResourceLoader::targetDispatcher()
     virtual void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler) { completionHandler(ShouldContinuePolicyCheck::Yes); }
     virtual void redirectReceived(PlatformMediaResource&, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) { completionHandler(WTFMove(request)); }
     virtual bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) { return true; }
@@ -73,9 +73,9 @@ public:
 
     virtual void sendH2Ping(const URL&, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&&) = 0;
 
-    // Can be called on any threads. Return the WorkQueue on which the PlaftormMediaResource and PlatformMediaResourceClient must be be called on.
-    virtual Ref<WorkQueue> targetQueue() { return WorkQueue::main(); }
-    // requestResource will be called on the main thread, the PlatformMediaResource object is to be used on targetQueue().
+    // Can be called on any threads. Return the function dispatcher on which the PlaftormMediaResource and PlatformMediaResourceClient must be be called on.
+    virtual Ref<RefCountedSerialFunctionDispatcher> targetDispatcher() { return MainThreadDispatcher::singleton(); }
+    // requestResource will be called on the main thread, the PlatformMediaResource object is to be used on targetDispatcher().
     virtual RefPtr<PlatformMediaResource> requestResource(ResourceRequest&&, LoadOptions) = 0;
 
 protected:

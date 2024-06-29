@@ -125,14 +125,14 @@ public:
     virtual void setFromValue(const WebCore::TransformationMatrix&) = 0;
     virtual void setFromValue(const FloatPoint3D&) = 0;
     virtual void setFromValue(const WebCore::Color&) = 0;
-    virtual void setFromValue(const FilterOperation*) = 0;
+    virtual void setFromValue(const FilterOperation&) = 0;
     virtual void copyFromValueFrom(const PlatformCAAnimation&) = 0;
 
     virtual void setToValue(float) = 0;
     virtual void setToValue(const WebCore::TransformationMatrix&) = 0;
     virtual void setToValue(const FloatPoint3D&) = 0;
     virtual void setToValue(const WebCore::Color&) = 0;
-    virtual void setToValue(const FilterOperation*) = 0;
+    virtual void setToValue(const FilterOperation&) = 0;
     virtual void copyToValueFrom(const PlatformCAAnimation&) = 0;
 
     // Keyframe-animation properties.
@@ -140,7 +140,7 @@ public:
     virtual void setValues(const Vector<WebCore::TransformationMatrix>&) = 0;
     virtual void setValues(const Vector<FloatPoint3D>&) = 0;
     virtual void setValues(const Vector<WebCore::Color>&) = 0;
-    virtual void setValues(const Vector<RefPtr<FilterOperation>>&) = 0;
+    virtual void setValues(const Vector<Ref<FilterOperation>>&) = 0;
     virtual void copyValuesFrom(const PlatformCAAnimation&) = 0;
 
     virtual void setKeyTimes(const Vector<float>&) = 0;

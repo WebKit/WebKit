@@ -67,7 +67,7 @@ ASCIILiteral NavigatorBeacon::supplementName()
     return "NavigatorBeacon"_s;
 }
 
-void NavigatorBeacon::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
+void NavigatorBeacon::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     if (!resource.resourceError().isNull())
         logError(resource.resourceError());

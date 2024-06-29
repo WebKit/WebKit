@@ -131,7 +131,7 @@ gl::TextureType AhbDescUsageToTextureType(const AHardwareBuffer_Desc &ahbDescrip
     }
     return textureType;
 }
-// TODO(anglebug.com/7956): remove when NDK header is updated to contain FRONT_BUFFER usage flag
+// TODO(anglebug.com/42266422): remove when NDK header is updated to contain FRONT_BUFFER usage flag
 constexpr uint64_t kAHardwareBufferUsageFrontBuffer = (1ULL << 32);
 }  // namespace
 
@@ -353,6 +353,10 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
                       ? static_cast<uint32_t>(log2(std::max(mSize.width, mSize.height))) + 1
                       : 1;
 
+    // No support for rendering to external YUV AHB with multiple miplevels
+    ANGLE_VK_CHECK(displayVk, (!externalRenderTargetSupported || mLevelCount == 1),
+                   VK_ERROR_INITIALIZATION_FAILED);
+
     // Setup layer count
     const uint32_t layerCount = mSize.depth;
     vkExtents.depth           = 1;
@@ -446,7 +450,7 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
 
     ANGLE_TRY(mImage->initExternalMemory(displayVk, renderer->getMemoryProperties(),
                                          externalMemoryRequirements, 1, &dedicatedAllocInfoPtr,
-                                         VK_QUEUE_FAMILY_FOREIGN_EXT, flags));
+                                         vk::kForeignDeviceQueueIndex, flags));
 
     if (isExternal)
     {
@@ -460,7 +464,7 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     {
         constexpr uint32_t kColorRenderableRequiredBits = VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT;
         constexpr uint32_t kDepthStencilRenderableRequiredBits =
-            VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT;
+            VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
         mRenderable =
             renderer->hasImageFormatFeatureBits(vkFormat->getActualRenderableImageFormatID(),
                                                 kColorRenderableRequiredBits) ||

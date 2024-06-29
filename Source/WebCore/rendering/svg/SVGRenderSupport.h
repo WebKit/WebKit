@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "LayoutRepainter.h"
 #include "PaintInfo.h"
 #include "RenderObject.h"
 
@@ -71,7 +72,7 @@ public:
     static const RenderElement& localToParentTransform(const RenderElement&, AffineTransform&);
     static void mapLocalToContainer(const RenderElement&, const RenderLayerModelObject* ancestorContainer, TransformState&, bool* wasFixed);
     static const RenderElement* pushMappingToContainer(const RenderElement&, const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&);
-    static bool checkForSVGRepaintDuringLayout(const RenderElement&);
+    static LayoutRepainter::CheckForRepaint checkForSVGRepaintDuringLayout(const RenderElement&);
 
     static FloatRect calculateApproximateStrokeBoundingBox(const RenderElement&);
 

@@ -1,0 +1,62 @@
+CONSOLE MESSAGE: A VideoFrame was destroyed without having been closed explicitly
+layer at (0,0) size 785x665
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x665
+  RenderBlock {HTML} at (0,0) size 785x665 [color=#99DDBBCC] [bgcolor=#102030E0]
+    RenderBody {BODY} at (8,8) size 769x649
+      RenderImage {IMG} at (0,88) size 55x62
+      RenderImage {IMG} at (55,84) size 155x66
+      RenderHTMLCanvas {CANVAS} at (210,0) size 300x150
+      RenderText {#text} at (510,137) size 31x17
+        text run at (510,137) width 31: "\x{D70}\x{3846}"
+      RenderText {#text} at (540,137) size 80x17
+        text run at (540,137) width 80: "\x{9AA4}\x{116F}\x{D83F}\x{DCB4}\x{2376}\x{D945}\x{F70C}\x{907}"
+      RenderText {#text} at (619,137) size 70x17
+        text run at (619,137) width 7 RTL: "\x{692}"
+        text run at (625,137) width 64: "\x{D83E}\x{DF0B}\x{996}\x{4A8}\x{D7}\x{EABE}\x{AAB0}"
+      RenderImage {IMG} at (316,156) size 298x170
+      RenderText {#text} at (614,313) size 103x17
+        text run at (614,313) width 103: "\x{CAD}\x{D94}\x{4B88}\x{816}\x{394D}\x{F0ED}\x{36A2}\x{A98}\x{3A3E}"
+      RenderText {#text} at (130,573) size 100x17
+        text run at (130,573) width 100: "\x{D83F}\x{DEC6}\x{D55E}\x{402}\x{D83F}\x{DF7B}\x{8A4E}\x{CADE}\x{B7B1}\x{1E61}"
+      RenderText {#text} at (229,573) size 117x17
+        text run at (229,573) width 31: "\x{B25}\x{D83F}\x{DC03}\x{D83F}\x{DD50}"
+        text run at (259,573) width 11 RTL: "\x{79B}"
+        text run at (269,573) width 77: "\x{D83E}\x{DDC3}\x{576}\x{E20F}\x{280}\x{4DEE}\x{13A}\x{F0F9}"
+      RenderImage {IMG} at (345,333) size 293x253
+      RenderText {#text} at (637,573) size 104x17
+        text run at (637,573) width 104: "\x{24DD}\x{1788}\x{D83E}\x{DE55}\x{6EB}\x{103}\x{D83E}\x{DE5C}\x{D83E}\x{DDEB}\x{DB9}"
+      RenderText {#text} at (0,573) size 762x48
+        text run at (740,573) width 22: "\x{10D}\x{BA96}"
+        text run at (0,604) width 83: "\x{12FD}\x{D83E}\x{DE2D}\x{965}\x{9671}\x{1C5}\x{4E8F}"
+      RenderText {#text} at (82,604) size 102x17
+        text run at (82,604) width 102: "\x{52B}\x{D83E}\x{DEB4}\x{6B33}\x{6575}\x{2DB}\x{F261}\x{9F9}\x{7167}"
+      RenderText {#text} at (183,604) size 115x17
+        text run at (183,604) width 115: "\x{1FA5}\x{D272}\x{923B}\x{658}\x{65F1}\x{BE17}\x{2CD9}\x{C06}\x{E310}\x{D83F}\x{DCED}"
+      RenderText {#text} at (297,604) size 35x17
+        text run at (297,604) width 35: "\x{123E}\x{D83E}\x{DCAA}\x{D83E}\x{DF0C}"
+      RenderText {#text} at (331,604) size 120x17
+        text run at (331,604) width 26: "\x{24BF}\x{B00}"
+        text run at (356,604) width 12 RTL: "\x{5FF}"
+        text run at (367,604) width 14: "\x{2FA}\x{B13}"
+        text run at (380,604) width 11 RTL: "\x{8BC}"
+        text run at (390,604) width 61: "\x{B7B}\x{FD1}\x{D83F}\x{DF3C}\x{CEF8}\x{9508}"
+      RenderText {#text} at (450,604) size 88x17
+        text run at (450,604) width 88: "\x{7A2A}\x{F372}\x{8321}\x{EC39}\x{9A92}\x{F10}\x{BD6D}"
+      RenderText {#text} at (537,604) size 88x17
+        text run at (537,604) width 88: "\x{115}\x{6749}\x{D83D}\x{DEAA}\x{BB6A}\x{C0F2}\x{52EF}"
+      RenderText {#text} at (624,604) size 22x17
+        text run at (624,604) width 22: "\x{D83E}\x{DF52}\x{D83E}\x{DE24}"
+      RenderText {#text} at (645,604) size 111x17
+        text run at (645,604) width 111: "\x{C403}\x{ED76}\x{F09D}\x{D83E}\x{DCC4}\x{DE85}\x{356}\x{96C6}\x{E0BE}\x{BF7}"
+      RenderText {#text} at (0,604) size 767x43
+        text run at (755,604) width 12: "\x{ECB8}"
+        text run at (0,630) width 68: "\x{68FB}\x{7337}\x{C07}\x{FE0}\x{8A1C}"
+      RenderText {#text} at (67,630) size 85x17
+        text run at (67,630) width 85: "\x{B050}\x{7756}\x{372}\x{D83D}\x{DFF3}\x{D22}\x{12C}\x{29B8}"
+layer at (8,184) size 300x150
+  RenderHTMLCanvas {CANVAS} at (0,176) size 300x150
+layer at (308,318) size 16x16
+  RenderVideo {VIDEO} at (300,310) size 16x16
+layer at (8,381) size 130x213
+  RenderVideo {VIDEO} at (0,373) size 130x213

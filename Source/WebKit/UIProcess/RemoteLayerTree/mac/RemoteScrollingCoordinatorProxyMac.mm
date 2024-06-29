@@ -50,7 +50,7 @@ using namespace WebCore;
 RemoteScrollingCoordinatorProxyMac::RemoteScrollingCoordinatorProxyMac(WebPageProxy& webPageProxy)
     : RemoteScrollingCoordinatorProxy(webPageProxy)
 #if ENABLE(SCROLLING_THREAD)
-    , m_eventDispatcher(RemoteLayerTreeEventDispatcher::create(*this, webPageProxy.webPageID()))
+    , m_eventDispatcher(RemoteLayerTreeEventDispatcher::create(*this, webPageProxy.webPageIDInMainFrameProcess()))
 #endif
 {
     m_eventDispatcher->setScrollingTree(scrollingTree());

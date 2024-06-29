@@ -31,11 +31,14 @@ class Context;
 class DrawContext;
 enum class DstReadRequirement;
 class Geometry;
+class Image;
+enum class LoadOp : uint8_t;
 class PaintParams;
 class Recorder;
 class Renderer;
 class Shape;
 class StrokeStyle;
+class Task;
 class TextureProxy;
 class TextureProxyView;
 
@@ -43,45 +46,38 @@ class Device final : public SkDevice {
 public:
     ~Device() override;
 
-    static sk_sp<Device> Make(Recorder*,
-                              const SkImageInfo&,
-                              skgpu::Budgeted,
-                              Mipmapped,
-                              SkBackingFit,
-                              const SkSurfaceProps&,
-                              bool addInitialClear);
-    static sk_sp<Device> Make(Recorder*,
-                              sk_sp<TextureProxy>,
-                              const SkColorInfo&,
-                              const SkSurfaceProps&,
-                              bool addInitialClear);
+    // If 'registerWithRecorder' is false, it is meant to be a short-lived Device that is managed
+    // by the caller within a limited scope (such that it is guaranteed to go out of scope before
+    // the Recorder can be snapped).
     static sk_sp<Device> Make(Recorder* recorder,
                               sk_sp<TextureProxy>,
                               SkISize deviceSize,
                               const SkColorInfo&,
                               const SkSurfaceProps&,
-                              bool addInitialClear);
-
-    // Creates a device that is not registered on the provided recorder. Meant to be short-lived and
-    // managed by the caller within a single scope.
-    static sk_sp<Device> MakeScratch(Recorder* recorder,
-                                     const SkImageInfo& ii,
-                                     Mipmapped mipmapped,
-                                     const SkSurfaceProps& props,
-                                     bool addInitialClear);
+                              LoadOp initialLoadOp,
+                              bool registerWithRecorder=true);
+    // Convenience factory to create the underlying TextureProxy based on the configuration provided
+    static sk_sp<Device> Make(Recorder*,
+                              const SkImageInfo&,
+                              Budgeted,
+                              Mipmapped,
+                              SkBackingFit,
+                              const SkSurfaceProps&,
+                              LoadOp initialLoadOp,
+                              std::string_view label,
+                              bool registerWithRecorder=true);
 
     Device* asGraphiteDevice() override { return this; }
 
     Recorder* recorder() const override { return fRecorder; }
     // This call is triggered from the Recorder on its registered Devices. It is typically called
     // when the Recorder is abandoned or deleted.
-    void abandonRecorder();
+    void abandonRecorder() { fRecorder = nullptr; }
 
     // Ensures clip elements are drawn that will clip previous draw calls, snaps all pending work
     // from the DrawContext as a RenderPassTask and records it in the Device's recorder.
-    void flushPendingWorkToRecorder();
-
-    TextureProxyView createCopy(const SkIRect* subset, Mipmapped, SkBackingFit);
+    // TODO(b/333073673): Optionally pass in the Recorder that triggered the flush for validation.
+    void flushPendingWorkToRecorder(Recorder* recorder=nullptr);
 
     const Transform& localToDeviceTransform();
 
@@ -91,7 +87,31 @@ public:
     SkStrikeDeviceInfo strikeDeviceInfo() const override;
 
     TextureProxy* target();
+    // May be null if target is not sampleable.
     TextureProxyView readSurfaceView() const;
+    // Can succeed if target is readable but not sampleable. Assumes 'subset' is contained in bounds
+    sk_sp<Image> makeImageCopy(const SkIRect& subset, Budgeted, Mipmapped, SkBackingFit);
+
+    // True if this Device represents an internal renderable surface that will go out of scope
+    // before the next Recorder snap.
+    // NOTE: Currently, there are two different notions of "scratch" that are being merged together.
+    // 1. Devices whose targets are not instantiated (Device::Make).
+    // 2. Devices that are not registered with the Recorder (Surface::MakeScratch).
+    //
+    // This function reflects notion #1, since the long-term plan will be that all Devices that are
+    // not instantiated will also not be registered with the Recorder. For the time being, due to
+    // shared atlas management, layer-backing Devices need to be registered with the Recorder but
+    // are otherwise the canonical scratch device.
+    //
+    // Existing uses of Surface::MakeScratch() will migrate to using un-instantiated Devices with
+    // the requirement that if the Device's target is being returned in a client-owned object
+    // (e.g. SkImages::MakeWithFilter), that it should then be explicitly instantiated. Once scratch
+    // tasks are fully organized in a graph and not automatically appended to the root task list,
+    // this explicit instantiation will be responsible for moving the scratch tasks to the root list
+    bool isScratchDevice() const;
+
+    // Only used for scratch devices.
+    sk_sp<Task> lastDrawTask() const;
 
     // SkCanvas only uses drawCoverageMask w/o this staging flag, so only enable
     // mask filters in clients that have finished migrating.
@@ -181,8 +201,12 @@ public:
     void drawCoverageMask(const SkSpecialImage*, const SkMatrix& localToDevice,
                           const SkSamplingOptions&, const SkPaint&) override;
 
+    bool drawBlurredRRect(const SkRRect&, const SkPaint&, float deviceSigma) override;
+
 private:
     class IntersectionTreeSet;
+
+    Device(Recorder*, sk_sp<DrawContext>);
 
     sk_sp<SkSpecialImage> makeSpecial(const SkBitmap&) override;
     sk_sp<SkSpecialImage> makeSpecial(const SkImage*) override;
@@ -198,23 +222,20 @@ private:
     sk_sp<skif::Backend> createImageFilteringBackend(const SkSurfaceProps& surfaceProps,
                                                      SkColorType colorType) const override;
 
-    // DrawFlags alters the effects used by drawShape.
+    // DrawFlags alters the effects used by drawGeometry.
+    //
+    // There is no kIgnoreMaskFilter flag because the Device always ignores the mask filter -- the
+    // mask filter should be handled by the SkCanvas, either with an auto mask filter layer or
+    // being converted to an analytic blur draw.
     enum class DrawFlags : unsigned {
         kNone             = 0b000,
 
-        // Any SkMaskFilter on the SkPaint passed into drawGeometry() is ignored.
-        // - drawPaint, drawVertices, drawAtlas
-        // - drawShape after it's applied the mask filter.
-        kIgnoreMaskFilter = 0b001,
-
         // Any SkPathEffect on the SkPaint passed into drawGeometry() is ignored.
         // - drawPaint, drawImageLattice, drawImageRect, drawEdgeAAImageSet, drawVertices, drawAtlas
-        // - drawShape after it's applied the path effect.
-        kIgnorePathEffect = 0b010,
+        // - drawGeometry after it's applied the path effect.
+        kIgnorePathEffect = 0b001,
     };
     SK_DECL_BITMASK_OPS_FRIENDS(DrawFlags)
-
-    Device(Recorder*, sk_sp<DrawContext>, bool addInitialClear, bool registerWithRecorder);
 
     // Handles applying path effects, mask filters, stroke-and-fill styles, and hairlines.
     // Ignores geometric style on the paint in favor of explicitly provided SkStrokeRec and flags.
@@ -269,8 +290,18 @@ private:
     // Flush internal work, such as pending clip draws and atlas uploads, into the Device's DrawTask
     void internalFlush();
 
+    // TODO(b/333073673): Detect memory stomping over fRecorder to see if that's the cause of
+    // crashes; can be removed once the issue is resolved.
+    SkDEBUGCODE(const intptr_t fPreRecorderSentinel;)
     Recorder* fRecorder;
+    SkDEBUGCODE(const intptr_t fPostRecorderSentinel;)
     sk_sp<DrawContext> fDC;
+    // Scratch devices hold on to their last snapped DrawTask so that they can be directly
+    // referenced when the device image is drawn into some other surface.
+    // NOTE: For now, this task is still added to the root task list when the Device is flushed, but
+    // in the long-term, these scratch draw tasks will only be executed if they are referenced by
+    // some other task chain that makes it to the root list.
+    sk_sp<Task> fLastTask;
 
     ClipStack fClip;
 
@@ -289,7 +320,19 @@ private:
     // The DrawContext's target supports MSAA
     bool fMSAASupported = false;
 
+    // TODO(b/330864257): Clean up once flushPendingWorkToRecorder() doesn't have to be re-entrant
+    bool fIsFlushing = false;
+
     const sktext::gpu::SDFTControl fSDFTControl;
+
+#if defined(SK_DEBUG)
+    // When not 0, this Device is an unregistered scratch device that is intended to go out of
+    // scope before the Recorder is snapped. Assuming controlling code is valid, that means the
+    // Device's recorder's next recording ID should still be the the recording ID at the time the
+    // Device was created. If not, it means the Device lived too long and may not be flushing tasks
+    // in the expected order.
+    uint32_t fScopedRecordingID = 0;
+#endif
 
     friend class ClipStack; // for recordDraw
 };

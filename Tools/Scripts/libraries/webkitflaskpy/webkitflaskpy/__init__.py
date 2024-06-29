@@ -20,8 +20,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
 import sys
+
+if sys.version_info < (3, 6):
+    raise ImportError("webkitflaskpy requires Python 3.6 or above")
+
+import os
 
 
 def _maybe_add_webkitcorepy_path():
@@ -43,7 +47,7 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(0, 6, 0)
+version = Version(0, 7, 0)
 
 AutoInstall.register(Package('click', Version(7, 1, 2)))
 AutoInstall.register(Package('flask', Version(1, 1, 2)))

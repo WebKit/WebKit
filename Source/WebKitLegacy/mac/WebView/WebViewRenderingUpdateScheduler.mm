@@ -114,6 +114,10 @@ void WebViewRenderingUpdateScheduler::renderingUpdateRunLoopObserverCallback()
 
 void WebViewRenderingUpdateScheduler::postRenderingUpdateCallback()
 {
+#if PLATFORM(IOS_FAMILY)
+    WebThreadLock();
+#endif
+
     @autoreleasepool {
         [m_webView _didCompleteRenderingFrame];
         m_postRenderingUpdateRunLoopObserver->invalidate();

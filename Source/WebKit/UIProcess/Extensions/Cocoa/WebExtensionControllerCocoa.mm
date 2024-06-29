@@ -367,7 +367,7 @@ void WebExtensionController::addPage(WebPageProxy& page)
     for (auto& entry : m_registeredSchemeHandlers)
         page.setURLSchemeHandlerForScheme(entry.value.copyRef(), entry.key);
 
-    Ref pool = page.process().processPool();
+    Ref pool = page.configuration().processPool();
     addProcessPool(pool);
 
     Ref dataStore = page.websiteDataStore();
@@ -382,7 +382,7 @@ void WebExtensionController::removePage(WebPageProxy& page)
     ASSERT(m_pages.contains(page));
     m_pages.remove(page);
 
-    Ref pool = page.process().processPool();
+    Ref pool = page.configuration().processPool();
     removeProcessPool(pool);
 
     Ref dataStore = page.websiteDataStore();
@@ -416,7 +416,7 @@ void WebExtensionController::removeProcessPool(WebProcessPool& processPool)
 {
     // Only remove the message receiver and process pool if no other pages use the same process pool.
     for (Ref knownPage : m_pages) {
-        if (knownPage->process().processPool() == processPool)
+        if (knownPage->configuration().processPool() == processPool)
             return;
     }
 

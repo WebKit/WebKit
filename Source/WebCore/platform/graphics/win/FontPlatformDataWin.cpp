@@ -40,17 +40,7 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> font, float size, bool bold,
     : FontPlatformData(size, bold, oblique, FontOrientation::Horizontal, FontWidthVariant::RegularWidth, TextRenderingMode::AutoTextRendering, customPlatformData)
 {
     m_font = SharedGDIObject<HFONT>::create(WTFMove(font));
-
-    HWndDC hdc(0);
-    SaveDC(hdc);
-    
-    ::SelectObject(hdc, m_font->get());
-
-    wchar_t faceName[LF_FACESIZE];
-    GetTextFace(hdc, LF_FACESIZE, faceName);
-    platformDataInit(m_font->get(), size, faceName);
-
-    RestoreDC(hdc, -1);
+    platformDataInit(m_font->get(), size);
 }
 
 RefPtr<SharedBuffer> FontPlatformData::platformOpenTypeTable(uint32_t table) const

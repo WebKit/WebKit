@@ -113,8 +113,8 @@ static GList* webkitBackForwardListCreateList(WebKitBackForwardList* list, API::
 
     GList* returnValue = 0;
     for (size_t i = 0; i < backForwardItems->size(); ++i) {
-        WebBackForwardListItem* webItem = static_cast<WebBackForwardListItem*>(backForwardItems->at(i));
-        returnValue = g_list_prepend(returnValue, webkitBackForwardListGetOrCreateItem(list, webItem));
+        RefPtr webItem = static_cast<WebBackForwardListItem*>(backForwardItems->at(i));
+        returnValue = g_list_prepend(returnValue, webkitBackForwardListGetOrCreateItem(list, webItem.get()));
     }
 
     return returnValue;

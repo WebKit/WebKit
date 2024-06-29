@@ -83,13 +83,6 @@
 #
 #  - a0, a1, a2 and a3 are the platform's customary argument registers, and
 #  thus are pairwise distinct registers. Be mindful that:
-#    + On X86, there are no argument registers. a0 and a1 are edx and
-#    ecx following the fastcall convention, but you should still use the stack
-#    to pass your arguments. The cCall2 and cCall4 macros do this for you.
-#    + On X86_64_WIN, you should allocate space on the stack for the arguments,
-#    and the return convention is weird for > 8 bytes types. The only place we
-#    use > 8 bytes return values is on a cCall, and cCall2 and cCall4 handle
-#    this for you.
 #
 #  - The only registers guaranteed to be caller-saved are r0, r1, a0, a1 and a2, and
 #  you should be mindful of that in functions that are called directly from C.
@@ -116,11 +109,10 @@
 #  work if swapped with e.g. t3, while code using r0 (or r1) should not. There
 #  *may* be legacy code relying on this.
 #
-#  - On all platforms other than X86, t0 can only be a0 and t2 can only be a2.
+#  - On all platforms, t0 can only be a0 and t2 can only be a2.
 #
-#  - On all platforms other than X86 and X86_64, a2 is not a return register.
-#  a2 is r0 on X86 (because we have so few registers) and r1 on X86_64 (because
-#  the ABI enforces it).
+#  - On all platforms other than X86_64, a2 is not a return register.
+#  a2 is r1 on X86_64 (because the ABI enforces it).
 #
 # The following floating-point registers are available:
 #
@@ -270,7 +262,7 @@ const NativeToJITGatePtrTag = constexpr NativeToJITGatePtrTag
 const ExceptionHandlerPtrTag = constexpr ExceptionHandlerPtrTag
 const YarrEntryPtrTag = constexpr YarrEntryPtrTag
 const CSSSelectorPtrTag = constexpr CSSSelectorPtrTag
-const LLintToWasmEntryPtrTag = constexpr LLintToWasmEntryPtrTag
+const LLIntToWasmEntryPtrTag = constexpr LLIntToWasmEntryPtrTag
 const NoPtrTag = constexpr NoPtrTag
  
 # VMTraps data
@@ -290,16 +282,11 @@ if JSVALUE64
         const PB = csr7
         const numberTag = csr8
         const notCellMask = csr9
-    elsif X86_64
+    elsif X86_64 or X86_64_WIN
         const metadataTable = csr1
         const PB = csr2
         const numberTag = csr3
         const notCellMask = csr4
-    elsif X86_64_WIN
-        const metadataTable = csr3
-        const PB = csr4
-        const numberTag = csr5
-        const notCellMask = csr6
     elsif C_LOOP or C_LOOP_WIN
         const PB = csr0
         const numberTag = csr1
@@ -472,11 +459,6 @@ _%label%:
         break
     end
 
-# FIXME: We cannot enable wide16 bytecode in Windows CLoop. With MSVC, as CLoop::execute gets larger code
-# size, CLoop::execute gets higher stack height requirement. This makes CLoop::execute takes 160KB stack
-# per call, causes stack overflow error easily. For now, we disable wide16 optimization for Windows CLoop.
-# https://bugs.webkit.org/show_bug.cgi?id=198283
-if not C_LOOP_WIN
 _%label%_wide16:
     prologue()
     fn(wide16)
@@ -484,7 +466,6 @@ _%label%_wide16:
         break
         break
     end
-end
 
 _%label%_wide32:
     prologue()
@@ -551,12 +532,7 @@ macro llintOpWithProfile(opcodeName, opcodeStruct, fn)
     end)
 end
 
-
-if X86_64_WIN
-    const extraTempReg = t0
-else
-    const extraTempReg = t5
-end
+const extraTempReg = t5
 
 # Constants for reasoning about value representation.
 const TagOffset = constexpr TagOffset
@@ -786,8 +762,6 @@ if C_LOOP or C_LOOP_WIN or ARM64 or ARM64E or X86_64 or X86_64_WIN or RISCV64
     const CalleeSaveRegisterCount = 0
 elsif ARMv7
     const CalleeSaveRegisterCount = 5 + 2 * 2 // 5 32-bit GPRs + 2 64-bit FPRs
-elsif X86 or X86_WIN
-    const CalleeSaveRegisterCount = 3
 end
 
 const CalleeRegisterSaveSize = CalleeSaveRegisterCount * MachineRegisterSize
@@ -805,14 +779,6 @@ macro pushCalleeSaves()
     elsif ARMv7
         emit "vpush.64 {d14, d15}"
         emit "push {r4-r6, r8-r9}"
-    elsif X86
-        emit "push %esi"
-        emit "push %edi"
-        emit "push %ebx"
-    elsif X86_WIN
-        emit "push esi"
-        emit "push edi"
-        emit "push ebx"
     end
 end
 
@@ -821,14 +787,6 @@ macro popCalleeSaves()
     elsif ARMv7
         emit "pop {r4-r6, r8-r9}"
         emit "vpop.64 {d14, d15}"
-    elsif X86
-        emit "pop %ebx"
-        emit "pop %edi"
-        emit "pop %esi"
-    elsif X86_WIN
-        emit "pop ebx"
-        emit "pop edi"
-        emit "pop esi"
     end
 end
 
@@ -836,7 +794,7 @@ macro preserveCallerPCAndCFR()
     if C_LOOP or C_LOOP_WIN or ARMv7
         push lr
         push cfr
-    elsif X86 or X86_WIN or X86_64 or X86_64_WIN
+    elsif X86_64 or X86_64_WIN
         push cfr
     elsif ARM64 or ARM64E or RISCV64
         push cfr, lr
@@ -851,7 +809,7 @@ macro restoreCallerPCAndCFR()
     if C_LOOP or C_LOOP_WIN or ARMv7
         pop cfr
         pop lr
-    elsif X86 or X86_WIN or X86_64 or X86_64_WIN
+    elsif X86_64 or X86_64_WIN
         pop cfr
     elsif ARM64 or ARM64E or RISCV64
         pop lr, cfr
@@ -868,18 +826,11 @@ macro preserveCalleeSavesUsedByLLInt()
     elsif ARM64 or ARM64E
         storepairq csr8, csr9, -16[cfr]
         storepairq csr6, csr7, -32[cfr]
-    elsif X86
-    elsif X86_WIN
-    elsif X86_64
+    elsif X86_64 or X86_64_WIN
         storep csr4, -8[cfr]
         storep csr3, -16[cfr]
         storep csr2, -24[cfr]
         storep csr1, -32[cfr]
-    elsif X86_64_WIN
-        storep csr6, -8[cfr]
-        storep csr5, -16[cfr]
-        storep csr4, -24[cfr]
-        storep csr3, -32[cfr]
     elsif RISCV64
         storep csr9, -8[cfr]
         storep csr8, -16[cfr]
@@ -897,18 +848,11 @@ macro restoreCalleeSavesUsedByLLInt()
     elsif ARM64 or ARM64E
         loadpairq -32[cfr], csr6, csr7
         loadpairq -16[cfr], csr8, csr9
-    elsif X86
-    elsif X86_WIN
-    elsif X86_64
+    elsif X86_64 or X86_64_WIN
         loadp -32[cfr], csr1
         loadp -24[cfr], csr2
         loadp -16[cfr], csr3
         loadp -8[cfr], csr4
-    elsif X86_64_WIN
-        loadp -32[cfr], csr3
-        loadp -24[cfr], csr4
-        loadp -16[cfr], csr5
-        loadp -8[cfr], csr6
     elsif RISCV64
         loadp -32[cfr], csr6
         loadp -24[cfr], csr7
@@ -931,20 +875,12 @@ macro copyCalleeSavesToEntryFrameCalleeSavesBuffer(entryFrame)
             storepaird csfr2, csfr3, 96[entryFrame]
             storepaird csfr4, csfr5, 112[entryFrame]
             storepaird csfr6, csfr7, 128[entryFrame]
-        elsif X86_64
+        elsif X86_64 or X86_64_WIN
             storeq csr0, [entryFrame]
             storeq csr1, 8[entryFrame]
             storeq csr2, 16[entryFrame]
             storeq csr3, 24[entryFrame]
             storeq csr4, 32[entryFrame]
-        elsif X86_64_WIN
-            storeq csr0, [entryFrame]
-            storeq csr1, 8[entryFrame]
-            storeq csr2, 16[entryFrame]
-            storeq csr3, 24[entryFrame]
-            storeq csr4, 32[entryFrame]
-            storeq csr5, 40[entryFrame]
-            storeq csr6, 48[entryFrame]
         elsif ARMv7
             storep csr0, [entryFrame]
             storep csr1, 4[entryFrame]
@@ -1004,20 +940,12 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
             loadpaird 96[temp], csfr2, csfr3
             loadpaird 112[temp], csfr4, csfr5
             loadpaird 128[temp], csfr6, csfr7
-        elsif X86_64
+        elsif X86_64 or X86_64_WIN
             loadq [temp], csr0
             loadq 8[temp], csr1
             loadq 16[temp], csr2
             loadq 24[temp], csr3
             loadq 32[temp], csr4
-        elsif X86_64_WIN
-            loadq [temp], csr0
-            loadq 8[temp], csr1
-            loadq 16[temp], csr2
-            loadq 24[temp], csr3
-            loadq 32[temp], csr4
-            loadq 40[temp], csr5
-            loadq 48[temp], csr6
         elsif ARMv7
             loadp [temp], csr0
             loadp 4[temp], csr1
@@ -1059,7 +987,7 @@ macro preserveReturnAddressAfterCall(destinationRegister)
     if C_LOOP or C_LOOP_WIN or ARMv7 or ARM64 or ARM64E or RISCV64
         # In C_LOOP or C_LOOP_WIN case, we're only preserving the bytecode vPC.
         move lr, destinationRegister
-    elsif X86 or X86_WIN or X86_64 or X86_64_WIN
+    elsif X86_64 or X86_64_WIN
         pop destinationRegister
     else
         error
@@ -1068,7 +996,7 @@ end
 
 macro functionPrologue()
     tagReturnAddress sp
-    if X86 or X86_WIN or X86_64 or X86_64_WIN
+    if X86_64 or X86_64_WIN
         push cfr
     elsif ARM64 or ARM64E or RISCV64
         push cfr, lr
@@ -1080,7 +1008,7 @@ macro functionPrologue()
 end
 
 macro functionEpilogue()
-    if X86 or X86_WIN or X86_64 or X86_64_WIN
+    if X86_64 or X86_64_WIN
         pop cfr
     elsif ARM64 or ARM64E or RISCV64
         pop lr, cfr
@@ -1119,21 +1047,15 @@ end
 
 macro defineReturnLabel(opcodeName, size)
     macro defineNarrow()
-        if not C_LOOP_WIN
-            _%opcodeName%_return_location:
-        end
+        _%opcodeName%_return_location:
     end
 
     macro defineWide16()
-        if not C_LOOP_WIN
-            _%opcodeName%_return_location_wide16:
-        end
+        _%opcodeName%_return_location_wide16:
     end
 
     macro defineWide32()
-        if not C_LOOP_WIN
-            _%opcodeName%_return_location_wide32:
-        end
+        _%opcodeName%_return_location_wide32:
     end
 
     size(defineNarrow, defineWide16, defineWide32, macro (f) f() end)
@@ -1828,15 +1750,6 @@ if not (C_LOOP or C_LOOP_WIN)
     global _sanitizeStackForVMImpl
     _sanitizeStackForVMImpl:
         tagReturnAddress sp
-        # We need three non-aliased caller-save registers. We are guaranteed
-        # this for a0, a1 and a2 on all architectures. Beware also that
-        # offlineasm might use temporary registers when lowering complex
-        # instructions on some platforms, which might be callee-save. To avoid
-        # this, we use the simplest instructions so we never need a temporary
-        # and hence don't clobber any callee-save registers.
-        if X86 or X86_WIN
-            loadp 4[sp], a0
-        end
         const address = a1
         const scratch = a2
 
@@ -1882,10 +1795,6 @@ if not (C_LOOP or C_LOOP_WIN)
     global _vmEntryRecord
     _vmEntryRecord:
         tagReturnAddress sp
-        if X86 or X86_WIN
-            loadp 4[sp], a0
-        end
-
         vmEntryRecord(a0, r0)
         ret
 end
@@ -1967,7 +1876,7 @@ if C_LOOP or C_LOOP_WIN
         crash()
 else
     macro initPCRelative(kind, pcBase)
-        if X86_64 or X86_64_WIN or X86 or X86_WIN
+        if X86_64 or X86_64_WIN
             call _%kind%_relativePCBase
         _%kind%_relativePCBase:
             pop pcBase
@@ -1982,18 +1891,10 @@ else
     # The PC base is in t3, as this is what _llint_entry leaves behind through
     # initPCRelative(t3)
     macro setEntryAddressCommon(kind, index, label, map)
-        if X86_64
+        if X86_64 or X86_64_WIN
             leap (label - _%kind%_relativePCBase)[t3], t4
             move index, t5
             storep t4, [map, t5, 8]
-        elsif X86_64_WIN
-            leap (label - _%kind%_relativePCBase)[t3], t4
-            move index, t0
-            storep t4, [map, t0, 8]
-        elsif X86 or X86_WIN
-            leap (label - _%kind%_relativePCBase)[t3], t4
-            move index, t5
-            storep t4, [map, t5, 4]
         elsif ARM64 or RISCV64
             pcrtoaddr label, t3
             move index, t4
@@ -2036,11 +1937,6 @@ macro entry(kind, initialize)
     _%kind%_entry:
         functionPrologue()
         pushCalleeSaves()
-        if X86 or X86_WIN
-            loadp 20[sp], a0
-            loadp 24[sp], a1
-            loadp 28[sp], a2
-        end
 
         initPCRelative(kind, t3)
 
@@ -2654,6 +2550,67 @@ op(llint_virtual_tail_call_trampoline, macro ()
     virtualThunkFor(ExecutableBase::m_jitCodeForCallWithArityCheck, FunctionExecutable::m_codeBlockForCall, _llint_internal_function_call_trampoline, .slowCase)
 .slowCase:
     linkFor(_llint_virtual_call)
+end)
+
+# 64bit:t0 32bit(t0,t1) is callee
+# t2 is CallLinkInfo*
+op(llint_polymorphic_normal_call_trampoline, macro ()
+    if not JSVALUE64
+        bineq t1, CellTag, .slowCase
+    end
+    loadp CallLinkInfo::m_stub[t2], t5
+    addp (constexpr (PolymorphicCallStubRoutine::offsetOfTrailingData())), t5
+
+.loop:
+    loadp CallSlot::m_calleeOrExecutable[t5], t3
+    bpeq t3, t0, .found
+    btpz t3, .slowCase
+    addp (constexpr (sizeof(CallSlot))), t5
+    jmp .loop
+
+.found:
+    loadp CallSlot::m_target[t5], t1
+    loadp CallSlot::m_codeBlock[t5], t5
+    storep t5, CodeBlock - PrologueStackPointerDelta[sp]
+    jmp t1, JSEntryPtrTag
+
+.slowCase:
+    linkFor(_llint_polymorphic_call)
+end)
+
+# 64bit:t0 32bit(t0,t1) is callee
+# t2 is CallLinkInfo*
+op(llint_polymorphic_closure_call_trampoline, macro ()
+    if JSVALUE64
+        btqnz t0, NotCellMask, .slowCase
+    else
+        bineq t1, CellTag, .slowCase
+    end
+
+    bbneq JSCell::m_type[t0], JSFunctionType, .slowCase
+    loadp JSFunction::m_executableOrRareData[t0], t6
+    btpz t6, (constexpr JSFunction::rareDataTag), .isExecutable
+    loadp (FunctionRareData::m_executable - (constexpr JSFunction::rareDataTag))[t6], t6
+.isExecutable:
+
+    loadp CallLinkInfo::m_stub[t2], t5
+    addp (constexpr (PolymorphicCallStubRoutine::offsetOfTrailingData())), t5
+
+.loop:
+    loadp CallSlot::m_calleeOrExecutable[t5], t3
+    bpeq t3, t6, .found
+    btpz t3, .slowCase
+    addp (constexpr (sizeof(CallSlot))), t5
+    jmp .loop
+
+.found:
+    loadp CallSlot::m_target[t5], t1
+    loadp CallSlot::m_codeBlock[t5], t5
+    storep t5, CodeBlock - PrologueStackPointerDelta[sp]
+    jmp t1, JSEntryPtrTag
+
+.slowCase:
+    linkFor(_llint_polymorphic_call)
 end)
 
 if JIT

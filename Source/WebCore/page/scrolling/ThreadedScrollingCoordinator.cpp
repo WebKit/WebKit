@@ -55,18 +55,20 @@ void ThreadedScrollingCoordinator::pageDestroyed()
 
 void ThreadedScrollingCoordinator::commitTreeStateIfNeeded()
 {
-    willCommitTree();
+    scrollingStateTrees().forEach([&] (auto& key, auto& value) {
+        willCommitTree(key);
 
-    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingCoordinator::commitTreeState, has changes " << scrollingStateTree()->hasChangedProperties());
+        LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingCoordinator::commitTreeState, has changes " << value->hasChangedProperties());
 
-    if (!scrollingStateTree()->hasChangedProperties())
-        return;
+        if (!value->hasChangedProperties())
+            return;
 
-    LOG_WITH_STREAM(ScrollingTree, stream << "ThreadedScrollingCoordinator::commitTreeState: state tree " << scrollingStateTreeAsText(debugScrollingStateTreeAsTextBehaviors));
+        LOG_WITH_STREAM(ScrollingTree, stream << "ThreadedScrollingCoordinator::commitTreeState: state tree " << scrollingStateTreeAsText(debugScrollingStateTreeAsTextBehaviors));
 
-    auto stateTree = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation);
-    stateTree->setRootFrameIdentifier(page()->mainFrame().frameID());
-    scrollingTree()->commitTreeState(WTFMove(stateTree));
+        auto stateTree = commitTreeStateForRootFrameID(key, LayerRepresentation::PlatformLayerRepresentation);
+        stateTree->setRootFrameIdentifier(key);
+        scrollingTree()->commitTreeState(WTFMove(stateTree));
+    });
 }
 
 WheelEventHandlingResult ThreadedScrollingCoordinator::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID, std::optional<WheelScrollGestureState> gestureState)

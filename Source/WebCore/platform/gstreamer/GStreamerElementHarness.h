@@ -103,7 +103,7 @@ public:
     void flush();
     bool flushBuffers();
 
-    void dumpGraph(const char* filenamePrefix);
+    void dumpGraph(ASCIILiteral filenamePrefix);
 
 private:
     GStreamerElementHarness(GRefPtr<GstElement>&&, ProcessSampleCallback&&, std::optional<PadLinkCallback>&&);

@@ -217,6 +217,11 @@ void RecorderImpl::recordBeginTransparencyLayer(float opacity)
     append(BeginTransparencyLayer(opacity));
 }
 
+void RecorderImpl::recordBeginTransparencyLayer(CompositeOperator compositeOperator, BlendMode blendMode)
+{
+    append(BeginTransparencyLayerWithCompositeMode({ compositeOperator, blendMode }));
+}
+
 void RecorderImpl::recordEndTransparencyLayer()
 {
     append(EndTransparencyLayer());

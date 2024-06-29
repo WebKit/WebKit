@@ -63,42 +63,42 @@ layer at (0,0) size 800x600
           RenderSVGPath {polygon} at (368,107) size 2x2 [fill={[type=SOLID] [color=#5A59CE]}] [points="600 210 592 214 592 206"]
           RenderSVGPath {polygon} at (362,115) size 2x3 [fill={[type=SOLID] [color=#5A59CE]}] [points="511 264 503 268 503 260"]
           RenderSVGPath {polygon} at (372,117) size 3x2 [fill={[type=SOLID] [color=#5A59CE]}] [points="597 324 590 329 588 321"]
-        RenderSVGContainer {g} at (325,84) size 75x53
-          RenderSVGText {text} at (458,95) size 420x13 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 420x12
+        RenderSVGContainer {g} at (325,84) size 74x53
+          RenderSVGText {text} at (458,95) size 420x10 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 420x10
               chunk 1 text run 1 at (458.00,105.00) startOffset 0 endOffset 67 width 420.00: "http://prismstandard.org/vocabularies/1.0/resourcetype.xml#birdsEye"
-          RenderSVGText {text} at (453,149) size 410x13 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 410x12
+          RenderSVGText {text} at (453,149) size 410x10 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 410x10
               chunk 1 text run 1 at (453.00,159.00) startOffset 0 endOffset 71 width 410.00: "http://prismstandard.org/vocabularies/1.0/resourcetype.xml#illustration"
-          RenderSVGText {text} at (604,203) size 100x13 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 100x12
+          RenderSVGText {text} at (604,203) size 100x10 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 100x10
               chunk 1 text run 1 at (604.00,213.00) startOffset 0 endOffset 13 width 100.00: "image/svg+xml"
-          RenderSVGText {text} at (530,257) size 220x13 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 220x12
+          RenderSVGText {text} at (530,257) size 220x10 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 220x10
               chunk 1 text run 1 at (530.00,267.00) startOffset 0 endOffset 44 width 220.00: "Line drawing of woman in antique attire, ..."
-          RenderSVGText {text} at (177,203) size 40x13 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 40x12
+          RenderSVGText {text} at (177,203) size 40x10 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 40x10
               chunk 1 text run 1 at (177.00,213.00) startOffset 0 endOffset 7 width 40.00: "online:"
-          RenderSVGText {text} at (601,311) size 100x13 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 100x12
+          RenderSVGText {text} at (601,311) size 100x10 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 100x10
               chunk 1 text run 1 at (601.00,321.00) startOffset 0 endOffset 16 width 99.63: "Sibyll Trelawney"
-        RenderSVGContainer {g} at (331,103) size 30x28
-          RenderSVGText {text} at (256,148) size 190x13 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 190x12
+        RenderSVGContainer {g} at (331,102) size 30x28
+          RenderSVGText {text} at (256,148) size 190x10 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 190x10
               chunk 1 text run 1 at (256.00,158.00) startOffset 0 endOffset 36 width 190.00: "http://purl.org/dc/elements/1.1/type"
-          RenderSVGText {text} at (250,196) size 190x13 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 190x12
+          RenderSVGText {text} at (250,196) size 190x10 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 190x10
               chunk 1 text run 1 at (250.00,206.00) startOffset 0 endOffset 38 width 190.00: "http://purl.org/dc/elements/1.1/format"
-          RenderSVGText {text} at (250,266) size 210x13 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 210x12
+          RenderSVGText {text} at (250,266) size 210x10 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 210x10
               chunk 1 text run 1 at (250.00,276.00) startOffset 0 endOffset 39 width 210.00: "http://purl.org/dc/elements/1.1/subject"
-          RenderSVGText {text} at (256,95) size 190x13 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 190x12
+          RenderSVGText {text} at (256,95) size 190x10 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 190x10
               chunk 1 text run 1 at (256.00,105.00) startOffset 0 endOffset 36 width 190.00: "http://purl.org/dc/elements/1.1/type"
-          RenderSVGText {text} at (240,215) size 230x13 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 230x12
+          RenderSVGText {text} at (240,215) size 230x10 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 230x10
               chunk 1 text run 1 at (240.00,225.00) startOffset 0 endOffset 43 width 230.00: "http://purl.org/dc/elements/1.1/description"
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 264x45
+      RenderSVGInlineText {#text} at (0,0) size 264x44
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.40: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

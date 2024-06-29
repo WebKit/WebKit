@@ -52,21 +52,21 @@ bool CSSStyleSheetObservableArray::setValueAt(JSC::JSGlobalObject* lexicalGlobal
 
     RELEASE_ASSERT(index <= m_sheets.size());
 
-    RefPtr sheet = convert<IDLInterface<CSSStyleSheet>>(*lexicalGlobalObject, value);
-    if (!sheet)
+    auto sheetConversionResult = convert<IDLInterface<CSSStyleSheet>>(*lexicalGlobalObject, value);
+    if (UNLIKELY(sheetConversionResult.hasException(scope)))
         return false;
 
-    if (auto exception = shouldThrowWhenAddingSheet(*sheet)) {
+    if (auto exception = shouldThrowWhenAddingSheet(*sheetConversionResult.returnValue())) {
         throwException(lexicalGlobalObject, scope, createDOMException(*lexicalGlobalObject, WTFMove(*exception)));
         return false;
     }
 
     if (index == m_sheets.size())
-        m_sheets.append(*sheet);
+        m_sheets.append(*sheetConversionResult.returnValue());
     else
-        m_sheets[index] = *sheet;
+        m_sheets[index] = *sheetConversionResult.returnValue();
 
-    didAddSheet(*sheet);
+    didAddSheet(*sheetConversionResult.releaseReturnValue());
     return true;
 }
 

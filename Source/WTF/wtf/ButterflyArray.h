@@ -64,8 +64,8 @@ public:
         return memoryOffsetForDerived(leadingSize) + offsetOfTrailingData() + trailingSize * sizeof(TrailingType);
     }
 
-    static ptrdiff_t offsetOfLeadingSize() { return OBJECT_OFFSETOF(Derived, m_leadingSize); }
-    static ptrdiff_t offsetOfTrailingSize() { return OBJECT_OFFSETOF(Derived, m_trailingSize); }
+    static constexpr ptrdiff_t offsetOfLeadingSize() { return OBJECT_OFFSETOF(Derived, m_leadingSize); }
+    static constexpr ptrdiff_t offsetOfTrailingSize() { return OBJECT_OFFSETOF(Derived, m_trailingSize); }
     static constexpr ptrdiff_t offsetOfTrailingData()
     {
         return WTF::roundUpToMultipleOf<alignof(TrailingType)>(sizeof(Derived));

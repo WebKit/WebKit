@@ -61,6 +61,7 @@ public:
     void strokePath(const Path&) final;
 
     void beginTransparencyLayer(float opacity) final;
+    void beginTransparencyLayer(CompositeOperator, BlendMode) final;
     void endTransparencyLayer() final;
 
     void applyDeviceScaleFactor(float factor) final;

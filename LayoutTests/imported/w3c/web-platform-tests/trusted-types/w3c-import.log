@@ -32,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Node-multiple-arguments.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Range-createContextualFragment.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/SVGScriptElement-internal-slot.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedType-AttributeNodes.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicy-CSP-no-name.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicy-CSP-wildcard.html
@@ -40,6 +41,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-constants.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-createXYZTests.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-cspTests-noNamesGiven.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-cspTests-none-none-name.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-cspTests-none-none.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-cspTests-none-skip.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-cspTests-none.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-cspTests-wildcard.html
@@ -49,9 +52,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-defaultPolicy.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-getAttributeType-namespace.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-getAttributeType-svg.html
-/LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-getPropertyType.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-getPropertyType.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-isXXX.html
-/LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-metadata.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-metadata.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/Window-TrustedTypes.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-eval.html
@@ -119,6 +122,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-source-file-path.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-svg-script-set-href.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-svg-script.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-tojson.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/tt-block-eval.html

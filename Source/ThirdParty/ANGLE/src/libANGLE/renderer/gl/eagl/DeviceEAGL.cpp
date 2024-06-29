@@ -40,11 +40,6 @@ egl::Error DeviceEAGL::getAttribute(const egl::Display *display, EGLint attribut
     return egl::NoError();
 }
 
-EGLint DeviceEAGL::getType()
-{
-    return 0;
-}
-
 void DeviceEAGL::generateExtensions(egl::DeviceExtensions *outExtensions) const
 {
     outExtensions->deviceEAGL = true;

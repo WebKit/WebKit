@@ -105,7 +105,7 @@ void UnlinkedCodeBlock::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         visitor.append(barrier);
     for (auto& barrier : thisObject->m_functionExprs)
         visitor.append(barrier);
-    visitor.appendValues(thisObject->m_constantRegisters.data(), thisObject->m_constantRegisters.size());
+    visitor.appendValues(thisObject->m_constantRegisters.span());
     size_t extraMemory = thisObject->metadataSizeInBytes();
     if (thisObject->m_instructions)
         extraMemory += thisObject->m_instructions->sizeInBytes();

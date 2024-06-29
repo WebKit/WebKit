@@ -45,7 +45,7 @@ WK_CLASS_AVAILABLE(macos(10.14), ios(12.0))
 @property (nonatomic, readonly, nullable) NSString *filePath;
 @property (nonatomic, readonly, nullable) NSData *data;
 @property (nonatomic, readonly, nullable) NSFileWrapper *fileWrapper;
-@property (nonatomic, readonly) BOOL shouldPreserveFidelity WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) BOOL shouldPreserveFidelity WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 @end
 
 WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))

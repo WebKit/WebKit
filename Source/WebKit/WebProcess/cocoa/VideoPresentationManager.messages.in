@@ -36,9 +36,12 @@ messages -> VideoPresentationManager {
     DidCleanupFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
     SetVideoLayerFrameFenced(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::FloatRect bounds, MachSendRight machSendRight)
     SetVideoLayerGravityEnum(WebKit::PlaybackSessionContextIdentifier contextId, unsigned gravity)
+    SetVideoFullscreenFrame(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::FloatRect frame)
     FullscreenModeChanged(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::MediaPlayerEnums::VideoFullscreenMode videoFullscreenMode)
     FullscreenMayReturnToInline(WebKit::PlaybackSessionContextIdentifier contextId, bool isPageVisible)
     RequestRouteSharingPolicyAndContextUID(WebKit::PlaybackSessionContextIdentifier contextId) -> (enum:uint8_t WebCore::RouteSharingPolicy routeSharingPolicy, String routingContextUID)
     EnsureUpdatedVideoDimensions(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::FloatSize existingVideoDimensions)
+    SetRequiresTextTrackRepresentation(WebKit::PlaybackSessionContextIdentifier contextId, bool requiresTextTrackRepresentation)
+    SetTextTrackRepresentationBounds(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::IntRect bounds)
 }
 #endif

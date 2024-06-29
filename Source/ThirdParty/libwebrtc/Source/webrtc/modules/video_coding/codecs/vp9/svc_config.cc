@@ -190,6 +190,9 @@ std::vector<SpatialLayer> GetVp9SvcConfig(VideoCodec& codec) {
     codec.SetScalabilityMode(limited_scalability_mode);
   }
 
+  codec.VP9()->interLayerPred =
+      ScalabilityModeToInterLayerPredMode(*scalability_mode);
+
   absl::optional<ScalableVideoController::StreamLayersConfig> info =
       ScalabilityStructureConfig(*scalability_mode);
   if (!info.has_value()) {

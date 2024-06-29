@@ -50,6 +50,7 @@ namespace WebCore {
 
 class CSSFontSelector;
 class CSSValuePool;
+class CacheStorageConnection;
 class ContentSecurityPolicyResponseHeaders;
 class Crypto;
 class FileSystemStorageConnection;
@@ -60,6 +61,7 @@ class ReportingScope;
 class ScheduledAction;
 class ScriptBuffer;
 class ScriptBufferSourceProvider;
+class TrustedScriptURL;
 class WorkerCacheStorageConnection;
 class WorkerClient;
 class WorkerFileSystemStorageConnection;
@@ -104,7 +106,7 @@ public:
     static void postFileSystemStorageTask(Function<void()>&&);
     WorkerFileSystemStorageConnection& getFileSystemStorageConnection(Ref<FileSystemStorageConnection>&&);
     WEBCORE_EXPORT WorkerFileSystemStorageConnection* fileSystemStorageConnection();
-    WorkerCacheStorageConnection& cacheStorageConnection();
+    CacheStorageConnection& cacheStorageConnection();
     MessagePortChannelProvider& messagePortChannelProvider();
 
     WorkerSWClientConnection& swClientConnection();
@@ -118,7 +120,7 @@ public:
     WorkerLocation& location() const;
     void close();
 
-    virtual ExceptionOr<void> importScripts(const FixedVector<String>& urls);
+    virtual ExceptionOr<void> importScripts(const FixedVector<std::variant<RefPtr<TrustedScriptURL>, String>>& urls);
     WorkerNavigator& navigator();
 
     void setIsOnline(bool);
@@ -239,7 +241,7 @@ private:
     WeakPtr<ScriptBufferSourceProvider> m_mainScriptSourceProvider;
     MemoryCompactRobinHoodHashMap<URL, WeakHashSet<ScriptBufferSourceProvider>> m_importedScriptsSourceProviders;
 
-    RefPtr<WorkerCacheStorageConnection> m_cacheStorageConnection;
+    RefPtr<CacheStorageConnection> m_cacheStorageConnection;
     std::unique_ptr<WorkerMessagePortChannelProvider> m_messagePortChannelProvider;
     RefPtr<WorkerSWClientConnection> m_swClientConnection;
     std::unique_ptr<CSSValuePool> m_cssValuePool;

@@ -116,7 +116,7 @@ public:
     {
         uint32_t tempRefCount = m_refCount - 1;
         if (!tempRefCount) {
-            delete this;
+            delete const_cast<Derived*>(static_cast<const Derived*>(this));
             return;
         }
         m_refCount = tempRefCount;

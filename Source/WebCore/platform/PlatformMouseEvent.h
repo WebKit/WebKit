@@ -122,18 +122,4 @@ protected:
 #endif
 };
 
-#if COMPILER(MSVC)
-// These functions are necessary to work around the fact that MSVC will not find a most-specific
-// operator== to use after implicitly converting MouseButton to a short.
-inline bool operator==(short a, MouseButton b)
-{
-    return a == static_cast<short>(b);
-}
-
-inline bool operator!=(short a, MouseButton b)
-{
-    return a != static_cast<short>(b);
-}
-#endif
-
 } // namespace WebCore

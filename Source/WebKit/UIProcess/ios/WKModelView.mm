@@ -108,7 +108,7 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
     if (file <= 0)
         return NO;
 
-    auto byteCount = static_cast<std::size_t>(FileSystem::writeToFile(file, model.data()->data(), model.data()->size()));
+    auto byteCount = static_cast<std::size_t>(FileSystem::writeToFile(file, model.data()->span()));
     ASSERT_UNUSED(byteCount, byteCount == model.data()->size());
     FileSystem::closeFile(file);
     _filePath = filePath;

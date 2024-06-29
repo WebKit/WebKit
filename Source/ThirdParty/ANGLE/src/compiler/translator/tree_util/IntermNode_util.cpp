@@ -50,6 +50,15 @@ TIntermTyped *CreateZeroNode(const TType &type)
     TType constType(type);
     constType.setQualifier(EvqConst);
 
+    // Make sure as a constructor, the type does not inherit qualifiers that are otherwise specified
+    // on interface blocks and varyings.
+    constType.setInvariant(false);
+    constType.setPrecise(false);
+    constType.setInterpolant(false);
+    constType.setMemoryQualifier(TMemoryQualifier::Create());
+    constType.setLayoutQualifier(TLayoutQualifier::Create());
+    constType.setInterfaceBlock(nullptr);
+
     if (!type.isArray() && type.getBasicType() != EbtStruct)
     {
         size_t size       = constType.getObjectSize();

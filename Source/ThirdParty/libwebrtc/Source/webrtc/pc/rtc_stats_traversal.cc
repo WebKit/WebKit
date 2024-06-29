@@ -15,6 +15,7 @@
 #include <utility>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "api/stats/rtcstats_objects.h"
 #include "rtc_base/checks.h"
 
@@ -42,9 +43,9 @@ void TraverseAndTakeVisitedStats(RTCStatsReport* report,
   }
 }
 
-void AddIdIfDefined(const RTCStatsMember<std::string>& id,
+void AddIdIfDefined(const absl::optional<std::string>& id,
                     std::vector<const std::string*>* neighbor_ids) {
-  if (id.is_defined())
+  if (id.has_value())
     neighbor_ids->push_back(&(*id));
 }
 

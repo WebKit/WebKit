@@ -121,12 +121,8 @@ static uint64_t generateListenerID()
     return uniqueListenerID++;
 }
 
-// FIXME: Remove receivedMainFrameIdentifierFromUIProcess in favor of a more correct way of sending frame tree deltas to each process. <rdar://116201135>
-void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame, bool receivedMainFrameIdentifierFromUIProcess)
+void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
 {
-    if (!receivedMainFrameIdentifierFromUIProcess)
-        page.send(Messages::WebPageProxy::DidCreateMainFrame(frameID()));
-
     m_coreFrame = coreFrame;
     m_coreFrame->tree().setSpecifiedName(nullAtom());
     if (auto* localFrame = dynamicDowncast<LocalFrame>(coreFrame))
@@ -395,6 +391,8 @@ void WebFrame::loadDidCommitInAnotherProcess(std::optional<WebCore::LayerHosting
     if (corePage->focusController().focusedFrame() == localFrame.get())
         corePage->focusController().setFocusedFrame(newFrame.ptr(), FocusController::BroadcastFocusedFrame::No);
 
+    localFrame->loader().detachFromParent();
+
     if (ownerElement)
         ownerElement->scheduleInvalidateStyleAndLayerComposition();
 }
@@ -425,13 +423,14 @@ void WebFrame::createProvisionalFrame(ProvisionalFrameCreationParameters&& param
         setLayerHostingContextIdentifier(*parameters.layerHostingContextIdentifier);
 }
 
-void WebFrame::provisionalLoadFailed()
+void WebFrame::destroyProvisionalFrame()
 {
     if (RefPtr frame = std::exchange(m_provisionalFrame, nullptr)) {
         if (auto* client = toWebLocalFrameLoaderClient(frame->loader().client()))
             client->takeFrameInvalidator().release();
         if (RefPtr parent = frame->tree().parent())
             parent->tree().removeChild(*frame);
+        frame->loader().detachFromParent();
         frame->setView(nullptr);
     }
 }
@@ -456,6 +455,7 @@ void WebFrame::commitProvisionalFrame()
 
     RefPtr parent = remoteFrame->tree().parent();
     RefPtr ownerElement = remoteFrame->ownerElement();
+    auto* ownerRenderer = remoteFrame->ownerRenderer();
 
     if (parent)
         parent->tree().removeChild(*remoteFrame);
@@ -465,6 +465,10 @@ void WebFrame::commitProvisionalFrame()
     m_coreFrame = localFrame.get();
     remoteFrame->setView(nullptr);
     localFrame->tree().setSpecifiedName(remoteFrame->tree().specifiedName());
+
+    if (ownerRenderer)
+        ownerRenderer->setWidget(localFrame->view());
+
     localFrame->setOwnerElement(ownerElement.get());
     if (remoteFrame->isMainFrame())
         corePage->setMainFrame(*localFrame);
@@ -1178,7 +1182,7 @@ RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void
 
 RefPtr<WebImage> WebFrame::createSelectionSnapshot() const
 {
-    auto snapshot = snapshotSelection(*coreLocalFrame(), { { WebCore::SnapshotFlags::ForceBlackText, WebCore::SnapshotFlags::Shareable }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+    auto snapshot = snapshotSelection(*coreLocalFrame(), { { WebCore::SnapshotFlags::ForceBlackText, WebCore::SnapshotFlags::Shareable }, ImageBufferPixelFormat::BGRA8, DestinationColorSpace::SRGB() });
     if (!snapshot)
         return nullptr;
 

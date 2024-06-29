@@ -1,0 +1,39 @@
+Ensure correct behavior of canvas with fillRect using destination-atop globalCompositeOperation and shadow on top of pre-existing content
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Verifying if the original content was preserved where it overlaps with both shadow and shape...
+PASS data[0] is 255
+PASS data[1] is 0
+PASS data[2] is 0
+PASS data[3] is 255
+PASS data[0] is 255
+PASS data[1] is 0
+PASS data[2] is 0
+PASS data[3] is 255
+Verifying if the shadow is "atop" the shape...
+PASS data[0] is 0
+PASS data[1] is 0
+PASS data[2] is 255
+PASS data[3] is 255
+Verifying if the only visible part of shape is there...
+PASS data[0] is 0
+PASS data[1] is 255
+PASS data[2] is 0
+PASS data[3] is 255
+Verifying if the part of original content was lost during overlap with shape...
+PASS data[0] is 0
+PASS data[1] is 0
+PASS data[2] is 0
+PASS data[3] is 0
+Verifying if the part of shadow was lost during overlap with shape...
+PASS data[0] is 0
+PASS data[1] is 0
+PASS data[2] is 0
+PASS data[3] is 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

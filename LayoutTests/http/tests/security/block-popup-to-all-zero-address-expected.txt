@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: Not allowed to use restricted network host "0.0.0.0": http://0.0.0.0:8000/security/resources/target.html
+This attempts to load an iframe from the all-zeroes address, which should be blocked.

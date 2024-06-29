@@ -883,7 +883,7 @@ String PlatformKeyboardEvent::keyIdentifierForWPEKeyCode(unsigned keyCode)
         break;
     }
 
-    return makeString("U+", hex(wpe_key_code_to_unicode(keyCode), 4));
+    return makeString("U+"_s, hex(wpe_key_code_to_unicode(keyCode), 4));
 }
 
 int PlatformKeyboardEvent::windowsKeyCodeForWPEKeyCode(unsigned keycode)

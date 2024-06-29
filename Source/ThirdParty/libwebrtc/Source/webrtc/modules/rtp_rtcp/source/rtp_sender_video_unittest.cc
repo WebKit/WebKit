@@ -21,6 +21,7 @@
 #include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/test/mock_frame_encryptor.h"
+#include "api/test/mock_frame_transformer.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_codec_constants.h"
@@ -46,7 +47,6 @@
 #include "test/explicit_key_value_config.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "test/mock_frame_transformer.h"
 #include "test/time_controller/simulated_time_controller.h"
 
 namespace webrtc {

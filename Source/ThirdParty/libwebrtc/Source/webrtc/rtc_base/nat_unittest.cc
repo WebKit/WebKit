@@ -11,14 +11,17 @@
 #include <string.h>
 
 #include <algorithm>
+#include <cstddef>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "absl/memory/memory.h"
+#include "api/units/time_delta.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/async_tcp_socket.h"
 #include "rtc_base/async_udp_socket.h"
+#include "rtc_base/event.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/logging.h"
@@ -73,36 +76,44 @@ void TestSend(SocketServer* internal,
   Thread th_int(internal);
   Thread th_ext(external);
 
+  th_int.Start();
+  th_ext.Start();
+
   SocketAddress server_addr = internal_addr;
   server_addr.SetPort(0);  // Auto-select a port
-  NATServer* nat = new NATServer(nat_type, internal, server_addr, server_addr,
-                                 external, external_addrs[0]);
+  NATServer* nat =
+      new NATServer(nat_type, th_int, internal, server_addr, server_addr,
+                    th_ext, external, external_addrs[0]);
   NATSocketFactory* natsf = new NATSocketFactory(
       internal, nat->internal_udp_address(), nat->internal_tcp_address());
 
-  TestClient* in = CreateTestClient(natsf, internal_addr);
-  TestClient* out[4];
-  for (int i = 0; i < 4; i++)
-    out[i] = CreateTestClient(external, external_addrs[i]);
+  TestClient* in;
+  th_int.BlockingCall([&] { in = CreateTestClient(natsf, internal_addr); });
 
-  th_int.Start();
-  th_ext.Start();
+  TestClient* out[4];
+  th_ext.BlockingCall([&] {
+    for (int i = 0; i < 4; i++)
+      out[i] = CreateTestClient(external, external_addrs[i]);
+  });
 
   const char* buf = "filter_test";
   size_t len = strlen(buf);
 
-  in->SendTo(buf, len, out[0]->address());
+  th_int.BlockingCall([&] { in->SendTo(buf, len, out[0]->address()); });
   SocketAddress trans_addr;
-  EXPECT_TRUE(out[0]->CheckNextPacket(buf, len, &trans_addr));
+  th_ext.BlockingCall(
+      [&] { EXPECT_TRUE(out[0]->CheckNextPacket(buf, len, &trans_addr)); });
 
   for (int i = 1; i < 4; i++) {
-    in->SendTo(buf, len, out[i]->address());
+    th_int.BlockingCall([&] { in->SendTo(buf, len, out[i]->address()); });
     SocketAddress trans_addr2;
-    EXPECT_TRUE(out[i]->CheckNextPacket(buf, len, &trans_addr2));
-    bool are_same = (trans_addr == trans_addr2);
-    ASSERT_EQ(are_same, exp_same) << "same translated address";
-    ASSERT_NE(AF_UNSPEC, trans_addr.family());
-    ASSERT_NE(AF_UNSPEC, trans_addr2.family());
+    th_ext.BlockingCall([&] {
+      EXPECT_TRUE(out[i]->CheckNextPacket(buf, len, &trans_addr2));
+      bool are_same = (trans_addr == trans_addr2);
+      ASSERT_EQ(are_same, exp_same) << "same translated address";
+      ASSERT_NE(AF_UNSPEC, trans_addr.family());
+      ASSERT_NE(AF_UNSPEC, trans_addr2.family());
+    });
   }
 
   th_int.Stop();
@@ -129,34 +140,44 @@ void TestRecv(SocketServer* internal,
 
   SocketAddress server_addr = internal_addr;
   server_addr.SetPort(0);  // Auto-select a port
-  NATServer* nat = new NATServer(nat_type, internal, server_addr, server_addr,
-                                 external, external_addrs[0]);
+  th_int.Start();
+  th_ext.Start();
+  NATServer* nat =
+      new NATServer(nat_type, th_int, internal, server_addr, server_addr,
+                    th_ext, external, external_addrs[0]);
   NATSocketFactory* natsf = new NATSocketFactory(
       internal, nat->internal_udp_address(), nat->internal_tcp_address());
 
-  TestClient* in = CreateTestClient(natsf, internal_addr);
-  TestClient* out[4];
-  for (int i = 0; i < 4; i++)
-    out[i] = CreateTestClient(external, external_addrs[i]);
+  TestClient* in = nullptr;
+  th_int.BlockingCall([&] { in = CreateTestClient(natsf, internal_addr); });
 
-  th_int.Start();
-  th_ext.Start();
+  TestClient* out[4];
+  th_ext.BlockingCall([&] {
+    for (int i = 0; i < 4; i++)
+      out[i] = CreateTestClient(external, external_addrs[i]);
+  });
 
   const char* buf = "filter_test";
   size_t len = strlen(buf);
 
-  in->SendTo(buf, len, out[0]->address());
+  th_int.BlockingCall([&] { in->SendTo(buf, len, out[0]->address()); });
   SocketAddress trans_addr;
-  EXPECT_TRUE(out[0]->CheckNextPacket(buf, len, &trans_addr));
+  th_ext.BlockingCall(
+      [&] { EXPECT_TRUE(out[0]->CheckNextPacket(buf, len, &trans_addr)); });
 
-  out[1]->SendTo(buf, len, trans_addr);
-  EXPECT_TRUE(CheckReceive(in, !filter_ip, buf, len));
+  th_ext.BlockingCall([&] { out[1]->SendTo(buf, len, trans_addr); });
+  th_int.BlockingCall(
+      [&] { EXPECT_TRUE(CheckReceive(in, !filter_ip, buf, len)); });
+  th_ext.BlockingCall([&] { out[2]->SendTo(buf, len, trans_addr); });
 
-  out[2]->SendTo(buf, len, trans_addr);
-  EXPECT_TRUE(CheckReceive(in, !filter_port, buf, len));
+  th_int.BlockingCall(
+      [&] { EXPECT_TRUE(CheckReceive(in, !filter_port, buf, len)); });
 
-  out[3]->SendTo(buf, len, trans_addr);
-  EXPECT_TRUE(CheckReceive(in, !filter_ip && !filter_port, buf, len));
+  th_ext.BlockingCall([&] { out[3]->SendTo(buf, len, trans_addr); });
+
+  th_int.BlockingCall([&] {
+    EXPECT_TRUE(CheckReceive(in, !filter_ip && !filter_port, buf, len));
+  });
 
   th_int.Stop();
   th_ext.Stop();
@@ -212,12 +233,12 @@ bool TestConnectivity(const SocketAddress& src, const IPAddress& dst) {
   const char* buf = "hello other socket";
   size_t len = strlen(buf);
   int sent = client->SendTo(buf, len, server->GetLocalAddress());
-  SocketAddress addr;
-  const size_t kRecvBufSize = 64;
-  char recvbuf[kRecvBufSize];
+
   Thread::Current()->SleepMs(100);
-  int received = server->RecvFrom(recvbuf, kRecvBufSize, &addr, nullptr);
-  return received == sent && ::memcmp(buf, recvbuf, len) == 0;
+  rtc::Buffer payload;
+  Socket::ReceiveBuffer receive_buffer(payload);
+  int received = server->RecvFrom(receive_buffer);
+  return received == sent && ::memcmp(buf, payload.data(), len) == 0;
 }
 
 void TestPhysicalInternal(const SocketAddress& int_addr) {
@@ -335,9 +356,11 @@ class NatTcpTest : public ::testing::Test, public sigslot::has_slots<> {
         int_thread_(new Thread(int_vss_.get())),
         ext_thread_(new Thread(ext_vss_.get())),
         nat_(new NATServer(NAT_OPEN_CONE,
+                           *int_thread_,
                            int_vss_.get(),
                            int_addr_,
                            int_addr_,
+                           *ext_thread_,
                            ext_vss_.get(),
                            ext_addr_)),
         natsf_(new NATSocketFactory(int_vss_.get(),

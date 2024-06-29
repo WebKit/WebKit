@@ -10,20 +10,6 @@ features: [Temporal]
 const instance = new Temporal.Duration();
 
 const cases = [
-  // 2^32 = 4294967296
-  ["P4294967296Y", "string with years > max"],
-  [{ years: 4294967296 }, "property bag with years > max"],
-  ["-P4294967296Y", "string with years < min"],
-  [{ years: -4294967296 }, "property bag with years < min"],
-  ["P4294967296M", "string with months > max"],
-  [{ months: 4294967296 }, "property bag with months > max"],
-  ["-P4294967296M", "string with months < min"],
-  [{ months: -4294967296 }, "property bag with months < min"],
-  ["P4294967296W", "string with weeks > max"],
-  [{ weeks: 4294967296 }, "property bag with weeks > max"],
-  ["-P4294967296W", "string with weeks < min"],
-  [{ weeks: -4294967296 }, "property bag with weeks < min"],
-
   // ceil(max safe integer / 86400) = 104249991375
   ["P104249991375D", "string with days > max"],
   [{ days: 104249991375 }, "property bag with days > max"],

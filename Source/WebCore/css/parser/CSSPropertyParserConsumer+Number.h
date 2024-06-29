@@ -24,117 +24,21 @@
 
 #pragma once
 
-#include "CSSParserMode.h"
-#include "CSSParserToken.h"
-#include "CSSPropertyParserConsumer+Meta.h"
-#include "CSSPropertyParserConsumer+None.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
-#include "Length.h"
 #include <optional>
-
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class CSSPrimitiveValue;
 class CSSParserTokenRange;
-class CSSCalcSymbolTable;
 
 namespace CSSPropertyParserHelpers {
-
-// MARK: Number (Raw)
-
-std::optional<NumberRaw> validatedNumberRaw(double, ValueRange);
-
-struct NumberRawKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<NumberRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
-};
-
-struct NumberRawKnownTokenTypeNumberConsumer {
-    static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<NumberRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
-};
-
-struct NumberRawKnownTokenTypeIdentConsumer {
-    static constexpr CSSParserTokenType tokenType = IdentToken;
-    static std::optional<NumberRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
-};
-
-// MARK: Number (CSSPrimitiveValue - maintaining calc)
-
-struct NumberCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
-};
-
-struct NumberCSSPrimitiveValueWithCalcWithKnownTokenTypeNumberConsumer {
-    static constexpr CSSParserTokenType tokenType = NumberToken;
-    static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
-};
-
-// MARK: - Consumer definitions.
-
-template<typename T>
-struct NumberRawConsumer {
-    using Transformer = T;
-    using Result = typename Transformer::Result;
-
-    using FunctionToken = NumberRawKnownTokenTypeFunctionConsumer;
-    using NumberToken = NumberRawKnownTokenTypeNumberConsumer;
-};
-
-template<typename Transformer>
-struct NumberRawAllowingSymbolTableIdentConsumer : NumberRawConsumer<Transformer> {
-    using IdentToken = NumberRawKnownTokenTypeIdentConsumer;
-};
-
-struct NumberConsumer {
-    using Result = RefPtr<CSSPrimitiveValue>;
-
-    using FunctionToken = NumberCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer;
-    using NumberToken = NumberCSSPrimitiveValueWithCalcWithKnownTokenTypeNumberConsumer;
-};
-
-// MARK: - Combination consumer definitions.
-
-// MARK: Number + None
-
-template<typename Transformer>
-struct NumberOrNoneRawConsumer : NumberRawConsumer<Transformer> {
-    using IdentToken = NoneRawKnownTokenTypeIdentConsumer;
-};
-
-template<typename Transformer>
-struct NumberOrNoneRawAllowingSymbolTableIdentConsumer : NumberRawConsumer<Transformer> {
-    using IdentToken = SameTokenMetaConsumer<
-        Transformer,
-        NoneRawKnownTokenTypeIdentConsumer,
-        NumberRawKnownTokenTypeIdentConsumer
-    >;
-};
 
 // MARK: - Consumer functions
 
 std::optional<NumberRaw> consumeNumberRaw(CSSParserTokenRange&, ValueRange = ValueRange::All);
-RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange&, ValueRange);
-
-// MARK: - Transformable
-
-template<typename Transformer = RawIdentityTransformer<NumberOrNoneRaw>>
-auto consumeNumberOrNoneRaw(CSSParserTokenRange& range, ValueRange valueRange = ValueRange::All) -> typename Transformer::Result
-{
-    return consumeMetaConsumer<NumberOrNoneRawConsumer<Transformer>>(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
-}
-
-// MARK: Consumer Lookup
-
-template<> struct ConsumerLookup<NumberRaw> {
-    std::optional<NumberRaw> operator()(CSSParserTokenRange& args, CSSParserMode)
-    {
-        return consumeNumberRaw(args);
-    }
-};
+RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange&, ValueRange = ValueRange::All);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

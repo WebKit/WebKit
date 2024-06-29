@@ -116,19 +116,4 @@ TEST(OpenSSLAdapterFactoryTest, CreateWorksWithCustomVerifier) {
   EXPECT_NE(simple_adapter, nullptr);
 }
 
-TEST(StrJoinTest, SingleElement) {
-  EXPECT_EQ(webrtc_openssl_adapter_internal::StrJoin({"a"}, ','), "a");
-}
-
-TEST(StrJoinTest, TwoElements) {
-  EXPECT_EQ(webrtc_openssl_adapter_internal::StrJoin({"first", "second"}, ':'),
-            "first:second");
-}
-
-TEST(StrJoinTest, WithEmptyElement) {
-  EXPECT_EQ(
-      webrtc_openssl_adapter_internal::StrJoin({"first", "", "second"}, ':'),
-      "first::second");
-}
-
 }  // namespace rtc

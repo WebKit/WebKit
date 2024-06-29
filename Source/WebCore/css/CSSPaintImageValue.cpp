@@ -45,7 +45,7 @@ CSSPaintImageValue::~CSSPaintImageValue() = default;
 String CSSPaintImageValue::customCSSText() const
 {
     // FIXME: This should include the arguments too.
-    return makeString("paint(", m_name, ')');
+    return makeString("paint("_s, m_name, ')');
 }
 
 RefPtr<StyleImage> CSSPaintImageValue::createStyleImage(Style::BuilderState&) const

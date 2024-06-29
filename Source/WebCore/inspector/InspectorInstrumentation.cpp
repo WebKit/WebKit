@@ -67,6 +67,7 @@
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "WebConsoleAgent.h"
 #include "WebDebuggerAgent.h"
 #include "WebGLRenderingContextBase.h"
@@ -1357,6 +1358,11 @@ void InspectorInstrumentation::renderLayerDestroyedImpl(InstrumentingAgents& ins
 }
 
 InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(WorkerOrWorkletGlobalScope& globalScope)
+{
+    return globalScope.inspectorController().m_instrumentingAgents;
+}
+
+InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(ServiceWorkerGlobalScope& globalScope)
 {
     return globalScope.inspectorController().m_instrumentingAgents;
 }

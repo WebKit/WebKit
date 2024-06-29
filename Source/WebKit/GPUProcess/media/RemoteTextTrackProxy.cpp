@@ -111,12 +111,12 @@ void RemoteTextTrackProxy::languageChanged(const AtomString&)
     configurationChanged();
 }
 
-void RemoteTextTrackProxy::addDataCue(const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
+void RemoteTextTrackProxy::addDataCue(const MediaTime& start, const MediaTime& end, std::span<const uint8_t> data)
 {
     auto connection = m_connectionToWebProcess.get();
     if (!connection)
         return;
-    connection->connection().send(Messages::MediaPlayerPrivateRemote::AddDataCue(m_trackPrivate->id(), start, end, std::span(static_cast<const uint8_t*>(data), length)), m_mediaPlayerIdentifier);
+    connection->connection().send(Messages::MediaPlayerPrivateRemote::AddDataCue(m_trackPrivate->id(), start, end, data), m_mediaPlayerIdentifier);
 }
 
 #if ENABLE(DATACUE_VALUE)

@@ -114,7 +114,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
 
     CSSParser p(parserContext());
     auto isNestedContext = hasStyleRuleAncestor() ? CSSParserEnum::IsNestedContext::Yes : CSSParserEnum::IsNestedContext::No;
-    auto* sheet = parentStyleSheet();
+    RefPtr sheet = parentStyleSheet();
     auto selectorList = p.parseSelectorList(selectorText, sheet ? &sheet->contents() : nullptr, isNestedContext);
     if (!selectorList)
         return;
@@ -234,7 +234,7 @@ ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigne
     if (index > nestedRules().size())
         return Exception { ExceptionCode::IndexSizeError };
 
-    auto* styleSheet = parentStyleSheet();
+    RefPtr styleSheet = parentStyleSheet();
     RefPtr<StyleRuleBase> newRule = CSSParser::parseRule(parserContext(), styleSheet ? &styleSheet->contents() : nullptr, ruleString, CSSParserEnum::IsNestedContext::Yes);
     if (!newRule)
         return Exception { ExceptionCode::SyntaxError };
@@ -245,9 +245,9 @@ ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigne
     if (!m_styleRule->isStyleRuleWithNesting()) {
         // Call the parent rule (or parent stylesheet if top-level or nothing if it's an orphaned rule) to transform the current StyleRule to StyleRuleWithNesting.
         RefPtr<StyleRuleWithNesting> styleRuleWithNesting;
-        if (auto parent = parentRule())
+        if (RefPtr parent = parentRule())
             styleRuleWithNesting = parent->prepareChildStyleRuleForNesting(m_styleRule);
-        else if (auto parent = parentStyleSheet())
+        else if (RefPtr parent = parentStyleSheet())
             styleRuleWithNesting = parent->prepareChildStyleRuleForNesting(WTFMove(m_styleRule.get()));
         else
             styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(m_styleRule.get()));

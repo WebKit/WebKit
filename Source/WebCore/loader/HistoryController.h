@@ -77,6 +77,7 @@ public:
     HistoryItem* currentItem() const { return m_currentItem.get(); }
     RefPtr<HistoryItem> protectedCurrentItem() const;
     WEBCORE_EXPORT void setCurrentItem(Ref<HistoryItem>&&);
+    void setCurrentItemTitle(const StringWithDirection&);
     bool currentItemShouldBeReplaced() const;
     WEBCORE_EXPORT void replaceCurrentItem(RefPtr<HistoryItem>&&);
 

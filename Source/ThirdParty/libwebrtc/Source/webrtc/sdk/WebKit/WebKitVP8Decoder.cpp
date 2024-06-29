@@ -27,6 +27,7 @@
 
 #include "WebKitDecoder.h"
 #include "WebKitDecoderReceiver.h"
+#include "api/environment/environment_factory.h"
 #include "modules/video_coding/codecs/vp8/libvpx_vp8_decoder.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/cpu_info.h"
@@ -184,7 +185,7 @@ OSStatus startVP8DecoderSession(VTVideoDecoderRef instance, VTVideoDecoderSessio
         return kVTParameterErr;
     }
 
-    decoder->m_instance = std::make_unique<LibvpxVp8Decoder>();
+    decoder->m_instance = std::make_unique<LibvpxVp8Decoder>(webrtc::EnvironmentFactory().Create());
     decoder->m_receiver = std::make_unique<WebKitDecoderReceiver>(session);
     decoder->m_receiver->initializeFromFormatDescription(formatDescription);
 

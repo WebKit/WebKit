@@ -15,4 +15,4 @@ var shouldThrow = function(func, errorMessage) {
 
 shouldThrow(() => {
     $.evalScript(`const shouldThrow = 42`);
-}, `SyntaxError: Can't create duplicate variable: 'shouldThrow'`);
+}, `SyntaxError: Can't create duplicate variable that shadows a global property: 'shouldThrow'`);

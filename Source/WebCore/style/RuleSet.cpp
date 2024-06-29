@@ -150,6 +150,7 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
     const CSSSelector* customPseudoElementSelector = nullptr;
     const CSSSelector* slottedPseudoElementSelector = nullptr;
     const CSSSelector* partPseudoElementSelector = nullptr;
+    const CSSSelector* namedPseudoElementSelector = nullptr;
 #if ENABLE(VIDEO)
     const CSSSelector* cuePseudoElementSelector = nullptr;
 #endif
@@ -204,6 +205,13 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
                 cuePseudoElementSelector = selector;
                 break;
 #endif
+            case CSSSelector::PseudoElement::ViewTransitionGroup:
+            case CSSSelector::PseudoElement::ViewTransitionImagePair:
+            case CSSSelector::PseudoElement::ViewTransitionOld:
+            case CSSSelector::PseudoElement::ViewTransitionNew:
+                if (selector->argumentList()->first().identifier != starAtom())
+                    namedPseudoElementSelector = selector;
+                break;
             default:
                 break;
             }
@@ -312,6 +320,11 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
         return;
     }
 
+    if (namedPseudoElementSelector) {
+        addToRuleSet(namedPseudoElementSelector->argumentList()->first().identifier, m_namedPseudoElementRules, ruleData);
+        return;
+    }
+
     if (rootElementSelector) {
         m_rootElementRules.append(ruleData);
         return;
@@ -352,6 +365,7 @@ void RuleSet::traverseRuleDatas(Function&& function)
     traverseMap(m_tagLocalNameRules);
     traverseMap(m_tagLowercaseLocalNameRules);
     traverseMap(m_userAgentPartRules);
+    traverseMap(m_namedPseudoElementRules);
     traverseVector(m_linkPseudoClassRules);
 #if ENABLE(VIDEO)
     traverseVector(m_cuePseudoRules);
@@ -445,6 +459,7 @@ void RuleSet::shrinkToFit()
     shrinkMapVectorsToFit(m_tagLocalNameRules);
     shrinkMapVectorsToFit(m_tagLowercaseLocalNameRules);
     shrinkMapVectorsToFit(m_userAgentPartRules);
+    shrinkMapVectorsToFit(m_namedPseudoElementRules);
 
     m_linkPseudoClassRules.shrinkToFit();
 #if ENABLE(VIDEO)

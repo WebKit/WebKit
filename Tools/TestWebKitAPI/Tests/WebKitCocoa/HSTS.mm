@@ -168,7 +168,12 @@ TEST(HSTS, CrossOriginRedirect)
     EXPECT_EQ(httpServer.totalRequests(), 1u);
 }
 
+// FIXME when rdar://108167361 is resolved
+#if PLATFORM(MAC) && defined(NDEBUG)
+TEST(HSTS, DISABLED_Preconnect)
+#else
 TEST(HSTS, Preconnect)
+#endif
 {
     bool responseSent { false };
     bool preconnectSuccessful { false };

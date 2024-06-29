@@ -52,7 +52,7 @@ static std::set<OSXWindow *> &AllWindows()
 }
 
 // Override internal method to try to diagnose unexpected crashes in Core Animation.
-// anglebug.com/6570
+// anglebug.com/42265067
 // See also:
 //   https://github.com/microsoft/appcenter-sdk-apple/issues/1944
 //   https://stackoverflow.com/questions/220159/how-do-you-print-out-a-stack-trace-to-the-console-log-in-cocoa
@@ -724,7 +724,7 @@ void OSXWindow::messageLoop()
     {
         while (true)
         {
-            // TODO(http://anglebug.com/6570): @try/@catch is a workaround for
+            // TODO(http://anglebug.com/42265067): @try/@catch is a workaround for
             // exceptions being thrown from Cocoa-internal function
             // NS_setFlushesWithDisplayLink starting in macOS 11.
             @try

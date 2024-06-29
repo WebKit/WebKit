@@ -1,0 +1,38 @@
+<meta name="fuzzy" content="maxDifference=0-45; totalPixels=0-23063" />
+<style>
+    canvas {
+        width: 700px;
+        height: 400px;
+    }
+</style>
+<body>
+    <h3>This tests canvas layers and globalAlpha.</h3>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 700;
+        canvas.height = 400;
+
+        ctx.globalAlpha = 0.5;
+
+        ctx.fillStyle = "blue";
+        ctx.fillRect(150, 140, 140, 160);
+
+        ctx.fillStyle = "red";
+
+        ctx.beginLayer();
+            ctx.beginLayer();
+                ctx.globalCompositeOperation = "xor";
+
+                ctx.arc(220, 120, 70, 0, Math.PI * 2, true);
+                ctx.fill();
+
+                ctx.arc(220, 120, 100, 0, Math.PI * 2, true);
+                ctx.fill();
+            ctx.endLayer();     
+
+            ctx.fillRect(120, 120, 200, 200);
+        ctx.endLayer();
+    </script>
+</body>

@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "ClassMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
@@ -55,6 +56,11 @@ static void checkCGRectIsNotEmpty(CGRect rect)
     EXPECT_FALSE(isEmpty);
     if (isEmpty)
         NSLog(@"Expected %@ to be non-empty", NSStringFromCGRect(rect));
+}
+
+static UIFont *returnNil(Class, SEL)
+{
+    return nil;
 }
 
 TEST(AutocorrectionTests, FontAtCaretWhenUsingUICTFontTextStyle)
@@ -90,6 +96,13 @@ TEST(AutocorrectionTests, FontAtCaretWhenUsingUICTFontTextStyle)
     auto traitsBeforeScaling = fontBeforeScaling.fontDescriptor.symbolicTraits;
     EXPECT_TRUE(traitsBeforeScaling & UIFontDescriptorTraitBold);
     EXPECT_TRUE(traitsBeforeScaling & UIFontDescriptorTraitItalic);
+
+    {
+        // Verify that -textStylingAtPosition:inDirection: is robust in the case where +fontWithDescriptor:size: is nil.
+        ClassMethodSwizzler swizzler { UIFont.class, @selector(fontWithDescriptor:size:), reinterpret_cast<IMP>(returnNil) };
+        NSDictionary *result = [contentView textStylingAtPosition:contentView.selectedTextRange.start inDirection:UITextStorageDirectionForward];
+        EXPECT_TRUE(!!result[NSFontAttributeName]);
+    }
 
     [webView scrollView].zoomScale = 2;
     auto selectedTextRangeAfterScaling = contentView.selectedTextRange;

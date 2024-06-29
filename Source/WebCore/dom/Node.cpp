@@ -500,9 +500,10 @@ String Node::nodeValue() const
     return String();
 }
 
-void Node::setNodeValue(const String&)
+ExceptionOr<void> Node::setNodeValue(const String&)
 {
     // By default, setting nodeValue has no effect.
+    return { };
 }
 
 RefPtr<NodeList> Node::childNodes()
@@ -1528,7 +1529,7 @@ void Node::removedFromAncestor(RemovalType removalType, ContainerNode& oldParent
     if (isInShadowTree() && !treeScope().rootNode().isShadowRoot())
         clearEventTargetFlag(EventTargetFlag::IsInShadowTree);
     if (removalType.disconnectedFromDocument) {
-        if (auto* cache = oldParentOfRemovedTree.document().existingAXObjectCache())
+        if (CheckedPtr cache = oldParentOfRemovedTree.document().existingAXObjectCache())
             cache->remove(*this);
     }
 }
@@ -1798,7 +1799,7 @@ String Node::textContent(bool convertBRsToNewlines) const
     return isNullString ? String() : content.toString();
 }
 
-void Node::setTextContent(String&& text)
+ExceptionOr<void> Node::setTextContent(String&& text)
 {           
     switch (nodeType()) {
     case ATTRIBUTE_NODE:
@@ -1806,18 +1807,19 @@ void Node::setTextContent(String&& text)
     case CDATA_SECTION_NODE:
     case COMMENT_NODE:
     case PROCESSING_INSTRUCTION_NODE:
-        setNodeValue(WTFMove(text));
-        return;
+        return setNodeValue(WTFMove(text));
     case ELEMENT_NODE:
     case DOCUMENT_FRAGMENT_NODE:
         uncheckedDowncast<ContainerNode>(*this).stringReplaceAll(WTFMove(text));
-        return;
+        return { };
     case DOCUMENT_NODE:
     case DOCUMENT_TYPE_NODE:
         // Do nothing.
-        return;
+        return { };
     }
     ASSERT_NOT_REACHED();
+
+    return { };
 }
 
 static SHA1::Digest hashPointer(const void* pointer)
@@ -1977,13 +1979,13 @@ FloatPoint Node::convertFromPage(const FloatPoint& p) const
 String Node::description() const
 {
     auto name = nodeName();
-    return makeString(name.isEmpty() ? "<none>" : "", name);
+    return makeString(name.isEmpty() ? "<none>"_s : ""_s, name);
 }
 
 String Node::debugDescription() const
 {
     auto name = nodeName();
-    return makeString(name.isEmpty() ? "<none>" : "", name, " 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
+    return makeString(name.isEmpty() ? "<none>"_s : ""_s, name, " 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
 }
 
 #if ENABLE(TREE_DEBUGGING)
@@ -2123,12 +2125,12 @@ static void showSubTreeAcrossFrame(const Node* node, const Node* markedNode, con
     node->showNode();
     if (!node->isShadowRoot()) {
         if (auto* frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(node))
-            showSubTreeAcrossFrame(frameOwner->protectedContentDocument().get(), markedNode, indent + "\t");
+            showSubTreeAcrossFrame(frameOwner->protectedContentDocument().get(), markedNode, makeString(indent, '\t'));
         if (RefPtr shadowRoot = node->shadowRoot())
-            showSubTreeAcrossFrame(shadowRoot.get(), markedNode, indent + "\t");
+            showSubTreeAcrossFrame(shadowRoot.get(), markedNode, makeString(indent, '\t'));
     }
     for (RefPtr child = node->firstChild(); child; child = child->nextSibling())
-        showSubTreeAcrossFrame(child.get(), markedNode, indent + "\t");
+        showSubTreeAcrossFrame(child.get(), markedNode, makeString(indent, '\t'));
 }
 
 void Node::showTreeForThisAcrossFrame() const
@@ -2362,7 +2364,7 @@ void Node::moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDoc
         oldDocument.parentlessNodeMovedToNewDocument(*this);
 
     if (AXObjectCache::accessibilityEnabled()) {
-        if (auto* cache = oldDocument.existingAXObjectCache())
+        if (CheckedPtr cache = oldDocument.existingAXObjectCache())
             cache->remove(*this);
     }
 

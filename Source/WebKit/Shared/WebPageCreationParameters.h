@@ -87,7 +87,7 @@ class Encoder;
 
 namespace WebKit {
 
-struct SubframeProcessPageParameters {
+struct RemotePageParameters {
     URL initialMainDocumentURL;
     FrameTreeCreationParameters frameTreeParameters;
     std::optional<WebsitePoliciesData> websitePoliciesData;
@@ -189,7 +189,7 @@ struct WebPageCreationParameters {
 #if ENABLE(META_VIEWPORT)
     bool ignoresViewportScaleLimits;
     WebCore::FloatSize viewportConfigurationViewLayoutSize;
-    double viewportConfigurationLayoutSizeScaleFactor;
+    double viewportConfigurationLayoutSizeScaleFactorFromClient;
     double viewportConfigurationMinimumEffectiveDeviceWidth;
     WebCore::FloatSize viewportConfigurationViewSize;
     std::optional<WebCore::ViewportArguments> overrideViewportArguments;
@@ -289,7 +289,6 @@ struct WebPageCreationParameters {
 #endif
     bool shouldEnableVP8Decoder { false };
     bool shouldEnableVP9Decoder { false };
-    bool shouldEnableVP9SWDecoder { false };
 #if ENABLE(APP_BOUND_DOMAINS)
     bool limitsNavigationsToAppBoundDomains { false };
 #endif
@@ -316,7 +315,7 @@ struct WebPageCreationParameters {
 
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
-    std::optional<SubframeProcessPageParameters> subframeProcessPageParameters;
+    std::optional<RemotePageParameters> remotePageParameters;
     std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;
     std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
 

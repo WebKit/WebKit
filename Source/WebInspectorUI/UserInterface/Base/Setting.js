@@ -240,7 +240,9 @@ WI.settings = {
     experimentalCSSSortPropertyNameAutocompletionByUsage: new WI.Setting("experimental-css-sort-property-name-autocompletion-by-usage", true),
     experimentalEnableNetworkEmulatedCondition: new WI.Setting("experimental-enable-network-emulated-condition", false),
     experimentalGroupSourceMapErrors: new WI.Setting("experimental-group-source-map-errors", true),
+    experimentalShowCaseSensitiveAutocomplete: new WI.Setting("experimental-show-case-sensitive-auto-complete", false),
     experimentalLimitSourceCodeHighlighting: new WI.Setting("engineering-limit-source-code-highlighting", false),
+    experimentalUseFuzzyMatchingForCSSCodeCompletion: new WI.Setting("experimental-use-fuzzy-matching-for-css-code-completion", true),
 
     // Protocol
     protocolLogAsText: new WI.Setting("protocol-log-as-text", false),

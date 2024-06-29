@@ -317,14 +317,33 @@ layer at (0,0) size 800x1054
                                           RenderInline {A} at (0,0) size 12x19
                                             RenderText {#text} at (0,0) size 12x19
                                               text run at (0,0) width 12: "X"
-      RenderBlock (anonymous) at (0,724) size 784x50
+      RenderBlock (anonymous) at (0,724) size 784x30
         RenderTable {TABLE} at (0,0) size 55x30 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 53x28
             RenderTableRow {TR} at (0,2) size 53x24
               RenderTableCell {TD} at (2,2) size 49x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 45x19
                   text run at (2,2) width 45: "table-9"
-        RenderBlock {DIV} at (0,30) size 784x20
+      RenderBlock (anonymous) at (0,754) size 784x0
+        RenderInline {FONT} at (0,0) size 0x0
+          RenderInline {FONT} at (0,0) size 0x0
+            RenderInline {FONT} at (0,0) size 0x0
+              RenderInline {FONT} at (0,0) size 0x0
+                RenderInline {FONT} at (0,0) size 0x0
+                  RenderInline {FONT} at (0,0) size 0x0
+                    RenderInline {FONT} at (0,0) size 0x0
+                      RenderInline {FONT} at (0,0) size 0x0
+                        RenderInline {FONT} at (0,0) size 0x0
+                          RenderInline {FONT} at (0,0) size 0x0
+                            RenderInline {FONT} at (0,0) size 0x0
+                              RenderInline {FONT} at (0,0) size 0x0
+                                RenderInline {FONT} at (0,0) size 0x0
+                                  RenderInline {FONT} at (0,0) size 0x0
+                                    RenderInline {FONT} at (0,0) size 0x0
+                                      RenderInline {FONT} at (0,0) size 0x0
+                                        RenderInline {FONT} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,754) size 784x20
+        RenderBlock {DIV} at (0,0) size 784x20
           RenderText {#text} at (0,0) size 89x19
             text run at (0,0) width 89: "div after table"
       RenderBlock (anonymous) at (0,774) size 784x20
@@ -429,14 +448,37 @@ layer at (0,0) size 800x1054
                                             RenderInline {FONT} at (0,0) size 0x0
                                               RenderInline {FONT} at (0,0) size 0x0
                                                 RenderInline {FONT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,900) size 784x50
+      RenderBlock (anonymous) at (0,900) size 784x30
         RenderTable {TABLE} at (0,0) size 62x30 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 60x28
             RenderTableRow {TR} at (0,2) size 60x24
               RenderTableCell {TD} at (2,2) size 56x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 52x19
                   text run at (2,2) width 52: "table-11"
-        RenderBlock {DIV} at (0,30) size 784x20
+      RenderBlock (anonymous) at (0,930) size 784x0
+        RenderInline {FONT} at (0,0) size 0x0
+          RenderInline {FONT} at (0,0) size 0x0
+            RenderInline {FONT} at (0,0) size 0x0
+              RenderInline {FONT} at (0,0) size 0x0
+                RenderInline {FONT} at (0,0) size 0x0
+                  RenderInline {FONT} at (0,0) size 0x0
+                    RenderInline {FONT} at (0,0) size 0x0
+                      RenderInline {FONT} at (0,0) size 0x0
+                        RenderInline {FONT} at (0,0) size 0x0
+                          RenderInline {FONT} at (0,0) size 0x0
+                            RenderInline {FONT} at (0,0) size 0x0
+                              RenderInline {FONT} at (0,0) size 0x0
+                                RenderInline {FONT} at (0,0) size 0x0
+                                  RenderInline {FONT} at (0,0) size 0x0
+                                    RenderInline {FONT} at (0,0) size 0x0
+                                      RenderInline {FONT} at (0,0) size 0x0
+                                        RenderInline {FONT} at (0,0) size 0x0
+                                          RenderInline {FONT} at (0,0) size 0x0
+                                            RenderInline {FONT} at (0,0) size 0x0
+                                              RenderInline {FONT} at (0,0) size 0x0
+                                                RenderInline {FONT} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,930) size 784x20
+        RenderBlock {DIV} at (0,0) size 784x20
           RenderText {#text} at (0,0) size 89x19
             text run at (0,0) width 89: "div after table"
       RenderBlock (anonymous) at (0,950) size 784x20

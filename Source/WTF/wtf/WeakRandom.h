@@ -103,8 +103,8 @@ public:
         return false;
     }
 
-    static unsigned lowOffset() { return OBJECT_OFFSETOF(WeakRandom, m_low); }
-    static unsigned highOffset() { return OBJECT_OFFSETOF(WeakRandom, m_high); }
+    static constexpr unsigned lowOffset() { return OBJECT_OFFSETOF(WeakRandom, m_low); }
+    static constexpr unsigned highOffset() { return OBJECT_OFFSETOF(WeakRandom, m_high); }
 
     static constexpr uint64_t nextState(uint64_t x, uint64_t y)
     {

@@ -1,0 +1,39 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: GPUPipelineError: unclippedDepth used without enabling depth-clip-contro feature
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600 [color=#99DDBBCC] [bgcolor=#102030E0]
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,224) size 84x17
+        text run at (0,224) width 49: "\x{D83F}\x{DDAD}\x{701A}\x{45D}\x{81FF}"
+        text run at (48,224) width 10 RTL: "\x{6D2}"
+        text run at (57,224) width 27: "\x{FFC}\x{507D}"
+      RenderText {#text} at (83,224) size 70x17
+        text run at (83,224) width 70: "\x{C76}\x{D83D}\x{DEB9}\x{A2B7}\x{6036}\x{BD24}"
+      RenderImage {IMG} at (389,61) size 8x176
+      RenderText {#text} at (396,224) size 72x17
+        text run at (396,224) width 72: "\x{E562}\x{5CF0}\x{D83E}\x{DD69}\x{B2F}\x{8AA8}"
+      RenderText {#text} at (467,224) size 129x17
+        text run at (467,224) width 50: "\x{82D0}\x{5AFA}t\x{6C3A}"
+        text run at (516,224) width 12 RTL: "\x{72C}\x{A80B}"
+        text run at (527,224) width 69: "\x{D83E}\x{DEF8}\x{D40}\x{6760}\x{E6D}\x{D83F}\x{DC2A}"
+      RenderText {#text} at (595,224) size 27x17
+        text run at (595,224) width 27: "\x{D1D6}\x{D83F}\x{DD9A}"
+      RenderText {#text} at (621,224) size 65x17
+        text run at (621,224) width 9 RTL: "\x{7E3}"
+        text run at (629,224) width 57: "\x{64C7}\x{B5F6}\x{59D}\x{D83D}\x{DF8E}\x{4D3C}"
+      RenderText {#text} at (685,224) size 19x17
+        text run at (685,224) width 19: "\x{536}\x{1C68}"
+      RenderText {#text} at (0,224) size 771x43
+        text run at (703,224) width 68: "\x{D1A2}\x{9F8A}\x{919C}\x{D83E}\x{DE0E}\x{D83F}\x{DDDC}"
+        text run at (0,250) width 41: "\x{2527}\x{571C}\x{D83F}\x{DD7D}"
+      RenderText {#text} at (40,250) size 105x17
+        text run at (40,250) width 105: "\x{8AA1}\x{7F21}\x{EAF8}\x{D83E}\x{DDE6}\x{D83F}\x{DECA}\x{B9C}\x{E06}\x{ECDF}"
+      RenderText {#text} at (144,250) size 98x17
+        text run at (144,250) width 98: "\x{9D57}\x{A732}\x{9996}\x{D83F}\x{DCCD}\x{6309}\x{CCF}\x{947}"
+      RenderText {#text} at (241,250) size 36x17
+        text run at (241,250) width 36: "\x{43B2}\x{D83D}\x{DE4B}"
+      RenderText {#text} at (276,250) size 45x17
+        text run at (276,250) width 45: "\x{8DB4}\x{FD6}\x{D83E}\x{DE90}"
+layer at (161,8) size 237x237
+  RenderVideo {VIDEO} at (152,0) size 238x237

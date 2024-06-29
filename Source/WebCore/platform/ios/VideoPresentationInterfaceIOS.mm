@@ -40,6 +40,7 @@
 #import <objc/message.h>
 #import <objc/runtime.h>
 #import <pal/spi/ios/UIKitSPI.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -213,8 +214,8 @@ void VideoPresentationInterfaceIOS::doSetup()
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-#if !PLATFORM(WATCHOS) && !ENABLE(LINEAR_MEDIA_PLAYER)
-    if (![[m_parentView window] _isHostedInAnotherProcess] && !m_window) {
+#if !PLATFORM(WATCHOS)
+    if (![[m_parentView window] _isHostedInAnotherProcess] && !m_window && !PAL::currentUserInterfaceIdiomIsVision()) {
         m_window = adoptNS([PAL::allocUIWindowInstance() initWithWindowScene:[[m_parentView window] windowScene]]);
         [m_window setBackgroundColor:clearUIColor()];
         if (!m_viewController)
@@ -229,7 +230,7 @@ void VideoPresentationInterfaceIOS::doSetup()
         [m_window setWindowLevel:textEffectsWindowLevel - 1];
         [m_window makeKeyAndVisible];
     }
-#endif // !PLATFORM(WATCHOS) && !ENABLE(LINEAR_MEDIA_PLAYER)
+#endif // !PLATFORM(WATCHOS)
 
     if (!m_playerLayerView)
         m_playerLayerView = adoptNS([allocWebAVPlayerLayerViewInstance() init]);
@@ -614,6 +615,7 @@ void VideoPresentationInterfaceIOS::willStartPictureInPicture()
     if (auto model = videoPresentationModel()) {
         if (!m_hasVideoContentLayer)
             model->requestVideoContentLayer();
+        model->setRequiresTextTrackRepresentation(true);
         model->willEnterPictureInPicture();
     }
 }
@@ -832,18 +834,26 @@ void VideoPresentationInterfaceIOS::finalizeSetup()
             if (!m_hasVideoContentLayer && m_targetMode.hasVideo()) {
                 m_finalizeSetupNeedsVideoContentLayer = true;
                 model->requestVideoContentLayer();
+                model->setRequiresTextTrackRepresentation(true);
                 return;
             }
             m_finalizeSetupNeedsVideoContentLayer = false;
             if (m_hasVideoContentLayer && !m_targetMode.hasVideo()) {
                 m_finalizeSetupNeedsReturnVideoContentLayer = true;
                 model->returnVideoContentLayer();
+                model->setRequiresTextTrackRepresentation(false);
                 return;
             }
             m_finalizeSetupNeedsReturnVideoContentLayer = false;
             model->didSetupFullscreen();
         }
     });
+}
+
+void VideoPresentationInterfaceIOS::failedToRestoreFullscreen()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
 }
 
 void VideoPresentationInterfaceIOS::returnToStandby()
@@ -869,7 +879,12 @@ void VideoPresentationInterfaceIOS::setMode(HTMLMediaElementEnums::VideoFullscre
     // Mode::mode() can be 3 (VideoFullscreenModeStandard | VideoFullscreenModePictureInPicture).
     // HTMLVideoElement does not expect such a value in the fullscreenModeChanged() callback.
     auto model = videoPresentationModel();
-    if (model && shouldNotifyModel)
+    if (!model)
+        return;
+
+    model->setRequiresTextTrackRepresentation(m_currentMode.hasVideo());
+
+    if (shouldNotifyModel)
         model->fullscreenModeChanged(mode);
 }
 
@@ -880,7 +895,12 @@ void VideoPresentationInterfaceIOS::clearMode(HTMLMediaElementEnums::VideoFullsc
 
     m_currentMode.clearMode(mode);
     auto model = videoPresentationModel();
-    if (model && shouldNotifyModel)
+    if (!model)
+        return;
+
+    model->setRequiresTextTrackRepresentation(m_currentMode.hasVideo());
+
+    if (shouldNotifyModel)
         model->fullscreenModeChanged(m_currentMode.mode());
 }
 

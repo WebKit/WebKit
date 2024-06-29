@@ -6,6 +6,7 @@ PASS Fetch with POST with Blob body
 PASS Fetch with POST with ArrayBuffer body
 PASS Fetch with POST with Uint8Array body
 PASS Fetch with POST with Int8Array body
+FAIL Fetch with POST with Float16Array body Can't find variable: Float16Array
 PASS Fetch with POST with Float32Array body
 PASS Fetch with POST with Float64Array body
 PASS Fetch with POST with DataView body

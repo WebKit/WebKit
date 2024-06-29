@@ -140,7 +140,6 @@ public:
             "website-data-manager", websiteDataManager.get(),
 #if PLATFORM(GTK)
             "process-swap-on-cross-site-navigation-enabled", TRUE,
-            "use-system-appearance-for-scrollbars", FALSE,
 #endif
             "memory-pressure-settings", s_memoryPressureSettings,
             nullptr)));

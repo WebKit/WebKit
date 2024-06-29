@@ -189,7 +189,7 @@ class _Worker(object):
             if line.lstrip().startswith('objc['):
                 continue
             result += line + '\n'
-        return result
+        return result.rstrip()
 
     def _run_single_test(self, binary_name, test):
         server_process = ServerProcess(
@@ -260,7 +260,7 @@ class _Worker(object):
                     line = self.EXCEEDED_LOG_LINE_MESSAGE.format(self.log_limit)
 
                 _log.error(line)
-                output_buffer += line
+                output_buffer += line + '\n'
 
                 if line_count > self.log_limit:
                     break

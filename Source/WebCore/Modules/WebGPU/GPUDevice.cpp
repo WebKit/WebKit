@@ -602,9 +602,11 @@ bool GPUDevice::addEventListener(const AtomString& eventType, Ref<EventListener>
     return result;
 }
 
+#if ENABLE(VIDEO)
 WeakPtr<GPUExternalTexture> GPUDevice::takeExternalTextureForVideoElement(const HTMLVideoElement& element)
 {
     return m_videoElementToExternalTextureMap.take(element);
 }
+#endif
 
 }

@@ -113,35 +113,26 @@ void RemoteRealtimeMediaSourceProxy::applyConstraints(const MediaConstraints& co
     m_connection->send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints { m_identifier, constraints }, 0);
 }
 
+struct RemoteRealtimeMediaSourceProxy::PromiseConverter {
+    static auto convertError(IPC::Error)
+    {
+        return makeUnexpected(String { "IPC Connection closed"_s });
+    }
+};
+
 Ref<WebCore::RealtimeMediaSource::TakePhotoNativePromise> RemoteRealtimeMediaSourceProxy::takePhoto(PhotoSettings&& settings)
 {
-    return m_connection->sendWithPromisedReply(Messages::UserMediaCaptureManagerProxy::TakePhoto(identifier(), WTFMove(settings)))->whenSettled(RunLoop::current(), [](Messages::UserMediaCaptureManagerProxy::TakePhoto::Promise::Result&& result) {
-        if (result)
-            return WebCore::RealtimeMediaSource::TakePhotoNativePromise::createAndSettle(WTFMove(result.value()));
-
-        return WebCore::RealtimeMediaSource::TakePhotoNativePromise::createAndReject(String("IPC Connection closed"_s));
-    });
+    return m_connection->sendWithPromisedReply<PromiseConverter>(Messages::UserMediaCaptureManagerProxy::TakePhoto { identifier(), WTFMove(settings) });
 }
 
 Ref<WebCore::RealtimeMediaSource::PhotoCapabilitiesNativePromise> RemoteRealtimeMediaSourceProxy::getPhotoCapabilities()
 {
-    return m_connection->sendWithPromisedReply(Messages::UserMediaCaptureManagerProxy::GetPhotoCapabilities(identifier()))
-    ->whenSettled(RunLoop::current(), [](Messages::UserMediaCaptureManagerProxy::GetPhotoCapabilities::Promise::Result&& result) {
-        if (result)
-            return WebCore::RealtimeMediaSource::PhotoCapabilitiesNativePromise::createAndSettle(WTFMove(result.value()));
-
-        return WebCore::RealtimeMediaSource::PhotoCapabilitiesNativePromise::createAndReject(String("IPC Connection closed"_s));
-    });
+    return m_connection->sendWithPromisedReply<PromiseConverter>(Messages::UserMediaCaptureManagerProxy::GetPhotoCapabilities { identifier() });
 }
 
 Ref<WebCore::RealtimeMediaSource::PhotoSettingsNativePromise> RemoteRealtimeMediaSourceProxy::getPhotoSettings()
 {
-    return m_connection->sendWithPromisedReply(Messages::UserMediaCaptureManagerProxy::GetPhotoSettings(identifier()))->whenSettled(RunLoop::current(), [](Messages::UserMediaCaptureManagerProxy::GetPhotoSettings::Promise::Result&& result) {
-        if (result)
-            return WebCore::RealtimeMediaSource::PhotoSettingsNativePromise::createAndSettle(WTFMove(result.value()));
-
-        return WebCore::RealtimeMediaSource::PhotoSettingsNativePromise::createAndReject(String("IPC Connection closed"_s));
-    });
+    return m_connection->sendWithPromisedReply<PromiseConverter>(Messages::UserMediaCaptureManagerProxy::GetPhotoSettings { identifier() });
 }
 
 void RemoteRealtimeMediaSourceProxy::applyConstraintsSucceeded()
@@ -200,6 +191,13 @@ void RemoteRealtimeMediaSourceProxy::didFail(CaptureSourceError&& reason)
     m_failureReason = WTFMove(reason);
     if (m_callback)
         m_callback(WebCore::CaptureSourceError(m_failureReason));
+}
+
+bool RemoteRealtimeMediaSourceProxy::isPowerEfficient() const
+{
+    auto syncResult = m_connection->sendSync(Messages::UserMediaCaptureManagerProxy::IsPowerEfficient { identifier() }, 0, GPUProcessConnection::defaultTimeout);
+    auto [isPowerEfficient] = syncResult.takeReplyOr(false);
+    return isPowerEfficient;
 }
 
 }

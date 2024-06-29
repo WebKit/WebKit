@@ -130,6 +130,12 @@ void Pasteboard::clear()
 void Pasteboard::write(const PasteboardWebContent& content)
 {
     Vector<String> types;
+    Vector<String> clientTypes;
+    Vector<RefPtr<WebCore::SharedBuffer>> clientData;
+    for (size_t it = 0; it < content.clientTypesAndData.size(); ++it) {
+        clientTypes.append(content.clientTypesAndData[it].first);
+        clientData.append(content.clientTypesAndData[it].second);
+    }
 
     if (content.canSmartCopyOrDelete)
         types.append(WebSmartPastePboardType);
@@ -148,7 +154,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         types.append(String(legacyHTMLPasteboardType()));
     if (!content.dataInStringFormat.isNull())
         types.append(String(legacyStringPasteboardType()));
-    types.appendVector(content.clientTypes);
+    types.appendVector(clientTypes);
     types.append(PasteboardCustomData::cocoaType());
 
     m_changeCount = platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName, context());
@@ -156,9 +162,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // FIXME: The following code should be refactored, such that it only requires a single call out to the client layer.
     // In WebKit2, this currently results in many unnecessary synchronous round-trip IPC messages.
 
-    ASSERT(content.clientTypes.size() == content.clientData.size());
-    for (size_t i = 0, size = content.clientTypes.size(); i < size; ++i)
-        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.clientData[i].get(), content.clientTypes[i], m_pasteboardName, context());
+    ASSERT(clientTypes.size() == clientData.size());
+    for (size_t i = 0, size = clientTypes.size(); i < size; ++i)
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(clientData[i].get(), clientTypes[i], m_pasteboardName, context());
     if (content.canSmartCopyOrDelete)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(nullptr, WebSmartPastePboardType, m_pasteboardName, context());
     if (content.dataInWebArchiveFormat) {

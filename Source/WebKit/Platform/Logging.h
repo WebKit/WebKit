@@ -52,6 +52,7 @@ extern "C" {
     M(ContentObservation) \
     M(ContextMenu) \
     M(DisplayLink) \
+    M(DisplayLists) \
     M(DiskPersistency) \
     M(DragAndDrop) \
     M(EME) \
@@ -118,7 +119,6 @@ extern "C" {
     M(TextInput) \
     M(TextInteraction) \
     M(Translation) \
-    M(UnifiedTextReplacement) \
     M(UIHitTesting) \
     M(ViewGestures) \
     M(ViewState) \

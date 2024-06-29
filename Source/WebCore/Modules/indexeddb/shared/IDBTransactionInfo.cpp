@@ -111,7 +111,7 @@ String IDBTransactionInfo::loggingString() const
         ASSERT_NOT_REACHED();
     }
     
-    return makeString("Transaction: ", m_identifier.loggingString(), " mode ", modeString, " newVersion ", m_newVersion);
+    return makeString("Transaction: "_s, m_identifier.loggingString(), " mode "_s, modeString, " newVersion "_s, m_newVersion);
 }
 
 #endif

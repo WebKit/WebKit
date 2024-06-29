@@ -34,7 +34,17 @@
 #include "SecItemResponseData.h"
 #include "SecItemShimProxyMessages.h"
 #include <Security/SecBase.h>
+#include <Security/SecIdentity.h>
 #include <Security/SecItem.h>
+#include <WebCore/CertificateInfo.h>
+#include <wtf/cf/VectorCF.h>
+
+#if HAVE(SEC_KEYCHAIN)
+#import <Security/SecKeychainItem.h>
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+WTF_DECLARE_CF_TYPE_TRAIT(SecKeychainItem);
+ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
 
 namespace WebKit {
 
@@ -92,9 +102,34 @@ void SecItemShimProxy::secItemRequest(IPC::Connection& connection, const SecItem
         break;
 
     case SecItemRequestData::Type::CopyMatching: {
-        CFTypeRef resultObject = nullptr;
-        OSStatus resultCode = SecItemCopyMatching(request.query(), &resultObject);
-        response(SecItemResponseData { resultCode, adoptCF(resultObject) });
+        CFTypeRef resultRawObject = nullptr;
+        OSStatus resultCode = SecItemCopyMatching(request.query(), &resultRawObject);
+        auto result = adoptCF(resultRawObject);
+
+        SecItemResponseData::Result resultData;
+        if (result) {
+            auto resultType = CFGetTypeID(result.get());
+            CFArrayRef resultArray = (CFArrayRef)result.get();
+            if (resultType == CFArrayGetTypeID() && CFArrayGetCount(resultArray)) {
+                auto containedType = CFGetTypeID(CFArrayGetValueAtIndex(resultArray, 0));
+                if (containedType == SecCertificateGetTypeID()) {
+                    resultData = Vector<RetainPtr<SecCertificateRef>>(makeVector(resultArray, [] (SecCertificateRef element) {
+                        return std::optional(RetainPtr<SecCertificateRef> { element });
+                    }));
+#if HAVE(SEC_KEYCHAIN)
+                    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+                } else if (containedType == SecKeychainItemGetTypeID()) {
+                    resultData = Vector<RetainPtr<SecKeychainItemRef>>(makeVector(resultArray, [] (SecKeychainItemRef element) {
+                        return std::optional(RetainPtr<SecKeychainItemRef> { element });
+                    }));
+                    ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
+                } else
+                    resultData = WTFMove(result);
+            } else
+                resultData = WTFMove(result);
+        }
+        response(SecItemResponseData { resultCode, WTFMove(resultData) });
         break;
     }
 

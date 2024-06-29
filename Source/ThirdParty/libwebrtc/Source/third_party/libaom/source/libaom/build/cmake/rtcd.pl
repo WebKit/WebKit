@@ -392,7 +392,7 @@ if ($opts{arch} eq 'x86') {
   @ALL_ARCHS = filter(qw/neon/);
   arm;
 } elsif ($opts{arch} eq 'arm64' ) {
-  @ALL_ARCHS = filter(qw/neon arm_crc32 neon_dotprod neon_i8mm sve/);
+  @ALL_ARCHS = filter(qw/neon arm_crc32 neon_dotprod neon_i8mm sve sve2/);
   @REQUIRES = filter(qw/neon/);
   &require(@REQUIRES);
   arm;

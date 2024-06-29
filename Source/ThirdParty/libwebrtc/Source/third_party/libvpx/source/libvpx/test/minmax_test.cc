@@ -13,6 +13,7 @@
 
 #include "third_party/googletest/src/include/gtest/gtest.h"
 
+#include "vpx_config.h"
 #include "./vpx_dsp_rtcd.h"
 #include "vpx/vpx_integer.h"
 #include "vpx_mem/vpx_mem.h"

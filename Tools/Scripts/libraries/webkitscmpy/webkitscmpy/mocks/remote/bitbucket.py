@@ -249,7 +249,7 @@ class BitBucket(mocks.Requests):
                     contextLines=3,
                     whitespace='SHOW',
                     diffs=[dict(
-                        source=dict(toString='ChangeLog'),
+                        source=None,
                         destination=dict(toString='ChangeLog'),
                         hunks=[dict(
                             sourceLine=1,
@@ -353,9 +353,11 @@ class BitBucket(mocks.Requests):
                 return mocks.Response.fromJson({})
             if method == 'PUT':
                 self.pull_requests[existing].update(json)
-                self.pull_requests[existing]['fromRef']['displayId'] = '/'.join(json['fromRef']['id'].split('/')[-2:])
                 self.pull_requests[existing]['fromRef']['latestCommit'] = json['fromRef']['latestCommit']
-                self.pull_requests[existing]['toRef']['displayId'] = '/'.join(json['toRef']['id'].split('/')[-2:])
+                if 'id' in json['fromRef']:
+                    self.pull_requests[existing]['fromRef']['displayId'] = '/'.join(json['fromRef']['id'].split('/')[-2:])
+                if 'id' in json['toRef']:
+                    self.pull_requests[existing]['toRef']['displayId'] = '/'.join(json['toRef']['id'].split('/')[-2:])
             if len(split_url) < 11:
                 return mocks.Response.fromJson({key: value for key, value in self.pull_requests[existing].items() if key not in ('commit', 'activities')})
 

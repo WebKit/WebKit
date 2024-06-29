@@ -49,7 +49,6 @@
 
 .content-view.recording > header > .slider-container > .slider-value {
     font-family: Menlo, monospace;
-    font-family: 11px;
 }
 
 .content-view.recording > header > .slider-container > input[type=range] {

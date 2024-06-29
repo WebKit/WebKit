@@ -85,7 +85,7 @@ void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjecti
         auto scriptPairs = getSourcePairsForParameters(parameters, m_extension);
         Ref executionWorld = toContentWorld(parameters.world);
 
-        executeScript(scriptPairs, webView, executionWorld, tab.get(), parameters, *this, [completionHandler = WTFMove(completionHandler)](InjectionResults&& injectionResults) mutable {
+        executeScript(scriptPairs, webView, executionWorld, *tab, parameters, *this, [completionHandler = WTFMove(completionHandler)](InjectionResults&& injectionResults) mutable {
             completionHandler(WTFMove(injectionResults));
         });
     });
@@ -283,8 +283,8 @@ void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>
         }
 
         auto removeUserScriptsAndStyleSheets = ^(String scriptID) {
-            RefPtr registeredScript = m_registeredScriptsMap.take(scriptID);
-            registeredScript->removeUserScriptsAndStyleSheets(scriptID);
+            if (RefPtr registeredScript = m_registeredScriptsMap.take(scriptID))
+                registeredScript->removeUserScriptsAndStyleSheets(scriptID);
         };
 
         for (auto& scriptID : ids)

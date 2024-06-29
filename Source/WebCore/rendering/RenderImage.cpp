@@ -412,7 +412,7 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
     contentChanged(ImageChanged);
 }
 
-void RenderImage::notifyFinished(CachedResource& newImage, const NetworkLoadMetrics& metrics)
+void RenderImage::notifyFinished(CachedResource& newImage, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     if (renderTreeBeingDestroyed())
         return;
@@ -428,7 +428,7 @@ void RenderImage::notifyFinished(CachedResource& newImage, const NetworkLoadMetr
     if (RefPtr image = dynamicDowncast<HTMLImageElement>(element()))
         page().didFinishLoadingImageForElement(*image);
 
-    RenderReplaced::notifyFinished(newImage, metrics);
+    RenderReplaced::notifyFinished(newImage, metrics, loadWillContinueInAnotherProcess);
 }
 
 void RenderImage::setImageDevicePixelRatio(float factor)

@@ -1698,7 +1698,7 @@ void vp9_pick_inter_mode(VP9_COMP *cpi, MACROBLOCK *x, TileDataEnc *tile_data,
   MV_REFERENCE_FRAME usable_ref_frame, second_ref_frame;
   int_mv frame_mv[MB_MODE_COUNT][MAX_REF_FRAMES];
   uint8_t mode_checked[MB_MODE_COUNT][MAX_REF_FRAMES];
-  struct buf_2d yv12_mb[4][MAX_MB_PLANE];
+  struct buf_2d yv12_mb[4][MAX_MB_PLANE] = { 0 };
   RD_COST this_rdc, best_rdc;
   // var_y and sse_y are saved to be used in skipping checking
   unsigned int var_y = UINT_MAX;

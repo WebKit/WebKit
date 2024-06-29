@@ -88,7 +88,8 @@ class ProgramExecutableImpl : angle::NonCopyable
     virtual void getUniformuiv(const gl::Context *context,
                                GLint location,
                                GLuint *params) const                                           = 0;
-    virtual void waitForPostLinkTasks(const gl::Context *context) {}
+    // Optional. Implement in backends that fill |postLinkSubTasksOut| in |LinkTask|.
+    virtual void waitForPostLinkTasks(const gl::Context *context) { UNIMPLEMENTED(); }
     const gl::ProgramExecutable *getExecutable() const { return mExecutable; }
 
   protected:

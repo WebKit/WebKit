@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/UUID.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 namespace WebCore {
 
@@ -89,7 +90,7 @@ RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(const String& 
         return nullptr;
     }
 
-    RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:certificate->baseAddress() length:certificate->byteLength()]);
+    RetainPtr certificateData = toNSData(certificate->span());
     NSString* assetStr = keyID;
     RetainPtr<NSData> assetID = [NSData dataWithBytes: [assetStr cStringUsingEncoding:NSUTF8StringEncoding] length:[assetStr lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
     NSError* nsError = 0;
@@ -110,9 +111,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    auto keyRequestBuffer = ArrayBuffer::create([keyRequest bytes], [keyRequest length]);
-    unsigned byteLength = keyRequestBuffer->byteLength();
-    return Uint8Array::tryCreate(WTFMove(keyRequestBuffer), 0, byteLength);
+    return Uint8Array::create(ArrayBuffer::create(span(keyRequest.get())));
 }
 
 void CDMSessionAVFoundationObjC::releaseKeys()
@@ -121,7 +120,7 @@ void CDMSessionAVFoundationObjC::releaseKeys()
 
 bool CDMSessionAVFoundationObjC::update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode)
 {
-    RetainPtr<NSData> keyData = adoptNS([[NSData alloc] initWithBytes:key->baseAddress() length:key->byteLength()]);
+    RetainPtr keyData = toNSData(key->span());
     [[m_request dataRequest] respondWithData:keyData.get()];
     [m_request finishLoading];
     errorCode = MediaPlayer::NoError;

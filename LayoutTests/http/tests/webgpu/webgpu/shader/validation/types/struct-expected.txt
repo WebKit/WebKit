@@ -1,0 +1,68 @@
+
+PASS :no_direct_recursion:target="i32"
+PASS :no_direct_recursion:target="S"
+PASS :no_indirect_recursion:target="i32"
+PASS :no_indirect_recursion:target="S"
+PASS :no_indirect_recursion_via_array_element:target="i32"
+PASS :no_indirect_recursion_via_array_element:target="S"
+PASS :no_indirect_recursion_via_array_size:target="S1"
+PASS :no_indirect_recursion_via_array_size:target="S2"
+PASS :no_indirect_recursion_via_struct_attribute:target="S1";attribute="align"
+PASS :no_indirect_recursion_via_struct_attribute:target="S1";attribute="location"
+PASS :no_indirect_recursion_via_struct_attribute:target="S1";attribute="size"
+PASS :no_indirect_recursion_via_struct_attribute:target="S2";attribute="align"
+PASS :no_indirect_recursion_via_struct_attribute:target="S2";attribute="location"
+PASS :no_indirect_recursion_via_struct_attribute:target="S2";attribute="size"
+PASS :no_indirect_recursion_via_struct_member_nested_in_alias:target="i32"
+PASS :no_indirect_recursion_via_struct_member_nested_in_alias:target="A"
+PASS :structures:case="bool"
+PASS :structures:case="u32"
+PASS :structures:case="i32"
+PASS :structures:case="f32"
+PASS :structures:case="f16"
+PASS :structures:case="vec2u"
+PASS :structures:case="vec3i"
+PASS :structures:case="vec4f"
+PASS :structures:case="vec4h"
+PASS :structures:case="mat2x2f"
+PASS :structures:case="mat3x4h"
+PASS :structures:case="atomic_u32"
+PASS :structures:case="atomic_i32"
+PASS :structures:case="array_u32_4"
+PASS :structures:case="array_u32"
+PASS :structures:case="array_u32_not_last"
+PASS :structures:case="array_u32_override"
+PASS :structures:case="structure"
+FAIL :structures:case="structure_structure_rta" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+        struct S { x : array<u32> }
+        struct T { x : S }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/struct.spec.js:298:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :structures:case="pointer"
+PASS :structures:case="texture"
+PASS :structures:case="sampler"
+PASS :structures:case="sampler_comparison"
+PASS :structures:case="many_members"
+PASS :structures:case="trailing_comma"
+PASS :structures:case="empty"
+PASS :structures:case="name_collision1"
+PASS :structures:case="name_collision2"
+PASS :structures:case="name_collision3"
+PASS :structures:case="member_collision"
+PASS :structures:case="no_name"
+PASS :structures:case="missing_l_brace"
+PASS :structures:case="missing_r_brace"
+PASS :structures:case="bad_name"
+PASS :structures:case="bad_delimiter"
+PASS :structures:case="missing_delimiter"
+PASS :structures:case="bad_member_decl"
+

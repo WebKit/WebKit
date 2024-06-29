@@ -101,7 +101,9 @@ private:
 
     // FIXME: Investigate whether we should allocate a hunk of virtual memory
     // and hand out chunks of it to NeverDestroyed instead, to reduce fragmentation.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_storage;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 };
 
 // FIXME: It's messy to have to repeat the whole class just to make this "lazy" version.
@@ -174,7 +176,9 @@ private:
 
     // FIXME: Investigate whether we should allocate a hunk of virtual memory
     // and hand out chunks of it to NeverDestroyed instead, to reduce fragmentation.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_storage;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 };
 
 template<typename T> NeverDestroyed(T) -> NeverDestroyed<T>;

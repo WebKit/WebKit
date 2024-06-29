@@ -38,6 +38,7 @@ namespace Style {
 
 enum class ForVisitedLink : bool;
 
+StyleColor colorFromValueID(const Document&, RenderStyle&, CSSValueID, Style::ForVisitedLink);
 StyleColor colorFromPrimitiveValue(const Document&, RenderStyle&, const CSSPrimitiveValue&, Style::ForVisitedLink);
 Color colorFromPrimitiveValueWithResolvedCurrentColor(const Document&, RenderStyle&, const CSSPrimitiveValue&);
 

@@ -47,7 +47,11 @@
 #include <sys/mman.h>
 #endif
 
+#if ENABLE(MPROTECT_RX_TO_RWX)
+#define EXECUTABLE_POOL_WRITABLE false
+#else
 #define EXECUTABLE_POOL_WRITABLE true
+#endif
 
 namespace JSC {
 
@@ -110,6 +114,10 @@ ALWAYS_INLINE bool isJITPC(void* pc)
 
 JS_EXPORT_PRIVATE void dumpJITMemory(const void*, const void*, size_t);
 
+#if ENABLE(MPROTECT_RX_TO_RWX)
+JS_EXPORT_PRIVATE void* performJITMemcpyWithMProtect(void *dst, const void *src, size_t n);
+#endif
+
 static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n)
 {
 #if CPU(ARM64)
@@ -123,6 +131,10 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
 
         if (UNLIKELY(Options::dumpJITMemoryPath()))
             dumpJITMemory(dst, src, n);
+
+#if ENABLE(MPROTECT_RX_TO_RWX)
+        return performJITMemcpyWithMProtect(dst, src, n);
+#endif
 
         if (g_jscConfig.useFastJITPermissions) {
             threadSelfRestrictRWXToRW();
@@ -177,6 +189,11 @@ public:
     static size_t committedByteCount();
 
     Lock& getLock() const;
+
+#if ENABLE(MPROTECT_RX_TO_RWX)
+    void startWriting(const void* start, size_t sizeInBytes);
+    void finishWriting(const void* start, size_t sizeInBytes);
+#endif
 
 #if ENABLE(JUMP_ISLANDS)
     JS_EXPORT_PRIVATE void* getJumpIslandToUsingJITMemcpy(void* from, void* newDestination);

@@ -29,6 +29,7 @@ Anupam Pandey <anupam.pandey@ittiam.com>
 Apurve Kumar Pandey <apurve.pandey@ittiam.com>
 Arild Fuldseth <arilfuld@cisco.com>
 Aron Rosenberg <arosenberg@logitech.com>
+Arpad Panyik <Arpad.Panyik@arm.com>
 Arun Singh Negi <arun.negi@ittiam.com>
 Attila Nagy <attilanagy@google.com>
 Balaji Anandapadmanaban <balaji.anandapadmanaban@arm.com>
@@ -50,6 +51,7 @@ Cyril Concolato <cconcolato@netflix.com>
 Dake He <dkhe@google.com>
 Damon Shen <yjshen@google.com>
 Dandan Ding <vickyddding@gmail.com>
+Daniel Cheng <dcheng@chromium.org>
 Daniele Castagna <dcastagna@chromium.org>
 Daniel Kang <ddkang@google.com>
 Daniel Max Valenzuela <daniel.vt@samsung.com>
@@ -93,9 +95,11 @@ Guillermo Ballester Valor <gbvalor@gmail.com>
 Hamsalekha S <hamsalekha.s@ittiam.com>
 Hangyu Kuang <hkuang@google.com>
 Hanno Böck <hanno@hboeck.de>
+Hari Limaye <hari.limaye@arm.com>
 Harish Mahendrakar <harish.mahendrakar@ittiam.com>
 Henrik Lundin <hlundin@google.com>
 Hien Ho <hienho@google.com>
+Hirokazu Honda <hiroh@google.com>
 Hui Su <huisu@google.com>
 Ilie Halip <ilie.halip@gmail.com>
 Ilya Brailovskiy <brailovs@lab126.com>
@@ -122,7 +126,7 @@ Jeff Muizelaar <jmuizelaar@mozilla.com>
 Jeff Petkau <jpet@chromium.org>
 Jerome Jiang <jianj@google.com>
 Jia Jia <jia.jia@linaro.org>
-Jian Zhou <zhoujian@google.com>
+Jian Zhou <zhoujian@fb.com>
 Jim Bankoski <jimbankoski@google.com>
 Jingning Han <jingning@google.com>
 Joe Young <joeyoung@google.com>
@@ -150,6 +154,7 @@ Larisa Markeeva <lmarkeeva@google.com>
 Lauren Partin <lpartin@google.com>
 Lawrence Velázquez <larryv@macports.org>
 leolzhao <leolzhao@tencent.com>
+Leon Kollar <Leon.Kollar@arm.com>
 L. E. Segovia <amy@amyspark.me>
 Lester Lu <kslu@google.com>
 liang zhao <leolzhao@tencent.com>
@@ -191,7 +196,6 @@ Morton Jonuschat <yabawock@gmail.com>
 Mudassir Galaganath <mudassir.galaganath@ittiam.com>
 Mufaddal Chakera <mufaddal.chakera@ittiam.com>
 Narayan Kalaburgi <narayan.kalaburgi@ittiam.com>
-Narayan <narayan.kalaburgi@ittiam.com>
 Nathan E. Egge <negge@mozilla.com>
 Neeraj Gadgil <neeraj.gadgil@ittiam.com>
 Neha Mary Thomas <neha.marythomas@ittiam.com>
@@ -214,6 +218,7 @@ Peter Boström <pbos@google.com>
 Peter de Rivaz <peter.derivaz@gmail.com>
 Peter Kasting <pkasting@chromium.org>
 Philip Jägenstedt <philipj@opera.com>
+Philippe Antoine <p.antoine@catenacyber.fr>
 Priit Laes <plaes@plaes.org>
 Qiu Jianlin <jianlin.qiu@intel.com>
 Rachel Barker <rachelbarker@google.com>
@@ -233,6 +238,7 @@ Ronald S. Bultje <rsbultje@gmail.com>
 Rostislav Pehlivanov <rpehlivanov@mozilla.com>
 Ruiling Song <ruiling.song@intel.com>
 Rui Ueyama <ruiu@google.com>
+Ruoyu Zhong <zhongruoyu@outlook.com>
 Rupert Swarbrick <rupert.swarbrick@argondesign.com>
 Ryan Lei <ryanlei@fb.com>
 Ryan Overbeck <rover@google.com>
@@ -242,8 +248,10 @@ Salome Thirot <salome.thirot@arm.com>
 Sami Boukortt <sboukortt@google.com>
 Sami Pietilä <samipietila@google.com>
 Samuel Thibault <samuel.thibault@ens-lyon.org>
+Samuthirika S <samuthirika.s@ittiam.com>
 Sarah Parker <sarahparker@google.com>
 Sasi Inguva <isasi@google.com>
+Satheesh Kumar <satheesh.kumar@ittiam.com>
 Satish Kumar Suman <satish.suman@ittiam.com>
 Scott Graham <scottmg@chromium.org>
 Scott LaVarnway <slavarnway@google.com>
@@ -261,8 +269,9 @@ Soo-Chul Han <shan@vidyo.com>
 Stanislav Vitvitskyy <vitvitskyy@google.com>
 Stefan Holmer <holmer@google.com>
 Steinar Midtskogen <stemidts@cisco.com>
+Steve Lhomme <robux4@gmail.com>
 Suman Sunkara <sunkaras@google.com>
-susannad <susannad@google.com>
+Susanna D'Souza <susannad@google.com>
 Taekhyun Kim <takim@nvidia.com>
 Takanori MATSUURA <t.matsuu@gmail.com>
 Tamar Levy <tamar.levy@intel.com>
@@ -290,7 +299,6 @@ Vincent Rabaud <vrabaud@google.com>
 Vishesh <vishesh.garg@ittiam.com>
 Vishnu Teja Manyam <vishnu.teja@ittiam.com>
 Vitalii Dziumenko <vdziumenko@luxoft.com>
-Vitalii Dziumenko <vdziumenko@luxoft.corp-partner.google.com>
 Wan-Teh Chang <wtc@google.com>
 Wei-Ting Lin <weitinglin@google.com>
 Wenyao Liu <wenyao.liu@cidana.com>

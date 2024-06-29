@@ -48,11 +48,11 @@ int a(S *s) {
   c(1);
   return 0;
 }
-int e() {
+int e(void) {
   c(0);
   return 0;
 }
-int main() {
+int main(void) {
   int p = 3;
   S s;
   s.x = p + 1;

@@ -396,7 +396,7 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventB
 
     setTextAsOfLastFormControlChangeEvent(normalizedValue);
 
-    if (auto* cache = document().existingAXObjectCache())
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->valueChanged(*this);
 }
 

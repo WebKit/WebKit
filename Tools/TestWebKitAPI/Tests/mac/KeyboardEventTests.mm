@@ -29,8 +29,10 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKWebViewPrivate.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
 
 @interface KeyboardTestMenu : NSMenu
 @end
@@ -124,6 +126,21 @@ TEST(KeyboardEventTests, SmoothKeyboardScrolling)
 
     Util::runFor(Seconds(3));
     EXPECT_EQ([view keyDownCount], 0UL);
+}
+
+TEST(KeyboardEventTests, TerminateWebContentProcessDuringKeyEventHandling)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@""];
+
+    RunLoop::main().dispatchAfter(5_ms, [&] {
+        [webView _killWebContentProcessAndResetState];
+    });
+    for (unsigned i = 0; i < 10; ++i) {
+        [webView typeCharacter:'a'];
+        Util::runFor(1_ms);
+    }
+    Util::runFor(25_ms);
 }
 
 } // namespace TestWebKitAPI

@@ -1887,6 +1887,14 @@
    },
    {
       "emails" : [
+         "dan.hecht@apple.com"
+      ],
+      "expertise" : "JavaScriptCore",
+      "github" : "dhecht",
+      "name" : "Dan Hecht"
+   },
+   {
+      "emails" : [
          "dtr_bugzilla@apple.com"
       ],
       "github" : "drobson1005",
@@ -2020,6 +2028,16 @@
    },
    {
       "emails" : [
+         "darryl@dpogue.ca"
+      ],
+      "github" : "dpogue",
+      "name" : "Darryl Pogue",
+      "nicks" : [
+         "dpogue"
+      ]
+   },
+   {
+      "emails" : [
          "dbarton@mathscribe.com"
       ],
       "expertise" : "MathML",
@@ -2040,6 +2058,7 @@
    {
       "emails" : [
          "david_choi5@apple.com",
+         "davidchoi1027@gmail.com",
          "djchoi@andrew.cmu.edu"
       ],
       "expertise" : "WebCore",
@@ -2047,7 +2066,8 @@
       "name" : "David Choi",
       "nicks" : [
          "RWDavid"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -2917,6 +2937,16 @@
       "name" : "Frances Cornwall",
       "nicks" : [
          "Frances"
+      ]
+   },
+   {
+      "emails" : [
+         "tolmasky@gmail.com"
+      ],
+      "github" : "tolmasky",
+      "name" : "Francisco Ryan Tolmasky I",
+      "nicks" : [
+         "tolmasky"
       ]
    },
    {
@@ -3881,7 +3911,8 @@
    },
    {
       "emails" : [
-         "j_stfleur@apple.com"
+         "j_stfleur@apple.com",
+         "jstsaintfleur@gmail.com"
       ],
       "github" : "Jean-saintfleur",
       "name" : "Jay Stfleur",
@@ -4503,6 +4534,7 @@
    },
    {
       "emails" : [
+         "jmichaud@igalia.com",
          "justin@justinmichaud.com"
       ],
       "expertise" : "JavaScriptCore",
@@ -5097,6 +5129,13 @@
    },
    {
       "emails" : [
+         "lily_spiniolas@apple.com"
+      ],
+      "github" : "lilyspiniolas",
+      "name" : "Lily Spiniolas"
+   },
+   {
+      "emails" : [
          "lindseywild@github.com"
       ],
       "github" : "lindseywild",
@@ -5286,7 +5325,8 @@
       "name" : "Marcus Plutowski",
       "nicks" : [
          "marcus"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -6068,7 +6108,8 @@
       "name" : "Nitin Mahendru",
       "nicks" : [
          "Nitin"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -6409,6 +6450,14 @@
       "nicks" : [
          "pol"
       ]
+   },
+   {
+      "emails" : [
+         "pbahrami@apple.com",
+         "pnikkhah@ucdavis.edu"
+      ],
+      "github" : "pooneh-nb",
+      "name" : "Pouneh Bahrami"
    },
    {
       "emails" : [
@@ -7159,6 +7208,16 @@
       "name" : "Simon Pena",
       "nicks" : [
          "spenap"
+      ]
+   },
+   {
+      "emails" : [
+         "aosukeke@gmail.com"
+      ],
+      "github" : "sosukesuzuki",
+      "name" : "Sosuke Suzuki",
+      "nicks" : [
+         "sosukesuzuki"
       ]
    },
    {
@@ -7998,12 +8057,13 @@
          "yijia_huang@apple.com",
          "hyjorc1@gmail.com"
       ],
+      "expertise" : "JavaScriptCore",
       "github" : "hyjorc1",
       "name" : "Yijia Huang",
       "nicks" : [
          "yijia"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [

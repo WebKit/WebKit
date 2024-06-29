@@ -1,0 +1,39 @@
+<script src="../../resources/js-test.js"></script>
+<body>
+    <div class="container">
+        <img src="resources/animated-red-green-blue-1000x1000-infinite.gif" width="50">
+        <img src="resources/animated-red-green-blue-1000x1000-infinite.gif" width="100">
+        <img src="resources/animated-red-green-blue-1000x1000-infinite.gif" width="200">
+        <img src="resources/animated-red-green-blue-1000x1000-infinite.gif" width="400">
+    </div>
+    <script>
+        description("No blank drawing will happen for an animated image when it is dawn with different destinaton sizes");
+
+        jsTestIsAsync = true;
+
+        if (window.internals)
+            internals.clearMemoryCache();
+
+        let frameCount = 0;
+        let image = document.querySelector("img");
+
+        function animateLoop(timestamp) {
+            if (frameCount == 0 && window.internals)
+                internals.settings.setAnimatedImageAsyncDecodingEnabled(true);
+
+            if (++frameCount < 100) {
+                requestAnimationFrame(animateLoop);
+                return;
+            }
+
+            if (window.internals)
+                shouldBeLessThanOrEqual("internals.imageBlankDrawCount(image)", "1");
+
+            finishJSTest();
+        }
+
+        image.onload = () => {
+            requestAnimationFrame(animateLoop);
+        };
+    </script>
+</body>

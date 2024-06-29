@@ -27,7 +27,7 @@
 
 #include "WPEEvent.h"
 #include "WPEKeymap.h"
-#include "WPEView.h"
+#include "WPEToplevelWayland.h"
 #include <wayland-client.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
@@ -50,6 +50,9 @@ public:
 
     void setCursor(struct wl_surface*, int32_t, int32_t);
 
+    void emitPointerEnter(WPEView*) const;
+    void emitPointerLeave(WPEView*) const;
+
 private:
     static const struct wl_seat_listener s_listener;
     static const struct wl_pointer_listener s_pointerListener;
@@ -67,7 +70,7 @@ private:
     struct {
         struct wl_pointer* object { nullptr };
         WPEInputSource source { WPE_INPUT_SOURCE_MOUSE };
-        GWeakPtr<WPEView> view;
+        GWeakPtr<WPEToplevelWayland> toplevel;
         double x { 0 };
         double y { 0 };
         uint32_t modifiers { 0 };
@@ -88,7 +91,7 @@ private:
     struct {
         struct wl_keyboard* object { nullptr };
         WPEInputSource source { WPE_INPUT_SOURCE_KEYBOARD };
-        GWeakPtr<WPEView> view;
+        GWeakPtr<WPEToplevelWayland> toplevel;
         uint32_t modifiers { 0 };
         uint32_t time { 0 };
 
@@ -111,7 +114,7 @@ private:
     struct {
         struct wl_touch* object { nullptr };
         WPEInputSource source { WPE_INPUT_SOURCE_TOUCHSCREEN };
-        GWeakPtr<WPEView> view;
+        GWeakPtr<WPEToplevelWayland> toplevel;
         HashMap<int32_t, std::pair<double, double>, IntHash<int32_t>, WTF::SignedWithZeroKeyHashTraits<int32_t>> points;
     } m_touch;
 };

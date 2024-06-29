@@ -60,7 +60,7 @@ inline bool TextManipulationControllerExclusionRule::match(const Element& elemen
     }, [&element] (AttributeRule rule) {
         return equalIgnoringASCIICase(element.getAttribute(rule.name), rule.value);
     }, [&element] (ClassRule rule) {
-        return element.hasClass() && element.classNames().contains(rule.className);
+        return element.hasClassName(rule.className);
     });
 }
 
@@ -260,6 +260,8 @@ private:
 
 static bool shouldExtractValueForTextManipulation(const HTMLInputElement& input)
 {
+    // FIXME: Consider using `type()` instead of checking the attribute, so that plain text fields
+    // with and without an explicit `type="text"` behave consistently.
     if (input.isSearchField() || equalIgnoringASCIICase(input.attributeWithoutSynchronization(HTMLNames::typeAttr), InputTypeNames::text()))
         return !input.lastChangeWasUserEdit();
 
@@ -358,6 +360,15 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
         return true;
 
     return false;
+}
+
+static bool shouldIgnoreNodeInTextField(const Node& node)
+{
+    RefPtr input = dynamicDowncast<HTMLInputElement>(node.shadowHost());
+    if (!input)
+        return false;
+
+    return input->lastChangeWasUserEdit() || input->isAutoFilled();
 }
 
 TextManipulationController::ManipulationUnit TextManipulationController::createUnit(const Vector<String>& text, Node& textNode)
@@ -590,13 +601,18 @@ void TextManipulationController::scheduleObservationUpdate()
         for (auto& text : controller->m_manipulatedNodesWithNewContent) {
             if (!controller->m_manipulatedNodes.contains(text))
                 continue;
+            if (shouldIgnoreNodeInTextField(text))
+                continue;
             controller->m_manipulatedNodes.remove(text);
             nodesToObserve.add(text);
         }
         controller->m_manipulatedNodesWithNewContent.clear();
 
-        for (auto& node : controller->m_addedOrNewlyRenderedNodes)
+        for (auto& node : controller->m_addedOrNewlyRenderedNodes) {
+            if (shouldIgnoreNodeInTextField(node))
+                continue;
             nodesToObserve.add(node);
+        }
         controller->m_addedOrNewlyRenderedNodes.clear();
 
         if (nodesToObserve.isEmpty())
@@ -805,6 +821,9 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         m_manipulatedNodes.add(*element);
         return std::nullopt;
     }
+
+    if (RefPtr container = item.start.containerNode(); container && shouldIgnoreNodeInTextField(*container))
+        return ManipulationFailure::Type::ContentChanged;
 
     size_t currentTokenIndex = 0;
     HashMap<TextManipulationTokenIdentifier, TokenExchangeData> tokenExchangeMap;

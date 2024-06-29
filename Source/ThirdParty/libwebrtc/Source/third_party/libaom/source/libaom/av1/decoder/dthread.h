@@ -14,7 +14,6 @@
 
 #include "config/aom_config.h"
 
-#include "aom_util/aom_thread.h"
 #include "aom/internal/aom_codec_internal.h"
 
 #ifdef __cplusplus

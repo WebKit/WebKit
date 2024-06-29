@@ -42,7 +42,6 @@ public:
     static IntSize calculateSafeBackendSize(const Parameters&);
     static unsigned calculateBytesPerRow(const IntSize& backendSize);
     static size_t calculateMemoryCost(const Parameters&);
-    static size_t calculateExternalMemoryCost(const Parameters&);
 
     static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const Parameters&, const ImageBufferCreationContext&);
 

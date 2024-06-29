@@ -154,14 +154,7 @@ static void addStringToSHA1(SHA1& sha1, const String& string)
     if (string.isEmpty())
         return;
 
-    if (string.is8Bit() && string.containsOnlyASCII()) {
-        const uint8_t nullByte = 0;
-        sha1.addBytes(string.span8());
-        sha1.addBytes(std::span { &nullByte, 1 });
-        return;
-    }
-
-    sha1.addBytes(string.utf8().spanIncludingNullTerminator());
+    sha1.addUTF8Bytes(string);
 }
 
 String RealtimeMediaSourceCenter::hashStringWithSalt(const String& id, const String& hashSalt)

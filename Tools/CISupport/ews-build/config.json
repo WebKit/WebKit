@@ -156,6 +156,21 @@
     { "name": "ews201", "platform": "ios-simulator-17" },
     { "name": "ews202", "platform": "ios-simulator-17" },
     { "name": "ews203", "platform": "ios-simulator-17" },
+    { "name": "ews216", "platform": "visionos-1" },
+    { "name": "ews217", "platform": "visionos-1" },
+    { "name": "ews218", "platform": "visionos-1" },
+    { "name": "ews219", "platform": "visionos-1" },
+    { "name": "ews220", "platform": "visionos-1" },
+    { "name": "ews221", "platform": "visionos-simulator-1" },
+    { "name": "ews222", "platform": "visionos-simulator-1" },
+    { "name": "ews223", "platform": "visionos-simulator-1" },
+    { "name": "ews224", "platform": "visionos-simulator-1" },
+    { "name": "ews225", "platform": "visionos-simulator-1" },
+    { "name": "ews226", "platform": "visionos-simulator-1" },
+    { "name": "ews227", "platform": "visionos-simulator-1" },
+    { "name": "ews228", "platform": "visionos-simulator-1" },
+    { "name": "ews229", "platform": "visionos-simulator-1" },
+    { "name": "ews230", "platform": "visionos-simulator-1" },
     { "name": "webkit-cq-01", "platform": "mac-monterey" },
     { "name": "webkit-cq-02", "platform": "mac-monterey" },
     { "name": "webkit-cq-03", "platform": "mac-monterey" },
@@ -205,7 +220,7 @@
       "factory": "iOSTestsFactory", "platform": "ios-simulator-17",
       "configuration": "release",
       "triggered_by": ["ios-17-sim-build-ews"],
-      "additionalArguments": ["--child-processes=6", "--exclude-tests", "imported/w3c/web-platform-tests"],
+      "additionalArguments": ["--child-processes=5", "--exclude-tests", "imported/w3c/web-platform-tests"],
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185"]
     },
     {
@@ -213,7 +228,7 @@
       "factory": "iOSTestsFactory", "platform": "ios-simulator-17",
       "configuration": "release",
       "triggered_by": ["ios-17-sim-build-ews"],
-      "additionalArguments": ["--child-processes=6", "imported/w3c/web-platform-tests"],
+      "additionalArguments": ["--child-processes=5", "imported/w3c/web-platform-tests"],
       "workernames": ["ews191", "ews192", "ews193", "ews194", "ews195", "ews196", "ews197", "ews198"]
     },
     {
@@ -283,6 +298,27 @@
       "workernames": ["ews168", "ews170"]
     },
     {
+      "name": "visionOS-1-Build-EWS", "shortname": "vision", "icon": "buildOnly",
+      "factory": "visionOSEmbeddedBuildFactory", "platform": "visionos-1",
+      "configuration": "release", "architectures": ["arm64"],
+      "workernames": ["ews216", "ews217", "ews218", "ews219", "ews220"]
+    },
+    {
+      "name": "visionOS-1-Simulator-Build-EWS", "shortname": "vision-sim", "icon": "buildOnly",
+      "factory": "visionOSBuildFactory", "platform": "visionos-simulator-1",
+      "configuration": "release", "architectures": ["arm64"],
+      "triggers": ["visionos-1-sim-wk2-tests-ews"],
+      "workernames": ["ews221", "ews222", "ews223", "ews224", "ews225"]
+    },
+    {
+      "name": "visionOS-1-Simulator-WK2-Tests-EWS", "shortname": "vision-wk2", "icon": "testOnly",
+      "factory": "visionOSTestsFactory", "platform": "visionos-simulator-1",
+      "configuration": "release",
+      "triggered_by": ["visionos-1-sim-build-ews"],
+      "additionalArguments": ["--child-processes=2"],
+      "workernames": ["ews226", "ews227", "ews228", "ews229", "ews230"]
+    },
+    {
       "name": "Win-Build-EWS", "shortname": "wincairo", "icon": "buildOnly",
       "factory": "WinBuildFactory", "configuration": "release",
       "architectures": ["x86_64"], "platform": "wincairo",
@@ -293,6 +329,7 @@
       "name": "Win-Tests-EWS", "shortname": "wincairo-tests", "icon": "testOnly",
       "factory": "WinTestsFactory", "configuration": "release",
       "architectures": ["x86_64"], "platform": "wincairo",
+      "triggered_by": ["win-build-ews"],
       "workernames": ["win-tests-ews-001", "win-tests-ews-002", "win-tests-ews-003", "win-tests-ews-004", "win-tests-ews-005", "win-tests-ews-006", "win-tests-ews-007", "win-tests-ews-008"]
     },
     {
@@ -310,9 +347,10 @@
       "workernames": ["igalia4-wpe-ews", "igalia5-wpe-ews", "igalia6-wpe-ews", "igalia7-wpe-ews", "igalia8-wpe-ews", "igalia9-wpe-ews", "igalia10-wpe-ews", "igalia11-wpe-ews"]
     },
     {
-      "name": "WPE-Skia-Build-EWS", "shortname": "wpe-skia", "icon": "buildOnly",
-      "factory": "WPESkiaBuildFactory", "platform": "wpe",
+      "name": "WPE-Cairo-Build-EWS", "shortname": "wpe-cairo", "icon": "buildOnly",
+      "factory": "WPECairoBuildFactory", "platform": "wpe",
       "configuration": "release", "architectures": ["x86_64"],
+      "additionalArguments": ["--cmakeargs=-DUSE_SKIA=OFF"],
       "workernames": ["igalia16-wpe-ews", "igalia17-wpe-ews", "igalia18-wpe-ews", "igalia19-wpe-ews"]
     },
     {
@@ -348,7 +386,7 @@
     {
       "name": "WebKitPy-Tests-EWS", "shortname": "webkitpy", "icon": "testOnly",
       "factory": "WebKitPyFactory", "platform": "*",
-      "workernames": ["webkit-misc"]
+      "workernames": ["ews151", "webkit-misc"]
     },
     {
       "name": "WebKitPerl-Tests-EWS", "shortname": "webkitperl", "icon": "testOnly",
@@ -417,9 +455,9 @@
             "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-17-Build-EWS", "iOS-17-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-Sonoma-Debug-Build-EWS", "macOS-Ventura-Release-Build-EWS",
-            "Services-EWS", "Style-EWS", "tvOS-17-Build-EWS", "tvOS-17-Simulator-Build-EWS", "watchOS-10-Build-EWS",
-            "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "Win-Build-EWS",
-            "WPE-Skia-Build-EWS"
+            "Services-EWS", "Style-EWS", "tvOS-17-Build-EWS", "tvOS-17-Simulator-Build-EWS", "visionOS-1-Build-EWS", "visionOS-1-Simulator-Build-EWS",
+            "watchOS-10-Build-EWS", "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "Win-Build-EWS",
+            "WPE-Cairo-Build-EWS"
       ]
     },
     {
@@ -432,9 +470,9 @@
             "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-17-Build-EWS", "iOS-17-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-Sonoma-Debug-Build-EWS", "macOS-Ventura-Release-Build-EWS",
-            "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-17-Build-EWS", "tvOS-17-Simulator-Build-EWS", "watchOS-10-Build-EWS",
-            "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "Win-Build-EWS",
-            "WPE-Skia-Build-EWS"
+            "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-17-Build-EWS", "tvOS-17-Simulator-Build-EWS", "visionOS-1-Build-EWS", "visionOS-1-Simulator-Build-EWS",
+            "watchOS-10-Build-EWS", "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "Win-Build-EWS",
+            "WPE-Cairo-Build-EWS"
       ]
     },
     {
@@ -504,6 +542,18 @@
     {
       "type": "Triggerable", "name": "gtk-wk2-tests-ews",
       "builderNames": ["GTK-WK2-Tests-EWS"]
+    },
+    {
+      "type": "Triggerable", "name": "visionos-1-sim-build-ews",
+      "builderNames": ["visionOS-1-Simulator-Build-EWS"]
+    },
+    {
+      "type": "Triggerable", "name": "visionos-1-sim-wk2-tests-ews",
+      "builderNames": ["visionOS-1-Simulator-WK2-Tests-EWS"]
+    },
+    {
+      "type": "Triggerable", "name": "win-build-ews",
+      "builderNames": ["Win-Build-EWS"]
     },
     {
       "type": "Triggerable", "name": "win-tests-ews",

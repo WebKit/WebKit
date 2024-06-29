@@ -101,8 +101,8 @@ void StyleFilterImage::load(CachedResourceLoader& cachedResourceLoader, const Re
             m_cachedImage->addClient(*this);
     }
 
-    for (auto& filterOperation : m_filterOperations.operations()) {
-        if (auto* referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(filterOperation.get()))
+    for (auto& filterOperation : m_filterOperations) {
+        if (RefPtr referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(filterOperation))
             referenceFilterOperation->loadExternalDocumentIfNeeded(cachedResourceLoader, options);
     }
 
@@ -133,7 +133,7 @@ RefPtr<Image> StyleFilterImage::image(const RenderElement* renderer, const Float
 
     cssFilter->setFilterRegion(sourceImageRect);
 
-    auto sourceImage = ImageBuffer::create(size, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, bufferOptionsForRendingMode(cssFilter->renderingMode()), renderer->hostWindow());
+    auto sourceImage = ImageBuffer::create(size, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8, bufferOptionsForRendingMode(cssFilter->renderingMode()), renderer->hostWindow());
     if (!sourceImage)
         return &Image::nullImage();
 

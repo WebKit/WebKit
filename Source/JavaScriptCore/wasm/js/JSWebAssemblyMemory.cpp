@@ -59,7 +59,7 @@ void JSWebAssemblyMemory::adopt(Ref<Wasm::Memory>&& memory)
 {
     m_memory.swap(memory);
     ASSERT(m_memory->refCount() == 1);
-    m_memory->check();
+    m_memory->checkLifetime();
 }
 
 Structure* JSWebAssemblyMemory::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -94,7 +94,7 @@ JSArrayBuffer* JSWebAssemblyMemory::buffer(JSGlobalObject* globalObject)
         size_t size = m_memory->size();
         ASSERT(memory);
         auto destructor = createSharedTask<void(void*)>([protectedHandle = WTFMove(protectedHandle)] (void*) { });
-        m_buffer = ArrayBuffer::createFromBytes(memory, size, WTFMove(destructor));
+        m_buffer = ArrayBuffer::createFromBytes({ static_cast<const uint8_t*>(memory), size }, WTFMove(destructor));
         m_buffer->makeWasmMemory();
         if (m_memory->sharingMode() == MemorySharingMode::Shared)
             m_buffer->makeShared();
@@ -171,7 +171,7 @@ void JSWebAssemblyMemory::growSuccessCallback(VM& vm, PageCount oldPageCount, Pa
         m_bufferWrapper.clear();
     }
     
-    memory().check();
+    memory().checkLifetime();
     
     vm.heap.reportExtraMemoryAllocated(this, newPageCount.bytes() - oldPageCount.bytes());
 }

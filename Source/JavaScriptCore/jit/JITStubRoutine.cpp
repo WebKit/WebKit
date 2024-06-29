@@ -31,8 +31,6 @@
 #include "GCAwareJITStubRoutine.h"
 #include "PolymorphicCallStubRoutine.h"
 
-#if ENABLE(JIT)
-
 namespace JSC {
 
 void JITStubRoutine::observeZeroRefCountImpl()
@@ -51,11 +49,12 @@ void JITStubRoutine::runWithDowncast(const Func& function)
     case Type::GCAwareJITStubRoutineType:
         function(static_cast<GCAwareJITStubRoutine*>(this));
         break;
-    case Type::PolymorphicAccessJITStubRoutineType:
-        function(static_cast<PolymorphicAccessJITStubRoutine*>(this));
-        break;
     case Type::PolymorphicCallStubRoutineType:
         function(static_cast<PolymorphicCallStubRoutine*>(this));
+        break;
+#if ENABLE(JIT)
+    case Type::PolymorphicAccessJITStubRoutineType:
+        function(static_cast<PolymorphicAccessJITStubRoutine*>(this));
         break;
     case Type::MarkingGCAwareJITStubRoutineType:
         function(static_cast<MarkingGCAwareJITStubRoutine*>(this));
@@ -63,6 +62,7 @@ void JITStubRoutine::runWithDowncast(const Func& function)
     case Type::GCAwareJITStubRoutineWithExceptionHandlerType:
         function(static_cast<GCAwareJITStubRoutineWithExceptionHandler*>(this));
         break;
+#endif
     }
 }
 
@@ -89,6 +89,15 @@ bool JITStubRoutine::visitWeak(VM& vm)
     return result;
 }
 
+CallLinkInfo* JITStubRoutine::callLinkInfoAt(const ConcurrentJSLocker& locker, unsigned index)
+{
+    CallLinkInfo* result = nullptr;
+    runWithDowncast([&](auto* derived) {
+        result = derived->callLinkInfoAtImpl(locker, index);
+    });
+    return result;
+}
+
 void JITStubRoutine::markRequiredObjects(AbstractSlotVisitor& visitor)
 {
     runWithDowncast([&](auto* derived) {
@@ -111,6 +120,3 @@ void JITStubRoutine::operator delete(JITStubRoutine* stubRoutine, std::destroyin
 }
 
 } // namespace JSC
-
-#endif // ENABLE(JIT)
-

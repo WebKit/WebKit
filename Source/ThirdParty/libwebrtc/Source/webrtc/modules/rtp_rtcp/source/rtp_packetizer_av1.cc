@@ -34,6 +34,12 @@ constexpr int kObuTypeTemporalDelimiter = 2;
 constexpr int kObuTypeTileList = 8;
 constexpr int kObuTypePadding = 15;
 
+// Overhead introduced by "even distribution" of packet sizes.
+constexpr size_t kBytesOverheadEvenDistribution = 1;
+// Experimentally determined minimum amount of potential savings per packet to
+// make "even distribution" of packet sizes worthwhile.
+constexpr size_t kMinBytesSavedPerPacketWithEvenDistribution = 10;
+
 bool ObuHasExtension(uint8_t obu_header) {
   return obu_header & 0b0'0000'100;
 }
@@ -65,17 +71,18 @@ int MaxFragmentSize(int remaining_bytes) {
 RtpPacketizerAv1::RtpPacketizerAv1(rtc::ArrayView<const uint8_t> payload,
                                    RtpPacketizer::PayloadSizeLimits limits,
                                    VideoFrameType frame_type,
-                                   bool is_last_frame_in_picture)
+                                   bool is_last_frame_in_picture,
+                                   bool even_distribution)
     : frame_type_(frame_type),
       obus_(ParseObus(payload)),
-      packets_(Packetize(obus_, limits)),
+      packets_(even_distribution ? PacketizeAboutEqually(obus_, limits)
+                                 : Packetize(obus_, limits)),
       is_last_frame_in_picture_(is_last_frame_in_picture) {}
 
 std::vector<RtpPacketizerAv1::Obu> RtpPacketizerAv1::ParseObus(
     rtc::ArrayView<const uint8_t> payload) {
   std::vector<Obu> result;
-  rtc::ByteBufferReader payload_reader(
-      reinterpret_cast<const char*>(payload.data()), payload.size());
+  rtc::ByteBufferReader payload_reader(payload);
   while (payload_reader.Length() > 0) {
     Obu obu;
     payload_reader.ReadUInt8(&obu.header);
@@ -288,6 +295,54 @@ std::vector<RtpPacketizerAv1::Packet> RtpPacketizerAv1::Packetize(
     last_packet.last_obu_size = last_fragment_size;
     last_packet.packet_size = last_fragment_size;
     packet_remaining_bytes = limits.max_payload_len - last_fragment_size;
+  }
+  return packets;
+}
+
+std::vector<RtpPacketizerAv1::Packet> RtpPacketizerAv1::PacketizeAboutEqually(
+    rtc::ArrayView<const Obu> obus,
+    PayloadSizeLimits limits) {
+  std::vector<Packet> packets = Packetize(obus, limits);
+  if (packets.size() <= 1) {
+    return packets;
+  }
+  size_t packet_index = 0;
+  size_t packet_size_left_unused = 0;
+  for (const auto& packet : packets) {
+    // Every packet has to have an aggregation header of size
+    // kAggregationHeaderSize.
+    int available_bytes = limits.max_payload_len - kAggregationHeaderSize;
+
+    if (packet_index == 0) {
+      available_bytes -= limits.first_packet_reduction_len;
+    } else if (packet_index == packets.size() - 1) {
+      available_bytes -= limits.last_packet_reduction_len;
+    }
+    if (available_bytes >= packet.packet_size) {
+      packet_size_left_unused += (available_bytes - packet.packet_size);
+    }
+    packet_index++;
+  }
+  if (packet_size_left_unused >
+      packets.size() * kMinBytesSavedPerPacketWithEvenDistribution) {
+    // Calculate new limits with a reduced max_payload_len.
+    size_t size_reduction = packet_size_left_unused / packets.size();
+    RTC_DCHECK_GT(limits.max_payload_len, size_reduction);
+    RTC_DCHECK_GT(size_reduction, kBytesOverheadEvenDistribution);
+    limits.max_payload_len -= (size_reduction - kBytesOverheadEvenDistribution);
+    if (limits.max_payload_len - limits.last_packet_reduction_len < 3 ||
+        limits.max_payload_len - limits.first_packet_reduction_len < 3) {
+      return packets;
+    }
+    std::vector<Packet> packets_even = Packetize(obus, limits);
+    // The number of packets should not change in the second pass. If it does,
+    // conservatively return the original packets.
+    if (packets_even.size() == packets.size()) {
+      return packets_even;
+    }
+    RTC_LOG(LS_WARNING) << "AV1 even distribution caused a regression in "
+                           "number of packets from "
+                        << packets.size() << " to " << packets_even.size();
   }
   return packets;
 }

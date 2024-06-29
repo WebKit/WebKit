@@ -294,6 +294,59 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
+        'visionOS-1-Build-EWS': [
+            'configure-build',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'show-identifier',
+            'apply-patch',
+            'checkout-pull-request',
+            'kill-old-processes',
+            'validate-change',
+            'compile-webkit'
+        ],
+        'visionOS-1-Simulator-Build-EWS': [
+            'configure-build',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'show-identifier',
+            'apply-patch',
+            'checkout-pull-request',
+            'kill-old-processes',
+            'validate-change',
+            'compile-webkit'
+        ],
+        'visionOS-1-Simulator-WK2-Tests-EWS': [
+            'configure-build',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'get-test-expectations-baseline',
+            'show-identifier',
+            'apply-patch',
+            'checkout-pull-request',
+            'get-updated-test-expectations',
+            'find-modified-layout-tests',
+            'download-built-product',
+            'extract-built-product',
+            'wait-for-crash-collection',
+            'kill-old-processes',
+            'run-layout-tests-in-stress-mode',
+            'layout-tests',
+            'trigger-crash-log-submission',
+            'set-build-summary'
+        ],
         'watchOS-10-Build-EWS': [
             'configure-build',
             'validate-change',
@@ -405,7 +458,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'clean-derived-sources',
             'compile-webkit'
         ],
-        'WPE-Skia-Build-EWS': [
+        'WPE-Cairo-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -539,8 +592,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'checkout-pull-request',
             'validate-change',
-            'webkitpy-tests-python2',
-            'webkitpy-tests-python3',
+            'webkitpy-tests',
             'set-build-summary'
         ],
         'WebKitPerl-Tests-EWS': [
@@ -571,7 +623,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'download-built-product',
             'extract-built-product',
             'kill-old-processes',
-            'run-api-tests'
+            'run-api-tests',
+            'set-build-summary'
         ],
         'API-Tests-macOS-EWS': [
             'configure-build',
@@ -587,7 +640,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'download-built-product',
             'extract-built-product',
             'kill-old-processes',
-            'run-api-tests'
+            'run-api-tests',
+            'set-build-summary'
         ],
         'API-Tests-GTK-EWS': [
             'configure-build',
@@ -604,7 +658,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'download-built-product',
             'extract-built-product',
             'kill-old-processes',
-            'run-api-tests'
+            'run-api-tests',
+            'set-build-summary'
         ],
         'API-Tests-WPE-EWS': [
             'configure-build',
@@ -621,7 +676,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'download-built-product',
             'extract-built-product',
             'kill-old-processes',
-            'run-api-tests'
+            'run-api-tests',
+            'set-build-summary'
         ],
         'Services-EWS': [
             'configure-build',

@@ -39,7 +39,7 @@ class ShadowData;
 struct PaintInfo;
 
 struct TextPaintStyle {
-    TextPaintStyle() { }
+    TextPaintStyle() = default;
     TextPaintStyle(const Color&);
 
     bool operator==(const TextPaintStyle&) const;

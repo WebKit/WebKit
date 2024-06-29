@@ -26,8 +26,8 @@ class TextureProxy;
 class Transform;
 
 // Encodes Bezier path fills, shapes, and clips. Once populated, this data structure can be used
-// with the full compositing and coverage mask generating pipelines. The latter ignores all color
-// information.
+// with the full compositing and coverage mask generating pipelines. The latter only uses the red
+// color channel information.
 //
 // All color type parameters are expected to be unpremultiplied and in the sRGB color space.
 class VelloScene final {
@@ -49,6 +49,8 @@ public:
     void pushClipLayer(const SkPath& shape, const Transform& transform);
     void popClipLayer();
 
+    void append(const VelloScene& other);
+
 private:
     friend class VelloRenderer;
 
@@ -63,8 +65,15 @@ private:
 enum class VelloAaConfig {
     kAnalyticArea,
     kMSAA16,
+    kMSAA8,
 };
 
+// A VelloRenderer that is specialized for rendering coverage masks. The renderer only supports
+// paths and clipping and omits the full vello imaging model (e.g. gradients and images).
+//
+// VelloRenderer requires `kAlpha_8_SkColorType` as the target color type on platforms that
+// support the `R8Unorm` storage texture view format. Otherwise, the texture format must be
+// `kRGBA_8888_SkColorType`.
 class VelloRenderer final {
 public:
     explicit VelloRenderer(const Caps*);
@@ -83,8 +92,10 @@ public:
     };
 
     // Run the full pipeline which supports compositing colors with different blend styles. Does
-    // nothing if `scene` or target render dimensions are empty. The color type of `target` must
-    // be `kRGBA_8888_SkColorType`.
+    // nothing if `scene` or target render dimensions are empty.
+    //
+    // The color type of `target` must be `kAlpha_8_SkColorType` on platforms that support R8Unorm
+    // storage textures. Otherwise, it must be `kRGBA_8888_SkColorType`.
     std::unique_ptr<DispatchGroup> renderScene(const RenderParams&,
                                                const VelloScene&,
                                                sk_sp<TextureProxy> target,
@@ -113,17 +124,9 @@ private:
     VelloTileAllocStep fTileAlloc;
 
     // Fine rasterization stage variants:
-    VelloFineAreaStep fFineArea;
-    VelloFineMsaa16Step fFineMsaa16;
-
-    // The full renderer uses an image atlas and a gradient ramp texture for image composition and
-    // gradient fills, respectively. These are currently unused, so we allocate and reuse two 1x1
-    // textures to satisfy the shader bindings.
-    //
-    // TODO: The contents of these textures will be scene dependent. Re-evaluate if/when we enable
-    // gradient fills or images.
-    sk_sp<TextureProxy> fGradientImage;
-    sk_sp<TextureProxy> fImageAtlas;
+    std::unique_ptr<ComputeStep> fFineArea;
+    std::unique_ptr<ComputeStep> fFineMsaa16;
+    std::unique_ptr<ComputeStep> fFineMsaa8;
 };
 
 }  // namespace skgpu::graphite

@@ -2934,7 +2934,7 @@
                     "resolver": "bottom"
                 },
                 "parser-function": "consumeSide",
-                "parser-function-requires-context-mode": true,
+                "parser-function-requires-context": true,
                 "parser-function-requires-current-shorthand": true,
                 "parser-grammar-unused": "<length-percentage> | auto",
                 "parser-grammar-unused-reason": "Needs support for different parsing based on the current shorthand."
@@ -3388,7 +3388,8 @@
             ],
             "codegen-properties": {
                 "converter": "SVGPath",
-                "parser-grammar": "none | <path()>"
+                "parser-grammar": "none | <path()>",
+                "settings-flag": "cssDPropertyEnabled"
             },
             "specification": {
                 "category": "svg",
@@ -3715,7 +3716,10 @@
                     "name": "inset",
                     "resolver": "block-end"
                 },
-                "parser-grammar": "<inset-logical-start-end>"
+                "parser-function": "consumeInsetLogicalStartEnd",
+                "parser-function-requires-context": true,
+                "parser-grammar-unused": "<length-percentage> | auto",
+                "parser-grammar-unused-reason": "Needs support for different parsing based on CSSAnchorPositioningEnabled feature flag."
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3729,7 +3733,10 @@
                     "name": "inset",
                     "resolver": "block-start"
                 },
-                "parser-grammar": "<inset-logical-start-end>"
+                "parser-function": "consumeInsetLogicalStartEnd",
+                "parser-function-requires-context": true,
+                "parser-grammar-unused": "<length-percentage> | auto",
+                "parser-grammar-unused-reason": "Needs support for different parsing based on CSSAnchorPositioningEnabled feature flag."
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3755,7 +3762,10 @@
                     "name": "inset",
                     "resolver": "inline-end"
                 },
-                "parser-grammar": "<inset-logical-start-end>"
+                "parser-function": "consumeInsetLogicalStartEnd",
+                "parser-function-requires-context": true,
+                "parser-grammar-unused": "<length-percentage> | auto",
+                "parser-grammar-unused-reason": "Needs support for different parsing based on CSSAnchorPositioningEnabled feature flag."
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3769,7 +3779,10 @@
                     "name": "inset",
                     "resolver": "inline-start"
                 },
-                "parser-grammar": "<inset-logical-start-end>"
+                "parser-function": "consumeInsetLogicalStartEnd",
+                "parser-function-requires-context": true,
+                "parser-grammar-unused": "<length-percentage> | auto",
+                "parser-grammar-unused-reason": "Needs support for different parsing based on CSSAnchorPositioningEnabled feature flag."
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3800,7 +3813,7 @@
                     "resolver": "left"
                 },
                 "parser-function": "consumeSide",
-                "parser-function-requires-context-mode": true,
+                "parser-function-requires-context": true,
                 "parser-function-requires-current-shorthand": true,
                 "parser-grammar-unused": "<length-percentage> | auto",
                 "parser-grammar-unused-reason": "Needs support for different parsing based on the current shorthand."
@@ -5461,7 +5474,7 @@
                     "resolver": "right"
                 },
                 "parser-function": "consumeSide",
-                "parser-function-requires-context-mode": true,
+                "parser-function-requires-context": true,
                 "parser-function-requires-current-shorthand": true,
                 "parser-grammar-unused": "<length-percentage> | auto",
                 "parser-grammar-unused-reason": "Needs support for different parsing based on the current shorthand."
@@ -6017,7 +6030,7 @@
                     "resolver": "top"
                 },
                 "parser-function": "consumeSide",
-                "parser-function-requires-context-mode": true,
+                "parser-function-requires-context": true,
                 "parser-function-requires-current-shorthand": true,
                 "parser-grammar-unused": "<length-percentage> | auto",
                 "parser-grammar-unused-reason": "Needs support for different parsing based on the current shorthand."
@@ -9277,6 +9290,29 @@
                 "url": "https://drafts.csswg.org/css-view-transitions/#view-transition-name-prop"
             }
         },
+        "anchor-name": {
+            "codegen-properties": {
+                "converter": "AnchorName",
+                "name-for-methods": "AnchorNames",
+                "parser-grammar": "none | <dashed-ident>#",
+                "settings-flag": "cssAnchorPositioningEnabled"
+            },
+            "specification": {
+                "category": "css-anchor-position",
+                "url": "https://drafts.csswg.org/css-anchor-position-1/#name"
+            }
+        },
+        "position-anchor": {
+            "codegen-properties": {
+                "converter": "StringOrAutoAtom",
+                "parser-grammar": "auto | <dashed-ident>",
+                "settings-flag": "cssAnchorPositioningEnabled"
+            },
+            "specification": {
+                "category": "css-anchor-position",
+                "url": "https://drafts.csswg.org/css-anchor-position-1/#position-anchor"
+            }
+        },
         "-webkit-tap-highlight-color": {
             "inherited": true,
             "codegen-properties": {
@@ -9915,6 +9951,11 @@
             "longname": "CSS Box Alignment Module",
             "url": "https://www.w3.org/TR/css-align-3/"
         },
+        "css-anchor-position": {
+            "shortname": "CSS Anchor Positioning",
+            "longname": "CSS Anchor Positioning",
+            "url": "https://www.w3.org/TR/css-anchor-position-1/"
+        },
         "css-animations": {
             "shortname": "CSS Animations",
             "longname": "CSS Animations",
@@ -10352,13 +10393,6 @@
                 "url": "https://drafts.csswg.org/css-ui/#typedef-outline-line-style",
                 "comment": "Defined in prose as '<outline-line-style> accepts the same values as <line-style> (CSS Backgrounds 3 § 3.2 Line Patterns: the border-style properties) with the same meaning, except that hidden is not a legal outline style.'"
             
-            }
-        },
-        "<inset-logical-start-end>": {
-            "grammar": "auto | <length-percentage>",
-            "specification": {
-                "category": "css-logical-props",
-                "url": "https://www.w3.org/TR/css-logical/#inset-properties"
             }
         },
         "<margin-logical-start-end>": {
@@ -11142,6 +11176,14 @@
             "specification": {
                 "category": "scroll-animations",
                 "url": "https://drafts.csswg.org/scroll-animations-1/#propdef-view-timeline-inset"
+            }
+        },
+        "<anchor-side>": {
+            "grammar": "inside | outside | top | left | right | bottom | start | end | self-start | self-end | <percentage> | center",
+            "exported": true,
+            "specification": {
+                "category": "css-anchor-position",
+                "url": "https://drafts.csswg.org/css-anchor-position-1/#typedef-anchor-side"
             }
         }
     }

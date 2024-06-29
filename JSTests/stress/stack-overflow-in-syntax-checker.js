@@ -1,4 +1,4 @@
-//@ runDefault
+//@ runDefault("--ignoreUncaughtExceptions")
 
 // This is just check that we have sufficient Reserved Zone size to handle stack
 // overflows, especially on ASAN builds. The test passes if it does not crash.

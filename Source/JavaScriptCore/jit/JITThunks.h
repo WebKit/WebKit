@@ -64,17 +64,81 @@ class NativeExecutable;
     macro(InternalFunctionConstruct, internalFunctionConstructGenerator) \
     macro(ThrowExceptionFromCall, throwExceptionFromCallGenerator) \
     macro(ThrowExceptionFromCallSlowPath, throwExceptionFromCallSlowPathGenerator) \
-    macro(PolymorphicRepatchThunk, polymorphicRepatchThunk) \
     macro(VirtualThunkForRegularCall, virtualThunkForRegularCall) \
     macro(VirtualThunkForTailCall, virtualThunkForTailCall) \
     macro(VirtualThunkForConstruct, virtualThunkForConstruct) \
-    macro(PolymorphicThunkForRegularCall, polymorphicThunkForRegularCall) \
-    macro(PolymorphicThunkForTailCall, polymorphicThunkForTailCall) \
-    macro(PolymorphicThunkForRegularCallForClosure, polymorphicThunkForRegularCallForClosure) \
-    macro(PolymorphicThunkForTailCallForClosure, polymorphicThunkForTailCallForClosure) \
+    macro(PolymorphicThunk, polymorphicThunk) \
+    macro(PolymorphicThunkForClosure, polymorphicThunkForClosure) \
+    macro(PolymorphicTopTierThunk, polymorphicTopTierThunk) \
+    macro(PolymorphicTopTierThunkForClosure, polymorphicTopTierThunkForClosure) \
     macro(ReturnFromBaseline, returnFromBaselineGenerator) \
     macro(ArityFixup, arityFixupGenerator) \
-
+    macro(GetByIdLoadOwnPropertyHandler, getByIdLoadOwnPropertyHandler) \
+    macro(GetByIdLoadPrototypePropertyHandler, getByIdLoadPrototypePropertyHandler) \
+    macro(GetByIdMissHandler, getByIdMissHandler) \
+    macro(GetByIdCustomAccessorHandler, getByIdCustomAccessorHandler) \
+    macro(GetByIdCustomValueHandler, getByIdCustomValueHandler) \
+    macro(GetByIdGetterHandler, getByIdGetterHandler) \
+    macro(GetByIdProxyObjectLoadHandler, getByIdProxyObjectLoadHandler) \
+    macro(GetByIdModuleNamespaceLoadHandler, getByIdModuleNamespaceLoadHandler) \
+    macro(PutByIdReplaceHandler, putByIdReplaceHandler) \
+    macro(PutByIdTransitionNonAllocatingHandler, putByIdTransitionNonAllocatingHandler) \
+    macro(PutByIdTransitionNewlyAllocatingHandler, putByIdTransitionNewlyAllocatingHandler) \
+    macro(PutByIdTransitionReallocatingHandler, putByIdTransitionReallocatingHandler) \
+    macro(PutByIdTransitionReallocatingOutOfLineHandler, putByIdTransitionReallocatingOutOfLineHandler) \
+    macro(PutByIdCustomAccessorHandler, putByIdCustomAccessorHandler) \
+    macro(PutByIdCustomValueHandler, putByIdCustomValueHandler) \
+    macro(PutByIdStrictSetterHandler, putByIdStrictSetterHandler) \
+    macro(PutByIdSloppySetterHandler, putByIdSloppySetterHandler) \
+    macro(InByIdHitHandler, inByIdHitHandler) \
+    macro(InByIdMissHandler, inByIdMissHandler) \
+    macro(DeleteByIdDeleteHandler, deleteByIdDeleteHandler) \
+    macro(DeleteByIdDeleteNonConfigurableHandler, deleteByIdDeleteNonConfigurableHandler) \
+    macro(DeleteByIdDeleteMissHandler, deleteByIdDeleteMissHandler) \
+    macro(InstanceOfHitHandler, instanceOfHitHandler) \
+    macro(InstanceOfMissHandler, instanceOfMissHandler) \
+    macro(GetByValWithStringLoadOwnPropertyHandler, getByValWithStringLoadOwnPropertyHandler) \
+    macro(GetByValWithStringLoadPrototypePropertyHandler, getByValWithStringLoadPrototypePropertyHandler) \
+    macro(GetByValWithStringMissHandler, getByValWithStringMissHandler) \
+    macro(GetByValWithStringCustomAccessorHandler, getByValWithStringCustomAccessorHandler) \
+    macro(GetByValWithStringCustomValueHandler, getByValWithStringCustomValueHandler) \
+    macro(GetByValWithStringGetterHandler, getByValWithStringGetterHandler) \
+    macro(GetByValWithSymbolLoadOwnPropertyHandler, getByValWithSymbolLoadOwnPropertyHandler) \
+    macro(GetByValWithSymbolLoadPrototypePropertyHandler, getByValWithSymbolLoadPrototypePropertyHandler) \
+    macro(GetByValWithSymbolMissHandler, getByValWithSymbolMissHandler) \
+    macro(GetByValWithSymbolCustomAccessorHandler, getByValWithSymbolCustomAccessorHandler) \
+    macro(GetByValWithSymbolCustomValueHandler, getByValWithSymbolCustomValueHandler) \
+    macro(GetByValWithSymbolGetterHandler, getByValWithSymbolGetterHandler) \
+    macro(PutByValWithStringReplaceHandler, putByValWithStringReplaceHandler) \
+    macro(PutByValWithStringTransitionNonAllocatingHandler, putByValWithStringTransitionNonAllocatingHandler) \
+    macro(PutByValWithStringTransitionNewlyAllocatingHandler, putByValWithStringTransitionNewlyAllocatingHandler) \
+    macro(PutByValWithStringTransitionReallocatingHandler, putByValWithStringTransitionReallocatingHandler) \
+    macro(PutByValWithStringTransitionReallocatingOutOfLineHandler, putByValWithStringTransitionReallocatingOutOfLineHandler) \
+    macro(PutByValWithStringCustomAccessorHandler, putByValWithStringCustomAccessorHandler) \
+    macro(PutByValWithStringCustomValueHandler, putByValWithStringCustomValueHandler) \
+    macro(PutByValWithStringStrictSetterHandler, putByValWithStringStrictSetterHandler) \
+    macro(PutByValWithStringSloppySetterHandler, putByValWithStringSloppySetterHandler) \
+    macro(PutByValWithSymbolReplaceHandler, putByValWithSymbolReplaceHandler) \
+    macro(PutByValWithSymbolTransitionNonAllocatingHandler, putByValWithSymbolTransitionNonAllocatingHandler) \
+    macro(PutByValWithSymbolTransitionNewlyAllocatingHandler, putByValWithSymbolTransitionNewlyAllocatingHandler) \
+    macro(PutByValWithSymbolTransitionReallocatingHandler, putByValWithSymbolTransitionReallocatingHandler) \
+    macro(PutByValWithSymbolTransitionReallocatingOutOfLineHandler, putByValWithSymbolTransitionReallocatingOutOfLineHandler) \
+    macro(PutByValWithSymbolCustomAccessorHandler, putByValWithSymbolCustomAccessorHandler) \
+    macro(PutByValWithSymbolCustomValueHandler, putByValWithSymbolCustomValueHandler) \
+    macro(PutByValWithSymbolStrictSetterHandler, putByValWithSymbolStrictSetterHandler) \
+    macro(PutByValWithSymbolSloppySetterHandler, putByValWithSymbolSloppySetterHandler) \
+    macro(InByValWithStringHitHandler, inByValWithStringHitHandler) \
+    macro(InByValWithStringMissHandler, inByValWithStringMissHandler) \
+    macro(InByValWithSymbolHitHandler, inByValWithSymbolHitHandler) \
+    macro(InByValWithSymbolMissHandler, inByValWithSymbolMissHandler) \
+    macro(DeleteByValWithStringDeleteHandler, deleteByValWithStringDeleteHandler) \
+    macro(DeleteByValWithStringDeleteNonConfigurableHandler, deleteByValWithStringDeleteNonConfigurableHandler) \
+    macro(DeleteByValWithStringDeleteMissHandler, deleteByValWithStringDeleteMissHandler) \
+    macro(DeleteByValWithSymbolDeleteHandler, deleteByValWithSymbolDeleteHandler) \
+    macro(DeleteByValWithSymbolDeleteNonConfigurableHandler, deleteByValWithSymbolDeleteNonConfigurableHandler) \
+    macro(DeleteByValWithSymbolDeleteMissHandler, deleteByValWithSymbolDeleteMissHandler) \
+    macro(CheckPrivateBrandHandler, checkPrivateBrandHandler) \
+    macro(SetPrivateBrandHandler, setPrivateBrandHandler) \
 
 #if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
 #define JSC_FOR_EACH_YARR_JIT_BACKREFERENCES_THUNK(macro) \

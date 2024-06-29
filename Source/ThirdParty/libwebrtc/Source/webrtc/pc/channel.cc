@@ -79,7 +79,7 @@ struct StreamFinder {
 }  // namespace
 
 void MediaChannelParametersFromMediaDescription(
-    const RtpMediaContentDescription* desc,
+    const MediaContentDescription* desc,
     const RtpHeaderExtensions& extensions,
     bool is_stream_active,
     MediaChannelParameters* params) {
@@ -97,7 +97,7 @@ void MediaChannelParametersFromMediaDescription(
 }
 
 void RtpSendParametersFromMediaDescription(
-    const RtpMediaContentDescription* desc,
+    const MediaContentDescription* desc,
     webrtc::RtpExtension::Filter extensions_filter,
     SenderParameters* send_params) {
   RtpHeaderExtensions extensions =
@@ -875,7 +875,7 @@ bool VoiceChannel::SetLocalContent_w(const MediaContentDescription* content,
 
   AudioReceiverParameters recv_params = last_recv_params_;
   MediaChannelParametersFromMediaDescription(
-      content->as_audio(), header_extensions,
+      content, header_extensions,
       webrtc::RtpTransceiverDirectionHasRecv(content->direction()),
       &recv_params);
 
@@ -927,8 +927,8 @@ bool VoiceChannel::SetRemoteContent_w(const MediaContentDescription* content,
   RTC_LOG(LS_INFO) << "Setting remote voice description for " << ToString();
 
   AudioSenderParameter send_params = last_send_params_;
-  RtpSendParametersFromMediaDescription(content->as_audio(),
-                                        extensions_filter(), &send_params);
+  RtpSendParametersFromMediaDescription(content, extensions_filter(),
+                                        &send_params);
   send_params.mid = mid();
 
   bool parameters_applied =
@@ -1016,7 +1016,7 @@ bool VideoChannel::SetLocalContent_w(const MediaContentDescription* content,
   VideoReceiverParameters recv_params = last_recv_params_;
 
   MediaChannelParametersFromMediaDescription(
-      content->as_video(), header_extensions,
+      content, header_extensions,
       webrtc::RtpTransceiverDirectionHasRecv(content->direction()),
       &recv_params);
 
@@ -1029,15 +1029,15 @@ bool VideoChannel::SetLocalContent_w(const MediaContentDescription* content,
   // instead.
   bool needs_send_params_update = false;
   if (type == SdpType::kAnswer || type == SdpType::kPrAnswer) {
-    webrtc::flat_set<const VideoCodec*> matched_codecs;
-    for (VideoCodec& send_codec : send_params.codecs) {
-      if (absl::c_any_of(matched_codecs, [&](const VideoCodec* c) {
+    webrtc::flat_set<const Codec*> matched_codecs;
+    for (Codec& send_codec : send_params.codecs) {
+      if (absl::c_any_of(matched_codecs, [&](const Codec* c) {
             return send_codec.Matches(*c);
           })) {
         continue;
       }
 
-      std::vector<const VideoCodec*> recv_codecs =
+      std::vector<const Codec*> recv_codecs =
           FindAllMatchingCodecs(recv_params.codecs, send_codec);
       if (recv_codecs.empty()) {
         continue;
@@ -1045,7 +1045,7 @@ bool VideoChannel::SetLocalContent_w(const MediaContentDescription* content,
 
       bool may_ignore_packetization = false;
       bool has_matching_packetization = false;
-      for (const VideoCodec* recv_codec : recv_codecs) {
+      for (const Codec* recv_codec : recv_codecs) {
         if (!recv_codec->packetization.has_value() &&
             send_codec.packetization.has_value()) {
           may_ignore_packetization = true;
@@ -1100,7 +1100,7 @@ bool VideoChannel::SetLocalContent_w(const MediaContentDescription* content,
     last_send_params_ = send_params;
   }
 
-  if (!UpdateLocalStreams_w(content->as_video()->streams(), type, error_desc)) {
+  if (!UpdateLocalStreams_w(content->streams(), type, error_desc)) {
     RTC_DCHECK(!error_desc.empty());
     return false;
   }
@@ -1128,13 +1128,11 @@ bool VideoChannel::SetRemoteContent_w(const MediaContentDescription* content,
   TRACE_EVENT0("webrtc", "VideoChannel::SetRemoteContent_w");
   RTC_LOG(LS_INFO) << "Setting remote video description for " << ToString();
 
-  const VideoContentDescription* video = content->as_video();
-
   VideoSenderParameters send_params = last_send_params_;
-  RtpSendParametersFromMediaDescription(video, extensions_filter(),
+  RtpSendParametersFromMediaDescription(content, extensions_filter(),
                                         &send_params);
   send_params.mid = mid();
-  send_params.conference_mode = video->conference_mode();
+  send_params.conference_mode = content->conference_mode();
 
   VideoReceiverParameters recv_params = last_recv_params_;
 
@@ -1145,15 +1143,15 @@ bool VideoChannel::SetRemoteContent_w(const MediaContentDescription* content,
   // instead.
   bool needs_recv_params_update = false;
   if (type == SdpType::kAnswer || type == SdpType::kPrAnswer) {
-    webrtc::flat_set<const VideoCodec*> matched_codecs;
-    for (VideoCodec& recv_codec : recv_params.codecs) {
-      if (absl::c_any_of(matched_codecs, [&](const VideoCodec* c) {
+    webrtc::flat_set<const Codec*> matched_codecs;
+    for (Codec& recv_codec : recv_params.codecs) {
+      if (absl::c_any_of(matched_codecs, [&](const Codec* c) {
             return recv_codec.Matches(*c);
           })) {
         continue;
       }
 
-      std::vector<const VideoCodec*> send_codecs =
+      std::vector<const Codec*> send_codecs =
           FindAllMatchingCodecs(send_params.codecs, recv_codec);
       if (send_codecs.empty()) {
         continue;
@@ -1161,7 +1159,7 @@ bool VideoChannel::SetRemoteContent_w(const MediaContentDescription* content,
 
       bool may_ignore_packetization = false;
       bool has_matching_packetization = false;
-      for (const VideoCodec* send_codec : send_codecs) {
+      for (const Codec* send_codec : send_codecs) {
         if (!send_codec->packetization.has_value() &&
             recv_codec.packetization.has_value()) {
           may_ignore_packetization = true;

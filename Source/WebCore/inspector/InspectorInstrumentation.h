@@ -93,6 +93,7 @@ class ResourceRequest;
 class ResourceResponse;
 class ScriptExecutionContext;
 class SecurityOrigin;
+class ServiceWorkerGlobalScope;
 class ShadowRoot;
 class FragmentedSharedBuffer;
 class TimerBase;
@@ -205,11 +206,11 @@ public:
     static void didFinishLoading(LocalFrame*, DocumentLoader*, ResourceLoaderIdentifier, const NetworkLoadMetrics&, ResourceLoader*);
     static void didFailLoading(LocalFrame*, DocumentLoader*, ResourceLoaderIdentifier, const ResourceError&);
 
-    static void willSendRequest(WorkerOrWorkletGlobalScope&, ResourceLoaderIdentifier, ResourceRequest&);
-    static void didReceiveResourceResponse(WorkerOrWorkletGlobalScope&, ResourceLoaderIdentifier, const ResourceResponse&);
-    static void didReceiveData(WorkerOrWorkletGlobalScope&, ResourceLoaderIdentifier, const SharedBuffer&);
-    static void didFinishLoading(WorkerOrWorkletGlobalScope&, ResourceLoaderIdentifier, const NetworkLoadMetrics&);
-    static void didFailLoading(WorkerOrWorkletGlobalScope&, ResourceLoaderIdentifier, const ResourceError&);
+    static void willSendRequest(ServiceWorkerGlobalScope&, ResourceLoaderIdentifier, ResourceRequest&);
+    static void didReceiveResourceResponse(ServiceWorkerGlobalScope&, ResourceLoaderIdentifier, const ResourceResponse&);
+    static void didReceiveData(ServiceWorkerGlobalScope&, ResourceLoaderIdentifier, const SharedBuffer&);
+    static void didFinishLoading(ServiceWorkerGlobalScope&, ResourceLoaderIdentifier, const NetworkLoadMetrics&);
+    static void didFailLoading(ServiceWorkerGlobalScope&, ResourceLoaderIdentifier, const ResourceError&);
 
     // Some network requests do not go through the normal network loading path.
     // These network requests have to issue their own willSendRequest / didReceiveResponse / didFinishLoading / didFailLoading
@@ -224,7 +225,7 @@ public:
     static void didLoadXHRSynchronously(ScriptExecutionContext*);
     static void scriptImported(ScriptExecutionContext&, ResourceLoaderIdentifier, const String& sourceString);
     static void scriptExecutionBlockedByCSP(ScriptExecutionContext*, const String& directiveText);
-    static void didReceiveScriptResponse(ScriptExecutionContext*, ResourceLoaderIdentifier);
+    static void didReceiveScriptResponse(ScriptExecutionContext&, ResourceLoaderIdentifier);
     static void domContentLoadedEventFired(LocalFrame&);
     static void loadEventFired(LocalFrame*);
     static void frameDetachedFromParent(LocalFrame&);
@@ -538,6 +539,7 @@ private:
 
     static InstrumentingAgents& instrumentingAgents(Page&);
     static InstrumentingAgents& instrumentingAgents(WorkerOrWorkletGlobalScope&);
+    static InstrumentingAgents& instrumentingAgents(ServiceWorkerGlobalScope&);
 
     static InstrumentingAgents* instrumentingAgents(const Frame&);
     static InstrumentingAgents* instrumentingAgents(const Frame*);
@@ -1096,7 +1098,7 @@ inline void InspectorInstrumentation::willSendRequest(LocalFrame* frame, Resourc
         willSendRequestImpl(*agents, identifier, loader, request, redirectResponse, cachedResource, resourceLoader);
 }
 
-inline void InspectorInstrumentation::willSendRequest(WorkerOrWorkletGlobalScope& globalScope, ResourceLoaderIdentifier identifier, ResourceRequest& request)
+inline void InspectorInstrumentation::willSendRequest(ServiceWorkerGlobalScope& globalScope, ResourceLoaderIdentifier identifier, ResourceRequest& request)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     willSendRequestImpl(instrumentingAgents(globalScope), identifier, nullptr, request, ResourceResponse { }, nullptr, nullptr);
@@ -1121,7 +1123,7 @@ inline void InspectorInstrumentation::didReceiveResourceResponse(LocalFrame& fra
         didReceiveResourceResponseImpl(*agents, identifier, loader, response, resourceLoader);
 }
 
-inline void InspectorInstrumentation::didReceiveResourceResponse(WorkerOrWorkletGlobalScope& globalScope, ResourceLoaderIdentifier identifier, const ResourceResponse& response)
+inline void InspectorInstrumentation::didReceiveResourceResponse(ServiceWorkerGlobalScope& globalScope, ResourceLoaderIdentifier identifier, const ResourceResponse& response)
 {
     didReceiveResourceResponseImpl(instrumentingAgents(globalScope), identifier, nullptr, response, nullptr);
 }
@@ -1140,7 +1142,7 @@ inline void InspectorInstrumentation::didReceiveData(LocalFrame* frame, Resource
         didReceiveDataImpl(*agents, identifier, buffer, encodedDataLength);
 }
 
-inline void InspectorInstrumentation::didReceiveData(WorkerOrWorkletGlobalScope& globalScope, ResourceLoaderIdentifier identifier, const SharedBuffer& buffer)
+inline void InspectorInstrumentation::didReceiveData(ServiceWorkerGlobalScope& globalScope, ResourceLoaderIdentifier identifier, const SharedBuffer& buffer)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     didReceiveDataImpl(instrumentingAgents(globalScope), identifier, &buffer, buffer.size());
@@ -1153,7 +1155,7 @@ inline void InspectorInstrumentation::didFinishLoading(LocalFrame* frame, Docume
         didFinishLoadingImpl(*agents, identifier, loader, networkLoadMetrics, resourceLoader);
 }
 
-inline void InspectorInstrumentation::didFinishLoading(WorkerOrWorkletGlobalScope& globalScope, ResourceLoaderIdentifier identifier, const NetworkLoadMetrics& networkLoadMetrics)
+inline void InspectorInstrumentation::didFinishLoading(ServiceWorkerGlobalScope& globalScope, ResourceLoaderIdentifier identifier, const NetworkLoadMetrics& networkLoadMetrics)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     didFinishLoadingImpl(instrumentingAgents(globalScope), identifier, nullptr, networkLoadMetrics, nullptr);
@@ -1165,7 +1167,7 @@ inline void InspectorInstrumentation::didFailLoading(LocalFrame* frame, Document
         didFailLoadingImpl(*agents, identifier, loader, error);
 }
 
-inline void InspectorInstrumentation::didFailLoading(WorkerOrWorkletGlobalScope& globalScope, ResourceLoaderIdentifier identifier, const ResourceError& error)
+inline void InspectorInstrumentation::didFailLoading(ServiceWorkerGlobalScope& globalScope, ResourceLoaderIdentifier identifier, const ResourceError& error)
 {
     didFailLoadingImpl(instrumentingAgents(globalScope), identifier, nullptr, error);
 }
@@ -1219,7 +1221,7 @@ inline void InspectorInstrumentation::scriptExecutionBlockedByCSP(ScriptExecutio
         scriptExecutionBlockedByCSPImpl(*agents, directiveText);
 }
 
-inline void InspectorInstrumentation::didReceiveScriptResponse(ScriptExecutionContext* context, ResourceLoaderIdentifier identifier)
+inline void InspectorInstrumentation::didReceiveScriptResponse(ScriptExecutionContext& context, ResourceLoaderIdentifier identifier)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(context))

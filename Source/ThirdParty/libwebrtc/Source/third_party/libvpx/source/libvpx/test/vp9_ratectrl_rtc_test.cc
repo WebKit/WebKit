@@ -9,6 +9,7 @@
  */
 #include "vp9/ratectrl_rtc.h"
 
+#include <climits>
 #include <fstream>  // NOLINT
 #include <string>
 
@@ -19,6 +20,8 @@
 #include "test/i420_video_source.h"
 #include "test/util.h"
 #include "test/video_source.h"
+#include "vp9/encoder/vp9_encoder.h"
+#include "vp9/encoder/vp9_svc_layercontext.h"
 #include "vpx/vpx_codec.h"
 #include "vpx_ports/bitops.h"
 
@@ -31,6 +34,7 @@ const int kTemporalId2Layer[2] = { 0, 1 };
 const int kTemporalRateAllocation3Layer[3] = { 50, 70, 100 };
 const int kTemporalRateAllocation2Layer[2] = { 60, 100 };
 const int kSpatialLayerBitrate[3] = { 200, 400, 1000 };
+const int kSpatialLayerBitrateLow[3] = { 50, 100, 400 };
 
 class RcInterfaceTest
     : public ::libvpx_test::EncoderTest,
@@ -38,7 +42,7 @@ class RcInterfaceTest
  public:
   RcInterfaceTest()
       : EncoderTest(GET_PARAM(0)), aq_mode_(GET_PARAM(1)), key_interval_(3000),
-        encoder_exit_(false) {}
+        encoder_exit_(false), frame_drop_thresh_(0), num_drops_(0) {}
 
   ~RcInterfaceTest() override = default;
 
@@ -53,7 +57,11 @@ class RcInterfaceTest
     if (video->frame() == 0) {
       encoder->Control(VP8E_SET_CPUUSED, 7);
       encoder->Control(VP9E_SET_AQ_MODE, aq_mode_);
-      encoder->Control(VP9E_SET_TUNE_CONTENT, 0);
+      if (rc_cfg_.is_screen) {
+        encoder->Control(VP9E_SET_TUNE_CONTENT, VP9E_CONTENT_SCREEN);
+      } else {
+        encoder->Control(VP9E_SET_TUNE_CONTENT, VP9E_CONTENT_DEFAULT);
+      }
       encoder->Control(VP8E_SET_MAX_INTRA_BITRATE_PCT, 1000);
       encoder->Control(VP9E_SET_RTC_EXTERNAL_RATECTRL, 1);
     }
@@ -76,9 +84,12 @@ class RcInterfaceTest
     int loopfilter_level, qp;
     encoder->Control(VP9E_GET_LOOPFILTER_LEVEL, &loopfilter_level);
     encoder->Control(VP8E_GET_LAST_QUANTIZER, &qp);
-    rc_api_->ComputeQP(frame_params_);
-    ASSERT_EQ(rc_api_->GetQP(), qp);
-    ASSERT_EQ(rc_api_->GetLoopfilterLevel(), loopfilter_level);
+    if (rc_api_->ComputeQP(frame_params_) == libvpx::FrameDropDecision::kOk) {
+      ASSERT_EQ(rc_api_->GetQP(), qp);
+      ASSERT_EQ(rc_api_->GetLoopfilterLevel(), loopfilter_level);
+    } else {
+      num_drops_++;
+    }
   }
 
   void FramePktHook(const vpx_codec_cx_pkt_t *pkt) override {
@@ -95,6 +106,42 @@ class RcInterfaceTest
                                          1280, 720, 30, 1, 0, kNumFrames);
 
     ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+  }
+
+  void RunOneLayerScreen() {
+    SetConfig(GET_PARAM(2));
+    rc_cfg_.is_screen = true;
+    rc_api_ = libvpx::VP9RateControlRTC::Create(rc_cfg_);
+    frame_params_.spatial_layer_id = 0;
+    frame_params_.temporal_layer_id = 0;
+
+    ::libvpx_test::I420VideoSource video("desktop_office1.1280_720-020.yuv",
+                                         1280, 720, 30, 1, 0, kNumFrames);
+
+    ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+  }
+
+  void RunOneLayerDropFramesCBR() {
+    if (GET_PARAM(2) != VPX_CBR) {
+      GTEST_SKIP() << "Frame dropping is only for CBR mode.";
+    }
+    frame_drop_thresh_ = 30;
+    SetConfig(GET_PARAM(2));
+    // Use lower bitrate, lower max-q, and enable frame dropper.
+    rc_cfg_.target_bandwidth = 200;
+    cfg_.rc_target_bitrate = 200;
+    rc_cfg_.max_quantizer = 50;
+    cfg_.rc_max_quantizer = 50;
+    rc_api_ = libvpx::VP9RateControlRTC::Create(rc_cfg_);
+    frame_params_.spatial_layer_id = 0;
+    frame_params_.temporal_layer_id = 0;
+
+    ::libvpx_test::I420VideoSource video("desktop_office1.1280_720-020.yuv",
+                                         1280, 720, 30, 1, 0, kNumFrames);
+
+    ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+    // Check that some frames were dropped, otherwise test has no value.
+    ASSERT_GE(num_drops_, 1);
   }
 
   void RunOneLayerVBRPeriodicKey() {
@@ -134,6 +181,7 @@ class RcInterfaceTest
     rc_cfg_.min_quantizers[0] = 2;
     rc_cfg_.rc_mode = rc_mode;
     rc_cfg_.aq_mode = aq_mode_;
+    rc_cfg_.frame_drop_thresh = frame_drop_thresh_;
 
     // Encoder settings for ground truth.
     cfg_.g_w = 1280;
@@ -152,6 +200,7 @@ class RcInterfaceTest
     cfg_.rc_target_bitrate = 1000;
     cfg_.kf_min_dist = key_interval_;
     cfg_.kf_max_dist = key_interval_;
+    cfg_.rc_dropframe_thresh = frame_drop_thresh_;
   }
 
   std::unique_ptr<libvpx::VP9RateControlRTC> rc_api_;
@@ -160,6 +209,8 @@ class RcInterfaceTest
   int key_interval_;
   libvpx::VP9FrameParamsQpRTC frame_params_;
   bool encoder_exit_;
+  int frame_drop_thresh_;
+  int num_drops_;
 };
 
 class RcInterfaceSvcTest
@@ -169,7 +220,8 @@ class RcInterfaceSvcTest
   RcInterfaceSvcTest()
       : EncoderTest(GET_PARAM(0)), aq_mode_(GET_PARAM(1)), key_interval_(3000),
         dynamic_spatial_layers_(0), inter_layer_pred_off_(GET_PARAM(2)),
-        parallel_spatial_layers_(false) {}
+        parallel_spatial_layers_(false), frame_drop_thresh_(0),
+        max_consec_drop_(INT_MAX), num_drops_(0) {}
   ~RcInterfaceSvcTest() override = default;
 
  protected:
@@ -181,6 +233,7 @@ class RcInterfaceSvcTest
   void PreEncodeFrameHook(libvpx_test::VideoSource *video,
                           ::libvpx_test::Encoder *encoder) override {
     if (video->frame() == 0) {
+      current_superframe_ = 0;
       encoder->Control(VP8E_SET_CPUUSED, 7);
       encoder->Control(VP9E_SET_AQ_MODE, aq_mode_);
       encoder->Control(VP9E_SET_TUNE_CONTENT, 0);
@@ -192,12 +245,19 @@ class RcInterfaceSvcTest
         encoder->Control(VP9E_SET_SVC_INTER_LAYER_PRED,
                          INTER_LAYER_PRED_OFF_NONKEY);
       }
+      if (frame_drop_thresh_ > 0) {
+        vpx_svc_frame_drop_t svc_drop_frame;
+        svc_drop_frame.framedrop_mode = FULL_SUPERFRAME_DROP;
+        for (int sl = 0; sl < rc_cfg_.ss_number_layers; ++sl)
+          svc_drop_frame.framedrop_thresh[sl] = frame_drop_thresh_;
+        svc_drop_frame.max_consec_drop = max_consec_drop_;
+        encoder->Control(VP9E_SET_SVC_FRAME_DROP_LAYER, &svc_drop_frame);
+      }
     }
     frame_params_.frame_type = video->frame() % key_interval_ == 0
                                    ? libvpx::RcFrameType::kKeyFrame
                                    : libvpx::RcFrameType::kInterFrame;
     encoder_exit_ = video->frame() == kNumFrames;
-    current_superframe_ = video->frame();
     if (dynamic_spatial_layers_ == 1) {
       if (video->frame() == 100) {
         // Go down to 2 spatial layers: set top SL to 0 bitrate.
@@ -257,24 +317,38 @@ class RcInterfaceSvcTest
   }
 
   void PostEncodeFrameHook(::libvpx_test::Encoder *encoder) override {
+    if (encoder_exit_) {
+      return;
+    }
+    int superframe_is_dropped = false;
     ::libvpx_test::CxDataIterator iter = encoder->GetCxData();
     for (int sl = 0; sl < rc_cfg_.ss_number_layers; sl++) sizes_[sl] = 0;
     std::vector<int> rc_qp;
+    // For FULL_SUPERFRAME_DROP: the full superframe drop decision is
+    // determined on the base spatial layer.
+    SetFrameParamsSvc(0);
+    if (rc_api_->ComputeQP(frame_params_) == libvpx::FrameDropDecision::kDrop) {
+      superframe_is_dropped = true;
+      num_drops_++;
+    }
     while (const vpx_codec_cx_pkt_t *pkt = iter.Next()) {
+      ASSERT_EQ(superframe_is_dropped, false);
       ParseSuperframeSizes(static_cast<const uint8_t *>(pkt->data.frame.buf),
                            pkt->data.frame.sz);
       if (!parallel_spatial_layers_ || current_superframe_ == 0) {
         for (int sl = 0; sl < rc_cfg_.ss_number_layers; sl++) {
           if (sizes_[sl] > 0) {
             SetFrameParamsSvc(sl);
-            rc_api_->ComputeQP(frame_params_);
+            // For sl=0 ComputeQP() is already called above (line 310).
+            if (sl > 0) rc_api_->ComputeQP(frame_params_);
             rc_api_->PostEncodeUpdate(sizes_[sl], frame_params_);
             rc_qp.push_back(rc_api_->GetQP());
           }
         }
       } else {
         for (int sl = 0; sl < rc_cfg_.ss_number_layers; sl++) {
-          if (sizes_[sl] > 0) {
+          // For sl=0 ComputeQP() is already called above (line 310).
+          if (sizes_[sl] > 0 && sl > 0) {
             SetFrameParamsSvc(sl);
             rc_api_->ComputeQP(frame_params_);
           }
@@ -288,7 +362,7 @@ class RcInterfaceSvcTest
         }
       }
     }
-    if (!encoder_exit_) {
+    if (!superframe_is_dropped) {
       int loopfilter_level;
       std::vector<int> encoder_qp(VPX_SS_MAX_LAYERS, 0);
       encoder->Control(VP9E_GET_LOOPFILTER_LEVEL, &loopfilter_level);
@@ -296,6 +370,7 @@ class RcInterfaceSvcTest
       encoder_qp.resize(rc_qp.size());
       ASSERT_EQ(rc_qp, encoder_qp);
       ASSERT_EQ(rc_api_->GetLoopfilterLevel(), loopfilter_level);
+      current_superframe_++;
     }
   }
   // This method needs to be overridden because non-reference frames are
@@ -313,6 +388,21 @@ class RcInterfaceSvcTest
                                          1280, 720, 30, 1, 0, kNumFrames);
 
     ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+  }
+
+  void RunSvcDropFramesCBR() {
+    max_consec_drop_ = 10;
+    frame_drop_thresh_ = 30;
+    SetRCConfigSvc(3, 3);
+    rc_api_ = libvpx::VP9RateControlRTC::Create(rc_cfg_);
+    SetEncoderConfigSvc(3, 3);
+
+    ::libvpx_test::I420VideoSource video("desktop_office1.1280_720-020.yuv",
+                                         1280, 720, 30, 1, 0, kNumFrames);
+
+    ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+    // Check that some frames were dropped, otherwise test has no value.
+    ASSERT_GE(num_drops_, 1);
   }
 
   void RunSvcPeriodicKey() {
@@ -438,12 +528,14 @@ class RcInterfaceSvcTest
     cfg_.kf_max_dist = 9999;
     cfg_.rc_overshoot_pct = 50;
     cfg_.rc_undershoot_pct = 50;
+    cfg_.rc_dropframe_thresh = frame_drop_thresh_;
 
     cfg_.rc_target_bitrate = 0;
     for (int sl = 0; sl < number_spatial_layers; sl++) {
       int spatial_bitrate = 0;
       if (number_spatial_layers <= 3)
-        spatial_bitrate = kSpatialLayerBitrate[sl];
+        spatial_bitrate = frame_drop_thresh_ > 0 ? kSpatialLayerBitrateLow[sl]
+                                                 : kSpatialLayerBitrate[sl];
       for (int tl = 0; tl < number_temporal_layers; tl++) {
         int layer = sl * number_temporal_layers + tl;
         if (number_temporal_layers == 3)
@@ -478,6 +570,8 @@ class RcInterfaceSvcTest
     rc_cfg_.framerate = 30.0;
     rc_cfg_.rc_mode = VPX_CBR;
     rc_cfg_.aq_mode = aq_mode_;
+    rc_cfg_.frame_drop_thresh = frame_drop_thresh_;
+    rc_cfg_.max_consec_drop = max_consec_drop_;
 
     if (number_spatial_layers == 3) {
       rc_cfg_.scaling_factor_num[0] = 1;
@@ -511,7 +605,8 @@ class RcInterfaceSvcTest
     for (int sl = 0; sl < number_spatial_layers; sl++) {
       int spatial_bitrate = 0;
       if (number_spatial_layers <= 3)
-        spatial_bitrate = kSpatialLayerBitrate[sl];
+        spatial_bitrate = frame_drop_thresh_ > 0 ? kSpatialLayerBitrateLow[sl]
+                                                 : kSpatialLayerBitrate[sl];
       for (int tl = 0; tl < number_temporal_layers; tl++) {
         int layer = sl * number_temporal_layers + tl;
         if (number_temporal_layers == 3)
@@ -548,13 +643,22 @@ class RcInterfaceSvcTest
   bool inter_layer_pred_off_;
   // ComputeQP() and PostEncodeUpdate() don't need to be sequential for KSVC.
   bool parallel_spatial_layers_;
+  int frame_drop_thresh_;
+  int max_consec_drop_;
+  int num_drops_;
 };
 
 TEST_P(RcInterfaceTest, OneLayer) { RunOneLayer(); }
 
+TEST_P(RcInterfaceTest, OneLayerDropFramesCBR) { RunOneLayerDropFramesCBR(); }
+
+TEST_P(RcInterfaceTest, OneLayerScreen) { RunOneLayerScreen(); }
+
 TEST_P(RcInterfaceTest, OneLayerVBRPeriodicKey) { RunOneLayerVBRPeriodicKey(); }
 
 TEST_P(RcInterfaceSvcTest, Svc) { RunSvc(); }
+
+TEST_P(RcInterfaceSvcTest, SvcDropFramesCBR) { RunSvcDropFramesCBR(); }
 
 TEST_P(RcInterfaceSvcTest, SvcParallelSpatialLayers) {
   RunSvcParallelSpatialLayers();

@@ -170,13 +170,15 @@ class LogMessage {
 
   // Types that support `AbslStringify()` are serialized that way.
   template <typename T,
-            typename std::enable_if<HasAbslStringify<T>::value, int>::type = 0>
+            typename std::enable_if<absl::HasAbslStringify<T>::value,
+                                    int>::type = 0>
   LogMessage& operator<<(const T& v) ABSL_ATTRIBUTE_NOINLINE;
 
   // Types that don't support `AbslStringify()` but do support streaming into a
   // `std::ostream&` are serialized that way.
   template <typename T,
-            typename std::enable_if<!HasAbslStringify<T>::value, int>::type = 0>
+            typename std::enable_if<!absl::HasAbslStringify<T>::value,
+                                    int>::type = 0>
   LogMessage& operator<<(const T& v) ABSL_ATTRIBUTE_NOINLINE;
 
   // Note: We explicitly do not support `operator<<` for non-const references
@@ -281,7 +283,7 @@ class StringifySink final {
 
 // Note: the following is declared `ABSL_ATTRIBUTE_NOINLINE`
 template <typename T,
-          typename std::enable_if<HasAbslStringify<T>::value, int>::type>
+          typename std::enable_if<absl::HasAbslStringify<T>::value, int>::type>
 LogMessage& LogMessage::operator<<(const T& v) {
   StringifySink sink(*this);
   // Replace with public API.
@@ -291,7 +293,7 @@ LogMessage& LogMessage::operator<<(const T& v) {
 
 // Note: the following is declared `ABSL_ATTRIBUTE_NOINLINE`
 template <typename T,
-          typename std::enable_if<!HasAbslStringify<T>::value, int>::type>
+          typename std::enable_if<!absl::HasAbslStringify<T>::value, int>::type>
 LogMessage& LogMessage::operator<<(const T& v) {
   OstreamView view(*data_);
   view.stream() << log_internal::NullGuard<T>().Guard(v);
@@ -355,6 +357,25 @@ class LogMessageFatal final : public LogMessage {
   ABSL_ATTRIBUTE_NORETURN ~LogMessageFatal();
 };
 
+// `LogMessageDebugFatal` ensures the process will exit in failure after logging
+// this message. It matches LogMessageFatal but is not [[noreturn]] as it's used
+// for DLOG(FATAL) variants.
+class LogMessageDebugFatal final : public LogMessage {
+ public:
+  LogMessageDebugFatal(const char* file, int line) ABSL_ATTRIBUTE_COLD;
+  ~LogMessageDebugFatal();
+};
+
+class LogMessageQuietlyDebugFatal final : public LogMessage {
+ public:
+  // DLOG(QFATAL) calls this instead of LogMessageQuietlyFatal to make sure the
+  // destructor is not [[noreturn]] even if this is always FATAL as this is only
+  // invoked when DLOG() is enabled.
+  LogMessageQuietlyDebugFatal(const char* file, int line) ABSL_ATTRIBUTE_COLD;
+  ~LogMessageQuietlyDebugFatal();
+};
+
+// Used for LOG(QFATAL) to make sure it's properly understood as [[noreturn]].
 class LogMessageQuietlyFatal final : public LogMessage {
  public:
   LogMessageQuietlyFatal(const char* file, int line) ABSL_ATTRIBUTE_COLD;

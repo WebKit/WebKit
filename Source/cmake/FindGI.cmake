@@ -243,7 +243,7 @@ function(GI_INTROSPECT namespace nsversion header)
         message(FATAL_ERROR "Target '${opt_TARGET}' was not defined")
     endif ()
 
-    set(gir_deps)
+    set(gir_deps ${opt_TARGET})
     set(gir_name "${namespace}-${nsversion}")
     set(gir_path "${CMAKE_BINARY_DIR}/${gir_name}.gir")
     set(typ_path "${CMAKE_BINARY_DIR}/${gir_name}.typelib")

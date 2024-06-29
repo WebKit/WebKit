@@ -13,7 +13,9 @@
 #include <vector>
 
 #include "absl/strings/str_replace.h"
+#include "api/audio/audio_device.h"
 #include "api/audio/audio_mixer.h"
+#include "api/audio/audio_processing.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
@@ -31,8 +33,6 @@
 #include "api/video_codecs/video_encoder_factory_template_libvpx_vp8_adapter.h"
 #include "api/video_codecs/video_encoder_factory_template_libvpx_vp9_adapter.h"
 #include "api/video_codecs/video_encoder_factory_template_open_h264_adapter.h"
-#include "modules/audio_device/include/audio_device.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "p2p/base/port_allocator.h"
 #include "pc/peer_connection_wrapper.h"
 #include "pc/session_description.h"
@@ -88,7 +88,7 @@ class SdpOfferAnswerTest : public ::testing::Test {
                                             Dav1dDecoderTemplateAdapter>>(),
             nullptr /* audio_mixer */,
             nullptr /* audio_processing */)) {
-    webrtc::metrics::Reset();
+    metrics::Reset();
   }
 
   std::unique_ptr<PeerConnectionWrapper> CreatePeerConnection() {
@@ -168,8 +168,8 @@ TEST_F(SdpOfferAnswerTest, BundleRejectsCodecCollisionsAudioVideo) {
   // There is no error yet but the metrics counter will increase.
   EXPECT_TRUE(error.ok());
   EXPECT_METRIC_EQ(
-      1, webrtc::metrics::NumEvents(
-             "WebRTC.PeerConnection.ValidBundledPayloadTypes", false));
+      1, metrics::NumEvents("WebRTC.PeerConnection.ValidBundledPayloadTypes",
+                            false));
 
   // Tolerate codec collisions in rejected m-lines.
   pc = CreatePeerConnection();
@@ -178,9 +178,9 @@ TEST_F(SdpOfferAnswerTest, BundleRejectsCodecCollisionsAudioVideo) {
       absl::StrReplaceAll(sdp, {{"m=video 9 ", "m=video 0 "}}));
   pc->SetRemoteDescription(std::move(rejected_offer), &error);
   EXPECT_TRUE(error.ok());
-  EXPECT_METRIC_EQ(1,
-                   webrtc::metrics::NumEvents(
-                       "WebRTC.PeerConnection.ValidBundledPayloadTypes", true));
+  EXPECT_METRIC_EQ(
+      1, metrics::NumEvents("WebRTC.PeerConnection.ValidBundledPayloadTypes",
+                            true));
 }
 
 TEST_F(SdpOfferAnswerTest, BundleRejectsCodecCollisionsVideoFmtp) {
@@ -221,8 +221,8 @@ TEST_F(SdpOfferAnswerTest, BundleRejectsCodecCollisionsVideoFmtp) {
   pc->SetRemoteDescription(std::move(desc), &error);
   EXPECT_TRUE(error.ok());
   EXPECT_METRIC_EQ(
-      1, webrtc::metrics::NumEvents(
-             "WebRTC.PeerConnection.ValidBundledPayloadTypes", false));
+      1, metrics::NumEvents("WebRTC.PeerConnection.ValidBundledPayloadTypes",
+                            false));
 }
 
 TEST_F(SdpOfferAnswerTest, BundleCodecCollisionInDifferentBundlesAllowed) {
@@ -264,8 +264,8 @@ TEST_F(SdpOfferAnswerTest, BundleCodecCollisionInDifferentBundlesAllowed) {
   pc->SetRemoteDescription(std::move(desc), &error);
   EXPECT_TRUE(error.ok());
   EXPECT_METRIC_EQ(
-      0, webrtc::metrics::NumEvents(
-             "WebRTC.PeerConnection.ValidBundledPayloadTypes", false));
+      0, metrics::NumEvents("WebRTC.PeerConnection.ValidBundledPayloadTypes",
+                            false));
 }
 
 TEST_F(SdpOfferAnswerTest, BundleMeasuresHeaderExtensionIdCollision) {
@@ -990,8 +990,7 @@ TEST_F(SdpOfferAnswerTest, SdpMungingWithInvalidPayloadTypeIsRejected) {
 
   auto offer = pc->CreateOffer();
   ASSERT_EQ(offer->description()->contents().size(), 1u);
-  auto* audio =
-      offer->description()->contents()[0].media_description()->as_audio();
+  auto* audio = offer->description()->contents()[0].media_description();
   ASSERT_GT(audio->codecs().size(), 0u);
   EXPECT_TRUE(audio->rtcp_mux());
   auto codecs = audio->codecs();
@@ -1004,6 +1003,111 @@ TEST_F(SdpOfferAnswerTest, SdpMungingWithInvalidPayloadTypeIsRejected) {
     ASSERT_FALSE(pc->SetLocalDescription(offer->Clone()));
     ASSERT_FALSE(pc->SetRemoteDescription(offer->Clone()));
   }
+}
+
+TEST_F(SdpOfferAnswerTest, MsidSignalingInSubsequentOfferAnswer) {
+  auto pc = CreatePeerConnection();
+  pc->AddAudioTrack("audio_track", {});
+
+  std::string sdp =
+      "v=0\r\n"
+      "o=- 0 3 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "a=msid-semantic: WMS\r\n"
+      "a=fingerprint:sha-1 "
+      "4A:AD:B9:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\r\n"
+      "a=setup:actpass\r\n"
+      "a=ice-ufrag:ETEn\r\n"
+      "a=ice-pwd:OtSK0WpNtpUjkY4+86js7Z/l\r\n"
+      "m=audio 9 UDP/TLS/RTP/SAVPF 111\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=rtcp:9 IN IP4 0.0.0.0\r\n"
+      "a=recvonly\r\n"
+      "a=rtcp-mux\r\n"
+      "a=rtpmap:111 opus/48000/2\r\n";
+
+  auto offer = CreateSessionDescription(SdpType::kOffer, sdp);
+  EXPECT_TRUE(pc->SetRemoteDescription(std::move(offer)));
+
+  // Check the generated SDP.
+  auto answer = pc->CreateAnswer();
+  answer->ToString(&sdp);
+  EXPECT_NE(std::string::npos, sdp.find("a=msid:- audio_track\r\n"));
+
+  EXPECT_TRUE(pc->SetLocalDescription(std::move(answer)));
+
+  // Check the local description object.
+  auto local_description = pc->pc()->local_description();
+  ASSERT_EQ(local_description->description()->contents().size(), 1u);
+  auto streams = local_description->description()
+                     ->contents()[0]
+                     .media_description()
+                     ->streams();
+  ASSERT_EQ(streams.size(), 1u);
+  EXPECT_EQ(streams[0].id, "audio_track");
+
+  // Check the serialization of the local description.
+  local_description->ToString(&sdp);
+  EXPECT_NE(std::string::npos, sdp.find("a=msid:- audio_track\r\n"));
+}
+
+// Regression test for crbug.com/328522463
+// where the stream parameters got recreated which changed the ssrc.
+TEST_F(SdpOfferAnswerTest, MsidSignalingUnknownRespondsWithMsidAndKeepsSsrc) {
+  auto pc = CreatePeerConnection();
+  pc->AddAudioTrack("audio_track", {"default"});
+  std::string sdp =
+      "v=0\r\n"
+      "o=- 0 3 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "a=group:BUNDLE 0\r\n"
+      // "a=msid-semantic: WMS *\r\n"
+      "a=ice-ufrag:ETEn\r\n"
+      "a=ice-pwd:OtSK0WpNtpUjkY4+86js7Z/l\r\n"
+      "a=fingerprint:sha-1 "
+      "4A:AD:B9:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\r\n"
+      "a=setup:actpass\r\n"
+      "m=audio 9 UDP/TLS/RTP/SAVPF 111\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=rtcp:9 IN IP4 0.0.0.0\r\n"
+      "a=recvonly\r\n"
+      "a=rtcp-mux\r\n"
+      "a=mid:0\r\n"
+      "a=rtpmap:111 opus/48000/2\r\n";
+
+  auto offer = CreateSessionDescription(SdpType::kOffer, sdp);
+  EXPECT_TRUE(pc->SetRemoteDescription(std::move(offer)));
+  auto first_transceiver = pc->pc()->GetTransceivers()[0];
+  EXPECT_TRUE(first_transceiver
+                  ->SetDirectionWithError(RtpTransceiverDirection::kSendOnly)
+                  .ok());
+  // Check the generated *serialized* SDP.
+  auto answer = pc->CreateAnswer();
+  const auto& answer_contents = answer->description()->contents();
+  ASSERT_EQ(answer_contents.size(), 1u);
+  auto answer_streams = answer_contents[0].media_description()->streams();
+  ASSERT_EQ(answer_streams.size(), 1u);
+  std::string first_stream_serialized = answer_streams[0].ToString();
+  uint32_t first_ssrc = answer_contents[0].media_description()->first_ssrc();
+
+  answer->ToString(&sdp);
+  EXPECT_TRUE(
+      pc->SetLocalDescription(CreateSessionDescription(SdpType::kAnswer, sdp)));
+
+  auto reoffer = pc->CreateOffer();
+  const auto& offer_contents = reoffer->description()->contents();
+  ASSERT_EQ(offer_contents.size(), 1u);
+
+  auto offer_streams = offer_contents[0].media_description()->streams();
+  ASSERT_EQ(offer_streams.size(), 1u);
+  std::string second_stream_serialized = offer_streams[0].ToString();
+  uint32_t second_ssrc = offer_contents[0].media_description()->first_ssrc();
+
+  EXPECT_EQ(first_ssrc, second_ssrc);
+  EXPECT_EQ(first_stream_serialized, second_stream_serialized);
+  EXPECT_TRUE(pc->SetLocalDescription(std::move(reoffer)));
 }
 
 // Test variant with boolean order for audio-video and video-audio.
@@ -1096,5 +1200,142 @@ TEST_P(SdpOfferAnswerShuffleMediaTypes,
 INSTANTIATE_TEST_SUITE_P(SdpOfferAnswerShuffleMediaTypes,
                          SdpOfferAnswerShuffleMediaTypes,
                          ::testing::Values(true, false));
+
+TEST_F(SdpOfferAnswerTest, OfferWithNoCompatibleCodecsIsRejectedInAnswer) {
+  auto pc = CreatePeerConnection();
+  // An offer with no common codecs. This should reject both contents
+  // in the answer without throwing an error.
+  std::string sdp =
+      "v=0\r\n"
+      "o=- 0 3 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "a=fingerprint:sha-1 "
+      "4A:AD:B9:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\r\n"
+      "a=setup:actpass\r\n"
+      "a=ice-ufrag:ETEn\r\n"
+      "a=ice-pwd:OtSK0WpNtpUjkY4+86js7Z/l\r\n"
+      "m=audio 9 RTP/SAVPF 97\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=sendrecv\r\n"
+      "a=rtpmap:97 x-unknown/90000\r\n"
+      "a=rtcp-mux\r\n"
+      "m=video 9 RTP/SAVPF 98\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=sendrecv\r\n"
+      "a=rtpmap:98 H263-1998/90000\r\n"
+      "a=fmtp:98 CIF=1;QCIF=1\r\n"
+      "a=rtcp-mux\r\n";
+
+  auto desc = CreateSessionDescription(SdpType::kOffer, sdp);
+  ASSERT_NE(desc, nullptr);
+  RTCError error;
+  pc->SetRemoteDescription(std::move(desc), &error);
+  EXPECT_TRUE(error.ok());
+
+  auto answer = pc->CreateAnswer();
+  auto answer_contents = answer->description()->contents();
+  ASSERT_EQ(answer_contents.size(), 2u);
+  EXPECT_EQ(answer_contents[0].rejected, true);
+  EXPECT_EQ(answer_contents[1].rejected, true);
+}
+
+TEST_F(SdpOfferAnswerTest, OfferWithRejectedMlineWithoutFingerprintIsAccepted) {
+  auto pc = CreatePeerConnection();
+  // A rejected m-line without fingerprint.
+  // The answer does not require one.
+  std::string sdp =
+      "v=0\r\n"
+      "o=- 0 3 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "a=setup:actpass\r\n"
+      "a=ice-ufrag:ETEn\r\n"
+      "a=ice-pwd:OtSK0WpNtpUjkY4+86js7Z/l\r\n"
+      "m=audio 0 RTP/SAVPF 111\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=sendrecv\r\n"
+      "a=rtpmap:111 opus/48000/2\r\n"
+      "a=rtcp-mux\r\n";
+  auto desc = CreateSessionDescription(SdpType::kOffer, sdp);
+  ASSERT_NE(desc, nullptr);
+  RTCError error;
+  pc->SetRemoteDescription(std::move(desc), &error);
+  EXPECT_TRUE(error.ok());
+
+  auto answer = pc->CreateAnswer();
+  EXPECT_TRUE(pc->SetLocalDescription(std::move(answer)));
+}
+
+TEST_F(SdpOfferAnswerTest, MidBackfillAnswer) {
+  auto pc = CreatePeerConnection();
+  // An offer without a mid backfills the mid. This is currently
+  // done with a per-peerconnection counter that starts from 0.
+  // JSEP says to only include the mid in the answer if it was in the offer
+  // but due to backfill it is always present.
+  // TODO: https://issues.webrtc.org/issues/338529222 - don't respond with mid.
+  std::string sdp =
+      "v=0\r\n"
+      "o=- 0 3 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "a=setup:actpass\r\n"
+      "a=ice-ufrag:ETEn\r\n"
+      "a=ice-pwd:OtSK0WpNtpUjkY4+86js7Z/l\r\n"
+      "a=fingerprint:sha-1 "
+      "4A:AD:B9:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\r\n"
+      "a=setup:actpass\r\n"
+      "m=audio 9 RTP/SAVPF 111\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=sendrecv\r\n"
+      "a=rtpmap:111 opus/48000/2\r\n"
+      // "a=mid:0\r\n"
+      "a=rtcp-mux\r\n";
+  auto desc = CreateSessionDescription(SdpType::kOffer, sdp);
+  ASSERT_NE(desc, nullptr);
+  RTCError error;
+  pc->SetRemoteDescription(std::move(desc), &error);
+  EXPECT_TRUE(error.ok());
+  auto offer_contents =
+      pc->pc()->remote_description()->description()->contents();
+  ASSERT_EQ(offer_contents.size(), 1u);
+  EXPECT_EQ(offer_contents[0].mid(), "0");
+  auto answer = pc->CreateAnswerAndSetAsLocal();
+  auto answer_contents = answer->description()->contents();
+  ASSERT_EQ(answer_contents.size(), 1u);
+  EXPECT_EQ(answer_contents[0].mid(), offer_contents[0].mid());
+}
+
+TEST_F(SdpOfferAnswerTest, MidBackfillDoesNotCheckAgainstBundleGroup) {
+  auto pc = CreatePeerConnection();
+  // An offer with a BUNDLE group specifying a mid that is not present
+  // in the offer. This is not rejected due to the mid being backfilled
+  // starting at 0.
+  // TODO: https://issues.webrtc.org/issues/338528603 - reject this.
+  std::string sdp =
+      "v=0\r\n"
+      "o=- 0 3 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "a=setup:actpass\r\n"
+      "a=ice-ufrag:ETEn\r\n"
+      "a=ice-pwd:OtSK0WpNtpUjkY4+86js7Z/l\r\n"
+      "a=fingerprint:sha-1 "
+      "4A:AD:B9:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\r\n"
+      "a=setup:actpass\r\n"
+      "a=group:BUNDLE 0\r\n"
+      "m=audio 9 RTP/SAVPF 111\r\n"
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=sendrecv\r\n"
+      "a=rtpmap:111 opus/48000/2\r\n"
+      // "a=mid:0\r\n"
+      "a=rtcp-mux\r\n";
+  auto desc = CreateSessionDescription(SdpType::kOffer, sdp);
+  ASSERT_NE(desc, nullptr);
+  RTCError error;
+  pc->SetRemoteDescription(std::move(desc), &error);
+  EXPECT_TRUE(error.ok());
+  EXPECT_TRUE(pc->CreateAnswerAndSetAsLocal());
+}
 
 }  // namespace webrtc

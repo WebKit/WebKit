@@ -35,13 +35,11 @@ OBJC_CLASS WKLinearMediaPlayerDelegate;
 
 namespace WebKit {
 
-using namespace WebCore;
-
-class PlaybackSessionInterfaceLMK final : public PlaybackSessionInterfaceIOS {
+class PlaybackSessionInterfaceLMK final : public WebCore::PlaybackSessionInterfaceIOS {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceLMK);
 public:
-    static Ref<PlaybackSessionInterfaceLMK> create(PlaybackSessionModel&);
+    static Ref<PlaybackSessionInterfaceLMK> create(WebCore::PlaybackSessionModel&);
     ~PlaybackSessionInterfaceLMK();
 
     WebAVPlayerController *playerController() const final { return nullptr; }
@@ -49,17 +47,18 @@ public:
     void durationChanged(double) final;
     void currentTimeChanged(double, double) final;
     void bufferedTimeChanged(double) final { }
-    void rateChanged(OptionSet<PlaybackSessionModel::PlaybackState>, double, double) final;
-    void seekableRangesChanged(const TimeRanges&, double, double) final;
+    void rateChanged(OptionSet<WebCore::PlaybackSessionModel::PlaybackState>, double, double) final;
+    void seekableRangesChanged(const WebCore::TimeRanges&, double, double) final;
     void canPlayFastReverseChanged(bool) final;
-    void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>&, uint64_t) final;
-    void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>&, uint64_t) final;
+    void audioMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>&, uint64_t) final;
+    void legibleMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>&, uint64_t) final;
     void audioMediaSelectionIndexChanged(uint64_t) final;
     void legibleMediaSelectionIndexChanged(uint64_t) final;
-    void externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&) final { }
+    void externalPlaybackChanged(bool, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, const String&) final { }
     void wirelessVideoPlaybackDisabledChanged(bool) final { }
     void mutedChanged(bool) final;
     void volumeChanged(double) final;
+    void supportsLinearMediaPlayerChanged(bool) final;
     void startObservingNowPlayingMetadata() final;
     void stopObservingNowPlayingMetadata() final;
 #if !RELEASE_LOG_DISABLED
@@ -69,7 +68,7 @@ public:
     void nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata&);
 
 private:
-    PlaybackSessionInterfaceLMK(PlaybackSessionModel&);
+    PlaybackSessionInterfaceLMK(WebCore::PlaybackSessionModel&);
 
     RetainPtr<WKSLinearMediaPlayer> m_player;
     RetainPtr<WKLinearMediaPlayerDelegate> m_playerDelegate;

@@ -2457,7 +2457,7 @@ TEST_P(ClipCullDistanceTest, FourCullDistances)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kExtensionName));
 
-    // SwiftShader bug: http://anglebug.com/5451
+    // SwiftShader bug: http://anglebug.com/42263990
     ANGLE_SKIP_TEST_IF(isSwiftshader());
 
     std::string kVS = R"(#version 300 es

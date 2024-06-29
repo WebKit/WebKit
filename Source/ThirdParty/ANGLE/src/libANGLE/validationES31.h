@@ -28,6 +28,14 @@ bool ValidateTexBufferRangeBase(const Context *context,
                                 GLintptr offset,
                                 GLsizeiptr size);
 
+// GL_EXT_geometry_shader
+bool ValidateFramebufferTextureCommon(const Context *context,
+                                      angle::EntryPoint entryPoint,
+                                      GLenum target,
+                                      GLenum attachment,
+                                      TextureID texture,
+                                      GLint level);
+
 // GL_EXT_multi_draw_indirect
 bool ValidateMultiDrawIndirectBase(const Context *context,
                                    angle::EntryPoint entryPoint,
@@ -295,6 +303,13 @@ bool ValidateUseProgramStagesBase(const Context *context,
 bool ValidateValidateProgramPipelineBase(const Context *context,
                                          angle::EntryPoint entryPoint,
                                          ProgramPipelineID pipelinePacked);
+
+// GL_EXT_tessellation_shader
+bool ValidatePatchParameteriBase(const PrivateState &state,
+                                 ErrorSet *errors,
+                                 angle::EntryPoint entryPoint,
+                                 GLenum pname,
+                                 GLint value);
 }  // namespace gl
 
 #endif  // LIBANGLE_VALIDATION_ES31_H_

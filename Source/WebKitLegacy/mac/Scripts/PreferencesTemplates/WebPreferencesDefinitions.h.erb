@@ -62,7 +62,11 @@
 <%-   if @pref.condition -%>
 #if <%= @pref.condition %>
 <%-   end -%>
+<%- if @pref.type == "String" -%>
+#define INITIALIZE_DEFAULT_PREFERENCES_FOR_<%= @pref.name %> (NSString *)DEFAULT_VALUE_FOR_<%= @pref.name %>, @"<%= @pref.preferenceKey %>",
+<%- else -%>
 #define INITIALIZE_DEFAULT_PREFERENCES_FOR_<%= @pref.name %> @(DEFAULT_VALUE_FOR_<%= @pref.name %>), @"<%= @pref.preferenceKey %>",
+<%- end -%>
 <%-   if @pref.condition -%>
 #else
 #define INITIALIZE_DEFAULT_PREFERENCES_FOR_<%= @pref.name %>

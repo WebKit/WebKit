@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/RegistrableDomain.h>
+#include "Site.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -40,18 +40,18 @@ class FrameProcess : public RefCounted<FrameProcess>, public CanMakeWeakPtr<Fram
 public:
     ~FrameProcess();
 
-    const WebCore::RegistrableDomain& domain() const { return m_domain; }
+    const Site& site() const { return m_site; }
     const WebProcessProxy& process() const { return m_process.get(); }
     WebProcessProxy& process() { return m_process.get(); }
 
 private:
     friend class BrowsingContextGroup; // FrameProcess should not be created except by BrowsingContextGroup.
-    static Ref<FrameProcess> create(WebProcessProxy& process, BrowsingContextGroup& group, const WebCore::RegistrableDomain& domain, const WebPreferences& preferences) { return adoptRef(*new FrameProcess(process, group, domain, preferences)); }
-    FrameProcess(WebProcessProxy&, BrowsingContextGroup&, const WebCore::RegistrableDomain&, const WebPreferences&);
+    static Ref<FrameProcess> create(WebProcessProxy& process, BrowsingContextGroup& group, const Site& site, const WebPreferences& preferences) { return adoptRef(*new FrameProcess(process, group, site, preferences)); }
+    FrameProcess(WebProcessProxy&, BrowsingContextGroup&, const Site&, const WebPreferences&);
 
     Ref<WebProcessProxy> m_process;
     WeakPtr<BrowsingContextGroup> m_browsingContextGroup;
-    const WebCore::RegistrableDomain m_domain;
+    const Site m_site;
 };
 
 }

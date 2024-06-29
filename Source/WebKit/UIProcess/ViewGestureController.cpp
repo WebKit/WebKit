@@ -103,7 +103,7 @@ void ViewGestureController::disconnectFromProcess()
     if (!m_isConnectedToProcess)
         return;
 
-    m_webPageProxy.process().removeMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.webPageID());
+    m_webPageProxy.legacyMainFrameProcess().removeMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.webPageIDInMainFrameProcess());
     m_isConnectedToProcess = false;
 }
 
@@ -112,7 +112,7 @@ void ViewGestureController::connectToProcess()
     if (m_isConnectedToProcess)
         return;
 
-    m_webPageProxy.process().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.webPageID(), *this);
+    m_webPageProxy.legacyMainFrameProcess().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.webPageIDInMainFrameProcess(), *this);
     m_isConnectedToProcess = true;
 }
 
@@ -138,6 +138,8 @@ void ViewGestureController::willBeginGesture(ViewGestureType type)
 
     m_activeGestureType = type;
     m_currentGestureID = takeNextGestureID();
+
+    m_webPageProxy.willBeginViewGesture();
 }
 
 void ViewGestureController::didEndGesture()
@@ -146,6 +148,8 @@ void ViewGestureController::didEndGesture()
 
     m_activeGestureType = ViewGestureType::None;
     m_currentGestureID = 0;
+
+    m_webPageProxy.didEndViewGesture();
 }
 
 void ViewGestureController::setAlternateBackForwardListSourcePage(WebPageProxy* page)
@@ -328,7 +332,7 @@ void ViewGestureController::SnapshotRemovalTracker::start(Events desiredEvents, 
 void ViewGestureController::SnapshotRemovalTracker::reset()
 {
     if (m_outstandingEvents)
-        log(makeString("reset; had outstanding events: ", eventsDescription(m_outstandingEvents)));
+        log(makeString("reset; had outstanding events: "_s, eventsDescription(m_outstandingEvents)));
     m_outstandingEvents = 0;
     m_watchdogTimer.stop();
     m_removalCallback = nullptr;
@@ -342,7 +346,7 @@ bool ViewGestureController::SnapshotRemovalTracker::stopWaitingForEvent(Events e
         return false;
 
     if (shouldIgnoreEventIfPaused == ShouldIgnoreEventIfPaused::Yes && isPaused()) {
-        log(makeString("is paused; ignoring event: ", eventsDescription(event)));
+        log(makeString("is paused; ignoring event: "_s, eventsDescription(event)));
         return false;
     }
 
@@ -372,7 +376,7 @@ bool ViewGestureController::SnapshotRemovalTracker::hasOutstandingEvent(Event ev
 void ViewGestureController::SnapshotRemovalTracker::fireRemovalCallbackIfPossible()
 {
     if (m_outstandingEvents) {
-        log(makeString("deferring removal; had outstanding events: ", eventsDescription(m_outstandingEvents)));
+        log(makeString("deferring removal; had outstanding events: "_s, eventsDescription(m_outstandingEvents)));
         return;
     }
 
@@ -399,7 +403,7 @@ void ViewGestureController::SnapshotRemovalTracker::watchdogTimerFired()
 
 void ViewGestureController::SnapshotRemovalTracker::startWatchdog(Seconds duration)
 {
-    log(makeString("(re)started watchdog timer for ", duration.seconds(), " seconds"));
+    log(makeString("(re)started watchdog timer for "_s, duration.seconds(), " seconds"_s));
     m_watchdogTimer.startOneShot(duration);
 }
 
@@ -659,8 +663,10 @@ void ViewGestureController::requestRenderTreeSizeNotificationIfNeeded()
         return;
 
     auto threshold = m_snapshotRemovalTracker.renderTreeSizeThreshold();
-    auto* messageSender = m_webPageProxy.provisionalPageProxy() ? static_cast<IPC::MessageSender*>(m_webPageProxy.provisionalPageProxy()) : &m_webPageProxy;
-    messageSender->send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(threshold));
+    if (m_webPageProxy.provisionalPageProxy())
+        m_webPageProxy.provisionalPageProxy()->send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(threshold));
+    else
+        m_webPageProxy.legacyMainFrameProcess().send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(threshold), m_webPageProxy.webPageIDInMainFrameProcess());
 }
 
 FloatPoint ViewGestureController::scaledMagnificationOrigin(FloatPoint origin, double scale)
@@ -688,7 +694,7 @@ void ViewGestureController::didCollectGeometryForMagnificationGesture(FloatRect 
 void ViewGestureController::prepareMagnificationGesture(FloatPoint origin)
 {
     m_magnification = m_webPageProxy.pageScaleFactor();
-    m_webPageProxy.send(Messages::ViewGestureGeometryCollector::CollectGeometryForMagnificationGesture());
+    m_webPageProxy.legacyMainFrameProcess().send(Messages::ViewGestureGeometryCollector::CollectGeometryForMagnificationGesture(), m_webPageProxy.webPageIDInMainFrameProcess());
 
     m_initialMagnification = m_magnification;
     m_initialMagnificationOrigin = FloatPoint(origin);
@@ -705,8 +711,8 @@ void ViewGestureController::applyMagnification()
 
     if (m_frameHandlesMagnificationGesture)
         m_webPageProxy.scalePage(m_magnification, roundedIntPoint(m_magnificationOrigin));
-    else
-        m_webPageProxy.drawingArea()->adjustTransientZoom(m_magnification, scaledMagnificationOrigin(m_magnificationOrigin, m_magnification));
+    else if (auto* drawingArea = m_webPageProxy.drawingArea())
+        drawingArea->adjustTransientZoom(m_magnification, scaledMagnificationOrigin(m_magnificationOrigin, m_magnification));
 }
 
 void ViewGestureController::endMagnificationGesture()

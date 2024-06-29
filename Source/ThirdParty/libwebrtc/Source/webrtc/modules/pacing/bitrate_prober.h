@@ -38,6 +38,9 @@ struct BitrateProberConfig {
   // This defines the max min packet size, meaning that on high bitrates
   // a packet of at least this size is needed to trigger sending a probe.
   FieldTrialParameter<DataSize> min_packet_size;
+
+  // If true, `min_packet_size` is ignored.
+  bool allow_start_probing_immediately = false;
 };
 
 // Note that this class isn't thread-safe by itself and therefore relies
@@ -48,6 +51,7 @@ class BitrateProber {
   ~BitrateProber() = default;
 
   void SetEnabled(bool enable);
+  void SetAllowProbeWithoutMediaPacket(bool allow);
 
   // Returns true if the prober is in a probing session, i.e., it currently
   // wants packets to be sent out according to the time returned by
@@ -105,6 +109,8 @@ class BitrateProber {
   };
 
   Timestamp CalculateNextProbeTime(const ProbeCluster& cluster) const;
+
+  void MaybeSetActiveState(DataSize packet_size);
   bool ReadyToSetActiveState(DataSize packet_size) const;
 
   ProbingState probing_state_;

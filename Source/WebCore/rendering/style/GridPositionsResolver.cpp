@@ -56,9 +56,9 @@ static inline GridTrackSizingDirection directionFromSide(GridPositionSide side)
     return side == GridPositionSide::ColumnStartSide || side == GridPositionSide::ColumnEndSide ? GridTrackSizingDirection::ForColumns : GridTrackSizingDirection::ForRows;
 }
 
-static const String implicitNamedGridLineForSide(const String& lineName, GridPositionSide side)
+static String implicitNamedGridLineForSide(const String& lineName, GridPositionSide side)
 {
-    return lineName + (isStartSide(side) ? "-start" : "-end");
+    return makeString(lineName, isStartSide(side) ? "-start"_s : "-end"_s);
 }
 
 static unsigned explicitGridSizeForSide(const RenderGrid& gridContainer, GridPositionSide side)

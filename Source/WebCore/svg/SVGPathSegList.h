@@ -124,10 +124,16 @@ public:
         return { };
     }
 
-    void updateByteStreamData(const SVGPathByteStream::Data& byteStreamData)
+    void updateByteStreamData(DataRef<SVGPathByteStream::Data>&& byteStreamData)
     {
         pathByteStreamWillChange();
-        m_pathByteStream.setData(byteStreamData);
+        m_pathByteStream.setData(WTFMove(byteStreamData));
+    }
+
+    void clearByteStreamData()
+    {
+        pathByteStreamWillChange();
+        m_pathByteStream.clear();
     }
 
     const SVGPathByteStream& existingPathByteStream() const { return m_pathByteStream; }

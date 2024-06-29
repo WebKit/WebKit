@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import shutil
 
 from webkitcorepy.subprocess_utils import run
 from webkitcorepy.decorators import hybridmethod
@@ -37,8 +38,7 @@ class Editor(object):
 
     @classmethod
     def sublime(cls):
-        from whichcraft import which
-        path = which('subl') or '/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'
+        path = shutil.which('subl') or '/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'
         return cls(
             name='Sublime',
             path=path,
@@ -48,8 +48,7 @@ class Editor(object):
 
     @classmethod
     def bbedit(cls):
-        from whichcraft import which
-        path = which('bbedit') or '/Applications/BBEdit.app/Contents/Helpers/bbedit_tool'
+        path = shutil.which('bbedit') or '/Applications/BBEdit.app/Contents/Helpers/bbedit_tool'
         return cls(
             name='BBEdit',
             path=path,
@@ -59,19 +58,17 @@ class Editor(object):
 
     @classmethod
     def textmate(cls):
-        from whichcraft import which
         return cls(
             name='TextMate',
-            path=which('mate') or '/Applications/TextMate.app/Contents/Resources/mate',
+            path=shutil.which('mate') or '/Applications/TextMate.app/Contents/Resources/mate',
             wait=['-w'],
         )
 
     @classmethod
     def xcode(cls):
-        from whichcraft import which
         return cls(
             name='Xcode',
-            path=which('xed') or '/Applications/Xcode.app/Contents/Developer/usr/bin/xed',
+            path=shutil.which('xed') or '/Applications/Xcode.app/Contents/Developer/usr/bin/xed',
             wait=['-w'],
         )
 
@@ -86,8 +83,7 @@ class Editor(object):
 
     @classmethod
     def vscode(cls):
-        from whichcraft import which
-        path = which('code') or '/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code'
+        path = shutil.which('code') or '/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code'
         return cls(
             name='VSCode',
             path=path,
@@ -97,8 +93,7 @@ class Editor(object):
 
     @classmethod
     def vi(cls):
-        from whichcraft import which
-        path = which('vi')
+        path = shutil.which('vi')
         return cls(
             name='vi',
             path=path,
@@ -107,8 +102,7 @@ class Editor(object):
 
     @classmethod
     def default(cls):
-        from whichcraft import which
-        path = which('open')
+        path = shutil.which('open')
         return cls(
             name='open',
             path=path,

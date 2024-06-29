@@ -12,7 +12,7 @@
 
 #include <fuchsia/sysmem/cpp/fidl.h>
 #include <fuchsia/ui/composition/cpp/fidl.h>
-#include <fuchsia/ui/scenic/cpp/fidl.h>
+#include <fuchsia/ui/display/singleton/cpp/fidl.h>
 #include <lib/sys/cpp/component_context.h>
 
 #include <algorithm>
@@ -200,24 +200,26 @@ ScreenCapturerFuchsia::GetBufferConstraints() {
 }
 
 void ScreenCapturerFuchsia::SetupBuffers() {
-  fuchsia::ui::scenic::ScenicSyncPtr scenic;
-  zx_status_t status = component_context_->svc()->Connect(scenic.NewRequest());
+  fuchsia::ui::display::singleton::InfoSyncPtr display_info;
+  zx_status_t status =
+      component_context_->svc()->Connect(display_info.NewRequest());
   if (status != ZX_OK) {
     fatal_error_ = true;
-    RTC_LOG(LS_ERROR) << "Failed to connect to Scenic: " << status;
+    RTC_LOG(LS_ERROR)
+        << "Failed to connect to fuchsia.ui.display.singleton.Info: " << status;
     return;
   }
 
-  fuchsia::ui::gfx::DisplayInfo display_info;
-  status = scenic->GetDisplayInfo(&display_info);
+  fuchsia::ui::display::singleton::Metrics metrics;
+  status = display_info->GetMetrics(&metrics);
   if (status != ZX_OK) {
     fatal_error_ = true;
     RTC_LOG(LS_ERROR) << "Failed to connect to get display dimensions: "
                       << status;
     return;
   }
-  width_ = display_info.width_in_px;
-  height_ = display_info.height_in_px;
+  width_ = metrics.extent_in_px().width;
+  height_ = metrics.extent_in_px().height;
 
   status = component_context_->svc()->Connect(sysmem_allocator_.NewRequest());
   if (status != ZX_OK) {

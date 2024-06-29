@@ -31,7 +31,9 @@
 #include "CSSCalcNegateNode.h"
 #include "CSSCalcOperationNode.h"
 #include "CSSCalcPrimitiveValueNode.h"
+#include "CSSCalcSymbolNode.h"
 #include "CSSCalcSymbolTable.h"
+#include "CSSCalcSymbolsAllowed.h"
 #include "CSSCalcValue.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserHelpers.h"
@@ -300,7 +302,15 @@ static bool checkRoundKeyword(CSSValueID functionID, RefPtr<CSSCalcExpressionNod
 
 bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, CSSValueID functionID, RefPtr<CSSCalcExpressionNode>& result)
 {
-    auto makeCSSCalcPrimitiveValueNode = [&] (CSSUnitType type, double value) -> bool {
+    auto makeCSSCalcSymbolNode = [&](CSSValueID value, CSSUnitType type) -> bool {
+        if (calcUnitCategory(type) == CalculationCategory::Other)
+            return false;
+
+        result = CSSCalcSymbolNode::create(value, type);
+        return true;
+    };
+
+    auto makeCSSCalcPrimitiveValueNode = [&](double value, CSSUnitType type) -> bool {
         if (calcUnitCategory(type) == CalculationCategory::Other)
             return false;
         
@@ -314,17 +324,17 @@ bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, CSSVal
     case IdentToken: {
         if (checkRoundKeyword(functionID, result, token.id()))
             return true;
-        auto value = m_symbolTable->get(token.id());
-        value = value ? value : getConstantTable().get(token.id());
-        if (!value)
-            return false;
-        return makeCSSCalcPrimitiveValueNode(value->type, value->value);
+        if (auto value = m_symbolsAllowed.get(token.id()))
+            return makeCSSCalcSymbolNode(token.id(), *value);
+        if (auto value = getConstantTable().get(token.id()))
+            return makeCSSCalcPrimitiveValueNode(value->value, value->type);
+        return false;
     }
 
     case NumberToken:
     case PercentageToken:
     case DimensionToken:
-        return makeCSSCalcPrimitiveValueNode(token.unitType(), token.numericValue());
+        return makeCSSCalcPrimitiveValueNode(token.numericValue(), token.unitType());
 
     default:
         return false;

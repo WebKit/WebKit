@@ -138,83 +138,74 @@ DrawBufferManager::BufferInfo::BufferInfo(BufferType type, size_t blockSize, con
         , fStartAlignment(starting_alignment(type, !caps->drawBufferCanBeMapped(), caps))
         , fBlockSize(SkAlignTo(blockSize, fStartAlignment)) {}
 
-std::tuple<VertexWriter, BindBufferInfo> DrawBufferManager::getVertexWriter(size_t requiredBytes) {
+std::pair<VertexWriter, BindBufferInfo> DrawBufferManager::getVertexWriter(size_t requiredBytes) {
     if (!requiredBytes) {
         return {};
     }
 
     auto& info = fCurrentBuffers[kVertexBufferIndex];
-    auto [ptr, bindInfo] = this->prepareMappedBindBuffer(&info, requiredBytes);
-    if (!ptr) {
-        return {};
-    }
-
+    auto [ptr, bindInfo] = this->prepareMappedBindBuffer(&info, requiredBytes, "VertexBuffer");
     return {VertexWriter(ptr, requiredBytes), bindInfo};
 }
 
 void DrawBufferManager::returnVertexBytes(size_t unusedBytes) {
+    if (fMappingFailed) {
+        // The caller can be unaware that the written data went to no-where and will still call
+        // this function.
+        return;
+    }
     SkASSERT(fCurrentBuffers[kVertexBufferIndex].fOffset >= unusedBytes);
     fCurrentBuffers[kVertexBufferIndex].fOffset -= unusedBytes;
 }
 
-std::tuple<IndexWriter, BindBufferInfo> DrawBufferManager::getIndexWriter(size_t requiredBytes) {
+std::pair<IndexWriter, BindBufferInfo> DrawBufferManager::getIndexWriter(size_t requiredBytes) {
     if (!requiredBytes) {
         return {};
     }
 
     auto& info = fCurrentBuffers[kIndexBufferIndex];
-    auto [ptr, bindInfo] = this->prepareMappedBindBuffer(&info, requiredBytes);
-    if (!ptr) {
-        return {};
-    }
-
+    auto [ptr, bindInfo] = this->prepareMappedBindBuffer(&info, requiredBytes, "IndexBuffer");
     return {IndexWriter(ptr, requiredBytes), bindInfo};
 }
 
-std::tuple<UniformWriter, BindBufferInfo> DrawBufferManager::getUniformWriter(
+std::pair<UniformWriter, BindBufferInfo> DrawBufferManager::getUniformWriter(size_t requiredBytes) {
+    if (!requiredBytes) {
+        return {};
+    }
+
+    auto& info = fCurrentBuffers[kUniformBufferIndex];
+    auto [ptr, bindInfo] = this->prepareMappedBindBuffer(&info, requiredBytes, "UniformBuffer");
+    return {UniformWriter(ptr, requiredBytes), bindInfo};
+}
+
+std::pair<UniformWriter, BindBufferInfo> DrawBufferManager::getSsboWriter(size_t requiredBytes) {
+    if (!requiredBytes) {
+        return {};
+    }
+
+    auto& info = fCurrentBuffers[kStorageBufferIndex];
+    auto [ptr, bindInfo] = this->prepareMappedBindBuffer(&info, requiredBytes, "StorageBuffer");
+    return {UniformWriter(ptr, requiredBytes), bindInfo};
+}
+
+std::pair<void* /*mappedPtr*/, BindBufferInfo> DrawBufferManager::getUniformPointer(
+            size_t requiredBytes) {
+    if (!requiredBytes) {
+        return {};
+    }
+
+    auto& info = fCurrentBuffers[kUniformBufferIndex];
+    return this->prepareMappedBindBuffer(&info, requiredBytes, "UniformBuffer");
+}
+
+std::pair<void* /*mappedPtr*/, BindBufferInfo> DrawBufferManager::getStoragePointer(
         size_t requiredBytes) {
     if (!requiredBytes) {
         return {};
     }
 
-    auto& info = fCurrentBuffers[kUniformBufferIndex];
-    auto [ptr, bindInfo] = this->prepareMappedBindBuffer(&info, requiredBytes);
-    if (!ptr) {
-        return {};
-    }
-
-    return {UniformWriter(ptr, requiredBytes), bindInfo};
-}
-
-std::tuple<UniformWriter, BindBufferInfo> DrawBufferManager::getSsboWriter(size_t requiredBytes) {
-    if (!requiredBytes) {
-        return {};
-    }
-
     auto& info = fCurrentBuffers[kStorageBufferIndex];
-    auto [ptr, bindInfo] = this->prepareMappedBindBuffer(&info, requiredBytes);
-    if (!ptr) {
-        return {};
-    }
-    return {UniformWriter(ptr, requiredBytes), bindInfo};
-}
-
-std::tuple<void*, BindBufferInfo> DrawBufferManager::getUniformPointer(size_t requiredBytes) {
-    if (!requiredBytes) {
-        return {};
-    }
-
-    auto& info = fCurrentBuffers[kUniformBufferIndex];
-    return this->prepareMappedBindBuffer(&info, requiredBytes);
-}
-
-std::tuple<void*, BindBufferInfo> DrawBufferManager::getStoragePointer(size_t requiredBytes) {
-    if (!requiredBytes) {
-        return {};
-    }
-
-    auto& info = fCurrentBuffers[kStorageBufferIndex];
-    return this->prepareMappedBindBuffer(&info, requiredBytes);
+    return this->prepareMappedBindBuffer(&info, requiredBytes, "StorageBuffer");
 }
 
 BindBufferInfo DrawBufferManager::getStorage(size_t requiredBytes, ClearBuffer cleared) {
@@ -223,7 +214,11 @@ BindBufferInfo DrawBufferManager::getStorage(size_t requiredBytes, ClearBuffer c
     }
 
     auto& info = fCurrentBuffers[kGpuOnlyStorageBufferIndex];
-    return this->prepareBindBuffer(&info, requiredBytes, /*supportCpuUpload=*/false, cleared);
+    return this->prepareBindBuffer(&info,
+                                   requiredBytes,
+                                   "StorageBuffer",
+                                   /*supportCpuUpload=*/false,
+                                   cleared);
 }
 
 BindBufferInfo DrawBufferManager::getVertexStorage(size_t requiredBytes) {
@@ -232,7 +227,7 @@ BindBufferInfo DrawBufferManager::getVertexStorage(size_t requiredBytes) {
     }
 
     auto& info = fCurrentBuffers[kVertexStorageBufferIndex];
-    return this->prepareBindBuffer(&info, requiredBytes);
+    return this->prepareBindBuffer(&info, requiredBytes, "VertexStorageBuffer");
 }
 
 BindBufferInfo DrawBufferManager::getIndexStorage(size_t requiredBytes) {
@@ -241,7 +236,7 @@ BindBufferInfo DrawBufferManager::getIndexStorage(size_t requiredBytes) {
     }
 
     auto& info = fCurrentBuffers[kIndexStorageBufferIndex];
-    return this->prepareBindBuffer(&info, requiredBytes);
+    return this->prepareBindBuffer(&info, requiredBytes, "IndexStorageBuffer");
 }
 
 BindBufferInfo DrawBufferManager::getIndirectStorage(size_t requiredBytes, ClearBuffer cleared) {
@@ -250,11 +245,15 @@ BindBufferInfo DrawBufferManager::getIndirectStorage(size_t requiredBytes, Clear
     }
 
     auto& info = fCurrentBuffers[kIndirectStorageBufferIndex];
-    return this->prepareBindBuffer(&info, requiredBytes, /*supportCpuUpload=*/false, cleared);
+    return this->prepareBindBuffer(&info,
+                                   requiredBytes,
+                                   "IndirectStorageBuffer",
+                                   /*supportCpuUpload=*/false,
+                                   cleared);
 }
 
 ScratchBuffer DrawBufferManager::getScratchStorage(size_t requiredBytes) {
-    if (!requiredBytes) {
+    if (!requiredBytes || fMappingFailed) {
         return {};
     }
 
@@ -264,12 +263,45 @@ ScratchBuffer DrawBufferManager::getScratchStorage(size_t requiredBytes) {
     sk_sp<Buffer> buffer = this->findReusableSbo(bufferSize);
     if (!buffer) {
         buffer = fResourceProvider->findOrCreateBuffer(
-                bufferSize, BufferType::kStorage, AccessPattern::kGpuOnly);
+                bufferSize, BufferType::kStorage, AccessPattern::kGpuOnly, "ScratchStorageBuffer");
+
+        if (!buffer) {
+            this->onFailedBuffer();
+            return {};
+        }
     }
     return {requiredBytes, info.fStartAlignment, std::move(buffer), this};
 }
 
+void DrawBufferManager::onFailedBuffer() {
+    fMappingFailed = true;
+
+    // Clean up and unmap everything now
+    fReusableScratchStorageBuffers.clear();
+
+    for (auto& [buffer, _] : fUsedBuffers) {
+        if (buffer->isMapped()) {
+            buffer->unmap();
+        }
+    }
+    fUsedBuffers.clear();
+
+    for (auto& info : fCurrentBuffers) {
+        if (info.fBuffer && info.fBuffer->isMapped()) {
+            info.fBuffer->unmap();
+        }
+        info.fBuffer = nullptr;
+        info.fTransferBuffer = {};
+        info.fOffset = 0;
+    }
+}
+
 void DrawBufferManager::transferToRecording(Recording* recording) {
+    // We could allow this to be called when the mapping has failed, since the transfer will be a no
+    // op, but in practice, the caller will want to check the error state as soon as possible to
+    // limit any unnecessary resource preparation from other tasks.
+    SkASSERT(!fMappingFailed);
+
     if (!fClearList.empty()) {
         recording->priv().addTask(ClearBuffersTask::Make(std::move(fClearList)));
     }
@@ -305,7 +337,7 @@ void DrawBufferManager::transferToRecording(Recording* recording) {
 
     // The current draw buffers have not been added to fUsedBuffers,
     // so we need to handle them as well.
-    for (auto &info : fCurrentBuffers) {
+    for (auto& info : fCurrentBuffers) {
         if (!info.fBuffer) {
             continue;
         }
@@ -332,16 +364,28 @@ void DrawBufferManager::transferToRecording(Recording* recording) {
     }
 }
 
-std::pair<void*, BindBufferInfo> DrawBufferManager::prepareMappedBindBuffer(BufferInfo* info,
-                                                                            size_t requiredBytes) {
+std::pair<void*, BindBufferInfo> DrawBufferManager::prepareMappedBindBuffer(
+        BufferInfo* info,
+        size_t requiredBytes,
+        std::string_view label) {
     BindBufferInfo bindInfo = this->prepareBindBuffer(info,
                                                       requiredBytes,
+                                                      std::move(label),
                                                       /*supportCpuUpload=*/true);
     if (!bindInfo) {
+        // prepareBindBuffer() already called onFailedBuffer()
+        SkASSERT(fMappingFailed);
         return {nullptr, {}};
     }
 
+    // If there's a transfer buffer, its mapped pointer should already have been validated
+    SkASSERT(!info->fTransferBuffer || info->fTransferMapPtr);
     void* mapPtr = info->fTransferBuffer ? info->fTransferMapPtr : info->fBuffer->map();
+    if (!mapPtr) {
+        // Mapping a direct draw buffer failed
+        this->onFailedBuffer();
+        return {nullptr, {}};
+    }
 
     mapPtr = SkTAddOffset<void>(mapPtr, static_cast<ptrdiff_t>(bindInfo.fOffset));
     return {mapPtr, bindInfo};
@@ -349,10 +393,15 @@ std::pair<void*, BindBufferInfo> DrawBufferManager::prepareMappedBindBuffer(Buff
 
 BindBufferInfo DrawBufferManager::prepareBindBuffer(BufferInfo* info,
                                                     size_t requiredBytes,
+                                                    std::string_view label,
                                                     bool supportCpuUpload,
                                                     ClearBuffer cleared) {
     SkASSERT(info);
     SkASSERT(requiredBytes);
+
+    if (fMappingFailed) {
+        return {};
+    }
 
     // A transfer buffer is not necessary if the caller does not intend to upload CPU data to it.
     bool useTransferBuffer = supportCpuUpload && !fCaps->drawBufferCanBeMapped();
@@ -371,19 +420,25 @@ BindBufferInfo DrawBufferManager::prepareBindBuffer(BufferInfo* info,
                                               ? AccessPattern::kGpuOnly
                                               : AccessPattern::kHostVisible;
         size_t bufferSize = sufficient_block_size(requiredBytes, info->fBlockSize);
-        info->fBuffer =
-                fResourceProvider->findOrCreateBuffer(bufferSize, info->fType, accessPattern);
+        info->fBuffer = fResourceProvider->findOrCreateBuffer(bufferSize,
+                                                              info->fType,
+                                                              accessPattern,
+                                                              std::move(label));
         info->fOffset = 0;
         if (!info->fBuffer) {
+            this->onFailedBuffer();
             return {};
         }
     }
 
     if (useTransferBuffer && !info->fTransferBuffer) {
-        std::tie(info->fTransferMapPtr, info->fTransferBuffer) = fUploadManager->makeBindInfo(
-                info->fBuffer->size(), fCaps->requiredTransferBufferAlignment());
+        std::tie(info->fTransferMapPtr, info->fTransferBuffer) =
+                fUploadManager->makeBindInfo(info->fBuffer->size(),
+                                             fCaps->requiredTransferBufferAlignment(),
+                                             "TransferForDataBuffer");
 
         if (!info->fTransferBuffer) {
+            this->onFailedBuffer();
             return {};
         }
         SkASSERT(info->fTransferMapPtr);
@@ -402,6 +457,7 @@ BindBufferInfo DrawBufferManager::prepareBindBuffer(BufferInfo* info,
 
 sk_sp<Buffer> DrawBufferManager::findReusableSbo(size_t bufferSize) {
     SkASSERT(bufferSize);
+    SkASSERT(!fMappingFailed);
 
     for (int i = 0; i < fReusableScratchStorageBuffers.size(); ++i) {
         sk_sp<Buffer>* buffer = &fReusableScratchStorageBuffers[i];
@@ -425,9 +481,9 @@ StaticBufferManager::StaticBufferManager(ResourceProvider* resourceProvider,
                                          const Caps* caps)
         : fResourceProvider(resourceProvider)
         , fUploadManager(resourceProvider, caps)
+        , fRequiredTransferAlignment(caps->requiredTransferBufferAlignment())
         , fVertexBufferInfo(BufferType::kVertex, caps)
-        , fIndexBufferInfo(BufferType::kIndex, caps)
-        , fRequiredTransferAlignment(caps->requiredTransferBufferAlignment()) {}
+        , fIndexBufferInfo(BufferType::kIndex, caps) {}
 StaticBufferManager::~StaticBufferManager() = default;
 
 StaticBufferManager::BufferInfo::BufferInfo(BufferType type, const Caps* caps)
@@ -451,7 +507,7 @@ void* StaticBufferManager::prepareStaticData(BufferInfo* info,
     // Zero-out the target binding in the event of any failure in actually transfering data later.
     SkASSERT(target);
     *target = {nullptr, 0};
-    if (!size) {
+    if (!size || fMappingFailed) {
         return nullptr;
     }
 
@@ -461,7 +517,14 @@ void* StaticBufferManager::prepareStaticData(BufferInfo* info,
     size = SkAlignTo(size, info->fAlignment);
 
     auto [transferMapPtr, transferBindInfo] =
-            fUploadManager.makeBindInfo(size, fRequiredTransferAlignment);
+            fUploadManager.makeBindInfo(size,
+                                        fRequiredTransferAlignment,
+                                        "TransferForStaticBuffer");
+    if (!transferMapPtr) {
+        SKGPU_LOG_E("Failed to create or map transfer buffer that initializes static GPU data.");
+        fMappingFailed = true;
+        return nullptr;
+    }
 
     info->fData.push_back({transferBindInfo, target, size});
     info->fTotalRequiredBytes += size;
@@ -472,13 +535,14 @@ bool StaticBufferManager::BufferInfo::createAndUpdateBindings(
         ResourceProvider* resourceProvider,
         Context* context,
         QueueManager* queueManager,
-        GlobalCache* globalCache) const {
+        GlobalCache* globalCache,
+        std::string_view label) const {
     if (!fTotalRequiredBytes) {
         return true; // No buffer needed
     }
 
     sk_sp<Buffer> staticBuffer = resourceProvider->findOrCreateBuffer(
-            fTotalRequiredBytes, fBufferType, AccessPattern::kGpuOnly);
+            fTotalRequiredBytes, fBufferType, AccessPattern::kGpuOnly, std::move(label));
     if (!staticBuffer) {
         SKGPU_LOG_E("Failed to create static buffer for type %d of size %zu bytes.\n",
                     (int) fBufferType, fTotalRequiredBytes);
@@ -513,6 +577,10 @@ bool StaticBufferManager::BufferInfo::createAndUpdateBindings(
 StaticBufferManager::FinishResult StaticBufferManager::finalize(Context* context,
                                                                 QueueManager* queueManager,
                                                                 GlobalCache* globalCache) {
+    if (fMappingFailed) {
+        return FinishResult::kFailure;
+    }
+
     const size_t totalRequiredBytes = fVertexBufferInfo.fTotalRequiredBytes +
                                       fIndexBufferInfo.fTotalRequiredBytes;
     SkASSERT(totalRequiredBytes <= kMaxStaticDataSize);
@@ -520,12 +588,18 @@ StaticBufferManager::FinishResult StaticBufferManager::finalize(Context* context
         return FinishResult::kNoWork;
     }
 
-    if (!fVertexBufferInfo.createAndUpdateBindings(fResourceProvider, context,
-                                                   queueManager, globalCache)) {
+    if (!fVertexBufferInfo.createAndUpdateBindings(fResourceProvider,
+                                                   context,
+                                                   queueManager,
+                                                   globalCache,
+                                                   "StaticVertexBuffer")) {
         return FinishResult::kFailure;
     }
-    if (!fIndexBufferInfo.createAndUpdateBindings(fResourceProvider, context,
-                                                  queueManager, globalCache)) {
+    if (!fIndexBufferInfo.createAndUpdateBindings(fResourceProvider,
+                                                  context,
+                                                  queueManager,
+                                                  globalCache,
+                                                  "StaticIndexBuffer")) {
         return FinishResult::kFailure;
     }
     queueManager->addUploadBufferManagerRefs(&fUploadManager);

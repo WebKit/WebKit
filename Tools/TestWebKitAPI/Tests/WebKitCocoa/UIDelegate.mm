@@ -1075,12 +1075,17 @@ TEST(WebKit, MouseMoveOverElementWithClosedWebView)
         auto uiDelegate = adoptNS([[MouseMoveOverElementDelegate alloc] init]);
         [webView setUIDelegate:uiDelegate.get()];
         [webView synchronouslyLoadHTMLString:@"<a id='link' href='http://example.com/path' style='font-size: 300px;' title='link title'>link label</a>"];
+
+        [webView _createFlagsChangedEventMonitorForTesting];
+
         [webView mouseMoveToPoint:linkLocation withFlags:NSEventModifierFlagShift];
         [webView waitForNextPresentationUpdate];
         // This test just verifies that attempting to asynchronously dispatch a mouseDidMoveOverElement
         // update when the WKWebView and its page client have been destructed does not trigger a crash.
         gEventMonitorHandler([NSEvent mouseEventWithType:NSEventTypeMouseMoved location:linkLocation modifierFlags:0 timestamp:0 windowNumber:[[webView hostWindow] windowNumber] context:nil eventNumber:0 clickCount:0 pressure:0]);
         [webView removeFromSuperview];
+
+        [webView _removeFlagsChangedEventMonitorForTesting];
     }
 
     TestWebKitAPI::Util::runFor(10_ms);

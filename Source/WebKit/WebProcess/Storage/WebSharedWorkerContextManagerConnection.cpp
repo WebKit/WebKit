@@ -42,13 +42,16 @@
 #include "WebProcess.h"
 #include "WebSharedWorkerServerToContextConnectionMessages.h"
 #include "WebSocketProvider.h"
+#include "WebStorageProvider.h"
 #include "WebUserContentController.h"
+#include "WebWorkerClient.h"
 #include <WebCore/EmptyClients.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/RemoteFrameClient.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SharedWorkerContextManager.h>
+#include <WebCore/SharedWorkerThread.h>
 #include <WebCore/SharedWorkerThreadProxy.h>
 #include <WebCore/UserAgent.h>
 #include <WebCore/WorkerFetchResult.h>
@@ -107,6 +110,7 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
 #if ENABLE(WEB_RTC)
     pageConfiguration.webRTCProvider = makeUniqueRef<RemoteWorkerLibWebRTCProvider>();
 #endif
+    pageConfiguration.storageProvider = makeUniqueRef<WebStorageProvider>(WebProcess::singleton().mediaKeysStorageDirectory(), WebProcess::singleton().mediaKeysStorageSalt());
 
     pageConfiguration.clientCreatorForMainFrame = CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [client = makeUniqueRef<RemoteWorkerFrameLoaderClient>(m_webPageProxyID, m_pageID, m_userAgent)] (auto&) mutable {
         return WTFMove(client);
@@ -126,8 +130,13 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
     if (!initializationData.clientIdentifier)
         initializationData.clientIdentifier = WebCore::ScriptExecutionContextIdentifier::generate();
 
-    page->setupForRemoteWorker(workerFetchResult.responseURL, origin.topOrigin, workerFetchResult.referrerPolicy);
-    auto sharedWorkerThreadProxy = WebCore::SharedWorkerThreadProxy::create(WTFMove(page), sharedWorkerIdentifier, origin, WTFMove(workerFetchResult), WTFMove(workerOptions), WTFMove(initializationData), WebProcess::singleton().cacheStorageProvider());
+    page->setupForRemoteWorker(workerFetchResult.responseURL, origin.topOrigin, workerFetchResult.referrerPolicy, initializationData.advancedPrivacyProtections);
+
+    auto sharedWorkerThreadProxy = WebCore::SharedWorkerThreadProxy::create(Ref { page }, sharedWorkerIdentifier, origin, WTFMove(workerFetchResult), WTFMove(workerOptions), WTFMove(initializationData), WebProcess::singleton().cacheStorageProvider());
+
+    Ref thread = sharedWorkerThreadProxy->thread();
+    auto workerClient = WebWorkerClient::create(WTFMove(page), thread);
+    thread->setWorkerClient(workerClient.moveToUniquePtr());
 
     WebCore::SharedWorkerContextManager::singleton().registerSharedWorkerThread(WTFMove(sharedWorkerThreadProxy));
 }

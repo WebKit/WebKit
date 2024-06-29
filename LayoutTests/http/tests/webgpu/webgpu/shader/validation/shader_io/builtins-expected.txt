@@ -331,4 +331,27 @@ PASS :reuse_builtin_name:name="sample_mask";stage="fragment";io="out";type="u32"
 PASS :reuse_builtin_name:name="sample_mask";stage="fragment";io="out";type="u32";use="function"
 PASS :reuse_builtin_name:name="sample_mask";stage="fragment";io="out";type="u32";use="module-var"
 PASS :reuse_builtin_name:name="sample_mask";stage="fragment";io="out";type="u32";use="function-var"
+PASS :parse:builtin="pos"
+PASS :parse:builtin="trailing_comma"
+PASS :parse:builtin="newline_in_attr"
+PASS :parse:builtin="whitespace_in_attr"
+PASS :parse:builtin="invalid_name"
+PASS :parse:builtin="no_params"
+PASS :parse:builtin="missing_param"
+PASS :parse:builtin="missing_parens"
+PASS :parse:builtin="missing_lparen"
+PASS :parse:builtin="missing_rparen"
+PASS :parse:builtin="multiple_params"
+PASS :parse:builtin="ident_param"
+PASS :parse:builtin="number_param"
+PASS :parse:builtin="duplicate"
+PASS :placement:scope="private-var";attribute={"private-var":false,"storage-var":false,"struct-member":true,"non-ep-param":false,"non-ep-ret":false,"fn-decl":false,"fn-var":false,"fn-return":false,"while-stmt":false}
+PASS :placement:scope="storage-var";attribute={"private-var":false,"storage-var":false,"struct-member":true,"non-ep-param":false,"non-ep-ret":false,"fn-decl":false,"fn-var":false,"fn-return":false,"while-stmt":false}
+PASS :placement:scope="struct-member";attribute={"private-var":false,"storage-var":false,"struct-member":true,"non-ep-param":false,"non-ep-ret":false,"fn-decl":false,"fn-var":false,"fn-return":false,"while-stmt":false}
+PASS :placement:scope="non-ep-param";attribute={"private-var":false,"storage-var":false,"struct-member":true,"non-ep-param":false,"non-ep-ret":false,"fn-decl":false,"fn-var":false,"fn-return":false,"while-stmt":false}
+PASS :placement:scope="non-ep-ret";attribute={"private-var":false,"storage-var":false,"struct-member":true,"non-ep-param":false,"non-ep-ret":false,"fn-decl":false,"fn-var":false,"fn-return":false,"while-stmt":false}
+PASS :placement:scope="fn-decl";attribute={"private-var":false,"storage-var":false,"struct-member":true,"non-ep-param":false,"non-ep-ret":false,"fn-decl":false,"fn-var":false,"fn-return":false,"while-stmt":false}
+PASS :placement:scope="fn-var";attribute={"private-var":false,"storage-var":false,"struct-member":true,"non-ep-param":false,"non-ep-ret":false,"fn-decl":false,"fn-var":false,"fn-return":false,"while-stmt":false}
+PASS :placement:scope="while-stmt";attribute={"private-var":false,"storage-var":false,"struct-member":true,"non-ep-param":false,"non-ep-ret":false,"fn-decl":false,"fn-var":false,"fn-return":false,"while-stmt":false}
+PASS :placement:scope="_undef_";attribute={"private-var":false,"storage-var":false,"struct-member":true,"non-ep-param":false,"non-ep-ret":false,"fn-decl":false,"fn-var":false,"fn-return":false,"while-stmt":false}
 

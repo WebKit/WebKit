@@ -658,6 +658,10 @@ void SendStatisticsProxy::UmaSamplesContainer::UpdateHistograms(
              << current_stats.frames_dropped_by_capturer << "\n";
   RTC_HISTOGRAMS_COUNTS_1000(kIndex, uma_prefix_ + "DroppedFrames.Capturer",
                              current_stats.frames_dropped_by_capturer);
+  log_stream << uma_prefix_ << "DroppedFrames.BadTimestamp"
+             << current_stats.frames_dropped_by_bad_timestamp << "\n";
+  RTC_HISTOGRAMS_COUNTS_1000(kIndex, uma_prefix_ + "DroppedFrames.BadTimestamp",
+                             current_stats.frames_dropped_by_bad_timestamp);
   log_stream << uma_prefix_ << "DroppedFrames.EncoderQueue "
              << current_stats.frames_dropped_by_encoder_queue << "\n";
   RTC_HISTOGRAMS_COUNTS_1000(kIndex, uma_prefix_ + "DroppedFrames.EncoderQueue",
@@ -1096,6 +1100,9 @@ void SendStatisticsProxy::OnFrameDropped(DropReason reason) {
   switch (reason) {
     case DropReason::kSource:
       ++stats_.frames_dropped_by_capturer;
+      break;
+    case DropReason::kBadTimestamp:
+      ++stats_.frames_dropped_by_bad_timestamp;
       break;
     case DropReason::kEncoderQueue:
       ++stats_.frames_dropped_by_encoder_queue;

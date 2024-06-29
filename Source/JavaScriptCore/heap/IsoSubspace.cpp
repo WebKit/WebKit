@@ -54,9 +54,7 @@ IsoSubspace::IsoSubspace(CString name, JSC::Heap& heap, const HeapCellType& heap
     m_firstDirectory = &m_directory;
 }
 
-IsoSubspace::~IsoSubspace()
-{
-}
+IsoSubspace::~IsoSubspace() = default;
 
 void IsoSubspace::didResizeBits(unsigned blockIndex)
 {

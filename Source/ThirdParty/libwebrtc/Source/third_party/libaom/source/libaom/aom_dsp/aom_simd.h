@@ -24,12 +24,10 @@
 
 #define SIMD_CHECK 1  // Sanity checks in C equivalents
 
-#if HAVE_NEON
-#include "simd/v256_intrinsics_arm.h"
 // VS compiling for 32 bit targets does not support vector types in
 // structs as arguments, which makes the v256 type of the intrinsics
 // hard to support, so optimizations for this target are disabled.
-#elif HAVE_SSE2 && (defined(_WIN64) || !defined(_MSC_VER) || defined(__clang__))
+#if HAVE_SSE2 && (defined(_WIN64) || !defined(_MSC_VER) || defined(__clang__))
 #include "simd/v256_intrinsics_x86.h"
 #else
 #include "simd/v256_intrinsics.h"

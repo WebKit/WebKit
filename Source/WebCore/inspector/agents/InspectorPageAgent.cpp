@@ -83,6 +83,10 @@
 #include "LegacyWebArchive.h"
 #endif
 
+#if USE(CF)
+#include <wtf/cf/VectorCF.h>
+#endif
+
 
 namespace WebCore {
 
@@ -642,31 +646,31 @@ static std::optional<Cookie> parseCookieObject(Inspector::Protocol::ErrorString&
 {
     Cookie cookie;
 
-    cookie.name = cookieObject->getString(Inspector::Protocol::Page::Cookie::nameKey);
+    cookie.name = cookieObject->getString("name"_s);
     if (!cookie.name) {
         errorString = "Invalid value for key name in given cookie"_s;
         return std::nullopt;
     }
 
-    cookie.value = cookieObject->getString(Inspector::Protocol::Page::Cookie::valueKey);
+    cookie.value = cookieObject->getString("value"_s);
     if (!cookie.value) {
         errorString = "Invalid value for key value in given cookie"_s;
         return std::nullopt;
     }
 
-    cookie.domain = cookieObject->getString(Inspector::Protocol::Page::Cookie::domainKey);
+    cookie.domain = cookieObject->getString("domain"_s);
     if (!cookie.domain) {
         errorString = "Invalid value for key domain in given cookie"_s;
         return std::nullopt;
     }
 
-    cookie.path = cookieObject->getString(Inspector::Protocol::Page::Cookie::pathKey);
+    cookie.path = cookieObject->getString("path"_s);
     if (!cookie.path) {
         errorString = "Invalid value for key path in given cookie"_s;
         return std::nullopt;
     }
 
-    auto httpOnly = cookieObject->getBoolean(Inspector::Protocol::Page::Cookie::httpOnlyKey);
+    auto httpOnly = cookieObject->getBoolean("httpOnly"_s);
     if (!httpOnly) {
         errorString = "Invalid value for key httpOnly in given cookie"_s;
         return std::nullopt;
@@ -674,7 +678,7 @@ static std::optional<Cookie> parseCookieObject(Inspector::Protocol::ErrorString&
 
     cookie.httpOnly = *httpOnly;
 
-    auto secure = cookieObject->getBoolean(Inspector::Protocol::Page::Cookie::secureKey);
+    auto secure = cookieObject->getBoolean("secure"_s);
     if (!secure) {
         errorString = "Invalid value for key secure in given cookie"_s;
         return std::nullopt;
@@ -682,8 +686,8 @@ static std::optional<Cookie> parseCookieObject(Inspector::Protocol::ErrorString&
 
     cookie.secure = *secure;
 
-    auto session = cookieObject->getBoolean(Inspector::Protocol::Page::Cookie::sessionKey);
-    cookie.expires = cookieObject->getDouble(Inspector::Protocol::Page::Cookie::expiresKey);
+    auto session = cookieObject->getBoolean("session"_s);
+    cookie.expires = cookieObject->getDouble("expires"_s);
     if (!session && !cookie.expires) {
         errorString = "Invalid value for key expires in given cookie"_s;
         return std::nullopt;
@@ -691,7 +695,7 @@ static std::optional<Cookie> parseCookieObject(Inspector::Protocol::ErrorString&
 
     cookie.session = *session;
 
-    auto sameSiteString = cookieObject->getString(Inspector::Protocol::Page::Cookie::sameSiteKey);
+    auto sameSiteString = cookieObject->getString("sameSite"_s);
     if (!sameSiteString) {
         errorString = "Invalid value for key sameSite in given cookie"_s;
         return std::nullopt;
@@ -1192,7 +1196,7 @@ Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotNode(Insp
     if (!localMainFrame)
         return makeUnexpected("Main frame isn't local"_s);
 
-    auto snapshot = WebCore::snapshotNode(*localMainFrame, *node, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+    auto snapshot = WebCore::snapshotNode(*localMainFrame, *node, { { }, ImageBufferPixelFormat::BGRA8, DestinationColorSpace::SRGB() });
     if (!snapshot)
         return makeUnexpected("Could not capture snapshot"_s);
 
@@ -1201,7 +1205,7 @@ Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotNode(Insp
 
 Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotRect(int x, int y, int width, int height, Inspector::Protocol::Page::CoordinateSystem coordinateSystem)
 {
-    SnapshotOptions options { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+    SnapshotOptions options { { }, ImageBufferPixelFormat::BGRA8, DestinationColorSpace::SRGB() };
     if (coordinateSystem == Inspector::Protocol::Page::CoordinateSystem::Viewport)
         options.flags.add(SnapshotFlags::InViewCoordinates);
 
@@ -1229,7 +1233,7 @@ Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::archive()
         return makeUnexpected("Could not create web archive for main frame"_s);
 
     RetainPtr<CFDataRef> buffer = archive->rawDataRepresentation();
-    return base64EncodeToString(CFDataGetBytePtr(buffer.get()), CFDataGetLength(buffer.get()));
+    return base64EncodeToString(span(buffer.get()));
 }
 #endif
 

@@ -603,7 +603,7 @@ TEST_P(MultiDrawTest, MultiDrawArrays)
 {
     ANGLE_SKIP_TEST_IF(!requestExtensions());
 
-    // http://anglebug.com/5265
+    // http://anglebug.com/40644769
     ANGLE_SKIP_TEST_IF(IsInstancedTest() && IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
     SetupBuffers();
@@ -618,7 +618,7 @@ TEST_P(MultiDrawTestES3, MultiDrawArraysAfterFailedRelink)
 {
     ANGLE_SKIP_TEST_IF(!requestExtensions());
 
-    // http://anglebug.com/5265
+    // http://anglebug.com/40644769
     ANGLE_SKIP_TEST_IF(IsInstancedTest() && IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
     SetupBuffers();
@@ -655,7 +655,7 @@ TEST_P(MultiDrawTest, MultiDrawArraysThenDrawArrays)
 {
     ANGLE_SKIP_TEST_IF(!requestExtensions());
 
-    // http://anglebug.com/5265
+    // http://anglebug.com/40644769
     ANGLE_SKIP_TEST_IF(IsInstancedTest() && IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
     SetupBuffers();

@@ -31,9 +31,11 @@ public:
 
     ~CopyBufferToBufferTask() override;
 
-    bool prepareResources(ResourceProvider*, const RuntimeEffectDictionary*) override;
+    Status prepareResources(ResourceProvider*,
+                            ScratchResourceManager*,
+                            const RuntimeEffectDictionary*) override;
 
-    bool addCommands(Context*, CommandBuffer*, ReplayTargetData) override;
+    Status addCommands(Context*, CommandBuffer*, ReplayTargetData) override;
 
 private:
     CopyBufferToBufferTask(const Buffer* srcBuffer,
@@ -59,9 +61,11 @@ public:
 
     ~CopyTextureToBufferTask() override;
 
-    bool prepareResources(ResourceProvider*, const RuntimeEffectDictionary*) override;
+    Status prepareResources(ResourceProvider*,
+                            ScratchResourceManager*,
+                            const RuntimeEffectDictionary*) override;
 
-    bool addCommands(Context*, CommandBuffer*, ReplayTargetData) override;
+    Status addCommands(Context*, CommandBuffer*, ReplayTargetData) override;
 
 private:
     CopyTextureToBufferTask(sk_sp<TextureProxy>,
@@ -87,9 +91,11 @@ public:
 
     ~CopyTextureToTextureTask() override;
 
-    bool prepareResources(ResourceProvider*, const RuntimeEffectDictionary*) override;
+    Status prepareResources(ResourceProvider*,
+                            ScratchResourceManager*,
+                            const RuntimeEffectDictionary*) override;
 
-    bool addCommands(Context*, CommandBuffer*, ReplayTargetData) override;
+    Status addCommands(Context*, CommandBuffer*, ReplayTargetData) override;
 
 private:
     CopyTextureToTextureTask(sk_sp<TextureProxy> srcProxy,

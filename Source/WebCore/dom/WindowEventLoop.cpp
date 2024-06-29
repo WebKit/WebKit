@@ -29,6 +29,7 @@
 #include "CommonVM.h"
 #include "CustomElementReactionQueue.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "HTMLSlotElement.h"
 #include "IdleCallbackController.h"
 #include "Microtasks.h"
@@ -59,7 +60,7 @@ static String agentClusterKeyOrNullIfUnique(const SecurityOrigin& origin)
         RegistrableDomain registrableDomain { origin.data() };
         if (registrableDomain.isEmpty())
             return origin.toString();
-        return makeString(origin.protocol(), "://", registrableDomain.string());
+        return makeString(origin.protocol(), "://"_s, registrableDomain.string());
     };
     auto key = computeKey();
     if (key.isEmpty() || key == "null"_s)

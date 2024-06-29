@@ -60,31 +60,16 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITSlowPathCall::generateThunk(VM& vm, Slo
     jit.store32(bytecodeOffsetGPR, CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
 
-#if OS(WINDOWS) && CPU(X86_64)
-    // On Windows, return values larger than 8 bytes are retuened via an implicit pointer passed as
-    // the first argument, and remaining arguments are shifted to the right. Make space for this.
-    static_assert(sizeof(UGPRPair) == 16, "Assumed by generated call site below");
-    jit.subPtr(MacroAssembler::TrustedImm32(16), MacroAssembler::stackPointerRegister);
-    jit.move(MacroAssembler::stackPointerRegister, GPRInfo::argumentGPR0);
-    constexpr GPRReg callFrameArgGPR = GPRInfo::argumentGPR1;
-    constexpr GPRReg pcArgGPR = GPRInfo::argumentGPR2;
-    static_assert(noOverlap(GPRInfo::argumentGPR0, callFrameArgGPR, pcArgGPR, bytecodeOffsetGPR));
-#else
     constexpr GPRReg callFrameArgGPR = GPRInfo::argumentGPR0;
     constexpr GPRReg pcArgGPR = GPRInfo::argumentGPR1;
     static_assert(noOverlap(callFrameArgGPR, pcArgGPR, bytecodeOffsetGPR));
-#endif
+
     jit.move(GPRInfo::callFrameRegister, callFrameArgGPR);
     jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::codeBlock), pcArgGPR);
     jit.loadPtr(CCallHelpers::Address(pcArgGPR, CodeBlock::offsetOfInstructionsRawPointer()), pcArgGPR);
     jit.addPtr(bytecodeOffsetGPR, pcArgGPR);
 
     jit.callOperation<OperationPtrTag>(slowPathFunction);
-
-#if OS(WINDOWS) && CPU(X86_64)
-    jit.pop(GPRInfo::returnValueGPR); // pc
-    jit.pop(GPRInfo::returnValueGPR2); // callFrame
-#endif
 
     jit.emitCTIThunkEpilogue();
 

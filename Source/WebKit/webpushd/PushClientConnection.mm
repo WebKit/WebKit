@@ -39,6 +39,7 @@
 #import <wtf/HexNumber.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/text/StringConcatenateNumbers.h>
 
 #if PLATFORM(MAC)
 #import <bsm/libbsm.h>
@@ -170,7 +171,7 @@ void PushClientConnection::setDebugModeIsEnabled(bool enabled)
         return;
 
     m_debugModeEnabled = enabled;
-    broadcastDebugMessage(makeString("Turned Debug Mode ", m_debugModeEnabled ? "on" : "off"));
+    broadcastDebugMessage(makeString("Turned Debug Mode "_s, m_debugModeEnabled ? "on"_s : "off"_s));
 }
 
 void PushClientConnection::broadcastDebugMessage(const String& message)
@@ -178,9 +179,9 @@ void PushClientConnection::broadcastDebugMessage(const String& message)
     String messageIdentifier;
     auto signingIdentifier = hostAppCodeSigningIdentifier();
     if (signingIdentifier.isEmpty())
-        messageIdentifier = makeString("[(0x", hex(reinterpret_cast<uint64_t>(m_xpcConnection.get()), WTF::HexConversionMode::Lowercase), ") (", String::number(identifier().toUInt64()), " )] ");
+        messageIdentifier = makeString("[(0x"_s, hex(reinterpret_cast<uint64_t>(m_xpcConnection.get()), WTF::HexConversionMode::Lowercase), ") ("_s, identifier().toUInt64(), " )] "_s);
     else
-        messageIdentifier = makeString("[", signingIdentifier, " (", String::number(identifier().toUInt64()), ")] ");
+        messageIdentifier = makeString('[', signingIdentifier, " ("_s, identifier().toUInt64(), ")] "_s);
 
     WebPushDaemon::singleton().broadcastDebugMessage(makeString(messageIdentifier, message));
 }

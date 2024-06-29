@@ -210,31 +210,31 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
         return;
     }
 
-    auto updateState = [&](CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
-        if (!updateParameters.state || updateParameters.state == window->state()) {
+    auto updateState = [](WebExtensionWindow& window, const WebExtensionWindowParameters& updateParameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
+        if (!updateParameters.state || updateParameters.state == window.state()) {
             stepCompletionHandler({ });
             return;
         }
 
-        window->setState(updateParameters.state.value(), WTFMove(stepCompletionHandler));
+        window.setState(updateParameters.state.value(), WTFMove(stepCompletionHandler));
     };
 
-    auto updateFocus = [&](CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
+    auto updateFocus = [](WebExtensionWindow& window, const WebExtensionWindowParameters& updateParameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
         if (!updateParameters.focused || !updateParameters.focused.value()) {
             stepCompletionHandler({ });
             return;
         }
 
-        window->focus(WTFMove(stepCompletionHandler));
+        window.focus(WTFMove(stepCompletionHandler));
     };
 
-    auto updateFrame = [&](CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
-        if (!updateParameters.frame || window->state() != WebExtensionWindow::State::Normal) {
+    auto updateFrame = [](WebExtensionWindow& window, const WebExtensionWindowParameters& updateParameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
+        if (!updateParameters.frame || window.state() != WebExtensionWindow::State::Normal) {
             stepCompletionHandler({ });
             return;
         }
 
-        CGRect currentFrame = window->frame();
+        CGRect currentFrame = window.frame();
         if (CGRectIsNull(currentFrame)) {
             stepCompletionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'top', 'left', 'width', and 'height'"));
             return;
@@ -252,7 +252,7 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
         // On macOS, window coordinates originate from the bottom-left of the main screen. When working with
         // multi-screen setups, the screen's frame defines this origin. However, Web Extensions expect window
         // coordinates with the origin in the top-left corner.
-        CGRect screenFrame = window->screenFrame();
+        CGRect screenFrame = window.screenFrame();
         if (CGRectIsEmpty(screenFrame)) {
             stepCompletionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'top', 'left', 'width', and 'height'"));
             return;
@@ -283,7 +283,7 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
             return;
         }
 
-        window->setFrame(desiredFrame, WTFMove(stepCompletionHandler));
+        window.setFrame(desiredFrame, WTFMove(stepCompletionHandler));
     };
 
     // Frame can only be updated if state is Normal.
@@ -292,19 +292,19 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
         updateParameters.state = WebExtensionWindow::State::Normal;
     }
 
-    updateState([&](Expected<void, WebExtensionError>&& stateResult) {
+    updateState(*window, updateParameters, [window = Ref { *window }, updateParameters = WTFMove(updateParameters), updateFocus = WTFMove(updateFocus), updateFrame = WTFMove(updateFrame), completionHandler = WTFMove(completionHandler)](Expected<void, WebExtensionError>&& stateResult) mutable {
         if (!stateResult) {
             completionHandler(makeUnexpected(stateResult.error()));
             return;
         }
 
-        updateFocus([&](Expected<void, WebExtensionError>&& focusResult) {
+        updateFocus(window, updateParameters, [window, updateParameters = WTFMove(updateParameters), updateFrame = WTFMove(updateFrame), completionHandler = WTFMove(completionHandler)](Expected<void, WebExtensionError>&& focusResult) mutable {
             if (!focusResult) {
                 completionHandler(makeUnexpected(focusResult.error()));
                 return;
             }
 
-            updateFrame([&](Expected<void, WebExtensionError>&& frameResult) {
+            updateFrame(window, updateParameters, [window, completionHandler = WTFMove(completionHandler)](Expected<void, WebExtensionError>&& frameResult) mutable {
                 if (!frameResult) {
                     completionHandler(makeUnexpected(frameResult.error()));
                     return;

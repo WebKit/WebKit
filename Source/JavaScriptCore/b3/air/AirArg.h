@@ -62,6 +62,10 @@ public:
         // eventually become registers.
         Tmp,
 
+#if USE(JSVALUE32_64)
+        TmpPair,
+#endif
+
         // This is an immediate that the instruction will materialize. Imm is the immediate that can be
         // inlined into most instructions, while BigImm indicates a constant materialization and is
         // usually only usable with Move. Specials may also admit it, for example for stackmaps used for
@@ -497,7 +501,16 @@ public:
         : Arg(Air::Tmp(reg))
     {
     }
-    
+
+#if USE(JSVALUE32_64)
+    Arg(Air::Tmp tmpHi, Air::Tmp tmpLo)
+        : m_kind(TmpPair)
+        , m_baseHi(tmpHi)
+        , m_baseLo(tmpLo)
+    {
+    }
+#endif
+
     static Arg simdInfo(SIMDLane simdLane, SIMDSignMode signMode = SIMDSignMode::None)
     {
         Arg result;
@@ -1108,6 +1121,43 @@ public:
         return widthForBytes(m_offset);
     }
 
+#if USE(JSVALUE32_64)
+    bool isTmpPair() const
+    {
+        return kind() == TmpPair;
+    }
+
+    Air::Tmp tmpHi() const
+    {
+        ASSERT(kind() == TmpPair);
+        return m_baseHi;
+    }
+
+    Air::Tmp tmpLo() const
+    {
+        ASSERT(kind() == TmpPair);
+        return m_baseLo;
+    }
+
+    bool isGPTmpPair() const
+    {
+        // We only use TmpPair for GPs
+        ASSERT(tmpHi().isGP() && tmpLo().isGP());
+        return isTmpPair();
+    }
+
+    Reg regHi() const
+    {
+        return tmpHi().reg();
+    }
+
+    Reg regLo() const
+    {
+        return tmpLo().reg();
+    }
+
+#endif
+
     bool isGPTmp() const
     {
         return isTmp() && tmp().isGP();
@@ -1141,6 +1191,9 @@ public:
         case StatusCond:
         case Special:
         case WidthArg:
+#if USE(JSVALUE32_64)
+        case TmpPair:
+#endif
             return true;
         case Tmp:
             return isGPTmp();
@@ -1167,6 +1220,9 @@ public:
         case Invalid:
         case ZeroReg:
         case SIMDInfo:
+#if USE(JSVALUE32_64)
+        case TmpPair:
+#endif
             return false;
         case SimpleAddr:
         case Addr:
@@ -1192,6 +1248,9 @@ public:
         case BitImm64:
         case Special:
         case Tmp:
+#if USE(JSVALUE32_64)
+        case TmpPair:
+#endif
             return true;
         default:
             return false;
@@ -1386,6 +1445,9 @@ public:
         switch (kind()) {
         case Invalid:
             return false;
+#if USE(JSVALUE32_64)
+        case TmpPair:
+#endif
         case Tmp:
             return true;
         case Imm:
@@ -1433,6 +1495,12 @@ public:
         case PostIndex:
             functor(m_base);
             break;
+#if USE(JSVALUE32_64)
+        case TmpPair:
+            functor(m_baseHi);
+            functor(m_baseLo);
+            break;
+#endif
         case Index:
             functor(m_base);
             functor(m_index);
@@ -1470,6 +1538,13 @@ public:
             ASSERT(isAnyUse(argRole) || isAnyDef(argRole));
             functor(m_base, argRole, argBank, argWidth);
             break;
+#if USE(JSVALUE32_64)
+        case TmpPair:
+            ASSERT(isAnyUse(argRole) || isAnyDef(argRole));
+            functor(m_baseHi, argRole, argBank, Width32);
+            functor(m_baseLo, argRole, argBank, Width32);
+            break;
+#endif
         case SimpleAddr:
         case Addr:
         case ExtendedOffsetAddr:
@@ -1673,6 +1748,11 @@ private:
     int32_t m_scale { 1 };
     Air::Tmp m_base;
     Air::Tmp m_index;
+#if USE(JSVALUE32_64)
+    // XXX: stick in union with m_base?
+    Air::Tmp m_baseHi;
+    Air::Tmp m_baseLo;
+#endif
     JSC::SIMDInfo m_simdInfo;
 };
 

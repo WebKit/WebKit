@@ -199,12 +199,14 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
             // 1) The iterator is not a known iterator.
             // 2) The base object does not have a length getter.
             // 3) The base object might have indexed getters.
+            // 4) The iterator protocol is still intact.
             // it should not be observable that we do not use the iterator.
 
             if (!iteratorFunc.isUndefinedOrNull()
                 && (iteratorFunc != object->globalObject()->arrayProtoValuesFunction()
                     || lengthSlot.isAccessor() || lengthSlot.isCustom() || lengthSlot.isTaintedByOpaqueObject()
-                    || hasAnyArrayStorage(object->indexingType()))) {
+                    || hasAnyArrayStorage(object->indexingType())
+                    || !object->globalObject()->arrayIteratorProtocolWatchpointSet().isStillValid())) {
                     RELEASE_AND_RETURN(scope, constructGenericTypedArrayViewFromIterator<ViewClass>(globalObject, structure, object, iteratorFunc));
             }
 

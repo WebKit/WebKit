@@ -1481,7 +1481,7 @@ class SegmentInfo {
   uint64_t timecode_scale_;
   // Initially set to libwebm-%d.%d.%d.%d, major, minor, build, revision.
   char* writing_app_;
-  // LLONG_MIN when DateUTC is not set.
+  // INT64_MIN when DateUTC is not set.
   int64_t date_utc_;
 
   // The file position of the duration element.

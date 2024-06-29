@@ -46,19 +46,20 @@ namespace WebCore {
 
 #if !LOG_DISABLED
 
-static String validationPolicyAsString(OptionSet<TileGrid::ValidationPolicyFlag> policy)
+static TextStream& operator<<(TextStream& ts, TileGrid::ValidationPolicyFlag flag)
 {
-    return makeString('[',
-        policy.contains(TileGrid::PruneSecondaryTiles) ? "prune secondary" : "",
-        policy.containsAll({ TileGrid::PruneSecondaryTiles, TileGrid::UnparentAllTiles }) ? ", " : "",
-        policy.contains(TileGrid::PruneSecondaryTiles) ? "unparent all" : "",
-        ']');
+    switch (flag) {
+    case TileGrid::ValidationPolicyFlag::PruneSecondaryTiles: ts << "prune secondary"; break;
+    case TileGrid::ValidationPolicyFlag::UnparentAllTiles: ts << "unparent all"; break;
+    }
+    return ts;
 }
 
 #endif
 
 TileGrid::TileGrid(TileController& controller)
-    : m_controller(controller)
+    : m_identifier(TileGridIdentifier::generate())
+    , m_controller(controller)
     , m_containerLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
     , m_cohortRemovalTimer(*this, &TileGrid::cohortRemovalTimerFired)
     , m_tileSize(kDefaultTileSize, kDefaultTileSize)
@@ -350,7 +351,7 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
     FloatRect coverageRect = m_controller.coverageRect();
     IntRect bounds = m_controller.bounds();
 
-    LOG_WITH_STREAM(Tiling, stream << "TileGrid " << this << " (controller " << &m_controller << ") revalidateTiles: bounds " << bounds << " coverageRect" << coverageRect << " validation: " << validationPolicyAsString(validationPolicy));
+    LOG_WITH_STREAM(Tiling, stream << "TileGrid " << this << " (controller " << &m_controller << ") revalidateTiles: bounds " << bounds << " coverageRect" << coverageRect << " validation: " << validationPolicy);
 
     FloatRect scaledRect(coverageRect);
     scaledRect.scale(m_scale);
@@ -584,7 +585,6 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
 
             if (!tileInfo.layer) {
                 tileInfo.layer = m_controller.createTileLayer(tileRect, *this);
-                m_controller.willRepaintTile(*this, tileIndex, tileRect, tileRect);
                 ASSERT(!m_tileRepaintCounts.contains(tileInfo.layer.get()));
             } else {
                 // We already have a layer for this tile. Ensure that its size is correct.
@@ -595,7 +595,6 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
                     tileInfo.layer->setBounds(FloatRect(FloatPoint(), tileRect.size()));
                     tileInfo.layer->setPosition(tileRect.location());
                     tileInfo.layer->setNeedsDisplay();
-                    m_controller.willRepaintTile(*this, tileIndex, tileRect, tileRect);
                 }
             }
 
@@ -603,6 +602,9 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
                 tileInfo.cohort = currCohort;
                 ++tilesInCohort;
             }
+
+            if (tileInfo.layer->needsDisplay())
+                m_controller.willRepaintTile(*this, tileIndex, tileRect, tileRect);
 
             if (!tileInfo.layer->superlayer())
                 m_containerLayer.get().appendSublayer(*tileInfo.layer);
@@ -702,13 +704,17 @@ void TileGrid::drawTileMapContents(CGContextRef context, CGRect layerBounds) con
         CGContextSaveGState(context);
 
         auto repaintCount = m_tileRepaintCounts.count(tileLayer);
-        char repaintCountCharacters[lengthOfIntegerAsString(std::numeric_limits<decltype(repaintCount)>::max())];
-        writeIntegerToBuffer(repaintCount, repaintCountCharacters);
-        tileLayer->drawTextAtPoint(context, frame.origin.x + 64, frame.origin.y + 192, CGSizeMake(3, -3), 58,
-            repaintCountCharacters, lengthOfIntegerAsString(repaintCount));
+        std::array<char8_t, lengthOfIntegerAsString(std::numeric_limits<decltype(repaintCount)>::max())> repaintCountCharacters;
+        writeIntegerToBuffer(repaintCount, repaintCountCharacters.data());
+        tileLayer->drawTextAtPoint(context, frame.origin.x + 64, frame.origin.y + 192, CGSizeMake(3, -3), 58, repaintCountCharacters);
 
         CGContextRestoreGState(context);
     }
+}
+
+PlatformLayerIdentifier TileGrid::platformCALayerIdentifier() const
+{
+    return m_controller.layerIdentifier();
 }
 
 void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior> layerPaintBehavior)

@@ -76,8 +76,6 @@ NetEqTest::NetEqTest(const NetEq::Config& config,
       callbacks_(callbacks),
       sample_rate_hz_(config.sample_rate_hz),
       text_log_(std::move(text_log)) {
-  RTC_CHECK(!config.enable_muted_state)
-      << "The code does not handle enable_muted_state";
   RegisterDecoders(codecs);
 }
 
@@ -177,11 +175,9 @@ NetEqTest::SimulationStepResult NetEqTest::RunToNextGetAudio() {
         callbacks_.get_audio_callback->BeforeGetAudio(neteq_.get());
       }
       AudioFrame out_frame;
-      bool muted;
-      int error = neteq_->GetAudio(&out_frame, &muted, nullptr,
+      int error = neteq_->GetAudio(&out_frame, nullptr, nullptr,
                                    ActionToOperations(next_action_));
       next_action_ = absl::nullopt;
-      RTC_CHECK(!muted) << "The code does not handle enable_muted_state";
       if (error != NetEq::kOK) {
         if (callbacks_.error_callback) {
           callbacks_.error_callback->OnGetAudioError();
@@ -190,8 +186,8 @@ NetEqTest::SimulationStepResult NetEqTest::RunToNextGetAudio() {
         sample_rate_hz_ = out_frame.sample_rate_hz_;
       }
       if (callbacks_.get_audio_callback) {
-        callbacks_.get_audio_callback->AfterGetAudio(time_now_ms, out_frame,
-                                                     muted, neteq_.get());
+        callbacks_.get_audio_callback->AfterGetAudio(
+            time_now_ms, out_frame, out_frame.muted(), neteq_.get());
       }
 
       if (output_) {

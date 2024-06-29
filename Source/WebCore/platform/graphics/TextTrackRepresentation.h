@@ -54,6 +54,7 @@ public:
     virtual void update() = 0;
     virtual PlatformLayer* platformLayer() = 0;
     virtual void setContentScale(float) = 0;
+    virtual void setBounds(const IntRect&) = 0;
     virtual IntRect bounds() const = 0;
     virtual void setHidden(bool) const = 0;
 };

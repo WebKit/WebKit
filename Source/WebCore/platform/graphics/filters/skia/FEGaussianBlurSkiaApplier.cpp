@@ -53,12 +53,12 @@ bool FEGaussianBlurSkiaApplier::apply(const Filter& filter, const FilterImageVec
         return false;
 
     FloatSize sigma = FloatSize(m_effect.stdDeviationX(), m_effect.stdDeviationY()) * filter.filterScale();
-    auto outsetSize = m_effect.calculateOutsetSize(sigma);
 
     SkPaint paint;
     paint.setImageFilter(SkImageFilters::Blur(sigma.width(), sigma.height(), nullptr));
 
-    resultImage->context().platformContext()->drawImage(nativeImage->platformImage(), outsetSize.width(), outsetSize.height(), { }, &paint);
+    auto inputOffsetWithinResult = input.absoluteImageRectRelativeTo(result).location();
+    resultImage->context().platformContext()->drawImage(nativeImage->platformImage(), inputOffsetWithinResult.x(), inputOffsetWithinResult.y(), { }, &paint);
     return true;
 }
 

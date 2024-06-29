@@ -139,8 +139,8 @@ public:
     WebCore::GraphicsContextGLCV* asCV() final { return nullptr; }
 #endif
 private:
-    RemoteGraphicsContextGLProxyCocoa(IPC::Connection& connection,  Ref<IPC::StreamClientConnection> streamConnection, const WebCore::GraphicsContextGLAttributes& attributes, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
-        : RemoteGraphicsContextGLProxy(connection, WTFMove(streamConnection), attributes, WTFMove(videoFrameObjectHeapProxy))
+    RemoteGraphicsContextGLProxyCocoa(const WebCore::GraphicsContextGLAttributes& attributes, WTF::SerialFunctionDispatcher& dispatcher)
+        : RemoteGraphicsContextGLProxy(attributes, dispatcher)
         , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha))
     {
     }
@@ -191,9 +191,9 @@ void RemoteGraphicsContextGLProxyCocoa::addNewFence(Ref<DisplayBufferFence> newF
 
 }
 
-Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(IPC::Connection& connection,  Ref<IPC::StreamClientConnection> streamConnection, const WebCore::GraphicsContextGLAttributes& attributes, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
+Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(const WebCore::GraphicsContextGLAttributes& attributes, SerialFunctionDispatcher& dispatcher)
 {
-    return adoptRef(*new RemoteGraphicsContextGLProxyCocoa(connection, WTFMove(streamConnection), attributes, WTFMove(videoFrameObjectHeapProxy)));
+    return adoptRef(*new RemoteGraphicsContextGLProxyCocoa(attributes, dispatcher));
 }
 
 }

@@ -397,6 +397,12 @@ INSTANTIATE_TEST_SUITE_P(NEON, WienerTest,
                          ::testing::Values(av1_compute_stats_neon));
 #endif  // HAVE_NEON
 
+#if HAVE_SVE
+
+INSTANTIATE_TEST_SUITE_P(SVE, WienerTest,
+                         ::testing::Values(av1_compute_stats_sve));
+#endif  // HAVE_SVE
+
 }  // namespace wiener_lowbd
 
 #if CONFIG_AV1_HIGHBITDEPTH
@@ -514,25 +520,27 @@ static void compute_stats_highbd_win_opt_c(int wiener_win, const uint8_t *dgd8,
 }
 
 void compute_stats_highbd_opt_c(int wiener_win, const uint8_t *dgd,
-                                const uint8_t *src, int h_start, int h_end,
-                                int v_start, int v_end, int dgd_stride,
-                                int src_stride, int64_t *M, int64_t *H,
-                                aom_bit_depth_t bit_depth) {
+                                const uint8_t *src, int16_t *d, int16_t *s,
+                                int h_start, int h_end, int v_start, int v_end,
+                                int dgd_stride, int src_stride, int64_t *M,
+                                int64_t *H, aom_bit_depth_t bit_depth) {
   if (wiener_win == WIENER_WIN || wiener_win == WIENER_WIN_CHROMA) {
     compute_stats_highbd_win_opt_c(wiener_win, dgd, src, h_start, h_end,
                                    v_start, v_end, dgd_stride, src_stride, M, H,
                                    bit_depth);
   } else {
-    av1_compute_stats_highbd_c(wiener_win, dgd, src, h_start, h_end, v_start,
-                               v_end, dgd_stride, src_stride, M, H, bit_depth);
+    av1_compute_stats_highbd_c(wiener_win, dgd, src, d, s, h_start, h_end,
+                               v_start, v_end, dgd_stride, src_stride, M, H,
+                               bit_depth);
   }
 }
 
 static const int kIterations = 100;
 typedef void (*compute_stats_Func)(int wiener_win, const uint8_t *dgd,
-                                   const uint8_t *src, int h_start, int h_end,
-                                   int v_start, int v_end, int dgd_stride,
-                                   int src_stride, int64_t *M, int64_t *H,
+                                   const uint8_t *src, int16_t *d, int16_t *s,
+                                   int h_start, int h_end, int v_start,
+                                   int v_end, int dgd_stride, int src_stride,
+                                   int64_t *M, int64_t *H,
                                    aom_bit_depth_t bit_depth);
 
 typedef std::tuple<const compute_stats_Func> WienerTestParam;
@@ -546,11 +554,17 @@ class WienerTestHighbd : public ::testing::TestWithParam<WienerTestParam> {
     dgd_buf = (uint16_t *)aom_memalign(
         32, MAX_DATA_BLOCK * MAX_DATA_BLOCK * sizeof(*dgd_buf));
     ASSERT_NE(dgd_buf, nullptr);
+    const size_t buf_size =
+        sizeof(*buf) * 6 * RESTORATION_UNITSIZE_MAX * RESTORATION_UNITSIZE_MAX;
+    buf = (int16_t *)aom_memalign(32, buf_size);
+    ASSERT_NE(buf, nullptr);
+    memset(buf, 0, buf_size);
     target_func_ = GET_PARAM(0);
   }
   void TearDown() override {
     aom_free(src_buf);
     aom_free(dgd_buf);
+    aom_free(buf);
   }
   void RunWienerTest(const int32_t wiener_win, int32_t run_times,
                      aom_bit_depth_t bit_depth);
@@ -562,6 +576,7 @@ class WienerTestHighbd : public ::testing::TestWithParam<WienerTestParam> {
   libaom_test::ACMRandom rng_;
   uint16_t *src_buf;
   uint16_t *dgd_buf;
+  int16_t *buf;
 };
 
 void WienerTestHighbd::RunWienerTest(const int32_t wiener_win,
@@ -589,6 +604,9 @@ void WienerTestHighbd::RunWienerTest(const int32_t wiener_win,
   const int dgd_stride = h_end;
   const int src_stride = MAX_DATA_BLOCK;
   const int iters = run_times == 1 ? kIterations : 2;
+  int16_t *dgd_avg = buf;
+  int16_t *src_avg =
+      buf + (3 * RESTORATION_UNITSIZE_MAX * RESTORATION_UNITSIZE_MAX);
   for (int iter = 0; iter < iters && !HasFatalFailure(); ++iter) {
     for (int i = 0; i < MAX_DATA_BLOCK * MAX_DATA_BLOCK; ++i) {
       dgd_buf[i] = rng_.Rand16() % (1 << bit_depth);
@@ -601,16 +619,17 @@ void WienerTestHighbd::RunWienerTest(const int32_t wiener_win,
     aom_usec_timer timer;
     aom_usec_timer_start(&timer);
     for (int i = 0; i < run_times; ++i) {
-      av1_compute_stats_highbd_c(wiener_win, dgd8, src8, h_start, h_end,
-                                 v_start, v_end, dgd_stride, src_stride, M_ref,
-                                 H_ref, bit_depth);
+      av1_compute_stats_highbd_c(wiener_win, dgd8, src8, dgd_avg, src_avg,
+                                 h_start, h_end, v_start, v_end, dgd_stride,
+                                 src_stride, M_ref, H_ref, bit_depth);
     }
     aom_usec_timer_mark(&timer);
     const double time1 = static_cast<double>(aom_usec_timer_elapsed(&timer));
     aom_usec_timer_start(&timer);
     for (int i = 0; i < run_times; ++i) {
-      target_func_(wiener_win, dgd8, src8, h_start, h_end, v_start, v_end,
-                   dgd_stride, src_stride, M_test, H_test, bit_depth);
+      target_func_(wiener_win, dgd8, src8, dgd_avg, src_avg, h_start, h_end,
+                   v_start, v_end, dgd_stride, src_stride, M_test, H_test,
+                   bit_depth);
     }
     aom_usec_timer_mark(&timer);
     const double time2 = static_cast<double>(aom_usec_timer_elapsed(&timer));
@@ -657,6 +676,9 @@ void WienerTestHighbd::RunWienerTest_ExtremeValues(const int32_t wiener_win,
   const int dgd_stride = h_end;
   const int src_stride = MAX_DATA_BLOCK;
   const int iters = 1;
+  int16_t *dgd_avg = buf;
+  int16_t *src_avg =
+      buf + (3 * RESTORATION_UNITSIZE_MAX * RESTORATION_UNITSIZE_MAX);
   for (int iter = 0; iter < iters && !HasFatalFailure(); ++iter) {
     // Fill with alternating extreme values to maximize difference with
     // the average.
@@ -668,12 +690,13 @@ void WienerTestHighbd::RunWienerTest_ExtremeValues(const int32_t wiener_win,
         dgd_buf + wiener_halfwin * MAX_DATA_BLOCK + wiener_halfwin);
     const uint8_t *src8 = CONVERT_TO_BYTEPTR(src_buf);
 
-    av1_compute_stats_highbd_c(wiener_win, dgd8, src8, h_start, h_end, v_start,
-                               v_end, dgd_stride, src_stride, M_ref, H_ref,
-                               bit_depth);
+    av1_compute_stats_highbd_c(wiener_win, dgd8, src8, dgd_avg, src_avg,
+                               h_start, h_end, v_start, v_end, dgd_stride,
+                               src_stride, M_ref, H_ref, bit_depth);
 
-    target_func_(wiener_win, dgd8, src8, h_start, h_end, v_start, v_end,
-                 dgd_stride, src_stride, M_test, H_test, bit_depth);
+    target_func_(wiener_win, dgd8, src8, dgd_avg, src_avg, h_start, h_end,
+                 v_start, v_end, dgd_stride, src_stride, M_test, H_test,
+                 bit_depth);
 
     int failed = 0;
     for (int i = 0; i < wiener_win2; ++i) {
@@ -737,6 +760,16 @@ INSTANTIATE_TEST_SUITE_P(SSE4_1, WienerTestHighbd,
 INSTANTIATE_TEST_SUITE_P(AVX2, WienerTestHighbd,
                          ::testing::Values(av1_compute_stats_highbd_avx2));
 #endif  // HAVE_AVX2
+
+#if HAVE_NEON
+INSTANTIATE_TEST_SUITE_P(NEON, WienerTestHighbd,
+                         ::testing::Values(av1_compute_stats_highbd_neon));
+#endif  // HAVE_NEON
+
+#if HAVE_SVE
+INSTANTIATE_TEST_SUITE_P(SVE, WienerTestHighbd,
+                         ::testing::Values(av1_compute_stats_highbd_sve));
+#endif  // HAVE_SVE
 
 // A test that reproduces b/274668506: signed integer overflow in
 // update_a_sep_sym().
@@ -1070,6 +1103,233 @@ TEST(SearchWienerTest, 12bitSignedIntegerOverflowInUpdateBSepSym) {
   EXPECT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);
 }
 
+// A test that reproduces crbug.com/oss-fuzz/66474: signed integer overflow in
+// update_b_sep_sym().
+TEST(SearchWienerTest, 12bitSignedIntegerOverflowInUpdateBSepSym2) {
+  constexpr int kWidth = 510;
+  constexpr int kHeight = 3;
+  static const uint16_t buffer[kWidth * kHeight] = {
+    // Y plane:
+    2136, 4095, 0,    0,    0,    4095, 4095, 0,    4095, 4095, 329,  0,
+    4095, 0,    4095, 2587, 0,    0,    0,    4095, 0,    0,    0,    0,
+    4095, 0,    4095, 878,  0,    4095, 0,    4095, 1474, 0,    573,  0,
+    2401, 0,    1663, 4095, 0,    9,    3381, 0,    1084, 0,    270,  0,
+    4095, 4095, 4095, 3992, 4095, 2047, 0,    0,    0,    4095, 41,   0,
+    2726, 279,  0,    0,    4095, 0,    0,    1437, 0,    4095, 4095, 0,
+    0,    0,    4095, 1683, 183,  3976, 3052, 0,    4095, 0,    0,    0,
+    4095, 4095, 1882, 4095, 0,    4095, 83,   4095, 0,    4095, 0,    0,
+    4095, 4095, 0,    0,    1637, 4095, 0,    4095, 0,    4095, 4095, 4095,
+    0,    4095, 197,  4095, 563,  0,    3696, 3073, 3670, 0,    4095, 4095,
+    0,    0,    0,    4095, 0,    0,    0,    0,    4095, 4095, 0,    0,
+    0,    3539, 3468, 0,    2856, 3880, 0,    0,    1350, 2358, 4095, 802,
+    4051, 0,    4095, 4095, 4095, 1677, 4095, 1135, 0,    4095, 0,    0,
+    0,    618,  4095, 4095, 4095, 0,    2080, 4095, 0,    0,    1917, 0,
+    0,    4095, 1937, 2835, 4095, 4095, 4095, 4095, 0,    4095, 4095, 3938,
+    1707, 0,    0,    0,    4095, 448,  4095, 0,    1000, 2481, 3408, 0,
+    0,    4095, 0,    3176, 0,    4095, 0,    4095, 4095, 4095, 0,    160,
+    222,  1134, 4095, 4095, 0,    3539, 4095, 569,  3364, 0,    4095, 3687,
+    0,    4095, 0,    0,    473,  0,    0,    4095, 298,  0,    3126, 4095,
+    3854, 424,  0,    0,    4095, 3893, 0,    0,    175,  2774, 0,    4095,
+    0,    2661, 950,  4095, 0,    1553, 0,    4095, 0,    4095, 4095, 2767,
+    3630, 799,  255,  0,    4095, 0,    0,    4095, 2375, 0,    0,    0,
+    0,    4095, 4095, 0,    0,    0,    1404, 4095, 4095, 4095, 4095, 2317,
+    4095, 1227, 2205, 775,  0,    4095, 0,    0,    797,  1125, 736,  1773,
+    2996, 4095, 2822, 4095, 4095, 0,    0,    0,    919,  0,    968,  3426,
+    2702, 2613, 3647, 0,    0,    4095, 4095, 129,  4095, 0,    0,    4095,
+    0,    0,    3632, 0,    3275, 123,  4095, 1566, 0,    0,    0,    1609,
+    0,    1466, 4095, 577,  4095, 4095, 0,    4095, 1103, 1103, 4095, 0,
+    1909, 0,    4095, 0,    4095, 4095, 227,  0,    4095, 2168, 4095, 374,
+    4095, 4095, 4095, 0,    0,    0,    4095, 2066, 4095, 4095, 1475, 0,
+    1959, 673,  4095, 0,    4095, 4095, 4095, 1142, 0,    464,  1819, 2033,
+    4095, 0,    2212, 4095, 4095, 3961, 0,    4095, 0,    2838, 0,    4095,
+    4095, 4095, 4095, 0,    3796, 3379, 2208, 0,    4095, 4095, 1943, 478,
+    3573, 4095, 1763, 0,    0,    4095, 4095, 4095, 4095, 2061, 3346, 4095,
+    0,    0,    4095, 0,    4095, 4095, 4095, 3738, 4095, 4095, 0,    4095,
+    0,    425,  0,    0,    0,    927,  0,    0,    1814, 966,  4095, 0,
+    0,    3185, 570,  3883, 2932, 0,    1413, 4095, 4095, 4095, 4095, 2477,
+    2270, 4095, 2531, 4095, 1936, 3110, 99,   3936, 4095, 1315, 4095, 0,
+    4095, 3564, 4095, 0,    0,    2797, 4095, 0,    1598, 0,    0,    3064,
+    3526, 4095, 4095, 0,    3473, 3661, 0,    2388, 0,    4095, 639,  4095,
+    0,    4095, 2390, 3715, 4095, 0,    0,    0,    740,  4095, 1432, 0,
+    0,    0,    4057, 0,    0,    757,  4095, 4095, 0,    1437, 0,    0,
+    4095, 0,    0,    0,    0,    0,    272,  4095, 4095, 4095, 2175, 4058,
+    0,    4095, 4095, 4095, 3959, 3535, 0,    4095, 0,    0,    4095, 4095,
+    4095, 4095, 0,    0,    4095, 4095, 4095, 3440, 3811, 0,    4095, 4095,
+    4095, 4095, 0,    4095, 3193, 3674, 2819, 4095, 4095, 4048, 0,    0,
+    4037, 4095, 3110, 4095, 1003, 0,    3650, 4095, 4095, 3154, 0,    1274,
+    2192, 4095, 0,    4095, 0,    2814, 981,  370,  1407, 0,    4095, 1518,
+    4095, 0,    0,    0,    0,    4095, 1577, 0,    4095, 0,    2607, 4095,
+    3583, 0,    0,    4095, 1983, 1498, 4095, 4095, 2645, 4095, 4095, 3480,
+    2587, 4095, 0,    0,    0,    0,    4095, 0,    4095, 4095, 0,    284,
+    3973, 0,    0,    3677, 2463, 4095, 1338, 0,    4095, 0,    0,    4095,
+    212,  2000, 4095, 4095, 0,    4095, 3780, 2039, 4095, 2453, 4095, 2050,
+    2660, 1,    3839, 5,    1,    505,  809,  2907, 0,    0,    0,    1421,
+    4095, 0,    0,    4095, 4095, 4095, 552,  0,    0,    4095, 3056, 0,
+    0,    0,    0,    0,    4095, 0,    3386, 0,    0,    0,    4095, 0,
+    0,    3404, 2702, 3534, 4095, 3562, 0,    4095, 4095, 150,  4095, 0,
+    0,    3599, 4095, 4095, 0,    0,    0,    4095, 4095, 2093, 4095, 3753,
+    3754, 4095, 0,    4095, 2733, 4095, 4095, 0,    0,    4095, 0,    0,
+    0,    1496, 4095, 2366, 2936, 2494, 4095, 744,  1173, 4095, 0,    0,
+    0,    1966, 4095, 4095, 0,    178,  3254, 4095, 4095, 995,  4095, 2083,
+    0,    2639, 4095, 3422, 4095, 4095, 4095, 0,    842,  4095, 4095, 552,
+    3681, 4095, 0,    1075, 2631, 554,  0,    0,    4095, 0,    0,    0,
+    4095, 4095, 0,    0,    0,    2234, 0,    1098, 4095, 3164, 4095, 0,
+    2748, 0,    0,    0,    4095, 4095, 4095, 1724, 891,  3496, 3964, 4095,
+    0,    0,    1923, 4095, 4095, 4095, 3118, 0,    0,    0,    4095, 4095,
+    0,    0,    3856, 4095, 0,    0,    4095, 4095, 2647, 0,    2089, 4095,
+    471,  0,    4095, 0,    0,    0,    4095, 0,    1263, 2969, 289,  0,
+    0,    4095, 289,  0,    0,    2965, 0,    0,    3280, 2279, 4091, 5,
+    512,  1776, 4,    2046, 3994, 1,    4095, 898,  4095, 0,    0,    0,
+    0,    4095, 0,    4095, 4095, 1930, 0,    0,    3725, 4095, 4095, 0,
+    2593, 4095, 0,    4095, 984,  0,    4095, 2388, 0,    0,    4095, 4095,
+    3341, 4095, 0,    2787, 0,    831,  2978, 4095, 0,    0,    0,    4095,
+    1624, 4095, 1054, 1039, 0,    89,   3565, 0,    4095, 468,  0,    4095,
+    4095, 0,    4095, 4095, 0,    3907, 0,    0,    0,    0,    0,    0,
+    4095, 1898, 2178, 4095, 0,    3708, 2825, 0,    4095, 0,    4095, 4095,
+    0,    0,    811,  1078, 0,    4095, 0,    3478, 0,    0,    1127, 0,
+    504,  4095, 4095, 2006, 4095, 0,    2666, 1172, 4095, 4095, 4095, 4095,
+    4095, 0,    199,  4095, 0,    2355, 2650, 2961, 0,    0,    0,    4095,
+    4095, 0,    4095, 0,    4095, 1477, 0,    0,    1946, 0,    3352, 1988,
+    0,    0,    2321, 4095, 0,    4095, 3367, 0,    0,    4095, 4095, 1946,
+    0,    4034, 0,    0,    4095, 4095, 0,    0,    0,    0,    4095, 973,
+    1734, 3966, 4095, 0,    3780, 1242, 0,    4095, 1301, 0,    1513, 4095,
+    1079, 4095, 0,    0,    1316, 4095, 4095, 675,  2713, 2006, 4095, 4095,
+    0,    0,    4095, 4095, 0,    3542, 4095, 0,    2365, 130,  4095, 2919,
+    0,    4095, 3434, 0,    905,  4095, 673,  4095, 4095, 0,    3923, 293,
+    4095, 213,  4095, 4095, 1334, 4095, 0,    3317, 0,    0,    0,    4095,
+    4095, 4095, 2598, 2010, 0,    0,    3507, 0,    0,    0,    489,  0,
+    0,    1782, 2681, 3303, 4095, 4095, 1955, 4095, 4095, 4095, 203,  1973,
+    4095, 4020, 0,    4095, 1538, 0,    373,  1934, 4095, 0,    4095, 2244,
+    4095, 1936, 4095, 640,  0,    4095, 0,    0,    0,    3653, 4095, 1966,
+    4095, 4095, 4095, 4095, 0,    4095, 843,  0,    4095, 4095, 4095, 1646,
+    4095, 0,    0,    4095, 4095, 4095, 2164, 0,    0,    0,    2141, 4095,
+    0,    903,  4095, 4095, 0,    624,  4095, 792,  0,    0,    0,    0,
+    0,    0,    0,    4095, 0,    4095, 4095, 2466, 0,    3631, 0,    4095,
+    4095, 4095, 0,    941,  4095, 4095, 1609, 4095, 4095, 0,    0,    2398,
+    4095, 4095, 2579, 0,    4020, 3485, 0,    0,    4095, 0,    4095, 0,
+    3158, 2355, 0,    4095, 4095, 4095, 0,    0,    4095, 0,    0,    4095,
+    475,  2272, 1010, 0,    0,    4095, 0,    0,    4095, 841,  4095, 4095,
+    4095, 4095, 0,    4095, 0,    1046, 4095, 1738, 708,  4095, 0,    4095,
+    4095, 0,    4095, 4095, 0,    4095, 4095, 0,    0,    0,    4032, 0,
+    2679, 0,    1564, 0,    0,    0,    659,  1915, 4095, 3682, 0,    3660,
+    4095, 723,  1383, 2499, 1353, 4095, 0,    3898, 2322, 3798, 4095, 0,
+    444,  2277, 3729, 4095, 4095, 4095, 3054, 387,  3309, 4048, 3793, 2842,
+    2087, 0,    3274, 2454, 518,  0,    4095, 0,    4095, 4095, 3358, 4095,
+    2083, 2105, 0,    0,    0,    1125, 2636, 0,    0,    0,    0,    736,
+    0,    349,  0,    4095, 2031, 4095, 992,  0,    4095, 3284, 4095, 214,
+    3692, 4010, 402,  0,    0,    3776, 4095, 4095, 4095, 4095, 803,  2095,
+    3864, 4095, 3323, 0,    0,    361,  1634, 0,    983,  0,    1181, 4095,
+    1791, 4095, 367,  792,  4095, 4095, 3315, 3149, 4095, 62,   4095, 1791,
+    3708, 2030, 4095, 1237, 0,    4095, 4095, 0,    0,    0,    0,    4095,
+    1902, 2257, 4095, 4095, 0,    0,    2929, 4095, 0,    4095, 2356, 4095,
+    2877, 1296, 4095, 0,    0,    0,    1310, 1968, 820,  4095, 4095, 4095,
+    4095, 4095, 0,    0,    4095, 4095, 4095, 2897, 1787, 2218, 0,    129,
+    4095, 4095, 0,    4095, 2331, 4095, 4095, 3192, 4095, 1744, 755,  0,
+    1905, 0,    4095, 4095, 4095, 0,    0,    4095, 4095, 4095, 0,    0,
+    0,    1467, 266,  1719, 4095, 729,  4095, 4095, 2647, 3543, 3388, 3326,
+    4095, 0,    4095, 4095, 4095, 1416, 4095, 2131, 810,  0,    0,    4095,
+    4095, 1250, 0,    0,    4095, 2722, 1493, 4095, 0,    4095, 0,    2895,
+    0,    3847, 0,    2078, 0,    0,    0,    4095, 4095, 4095, 4095, 0,
+    4095, 2651, 4095, 4095, 351,  2675, 4095, 0,    858,  0,    0,    0,
+    816,  4095, 0,    4095, 0,    3842, 1990, 593,  0,    0,    3992, 4095,
+    4095, 0,    4095, 1314, 4095, 4095, 1864, 2561, 4095, 1339, 0,    4095,
+    2201, 4095, 0,    1403, 0,    0,    4095, 4095, 4095, 0,    0,    0,
+    0,    0,    0,    577,  4095, 995,  2534, 827,  1431, 4095, 4095, 778,
+    1405, 0,    0,    4095, 0,    4095, 1327, 4095, 0,    2725, 3351, 3937,
+    741,  0,    2690, 2849, 4095, 4095, 2151, 0,    4095, 0,    4095, 4095,
+    4095, 1342, 142,  1920, 1007, 2001
+  };
+  unsigned char *img_data =
+      reinterpret_cast<unsigned char *>(const_cast<uint16_t *>(buffer));
+
+  aom_image_t img;
+  EXPECT_EQ(&img, aom_img_wrap(&img, AOM_IMG_FMT_I42016, kWidth, kHeight, 1,
+                               img_data));
+  img.cp = AOM_CICP_CP_UNSPECIFIED;
+  img.tc = AOM_CICP_TC_UNSPECIFIED;
+  img.mc = AOM_CICP_MC_UNSPECIFIED;
+  img.monochrome = 1;
+  img.csp = AOM_CSP_UNKNOWN;
+  img.range = AOM_CR_FULL_RANGE;
+  img.planes[1] = img.planes[2] = nullptr;
+  img.stride[1] = img.stride[2] = 0;
+
+  aom_codec_iface_t *iface = aom_codec_av1_cx();
+  aom_codec_enc_cfg_t cfg;
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_enc_config_default(iface, &cfg, AOM_USAGE_GOOD_QUALITY));
+  cfg.rc_end_usage = AOM_Q;
+  cfg.g_profile = 2;
+  cfg.g_bit_depth = AOM_BITS_12;
+  cfg.g_input_bit_depth = 12;
+  cfg.g_w = kWidth;
+  cfg.g_h = kHeight;
+  cfg.g_lag_in_frames = 0;
+  cfg.g_threads = 53;
+  cfg.monochrome = 1;
+  cfg.rc_min_quantizer = 22;
+  cfg.rc_max_quantizer = 30;
+  aom_codec_ctx_t enc;
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_enc_init(&enc, iface, &cfg, AOM_CODEC_USE_HIGHBITDEPTH));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AOME_SET_CQ_LEVEL, 26));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AV1E_SET_TILE_ROWS, 3));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AOME_SET_CPUUSED, 6));
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_control(&enc, AV1E_SET_COLOR_RANGE, AOM_CR_FULL_RANGE));
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_control(&enc, AOME_SET_TUNING, AOM_TUNE_SSIM));
+
+  // Encode frame
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, &img, 0, 1, 0));
+  aom_codec_iter_t iter = nullptr;
+  const aom_codec_cx_pkt_t *pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_NE(pkt, nullptr);
+  EXPECT_EQ(pkt->kind, AOM_CODEC_CX_FRAME_PKT);
+  // pkt->data.frame.flags is 0x1f0011.
+  EXPECT_EQ(pkt->data.frame.flags & AOM_FRAME_IS_KEY, AOM_FRAME_IS_KEY);
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  // Encode frame
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_encode(&enc, &img, 0, 1, AOM_EFLAG_FORCE_KF));
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_NE(pkt, nullptr);
+  EXPECT_EQ(pkt->kind, AOM_CODEC_CX_FRAME_PKT);
+  // pkt->data.frame.flags is 0x1f0011.
+  EXPECT_EQ(pkt->data.frame.flags & AOM_FRAME_IS_KEY, AOM_FRAME_IS_KEY);
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  // Encode frame
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, &img, 0, 1, 0));
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_NE(pkt, nullptr);
+  EXPECT_EQ(pkt->kind, AOM_CODEC_CX_FRAME_PKT);
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  // Encode frame
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, &img, 0, 1, 0));
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_NE(pkt, nullptr);
+  EXPECT_EQ(pkt->kind, AOM_CODEC_CX_FRAME_PKT);
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  // Flush encoder
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, nullptr, 0, 1, 0));
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
+}
+
 // A test that reproduces b/272139363: signed integer overflow in
 // update_b_sep_sym().
 TEST(SearchWienerTest, 10bitSignedIntegerOverflowInUpdateBSepSym) {
@@ -1151,6 +1411,161 @@ TEST(SearchWienerTest, 10bitSignedIntegerOverflowInUpdateBSepSym) {
   EXPECT_EQ(pkt, nullptr);
 
   // Flush encoder
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, nullptr, 0, 1, 0));
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
+}
+
+// A test that reproduces b/319140742: signed integer overflow in
+// update_b_sep_sym().
+TEST(SearchWienerTest, 10bitSignedIntegerOverflowInUpdateBSepSym2) {
+  constexpr int kWidth = 326;
+  constexpr int kHeight = 3;
+  static const uint16_t buffer[kWidth * kHeight] = {
+    // Y plane:
+    1023, 1023, 0,    1023, 1023, 0,    623,  0,    0,    1023, 1023, 0,
+    0,    0,    0,    523,  1023, 2,    0,    0,    863,  1023, 1023, 409,
+    7,    1023, 0,    409,  1023, 0,    579,  1023, 1023, 1023, 0,    0,
+    1023, 1023, 446,  1023, 1023, 0,    0,    1023, 0,    0,    829,  1023,
+    0,    1023, 939,  0,    0,    23,   1022, 990,  1023, 0,    0,    4,
+    0,    299,  0,    0,    1023, 1023, 629,  688,  1023, 1023, 266,  1023,
+    865,  0,    413,  0,    267,  0,    0,    69,   1023, 866,  1023, 885,
+    0,    762,  330,  382,  0,    1023, 1023, 734,  504,  899,  119,  0,
+    378,  1011, 0,    0,    1023, 364,  0,    1023, 1023, 462,  1023, 0,
+    504,  1023, 1023, 0,    695,  1023, 57,   1023, 1023, 362,  0,    0,
+    0,    0,    1023, 1023, 387,  12,   929,  1023, 0,    194,  1023, 0,
+    1023, 505,  0,    1023, 1023, 1023, 1023, 1023, 0,    0,    676,  0,
+    6,    683,  70,   0,    0,    1023, 226,  1023, 320,  758,  0,    0,
+    648,  1023, 867,  550,  630,  960,  1023, 1023, 1023, 0,    0,    822,
+    0,    0,    0,    1023, 1011, 1023, 1023, 0,    0,    15,   30,   0,
+    1023, 1023, 0,    0,    0,    84,   954,  1023, 933,  416,  333,  323,
+    0,    0,    1023, 355,  1023, 176,  1023, 1023, 886,  87,   1023, 0,
+    1023, 1023, 1023, 562,  0,    1023, 1023, 354,  0,    0,    1023, 0,
+    86,   0,    0,    1023, 0,    1023, 192,  0,    1023, 0,    1023, 0,
+    0,    0,    735,  1023, 1023, 1023, 0,    372,  988,  131,  1023, 1023,
+    0,    1023, 1023, 1023, 1023, 970,  1023, 1023, 248,  757,  665,  330,
+    223,  273,  0,    274,  1023, 0,    1023, 613,  786,  1023, 792,  0,
+    390,  282,  0,    1023, 0,    1023, 0,    1023, 1023, 1023, 614,  993,
+    135,  737,  662,  0,    1023, 524,  970,  1023, 0,    906,  1023, 1023,
+    959,  1023, 1023, 1023, 1023, 836,  838,  0,    0,    0,    0,    0,
+    1023, 917,  492,  290,  1023, 1023, 817,  1023, 0,    0,    588,  410,
+    419,  0,    1023, 1023, 178,  0,    0,    563,  775,  977,  1023, 1023,
+    0,    1023, 0,    370,  434,  1023, 963,  587,  0,    0,    1023, 1023,
+    1023, 1023, 1023, 1023, 619,  0,    1023, 352,  1023, 0,    0,    0,
+    133,  557,  36,   1023, 1023, 1023, 0,    469,  1023, 1023, 0,    900,
+    59,   841,  1023, 886,  0,    193,  126,  263,  119,  629,  0,    1023,
+    0,    1023, 0,    0,    478,  0,    1023, 63,   1023, 0,    0,    0,
+    0,    0,    0,    0,    1023, 888,  1023, 905,  646,  0,    0,    1023,
+    752,  1023, 1023, 0,    1023, 0,    0,    648,  1023, 0,    0,    838,
+    0,    321,  1023, 475,  0,    215,  867,  1023, 0,    1023, 1023, 624,
+    417,  1023, 426,  0,    0,    960,  1020, 839,  687,  1023, 161,  1023,
+    1023, 1023, 1023, 968,  0,    95,   430,  0,    132,  1023, 1023, 113,
+    0,    1023, 1023, 606,  1023, 0,    0,    31,   1023, 1023, 0,    180,
+    140,  654,  1023, 1023, 1023, 1023, 1023, 779,  1023, 0,    0,    1023,
+    1023, 1023, 0,    1023, 0,    0,    1023, 963,  723,  536,  1023, 0,
+    0,    0,    337,  812,  0,    0,    0,    428,  48,   0,    321,  205,
+    0,    587,  799,  272,  5,    1023, 322,  0,    761,  0,    749,  1023,
+    0,    0,    1023, 1023, 1023, 1023, 242,  402,  98,   0,    1023, 884,
+    219,  1023, 0,    1023, 0,    0,    0,    106,  1023, 0,    1023, 414,
+    1023, 0,    1023, 619,  0,    0,    973,  854,  82,   1023, 1023, 1023,
+    0,    1023, 1023, 0,    0,    588,  433,  0,    0,    961,  0,    0,
+    0,    917,  859,  461,  455,  68,   1023, 409,  1023, 821,  1023, 487,
+    1023, 0,    717,  0,    613,  0,    0,    840,  932,  782,  1023, 1023,
+    576,  1023, 0,    1023, 1023, 187,  876,  162,  0,    1023, 1023, 946,
+    873,  0,    0,    953,  0,    537,  0,    0,    1023, 193,  807,  756,
+    0,    0,    1023, 732,  1023, 1023, 1023, 0,    0,    1023, 1023, 1023,
+    1023, 1023, 119,  0,    0,    90,   1023, 0,    1023, 0,    0,    0,
+    1023, 366,  1023, 655,  0,    58,   1023, 1023, 8,    1023, 1023, 24,
+    1023, 103,  0,    0,    1023, 919,  1023, 566,  1023, 0,    0,    480,
+    1023, 1023, 0,    0,    807,  0,    1023, 0,    273,  412,  632,  1023,
+    1023, 1023, 10,   633,  1023, 692,  978,  0,    0,    1023, 1023, 1023,
+    25,   494,  215,  0,    148,  1023, 840,  118,  1023, 1023, 999,  1023,
+    1023, 1023, 0,    0,    1023, 435,  894,  0,    1023, 1023, 168,  1023,
+    1023, 211,  1023, 1023, 656,  1023, 0,    0,    0,    744,  238,  1023,
+    0,    196,  907,  0,    0,    0,    838,  726,  1023, 1023, 1023, 0,
+    0,    0,    1023, 0,    1023, 1023, 1023, 0,    1023, 0,    0,    0,
+    323,  1023, 1023, 0,    1023, 0,    0,    925,  582,  1023, 0,    685,
+    1023, 661,  464,  0,    0,    0,    1023, 0,    807,  0,    1023, 1023,
+    1023, 100,  0,    1023, 302,  1023, 1023, 1023, 616,  0,    1023, 0,
+    0,    377,  1023, 1023, 1023, 0,    1023, 555,  1023, 784,  0,    0,
+    1023, 0,    0,    1023, 755,  0,    839,  1023, 0,    0,    0,    1023,
+    1023, 1023, 0,    1023, 413,  0,    1023, 1023, 384,  0,    823,  797,
+    1023, 0,    1023, 0,    0,    1023, 1023, 1023, 1023, 0,    1023, 39,
+    0,    473,  299,  0,    0,    1023, 567,  1023, 1023, 0,    0,    1023,
+    650,  1023, 41,   1023, 0,    1023, 0,    1023, 0,    1023, 0,    0,
+    444,  1023, 23,   0,    503,  97,   0,    1023, 0,    890,  59,   578,
+    0,    201,  1023, 672,  1023, 593,  1023, 599,  213,  1023, 1023, 1023,
+    986,  1023, 335,  1023, 457,  0,    888,  1023, 1023, 97,   308,  259,
+    813,  1023, 1023, 1023, 0,    1023, 798,  907,  105,  0,    1023, 0,
+    1023, 1023, 0,    970,  518,  0,    635,  0,    634,  329,  1023, 430,
+    0,    17,   1023, 1023, 1023, 0,    0,    407,  1023, 1023, 0,    1023,
+    0,    0,    0,    0,    1023, 1023, 1023, 402,  1023, 0,    0,    101,
+    1023, 1023, 1023, 1023, 1023, 1023, 425,  791,  1023, 1023, 961,  0,
+    0,    1023, 474,  1023, 1023, 1023, 1023, 468,  1023, 1023, 0,    1023,
+    215,  0,    1023, 1023, 334,  463,  286,  1023, 0,    1023, 0,    1023,
+    270,  401,  0,    0,    1023, 0,    794,  0,    0,    0,    1023, 0,
+    1023, 172,  317,  905,  950,  0
+  };
+  unsigned char *img_data =
+      reinterpret_cast<unsigned char *>(const_cast<uint16_t *>(buffer));
+
+  aom_image_t img;
+  EXPECT_EQ(&img, aom_img_wrap(&img, AOM_IMG_FMT_I42016, kWidth, kHeight, 1,
+                               img_data));
+  img.cp = AOM_CICP_CP_UNSPECIFIED;
+  img.tc = AOM_CICP_TC_UNSPECIFIED;
+  img.mc = AOM_CICP_MC_UNSPECIFIED;
+  img.monochrome = 1;
+  img.csp = AOM_CSP_UNKNOWN;
+  img.range = AOM_CR_FULL_RANGE;
+  img.planes[1] = img.planes[2] = nullptr;
+  img.stride[1] = img.stride[2] = 0;
+
+  aom_codec_iface_t *iface = aom_codec_av1_cx();
+  aom_codec_enc_cfg_t cfg;
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_enc_config_default(iface, &cfg, AOM_USAGE_GOOD_QUALITY));
+  cfg.rc_end_usage = AOM_Q;
+  cfg.g_profile = 0;
+  cfg.g_bit_depth = AOM_BITS_10;
+  cfg.g_input_bit_depth = 10;
+  cfg.g_w = kWidth;
+  cfg.g_h = kHeight;
+  cfg.g_threads = 6;
+  cfg.monochrome = 1;
+  cfg.rc_min_quantizer = 54;
+  cfg.rc_max_quantizer = 62;
+  aom_codec_ctx_t enc;
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_enc_init(&enc, iface, &cfg, AOM_CODEC_USE_HIGHBITDEPTH));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AOME_SET_CQ_LEVEL, 58));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AV1E_SET_TILE_ROWS, 1));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AOME_SET_CPUUSED, 6));
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_control(&enc, AV1E_SET_COLOR_RANGE, AOM_CR_FULL_RANGE));
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_control(&enc, AOME_SET_TUNING, AOM_TUNE_SSIM));
+
+  // Encode frame
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, &img, 0, 1, 0));
+  aom_codec_iter_t iter = nullptr;
+  const aom_codec_cx_pkt_t *pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_EQ(pkt, nullptr);
+
+  // Flush encoder
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, nullptr, 0, 1, 0));
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_NE(pkt, nullptr);
+  EXPECT_EQ(pkt->kind, AOM_CODEC_CX_FRAME_PKT);
+  // pkt->data.frame.flags is 0x1f0011.
+  EXPECT_EQ(pkt->data.frame.flags & AOM_FRAME_IS_KEY, AOM_FRAME_IS_KEY);
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, nullptr, 0, 1, 0));
   iter = nullptr;
   pkt = aom_codec_get_cx_data(&enc, &iter);
@@ -1304,6 +1719,97 @@ TEST(SearchWienerTest, 8bitSignedIntegerOverflowInUpdateBSepSym) {
   EXPECT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);
 }
 
+// A test that reproduces crbug.com/oss-fuzz/68195: signed integer overflow in
+// linsolve_wiener().
+TEST(SearchWienerTest, 8bitSignedIntegerOverflowInLinsolveWiener) {
+  constexpr int kWidth = 4;
+  constexpr int kHeight = 3;
+  constexpr unsigned char kBuffer[kWidth * kHeight] = {
+    // Y plane:
+    50, 167, 190, 194, 27, 29, 204, 182, 133, 239, 64, 179,
+  };
+  unsigned char *img_data = const_cast<unsigned char *>(kBuffer);
+
+  aom_image_t img;
+  EXPECT_EQ(&img,
+            aom_img_wrap(&img, AOM_IMG_FMT_I420, kWidth, kHeight, 1, img_data));
+  img.cp = AOM_CICP_CP_UNSPECIFIED;
+  img.tc = AOM_CICP_TC_UNSPECIFIED;
+  img.mc = AOM_CICP_MC_UNSPECIFIED;
+  img.monochrome = 1;
+  img.csp = AOM_CSP_UNKNOWN;
+  img.range = AOM_CR_FULL_RANGE;
+  img.planes[1] = img.planes[2] = nullptr;
+  img.stride[1] = img.stride[2] = 0;
+
+  aom_codec_iface_t *iface = aom_codec_av1_cx();
+  aom_codec_enc_cfg_t cfg;
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_enc_config_default(iface, &cfg, AOM_USAGE_GOOD_QUALITY));
+  cfg.rc_end_usage = AOM_Q;
+  cfg.g_profile = 0;
+  cfg.g_bit_depth = AOM_BITS_8;
+  cfg.g_input_bit_depth = 8;
+  cfg.g_w = kWidth;
+  cfg.g_h = kHeight;
+  cfg.g_threads = 32;
+  cfg.monochrome = 1;
+  cfg.rc_min_quantizer = 50;
+  cfg.rc_max_quantizer = 57;
+  aom_codec_ctx_t enc;
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_enc_init(&enc, iface, &cfg, 0));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AOME_SET_CQ_LEVEL, 53));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AV1E_SET_TILE_ROWS, 1));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AV1E_SET_TILE_COLUMNS, 1));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AOME_SET_CPUUSED, 6));
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_control(&enc, AV1E_SET_COLOR_RANGE, AOM_CR_FULL_RANGE));
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_control(&enc, AOME_SET_TUNING, AOM_TUNE_SSIM));
+
+  // Encode frame
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, &img, 0, 1, 0));
+  aom_codec_iter_t iter = nullptr;
+  const aom_codec_cx_pkt_t *pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_EQ(pkt, nullptr);
+
+  // Encode frame
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, &img, 0, 1, 0));
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  // Flush encoder
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, nullptr, 0, 1, 0));
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_NE(pkt, nullptr);
+  EXPECT_EQ(pkt->kind, AOM_CODEC_CX_FRAME_PKT);
+  // pkt->data.frame.flags is 0x1f0011.
+  EXPECT_EQ(pkt->data.frame.flags & AOM_FRAME_IS_KEY, AOM_FRAME_IS_KEY);
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  // Flush encoder
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, nullptr, 0, 1, 0));
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_NE(pkt, nullptr);
+  EXPECT_EQ(pkt->kind, AOM_CODEC_CX_FRAME_PKT);
+  // pkt->data.frame.flags is 0x0.
+  EXPECT_EQ(pkt->data.frame.flags & AOM_FRAME_IS_KEY, 0u);
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  // Flush encoder
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, nullptr, 0, 1, 0));
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
+}
+
 // A test that reproduces b/259173819: signed integer overflow in
 // linsolve_wiener().
 TEST(SearchWienerTest, 10bitSignedIntegerOverflowInLinsolveWiener) {
@@ -1379,6 +1885,152 @@ TEST(SearchWienerTest, 10bitSignedIntegerOverflowInLinsolveWiener) {
   EXPECT_EQ(pkt, nullptr);
 
   EXPECT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);
+}
+
+// A test that reproduces b/330639949: signed integer overflow in
+// linsolve_wiener().
+TEST(SearchWienerTest, 12bitSignedIntegerOverflowInLinsolveWiener) {
+  constexpr int kWidth = 173;
+  constexpr int kHeight = 3;
+  // Since the image format is YUV 4:2:0, aom_img_wrap() expects the buffer is
+  // allocated with width and height aligned to a multiple of 2. Align the
+  // width to a multiple of 2 so that the stride set by aom_img_wrap() is
+  // correct. It is not necessary to align the height to a multiple of 2
+  // because aom_codec_encode() will only read cfg.g_h rows.
+  static constexpr uint16_t kBuffer[(kWidth + 1) * kHeight] = {
+    // Y plane:
+    // Row:
+    0, 0, 369, 0, 4095, 873, 4095, 4095, 0, 571, 4023, 0, 1028, 58, 556, 0, 0,
+    1875, 16, 1043, 4095, 0, 1671, 1990, 0, 4095, 2932, 3117, 4095, 0, 0, 0,
+    4095, 4095, 4095, 4095, 4095, 4095, 508, 4095, 0, 0, 4095, 4095, 4095, 0,
+    4095, 4095, 0, 197, 4095, 1475, 1127, 4095, 0, 1570, 1881, 4095, 1215, 4095,
+    0, 0, 1918, 4095, 0, 4095, 3415, 0, 732, 122, 1087, 0, 0, 0, 0, 0, 1012,
+    4095, 0, 4095, 4095, 0, 0, 4095, 1931, 4095, 0, 4095, 4095, 4095, 4095, 570,
+    4095, 4095, 0, 2954, 0, 0, 0, 1925, 3802, 0, 4095, 55, 0, 4095, 760, 4095,
+    0, 3313, 4095, 4095, 4095, 0, 218, 799, 4095, 0, 4095, 2455, 4095, 0, 0,
+    611, 4095, 3060, 1669, 0, 0, 4095, 3589, 3903, 0, 3427, 1903, 0, 4095, 3789,
+    4095, 4095, 107, 2064, 4095, 2764, 4095, 0, 0, 0, 3498, 0, 0, 1336, 4095,
+    4095, 3480, 0, 545, 673, 4095, 0, 4095, 4095, 3175, 4095, 1623, 4095, 0,
+    540, 4095, 4095, 14, 429, 0, 0,
+    // Row:
+    0, 4095, 4095, 0, 1703, 3003, 968, 1313, 4095, 613, 4095, 3918, 112, 4095,
+    0, 4095, 2211, 88, 4051, 1203, 2005, 4095, 4095, 0, 2106, 0, 4095, 0, 4095,
+    4095, 4095, 0, 3261, 0, 4095, 0, 1184, 4095, 4095, 818, 4095, 0, 4095, 1292,
+    4095, 0, 4095, 4095, 0, 4095, 4095, 0, 0, 346, 906, 974, 4095, 4095, 4095,
+    4095, 0, 4095, 3225, 2547, 4095, 0, 0, 2705, 2933, 4095, 0, 0, 3579, 0,
+    4095, 4095, 4095, 1872, 4095, 298, 2961, 0, 0, 2805, 0, 0, 1210, 3773, 0,
+    1208, 3347, 0, 4095, 0, 0, 0, 4034, 4095, 0, 0, 4095, 0, 0, 0, 3302, 0, 0,
+    0, 0, 0, 4095, 4095, 0, 2609, 4095, 0, 1831, 4095, 0, 2463, 4095, 4095,
+    4095, 4095, 752, 4095, 4095, 41, 1829, 2975, 227, 2505, 2719, 1059, 4071,
+    4095, 4095, 3859, 0, 0, 0, 0, 4095, 2423, 4095, 4095, 4095, 4095, 4095,
+    1466, 0, 0, 4095, 121, 0, 0, 4095, 0, 0, 3328, 4095, 4095, 0, 1172, 0, 2938,
+    0, 4095, 0, 0, 0, 4095, 1821, 0,
+    // Row:
+    4095, 4095, 4095, 4095, 3487, 4095, 0, 0, 0, 3367, 4095, 4095, 1139, 4095,
+    4095, 169, 1300, 1840, 4095, 3508, 4095, 618, 4095, 4095, 4095, 53, 4095,
+    4095, 4095, 4095, 4055, 0, 0, 0, 4095, 4095, 0, 0, 0, 0, 1919, 2415, 1485,
+    458, 4095, 4095, 3176, 4095, 0, 0, 4095, 4095, 617, 3631, 4095, 4095, 0, 0,
+    3983, 4095, 4095, 681, 1685, 4095, 4095, 0, 1783, 25, 4095, 0, 0, 4095,
+    4095, 0, 2075, 0, 4095, 4095, 4095, 0, 773, 3407, 0, 4095, 4095, 0, 0, 4095,
+    4095, 4095, 4095, 4095, 0, 0, 0, 0, 4095, 0, 1804, 0, 0, 3169, 3576, 502, 0,
+    0, 4095, 0, 4095, 0, 4095, 4095, 4095, 0, 4095, 779, 0, 4095, 0, 0, 0, 4095,
+    0, 0, 4095, 4095, 4095, 4095, 0, 0, 4095, 4095, 2134, 4095, 4020, 2990,
+    3949, 4095, 4095, 4095, 4095, 4095, 0, 4095, 4095, 2829, 4095, 4095, 4095,
+    0, 197, 2328, 3745, 0, 3412, 190, 4095, 4095, 4095, 2809, 3953, 0, 4095,
+    1502, 2514, 3866, 0, 0, 4095, 4095, 1878, 129, 4095, 0
+  };
+  unsigned char *img_data =
+      reinterpret_cast<unsigned char *>(const_cast<uint16_t *>(kBuffer));
+
+  aom_image_t img;
+  EXPECT_EQ(&img, aom_img_wrap(&img, AOM_IMG_FMT_I42016, kWidth, kHeight, 1,
+                               img_data));
+  img.cp = AOM_CICP_CP_UNSPECIFIED;
+  img.tc = AOM_CICP_TC_UNSPECIFIED;
+  img.mc = AOM_CICP_MC_UNSPECIFIED;
+  img.monochrome = 1;
+  img.csp = AOM_CSP_UNKNOWN;
+  img.range = AOM_CR_FULL_RANGE;
+  img.planes[1] = img.planes[2] = nullptr;
+  img.stride[1] = img.stride[2] = 0;
+
+  aom_codec_iface_t *iface = aom_codec_av1_cx();
+  aom_codec_enc_cfg_t cfg;
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_enc_config_default(iface, &cfg, AOM_USAGE_GOOD_QUALITY));
+  cfg.rc_end_usage = AOM_Q;
+  cfg.g_profile = 2;
+  cfg.g_bit_depth = AOM_BITS_12;
+  cfg.g_input_bit_depth = 12;
+  cfg.g_w = kWidth;
+  cfg.g_h = kHeight;
+  cfg.g_lag_in_frames = 0;
+  cfg.g_threads = 18;
+  cfg.monochrome = 1;
+  cfg.rc_min_quantizer = 0;
+  cfg.rc_max_quantizer = 51;
+  aom_codec_ctx_t enc;
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_enc_init(&enc, iface, &cfg, AOM_CODEC_USE_HIGHBITDEPTH));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AOME_SET_CQ_LEVEL, 25));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AV1E_SET_TILE_ROWS, 4));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AOME_SET_CPUUSED, 6));
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_control(&enc, AV1E_SET_COLOR_RANGE, AOM_CR_FULL_RANGE));
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_control(&enc, AOME_SET_TUNING, AOM_TUNE_SSIM));
+
+  // Encode frame
+  EXPECT_EQ(aom_codec_encode(&enc, &img, 0, 1, 0), AOM_CODEC_OK);
+  aom_codec_iter_t iter = nullptr;
+  const aom_codec_cx_pkt_t *pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_NE(pkt, nullptr);
+  EXPECT_EQ(pkt->kind, AOM_CODEC_CX_FRAME_PKT);
+  // pkt->data.frame.flags is 0x1f0011.
+  EXPECT_EQ(pkt->data.frame.flags & AOM_FRAME_IS_KEY, AOM_FRAME_IS_KEY);
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  // Encode frame
+  EXPECT_EQ(aom_codec_encode(&enc, &img, 0, 1, 0), AOM_CODEC_OK);
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_NE(pkt, nullptr);
+  EXPECT_EQ(pkt->kind, AOM_CODEC_CX_FRAME_PKT);
+  // pkt->data.frame.flags is 0x20000.
+  EXPECT_EQ(pkt->data.frame.flags & AOM_FRAME_IS_KEY, 0u);
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  // Encode frame
+  EXPECT_EQ(aom_codec_encode(&enc, &img, 0, 1, 0), AOM_CODEC_OK);
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_NE(pkt, nullptr);
+  EXPECT_EQ(pkt->kind, AOM_CODEC_CX_FRAME_PKT);
+  // pkt->data.frame.flags is 0x20000.
+  EXPECT_EQ(pkt->data.frame.flags & AOM_FRAME_IS_KEY, 0u);
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  // Encode frame
+  EXPECT_EQ(aom_codec_encode(&enc, &img, 0, 1, 0), AOM_CODEC_OK);
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_NE(pkt, nullptr);
+  EXPECT_EQ(pkt->kind, AOM_CODEC_CX_FRAME_PKT);
+  // pkt->data.frame.flags is 0x20000.
+  EXPECT_EQ(pkt->data.frame.flags & AOM_FRAME_IS_KEY, 0u);
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  // Flush encoder
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, nullptr, 0, 1, 0));
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
 }
 
 }  // namespace wiener_highbd

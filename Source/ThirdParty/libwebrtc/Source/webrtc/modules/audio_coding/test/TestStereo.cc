@@ -469,7 +469,7 @@ void TestStereo::RegisterSendCodec(char side,
                                : sampling_freq_hz;
   const std::string ptime = rtc::ToString(rtc::CheckedDivExact(
       pack_size, rtc::CheckedDivExact(sampling_freq_hz, 1000)));
-  SdpAudioFormat::Parameters params = {{"ptime", ptime}};
+  CodecParameterMap params = {{"ptime", ptime}};
   RTC_CHECK(channels == 1 || channels == 2);
   if (absl::EqualsIgnoreCase(codec_name, "opus")) {
     if (channels == 2) {

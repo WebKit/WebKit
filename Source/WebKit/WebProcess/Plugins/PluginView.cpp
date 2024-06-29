@@ -979,6 +979,11 @@ bool PluginView::isBeingDestroyed() const
     return protectedPlugin()->isBeingDestroyed();
 }
 
+void PluginView::releaseMemory()
+{
+    protectedPlugin()->releaseMemory();
+}
+
 RetainPtr<PDFDocument> PluginView::pdfDocumentForPrinting() const
 {
     return protectedPlugin()->pdfDocument();
@@ -1025,6 +1030,11 @@ void PluginView::didSameDocumentNavigationForFrame(WebFrame& frame)
         return;
 
     return protectedPlugin()->didSameDocumentNavigationForFrame(frame);
+}
+
+bool PluginView::sendEditingCommandToPDFForTesting(const String& commandName, const String& argument)
+{
+    return protectedPlugin()->handleEditingCommand(commandName, argument);
 }
 
 void PluginView::setPDFDisplayModeForTesting(const String& mode)

@@ -123,6 +123,10 @@ class LinuxBrowserDriver(BrowserDriver):
         _log.info('Launching "%s" with url "%s"' % (driver.name, url))
         driver.get(url)
 
+    def diagnose_test_failure(self, diagnose_directory, error):
+        # FIXME: store a screenshoot or some debug data for later analysis before closing the browser.
+        self.close_browsers()
+
     def _get_first_executable_path_from_list(self, searchlist):
         searchpath = [os.path.curdir] + os.environ['PATH'].split(os.pathsep)
         for program in searchlist:

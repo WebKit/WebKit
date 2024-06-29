@@ -33,7 +33,6 @@
 #include "include/pathops/SkPathOps.h"
 #include "include/private/SkIDChangeListener.h"
 #include "include/private/SkPathRef.h"
-#include "include/private/base/SkFloatBits.h"
 #include "include/private/base/SkFloatingPoint.h"
 #include "include/private/base/SkMalloc.h"
 #include "include/private/base/SkTo.h"
@@ -41,6 +40,7 @@
 #include "include/utils/SkParse.h"
 #include "include/utils/SkParsePath.h"
 #include "src/base/SkAutoMalloc.h"
+#include "src/base/SkFloatBits.h"
 #include "src/base/SkRandom.h"
 #include "src/core/SkGeometry.h"
 #include "src/core/SkPathEnums.h"
@@ -2438,6 +2438,84 @@ static void test_is_closed_rect(skiatest::Reporter* reporter) {
 
 }
 
+static void test_isArc(skiatest::Reporter* reporter) {
+    SkPath path;
+    REPORTER_ASSERT(reporter, !path.isArc(nullptr));
+
+    // One circle, one oval:
+    const SkRect kOvals[] = { SkRect::MakeWH(100, 100), SkRect::MakeWH(100, 200)};
+
+    // Various start and sweep angles. Note that we can't test with more than a full revolution,
+    // those cases are automatically converted to ovals by SkPath.
+    const SkScalar kStartAngles[] = { -270, -135, -45, 0, 10, 70, 180, 350 };
+    const SkScalar kSweepAngles[] = { -350, -190, -90, -5, 5, 89, 180, 270, 350 };
+
+    int mutator = 0;
+
+    for (SkRect oval : kOvals) {
+        for (SkScalar startAngle : kStartAngles) {
+            for (SkScalar sweepAngle : kSweepAngles) {
+                // For now, isArc only works for arcs where useCenter is false!
+                // TODO: When that's fixed, add more tests cases here.
+                path.rewind();
+                // Include an extra moveTo at the start - this should not interfere with isArc
+                path.moveTo(oval.center());
+                path.addArc(oval, startAngle, sweepAngle);
+
+                SkArc arc;
+                REPORTER_ASSERT(reporter, path.isArc(&arc));
+                REPORTER_ASSERT(reporter,
+                                oval == arc.fOval &&
+                                startAngle == arc.fStartAngle &&
+                                sweepAngle == arc.fSweepAngle &&
+                                !arc.isWedge());
+
+                // Apply some mutation. All of these should cause the path to no longer be an arc:
+                switch (mutator) {
+                    case 0:
+                        path.addArc(oval, startAngle, sweepAngle);
+                        break;
+                    case 1:
+                        path.lineTo(oval.center());
+                        break;
+                    case 2:
+                        path.lineTo(path.getPoint(0));
+                        break;
+                    case 3:
+                        path.close();
+                        break;
+                    case 4:
+                        path.moveTo(oval.center());
+                        break;
+                    default:
+                        SkUNREACHABLE;
+                }
+                mutator = (mutator + 1) % 5;
+                REPORTER_ASSERT(reporter, !path.isArc(nullptr));
+            }
+        }
+    }
+
+    // Having any non-move verb before the arc should cause isArc to return false:
+    path.rewind();
+    path.lineTo(kOvals[0].center());
+    path.addArc(kOvals[0], kStartAngles[0], kSweepAngles[0]);
+    REPORTER_ASSERT(reporter, !path.isArc(nullptr));
+
+    // Finally, transforming an arc path by a non-identity should always result in a non-arc path:
+    // TODO: We could clearly preserve arcs for translation, and for scale/rotation with extra work.
+    for (SkMatrix m :
+         {SkMatrix::Translate(10, 10), SkMatrix::RotateDeg(90), SkMatrix::Scale(2, 2)}) {
+        path.rewind();
+        path.addArc(kOvals[0], kStartAngles[0], kSweepAngles[0]);
+        REPORTER_ASSERT(reporter, path.isArc(nullptr));
+        path.transform(SkMatrix::I());
+        REPORTER_ASSERT(reporter, path.isArc(nullptr));
+        path.transform(m);
+        REPORTER_ASSERT(reporter, !path.isArc(nullptr));
+    }
+}
+
 static void test_isNestedFillRects(skiatest::Reporter* reporter) {
     // passing tests (all moveTo / lineTo...
     SkPoint r1[] = {{0, 0}, {1, 0}, {1, 1}, {0, 1}}; // CW
@@ -3664,6 +3742,70 @@ static void test_oval(skiatest::Reporter* reporter) {
     tmp.reset();
     tmp.addOval(rect);
     path = tmp;
+    REPORTER_ASSERT(reporter, SkPathPriv::IsOval(path, nullptr, &dir, &start));
+    REPORTER_ASSERT(reporter, SkPathDirection::kCW == dir);
+    REPORTER_ASSERT(reporter, 1 == start);
+}
+
+static void test_open_oval(skiatest::Reporter* reporter) {
+    SkRect rect;
+    SkMatrix m;
+    SkPath path;
+    unsigned start = 0;
+    SkPathDirection dir = SkPathDirection::kCCW;
+
+    rect = SkRect::MakeWH(SkIntToScalar(30), SkIntToScalar(50));
+    path.addOpenOval(rect, SkPathDirection::kCW, /*start=*/1);
+
+    // Open ovals are not ovals...
+    REPORTER_ASSERT(reporter, !path.isOval(nullptr));
+    // ... until they're closed
+    path.close();
+    REPORTER_ASSERT(reporter, path.isOval(nullptr));
+
+    // We can transform an open oval before closing it
+    path.reset();
+    path.addOpenOval(rect, SkPathDirection::kCW, /*start=*/1);
+
+    m.setRotate(SkIntToScalar(90));
+    SkPath tmp;
+    path.transform(m, &tmp);
+    // an oval rotated 90 degrees is still an oval. The start index changes from 1 to 2. Direction
+    // is unchanged.
+    REPORTER_ASSERT(reporter, !tmp.isOval(nullptr));
+    tmp.close();
+    REPORTER_ASSERT(reporter, SkPathPriv::IsOval(tmp, nullptr, &dir, &start));
+    REPORTER_ASSERT(reporter, 2 == start);
+    REPORTER_ASSERT(reporter, SkPathDirection::kCW == dir);
+
+    m.reset();
+    m.setRotate(SkIntToScalar(30));
+    tmp.reset();
+    path.transform(m, &tmp);
+    // an open oval rotated 30 degrees does not become an oval when closed
+    tmp.close();
+    REPORTER_ASSERT(reporter, !tmp.isOval(nullptr));
+
+    // Calling moveTo before addOpenOval does not result in an oval
+    path.reset();
+    path.moveTo(0, 0);
+    path.addOpenOval(rect, SkPathDirection::kCW, /*start=*/1);
+    path.close();
+    REPORTER_ASSERT(reporter, !path.isOval(nullptr));
+
+    // Moving (or any other verb) before the close also does not result in an oval
+    path.reset();
+    path.addOpenOval(rect, SkPathDirection::kCW, /*start=*/1);
+    path.moveTo(0, 0);
+    path.close();
+    REPORTER_ASSERT(reporter, !path.isOval(nullptr));
+
+    // copy path before closing
+    path.reset();
+    tmp.reset();
+    tmp.addOpenOval(rect, SkPathDirection::kCW, /*start=*/1);
+    path = tmp;
+    path.close();
     REPORTER_ASSERT(reporter, SkPathPriv::IsOval(path, nullptr, &dir, &start));
     REPORTER_ASSERT(reporter, SkPathDirection::kCW == dir);
     REPORTER_ASSERT(reporter, 1 == start);
@@ -5014,6 +5156,7 @@ DEF_TEST(Paths, reporter) {
     test_isRect(reporter);
     test_is_closed_rect(reporter);
     test_isNestedFillRects(reporter);
+    test_isArc(reporter);
     test_zero_length_paths(reporter);
     test_direction(reporter);
     test_convexity(reporter);
@@ -5029,6 +5172,7 @@ DEF_TEST(Paths, reporter) {
     test_range_iter(reporter);
     test_circle(reporter);
     test_oval(reporter);
+    test_open_oval(reporter);
     test_strokerec(reporter);
     test_addPoly(reporter);
     test_isfinite(reporter);

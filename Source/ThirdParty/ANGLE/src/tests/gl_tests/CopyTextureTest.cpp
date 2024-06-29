@@ -509,7 +509,7 @@ class CopyTextureVariationsTest : public ANGLETest<CopyTextureVariationsTestPara
             sourceFormat == GL_ALPHA || destFormat == GL_LUMINANCE ||
             destFormat == GL_LUMINANCE_ALPHA || destFormat == GL_ALPHA)
         {
-            // http://anglebug.com/4939
+            // http://anglebug.com/42263512
             ANGLE_SKIP_TEST_IF(IsOpenGL() && destFormat == GL_SRGB_ALPHA_EXT);
         }
 
@@ -602,7 +602,7 @@ class CopyTextureVariationsTest : public ANGLETest<CopyTextureVariationsTestPara
             sourceFormat == GL_ALPHA || destFormat == GL_LUMINANCE ||
             destFormat == GL_LUMINANCE_ALPHA || destFormat == GL_ALPHA)
         {
-            // http://anglebug.com/4939
+            // http://anglebug.com/42263512
             ANGLE_SKIP_TEST_IF(IsOpenGL() && destFormat == GL_SRGB_ALPHA_EXT);
         }
 
@@ -1169,9 +1169,9 @@ constexpr GLint kMesaYFlips[]                       = {0, 1};
 
 TEST_P(CopyTextureVariationsTest, CopyTexture)
 {
-    // http://anglebug.com/5723
+    // http://anglebug.com/42264260
     ANGLE_SKIP_TEST_IF(IsOzone());
-    // http://anglebug.com/5246
+    // http://anglebug.com/42263799
     if (std::get<1>(GetParam()) == GL_ALPHA && std::get<2>(GetParam()) == GL_RGB &&
         std::get<3>(GetParam()) && std::get<5>(GetParam()))
     {
@@ -1190,7 +1190,7 @@ TEST_P(CopyTextureVariationsTest, CopyTexture)
 
 TEST_P(CopyTextureVariationsTest, CopySubTexture)
 {
-    // http://anglebug.com/5723
+    // http://anglebug.com/42264260
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     if (std::get<6>(GetParam()))
@@ -1239,10 +1239,10 @@ TEST_P(CopyTextureTest, CubeMapTarget)
         return;
     }
 
-    // http://anglebug.com/1932
+    // http://anglebug.com/42260718
     ANGLE_SKIP_TEST_IF(IsMac() && IsIntel() && IsDesktopOpenGL());
 
-    // http://anglebug.com/3145
+    // http://anglebug.com/42261821
     ANGLE_SKIP_TEST_IF(IsFuchsia() && IsIntel() && IsVulkan());
 
     GLColor pixels[7] = {
@@ -1294,7 +1294,7 @@ TEST_P(CopyTextureTest, CubeMapTarget)
 }
 
 // Test that we can successfully copy into incomplete cube maps. Regression test for
-// http://anglebug.com/3384
+// http://anglebug.com/42262051
 TEST_P(CopyTextureTest, IncompleteCubeMap)
 {
     if (!checkExtensions())
@@ -1338,7 +1338,7 @@ TEST_P(CopyTextureTest, CubeMapTargetBGRA)
         return;
     }
 
-    // http://anglebug.com/3145
+    // http://anglebug.com/42261821
     ANGLE_SKIP_TEST_IF(IsFuchsia() && IsIntel() && IsVulkan());
 
     GLColor pixels[7] = {
@@ -1399,10 +1399,10 @@ TEST_P(CopyTextureTest, CubeMapTargetRGB)
         return;
     }
 
-    // http://anglebug.com/1932
+    // http://anglebug.com/42260718
     ANGLE_SKIP_TEST_IF(IsMac() && IsIntel() && IsDesktopOpenGL());
 
-    // http://anglebug.com/3145
+    // http://anglebug.com/42261821
     ANGLE_SKIP_TEST_IF(IsFuchsia() && IsIntel() && IsVulkan());
 
     constexpr uint8_t pixels[16 * 7] = {
@@ -1526,10 +1526,10 @@ TEST_P(CopyTextureTest, CopyOutsideMipmap)
         return;
     }
 
-    // http://anglebug.com/4716
+    // http://anglebug.com/42263316
     ANGLE_SKIP_TEST_IF(IsD3D());
 
-    // http://anglebug.com/5246
+    // http://anglebug.com/42263799
     ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsOpenGL());
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -1952,7 +1952,7 @@ TEST_P(CopyTextureTestDest, AlphaUnmultiply)
 // are set to 0.
 TEST_P(CopyTextureTestDest, AlphaCopyWithRGB)
 {
-    // http://anglebug.com/4121
+    // http://anglebug.com/40644706
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGLES());
     ANGLE_SKIP_TEST_IF(!checkExtensions());
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_half_float"));
@@ -2073,10 +2073,10 @@ TEST_P(CopyTextureTestES3, ES3UnormFormats)
     {
         return;
     }
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsAndroid());
 
-    // http://anglebug.com/5127
+    // http://anglebug.com/42263690
     ANGLE_SKIP_TEST_IF(IsWindows() && IsOpenGL() && IsIntel());
 
     auto testOutput = [this](GLuint texture, const GLColor &expectedColor) {
@@ -2742,10 +2742,10 @@ TEST_P(CopyTextureTestES3, InvalidateCopyThenBlend)
 {
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
 
-    // http://anglebug.com/5155
+    // http://anglebug.com/42263716
     ANGLE_SKIP_TEST_IF(IsMac() && IsIntel() && IsOpenGL());
 
-    // http://anglebug.com/5156
+    // http://anglebug.com/42263717
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsOpenGL());
 
     constexpr GLsizei kSize = 4;
@@ -2799,7 +2799,7 @@ TEST_P(CopyTextureTestES3, InvalidateCopyThenBlend)
 }
 
 // Test that sRGB-to-RGB copy does not change pixel values.
-// http://anglebug.com/7907
+// http://anglebug.com/40096868
 TEST_P(CopyTextureTest, NoConvertSRGBToRGB)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_sRGB"));
@@ -2807,7 +2807,7 @@ TEST_P(CopyTextureTest, NoConvertSRGBToRGB)
 }
 
 // Test that sRGB-to-RGB copy does not change pixel values.
-// http://anglebug.com/7907
+// http://anglebug.com/40096868
 TEST_P(CopyTextureTestES3, NoConvertSRGBToRGB)
 {
     testSrgbToRgb(GL_SRGB8_ALPHA8, GL_RGBA);
@@ -2815,13 +2815,13 @@ TEST_P(CopyTextureTestES3, NoConvertSRGBToRGB)
 
 void CopyTextureTestES3::invalidateBlitThenBlendCommon(GLsizei layerCount)
 {
-    // http://anglebug.com/5152
+    // http://anglebug.com/42263713
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL());
 
-    // http://anglebug.com/5155
+    // http://anglebug.com/42263716
     ANGLE_SKIP_TEST_IF(IsMac() && IsIntel() && IsOpenGL());
 
-    // http://anglebug.com/5156
+    // http://anglebug.com/42263717
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsOpenGL());
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
@@ -2896,7 +2896,7 @@ TEST_P(CopyTextureTestES3, InvalidateBlitThenBlend1000Layers)
 
 TEST_P(CopyTextureTestES3, DrawThenCopyThenBlend)
 {
-    // Regression test for anglebug.com/6972.
+    // Regression test for anglebug.com/42265446.
     //
     // Reproduces two behaviors:
     //

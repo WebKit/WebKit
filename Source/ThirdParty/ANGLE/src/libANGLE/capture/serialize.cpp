@@ -975,7 +975,7 @@ void SerializeShader(const gl::Context *context,
     SerializeCompiledShaderState(json, shader->getCompiledState());
     json->addScalar("Handle", shader->getHandle().value);
     // TODO: implement MEC context validation only after all contexts have been initialized
-    // http://anglebug.com/8029
+    // http://anglebug.com/42266488
     // json->addScalar("RefCount", shader->getRefCount());
     json->addScalar("FlaggedForDeletion", shader->isFlaggedForDeletion());
     // Do not serialize mType because it is already serialized in SerializeCompiledShaderState.
@@ -1122,7 +1122,7 @@ void SerializeProgram(JsonSerializer *json,
     json->addScalar("IsLinked", program->isLinked());
     json->addScalar("IsFlaggedForDeletion", program->isFlaggedForDeletion());
     // TODO: implement MEC context validation only after all contexts have been initialized
-    // http://anglebug.com/8029
+    // http://anglebug.com/42266488
     // json->addScalar("RefCount", program->getRefCount());
     json->addScalar("ID", program->id().value);
 
@@ -1289,7 +1289,7 @@ Result SerializeTextureData(JsonSerializer *json,
         {
             if (format.compressed)
             {
-                // TODO: Read back compressed data. http://anglebug.com/6177
+                // TODO: Read back compressed data. http://anglebug.com/42264702
                 json->addCString(label.str(), "compressed texel data");
             }
             else
@@ -1404,7 +1404,8 @@ Result SerializeContextToString(const gl::Context *context, std::string *stringO
         const gl::FramebufferManager &framebufferManager =
             context->getState().getFramebufferManagerForCapture();
         GroupScope framebufferGroup(&json, "FramebufferManager");
-        for (const auto &framebuffer : framebufferManager)
+        for (const auto &framebuffer :
+             gl::UnsafeResourceMapIter(framebufferManager.getResourcesForCapture()))
         {
             gl::Framebuffer *framebufferPtr = framebuffer.second;
             ANGLE_TRY(SerializeFramebuffer(context, &json, &scratchBuffer, framebufferPtr));
@@ -1413,7 +1414,7 @@ Result SerializeContextToString(const gl::Context *context, std::string *stringO
     {
         const gl::BufferManager &bufferManager = context->getState().getBufferManagerForCapture();
         GroupScope framebufferGroup(&json, "BufferManager");
-        for (const auto &buffer : bufferManager)
+        for (const auto &buffer : gl::UnsafeResourceMapIter(bufferManager.getResourcesForCapture()))
         {
             gl::Buffer *bufferPtr = buffer.second;
             ANGLE_TRY(SerializeBuffer(context, &json, &scratchBuffer, bufferPtr));
@@ -1423,7 +1424,8 @@ Result SerializeContextToString(const gl::Context *context, std::string *stringO
         const gl::SamplerManager &samplerManager =
             context->getState().getSamplerManagerForCapture();
         GroupScope samplerGroup(&json, "SamplerManager");
-        for (const auto &sampler : samplerManager)
+        for (const auto &sampler :
+             gl::UnsafeResourceMapIter(samplerManager.getResourcesForCapture()))
         {
             gl::Sampler *samplerPtr = sampler.second;
             SerializeSampler(&json, samplerPtr);
@@ -1433,7 +1435,8 @@ Result SerializeContextToString(const gl::Context *context, std::string *stringO
         const gl::RenderbufferManager &renderbufferManager =
             context->getState().getRenderbufferManagerForCapture();
         GroupScope renderbufferGroup(&json, "RenderbufferManager");
-        for (const auto &renderbuffer : renderbufferManager)
+        for (const auto &renderbuffer :
+             gl::UnsafeResourceMapIter(renderbufferManager.getResourcesForCapture()))
         {
             gl::Renderbuffer *renderbufferPtr = renderbuffer.second;
             ANGLE_TRY(SerializeRenderbuffer(context, &json, &scratchBuffer, renderbufferPtr));
@@ -1445,7 +1448,7 @@ Result SerializeContextToString(const gl::Context *context, std::string *stringO
         const gl::ResourceMap<gl::Shader, gl::ShaderProgramID> &shaderManager =
             shaderProgramManager.getShadersForCapture();
         GroupScope shaderGroup(&json, "ShaderManager");
-        for (const auto &shader : shaderManager)
+        for (const auto &shader : gl::UnsafeResourceMapIter(shaderManager))
         {
             GLuint id             = shader.first;
             gl::Shader *shaderPtr = shader.second;
@@ -1456,7 +1459,7 @@ Result SerializeContextToString(const gl::Context *context, std::string *stringO
         const gl::ResourceMap<gl::Program, gl::ShaderProgramID> &programManager =
             shaderProgramManager.getProgramsForCaptureAndPerf();
         GroupScope shaderGroup(&json, "ProgramManager");
-        for (const auto &program : programManager)
+        for (const auto &program : gl::UnsafeResourceMapIter(programManager))
         {
             GLuint id               = program.first;
             gl::Program *programPtr = program.second;
@@ -1467,7 +1470,8 @@ Result SerializeContextToString(const gl::Context *context, std::string *stringO
         const gl::TextureManager &textureManager =
             context->getState().getTextureManagerForCapture();
         GroupScope shaderGroup(&json, "TextureManager");
-        for (const auto &texture : textureManager)
+        for (const auto &texture :
+             gl::UnsafeResourceMapIter(textureManager.getResourcesForCapture()))
         {
             gl::Texture *texturePtr = texture.second;
             ANGLE_TRY(SerializeTexture(context, &json, &scratchBuffer, texturePtr));
@@ -1476,7 +1480,7 @@ Result SerializeContextToString(const gl::Context *context, std::string *stringO
     {
         const gl::VertexArrayMap &vertexArrayMap = context->getVertexArraysForCapture();
         GroupScope shaderGroup(&json, "VertexArrayMap");
-        for (const auto &vertexArray : vertexArrayMap)
+        for (const auto &vertexArray : gl::UnsafeResourceMapIter(vertexArrayMap))
         {
             gl::VertexArray *vertexArrayPtr = vertexArray.second;
             SerializeVertexArray(&json, vertexArrayPtr);

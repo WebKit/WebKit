@@ -448,9 +448,6 @@ public:
     {
         return Builder<NoFieldsSet>(JSON::Object::create());
     }
-
-    // Property names for type generated as open.
-    None static const ASCIILiteral alphaKey;
 };
 
 } // Test
@@ -500,8 +497,6 @@ public:
 namespace Inspector {
 
 namespace Protocol {
-
-const ASCIILiteral Protocol::Test::OpenParameters::alphaKey = "alpha"_s;
 
 } // namespace Protocol
 

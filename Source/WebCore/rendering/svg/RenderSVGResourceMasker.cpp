@@ -61,7 +61,7 @@ static RefPtr<ImageBuffer> createImageBuffer(const FloatRect& targetRect, const 
     FloatSize clampedSize = ImageBuffer::clampedSize(paintRect.size(), scale);
 
     UNUSED_PARAM(context);
-    auto imageBuffer = ImageBuffer::create(clampedSize, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(clampedSize, RenderingPurpose::Unspecified, 1, colorSpace, ImageBufferPixelFormat::BGRA8);
     if (!imageBuffer)
         return nullptr;
 
@@ -184,7 +184,7 @@ bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, c
     // Eventually adjust the mask image context according to the target objectBoundingBox.
     AffineTransform maskContentTransformation;
 
-    if (maskElement().maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+    if (protectedMaskElement()->maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         maskContentTransformation.translate(objectBoundingBox.location());
         maskContentTransformation.scale(objectBoundingBox.size());
     }

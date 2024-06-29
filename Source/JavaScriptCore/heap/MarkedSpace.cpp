@@ -559,6 +559,7 @@ void MarkedSpace::dumpBits(PrintStream& out)
 {
     forEachDirectory(
         [&] (BlockDirectory& directory) -> IterationStatus {
+            directory.assertIsMutatorOrMutatorIsStopped();
             out.print("Bits for ", directory, ":\n");
             directory.dumpBits(out);
             return IterationStatus::Continue;

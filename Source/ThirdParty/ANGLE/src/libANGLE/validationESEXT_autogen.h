@@ -1149,6 +1149,28 @@ bool ValidateBufferStorageEXT(const Context *context,
                               const void *data,
                               GLbitfield flags);
 
+// GL_EXT_clear_texture
+bool ValidateClearTexImageEXT(const Context *context,
+                              angle::EntryPoint entryPoint,
+                              TextureID texturePacked,
+                              GLint level,
+                              GLenum format,
+                              GLenum type,
+                              const void *data);
+bool ValidateClearTexSubImageEXT(const Context *context,
+                                 angle::EntryPoint entryPoint,
+                                 TextureID texturePacked,
+                                 GLint level,
+                                 GLint xoffset,
+                                 GLint yoffset,
+                                 GLint zoffset,
+                                 GLsizei width,
+                                 GLsizei height,
+                                 GLsizei depth,
+                                 GLenum format,
+                                 GLenum type,
+                                 const void *data);
+
 // GL_EXT_clip_control
 bool ValidateClipControlEXT(const PrivateState &state,
                             ErrorSet *errors,
@@ -2051,6 +2073,8 @@ bool ValidateTexStorage3DEXT(const Context *context,
 // GL_KHR_blend_equation_advanced
 bool ValidateBlendBarrierKHR(const Context *context, angle::EntryPoint entryPoint);
 
+// GL_KHR_blend_equation_advanced_coherent
+
 // GL_KHR_debug
 bool ValidateDebugMessageCallbackKHR(const Context *context,
                                      angle::EntryPoint entryPoint,
@@ -2126,6 +2150,37 @@ bool ValidateMaxShaderCompilerThreadsKHR(const Context *context,
                                          GLuint count);
 
 // GL_KHR_robust_buffer_access_behavior
+
+// GL_KHR_robustness
+bool ValidateGetGraphicsResetStatusKHR(const Context *context, angle::EntryPoint entryPoint);
+bool ValidateGetnUniformfvKHR(const Context *context,
+                              angle::EntryPoint entryPoint,
+                              ShaderProgramID programPacked,
+                              UniformLocation locationPacked,
+                              GLsizei bufSize,
+                              const GLfloat *params);
+bool ValidateGetnUniformivKHR(const Context *context,
+                              angle::EntryPoint entryPoint,
+                              ShaderProgramID programPacked,
+                              UniformLocation locationPacked,
+                              GLsizei bufSize,
+                              const GLint *params);
+bool ValidateGetnUniformuivKHR(const Context *context,
+                               angle::EntryPoint entryPoint,
+                               ShaderProgramID programPacked,
+                               UniformLocation locationPacked,
+                               GLsizei bufSize,
+                               const GLuint *params);
+bool ValidateReadnPixelsKHR(const Context *context,
+                            angle::EntryPoint entryPoint,
+                            GLint x,
+                            GLint y,
+                            GLsizei width,
+                            GLsizei height,
+                            GLenum format,
+                            GLenum type,
+                            GLsizei bufSize,
+                            const void *data);
 
 // GL_KHR_texture_compression_astc_hdr
 
@@ -2460,6 +2515,8 @@ bool ValidateProgramBinaryOES(const Context *context,
                               const void *binary,
                               GLint length);
 
+// GL_OES_gpu_shader5
+
 // GL_OES_mapbuffer
 bool ValidateGetBufferPointervOES(const Context *context,
                                   angle::EntryPoint entryPoint,
@@ -2542,6 +2599,13 @@ bool ValidateMinSampleShadingOES(const PrivateState &state,
 // GL_OES_standard_derivatives
 
 // GL_OES_surfaceless_context
+
+// GL_OES_tessellation_shader
+bool ValidatePatchParameteriOES(const PrivateState &state,
+                                ErrorSet *errors,
+                                angle::EntryPoint entryPoint,
+                                GLenum pname,
+                                GLint value);
 
 // GL_OES_texture_3D
 bool ValidateCompressedTexImage3DOES(const Context *context,
@@ -2813,6 +2877,18 @@ bool ValidateTextureFoveationParametersQCOM(const Context *context,
                                             GLfloat gainX,
                                             GLfloat gainY,
                                             GLfloat foveaArea);
+
+// GL_QCOM_tiled_rendering
+bool ValidateEndTilingQCOM(const Context *context,
+                           angle::EntryPoint entryPoint,
+                           GLbitfield preserveMask);
+bool ValidateStartTilingQCOM(const Context *context,
+                             angle::EntryPoint entryPoint,
+                             GLuint x,
+                             GLuint y,
+                             GLuint width,
+                             GLuint height,
+                             GLbitfield preserveMask);
 }  // namespace gl
 
 #endif  // LIBANGLE_VALIDATION_ESEXT_AUTOGEN_H_

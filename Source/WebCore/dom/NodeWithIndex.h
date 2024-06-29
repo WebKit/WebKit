@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,6 @@ class NodeWithIndex {
 public:
     explicit NodeWithIndex(Node* node)
         : m_node(node)
-        , m_haveIndex(false)
     {
         ASSERT(node);
     }
@@ -44,18 +43,16 @@ public:
 
     int index() const
     {
-        if (!m_haveIndex) {
+        if (!m_index) {
             m_index = m_node->computeNodeIndex();
-            m_haveIndex = true;
         }
-        ASSERT(m_index == static_cast<int>(m_node->computeNodeIndex()));
-        return m_index;
+        ASSERT(*m_index == static_cast<int>(m_node->computeNodeIndex()));
+        return *m_index;
     }
 
 private:
     Node* m_node;
-    mutable bool m_haveIndex;
-    mutable int m_index;
+    mutable Markable<int, IntegralMarkableTraits<int, -1>> m_index;
 };
 
 } // namespace WebCore

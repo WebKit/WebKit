@@ -14,6 +14,7 @@
 #include <assert.h>
 
 #include "config/aom_config.h"
+#include "config/aom_dsp_rtcd.h"
 
 #include "aom/aom_integer.h"
 #include "aom_ports/mem.h"

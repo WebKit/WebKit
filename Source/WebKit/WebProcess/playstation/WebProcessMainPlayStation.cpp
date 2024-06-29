@@ -29,10 +29,21 @@
 #include "AuxiliaryProcessMain.h"
 #include "WebProcess.h"
 
+#if USE(SKIA) && !ENABLE(GPU_PROCESS)
+#include <skia/core/SkGraphics.h>
+#endif
+
 namespace WebKit {
-using namespace WebCore;
 
 class WebProcessMainPlayStation final: public AuxiliaryProcessMainBase<WebProcess> {
+public:
+    bool platformInitialize() override
+    {
+#if USE(SKIA) && !ENABLE(GPU_PROCESS)
+        SkGraphics::Init();
+#endif
+        return true;
+    }
 };
 
 int WebProcessMain(int argc, char** argv)

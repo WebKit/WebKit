@@ -140,7 +140,7 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
         if (Options::forceAllFunctionsToUseSIMD())
             return true;
         // The LLInt discovers this value.
-        ASSERT(Options::useWasmLLInt() || Options::useWasmIPInt());
+        ASSERT(Options::useWebAssemblyLLInt() || Options::useWebAssemblyIPInt());
 
         return functions[index].usesSIMD;
     }

@@ -10,6 +10,10 @@
       (backgroundColor #FFFFFF)
       (event region
         (rect (0,0) width=800 height=600)
+
+      (interaction regions [
+        (interaction (8,8) width=332 height=57)
+        (cornerRadius 5.00)])
       )
     )
   )

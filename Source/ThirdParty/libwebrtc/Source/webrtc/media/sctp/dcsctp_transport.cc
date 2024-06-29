@@ -19,6 +19,8 @@
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/data_channel_interface.h"
+#include "api/environment/environment.h"
 #include "media/base/media_channel.h"
 #include "net/dcsctp/public/dcsctp_socket_factory.h"
 #include "net/dcsctp/public/packet_observer.h"
@@ -27,6 +29,7 @@
 #include "p2p/base/packet_transport_internal.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/network/received_packet.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/thread.h"
@@ -113,23 +116,22 @@ bool IsEmptyPPID(dcsctp::PPID ppid) {
 }
 }  // namespace
 
-DcSctpTransport::DcSctpTransport(rtc::Thread* network_thread,
-                                 rtc::PacketTransportInternal* transport,
-                                 Clock* clock)
-    : DcSctpTransport(network_thread,
+DcSctpTransport::DcSctpTransport(const Environment& env,
+                                 rtc::Thread* network_thread,
+                                 rtc::PacketTransportInternal* transport)
+    : DcSctpTransport(env,
+                      network_thread,
                       transport,
-                      clock,
                       std::make_unique<dcsctp::DcSctpSocketFactory>()) {}
-
 DcSctpTransport::DcSctpTransport(
+    const Environment& env,
     rtc::Thread* network_thread,
     rtc::PacketTransportInternal* transport,
-    Clock* clock,
     std::unique_ptr<dcsctp::DcSctpSocketFactory> socket_factory)
     : network_thread_(network_thread),
       transport_(transport),
-      clock_(clock),
-      random_(clock_->TimeInMicroseconds()),
+      env_(env),
+      random_(env_.clock().TimeInMicroseconds()),
       socket_factory_(std::move(socket_factory)),
       task_queue_timeout_factory_(
           *network_thread,
@@ -191,6 +193,10 @@ bool DcSctpTransport::Start(int local_sctp_port,
     // Don't close the connection automatically on too many retransmissions.
     options.max_retransmissions = absl::nullopt;
     options.max_init_retransmits = absl::nullopt;
+    options.per_stream_send_queue_limit =
+        DataChannelInterface::MaxSendQueueSize();
+    // This is just set to avoid denial-of-service. Practically unlimited.
+    options.max_send_buffer_size = std::numeric_limits<size_t>::max();
 
     std::unique_ptr<dcsctp::PacketObserver> packet_observer;
     if (RTC_LOG_CHECK_LEVEL(LS_VERBOSE)) {
@@ -374,6 +380,24 @@ absl::optional<int> DcSctpTransport::max_inbound_streams() const {
   return socket_->options().announced_maximum_incoming_streams;
 }
 
+size_t DcSctpTransport::buffered_amount(int sid) const {
+  if (!socket_)
+    return 0;
+  return socket_->buffered_amount(dcsctp::StreamID(sid));
+}
+
+size_t DcSctpTransport::buffered_amount_low_threshold(int sid) const {
+  if (!socket_)
+    return 0;
+  return socket_->buffered_amount_low_threshold(dcsctp::StreamID(sid));
+}
+
+void DcSctpTransport::SetBufferedAmountLowThreshold(int sid, size_t bytes) {
+  if (!socket_)
+    return;
+  socket_->SetBufferedAmountLowThreshold(dcsctp::StreamID(sid), bytes);
+}
+
 void DcSctpTransport::set_debug_name_for_testing(const char* debug_name) {
   debug_name_ = debug_name;
 }
@@ -422,7 +446,7 @@ std::unique_ptr<dcsctp::Timeout> DcSctpTransport::CreateTimeout(
 }
 
 dcsctp::TimeMs DcSctpTransport::TimeMillis() {
-  return dcsctp::TimeMs(clock_->TimeInMilliseconds());
+  return dcsctp::TimeMs(env_.clock().TimeInMilliseconds());
 }
 
 uint32_t DcSctpTransport::GetRandomInt(uint32_t low, uint32_t high) {
@@ -436,6 +460,13 @@ void DcSctpTransport::OnTotalBufferedAmountLow() {
     if (data_channel_sink_) {
       data_channel_sink_->OnReadyToSend();
     }
+  }
+}
+
+void DcSctpTransport::OnBufferedAmountLow(dcsctp::StreamID stream_id) {
+  RTC_DCHECK_RUN_ON(network_thread_);
+  if (data_channel_sink_) {
+    data_channel_sink_->OnBufferedAmountLow(*stream_id);
   }
 }
 
@@ -605,9 +636,18 @@ void DcSctpTransport::ConnectTransportSignals() {
   }
   transport_->SignalWritableState.connect(
       this, &DcSctpTransport::OnTransportWritableState);
-  transport_->SignalReadPacket.connect(this,
-                                       &DcSctpTransport::OnTransportReadPacket);
-  transport_->SignalClosed.connect(this, &DcSctpTransport::OnTransportClosed);
+  transport_->RegisterReceivedPacketCallback(
+      this, [&](rtc::PacketTransportInternal* transport,
+                const rtc::ReceivedPacket& packet) {
+        OnTransportReadPacket(transport, packet);
+      });
+  transport_->SetOnCloseCallback([this]() {
+    RTC_DCHECK_RUN_ON(network_thread_);
+    RTC_DLOG(LS_VERBOSE) << debug_name_ << "->OnTransportClosed().";
+    if (data_channel_sink_) {
+      data_channel_sink_->OnTransportClosed({});
+    }
+  });
 }
 
 void DcSctpTransport::DisconnectTransportSignals() {
@@ -616,8 +656,8 @@ void DcSctpTransport::DisconnectTransportSignals() {
     return;
   }
   transport_->SignalWritableState.disconnect(this);
-  transport_->SignalReadPacket.disconnect(this);
-  transport_->SignalClosed.disconnect(this);
+  transport_->DeregisterReceivedPacketCallback(this);
+  transport_->SetOnCloseCallback(nullptr);
 }
 
 void DcSctpTransport::OnTransportWritableState(
@@ -632,30 +672,17 @@ void DcSctpTransport::OnTransportWritableState(
 
 void DcSctpTransport::OnTransportReadPacket(
     rtc::PacketTransportInternal* transport,
-    const char* data,
-    size_t length,
-    const int64_t& /* packet_time_us */,
-    int flags) {
+    const rtc::ReceivedPacket& packet) {
   RTC_DCHECK_RUN_ON(network_thread_);
-  if (flags) {
+  if (packet.decryption_info() != rtc::ReceivedPacket::kDtlsDecrypted) {
     // We are only interested in SCTP packets.
     return;
   }
 
-  RTC_DLOG(LS_VERBOSE) << debug_name_
-                       << "->OnTransportReadPacket(), length=" << length;
+  RTC_DLOG(LS_VERBOSE) << debug_name_ << "->OnTransportReadPacket(), length="
+                       << packet.payload().size();
   if (socket_) {
-    socket_->ReceivePacket(rtc::ArrayView<const uint8_t>(
-        reinterpret_cast<const uint8_t*>(data), length));
-  }
-}
-
-void DcSctpTransport::OnTransportClosed(
-    rtc::PacketTransportInternal* transport) {
-  RTC_DCHECK_RUN_ON(network_thread_);
-  RTC_DLOG(LS_VERBOSE) << debug_name_ << "->OnTransportClosed().";
-  if (data_channel_sink_) {
-    data_channel_sink_->OnTransportClosed({});
+    socket_->ReceivePacket(packet.payload());
   }
 }
 

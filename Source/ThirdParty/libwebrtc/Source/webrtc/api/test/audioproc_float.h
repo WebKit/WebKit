@@ -14,7 +14,7 @@
 #include <memory>
 #include <vector>
 
-#include "modules/audio_processing/include/audio_processing.h"
+#include "api/audio/audio_processing.h"
 
 namespace webrtc {
 namespace test {

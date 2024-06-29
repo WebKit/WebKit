@@ -93,23 +93,12 @@ _TYPES_NEEDING_RUNTIME_CASTS = set([
 ])
 
 # FIXME: This should be converted into a property in JSON.
+# These exist for ONLY for legacy code.
+# DO NOT ADD TO THIS LIST!!!
 _TYPES_WITH_OPEN_FIELDS = {
     "Timeline.TimelineEvent": [],
     "CSS.CSSProperty": ["priority", "parsedOk", "status"],
-    "DOM.HighlightConfig": [],
-    "DOM.GridOverlayConfig": [],
-    "DOM.FlexOverlayConfig": [],
-    "DOM.RGBAColor": [],
-    "DOMStorage.StorageId": [],
-    "Debugger.BreakpointAction": [],
-    "Debugger.BreakpointOptions": [],
-    "Debugger.Location": [],
-    "IndexedDB.Key": [],
-    "IndexedDB.KeyRange": [],
     "Network.Response": ["status", "statusText", "mimeType", "source"],
-    "Page.Cookie": [],
-    "Runtime.CallArgument": ["objectId"],
-    "Runtime.TypeLocation": [],
     # For testing purposes only.
     "Test.OpenParameters": ["alpha"],
 }

@@ -26,6 +26,7 @@ import argparse
 import json
 import math
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -41,7 +42,6 @@ if os.path.isdir(os.path.join(scripts, 'webkitpy')):
 from reporelaypy import Checkout, HookProcessor, HookReceiver, Redirector
 from webkitflaskpy import Database
 from webkitcorepy import arguments, AutoInstall
-from whichcraft import which
 
 
 def main(args=None):
@@ -189,7 +189,7 @@ def main(args=None):
     processor = HookProcessor(checkout=checkout, database=database) if args.hooks else None
 
     with subprocess.Popen(
-        [which('gunicorn'), 'reporelaypy.webserver:app'],
+        [shutil.which('gunicorn'), 'reporelaypy.webserver:app'],
         cwd=os.path.dirname(os.path.dirname(reporelaypy.__file__)),
         env=passenv,
     ) as webserver:

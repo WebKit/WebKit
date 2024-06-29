@@ -25,14 +25,16 @@
 
 #include "config.h"
 #include "GeolocationPermissionRequestProxy.h"
+#include "WebProcessProxy.h"
 
 #include "GeolocationPermissionRequestManagerProxy.h"
 
 namespace WebKit {
 
-GeolocationPermissionRequestProxy::GeolocationPermissionRequestProxy(GeolocationPermissionRequestManagerProxy* manager, GeolocationIdentifier geolocationID)
+GeolocationPermissionRequestProxy::GeolocationPermissionRequestProxy(GeolocationPermissionRequestManagerProxy* manager, GeolocationIdentifier geolocationID, WebProcessProxy& process)
     : m_manager(manager)
     , m_geolocationID(geolocationID)
+    , m_process(process)
 {
 }
 
@@ -57,6 +59,11 @@ void GeolocationPermissionRequestProxy::deny()
 void GeolocationPermissionRequestProxy::invalidate()
 {
     m_manager = nullptr;
+}
+
+WebProcessProxy* GeolocationPermissionRequestProxy::process() const
+{
+    return m_process.get();
 }
 
 } // namespace WebKit

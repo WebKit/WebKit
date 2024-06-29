@@ -56,7 +56,7 @@ bool CSSLinearTimingFunctionValue::equals(const CSSLinearTimingFunctionValue& ot
 
 String CSSCubicBezierTimingFunctionValue::customCSSText() const
 {
-    return makeString("cubic-bezier(", m_x1, ", ", m_y1, ", ", m_x2, ", ", m_y2, ')');
+    return makeString("cubic-bezier("_s, m_x1, ", "_s, m_y1, ", "_s, m_x2, ", "_s, m_y2, ')');
 }
 
 bool CSSCubicBezierTimingFunctionValue::equals(const CSSCubicBezierTimingFunctionValue& other) const
@@ -96,7 +96,7 @@ bool CSSStepsTimingFunctionValue::equals(const CSSStepsTimingFunctionValue& othe
 
 String CSSSpringTimingFunctionValue::customCSSText() const
 {
-    return makeString("spring(", FormattedNumber::fixedPrecision(m_mass), ' ', FormattedNumber::fixedPrecision(m_stiffness), ' ', FormattedNumber::fixedPrecision(m_damping), ' ', FormattedNumber::fixedPrecision(m_initialVelocity), ')');
+    return makeString("spring("_s, FormattedNumber::fixedPrecision(m_mass), ' ', FormattedNumber::fixedPrecision(m_stiffness), ' ', FormattedNumber::fixedPrecision(m_damping), ' ', FormattedNumber::fixedPrecision(m_initialVelocity), ')');
 }
 
 bool CSSSpringTimingFunctionValue::equals(const CSSSpringTimingFunctionValue& other) const

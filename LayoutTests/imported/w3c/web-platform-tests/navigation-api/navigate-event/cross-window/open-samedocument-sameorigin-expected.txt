@@ -1,4 +1,4 @@
 
 
-FAIL using window.open() to navigate same-document targeting a same-origin window assert_true: destination.sameDocument expected true got false
+PASS using window.open() to navigate same-document targeting a same-origin window
 

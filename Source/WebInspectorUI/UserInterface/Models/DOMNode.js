@@ -935,7 +935,8 @@ WI.DOMNode = class DOMNode extends WI.Object
                     required: accessibilityProperties.required,
                     role: accessibilityProperties.role,
                     selected: accessibilityProperties.selected,
-                    selectedChildNodeIds: accessibilityProperties.selectedChildNodeIds
+                    selectedChildNodeIds: accessibilityProperties.selectedChildNodeIds,
+                    switchState: accessibilityProperties.switchState,
                 });
             }
         }

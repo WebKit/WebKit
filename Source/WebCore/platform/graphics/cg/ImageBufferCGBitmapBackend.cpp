@@ -63,7 +63,7 @@ size_t ImageBufferCGBitmapBackend::calculateMemoryCost(const Parameters& paramet
 
 std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(const Parameters& parameters, const ImageBufferCreationContext&)
 {
-    ASSERT(parameters.pixelFormat == PixelFormat::BGRA8);
+    ASSERT(parameters.pixelFormat == ImageBufferPixelFormat::BGRA8);
 
     IntSize backendSize = calculateSafeBackendSize(parameters);
     if (backendSize.isEmpty())
@@ -78,7 +78,7 @@ std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(c
     ASSERT(!(reinterpret_cast<intptr_t>(data) & 3));
 
     size_t numBytes = backendSize.height() * bytesPerRow;
-    verifyImageBufferIsBigEnough(data, numBytes);
+    verifyImageBufferIsBigEnough({ static_cast<const uint8_t*>(data), numBytes });
 
     auto cgContext = adoptCF(CGBitmapContextCreate(data, backendSize.width(), backendSize.height(), 8, bytesPerRow, parameters.colorSpace.platformColorSpace(), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host)));
     if (!cgContext)
@@ -90,10 +90,10 @@ std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(c
         fastFree(const_cast<void*>(data));
     }));
 
-    return std::unique_ptr<ImageBufferCGBitmapBackend>(new ImageBufferCGBitmapBackend(parameters, data, WTFMove(dataProvider), WTFMove(context)));
+    return std::unique_ptr<ImageBufferCGBitmapBackend>(new ImageBufferCGBitmapBackend(parameters, static_cast<uint8_t*>(data), WTFMove(dataProvider), WTFMove(context)));
 }
 
-ImageBufferCGBitmapBackend::ImageBufferCGBitmapBackend(const Parameters& parameters, void* data, RetainPtr<CGDataProviderRef>&& dataProvider, std::unique_ptr<GraphicsContextCG>&& context)
+ImageBufferCGBitmapBackend::ImageBufferCGBitmapBackend(const Parameters& parameters, uint8_t* data, RetainPtr<CGDataProviderRef>&& dataProvider, std::unique_ptr<GraphicsContextCG>&& context)
     : ImageBufferCGBackend(parameters)
     , m_data(data)
     , m_dataProvider(WTFMove(dataProvider))

@@ -53,7 +53,7 @@ public:
     static String animatedFilterPropertyName(FilterOperation::Type);
     static bool isValidAnimatedFilterPropertyName(const String&);
 
-    WEBCORE_EXPORT static RetainPtr<NSValue> filterValueForOperation(const FilterOperation*);
+    WEBCORE_EXPORT static RetainPtr<NSValue> filterValueForOperation(const FilterOperation&);
 
     // A null operation indicates that we should make a "no-op" filter of the given type.
     static RetainPtr<NSValue> colorMatrixValueForFilter(FilterOperation::Type, const FilterOperation*);

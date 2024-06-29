@@ -33,6 +33,7 @@
 #include <wtf/WTFSemaphore.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 
@@ -285,9 +286,12 @@ void SharedAudioDestination::sharedRender(AudioBus* sourceBus, AudioBus* destina
     if (!m_dispatchToRenderThread)
         callRenderCallback(sourceBus, destinationBus, numberOfFrames, outputPosition);
     else {
-        m_dispatchToRenderThread([protectedThis = Ref { *this }, sourceBus = RefPtr { sourceBus }, destinationBus = RefPtr { destinationBus }, numberOfFrames, outputPosition]() mutable {
+        BinarySemaphore semaphore;
+        m_dispatchToRenderThread([protectedThis = Ref { *this }, sourceBus = RefPtr { sourceBus }, destinationBus = RefPtr { destinationBus }, numberOfFrames, outputPosition, &semaphore]() mutable {
             protectedThis->callRenderCallback(sourceBus.get(), destinationBus.get(), numberOfFrames, outputPosition);
+            semaphore.signal();
         });
+        semaphore.wait();
     }
 }
 

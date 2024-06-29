@@ -221,6 +221,12 @@ void printInternal(PrintStream& out, const RefPtr<T>& value)
     out.print(pointerDump(value.get()));
 }
 
+template<typename T>
+void printInternal(PrintStream& out, const Ref<T>& value)
+{
+    printInternal(out, value.get());
+}
+
 template<typename T, typename U>
 class ValueInContext {
 public:

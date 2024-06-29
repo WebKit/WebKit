@@ -247,7 +247,9 @@ static AOM_INLINE void unsharp(const AV1_COMP *const cpi,
 
 // 8-tap Gaussian convolution filter with sigma = 1.0, sums to 128,
 // all co-efficients must be even.
-DECLARE_ALIGNED(16, static const int16_t, gauss_filter[8]) = { 0,  8, 30, 52,
+// The array is of size 9 to allow passing gauss_filter + 1 to
+// _mm_loadu_si128() in prepare_coeffs_6t().
+DECLARE_ALIGNED(16, static const int16_t, gauss_filter[9]) = { 0,  8, 30, 52,
                                                                30, 8, 0,  0 };
 static AOM_INLINE void gaussian_blur(const int bit_depth,
                                      const YV12_BUFFER_CONFIG *source,
@@ -288,10 +290,10 @@ static AOM_INLINE void gaussian_blur(const int bit_depth,
   }
 }
 
-static AOM_INLINE double cal_approx_vmaf(const AV1_COMP *const cpi,
-                                         double source_variance,
-                                         YV12_BUFFER_CONFIG *const source,
-                                         YV12_BUFFER_CONFIG *const sharpened) {
+static AOM_INLINE double cal_approx_vmaf(
+    const AV1_COMP *const cpi, double source_variance,
+    const YV12_BUFFER_CONFIG *const source,
+    const YV12_BUFFER_CONFIG *const sharpened) {
   const int bit_depth = cpi->td.mb.e_mbd.bd;
   const bool cal_vmaf_neg =
       cpi->oxcf.tune_cfg.tuning == AOM_TUNE_VMAF_NEG_MAX_GAIN;
@@ -305,11 +307,11 @@ static AOM_INLINE double cal_approx_vmaf(const AV1_COMP *const cpi,
 }
 
 static double find_best_frame_unsharp_amount_loop(
-    const AV1_COMP *const cpi, YV12_BUFFER_CONFIG *const source,
-    YV12_BUFFER_CONFIG *const blurred, YV12_BUFFER_CONFIG *const sharpened,
-    double best_vmaf, const double baseline_variance,
-    const double unsharp_amount_start, const double step_size,
-    const int max_loop_count, const double max_amount) {
+    const AV1_COMP *const cpi, const YV12_BUFFER_CONFIG *const source,
+    const YV12_BUFFER_CONFIG *const blurred,
+    const YV12_BUFFER_CONFIG *const sharpened, double best_vmaf,
+    const double baseline_variance, const double unsharp_amount_start,
+    const double step_size, const int max_loop_count, const double max_amount) {
   const double min_amount = 0.0;
   int loop_count = 0;
   double approx_vmaf = best_vmaf;
@@ -328,13 +330,11 @@ static double find_best_frame_unsharp_amount_loop(
   return AOMMIN(max_amount, AOMMAX(unsharp_amount, min_amount));
 }
 
-static double find_best_frame_unsharp_amount(const AV1_COMP *const cpi,
-                                             YV12_BUFFER_CONFIG *const source,
-                                             YV12_BUFFER_CONFIG *const blurred,
-                                             const double unsharp_amount_start,
-                                             const double step_size,
-                                             const int max_loop_count,
-                                             const double max_filter_amount) {
+static double find_best_frame_unsharp_amount(
+    const AV1_COMP *const cpi, const YV12_BUFFER_CONFIG *const source,
+    const YV12_BUFFER_CONFIG *const blurred, const double unsharp_amount_start,
+    const double step_size, const int max_loop_count,
+    const double max_filter_amount) {
   const AV1_COMMON *const cm = &cpi->common;
   const int width = source->y_width;
   const int height = source->y_height;
@@ -343,7 +343,7 @@ static double find_best_frame_unsharp_amount(const AV1_COMP *const cpi,
   aom_alloc_frame_buffer(
       &sharpened, width, height, source->subsampling_x, source->subsampling_y,
       cm->seq_params->use_highbitdepth, cpi->oxcf.border_in_pixels,
-      cm->features.byte_alignment, 0, 0);
+      cm->features.byte_alignment, false, 0);
 
   const double baseline_variance = frame_average_variance(cpi, source);
   double unsharp_amount;
@@ -376,7 +376,7 @@ static double find_best_frame_unsharp_amount(const AV1_COMP *const cpi,
 }
 
 void av1_vmaf_neg_preprocessing(AV1_COMP *const cpi,
-                                YV12_BUFFER_CONFIG *const source) {
+                                const YV12_BUFFER_CONFIG *const source) {
   const AV1_COMMON *const cm = &cpi->common;
   const int bit_depth = cpi->td.mb.e_mbd.bd;
   const int width = source->y_width;
@@ -395,7 +395,7 @@ void av1_vmaf_neg_preprocessing(AV1_COMP *const cpi,
   aom_alloc_frame_buffer(
       &blurred, width, height, source->subsampling_x, source->subsampling_y,
       cm->seq_params->use_highbitdepth, cpi->oxcf.border_in_pixels,
-      cm->features.byte_alignment, 0, 0);
+      cm->features.byte_alignment, false, 0);
 
   gaussian_blur(bit_depth, source, &blurred);
   unsharp(cpi, source, &blurred, source, best_frame_unsharp_amount);
@@ -403,7 +403,7 @@ void av1_vmaf_neg_preprocessing(AV1_COMP *const cpi,
 }
 
 void av1_vmaf_frame_preprocessing(AV1_COMP *const cpi,
-                                  YV12_BUFFER_CONFIG *const source) {
+                                  const YV12_BUFFER_CONFIG *const source) {
   const AV1_COMMON *const cm = &cpi->common;
   const int bit_depth = cpi->td.mb.e_mbd.bd;
   const int width = source->y_width;
@@ -415,11 +415,11 @@ void av1_vmaf_frame_preprocessing(AV1_COMP *const cpi,
   aom_alloc_frame_buffer(
       &source_extended, width, height, source->subsampling_x,
       source->subsampling_y, cm->seq_params->use_highbitdepth,
-      cpi->oxcf.border_in_pixels, cm->features.byte_alignment, 0, 0);
+      cpi->oxcf.border_in_pixels, cm->features.byte_alignment, false, 0);
   aom_alloc_frame_buffer(
       &blurred, width, height, source->subsampling_x, source->subsampling_y,
       cm->seq_params->use_highbitdepth, cpi->oxcf.border_in_pixels,
-      cm->features.byte_alignment, 0, 0);
+      cm->features.byte_alignment, false, 0);
 
   av1_copy_and_extend_frame(source, &source_extended);
   gaussian_blur(bit_depth, &source_extended, &blurred);
@@ -442,7 +442,7 @@ void av1_vmaf_frame_preprocessing(AV1_COMP *const cpi,
 }
 
 void av1_vmaf_blk_preprocessing(AV1_COMP *const cpi,
-                                YV12_BUFFER_CONFIG *const source) {
+                                const YV12_BUFFER_CONFIG *const source) {
   const AV1_COMMON *const cm = &cpi->common;
   const int width = source->y_width;
   const int height = source->y_height;
@@ -455,11 +455,11 @@ void av1_vmaf_blk_preprocessing(AV1_COMP *const cpi,
   memset(&source_extended, 0, sizeof(source_extended));
   aom_alloc_frame_buffer(
       &blurred, width, height, ss_x, ss_y, cm->seq_params->use_highbitdepth,
-      cpi->oxcf.border_in_pixels, cm->features.byte_alignment, 0, 0);
+      cpi->oxcf.border_in_pixels, cm->features.byte_alignment, false, 0);
   aom_alloc_frame_buffer(&source_extended, width, height, ss_x, ss_y,
                          cm->seq_params->use_highbitdepth,
                          cpi->oxcf.border_in_pixels,
-                         cm->features.byte_alignment, 0, 0);
+                         cm->features.byte_alignment, false, 0);
 
   av1_copy_and_extend_frame(source, &source_extended);
   gaussian_blur(bit_depth, &source_extended, &blurred);
@@ -495,11 +495,11 @@ void av1_vmaf_blk_preprocessing(AV1_COMP *const cpi,
   aom_alloc_frame_buffer(&source_block, block_w, block_h, ss_x, ss_y,
                          cm->seq_params->use_highbitdepth,
                          cpi->oxcf.border_in_pixels,
-                         cm->features.byte_alignment, 0, 0);
+                         cm->features.byte_alignment, false, 0);
   aom_alloc_frame_buffer(&blurred_block, block_w, block_h, ss_x, ss_y,
                          cm->seq_params->use_highbitdepth,
                          cpi->oxcf.border_in_pixels,
-                         cm->features.byte_alignment, 0, 0);
+                         cm->features.byte_alignment, false, 0);
 
   for (int row = 0; row < num_rows; ++row) {
     for (int col = 0; col < num_cols; ++col) {
@@ -622,7 +622,7 @@ void av1_set_mb_vmaf_rdmult_scaling(AV1_COMP *cpi) {
   aom_alloc_frame_buffer(
       &resized_source, y_width / resize_factor, y_height / resize_factor, ss_x,
       ss_y, cm->seq_params->use_highbitdepth, cpi->oxcf.border_in_pixels,
-      cm->features.byte_alignment, 0, 0);
+      cm->features.byte_alignment, false, 0);
   if (!av1_resize_and_extend_frame_nonnormative(
           cpi->source, &resized_source, bit_depth, av1_num_planes(cm))) {
     aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
@@ -643,7 +643,7 @@ void av1_set_mb_vmaf_rdmult_scaling(AV1_COMP *cpi) {
   aom_alloc_frame_buffer(&blurred, resized_y_width, resized_y_height, ss_x,
                          ss_y, cm->seq_params->use_highbitdepth,
                          cpi->oxcf.border_in_pixels,
-                         cm->features.byte_alignment, 0, 0);
+                         cm->features.byte_alignment, false, 0);
   gaussian_blur(bit_depth, &resized_source, &blurred);
 
   YV12_BUFFER_CONFIG recon;
@@ -651,7 +651,7 @@ void av1_set_mb_vmaf_rdmult_scaling(AV1_COMP *cpi) {
   aom_alloc_frame_buffer(&recon, resized_y_width, resized_y_height, ss_x, ss_y,
                          cm->seq_params->use_highbitdepth,
                          cpi->oxcf.border_in_pixels,
-                         cm->features.byte_alignment, 0, 0);
+                         cm->features.byte_alignment, false, 0);
   aom_yv12_copy_frame(&resized_source, &recon, 1);
 
   VmafContext *vmaf_context;
@@ -830,15 +830,15 @@ static double calc_vmaf_motion_score(const AV1_COMP *const cpi,
   aom_alloc_frame_buffer(&blurred_cur, y_width, y_height, ss_x, ss_y,
                          cm->seq_params->use_highbitdepth,
                          cpi->oxcf.border_in_pixels,
-                         cm->features.byte_alignment, 0, 0);
+                         cm->features.byte_alignment, false, 0);
   aom_alloc_frame_buffer(&blurred_last, y_width, y_height, ss_x, ss_y,
                          cm->seq_params->use_highbitdepth,
                          cpi->oxcf.border_in_pixels,
-                         cm->features.byte_alignment, 0, 0);
+                         cm->features.byte_alignment, false, 0);
   aom_alloc_frame_buffer(&blurred_next, y_width, y_height, ss_x, ss_y,
                          cm->seq_params->use_highbitdepth,
                          cpi->oxcf.border_in_pixels,
-                         cm->features.byte_alignment, 0, 0);
+                         cm->features.byte_alignment, false, 0);
 
   gaussian_blur(bit_depth, cur, &blurred_cur);
   gaussian_blur(bit_depth, last, &blurred_last);
@@ -881,8 +881,8 @@ static double calc_vmaf_motion_score(const AV1_COMP *const cpi,
 }
 
 static AOM_INLINE void get_neighbor_frames(const AV1_COMP *const cpi,
-                                           YV12_BUFFER_CONFIG **last,
-                                           YV12_BUFFER_CONFIG **next) {
+                                           const YV12_BUFFER_CONFIG **last,
+                                           const YV12_BUFFER_CONFIG **next) {
   const AV1_COMMON *const cm = &cpi->common;
   const GF_GROUP *gf_group = &cpi->ppi->gf_group;
   const int src_index =
@@ -920,7 +920,7 @@ int av1_get_vmaf_base_qindex(const AV1_COMP *const cpi, int current_qindex) {
   if (approx_sse < sse_threshold || approx_dvmaf < vmaf_threshold) {
     return current_qindex;
   }
-  YV12_BUFFER_CONFIG *cur_buf = cpi->source;
+  const YV12_BUFFER_CONFIG *cur_buf = cpi->source;
   if (cm->show_frame == 0) {
     const int src_index = gf_group->arf_src_offset[cpi->gf_frame_index];
     struct lookahead_entry *cur_entry = av1_lookahead_peek(
@@ -929,7 +929,7 @@ int av1_get_vmaf_base_qindex(const AV1_COMP *const cpi, int current_qindex) {
   }
   assert(cur_buf);
 
-  YV12_BUFFER_CONFIG *next_buf, *last_buf;
+  const YV12_BUFFER_CONFIG *next_buf, *last_buf;
   get_neighbor_frames(cpi, &last_buf, &next_buf);
   assert(last_buf);
 
@@ -954,8 +954,8 @@ int av1_get_vmaf_base_qindex(const AV1_COMP *const cpi, int current_qindex) {
 
 static AOM_INLINE double cal_approx_score(
     AV1_COMP *const cpi, double src_variance, double new_variance,
-    double src_score, YV12_BUFFER_CONFIG *const src,
-    YV12_BUFFER_CONFIG *const recon_sharpened) {
+    double src_score, const YV12_BUFFER_CONFIG *const src,
+    const YV12_BUFFER_CONFIG *const recon_sharpened) {
   double score;
   const uint32_t bit_depth = cpi->td.mb.e_mbd.bd;
   const bool cal_vmaf_neg =
@@ -967,11 +967,12 @@ static AOM_INLINE double cal_approx_score(
 
 static double find_best_frame_unsharp_amount_loop_neg(
     AV1_COMP *const cpi, double src_variance, double base_score,
-    YV12_BUFFER_CONFIG *const src, YV12_BUFFER_CONFIG *const recon,
-    YV12_BUFFER_CONFIG *const ref, YV12_BUFFER_CONFIG *const src_blurred,
-    YV12_BUFFER_CONFIG *const recon_blurred,
-    YV12_BUFFER_CONFIG *const src_sharpened,
-    YV12_BUFFER_CONFIG *const recon_sharpened, FULLPEL_MV *mvs,
+    const YV12_BUFFER_CONFIG *const src, const YV12_BUFFER_CONFIG *const recon,
+    const YV12_BUFFER_CONFIG *const ref,
+    const YV12_BUFFER_CONFIG *const src_blurred,
+    const YV12_BUFFER_CONFIG *const recon_blurred,
+    const YV12_BUFFER_CONFIG *const src_sharpened,
+    const YV12_BUFFER_CONFIG *const recon_sharpened, FULLPEL_MV *mvs,
     double best_score, const double unsharp_amount_start,
     const double step_size, const int max_loop_count, const double max_amount) {
   const double min_amount = 0.0;
@@ -999,8 +1000,8 @@ static double find_best_frame_unsharp_amount_loop_neg(
 }
 
 static double find_best_frame_unsharp_amount_neg(
-    AV1_COMP *const cpi, YV12_BUFFER_CONFIG *const src,
-    YV12_BUFFER_CONFIG *const recon, YV12_BUFFER_CONFIG *const ref,
+    AV1_COMP *const cpi, const YV12_BUFFER_CONFIG *const src,
+    const YV12_BUFFER_CONFIG *const recon, const YV12_BUFFER_CONFIG *const ref,
     double base_score, const double unsharp_amount_start,
     const double step_size, const int max_loop_count,
     const double max_filter_amount) {
@@ -1023,18 +1024,18 @@ static double find_best_frame_unsharp_amount_neg(
   aom_alloc_frame_buffer(&recon_sharpened, width, height, ss_x, ss_y,
                          cm->seq_params->use_highbitdepth,
                          cpi->oxcf.border_in_pixels,
-                         cm->features.byte_alignment, 0, 0);
+                         cm->features.byte_alignment, false, 0);
   aom_alloc_frame_buffer(&src_sharpened, width, height, ss_x, ss_y,
                          cm->seq_params->use_highbitdepth,
                          cpi->oxcf.border_in_pixels,
-                         cm->features.byte_alignment, 0, 0);
+                         cm->features.byte_alignment, false, 0);
   aom_alloc_frame_buffer(&recon_blurred, width, height, ss_x, ss_y,
                          cm->seq_params->use_highbitdepth,
                          cpi->oxcf.border_in_pixels,
-                         cm->features.byte_alignment, 0, 0);
+                         cm->features.byte_alignment, false, 0);
   aom_alloc_frame_buffer(
       &src_blurred, width, height, ss_x, ss_y, cm->seq_params->use_highbitdepth,
-      cpi->oxcf.border_in_pixels, cm->features.byte_alignment, 0, 0);
+      cpi->oxcf.border_in_pixels, cm->features.byte_alignment, false, 0);
 
   gaussian_blur(bit_depth, recon, &recon_blurred);
   gaussian_blur(bit_depth, src, &src_blurred);
@@ -1076,8 +1077,8 @@ static double find_best_frame_unsharp_amount_neg(
 }
 
 void av1_update_vmaf_curve(AV1_COMP *cpi) {
-  YV12_BUFFER_CONFIG *source = cpi->source;
-  YV12_BUFFER_CONFIG *recon = &cpi->common.cur_frame->buf;
+  const YV12_BUFFER_CONFIG *source = cpi->source;
+  const YV12_BUFFER_CONFIG *recon = &cpi->common.cur_frame->buf;
   const int bit_depth = cpi->td.mb.e_mbd.bd;
   const GF_GROUP *const gf_group = &cpi->ppi->gf_group;
   const int layer_depth =
@@ -1099,7 +1100,7 @@ void av1_update_vmaf_curve(AV1_COMP *cpi) {
   }
 
   if (cpi->oxcf.tune_cfg.tuning == AOM_TUNE_VMAF_NEG_MAX_GAIN) {
-    YV12_BUFFER_CONFIG *last, *next;
+    const YV12_BUFFER_CONFIG *last, *next;
     get_neighbor_frames(cpi, &last, &next);
     double best_unsharp_amount_start =
         get_layer_value(cpi->vmaf_info.last_frame_unsharp_amount, layer_depth);

@@ -40,7 +40,6 @@
 #include "WKNumber.h"
 #include "WKRetainPtr.h"
 #include "WKString.h"
-#include "WebConnection.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
@@ -75,11 +74,6 @@ void WKBundlePostSynchronousMessage(WKBundleRef bundleRef, WKStringRef messageNa
     WebKit::toImpl(bundleRef)->postSynchronousMessage(WebKit::toWTFString(messageNameRef), WebKit::toImpl(messageBodyRef), returnData);
     if (returnRetainedDataRef)
         *returnRetainedDataRef = WebKit::toAPI(returnData.leakRef());
-}
-
-WKConnectionRef WKBundleGetApplicationConnection(WKBundleRef bundleRef)
-{
-    return toAPI(WebKit::toImpl(bundleRef)->webConnectionToUIProcess());
 }
 
 void WKBundleGarbageCollectJavaScriptObjects(WKBundleRef bundleRef)
@@ -190,11 +184,6 @@ bool WKBundleIsProcessingUserGesture(WKBundleRef)
 void WKBundleSetUserStyleSheetLocationForTesting(WKBundleRef bundleRef, WKStringRef location)
 {
     WebKit::toImpl(bundleRef)->setUserStyleSheetLocation(WebKit::toWTFString(location));
-}
-
-void WKBundleSetWebNotificationPermission(WKBundleRef bundleRef, WKBundlePageRef pageRef, WKStringRef originStringRef, bool allowed)
-{
-    WebKit::toImpl(bundleRef)->setWebNotificationPermission(WebKit::toImpl(pageRef), WebKit::toWTFString(originStringRef), allowed);
 }
 
 void WKBundleRemoveAllWebNotificationPermissions(WKBundleRef bundleRef, WKBundlePageRef pageRef)

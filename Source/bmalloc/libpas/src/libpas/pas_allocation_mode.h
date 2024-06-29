@@ -41,6 +41,7 @@ enum pas_allocation_mode {
 };
 
 typedef enum pas_allocation_mode pas_allocation_mode;
+typedef enum pas_allocation_mode __pas_allocation_mode;
 
 static inline const char* pas_allocation_mode_get_string(pas_allocation_mode allocation_mode)
 {

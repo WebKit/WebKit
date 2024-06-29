@@ -270,7 +270,7 @@ constexpr const ImmutableString _empty("");
 
 // TODO(oetuaho): Would be nice to make this a class instead of a namespace so that we could friend
 // this from TVariable. Now symbol constructors taking an id have to be public even though they're
-// not supposed to be accessible from outside of here. http://anglebug.com/2390
+// not supposed to be accessible from outside of here. http://anglebug.com/42261100
 namespace BuiltInVariable
 {{
 
@@ -291,7 +291,7 @@ namespace BuiltInParameters
 
 // TODO(oetuaho): Would be nice to make this a class instead of a namespace so that we could friend
 // this from TFunction. Now symbol constructors taking an id have to be public even though they're
-// not supposed to be accessible from outside of here. http://anglebug.com/2390
+// not supposed to be accessible from outside of here. http://anglebug.com/42261100
 namespace Func
 {{
 
@@ -415,7 +415,7 @@ enum TOperator : uint16_t
     // * They should not return arrays.
     // * They should not have out parameters.
     //
-    // DEPRECATED; DO NOT USE.  TODO: remove this.  http://anglebug.com/6059
+    // DEPRECATED; DO NOT USE.  TODO: remove this.  http://anglebug.com/42264589
     //
     EOpCallInternalRawFunction,
 
@@ -1135,7 +1135,7 @@ class TType:
         return self
 
     def parse_type(self, glsl_header_type):
-        # TODO(http://anglebug.com/3833): handle readonly, writeonly qualifiers
+        # TODO(http://anglebug.com/42262477): handle readonly, writeonly qualifiers
         if glsl_header_type.startswith('readonly writeonly '):
             type_obj = self.parse_type(glsl_header_type[19:])
             type_obj['qualifier'] = 'Readonly Writeonly'
@@ -1990,7 +1990,7 @@ return &k{name_with_suffix};
 
         if essl_level != 'GLSL_BUILTINS':
             obj = '&BuiltInVariable::k{name_with_suffix}'.format(**template_args)
-            # TODO(http://anglebug.com/3835): Add GLSL level once GLSL built-in vars are added
+            # TODO(http://anglebug.com/42262479): Add GLSL level once GLSL built-in vars are added
             mangled_builtins.add_entry(essl_level, 'COMMON_BUILTINS', shader_type,
                                        template_args['name'], obj, template_args['essl_extension'],
                                        template_args['glsl_extension'],
@@ -2005,7 +2005,7 @@ return &k{name_with_suffix};
 
         obj = 'm_{name_with_suffix}'.format(**template_args)
 
-        # TODO(http://anglebug.com/3835): Add GLSL level once GLSL built-in vars are added
+        # TODO(http://anglebug.com/42262479): Add GLSL level once GLSL built-in vars are added
         mangled_builtins.add_entry(essl_level, 'COMMON_BUILTINS', shader_type,
                                    template_args['name'], obj, template_args['essl_extension'],
                                    template_args['glsl_extension'],
@@ -2078,7 +2078,7 @@ def generate_files(essl_only, args, functions_txt_filename, variables_json_filen
 
     parsed_variables = None
     with open(variables_json_filename) as f:
-        # TODO(http://anglebug.com/3835): skip loading GLSL-only vars when they are added if essl_only
+        # TODO(http://anglebug.com/42262479): skip loading GLSL-only vars when they are added if essl_only
         parsed_variables = json.load(f, object_pairs_hook=OrderedDict)
 
     # This script uses a perfect hash function to avoid dealing with collisions

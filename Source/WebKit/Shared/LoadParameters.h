@@ -33,6 +33,7 @@
 #include <WebCore/AdvancedPrivacyProtections.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/PublicSuffixStore.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
 #include <WebCore/SubstituteData.h>
@@ -51,7 +52,7 @@ using SandboxFlags = int;
 namespace WebKit {
 
 struct LoadParameters {
-    String publicSuffix;
+    WebCore::PublicSuffix publicSuffix;
 
     uint64_t navigationID { 0 };
     std::optional<WebCore::FrameIdentifier> frameIdentifier;

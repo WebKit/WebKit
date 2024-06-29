@@ -4,6 +4,7 @@ PASS Setup audio MediaStreamTrack getCapabilities() test for sampleSize
 PASS Setup audio MediaStreamTrack getCapabilities() test for echoCancellation
 PASS Setup audio MediaStreamTrack getCapabilities() test for autoGainControl
 PASS Setup audio MediaStreamTrack getCapabilities() test for noiseSuppression
+PASS Setup audio MediaStreamTrack getCapabilities() test for voiceIsolation
 PASS Setup audio MediaStreamTrack getCapabilities() test for latency
 PASS Setup audio MediaStreamTrack getCapabilities() test for channelCount
 PASS Setup audio MediaStreamTrack getCapabilities() test for deviceId
@@ -21,6 +22,7 @@ PASS Setup audio InputDeviceInfo getCapabilities() test for sampleSize
 PASS Setup audio InputDeviceInfo getCapabilities() test for echoCancellation
 PASS Setup audio InputDeviceInfo getCapabilities() test for autoGainControl
 PASS Setup audio InputDeviceInfo getCapabilities() test for noiseSuppression
+PASS Setup audio InputDeviceInfo getCapabilities() test for voiceIsolation
 PASS Setup audio InputDeviceInfo getCapabilities() test for latency
 PASS Setup audio InputDeviceInfo getCapabilities() test for channelCount
 PASS Setup audio InputDeviceInfo getCapabilities() test for deviceId
@@ -43,6 +45,8 @@ FAIL Audio track getCapabilities() autoGainControl property present. assert_true
 FAIL Audio track getCapabilities() autoGainControl properly supported. undefined is not an object (evaluating 'capability.length')
 FAIL Audio track getCapabilities() noiseSuppression property present. assert_true: expected true got false
 FAIL Audio track getCapabilities() noiseSuppression properly supported. undefined is not an object (evaluating 'capability.length')
+FAIL Audio track getCapabilities() voiceIsolation property present. assert_true: expected true got false
+FAIL Audio track getCapabilities() voiceIsolation properly supported. undefined is not an object (evaluating 'capability.length')
 FAIL Audio track getCapabilities() latency property present. assert_true: expected true got false
 FAIL Audio track getCapabilities() latency properly supported. assert_equals: expected "object" but got "undefined"
 FAIL Audio track getCapabilities() channelCount property present. assert_true: expected true got false
@@ -79,6 +83,8 @@ FAIL Audio device getCapabilities() autoGainControl property present. assert_tru
 FAIL Audio device getCapabilities() autoGainControl properly supported. undefined is not an object (evaluating 'capability.length')
 FAIL Audio device getCapabilities() noiseSuppression property present. assert_true: expected true got false
 FAIL Audio device getCapabilities() noiseSuppression properly supported. undefined is not an object (evaluating 'capability.length')
+FAIL Audio device getCapabilities() voiceIsolation property present. assert_true: expected true got false
+FAIL Audio device getCapabilities() voiceIsolation properly supported. undefined is not an object (evaluating 'capability.length')
 FAIL Audio device getCapabilities() latency property present. assert_true: expected true got false
 FAIL Audio device getCapabilities() latency properly supported. assert_equals: expected "object" but got "undefined"
 FAIL Audio device getCapabilities() channelCount property present. assert_true: expected true got false

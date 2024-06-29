@@ -91,7 +91,14 @@ id<RTCVideoDecoderFactory> ObjCVideoDecoderFactory::wrapped_decoder_factory() co
   return decoder_factory_;
 }
 
-std::unique_ptr<VideoDecoder> ObjCVideoDecoderFactory::CreateVideoDecoder(
+ObjCVideoDecoderFactory::CodecSupport ObjCVideoDecoderFactory::QueryCodecSupport(const SdpVideoFormat& format, bool reference_scaling) const {
+    CodecSupport codec_support;
+    codec_support.is_supported = format.IsCodecInList(GetSupportedFormats());
+    return codec_support;
+}
+
+std::unique_ptr<VideoDecoder> ObjCVideoDecoderFactory::Create(
+    const Environment& environment,
     const SdpVideoFormat &format) {
   NSString *codecName = [NSString stringWithUTF8String:format.name.c_str()];
   for (RTCVideoCodecInfo *codecInfo in decoder_factory_.supportedCodecs) {

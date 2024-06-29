@@ -46,6 +46,7 @@ typedef NS_ENUM(NSInteger, WKContentMode) {
  determine the preferences to use when loading and rendering a page.
  @discussion Contains properties used to determine webpage preferences.
  */
+WK_SWIFT_UI_ACTOR
 WK_CLASS_AVAILABLE(macos(10.15), ios(13.0))
 @interface WKWebpagePreferences : NSObject
 

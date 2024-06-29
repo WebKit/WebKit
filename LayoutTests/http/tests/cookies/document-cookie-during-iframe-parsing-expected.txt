@@ -1,4 +1,4 @@
-Tests that document.cookie returns the right value after a showModalDialog() call
+Tests that document.cookie returns the right value while iframe is being parsed
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

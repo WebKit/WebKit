@@ -155,7 +155,7 @@ TEST_P(BPTCCompressedTextureTest, CompressedTexImageBC6HNoCrash)
     setupTextureParameters(texture);
 
     // This fake pixel data represents a 4x4 pixel image.
-    // TODO(http://anglebug.com/2869): Add pixel tests for these formats. These need HDR source
+    // TODO(http://anglebug.com/40096529): Add pixel tests for these formats. These need HDR source
     // images.
     std::vector<GLubyte> data;
     data.resize(16u, 0u);

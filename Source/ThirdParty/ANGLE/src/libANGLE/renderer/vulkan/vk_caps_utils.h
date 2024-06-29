@@ -71,12 +71,15 @@ static ANGLE_INLINE EGLenum GetConfigCaveat(GLenum format)
 
 namespace vk
 {
+// Checks support for extensions required for GLES 3.2. If any of those extensions is missing, the
+// context version should be capped to GLES 3.1 by default.
+bool CanSupportGLES32(const gl::Extensions &nativeExtensions);
+
 // Functions that determine support for a feature or extension, used both to advertise support for
 // an extension, and to determine if a context version can be supported.
 bool CanSupportTransformFeedbackExtension(
     const VkPhysicalDeviceTransformFeedbackFeaturesEXT &xfbFeatures);
 bool CanSupportTransformFeedbackEmulation(const VkPhysicalDeviceFeatures &features);
-bool CanSupportGPUShader5EXT(const VkPhysicalDeviceFeatures &features);
 }  // namespace vk
 
 }  // namespace rx

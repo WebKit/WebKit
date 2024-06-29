@@ -150,18 +150,54 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/naming"]),
 
     ([
-      # The WPEQtView class can't rely on the readability/parameter_name rule,
-      # because omitting parameter names for QML signals leads to runtime
-      # errors.
-      os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt', 'WPEQtView.h'),
-    ],
-    ["-readability/parameter_name"]),
+        # The WPEQtViewBackend class needs to enforce a certain include order to the gbm.h/epoxy constraints.
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt5', 'WPEQtViewBackend.h')],
+     ["-build/include_order"]),
 
     ([
-     # The WPE QT wrapper lib is not part of Webkit and therefore don't need to statically
-     # link the WTF framework. Instead it uses the standard alloc mechanism.
-     os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt')],
-     ["-runtime/wtf_make_unique"]),
+        # The WPEQtViewLoadRequest class uses Qt naming conventions (d_ptr).
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt5', 'WPEQtViewLoadRequest.h'),
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEQtViewLoadRequest.h'),
+
+        # The WPEQtView class uses Qt naming conventions (d_ptr).
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEQtView.h')],
+     ["-readability/naming/underscores"]),
+
+    ([
+        # The WPEQtView class can't rely on the readability/parameter_name rule,
+        # because omitting parameter names for QML signals leads to runtime
+        # errors.
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt5', 'WPEQtView.h'),
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEQtView.h')],
+     ["-readability/parameter_name", "-readability/naming/acronym"]),
+
+    ([
+        # The WPE QtQuick files follow GLib API conventions.
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEViewQtQuick.h'),
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEToplevelQtQuick.h'),
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEDisplayQtQuick.h')],
+     ["-build/header_guard", "-readability/naming/underscores", "-readability/parameter_name", "-whitespace/declaration", "-whitespace/parens"]),
+
+    ([
+        # The WPE QtQuick files follow GLib API conventions.
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEViewQtQuick.cpp'),
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEToplevelQtQuick.cpp'),
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEDisplayQtQuick.cpp')],
+     ["-build/include_order", "-whitespace/parens"]),
+
+    ([
+        # The WPEQtView class needs to include moc_*.cpp files at the end of the file.
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6', 'WPEQtView.cpp')],
+     ["-build/include_order", "-runtime/wtf_make_unique", "-readability/naming/acronym"]),
+
+    ([
+        # The WPE QT wrapper lib is not part of Webkit and therefore don't need to statically
+        # link the WTF framework. Instead it uses the standard alloc mechanism.
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt5'),
+        os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt6'),
+        os.path.join('Tools', 'MiniBrowser', 'wpe', 'qt5', 'main.cpp'),
+        os.path.join('Tools', 'MiniBrowser', 'wpe', 'qt6', 'main.cpp')],
+     ["-runtime/wtf_make_unique", "-readability/naming/underscores", "-readability/naming/acronym"]),
 
     ([
       # The GTK+ and WPE APIs use upper case, underscore separated, words in
@@ -284,6 +320,7 @@ _PATH_RULES_SPECIFIER = [
     ([os.path.join('webkitpy', 'thirdparty'),
       os.path.join('Source', 'bmalloc', 'bmalloc', 'valgrind.h'),
       os.path.join('Source', 'ThirdParty', 'ANGLE'),
+      os.path.join('Source', 'ThirdParty', 'libsysprof-capture'),
       os.path.join('Source', 'ThirdParty', 'libwebrtc'),
       os.path.join('Source', 'ThirdParty', 'openvr'),
       os.path.join('Source', 'ThirdParty', 'skia'),
@@ -487,6 +524,9 @@ _SKIPPED_FILES_WITHOUT_WARNING = [
     os.path.join('Source', 'WebCore', 'icu'),
     os.path.join('Source', 'WebKitLegacy', 'mac', 'icu'),
     os.path.join('Source', 'WTF', 'icu'),
+
+    # libsysprof-capture.
+    os.path.join('Source', 'ThirdParty', 'libsysprof-capture'),
 
     # Skia.
     os.path.join('Source', 'ThirdParty', 'skia'),

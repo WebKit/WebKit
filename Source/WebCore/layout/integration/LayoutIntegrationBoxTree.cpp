@@ -208,6 +208,12 @@ UniqueRef<Layout::Box> BoxTree::createLayoutBox(RenderObject& renderer)
             textRenderer->setHasPositionDependentContentWidth(*hasPositionDependentContentWidth);
         }
 
+        auto hasStrongDirectionalityContent = textRenderer->hasStrongDirectionalityContent();
+        if (!hasStrongDirectionalityContent) {
+            hasStrongDirectionalityContent = Layout::TextUtil::containsStrongDirectionalityText(text);
+            textRenderer->setHasStrongDirectionalityContent(*hasStrongDirectionalityContent);
+        }
+
         auto contentCharacteristic = OptionSet<Layout::InlineTextBox::ContentCharacteristic> { };
         if (canUseSimpleFontCodePath)
             contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimpledFontCodepath);
@@ -215,6 +221,8 @@ UniqueRef<Layout::Box> BoxTree::createLayoutBox(RenderObject& renderer)
             contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimplifiedContentMeasuring);
         if (*hasPositionDependentContentWidth)
             contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
+        if (*hasStrongDirectionalityContent)
+            contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasStrongDirectionalityContent);
 
         return makeUniqueRef<Layout::InlineTextBox>(text, isCombinedText, contentCharacteristic, WTFMove(style), WTFMove(firstLineStyle));
     }
@@ -282,6 +290,8 @@ static void updateContentCharacteristic(const RenderText& rendererText, Layout::
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimpledFontCodepath);
     if (inlineTextBox.hasPositionDependentContentWidth())
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
+    if (inlineTextBox.hasStrongDirectionalityContent())
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasStrongDirectionalityContent);
 
     if (inlineTextBox.canUseSimpleFontCodePath() && Layout::TextUtil::canUseSimplifiedTextMeasuring(inlineTextBox.content(), rendererStyle.fontCascade(), rendererStyle.collapseWhiteSpace(), &rendererText.firstLineStyle()))
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimplifiedContentMeasuring);
@@ -342,8 +352,20 @@ void BoxTree::updateContent(const RenderText& textRenderer)
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimpledFontCodepath);
     if (textRenderer.canUseSimpleFontCodePath() && Layout::TextUtil::canUseSimplifiedTextMeasuring(text, style.fontCascade(), style.collapseWhiteSpace(), &inlineTextBox.firstLineStyle()))
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimplifiedContentMeasuring);
-    if (Layout::TextUtil::hasPositionDependentContentWidth(text))
+    auto hasPositionDependentContentWidth = textRenderer.hasPositionDependentContentWidth();
+    if (!hasPositionDependentContentWidth) {
+        hasPositionDependentContentWidth = Layout::TextUtil::hasPositionDependentContentWidth(text);
+        const_cast<RenderText&>(textRenderer).setHasPositionDependentContentWidth(*hasPositionDependentContentWidth);
+    }
+    if (*hasPositionDependentContentWidth)
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
+    auto hasStrongDirectionalityContent = textRenderer.hasStrongDirectionalityContent();
+    if (!hasStrongDirectionalityContent) {
+        hasStrongDirectionalityContent = Layout::TextUtil::containsStrongDirectionalityText(text);
+        const_cast<RenderText&>(textRenderer).setHasStrongDirectionalityContent(*hasStrongDirectionalityContent);
+    }
+    if (*hasStrongDirectionalityContent)
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasStrongDirectionalityContent);
 
     inlineTextBox.setContent(text, contentCharacteristic);
 }

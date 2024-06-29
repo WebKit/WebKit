@@ -146,7 +146,6 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String&
     if (!isExposed(propertyID, &parserContext.propertySettings) && !isInternal(propertyID)) {
         // Allow internal properties as we use them to handle certain DOM-exposed values
         // (e.g. -webkit-font-size-delta from execCommand('FontSizeDelta')).
-        ASSERT_NOT_REACHED();
         return false;
     }
 
@@ -275,10 +274,12 @@ bool MutableStyleProperties::addParsedProperty(const CSSProperty& property)
     return setProperty(property);
 }
 
-void MutableStyleProperties::mergeAndOverrideOnConflict(const StyleProperties& other)
+bool MutableStyleProperties::mergeAndOverrideOnConflict(const StyleProperties& other)
 {
+    bool changed = false;
     for (auto property : other)
-        addParsedProperty(property.toCSSProperty());
+        changed |= addParsedProperty(property.toCSSProperty());
+    return changed;
 }
 
 void MutableStyleProperties::clear()

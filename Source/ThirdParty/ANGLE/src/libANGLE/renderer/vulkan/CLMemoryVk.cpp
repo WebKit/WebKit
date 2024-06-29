@@ -73,7 +73,7 @@ VkBufferUsageFlags CLMemoryVk::getVkUsageFlags()
 
 VkMemoryPropertyFlags CLMemoryVk::getVkMemPropertyFlags()
 {
-    // TODO: http://anglebug.com/8588
+    // TODO: http://anglebug.com/42267018
     VkMemoryPropertyFlags propFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 
     if (mMemory.getFlags().isSet(CL_MEM_USE_HOST_PTR | CL_MEM_ALLOC_HOST_PTR |
@@ -206,7 +206,7 @@ angle::Result CLBufferVk::setDataImpl(const uint8_t *data, size_t size, size_t o
     ASSERT(data != nullptr);
 
     // Assuming host visible buffers for now
-    // TODO: http://anglebug.com/8589
+    // TODO: http://anglebug.com/42267019
     if (!mBuffer.isHostVisible())
     {
         UNIMPLEMENTED();

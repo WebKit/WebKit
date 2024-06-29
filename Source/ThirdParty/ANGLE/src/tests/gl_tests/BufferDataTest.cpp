@@ -80,7 +80,7 @@ void main()
 };
 
 // If glBufferData was not called yet the capturing must not try to
-// read the data. http://anglebug.com/6093
+// read the data. http://anglebug.com/42264622
 TEST_P(BufferDataTest, Uninitialized)
 {
     // Trigger frame capture to try capturing the
@@ -146,7 +146,7 @@ TEST_P(BufferDataTest, RepeatedDrawWithDynamic)
 // DYNAMIC
 TEST_P(BufferDataTest, RepeatedDrawDynamicBug)
 {
-    // http://anglebug.com/2843: Seems to be an Intel driver bug.
+    // http://anglebug.com/42261546: Seems to be an Intel driver bug.
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsIntel() && IsWindows());
 
     glUseProgram(mProgram);
@@ -461,7 +461,7 @@ void main()
 // https://code.google.com/p/angleproject/issues/detail?id=709
 TEST_P(IndexedBufferCopyTest, IndexRangeBug)
 {
-    // TODO(geofflang): Figure out why this fails on AMD OpenGL (http://anglebug.com/1291)
+    // TODO(geofflang): Figure out why this fails on AMD OpenGL (http://anglebug.com/42260302)
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
 
     unsigned char vertexData[] = {255, 0, 0, 0, 0, 0};
@@ -1287,10 +1287,10 @@ TEST_P(BufferDataTestES3, BufferDataUnmap)
 // works.  Regression test for the Vulkan backend where that flag caused use after free.
 TEST_P(BufferSubDataTest, MapInvalidateThenBufferSubData)
 {
-    // http://anglebug.com/5984
+    // http://anglebug.com/42264515
     ANGLE_SKIP_TEST_IF(IsWindows() && IsOpenGL() && IsIntel());
 
-    // http://anglebug.com/5985
+    // http://anglebug.com/42264516
     ANGLE_SKIP_TEST_IF(IsNexus5X() && IsOpenGLES());
 
     const std::array<GLColor, 4> kInitialData = {GLColor::red, GLColor::red, GLColor::red,

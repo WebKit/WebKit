@@ -26,18 +26,8 @@
 #pragma once
 
 #include "WebPageProxyIdentifier.h"
-#include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class ProvisionalFrameProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ProvisionalFrameProxy> : std::true_type { };
-}
 
 namespace WebKit {
 
@@ -46,27 +36,22 @@ class VisitedLinkStore;
 class WebFrameProxy;
 class WebProcessProxy;
 
-class ProvisionalFrameProxy : public CanMakeWeakPtr<ProvisionalFrameProxy> {
+class ProvisionalFrameProxy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ProvisionalFrameProxy(WebFrameProxy&, Ref<FrameProcess>&&, bool isCrossSiteRedirect);
+    explicit ProvisionalFrameProxy(WebFrameProxy&, Ref<FrameProcess>&&);
+
     ~ProvisionalFrameProxy();
 
     WebProcessProxy& process() const;
     Ref<WebProcessProxy> protectedProcess() const;
 
-    WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
-
-    Ref<FrameProcess> takeFrameProcess();
-
-    bool isCrossSiteRedirect() const { return m_isCrossSiteRedirect; }
+    RefPtr<FrameProcess> takeFrameProcess();
 
 private:
     WeakRef<WebFrameProxy> m_frame;
-    Ref<FrameProcess> m_frameProcess;
+    RefPtr<FrameProcess> m_frameProcess;
     Ref<VisitedLinkStore> m_visitedLinkStore;
-    bool m_isCrossSiteRedirect;
-    WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier;
 };
 
 } // namespace WebKit

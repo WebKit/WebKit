@@ -394,7 +394,7 @@ ALWAYS_INLINE void SelectorDataList::executeSingleClassNameSelectorData(const Co
 
     const AtomString& className = selectorData.selector->value();
     for (auto& element : descendantsOfType<Element>(const_cast<ContainerNode&>(rootNode))) {
-        if (element.hasClass() && element.classNames().contains(className)) {
+        if (element.hasClassName(className)) {
             appendOutputForElement(output, element);
             if constexpr (std::is_same_v<OutputType, Element*>)
                 return;

@@ -29,6 +29,7 @@
 
 #include "ImageBufferAllocator.h"
 #include "ImageBufferBackend.h"
+#include "ImageBufferPixelFormat.h"
 #include "PlatformScreen.h"
 #include "ProcessIdentity.h"
 #include "RenderingMode.h"
@@ -85,17 +86,17 @@ struct ImageBufferParameters {
     FloatSize logicalSize;
     float resolutionScale;
     DestinationColorSpace colorSpace;
-    PixelFormat pixelFormat;
+    ImageBufferPixelFormat pixelFormat;
     RenderingPurpose purpose;
 };
 
 class ImageBuffer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageBuffer> {
 public:
     using Parameters = ImageBufferParameters;
-    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, OptionSet<ImageBufferOptions> = { }, GraphicsClient* graphicsClient = nullptr);
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, ImageBufferPixelFormat, OptionSet<ImageBufferOptions> = { }, GraphicsClient* graphicsClient = nullptr);
 
     template<typename BackendType, typename ImageBufferType = ImageBuffer, typename... Arguments>
-    static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, const ImageBufferCreationContext& creationContext, Arguments&&... arguments)
+    static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat, RenderingPurpose purpose, const ImageBufferCreationContext& creationContext, Arguments&&... arguments)
     {
         Parameters parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
         auto backendParameters = ImageBuffer::backendParameters(parameters);
@@ -117,9 +118,8 @@ public:
     {
         return {
             BackendType::renderingMode,
-            BackendType::calculateBaseTransform(parameters, BackendType::isOriginAtBottomLeftCorner),
+            ImageBufferBackend::calculateBaseTransform(parameters),
             BackendType::calculateMemoryCost(parameters),
-            BackendType::calculateExternalMemoryCost(parameters)
         };
     }
 
@@ -157,13 +157,12 @@ public:
     DestinationColorSpace colorSpace() const { return m_parameters.colorSpace; }
     
     RenderingPurpose renderingPurpose() const { return m_parameters.purpose; }
-    PixelFormat pixelFormat() const { return m_parameters.pixelFormat; }
+    ImageBufferPixelFormat pixelFormat() const { return m_parameters.pixelFormat; }
     const Parameters& parameters() const { return m_parameters; }
 
     RenderingMode renderingMode() const { return m_backendInfo.renderingMode; }
     AffineTransform baseTransform() const { return m_backendInfo.baseTransform; }
     size_t memoryCost() const { return m_backendInfo.memoryCost; }
-    size_t externalMemoryCost() const { return m_backendInfo.externalMemoryCost; }
     const ImageBufferBackend::Info& backendInfo() { return m_backendInfo; }
 
     // Returns NativeImage of the current drawing results. Results in an immutable copy of the current back buffer.
@@ -187,6 +186,8 @@ public:
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     WEBCORE_EXPORT virtual std::optional<DynamicContentScalingDisplayList> dynamicContentScalingDisplayList();
 #endif
+
+    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate();
 
     // Returns NativeImage of the current drawing results. Results in an immutable copy of the current back buffer.
     // Caller is responsible for ensuring that the passed reference is the only reference to the ImageBuffer.

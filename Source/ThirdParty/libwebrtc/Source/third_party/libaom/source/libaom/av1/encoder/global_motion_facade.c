@@ -89,6 +89,7 @@ static AOM_INLINE void compute_global_motion_for_ref_frame(
   assert(ref_buf[frame] != NULL);
   int bit_depth = cpi->common.seq_params->bit_depth;
   GlobalMotionMethod global_motion_method = default_global_motion_method;
+  int downsample_level = cpi->sf.gm_sf.downsample_level;
   int num_refinements = cpi->sf.gm_sf.num_refinement_steps;
   bool mem_alloc_failed = false;
 
@@ -99,9 +100,10 @@ static AOM_INLINE void compute_global_motion_for_ref_frame(
   double best_erroradv = erroradv_tr;
   for (TransformationType model = FIRST_GLOBAL_TRANS_TYPE;
        model <= LAST_GLOBAL_TRANS_TYPE; ++model) {
-    if (!aom_compute_global_motion(
-            model, cpi->source, ref_buf[frame], bit_depth, global_motion_method,
-            motion_models, RANSAC_NUM_MOTIONS, &mem_alloc_failed)) {
+    if (!aom_compute_global_motion(model, cpi->source, ref_buf[frame],
+                                   bit_depth, global_motion_method,
+                                   downsample_level, motion_models,
+                                   RANSAC_NUM_MOTIONS, &mem_alloc_failed)) {
       if (mem_alloc_failed) {
         aom_internal_error(error_info, AOM_CODEC_MEM_ERROR,
                            "Failed to allocate global motion buffers");
@@ -114,6 +116,9 @@ static AOM_INLINE void compute_global_motion_for_ref_frame(
 
       WarpedMotionParams tmp_wm_params;
       av1_convert_model_to_params(motion_models[i].params, &tmp_wm_params);
+
+      // Check that the generated model is warp-able
+      if (!av1_get_shear_params(&tmp_wm_params)) continue;
 
       // Skip models that we won't use (IDENTITY or TRANSLATION)
       //
@@ -151,6 +156,14 @@ static AOM_INLINE void compute_global_motion_for_ref_frame(
 
       double erroradvantage = (double)warp_error / ref_frame_error;
 
+      // Check that the model signaling cost is not too high
+      if (!av1_is_enough_erroradvantage(
+              erroradvantage,
+              gm_get_params_cost(&tmp_wm_params, ref_params,
+                                 cm->features.allow_high_precision_mv))) {
+        continue;
+      }
+
       if (erroradvantage < best_erroradv) {
         best_erroradv = erroradvantage;
         // Save the wm_params modified by
@@ -160,34 +173,6 @@ static AOM_INLINE void compute_global_motion_for_ref_frame(
                sizeof(WarpedMotionParams));
       }
     }
-  }
-
-  if (!av1_get_shear_params(&cm->global_motion[frame]))
-    cm->global_motion[frame] = default_warp_params;
-
-#if 0
-  // We never choose translational models, so this code is disabled
-  if (cm->global_motion[frame].wmtype == TRANSLATION) {
-    cm->global_motion[frame].wmmat[0] =
-        convert_to_trans_prec(cm->features.allow_high_precision_mv,
-                              cm->global_motion[frame].wmmat[0]) *
-        GM_TRANS_ONLY_DECODE_FACTOR;
-    cm->global_motion[frame].wmmat[1] =
-        convert_to_trans_prec(cm->features.allow_high_precision_mv,
-                              cm->global_motion[frame].wmmat[1]) *
-        GM_TRANS_ONLY_DECODE_FACTOR;
-  }
-#endif
-
-  if (cm->global_motion[frame].wmtype == IDENTITY) return;
-
-  // If the best error advantage found doesn't meet the threshold for
-  // this motion type, revert to IDENTITY.
-  if (!av1_is_enough_erroradvantage(
-          best_erroradv,
-          gm_get_params_cost(&cm->global_motion[frame], ref_params,
-                             cm->features.allow_high_precision_mv))) {
-    cm->global_motion[frame] = default_warp_params;
   }
 }
 
@@ -431,15 +416,19 @@ void av1_compute_global_motion_facade(AV1_COMP *cpi) {
   }
 
   if (cpi->common.current_frame.frame_type == INTER_FRAME && cpi->source &&
-      cpi->oxcf.tool_cfg.enable_global_motion && !gm_info->search_done) {
+      cpi->oxcf.tool_cfg.enable_global_motion && !gm_info->search_done &&
+      cpi->sf.gm_sf.gm_search_type != GM_DISABLE_SEARCH) {
     setup_global_motion_info_params(cpi);
-    gm_alloc_data(cpi, &cpi->td.gm_data);
-    if (cpi->mt_info.num_workers > 1)
-      av1_global_motion_estimation_mt(cpi);
-    else
-      global_motion_estimation(cpi);
-    gm_dealloc_data(&cpi->td.gm_data);
-    gm_info->search_done = 1;
+    // Terminate early if the total number of reference frames is zero.
+    if (cpi->gm_info.num_ref_frames[0] || cpi->gm_info.num_ref_frames[1]) {
+      gm_alloc_data(cpi, &cpi->td.gm_data);
+      if (cpi->mt_info.num_workers > 1)
+        av1_global_motion_estimation_mt(cpi);
+      else
+        global_motion_estimation(cpi);
+      gm_dealloc_data(&cpi->td.gm_data);
+      gm_info->search_done = 1;
+    }
   }
   memcpy(cm->cur_frame->global_motion, cm->global_motion,
          sizeof(cm->cur_frame->global_motion));

@@ -43,7 +43,7 @@ bool createServerAndClientIdentifiers(HANDLE& serverIdentifier, HANDLE& clientId
     String pipeName;
 
     do {
-        pipeName = makeString("\\\\.\\pipe\\com.apple.WebKit.", hex(cryptographicallyRandomNumber<unsigned>()));
+        pipeName = makeString("\\\\.\\pipe\\com.apple.WebKit."_s, hex(cryptographicallyRandomNumber<unsigned>()));
 
         serverIdentifier = ::CreateNamedPipe(pipeName.wideCharacters().data(),
             PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE | FILE_FLAG_OVERLAPPED,
@@ -287,7 +287,8 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 
     // Write the outgoing message.
 
-    if (::WriteFile(m_connectionPipe, encoder->buffer(), encoder->bufferSize(), 0, &m_writeListener.state())) {
+    auto buffer = encoder->span();
+    if (::WriteFile(m_connectionPipe, buffer.data(), buffer.size(), 0, &m_writeListener.state())) {
         // We successfully sent this message.
         return true;
     }

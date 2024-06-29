@@ -1,0 +1,11 @@
+
+PASS :matrix:inputSource="const";cols=2;rows=2
+PASS :matrix:inputSource="const";cols=2;rows=3
+PASS :matrix:inputSource="const";cols=2;rows=4
+PASS :matrix:inputSource="const";cols=3;rows=2
+PASS :matrix:inputSource="const";cols=3;rows=3
+PASS :matrix:inputSource="const";cols=3;rows=4
+PASS :matrix:inputSource="const";cols=4;rows=2
+PASS :matrix:inputSource="const";cols=4;rows=3
+PASS :matrix:inputSource="const";cols=4;rows=4
+

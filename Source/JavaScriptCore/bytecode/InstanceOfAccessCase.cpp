@@ -46,11 +46,6 @@ void InstanceOfAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma, Inden
     out.print(comma, "prototype = ", JSValue(prototype()));
 }
 
-Ref<AccessCase> InstanceOfAccessCase::cloneImpl() const
-{
-    return adoptRef(*new InstanceOfAccessCase(*this));
-}
-
 InstanceOfAccessCase::InstanceOfAccessCase(
     VM& vm, JSCell* owner, AccessType accessType, Structure* structure,
     const ObjectPropertyConditionSet& conditionSet, JSObject* prototype)

@@ -61,6 +61,9 @@ class RTPSenderAudio {
     // header-extension-for-audio-level-indication.
     // Valid range is [0,127]. Actual value is negative.
     absl::optional<int> audio_level_dbov;
+
+    // Contributing sources list.
+    rtc::ArrayView<const uint32_t> csrcs;
   };
   bool SendAudio(const RtpAudioFrame& frame);
 

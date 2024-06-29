@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "FrameLoaderTypes.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -56,7 +57,7 @@ public:
 
     virtual ~CachedResourceClient();
 
-    virtual void notifyFinished(CachedResource&, const NetworkLoadMetrics&);
+    virtual void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
     virtual void deprecatedDidReceiveCachedResource(CachedResource&);
 
     static CachedResourceClientType expectedType();

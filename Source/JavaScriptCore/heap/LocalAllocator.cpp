@@ -224,6 +224,8 @@ void* LocalAllocator::tryAllocateIn(MarkedBlock::Handle* block, size_t cellSize)
 {
     ASSERT(block);
     ASSERT(!block->isFreeListed());
+    m_directory->assertIsMutatorOrMutatorIsStopped();
+    ASSERT(m_directory->isInUse(block));
     
     block->sweep(&m_freeList);
     
@@ -233,8 +235,8 @@ void* LocalAllocator::tryAllocateIn(MarkedBlock::Handle* block, size_t cellSize)
         ASSERT(block->isFreeListed());
         block->unsweepWithNoNewlyAllocated();
         ASSERT(!block->isFreeListed());
-        ASSERT(!m_directory->isEmpty(NoLockingNecessary, block));
-        ASSERT(!m_directory->isCanAllocateButNotEmpty(NoLockingNecessary, block));
+        ASSERT(!m_directory->isEmpty(block));
+        ASSERT(!m_directory->isCanAllocateButNotEmpty(block));
         return nullptr;
     }
     
@@ -245,7 +247,9 @@ void* LocalAllocator::tryAllocateIn(MarkedBlock::Handle* block, size_t cellSize)
             RELEASE_ASSERT_NOT_REACHED();
             return nullptr;
         }, cellSize);
-    m_directory->setIsEden(NoLockingNecessary, m_currentBlock, true);
+
+    // FIXME: We should make this work with thread safety analysis.
+    m_directory->m_bits.setIsEden(m_currentBlock->index(), true);
     m_directory->markedSpace().didAllocateInBlock(m_currentBlock);
     return result;
 }

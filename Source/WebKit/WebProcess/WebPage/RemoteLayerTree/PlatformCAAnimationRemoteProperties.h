@@ -52,7 +52,7 @@ struct PlatformCAAnimationRemoteProperties {
 
     // For basic animations, these vectors have two entries. For keyframe animations, two or more.
     // timingFunctions has n-1 entries.
-    using KeyframeValue = std::variant<float, WebCore::Color, WebCore::FloatPoint3D, WebCore::TransformationMatrix, RefPtr<WebCore::FilterOperation>>;
+    using KeyframeValue = std::variant<float, WebCore::Color, WebCore::FloatPoint3D, WebCore::TransformationMatrix, Ref<WebCore::FilterOperation>>;
     Vector<KeyframeValue> keyValues;
     Vector<float> keyTimes;
     Vector<Ref<WebCore::TimingFunction>> timingFunctions;

@@ -1,0 +1,29 @@
+
+PASS :matrix_matrix:inputSource="const";common_dim=2;x_rows=2;y_cols=2
+PASS :matrix_matrix:inputSource="const";common_dim=2;x_rows=2;y_cols=3
+PASS :matrix_matrix:inputSource="const";common_dim=2;x_rows=2;y_cols=4
+PASS :matrix_matrix:inputSource="const";common_dim=2;x_rows=3;y_cols=2
+PASS :matrix_matrix:inputSource="const";common_dim=2;x_rows=3;y_cols=3
+PASS :matrix_matrix:inputSource="const";common_dim=2;x_rows=3;y_cols=4
+PASS :matrix_matrix:inputSource="const";common_dim=2;x_rows=4;y_cols=2
+PASS :matrix_matrix:inputSource="const";common_dim=2;x_rows=4;y_cols=3
+PASS :matrix_matrix:inputSource="const";common_dim=2;x_rows=4;y_cols=4
+PASS :matrix_matrix:inputSource="const";common_dim=3;x_rows=2;y_cols=2
+PASS :matrix_matrix:inputSource="const";common_dim=3;x_rows=2;y_cols=3
+PASS :matrix_matrix:inputSource="const";common_dim=3;x_rows=2;y_cols=4
+PASS :matrix_matrix:inputSource="const";common_dim=3;x_rows=3;y_cols=2
+PASS :matrix_matrix:inputSource="const";common_dim=3;x_rows=3;y_cols=3
+PASS :matrix_matrix:inputSource="const";common_dim=3;x_rows=3;y_cols=4
+PASS :matrix_matrix:inputSource="const";common_dim=3;x_rows=4;y_cols=2
+PASS :matrix_matrix:inputSource="const";common_dim=3;x_rows=4;y_cols=3
+PASS :matrix_matrix:inputSource="const";common_dim=3;x_rows=4;y_cols=4
+PASS :matrix_matrix:inputSource="const";common_dim=4;x_rows=2;y_cols=2
+PASS :matrix_matrix:inputSource="const";common_dim=4;x_rows=2;y_cols=3
+PASS :matrix_matrix:inputSource="const";common_dim=4;x_rows=2;y_cols=4
+PASS :matrix_matrix:inputSource="const";common_dim=4;x_rows=3;y_cols=2
+PASS :matrix_matrix:inputSource="const";common_dim=4;x_rows=3;y_cols=3
+PASS :matrix_matrix:inputSource="const";common_dim=4;x_rows=3;y_cols=4
+PASS :matrix_matrix:inputSource="const";common_dim=4;x_rows=4;y_cols=2
+PASS :matrix_matrix:inputSource="const";common_dim=4;x_rows=4;y_cols=3
+PASS :matrix_matrix:inputSource="const";common_dim=4;x_rows=4;y_cols=4
+

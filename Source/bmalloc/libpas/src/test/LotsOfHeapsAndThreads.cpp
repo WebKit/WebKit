@@ -48,7 +48,7 @@ void testLotsOfHeapsAndThreads(unsigned numHeaps, unsigned numThreads, unsigned 
         threads[i] = thread([&] () {
             for (unsigned j = count; j--;) {
                 for (unsigned k = numHeaps; k--;) {
-                    void* ptr = bmalloc_iso_allocate(heaps + k);
+                    void* ptr = bmalloc_iso_allocate(heaps + k, pas_non_compact_allocation_mode);
                     CHECK_EQUAL(pas_get_heap(ptr, BMALLOC_HEAP_CONFIG),
                                 bmalloc_heap_ref_get_heap(heaps + k));
                     bmalloc_deallocate(ptr);

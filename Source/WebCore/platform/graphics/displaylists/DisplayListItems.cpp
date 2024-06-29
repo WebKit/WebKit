@@ -882,9 +882,20 @@ void BeginTransparencyLayer::apply(GraphicsContext& context) const
     context.beginTransparencyLayer(m_opacity);
 }
 
+void BeginTransparencyLayerWithCompositeMode::apply(GraphicsContext& context) const
+{
+    context.beginTransparencyLayer(m_compositeMode.operation, m_compositeMode.blendMode);
+}
+
 void BeginTransparencyLayer::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
     ts.dumpProperty("opacity", opacity());
+}
+
+void BeginTransparencyLayerWithCompositeMode::dump(TextStream& ts, OptionSet<AsTextFlag>) const
+{
+    ts.dumpProperty("composite-operator", compositeMode().operation);
+    ts.dumpProperty("blend-mode", compositeMode().blendMode);
 }
 
 void EndTransparencyLayer::apply(GraphicsContext& context) const

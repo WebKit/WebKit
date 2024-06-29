@@ -36,7 +36,7 @@ namespace WebKit::WebGPU {
 
 std::optional<OutOfMemoryError> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::OutOfMemoryError& outOfMemoryError)
 {
-    return { { } };
+    return { OutOfMemoryError { } };
 }
 
 RefPtr<WebCore::WebGPU::OutOfMemoryError> ConvertFromBackingContext::convertFromBacking(const OutOfMemoryError& outOfMemoryError)

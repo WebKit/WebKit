@@ -104,7 +104,7 @@ TEST(Signals, SignalsAccessFault)
     OSAllocator::protect(ptr, 4096, false, false);
 
     // Try and read, triggering an AccessFault
-    dataLogF("Reading from protected memory", ptr[0]);
+    dataLogLn("Reading from protected memory", static_cast<unsigned>(ptr[0]));
 
     EXPECT_TRUE(handlerRan);
 }

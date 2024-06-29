@@ -59,7 +59,7 @@ public:
     AtomString language() const final { return m_language; }
     int trackIndex() const final { return m_index; }
 
-    void handleSample(GRefPtr<GstSample>);
+    void handleSample(GRefPtr<GstSample>&&);
 
 protected:
     void tagsChanged(GRefPtr<GstTagList>&&) final;

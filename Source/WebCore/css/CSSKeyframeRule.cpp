@@ -95,8 +95,8 @@ bool StyleRuleKeyframe::setKeyText(const String& keyText)
 String StyleRuleKeyframe::cssText() const
 {
     if (auto declarations = m_properties->asText(); !declarations.isEmpty())
-        return makeString(keyText(), " { ", declarations, " }");
-    return makeString(keyText(), " { }");
+        return makeString(keyText(), " { "_s, declarations, " }"_s);
+    return makeString(keyText(), " { }"_s);
 }
 
 CSSKeyframeRule::CSSKeyframeRule(StyleRuleKeyframe& keyframe, CSSKeyframesRule* parent)

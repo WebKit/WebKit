@@ -68,7 +68,6 @@ typedef void* PlatformBundle;
 #endif
 
 class InjectedBundleScriptWorld;
-class WebConnection;
 class WebFrame;
 class WebPage;
 class WebPageGroupProxy;
@@ -91,8 +90,6 @@ public:
     void postSynchronousMessage(const String&, API::Object*, RefPtr<API::Object>& returnData);
     void setServiceWorkerProxyCreationCallback(void (*)(uint64_t));
 
-    WebConnection* webConnectionToUIProcess() const;
-
     // TestRunner only SPI
     void addOriginAccessAllowListEntry(const String&, const String&, const String&, bool);
     void removeOriginAccessAllowListEntry(const String&, const String&, const String&, bool);
@@ -103,7 +100,6 @@ public:
     String pageSizeAndMarginsInPixels(WebFrame*, int, int, int, int, int, int, int);
     bool isPageBoxVisible(WebFrame*, int);
     void setUserStyleSheetLocation(const String&);
-    void setWebNotificationPermission(WebPage*, const String& originString, bool allowed);
     void removeAllWebNotificationPermissions(WebPage*);
     std::optional<WTF::UUID> webNotificationID(JSContextRef, JSValueRef);
     Ref<API::Data> createWebDataFromUint8Array(JSContextRef, JSValueRef);

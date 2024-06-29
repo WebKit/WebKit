@@ -104,6 +104,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;
+    const void* logIdentifier() const final { return BaseAudioContext::logIdentifier(); }
 #endif
 
     void constructCommon();
@@ -137,6 +138,7 @@ private:
     bool isNowPlayingEligible() const final;
     std::optional<NowPlayingInfo> nowPlayingInfo() const final;
     WeakPtr<PlatformMediaSession> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSession>>&, PlatformMediaSession::PlaybackControlsPurpose) final;
+    void isActiveNowPlayingSessionChanged() final;
 
     // MediaCanStartListener.
     void mediaCanStart(Document&) final;

@@ -347,6 +347,9 @@ angle::CallCapture CaptureCopyMetalSharedEventANGLE(egl::Thread *thread,
                                                     egl::Display *dpyPacked,
                                                     egl::SyncID syncPacked,
                                                     void *returnValue);
+angle::CallCapture CaptureSetValidationEnabledANGLE(egl::Thread *thread,
+                                                    bool isCallValid,
+                                                    EGLBoolean validationState);
 angle::CallCapture CaptureReleaseHighPowerGPUANGLE(egl::Thread *thread,
                                                    bool isCallValid,
                                                    egl::Display *dpyPacked,

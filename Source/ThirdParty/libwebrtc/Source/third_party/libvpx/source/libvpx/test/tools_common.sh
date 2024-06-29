@@ -280,7 +280,12 @@ run_tests() {
     test_end "${test}"
   done
 
-  local tested_config="$(test_configuration_target) @ $(current_hash)"
+  # C vs SIMD tests are run for x86 32-bit, 64-bit and ARM platform
+  if [ "${test_name}" = "vp9_c_vs_simd_encode" ]; then
+    local tested_config="$(current_hash)"
+  else
+    local tested_config="$(test_configuration_target) @ $(current_hash)"
+  fi
   echo "${test_name}: Done, all tests pass for ${tested_config}."
 }
 

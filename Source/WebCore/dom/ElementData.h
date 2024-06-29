@@ -94,10 +94,10 @@ public:
 
     void setClassNames(SpaceSplitString&& classNames) const { m_classNames = WTFMove(classNames); }
     const SpaceSplitString& classNames() const { return m_classNames; }
-    static ptrdiff_t classNamesMemoryOffset() { return OBJECT_OFFSETOF(ElementData, m_classNames); }
+    static constexpr ptrdiff_t classNamesMemoryOffset() { return OBJECT_OFFSETOF(ElementData, m_classNames); }
 
     const AtomString& idForStyleResolution() const { return m_idForStyleResolution; }
-    static ptrdiff_t idForStyleResolutionMemoryOffset() { return OBJECT_OFFSETOF(ElementData, m_idForStyleResolution); }
+    static constexpr ptrdiff_t idForStyleResolutionMemoryOffset() { return OBJECT_OFFSETOF(ElementData, m_idForStyleResolution); }
     void setIdForStyleResolution(const AtomString& newId) const { m_idForStyleResolution = newId; }
 
     const StyleProperties* inlineStyle() const { return m_inlineStyle.get(); }
@@ -121,7 +121,7 @@ public:
     bool isUnique() const { return m_arraySizeAndFlags & s_flagIsUnique; }
     static uint32_t isUniqueFlag() { return s_flagIsUnique; }
 
-    static ptrdiff_t arraySizeAndFlagsMemoryOffset() { return OBJECT_OFFSETOF(ElementData, m_arraySizeAndFlags); }
+    static constexpr ptrdiff_t arraySizeAndFlagsMemoryOffset() { return OBJECT_OFFSETOF(ElementData, m_arraySizeAndFlags); }
     static inline uint32_t styleAttributeIsDirtyFlag() { return s_flagStyleAttributeIsDirty; }
     static uint32_t animatedSVGAttributesAreDirtyFlag() { return s_flagAnimatedSVGAttributesAreDirty; }
 
@@ -202,7 +202,7 @@ public:
     explicit ShareableElementData(const UniqueElementData&);
     ~ShareableElementData();
 
-    static ptrdiff_t attributeArrayMemoryOffset() { return OBJECT_OFFSETOF(ShareableElementData, m_attributeArray); }
+    static constexpr ptrdiff_t attributeArrayMemoryOffset() { return OBJECT_OFFSETOF(ShareableElementData, m_attributeArray); }
 
     Attribute m_attributeArray[0];
 };
@@ -227,7 +227,7 @@ public:
     explicit UniqueElementData(const ShareableElementData&);
     explicit UniqueElementData(const UniqueElementData&);
 
-    static ptrdiff_t attributeVectorMemoryOffset() { return OBJECT_OFFSETOF(UniqueElementData, m_attributeVector); }
+    static constexpr ptrdiff_t attributeVectorMemoryOffset() { return OBJECT_OFFSETOF(UniqueElementData, m_attributeVector); }
 
     mutable RefPtr<ImmutableStyleProperties> m_presentationalHintStyle;
     typedef Vector<Attribute, 4> AttributeVector;

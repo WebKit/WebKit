@@ -220,15 +220,15 @@ inline JSFunction* JSGlobalObject::promiseProtoThenFunction() const { return jsC
 inline JSFunction* JSGlobalObject::performPromiseThenFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performPromiseThen)); }
 inline JSFunction* JSGlobalObject::regExpProtoExecFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::regExpBuiltinExec)); }
 inline JSFunction* JSGlobalObject::stringProtoSubstringFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::stringSubstring)); }
-inline JSFunction* JSGlobalObject::performProxyObjectHasFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectHas)); }
-inline JSFunction* JSGlobalObject::performProxyObjectGetFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectGet)); }
-inline JSFunction* JSGlobalObject::performProxyObjectGetFunctionConcurrently() const { return linkTimeConstantConcurrently<JSFunction*>(LinkTimeConstant::performProxyObjectGet); }
-inline JSFunction* JSGlobalObject::performProxyObjectGetByValFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectGetByVal)); }
-inline JSFunction* JSGlobalObject::performProxyObjectGetByValFunctionConcurrently() const { return linkTimeConstantConcurrently<JSFunction*>(LinkTimeConstant::performProxyObjectGetByVal); }
-inline JSFunction* JSGlobalObject::performProxyObjectSetSloppyFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectSetSloppy)); }
-inline JSFunction* JSGlobalObject::performProxyObjectSetSloppyFunctionConcurrently() const { return linkTimeConstantConcurrently<JSFunction*>(LinkTimeConstant::performProxyObjectSetSloppy); }
-inline JSFunction* JSGlobalObject::performProxyObjectSetStrictFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectSetStrict)); }
-inline JSFunction* JSGlobalObject::performProxyObjectSetStrictFunctionConcurrently() const { return linkTimeConstantConcurrently<JSFunction*>(LinkTimeConstant::performProxyObjectSetStrict); }
+inline JSFunction* JSGlobalObject::performProxyObjectHasFunction() const { return m_performProxyObjectHasFunction.get(); }
+inline JSFunction* JSGlobalObject::performProxyObjectGetFunction() const { return m_performProxyObjectGetFunction.get(); }
+inline JSFunction* JSGlobalObject::performProxyObjectGetFunctionConcurrently() const { return performProxyObjectGetFunction(); }
+inline JSFunction* JSGlobalObject::performProxyObjectGetByValFunction() const { return m_performProxyObjectGetByValFunction.get(); }
+inline JSFunction* JSGlobalObject::performProxyObjectGetByValFunctionConcurrently() const { return performProxyObjectGetByValFunction(); }
+inline JSFunction* JSGlobalObject::performProxyObjectSetSloppyFunction() const { return m_performProxyObjectSetSloppyFunction.get(); }
+inline JSFunction* JSGlobalObject::performProxyObjectSetSloppyFunctionConcurrently() const { return performProxyObjectSetSloppyFunction(); }
+inline JSFunction* JSGlobalObject::performProxyObjectSetStrictFunction() const { return m_performProxyObjectSetStrictFunction.get(); }
+inline JSFunction* JSGlobalObject::performProxyObjectSetStrictFunctionConcurrently() const { return performProxyObjectSetStrictFunction(); }
 inline GetterSetter* JSGlobalObject::regExpProtoGlobalGetter() const { return bitwise_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoGlobalGetter)); }
 inline GetterSetter* JSGlobalObject::regExpProtoUnicodeGetter() const { return bitwise_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoUnicodeGetter)); }
 inline GetterSetter* JSGlobalObject::regExpProtoUnicodeSetsGetter() const { return bitwise_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoUnicodeSetsGetter)); }
@@ -453,16 +453,6 @@ inline JSScope* JSGlobalObject::globalScope()
     return m_globalLexicalEnvironment.get();
 }
 
-// https://tc39.es/ecma262/#sec-hasvardeclaration
-inline bool JSGlobalObject::hasVarDeclaration(const RefPtr<UniquedStringImpl>& ident)
-{
-    SymbolTableEntry entry = symbolTable()->get(ident.get());
-    if (!entry.isNull() && entry.scopeOffset() > m_lastStaticGlobalOffset)
-        return true;
-
-    return m_varNamesDeclaredViaEval.contains(ident);
-}
-
 // https://tc39.es/ecma262/#sec-candeclareglobalvar
 inline bool JSGlobalObject::canDeclareGlobalVar(const Identifier& ident)
 {
@@ -489,10 +479,8 @@ inline void JSGlobalObject::createGlobalVarBinding(const Identifier& ident)
     ASSERT(isStructureExtensible());
     if constexpr (context == BindingCreationContext::Global)
         addSymbolTableEntry(ident);
-    else {
+    else
         putDirect(vm, ident, jsUndefined());
-        m_varNamesDeclaredViaEval.add(ident.impl());
-    }
 }
 
 inline InlineWatchpointSet& JSGlobalObject::typedArraySpeciesWatchpointSet(TypedArrayType type)

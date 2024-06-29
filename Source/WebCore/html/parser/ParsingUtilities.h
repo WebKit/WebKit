@@ -213,7 +213,7 @@ template<typename CharacterType> bool skipExactlyIgnoringASCIICase(const Charact
     
     if (position + literalLength > end)
         return false;
-    if (!equalLettersIgnoringASCIICase(position, literal))
+    if (!equalLettersIgnoringASCIICaseWithLength(std::span { position, literalLength }, literal.span8(), literalLength))
         return false;
     position += literalLength;
     return true;
@@ -225,7 +225,7 @@ template<typename CharacterType> bool skipExactlyIgnoringASCIICase(StringParsing
 
     if (buffer.lengthRemaining() < literalLength)
         return false;
-    if (!equalLettersIgnoringASCIICase(buffer.position(), literal))
+    if (!equalLettersIgnoringASCIICaseWithLength(buffer.span(), literal.span8(), literalLength))
         return false;
     buffer += literalLength;
     return true;

@@ -44,8 +44,6 @@ public:
     virtual AffineTransform getCTM(StyleUpdateStrategy) = 0;
     virtual AffineTransform getScreenCTM(StyleUpdateStrategy) = 0;
 
-    ExceptionOr<Ref<SVGMatrix>> getTransformToElement(SVGElement*, StyleUpdateStrategy = AllowStyleUpdate);
-
     static SVGElement* nearestViewportElement(const SVGElement*);
     static SVGElement* farthestViewportElement(const SVGElement*);
 

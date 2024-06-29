@@ -33,6 +33,7 @@
 #include "pas_allocator_counts.h"
 #include "pas_heap_ref.h"
 #include "pas_intrinsic_heap_support.h"
+#include "pas_allocation_mode.h"
 
 #include "thingy_heap_prefix.h"
 
@@ -63,7 +64,7 @@ PAS_API size_t thingy_get_allocation_size(void*);
 
 PAS_API pas_heap* thingy_heap_ref_get_heap(pas_heap_ref* heap_ref);
 
-PAS_API void* thingy_utility_heap_allocate(size_t size);
+PAS_API void* thingy_utility_heap_allocate(size_t size, pas_allocation_mode allocation_mode);
 
 PAS_END_EXTERN_C;
 

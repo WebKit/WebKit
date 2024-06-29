@@ -109,7 +109,7 @@ NSDictionary *NotificationData::dictionaryRepresentation() const
         WebNotificationUUIDStringKey : (NSString *)notificationID.toString(),
         WebNotificationContextUUIDStringKey : (NSString *)contextIdentifier.toString(),
         WebNotificationSessionIDKey : @(sourceSession.toUInt64()),
-        WebNotificationDataKey: [NSData dataWithBytes:data.data() length:data.size()],
+        WebNotificationDataKey: toNSData(data).autorelease(),
     }.mutableCopy;
 
     if (silent != std::nullopt)

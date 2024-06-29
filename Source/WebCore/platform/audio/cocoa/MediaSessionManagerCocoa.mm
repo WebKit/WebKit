@@ -74,10 +74,11 @@ void MediaSessionManagerCocoa::ensureCodecsRegistered()
     dispatch_once(&onceToken, ^{
         if (shouldEnableVP9Decoder())
             registerSupplementalVP9Decoder();
-        if (shouldEnableVP8Decoder())
-            registerWebKitVP8Decoder();
-        if (shouldEnableVP9SWDecoder())
+        if (swVPDecodersAlwaysEnabled()) {
             registerWebKitVP9Decoder();
+            registerWebKitVP8Decoder();
+        } else if (shouldEnableVP8Decoder())
+            registerWebKitVP8Decoder();
     });
 #endif
 }
@@ -474,6 +475,13 @@ WeakPtr<PlatformMediaSession> MediaSessionManagerCocoa::nowPlayingEligibleSessio
     }, PlatformMediaSession::PlaybackControlsPurpose::NowPlaying);
 }
 
+void MediaSessionManagerCocoa::updateActiveNowPlayingSession(CheckedPtr<PlatformMediaSession> activeNowPlayingSession)
+{
+    forEachSession([&](auto& session) {
+        session.setActiveNowPlayingSession(&session == activeNowPlayingSession.get());
+    });
+}
+
 void MediaSessionManagerCocoa::updateNowPlayingInfo()
 {
     if (!isMediaRemoteFrameworkAvailable())
@@ -482,11 +490,11 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     std::optional<NowPlayingInfo> nowPlayingInfo;
-    if (auto session = nowPlayingEligibleSession())
+    CheckedPtr session = nowPlayingEligibleSession().get();
+    if (session)
         nowPlayingInfo = session->nowPlayingInfo();
 
     if (!nowPlayingInfo) {
-
         if (m_registeredAsNowPlayingApplication) {
             ALWAYS_LOG(LOGIDENTIFIER, "clearing now playing info");
             m_nowPlayingManager->clearNowPlayingInfo();
@@ -499,6 +507,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
         m_lastUpdatedNowPlayingElapsedTime = NAN;
         m_lastUpdatedNowPlayingInfoUniqueIdentifier = { };
 
+        updateActiveNowPlayingSession(nullptr);
         return;
     }
 
@@ -518,6 +527,8 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
         m_registeredAsNowPlayingApplication = true;
         providePresentingApplicationPIDIfNecessary();
     }
+
+    updateActiveNowPlayingSession(session);
 
     if (!m_nowPlayingInfo || nowPlayingInfo->metadata != m_nowPlayingInfo->metadata)
         nowPlayingMetadataChanged(nowPlayingInfo->metadata);

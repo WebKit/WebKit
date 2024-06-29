@@ -1,0 +1,183 @@
+#!/usr/bin/env python3
+# Copyright (C) 2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import os
+import subprocess
+import argparse
+import json
+import sys
+
+CHECKER_MAP = {
+    'Member variable is a raw-pointer/reference to reference-countable type': 'NoUncountedMemberChecker',
+    "Reference-countable base class doesn't have virtual destructor": 'RefCntblBaseVirtualDtor',
+    'Uncounted call argument for a raw pointer/reference parameter': 'UncountedCallArgsChecker',
+    'Uncounted raw pointer or reference not provably backed by ref-counted variable': 'UncountedLocalVarsChecker'
+}
+
+PROJECTS = ['WebCore', 'WebKit']
+
+
+def parser():
+    parser = argparse.ArgumentParser(description='Generates files listing new regressions and files per checker type')
+    parser.add_argument(
+        'results_dir',
+        help='Path to directory of results to parse'
+    )
+    parser.add_argument(
+        '--output-dir',
+        dest='output_dir',
+        help='Path to output directory for generated files',
+        default='smart-pointer-result-archive'
+    )
+    parser.add_argument(
+        '--build-dir',
+        dest='build_dir',
+        help='Path to build directory, used to standardize file paths',
+        required=True
+    )
+
+    return parser.parse_args()
+
+
+def parse_results_file(args, file_path):
+    bug_type, bug_file, issue_hash, bug_line = None, None, None, None
+    with open(file_path, 'r') as f:
+        while True:
+            lines = f.readlines(250)
+            if not lines:
+                break
+            for line in lines:
+                if 'BUGFILE' in line:
+                    bug_file = line.removeprefix('<!-- BUGFILE ')
+                    bug_file = bug_file.removesuffix(' -->\n')
+                    bug_file = bug_file.removeprefix(f'{args.build_dir}/')
+                if 'ISSUEHASHCONTENTOFLINEINCONTEXT' in line:
+                    issue_hash = line.removeprefix('<!-- ISSUEHASHCONTENTOFLINEINCONTEXT ')
+                    issue_hash = issue_hash.removesuffix(' -->\n')
+                if 'BUGTYPE' in line:
+                    bug_type = line.removeprefix('<!-- BUGTYPE ')
+                    bug_type = bug_type.removesuffix(' -->\n')
+                if 'BUGLINE' in line:
+                    bug_line = line.removeprefix('<!-- BUGLINE ')
+                    bug_line = bug_line.removesuffix(' -->\n')
+                if bug_file and issue_hash and bug_type and bug_line:
+                    return bug_file, issue_hash, bug_type, bug_line
+    return None, None, None, None
+
+
+def find_project_results(args, project, file_list, results_data):
+    bug_counts = {}
+    files_per_project = {key: set() for key in CHECKER_MAP.values()}
+
+    for result_file in file_list:
+        file_name, issue_hash, bug_type, _ = parse_results_file(args, result_file)
+        if not file_name:
+            continue
+
+        if bug_type not in bug_counts:
+            bug_counts[bug_type] = 0
+        bug_counts[bug_type] += 1
+
+        # Truncate path after project name to match the expectations file
+        try:
+            file_name = file_name.split(f'{project}/')[1]
+        except IndexError:
+            # Ignore WebKitBuild/Debug files that are included in other projects
+            continue
+
+        # Map filename to issues for each bug type
+        file_dict = results_data.get(CHECKER_MAP[bug_type], {})
+        if not file_name in file_dict:
+            file_dict[file_name] = {}
+
+        # Map issue to its report path
+        if not issue_hash in file_dict[file_name]:
+            file_dict[file_name][issue_hash] = result_file
+        results_data[CHECKER_MAP[bug_type]] = file_dict
+
+        output_file_name = os.path.abspath(f'{args.output_dir}/{project}/{CHECKER_MAP[bug_type]}Issues')
+        with open(output_file_name, 'a') as f:
+            f.write(f'{issue_hash}\n')
+
+        # Map checker to all files with bugs of that type
+        files_per_project[CHECKER_MAP[bug_type]].add(file_name)
+
+    for checker in CHECKER_MAP.values():
+        output_file_name_2 = os.path.abspath(f'{args.output_dir}/{project}/{checker}Files')
+        with open(output_file_name_2, 'a') as f:
+            f.write('\n'.join(sorted(files_per_project[checker])))
+
+    for type, count in bug_counts.items():
+        print(f'    {type}: {count}')
+    return results_data
+
+
+def find_all_results(args):
+    file_list = []
+    results_data = {}
+    result_counts = {}
+
+    for project in PROJECTS:
+        subprocess.run(['mkdir', os.path.abspath(f'{args.output_dir}/{project}')])
+        path = os.path.abspath(os.path.join(args.results_dir, 'StaticAnalyzer', project))
+        command = 'find {} -name report\\*.html -print'.format(path)
+        try:
+            result_files = subprocess.check_output(command, shell=True, text=True)
+        except subprocess.CalledProcessError as e:
+            sys.stderr.write(f'{e.output}')
+            sys.stderr.write(f'Could not find results for {project}\n')
+            return -1
+        project_files = result_files.splitlines()
+        file_list.extend(project_files)
+        result_counts[project] = len(project_files)
+
+        print(f'\n------ {project} ------\n')
+        print(f'TOTAL ISSUES: {len(project_files)}')
+        find_project_results(args, project, project_files, results_data)
+
+    print("\nWriting results files...")
+    results_data_file = os.path.abspath(f'{args.output_dir}/issues_per_file.json')
+    with open(results_data_file, "w") as f:
+        results_data_obj = json.dumps(results_data, indent=4)
+        f.write(results_data_obj)
+    print(f'Done! Find them in {os.path.abspath(args.output_dir)}\n')
+
+    results_msg = f'Total ({sum([c for c in result_counts.values()])}) '
+    for proj, count in result_counts.items():
+        results_msg += f'{proj} ({count}) '
+    print(results_msg)
+
+
+def main():
+    args = parser()
+    try:
+        subprocess.run(['mkdir', '-p', args.output_dir])
+    except subprocess.CalledProcessError as e:
+        sys.stderr.write(f'{e.output}\n')
+
+    if args.results_dir:
+        find_all_results(args)
+
+
+if __name__ == '__main__':
+    main()

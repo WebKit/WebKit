@@ -140,7 +140,9 @@ public:
     void removeBufferToUnmap(GPUBuffer&);
     void addBufferToUnmap(GPUBuffer&);
 
+#if ENABLE(VIDEO)
     WeakPtr<GPUExternalTexture> takeExternalTextureForVideoElement(const HTMLVideoElement&);
+#endif
 
 private:
     GPUDevice(ScriptExecutionContext*, Ref<WebGPU::Device>&&, String&& queueLabel);

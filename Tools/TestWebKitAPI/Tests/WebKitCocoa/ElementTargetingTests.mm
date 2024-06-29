@@ -35,10 +35,31 @@
 #import <WebKit/_WKTargetedElementInfo.h>
 #import <WebKit/_WKTargetedElementRequest.h>
 
+@interface _WKTargetedElementInfo (TestWebKitAPI)
+- (CGImageRef)takeSnapshot;
+@end
+
+@implementation _WKTargetedElementInfo (TestWebKitAPI)
+
+- (CGImageRef)takeSnapshot
+{
+    __block bool done = false;
+    __block RetainPtr<CGImageRef> result;
+    [self takeSnapshotWithCompletionHandler:^(CGImageRef image) {
+        result = image;
+        done = true;
+    }];
+    Util::run(&done);
+    return result.autorelease();
+}
+
+@end
+
 @interface WKWebView (ElementTargeting)
 
 - (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoAt:(CGPoint)point;
 - (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoWithText:(NSString *)searchText;
+- (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoWithSelectors:(NSArray<NSSet<NSString *> *> *)selectors;
 - (BOOL)adjustVisibilityForTargets:(NSArray<_WKTargetedElementInfo *> *)targets;
 - (BOOL)resetVisibilityAdjustmentsForTargets:(NSArray<_WKTargetedElementInfo *> *)elements;
 - (void)expectSingleTargetedSelector:(NSString *)expectedSelector at:(CGPoint)point;
@@ -70,6 +91,12 @@
 - (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoWithText:(NSString *)searchText
 {
     auto request = adoptNS([[_WKTargetedElementRequest alloc] initWithSearchText:searchText]);
+    return [self targetedElementInfo:request.get()];
+}
+
+- (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoWithSelectors:(NSArray<NSSet<NSString *> *> *)selectors
+{
+    auto request = adoptNS([[_WKTargetedElementRequest alloc] initWithSelectors:selectors]);
     return [self targetedElementInfo:request.get()];
 }
 
@@ -324,6 +351,12 @@ TEST(ElementTargeting, AdjustVisibilityFromSelectors)
         EXPECT_TRUE([adjustedSelectors containsObject:@".absolute.bottom-right"]);
         EXPECT_TRUE([adjustedSelectors containsObject:@".fixed.container"]);
         EXPECT_TRUE([adjustedSelectors containsObject:@".absolute.bottom-left"]);
+
+        [webView objectByEvaluatingJavaScript:@"[...document.querySelectorAll('.fixed,.absolute')].map(e => e.style.display = 'none')"];
+        [webView waitForNextPresentationUpdate];
+        EXPECT_GT([webView numberOfVisibilityAdjustmentRects], 0U);
+        [webView objectByEvaluatingJavaScript:@"[...document.querySelectorAll('.fixed,.absolute')].map(e => e.style.display = '')"];
+        [webView waitForNextPresentationUpdate];
     }
 
     [webView resetVisibilityAdjustmentsForTargets:nil];
@@ -336,6 +369,71 @@ TEST(ElementTargeting, AdjustVisibilityFromSelectors)
         EXPECT_FALSE(pixelReader.at(x, y) == WebCore::Color::white);
         EXPECT_EQ([webView numberOfVisibilityAdjustmentRects], 0U);
     }
+}
+
+TEST(ElementTargeting, RequestElementsFromSelectors)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 480)]);
+
+    RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
+    [preferences _setVisibilityAdjustmentSelectors:[NSSet setWithObjects:
+        @".fixed.container"
+        , @"DIV.absolute.bottom-right"
+        , @"DIV.absolute.bottom-left"
+        , @"DIV.absolute.top-right"
+        , nil]];
+
+    RetainPtr delegate = adoptNS([TestUIDelegate new]);
+    __block bool didAdjustVisibility = false;
+    [delegate setWebViewDidAdjustVisibilityWithSelectors:^(WKWebView *, NSArray<NSString *> *selectors) {
+        didAdjustVisibility = true;
+    }];
+    [webView setUIDelegate:delegate.get()];
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-2" preferences:preferences.get()];
+    Util::run(&didAdjustVisibility);
+
+    RetainPtr targets = [webView targetedElementInfoWithSelectors:@[
+        [NSSet setWithObjects:@"DIV.absolute.bottom-right", @"#no-match", @".also-no-match", nil]
+    ]];
+
+    RetainPtr target = [targets firstObject];
+    EXPECT_EQ(1U, [targets count]);
+    EXPECT_WK_STREQ("DIV.absolute.bottom-right", [target selectorsIncludingShadowHosts].firstObject.firstObject);
+    EXPECT_TRUE([target isInVisibilityAdjustmentSubtree]);
+
+    didAdjustVisibility = false;
+
+    [webView resetVisibilityAdjustmentsForTargets:targets.get()];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_FALSE(didAdjustVisibility);
+}
+
+TEST(ElementTargeting, SnapshotElementWithVisibilityAdjustment)
+{
+    auto webViewFrame = CGRectMake(0, 0, 800, 600);
+
+    auto viewAndWindow = setUpWebViewForSnapshotting(webViewFrame);
+    auto [webView, window] = viewAndWindow;
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-2"];
+
+    RetainPtr targets = [webView targetedElementInfoWithSelectors:@[
+        [NSSet setWithObject:@".absolute.bottom-right"]
+    ]];
+
+    EXPECT_EQ([targets count], 1U);
+    [webView adjustVisibilityForTargets:targets.get()];
+
+    CGImagePixelReader reader { [[targets firstObject] takeSnapshot] };
+    auto checkPixelColor = [&reader](unsigned x, unsigned y) {
+        auto color = reader.at(x, y);
+        EXPECT_FALSE(color == WebCore::Color::transparentBlack);
+        EXPECT_FALSE(color == WebCore::Color::white);
+    };
+
+    checkPixelColor(10, 10);
+    checkPixelColor(reader.width() - 10, 10);
+    checkPixelColor(reader.width() - 10, reader.height() - 10);
+    checkPixelColor(10, reader.height() - 10);
 }
 
 TEST(ElementTargeting, AdjustVisibilityFromPseudoSelectors)
@@ -456,11 +554,16 @@ TEST(ElementTargeting, ReplacedRendererSizeIgnoresPageScaleAndZoom)
     [webView _setPageZoomFactor:2];
     [webView _setPageScale:1.5 withOrigin:CGPointZero];
 #else
-    [[webView scrollView] setZoomScale:3 animated:NO];
+    RetainPtr scrollView = [webView scrollView];
+    [scrollView setZoomScale:3 animated:NO];
+    [scrollView setContentOffset:CGPointZero];
+    [webView waitForNextVisibleContentRectUpdate];
 #endif
     [webView waitForNextPresentationUpdate];
     RetainPtr targetAfterScaling = [[webView targetedElementInfoAt:CGPointMake(100, 100)] firstObject];
     EXPECT_WK_STREQ([targetBeforeScaling renderedText], [targetAfterScaling renderedText]);
+    EXPECT_FALSE([targetBeforeScaling hasLargeReplacedDescendant]);
+    EXPECT_FALSE([targetAfterScaling hasLargeReplacedDescendant]);
 }
 
 TEST(ElementTargeting, RequestTargetedElementsBySearchableText)
@@ -472,9 +575,43 @@ TEST(ElementTargeting, RequestTargetedElementsBySearchableText)
     NSString *searchableText = [targetFromHitTest searchableText];
     EXPECT_GT(searchableText.length, 0U);
     EXPECT_TRUE([@"Image of a sunset over the 4th floor of Infinite Loop 2" containsString:searchableText]);
+    EXPECT_WK_STREQ("sunset-in-cupertino-200px.png", [[[targetFromHitTest mediaAndLinkURLs] anyObject] lastPathComponent]);
 
     RetainPtr targetFromSearchText = [[webView targetedElementInfoWithText:searchableText] firstObject];
     EXPECT_TRUE([targetFromSearchText isSameElement:targetFromHitTest.get()]);
+    EXPECT_WK_STREQ("sunset-in-cupertino-200px.png", [[[targetFromSearchText mediaAndLinkURLs] anyObject] lastPathComponent]);
+}
+
+TEST(ElementTargeting, AdjustVisibilityAfterRecreatingElement)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+
+    RetainPtr delegate = adoptNS([TestUIDelegate new]);
+    [webView setUIDelegate:delegate.get()];
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-7"];
+
+    RetainPtr firstTarget = [[webView targetedElementInfoAt:CGPointMake(100, 100)] firstObject];
+    [webView adjustVisibilityForTargets:@[ firstTarget.get() ]];
+
+    __block bool didAdjustment = false;
+    [delegate setWebViewDidAdjustVisibilityWithSelectors:^(WKWebView *, NSArray<NSString *> *selectors) {
+        didAdjustment = true;
+    }];
+
+    [webView objectByEvaluatingJavaScript:@"recreateContainer()"];
+
+    Util::run(&didAdjustment);
+}
+
+TEST(ElementTargeting, TargetedElementWithLargeImage)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 480, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-9"];
+    RetainPtr element = [[webView targetedElementInfoAt:CGPointMake(80, 80)] firstObject];
+
+    EXPECT_WK_STREQ("{480,150}", [element renderedText]);
+    EXPECT_EQ([[element screenReaderText] length], 0U);
+    EXPECT_TRUE([element hasLargeReplacedDescendant]);
 }
 
 } // namespace TestWebKitAPI

@@ -143,7 +143,7 @@ std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(CVPi
     if (!prepareWriting(info, newSemaphoreCallback, newMemoryCallback))
         return { };
 
-    if (!info.writePixelBuffer(pixelBuffer, static_cast<uint8_t*>(m_storage->data())))
+    if (!info.writePixelBuffer(pixelBuffer, m_storage->mutableSpan().data()))
         return { };
 
     scope.release();
@@ -170,7 +170,7 @@ std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(webr
     if (!prepareWriting(info, newSemaphoreCallback, newMemoryCallback))
         return { };
 
-    if (!info.writeVideoFrameBuffer(frameBuffer, static_cast<uint8_t*>(m_storage->data())))
+    if (!info.writeVideoFrameBuffer(frameBuffer, m_storage->mutableSpan().data()))
         return { };
 
     scope.release();

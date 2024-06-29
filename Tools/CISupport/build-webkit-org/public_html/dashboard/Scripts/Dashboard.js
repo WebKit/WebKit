@@ -29,6 +29,8 @@ Dashboard = {
         macOSVentura: { name: "macos-ventura", readableName: "macOS Ventura", order: 2 },
         iOS17Simulator: { name: "ios-simulator-17", readableName: "iOS 17 Simulator", order: 12 },
         iOS17Device: { name: "ios-17", readableName: "iOS 17", order: 13 },
+        visionOS1Simulator: { name: "visionos-simulator-1", readableName: "visionOS 1 Simulator", order: 14 },
+        visionOS1Device: { name: "visionos-1", readableName: "visionOS 1", order: 15 },
         tvOS17Simulator: { name: "tvos-simulator-17", readableName: "TvOS Simulator 17", order: 19 },
         tvOS17Device: { name: "tvos-17", readableName: "TvOS 17", order: 20 },
         watchOS10Simulator: { name: "watchos-simulator-10", readableName: "WatchOS Simulator 10", order: 31 },

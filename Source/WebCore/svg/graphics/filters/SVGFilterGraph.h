@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,17 +78,19 @@ public:
 
     RefPtr<NodeType> getNamedNode(const AtomString& id) const
     {
-        if (id.isEmpty()) {
-            if (m_lastNode)
-                return m_lastNode;
+        if (!id.isEmpty()) {
+            if (auto sourceNode = m_sourceNodes.get(id))
+                return sourceNode;
 
-            return sourceGraphic();
+            if (auto namedNode = m_namedNodes.get(id))
+                return namedNode;
         }
 
-        if (m_sourceNodes.contains(id))
-            return m_sourceNodes.get(id);
+        if (m_lastNode)
+            return m_lastNode;
 
-        return m_namedNodes.get(id);
+        // Fallback to the 'sourceGraphic' input.
+        return sourceGraphic();
     }
 
     std::optional<NodeVector> getNamedNodes(std::span<const AtomString> names) const

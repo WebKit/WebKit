@@ -37,14 +37,14 @@ static constexpr bool verbose = false;
 
 Expected<URL, String> ImportMap::resolveImportMatch(const String& normalizedSpecifier, const URL& asURL, const SpecifierMap& specifierMap)
 {
-    // https://wicg.github.io/import-maps/#resolve-an-imports-match
+    // https://html.spec.whatwg.org/C#resolving-an-imports-match
 
     auto result = specifierMap.find(normalizedSpecifier);
 
     // 1.1.1. If resolutionResult is null, then throw a TypeError indicating that resolution of specifierKey was blocked by a null entry.
     if (result != specifierMap.end()) {
         if (result->value.isNull())
-            return makeUnexpected("speficier is blocked"_s);
+            return makeUnexpected("specifier is blocked"_s);
         return result->value;
     }
 
@@ -65,14 +65,14 @@ Expected<URL, String> ImportMap::resolveImportMatch(const String& normalizedSpec
 
         if (matched) {
             if (matched->isNull())
-                return makeUnexpected("speficier is blocked"_s);
+                return makeUnexpected("specifier is blocked"_s);
             auto afterPrefix = normalizedSpecifier.substring(length);
             ASSERT(matched->string().endsWith('/'));
             URL url { matched.value(), afterPrefix };
             if (!url.isValid())
-                return makeUnexpected("speficier is blocked"_s);
+                return makeUnexpected("specifier is blocked"_s);
             if (!url.string().startsWith(matched->string()))
-                return makeUnexpected("speficier is blocked"_s);
+                return makeUnexpected("specifier is blocked"_s);
             return url;
         }
     }
@@ -82,7 +82,7 @@ Expected<URL, String> ImportMap::resolveImportMatch(const String& normalizedSpec
 
 static URL parseURLLikeModuleSpecifier(const String& specifier, const URL& baseURL)
 {
-    // https://wicg.github.io/import-maps/#parse-a-url-like-import-specifier
+    // https://html.spec.whatwg.org/C#resolving-a-url-like-module-specifier
 
     if (specifier.startsWith('/') || specifier.startsWith("./"_s) || specifier.startsWith("../"_s))
         return URL(baseURL, specifier);
@@ -92,8 +92,7 @@ static URL parseURLLikeModuleSpecifier(const String& specifier, const URL& baseU
 
 URL ImportMap::resolve(const String& specifier, const URL& baseURL) const
 {
-    // https://html.spec.whatwg.org/multipage/webappapis.html#resolve-a-module-specifier
-    // https://wicg.github.io/import-maps/#new-resolve-algorithm
+    // https://html.spec.whatwg.org/C#resolve-a-module-specifier
 
     URL asURL = parseURLLikeModuleSpecifier(specifier, baseURL);
     String normalizedSpecifier = asURL.isValid() ? asURL.string() : specifier;
@@ -128,7 +127,7 @@ URL ImportMap::resolve(const String& specifier, const URL& baseURL) const
 
 static String normalizeSpecifierKey(const String& specifierKey, const URL& baseURL, ImportMap::Reporter* reporter)
 {
-    // https://wicg.github.io/import-maps/#normalize-a-specifier-key
+    // https://html.spec.whatwg.org/C#normalizing-a-specifier-key
 
     if (UNLIKELY(specifierKey.isEmpty())) {
         if (reporter)
@@ -143,7 +142,7 @@ static String normalizeSpecifierKey(const String& specifierKey, const URL& baseU
 
 static ImportMap::SpecifierMap sortAndNormalizeSpecifierMap(Ref<JSON::Object> importsMap, const URL& baseURL, ImportMap::Reporter* reporter)
 {
-    // https://wicg.github.io/import-maps/#sort-and-normalize-a-specifier-map
+    // https://html.spec.whatwg.org/C#sorting-and-normalizing-a-module-specifier-map
 
     ImportMap::SpecifierMap normalized;
     for (auto& [key, value] : importsMap.get()) {
@@ -177,8 +176,8 @@ static ImportMap::SpecifierMap sortAndNormalizeSpecifierMap(Ref<JSON::Object> im
 
 Expected<void, String> ImportMap::registerImportMap(const SourceCode& sourceCode, const URL& baseURL, ImportMap::Reporter* reporter)
 {
-    // https://wicg.github.io/import-maps/#integration-register-an-import-map
-    // https://wicg.github.io/import-maps/#parsing
+    // https://html.spec.whatwg.org/C#register-an-import-map
+    // https://html.spec.whatwg.org/C#parse-an-import-map-string
 
     auto result = JSON::Value::parseJSON(sourceCode.view());
     if (!result)
@@ -203,7 +202,7 @@ Expected<void, String> ImportMap::registerImportMap(const SourceCode& sourceCode
         if (!scopesMap)
             return makeUnexpected("scopes is not a map"_s);
 
-        // https://wicg.github.io/import-maps/#sort-and-normalize-scopes
+        // https://html.spec.whatwg.org/C#sorting-and-normalizing-scopes
         for (auto& [key, value] : *scopesMap) {
             auto potentialSpecifierMap = value->asObject();
             if (!potentialSpecifierMap)
@@ -225,10 +224,47 @@ Expected<void, String> ImportMap::registerImportMap(const SourceCode& sourceCode
         return codePointCompareLessThan(rhs.m_scope.string(), lhs.m_scope.string());
     });
 
+    IntegrityMap integrity;
+    StringBuilder errorMessage;
+    if (auto integrityValue = rootMap->getValue("integrity"_s)) {
+        auto integrityMap = integrityValue->asObject();
+        if (!integrityMap)
+            return makeUnexpected("integrity is not a map"_s);
+
+        // https://html.spec.whatwg.org/C#normalizing-a-module-integrity-map
+        for (auto& [key, value] : *integrityMap) {
+            URL integrityURL = resolve(key, baseURL);
+            if (UNLIKELY(integrityURL.isNull())) {
+                errorMessage.append("Integrity URL "_s);
+                errorMessage.append(key);
+                errorMessage.append(" is not a valid absolute URL nor a relative URL starting with '/', './' or '../'\n"_s);
+                continue;
+            }
+
+            auto valueAsString = value->asString();
+            if (UNLIKELY(valueAsString.isNull())) {
+                errorMessage.append("Integrity value of "_s);
+                errorMessage.append(key);
+                errorMessage.append(" is not a string\n"_s);
+                continue;
+            }
+
+            integrity.set(integrityURL, valueAsString);
+        }
+    }
+
+
     m_imports = WTFMove(normalizedImports);
     m_scopes = WTFMove(scopes);
+    m_integrity = WTFMove(integrity);
+    if (!errorMessage.isEmpty())
+        return makeUnexpected(errorMessage.toString());
     return { };
 }
 
+String ImportMap::integrityForURL(const URL& url) const
+{
+    return m_integrity.get(url);
+}
 
 } // namespace JSC

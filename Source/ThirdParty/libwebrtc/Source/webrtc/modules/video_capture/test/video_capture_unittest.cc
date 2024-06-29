@@ -22,34 +22,15 @@
 #include "api/video/video_frame.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "modules/video_capture/video_capture_factory.h"
+#include "rtc_base/gunit.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/time_utils.h"
-#include "system_wrappers/include/sleep.h"
 #include "test/frame_utils.h"
 #include "test/gtest.h"
 
-using webrtc::SleepMs;
 using webrtc::VideoCaptureCapability;
 using webrtc::VideoCaptureFactory;
 using webrtc::VideoCaptureModule;
-
-#define WAIT_(ex, timeout, res)                           \
-  do {                                                    \
-    res = (ex);                                           \
-    int64_t start = rtc::TimeMillis();                    \
-    while (!res && rtc::TimeMillis() < start + timeout) { \
-      SleepMs(5);                                         \
-      res = (ex);                                         \
-    }                                                     \
-  } while (0)
-
-#define EXPECT_TRUE_WAIT(ex, timeout) \
-  do {                                \
-    bool res;                         \
-    WAIT_(ex, timeout, res);          \
-    if (!res)                         \
-      EXPECT_TRUE(ex);                \
-  } while (0)
 
 static const int kTimeOut = 5000;
 #ifdef WEBRTC_MAC

@@ -158,7 +158,7 @@ std::unique_ptr<FilterEffectApplier> FEColorMatrix::createSoftwareApplier() cons
 #endif
 }
 
-std::optional<GraphicsStyle> FEColorMatrix::createGraphicsStyle(const Filter&) const
+std::optional<GraphicsStyle> FEColorMatrix::createGraphicsStyle(GraphicsContext&, const Filter&) const
 {
     std::array<float, 20> values;
     std::copy_n(m_values.begin(), std::min<size_t>(m_values.size(), 20), values.begin());

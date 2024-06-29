@@ -133,7 +133,7 @@ struct FontPlatformDataAttributes {
     LOGFONT m_font;
 #elif USE(CORE_TEXT)
     RetainPtr<CFDictionaryRef> m_attributes;
-    CTFontDescriptorOptions m_options;
+    CTFontDescriptorOptions m_options { (CTFontDescriptorOptions)0 }; // FIXME: <rdar://121670125>
     RetainPtr<CFStringRef> m_url;
     RetainPtr<CFStringRef> m_psName;
 #elif USE(SKIA)
@@ -142,9 +142,67 @@ struct FontPlatformDataAttributes {
 };
 
 #if USE(CORE_TEXT)
+
+// FIXME: Some of these structures have std::optional<RetainPtr<>> which seems weird,
+// but generated encode/decode of RetainPtrs doesn't currently handle null values very well.
+// Once it does, remove the std::optional redirect.
+struct FontPlatformSerializedTraits {
+    static std::optional<FontPlatformSerializedTraits> fromCF(CFDictionaryRef);
+    RetainPtr<CFDictionaryRef> toCFDictionary() const;
+
+    String uiFontDesign;
+    std::optional<RetainPtr<CFNumberRef>> weight;
+    std::optional<RetainPtr<CFNumberRef>> width;
+    std::optional<RetainPtr<CFNumberRef>> symbolic;
+    std::optional<RetainPtr<CFNumberRef>> grade;
+};
+
+struct FontPlatformOpticalSize {
+    static std::optional<FontPlatformOpticalSize> fromCF(CFTypeRef);
+    RetainPtr<CFTypeRef> toCF() const;
+    std::variant<RetainPtr<CFNumberRef>, String> opticalSize;
+};
+
+struct FontPlatformSerializedAttributes {
+    static std::optional<FontPlatformSerializedAttributes> fromCF(CFDictionaryRef);
+    RetainPtr<CFDictionaryRef> toCFDictionary() const;
+
+    String fontName;
+    String descriptorLanguage;
+    String descriptorTextStyle;
+
+    std::optional<RetainPtr<CFDataRef>> matrix;
+
+    std::optional<RetainPtr<CFBooleanRef>> ignoreLegibilityWeight;
+
+    std::optional<RetainPtr<CFNumberRef>> baselineAdjust;
+    std::optional<RetainPtr<CFNumberRef>> fallbackOption;
+    std::optional<RetainPtr<CFNumberRef>> fixedAdvance;
+    std::optional<RetainPtr<CFNumberRef>> orientation;
+    std::optional<RetainPtr<CFNumberRef>> palette;
+    std::optional<RetainPtr<CFNumberRef>> size;
+    std::optional<RetainPtr<CFNumberRef>> sizeCategory;
+    std::optional<RetainPtr<CFNumberRef>> track;
+    std::optional<RetainPtr<CFNumberRef>> unscaledTracking;
+
+    std::optional<Vector<std::pair<RetainPtr<CFNumberRef>, RetainPtr<CGColorRef>>>> paletteColors;
+    std::optional<Vector<std::pair<RetainPtr<CFNumberRef>, RetainPtr<CFNumberRef>>>> variations;
+
+    std::optional<FontPlatformOpticalSize> opticalSize;
+    std::optional<FontPlatformSerializedTraits> traits;
+
+    // FIXME: featureSettings is an array of CFDictionaries whose layouts are highly variable
+    std::optional<RetainPtr<CFArrayRef>> featureSettings;
+
+#if HAVE(ADDITIONAL_FONT_PLATFORM_SERIALIZED_ATTRIBUTES)
+    std::optional<RetainPtr<CFNumberRef>> additionalNumber;
+    static CFStringRef additionalFontPlatformSerializedAttributesNumberDictionaryKey();
+#endif
+};
+
 struct FontPlatformSerializedCreationData {
     Vector<uint8_t> fontFaceData;
-    RetainPtr<CFDictionaryRef> attributes;
+    std::optional<FontPlatformSerializedAttributes> attributes;
     String itemInCollection;
 };
 
@@ -152,7 +210,7 @@ struct FontPlatformSerializedData {
     CTFontDescriptorOptions options { 0 }; // <rdar://121670125>
     RetainPtr<CFStringRef> referenceURL;
     RetainPtr<CFStringRef> postScriptName;
-    RetainPtr<CFDictionaryRef> attributes;
+    std::optional<FontPlatformSerializedAttributes> attributes;
 };
 #endif
 
@@ -243,7 +301,7 @@ public:
     CTFontRef ctFont() const;
 #endif
 
-#if PLATFORM(WIN) || PLATFORM(COCOA)
+#if PLATFORM(COCOA)
     bool isSystemFont() const { return m_isSystemFont; }
 #endif
 
@@ -340,7 +398,7 @@ private:
 #endif
 
 #if PLATFORM(WIN)
-    void platformDataInit(HFONT, float size, WCHAR* faceName);
+    void platformDataInit(HFONT, float size);
 #endif
 
 #if USE(FREETYPE) && USE(CAIRO)
@@ -381,7 +439,9 @@ private:
     bool m_syntheticOblique { false };
     bool m_isColorBitmapFont { false };
     bool m_isHashTableDeletedValue { false };
+#if PLATFORM(COCOA)
     bool m_isSystemFont { false };
+#endif
     bool m_hasVariations { false };
     // The values above are common to all ports
 

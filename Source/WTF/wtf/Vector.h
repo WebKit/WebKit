@@ -363,7 +363,7 @@ public:
 
     T* buffer() { return m_buffer; }
     const T* buffer() const { return m_buffer; }
-    static ptrdiff_t bufferMemoryOffset() { return OBJECT_OFFSETOF(VectorBufferBase, m_buffer); }
+    static constexpr ptrdiff_t bufferMemoryOffset() { return OBJECT_OFFSETOF(VectorBufferBase, m_buffer); }
     size_t capacity() const { return m_capacity; }
 
     MallocPtr<T, Malloc> releaseBuffer()
@@ -652,9 +652,13 @@ private:
     // FIXME: Add a redzone before the buffer to catch off by one accesses. We don't need a guard after, because the buffer is the last member variable.
     static constexpr size_t asanInlineBufferAlignment = std::alignment_of<T>::value >= 8 ? std::alignment_of<T>::value : 8;
     static constexpr size_t asanAdjustedInlineCapacity = ((sizeof(T) * inlineCapacity + 7) & ~7) / sizeof(T);
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     typename std::aligned_storage<sizeof(T), asanInlineBufferAlignment>::type m_inlineBuffer[asanAdjustedInlineCapacity];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #else
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_inlineBuffer[inlineCapacity];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 };
 
@@ -727,15 +731,9 @@ public:
         }
     }
 
-    // Include this non-template conversion from std::span to guide implicit conversion from arrays.
-    Vector(std::span<const T> span)
-        : Base(span.size(), span.size())
-    {
-        asanSetInitialBufferSizeTo(span.size());
-
-        if (begin())
-            VectorCopier<std::is_trivial<T>::value, T>::uninitializedCopy(span.data(), span.data() + span.size(), begin());
-    }
+    template<typename U, size_t Extent>
+    Vector(std::array<U, Extent> array)
+        : Vector(std::span { array }) { }
 
     template<typename U, size_t Extent> Vector(std::span<U, Extent> span)
         : Base(span.size(), span.size())
@@ -796,7 +794,7 @@ public:
 
     size_t size() const { return m_size; }
     size_t sizeInBytes() const { return static_cast<size_t>(m_size) * sizeof(T); }
-    static ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(Vector, m_size); }
+    static constexpr ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(Vector, m_size); }
     size_t capacity() const { return Base::capacity(); }
     bool isEmpty() const { return !size(); }
     std::span<const T> span() const { return { data(), size() }; }
@@ -830,7 +828,7 @@ public:
 
     T* data() { return Base::buffer(); }
     const T* data() const { return Base::buffer(); }
-    static ptrdiff_t dataMemoryOffset() { return Base::bufferMemoryOffset(); }
+    static constexpr ptrdiff_t dataMemoryOffset() { return Base::bufferMemoryOffset(); }
 
     iterator begin() { return data(); }
     iterator end() { return begin() + m_size; }

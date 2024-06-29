@@ -105,6 +105,8 @@ public:
 
     std::optional<MediaPlayerIdentifier> playerIdentifier() const { return m_playerIdentifier; }
 
+    WEBCORE_EXPORT void documentVisibilityChanged(bool) final;
+
 #if !RELEASE_LOG_DISABLED
     const void* logIdentifier() const;
     const Logger* loggerPtr() const;
@@ -120,12 +122,15 @@ private:
     uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::ptrCountWithoutThreadCheck(); }
     void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
     void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+    void setDocumentBecameVisibleCallback(Function<void()>&& callback) { m_documentBecameVisibleCallback = WTFMove(callback); }
 
     Ref<PlaybackSessionInterfaceMac> m_playbackSessionInterface;
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;
     ThreadSafeWeakPtr<VideoPresentationModel> m_videoPresentationModel;
     HTMLMediaElementEnums::VideoFullscreenMode m_mode { HTMLMediaElementEnums::VideoFullscreenModeNone };
     RetainPtr<WebVideoPresentationInterfaceMacObjC> m_webVideoPresentationInterfaceObjC;
+    bool m_documentIsVisible { true };
+    Function<void()> m_documentBecameVisibleCallback;
 };
 
 } // namespace WebCore

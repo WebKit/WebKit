@@ -1,0 +1,343 @@
+
+PASS :stage:stage="fragment";atomicOp="add"
+PASS :stage:stage="fragment";atomicOp="sub"
+PASS :stage:stage="fragment";atomicOp="max"
+PASS :stage:stage="fragment";atomicOp="min"
+PASS :stage:stage="fragment";atomicOp="and"
+PASS :stage:stage="fragment";atomicOp="or"
+PASS :stage:stage="fragment";atomicOp="xor"
+PASS :stage:stage="fragment";atomicOp="load"
+PASS :stage:stage="fragment";atomicOp="store"
+PASS :stage:stage="fragment";atomicOp="exchange"
+PASS :stage:stage="fragment";atomicOp="compareexchangeweak"
+FAIL :stage:stage="vertex";atomicOp="add" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var<storage, read_write> a: atomic<i32>;
+
+    @vertex fn vmain() -> @builtin(position) vec4<f32> {
+      atomicAdd(&a,1);
+      return vec4<f32>();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/atomics.spec.js:95:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :stage:stage="vertex";atomicOp="sub" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var<storage, read_write> a: atomic<i32>;
+
+    @vertex fn vmain() -> @builtin(position) vec4<f32> {
+      atomicSub(&a,1);
+      return vec4<f32>();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/atomics.spec.js:95:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :stage:stage="vertex";atomicOp="max" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var<storage, read_write> a: atomic<i32>;
+
+    @vertex fn vmain() -> @builtin(position) vec4<f32> {
+      atomicMax(&a,1);
+      return vec4<f32>();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/atomics.spec.js:95:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :stage:stage="vertex";atomicOp="min" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var<storage, read_write> a: atomic<i32>;
+
+    @vertex fn vmain() -> @builtin(position) vec4<f32> {
+      atomicMin(&a,1);
+      return vec4<f32>();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/atomics.spec.js:95:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :stage:stage="vertex";atomicOp="and" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var<storage, read_write> a: atomic<i32>;
+
+    @vertex fn vmain() -> @builtin(position) vec4<f32> {
+      atomicAnd(&a,1);
+      return vec4<f32>();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/atomics.spec.js:95:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :stage:stage="vertex";atomicOp="or" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var<storage, read_write> a: atomic<i32>;
+
+    @vertex fn vmain() -> @builtin(position) vec4<f32> {
+      atomicOr(&a,1);
+      return vec4<f32>();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/atomics.spec.js:95:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :stage:stage="vertex";atomicOp="xor" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var<storage, read_write> a: atomic<i32>;
+
+    @vertex fn vmain() -> @builtin(position) vec4<f32> {
+      atomicXor(&a,1);
+      return vec4<f32>();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/atomics.spec.js:95:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :stage:stage="vertex";atomicOp="load" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var<storage, read_write> a: atomic<i32>;
+
+    @vertex fn vmain() -> @builtin(position) vec4<f32> {
+      atomicLoad(&a);
+      return vec4<f32>();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/atomics.spec.js:95:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :stage:stage="vertex";atomicOp="store" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var<storage, read_write> a: atomic<i32>;
+
+    @vertex fn vmain() -> @builtin(position) vec4<f32> {
+      atomicStore(&a,1);
+      return vec4<f32>();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/atomics.spec.js:95:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :stage:stage="vertex";atomicOp="exchange" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var<storage, read_write> a: atomic<i32>;
+
+    @vertex fn vmain() -> @builtin(position) vec4<f32> {
+      atomicExchange(&a,1);
+      return vec4<f32>();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/atomics.spec.js:95:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :stage:stage="vertex";atomicOp="compareexchangeweak" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var<storage, read_write> a: atomic<i32>;
+
+    @vertex fn vmain() -> @builtin(position) vec4<f32> {
+      atomicCompareExchangeWeak(&a,1,1);
+      return vec4<f32>();
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/atomics.spec.js:95:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :stage:stage="compute";atomicOp="add"
+PASS :stage:stage="compute";atomicOp="sub"
+PASS :stage:stage="compute";atomicOp="max"
+PASS :stage:stage="compute";atomicOp="min"
+PASS :stage:stage="compute";atomicOp="and"
+PASS :stage:stage="compute";atomicOp="or"
+PASS :stage:stage="compute";atomicOp="xor"
+PASS :stage:stage="compute";atomicOp="load"
+PASS :stage:stage="compute";atomicOp="store"
+PASS :stage:stage="compute";atomicOp="exchange"
+PASS :stage:stage="compute";atomicOp="compareexchangeweak"
+PASS :atomic_parameterization:op="add"
+PASS :atomic_parameterization:op="sub"
+PASS :atomic_parameterization:op="max"
+PASS :atomic_parameterization:op="min"
+PASS :atomic_parameterization:op="and"
+PASS :atomic_parameterization:op="or"
+PASS :atomic_parameterization:op="xor"
+PASS :atomic_parameterization:op="load"
+PASS :atomic_parameterization:op="store"
+PASS :atomic_parameterization:op="exchange"
+PASS :atomic_parameterization:op="compareexchangeweak"
+PASS :data_parameters:op="atomicStore"
+PASS :data_parameters:op="atomicAdd"
+PASS :data_parameters:op="atomicSub"
+PASS :data_parameters:op="atomicMax"
+PASS :data_parameters:op="atomicMin"
+PASS :data_parameters:op="atomicAnd"
+PASS :data_parameters:op="atomicOr"
+PASS :data_parameters:op="atomicXor"
+PASS :data_parameters:op="atomicExchange"
+PASS :data_parameters:op="atomicCompareExchangeWeak1"
+PASS :data_parameters:op="atomicCompareExchangeWeak2"
+PASS :return_types:op="add"
+PASS :return_types:op="sub"
+PASS :return_types:op="max"
+PASS :return_types:op="min"
+PASS :return_types:op="and"
+PASS :return_types:op="or"
+PASS :return_types:op="xor"
+PASS :return_types:op="load"
+PASS :return_types:op="store"
+PASS :return_types:op="exchange"
+PASS :return_types:op="compareexchangeweak"
+PASS :non_atomic:op="add";addrspace="storage";type="i32";atomic=true
+PASS :non_atomic:op="add";addrspace="storage";type="i32";atomic=false
+PASS :non_atomic:op="add";addrspace="storage";type="u32";atomic=true
+PASS :non_atomic:op="add";addrspace="storage";type="u32";atomic=false
+PASS :non_atomic:op="add";addrspace="workgroup";type="i32";atomic=true
+PASS :non_atomic:op="add";addrspace="workgroup";type="i32";atomic=false
+PASS :non_atomic:op="add";addrspace="workgroup";type="u32";atomic=true
+PASS :non_atomic:op="add";addrspace="workgroup";type="u32";atomic=false
+PASS :non_atomic:op="sub";addrspace="storage";type="i32";atomic=true
+PASS :non_atomic:op="sub";addrspace="storage";type="i32";atomic=false
+PASS :non_atomic:op="sub";addrspace="storage";type="u32";atomic=true
+PASS :non_atomic:op="sub";addrspace="storage";type="u32";atomic=false
+PASS :non_atomic:op="sub";addrspace="workgroup";type="i32";atomic=true
+PASS :non_atomic:op="sub";addrspace="workgroup";type="i32";atomic=false
+PASS :non_atomic:op="sub";addrspace="workgroup";type="u32";atomic=true
+PASS :non_atomic:op="sub";addrspace="workgroup";type="u32";atomic=false
+PASS :non_atomic:op="max";addrspace="storage";type="i32";atomic=true
+PASS :non_atomic:op="max";addrspace="storage";type="i32";atomic=false
+PASS :non_atomic:op="max";addrspace="storage";type="u32";atomic=true
+PASS :non_atomic:op="max";addrspace="storage";type="u32";atomic=false
+PASS :non_atomic:op="max";addrspace="workgroup";type="i32";atomic=true
+PASS :non_atomic:op="max";addrspace="workgroup";type="i32";atomic=false
+PASS :non_atomic:op="max";addrspace="workgroup";type="u32";atomic=true
+PASS :non_atomic:op="max";addrspace="workgroup";type="u32";atomic=false
+PASS :non_atomic:op="min";addrspace="storage";type="i32";atomic=true
+PASS :non_atomic:op="min";addrspace="storage";type="i32";atomic=false
+PASS :non_atomic:op="min";addrspace="storage";type="u32";atomic=true
+PASS :non_atomic:op="min";addrspace="storage";type="u32";atomic=false
+PASS :non_atomic:op="min";addrspace="workgroup";type="i32";atomic=true
+PASS :non_atomic:op="min";addrspace="workgroup";type="i32";atomic=false
+PASS :non_atomic:op="min";addrspace="workgroup";type="u32";atomic=true
+PASS :non_atomic:op="min";addrspace="workgroup";type="u32";atomic=false
+PASS :non_atomic:op="and";addrspace="storage";type="i32";atomic=true
+PASS :non_atomic:op="and";addrspace="storage";type="i32";atomic=false
+PASS :non_atomic:op="and";addrspace="storage";type="u32";atomic=true
+PASS :non_atomic:op="and";addrspace="storage";type="u32";atomic=false
+PASS :non_atomic:op="and";addrspace="workgroup";type="i32";atomic=true
+PASS :non_atomic:op="and";addrspace="workgroup";type="i32";atomic=false
+PASS :non_atomic:op="and";addrspace="workgroup";type="u32";atomic=true
+PASS :non_atomic:op="and";addrspace="workgroup";type="u32";atomic=false
+PASS :non_atomic:op="or";addrspace="storage";type="i32";atomic=true
+PASS :non_atomic:op="or";addrspace="storage";type="i32";atomic=false
+PASS :non_atomic:op="or";addrspace="storage";type="u32";atomic=true
+PASS :non_atomic:op="or";addrspace="storage";type="u32";atomic=false
+PASS :non_atomic:op="or";addrspace="workgroup";type="i32";atomic=true
+PASS :non_atomic:op="or";addrspace="workgroup";type="i32";atomic=false
+PASS :non_atomic:op="or";addrspace="workgroup";type="u32";atomic=true
+PASS :non_atomic:op="or";addrspace="workgroup";type="u32";atomic=false
+PASS :non_atomic:op="xor";addrspace="storage";type="i32";atomic=true
+PASS :non_atomic:op="xor";addrspace="storage";type="i32";atomic=false
+PASS :non_atomic:op="xor";addrspace="storage";type="u32";atomic=true
+PASS :non_atomic:op="xor";addrspace="storage";type="u32";atomic=false
+PASS :non_atomic:op="xor";addrspace="workgroup";type="i32";atomic=true
+PASS :non_atomic:op="xor";addrspace="workgroup";type="i32";atomic=false
+PASS :non_atomic:op="xor";addrspace="workgroup";type="u32";atomic=true
+PASS :non_atomic:op="xor";addrspace="workgroup";type="u32";atomic=false
+PASS :non_atomic:op="load";addrspace="storage";type="i32";atomic=true
+PASS :non_atomic:op="load";addrspace="storage";type="i32";atomic=false
+PASS :non_atomic:op="load";addrspace="storage";type="u32";atomic=true
+PASS :non_atomic:op="load";addrspace="storage";type="u32";atomic=false
+PASS :non_atomic:op="load";addrspace="workgroup";type="i32";atomic=true
+PASS :non_atomic:op="load";addrspace="workgroup";type="i32";atomic=false
+PASS :non_atomic:op="load";addrspace="workgroup";type="u32";atomic=true
+PASS :non_atomic:op="load";addrspace="workgroup";type="u32";atomic=false
+PASS :non_atomic:op="store";addrspace="storage";type="i32";atomic=true
+PASS :non_atomic:op="store";addrspace="storage";type="i32";atomic=false
+PASS :non_atomic:op="store";addrspace="storage";type="u32";atomic=true
+PASS :non_atomic:op="store";addrspace="storage";type="u32";atomic=false
+PASS :non_atomic:op="store";addrspace="workgroup";type="i32";atomic=true
+PASS :non_atomic:op="store";addrspace="workgroup";type="i32";atomic=false
+PASS :non_atomic:op="store";addrspace="workgroup";type="u32";atomic=true
+PASS :non_atomic:op="store";addrspace="workgroup";type="u32";atomic=false
+PASS :non_atomic:op="exchange";addrspace="storage";type="i32";atomic=true
+PASS :non_atomic:op="exchange";addrspace="storage";type="i32";atomic=false
+PASS :non_atomic:op="exchange";addrspace="storage";type="u32";atomic=true
+PASS :non_atomic:op="exchange";addrspace="storage";type="u32";atomic=false
+PASS :non_atomic:op="exchange";addrspace="workgroup";type="i32";atomic=true
+PASS :non_atomic:op="exchange";addrspace="workgroup";type="i32";atomic=false
+PASS :non_atomic:op="exchange";addrspace="workgroup";type="u32";atomic=true
+PASS :non_atomic:op="exchange";addrspace="workgroup";type="u32";atomic=false
+PASS :non_atomic:op="compareexchangeweak";addrspace="storage";type="i32";atomic=true
+PASS :non_atomic:op="compareexchangeweak";addrspace="storage";type="i32";atomic=false
+PASS :non_atomic:op="compareexchangeweak";addrspace="storage";type="u32";atomic=true
+PASS :non_atomic:op="compareexchangeweak";addrspace="storage";type="u32";atomic=false
+PASS :non_atomic:op="compareexchangeweak";addrspace="workgroup";type="i32";atomic=true
+PASS :non_atomic:op="compareexchangeweak";addrspace="workgroup";type="i32";atomic=false
+PASS :non_atomic:op="compareexchangeweak";addrspace="workgroup";type="u32";atomic=true
+PASS :non_atomic:op="compareexchangeweak";addrspace="workgroup";type="u32";atomic=false
+

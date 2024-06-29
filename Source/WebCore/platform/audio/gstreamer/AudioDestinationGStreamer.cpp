@@ -71,10 +71,8 @@ static unsigned long maximumNumberOfOutputChannels()
                 auto* structure = gst_caps_get_structure(caps.get(), i);
                 if (!g_str_equal(gst_structure_get_name(structure), "audio/x-raw"))
                     continue;
-                int value;
-                if (!gst_structure_get_int(structure, "channels", &value))
-                    continue;
-                count = std::max(count, value);
+                if (auto value = gstStructureGet<int>(structure, "channels"_s))
+                    count = std::max(count, *value);
             }
             devices = g_list_delete_link(devices, devices);
         }
@@ -113,7 +111,7 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
     , m_renderBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize, false))
 {
     static Atomic<uint32_t> pipelineId;
-    m_pipeline = gst_pipeline_new(makeString("audio-destination-", pipelineId.exchangeAdd(1)).ascii().data());
+    m_pipeline = gst_pipeline_new(makeString("audio-destination-"_s, pipelineId.exchangeAdd(1)).ascii().data());
     registerActivePipeline(m_pipeline);
     connectSimpleBusMessageCallback(m_pipeline.get(), [this](GstMessage* message) {
         this->handleMessage(message);

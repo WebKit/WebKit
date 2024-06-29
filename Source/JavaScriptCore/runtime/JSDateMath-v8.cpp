@@ -126,7 +126,7 @@ private:
     public:
         explicit InputReader(const unsigned char* s, size_t size)
             : index_(0)
-            , buffer_({ s, size })
+            , buffer_({ *s, static_cast<unsigned char>(size) })
         {
             Next();
         }

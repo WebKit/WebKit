@@ -86,6 +86,11 @@ double UIScriptControllerMac::zoomScale() const
     return webView().magnification;
 }
 
+double UIScriptControllerMac::minimumZoomScale() const
+{
+    return webView().minimumMagnification;
+}
+
 void UIScriptControllerMac::simulateAccessibilitySettingsChangeNotification(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);

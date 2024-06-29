@@ -6,6 +6,8 @@
 </head>
 <body>
 
+<div id="content">
+
 <div id="list1" role="list" aria-owns="item3 item4">
     <div id="item1" role="listitem">1</div>
     <div id="item2" role="listitem">2</div>
@@ -21,6 +23,8 @@
     <div role="listitem" id="item5">item5</div>
 </div>
 
+</div>
+
 <script>
 description("This tests that aria-owns can remap accessibility hierarchies.");
 
@@ -29,31 +33,51 @@ if (window.accessibilityController) {
 
     var ax = accessibilityController;
     var output = "";
-    setTimeout(function() {
-        output += expect("ax.accessibleElementById('list1').childAtIndex(0).isEqual(ax.accessibleElementById('item3'))", "true");
+    setTimeout(async () => {
+        list1 = ax.accessibleElementById("list1");
+        item3 = ax.accessibleElementById("item3");
+        item4 = ax.accessibleElementById("item4");
+        await waitFor(() => {
+            return list1.childAtIndex(0).isEqual(item3);
+        });
+        output += expect("list1.childrenCount", "2");
+        output += expect("list1.childAtIndex(0).isEqual(item3)", "true");
+        output += expect("list1.childAtIndex(1).isEqual(item4)", "true");
+        output += expect("item3.parentElement().isEqual(list1)", "true");
+        output += expect("item4.parentElement().isEqual(list1)", "true");
 
-        output += expect("ax.accessibleElementById('list1').childAtIndex(1).isEqual(ax.accessibleElementById('item4'))", "true");
-        output += expect("ax.accessibleElementById('item3').parentElement().isEqual(ax.accessibleElementById('list1'))", "true");
-        output += expect("ax.accessibleElementById('item4').parentElement().isEqual(ax.accessibleElementById('list1'))", "true");
-        output += expect("ax.accessibleElementById('list1').childrenCount", "2");
+        list2 = ax.accessibleElementById("list2");
+        item1 = ax.accessibleElementById("item1");
+        realitem1 = ax.accessibleElementById("realitem1");
+        item2 = ax.accessibleElementById("item2");
+        output += expect("list2.childrenCount", "3");
+        output += expect("list2.childAtIndex(0).isEqual(item1)", "true");
+        output += expect("list2.childAtIndex(1).isEqual(realitem1)", "true");
+        output += expect("list2.childAtIndex(2).isEqual(item2)", "true");
+        output += expect("item1.parentElement().isEqual(list2)", "true");
+        output += expect("realitem1.parentElement().isEqual(list2)", "true");
+        output += expect("item2.parentElement().isEqual(list2)", "true");
 
-        output += expect("ax.accessibleElementById('list2').childAtIndex(0).isEqual(ax.accessibleElementById('item1'))", "true");
-        output += expect("ax.accessibleElementById('list2').childAtIndex(1).isEqual(ax.accessibleElementById('realitem1'))", "true");
-        output += expect("ax.accessibleElementById('list2').childAtIndex(2).isEqual(ax.accessibleElementById('item2'))", "true");
-        output += expect("ax.accessibleElementById('item1').parentElement().isEqual(ax.accessibleElementById('list2'))", "true");
-        output += expect("ax.accessibleElementById('realitem1').parentElement().isEqual(ax.accessibleElementById('list2'))", "true");
-        output += expect("ax.accessibleElementById('item2').parentElement().isEqual(ax.accessibleElementById('list2'))", "true");
-        output += expect("ax.accessibleElementById('list2').childrenCount", "3");
-
-        // Add another aria-owned element dynamically.
+        // Add item5 as another aria-owned element to list1.
         document.getElementById("list1").setAttribute("aria-owns", "item3 item5 item4");
 
         // list3 must not have any children now since its only real child is now owned by list1.
-        output += expect("ax.accessibleElementById('list3').childrenCount", "0");
+        list3 = ax.accessibleElementById("list3");
+        await waitFor(() => {
+            return !list3.childrenCount;
+        });
+        output += expect("list3.childrenCount", "0");
 
-        output += expect("ax.accessibleElementById('list1').childrenCount", "3");
-        output += expect("ax.accessibleElementById('list1').childAtIndex(1).isEqual(ax.accessibleElementById('item5'))", "true");
+        item5 = ax.accessibleElementById("item5");
+        output += expect("list1.childrenCount", "3");
+        output += expect("list1.childAtIndex(0).isEqual(item3)", "true");
+        output += expect("list1.childAtIndex(1).isEqual(item5)", "true");
+        output += expect("list1.childAtIndex(2).isEqual(item4)", "true");
+        output += expect("item3.parentElement().isEqual(list1)", "true");
+        output += expect("item5.parentElement().isEqual(list1)", "true");
+        output += expect("item4.parentElement().isEqual(list1)", "true");
 
+        document.getElementById("content").style.visibility = "hidden";
         debug(output);
         finishJSTest();
     }, 0);

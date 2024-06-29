@@ -37,6 +37,7 @@
 #include "WebProcess.h"
 #include <WebCore/AsyncScrollingCoordinator.h>
 #include <WebCore/Chrome.h>
+#include <WebCore/Damage.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/PageOverlayController.h>
@@ -84,12 +85,20 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
     scaledSize.scale(m_webPage.deviceScaleFactor());
     float scaleFactor = m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor();
 
+    const auto damagePropagation = ([](const WebCore::Settings& settings) {
+        if (!settings.propagateDamagingInformation())
+            return ThreadedCompositor::DamagePropagation::None;
+        if (settings.unifyDamagedRegions())
+            return ThreadedCompositor::DamagePropagation::Unified;
+        return ThreadedCompositor::DamagePropagation::Region;
+    })(m_webPage.corePage()->settings());
+
 #if HAVE(DISPLAY_LINK)
     // FIXME: remove the displayID from ThreadedCompositor too.
     auto displayID = m_webPage.corePage()->displayID();
-    m_compositor = ThreadedCompositor::create(*this, displayID, scaledSize, scaleFactor, m_surface->shouldPaintMirrored());
+    m_compositor = ThreadedCompositor::create(*this, displayID, scaledSize, scaleFactor, m_surface->shouldPaintMirrored(), damagePropagation);
 #else
-    m_compositor = ThreadedCompositor::create(*this, *this, displayID, scaledSize, scaleFactor, m_surface->shouldPaintMirrored());
+    m_compositor = ThreadedCompositor::create(*this, *this, displayID, scaledSize, scaleFactor, m_surface->shouldPaintMirrored(), damagePropagation);
 #endif
     m_layerTreeContext.contextID = m_surface->surfaceID();
     m_surface->didCreateCompositingRunLoop(m_compositor->compositingRunLoop());
@@ -192,6 +201,8 @@ void LayerTreeHost::setViewOverlayRootLayer(GraphicsLayer* viewOverlayRootLayer)
 
 void LayerTreeHost::scrollNonCompositedContents(const IntRect& rect)
 {
+    m_scrolledSinceLastFrame = true;
+
     auto* frameView = m_webPage.localMainFrameView();
     if (!frameView || !frameView->delegatesScrolling())
         return;
@@ -308,6 +319,7 @@ void LayerTreeHost::didChangeViewport()
     float pageScale = m_viewportController.pageScaleFactor();
     IntPoint scrollPosition = roundedIntPoint(visibleRect.location());
     if (m_lastScrollPosition != scrollPosition) {
+        m_scrolledSinceLastFrame = true;
         m_lastScrollPosition = scrollPosition;
         m_compositor->setScrollPosition(m_lastScrollPosition, m_webPage.deviceScaleFactor() * pageScale);
 
@@ -409,9 +421,16 @@ void LayerTreeHost::clearIfNeeded()
     m_surface->clearIfNeeded();
 }
 
-void LayerTreeHost::didRenderFrame(uint32_t compositionResponseID)
+void LayerTreeHost::didRenderFrame(uint32_t compositionResponseID, const WebCore::Damage& damage)
 {
-    m_surface->didRenderFrame();
+    std::optional<WebCore::Region> damageRegion;
+    if (!m_scrolledSinceLastFrame && !damage.isInvalid())
+        damageRegion = damage.region();
+
+    m_surface->didRenderFrame(damageRegion);
+
+    m_scrolledSinceLastFrame = false;
+
 #if HAVE(DISPLAY_LINK)
     m_compositionResponseID = compositionResponseID;
     if (!m_didRenderFrameTimer.isActive())

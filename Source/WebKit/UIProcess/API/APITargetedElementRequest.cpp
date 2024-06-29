@@ -44,12 +44,9 @@ void TargetedElementRequest::setPoint(WebCore::FloatPoint point)
     m_request.data = point;
 }
 
-WTF::String TargetedElementRequest::searchText() const
+void TargetedElementRequest::setSelectors(WebCore::TargetedElementSelectors&& selectors)
 {
-    if (!std::holds_alternative<WTF::String>(m_request.data))
-        return { };
-
-    return std::get<WTF::String>(m_request.data);
+    m_request.data = WTFMove(selectors);
 }
 
 void TargetedElementRequest::setSearchText(WTF::String&& searchText)

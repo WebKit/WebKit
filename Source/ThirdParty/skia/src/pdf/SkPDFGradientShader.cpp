@@ -7,15 +7,26 @@
 
 #include "src/pdf/SkPDFGradientShader.h"
 
+#include "include/core/SkPaint.h"
+#include "include/core/SkPathTypes.h"
+#include "include/core/SkSpan.h"
+#include "include/core/SkStream.h"
 #include "include/core/SkTileMode.h"
-#include "include/docs/SkPDFDocument.h"
+#include "include/private/base/SkTemplates.h"
+#include "include/private/base/SkTo.h"
 #include "src/core/SkChecksum.h"
+#include "src/core/SkTHash.h"
 #include "src/pdf/SkPDFDocumentPriv.h"
 #include "src/pdf/SkPDFFormXObject.h"
 #include "src/pdf/SkPDFGraphicState.h"
 #include "src/pdf/SkPDFResourceDict.h"
 #include "src/pdf/SkPDFTypes.h"
 #include "src/pdf/SkPDFUtils.h"
+
+#include <cmath>
+#include <cstddef>
+#include <utility>
+#include <vector>
 
 using namespace skia_private;
 
@@ -132,7 +143,7 @@ static void interpolate_color_code(SkScalar range, SkColor beginColor, SkColor e
 
 static void write_gradient_ranges(const SkShaderBase::GradientInfo& info, SkSpan<size_t> rangeEnds,
                                   bool top, bool first, SkDynamicMemoryWStream* result) {
-    SkASSERT(rangeEnds.size() > 0);
+    SkASSERT(!rangeEnds.empty());
 
     size_t rangeEndIndex = rangeEnds[rangeEnds.size() - 1];
     SkScalar rangeEnd = info.fColorOffsets[rangeEndIndex];

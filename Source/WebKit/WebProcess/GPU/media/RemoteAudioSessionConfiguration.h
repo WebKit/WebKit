@@ -40,6 +40,8 @@ struct RemoteAudioSessionConfiguration {
     size_t preferredBufferSize { 0 };
     bool isMuted { false };
     bool isActive { false };
+    String sceneIdentifier;
+    WebCore::AudioSessionSoundStageSize soundStageSize { WebCore::AudioSessionSoundStageSize::Automatic };
 };
 
 } // namespace WebKit

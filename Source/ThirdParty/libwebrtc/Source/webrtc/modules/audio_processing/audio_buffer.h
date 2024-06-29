@@ -17,8 +17,8 @@
 #include <memory>
 #include <vector>
 
+#include "api/audio/audio_processing.h"
 #include "common_audio/channel_buffer.h"
-#include "modules/audio_processing/include/audio_processing.h"
 
 namespace webrtc {
 

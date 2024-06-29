@@ -1,0 +1,20 @@
+<style>
+html {
+  float: left;
+}
+</style>
+PASS if no crash or ASSERT
+<div id=container>
+  <dialog id=dialog></dialog>
+  <div id=moveto></div>
+</div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+dialog.showModal();
+let range = document.createRange();
+range.selectNode(document.getElementById("container"));
+document.body.offsetHeight;
+range.surroundContents(document.getElementById("moveto"));
+</script>

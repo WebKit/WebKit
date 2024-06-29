@@ -1,0 +1,32 @@
+<style>
+     canvas {
+         width: 700px;
+         height: 400px;
+     }
+ </style>
+ <body>
+    <h3>This tests the layer with filter is drawn to the canvas.</h3>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 700;
+        canvas.height = 400;
+
+        const memoryCanvas = document.createElement('canvas');
+        const memoryCtx = memoryCanvas.getContext('2d');
+        memoryCanvas.width = 700;
+        memoryCanvas.height = 400;
+
+        memoryCtx.fillStyle = 'Beige';
+        memoryCtx.fillRect(120, 120, 200, 200);
+        memoryCtx.fillRect(20, 20, 200, 200);
+
+        memoryCtx.fillStyle = 'Salmon';
+        memoryCtx.fillRect(480, 120, 200, 200);
+        memoryCtx.fillRect(360, 20, 200, 200);
+
+        ctx.filter = 'drop-shadow(10px 10px 0 #666)';
+        ctx.drawImage(memoryCanvas, 0, 0);
+    </script>
+</body>

@@ -214,6 +214,8 @@ public:
         LegacySVGPath,
         LegacySVGRect,
         LegacySVGResourceClipper,
+        LegacySVGResourceFilter,
+        LegacySVGResourceFilterPrimitive,
         LegacySVGResourceLinearGradient,
         LegacySVGResourceMarker,
         LegacySVGResourceMasker,
@@ -508,10 +510,9 @@ public:
     bool beingDestroyed() const { return m_stateBitfields.hasFlag(StateFlag::BeingDestroyed); }
 
     bool everHadLayout() const { return m_stateBitfields.hasFlag(StateFlag::EverHadLayout); }
+    std::optional<bool> wasSkippedDuringLastLayoutDueToContentVisibility() const { return everHadLayout() ? std::make_optional(m_stateBitfields.hasFlag(StateFlag::WasSkippedDuringLastLayoutDueToContentVisibility)) : std::nullopt; }
 
     static ScrollAnchoringController* searchParentChainForScrollAnchoringController(const RenderObject&);
-
-    bool everHadSkippedContentLayout() const { return m_stateBitfields.hasFlag(StateFlag::EverHadSkippedContentLayout); }
 
     bool childrenInline() const { return m_stateBitfields.hasFlag(StateFlag::ChildrenInline); }
     virtual void setChildrenInline(bool b) { m_stateBitfields.setFlag(StateFlag::ChildrenInline, b); }
@@ -559,7 +560,7 @@ public:
     bool isLegacyRenderSVGViewportContainer() const { return type() == Type::LegacySVGViewportContainer; }
     bool isRenderSVGGradientStop() const { return type() == Type::SVGGradientStop; }
     bool isLegacyRenderSVGHiddenContainer() const { return type() == Type::LegacySVGHiddenContainer || isLegacyRenderSVGResourceContainer(); }
-    bool isRenderSVGHiddenContainer() const { return type() == Type::SVGHiddenContainer || isRenderSVGResourceContainer(); }
+    bool isRenderSVGHiddenContainer() const { return type() == Type::SVGHiddenContainer || isRenderSVGResourceContainer() || isRenderSVGResourceFilterPrimitive(); }
     bool isLegacyRenderSVGPath() const { return type() == Type::LegacySVGPath; }
     bool isRenderSVGPath() const { return type() == Type::SVGPath; }
     bool isRenderSVGShape() const { return isRenderSVGModelObject() && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsShape); }
@@ -575,14 +576,16 @@ public:
     bool isRenderSVGForeignObject() const { return type() == Type::SVGForeignObject; }
     bool isLegacyRenderSVGResourceContainer() const { return isLegacyRenderSVGModelObject() && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsResourceContainer); }
     bool isRenderSVGResourceContainer() const { return isRenderSVGModelObject() && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsResourceContainer); }
+    bool isLegacyRenderSVGResourceFilter() const { return type() == Type::LegacySVGResourceFilter; }
     bool isRenderSVGResourceFilter() const { return type() == Type::SVGResourceFilter; }
     bool isLegacyRenderSVGResourceClipper() const { return type() == Type::LegacySVGResourceClipper; }
     bool isLegacyRenderSVGResourceMarker() const { return type() == Type::LegacySVGResourceMarker; }
     bool isLegacyRenderSVGResourceMasker() const { return type() == Type::LegacySVGResourceMasker; }
     bool isRenderSVGResourceGradient() const { return type() == Type::SVGResourceLinearGradient || type() == Type::SVGResourceRadialGradient; }
-    bool isRenderSVGResourcePaintServer() const { return isRenderSVGResourceGradient() || isRenderSVGResourcePattern(); }
+    bool isRenderSVGResourcePaintServer() const { return isRenderSVGResourceFilter() || isRenderSVGResourceGradient() || isRenderSVGResourcePattern(); }
     bool isRenderSVGResourcePattern() const { return type() == Type::SVGResourcePattern; }
     bool isRenderSVGResourceClipper() const { return type() == Type::SVGResourceClipper; }
+    bool isLegacyRenderSVGResourceFilterPrimitive() const { return type() == Type::LegacySVGResourceFilterPrimitive; }
     bool isRenderSVGResourceFilterPrimitive() const { return type() == Type::SVGResourceFilterPrimitive; }
     bool isRenderSVGResourceLinearGradient() const { return type() == Type::SVGResourceLinearGradient; }
     bool isRenderSVGResourceMarker() const { return type() == Type::SVGResourceMarker; }
@@ -594,6 +597,7 @@ public:
     bool isRenderOrLegacyRenderSVGImage() const { return isRenderSVGImage() || isLegacyRenderSVGImage(); }
     bool isRenderOrLegacyRenderSVGForeignObject() const { return isRenderSVGForeignObject() || isLegacyRenderSVGForeignObject(); }
     bool isRenderOrLegacyRenderSVGModelObject() const { return isRenderSVGModelObject() || isLegacyRenderSVGModelObject(); }
+    bool isRenderOrLegacyRenderSVGResourceFilterPrimitive() const { return isRenderSVGResourceFilterPrimitive() || isLegacyRenderSVGResourceFilterPrimitive(); }
     bool isSVGLayerAwareRenderer() const { return isRenderSVGRoot() || isRenderSVGModelObject() || isRenderSVGText() || isRenderSVGInline() || isRenderSVGForeignObject(); }
     bool isSVGRenderer() const { return isRenderOrLegacyRenderSVGRoot() || isLegacyRenderSVGModelObject() || isRenderSVGModelObject() || isRenderSVGBlock() || isRenderSVGInline(); }
 
@@ -705,6 +709,7 @@ public:
     bool needsSimplifiedNormalFlowLayout() const { return m_stateBitfields.hasFlag(StateFlag::NeedsSimplifiedNormalFlowLayout); }
     bool needsSimplifiedNormalFlowLayoutOnly() const;
     bool normalChildNeedsLayout() const { return m_stateBitfields.hasFlag(StateFlag::NormalChildNeedsLayout); }
+    bool outOfFlowChildNeedsStaticPositionLayout() const { return m_stateBitfields.hasFlag(StateFlag::OutOfFlowChildNeedsStaticPositionLayout); }
     
     bool preferredLogicalWidthsDirty() const { return m_stateBitfields.hasFlag(StateFlag::PreferredLogicalWidthsDirty); }
 
@@ -719,7 +724,11 @@ public:
     inline bool hasTransformOrPerspective() const;
 
     bool capturedInViewTransition() const { return m_stateBitfields.hasFlag(StateFlag::CapturedInViewTransition); }
-    void setCapturedInViewTransition(bool captured) { m_stateBitfields.setFlag(StateFlag::CapturedInViewTransition, captured); }
+    void setCapturedInViewTransition(bool);
+
+    // When the document element is captured, the captured contents uses the RenderView
+    // instead. Returns the capture state with this adjustment applied.
+    bool effectiveCapturedInViewTransition() const;
 
     inline bool preservesNewline() const;
 
@@ -764,8 +773,8 @@ public:
 
     RenderElement* markContainingBlocksForLayout(RenderElement* layoutRoot = nullptr);
     void setNeedsLayout(MarkingBehavior = MarkContainingBlockChain);
-    enum class EverHadSkippedContentLayout { Yes, No };
-    void clearNeedsLayout(EverHadSkippedContentLayout = EverHadSkippedContentLayout::Yes);
+    enum class HadSkippedLayout { No, Yes };
+    void clearNeedsLayout(HadSkippedLayout = HadSkippedLayout::No);
     void setPreferredLogicalWidthsDirty(bool, MarkingBehavior = MarkContainingBlockChain);
     void invalidateContainerPreferredLogicalWidths();
     
@@ -821,6 +830,7 @@ public:
 
     // Convert the given local point to absolute coordinates. If OptionSet<MapCoordinatesMode> includes UseTransforms, take transforms into account.
     WEBCORE_EXPORT FloatPoint localToAbsolute(const FloatPoint& localPoint = FloatPoint(), OptionSet<MapCoordinatesMode> = { }, bool* wasFixed = nullptr) const;
+    std::unique_ptr<TransformationMatrix> viewTransitionTransform() const;
     FloatPoint absoluteToLocal(const FloatPoint&, OptionSet<MapCoordinatesMode> = { }) const;
 
     // Convert a local quad to absolute coordinates, taking transforms into account.
@@ -891,8 +901,8 @@ public:
     RepaintContainerStatus containerForRepaint() const;
     // Actually do the repaint of rect r for this object which has been computed in the coordinate space
     // of repaintContainer. If repaintContainer is nullptr, repaint via the view.
-    void repaintUsingContainer(const RenderLayerModelObject* repaintContainer, const LayoutRect&, bool shouldClipToLayer = true) const;
-    
+    void repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerModelObject>&& repaintContainer, const LayoutRect&, bool shouldClipToLayer = true) const;
+
     // Repaint the entire object.  Called when, e.g., the color of a border changes, or when a border
     // style changes.
     enum class ForceRepaint : bool { No, Yes };
@@ -1131,6 +1141,8 @@ public:
     bool isSkippedContentRoot() const;
     bool isSkippedContentForLayout() const;
 
+    PointerEvents usedPointerEvents() const;
+
 protected:
     //////////////////////////////////////////
     // Helper functions. Dangerous to use!
@@ -1147,6 +1159,7 @@ protected:
     void setNormalChildNeedsLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::NormalChildNeedsLayout, b); }
     void setPosChildNeedsLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::PosChildNeedsLayout, b); }
     void setNeedsSimplifiedNormalFlowLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::NeedsSimplifiedNormalFlowLayout, b); }
+    void setOutOfFlowChildNeedsStaticPositionLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::OutOfFlowChildNeedsStaticPositionLayout, b); }
 
     virtual RenderFragmentedFlow* locateEnclosingFragmentedFlow() const;
 
@@ -1181,8 +1194,7 @@ private:
     void propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderLayerModelObject& repaintContainer, const LayoutRect& repaintRect) const;
 
     void setEverHadLayout() { m_stateBitfields.setFlag(StateFlag::EverHadLayout); }
-
-    void setEverHadSkippedContentLayout(bool b) { m_stateBitfields.setFlag(StateFlag::EverHadSkippedContentLayout, b); }
+    void setHadSkippedLayout(bool b) { m_stateBitfields.setFlag(StateFlag::WasSkippedDuringLastLayoutDueToContentVisibility, b); }
 
     bool hasRareData() const { return m_stateBitfields.hasFlag(StateFlag::HasRareData); }
 
@@ -1205,20 +1217,21 @@ private:
         NormalChildNeedsLayout = 1 << 5,
         PosChildNeedsLayout = 1 << 6,
         NeedsSimplifiedNormalFlowLayout = 1 << 7,
-        EverHadLayout = 1 << 8,
-        IsExcludedFromNormalLayout = 1 << 9,
-        Floating = 1 << 10,
-        VerticalWritingMode = 1 << 11,
-        PreferredLogicalWidthsDirty = 1 << 12,
-        HasRareData = 1 << 13,
-        HasLayer = 1 << 14,
-        HasNonVisibleOverflow = 1 << 15,
-        HasTransformRelatedProperty = 1 << 16,
-        ChildrenInline = 1 << 17,
-        PaintContainmentApplies = 1 << 18,
-        HasSVGTransform = 1 << 19,
-        EverHadSkippedContentLayout = 1 << 20,
-        CapturedInViewTransition = 1 << 21
+        OutOfFlowChildNeedsStaticPositionLayout = 1 << 8,
+        EverHadLayout = 1 << 9,
+        IsExcludedFromNormalLayout = 1 << 10,
+        Floating = 1 << 11,
+        VerticalWritingMode = 1 << 12,
+        PreferredLogicalWidthsDirty = 1 << 13,
+        HasRareData = 1 << 14,
+        HasLayer = 1 << 15,
+        HasNonVisibleOverflow = 1 << 16,
+        HasTransformRelatedProperty = 1 << 17,
+        ChildrenInline = 1 << 18,
+        PaintContainmentApplies = 1 << 19,
+        HasSVGTransform = 1 << 20,
+        WasSkippedDuringLastLayoutDueToContentVisibility = 1 << 21,
+        CapturedInViewTransition = 1 << 22
     };
 
     class StateBitfields {
@@ -1230,12 +1243,12 @@ private:
         };
 
     private:
-        uint32_t m_flags : 22 { 0 };
+        uint32_t m_flags : 23 { 0 };
         uint32_t m_positionedState : 2 { IsStaticallyPositioned }; // PositionedState
         uint32_t m_selectionState : 3 { enumToUnderlyingType(HighlightState::None) }; // HighlightState
         uint32_t m_fragmentedFlowState : 1 { enumToUnderlyingType(FragmentedFlowState::NotInsideFlow) }; // FragmentedFlowState
         uint32_t m_boxDecorationState : 2 { enumToUnderlyingType(BoxDecorationState::None) }; // BoxDecorationState
-        // 3 bits free
+        // 1 bit free
 
     public:
         OptionSet<StateFlag> flags() const { return OptionSet<StateFlag>::fromRaw(m_flags); }

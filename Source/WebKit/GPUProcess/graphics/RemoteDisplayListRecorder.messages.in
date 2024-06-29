@@ -55,6 +55,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     DrawSystemImage(Ref<WebCore::SystemImage> systemImage, WebCore::FloatRect destinationRect)
     DrawPattern(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect tileRect, WebCore::AffineTransform transform, WebCore::FloatPoint phase, WebCore::FloatSize spacing, struct WebCore::ImagePaintingOptions options)
     BeginTransparencyLayer(float opacity)
+    BeginTransparencyLayerWithCompositeMode(struct WebCore::CompositeMode compositeMode)
     EndTransparencyLayer()
     DrawRect(WebCore::FloatRect rect, float borderThickness)
     DrawLine(WebCore::FloatPoint point1, WebCore::FloatPoint point2)

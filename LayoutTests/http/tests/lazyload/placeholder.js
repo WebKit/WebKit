@@ -7,7 +7,13 @@ function is_image_fully_loaded(image) {
   let canvas = document.createElement('canvas');
   canvas.width = canvas.height = 1;
   let canvasContext = canvas.getContext("2d");
-  canvasContext.drawImage(image, 0, 0);
+
+  try {
+    canvasContext.drawImage(image, 0, 0);
+  } catch (error) {
+    console.error(error);
+  }
+
   let data = canvasContext.getImageData(0, 0, canvas.width, canvas.height).data;
 
   // Fully loaded image should not be a placeholder which is drawn as a

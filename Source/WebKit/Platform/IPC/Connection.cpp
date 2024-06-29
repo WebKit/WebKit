@@ -542,7 +542,7 @@ Error Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption
 {
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     auto signpostIdentifier = generateSignpostIdentifier();
-    WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendMessage: %{public}s", description(encoder->messageName()));
+    WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendMessage: %{public}s", description(encoder->messageName()).characters());
 #endif
 
     auto error = sendMessageImpl(WTFMove(encoder), sendOptions, qos);
@@ -653,7 +653,7 @@ Error Connection::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncR
         handler(decoder);
     });
 
-    WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendMessageWithAsyncReply: %{public}s", description(encoder->messageName()));
+    WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendMessageWithAsyncReply: %{public}s", description(encoder->messageName()).characters());
 #endif
 
     addAsyncReplyHandler(WTFMove(replyHandler));
@@ -706,7 +706,7 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     auto signpostIdentifier = generateSignpostIdentifier();
-    WTFBeginSignpost(signpostIdentifier, IPCConnection, "waitForMessage: %{public}s", description(messageName));
+    WTFBeginSignpost(signpostIdentifier, IPCConnection, "waitForMessage: %{public}s", description(messageName).characters());
     auto endSignpost = makeScopeExit([&] {
         WTFEndSignpost(signpostIdentifier, IPCConnection);
     });
@@ -798,7 +798,9 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
         }
         if (m_waitingForMessage->messageWaitingInterrupted) {
             m_waitingForMessage = nullptr;
-            return makeUnexpected(Error::SyncMessageInterruptedWait);
+            if (m_shouldWaitForMessages)
+                return makeUnexpected(Error::SyncMessageInterruptedWait);
+            return makeUnexpected(Error::AttemptingToWaitOnClosedConnection);
         }
     }
 
@@ -850,7 +852,7 @@ auto Connection::sendSyncMessage(SyncRequestID syncRequestID, UniqueRef<Encoder>
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     auto signpostIdentifier = generateSignpostIdentifier();
-    WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendSyncMessage: %{public}s", description(messageName));
+    WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendSyncMessage: %{public}s", description(messageName).characters());
 #endif
 
     // Since sync IPC is blocking the current thread, make sure we use the same priority for the IPC sending thread
@@ -1263,10 +1265,14 @@ void Connection::enqueueIncomingMessage(UniqueRef<Decoder> incomingMessage)
             return;
 
         if (isIncomingMessagesThrottlingEnabled() && m_incomingMessages.size() >= maxPendingIncomingMessagesKillingThreshold) {
-            if (kill()) {
-                RELEASE_LOG_FAULT(IPC, "%p - Connection::enqueueIncomingMessage: Over %zu incoming messages have been queued without the main thread processing them, killing the connection as the remote process seems to be misbehaving", this, maxPendingIncomingMessagesKillingThreshold);
-                m_incomingMessages.clear();
-            }
+            dispatchToClient([protectedThis = Ref { *this }] {
+                if (!protectedThis->m_client)
+                    return;
+                protectedThis->m_client->requestRemoteProcessTermination();
+                RELEASE_LOG_FAULT(IPC, "%p - Connection::enqueueIncomingMessage: Over %zu incoming messages have been queued without the main thread processing them, terminating the remote process as it seems to be misbehaving", protectedThis.ptr(), maxPendingIncomingMessagesKillingThreshold);
+                Locker lock { protectedThis->m_incomingMessagesLock };
+                protectedThis->m_incomingMessages.clear();
+            });
             return;
         }
 #endif

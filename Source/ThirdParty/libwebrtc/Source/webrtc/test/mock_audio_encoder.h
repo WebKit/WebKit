@@ -33,6 +33,10 @@ class MockAudioEncoder : public AudioEncoder {
               GetFrameLengthRange,
               (),
               (const, override));
+  MOCK_METHOD((absl::optional<std::pair<DataRate, DataRate>>),
+              GetBitrateRange,
+              (),
+              (const, override));
 
   MOCK_METHOD(void, Reset, (), (override));
   MOCK_METHOD(bool, SetFec, (bool enable), (override));

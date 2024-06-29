@@ -82,6 +82,7 @@ enum RenderingMode {
 };
 
 CanvasRenderingContext2D includes CanvasState;
+CanvasRenderingContext2D includes CanvasLayers;
 CanvasRenderingContext2D includes CanvasTransform;
 CanvasRenderingContext2D includes CanvasCompositing;
 CanvasRenderingContext2D includes CanvasImageSmoothing;

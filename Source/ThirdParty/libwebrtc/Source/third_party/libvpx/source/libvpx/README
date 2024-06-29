@@ -1,5 +1,3 @@
-v1.13.1 Ugly Duckling
-
 Welcome to the WebM VP8/VP9 Codec SDK!
 
 COMPILING THE APPLICATIONS/LIBRARIES:
@@ -66,6 +64,7 @@ COMPILING THE APPLICATIONS/LIBRARIES:
     arm64-darwin20-gcc
     arm64-darwin21-gcc
     arm64-darwin22-gcc
+    arm64-darwin23-gcc
     arm64-linux-gcc
     arm64-win64-gcc
     arm64-win64-vs15
@@ -81,6 +80,8 @@ COMPILING THE APPLICATIONS/LIBRARIES:
     armv7-win32-gcc
     armv7-win32-vs14
     armv7-win32-vs15
+    armv7-win32-vs16
+    armv7-win32-vs17
     armv7s-darwin-gcc
     armv8-linux-gcc
     loongarch32-linux-gcc
@@ -127,6 +128,7 @@ COMPILING THE APPLICATIONS/LIBRARIES:
     x86_64-darwin20-gcc
     x86_64-darwin21-gcc
     x86_64-darwin22-gcc
+    x86_64-darwin23-gcc
     x86_64-iphonesimulator-gcc
     x86_64-linux-gcc
     x86_64-linux-icc
@@ -178,6 +180,44 @@ CODE STYLE:
   any difference between your local formatting and the review system.
 
   See also: http://clang.llvm.org/docs/ClangFormat.html
+
+PROFILE GUIDED OPTIMIZATION (PGO)
+  Profile Guided Optimization can be enabled for Clang builds using the
+  commands:
+
+  $ export CC=clang
+  $ export CXX=clang++
+  $ ../libvpx/configure  --enable-profile
+  $ make
+
+  Generate one or multiple PGO profile files by running vpxdec or vpxenc. For
+  example:
+
+  $ ./vpxdec ../vpx/out_ful/vp90-2-sintel_1280x546_tile_1x4_1257kbps.webm \
+    -o - > /dev/null
+
+  To convert and merge the raw profile files, use the llvm-profdata tool:
+
+  $ llvm-profdata merge -o perf.profdata default_8382761441159425451_0.profraw
+
+  Then, rebuild the project with the new profile file:
+
+  $ make clean
+  $ ../libvpx/configure --use-profile=perf.profdata
+  $ make
+
+  Note: Always use the llvm-profdata from the toolchain that is used for
+  compiling the PGO-enabled binary.
+
+  To observe the improvements from a PGO-enabled build, enable and compare the
+  list of failed optimizations by using the -Rpass-missed compiler flag. For
+  example, to list the failed loop vectorizations:
+
+  $ ../libvpx/configure --use-profile=perf.profdata \
+    --extra-cflags=-Rpass-missed=loop-vectorize
+
+  For guidance on utilizing PGO files to identify potential optimization
+  opportunities, see: tools/README.pgo.md
 
 SUPPORT
   This library is an open source project supported by its community. Please

@@ -152,7 +152,7 @@ bool HRTFElevation::calculateKernelsForAzimuthElevation(int azimuth, int elevati
     AudioChannel* leftEarImpulseResponse = response->channel(AudioBus::ChannelLeft);
     AudioChannel* rightEarImpulseResponse = response->channel(AudioBus::ChannelRight);
 #else
-    auto resourceName = makeString("IRC_", subjectName, "_C_R0195_T", pad('0', 3, azimuth), "_P", pad('0', 3, positiveElevation)).utf8();
+    auto resourceName = makeString("IRC_"_s, subjectName, "_C_R0195_T"_s, pad('0', 3, azimuth), "_P"_s, pad('0', 3, positiveElevation)).utf8();
 
     RefPtr<AudioBus> impulseResponse(AudioBus::loadPlatformResource(resourceName.data(), sampleRate));
 

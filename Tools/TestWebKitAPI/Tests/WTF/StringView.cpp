@@ -338,8 +338,7 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseBasic)
     RefPtr<StringImpl> b = StringImpl::create("ABCDEFG"_s);
     RefPtr<StringImpl> c = StringImpl::create("abcdefg"_s);
     constexpr auto d = "aBcDeFG"_s;
-    constexpr size_t zeroLength = 0; // LLVM bug workaround.
-    RefPtr<StringImpl> empty = StringImpl::create(std::span { reinterpret_cast<const LChar*>(""), zeroLength });
+    RefPtr<StringImpl> empty = StringImpl::create(""_span);
     RefPtr<StringImpl> shorter = StringImpl::create("abcdef"_s);
     RefPtr<StringImpl> different = StringImpl::create("abcrefg"_s);
 
@@ -384,9 +383,8 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseBasic)
 
 TEST(WTF, StringViewEqualIgnoringASCIICaseWithEmpty)
 {
-    constexpr size_t zeroLength = 0; // LLVM bug workaround.
-    RefPtr<StringImpl> a = StringImpl::create(std::span { reinterpret_cast<const LChar*>(""), zeroLength });
-    RefPtr<StringImpl> b = StringImpl::create(std::span { reinterpret_cast<const LChar*>(""), zeroLength });
+    RefPtr<StringImpl> a = StringImpl::create(""_span);
+    RefPtr<StringImpl> b = StringImpl::create(""_span);
     StringView stringViewA(*a.get());
     StringView stringViewB(*b.get());
     ASSERT_TRUE(equalIgnoringASCIICase(stringViewA, stringViewB));

@@ -391,6 +391,7 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
         break;
     case WM_DPICHANGED: {
         thisWindow->updateDeviceScaleFactor();
+        thisWindow->browserWindow()->adjustScaleFactors();
         auto& rect = *reinterpret_cast<RECT*>(lParam);
         SetWindowPos(hWnd, nullptr, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOACTIVATE);
         break;

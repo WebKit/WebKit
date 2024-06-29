@@ -50,8 +50,8 @@ String SecurityOriginData::toString() const
 
     auto port = this->port();
     if (!port)
-        return makeString(protocol, "://", host);
-    return makeString(protocol, "://", host, ':', static_cast<uint32_t>(*port));
+        return makeString(protocol, "://"_s, host);
+    return makeString(protocol, "://"_s, host, ':', static_cast<uint32_t>(*port));
 }
 
 URL SecurityOriginData::toURL() const

@@ -17,7 +17,8 @@ namespace skgpu::graphite {
 sk_sp<Buffer> VulkanBuffer::Make(const VulkanSharedContext* sharedContext,
                                  size_t size,
                                  BufferType type,
-                                 AccessPattern accessPattern) {
+                                 AccessPattern accessPattern,
+                                 std::string_view label) {
     if (size <= 0) {
         return nullptr;
     }
@@ -95,10 +96,12 @@ sk_sp<Buffer> VulkanBuffer::Make(const VulkanSharedContext* sharedContext,
     bufInfo.pQueueFamilyIndices = nullptr;
 
     VkResult result;
-    VULKAN_CALL_RESULT(sharedContext->interface(), result, CreateBuffer(sharedContext->device(),
-                                                           &bufInfo,
-                                                           nullptr, /*const VkAllocationCallbacks*/
-                                                           &buffer));
+    VULKAN_CALL_RESULT(sharedContext,
+                       result,
+                       CreateBuffer(sharedContext->device(),
+                                    &bufInfo,
+                                    nullptr, /*const VkAllocationCallbacks*/
+                                    &buffer));
     if (result != VK_SUCCESS) {
         return nullptr;
     }
@@ -123,10 +126,10 @@ sk_sp<Buffer> VulkanBuffer::Make(const VulkanSharedContext* sharedContext,
     }
 
     // Bind buffer
-    VULKAN_CALL_RESULT(sharedContext->interface(), result, BindBufferMemory(sharedContext->device(),
-                                                                            buffer,
-                                                                            alloc.fMemory,
-                                                                            alloc.fOffset));
+    VULKAN_CALL_RESULT(
+            sharedContext,
+            result,
+            BindBufferMemory(sharedContext->device(), buffer, alloc.fMemory, alloc.fOffset));
     if (result != VK_SUCCESS) {
         skgpu::VulkanMemory::FreeBufferMemory(allocator, alloc);
         VULKAN_CALL(sharedContext->interface(), DestroyBuffer(sharedContext->device(),
@@ -135,8 +138,14 @@ sk_sp<Buffer> VulkanBuffer::Make(const VulkanSharedContext* sharedContext,
         return nullptr;
     }
 
-    return sk_sp<Buffer>(new VulkanBuffer(
-            sharedContext, size, type, accessPattern, std::move(buffer), alloc, bufInfo.usage));
+    return sk_sp<Buffer>(new VulkanBuffer(sharedContext,
+                                          size,
+                                          type,
+                                          accessPattern,
+                                          std::move(buffer),
+                                          alloc,
+                                          bufInfo.usage,
+                                          std::move(label)));
 }
 
 VulkanBuffer::VulkanBuffer(const VulkanSharedContext* sharedContext,
@@ -145,8 +154,9 @@ VulkanBuffer::VulkanBuffer(const VulkanSharedContext* sharedContext,
                            AccessPattern accessPattern,
                            VkBuffer buffer,
                            const skgpu::VulkanAlloc& alloc,
-                           const VkBufferUsageFlags usageFlags)
-        : Buffer(sharedContext, size)
+                           const VkBufferUsageFlags usageFlags,
+                           std::string_view label)
+        : Buffer(sharedContext, size, std::move(label))
         , fBuffer(std::move(buffer))
         , fAlloc(alloc)
         , fBufferUsageFlags(usageFlags)
@@ -189,15 +199,18 @@ void VulkanBuffer::internalMap(size_t readOffset, size_t readSize) {
 
         auto allocator = sharedContext->memoryAllocator();
         auto checkResult = [sharedContext](VkResult result) {
-            VULKAN_LOG_IF_NOT_SUCCESS(result, "skgpu::VulkanMemory::MapAlloc");
+            VULKAN_LOG_IF_NOT_SUCCESS(sharedContext, result, "skgpu::VulkanMemory::MapAlloc");
             return sharedContext->checkVkResult(result);
         };
         fMapPtr = skgpu::VulkanMemory::MapAlloc(allocator, fAlloc, checkResult);
         if (fMapPtr && readSize != 0) {
             auto checkResult_invalidate = [sharedContext, readOffset, readSize](VkResult result) {
-                VULKAN_LOG_IF_NOT_SUCCESS(result, "skgpu::VulkanMemory::InvalidateMappedAlloc "
-                                                  "(readOffset:%zu, readSize:%zu)",
-                                          readOffset, readSize);
+                VULKAN_LOG_IF_NOT_SUCCESS(sharedContext,
+                                          result,
+                                          "skgpu::VulkanMemory::InvalidateMappedAlloc "
+                                          "(readOffset:%zu, readSize:%zu)",
+                                          readOffset,
+                                          readSize);
                 return sharedContext->checkVkResult(result);
             };
             // "Invalidate" here means make device writes visible to the host. That is, it makes
@@ -219,9 +232,12 @@ void VulkanBuffer::internalUnmap(size_t flushOffset, size_t flushSize) {
 
     const VulkanSharedContext* sharedContext = this->vulkanSharedContext();
     auto checkResult = [sharedContext, flushOffset, flushSize](VkResult result) {
-       VULKAN_LOG_IF_NOT_SUCCESS(result, "skgpu::VulkanMemory::FlushMappedAlloc "
-                                         "(flushOffset:%zu, flushSize:%zu)",
-                                         flushOffset, flushSize);
+        VULKAN_LOG_IF_NOT_SUCCESS(sharedContext,
+                                  result,
+                                  "skgpu::VulkanMemory::FlushMappedAlloc "
+                                  "(flushOffset:%zu, flushSize:%zu)",
+                                  flushOffset,
+                                  flushSize);
         return sharedContext->checkVkResult(result);
     };
 

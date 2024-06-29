@@ -583,4 +583,11 @@ ALWAYS_INLINE bool matchesUserValidPseudoClass(const Element& element)
     return element.matchesUserValidPseudoClass();
 }
 
+ALWAYS_INLINE bool matchesActiveViewTransitionPseudoClass(const Element& element)
+{
+    if (&element != element.document().documentElement())
+        return false;
+    return !!element.document().activeViewTransition();
+}
+
 } // namespace WebCore

@@ -103,8 +103,9 @@ void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
                                       absl::optional<int32_t> decode_time_ms,
                                       absl::optional<uint8_t> qp) {
   RTC_DCHECK(_receiveCallback) << "Callback must not be null at this point";
-  TRACE_EVENT_INSTANT1("webrtc", "VCMDecodedFrameCallback::Decoded",
-                       "timestamp", decodedImage.timestamp());
+  TRACE_EVENT(
+      "webrtc", "VCMDecodedFrameCallback::Decoded",
+      perfetto::TerminatingFlow::ProcessScoped(decodedImage.rtp_timestamp()));
   // TODO(holmer): We should improve this so that we can handle multiple
   // callbacks from one call to Decode().
   absl::optional<FrameInfo> frame_info;
@@ -113,7 +114,7 @@ void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
   {
     MutexLock lock(&lock_);
     std::tie(frame_info, dropped_frames) =
-        FindFrameInfo(decodedImage.timestamp());
+        FindFrameInfo(decodedImage.rtp_timestamp());
     timestamp_map_size = frame_infos_.size();
   }
   if (dropped_frames > 0) {
@@ -123,7 +124,7 @@ void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
   if (!frame_info) {
     RTC_LOG(LS_WARNING) << "Too many frames backed up in the decoder, dropping "
                            "frame with timestamp "
-                        << decodedImage.timestamp();
+                        << decodedImage.rtp_timestamp();
     return;
   }
 
@@ -203,7 +204,7 @@ void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
   timing_frame_info.decode_finish_ms = now.ms();
   timing_frame_info.render_time_ms =
       frame_info->render_time ? frame_info->render_time->ms() : -1;
-  timing_frame_info.rtp_timestamp = decodedImage.timestamp();
+  timing_frame_info.rtp_timestamp = decodedImage.rtp_timestamp();
   timing_frame_info.receive_start_ms = frame_info->timing.receive_start_ms;
   timing_frame_info.receive_finish_ms = frame_info->timing.receive_finish_ms;
   RTC_HISTOGRAM_COUNTS_1000(
@@ -292,8 +293,8 @@ int32_t VCMGenericDecoder::Decode(const VCMEncodedFrame& frame, Timestamp now) {
 int32_t VCMGenericDecoder::Decode(const EncodedImage& frame,
                                   Timestamp now,
                                   int64_t render_time_ms) {
-  TRACE_EVENT1("webrtc", "VCMGenericDecoder::Decode", "timestamp",
-               frame.RtpTimestamp());
+  TRACE_EVENT("webrtc", "VCMGenericDecoder::Decode",
+              perfetto::Flow::ProcessScoped(frame.RtpTimestamp()));
   FrameInfo frame_info;
   frame_info.rtp_timestamp = frame.RtpTimestamp();
   frame_info.decode_start = now;
@@ -329,18 +330,7 @@ int32_t VCMGenericDecoder::Decode(const EncodedImage& frame,
     }
     _callback->OnDecoderInfoChanged(std::move(decoder_info));
   }
-  if (ret < WEBRTC_VIDEO_CODEC_OK) {
-    const absl::optional<uint32_t> ssrc =
-        !frame_info.packet_infos.empty()
-            ? absl::make_optional(frame_info.packet_infos[0].ssrc())
-            : absl::nullopt;
-    RTC_LOG(LS_WARNING) << "Failed to decode frame with timestamp "
-                        << frame.RtpTimestamp() << ", ssrc "
-                        << (ssrc ? rtc::ToString(*ssrc) : "<not set>")
-                        << ", error code: " << ret;
-    _callback->ClearTimestampMap();
-  } else if (ret == WEBRTC_VIDEO_CODEC_NO_OUTPUT) {
-    // No output.
+  if (ret < WEBRTC_VIDEO_CODEC_OK || ret == WEBRTC_VIDEO_CODEC_NO_OUTPUT) {
     _callback->ClearTimestampMap();
   }
   return ret;

@@ -173,7 +173,7 @@ bool FileReaderLoader::processResponse(const ResourceResponse& response)
     return true;
 }
 
-void FileReaderLoader::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
+void FileReaderLoader::didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse& response)
 {
     if (!processResponse(response))
         return;
@@ -230,7 +230,7 @@ void FileReaderLoader::didReceiveData(const SharedBuffer& buffer)
     if (length <= 0)
         return;
 
-    memcpy(static_cast<char*>(m_rawData->data()) + m_bytesLoaded, buffer.data(), length);
+    memcpy(static_cast<char*>(m_rawData->data()) + m_bytesLoaded, buffer.span().data(), length);
     m_bytesLoaded += length;
 
     m_isRawDataConverted = false;
@@ -239,7 +239,7 @@ void FileReaderLoader::didReceiveData(const SharedBuffer& buffer)
         m_client->didReceiveData();
 }
 
-void FileReaderLoader::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&)
+void FileReaderLoader::didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&)
 {
     if (m_variableLength && m_totalBytes > m_bytesLoaded) {
         m_rawData = m_rawData->slice(0, m_bytesLoaded);
@@ -250,7 +250,7 @@ void FileReaderLoader::didFinishLoading(ResourceLoaderIdentifier, const NetworkL
         m_client->didFinishLoading();
 }
 
-void FileReaderLoader::didFail(const ResourceError& error)
+void FileReaderLoader::didFail(ScriptExecutionContextIdentifier, const ResourceError& error)
 {
     // If we're aborting, do not proceed with normal error handling since it is covered in aborting code.
     if (m_errorCode && m_errorCode.value() == ExceptionCode::AbortError)
@@ -358,7 +358,7 @@ void FileReaderLoader::convertToText()
 
 void FileReaderLoader::convertToDataURL()
 {
-    m_stringResult = makeString("data:", m_dataType.isEmpty() ? "application/octet-stream"_s : m_dataType, ";base64,", base64Encoded(m_rawData ? m_rawData->data() : nullptr, m_bytesLoaded));
+    m_stringResult = makeString("data:"_s, m_dataType.isEmpty() ? "application/octet-stream"_s : m_dataType, ";base64,"_s, base64Encoded(m_rawData ? m_rawData->span().first(m_bytesLoaded) : std::span<const uint8_t>()));
 }
 
 bool FileReaderLoader::isCompleted() const

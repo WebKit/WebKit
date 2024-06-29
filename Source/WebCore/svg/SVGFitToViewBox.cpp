@@ -117,7 +117,7 @@ template<typename CharacterType> std::optional<FloatRect> SVGFitToViewBox::parse
         Ref document = m_viewBox->contextElement()->document();
 
         if (!x || !y || !width || !height) {
-            document->checkedSVGExtensions()->reportWarning(makeString("Problem parsing viewBox=\"", stringToParse, "\""));
+            document->checkedSVGExtensions()->reportWarning(makeString("Problem parsing viewBox=\""_s, stringToParse, "\""_s));
             return std::nullopt;
         }
 
@@ -136,7 +136,7 @@ template<typename CharacterType> std::optional<FloatRect> SVGFitToViewBox::parse
         // Nothing should come after the last, fourth number.
         skipOptionalSVGSpaces(buffer);
         if (buffer.hasCharactersRemaining()) {
-            document->checkedSVGExtensions()->reportWarning(makeString("Problem parsing viewBox=\"", stringToParse, "\""));
+            document->checkedSVGExtensions()->reportWarning(makeString("Problem parsing viewBox=\""_s, stringToParse, "\""_s));
             return std::nullopt;
         }
     }

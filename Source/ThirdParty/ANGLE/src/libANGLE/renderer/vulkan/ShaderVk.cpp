@@ -41,6 +41,11 @@ std::shared_ptr<ShaderTranslateTask> ShaderVk::compile(const gl::Context *contex
         }
     }
 
+    if (contextVk->getFeatures().supportsSPIRV14.enabled)
+    {
+        options->emitSPIRV14 = true;
+    }
+
     if (contextVk->getFeatures().retainSPIRVDebugInfo.enabled)
     {
         options->outputDebugInfo = true;

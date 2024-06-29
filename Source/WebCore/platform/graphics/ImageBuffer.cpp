@@ -32,12 +32,12 @@
 #include "Filter.h"
 #include "FilterImage.h"
 #include "FilterResults.h"
-#include "FilterStyleTargetSwitcher.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "ImageBufferPlatformBackend.h"
 #include "MIMETypeRegistry.h"
 #include "ProcessCapabilities.h"
+#include "TransparencyLayerContextSwitcher.h"
 #include <wtf/text/Base64.h>
 
 #if USE(CG)
@@ -65,7 +65,7 @@ namespace WebCore {
 static const float MaxClampedLength = 4096;
 static const float MaxClampedArea = MaxClampedLength * MaxClampedLength;
 
-RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, OptionSet<ImageBufferOptions> options, GraphicsClient* graphicsClient)
+RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat, OptionSet<ImageBufferOptions> options, GraphicsClient* graphicsClient)
 {
     RefPtr<ImageBuffer> imageBuffer;
 
@@ -348,10 +348,10 @@ RefPtr<NativeImage> ImageBuffer::filteredNativeImage(Filter& filter)
 
 RefPtr<NativeImage> ImageBuffer::filteredNativeImage(Filter& filter, Function<void(GraphicsContext&)> drawCallback)
 {
-    std::unique_ptr<FilterTargetSwitcher> targetSwitcher;
+    std::unique_ptr<GraphicsContextSwitcher> targetSwitcher;
 
     if (filter.filterRenderingModes().contains(FilterRenderingMode::GraphicsContext)) {
-        targetSwitcher = makeUnique<FilterStyleTargetSwitcher>(filter, FloatRect { { }, logicalSize() });
+        targetSwitcher = makeUnique<TransparencyLayerContextSwitcher>(context(), FloatRect { { }, logicalSize() }, &filter);
         if (!targetSwitcher)
             return nullptr;
         targetSwitcher->beginDrawSourceImage(context());
@@ -395,6 +395,13 @@ RefPtr<cairo_surface_t> ImageBuffer::createCairoSurface()
 }
 #endif
 
+RefPtr<GraphicsLayerContentsDisplayDelegate> ImageBuffer::layerContentsDisplayDelegate()
+{
+    if (auto* backend = ensureBackend())
+        return backend->layerContentsDisplayDelegate();
+    return nullptr;
+}
+
 RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage(RefPtr<ImageBuffer> source)
 {
     if (!source)
@@ -431,7 +438,7 @@ String ImageBuffer::toDataURL(Ref<ImageBuffer> source, const String& mimeType, s
     auto encodedData = toData(WTFMove(source), mimeType, quality, preserveResolution);
     if (encodedData.isEmpty())
         return "data:,"_s;
-    return makeString("data:", mimeType, ";base64,", base64Encoded(encodedData));
+    return makeString("data:"_s, mimeType, ";base64,"_s, base64Encoded(encodedData));
 }
 
 Vector<uint8_t> ImageBuffer::toData(Ref<ImageBuffer> source, const String& mimeType, std::optional<double> quality, PreserveResolution preserveResolution)

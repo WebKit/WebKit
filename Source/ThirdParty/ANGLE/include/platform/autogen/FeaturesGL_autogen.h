@@ -129,14 +129,14 @@ struct FeaturesGL : FeatureSetBase
         "unpackLastRowSeparatelyForPaddingInclusion",
         FeatureCategory::OpenGLWorkarounds,
         "When uploading textures from an unpack buffer, some drivers count an extra row padding",
-        &members, "http://anglebug.com/1512"
+        &members, "http://anglebug.com/42260492"
     };
 
     FeatureInfo packLastRowSeparatelyForPaddingInclusion = {
         "packLastRowSeparatelyForPaddingInclusion",
         FeatureCategory::OpenGLWorkarounds,
         "When uploading textures from an pack buffer, some drivers count an extra row padding",
-        &members, "http://anglebug.com/1512"
+        &members, "http://anglebug.com/42260492"
     };
 
     FeatureInfo emulateIsnanFloat = {
@@ -178,21 +178,21 @@ struct FeaturesGL : FeatureSetBase
         "reapplyUBOBindingsAfterUsingBinaryProgram",
         FeatureCategory::OpenGLWorkarounds,
         "Some drivers forget about UBO bindings when using program binaries",
-        &members, "http://anglebug.com/1637"
+        &members, "http://anglebug.com/42260591"
     };
 
     FeatureInfo emulateMaxVertexAttribStride = {
         "emulateMaxVertexAttribStride",
         FeatureCategory::OpenGLWorkarounds,
         "Some drivers return 0 when MAX_VERTEX_ATTRIB_STRIED queried",
-        &members, "http://anglebug.com/1936"
+        &members, "http://anglebug.com/42260722"
     };
 
     FeatureInfo dontInitializeUninitializedLocals = {
         "dontInitializeUninitializedLocals",
         FeatureCategory::OpenGLWorkarounds,
         "Initializing uninitialized locals caused odd behavior in a few WebGL 2 tests",
-        &members, "http://anglebug.com/2046"
+        &members, "http://anglebug.com/40096454"
     };
 
     FeatureInfo clampPointSize = {
@@ -235,7 +235,7 @@ struct FeaturesGL : FeatureSetBase
         "disableBlendFuncExtended",
         FeatureCategory::OpenGLWorkarounds,
         "ARB_blend_func_extended does not pass the tests",
-        &members, "http://anglebug.com/1085"
+        &members, "http://anglebug.com/40644593"
     };
 
     FeatureInfo unsizedSRGBReadPixelsDoesntTransform = {
@@ -250,7 +250,7 @@ struct FeaturesGL : FeatureSetBase
         "queryCounterBitsGeneratesErrors",
         FeatureCategory::OpenGLWorkarounds,
         "Drivers generate errors when querying the number of bits in timer queries",
-        &members, "http://anglebug.com/3027"
+        &members, "http://anglebug.com/42261713"
     };
 
     FeatureInfo limitWebglMaxTextureSizeTo4096 = {
@@ -266,7 +266,7 @@ struct FeaturesGL : FeatureSetBase
         FeatureCategory::OpenGLWorkarounds,
         "Limit webgl max texture size to 8192 to avoid frequent "
         "out-of-memory errors",
-        &members, "http://anglebug.com/8611"
+        &members, "http://anglebug.com/42267045"
     };
 
     FeatureInfo limitMaxMSAASamplesTo4 = {
@@ -288,7 +288,7 @@ struct FeaturesGL : FeatureSetBase
         "clampArrayAccess",
         FeatureCategory::OpenGLWorkarounds,
         "Clamp uniform array access to avoid reading invalid memory.",
-        &members, "http://anglebug.com/2978"
+        &members, "http://anglebug.com/40096539"
     };
 
     FeatureInfo resetTexImage2DBaseLevel = {
@@ -331,7 +331,7 @@ struct FeaturesGL : FeatureSetBase
         "RGBDXT1TexturesSampleZeroAlpha",
         FeatureCategory::OpenGLWorkarounds,
         "Sampling BLACK texels from RGB DXT1 textures returns transparent black on Mac.",
-        &members, "http://anglebug.com/3729"
+        &members, "http://anglebug.com/42262386"
     };
 
     FeatureInfo unfoldShortCircuits = {
@@ -339,7 +339,7 @@ struct FeaturesGL : FeatureSetBase
         FeatureCategory::OpenGLWorkarounds,
         "Mac incorrectly executes both sides of && and || expressions when they should "
         "short-circuit.",
-        &members, "http://anglebug.com/482"
+        &members, "http://anglebug.com/42263407"
     };
 
     FeatureInfo emulatePrimitiveRestartFixedIndex = {
@@ -347,7 +347,7 @@ struct FeaturesGL : FeatureSetBase
         FeatureCategory::OpenGLWorkarounds,
         "When GL_PRIMITIVE_RESTART_FIXED_INDEX is not available, emulate it with "
         "GL_PRIMITIVE_RESTART and glPrimitiveRestartIndex.",
-        &members, "http://anglebug.com/3997"
+        &members, "http://anglebug.com/40096648"
     };
 
     FeatureInfo setPrimitiveRestartFixedIndexForDrawArrays = {
@@ -355,7 +355,7 @@ struct FeaturesGL : FeatureSetBase
         FeatureCategory::OpenGLWorkarounds,
         "Some drivers discard vertex data in DrawArrays calls when the fixed primitive restart "
         "index is within the number of primitives being drawn.",
-        &members, "http://anglebug.com/3997"
+        &members, "http://anglebug.com/40096648"
     };
 
     FeatureInfo removeDynamicIndexingOfSwizzledVector = {
@@ -388,7 +388,7 @@ struct FeaturesGL : FeatureSetBase
         FeatureCategory::OpenGLWorkarounds,
         "Quite some OpenGL ES drivers don't implement readPixels for RGBA/UNSIGNED_SHORT from "
         "EXT_texture_norm16 correctly",
-        &members, "http://anglebug.com/4214"
+        &members, "http://anglebug.com/40096661"
     };
 
     FeatureInfo flushBeforeDeleteTextureIfCopiedTo = {
@@ -396,14 +396,14 @@ struct FeaturesGL : FeatureSetBase
         FeatureCategory::OpenGLWorkarounds,
         "Some drivers track CopyTex{Sub}Image texture dependencies incorrectly. Flush"
         " before glDeleteTextures in this case",
-        &members, "http://anglebug.com/4267"
+        &members, "http://anglebug.com/40644715"
     };
 
     FeatureInfo rewriteRowMajorMatrices = {
         "rewriteRowMajorMatrices",
         FeatureCategory::OpenGLWorkarounds,
         "Rewrite row major matrices in shaders as column major as a driver bug workaround",
-        &members, "http://anglebug.com/2273"
+        &members, "http://anglebug.com/40096480"
     };
 
     FeatureInfo disableDrawBuffersIndexed = {
@@ -431,7 +431,7 @@ struct FeaturesGL : FeatureSetBase
         "decodeEncodeSRGBForGenerateMipmap",
         FeatureCategory::OpenGLWorkarounds,
         "Decode and encode before generateMipmap for srgb format textures.",
-        &members, "http://anglebug.com/4646"
+        &members, "http://anglebug.com/40644730"
     };
 
     FeatureInfo emulateCopyTexImage2D = {
@@ -445,7 +445,7 @@ struct FeaturesGL : FeatureSetBase
         "emulateCopyTexImage2DFromRenderbuffers",
         FeatureCategory::OpenGLWorkarounds,
         "CopyTexImage2D spuriously returns errors on iOS when copying from renderbuffers.",
-        &members, "https://anglebug.com/4674"
+        &members, "https://anglebug.com/42263273"
     };
 
     FeatureInfo disableGPUSwitchingSupport = {
@@ -466,7 +466,7 @@ struct FeaturesGL : FeatureSetBase
         "emulatePackSkipRowsAndPackSkipPixels",
         FeatureCategory::OpenGLWorkarounds,
         "GL_PACK_SKIP_ROWS and GL_PACK_SKIP_PIXELS are ignored in Apple's OpenGL driver.",
-        &members, "https://anglebug.com/4849"
+        &members, "https://anglebug.com/40096712"
     };
 
     FeatureInfo clampMscRate = {
@@ -481,7 +481,7 @@ struct FeaturesGL : FeatureSetBase
         FeatureCategory::OpenGLWorkarounds,
         "Bind transform feedback buffers to the generic binding point before calling "
         "glBindBufferBase or glBindBufferRange.",
-        &members, "https://anglebug.com/5140"
+        &members, "https://anglebug.com/42263702"
     };
 
     FeatureInfo disableSyncControlSupport = {
@@ -510,7 +510,7 @@ struct FeaturesGL : FeatureSetBase
         "promotePackedFormatsTo8BitPerChannel",
         FeatureCategory::OpenGLWorkarounds,
         "Packed color formats are buggy on Macs with AMD GPUs",
-        &members, "http://anglebug.com/5469"
+        &members, "http://anglebug.com/42264008"
     };
 
     FeatureInfo initFragmentOutputVariables = {
@@ -531,7 +531,7 @@ struct FeaturesGL : FeatureSetBase
         "syncVertexArraysToDefault",
         FeatureCategory::OpenGLWorkarounds,
         "Only use the default VAO because of missing support or driver bugs",
-        &members, "http://anglebug.com/5577"
+        &members, "http://anglebug.com/40096758"
     };
 
     FeatureInfo sanitizeAMDGPURendererString = {
@@ -560,7 +560,7 @@ struct FeaturesGL : FeatureSetBase
         "disableMultisampledRenderToTexture",
         FeatureCategory::OpenGLWorkarounds,
         "Many drivers have bugs when using GL_EXT_multisampled_render_to_texture",
-        &members, "http://anglebug.com/2894"
+        &members, "http://anglebug.com/40096530"
     };
 
     FeatureInfo uploadTextureDataInChunks = {
@@ -588,21 +588,21 @@ struct FeaturesGL : FeatureSetBase
         "alwaysUnbindFramebufferTexture2D",
         FeatureCategory::OpenGLWorkarounds,
         "Force unbind framebufferTexture2D before binding renderbuffer to work around driver bug.",
-        &members, "https://anglebug.com/5536"
+        &members, "https://anglebug.com/42264072"
     };
 
     FeatureInfo disableTextureClampToBorder = {
         "disableTextureClampToBorder",
         FeatureCategory::OpenGLWorkarounds,
         "Imagination devices generate INVALID_ENUM when setting the texture border color.",
-        &members, "https://anglebug.com/7405"
+        &members, "https://anglebug.com/42265877"
     };
 
     FeatureInfo passHighpToPackUnormSnormBuiltins = {
         "passHighpToPackUnormSnormBuiltins",
         FeatureCategory::OpenGLWorkarounds,
         "packUnorm4x8 fails on Pixel 4 if it is not passed a highp vec4.",
-        &members, "http://anglebug.com/7527"
+        &members, "http://anglebug.com/42265995"
     };
 
     FeatureInfo emulateClipDistanceState = {
@@ -631,49 +631,49 @@ struct FeaturesGL : FeatureSetBase
         "disableBaseInstanceVertex",
         FeatureCategory::OpenGLWorkarounds,
         "Some drivers have buggy implementations of glDraw*BaseVertex*.",
-        &members, "http://anglebug.com/8172"
+        &members, "http://anglebug.com/42266610"
     };
 
     FeatureInfo supportsFragmentShaderInterlockNV = {
         "supportsFragmentShaderInterlockNV",
         FeatureCategory::OpenGLFeatures,
         "Backend GL context supports NV_fragment_shader_interlock extension",
-        &members, "http://anglebug.com/7279"
+        &members, "http://anglebug.com/40096838"
     };
 
     FeatureInfo supportsFragmentShaderOrderingINTEL = {
         "supportsFragmentShaderOrderingINTEL",
         FeatureCategory::OpenGLFeatures,
         "Backend GL context supports GL_INTEL_fragment_shader_ordering extension",
-        &members, "http://anglebug.com/7279"
+        &members, "http://anglebug.com/40096838"
     };
 
     FeatureInfo supportsFragmentShaderInterlockARB = {
         "supportsFragmentShaderInterlockARB",
         FeatureCategory::OpenGLFeatures,
         "Backend GL context supports ARB_fragment_shader_interlock extension",
-        &members, "http://anglebug.com/7279"
+        &members, "http://anglebug.com/40096838"
     };
 
     FeatureInfo supportsShaderFramebufferFetchEXT = {
         "supportsShaderFramebufferFetchEXT",
         FeatureCategory::OpenGLFeatures,
         "Backend GL context supports EXT_shader_framebuffer_fetch extension",
-        &members, "http://anglebug.com/7279"
+        &members, "http://anglebug.com/40096838"
     };
 
     FeatureInfo supportsShaderFramebufferFetchNonCoherentEXT = {
         "supportsShaderFramebufferFetchNonCoherentEXT",
         FeatureCategory::OpenGLFeatures,
         "Backend GL context supports EXT_shader_framebuffer_fetch_non_coherent extension",
-        &members, "http://anglebug.com/7279"
+        &members, "http://anglebug.com/40096838"
     };
 
     FeatureInfo supportsShaderPixelLocalStorageEXT = {
         "supportsShaderPixelLocalStorageEXT",
         FeatureCategory::OpenGLFeatures,
         "Backend GL context supports EXT_shader_pixel_local_storage extension",
-        &members, "http://anglebug.com/7279"
+        &members, "http://anglebug.com/40096838"
     };
 
     FeatureInfo disableClipControl = {
@@ -701,35 +701,35 @@ struct FeaturesGL : FeatureSetBase
         "explicitFragmentLocations",
         FeatureCategory::OpenGLWorkarounds,
         "Always write explicit location layout qualifiers for fragment outputs.",
-        &members, "https://anglebug.com/8308"
+        &members, "https://anglebug.com/42266740"
     };
 
     FeatureInfo disableRenderSnorm = {
         "disableRenderSnorm",
         FeatureCategory::OpenGLWorkarounds,
         "Disable EXT_render_snorm extension.",
-        &members, "https://anglebug.com/8315"
+        &members, "https://anglebug.com/42266745"
     };
 
     FeatureInfo disableTextureMirrorClampToEdge = {
         "disableTextureMirrorClampToEdge",
         FeatureCategory::OpenGLWorkarounds,
         "Disable EXT_texture_mirror_clamp_to_edge extension.",
-        &members, "https://anglebug.com/8319"
+        &members, "https://anglebug.com/42266748"
     };
 
     FeatureInfo resyncDepthRangeOnClipControl = {
         "resyncDepthRangeOnClipControl",
         FeatureCategory::OpenGLWorkarounds,
         "Resync depth range to apply clip control updates.",
-        &members, "https://anglebug.com/8381"
+        &members, "https://anglebug.com/42266811"
     };
 
     FeatureInfo corruptProgramBinaryForTesting = {
         "corruptProgramBinaryForTesting",
         FeatureCategory::OpenGLWorkarounds,
         "Corrupt the program binary retrieved from the driver for testing purposes.",
-        &members, "https://anglebug.com/8471"
+        &members, "https://anglebug.com/41488638"
     };
 
     FeatureInfo useIntermediateTextureForGenerateMipmap = {
@@ -737,6 +737,30 @@ struct FeaturesGL : FeatureSetBase
         FeatureCategory::OpenGLWorkarounds,
         "Some drivers lose context when repeatedly generating mipmaps on textures that were used as framebuffers.",
         &members, "https://crbug.com/40279678"
+    };
+
+    FeatureInfo srgbBlendingBroken = {
+        "srgbBlendingBroken",
+        FeatureCategory::OpenGLWorkarounds,
+        "SRGB blending does not appear to work correctly on the some Qualcomm devices. "
+        "Writing to an SRGB framebuffer with GL_FRAMEBUFFER_SRGB enabled and "
+        "then reading back returns the same value. Disabling GL_FRAMEBUFFER_SRGB "
+        "will then convert in the wrong direction.",
+        &members, "https://crbug.com/40488750"
+    };
+
+    FeatureInfo bgraTexImageFormatsBroken = {
+        "bgraTexImageFormatsBroken",
+        FeatureCategory::OpenGLWorkarounds,
+        "BGRA formats do not appear to be accepted by some qualcomm despite the extension being exposed.",
+        &members, "https://anglebug.com/40096376"
+    };
+
+    FeatureInfo disableTiledRendering = {
+        "disableTiledRendering",
+        FeatureCategory::OpenGLWorkarounds,
+        "Disable QCOM_tiled_rendering on devices with rendering artifacts or which improperly expose the extension.",
+        &members, "http://skbug.com/9491 https://github.com/flutter/flutter/issues/47164 https://github.com/flutter/flutter/issues/47804"
     };
 
 };

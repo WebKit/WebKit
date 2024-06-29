@@ -13,18 +13,11 @@
 #include <memory>
 #include <utility>
 
+#include "api/units/time_delta.h"
 #include "modules/congestion_controller/goog_cc/goog_cc_network_control.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
-GoogCcNetworkControllerFactory::GoogCcNetworkControllerFactory(
-    RtcEventLog* event_log)
-    : event_log_(event_log) {}
-
-GoogCcNetworkControllerFactory::GoogCcNetworkControllerFactory(
-    NetworkStatePredictorFactoryInterface* network_state_predictor_factory) {
-  factory_config_.network_state_predictor_factory =
-      network_state_predictor_factory;
-}
 
 GoogCcNetworkControllerFactory::GoogCcNetworkControllerFactory(
     GoogCcFactoryConfig config)
@@ -32,8 +25,6 @@ GoogCcNetworkControllerFactory::GoogCcNetworkControllerFactory(
 
 std::unique_ptr<NetworkControllerInterface>
 GoogCcNetworkControllerFactory::Create(NetworkControllerConfig config) {
-  if (event_log_)
-    config.event_log = event_log_;
   GoogCcConfig goog_cc_config;
   goog_cc_config.feedback_only = factory_config_.feedback_only;
   if (factory_config_.network_state_estimator_factory) {
@@ -54,12 +45,6 @@ GoogCcNetworkControllerFactory::Create(NetworkControllerConfig config) {
 TimeDelta GoogCcNetworkControllerFactory::GetProcessInterval() const {
   const int64_t kUpdateIntervalMs = 25;
   return TimeDelta::Millis(kUpdateIntervalMs);
-}
-
-GoogCcFeedbackNetworkControllerFactory::GoogCcFeedbackNetworkControllerFactory(
-    RtcEventLog* event_log)
-    : GoogCcNetworkControllerFactory(event_log) {
-  factory_config_.feedback_only = true;
 }
 
 }  // namespace webrtc

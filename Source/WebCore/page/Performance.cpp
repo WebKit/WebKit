@@ -142,12 +142,12 @@ PerformanceTiming* Performance::timing()
     return m_timing.get();
 }
 
-Vector<RefPtr<PerformanceEntry>> Performance::getEntries() const
+Vector<Ref<PerformanceEntry>> Performance::getEntries() const
 {
-    Vector<RefPtr<PerformanceEntry>> entries;
+    Vector<Ref<PerformanceEntry>> entries;
 
     if (m_navigationTiming)
-        entries.append(m_navigationTiming);
+        entries.append(*m_navigationTiming);
 
     entries.appendVector(m_resourceTimingBuffer);
 
@@ -157,24 +157,24 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntries() const
     }
 
     if (m_firstContentfulPaint)
-        entries.append(m_firstContentfulPaint);
+        entries.append(*m_firstContentfulPaint);
 
     std::sort(entries.begin(), entries.end(), PerformanceEntry::startTimeCompareLessThan);
     return entries;
 }
 
-Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByType(const String& entryType) const
+Vector<Ref<PerformanceEntry>> Performance::getEntriesByType(const String& entryType) const
 {
-    Vector<RefPtr<PerformanceEntry>> entries;
+    Vector<Ref<PerformanceEntry>> entries;
 
     if (m_navigationTiming && entryType == "navigation"_s)
-        entries.append(m_navigationTiming);
+        entries.append(*m_navigationTiming);
     
     if (entryType == "resource"_s)
         entries.appendVector(m_resourceTimingBuffer);
 
     if (m_firstContentfulPaint && entryType == "paint"_s)
-        entries.append(m_firstContentfulPaint);
+        entries.append(*m_firstContentfulPaint);
 
     if (m_userTiming) {
         if (entryType == "mark"_s)
@@ -187,12 +187,12 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByType(const String& ent
     return entries;
 }
 
-Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByName(const String& name, const String& entryType) const
+Vector<Ref<PerformanceEntry>> Performance::getEntriesByName(const String& name, const String& entryType) const
 {
-    Vector<RefPtr<PerformanceEntry>> entries;
+    Vector<Ref<PerformanceEntry>> entries;
 
     if (m_navigationTiming && (entryType.isNull() || entryType == "navigation"_s) && name == m_navigationTiming->name())
-        entries.append(m_navigationTiming);
+        entries.append(*m_navigationTiming);
 
     if (entryType.isNull() || entryType == "resource"_s) {
         for (auto& resource : m_resourceTimingBuffer) {
@@ -202,7 +202,7 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByName(const String& nam
     }
 
     if (m_firstContentfulPaint && (entryType.isNull() || entryType == "paint"_s) && name == "first-contentful-paint"_s)
-        entries.append(m_firstContentfulPaint);
+        entries.append(*m_firstContentfulPaint);
 
     if (m_userTiming) {
         if (entryType.isNull() || entryType == "mark"_s)
@@ -215,12 +215,12 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByName(const String& nam
     return entries;
 }
 
-void Performance::appendBufferedEntriesByType(const String& entryType, Vector<RefPtr<PerformanceEntry>>& entries, PerformanceObserver& observer) const
+void Performance::appendBufferedEntriesByType(const String& entryType, Vector<Ref<PerformanceEntry>>& entries, PerformanceObserver& observer) const
 {
     if (m_navigationTiming
         && entryType == "navigation"_s
         && !observer.hasNavigationTiming()) {
-        entries.append(m_navigationTiming);
+        entries.append(*m_navigationTiming);
         observer.addedNavigationTiming();
     }
 
@@ -228,7 +228,7 @@ void Performance::appendBufferedEntriesByType(const String& entryType, Vector<Re
         entries.appendVector(m_resourceTimingBuffer);
 
     if (entryType == "paint"_s && m_firstContentfulPaint)
-        entries.append(m_firstContentfulPaint);
+        entries.append(*m_firstContentfulPaint);
 
     if (m_userTiming) {
         if (entryType.isNull() || entryType == "mark"_s)
@@ -313,7 +313,7 @@ void Performance::resourceTimingBufferFullTimerFired()
     while (!m_backupResourceTimingBuffer.isEmpty()) {
         auto beforeCount = m_backupResourceTimingBuffer.size();
 
-        auto backupBuffer = WTFMove(m_backupResourceTimingBuffer);
+        auto backupBuffer = std::exchange(m_backupResourceTimingBuffer, { });
         ASSERT(m_backupResourceTimingBuffer.isEmpty());
 
         if (isResourceTimingBufferFull()) {
@@ -323,22 +323,20 @@ void Performance::resourceTimingBufferFullTimerFired()
 
         if (m_resourceTimingBufferFullFlag) {
             for (auto& entry : backupBuffer)
-                queueEntry(*entry);
+                queueEntry(entry);
             // Dispatching resourcetimingbufferfull event may have inserted more entries.
-            for (auto& entry : m_backupResourceTimingBuffer)
-                queueEntry(*entry);
-            m_backupResourceTimingBuffer.clear();
+            for (auto& entry : std::exchange(m_backupResourceTimingBuffer, { }))
+                queueEntry(entry);
             break;
         }
 
         // More entries may have added while dispatching resourcetimingbufferfull event.
-        backupBuffer.appendVector(m_backupResourceTimingBuffer);
-        m_backupResourceTimingBuffer.clear();
+        backupBuffer.appendVector(std::exchange(m_backupResourceTimingBuffer, { }));
 
         for (auto& entry : backupBuffer) {
             if (!isResourceTimingBufferFull()) {
                 m_resourceTimingBuffer.append(entry.copyRef());
-                queueEntry(*entry);
+                queueEntry(entry);
             } else
                 m_backupResourceTimingBuffer.append(entry.copyRef());
         }

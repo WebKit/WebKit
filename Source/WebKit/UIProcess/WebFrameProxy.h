@@ -30,6 +30,7 @@
 #include "WebFramePolicyListenerProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/ListHashSet.h>
@@ -154,9 +155,9 @@ public:
     void disconnect();
     void didCreateSubframe(WebCore::FrameIdentifier, const String& frameName);
     ProcessID processID() const;
-    void prepareForProvisionalNavigationInProcess(WebProcessProxy&, const API::Navigation&, BrowsingContextGroup&, CompletionHandler<void()>&&);
+    void prepareForProvisionalLoadInProcess(WebProcessProxy&, API::Navigation&, BrowsingContextGroup&, CompletionHandler<void()>&&);
 
-    void commitProvisionalFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
+    void commitProvisionalFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
 
     void getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&&);
     FrameTreeCreationParameters frameTreeCreationParameters() const;
@@ -167,8 +168,10 @@ public:
     Ref<WebProcessProxy> protectedProcess() const { return process(); }
     void setProcess(FrameProcess&);
     const FrameProcess& frameProcess() const { return m_frameProcess.get(); }
+    void removeChildFrames();
     ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
     std::unique_ptr<ProvisionalFrameProxy> takeProvisionalFrame();
+    WebProcessProxy& provisionalLoadProcess();
     void remoteProcessDidTerminate(WebProcessProxy&);
     std::optional<WebCore::PageIdentifier> webPageIDInCurrentProcess();
     void notifyParentOfLoadCompletion(WebProcessProxy&);
@@ -184,6 +187,12 @@ public:
     TraversalResult traverseNext() const;
     TraversalResult traverseNext(CanWrap) const;
     TraversalResult traversePrevious(CanWrap);
+
+    void setHasPendingBackForwardItem(bool hasPendingBackForwardItem) { m_hasPendingBackForwardItem = hasPendingBackForwardItem; }
+    bool hasPendingBackForwardItem() { return m_hasPendingBackForwardItem; }
+
+    WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
+    void setRemoteFrameSize(WebCore::IntSize size) { m_remoteFrameSize = size; }
 
 private:
     WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier);
@@ -215,6 +224,9 @@ private:
     WebCore::ContentFilterUnblockHandler m_contentFilterUnblockHandler;
 #endif
     CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)> m_navigateCallback;
+    const WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier;
+    bool m_hasPendingBackForwardItem { false };
+    std::optional<WebCore::IntSize> m_remoteFrameSize;
 };
 
 } // namespace WebKit

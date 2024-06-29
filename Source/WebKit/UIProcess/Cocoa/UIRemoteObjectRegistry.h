@@ -41,7 +41,7 @@ public:
 
 private:
     Ref<WebPageProxy> protectedPage();
-    IPC::MessageSender& messageSender() final;
+    MessageSender messageSender() final;
     uint64_t messageDestinationID() final;
     std::unique_ptr<ProcessThrottler::BackgroundActivity> backgroundActivity(ASCIILiteral) final;
 

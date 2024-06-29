@@ -64,7 +64,7 @@ public:
             GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(client), result, &error.outPtr()));
             if (!connection) {
                 if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CONNECTION_REFUSED)) {
-                    g_timeout_add(100, [](gpointer userData) {
+                    g_timeout_add(100, [](gpointer userData) -> gboolean {
                         static_cast<InspectorServerTest*>(userData)->connectToInspectorServer();
                         return G_SOURCE_REMOVE;
                     }, userData);

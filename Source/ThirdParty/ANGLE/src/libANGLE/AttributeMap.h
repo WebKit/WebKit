@@ -77,7 +77,7 @@ class AttributeMap final
                                 const egl::Display *display,
                                 AttributeValidationFunc validationFunc) const;
 
-    // TODO: remove this and validate at every call site. http://anglebug.com/6671
+    // TODO: remove this and validate at every call site. http://anglebug.com/42265167
     void initializeWithoutValidation() const;
 
     static AttributeMap CreateFromIntArray(const EGLint *attributes);

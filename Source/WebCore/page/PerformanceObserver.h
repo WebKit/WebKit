@@ -57,7 +57,7 @@ public:
 
     ExceptionOr<void> observe(Init&&);
     void disconnect();
-    Vector<RefPtr<PerformanceEntry>> takeRecords();
+    Vector<Ref<PerformanceEntry>> takeRecords();
 
     OptionSet<PerformanceEntry::Type> typeFilter() const { return m_typeFilter; }
 
@@ -76,7 +76,7 @@ private:
     RefPtr<Performance> protectedPerformance() const;
 
     RefPtr<Performance> m_performance;
-    Vector<RefPtr<PerformanceEntry>> m_entriesToDeliver;
+    Vector<Ref<PerformanceEntry>> m_entriesToDeliver;
     Ref<PerformanceObserverCallback> m_callback;
     OptionSet<PerformanceEntry::Type> m_typeFilter;
     bool m_registered { false };

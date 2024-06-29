@@ -36,7 +36,6 @@
 #include "ProcessThrottler.h"
 #include "VisitedLinkStore.h"
 #include "WebContextClient.h"
-#include "WebContextConnectionClient.h"
 #include "WebPreferencesStore.h"
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
@@ -190,12 +189,14 @@ public:
     WebBackForwardCache& backForwardCache() { return m_backForwardCache.get(); }
     CheckedRef<WebBackForwardCache> checkedBackForwardCache();
     
-    void addMessageReceiver(IPC::ReceiverName messageReceiverName, const ObjectIdentifierGenericBase& destinationID, IPC::MessageReceiver& receiver)
+    template<typename RawValue>
+    void addMessageReceiver(IPC::ReceiverName messageReceiverName, const ObjectIdentifierGenericBase<RawValue>& destinationID, IPC::MessageReceiver& receiver)
     {
         addMessageReceiver(messageReceiverName, destinationID.toUInt64(), receiver);
     }
     
-    void removeMessageReceiver(IPC::ReceiverName messageReceiverName, const ObjectIdentifierGenericBase& destinationID)
+    template<typename RawValue>
+    void removeMessageReceiver(IPC::ReceiverName messageReceiverName, const ObjectIdentifierGenericBase<RawValue>& destinationID)
     {
         removeMessageReceiver(messageReceiverName, destinationID.toUInt64());
     }
@@ -205,7 +206,6 @@ public:
 
     void initializeClient(const WKContextClientBase*);
     void setInjectedBundleClient(std::unique_ptr<API::InjectedBundleClient>&&);
-    void initializeConnectionClient(const WKContextConnectionClientBase*);
     void setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient>&&);
     void setLegacyDownloadClient(RefPtr<API::DownloadClient>&&);
     void setAutomationClient(std::unique_ptr<API::AutomationClient>&&);
@@ -699,7 +699,6 @@ private:
     std::unique_ptr<API::InjectedBundleClient> m_injectedBundleClient;
 
     WebContextClient m_client;
-    WebContextConnectionClient m_connectionClient;
     std::unique_ptr<API::AutomationClient> m_automationClient;
     RefPtr<API::DownloadClient> m_legacyDownloadClient;
     std::unique_ptr<API::LegacyContextHistoryClient> m_historyClient;

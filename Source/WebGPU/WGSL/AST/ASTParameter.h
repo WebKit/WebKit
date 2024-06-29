@@ -43,6 +43,7 @@ enum class ParameterRole : uint8_t {
     UserDefined,
     StageIn,
     BindGroup,
+    PackedResource,
 };
 
 class Parameter final : public Node {

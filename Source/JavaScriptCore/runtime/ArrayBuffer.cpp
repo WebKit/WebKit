@@ -149,13 +149,13 @@ void ArrayBufferContents::tryAllocate(size_t numElements, unsigned elementByteSi
 
 void ArrayBufferContents::makeShared()
 {
-    m_shared = SharedArrayBufferContents::create(data(), sizeInBytes(), maxByteLength(), m_memoryHandle, WTFMove(m_destructor), SharedArrayBufferContents::Mode::Default);
+    m_shared = SharedArrayBufferContents::create(mutableSpan(), maxByteLength(), m_memoryHandle, WTFMove(m_destructor), SharedArrayBufferContents::Mode::Default);
     m_destructor = nullptr;
 }
 
 SharedArrayBufferContents::~SharedArrayBufferContents()
 {
-    WaiterListManager::singleton().unregisterSharedArrayBuffer(bitwise_cast<uint8_t*>(data()), m_sizeInBytes);
+    WaiterListManager::singleton().unregister(bitwise_cast<uint8_t*>(data()), m_sizeInBytes);
     if (m_destructor) {
         // FIXME: we shouldn't use getUnsafe here https://bugs.webkit.org/show_bug.cgi?id=197698
         m_destructor->run(m_data.getUnsafe());
@@ -197,18 +197,10 @@ Ref<ArrayBuffer> ArrayBuffer::create(size_t numElements, unsigned elementByteSiz
 
 Ref<ArrayBuffer> ArrayBuffer::create(ArrayBuffer& other)
 {
-    return ArrayBuffer::create(other.data(), other.byteLength());
+    return ArrayBuffer::create(other.span());
 }
 
-Ref<ArrayBuffer> ArrayBuffer::create(const void* source, size_t byteLength)
-{
-    auto buffer = tryCreate(source, byteLength);
-    if (!buffer)
-        CRASH();
-    return buffer.releaseNonNull();
-}
-
-Ref<ArrayBuffer> ArrayBuffer::create(std::span<uint8_t> span)
+Ref<ArrayBuffer> ArrayBuffer::create(std::span<const uint8_t> span)
 {
     auto buffer = tryCreate(span);
     if (!buffer)
@@ -221,19 +213,14 @@ Ref<ArrayBuffer> ArrayBuffer::create(ArrayBufferContents&& contents)
     return adoptRef(*new ArrayBuffer(WTFMove(contents)));
 }
 
-Ref<ArrayBuffer> ArrayBuffer::create(const Vector<uint8_t>& vector)
-{
-    return ArrayBuffer::create(vector.data(), vector.size());
-}
-
 // FIXME: We cannot use this except if the memory comes from the cage.
 // Current this is only used from:
 // - JSGenericTypedArrayView<>::slowDownAndWasteMemory. But in that case, the memory should have already come
 //   from the cage.
-Ref<ArrayBuffer> ArrayBuffer::createAdopted(const void* data, size_t byteLength)
+Ref<ArrayBuffer> ArrayBuffer::createAdopted(std::span<const uint8_t> data)
 {
-    ASSERT(!Gigacage::isEnabled() || (Gigacage::contains(data) && Gigacage::contains(static_cast<const uint8_t*>(data) + byteLength - 1)));
-    return createFromBytes(data, byteLength, ArrayBuffer::primitiveGigacageDestructor());
+    ASSERT(!Gigacage::isEnabled() || (Gigacage::contains(data.data()) && Gigacage::contains(data.data() + data.size() - 1)));
+    return createFromBytes(data, ArrayBuffer::primitiveGigacageDestructor());
 }
 
 // FIXME: We cannot use this except if the memory comes from the cage.
@@ -242,12 +229,12 @@ Ref<ArrayBuffer> ArrayBuffer::createAdopted(const void* data, size_t byteLength)
 //   longer caged, or we could introduce a new set of typed array types that are uncaged and get accessed
 //   differently.
 // - WebAssembly. Wasm should allocate from the cage.
-Ref<ArrayBuffer> ArrayBuffer::createFromBytes(const void* data, size_t byteLength, ArrayBufferDestructorFunction&& destructor)
+Ref<ArrayBuffer> ArrayBuffer::createFromBytes(std::span<const uint8_t> data, ArrayBufferDestructorFunction&& destructor)
 {
-    if (data && !Gigacage::isCaged(Gigacage::Primitive, data))
+    if (data.data() && !Gigacage::isCaged(Gigacage::Primitive, data.data()))
         Gigacage::disablePrimitiveGigacage();
     
-    ArrayBufferContents contents(const_cast<void*>(data), byteLength, std::nullopt, WTFMove(destructor));
+    ArrayBufferContents contents(data, std::nullopt, WTFMove(destructor));
     return create(WTFMove(contents));
 }
 
@@ -264,21 +251,16 @@ RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(size_t numElements, unsigned elementB
 
 RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(ArrayBuffer& other)
 {
-    return tryCreate(other.data(), other.byteLength());
-}
-
-RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(const void* source, size_t byteLength)
-{
-    ArrayBufferContents contents;
-    contents.tryAllocate(byteLength, 1, ArrayBufferContents::InitializationPolicy::DontInitialize);
-    if (!contents.m_data)
-        return nullptr;
-    return createInternal(WTFMove(contents), source, byteLength);
+    return tryCreate(other.span());
 }
 
 RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(std::span<const uint8_t> span)
 {
-    return tryCreate(span.data(), span.size_bytes());
+    ArrayBufferContents contents;
+    contents.tryAllocate(span.size(), 1, ArrayBufferContents::InitializationPolicy::DontInitialize);
+    if (!contents.m_data)
+        return nullptr;
+    return createInternal(WTFMove(contents), span.data(), span.size());
 }
 
 Ref<ArrayBuffer> ArrayBuffer::createUninitialized(size_t numElements, unsigned elementByteSize)
@@ -372,7 +354,7 @@ RefPtr<ArrayBuffer> ArrayBuffer::slice(double begin) const
 RefPtr<ArrayBuffer> ArrayBuffer::sliceWithClampedIndex(size_t begin, size_t end) const
 {
     size_t size = begin <= end ? end - begin : 0;
-    auto result = ArrayBuffer::tryCreate(static_cast<const char*>(data()) + begin, size);
+    auto result = ArrayBuffer::tryCreate(span().subspan(begin, size));
     if (result)
         result->setSharingMode(sharingMode());
     return result;
@@ -572,8 +554,8 @@ RefPtr<ArrayBuffer> ArrayBuffer::tryCreateShared(VM& vm, size_t numElements, uns
     if (!handle)
         return nullptr;
 
-    void* memory = handle->memory();
-    return createShared(SharedArrayBufferContents::create(memory, sizeInBytes.value(), maxByteLength, WTFMove(handle), nullptr, SharedArrayBufferContents::Mode::Default));
+    auto* memory = static_cast<uint8_t*>(handle->memory());
+    return createShared(SharedArrayBufferContents::create({ memory, sizeInBytes.value() }, maxByteLength, WTFMove(handle), nullptr, SharedArrayBufferContents::Mode::Default));
 }
 
 Expected<int64_t, GrowFailReason> SharedArrayBufferContents::grow(VM& vm, size_t newByteLength)
@@ -652,7 +634,7 @@ ASCIILiteral errorMessageForTransfer(ArrayBuffer* buffer)
     return "Cannot transfer an ArrayBuffer whose backing store has been accessed by the JavaScriptCore C API"_s;
 }
 
-std::optional<ArrayBufferContents> ArrayBufferContents::fromDataSpan(std::span<const uint8_t> data)
+std::optional<ArrayBufferContents> ArrayBufferContents::fromSpan(std::span<const uint8_t> data)
 {
     void* buffer = Gigacage::tryMalloc(Gigacage::Primitive, data.size_bytes());
     if (!buffer)

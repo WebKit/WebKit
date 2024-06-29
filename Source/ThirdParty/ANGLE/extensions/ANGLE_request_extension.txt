@@ -85,7 +85,9 @@ Additions to the OpenGL ES 3.0 Specification
     enable or disable the requestable OpenGL ES extension named <name>. If the
     requested extension was not requestable or disablable, INVALID_OPERATION is
     generated. Not all requestable extensions can be disabled. There is
-    currently no query for disablable extensions.
+    currently no query for disablable extensions.  This operation is not thread
+    safe, and the application is responsible for ensuring no other context in
+    the share group is accessed by another thread during this operation.
 
 New State
 

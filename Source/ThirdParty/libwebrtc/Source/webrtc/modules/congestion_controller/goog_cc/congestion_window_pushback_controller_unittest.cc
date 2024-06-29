@@ -13,93 +13,91 @@
 #include <cstdint>
 #include <memory>
 
-#include "api/transport/field_trial_based_config.h"
 #include "api/units/data_size.h"
-#include "test/field_trial.h"
+#include "test/explicit_key_value_config.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-
-using ::testing::_;
 
 namespace webrtc {
 namespace test {
 
-class CongestionWindowPushbackControllerTest : public ::testing::Test {
- public:
-  CongestionWindowPushbackControllerTest() {
-    cwnd_controller_.reset(
-        new CongestionWindowPushbackController(&field_trial_config_));
-  }
+using ::testing::_;
 
- protected:
-  FieldTrialBasedConfig field_trial_config_;
+TEST(CongestionWindowPushbackControllerTest, FullCongestionWindow) {
+  CongestionWindowPushbackController cwnd_controller(
+      ExplicitKeyValueConfig(""));
 
-  std::unique_ptr<CongestionWindowPushbackController> cwnd_controller_;
-};
-
-TEST_F(CongestionWindowPushbackControllerTest, FullCongestionWindow) {
-  cwnd_controller_->UpdateOutstandingData(100000);
-  cwnd_controller_->SetDataWindow(DataSize::Bytes(50000));
+  cwnd_controller.UpdateOutstandingData(100000);
+  cwnd_controller.SetDataWindow(DataSize::Bytes(50000));
 
   uint32_t bitrate_bps = 80000;
-  bitrate_bps = cwnd_controller_->UpdateTargetBitrate(bitrate_bps);
+  bitrate_bps = cwnd_controller.UpdateTargetBitrate(bitrate_bps);
   EXPECT_EQ(72000u, bitrate_bps);
 
-  cwnd_controller_->SetDataWindow(DataSize::Bytes(50000));
-  bitrate_bps = cwnd_controller_->UpdateTargetBitrate(bitrate_bps);
+  cwnd_controller.SetDataWindow(DataSize::Bytes(50000));
+  bitrate_bps = cwnd_controller.UpdateTargetBitrate(bitrate_bps);
   EXPECT_EQ(static_cast<uint32_t>(72000 * 0.9 * 0.9), bitrate_bps);
 }
 
-TEST_F(CongestionWindowPushbackControllerTest, NormalCongestionWindow) {
-  cwnd_controller_->UpdateOutstandingData(199999);
-  cwnd_controller_->SetDataWindow(DataSize::Bytes(200000));
+TEST(CongestionWindowPushbackControllerTest, NormalCongestionWindow) {
+  CongestionWindowPushbackController cwnd_controller(
+      ExplicitKeyValueConfig(""));
+
+  cwnd_controller.UpdateOutstandingData(199999);
+  cwnd_controller.SetDataWindow(DataSize::Bytes(200000));
 
   uint32_t bitrate_bps = 80000;
-  bitrate_bps = cwnd_controller_->UpdateTargetBitrate(bitrate_bps);
+  bitrate_bps = cwnd_controller.UpdateTargetBitrate(bitrate_bps);
   EXPECT_EQ(80000u, bitrate_bps);
 }
 
-TEST_F(CongestionWindowPushbackControllerTest, LowBitrate) {
-  cwnd_controller_->UpdateOutstandingData(100000);
-  cwnd_controller_->SetDataWindow(DataSize::Bytes(50000));
+TEST(CongestionWindowPushbackControllerTest, LowBitrate) {
+  CongestionWindowPushbackController cwnd_controller(
+      ExplicitKeyValueConfig(""));
+
+  cwnd_controller.UpdateOutstandingData(100000);
+  cwnd_controller.SetDataWindow(DataSize::Bytes(50000));
 
   uint32_t bitrate_bps = 35000;
-  bitrate_bps = cwnd_controller_->UpdateTargetBitrate(bitrate_bps);
+  bitrate_bps = cwnd_controller.UpdateTargetBitrate(bitrate_bps);
   EXPECT_EQ(static_cast<uint32_t>(35000 * 0.9), bitrate_bps);
 
-  cwnd_controller_->SetDataWindow(DataSize::Bytes(20000));
-  bitrate_bps = cwnd_controller_->UpdateTargetBitrate(bitrate_bps);
+  cwnd_controller.SetDataWindow(DataSize::Bytes(20000));
+  bitrate_bps = cwnd_controller.UpdateTargetBitrate(bitrate_bps);
   EXPECT_EQ(30000u, bitrate_bps);
 }
 
-TEST_F(CongestionWindowPushbackControllerTest, NoPushbackOnDataWindowUnset) {
-  cwnd_controller_->UpdateOutstandingData(1e8);  // Large number
+TEST(CongestionWindowPushbackControllerTest, NoPushbackOnDataWindowUnset) {
+  CongestionWindowPushbackController cwnd_controller(
+      ExplicitKeyValueConfig(""));
+
+  cwnd_controller.UpdateOutstandingData(1e8);  // Large number
 
   uint32_t bitrate_bps = 80000;
-  bitrate_bps = cwnd_controller_->UpdateTargetBitrate(bitrate_bps);
+  bitrate_bps = cwnd_controller.UpdateTargetBitrate(bitrate_bps);
   EXPECT_EQ(80000u, bitrate_bps);
 }
 
-TEST_F(CongestionWindowPushbackControllerTest, PushbackOnInititialDataWindow) {
-  test::ScopedFieldTrials trials("WebRTC-CongestionWindow/InitWin:100000/");
-  cwnd_controller_.reset(
-      new CongestionWindowPushbackController(&field_trial_config_));
-  cwnd_controller_->UpdateOutstandingData(1e8);  // Large number
+TEST(CongestionWindowPushbackControllerTest, PushbackOnInititialDataWindow) {
+  CongestionWindowPushbackController cwnd_controller(
+      ExplicitKeyValueConfig("WebRTC-CongestionWindow/InitWin:100000/"));
+
+  cwnd_controller.UpdateOutstandingData(1e8);  // Large number
 
   uint32_t bitrate_bps = 80000;
-  bitrate_bps = cwnd_controller_->UpdateTargetBitrate(bitrate_bps);
+  bitrate_bps = cwnd_controller.UpdateTargetBitrate(bitrate_bps);
   EXPECT_GT(80000u, bitrate_bps);
 }
 
-TEST_F(CongestionWindowPushbackControllerTest, PushbackDropFrame) {
-  test::ScopedFieldTrials trials("WebRTC-CongestionWindow/DropFrame:true/");
-  cwnd_controller_.reset(
-      new CongestionWindowPushbackController(&field_trial_config_));
-  cwnd_controller_->UpdateOutstandingData(1e8);  // Large number
-  cwnd_controller_->SetDataWindow(DataSize::Bytes(50000));
+TEST(CongestionWindowPushbackControllerTest, PushbackDropFrame) {
+  CongestionWindowPushbackController cwnd_controller(
+      ExplicitKeyValueConfig("WebRTC-CongestionWindow/DropFrame:true/"));
+
+  cwnd_controller.UpdateOutstandingData(1e8);  // Large number
+  cwnd_controller.SetDataWindow(DataSize::Bytes(50000));
 
   uint32_t bitrate_bps = 80000;
-  bitrate_bps = cwnd_controller_->UpdateTargetBitrate(bitrate_bps);
+  bitrate_bps = cwnd_controller.UpdateTargetBitrate(bitrate_bps);
   EXPECT_GT(80000u, bitrate_bps);
 }
 

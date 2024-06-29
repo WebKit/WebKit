@@ -31,8 +31,6 @@
 import os
 import sys
 
-os.environ['WEBKITPY_ALLOW_PYTHON_2'] = '1'
-
 from webkitpy.common import multiprocessing_bootstrap
 
 

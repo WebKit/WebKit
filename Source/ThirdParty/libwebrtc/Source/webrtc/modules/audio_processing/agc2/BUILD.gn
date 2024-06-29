@@ -23,9 +23,9 @@ rtc_library("speech_level_estimator") {
 
   deps = [
     ":common",
-    "..:api",
     "..:apm_logging",
     "../../../api:array_view",
+    "../../../api/audio:audio_processing",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
     "../../../rtc_base:safe_minmax",
@@ -48,9 +48,9 @@ rtc_library("adaptive_digital_gain_controller") {
   deps = [
     ":common",
     ":gain_applier",
-    "..:api",
     "..:apm_logging",
     "..:audio_frame_view",
+    "../../../api/audio:audio_processing",
     "../../../common_audio",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
@@ -112,8 +112,8 @@ rtc_library("clipping_predictor") {
 
   deps = [
     ":gain_map",
-    "..:api",
     "..:audio_frame_view",
+    "../../../api/audio:audio_processing",
     "../../../common_audio",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
@@ -209,10 +209,10 @@ rtc_library("input_volume_controller") {
     ":clipping_predictor",
     ":gain_map",
     ":input_volume_stats_reporter",
-    "..:api",
     "..:audio_buffer",
     "..:audio_frame_view",
     "../../../api:array_view",
+    "../../../api/audio:audio_processing",
     "../../../rtc_base:checks",
     "../../../rtc_base:checks",
     "../../../rtc_base:gtest_prod",
@@ -303,8 +303,8 @@ rtc_library("speech_level_estimator_unittest") {
   deps = [
     ":common",
     ":speech_level_estimator",
-    "..:api",
     "..:apm_logging",
+    "../../../api/audio:audio_processing",
     "../../../rtc_base:gunit_helpers",
     "../../../test:test_support",
   ]
@@ -320,9 +320,9 @@ rtc_library("adaptive_digital_gain_controller_unittest") {
     ":adaptive_digital_gain_controller",
     ":common",
     ":test_utils",
-    "..:api",
     "..:apm_logging",
     "..:audio_frame_view",
+    "../../../api/audio:audio_processing",
     "../../../common_audio",
     "../../../rtc_base:gunit_helpers",
     "../../../test:test_support",
@@ -413,7 +413,6 @@ rtc_library("input_volume_controller_unittests") {
     ":clipping_predictor",
     ":gain_map",
     ":input_volume_controller",
-    "..:api",
     "../../../api:array_view",
     "../../../rtc_base:checks",
     "../../../rtc_base:random",

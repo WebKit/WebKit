@@ -223,11 +223,11 @@ void vp9_update_layer_context_change_config(VP9_COMP *const cpi,
           bitrate_alloc = (float)lc->target_bandwidth / target_bandwidth;
         }
         lrc->starting_buffer_level =
-            (int64_t)(rc->starting_buffer_level * bitrate_alloc);
+            (int64_t)(rc->starting_buffer_level * bitrate_alloc + 0.5);
         lrc->optimal_buffer_level =
-            (int64_t)(rc->optimal_buffer_level * bitrate_alloc);
+            (int64_t)(rc->optimal_buffer_level * bitrate_alloc + 0.5);
         lrc->maximum_buffer_size =
-            (int64_t)(rc->maximum_buffer_size * bitrate_alloc);
+            (int64_t)(rc->maximum_buffer_size * bitrate_alloc + 0.5);
         lrc->bits_off_target =
             VPXMIN(lrc->bits_off_target, lrc->maximum_buffer_size);
         lrc->buffer_level = VPXMIN(lrc->buffer_level, lrc->maximum_buffer_size);
@@ -339,13 +339,14 @@ void vp9_update_spatial_layer_framerate(VP9_COMP *const cpi, double framerate) {
   RATE_CONTROL *const lrc = &lc->rc;
 
   lc->framerate = framerate;
-  lrc->avg_frame_bandwidth =
-      (int)VPXMIN(lc->target_bandwidth / lc->framerate, INT_MAX);
-  lrc->min_frame_bandwidth =
-      (int)(lrc->avg_frame_bandwidth * oxcf->two_pass_vbrmin_section / 100);
-  lrc->max_frame_bandwidth = (int)(((int64_t)lrc->avg_frame_bandwidth *
-                                    oxcf->two_pass_vbrmax_section) /
-                                   100);
+  const double avg_frame_bandwidth = lc->target_bandwidth / lc->framerate;
+  lrc->avg_frame_bandwidth = (int)VPXMIN(avg_frame_bandwidth, INT_MAX);
+  const int64_t vbr_min_bits =
+      (int64_t)lrc->avg_frame_bandwidth * oxcf->two_pass_vbrmin_section / 100;
+  lrc->min_frame_bandwidth = (int)VPXMIN(vbr_min_bits, INT_MAX);
+  const int64_t vbr_max_bits =
+      (int64_t)lrc->avg_frame_bandwidth * oxcf->two_pass_vbrmax_section / 100;
+  lrc->max_frame_bandwidth = (int)VPXMIN(vbr_max_bits, INT_MAX);
   vp9_rc_set_gf_interval_range(cpi, lrc);
 }
 
@@ -1349,4 +1350,28 @@ void vp9_svc_adjust_avg_frame_qindex(VP9_COMP *const cpi) {
       lrc->avg_frame_qindex[INTER_FRAME] = rc->avg_frame_qindex[INTER_FRAME];
     }
   }
+}
+
+// SVC: skip encoding of enhancement layer if the layer target bandwidth = 0.
+// No need to set svc.skip_enhancement_layer if whole superframe will be
+// dropped.
+int vp9_svc_check_skip_enhancement_layer(VP9_COMP *const cpi) {
+  if (cpi->use_svc && cpi->svc.spatial_layer_id > 0 &&
+      cpi->oxcf.target_bandwidth == 0 &&
+      !(cpi->svc.framedrop_mode != LAYER_DROP &&
+        (cpi->svc.framedrop_mode != CONSTRAINED_FROM_ABOVE_DROP ||
+         cpi->svc
+             .force_drop_constrained_from_above[cpi->svc.number_spatial_layers -
+                                                1]) &&
+        cpi->svc.drop_spatial_layer[0])) {
+    cpi->svc.skip_enhancement_layer = 1;
+    vp9_rc_postencode_update_drop_frame(cpi);
+    cpi->ext_refresh_frame_flags_pending = 0;
+    cpi->last_frame_dropped = 1;
+    cpi->svc.last_layer_dropped[cpi->svc.spatial_layer_id] = 1;
+    cpi->svc.drop_spatial_layer[cpi->svc.spatial_layer_id] = 1;
+    vp9_inc_frame_in_layer(cpi);
+    return 1;
+  }
+  return 0;
 }

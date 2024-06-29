@@ -65,7 +65,7 @@ void SharedStringHashTableReadOnly::setSharedMemory(RefPtr<SharedMemory>&& share
 
     if (m_sharedMemory) {
         ASSERT(!(m_sharedMemory->size() % sizeof(SharedStringHash)));
-        m_table = static_cast<SharedStringHash*>(m_sharedMemory->data());
+        m_table = reinterpret_cast<SharedStringHash*>(m_sharedMemory->mutableSpan().data());
         m_tableSize = m_sharedMemory->size() / sizeof(SharedStringHash);
         ASSERT(isPowerOf2(m_tableSize));
         m_tableSizeMask = m_tableSize - 1;

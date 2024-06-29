@@ -50,12 +50,14 @@ namespace WebCore::WebGPU {
 
 class Device;
 
+enum class TextureFormat : uint8_t;
+
 class CompositorIntegration : public RefCounted<CompositorIntegration>, public CanMakeWeakPtr<CompositorIntegration> {
 public:
     virtual ~CompositorIntegration() = default;
 
 #if PLATFORM(COCOA)
-    virtual Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication, Device&) = 0;
+    virtual Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, Device&) = 0;
 #endif
 
     virtual void prepareForDisplay(CompletionHandler<void()>&&) = 0;

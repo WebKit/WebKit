@@ -160,6 +160,9 @@ static constexpr unsigned bitWidthOfLoadedFromOpaqueSource = 1;
 enum class LoadedFromPluginElement : bool { No, Yes };
 static constexpr unsigned bitWidthOfLoadedFromPluginElement = 1;
 
+enum class LoadedFromFetch : bool { No, Yes };
+static constexpr unsigned bitWidthOfLoadedFromFetch = 1;
+
 struct ResourceLoaderOptions : public FetchOptions {
     ResourceLoaderOptions()
         : ResourceLoaderOptions(FetchOptions())
@@ -187,6 +190,7 @@ struct ResourceLoaderOptions : public FetchOptions {
         , preflightPolicy(PreflightPolicy::Consider)
         , loadedFromOpaqueSource(LoadedFromOpaqueSource::No)
         , loadedFromPluginElement(LoadedFromPluginElement::No)
+        , loadedFromFetch(LoadedFromFetch::No)
         , fetchPriorityHint(RequestPriority::Auto)
         , shouldEnableContentExtensionsCheck(ShouldEnableContentExtensionsCheck::Yes)
     { }
@@ -211,6 +215,7 @@ struct ResourceLoaderOptions : public FetchOptions {
         , preflightPolicy(PreflightPolicy::Consider)
         , loadedFromOpaqueSource(LoadedFromOpaqueSource::No)
         , loadedFromPluginElement(LoadedFromPluginElement::No)
+        , loadedFromFetch(LoadedFromFetch::No)
         , fetchPriorityHint(RequestPriority::Auto)
         , shouldEnableContentExtensionsCheck(ShouldEnableContentExtensionsCheck::Yes)
     {
@@ -244,6 +249,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     PreflightPolicy preflightPolicy : bitWidthOfPreflightPolicy;
     LoadedFromOpaqueSource loadedFromOpaqueSource : bitWidthOfLoadedFromOpaqueSource;
     LoadedFromPluginElement loadedFromPluginElement : bitWidthOfLoadedFromPluginElement;
+    LoadedFromFetch loadedFromFetch : bitWidthOfLoadedFromFetch;
     RequestPriority fetchPriorityHint : bitWidthOfFetchPriorityHint;
     ShouldEnableContentExtensionsCheck shouldEnableContentExtensionsCheck : bitWidthOfShouldEnableContentExtensionsCheck;
 

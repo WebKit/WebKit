@@ -11,6 +11,7 @@
 #define COMMON_RING_BUFFER_ALLOCATOR_H_
 
 #include "angleutils.h"
+#include "common/SimpleMutex.h"
 #include "common/debug.h"
 
 #include <atomic>
@@ -142,7 +143,7 @@ class SharedRingBufferAllocatorCheckPoint final : angle::NonCopyable
   private:
     friend class SharedRingBufferAllocator;
     RingBufferAllocatorCheckPoint pop();
-    std::mutex mMutex;
+    angle::SimpleMutex mMutex;
     RingBufferAllocatorCheckPoint mValue;
 
 #if defined(ANGLE_ENABLE_ASSERTS)

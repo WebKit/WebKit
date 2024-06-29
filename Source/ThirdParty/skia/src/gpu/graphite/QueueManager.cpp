@@ -96,11 +96,6 @@ bool QueueManager::addRecording(const InsertRecordingInfo& info, Context* contex
                                    info.fRecording->priv().uniqueID());
     }
 
-// Merge error, remove later
-//    // Note the new Recording ID.
-//    fLastAddedRecordingIDs.set(info.fRecording->priv().recorderID(),
-//                               info.fRecording->priv().uniqueID());
-
     if (info.fTargetSurface &&
         !static_cast<const SkSurface_Base*>(info.fTargetSurface)->isGraphiteBacked()) {
         if (callback) {
@@ -185,7 +180,7 @@ bool QueueManager::addTask(Task* task,
         return false;
     }
 
-    if (!task->addCommands(context, fCurrentCommandBuffer.get(), {})) {
+    if (task->addCommands(context, fCurrentCommandBuffer.get(), {}) == Task::Status::kFail) {
         SKGPU_LOG_E("Adding Task commands to the CommandBuffer has failed");
         return false;
     }

@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setAnimatingViewAlpha:(CGFloat)alpha;
 - (void)setSupportedOrientations:(UIInterfaceOrientationMask)supportedOrientations;
 - (void)resetSupportedOrientations;
-#if PLATFORM(VISION)
+#if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
 - (void)hideCustomControls:(BOOL)hidden;
 #endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)

@@ -1,12 +1,13 @@
 When prompted, accept to share your video stream.
 
 Description
-
 This test checks that a disabled video track in a MediaStream is handled correctly by HTMLVideoElement.
 
 
 
+Harness Error (TIMEOUT), message = null
+
 PASS Tests that a disabled video track in a MediaStream is rendered as blackness
-PASS Test that a video element rendering a disabled video track reports correct intrinsic dimensions
-FAIL Test that frames don't flow for a disabled video track assert_equals: expected 0 but got 1
+TIMEOUT Test that a video element rendering a disabled video track reports correct intrinsic dimensions Test timed out
+NOTRUN Test that frames are black for a disabled video track with an enabled clone
 

@@ -1,4 +1,3 @@
 
-
-FAIL navigate event destination after iframe detach promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'i.contentWindow.navigation.currentEntry.key')"
+PASS navigate event destination after iframe detach
 

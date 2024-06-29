@@ -121,6 +121,7 @@ PLS_ALLOW_WILDCARDS = [
     "Is*",
     "ObjectLabel*",
     "ObjectPtrLabel*",
+    "PolygonMode*",
     "PolygonOffset*",
     "PopDebugGroup*",
     "PushDebugGroup*",
@@ -464,7 +465,14 @@ void EGLAPIENTRY EGL_{name}({params})
 
         {{
             ANGLE_EGL_SCOPED_CONTEXT_LOCK({name}, thread{comma_if_needed_context_lock}{internal_context_lock_params});
-            ANGLE_EGL_VALIDATE_VOID(thread, {name}, {labeled_object}, {internal_params});
+            if (IsEGLValidationEnabled())
+            {{
+                ANGLE_EGL_VALIDATE_VOID(thread, {name}, {labeled_object}, {internal_params});
+            }}
+            else
+            {{
+                {attrib_map_init}
+            }}
 
             {name}(thread{comma_if_needed}{internal_params});
         }}
@@ -489,7 +497,14 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN = """\
 
         {{
             ANGLE_EGL_SCOPED_CONTEXT_LOCK({name}, thread{comma_if_needed_context_lock}{internal_context_lock_params});
-            ANGLE_EGL_VALIDATE(thread, {name}, {labeled_object}, {return_type}{comma_if_needed}{internal_params});
+            if (IsEGLValidationEnabled())
+            {{
+                ANGLE_EGL_VALIDATE(thread, {name}, {labeled_object}, {return_type}{comma_if_needed}{internal_params});
+            }}
+            else
+            {{
+                {attrib_map_init}
+            }}
 
             returnValue = {name}(thread{comma_if_needed}{internal_params});
         }}
@@ -512,7 +527,14 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN_NO_LOCKS = """\
 
     {packed_gl_enum_conversions}
 
-    ANGLE_EGL_VALIDATE(thread, {name}, {labeled_object}, {return_type}{comma_if_needed}{internal_params});
+    if (IsEGLValidationEnabled())
+    {{
+        ANGLE_EGL_VALIDATE(thread, {name}, {labeled_object}, {return_type}{comma_if_needed}{internal_params});
+    }}
+    else
+    {{
+        {attrib_map_init}
+    }}
 
     returnValue = {name}(thread{comma_if_needed}{internal_params});
 
@@ -999,6 +1021,7 @@ FORMAT_DICT = {
     "GLushort": "%u",
     "int": "%d",
     # EGL-specific types
+    "EGLBoolean": "%u",
     "EGLConfig": POINTER_FORMAT,
     "EGLContext": POINTER_FORMAT,
     "EGLDisplay": POINTER_FORMAT,
@@ -1614,14 +1637,15 @@ def is_lockless_egl_entry_point(cmd_name):
         return True
     return False
 
-def get_validation_expression(api, cmd_name, entry_point_name, internal_params):
+
+def get_validation_expression(api, cmd_name, entry_point_name, internal_params, is_gles1):
     name = strip_api_prefix(cmd_name)
     private_params = ["context->getPrivateState()", "context->getMutableErrorSetForValidation()"]
     extra_params = private_params if is_context_private_state_command(api,
                                                                       cmd_name) else ["context"]
     expr = "Validate{name}({params})".format(
         name=name, params=", ".join(extra_params + [entry_point_name] + internal_params))
-    if not is_allowed_with_active_pixel_local_storage(name):
+    if not is_gles1 and not is_allowed_with_active_pixel_local_storage(name):
         expr = "(ValidatePixelLocalStorageInactive({extra_params}, {entry_point_name}) && {expr})".format(
             extra_params=", ".join(private_params), entry_point_name=entry_point_name, expr=expr)
     return expr
@@ -1890,7 +1914,7 @@ def get_def_template(api, cmd_name, return_type, has_errcode_ret):
 
 
 def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packed_enums,
-                           packed_param_types, ep_to_object):
+                           packed_param_types, ep_to_object, is_gles1):
     packed_enums = get_packed_enums(api, cmd_packed_enums, cmd_name, packed_param_types, params)
     internal_params = [just_the_name_packed(param, packed_enums) for param in params]
     if internal_params and internal_params[-1] == "errcode_ret":
@@ -1907,6 +1931,13 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
 
     packed_gl_enum_conversions = []
 
+    # egl::AttributeMap objects do not convert the raw input parameters to a map until they are
+    # validated because it is possible to have unterminated attribute lists if one of the
+    # attributes is invalid.
+    # When validation is disabled, force the conversion from attribute list to map using
+    # initializeWithoutValidation.
+    attrib_map_init = []
+
     for param in params:
         name = just_the_name(param)
 
@@ -1917,6 +1948,9 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
                 "\n        " + internal_type + " " + internal_name + " = PackParam<" +
                 internal_type + ">(" + name + ");"
             ]
+
+            if 'AttributeMap' in internal_type:
+                attrib_map_init.append(internal_name + ".initializeWithoutValidation();")
 
     pass_params = [param_print_argument(api, command_node, param) for param in params]
     format_params = [param_format_string(param) for param in params]
@@ -1940,6 +1974,8 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
             ", ".join(params),
         "internal_params":
             ", ".join(internal_params),
+        "attrib_map_init":
+            "\n".join(attrib_map_init),
         "context_private_internal_params":
             ", ".join(
                 ["context->getMutablePrivateState()", "context->getMutablePrivateStateCache()"] +
@@ -1961,7 +1997,7 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
         "egl_capture_params":
             ", ".join(["thread"] + internal_params),
         "validation_expression":
-            get_validation_expression(api, cmd_name, entry_point_name, internal_params),
+            get_validation_expression(api, cmd_name, entry_point_name, internal_params, is_gles1),
         "format_params":
             ", ".join(format_params),
         "context_getter":
@@ -2245,7 +2281,8 @@ class ANGLEEntryPoints(registry_xml.EntryPoints):
                  cmd_packed_enums,
                  export_template=TEMPLATE_GL_ENTRY_POINT_EXPORT,
                  packed_param_types=[],
-                 ep_to_object={}):
+                 ep_to_object={},
+                 is_gles1=False):
         super().__init__(api, xml, commands)
 
         self.decls = []
@@ -2263,7 +2300,8 @@ class ANGLEEntryPoints(registry_xml.EntryPoints):
             self.decls.append(format_entry_point_decl(self.api, cmd_name, proto_text, param_text))
             self.defs.append(
                 format_entry_point_def(self.api, command_node, cmd_name, proto_text, param_text,
-                                       cmd_packed_enums, packed_param_types, ep_to_object))
+                                       cmd_packed_enums, packed_param_types, ep_to_object,
+                                       is_gles1))
 
             self.export_defs.append(
                 format_entry_point_export(cmd_name, proto_text, param_text, export_template))
@@ -2300,9 +2338,14 @@ class GLEntryPoints(ANGLEEntryPoints):
 
     all_param_types = set()
 
-    def __init__(self, api, xml, commands):
-        super().__init__(api, xml, commands, GLEntryPoints.all_param_types,
-                         GLEntryPoints.get_packed_enums())
+    def __init__(self, api, xml, commands, is_gles1=False):
+        super().__init__(
+            api,
+            xml,
+            commands,
+            GLEntryPoints.all_param_types,
+            GLEntryPoints.get_packed_enums(),
+            is_gles1=is_gles1)
 
     _packed_enums = None
 
@@ -3055,12 +3098,39 @@ def get_egl_entry_point_labeled_object(ep_to_object, cmd_stripped, params, packe
     return "Get%sIfValid(%s, %s)" % (category, display_param, found_param)
 
 
+def disable_share_group_lock(api, cmd_name):
+    if cmd_name == 'glBindBuffer':
+        # This function looks up the ID in the buffer manager,
+        # access to which is thread-safe for buffers.
+        return True
+
+    if api == apis.GLES and cmd_name.startswith('glUniform'):
+        # Thread safety of glUniform1/2/3/4 and glUniformMatrix* calls is defined by the backend,
+        # frontend only does validation.
+        keep_locked = [
+            # Might set samplers:
+            'glUniform1i',
+            'glUniform1iv',
+            # More complex state change with notifications:
+            'glUniformBlockBinding',
+        ]
+        return cmd_name not in keep_locked
+
+    return False
+
+
 def get_context_lock(api, cmd_name):
     # EGLImage related commands need to access EGLImage and Display which should
     # be protected with global lock
     # Also handles ContextMutex merging when "angle_enable_context_mutex" is true.
     if api == apis.GLES and cmd_name.startswith("glEGLImage"):
         return "SCOPED_EGL_IMAGE_SHARE_CONTEXT_LOCK(context, imagePacked);"
+
+    # Certain commands do not need to hold the share group lock.  Both
+    # validation and their implementation in the context are limited to
+    # context-local state.
+    if disable_share_group_lock(api, cmd_name):
+        return ""
 
     return "SCOPED_SHARE_CONTEXT_LOCK(context);"
 
@@ -3112,10 +3182,11 @@ def get_unlocked_tail_call(api, cmd_name):
     # - eglPrepareSwapBuffersANGLE -> Calls vkAcquireNextImageKHR in tail call
     #
     # - eglSwapBuffers, eglSwapBuffersWithDamageKHR and
-    #   eglSwapBuffersWithFrameTokenANGLE -> May throttle the CPU in tail call
+    #   eglSwapBuffersWithFrameTokenANGLE -> May throttle the CPU in tail call or
+    #   calls native EGL function
     #
     # - eglClientWaitSyncKHR, eglClientWaitSync, glClientWaitSync,
-    #   glFinishFenceNV -> May wait on fence in tail call
+    #   glFinishFenceNV -> May wait on fence in tail call or call native EGL function
     #
     # - glTexImage2D, glTexImage3D, glTexSubImage2D, glTexSubImage3D,
     #   glCompressedTexImage2D, glCompressedTexImage3D,
@@ -3125,12 +3196,15 @@ def get_unlocked_tail_call(api, cmd_name):
     # - glCompileShader and glLinkProgram -> May perform the compilation / link
     #   in tail call
     #
+    # - eglCreateSync, eglCreateImage, eglDestroySync, eglDestroyImage,
+    #   eglGetCompositorTimingANDROID, eglGetFrameTimestampsANDROID -> Calls
+    #   native EGL function in tail call
+    #
     if (cmd_name in [
             'eglDestroySurface', 'eglMakeCurrent', 'eglReleaseThread', 'eglCreateWindowSurface',
             'eglCreatePlatformWindowSurface', 'eglCreatePlatformWindowSurfaceEXT',
-            'eglPrepareSwapBuffersANGLE', 'eglSwapBuffers', 'eglSwapBuffersWithDamageKHR',
-            'eglSwapBuffersWithFrameTokenANGLE', 'glFinishFenceNV', 'glCompileShader',
-            'glLinkProgram'
+            'eglPrepareSwapBuffersANGLE', 'eglSwapBuffersWithFrameTokenANGLE', 'glFinishFenceNV',
+            'glCompileShader', 'glLinkProgram'
     ] or cmd_name.startswith('glTexImage2D') or cmd_name.startswith('glTexImage3D') or
             cmd_name.startswith('glTexSubImage2D') or cmd_name.startswith('glTexSubImage3D') or
             cmd_name.startswith('glCompressedTexImage2D') or
@@ -3139,7 +3213,23 @@ def get_unlocked_tail_call(api, cmd_name):
             cmd_name.startswith('glCompressedTexSubImage3D')):
         return 'egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);'
 
-    if cmd_name in ['eglClientWaitSyncKHR', 'eglClientWaitSync', 'glClientWaitSync']:
+    if cmd_name in [
+            'eglClientWaitSyncKHR',
+            'eglClientWaitSync',
+            'eglCreateImageKHR',
+            'eglCreateImage',
+            'eglCreateSyncKHR',
+            'eglCreateSync',
+            'eglDestroySyncKHR',
+            'eglDestroySync',
+            'eglGetCompositorTimingANDROID',
+            'eglGetFrameTimestampsANDROID',
+            'eglSwapBuffers',
+            'eglSwapBuffersWithDamageKHR',
+            'eglWaitSyncKHR',
+            'eglWaitSync',
+            'glClientWaitSync',
+    ]:
         return 'egl::Display::GetCurrentThreadUnlockedTailCall()->run(&returnValue);'
 
     # Otherwise assert that no tail calls where generated
@@ -3340,7 +3430,7 @@ def main():
         all_commands_no_suffix.extend(xml.commands[version])
         all_commands_with_suffix.extend(xml.commands[version])
 
-        eps = GLEntryPoints(apis.GLES, xml, version_commands)
+        eps = GLEntryPoints(apis.GLES, xml, version_commands, is_gles1=(major_version == 1))
         eps.decls.insert(0, "extern \"C\" {")
         eps.decls.append("} // extern \"C\"")
         eps.defs.insert(0, "extern \"C\" {")
@@ -3408,7 +3498,8 @@ def main():
         extension_commands.extend(xml.ext_data[extension_name])
 
         # Detect and filter duplicate extensions.
-        eps = GLEntryPoints(apis.GLES, xml, ext_cmd_names)
+        is_gles1 = extension_name in registry_xml.gles1_extensions
+        eps = GLEntryPoints(apis.GLES, xml, ext_cmd_names, is_gles1=is_gles1)
 
         # Write the extension name as a comment before the first EP.
         comment = "\n// {}".format(extension_name)

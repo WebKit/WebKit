@@ -48,7 +48,8 @@ AVIFImageReader::~AVIFImageReader() = default;
 
 bool AVIFImageReader::parseHeader(const SharedBuffer& data, bool allDataReceived)
 {
-    if (avifDecoderSetIOMemory(m_avifDecoder.get(), data.data(), data.size()) != AVIF_RESULT_OK)
+    auto dataSpan = data.span();
+    if (avifDecoderSetIOMemory(m_avifDecoder.get(), dataSpan.data(), dataSpan.size()) != AVIF_RESULT_OK)
         return allDataReceived ? m_decoder->setFailed() : false;
 
     if (avifDecoderParse(m_avifDecoder.get()) != AVIF_RESULT_OK
@@ -69,7 +70,8 @@ void AVIFImageReader::decodeFrame(size_t frameIndex, ScalableImageDecoderFrame& 
         return;
 
     if (!m_dataParsed) {
-        if (avifDecoderSetIOMemory(m_avifDecoder.get(), data.data(), data.size()) != AVIF_RESULT_OK) {
+        auto dataSpan = data.span();
+        if (avifDecoderSetIOMemory(m_avifDecoder.get(), dataSpan.data(), dataSpan.size()) != AVIF_RESULT_OK) {
             m_decoder->setFailed();
             return;
         }

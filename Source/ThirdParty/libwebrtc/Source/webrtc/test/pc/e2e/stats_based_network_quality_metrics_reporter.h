@@ -70,9 +70,6 @@ class StatsBasedNetworkQualityMetricsReporter
 
  private:
   struct PCStats {
-    // TODO(bugs.webrtc.org/10525): Separate audio and video counters. Depends
-    // on standard stat counters, enabled by field trial
-    // "WebRTC-UseStandardBytesStats".
     DataSize payload_received = DataSize::Zero();
     DataSize payload_sent = DataSize::Zero();
 

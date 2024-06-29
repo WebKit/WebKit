@@ -226,15 +226,11 @@ namespace JSC {
 
         ResultType resultDescriptor() const { return m_resultType; }
 
-        bool isOnlyChildOfStatement() const { return m_isOnlyChildOfStatement; }
-        void setIsOnlyChildOfStatement() { m_isOnlyChildOfStatement = true; }
-
         bool isOptionalChainBase() const { return m_isOptionalChainBase; }
         void setIsOptionalChainBase() { m_isOptionalChainBase = true; }
 
     private:
         ResultType m_resultType;
-        bool m_isOnlyChildOfStatement { false };
         bool m_isOptionalChainBase { false };
     };
 

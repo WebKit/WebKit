@@ -18,7 +18,6 @@
 #include "api/video/video_adaptation_reason.h"
 #include "api/video_codecs/video_encoder.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/experiments/bandwidth_quality_scaler_settings.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/exp_filter.h"
 #include "rtc_base/time_utils.h"
@@ -31,16 +30,11 @@ namespace {
 constexpr int kDefaultMaxWindowSizeMs = 5000;
 constexpr float kHigherMaxBitrateTolerationFactor = 0.95;
 constexpr float kLowerMinBitrateTolerationFactor = 0.8;
-constexpr int kDefaultBitrateStateUpdateIntervalSeconds = 5;
 }  // namespace
 
 BandwidthQualityScaler::BandwidthQualityScaler(
     BandwidthQualityScalerUsageHandlerInterface* handler)
-    : kBitrateStateUpdateInterval(TimeDelta::Seconds(
-          BandwidthQualityScalerSettings::ParseFromFieldTrials()
-              .BitrateStateUpdateInterval()
-              .value_or(kDefaultBitrateStateUpdateIntervalSeconds))),
-      handler_(handler),
+    : handler_(handler),
       encoded_bitrate_(kDefaultMaxWindowSizeMs, RateStatistics::kBpsScale),
       weak_ptr_factory_(this) {
   RTC_DCHECK_RUN_ON(&task_checker_);

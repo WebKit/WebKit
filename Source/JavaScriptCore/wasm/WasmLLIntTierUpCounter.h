@@ -31,6 +31,7 @@
 #include "InstructionStream.h"
 #include "Options.h"
 #include "VirtualRegister.h"
+#include <wtf/FixedVector.h>
 #include <wtf/HashMap.h>
 
 namespace JSC { namespace Wasm {
@@ -40,7 +41,7 @@ class LLIntTierUpCounter : public BaselineExecutionCounter {
 
 public:
     enum class CompilationStatus : uint8_t {
-        NotCompiled,
+        NotCompiled = 0,
         Compiling,
         Compiled,
     };
@@ -54,11 +55,13 @@ public:
         : m_osrEntryData(WTFMove(osrEntryData))
     {
         optimizeAfterWarmUp();
+        m_compilationStatus.fill(CompilationStatus::NotCompiled);
+        m_loopCompilationStatus.fill(CompilationStatus::NotCompiled);
     }
 
     void optimizeAfterWarmUp()
     {
-        if (Options::wasmLLIntTiersUpToBBQ())
+        if (Options::webAssemblyLLIntTiersUpToBBQ())
             setNewThreshold(Options::thresholdForBBQOptimizeAfterWarmUp());
         else
             setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp());
@@ -71,7 +74,7 @@ public:
 
     void optimizeSoon()
     {
-        if (Options::wasmLLIntTiersUpToBBQ())
+        if (Options::webAssemblyLLIntTiersUpToBBQ())
             setNewThreshold(Options::thresholdForBBQOptimizeSoon());
         else
             setNewThreshold(Options::thresholdForOMGOptimizeSoon());
@@ -81,9 +84,15 @@ public:
 
     const OSREntryData& osrEntryDataForLoop(WasmInstructionStream::Offset) const;
 
+    ALWAYS_INLINE CompilationStatus compilationStatus(MemoryMode mode) { return m_compilationStatus[static_cast<MemoryModeType>(mode)]; }
+    ALWAYS_INLINE void setCompilationStatus(MemoryMode mode, CompilationStatus status) { m_compilationStatus[static_cast<MemoryModeType>(mode)] = status; }
+
+    ALWAYS_INLINE CompilationStatus loopCompilationStatus(MemoryMode mode) { return m_loopCompilationStatus[static_cast<MemoryModeType>(mode)]; }
+    ALWAYS_INLINE void setLoopCompilationStatus(MemoryMode mode, CompilationStatus status) { m_loopCompilationStatus[static_cast<MemoryModeType>(mode)] = status; }
+
     Lock m_lock;
-    CompilationStatus m_compilationStatus { CompilationStatus::NotCompiled };
-    CompilationStatus m_loopCompilationStatus { CompilationStatus::NotCompiled };
+    std::array<CompilationStatus, numberOfMemoryModes> m_compilationStatus;
+    std::array<CompilationStatus, numberOfMemoryModes> m_loopCompilationStatus;
     HashMap<WasmInstructionStream::Offset, OSREntryData> m_osrEntryData;
 };
 

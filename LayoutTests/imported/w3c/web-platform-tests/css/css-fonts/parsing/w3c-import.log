@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/ahem-ex-500.otf
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-face-src-format.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-face-src-list.html
@@ -55,6 +57,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-style-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-synthesis-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-synthesis-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-synthesis-position-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-synthesis-position-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-synthesis-small-caps-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-synthesis-small-caps-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/parsing/font-synthesis-style-invalid.html

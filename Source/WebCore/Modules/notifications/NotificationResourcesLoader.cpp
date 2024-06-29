@@ -148,7 +148,7 @@ void NotificationResourcesLoader::ResourceLoader::cancel()
         completionHandler(this, nullptr);
 }
 
-void NotificationResourcesLoader::ResourceLoader::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
+void NotificationResourcesLoader::ResourceLoader::didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse& response)
 {
     // If the response's internal response's type is "default", then attempt to decode the resource as image.
     if (response.type() == ResourceResponse::Type::Default)
@@ -163,7 +163,7 @@ void NotificationResourcesLoader::ResourceLoader::didReceiveData(const SharedBuf
     }
 }
 
-void NotificationResourcesLoader::ResourceLoader::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&)
+void NotificationResourcesLoader::ResourceLoader::didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&)
 {
     m_finished = true;
 
@@ -174,7 +174,7 @@ void NotificationResourcesLoader::ResourceLoader::didFinishLoading(ResourceLoade
         m_completionHandler(this, WTFMove(m_image));
 }
 
-void NotificationResourcesLoader::ResourceLoader::didFail(const ResourceError&)
+void NotificationResourcesLoader::ResourceLoader::didFail(ScriptExecutionContextIdentifier, const ResourceError&)
 {
     m_finished = true;
 

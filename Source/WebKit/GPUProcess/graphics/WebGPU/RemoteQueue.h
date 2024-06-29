@@ -38,6 +38,10 @@
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+class SharedMemoryHandle;
+}
+
 namespace WebCore::WebGPU {
 class Queue;
 }
@@ -89,13 +93,15 @@ private:
     void writeBuffer(
         WebGPUIdentifier,
         WebCore::WebGPU::Size64 bufferOffset,
-        Vector<uint8_t>&&);
+        std::optional<WebCore::SharedMemoryHandle>&&,
+        CompletionHandler<void(bool)>&&);
 
     void writeTexture(
         const WebGPU::ImageCopyTexture& destination,
-        Vector<uint8_t>&&,
+        std::optional<WebCore::SharedMemoryHandle>&&,
         const WebGPU::ImageDataLayout&,
-        const WebGPU::Extent3D& size);
+        const WebGPU::Extent3D& size,
+        CompletionHandler<void(bool)>&&);
 
     void copyExternalImageToTexture(
         const WebGPU::ImageCopyExternalImage& source,

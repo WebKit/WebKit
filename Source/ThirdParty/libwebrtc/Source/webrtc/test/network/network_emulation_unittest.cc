@@ -11,12 +11,16 @@
 #include "test/network/network_emulation.h"
 
 #include <atomic>
+#include <functional>
+#include <map>
 #include <memory>
 #include <set>
 
+#include "api/task_queue/task_queue_base.h"
+#include "api/test/create_time_controller.h"
 #include "api/test/simulated_network.h"
 #include "api/units/time_delta.h"
-#include "call/simulated_network.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/event.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/synchronization/mutex.h"
@@ -24,6 +28,7 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/network/network_emulation_manager.h"
+#include "test/network/simulated_network.h"
 
 namespace webrtc {
 namespace test {
@@ -74,6 +79,23 @@ class SocketReader : public sigslot::has_slots<> {
 class MockReceiver : public EmulatedNetworkReceiverInterface {
  public:
   MOCK_METHOD(void, OnPacketReceived, (EmulatedIpPacket packet), (override));
+};
+
+class MockNetworkBehaviourInterface : public NetworkBehaviorInterface {
+ public:
+  MOCK_METHOD(bool, EnqueuePacket, (PacketInFlightInfo), (override));
+  MOCK_METHOD(std::vector<PacketDeliveryInfo>,
+              DequeueDeliverablePackets,
+              (int64_t),
+              (override));
+  MOCK_METHOD(absl::optional<int64_t>,
+              NextDeliveryTimeUs,
+              (),
+              (const override));
+  MOCK_METHOD(void,
+              RegisterDeliveryTimeChangedCallback,
+              (absl::AnyInvocable<void()>),
+              (override));
 };
 
 class NetworkEmulationManagerThreeNodesRoutingTest : public ::testing::Test {
@@ -143,7 +165,7 @@ class NetworkEmulationManagerThreeNodesRoutingTest : public ::testing::Test {
   MockReceiver r_e3_e1_;
 
   NetworkEmulationManagerImpl emulation_{
-      TimeMode::kRealTime, EmulatedNetworkStatsGatheringMode::kDefault};
+      NetworkEmulationManagerConfig{.time_mode = TimeMode::kRealTime}};
   EmulatedEndpoint* e1_;
   EmulatedEndpoint* e2_;
   EmulatedEndpoint* e3_;
@@ -157,11 +179,9 @@ EmulatedNetworkNode* CreateEmulatedNodeWithDefaultBuiltInConfig(
 
 }  // namespace
 
-using ::testing::_;
-
 TEST(NetworkEmulationManagerTest, GeneratedIpv4AddressDoesNotCollide) {
   NetworkEmulationManagerImpl network_manager(
-      TimeMode::kRealTime, EmulatedNetworkStatsGatheringMode::kDefault);
+      {.time_mode = TimeMode::kRealTime});
   std::set<rtc::IPAddress> ips;
   EmulatedEndpointConfig config;
   config.generated_ip_family = EmulatedEndpointConfig::IpAddressFamily::kIpv4;
@@ -175,7 +195,7 @@ TEST(NetworkEmulationManagerTest, GeneratedIpv4AddressDoesNotCollide) {
 
 TEST(NetworkEmulationManagerTest, GeneratedIpv6AddressDoesNotCollide) {
   NetworkEmulationManagerImpl network_manager(
-      TimeMode::kRealTime, EmulatedNetworkStatsGatheringMode::kDefault);
+      {.time_mode = TimeMode::kRealTime});
   std::set<rtc::IPAddress> ips;
   EmulatedEndpointConfig config;
   config.generated_ip_family = EmulatedEndpointConfig::IpAddressFamily::kIpv6;
@@ -189,7 +209,7 @@ TEST(NetworkEmulationManagerTest, GeneratedIpv6AddressDoesNotCollide) {
 
 TEST(NetworkEmulationManagerTest, Run) {
   NetworkEmulationManagerImpl network_manager(
-      TimeMode::kRealTime, EmulatedNetworkStatsGatheringMode::kDefault);
+      {.time_mode = TimeMode::kRealTime});
 
   EmulatedNetworkNode* alice_node = network_manager.CreateEmulatedNode(
       std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
@@ -343,7 +363,8 @@ TEST(NetworkEmulationManagerTest, Run) {
 
 TEST(NetworkEmulationManagerTest, DebugStatsCollectedInDebugMode) {
   NetworkEmulationManagerImpl network_manager(
-      TimeMode::kSimulated, EmulatedNetworkStatsGatheringMode::kDebug);
+      {.time_mode = TimeMode::kSimulated,
+       .stats_gathering_mode = EmulatedNetworkStatsGatheringMode::kDebug});
 
   EmulatedNetworkNode* alice_node = network_manager.CreateEmulatedNode(
       std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
@@ -443,7 +464,7 @@ TEST(NetworkEmulationManagerTest, DebugStatsCollectedInDebugMode) {
 
 TEST(NetworkEmulationManagerTest, ThroughputStats) {
   NetworkEmulationManagerImpl network_manager(
-      TimeMode::kRealTime, EmulatedNetworkStatsGatheringMode::kDefault);
+      {.time_mode = TimeMode::kRealTime});
 
   EmulatedNetworkNode* alice_node = network_manager.CreateEmulatedNode(
       std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
@@ -574,7 +595,7 @@ TEST_F(NetworkEmulationManagerThreeNodesRoutingTest,
 
 TEST(NetworkEmulationManagerTest, EndpointLoopback) {
   NetworkEmulationManagerImpl network_manager(
-      TimeMode::kSimulated, EmulatedNetworkStatsGatheringMode::kDefault);
+      {.time_mode = TimeMode::kSimulated});
   auto endpoint = network_manager.CreateEndpoint(EmulatedEndpointConfig());
 
   MockReceiver receiver;
@@ -591,7 +612,7 @@ TEST(NetworkEmulationManagerTest, EndpointCanSendWithDifferentSourceIp) {
   constexpr uint32_t kEndpointIp = 0xC0A80011;  // 192.168.0.17
   constexpr uint32_t kSourceIp = 0xC0A80012;    // 192.168.0.18
   NetworkEmulationManagerImpl network_manager(
-      TimeMode::kSimulated, EmulatedNetworkStatsGatheringMode::kDefault);
+      {.time_mode = TimeMode::kSimulated});
   EmulatedEndpointConfig endpoint_config;
   endpoint_config.ip = rtc::IPAddress(kEndpointIp);
   endpoint_config.allow_send_packet_with_different_source_ip = true;
@@ -612,7 +633,7 @@ TEST(NetworkEmulationManagerTest,
   constexpr uint32_t kDestEndpointIp = 0xC0A80011;  // 192.168.0.17
   constexpr uint32_t kDestIp = 0xC0A80012;          // 192.168.0.18
   NetworkEmulationManagerImpl network_manager(
-      TimeMode::kSimulated, EmulatedNetworkStatsGatheringMode::kDefault);
+      {.time_mode = TimeMode::kSimulated});
   auto sender_endpoint =
       network_manager.CreateEndpoint(EmulatedEndpointConfig());
   EmulatedEndpointConfig endpoint_config;
@@ -636,7 +657,7 @@ TEST(NetworkEmulationManagerTest,
 
 TEST(NetworkEmulationManagerTURNTest, GetIceServerConfig) {
   NetworkEmulationManagerImpl network_manager(
-      TimeMode::kRealTime, EmulatedNetworkStatsGatheringMode::kDefault);
+      {.time_mode = TimeMode::kRealTime});
   auto turn = network_manager.CreateTURNServer(EmulatedTURNServerConfig());
 
   EXPECT_GT(turn->GetIceServerConfig().username.size(), 0u);
@@ -647,8 +668,7 @@ TEST(NetworkEmulationManagerTURNTest, GetIceServerConfig) {
 }
 
 TEST(NetworkEmulationManagerTURNTest, ClientTraffic) {
-  NetworkEmulationManagerImpl emulation(
-      TimeMode::kSimulated, EmulatedNetworkStatsGatheringMode::kDefault);
+  NetworkEmulationManagerImpl emulation({.time_mode = TimeMode::kSimulated});
   auto* ep = emulation.CreateEndpoint(EmulatedEndpointConfig());
   auto* turn = emulation.CreateTURNServer(EmulatedTURNServerConfig());
   auto* node = CreateEmulatedNodeWithDefaultBuiltInConfig(&emulation);
@@ -670,6 +690,46 @@ TEST(NetworkEmulationManagerTURNTest, ClientTraffic) {
   ep->SendPacket(rtc::SocketAddress(ep->GetPeerLocalAddress(), port),
                  turn->GetClientEndpointAddress(), packet);
   emulation.time_controller()->AdvanceTime(TimeDelta::Seconds(1));
+}
+
+TEST(LinkEmulationTest, HandlesDeliveryTimeChangedCallback) {
+  constexpr uint32_t kEndpointIp = 0xC0A80011;  // 192.168.0.17
+  NetworkEmulationManagerImpl network_manager(
+      {.time_mode = TimeMode::kSimulated});
+  auto mock_behaviour =
+      std::make_unique<::testing::NiceMock<MockNetworkBehaviourInterface>>();
+  MockNetworkBehaviourInterface* mock_behaviour_ptr = mock_behaviour.get();
+  absl::AnyInvocable<void()> delivery_time_changed_callback = nullptr;
+  TaskQueueBase* emulation_task_queue = nullptr;
+  EXPECT_CALL(*mock_behaviour_ptr, RegisterDeliveryTimeChangedCallback)
+      .WillOnce([&](absl::AnyInvocable<void()> callback) {
+        delivery_time_changed_callback = std::move(callback);
+        emulation_task_queue = TaskQueueBase::Current();
+      });
+  LinkEmulation* link =
+      network_manager.CreateEmulatedNode(std::move(mock_behaviour))->link();
+  network_manager.time_controller()->AdvanceTime(TimeDelta::Zero());
+  ASSERT_TRUE(delivery_time_changed_callback);
+
+  EXPECT_CALL(*mock_behaviour_ptr, EnqueuePacket);
+  EXPECT_CALL(*mock_behaviour_ptr, NextDeliveryTimeUs)
+      .WillOnce(::testing::Return(
+          network_manager.time_controller()->GetClock()->TimeInMicroseconds() +
+          10));
+  link->OnPacketReceived(EmulatedIpPacket(
+      rtc::SocketAddress(kEndpointIp, 50), rtc::SocketAddress(kEndpointIp, 79),
+      rtc::CopyOnWriteBuffer(10), Timestamp::Millis(1)));
+  network_manager.time_controller()->AdvanceTime(TimeDelta::Zero());
+
+  // Test that NetworkBehaviour can reschedule time for delivery. When
+  // delivery_time_changed_callback is triggered, LinkEmulation re-query the
+  // next delivery time.
+  EXPECT_CALL(*mock_behaviour_ptr, NextDeliveryTimeUs)
+      .WillOnce(::testing::Return(
+          network_manager.time_controller()->GetClock()->TimeInMicroseconds() +
+          20));
+  emulation_task_queue->PostTask([&]() { delivery_time_changed_callback(); });
+  network_manager.time_controller()->AdvanceTime(TimeDelta::Zero());
 }
 
 }  // namespace test

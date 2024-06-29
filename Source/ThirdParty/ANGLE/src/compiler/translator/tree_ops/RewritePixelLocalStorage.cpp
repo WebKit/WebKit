@@ -226,7 +226,7 @@ class RewritePLSTraverser : public TIntermTraverser
         }
     }
 
-    // anglebug.com/7524: Storing to integer formats with larger-than-representable values has
+    // anglebug.com/42265993: Storing to integer formats with larger-than-representable values has
     // different behavior on the various APIs.
     //
     // This method clamps sub-32-bit integers to the min/max representable values of their format.
@@ -397,7 +397,7 @@ class RewritePLSToImagesTraverser : public RewritePLSTraverser
         memoryQualifier.coherent          = true;
         memoryQualifier.restrictQualifier = true;
         memoryQualifier.volatileQualifier = false;
-        // TODO(anglebug.com/7279): Maybe we could walk the tree first and see which PLS is used
+        // TODO(anglebug.com/40096838): Maybe we could walk the tree first and see which PLS is used
         // how. If the PLS is never loaded, we could add a writeonly qualifier, for example.
         memoryQualifier.readonly  = false;
         memoryQualifier.writeonly = false;
@@ -517,7 +517,7 @@ class RewritePLSToImagesTraverser : public RewritePLSTraverser
                 ASSERT(!mCompileOptions->pls.supportsNativeRGBA8ImageFormats);
                 if (mCompileOptions->passHighpToPackUnormSnormBuiltins)
                 {
-                    // anglebug.com/7527: unpackUnorm4x8 doesn't work on Pixel 4 when passed
+                    // anglebug.com/42265995: unpackUnorm4x8 doesn't work on Pixel 4 when passed
                     // a mediump vec4. Use an intermediate highp vec4.
                     //
                     // It's safe to inject a variable here because it happens right before
@@ -1013,7 +1013,7 @@ bool RewritePixelLocalStorage(TCompiler *compiler,
     }
 
     // Inject the code that needs to run before and after all PLS operations.
-    // TODO(anglebug.com/7279): Inject these functions in a tight critical section, instead of
+    // TODO(anglebug.com/40096838): Inject these functions in a tight critical section, instead of
     // just locking the entire main() function:
     //   - Monomorphize all PLS calls into main().
     //   - Insert begin/end calls around the first/last PLS calls (and outside of flow control).

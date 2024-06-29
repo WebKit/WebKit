@@ -1328,7 +1328,7 @@ TEST(WKWebExtensionAPIRuntime, ConnectNative)
     manager.get().internalDelegate.connectUsingMessagePort = ^(_WKWebExtensionMessagePort *messagePort) {
         EXPECT_NS_EQUAL(messagePort.applicationIdentifier, @"test");
 
-        messagePort.messageHandler = ^(id _Nullable message, NSError * _Nullable error) {
+        messagePort.messageHandler = ^(id message, NSError *error) {
             EXPECT_NULL(error);
             EXPECT_NS_EQUAL(message, @"Hello");
 
@@ -1364,7 +1364,7 @@ TEST(WKWebExtensionAPIRuntime, ConnectNativeWithInvalidMessage)
     manager.get().internalDelegate.connectUsingMessagePort = ^(_WKWebExtensionMessagePort *messagePort) {
         EXPECT_NS_EQUAL(messagePort.applicationIdentifier, @"test");
 
-        messagePort.messageHandler = ^(id _Nullable message, NSError * _Nullable error) {
+        messagePort.messageHandler = ^(id message, NSError *error) {
             EXPECT_NULL(error);
             EXPECT_NS_EQUAL(message, @"Hello");
 
@@ -1372,6 +1372,49 @@ TEST(WKWebExtensionAPIRuntime, ConnectNativeWithInvalidMessage)
                 EXPECT_FALSE(success);
                 EXPECT_NOT_NULL(error);
                 EXPECT_EQ(error.code, _WKWebExtensionMessagePortErrorMessageInvalid);
+            }];
+
+            [messagePort disconnectWithError:nil];
+
+            [manager done];
+        };
+    };
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIRuntime, ConnectNativeWithUndefinedMessage)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const port = browser.runtime?.connectNative('test')",
+        @"browser.test.assertEq(typeof port, 'object', 'Port should be an object')",
+        @"browser.test.assertEq(port?.name, 'test', 'Port name should be test')",
+        @"browser.test.assertEq(port?.sender, null, 'Port sender should be null')",
+
+        @"port?.onMessage.addListener((response) => {",
+        @"  browser.test.assertEq(response, undefined, 'Response should be undefined when sending null message')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"port?.postMessage('Hello')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionNativeMessaging];
+
+    manager.get().internalDelegate.connectUsingMessagePort = ^(_WKWebExtensionMessagePort *messagePort) {
+        EXPECT_NS_EQUAL(messagePort.applicationIdentifier, @"test");
+
+        messagePort.messageHandler = ^(id message, NSError *error) {
+            EXPECT_NULL(error);
+            EXPECT_NS_EQUAL(message, @"Hello");
+
+            [messagePort sendMessage:nil completionHandler:^(BOOL success, NSError *error) {
+                EXPECT_TRUE(success);
+                EXPECT_NULL(error);
             }];
 
             [messagePort disconnectWithError:nil];

@@ -131,18 +131,23 @@ bool IsAndroidDevice(const std::string &deviceName)
     return false;
 }
 
-bool IsAndroid9OrNewer()
+bool IsAndroidSdkLevelOrNewer(int level)
 {
     if (!IsAndroid())
     {
         return false;
     }
     SystemInfo *systemInfo = GetTestSystemInfo();
-    if (systemInfo->androidSdkLevel >= 28)
+    if (systemInfo->androidSdkLevel >= level)
     {
         return true;
     }
     return false;
+}
+
+bool IsAndroid9OrNewer()
+{
+    return IsAndroidSdkLevelOrNewer(28);
 }
 
 GPUDeviceInfo *GetActiveGPUDeviceInfo()
@@ -319,6 +324,11 @@ bool IsNVIDIAShield()
     return IsAndroidDevice("SHIELD Android TV");
 }
 
+bool IsAndroid14OrNewer()
+{
+    return IsAndroidSdkLevelOrNewer(34);
+}
+
 bool IsIntel()
 {
     return HasSystemVendorID(kVendorID_Intel);
@@ -361,7 +371,7 @@ bool IsSwiftShaderSupported()
 bool IsNVIDIA()
 {
 #if defined(ANGLE_PLATFORM_ANDROID)
-    // NVIDIA Shield cannot detect vendor ID (http://anglebug.com/3541)
+    // NVIDIA Shield cannot detect vendor ID (http://anglebug.com/42262205)
     if (IsNVIDIAShield())
     {
         return true;
@@ -372,8 +382,8 @@ bool IsNVIDIA()
 
 bool IsQualcomm()
 {
-    return IsNexus5X() || IsNexus9() || IsPixelXL() || IsPixel2() || IsPixel2XL() || IsPixel4() ||
-           IsPixel4XL();
+    return HasSystemVendorID(kVendorID_Qualcomm) || IsNexus5X() || IsNexus9() || IsPixelXL() ||
+           IsPixel2() || IsPixel2XL() || IsPixel4() || IsPixel4XL();
 }
 
 bool HasMesa()
@@ -453,7 +463,7 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
                         return true;
                     case EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE:
                         // Note we disable AMD OpenGL testing on Windows due to using a very old and
-                        // outdated card with many driver bugs. See http://anglebug.com/5123
+                        // outdated card with many driver bugs. See http://anglebug.com/42263687
                         return !IsAMD();
                     case EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE:
                         if (IsARM64())
@@ -529,12 +539,12 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
         }
 
         // ES 3 configs do not work properly on Fuchsia ARM.
-        // TODO(anglebug.com/4352): Investigate missing features.
+        // TODO(anglebug.com/42262979): Investigate missing features.
         if (param.majorVersion > 2 && IsARM())
             return false;
 
         // Loading swiftshader is not brought up on Fuchsia.
-        // TODO(anglebug.com/4353): Support loading swiftshader vulkan ICD.
+        // TODO(anglebug.com/42262980): Support loading swiftshader vulkan ICD.
         if (param.getDeviceType() == EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE)
             return false;
 

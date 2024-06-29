@@ -18,6 +18,7 @@
 #include "angle_gl.h"
 #include "common/MemoryBuffer.h"
 #include "common/PackedEnums.h"
+#include "common/SimpleMutex.h"
 #include "common/angleutils.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/Constants.h"
@@ -121,6 +122,7 @@ class ErrorSet : angle::NonCopyable
     bool isContextLost() const { return mContextLost.load(std::memory_order_relaxed) != 0; }
     GLenum getGraphicsResetStatus(rx::ContextImpl *contextImpl);
     GLenum getResetStrategy() const { return mResetStrategy; }
+    GLenum getErrorForCapture() const;
 
   private:
     void setContextLost();
@@ -654,7 +656,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     MemoryProgramCache *getMemoryProgramCache() const { return mMemoryProgramCache; }
     MemoryShaderCache *getMemoryShaderCache() const { return mMemoryShaderCache; }
 
-    std::mutex &getProgramCacheMutex() const;
+    angle::SimpleMutex &getProgramCacheMutex() const;
 
     bool hasBeenCurrent() const { return mHasBeenCurrent; }
     egl::Display *getDisplay() const { return mDisplay; }
@@ -780,6 +782,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     {
         return mTransformFeedbackMap;
     }
+    GLenum getErrorForCapture() const { return mErrors.getErrorForCapture(); }
 
     void onPreSwap();
 
@@ -906,6 +909,8 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
                                             MultisamplingMode mode);
 
     void onUniformBlockBindingUpdated(GLuint uniformBlockIndex);
+
+    void endTilingImplicit();
 
     State mState;
     bool mShared;

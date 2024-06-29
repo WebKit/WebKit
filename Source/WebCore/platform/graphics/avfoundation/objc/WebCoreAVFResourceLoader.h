@@ -27,6 +27,7 @@
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -34,10 +35,6 @@
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVAssetResourceLoadingRequest;
-
-namespace WTF {
-class WorkQueue;
-}
 
 namespace WebCore {
 
@@ -53,14 +50,14 @@ class ResourceResponse;
 class WebCoreAVFResourceLoader : public ThreadSafeRefCounted<WebCoreAVFResourceLoader> {
     WTF_MAKE_NONCOPYABLE(WebCoreAVFResourceLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<WebCoreAVFResourceLoader> create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, WTF::WorkQueue&);
+    static Ref<WebCoreAVFResourceLoader> create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, RefCountedSerialFunctionDispatcher&);
     virtual ~WebCoreAVFResourceLoader();
 
     void startLoading();
     void stopLoading();
 
 private:
-    WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, WTF::WorkQueue&);
+    WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, RefCountedSerialFunctionDispatcher&);
 
     friend class CachedResourceMediaLoader;
     friend class DataURLResourceMediaLoader;
@@ -83,7 +80,7 @@ private:
     int64_t m_requestedOffset { 0 };
     int64_t m_currentOffset { 0 };
 
-    Ref<WTF::WorkQueue> m_targetQueue;
+    Ref<RefCountedSerialFunctionDispatcher> m_targetDispatcher;
 };
 
 }

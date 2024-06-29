@@ -67,9 +67,12 @@ WK_VISIONKITCORE_LDFLAGS_iphonesimulator = -framework VisionKitCore;
 WK_VISIONKITCORE_LDFLAGS_xros = -framework VisionKitCore;
 WK_VISIONKITCORE_LDFLAGS_xrsimulator = -framework VisionKitCore;
 
-WK_OPENGL_LDFLAGS = $(WK_OPENGL_LDFLAGS_$(WK_COCOA_TOUCH));
-WK_OPENGL_LDFLAGS_ = -framework OpenGL;
-WK_OPENGL_LDFLAGS_cocoatouch = -framework OpenGLES;
+WK_OPENGL_LDFLAGS = $(WK_OPENGL_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_OPENGL_LDFLAGS_macosx = -framework OpenGL;
+WK_OPENGL_LDFLAGS_iphoneos = -framework OpenGLES;
+WK_OPENGL_LDFLAGS_iphonesimulator = -framework OpenGLES;
+WK_OPENGL_LDFLAGS_xros = -framework OpenGLES;
+WK_OPENGL_LDFLAGS_xrsimulator = -framework OpenGLES;
 
 WK_PDFKIT_LDFLAGS = $(WK_PDFKIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_PDFKIT_LDFLAGS_macosx = -framework PDFKit;
@@ -101,9 +104,27 @@ WK_IMAGEIO_LDFLAGS_maccatalyst = -framework ImageIO
 WK_IMAGEIO_LDFLAGS_macosx = $(WK_IMAGEIO_LDFLAGS$(WK_MACOS_1300));
 WK_IMAGEIO_LDFLAGS_MACOS_SINCE_1300 = -framework ImageIO;
 
+WK_WRITING_TOOLS_LDFLAGS = $(WK_WRITING_TOOLS_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_WRITING_TOOLS_LDFLAGS_iphoneos = $(WK_WRITING_TOOLS_LDFLAGS$(WK_IOS_18));
+WK_WRITING_TOOLS_LDFLAGS_iphonesimulator = $(WK_WRITING_TOOLS_LDFLAGS$(WK_IOS_18));
+WK_WRITING_TOOLS_LDFLAGS_IOS_SINCE_18 = -weak_framework WritingTools;
+WK_WRITING_TOOLS_LDFLAGS_maccatalyst = $(WK_WRITING_TOOLS_LDFLAGS_maccatalyst$(WK_MACOS_1500));
+WK_WRITING_TOOLS_LDFLAGS_maccatalyst_MACOS_SINCE_1500 = -weak_framework WritingTools;
+WK_WRITING_TOOLS_LDFLAGS_macosx = $(WK_WRITING_TOOLS_LDFLAGS$(WK_MACOS_1500));
+WK_WRITING_TOOLS_LDFLAGS_MACOS_SINCE_1500 = -weak_framework WritingTools;
+
+WK_WRITING_TOOLS_UI_LDFLAGS = $(WK_WRITING_TOOLS_UI_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_WRITING_TOOLS_UI_LDFLAGS_iphoneos = $(WK_WRITING_TOOLS_UI_LDFLAGS$(WK_IOS_18));
+WK_WRITING_TOOLS_UI_LDFLAGS_iphonesimulator = ;
+WK_WRITING_TOOLS_UI_LDFLAGS_IOS_SINCE_18 = -weak_framework WritingToolsUI;
+WK_WRITING_TOOLS_UI_LDFLAGS_maccatalyst = $(WK_WRITING_TOOLS_UI_LDFLAGS_maccatalyst$(WK_MACOS_1500));
+WK_WRITING_TOOLS_UI_LDFLAGS_maccatalyst_MACOS_SINCE_1500 = -weak_framework WritingToolsUI;
+WK_WRITING_TOOLS_UI_LDFLAGS_macosx = $(WK_WRITING_TOOLS_UI_LDFLAGS$(WK_MACOS_1500));
+WK_WRITING_TOOLS_UI_LDFLAGS_MACOS_SINCE_1500 = -weak_framework WritingToolsUI;
+
 OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 
-OTHER_LDFLAGS = $(inherited) -lgtest -lxml2 -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebCore -framework WebKit -lWebCoreTestSupport -framework Metal -framework IOSurface $(WK_APPSERVERSUPPORT_LDFLAGS) $(WK_AUTHKIT_LDFLAGS) -framework Network -framework UniformTypeIdentifiers -framework CoreFoundation -framework CoreServices $(WK_BROWSERENGINEKIT_LDFLAGS) $(WK_HID_LDFLAGS) $(WK_IMAGEIO_LDFLAGS) $(WK_OPENGL_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_SYSTEM_LDFLAGS) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_VISIONKITCORE_LDFLAGS) $(WK_WEBCORE_LDFLAGS) $(WK_REVEAL_LDFLAGS) $(OTHER_LDFLAGS_DELAY_INIT) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH));
+OTHER_LDFLAGS = $(inherited) -lgtest -lxml2 -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebCore -framework WebKit -lWebCoreTestSupport -framework Metal -framework IOSurface $(WK_APPSERVERSUPPORT_LDFLAGS) $(WK_AUTHKIT_LDFLAGS) -framework Network -framework UniformTypeIdentifiers -framework CoreFoundation -framework CoreServices $(WK_BROWSERENGINEKIT_LDFLAGS) $(WK_HID_LDFLAGS) $(WK_IMAGEIO_LDFLAGS) $(WK_OPENGL_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_SYSTEM_LDFLAGS) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_VISIONKITCORE_LDFLAGS) $(WK_WEBCORE_LDFLAGS) $(WK_REVEAL_LDFLAGS) $(WK_WRITING_TOOLS_LDFLAGS) $(WK_WRITING_TOOLS_UI_LDFLAGS) $(OTHER_LDFLAGS_DELAY_INIT) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH));
 
 OTHER_LDFLAGS_DELAY_INIT[sdk=iphone*] = -Wl,-delay_framework,CoreTelephony;
 OTHER_LDFLAGS_DELAY_INIT[sdk=iphone*17.*] = ;

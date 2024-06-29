@@ -32,9 +32,9 @@
 
 namespace WebCore {
 
-void MediaPlayer::setVideoReceiverEndpoint(const VideoReceiverEndpoint& endpoint)
+void MediaPlayer::setVideoTarget(const PlatformVideoTarget& target)
 {
-    m_private->setVideoReceiverEndpoint(endpoint);
+    m_private->setVideoTarget(target);
 }
 
 } // namespace WebCore

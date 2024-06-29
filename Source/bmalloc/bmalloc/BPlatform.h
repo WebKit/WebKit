@@ -392,8 +392,10 @@
 #define BENABLE_MALLOC_GOOD_SIZE 0
 #endif
 
+#if !defined(BUSE_TZONE)
 #if BUSE(LIBPAS) && BOS(DARWIN) && BCPU(ARM64)
 #define BUSE_TZONE 0
 #else
 #define BUSE_TZONE 0
+#endif
 #endif

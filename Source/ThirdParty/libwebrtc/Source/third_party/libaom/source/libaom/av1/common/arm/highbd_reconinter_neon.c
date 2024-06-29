@@ -113,8 +113,7 @@ static INLINE void diffwtd_mask_highbd_neon(uint8_t *mask, bool inverse,
                       vget_low_u8(max_alpha));
         }
 
-        store_u8_4x1(mask, m, 0);
-        store_u8_4x1(mask + w, m, 1);
+        store_u8x4_strided_x2(mask, w, m);
 
         src0 += 2 * src0_stride;
         src1 += 2 * src1_stride;
@@ -205,8 +204,7 @@ static INLINE void diffwtd_mask_highbd_neon(uint8_t *mask, bool inverse,
                       vget_low_u8(max_alpha));
         }
 
-        store_u8_4x1(mask, m, 0);
-        store_u8_4x1(mask + w, m, 1);
+        store_u8x4_strided_x2(mask, w, m);
 
         src0 += 2 * src0_stride;
         src1 += 2 * src1_stride;
@@ -298,8 +296,7 @@ static INLINE void diffwtd_mask_highbd_neon(uint8_t *mask, bool inverse,
                       vget_low_u8(max_alpha));
         }
 
-        store_u8_4x1(mask, m, 0);
-        store_u8_4x1(mask + w, m, 1);
+        store_u8x4_strided_x2(mask, w, m);
 
         src0 += 2 * src0_stride;
         src1 += 2 * src1_stride;

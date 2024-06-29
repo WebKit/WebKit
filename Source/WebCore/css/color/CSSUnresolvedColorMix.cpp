@@ -26,16 +26,30 @@
 #include "config.h"
 #include "CSSUnresolvedColorMix.h"
 
+#include "CSSColorMixResolver.h"
 #include "CSSColorMixSerialization.h"
-#include "ColorFromPrimitiveValue.h"
+#include "CSSUnresolvedColor.h"
+#include "CSSUnresolvedColorResolutionContext.h"
 #include "ColorSerialization.h"
 #include "StyleBuilderState.h"
 
 namespace WebCore {
 
+PercentRaw resolveComponentPercentage(const CSSUnresolvedColorMix::Component::Percentage& percentage)
+{
+    return evaluateCalc(percentage, { });
+}
+
+static std::optional<PercentRaw> resolveComponentPercentage(const std::optional<CSSUnresolvedColorMix::Component::Percentage>& percentage)
+{
+    if (!percentage)
+        return std::nullopt;
+    return resolveComponentPercentage(*percentage);
+}
+
 void serializationForCSS(StringBuilder& builder, const CSSUnresolvedColorMix& colorMix)
 {
-    serializationForCSSColorMix<CSSUnresolvedColorMix>(builder, colorMix);
+    serializationForCSSColorMix(builder, colorMix);
 }
 
 String serializationForCSS(const CSSUnresolvedColorMix& unresolved)
@@ -45,34 +59,63 @@ String serializationForCSS(const CSSUnresolvedColorMix& unresolved)
     return builder.toString();
 }
 
-bool operator==(const CSSUnresolvedColorMix::Component& a, const CSSUnresolvedColorMix::Component& b)
+bool CSSUnresolvedColorMix::Component::operator==(const CSSUnresolvedColorMix::Component& other) const
 {
-    return compareCSSValue(a.color, b.color)
-        && compareCSSValuePtr(a.percentage, b.percentage);
+    return color->equals(color.get()) && percentage == other.percentage;
 }
 
 StyleColor createStyleColor(const CSSUnresolvedColorMix& unresolved, const Document& document, RenderStyle& style, Style::ForVisitedLink forVisitedLink)
 {
-    auto resolvePercentage = [](auto& percentage) -> std::optional<double> {
-        if (!percentage)
-            return std::nullopt;
-        return percentage->doubleValue();
-    };
-
-    auto resolveComponent = [&](auto& component, auto& document, auto& style, auto forVisitedLink) -> StyleColorMix::Component {
-        return {
-            colorFromPrimitiveValue(document, style, component.color.get(), forVisitedLink),
-            resolvePercentage(component.percentage)
-        };
-    };
-
     return StyleColor {
         StyleColorMix {
             unresolved.colorInterpolationMethod,
-            resolveComponent(unresolved.mixComponents1, document, style, forVisitedLink),
-            resolveComponent(unresolved.mixComponents2, document, style, forVisitedLink)
+            StyleColorMix::Component {
+                unresolved.mixComponents1.color->createStyleColor(document, style, forVisitedLink),
+                resolveComponentPercentage(unresolved.mixComponents1.percentage)
+            },
+            StyleColorMix::Component {
+                unresolved.mixComponents2.color->createStyleColor(document, style, forVisitedLink),
+                resolveComponentPercentage(unresolved.mixComponents2.percentage)
+            }
         }
     };
+}
+
+Color createColor(const CSSUnresolvedColorMix& unresolved, const CSSUnresolvedColorResolutionContext& context)
+{
+    auto component1Color = unresolved.mixComponents1.color->createColor(context);
+    if (!component1Color.isValid())
+        return { };
+
+    auto component2Color = unresolved.mixComponents2.color->createColor(context);
+    if (!component2Color.isValid())
+        return { };
+
+    return mix(
+        CSSColorMixResolver {
+            unresolved.colorInterpolationMethod,
+            CSSColorMixResolver::Component {
+                WTFMove(component1Color),
+                resolveComponentPercentage(unresolved.mixComponents1.percentage)
+            },
+            CSSColorMixResolver::Component {
+                WTFMove(component2Color),
+                resolveComponentPercentage(unresolved.mixComponents2.percentage)
+            }
+        }
+    );
+}
+
+bool containsCurrentColor(const CSSUnresolvedColorMix& unresolved)
+{
+    return unresolved.mixComponents1.color->containsCurrentColor()
+        || unresolved.mixComponents2.color->containsCurrentColor();
+}
+
+bool containsColorSchemeDependentColor(const CSSUnresolvedColorMix& unresolved)
+{
+    return unresolved.mixComponents1.color->containsColorSchemeDependentColor()
+        || unresolved.mixComponents2.color->containsColorSchemeDependentColor();
 }
 
 } // namespace WebCore

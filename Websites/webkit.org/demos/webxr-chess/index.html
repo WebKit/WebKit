@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Computer Chess</title>
+    <meta charset="UTF-8">
+    <link as="fetch" rel="preload" href="./assets/chess.glb" crossorigin="anonymous">
+    <script type="module" src="./assets/scripts/shorthand-patch.js" defer></script>
+    <script type="module" src="./assets/scripts/index.js" defer></script>
+    <link rel="stylesheet" href="chess.css">
+</head>
+
+<body>
+
+<h1>♟️ Example Chess School ♛</h1>
+<main>
+    <article>
+        <h2>Chess Garden</h2>
+        <blockquote><p>When the game is over, the king and pawn go into the same box.</p><footer>—Proverb</footer></blockquote>
+        <p>This is an example of a chess game that uses WebXR. To play you need to view the page on a browser with WebXR capabilities on hardware with XR capabilities such as Safari on visionOS on Apple Vision Pro. In this versions the CPU player makes random but valid moves, it would probably be more engaging to integrate a Chess engine into the game so that it plays smarter.</p>
+        <section class="demo">
+        
+            <sh-geometry-cylinder id="pointer" height="2" radius-bottom="0.001" radius-top="0.001" location="0 1 0" rotate="-90 0 0"></sh-geometry-cylinder>
+            <sh-material-basic color="red" id="red"></sh-material-basic>
+            <sh-material-shadow color="#000030" opacity="0.5" alpha-to-coverage="true" depth-write="true" id="shadowMat"></sh-material-shadow>
+            <sh-material-physical color="grey" roughness="0.4" id="screenmaterial"></sh-material-physical>
+            <sh-material-phong emissive="#888888" environment-map="#hdrs" shininess="0" reflectivity="0.7" id="panewhite"></sh-material-phong>
+            <sh-material-standard color="#222222" roughness="0.7" id="fontblack"></sh-material-standard>
+            <sh-material-phong emissive="#333333" combine="mix" environment-map="#hdrs" shininess="0" reflectivity="0.4"id="buttonmaterial"></sh-material-phong>
+            <img id="hdr" is="sh-texture-image" src="assets/bake.hdr" mapping="reflection">
+            <img id="hdrs" is="sh-texture-image" src="assets/baketiny.hdr" mapping="refraction">
+            <sh-xr-session id="xrsession"></sh-xr-session>
+        
+            <sh-renderer-webgl scene="sh-scene" id="renderer" power-preference="high-performance">
+                <sh-scene environment="#hdr" slot="scene">
+                    <sh-group rotate="0 30 0">
+                        <sh-model id="garden" src="assets/garden4k.glb" pointer-events="none"></sh-model>
+                        <sh-light-directional shadow-bias="-1e-5" shadow-radius="1.1" shadow-focus="#chess-group" shadow-map-size="1536 1536" location="-1 1 0" intensity="4"></sh-light-directional>
+                    </sh-group>
+
+
+                    <img id="leaf-tex" is="sh-texture-image" repeat="0.25 0.5" src="assets/leaf_sprite_variants_bc.png">
+                    <sh-geometry-cylinder id="leaf-geo" sweep-length="90" open="true" segments-radial="12" height="0.15" radius-bottom="0.1" radius-top="0.1" ></sh-geometry-cylinder>
+                    <sh-material-standard id="leaf-mat" roughness="0.8" metalness="0" map="#leaf-tex" transparent="true" backface-visibility="visible" alpha-to-coverage="true"></sh-material-standard>
+                
+                    <sh-mesh cast-shadow="false" id="leafMesh" brownian-motion="true" count="60" speed="0.03" velocity="0 -0.4 0" rotation-variance="80 80 80" position-variance="10 10 15" location="0 4 1.65" geometry="#leaf-geo" material="#leaf-mat"></sh-mesh>
+                    <script type="module" defer>
+                        queueMicrotask(async ()=>{
+                            const matEl = document.getElementById('leaf-mat');
+                            const mat = await matEl.object;
+                            mat.needsUpdate = true;
+                            mat.onBeforeCompile = function (shader) {
+                                shader.vertexShader = shader.vertexShader.replace(
+                                    `#include <uv_vertex>`,
+                                `#include <uv_vertex>
+                                    vMapUv.x += 0.25 * mod(float(gl_InstanceID), 4.);
+                                    vMapUv.y += 0.5 * mod(float(gl_InstanceID / 4), 2.);
+                                `);
+                            }
+                            console.log('Replacing Leaf Material');
+                        });
+                    </script>
+        
+                    <sh-group id="chess-group" location="0 0.66 -0.65" rotate="0 90 0" scale="1.1 1.1 1.1">
+                        <sh-mesh material="shadow" geometry="plane" scale="0.7 0.9 0.9" location="0 0.002 0" rotate="-90 0 0" receive-shadow="true" cast-shadow="false" pointer-events="none"></sh-mesh>
+                        <sh-model class="chesstable" src="assets/chess-table.glb"></sh-model>
+                        <sh-model id="chess3d" src="assets/chess.glb" batches="true"></sh-model>
+                        <script type="module" defer>
+                            /* The chess pieces are rendered using BatchedMesh and if either of these properties re true then it will reclaculate the matrix in the middle of a frame so it is good to do it early */
+                            queueMicrotask(async ()=>{
+                                const model = await window.chess3d.object;
+                                for (const c of model.children) {
+                                    if (c.isBatchedMesh) {
+                                        c.perObjectFrustumCulled = false
+                                        c.sortObjects = false
+                                    }
+                                }
+                                console.log('Updating BatchedMesh properties');
+                            });
+                        </script>
+
+                        <sh-mesh class="magnet" id="magnetA"
+                            plane-constraint-target="#chess3d::part(held)"
+                            location="0.028575 0 0.028575"
+                            plane-constraint-limit="0.36 -1 origin"
+                            plane-constraint-step="0.05715 0 0.05715"
+                            plane-constraint-latch="true"
+                            geometry="path(M0-.027A.027.027 0 110 .027.027.027 0 110-.027) / path(M0-.0225A.0225.0225 0 100 .0225.0225.0225 0 100-.0225), path(M0-.015A.015.015 0 110 .015.015.015 0 110-.015) / path(M0-.01A.01.01 0 100 .01.01.01 0 100-.01) .005 smooth"
+                            material="#screenmaterial"
+                            cast-shadow="true"
+                            receive-shadow="true"
+                        >
+                            <audio is="sh-audio" class="chessclick" preload="auto" src="assets/chessA.m4a"></audio>
+                            <audio is="sh-audio" class="chessclick" preload="auto" src="assets/chessB.m4a"></audio>
+                            <audio is="sh-audio" class="chessclick" preload="auto" src="assets/chessC.m4a"></audio>
+                        </sh-mesh>
+        
+                        <sh-group id="tools" location="0.5 0.0 -0.6" rotate="0 300 0" scale="0.45 0.45 0.45">
+                            <sh-mesh id="toolpane" geometry="rect(0.8 0.2 0.04 0.04 -0.4 -0.0)" pointer-events="none" material="#panewhite" location="0 0 -0.03" receive-shadow="true"></sh-mesh>
+                            <sh-mesh geometry="rect(0.6 0.08 0.04 0.04 -0.3 -0.12)" grab-target="parent" material="#panewhite" location="0 0 -0.03"></sh-mesh>
+                            <sh-use location="0 0.1 0" id="resetgame" class="auto-text-shape clickable" color="white" material="#buttonmaterial">Reset game</sh-use>
+                            <sh-group location="0 0.3 0" class="ifvravailable">
+                                <sh-use id="sessionstart" onclick="xrsession.enterVR()" class="auto-text-shape clickable" color="white" material="#buttonmaterial">Enter VR</sh-use>
+                                <sh-use id="sessionend" onclick="xrsession.endXR()" class="auto-text-shape clickable" color="white" material="#buttonmaterial">Leave garden</sh-use>
+                            </sh-group>
+                             <script>
+                                let i=0;
+                                window.addEventListener('postrender', e => (i++%60 === 0) && console.log(`Calls: ${e.detail.calls}/FPS: ${e.detail.fps}`));
+                            </script>
+                        </sh-group>
+                    </sh-group>
+        
+                    <sh-user id="shUser">
+        
+                        <sh-group slot="left-gamepad-ray">
+                            <sh-mesh pointer-events="none" geometry="#pointer" material="#red" cast-shadow="false"></sh-mesh>
+                        </sh-group>
+                        <sh-group slot="right-gamepad-ray">
+                            <sh-mesh pointer-events="none" geometry="#pointer" material="#red" cast-shadow="false"></sh-mesh>
+                        </sh-group>
+                        <sh-select-grab slot="left-gamepad-grip"></sh-select-grab>
+                        <sh-select-grab slot="right-gamepad-grip"></sh-select-grab>
+        
+                        <sh-select-grab slot="transient-pointer-ray-1"></sh-select-grab>
+                        <sh-select-grab slot="transient-pointer-ray-0"></sh-select-grab>
+        
+                        <sh-hand-grab slot="right-index-finger-tip"></sh-hand-grab>
+                        <sh-hand-grab slot="left-index-finger-tip"></sh-hand-grab>
+                        <sh-hand-grab slot="right-middle-finger-tip"></sh-hand-grab>
+                        <sh-hand-grab slot="left-middle-finger-tip"></sh-hand-grab>
+                        <sh-hand-grab slot="right-thumb-tip"></sh-hand-grab>
+                        <sh-hand-grab slot="left-thumb-tip"></sh-hand-grab>
+                    </sh-user>
+                </sh-scene>
+                <button class="enter-vr" onclick="xrsession.enterVR()">LAUNCH VR EXPERIENCE</button>
+            </sh-renderer-webgl>
+            <script>
+                window.renderer.addEventListener('ready', function () {
+                    const position = window.chess3d.object.getWorldPosition(chess3d.object.position.clone());
+                    const camera = window.shUser.shadowRoot.querySelector('[part=camera]').object;
+                    camera.lookAt(position);
+                });
+            </script>
+        </section>
+        <p>The rest of this text is lorem ipsum to show how WebXR can be part of a regular website.</p>
+        <p>Sed nec sem ac leo tincidunt tincidunt et nec enim. Cras pulvinar at odio sed feugiat. Aenean condimentum nibh sit amet facilisis ultricies. Sed accumsan ut urna a mollis. Sed accumsan lacus at elementum convallis. Sed vel libero a velit fermentum posuere. Pellentesque egestas tellus id purus finibus tempor. Maecenas quis iaculis eros, et porta massa. Curabitur aliquet pharetra est ut placerat. Ut at ex a nunc aliquam dapibus vitae et leo. Nullam cursus fringilla augue non volutpat. Aliquam in dui massa. Aenean dignissim eleifend ligula tincidunt consectetur. Sed ultrices varius est at faucibus. Curabitur dignissim eleifend tortor, ut viverra neque fermentum sit amet. Curabitur sollicitudin nisl vel justo mollis lacinia ut eget lorem.</p>
+        <p>interdum id lacus nec consectetur. Maecenas facilisis elit in vehicula ultricies. Nunc eget ornare sem. Quisque sed consectetur nisi, sed euismod diam. Quisque dignissim sem eu rutrum molestie. Donec nisl nisi, commodo ac lacinia ac, facilisis in diam. Fusce sollicitudin augue tincidunt nunc malesuada varius. Proin laoreet finibus lacus, euismod vestibulum nisl. Aenean condimentum nisl vitae luctus imperdiet. Fusce ullamcorper arcu erat, eu varius tellus suscipit id. Donec molestie mattis dolor eget maximus. Maecenas viverra euismod velit vestibulum posuere.</p>
+        <footer><p><a href="./assets/scripts/thirdparty/chess.js.license">License for chess.js</a></p></footer>
+    </article>
+</main>
+</body>
+
+</html>

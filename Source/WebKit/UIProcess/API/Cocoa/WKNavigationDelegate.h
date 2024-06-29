@@ -65,6 +65,7 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  methods for tracking progress for main frame navigations and for deciding
  policy for main frame and subframe navigations.
  */
+WK_SWIFT_UI_ACTOR
 @protocol WKNavigationDelegate <NSObject>
 
 @optional
@@ -77,7 +78,7 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  navigation. The argument is one of the constants of the enumerated type WKNavigationActionPolicy.
  @discussion If you do not implement this method, the web view will load the request or, if appropriate, forward it to another application.
  */
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler WK_SWIFT_ASYNC(3);
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(WK_SWIFT_UI_ACTOR void (^)(WKNavigationActionPolicy))decisionHandler WK_SWIFT_ASYNC(3);
 
 /*! @abstract Decides whether to allow or cancel a navigation.
  @param webView The web view invoking the delegate method.
@@ -91,7 +92,7 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  @discussion If you implement this method,
  -webView:decidePolicyForNavigationAction:decisionHandler: will not be called.
  */
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler WK_SWIFT_ASYNC(4) WK_API_AVAILABLE(macos(10.15), ios(13.0));
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(WK_SWIFT_UI_ACTOR void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler WK_SWIFT_ASYNC(4) WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /*! @abstract Decides whether to allow or cancel a navigation after its
  response is known.
@@ -102,7 +103,7 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  navigation. The argument is one of the constants of the enumerated type WKNavigationResponsePolicy.
  @discussion If you do not implement this method, the web view will allow the response, if the web view can show it.
  */
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler WK_SWIFT_ASYNC(3);
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(WK_SWIFT_UI_ACTOR void (^)(WKNavigationResponsePolicy))decisionHandler WK_SWIFT_ASYNC(3);
 
 /*! @abstract Invoked when a main frame navigation starts.
  @param webView The web view invoking the delegate method.
@@ -155,7 +156,7 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  credential.
  @discussion If you do not implement this method, the web view will respond to the authentication challenge with the NSURLSessionAuthChallengeRejectProtectionSpace disposition.
  */
-- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler WK_SWIFT_ASYNC_NAME(webView(_:respondTo:));
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler WK_SWIFT_ASYNC_NAME(webView(_:respondTo:));
 
 /*! @abstract Invoked when the web view's web content process is terminated.
  @param webView The web view whose underlying web content process was terminated.
@@ -167,7 +168,7 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  @param challenge The authentication challenge.
  @param decisionHandler The decision handler you must invoke to respond to indicate whether or not to continue with the connection establishment.
  */
-- (void)webView:(WKWebView *)webView authenticationChallenge:(NSURLAuthenticationChallenge *)challenge shouldAllowDeprecatedTLS:(void (^)(BOOL))decisionHandler WK_SWIFT_ASYNC_NAME(webView(_:shouldAllowDeprecatedTLSFor:)) WK_SWIFT_ASYNC(3) WK_API_AVAILABLE(macos(11.0), ios(14.0));
+- (void)webView:(WKWebView *)webView authenticationChallenge:(NSURLAuthenticationChallenge *)challenge shouldAllowDeprecatedTLS:(WK_SWIFT_UI_ACTOR void (^)(BOOL))decisionHandler WK_SWIFT_ASYNC_NAME(webView(_:shouldAllowDeprecatedTLSFor:)) WK_SWIFT_ASYNC(3) WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /*
  @abstract Called after using WKNavigationActionPolicyDownload.

@@ -34,7 +34,7 @@ namespace JSC {
 ParseHash::ParseHash(const SourceCode& sourceCode)
 {
     SHA1 sha1;
-    sha1.addBytes(sourceCode.toUTF8());
+    sha1.addUTF8Bytes(sourceCode.view());
     SHA1::Digest digest;
     sha1.computeHash(digest);
     unsigned hash = digest[0] | (digest[1] << 8) | (digest[2] << 16) | (digest[3] << 24);

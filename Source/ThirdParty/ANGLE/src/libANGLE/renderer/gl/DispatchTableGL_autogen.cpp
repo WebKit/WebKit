@@ -2288,6 +2288,12 @@ void DispatchTableGL::initProcsGLES(const gl::Version &version,
         ASSIGN("glViewportIndexedfvOES", viewportIndexedfv);
     }
 
+    if (extensions.count("GL_QCOM_tiled_rendering") != 0)
+    {
+        ASSIGN("glEndTilingQCOM", endTilingQCOM);
+        ASSIGN("glStartTilingQCOM", startTilingQCOM);
+    }
+
     if (version >= gl::Version(2, 0))
     {
         ASSIGN("glActiveTexture", activeTexture);
@@ -5112,6 +5118,12 @@ void DispatchTableGL::initProcsGLESNULL(const gl::Version &version,
         viewportArrayv    = &glViewportArrayvNULL;
         viewportIndexedf  = &glViewportIndexedfNULL;
         viewportIndexedfv = &glViewportIndexedfvNULL;
+    }
+
+    if (extensions.count("GL_QCOM_tiled_rendering") != 0)
+    {
+        endTilingQCOM   = &glEndTilingQCOMNULL;
+        startTilingQCOM = &glStartTilingQCOMNULL;
     }
 
     if (version >= gl::Version(2, 0))

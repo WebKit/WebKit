@@ -357,11 +357,9 @@ void ResourcesHLSL::outputHLSLSamplerUniformGroup(
             << (*groupTextureRegisterIndex) << ";\n";
     }
     out << "uniform " << TextureString(textureGroup) << " textures" << suffix << "["
-        << groupRegisterCount << "]"
-        << " : register(t" << (*groupTextureRegisterIndex) << ");\n";
+        << groupRegisterCount << "]" << " : register(t" << (*groupTextureRegisterIndex) << ");\n";
     out << "uniform " << SamplerString(textureGroup) << " samplers" << suffix << "["
-        << groupRegisterCount << "]"
-        << " : register(s" << (*groupTextureRegisterIndex) << ");\n";
+        << groupRegisterCount << "]" << " : register(s" << (*groupTextureRegisterIndex) << ");\n";
     *groupTextureRegisterIndex += groupRegisterCount;
 }
 
@@ -413,8 +411,7 @@ void ResourcesHLSL::outputHLSLReadonlyImageUniformGroup(TInfoSinkBase &out,
     out << "static const uint readonlyImageIndexOffset" << suffix << " = "
         << (*groupTextureRegisterIndex) << ";\n";
     out << "uniform " << TextureString(textureGroup) << " readonlyImages" << suffix << "["
-        << groupRegisterCount << "]"
-        << " : register(t" << (*groupTextureRegisterIndex) << ");\n";
+        << groupRegisterCount << "]" << " : register(t" << (*groupTextureRegisterIndex) << ");\n";
     *groupTextureRegisterIndex += groupRegisterCount;
 }
 
@@ -438,8 +435,7 @@ void ResourcesHLSL::outputHLSLImageUniformGroup(TInfoSinkBase &out,
     out << "static const uint imageIndexOffset" << suffix << " = " << (*groupTextureRegisterIndex)
         << ";\n";
     out << "uniform " << RWTextureString(textureGroup) << " images" << suffix << "["
-        << groupRegisterCount << "]"
-        << " : register(u" << (*groupTextureRegisterIndex) << ");\n";
+        << groupRegisterCount << "]" << " : register(u" << (*groupTextureRegisterIndex) << ");\n";
     *groupTextureRegisterIndex += groupRegisterCount;
 }
 
@@ -725,7 +721,7 @@ TString ResourcesHLSL::uniformBlocksHeader(
         }
 
         // In order to avoid compile performance issue, translate uniform block to structured
-        // buffer. anglebug.com/3682.
+        // buffer. anglebug.com/40096608.
         if (uniformBlockOptimizedMap.count(interfaceBlock.uniqueId().get()) != 0)
         {
             unsigned int structuredBufferRegister = mSRVRegister;

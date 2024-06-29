@@ -13,10 +13,6 @@ list(APPEND WebKitGTK_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPrintCustomWidget.h.in
 )
 
-list(APPEND WebKitWebProcessExtension_HEADER_TEMPLATES
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.h.in
-)
-
 set(WebKitDOM_INSTALLED_HEADERS
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/webkitdomautocleanups.h
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/webkitdomdefines.h

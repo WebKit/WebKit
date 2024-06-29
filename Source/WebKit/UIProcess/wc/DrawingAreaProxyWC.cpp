@@ -55,11 +55,16 @@ void DrawingAreaProxyWC::paint(PlatformPaintContextPtr context, const WebCore::I
     unpaintedRegion.subtract(WebCore::IntRect({ }, m_backingStore->size()));
 }
 
+void DrawingAreaProxyWC::deviceScaleFactorDidChange()
+{
+    sizeDidChange();
+}
+
 void DrawingAreaProxyWC::sizeDidChange()
 {
     discardBackingStore();
     m_currentBackingStoreStateID++;
-    send(Messages::DrawingArea::UpdateGeometryWC(m_currentBackingStoreStateID, m_size));
+    send(Messages::DrawingArea::UpdateGeometryWC(m_currentBackingStoreStateID, m_size, m_webPageProxy->deviceScaleFactor()));
 }
 
 void DrawingAreaProxyWC::update(uint64_t backingStoreStateID, UpdateInfo&& updateInfo)

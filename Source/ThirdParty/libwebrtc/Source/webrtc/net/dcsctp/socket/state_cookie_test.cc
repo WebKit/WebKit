@@ -24,14 +24,18 @@ TEST(StateCookieTest, SerializeAndDeserialize) {
                                .zero_checksum = true,
                                .negotiated_maximum_incoming_streams = 123,
                                .negotiated_maximum_outgoing_streams = 234};
-  StateCookie cookie(VerificationTag(123), TSN(456),
+  StateCookie cookie(/*peer_tag=*/VerificationTag(123),
+                     /*my_tag=*/VerificationTag(321),
+                     /*peer_initial_tsn=*/TSN(456), /*my_initial_tsn=*/TSN(654),
                      /*a_rwnd=*/789, TieTag(101112), capabilities);
   std::vector<uint8_t> serialized = cookie.Serialize();
   EXPECT_THAT(serialized, SizeIs(StateCookie::kCookieSize));
   ASSERT_HAS_VALUE_AND_ASSIGN(StateCookie deserialized,
                               StateCookie::Deserialize(serialized));
-  EXPECT_EQ(deserialized.initiate_tag(), VerificationTag(123));
-  EXPECT_EQ(deserialized.initial_tsn(), TSN(456));
+  EXPECT_EQ(deserialized.peer_tag(), VerificationTag(123));
+  EXPECT_EQ(deserialized.my_tag(), VerificationTag(321));
+  EXPECT_EQ(deserialized.peer_initial_tsn(), TSN(456));
+  EXPECT_EQ(deserialized.my_initial_tsn(), TSN(654));
   EXPECT_EQ(deserialized.a_rwnd(), 789u);
   EXPECT_EQ(deserialized.tie_tag(), TieTag(101112));
   EXPECT_TRUE(deserialized.capabilities().partial_reliability);
@@ -48,7 +52,9 @@ TEST(StateCookieTest, ValidateMagicValue) {
   Capabilities capabilities = {.partial_reliability = true,
                                .message_interleaving = false,
                                .reconfig = true};
-  StateCookie cookie(VerificationTag(123), TSN(456),
+  StateCookie cookie(/*peer_tag=*/VerificationTag(123),
+                     /*my_tag=*/VerificationTag(321),
+                     /*peer_initial_tsn=*/TSN(456), /*my_initial_tsn=*/TSN(654),
                      /*a_rwnd=*/789, TieTag(101112), capabilities);
   std::vector<uint8_t> serialized = cookie.Serialize();
   ASSERT_THAT(serialized, SizeIs(StateCookie::kCookieSize));

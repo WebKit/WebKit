@@ -9,9 +9,12 @@
  */
 
 #include "./vp9_rtcd.h"
+#include "./vpx_config.h"
 #include "./vpx_dsp_rtcd.h"
 #include "./vpx_scale_rtcd.h"
 #include "vp9/common/vp9_blockd.h"
+#include "vp9/encoder/vp9_encoder.h"
+#include "vpx/vpx_codec.h"
 #include "vpx_dsp/vpx_filter.h"
 #include "vpx_scale/yv12config.h"
 
@@ -91,6 +94,23 @@ void vp9_scale_and_extend_frame_c(const YV12_BUFFER_CONFIG *src,
   {
     const int dst_w = dst->y_crop_width;
     const int dst_h = dst->y_crop_height;
+
+    // The issue b/311394513 reveals a corner case bug. vpx_scaled_2d() requires
+    // both x_step_q4 and y_step_q4 are less than or equal to 64. Otherwise, it
+    // needs to call vp9_scale_and_extend_frame_nonnormative() that supports
+    // arbitrary scaling.
+    const int x_step_q4 = 16 * src_w / dst_w;
+    const int y_step_q4 = 16 * src_h / dst_h;
+    if (x_step_q4 > 64 || y_step_q4 > 64) {
+      // This function is only called while cm->bit_depth is VPX_BITS_8.
+#if CONFIG_VP9_HIGHBITDEPTH
+      vp9_scale_and_extend_frame_nonnormative(src, dst, (int)VPX_BITS_8);
+#else
+      vp9_scale_and_extend_frame_nonnormative(src, dst);
+#endif  // CONFIG_VP9_HIGHBITDEPTH
+      return;
+    }
+
     for (i = 0; i < MAX_MB_PLANE; ++i) {
       const int factor = (i == 0 || i == 3 ? 1 : 2);
       const int src_stride = src_strides[i];

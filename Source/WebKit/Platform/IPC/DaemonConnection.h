@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 #include <wtf/text/CString.h>
 
 #if PLATFORM(COCOA)
-#include <wtf/RetainPtr.h>
+#include <wtf/OSObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 #endif
 
@@ -60,13 +60,13 @@ public:
     virtual ~Connection() = default;
 
 #if PLATFORM(COCOA)
-    explicit Connection(RetainPtr<xpc_connection_t>&& connection)
+    explicit Connection(OSObjectPtr<xpc_connection_t>&& connection)
         : m_connection(WTFMove(connection)) { }
     xpc_connection_t get() const { return m_connection.get(); }
     void send(xpc_object_t) const;
     void sendWithReply(xpc_object_t, CompletionHandler<void(xpc_object_t)>&&) const;
 protected:
-    mutable RetainPtr<xpc_connection_t> m_connection;
+    mutable OSObjectPtr<xpc_connection_t> m_connection;
 #endif
     virtual void initializeConnectionIfNeeded() const { }
 };
@@ -83,7 +83,7 @@ public:
 
     virtual void newConnectionWasInitialized() const = 0;
 #if PLATFORM(COCOA)
-    virtual RetainPtr<xpc_object_t> dictionaryFromMessage(typename Traits::MessageType, EncodedMessage&&) const = 0;
+    virtual OSObjectPtr<xpc_object_t> dictionaryFromMessage(typename Traits::MessageType, EncodedMessage&&) const = 0;
     virtual void connectionReceivedEvent(xpc_object_t) = 0;
 #endif
 

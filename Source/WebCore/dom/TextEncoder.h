@@ -45,7 +45,7 @@ public:
     RefPtr<Uint8Array> encode(String&&) const;
     EncodeIntoResult encodeInto(String&&, Ref<Uint8Array>&& destination);
 private:
-    TextEncoder() { };
+    TextEncoder() = default;
 };
 
 }

@@ -215,7 +215,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const override { return m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    const void* logIdentifier() const override { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
     const void* nextAudioNodeLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextAudioNodeIdentifier); }
     const void* nextAudioParameterLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextAudioParameterIdentifier); }
@@ -250,6 +250,10 @@ protected:
     void setState(State);
 
     void clear();
+
+protected:
+    // Only accessed when the graph lock is held.
+    const Vector<AudioConnectionRefPtr<AudioNode>>& referencedSourceNodes() const { return m_referencedSourceNodes; }
 
 private:
     void scheduleNodeDeletion();

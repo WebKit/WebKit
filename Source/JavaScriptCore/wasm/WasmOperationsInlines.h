@@ -212,7 +212,7 @@ EncodedJSValue createArrayFromDataSegment(Instance* instance, FieldType elementT
         return JSValue::encode(jsNull());
 
     // Copy the data from the segment into the temp `values` vector
-    if (!instance->copyDataSegment(dataSegmentIndex, offset, arrayLengthInBytes, reinterpret_cast<uint8_t*>(tempValues.data()))) {
+    if (!instance->copyDataSegment(dataSegmentIndex, offset, arrayLengthInBytes, reinterpret_cast<uint8_t*>(tempValues.mutableSpan().data()))) {
         // If copyDataSegment() returns false, the segment access is out of bounds.
         // In that case, the caller is responsible for throwing an exception.
         return JSValue::encode(jsNull());
@@ -225,7 +225,7 @@ EncodedJSValue createArrayFromDataSegment(Instance* instance, FieldType elementT
 inline EncodedJSValue createArrayFromElementSegment(Instance* instance, size_t arraySize, unsigned elemSegmentIndex, unsigned offset, FixedVector<uint64_t>&& tempValues, RefPtr<const Wasm::RTT> rtt)
 {
     // Copy the data from the segment into the temp `values` vector
-    instance->copyElementSegment(instance->module().moduleInformation().elements[elemSegmentIndex], offset, arraySize, tempValues.data());
+    instance->copyElementSegment(instance->module().moduleInformation().elements[elemSegmentIndex], offset, arraySize, tempValues.mutableSpan().data());
 
     // Finally, return a JS value representing an array of the values from `tempValues`
     return createArrayValue(instance, FieldType { StorageType { Types::I64 }, Mutability::Mutable }, arraySize, WTFMove(tempValues), rtt);

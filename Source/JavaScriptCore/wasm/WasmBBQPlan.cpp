@@ -58,6 +58,8 @@ BBQPlan::BBQPlan(VM& vm, Ref<ModuleInformation> moduleInformation, uint32_t func
     ASSERT(Options::useBBQJIT());
     setMode(m_calleeGroup->mode());
     dataLogLnIf(WasmBBQPlanInternal::verbose, "Starting BBQ plan for ", functionIndex);
+    m_areWasmToJSStubsCompiled = true;
+    m_areWasmToWasmStubsCompiled = true;
 }
 
 FunctionAllowlist& BBQPlan::ensureGlobalBBQAllowlist()
@@ -131,9 +133,7 @@ void BBQPlan::work(CompilationEffort effort)
     CompilationContext context;
     Vector<UnlinkedWasmToWasmCall> unlinkedWasmToWasmCalls;
     std::unique_ptr<TierUpCount> tierUp;
-#if !CPU(ARM) // We don't want to attempt tier up to OMG on ARM just yet. Not initialising this counter achieves just that.
     tierUp = makeUnique<TierUpCount>();
-#endif
     size_t functionIndexSpace = m_functionIndex + m_moduleInformation->importFunctionCount();
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
@@ -200,16 +200,16 @@ void BBQPlan::work(CompilationEffort effort)
         m_calleeGroup->callsiteCollection().updateCallsitesToCallUs(locker, *m_calleeGroup, CodeLocationLabel<WasmEntryPtrTag>(entrypoint), m_functionIndex, functionIndexSpace);
 
         {
-            if (Options::useWasmIPInt()) {
+            if (Options::useWebAssemblyIPInt()) {
                 IPIntCallee& ipintCallee = m_calleeGroup->m_ipintCallees->at(m_functionIndex).get();
                 Locker locker { ipintCallee.tierUpCounter().m_lock };
                 ipintCallee.setReplacement(callee.copyRef(), mode());
-                ipintCallee.tierUpCounter().m_compilationStatus = IPIntTierUpCounter::CompilationStatus::Compiled;
+                ipintCallee.tierUpCounter().setCompilationStatus(mode(), IPIntTierUpCounter::CompilationStatus::Compiled);
             } else {
                 LLIntCallee& llintCallee = m_calleeGroup->m_llintCallees->at(m_functionIndex).get();
                 Locker locker { llintCallee.tierUpCounter().m_lock };
                 llintCallee.setReplacement(callee.copyRef(), mode());
-                llintCallee.tierUpCounter().m_compilationStatus = LLIntTierUpCounter::CompilationStatus::Compiled;
+                llintCallee.tierUpCounter().setCompilationStatus(mode(), LLIntTierUpCounter::CompilationStatus::Compiled);
             }
         }
     }
@@ -244,6 +244,9 @@ void BBQPlan::work(CompilationEffort effort)
             }
 
             callee->setEntrypoint(WTFMove(jsToWasmInternalFunction->entrypoint));
+            Locker locker { m_calleeGroup->m_lock };
+            // Note that we can compile the same function with multiple memory modes, which can cause this
+            // race. That's fine, both stubs should do the same thing.
             static_cast<JSEntrypointInterpreterCallee*>(jsEntrypointCallee)->setReplacement(callee.ptr());
 
             auto result = m_jsToWasmInternalFunctions.add(m_functionIndex, std::tuple { WTFMove(callee), WTFMove(linkBuffer), WTFMove(jsToWasmInternalFunction) });
@@ -300,7 +303,7 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
 {
     const auto& function = m_moduleInformation->functions[functionIndex];
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
-    const TypeDefinition& signature = TypeInformation::get(typeIndex);
+    const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
     unsigned functionIndexSpace = m_moduleInformation->importFunctionCount() + functionIndex;
     ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace) == typeIndex);
     Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;
@@ -324,10 +327,12 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
 
 void BBQPlan::didCompleteCompilation()
 {
+    generateStubsIfNecessary();
+
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
         CompilationContext& context = m_compilationContexts[functionIndex];
         TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
-        const TypeDefinition& signature = TypeInformation::get(typeIndex);
+        const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
         const uint32_t functionIndexSpace = functionIndex + m_moduleInformation->importFunctionCount();
         ASSERT(functionIndexSpace < m_moduleInformation->functionIndexSpaceSize());
         {

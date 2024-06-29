@@ -19,8 +19,8 @@
 
 #pragma once
 
+#include "Damage.h"
 #include "FilterOperations.h"
-#include "FloatRect.h"
 #include "NicosiaAnimation.h"
 #include "TextureMapperSolidColorLayer.h"
 #include <wtf/WeakPtr.h>
@@ -40,16 +40,20 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::TextureMappe
 
 namespace WebCore {
 
-class Region;
 class TextureMapper;
 class TextureMapperPaintOptions;
 class TextureMapperPlatformLayer;
+
+class TextureMapperLayerDamageVisitor {
+public:
+    virtual void recordDamage(const FloatRect&) = 0;
+};
 
 class WEBCORE_EXPORT TextureMapperLayer : public CanMakeWeakPtr<TextureMapperLayer> {
     WTF_MAKE_NONCOPYABLE(TextureMapperLayer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TextureMapperLayer();
+    TextureMapperLayer(Damage::ShouldPropagate = Damage::ShouldPropagate::No);
     virtual ~TextureMapperLayer();
 
 #if USE(COORDINATED_GRAPHICS)
@@ -118,6 +122,14 @@ public:
 
     void addChild(TextureMapperLayer*);
 
+    void acceptDamageVisitor(TextureMapperLayerDamageVisitor&);
+    void dismissDamageVisitor();
+
+    ALWAYS_INLINE void clearDamage();
+    ALWAYS_INLINE void invalidateDamage();
+    ALWAYS_INLINE void addDamage(const Damage&);
+    ALWAYS_INLINE void addDamage(const FloatRect&);
+
 private:
     TextureMapperLayer& rootLayer() const
     {
@@ -162,6 +174,7 @@ private:
     void paintSelfAndChildren(TextureMapperPaintOptions&);
     void paintSelfAndChildrenWithReplica(TextureMapperPaintOptions&);
     void applyMask(TextureMapperPaintOptions&);
+    void recordDamage(const FloatRect&, const TransformationMatrix&, const TextureMapperPaintOptions&);
 
     bool isVisible() const;
 
@@ -243,6 +256,11 @@ private:
     bool m_isBackdrop { false };
     bool m_isReplica { false };
 
+    Damage::ShouldPropagate m_propagateDamage;
+    Damage m_damage;
+
+    TextureMapperLayerDamageVisitor* m_visitor { nullptr };
+
     struct {
         TransformationMatrix localTransform;
         TransformationMatrix combined;
@@ -254,5 +272,31 @@ private:
 #endif
     } m_layerTransforms;
 };
+
+ALWAYS_INLINE void TextureMapperLayer::clearDamage()
+{
+    m_damage = Damage();
+}
+
+ALWAYS_INLINE void TextureMapperLayer::invalidateDamage()
+{
+    m_damage.invalidate();
+}
+
+ALWAYS_INLINE void TextureMapperLayer::addDamage(const Damage& damage)
+{
+    if (m_propagateDamage == Damage::ShouldPropagate::No)
+        return;
+
+    m_damage.add(damage);
+}
+
+ALWAYS_INLINE void TextureMapperLayer::addDamage(const FloatRect& rect)
+{
+    if (m_propagateDamage == Damage::ShouldPropagate::No)
+        return;
+
+    m_damage.add(rect);
+}
 
 } // namespace WebCore

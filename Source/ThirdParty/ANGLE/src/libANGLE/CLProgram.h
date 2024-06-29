@@ -13,7 +13,6 @@
 #include "libANGLE/cl_utils.h"
 #include "libANGLE/renderer/CLProgramImpl.h"
 
-#include "common/Spinlock.h"
 #include "common/SynchronizedValue.h"
 
 #include <atomic>
@@ -100,7 +99,7 @@ class Program final : public _cl_program, public Object
 
     // mCallback might be accessed from implementation initialization
     // and needs to be initialized first.
-    angle::SynchronizedValue<CallbackData, angle::Spinlock> mCallback;
+    angle::SynchronizedValue<CallbackData> mCallback;
     std::atomic<cl_uint> mNumAttachedKernels;
 
     rx::CLProgramImpl::Ptr mImpl;

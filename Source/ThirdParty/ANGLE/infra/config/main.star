@@ -290,6 +290,8 @@ def angle_builder(name, cpu):
         "test_mode": test_mode,
     }
 
+    # TODO(343503161): Remove sheriff_rotations after SoM is updated.
+    ci_properties["gardener_rotations"] = ["angle"]
     ci_properties["sheriff_rotations"] = ["angle"]
 
     if is_perf:
@@ -322,7 +324,7 @@ def angle_builder(name, cpu):
     active_experimental_builders = [
         "android-arm64-exp-test",
         "android-arm64-exp-s22-test",
-        "mac-exp-test",
+        "linux-exp-test",
     ]
 
     if (not is_exp) or (name in active_experimental_builders):

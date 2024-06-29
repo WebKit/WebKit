@@ -202,14 +202,15 @@
 
 SECTION .text
 
-;void aom_filter_block1d4_v8_sse2
+;void aom_highbd_filter_block1d4_v8_sse2
 ;(
-;    unsigned char *src_ptr,
-;    unsigned int   src_pitch,
-;    unsigned char *output_ptr,
-;    unsigned int   out_pitch,
-;    unsigned int   output_height,
-;    short *filter
+;    const uint16_t  *src_ptr,
+;    const ptrdiff_t  src_pitch,
+;    uint16_t        *output_ptr,
+;    ptrdiff_t        out_pitch,
+;    unsigned int     output_height,
+;    const int16_t   *filter,
+;    int              bd
 ;)
 globalsym(aom_highbd_filter_block1d4_v8_sse2)
 sym(aom_highbd_filter_block1d4_v8_sse2):
@@ -272,14 +273,15 @@ sym(aom_highbd_filter_block1d4_v8_sse2):
     pop         rbp
     ret
 
-;void aom_filter_block1d8_v8_sse2
+;void aom_highbd_filter_block1d8_v8_sse2
 ;(
-;    unsigned char *src_ptr,
-;    unsigned int   src_pitch,
-;    unsigned char *output_ptr,
-;    unsigned int   out_pitch,
-;    unsigned int   output_height,
-;    short *filter
+;    const uint16_t  *src_ptr,
+;    const ptrdiff_t  src_pitch,
+;    uint16_t        *output_ptr,
+;    ptrdiff_t        out_pitch,
+;    unsigned int     output_height,
+;    const int16_t   *filter,
+;    int              bd
 ;)
 globalsym(aom_highbd_filter_block1d8_v8_sse2)
 sym(aom_highbd_filter_block1d8_v8_sse2):
@@ -331,14 +333,15 @@ sym(aom_highbd_filter_block1d8_v8_sse2):
     pop         rbp
     ret
 
-;void aom_filter_block1d16_v8_sse2
+;void aom_highbd_filter_block1d16_v8_sse2
 ;(
-;    unsigned char *src_ptr,
-;    unsigned int   src_pitch,
-;    unsigned char *output_ptr,
-;    unsigned int   out_pitch,
-;    unsigned int   output_height,
-;    short *filter
+;    const uint16_t  *src_ptr,
+;    const ptrdiff_t  src_pitch,
+;    uint16_t        *output_ptr,
+;    ptrdiff_t        out_pitch,
+;    unsigned int     output_height,
+;    const int16_t   *filter,
+;    int              bd
 ;)
 globalsym(aom_highbd_filter_block1d16_v8_sse2)
 sym(aom_highbd_filter_block1d16_v8_sse2):
@@ -394,14 +397,15 @@ sym(aom_highbd_filter_block1d16_v8_sse2):
     pop         rbp
     ret
 
-;void aom_filter_block1d4_h8_sse2
+;void aom_highbd_filter_block1d4_h8_sse2
 ;(
-;    unsigned char  *src_ptr,
-;    unsigned int    src_pixels_per_line,
-;    unsigned char  *output_ptr,
-;    unsigned int    output_pitch,
-;    unsigned int    output_height,
-;    short *filter
+;    const uint16_t  *src_ptr,
+;    const ptrdiff_t  src_pitch,
+;    uint16_t        *output_ptr,
+;    ptrdiff_t        out_pitch,
+;    unsigned int     output_height,
+;    const int16_t   *filter,
+;    int              bd
 ;)
 globalsym(aom_highbd_filter_block1d4_h8_sse2)
 sym(aom_highbd_filter_block1d4_h8_sse2):
@@ -469,14 +473,15 @@ sym(aom_highbd_filter_block1d4_h8_sse2):
     pop         rbp
     ret
 
-;void aom_filter_block1d8_h8_sse2
+;void aom_highbd_filter_block1d8_h8_sse2
 ;(
-;    unsigned char  *src_ptr,
-;    unsigned int    src_pixels_per_line,
-;    unsigned char  *output_ptr,
-;    unsigned int    output_pitch,
-;    unsigned int    output_height,
-;    short *filter
+;    const uint16_t  *src_ptr,
+;    const ptrdiff_t  src_pitch,
+;    uint16_t        *output_ptr,
+;    ptrdiff_t        out_pitch,
+;    unsigned int     output_height,
+;    const int16_t   *filter,
+;    int              bd
 ;)
 globalsym(aom_highbd_filter_block1d8_h8_sse2)
 sym(aom_highbd_filter_block1d8_h8_sse2):
@@ -535,14 +540,15 @@ sym(aom_highbd_filter_block1d8_h8_sse2):
     pop         rbp
     ret
 
-;void aom_filter_block1d16_h8_sse2
+;void aom_highbd_filter_block1d16_h8_sse2
 ;(
-;    unsigned char  *src_ptr,
-;    unsigned int    src_pixels_per_line,
-;    unsigned char  *output_ptr,
-;    unsigned int    output_pitch,
-;    unsigned int    output_height,
-;    short *filter
+;    const uint16_t  *src_ptr,
+;    const ptrdiff_t  src_pitch,
+;    uint16_t        *output_ptr,
+;    ptrdiff_t        out_pitch,
+;    unsigned int     output_height,
+;    const int16_t   *filter,
+;    int              bd
 ;)
 globalsym(aom_highbd_filter_block1d16_h8_sse2)
 sym(aom_highbd_filter_block1d16_h8_sse2):

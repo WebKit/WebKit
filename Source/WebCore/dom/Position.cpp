@@ -1395,7 +1395,7 @@ String Position::debugDescription() const
 {
     if (isNull())
         return "<null>"_s;
-    return makeString("offset ", m_offset, " of ", deprecatedNode()->debugDescription());
+    return makeString("offset "_s, m_offset, " of "_s, deprecatedNode()->debugDescription());
 }
 
 void Position::showAnchorTypeAndOffset() const

@@ -12,9 +12,9 @@
 #include <memory>
 #include <utility>
 
+#include "api/audio/audio_processing.h"
 #include "modules/audio_processing/aec_dump/mock_aec_dump.h"
 #include "modules/audio_processing/audio_processing_impl.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/test/audio_processing_builder_for_testing.h"
 
 using ::testing::_;

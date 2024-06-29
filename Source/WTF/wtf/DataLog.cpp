@@ -34,16 +34,32 @@
 #include <wtf/ProcessID.h>
 #include <mutex>
 
+// Setting DATA_LOG_TO_FILE to 1 will cause logs to be sent to the filename
+// specified in the WTF_DATA_LOG_FILENAME envvar.
 #define DATA_LOG_TO_FILE 0
-
-// Set to 1 to use the temp directory from confstr instead of hardcoded directory.
-// The last component of DATA_LOG_FILENAME will still be used.
+// Alternatively, setting this to 1 will override the above settings and use
+// the temp directory from confstr instead of the hardcoded directory.
 #define DATA_LOG_TO_DARWIN_TEMP_DIR 0
 
-// Uncomment to force logging to the given file regardless of what the environment variable says.
+// Setting DATA_LOG_TO_FILE_IGNORE_ENVVAR to 1 will cause both data-log options
+// above to always use the fallback filename.
+#define DATA_LOG_IGNORE_ENV_VAR 0
+
+#if DATA_LOG_TO_FILE && DATA_LOG_TO_DARWIN_TEMP_DIR
+#error "Set at most one data-log file target"
+#endif
+
+#if OS(WINDOWS) && DATA_LOG_TO_DARWIN_TEMP_DIR
+#error "Cannot log to Darwin temp dir on Windows"
+#endif
+
 // Note that we will append ".<pid>.txt" where <pid> is the PID.
-// This path won't work on Windows, make sure to change to something like C:\\Users\\<more path>\\log.txt.
-#define DATA_LOG_FILENAME "/tmp/WTFLog"
+#define DATA_LOG_DEFAULT_BASENAME "WTFLog"
+#if OS(WINDOWS)
+#define DATA_LOG_DEFAULT_PATH "%localappdata%\\Temp\\"
+#else
+#define DATA_LOG_DEFAULT_PATH "/tmp/"
+#endif
 
 namespace WTF {
 
@@ -60,15 +76,14 @@ static void initializeLogFileOnce()
     if (s_file)
         return;
 
-#if DATA_LOG_TO_FILE
+#if DATA_LOG_TO_FILE || DATA_LOG_TO_DARWIN_TEMP_DIR
 #if DATA_LOG_TO_DARWIN_TEMP_DIR
     char filenameBuffer[maxPathLength + 1];
-#if defined(DATA_LOG_FILENAME)
-    const char* logBasename = strrchr(DATA_LOG_FILENAME, '/');
+    const char* logBasename = DATA_LOG_DEFAULT_BASENAME;
+#if !DATA_LOG_IGNORE_ENV_VAR
+    logBasename = getenv("WTF_DATA_LOG_FILENAME");
     if (!logBasename)
-        logBasename = (char*)DATA_LOG_FILENAME;
-#else
-    const char* logBasename = "WTFLog";
+        logBasename = DATA_LOG_DEFAULT_BASENAME;
 #endif
 
     bool success = confstr(_CS_DARWIN_USER_TEMP_DIR, filenameBuffer, sizeof(filenameBuffer));
@@ -85,18 +100,22 @@ static void initializeLogFileOnce()
             filename = filenameBuffer;
         }
     }
-#elif defined(DATA_LOG_FILENAME)
-    filename = DATA_LOG_FILENAME;
-#else
+#elif DATA_LOG_TO_FILE // !DATA_LOG_TO_DARWIN_TEMP_DIR
+    [[maybe_unused]] static constexpr const char* fallbackFilepath = DATA_LOG_DEFAULT_PATH DATA_LOG_DEFAULT_BASENAME;
+    filename = fallbackFilepath;
+#if !DATA_LOG_IGNORE_ENV_VAR
     filename = getenv("WTF_DATA_LOG_FILENAME");
+    if (!filename)
+        filename = fallbackFilepath;
 #endif
+#endif // DATA_LOG_TO_FILE
     char actualFilename[maxPathLength + 1];
 
     if (filename && !strstr(filename, "%pid")) {
         snprintf(actualFilename, sizeof(actualFilename), "%s.%%pid.txt", filename);
         filename = actualFilename;
     }
-#endif // DATA_LOG_TO_FILE
+#endif // DATA_LOG_TO_FILE || DATA_LOG_TO_DARWIN_TEMP_DIR
 
     setDataFile(filename);
 }

@@ -202,7 +202,7 @@ class TimeControl extends LayoutItem
         if (this._loading)
             this._durationOrRemainingTimeLabel().setValueWithNumberOfDigits(NaN, 4);
         else {
-            const shouldShowZeroDurations = isNaN(this._duration) || this._duration === Number.POSITIVE_INFINITY;
+            const shouldShowZeroDurations = isNaN(this._duration) || this._duration > maxNonLiveDuration;
 
             let numberOfDigitsForTimeLabels;
             if (this._duration < TenMinutes)

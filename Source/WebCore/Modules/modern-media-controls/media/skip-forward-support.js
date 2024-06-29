@@ -46,7 +46,7 @@ class SkipForwardSupport extends MediaControllerSupport
 
     syncControl()
     {
-        this.control.enabled = this.mediaController.media.duration !== Number.POSITIVE_INFINITY;
+        this.control.enabled = this.mediaController.media.duration <= maxNonLiveDuration;
     }
 
 }

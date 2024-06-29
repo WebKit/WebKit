@@ -14,6 +14,7 @@
 #include "test/encode_test_driver.h"
 #include "test/i420_video_source.h"
 #include "test/util.h"
+#include "vpx_config.h"
 
 namespace {
 
@@ -79,6 +80,11 @@ TEST_P(BordersTest, TestLowBitrate) {
   ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
 }
 
+#if CONFIG_REALTIME_ONLY
+VP9_INSTANTIATE_TEST_SUITE(BordersTest,
+                           ::testing::Values(::libvpx_test::kRealTime));
+#else
 VP9_INSTANTIATE_TEST_SUITE(BordersTest,
                            ::testing::Values(::libvpx_test::kTwoPassGood));
+#endif
 }  // namespace

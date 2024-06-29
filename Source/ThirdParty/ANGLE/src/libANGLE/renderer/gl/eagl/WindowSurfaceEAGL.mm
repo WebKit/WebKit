@@ -90,7 +90,7 @@
     {
         [self setFrame:CGRectMake(0, 0, texture.width, texture.height)];
 
-        // TODO(anglebug.com/4275): If this continues to remain an EAGLLayer, then this is
+        // TODO(anglebug.com/42262902): If this continues to remain an EAGLLayer, then this is
         // where we'd probably want to create the renderbuffer storage.
         [self setNeedsDisplay];
     }

@@ -1,0 +1,22 @@
+<iframe width="0" srcdoc='
+<style>
+    * { grid-template-rows: 2vh 61px; -webkit-user-modify: read-write-plaintext-only; }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+function jsfuzzer() {
+try { htmlvar00029.replaceWith("htmlvar00009"); var00145 = htmlvar00028.innerHTML; } catch(e) { }
+try { /* */ var00144 = document.execCommand("insertHTML", false, var00145); } catch(e) { }
+}
+function eventhandler3() {
+try { htmlvar00029.selectionDirection = String.fromCharCode(67, 93); } catch(e) { }
+}
+</script>
+<body onload=jsfuzzer()>
+<svg onload="eventhandler3()"></svg>
+</svg>
+<fieldset id="htmlvar00028">
+<textarea id="htmlvar00029" value=".(e;">b26</textarea>
+'></iframe>
+<div>This test should not crash</div>

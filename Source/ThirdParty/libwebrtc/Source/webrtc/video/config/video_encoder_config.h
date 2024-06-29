@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/field_trials_view.h"
 #include "api/scoped_refptr.h"
 #include "api/video/resolution.h"
 #include "api/video_codecs/scalability_mode.h"
@@ -100,20 +101,10 @@ class VideoEncoderConfig {
     virtual void FillVideoCodecVp8(VideoCodecVP8* vp8_settings) const;
     virtual void FillVideoCodecVp9(VideoCodecVP9* vp9_settings) const;
     virtual void FillVideoCodecAv1(VideoCodecAV1* av1_settings) const;
-    virtual void FillVideoCodecH265(VideoCodecH265* h265_settings) const;
 
    private:
     ~EncoderSpecificSettings() override {}
     friend class VideoEncoderConfig;
-  };
-
-  class H265EncoderSpecificSettings : public EncoderSpecificSettings {
-   public:
-    explicit H265EncoderSpecificSettings(const VideoCodecH265& specifics);
-    void FillVideoCodecH265(VideoCodecH265* h265_settings) const override;
-
-   private:
-    VideoCodecH265 specifics_;
   };
 
   class Vp8EncoderSpecificSettings : public EncoderSpecificSettings {
@@ -155,6 +146,7 @@ class VideoEncoderConfig {
     // The size of the vector may not be larger than
     // `encoder_config.number_of_streams`.
     virtual std::vector<VideoStream> CreateEncoderStreams(
+        const FieldTrialsView& field_trials,
         int frame_width,
         int frame_height,
         const VideoEncoderConfig& encoder_config) = 0;

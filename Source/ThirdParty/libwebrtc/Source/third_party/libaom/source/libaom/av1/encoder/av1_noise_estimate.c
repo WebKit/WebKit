@@ -34,18 +34,19 @@ static INLINE int noise_est_svc(const struct AV1_COMP *const cpi) {
 #endif
 
 void av1_noise_estimate_init(NOISE_ESTIMATE *const ne, int width, int height) {
+  const int64_t area = (int64_t)width * height;
   ne->enabled = 0;
-  ne->level = (width * height < 1280 * 720) ? kLowLow : kLow;
+  ne->level = (area < 1280 * 720) ? kLowLow : kLow;
   ne->value = 0;
   ne->count = 0;
   ne->thresh = 90;
   ne->last_w = 0;
   ne->last_h = 0;
-  if (width * height >= 1920 * 1080) {
+  if (area >= 1920 * 1080) {
     ne->thresh = 200;
-  } else if (width * height >= 1280 * 720) {
+  } else if (area >= 1280 * 720) {
     ne->thresh = 140;
-  } else if (width * height >= 640 * 360) {
+  } else if (area >= 640 * 360) {
     ne->thresh = 115;
   }
   ne->num_frames_estimate = 15;

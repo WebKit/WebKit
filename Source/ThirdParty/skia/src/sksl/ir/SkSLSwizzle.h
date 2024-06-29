@@ -9,13 +9,14 @@
 #define SKSL_SWIZZLE
 
 #include "include/core/SkTypes.h"
-#include "src/sksl/SkSLDefines.h"
+#include "src/base/SkFixedArray.h"
 #include "src/sksl/SkSLPosition.h"
 #include "src/sksl/ir/SkSLExpression.h"
 #include "src/sksl/ir/SkSLIRNode.h"
 #include "src/sksl/ir/SkSLType.h"
 
 #include <cstdint>
+#include <initializer_list>
 #include <memory>
 #include <string>
 #include <string_view>
@@ -40,6 +41,11 @@ enum Type : int8_t {
 }  // namespace SwizzleComponent
 
 /**
+ * Represents the components of a vector swizzle.
+ */
+using ComponentArray = skia_private::FixedArray<4, int8_t>;
+
+/**
  * Represents a vector swizzle operation such as 'float3(1, 2, 3).zyx'.
  */
 class Swizzle final : public Expression {
@@ -57,20 +63,14 @@ public:
         SkASSERT(this->components().size() >= 1 && this->components().size() <= 4);
     }
 
-    // Swizzle::Convert permits component arrays containing ZERO or ONE, does typechecking, reports
+    // Swizzle::Convert permits component strings containing ZERO or ONE, does typechecking, reports
     // errors via ErrorReporter, and returns an expression that combines constructors and native
     // swizzles (comprised solely of X/Y/W/Z).
     static std::unique_ptr<Expression> Convert(const Context& context,
                                                Position pos,
                                                Position maskPos,
                                                std::unique_ptr<Expression> base,
-                                               ComponentArray inComponents);
-
-    static std::unique_ptr<Expression> Convert(const Context& context,
-                                               Position pos,
-                                               Position maskPos,
-                                               std::unique_ptr<Expression> base,
-                                               std::string_view maskString);
+                                               std::string_view componentString);
 
     // Swizzle::Make does not permit ZERO or ONE in the component array, just X/Y/Z/W; errors are
     // reported via ASSERT.
@@ -100,6 +100,9 @@ public:
 
     // Converts an array of swizzle components into a string.
     static std::string MaskString(const ComponentArray& inComponents);
+
+    // Returns true if a swizzle keeps each component in its original position.
+    static bool IsIdentity(const ComponentArray& components);
 
 private:
     Swizzle(Position pos, const Type* type, std::unique_ptr<Expression> base,

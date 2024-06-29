@@ -31,6 +31,19 @@ struct WebKit::RemoteAudioSessionConfiguration {
     size_t preferredBufferSize;
     bool isMuted;
     bool isActive;
+    String sceneIdentifier;
+    WebCore::AudioSessionSoundStageSize soundStageSize;
 };
     
+#endif
+
+#if ENABLE(GPU_PROCESS) && PLATFORM(IOS_FAMILY)
+header: "RemoteMediaSessionHelper.h"
+[Nested] enum class WebKit::RemoteMediaSessionHelper::ShouldPause : bool
+[Nested] enum class WebKit::RemoteMediaSessionHelper::HasAvailableTargets : bool
+[Nested] enum class WebKit::RemoteMediaSessionHelper::SupportsAirPlayVideo : bool
+[Nested] enum class WebKit::RemoteMediaSessionHelper::PlayingToAutomotiveHeadUnit : bool
+[Nested] enum class WebKit::RemoteMediaSessionHelper::SuspendedUnderLock : bool
+[Nested] enum class WebKit::RemoteMediaSessionHelper::SupportsSpatialAudioPlayback : bool
+enum class WebKit::RespectSelectionAnchor : bool
 #endif

@@ -161,18 +161,18 @@ JSImmutableButterfly* JSImmutableButterfly::createFromString(JSGlobalObject* glo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto holder = string->viewWithUnderlyingString(globalObject);
+    auto holder = string->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    unsigned length = holder.view.length();
-    if (holder.view.is8Bit()) {
+    unsigned length = holder->length();
+    if (holder->is8Bit()) {
         JSImmutableButterfly* result = JSImmutableButterfly::tryCreate(vm, vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), length);
         if (UNLIKELY(!result)) {
             throwOutOfMemoryError(globalObject, scope);
             return nullptr;
         }
 
-        auto characters = holder.view.span8();
+        auto characters = holder->span8();
         for (size_t i = 0; i < length; ++i) {
             auto* value = jsSingleCharacterString(vm, characters[i]);
             result->setIndex(vm, i, value);
@@ -202,7 +202,7 @@ JSImmutableButterfly* JSImmutableButterfly::createFromString(JSGlobalObject* glo
         }
     };
 
-    auto characters = holder.view.span16();
+    auto characters = holder->span16();
     unsigned codePointLength = 0;
     forEachCodePointViaStringIteratorProtocol(characters, [&](size_t, size_t) {
         codePointLength += 1;

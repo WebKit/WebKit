@@ -494,7 +494,7 @@ struct StringView::UnderlyingString {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     std::atomic_uint refCount { 1u };
     bool isValid { true };
-    const StringImpl& string;
+    SUPPRESS_UNCOUNTED_MEMBER const StringImpl& string;
     explicit UnderlyingString(const StringImpl&);
 };
 

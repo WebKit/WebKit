@@ -30,7 +30,7 @@
 
 [RValue] struct WebKit::FullScreenMediaDetails {
     WebKit::FullScreenMediaDetails::Type type;
-    WebCore::FloatSize videoDimensions;
+    WebCore::FloatSize mediaDimensions;
     String mimeType;
     std::optional<WebCore::SharedMemory::Handle> imageHandle;
 };

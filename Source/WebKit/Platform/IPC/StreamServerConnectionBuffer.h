@@ -46,8 +46,8 @@ private:
     using StreamConnectionBuffer::StreamConnectionBuffer;
     static constexpr size_t minimumMessageSize = StreamConnectionEncoder::minimumMessageSize;
     static constexpr size_t messageAlignment = StreamConnectionEncoder::messageAlignment;
-    std::span<uint8_t> alignedSpan(size_t offset, size_t limit);
-    size_t size(size_t offset, size_t limit);
+    std::span<uint8_t> alignedMutableSpan(size_t offset, size_t limit);
+    size_t size(size_t offset, size_t limit) const;
     size_t alignOffset(size_t offset) const { return StreamConnectionBuffer::alignOffset<messageAlignment>(offset, minimumMessageSize); }
     using ServerLimit = ClientOffset;
     Atomic<ServerLimit>& sharedServerLimit() { return clientOffset(); }
@@ -71,10 +71,10 @@ inline std::optional<std::span<uint8_t>> StreamServerConnectionBuffer::tryAcquir
     if (serverLimit == ServerLimit::serverIsSleepingTag)
         return std::nullopt;
 
-    auto result = alignedSpan(m_serverOffset, clampedLimit(serverLimit));
+    auto result = alignedMutableSpan(m_serverOffset, clampedLimit(serverLimit));
     if (result.size() < minimumMessageSize) {
         serverLimit = sharedServerLimit().compareExchangeStrong(serverLimit, ServerLimit::serverIsSleepingTag, std::memory_order_acq_rel, std::memory_order_acquire);
-        result = alignedSpan(m_serverOffset, clampedLimit(serverLimit));
+        result = alignedMutableSpan(m_serverOffset, clampedLimit(serverLimit));
     }
 
     if (result.size() < minimumMessageSize)
@@ -85,7 +85,7 @@ inline std::optional<std::span<uint8_t>> StreamServerConnectionBuffer::tryAcquir
 
 inline std::span<uint8_t> StreamServerConnectionBuffer::acquireAll()
 {
-    return alignedSpan(0, dataSize() - 1);
+    return alignedMutableSpan(0, dataSize() - 1);
 }
 
 inline StreamServerConnectionBuffer::WakeUpClient StreamServerConnectionBuffer::release(size_t readSize)
@@ -120,7 +120,7 @@ inline StreamServerConnectionBuffer::WakeUpClient StreamServerConnectionBuffer::
     return wakeUpClient;
 }
 
-inline std::span<uint8_t> StreamServerConnectionBuffer::alignedSpan(size_t offset, size_t limit)
+inline std::span<uint8_t> StreamServerConnectionBuffer::alignedMutableSpan(size_t offset, size_t limit)
 {
     ASSERT(offset < dataSize());
     ASSERT(limit < dataSize());
@@ -133,10 +133,10 @@ inline std::span<uint8_t> StreamServerConnectionBuffer::alignedSpan(size_t offse
         if (aligned >= offset || aligned < limit)
             resultSize = size(aligned, limit);
     }
-    return { data() + aligned, resultSize };
+    return mutableSpan().subspan(aligned, resultSize);
 }
 
-inline size_t StreamServerConnectionBuffer::size(size_t offset, size_t limit)
+inline size_t StreamServerConnectionBuffer::size(size_t offset, size_t limit) const
 {
     if (offset <= limit)
         return limit - offset;

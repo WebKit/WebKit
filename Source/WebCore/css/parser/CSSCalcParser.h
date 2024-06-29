@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CSSCalcSymbolsAllowed.h"
 #include "CSSCalcValue.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
@@ -35,16 +36,13 @@ namespace WebCore {
 class CSSCalcSymbolTable;
 class CSSPrimitiveValue;
 
-enum CSSParserMode : uint8_t;
-
 enum class CalculationCategory : uint8_t;
-enum class ValueRange : uint8_t;
 
 namespace CSSPropertyParserHelpers {
 
 class CalcParser {
 public:
-    explicit CalcParser(CSSParserTokenRange&, CalculationCategory, ValueRange, const CSSCalcSymbolTable&, NegativePercentagePolicy = NegativePercentagePolicy::Forbid);
+    explicit CalcParser(CSSParserTokenRange&, CalculationCategory, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 
     const CSSCalcValue* value() const { return m_value.get(); }
 
@@ -57,8 +55,8 @@ private:
     RefPtr<CSSCalcValue> m_value;
 };
 
-bool canConsumeCalcValue(CalculationCategory, CSSParserMode);
-RefPtr<CSSCalcValue> consumeCalcRawWithKnownTokenTypeFunction(CSSParserTokenRange&, CalculationCategory, const CSSCalcSymbolTable&, ValueRange);
+bool canConsumeCalcValue(CalculationCategory, CSSPropertyParserOptions);
+RefPtr<CSSCalcValue> consumeCalcRawWithKnownTokenTypeFunction(CSSParserTokenRange&, CalculationCategory, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 
 }
 }

@@ -111,11 +111,7 @@ public:
             m_animVal = nullptr;
     }
 
-    // Visual Studio doesn't seem to see these private constructors from subclasses.
-    // FIXME: See what it takes to remove this hack.
-#if !COMPILER(MSVC)
 protected:
-#endif
     template<typename... Arguments>
     SVGAnimatedPropertyList(SVGElement* contextElement, Arguments&&... arguments)
         : SVGAnimatedProperty(contextElement)

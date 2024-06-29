@@ -79,4 +79,8 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCHapticsLocalit
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, GameController, ControllerClassForService, Class, (IOHIDServiceClientRef service), (service))
 #endif
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/GameControllerSoftLinkAdditions.h>)
+#import <WebKitAdditions/GameControllerSoftLinkAdditions.h>
+#endif
+
 #endif // ENABLE(GAMEPAD) && PLATFORM(COCOA)

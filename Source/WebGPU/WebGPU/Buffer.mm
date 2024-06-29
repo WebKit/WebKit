@@ -143,6 +143,10 @@ Buffer::Buffer(id<MTLBuffer> buffer, uint64_t initialSize, WGPUBufferUsageFlags 
     , m_mappingRange(initialMappingRange)
     , m_device(device)
 {
+    if (m_usage & WGPUBufferUsage_Indirect)
+        m_indirectBuffer = device.safeCreateBuffer(sizeof(MTLDrawPrimitivesIndirectArguments), MTLStorageModePrivate);
+    if (m_usage & (WGPUBufferUsage_Indirect | WGPUBufferUsage_Index))
+        m_indirectIndexedBuffer = device.safeCreateBuffer(sizeof(MTLDrawIndexedPrimitivesIndirectArguments), MTLStorageModePrivate);
 }
 
 Buffer::Buffer(Device& device)
@@ -152,10 +156,22 @@ Buffer::Buffer(Device& device)
 
 Buffer::~Buffer() = default;
 
+void Buffer::incrementBufferMapCount()
+{
+    for (auto& commandEncoder : m_commandEncoders)
+        commandEncoder.incrementBufferMapCount();
+}
+
+void Buffer::decrementBufferMapCount()
+{
+    for (auto& commandEncoder : m_commandEncoders)
+        commandEncoder.decrementBufferMapCount();
+}
+
 void Buffer::setCommandEncoder(CommandEncoder& commandEncoder, bool mayModifyBuffer) const
 {
     UNUSED_PARAM(mayModifyBuffer);
-    m_commandEncoder = commandEncoder;
+    m_commandEncoders.add(commandEncoder);
     if (m_state == State::Mapped || m_state == State::MappedAtCreation)
         commandEncoder.incrementBufferMapCount();
     if (isDestroyed())
@@ -171,11 +187,11 @@ void Buffer::destroy()
         unmap();
     }
 
-    m_state = State::Destroyed;
-    if (m_commandEncoder)
-        m_commandEncoder.get()->makeSubmitInvalid();
+    setState(State::Destroyed);
+    for (auto& commandEncoder : m_commandEncoders)
+        commandEncoder.makeSubmitInvalid();
 
-    m_commandEncoder = nullptr;
+    m_commandEncoders.clear();
     m_buffer = m_device->placeholderBuffer();
 }
 
@@ -293,15 +309,14 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
         return;
     }
 
-    m_state = State::MappingPending;
+    setState(State::MappingPending);
 
     m_mapMode = mode;
 
     m_device->getQueue().onSubmittedWorkDone([protectedThis = Ref { *this }, offset, rangeSize, callback = WTFMove(callback)](WGPUQueueWorkDoneStatus status) mutable {
         if (protectedThis->m_state == State::MappingPending) {
-            protectedThis->m_state = State::Mapped;
-            if (protectedThis->m_commandEncoder)
-                protectedThis->m_commandEncoder->incrementBufferMapCount();
+            protectedThis->setState(State::Mapped);
+            protectedThis->incrementBufferMapCount();
 
             protectedThis->m_mappingRange = { offset, offset + rangeSize };
 
@@ -333,6 +348,12 @@ bool Buffer::validateUnmap() const
 {
     return true;
 }
+
+void Buffer::setState(State state)
+{
+    if (m_state != State::Destroyed)
+        m_state = state;
+}
   
 void Buffer::unmap()
 {
@@ -341,8 +362,7 @@ void Buffer::unmap()
     if (!validateUnmap() && !m_device->isValid())
         return;
 
-    if (m_commandEncoder)
-        m_commandEncoder->decrementBufferMapCount();
+    decrementBufferMapCount();
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (m_state == State::MappedAtCreation && m_buffer.storageMode == MTLStorageModeManaged) {
@@ -351,7 +371,7 @@ void Buffer::unmap()
     }
 #endif
 
-    m_state = State::Unmapped;
+    setState(State::Unmapped);
     m_mappedRanges = MappedRanges();
 }
 
@@ -380,29 +400,36 @@ bool Buffer::isDestroyed() const
     return state() == State::Destroyed;
 }
 
-void Buffer::recomputeMaxIndexValues() const
+id<MTLBuffer> Buffer::indirectBuffer() const
 {
-    if (!(m_usage & WGPUBufferUsage_Index))
-        return;
-
-    NSUInteger lengthInBytes = m_buffer.length;
-    auto bufferPtr = static_cast<uint8_t*>(m_buffer.contents);
-    RELEASE_ASSERT(bufferPtr);
-    m_max16BitIndex = 0;
-    m_max32BitIndex = 0;
-    uint8_t* bufferEnd = bufferPtr + lengthInBytes;
-    for (; (bufferPtr += sizeof(uint32_t)) <= bufferEnd; bufferPtr += sizeof(uint32_t)) {
-        m_max32BitIndex = std::max(*reinterpret_cast<uint32_t*>(bufferPtr), m_max32BitIndex);
-        m_max16BitIndex = std::max(*(reinterpret_cast<uint16_t*>(bufferPtr) + 1), std::max(*reinterpret_cast<uint16_t*>(bufferPtr), m_max16BitIndex));
-    }
-    if (bufferPtr + sizeof(uint16_t) <= bufferEnd)
-        m_max16BitIndex = std::max(*reinterpret_cast<uint16_t*>(bufferPtr), m_max16BitIndex);
+    return m_indirectBuffer;
 }
 
-uint32_t Buffer::maxIndex(MTLIndexType indexType) const
+id<MTLBuffer> Buffer::indirectIndexedBuffer() const
 {
-    ASSERT(m_usage & WGPUBufferUsage_Index);
-    return indexType == MTLIndexTypeUInt16 ? m_max16BitIndex : m_max32BitIndex;
+    return m_indirectIndexedBuffer;
+}
+
+bool Buffer::indirectBufferRequiresRecomputation(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, uint32_t minInstanceCount, MTLIndexType indexType) const
+{
+    auto rangeBegin = m_indirectCache.lastBaseIndex;
+    auto rangeEnd = m_indirectCache.lastBaseIndex + m_indirectCache.indexCount;
+    auto newRangeEnd = baseIndex + indexCount;
+    return baseIndex != rangeBegin || newRangeEnd != rangeEnd || minVertexCount != m_indirectCache.minVertexCount || minInstanceCount != m_indirectCache.minInstanceCount || m_indirectCache.indexType != indexType;
+}
+
+void Buffer::indirectBufferRecomputed(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, uint32_t minInstanceCount, MTLIndexType indexType)
+{
+    m_indirectCache.lastBaseIndex = baseIndex;
+    m_indirectCache.indexCount = indexCount;
+    m_indirectCache.minVertexCount = minVertexCount;
+    m_indirectCache.minInstanceCount = minInstanceCount;
+    m_indirectCache.indexType = indexType;
+}
+
+void Buffer::indirectBufferInvalidated()
+{
+    indirectBufferRecomputed(0, 0, 0, 0, MTLIndexTypeUInt16);
 }
 
 } // namespace WebGPU
@@ -455,9 +482,14 @@ void* wgpuBufferGetBufferContents(WGPUBuffer buffer)
     return WebGPU::fromAPI(buffer).getBufferContents();
 }
 
-uint64_t wgpuBufferGetSize(WGPUBuffer buffer)
+uint64_t wgpuBufferGetInitialSize(WGPUBuffer buffer)
 {
     return WebGPU::fromAPI(buffer).initialSize();
+}
+
+uint64_t wgpuBufferGetCurrentSize(WGPUBuffer buffer)
+{
+    return WebGPU::fromAPI(buffer).currentSize();
 }
 
 void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapCallback callback, void* userdata)

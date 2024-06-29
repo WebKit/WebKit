@@ -481,19 +481,19 @@ EncoderId videoEncoderFindForFormat(WebKitVideoEncoder* self, const GRefPtr<GstC
 
 EncoderId videoEncoderFindForCodec(WebKitVideoEncoder* self, const String& codecName)
 {
-    const char* gstCodec = nullptr;
+    ASCIILiteral gstCodec;
     if (codecName == "vp8"_s || codecName == "vp08"_s)
-        gstCodec = "vp8";
+        gstCodec = "vp8"_s;
     else if (codecName.startsWith("vp9"_s) || codecName.startsWith("vp09"_s))
-        gstCodec = "vp9";
+        gstCodec = "vp9"_s;
     else if (codecName.startsWith("avc1"_s))
-        gstCodec = "h264";
+        gstCodec = "h264"_s;
     else if (codecName.startsWith("hvc1"_s) || codecName.startsWith("hev1"_s))
-        gstCodec = "h265";
+        gstCodec = "h265"_s;
     else if (codecName.startsWith("av01"_s))
-        gstCodec = "av1";
+        gstCodec = "av1"_s;
 
-    if (!gstCodec)
+    if (gstCodec.isNull())
         return None;
 
     auto name = makeString("video/x-"_s, gstCodec);

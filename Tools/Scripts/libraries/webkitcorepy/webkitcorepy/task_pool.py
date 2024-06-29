@@ -23,6 +23,7 @@
 import io
 import os
 import logging
+import math
 import multiprocessing
 import signal
 import sys
@@ -100,16 +101,18 @@ class _State(_Message):
     STARTING, STOPPING = 1, 0
     STATES = [STARTING, STOPPING]
 
-    def __init__(self, state):
+    def __init__(self, state, mutually_exclusive_groups=None):
         super(_State, self).__init__()
         self.state = state
+        self.mutually_exclusive_groups = mutually_exclusive_groups or []
 
     def __call__(self, caller):
-        log.info('{} {}'.format(
+        log.info('{} {}{}'.format(
             self.who, {
                 self.STARTING: 'starting',
                 self.STOPPING: 'stopping',
             }.get(self.state, self.state),
+            ' ({})'.format(', '.join(self.mutually_exclusive_groups)) if self.mutually_exclusive_groups else '',
         ))
         if caller:
             caller._started += {
@@ -164,6 +167,35 @@ class _BiDirectionalQueue(object):
             self.incoming.close()
             self.outgoing.join_thread()
             self.incoming.join_thread()
+
+
+class _Queue(object):
+    def __init__(self, queue=None):
+        self.queue = queue or multiprocessing.Queue()
+
+    def send(self, object):
+        if self.queue._closed:
+            sys.stderr.write('Cannot send message to closed queue\n')
+            return False
+        return self.queue.put(object)
+
+    def receive(self, blocking=True):
+        with Timeout.DisableAlarm():
+            try:
+                if not blocking:
+                    return self.queue.get(block=False)
+
+                difference = Timeout.difference()
+                if difference is not None:
+                    return self.queue.get(timeout=difference)
+                return self.queue.get()
+            except Queue.Empty:
+                pass
+
+    def close(self):
+        with OutputCapture():
+            self.queue.close()
+            self.queue.join_thread()
 
 
 class _DummyQueue(object):
@@ -264,7 +296,7 @@ class _Process(object):
             cls.working = False
 
     @classmethod
-    def main(cls, name, loglevel, setup, setupargs, setupkwargs, queue, teardown, teardownargs, teardownkwargs):
+    def main(cls, name, loglevel, setup, setupargs, setupkwargs, queue, teardown, teardownargs, teardownkwargs, mutually_exclusive_group_queues):
         from tblib import pickling_support
 
         cls.name = name
@@ -288,7 +320,8 @@ class _Process(object):
         logger.setLevel(loglevel)
 
         cls.queue = queue
-        queue.send(_State(_State.STARTING))
+        group_queues = list(mutually_exclusive_group_queues.values())
+        queue.send(_State(_State.STARTING, list(mutually_exclusive_group_queues.keys())))
 
         with OutputCapture.ReplaceSysStream('stderr', cls.Stream(_Print.stderr, queue)), OutputCapture.ReplaceSysStream('stdout', cls.Stream(_Print.stdout, queue)):
             try:
@@ -297,7 +330,22 @@ class _Process(object):
                     setup(*setupargs, **setupkwargs)
 
                 while cls.working:
-                    task = queue.receive()
+                    task = None
+                    for i in range(len(group_queues)):
+                        group_queue = group_queues[i]
+                        task = group_queue.receive(blocking=False)
+                        if task:
+                            del group_queues[i]
+                            group_queues.append(group_queue)
+                            break
+                    if not task:
+                        task = queue.receive()
+                    # Since queue.receive is blocking, we should check group_queues one final time before breaking the work loop
+                    if not task:
+                        for group_queue in group_queues:
+                            task = group_queue.receive(blocking=False)
+                            if task:
+                                break
                     if not task:
                         break
                     queue.send(_Result(value=task(None), id=task.id))
@@ -313,7 +361,7 @@ class _Process(object):
                     teardown(*teardownargs, **teardownkwargs)
                 sys.stdout.flush()
                 sys.stderr.flush()
-                queue.send(_State(_State.STOPPING))
+                queue.send(_State(_State.STOPPING, list(mutually_exclusive_group_queues.keys())))
                 cls.queue.close()
                 cls.queue = None
 
@@ -327,6 +375,7 @@ class TaskPool(object):
     State = _State
     ChildException = _ChildException
     BiDirectionalQueue = _BiDirectionalQueue
+    Queue = _Queue
     Process = _Process
 
 
@@ -338,6 +387,7 @@ class TaskPool(object):
         setupargs=None, setupkwargs=None,
         teardownargs=None, teardownkwargs=None,
         force_fork=False,
+        mutually_exclusive_groups=None,
     ):
         # Ensure tblib is installed before creating child processes
         import tblib
@@ -351,6 +401,8 @@ class TaskPool(object):
             raise ValueError('TaskPool requires positive number of workers')
 
         self.queue = None
+        self.mutually_exclusive_groups = set(mutually_exclusive_groups or [])
+        self._group_queues = dict()
         self.workers = []
 
         self._setup_args = (setup, setupargs or [], setupkwargs or {})
@@ -382,15 +434,25 @@ class TaskPool(object):
         from mock import patch
 
         self.queue = self.BiDirectionalQueue()
-        self.workers = [multiprocessing.Process(
-            target=self.Process.main,
-            args=(
-                '{}/{}'.format(self.name, count), logging.getLogger().getEffectiveLevel(),
-                self._setup_args[0], self._setup_args[1], self._setup_args[2],
-                self.BiDirectionalQueue(outgoing=self.queue.incoming, incoming=self.queue.outgoing),
-                self._teardown_args[0], self._teardown_args[1], self._teardown_args[2],
-            ),
-        ) for count in range(self._num_workers)]
+        self._group_queues = {
+            name: self.Queue() for name in self.mutually_exclusive_groups
+        }
+
+        mutually_exclusive_groups = sorted(self.mutually_exclusive_groups)
+        self.workers = []
+        for count in range(self._num_workers):
+            groups_for_worker = mutually_exclusive_groups[:int(math.ceil(float(len(mutually_exclusive_groups)) / (self._num_workers - count)))]
+            mutually_exclusive_groups = mutually_exclusive_groups[len(groups_for_worker):]
+            self.workers.append(multiprocessing.Process(
+                target=self.Process.main,
+                args=(
+                    '{}/{}'.format(self.name, count), logging.getLogger().getEffectiveLevel(),
+                    self._setup_args[0], self._setup_args[1], self._setup_args[2],
+                    self.BiDirectionalQueue(outgoing=self.queue.incoming, incoming=self.queue.outgoing),
+                    self._teardown_args[0], self._teardown_args[1], self._teardown_args[2],
+                    {group: self._group_queues[group] for group in groups_for_worker},
+                ),
+            ))
 
         with Timeout(seconds=self.enter_grace_period, patch=False, handler=self.Exception('Failed to start all workers')):
             for worker in self.workers:
@@ -402,16 +464,22 @@ class TaskPool(object):
 
     def do(self, function, *args, **kwargs):
         callback = kwargs.pop('callback', None)
+        group = kwargs.pop('group', None)
+        if group and group not in self.mutually_exclusive_groups:
+            raise ValueError("'{}' is not a recognized group".format(group))
+
         if not self.queue:
             result = function(*args, **kwargs)
             if callback:
                 callback(result)
             return
 
+        queue = self._group_queues.get(group, self.queue)
+
         if callback:
             self.callbacks[self._id_count] = callback
         self.pending_count += 1
-        self.queue.send(self.Task(function, self._id_count, *args, **kwargs))
+        queue.send(self.Task(function, self._id_count, *args, **kwargs))
         self._id_count += 1
 
         # For every block of tasks passed to our workers, we need consume messages so we don't get deadlocked

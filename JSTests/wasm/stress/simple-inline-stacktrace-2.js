@@ -1,6 +1,6 @@
 //@ skip if !$isWasmPlatform
 //@ skip if $memoryLimited
-//@ runDefault("--maximumWasmDepthForInlining=10", "--maximumWasmCalleeSizeForInlining=10000000", "--maximumWasmCallerSizeForInlining=10000000", "--useBBQJIT=0")
+//@ runDefault("--maximumWebAssemblyDepthForInlining=10", "--maximumWebAssemblyCalleeSizeForInlining=10000000", "--maximumWebAssemblyCallerSizeForInlining=10000000", "--useBBQJIT=0")
 var wasm_code = read('simple-inline-stacktrace.wasm', 'binary')
 var wasm_module = new WebAssembly.Module(wasm_code);
 var wasm_instance = new WebAssembly.Instance(wasm_module, { a: { doThrow: () => { throw new Error() } } });

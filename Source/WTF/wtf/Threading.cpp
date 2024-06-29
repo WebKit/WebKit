@@ -204,7 +204,7 @@ const char* Thread::normalizeThreadName(const char* threadName)
 #endif
     auto characters = result.span8();
     ASSERT(characters[characters.size()] == '\0');
-    return reinterpret_cast<const char*>(characters.data());
+    return byteCast<char>(characters.data());
 #endif
 }
 
@@ -393,7 +393,8 @@ void Thread::registerGCThread(GCThreadType gcThreadType)
 
 bool Thread::mayBeGCThread()
 {
-    return Thread::current().gcThreadType() != GCThreadType::None;
+    // TODO: FIX THIS
+    return Thread::current().gcThreadType() != GCThreadType::None || Thread::current().m_isCompilationThread;
 }
 
 void Thread::registerJSThread(Thread& thread)

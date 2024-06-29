@@ -64,38 +64,19 @@ ImageBitmapCanvas ImageBitmapRenderingContext::canvas()
     return &downcast<HTMLCanvasElement>(base);
 }
 
-bool ImageBitmapRenderingContext::isAccelerated() const
-{
-    return false;
-}
-
 void ImageBitmapRenderingContext::setOutputBitmap(RefPtr<ImageBitmap> imageBitmap)
 {
     // 1. If a bitmap argument was not provided, then:
 
     if (!imageBitmap) {
-
         // 1.1. Set context's bitmap mode to blank.
-
-        m_bitmapMode = BitmapMode::Blank;
-
         // 1.2. Let canvas be the canvas element to which context is bound.
-
         // 1.3. Set context's output bitmap to be transparent black with an
         //      intrinsic width equal to the numeric value of canvas's width attribute
         //      and an intrinsic height equal to the numeric value of canvas's height
         //      attribute, those values being interpreted in CSS pixels.
-
-        // FIXME: What is the point of creating a full size transparent buffer that
-        // can never be changed? Wouldn't a 1x1 buffer give the same rendering? The
-        // only reason I can think of is toDataURL(), but that doesn't seem like
-        // a good enough argument to waste memory.
-
-        auto buffer = ImageBuffer::create(FloatSize(canvasBase().width(), canvasBase().height()), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, bufferOptionsForRendingMode(RenderingMode::Unaccelerated));
-        canvasBase().setImageBufferAndMarkDirty(WTFMove(buffer));
-
+        setBlank();
         // 1.4. Set the output bitmap's origin-clean flag to true.
-
         canvasBase().setOriginClean();
         return;
     }
@@ -155,6 +136,28 @@ ExceptionOr<void> ImageBitmapRenderingContext::transferFromImageBitmap(RefPtr<Im
     imageBitmap->close();
 
     return { };
+}
+
+void ImageBitmapRenderingContext::setBlank()
+{
+    m_bitmapMode = BitmapMode::Blank;
+    // FIXME: What is the point of creating a full size transparent buffer that
+    // can never be changed? Wouldn't a 1x1 buffer give the same rendering? The
+    // only reason I can think of is toDataURL(), but that doesn't seem like
+    // a good enough argument to waste memory.
+    auto buffer = ImageBuffer::create(FloatSize(canvasBase().width(), canvasBase().height()), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8, bufferOptionsForRendingMode(RenderingMode::Unaccelerated));
+    canvasBase().setImageBufferAndMarkDirty(WTFMove(buffer));
+}
+
+RefPtr<ImageBuffer> ImageBitmapRenderingContext::transferToImageBuffer()
+{
+    if (!canvasBase().hasCreatedImageBuffer())
+        return canvasBase().allocateImageBuffer();
+    RefPtr result = canvasBase().buffer();
+    if (!result)
+        return nullptr;
+    setBlank();
+    return result;
 }
 
 }

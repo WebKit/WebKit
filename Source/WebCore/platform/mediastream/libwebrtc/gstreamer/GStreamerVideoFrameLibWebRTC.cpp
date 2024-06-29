@@ -118,12 +118,12 @@ rtc::scoped_refptr<webrtc::I420BufferInterface> GStreamerVideoFrameLibWebRTC::To
 
         ASSERT(videoConverter);
         gst_video_converter_frame(videoConverter.get(), inFrame.get(), outFrame.get());
-        return webrtc::I420Buffer::Copy(outFrame.width(), outFrame.height(), outFrame.ComponentData(0), outFrame.ComponentStride(0),
-            outFrame.ComponentData(1), outFrame.ComponentStride(1), outFrame.ComponentData(2), outFrame.ComponentStride(2));
+        return webrtc::I420Buffer::Copy(outFrame.width(), outFrame.height(), outFrame.componentData(0), outFrame.componentStride(0),
+            outFrame.componentData(1), outFrame.componentStride(1), outFrame.componentData(2), outFrame.componentStride(2));
     }
 
-    return webrtc::I420Buffer::Copy(inFrame.width(), inFrame.height(), inFrame.ComponentData(0), inFrame.ComponentStride(0),
-        inFrame.ComponentData(1), inFrame.ComponentStride(1), inFrame.ComponentData(2), inFrame.ComponentStride(2));
+    return webrtc::I420Buffer::Copy(inFrame.width(), inFrame.height(), inFrame.componentData(0), inFrame.componentStride(0),
+        inFrame.componentData(1), inFrame.componentStride(1), inFrame.componentData(2), inFrame.componentStride(2));
 }
 
 }

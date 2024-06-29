@@ -40,9 +40,7 @@ RemoteConnectionToTarget::RemoteConnectionToTarget(RemoteControllableTarget& tar
 {
 }
 
-RemoteConnectionToTarget::~RemoteConnectionToTarget()
-{
-}
+RemoteConnectionToTarget::~RemoteConnectionToTarget() = default;
 
 bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automaticallyPause)
 {

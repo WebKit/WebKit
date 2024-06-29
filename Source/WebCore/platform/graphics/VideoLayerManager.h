@@ -50,7 +50,6 @@ public:
     virtual void updateVideoFullscreenInlineImage(PlatformImagePtr) = 0;
 #endif
 
-    virtual bool requiresTextTrackRepresentation() const = 0;
     virtual void setTextTrackRepresentationLayer(PlatformLayer*) = 0;
     virtual void syncTextTrackBounds() = 0;
 };

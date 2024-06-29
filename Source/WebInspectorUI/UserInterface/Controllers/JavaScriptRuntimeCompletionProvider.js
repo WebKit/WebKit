@@ -360,6 +360,8 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
 
             var completions = defaultCompletions;
             let knownCompletions = new Set(completions);
+            let prefixLowerCase = prefix.toLowerCase();
+            let caseSensitiveMatching = WI.settings.experimentalShowCaseSensitiveAutocomplete.value;
 
             for (var i = 0; i < propertyNames.length; ++i) {
                 var property = propertyNames[i];
@@ -372,30 +374,34 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                         property = quoteUsed + property.escapeCharacters(quoteUsed + "\\") + (suffix !== quoteUsed ? quoteUsed : "");
                 }
 
-                if (!property.startsWith(prefix) || knownCompletions.has(property))
+                if (knownCompletions.has(property))
+                    continue;
+
+                let startsWithPrefix = caseSensitiveMatching ? property.startsWith(prefix) : property.toLowerCase().startsWith(prefixLowerCase);
+                if (!startsWithPrefix)
                     continue;
 
                 completions.push(property);
                 knownCompletions.add(property);
             }
 
-            function compare(a, b)
+            let completionSortCriteria = new Map;
+            for (let completion of completions) {
+                completionSortCriteria.set(completion, {
+                    startsWithPrefix: completion.startsWith(prefix),
+                    numericValue: isFinite(completion) ? +completion : Infinity,
+                    isRareProperty: completion.startsWith("__") && completion.endsWith("__"),
+                });
+            }
+
+            function compare(s, t)
             {
-                // Try to sort in numerical order first.
-                let numericCompareResult = a - b;
-                if (!isNaN(numericCompareResult))
-                    return numericCompareResult;
-
-                // Sort __defineGetter__, __lookupGetter__, and friends last.
-                let aRareProperty = a.startsWith("__") && a.endsWith("__");
-                let bRareProperty = b.startsWith("__") && b.endsWith("__");
-                if (aRareProperty && !bRareProperty)
-                    return 1;
-                if (!aRareProperty && bRareProperty)
-                    return -1;
-
-                // Not numbers, sort as strings.
-                return a.extendedLocaleCompare(b);
+                let a = completionSortCriteria.get(s);
+                let b = completionSortCriteria.get(t);
+                return a.numericValue - b.numericValue // Order completions that are numbers to come first, with lower values coming first.
+                    || a.isRareProperty - b.isRareProperty // Order __defineGetter__, __lookupGetter__, and friends to come last.
+                    || b.startsWithPrefix - a.startsWithPrefix // Order completions that directly match the typed text to come first.
+                    || s.extendedLocaleCompare(t); // Order completions in the same category by natural string ordering.
             }
 
             completions.sort(compare);

@@ -134,3 +134,16 @@
 #error "Unsupported compiler"
 #endif
 #endif
+
+/* BALLOW_DEPRECATED_DECLARATIONS_BEGIN and BALLOW_DEPRECATED_DECLARATIONS_END */
+
+#if BCOMPILER(GCC_COMPATIBLE)
+#define BALLOW_DEPRECATED_DECLARATIONS_BEGIN \
+    _Pragma("GCC diagnostic push") \
+    _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
+#define BALLOW_DEPRECATED_DECLARATIONS_END \
+    _Pragma("GCC diagnostic pop")
+#else
+#define BALLOW_DEPRECATED_DECLARATIONS_BEGIN
+#define BALLOW_DEPRECATED_DECLARATIONS_END
+#endif

@@ -34,11 +34,6 @@ const char kCongestionWindowDefaultFieldTrialString[] =
 const char kUseBaseHeavyVp8Tl3RateAllocationFieldTrialName[] =
     "WebRTC-UseBaseHeavyVP8TL3RateAllocation";
 
-bool IsEnabled(const FieldTrialsView* const key_value_config,
-               absl::string_view key) {
-  return absl::StartsWith(key_value_config->Lookup(key), "Enabled");
-}
-
 }  // namespace
 
 constexpr char CongestionWindowConfig::kKey[];
@@ -75,32 +70,25 @@ std::unique_ptr<StructParametersParser> VideoRateControlConfig::Parser() {
 }
 
 RateControlSettings::RateControlSettings(
-    const FieldTrialsView* const key_value_config) {
+    const FieldTrialsView& key_value_config) {
   std::string congestion_window_config =
-      key_value_config->Lookup(CongestionWindowConfig::kKey).empty()
-          ? kCongestionWindowDefaultFieldTrialString
-          : key_value_config->Lookup(CongestionWindowConfig::kKey);
+      key_value_config.Lookup(CongestionWindowConfig::kKey);
+  if (congestion_window_config.empty()) {
+    congestion_window_config = kCongestionWindowDefaultFieldTrialString;
+  }
   congestion_window_config_ =
       CongestionWindowConfig::Parse(congestion_window_config);
-  video_config_.vp8_base_heavy_tl3_alloc = IsEnabled(
-      key_value_config, kUseBaseHeavyVp8Tl3RateAllocationFieldTrialName);
+  video_config_.vp8_base_heavy_tl3_alloc = key_value_config.IsEnabled(
+      kUseBaseHeavyVp8Tl3RateAllocationFieldTrialName);
   video_config_.Parser()->Parse(
-      key_value_config->Lookup(VideoRateControlConfig::kKey));
+      key_value_config.Lookup(VideoRateControlConfig::kKey));
 }
 
 RateControlSettings::~RateControlSettings() = default;
 RateControlSettings::RateControlSettings(RateControlSettings&&) = default;
 
 RateControlSettings RateControlSettings::ParseFromFieldTrials() {
-  FieldTrialBasedConfig field_trial_config;
-  return RateControlSettings(&field_trial_config);
-}
-
-RateControlSettings RateControlSettings::ParseFromKeyValueConfig(
-    const FieldTrialsView* const key_value_config) {
-  FieldTrialBasedConfig field_trial_config;
-  return RateControlSettings(key_value_config ? key_value_config
-                                              : &field_trial_config);
+  return RateControlSettings(FieldTrialBasedConfig());
 }
 
 bool RateControlSettings::UseCongestionWindow() const {

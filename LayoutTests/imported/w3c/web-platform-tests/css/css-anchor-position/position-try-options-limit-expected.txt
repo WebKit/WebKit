@@ -1,0 +1,4 @@
+
+FAIL Try options which are not found are not part of the limit assert_equals: The --bar try option should be applied expected 0 but got 10
+FAIL Must support At least five try options assert_equals: The --f5 try option should be applied expected 20 but got 10
+

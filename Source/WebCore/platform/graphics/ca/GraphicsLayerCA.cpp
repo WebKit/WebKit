@@ -51,6 +51,7 @@
 #include "ScaleTransformOperation.h"
 #include "Settings.h"
 #include "TiledBacking.h"
+#include "TransformOperationsSharedPrimitivesPrefix.h"
 #include "TransformState.h"
 #include "TranslateTransformOperation.h"
 #include <QuartzCore/CATransform3D.h>
@@ -479,8 +480,8 @@ String GraphicsLayerCA::debugName() const
 #if ENABLE(TREE_DEBUGGING)
     String caLayerDescription;
     if (m_layer->type() == PlatformCALayer::Type::Cocoa)
-        caLayerDescription = makeString("CALayer(0x", hex(reinterpret_cast<uintptr_t>(m_layer->platformLayer()), Lowercase), ") ");
-    return makeString(caLayerDescription, "GraphicsLayer(0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase), ", ", primaryLayerID().object(), ") ", name());
+        caLayerDescription = makeString("CALayer(0x"_s, hex(reinterpret_cast<uintptr_t>(m_layer->platformLayer()), Lowercase), ") "_s);
+    return makeString(caLayerDescription, "GraphicsLayer(0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase), ", "_s, primaryLayerID().object(), ") "_s, name());
 #else
     return name();
 #endif
@@ -1199,7 +1200,7 @@ void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
             m_contentsLayerPurpose = ContentsLayerPurpose::BackgroundColor;
             m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, this);
 #if ENABLE(TREE_DEBUGGING)
-            m_contentsLayer->setName(makeString("contents color ", m_contentsLayer->layerID().object()));
+            m_contentsLayer->setName(makeString("contents color "_s, m_contentsLayer->layerID().object()));
 #else
             m_contentsLayer->setName(MAKE_STATIC_STRING_IMPL("contents color"));
 #endif
@@ -1260,7 +1261,7 @@ void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model, ModelInteraction
     if (model) {
         m_contentsLayer = createPlatformCALayer(*model, this);
 #if ENABLE(TREE_DEBUGGING)
-        m_contentsLayer->setName(makeString("contents model ", m_contentsLayer->layerID().object()));
+        m_contentsLayer->setName(makeString("contents model "_s, m_contentsLayer->layerID().object()));
 #else
         m_contentsLayer->setName(MAKE_STATIC_STRING_IMPL("contents model"));
 #endif
@@ -1440,17 +1441,18 @@ FloatPoint GraphicsLayerCA::computePositionRelativeToBase(float& pageScale) cons
 {
     pageScale = 1;
 
+    bool didFindAnyLayerThatAppliesPageScale = false;
     FloatPoint offset;
     for (const GraphicsLayer* currLayer = this; currLayer; currLayer = currLayer->parent()) {
         if (currLayer->appliesPageScale()) {
-            pageScale = currLayer->pageScaleFactor();
-            return offset;
+            pageScale *= currLayer->pageScaleFactor();
+            didFindAnyLayerThatAppliesPageScale = true;
         }
 
         offset += currLayer->position();
     }
 
-    return FloatPoint();
+    return didFindAnyLayerThatAppliesPageScale ? offset : FloatPoint { };
 }
 
 void GraphicsLayerCA::flushCompositingState(const FloatRect& visibleRect)
@@ -1769,6 +1771,9 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
 
 bool GraphicsLayerCA::needsCommit(const CommitState& commitState)
 {
+    if (renderingIsSuppressedIncludingDescendants())
+        return false;
+
     if (commitState.ancestorHadChanges)
         return true;
     if (m_uncommittedChanges)
@@ -1817,7 +1822,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
         constexpr auto washBorderColor = Color::red.colorWithAlphaByte(100);
         
         m_visibleTileWashLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
-        m_visibleTileWashLayer->setName(makeString("Visible Tile Wash Layer 0x", hex(reinterpret_cast<uintptr_t>(m_visibleTileWashLayer->platformLayer()), Lowercase)));
+        m_visibleTileWashLayer->setName(makeString("Visible Tile Wash Layer 0x"_s, hex(reinterpret_cast<uintptr_t>(m_visibleTileWashLayer->platformLayer()), Lowercase)));
         m_visibleTileWashLayer->setAnchorPoint(FloatPoint3D(0, 0, 0));
         m_visibleTileWashLayer->setBorderColor(washBorderColor);
         m_visibleTileWashLayer->setBorderWidth(8);
@@ -1838,7 +1843,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
         childCommitState.ancestorHadChanges = hadChanges;
 
     if (appliesPageScale()) {
-        pageScaleFactor = this->pageScaleFactor();
+        pageScaleFactor *= this->pageScaleFactor();
         affectedByPageScale = true;
     }
 
@@ -2211,13 +2216,13 @@ void GraphicsLayerCA::updateNames()
     auto name = debugName();
     switch (structuralLayerPurpose()) {
     case StructuralLayerForPreserves3D:
-        m_structuralLayer->setName("preserve-3d: " + name);
+        m_structuralLayer->setName(makeString("preserve-3d: "_s, name));
         break;
     case StructuralLayerForReplicaFlattening:
-        m_structuralLayer->setName("replica flattening: " + name);
+        m_structuralLayer->setName(makeString("replica flattening: "_s, name));
         break;
     case StructuralLayerForBackdrop:
-        m_structuralLayer->setName("backdrop hosting: " + name);
+        m_structuralLayer->setName(makeString("backdrop hosting: "_s, name));
         break;
     case NoStructuralLayer:
         break;
@@ -2529,10 +2534,9 @@ void GraphicsLayerCA::updateBackdropFilters(CommitState& commitState)
     }
 
     // If nothing actually changed, no need to touch the layer properties.
-    if (!(m_uncommittedChanges & BackdropFiltersChanged)) {
+    if (!(m_uncommittedChanges & BackdropFiltersChanged) && m_backdropLayer) {
         // Opaque state depends on ancestor state, and is cheap to set, so just unconditionally update it.
-        if (m_backdropLayer)
-            m_backdropLayer->setBackdropRootIsOpaque(commitState.backdropRootIsOpaque);
+        m_backdropLayer->setBackdropRootIsOpaque(commitState.backdropRootIsOpaque);
         return;
     }
 
@@ -2898,7 +2902,7 @@ void GraphicsLayerCA::updateContentsImage()
         if (!m_contentsLayer.get()) {
             m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, this);
 #if ENABLE(TREE_DEBUGGING)
-            m_contentsLayer->setName(makeString("contents image ", m_contentsLayer->layerID().object()));
+            m_contentsLayer->setName(makeString("contents image "_s, m_contentsLayer->layerID().object()));
 #else
             m_contentsLayer->setName(MAKE_STATIC_STRING_IMPL("contents image"));
 #endif
@@ -3010,7 +3014,7 @@ void GraphicsLayerCA::updateContentsRects()
             m_contentsClippingLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, this);
             m_contentsClippingLayer->setAnchorPoint({ });
 #if ENABLE(TREE_DEBUGGING)
-            m_contentsClippingLayer->setName(makeString("contents clipping ", m_contentsClippingLayer->layerID().object()));
+            m_contentsClippingLayer->setName(makeString("contents clipping "_s, m_contentsClippingLayer->layerID().object()));
 #else
             m_contentsClippingLayer->setName(MAKE_STATIC_STRING_IMPL("contents clipping"));
 #endif
@@ -3565,7 +3569,7 @@ static const TransformOperations& transformationAnimationValueAt(const KeyframeV
     return static_cast<const TransformAnimationValue&>(valueList.at(i)).value();
 }
 
-static bool hasBig3DRotation(const KeyframeValueList& valueList, const SharedPrimitivesPrefix& prefix)
+static bool hasBig3DRotation(const KeyframeValueList& valueList, const TransformOperationsSharedPrimitivesPrefix& prefix)
 {
     // Hardware non-matrix animations are used for every function in the shared primitives prefix.
     // These kind of animations have issues with large rotation angles, so for every function that
@@ -3605,7 +3609,7 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
     // FIXME: Currently, this only supports situations where every keyframe shares the same prefix of shared
     // transformation primitives, but the specification says direct interpolation should be determined by
     // the primitives shared between any two adjacent keyframes.
-    SharedPrimitivesPrefix prefix;
+    TransformOperationsSharedPrimitivesPrefix prefix;
     for (size_t i = 0; i < valueList.size(); ++i)
         prefix.update(transformationAnimationValueAt(valueList, i));
 
@@ -3633,9 +3637,9 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
     return appendToUncommittedAnimations(valueList, TransformOperation::Type::Matrix3D, animation, animationName, boxSize, primitives.size(), timeOffset, true /* isMatrixAnimation */, keyframesShouldUseAnimationWideTimingFunction);
 }
 
-bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const FilterOperation* operation, const Animation* animation, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const FilterOperation& operation, const Animation* animation, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    auto filterOp = operation->type();
+    auto filterOp = operation.type();
     if (!PlatformCAFilters::isAnimatedFilterProperty(filterOp))
         return true;
 
@@ -3671,18 +3675,15 @@ bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueLis
     if (!filtersCanBeComposited(operations))
         return false;
 
-    int numAnimations = operations.size();
-
     // FIXME: We can't currently hardware animate shadows.
-    for (int i = 0; i < numAnimations; ++i) {
-        if (operations.at(i)->type() == FilterOperation::Type::DropShadow)
-            return false;
-    }
+    if (operations.hasFilterOfType<FilterOperation::Type::DropShadow>())
+        return false;
 
     removeAnimation(animationName, valueList.property());
 
-    for (int animationIndex = 0; animationIndex < numAnimations; ++animationIndex) {
-        if (!appendToUncommittedAnimations(valueList, operations.operations().at(animationIndex).get(), animation, animationName, animationIndex, timeOffset, keyframesShouldUseAnimationWideTimingFunction))
+    int numberOfAnimations = operations.size();
+    for (int animationIndex = 0; animationIndex < numberOfAnimations; ++animationIndex) {
+        if (!appendToUncommittedAnimations(valueList, operations[animationIndex], animation, animationName, animationIndex, timeOffset, keyframesShouldUseAnimationWideTimingFunction))
             return false;
     }
 
@@ -3840,8 +3841,8 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
 
     if (isMatrixAnimation) {
         TransformationMatrix fromTransform, toTransform;
-        startValue.apply(boxSize, fromTransform);
-        endValue.apply(boxSize, toTransform);
+        startValue.apply(fromTransform, boxSize);
+        endValue.apply(toTransform, boxSize);
 
         // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
         if (!fromTransform.isInvertible() || !toTransform.isInvertible())
@@ -3901,7 +3902,7 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
 
         if (isMatrixAnimation) {
             TransformationMatrix transform;
-            curValue.value().apply(functionIndex, boxSize, transform);
+            curValue.value().apply(transform, boxSize, functionIndex);
 
             // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
             if (!transform.isInvertible())
@@ -3977,8 +3978,8 @@ bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& value
         toOperation = defaultToOperation.get();
     }
 
-    basicAnim->setFromValue(fromOperation);
-    basicAnim->setToValue(toOperation);
+    basicAnim->setFromValue(*fromOperation);
+    basicAnim->setToValue(*toOperation);
 
     return true;
 }
@@ -3986,7 +3987,7 @@ bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& value
 bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, FilterOperation::Type filterOp, bool keyframesShouldUseAnimationWideTimingFunction)
 {
     Vector<float> keyTimes;
-    Vector<RefPtr<FilterOperation>> values;
+    Vector<Ref<FilterOperation>> values;
     Vector<Ref<const TimingFunction>> timingFunctions;
     RefPtr<DefaultFilterOperation> defaultOperation;
 
@@ -3997,12 +3998,12 @@ bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& value
         const FilterAnimationValue& curValue = static_cast<const FilterAnimationValue&>(valueList.at(index));
         keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
 
-        if (curValue.value().operations().size() > static_cast<size_t>(functionIndex))
-            values.append(curValue.value().operations()[functionIndex]);
+        if (curValue.value().size() > static_cast<size_t>(functionIndex))
+            values.append(curValue.value()[functionIndex].copyRef());
         else {
             if (!defaultOperation)
                 defaultOperation = DefaultFilterOperation::create(filterOp);
-            values.append(defaultOperation);
+            values.append(*defaultOperation);
         }
 
         if (i < (valueList.size() - 1))
@@ -4652,9 +4653,9 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(const CloneID& cloneID,
     } else {
         resultLayer = cloneLayer(sourceLayer, cloneLevel);
 #if ENABLE(TREE_DEBUGGING)
-        resultLayer->setName(makeString("clone ", hex(cloneID[0U]), " of ", sourceLayer->layerID().object()));
+        resultLayer->setName(makeString("clone "_s, hex(cloneID[0U]), " of "_s, sourceLayer->layerID().object()));
 #else
-        resultLayer->setName("clone of " + m_name);
+        resultLayer->setName(makeString("clone of "_s, m_name));
 #endif
         addResult.iterator->value = resultLayer;
     }

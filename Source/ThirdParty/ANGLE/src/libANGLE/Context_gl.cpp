@@ -2472,30 +2472,6 @@ void Context::bindVertexBuffers(GLuint first,
     UNIMPLEMENTED();
 }
 
-void Context::clearTexImage(TextureID texture,
-                            GLint level,
-                            GLenum format,
-                            GLenum type,
-                            const void *data)
-{
-    UNIMPLEMENTED();
-}
-
-void Context::clearTexSubImage(TextureID texture,
-                               GLint level,
-                               GLint xoffset,
-                               GLint yoffset,
-                               GLint zoffset,
-                               GLsizei width,
-                               GLsizei height,
-                               GLsizei depth,
-                               GLenum format,
-                               GLenum type,
-                               const void *data)
-{
-    UNIMPLEMENTED();
-}
-
 void Context::bindTextureUnit(GLuint unit, TextureID texture)
 {
     UNIMPLEMENTED();

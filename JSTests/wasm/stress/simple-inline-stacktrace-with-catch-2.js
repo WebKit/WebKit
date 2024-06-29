@@ -1,5 +1,5 @@
 //@ skip if !$isWasmPlatform
-//@ runDefault("--maximumWasmDepthForInlining=10", "--maximumWasmCalleeSizeForInlining=10000000", "--maximumWasmCallerSizeForInlining=10000000", "--useBBQJIT=0")
+//@ runDefault("--maximumWebAssemblyDepthForInlining=10", "--maximumWebAssemblyCalleeSizeForInlining=10000000", "--maximumWebAssemblyCallerSizeForInlining=10000000", "--useBBQJIT=0")
 var wasm_code = read('simple-inline-stacktrace-with-catch.wasm', 'binary')
 var wasm_module = new WebAssembly.Module(wasm_code);
 let throwCounter = 0

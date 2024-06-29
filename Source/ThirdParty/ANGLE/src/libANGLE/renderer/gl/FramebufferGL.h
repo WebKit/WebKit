@@ -81,6 +81,11 @@ class FramebufferGL : public FramebufferImpl
 
     gl::FramebufferStatus checkStatus(const gl::Context *context) const override;
 
+    angle::Result ensureAttachmentsInitialized(const gl::Context *context,
+                                               const gl::DrawBufferMask &colorAttachments,
+                                               bool depth,
+                                               bool stencil) override;
+
     angle::Result syncState(const gl::Context *context,
                             GLenum binding,
                             const gl::Framebuffer::DirtyBits &dirtyBits,

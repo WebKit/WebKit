@@ -96,6 +96,8 @@ void cfl_load_dc_pred(MACROBLOCKD *const xd, uint8_t *dst, int dst_stride,
 // goodness.
 #define CFL_SUBSAMPLE(arch, sub, bd, width, height)                       \
   void cfl_subsample_##bd##_##sub##_##width##x##height##_##arch(          \
+      const CFL_##bd##_TYPE, int input_stride, uint16_t *output_q3);      \
+  void cfl_subsample_##bd##_##sub##_##width##x##height##_##arch(          \
       const CFL_##bd##_TYPE, int input_stride, uint16_t *output_q3) {     \
     cfl_luma_subsampling_##sub##_##bd##_##arch(cfl_type, input_stride,    \
                                                output_q3, width, height); \
@@ -171,6 +173,8 @@ void cfl_load_dc_pred(MACROBLOCKD *const xd, uint8_t *dst, int dst_stride,
 // goodness.
 #define CFL_SUB_AVG_X(arch, width, height, round_offset, num_pel_log2)       \
   void cfl_subtract_average_##width##x##height##_##arch(const uint16_t *src, \
+                                                        int16_t *dst);       \
+  void cfl_subtract_average_##width##x##height##_##arch(const uint16_t *src, \
                                                         int16_t *dst) {      \
     subtract_average_##arch(src, dst, width, height, round_offset,           \
                             num_pel_log2);                                   \
@@ -220,22 +224,21 @@ void cfl_load_dc_pred(MACROBLOCKD *const xd, uint8_t *dst, int dst_stride,
     return sub_avg[tx_size % TX_SIZES_ALL];                               \
   }
 
-// For VSX SIMD optimization, the C versions of width == 4 subtract are
-// faster than the VSX. As such, the VSX code calls the C versions.
-void cfl_subtract_average_4x4_c(const uint16_t *src, int16_t *dst);
-void cfl_subtract_average_4x8_c(const uint16_t *src, int16_t *dst);
-void cfl_subtract_average_4x16_c(const uint16_t *src, int16_t *dst);
-
-#define CFL_PREDICT_lbd(arch, width, height)                              \
-  void cfl_predict_lbd_##width##x##height##_##arch(                       \
-      const int16_t *pred_buf_q3, uint8_t *dst, int dst_stride,           \
-      int alpha_q3) {                                                     \
-    cfl_predict_lbd_##arch(pred_buf_q3, dst, dst_stride, alpha_q3, width, \
-                           height);                                       \
+#define CFL_PREDICT_lbd(arch, width, height)                                   \
+  void cfl_predict_lbd_##width##x##height##_##arch(                            \
+      const int16_t *pred_buf_q3, uint8_t *dst, int dst_stride, int alpha_q3); \
+  void cfl_predict_lbd_##width##x##height##_##arch(                            \
+      const int16_t *pred_buf_q3, uint8_t *dst, int dst_stride,                \
+      int alpha_q3) {                                                          \
+    cfl_predict_lbd_##arch(pred_buf_q3, dst, dst_stride, alpha_q3, width,      \
+                           height);                                            \
   }
 
 #if CONFIG_AV1_HIGHBITDEPTH
 #define CFL_PREDICT_hbd(arch, width, height)                                   \
+  void cfl_predict_hbd_##width##x##height##_##arch(                            \
+      const int16_t *pred_buf_q3, uint16_t *dst, int dst_stride, int alpha_q3, \
+      int bd);                                                                 \
   void cfl_predict_hbd_##width##x##height##_##arch(                            \
       const int16_t *pred_buf_q3, uint16_t *dst, int dst_stride, int alpha_q3, \
       int bd) {                                                                \

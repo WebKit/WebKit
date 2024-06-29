@@ -25,6 +25,7 @@
 
 #include "FESpecularLighting.h"
 #include "NodeName.h"
+#include "RenderElement.h"
 #include "RenderStyle.h"
 #include "SVGFELightElement.h"
 #include "SVGNames.h"

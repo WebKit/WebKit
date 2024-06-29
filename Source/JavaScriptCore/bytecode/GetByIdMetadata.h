@@ -90,7 +90,7 @@ union GetByIdModeMetadata {
         GetByIdMode mode;
         uint8_t hitCountForLLIntCaching; // This must be zero when we use ProtoLoad mode.
     };
-    static ptrdiff_t offsetOfMode() { return OBJECT_OFFSETOF(GetByIdModeMetadata, mode); }
+    static constexpr ptrdiff_t offsetOfMode() { return OBJECT_OFFSETOF(GetByIdModeMetadata, mode); }
     GetByIdModeMetadataDefault defaultMode;
     GetByIdModeMetadataUnset unsetMode;
     GetByIdModeMetadataArrayLength arrayLengthMode;
@@ -120,7 +120,7 @@ struct GetByIdModeMetadata {
         GetByIdModeMetadataProtoLoad protoLoadMode;
     };
     GetByIdMode mode;
-    static ptrdiff_t offsetOfMode() { return OBJECT_OFFSETOF(GetByIdModeMetadata, mode); }
+    static constexpr ptrdiff_t offsetOfMode() { return OBJECT_OFFSETOF(GetByIdModeMetadata, mode); }
     uint8_t hitCountForLLIntCaching;
 };
 #endif

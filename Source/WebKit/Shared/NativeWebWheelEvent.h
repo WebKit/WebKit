@@ -71,7 +71,7 @@ public:
 #endif
 
 #elif PLATFORM(WIN)
-    NativeWebWheelEvent(HWND, UINT message, WPARAM, LPARAM);
+    NativeWebWheelEvent(HWND, UINT message, WPARAM, LPARAM, float deviceScaleFactor);
 #endif
 
 #if USE(APPKIT)

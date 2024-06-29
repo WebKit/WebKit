@@ -32,21 +32,21 @@
 namespace WebCore {
 
 template<> struct Converter<IDLObject> : DefaultConverter<IDLObject> {
-
     static constexpr bool conversionHasSideEffects = false;
+    using Result = ConversionResult<IDLObject>;
 
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static JSC::Strong<JSC::JSObject> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
         JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         if (!value.isObject()) {
             exceptionThrower(lexicalGlobalObject, scope);
-            return { };
+            return Result::exception();
         }
         
-        return { vm, JSC::asObject(value) };
+        return JSC::Strong<JSC::JSObject> { vm, JSC::asObject(value) };
     }
 };
 

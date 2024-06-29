@@ -36,11 +36,11 @@ struct ProtoCallFrame;
 typedef int64_t EncodedJSValue;
 
 extern "C" {
-    EncodedJSValue vmEntryToJavaScript(void*, VM*, ProtoCallFrame*);
-    EncodedJSValue vmEntryToNative(void*, VM*, ProtoCallFrame*);
-    EncodedJSValue vmEntryCustomGetter(CPURegister, CPURegister, CPURegister, CPURegister);
-    EncodedJSValue vmEntryCustomSetter(CPURegister, CPURegister, CPURegister, CPURegister, CPURegister);
-    EncodedJSValue vmEntryHostFunction(JSGlobalObject*, CallFrame*, void*);
+    EncodedJSValue SYSV_ABI vmEntryToJavaScript(void*, VM*, ProtoCallFrame*);
+    EncodedJSValue SYSV_ABI vmEntryToNative(void*, VM*, ProtoCallFrame*);
+    EncodedJSValue SYSV_ABI vmEntryCustomGetter(JSGlobalObject*, EncodedJSValue, PropertyName, void*);
+    void SYSV_ABI vmEntryCustomSetter(JSGlobalObject*, EncodedJSValue, EncodedJSValue, PropertyName, void*);
+    EncodedJSValue SYSV_ABI vmEntryHostFunction(JSGlobalObject*, CallFrame*, void*);
 
 #if CPU(ARM64) && CPU(ADDRESS64) && !ENABLE(C_LOOP)
     EncodedJSValue vmEntryToJavaScriptWith0Arguments(void*, VM*, CodeBlock*, JSObject*, JSValue);
@@ -56,8 +56,8 @@ extern "C" {
     void vmEntryToJavaScriptGateAfter(void);
 
     // WebCore calls these from SelectorCompiler, so they are not hidden like normal LLInt symbols.
-    JS_EXPORT_PRIVATE unsigned vmEntryToCSSJIT(uintptr_t, uintptr_t, uintptr_t, const void* codePtr);
-    JS_EXPORT_PRIVATE void vmEntryToCSSJITAfter(void);
+    JS_EXPORT_PRIVATE unsigned SYSV_ABI vmEntryToCSSJIT(uintptr_t, uintptr_t, uintptr_t, const void* codePtr);
+    JS_EXPORT_PRIVATE void SYSV_ABI vmEntryToCSSJITAfter(void);
 
     void llint_function_for_call_arity_checkUntagGateAfter(void);
     void llint_function_for_call_arity_checkTagGateAfter(void);

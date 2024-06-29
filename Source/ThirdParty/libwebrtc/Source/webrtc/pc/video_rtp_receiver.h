@@ -82,7 +82,7 @@ class VideoRtpReceiver : public RtpReceiverInternal {
   rtc::scoped_refptr<FrameDecryptorInterface> GetFrameDecryptor()
       const override;
 
-  void SetDepacketizerToDecoderFrameTransformer(
+  void SetFrameTransformer(
       rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) override;
 #if defined(WEBRTC_WEBKIT_BUILD)
   void GenerateKeyFrame() override;

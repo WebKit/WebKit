@@ -25,9 +25,8 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-
 #if ENABLE(LINEAR_MEDIA_PLAYER)
+#include <wtf/OSObjectPtr.h>
 #include <xpc/xpc.h>
 #endif
 

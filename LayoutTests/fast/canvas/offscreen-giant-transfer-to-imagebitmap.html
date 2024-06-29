@@ -1,11 +1,36 @@
+<body>
+<script src="../../resources/js-test.js"></script>
 <script>
-  onload = () => {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
+function runTest() {
+    if (!window.OffscreenCanvas) {
+        debug("OffscreenCanvas not enabled");
+        return;
     }
-    let offscreenCanvas = new OffscreenCanvas(1, 100000000);
-    offscreenCanvas.getContext('2d');
-    offscreenCanvas.width = 100;
-    offscreenCanvas.transferToImageBitmap();
-  }
+    let types = ["none", "2d", "webgl", "webgl2", "webgpu", "bitmaprenderer"];
+    let heights = [100, 100000000];
+    for (let height of heights) {
+        for (let type of types) {
+            debug(`Testing height: ${height} type: ${type} `);
+            let canvas = new OffscreenCanvas(1, height);
+            if (type != "none") {
+                let ctx = canvas.getContext(type);
+                debug(`Got context: "${ctx}"`);
+            }
+            canvas.width = 100;
+            try {
+                let result = canvas.transferToImageBitmap();
+                if (result)
+                    debug(`Got result with size: ${result.width}x${result.height}`);
+                else
+                    debug(`Got result: "${result}"`);
+            } catch (e) {
+                debug(`Got exception: "${e}"`);
+            }
+            delete ctx;
+            delete canvas;
+        }
+    }
+}
+runTest();
 </script>
+</body>

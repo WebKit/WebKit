@@ -29,10 +29,12 @@ class ComputeStep;
 enum class Coverage;
 class DrawParams;
 enum class DstReadRequirement;
+class Geometry;
 class GraphicsPipelineDesc;
 class PaintParams;
 class PipelineDataGatherer;
 class Recorder;
+struct RenderPassDesc;
 class RenderStep;
 class RuntimeEffectDictionary;
 class ShaderNode;
@@ -42,12 +44,18 @@ struct ResourceBindingRequirements;
 
 struct VertSkSLInfo {
     std::string fSkSL;
+
+    std::string fLabel;
+
     int fRenderStepUniformsTotalBytes = 0;
 };
 
 struct FragSkSLInfo {
     std::string fSkSL;
     BlendInfo fBlendInfo;
+
+    std::string fLabel;
+
     bool fRequiresLocalCoords = false;
     int fNumTexturesAndSamplers = 0;
     int fNumPaintUniforms = 0;
@@ -55,16 +63,17 @@ struct FragSkSLInfo {
     int fPaintUniformsTotalBytes = 0;
 };
 
-std::tuple<UniquePaintParamsID, const UniformDataBlock*, const TextureDataBlock*>
-ExtractPaintData(Recorder*,
-                 PipelineDataGatherer* gatherer,
-                 PaintParamsKeyBuilder* builder,
-                 const Layout layout,
-                 const SkM44& local2Dev,
-                 const PaintParams&,
-                 sk_sp<TextureProxy> dstTexture,
-                 SkIPoint dstOffset,
-                 const SkColorInfo& targetColorInfo);
+std::tuple<UniquePaintParamsID, const UniformDataBlock*, const TextureDataBlock*> ExtractPaintData(
+        Recorder*,
+        PipelineDataGatherer* gatherer,
+        PaintParamsKeyBuilder* builder,
+        const Layout layout,
+        const SkM44& local2Dev,
+        const PaintParams&,
+        const Geometry& geometry,
+        sk_sp<TextureProxy> dstTexture,
+        SkIPoint dstOffset,
+        const SkColorInfo& targetColorInfo);
 
 std::tuple<const UniformDataBlock*, const TextureDataBlock*> ExtractRenderStepData(
         UniformDataCache* uniformDataCache,
@@ -88,6 +97,11 @@ FragSkSLInfo BuildFragmentSkSL(const Caps* caps,
                                UniquePaintParamsID paintID,
                                bool useStorageBuffers,
                                skgpu::Swizzle writeSwizzle);
+
+std::string GetPipelineLabel(const ShaderCodeDictionary*,
+                             const RenderPassDesc& renderPassDesc,
+                             const RenderStep* renderStep,
+                             UniquePaintParamsID paintID);
 
 std::string BuildComputeSkSL(const Caps*, const ComputeStep*);
 

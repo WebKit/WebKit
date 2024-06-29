@@ -43,6 +43,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/meta-csp-img-src-none-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/meta-referrer-no-referrer-img-src-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/meta-viewport-link-stylesheet-media-nonspeculative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/nested-template-shadowrootmode-1-nonspeculative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/nested-template-shadowrootmode-2-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/picture-source-br-img-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/picture-source-no-img-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/picture-source-nomatch-media-nonspeculative.sub.html
@@ -63,6 +65,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/svg-script-href-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/svg-script-src-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/svg-script-xlinkhref-nonspeculative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/template-img-src-nonspeculative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/template-link-stylesheet-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/template-script-src-nonspeculative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/template-shadowrootmode-img-src-nonspeculative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/template-shadowrootmode-link-stylesheet-nonspeculative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/template-shadowrootmode-script-src-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/video-poster-nonspeculative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/resources/xmp-script-src-nonspeculative.sub.html

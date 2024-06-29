@@ -30,9 +30,7 @@
 #include "rtc_base/system/file_wrapper.h"
 
 namespace webrtc {
-class AudioDeviceModule;
 class AudioMixer;
-class AudioProcessing;
 class Call;
 }  // namespace webrtc
 
@@ -42,14 +40,14 @@ namespace cricket {
 // least one video codec of the list. If the list is empty, no check is done.
 webrtc::RTCError CheckScalabilityModeValues(
     const webrtc::RtpParameters& new_parameters,
-    rtc::ArrayView<cricket::Codec> codec_preferences,
+    rtc::ArrayView<cricket::Codec> send_codecs,
     absl::optional<cricket::Codec> send_codec);
 
 // Checks the parameters have valid and supported values, and checks parameters
 // with CheckScalabilityModeValues().
 webrtc::RTCError CheckRtpParametersValues(
     const webrtc::RtpParameters& new_parameters,
-    rtc::ArrayView<cricket::Codec> codec_preferences,
+    rtc::ArrayView<cricket::Codec> send_codecs,
     absl::optional<cricket::Codec> send_codec);
 
 // Checks that the immutable values have not changed in new_parameters and
@@ -57,7 +55,7 @@ webrtc::RTCError CheckRtpParametersValues(
 webrtc::RTCError CheckRtpParametersInvalidModificationAndValues(
     const webrtc::RtpParameters& old_parameters,
     const webrtc::RtpParameters& new_parameters,
-    rtc::ArrayView<cricket::Codec> codec_preferences,
+    rtc::ArrayView<cricket::Codec> send_codecs,
     absl::optional<cricket::Codec> send_codec);
 
 // Checks that the immutable values have not changed in new_parameters and
@@ -120,8 +118,8 @@ class VoiceEngineInterface : public RtpHeaderExtensionQueryInterface {
     return nullptr;
   }
 
-  virtual const std::vector<AudioCodec>& send_codecs() const = 0;
-  virtual const std::vector<AudioCodec>& recv_codecs() const = 0;
+  virtual const std::vector<Codec>& send_codecs() const = 0;
+  virtual const std::vector<Codec>& recv_codecs() const = 0;
 
   // Starts AEC dump using existing file, a maximum file size in bytes can be
   // specified. Logging is stopped just before the size limit is exceeded.
@@ -166,16 +164,16 @@ class VideoEngineInterface : public RtpHeaderExtensionQueryInterface {
   }
 
   // Retrieve list of supported codecs.
-  virtual std::vector<VideoCodec> send_codecs() const = 0;
-  virtual std::vector<VideoCodec> recv_codecs() const = 0;
+  virtual std::vector<Codec> send_codecs() const = 0;
+  virtual std::vector<Codec> recv_codecs() const = 0;
   // As above, but if include_rtx is false, don't include RTX codecs.
   // TODO(bugs.webrtc.org/13931): Remove default implementation once
   // upstream subclasses have converted.
-  virtual std::vector<VideoCodec> send_codecs(bool include_rtx) const {
+  virtual std::vector<Codec> send_codecs(bool include_rtx) const {
     RTC_DCHECK(include_rtx);
     return send_codecs();
   }
-  virtual std::vector<VideoCodec> recv_codecs(bool include_rtx) const {
+  virtual std::vector<Codec> recv_codecs(bool include_rtx) const {
     RTC_DCHECK(include_rtx);
     return recv_codecs();
   }

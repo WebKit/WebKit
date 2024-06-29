@@ -67,6 +67,7 @@ namespace WTF {
 class SymbolImpl;
 class SymbolRegistry;
 
+struct ASCIICaseInsensitiveStringViewHashTranslator;
 struct HashedUTF8CharactersTranslator;
 struct HashTranslatorASCIILiteral;
 struct LCharBufferTranslator;
@@ -186,6 +187,7 @@ class StringImpl : private StringImplShape {
     friend class SymbolImpl;
     friend class ExternalStringImpl;
 
+    friend struct WTF::ASCIICaseInsensitiveStringViewHashTranslator;
     friend struct WTF::HashedUTF8CharactersTranslator;
     friend struct WTF::HashTranslatorASCIILiteral;
     friend struct WTF::LCharBufferTranslator;
@@ -248,7 +250,7 @@ public:
 
     WTF_EXPORT_PRIVATE static Ref<StringImpl> create(std::span<const UChar>);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> create(std::span<const LChar>);
-    ALWAYS_INLINE static Ref<StringImpl> create(std::span<const char> characters) { return create({ reinterpret_cast<const LChar*>(characters.data()), characters.size() }); }
+    ALWAYS_INLINE static Ref<StringImpl> create(std::span<const char> characters) { return create(byteCast<LChar>(characters)); }
     WTF_EXPORT_PRIVATE static Ref<StringImpl> create8BitIfPossible(std::span<const UChar>);
 
     // Not using create() naming to encourage developers to call create(ASCIILiteral) when they have a string literal.
@@ -260,7 +262,7 @@ public:
 
     static Ref<StringImpl> createWithoutCopying(std::span<const UChar> characters) { return characters.empty() ?  Ref { *empty() } : createWithoutCopyingNonEmpty(characters); }
     static Ref<StringImpl> createWithoutCopying(std::span<const LChar> characters) { return characters.empty() ? Ref { *empty() } : createWithoutCopyingNonEmpty(characters); }
-    ALWAYS_INLINE static Ref<StringImpl> createWithoutCopying(std::span<const char> characters) { return createWithoutCopying({ reinterpret_cast<const LChar*>(characters.data()), characters.size() }); }
+    ALWAYS_INLINE static Ref<StringImpl> createWithoutCopying(std::span<const char> characters) { return createWithoutCopying(byteCast<LChar>(characters)); }
 
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createUninitialized(size_t length, LChar*&);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createUninitialized(size_t length, UChar*&);
@@ -271,9 +273,8 @@ public:
 
     static Ref<StringImpl> createStaticStringImpl(std::span<const char> characters)
     {
-        std::span lcharSpan { reinterpret_cast<const LChar*>(characters.data()), characters.size() };
-        ASSERT(charactersAreAllASCII(lcharSpan));
-        return createStaticStringImpl(lcharSpan);
+        ASSERT(charactersAreAllASCII(byteCast<LChar>(characters)));
+        return createStaticStringImpl(byteCast<LChar>(characters));
     }
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImpl(std::span<const LChar>);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImpl(std::span<const UChar>);
@@ -286,12 +287,12 @@ public:
     static Expected<Ref<StringImpl>, UTF8ConversionError> tryReallocate(Ref<StringImpl>&& originalString, unsigned length, LChar*& data);
     static Expected<Ref<StringImpl>, UTF8ConversionError> tryReallocate(Ref<StringImpl>&& originalString, unsigned length, UChar*& data);
 
-    static unsigned flagsOffset() { return OBJECT_OFFSETOF(StringImpl, m_hashAndFlags); }
+    static constexpr unsigned flagsOffset() { return OBJECT_OFFSETOF(StringImpl, m_hashAndFlags); }
     static constexpr unsigned flagIs8Bit() { return s_hashFlag8BitBuffer; }
     static constexpr unsigned flagIsAtom() { return s_hashFlagStringKindIsAtom; }
     static constexpr unsigned flagIsSymbol() { return s_hashFlagStringKindIsSymbol; }
     static constexpr unsigned maskStringKind() { return s_hashMaskStringKind; }
-    static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
+    static constexpr unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
 
     template<typename CharacterType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
     static Ref<StringImpl> adopt(Vector<CharacterType, inlineCapacity, OverflowHandler, minCapacity, Malloc>&&);
@@ -300,7 +301,7 @@ public:
     WTF_EXPORT_PRIVATE static Ref<StringImpl> adopt(StringBuffer<LChar>&&);
 
     unsigned length() const { return m_length; }
-    static ptrdiff_t lengthMemoryOffset() { return OBJECT_OFFSETOF(StringImpl, m_length); }
+    static constexpr ptrdiff_t lengthMemoryOffset() { return OBJECT_OFFSETOF(StringImpl, m_length); }
     bool isEmpty() const { return !m_length; }
 
     bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
@@ -324,15 +325,15 @@ public:
 
     static WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> utf8ForCharacters(std::span<const LChar> characters);
     static WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> utf8ForCharacters(std::span<const UChar> characters, ConversionMode = LenientConversion);
-    static WTF_EXPORT_PRIVATE Expected<size_t, UTF8ConversionError> utf8ForCharactersIntoBuffer(std::span<const UChar> characters, ConversionMode, Vector<char, 1024>&);
+    static WTF_EXPORT_PRIVATE Expected<size_t, UTF8ConversionError> utf8ForCharactersIntoBuffer(std::span<const UChar> characters, ConversionMode, Vector<char8_t, 1024>&);
 
     template<typename Func>
-    static Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8ConversionError> tryGetUTF8ForCharacters(const Func&, std::span<const LChar> characters);
+    static Expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8ForCharacters(const Func&, std::span<const LChar> characters);
     template<typename Func>
-    static Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8ConversionError> tryGetUTF8ForCharacters(const Func&, std::span<const UChar> characters, ConversionMode = LenientConversion);
+    static Expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8ForCharacters(const Func&, std::span<const UChar> characters, ConversionMode = LenientConversion);
 
     template<typename Func>
-    Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8ConversionError> tryGetUTF8(const Func&, ConversionMode = LenientConversion) const;
+    Expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(const Func&, ConversionMode = LenientConversion) const;
     WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUTF8(ConversionMode = LenientConversion) const;
     WTF_EXPORT_PRIVATE CString utf8(ConversionMode = LenientConversion) const;
 
@@ -493,7 +494,7 @@ public:
 
     WTF_EXPORT_PRIVATE Ref<StringImpl> replace(UChar, UChar);
     WTF_EXPORT_PRIVATE Ref<StringImpl> replace(UChar, StringView);
-    ALWAYS_INLINE Ref<StringImpl> replace(UChar pattern, std::span<const char> replacement) { return replace(pattern, { reinterpret_cast<const LChar*>(replacement.data()), replacement.size() }); }
+    ALWAYS_INLINE Ref<StringImpl> replace(UChar pattern, std::span<const char> replacement) { return replace(pattern, byteCast<LChar>(replacement)); }
     WTF_EXPORT_PRIVATE Ref<StringImpl> replace(UChar, std::span<const LChar>);
     Ref<StringImpl> replace(UChar, std::span<const UChar>);
     WTF_EXPORT_PRIVATE Ref<StringImpl> replace(StringView, StringView);
@@ -515,7 +516,7 @@ public:
 
     BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
 
-    template<typename T> static size_t headerSize() { return tailOffset<T>(); }
+    template<typename T> static constexpr size_t headerSize() { return tailOffset<T>(); }
     
 protected:
     ~StringImpl();
@@ -531,7 +532,7 @@ protected:
 private:
     template<typename> static size_t allocationSize(Checked<size_t> tailElementCount);
     template<typename> static size_t maxInternalLength();
-    template<typename> static size_t tailOffset();
+    template<typename> static constexpr size_t tailOffset();
 
     WTF_EXPORT_PRIVATE size_t find(std::span<const LChar>, size_t start);
     WTF_EXPORT_PRIVATE size_t reverseFind(std::span<const LChar>, size_t start);
@@ -605,13 +606,13 @@ template<> struct ValueCheck<StringImpl*> {
 
 WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const StringImpl*);
 WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const LChar*);
-inline bool equal(const StringImpl* a, const char* b) { return equal(a, reinterpret_cast<const LChar*>(b)); }
+inline bool equal(const StringImpl* a, const char* b) { return equal(a, byteCast<LChar>(b)); }
 WTF_EXPORT_PRIVATE bool equal(const StringImpl*, std::span<const LChar>);
 WTF_EXPORT_PRIVATE bool equal(const StringImpl*, std::span<const UChar>);
 ALWAYS_INLINE bool equal(const StringImpl* a, ASCIILiteral b) { return equal(a, b.span8()); }
-inline bool equal(const StringImpl* a, std::span<const char> b) { return equal(a, { reinterpret_cast<const LChar*>(b.data()), b.size() }); }
+inline bool equal(const StringImpl* a, std::span<const char> b) { return equal(a, byteCast<LChar>(b)); }
 inline bool equal(const LChar* a, StringImpl* b) { return equal(b, a); }
-inline bool equal(const char* a, StringImpl* b) { return equal(b, reinterpret_cast<const LChar*>(a)); }
+inline bool equal(const char* a, StringImpl* b) { return equal(b, byteCast<LChar>(a)); }
 WTF_EXPORT_PRIVATE bool equal(const StringImpl& a, const StringImpl& b);
 
 WTF_EXPORT_PRIVATE bool equalIgnoringNullity(StringImpl*, StringImpl*);
@@ -741,7 +742,7 @@ inline size_t StringImpl::find(LChar character, size_t start)
 
 ALWAYS_INLINE size_t StringImpl::find(char character, size_t start)
 {
-    return find(static_cast<LChar>(character), start);
+    return find(byteCast<LChar>(character), start);
 }
 
 inline size_t StringImpl::find(UChar character, size_t start)
@@ -1211,7 +1212,7 @@ inline size_t StringImpl::maxInternalLength()
     return std::min(static_cast<size_t>(MaxLength), (std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(CharacterType));
 }
 
-template<typename T> inline size_t StringImpl::tailOffset()
+template<typename T> constexpr size_t StringImpl::tailOffset()
 {
     return roundUpToMultipleOf<alignof(T)>(offsetof(StringImpl, m_hashAndFlags) + sizeof(StringImpl::m_hashAndFlags));
 }
@@ -1382,20 +1383,24 @@ inline Ref<StringImpl> StringImpl::createByReplacingInCharacters(std::span<const
 }
 
 template<typename Func>
-inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8ConversionError> StringImpl::tryGetUTF8(const Func& function, ConversionMode mode) const
+inline Expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> StringImpl::tryGetUTF8(const Func& function, ConversionMode mode) const
 {
     if (is8Bit())
         return tryGetUTF8ForCharacters(function, span8());
     return tryGetUTF8ForCharacters(function, span16(), mode);
 }
 
-template<typename Func>
-inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8ConversionError> StringImpl::tryGetUTF8ForCharacters(const Func& function, std::span<const LChar> characters)
+static inline std::span<const char8_t> nonNullEmptyUTF8Span()
 {
-    if (characters.empty()) {
-        constexpr const char* emptyString = "";
-        return function(std::span(emptyString, emptyString));
-    }
+    static constexpr char8_t empty = 0;
+    return { &empty, 0 };
+}
+
+template<typename Func>
+inline Expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> StringImpl::tryGetUTF8ForCharacters(const Func& function, std::span<const LChar> characters)
+{
+    if (characters.empty())
+        return function(nonNullEmptyUTF8Span());
 
     // Allocate a buffer big enough to hold all the characters
     // (an individual LChar can only expand to 2 UTF-8 bytes).
@@ -1418,33 +1423,32 @@ inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8Conversio
         memcpy(buffer.data(), characters.data(), prefixLength);
         auto result = Unicode::convert(characters.subspan(prefixLength), buffer.mutableSpan().subspan(prefixLength));
         ASSERT(result.code == Unicode::ConversionResultCode::Success); // 2x is sufficient for any conversion from Latin1
-        return function(std::span(bitwise_cast<const char*>(buffer.data()), prefixLength + result.buffer.size()));
+        return function(buffer.span().first(prefixLength + result.buffer.size()));
     }
-    return function(std::span(bitwise_cast<const char*>(characters.data()), characters.size()));
+    return function(byteCast<char8_t>(characters));
 #else
     Vector<char8_t, 1024> buffer(characters.size() * 2);
     auto result = Unicode::convert(characters, buffer.mutableSpan());
     ASSERT(result.code == Unicode::ConversionResultCode::Success); // 2x is sufficient for any conversion from Latin1
-    return function(std::span(bitwise_cast<const char*>(result.buffer.data()), result.buffer.size()));
+    return function(result.buffer);
 #endif
 }
 
 template<typename Func>
-inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8ConversionError> StringImpl::tryGetUTF8ForCharacters(const Func& function, std::span<const UChar> characters, ConversionMode mode)
+inline Expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> StringImpl::tryGetUTF8ForCharacters(const Func& function, std::span<const UChar> characters, ConversionMode mode)
 {
-    if (characters.empty()) {
-        constexpr const char* emptyString = "";
-        return function(std::span(emptyString, emptyString));
-    }
+    if (characters.empty())
+        return function(nonNullEmptyUTF8Span());
+
     if (characters.size() > MaxLength / 3)
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
 
     size_t bufferSize = characters.size() * 3;
-    Vector<char, 1024> bufferVector(bufferSize);
+    Vector<char8_t, 1024> bufferVector(bufferSize);
     auto convertedSize = utf8ForCharactersIntoBuffer(characters, mode, bufferVector);
     if (!convertedSize)
         return makeUnexpected(convertedSize.error());
-    return function(std::span(bufferVector.data(), *convertedSize));
+    return function(bufferVector.span().first(*convertedSize));
 }
 
 } // namespace WTF

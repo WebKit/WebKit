@@ -11,6 +11,7 @@
 #define LIBANGLE_FRAME_CAPTURE_H_
 
 #include "common/PackedEnums.h"
+#include "common/SimpleMutex.h"
 #include "common/frame_capture_utils.h"
 #include "common/system_utils.h"
 #include "libANGLE/Context.h"
@@ -557,7 +558,7 @@ class CoherentBufferTracker final : angle::NonCopyable
     PageFaultHandlerRangeType handleWrite(uintptr_t address);
 
   public:
-    std::mutex mMutex;
+    angle::SimpleMutex mMutex;
     HashMap<GLuint, std::shared_ptr<CoherentBuffer>> mBuffers;
 
   private:
@@ -709,7 +710,7 @@ class FrameCaptureShared final : angle::NonCopyable
     void *maybeGetShadowMemoryPointer(gl::Buffer *buffer, GLsizeiptr length, GLbitfield access);
     void determineMemoryProtectionSupport(gl::Context *context);
 
-    std::mutex &getFrameCaptureMutex() { return mFrameCaptureMutex; }
+    angle::SimpleMutex &getFrameCaptureMutex() { return mFrameCaptureMutex; }
 
     void setDeferredLinkProgram(gl::ShaderProgramID programID)
     {
@@ -796,7 +797,7 @@ class FrameCaptureShared final : angle::NonCopyable
     std::string mValidationExpression;
     PackedEnumMap<ResourceIDType, uint32_t> mMaxAccessedResourceIDs;
     CoherentBufferTracker mCoherentBufferTracker;
-    std::mutex mFrameCaptureMutex;
+    angle::SimpleMutex mFrameCaptureMutex;
 
     ResourceTracker mResourceTracker;
     ReplayWriter mReplayWriter;
@@ -839,7 +840,7 @@ void CaptureGLCallToFrameCapture(CaptureFuncT captureFunc,
     // EGL calls are protected by the global context mutex but only a subset of GL calls
     // are so protected. Ensure FrameCaptureShared access thread safety by using a
     // frame-capture only mutex.
-    std::lock_guard<std::mutex> lock(frameCaptureShared->getFrameCaptureMutex());
+    std::lock_guard<angle::SimpleMutex> lock(frameCaptureShared->getFrameCaptureMutex());
 
     if (!frameCaptureShared->isCapturing())
     {

@@ -46,6 +46,9 @@ class BandwidthQualityScalerUsageHandlerInterface {
 // stream down or up).
 class BandwidthQualityScaler {
  public:
+  static constexpr TimeDelta kBitrateStateUpdateInterval =
+      TimeDelta::Seconds(5);
+
   explicit BandwidthQualityScaler(
       BandwidthQualityScalerUsageHandlerInterface* handler);
   virtual ~BandwidthQualityScaler();
@@ -61,8 +64,6 @@ class BandwidthQualityScaler {
   void SetResolutionBitrateLimits(
       const std::vector<VideoEncoder::ResolutionBitrateLimits>&
           resolution_bitrate_limits);
-
-  const TimeDelta kBitrateStateUpdateInterval;
 
  private:
   enum class CheckBitrateResult {

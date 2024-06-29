@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FloatRect.h"
 #include "IntSize.h"
 #include <wtf/RetainPtr.h>
 

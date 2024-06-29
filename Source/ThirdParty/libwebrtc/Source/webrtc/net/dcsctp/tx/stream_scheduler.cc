@@ -14,7 +14,6 @@
 #include "absl/algorithm/container.h"
 #include "absl/types/optional.h"
 #include "api/array_view.h"
-#include "net/dcsctp/common/str_join.h"
 #include "net/dcsctp/packet/data.h"
 #include "net/dcsctp/public/dcsctp_message.h"
 #include "net/dcsctp/public/dcsctp_socket.h"
@@ -22,6 +21,7 @@
 #include "net/dcsctp/tx/send_queue.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/strings/str_join.h"
 
 namespace dcsctp {
 
@@ -31,7 +31,7 @@ void StreamScheduler::Stream::SetPriority(StreamPriority priority) {
 }
 
 absl::optional<SendQueue::DataToSend> StreamScheduler::Produce(
-    TimeMs now,
+    webrtc::Timestamp now,
     size_t max_size) {
   // For non-interleaved streams, avoid rescheduling while still sending a
   // message as it needs to be sent in full. For interleaved messaging,
@@ -127,7 +127,7 @@ StreamScheduler::VirtualTime StreamScheduler::Stream::CalculateFinishTime(
 }
 
 absl::optional<SendQueue::DataToSend> StreamScheduler::Stream::Produce(
-    TimeMs now,
+    webrtc::Timestamp now,
     size_t max_size) {
   absl::optional<SendQueue::DataToSend> data = producer_.Produce(now, max_size);
 

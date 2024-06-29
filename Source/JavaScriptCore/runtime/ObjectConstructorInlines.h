@@ -254,6 +254,11 @@ ALWAYS_INLINE JSObject* tryCreateObjectViaCloning(VM& vm, JSGlobalObject* global
         return nullptr;
     }
 
+    if (sourceStructure->storedPrototype() != globalObject->objectPrototype()) {
+        dataLogLnIf(verbose, "__proto__ is different");
+        return nullptr;
+    }
+
     dataLogLnIf(verbose, "Use fast cloning!");
 
     DeferGC deferGC(vm);

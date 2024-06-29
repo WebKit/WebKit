@@ -193,7 +193,7 @@ TEST(WKWebExtensionAPIStorage, SetAccessLevelTrustedAndUntrustedContexts)
 TEST(WKWebExtensionAPIStorage, Set)
 {
     auto *backgroundScript = Util::constructScript(@[
-        @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'], 'null': null }",
+        @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'], 'null': null, 'undefined': undefined }",
         @"await browser?.storage?.local?.set(data)",
 
         @"var result = await browser?.storage?.local?.get()",

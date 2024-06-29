@@ -22,12 +22,9 @@
 
 #if USE(GSTREAMER)
 
-#include "GStreamerCodecUtilities.h"
 #include "GStreamerCommon.h"
 #include "GStreamerElementHarness.h"
 #include "GStreamerRegistryScanner.h"
-#include "HEVCUtilities.h"
-#include "VP9Utilities.h"
 #include "VideoFrameGStreamer.h"
 #include <wtf/WorkQueue.h>
 
@@ -224,7 +221,7 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
 
         static std::once_flag onceFlag;
         std::call_once(onceFlag, [this] {
-            m_harness->dumpGraph("video-decoder");
+            m_harness->dumpGraph("video-decoder"_s);
         });
 
         if (m_presentationSize.isEmpty())

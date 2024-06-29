@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: GPUPipelineError: vertexScalarComponents > maxVertexShaderOutputComponents
+CONSOLE MESSAGE: Unhandled Promise Rejection: GPUPipelineError: vertexScalarComponents > maxVertexShaderOutputComponents
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600 [color=#99DDBBCC] [bgcolor=#102030E0]
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,4) size 68x17
+        text run at (0,4) width 68: "\x{E5EC}\x{48B4}\x{D13}\x{19A2}\x{930B}"
+      RenderText {#text} at (67,4) size 136x17
+        text run at (67,4) width 136: "\x{ADE0}\x{D83E}\x{DF0E}\x{7BDB}\x{A35}\x{FE32}\x{8F9B}\x{9B3D}\x{D83F}\x{DFE5}\x{2E5D}\x{4E2A}\x{D22}"
+      RenderText {#text} at (202,4) size 12x17
+        text run at (202,4) width 12: "\x{5AD}\x{EF97}"

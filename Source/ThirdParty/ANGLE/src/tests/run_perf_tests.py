@@ -310,8 +310,24 @@ def _skipped_or_glmark2(test, test_status):
     return False
 
 
-def _maybe_log_system_temps():
-    if logging.getLogger().isEnabledFor(logging.DEBUG) and sys.platform == 'linux':
+def _sleep_until_temps_below(limit_temp):
+    while True:
+        max_temp = max(android_helper.GetTemps())
+        if max_temp < limit_temp:
+            break
+        logging.info('Waiting for device temps below %.1f, curently %.1f', limit_temp, max_temp)
+        time.sleep(10)
+
+
+def _maybe_throttle_or_log_temps(custom_throttling_temp):
+    is_debug = logging.getLogger().isEnabledFor(logging.DEBUG)
+
+    if angle_test_util.IsAndroid():
+        if custom_throttling_temp:
+            _sleep_until_temps_below(custom_throttling_temp)
+        elif is_debug:
+            android_helper.GetTemps()  # calls log.debug
+    elif sys.platform == 'linux' and is_debug:
         out = subprocess.check_output('cat /sys/class/hwmon/hwmon*/temp*_input', shell=True)
         logging.debug('hwmon temps: %s',
                       ','.join([str(int(n) // 1000) for n in out.decode().split('\n') if n]))
@@ -362,7 +378,7 @@ def _run_tests(tests, args, extra_flags, env):
         test_histogram_set = histogram_set.HistogramSet()
         for sample in range(args.samples_per_test):
             try:
-                _maybe_log_system_temps()
+                _maybe_throttle_or_log_temps(args.custom_throttling_temp)
                 test_status, sample_metrics, sample_histogram = _run_perf(
                     args, common_args, env, steps_per_trial)
             except RuntimeError as e:
@@ -547,6 +563,10 @@ def main():
         '--split-shard-samples',
         help='Attempt to mitigate variance between machines by splitting samples between shards.',
         action='store_true')
+    parser.add_argument(
+        '--custom-throttling-temp',
+        help='Android: custom thermal throttling with limit set to this temperature (off by default)',
+        type=float)
 
     args, extra_flags = parser.parse_known_args()
 

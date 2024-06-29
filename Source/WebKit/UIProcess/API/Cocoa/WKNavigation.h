@@ -33,6 +33,7 @@
  also passed to the navigation delegate methods, to uniquely identify a webpage
  load from start to finish.
  */
+WK_SWIFT_UI_ACTOR
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKNavigation : NSObject
 

@@ -33,6 +33,7 @@
 #include "NotImplemented.h"
 #include "PixelBuffer.h"
 #include "PlatformDisplay.h"
+#include "SharedBuffer.h"
 #include <skia/core/SkData.h>
 #include <skia/core/SkImage.h>
 

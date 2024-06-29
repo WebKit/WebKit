@@ -138,6 +138,8 @@ WTF_EXPORT_PRIVATE void fastEnableMiniMode();
 
 WTF_EXPORT_PRIVATE void fastDisableScavenger();
 
+WTF_EXPORT_PRIVATE void forceEnablePGM();
+
 class ForbidMallocUseForCurrentThreadScope {
 public:
 #if ASSERT_ENABLED
@@ -406,14 +408,10 @@ using WTF::tryFastCompactMalloc;
 using WTF::tryFastCompactZeroedMalloc;
 using WTF::fastCompactAlignedMalloc;
 
-#if COMPILER(GCC_COMPATIBLE) && OS(DARWIN)
+#if OS(DARWIN)
 #define WTF_PRIVATE_INLINE __private_extern__ inline __attribute__((always_inline))
-#elif COMPILER(GCC_COMPATIBLE)
-#define WTF_PRIVATE_INLINE inline __attribute__((always_inline))
-#elif COMPILER(MSVC)
-#define WTF_PRIVATE_INLINE __forceinline
 #else
-#define WTF_PRIVATE_INLINE inline
+#define WTF_PRIVATE_INLINE inline __attribute__((always_inline))
 #endif
 
 #define WTF_MAKE_FAST_ALLOCATED_IMPL \

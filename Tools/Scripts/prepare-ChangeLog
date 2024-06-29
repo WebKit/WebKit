@@ -72,7 +72,6 @@ sub changeLogNameFromArgs($$);
 sub computeModifiedFunctions($$$);
 sub createPatchCommand($$$$);
 sub decodeEntities($);
-sub determinePropertyChanges($$$);
 sub diffCommand($$$$);
 sub diffFromToString($$$);
 sub extractLineRangeAfterChange($);
@@ -81,7 +80,6 @@ sub fetchBugXMLData($$);
 sub fetchBugDescriptionFromBugXMLData($$$);
 sub fetchRadarURLFromBugXMLData($$);
 sub findChangeLogs($$);
-sub findOriginalFileFromSvn($);
 sub generateFileList(\%$$$\%);
 sub generateFunctionLists($$$$$);
 sub generateNewChangeLogs($$$$$$$$$$$$$$$);
@@ -110,17 +108,14 @@ sub printDiff($$$$);
 sub processPaths(\@);
 sub propertyChangeDescription($);
 sub resolveChangeLogsPath($@);
-sub resolveConflictedChangeLogs($);
 sub reviewerAndDescriptionForGitCommit($$);
 sub statusCommand($$$$);
 sub statusDescription($$$$);
-sub svnUpdateCommand(@);
 sub testListForChangeLog(@);
 
 ### Constant variables.
 # Project time zone for Cupertino, CA, US
 use constant ChangeLogTimeZone => "PST8PDT";
-use constant SVN => "svn";
 use constant GIT => "git";
 use constant SupportedTestExtensions => {map { $_ => 1 } qw(html shtml svg xml xhtml pl php)};
 
@@ -164,7 +159,7 @@ sub main()
                    "update!" => \$updateChangeLogs,
                    "only-files" => \$onlyFiles);
     if (!$parseOptionsResult || $showHelp) {
-        print STDERR basename($0) . " [-b|--bug=<bugid>] [-d|--diff] [-h|--help] [-o|--open] [-g|--git-commit=<committish>] [--git-reviewer=<name>] [svndir1 [svndir2 ...]]\n";
+        print STDERR basename($0) . " [-b|--bug=<bugid>] [-d|--diff] [-h|--help] [-o|--open] [-g|--git-commit=<committish>] [--git-reviewer=<name>] [gitdir1 [gitdir2 ...]]\n";
         print STDERR "  -b|--bug        Fill in the ChangeLog bug information from the given bug.\n";
         print STDERR "  --description   One-line description that matches the bug title.\n";
         print STDERR "  -d|--diff       Spew diff to stdout when running\n";
@@ -176,7 +171,7 @@ sub main()
         print STDERR "  -h|--help       Show this help message\n";
         print STDERR "  --[no-]style    Run check-webkit-style script when done (default: no-style)\n";
         print STDERR "  -o|--open       Open ChangeLogs in an editor when done\n";
-        print STDERR "  --[no-]update   Update ChangeLogs from svn before adding entry (default: update)\n";
+        print STDERR "  --[no-]update   Update ChangeLogs from git before adding entry (default: update)\n";
         print STDERR "  --[no-]write    Write ChangeLogs to disk (otherwise send new entries to stdout) (default: write)\n";
         print STDERR "  --delimiters    When writing to stdout, label and print a \"~\" after each entry\n";
         print STDERR "  --email=        Specify the email address to be used in the patch\n";
@@ -191,7 +186,7 @@ sub main()
 
     die "--git-commit and --git-index are incompatible when not used with --only-files." if ($gitIndex && $gitCommit && !$onlyFiles);
 
-    isSVN() || isGit() || die "Couldn't determine your version control system.";
+    isGit() || die "Couldn't determine your version control system.";
 
     my %paths = processPaths(@ARGV);
 
@@ -232,13 +227,7 @@ sub main()
     }
 
     my ($filesInChangeLog, $prefixes) = findChangeLogs($functionLists, $writeChangeLogs);
-
-    # Get the latest ChangeLog files from svn.
     my $changeLogs = getLatestChangeLogs($prefixes);
-
-    if (@$changeLogs && $updateChangeLogs && isSVN()) {
-        resolveConflictedChangeLogs($changeLogs);
-    }
 
     generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $requiresTests, $functionLists, $bugURL, $bugDescription, $bugRadarURL, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters, $onlyFiles);
 
@@ -263,10 +252,7 @@ sub originalFile($$$$)
     my ($file, $gitCommit, $gitIndex, $mergeBase) = @_;
 
     my $command;
-    if (isSVN()) {
-        my $escapedPathsString = escapeSubversionPath($file);
-        $command = SVN . " cat $escapedPathsString";
-    } elsif (isGit()) {
+    if (isGit()) {
         $command = GIT . " show ";
         if ($gitCommit) {
             $command .= "$gitCommit^";
@@ -595,17 +581,6 @@ sub getLatestChangeLogs($)
     return \@changeLogs;
 }
 
-sub svnUpdateCommand(@)
-{
-    my @changeLogs = shift;
-
-    my @escapedChangeLogPaths = map(escapeSubversionPath($_), @changeLogs);
-    my $escapedChangeLogPathsString = qq(") . join(qq(" "), @escapedChangeLogPaths) . qq(");
-    my $command = SVN . " update $escapedChangeLogPathsString";
-
-    return $command;
-}
-
 sub resolveChangeLogsPath($@)
 {
     my ($resolveChangeLogsPath, @conflictedChangeLogs) = @_;
@@ -615,30 +590,6 @@ sub resolveChangeLogsPath($@)
     my $command = "$resolveChangeLogsPath --no-warnings $escapedConflictedChangeLogsString";
 
     return $command;
-}
-
-sub resolveConflictedChangeLogs($)
-{
-    my ($changeLogs) = @_;
-
-    print STDERR "  Running 'svn update' to update ChangeLog files.\n";
-    open ERRORS, "-|", svnUpdateCommand(@$changeLogs)
-        or die "The svn update of ChangeLog files failed: $!.\n";
-    my @conflictedChangeLogs;
-    while (my $line = <ERRORS>) {
-        print STDERR "    ", $line;
-        push @conflictedChangeLogs, $1 if $line =~ m/^C\s+(.+?)[\r\n]*$/;
-    }
-    close ERRORS;
-
-    return if !@conflictedChangeLogs;
-
-    print STDERR "  Attempting to merge conflicted ChangeLogs.\n";
-    my $resolveChangeLogsPath = File::Spec->catfile(dirname($0), "resolve-ChangeLogs");
-    open RESOLVE, "-|", resolveChangeLogsPath($resolveChangeLogsPath, @conflictedChangeLogs)
-        or die "Could not open resolve-ChangeLogs script: $!.\n";
-    print STDERR "    $_" while <RESOLVE>;
-    close RESOLVE;
 }
 
 sub generateNewChangeLogs($$$$$$$$$$$$$$$)
@@ -2088,7 +2039,6 @@ sub diffFromToString($$$)
 {
     my ($gitCommit, $gitIndex, $mergeBase) = @_;
 
-    return "" if isSVN();
     return $gitCommit if $gitCommit =~ m/.+\.\..+/;
     return "--cached \"$gitCommit^\"" if $gitCommit && $gitIndex;
     return "\"$gitCommit^\" \"$gitCommit\"" if $gitCommit;
@@ -2104,11 +2054,7 @@ sub diffCommand($$$$)
     # The function overlap detection logic in computeModifiedFunctions() assumes that its line
     # ranges were from a unified diff without any context lines.
     my $command;
-    if (isSVN()) {
-        my @escapedPaths = map(escapeSubversionPath($_), @$paths);
-        my $escapedPathsString = qq(") . join(qq(" "), @escapedPaths) . qq(");
-        $command = SVN . " diff --diff-cmd diff -x -U0 $escapedPathsString";
-    } elsif (isGit()) {
+    if (isGit()) {
         my $pathsString = "'" . join("' '", @$paths) . "'"; 
         $command = GIT . " diff --no-ext-diff -U0 " . diffFromToString($gitCommit, $gitIndex, $mergeBase);
         $command .= " -- $pathsString" unless $gitCommit or $mergeBase;
@@ -2122,11 +2068,7 @@ sub statusCommand($$$$)
     my ($paths, $gitCommit, $gitIndex, $mergeBase) = @_;
 
     my $command;
-    if (isSVN()) {
-        my @escapedFiles = map(escapeSubversionPath($_), keys %$paths);
-        my $escapedFilesString = qq(") . join(qq(" "), @escapedFiles) . qq(");
-        $command = SVN . " stat $escapedFilesString";
-    } elsif (isGit()) {
+    if (isGit()) {
         my $filesString = '"' . join('" "', keys %$paths) . '"';
         $command = GIT . " diff -r --name-status -M -C " . diffFromToString($gitCommit, $gitIndex, $mergeBase);
         $command .= " -- $filesString" unless $gitCommit;
@@ -2140,32 +2082,7 @@ sub attributeCommand($$$)
     my ($attributeCache, $file, $attr) = @_;
 
     my $result;
-    if (isSVN()) {
-        my $devNull = File::Spec->devnull();
-        my $foundAttribute = 0;
-        my $subPath = ".";
-        my (@directoryParts) = File::Spec->splitdir($file);
-        foreach my $part (@directoryParts) {
-            if ($part eq ".") {
-                next;
-            }
-            $subPath = File::Spec->join($subPath, $part);
-            $subPath =~ s/^\.\///;
-            if ($foundAttribute || exists $attributeCache->{$attr}{$subPath} && $attributeCache->{$attr}{$subPath} eq "1") {
-                $attributeCache->{$attr}{$subPath} = "1";
-                $foundAttribute = 1;
-                next;
-            }
-            my $command = SVN . " propget $attr '$subPath'";
-            my $attrib = $attributeCache->{$attr}{$subPath} || `$command 2> $devNull`;
-            chomp $attrib;
-            if ($attrib eq "1") {
-                $foundAttribute = 1;
-            }
-            $attributeCache->{$attr}{$subPath} = $attrib || "0";
-        }
-        $result = $attributeCache->{$attr}{$file};
-    } elsif (isGit()) {
+    if (isGit()) {
         my $command = GIT . " check-attr $attr -- '$file'";
         $result = `$command`;
         chomp $result;
@@ -2187,92 +2104,6 @@ sub createPatchCommand($$$$)
     }
 
     return $command;
-}
-
-sub findOriginalFileFromSvn($)
-{
-    my ($file) = @_;
-    my $baseUrl;
-    open INFO, SVN . " info . |" or die;
-    while (<INFO>) {
-        if (/^URL: (.+?)[\r\n]*$/) {
-            $baseUrl = $1;
-        }
-    }
-    close INFO;
-    my $sourceFile;
-    my $escapedFile = escapeSubversionPath($file);
-    open INFO, SVN . " info '$escapedFile' |" or die;
-    while (<INFO>) {
-        if (/^Copied From URL: (.+?)[\r\n]*$/) {
-            $sourceFile = File::Spec->abs2rel($1, $baseUrl);
-        }
-    }
-    close INFO;
-    return $sourceFile;
-}
-
-sub determinePropertyChanges($$$)
-{
-    my ($file, $isAdd, $original) = @_;
-
-    my $escapedFile = escapeSubversionPath($file);
-    my %changes;
-    if ($isAdd) {
-        my %addedProperties;
-        my %removedProperties;
-        open PROPLIST, SVN . " proplist '$escapedFile' |" or die;
-        while (<PROPLIST>) {
-            $addedProperties{$1} = 1 if /^  (.+?)[\r\n]*$/ && $1 ne 'svn:mergeinfo';
-        }
-        close PROPLIST;
-        if ($original) {
-            my $escapedOriginal = escapeSubversionPath($original);
-            open PROPLIST, SVN . " proplist '$escapedOriginal' |" or die;
-            while (<PROPLIST>) {
-                next unless /^  (.+?)[\r\n]*$/;
-                my $property = $1;
-                if (exists $addedProperties{$property}) {
-                    delete $addedProperties{$1};
-                } else {
-                    $removedProperties{$1} = 1;
-                }
-            }
-        }
-        $changes{"A"} = [sort keys %addedProperties] if %addedProperties;
-        $changes{"D"} = [sort keys %removedProperties] if %removedProperties;
-    } else {
-        open DIFF, SVN . " diff '$escapedFile' |" or die;
-        while (<DIFF>) {
-            if (/^Property changes on:/) {
-                while (<DIFF>) {
-                    my $operation;
-                    my $property;
-                    if (/^Added: (\S*)/) {
-                        $operation = "A";
-                        $property = $1;
-                    } elsif (/^Modified: (\S*)/) {
-                        $operation = "M";
-                        $property = $1;
-                    } elsif (/^Deleted: (\S*)/) {
-                        $operation = "D";
-                        $property = $1;
-                    } elsif (/^Name: (\S*)/) {
-                        # Older versions of svn just say "Name" instead of the type
-                        # of property change.
-                        $operation = "C";
-                        $property = $1;
-                    }
-                    if ($operation) {
-                        $changes{$operation} = [] unless exists $changes{$operation};
-                        push @{$changes{$operation}}, $property;
-                    }
-                }
-            }
-        }
-        close DIFF;
-    }
-    return \%changes;
 }
 
 sub pluralizeAndList($$@)
@@ -2302,28 +2133,7 @@ sub generateFileList(\%$$$\%)
         my $original;
         my $file;
 
-        if (isSVN()) {
-            my $matches;
-            if (isSVNVersion16OrNewer()) {
-                $matches = /^([ ACDMR])([ CM]).{5} (.+?)[\r\n]*$/;
-                $status = $1;
-                $propertyStatus = $2;
-                $file = $3;
-            } else {
-                $matches = /^([ ACDMR])([ CM]).{4} (.+?)[\r\n]*$/;
-                $status = $1;
-                $propertyStatus = $2;
-                $file = $3;
-            }
-            if ($matches) {
-                $file = normalizePath($file);
-                $original = findOriginalFileFromSvn($file) if substr($_, 3, 1) eq "+";
-                my $isAdd = isAddedStatus($status);
-                $propertyChanges = determinePropertyChanges($file, $isAdd, $original) if isModifiedStatus($propertyStatus) || $isAdd;
-            } else {
-                print;  # error output from svn stat
-            }
-        } elsif (isGit()) {
+        if (isGit()) {
             if (/^([ADM])\t(.+)$/) {
                 $status = $1;
                 $propertyStatus = " ";  # git doesn't have properties
@@ -2409,16 +2219,11 @@ sub isConflictStatus($$$)
 {
     my ($status, $gitCommit, $gitIndex) = @_;
 
-    my %svn = (
-        "C" => 1,
-    );
-
     my %git = (
         "U" => 1,
     );
 
     return 0 if ($gitCommit || $gitIndex); # an existing commit or staged change cannot have conflicts
-    return $svn{$status} if isSVN();
     return $git{$status} if isGit();
 }
 
@@ -2428,23 +2233,18 @@ sub statusDescription($$$$)
 
     my $propertyDescription = defined $propertyChanges ? propertyChangeDescription($propertyChanges) : "";
 
-    my %svn = (
-        "A" => defined $original ? sprintf(" Copied from \%s.", $original) : " Added.",
+    my %git = (
+        "A" => " Added.",
         "D" => " Removed.",
         "M" => "",
-        "R" => defined $original ? sprintf(" Replaced with \%s.", $original) : " Replaced.",
         " " => "",
     );
-
-    my %git = %svn;
-    $git{"A"} = " Added.";
     if (defined $original) {
         $git{"C"} = sprintf(" Copied from \%s.", $original);
         $git{"R"} = sprintf(" Renamed from \%s.", $original);
     }
 
     my $description;
-    $description = $svn{$status} if isSVN() && exists $svn{$status};
     $description = $git{$status} if isGit() && exists $git{$status};
     return unless defined $description;
 

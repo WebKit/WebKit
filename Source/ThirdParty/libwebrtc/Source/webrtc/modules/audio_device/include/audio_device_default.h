@@ -11,7 +11,7 @@
 #ifndef MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_DEFAULT_H_
 #define MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_DEFAULT_H_
 
-#include "modules/audio_device/include/audio_device.h"
+#include "api/audio/audio_device.h"
 
 namespace webrtc {
 namespace webrtc_impl {

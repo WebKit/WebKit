@@ -1,8 +1,11 @@
 CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
 PASS outerHTML with html assigned via policy (successful HTML transformation).
+PASS `outerHTML = TrustedHTML` throws NoModificationAllowedError when parent is a document.
 PASS `outerHTML = string` throws.
+PASS `outerHTML = string` throws TypeError even when parent is a document.
 PASS `outerHTML = null` throws.
 PASS `outerHTML = string` assigned via default policy (successful HTML transformation).
 PASS `outerHTML = null` assigned via default policy does not throw

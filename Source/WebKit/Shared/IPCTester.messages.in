@@ -40,6 +40,7 @@ messages -> IPCTester NotRefCounted {
     SyncPingEmptyReply(uint32_t value) -> () Synchronous
 
     SendAsyncMessageToReceiver(uint32_t arg0)
+    AsyncOptionalExceptionData(bool sendEngaged) -> (std::optional<WebCore::ExceptionData> exceptionData, String other)
 }
 
 #endif

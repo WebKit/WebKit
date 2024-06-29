@@ -541,13 +541,6 @@ void Chrome::dispatchViewportPropertiesDidChange(const ViewportArguments& argume
     m_client->dispatchViewportPropertiesDidChange(arguments);
 }
 
-#if ENABLE(APP_HIGHLIGHTS)
-void Chrome::storeAppHighlight(AppHighlight&& highlight) const
-{
-    m_client->storeAppHighlight(WTFMove(highlight));
-}
-#endif
-
 void Chrome::setCursor(const Cursor& cursor)
 {
     m_client->setCursor(cursor);
@@ -558,7 +551,7 @@ void Chrome::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
     m_client->setCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves);
 }
 
-RefPtr<ImageBuffer> Chrome::createImageBuffer(const FloatSize& size, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, OptionSet<ImageBufferOptions> options) const
+RefPtr<ImageBuffer> Chrome::createImageBuffer(const FloatSize& size, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat, OptionSet<ImageBufferOptions> options) const
 {
     return m_client->createImageBuffer(size, purpose, resolutionScale, colorSpace, pixelFormat, options);
 }

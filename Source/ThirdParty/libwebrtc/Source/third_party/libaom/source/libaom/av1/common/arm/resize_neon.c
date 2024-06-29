@@ -16,6 +16,7 @@
 #include "aom_dsp/arm/transpose_neon.h"
 #include "av1/common/resize.h"
 #include "config/av1_rtcd.h"
+#include "config/aom_dsp_rtcd.h"
 #include "config/aom_scale_rtcd.h"
 
 static INLINE int16x4_t convolve8_4(const int16x4_t s0, const int16x4_t s1,
@@ -929,7 +930,7 @@ static INLINE void scaledconvolve_horiz_w4(
           tt = convolve8_4(t[0], t[1], t[2], t[3], t[4], t[5], t[6], t[7],
                            filters);
           d = vqrshrun_n_s16(vcombine_s16(tt, tt), 7);
-          store_u8_4x1(&temp[4 * z], d, 0);
+          store_u8_4x1(&temp[4 * z], d);
         } else {
           int i;
           for (i = 0; i < 4; ++i) {
@@ -942,10 +943,10 @@ static INLINE void scaledconvolve_horiz_w4(
       // transpose the 4x4 filters values back to dst
       {
         const uint8x8x4_t d4 = vld4_u8(temp);
-        store_u8_4x1(&dst[x + 0 * dst_stride], d4.val[0], 0);
-        store_u8_4x1(&dst[x + 1 * dst_stride], d4.val[1], 0);
-        store_u8_4x1(&dst[x + 2 * dst_stride], d4.val[2], 0);
-        store_u8_4x1(&dst[x + 3 * dst_stride], d4.val[3], 0);
+        store_u8_4x1(&dst[x + 0 * dst_stride], d4.val[0]);
+        store_u8_4x1(&dst[x + 1 * dst_stride], d4.val[1]);
+        store_u8_4x1(&dst[x + 2 * dst_stride], d4.val[2]);
+        store_u8_4x1(&dst[x + 3 * dst_stride], d4.val[3]);
       }
       x += 4;
     } while (x < w);
@@ -1040,7 +1041,7 @@ static INLINE void scaledconvolve_vert_w4(
 
       tt = convolve8_4(t[0], t[1], t[2], t[3], t[4], t[5], t[6], t[7], filters);
       d = vqrshrun_n_s16(vcombine_s16(tt, tt), 7);
-      store_u8_4x1(dst, d, 0);
+      store_u8_4x1(dst, d);
     } else {
       memcpy(dst, &src_y[3 * src_stride], w);
     }

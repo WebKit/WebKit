@@ -57,16 +57,7 @@ Screen::~Screen() = default;
 
 static bool fingerprintingProtectionsEnabled(const LocalFrame& frame)
 {
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.mainFrame());
-    if (!localFrame)
-        return false;
-
-    RefPtr mainDocument = localFrame->document();
-    if (!mainDocument)
-        return false;
-
-    RefPtr loader = mainDocument->loader();
-    return loader && loader->fingerprintingProtectionsEnabled();
+    return frame.mainFrame().advancedPrivacyProtections().contains(AdvancedPrivacyProtections::FingerprintingProtections);
 }
 
 int Screen::height() const

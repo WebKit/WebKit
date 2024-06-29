@@ -276,7 +276,7 @@ NativeWindowFactory::NativeWindowFactory(EventState *eventState, uint32_t preRot
 eglu::NativeWindow *NativeWindowFactory::createWindow(eglu::NativeDisplay *nativeDisplay,
                                                       const eglu::WindowParams &params) const
 {
-    DE_ASSERT(DE_FALSE);
+    DE_ASSERT(false);
     return nullptr;
 }
 
@@ -334,7 +334,7 @@ void NativeWindow::setVisibility(eglu::WindowParams::Visibility visibility)
             break;
 
         default:
-            DE_ASSERT(DE_FALSE);
+            DE_ASSERT(false);
     }
 }
 

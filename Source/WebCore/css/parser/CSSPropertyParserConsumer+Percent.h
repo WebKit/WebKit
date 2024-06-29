@@ -24,218 +24,30 @@
 
 #pragma once
 
-#include "CSSCalcSymbolTable.h"
-#include "CSSParserToken.h"
-#include "CSSPropertyParserConsumer+Meta.h"
-#include "CSSPropertyParserConsumer+None.h"
-#include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include <optional>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class CSSCalcSymbolTable;
 class CSSPrimitiveValue;
 class CSSParserTokenRange;
 
 namespace CSSPropertyParserHelpers {
 
-// MARK: - Primitive value consumers for callers that know the token type.
-
-// MARK: Percent (raw)
-
-std::optional<PercentRaw> validatedPercentRaw(double, ValueRange);
-
-struct PercentRawKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<PercentRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
-};
-
-struct PercentRawKnownTokenTypePercentConsumer {
-    static constexpr CSSParserTokenType tokenType = PercentageToken;
-    static std::optional<PercentRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
-};
-
-struct PercentRawKnownTokenTypeIdentConsumer {
-    static constexpr CSSParserTokenType tokenType = IdentToken;
-    static std::optional<PercentRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
-};
-
-// MARK: Percent (CSSPrimitiveValue - maintaining calc)
-
-struct PercentCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
-};
-
-struct PercentCSSPrimitiveValueWithCalcWithKnownTokenTypePercentConsumer {
-    static constexpr CSSParserTokenType tokenType = PercentageToken;
-    static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
-};
-
-// MARK: Specialized combination consumers.
-
-// FIXME: Rename to PercentOrNumberRaw to remove cycle.
-// FIXME: It would be good to find a way to synthesize this from an number and percent specific variants.
-struct NumberOrPercentRawKnownTokenTypeIdentConsumer {
-    static constexpr CSSParserTokenType tokenType = IdentToken;
-    static std::optional<NumberOrPercentRaw> consume(CSSParserTokenRange&, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
-};
-
-// MARK: - Consumer definitions.
-
-// MARK: Percent
-
-template<typename T>
-struct PercentRawConsumer {
-    using Transformer = T;
-    using Result = typename Transformer::Result;
-
-    using FunctionToken = PercentRawKnownTokenTypeFunctionConsumer;
-    using PercentageToken = PercentRawKnownTokenTypePercentConsumer;
-};
-
-template<typename Transformer>
-struct PercentRawAllowingSymbolTableIdentConsumer : PercentRawConsumer<Transformer> {
-    using IdentToken = PercentRawKnownTokenTypeIdentConsumer;
-};
-
-struct PercentConsumer {
-    using Result = RefPtr<CSSPrimitiveValue>;
-
-    using FunctionToken = PercentCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer;
-    using PercentageToken = PercentCSSPrimitiveValueWithCalcWithKnownTokenTypePercentConsumer;
-};
-
-// MARK: Percent + None
-
-template<typename Transformer>
-struct PercentOrNoneRawConsumer : PercentRawConsumer<Transformer> {
-    using IdentToken = NoneRawKnownTokenTypeIdentConsumer;
-};
-
-template<typename Transformer>
-struct PercentOrNoneRawAllowingSymbolTableIdentConsumer : PercentRawConsumer<Transformer> {
-    using IdentToken = SameTokenMetaConsumer<
-        Transformer,
-        NoneRawKnownTokenTypeIdentConsumer,
-        PercentRawKnownTokenTypeIdentConsumer
-    >;
-};
-
-// MARK: Percent + Number
-
-// FIXME: Rename to PercentOrNumberRawConsumer
-template<typename T>
-struct NumberOrPercentRawConsumer {
-    using Transformer = T;
-    using Result = typename Transformer::Result;
-
-    using FunctionToken = SameTokenMetaConsumer<
-        Transformer,
-        PercentRawKnownTokenTypeFunctionConsumer,
-        NumberRawKnownTokenTypeFunctionConsumer
-    >;
-    using NumberToken = NumberRawKnownTokenTypeNumberConsumer;
-    using PercentageToken = PercentRawKnownTokenTypePercentConsumer;
-};
-
-// FIXME: Rename to PercentOrNumberRawAllowingSymbolTableIdentConsumer
-template<typename Transformer>
-struct NumberOrPercentRawAllowingSymbolTableIdentConsumer : NumberOrPercentRawConsumer<Transformer> {
-    using IdentToken = NumberOrPercentRawKnownTokenTypeIdentConsumer;
-};
-
-// MARK: Percent + Number + None
-
-// FIXME: Rename to PercentOrNumberOrNoneRawConsumer
-template<typename Transformer>
-struct NumberOrPercentOrNoneRawConsumer : NumberOrPercentRawConsumer<Transformer> {
-    using IdentToken = NoneRawKnownTokenTypeIdentConsumer;
-};
-
-// FIXME: Rename to PercentOrNumberOrNoneRawAllowingSymbolTableIdentConsumer
-template<typename Transformer>
-struct NumberOrPercentOrNoneRawAllowingSymbolTableIdentConsumer : NumberOrPercentRawConsumer<Transformer> {
-    using IdentToken = SameTokenMetaConsumer<
-        Transformer,
-        NoneRawKnownTokenTypeIdentConsumer,
-        NumberOrPercentRawKnownTokenTypeIdentConsumer
-    >;
-};
-
 // MARK: - Consumer functions
 
 // MARK: - Percent
-std::optional<PercentRaw> consumePercentRaw(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange&, ValueRange);
+std::optional<PercentRaw> consumePercentRaw(CSSParserTokenRange&, ValueRange = ValueRange::All);
+RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange&, ValueRange = ValueRange::All);
 
 // MARK: - Percent or Number
-// FIXME: Rename to consumePercentOrNumber.
-RefPtr<CSSPrimitiveValue> consumeNumberOrPercent(CSSParserTokenRange&, ValueRange);
+std::optional<PercentOrNumberRaw> consumePercentOrNumberRaw(CSSParserTokenRange&, ValueRange = ValueRange::All);
+RefPtr<CSSPrimitiveValue> consumePercentOrNumber(CSSParserTokenRange&, ValueRange = ValueRange::All);
 
-// MARK: - Transformable
-
-// FIXME: Rename to consumePercentOrNumberRaw.
-template<typename Transformer = RawIdentityTransformer<NumberOrPercentRaw>>
-auto consumeNumberOrPercentRaw(CSSParserTokenRange& range, ValueRange valueRange = ValueRange::All) -> typename Transformer::Result
-{
-    return consumeMetaConsumer<NumberOrPercentRawConsumer<Transformer>>(range, CSSCalcSymbolTable { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
-}
-
-// FIXME: Rename to consumePercentOrNumberOrNoneRaw.
-template<typename Transformer = RawIdentityTransformer<NumberOrPercentOrNoneRaw>>
-auto consumeNumberOrPercentOrNoneRaw(CSSParserTokenRange& range, ValueRange valueRange = ValueRange::All) -> typename Transformer::Result
-{
-    return consumeMetaConsumer<NumberOrPercentOrNoneRawConsumer<Transformer>>(range, CSSCalcSymbolTable { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
-}
-
-// FIXME: Rename to consumePercentOrNumberOrNoneRawAllowingSymbolTableIdent.
-template<typename Transformer = RawIdentityTransformer<NumberOrPercentOrNoneRaw>>
-auto consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange = ValueRange::All) -> typename Transformer::Result
-{
-    return consumeMetaConsumer<NumberOrPercentOrNoneRawAllowingSymbolTableIdentConsumer<Transformer>>(range, symbolTable, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
-}
-
-template<typename Transformer = RawIdentityTransformer<PercentOrNoneRaw>>
-auto consumePercentOrNoneRaw(CSSParserTokenRange& range, ValueRange valueRange = ValueRange::All) -> typename Transformer::Result
-{
-    return consumeMetaConsumer<PercentOrNoneRawConsumer<Transformer>>(range, CSSCalcSymbolTable { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
-}
-
-template<typename Transformer = RawIdentityTransformer<PercentOrNoneRaw>>
-auto consumePercentOrNoneRawAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange = ValueRange::All) -> typename Transformer::Result
-{
-    return consumeMetaConsumer<PercentOrNoneRawAllowingSymbolTableIdentConsumer<Transformer>>(range, symbolTable, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
-}
-
-// MARK: Consumer Lookup
-
-template<> struct ConsumerLookup<PercentRaw> {
-    std::optional<PercentRaw> operator()(CSSParserTokenRange& args, CSSParserMode)
-    {
-        return consumePercentRaw(args);
-    }
-};
-
-template<> struct ConsumerLookup<NumberOrPercentRaw> {
-    std::optional<NumberOrPercentRaw> operator()(CSSParserTokenRange& args, CSSParserMode)
-    {
-        return consumeNumberOrPercentRaw(args);
-    }
-};
-
-template<> struct ConsumerLookup<NumberOrPercentOrNoneRaw> {
-    std::optional<NumberOrPercentOrNoneRaw> operator()(CSSParserTokenRange& args, CSSParserMode)
-    {
-        return consumeNumberOrPercentOrNoneRaw(args);
-    }
-
-    std::optional<NumberOrPercentOrNoneRaw> operator()(CSSParserTokenRange& args, CSSParserMode, const CSSCalcSymbolTable& symbolTable)
-    {
-        return consumeNumberOrPercentOrNoneRawAllowingSymbolTableIdent(args, symbolTable);
-    }
-};
+// FIXME: Users of this function are likely getting incorrect results when used with calc() producing a percent, as it is not getting divided by 100.
+RefPtr<CSSPrimitiveValue> consumePercentDividedBy100OrNumber(CSSParserTokenRange&, ValueRange = ValueRange::All);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

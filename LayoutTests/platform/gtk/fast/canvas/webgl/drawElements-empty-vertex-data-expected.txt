@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: drawElements: attempt to access out of bounds arrays
-PASS: Unable to draw with invalid vertexAttribArray0

@@ -31,38 +31,20 @@
 #include "JSCInlines.h"
 #include "JSWebAssemblyCompileError.h"
 #include "JSWebAssemblyLinkError.h"
+#include "WasmBinding.h"
 #include "WasmFormat.h"
 #include "WasmModule.h"
 #include "WasmModuleInformation.h"
-#include "WasmToJS.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
 const ClassInfo JSWebAssemblyModule::s_info = { "WebAssembly.Module"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyModule) };
 
-JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, JSGlobalObject* globalObject, Structure* structure, Wasm::Module::ValidationResult&& result)
+JSWebAssemblyModule* JSWebAssemblyModule::create(VM& vm, Structure* structure, Ref<Wasm::Module>&& result)
 {
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    if (!result.has_value()) {
-        throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, result.error()));
-        return nullptr;
-    }
-
-    auto* module = new (NotNull, allocateCell<JSWebAssemblyModule>(vm)) JSWebAssemblyModule(vm, structure, result.value().releaseNonNull());
+    auto* module = new (NotNull, allocateCell<JSWebAssemblyModule>(vm)) JSWebAssemblyModule(vm, structure, WTFMove(result));
     module->finishCreation(vm);
-
-#if ENABLE(JIT)
-    auto error = module->generateWasmToJSStubs(vm);
-    if (UNLIKELY(!error)) {
-        switch (error.error()) {
-        case Wasm::BindingFailure::OutOfMemory:
-            throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, "Out of executable memory"_s));
-            return nullptr;
-        }
-        ASSERT_NOT_REACHED();
-    }
-#endif
     return module;
 }
 
@@ -135,47 +117,6 @@ void JSWebAssemblyModule::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 }
 
 DEFINE_VISIT_CHILDREN(JSWebAssemblyModule);
-
-void JSWebAssemblyModule::clearJSCallICs(VM& vm)
-{
-#if ENABLE(JIT)
-    for (auto& callLinkInfo : m_callLinkInfos)
-        callLinkInfo.unlinkOrUpgrade(vm, nullptr, nullptr);
-#else
-    UNUSED_PARAM(vm);
-#endif
-}
-
-void JSWebAssemblyModule::finalizeUnconditionally(VM& vm, CollectionScope)
-{
-#if ENABLE(JIT)
-    for (auto& callLinkInfo : m_callLinkInfos)
-        callLinkInfo.visitWeak(vm);
-#else
-    UNUSED_PARAM(vm);
-#endif
-}
-
-#if ENABLE(JIT)
-Expected<void, Wasm::BindingFailure> JSWebAssemblyModule::generateWasmToJSStubs(VM& vm)
-{
-    const Wasm::ModuleInformation& moduleInformation = m_module->moduleInformation();
-    if (moduleInformation.importFunctionCount()) {
-        FixedVector<OptimizingCallLinkInfo> callLinkInfos(moduleInformation.importFunctionCount());
-        FixedVector<MacroAssemblerCodeRef<WasmEntryPtrTag>> stubs(moduleInformation.importFunctionCount());
-        for (unsigned importIndex = 0; importIndex < moduleInformation.importFunctionCount(); ++importIndex) {
-            Wasm::TypeIndex typeIndex = moduleInformation.importFunctionTypeIndices.at(importIndex);
-            auto binding = Wasm::wasmToJS(vm, m_module->wasmToJSCallee(), callLinkInfos[importIndex], typeIndex, importIndex);
-            if (UNLIKELY(!binding))
-                return makeUnexpected(binding.error());
-            stubs[importIndex] = binding.value();
-        }
-        m_wasmToJSExitStubs = WTFMove(stubs);
-        m_callLinkInfos = WTFMove(callLinkInfos);
-    }
-    return { };
-}
-#endif // ENABLE(JIT)
 
 } // namespace JSC
 

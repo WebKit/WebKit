@@ -67,7 +67,7 @@ public:
 
         buffer.grow(bufferSize);
         m_pixels = FragmentedSharedBuffer::DataSegment::create(WTFMove(buffer));
-        m_pixelsPtr = reinterpret_cast<uint32_t*>(const_cast<uint8_t*>(m_pixels->data()));
+        m_pixelsPtr = reinterpret_cast<uint32_t*>(const_cast<uint8_t*>(m_pixels->span().data()));
         m_size = size;
         m_frameRect = IntRect(IntPoint(), m_size);
         clear();
@@ -207,7 +207,7 @@ private:
         ASSERT(!m_size.isEmpty() && !isOverSize(m_size));
         Vector<uint8_t> buffer(other.m_pixels->span());
         m_pixels = FragmentedSharedBuffer::DataSegment::create(WTFMove(buffer));
-        m_pixelsPtr = reinterpret_cast<uint32_t*>(const_cast<uint8_t*>(m_pixels->data()));
+        m_pixelsPtr = reinterpret_cast<uint32_t*>(const_cast<uint8_t*>(m_pixels->span().data()));
     }
 
     bool inBounds(const IntPoint& point) const

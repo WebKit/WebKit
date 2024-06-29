@@ -33,6 +33,7 @@
 #if BENABLE(LIBPAS)
 #include "bmalloc_heap_config.h"
 #include "pas_page_sharing_pool.h"
+#include "pas_probabilistic_guard_malloc_allocator.h"
 #include "pas_scavenger.h"
 #include "pas_thread_local_cache.h"
 #endif
@@ -229,6 +230,13 @@ void disableScavenger()
 #if !BUSE(LIBPAS)
     if (!DebugHeap::tryGet())
         Scavenger::get()->disable();
+#endif
+}
+
+void forceEnablePGM()
+{
+#if BUSE(LIBPAS)
+    pas_probabilistic_guard_malloc_initialize_pgm_as_enabled();
 #endif
 }
 

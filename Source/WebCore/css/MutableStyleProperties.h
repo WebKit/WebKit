@@ -74,7 +74,7 @@ public:
     bool removeProperty(CSSPropertyID, String* returnText = nullptr);
     bool removeProperties(std::span<const CSSPropertyID>);
 
-    void mergeAndOverrideOnConflict(const StyleProperties&);
+    bool mergeAndOverrideOnConflict(const StyleProperties&);
 
     void clear();
     bool parseDeclaration(const String& styleDeclaration, CSSParserContext);

@@ -156,7 +156,8 @@ OptionSet<FilterRenderingMode> FEGaussianBlur::supportedFilterRenderingModes() c
 {
     OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
 #if USE(SKIA)
-    modes.add(FilterRenderingMode::Accelerated);
+    if (m_edgeMode == EdgeModeType::None)
+        modes.add(FilterRenderingMode::Accelerated);
 #endif
     // FIXME: Ensure the correctness of the CG GaussianBlur filter (http://webkit.org/b/243816).
 #if 0 && HAVE(CGSTYLE_COLORMATRIX_BLUR)
@@ -178,13 +179,13 @@ std::unique_ptr<FilterEffectApplier> FEGaussianBlur::createAcceleratedApplier() 
 std::unique_ptr<FilterEffectApplier> FEGaussianBlur::createSoftwareApplier() const
 {
 #if USE(SKIA)
-    return FilterEffectApplier::create<FEGaussianBlurSkiaApplier>(*this);
-#else
-    return FilterEffectApplier::create<FEGaussianBlurSoftwareApplier>(*this);
+    if (m_edgeMode == EdgeModeType::None)
+        return FilterEffectApplier::create<FEGaussianBlurSkiaApplier>(*this);
 #endif
+    return FilterEffectApplier::create<FEGaussianBlurSoftwareApplier>(*this);
 }
 
-std::optional<GraphicsStyle> FEGaussianBlur::createGraphicsStyle(const Filter& filter) const
+std::optional<GraphicsStyle> FEGaussianBlur::createGraphicsStyle(GraphicsContext&, const Filter& filter) const
 {
     auto radius = calculateUnscaledKernelSize(filter.resolvedSize({ m_stdX, m_stdY }));
     return GraphicsGaussianBlur { radius };

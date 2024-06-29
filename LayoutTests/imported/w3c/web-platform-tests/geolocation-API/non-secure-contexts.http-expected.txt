@@ -1,14 +1,7 @@
-CONSOLE MESSAGE: [blocked] Access to geolocation was blocked over insecure connection to http://localhost:8800.
+CONSOLE MESSAGE: http://localhost:8800/geolocation-API/non-secure-contexts.http.html
 
-CONSOLE MESSAGE: [blocked] Access to geolocation was blocked over insecure connection to http://localhost:8800.
+Harness Error (TIMEOUT), message = null
 
-CONSOLE MESSAGE: [blocked] Access to geolocation was blocked over insecure connection to http://localhost:8800.
-
-CONSOLE MESSAGE: [blocked] Access to geolocation was blocked over insecure connection to http://localhost:8800.
-
-
-PASS When in a non-secure context, getCurrentPosition()'s errorCallback is asynchronously called.
-PASS When in a non-secure context, watchPosition()'s errorCallback is asynchronously called.
-PASS When in a non-secure context, the getCurrentPosition() errorCallBack gets a GeolocationPositionError with the correct error code.
-PASS When in a non-secure context, the watchPosition() errorCallBack gets a GeolocationPositionError with the correct error code.
+FAIL When in a non-secure context, getCurrentPosition()'s errorCallback is asynchronously called. promise_test: Unhandled rejection with value: object "Error: successCallback must never be invoked."
+TIMEOUT When in a non-secure context, the getCurrentPosition() errorCallBack gets a GeolocationPositionError with PERMISSION_DENIED. Test timed out
 

@@ -1818,10 +1818,7 @@ private:
     template <class TreeBuilder> TreeStatement parseIfStatement(TreeBuilder&);
     enum class BlockType : uint8_t { Normal, CatchBlock, StaticBlock };
     template <class TreeBuilder> TreeStatement parseBlockStatement(TreeBuilder&, BlockType = BlockType::Normal);
-
-    enum class IsOnlyChildOfStatement : bool { No, Yes };
-    template <class TreeBuilder> TreeExpression parseExpression(TreeBuilder&, IsOnlyChildOfStatement = IsOnlyChildOfStatement::No);
-
+    template <class TreeBuilder> TreeExpression parseExpression(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parseAssignmentExpression(TreeBuilder&, ExpressionErrorClassifier&);
     template <class TreeBuilder> TreeExpression parseAssignmentExpression(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parseAssignmentExpressionOrPropagateErrorClass(TreeBuilder&);

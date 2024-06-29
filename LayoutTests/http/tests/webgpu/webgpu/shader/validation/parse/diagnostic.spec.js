@@ -161,12 +161,14 @@ fn((t) => {
   t.expectCompileResult(t.params.s1 === t.params.s2, code);
 });
 
-g.test('conflicting_attribute_same_location').
+g.test('duplicate_attribute_same_location').
 specURL('https://gpuweb.github.io/gpuweb/wgsl/#diagnostics').
-desc(`Tests conflicts between attributes`).
+desc(`Tests duplicate diagnostics at the same location must be on different rules`).
 params((u) =>
 u.
 combine('loc', keysOf(kValidLocations)).
+combine('same_rule', [true, false]).
+beginSubcases().
 combine('s1', kSpecDiagnosticSeverities).
 combine('s2', kSpecDiagnosticSeverities).
 filter((u) => {
@@ -174,11 +176,12 @@ filter((u) => {
 })
 ).
 fn((t) => {
-  const d1 = generateDiagnostic('attribute', t.params.s1, 'derivative_uniformity');
-  const d2 = generateDiagnostic('attribute', t.params.s2, 'derivative_uniformity');
-  const diag = d1 + ' ' + d2;
-  const code = `${kValidLocations[t.params.loc](diag)}`;
-  t.expectCompileResult(t.params.s1 === t.params.s2, code);
+  const rule1 = 'derivative_uniformity';
+  const rule2 = 'another_diagnostic_rule';
+  const d1 = generateDiagnostic('attribute', t.params.s1, rule1);
+  const d2 = generateDiagnostic('attribute', t.params.s2, t.params.same_rule ? rule1 : rule2);
+  const code = `${kValidLocations[t.params.loc](`${d1} ${d2}`)}`;
+  t.expectCompileResult(!t.params.same_rule, code);
 });
 
 g.test('conflicting_attribute_different_location').

@@ -30,9 +30,7 @@
 
 namespace JSC { namespace B3 {
 
-ExtractValue::~ExtractValue()
-{
-}
+ExtractValue::~ExtractValue() = default;
 
 void ExtractValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {

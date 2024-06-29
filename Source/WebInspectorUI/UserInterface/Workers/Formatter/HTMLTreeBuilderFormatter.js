@@ -148,7 +148,7 @@ HTMLTreeBuilderFormatter = class HTMLTreeBuilderFormatter
             this._implicitlyCloseTagNamesInsideParentTagNames(["option"], ["select"]);
             break;
         case "optgroup": {
-            let didClose = this._implicitlyCloseTagNamesInsideParentTagNames(["optgroup"], ["select"]);;
+            let didClose = this._implicitlyCloseTagNamesInsideParentTagNames(["optgroup"], ["select"]);
             if (!didClose)
                 this._implicitlyCloseTagNamesInsideParentTagNames(["option"], ["select"]);
             break;

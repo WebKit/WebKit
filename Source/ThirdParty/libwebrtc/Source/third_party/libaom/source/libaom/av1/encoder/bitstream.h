@@ -21,6 +21,7 @@ extern "C" {
 #include "av1/common/enums.h"
 #include "av1/encoder/level.h"
 #include "aom_dsp/bitwriter.h"
+#include "aom_util/aom_pthread.h"
 
 struct aom_write_bit_buffer;
 struct AV1_COMP;

@@ -24,8 +24,9 @@
  */
 
 #include "config.h"
-#include "WebAutomationSession.h"
+#include "WebAutomationSessionLibWPE.h"
 
+#include "WebAutomationSession.h"
 #include "WebAutomationSessionMacros.h"
 #include "WebPageProxy.h"
 #include <wpe/wpe.h>
@@ -34,7 +35,7 @@ namespace WebKit {
 using namespace WebCore;
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-static uint32_t modifiersToEventState(OptionSet<WebEventModifier> modifiers)
+static uint32_t libWPEModifiersToEventState(OptionSet<WebEventModifier> modifiers)
 {
     uint32_t state = 0;
     if (modifiers.contains(WebEventModifier::ControlKey))
@@ -81,16 +82,9 @@ static unsigned stateModifierForWPEButton(unsigned button)
     return state;
 }
 
-static WebCore::IntPoint deviceScaleLocationInView(WebPageProxy& page, const WebCore::IntPoint& locationInView)
+static void doMouseEvent(struct wpe_view_backend* viewBackend, const WebCore::IntPoint& location, unsigned button, bool isPressed, uint32_t modifiers)
 {
-    WebCore::IntPoint deviceScaleLocationInView(locationInView);
-    deviceScaleLocationInView.scale(page.deviceScaleFactor());
-    return deviceScaleLocationInView;
-}
-
-static void doMouseEvent(struct wpe_view_backend* viewBackend, const WebCore::IntPoint& location, unsigned button, unsigned state, uint32_t modifiers)
-{
-    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, 0, location.x(), location.y(), button, static_cast<uint32_t>(state ? 1 : 0), modifiers };
+    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, 0, location.x(), location.y(), button, static_cast<uint32_t>(isPressed ? 1 : 0), modifiers };
     wpe_view_backend_dispatch_pointer_event(viewBackend, &event);
 }
 
@@ -100,55 +94,37 @@ static void doMotionEvent(struct wpe_view_backend* viewBackend, const WebCore::I
     wpe_view_backend_dispatch_pointer_event(viewBackend, &event);
 }
 
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEventModifier> keyModifiers, const String& pointerType)
+void platformSimulateMouseInteractionLibWPE(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& location, OptionSet<WebEventModifier> keyModifiers, const String& pointerType, unsigned& currentModifiers)
 {
     UNUSED_PARAM(pointerType);
 
     unsigned wpeButton = mouseButtonToWPEButton(button);
     auto modifier = stateModifierForWPEButton(wpeButton);
-    uint32_t state = modifiersToEventState(keyModifiers) | m_currentModifiers;
-    auto location = deviceScaleLocationInView(page, locationInView);
+    uint32_t state = libWPEModifiersToEventState(keyModifiers) | currentModifiers;
 
     switch (interaction) {
     case MouseInteraction::Move:
         doMotionEvent(page.viewBackend(), location, state);
         break;
     case MouseInteraction::Down:
-        m_currentModifiers |= modifier;
-        doMouseEvent(page.viewBackend(), location, wpeButton, 1, state | modifier);
+        currentModifiers |= modifier;
+        doMouseEvent(page.viewBackend(), location, wpeButton, true, state | modifier);
         break;
     case MouseInteraction::Up:
-        m_currentModifiers &= ~modifier;
-        doMouseEvent(page.viewBackend(), location, wpeButton, 0, state & ~modifier);
+        currentModifiers &= ~modifier;
+        doMouseEvent(page.viewBackend(), location, wpeButton, false, state & ~modifier);
         break;
     case MouseInteraction::SingleClick:
-        doMouseEvent(page.viewBackend(), location, wpeButton, 1, state | modifier);
-        doMouseEvent(page.viewBackend(), location, wpeButton, 0, state);
+        doMouseEvent(page.viewBackend(), location, wpeButton, true, state | modifier);
+        doMouseEvent(page.viewBackend(), location, wpeButton, false, state);
         break;
     case MouseInteraction::DoubleClick:
-        doMouseEvent(page.viewBackend(), location, wpeButton, 1, state | modifier);
-        doMouseEvent(page.viewBackend(), location, wpeButton, 0, state);
-        doMouseEvent(page.viewBackend(), location, wpeButton, 1, state | modifier);
-        doMouseEvent(page.viewBackend(), location, wpeButton, 0, state);
+        doMouseEvent(page.viewBackend(), location, wpeButton, true, state | modifier);
+        doMouseEvent(page.viewBackend(), location, wpeButton, false, state);
+        doMouseEvent(page.viewBackend(), location, wpeButton, true, state | modifier);
+        doMouseEvent(page.viewBackend(), location, wpeButton, false, state);
         break;
     }
-}
-
-OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(unsigned modifiers)
-{
-    OptionSet<WebEventModifier> webModifiers;
-
-    if (modifiers & wpe_input_keyboard_modifier_alt)
-        webModifiers.add(WebEventModifier::AltKey);
-    if (modifiers & wpe_input_keyboard_modifier_meta)
-        webModifiers.add(WebEventModifier::MetaKey);
-    if (modifiers & wpe_input_keyboard_modifier_control)
-        webModifiers.add(WebEventModifier::ControlKey);
-    if (modifiers & wpe_input_keyboard_modifier_shift)
-        webModifiers.add(WebEventModifier::ShiftKey);
-    // WPE has no Caps Lock modifier.
-
-    return webModifiers;
 }
 
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
@@ -343,7 +319,7 @@ static uint32_t modifiersForKeyCode(unsigned keyCode)
     return 0;
 }
 
-void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, std::variant<VirtualKey, CharKey>&& key)
+void platformSimulateKeyboardInteractionLibWPE(WebPageProxy& page, KeyboardInteraction interaction, std::variant<VirtualKey, CharKey>&& key, unsigned& currentModifiers)
 {
     uint32_t keyCode;
     WTF::switchOn(key,
@@ -358,31 +334,30 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
 
     switch (interaction) {
     case KeyboardInteraction::KeyPress:
-        m_currentModifiers |= modifiers;
-        doKeyStrokeEvent(page.viewBackend(), true, keyCode, m_currentModifiers);
+        currentModifiers |= modifiers;
+        doKeyStrokeEvent(page.viewBackend(), true, keyCode, currentModifiers);
         break;
     case KeyboardInteraction::KeyRelease:
-        m_currentModifiers &= ~modifiers;
-        doKeyStrokeEvent(page.viewBackend(), false, keyCode, m_currentModifiers);
+        currentModifiers &= ~modifiers;
+        doKeyStrokeEvent(page.viewBackend(), false, keyCode, currentModifiers);
         break;
     case KeyboardInteraction::InsertByKey:
-        doKeyStrokeEvent(page.viewBackend(), true, keyCode, m_currentModifiers, true);
+        doKeyStrokeEvent(page.viewBackend(), true, keyCode, currentModifiers, true);
         break;
     }
 }
 
-void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const String& keySequence)
+void platformSimulateKeySequenceLibWPE(WebPageProxy& page, const String& keySequence, unsigned& currentModifiers)
 {
     for (auto codePoint : StringView(keySequence).codePoints())
-        doKeyStrokeEvent(page.viewBackend(), true, wpe_unicode_to_key_code(codePoint), m_currentModifiers, true);
+        doKeyStrokeEvent(page.viewBackend(), true, wpe_unicode_to_key_code(codePoint), currentModifiers, true);
 }
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 
 #if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
-void WebAutomationSession::platformSimulateWheelInteraction(WebPageProxy& page, const WebCore::IntPoint& locationInView, const WebCore::IntSize& delta)
+void platformSimulateWheelInteractionLibWPE(WebPageProxy& page, const WebCore::IntPoint& location, const WebCore::IntSize& delta)
 {
-    auto location = deviceScaleLocationInView(page, locationInView);
-
+    // No need to scale the location as the virtual method override already did it for us.
 #if WPE_CHECK_VERSION(1, 5, 0)
     struct wpe_input_axis_2d_event event;
     memset(&event, 0, sizeof(event));

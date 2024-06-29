@@ -137,7 +137,8 @@ int av1_calc_arf_boost(const TWO_PASS *twopass,
 void av1_mark_flashes(FIRSTPASS_STATS *first_stats,
                       FIRSTPASS_STATS *last_stats);
 void av1_estimate_noise(FIRSTPASS_STATS *first_stats,
-                        FIRSTPASS_STATS *last_stats);
+                        FIRSTPASS_STATS *last_stats,
+                        struct aom_internal_error_info *error_info);
 void av1_estimate_coeff(FIRSTPASS_STATS *first_stats,
                         FIRSTPASS_STATS *last_stats);
 

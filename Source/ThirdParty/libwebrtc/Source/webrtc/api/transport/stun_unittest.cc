@@ -35,7 +35,7 @@ class StunTest : public ::testing::Test {
   }
 
   void CheckStunTransactionID(const StunMessage& msg,
-                              const unsigned char* expectedID,
+                              const uint8_t* expectedID,
                               size_t length) {
     ASSERT_EQ(length, msg.transaction_id().size());
     ASSERT_EQ(length == kStunTransactionIdLength + 4, msg.IsLegacy());
@@ -65,10 +65,9 @@ class StunTest : public ::testing::Test {
   }
 
   size_t ReadStunMessageTestCase(StunMessage* msg,
-                                 const unsigned char* testcase,
+                                 const uint8_t* testcase,
                                  size_t size) {
-    const char* input = reinterpret_cast<const char*>(testcase);
-    rtc::ByteBufferReader buf(input, size);
+    rtc::ByteBufferReader buf(rtc::MakeArrayView(testcase, size));
     if (msg->Read(&buf)) {
       // Returns the size the stun message should report itself as being
       return (size - 20);
@@ -85,7 +84,7 @@ class StunTest : public ::testing::Test {
 // clang-format off
 // clang formatting doesn't respect inline comments.
 
-static const unsigned char kStunMessageWithIPv6MappedAddress[] = {
+static const uint8_t kStunMessageWithIPv6MappedAddress[] = {
   0x00, 0x01, 0x00, 0x18,  // message header
   0x21, 0x12, 0xa4, 0x42,  // transaction id
   0x29, 0x1f, 0xcd, 0x7c,
@@ -99,7 +98,7 @@ static const unsigned char kStunMessageWithIPv6MappedAddress[] = {
   0xfe, 0xe5, 0x00, 0xc3
 };
 
-static const unsigned char kStunMessageWithIPv4MappedAddress[] = {
+static const uint8_t kStunMessageWithIPv4MappedAddress[] = {
   0x01, 0x01, 0x00, 0x0c,   // binding response, length 12
   0x21, 0x12, 0xa4, 0x42,   // magic cookie
   0x29, 0x1f, 0xcd, 0x7c,   // transaction ID
@@ -111,7 +110,7 @@ static const unsigned char kStunMessageWithIPv4MappedAddress[] = {
 };
 
 // Test XOR-mapped IP addresses:
-static const unsigned char kStunMessageWithIPv6XorMappedAddress[] = {
+static const uint8_t kStunMessageWithIPv6XorMappedAddress[] = {
   0x01, 0x01, 0x00, 0x18,  // message header (binding response)
   0x21, 0x12, 0xa4, 0x42,  // magic cookie (rfc5389)
   0xe3, 0xa9, 0x46, 0xe1,  // transaction ID
@@ -125,7 +124,7 @@ static const unsigned char kStunMessageWithIPv6XorMappedAddress[] = {
   0xaa, 0xed, 0x01, 0xc3
 };
 
-static const unsigned char kStunMessageWithIPv4XorMappedAddress[] = {
+static const uint8_t kStunMessageWithIPv4XorMappedAddress[] = {
   0x01, 0x01, 0x00, 0x0c,  // message header (binding response)
   0x21, 0x12, 0xa4, 0x42,  // magic cookie
   0x29, 0x1f, 0xcd, 0x7c,  // transaction ID
@@ -137,7 +136,7 @@ static const unsigned char kStunMessageWithIPv4XorMappedAddress[] = {
 };
 
 // ByteString Attribute (username)
-static const unsigned char kStunMessageWithByteStringAttribute[] = {
+static const uint8_t kStunMessageWithByteStringAttribute[] = {
   0x00, 0x01, 0x00, 0x0c,
   0x21, 0x12, 0xa4, 0x42,
   0xe3, 0xa9, 0x46, 0xe1,
@@ -150,7 +149,7 @@ static const unsigned char kStunMessageWithByteStringAttribute[] = {
 
 // Message with an unknown but comprehensible optional attribute.
 // Parsing should succeed despite this unknown attribute.
-static const unsigned char kStunMessageWithUnknownAttribute[] = {
+static const uint8_t kStunMessageWithUnknownAttribute[] = {
   0x00, 0x01, 0x00, 0x14,
   0x21, 0x12, 0xa4, 0x42,
   0xe3, 0xa9, 0x46, 0xe1,
@@ -164,7 +163,7 @@ static const unsigned char kStunMessageWithUnknownAttribute[] = {
 };
 
 // ByteString Attribute (username) with padding byte
-static const unsigned char kStunMessageWithPaddedByteStringAttribute[] = {
+static const uint8_t kStunMessageWithPaddedByteStringAttribute[] = {
   0x00, 0x01, 0x00, 0x08,
   0x21, 0x12, 0xa4, 0x42,
   0xe3, 0xa9, 0x46, 0xe1,
@@ -175,7 +174,7 @@ static const unsigned char kStunMessageWithPaddedByteStringAttribute[] = {
 };
 
 // Message with an Unknown Attributes (uint16_t list) attribute.
-static const unsigned char kStunMessageWithUInt16ListAttribute[] = {
+static const uint8_t kStunMessageWithUInt16ListAttribute[] = {
   0x00, 0x01, 0x00, 0x0c,
   0x21, 0x12, 0xa4, 0x42,
   0xe3, 0xa9, 0x46, 0xe1,
@@ -187,7 +186,7 @@ static const unsigned char kStunMessageWithUInt16ListAttribute[] = {
 };
 
 // Error response message (unauthorized)
-static const unsigned char kStunMessageWithErrorAttribute[] = {
+static const uint8_t kStunMessageWithErrorAttribute[] = {
   0x01, 0x11, 0x00, 0x14,
   0x21, 0x12, 0xa4, 0x42,
   0x29, 0x1f, 0xcd, 0x7c,
@@ -205,7 +204,7 @@ static const unsigned char kStunMessageWithErrorAttribute[] = {
 // The actual length in bytes of the invalid messages (including STUN header)
 static const int kRealLengthOfInvalidLengthTestCases = 32;
 
-static const unsigned char kStunMessageWithZeroLength[] = {
+static const uint8_t kStunMessageWithZeroLength[] = {
   0x00, 0x01, 0x00, 0x00,  // length of 0 (last 2 bytes)
   0x21, 0x12, 0xA4, 0x42,  // magic cookie
   '0', '1', '2', '3',      // transaction id
@@ -216,7 +215,7 @@ static const unsigned char kStunMessageWithZeroLength[] = {
   0x21, 0x12, 0xA4, 0x53,
 };
 
-static const unsigned char kStunMessageWithExcessLength[] = {
+static const uint8_t kStunMessageWithExcessLength[] = {
   0x00, 0x01, 0x00, 0x55,  // length of 85
   0x21, 0x12, 0xA4, 0x42,  // magic cookie
   '0', '1', '2', '3',      // transaction id
@@ -227,7 +226,7 @@ static const unsigned char kStunMessageWithExcessLength[] = {
   0x21, 0x12, 0xA4, 0x53,
 };
 
-static const unsigned char kStunMessageWithSmallLength[] = {
+static const uint8_t kStunMessageWithSmallLength[] = {
   0x00, 0x01, 0x00, 0x03,  // length of 3
   0x21, 0x12, 0xA4, 0x42,  // magic cookie
   '0', '1', '2', '3',      // transaction id
@@ -238,7 +237,7 @@ static const unsigned char kStunMessageWithSmallLength[] = {
   0x21, 0x12, 0xA4, 0x53,
 };
 
-static const unsigned char kStunMessageWithBadHmacAtEnd[] = {
+static const uint8_t kStunMessageWithBadHmacAtEnd[] = {
   0x00, 0x01, 0x00, 0x14,  // message length exactly 20
   0x21, 0x12, 0xA4, 0x42,  // magic cookie
   '0', '1', '2', '3',      // transaction ID
@@ -253,7 +252,7 @@ static const unsigned char kStunMessageWithBadHmacAtEnd[] = {
 
 // RTCP packet, for testing we correctly ignore non stun packet types.
 // V=2, P=false, RC=0, Type=200, Len=6, Sender-SSRC=85, etc
-static const unsigned char kRtcpPacket[] = {
+static const uint8_t kRtcpPacket[] = {
   0x80, 0xc8, 0x00, 0x06, 0x00, 0x00, 0x00, 0x55,
   0xce, 0xa5, 0x18, 0x3a, 0x39, 0xcc, 0x7d, 0x09,
   0x23, 0xed, 0x19, 0x07, 0x00, 0x00, 0x01, 0x56,
@@ -266,7 +265,7 @@ static const unsigned char kRtcpPacket[] = {
 // Software name (response): "test vector" (without quotes)
 // Username:  "evtj:h6vY" (without quotes)
 // Password:  "VOkJxbRl1RmTxUk/WvJxBt" (without quotes)
-static const unsigned char kRfc5769SampleMsgTransactionId[] = {
+static const uint8_t kRfc5769SampleMsgTransactionId[] = {
   0xb7, 0xe7, 0xa7, 0x01, 0xbc, 0x34, 0xd6, 0x86, 0xfa, 0x87, 0xdf, 0xae
 };
 static const char kRfc5769SampleMsgClientSoftware[] = "STUN test client";
@@ -278,7 +277,7 @@ static const rtc::SocketAddress kRfc5769SampleMsgMappedAddress(
 static const rtc::SocketAddress kRfc5769SampleMsgIPv6MappedAddress(
     "2001:db8:1234:5678:11:2233:4455:6677", 32853);
 
-static const unsigned char kRfc5769SampleMsgWithAuthTransactionId[] = {
+static const uint8_t kRfc5769SampleMsgWithAuthTransactionId[] = {
   0x78, 0xad, 0x34, 0x33, 0xc6, 0xad, 0x72, 0xc0, 0x29, 0xda, 0x41, 0x2e
 };
 static const char kRfc5769SampleMsgWithAuthUsername[] =
@@ -289,7 +288,7 @@ static const char kRfc5769SampleMsgWithAuthNonce[] =
 static const char kRfc5769SampleMsgWithAuthRealm[] = "example.org";
 
 // 2.1.  Sample Request
-static const unsigned char kRfc5769SampleRequest[] = {
+static const uint8_t kRfc5769SampleRequest[] = {
   0x00, 0x01, 0x00, 0x58,   //    Request type and message length
   0x21, 0x12, 0xa4, 0x42,   //    Magic cookie
   0xb7, 0xe7, 0xa7, 0x01,   // }
@@ -320,7 +319,7 @@ static const unsigned char kRfc5769SampleRequest[] = {
 };
 
 // 2.1.  Sample Request
-static const unsigned char kSampleRequestMI32[] = {
+static const uint8_t kSampleRequestMI32[] = {
   0x00, 0x01, 0x00, 0x48,   //    Request type and message length
   0x21, 0x12, 0xa4, 0x42,   //    Magic cookie
   0xb7, 0xe7, 0xa7, 0x01,   // }
@@ -347,7 +346,7 @@ static const unsigned char kSampleRequestMI32[] = {
 };
 
 // 2.2.  Sample IPv4 Response
-static const unsigned char kRfc5769SampleResponse[] = {
+static const uint8_t kRfc5769SampleResponse[] = {
   0x01, 0x01, 0x00, 0x3c,  //     Response type and message length
   0x21, 0x12, 0xa4, 0x42,  //     Magic cookie
   0xb7, 0xe7, 0xa7, 0x01,  // }
@@ -371,7 +370,7 @@ static const unsigned char kRfc5769SampleResponse[] = {
 };
 
 // 2.3.  Sample IPv6 Response
-static const unsigned char kRfc5769SampleResponseIPv6[] = {
+static const uint8_t kRfc5769SampleResponseIPv6[] = {
   0x01, 0x01, 0x00, 0x48,  //    Response type and message length
   0x21, 0x12, 0xa4, 0x42,  //    Magic cookie
   0xb7, 0xe7, 0xa7, 0x01,  // }
@@ -398,7 +397,7 @@ static const unsigned char kRfc5769SampleResponseIPv6[] = {
 };
 
 // 2.4.  Sample Request with Long-Term Authentication
-static const unsigned char kRfc5769SampleRequestLongTermAuth[] = {
+static const uint8_t kRfc5769SampleRequestLongTermAuth[] = {
   0x00, 0x01, 0x00, 0x60,  //    Request type and message length
   0x21, 0x12, 0xa4, 0x42,  //    Magic cookie
   0x78, 0xad, 0x34, 0x33,  // }
@@ -433,7 +432,7 @@ static const unsigned char kRfc5769SampleRequestLongTermAuth[] = {
 // Length parameter is changed to 0x38 from 0x58.
 // AddMessageIntegrity will add MI information and update the length param
 // accordingly.
-static const unsigned char kRfc5769SampleRequestWithoutMI[] = {
+static const uint8_t kRfc5769SampleRequestWithoutMI[] = {
   0x00, 0x01, 0x00, 0x38,  //    Request type and message length
   0x21, 0x12, 0xa4, 0x42,  //    Magic cookie
   0xb7, 0xe7, 0xa7, 0x01,  // }
@@ -457,7 +456,7 @@ static const unsigned char kRfc5769SampleRequestWithoutMI[] = {
 
 // This HMAC differs from the RFC 5769 SampleRequest message. This differs
 // because spec uses 0x20 for the padding where as our implementation uses 0.
-static const unsigned char kCalculatedHmac1[] = {
+static const uint8_t kCalculatedHmac1[] = {
   0x79, 0x07, 0xc2, 0xd2,  // }
   0xed, 0xbf, 0xea, 0x48,  // }
   0x0e, 0x4c, 0x76, 0xd8,  // }  HMAC-SHA1 fingerprint
@@ -469,14 +468,14 @@ static const unsigned char kCalculatedHmac1[] = {
 // above since the sum is computed including header
 // and the header is different since the message is shorter
 // than when MESSAGE-INTEGRITY is used.
-static const unsigned char kCalculatedHmac1_32[] = {
+static const uint8_t kCalculatedHmac1_32[] = {
   0xda, 0x39, 0xde, 0x5d,  // }
 };
 
 // Length parameter is changed to 0x1c from 0x3c.
 // AddMessageIntegrity will add MI information and update the length param
 // accordingly.
-static const unsigned char kRfc5769SampleResponseWithoutMI[] = {
+static const uint8_t kRfc5769SampleResponseWithoutMI[] = {
   0x01, 0x01, 0x00, 0x1c,  //    Response type and message length
   0x21, 0x12, 0xa4, 0x42,  //    Magic cookie
   0xb7, 0xe7, 0xa7, 0x01,  // }
@@ -493,7 +492,7 @@ static const unsigned char kRfc5769SampleResponseWithoutMI[] = {
 
 // This HMAC differs from the RFC 5769 SampleResponse message. This differs
 // because spec uses 0x20 for the padding where as our implementation uses 0.
-static const unsigned char kCalculatedHmac2[] = {
+static const uint8_t kCalculatedHmac2[] = {
   0x5d, 0x6b, 0x58, 0xbe,  // }
   0xad, 0x94, 0xe0, 0x7e,  // }
   0xef, 0x0d, 0xfc, 0x12,  // }  HMAC-SHA1 fingerprint
@@ -505,7 +504,7 @@ static const unsigned char kCalculatedHmac2[] = {
 // above since the sum is computed including header
 // and the header is different since the message is shorter
 // than when MESSAGE-INTEGRITY is used.
-static const unsigned char kCalculatedHmac2_32[] = {
+static const uint8_t kCalculatedHmac2_32[] = {
   0xe7, 0x5c, 0xd3, 0x16,  // }
 };
 
@@ -513,14 +512,14 @@ static const unsigned char kCalculatedHmac2_32[] = {
 
 // A transaction ID without the 'magic cookie' portion
 // pjnat's test programs use this transaction ID a lot.
-const unsigned char kTestTransactionId1[] = {0x029, 0x01f, 0x0cd, 0x07c,
-                                             0x0ba, 0x058, 0x0ab, 0x0d7,
-                                             0x0f2, 0x041, 0x001, 0x000};
+const uint8_t kTestTransactionId1[] = {0x029, 0x01f, 0x0cd, 0x07c,
+                                       0x0ba, 0x058, 0x0ab, 0x0d7,
+                                       0x0f2, 0x041, 0x001, 0x000};
 
 // They use this one sometimes too.
-const unsigned char kTestTransactionId2[] = {0x0e3, 0x0a9, 0x046, 0x0e1,
-                                             0x07c, 0x000, 0x0c2, 0x062,
-                                             0x054, 0x008, 0x001, 0x000};
+const uint8_t kTestTransactionId2[] = {0x0e3, 0x0a9, 0x046, 0x0e1,
+                                       0x07c, 0x000, 0x0c2, 0x062,
+                                       0x054, 0x008, 0x001, 0x000};
 
 const in6_addr kIPv6TestAddress1 = {
     {{0x24, 0x01, 0xfa, 0x00, 0x00, 0x04, 0x10, 0x00, 0xbe, 0x30, 0x5b, 0xff,
@@ -743,7 +742,7 @@ TEST_F(StunTest, ReadRfc5769RequestMessageLongTermAuth) {
 // kStunMessageWithIPv4MappedAddress, but with a different value where the
 // magic cookie was.
 TEST_F(StunTest, ReadLegacyMessage) {
-  unsigned char rfc3489_packet[sizeof(kStunMessageWithIPv4MappedAddress)];
+  uint8_t rfc3489_packet[sizeof(kStunMessageWithIPv4MappedAddress)];
   memcpy(rfc3489_packet, kStunMessageWithIPv4MappedAddress,
          sizeof(kStunMessageWithIPv4MappedAddress));
   // Overwrite the magic cookie here.
@@ -1122,10 +1121,9 @@ TEST_F(StunTest, WriteMessageWithAUInt16ListAttribute) {
 }
 
 // Test that we fail to read messages with invalid lengths.
-void CheckFailureToRead(const unsigned char* testcase, size_t length) {
+void CheckFailureToRead(const uint8_t* testcase, size_t length) {
   StunMessage msg;
-  const char* input = reinterpret_cast<const char*>(testcase);
-  rtc::ByteBufferReader buf(input, length);
+  rtc::ByteBufferReader buf(rtc::MakeArrayView(testcase, length));
   ASSERT_FALSE(msg.Read(&buf));
 }
 
@@ -1228,16 +1226,14 @@ TEST_F(StunTest, ValidateMessageIntegrity) {
 // the RFC5769 test messages used include attributes not found in basic STUN.
 TEST_F(StunTest, AddMessageIntegrity) {
   IceMessage msg;
-  rtc::ByteBufferReader buf(
-      reinterpret_cast<const char*>(kRfc5769SampleRequestWithoutMI),
-      sizeof(kRfc5769SampleRequestWithoutMI));
+  rtc::ByteBufferReader buf(kRfc5769SampleRequestWithoutMI);
   EXPECT_TRUE(msg.Read(&buf));
   EXPECT_TRUE(msg.AddMessageIntegrity(kRfc5769SampleMsgPassword));
   const StunByteStringAttribute* mi_attr =
       msg.GetByteString(STUN_ATTR_MESSAGE_INTEGRITY);
   EXPECT_EQ(20U, mi_attr->length());
-  EXPECT_EQ(
-      0, memcmp(mi_attr->bytes(), kCalculatedHmac1, sizeof(kCalculatedHmac1)));
+  EXPECT_EQ(0, memcmp(mi_attr->array_view().data(), kCalculatedHmac1,
+                      sizeof(kCalculatedHmac1)));
 
   rtc::ByteBufferWriter buf1;
   EXPECT_TRUE(msg.Write(&buf1));
@@ -1246,16 +1242,14 @@ TEST_F(StunTest, AddMessageIntegrity) {
       kRfc5769SampleMsgPassword));
 
   IceMessage msg2;
-  rtc::ByteBufferReader buf2(
-      reinterpret_cast<const char*>(kRfc5769SampleResponseWithoutMI),
-      sizeof(kRfc5769SampleResponseWithoutMI));
+  rtc::ByteBufferReader buf2(kRfc5769SampleResponseWithoutMI);
   EXPECT_TRUE(msg2.Read(&buf2));
   EXPECT_TRUE(msg2.AddMessageIntegrity(kRfc5769SampleMsgPassword));
   const StunByteStringAttribute* mi_attr2 =
       msg2.GetByteString(STUN_ATTR_MESSAGE_INTEGRITY);
   EXPECT_EQ(20U, mi_attr2->length());
-  EXPECT_EQ(
-      0, memcmp(mi_attr2->bytes(), kCalculatedHmac2, sizeof(kCalculatedHmac2)));
+  EXPECT_EQ(0, memcmp(mi_attr2->array_view().data(), kCalculatedHmac2,
+                      sizeof(kCalculatedHmac2)));
 
   rtc::ByteBufferWriter buf3;
   EXPECT_TRUE(msg2.Write(&buf3));
@@ -1321,15 +1315,13 @@ TEST_F(StunTest, ValidateMessageIntegrity32) {
 // Validate that we generate correct MESSAGE-INTEGRITY-32 attributes.
 TEST_F(StunTest, AddMessageIntegrity32) {
   IceMessage msg;
-  rtc::ByteBufferReader buf(
-      reinterpret_cast<const char*>(kRfc5769SampleRequestWithoutMI),
-      sizeof(kRfc5769SampleRequestWithoutMI));
+  rtc::ByteBufferReader buf(kRfc5769SampleRequestWithoutMI);
   EXPECT_TRUE(msg.Read(&buf));
   EXPECT_TRUE(msg.AddMessageIntegrity32(kRfc5769SampleMsgPassword));
   const StunByteStringAttribute* mi_attr =
       msg.GetByteString(STUN_ATTR_GOOG_MESSAGE_INTEGRITY_32);
   EXPECT_EQ(4U, mi_attr->length());
-  EXPECT_EQ(0, memcmp(mi_attr->bytes(), kCalculatedHmac1_32,
+  EXPECT_EQ(0, memcmp(mi_attr->array_view().data(), kCalculatedHmac1_32,
                       sizeof(kCalculatedHmac1_32)));
 
   rtc::ByteBufferWriter buf1;
@@ -1339,15 +1331,13 @@ TEST_F(StunTest, AddMessageIntegrity32) {
       kRfc5769SampleMsgPassword));
 
   IceMessage msg2;
-  rtc::ByteBufferReader buf2(
-      reinterpret_cast<const char*>(kRfc5769SampleResponseWithoutMI),
-      sizeof(kRfc5769SampleResponseWithoutMI));
+  rtc::ByteBufferReader buf2(kRfc5769SampleResponseWithoutMI);
   EXPECT_TRUE(msg2.Read(&buf2));
   EXPECT_TRUE(msg2.AddMessageIntegrity32(kRfc5769SampleMsgPassword));
   const StunByteStringAttribute* mi_attr2 =
       msg2.GetByteString(STUN_ATTR_GOOG_MESSAGE_INTEGRITY_32);
   EXPECT_EQ(4U, mi_attr2->length());
-  EXPECT_EQ(0, memcmp(mi_attr2->bytes(), kCalculatedHmac2_32,
+  EXPECT_EQ(0, memcmp(mi_attr2->array_view().data(), kCalculatedHmac2_32,
                       sizeof(kCalculatedHmac2_32)));
 
   rtc::ByteBufferWriter buf3;
@@ -1420,9 +1410,7 @@ TEST_F(StunTest, ValidateFingerprint) {
 
 TEST_F(StunTest, AddFingerprint) {
   IceMessage msg;
-  rtc::ByteBufferReader buf(
-      reinterpret_cast<const char*>(kRfc5769SampleRequestWithoutMI),
-      sizeof(kRfc5769SampleRequestWithoutMI));
+  rtc::ByteBufferReader buf(kRfc5769SampleRequestWithoutMI);
   EXPECT_TRUE(msg.Read(&buf));
   EXPECT_TRUE(msg.AddFingerprint());
 
@@ -1435,7 +1423,7 @@ TEST_F(StunTest, AddFingerprint) {
 // Sample "GTURN" relay message.
 // clang-format off
 // clang formatting doesn't respect inline comments.
-static const unsigned char kRelayMessage[] = {
+static const uint8_t kRelayMessage[] = {
   0x00, 0x01, 0x00, 88,    // message header
   0x21, 0x12, 0xA4, 0x42,  // magic cookie
   '0', '1', '2', '3',      // transaction id
@@ -1470,13 +1458,11 @@ static const unsigned char kRelayMessage[] = {
 TEST_F(StunTest, ReadRelayMessage) {
   RelayMessage msg;
 
-  const char* input = reinterpret_cast<const char*>(kRelayMessage);
-  size_t size = sizeof(kRelayMessage);
-  rtc::ByteBufferReader buf(input, size);
+  rtc::ByteBufferReader buf(kRelayMessage);
   EXPECT_TRUE(msg.Read(&buf));
 
   EXPECT_EQ(STUN_BINDING_REQUEST, msg.type());
-  EXPECT_EQ(size - 20, msg.length());
+  EXPECT_EQ(sizeof(kRelayMessage) - 20, msg.length());
   EXPECT_EQ("0123456789ab", msg.transaction_id());
 
   RelayMessage msg2(STUN_BINDING_REQUEST, "0123456789ab");
@@ -1516,7 +1502,7 @@ TEST_F(StunTest, ReadRelayMessage) {
   bytes = msg.GetByteString(STUN_ATTR_MAGIC_COOKIE);
   ASSERT_TRUE(bytes != NULL);
   EXPECT_EQ(4U, bytes->length());
-  EXPECT_EQ(0, memcmp(bytes->bytes(), TURN_MAGIC_COOKIE_VALUE,
+  EXPECT_EQ(0, memcmp(bytes->array_view().data(), TURN_MAGIC_COOKIE_VALUE,
                       sizeof(TURN_MAGIC_COOKIE_VALUE)));
 
   bytes2 = StunAttribute::CreateByteString(STUN_ATTR_MAGIC_COOKIE);
@@ -1565,21 +1551,21 @@ TEST_F(StunTest, ReadRelayMessage) {
 
   rtc::ByteBufferWriter out;
   EXPECT_TRUE(msg.Write(&out));
-  EXPECT_EQ(size, out.Length());
+  EXPECT_EQ(sizeof(kRelayMessage), out.Length());
   size_t len1 = out.Length();
   rtc::ByteBufferReader read_buf(out);
   std::string outstring;
   read_buf.ReadString(&outstring, len1);
-  EXPECT_EQ(0, memcmp(outstring.c_str(), input, len1));
+  EXPECT_EQ(0, memcmp(outstring.c_str(), kRelayMessage, len1));
 
   rtc::ByteBufferWriter out2;
   EXPECT_TRUE(msg2.Write(&out2));
-  EXPECT_EQ(size, out2.Length());
+  EXPECT_EQ(sizeof(kRelayMessage), out2.Length());
   size_t len2 = out2.Length();
   rtc::ByteBufferReader read_buf2(out2);
   std::string outstring2;
   read_buf2.ReadString(&outstring2, len2);
-  EXPECT_EQ(0, memcmp(outstring2.c_str(), input, len2));
+  EXPECT_EQ(0, memcmp(outstring2.c_str(), kRelayMessage, len2));
 }
 
 // Test that we can remove attribute from a message.
@@ -1600,8 +1586,9 @@ TEST_F(StunTest, RemoveAttribute) {
     auto attr = msg.RemoveAttribute(STUN_ATTR_USERNAME);
     ASSERT_NE(attr, nullptr);
     EXPECT_EQ(attr->type(), STUN_ATTR_USERNAME);
-    EXPECT_STREQ("kes",
-                 static_cast<StunByteStringAttribute*>(attr.get())->bytes());
+    EXPECT_STREQ("kes", static_cast<StunByteStringAttribute*>(attr.get())
+                            ->string_view()
+                            .data());
     EXPECT_LT(msg.length(), len);
   }
 
@@ -1623,8 +1610,9 @@ TEST_F(StunTest, RemoveAttribute) {
     auto attr = msg.RemoveAttribute(STUN_ATTR_USERNAME);
     ASSERT_NE(attr, nullptr);
     EXPECT_EQ(attr->type(), STUN_ATTR_USERNAME);
-    EXPECT_STREQ("kenta",
-                 static_cast<StunByteStringAttribute*>(attr.get())->bytes());
+    EXPECT_STREQ("kenta", static_cast<StunByteStringAttribute*>(attr.get())
+                              ->string_view()
+                              .data());
   }
 
   // Remove should remove the last added occurrence.
@@ -1632,8 +1620,9 @@ TEST_F(StunTest, RemoveAttribute) {
     auto attr = msg.RemoveAttribute(STUN_ATTR_USERNAME);
     ASSERT_NE(attr, nullptr);
     EXPECT_EQ(attr->type(), STUN_ATTR_USERNAME);
-    EXPECT_STREQ("kes",
-                 static_cast<StunByteStringAttribute*>(attr.get())->bytes());
+    EXPECT_STREQ("kes", static_cast<StunByteStringAttribute*>(attr.get())
+                            ->string_view()
+                            .data());
   }
 
   // Removing something that does exist should return nullptr.
@@ -1666,8 +1655,9 @@ TEST_F(StunTest, CopyAttribute) {
 
       auto copy = CopyStunAttribute(*attr.get(), buffer_ptr);
       ASSERT_EQ(copy->value_type(), STUN_VALUE_BYTE_STRING);
-      EXPECT_STREQ("kes",
-                   static_cast<StunByteStringAttribute*>(copy.get())->bytes());
+      EXPECT_STREQ("kes", static_cast<StunByteStringAttribute*>(copy.get())
+                              ->string_view()
+                              .data());
     }
 
     {  // Test StunAddressAttribute.
@@ -1826,7 +1816,7 @@ TEST_F(StunTest, GoogMiscInfo) {
   ASSERT_EQ(size, out.Length());
 
   size_t read_size = ReadStunMessageTestCase(
-      &msg, reinterpret_cast<const unsigned char*>(out.Data()), out.Length());
+      &msg, reinterpret_cast<const uint8_t*>(out.Data()), out.Length());
   ASSERT_EQ(read_size + 20, size);
   CheckStunHeader(msg, STUN_BINDING_REQUEST, read_size);
   const StunUInt16ListAttribute* types =
@@ -1860,9 +1850,7 @@ TEST_F(StunTest, ValidateMessageIntegrityWithParser) {
   webrtc::metrics::Reset();  // Ensure counters start from zero.
   // Try the messages from RFC 5769.
   StunMessage message;
-  rtc::ByteBufferReader reader(
-      reinterpret_cast<const char*>(kRfc5769SampleRequest),
-      sizeof(kRfc5769SampleRequest));
+  rtc::ByteBufferReader reader(kRfc5769SampleRequest);
   EXPECT_TRUE(message.Read(&reader));
   EXPECT_EQ(message.ValidateMessageIntegrity(kRfc5769SampleMsgPassword),
             StunMessage::IntegrityStatus::kIntegrityOk);

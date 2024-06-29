@@ -112,7 +112,7 @@ Ref<InspectorCanvas> InspectorCanvas::create(CanvasRenderingContext& context)
 }
 
 InspectorCanvas::InspectorCanvas(CanvasRenderingContext& context)
-    : m_identifier("canvas:" + IdentifiersFactory::createIdentifier())
+    : m_identifier(makeString("canvas:"_s, IdentifiersFactory::createIdentifier()))
     , m_context(context)
 {
 }
@@ -364,6 +364,16 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<ImageData>& argument)
 {
     return processArgument(argument.get());
+}
+
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<JSC::ArrayBuffer>&)
+{
+    return {{ JSON::Value::create(0), RecordingSwizzleType::TypedArray }};
+}
+
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(Ref<JSC::ArrayBufferView>&)
+{
+    return {{ JSON::Value::create(0), RecordingSwizzleType::TypedArray }};
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<JSC::ArrayBuffer>& argument)
@@ -1001,11 +1011,12 @@ Ref<Inspector::Protocol::Recording::Recording> InspectorCanvas::releaseObjectFor
 
 Inspector::Protocol::ErrorStringOr<String> InspectorCanvas::getContentAsDataURL(CanvasRenderingContext& context)
 {
+    RefPtr<ImageBuffer> buffer;
     if (context.compositingResultsNeedUpdating())
-        context.drawBufferToCanvas(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
+        buffer = context.surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
     else
-        context.drawBufferToCanvas(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
-    if (auto* buffer = context.canvasBase().buffer())
+        buffer = context.surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
+    if (buffer)
         return buffer->toDataURL("image/png"_s);
     return emptyString();
 }
@@ -1061,7 +1072,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             if (CachedImage* cachedImage = imageElement->cachedImage()) {
                 Image* image = cachedImage->image();
                 if (image && image != &Image::nullImage()) {
-                    auto imageBuffer = ImageBuffer::create(image->size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+                    auto imageBuffer = ImageBuffer::create(image->size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
                     imageBuffer->context().drawImage(*image, FloatPoint(0, 0));
                     dataURL = imageBuffer->toDataURL("image/png"_s);
                 }
@@ -1075,7 +1086,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
 
             unsigned videoWidth = videoElement->videoWidth();
             unsigned videoHeight = videoElement->videoHeight();
-            auto imageBuffer = ImageBuffer::create(FloatSize(videoWidth, videoHeight), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+            auto imageBuffer = ImageBuffer::create(FloatSize(videoWidth, videoHeight), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
             if (imageBuffer) {
                 videoElement->paintCurrentFrameInContext(imageBuffer->context(), FloatRect(0, 0, videoWidth, videoHeight));
                 dataURL = imageBuffer->toDataURL("image/png"_s);
@@ -1139,7 +1150,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             if (auto* cachedImage = cssImageValue->image()) {
                 auto* image = cachedImage->image();
                 if (image && image != &Image::nullImage()) {
-                    auto imageBuffer = ImageBuffer::create(image->size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+                    auto imageBuffer = ImageBuffer::create(image->size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
                     imageBuffer->context().drawImage(*image, FloatPoint(0, 0));
                     dataURL = imageBuffer->toDataURL("image/png"_s);
                 }
@@ -1159,8 +1170,8 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
         [&] (const RefPtr<OffscreenCanvas> offscreenCanvas) {
             String dataURL = "data:,"_s;
 
-            if (offscreenCanvas->originClean() && offscreenCanvas->hasCreatedImageBuffer()) {
-                if (auto *buffer = offscreenCanvas->buffer())
+            if (offscreenCanvas->originClean()) {
+                if (RefPtr buffer = offscreenCanvas->makeRenderingResultsAvailable())
                     dataURL = buffer->toDataURL("image/png"_s);
             }
 

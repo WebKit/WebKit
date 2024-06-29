@@ -20,9 +20,9 @@
 #include <string>
 #include <vector>
 
+#include "api/ref_count.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
-#include "rtc_base/ref_count.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -240,7 +240,7 @@ class RTC_EXPORT StatsReport {
     kStatsValueNameLocalCandidateRelayProtocol,
   };
 
-  class RTC_EXPORT IdBase : public rtc::RefCountInterface {
+  class RTC_EXPORT IdBase : public webrtc::RefCountInterface {
    public:
     ~IdBase() override;
     StatsType type() const;

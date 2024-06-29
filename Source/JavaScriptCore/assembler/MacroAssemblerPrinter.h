@@ -224,7 +224,7 @@ struct Printer<MemWord<IntType>> : public Printer<Memory> {
     { }
 };
 
-void printCallback(Probe::Context&);
+void SYSV_ABI printCallback(Probe::Context&);
 
 } // namespace Printer
 

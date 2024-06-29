@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,7 +71,7 @@ public:
     ALWAYS_INLINE void forEachValueProfile(const Functor& func)
     {
         // We could do a checked multiply here but if it overflows we'd just not look at any value profiles so it's probably not worth it.
-        int lastValueProfileOffset = -unlinkedMetadata().m_numValueProfiles;
+        int lastValueProfileOffset = -unlinkedMetadata()->m_numValueProfiles;
         for (int i = -1; i >= lastValueProfileOffset; --i)
             func(valueProfilesEnd()[i]);
     }
@@ -83,7 +83,7 @@ public:
 
     ValueProfile& valueProfileForOffset(unsigned profileOffset)
     {
-        ASSERT(profileOffset <= unlinkedMetadata().m_numValueProfiles);
+        ASSERT(profileOffset <= unlinkedMetadata()->m_numValueProfiles);
         return valueProfilesEnd()[-static_cast<ptrdiff_t>(profileOffset)];
     }
 
@@ -96,12 +96,15 @@ public:
 
     void deref()
     {
-        unsigned tempRefCount = linkingData().refCount - 1;
-        if (!tempRefCount) {
+        if (!--linkingData().refCount) {
+            // Setting refCount to 1 here prevents double delete within the destructor but not from another thread
+            // since such a thread could have ref'ed this object long after it had been deleted. This is consistent
+            // with ThreadSafeRefCounted.h, see webkit.org/b/201576 for the reasoning.
+            linkingData().refCount = 1;
+
             MetadataTable::destroy(this);
             return;
         }
-        linkingData().refCount = tempRefCount;
     }
 
     unsigned refCount() const
@@ -124,7 +127,13 @@ public:
 
     void validate() const;
 
-    UnlinkedMetadataTable& unlinkedMetadata() const { return linkingData().unlinkedMetadata.get(); }
+    RefPtr<UnlinkedMetadataTable> unlinkedMetadata() const { return static_reference_cast<UnlinkedMetadataTable>(linkingData().unlinkedMetadata); }
+
+    SUPPRESS_ASAN bool isDestroyed() const
+    {
+        uintptr_t unlinkedMetadataPtr = *bitwise_cast<uintptr_t*>(&linkingData().unlinkedMetadata);
+        return !unlinkedMetadataPtr;
+    }
 
 private:
     MetadataTable(UnlinkedMetadataTable&);
@@ -134,7 +143,7 @@ private:
 
     size_t totalSize() const
     {
-        return unlinkedMetadata().m_numValueProfiles * sizeof(ValueProfile) + sizeof(UnlinkedMetadataTable::LinkingData) + getOffset(UnlinkedMetadataTable::s_offsetTableEntries - 1);
+        return unlinkedMetadata()->m_numValueProfiles * sizeof(ValueProfile) + sizeof(UnlinkedMetadataTable::LinkingData) + getOffset(UnlinkedMetadataTable::s_offsetTableEntries - 1);
     }
 
     UnlinkedMetadataTable::LinkingData& linkingData() const

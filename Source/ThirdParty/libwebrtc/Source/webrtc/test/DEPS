@@ -49,6 +49,9 @@ specific_include_rules = {
   ".*stun_validator_fuzzer\.cc": [
     "+p2p/base/stun.h",
   ],
+  ".*test_main_lib\.cc": [
+    "+third_party/perfetto",
+  ],
   ".*test_main\.cc": [
     "+absl/debugging/failure_signal_handler.h",
     "+absl/debugging/symbolize.h",

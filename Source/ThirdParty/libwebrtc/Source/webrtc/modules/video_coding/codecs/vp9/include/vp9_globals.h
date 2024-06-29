@@ -30,8 +30,8 @@ const size_t kMaxVp9RefPics = 3;
 const size_t kMaxVp9FramesInGof = 0xFF;  // 8 bits
 const size_t kMaxVp9NumberOfSpatialLayers = 8;
 
-const size_t kMinVp9SpatialLayerLongSideLength = 240;
-const size_t kMinVp9SpatialLayerShortSideLength = 135;
+const int kMinVp9SpatialLayerLongSideLength = 240;
+const int kMinVp9SpatialLayerShortSideLength = 135;
 
 enum TemporalStructureMode {
   kTemporalStructureMode1,  // 1 temporal layer structure - i.e., IPPP...

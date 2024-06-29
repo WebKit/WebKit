@@ -92,7 +92,7 @@ WebExtensionController::WebProcessProxySet WebExtensionController::allProcesses(
 {
     WebProcessProxySet processes;
     for (auto& page : m_pages)
-        processes.add(page.process());
+        processes.add(page.legacyMainFrameProcess());
     return processes;
 }
 

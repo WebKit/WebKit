@@ -56,7 +56,7 @@ public:
     std::optional<uint32_t> maximum() const { return m_maximum; }
     uint32_t length() const { return m_length; }
 
-    static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(Table, m_length); }
+    static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(Table, m_length); }
 
     static uint32_t allocatedLength(uint32_t length);
 
@@ -133,16 +133,16 @@ public:
         Instance* m_instance { nullptr };
         WriteBarrier<Unknown> m_value { NullWriteBarrierTag };
 
-        static ptrdiff_t offsetOfFunction() { return OBJECT_OFFSETOF(Function, m_function); }
-        static ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(Function, m_instance); }
-        static ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(Function, m_value); }
+        static constexpr ptrdiff_t offsetOfFunction() { return OBJECT_OFFSETOF(Function, m_function); }
+        static constexpr ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(Function, m_instance); }
+        static constexpr ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(Function, m_value); }
     };
 
     void setFunction(uint32_t, JSObject*, WasmToWasmImportableFunction, Instance*);
     const Function& function(uint32_t) const;
     void copyFunction(const FuncRefTable* srcTable, uint32_t dstIndex, uint32_t srcIndex);
 
-    static ptrdiff_t offsetOfFunctions() { return OBJECT_OFFSETOF(FuncRefTable, m_importableFunctions); }
+    static constexpr ptrdiff_t offsetOfFunctions() { return OBJECT_OFFSETOF(FuncRefTable, m_importableFunctions); }
     static constexpr ptrdiff_t offsetOfTail() { return WTF::roundUpToMultipleOf<alignof(Function)>(sizeof(FuncRefTable)); }
     static constexpr ptrdiff_t offsetOfFunctionsForFixedSizedTable() { return offsetOfTail(); }
 

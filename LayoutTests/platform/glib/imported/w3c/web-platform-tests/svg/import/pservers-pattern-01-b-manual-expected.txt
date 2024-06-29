@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
       RenderSVGResourcePattern {pattern} [id="pat3"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderSVGRect {rect} at (0,0) size 17x17 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
         RenderSVGRect {rect} at (0,16) size 17x18 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=10.00] [width=10.00] [height=10.00]
-      RenderSVGText {text} at (25,174) size 292x57 contains 1 chunk(s)
+      RenderSVGText {text} at (25,175) size 292x56 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 292x56
           chunk 1 text run 1 at (25.00,220.00) startOffset 0 endOffset 15 width 291.60: "Pattern on fill"
       RenderSVGText {text} at (25,224) size 227x14 contains 1 chunk(s)
@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
       RenderSVGResourcePattern {pattern} [id="pat4"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderSVGRect {rect} at (0,0) size 17x17 [fill={[type=SOLID] [color=#800000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
         RenderSVGRect {rect} at (16,0) size 18x17 [fill={[type=SOLID] [color=#0000FF]}] [x=10.00] [y=0.00] [width=10.00] [height=10.00]
-      RenderSVGText {text} at (25,238) size 305x46 contains 1 chunk(s)
+      RenderSVGText {text} at (25,239) size 305x45 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 305x45
           chunk 1 text run 1 at (25.00,275.00) startOffset 0 endOffset 17 width 304.80: "Pattern on stroke"
       RenderSVGText {text} at (25,279) size 242x14 contains 1 chunk(s)

@@ -52,7 +52,7 @@ struct InlineContent;
 
 class InlineContentPainter {
 public:
-    InlineContentPainter(PaintInfo&, const LayoutPoint& paintOffset, const RenderInline* layerRenderer, const InlineContent&, const BoxTree&);
+    InlineContentPainter(PaintInfo&, const LayoutPoint& paintOffset, const RenderInline* inlineBoxWithLayer, const InlineContent&, const BoxTree&);
 
     void paint();
 
@@ -65,7 +65,7 @@ private:
     PaintInfo& m_paintInfo;
     const LayoutPoint m_paintOffset;
     LayoutRect m_damageRect;
-    const RenderInline* m_layerRenderer { nullptr };
+    const RenderInline* m_inlineBoxWithLayer { nullptr };
     const InlineContent& m_inlineContent;
     const BoxTree& m_boxTree;
     SingleThreadWeakListHashSet<RenderInline> m_outlineObjects;
@@ -73,12 +73,12 @@ private:
 
 class LayerPaintScope {
 public:
-    LayerPaintScope(const BoxTree&, const RenderInline* layerRenderer);
+    LayerPaintScope(const BoxTree&, const RenderInline* inlineBoxWithLayer);
     bool includes(const InlineDisplay::Box&);
 
 private:
     const BoxTree& m_boxTree;
-    const Layout::ElementBox* const m_layerInlineBox;
+    const Layout::ElementBox* const m_inlineBoxWithLayer;
     const Layout::ElementBox* m_currentExcludedInlineBox { nullptr };
 };
 

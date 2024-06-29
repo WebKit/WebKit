@@ -1,0 +1,27 @@
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<p>Test passes if loading video is not successful</p>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    const video = document.createElement("video");
+    video.src = "http://0.0.0.0:8000/media/resources/test.mp4";
+    video.onerror = (e) => {
+        testPassed("Received error");
+        testRunner.notifyDone();
+    }
+    video.onopen = (e) => {
+        testFailed("Received open");
+        testRunner.notifyDone();
+    }
+    video.onmessage = (e) => {
+        testFailed("Received message");
+        testRunner.notifyDone();
+    }
+</script>
+</body>

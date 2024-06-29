@@ -110,6 +110,7 @@ CSSUnitCategory unitCategory(CSSUnitType type)
     case CSSUnitType::CSS_CQB:
     case CSSUnitType::CSS_CQMIN:
     case CSSUnitType::CSS_CQMAX:
+    case CSSUnitType::CSS_ANCHOR:
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_CALC:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
@@ -267,6 +268,7 @@ TextStream& operator<<(TextStream& ts, CSSUnitType unitType)
     case CSSUnitType::CSS_PROPERTY_ID: ts << "property_id"; break;
     case CSSUnitType::CSS_VALUE_ID: ts << "value_id"; break;
     case CSSUnitType::CSS_QUIRKY_EM: ts << "quirky_em"; break;
+    case CSSUnitType::CSS_ANCHOR: ts << "anchor"; break;
     }
     return ts;
 }

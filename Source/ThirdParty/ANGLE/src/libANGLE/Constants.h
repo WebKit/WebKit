@@ -102,7 +102,7 @@ enum
 
     // QCOM foveated rendering constants
     // We support a max of 1 layer and 2 focal points, for now
-    // TODO (anglebug.com/8484): Implement support for multiple layers
+    // TODO (anglebug.com/42266906): Implement support for multiple layers
     IMPLEMENTATION_MAX_NUM_LAYERS   = 1,
     IMPLEMENTATION_MAX_FOCAL_POINTS = 2,
 };

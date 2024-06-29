@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      a.transition .svg1 {
+        fill: rgb(0, 200, 0);
+      }
+      a.transition:visited .svg2 {
+        fill: rgb(0, 0, 200);
+      }
+      .svg1, .svg2 {
+        transition: fill 100s steps(2, jump-start);
+        fill: rgb(200, 0, 0);
+      }
+    </style>
+  </head>
+  <body onload="test()">
+    <a href="">
+      <svg class="svg1" height="24" width="24" viewBox="0 0 24 24">
+          <rect width="200" height="100" x="10" y="10"/>
+      </svg>
+      <svg class="svg2" height="24" width="24" viewBox="0 0 24 24">
+          <rect width="200" height="100" x="10" y="10"/>
+      </svg>
+    </a>
+    <script>
+    function test() {
+        document.querySelector("a").classList.add("transition");
+    }
+    </script>
+  </body>
+</html>

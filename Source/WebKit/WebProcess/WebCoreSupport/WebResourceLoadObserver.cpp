@@ -120,7 +120,7 @@ String WebResourceLoadObserver::statisticsForURL(const URL& url)
     if (!statistics)
         return emptyString();
 
-    return makeString("Statistics for ", url.host().toString(), ":\n", statistics->toString());
+    return makeString("Statistics for "_s, url.host().toString(), ":\n"_s, statistics->toString());
 }
 
 Vector<ResourceLoadStatistics> WebResourceLoadObserver::takeStatistics()

@@ -1,0 +1,3 @@
+
+FAIL Create a close watcher without user activation that preventDefault()s cancel; send user activation assert_array_equals: lengths differ, expected array ["cancel[cancelable=true]", "cancel[cancelable=false]", "close"] length 3, got ["cancel[cancelable=true]", "cancel[cancelable=true]"] length 2
+

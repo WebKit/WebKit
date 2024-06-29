@@ -144,7 +144,7 @@ public:
     float scale() const { return m_parameters.scale; }
     bool usesDeepColorBackingStore() const;
     WebCore::DestinationColorSpace colorSpace() const { return m_parameters.colorSpace; }
-    WebCore::PixelFormat pixelFormat() const;
+    WebCore::ImageBufferPixelFormat pixelFormat() const;
     Type type() const { return m_parameters.type; }
     bool isOpaque() const { return m_parameters.isOpaque; }
     unsigned bytesPerPixel() const;

@@ -69,7 +69,7 @@ void* mbmalloc(size_t size)
     if (verbose)
         printf("malloc(%zu)\n", size);
     install_verifier_if_necessary();
-    return iso_try_allocate_common_primitive(size);
+    return iso_try_allocate_common_primitive(size, pas_non_compact_allocation_mode);
 }
 
 void* mbmemalign(size_t alignment, size_t size)
@@ -77,7 +77,7 @@ void* mbmemalign(size_t alignment, size_t size)
     if (verbose)
         printf("memalign(%zu, %zu)\n", alignment, size);
     install_verifier_if_necessary();
-    return iso_try_allocate_common_primitive_with_alignment(size, alignment);
+    return iso_try_allocate_common_primitive_with_alignment(size, alignment, pas_non_compact_allocation_mode);
 }
 
 void* mbrealloc(void* p, size_t ignored_old_size, size_t new_size)
@@ -85,7 +85,7 @@ void* mbrealloc(void* p, size_t ignored_old_size, size_t new_size)
     if (verbose)
         printf("realloc(%p, %zu)\n", p, new_size);
     install_verifier_if_necessary();
-    return iso_try_reallocate_common_primitive(p, new_size, pas_reallocate_free_if_successful);
+    return iso_try_reallocate_common_primitive(p, new_size, pas_reallocate_free_if_successful, pas_non_compact_allocation_mode);
 }
 
 void mbfree(void* p, size_t ignored_size)

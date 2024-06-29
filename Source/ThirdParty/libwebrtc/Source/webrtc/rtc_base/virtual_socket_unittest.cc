@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+#include "rtc_base/network/received_packet.h"
 #if defined(WEBRTC_POSIX)
 #include <netinet/in.h>
 #endif
@@ -101,7 +103,10 @@ struct Receiver : public sigslot::has_slots<> {
         sum(0),
         sum_sq(0),
         samples(0) {
-    socket->SignalReadPacket.connect(this, &Receiver::OnReadPacket);
+    socket->RegisterReceivedPacketCallback(
+        [&](rtc::AsyncPacketSocket* socket, const rtc::ReceivedPacket& packet) {
+          OnReadPacket(socket, packet);
+        });
     periodic = RepeatingTaskHandle::DelayedStart(
         thread, TimeDelta::Seconds(1), [this] {
           // It is always possible for us to receive more than expected because
@@ -116,18 +121,15 @@ struct Receiver : public sigslot::has_slots<> {
 
   ~Receiver() override { periodic.Stop(); }
 
-  void OnReadPacket(AsyncPacketSocket* s,
-                    const char* data,
-                    size_t size,
-                    const SocketAddress& remote_addr,
-                    const int64_t& /* packet_time_us */) {
+  void OnReadPacket(AsyncPacketSocket* s, const rtc::ReceivedPacket& packet) {
     ASSERT_EQ(socket.get(), s);
-    ASSERT_GE(size, 4U);
+    ASSERT_GE(packet.payload().size(), 4U);
 
-    count += size;
-    sec_count += size;
+    count += packet.payload().size();
+    sec_count += packet.payload().size();
 
-    uint32_t send_time = *reinterpret_cast<const uint32_t*>(data);
+    uint32_t send_time =
+        *reinterpret_cast<const uint32_t*>(packet.payload().data());
     uint32_t recv_time = rtc::TimeMillis();
     uint32_t delay = recv_time - send_time;
     sum += delay;

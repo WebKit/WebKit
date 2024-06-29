@@ -27,7 +27,7 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    Exposed=(Window,DedicatedWorker),
+    Exposed=(Window,Worker),
     SecureContext
 ]
 interface GPUBindGroupLayout {

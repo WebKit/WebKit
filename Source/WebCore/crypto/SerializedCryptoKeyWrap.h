@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+struct WrappedCryptoKey;
+
 // The purpose of the following APIs is to protect serialized CryptoKey data in IndexedDB or
 // any other local storage that go through the structured clone algorithm. However, a side effect
 // of this extra layer of protection is redundant communications between mainThread(document) and
@@ -41,6 +43,8 @@ WEBCORE_EXPORT std::optional<Vector<uint8_t>> defaultWebCryptoMasterKey();
 WEBCORE_EXPORT bool deleteDefaultWebCryptoMasterKey();
 
 WEBCORE_EXPORT bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& key, Vector<uint8_t>& result);
-WEBCORE_EXPORT bool unwrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key);
+
+WEBCORE_EXPORT std::optional<WrappedCryptoKey> readSerializedCryptoKey(const Vector<uint8_t>& wrappedKey);
+WEBCORE_EXPORT std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>& masterKey, const struct WrappedCryptoKey& wrappedKey);
 
 } // namespace WebCore

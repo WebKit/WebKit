@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2022 Metrological Group B.V.
- * Copyright (C) 2022 Igalia S.L.
+ * Copyright (C) 2022-2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,10 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+
+namespace IPC {
+template<typename T, typename U> struct ArgumentCoder;
+}
 
 namespace WebCore {
 
@@ -129,6 +133,15 @@ struct DMABufFormat {
         FourCC fourcc { FourCC::Invalid };
         unsigned horizontalSubsampling { 0 };
         unsigned verticalSubsampling { 0 };
+
+    private:
+        Plane(const FourCC& fourcc, const unsigned& hsValue, const unsigned& vsValue)
+            : fourcc(fourcc)
+            , horizontalSubsampling(hsValue)
+            , verticalSubsampling(vsValue)
+        { }
+
+        friend struct IPC::ArgumentCoder<Plane, void>;
     };
     std::array<Plane, c_maxPlanes> planes;
 };

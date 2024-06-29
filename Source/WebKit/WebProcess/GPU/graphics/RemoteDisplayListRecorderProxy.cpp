@@ -35,6 +35,7 @@
 #include "SharedVideoFrame.h"
 #include "StreamClientConnection.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebProcess.h"
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListDrawingContext.h>
 #include <WebCore/DisplayListItems.h>
@@ -70,22 +71,35 @@ RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(RemoteRenderingBa
 template<typename T>
 ALWAYS_INLINE void RemoteDisplayListRecorderProxy::send(T&& message)
 {
-    auto imageBuffer = m_imageBuffer.get();
-    if (UNLIKELY(!m_renderingBackend))
+    RefPtr connection = this->connection();
+    if (UNLIKELY(!connection))
         return;
 
-    if (imageBuffer)
+    RefPtr imageBuffer = m_imageBuffer.get();
+    if (LIKELY(imageBuffer))
         imageBuffer->backingStoreWillChange();
-    auto result = m_renderingBackend->streamConnection().send(std::forward<T>(message), m_destinationBufferIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
-#if !RELEASE_LOG_DISABLED
+    auto result = connection->send(std::forward<T>(message), m_destinationBufferIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
     if (UNLIKELY(result != IPC::Error::NoError)) {
-        auto& parameters = m_renderingBackend->parameters();
-        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteDisplayListRecorderProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
-            parameters.pageProxyID.toUInt64(), parameters.pageID.toUInt64(), parameters.identifier.toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
+        RELEASE_LOG(RemoteLayerBuffers, "RemoteDisplayListRecorderProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
+            IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
+        didBecomeUnresponsive();
     }
-#else
-    UNUSED_VARIABLE(result);
-#endif
+}
+
+ALWAYS_INLINE RefPtr<IPC::StreamClientConnection> RemoteDisplayListRecorderProxy::connection() const
+{
+    auto* backend = m_renderingBackend.get();
+    if (UNLIKELY(!backend))
+        return nullptr;
+    return backend->connection();
+}
+
+void RemoteDisplayListRecorderProxy::didBecomeUnresponsive() const
+{
+    auto* backend = m_renderingBackend.get();
+    if (UNLIKELY(!backend))
+        return;
+    backend->didBecomeUnresponsive();
 }
 
 RenderingMode RemoteDisplayListRecorderProxy::renderingMode() const
@@ -259,6 +273,11 @@ void RemoteDisplayListRecorderProxy::recordDrawPattern(RenderingResourceIdentifi
 void RemoteDisplayListRecorderProxy::recordBeginTransparencyLayer(float opacity)
 {
     send(Messages::RemoteDisplayListRecorder::BeginTransparencyLayer(opacity));
+}
+
+void RemoteDisplayListRecorderProxy::recordBeginTransparencyLayer(CompositeOperator compositeOperator, BlendMode blendMode)
+{
+    send(Messages::RemoteDisplayListRecorder::BeginTransparencyLayerWithCompositeMode({ compositeOperator, blendMode }));
 }
 
 void RemoteDisplayListRecorderProxy::recordEndTransparencyLayer()
@@ -589,7 +608,7 @@ RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createImageBuffer(const Floa
     OptionSet<ImageBufferOptions> options;
     if (renderingMode.value_or(this->renderingMode()) == RenderingMode::Accelerated)
         options.add(ImageBufferOptions::Accelerated);
-    return m_renderingBackend->createImageBuffer(size, purpose, resolutionScale, colorSpace, PixelFormat::BGRA8, options);
+    return m_renderingBackend->createImageBuffer(size, purpose, resolutionScale, colorSpace, ImageBufferPixelFormat::BGRA8, options);
 }
 
 RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createAlignedImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, std::optional<RenderingMethod> renderingMethod) const

@@ -14,6 +14,8 @@
 #include <memory>
 #include <vector>
 
+#include "absl/base/nullability.h"
+#include "api/environment/environment.h"
 #include "api/transport/network_control.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
@@ -35,12 +37,18 @@ class RemoteBitrateEstimator;
 class ReceiveSideCongestionController : public CallStatsObserver {
  public:
   ReceiveSideCongestionController(
+      const Environment& env,
+      RemoteEstimatorProxy::TransportFeedbackSender feedback_sender,
+      RembThrottler::RembSender remb_sender,
+      absl::Nullable<NetworkStateEstimator*> network_state_estimator);
+
+  [[deprecated]] ReceiveSideCongestionController(
       Clock* clock,
       RemoteEstimatorProxy::TransportFeedbackSender feedback_sender,
       RembThrottler::RembSender remb_sender,
       NetworkStateEstimator* network_state_estimator);
 
-  ~ReceiveSideCongestionController() override {}
+  ~ReceiveSideCongestionController() override = default;
 
   void OnReceivedPacket(const RtpPacketReceived& packet, MediaType media_type);
 

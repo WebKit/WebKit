@@ -24,6 +24,7 @@
 
 #include "FEMorphology.h"
 #include "NodeName.h"
+#include "SVGFilter.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include <wtf/IsoMallocInlines.h>

@@ -12,7 +12,6 @@
 #include "libANGLE/CLObject.h"
 #include "libANGLE/renderer/CLDeviceImpl.h"
 
-#include "common/Spinlock.h"
 #include "common/SynchronizedValue.h"
 
 #include <functional>
@@ -65,7 +64,7 @@ class Device final : public _cl_device_id, public Object
     const rx::CLDeviceImpl::Ptr mImpl;
     const rx::CLDeviceImpl::Info mInfo;
 
-    angle::SynchronizedValue<CommandQueue *, angle::Spinlock> mDefaultCommandQueue = nullptr;
+    angle::SynchronizedValue<CommandQueue *> mDefaultCommandQueue = nullptr;
 
     friend class CommandQueue;
     friend class Platform;

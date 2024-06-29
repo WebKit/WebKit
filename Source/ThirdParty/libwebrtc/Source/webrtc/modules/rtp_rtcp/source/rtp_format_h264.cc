@@ -155,8 +155,7 @@ bool RtpPacketizerH264::PacketizeFuA(size_t fragment_index) {
   return true;
 }
 
-size_t RtpPacketizerH264::PacketizeStapA(size_t fragment_index)
-{
+size_t RtpPacketizerH264::PacketizeStapA(size_t fragment_index) {
   // Aggregate fragments into one packet (STAP-A).
   size_t payload_size_left = limits_.max_payload_len;
   int aggregated_fragments = 0;

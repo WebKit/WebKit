@@ -42,6 +42,7 @@
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
 #include "StructuredSerializeOptions.h"
+#include "TrustedType.h"
 #include "WorkerGlobalScopeProxy.h"
 #include "WorkerInitializationData.h"
 #include "WorkerScriptLoader.h"
@@ -80,7 +81,7 @@ void Worker::networkStateChanged(bool isOnline)
 Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, WorkerOptions&& options)
     : ActiveDOMObject(&context)
     , m_options(WTFMove(options))
-    , m_identifier("worker:" + Inspector::IdentifiersFactory::createIdentifier())
+    , m_identifier(makeString("worker:"_s, Inspector::IdentifiersFactory::createIdentifier()))
     , m_contextProxy(WorkerGlobalScopeProxy::create(*this))
     , m_runtimeFlags(runtimeFlags)
     , m_clientIdentifier(ScriptExecutionContextIdentifier::generate())
@@ -96,13 +97,17 @@ Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, 
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, const String& url, WorkerOptions&& options)
+ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, std::variant<RefPtr<TrustedScriptURL>, String>&& url, WorkerOptions&& options)
 {
+    auto compliantScriptURLString = trustedTypeCompliantString(context, WTFMove(url), "Worker constructor"_s);
+    if (compliantScriptURLString.hasException())
+        return compliantScriptURLString.releaseException();
+
     auto worker = adoptRef(*new Worker(context, runtimeFlags, WTFMove(options)));
 
     worker->suspendIfNeeded();
 
-    auto scriptURL = worker->resolveURL(url);
+    auto scriptURL = worker->resolveURL(compliantScriptURLString.releaseReturnValue());
     if (scriptURL.hasException())
         return scriptURL.releaseException();
 
@@ -181,15 +186,20 @@ bool Worker::virtualHasPendingActivity() const
     return m_scriptLoader || (m_didStartWorkerGlobalScope && !m_contextProxy.askedToTerminate());
 }
 
-void Worker::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
+void Worker::didReceiveResponse(ScriptExecutionContextIdentifier mainContextIdentifier, ResourceLoaderIdentifier identifier, const ResourceResponse& response)
 {
     const URL& responseURL = response.url();
     if (!responseURL.protocolIsBlob() && !responseURL.protocolIsFile() && !SecurityOrigin::create(responseURL)->isOpaque())
         m_contentSecurityPolicyResponseHeaders = ContentSecurityPolicyResponseHeaders(response);
-    InspectorInstrumentation::didReceiveScriptResponse(scriptExecutionContext(), identifier);
+
+    if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+        ScriptExecutionContext::ensureOnContextThread(mainContextIdentifier, [identifier] (auto& mainContext) {
+            InspectorInstrumentation::didReceiveScriptResponse(mainContext, identifier);
+        });
+    }
 }
 
-void Worker::notifyFinished()
+void Worker::notifyFinished(ScriptExecutionContextIdentifier mainContextIdentifier)
 {
     auto clearLoader = makeScopeExit([this] {
         m_scriptLoader = nullptr;
@@ -217,10 +227,16 @@ void Worker::notifyFinished()
     WorkerInitializationData initializationData {
         m_scriptLoader->takeServiceWorkerData(),
         m_clientIdentifier,
+        m_scriptLoader->advancedPrivacyProtections(),
         context->userAgent(m_scriptLoader->responseURL())
     };
     m_contextProxy.startWorkerGlobalScope(m_scriptLoader->responseURL(), *sessionID, m_options.name, WTFMove(initializationData), m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_scriptLoader->crossOriginEmbedderPolicy(), m_workerCreationTime, referrerPolicy, m_options.type, m_options.credentials, m_runtimeFlags);
-    InspectorInstrumentation::scriptImported(*context, m_scriptLoader->identifier(), m_scriptLoader->script().toString());
+
+    if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+        ScriptExecutionContext::ensureOnContextThread(mainContextIdentifier, [identifier = m_scriptLoader->identifier(), script = m_scriptLoader->script().isolatedCopy()] (auto& mainContext) {
+            InspectorInstrumentation::scriptImported(mainContext, identifier, script.toString());
+        });
+    }
 }
 
 void Worker::dispatchEvent(Event& event)

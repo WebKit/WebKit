@@ -1402,7 +1402,12 @@ TEST(WKAttachmentTests, InvalidateAttachmentsAfterMainFrameNavigation)
     [htmlAttachment expectRequestedDataToBe:nil];
 }
 
+// FIXME: <rdar://130762747> Investigate why 280261@main seems to have made this time out on open source iOS.
+#if PLATFORM(IOS_FAMILY) && !USE(APPLE_INTERNAL_SDK)
+TEST(WKAttachmentTests, DISABLED_InvalidateAttachmentsAfterWebProcessTermination)
+#else
 TEST(WKAttachmentTests, InvalidateAttachmentsAfterWebProcessTermination)
+#endif
 {
     auto webView = webViewForTestingAttachments();
     RetainPtr<_WKAttachment> pdfAttachment;

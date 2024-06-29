@@ -54,12 +54,15 @@ class MultisampleTest : public ANGLETest<>
 class MultisampleTestES3 : public MultisampleTest
 {};
 
+class MultisampleTestES32 : public MultisampleTest
+{};
+
 // Test point rendering on a multisampled surface.  GLES2 section 3.3.1.
 TEST_P(MultisampleTest, Point)
 {
-    // http://anglebug.com/3470
+    // http://anglebug.com/42262135
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsNVIDIAShield() && IsOpenGLES());
-    // http://anglebug.com/5727
+    // http://anglebug.com/42264264
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     constexpr char kPointsVS[] = R"(precision highp float;
@@ -118,7 +121,7 @@ void main()
 TEST_P(MultisampleTest, Line)
 {
     ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
-    // http://anglebug.com/5727
+    // http://anglebug.com/42264264
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
@@ -164,9 +167,9 @@ TEST_P(MultisampleTest, Line)
 // Test polygon rendering on a multisampled surface.  GLES2 section 3.5.3.
 TEST_P(MultisampleTest, Triangle)
 {
-    // http://anglebug.com/3470
+    // http://anglebug.com/42262135
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsNVIDIAShield() && IsOpenGLES());
-    // http://anglebug.com/5727
+    // http://anglebug.com/42264264
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
@@ -207,11 +210,11 @@ TEST_P(MultisampleTest, Triangle)
 TEST_P(MultisampleTest, ContentPresevedAfterInterruption)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_rgb8_rgba8"));
-    // http://anglebug.com/3470
+    // http://anglebug.com/42262135
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsNVIDIAShield() && IsOpenGLES());
-    // http://anglebug.com/4609
+    // http://anglebug.com/42263216
     ANGLE_SKIP_TEST_IF(IsD3D11());
-    // http://anglebug.com/5727
+    // http://anglebug.com/42264264
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
@@ -288,7 +291,7 @@ TEST_P(MultisampleTest, ContentPresevedAfterInterruption)
 // Test that alpha to coverage is enabled works properly along with early fragment test.
 TEST_P(MultisampleTest, AlphaToSampleCoverage)
 {
-    // http://anglebug.com/5727
+    // http://anglebug.com/42264264
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     constexpr char kFS[] =
@@ -825,6 +828,25 @@ TEST_P(MultisampleTestES3, DISABLED_ClearMSAAReachesWindow)
     angle::Sleep(2000);
 }
 
+// According to the spec, the minimum value for the multisample line width range limits is one.
+TEST_P(MultisampleTestES32, MultisampleLineWidthRangeCheck)
+{
+    GLfloat range[2] = {0, 0};
+    glGetFloatv(GL_MULTISAMPLE_LINE_WIDTH_RANGE, range);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_GE(range[0], 1.0f);
+    EXPECT_GE(range[1], 1.0f);
+}
+
+// The multisample line width granularity should not be negative.
+TEST_P(MultisampleTestES32, MultisampleLineWidthGranularityCheck)
+{
+    GLfloat granularity = -1.0f;
+    glGetFloatv(GL_MULTISAMPLE_LINE_WIDTH_GRANULARITY, &granularity);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_GE(granularity, 0.0f);
+}
+
 // These colors match the shader in resolveToFBO which returns (0.5, 0.6, 0.7, 0.8).
 const GLColor MultisampleResolveTest::kEXPECTED_R8(128, 0, 0, 255);
 const GLColor MultisampleResolveTest::kEXPECTED_RG8(128, 153, 0, 255);
@@ -1145,6 +1167,12 @@ ANGLE_INSTANTIATE_TEST_ES3_AND_ES31_AND(MultisampleTestES3,
                                         ES3_VULKAN().enable(Feature::EmulatedPrerotation90),
                                         ES3_VULKAN().enable(Feature::EmulatedPrerotation180),
                                         ES3_VULKAN().enable(Feature::EmulatedPrerotation270));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultisampleTestES32);
+ANGLE_INSTANTIATE_TEST_ES32_AND(MultisampleTestES32,
+                                ES32_VULKAN().enable(Feature::EmulatedPrerotation90),
+                                ES32_VULKAN().enable(Feature::EmulatedPrerotation180),
+                                ES32_VULKAN().enable(Feature::EmulatedPrerotation270));
 
 ANGLE_INSTANTIATE_TEST_ES3_AND(
     MultisampleResolveTest,

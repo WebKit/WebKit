@@ -1,0 +1,55 @@
+Test the Touch constructor
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS new Touch({ }) threw exception TypeError: Member TouchInit.identifier is required and must be an instance of long.
+PASS new Touch({ identifier: 0 }) threw exception TypeError: Member TouchInit.target is required and must be an instance of EventTarget.
+PASS new Touch({ target: document.body }) threw exception TypeError: Member TouchInit.identifier is required and must be an instance of long.
+PASS new Touch({ identifier: 0, target: null }) threw exception TypeError: Type error.
+
+PASS touch = new Touch({ identifier: 1, target: document.body }) did not throw exception.
+PASS createdTouch.identifier is init.identifier
+PASS createdTouch.target is init.target
+PASS createdTouch.screenX is 0
+PASS createdTouch.screenY is 0
+PASS createdTouch.pageX is 0
+PASS createdTouch.pageY is 0
+PASS createdTouch.clientX is 0
+PASS createdTouch.clientY is 0
+PASS createdTouch.radiusX is 0
+PASS createdTouch.radiusY is 0
+PASS createdTouch.rotationAngle is 0
+PASS createdTouch.force is 0
+
+PASS touch = new Touch({ identifier: 1, target: document.body, clientX: 1, clientY: 2, screenX: 3, screenY: 4, pageX: 5, pageY: 6, force: 7, radiusX: 8, radiusY: 9, rotationAngle: 10 }) did not throw exception.
+PASS createdTouch.identifier is init.identifier
+PASS createdTouch.target is init.target
+PASS createdTouch.screenX is init.screenX
+PASS createdTouch.screenY is init.screenY
+PASS createdTouch.pageX is init.pageX
+PASS createdTouch.pageY is init.pageY
+PASS createdTouch.clientX is init.clientX
+PASS createdTouch.clientY is init.clientY
+PASS createdTouch.radiusX is init.radiusX
+PASS createdTouch.radiusY is init.radiusY
+PASS createdTouch.rotationAngle is init.rotationAngle
+PASS createdTouch.force is init.force
+
+PASS touch = new Touch({ identifier: 1, target: document.body, clientX: 1.5, clientY: 2.5, screenX: 3.5, screenY: 4.5, pageX: 5.5, pageY: 6.5, force: 7.5, radiusX: 8.5, radiusY: 9.5, rotationAngle: 10.5 }) did not throw exception.
+PASS createdTouch.identifier is init.identifier
+PASS createdTouch.target is init.target
+PASS createdTouch.screenX is init.screenX
+PASS createdTouch.screenY is init.screenY
+PASS createdTouch.pageX is init.pageX
+PASS createdTouch.pageY is init.pageY
+PASS createdTouch.clientX is init.clientX
+PASS createdTouch.clientY is init.clientY
+PASS createdTouch.radiusX is init.radiusX
+PASS createdTouch.radiusY is init.radiusY
+PASS createdTouch.rotationAngle is init.rotationAngle
+PASS createdTouch.force is init.force
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

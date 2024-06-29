@@ -29,6 +29,9 @@ namespace {
 
 typedef unsigned int (*Get4x4SseFunc)(const uint8_t *a, int a_stride,
                                       const uint8_t *b, int b_stride);
+typedef void (*GetVarianceFunc)(const uint8_t *src_ptr, int src_stride,
+                                const uint8_t *ref_ptr, int ref_stride,
+                                uint32_t *sse, int *sum);
 typedef unsigned int (*SumOfSquaresFunction)(const int16_t *src);
 
 using libvpx_test::ACMRandom;
@@ -63,35 +66,65 @@ static unsigned int mb_ss_ref(const int16_t *src) {
  *  Our codebase calculates the "diff" value in the variance algorithm by
  *  (src - ref).
  */
-static uint32_t variance_ref(const uint8_t *src, const uint8_t *ref, int l2w,
-                             int l2h, int src_stride, int ref_stride,
-                             uint32_t *sse_ptr, bool use_high_bit_depth_,
-                             vpx_bit_depth_t bit_depth) {
-  int64_t se = 0;
-  uint64_t sse = 0;
-  const int w = 1 << l2w;
-  const int h = 1 << l2h;
+static void variance(const uint8_t *src, int src_stride, const uint8_t *ref,
+                     int ref_stride, int w, int h, bool use_high_bit_depth_,
+                     uint64_t *sse, int64_t *se, vpx_bit_depth_t bit_depth) {
+  int64_t se_long = 0;
+  uint64_t sse_long = 0;
+
   for (int y = 0; y < h; y++) {
     for (int x = 0; x < w; x++) {
-      int diff;
+      int diff = 0;
       if (!use_high_bit_depth_) {
         diff = src[y * src_stride + x] - ref[y * ref_stride + x];
-        se += diff;
-        sse += diff * diff;
 #if CONFIG_VP9_HIGHBITDEPTH
       } else {
         diff = CONVERT_TO_SHORTPTR(src)[y * src_stride + x] -
                CONVERT_TO_SHORTPTR(ref)[y * ref_stride + x];
-        se += diff;
-        sse += diff * diff;
 #endif  // CONFIG_VP9_HIGHBITDEPTH
       }
+      se_long += diff;
+      sse_long += diff * diff;
     }
   }
-  RoundHighBitDepth(bit_depth, &se, &sse);
-  *sse_ptr = static_cast<uint32_t>(sse);
+
+  RoundHighBitDepth(bit_depth, &se_long, &sse_long);
+
+  *sse = sse_long;
+  *se = se_long;
+}
+
+static void get_variance_ref(const uint8_t *src, int src_stride,
+                             const uint8_t *ref, int ref_stride, int l2w,
+                             int l2h, bool use_high_bit_depth_, uint32_t *sse,
+                             int *se, vpx_bit_depth_t bit_depth) {
+  const int w = 1 << l2w;
+  const int h = 1 << l2h;
+  int64_t se_long = 0;
+  uint64_t sse_long = 0;
+
+  variance(src, src_stride, ref, ref_stride, w, h, use_high_bit_depth_,
+           &sse_long, &se_long, bit_depth);
+
+  *sse = static_cast<uint32_t>(sse_long);
+  *se = static_cast<int>(se_long);
+}
+
+static uint32_t variance_ref(const uint8_t *src, const uint8_t *ref, int l2w,
+                             int l2h, int src_stride, int ref_stride,
+                             uint32_t *sse_ptr, bool use_high_bit_depth_,
+                             vpx_bit_depth_t bit_depth) {
+  const int w = 1 << l2w;
+  const int h = 1 << l2h;
+  int64_t se_long = 0;
+  uint64_t sse_long = 0;
+
+  variance(src, src_stride, ref, ref_stride, w, h, use_high_bit_depth_,
+           &sse_long, &se_long, bit_depth);
+
+  *sse_ptr = static_cast<uint32_t>(sse_long);
   return static_cast<uint32_t>(
-      sse - ((static_cast<int64_t>(se) * se) >> (l2w + l2h)));
+      sse_long - ((static_cast<int64_t>(se_long) * se_long) >> (l2w + l2h)));
 }
 
 /* The subpel reference functions differ from the codec version in one aspect:
@@ -337,6 +370,9 @@ class MainTestClass
   void OneQuarterTest();
   void SpeedTest();
 
+  // GetVariance tests
+  void RefTestGetVar();
+
   // MSE/SSE tests
   void RefTestMse();
   void RefTestSse();
@@ -490,6 +526,35 @@ void MainTestClass<VarianceFunctionType>::SpeedTest() {
   const int elapsed_time = static_cast<int>(vpx_usec_timer_elapsed(&timer));
   printf("Variance %dx%d %dbpp time: %5d ms\n", width(), height(),
          params_.bit_depth, elapsed_time / 1000);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Tests related to GetVariance.
+template <typename GetVarianceFunctionType>
+void MainTestClass<GetVarianceFunctionType>::RefTestGetVar() {
+  for (int i = 0; i < 10; ++i) {
+    for (int j = 0; j < block_size(); j++) {
+      if (!use_high_bit_depth()) {
+        src_[j] = rnd_.Rand8();
+        ref_[j] = rnd_.Rand8();
+#if CONFIG_VP9_HIGHBITDEPTH
+      } else {
+        CONVERT_TO_SHORTPTR(src_)[j] = rnd_.Rand16() & mask();
+        CONVERT_TO_SHORTPTR(ref_)[j] = rnd_.Rand16() & mask();
+#endif  // CONFIG_VP9_HIGHBITDEPTH
+      }
+    }
+    unsigned int sse1, sse2;
+    int sum1, sum2;
+    const int stride = width();
+    ASM_REGISTER_STATE_CHECK(
+        params_.func(src_, stride, ref_, stride, &sse1, &sum1));
+    get_variance_ref(src_, stride, ref_, stride, params_.log2width,
+                     params_.log2height, use_high_bit_depth(), &sse2, &sum2,
+                     params_.bit_depth);
+    EXPECT_EQ(sse1, sse2) << "Error at test index: " << i;
+    EXPECT_EQ(sum1, sum2) << "Error at test index: " << i;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -766,6 +831,7 @@ void SubpelVarianceTest<vpx_subp_avg_variance_fn_t>::RefTest() {
 typedef MainTestClass<Get4x4SseFunc> VpxSseTest;
 typedef MainTestClass<vpx_variance_fn_t> VpxMseTest;
 typedef MainTestClass<vpx_variance_fn_t> VpxVarianceTest;
+typedef MainTestClass<GetVarianceFunc> VpxGetVarianceTest;
 typedef SubpelVarianceTest<vpx_subpixvariance_fn_t> VpxSubpelVarianceTest;
 typedef SubpelVarianceTest<vpx_subp_avg_variance_fn_t> VpxSubpelAvgVarianceTest;
 
@@ -779,6 +845,7 @@ TEST_P(VpxVarianceTest, Ref) { RefTest(); }
 TEST_P(VpxVarianceTest, RefStride) { RefStrideTest(); }
 TEST_P(VpxVarianceTest, OneQuarter) { OneQuarterTest(); }
 TEST_P(VpxVarianceTest, DISABLED_Speed) { SpeedTest(); }
+TEST_P(VpxGetVarianceTest, RefGetVar) { RefTestGetVar(); }
 TEST_P(SumOfSquaresTest, Const) { ConstTest(); }
 TEST_P(SumOfSquaresTest, Ref) { RefTest(); }
 TEST_P(VpxSubpelVarianceTest, Ref) { RefTest(); }
@@ -818,6 +885,16 @@ INSTANTIATE_TEST_SUITE_P(
                       VarianceParams(2, 3, &vpx_variance4x8_c),
                       VarianceParams(2, 2, &vpx_variance4x4_c)));
 
+typedef TestParams<GetVarianceFunc> GetVarianceParams;
+INSTANTIATE_TEST_SUITE_P(
+    C, VpxGetVarianceTest,
+    ::testing::Values(GetVarianceParams(4, 4, &vpx_get16x16var_c),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_c),
+                      GetVarianceParams(4, 4, &vpx_get16x16var_c),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_c),
+                      GetVarianceParams(4, 4, &vpx_get16x16var_c),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_c)));
+
 typedef TestParams<vpx_subpixvariance_fn_t> SubpelVarianceParams;
 INSTANTIATE_TEST_SUITE_P(
     C, VpxSubpelVarianceTest,
@@ -856,6 +933,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 #if CONFIG_VP9_HIGHBITDEPTH
 typedef MainTestClass<vpx_variance_fn_t> VpxHBDVarianceTest;
+typedef MainTestClass<GetVarianceFunc> VpxHBDGetVarianceTest;
 typedef SubpelVarianceTest<vpx_subpixvariance_fn_t> VpxHBDSubpelVarianceTest;
 typedef SubpelVarianceTest<vpx_subp_avg_variance_fn_t>
     VpxHBDSubpelAvgVarianceTest;
@@ -865,6 +943,7 @@ TEST_P(VpxHBDVarianceTest, Ref) { RefTest(); }
 TEST_P(VpxHBDVarianceTest, RefStride) { RefStrideTest(); }
 TEST_P(VpxHBDVarianceTest, OneQuarter) { OneQuarterTest(); }
 TEST_P(VpxHBDVarianceTest, DISABLED_Speed) { SpeedTest(); }
+TEST_P(VpxHBDGetVarianceTest, RefGetVar) { RefTestGetVar(); }
 TEST_P(VpxHBDSubpelVarianceTest, Ref) { RefTest(); }
 TEST_P(VpxHBDSubpelVarianceTest, ExtremeRef) { ExtremeRefTest(); }
 TEST_P(VpxHBDSubpelAvgVarianceTest, Ref) { RefTest(); }
@@ -931,6 +1010,15 @@ INSTANTIATE_TEST_SUITE_P(
                       VarianceParams(3, 2, &vpx_highbd_8_variance8x4_c, 8),
                       VarianceParams(2, 3, &vpx_highbd_8_variance4x8_c, 8),
                       VarianceParams(2, 2, &vpx_highbd_8_variance4x4_c, 8)));
+
+INSTANTIATE_TEST_SUITE_P(
+    C, VpxHBDGetVarianceTest,
+    ::testing::Values(GetVarianceParams(4, 4, &vpx_highbd_12_get16x16var_c, 12),
+                      GetVarianceParams(3, 3, &vpx_highbd_12_get8x8var_c, 12),
+                      GetVarianceParams(4, 4, &vpx_highbd_10_get16x16var_c, 10),
+                      GetVarianceParams(3, 3, &vpx_highbd_10_get8x8var_c, 10),
+                      GetVarianceParams(4, 4, &vpx_highbd_8_get16x16var_c, 8),
+                      GetVarianceParams(3, 3, &vpx_highbd_8_get8x8var_c, 8)));
 
 INSTANTIATE_TEST_SUITE_P(
     C, VpxHBDSubpelVarianceTest,
@@ -1119,6 +1207,15 @@ INSTANTIATE_TEST_SUITE_P(
                       VarianceParams(2, 2, &vpx_variance4x4_sse2)));
 
 INSTANTIATE_TEST_SUITE_P(
+    SSE2, VpxGetVarianceTest,
+    ::testing::Values(GetVarianceParams(4, 4, &vpx_get16x16var_sse2),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_sse2),
+                      GetVarianceParams(4, 4, &vpx_get16x16var_sse2),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_sse2),
+                      GetVarianceParams(4, 4, &vpx_get16x16var_sse2),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_sse2)));
+
+INSTANTIATE_TEST_SUITE_P(
     SSE2, VpxSubpelVarianceTest,
     ::testing::Values(
         SubpelVarianceParams(6, 6, &vpx_sub_pixel_variance64x64_sse2, 0),
@@ -1196,6 +1293,16 @@ INSTANTIATE_TEST_SUITE_P(
         VarianceParams(4, 3, &vpx_highbd_8_variance16x8_sse2, 8),
         VarianceParams(3, 4, &vpx_highbd_8_variance8x16_sse2, 8),
         VarianceParams(3, 3, &vpx_highbd_8_variance8x8_sse2, 8)));
+
+INSTANTIATE_TEST_SUITE_P(
+    SSE2, VpxHBDGetVarianceTest,
+    ::testing::Values(
+        GetVarianceParams(4, 4, &vpx_highbd_12_get16x16var_sse2, 12),
+        GetVarianceParams(3, 3, &vpx_highbd_12_get8x8var_sse2, 12),
+        GetVarianceParams(4, 4, &vpx_highbd_10_get16x16var_sse2, 10),
+        GetVarianceParams(3, 3, &vpx_highbd_10_get8x8var_sse2, 10),
+        GetVarianceParams(4, 4, &vpx_highbd_8_get16x16var_sse2, 8),
+        GetVarianceParams(3, 3, &vpx_highbd_8_get8x8var_sse2, 8)));
 
 INSTANTIATE_TEST_SUITE_P(
     SSE2, VpxHBDSubpelVarianceTest,
@@ -1475,6 +1582,15 @@ INSTANTIATE_TEST_SUITE_P(
                       VarianceParams(2, 3, &vpx_variance4x8_neon),
                       VarianceParams(2, 2, &vpx_variance4x4_neon)));
 
+INSTANTIATE_TEST_SUITE_P(
+    NEON, VpxGetVarianceTest,
+    ::testing::Values(GetVarianceParams(4, 4, &vpx_get16x16var_neon),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_neon),
+                      GetVarianceParams(4, 4, &vpx_get16x16var_neon),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_neon),
+                      GetVarianceParams(4, 4, &vpx_get16x16var_neon),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_neon)));
+
 #if HAVE_NEON_DOTPROD
 INSTANTIATE_TEST_SUITE_P(
     NEON_DOTPROD, VpxSseTest,
@@ -1502,6 +1618,15 @@ INSTANTIATE_TEST_SUITE_P(
                       VarianceParams(3, 2, &vpx_variance8x4_neon_dotprod),
                       VarianceParams(2, 3, &vpx_variance4x8_neon_dotprod),
                       VarianceParams(2, 2, &vpx_variance4x4_neon_dotprod)));
+
+INSTANTIATE_TEST_SUITE_P(
+    NEON_DOTPROD, VpxGetVarianceTest,
+    ::testing::Values(GetVarianceParams(4, 4, &vpx_get16x16var_neon_dotprod),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_neon_dotprod),
+                      GetVarianceParams(4, 4, &vpx_get16x16var_neon_dotprod),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_neon_dotprod),
+                      GetVarianceParams(4, 4, &vpx_get16x16var_neon_dotprod),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_neon_dotprod)));
 #endif  // HAVE_NEON_DOTPROD
 
 INSTANTIATE_TEST_SUITE_P(
@@ -1555,9 +1680,6 @@ INSTANTIATE_TEST_SUITE_P(
         MseParams(3, 4, &vpx_highbd_8_mse8x16_neon, VPX_BITS_8),
         MseParams(3, 3, &vpx_highbd_8_mse8x8_neon, VPX_BITS_8)));
 
-// TODO(webm:1819): Re-enable when vpx_highbd_8_mse16x16_neon_dotprod, etc. can
-// be used again.
-#if 0
 #if HAVE_NEON_DOTPROD
 INSTANTIATE_TEST_SUITE_P(
     NEON_DOTPROD, VpxHBDMseTest,
@@ -1567,7 +1689,19 @@ INSTANTIATE_TEST_SUITE_P(
         MseParams(3, 4, &vpx_highbd_8_mse8x16_neon_dotprod, VPX_BITS_8),
         MseParams(3, 3, &vpx_highbd_8_mse8x8_neon_dotprod, VPX_BITS_8)));
 #endif  // HAVE_NEON_DOTPROD
-#endif  // 0
+
+#if HAVE_SVE
+INSTANTIATE_TEST_SUITE_P(
+    SVE, VpxHBDMseTest,
+    ::testing::Values(MseParams(4, 4, &vpx_highbd_12_mse16x16_sve, VPX_BITS_12),
+                      MseParams(4, 3, &vpx_highbd_12_mse16x8_sve, VPX_BITS_12),
+                      MseParams(3, 4, &vpx_highbd_12_mse8x16_sve, VPX_BITS_12),
+                      MseParams(3, 3, &vpx_highbd_12_mse8x8_sve, VPX_BITS_12),
+                      MseParams(4, 4, &vpx_highbd_10_mse16x16_sve, VPX_BITS_10),
+                      MseParams(4, 3, &vpx_highbd_10_mse16x8_sve, VPX_BITS_10),
+                      MseParams(3, 4, &vpx_highbd_10_mse8x16_sve, VPX_BITS_10),
+                      MseParams(3, 3, &vpx_highbd_10_mse8x8_sve, VPX_BITS_10)));
+#endif  // HAVE_SVE
 
 INSTANTIATE_TEST_SUITE_P(
     NEON, VpxHBDVarianceTest,
@@ -1611,6 +1745,28 @@ INSTANTIATE_TEST_SUITE_P(
         VarianceParams(3, 2, &vpx_highbd_8_variance8x4_neon, 8),
         VarianceParams(2, 3, &vpx_highbd_8_variance4x8_neon, 8),
         VarianceParams(2, 2, &vpx_highbd_8_variance4x4_neon, 8)));
+
+INSTANTIATE_TEST_SUITE_P(
+    NEON, VpxHBDGetVarianceTest,
+    ::testing::Values(
+        GetVarianceParams(4, 4, &vpx_highbd_12_get16x16var_neon, 12),
+        GetVarianceParams(3, 3, &vpx_highbd_12_get8x8var_neon, 12),
+        GetVarianceParams(4, 4, &vpx_highbd_10_get16x16var_neon, 10),
+        GetVarianceParams(3, 3, &vpx_highbd_10_get8x8var_neon, 10),
+        GetVarianceParams(4, 4, &vpx_highbd_8_get16x16var_neon, 8),
+        GetVarianceParams(3, 3, &vpx_highbd_8_get8x8var_neon, 8)));
+
+#if HAVE_SVE
+INSTANTIATE_TEST_SUITE_P(
+    SVE, VpxHBDGetVarianceTest,
+    ::testing::Values(
+        GetVarianceParams(4, 4, &vpx_highbd_12_get16x16var_sve, 12),
+        GetVarianceParams(3, 3, &vpx_highbd_12_get8x8var_sve, 12),
+        GetVarianceParams(4, 4, &vpx_highbd_10_get16x16var_sve, 10),
+        GetVarianceParams(3, 3, &vpx_highbd_10_get8x8var_sve, 10),
+        GetVarianceParams(4, 4, &vpx_highbd_8_get16x16var_sve, 8),
+        GetVarianceParams(3, 3, &vpx_highbd_8_get8x8var_sve, 8)));
+#endif  // HAVE_SVE
 
 INSTANTIATE_TEST_SUITE_P(
     NEON, VpxHBDSubpelVarianceTest,
@@ -1815,6 +1971,53 @@ INSTANTIATE_TEST_SUITE_P(
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 #endif  // HAVE_NEON
 
+#if HAVE_SVE
+#if CONFIG_VP9_HIGHBITDEPTH
+INSTANTIATE_TEST_SUITE_P(
+    SVE, VpxHBDVarianceTest,
+    ::testing::Values(
+        VarianceParams(6, 6, &vpx_highbd_12_variance64x64_sve, 12),
+        VarianceParams(6, 5, &vpx_highbd_12_variance64x32_sve, 12),
+        VarianceParams(5, 6, &vpx_highbd_12_variance32x64_sve, 12),
+        VarianceParams(5, 5, &vpx_highbd_12_variance32x32_sve, 12),
+        VarianceParams(5, 4, &vpx_highbd_12_variance32x16_sve, 12),
+        VarianceParams(4, 5, &vpx_highbd_12_variance16x32_sve, 12),
+        VarianceParams(4, 4, &vpx_highbd_12_variance16x16_sve, 12),
+        VarianceParams(4, 3, &vpx_highbd_12_variance16x8_sve, 12),
+        VarianceParams(3, 4, &vpx_highbd_12_variance8x16_sve, 12),
+        VarianceParams(3, 3, &vpx_highbd_12_variance8x8_sve, 12),
+        VarianceParams(3, 2, &vpx_highbd_12_variance8x4_sve, 12),
+        VarianceParams(2, 3, &vpx_highbd_12_variance4x8_sve, 12),
+        VarianceParams(2, 2, &vpx_highbd_12_variance4x4_sve, 12),
+        VarianceParams(6, 6, &vpx_highbd_10_variance64x64_sve, 10),
+        VarianceParams(6, 5, &vpx_highbd_10_variance64x32_sve, 10),
+        VarianceParams(5, 6, &vpx_highbd_10_variance32x64_sve, 10),
+        VarianceParams(5, 5, &vpx_highbd_10_variance32x32_sve, 10),
+        VarianceParams(5, 4, &vpx_highbd_10_variance32x16_sve, 10),
+        VarianceParams(4, 5, &vpx_highbd_10_variance16x32_sve, 10),
+        VarianceParams(4, 4, &vpx_highbd_10_variance16x16_sve, 10),
+        VarianceParams(4, 3, &vpx_highbd_10_variance16x8_sve, 10),
+        VarianceParams(3, 4, &vpx_highbd_10_variance8x16_sve, 10),
+        VarianceParams(3, 3, &vpx_highbd_10_variance8x8_sve, 10),
+        VarianceParams(3, 2, &vpx_highbd_10_variance8x4_sve, 10),
+        VarianceParams(2, 3, &vpx_highbd_10_variance4x8_sve, 10),
+        VarianceParams(2, 2, &vpx_highbd_10_variance4x4_sve, 10),
+        VarianceParams(6, 6, &vpx_highbd_8_variance64x64_sve, 8),
+        VarianceParams(6, 5, &vpx_highbd_8_variance64x32_sve, 8),
+        VarianceParams(5, 6, &vpx_highbd_8_variance32x64_sve, 8),
+        VarianceParams(5, 5, &vpx_highbd_8_variance32x32_sve, 8),
+        VarianceParams(5, 4, &vpx_highbd_8_variance32x16_sve, 8),
+        VarianceParams(4, 5, &vpx_highbd_8_variance16x32_sve, 8),
+        VarianceParams(4, 4, &vpx_highbd_8_variance16x16_sve, 8),
+        VarianceParams(4, 3, &vpx_highbd_8_variance16x8_sve, 8),
+        VarianceParams(3, 4, &vpx_highbd_8_variance8x16_sve, 8),
+        VarianceParams(3, 3, &vpx_highbd_8_variance8x8_sve, 8),
+        VarianceParams(3, 2, &vpx_highbd_8_variance8x4_sve, 8),
+        VarianceParams(2, 3, &vpx_highbd_8_variance4x8_sve, 8),
+        VarianceParams(2, 2, &vpx_highbd_8_variance4x4_sve, 8)));
+#endif  // CONFIG_VP9_HIGHBITDEPTH
+#endif  // HAVE_SVE
+
 #if HAVE_MSA
 INSTANTIATE_TEST_SUITE_P(MSA, SumOfSquaresTest,
                          ::testing::Values(vpx_get_mb_ss_msa));
@@ -1844,6 +2047,15 @@ INSTANTIATE_TEST_SUITE_P(
                       VarianceParams(3, 2, &vpx_variance8x4_msa),
                       VarianceParams(2, 3, &vpx_variance4x8_msa),
                       VarianceParams(2, 2, &vpx_variance4x4_msa)));
+
+INSTANTIATE_TEST_SUITE_P(
+    MSA, VpxGetVarianceTest,
+    ::testing::Values(GetVarianceParams(4, 4, &vpx_get16x16var_msa),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_msa),
+                      GetVarianceParams(4, 4, &vpx_get16x16var_msa),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_msa),
+                      GetVarianceParams(4, 4, &vpx_get16x16var_msa),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_msa)));
 
 INSTANTIATE_TEST_SUITE_P(
     MSA, VpxSubpelVarianceTest,
@@ -1908,6 +2120,15 @@ INSTANTIATE_TEST_SUITE_P(
                       VarianceParams(3, 2, &vpx_variance8x4_vsx),
                       VarianceParams(2, 3, &vpx_variance4x8_vsx),
                       VarianceParams(2, 2, &vpx_variance4x4_vsx)));
+
+INSTANTIATE_TEST_SUITE_P(
+    VSX, VpxGetVarianceTest,
+    ::testing::Values(GetVarianceParams(4, 4, &vpx_get16x16var_vsx),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_vsx),
+                      GetVarianceParams(4, 4, &vpx_get16x16var_vsx),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_vsx),
+                      GetVarianceParams(4, 4, &vpx_get16x16var_vsx),
+                      GetVarianceParams(3, 3, &vpx_get8x8var_vsx)));
 #endif  // HAVE_VSX
 
 #if HAVE_MMI

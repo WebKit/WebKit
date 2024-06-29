@@ -61,7 +61,7 @@ class VideoQualityTestFixtureInterface {
       bool automatic_scaling = false;
       std::string clip_path;  // "Generator" to generate frames instead.
       size_t capture_device_index = 0;
-      SdpVideoFormat::Parameters sdp_params;
+      CodecParameterMap sdp_params;
       double encoder_overshoot_factor = 0.0;
     } video[2];
     struct Audio {

@@ -58,16 +58,16 @@ void EXTDisjointTimerQueryWebGL2::queryCounterEXT(WebGLQuery& query, GCGLenum ta
     if (!context.scriptExecutionContext())
         return;
 
-    if (!context.validateWebGLObject("queryCounterEXT", query))
+    if (!context.validateWebGLObject("queryCounterEXT"_s, query))
         return;
 
     if (target != GraphicsContextGL::TIMESTAMP_EXT) {
-        context.synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "queryCounterEXT", "invalid target");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "queryCounterEXT"_s, "invalid target"_s);
         return;
     }
 
     if (query.target() && query.target() != target) {
-        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "queryCounterEXT", "query type does not match target");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "queryCounterEXT"_s, "query type does not match target"_s);
         return;
     }
 

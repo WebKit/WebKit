@@ -63,7 +63,8 @@ def removeDerivedSources(fs):
             if dirname == 'DerivedSources':
                 derived_sources.append(os.path.join(root, dirname))
         for filename in files:
-            if filename.endswith(".ninja"):
+            # Don't remove build.ninja file for COG
+            if filename.endswith(".ninja") and root.find("cog") == -1:
                 path = os.path.join(root, filename)
                 ninja_files.append(path)
     for each in derived_sources:

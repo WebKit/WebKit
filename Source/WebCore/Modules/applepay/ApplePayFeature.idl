@@ -42,6 +42,9 @@
 #if defined(ENABLE_APPLE_PAY_COUPON_CODE) && ENABLE_APPLE_PAY_COUPON_CODE
     "paymentRequestCouponCode",
 #endif
+#if defined(ENABLE_APPLE_PAY_MERCHANT_CATEGORY_CODE) && ENABLE_APPLE_PAY_MERCHANT_CATEGORY_CODE
+    "paymentRequestMerchantCategoryCode",
+#endif
 #if defined(ENABLE_APPLE_PAY_MULTI_MERCHANT_PAYMENTS) && ENABLE_APPLE_PAY_MULTI_MERCHANT_PAYMENTS
     "paymentRequestMultiTokenContexts",
 #endif

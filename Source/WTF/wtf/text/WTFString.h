@@ -122,7 +122,7 @@ public:
     WTF_EXPORT_PRIVATE CString utf8(ConversionMode = LenientConversion) const;
 
     template<typename Func>
-    Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8ConversionError> tryGetUTF8(const Func&, ConversionMode = LenientConversion) const;
+    Expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(const Func&, ConversionMode = LenientConversion) const;
     WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUTF8(ConversionMode) const;
     WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUTF8() const;
 
@@ -269,16 +269,16 @@ public:
 
     // String::fromUTF8 will return a null string if the input data contains invalid UTF-8 sequences.
     WTF_EXPORT_PRIVATE static String fromUTF8(std::span<const char8_t>);
-    static String fromUTF8(std::span<const LChar> characters) { return fromUTF8({ reinterpret_cast<const char8_t*>(characters.data()), characters.size() }); }
-    static String fromUTF8(std::span<const char> characters) { return fromUTF8({ reinterpret_cast<const char8_t*>(characters.data()), characters.size() }); }
+    static String fromUTF8(std::span<const LChar> characters) { return fromUTF8(byteCast<char8_t>(characters)); }
+    static String fromUTF8(std::span<const char> characters) { return fromUTF8(byteCast<char8_t>(characters)); }
     static String fromUTF8(const char* string) { return fromUTF8(WTF::span8(string)); }
     static String fromUTF8ReplacingInvalidSequences(std::span<const char8_t>);
-    static String fromUTF8ReplacingInvalidSequences(std::span<const LChar> characters) { return fromUTF8ReplacingInvalidSequences({ reinterpret_cast<const char8_t*>(characters.data()), characters.size() }); }
+    static String fromUTF8ReplacingInvalidSequences(std::span<const LChar> characters) { return fromUTF8ReplacingInvalidSequences(byteCast<char8_t>(characters)); }
 
     // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.
     WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(std::span<const char8_t>);
-    static String fromUTF8WithLatin1Fallback(std::span<const LChar> characters) { return fromUTF8WithLatin1Fallback({ reinterpret_cast<const char8_t*>(characters.data()), characters.size() }); }
-    static String fromUTF8WithLatin1Fallback(std::span<const char> characters) { return fromUTF8WithLatin1Fallback({ reinterpret_cast<const char8_t*>(characters.data()), characters.size() }); }
+    static String fromUTF8WithLatin1Fallback(std::span<const LChar> characters) { return fromUTF8WithLatin1Fallback(byteCast<char8_t>(characters)); }
+    static String fromUTF8WithLatin1Fallback(std::span<const char> characters) { return fromUTF8WithLatin1Fallback(byteCast<char8_t>(characters)); }
 
     WTF_EXPORT_PRIVATE static String fromCodePoint(char32_t codePoint);
 
@@ -518,12 +518,10 @@ inline String String::substring(unsigned position, unsigned length) const
 }
 
 template<typename Func>
-inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8ConversionError> String::tryGetUTF8(const Func& function, ConversionMode mode) const
+inline Expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> String::tryGetUTF8(const Func& function, ConversionMode mode) const
 {
-    if (!m_impl) {
-        constexpr const char* emptyString = "";
-        return function(std::span(emptyString, emptyString));
-    }
+    if (!m_impl)
+        return function(nonNullEmptyUTF8Span());
     return m_impl->tryGetUTF8(function, mode);
 }
 
@@ -612,5 +610,6 @@ using WTF::equal;
 using WTF::find;
 using WTF::containsOnly;
 using WTF::reverseFind;
+using WTF::codePointCompareLessThan;
 
 #include <wtf/text/AtomString.h>

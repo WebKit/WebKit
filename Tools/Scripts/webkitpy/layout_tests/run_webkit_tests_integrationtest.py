@@ -186,7 +186,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(details.initial_results.total, test.TOTAL_TESTS)
         self.assertEqual(details.initial_results.expected_skips, test.TOTAL_SKIPS)
         self.assertEqual(len(details.initial_results.unexpected_results_by_name), test.UNEXPECTED_PASSES + test.UNEXPECTED_FAILURES)
-        self.assertEqual(details.exit_code, test.UNEXPECTED_FAILURES - 3)  # FIXME: Figure out why - 3 is needed.
+        self.assertEqual(details.exit_code, test.UNEXPECTED_FAILURES - 4)  # 4 tests succeed on retry
         self.assertEqual(details.retry_results.total, test.TOTAL_RETRIES)
 
         one_line_summary = "%d tests ran as expected, %d didn't:\n" % (
@@ -445,7 +445,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
     def serial_test_run_singly_actually_runs_tests(self):
         details, _, _ = logging_run(['--run-singly'], tests_included=True)
-        self.assertEqual(details.exit_code, test.UNEXPECTED_FAILURES - 2)  # FIXME: Figure out why - 2 is needed.
+        self.assertEqual(details.exit_code, test.UNEXPECTED_FAILURES - 3)  # 3 tests succeed on retry
 
     def test_single_file(self):
         tests_run = get_tests_run(['passes/text.html'])
@@ -818,6 +818,40 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue('flaky/text.html' in err.getvalue())
         self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/failures/flaky/text-actual.txt'))
         self.assertFalse(host.filesystem.exists('retries'))
+
+    def test_retrying_multiple_failures(self):
+        host = MockHost()
+        details, err, _ = logging_run(['--debug-rwt-logging', 'corner-cases/multiple-failures/failure-crash.html'], tests_included=True, host=host)
+        self.assertEqual(details.exit_code, 1)
+        self.assertTrue('Retrying' in err.getvalue())
+
+        actual_dictionary = json.loads(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')[len('ADD_RESULTS('):-2])
+        self.assertEqual(
+            actual_dictionary['tests'], {
+                'corner-cases': {'multiple-failures': {'failure-crash.html': {
+                    'report': 'REGRESSION',
+                    'expected': 'PASS',
+                    'actual': 'TEXT CRASH',
+                }}}
+            },
+        )
+
+    def test_retrying_multiple_failures_expected(self):
+        host = MockHost()
+        details, err, _ = logging_run(['--debug-rwt-logging', 'corner-cases/multiple-failures/failure-timeout.html'], tests_included=True, host=host)
+        self.assertEqual(details.exit_code, 0)
+        self.assertTrue('Retrying' in err.getvalue())
+
+        actual_dictionary = json.loads(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')[len('ADD_RESULTS('):-2])
+        self.assertEqual(
+            actual_dictionary['tests'], {
+                'corner-cases': {'multiple-failures': {'failure-timeout.html': {
+                    'report': 'FLAKY',
+                    'expected': 'PASS TIMEOUT',
+                    'actual': 'TEXT TIMEOUT',
+                }}}
+            },
+        )
 
     def test_retrying_force_pixel_tests(self):
         host = MockHost()

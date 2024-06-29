@@ -1,0 +1,96 @@
+
+FAIL .target 1 assert_equals:
+<div class="target" style="left: anchor(--a1 0%)" data-offset-x="20"></div>
+offsetLeft expected 20 but got 0
+FAIL .target 2 assert_equals:
+<div class="target" style="left: anchor(--a1 20%)" data-offset-x="40"></div>
+offsetLeft expected 40 but got 0
+FAIL .target 3 assert_equals:
+<div class="target" style="left: anchor(--a1 50%)" data-offset-x="70"></div>
+offsetLeft expected 70 but got 0
+FAIL .target 4 assert_equals:
+<div class="target" style="left: anchor(--a1 center)" data-offset-x="70"></div>
+offsetLeft expected 70 but got 0
+FAIL .target 5 assert_equals:
+<div class="target" style="left: anchor(--a1 80%)" data-offset-x="100"></div>
+offsetLeft expected 100 but got 0
+FAIL .target 6 assert_equals:
+<div class="target" style="left: anchor(--a1 100%)" data-offset-x="120"></div>
+offsetLeft expected 120 but got 0
+FAIL .target 7 assert_equals:
+<div class="target" style="right: anchor(--a1 0%)" data-offset-x="20"></div>
+offsetLeft expected 20 but got 200
+FAIL .target 8 assert_equals:
+<div class="target" style="right: anchor(--a1 20%)" data-offset-x="40"></div>
+offsetLeft expected 40 but got 200
+FAIL .target 9 assert_equals:
+<div class="target" style="right: anchor(--a1 50%)" data-offset-x="70"></div>
+offsetLeft expected 70 but got 200
+FAIL .target 10 assert_equals:
+<div class="target" style="right: anchor(--a1 center)" data-offset-x="70"></div>
+offsetLeft expected 70 but got 200
+FAIL .target 11 assert_equals:
+<div class="target" style="right: anchor(--a1 80%)" data-offset-x="100"></div>
+offsetLeft expected 100 but got 200
+FAIL .target 12 assert_equals:
+<div class="target" style="right: anchor(--a1 100%)" data-offset-x="120"></div>
+offsetLeft expected 120 but got 200
+FAIL .target 13 assert_equals:
+<div class="target" style="top: anchor(--a1 0%)" data-offset-y="30"></div>
+offsetTop expected 30 but got 0
+FAIL .target 14 assert_equals:
+<div class="target" style="top: anchor(--a1 20%)" data-offset-y="70"></div>
+offsetTop expected 70 but got 0
+FAIL .target 15 assert_equals:
+<div class="target" style="top: anchor(--a1 50%)" data-offset-y="130"></div>
+offsetTop expected 130 but got 0
+FAIL .target 16 assert_equals:
+<div class="target" style="top: anchor(--a1 center)" data-offset-y="130"></div>
+offsetTop expected 130 but got 0
+FAIL .target 17 assert_equals:
+<div class="target" style="top: anchor(--a1 80%)" data-offset-y="190"></div>
+offsetTop expected 190 but got 0
+FAIL .target 18 assert_equals:
+<div class="target" style="top: anchor(--a1 100%)" data-offset-y="230"></div>
+offsetTop expected 230 but got 0
+FAIL .target 19 assert_equals:
+<div class="target" style="bottom: anchor(--a1 0%)" data-offset-y="30"></div>
+offsetTop expected 30 but got 230
+FAIL .target 20 assert_equals:
+<div class="target" style="bottom: anchor(--a1 20%)" data-offset-y="70"></div>
+offsetTop expected 70 but got 230
+FAIL .target 21 assert_equals:
+<div class="target" style="bottom: anchor(--a1 50%)" data-offset-y="130"></div>
+offsetTop expected 130 but got 230
+FAIL .target 22 assert_equals:
+<div class="target" style="bottom: anchor(--a1 center)" data-offset-y="130"></div>
+offsetTop expected 130 but got 230
+FAIL .target 23 assert_equals:
+<div class="target" style="bottom: anchor(--a1 80%)" data-offset-y="190"></div>
+offsetTop expected 190 but got 230
+PASS .target 24
+FAIL .target 25 assert_equals:
+<div class="target" style="left: anchor(--a1 0%)" data-offset-x="170"></div>
+offsetLeft expected 170 but got 0
+FAIL .target 26 assert_equals:
+<div class="target" style="left: anchor(--a1 100%)" data-offset-x="70"></div>
+offsetLeft expected 70 but got 0
+FAIL .target 27 assert_equals:
+<div class="target" style="right: anchor(--a1 0%)" data-offset-x="170"></div>
+offsetLeft expected 170 but got 200
+FAIL .target 28 assert_equals:
+<div class="target" style="right: anchor(--a1 100%)" data-offset-x="70"></div>
+offsetLeft expected 70 but got 200
+FAIL .target 29 assert_equals:
+<div class="target" style="top: anchor(--a1 0%)" data-offset-y="220"></div>
+offsetTop expected 220 but got 0
+FAIL .target 30 assert_equals:
+<div class="target" style="top: anchor(--a1 100%)" data-offset-y="20"></div>
+offsetTop expected 20 but got 0
+FAIL .target 31 assert_equals:
+<div class="target" style="bottom: anchor(--a1 0%)" data-offset-y="220"></div>
+offsetTop expected 220 but got 240
+FAIL .target 32 assert_equals:
+<div class="target" style="bottom: anchor(--a1 100%)" data-offset-y="20"></div>
+offsetTop expected 20 but got 240
+

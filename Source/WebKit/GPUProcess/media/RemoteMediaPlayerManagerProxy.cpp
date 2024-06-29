@@ -69,7 +69,7 @@ void RemoteMediaPlayerManagerProxy::clear()
         proxy->invalidate();
 }
 
-void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier identifier, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& proxyConfiguration)
+void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier identifier, MediaPlayerClientIdentifier clientIdentifier, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& proxyConfiguration)
 {
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!connection)
@@ -77,7 +77,7 @@ void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier iden
     ASSERT(RunLoop::isMain());
     ASSERT(!m_proxies.contains(identifier));
 
-    auto proxy = RemoteMediaPlayerProxy::create(*this, identifier, connection->protectedConnection(), engineIdentifier, WTFMove(proxyConfiguration), Ref { connection->videoFrameObjectHeap() }, connection->webProcessIdentity());
+    auto proxy = RemoteMediaPlayerProxy::create(*this, identifier, clientIdentifier, connection->protectedConnection(), engineIdentifier, WTFMove(proxyConfiguration), Ref { connection->videoFrameObjectHeap() }, connection->webProcessIdentity());
     m_proxies.add(identifier, WTFMove(proxy));
 }
 
@@ -158,6 +158,8 @@ bool RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage(IPC::Connection&
 RefPtr<MediaPlayer> RemoteMediaPlayerManagerProxy::mediaPlayer(const MediaPlayerIdentifier& identifier)
 {
     ASSERT(RunLoop::isMain());
+    if (!identifier.isValid())
+        return nullptr;
     auto results = m_proxies.find(identifier);
     if (results != m_proxies.end())
         return results->value->mediaPlayer();

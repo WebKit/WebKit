@@ -72,7 +72,7 @@ class RtpTransportInternal : public sigslot::has_slots<> {
   // Called whenever a RTP packet that can not be demuxed by the transport is
   // received.
   void SetUnDemuxableRtpPacketReceivedHandler(
-      absl::AnyInvocable<void(webrtc::RtpPacketReceived&)> callback) {
+      absl::AnyInvocable<void(RtpPacketReceived&)> callback) {
     callback_undemuxable_rtp_packet_received_ = std::move(callback);
   }
 
@@ -160,7 +160,7 @@ class RtpTransportInternal : public sigslot::has_slots<> {
   CallbackList<bool> callback_list_ready_to_send_;
   CallbackList<rtc::CopyOnWriteBuffer*, int64_t>
       callback_list_rtcp_packet_received_;
-  absl::AnyInvocable<void(webrtc::RtpPacketReceived&)>
+  absl::AnyInvocable<void(RtpPacketReceived&)>
       callback_undemuxable_rtp_packet_received_ =
           [](RtpPacketReceived& packet) {};
   CallbackList<absl::optional<rtc::NetworkRoute>>

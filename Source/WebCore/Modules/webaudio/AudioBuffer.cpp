@@ -144,6 +144,19 @@ AudioBuffer::AudioBuffer(AudioBus& bus)
     m_channelWrappers = FixedVector<JSValueInWrappedObject> { m_channels.size() };
 }
 
+// FIXME: We don't currently implement "acquire the content" [1] and
+// AudioBuffer::getChannelData() correctly. As a result, the audio thread
+// may be reading an array buffer that the JS can detach. To guard against
+// this, we mark the array buffers as non-detachable as soon as their content
+// has been acquired.
+// [1] https://www.w3.org/TR/webaudio/#acquire-the-content
+void AudioBuffer::markBuffersAsNonDetachable()
+{
+    Locker locker { m_channelsLock };
+    for (auto& channel : m_channels)
+        channel->setDetachable(false);
+}
+
 void AudioBuffer::invalidate()
 {
     releaseMemory();
@@ -155,7 +168,7 @@ void AudioBuffer::releaseMemory()
     Locker locker { m_channelsLock };
     m_channels = { };
     m_channelWrappers = { };
-    m_needsAdditionalNoise = false;
+    m_noiseInjectionMultiplier = 0;
 }
 
 ExceptionOr<JSC::JSValue> AudioBuffer::getChannelData(JSDOMGlobalObject& globalObject, unsigned channelIndex)
@@ -264,7 +277,7 @@ ExceptionOr<void> AudioBuffer::copyToChannel(Ref<Float32Array>&& source, unsigne
     ASSERT(dst);
     
     memmove(dst + bufferOffset, src, count * sizeof(*dst));
-    m_needsAdditionalNoise = false;
+    m_noiseInjectionMultiplier = 0;
     return { };
 }
 
@@ -273,7 +286,7 @@ void AudioBuffer::zero()
     for (auto& channel : m_channels)
         channel->zeroFill();
 
-    m_needsAdditionalNoise = false;
+    m_noiseInjectionMultiplier = 0;
 }
 
 size_t AudioBuffer::memoryCost() const
@@ -315,7 +328,7 @@ bool AudioBuffer::copyTo(AudioBuffer& other) const
     for (unsigned channelIndex = 0; channelIndex < numberOfChannels(); ++channelIndex)
         memcpy(other.rawChannelData(channelIndex), m_channels[channelIndex]->data(), length() * sizeof(float));
 
-    other.m_needsAdditionalNoise = m_needsAdditionalNoise;
+    other.m_noiseInjectionMultiplier = m_noiseInjectionMultiplier;
     return true;
 }
 
@@ -335,13 +348,13 @@ WebCoreOpaqueRoot root(AudioBuffer* buffer)
 
 void AudioBuffer::applyNoiseIfNeeded()
 {
-    if (!m_needsAdditionalNoise)
+    if (!m_noiseInjectionMultiplier)
         return;
 
     for (auto& channel : m_channels)
-        AudioUtilities::applyNoise(channel->data(), channel->length(), 0.001);
+        AudioUtilities::applyNoise(channel->data(), channel->length(), m_noiseInjectionMultiplier);
 
-    m_needsAdditionalNoise = false;
+    m_noiseInjectionMultiplier = 0;
 }
 
 } // namespace WebCore

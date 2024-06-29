@@ -163,7 +163,7 @@ WI.AnimationContentView = class AnimationContentView extends WI.ContentView
     _refreshSubtitle()
     {
         this.representedObject.requestEffectTarget((styleable) => {
-            this._animationTargetDOMNode = styleable.node;
+            this._animationTargetDOMNode = styleable?.node ?? null;
 
             this._subtitleElement.removeChildren();
             if (styleable)

@@ -191,11 +191,11 @@ Ref<JSON::ArrayOf<Inspector::Protocol::ApplicationCache::ApplicationCacheResourc
 
 Ref<Inspector::Protocol::ApplicationCache::ApplicationCacheResource> InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo& resourceInfo)
 {
-    auto types = makeString(resourceInfo.isMaster ? "Master " : "",
-        resourceInfo.isManifest ? "Manifest " : "",
-        resourceInfo.isFallback ? "Fallback " : "",
-        resourceInfo.isForeign ? "Foreign " : "",
-        resourceInfo.isExplicit ? "Explicit " : "");
+    auto types = makeString(resourceInfo.isMaster ? "Master "_s : ""_s,
+        resourceInfo.isManifest ? "Manifest "_s : ""_s,
+        resourceInfo.isFallback ? "Fallback "_s : ""_s,
+        resourceInfo.isForeign ? "Foreign "_s : ""_s,
+        resourceInfo.isExplicit ? "Explicit "_s : ""_s);
     return Inspector::Protocol::ApplicationCache::ApplicationCacheResource::create()
         .setUrl(resourceInfo.resource.string())
         .setSize(static_cast<int>(resourceInfo.size))

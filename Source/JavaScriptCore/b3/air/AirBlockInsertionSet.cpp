@@ -38,9 +38,7 @@ BlockInsertionSet::BlockInsertionSet(Code &code)
 {
 }
 
-BlockInsertionSet::~BlockInsertionSet()
-{
-}
+BlockInsertionSet::~BlockInsertionSet() = default;
 
 } } } // namespace JSC::B3::Air
 

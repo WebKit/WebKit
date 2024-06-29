@@ -125,7 +125,7 @@ class VulkanMultithreadingTest : public ANGLETest<>
 // descriptor pools.
 TEST_P(VulkanMultithreadingTest, MultiContextDrawSmallDescriptorPools)
 {
-    // TODO(http://anglebug.com/6633: Flaky on linux.
+    // TODO(http://anglebug.com/42265131: Flaky on linux.
     ANGLE_SKIP_TEST_IF(IsLinux());
     ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
     // Verify the extension is enabled.
@@ -191,7 +191,7 @@ TEST_P(VulkanMultithreadingTest, MultiContextDrawSmallDescriptorPools)
 
             // There's a good chance this test will crash before failing, but if not we'll try and
             // verify the contents of the copied texture.
-            // TODO(http://anglebug.com/5204): Need to re-enable for Linux/Windows.
+            // TODO(http://anglebug.com/42263765): Need to re-enable for Linux/Windows.
             if (IsGLExtensionEnabled(kExtensionName) && !(IsLinux() || IsWindows()))
             {
                 // Verify glCopyTexImage2D() was successful.

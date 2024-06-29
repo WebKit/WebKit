@@ -49,9 +49,6 @@ class CoreIPCCFURL;
 class CoreIPCCGColorSpace;
 class CoreIPCSecCertificate;
 class CoreIPCSecTrust;
-#if HAVE(SEC_KEYCHAIN)
-class CoreIPCSecKeychainItem;
-#endif
 #if HAVE(SEC_ACCESS_CONTROL)
 class CoreIPCSecAccessControl;
 #endif
@@ -72,9 +69,6 @@ using CFObjectValue = std::variant<
     CoreIPCSecTrust,
     CoreIPCCGColorSpace,
     WebCore::Color
-#if HAVE(SEC_KEYCHAIN)
-    , CoreIPCSecKeychainItem
-#endif
 #if HAVE(SEC_ACCESS_CONTROL)
     , CoreIPCSecAccessControl
 #endif

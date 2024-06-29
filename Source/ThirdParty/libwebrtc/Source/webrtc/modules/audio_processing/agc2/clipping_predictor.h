@@ -15,8 +15,8 @@
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/audio/audio_processing.h"
 #include "modules/audio_processing/include/audio_frame_view.h"
-#include "modules/audio_processing/include/audio_processing.h"
 
 namespace webrtc {
 

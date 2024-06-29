@@ -1,3 +1,0 @@
-If the canvas below is black, then we managed to draw before loading stylesheets. Hooray!
-
-

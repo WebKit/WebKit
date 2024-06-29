@@ -151,7 +151,7 @@ public:
     HistoryEntryDataEncoder& operator<<(const Vector<char>& value)
     {
         *this << static_cast<uint64_t>(value.size());
-        encodeFixedLengthData(spanReinterpretCast<const uint8_t>(value.span()), 1);
+        encodeFixedLengthData(byteCast<uint8_t>(value.span()), 1);
 
         return *this;
     }
@@ -508,7 +508,7 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
     if (!CFPropertyListWrite(stateDictionary.get(), writeStream.get(), kCFPropertyListBinaryFormat_v1_0, 0, nullptr))
         return nullptr;
 
-    auto data = adoptCF(static_cast<CFDataRef>(CFWriteStreamCopyProperty(writeStream.get(), kCFStreamPropertyDataWritten)));
+    auto data = adoptCF(checked_cf_cast<CFDataRef>(CFWriteStreamCopyProperty(writeStream.get(), kCFStreamPropertyDataWritten)));
 
     CFIndex length = CFDataGetLength(data.get());
 
@@ -1015,10 +1015,6 @@ static WARN_UNUSED_RETURN bool decodeSessionHistoryEntry(CFDictionaryRef entryDi
     if (!originalURLString)
         return false;
 
-    auto historyEntryData = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryDataKey));
-    if (!historyEntryData)
-        return false;
-
     auto rawShouldOpenExternalURLsPolicy = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryShouldOpenExternalURLsPolicyKey));
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
     if (rawShouldOpenExternalURLsPolicy) {
@@ -1028,7 +1024,8 @@ static WARN_UNUSED_RETURN bool decodeSessionHistoryEntry(CFDictionaryRef entryDi
     } else
         shouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks;
 
-    if (!decodeSessionHistoryEntryData(historyEntryData, backForwardListItemState.pageState.mainFrameState))
+    auto historyEntryData = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryDataKey));
+    if (historyEntryData && !decodeSessionHistoryEntryData(historyEntryData, backForwardListItemState.pageState.mainFrameState))
         return false;
 
     backForwardListItemState.pageState.title = title;

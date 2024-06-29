@@ -3,28 +3,28 @@ This tests that aria-owns can remap accessibility hierarchies.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS: ax.accessibleElementById('list1').childAtIndex(0).isEqual(ax.accessibleElementById('item3')) === true
-PASS: ax.accessibleElementById('list1').childAtIndex(1).isEqual(ax.accessibleElementById('item4')) === true
-PASS: ax.accessibleElementById('item3').parentElement().isEqual(ax.accessibleElementById('list1')) === true
-PASS: ax.accessibleElementById('item4').parentElement().isEqual(ax.accessibleElementById('list1')) === true
-PASS: ax.accessibleElementById('list1').childrenCount === 2
-PASS: ax.accessibleElementById('list2').childAtIndex(0).isEqual(ax.accessibleElementById('item1')) === true
-PASS: ax.accessibleElementById('list2').childAtIndex(1).isEqual(ax.accessibleElementById('realitem1')) === true
-PASS: ax.accessibleElementById('list2').childAtIndex(2).isEqual(ax.accessibleElementById('item2')) === true
-PASS: ax.accessibleElementById('item1').parentElement().isEqual(ax.accessibleElementById('list2')) === true
-PASS: ax.accessibleElementById('realitem1').parentElement().isEqual(ax.accessibleElementById('list2')) === true
-PASS: ax.accessibleElementById('item2').parentElement().isEqual(ax.accessibleElementById('list2')) === true
-PASS: ax.accessibleElementById('list2').childrenCount === 3
-PASS: ax.accessibleElementById('list3').childrenCount === 0
-PASS: ax.accessibleElementById('list1').childrenCount === 3
-PASS: ax.accessibleElementById('list1').childAtIndex(1).isEqual(ax.accessibleElementById('item5')) === true
+PASS: list1.childrenCount === 2
+PASS: list1.childAtIndex(0).isEqual(item3) === true
+PASS: list1.childAtIndex(1).isEqual(item4) === true
+PASS: item3.parentElement().isEqual(list1) === true
+PASS: item4.parentElement().isEqual(list1) === true
+PASS: list2.childrenCount === 3
+PASS: list2.childAtIndex(0).isEqual(item1) === true
+PASS: list2.childAtIndex(1).isEqual(realitem1) === true
+PASS: list2.childAtIndex(2).isEqual(item2) === true
+PASS: item1.parentElement().isEqual(list2) === true
+PASS: realitem1.parentElement().isEqual(list2) === true
+PASS: item2.parentElement().isEqual(list2) === true
+PASS: list3.childrenCount === 0
+PASS: list1.childrenCount === 3
+PASS: list1.childAtIndex(0).isEqual(item3) === true
+PASS: list1.childAtIndex(1).isEqual(item5) === true
+PASS: list1.childAtIndex(2).isEqual(item4) === true
+PASS: item3.parentElement().isEqual(list1) === true
+PASS: item5.parentElement().isEqual(list1) === true
+PASS: item4.parentElement().isEqual(list1) === true
 
 PASS successfullyParsed is true
 
 TEST COMPLETE
-1
-2
-real 1
-3
-4
-item5
+

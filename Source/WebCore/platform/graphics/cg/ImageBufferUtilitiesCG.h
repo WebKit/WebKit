@@ -34,7 +34,7 @@ namespace WebCore {
 
 class PixelBuffer;
 
-WEBCORE_EXPORT uint8_t verifyImageBufferIsBigEnough(const void* buffer, size_t bufferSize);
+WEBCORE_EXPORT uint8_t verifyImageBufferIsBigEnough(std::span<const uint8_t> buffer);
 
 RetainPtr<CFStringRef> utiFromImageBufferMIMEType(const String& mimeType);
 CFStringRef jpegUTI();

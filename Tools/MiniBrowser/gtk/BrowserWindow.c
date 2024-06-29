@@ -228,7 +228,9 @@ static void browserWindowCreateBackForwardMenu(BrowserWindow *window, GList *lis
     GList *listItem;
     for (listItem = list; listItem; listItem = g_list_next(listItem)) {
         WebKitBackForwardListItem *item = (WebKitBackForwardListItem *)listItem->data;
-        const char *title = webkit_back_forward_list_item_get_uri(item);
+        const char *title = webkit_back_forward_list_item_get_title(item);
+        if (!title || !*title)
+            title = webkit_back_forward_list_item_get_uri(item);
 
         char *displayTitle;
 #define MAX_TITLE 100
@@ -252,7 +254,7 @@ static void browserWindowCreateBackForwardMenu(BrowserWindow *window, GList *lis
 #endif
 #undef MAX_TITLE
 
-        char *actionName = g_strdup_printf("action-%lu", ++actionId);
+        char *actionName = g_strdup_printf("action-%" G_GUINT64_FORMAT, ++actionId);
         GSimpleAction *action = g_simple_action_new(actionName, NULL);
         g_object_set_data_full(G_OBJECT(action), "back-forward-list-item", g_object_ref(item), g_object_unref);
         g_signal_connect_swapped(action, "activate", G_CALLBACK(browserWindowHistoryItemActivated), window);

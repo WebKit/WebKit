@@ -13,7 +13,8 @@ if(AOM_AOM_UTIL_AOM_UTIL_CMAKE_)
 endif() # AOM_AOM_UTIL_AOM_UTIL_CMAKE_
 set(AOM_AOM_UTIL_AOM_UTIL_CMAKE_ 1)
 
-list(APPEND AOM_UTIL_SOURCES "${AOM_ROOT}/aom_util/aom_thread.c"
+list(APPEND AOM_UTIL_SOURCES "${AOM_ROOT}/aom_util/aom_pthread.h"
+            "${AOM_ROOT}/aom_util/aom_thread.c"
             "${AOM_ROOT}/aom_util/aom_thread.h"
             "${AOM_ROOT}/aom_util/endian_inl.h")
 

@@ -29,14 +29,16 @@
 #include "APIArray.h"
 #include "APIString.h"
 #include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-WebOpenPanelResultListenerProxy::WebOpenPanelResultListenerProxy(WebPageProxy* page)
+WebOpenPanelResultListenerProxy::WebOpenPanelResultListenerProxy(WebPageProxy* page, WebProcessProxy& process)
     : m_page(page)
+    , m_process(process)
 {
 }
 
@@ -73,6 +75,12 @@ void WebOpenPanelResultListenerProxy::cancel()
 void WebOpenPanelResultListenerProxy::invalidate()
 {
     m_page = nullptr;
+    m_process = nullptr;
+}
+
+WebProcessProxy* WebOpenPanelResultListenerProxy::process() const
+{
+    return m_process.get();
 }
 
 } // namespace WebKit

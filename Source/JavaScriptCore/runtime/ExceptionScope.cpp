@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ExceptionScope.h"
 
+#include "ErrorInstance.h"
+#include "Exception.h"
 #include <wtf/StackTrace.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/Threading.h>
@@ -62,6 +64,11 @@ CString ExceptionScope::unexpectedExceptionMessage()
     
     out.println("The exception was thrown from thread ", *m_vm.throwingThread(), " at:");
     out.print(StackTracePrinter { *m_vm.nativeStackTraceOfLastThrow(), "    " });
+
+    if (auto* error = jsDynamicCast<ErrorInstance*>(exception()->value()))
+        out.println("Error Exception: ", error->tryGetMessageForDebugging());
+    else
+        out.println("non-Error Exception: ", exception()->value());
 
     return out.toCString();
 }

@@ -35,3 +35,5 @@ WPE::WaylandSeat* wpeDisplayWaylandGetSeat(WPEDisplayWayland*);
 WPE::WaylandCursor* wpeDisplayWaylandGetCursor(WPEDisplayWayland*);
 WPEMonitor* wpeDisplayWaylandFindMonitor(WPEDisplayWayland*, struct wl_output*);
 struct zwp_linux_dmabuf_v1* wpeDisplayWaylandGetLinuxDMABuf(WPEDisplayWayland*);
+struct zwp_text_input_v1* wpeDisplayWaylandGetTextInputV1(WPEDisplayWayland*);
+struct zwp_text_input_v3* wpeDisplayWaylandGetTextInputV3(WPEDisplayWayland*);

@@ -2,8 +2,8 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (24,57) size 669x437
-      RenderSVGContainer {g} at (24,57) size 669x437 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,0.00)}]
+    RenderSVGContainer {g} at (24,57) size 669x438
+      RenderSVGContainer {g} at (24,57) size 669x438 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,0.00)}]
         RenderSVGText {text} at (88,19) size 68x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 68x14
             chunk 1 text run 1 at (88.00,30.00) startOffset 0 endOffset 14 width 67.33: "M, L, L, L, Z,"
@@ -34,6 +34,6 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 25x14
             chunk 1 text run 1 at (162.00,162.00) startOffset 0 endOffset 6 width 24.67: "filled"
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 264x45
+      RenderSVGInlineText {#text} at (0,0) size 264x44
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.40: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

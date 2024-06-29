@@ -34,7 +34,6 @@ rtc_library("control_handler") {
     "../../../rtc_base:safe_conversions",
     "../../../rtc_base:safe_minmax",
     "../../../rtc_base/system:no_unique_address",
-    "../../../system_wrappers:field_trial",
     "../../pacing",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]

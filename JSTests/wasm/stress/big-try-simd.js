@@ -48,7 +48,7 @@ async function test() {
     const { test } = instance.exports
 
     for (let i = 0; i < 10000; ++i) {
-        assert.throws(() => test(42), TypeError, "an exported wasm function cannot contain a v128 parameter or return value")
+        assert.eq(test(42), undefined);
     }
 }
 

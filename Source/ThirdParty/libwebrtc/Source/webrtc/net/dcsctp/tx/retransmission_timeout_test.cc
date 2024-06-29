@@ -15,20 +15,21 @@
 
 namespace dcsctp {
 namespace {
+using ::webrtc::TimeDelta;
 
-constexpr DurationMs kMaxRtt = DurationMs(8'000);
-constexpr DurationMs kInitialRto = DurationMs(200);
-constexpr DurationMs kMaxRto = DurationMs(800);
-constexpr DurationMs kMinRto = DurationMs(120);
-constexpr DurationMs kMinRttVariance = DurationMs(220);
+constexpr TimeDelta kMaxRtt = TimeDelta::Millis(8'000);
+constexpr TimeDelta kInitialRto = TimeDelta::Millis(200);
+constexpr TimeDelta kMaxRto = TimeDelta::Millis(800);
+constexpr TimeDelta kMinRto = TimeDelta::Millis(120);
+constexpr TimeDelta kMinRttVariance = TimeDelta::Millis(220);
 
 DcSctpOptions MakeOptions() {
   DcSctpOptions options;
-  options.rtt_max = kMaxRtt;
-  options.rto_initial = kInitialRto;
-  options.rto_max = kMaxRto;
-  options.rto_min = kMinRto;
-  options.min_rtt_variance = kMinRttVariance;
+  options.rtt_max = DurationMs(kMaxRtt);
+  options.rto_initial = DurationMs(kInitialRto);
+  options.rto_max = DurationMs(kMaxRto);
+  options.rto_min = DurationMs(kMinRto);
+  options.min_rtt_variance = DurationMs(kMinRttVariance);
   return options;
 }
 
@@ -45,31 +46,31 @@ TEST(RetransmissionTimeoutTest, HasValidInitialSrtt) {
 TEST(RetransmissionTimeoutTest, NegativeValuesDoNotAffectRTO) {
   RetransmissionTimeout rto_(MakeOptions());
   // Initial negative value
-  rto_.ObserveRTT(DurationMs(-10));
+  rto_.ObserveRTT(TimeDelta::Millis(-10));
   EXPECT_EQ(rto_.rto(), kInitialRto);
-  rto_.ObserveRTT(DurationMs(124));
-  EXPECT_EQ(*rto_.rto(), 372);
+  rto_.ObserveRTT(TimeDelta::Millis(124));
+  EXPECT_EQ(rto_.rto().ms(), 372);
   // Subsequent negative value
-  rto_.ObserveRTT(DurationMs(-10));
-  EXPECT_EQ(*rto_.rto(), 372);
+  rto_.ObserveRTT(TimeDelta::Millis(-10));
+  EXPECT_EQ(rto_.rto().ms(), 372);
 }
 
 TEST(RetransmissionTimeoutTest, TooLargeValuesDoNotAffectRTO) {
   RetransmissionTimeout rto_(MakeOptions());
   // Initial too large value
-  rto_.ObserveRTT(kMaxRtt + DurationMs(100));
+  rto_.ObserveRTT(kMaxRtt + TimeDelta::Millis(100));
   EXPECT_EQ(rto_.rto(), kInitialRto);
-  rto_.ObserveRTT(DurationMs(124));
-  EXPECT_EQ(*rto_.rto(), 372);
+  rto_.ObserveRTT(TimeDelta::Millis(124));
+  EXPECT_EQ(rto_.rto().ms(), 372);
   // Subsequent too large value
-  rto_.ObserveRTT(kMaxRtt + DurationMs(100));
-  EXPECT_EQ(*rto_.rto(), 372);
+  rto_.ObserveRTT(kMaxRtt + TimeDelta::Millis(100));
+  EXPECT_EQ(rto_.rto().ms(), 372);
 }
 
 TEST(RetransmissionTimeoutTest, WillNeverGoBelowMinimumRto) {
   RetransmissionTimeout rto_(MakeOptions());
   for (int i = 0; i < 1000; ++i) {
-    rto_.ObserveRTT(DurationMs(1));
+    rto_.ObserveRTT(TimeDelta::Millis(1));
   }
   EXPECT_GE(rto_.rto(), kMinRto);
 }
@@ -77,67 +78,67 @@ TEST(RetransmissionTimeoutTest, WillNeverGoBelowMinimumRto) {
 TEST(RetransmissionTimeoutTest, WillNeverGoAboveMaximumRto) {
   RetransmissionTimeout rto_(MakeOptions());
   for (int i = 0; i < 1000; ++i) {
-    rto_.ObserveRTT(kMaxRtt - DurationMs(1));
+    rto_.ObserveRTT(kMaxRtt - TimeDelta::Millis(1));
     // Adding jitter, which would make it RTO be well above RTT.
-    rto_.ObserveRTT(kMaxRtt - DurationMs(100));
+    rto_.ObserveRTT(kMaxRtt - TimeDelta::Millis(100));
   }
   EXPECT_LE(rto_.rto(), kMaxRto);
 }
 
 TEST(RetransmissionTimeoutTest, CalculatesRtoForStableRtt) {
   RetransmissionTimeout rto_(MakeOptions());
-  rto_.ObserveRTT(DurationMs(124));
-  EXPECT_EQ(*rto_.rto(), 372);
-  rto_.ObserveRTT(DurationMs(128));
-  EXPECT_EQ(*rto_.rto(), 344);
-  rto_.ObserveRTT(DurationMs(123));
-  EXPECT_EQ(*rto_.rto(), 344);
-  rto_.ObserveRTT(DurationMs(125));
-  EXPECT_EQ(*rto_.rto(), 344);
-  rto_.ObserveRTT(DurationMs(127));
-  EXPECT_EQ(*rto_.rto(), 344);
+  rto_.ObserveRTT(TimeDelta::Millis(124));
+  EXPECT_EQ(rto_.rto().ms(), 372);
+  rto_.ObserveRTT(TimeDelta::Millis(128));
+  EXPECT_EQ(rto_.rto().ms(), 315);
+  rto_.ObserveRTT(TimeDelta::Millis(123));
+  EXPECT_EQ(rto_.rto().ms(), 268);
+  rto_.ObserveRTT(TimeDelta::Millis(125));
+  EXPECT_EQ(rto_.rto().ms(), 234);
+  rto_.ObserveRTT(TimeDelta::Millis(127));
+  EXPECT_EQ(rto_.rto().ms(), 235);
 }
 
 TEST(RetransmissionTimeoutTest, CalculatesRtoForUnstableRtt) {
   RetransmissionTimeout rto_(MakeOptions());
-  rto_.ObserveRTT(DurationMs(124));
-  EXPECT_EQ(*rto_.rto(), 372);
-  rto_.ObserveRTT(DurationMs(402));
-  EXPECT_EQ(*rto_.rto(), 622);
-  rto_.ObserveRTT(DurationMs(728));
-  EXPECT_EQ(*rto_.rto(), 800);
-  rto_.ObserveRTT(DurationMs(89));
-  EXPECT_EQ(*rto_.rto(), 800);
-  rto_.ObserveRTT(DurationMs(126));
-  EXPECT_EQ(*rto_.rto(), 800);
+  rto_.ObserveRTT(TimeDelta::Millis(124));
+  EXPECT_EQ(rto_.rto().ms(), 372);
+  rto_.ObserveRTT(TimeDelta::Millis(402));
+  EXPECT_EQ(rto_.rto().ms(), 623);
+  rto_.ObserveRTT(TimeDelta::Millis(728));
+  EXPECT_EQ(rto_.rto().ms(), 800);
+  rto_.ObserveRTT(TimeDelta::Millis(89));
+  EXPECT_EQ(rto_.rto().ms(), 800);
+  rto_.ObserveRTT(TimeDelta::Millis(126));
+  EXPECT_EQ(rto_.rto().ms(), 800);
 }
 
 TEST(RetransmissionTimeoutTest, WillStabilizeAfterAWhile) {
   RetransmissionTimeout rto_(MakeOptions());
-  rto_.ObserveRTT(DurationMs(124));
-  rto_.ObserveRTT(DurationMs(402));
-  rto_.ObserveRTT(DurationMs(728));
-  rto_.ObserveRTT(DurationMs(89));
-  rto_.ObserveRTT(DurationMs(126));
-  EXPECT_EQ(*rto_.rto(), 800);
-  rto_.ObserveRTT(DurationMs(124));
-  EXPECT_EQ(*rto_.rto(), 800);
-  rto_.ObserveRTT(DurationMs(122));
-  EXPECT_EQ(*rto_.rto(), 710);
-  rto_.ObserveRTT(DurationMs(123));
-  EXPECT_EQ(*rto_.rto(), 631);
-  rto_.ObserveRTT(DurationMs(124));
-  EXPECT_EQ(*rto_.rto(), 562);
-  rto_.ObserveRTT(DurationMs(122));
-  EXPECT_EQ(*rto_.rto(), 505);
-  rto_.ObserveRTT(DurationMs(124));
-  EXPECT_EQ(*rto_.rto(), 454);
-  rto_.ObserveRTT(DurationMs(124));
-  EXPECT_EQ(*rto_.rto(), 410);
-  rto_.ObserveRTT(DurationMs(124));
-  EXPECT_EQ(*rto_.rto(), 372);
-  rto_.ObserveRTT(DurationMs(124));
-  EXPECT_EQ(*rto_.rto(), 367);
+  rto_.ObserveRTT(TimeDelta::Millis(124));
+  rto_.ObserveRTT(TimeDelta::Millis(402));
+  rto_.ObserveRTT(TimeDelta::Millis(728));
+  rto_.ObserveRTT(TimeDelta::Millis(89));
+  rto_.ObserveRTT(TimeDelta::Millis(126));
+  EXPECT_EQ(rto_.rto().ms(), 800);
+  rto_.ObserveRTT(TimeDelta::Millis(124));
+  EXPECT_EQ(rto_.rto().ms(), 800);
+  rto_.ObserveRTT(TimeDelta::Millis(122));
+  EXPECT_EQ(rto_.rto().ms(), 709);
+  rto_.ObserveRTT(TimeDelta::Millis(123));
+  EXPECT_EQ(rto_.rto().ms(), 630);
+  rto_.ObserveRTT(TimeDelta::Millis(124));
+  EXPECT_EQ(rto_.rto().ms(), 562);
+  rto_.ObserveRTT(TimeDelta::Millis(122));
+  EXPECT_EQ(rto_.rto().ms(), 505);
+  rto_.ObserveRTT(TimeDelta::Millis(124));
+  EXPECT_EQ(rto_.rto().ms(), 454);
+  rto_.ObserveRTT(TimeDelta::Millis(124));
+  EXPECT_EQ(rto_.rto().ms(), 410);
+  rto_.ObserveRTT(TimeDelta::Millis(124));
+  EXPECT_EQ(rto_.rto().ms(), 372);
+  rto_.ObserveRTT(TimeDelta::Millis(124));
+  EXPECT_EQ(rto_.rto().ms(), 340);
 }
 
 TEST(RetransmissionTimeoutTest, WillAlwaysStayAboveRTT) {
@@ -149,31 +150,33 @@ TEST(RetransmissionTimeoutTest, WillAlwaysStayAboveRTT) {
   RetransmissionTimeout rto_(MakeOptions());
 
   for (int i = 0; i < 1000; ++i) {
-    rto_.ObserveRTT(DurationMs(124));
+    rto_.ObserveRTT(TimeDelta::Millis(124));
   }
-  EXPECT_EQ(*rto_.rto(), 344);
+  EXPECT_EQ(rto_.rto().ms(), 234);
 }
 
 TEST(RetransmissionTimeoutTest, CanSpecifySmallerMinimumRttVariance) {
   DcSctpOptions options = MakeOptions();
-  options.min_rtt_variance = kMinRttVariance - DurationMs(100);
+  options.min_rtt_variance =
+      DurationMs(kMinRttVariance - TimeDelta::Millis(100));
   RetransmissionTimeout rto_(options);
 
   for (int i = 0; i < 1000; ++i) {
-    rto_.ObserveRTT(DurationMs(124));
+    rto_.ObserveRTT(TimeDelta::Millis(124));
   }
-  EXPECT_EQ(*rto_.rto(), 244);
+  EXPECT_EQ(rto_.rto().ms(), 184);
 }
 
 TEST(RetransmissionTimeoutTest, CanSpecifyLargerMinimumRttVariance) {
   DcSctpOptions options = MakeOptions();
-  options.min_rtt_variance = kMinRttVariance + DurationMs(100);
+  options.min_rtt_variance =
+      DurationMs(kMinRttVariance + TimeDelta::Millis(100));
   RetransmissionTimeout rto_(options);
 
   for (int i = 0; i < 1000; ++i) {
-    rto_.ObserveRTT(DurationMs(124));
+    rto_.ObserveRTT(TimeDelta::Millis(124));
   }
-  EXPECT_EQ(*rto_.rto(), 444);
+  EXPECT_EQ(rto_.rto().ms(), 284);
 }
 
 }  // namespace

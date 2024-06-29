@@ -96,6 +96,8 @@ DynamicContentScalingImageBufferBackend::DynamicContentScalingImageBufferBackend
         m_resourceCache = bridge_id_cast(adoptCF(RECGCommandsCacheCreate(nullptr)));
 }
 
+DynamicContentScalingImageBufferBackend::~DynamicContentScalingImageBufferBackend() = default;
+
 std::optional<ImageBufferBackendHandle> DynamicContentScalingImageBufferBackend::createBackendHandle(WebCore::SharedMemory::Protection) const
 {
     if (!m_context)

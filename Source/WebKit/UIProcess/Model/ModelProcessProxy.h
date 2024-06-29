@@ -68,6 +68,8 @@ public:
 private:
     explicit ModelProcessProxy();
 
+    Type type() const final { return Type::Model; }
+
     void addSession(const WebsiteDataStore&);
 
     // AuxiliaryProcessProxy

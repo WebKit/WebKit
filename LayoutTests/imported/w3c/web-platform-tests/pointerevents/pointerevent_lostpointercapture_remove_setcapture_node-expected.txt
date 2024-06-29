@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: target1 is removed and should never get pointer capture. Reached unreachable code
+Pointer Events - lostpointercapture removes new capture element
+
+
+
+FAIL setPointerCapture target removed by lostpointercapture assert_equals: expected "pointerover@button, pointerenter@button, pointermove@button, pointerdown@button, pointerout@button, pointerleave@button, pointerover@target0, pointerenter@target0, gotpointercapture@target0, pointermove@target0, lostpointercapture@target0, pointerout@target0, pointerleave@target0, pointerover@button, pointerenter@button, pointermove@button, pointerup@button" but got "pointerover@button, pointerenter@button, pointermove@button, pointerdown@button, pointerout@button, pointerleave@button, pointerover@target0, pointerenter@target0, gotpointercapture@target0, pointermove@target0, lostpointercapture@target0, pointerout@target0, pointerleave@target0, pointerover@target1, pointerenter@target1, gotpointercapture@target1, pointerup@target1, lostpointercapture@target1, pointerout@target1, pointerleave@target1, pointerover@button, pointerenter@button"
+

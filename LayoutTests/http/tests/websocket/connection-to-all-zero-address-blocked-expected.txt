@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: WebSocket address 0.0.0.0 blocked
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS Received error
+Test passes if websocket connection is not successful

@@ -634,7 +634,7 @@ TEST_F(MSLOutputTest, AnonymousStruct)
             gl_FragColor = anonStruct.v;
         })";
     compile(shaderString);
-    // TODO(anglebug.com/6395): This success condition is expected to fail now.
+    // TODO(anglebug.com/42264909): This success condition is expected to fail now.
     // When WebKit build is able to run the tests, this should be changed to something else.
     //    ASSERT_TRUE(foundInCode(SH_MSL_METAL_OUTPUT, "__unnamed"));
 }

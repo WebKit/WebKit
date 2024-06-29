@@ -329,7 +329,7 @@ std::optional<DestinationColorSpace> HTMLVideoElement::colorSpace() const
     return player->colorSpace();
 }
 
-RefPtr<ImageBuffer> HTMLVideoElement::createBufferForPainting(const FloatSize& size, RenderingMode renderingMode, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat) const
+RefPtr<ImageBuffer> HTMLVideoElement::createBufferForPainting(const FloatSize& size, RenderingMode renderingMode, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat) const
 {
     auto* hostWindow = document().view() && document().view()->root() ? document().view()->root()->hostWindow() : nullptr;
     return ImageBuffer::create(size, RenderingPurpose::MediaPainting, 1, colorSpace, pixelFormat, bufferOptionsForRendingMode(renderingMode), hostWindow);
@@ -556,6 +556,14 @@ void HTMLVideoElement::setPresentationMode(VideoPresentationMode mode)
 auto HTMLVideoElement::webkitPresentationMode() const -> VideoPresentationMode
 {
     return toPresentationMode(fullscreenMode());
+}
+
+auto HTMLVideoElement::webkitPresentationModeForBindings() const -> VideoPresentationMode
+{
+    auto mode = webkitPresentationMode();
+    if (mode == HTMLVideoElement::VideoPresentationMode::InWindow)
+        return HTMLVideoElement::VideoPresentationMode::Inline;
+    return mode;
 }
 
 void HTMLVideoElement::didEnterFullscreenOrPictureInPicture(const FloatSize& size)

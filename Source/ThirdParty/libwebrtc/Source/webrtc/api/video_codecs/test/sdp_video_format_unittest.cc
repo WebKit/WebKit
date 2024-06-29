@@ -18,7 +18,7 @@
 namespace webrtc {
 
 typedef SdpVideoFormat Sdp;
-typedef SdpVideoFormat::Parameters Params;
+typedef CodecParameterMap Params;
 
 TEST(SdpVideoFormatTest, SameCodecNameNoParameters) {
   EXPECT_TRUE(Sdp("H264").IsSameCodec(Sdp("h264")));

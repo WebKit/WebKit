@@ -65,7 +65,7 @@ void provideMediaKeySystemTo(Page& page, MediaKeySystemClient& client)
 void MediaKeySystemController::logRequestMediaKeySystemDenial(Document& document)
 {
     if (RefPtr window = document.domWindow())
-        window->printErrorMessage(makeString("Not allowed to access MediaKeySystem."));
+        window->printErrorMessage("Not allowed to access MediaKeySystem."_str);
 }
 
 } // namespace WebCore

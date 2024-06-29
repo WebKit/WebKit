@@ -501,7 +501,7 @@ static void pack_inter_mode_mvs(VP8_COMP *const cpi) {
           int ct[4];
 
           vp8_find_near_mvs(xd, m, &n1, &n2, &best_mv, ct, rf,
-                            cpi->common.ref_frame_sign_bias);
+                            pc->ref_frame_sign_bias);
           vp8_clamp_mv2(&best_mv, xd);
 
           vp8_mv_ref_probs(mv_ref_p, ct);
@@ -1021,7 +1021,7 @@ void vp8_pack_bitstream(VP8_COMP *cpi, unsigned char *dest,
 
   bc[0].error = &pc->error;
 
-  validate_buffer(cx_data, 3, cx_data_end, &cpi->common.error);
+  validate_buffer(cx_data, 3, cx_data_end, &pc->error);
   cx_data += 3;
 
 #if defined(SECTIONBITS_OUTPUT)
@@ -1034,7 +1034,7 @@ void vp8_pack_bitstream(VP8_COMP *cpi, unsigned char *dest,
   if (oh.type == KEY_FRAME) {
     int v;
 
-    validate_buffer(cx_data, 7, cx_data_end, &cpi->common.error);
+    validate_buffer(cx_data, 7, cx_data_end, &pc->error);
 
     /* Start / synch code */
     cx_data[0] = 0x9D;
@@ -1243,7 +1243,7 @@ void vp8_pack_bitstream(VP8_COMP *cpi, unsigned char *dest,
 #else
   if (pc->refresh_entropy_probs == 0) {
     /* save a copy for later refresh */
-    memcpy(&cpi->common.lfc, &cpi->common.fc, sizeof(cpi->common.fc));
+    pc->lfc = pc->fc;
   }
 
   vp8_update_coef_probs(cpi);

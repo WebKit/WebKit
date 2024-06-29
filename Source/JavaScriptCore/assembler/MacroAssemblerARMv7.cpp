@@ -28,17 +28,16 @@
 #if ENABLE(ASSEMBLER) && CPU(ARM_THUMB2)
 #include "MacroAssembler.h"
 
+#include "OperationResult.h"
 #include "ProbeContext.h"
 #include <wtf/InlineASM.h>
 
 namespace JSC {
 
-JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
 JSC_ANNOTATE_JIT_OPERATION_PROBE(ctiMasmProbeTrampoline);
 
 using namespace ARMRegisters;
-
-#if COMPILER(GCC_COMPATIBLE)
 
 // The following are offsets for Probe::State fields accessed
 // by the ctiMasmProbeTrampoline stub.
@@ -363,7 +362,6 @@ asm (
     "pop       { pc }" "\n"
     ".previous" "\n"
 );
-#endif // COMPILER(GCC_COMPATIBLE)
 
 void MacroAssembler::probe(Probe::Function function, void* arg, SavedFPWidth)
 {

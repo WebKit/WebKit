@@ -75,9 +75,8 @@ public:
     bool isNull() const;
     bool isEmpty() const { return !m_size; }
 
-    const uint8_t* data() const;
+    std::span<const uint8_t> span() const;
     size_t size() const { return m_size; }
-    std::span<const uint8_t> span() const { return { data(), size() }; }
     bool isMap() const { return m_isMap; }
     RefPtr<WebCore::SharedMemory> tryCreateSharedMemory() const;
 

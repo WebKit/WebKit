@@ -30,6 +30,8 @@
 #import "RemoteObjectInvocation.h"
 #import "RemoteObjectRegistryMessages.h"
 #import "UserData.h"
+#import "WebPage.h"
+#import "WebProcessProxy.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 
 namespace WebKit {
@@ -39,29 +41,33 @@ RemoteObjectRegistry::RemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObject
 {
 }
 
-RemoteObjectRegistry::~RemoteObjectRegistry()
+RemoteObjectRegistry::~RemoteObjectRegistry() = default;
+
+template<typename M> void RemoteObjectRegistry::send(M&& message)
 {
+    WTF::switchOn(messageSender(), [&] (auto sender) {
+        sender.get().send(WTFMove(message), messageDestinationID());
+    });
 }
 
 void RemoteObjectRegistry::sendInvocation(const RemoteObjectInvocation& invocation)
 {
-
     if (auto& replyInfo = invocation.replyInfo()) {
         ASSERT(!m_pendingReplies.contains(replyInfo->replyID));
         m_pendingReplies.add(replyInfo->replyID, backgroundActivity("RemoteObjectRegistry invocation"_s));
     }
 
-    messageSender().send(Messages::RemoteObjectRegistry::InvokeMethod(invocation), messageDestinationID());
+    send(Messages::RemoteObjectRegistry::InvokeMethod(invocation));
 }
 
 void RemoteObjectRegistry::sendReplyBlock(uint64_t replyID, const UserData& blockInvocation)
 {
-    messageSender().send(Messages::RemoteObjectRegistry::CallReplyBlock(replyID, blockInvocation), messageDestinationID());
+    send(Messages::RemoteObjectRegistry::CallReplyBlock(replyID, blockInvocation));
 }
 
 void RemoteObjectRegistry::sendUnusedReply(uint64_t replyID)
 {
-    messageSender().send(Messages::RemoteObjectRegistry::ReleaseUnusedReplyBlock(replyID), messageDestinationID());
+    send(Messages::RemoteObjectRegistry::ReleaseUnusedReplyBlock(replyID));
 }
 
 void RemoteObjectRegistry::invokeMethod(const RemoteObjectInvocation& invocation)

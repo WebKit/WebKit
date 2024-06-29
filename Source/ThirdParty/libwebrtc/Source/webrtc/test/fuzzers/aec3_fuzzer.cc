@@ -9,9 +9,9 @@
  */
 
 #include "absl/types/optional.h"
+#include "api/audio/audio_processing.h"
 #include "modules/audio_processing/aec3/echo_canceller3.h"
 #include "modules/audio_processing/audio_buffer.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {

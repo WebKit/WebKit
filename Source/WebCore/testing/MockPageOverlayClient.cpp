@@ -72,8 +72,8 @@ String MockPageOverlayClient::layerTreeAsText(Page& page, OptionSet<LayerTreeAsT
     GraphicsLayer* viewOverlayRoot = page.pageOverlayController().viewOverlayRootLayer();
     GraphicsLayer* documentOverlayRoot = page.pageOverlayController().documentOverlayRootLayer();
     
-    return "View-relative:\n" + (viewOverlayRoot ? viewOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no view-relative overlay root)"_s)
-        + "\n\nDocument-relative:\n" + (documentOverlayRoot ? documentOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no document-relative overlay root)"_s);
+    return makeString("View-relative:\n"_s, (viewOverlayRoot ? viewOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no view-relative overlay root)"_s)
+        , "\n\nDocument-relative:\n"_s, (documentOverlayRoot ? documentOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no document-relative overlay root)"_s));
 }
 
 void MockPageOverlayClient::willMoveToPage(PageOverlay&, Page*)
@@ -107,7 +107,7 @@ bool MockPageOverlayClient::mouseEvent(PageOverlay& overlay, const PlatformMouse
 {
     if (auto* localMainFrame = dynamicDowncast<LocalFrame>(overlay.page()->mainFrame())) {
         localMainFrame->document()->addConsoleMessage(MessageSource::Other, MessageLevel::Debug,
-            makeString("MockPageOverlayClient::mouseEvent location (", event.position().x(), ", ", event.position().y(), ')'));
+            makeString("MockPageOverlayClient::mouseEvent location ("_s, event.position().x(), ", "_s, event.position().y(), ')'));
     }
     return false;
 }

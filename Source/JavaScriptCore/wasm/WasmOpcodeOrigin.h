@@ -61,10 +61,20 @@ private:
     uint64_t packedData { 0 };
 
 #elif USE(JSVALUE32_64)
-    OpcodeOrigin(B3::Origin) { UNREACHABLE_FOR_PLATFORM(); }
+    OpcodeOrigin(OpType opcode, size_t offset)
+    {
+        // We accept the wrap around for large offsets.
+        packedData = (static_cast<uint32_t>(opcode) << 24) | (offset & 0xffffff);
+    }
+    OpcodeOrigin(B3::Origin origin)
+        : packedData(bitwise_cast<uint32_t>(origin))
+    {
+    }
 
-    OpType opcode() const { UNREACHABLE_FOR_PLATFORM(); }
-    size_t location() const { UNREACHABLE_FOR_PLATFORM(); }
+    OpType opcode() const { return static_cast<OpType>(packedData >> 24); }
+    size_t location() const { return packedData & 0xffffff; }
+private:
+    uint32_t packedData { 0 };
 #endif
 };
 

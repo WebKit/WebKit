@@ -1,0 +1,17 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+skia_filegroup(
+    name = "public_hdrs",
+    srcs = ["GrGLMakeMacInterface.h"],
+    visibility = [
+        "//src/gpu/ganesh/gl/mac:__pkg__",
+    ],
+)

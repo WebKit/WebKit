@@ -144,17 +144,15 @@ void ElementRuleCollector::clearMatchedRules()
     m_matchedRuleTransferIndex = 0;
 }
 
-inline void ElementRuleCollector::addElementStyleProperties(const StyleProperties* propertySet, CascadeLayerPriority priority, bool isCacheable, FromStyleAttribute fromStyleAttribute)
+inline void ElementRuleCollector::addElementStyleProperties(const StyleProperties* propertySet, CascadeLayerPriority priority, IsCacheable isCacheable, FromStyleAttribute fromStyleAttribute)
 {
     if (!propertySet || propertySet->isEmpty())
         return;
 
-    if (!isCacheable)
-        m_result->isCacheable = false;
-
     auto matchedProperty = MatchedProperties { *propertySet };
     matchedProperty.cascadeLayerPriority = priority;
     matchedProperty.fromStyleAttribute = fromStyleAttribute;
+    matchedProperty.isCacheable = isCacheable;
     addMatchedProperties(WTFMove(matchedProperty), DeclarationOrigin::Author);
 }
 
@@ -209,8 +207,8 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     if (!id.isNull())
         collectMatchingRulesForList(matchRequest.ruleSet.idRules(id), matchRequest);
     if (element.hasClass()) {
-        for (size_t i = 0; i < element.classNames().size(); ++i)
-            collectMatchingRulesForList(matchRequest.ruleSet.classRules(element.classNames()[i]), matchRequest);
+        for (auto& className : element.classNames())
+            collectMatchingRulesForList(matchRequest.ruleSet.classRules(className), matchRequest);
     }
     if (element.hasAttributesWithoutUpdate() && matchRequest.ruleSet.hasAttributeRules()) {
         Vector<const RuleSet::RuleDataVector*, 4> ruleVectors;
@@ -221,6 +219,8 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
         for (auto* rules : ruleVectors)
             collectMatchingRulesForList(rules, matchRequest);
     }
+    if (m_pseudoElementRequest && m_pseudoElementRequest->nameArgument() != nullAtom())
+        collectMatchingRulesForList(matchRequest.ruleSet.namedPseudoElementRules(m_pseudoElementRequest->nameArgument()), matchRequest);
     if (element.isLink())
         collectMatchingRulesForList(matchRequest.ruleSet.linkPseudoClassRules(), matchRequest);
     if (matchesFocusPseudoClass(element))
@@ -789,9 +789,10 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
             // Presentation attributes in SVG elements tend to be unique and not restyled often. Avoid bloating the cache.
             // FIXME: Refcount is an imperfect proxy for sharing within a single document.
             static constexpr auto matchedDeclarationsCacheSharingThreshold = 4;
-            bool allowCaching = !styledElement->isSVGElement() || presentationalHintStyle->refCount() > matchedDeclarationsCacheSharingThreshold;
+            bool allowFullCaching = !styledElement->isSVGElement() || presentationalHintStyle->refCount() > matchedDeclarationsCacheSharingThreshold;
 
-            addElementStyleProperties(presentationalHintStyle, RuleSet::cascadeLayerPriorityForPresentationalHints, allowCaching);
+            auto isCacheable = allowFullCaching ? IsCacheable::Yes : IsCacheable::Partially;
+            addElementStyleProperties(presentationalHintStyle, RuleSet::cascadeLayerPriorityForPresentationalHints, isCacheable);
         }
 
         // Tables and table cells share an additional presentation style that must be applied
@@ -829,13 +830,13 @@ void ElementRuleCollector::addElementInlineStyleProperties(bool includeSMILPrope
         return;
 
     if (auto* inlineStyle = styledElement->inlineStyle()) {
-        bool isInlineStyleCacheable = !inlineStyle->isMutable();
+        auto isInlineStyleCacheable = inlineStyle->isMutable() ? IsCacheable::No : IsCacheable::Yes;
         addElementStyleProperties(inlineStyle, RuleSet::cascadeLayerPriorityForUnlayered, isInlineStyleCacheable, FromStyleAttribute::Yes);
     }
 
     if (includeSMILProperties) {
         if (auto* svgElement = dynamicDowncast<SVGElement>(element()))
-            addElementStyleProperties(svgElement->animatedSMILStyleProperties(), RuleSet::cascadeLayerPriorityForUnlayered, false /* isCacheable */);
+            addElementStyleProperties(svgElement->animatedSMILStyleProperties(), RuleSet::cascadeLayerPriorityForUnlayered, IsCacheable::No);
     }
 }
 
@@ -858,6 +859,16 @@ void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedPrope
     }
     if (matchedProperties.isStartingStyle == IsStartingStyle::Yes)
         m_result->hasStartingStyle = true;
+
+    if (matchedProperties.isCacheable == IsCacheable::Partially && !m_result->isCompletelyNonCacheable) {
+        for (auto property : matchedProperties.properties.get())
+            m_result->nonCacheablePropertyIds.append(property.id());
+    }
+    if (matchedProperties.isCacheable == IsCacheable::No) {
+        m_result->isCompletelyNonCacheable = true;
+        m_result->nonCacheablePropertyIds.clear();
+    }
+
     declarations.append(WTFMove(matchedProperties));
 }
 

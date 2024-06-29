@@ -5000,6 +5000,17 @@ class WebKitStyleTest(CppStyleTestBase):
             ['Extra space after ( in function call  [whitespace/parens] [4]',
              'Extra space before )  [whitespace/parens] [2]'])
 
+        # Ignore concept constraints.
+        self.assert_multi_line_lint(
+            'template<typename T>\n'
+            'requires (MyConcept<T>)\n'
+            'int f(T a);',
+            '')
+
+        self.assert_multi_line_lint(
+            'int foo(int a, int b) requires (MyConcept<T>) { return a + b; }',
+            '')
+
         # Ignore spacing inside four char code.
         self.assert_multi_line_lint(
             'CTFontTableTag os2Tag = \'OS/2\';',

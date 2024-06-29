@@ -95,6 +95,12 @@ void XRDeviceProxy::shutDownTrackingAndRendering()
         m_xrSystem->shutDownTrackingAndRendering();
 }
 
+void XRDeviceProxy::didCompleteShutdownTriggeredBySystem()
+{
+    if (m_xrSystem)
+        m_xrSystem->didCompleteShutdownTriggeredBySystem();
+}
+
 Vector<PlatformXR::Device::ViewData> XRDeviceProxy::views(SessionMode mode) const
 {
     Vector<Device::ViewData> views;
@@ -110,6 +116,8 @@ void XRDeviceProxy::requestFrame(PlatformXR::Device::RequestFrameCallback&& call
 {
     if (m_xrSystem)
         m_xrSystem->requestFrame(WTFMove(callback));
+    else
+        callback({ });
 }
 
 std::optional<PlatformXR::LayerHandle> XRDeviceProxy::createLayerProjection(uint32_t width, uint32_t height, bool alpha)

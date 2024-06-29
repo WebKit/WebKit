@@ -160,8 +160,8 @@ shouldBe('stepDown("1.2", 1, null)', '"1"');    // Is 0.2 in non-render test
 shouldBe('stepDown("2.0", 1, null)', '"1"');
 
 debug('');
-shouldBe('stepDown("-0.1", 1, null)', '"-1"');  // Is -1.1 in non-render test
-shouldBe('stepDown("-0.2", 1, null)', '"-1"');  // Is -1.2 in non-render test
+shouldBe('stepDown("-0.1", 1, null)', '"0"');  // Is -1.1 in non-render test
+shouldBe('stepDown("-0.2", 1, null)', '"0"');  // Is -1.2 in non-render test
 shouldBe('stepDown("-1.0", 1, null)', '"-2"');
 shouldBe('stepDown("-1.1", 1, null)', '"-2"');  // Is -2.1 in non-render test
 shouldBe('stepDown("-1.2", 1, null)', '"-2"');  // Is -2.2 in non-render test
@@ -187,8 +187,8 @@ shouldBe('stepDown("1.", 1, null)', '"-1"');
 shouldBe('stepDown("2.", 1, null)', '"-1"');
 
 debug('');
-shouldBe('stepDown("-.1", 1, null)', '"-1"');   // Is -1.1 in non-render test
-shouldBe('stepDown("-.2", 1, null)', '"-1"');   // Is -1.2 in non-render test
+shouldBe('stepDown("-.1", 1, null)', '"0"');   // Is -1.1 in non-render test
+shouldBe('stepDown("-.2", 1, null)', '"0"');   // Is -1.2 in non-render test
 shouldBe('stepDown("-1.", 1, null)', '"-1"');
 shouldBe('stepDown("-2.", 1, null)', '"-1"');
 

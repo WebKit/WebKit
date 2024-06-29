@@ -376,6 +376,10 @@ void BoxGeometryUpdater::setGeometriesForIntrinsicWidth(Layout::IntrinsicWidthMo
             updateInlineBoxDimensions(*renderInline, intrinsicWidthMode);
             continue;
         }
+        if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderer)) {
+            updateListMarkerDimensions(*renderListMarker, intrinsicWidthMode);
+            continue;
+        }
         if (auto* renderBox = dynamicDowncast<RenderBox>(renderer)) {
             // FIXME: Add support for flexing boxes.
             ASSERT(renderBox->style().logicalWidth().isFixed());

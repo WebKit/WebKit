@@ -7,6 +7,7 @@
 # be found in the AUTHORS file in the root of the source tree.
 
 import("//build/config/arm.gni")
+import("//build/config/loongarch64.gni")
 import("//build/config/mips.gni")
 import("//build_overrides/build.gni")
 
@@ -21,4 +22,8 @@ declare_args() {
       (current_cpu == "mips64el" || current_cpu == "mipsel") && mips_use_msa
   libyuv_use_mmi =
       (current_cpu == "mips64el" || current_cpu == "mipsel") && mips_use_mmi
+  libyuv_use_lsx =
+      (current_cpu == "loong64") && loongarch64_use_lsx
+  libyuv_use_lasx =
+      (current_cpu == "loong64") && loongarch64_use_lasx
 }

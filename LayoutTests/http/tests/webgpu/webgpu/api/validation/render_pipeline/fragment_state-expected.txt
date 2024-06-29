@@ -1,6 +1,20 @@
 
 PASS :color_target_exists:isAsync=false
 PASS :color_target_exists:isAsync=true
+PASS :targets_format_is_color_format:format="rgba8unorm";isAsync=false
+PASS :targets_format_is_color_format:format="rgba8unorm";isAsync=true
+PASS :targets_format_is_color_format:format="stencil8";isAsync=false
+PASS :targets_format_is_color_format:format="stencil8";isAsync=true
+PASS :targets_format_is_color_format:format="depth16unorm";isAsync=false
+PASS :targets_format_is_color_format:format="depth16unorm";isAsync=true
+PASS :targets_format_is_color_format:format="depth32float";isAsync=false
+PASS :targets_format_is_color_format:format="depth32float";isAsync=true
+PASS :targets_format_is_color_format:format="depth24plus";isAsync=false
+PASS :targets_format_is_color_format:format="depth24plus";isAsync=true
+PASS :targets_format_is_color_format:format="depth24plus-stencil8";isAsync=false
+PASS :targets_format_is_color_format:format="depth24plus-stencil8";isAsync=true
+PASS :targets_format_is_color_format:format="depth32float-stencil8";isAsync=false
+PASS :targets_format_is_color_format:format="depth32float-stencil8";isAsync=true
 PASS :targets_format_renderable:isAsync=false;format="r8unorm"
 PASS :targets_format_renderable:isAsync=false;format="r8snorm"
 PASS :targets_format_renderable:isAsync=false;format="r8uint"
@@ -38,12 +52,6 @@ PASS :targets_format_renderable:isAsync=false;format="rgb10a2uint"
 PASS :targets_format_renderable:isAsync=false;format="rgb10a2unorm"
 PASS :targets_format_renderable:isAsync=false;format="rg11b10ufloat"
 PASS :targets_format_renderable:isAsync=false;format="rgb9e5ufloat"
-PASS :targets_format_renderable:isAsync=false;format="stencil8"
-PASS :targets_format_renderable:isAsync=false;format="depth16unorm"
-PASS :targets_format_renderable:isAsync=false;format="depth32float"
-PASS :targets_format_renderable:isAsync=false;format="depth24plus"
-PASS :targets_format_renderable:isAsync=false;format="depth24plus-stencil8"
-PASS :targets_format_renderable:isAsync=false;format="depth32float-stencil8"
 PASS :targets_format_renderable:isAsync=false;format="bc1-rgba-unorm"
 PASS :targets_format_renderable:isAsync=false;format="bc1-rgba-unorm-srgb"
 PASS :targets_format_renderable:isAsync=false;format="bc2-rgba-unorm"
@@ -133,12 +141,6 @@ PASS :targets_format_renderable:isAsync=true;format="rgb10a2uint"
 PASS :targets_format_renderable:isAsync=true;format="rgb10a2unorm"
 PASS :targets_format_renderable:isAsync=true;format="rg11b10ufloat"
 PASS :targets_format_renderable:isAsync=true;format="rgb9e5ufloat"
-PASS :targets_format_renderable:isAsync=true;format="stencil8"
-PASS :targets_format_renderable:isAsync=true;format="depth16unorm"
-PASS :targets_format_renderable:isAsync=true;format="depth32float"
-PASS :targets_format_renderable:isAsync=true;format="depth24plus"
-PASS :targets_format_renderable:isAsync=true;format="depth24plus-stencil8"
-PASS :targets_format_renderable:isAsync=true;format="depth32float-stencil8"
 PASS :targets_format_renderable:isAsync=true;format="bc1-rgba-unorm"
 PASS :targets_format_renderable:isAsync=true;format="bc1-rgba-unorm-srgb"
 PASS :targets_format_renderable:isAsync=true;format="bc2-rgba-unorm"

@@ -79,7 +79,7 @@ TEST_P(FramebufferObjectTest, TextureObject)
 // Checks different formats for a texture object bound to a framebuffer object.
 TEST_P(FramebufferObjectTest, TextureObjectDifferentFormats)
 {
-    // http://anglebug.com/5642
+    // http://anglebug.com/42264178
     ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     GLuint fboId;

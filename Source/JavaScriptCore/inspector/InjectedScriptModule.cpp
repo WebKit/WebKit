@@ -43,9 +43,7 @@ InjectedScriptModule::InjectedScriptModule(const String& name)
 {
 }
 
-InjectedScriptModule::~InjectedScriptModule()
-{
-}
+InjectedScriptModule::~InjectedScriptModule() = default;
 
 void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptManager, JSC::JSGlobalObject* globalObject)
 {

@@ -239,7 +239,7 @@ class VisionMediaControls extends MediaControls
     _bottomBarRightContainerButtons()
     {
         if (this._shouldUseAudioLayout || this._shouldUseSingleBarLayout)
-            return [this.muteButton];
+            return [this.muteButton, this.overflowButton];
         return [this.overflowButton];
     }
 }

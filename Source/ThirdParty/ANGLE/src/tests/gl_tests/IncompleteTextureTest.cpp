@@ -404,7 +404,7 @@ TEST_P(IncompleteTextureTestES3, ShadowType)
     // through the routine which creates a incomplete texture in the ANGLE driver.
     ANGLE_SKIP_TEST_IF(IsAdreno() && IsAndroid() && IsOpenGLES());
 
-    // http://anglebug.com/5594
+    // http://anglebug.com/42264125
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     constexpr char kVS[] = R"(#version 300 es

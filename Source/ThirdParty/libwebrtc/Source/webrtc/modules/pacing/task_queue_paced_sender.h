@@ -45,22 +45,23 @@ class TaskQueuePacedSender : public RtpPacketPacer, public RtpPacketSender {
   // processed. Increasing this reduces thread wakeups at the expense of higher
   // latency.
   //
-  // If the `burst_interval` parameter is set, the pacer is allowed to build up
-  // a packet "debt" that correspond to approximately the send rate during the
-  // specified interval. This greatly reduced wake ups by not pacing packets
-  // within the allowed burst budget.
-  //
   // The taskqueue used when constructing a TaskQueuePacedSender will also be
   // used for pacing.
-  TaskQueuePacedSender(
-      Clock* clock,
-      PacingController::PacketSender* packet_sender,
-      const FieldTrialsView& field_trials,
-      TimeDelta max_hold_back_window,
-      int max_hold_back_window_in_packets,
-      absl::optional<TimeDelta> burst_interval = absl::nullopt);
+  TaskQueuePacedSender(Clock* clock,
+                       PacingController::PacketSender* packet_sender,
+                       const FieldTrialsView& field_trials,
+                       TimeDelta max_hold_back_window,
+                       int max_hold_back_window_in_packets);
 
   ~TaskQueuePacedSender() override;
+
+  // The pacer is allowed to send enqued packets in bursts and can build up a
+  // packet "debt" that correspond to approximately the send rate during
+  // 'burst_interval'.
+  void SetSendBurstInterval(TimeDelta burst_interval);
+
+  // A probe may be sent without first waing for a media packet.
+  void SetAllowProbeWithoutMediaPacket(bool allow);
 
   // Ensure that necessary delayed tasks are scheduled.
   void EnsureStarted();
@@ -145,15 +146,6 @@ class TaskQueuePacedSender : public RtpPacketPacer, public RtpPacketSender {
   Stats GetStats() const;
 
   Clock* const clock_;
-  struct BurstyPacerFlags {
-    // Parses `kBurstyPacerFieldTrial`. Example:
-    // --force-fieldtrials=WebRTC-BurstyPacer/burst:20ms/
-    explicit BurstyPacerFlags(const FieldTrialsView& field_trials);
-    // If set, the pacer is allowed to build up a packet "debt" that correspond
-    // to approximately the send rate during the specified interval.
-    FieldTrialOptional<TimeDelta> burst;
-  };
-  const BurstyPacerFlags bursty_pacer_flags_;
 
   // The holdback window prevents too frequent delayed MaybeProcessPackets()
   // calls. These are only applicable if `allow_low_precision` is false.

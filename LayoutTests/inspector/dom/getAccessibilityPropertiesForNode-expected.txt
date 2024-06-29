@@ -4,10 +4,10 @@ Checking Web Inspector protocol for the Accessibility Node Inspector.
     exists: true
     label:
     role:
-    childNodeIds.length: 93
+    childNodeIds.length: 96
 
 
-Total elements to be tested: 123.
+Total elements to be tested: 126.
 
 <div onclick="void(0);">click</div>
     exists: true
@@ -777,11 +777,37 @@ Total elements to be tested: 123.
     readonly: true
     required: false
 
-<div role="switch" aria-required="true">Required switch.</div>
+<input type="checkbox" switch="" checked="">
     exists: true
-    label: Required switch.
+    label:
     role: switch
-    checked: false
+    switchState: on
+    focused: false
+    parentNodeId: exists
+    required: false
+
+<input type="checkbox" switch="">
+    exists: true
+    label:
+    role: switch
+    switchState: off
+    focused: false
+    parentNodeId: exists
+    required: false
+
+<div role="switch" aria-checked="true">On-state ARIA switch.</div>
+    exists: true
+    label: On-state ARIA switch.
+    role: switch
+    switchState: on
+    parentNodeId: exists
+    required: false
+
+<div role="switch" aria-required="true">Required, off-state ARIA switch.</div>
+    exists: true
+    label: Required, off-state ARIA switch.
+    role: switch
+    switchState: off
     parentNodeId: exists
     required: true
 

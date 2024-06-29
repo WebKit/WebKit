@@ -23,7 +23,7 @@ class WebKitBuildArchives {
     }
 
     private function call ($endpoint, $params = array()) {
-        $url = add_query_arg($params, 'https://q1tzqfy48e.execute-api.us-west-2.amazonaws.com/v3/' . $endpoint);
+        $url = add_query_arg($params, 'https://archives-list.webkit.org/' . $endpoint);
         $api = wp_remote_get($url);
         $response = wp_remote_retrieve_body($api);
 

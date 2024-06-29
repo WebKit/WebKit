@@ -65,10 +65,18 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild
     if (!child.isRenderText() && child.style().display() == DisplayType::Ruby && parent.style().display() == DisplayType::RubyBlock)
         return parent;
 
-    if (parent.style().display() == DisplayType::RubyBlock && parent.firstChild()) {
+    if (parent.style().display() == DisplayType::RubyBlock) {
         // See if we have an anonymous ruby box already.
-        ASSERT(parent.firstChild()->style().display() == DisplayType::Ruby);
-        return downcast<RenderElement>(*parent.firstChild());
+        // FIXME: It should be the immediate child but continuations can break this assumption.
+        for (CheckedPtr first = parent.firstChild(); first; first = first->firstChildSlow()) {
+            if (!first->isAnonymous()) {
+                // <ruby blockified><ruby> is valid and still requires construction of an anonymous inline ruby box.
+                ASSERT(first->style().display() == DisplayType::Ruby);
+                break;
+            }
+            if (first->style().display() == DisplayType::Ruby)
+                return downcast<RenderElement>(*first);
+        }
     }
 
     if (parent.style().display() != DisplayType::Ruby) {

@@ -70,4 +70,6 @@ public:
 
     virtual void clearCookies() = 0;
     virtual void clearWebsiteData() = 0;
+
+    virtual void adjustScaleFactors() = 0;
 };

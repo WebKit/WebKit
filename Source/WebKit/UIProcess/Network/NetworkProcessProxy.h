@@ -339,6 +339,8 @@ public:
 private:
     explicit NetworkProcessProxy();
 
+    Type type() const final { return Type::Network; }
+
     void sendCreationParametersToNewProcess();
 
     // AuxiliaryProcessProxy

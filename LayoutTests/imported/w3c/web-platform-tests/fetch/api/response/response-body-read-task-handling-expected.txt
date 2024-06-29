@@ -1,3 +1,4 @@
 
 PASS reading from a body stream should occur in a microtask scope
+PASS piping from a body stream to a JS-written WritableStream should occur in a microtask scope
 

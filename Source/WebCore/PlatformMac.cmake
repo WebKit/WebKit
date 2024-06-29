@@ -219,7 +219,7 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/RuntimeApplicationChecksCocoa.mm
     platform/cocoa/SearchPopupMenuCocoa.mm
     platform/cocoa/SharedBufferCocoa.mm
-    platform/cocoa/SharedMemoryCocoa.cpp
+    platform/cocoa/SharedMemoryCocoa.mm
     platform/cocoa/SystemBattery.mm
     platform/cocoa/SystemVersion.mm
     platform/cocoa/TelephoneNumberDetectorCocoa.cpp
@@ -305,7 +305,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/PathCG.cpp
     platform/graphics/cg/PatternCG.cpp
     platform/graphics/cg/TransformationMatrixCG.cpp
-    platform/graphics/cg/UTIRegistry.cpp
+    platform/graphics/cg/UTIRegistry.mm
 
     platform/graphics/cocoa/CMUtilities.mm
     platform/graphics/cocoa/FloatRectCocoa.mm

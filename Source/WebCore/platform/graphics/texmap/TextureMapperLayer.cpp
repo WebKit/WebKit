@@ -59,7 +59,10 @@ struct TextureMapperLayer::ComputeTransformData {
     }
 };
 
-TextureMapperLayer::TextureMapperLayer() = default;
+TextureMapperLayer::TextureMapperLayer(Damage::ShouldPropagate propagateDamage)
+    : m_propagateDamage(propagateDamage)
+{
+}
 
 TextureMapperLayer::~TextureMapperLayer()
 {
@@ -218,8 +221,31 @@ void TextureMapperLayer::paintSelf(TextureMapperPaintOptions& options)
         solidColorLayer.setColor(m_state.solidColor);
         contentsLayer = &solidColorLayer;
     }
-    if (!contentsLayer)
+
+    if (!contentsLayer) {
+        // Use the damage information we received from the CoordinatedGraphicsLayer
+        // Here we ignore the targetRect parameter as it should already have
+        // been covered by the damage tracking in setNeedsDisplay/setNeedsDisplayInRect
+        // calls from CoordinatedGraphicsLayer.
+        if (m_propagateDamage == Damage::ShouldPropagate::Yes) {
+            if (m_damage.isInvalid())
+                recordDamage(layerRect(), transform, options);
+            else {
+                for (const auto& rect : m_damage.rects()) {
+                    ASSERT(!rect.isEmpty());
+                    recordDamage(rect, transform, options);
+                }
+            }
+            clearDamage();
+        }
         return;
+    }
+
+    if (m_propagateDamage == Damage::ShouldPropagate::Yes) {
+        // Layers with content layer are always fully damaged for now...
+        recordDamage(layerRect(), transform, options);
+        clearDamage();
+    }
 
     if (!m_state.contentsTileSize.isEmpty()) {
         options.textureMapper.setWrapMode(TextureMapper::WrapMode::Repeat);
@@ -827,10 +853,15 @@ void TextureMapperLayer::addChild(TextureMapperLayer* childLayer)
 
     childLayer->m_parent = this;
     m_children.append(childLayer);
+
+    if (m_visitor)
+        childLayer->acceptDamageVisitor(*m_visitor);
 }
 
 void TextureMapperLayer::removeFromParent()
 {
+    dismissDamageVisitor();
+
     if (m_parent) {
         size_t index = m_parent->m_children.find(this);
         ASSERT(index != notFound);
@@ -843,8 +874,10 @@ void TextureMapperLayer::removeFromParent()
 void TextureMapperLayer::removeAllChildren()
 {
     auto oldChildren = WTFMove(m_children);
-    for (auto* child : oldChildren)
+    for (auto* child : oldChildren) {
+        child->dismissDamageVisitor();
         child->m_parent = nullptr;
+    }
 }
 
 void TextureMapperLayer::setMaskLayer(TextureMapperLayer* maskLayer)
@@ -1022,6 +1055,8 @@ bool TextureMapperLayer::descendantsOrSelfHaveRunningAnimations() const
 bool TextureMapperLayer::applyAnimationsRecursively(MonotonicTime time)
 {
     bool hasRunningAnimations = syncAnimations(time);
+    if (hasRunningAnimations) // FIXME Too broad?
+        addDamage(layerRect());
     if (m_state.replicaLayer)
         hasRunningAnimations |= m_state.replicaLayer->applyAnimationsRecursively(time);
     if (m_state.backdropLayer)
@@ -1048,6 +1083,40 @@ bool TextureMapperLayer::syncAnimations(MonotonicTime time)
 #endif
 
     return applicationResults.hasRunningAnimations;
+}
+
+void TextureMapperLayer::acceptDamageVisitor(TextureMapperLayerDamageVisitor& visitor)
+{
+    if (&visitor == m_visitor)
+        return;
+
+    m_visitor = &visitor;
+
+    for (auto* child : m_children)
+        child->acceptDamageVisitor(visitor);
+}
+
+void TextureMapperLayer::dismissDamageVisitor()
+{
+    for (auto* child : m_children)
+        child->dismissDamageVisitor();
+    m_visitor = nullptr;
+}
+
+void TextureMapperLayer::recordDamage(const FloatRect& rect, const TransformationMatrix& transform, const TextureMapperPaintOptions& options)
+{
+    if (!m_visitor)
+        return;
+
+    FloatQuad quad(rect);
+    quad = transform.mapQuad(quad);
+    FloatRect transformedRect = quad.boundingBox();
+    // Some layers are drawn on an intermediate surface and have this offset applied to convert to the
+    // intermediate surface coordinates. In order to translate back to actual coordinates,
+    // we have to undo it.
+    if (!options.offset.isZero())
+        transformedRect.move(-options.offset);
+    m_visitor->recordDamage(transformedRect);
 }
 
 }

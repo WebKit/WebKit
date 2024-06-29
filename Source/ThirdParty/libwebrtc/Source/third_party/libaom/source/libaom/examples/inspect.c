@@ -742,7 +742,7 @@ void inspect(void *pbi, void *data) {
   aom_free(buffer);
 }
 
-void ifd_init_cb() {
+void ifd_init_cb(void) {
   aom_inspect_init ii;
   ii.inspect_cb = inspect;
   ii.inspect_ctx = NULL;
@@ -775,7 +775,7 @@ const unsigned char *end_frame;
 size_t frame_size = 0;
 
 EMSCRIPTEN_KEEPALIVE
-int read_frame() {
+int read_frame(void) {
   img = NULL;
 
   // This loop skips over any frames that are show_existing_frames,  as
@@ -824,16 +824,18 @@ int read_frame() {
 }
 
 EMSCRIPTEN_KEEPALIVE
-const char *get_aom_codec_build_config() { return aom_codec_build_config(); }
+const char *get_aom_codec_build_config(void) {
+  return aom_codec_build_config();
+}
 
 EMSCRIPTEN_KEEPALIVE
-int get_bit_depth() { return img->bit_depth; }
+int get_bit_depth(void) { return img->bit_depth; }
 
 EMSCRIPTEN_KEEPALIVE
-int get_bits_per_sample() { return img->bps; }
+int get_bits_per_sample(void) { return img->bps; }
 
 EMSCRIPTEN_KEEPALIVE
-int get_image_format() { return img->fmt; }
+int get_image_format(void) { return img->fmt; }
 
 EMSCRIPTEN_KEEPALIVE
 unsigned char *get_plane(int plane) { return img->planes[plane]; }
@@ -848,10 +850,10 @@ EMSCRIPTEN_KEEPALIVE
 int get_plane_height(int plane) { return aom_img_plane_height(img, plane); }
 
 EMSCRIPTEN_KEEPALIVE
-int get_frame_width() { return info->frame_width; }
+int get_frame_width(void) { return info->frame_width; }
 
 EMSCRIPTEN_KEEPALIVE
-int get_frame_height() { return info->frame_height; }
+int get_frame_height(void) { return info->frame_height; }
 
 static void parse_args(char **argv) {
   char **argi, **argj;
@@ -949,7 +951,7 @@ int main(int argc, char **argv) {
 }
 
 EMSCRIPTEN_KEEPALIVE
-void quit() {
+void quit(void) {
   if (aom_codec_destroy(&codec)) die_codec(&codec, "Failed to destroy codec");
   aom_video_reader_close(reader);
 }

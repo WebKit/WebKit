@@ -71,6 +71,8 @@ bool RealtimeMediaSourceSupportedConstraints::supportsConstraint(MediaConstraint
         return supportsTorch();
     case MediaConstraintType::BackgroundBlur:
         return supportsBackgroundBlur();
+    case MediaConstraintType::PowerEfficient:
+        return false;
     }
 
     ASSERT_NOT_REACHED();

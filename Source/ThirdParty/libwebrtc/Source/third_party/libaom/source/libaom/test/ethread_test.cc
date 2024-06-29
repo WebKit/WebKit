@@ -18,6 +18,7 @@
 #include "test/util.h"
 #include "test/y4m_video_source.h"
 #include "test/yuv_video_source.h"
+#include "av1/encoder/enc_enums.h"
 #include "av1/encoder/firstpass.h"
 
 namespace {
@@ -411,9 +412,7 @@ class AVxEncoderThreadTest
                                 const std::vector<size_t> ref_size_enc,
                                 const std::vector<std::string> ref_md5_enc,
                                 const std::vector<std::string> ref_md5_dec) {
-    // This value should be kept the same as MAX_NUM_THREADS
-    // in aom_thread.h
-    cfg_.g_threads = 64;
+    cfg_.g_threads = MAX_NUM_THREADS;
     ASSERT_NO_FATAL_FAILURE(RunLoop(video));
     std::vector<size_t> multi_thr_max_row_mt_size_enc;
     std::vector<std::string> multi_thr_max_row_mt_md5_enc;

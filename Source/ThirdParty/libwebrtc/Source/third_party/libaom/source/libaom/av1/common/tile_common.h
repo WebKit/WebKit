@@ -12,12 +12,13 @@
 #ifndef AOM_AV1_COMMON_TILE_COMMON_H_
 #define AOM_AV1_COMMON_TILE_COMMON_H_
 
+#include <stdbool.h>
+
+#include "config/aom_config.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include "config/aom_config.h"
-#include "aom_dsp/rect.h"
 
 struct AV1Common;
 struct SequenceHeader;
@@ -43,10 +44,6 @@ void av1_tile_set_col(TileInfo *tile, const struct AV1Common *cm, int col);
 int av1_get_sb_rows_in_tile(const struct AV1Common *cm, const TileInfo *tile);
 int av1_get_sb_cols_in_tile(const struct AV1Common *cm, const TileInfo *tile);
 
-// Return the pixel extents of the given tile
-PixelRect av1_get_tile_rect(const TileInfo *tile_info,
-                            const struct AV1Common *cm, int is_uv);
-
 // Define tile maximum width and area
 // There is no maximum height since height is limited by area and width limits
 // The minimum tile width or height is fixed at one superblock
@@ -56,7 +53,9 @@ PixelRect av1_get_tile_rect(const TileInfo *tile_info,
 #define MAX_TILE_AREA_LEVEL_7_AND_ABOVE (4096 * 4608)
 #endif
 
-void av1_get_uniform_tile_size(const struct AV1Common *cm, int *w, int *h);
+// Gets the width and height (in units of MI_SIZE) of the tiles in a tile list.
+// Returns true on success, false on failure.
+bool av1_get_uniform_tile_size(const struct AV1Common *cm, int *w, int *h);
 void av1_get_tile_limits(struct AV1Common *const cm);
 void av1_calculate_tile_cols(const struct SequenceHeader *const seq_params,
                              int cm_mi_rows, int cm_mi_cols,

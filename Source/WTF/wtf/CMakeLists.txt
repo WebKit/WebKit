@@ -157,6 +157,7 @@ set(WTF_PUBLIC_HEADERS
     MachSendRight.h
     MainThread.h
     MainThreadData.h
+    MainThreadDispatcher.h
     MallocPtr.h
     Markable.h
     MathExtras.h
@@ -265,6 +266,7 @@ set(WTF_PUBLIC_HEADERS
     SinglyLinkedList.h
     SinglyLinkedListWithTail.h
     SixCharacterHash.h
+    SmallMap.h
     SmallSet.h
     SoftLinking.h
     SortedArrayMap.h
@@ -357,22 +359,6 @@ set(WTF_PUBLIC_HEADERS
     WorkerPool.h
     dtoa.h
 
-    cf/CFURLExtras.h
-    cf/TypeCastsCF.h
-    cf/VectorCF.h
-
-    cocoa/CrashReporter.h
-    cocoa/Entitlements.h
-    cocoa/NSURLExtras.h
-    cocoa/RuntimeApplicationChecksCocoa.h
-    cocoa/SoftLinking.h
-    cocoa/TollFreeBridging.h
-    cocoa/TypeCastsCocoa.h
-    cocoa/VectorCocoa.h
-
-    darwin/OSLogPrintStream.h
-    darwin/WeakLinking.h
-
     dragonbox/dragonbox.h
     dragonbox/dragonbox_to_chars.h
     dragonbox/ieee754_format.h
@@ -408,23 +394,6 @@ set(WTF_PUBLIC_HEADERS
     fast_float/parse_number.h
     fast_float/simple_decimal_conversion.h
 
-    glib/ChassisType.h
-    glib/GMutexLocker.h
-    glib/GRefPtr.h
-    glib/GSocketMonitor.h
-    glib/GThreadSafeWeakPtr.h
-    glib/GTypedefs.h
-    glib/GUniquePtr.h
-    glib/GWeakPtr.h
-    glib/RunLoopSourcePriority.h
-    glib/Sandbox.h
-    glib/SocketConnection.h
-    glib/WTFGType.h
-
-    linux/CurrentProcessMemoryStatus.h
-    linux/ProcessMemoryFootprint.h
-    linux/RealTimeThreads.h
-
     persistence/PersistentCoders.h
     persistence/PersistentDecoder.h
     persistence/PersistentEncoder.h
@@ -432,29 +401,6 @@ set(WTF_PUBLIC_HEADERS
     simde/simde.h
     simde/arm/neon.h
     simde/arm/sve.h
-
-    spi/cf/CFBundleSPI.h
-    spi/cf/CFStringSPI.h
-
-    spi/cocoa/CFXPCBridgeSPI.h
-    spi/cocoa/CrashReporterClientSPI.h
-    spi/cocoa/IOSurfaceSPI.h
-    spi/cocoa/MachVMSPI.h
-    spi/cocoa/NSLocaleSPI.h
-    spi/cocoa/NSObjCRuntimeSPI.h
-    spi/cocoa/SecuritySPI.h
-    spi/cocoa/objcSPI.h
-
-    spi/darwin/AbortWithReasonSPI.h
-    spi/darwin/CodeSignSPI.h
-    spi/darwin/DataVaultSPI.h
-    spi/darwin/OSVariantSPI.h
-    spi/darwin/ProcessMemoryFootprint.h
-    spi/darwin/SandboxSPI.h
-    spi/darwin/XPCSPI.h
-    spi/darwin/dyldSPI.h
-
-    spi/mac/MetadataSPI.h
 
     text/ASCIIFastPath.h
     text/ASCIILiteral.h
@@ -503,15 +449,10 @@ set(WTF_PUBLIC_HEADERS
     text/UniquedStringImpl.h
     text/WTFString.h
 
-    text/cf/StringConcatenateCF.h
-    text/cf/TextBreakIteratorCF.h
-
     text/icu/TextBreakIteratorICU.h
     text/icu/UTextProvider.h
     text/icu/UTextProviderLatin1.h
     text/icu/UTextProviderUTF16.h
-
-    text/win/WCharStringExtras.h
 
     threads/BinarySemaphore.h
     threads/Signals.h
@@ -523,14 +464,14 @@ set(WTF_PUBLIC_HEADERS
     unicode/icu/ICUHelpers.h
 
     ForkExtras.h
-    unix/UnixFileDescriptor.h
+    # unix/UnixFileDescriptor.h
 
-    win/DbgHelperWin.h
-    win/GDIObject.h
-    win/PathWalker.h
-    win/SoftLinking.h
-    win/Win32Handle.h
-    text/win/WCharStringExtras.h
+    # win/DbgHelperWin.h
+    # win/GDIObject.h
+    # win/PathWalker.h
+    # win/SoftLinking.h
+    # win/Win32Handle.h
+    # text/win/WCharStringExtras.h
 )
 
 set(WTF_SOURCES
@@ -578,6 +519,7 @@ set(WTF_SOURCES
     Logger.cpp
     Logging.cpp
     MainThread.cpp
+    MainThreadDispatcher.cpp
     MediaTime.cpp
     MemoryPressureHandler.cpp
     MetaAllocator.cpp
@@ -682,14 +624,69 @@ set(WTF_SOURCES
     unicode/icu/ICUHelpers.cpp
 )
 
-if (APPLE)
+if (WIN32)
+    list(APPEND WTF_PUBLIC_HEADERS
+        text/win/WCharStringExtras.h
+
+        win/DbgHelperWin.h
+        win/GDIObject.h
+        win/PathWalker.h
+        win/SoftLinking.h
+        win/Win32Handle.h
+    )
+elseif (APPLE)
     list(APPEND WTF_SOURCES
         darwin/OSLogPrintStream.mm
     )
-endif ()
 
-if (MSVC AND WTF_CPU_X86_64)
-    list(APPEND WTF_SOURCES win/AsmStubsMSVC64.asm)
+    list(APPEND WTF_PUBLIC_HEADERS
+        cf/CFURLExtras.h
+        cf/TypeCastsCF.h
+        cf/VectorCF.h
+
+        cocoa/CrashReporter.h
+        cocoa/Entitlements.h
+        cocoa/NSURLExtras.h
+        cocoa/RuntimeApplicationChecksCocoa.h
+        cocoa/SoftLinking.h
+        cocoa/TollFreeBridging.h
+        cocoa/TypeCastsCocoa.h
+        cocoa/VectorCocoa.h
+
+        darwin/OSLogPrintStream.h
+        darwin/WeakLinking.h
+
+        spi/cf/CFBundleSPI.h
+        spi/cf/CFStringSPI.h
+
+        spi/cocoa/CFXPCBridgeSPI.h
+        spi/cocoa/CrashReporterClientSPI.h
+        spi/cocoa/IOSurfaceSPI.h
+        spi/cocoa/MachVMSPI.h
+        spi/cocoa/NSLocaleSPI.h
+        spi/cocoa/NSObjCRuntimeSPI.h
+        spi/cocoa/SecuritySPI.h
+        spi/cocoa/objcSPI.h
+
+        spi/darwin/AbortWithReasonSPI.h
+        spi/darwin/CodeSignSPI.h
+        spi/darwin/DataVaultSPI.h
+        spi/darwin/OSVariantSPI.h
+        spi/darwin/ProcessMemoryFootprint.h
+        spi/darwin/SandboxSPI.h
+        spi/darwin/XPCSPI.h
+        spi/darwin/dyldSPI.h
+
+        spi/mac/MetadataSPI.h
+
+        text/cf/StringConcatenateCF.h
+        text/cf/TextBreakIteratorCF.h
+    )
+elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    list(APPEND WTF_PUBLIC_HEADERS
+        linux/CurrentProcessMemoryStatus.h
+        linux/ProcessMemoryFootprint.h
+    )
 endif ()
 
 set(WTF_PRIVATE_INCLUDE_DIRECTORIES

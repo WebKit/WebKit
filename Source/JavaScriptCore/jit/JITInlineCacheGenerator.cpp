@@ -75,7 +75,8 @@ void JITInlineCacheGenerator::generateDFGDataICFastPath(DFG::JITCompiler& jit, S
 {
     m_start = jit.label();
     jit.loadStructureStubInfo(stubInfoConstant, stubInfoGPR);
-    jit.farJump(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+    jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
+    jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
     m_done = jit.label();
 }
 #endif
@@ -130,7 +131,7 @@ JITGetByIdGenerator::JITGetByIdGenerator(
 {
     RELEASE_ASSERT(base.payloadGPR() != value.tagGPR());
     std::visit([&](auto* stubInfo) {
-        setUpStubInfo(*stubInfo, accessType, codeOrigin, callSite, usedRegisters, propertyName, base, value, stubInfoGPR);
+        setUpStubInfo(*stubInfo, codeBlock, accessType, codeOrigin, callSite, usedRegisters, propertyName, base, value, stubInfoGPR);
     }, stubInfo);
 }
 
@@ -178,7 +179,8 @@ static void generateGetByIdInlineAccessDFGDataIC(CCallHelpers& jit, GPRReg stubI
 {
     jit.load32(CCallHelpers::Address(baseJSR.payloadGPR(), JSCell::structureIDOffset()), scratch1GPR);
     auto doInlineAccess = jit.branch32(CCallHelpers::Equal, scratch1GPR, CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfInlineAccessBaseStructureID()));
-    jit.farJump(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+    jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
+    jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
     doInlineAccess.link(&jit);
     jit.load32(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfByIdSelfOffset()), scratch1GPR);
     jit.loadProperty(baseJSR.payloadGPR(), scratch1GPR, resultJSR);
@@ -200,7 +202,7 @@ JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator(
 {
     RELEASE_ASSERT(thisRegs.payloadGPR() != thisRegs.tagGPR());
     std::visit([&](auto* stubInfo) {
-        setUpStubInfo(*stubInfo, AccessType::GetByIdWithThis, codeOrigin, callSite, usedRegisters, propertyName, value, base, thisRegs, stubInfoGPR);
+        setUpStubInfo(*stubInfo, codeBlock, AccessType::GetByIdWithThis, codeOrigin, callSite, usedRegisters, propertyName, value, base, thisRegs, stubInfoGPR);
     }, stubInfo);
 }
 
@@ -242,7 +244,7 @@ JITPutByIdGenerator::JITPutByIdGenerator(
         : JITByIdGenerator(codeBlock, stubInfo, jitType, codeOrigin, accessType, base, value)
 {
     std::visit([&](auto* stubInfo) {
-        setUpStubInfo(*stubInfo, accessType, codeOrigin, callSite, usedRegisters, propertyName, base, value, stubInfoGPR, scratch);
+        setUpStubInfo(*stubInfo, codeBlock, accessType, codeOrigin, callSite, usedRegisters, propertyName, base, value, stubInfoGPR, scratch);
     }, stubInfo);
 }
 
@@ -285,7 +287,8 @@ void JITPutByIdGenerator::generateDFGDataICFastPath(DFG::JITCompiler& jit, Struc
     jit.loadStructureStubInfo(stubInfoConstant, stubInfoGPR);
     jit.load32(CCallHelpers::Address(baseJSR.payloadGPR(), JSCell::structureIDOffset()), scratch1GPR);
     auto doInlineAccess = jit.branch32(CCallHelpers::Equal, scratch1GPR, CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfInlineAccessBaseStructureID()));
-    jit.farJump(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+    jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
+    jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
     doInlineAccess.link(&jit);
     jit.load32(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfByIdSelfOffset()), scratch1GPR);
     // The second scratch can be the same to baseJSR.
@@ -306,7 +309,7 @@ JITDelByValGenerator::JITDelByValGenerator(CodeBlock* codeBlock, CompileTimeStru
     : Base(codeBlock, stubInfo, jitType, codeOrigin, accessType)
 {
     std::visit([&](auto* stubInfo) {
-        setUpStubInfo(*stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters, base, property, result, stubInfoGPR);
+        setUpStubInfo(*stubInfo, codeBlock, accessType, codeOrigin, callSiteIndex, usedRegisters, base, property, result, stubInfoGPR);
     }, stubInfo);
 }
 
@@ -336,7 +339,7 @@ JITDelByIdGenerator::JITDelByIdGenerator(CodeBlock* codeBlock, CompileTimeStruct
     : Base(codeBlock, stubInfo, jitType, codeOrigin, accessType)
 {
     std::visit([&](auto* stubInfo) {
-        setUpStubInfo(*stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters, propertyName, base, result, stubInfoGPR);
+        setUpStubInfo(*stubInfo, codeBlock, accessType, codeOrigin, callSiteIndex, usedRegisters, propertyName, base, result, stubInfoGPR);
     }, stubInfo);
 }
 
@@ -366,7 +369,7 @@ JITInByValGenerator::JITInByValGenerator(CodeBlock* codeBlock, CompileTimeStruct
     : Base(codeBlock, stubInfo, jitType, codeOrigin, accessType)
 {
     std::visit([&](auto* stubInfo) {
-        setUpStubInfo(*stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters, base, property, result, arrayProfileGPR, stubInfoGPR);
+        setUpStubInfo(*stubInfo, codeBlock, accessType, codeOrigin, callSiteIndex, usedRegisters, base, property, result, arrayProfileGPR, stubInfoGPR);
     }, stubInfo);
 }
 
@@ -401,7 +404,7 @@ JITInByIdGenerator::JITInByIdGenerator(
 {
     RELEASE_ASSERT(base.payloadGPR() != value.tagGPR());
     std::visit([&](auto* stubInfo) {
-        setUpStubInfo(*stubInfo, AccessType::InById, codeOrigin, callSite, usedRegisters, propertyName, base, value, stubInfoGPR);
+        setUpStubInfo(*stubInfo, codeBlock, AccessType::InById, codeOrigin, callSite, usedRegisters, propertyName, base, value, stubInfoGPR);
     }, stubInfo);
 }
 
@@ -451,7 +454,8 @@ void JITInByIdGenerator::generateDFGDataICFastPath(DFG::JITCompiler& jit, Struct
     jit.boxBoolean(true, resultJSR);
     auto finished = jit.jump();
     skipInlineAccess.link(&jit);
-    jit.farJump(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+    jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
+    jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
     finished.link(&jit);
     m_done = jit.label();
 }
@@ -464,7 +468,7 @@ JITInstanceOfGenerator::JITInstanceOfGenerator(
     : JITInlineCacheGenerator(codeBlock, stubInfo, jitType, codeOrigin, AccessType::InstanceOf)
 {
     std::visit([&](auto* stubInfo) {
-        setUpStubInfo(*stubInfo, AccessType::InstanceOf, codeOrigin, callSiteIndex, usedRegisters, result, value, prototype, stubInfoGPR, prototypeIsKnownObject);
+        setUpStubInfo(*stubInfo, codeBlock, AccessType::InstanceOf, codeOrigin, callSiteIndex, usedRegisters, result, value, prototype, stubInfoGPR, prototypeIsKnownObject);
     }, stubInfo);
 }
 
@@ -496,7 +500,7 @@ JITGetByValGenerator::JITGetByValGenerator(CodeBlock* codeBlock, CompileTimeStru
     , m_result(result)
 {
     std::visit([&](auto* stubInfo) {
-        setUpStubInfo(*stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters, base, property, result, arrayProfileGPR, stubInfoGPR);
+        setUpStubInfo(*stubInfo, codeBlock, accessType, codeOrigin, callSiteIndex, usedRegisters, base, property, result, arrayProfileGPR, stubInfoGPR);
     }, stubInfo);
 }
 
@@ -534,7 +538,7 @@ JITGetByValWithThisGenerator::JITGetByValWithThisGenerator(CodeBlock* codeBlock,
     , m_result(result)
 {
     std::visit([&](auto* stubInfo) {
-        setUpStubInfo(*stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters, base, property, thisRegs, result, arrayProfileGPR, stubInfoGPR);
+        setUpStubInfo(*stubInfo, codeBlock, accessType, codeOrigin, callSiteIndex, usedRegisters, base, property, thisRegs, result, arrayProfileGPR, stubInfoGPR);
     }, stubInfo);
 }
 
@@ -574,7 +578,7 @@ JITPutByValGenerator::JITPutByValGenerator(CodeBlock* codeBlock, CompileTimeStru
     , m_value(value)
 {
     std::visit([&](auto* stubInfo) {
-        setUpStubInfo(*stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters, base, property, value, arrayProfileGPR, stubInfoGPR);
+        setUpStubInfo(*stubInfo, codeBlock, accessType, codeOrigin, callSiteIndex, usedRegisters, base, property, value, arrayProfileGPR, stubInfoGPR);
     }, stubInfo);
 }
 
@@ -605,7 +609,7 @@ JITPrivateBrandAccessGenerator::JITPrivateBrandAccessGenerator(CodeBlock* codeBl
 {
     ASSERT(accessType == AccessType::CheckPrivateBrand || accessType == AccessType::SetPrivateBrand);
     std::visit([&](auto* stubInfo) {
-        setUpStubInfo(*stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters, base, brand, stubInfoGPR);
+        setUpStubInfo(*stubInfo, codeBlock, accessType, codeOrigin, callSiteIndex, usedRegisters, base, brand, stubInfoGPR);
     }, stubInfo);
 }
 

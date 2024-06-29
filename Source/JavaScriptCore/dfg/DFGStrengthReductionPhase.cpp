@@ -908,7 +908,7 @@ private:
                 if (codeSize > Options::maximumRegExpTestInlineCodesize())
                     return false;
 
-                unsigned alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), inlineCodeStats8Bit.stackSize());
+                unsigned alignedFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(inlineCodeStats8Bit.stackSize());
 
                 if (alignedFrameSize)
                     m_graph.m_parameterSlots = std::max(m_graph.m_parameterSlots, argumentCountForStackSize(alignedFrameSize));
@@ -1249,7 +1249,7 @@ private:
             // FIXME: Support wasm IC.
             // DirectCall to wasm function has suboptimal implementation. We avoid using DirectCall if we know that function is a wasm function.
             // https://bugs.webkit.org/show_bug.cgi?id=220339
-            if (executable->intrinsic() == WasmFunctionIntrinsic) {
+            if (executable->intrinsic() == WasmFunctionIntrinsic && !Options::forceICFailure()) {
                 if (m_node->op() != Call) // FIXME: We should support tail-call.
                     break;
                 if (!function)
@@ -1257,10 +1257,9 @@ private:
                 auto* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(function);
                 if (!wasmFunction)
                     break;
-                const auto& typeDefinition = Wasm::TypeInformation::get(wasmFunction->typeIndex()).expand();
-                const auto& signature = *typeDefinition.as<Wasm::FunctionSignature>();
+                const auto& signature = Wasm::TypeInformation::getFunctionSignature(wasmFunction->typeIndex());
                 const Wasm::WasmCallingConvention& wasmCC = Wasm::wasmCallingConvention();
-                Wasm::CallInformation wasmCallInfo = wasmCC.callInformationFor(typeDefinition);
+                Wasm::CallInformation wasmCallInfo = wasmCC.callInformationFor(signature);
                 if (wasmCallInfo.argumentsOrResultsIncludeV128)
                     break;
 

@@ -13,6 +13,8 @@
 
 #include "config/aom_config.h"
 
+#include "aom_util/aom_pthread.h"
+
 #if CONFIG_TFLITE
 #include "tensorflow/lite/c/c_api.h"
 #include "av1/encoder/deltaq4_model.c"
@@ -28,6 +30,26 @@
 #include "av1/encoder/hybrid_fwd_txfm.h"
 #include "av1/encoder/model_rd.h"
 #include "av1/encoder/rdopt_utils.h"
+
+#define MB_WIENER_PRED_BLOCK_SIZE BLOCK_128X128
+#define MB_WIENER_PRED_BUF_STRIDE 128
+
+void av1_alloc_mb_wiener_var_pred_buf(AV1_COMMON *cm, ThreadData *td) {
+  const int is_high_bitdepth = is_cur_buf_hbd(&td->mb.e_mbd);
+  assert(MB_WIENER_PRED_BLOCK_SIZE < BLOCK_SIZES_ALL);
+  const int buf_width = block_size_wide[MB_WIENER_PRED_BLOCK_SIZE];
+  const int buf_height = block_size_high[MB_WIENER_PRED_BLOCK_SIZE];
+  assert(buf_width == MB_WIENER_PRED_BUF_STRIDE);
+  const size_t buf_size =
+      (buf_width * buf_height * sizeof(*td->wiener_tmp_pred_buf))
+      << is_high_bitdepth;
+  CHECK_MEM_ERROR(cm, td->wiener_tmp_pred_buf, aom_memalign(32, buf_size));
+}
+
+void av1_dealloc_mb_wiener_var_pred_buf(ThreadData *td) {
+  aom_free(td->wiener_tmp_pred_buf);
+  td->wiener_tmp_pred_buf = NULL;
+}
 
 void av1_init_mb_wiener_var_buffer(AV1_COMP *cpi) {
   AV1_COMMON *cm = &cpi->common;
@@ -236,7 +258,7 @@ void av1_calc_mb_wiener_var_row(AV1_COMP *const cpi, MACROBLOCK *x,
                                 int16_t *src_diff, tran_low_t *coeff,
                                 tran_low_t *qcoeff, tran_low_t *dqcoeff,
                                 double *sum_rec_distortion,
-                                double *sum_est_rate) {
+                                double *sum_est_rate, uint8_t *pred_buffer) {
   AV1_COMMON *const cm = &cpi->common;
   uint8_t *buffer = cpi->source->y_buffer;
   int buf_stride = cpi->source->y_stride;
@@ -250,27 +272,21 @@ void av1_calc_mb_wiener_var_row(AV1_COMP *const cpi, MACROBLOCK *x,
   const int coeff_count = block_size * block_size;
   const int mb_step = mi_size_wide[bsize];
   const BitDepthInfo bd_info = get_bit_depth_info(xd);
-  const AV1EncAllIntraMultiThreadInfo *const intra_mt = &cpi->mt_info.intra_mt;
+  const MultiThreadInfo *const mt_info = &cpi->mt_info;
+  const AV1EncAllIntraMultiThreadInfo *const intra_mt = &mt_info->intra_mt;
   AV1EncRowMultiThreadSync *const intra_row_mt_sync =
       &cpi->ppi->intra_row_mt_sync;
   const int mi_cols = cm->mi_params.mi_cols;
   const int mt_thread_id = mi_row / mb_step;
   // TODO(chengchen): test different unit step size
-  const int mt_unit_step = mi_size_wide[BLOCK_64X64];
+  const int mt_unit_step = mi_size_wide[MB_WIENER_MT_UNIT_SIZE];
   const int mt_unit_cols = (mi_cols + (mt_unit_step >> 1)) / mt_unit_step;
   int mt_unit_col = 0;
   const int is_high_bitdepth = is_cur_buf_hbd(xd);
 
-  // We use a scratch buffer to store the prediction.
-  // The stride is the max block size (128).
-  uint8_t *pred_buffer;
-  const int dst_buffer_stride = 128;
-  const int buf_width = 128;
-  const int buf_height = 128;
-  const size_t buf_size = (buf_width * buf_height * sizeof(*pred_buffer))
-                          << is_high_bitdepth;
-  CHECK_MEM_ERROR(cm, pred_buffer, aom_memalign(32, buf_size));
   uint8_t *dst_buffer = pred_buffer;
+  const int dst_buffer_stride = MB_WIENER_PRED_BUF_STRIDE;
+
   if (is_high_bitdepth) {
     uint16_t *pred_buffer_16 = (uint16_t *)pred_buffer;
     dst_buffer = CONVERT_TO_BYTEPTR(pred_buffer_16);
@@ -280,6 +296,18 @@ void av1_calc_mb_wiener_var_row(AV1_COMP *const cpi, MACROBLOCK *x,
     if (mi_col % mt_unit_step == 0) {
       intra_mt->intra_sync_read_ptr(intra_row_mt_sync, mt_thread_id,
                                     mt_unit_col);
+#if CONFIG_MULTITHREAD
+      const int num_workers =
+          AOMMIN(mt_info->num_mod_workers[MOD_AI], mt_info->num_workers);
+      if (num_workers > 1) {
+        const AV1EncRowMultiThreadInfo *const enc_row_mt = &mt_info->enc_row_mt;
+        pthread_mutex_lock(enc_row_mt->mutex_);
+        const bool exit = enc_row_mt->mb_wiener_mt_exit;
+        pthread_mutex_unlock(enc_row_mt->mutex_);
+        // Stop further processing in case any worker has encountered an error.
+        if (exit) break;
+      }
+#endif
     }
 
     PREDICTION_MODE best_mode = DC_PRED;
@@ -434,7 +462,6 @@ void av1_calc_mb_wiener_var_row(AV1_COMP *const cpi, MACROBLOCK *x,
   }
   // Set the pointer to null since mbmi is only allocated inside this function.
   xd->mi = NULL;
-  aom_free(pred_buffer);
 }
 
 static void calc_mb_wiener_var(AV1_COMP *const cpi, double *sum_rec_distortion,
@@ -449,7 +476,8 @@ static void calc_mb_wiener_var(AV1_COMP *const cpi, double *sum_rec_distortion,
   DECLARE_ALIGNED(32, tran_low_t, dqcoeff[32 * 32]);
   for (int mi_row = 0; mi_row < cpi->frame_info.mi_rows; mi_row += mb_step) {
     av1_calc_mb_wiener_var_row(cpi, x, xd, mi_row, src_diff, coeff, qcoeff,
-                               dqcoeff, sum_rec_distortion, sum_est_rate);
+                               dqcoeff, sum_rec_distortion, sum_est_rate,
+                               cpi->td.wiener_tmp_pred_buf);
   }
 }
 
@@ -562,9 +590,10 @@ void av1_set_mb_wiener_variance(AV1_COMP *cpi) {
           &cm->cur_frame->buf, cm->width, cm->height, seq_params->subsampling_x,
           seq_params->subsampling_y, seq_params->use_highbitdepth,
           cpi->oxcf.border_in_pixels, cm->features.byte_alignment, NULL, NULL,
-          NULL, cpi->image_pyramid_levels, 0))
+          NULL, cpi->alloc_pyramid, 0))
     aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
                        "Failed to allocate frame buffer");
+  av1_alloc_mb_wiener_var_pred_buf(&cpi->common, &cpi->td);
   cpi->norm_wiener_variance = 0;
 
   MACROBLOCK *x = &cpi->td.mb;
@@ -647,6 +676,7 @@ void av1_set_mb_wiener_variance(AV1_COMP *cpi) {
   // Set the pointer to null since mbmi is only allocated inside this function.
   xd->mi = NULL;
   aom_free_frame_buffer(&cm->cur_frame->buf);
+  av1_dealloc_mb_wiener_var_pred_buf(&cpi->td);
 }
 
 static int get_rate_guided_quantizer(AV1_COMP *const cpi, BLOCK_SIZE bsize,

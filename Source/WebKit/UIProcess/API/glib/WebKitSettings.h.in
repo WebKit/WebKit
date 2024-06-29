@@ -415,6 +415,13 @@ webkit_settings_set_enable_accelerated_2d_canvas               (WebKitSettings *
 #endif
 
 WEBKIT_API gboolean
+webkit_settings_get_enable_2d_canvas_acceleration              (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_enable_2d_canvas_acceleration              (WebKitSettings *settings,
+                                                                gboolean        enabled);
+
+WEBKIT_API gboolean
 webkit_settings_get_enable_write_console_messages_to_stdout    (WebKitSettings *settings);
 
 WEBKIT_API void
@@ -561,6 +568,12 @@ webkit_settings_get_experimental_features                      (void);
 
 WEBKIT_API WebKitFeatureList *
 webkit_settings_get_development_features                       (void);
+
+WEBKIT_API gboolean
+webkit_settings_apply_from_key_file                            (WebKitSettings  *settings,
+                                                                GKeyFile        *key_file,
+                                                                const gchar     *group_name,
+                                                                GError         **error);
 
 G_END_DECLS
 

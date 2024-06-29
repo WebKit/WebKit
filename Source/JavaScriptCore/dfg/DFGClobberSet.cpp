@@ -34,8 +34,8 @@
 
 namespace JSC { namespace DFG {
 
-ClobberSet::ClobberSet() { }
-ClobberSet::~ClobberSet() { }
+ClobberSet::ClobberSet() = default;
+ClobberSet::~ClobberSet() = default;
 
 void ClobberSet::add(AbstractHeap heap)
 {

@@ -1021,6 +1021,15 @@ INSTANTIATE_TEST_SUITE_P(
                       make_tuple(5, &aom_vector_var_c, &aom_vector_var_neon)));
 #endif
 
+#if HAVE_SVE
+INSTANTIATE_TEST_SUITE_P(
+    SVE, VectorVarTest,
+    ::testing::Values(make_tuple(2, &aom_vector_var_c, &aom_vector_var_sve),
+                      make_tuple(3, &aom_vector_var_c, &aom_vector_var_sve),
+                      make_tuple(4, &aom_vector_var_c, &aom_vector_var_sve),
+                      make_tuple(5, &aom_vector_var_c, &aom_vector_var_sve)));
+#endif  // HAVE_SVE
+
 #if HAVE_SSE4_1
 INSTANTIATE_TEST_SUITE_P(
     SSE4_1, VectorVarTest,

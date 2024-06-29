@@ -103,7 +103,7 @@ void IconLoader::stopLoading()
         resource->removeClient(*this);
 }
 
-void IconLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
+void IconLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
 

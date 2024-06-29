@@ -62,3 +62,11 @@ headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameter
     HashSet<String> localhostAliasesForTesting;
     Vector<WebCore::OrganizationStorageAccessPromptQuirk> storageAccessPromptQuirksData;
 }
+
+enum class WebKit::LoadedWebArchive : bool
+enum class WebKit::DidFilterKnownLinkDecoration : bool
+enum class WebKit::ShouldGrandfatherStatistics : bool
+enum class WebKit::PrivateRelayed : bool
+enum class WebKit::ContentAsStringIncludesChildFrames : bool
+enum class WebKit::CallDownloadDidStart : bool
+enum class WebKit::AllowOverwrite : bool

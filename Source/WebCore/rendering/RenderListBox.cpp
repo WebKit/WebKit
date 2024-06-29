@@ -1151,7 +1151,7 @@ bool RenderListBox::mockScrollbarsControllerEnabled() const
 
 void RenderListBox::logMockScrollbarsControllerMessage(const String& message) const
 {
-    document().addConsoleMessage(MessageSource::Other, MessageLevel::Debug, "RenderListBox: " + message);
+    document().addConsoleMessage(MessageSource::Other, MessageLevel::Debug, makeString("RenderListBox: "_s, message));
 }
 
 String RenderListBox::debugDescription() const
@@ -1212,6 +1212,11 @@ float RenderListBox::deviceScaleFactor() const
 bool RenderListBox::isVisibleToHitTesting() const
 {
     return visibleToHitTesting();
+}
+
+FrameIdentifier RenderListBox::rootFrameID() const
+{
+    return view().frameView().frame().rootFrame().frameID();
 }
 
 } // namespace WebCore

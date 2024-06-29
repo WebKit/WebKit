@@ -62,7 +62,7 @@ public:
     static_assert(OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) <= maxNumberOfBitsInPointer);
 
 #if CPU(LITTLE_ENDIAN)
-    static ptrdiff_t offsetOfType()
+    static constexpr ptrdiff_t offsetOfType()
     {
         return maxNumberOfBitsInPointer / 8;
     }

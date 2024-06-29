@@ -25,8 +25,11 @@
 #import "config.h"
 #import "WebCoreTextAttachment.h"
 
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
+
+#import <pal/ios/UIKitSoftLink.h>
 
 id webCoreTextAttachmentMissingPlatformImage()
 {

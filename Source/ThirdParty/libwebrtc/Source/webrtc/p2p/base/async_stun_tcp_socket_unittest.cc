@@ -13,12 +13,17 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <cstdint>
 #include <list>
 #include <memory>
 #include <string>
 #include <utility>
 
 #include "absl/memory/memory.h"
+#include "api/array_view.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/byte_buffer.h"
+#include "rtc_base/network/received_packet.h"
 #include "rtc_base/network/sent_packet.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
@@ -96,11 +101,10 @@ class AsyncStunTCPSocketTest : public ::testing::Test,
   }
 
   void OnReadPacket(rtc::AsyncPacketSocket* socket,
-                    const char* data,
-                    size_t len,
-                    const rtc::SocketAddress& remote_addr,
-                    const int64_t& /* packet_time_us */) {
-    recv_packets_.push_back(std::string(data, len));
+                    const rtc::ReceivedPacket& packet) {
+    recv_packets_.push_back(
+        std::string(reinterpret_cast<const char*>(packet.payload().data()),
+                    packet.payload().size()));
   }
 
   void OnSentPacket(rtc::AsyncPacketSocket* socket,
@@ -111,8 +115,10 @@ class AsyncStunTCPSocketTest : public ::testing::Test,
   void OnNewConnection(rtc::AsyncListenSocket* /*server*/,
                        rtc::AsyncPacketSocket* new_socket) {
     recv_socket_ = absl::WrapUnique(new_socket);
-    new_socket->SignalReadPacket.connect(this,
-                                         &AsyncStunTCPSocketTest::OnReadPacket);
+    new_socket->RegisterReceivedPacketCallback(
+        [&](rtc::AsyncPacketSocket* socket, const rtc::ReceivedPacket& packet) {
+          OnReadPacket(socket, packet);
+        });
   }
 
   bool Send(const void* data, size_t len) {
@@ -162,6 +168,30 @@ TEST_F(AsyncStunTCPSocketTest, TestMultipleStunPackets) {
   EXPECT_TRUE(
       Send(kStunMessageWithZeroLength, sizeof(kStunMessageWithZeroLength)));
   EXPECT_EQ(4u, recv_packets_.size());
+}
+
+TEST_F(AsyncStunTCPSocketTest, ProcessInputHandlesMultiplePackets) {
+  send_socket_->RegisterReceivedPacketCallback(
+      [&](rtc::AsyncPacketSocket* socket, const rtc::ReceivedPacket& packet) {
+        recv_packets_.push_back(
+            std::string(reinterpret_cast<const char*>(packet.payload().data()),
+                        packet.payload().size()));
+      });
+  rtc::Buffer buffer;
+  buffer.AppendData(kStunMessageWithZeroLength,
+                    sizeof(kStunMessageWithZeroLength));
+  // ChannelData message MUST be padded to
+  // a multiple of four bytes.
+  const unsigned char kTurnChannelData[] = {
+      0x40, 0x00, 0x00, 0x04, 0x21, 0x12, 0xA4, 0x42,
+  };
+  buffer.AppendData(kTurnChannelData, sizeof(kTurnChannelData));
+
+  send_socket_->ProcessInput(buffer);
+  EXPECT_EQ(2u, recv_packets_.size());
+  EXPECT_TRUE(CheckData(kStunMessageWithZeroLength,
+                        sizeof(kStunMessageWithZeroLength)));
+  EXPECT_TRUE(CheckData(kTurnChannelData, sizeof(kTurnChannelData)));
 }
 
 // Verifying TURN channel data message with zero length.

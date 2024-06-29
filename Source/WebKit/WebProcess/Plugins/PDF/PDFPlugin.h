@@ -87,7 +87,7 @@ public:
     virtual ~PDFPlugin();
 
     void paintControlForLayerInContext(CALayer *, CGContextRef);
-    void setActiveAnnotation(RetainPtr<PDFAnnotation>&&) final;
+    void setActiveAnnotation(SetActiveAnnotationParams&&) final;
 
     void notifyContentScaleFactorChanged(CGFloat scaleFactor);
     void notifyDisplayModeChanged(int);

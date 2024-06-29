@@ -13,12 +13,11 @@
 
 #include <memory>
 #include <string>
-#include <vector>
 
+#include "api/ref_count.h"
 #include "api/scoped_refptr.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/video_frame_metadata.h"
-#include "rtc_base/ref_count.h"
 
 namespace webrtc {
 
@@ -54,11 +53,7 @@ class TransformableFrameInterface {
   // sender frames to allow received frames to be directly re-transmitted on
   // other PeerConnectionss.
   virtual Direction GetDirection() const { return Direction::kUnknown; }
-  virtual std::string GetMimeType() const {
-    // TODO(bugs.webrtc.org/15579): Change this to pure virtual after it
-    // is implemented everywhere.
-    return "unknown/unknown";
-  }
+  virtual std::string GetMimeType() const = 0;
 };
 
 class TransformableVideoFrameInterface : public TransformableFrameInterface {
@@ -78,11 +73,7 @@ class TransformableAudioFrameInterface : public TransformableFrameInterface {
 
   virtual rtc::ArrayView<const uint32_t> GetContributingSources() const = 0;
 
-  // TODO(crbug.com/1453226): Change this to pure virtual after it
-  // is implemented everywhere.
-  virtual const absl::optional<uint16_t> SequenceNumber() const {
-    return absl::nullopt;
-  }
+  virtual const absl::optional<uint16_t> SequenceNumber() const = 0;
 
   virtual absl::optional<uint64_t> AbsoluteCaptureTimestamp() const = 0;
 
@@ -91,6 +82,11 @@ class TransformableAudioFrameInterface : public TransformableFrameInterface {
   // TODO(crbug.com/1456628): Change this to pure virtual after it
   // is implemented everywhere.
   virtual FrameType Type() const { return FrameType::kEmptyFrame; }
+
+  // Audio level in -dBov. Values range from 0 to 127, representing 0 to -127
+  // dBov. 127 represents digital silence. Only present on remote frames if
+  // the audio level header extension was included.
+  virtual absl::optional<uint8_t> AudioLevel() const = 0;
 };
 
 // Objects implement this interface to be notified with the transformed frame.
@@ -98,6 +94,12 @@ class TransformedFrameCallback : public rtc::RefCountInterface {
  public:
   virtual void OnTransformedFrame(
       std::unique_ptr<TransformableFrameInterface> frame) = 0;
+
+  // Request to no longer be called on each frame, instead having frames be
+  // sent directly to OnTransformedFrame without additional work.
+  // TODO(crbug.com/1502781): Make pure virtual once all mocks have
+  // implementations.
+  virtual void StartShortCircuiting() {}
 
  protected:
   ~TransformedFrameCallback() override = default;
@@ -121,6 +123,18 @@ class FrameTransformerInterface : public rtc::RefCountInterface {
 
  protected:
   ~FrameTransformerInterface() override = default;
+};
+
+// An interface implemented by classes that can host a transform.
+// Currently this is implemented by the RTCRtpSender and RTCRtpReceiver.
+class FrameTransformerHost {
+ public:
+  virtual ~FrameTransformerHost() {}
+  virtual void SetFrameTransformer(
+      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) = 0;
+  // TODO: bugs.webrtc.org/15929 - To be added:
+  // virtual AddIncomingMediaType(RtpCodec codec) = 0;
+  // virtual AddOutgoingMediaType(RtpCodec codec) = 0;
 };
 
 }  // namespace webrtc

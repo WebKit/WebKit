@@ -62,6 +62,7 @@ int main(int argc, char **argv) {
   if (!(caps & HAS_NEON_DOTPROD)) append_negative_gtest_filter("NEON_DOTPROD");
   if (!(caps & HAS_NEON_I8MM)) append_negative_gtest_filter("NEON_I8MM");
   if (!(caps & HAS_SVE)) append_negative_gtest_filter("SVE");
+  if (!(caps & HAS_SVE2)) append_negative_gtest_filter("SVE2");
 #elif AOM_ARCH_ARM
   const int caps = aom_arm_cpu_caps();
   if (!(caps & HAS_NEON)) append_negative_gtest_filter("NEON");

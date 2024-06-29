@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-static constexpr std::array<const char *, 3> databaseFileSuffixes { "", "-shm", "-wal" };
+static constexpr std::array<ASCIILiteral, 3> databaseFileSuffixes { ""_s, "-shm"_s, "-wal"_s };
 
 SQLiteFileSystem::SQLiteFileSystem()
 {
@@ -87,8 +87,8 @@ bool SQLiteFileSystem::deleteEmptyDatabaseDirectory(const String& path)
 bool SQLiteFileSystem::deleteDatabaseFile(const String& filePath)
 {
     bool fileExists = false;
-    for (const auto* suffix : databaseFileSuffixes) {
-        String path = filePath + suffix;
+    for (auto suffix : databaseFileSuffixes) {
+        auto path = makeString(filePath, suffix);
         FileSystem::deleteFile(path);
         fileExists |= FileSystem::fileExists(path);
     }
@@ -99,8 +99,8 @@ bool SQLiteFileSystem::deleteDatabaseFile(const String& filePath)
 #if PLATFORM(COCOA)
 void SQLiteFileSystem::setCanSuspendLockedFileAttribute(const String& filePath)
 {
-    for (const auto* suffix : databaseFileSuffixes) {
-        String path = filePath + suffix;
+    for (auto suffix : databaseFileSuffixes) {
+        auto path = makeString(filePath, suffix);
         char excluded = 0xff;
         auto result = setxattr(FileSystem::fileSystemRepresentation(path).data(), "com.apple.runningboard.can-suspend-locked", &excluded, sizeof(excluded), 0, 0);
         if (result < 0 && !strcmp(suffix, ""))
@@ -112,7 +112,7 @@ void SQLiteFileSystem::setCanSuspendLockedFileAttribute(const String& filePath)
 bool SQLiteFileSystem::moveDatabaseFile(const String& oldFilePath, const String& newFilePath)
 {
     bool allMoved = true;
-    for (const auto* suffix : databaseFileSuffixes)
+    for (auto suffix : databaseFileSuffixes)
         allMoved &= FileSystem::moveFile(makeString(oldFilePath, suffix), makeString(newFilePath, suffix));
 
     return allMoved;
@@ -128,8 +128,8 @@ bool SQLiteFileSystem::truncateDatabaseFile(sqlite3* database)
 uint64_t SQLiteFileSystem::databaseFileSize(const String& filePath)
 {
     uint64_t totalSize = 0;
-    for (const auto* suffix : databaseFileSuffixes) {
-        if (auto fileSize = FileSystem::fileSize(filePath + suffix))
+    for (auto suffix : databaseFileSuffixes) {
+        if (auto fileSize = FileSystem::fileSize(makeString(filePath, suffix)))
             totalSize += *fileSize;
     }
 

@@ -34,7 +34,7 @@ public:
     GStreamerVideoDecoderFactory(bool isSupportingVP9Profile0, bool isSupportingVP9Profile2);
 
 private:
-    std::unique_ptr<webrtc::VideoDecoder> CreateVideoDecoder(const webrtc::SdpVideoFormat&) final;
+    std::unique_ptr<webrtc::VideoDecoder> Create(const webrtc::Environment&, const webrtc::SdpVideoFormat&) final;
     std::vector<webrtc::SdpVideoFormat> GetSupportedFormats() const final;
 
     bool m_isSupportingVP9Profile0;

@@ -80,7 +80,7 @@ public:
     bool hasVideo() const final;
     bool hasAudio() const final;
 
-    void setPageIsVisible(bool, String&&) final;
+    void setPageIsVisible(bool) final;
 
     bool seeking() const final;
     void seekToTarget(const SeekTarget&) final;
@@ -148,7 +148,6 @@ private:
     mutable Lock m_cachedNaturalSizeLock;
 
     COMPtr<IMFMediaSession> m_mediaSession;
-    COMPtr<IMFSourceResolver> m_sourceResolver;
     COMPtr<IMFMediaSource> m_mediaSource;
     COMPtr<IMFTopology> m_topology;
     COMPtr<IMFPresentationDescriptor> m_sourcePD;

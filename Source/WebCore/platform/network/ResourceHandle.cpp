@@ -27,6 +27,7 @@
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
 
+#include "DNS.h"
 #include "Logging.h"
 #include "NetworkingContext.h"
 #include "NotImplemented.h"
@@ -85,7 +86,7 @@ ResourceHandle::ResourceHandle(NetworkingContext* context, const ResourceRequest
         return;
     }
 
-    if (!portAllowed(request.url())) {
+    if (!portAllowed(request.url()) || isIPAddressDisallowed(request.url())) {
         scheduleFailure(BlockedFailure);
         return;
     }
@@ -166,7 +167,7 @@ void ResourceHandle::didReceiveResponse(ResourceResponse&& response, CompletionH
         std::optional<uint16_t> port = url.port();
         if (port && !WTF::isDefaultPortForProtocol(port.value(), url.protocol())) {
             cancel();
-            String message = "Cancelled load from '" + url.stringCenterEllipsizedToLength() + "' because it is using HTTP/0.9.";
+            auto message = makeString("Cancelled load from '"_s, url.stringCenterEllipsizedToLength(), "' because it is using HTTP/0.9."_s);
             d->m_client->didFail(this, { String(), 0, url, message });
             completionHandler();
             return;

@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <limits>
 
+#include "api/units/time_delta.h"
 #include "rtc_base/strong_alias.h"
 
 namespace dcsctp {
@@ -41,6 +42,10 @@ class DurationMs : public webrtc::StrongAlias<class DurationMsTag, int32_t> {
   constexpr explicit DurationMs(const UnderlyingType& v)
       : webrtc::StrongAlias<class DurationMsTag, int32_t>(v) {}
 
+  constexpr explicit DurationMs(webrtc::TimeDelta v)
+      : webrtc::StrongAlias<class DurationMsTag, int32_t>(
+            v.IsInfinite() ? InfiniteDuration() : DurationMs(v.ms())) {}
+
   static constexpr DurationMs InfiniteDuration() {
     return DurationMs(std::numeric_limits<int32_t>::max());
   }
@@ -57,6 +62,11 @@ class DurationMs : public webrtc::StrongAlias<class DurationMsTag, int32_t> {
   constexpr DurationMs& operator*=(T factor) {
     value_ *= factor;
     return *this;
+  }
+  constexpr webrtc::TimeDelta ToTimeDelta() const {
+    return *this == DurationMs::InfiniteDuration()
+               ? webrtc::TimeDelta::PlusInfinity()
+               : webrtc::TimeDelta::Millis(value_);
   }
 };
 
@@ -140,6 +150,27 @@ class LifecycleId : public webrtc::StrongAlias<class LifecycleIdTag, uint64_t> {
   constexpr bool IsSet() const { return value_ != 0; }
 
   static constexpr LifecycleId NotSet() { return LifecycleId(0); }
+};
+
+// To enable zero checksum feature, both peers must agree on which alternate
+// error detection method that is used. See
+// https://www.ietf.org/archive/id/draft-ietf-tsvwg-sctp-zero-checksum-06.html.
+class ZeroChecksumAlternateErrorDetectionMethod
+    : public webrtc::StrongAlias<
+          class ZeroChecksumAlternateErrorDetectionMethodTag,
+          uint32_t> {
+ public:
+  constexpr explicit ZeroChecksumAlternateErrorDetectionMethod(
+      const UnderlyingType& v)
+      : webrtc::StrongAlias<class ZeroChecksumAlternateErrorDetectionMethodTag,
+                            uint32_t>(v) {}
+
+  static constexpr ZeroChecksumAlternateErrorDetectionMethod None() {
+    return ZeroChecksumAlternateErrorDetectionMethod(0);
+  }
+  static constexpr ZeroChecksumAlternateErrorDetectionMethod LowerLayerDtls() {
+    return ZeroChecksumAlternateErrorDetectionMethod(1);
+  }
 };
 }  // namespace dcsctp
 

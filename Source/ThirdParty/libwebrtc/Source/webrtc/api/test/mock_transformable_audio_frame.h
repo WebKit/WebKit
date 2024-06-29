@@ -11,6 +11,8 @@
 #ifndef API_TEST_MOCK_TRANSFORMABLE_AUDIO_FRAME_H_
 #define API_TEST_MOCK_TRANSFORMABLE_AUDIO_FRAME_H_
 
+#include <string>
+
 #include "api/frame_transformer_interface.h"
 #include "test/gmock.h"
 
@@ -24,6 +26,7 @@ class MockTransformableAudioFrame : public TransformableAudioFrameInterface {
   MOCK_METHOD(uint8_t, GetPayloadType, (), (const, override));
   MOCK_METHOD(uint32_t, GetSsrc, (), (const, override));
   MOCK_METHOD(uint32_t, GetTimestamp, (), (const, override));
+  MOCK_METHOD(std::string, GetMimeType, (), (const, override));
   MOCK_METHOD(rtc::ArrayView<const uint32_t>,
               GetContributingSources,
               (),
@@ -44,6 +47,7 @@ class MockTransformableAudioFrame : public TransformableAudioFrameInterface {
               Type,
               (),
               (const, override));
+  MOCK_METHOD(absl::optional<uint8_t>, AudioLevel, (), (const, override));
 };
 
 }  // namespace webrtc

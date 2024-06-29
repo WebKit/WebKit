@@ -9,6 +9,7 @@
 #include "libANGLE/renderer/gl/egl/SurfaceEGL.h"
 
 #include "common/debug.h"
+#include "libANGLE/Display.h"
 
 namespace rx
 {
@@ -38,11 +39,12 @@ egl::Error SurfaceEGL::makeCurrent(const gl::Context *context)
 
 egl::Error SurfaceEGL::swap(const gl::Context *context)
 {
-    EGLBoolean success = mEGL->swapBuffers(mSurface);
-    if (success == EGL_FALSE)
-    {
-        return egl::Error(mEGL->getError(), "eglSwapBuffers failed");
-    }
+    egl::Display::GetCurrentThreadUnlockedTailCall()->add(
+        [egl = mEGL, surface = mSurface](void *resultOut) {
+            ANGLE_UNUSED_VARIABLE(resultOut);
+            *static_cast<EGLBoolean *>(resultOut) = egl->swapBuffers(surface);
+        });
+
     return egl::NoError();
 }
 
@@ -50,19 +52,24 @@ egl::Error SurfaceEGL::swapWithDamage(const gl::Context *context,
                                       const EGLint *rects,
                                       EGLint n_rects)
 {
-    EGLBoolean success;
     if (mHasSwapBuffersWithDamage)
     {
-        success = mEGL->swapBuffersWithDamageKHR(mSurface, rects, n_rects);
+        egl::Display::GetCurrentThreadUnlockedTailCall()->add(
+            [egl = mEGL, surface = mSurface, rects, n_rects](void *resultOut) {
+                ANGLE_UNUSED_VARIABLE(resultOut);
+                *static_cast<EGLBoolean *>(resultOut) =
+                    egl->swapBuffersWithDamageKHR(surface, rects, n_rects);
+            });
     }
     else
     {
-        success = mEGL->swapBuffers(mSurface);
+        egl::Display::GetCurrentThreadUnlockedTailCall()->add(
+            [egl = mEGL, surface = mSurface](void *resultOut) {
+                ANGLE_UNUSED_VARIABLE(resultOut);
+                *static_cast<EGLBoolean *>(resultOut) = egl->swapBuffers(surface);
+            });
     }
-    if (success == EGL_FALSE)
-    {
-        return egl::Error(mEGL->getError(), "eglSwapBuffersWithDamageKHR failed");
-    }
+
     return egl::NoError();
 }
 
@@ -187,11 +194,17 @@ egl::Error SurfaceEGL::getCompositorTiming(EGLint numTimestamps,
 {
     ASSERT(mEGL->hasExtension("EGL_ANDROID_get_frame_timestamps"));
 
-    EGLBoolean success = mEGL->getCompositorTimingANDROID(mSurface, numTimestamps, names, values);
-    if (success == EGL_FALSE)
-    {
-        return egl::Error(mEGL->getError(), "eglGetCompositorTimingANDROID failed");
-    }
+    egl::Display::GetCurrentThreadUnlockedTailCall()->add(
+        [egl = mEGL, surface = mSurface, numTimestamps, names, values](void *resultOut) {
+            EGLBoolean success =
+                egl->getCompositorTimingANDROID(surface, numTimestamps, names, values);
+            if (!success)
+            {
+                ERR() << "eglGetCompositorTimingANDROID failed: " << egl::Error(egl->getError());
+            }
+            *static_cast<EGLBoolean *>(resultOut) = success;
+        });
+
     return egl::NoError();
 }
 
@@ -227,13 +240,20 @@ egl::Error SurfaceEGL::getFrameTimestamps(EGLuint64KHR frameId,
 {
     ASSERT(mEGL->hasExtension("EGL_ANDROID_get_frame_timestamps"));
 
-    // The driver may return EGL_BAD_ACCESS at any time if the requested frame is no longer stored.
-    EGLBoolean success =
-        mEGL->getFrameTimestampsANDROID(mSurface, frameId, numTimestamps, timestamps, values);
-    if (success == EGL_FALSE)
-    {
-        return egl::Error(mEGL->getError(), "eglGetFrameTimestampsANDROID failed");
-    }
+    egl::Display::GetCurrentThreadUnlockedTailCall()->add([egl = mEGL, surface = mSurface, frameId,
+                                                           numTimestamps, timestamps,
+                                                           values](void *resultOut) {
+        EGLBoolean success =
+            egl->getFrameTimestampsANDROID(surface, frameId, numTimestamps, timestamps, values);
+        if (!success)
+        {
+            // The driver may return EGL_BAD_ACCESS at any time if the requested frame is no longer
+            // stored.
+            ERR() << "eglGetFrameTimestampsANDROID failed: " << egl::Error(egl->getError());
+        }
+        *static_cast<EGLBoolean *>(resultOut) = success;
+    });
+
     return egl::NoError();
 }
 

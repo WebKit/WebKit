@@ -20,7 +20,7 @@
 
 static const char *exec_name = NULL;
 
-static void usage() {
+static void usage(void) {
   printf("Usage:\n");
   printf("%s <input_yuv> <width>x<height> <target_width>x<target_height> ",
          exec_name);

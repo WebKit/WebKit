@@ -27,7 +27,6 @@
 #define WKBackForwardListItemRef_h
 
 #include <WebKit/WKBase.h>
-#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,7 +35,7 @@ extern "C" {
 WK_EXPORT WKTypeID WKBackForwardListItemGetTypeID(void);
 
 WK_EXPORT WKURLRef WKBackForwardListItemCopyURL(WKBackForwardListItemRef item);
-WK_EXPORT WKStringRef WKBackForwardListItemCopyTitle(WKBackForwardListItemRef item) WK_C_API_DEPRECATED;
+WK_EXPORT WKStringRef WKBackForwardListItemCopyTitle(WKBackForwardListItemRef item);
 WK_EXPORT WKURLRef WKBackForwardListItemCopyOriginalURL(WKBackForwardListItemRef item);
 
 #ifdef __cplusplus

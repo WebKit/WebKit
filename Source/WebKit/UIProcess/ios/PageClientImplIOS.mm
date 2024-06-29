@@ -76,10 +76,11 @@
 #import <WebCore/ValidationBubble.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 #define MESSAGE_CHECK(assertion) do { \
     if (auto webView = this->webView()) { \
-        MESSAGE_CHECK_BASE(assertion, webView->_page->process().connection()); \
+        MESSAGE_CHECK_BASE(assertion, webView->_page->legacyMainFrameProcess().connection()); \
     } else { \
         ASSERT_NOT_REACHED(); \
     } \
@@ -298,7 +299,7 @@ void PageClientImpl::didCompleteSyntheticClick()
 void PageClientImpl::decidePolicyForGeolocationPermissionRequest(WebFrameProxy& frame, const FrameInfoData& frameInfo, Function<void(bool)>& completionHandler)
 {
     if (auto webView = this->webView()) {
-        auto* geolocationProvider = [wrapper(webView->_page->process().processPool()) _geolocationProvider];
+        auto* geolocationProvider = [wrapper(webView->_page->configuration().processPool()) _geolocationProvider];
         [geolocationProvider decidePolicyForGeolocationRequestFromOrigin:FrameInfoData { frameInfo } completionHandler:std::exchange(completionHandler, nullptr) view:webView.get()];
     }
 }
@@ -400,8 +401,7 @@ void PageClientImpl::executeUndoRedo(UndoOrRedo undoOrRedo)
 
 void PageClientImpl::accessibilityWebProcessTokenReceived(std::span<const uint8_t> data, WebCore::FrameIdentifier, pid_t)
 {
-    NSData *remoteToken = [NSData dataWithBytes:data.data() length:data.size()];
-    [contentView() _setAccessibilityWebProcessToken:remoteToken];
+    [contentView() _setAccessibilityWebProcessToken:toNSData(data).get()];
 }
 
 bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent& event, bool isCharEvent)
@@ -788,9 +788,9 @@ bool PageClientImpl::isFullScreen()
     return [webView fullScreenWindowController].isFullScreen;
 }
 
-void PageClientImpl::enterFullScreen(FloatSize videoDimensions)
+void PageClientImpl::enterFullScreen(FloatSize mediaDimensions)
 {
-    [[webView() fullScreenWindowController] enterFullScreen:videoDimensions];
+    [[webView() fullScreenWindowController] enterFullScreen:mediaDimensions];
 }
 
 void PageClientImpl::exitFullScreen()
@@ -839,8 +839,7 @@ void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntR
 
 void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t> dataReference)
 {
-    RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytes:dataReference.data() length:dataReference.size()]);
-    [webView() _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:suggestedFilename data:data.get()];
+    [webView() _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:suggestedFilename data:toNSData(dataReference).get()];
 }
 
 void PageClientImpl::scrollingNodeScrollViewWillStartPanGesture(ScrollingNodeID)
@@ -1060,9 +1059,9 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
 }
 #endif
 
-void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
+void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
-    [contentView() _requestDOMPasteAccessForCategory:pasteAccessCategory elementRect:elementRect originIdentifier:originIdentifier completionHandler:WTFMove(completionHandler)];
+    [contentView() _requestDOMPasteAccessForCategory:pasteAccessCategory requiresInteraction:requiresInteraction elementRect:elementRect originIdentifier:originIdentifier completionHandler:WTFMove(completionHandler)];
 }
 
 void PageClientImpl::cancelPointersForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)
@@ -1248,6 +1247,11 @@ const String& PageClientImpl::spatialTrackingLabel() const
     return [contentView() spatialTrackingLabel];
 }
 #endif
+
+void PageClientImpl::scheduleVisibleContentRectUpdate()
+{
+    [webView() _scheduleVisibleContentRectUpdate];
+}
 
 } // namespace WebKit
 

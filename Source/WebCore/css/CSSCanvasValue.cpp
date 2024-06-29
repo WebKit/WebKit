@@ -40,7 +40,7 @@ CSSCanvasValue::~CSSCanvasValue() = default;
 
 String CSSCanvasValue::customCSSText() const
 {
-    return makeString("-webkit-canvas(", m_name, ')');
+    return makeString("-webkit-canvas("_s, m_name, ')');
 }
 
 bool CSSCanvasValue::equals(const CSSCanvasValue& other) const

@@ -4,25 +4,25 @@ xyz
 def
 1 AXValueChanged for element  with AXRole: AXWebArea
 AXValue:
-2 AXValueChanged for element outer_editable with AXRole: AXGroup
+2 AXValueChanged for element outer_editable with AXRole: AXTextArea
 AXValue: aabc
 xyz
 def
 3 AXValueChanged for element  with AXRole: AXWebArea
 AXValue:
-4 AXValueChanged for element outer_editable with AXRole: AXGroup
+4 AXValueChanged for element outer_editable with AXRole: AXTextArea
 AXValue: aabc
 xyz
 def
 5 AXValueChanged for element  with AXRole: AXWebArea
 AXValue:
-6 AXValueChanged for element outer_editable with AXRole: AXGroup
+6 AXValueChanged for element outer_editable with AXRole: AXTextArea
 AXValue: aabc
 xyz
 dgef
-7 AXValueChanged for element inner_editable with AXRole: AXGroup
+7 AXValueChanged for element inner_editable with AXRole: AXTextArea
 AXValue: dgef
-8 AXValueChanged for element inner_editable with AXRole: AXGroup
+8 AXValueChanged for element inner_editable with AXRole: AXTextArea
 AXValue: dgef
 
 PASS successfullyParsed is true

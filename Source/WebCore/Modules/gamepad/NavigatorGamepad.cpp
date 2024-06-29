@@ -28,12 +28,15 @@
 
 #if ENABLE(GAMEPAD)
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "Gamepad.h"
 #include "GamepadManager.h"
 #include "GamepadProvider.h"
 #include "LocalDOMWindow.h"
 #include "Navigator.h"
+#include "Page.h"
 #include "PermissionsPolicy.h"
 #include "PlatformGamepad.h"
 
@@ -83,14 +86,47 @@ ExceptionOr<const Vector<RefPtr<Gamepad>>&> NavigatorGamepad::getGamepads(Naviga
         return { emptyGamepads.get() };
     }
 
-    if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Gamepad, *document, LogPermissionsPolicyFailure::Yes))
+    if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Gamepad, *document))
         return Exception { ExceptionCode::SecurityError, "Third-party iframes are not allowed to call getGamepads() unless explicitly allowed via Feature-Policy (gamepad)"_s };
 
     return NavigatorGamepad::from(navigator)->gamepads();
 }
 
+// The UIProcess tracks when a WebPage has recently used gamepads to configure certain behaviors on the page.
+//
+// Once a WebPage notifies the UIProcess that gamepads have been accessed, the UIProcess starts a timer with
+// a short delay, after which it assumes that WebPage is no longer actively using gamepads.
+//
+// This works because of the polling nature of the gamepad API - If a web page is using gamepads it will be
+// accessing them multiple times per second.
+//
+// WebPages need to continuously tell the UIProcess that gamepads have been used recently, but can do so lazily;
+// As long as a WebPage continuously using gamepads notifies the UIProcess at least once during the UIProcess's
+// timer delay, things will work as expected.
+//
+// So it follows: Web processes have this value initialized to be compatible with the UIProcess timer threshold.
+
+static Seconds s_gamepadsRecentlyAccessedThreshold;
+
+void NavigatorGamepad::setGamepadsRecentlyAccessedThreshold(Seconds threshold)
+{
+    // This value should only initialized once.
+    RELEASE_ASSERT(!s_gamepadsRecentlyAccessedThreshold);
+    s_gamepadsRecentlyAccessedThreshold = threshold;
+}
+
+Seconds NavigatorGamepad::gamepadsRecentlyAccessedThreshold()
+{
+    return s_gamepadsRecentlyAccessedThreshold;
+}
+
 const Vector<RefPtr<Gamepad>>& NavigatorGamepad::gamepads()
 {
+    if (RefPtr frame = m_navigator.frame()) {
+        if (RefPtr page = frame->protectedPage())
+            page->gamepadsRecentlyAccessed();
+    }
+
     if (m_gamepads.isEmpty())
         return m_gamepads;
 

@@ -92,7 +92,7 @@ struct CharacterOffset {
 
     String debugDescription()
     {
-        return makeString("CharacterOffset {node: ", node ? node->debugDescription() : "null"_s, ", startIndex: ", startIndex, ", offset: ", offset, ", remainingOffset: ", remainingOffset, "}");
+        return makeString("CharacterOffset {node: "_s, node ? node->debugDescription() : "null"_s, ", startIndex: "_s, startIndex, ", offset: "_s, offset, ", remainingOffset: "_s, remainingOffset, '}');
     }
 };
 
@@ -451,13 +451,13 @@ public:
     TextMarkerData textMarkerDataForPreviousCharacterOffset(const CharacterOffset&);
     AXTextMarker previousTextMarker(const AXTextMarker&);
     VisiblePosition visiblePositionForTextMarkerData(const TextMarkerData&);
-    CharacterOffset characterOffsetForTextMarkerData(TextMarkerData&);
+    CharacterOffset characterOffsetForTextMarkerData(const TextMarkerData&);
     // Use ignoreNextNodeStart/ignorePreviousNodeEnd to determine the behavior when we are at node boundary.
     CharacterOffset nextCharacterOffset(const CharacterOffset&, bool ignoreNextNodeStart = true);
     CharacterOffset previousCharacterOffset(const CharacterOffset&, bool ignorePreviousNodeEnd = true);
     TextMarkerData startOrEndTextMarkerDataForRange(const SimpleRange&, bool);
     CharacterOffset startOrEndCharacterOffsetForRange(const SimpleRange&, bool, bool enterTextControls = false);
-    AccessibilityObject* accessibilityObjectForTextMarkerData(TextMarkerData&);
+    AccessibilityObject* accessibilityObjectForTextMarkerData(const TextMarkerData&);
     std::optional<SimpleRange> rangeForUnorderedCharacterOffsets(const CharacterOffset&, const CharacterOffset&);
     static SimpleRange rangeForNodeContents(Node&);
     static unsigned lengthForRange(const SimpleRange&);
@@ -573,6 +573,8 @@ public:
     static bool clientIsInTestMode();
 #endif
 
+    bool isNodeInUse(Node& node) const { return m_textMarkerNodes.contains(node); }
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void scheduleObjectRegionsUpdate(bool scheduleImmediately = false) { m_geometryManager->scheduleObjectRegionsUpdate(scheduleImmediately); }
     void willUpdateObjectRegions() { m_geometryManager->willUpdateObjectRegions(); }
@@ -595,7 +597,7 @@ private:
 #endif
 
 protected:
-    void postPlatformNotification(AXCoreObject*, AXNotification);
+    void postPlatformNotification(AccessibilityObject&, AXNotification);
     void platformHandleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode);
 
     void platformPerformDeferredCacheUpdate();
@@ -603,7 +605,7 @@ protected:
 #if PLATFORM(COCOA) || USE(ATSPI)
     void postTextStateChangePlatformNotification(AccessibilityObject*, const AXTextStateChangeIntent&, const VisibleSelection&);
     void postTextStateChangePlatformNotification(AccessibilityObject*, AXTextEditType, const String&, const VisiblePosition&);
-    void postTextReplacementPlatformNotificationForTextControl(AccessibilityObject*, const String& deletedText, const String& insertedText, HTMLTextFormControlElement&);
+    void postTextReplacementPlatformNotificationForTextControl(AccessibilityObject*, const String& deletedText, const String& insertedText);
     void postTextReplacementPlatformNotification(AccessibilityObject*, AXTextEditType, const String&, AXTextEditType, const String&, const VisiblePosition&);
 #else // PLATFORM(COCOA) || USE(ATSPI)
     static AXTextChange textChangeForEditType(AXTextEditType);
@@ -626,7 +628,6 @@ protected:
     // This is a weak reference cache for knowing if Nodes used by TextMarkers are valid.
     void setNodeInUse(Node& node) { m_textMarkerNodes.add(node); }
     void removeNodeForUse(Node& node) { m_textMarkerNodes.remove(node); }
-    bool isNodeInUse(Node& node) { return m_textMarkerNodes.contains(node); }
 
     // CharacterOffset functions.
     enum TraverseOption { TraverseOptionDefault = 1 << 0, TraverseOptionToNodeEnd = 1 << 1, TraverseOptionIncludeStart = 1 << 2, TraverseOptionValidateOffset = 1 << 3, TraverseOptionDoNotEnterTextControls = 1 << 4 };

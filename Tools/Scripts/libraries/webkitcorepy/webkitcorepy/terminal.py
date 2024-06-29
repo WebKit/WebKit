@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -189,8 +189,7 @@ class Terminal(object):
                 process = run(['explorer', url])
             else:
                 # TODO: Use shutil directly when Python 2.7 is removed
-                from whichcraft import which
-                if sys.platform.startswith('linux') and which('xdg-open'):
+                if sys.platform.startswith('linux') and shutil.which('xdg-open'):
                     process = run(['xdg-open', url])
                 else:
                     process = run(['open', url])

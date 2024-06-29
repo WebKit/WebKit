@@ -1,0 +1,41 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<body>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText()
+
+    if (window.IPC) {
+        [streamConnection, streamConnectionHandle] = IPC.createStreamClientConnection(14);
+        streamConnection.open();
+        IPC.sendMessage(
+            'GPU',
+            0,
+            IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,
+            [
+            {type: 'uint64_t', value: 1289},
+            {type: 'uint64_t', value: IPC.webPageProxyID},
+            {type: 'uint64_t', value: IPC.pageID},
+            {type: 'StreamServerConnectionHandle', value: streamConnectionHandle}
+            ]
+        );
+        streamConnection.sendMessage(
+            1289,
+            IPC.messages.RemoteRenderingBackend_CacheFilter.name,
+            0.1,
+            [
+            {type: 'uint8_t',value: 0},
+            {type: 'Vector',value: []},
+            {type: 'uint8_t',value: 3},
+            {type: 'float',value: 710},
+            {type: 'float',value: 427},
+            {type: 'float',value: 929.2551582408528},
+            {type: 'float',value: 380},
+            {type: 'float',value: 371},
+            {type: 'float',value: 1919.3690210676366}
+            ]
+        );
+    } else {
+        testRunner.notifyDone();
+    }
+</script>
+</body>

@@ -37,7 +37,7 @@ namespace WebCore {
 
 class FloatLine {
 public:
-    FloatLine() { }
+    FloatLine() = default;
     FloatLine(const FloatPoint& start, const FloatPoint& end)
         : m_start(start)
         , m_end(end)

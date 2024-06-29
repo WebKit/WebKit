@@ -60,7 +60,7 @@ String StorageSyncManager::fullDatabaseFilename(const String& databaseIdentifier
         return String();
     }
 
-    return FileSystem::pathByAppendingComponent(m_path, makeString(databaseIdentifier, ".localstorage"));
+    return FileSystem::pathByAppendingComponent(m_path, makeString(databaseIdentifier, ".localstorage"_s));
 }
 
 void StorageSyncManager::dispatch(Function<void ()>&& function)

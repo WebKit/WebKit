@@ -144,7 +144,7 @@ void InstallDebugAnnotator(egl::Display *display, vk::Renderer *renderer)
 
     if (!installedAnnotator)
     {
-        std::unique_lock<std::mutex> lock(gl::GetDebugMutex());
+        std::unique_lock<angle::SimpleMutex> lock(gl::GetDebugMutex());
         display->setGlobalDebugAnnotator();
     }
 }
@@ -178,6 +178,8 @@ egl::Error DisplayVk::initialize(egl::Display *display)
         this, this, desiredICD, preferredVendorId, preferredDeviceId, useValidationLayers,
         getWSIExtension(), getWSILayer(), getWindowSystem(), mState.featureOverrides);
     ANGLE_TRY(angle::ToEGL(result, EGL_NOT_INITIALIZED));
+
+    mDeviceQueueIndex = mRenderer->getDeviceQueueIndex(egl::ContextPriority::Medium);
 
     InstallDebugAnnotator(display, mRenderer);
 
@@ -508,10 +510,10 @@ ExternalImageSiblingImpl *DisplayVk::createExternalImageSibling(const gl::Contex
 
 void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
 {
-    outExtensions->createContextRobustness    = getRenderer()->getNativeExtensions().robustnessEXT;
-    outExtensions->surfaceOrientation         = true;
-    outExtensions->displayTextureShareGroup   = true;
-    outExtensions->displaySemaphoreShareGroup = true;
+    outExtensions->createContextRobustness  = getRenderer()->getNativeExtensions().robustnessAny();
+    outExtensions->surfaceOrientation       = true;
+    outExtensions->displayTextureShareGroup = true;
+    outExtensions->displaySemaphoreShareGroup        = true;
     outExtensions->robustResourceInitializationANGLE = true;
 
     // The Vulkan implementation will always say that EGL_KHR_swap_buffers_with_damage is supported.

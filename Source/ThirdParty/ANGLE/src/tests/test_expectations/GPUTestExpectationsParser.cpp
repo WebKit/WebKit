@@ -176,7 +176,8 @@ constexpr TokenInfo kTokenData[kNumberOfTokens] = {
     {"mac", GPUTestConfig::kConditionMac},
     {"ios", GPUTestConfig::kConditionIOS},
     {"linux", GPUTestConfig::kConditionLinux},
-    {"chromeos", GPUTestConfig::kConditionNone},  // https://anglebug.com/3363 CrOS not supported
+    {"chromeos",
+     GPUTestConfig::kConditionNone},  // https://anglebug.com/42262032 CrOS not supported
     {"android", GPUTestConfig::kConditionAndroid},
     {"nvidia", GPUTestConfig::kConditionNVIDIA},
     {"amd", GPUTestConfig::kConditionAMD},

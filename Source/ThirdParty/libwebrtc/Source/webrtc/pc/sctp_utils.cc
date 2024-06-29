@@ -64,7 +64,7 @@ bool ParseDataChannelOpenMessage(const rtc::CopyOnWriteBuffer& payload,
   // Format defined at
   // http://tools.ietf.org/html/draft-jesup-rtcweb-data-protocol-04
 
-  rtc::ByteBufferReader buffer(payload.data<char>(), payload.size());
+  rtc::ByteBufferReader buffer(payload);
   uint8_t message_type;
   if (!buffer.ReadUInt8(&message_type)) {
     RTC_LOG(LS_WARNING) << "Could not read OPEN message type.";

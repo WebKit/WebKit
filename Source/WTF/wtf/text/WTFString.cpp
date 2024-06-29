@@ -51,7 +51,7 @@ String::String(std::span<const LChar> characters)
 }
 
 String::String(std::span<const char> characters)
-    : m_impl(characters.data() ? RefPtr { StringImpl::create(spanReinterpretCast<const uint8_t>(characters)) } : nullptr)
+    : m_impl(characters.data() ? RefPtr { StringImpl::create(byteCast<uint8_t>(characters)) } : nullptr)
 {
 }
 

@@ -1,0 +1,4 @@
+
+PASS Call getFileHandle successfully
+PASS Call getDirectoryHandle successfully
+

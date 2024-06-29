@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+
+
+PASS Trusted Type violation report: evaluating a string.
+PASS Trusted Type violation report: evaluating a Trusted Script.
+FAIL Trusted Type violation report: default policy transforms the script before CSP checks runs. Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment.
+

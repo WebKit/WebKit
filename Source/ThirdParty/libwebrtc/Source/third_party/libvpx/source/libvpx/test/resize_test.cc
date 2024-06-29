@@ -7,8 +7,6 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include <stdio.h>
-
 #include <climits>
 #include <vector>
 #include "third_party/googletest/src/include/gtest/gtest.h"
@@ -17,6 +15,7 @@
 #include "test/i420_video_source.h"
 #include "test/video_source.h"
 #include "test/util.h"
+#include "vpx_config.h"
 
 // Enable(1) or Disable(0) writing of the compressed bitstream.
 #define WRITE_COMPRESSED_STREAM 0
@@ -598,6 +597,7 @@ TEST_P(ResizeRealtimeTest, TestInternalResizeDown) {
   mismatch_nframes_ = 0;
   ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
 
+#if CONFIG_VP9_DECODER
   unsigned int last_w = cfg_.g_w;
   unsigned int last_h = cfg_.g_h;
   int resize_count = 0;
@@ -613,12 +613,12 @@ TEST_P(ResizeRealtimeTest, TestInternalResizeDown) {
     }
   }
 
-#if CONFIG_VP9_DECODER
   // Verify that we get 1 resize down event in this test.
   ASSERT_EQ(1, resize_count) << "Resizing should occur.";
   EXPECT_EQ(static_cast<unsigned int>(0), GetMismatchFrames());
 #else
-  printf("Warning: VP9 decoder unavailable, unable to check resize count!\n");
+  GTEST_SKIP()
+      << "Warning: VP9 decoder unavailable, unable to check resize count!\n";
 #endif
 }
 
@@ -669,7 +669,8 @@ TEST_P(ResizeRealtimeTest, TestInternalResizeDownUpChangeBitRate) {
   ASSERT_EQ(resize_count, 4) << "Resizing should occur twice.";
   EXPECT_EQ(static_cast<unsigned int>(0), GetMismatchFrames());
 #else
-  printf("Warning: VP9 decoder unavailable, unable to check resize count!\n");
+  GTEST_SKIP()
+      << "Warning: VP9 decoder unavailable, unable to check resize count!\n";
 #endif
 }
 

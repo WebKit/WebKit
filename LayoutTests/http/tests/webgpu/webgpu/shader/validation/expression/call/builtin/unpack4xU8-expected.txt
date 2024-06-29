@@ -1,0 +1,22 @@
+
+PASS :unsupported:requires=false
+PASS :unsupported:requires=true
+PASS :supported:requires=false
+PASS :supported:requires=true
+PASS :values:stage="constant";type="u32"
+PASS :values:stage="constant";type="abstract-int"
+PASS :values:stage="override";type="u32"
+PASS :arguments:args="good"
+PASS :arguments:args="bad_no_args"
+PASS :arguments:args="bad_more_args"
+PASS :arguments:args="bad_i32"
+PASS :arguments:args="bad_f32"
+PASS :arguments:args="bad_f16"
+PASS :arguments:args="bad_bool"
+PASS :arguments:args="bad_vec2u"
+PASS :arguments:args="bad_vec3u"
+PASS :arguments:args="bad_vec4u"
+PASS :arguments:args="bad_array"
+PASS :must_use:use=true
+PASS :must_use:use=false
+

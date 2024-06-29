@@ -30,6 +30,7 @@
 typedef struct CGColorSpace* CGColorSpaceRef;
 #elif USE(SKIA)
 #include <skia/core/SkColorSpace.h>
+#include <skia/core/SkData.h>
 #else
 #include <optional>
 #endif

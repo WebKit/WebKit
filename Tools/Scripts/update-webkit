@@ -60,14 +60,7 @@ __END__
     exit 1;
 }
 
-my @svnOptions = ();
-push @svnOptions, '-q' if $quiet;
-
-# Don't prompt when using svn-1.6 or newer.
-push @svnOptions, qw(--accept postpone) if isSVNVersion16OrNewer();
-
 print "Updating OpenSource\n" unless $quiet;
-runSvnUpdateAndResolveChangeLogs(@svnOptions) if isSVN();
 runGitUpdate() if isGit();
 
 exit 0;

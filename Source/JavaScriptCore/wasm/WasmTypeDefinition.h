@@ -355,6 +355,15 @@ public:
         return n;
     }
 
+    bool hasReturnVector() const
+    {
+        for (size_t i = 0; i < returnCount(); ++i) {
+            if (returnType(i).isV128())
+                return true;
+        }
+        return false;
+    }
+
     bool operator==(const FunctionSignature& other) const
     {
         // Function signatures are unique because it is just an view class over TypeDefinition and
@@ -699,9 +708,9 @@ public:
     bool isSubRTT(const RTT& other) const;
     static size_t allocatedRTTSize(Checked<DisplayCount> count) { return sizeof(RTT) + count * sizeof(TypeIndex); }
 
-    static ptrdiff_t offsetOfKind() { return OBJECT_OFFSETOF(RTT, m_kind); }
-    static ptrdiff_t offsetOfDisplaySize() { return OBJECT_OFFSETOF(RTT, m_displaySize); }
-    static ptrdiff_t offsetOfPayload() { return sizeof(RTT); }
+    static constexpr ptrdiff_t offsetOfKind() { return OBJECT_OFFSETOF(RTT, m_kind); }
+    static constexpr ptrdiff_t offsetOfDisplaySize() { return OBJECT_OFFSETOF(RTT, m_displaySize); }
+    static constexpr ptrdiff_t offsetOfPayload() { return sizeof(RTT); }
 
 private:
     // Payload starts past end of this object.

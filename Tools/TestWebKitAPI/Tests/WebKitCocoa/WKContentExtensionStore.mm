@@ -1091,6 +1091,38 @@ TEST_F(WKContentRuleListStoreTest, Redirect)
     checkURLs(urlsFromCallback, expectedRequestedURLs);
 }
 
+TEST_F(WKContentRuleListStoreTest, MainResourceCrossOriginRedirect)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/1.txt"_s, { "<script>alert('this should never load')</script>"_s } },
+        { "/1.replaced"_s, { "<script>document.cookie = 'key=value'; alert('loaded replacement successfully: ' + document.cookie)</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "redirect", "redirect": { "regex-substitution": "https://webkit.org/\\1.replaced" } },
+            "trigger": { "url-filter": "(1).txt" }
+        } ]
+    )JSON");
+
+    auto configuration = server.httpsProxyConfiguration();
+    [[configuration userContentController] addContentRuleList:list.get()];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences._activeContentRuleListActionPatterns = @{
+            @"testidentifier": [NSSet setWithObject:@"https://example.com/*"]
+        };
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    [delegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = delegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/1.txt"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded replacement successfully: key=value");
+}
+
 TEST_F(WKContentRuleListStoreTest, NullPatternSet)
 {
     auto list = compileContentRuleList(R"JSON(

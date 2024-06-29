@@ -39,7 +39,7 @@ public:
 
 private:
     // CachedRawResourceClient.
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
 
     void registerRequest(CachedResource&);
     void unregisterRequest(CachedResource&);

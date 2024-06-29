@@ -13,9 +13,9 @@
 
 #include <vector>
 
+#include "api/audio/audio_processing.h"
 #include "modules/audio_processing/agc2/gain_applier.h"
 #include "modules/audio_processing/include/audio_frame_view.h"
-#include "modules/audio_processing/include/audio_processing.h"
 
 namespace webrtc {
 

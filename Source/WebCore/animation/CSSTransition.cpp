@@ -61,10 +61,11 @@ CSSTransition::CSSTransition(const Styleable& styleable, const AnimatableCSSProp
 {
 }
 
-void CSSTransition::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, std::optional<Seconds> startTime)
+OptionSet<AnimationImpact> CSSTransition::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, std::optional<Seconds> startTime)
 {
-    StyleOriginatedAnimation::resolve(targetStyle, resolutionContext, startTime);
+    auto impact = StyleOriginatedAnimation::resolve(targetStyle, resolutionContext, startTime);
     m_currentStyle = RenderStyle::clonePtr(targetStyle);
+    return impact;
 }
 
 void CSSTransition::animationDidFinish()

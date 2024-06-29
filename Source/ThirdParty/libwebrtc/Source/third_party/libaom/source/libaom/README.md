@@ -46,17 +46,23 @@ README.md                {#LREADME}
 
 ### Prerequisites {#prerequisites}
 
- 1. [CMake](https://cmake.org). See CMakeLists.txt for the minimum version
-    required.
- 2. [Git](https://git-scm.com/).
- 3. [Perl](https://www.perl.org/).
- 4. For x86 targets, [yasm](http://yasm.tortall.net/), which is preferred, or a
-    recent version of [nasm](http://www.nasm.us/). If you download yasm with
-    the intention to work with Visual Studio, please download win32.exe or
-    win64.exe and rename it into yasm.exe. DO NOT download or use vsyasm.exe.
- 5. Building the documentation requires
+1. [CMake](https://cmake.org). See CMakeLists.txt for the minimum version
+   required.
+2. [Git](https://git-scm.com/).
+3. A modern C compiler. gcc 6+, clang 7+, Microsoft Visual Studio 2019+ or
+   the latest version of MinGW-w64 (clang64 or ucrt toolchains) are
+   recommended. A C++ compiler is necessary to build the unit tests and some
+   features contained in the examples.
+4. [Perl](https://www.perl.org/).
+5. For x86 targets, [yasm](http://yasm.tortall.net/) or a recent version (2.14
+   or later) of [nasm](http://www.nasm.us/). (If both yasm and nasm are
+   present, yasm will be used by default. Pass -DENABLE_NASM=ON to cmake to
+   select nasm.) If you download yasm with the intention to work with Visual
+   Studio, please download win32.exe or win64.exe and rename it into yasm.exe.
+   DO NOT download or use vsyasm.exe.
+6. Building the documentation requires
    [doxygen version 1.8.10 or newer](http://doxygen.org).
- 6. Emscripten builds require the portable
+7. Emscripten builds require the portable
    [EMSDK](https://kripken.github.io/emscripten-site/index.html).
 
 ### Get the code {#get-the-code}

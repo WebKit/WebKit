@@ -67,9 +67,9 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         this._shouldAutoPruneStaleTopLevelResourceTreeElements = shouldAutoPruneStaleTopLevelResourceTreeElements || false;
 
         if (this._shouldAutoPruneStaleTopLevelResourceTreeElements) {
-            WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._checkForStaleResources, this);
-            WI.Frame.addEventListener(WI.Frame.Event.ChildFrameWasRemoved, this._checkForStaleResources, this);
-            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasRemoved, this._checkForStaleResources, this);
+            WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this.pruneStaleResourceTreeElements, this);
+            WI.Frame.addEventListener(WI.Frame.Event.ChildFrameWasRemoved, this.pruneStaleResourceTreeElements, this);
+            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasRemoved, this.pruneStaleResourceTreeElements, this);
         }
 
         this._pendingViewStateCookie = null;
@@ -86,9 +86,9 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         window.removeEventListener("resize", this._boundUpdateContentOverflowShadowVisibilitySoon);
 
         if (this._shouldAutoPruneStaleTopLevelResourceTreeElements) {
-            WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._checkForStaleResources, this);
-            WI.Frame.removeEventListener(WI.Frame.Event.ChildFrameWasRemoved, this._checkForStaleResources, this);
-            WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasRemoved, this._checkForStaleResources, this);
+            WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this.pruneStaleResourceTreeElements, this);
+            WI.Frame.removeEventListener(WI.Frame.Event.ChildFrameWasRemoved, this.pruneStaleResourceTreeElements, this);
+            WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasRemoved, this.pruneStaleResourceTreeElements, this);
         }
     }
 
@@ -485,11 +485,6 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
 
     pruneStaleResourceTreeElements()
     {
-        if (this._checkForStaleResourcesTimeoutIdentifier) {
-            clearTimeout(this._checkForStaleResourcesTimeoutIdentifier);
-            this._checkForStaleResourcesTimeoutIdentifier = undefined;
-        }
-
         for (let contentTreeOutline of this.contentTreeOutlines) {
             // Check all the ResourceTreeElements at the top level to make sure their Resource still has a parentFrame in the frame hierarchy.
             // If the parentFrame is no longer in the frame hierarchy we know it was removed due to a navigation or some other page change and
@@ -631,24 +626,6 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
             this._updateContentOverflowShadowVisibilityDebouncer.delayForTime(0);
     }
 
-    _checkForStaleResourcesIfNeeded()
-    {
-        if (!this._checkForStaleResourcesTimeoutIdentifier || !this._shouldAutoPruneStaleTopLevelResourceTreeElements)
-            return;
-        this.pruneStaleResourceTreeElements();
-    }
-
-    _checkForStaleResources(event)
-    {
-        console.assert(this._shouldAutoPruneStaleTopLevelResourceTreeElements);
-
-        if (this._checkForStaleResourcesTimeoutIdentifier)
-            return;
-
-        // Check on a delay to coalesce multiple calls to _checkForStaleResources.
-        this._checkForStaleResourcesTimeoutIdentifier = setTimeout(this.pruneStaleResourceTreeElements.bind(this));
-    }
-
     _isTreeElementWithoutRepresentedObject(treeElement)
     {
         return treeElement instanceof WI.FolderTreeElement
@@ -671,7 +648,8 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         if (!this._pendingViewStateCookie)
             return;
 
-        this._checkForStaleResourcesIfNeeded();
+        if (this.shouldAutoPruneStaleTopLevelResourceTreeElements)
+            this.pruneStaleResourceTreeElements();
 
         var visibleTreeElements = [];
         this.contentTreeOutlines.forEach(function(outline) {

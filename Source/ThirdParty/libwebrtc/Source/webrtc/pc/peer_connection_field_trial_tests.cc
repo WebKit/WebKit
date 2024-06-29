@@ -16,13 +16,13 @@
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
+#include "api/enable_media_with_defaults.h"
 #include "api/peer_connection_interface.h"
 #include "api/stats/rtcstats_objects.h"
 #include "api/task_queue/default_task_queue_factory.h"
 #include "api/video_codecs/builtin_video_decoder_factory.h"
 #include "api/video_codecs/builtin_video_encoder_factory.h"
 #include "media/engine/webrtc_media_engine.h"
-#include "media/engine/webrtc_media_engine_defaults.h"
 #include "pc/peer_connection_wrapper.h"
 #include "pc/session_description.h"
 #include "pc/test/fake_audio_capture_module.h"
@@ -68,7 +68,7 @@ class PeerConnectionFieldTrialTest : public ::testing::Test {
 #ifdef WEBRTC_ANDROID
     InitializeAndroidObjects();
 #endif
-    webrtc::PeerConnectionInterface::IceServer ice_server;
+    PeerConnectionInterface::IceServer ice_server;
     ice_server.uri = "stun:stun.l.google.com:19302";
     config_.servers.push_back(ice_server);
     config_.sdp_semantics = SdpSemantics::kUnifiedPlan;
@@ -81,13 +81,8 @@ class PeerConnectionFieldTrialTest : public ::testing::Test {
     pcf_deps.signaling_thread = rtc::Thread::Current();
     pcf_deps.trials = std::move(field_trials);
     pcf_deps.task_queue_factory = CreateDefaultTaskQueueFactory();
-    pcf_deps.call_factory = webrtc::CreateCallFactory();
-    cricket::MediaEngineDependencies media_deps;
-    media_deps.task_queue_factory = pcf_deps.task_queue_factory.get();
-    media_deps.adm = FakeAudioCaptureModule::Create();
-    media_deps.trials = pcf_deps.trials.get();
-    webrtc::SetMediaEngineDefaults(&media_deps);
-    pcf_deps.media_engine = cricket::CreateMediaEngine(std::move(media_deps));
+    pcf_deps.adm = FakeAudioCaptureModule::Create();
+    EnableMediaWithDefaults(pcf_deps);
     pc_factory_ = CreateModularPeerConnectionFactory(std::move(pcf_deps));
 
     // Allow ADAPTER_TYPE_LOOPBACK to create PeerConnections with loopback in
@@ -113,7 +108,7 @@ class PeerConnectionFieldTrialTest : public ::testing::Test {
   std::unique_ptr<rtc::SocketServer> socket_server_;
   rtc::AutoSocketServerThread main_thread_;
   rtc::scoped_refptr<PeerConnectionFactoryInterface> pc_factory_ = nullptr;
-  webrtc::PeerConnectionInterface::RTCConfiguration config_;
+  PeerConnectionInterface::RTCConfiguration config_;
 };
 
 // Tests for the dependency descriptor field trial. The dependency descriptor
@@ -138,7 +133,7 @@ TEST_F(PeerConnectionFieldTrialTest, EnableDependencyDescriptorAdvertised) {
       media_description1->rtp_header_extensions();
 
   bool found = absl::c_find_if(rtp_header_extensions1,
-                               [](const webrtc::RtpExtension& rtp_extension) {
+                               [](const RtpExtension& rtp_extension) {
                                  return rtp_extension.uri ==
                                         RtpExtension::kDependencyDescriptorUri;
                                }) != rtp_header_extensions1.end();
@@ -147,7 +142,13 @@ TEST_F(PeerConnectionFieldTrialTest, EnableDependencyDescriptorAdvertised) {
 
 // Tests that dependency descriptor RTP header extensions can be exchanged
 // via SDP munging, even if dependency descriptor field trial is disabled.
-TEST_F(PeerConnectionFieldTrialTest, InjectDependencyDescriptor) {
+#ifdef WEBRTC_WIN
+// TODO: crbug.com/webrtc/15876 - Test is flaky on Windows machines.
+#define MAYBE_InjectDependencyDescriptor DISABLED_InjectDependencyDescriptor
+#else
+#define MAYBE_InjectDependencyDescriptor InjectDependencyDescriptor
+#endif
+TEST_F(PeerConnectionFieldTrialTest, MAYBE_InjectDependencyDescriptor) {
   std::unique_ptr<test::ScopedKeyValueConfig> field_trials =
       std::make_unique<test::ScopedKeyValueConfig>(
           "WebRTC-DependencyDescriptorAdvertised/Disabled/");
@@ -168,14 +169,14 @@ TEST_F(PeerConnectionFieldTrialTest, InjectDependencyDescriptor) {
       media_description1->rtp_header_extensions();
 
   bool found1 = absl::c_find_if(rtp_header_extensions1,
-                                [](const webrtc::RtpExtension& rtp_extension) {
+                                [](const RtpExtension& rtp_extension) {
                                   return rtp_extension.uri ==
                                          RtpExtension::kDependencyDescriptorUri;
                                 }) != rtp_header_extensions1.end();
   EXPECT_FALSE(found1);
 
   std::set<int> existing_ids;
-  for (const webrtc::RtpExtension& rtp_extension : rtp_header_extensions1) {
+  for (const RtpExtension& rtp_extension : rtp_header_extensions1) {
     existing_ids.insert(rtp_extension.id);
   }
 
@@ -212,7 +213,7 @@ TEST_F(PeerConnectionFieldTrialTest, InjectDependencyDescriptor) {
       media_description2->rtp_header_extensions();
 
   bool found2 = absl::c_find_if(rtp_header_extensions2,
-                                [](const webrtc::RtpExtension& rtp_extension) {
+                                [](const RtpExtension& rtp_extension) {
                                   return rtp_extension.uri ==
                                          RtpExtension::kDependencyDescriptorUri;
                                 }) != rtp_header_extensions2.end();
@@ -269,7 +270,7 @@ TEST_F(PeerConnectionFieldTrialTest, ApplyFakeNetworkConfig) {
   std::vector<const RTCOutboundRtpStreamStats*> outbound_rtp_stats =
       caller->GetStats()->GetStatsOfType<RTCOutboundRtpStreamStats>();
   ASSERT_GE(outbound_rtp_stats.size(), 1u);
-  ASSERT_TRUE(outbound_rtp_stats[0]->target_bitrate.is_defined());
+  ASSERT_TRUE(outbound_rtp_stats[0]->target_bitrate.has_value());
   // Link capacity is limited to 500k, so BWE is expected to be close to 500k.
   ASSERT_LE(*outbound_rtp_stats[0]->target_bitrate, 500'000 * 1.1);
 }

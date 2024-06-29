@@ -94,7 +94,7 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext& context, P
     if (!context.isDocument() || WebProcess::singleton().sessionID().isEphemeral())
         return permissionHandler(NotificationClient::Permission::Denied);
 
-    auto* securityOrigin = context.securityOrigin();
+    RefPtr securityOrigin = context.securityOrigin();
     if (!securityOrigin)
         return permissionHandler(NotificationClient::Permission::Denied);
 
@@ -109,7 +109,7 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
     if (!context || (!context->isDocument() && !context->isServiceWorkerGlobalScope()))
         return NotificationClient::Permission::Denied;
 
-    auto* origin = context->securityOrigin();
+    RefPtr origin = context->securityOrigin();
     if (!origin)
         return NotificationClient::Permission::Denied;
 

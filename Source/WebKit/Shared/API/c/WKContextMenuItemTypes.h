@@ -127,12 +127,13 @@ enum {
     kWKContextMenuItemTagToggleVideoFullscreen,
     kWKContextMenuItemTagShareMenu,
     kWKContextMenuItemTagToggleVideoEnhancedFullscreen,
+    kWKContextMenuItemTagToggleVideoViewer,
     kWKContextMenuItemTagAddHighlightToCurrentQuickNote,
     kWKContextMenuItemTagAddHighlightToNewQuickNote,
     kWKContextMenuItemTagRevealImage,
     kWKContextMenuItemTagTranslate,
     kWKContextMenuItemTagCopyCroppedImage,
-    kWKContextMenuItemTagSwapCharacters,
+    kWKContextMenuItemTagWritingTools,
     kWKContextMenuItemTagCopyLinkToHighlight,
     kWKContextMenuItemBaseApplicationTag = 10000
 };

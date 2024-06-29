@@ -82,12 +82,18 @@ auto RemoteBufferProxy::getBufferContents() -> MappedRange
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void RemoteBufferProxy::copy(Vector<uint8_t>&& data, size_t offset)
+void RemoteBufferProxy::copy(std::span<const uint8_t> span, size_t offset)
 {
     if (!m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write))
         return;
 
-    auto sendResult = send(Messages::RemoteBuffer::Copy(WTFMove(data), offset));
+    auto sharedMemory = WebCore::SharedMemory::copySpan(span);
+    std::optional<WebCore::SharedMemoryHandle> handle;
+    if (sharedMemory)
+        handle = sharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
+    auto sendResult = sendWithAsyncReply(Messages::RemoteBuffer::Copy(WTFMove(handle), offset), [sharedMemory = sharedMemory.copyRef(), handleHasValue = handle.has_value()](auto) mutable {
+        RELEASE_ASSERT(sharedMemory.get() || !handleHasValue);
+    });
     UNUSED_VARIABLE(sendResult);
 }
 

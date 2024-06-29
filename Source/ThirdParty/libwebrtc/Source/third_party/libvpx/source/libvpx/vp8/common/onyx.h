@@ -83,7 +83,14 @@ typedef struct {
   int Width;
   int Height;
   struct vpx_rational timebase;
-  unsigned int target_bandwidth; /* kilobits per second */
+  /* In either kilobits per second or bits per second, depending on which
+   * copy of oxcf this is in.
+   * - ctx->oxcf.target_bandwidth is in kilobits per second. See
+   *   set_vp8e_config().
+   * - ctx->cpi->oxcf.target_bandwidth in is bits per second. See
+   *   vp8_change_config().
+   */
+  unsigned int target_bandwidth;
 
   /* Parameter used for applying denoiser.
    * For temporal denoiser: noise_sensitivity = 0 means off,
@@ -214,6 +221,7 @@ typedef struct {
 
   /* Temporal scaling parameters */
   unsigned int number_of_layers;
+  /* kilobits per second */
   unsigned int target_bitrate[VPX_TS_MAX_PERIODICITY];
   unsigned int rate_decimator[VPX_TS_MAX_PERIODICITY];
   unsigned int periodicity;
@@ -234,9 +242,9 @@ typedef struct {
 #endif
 } VP8_CONFIG;
 
-void vp8_initialize();
+void vp8_initialize(void);
 
-struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf);
+struct VP8_COMP *vp8_create_compressor(const VP8_CONFIG *oxcf);
 void vp8_remove_compressor(struct VP8_COMP **comp);
 
 void vp8_init_config(struct VP8_COMP *onyx, VP8_CONFIG *oxcf);

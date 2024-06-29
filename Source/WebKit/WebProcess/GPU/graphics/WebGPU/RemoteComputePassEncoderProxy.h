@@ -66,11 +66,6 @@ private:
     {
         return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
     }
-    template<typename T>
-    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
-    {
-        return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
-    }
 
     void setPipeline(const WebCore::WebGPU::ComputePipeline&) final;
     void dispatch(WebCore::WebGPU::Size32 workgroupCountX, WebCore::WebGPU::Size32 workgroupCountY = 1, WebCore::WebGPU::Size32 workgroupCountZ = 1) final;

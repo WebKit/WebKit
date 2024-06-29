@@ -482,7 +482,7 @@ angle::Result ContextGL::drawArraysInstancedBaseInstance(const gl::Context *cont
     else
     {
         // GL 3.3+ or GLES 3.2+
-        // TODO(http://anglebug.com/3910): This is a temporary solution by setting and resetting
+        // TODO(http://anglebug.com/42262554): This is a temporary solution by setting and resetting
         // pointer offset calling vertexAttribPointer Will refactor stateCache and pass baseInstance
         // to setDrawArraysState to set pointer offset
 
@@ -636,7 +636,7 @@ angle::Result ContextGL::drawElementsInstancedBaseVertexBaseInstance(const gl::C
     else
     {
         // GL 3.3+ or GLES 3.2+
-        // TODO(http://anglebug.com/3910): same as above
+        // TODO(http://anglebug.com/42262554): same as above
         gl::AttributesMask attribToResetMask = updateAttributesForBaseInstance(baseInstance);
 
         ANGLE_GL_TRY(context, functions->drawElementsInstancedBaseVertex(
@@ -992,6 +992,23 @@ angle::Result ContextGL::memoryBarrierByRegion(const gl::Context *context, GLbit
 void ContextGL::framebufferFetchBarrier()
 {
     mRenderer->framebufferFetchBarrier();
+}
+
+angle::Result ContextGL::startTiling(const gl::Context *context,
+                                     const gl::Rectangle &area,
+                                     GLbitfield preserveMask)
+{
+    const FunctionsGL *functions = getFunctions();
+    ANGLE_GL_TRY(context,
+                 functions->startTilingQCOM(area.x, area.y, area.width, area.height, preserveMask));
+    return angle::Result::Continue;
+}
+
+angle::Result ContextGL::endTiling(const gl::Context *context, GLbitfield preserveMask)
+{
+    const FunctionsGL *functions = getFunctions();
+    ANGLE_GL_TRY(context, functions->endTilingQCOM(preserveMask));
+    return angle::Result::Continue;
 }
 
 void ContextGL::setMaxShaderCompilerThreads(GLuint count)

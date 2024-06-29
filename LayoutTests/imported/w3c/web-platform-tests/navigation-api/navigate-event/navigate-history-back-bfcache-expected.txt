@@ -1,0 +1,3 @@
+
+NOTRUN navigate event should fire when traversing to a bfcache hit Should be BFCached but actually wasn't
+

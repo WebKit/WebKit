@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DOMJITGetterSetter.h"
 #include "StructureStubInfo.h"
 
 namespace JSC {
@@ -38,6 +39,7 @@ public:
 
     using StructureStubInfoKey = std::tuple<AccessType, bool, bool, bool, bool>;
     using StatelessCacheKey = std::tuple<StructureStubInfoKey, AccessCase::AccessType>;
+    using DOMJITCacheKey = std::tuple<StructureStubInfoKey, const DOMJIT::GetterSetter*>;
 
     static StructureStubInfoKey stubInfoKey(const StructureStubInfo& stubInfo)
     {
@@ -86,30 +88,34 @@ public:
         struct Translator {
             static unsigned hash(const Searcher& searcher)
             {
-                return PolymorphicAccessJITStubRoutine::computeHash(searcher.m_cases);
+                return searcher.m_hash;
             }
 
             static bool equal(const Hash::Key a, const Searcher& b)
             {
-                if (a.m_stubInfoKey == b.m_stubInfoKey) {
-                    // FIXME: The ordering of cases does not matter for sharing capabilities.
-                    // We can potentially increase success rate by making this comparison / hashing non ordering sensitive.
-                    const auto& aCases = a.m_wrapped->cases();
-                    const auto& bCases = b.m_cases;
-                    if (aCases.size() != bCases.size())
+                if (a.m_stubInfoKey == b.m_stubInfoKey && Hash::hash(a) == b.m_hash) {
+                    if (a.m_wrapped->cases().size() != 1)
                         return false;
-                    for (unsigned index = 0; index < bCases.size(); ++index) {
-                        if (!AccessCase::canBeShared(*aCases[index], *bCases[index]))
-                            return false;
-                    }
+                    const auto& aCase = a.m_wrapped->cases()[0];
+                    const auto& bCase = b.m_accessCase;
+                    if (!AccessCase::canBeShared(aCase.get(), bCase.get()))
+                        return false;
                     return true;
                 }
                 return false;
             }
         };
 
+        Searcher(StructureStubInfoKey&& stubInfoKey, Ref<AccessCase>&& accessCase)
+            : m_stubInfoKey(WTFMove(stubInfoKey))
+            , m_accessCase(WTFMove(accessCase))
+            , m_hash(m_accessCase->hash())
+        {
+        }
+
         StructureStubInfoKey m_stubInfoKey;
-        std::span<const RefPtr<AccessCase>> m_cases;
+        Ref<AccessCase> m_accessCase;
+        unsigned m_hash { 0 };
     };
 
     struct PointerTranslator {
@@ -147,12 +153,16 @@ public:
     RefPtr<PolymorphicAccessJITStubRoutine> getStatelessStub(StatelessCacheKey) const;
     void setStatelessStub(StatelessCacheKey, Ref<PolymorphicAccessJITStubRoutine>);
 
+    MacroAssemblerCodeRef<JITStubRoutinePtrTag> getDOMJITCode(DOMJITCacheKey) const;
+    void setDOMJITCode(DOMJITCacheKey, MacroAssemblerCodeRef<JITStubRoutinePtrTag>);
+
     RefPtr<InlineCacheHandler> getSlowPathHandler(AccessType) const;
     void setSlowPathHandler(AccessType, Ref<InlineCacheHandler>);
 
 private:
     HashSet<Hash::Key, Hash, Hash::KeyTraits> m_stubs;
     HashMap<StatelessCacheKey, Ref<PolymorphicAccessJITStubRoutine>> m_statelessStubs;
+    HashMap<DOMJITCacheKey, MacroAssemblerCodeRef<JITStubRoutinePtrTag>> m_domJITCodes;
     std::array<RefPtr<InlineCacheHandler>, numberOfAccessTypes> m_fallbackHandlers { };
     std::array<RefPtr<InlineCacheHandler>, numberOfAccessTypes> m_slowPathHandlers { };
 };

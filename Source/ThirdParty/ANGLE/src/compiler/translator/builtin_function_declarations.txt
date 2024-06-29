@@ -206,7 +206,7 @@ GROUP BEGIN Math {"queryFunction": true}
       genType uintBitsToFloat(genUType);
     DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_BUILTINS"}
       genType fma(genType, genType, genType);
-    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "essl_extension": "EXT_gpu_shader5", "suffix": "Ext"}
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "essl_extension": "EXT_gpu_shader5, OES_gpu_shader5", "suffix": "Ext"}
       genType fma(genType, genType, genType);
     DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
       genType fma(genDType, genDType, genDType);
@@ -910,7 +910,7 @@ GROUP BEGIN Texture {"queryFunction": true}
             gvec4 textureGatherOffsets(gsampler2DArray, vec3, ivec2[4]);
             vec4 textureGatherOffsets(sampler2DShadow, vec2, float, ivec2[4]);
             vec4 textureGatherOffsets(sampler2DArrayShadow, vec3, float, ivec2[4]);
-          DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "essl_extension": "EXT_gpu_shader5", "suffix": "Ext"}
+          DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "essl_extension": "EXT_gpu_shader5, OES_gpu_shader5", "suffix": "Ext"}
             gvec4 textureGatherOffsets(gsampler2D, vec2, ivec2[4]);
             gvec4 textureGatherOffsets(gsampler2DArray, vec3, ivec2[4]);
             vec4 textureGatherOffsets(sampler2DShadow, vec2, float, ivec2[4]);
@@ -923,7 +923,7 @@ GROUP BEGIN Texture {"queryFunction": true}
           DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_BUILTINS"}
             gvec4 textureGatherOffsets(gsampler2D, vec2, ivec2[4], int);
             gvec4 textureGatherOffsets(gsampler2DArray, vec3, ivec2[4], int);
-          DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "essl_extension": "EXT_gpu_shader5", "suffix": "Ext"}
+          DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "essl_extension": "EXT_gpu_shader5, OES_gpu_shader5", "suffix": "Ext"}
             gvec4 textureGatherOffsets(gsampler2D, vec2, ivec2[4], int);
             gvec4 textureGatherOffsets(gsampler2DArray, vec3, ivec2[4], int);
           DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
@@ -1186,7 +1186,7 @@ GROUP BEGIN ESSL310CS {"shader_type": "COMPUTE"}
 GROUP END ESSL310CS
 
 GROUP BEGIN ESSL310TCS {"shader_type": "TESS_CONTROL_EXT"}
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "essl_extension": "EXT_tessellation_shader", "essl_extension_becomes_core_in": "ESSL3_2_BUILTINS", "opSuffix": "TCS", "hasSideEffects": true, "suffix": "TCS"}
+  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "essl_extension": "EXT_tessellation_shader, OES_tessellation_shader", "essl_extension_becomes_core_in": "ESSL3_2_BUILTINS", "opSuffix": "TCS", "hasSideEffects": true, "suffix": "TCS"}
     void barrier();
 GROUP END ESSL310TCS
 

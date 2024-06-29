@@ -2516,7 +2516,7 @@ void main (void)
 }
 
 // Verify we can use inout with the default framebuffer
-// http://anglebug.com/6893
+// http://anglebug.com/42265386
 TEST_P(FramebufferFetchES31, DefaultFramebufferTest)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
@@ -2570,7 +2570,7 @@ void main (void)
 
 // Verify we can render to the default framebuffer without fetch, then switch to a program
 // that does fetch.
-// http://anglebug.com/6893
+// http://anglebug.com/42265386
 TEST_P(FramebufferFetchES31, DefaultFramebufferMixedProgramsTest)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
@@ -2648,7 +2648,7 @@ void main (void)
 }
 
 // Verify we can render to a framebuffer with fetch, then switch to another framebuffer (without
-// changing programs) http://anglebug.com/6893
+// changing programs) http://anglebug.com/42265386
 TEST_P(FramebufferFetchES31, FramebufferMixedFetchTest)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
@@ -2968,7 +2968,7 @@ TEST_P(FramebufferFetchES31, ProgramPipeline_ARM)
 }
 
 // Verify we can use the default framebuffer
-// http://anglebug.com/6893
+// http://anglebug.com/42265386
 TEST_P(FramebufferFetchES31, DefaultFramebufferTest_ARM)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch"));
@@ -3021,7 +3021,7 @@ void main (void)
 }
 
 // Verify we can redeclare gl_LastFragColorARM with a new precision
-// http://anglebug.com/6893
+// http://anglebug.com/42265386
 TEST_P(FramebufferFetchES31, NondefaultPrecisionTest_ARM)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch"));
@@ -3076,7 +3076,7 @@ void main (void)
 
 // Verify we can render to the default framebuffer without fetch, then switch to a program
 // that does fetch.
-// http://anglebug.com/6893
+// http://anglebug.com/42265386
 TEST_P(FramebufferFetchES31, DefaultFramebufferMixedProgramsTest_ARM)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch"));
@@ -3154,7 +3154,7 @@ void main (void)
 }
 
 // Verify we can render to a framebuffer with fetch, then switch to another framebuffer (without
-// changing programs) http://anglebug.com/6893
+// changing programs) http://anglebug.com/42265386
 TEST_P(FramebufferFetchES31, FramebufferMixedFetchTest_ARM)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch"));
@@ -3402,7 +3402,7 @@ TEST_P(FramebufferFetchES31, BasicTokenUsage_ARM)
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 
     // Ensure we can't query its state with isEnabled
-    // Commented out due to http://anglebug.com/8025
+    // Commented out due to http://anglebug.com/42266484
     // glIsEnabled(GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM);
     // EXPECT_GL_ERROR(GL_INVALID_ENUM);
 
@@ -3533,5 +3533,6 @@ TEST_P(FramebufferFetchES31, MultipleRenderTarget_Both_Complex)
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferFetchES31);
-ANGLE_INSTANTIATE_TEST_ES31(FramebufferFetchES31);
+ANGLE_INSTANTIATE_TEST_ES31_AND(FramebufferFetchES31,
+                                ES31_VULKAN().disable(Feature::SupportsSPIRV14));
 }  // namespace angle

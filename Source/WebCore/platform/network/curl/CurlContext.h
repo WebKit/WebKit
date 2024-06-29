@@ -301,7 +301,6 @@ public:
     std::optional<String> getProxyUrl();
     std::optional<long> getResponseCode();
     std::optional<long> getHttpConnectCode();
-    std::optional<long long> getContentLength();
     std::optional<long> getHttpAuthAvail();
     std::optional<long> getProxyAuthAvail();
     std::optional<long> getHttpVersion();

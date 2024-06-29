@@ -62,6 +62,7 @@ class ChannelSendInterface {
   virtual CallSendStatistics GetRTCPStatistics() const = 0;
 
   virtual void SetEncoder(int payload_type,
+                          const SdpAudioFormat& encoder_format,
                           std::unique_ptr<AudioEncoder> encoder) = 0;
   virtual void ModifyEncoder(
       rtc::FunctionView<void(std::unique_ptr<AudioEncoder>*)> modifier) = 0;

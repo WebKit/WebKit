@@ -9,17 +9,21 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include "av1/common/debugmodes.h"
+
 #include <stdio.h>
 
 #include "av1/common/av1_common_int.h"
 #include "av1/common/blockd.h"
 #include "av1/common/enums.h"
 
+#if 0
 static void log_frame_info(AV1_COMMON *cm, const char *str, FILE *f) {
   fprintf(f, "%s", str);
   fprintf(f, "(Frame %u, Show:%d, Q:%d): \n", cm->current_frame.frame_number,
           cm->show_frame, cm->quant_params.base_qindex);
 }
+
 /* This function dereferences a pointer to the mbmi structure
  * and uses the passed in member offset to print out the value of an integer
  * for each mbmi member value in the mi structure.
@@ -87,6 +91,7 @@ void av1_print_modes_and_motion_vectors(AV1_COMMON *cm, const char *file) {
 
   fclose(mvs);
 }
+#endif  // 0
 
 void av1_print_uncompressed_frame_header(const uint8_t *data, int size,
                                          const char *filename) {

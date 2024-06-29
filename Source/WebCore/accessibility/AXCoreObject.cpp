@@ -101,9 +101,6 @@ bool AXCoreObject::isButton() const
 
 bool AXCoreObject::isTextControl() const
 {
-    if (isNonNativeTextControl())
-        return true;
-
     switch (roleValue()) {
     case AccessibilityRole::ComboBox:
     case AccessibilityRole::SearchField:
@@ -209,7 +206,7 @@ AXCoreObject::AXValue AXCoreObject::value()
 
     if (isColorWell()) {
         auto color = convertColor<SRGBA<float>>(colorValue()).resolved();
-        return makeString("rgb ", String::numberToStringFixedPrecision(color.red, 6, TrailingZerosPolicy::Keep), " ", String::numberToStringFixedPrecision(color.green, 6, TrailingZerosPolicy::Keep), " ", String::numberToStringFixedPrecision(color.blue, 6, TrailingZerosPolicy::Keep), " 1");
+        return makeString("rgb "_s, String::numberToStringFixedPrecision(color.red, 6, TrailingZerosPolicy::Keep), ' ', String::numberToStringFixedPrecision(color.green, 6, TrailingZerosPolicy::Keep), ' ', String::numberToStringFixedPrecision(color.blue, 6, TrailingZerosPolicy::Keep), " 1"_s);
     }
 
     return stringValue();
@@ -363,46 +360,7 @@ AXCoreObject* AXCoreObject::activeDescendant() const
     ASSERT(activeDescendants.size() <= 1);
     if (!activeDescendants.isEmpty())
         return activeDescendants[0].get();
-
-    // When the active descendant changes for a combobox, the target
-    // of the notification is the owned or controlled element of the combobox
-    // if exists, most commonly a list or listbox (seee AXObjectCache::handleActiveDescendantChange).
-    // Thus, a client could request the new active descendant from the list or
-    // listbox. To support this scenario, we try to get the controller or owner
-    // combobox if exists and return its active descendant.
-    if (canBeControlledBy(AccessibilityRole::ComboBox)) {
-        auto controllers = this->controllers();
-        if (controllers.isEmpty())
-            controllers = owners();
-        if (controllers.isEmpty())
-            return nullptr;
-
-        auto combobox = std::find_if(controllers.begin(), controllers.end(), [] (const auto& object) {
-            return object->isComboBox();
-        });
-        if (combobox != controllers.end())
-            return (*combobox)->activeDescendant();
-    }
-
     return nullptr;
-}
-
-bool AXCoreObject::canBeControlledBy(AccessibilityRole controllerRole) const
-{
-    if (controllerRole == AccessibilityRole::ComboBox) {
-        switch (roleValue()) {
-        case AccessibilityRole::Grid:
-        case AccessibilityRole::List:
-        case AccessibilityRole::ListBox:
-        case AccessibilityRole::Tree:
-        case AccessibilityRole::TreeGrid:
-            return true;
-        default:
-            return false;
-        }
-    }
-    // FIXME: add other restrictions.
-    return true;
 }
 
 AXCoreObject::AccessibilityChildrenVector AXCoreObject::selectedCells()

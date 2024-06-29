@@ -113,7 +113,7 @@ private:
     unsigned m_offsetAfterLastTypedCharacter { 0 };
 };
 
-using SecureTextTimerMap = HashMap<SingleThreadWeakRef<RenderText>, std::unique_ptr<SecureTextTimer>>;
+using SecureTextTimerMap = SingleThreadWeakHashMap<RenderText, std::unique_ptr<SecureTextTimer>>;
 
 static SecureTextTimerMap& secureTextTimers()
 {
@@ -141,7 +141,7 @@ inline unsigned SecureTextTimer::takeOffsetAfterLastTypedCharacter()
 
 void SecureTextTimer::fired()
 {
-    ASSERT(secureTextTimers().get(&m_renderer) == this);
+    ASSERT(secureTextTimers().get(m_renderer) == this);
     m_offsetAfterLastTypedCharacter = 0;
     m_renderer.setText(m_renderer.text(), true /* forcing setting text as it may be masked later */);
 }
@@ -233,7 +233,7 @@ static LayoutRect selectionRectForTextBox(const InlineIterator::TextBox& textBox
 
     auto textRun = textBox.textRun();
     if (clampedStart || clampedEnd != textRun.length())
-        textBox.fontCascade().adjustSelectionRectForText(textRun, selectionRect, clampedStart, clampedEnd);
+        textBox.fontCascade().adjustSelectionRectForText(textBox.renderer().canUseSimplifiedTextMeasuring().value_or(false), textRun, selectionRect, clampedStart, clampedEnd);
 
     return snappedSelectionRect(selectionRect, textBox.logicalRightIgnoringInlineDirection(), lineSelectionRect.y(), lineSelectionRect.height(), textBox.isHorizontal());
 }
@@ -317,7 +317,8 @@ void RenderText::initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifi
     auto fontVariant = AutoVariant;
     m_canUseSimplifiedTextMeasuring = canUseSimpleFontCodePath();
 #if USE(FONT_VARIANT_VIA_FEATURES)
-    if (fontCascade.fontDescription().variantCaps() == FontVariantCaps::Small) {
+    auto fontVariantCaps = fontCascade.fontDescription().variantCaps();
+    if (fontVariantCaps == FontVariantCaps::Small || fontVariantCaps == FontVariantCaps::AllSmall || fontVariantCaps ==  FontVariantCaps::Petite || fontVariantCaps == FontVariantCaps::AllPetite) {
         // This matches the behavior of ComplexTextController::collectComplexTextRuns(): that function doesn't perform font fallback
         // on the capitalized characters when small caps is enabled, so we shouldn't here either.
         fontVariant = NormalVariant;
@@ -401,7 +402,8 @@ void RenderText::removeAndDestroyTextBoxes()
 
 void RenderText::willBeDestroyed()
 {
-    secureTextTimers().remove(this);
+    if (m_hasSecureTextTimer)
+        secureTextTimers().remove(*this);
 
     removeAndDestroyTextBoxes();
 
@@ -1218,7 +1220,8 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, SingleThreadWeak
     // word-break, but we support it as though it means break-all.
     bool breakAll = (style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere) && style.autoWrap();
     bool keepAllWords = style.wordBreak() == WordBreak::KeepAll;
-    bool canUseLineBreakShortcut = iteratorMode == TextBreakIterator::LineMode::Behavior::Default;
+    bool canUseLineBreakShortcut = iteratorMode == TextBreakIterator::LineMode::Behavior::Default
+        && contentAnalysis == TextBreakIterator::ContentAnalysis::Mechanical;
 
     for (unsigned i = 0; i < length; i++) {
         UChar c = string[i];
@@ -1264,7 +1267,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, SingleThreadWeak
             continue;
         }
 
-        bool hasBreak = breakAll || isBreakable(lineBreakIteratorFactory, i, nextBreakable, breakNBSP, canUseLineBreakShortcut, keepAllWords, breakAnywhere);
+        bool hasBreak = breakAll || BreakLines::isBreakable(lineBreakIteratorFactory, i, nextBreakable, breakNBSP, canUseLineBreakShortcut, keepAllWords, breakAnywhere);
         bool betweenWords = true;
         unsigned j = i;
         while (c != '\n' && !isSpaceAccordingToStyle(c, style) && c != '\t' && c != zeroWidthSpace && (c != softHyphen || style.hyphens() == Hyphens::None)) {
@@ -1275,7 +1278,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, SingleThreadWeak
             c = string[j];
             if (U_IS_LEAD(previousCharacter) && U_IS_TRAIL(c))
                 continue;
-            if (isBreakable(lineBreakIteratorFactory, j, nextBreakable, breakNBSP, canUseLineBreakShortcut, keepAllWords, breakAnywhere) && characterAt(j - 1) != softHyphen)
+            if (BreakLines::isBreakable(lineBreakIteratorFactory, j, nextBreakable, breakNBSP, canUseLineBreakShortcut, keepAllWords, breakAnywhere) && characterAt(j - 1) != softHyphen)
                 break;
             if (breakAll) {
                 // FIXME: This code is ultra wrong.
@@ -1674,12 +1677,14 @@ void RenderText::secureText(UChar maskingCharacter)
     UChar characterToReveal = 0;
     unsigned revealedCharactersOffset = 0;
 
-    if (SecureTextTimer* timer = secureTextTimers().get(this)) {
-        // We take the offset out of the timer to make this one-shot. We count on this being called only once.
-        // If it's called a second time we assume the text is different and a character should not be revealed.
-        revealedCharactersOffset = timer->takeOffsetAfterLastTypedCharacter();
-        if (revealedCharactersOffset && revealedCharactersOffset <= length)
-            characterToReveal = text()[--revealedCharactersOffset];
+    if (m_hasSecureTextTimer) {
+        if (SecureTextTimer* timer = secureTextTimers().get(*this)) {
+            // We take the offset out of the timer to make this one-shot. We count on this being called only once.
+            // If it's called a second time we assume the text is different and a character should not be revealed.
+            revealedCharactersOffset = timer->takeOffsetAfterLastTypedCharacter();
+            if (revealedCharactersOffset && revealedCharactersOffset <= length)
+                characterToReveal = text()[--revealedCharactersOffset];
+        }
     }
 
     UChar* characters;
@@ -2053,6 +2058,7 @@ void RenderText::momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTyp
 {
     if (style().textSecurity() == TextSecurity::None)
         return;
+    m_hasSecureTextTimer = true;
     auto& secureTextTimer = secureTextTimers().add(*this, nullptr).iterator->value;
     if (!secureTextTimer)
         secureTextTimer = makeUnique<SecureTextTimer>(*this);

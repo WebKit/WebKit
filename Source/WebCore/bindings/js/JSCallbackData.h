@@ -37,6 +37,8 @@
 
 namespace WebCore {
 
+template<typename ImplementationClass> struct JSDOMCallbackConverterTraits;
+
 // We have to clean up this data on the context thread because unprotecting a
 // JSObject on the wrong thread without synchronization would corrupt the heap
 // (and synchronization would be slow).

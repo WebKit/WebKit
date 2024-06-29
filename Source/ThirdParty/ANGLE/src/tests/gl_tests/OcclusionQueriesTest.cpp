@@ -115,7 +115,7 @@ TEST_P(OcclusionQueriesTest, ClearNotCounted)
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_EXT_occlusion_query_boolean"));
 
-    // http://anglebug.com/4925
+    // http://anglebug.com/42263499
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     glDepthMask(GL_TRUE);
@@ -184,7 +184,7 @@ TEST_P(OcclusionQueriesTest, MaskedClearNotCounted)
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_EXT_occlusion_query_boolean"));
 
-    // http://anglebug.com/4925
+    // http://anglebug.com/42263499
     ANGLE_SKIP_TEST_IF(IsD3D());
 
     GLQueryEXT query;
@@ -212,7 +212,7 @@ TEST_P(OcclusionQueriesTest, CopyNotCounted)
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_EXT_occlusion_query_boolean"));
 
-    // http://anglebug.com/4925
+    // http://anglebug.com/42263499
     ANGLE_SKIP_TEST_IF(IsD3D());
 
     GLQueryEXT query;
@@ -241,10 +241,10 @@ TEST_P(OcclusionQueriesTest, CopyNotCounted)
 // Test that blit should not be counted by occlusion query.
 TEST_P(OcclusionQueriesTestES3, BlitNotCounted)
 {
-    // http://anglebug.com/4925
+    // http://anglebug.com/42263499
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
-    // http://anglebug.com/5101
+    // http://anglebug.com/42263669
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
 
     constexpr GLuint kSize = 64;
@@ -496,16 +496,81 @@ TEST_P(OcclusionQueriesTestES3, SwitchFramebuffersThenMaskedClear)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that an empty query after a positive query returns false
+TEST_P(OcclusionQueriesTest, EmptyQueryAfterCompletedQuery)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       !IsGLExtensionEnabled("GL_EXT_occlusion_query_boolean"));
+
+    GLQueryEXT query;
+
+    glBeginQueryEXT(GL_ANY_SAMPLES_PASSED_EXT, query);
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    glEndQueryEXT(GL_ANY_SAMPLES_PASSED_EXT);
+    ASSERT_GL_NO_ERROR();
+
+    GLuint result = GL_FALSE;
+    glGetQueryObjectuivEXT(query, GL_QUERY_RESULT_EXT, &result);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_TRUE(result);
+
+    glBeginQueryEXT(GL_ANY_SAMPLES_PASSED_EXT, query);
+    glEndQueryEXT(GL_ANY_SAMPLES_PASSED_EXT);
+    ASSERT_GL_NO_ERROR();
+
+    result = GL_FALSE;
+    glGetQueryObjectuivEXT(query, GL_QUERY_RESULT_EXT, &result);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_FALSE(result);
+}
+
+// Some Metal drivers do not automatically clear visibility buffer
+// at the beginning of a render pass. This test makes two queries
+// that would use the same internal visibility buffer at the same
+// offset and checks the query results.
+TEST_P(OcclusionQueriesTest, EmptyQueryAfterCompletedQueryInterleaved)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       !IsGLExtensionEnabled("GL_EXT_occlusion_query_boolean"));
+
+    GLQueryEXT query;
+
+    // Make a draw call to start a new render pass
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.0f);
+
+    // Begin a query and make another draw call
+    glBeginQueryEXT(GL_ANY_SAMPLES_PASSED_EXT, query);
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.0f);
+    glEndQueryEXT(GL_ANY_SAMPLES_PASSED_EXT);
+
+    // Check the query result to end command encoding
+    GLuint result = GL_FALSE;
+    glGetQueryObjectuivEXT(query, GL_QUERY_RESULT_EXT, &result);
+    EXPECT_TRUE(result);
+    ASSERT_GL_NO_ERROR();
+
+    // Make a draw call to start a new render pass
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.0f);
+
+    // Begin and immediately resolve a new query; it must return false
+    result = GL_FALSE;
+    glBeginQueryEXT(GL_ANY_SAMPLES_PASSED_EXT, query);
+    glEndQueryEXT(GL_ANY_SAMPLES_PASSED_EXT);
+    glGetQueryObjectuivEXT(query, GL_QUERY_RESULT_EXT, &result);
+    EXPECT_FALSE(result);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test multiple occlusion queries.
 TEST_P(OcclusionQueriesTest, MultiQueries)
 {
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_EXT_occlusion_query_boolean"));
 
-    // http://anglebug.com/4925
+    // http://anglebug.com/42263499
     ANGLE_SKIP_TEST_IF(IsOpenGL() || IsD3D11());
 
-    // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
+    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
     ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     GLQueryEXT query[5];
@@ -679,7 +744,7 @@ TEST_P(OcclusionQueriesTest, MultiContext)
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_EXT_occlusion_query_boolean"));
 
-    // TODO(cwallez@chromium.org): Suppression for http://anglebug.com/3080
+    // TODO(cwallez@chromium.org): Suppression for http://anglebug.com/42261759
     ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsVulkan());
 
     // Test skipped because the D3D backends cannot support simultaneous queries on multiple

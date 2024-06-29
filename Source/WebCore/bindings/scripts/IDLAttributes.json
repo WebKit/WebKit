@@ -291,7 +291,7 @@
             "contextsAllowed": ["interface", "dictionary", "callback-function"]
         },
         "JSGenerateToNativeObject": {
-            "contextsAllowed": ["interface"]
+            "contextsAllowed": ["interface", "dictionary"]
         },
         "JSLegacyParent": {
             "contextsAllowed": ["interface"],
@@ -489,10 +489,6 @@
         },
         "SkipVTableValidation": {
             "contextsAllowed": ["interface"]
-        },
-        "StringContext": {
-            "contextsAllowed": ["type"],
-            "values": ["TrustedHTML", "TrustedScript", "TrustedScriptURL"]
         },
         "SuppressToJSObject": {
             "contextsAllowed": ["interface"]

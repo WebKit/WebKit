@@ -76,8 +76,6 @@ class WebArchiveResource;
 
 namespace WebKit {
 
-class ObjCObjectGraph;
-class WebConnection;
 class WebContextMenuItem;
 class WebImage;
 
@@ -94,7 +92,6 @@ template<typename ImplType> struct ImplTypeInfo;
 
 WK_ADD_API_MAPPING(WKArrayRef, API::Array)
 WK_ADD_API_MAPPING(WKBooleanRef, API::Boolean)
-WK_ADD_API_MAPPING(WKConnectionRef, WebConnection)
 WK_ADD_API_MAPPING(WKContextMenuItemRef, WebContextMenuItem)
 WK_ADD_API_MAPPING(WKDataRef, API::Data)
 WK_ADD_API_MAPPING(WKDictionaryRef, API::Dictionary)
@@ -124,7 +121,6 @@ template<> struct APITypeInfo<WKMutableDictionaryRef> {
 #if PLATFORM(COCOA)
 WK_ADD_API_MAPPING(WKWebArchiveRef, API::WebArchive)
 WK_ADD_API_MAPPING(WKWebArchiveResourceRef, API::WebArchiveResource)
-WK_ADD_API_MAPPING(WKObjCTypeWrapperRef, ObjCObjectGraph)
 #endif
 
 template<typename T, typename APIType = typename ImplTypeInfo<T>::APIType>
@@ -539,6 +535,8 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagToggleVideoEnhancedFullscreen;
     case WebCore::ContextMenuItemTagMediaPlayPause:
         return kWKContextMenuItemTagMediaPlayPause;
+    case WebCore::ContextMenuItemTagToggleVideoViewer:
+        return kWKContextMenuItemTagToggleVideoViewer;
     case WebCore::ContextMenuItemTagMediaMute:
         return kWKContextMenuItemTagMediaMute;
     case WebCore::ContextMenuItemTagAddHighlightToCurrentQuickNote:
@@ -581,8 +579,8 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagRevealImage;
     case WebCore::ContextMenuItemTagTranslate:
         return kWKContextMenuItemTagTranslate;
-    case WebCore::ContextMenuItemTagSwapCharacters:
-        return kWKContextMenuItemTagSwapCharacters;
+    case WebCore::ContextMenuItemTagWritingTools:
+        return kWKContextMenuItemTagWritingTools;
     case WebCore::ContextMenuItemTagCopySubject:
         return kWKContextMenuItemTagCopyCroppedImage;
     default:
@@ -757,6 +755,8 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagToggleVideoEnhancedFullscreen;
     case kWKContextMenuItemTagMediaPlayPause:
         return WebCore::ContextMenuItemTagMediaPlayPause;
+    case kWKContextMenuItemTagToggleVideoViewer:
+        return WebCore::ContextMenuItemTagToggleVideoViewer;
     case kWKContextMenuItemTagMediaMute:
         return WebCore::ContextMenuItemTagMediaMute;
     case kWKContextMenuItemTagAddHighlightToCurrentQuickNote:
@@ -799,8 +799,8 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagLookUpImage;
     case kWKContextMenuItemTagTranslate:
         return WebCore::ContextMenuItemTagTranslate;
-    case kWKContextMenuItemTagSwapCharacters:
-        return WebCore::ContextMenuItemTagSwapCharacters;
+    case kWKContextMenuItemTagWritingTools:
+        return WebCore::ContextMenuItemTagWritingTools;
     case kWKContextMenuItemTagCopyCroppedImage:
         return WebCore::ContextMenuItemTagCopySubject;
     case kWKContextMenuItemTagOpenLinkInThisWindow:

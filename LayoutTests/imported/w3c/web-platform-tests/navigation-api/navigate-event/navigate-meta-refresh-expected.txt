@@ -1,4 +1,4 @@
 
 
-FAIL <meta> refresh fires navigate event assert_false: expected false got true
+PASS <meta> refresh fires navigate event
 

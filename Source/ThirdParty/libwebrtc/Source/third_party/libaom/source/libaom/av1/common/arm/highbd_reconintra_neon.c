@@ -13,6 +13,7 @@
 #include <assert.h>
 
 #include "aom_dsp/arm/sum_neon.h"
+#include "config/av1_rtcd.h"
 
 #define MAX_UPSAMPLE_SZ 16
 

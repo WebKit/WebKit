@@ -45,6 +45,7 @@
 #import "TextCheckerClient.h"
 #import "TextCheckingHelper.h"
 #import "TextDecorationPainter.h"
+#import "TextIterator.h"
 #import <wtf/cocoa/SpanCocoa.h>
 
 #if PLATFORM(MAC)
@@ -825,8 +826,7 @@ void AXRemoteFrame::initializePlatformElementWithRemoteToken(std::span<const uin
     m_processIdentifier = processIdentifier;
     if ([wrapper() respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
         [(id)wrapper() accessibilitySetPresenterProcessIdentifier:processIdentifier];
-    NSData *tokenData = [NSData dataWithBytes:token.data() length:token.size()];
-    m_remoteFramePlatformElement = adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:tokenData]);
+    m_remoteFramePlatformElement = adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:toNSData(token).get()]);
 
     if (auto* cache = axObjectCache())
         cache->onRemoteFrameInitialized(*this);

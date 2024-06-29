@@ -205,6 +205,8 @@ typedef struct {
   int decimation_factor;
   int decimation_count;
   int prev_frame_is_dropped;
+  int drop_count_consec;
+  int max_consec_drop;
 
   /*!
    * Frame number for encoded frames (non-dropped).
@@ -246,6 +248,9 @@ typedef struct {
 
   // signals if number of blocks with motion is high
   int percent_blocks_with_motion;
+
+  // signals percentage of 16x16 blocks that are inactive, via active_maps
+  int percent_blocks_inactive;
 
   // Maximum value of source sad across all blocks of frame.
   uint64_t max_block_source_sad;

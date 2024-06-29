@@ -171,10 +171,10 @@ TEST_F(SecurityOriginTest, SecurityOriginConstructors)
 
 TEST_F(SecurityOriginTest, SecurityOriginFileBasedConstructors)
 {
-    auto tempFileOrigin = SecurityOrigin::create(URL { "file:///" + tempFilePath() });
-    auto spaceContainingOrigin = SecurityOrigin::create(URL { "file:///" + spaceContainingFilePath() });
-    auto bangContainingOrigin = SecurityOrigin::create(URL { "file:///" + bangContainingFilePath() });
-    auto quoteContainingOrigin = SecurityOrigin::create(URL { "file:///" + quoteContainingFilePath() });
+    auto tempFileOrigin = SecurityOrigin::create(URL { makeString("file:///"_s, tempFilePath()) });
+    auto spaceContainingOrigin = SecurityOrigin::create(URL { makeString("file:///"_s, spaceContainingFilePath()) });
+    auto bangContainingOrigin = SecurityOrigin::create(URL { makeString("file:///"_s, bangContainingFilePath()) });
+    auto quoteContainingOrigin = SecurityOrigin::create(URL { makeString("file:///"_s, quoteContainingFilePath()) });
     
     EXPECT_EQ(String("file"_s), tempFileOrigin->protocol());
     EXPECT_EQ(String("file"_s), spaceContainingOrigin->protocol());
@@ -197,7 +197,7 @@ TEST_F(SecurityOriginTest, SecurityOriginFileBasedConstructors)
 TEST_F(SecurityOriginTest, IsPotentiallyTrustworthy)
 {
     // Potentially Trustworthy
-    EXPECT_TRUE(SecurityOrigin::create(URL { "file:///" + tempFilePath() })->isPotentiallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::create(URL { makeString("file:///"_s, tempFilePath()) })->isPotentiallyTrustworthy());
     EXPECT_TRUE(SecurityOrigin::createFromString("blob:http://127.0.0.1/3D45F36F-C126-493A-A8AA-457FA495247B"_s)->isPotentiallyTrustworthy());
     EXPECT_TRUE(SecurityOrigin::createFromString("blob:http://localhost/3D45F36F-C126-493A-A8AA-457FA495247B"_s)->isPotentiallyTrustworthy());
     EXPECT_TRUE(SecurityOrigin::createFromString("blob:http://[::1]/3D45F36F-C126-493A-A8AA-457FA495247B"_s)->isPotentiallyTrustworthy());
@@ -276,7 +276,7 @@ TEST_F(SecurityOriginTest, SecurityOriginHash)
 {
     auto o1 = SecurityOrigin::create("http"_s, "example.com"_s, std::nullopt);
     auto o2 = SecurityOrigin::create("http"_s, "example.com"_s, std::optional<uint16_t>(80));
-    auto o3 = SecurityOrigin::create(URL { "file:///" + tempFilePath() });
+    auto o3 = SecurityOrigin::create(URL { makeString("file:///"_s, tempFilePath()) });
     auto o4 = SecurityOrigin::createOpaque();
     auto o5 = SecurityOrigin::createOpaque();
 

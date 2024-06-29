@@ -229,7 +229,7 @@ public:
 
     WEBCORE_EXPORT void setLastKnownMousePosition(IntPoint position, IntPoint globalPosition);
 
-    bool handlePasteGlobalSelection(const PlatformMouseEvent&);
+    bool handlePasteGlobalSelection();
 
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
     using TouchArray = Vector<RefPtr<Touch>>;

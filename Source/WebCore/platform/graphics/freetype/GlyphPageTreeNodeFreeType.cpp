@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
+bool GlyphPage::fill(std::span<const UChar> buffer)
 {
     const Font& font = this->font();
     cairo_scaled_font_t* scaledFont = font.platformData().scaledFont();
@@ -63,10 +63,10 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
     bool haveGlyphs = false;
     unsigned bufferOffset = 0;
     for (unsigned i = 0; i < GlyphPage::size; i++) {
-        if (bufferOffset == bufferLength)
+        if (bufferOffset == buffer.size())
             break;
         char32_t character;
-        U16_NEXT(buffer, bufferOffset, bufferLength, character);
+        U16_NEXT(buffer, bufferOffset, buffer.size(), character);
 
         Glyph glyph = FcFreeTypeCharIndex(face, FontCascade::treatAsSpace(character) ? space : character);
         // If the font doesn't support a Default_Ignorable character, replace it with zero with space.

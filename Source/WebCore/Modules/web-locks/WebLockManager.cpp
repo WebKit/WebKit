@@ -201,7 +201,7 @@ void WebLockManager::request(const String& name, Options&& options, Ref<WebLockG
     }
 
     if (name.length() > WebLock::maxNameLength) {
-        releasePromise->reject(ExceptionCode::NotSupportedError, makeString("Lock name cannot cannot be longer than "_s, WebLock::maxNameLength, " characters"));
+        releasePromise->reject(ExceptionCode::NotSupportedError, makeString("Lock name cannot cannot be longer than "_s, WebLock::maxNameLength, " characters"_s));
         return;
     }
 

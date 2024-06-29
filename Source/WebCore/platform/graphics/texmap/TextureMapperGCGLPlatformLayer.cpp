@@ -46,6 +46,9 @@ TextureMapperGCGLPlatformLayer::~TextureMapperGCGLPlatformLayer()
 
 void TextureMapperGCGLPlatformLayer::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
+    if (!m_context.m_isCompositorTextureInitialized)
+        return;
+
     auto attrs = m_context.contextAttributes();
     OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
     if (attrs.alpha)

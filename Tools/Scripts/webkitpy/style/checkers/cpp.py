@@ -1620,8 +1620,8 @@ def check_spacing_for_function_call(line, line_number, file_state, error):
     # " (something)[something]"
     # Note that we assume the contents of [] to be short enough that
     # they'll never need to wrap.
-    if (  # Ignore control structures.
-        not search(r'\b(if|for|while|switch|return|new|delete)\b', function_call)
+    if (  # Ignore control structures / c++20 concept constraints.
+        not search(r'\b(if|for|while|switch|return|new|delete|requires)\b', function_call)
         # Ignore lambda functions
         and not regex_for_lambdas_and_blocks(function_call, line_number, file_state, error)
         # Ignore pointers/references to functions.

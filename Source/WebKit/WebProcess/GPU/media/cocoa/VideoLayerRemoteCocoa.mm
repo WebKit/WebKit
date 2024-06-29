@@ -45,7 +45,7 @@
 static const Seconds PostAnimationDelay { 100_ms };
 
 @implementation WKVideoLayerRemote {
-    WeakPtr<WebKit::MediaPlayerPrivateRemote> _mediaPlayerPrivateRemote;
+    ThreadSafeWeakPtr<WebKit::MediaPlayerPrivateRemote> _mediaPlayerPrivateRemote;
     RetainPtr<CAContext> _context;
     WebCore::MediaPlayerEnums::VideoGravity _videoGravity;
 
@@ -83,7 +83,7 @@ static const Seconds PostAnimationDelay { 100_ms };
 
 - (WebKit::MediaPlayerPrivateRemote*)mediaPlayerPrivateRemote
 {
-    return _mediaPlayerPrivateRemote.get();
+    return _mediaPlayerPrivateRemote.get().get();
 }
 
 - (void)setMediaPlayerPrivateRemote:(WebKit::MediaPlayerPrivateRemote*)mediaPlayerPrivateRemote
@@ -103,7 +103,7 @@ static const Seconds PostAnimationDelay { 100_ms };
 
 - (bool)resizePreservingGravity
 {
-    auto* player = self.mediaPlayerPrivateRemote;
+    RefPtr<WebKit::MediaPlayerPrivateRemote> player = self.mediaPlayerPrivateRemote;
     if (player && player->inVideoFullscreenOrPictureInPicture())
         return true;
     
@@ -136,7 +136,7 @@ static const Seconds PostAnimationDelay { 100_ms };
     CGAffineTransform transform = CGAffineTransformIdentity;
     if ([self resizePreservingGravity]) {
         WebCore::FloatSize naturalSize { };
-        if (auto *mediaPlayer = _mediaPlayerPrivateRemote.get())
+        if (RefPtr mediaPlayer = _mediaPlayerPrivateRemote.get())
             naturalSize = mediaPlayer->naturalSize();
 
         if (!naturalSize.isEmpty()) {
@@ -195,7 +195,7 @@ static const Seconds PostAnimationDelay { 100_ms };
 
     if (!CGRectEqualToRect(self.videoLayerFrame, self.bounds)) {
         self.videoLayerFrame = self.bounds;
-        if (auto* mediaPlayerPrivateRemote = self.mediaPlayerPrivateRemote) {
+        if (RefPtr<WebKit::MediaPlayerPrivateRemote> mediaPlayerPrivateRemote = self.mediaPlayerPrivateRemote) {
             MachSendRight fenceSendRight = MachSendRight::adopt([_context createFencePort]);
             mediaPlayerPrivateRemote->setVideoLayerSizeFenced(WebCore::FloatSize(self.videoLayerFrame.size), WTFMove(fenceSendRight));
         }

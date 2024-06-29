@@ -38,7 +38,9 @@
 #include "DeviceOrientationOrMotionPermissionState.h"
 #include "DocumentLoadTiming.h"
 #include "DocumentWriter.h"
+#include "ElementTargetingTypes.h"
 #include "FrameDestructionObserver.h"
+#include "FrameLoaderTypes.h"
 #include "LinkIcon.h"
 #include "NavigationAction.h"
 #include "ResourceError.h"
@@ -328,7 +330,7 @@ public:
     void setMainResourceDataBufferingPolicy(DataBufferingPolicy);
 
     void startLoadingMainResource();
-    WEBCORE_EXPORT void cancelMainResourceLoad(const ResourceError&);
+    WEBCORE_EXPORT void cancelMainResourceLoad(const ResourceError&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
     void willContinueMainResourceLoadAfterRedirect(const ResourceRequest&);
 
     bool isLoadingMainResource() const { return m_loadingMainResource; }
@@ -346,8 +348,8 @@ public:
     bool allowsActiveContentRuleListActionsForURL(const String& contentRuleListIdentifier, const URL&) const;
     WEBCORE_EXPORT void setActiveContentRuleListActionPatterns(const HashMap<String, Vector<String>>&);
 
-    const Vector<Vector<HashSet<String>>>& visibilityAdjustmentSelectors() const { return m_visibilityAdjustmentSelectors; }
-    void setVisibilityAdjustmentSelectors(Vector<Vector<HashSet<String>>>&& selectors) { m_visibilityAdjustmentSelectors = WTFMove(selectors); }
+    const Vector<TargetedElementSelectors>& visibilityAdjustmentSelectors() const { return m_visibilityAdjustmentSelectors; }
+    void setVisibilityAdjustmentSelectors(Vector<TargetedElementSelectors>&& selectors) { m_visibilityAdjustmentSelectors = WTFMove(selectors); }
 
 #if ENABLE(DEVICE_ORIENTATION)
     DeviceOrientationOrMotionPermissionState deviceOrientationAndMotionAccessState() const { return m_deviceOrientationAndMotionAccessState; }
@@ -472,9 +474,6 @@ public:
 
     WEBCORE_EXPORT void applyPoliciesToSettings();
 
-    void setAllowContentChangeObserverQuirk(bool allow) { m_allowContentChangeObserverQuirk = allow; }
-    bool allowContentChangeObserverQuirk() const { return m_allowContentChangeObserverQuirk; }
-
     void setAdvancedPrivacyProtections(OptionSet<AdvancedPrivacyProtections> policy) { m_advancedPrivacyProtections = policy; }
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const { return m_advancedPrivacyProtections; }
 
@@ -509,6 +508,8 @@ public:
     uint64_t navigationID() const { return m_navigationID; }
     WEBCORE_EXPORT void setNavigationID(uint64_t);
 
+    bool isInitialAboutBlank() const { return m_isInitialAboutBlank; }
+
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
 
@@ -541,11 +542,11 @@ private:
 
     void willSendRequest(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&);
     void finishedLoading();
-    void mainReceivedError(const ResourceError&);
+    void mainReceivedError(const ResourceError&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
     WEBCORE_EXPORT void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
     WEBCORE_EXPORT void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) override;
     WEBCORE_EXPORT void dataReceived(CachedResource&, const SharedBuffer&) override;
-    WEBCORE_EXPORT void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
+    WEBCORE_EXPORT void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
 #if USE(QUICK_LOOK)
     WEBCORE_EXPORT void previewResponseReceived(CachedResource&, const ResourceResponse&) override;
 #endif
@@ -577,7 +578,7 @@ private:
     bool tryLoadingRedirectRequestFromApplicationCache(const ResourceRequest&);
     void continueAfterContentPolicy(PolicyAction);
 
-    void stopLoadingForPolicyChange();
+    void stopLoadingForPolicyChange(LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
     ResourceError interruptedForPolicyChangeError() const;
 
     void handleSubstituteDataLoadNow();
@@ -709,7 +710,7 @@ private:
     MemoryCompactRobinHoodHashMap<String, Vector<UserContentURLPattern>> m_activeContentRuleListActionPatterns;
     ContentExtensionEnablement m_contentExtensionEnablement { ContentExtensionDefaultEnablement::Enabled, { } };
 
-    Vector<Vector<HashSet<String>>> m_visibilityAdjustmentSelectors;
+    Vector<TargetedElementSelectors> m_visibilityAdjustmentSelectors;
 
     ScriptExecutionContextIdentifier m_resultingClientId;
 
@@ -733,7 +734,6 @@ private:
     ColorSchemePreference m_colorSchemePreference { ColorSchemePreference::NoPreference };
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
 
-    bool m_allowContentChangeObserverQuirk { false };
     bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
 
     bool m_isRequestFromClientOrUserInput { false };
@@ -750,6 +750,7 @@ private:
     bool m_isLoadingMultipartContent { false };
     bool m_isContinuingLoadAfterProvisionalLoadStarted { false };
     bool m_isInFinishedLoadingOfEmptyDocument { false };
+    bool m_isInitialAboutBlank { false };
 
     // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadDispatched are roughly the same
     // and should be merged.

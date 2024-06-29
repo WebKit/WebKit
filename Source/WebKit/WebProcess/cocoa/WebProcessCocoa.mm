@@ -35,7 +35,6 @@
 #import "Logging.h"
 #import "NetworkConnectionToWebProcessMessages.h"
 #import "NetworkProcessConnection.h"
-#import "ObjCObjectGraph.h"
 #import "ProcessAssertion.h"
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
@@ -215,8 +214,7 @@ void WebProcess::bindAccessibilityFrameWithData(WebCore::FrameIdentifier frameID
         m_accessibilityRemoteFrameTokenCache = adoptNS([[NSMutableDictionary alloc] init]);
 
     auto frameInt = frameID.object().toUInt64();
-    NSData *nsData = [NSData dataWithBytes:data.data() length:data.size()];
-    [m_accessibilityRemoteFrameTokenCache setObject:nsData forKey:@(frameInt)];
+    [m_accessibilityRemoteFrameTokenCache setObject:toNSData(data).get() forKey:@(frameInt)];
 }
 
 id WebProcess::accessibilityFocusedUIElement()
@@ -611,7 +609,7 @@ void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParame
 #endif
 
     if (!parameters.javaScriptConfigurationDirectory.isEmpty()) {
-        String javaScriptConfigFile = parameters.javaScriptConfigurationDirectory + "/JSC.config";
+        String javaScriptConfigFile = parameters.javaScriptConfigurationDirectory + "/JSC.config"_s;
         JSC::processConfigFile(javaScriptConfigFile.latin1().data(), "com.apple.WebKit.WebContent", m_uiProcessBundleIdentifier.latin1().data());
     }
 }
@@ -873,11 +871,11 @@ static void registerLogHook()
             char* messageString = os_log_copy_message_string(&msg);
             if (!messageString)
                 return;
-            std::span logString(reinterpret_cast<uint8_t*>(messageString), strlen(messageString) + 1);
+            std::span logStringIncludingNullTerminator(messageString, strlen(messageString) + 1);
 
             auto connectionID = WebProcess::singleton().networkProcessConnectionID();
             if (connectionID)
-                IPC::Connection::send(connectionID, Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(logChannel.spanIncludingNullTerminator(), logCategory.spanIncludingNullTerminator(), logString, type, getpid()), 0, { }, qos);
+                IPC::Connection::send(connectionID, Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(logChannel.spanIncludingNullTerminator(), logCategory.spanIncludingNullTerminator(), logStringIncludingNullTerminator, type, getpid()), 0, { }, qos);
 
             free(messageString);
         }, qos);
@@ -972,7 +970,7 @@ void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     auto webKitBundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
 
-    sandboxParameters.setOverrideSandboxProfilePath(makeString(String([webKitBundle resourcePath]), "/com.apple.WebProcess.sb"));
+    sandboxParameters.setOverrideSandboxProfilePath(makeString(String([webKitBundle resourcePath]), "/com.apple.WebProcess.sb"_s));
 
     AuxiliaryProcess::initializeSandbox(parameters, sandboxParameters);
 #endif
@@ -1102,52 +1100,6 @@ void WebProcess::updateCPUMonitorState(CPUMonitorUpdateReason reason)
 #else
     UNUSED_PARAM(reason);
 #endif
-}
-
-RefPtr<ObjCObjectGraph> WebProcess::transformHandlesToObjects(ObjCObjectGraph& objectGraph)
-{
-    struct Transformer final : ObjCObjectGraph::Transformer {
-        bool shouldTransformObject(id object) const override
-        {
-            if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
-                return true;
-            return false;
-        }
-
-        RetainPtr<id> transformObject(id object) const override
-        {
-            if (auto* handle = dynamic_objc_cast<WKBrowsingContextHandle>(object)) {
-                if (auto* webPage = WebProcess::singleton().webPage(ObjectIdentifier<WebCore::PageIdentifierType>(handle._webPageID)))
-                    return wrapper(*webPage);
-
-                return [NSNull null];
-            }
-            return object;
-        }
-    };
-
-    return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer()).get());
-}
-
-RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& objectGraph)
-{
-    struct Transformer final : ObjCObjectGraph::Transformer {
-        bool shouldTransformObject(id object) const override
-        {
-            if (dynamic_objc_cast<WKWebProcessPlugInBrowserContextController>(object))
-                return true;
-            return false;
-        }
-
-        RetainPtr<id> transformObject(id object) const override
-        {
-            if (auto* controller = dynamic_objc_cast<WKWebProcessPlugInBrowserContextController>(object))
-                return controller.handle;
-            return object;
-        }
-    };
-
-    return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer()).get());
 }
 
 void WebProcess::destroyRenderingResources()

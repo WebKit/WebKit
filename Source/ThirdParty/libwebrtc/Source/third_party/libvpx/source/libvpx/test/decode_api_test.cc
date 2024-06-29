@@ -20,7 +20,7 @@ namespace {
 #define NELEMENTS(x) static_cast<int>(sizeof(x) / sizeof(x[0]))
 
 TEST(DecodeAPI, InvalidParams) {
-  static const vpx_codec_iface_t *kCodecs[] = {
+  static vpx_codec_iface_t *kCodecs[] = {
 #if CONFIG_VP8_DECODER
     &vpx_codec_vp8_dx_algo,
 #endif
@@ -120,7 +120,7 @@ void TestVp9Controls(vpx_codec_ctx_t *dec) {
 }
 
 TEST(DecodeAPI, Vp9InvalidDecode) {
-  const vpx_codec_iface_t *const codec = &vpx_codec_vp9_dx_algo;
+  vpx_codec_iface_t *const codec = &vpx_codec_vp9_dx_algo;
   const char filename[] =
       "invalid-vp90-2-00-quantizer-00.webm.ivf.s5861_r01-05_b6-.v2.ivf";
   libvpx_test::IVFVideoSource video(filename);
@@ -147,7 +147,7 @@ TEST(DecodeAPI, Vp9InvalidDecode) {
 
 void TestPeekInfo(const uint8_t *const data, uint32_t data_sz,
                   uint32_t peek_size) {
-  const vpx_codec_iface_t *const codec = &vpx_codec_vp9_dx_algo;
+  vpx_codec_iface_t *const codec = &vpx_codec_vp9_dx_algo;
   // Verify behavior of vpx_codec_decode. vpx_codec_decode doesn't even get
   // to decoder_peek_si_internal on frames of size < 8.
   if (data_sz >= 8) {

@@ -52,7 +52,10 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (NSString *)title
 {
-    return nil;
+    if (!_item->title())
+        return nil;
+
+    return _item->title();
 }
 
 - (NSURL *)initialURL

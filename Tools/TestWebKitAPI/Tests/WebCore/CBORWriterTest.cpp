@@ -43,7 +43,7 @@ bool eq(const Vector<uint8_t>& cbor, const CString& expect)
 {
     if (cbor.size() != expect.length())
         return false;
-    return !memcmp(cbor.data(), reinterpret_cast<const uint8_t*>(expect.data()), cbor.size());
+    return !memcmp(cbor.data(), expect.data(), cbor.size());
 }
 
 bool eq(const Vector<uint8_t>& cbor, const uint8_t* expect, const size_t expectLength)

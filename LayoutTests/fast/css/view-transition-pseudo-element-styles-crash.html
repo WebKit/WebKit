@@ -1,0 +1,15 @@
+<style>
+html { content: url("#foo"); }
+</style>
+<script>
+if (testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
+}
+
+function runTest() {
+  document.startViewTransition();
+  setTimeout(function() { document.write("Test passes if it does not crash."); testRunner.notifyDone(); }, 10);
+}
+</script>
+<body onload=runTest()>

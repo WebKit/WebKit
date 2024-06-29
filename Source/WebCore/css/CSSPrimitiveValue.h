@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "CSSAnchorValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSUnits.h"
 #include "CSSValue.h"
@@ -70,6 +71,7 @@ class CSSPrimitiveValue final : public CSSValue {
 public:
     static constexpr bool isLength(CSSUnitType);
     static double computeDegrees(CSSUnitType, double angle);
+    static double computeRadians(CSSUnitType, double angle);
 
     // FIXME: Some of these use primitiveUnitType() and some use primitiveType(). Many that use primitiveUnitType() are likely broken with calc().
     bool isAngle() const { return unitCategory(primitiveType()) == CSSUnitCategory::Angle; }
@@ -95,7 +97,9 @@ public:
     bool isX() const { return primitiveType() == CSSUnitType::CSS_X; }
     bool isResolution() const { return unitCategory(primitiveType()) == CSSUnitCategory::Resolution; }
     bool isViewportPercentageLength() const { return isViewportPercentageLength(primitiveUnitType()); }
+    bool isContainerPercentageLength() const { return isContainerPercentageLength(primitiveUnitType()); }
     bool isFlex() const { return primitiveType() == CSSUnitType::CSS_FR; }
+    bool isAnchor() const { return primitiveType() == CSSUnitType::CSS_ANCHOR; }
 
     static Ref<CSSPrimitiveValue> create(double);
     static Ref<CSSPrimitiveValue> create(double, CSSUnitType);
@@ -103,6 +107,7 @@ public:
     static Ref<CSSPrimitiveValue> create(const Length&);
     static Ref<CSSPrimitiveValue> create(const Length&, const RenderStyle&);
     static Ref<CSSPrimitiveValue> create(Ref<CSSCalcValue>);
+    static Ref<CSSPrimitiveValue> create(Ref<CSSAnchorValue>);
 
     static inline Ref<CSSPrimitiveValue> create(CSSValueID);
     bool isValueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID; }
@@ -124,6 +129,10 @@ public:
 
     bool isColor() const { return primitiveUnitType() == CSSUnitType::CSS_RGBCOLOR; }
     const Color& color() const { ASSERT(isColor()); return *reinterpret_cast<const Color*>(&m_value.colorAsInteger); }
+
+    // Return an absolute color if possible, otherwise an invalid color.
+    // https://drafts.csswg.org/css-color-5/#absolute-color
+    Color absoluteColor() const;
 
     static Ref<CSSPrimitiveValue> createCustomIdent(String);
     bool isCustomIdent() const { return primitiveUnitType() == CSSUnitType::CustomIdent; }
@@ -206,6 +215,7 @@ private:
     CSSPrimitiveValue(double, CSSUnitType);
     explicit CSSPrimitiveValue(Ref<CSSCalcValue>);
     explicit CSSPrimitiveValue(CSSUnresolvedColor);
+    explicit CSSPrimitiveValue(Ref<CSSAnchorValue>);
 
     CSSPrimitiveValue(StaticCSSValueTag, CSSValueID);
     CSSPrimitiveValue(StaticCSSValueTag, Color);
@@ -228,6 +238,7 @@ private:
     static constexpr bool isFontIndependentLength(CSSUnitType);
     static constexpr bool isFontRelativeLength(CSSUnitType);
     static constexpr bool isRootFontRelativeLength(CSSUnitType);
+    static constexpr bool isContainerPercentageLength(CSSUnitType);
     static constexpr bool isViewportPercentageLength(CSSUnitType);
 
     union {
@@ -238,8 +249,12 @@ private:
         uint64_t colorAsInteger;
         const CSSUnresolvedColor* unresolvedColor;
         const CSSCalcValue* calc;
+        const CSSAnchorValue* anchor;
     } m_value;
 };
+
+void formatCSSNumberValue(StringBuilder&, double, ASCIILiteral suffix);
+String formatCSSNumberValue(double, ASCIILiteral suffix);
 
 template<typename TargetType> constexpr TargetType fromCSSValueID(CSSValueID);
 
@@ -275,6 +290,16 @@ constexpr bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
         || isRootFontRelativeLength(type);
 }
 
+constexpr bool CSSPrimitiveValue::isContainerPercentageLength(CSSUnitType type)
+{
+    return type == CSSUnitType::CSS_CQW
+        || type == CSSUnitType::CSS_CQH
+        || type == CSSUnitType::CSS_CQI
+        || type == CSSUnitType::CSS_CQB
+        || type == CSSUnitType::CSS_CQMIN
+        || type == CSSUnitType::CSS_CQMAX;
+}
+
 constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
 {
     return type == CSSUnitType::CSS_EM
@@ -286,14 +311,9 @@ constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
         || type == CSSUnitType::CSS_PT
         || type == CSSUnitType::CSS_PC
         || type == CSSUnitType::CSS_Q
-        || type == CSSUnitType::CSS_CQW
-        || type == CSSUnitType::CSS_CQH
-        || type == CSSUnitType::CSS_CQI
-        || type == CSSUnitType::CSS_CQB
-        || type == CSSUnitType::CSS_CQMIN
-        || type == CSSUnitType::CSS_CQMAX
         || isFontRelativeLength(type)
         || isViewportPercentageLength(type)
+        || isContainerPercentageLength(type)
         || type == CSSUnitType::CSS_QUIRKY_EM;
 }
 
@@ -327,6 +347,23 @@ inline double CSSPrimitiveValue::computeDegrees(CSSUnitType type, double angle)
         return grad2deg(angle);
     case CSSUnitType::CSS_TURN:
         return turn2deg(angle);
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
+inline double CSSPrimitiveValue::computeRadians(CSSUnitType type, double angle)
+{
+    switch (type) {
+    case CSSUnitType::CSS_DEG:
+        return deg2rad(angle);
+    case CSSUnitType::CSS_RAD:
+        return angle;
+    case CSSUnitType::CSS_GRAD:
+        return grad2rad(angle);
+    case CSSUnitType::CSS_TURN:
+        return turn2rad(angle);
     default:
         ASSERT_NOT_REACHED();
         return 0;

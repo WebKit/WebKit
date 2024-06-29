@@ -20,6 +20,8 @@
 #include "av1/encoder/block.h"
 #include "av1/encoder/encoder.h"
 
+#define MB_WIENER_MT_UNIT_SIZE BLOCK_64X64
+
 void av1_init_mb_wiener_var_buffer(AV1_COMP *cpi);
 
 void av1_calc_mb_wiener_var_row(AV1_COMP *const cpi, MACROBLOCK *x,
@@ -27,7 +29,7 @@ void av1_calc_mb_wiener_var_row(AV1_COMP *const cpi, MACROBLOCK *x,
                                 int16_t *src_diff, tran_low_t *coeff,
                                 tran_low_t *qcoeff, tran_low_t *dqcoeff,
                                 double *sum_rec_distortion,
-                                double *sum_est_rate);
+                                double *sum_est_rate, uint8_t *pred_buffer);
 
 void av1_set_mb_wiener_variance(AV1_COMP *cpi);
 

@@ -1,0 +1,5 @@
+
+FAIL target1 should scroll with anchor1 assert_equals: expected 40 but got 0
+FAIL target2 should scroll with anchor2 assert_equals: expected 155 but got 0
+FAIL target3 should scroll with anchor3 assert_equals: expected 270 but got 0
+

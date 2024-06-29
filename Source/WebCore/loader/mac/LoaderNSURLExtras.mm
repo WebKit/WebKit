@@ -41,6 +41,11 @@ using namespace WebCore;
 
 NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
 {
+    return suggestedFilenameWithMIMEType(url, mimeType, copyImageUnknownFileLabel());
+}
+
+NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType, const String& defaultValue)
+{
     // Get the filename from the URL. Try the lastPathComponent first.
     NSString *lastPathComponent = [[url path] lastPathComponent];
     NSString *filename = filenameByFixingIllegalCharacters(lastPathComponent);
@@ -51,8 +56,8 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
         auto host = URL(url).host().createNSString();
         filename = filenameByFixingIllegalCharacters(host.get());
         if ([filename length] == 0) {
-            // Can't make a filename using this URL, use "unknown".
-            filename = copyImageUnknownFileLabel();
+            // Can't make a filename using this URL, use the default value.
+            filename = defaultValue;
         }
     } else {
         // Save the extension for later correction. Only correct the extension of the lastPathComponent.

@@ -2625,6 +2625,54 @@ void CaptureReadnPixelsEXT_data(const State &glState,
     UNIMPLEMENTED();
 }
 
+void CaptureGetnUniformfvKHR_params(const State &glState,
+                                    bool isCallValid,
+                                    ShaderProgramID programPacked,
+                                    UniformLocation locationPacked,
+                                    GLsizei bufSize,
+                                    GLfloat *params,
+                                    angle::ParamCapture *paramCapture)
+{
+    UNIMPLEMENTED();
+}
+
+void CaptureGetnUniformivKHR_params(const State &glState,
+                                    bool isCallValid,
+                                    ShaderProgramID programPacked,
+                                    UniformLocation locationPacked,
+                                    GLsizei bufSize,
+                                    GLint *params,
+                                    angle::ParamCapture *paramCapture)
+{
+    UNIMPLEMENTED();
+}
+
+void CaptureGetnUniformuivKHR_params(const State &glState,
+                                     bool isCallValid,
+                                     ShaderProgramID programPacked,
+                                     UniformLocation locationPacked,
+                                     GLsizei bufSize,
+                                     GLuint *params,
+                                     angle::ParamCapture *paramCapture)
+{
+    UNIMPLEMENTED();
+}
+
+void CaptureReadnPixelsKHR_data(const State &glState,
+                                bool isCallValid,
+                                GLint x,
+                                GLint y,
+                                GLsizei width,
+                                GLsizei height,
+                                GLenum format,
+                                GLenum type,
+                                GLsizei bufSize,
+                                void *data,
+                                angle::ParamCapture *paramCapture)
+{
+    UNIMPLEMENTED();
+}
+
 void CaptureDeleteSemaphoresEXT_semaphoresPacked(const State &glState,
                                                  bool isCallValid,
                                                  GLsizei n,
@@ -3641,6 +3689,51 @@ void CaptureBufferStorageEXT_data(const State &glState,
     }
 }
 
+// GL_EXT_clear_texture
+void CaptureClearTexImageEXT_data(const State &glState,
+                                  bool isCallValid,
+                                  TextureID texturePacked,
+                                  GLint level,
+                                  GLenum format,
+                                  GLenum type,
+                                  const void *data,
+                                  angle::ParamCapture *paramCapture)
+{
+    if (!data)
+    {
+        return;
+    }
+
+    const gl::InternalFormat &internalFormatInfo = gl::GetInternalFormatInfo(format, type);
+    GLuint captureSize                           = internalFormatInfo.computePixelBytes(type);
+    CaptureMemory(data, captureSize, paramCapture);
+}
+
+void CaptureClearTexSubImageEXT_data(const State &glState,
+                                     bool isCallValid,
+                                     TextureID texturePacked,
+                                     GLint level,
+                                     GLint xoffset,
+                                     GLint yoffset,
+                                     GLint zoffset,
+                                     GLsizei width,
+                                     GLsizei height,
+                                     GLsizei depth,
+                                     GLenum format,
+                                     GLenum type,
+                                     const void *data,
+                                     angle::ParamCapture *paramCapture)
+{
+    if (!data)
+    {
+        return;
+    }
+
+    const gl::InternalFormat &internalFormatInfo = gl::GetInternalFormatInfo(format, type);
+    GLuint captureSize                           = internalFormatInfo.computePixelBytes(type);
+    CaptureMemory(data, captureSize, paramCapture);
+}
+
 // GL_EXT_separate_shader_objects
 void CaptureCreateShaderProgramvEXT_strings(const State &glState,
                                             bool isCallValid,
@@ -4082,7 +4175,7 @@ void CaptureDeletePerfMonitorsAMD_monitors(const State &glState,
                                            GLuint *monitors,
                                            angle::ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureArray(monitors, n, paramCapture);
 }
 
 void CaptureGenPerfMonitorsAMD_monitors(const State &glState,
@@ -4091,7 +4184,7 @@ void CaptureGenPerfMonitorsAMD_monitors(const State &glState,
                                         GLuint *monitors,
                                         angle::ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureArray(monitors, n, paramCapture);
 }
 
 void CaptureGetPerfMonitorCounterDataAMD_data(const State &glState,

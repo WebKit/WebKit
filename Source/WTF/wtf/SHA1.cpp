@@ -35,6 +35,7 @@
 #include <cstddef>
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WTF {
 
@@ -202,6 +203,40 @@ void SHA1::reset()
 }
 
 #endif
+
+void SHA1::addUTF8Bytes(StringView string)
+{
+    if (string.containsOnlyASCII()) {
+        if (string.is8Bit())
+            addBytes(string.span8());
+        else
+            addBytes(String::make8Bit(string.span16()).span8());
+    } else
+        addBytes(string.utf8().span());
+}
+
+#if USE(CF)
+void SHA1::addUTF8Bytes(CFStringRef string)
+{
+    if (auto* characters = CFStringGetCStringPtr(string, kCFStringEncodingASCII)) {
+        addBytes(std::span { byteCast<uint8_t>(characters), static_cast<size_t>(CFStringGetLength(string)) });
+        return;
+    }
+
+    constexpr size_t bufferSize = 1024;
+    if (size_t length = CFStringGetLength(string); length <= bufferSize) {
+        std::array<UInt8, bufferSize> buffer;
+        CFIndex usedBufferLength = 0;
+        CFStringGetBytes(string, CFRangeMake(0, length), kCFStringEncodingASCII, 0, false, buffer.data(), buffer.size(), &usedBufferLength);
+        if (length == static_cast<size_t>(usedBufferLength)) {
+            addBytes(std::span { buffer }.first(length));
+            return;
+        }
+    }
+
+    addUTF8Bytes(String(string));
+}
+#endif // USE(CF)
 
 CString SHA1::hexDigest(const Digest& digest)
 {

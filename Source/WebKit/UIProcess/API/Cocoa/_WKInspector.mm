@@ -160,9 +160,11 @@ private:
     _inspector->showResources();
 }
 
-- (void)showMainResourceForFrame:(_WKFrameHandle *)frame
+- (void)showMainResourceForFrame:(_WKFrameHandle *)handle
 {
-    _inspector->showMainResourceForFrame(WebKit::WebFrameProxy::webFrame(frame->_frameHandle->frameID()));
+    if (!handle)
+        return;
+    _inspector->showMainResourceForFrame(handle->_frameHandle->frameID());
 }
 
 - (void)attach

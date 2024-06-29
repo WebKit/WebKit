@@ -124,8 +124,19 @@ bool IncrementalSweeper::sweepNextBlock(VM& vm, SweepTrigger trigger)
     if (block) {
         DeferGCForAWhile deferGC(vm);
         block->sweep(nullptr);
-        if (trigger == SweepTrigger::Timer)
-            vm.heap.objectSpace().freeOrShrinkBlock(block);
+
+        bool blockIsFreed = false;
+        if (trigger == SweepTrigger::Timer) {
+            if (!block->isEmpty())
+                block->shrink();
+            else {
+                vm.heap.objectSpace().freeBlock(block);
+                blockIsFreed = true;
+            }
+        }
+
+        if (!blockIsFreed)
+            m_currentDirectory->didFinishUsingBlock(block);
         return true;
     }
 

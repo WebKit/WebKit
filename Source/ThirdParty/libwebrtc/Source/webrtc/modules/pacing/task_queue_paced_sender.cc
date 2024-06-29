@@ -17,35 +17,19 @@
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/transport/network_types.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/experiments/field_trial_parser.h"
-#include "rtc_base/experiments/field_trial_units.h"
 #include "rtc_base/trace_event.h"
 
 namespace webrtc {
 
-namespace {
-
-constexpr const char* kBurstyPacerFieldTrial = "WebRTC-BurstyPacer";
-
-}  // namespace
-
 const int TaskQueuePacedSender::kNoPacketHoldback = -1;
-
-TaskQueuePacedSender::BurstyPacerFlags::BurstyPacerFlags(
-    const FieldTrialsView& field_trials)
-    : burst("burst") {
-  ParseFieldTrial({&burst}, field_trials.Lookup(kBurstyPacerFieldTrial));
-}
 
 TaskQueuePacedSender::TaskQueuePacedSender(
     Clock* clock,
     PacingController::PacketSender* packet_sender,
     const FieldTrialsView& field_trials,
     TimeDelta max_hold_back_window,
-    int max_hold_back_window_in_packets,
-    absl::optional<TimeDelta> burst_interval)
+    int max_hold_back_window_in_packets)
     : clock_(clock),
-      bursty_pacer_flags_(field_trials),
       max_hold_back_window_(max_hold_back_window),
       max_hold_back_window_in_packets_(max_hold_back_window_in_packets),
       pacing_controller_(clock, packet_sender, field_trials),
@@ -56,22 +40,21 @@ TaskQueuePacedSender::TaskQueuePacedSender(
       include_overhead_(false),
       task_queue_(TaskQueueBase::Current()) {
   RTC_DCHECK_GE(max_hold_back_window_, PacingController::kMinSleepTime);
-  // There are multiple field trials that can affect burst. If multiple bursts
-  // are specified we pick the largest of the values.
-  absl::optional<TimeDelta> burst = bursty_pacer_flags_.burst.GetOptional();
-  // If not overriden by an experiment, the burst is specified by the
-  // `burst_interval` argument.
-  if (!burst.has_value()) {
-    burst = burst_interval;
-  }
-  if (burst.has_value()) {
-    pacing_controller_.SetSendBurstInterval(burst.value());
-  }
 }
 
 TaskQueuePacedSender::~TaskQueuePacedSender() {
   RTC_DCHECK_RUN_ON(task_queue_);
   is_shutdown_ = true;
+}
+
+void TaskQueuePacedSender::SetSendBurstInterval(TimeDelta burst_interval) {
+  RTC_DCHECK_RUN_ON(task_queue_);
+  pacing_controller_.SetSendBurstInterval(burst_interval);
+}
+
+void TaskQueuePacedSender::SetAllowProbeWithoutMediaPacket(bool allow) {
+  RTC_DCHECK_RUN_ON(task_queue_);
+  pacing_controller_.SetAllowProbeWithoutMediaPacket(allow);
 }
 
 void TaskQueuePacedSender::EnsureStarted() {

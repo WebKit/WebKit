@@ -17,6 +17,8 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/environment/environment.h"
+#include "api/field_trials_view.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder_legacy.h"
@@ -29,23 +31,22 @@
 #include "rtc_base/time_utils.h"
 
 namespace webrtc {
+namespace {
 
-std::unique_ptr<RtcEventLogEncoder> RtcEventLogImpl::CreateEncoder(
-    RtcEventLog::EncodingType type) {
-  switch (type) {
-    case RtcEventLog::EncodingType::Legacy:
-      RTC_DLOG(LS_INFO) << "Creating legacy encoder for RTC event log.";
-      return std::make_unique<RtcEventLogEncoderLegacy>();
-    case RtcEventLog::EncodingType::NewFormat:
-      RTC_DLOG(LS_INFO) << "Creating new format encoder for RTC event log.";
-      return std::make_unique<RtcEventLogEncoderNewFormat>();
-    default:
-      RTC_LOG(LS_ERROR) << "Unknown RtcEventLog encoder type (" << int(type)
-                        << ")";
-      RTC_DCHECK_NOTREACHED();
-      return std::unique_ptr<RtcEventLogEncoder>(nullptr);
+std::unique_ptr<RtcEventLogEncoder> CreateEncoder(const Environment& env) {
+  if (env.field_trials().IsDisabled("WebRTC-RtcEventLogNewFormat")) {
+    RTC_DLOG(LS_INFO) << "Creating legacy encoder for RTC event log.";
+    return std::make_unique<RtcEventLogEncoderLegacy>();
+  } else {
+    RTC_DLOG(LS_INFO) << "Creating new format encoder for RTC event log.";
+    return std::make_unique<RtcEventLogEncoderNewFormat>(env.field_trials());
   }
 }
+
+}  // namespace
+
+RtcEventLogImpl::RtcEventLogImpl(const Environment& env)
+    : RtcEventLogImpl(CreateEncoder(env), &env.task_queue_factory()) {}
 
 RtcEventLogImpl::RtcEventLogImpl(std::unique_ptr<RtcEventLogEncoder> encoder,
                                  TaskQueueFactory* task_queue_factory,
@@ -55,10 +56,9 @@ RtcEventLogImpl::RtcEventLogImpl(std::unique_ptr<RtcEventLogEncoder> encoder,
       max_config_events_in_history_(max_config_events_in_history),
       event_encoder_(std::move(encoder)),
       last_output_ms_(rtc::TimeMillis()),
-      task_queue_(
-          std::make_unique<rtc::TaskQueue>(task_queue_factory->CreateTaskQueue(
-              "rtc_event_log",
-              TaskQueueFactory::Priority::NORMAL))) {}
+      task_queue_(task_queue_factory->CreateTaskQueue(
+          "rtc_event_log",
+          TaskQueueFactory::Priority::NORMAL)) {}
 
 RtcEventLogImpl::~RtcEventLogImpl() {
   // If we're logging to the output, this will stop that. Blocking function.
@@ -71,10 +71,12 @@ RtcEventLogImpl::~RtcEventLogImpl() {
     StopLogging();
   }
 
-  // We want to block on any executing task by invoking ~TaskQueue() before
+  // Since we are posting tasks bound to `this`, it is critical that the event
+  // log and its members outlive `task_queue_`. Destruct `task_queue_` first
+  // to ensure tasks living on the queue can access other members.
+  // We want to block on any executing task by deleting TaskQueue before
   // we set unique_ptr's internal pointer to null.
-  rtc::TaskQueue* tq = task_queue_.get();
-  delete tq;
+  task_queue_.get_deleter()(task_queue_.get());
   task_queue_.release();
 }
 

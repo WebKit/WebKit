@@ -64,9 +64,9 @@ fn((t) => {
     colorAttachments: [
     {
       view: renderTexture.createView(),
-      storeOp: t.params.storeOp,
       clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 0.0 },
-      loadOp: 'clear'
+      loadOp: 'clear',
+      storeOp: t.params.storeOp
     }]
 
   });

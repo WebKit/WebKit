@@ -28,31 +28,27 @@
 #if ENABLE(GPU_PROCESS)
 #include "RemoteSharedResourceCache.h"
 
+#if HAVE(IOSURFACE)
+#include <WebCore/IOSurfacePool.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
-// Per GPU process limit of accelerated image buffers.
-// These consume limited global OS resources.
-constexpr size_t acceleratedImageBufferGlobalLimit = 30000;
-
-// Per GPU process count of current accelerated image buffers.
-static std::atomic<size_t> acceleratedImageBufferGlobalCount;
-
-// Per WebContent process limit of accelerated image buffers.
-constexpr size_t acceleratedImageBufferLimit = 5000;
-
-// Per WebContent process limit of accelerated image buffers for 2d context.
-// It is most common to leak 2d contexts.
-constexpr size_t acceleratedImageBuffer2DContextLimit = 1000;
-
 constexpr Seconds defaultRemoteSharedResourceCacheTimeout = 15_s;
 
-Ref<RemoteSharedResourceCache> RemoteSharedResourceCache::create()
+Ref<RemoteSharedResourceCache> RemoteSharedResourceCache::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
 {
-    return adoptRef(*new RemoteSharedResourceCache());
+    return adoptRef(*new RemoteSharedResourceCache(gpuConnectionToWebProcess));
 }
 
-RemoteSharedResourceCache::RemoteSharedResourceCache() = default;
+RemoteSharedResourceCache::RemoteSharedResourceCache(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
+    : m_resourceOwner(gpuConnectionToWebProcess.webProcessIdentity())
+#if HAVE(IOSURFACE)
+    , m_ioSurfacePool(IOSurfacePool::create())
+#endif
+{
+}
 
 RemoteSharedResourceCache::~RemoteSharedResourceCache() = default;
 
@@ -71,28 +67,11 @@ void RemoteSharedResourceCache::releaseSerializedImageBuffer(WebCore::RenderingR
     m_serializedImageBuffers.remove({ { identifier, 0 }, 0 });
 }
 
-void RemoteSharedResourceCache::didAddAcceleratedImageBuffer()
+void RemoteSharedResourceCache::lowMemoryHandler()
 {
-    ++acceleratedImageBufferGlobalCount;
-    ++m_acceleratedImageBufferCount;
-}
-
-void RemoteSharedResourceCache::didTakeAcceleratedImageBuffer()
-{
-    --acceleratedImageBufferGlobalCount;
-    --m_acceleratedImageBufferCount;
-}
-
-WebCore::RenderingMode RemoteSharedResourceCache::adjustAcceleratedImageBufferRenderingMode(RenderingPurpose renderingPurpose) const
-{
-    // These are naturally racy, but the limits are heuristic in nature.
-    if (acceleratedImageBufferGlobalCount >= acceleratedImageBufferGlobalLimit)
-        return RenderingMode::Unaccelerated;
-    if (m_acceleratedImageBufferCount >= acceleratedImageBufferLimit)
-        return RenderingMode::Unaccelerated;
-    if (renderingPurpose == RenderingPurpose::Canvas && m_acceleratedImageBufferCount >= acceleratedImageBuffer2DContextLimit)
-        return RenderingMode::Unaccelerated;
-    return RenderingMode::Accelerated;
+#if HAVE(IOSURFACE)
+    m_ioSurfacePool->discardAllSurfaces();
+#endif
 }
 
 } // namespace WebKit

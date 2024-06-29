@@ -46,7 +46,6 @@
 #include "video/adaptation/encode_usage_resource.h"
 #include "video/adaptation/overuse_frame_detector.h"
 #include "video/adaptation/pixel_limit_resource.h"
-#include "video/adaptation/quality_rampup_experiment_helper.h"
 #include "video/adaptation/quality_scaler_resource.h"
 #include "video/adaptation/video_stream_encoder_resource.h"
 #include "video/config/video_encoder_config.h"
@@ -70,8 +69,7 @@ extern const int kDefaultInputPixelsHeight;
 // ResourceAdaptationProcessor code such as the initial frame dropping.
 class VideoStreamEncoderResourceManager
     : public VideoSourceRestrictionsListener,
-      public ResourceLimitationsListener,
-      public QualityRampUpExperimentListener {
+      public ResourceLimitationsListener {
  public:
   VideoStreamEncoderResourceManager(
       VideoStreamInputStateProvider* input_state_provider,
@@ -149,9 +147,6 @@ class VideoStreamEncoderResourceManager
       const std::map<rtc::scoped_refptr<Resource>, VideoAdaptationCounters>&
           resource_limitations) override;
 
-  // QualityRampUpExperimentListener implementation.
-  void OnQualityRampUp() override;
-
   static bool IsSimulcastOrMultipleSpatialLayers(
       const VideoEncoderConfig& encoder_config,
       const VideoCodec& video_codec);
@@ -222,8 +217,6 @@ class VideoStreamEncoderResourceManager
   absl::optional<uint32_t> encoder_target_bitrate_bps_
       RTC_GUARDED_BY(encoder_queue_);
   absl::optional<VideoEncoder::RateControlParameters> encoder_rates_
-      RTC_GUARDED_BY(encoder_queue_);
-  std::unique_ptr<QualityRampUpExperimentHelper> quality_rampup_experiment_
       RTC_GUARDED_BY(encoder_queue_);
   absl::optional<EncoderSettings> encoder_settings_
       RTC_GUARDED_BY(encoder_queue_);

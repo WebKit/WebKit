@@ -120,7 +120,7 @@ public:
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
 #if USE(EXTENSIONKIT)
-    void resolveBookmarkDataForCacheDirectory(const std::span<const uint8_t>& bookmarkData);
+    void resolveBookmarkDataForCacheDirectory(std::span<const uint8_t> bookmarkData);
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
@@ -244,7 +244,7 @@ private:
 #if ENABLE(VP9) && PLATFORM(COCOA)
     bool m_haveEnabledVP8Decoder { false };
     bool m_haveEnabledVP9Decoder { false };
-    bool m_haveEnabledVP9SWDecoder { false };
+    bool m_haveEnabledSWVPDecoders { false };
 #endif
 
 };

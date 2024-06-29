@@ -63,9 +63,11 @@ Data Data::empty()
     return { adoptGRef(g_bytes_new(nullptr, 0)) };
 }
 
-const uint8_t* Data::data() const
+std::span<const uint8_t> Data::span() const
 {
-    return m_buffer ? reinterpret_cast<const uint8_t*>(g_bytes_get_data(m_buffer.get(), nullptr)) : nullptr;
+    if (!m_buffer)
+        return { };
+    return { reinterpret_cast<const uint8_t*>(g_bytes_get_data(m_buffer.get(), nullptr)), m_size };
 }
 
 bool Data::isNull() const

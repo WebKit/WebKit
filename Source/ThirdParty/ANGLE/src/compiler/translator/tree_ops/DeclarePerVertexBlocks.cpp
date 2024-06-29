@@ -359,7 +359,7 @@ class DeclarePerVertexBlocksTraverser : public TIntermTraverser
 
         // TODO: handle interaction with GS and T*S where the two can have different sizes.  These
         // values are valid for EvqPerVertexOut only.  For EvqPerVertexIn, the size should come from
-        // the declaration of gl_in.  http://anglebug.com/5466.
+        // the declaration of gl_in.  http://anglebug.com/42264006.
         if (clipDistanceType)
             clipDistanceType->makeArray(mClipDistanceArraySize);
         if (cullDistanceType)

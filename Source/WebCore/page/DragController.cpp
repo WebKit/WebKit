@@ -645,7 +645,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
                 OptionSet<ReplaceSelectionCommand::CommandOption> options { ReplaceSelectionCommand::SelectReplacement, ReplaceSelectionCommand::PreventNesting };
                 if (dragData.canSmartReplace())
                     options.add(ReplaceSelectionCommand::SmartReplace);
-                if (chosePlainText)
+                if (chosePlainText || dragData.shouldMatchStyleOnDrop())
                     options.add(ReplaceSelectionCommand::MatchStyle);
                 ReplaceSelectionCommand::create(protectedDocumentUnderMouse().releaseNonNull(), fragment.releaseNonNull(), options, EditAction::InsertFromDrop)->apply();
             }
@@ -765,6 +765,11 @@ bool DragController::tryDHTMLDrag(LocalFrame& frame, const DragData& dragData, s
 
 static bool imageElementIsDraggable(const HTMLImageElement& image, const LocalFrame& sourceFrame)
 {
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    if (image.isMultiRepresentationHEIC())
+        return false;
+#endif
+
     if (sourceFrame.settings().loadsImagesAutomatically())
         return true;
 
@@ -1047,7 +1052,6 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
 
     bool mustUseLegacyDragClient = hasData == HasNonDefaultPasteboardData::Yes || client().useLegacyDragClient();
 
-    IntRect dragImageBounds;
     RefPtr image = getImage(element);
     if (state.type == DragSourceAction::Selection) {
         PasteboardWriterData pasteboardWriterData;
@@ -1125,7 +1129,7 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
     }
 
     if (!src.document()->protectedSecurityOrigin()->canDisplay(linkURL, OriginAccessPatternsForWebProcess::singleton())) {
-        src.protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to drag local resource: " + linkURL.stringCenterEllipsizedToLength());
+        src.protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Not allowed to drag local resource: "_s, linkURL.stringCenterEllipsizedToLength()));
         return false;
     }
 

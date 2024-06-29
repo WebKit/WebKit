@@ -110,9 +110,7 @@ void SmallStrings::visitStrongReferences(Visitor& visitor)
 template void SmallStrings::visitStrongReferences(AbstractSlotVisitor&);
 template void SmallStrings::visitStrongReferences(SlotVisitor&);
 
-SmallStrings::~SmallStrings()
-{
-}
+SmallStrings::~SmallStrings() = default;
 
 Ref<AtomStringImpl> SmallStrings::singleCharacterStringRep(unsigned char character)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,9 @@
 
 #include "CompositeOperation.h"
 #include "FilterOperation.h"
-#include <wtf/RefPtr.h>
+#include <algorithm>
+#include <wtf/ArgumentCoder.h>
+#include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -37,20 +39,32 @@ struct BlendingContext;
 class FilterOperations {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    using const_iterator = Vector<Ref<FilterOperation>>::const_iterator;
+    using const_reverse_iterator = Vector<Ref<FilterOperation>>::const_reverse_iterator;
+    using value_type = Vector<Ref<FilterOperation>>::value_type;
+
     FilterOperations() = default;
-    WEBCORE_EXPORT explicit FilterOperations(Vector<RefPtr<FilterOperation>>&&);
+    WEBCORE_EXPORT explicit FilterOperations(Vector<Ref<FilterOperation>>&&);
 
     WEBCORE_EXPORT bool operator==(const FilterOperations&) const;
 
-    void clear() { m_operations.clear(); }
+    FilterOperations clone() const
+    {
+        return FilterOperations { m_operations.map([](const auto& op) { return op->clone(); }) };
+    }
 
-    Vector<RefPtr<FilterOperation>>& operations() { return m_operations; }
-    const Vector<RefPtr<FilterOperation>>& operations() const { return m_operations; }
-    void setOperations(Vector<RefPtr<FilterOperation>>&& operations) { m_operations = WTFMove(operations); }
+    const_iterator begin() const { return m_operations.begin(); }
+    const_iterator end() const { return m_operations.end(); }
+    const_reverse_iterator rbegin() const { return m_operations.rbegin(); }
+    const_reverse_iterator rend() const { return m_operations.rend(); }
 
     bool isEmpty() const { return m_operations.isEmpty(); }
     size_t size() const { return m_operations.size(); }
-    const FilterOperation* at(size_t index) const { return index < m_operations.size() ? m_operations[index].get() : nullptr; }
+    const FilterOperation* at(size_t index) const { return index < m_operations.size() ? m_operations[index].ptr() : nullptr; }
+
+    const Ref<FilterOperation>& operator[](size_t i) const { return m_operations[i]; }
+    const Ref<FilterOperation>& first() const { return m_operations.first(); }
+    const Ref<FilterOperation>& last() const { return m_operations.last(); }
 
     bool operationsMatch(const FilterOperations&) const;
 
@@ -60,6 +74,9 @@ public:
     bool hasFilterThatAffectsOpacity() const;
     bool hasFilterThatMovesPixels() const;
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const;
+
+    template<FilterOperation::Type Type>
+    bool hasFilterOfType() const;
 
     bool hasReferenceFilter() const;
     bool isReferenceFilter() const;
@@ -71,8 +88,16 @@ public:
     WEBCORE_EXPORT FilterOperations blend(const FilterOperations&, const BlendingContext&) const;
 
 private:
-    Vector<RefPtr<FilterOperation>> m_operations;
+    friend struct IPC::ArgumentCoder<FilterOperations, void>;
+    WEBCORE_EXPORT friend WTF::TextStream& operator<<(WTF::TextStream&, const FilterOperations&);
+
+    Vector<Ref<FilterOperation>> m_operations;
 };
+
+template<FilterOperation::Type type> bool FilterOperations::hasFilterOfType() const
+{
+    return std::ranges::any_of(m_operations, [](auto& op) { return op->type() == type; });
+}
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FilterOperations&);
 

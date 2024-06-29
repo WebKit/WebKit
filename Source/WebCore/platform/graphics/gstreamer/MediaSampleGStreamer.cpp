@@ -38,7 +38,7 @@ MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const Fl
     , m_presentationSize(presentationSize)
 {
     ASSERT(sample);
-    m_sample = sample;
+    m_sample = WTFMove(sample);
     const GstClockTime minimumDuration = 1000; // 1 us
     auto* buffer = gst_sample_get_buffer(m_sample.get());
     RELEASE_ASSERT(buffer);
@@ -142,7 +142,7 @@ Ref<MediaSample> MediaSampleGStreamer::createNonDisplayingCopy() const
     GstStructure* info = originalInfo ? gst_structure_copy(originalInfo) : nullptr;
     GRefPtr<GstSample> sample = adoptGRef(gst_sample_new(buffer, caps, segment, info));
 
-    return adoptRef(*new MediaSampleGStreamer(sample.get(), m_presentationSize, m_trackId));
+    return adoptRef(*new MediaSampleGStreamer(WTFMove(sample), m_presentationSize, m_trackId));
 }
 
 void MediaSampleGStreamer::dump(PrintStream& out) const

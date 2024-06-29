@@ -1,0 +1,45 @@
+
+FAIL .target 1 assert_equals:
+<div class="container">
+  <div class="anchor"></div>
+  <div class="target" data-expected-height="70" data-offset-y="30"></div>
+</div>
+height expected 70 but got 50
+FAIL .target 2 assert_equals:
+<div class="container">
+  <div class="anchor"></div>
+  <div class="target" style="top: 20px;" data-expected-height="70" data-offset-y="30"></div>
+</div>
+height expected 70 but got 80
+FAIL .target 3 assert_equals:
+<div class="container">
+  <div class="anchor"></div>
+  <div class="target" style="bottom: 20px;" data-expected-height="30" data-offset-y="50"></div>
+</div>
+height expected 30 but got 80
+FAIL .target 4 assert_equals:
+<div class="container">
+  <div class="anchor"></div>
+  <div class="target" style="bottom: -20px;" data-expected-height="110" data-offset-y="10"></div>
+</div>
+height expected 110 but got 120
+FAIL .target 5 assert_equals:
+<div class="container">
+  <div class="anchor"></div>
+  <div class="target" style="bottom: -100px;" data-expected-height="130" data-offset-y="0"></div>
+</div>
+height expected 130 but got 196
+FAIL .target 6 assert_equals:
+<div class="container">
+  <div class="anchor"></div>
+  <div class="target" style="top: 10px; bottom: 20px;" data-expected-height="30" data-offset-y="50"></div>
+</div>
+height expected 30 but got 70
+PASS .target 7
+FAIL .target 8 assert_equals:
+<div class="container">
+  <div class="anchor"></div>
+  <div class="target" style="top: -10px; bottom: -50px;" data-expected-height="150" data-offset-y="-10"></div>
+</div>
+height expected 150 but got 160
+

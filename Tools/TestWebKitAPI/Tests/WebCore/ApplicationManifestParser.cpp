@@ -95,19 +95,19 @@ public:
 
     ApplicationManifest parseTopLevelProperty(const String& key, const String& value)
     {
-        String manifestContent = "{ \"" + key + "\" : " + value + " }";
+        auto manifestContent = makeString("{ \""_s, key, "\" : "_s, value, " }"_s);
         return parseString(manifestContent);
     }
 
     ApplicationManifest parseIconFirstTopLevelProperty(const String& key, const String& value)
     {
-        String manifestContent = "{ \"icons\": [{\"" + key + "\": " + value + ", \"src\": \"icon/example.png\" }]}";
+        auto manifestContent = makeString("{ \"icons\": [{\""_s, key, "\": "_s, value, ", \"src\": \"icon/example.png\" }]}"_s);
         return parseString(manifestContent);
     }
 
     ApplicationManifest parseIconFirstTopLevelPropertyForSrc(const String& key, const String& value)
     {
-        String manifestContent = "{ \"icons\": [{\"" + key + "\": " + value + " }]}";
+        auto manifestContent = makeString("{ \"icons\": [{\""_s, key, "\": "_s, value, " }]}"_s);
         return parseString(manifestContent);
     }
 
@@ -206,7 +206,7 @@ public:
 
     void testScope(const String& rawJSON, const String& startURL, const String& expectedValue, bool expectedIsDefaultScope)
     {
-        String manifestContent = "{ \"scope\" : " + rawJSON + ", \"start_url\" : \"" + startURL + "\" }";
+        auto manifestContent = makeString("{ \"scope\" : "_s, rawJSON, ", \"start_url\" : \""_s, startURL, "\" }"_s);
         auto manifest = parseString(manifestContent);
         auto value = manifest.scope;
         EXPECT_STREQ(expectedValue.utf8().data(), value.string().utf8().data());
@@ -323,7 +323,7 @@ public:
 
     void testId(const String& rawJSON, const URL& startURL, const String& expectedValue)
     {
-        String manifestContent = "{ \"id\" : \"" + rawJSON + "\", \"start_url\" : \"" + startURL.string() + "\" }";
+        auto manifestContent = makeString("{ \"id\" : \""_s, rawJSON, "\", \"start_url\" : \""_s, startURL.string(), "\" }"_s);
         auto manifest = parseString(manifestContent);
         auto value = manifest.id;
         EXPECT_STREQ(expectedValue.utf8().data(), value.string().utf8().data());
@@ -380,9 +380,12 @@ TEST_F(ApplicationManifestParserTest, Id)
     testId("./foo"_s, m_startURL, "https://example.com/foo"_s);
     testId("foo/"_s, m_startURL, "https://example.com/foo/"_s);
     testId("../../foo/bar"_s, m_startURL, "https://example.com/foo/bar"_s);
-    testId("../../foo/bar?query=hi#hi"_s, m_startURL, "https://example.com/foo/bar?query=hi#hi"_s);
+    testId("../../foo/bar?query=hi#fragment"_s, m_startURL, "https://example.com/foo/bar?query=hi"_s);
+    testId("../../foo/bar?query=hi#"_s, m_startURL, "https://example.com/foo/bar?query=hi"_s);
 
     testId("https://example.com/foo"_s, m_startURL, "https://example.com/foo"_s);
+    testId("https://example.com/foo#"_s, m_startURL, "https://example.com/foo"_s);
+    testId("https://example.com/foo#fragment"_s, m_startURL, "https://example.com/foo"_s);
     testId("https://anothersite.com/foo"_s, m_startURL, m_startURL.string());
     testId("https://invalid.com:a"_s, m_startURL, m_startURL.string());
 }
@@ -560,6 +563,18 @@ TEST_F(ApplicationManifestParserTest, Scope)
     m_documentURL = URL { "https://example.com/documents/home"_s };
     m_startURL = URL { "https://example.com/documents/home"_s };
     m_manifestURL = URL { "https://example.com/resources/manifest.json"_s };
+
+    // Removes query
+    testScope("\"https://example.com/documents/home?query\""_s, "https://example.com/documents/home"_s, false);
+    testScope("\"https://example.com/documents/home?query=whatever\""_s, "https://example.com/documents/home"_s, false);
+
+    // Removes fragment
+    testScope("\"https://example.com/documents/home#\""_s, "https://example.com/documents/home"_s, false);
+    testScope("\"https://example.com/documents/home#fragment\""_s, "https://example.com/documents/home"_s, false);
+
+    // Removes query and fragment
+    testScope("\"https://example.com/documents/home?#\""_s, "https://example.com/documents/home"_s, false);
+    testScope("\"https://example.com/documents/home?query#fragment\""_s, "https://example.com/documents/home"_s, false);
 
     // It's fine if the document URL or manifest URL aren't within the application scope - only the start URL needs to be.
     testScope("\"https://example.com/other\""_s, "https://example.com/other/start-url"_s, "https://example.com/other"_s, false);

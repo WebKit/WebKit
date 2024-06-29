@@ -158,7 +158,7 @@ void TestInvocation::loadTestInCrossOriginIframe()
         "<script>"
         "    testRunner.dumpChildFramesAsText()"
         "</script>"
-        "<iframe src=\"", m_urlString.utf8().data(), "\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"));
+        "<iframe src=\""_s, m_urlString.utf8().span(), "\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"_s));
     WKPageLoadHTMLString(TestController::singleton().mainWebView()->page(), htmlString.get(), baseURL.get());
 }
 
@@ -221,9 +221,9 @@ void TestInvocation::dumpWebProcessUnresponsiveness(const char* errorMessage)
     char buffer[1024] = { };
 #if PLATFORM(COCOA)
     pid_t pid = WKPageGetProcessIdentifier(TestController::singleton().mainWebView()->page());
-    snprintf(buffer, sizeof(buffer), "#PROCESS UNRESPONSIVE - %s (pid %ld)\n", TestController::webProcessName(), static_cast<long>(pid));
+    snprintf(buffer, sizeof(buffer), "#PROCESS UNRESPONSIVE - %s (pid %ld)\n", TestController::webProcessName().characters(), static_cast<long>(pid));
 #else
-    snprintf(buffer, sizeof(buffer), "#PROCESS UNRESPONSIVE - %s\n", TestController::webProcessName());
+    snprintf(buffer, sizeof(buffer), "#PROCESS UNRESPONSIVE - %s\n", TestController::webProcessName().characters());
 #endif
 
     dump(errorMessage, buffer, true);
@@ -359,6 +359,9 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         auto messageBodyDictionary = dictionaryValue(messageBody);
         m_pixelResultIsPending = booleanValue(messageBodyDictionary, "PixelResultIsPending");
         if (!m_pixelResultIsPending) {
+            // Postpone page load stop if pixel result is still pending since
+            // cancelled image loads will paint as broken images.
+            WKPageStopLoading(TestController::singleton().mainWebView()->page());
             m_pixelResult = static_cast<WKImageRef>(value(messageBodyDictionary, "PixelResult"));
             ASSERT(!m_pixelResult || m_dumpPixels);
         }
@@ -689,6 +692,9 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     if (WKStringIsEqualToUTF8CString(messageName, "DumpBackForwardList"))
         return postPageMessage("DumpBackForwardList");
 
+    if (WKStringIsEqualToUTF8CString(messageName, "StopLoading"))
+        return WKPageStopLoading(TestController::singleton().mainWebView()->page());
+
     ASSERT_NOT_REACHED();
 }
 
@@ -942,11 +948,15 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return adoptWK(WKUInt64Create(count));
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "GrantNotificationPermission"))
+    if (WKStringIsEqualToUTF8CString(messageName, "GrantNotificationPermission")) {
+        WKPageSetPermissionLevelForTesting(TestController::singleton().mainWebView()->page(), stringValue(messageBody), true);
         return adoptWK(WKBooleanCreate(TestController::singleton().grantNotificationPermission(stringValue(messageBody))));
+    }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "DenyNotificationPermission"))
+    if (WKStringIsEqualToUTF8CString(messageName, "DenyNotificationPermission")) {
+        WKPageSetPermissionLevelForTesting(TestController::singleton().mainWebView()->page(), stringValue(messageBody), false);
         return adoptWK(WKBooleanCreate(TestController::singleton().denyNotificationPermission(stringValue(messageBody))));
+    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "DenyNotificationPermissionOnPrompt"))
         return adoptWK(WKBooleanCreate(TestController::singleton().denyNotificationPermissionOnPrompt(stringValue(messageBody))));
@@ -1395,6 +1405,15 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setRequestStorageAccessThrowsExceptionUntilReload(booleanValue(messageBody));
         return nullptr;
     }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "ExecuteCommand")) {
+        auto dictionary = dictionaryValue(messageBody);
+        WKPageExecuteCommandForTesting(TestController::singleton().mainWebView()->page(), stringValue(dictionary, "Command"), stringValue(dictionary, "Value"));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "IsCommandEnabled"))
+        return adoptWK(WKBooleanCreate(WKPageIsEditingCommandEnabledForTesting(TestController::singleton().mainWebView()->page(), stringValue(messageBody))));
 
     ASSERT_NOT_REACHED();
     return nullptr;

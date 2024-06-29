@@ -98,7 +98,7 @@ Ref<MediaPromise> SourceBufferPrivateGStreamer::appendInternal(Ref<SharedBuffer>
 
     ASSERT(!m_appendPromise);
     m_appendPromise.emplace();
-    gpointer bufferData = const_cast<void*>(static_cast<const void*>(data->data()));
+    gpointer bufferData = const_cast<uint8_t*>(data->span().data());
     auto bufferLength = data->size();
     GRefPtr<GstBuffer> buffer = adoptGRef(gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), bufferData, bufferLength, 0, bufferLength, &data.leakRef(),
         [](gpointer data)

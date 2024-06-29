@@ -81,8 +81,7 @@ LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& p
     ASSERT(isMainThread());
     ASSERT(client.factory());
 
-    if (DeprecatedGlobalSettings::webRTCH264SimulcastEnabled())
-        webrtc::field_trial::InitFieldTrialsFromString("WebRTC-H264Simulcast/Enabled/");
+    webrtc::field_trial::InitFieldTrialsFromString("WebRTC-Video-H26xPacketBuffer/Enabled/");
 }
 
 void LibWebRTCMediaEndpoint::restartIce()
@@ -284,7 +283,7 @@ void LibWebRTCMediaEndpoint::gatherDecoderImplementationName(Function<void(Strin
             for (const auto& rtcStats : *rtcReport) {
                 if (rtcStats.type() == webrtc::RTCInboundRtpStreamStats::kType) {
                     auto& inboundRTPStats = static_cast<const webrtc::RTCInboundRtpStreamStats&>(rtcStats);
-                    if (inboundRTPStats.decoder_implementation.is_defined()) {
+                    if (inboundRTPStats.decoder_implementation) {
                         callback(fromStdString(*inboundRTPStats.decoder_implementation));
                         return;
                     }
@@ -658,6 +657,7 @@ class SctpTransportState {
 public:
     explicit SctpTransportState(rtc::scoped_refptr<webrtc::SctpTransportInterface>&&);
     std::unique_ptr<LibWebRTCSctpTransportBackend> createBackend();
+    std::optional<double> maxMessageSize() const;
 
 private:
     rtc::scoped_refptr<webrtc::SctpTransportInterface> m_transport;
@@ -676,6 +676,11 @@ std::unique_ptr<LibWebRTCSctpTransportBackend> SctpTransportState::createBackend
     if (!m_transport)
         return nullptr;
     return makeUnique<LibWebRTCSctpTransportBackend>(WTFMove(m_transport), m_information.dtls_transport());
+}
+
+std::optional<double> SctpTransportState::maxMessageSize() const
+{
+    return m_information.MaxMessageSize() ? std::make_optional(*m_information.MaxMessageSize()) : std::nullopt;
 }
 
 struct LibWebRTCMediaEndpointTransceiverState {
@@ -735,7 +740,7 @@ void LibWebRTCMediaEndpoint::setLocalSessionDescriptionSucceeded()
             });
             return { WTFMove(state.mid), WTFMove(streams), state.firedDirection };
         });
-        protectedThis->m_peerConnectionBackend.setLocalDescriptionSucceeded(WTFMove(descriptions), WTFMove(transceiverStates), sctpState.createBackend());
+        protectedThis->m_peerConnectionBackend.setLocalDescriptionSucceeded(WTFMove(descriptions), WTFMove(transceiverStates), sctpState.createBackend(), sctpState.maxMessageSize());
     });
 }
 
@@ -762,7 +767,7 @@ void LibWebRTCMediaEndpoint::setRemoteSessionDescriptionSucceeded()
             });
             return { WTFMove(state.mid), WTFMove(streams), state.firedDirection };
         });
-        protectedThis->m_peerConnectionBackend.setRemoteDescriptionSucceeded(WTFMove(descriptions), WTFMove(transceiverStates), sctpState.createBackend());
+        protectedThis->m_peerConnectionBackend.setRemoteDescriptionSucceeded(WTFMove(descriptions), WTFMove(transceiverStates), sctpState.createBackend(), sctpState.maxMessageSize());
     });
 }
 

@@ -261,6 +261,15 @@ class Port(object):
 
         return paths
 
+    def sharding_groups(self):
+        return {}
+
+    def group_for_shard(self, shard):
+        for group, filter_fn in self.sharding_groups().items():
+            if filter_fn(shard):
+                return group
+        return None
+
     def check_build(self):
         """This routine is used to ensure that the build is up to date
         and all the needed binaries are present."""

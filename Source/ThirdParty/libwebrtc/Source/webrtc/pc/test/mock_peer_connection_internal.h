@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-#include "modules/audio_device/include/audio_device.h"
+#include "api/audio/audio_device.h"
 #include "pc/peer_connection_internal.h"
 #include "test/gmock.h"
 
@@ -153,6 +153,10 @@ class MockPeerConnectionInternal : public PeerConnectionInternal {
               (std::unique_ptr<SessionDescriptionInterface>,
                rtc::scoped_refptr<SetRemoteDescriptionObserverInterface>),
               (override));
+  MOCK_METHOD(bool,
+              ShouldFireNegotiationNeededEvent,
+              (uint32_t event_id),
+              (override));
   MOCK_METHOD(PeerConnectionInterface::RTCConfiguration,
               GetConfiguration,
               (),
@@ -170,6 +174,10 @@ class MockPeerConnectionInternal : public PeerConnectionInternal {
               (const std::vector<cricket::Candidate>&),
               (override));
   MOCK_METHOD(RTCError, SetBitrate, (const BitrateSettings&), (override));
+  MOCK_METHOD(void,
+              ReconfigureBandwidthEstimation,
+              (const BandwidthEstimationSettings&),
+              (override));
   MOCK_METHOD(void, SetAudioPlayout, (bool), (override));
   MOCK_METHOD(void, SetAudioRecording, (bool), (override));
   MOCK_METHOD(rtc::scoped_refptr<DtlsTransportInterface>,
@@ -188,6 +196,10 @@ class MockPeerConnectionInternal : public PeerConnectionInternal {
               (override));
   MOCK_METHOD(PeerConnectionState, peer_connection_state, (), (override));
   MOCK_METHOD(IceGatheringState, ice_gathering_state, (), (override));
+  MOCK_METHOD(void,
+              AddAdaptationResource,
+              (rtc::scoped_refptr<Resource>),
+              (override));
   MOCK_METHOD(absl::optional<bool>, can_trickle_ice_candidates, (), (override));
   MOCK_METHOD(bool,
               StartRtcEventLog,

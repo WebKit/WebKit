@@ -7,11 +7,19 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
+
 #include "rtc_base/event_tracer.h"
 
+#include <stdio.h>
+
+#include "rtc_base/trace_event.h"
+
+#if defined(RTC_USE_PERFETTO)
+#include "rtc_base/trace_categories.h"
+#include "third_party/perfetto/include/perfetto/tracing/tracing.h"
+#else
 #include <inttypes.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <string.h>
 
 #include <atomic>
@@ -28,20 +36,26 @@
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/time_utils.h"
-#include "rtc_base/trace_event.h"
-
-// This is a guesstimate that should be enough in most cases.
-static const size_t kEventLoggerArgsStrBufferInitialSize = 256;
-static const size_t kTraceArgBufferLength = 32;
+#endif
 
 namespace webrtc {
 
 namespace {
 
+#if !defined(RTC_USE_PERFETTO)
 GetCategoryEnabledPtr g_get_category_enabled_ptr = nullptr;
 AddTraceEventPtr g_add_trace_event_ptr = nullptr;
+#endif
 
 }  // namespace
+
+#if defined(RTC_USE_PERFETTO)
+void RegisterPerfettoTrackEvents() {
+  if (perfetto::Tracing::IsInitialized()) {
+    webrtc::TrackEvent::Register();
+  }
+}
+#else
 
 void SetupEventTracer(GetCategoryEnabledPtr get_category_enabled_ptr,
                       AddTraceEventPtr add_trace_event_ptr) {
@@ -73,8 +87,27 @@ void EventTracer::AddTraceEvent(char phase,
                           arg_names, arg_types, arg_values, flags);
   }
 }
+#endif
 
 }  // namespace webrtc
+
+#if defined(RTC_USE_PERFETTO)
+// TODO(bugs.webrtc.org/15917): Implement for perfetto.
+namespace rtc::tracing {
+void SetupInternalTracer(bool enable_all_categories) {}
+bool StartInternalCapture(absl::string_view filename) {
+  return false;
+}
+void StartInternalCaptureToFile(FILE* file) {}
+void StopInternalCapture() {}
+void ShutdownInternalTracer() {}
+
+}  // namespace rtc::tracing
+#else
+
+// This is a guesstimate that should be enough in most cases.
+static const size_t kEventLoggerArgsStrBufferInitialSize = 256;
+static const size_t kTraceArgBufferLength = 32;
 
 namespace rtc {
 namespace tracing {
@@ -206,12 +239,14 @@ class EventLogger final {
     // Finally start, everything should be set up now.
     logging_thread_ =
         PlatformThread::SpawnJoinable([this] { Log(); }, "EventTracingThread");
-    TRACE_EVENT_INSTANT0("webrtc", "EventLogger::Start");
+    TRACE_EVENT_INSTANT0("webrtc", "EventLogger::Start",
+                         TRACE_EVENT_SCOPE_GLOBAL);
   }
 
   void Stop() {
     RTC_DCHECK(thread_checker_.IsCurrent());
-    TRACE_EVENT_INSTANT0("webrtc", "EventLogger::Stop");
+    TRACE_EVENT_INSTANT0("webrtc", "EventLogger::Stop",
+                         TRACE_EVENT_SCOPE_GLOBAL);
     // Try to stop. Abort if we're not currently logging.
     int one = 1;
     if (g_event_logging_active.compare_exchange_strong(one, 0))
@@ -410,3 +445,5 @@ void ShutdownInternalTracer() {
 
 }  // namespace tracing
 }  // namespace rtc
+
+#endif  // defined(RTC_USE_PERFETTO)

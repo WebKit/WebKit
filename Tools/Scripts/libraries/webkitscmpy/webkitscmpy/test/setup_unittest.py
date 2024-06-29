@@ -62,8 +62,11 @@ class TestSetup(testing.PathTestCase):
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Create a private fork of 'WebKit/WebKit' named 'WebKit' belonging to 'username' ([Yes]/No): \n"
-            'Setup succeeded!\n',
+            '''Create a private fork of 'WebKit/WebKit' named 'WebKit' belonging to 'username'
+For detailed information about forking, please see: https://github.com/WebKit/WebKit/wiki/Git-Config#forking
+Press Enter to continue (Ctrl+C to exit)
+Setup succeeded!
+''',
         )
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
@@ -116,6 +119,9 @@ Using a rebase merge strategy for this repository
 Setting git editor for {repository}...
 Setting contents of 'SVN_LOG_EDITOR' as editor
 Set git editor to 'SVN_LOG_EDITOR' for this repository
+Fetching 1 remote...
+    Fetching origin...
+Fetched 1 remote!
 '''.format(repository=self.path),
         )
 
@@ -160,7 +166,9 @@ a pull request branch? ([when-user-owned]/disabled/always/never):
 Pick a commit message editor for this repository:
     {}
 : 
-Create a private fork of 'WebKit/WebKit' named 'WebKit' belonging to 'username' ([Yes]/No): 
+Create a private fork of 'WebKit/WebKit' named 'WebKit' belonging to 'username'
+For detailed information about forking, please see: https://github.com/WebKit/WebKit/wiki/Git-Config#forking
+Press Enter to continue (Ctrl+C to exit)
 Setup succeeded!
 '''.format('\n    '.join([
             '{}) {}'.format(
@@ -190,7 +198,10 @@ Created a private fork of 'WebKit' belonging to 'username'!
 Enabled secret scanning on https://github.example.com/username/WebKit!
 Adding forked remote as 'fork'...
 Added remote 'fork'
-Fetching 'fork'
+Fetching 2 remotes...
+    Fetching fork...
+    Fetching origin...
+Fetched 2 remotes!
 '''.format(repository=self.path),
         )
 

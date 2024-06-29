@@ -51,6 +51,48 @@ inline static float endPaddingQuirkValue(const RenderBlockFlow& flow)
     return endPadding;
 }
 
+static std::tuple<float, float> glyphOverflowInInlineDirection(size_t firstTextBoxIndex, size_t lastTextBoxIndex, const InlineDisplay::Boxes& boxes, const FloatRect& inkOverflowRect, bool isLeftToRightDirection)
+{
+    // FIXME: This should be on the text box level and taking all characters into account (maybe consider utilizing the measuring pass if turns out to be a perf hit)
+    if (firstTextBoxIndex >= boxes.size() || lastTextBoxIndex >= boxes.size()) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    auto bounds = [&](auto& textBox, bool isLeading) {
+        auto textContent = textBox.text().renderedContent();
+        if (!textContent.length()) {
+            ASSERT_NOT_REACHED();
+            return FloatRect { };
+        }
+        auto character = isLeading ? textContent[0] : textContent[textContent.length() - 1];
+        auto& fontCascade = textBox.style().fontCascade();
+        auto glyphData = fontCascade.glyphDataForCharacter(character, !isLeftToRightDirection);
+        return (glyphData.font ? *glyphData.font : fontCascade.primaryFont()).boundsForGlyph(glyphData.glyph);
+    };
+
+    auto leadingOverflow = [&] {
+        auto& firstTextBox = boxes[firstTextBoxIndex];
+        ASSERT(firstTextBox.isText());
+        if (downcast<Layout::InlineTextBox>(firstTextBox.layoutBox()).canUseSimpleFontCodePath())
+            return 0.f;
+        if (auto boundsX = bounds(firstTextBox, true).x(); boundsX < 0)
+            return std::max(0.f, inkOverflowRect.x() - (firstTextBox.left() + boundsX));
+        return 0.f;
+    };
+
+    auto trailingOverflow = [&] {
+        auto& lastTextBox = boxes[lastTextBoxIndex];
+        ASSERT(lastTextBox.isText());
+        if (downcast<Layout::InlineTextBox>(lastTextBox.layoutBox()).canUseSimpleFontCodePath())
+            return 0.f;
+        if (auto boundsMaxX = bounds(lastTextBox, false).maxX(); boundsMaxX > lastTextBox.width())
+            return std::max(0.f, (lastTextBox.left() + boundsMaxX) - inkOverflowRect.maxX());
+        return 0.f;
+    };
+    return { leadingOverflow(), trailingOverflow() };
+}
+
 InlineContentBuilder::InlineContentBuilder(const RenderBlockFlow& blockFlow, BoxTree& boxTree)
     : m_blockFlow(blockFlow)
     , m_boxTree(boxTree)
@@ -225,6 +267,8 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
         // Visual overflow propagation is slightly different from ink overflow when it comes to renderers with self painting layers.
         // -and for now we consult atomic renderers for such visual overflow which is not how we are supposed to do in LFC.
         // (visual overflow is computed during their ::layout() call which we issue right before running inline layout in RenderBlockFlow::layoutModernLines)
+        auto firstTextBoxIndex = std::optional<size_t> { };
+        auto lastTextBoxIndex = std::optional<size_t> { };
         for (; boxIndex < boxes.size() && boxes[boxIndex].lineIndex() == lineIndex; ++boxIndex) {
             auto& box = boxes[boxIndex];
             if (box.isRootInlineBox() || box.isEllipsis() || box.isLineBreak())
@@ -232,6 +276,10 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
 
             if (box.isText()) {
                 inkOverflowRect.unite(box.inkOverflow());
+                if (box.isVisible() && box.text().renderedContent().length()) {
+                    firstTextBoxIndex = firstTextBoxIndex.value_or(boxIndex);
+                    lastTextBoxIndex = boxIndex;
+                }
                 continue;
             }
 
@@ -252,6 +300,11 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
                 if (!downcast<RenderElement>(*box.layoutBox().rendererForIntegration()).hasSelfPaintingLayer())
                     inkOverflowRect.unite(box.inkOverflow());
             }
+        }
+
+        if (firstTextBoxIndex && lastTextBoxIndex) {
+            auto [leadingOverflow, trailingOverflow] = glyphOverflowInInlineDirection(*firstTextBoxIndex, *lastTextBoxIndex, boxes, inkOverflowRect, line.isLeftToRightInlineDirection());
+            inkOverflowRect.inflate(leadingOverflow, { }, trailingOverflow, { });
         }
 
         line.setScrollableOverflow(scrollableOverflowRect);

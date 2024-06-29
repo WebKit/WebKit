@@ -18,9 +18,16 @@
 #include "api/task_queue/task_queue_factory.h"
 #include "modules/rtp_rtcp/source/rtp_descriptor_authentication.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace {
+
+// Using a reasonable default of 10ms for the retransmission delay for frames
+// not coming from this sender's encoder. This is usually taken from an
+// estimate of the RTT of the link,so 10ms should be a reasonable estimate for
+// frames being re-transmitted to a peer, probably on the same network.
+const TimeDelta kDefaultRetransmissionsTime = TimeDelta::Millis(10);
 
 class TransformableVideoSenderFrame : public TransformableVideoFrameInterface {
  public:
@@ -147,6 +154,17 @@ bool RTPSenderVideoFrameTransformerDelegate::TransformFrame(
     const EncodedImage& encoded_image,
     RTPVideoHeader video_header,
     TimeDelta expected_retransmission_time) {
+  {
+    MutexLock lock(&sender_lock_);
+    if (short_circuit_) {
+      sender_->SendVideo(payload_type, codec_type, rtp_timestamp,
+                         encoded_image.CaptureTime(),
+                         *encoded_image.GetEncodedData(), encoded_image.size(),
+                         video_header, expected_retransmission_time,
+                         /*csrcs=*/{});
+      return true;
+    }
+  }
   frame_transformer_->Transform(std::make_unique<TransformableVideoSenderFrame>(
       encoded_image, video_header, payload_type, codec_type, rtp_timestamp,
       expected_retransmission_time, ssrc_,
@@ -167,6 +185,11 @@ void RTPSenderVideoFrameTransformerDelegate::OnTransformedFrame(
         RTC_DCHECK_RUN_ON(delegate->transformation_queue_.get());
         delegate->SendVideo(std::move(frame));
       });
+}
+
+void RTPSenderVideoFrameTransformerDelegate::StartShortCircuiting() {
+  MutexLock lock(&sender_lock_);
+  short_circuit_ = true;
 }
 
 void RTPSenderVideoFrameTransformerDelegate::SendVideo(
@@ -192,15 +215,17 @@ void RTPSenderVideoFrameTransformerDelegate::SendVideo(
     auto* transformed_video_frame =
         static_cast<TransformableVideoFrameInterface*>(transformed_frame.get());
     VideoFrameMetadata metadata = transformed_video_frame->Metadata();
-    sender_->SendVideo(
-        transformed_video_frame->GetPayloadType(), metadata.GetCodec(),
-        transformed_video_frame->GetTimestamp(),
-        /*capture_time=*/Timestamp::MinusInfinity(),
-        transformed_video_frame->GetData(),
-        transformed_video_frame->GetData().size(),
-        RTPVideoHeader::FromMetadata(metadata),
-        /*expected_retransmission_time=*/TimeDelta::PlusInfinity(),
-        metadata.GetCsrcs());
+    // TODO(bugs.webrtc.org/14708): Use an actual RTT estimate for the
+    // retransmission time instead of a const default, in the same way as a
+    // locally encoded frame.
+    sender_->SendVideo(transformed_video_frame->GetPayloadType(),
+                       metadata.GetCodec(),
+                       transformed_video_frame->GetTimestamp(),
+                       /*capture_time=*/Timestamp::MinusInfinity(),
+                       transformed_video_frame->GetData(),
+                       transformed_video_frame->GetData().size(),
+                       RTPVideoHeader::FromMetadata(metadata),
+                       kDefaultRetransmissionsTime, metadata.GetCsrcs());
   }
 }
 
@@ -237,13 +262,14 @@ std::unique_ptr<TransformableVideoFrameInterface> CloneSenderVideoFrame(
                                  ? VideoFrameType::kVideoFrameKey
                                  : VideoFrameType::kVideoFrameDelta;
   // TODO(bugs.webrtc.org/14708): Fill in other EncodedImage parameters
-
+  // TODO(bugs.webrtc.org/14708): Use an actual RTT estimate for the
+  // retransmission time instead of a const default, in the same way as a
+  // locally encoded frame.
   VideoFrameMetadata metadata = original->Metadata();
   RTPVideoHeader new_header = RTPVideoHeader::FromMetadata(metadata);
   return std::make_unique<TransformableVideoSenderFrame>(
       encoded_image, new_header, original->GetPayloadType(), new_header.codec,
-      original->GetTimestamp(),
-      /*expected_retransmission_time=*/TimeDelta::PlusInfinity(),
+      original->GetTimestamp(), kDefaultRetransmissionsTime,
       original->GetSsrc(), metadata.GetCsrcs());
 }
 

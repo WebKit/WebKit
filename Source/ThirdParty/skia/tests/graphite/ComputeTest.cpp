@@ -60,8 +60,11 @@ sk_sp<Buffer> sync_buffer_to_cpu(Recorder* recorder, const Buffer* buffer) {
     }
 
     // The backend requires a transfer buffer for CPU read-back
-    auto xferBuffer = recorder->priv().resourceProvider()->findOrCreateBuffer(
-            buffer->size(), BufferType::kXferGpuToCpu, AccessPattern::kHostVisible);
+    auto xferBuffer =
+            recorder->priv().resourceProvider()->findOrCreateBuffer(buffer->size(),
+                                                                    BufferType::kXferGpuToCpu,
+                                                                    AccessPattern::kHostVisible,
+                                                                    "ComputeTest_TransferToCpu");
     SkASSERT(xferBuffer);
 
     recorder->priv().add(CopyBufferToBufferTask::Make(buffer,
@@ -934,12 +937,15 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_StorageTextureReadAndWrite
         }
     }
 
+    auto texInfo = context->priv().caps()->getDefaultSampledTextureInfo(kRGBA_8888_SkColorType,
+                                                                        skgpu::Mipmapped::kNo,
+                                                                        skgpu::Protected::kNo,
+                                                                        skgpu::Renderable::kNo);
     sk_sp<TextureProxy> srcProxy = TextureProxy::Make(context->priv().caps(),
+                                                      recorder->priv().resourceProvider(),
                                                       {kDim, kDim},
-                                                      kRGBA_8888_SkColorType,
-                                                      skgpu::Mipmapped::kNo,
-                                                      skgpu::Protected::kNo,
-                                                      skgpu::Renderable::kNo,
+                                                      texInfo,
+                                                      "ComputeTestSrcProxy",
                                                       skgpu::Budgeted::kNo);
     MipLevel mipLevel;
     mipLevel.fPixels = srcPixels.addr();
@@ -1597,7 +1603,7 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_AtomicOperationsTest,
             map_buffer(context, testContext, buffer.get(), info.fOffset))[0];
     REPORTER_ASSERT(reporter,
                     result == kExpectedCount,
-                    "expected '%d', found '%d'",
+                    "expected '%u', found '%u'",
                     kExpectedCount,
                     result);
 }
@@ -1741,12 +1747,12 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_AtomicOperationsOverArrayA
     const uint32_t secondHalfCount = ssboData[1];
     REPORTER_ASSERT(reporter,
                     firstHalfCount == kExpectedCount,
-                    "expected '%d', found '%d'",
+                    "expected '%u', found '%u'",
                     kExpectedCount,
                     firstHalfCount);
     REPORTER_ASSERT(reporter,
                     secondHalfCount == kExpectedCount,
-                    "expected '%d', found '%d'",
+                    "expected '%u', found '%u'",
                     kExpectedCount,
                     secondHalfCount);
 }
@@ -2258,7 +2264,7 @@ DEF_GRAPHITE_TEST_FOR_DAWN_AND_METAL_CONTEXTS(Compute_IndirectDispatch,
             map_buffer(context, testContext, buffer.get(), info.fOffset))[0];
     REPORTER_ASSERT(reporter,
                     result == kExpectedCount,
-                    "expected '%d', found '%d'",
+                    "expected '%u', found '%u'",
                     kExpectedCount,
                     result);
 }
@@ -2381,7 +2387,7 @@ DEF_GRAPHITE_TEST_FOR_METAL_CONTEXT(Compute_NativeShaderSourceMetal,
             map_buffer(context, testContext, buffer.get(), info.fOffset))[0];
     REPORTER_ASSERT(reporter,
                     result == kExpectedCount,
-                    "expected '%d', found '%d'",
+                    "expected '%u', found '%u'",
                     kExpectedCount,
                     result);
 }
@@ -2511,7 +2517,7 @@ DEF_GRAPHITE_TEST_FOR_METAL_CONTEXT(Compute_WorkgroupBufferDescMetal,
             map_buffer(context, testContext, buffer.get(), info.fOffset))[0];
     REPORTER_ASSERT(reporter,
                     result == kExpectedCount,
-                    "expected '%d', found '%d'",
+                    "expected '%u', found '%u'",
                     kExpectedCount,
                     result);
 }
@@ -2634,7 +2640,7 @@ DEF_GRAPHITE_TEST_FOR_DAWN_CONTEXT(Compute_NativeShaderSourceWGSL, reporter, con
             map_buffer(context, testContext, buffer.get(), info.fOffset))[0];
     REPORTER_ASSERT(reporter,
                     result == kExpectedCount,
-                    "expected '%d', found '%d'",
+                    "expected '%u', found '%u'",
                     kExpectedCount,
                     result);
 }

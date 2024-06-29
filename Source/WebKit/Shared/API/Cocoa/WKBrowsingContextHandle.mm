@@ -34,7 +34,7 @@
 
 - (id)_initWithPageProxy:(NakedRef<WebKit::WebPageProxy>)page
 {
-    return [self _initWithPageProxyID:page->identifier() andWebPageID:page->webPageID()];
+    return [self _initWithPageProxyID:page->identifier() andWebPageID:page->webPageIDInMainFrameProcess()];
 }
 
 - (id)_initWithPage:(NakedRef<WebKit::WebPage>)page

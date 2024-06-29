@@ -108,7 +108,7 @@ TEST(H265ProfileTierLevel, TestStringToTier) {
 
 TEST(H265ProfileTierLevel, TestParseSdpProfileTierLevelAllEmpty) {
   const absl::optional<H265ProfileTierLevel> profile_tier_level =
-      ParseSdpForH265ProfileTierLevel(SdpVideoFormat::Parameters());
+      ParseSdpForH265ProfileTierLevel(CodecParameterMap());
   EXPECT_TRUE(profile_tier_level);
   EXPECT_EQ(H265Profile::kProfileMain, profile_tier_level->profile);
   EXPECT_EQ(H265Level::kLevel3_1, profile_tier_level->level);
@@ -116,7 +116,7 @@ TEST(H265ProfileTierLevel, TestParseSdpProfileTierLevelAllEmpty) {
 }
 
 TEST(H265ProfileTierLevel, TestParseSdpProfileTierLevelPartialEmpty) {
-  SdpVideoFormat::Parameters params;
+  CodecParameterMap params;
   params["profile-id"] = "1";
   params["tier-flag"] = "0";
   absl::optional<H265ProfileTierLevel> profile_tier_level =
@@ -144,7 +144,7 @@ TEST(H265ProfileTierLevel, TestParseSdpProfileTierLevelPartialEmpty) {
 }
 
 TEST(H265ProfileTierLevel, TestParseSdpProfileTierLevelInvalid) {
-  SdpVideoFormat::Parameters params;
+  CodecParameterMap params;
 
   // Invalid profile-tier-level combination.
   params["profile-id"] = "1";
@@ -170,7 +170,7 @@ TEST(H265ProfileTierLevel, TestParseSdpProfileTierLevelInvalid) {
 }
 
 TEST(H265ProfileTierLevel, TestToStringRoundTrip) {
-  SdpVideoFormat::Parameters params;
+  CodecParameterMap params;
   params["profile-id"] = "1";
   params["tier-flag"] = "0";
   params["level-id"] = "93";
@@ -193,8 +193,8 @@ TEST(H265ProfileTierLevel, TestToStringRoundTrip) {
 }
 
 TEST(H265ProfileTierLevel, TestProfileTierLevelCompare) {
-  SdpVideoFormat::Parameters params1;
-  SdpVideoFormat::Parameters params2;
+  CodecParameterMap params1;
+  CodecParameterMap params2;
 
   // None of profile-id/tier-flag/level-id is specified,
   EXPECT_TRUE(H265IsSameProfileTierLevel(params1, params2));
@@ -235,7 +235,7 @@ TEST(H265ProfileTierLevel, TestProfileTierLevelCompare) {
   params2["tier-flag"] = "1";
   EXPECT_FALSE(H265IsSameProfileTierLevel(params1, params2));
 
-  // One of the SdpVideoFormat::Parameters is invalid.
+  // One of the CodecParameterMap is invalid.
   params1.clear();
   params2.clear();
   params1["profile-id"] = "1";
@@ -243,6 +243,55 @@ TEST(H265ProfileTierLevel, TestProfileTierLevelCompare) {
   params1["tier-flag"] = "0";
   params2["tier-flag"] = "4";
   EXPECT_FALSE(H265IsSameProfileTierLevel(params1, params2));
+}
+
+TEST(H265ProfileTierLevel, TestGetSupportedH265Level) {
+  // Test with 720p at 30fps
+  Resolution r{.width = 1280, .height = 720};
+  EXPECT_EQ(GetSupportedH265Level(r, 30).value_or(H265Level::kLevel1),
+            H265Level::kLevel3);
+
+  // Test with QCIF at 15fps
+  r.width = 176;
+  r.height = 144;
+  EXPECT_EQ(GetSupportedH265Level(r, 15).value_or(H265Level::kLevel2),
+            H265Level::kLevel1);
+
+  // Test with 1080p at 30fps
+  r.width = 1920;
+  r.height = 1080;
+  EXPECT_EQ(GetSupportedH265Level(r, 30).value_or(H265Level::kLevel1),
+            H265Level::kLevel3_1);
+
+  // Test with 1080p at 60fps
+  EXPECT_EQ(GetSupportedH265Level(r, 60).value_or(H265Level::kLevel1),
+            H265Level::kLevel3_1);
+
+  // Test with 4K at 30fps
+  r.width = 3840;
+  r.height = 2160;
+  EXPECT_EQ(GetSupportedH265Level(r, 30).value_or(H265Level::kLevel1),
+            H265Level::kLevel4_1);
+
+  // Test with 4K at 60fps
+  EXPECT_EQ(GetSupportedH265Level(r, 60).value_or(H265Level::kLevel1),
+            H265Level::kLevel4_1);
+
+  // Test with 8K at 30fps
+  r.width = 8192;
+  r.height = 4320;
+  EXPECT_EQ(GetSupportedH265Level(r, 30).value_or(H265Level::kLevel1),
+            H265Level::kLevel6);
+
+  // Test with 64x64 at 30fps
+  r.width = 64;
+  r.height = 64;
+  EXPECT_EQ(GetSupportedH265Level(r, 30), absl::nullopt);
+
+  // Test with extremly large width or height at 15fps
+  r.width = 16928;
+  r.height = 64;
+  EXPECT_EQ(GetSupportedH265Level(r, 15), absl::nullopt);
 }
 
 }  // namespace webrtc

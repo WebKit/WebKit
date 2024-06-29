@@ -216,6 +216,7 @@ private:
 
     void SetEncoderToPacketizerFrameTransformer(rtc::scoped_refptr<webrtc::FrameTransformerInterface>) final { }
     void SetEncoderSelector(std::unique_ptr<webrtc::VideoEncoderFactory::EncoderSelectorInterface>) final { }
+    webrtc::RTCError GenerateKeyFrame(const std::vector<std::string>&) final { return  { }; }
 
 private:
     rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> m_track;
@@ -315,6 +316,14 @@ private:
     void RemoveStream(webrtc::MediaStreamInterface*) final { }
 
     std::vector<rtc::scoped_refptr<webrtc::RtpTransceiverInterface>> GetTransceivers() const final;
+
+    bool ShouldFireNegotiationNeededEvent(uint32_t) final { return false; }
+    void ReconfigureBandwidthEstimation(const webrtc::BandwidthEstimationSettings&) final { }
+    void SetAudioPlayout(bool) final { }
+    void SetAudioRecording(bool) final { }
+    absl::optional<bool> can_trickle_ice_candidates() final { return { }; }
+    void AddAdaptationResource(rtc::scoped_refptr<webrtc::Resource>) final { }
+    rtc::Thread* signaling_thread() const final { return nullptr; }
 
 protected:
     void SetRemoteDescription(webrtc::SetSessionDescriptionObserver*, webrtc::SessionDescriptionInterface*) final { ASSERT_NOT_REACHED(); }

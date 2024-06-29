@@ -113,9 +113,7 @@ void Debugger::TemporarilyDisableExceptionBreakpoints::restore()
 }
 
 
-Debugger::ProfilingClient::~ProfilingClient()
-{
-}
+Debugger::ProfilingClient::~ProfilingClient() = default;
 
 Debugger::Debugger(VM& vm)
     : m_vm(vm)
@@ -155,6 +153,7 @@ void Debugger::attach(JSGlobalObject* globalObject)
     // Call `sourceParsed` after iterating because it will execute JavaScript in Web Inspector.
     HashSet<RefPtr<SourceProvider>> sourceProviders;
     {
+        JSLockHolder locker(m_vm);
         HeapIterationScope iterationScope(m_vm.heap);
         m_vm.heap.objectSpace().forEachLiveCell(iterationScope, [&] (HeapCell* heapCell, HeapCell::Kind kind) {
             if (isJSCellKind(kind)) {

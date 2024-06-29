@@ -117,6 +117,8 @@ public:
     void updatePreferences(WebProcessProxy&);
     void updateScreenPropertiesIfNeeded();
 
+    void childConnectionDidBecomeUnresponsive();
+
     void terminateForTesting();
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
@@ -131,6 +133,8 @@ public:
 
 private:
     explicit GPUProcessProxy();
+
+    Type type() const final { return Type::GraphicsProcessing; }
 
     void addSession(const WebsiteDataStore&);
 

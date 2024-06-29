@@ -215,8 +215,10 @@ void ModelElementController::modelElementLoadRemotePreview(String uuid, URL file
     }
 
     auto preview = previewForUUID(uuid);
-    if (!preview)
+    if (!preview) {
         completionHandler(WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, { }, "Could not find a preview for the provided UUID"_s });
+        return;
+    }
 
     auto handler = CompletionHandlerWithFinalizer<void(std::optional<WebCore::ResourceError>&&)>(WTFMove(completionHandler), [](Function<void(std::optional<WebCore::ResourceError>&&)>& completionHandler) {
         completionHandler(WebCore::ResourceError { WebCore::ResourceError::Type::General });

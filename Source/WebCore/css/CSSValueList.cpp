@@ -218,10 +218,7 @@ CSSValueListBuilder CSSValueContainingVector::copyValues() const
 
 void CSSValueContainingVector::serializeItems(StringBuilder& builder) const
 {
-    auto prefix = ""_s;
-    auto separator = separatorCSSText();
-    for (auto& value : *this)
-        builder.append(std::exchange(prefix, separator), value.cssText());
+    builder.append(interleave(*this, [](auto& value) { return value.cssText(); }, separatorCSSText()));
 }
 
 String CSSValueContainingVector::serializeItems() const

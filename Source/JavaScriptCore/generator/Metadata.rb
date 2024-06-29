@@ -44,7 +44,7 @@ class Metadata
 
         def generateOffsetOfFunctions(prefix, fieldNames)
             fieldNames.map do |fieldName|
-                "#{prefix}static ptrdiff_t offsetOf#{fieldName[0].upcase}#{fieldName[1..-1]}() { return OBJECT_OFFSETOF(Metadata, m_#{fieldName}); }"
+                "#{prefix}static constexpr ptrdiff_t offsetOf#{fieldName[0].upcase}#{fieldName[1..-1]}() { return OBJECT_OFFSETOF(Metadata, m_#{fieldName}); }"
             end.join("\n")
         end
 

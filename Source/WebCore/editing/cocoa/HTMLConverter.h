@@ -34,7 +34,12 @@ WEBCORE_EXPORT AttributedString attributedString(const SimpleRange&);
 // such as tables, and doesn't produce document attributes, but it does use TextIterator so
 // text offsets will exactly match plain text and other editing machinery.
 // FIXME: This function and the one above should be merged.
-enum class IncludeImages : bool { No, Yes };
-WEBCORE_EXPORT AttributedString editingAttributedString(const SimpleRange&, IncludeImages = IncludeImages::Yes);
+
+enum class IncludedElement : uint8_t {
+    Images = 1 << 0,
+    Attachments = 1 << 1,
+};
+
+WEBCORE_EXPORT AttributedString editingAttributedString(const SimpleRange&, OptionSet<IncludedElement> = { IncludedElement::Images });
 
 } // namespace WebCore

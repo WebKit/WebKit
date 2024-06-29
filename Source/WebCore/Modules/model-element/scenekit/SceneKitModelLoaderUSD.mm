@@ -104,7 +104,7 @@ static RetainPtr<NSURL> writeToTemporaryFile(WebCore::Model& modelSource)
     auto [filePath, fileHandle] = FileSystem::openTemporaryFile("ModelFile"_s, ".usdz"_s);
     ASSERT(FileSystem::isHandleValid(fileHandle));
 
-    size_t byteCount = FileSystem::writeToFile(fileHandle, modelSource.data()->makeContiguous()->data(), modelSource.data()->size());
+    size_t byteCount = FileSystem::writeToFile(fileHandle, modelSource.data()->makeContiguous()->span());
     ASSERT_UNUSED(byteCount, byteCount == modelSource.data()->size());
     FileSystem::closeFile(fileHandle);
 

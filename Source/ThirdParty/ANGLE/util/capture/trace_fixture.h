@@ -27,7 +27,7 @@
 #    include <unordered_map>
 #    include <vector>
 
-// TODO(jmadill): Consolidate. http://anglebug.com/7753
+// TODO(jmadill): Consolidate. http://anglebug.com/42266223
 using BlockIndexesMap = std::unordered_map<GLuint, std::unordered_map<GLuint, GLuint>>;
 extern BlockIndexesMap gUniformBlockIndexes;
 using BufferHandleMap = std::unordered_map<GLuint, void *>;
@@ -99,7 +99,7 @@ extern GLuint *gTextureMap;
 extern GLuint *gTransformFeedbackMap;
 extern GLuint *gVertexArrayMap;
 
-// TODO(jmadill): Consolidate. http://anglebug.com/7753
+// TODO(jmadill): Consolidate. http://anglebug.com/42266223
 extern GLeglImageOES *gEGLImageMap2;
 extern EGLSurface *gSurfaceMap2;
 extern EGLContext *gContextMap2;

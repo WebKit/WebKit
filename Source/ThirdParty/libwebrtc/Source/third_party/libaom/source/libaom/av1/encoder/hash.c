@@ -10,6 +10,7 @@
  */
 
 #include "av1/encoder/hash.h"
+#include "config/av1_rtcd.h"
 
 static void crc_calculator_process_data(CRC_CALCULATOR *p_crc_calculator,
                                         uint8_t *pData, uint32_t dataLength) {

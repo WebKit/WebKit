@@ -105,8 +105,11 @@ protected:
 
     void didFinishInsertingNode();
     void childrenChanged(const ContainerNode::ChildChange&);
+    void finishParsingChildren();
     void handleSourceAttribute(const String& sourceURL);
     void handleAsyncAttribute();
+
+    void setTrustedScriptText(const String&);
 
 private:
     void executeScriptAndDispatchEvent(LoadableScript&);
@@ -141,6 +144,7 @@ private:
     bool m_willExecuteWhenDocumentFinishedParsing : 1 { false };
     bool m_forceAsync : 1;
     bool m_willExecuteInOrder : 1 { false };
+    bool m_childrenChangedByAPI : 1 { false };
     ScriptType m_scriptType : bitWidthOfScriptType { ScriptType::Classic };
     String m_characterEncoding;
     String m_fallbackCharacterEncoding;
@@ -151,6 +155,9 @@ private:
 
     MonotonicTime m_creationTime;
     RefPtr<UserGestureToken> m_userGestureToken;
+
+    // https://w3c.github.io/trusted-types/dist/spec/#slots-with-trusted-values
+    String m_trustedScriptText { emptyString() };
 };
 
 // FIXME: replace with is/downcast<ScriptElement>.

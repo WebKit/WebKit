@@ -39,6 +39,7 @@
 #include "SecurityOrigin.h"
 #include "SharedWorkerObjectConnection.h"
 #include "SharedWorkerProvider.h"
+#include "TrustedType.h"
 #include "WorkerOptions.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <wtf/IsoMallocInlines.h>
@@ -67,15 +68,19 @@ static inline SharedWorkerObjectConnection* mainThreadConnection()
     return SharedWorkerProvider::singleton().sharedWorkerConnection();
 }
 
-ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, String&& scriptURLString, std::optional<std::variant<String, WorkerOptions>>&& maybeOptions)
+ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, std::variant<RefPtr<TrustedScriptURL>, String>&& scriptURLString, std::optional<std::variant<String, WorkerOptions>>&& maybeOptions)
 {
+    auto compliantScriptURLString = trustedTypeCompliantString(document, WTFMove(scriptURLString), "SharedWorker constructor"_s);
+    if (compliantScriptURLString.hasException())
+        return compliantScriptURLString.releaseException();
+
     if (!mainThreadConnection())
         return Exception { ExceptionCode::NotSupportedError, "Shared workers are not supported"_s };
 
     if (!document.hasBrowsingContext())
         return Exception { ExceptionCode::InvalidStateError, "No browsing context"_s };
 
-    auto url = document.completeURL(scriptURLString);
+    auto url = document.completeURL(compliantScriptURLString.releaseReturnValue());
     if (!url.isValid())
         return Exception { ExceptionCode::SyntaxError, "Invalid script URL"_s };
 
@@ -116,7 +121,7 @@ SharedWorker::SharedWorker(Document& document, const SharedWorkerKey& key, Ref<M
     : ActiveDOMObject(&document)
     , m_key(key)
     , m_port(WTFMove(port))
-    , m_identifierForInspector("SharedWorker:" + Inspector::IdentifiersFactory::createIdentifier())
+    , m_identifierForInspector(makeString("SharedWorker:"_s, Inspector::IdentifiersFactory::createIdentifier()))
     , m_blobURLExtension({ m_key.url.protocolIsBlob() ? m_key.url : URL(), document.topOrigin().data() }) // Keep blob URL alive until the worker has finished loading.
 {
     SHARED_WORKER_RELEASE_LOG("SharedWorker:");

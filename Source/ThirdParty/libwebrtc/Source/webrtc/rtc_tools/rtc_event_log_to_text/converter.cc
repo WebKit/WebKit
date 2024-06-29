@@ -231,12 +231,10 @@ bool Convert(std::string inputfile,
                 {IceCandidatePairConfigType::kNumValues, "NUM_VALUES"}};
 
         static const std::map<IceCandidateType, std::string>
-            candidate_type_name{{IceCandidateType::kUnknown, "UNKNOWN"},
-                                {IceCandidateType::kLocal, "LOCAL"},
-                                {IceCandidateType::kStun, "STUN"},
+            candidate_type_name{{IceCandidateType::kHost, "LOCAL"},
+                                {IceCandidateType::kSrflx, "STUN"},
                                 {IceCandidateType::kPrflx, "PRFLX"},
-                                {IceCandidateType::kRelay, "RELAY"},
-                                {IceCandidateType::kNumValues, "NUM_VALUES"}};
+                                {IceCandidateType::kRelay, "RELAY"}};
 
         static const std::map<IceCandidatePairProtocol, std::string>
             protocol_name{{IceCandidatePairProtocol::kUnknown, "UNKNOWN"},
@@ -335,10 +333,11 @@ bool Convert(std::string inputfile,
       fprintf(output, " transmission_offset=%d",
               event.rtp.header.extension.transmissionTimeOffset);
     }
-    if (event.rtp.header.extension.hasAudioLevel) {
+    if (event.rtp.header.extension.audio_level()) {
       fprintf(output, " voice_activity=%d",
-              event.rtp.header.extension.voiceActivity);
-      fprintf(output, " audio_level=%u", event.rtp.header.extension.audioLevel);
+              event.rtp.header.extension.audio_level()->voice_activity());
+      fprintf(output, " audio_level=%u",
+              event.rtp.header.extension.audio_level()->level());
     }
     if (event.rtp.header.extension.hasVideoRotation) {
       fprintf(output, " video_rotation=%d",
@@ -369,10 +368,11 @@ bool Convert(std::string inputfile,
       fprintf(output, " transmission_offset=%d",
               event.rtp.header.extension.transmissionTimeOffset);
     }
-    if (event.rtp.header.extension.hasAudioLevel) {
+    if (event.rtp.header.extension.audio_level()) {
       fprintf(output, " voice_activity=%d",
-              event.rtp.header.extension.voiceActivity);
-      fprintf(output, " audio_level=%u", event.rtp.header.extension.audioLevel);
+              event.rtp.header.extension.audio_level()->voice_activity());
+      fprintf(output, " audio_level=%u",
+              event.rtp.header.extension.audio_level()->level());
     }
     if (event.rtp.header.extension.hasVideoRotation) {
       fprintf(output, " video_rotation=%d",
@@ -430,7 +430,6 @@ bool Convert(std::string inputfile,
         {VideoCodecType::kVideoCodecVP9, "VP9"},
         {VideoCodecType::kVideoCodecAV1, "AV1"},
         {VideoCodecType::kVideoCodecH264, "H264"},
-        {VideoCodecType::kVideoCodecMultiplex, "MULTIPLEX"},
         {VideoCodecType::kVideoCodecH265, "H265"}};
 
     fprintf(output,

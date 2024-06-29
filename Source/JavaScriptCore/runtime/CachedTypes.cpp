@@ -180,7 +180,7 @@ private:
         }
 
         for (const auto& page : m_pages) {
-            int bytesWritten = FileSystem::writeToFile(m_fd, page.buffer(), page.size());
+            int bytesWritten = FileSystem::writeToFile(m_fd, page.span());
             if (bytesWritten == -1) {
                 error = BytecodeCacheError::StandardError(errno);
                 return nullptr;
@@ -225,6 +225,9 @@ private:
 
         uint8_t* buffer() const { return m_buffer.get(); }
         size_t size() const { return static_cast<size_t>(m_offset); }
+
+        std::span<uint8_t> mutableSpan() { return { m_buffer.get(), size() }; }
+        std::span<const uint8_t> span() const { return { m_buffer.get(), size() }; }
 
         bool getOffset(const void* address, ptrdiff_t& result) const
         {
@@ -539,7 +542,7 @@ private:
     }
 };
 
-ptrdiff_t CachedPtrOffsets::offsetOffset()
+constexpr ptrdiff_t CachedPtrOffsets::offsetOffset()
 {
     return OBJECT_OFFSETOF(CachedPtr<void>, m_offset);
 }
@@ -605,7 +608,7 @@ private:
     CachedPtr<T, Source> m_ptr;
 };
 
-ptrdiff_t CachedWriteBarrierOffsets::ptrOffset()
+constexpr ptrdiff_t CachedWriteBarrierOffsets::ptrOffset()
 {
     return OBJECT_OFFSETOF(CachedWriteBarrier<void>, m_ptr);
 }
@@ -1368,8 +1371,9 @@ public:
 
         if (auto* string = jsDynamicCast<JSString*>(cell)) {
             m_type = EncodedType::String;
-            StringImpl* impl = string->tryGetValue().impl();
-            this->allocate<CachedUniquedStringImpl>(encoder)->encode(encoder, *impl);
+            // TODO: This seems wrong? What if this fails.
+            auto str = string->tryGetValue();
+            this->allocate<CachedUniquedStringImpl>(encoder)->encode(encoder, *str.data.impl());
             return;
         }
 
@@ -1924,17 +1928,17 @@ private:
     CachedWriteBarrier<CachedFunctionCodeBlock, UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForConstruct;
 };
 
-ptrdiff_t CachedFunctionExecutableOffsets::codeBlockForCallOffset()
+constexpr ptrdiff_t CachedFunctionExecutableOffsets::codeBlockForCallOffset()
 {
     return OBJECT_OFFSETOF(CachedFunctionExecutable, m_unlinkedCodeBlockForCall);
 }
 
-ptrdiff_t CachedFunctionExecutableOffsets::codeBlockForConstructOffset()
+constexpr ptrdiff_t CachedFunctionExecutableOffsets::codeBlockForConstructOffset()
 {
     return OBJECT_OFFSETOF(CachedFunctionExecutable, m_unlinkedCodeBlockForConstruct);
 }
 
-ptrdiff_t CachedFunctionExecutableOffsets::metadataOffset()
+constexpr ptrdiff_t CachedFunctionExecutableOffsets::metadataOffset()
 {
     return OBJECT_OFFSETOF(CachedFunctionExecutable, m_mutableMetadata);
 }
@@ -2543,10 +2547,7 @@ bool GenericCacheEntry::decode(Decoder& decoder, std::pair<SourceCodeKey, Unlink
         RELEASE_ASSERT_NOT_REACHED();
     }
     RELEASE_ASSERT_NOT_REACHED();
-#if COMPILER(MSVC)
-    // Without this, MSVC will complain that this path does not return a value.
     return false;
-#endif
 }
 
 bool GenericCacheEntry::isStillValid(Decoder& decoder, const SourceCodeKey& key, CachedCodeBlockTag tag) const

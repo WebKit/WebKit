@@ -35,12 +35,6 @@ namespace WebCore {
 class WebGLTexture final : public WebGLObject {
 public:
 
-    enum TextureExtensionFlag {
-        TextureExtensionsDisabled = 0,
-        TextureExtensionFloatLinearEnabled = 1 << 0,
-        TextureExtensionHalfFloatLinearEnabled = 2 << 0
-    };
-
     virtual ~WebGLTexture();
 
     static RefPtr<WebGLTexture> create(WebGLRenderingContextBase&);

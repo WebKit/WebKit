@@ -70,8 +70,7 @@ public:
 
     virtual void writeTexture(
         const ImageCopyTexture& destination,
-        const void* source,
-        size_t byteLength,
+        std::span<const uint8_t> source,
         const ImageDataLayout&,
         const Extent3D& size) = 0;
 
@@ -84,8 +83,7 @@ public:
 
     virtual void writeTexture(
         const ImageCopyTexture& destination,
-        void* source,
-        size_t byteLength,
+        std::span<uint8_t> source,
         const ImageDataLayout&,
         const Extent3D& size) = 0;
 

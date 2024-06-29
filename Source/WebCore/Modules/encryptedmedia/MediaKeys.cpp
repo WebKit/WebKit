@@ -80,7 +80,7 @@ ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(Document& document, M
     // When this method is invoked, the user agent must run the following steps:
     // 1. If this object's supported session types value does not contain sessionType, throw [WebIDL] a NotSupportedError.
     if (!m_supportedSessionTypes.contains(sessionType)) {
-        ERROR_LOG(identifier, "Exception: unsupported sessionType: ", sessionType);
+        ERROR_LOG(identifier, "Exception: unsupported sessionType: "_s, sessionType);
         return Exception(ExceptionCode::NotSupportedError);
     }
 

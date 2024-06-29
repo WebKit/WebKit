@@ -11,7 +11,7 @@
 #include <immintrin.h>
 #include <string.h>
 
-#include "config/aom_dsp_rtcd.h"
+#include "config/av1_rtcd.h"
 
 #include "aom_dsp/x86/convolve.h"
 #include "aom_dsp/x86/convolve_avx2.h"

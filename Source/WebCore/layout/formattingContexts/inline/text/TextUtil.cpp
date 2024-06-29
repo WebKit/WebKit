@@ -360,24 +360,28 @@ bool TextUtil::mayBreakInBetween(const InlineTextItem& previousInlineItem, const
 
 unsigned TextUtil::findNextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition, const RenderStyle& style)
 {
-    auto keepAllWordsForCJK = style.wordBreak() == WordBreak::KeepAll;
+    auto wordBreak = style.wordBreak();
     auto breakNBSP = style.autoWrap() && style.nbspMode() == NBSPMode::Space;
 
-    if (keepAllWordsForCJK) {
+    if (wordBreak == WordBreak::KeepAll) {
         if (breakNBSP)
-            return nextBreakablePosition<LineBreakRules::Special, WordBreakBehavior::KeepAll, NoBreakSpaceBehavior::Break>(lineBreakIteratorFactory, startPosition);
-        return nextBreakablePosition<LineBreakRules::Special, WordBreakBehavior::KeepAll, NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
+            return BreakLines::nextBreakablePosition<BreakLines::LineBreakRules::Special, BreakLines::WordBreakBehavior::KeepAll, BreakLines::NoBreakSpaceBehavior::Break>(lineBreakIteratorFactory, startPosition);
+        return BreakLines::nextBreakablePosition<BreakLines::LineBreakRules::Special, BreakLines::WordBreakBehavior::KeepAll, BreakLines::NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
     }
+
+    if (wordBreak == WordBreak::AutoPhrase)
+        return BreakLines::nextBreakablePosition<BreakLines::LineBreakRules::Special, BreakLines::WordBreakBehavior::AutoPhrase, BreakLines::NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
 
     if (lineBreakIteratorFactory.mode() == TextBreakIterator::LineMode::Behavior::Default) {
         if (breakNBSP)
-            return nextBreakablePosition<LineBreakRules::Normal, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Break>(lineBreakIteratorFactory, startPosition);
-        return nextBreakablePosition<LineBreakRules::Normal, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
+            return BreakLines::nextBreakablePosition<BreakLines::LineBreakRules::Normal, BreakLines::WordBreakBehavior::Normal, BreakLines::NoBreakSpaceBehavior::Break>(lineBreakIteratorFactory, startPosition);
+        return BreakLines::nextBreakablePosition<BreakLines::LineBreakRules::Normal, BreakLines::WordBreakBehavior::Normal, BreakLines::NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
     }
 
     if (breakNBSP)
-        return nextBreakablePosition<LineBreakRules::Special, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Break>(lineBreakIteratorFactory, startPosition);
-    return nextBreakablePosition<LineBreakRules::Special, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
+        return BreakLines::nextBreakablePosition<BreakLines::LineBreakRules::Special, BreakLines::WordBreakBehavior::Normal, BreakLines::NoBreakSpaceBehavior::Break>(lineBreakIteratorFactory, startPosition);
+
+    return BreakLines::nextBreakablePosition<BreakLines::LineBreakRules::Special, BreakLines::WordBreakBehavior::Normal, BreakLines::NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
 }
 
 bool TextUtil::shouldPreserveSpacesAndTabs(const Box& layoutBox)
@@ -483,7 +487,48 @@ bool TextUtil::containsStrongDirectionalityText(StringView text)
     if (text.is8Bit())
         return false;
 
-    if (text.containsOnly<isNotBidiRTL>())
+    if (![&](auto span) ALWAYS_INLINE_LAMBDA {
+        using UnsignedType = std::make_unsigned_t<typename decltype(span)::value_type>;
+        constexpr size_t stride = SIMD::stride<UnsignedType>;
+        if (span.size() >= stride) {
+            auto* cursor = span.data();
+            auto* end = cursor + span.size();
+            constexpr auto c0590 = SIMD::splat<UnsignedType>(0x0590);
+            constexpr auto c2010 = SIMD::splat<UnsignedType>(0x2010);
+            constexpr auto c2029 = SIMD::splat<UnsignedType>(0x2029);
+            constexpr auto c206A = SIMD::splat<UnsignedType>(0x206A);
+            constexpr auto cD7FF = SIMD::splat<UnsignedType>(0xD7FF);
+            constexpr auto cFF00 = SIMD::splat<UnsignedType>(0xFF00);
+            auto maybeBidiRTL = [&](auto* cursor) ALWAYS_INLINE_LAMBDA {
+                auto input = SIMD::load(bitwise_cast<const UnsignedType*>(cursor));
+                // ch < 0x0590
+                auto cond0 = SIMD::lessThan(input, c0590);
+                // General Punctuation such as curly quotes.
+                // ch >= 0x2010 && ch <= 0x2029
+                auto cond1 = SIMD::bitAnd(SIMD::greaterThanOrEqual(input, c2010), SIMD::lessThanOrEqual(input, c2029));
+                // CJK etc., up to Surrogate Pairs.
+                // ch >= 0x206A && ch <= 0xD7FF
+                auto cond2 = SIMD::bitAnd(SIMD::greaterThanOrEqual(input, c206A), SIMD::lessThanOrEqual(input, cD7FF));
+                // Common in CJK.
+                // ch >= 0xFF00 && ch <= 0xFFFF
+                auto cond3 = SIMD::greaterThanOrEqual(input, cFF00);
+                return SIMD::bitNot(SIMD::bitOr(cond0, cond1, cond2, cond3));
+            };
+
+            auto result = SIMD::splat<UnsignedType>(0);
+            for (; cursor + (stride - 1) < end; cursor += stride)
+                result = SIMD::bitOr(result, maybeBidiRTL(cursor));
+            if (cursor < end)
+                result = SIMD::bitOr(result, maybeBidiRTL(end - stride));
+            return SIMD::isNonZero(result);
+        }
+
+        for (auto character : span) {
+            if (mayBeBidiRTL(character))
+                return true;
+        }
+        return false;
+    }(text.span16()))
         return false;
 
     for (char32_t character : text.codePoints()) {
@@ -638,11 +683,9 @@ bool TextUtil::canUseSimplifiedTextMeasuring(StringView textContent, const FontC
 
 bool TextUtil::hasPositionDependentContentWidth(StringView textContent)
 {
-    for (char32_t character : StringView(textContent).codePoints()) {
-        if (character == tabCharacter)
-            return true;
-    }
-    return false;
+    if (textContent.is8Bit())
+        return charactersContain<LChar, tabCharacter>(textContent.span8());
+    return charactersContain<UChar, tabCharacter>(textContent.span16());
 }
 
 }

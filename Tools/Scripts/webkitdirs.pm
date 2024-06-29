@@ -45,7 +45,7 @@ use File::Path qw(make_path mkpath rmtree);
 use File::Spec;
 use File::Temp qw(tempdir);
 use File::stat;
-use List::Util;
+use List::Util qw(first);
 use POSIX;
 use Time::HiRes qw(usleep);
 use Text::ParseWords;
@@ -72,7 +72,6 @@ BEGIN {
        &XcodeStaticAnalyzerOption
        &appDisplayNameFromBundle
        &appendToEnvironmentVariableList
-       &archCommandLineArgumentsForRestrictedEnvironmentVariables
        &architecture
        &architecturesForProducts
        &argumentsForConfiguration
@@ -172,7 +171,6 @@ BEGIN {
        &runMacWebKitApp
        &runMiniBrowser
        &runSafari
-       &runSvnUpdateAndResolveChangeLogs
        &runWebKitTestRunner
        &safariPath
        &sdkDirectory
@@ -581,6 +579,17 @@ sub determineArchitecture
     $architecture = 'arm64' if $architecture =~ /aarch64/i;
 }
 
+sub xcodeBuildRequestsInRecencyOrder
+{
+    determineBaseProductDir();
+    my @buildRequests = sort { -M $a <=> -M $b } <"$baseProductDir/XCBuildData/*.xcbuilddata/build-request.json">;
+
+    return map {
+        open(my $fh, $_) or warn "Can't open previous build request: $!";
+        return decode_json(join '', <$fh>) if $fh;
+    } @buildRequests;
+}
+
 sub determineXcodeDestination
 {
     return if defined $destination;
@@ -618,16 +627,47 @@ sub determineXcodeDestination
     }
         
     if (!$generic && $xcodeSDKPlatformName =~ /simulator$/) {
-        my $runtime = simulatorRuntime($portName);
-        for my $device (iOSSimulatorDevices()) {
-            if ($device->{runtime} eq $runtime) {
-                $destination .= ',id=' . $device->{UDID};
-                return;
-            }
+        # Two goals:
+        # 1. Find a simulator device to build for, to avoid building multiple architectures.
+        # 2. Try to pick a simulator that's been used before (either by command-line or IDE builds) to avoid
+        #    unnecessary recompilation.
+        #
+        # Changing the targeted simulator between builds breaks incremental building, because it changes
+        # build settings like TARGET_DEVICE_IDENTIFIER.
+        my $prevBuildRequest = first {
+            $_->{parameters}->{activeRunDestination}->{platform} eq $xcodeSDKPlatformName
+        } xcodeBuildRequestsInRecencyOrder();
+        my $prevUDID = $prevBuildRequest->{parameters}->{overrides}->{synthesized}->{table}->{TARGET_DEVICE_IDENTIFIER} if $prevBuildRequest;
+        if ($prevBuildRequest && !$prevUDID) {
+            warn "Can't find UDID in previous $xcodeSDKPlatformName build request, builds may not be incremental.\n";
         }
-        warn "Unable to find a simulator target for $xcodeSDKPlatformName. " .
-            "Building for a generic device, which may build unwanted additional architectures";
-        $generic = 1;
+        
+        # Sort the list of devices to match the ordering in Xcode's UI.
+        my @devices = sort { $a->{name} cmp $b->{name} } iOSSimulatorDevices();
+        my $prevDevice = first { $prevUDID && $_->{UDID} eq $prevUDID } @devices;
+        if ($prevUDID && !$prevDevice) {
+            warn "Simulator with UDID '$prevUDID' not found, falling back to another available simulator. " .
+                "This build may not be incremental.\n";
+        }
+        
+        # If we found the previous device, check that the runtime being built has not changed (e.g. due to a
+        # major SDK update). If it has changed, or if no previous device is available, fall back to the first
+        # eligible device in the list.
+        my $runtime = simulatorRuntime($portName);
+        my $device;
+        if ($prevDevice && $prevDevice->{runtime} eq $runtime) {
+            $device = $prevDevice;
+        } else {
+            $device = first { $_->{runtime} eq $runtime } @devices;
+        }
+        
+        if ($device) {
+            $destination .= ',id=' . $device->{UDID};
+        } else {
+            warn "Unable to find a simulator target for $xcodeSDKPlatformName. " .
+                "Building for a generic device, which may build unwanted additional architectures";
+            $generic = 1;
+        }
     }
     
     $destination = 'generic/' . $destination if $generic;
@@ -730,11 +770,18 @@ sub determineNumberOfCPUs
     if (defined($ENV{NUMBER_OF_PROCESSORS})) {
         $numberOfCPUs = $ENV{NUMBER_OF_PROCESSORS};
     } elsif (isLinux()) {
-        # First try the nproc utility, if it exists. If we get no
-        # results fall back to just interpretting /proc directly.
-        chomp($numberOfCPUs = `nproc --all 2> /dev/null`);
+        use POSIX;
+        $numberOfCPUs = POSIX::sysconf(83); # _SC_NPROCESSORS_ONLN = 83
         if ($numberOfCPUs eq "") {
-            $numberOfCPUs = (grep /processor/, `cat /proc/cpuinfo`);
+            $numberOfCPUs = 0;
+            open CPUINFO, "/proc/cpuinfo";
+            while (<CPUINFO>) {
+                if (/[Pp]rocessor\s/) { $numberOfCPUs++; }
+            }
+            close CPUINFO;
+        }
+        if ($numberOfCPUs == 0) {
+            $numberOfCPUs = 1;
         }
     } elsif (isAnyWindows()) {
         # Assumes cygwin
@@ -804,7 +851,7 @@ sub argumentsForConfiguration()
 sub extractNonMacOSHostConfiguration
 {
     my @args = ();
-    my @extract = ('--device', '--gtk', '--ios', '--platform', '--sdk', '--simulator', '--wincairo', '--tvos', '--watchos', 'SDKROOT', 'ARCHS');
+    my @extract = ('--device', '--gtk', '--ios', '--platform', '--sdk', '--simulator', '--wincairo', '--tvos', '--visionos', '--watchos', 'SDKROOT', 'ARCHS');
     foreach (@{$_[0]}) {
         my $line = $_;
         my $flag = 0;
@@ -917,7 +964,7 @@ sub determineXcodeSDKPlatformName {
     if (checkForArgumentAndRemoveFromARGVGettingValue("--sdk", \$sdk)) {
         $xcodeSDK = lc $sdk;
         $xcodeSDKPlatformName ||= $sdk;
-        $xcodeSDKPlatformName =~ s/\.internal$//;
+        $xcodeSDKPlatformName =~ s/(\d+\.[\d\.]+)?(\.internal)?$//;
         die "Couldn't determine platform name from Xcode SDK" unless isValidXcodeSDKPlatformName($xcodeSDKPlatformName);
         return;
     }
@@ -1519,7 +1566,7 @@ sub builtDylibPathForName
         return "$configurationProductDir/$libraryName.framework/Versions/A/$libraryName";
     }
     if (isWPE()) {
-        return "$configurationProductDir/lib/libWPEWebKit-1.0.so";
+        return "$configurationProductDir/lib/libWPEWebKit-2.0.so";
     }
 
     die "Unsupported platform, can't determine built library locations.\nTry `build-webkit --help` for more information.\n";
@@ -2725,7 +2772,7 @@ sub generateBuildSystemFromCMakeProject
     push @args, "-DLTO_MODE=$ltoMode" if ltoMode();
 
     if (isPlayStation()) {
-        my $toolChainFile = $ENV{'CMAKE_TOOLCHAIN_FILE'} || "Platform/PlayStation";
+        my $toolChainFile = $ENV{'CMAKE_TOOLCHAIN_FILE'} || "Platform/PlayStation5";
         push @args, '-DCMAKE_TOOLCHAIN_FILE=' . $toolChainFile;
     }
 
@@ -3304,15 +3351,10 @@ sub runIOSWebKitApp($)
     die "Not using an iOS SDK."
 }
 
-sub archCommandLineArgumentsForRestrictedEnvironmentVariables()
+sub commandLineArgumentsForRestrictedEnvironmentVariables($)
 {
-    my @arguments = ();
-    foreach my $key (keys(%ENV)) {
-        if ($key =~ /^DYLD_/) {
-            push @arguments, "-e", "$key=$ENV{$key}";
-        }
-    }
-    return @arguments;
+    my $prefix = shift;
+    return map { ($prefix, "$_=$ENV{$_}") } grep { /^DYLD_/ } keys %ENV;
 }
 
 sub runMacWebKitApp($;$)
@@ -3325,10 +3367,10 @@ sub runMacWebKitApp($;$)
     setupMacWebKitEnvironment($productDir);
 
     if (defined($useOpenCommand) && $useOpenCommand == USE_OPEN_COMMAND) {
-        return system("open", "-W", "-a", $appPath, "--args", argumentsForRunAndDebugMacWebKitApp());
+        return system("open", "-W", "-a", $appPath, commandLineArgumentsForRestrictedEnvironmentVariables("--env"), "--args", argumentsForRunAndDebugMacWebKitApp());
     }
     if (architecture()) {
-        return system "arch", "-" . architecture(), archCommandLineArgumentsForRestrictedEnvironmentVariables(), $appPath, argumentsForRunAndDebugMacWebKitApp();
+        return system "arch", "-" . architecture(), commandLineArgumentsForRestrictedEnvironmentVariables("-e"), $appPath, argumentsForRunAndDebugMacWebKitApp();
     }
     return system { $appPath } $appPath, argumentsForRunAndDebugMacWebKitApp();
 }
@@ -3477,30 +3519,6 @@ sub formatBuildTime($)
         return sprintf("%dh:%02dm:%02ds", $buildHours, $buildMins, $buildSecs);
     }
     return sprintf("%02dm:%02ds", $buildMins, $buildSecs);
-}
-
-sub runSvnUpdateAndResolveChangeLogs(@)
-{
-    my @svnOptions = @_;
-    my $openCommand = "svn update " . join(" ", @svnOptions);
-    open my $update, "$openCommand |" or die "cannot execute command $openCommand";
-    my @conflictedChangeLogs;
-    while (my $line = <$update>) {
-        print $line;
-        $line =~ m/^C\s+(.+?)[\r\n]*$/;
-        if ($1) {
-          my $filename = normalizePath($1);
-          push @conflictedChangeLogs, $filename if basename($filename) eq "ChangeLog";
-        }
-    }
-    close $update or die;
-
-    if (@conflictedChangeLogs) {
-        print "Attempting to merge conflicted ChangeLogs.\n";
-        my $resolveChangeLogsPath = File::Spec->catfile(sourceDir(), "Tools", "Scripts", "resolve-ChangeLogs");
-        (system($resolveChangeLogsPath, "--no-warnings", @conflictedChangeLogs) == 0)
-            or die "Could not open resolve-ChangeLogs script: $!.\n";
-    }
 }
 
 sub runGitUpdate()

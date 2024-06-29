@@ -12,11 +12,19 @@ CONSOLE MESSAGE: Refused to load because it does not appear in the object-src di
 CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
 
 abc
 
-
-Harness Error (TIMEOUT), message = null
 
 PASS Trusted Type violation report: creating a forbidden policy.
 PASS Trusted Type violation report: creating a report-only-forbidden policy.
@@ -28,12 +36,12 @@ PASS Trusted Type violation report: assign trusted HTML to html; no report
 PASS Trusted Type violation report: sample for innerHTML assignment
 PASS Trusted Type violation report: sample for text assignment
 PASS Trusted Type violation report: sample for script.src assignment
-TIMEOUT Trusted Type violation report: sample for script innerText assignment Test timed out
-NOTRUN Trusted Type violation report: sample for SVGScriptElement href assignment
-NOTRUN Trusted Type violation report: sample for SVGScriptElement href assignment by setAttribute
-NOTRUN Trusted Type violation report: sample for SVGScriptElement text assignment
-NOTRUN Trusted Type violation report: sample for eval
-NOTRUN Trusted Type violation report: large values should be handled sanely.
-NOTRUN Trusted Type violation report: sample for custom element assignment
-NOTRUN Trusted Type violation report: Worker constructor
+PASS Trusted Type violation report: sample for script innerText assignment
+PASS Trusted Type violation report: sample for SVGScriptElement href assignment
+PASS Trusted Type violation report: sample for SVGScriptElement href assignment by setAttribute
+PASS Trusted Type violation report: sample for SVGScriptElement text assignment
+PASS Trusted Type violation report: sample for eval
+PASS Trusted Type violation report: large values should be handled sanely.
+PASS Trusted Type violation report: sample for custom element assignment
+PASS Trusted Type violation report: Worker constructor
 

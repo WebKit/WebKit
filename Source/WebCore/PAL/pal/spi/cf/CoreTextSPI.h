@@ -159,13 +159,19 @@ CGFloat CTFontGetAccessibilityBoldWeightOfWeight(CGFloat);
 
 extern const CFStringRef kCTFontCSSWeightAttribute;
 extern const CFStringRef kCTFontCSSWidthAttribute;
+extern const CFStringRef kCTFontDescriptorLanguageAttribute;
 extern const CFStringRef kCTFontDescriptorTextStyleAttribute;
-extern const CFStringRef kCTFontUIFontDesignTrait;
+extern const CFStringRef kCTFontGradeTrait;
+extern const CFStringRef kCTFontIgnoreLegibilityWeightAttribute;
+extern const CFStringRef kCTFontSizeCategoryAttribute;
+extern const CFStringRef kCTFontTrackAttribute;
+extern const CFStringRef kCTFontUnscaledTrackingAttribute;
 
 extern const CFStringRef kCTFontUIFontDesignDefault;
-extern const CFStringRef kCTFontUIFontDesignSerif;
 extern const CFStringRef kCTFontUIFontDesignMonospaced;
 extern const CFStringRef kCTFontUIFontDesignRounded;
+extern const CFStringRef kCTFontUIFontDesignSerif;
+extern const CFStringRef kCTFontUIFontDesignTrait;
 
 extern const CFStringRef kCTFontPaletteAttribute;
 extern const CFStringRef kCTFontPaletteColorsAttribute;

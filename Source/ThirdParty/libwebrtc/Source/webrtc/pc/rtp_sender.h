@@ -86,9 +86,7 @@ class RtpSenderInternal : public RtpSenderInterface {
       const RtpParameters& parameters) = 0;
 
   // Additional checks that are specific to the current codec settings
-  virtual RTCError CheckCodecParameters(const RtpParameters& parameters) {
-    return webrtc::RTCError::OK();
-  }
+  virtual RTCError CheckCodecParameters(const RtpParameters& parameters) = 0;
 
   // Returns an ID that changes every time SetTrack() is called, but
   // otherwise remains constant. Used to generate IDs for stats.
@@ -104,8 +102,7 @@ class RtpSenderInternal : public RtpSenderInterface {
 
   // Used by the owning transceiver to inform the sender on the currently
   // selected codecs.
-  virtual void SetCodecPreferences(
-      std::vector<cricket::Codec> codec_preferences) = 0;
+  virtual void SetSendCodecs(std::vector<cricket::Codec> send_codecs) = 0;
 };
 
 // Shared implementation for RtpSenderInternal interface.
@@ -209,7 +206,7 @@ class RtpSenderBase : public RtpSenderInternal, public ObserverInterface {
   // If the specified list is empty, this is a no-op.
   RTCError DisableEncodingLayers(const std::vector<std::string>& rid) override;
 
-  void SetEncoderToPacketizerFrameTransformer(
+  void SetFrameTransformer(
       rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) override;
 
   void SetEncoderSelector(
@@ -223,9 +220,8 @@ class RtpSenderBase : public RtpSenderInternal, public ObserverInterface {
     is_transceiver_stopped_ = true;
   }
 
-  void SetCodecPreferences(
-      std::vector<cricket::Codec> codec_preferences) override {
-    codec_preferences_ = codec_preferences;
+  void SetSendCodecs(std::vector<cricket::Codec> send_codecs) override {
+    send_codecs_ = send_codecs;
   }
 
  protected:
@@ -263,7 +259,7 @@ class RtpSenderBase : public RtpSenderInternal, public ObserverInterface {
 
   std::vector<std::string> stream_ids_;
   RtpParameters init_parameters_;
-  std::vector<cricket::Codec> codec_preferences_;
+  std::vector<cricket::Codec> send_codecs_;
 
   // TODO(tommi): `media_channel_` and several other member variables in this
   // class (ssrc_, stopped_, etc) are accessed from more than one thread without

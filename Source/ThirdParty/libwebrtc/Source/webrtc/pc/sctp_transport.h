@@ -35,8 +35,8 @@ namespace webrtc {
 class SctpTransport : public SctpTransportInterface,
                       public DataChannelTransportInterface {
  public:
-  explicit SctpTransport(
-      std::unique_ptr<cricket::SctpTransportInternal> internal);
+  SctpTransport(std::unique_ptr<cricket::SctpTransportInternal> internal,
+                rtc::scoped_refptr<DtlsTransport> dtls_transport);
 
   // SctpTransportInterface
   rtc::scoped_refptr<DtlsTransportInterface> dtls_transport() const override;
@@ -52,16 +52,18 @@ class SctpTransport : public SctpTransportInterface,
   RTCError CloseChannel(int channel_id) override;
   void SetDataSink(DataChannelSink* sink) override;
   bool IsReadyToSend() const override;
+  size_t buffered_amount(int channel_id) const override;
+  size_t buffered_amount_low_threshold(int channel_id) const override;
+  void SetBufferedAmountLowThreshold(int channel_id, size_t bytes) override;
 
   // Internal functions
   void Clear();
-  void SetDtlsTransport(rtc::scoped_refptr<DtlsTransport>);
   // Initialize the cricket::SctpTransport. This can be called from
   // the signaling thread.
   void Start(int local_port, int remote_port, int max_message_size);
 
   // TODO(https://bugs.webrtc.org/10629): Move functions that need
-  // internal() to be functions on the webrtc::SctpTransport interface,
+  // internal() to be functions on the SctpTransport interface,
   // and make the internal() function private.
   cricket::SctpTransportInternal* internal() {
     RTC_DCHECK_RUN_ON(owner_thread_);

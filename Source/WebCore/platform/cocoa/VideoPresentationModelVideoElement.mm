@@ -80,6 +80,8 @@ void VideoPresentationModelVideoElement::cleanVideoListeners()
         return;
     for (auto& eventName : observedEventNames())
         m_videoElement->removeEventListener(eventName, m_videoListener, false);
+    for (auto& eventName : documentObservedEventNames())
+        m_videoElement->document().removeEventListener(eventName, m_videoListener, false);
 }
 
 void VideoPresentationModelVideoElement::setVideoElement(HTMLVideoElement* videoElement)
@@ -102,6 +104,8 @@ void VideoPresentationModelVideoElement::setVideoElement(HTMLVideoElement* video
         for (auto& eventName : observedEventNames())
             m_videoElement->addEventListener(eventName, m_videoListener, false);
         m_isListening = true;
+        for (auto& eventName : documentObservedEventNames())
+            m_videoElement->document().addEventListener(eventName, m_videoListener, false);
     }
 
     updateForEventName(eventNameAll());
@@ -119,6 +123,9 @@ void VideoPresentationModelVideoElement::updateForEventName(const WTF::AtomStrin
         setHasVideo(m_videoElement);
         setVideoDimensions(m_videoElement ? FloatSize(m_videoElement->videoWidth(), m_videoElement->videoHeight()) : FloatSize());
     }
+
+    if (all || eventName == eventNames().visibilitychangeEvent)
+        documentVisibilityChanged();
 
     if (all
         || eventName == eventNames().loadedmetadataEvent || eventName == eventNames().loadstartEvent) {
@@ -139,6 +146,24 @@ void VideoPresentationModelVideoElement::updateForEventName(const WTF::AtomStrin
             return std::nullopt;
         }());
     }
+}
+
+void VideoPresentationModelVideoElement::documentVisibilityChanged()
+{
+    RefPtr videoElement = m_videoElement;
+
+    if (!videoElement)
+        return;
+
+    bool isDocumentVisible = !videoElement->document().hidden();
+
+    if (isDocumentVisible == m_documentIsVisible)
+        return;
+
+    m_documentIsVisible = isDocumentVisible;
+
+    for (auto& client : copyToVector(m_clients))
+        client->documentVisibilityChanged(m_documentIsVisible);
 }
 
 void VideoPresentationModelVideoElement::willExitFullscreen()
@@ -225,6 +250,13 @@ void VideoPresentationModelVideoElement::setVideoSizeFenced(const FloatSize& siz
     m_videoElement->setVideoFullscreenFrame({ { }, size });
 }
 
+void VideoPresentationModelVideoElement::setVideoFullscreenFrame(FloatRect rect)
+{
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, rect.size());
+    if (RefPtr videoElement = m_videoElement.get())
+        videoElement->setVideoFullscreenFrame(rect);
+}
+
 void VideoPresentationModelVideoElement::setVideoLayerGravity(MediaPlayer::VideoGravity gravity)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, gravity);
@@ -235,6 +267,12 @@ void VideoPresentationModelVideoElement::setVideoLayerGravity(MediaPlayer::Video
 std::span<const AtomString> VideoPresentationModelVideoElement::observedEventNames()
 {
     static NeverDestroyed names = std::array { eventNames().resizeEvent, eventNames().loadstartEvent, eventNames().loadedmetadataEvent };
+    return names.get();
+}
+
+std::span<const AtomString> VideoPresentationModelVideoElement::documentObservedEventNames()
+{
+    static NeverDestroyed names = std::array { eventNames().visibilitychangeEvent };
     return names.get();
 }
 
@@ -339,6 +377,26 @@ void VideoPresentationModelVideoElement::didExitPictureInPicture()
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     for (auto& client : copyToVector(m_clients))
         client->didExitPictureInPicture();
+}
+
+void VideoPresentationModelVideoElement::setRequiresTextTrackRepresentation(bool requiresTextTrackRepresentation)
+{
+    RefPtr videoElement = m_videoElement;
+    if (!videoElement)
+        return;
+
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    videoElement->setRequiresTextTrackRepresentation(requiresTextTrackRepresentation);
+}
+
+void VideoPresentationModelVideoElement::setTextTrackRepresentationBounds(const IntRect& bounds)
+{
+    RefPtr videoElement = m_videoElement;
+    if (!videoElement)
+        return;
+
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, bounds.size());
+    videoElement->setTextTrackRepresentataionBounds(bounds);
 }
 
 #if !RELEASE_LOG_DISABLED

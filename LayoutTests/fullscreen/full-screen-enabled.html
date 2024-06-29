@@ -3,10 +3,12 @@
 <a href="http://dvcs.w3.org/hg/fullscreen/raw-file/tip/Overview.html">Full Screen API</a></div>
 <script src="full-screen-test.js"></script>
 <script>
-    var iframe = document.documentElement.appendChild(document.createElement('iframe'));
+    var iframe = document.createElement('iframe');
     iframe.setAttribute('allowfullscreen', 'true');
-    var iframe2 = document.documentElement.appendChild(document.createElement('iframe'));
+    document.documentElement.appendChild(iframe);
+    var iframe2 = document.createElement('iframe')
     iframe2.setAttribute('allow', "fullscreen 'none'");
+    iframe2 = document.documentElement.appendChild(iframe2);
     testExpected('iframe.contentDocument.webkitFullscreenEnabled', true);
     testExpected('iframe2.contentDocument.webkitFullscreenEnabled', false);
     endTest();

@@ -29,8 +29,8 @@ class ShouldBuildTest(unittest.TestCase):
         (["ChangeLog", "Source/WebCore/ChangeLog", "Source/WebKit/ChangeLog-2011-02-11"], []),
         (["Websites/bugs.webkit.org/foo", "Source/WebCore/bar"], ["*"]),
         (["Websites/bugs.webkit.org/foo"], []),
-        (["Source/JavaScriptCore/JavaScriptCore.xcodeproj/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
-        (["Source/JavaScriptCore/Configurations/Base.xcconfig"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
+        (["Source/JavaScriptCore/JavaScriptCore.xcodeproj/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "visionos-1", "visionos-simulator-1", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
+        (["Source/JavaScriptCore/Configurations/Base.xcconfig"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "visionos-1", "visionos-simulator-1", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
         (["Source/JavaScriptCore/JavaScriptCore.vcproj/foo", "Source/WebKit/win/WebKit2.vcproj", "Source/WebKitLegacy/win/WebKit.sln", "Tools/WebKitTestRunner/Configurations/WebKitTestRunnerCommon.vsprops"], ["win"]),
         (["LayoutTests/platform/mac/foo", "Source/WebCore/bar"], ["*"]),
         (["LayoutTests/foo"], ["*"]),
@@ -44,7 +44,10 @@ class ShouldBuildTest(unittest.TestCase):
         (["LayoutTests/platform/ios-simulator/foo"], ["ios-17", "ios-simulator-17"]),
         (["LayoutTests/platform/ios-simulator-wk1/foo"], ["ios-17", "ios-simulator-17"]),
         (["LayoutTests/platform/ios-simulator-wk2/foo"], ["ios-17", "ios-simulator-17"]),
-        (["LayoutTests/platform/wk2/Skipped"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17"]),
+        (["LayoutTests/platform/visionos-simulator/foo"], ["visionos-1", "visionos-simulator-1"]),
+        (["LayoutTests/platform/visionos-simulator-wk1/foo"], ["visionos-1", "visionos-simulator-1"]),
+        (["LayoutTests/platform/visionos-simulator-wk2/foo"], ["visionos-1", "visionos-simulator-1"]),
+        (["LayoutTests/platform/wk2/Skipped"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "visionos-1", "visionos-simulator-1"]),
         (["LayoutTests/platform/mac-wk2/Skipped"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
         (["LayoutTests/platform/mac-wk1/compositing/tiling/transform-origin-tiled-expected.txt"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
         (["LayoutTests/platform/mac/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "win"]),
@@ -52,19 +55,19 @@ class ShouldBuildTest(unittest.TestCase):
         (["LayoutTests/platform/win-xp/foo"], ["win"]),
         (["LayoutTests/platform/win-wk1/foo"], ["win"]),
         (["LayoutTests/platform/win/foo"], ["win"]),
-        (["LayoutTests/platform/spi/cocoa/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
-        (["LayoutTests/platform/spi/cf/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "win", "ios-17", "ios-simulator-17", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
+        (["LayoutTests/platform/spi/cocoa/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "visionos-1", "visionos-simulator-1", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
+        (["LayoutTests/platform/spi/cf/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "win", "ios-17", "ios-simulator-17", "visionos-1", "visionos-simulator-1", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
         (["Source/WebKitLegacy/mac/WebKit.mac.exp"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
-        (["Source/WebKitLegacy/ios/WebKit.iOS.exp"], ["ios-17", "ios-simulator-17", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
-        (["Source/Dummy/foo.exp"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
-        (["Source/WebCore/ios/foo"], ["ios-17", "ios-simulator-17", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
+        (["Source/WebKitLegacy/ios/WebKit.iOS.exp"], ["ios-17", "ios-simulator-17", "visionos-1", "visionos-simulator-1", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
+        (["Source/Dummy/foo.exp"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "visionos-1", "visionos-simulator-1", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
+        (["Source/WebCore/ios/foo"], ["ios-17", "ios-simulator-17", "visionos-1", "visionos-simulator-1", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
         (["Source/WebCore/mac/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
         (["Source/WebCore/win/foo"], ["win"]),
-        (["Source/WebCore/bridge/objc/objc_class.mm"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
+        (["Source/WebCore/bridge/objc/objc_class.mm"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "visionos-1", "visionos-simulator-1", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
         (["Source/WebCore/platform/wx/wxcode/win/foo"], []),
-        (["Source/WebCore/accessibility/ios/AXObjectCacheIOS.mm"], ["ios-17", "ios-simulator-17", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
+        (["Source/WebCore/accessibility/ios/AXObjectCacheIOS.mm"], ["ios-17", "ios-simulator-17", "visionos-1", "visionos-simulator-1", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
         (["Source/WebCore/rendering/mac/RenderThemeMac.mm", "Source/WebCore/rendering/mac/RenderThemeMac.h"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
-        (["Source/WebCore/rendering/ios/RenderThemeIOS.mm", "Source/WebCore/rendering/ios/RenderThemeIOS.h"], ["ios-17", "ios-simulator-17", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
+        (["Source/WebCore/rendering/ios/RenderThemeIOS.mm", "Source/WebCore/rendering/ios/RenderThemeIOS.h"], ["ios-17", "ios-simulator-17", "visionos-1", "visionos-simulator-1", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
         (["Tools/CISupport/build-webkit-org/public_html/LeaksViewer/LeaksViewer.js"], []),
     ]
 
@@ -72,7 +75,7 @@ class ShouldBuildTest(unittest.TestCase):
         for files, platforms in self._should_build_tests:
             # FIXME: We should test more platforms here once
             # wkbuild._should_file_trigger_build is implemented for them.
-            for platform in ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "win", "ios-17", "ios-simulator-17", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]:
+            for platform in ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "win", "ios-17", "ios-simulator-17", "visionos-1", "visionos-simulator-1", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]:
                 should_build = platform in platforms or "*" in platforms
                 self.assertEqual(wkbuild.should_build(platform, files), should_build, "%s should%s have built but did%s (files: %s)" % (platform, "" if should_build else "n't", "n't" if should_build else "", str(files)))
 

@@ -1,0 +1,18 @@
+layer at (0,0) size 1084x1770
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x1770
+  RenderBlock {HTML} at (0,0) size 785x1770 [color=#99DDBBCC] [bgcolor=#102030E0]
+    RenderBody {BODY} at (8,8) size 769x1754
+      RenderHTMLCanvas {CANVAS} at (0,1435) size 300x150
+      RenderImage {IMG} at (300,1585) size 78x169
+      RenderImage {IMG} at (378,1735) size 220x19
+layer at (8,8) size 1076x150
+  RenderHTMLCanvas {CANVAS} at (0,0) size 1076x150
+layer at (308,1577) size 16x16
+  RenderVideo {VIDEO} at (300,1569) size 16x16
+layer at (324,158) size 273x1435
+  RenderHTMLCanvas {CANVAS} at (316,150) size 273x1435
+layer at (8,1612) size 300x150
+  RenderHTMLCanvas {CANVAS} at (0,1604) size 300x150
+layer at (606,1641) size 121x121
+  RenderVideo {VIDEO} at (598,1633) size 121x121

@@ -10,12 +10,13 @@
 ##
 ## This file runs all of the tests for the libaom examples.
 ##
+readonly EXEC_DIR="$(pwd)"
 . $(dirname $0)/tools_common.sh
 
 example_tests=$(ls -r $(dirname $0)/*.sh)
 
 # List of script names to exclude.
-exclude_list="best_encode examples run_encodes tools_common av1_c_vs_simd_encode"
+exclude_list="best_encode examples run_encodes tools_common"
 
 if [ "$(realtime_only_build)" = "yes" ]; then
   exclude_list="${exclude_list} twopass_encoder simple_decoder lightfield_test"
@@ -30,4 +31,7 @@ for test in ${example_tests}; do
   # Source each test script so that exporting variables can be avoided.
   AOM_TEST_NAME="$(basename ${test%.*})"
   . "${test}"
+  # Restore the working directory to the one at the beginning of execution.
+  # This avoids side-effects from tests that change the directory.
+  cd "${EXEC_DIR}"
 done

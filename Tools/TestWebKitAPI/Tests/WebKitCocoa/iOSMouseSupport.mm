@@ -215,9 +215,8 @@ public:
         }
 
         for (UIGestureRecognizer *gestureRecognizer in contentView.gestureRecognizers) {
-            auto hoverGestureRecognizer = dynamic_objc_cast<UIHoverGestureRecognizer>(gestureRecognizer);
-            if ([hoverGestureRecognizer.allowedTouchTypes containsObject:@(UITouchTypeIndirectPointer)])
-                m_hoverGestureRecognizer = hoverGestureRecognizer;
+            if ([gestureRecognizer.name isEqualToString:@"WKMouseHover"])
+                m_hoverGestureRecognizer = dynamic_objc_cast<UIHoverGestureRecognizer>(gestureRecognizer);
             else if ([gestureRecognizer.name isEqualToString:@"WKMouseTouch"])
                 m_mouseTouchGestureRecognizer = gestureRecognizer;
         }

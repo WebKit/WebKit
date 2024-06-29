@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 #ifndef _ANDROID_NATIVE_APP_GLUE_H
@@ -49,7 +48,7 @@ extern "C" {
  *
  * 2/ android_main() receives a pointer to a valid "android_app" structure
  *    that contains references to other important objects, e.g. the
- *    ANativeActivity obejct instance the application is running in.
+ *    ANativeActivity object instance the application is running in.
  *
  * 3/ the "android_app" object holds an ALooper instance that already
  *    listens to two important things:
@@ -87,17 +86,18 @@ struct android_app;
  * Data associated with an ALooper fd that will be returned as the "outData"
  * when that source has data ready.
  */
-struct android_poll_source {
+struct android_poll_source
+{
     // The identifier of this source.  May be LOOPER_ID_MAIN or
     // LOOPER_ID_INPUT.
     int32_t id;
 
     // The android_app this ident is associated with.
-    struct android_app* app;
+    struct android_app *app;
 
     // Function to call to perform the standard processing of data from
     // this source.
-    void (*process)(struct android_app* app, struct android_poll_source* source);
+    void (*process)(struct android_app *app, struct android_poll_source *source);
 };
 
 /**
@@ -108,25 +108,26 @@ struct android_poll_source {
  * VM, although it will need to be in order to make JNI calls any
  * Java objects.
  */
-struct android_app {
+struct android_app
+{
     // The application can place a pointer to its own state object
     // here if it likes.
-    void* userData;
+    void *userData;
 
     // Fill this in with the function to process main app commands (APP_CMD_*)
-    void (*onAppCmd)(struct android_app* app, int32_t cmd);
+    void (*onAppCmd)(struct android_app *app, int32_t cmd);
 
     // Fill this in with the function to process input events.  At this point
     // the event has already been pre-dispatched, and it will be finished upon
     // return.  Return 1 if you have handled the event, 0 for any default
     // dispatching.
-    int32_t (*onInputEvent)(struct android_app* app, AInputEvent* event);
+    int32_t (*onInputEvent)(struct android_app *app, AInputEvent *event);
 
     // The ANativeActivity object instance that this app is running in.
-    ANativeActivity* activity;
+    ANativeActivity *activity;
 
     // The current configuration the app is running in.
-    AConfiguration* config;
+    AConfiguration *config;
 
     // This is the last instance's saved state, as provided at creation time.
     // It is NULL if there was no state.  You can use this as you need; the
@@ -136,18 +137,18 @@ struct android_app {
     // at which point they will be initialized to NULL and you can malloc your
     // state and place the information here.  In that case the memory will be
     // freed for you later.
-    void* savedState;
+    void *savedState;
     size_t savedStateSize;
 
     // The ALooper associated with the app's thread.
-    ALooper* looper;
+    ALooper *looper;
 
     // When non-NULL, this is the input queue from which the app will
     // receive user input events.
-    AInputQueue* inputQueue;
+    AInputQueue *inputQueue;
 
     // When non-NULL, this is the window surface that the app can draw in.
-    ANativeWindow* window;
+    ANativeWindow *window;
 
     // Current content rectangle of the window; this is the area where the
     // window's content should be placed to be seen by the user.
@@ -179,12 +180,13 @@ struct android_app {
     int stateSaved;
     int destroyed;
     int redrawNeeded;
-    AInputQueue* pendingInputQueue;
-    ANativeWindow* pendingWindow;
+    AInputQueue *pendingInputQueue;
+    ANativeWindow *pendingWindow;
     ARect pendingContentRect;
 };
 
-enum {
+enum
+{
     /**
      * Looper data ID of commands coming from the app's main thread, which
      * is returned as an identifier from ALooper_pollOnce().  The data for this
@@ -209,7 +211,8 @@ enum {
     LOOPER_ID_USER = 3,
 };
 
-enum {
+enum
+{
     /**
      * Command from main thread: the AInputQueue has changed.  Upon processing
      * this command, android_app->inputQueue will be updated to the new queue
@@ -315,32 +318,37 @@ enum {
  * Call when ALooper_pollAll() returns LOOPER_ID_MAIN, reading the next
  * app command message.
  */
-int8_t android_app_read_cmd(struct android_app* android_app);
+int8_t android_app_read_cmd(struct android_app *android_app);
 
 /**
  * Call with the command returned by android_app_read_cmd() to do the
  * initial pre-processing of the given command.  You can perform your own
  * actions for the command after calling this function.
  */
-void android_app_pre_exec_cmd(struct android_app* android_app, int8_t cmd);
+void android_app_pre_exec_cmd(struct android_app *android_app, int8_t cmd);
 
 /**
  * Call with the command returned by android_app_read_cmd() to do the
  * final post-processing of the given command.  You must have done your own
  * actions for the command before calling this function.
  */
-void android_app_post_exec_cmd(struct android_app* android_app, int8_t cmd);
+void android_app_post_exec_cmd(struct android_app *android_app, int8_t cmd);
 
 /**
- * Dummy function you can call to ensure glue code isn't stripped.
+ * No-op function that used to be used to prevent the linker from stripping app
+ * glue code. No longer necessary, since __attribute__((visibility("default")))
+ * does this for us.
  */
-void app_dummy(void);
+__attribute__((
+    deprecated("Calls to app_dummy are no longer necessary. See "
+               "https://github.com/android-ndk/ndk/issues/381."))) void
+app_dummy(void);
 
 /**
  * This is the function that application code must implement, representing
  * the main entry to the app.
  */
-extern void android_main(struct android_app* app);
+extern void android_main(struct android_app *app);
 
 #ifdef __cplusplus
 }

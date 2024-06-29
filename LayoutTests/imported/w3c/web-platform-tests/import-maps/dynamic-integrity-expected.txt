@@ -1,0 +1,14 @@
+
+PASS script was not loaded, as its resolved URL failed its integrity check
+PASS script was loaded, as its resolved URL had no integrity check, despite its specifier having one
+PASS script was loaded, as its integrity check passed
+PASS Script with no import definition was not loaded, as it failed its integrity check
+PASS Bare specifier script was not loaded, as it failed its integrity check
+PASS Bare specifier used for integrity loaded, as its definition should have used the URL
+PASS script was loaded, as its integrity check passed, despite having an extra invalid hash
+PASS script was loaded, as its integrity check passed, despite having an invalid suffix
+PASS script was loaded, as its integrity check passed given multiple hashes. This also makes sure that the larger hash is picked
+PASS script was loaded, as its integrity check was ignored, as it was defined using a URL that looks like a bare specifier
+PASS Script imported inside an event handler was loaded as its valid integrity check passed
+PASS Script imported inside an event handler was not loaded as its integrity check failed
+

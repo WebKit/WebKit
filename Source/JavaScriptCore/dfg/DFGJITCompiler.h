@@ -141,21 +141,19 @@ public:
     }
 
     // Add a call out from JIT code, without an exception check.
-    Call appendCall(const CodePtr<CFunctionPtrTag> function)
+    template<PtrTag tag>
+    requires (tag != NoPtrTag)
+    Call appendCall(const CodePtr<tag> function)
     {
         Call functionCall = call(OperationPtrTag);
-        m_calls.append(CallLinkRecord(functionCall, function.retagged<OperationPtrTag>()));
+        // FIXME: If we had CustomGetters in JITOperationList we could just call retagged on all
+        // code paths but since we don't register them retagging triggers an ASSERT.
+        if constexpr (tag == OperationPtrTag)
+            m_calls.append(CallLinkRecord(functionCall, function));
+        else
+            m_calls.append(CallLinkRecord(functionCall, function.template retagged<OperationPtrTag>()));
         return functionCall;
     }
-
-#if OS(WINDOWS) && CPU(X86_64)
-    JITCompiler::Call appendCallWithUGPRPair(const CodePtr<CFunctionPtrTag> function)
-    {
-        Call functionCall = callWithUGPRPair(OperationPtrTag);
-        m_calls.append(CallLinkRecord(functionCall, function.retagged<OperationPtrTag>()));
-        return functionCall;
-    }
-#endif
 
     Call appendOperationCall(const CodePtr<OperationPtrTag> function)
     {
@@ -168,13 +166,6 @@ public:
     {
         call(address, OperationPtrTag);
     }
-
-#if OS(WINDOWS) && CPU(X86_64)
-    void appendCallWithUGPRPair(CCallHelpers::Address address)
-    {
-        callWithUGPRPair(address, OperationPtrTag);
-    }
-#endif
 
     void exceptionJumpWithCallFrameRollback();
 
@@ -250,11 +241,6 @@ public:
         m_privateBrandAccesses.append(InlineCacheWrapper<JITPrivateBrandAccessGenerator>(gen, slowPath));
     }
 
-    void addJSCall(Label slowPathStart, Label doneLocation, CompileTimeCallLinkInfo info)
-    {
-        m_jsCalls.append(JSCallRecord(slowPathStart, doneLocation, info));
-    }
-    
     void addJSDirectCall(Label slowPath, DirectCallLinkInfo* info)
     {
         m_jsDirectCalls.append(JSDirectCallRecord(slowPath, info));
@@ -428,19 +414,6 @@ protected:
     Vector<Label> m_blockHeads;
 
 
-    struct JSCallRecord {
-        JSCallRecord(Label slowPathStart, Label doneLocation, CompileTimeCallLinkInfo info)
-            : slowPathStart(slowPathStart)
-            , doneLocation(doneLocation)
-            , info(info)
-        {
-        }
-        
-        Label slowPathStart;
-        Label doneLocation;
-        CompileTimeCallLinkInfo info;
-    };
-    
     struct JSDirectCallRecord {
         JSDirectCallRecord(Label slowPath, DirectCallLinkInfo* info)
             : slowPath(slowPath)
@@ -464,7 +437,6 @@ protected:
     Vector<InlineCacheWrapper<JITInByValGenerator>, 4> m_inByVals;
     Vector<InlineCacheWrapper<JITInstanceOfGenerator>, 4> m_instanceOfs;
     Vector<InlineCacheWrapper<JITPrivateBrandAccessGenerator>, 4> m_privateBrandAccesses;
-    Vector<JSCallRecord, 4> m_jsCalls;
     Vector<JSDirectCallRecord, 4> m_jsDirectCalls;
     SegmentedVector<OSRExitCompilationInfo, 4> m_exitCompilationInfo;
     Vector<Vector<Label>> m_exitSiteLabels;

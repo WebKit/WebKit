@@ -277,8 +277,8 @@ std::vector<RtpSource> AudioRtpReceiver::GetSources() const {
   return media_channel_->GetSources(current_ssrc.value());
 }
 
-void AudioRtpReceiver::SetDepacketizerToDecoderFrameTransformer(
-    rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer) {
+void AudioRtpReceiver::SetFrameTransformer(
+    rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) {
   RTC_DCHECK_RUN_ON(worker_thread_);
   if (media_channel_) {
     media_channel_->SetDepacketizerToDecoderFrameTransformer(

@@ -17,7 +17,12 @@ import {
   vec3 } from
 '../../../../util/conversion.js';
 import { FP } from '../../../../util/floating_point.js';
-import { allInputSources, basicExpressionBuilder, run } from '../expression.js';
+import {
+
+  allInputSources,
+  basicExpressionBuilder,
+  run } from
+'../expression.js';
 
 export const g = makeTestGroup(GPUTest);
 
@@ -186,7 +191,7 @@ fn(async (t) => {
     basicExpressionBuilder((_) => `${fn}(${t.params.value * 0x100000000}${suffix}) / 0x100000000`),
     [],
     concreteVectorType,
-    { inputSource: 'const' },
+    { inputSource: 'const', constEvaluationMode: 'direct' },
     [{ input: [], expected: concreteVectorType.create(t.params.value) }]
   );
 });
@@ -264,7 +269,7 @@ fn(async (t) => {
     ),
     [],
     concreteVectorType,
-    { inputSource: 'const' },
+    { inputSource: 'const', constEvaluationMode: 'direct' },
     [{ input: [], expected: concreteVectorType.create(elements) }]
   );
 });
@@ -386,7 +391,7 @@ fn(async (t) => {
     basicExpressionBuilder((_) => `${fn}(${args.join(', ')}) / 0x100000000`),
     [],
     concreteVectorType,
-    { inputSource: 'const' },
+    { inputSource: 'const', constEvaluationMode: 'direct' },
     [
     {
       input: [],
@@ -509,7 +514,7 @@ fn(async (t) => {
     ),
     [],
     concreteMatrixType,
-    { inputSource: 'const' },
+    { inputSource: 'const', constEvaluationMode: 'direct' },
     [
     {
       input: [],
@@ -600,7 +605,7 @@ fn(async (t) => {
     basicExpressionBuilder((_) => `${fn}(${columnVectors.join(', ')}) * (1.0 / 0x100000000)`),
     [],
     concreteMatrixType,
-    { inputSource: 'const' },
+    { inputSource: 'const', constEvaluationMode: 'direct' },
     [
     {
       input: [],
@@ -729,7 +734,7 @@ fn(async (t) => {
     basicExpressionBuilder((_) => `${fn}(${elements.map((e) => e.args).join(', ')})`),
     [],
     concreteArrayType,
-    { inputSource: 'const' },
+    { inputSource: 'const', constEvaluationMode: 'direct' },
     [
     {
       input: [],
@@ -773,11 +778,11 @@ fn(async (t) => {
   );
   await run(
     t,
-    (parameterTypes, resultType, cases, inputSource) => {
+    (params) => {
       return `
 ${t.params.member_types.includes('f16') ? 'enable f16;' : ''}
 
-${builder(parameterTypes, resultType, cases, inputSource)}
+${builder(params)}
 
 struct MyStruct {
 ${t.params.member_types.map((ty, i) => `  member_${i} : ${ty},`).join('\n')}

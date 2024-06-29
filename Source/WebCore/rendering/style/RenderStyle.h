@@ -1072,16 +1072,13 @@ public:
 
     inline OptionSet<SpeakAs> speakAs() const;
 
-    inline FilterOperations& mutableFilter();
     inline const FilterOperations& filter() const;
     inline bool hasFilter() const;
     bool hasReferenceFilterOnly() const;
 
-    inline FilterOperations& mutableAppleColorFilter();
     inline const FilterOperations& appleColorFilter() const;
     inline bool hasAppleColorFilter() const;
 
-    inline FilterOperations& mutableBackdropFilter();
     inline const FilterOperations& backdropFilter() const;
     inline bool hasBackdropFilter() const;
 
@@ -1484,7 +1481,7 @@ public:
     inline void setColumnSpan(ColumnSpan);
     inline void inheritColumnPropertiesFrom(const RenderStyle& parent);
 
-    inline void setTransform(const TransformOperations&);
+    inline void setTransform(TransformOperations&&);
     inline void setTransformOriginX(Length&&);
     inline void setTransformOriginY(Length&&);
     inline void setTransformOriginZ(float);
@@ -1513,10 +1510,10 @@ public:
     inline void setColorScheme(StyleColorScheme);
 #endif
 
-    inline void setFilter(const FilterOperations&);
-    inline void setAppleColorFilter(const FilterOperations&);
+    inline void setFilter(FilterOperations&&);
+    inline void setAppleColorFilter(FilterOperations&&);
 
-    inline void setBackdropFilter(const FilterOperations&);
+    inline void setBackdropFilter(FilterOperations&&);
 
     inline void setTabSize(const TabSize&);
 
@@ -1653,16 +1650,22 @@ public:
     inline SVGRenderStyle& accessSVGStyle();
 
     inline SVGPaintType fillPaintType() const;
-    inline StyleColor fillPaintColor() const;
+    inline SVGPaintType visitedFillPaintType() const;
+    inline const StyleColor& fillPaintColor() const;
+    inline const StyleColor& visitedFillPaintColor() const;
     inline void setFillPaintColor(const StyleColor&);
+    inline void setVisitedFillPaintColor(const StyleColor&);
     inline void setHasExplicitlySetColor(bool);
     inline bool hasExplicitlySetColor() const;
     inline float fillOpacity() const;
     inline void setFillOpacity(float);
 
     inline SVGPaintType strokePaintType() const;
-    inline StyleColor strokePaintColor() const;
+    inline SVGPaintType visitedStrokePaintType() const;
+    inline const StyleColor& strokePaintColor() const;
+    inline const StyleColor& visitedStrokePaintColor() const;
     inline void setStrokePaintColor(const StyleColor&);
+    inline void setVisitedStrokePaintColor(const StyleColor&);
     inline float strokeOpacity() const;
     inline void setStrokeOpacity(float);
     inline Vector<SVGLengthValue> strokeDashArray() const;
@@ -2193,6 +2196,14 @@ public:
     inline void setBlockStepInsert(BlockStepInsert);
     bool scrollAnchoringSuppressionStyleDidChange(const RenderStyle*) const;
     bool outOfFlowPositionStyleDidChange(const RenderStyle*) const;
+
+    static Vector<AtomString> initialAnchorNames();
+    inline const Vector<AtomString>& anchorNames() const;
+    inline void setAnchorNames(const Vector<AtomString>&);
+
+    static inline const AtomString& initialPositionAnchor();
+    inline const AtomString& positionAnchor() const;
+    inline void setPositionAnchor(const AtomString&);
 
 private:
     struct NonInheritedFlags {

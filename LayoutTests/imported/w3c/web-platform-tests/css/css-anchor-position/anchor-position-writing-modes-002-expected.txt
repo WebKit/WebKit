@@ -1,0 +1,50 @@
+
+FAIL relpos htb-ltr/target/left: anchor(--a1 start) assert_equals: expected 0 but got 5
+FAIL relpos htb-ltr/target/left: anchor(--a1 end) assert_equals: expected 0 but got 35
+FAIL relpos htb-ltr/target/top: anchor(--a1 start) assert_equals: expected 0 but got 15
+FAIL relpos htb-ltr/target/top: anchor(--a1 end) assert_equals: expected 0 but got 45
+FAIL relpos htb-ltr/target htb-ltr/left: anchor(--a1 self-start) assert_equals: expected 0 but got 5
+FAIL relpos htb-ltr/target htb-ltr/left: anchor(--a1 self-end) assert_equals: expected 0 but got 35
+FAIL relpos htb-ltr/target htb-ltr/top: anchor(--a1 self-start) assert_equals: expected 0 but got 15
+FAIL relpos htb-ltr/target htb-ltr/top: anchor(--a1 self-end) assert_equals: expected 0 but got 45
+FAIL relpos htb-rtl/target/left: anchor(--a1 start) assert_equals: expected 0 but got 779
+FAIL relpos htb-rtl/target/left: anchor(--a1 end) assert_equals: expected 0 but got 749
+FAIL relpos htb-rtl/target/top: anchor(--a1 start) assert_equals: expected 0 but got 15
+FAIL relpos htb-rtl/target/top: anchor(--a1 end) assert_equals: expected 0 but got 45
+FAIL relpos htb-rtl/target htb-rtl/left: anchor(--a1 self-start) assert_equals: expected 0 but got 779
+FAIL relpos htb-rtl/target htb-rtl/left: anchor(--a1 self-end) assert_equals: expected 0 but got 749
+FAIL relpos htb-rtl/target htb-rtl/top: anchor(--a1 self-start) assert_equals: expected 0 but got 15
+FAIL relpos htb-rtl/target htb-rtl/top: anchor(--a1 self-end) assert_equals: expected 0 but got 45
+FAIL relpos vrl-ltr/target/left: anchor(--a1 start) assert_equals: expected 0 but got 35
+FAIL relpos vrl-ltr/target/left: anchor(--a1 end) assert_equals: expected 0 but got 5
+FAIL relpos vrl-ltr/target/top: anchor(--a1 start) assert_equals: expected 0 but got 5
+FAIL relpos vrl-ltr/target/top: anchor(--a1 end) assert_equals: expected 0 but got 35
+FAIL relpos vrl-ltr/target vrl-ltr/left: anchor(--a1 self-start) assert_equals: expected 0 but got 35
+FAIL relpos vrl-ltr/target vrl-ltr/left: anchor(--a1 self-end) assert_equals: expected 0 but got 5
+FAIL relpos vrl-ltr/target vrl-ltr/top: anchor(--a1 self-start) assert_equals: expected 0 but got 5
+FAIL relpos vrl-ltr/target vrl-ltr/top: anchor(--a1 self-end) assert_equals: expected 0 but got 35
+FAIL relpos vrl-rtl/target/left: anchor(--a1 start) assert_equals: expected 0 but got 35
+FAIL relpos vrl-rtl/target/left: anchor(--a1 end) assert_equals: expected 0 but got 5
+FAIL relpos vrl-rtl/target/top: anchor(--a1 start) assert_equals: expected 0 but got 35
+FAIL relpos vrl-rtl/target/top: anchor(--a1 end) assert_equals: expected 0 but got 5
+FAIL relpos vrl-rtl/target vrl-rtl/left: anchor(--a1 self-start) assert_equals: expected 0 but got 35
+FAIL relpos vrl-rtl/target vrl-rtl/left: anchor(--a1 self-end) assert_equals: expected 0 but got 5
+FAIL relpos vrl-rtl/target vrl-rtl/top: anchor(--a1 self-start) assert_equals: expected 0 but got 35
+FAIL relpos vrl-rtl/target vrl-rtl/top: anchor(--a1 self-end) assert_equals: expected 0 but got 5
+FAIL relpos vlr-ltr/target/left: anchor(--a1 start) assert_equals: expected 0 but got 15
+FAIL relpos vlr-ltr/target/left: anchor(--a1 end) assert_equals: expected 0 but got 45
+FAIL relpos vlr-ltr/target/top: anchor(--a1 start) assert_equals: expected 0 but got 5
+FAIL relpos vlr-ltr/target/top: anchor(--a1 end) assert_equals: expected 0 but got 35
+FAIL relpos vlr-ltr/target vlr-ltr/left: anchor(--a1 self-start) assert_equals: expected 0 but got 15
+FAIL relpos vlr-ltr/target vlr-ltr/left: anchor(--a1 self-end) assert_equals: expected 0 but got 45
+FAIL relpos vlr-ltr/target vlr-ltr/top: anchor(--a1 self-start) assert_equals: expected 0 but got 5
+FAIL relpos vlr-ltr/target vlr-ltr/top: anchor(--a1 self-end) assert_equals: expected 0 but got 35
+FAIL relpos vlr-rtl/target/left: anchor(--a1 start) assert_equals: expected 0 but got 15
+FAIL relpos vlr-rtl/target/left: anchor(--a1 end) assert_equals: expected 0 but got 45
+FAIL relpos vlr-rtl/target/top: anchor(--a1 start) assert_equals: expected 0 but got 35
+FAIL relpos vlr-rtl/target/top: anchor(--a1 end) assert_equals: expected 0 but got 5
+FAIL relpos vlr-rtl/target vlr-rtl/left: anchor(--a1 self-start) assert_equals: expected 0 but got 15
+FAIL relpos vlr-rtl/target vlr-rtl/left: anchor(--a1 self-end) assert_equals: expected 0 but got 45
+FAIL relpos vlr-rtl/target vlr-rtl/top: anchor(--a1 self-start) assert_equals: expected 0 but got 35
+FAIL relpos vlr-rtl/target vlr-rtl/top: anchor(--a1 self-end) assert_equals: expected 0 but got 5
+

@@ -48,7 +48,7 @@ static String remoteFrameAccessError(JSC::JSGlobalObject* lexicalGlobalObject)
 {
     auto& active = activeDOMWindow(*lexicalGlobalObject);
     Ref activeOrigin = active.document()->securityOrigin();
-    return makeString("Blocked a frame with origin \"", activeOrigin->toString(), "\" from accessing a cross-origin frame. Protocols, domains, and ports must match.");
+    return makeString("Blocked a frame with origin \""_s, activeOrigin->toString(), "\" from accessing a cross-origin frame. Protocols, domains, and ports must match."_s);
 }
 
 // FIXME: Refactor to share more code with canAccessDocument.

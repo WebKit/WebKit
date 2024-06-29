@@ -683,8 +683,6 @@ void WebLocalFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceErr
     // If we have a load listener, notify it.
     if (LoadListener* loadListener = m_frame->loadListener())
         loadListener->didFailLoad(m_frame.ptr(), error.isCancellation());
-
-    m_frame->provisionalLoadFailed();
 }
 
 void WebLocalFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
@@ -1156,10 +1154,9 @@ void WebLocalFrameLoaderClient::finishedLoading(DocumentLoader* loader)
             return;
 
         RefPtr<const SharedBuffer> contiguousData;
-        RefPtr<const FragmentedSharedBuffer> mainResourceData = loader->mainResourceData();
-        if (mainResourceData)
+        if (RefPtr mainResourceData = loader->mainResourceData())
             contiguousData = mainResourceData->makeContiguous();
-        std::span dataReference(contiguousData ? contiguousData->data() : nullptr, contiguousData ? contiguousData->size() : 0);
+        auto dataReference = contiguousData ? contiguousData->span() : std::span<const uint8_t> { };
         webPage->send(Messages::WebPageProxy::DidFinishLoadingDataForCustomContentProvider(loader->response().suggestedFilename(), dataReference));
     }
 

@@ -47,7 +47,8 @@ PASS :workgroup_size:attr="comment"
 PASS :workgroup_size:attr="mix_ux"
 PASS :workgroup_size:attr="mix_uy"
 PASS :workgroup_size:attr="mix_uz"
-PASS :workgroup_size:attr="duplicate"
+PASS :workgroup_size:attr="duplicate1"
+PASS :workgroup_size:attr="duplicate2"
 PASS :workgroup_size_fragment_shader:
 PASS :workgroup_size_vertex_shader:
 PASS :workgroup_size_function:

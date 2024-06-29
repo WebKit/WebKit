@@ -78,7 +78,6 @@ public:
     bool hasSelectedVideo() const;
 
     void willSeek();
-    void seeked(const MediaTime&);
 
     FloatSize naturalSize() const;
 

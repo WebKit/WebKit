@@ -1,0 +1,35 @@
+
+FAIL --right | --right assert_true: expected true got false
+FAIL --left | --left assert_true: expected true got false
+FAIL --top | --top assert_true: expected true got false
+FAIL --bottom | --bottom assert_true: expected true got false
+FAIL --right, --left, --bottom, --top | --right assert_true: expected true got false
+FAIL normal --right, --left, --bottom, --top | --right assert_true: expected true got false
+FAIL normal --top, --left, --bottom, --right | --top assert_true: expected true got false
+FAIL most-block-size --right, --left | --right assert_true: expected true got false
+FAIL most-height --right, --left | --right assert_true: expected true got false
+FAIL most-inline-size --right, --left | --left assert_true: expected true got false
+FAIL most-width --right, --left | --left assert_true: expected true got false
+FAIL most-inline-size --bottom, --top | --bottom assert_true: expected true got false
+FAIL most-width --bottom, --top | --bottom assert_true: expected true got false
+FAIL most-block-size --bottom, --top | --top assert_true: expected true got false
+FAIL most-height --bottom, --top | --top assert_true: expected true got false
+FAIL most-inline-size --right, --left, --bottom, --top | --bottom assert_true: expected true got false
+FAIL most-inline-size --right, --left, --top, --bottom | --top assert_true: expected true got false
+FAIL most-block-size --bottom, --top, --right, --left | --right assert_true: expected true got false
+FAIL most-block-size --bottom, --top, --left, --right | --left assert_true: expected true got false
+FAIL most-inline-size --left-sweep, --bottom-sweep | --left-sweep assert_true: expected true got false
+FAIL most-inline-size --bottom-sweep, --left-sweep | --bottom-sweep assert_true: expected true got false
+FAIL most-block-size --left-sweep, --bottom-sweep | --left-sweep assert_true: expected true got false
+FAIL most-block-size --bottom-sweep, --left-sweep | --left-sweep assert_true: expected true got false
+FAIL most-inline-size --right-sweep, --left-sweep, --bottom-sweep, --top-sweep | --left-sweep assert_true: expected true got false
+FAIL most-block-size --right-sweep, --left-sweep, --bottom-sweep, --top-sweep | --top-sweep assert_true: expected true got false
+FAIL most-inline-size
+  --right-sweep, --left-sweep, --bottom-sweep, --top-sweep,
+  --right, --left, --bottom, --top
+   | --left-sweep assert_true: expected true got false
+FAIL most-block-size
+  --right-sweep, --left-sweep, --bottom-sweep, --top-sweep,
+  --right, --left, --bottom, --top
+   | --right assert_true: expected true got false
+

@@ -253,7 +253,7 @@ static String screenDeviceUUID()
 
 static CaptureDevice& screenDevice()
 {
-    static NeverDestroyed<CaptureDevice> device = { screenDeviceUUID(), CaptureDevice::DeviceType::Screen, makeString("Screen 1"), emptyString(), true };
+    static NeverDestroyed<CaptureDevice> device = { screenDeviceUUID(), CaptureDevice::DeviceType::Screen, "Screen 1"_str, emptyString(), true };
     return device;
 }
 

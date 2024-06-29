@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Permission policy 'XRSpatialTracking' check failed for element with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Permission policy 'XRSpatialTracking' check failed for document with origin 'http://localhost:8000'.
 Tests that third-party iframes will be denied from calling makeXRCompatible() without xr-spatial-tracking feature policy.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

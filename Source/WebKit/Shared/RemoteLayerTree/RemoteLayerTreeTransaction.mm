@@ -201,7 +201,7 @@ static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedL
 
         if (layerProperties.changedProperties & LayerChange::AnimationsChanged) {
             for (const auto& keyAnimationPair : layerProperties.animationChanges.addedAnimations)
-                ts.dumpProperty("animation " +  keyAnimationPair.first, keyAnimationPair.second);
+                ts.dumpProperty(makeString("animation "_s, keyAnimationPair.first), keyAnimationPair.second);
 
             for (const auto& name : layerProperties.animationChanges.keysOfAnimationsToRemove)
                 ts.dumpProperty("removed animation", name);

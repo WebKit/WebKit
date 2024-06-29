@@ -9,8 +9,11 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include <string.h>
+
 #include "aom/aomcx.h"
 
+#include "av1/common/av1_common_int.h"
 #include "av1/encoder/bitstream.h"
 #include "av1/encoder/encodeframe.h"
 #include "av1/encoder/encoder.h"
@@ -421,11 +424,13 @@ void av1_apply_active_map(AV1_COMP *cpi) {
   struct segmentation *const seg = &cpi->common.seg;
   unsigned char *const seg_map = cpi->enc_seg.map;
   const unsigned char *const active_map = cpi->active_map.map;
-  int i;
 
   assert(AM_SEGMENT_ID_ACTIVE == CR_SEGMENT_ID_BASE);
 
-  if (frame_is_intra_only(&cpi->common)) {
+  // Disable the active_maps on intra_only frames or if the
+  // input map for the current frame has no inactive blocks.
+  if (frame_is_intra_only(&cpi->common) ||
+      cpi->rc.percent_blocks_inactive == 0) {
     cpi->active_map.enabled = 0;
     cpi->active_map.update = 1;
   }
@@ -434,8 +439,7 @@ void av1_apply_active_map(AV1_COMP *cpi) {
     if (cpi->active_map.enabled) {
       const int num_mis =
           cpi->common.mi_params.mi_rows * cpi->common.mi_params.mi_cols;
-      for (i = 0; i < num_mis; ++i)
-        if (seg_map[i] == AM_SEGMENT_ID_ACTIVE) seg_map[i] = active_map[i];
+      memcpy(seg_map, active_map, sizeof(active_map[0]) * num_mis);
       av1_enable_segmentation(seg);
       av1_enable_segfeature(seg, AM_SEGMENT_ID_INACTIVE, SEG_LVL_SKIP);
       av1_enable_segfeature(seg, AM_SEGMENT_ID_INACTIVE, SEG_LVL_ALT_LF_Y_H);
@@ -706,6 +710,14 @@ void av1_scale_references(AV1_COMP *cpi, const InterpFilter filter,
         if (ref_frame == ALTREF_FRAME && cpi->svc.skip_mvsearch_altref)
           continue;
       }
+      // For RTC with superres on: golden reference only needs to be scaled
+      // if it was refreshed in previous frame.
+      if (is_one_pass_rt_params(cpi) &&
+          cpi->oxcf.superres_cfg.enable_superres && ref_frame == GOLDEN_FRAME &&
+          cpi->rc.frame_num_last_gf_refresh <
+              (int)cm->current_frame.frame_number - 1) {
+        continue;
+      }
 
       if (ref->y_crop_width != cm->width || ref->y_crop_height != cm->height) {
         // Replace the reference buffer with a copy having a thicker border,
@@ -717,7 +729,7 @@ void av1_scale_references(AV1_COMP *cpi, const InterpFilter filter,
           RefCntBuffer *ref_fb = get_ref_frame_buf(cm, ref_frame);
           if (aom_yv12_realloc_with_new_border(
                   &ref_fb->buf, AOM_BORDER_IN_PIXELS,
-                  cm->features.byte_alignment, cpi->image_pyramid_levels,
+                  cm->features.byte_alignment, cpi->alloc_pyramid,
                   num_planes) != 0) {
             aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
                                "Failed to allocate frame buffer");
@@ -741,7 +753,7 @@ void av1_scale_references(AV1_COMP *cpi, const InterpFilter filter,
                   &new_fb->buf, cm->width, cm->height,
                   cm->seq_params->subsampling_x, cm->seq_params->subsampling_y,
                   cm->seq_params->use_highbitdepth, AOM_BORDER_IN_PIXELS,
-                  cm->features.byte_alignment, NULL, NULL, NULL, 0, 0)) {
+                  cm->features.byte_alignment, NULL, NULL, NULL, false, 0)) {
             if (force_scaling) {
               // Release the reference acquired in the get_free_fb() call above.
               --new_fb->ref_count;
@@ -1079,12 +1091,12 @@ void av1_determine_sc_tools_with_encoding(AV1_COMP *cpi, const int q_orig) {
 
   cpi->source = av1_realloc_and_scale_if_required(
       cm, cpi->unscaled_source, &cpi->scaled_source, cm->features.interp_filter,
-      0, false, false, cpi->oxcf.border_in_pixels, cpi->image_pyramid_levels);
+      0, false, false, cpi->oxcf.border_in_pixels, cpi->alloc_pyramid);
   if (cpi->unscaled_last_source != NULL) {
     cpi->last_source = av1_realloc_and_scale_if_required(
         cm, cpi->unscaled_last_source, &cpi->scaled_last_source,
         cm->features.interp_filter, 0, false, false, cpi->oxcf.border_in_pixels,
-        cpi->image_pyramid_levels);
+        cpi->alloc_pyramid);
   }
 
   av1_setup_frame(cpi);

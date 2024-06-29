@@ -126,7 +126,7 @@ public:
     }
 
     // Implemented by the platform.
-    bool fill(UChar* characterBuffer, unsigned bufferLength);
+    bool fill(std::span<const UChar> characterBuffer);
 
 private:
     explicit GlyphPage(const Font& font)

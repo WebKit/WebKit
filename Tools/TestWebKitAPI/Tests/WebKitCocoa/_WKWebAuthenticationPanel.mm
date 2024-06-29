@@ -56,7 +56,9 @@
 #import <WebKit/_WKWebAuthenticationPanel.h>
 #import <WebKit/_WKWebAuthenticationPanelForTesting.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/WeakRandomNumber.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 
@@ -656,14 +658,14 @@ TEST(WebAuthenticationPanel, SubFrameChangeLocationHidCancel)
     [webView focus];
 
     auto port = static_cast<unsigned>(server.port());
-    auto url = makeString("http://localhost:", port);
+    auto url = makeString("http://localhost:"_s, port);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:(id)url]]];
     Util::run(&webAuthenticationPanelRan);
     [webView evaluateJavaScript:@"theFrame.src = 'simple.html'" completionHandler:nil];
     Util::run(&webAuthenticationPanelFailed);
 
     // A bit of extra checks.
-    checkFrameInfo([delegate frame], false, (id)makeString(url, "/iFrame.html"), @"http", @"localhost", port, webView.get());
+    checkFrameInfo([delegate frame], false, (id)makeString(url, "/iFrame.html"_s), @"http", @"localhost", port, webView.get());
     checkPanel([delegate panel], @"localhost", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get()], _WKWebAuthenticationTypeGet);
 }
 
@@ -701,7 +703,7 @@ TEST(WebAuthenticationPanel, SubFrameDestructionHidCancel)
     [webView setUIDelegate:delegate.get()];
     [webView focus];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:(id)makeString("http://localhost:", server.port())]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:(id)makeString("http://localhost:"_s, server.port())]]];
     Util::run(&webAuthenticationPanelRan);
     [webView evaluateJavaScript:@"theFrame.parentNode.removeChild(theFrame)" completionHandler:nil];
     Util::run(&webAuthenticationPanelFailed);
@@ -1271,8 +1273,7 @@ TEST(WebAuthenticationPanel, MultipleAccounts)
 // which are required to run local authenticator tests.
 #if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS) || PLATFORM(VISION)
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LAError)
+TEST(WebAuthenticationPanel, LAError)
 {
     reset();
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la-error" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1288,8 +1289,7 @@ TEST(WebAuthenticationPanel, DISABLED_LAError)
     Util::run(&webAuthenticationPanelUpdateLAError);
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LADuplicateCredential)
+TEST(WebAuthenticationPanel, LADuplicateCredential)
 {
     reset();
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la-duplicate-credential" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1307,8 +1307,7 @@ TEST(WebAuthenticationPanel, DISABLED_LADuplicateCredential)
     cleanUpKeychain(emptyString());
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LADuplicateCredentialWithConsent)
+TEST(WebAuthenticationPanel, LADuplicateCredentialWithConsent)
 {
     reset();
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la-duplicate-credential" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1329,8 +1328,7 @@ TEST(WebAuthenticationPanel, DISABLED_LADuplicateCredentialWithConsent)
     cleanUpKeychain(emptyString());
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LANoCredential)
+TEST(WebAuthenticationPanel, LANoCredential)
 {
     reset();
     // In case this wasn't cleaned up by another test.
@@ -1349,8 +1347,7 @@ TEST(WebAuthenticationPanel, DISABLED_LANoCredential)
     Util::run(&webAuthenticationPanelUpdateLANoCredential);
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LAMakeCredentialAllowLocalAuthenticator)
+TEST(WebAuthenticationPanel, LAMakeCredentialAllowLocalAuthenticator)
 {
     reset();
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1371,8 +1368,7 @@ TEST(WebAuthenticationPanel, DISABLED_LAMakeCredentialAllowLocalAuthenticator)
 
 #if PLATFORM(MAC)
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LAGetAssertion)
+TEST(WebAuthenticationPanel, LAGetAssertion)
 {
     reset();
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1391,8 +1387,7 @@ TEST(WebAuthenticationPanel, DISABLED_LAGetAssertion)
     cleanUpKeychain(emptyString());
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LAGetAssertionMultipleCredentialStore)
+TEST(WebAuthenticationPanel, LAGetAssertionMultipleCredentialStore)
 {
     reset();
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1419,8 +1414,7 @@ TEST(WebAuthenticationPanel, DISABLED_LAGetAssertionMultipleCredentialStore)
     cleanUpKeychain(emptyString());
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LAGetAssertionNoMockNoUserGesture)
+TEST(WebAuthenticationPanel, LAGetAssertionNoMockNoUserGesture)
 {
     reset();
     webAuthenticationPanelRequestNoGesture = false;
@@ -1441,8 +1435,7 @@ TEST(WebAuthenticationPanel, DISABLED_LAGetAssertionNoMockNoUserGesture)
 #endif
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_LAGetAssertionMultipleOrder)
+TEST(WebAuthenticationPanel, LAGetAssertionMultipleOrder)
 {
     reset();
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1474,12 +1467,12 @@ TEST(WebAuthenticationPanel, DISABLED_LAGetAssertionMultipleOrder)
 
 TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMinimum)
 {
-    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
-    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    auto identifier = std::to_array<uint8_t>({ 0x01, 0x02, 0x03, 0x04 });
+    RetainPtr nsIdentifier = toNSData(identifier);
     auto parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
 
     auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
-    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier.get() displayName:@"J Appleseed"]);
     NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters.get() ];
 
     auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
@@ -1491,8 +1484,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMinimum)
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_TRUE(result.user.icon.isNull());
-    EXPECT_EQ(result.user.id.length(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.user.id.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_TRUE(equalSpans(result.user.id.span(), std::span<const uint8_t> { identifier }));
     EXPECT_WK_STREQ(result.user.displayName, "J Appleseed");
 
     EXPECT_EQ(result.pubKeyCredParams.size(), 1lu);
@@ -1508,14 +1500,14 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMinimum)
 
 TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximumDefault)
 {
-    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
-    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    auto identifier = std::to_array<uint8_t>({ 0x01, 0x02, 0x03, 0x04 });
+    RetainPtr nsIdentifier = toNSData(identifier);
     auto parameters1 = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
     auto parameters2 = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-257]);
-    auto descriptor = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
+    auto descriptor = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier.get()]);
 
     auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
-    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier.get() displayName:@"J Appleseed"]);
     NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters1.get(), parameters2.get() ];
     auto authenticatorSelection = adoptNS([[_WKAuthenticatorSelectionCriteria alloc] init]);
     auto extensions = adoptNS([[_WKAuthenticationExtensionsClientInputs alloc] init]);
@@ -1534,8 +1526,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximumDefault)
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_TRUE(result.user.icon.isNull());
-    EXPECT_EQ(result.user.id.length(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.user.id.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_TRUE(equalSpans(result.user.id.span(), std::span<const uint8_t> { identifier }));
     EXPECT_WK_STREQ(result.user.displayName, "J Appleseed");
 
     EXPECT_EQ(result.pubKeyCredParams.size(), 2lu);
@@ -1548,8 +1539,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximumDefault)
 
     EXPECT_EQ(result.excludeCredentials.size(), 1lu);
     EXPECT_EQ(result.excludeCredentials[0].type, WebCore::PublicKeyCredentialType::PublicKey);
-    EXPECT_EQ(result.excludeCredentials[0].id.length(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.excludeCredentials[0].id.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_TRUE(equalSpans(result.excludeCredentials[0].id.span(), std::span<const uint8_t> { identifier }));
 
     EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment, std::nullopt);
     EXPECT_EQ(result.authenticatorSelection->requireResidentKey, false);
@@ -1561,8 +1551,8 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximumDefault)
 
 TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum1)
 {
-    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
-    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    auto identifier = std::to_array<uint8_t>({ 0x01, 0x02, 0x03, 0x04 });
+    RetainPtr nsIdentifier = toNSData(identifier);
     auto parameters1 = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
     auto parameters2 = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-257]);
 
@@ -1570,7 +1560,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum1)
     [rp setIcon:@"https//www.example.com/icon.jpg"];
     [rp setIdentifier:@"example.com"];
 
-    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier.get() displayName:@"J Appleseed"]);
     [user setIcon:@"https//www.example.com/icon.jpg"];
 
     NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters1.get(), parameters2.get() ];
@@ -1582,7 +1572,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum1)
     RetainPtr nfc = [NSNumber numberWithInt:_WKWebAuthenticationTransportNFC];
     RetainPtr internal = [NSNumber numberWithInt:_WKWebAuthenticationTransportInternal];
     RetainPtr hybrid = [NSNumber numberWithInt:_WKWebAuthenticationTransportHybrid];
-    RetainPtr credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
+    RetainPtr credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier.get()]);
     [credential setTransports:@[ usb.get(), nfc.get(), internal.get(), hybrid.get() ]];
     [options setExcludeCredentials:@[ credential.get(), credential.get() ]];
 
@@ -1602,8 +1592,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum1)
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_WK_STREQ(result.user.icon, @"https//www.example.com/icon.jpg");
-    EXPECT_EQ(result.user.id.length(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.user.id.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_TRUE(equalSpans(result.user.id.span(), std::span<const uint8_t> { identifier }));
     EXPECT_WK_STREQ(result.user.displayName, "J Appleseed");
 
     EXPECT_EQ(result.pubKeyCredParams.size(), 2lu);
@@ -1616,8 +1605,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum1)
 
     EXPECT_EQ(result.excludeCredentials.size(), 2lu);
     EXPECT_EQ(result.excludeCredentials[0].type, WebCore::PublicKeyCredentialType::PublicKey);
-    EXPECT_EQ(result.excludeCredentials[0].id.length(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.excludeCredentials[0].id.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_TRUE(equalSpans(result.excludeCredentials[0].id.span(), std::span<const uint8_t> { identifier }));
     EXPECT_EQ(result.excludeCredentials[0].transports.size(), 4lu);
     EXPECT_EQ(result.excludeCredentials[0].transports[0], AuthenticatorTransport::Usb);
     EXPECT_EQ(result.excludeCredentials[0].transports[1], AuthenticatorTransport::Nfc);
@@ -1633,8 +1621,8 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum1)
 
 TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum2)
 {
-    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
-    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    auto identifier = std::to_array<uint8_t>({ 0x01, 0x02, 0x03, 0x04 });
+    RetainPtr nsIdentifier = toNSData(identifier);
     auto parameters1 = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
     auto parameters2 = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-257]);
 
@@ -1642,7 +1630,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum2)
     [rp setIcon:@"https//www.example.com/icon.jpg"];
     [rp setIdentifier:@"example.com"];
 
-    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier.get() displayName:@"J Appleseed"]);
     [user setIcon:@"https//www.example.com/icon.jpg"];
 
     NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters1.get(), parameters2.get() ];
@@ -1653,7 +1641,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum2)
     RetainPtr usb = [NSNumber numberWithInt:_WKWebAuthenticationTransportUSB];
     RetainPtr nfc = [NSNumber numberWithInt:_WKWebAuthenticationTransportNFC];
     RetainPtr internal = [NSNumber numberWithInt:_WKWebAuthenticationTransportInternal];
-    RetainPtr credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
+    RetainPtr credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier.get()]);
     [credential setTransports:@[ usb.get(), nfc.get(), internal.get() ]];
     [options setExcludeCredentials:@[ credential.get(), credential.get() ]];
 
@@ -1673,8 +1661,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum2)
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_WK_STREQ(result.user.icon, @"https//www.example.com/icon.jpg");
-    EXPECT_EQ(result.user.id.length(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.user.id.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_TRUE(equalSpans(result.user.id.span(), std::span<const uint8_t> { identifier }));
     EXPECT_WK_STREQ(result.user.displayName, "J Appleseed");
 
     EXPECT_EQ(result.pubKeyCredParams.size(), 2lu);
@@ -1687,8 +1674,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum2)
 
     EXPECT_EQ(result.excludeCredentials.size(), 2lu);
     EXPECT_EQ(result.excludeCredentials[0].type, WebCore::PublicKeyCredentialType::PublicKey);
-    EXPECT_EQ(result.excludeCredentials[0].id.length(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.excludeCredentials[0].id.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_TRUE(equalSpans(result.excludeCredentials[0].id.span(), std::span<const uint8_t> { identifier }));
     EXPECT_EQ(result.excludeCredentials[0].transports.size(), 3lu);
     EXPECT_EQ(result.excludeCredentials[0].transports[0], AuthenticatorTransport::Usb);
     EXPECT_EQ(result.excludeCredentials[0].transports[1], AuthenticatorTransport::Nfc);
@@ -1705,14 +1691,14 @@ TEST(WebAuthenticationPanel, MakeCredentialSPITimeout)
 {
     reset();
 
-    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
+    auto identifier = std::to_array<uint8_t>({ 0x01, 0x02, 0x03, 0x04 });
     uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
-    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    RetainPtr nsIdentifier = toNSData(identifier);
     NSData *nsHash = [NSData dataWithBytes:hash length:sizeof(hash)];
     auto parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
 
     auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
-    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier.get() displayName:@"J Appleseed"]);
     NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters.get() ];
     auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
     [options setTimeout:@10];
@@ -1731,20 +1717,19 @@ TEST(WebAuthenticationPanel, MakeCredentialSPITimeout)
 // For macOS, only internal builds can sign keychain entitlemnets
 // which are required to run local authenticator tests.
 #if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS) || PLATFORM(VISION)
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_MakeCredentialLA)
+TEST(WebAuthenticationPanel, MakeCredentialLA)
 {
     reset();
 
-    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
+    auto identifier = std::to_array<uint8_t>({ 0x01, 0x02, 0x03, 0x04 });
     uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
-    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    RetainPtr nsIdentifier = toNSData(identifier);
     auto nsHash = adoptNS([[NSData alloc] initWithBytes:hash length:sizeof(hash)]);
     auto parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
 
     auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
     [rp setIdentifier:@"example.com"];
-    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier.get() displayName:@"J Appleseed"]);
     NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters.get() ];
     auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
 
@@ -1769,20 +1754,19 @@ TEST(WebAuthenticationPanel, DISABLED_MakeCredentialLA)
     Util::run(&webAuthenticationPanelRan);
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_MakeCredentialLAClientDataHashMediation)
+TEST(WebAuthenticationPanel, MakeCredentialLAClientDataHashMediation)
 {
     reset();
 
-    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
+    auto identifier = std::to_array<uint8_t>({ 0x01, 0x02, 0x03, 0x04 });
     uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
-    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    RetainPtr nsIdentifier = toNSData(identifier);
     auto nsHash = adoptNS([[NSData alloc] initWithBytes:hash length:sizeof(hash)]);
     auto parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
 
     auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
     [rp setIdentifier:@"example.com"];
-    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier.get() displayName:@"J Appleseed"]);
     NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters.get() ];
     auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
 
@@ -1808,20 +1792,19 @@ TEST(WebAuthenticationPanel, DISABLED_MakeCredentialLAClientDataHashMediation)
     Util::run(&webAuthenticationPanelRan);
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_MakeCredentialLAAttestationFalback)
+TEST(WebAuthenticationPanel, MakeCredentialLAAttestationFalback)
 {
     reset();
 
-    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
+    auto identifier = std::to_array<uint8_t>({ 0x01, 0x02, 0x03, 0x04 });
     uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
-    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    RetainPtr nsIdentifier = toNSData(identifier);
     auto nsHash = adoptNS([[NSData alloc] initWithBytes:hash length:sizeof(hash)]);
     auto parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
 
     auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
     [rp setIdentifier:@"example.com"];
-    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier.get() displayName:@"J Appleseed"]);
     NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters.get() ];
     auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
     options.get().attestation = _WKAttestationConveyancePreferenceDirect;
@@ -1857,9 +1840,9 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMinimun)
 
 TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximumDefault)
 {
-    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
-    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
-    auto descriptor = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
+    auto identifier = std::to_array<uint8_t>({ 0x01, 0x02, 0x03, 0x04 });
+    RetainPtr nsIdentifier = toNSData(identifier);
+    auto descriptor = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier.get()]);
     auto extensions = adoptNS([[_WKAuthenticationExtensionsClientInputs alloc] init]);
 
     auto options = adoptNS([[_WKPublicKeyCredentialRequestOptions alloc] init]);
@@ -1873,8 +1856,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximumDefault)
 
     EXPECT_EQ(result.allowCredentials.size(), 1lu);
     EXPECT_EQ(result.allowCredentials[0].type, WebCore::PublicKeyCredentialType::PublicKey);
-    EXPECT_EQ(result.allowCredentials[0].id.length(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.allowCredentials[0].id.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_TRUE(equalSpans(result.allowCredentials[0].id.span(), std::span<const uint8_t> { identifier }));
 
     EXPECT_EQ(result.userVerification, UserVerificationRequirement::Preferred);
     EXPECT_TRUE(result.extensions->appid.isNull());
@@ -1882,8 +1864,8 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximumDefault)
 
 TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximum)
 {
-    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
-    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    auto identifier = std::to_array<uint8_t>({ 0x01, 0x02, 0x03, 0x04 });
+    RetainPtr nsIdentifier = toNSData(identifier);
 
     auto options = adoptNS([[_WKPublicKeyCredentialRequestOptions alloc] init]);
     [options setTimeout:@120];
@@ -1891,7 +1873,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximum)
     RetainPtr usb = [NSNumber numberWithInt:_WKWebAuthenticationTransportUSB];
     RetainPtr nfc = [NSNumber numberWithInt:_WKWebAuthenticationTransportNFC];
     RetainPtr internal = [NSNumber numberWithInt:_WKWebAuthenticationTransportInternal];
-    RetainPtr credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
+    RetainPtr credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier.get()]);
     [credential setTransports:@[ usb.get(), nfc.get(), internal.get() ]];
     [options setAllowCredentials:@[ credential.get(), credential.get() ]];
 
@@ -1907,8 +1889,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximum)
 
     EXPECT_EQ(result.allowCredentials.size(), 2lu);
     EXPECT_EQ(result.allowCredentials[0].type, WebCore::PublicKeyCredentialType::PublicKey);
-    EXPECT_EQ(result.allowCredentials[0].id.length(), sizeof(identifier));
-    EXPECT_EQ(memcmp(result.allowCredentials[0].id.data(), identifier, sizeof(identifier)), 0);
+    EXPECT_TRUE(equalSpans(result.allowCredentials[0].id.span(), std::span<const uint8_t> { identifier }));
     EXPECT_EQ(result.allowCredentials[0].transports.size(), 3lu);
     EXPECT_EQ(result.allowCredentials[0].transports[0], AuthenticatorTransport::Usb);
     EXPECT_EQ(result.allowCredentials[0].transports[1], AuthenticatorTransport::Nfc);
@@ -1942,8 +1923,7 @@ TEST(WebAuthenticationPanel, GetAssertionSPITimeout)
 // For macOS, only internal builds can sign keychain entitlemnets
 // which are required to run local authenticator tests.
 #if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS) || PLATFORM(VISION)
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_GetAssertionLA)
+TEST(WebAuthenticationPanel, GetAssertionLA)
 {
     reset();
     auto beforeTime = adoptNS([[NSDate alloc] init]);
@@ -2006,8 +1986,7 @@ TEST(WebAuthenticationPanel, DISABLED_GetAssertionLA)
     Util::run(&webAuthenticationPanelRan);
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_GetAssertionLAClientDataHashMediation)
+TEST(WebAuthenticationPanel, GetAssertionLAClientDataHashMediation)
 {
     reset();
 
@@ -2057,8 +2036,7 @@ TEST(WebAuthenticationPanel, DISABLED_GetAssertionLAClientDataHashMediation)
     Util::run(&webAuthenticationPanelRan);
 }
 
-// Re-enable as part of test development in https://bugs.webkit.org/show_bug.cgi?id=270583
-TEST(WebAuthenticationPanel, DISABLED_GetAssertionNullUserHandle)
+TEST(WebAuthenticationPanel, GetAssertionNullUserHandle)
 {
     reset();
 
@@ -2252,12 +2230,12 @@ TEST(WebAuthenticationPanel, EncodeCTAPCreation)
 {
     uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
     auto nsHash = adoptNS([[NSData alloc] initWithBytes:hash length:sizeof(hash)]);
-    uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
-    NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
+    auto identifier = std::to_array<uint8_t>({ 0x01, 0x02, 0x03, 0x04 });
+    RetainPtr nsIdentifier = toNSData(identifier);
     auto parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
 
     auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
-    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier displayName:@"J Appleseed"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier.get() displayName:@"J Appleseed"]);
     NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters.get() ];
 
     auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);

@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+CSSCalcExpressionNode::~CSSCalcExpressionNode() = default;
+
 TextStream& operator<<(TextStream& ts, const CSSCalcExpressionNode& node)
 {
     node.dump(ts);

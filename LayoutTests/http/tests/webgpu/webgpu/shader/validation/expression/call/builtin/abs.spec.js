@@ -124,6 +124,10 @@ const kTests = {
   too_many_params: {
     src: `_ = abs(1, 2);`,
     pass: false
+  },
+  must_use: {
+    src: `abs(1);`,
+    pass: false
   }
 };
 

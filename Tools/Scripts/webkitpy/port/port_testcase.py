@@ -48,6 +48,7 @@ from webkitpy.port.config import apple_additions
 from webkitpy.port.driver import DriverOutput
 from webkitpy.port.image_diff import ImageDiffer, ImageDiffResult
 from webkitpy.port.server_process_mock import MockServerProcess
+from webkitpy.layout_tests.controllers.layout_test_runner import TestShard
 from webkitpy.layout_tests.servers import http_server_base
 from webkitpy.tool.mocktool import MockOptions
 
@@ -126,6 +127,17 @@ class PortTestCase(unittest.TestCase):
         port = self.port_maker(host, port_name, options=options, **kwargs)
         port._config.build_directory = lambda configuration, for_host=False: '/mock-build'
         return port
+
+    def test_sharding_groups(self):
+        port = self.make_port()
+        self.assertEqual(sorted(port.sharding_groups().keys()), [])
+        self.assertEqual(None, port.group_for_shard(TestShard('media/something', [])))
+        self.assertEqual(None, port.group_for_shard(TestShard('webaudio/something', [])))
+        self.assertEqual(None, port.group_for_shard(TestShard('fast/media/something', [])))
+        self.assertEqual(None, port.group_for_shard(TestShard('media-session/something', [])))
+        self.assertEqual(None, port.group_for_shard(TestShard('imported/mediacapture-fromelement/something', [])))
+        self.assertEqual(None, port.group_for_shard(TestShard('something/media', [])))
+        self.assertEqual(None, port.group_for_shard(TestShard('fast/something', [])))
 
     def test_default_timeout_ms(self):
         self.assertEqual(self.make_port(options=MockOptions(configuration='Release')).default_timeout_ms(), 30000)

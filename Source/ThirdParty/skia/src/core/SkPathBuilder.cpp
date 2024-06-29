@@ -10,6 +10,7 @@
 #include "include/core/SkMatrix.h"
 #include "include/core/SkRRect.h"
 #include "include/private/SkPathRef.h"
+#include "include/private/base/SkFloatingPoint.h"
 #include "include/private/base/SkSafe32.h"
 #include "src/base/SkVx.h"
 #include "src/core/SkGeometry.h"
@@ -196,12 +197,12 @@ SkPath SkPathBuilder::make(sk_sp<SkPathRef> pr) const {
 
     switch (fIsA) {
         case kIsA_Oval:
-            pr->setIsOval( true, fIsACCW, fIsAStart);
+            pr->setIsOval(fIsACCW, fIsAStart, /*isClosed=*/true);
             convexity = SkPathConvexity::kConvex;
             dir = fIsACCW ? SkPathFirstDirection::kCCW : SkPathFirstDirection::kCW;
             break;
         case kIsA_RRect:
-            pr->setIsRRect(true, fIsACCW, fIsAStart);
+            pr->setIsRRect(fIsACCW, fIsAStart);
             convexity = SkPathConvexity::kConvex;
             dir = fIsACCW ? SkPathFirstDirection::kCCW : SkPathFirstDirection::kCW;
             break;
@@ -541,7 +542,7 @@ SkPathBuilder& SkPathBuilder::arcTo(SkPoint rad, SkScalar angle, SkPathBuilder::
     int segments = SkScalarCeilToInt(SkScalarAbs(thetaArc / (2 * SK_ScalarPI / 3)));
     SkScalar thetaWidth = thetaArc / segments;
     SkScalar t = SkScalarTan(0.5f * thetaWidth);
-    if (!SkScalarIsFinite(t)) {
+    if (!SkIsFinite(t)) {
         return *this;
     }
     SkScalar startTheta = theta1;

@@ -93,7 +93,7 @@ void RemoteLayerWithRemoteRenderingBackingStore::createContextAndPaintContents()
         return;
 
     if (!bufferSet->hasContext()) {
-        ASSERT(m_layer->owner()->platformCALayerDelegatesDisplay(m_layer));
+        // The platform layer delegates display or bufferSet does not have a working connection to GPUP anymore.
         return;
     }
 

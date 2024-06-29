@@ -71,6 +71,10 @@ struct ApplePayRequestBase {
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
     std::optional<ApplePayLaterAvailability> applePayLaterAvailability;
 #endif
+
+#if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
+    String merchantCategoryCode;
+#endif
 };
 
 ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document&, unsigned version, const ApplePayRequestBase&, const PaymentCoordinator&);

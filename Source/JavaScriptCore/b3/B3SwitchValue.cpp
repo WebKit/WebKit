@@ -34,9 +34,7 @@
 
 namespace JSC { namespace B3 {
 
-SwitchValue::~SwitchValue()
-{
-}
+SwitchValue::~SwitchValue() = default;
 
 BasicBlock* SwitchValue::fallThrough(const BasicBlock* owner)
 {

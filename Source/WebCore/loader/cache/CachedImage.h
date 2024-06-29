@@ -125,7 +125,6 @@ private:
     void setBodyDataFrom(const CachedResource&) final;
 
     bool isPDFResource() const;
-    bool isPostScriptResource() const;
 
     void createImage();
     void clearImage();

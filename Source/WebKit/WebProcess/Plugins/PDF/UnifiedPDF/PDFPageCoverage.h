@@ -42,17 +42,19 @@ struct PerPageInfo {
     bool operator==(const PerPageInfo&) const = default;
 };
 
-struct PDFPageCoverage {
-    Vector<PerPageInfo> pages;
+using PDFPageCoverage = Vector<PerPageInfo>;
+
+struct PDFPageCoverageAndScales {
+    PDFPageCoverage pages;
     float deviceScaleFactor { 1 };
     float pdfDocumentScale { 1 };
     float tilingScaleFactor { 1 };
 
-    bool operator==(const PDFPageCoverage&) const = default;
+    bool operator==(const PDFPageCoverageAndScales&) const = default;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const PerPageInfo&);
-WTF::TextStream& operator<<(WTF::TextStream&, const PDFPageCoverage&);
+WTF::TextStream& operator<<(WTF::TextStream&, const PDFPageCoverageAndScales&);
 
 } // namespace WebKit
 

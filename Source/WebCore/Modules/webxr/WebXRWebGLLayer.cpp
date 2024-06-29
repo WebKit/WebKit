@@ -269,6 +269,13 @@ HTMLCanvasElement* WebXRWebGLLayer::canvas() const
     });
 }
 
+void WebXRWebGLLayer::sessionEnded()
+{
+#if PLATFORM(COCOA)
+    if (m_framebuffer)
+        m_framebuffer->releaseAllDisplayAttachments();
+#endif
+}
 
 void WebXRWebGLLayer::startFrame(const PlatformXR::FrameData& data)
 {

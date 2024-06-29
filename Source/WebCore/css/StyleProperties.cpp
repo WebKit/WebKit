@@ -326,7 +326,7 @@ StringBuilder StyleProperties::asTextInternal() const
         else
             result.append(nameLiteral(propertyID));
 
-        result.append(": ", value, property.isImportant() ? " !important" : "", ';');
+        result.append(": "_s, value, property.isImportant() ? " !important"_s : ""_s, ';');
     }
 
     ASSERT(!numDecls ^ !result.isEmpty());
@@ -445,7 +445,7 @@ String StyleProperties::PropertyReference::cssName() const
 
 String StyleProperties::PropertyReference::cssText() const
 {
-    return makeString(cssName(), ": ", WebCore::serializeLonghandValue(id(), *m_value), isImportant() ? " !important;" : ";");
+    return makeString(cssName(), ": "_s, WebCore::serializeLonghandValue(id(), *m_value), isImportant() ? " !important;"_s : ";"_s);
 }
 
 } // namespace WebCore

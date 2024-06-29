@@ -47,7 +47,7 @@ namespace angle
 #    define INFO(...) printf(__VA_ARGS__)
 #    define DEBUG(...) printf(__VA_ARGS__)
 // Uncomment for debugging.
-//#    define VERBOSE(...) printf(__VA_ARGS__)
+// #    define VERBOSE(...) printf(__VA_ARGS__)
 #    define VERBOSE(...)
 #endif  // defined(ANDROID)
 
@@ -268,12 +268,12 @@ class Version
         : mMajor(major), mMinor(minor), mSubminor(subminor), mPatch(patch)
     {}
 
-    Version()                = default;
-    Version(const Version &) = default;
-    Version(Version &&)      = default;
+    Version()                           = default;
+    Version(const Version &)            = default;
+    Version(Version &&)                 = default;
     Version &operator=(const Version &) = default;
-    Version &operator=(Version &&) = default;
-    ~Version()                     = default;
+    Version &operator=(Version &&)      = default;
+    ~Version()                          = default;
 
     static Version FromJson(const Json::Value &jObject)
     {
@@ -807,7 +807,7 @@ ANGLE_EXPORT bool ANGLEGetSystemInfo(SystemInfoHandle *systemInfoHandle)
         return false;
     }
 
-    // TODO (http://anglebug.com/3036): Restore the real code
+    // TODO (http://anglebug.com/42261721): Restore the real code
     angle::SystemInfo *systemInfo = new angle::SystemInfo;
     systemInfo->gpus.resize(1);
     GPUDeviceInfo &gpu = systemInfo->gpus[0];

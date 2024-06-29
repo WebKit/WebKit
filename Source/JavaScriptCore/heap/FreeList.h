@@ -70,7 +70,7 @@ struct FreeCell {
         interval = bitwise_cast<FreeCell*>(intervalStart + offsetToNext);
     }
 
-    static ALWAYS_INLINE ptrdiff_t offsetOfScrambledBits() { return OBJECT_OFFSETOF(FreeCell, scrambledBits); }
+    static constexpr ptrdiff_t offsetOfScrambledBits() { return OBJECT_OFFSETOF(FreeCell, scrambledBits); }
 
     uint64_t preservedBitsForCrashAnalysis;
     uint64_t scrambledBits;
@@ -99,12 +99,12 @@ public:
     unsigned originalSize() const { return m_originalSize; }
 
     static bool isSentinel(FreeCell* cell) { return bitwise_cast<uintptr_t>(cell) & 1; }
-    static ptrdiff_t offsetOfNextInterval() { return OBJECT_OFFSETOF(FreeList, m_nextInterval); }
-    static ptrdiff_t offsetOfSecret() { return OBJECT_OFFSETOF(FreeList, m_secret); }
-    static ptrdiff_t offsetOfIntervalStart() { return OBJECT_OFFSETOF(FreeList, m_intervalStart); }
-    static ptrdiff_t offsetOfIntervalEnd() { return OBJECT_OFFSETOF(FreeList, m_intervalEnd); }
-    static ptrdiff_t offsetOfOriginalSize() { return OBJECT_OFFSETOF(FreeList, m_originalSize); }
-    static ptrdiff_t offsetOfCellSize() { return OBJECT_OFFSETOF(FreeList, m_cellSize); }
+    static constexpr ptrdiff_t offsetOfNextInterval() { return OBJECT_OFFSETOF(FreeList, m_nextInterval); }
+    static constexpr ptrdiff_t offsetOfSecret() { return OBJECT_OFFSETOF(FreeList, m_secret); }
+    static constexpr ptrdiff_t offsetOfIntervalStart() { return OBJECT_OFFSETOF(FreeList, m_intervalStart); }
+    static constexpr ptrdiff_t offsetOfIntervalEnd() { return OBJECT_OFFSETOF(FreeList, m_intervalEnd); }
+    static constexpr ptrdiff_t offsetOfOriginalSize() { return OBJECT_OFFSETOF(FreeList, m_originalSize); }
+    static constexpr ptrdiff_t offsetOfCellSize() { return OBJECT_OFFSETOF(FreeList, m_cellSize); }
     
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
 

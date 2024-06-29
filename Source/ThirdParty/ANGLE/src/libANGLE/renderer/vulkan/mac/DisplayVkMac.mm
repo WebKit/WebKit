@@ -55,7 +55,7 @@ egl::ConfigSet DisplayVkMac::generateConfigs()
 void DisplayVkMac::checkConfigSupport(egl::Config *config)
 {
     // TODO(geofflang): Test for native support and modify the config accordingly.
-    // anglebug.com/2692
+    // anglebug.com/42261400
 }
 
 const char *DisplayVkMac::getWSIExtension() const

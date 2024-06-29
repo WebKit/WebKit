@@ -28,6 +28,7 @@
 
 #include <algorithm>
 #include <wtf/PageBlock.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebKit {
 
@@ -123,7 +124,7 @@ void SharedStringHashStore::resizeTable(unsigned newTableLength)
         return;
     }
 
-    memset(newTableMemory->data(), 0, newTableMemory->size());
+    memsetSpan(newTableMemory->mutableSpan(), 0);
 
     RefPtr<SharedMemory> currentTableMemory = m_table.sharedMemory();
     unsigned currentTableLength = m_tableLength;
@@ -135,7 +136,7 @@ void SharedStringHashStore::resizeTable(unsigned newTableLength)
         RELEASE_ASSERT(currentTableMemory->size() == (Checked<unsigned>(currentTableLength) * sizeof(SharedStringHash)).value());
 
         // Go through the current hash table and re-add all entries to the new hash table.
-        const SharedStringHash* currentSharedStringHashes = static_cast<const SharedStringHash*>(currentTableMemory->data());
+        auto* currentSharedStringHashes = reinterpret_cast<const SharedStringHash*>(currentTableMemory->span().data());
         for (unsigned i = 0; i < currentTableLength; ++i) {
             auto sharedStringHash = currentSharedStringHashes[i];
             if (!sharedStringHash)

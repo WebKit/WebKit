@@ -451,7 +451,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     };
 
     auto link_callLinkInfo = [&](const auto& instruction, auto bytecode, auto& metadata) {
-        metadata.m_callLinkInfo.initialize(vm, this, CallLinkInfo::callTypeFor(decltype(bytecode)::opcodeID), instruction.index());
+        metadata.m_callLinkInfo.initialize(vm, this, CallLinkInfo::callTypeFor(decltype(bytecode)::opcodeID), CodeOrigin { instruction.index() });
     };
 
 #define LINK_FIELD(__field) \
@@ -862,9 +862,12 @@ CodeBlock::~CodeBlock()
         vm.m_perBytecodeProfiler->notifyDestruction(this);
 
     if (LIKELY(!vm.heap.isShuttingDown())) {
-        if (m_metadata) {
-            if (m_metadata->unlinkedMetadata().didOptimize() == TriState::Indeterminate)
-                m_metadata->unlinkedMetadata().setDidOptimize(TriState::False);
+        // FIXME: This check should really not be necessary, see https://webkit.org/b/272787
+        ASSERT(!m_metadata || m_metadata->unlinkedMetadata());
+        if (m_metadata && !m_metadata->isDestroyed()) {
+            auto unlinkedMetadata = m_metadata->unlinkedMetadata();
+            if (unlinkedMetadata->didOptimize() == TriState::Indeterminate)
+                unlinkedMetadata->setDidOptimize(TriState::False);
         }
     }
 
@@ -1628,7 +1631,7 @@ void CodeBlock::finalizeUnconditionally(VM& vm, CollectionScope)
     if (JITCode::couldBeInterpreted(jitType())) {
         finalizeLLIntInlineCaches();
         // If the CodeBlock is DFG or FTL, CallLinkInfo in metadata is not related.
-        forEachLLIntOrBaselineCallLinkInfo([&](BaselineCallLinkInfo& callLinkInfo) {
+        forEachLLIntOrBaselineCallLinkInfo([&](DataOnlyCallLinkInfo& callLinkInfo) {
             callLinkInfo.visitWeak(vm);
         });
     }
@@ -1697,7 +1700,7 @@ void CodeBlock::destroy(JSCell* cell)
 void CodeBlock::getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result)
 {
     if (JITCode::couldBeInterpreted(jitType())) {
-        forEachLLIntOrBaselineCallLinkInfo([&](BaselineCallLinkInfo& callLinkInfo) {
+        forEachLLIntOrBaselineCallLinkInfo([&](DataOnlyCallLinkInfo& callLinkInfo) {
             result.add(callLinkInfo.codeOrigin(), ICStatus()).iterator->value.callLinkInfo = &callLinkInfo;
         });
     }
@@ -1755,42 +1758,6 @@ StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)
         return IterationStatus::Continue;
     });
     return result;
-}
-
-CallLinkInfo* CodeBlock::getCallLinkInfoForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex index)
-{
-    if (JITCode::couldBeInterpreted(jitType())) {
-        auto& instruction = instructions().at(index);
-        switch (instruction->opcodeID()) {
-#define CASE(Op) \
-        case Op::opcodeID: \
-            return &instruction->as<Op>().metadata(this).m_callLinkInfo; \
-            break;
-
-        FOR_EACH_OPCODE_WITH_CALL_LINK_INFO(CASE)
-
-#undef CASE
-        default:
-            break;
-        }
-    }
-
-#if ENABLE(DFG_JIT)
-    if (JSC::JITCode::isOptimizingJIT(jitType())) {
-        DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
-        for (auto* callLinkInfo : dfgCommon->m_callLinkInfos) {
-            if (callLinkInfo->codeOrigin() == CodeOrigin(index))
-                return callLinkInfo;
-        }
-        if (auto* jitData = dfgJITData()) {
-            for (auto& callLinkInfo : jitData->callLinkInfos()) {
-                if (callLinkInfo.codeOrigin() == CodeOrigin(index))
-                    return &callLinkInfo;
-            }
-        }
-    }
-#endif
-    return nullptr;
 }
 
 void CodeBlock::resetBaselineJITData()

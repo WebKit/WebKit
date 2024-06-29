@@ -47,6 +47,7 @@ namespace WebCore {
 class DeferredPromise;
 class NavigatorBase;
 class ServiceWorker;
+class TrustedScriptURL;
 
 enum class ServiceWorkerUpdateViaCache : uint8_t;
 enum class WorkerType : bool;
@@ -69,7 +70,7 @@ public:
     ReadyPromise& ready();
 
     using RegistrationOptions = ServiceWorkerRegistrationOptions;
-    void addRegistration(const String& scriptURL, const RegistrationOptions&, Ref<DeferredPromise>&&);
+    void addRegistration(std::variant<RefPtr<TrustedScriptURL>, String>&&, const RegistrationOptions&, Ref<DeferredPromise>&&);
     void unregisterRegistration(ServiceWorkerRegistrationIdentifier, DOMPromiseDeferred<IDLBoolean>&&);
     void updateRegistration(const URL& scopeURL, const URL& scriptURL, WorkerType, RefPtr<DeferredPromise>&&);
 

@@ -52,7 +52,8 @@ private:
     InlineFormattingContext& formattingContext();
     const InlineFormattingContext& formattingContext() const;
     const InlineContentCache& formattingState() const;
-    const ElementBox& root() const;
+    const ElementBox& formattingContextRoot() const;
+    const ElementBox& lineBuilerRoot() const;
     const InlineItemList& inlineItemList() const { return m_inlineItems.content(); }
 
 private:

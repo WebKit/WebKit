@@ -28,16 +28,18 @@
 #include "APIObject.h"
 #include "GeolocationIdentifier.h"
 #include <wtf/Function.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 class GeolocationPermissionRequestManagerProxy;
+class WebProcessProxy;
 
 class GeolocationPermissionRequestProxy : public RefCounted<GeolocationPermissionRequestProxy> {
 public:
-    static Ref<GeolocationPermissionRequestProxy> create(GeolocationPermissionRequestManagerProxy* manager, GeolocationIdentifier geolocationID)
+    static Ref<GeolocationPermissionRequestProxy> create(GeolocationPermissionRequestManagerProxy* manager, GeolocationIdentifier geolocationID, WebProcessProxy& process)
     {
-        return adoptRef(*new GeolocationPermissionRequestProxy(manager, geolocationID));
+        return adoptRef(*new GeolocationPermissionRequestProxy(manager, geolocationID, process));
     }
 
     void allow();
@@ -45,11 +47,14 @@ public:
     
     void invalidate();
 
+    WebProcessProxy* process() const;
+
 private:
-    GeolocationPermissionRequestProxy(GeolocationPermissionRequestManagerProxy*, GeolocationIdentifier);
+    GeolocationPermissionRequestProxy(GeolocationPermissionRequestManagerProxy*, GeolocationIdentifier, WebProcessProxy&);
 
     GeolocationPermissionRequestManagerProxy* m_manager;
     GeolocationIdentifier m_geolocationID;
+    WeakPtr<WebProcessProxy> m_process;
 };
 
 class GeolocationPermissionRequest : public API::ObjectImpl<API::Object::Type::GeolocationPermissionRequest> {

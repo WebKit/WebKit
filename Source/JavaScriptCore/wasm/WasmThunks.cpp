@@ -98,7 +98,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowFromWasmThunkGenerator(c
     CCallHelpers jit;
     JIT_COMMENT(jit, "throwStackOverflowFromWasmThunkGenerator");
 
-    int32_t stackSpace = WTF::roundUpToMultipleOf(stackAlignmentBytes(), RegisterSetBuilder::calleeSaveRegisters().numberOfSetRegisters() * sizeof(Register));
+    int32_t stackSpace = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(RegisterSetBuilder::calleeSaveRegisters().numberOfSetRegisters() * sizeof(Register));
     ASSERT(static_cast<unsigned>(stackSpace) < Options::softReservedZoneSize());
     jit.addPtr(CCallHelpers::TrustedImm32(-stackSpace), GPRInfo::callFrameRegister, MacroAssembler::stackPointerRegister);
     jit.move(CCallHelpers::TrustedImm32(static_cast<uint32_t>(ExceptionType::StackOverflow)), GPRInfo::argumentGPR1);

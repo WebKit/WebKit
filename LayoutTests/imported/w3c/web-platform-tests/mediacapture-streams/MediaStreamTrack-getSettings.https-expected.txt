@@ -11,6 +11,7 @@ FAIL sampleSize is reported by getSettings() for getUserMedia() audio tracks ass
 PASS echoCancellation is reported by getSettings() for getUserMedia() audio tracks
 FAIL autoGainControl is reported by getSettings() for getUserMedia() audio tracks assert_equals: autoGainControl should exist and it should be a boolean. expected "boolean" but got "undefined"
 FAIL noiseSuppression is reported by getSettings() for getUserMedia() audio tracks assert_equals: noiseSuppression should exist and it should be a boolean. expected "boolean" but got "undefined"
+FAIL voiceIsolation is reported by getSettings() for getUserMedia() audio tracks assert_equals: voiceIsolation should exist and it should be a boolean. expected "boolean" but got "undefined"
 FAIL latency is reported by getSettings() for getUserMedia() audio tracks assert_equals: latency should exist and it should be a number. expected "number" but got "undefined"
 FAIL channelCount is reported by getSettings() for getUserMedia() audio tracks assert_equals: channelCount should exist and it should be a number. expected "number" but got "undefined"
 PASS deviceId is reported by getSettings() for getUserMedia() video tracks

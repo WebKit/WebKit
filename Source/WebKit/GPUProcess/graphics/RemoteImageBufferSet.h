@@ -69,7 +69,7 @@ private:
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     // Messages
-    void updateConfiguration(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat);
+    void updateConfiguration(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferPixelFormat);
     void endPrepareForDisplay(RenderingUpdateID);
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
@@ -79,7 +79,7 @@ private:
 
     bool isOpaque() const
     {
-        return m_pixelFormat == WebCore::PixelFormat::RGB10 || m_pixelFormat == WebCore::PixelFormat::BGRX8;
+        return m_pixelFormat == WebCore::ImageBufferPixelFormat::RGB10 || m_pixelFormat == WebCore::ImageBufferPixelFormat::BGRX8;
     }
 
     const RemoteImageBufferSetIdentifier m_identifier;
@@ -97,7 +97,7 @@ private:
     WebCore::RenderingPurpose m_purpose;
     float m_resolutionScale { 1.0f };
     WebCore::DestinationColorSpace m_colorSpace { WebCore::DestinationColorSpace::SRGB() };
-    WebCore::PixelFormat m_pixelFormat;
+    WebCore::ImageBufferPixelFormat m_pixelFormat;
     bool m_frontBufferIsCleared { false };
     bool m_displayListCreated { false };
 

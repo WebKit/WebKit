@@ -26,7 +26,9 @@ CLContextVk::CLContextVk(const cl::Context &context, const cl::DevicePtrs device
     : CLContextImpl(context),
       vk::Context(getPlatform()->getRenderer()),
       mAssociatedDevices(devicePtrs)
-{}
+{
+    mDeviceQueueIndex = mRenderer->getDefaultDeviceQueueIndex();
+}
 
 CLContextVk::~CLContextVk() = default;
 
@@ -263,7 +265,7 @@ angle::Result CLContextVk::waitForEvents(const cl::EventPtrs &events)
         {
             // TODO rework this to instead (flush w/ ResourceUse serial wait) once we move away from
             // spawning a submit-thread/Task for flush routine
-            // https://anglebug.com/8669
+            // https://anglebug.com/42267107
             ANGLE_TRY(event->getCommandQueue()->finish());
         }
     }

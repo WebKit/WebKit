@@ -50,7 +50,7 @@
 #import "WKProcessPoolPrivate.h"
 #import "WKSafeBrowsingWarning.h"
 #import "WKScrollView.h"
-#import "WKTextIndicatorStyleType.h"
+#import "WKTextAnimationType.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewContentProvider.h"
@@ -63,8 +63,6 @@
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import "WebProcessPool.h"
-#import "WebTextReplacementData.h"
-#import "WebUnifiedTextReplacementContextData.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/GraphicsContextCG.h>
@@ -108,6 +106,10 @@
         [_contentView _action ## ForWebView:sender]; \
 }
 
+namespace WebKit {
+enum class UpdateLastKnownWindowSizeResult : bool { Changed, DidNotChange };
+}
+
 #define WKWEBVIEW_RELEASE_LOG(...) RELEASE_LOG(ViewState, __VA_ARGS__)
 
 static const Seconds delayBeforeNoVisibleContentsRectsLogging = 1_s;
@@ -136,10 +138,6 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
 @interface UIWindow (UIWindowInternal)
 - (BOOL)_isHostedInAnotherProcess;
 @end
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewPrivateAdditions.mm>
-#endif
 
 @implementation WKWebView (WKViewInternalIOS)
 
@@ -339,6 +337,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (WKBrowsingContextController *)browsingContextController
 {
+    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::BrowsingContextControllerSPIAccessRemoved))
+        return nil;
     return [_contentView browsingContextController];
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -847,7 +847,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
 
 - (void)_didRelaunchProcess
 {
-    WKWEBVIEW_RELEASE_LOG("%p -[WKWebView _didRelaunchProcess] (pid=%d)", self, _page->processID());
+    WKWEBVIEW_RELEASE_LOG("%p -[WKWebView _didRelaunchProcess] (pid=%d)", self, _page->legacyMainFrameProcessID());
     _perProcessState.hasScheduledVisibleRectUpdate = NO;
     _viewStabilityWhenVisibleContentRectUpdateScheduled = { };
     if (_gestureController)
@@ -884,8 +884,8 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
 
 static CGPoint contentOffsetBoundedInValidRange(UIScrollView *scrollView, CGPoint contentOffset)
 {
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+// FIXME: Likely we can remove this special case for watchOS.
+#if !PLATFORM(WATCHOS)
     UIEdgeInsets contentInsets = scrollView.adjustedContentInset;
 #else
     UIEdgeInsets contentInsets = scrollView.contentInset;
@@ -1880,6 +1880,16 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return false;
 }
 
+- (WebKit::UpdateLastKnownWindowSizeResult)_updateLastKnownWindowSize
+{
+    auto size = self.window.bounds.size;
+    if (CGSizeEqualToSize(_lastKnownWindowSize, size))
+        return WebKit::UpdateLastKnownWindowSizeResult::DidNotChange;
+
+    _lastKnownWindowSize = size;
+    return WebKit::UpdateLastKnownWindowSizeResult::Changed;
+}
+
 - (void)didMoveToWindow
 {
     if (!_overridesInterfaceOrientation)
@@ -1894,9 +1904,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [self _invalidateResizeAssertions];
 #endif
 #if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
-    [self _destroyEndLiveResizeObserver];
     [self _endLiveResize];
 #endif
+    [self _updateLastKnownWindowSize];
 }
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
@@ -2320,7 +2330,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
 
     LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView " << _page->identifier() << " _dispatchSetViewLayoutSize:] " << viewLayoutSize << " contentZoomScale " << contentZoomScale(self));
-    _page->setViewportConfigurationViewLayoutSize(viewLayoutSize, _page->layoutSizeScaleFactor(), newMinimumEffectiveDeviceWidth);
+    _page->setViewportConfigurationViewLayoutSize(viewLayoutSize, _page->layoutSizeScaleFactorFromClient(), newMinimumEffectiveDeviceWidth);
     _perProcessState.lastSentViewLayoutSize = viewLayoutSize;
     _perProcessState.lastSentMinimumEffectiveDeviceWidth = newMinimumEffectiveDeviceWidth;
 }
@@ -2356,37 +2366,42 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_beginAutomaticLiveResizeIfNeeded
 {
-    if (![self usesStandardContentView])
+    if (!_page)
         return;
 
-    if (_perProcessState.liveResizeParameters)
+    if (!_page->preferences().automaticLiveResizeEnabled())
+        return;
+
+    if (![self usesStandardContentView])
         return;
 
     if (!self.window)
         return;
 
-    if (!self.window.windowScene._isInLiveResize)
+    if (CGRectIsEmpty(self.bounds))
+        return;
+
+    [self _rescheduleEndLiveResizeTimer];
+
+    if (_perProcessState.liveResizeParameters)
         return;
 
     [self _beginLiveResize];
-    
-    _endLiveResizeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:_UIWindowSceneDidEndLiveResizeNotification object:self.window.windowScene queue:NSOperationQueue.mainQueue usingBlock:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self)] (NSNotification *) {
-        auto strongSelf = weakSelf.get();
-        if (!strongSelf)
-            return;
-        
-        [strongSelf _destroyEndLiveResizeObserver];
-        [strongSelf _endLiveResize];
-    }).get()];
 }
 
-- (void)_destroyEndLiveResizeObserver
+- (void)_rescheduleEndLiveResizeTimer
 {
-    if (!_endLiveResizeNotificationObserver)
-        return;
+    [_endLiveResizeTimer invalidate];
 
-    [[NSNotificationCenter defaultCenter] removeObserver:_endLiveResizeNotificationObserver.get()];
-    _endLiveResizeNotificationObserver = nil;
+    constexpr auto endLiveResizeHysteresis = 500_ms;
+
+    _endLiveResizeTimer = [NSTimer
+        scheduledTimerWithTimeInterval:endLiveResizeHysteresis.seconds()
+        repeats:NO
+        block:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self)](NSTimer *) {
+            auto strongSelf = weakSelf.get();
+            [strongSelf _endLiveResize];
+        }).get()];
 }
 
 - (void)_updateLiveResizeTransform
@@ -2408,7 +2423,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (void)_frameOrBoundsWillChange
 {
 #if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
-    if (_page && _page->preferences().automaticLiveResizeEnabled())
+    if ([self _updateLastKnownWindowSize] == WebKit::UpdateLastKnownWindowSizeResult::Changed)
         [self _beginAutomaticLiveResizeIfNeeded];
 #endif
 }
@@ -2462,10 +2477,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_acquireResizeAssertionForReason:(NSString *)reason
 {
+    if (_page && _page->preferences().automaticLiveResizeEnabled())
+        return;
+
     UIWindowScene *windowScene = self.window.windowScene;
     if (!windowScene)
-        return;
-    if (![windowScene respondsToSelector:@selector(_holdLiveResizeSnapshotForReason:)])
         return;
 
     if (_resizeAssertions.isEmpty()) {
@@ -2545,8 +2561,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return contentOffset.y < -contentInsets.top && [self _scrollViewIsRubberBanding:_scrollView.get()];
 }
 
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+// FIXME: Likely we can remove this special case for watchOS.
+#if !PLATFORM(WATCHOS)
 - (void)safeAreaInsetsDidChange
 {
     [super safeAreaInsetsDidChange];
@@ -3177,8 +3193,8 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 
 - (void)_updateScrollViewInsetAdjustmentBehavior
 {
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+// FIXME: Likely we can remove this special case for watchOS.
+#if !PLATFORM(WATCHOS)
     if (![_scrollView _contentInsetAdjustmentBehaviorWasExternallyOverridden])
         [_scrollView _setContentInsetAdjustmentBehaviorInternal:self._safeAreaShouldAffectObscuredInsets ? UIScrollViewContentInsetAdjustmentAlways : UIScrollViewContentInsetAdjustmentNever];
 #endif
@@ -3312,9 +3328,12 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     if (!_perProcessState.liveResizeParameters)
         return;
 
-    UIView *liveResizeSnapshotView = [self snapshotViewAfterScreenUpdates:NO];
+    [_endLiveResizeTimer invalidate];
+    _endLiveResizeTimer = nil;
+
+    RetainPtr liveResizeSnapshotView = [self snapshotViewAfterScreenUpdates:NO];
     [liveResizeSnapshotView setFrame:self.bounds];
-    [self addSubview:liveResizeSnapshotView];
+    [self addSubview:liveResizeSnapshotView.get()];
 
     _perProcessState.liveResizeParameters = std::nullopt;
 
@@ -3322,9 +3341,17 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [self _destroyResizeAnimationView];
     [self _didStopDeferringGeometryUpdates];
 
-    [self _doAfterNextPresentationUpdate:^{
+    [self _doAfterNextVisibleContentRectUpdate:makeBlockPtr([liveResizeSnapshotView, weakSelf = WeakObjCPtr<WKWebView>(self)]() mutable {
+        auto strongSelf = weakSelf.get();
+        [strongSelf _doAfterNextPresentationUpdate:makeBlockPtr([liveResizeSnapshotView] {
+            [liveResizeSnapshotView removeFromSuperview];
+        }).get()];
+    }).get()];
+
+    // Ensure that the live resize snapshot is eventually removed, even if the webpage is unresponsive.
+    RunLoop::main().dispatchAfter(1_s, [liveResizeSnapshotView] {
         [liveResizeSnapshotView removeFromSuperview];
-    }];    
+    });
 }
 
 #endif // HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
@@ -4686,10 +4713,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     return nil;
 }
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewIOSAdditionsAfter.mm>
-#endif
 
 @end // WKWebView (WKPrivateIOS)
 

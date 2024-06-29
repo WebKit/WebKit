@@ -262,7 +262,7 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
 ExceptionOr<void> FetchRequest::setBody(FetchBody::Init&& body)
 {
     if (!methodCanHaveBody(m_request))
-        return Exception { ExceptionCode::TypeError, makeString("Request has method '", m_request.httpMethod(), "' and cannot have a body") };
+        return Exception { ExceptionCode::TypeError, makeString("Request has method '"_s, m_request.httpMethod(), "' and cannot have a body"_s) };
 
     ASSERT(scriptExecutionContext());
     auto result = extractBody(WTFMove(body));
@@ -281,7 +281,7 @@ ExceptionOr<void> FetchRequest::setBody(FetchRequest& request)
 
     if (!request.isBodyNull()) {
         if (!methodCanHaveBody(m_request))
-            return Exception { ExceptionCode::TypeError, makeString("Request has method '", m_request.httpMethod(), "' and cannot have a body") };
+            return Exception { ExceptionCode::TypeError, makeString("Request has method '"_s, m_request.httpMethod(), "' and cannot have a body"_s) };
         // FIXME: If body has a readable stream, we should pipe it to this new body stream.
         m_body = WTFMove(*request.m_body);
         request.setDisturbed();

@@ -30,6 +30,7 @@
 #include "InitializeThreading.h"
 
 #include "AssemblyComments.h"
+#include "AssertInvariants.h"
 #include "ExecutableAllocator.h"
 #include "InPlaceInterpreter.h"
 #include "JITOperationList.h"
@@ -115,7 +116,7 @@ void initialize()
 
         AssemblyCommentRegistry::initialize();
 #if ENABLE(WEBASSEMBLY)
-        if (Options::useWasmIPInt() || Options::useIPIntWrappers())
+        if (Options::useWebAssemblyIPInt() || Options::useInterpretedJSEntryWrappers())
             IPInt::initialize();
 #endif
         LLInt::initialize();
@@ -141,6 +142,8 @@ void initialize()
             if (Wasm::isSupported())
                 Wasm::prepareSignalingMemory();
         }
+
+        assertInvariants();
 
         WTF::compilerFence();
         RELEASE_ASSERT(!g_jscConfig.initializeHasBeenCalled);

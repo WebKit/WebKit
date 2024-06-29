@@ -29,6 +29,7 @@ typedef [EnforceRange] unsigned long PlaneLayoutOffsetOrStride;
 [
     Conditional=WEB_CODECS,
     JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] dictionary PlaneLayout {
   required PlaneLayoutOffsetOrStride offset;
   required PlaneLayoutOffsetOrStride stride;

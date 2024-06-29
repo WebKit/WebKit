@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -159,6 +159,86 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
     return [JSValue valueWithJSValueRef:JSValueMakeSymbol([context JSGlobalContextRef], string.get()) inContext:context];
 }
 
++ (JSValue *)valueWithNewBigIntFromString:(NSString *)string inContext:(JSContext *)context
+{
+    JSValueRef exception = nullptr;
+    JSValueRef bigInt = JSBigIntCreateWithString([context JSGlobalContextRef], OpaqueJSString::tryCreate(string).get(), &exception);
+    if (exception) {
+        [context notifyException:exception];
+        return nil;
+    }
+    return [JSValue valueWithJSValueRef:bigInt inContext:context];
+}
+
++ (JSValue *)valueWithNewBigIntFromInt64:(int64_t)int64 inContext:(JSContext *)context
+{
+    JSValueRef exception = nullptr;
+    JSValueRef bigInt = JSBigIntCreateWithInt64([context JSGlobalContextRef], int64, &exception);
+    if (exception) {
+        [context notifyException:exception];
+        return nil;
+    }
+    return [JSValue valueWithJSValueRef:bigInt inContext:context];
+}
+
++ (JSValue *)valueWithNewBigIntFromUInt64:(uint64_t)uint64 inContext:(JSContext *)context
+{
+    JSValueRef exception = nullptr;
+    JSValueRef bigInt = JSBigIntCreateWithUInt64([context JSGlobalContextRef], uint64, &exception);
+    if (exception) {
+        [context notifyException:exception];
+        return nil;
+    }
+    return [JSValue valueWithJSValueRef:bigInt inContext:context];
+}
+
++ (JSValue *)valueWithNewBigIntFromDouble:(double)value inContext:(JSContext *)context
+{
+    JSValueRef exception = nullptr;
+    JSValueRef bigInt = JSBigIntCreateWithDouble([context JSGlobalContextRef], value, &exception);
+    if (exception) {
+        [context notifyException:exception];
+        return nil;
+    }
+    return [JSValue valueWithJSValueRef:bigInt inContext:context];
+}
+
+- (JSRelationCondition)compareUInt64:(uint64_t)other
+{
+    JSValueRef exception = nullptr;
+    JSRelationCondition result = JSValueCompareUInt64([_context JSGlobalContextRef], m_value, other, &exception);
+    if (exception)
+        [_context notifyException:exception];
+    return result;
+}
+
+- (JSRelationCondition)compareInt64:(int64_t)other
+{
+    JSValueRef exception = nullptr;
+    JSRelationCondition result = JSValueCompareInt64([_context JSGlobalContextRef], m_value, other, &exception);
+    if (exception)
+        [_context notifyException:exception];
+    return result;
+}
+
+- (JSRelationCondition)compareDouble:(double)other
+{
+    JSValueRef exception = nullptr;
+    JSRelationCondition result = JSValueCompareDouble([_context JSGlobalContextRef], m_value, other, &exception);
+    if (exception)
+        [_context notifyException:exception];
+    return result;
+}
+
+- (JSRelationCondition)compareJSValue:(JSValue *)other
+{
+    JSValueRef exception = nullptr;
+    JSRelationCondition result = JSValueCompare([_context JSGlobalContextRef], m_value, other->m_value, &exception);
+    if (exception)
+        [_context notifyException:exception];
+    return result;
+}
+
 + (JSValue *)valueWithNewPromiseInContext:(JSContext *)context fromExecutor:(void (^)(JSValue *, JSValue *))executor
 {
     JSObjectRef resolve;
@@ -167,7 +247,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
     JSObjectRef promise = JSObjectMakeDeferredPromise([context JSGlobalContextRef], &resolve, &reject, &exception);
     if (exception) {
         [context notifyException:exception];
-        return [JSValue valueWithUndefinedInContext:context];
+        return nil;
     }
 
     JSValue *result = [JSValue valueWithJSValueRef:promise inContext:context];
@@ -231,12 +311,42 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
 - (int32_t)toInt32
 {
-    return JSC::toInt32([self toDouble]);
+    JSValueRef exception = nullptr;
+    int32_t result = JSValueToInt32([_context JSGlobalContextRef], m_value, &exception);
+    if (exception) {
+        [_context notifyException:exception];
+        return 0;
+    }
+    return result;
 }
 
 - (uint32_t)toUInt32
 {
-    return JSC::toUInt32([self toDouble]);
+    JSValueRef exception = nullptr;
+    uint32_t result = JSValueToUInt32([_context JSGlobalContextRef], m_value, &exception);
+    if (exception)
+        [_context notifyException:exception];
+    return result;
+}
+
+- (int64_t)toInt64
+{
+    JSValueRef exception = nullptr;
+    int64_t result = JSValueToInt64([_context JSGlobalContextRef], m_value, &exception);
+    if (exception) {
+        [_context notifyException:exception];
+        return 0;
+    }
+    return result;
+}
+
+- (uint64_t)toUInt64
+{
+    JSValueRef exception = nullptr;
+    uint64_t result = JSValueToUInt64([_context JSGlobalContextRef], m_value, &exception);
+    if (exception)
+        [_context notifyException:exception];
+    return result;
 }
 
 - (NSNumber *)toNumber
@@ -460,6 +570,15 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
     return JSValueIsSymbol([_context JSGlobalContextRef], m_value);
 #else
     return toJS(m_value).isSymbol();
+#endif
+}
+
+- (BOOL)isBigInt
+{
+#if !CPU(ADDRESS64)
+    return JSValueIsBigInt([_context JSGlobalContextRef], m_value);
+#else
+    return toJS(m_value).isBigInt();
 #endif
 }
 

@@ -98,7 +98,7 @@ TEST_F(AudioRtpReceiverTest, VolumesSetBeforeStartingAreRespected) {
 // thread when a media channel pointer is passed to the receiver via the
 // constructor.
 TEST(AudioRtpReceiver, OnChangedNotificationsAfterConstruction) {
-  webrtc::test::RunLoop loop;
+  test::RunLoop loop;
   auto* thread = rtc::Thread::Current();  // Points to loop's thread.
   cricket::MockVoiceMediaReceiveChannelInterface receive_channel;
   auto receiver = rtc::make_ref_counted<AudioRtpReceiver>(

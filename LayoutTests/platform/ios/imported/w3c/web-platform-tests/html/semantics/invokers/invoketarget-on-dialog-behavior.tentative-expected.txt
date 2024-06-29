@@ -1,0 +1,86 @@
+
+
+FAIL invoking (with invokeaction property as auto) closed dialog opens as modal assert_true: invokee.open expected true got false
+PASS invoking (with invokeaction property as auto) closed dialog with preventDefault is noop
+FAIL invoking (with invokeaction property as auto) while changing action still opens as modal assert_true: invokee.open expected true got false
+FAIL invoking (with invokeaction attribute as auto) closed dialog opens as modal assert_true: invokee.open expected true got false
+PASS invoking (with invokeaction attribute as auto) closed dialog with preventDefault is noop
+FAIL invoking (with invokeaction attribute as auto) while changing action still opens as modal assert_true: invokee.open expected true got false
+FAIL invoking (with invokeaction property as explicit empty) closed dialog opens as modal assert_true: invokee.open expected true got false
+PASS invoking (with invokeaction property as explicit empty) closed dialog with preventDefault is noop
+FAIL invoking (with invokeaction property as explicit empty) while changing action still opens as modal assert_true: invokee.open expected true got false
+FAIL invoking (with invokeaction attribute as explicit empty) closed dialog opens as modal assert_true: invokee.open expected true got false
+PASS invoking (with invokeaction attribute as explicit empty) closed dialog with preventDefault is noop
+FAIL invoking (with invokeaction attribute as explicit empty) while changing action still opens as modal assert_true: invokee.open expected true got false
+FAIL invoking (with invokeaction property as showmodal) closed dialog opens as modal assert_true: invokee.open expected true got false
+PASS invoking (with invokeaction property as showmodal) closed dialog with preventDefault is noop
+FAIL invoking (with invokeaction property as showmodal) while changing action still opens as modal assert_true: invokee.open expected true got false
+FAIL invoking (with invokeaction attribute as showmodal) closed dialog opens as modal assert_true: invokee.open expected true got false
+PASS invoking (with invokeaction attribute as showmodal) closed dialog with preventDefault is noop
+FAIL invoking (with invokeaction attribute as showmodal) while changing action still opens as modal assert_true: invokee.open expected true got false
+FAIL invoking (with invokeaction property as sHoWmOdAl) closed dialog opens as modal assert_true: invokee.open expected true got false
+PASS invoking (with invokeaction property as sHoWmOdAl) closed dialog with preventDefault is noop
+FAIL invoking (with invokeaction property as sHoWmOdAl) while changing action still opens as modal assert_true: invokee.open expected true got false
+FAIL invoking (with invokeaction attribute as sHoWmOdAl) closed dialog opens as modal assert_true: invokee.open expected true got false
+PASS invoking (with invokeaction attribute as sHoWmOdAl) closed dialog with preventDefault is noop
+FAIL invoking (with invokeaction attribute as sHoWmOdAl) while changing action still opens as modal assert_true: invokee.open expected true got false
+FAIL invoking to close (with invokeaction property as auto) open dialog closes assert_false: invokee.open expected false got true
+PASS invoking to close (with invokeaction property as auto) open dialog with preventDefault is no-op
+PASS invoking to close (with invokeaction property as auto) open modal dialog with preventDefault is no-op
+FAIL invoking to close (with invokeaction property as auto) open dialog while changing action still closes assert_false: invokee.open expected false got true
+FAIL invoking to close (with invokeaction property as auto) open modal dialog while changing action still closes assert_false: invokee.open expected false got true
+FAIL invoking to close (with invokeaction attribute as auto) open dialog closes assert_false: invokee.open expected false got true
+PASS invoking to close (with invokeaction attribute as auto) open dialog with preventDefault is no-op
+PASS invoking to close (with invokeaction attribute as auto) open modal dialog with preventDefault is no-op
+FAIL invoking to close (with invokeaction attribute as auto) open dialog while changing action still closes assert_false: invokee.open expected false got true
+FAIL invoking to close (with invokeaction attribute as auto) open modal dialog while changing action still closes assert_false: invokee.open expected false got true
+FAIL invoking to close (with invokeaction property as explicit empty) open dialog closes assert_false: invokee.open expected false got true
+PASS invoking to close (with invokeaction property as explicit empty) open dialog with preventDefault is no-op
+PASS invoking to close (with invokeaction property as explicit empty) open modal dialog with preventDefault is no-op
+FAIL invoking to close (with invokeaction property as explicit empty) open dialog while changing action still closes assert_false: invokee.open expected false got true
+FAIL invoking to close (with invokeaction property as explicit empty) open modal dialog while changing action still closes assert_false: invokee.open expected false got true
+FAIL invoking to close (with invokeaction attribute as explicit empty) open dialog closes assert_false: invokee.open expected false got true
+PASS invoking to close (with invokeaction attribute as explicit empty) open dialog with preventDefault is no-op
+PASS invoking to close (with invokeaction attribute as explicit empty) open modal dialog with preventDefault is no-op
+FAIL invoking to close (with invokeaction attribute as explicit empty) open dialog while changing action still closes assert_false: invokee.open expected false got true
+FAIL invoking to close (with invokeaction attribute as explicit empty) open modal dialog while changing action still closes assert_false: invokee.open expected false got true
+FAIL invoking to close (with invokeaction property as close) open dialog closes assert_false: invokee.open expected false got true
+PASS invoking to close (with invokeaction property as close) open dialog with preventDefault is no-op
+PASS invoking to close (with invokeaction property as close) open modal dialog with preventDefault is no-op
+FAIL invoking to close (with invokeaction property as close) open dialog while changing action still closes assert_false: invokee.open expected false got true
+FAIL invoking to close (with invokeaction property as close) open modal dialog while changing action still closes assert_false: invokee.open expected false got true
+FAIL invoking to close (with invokeaction attribute as close) open dialog closes assert_false: invokee.open expected false got true
+PASS invoking to close (with invokeaction attribute as close) open dialog with preventDefault is no-op
+PASS invoking to close (with invokeaction attribute as close) open modal dialog with preventDefault is no-op
+FAIL invoking to close (with invokeaction attribute as close) open dialog while changing action still closes assert_false: invokee.open expected false got true
+FAIL invoking to close (with invokeaction attribute as close) open modal dialog while changing action still closes assert_false: invokee.open expected false got true
+FAIL invoking to close (with invokeaction property as cLoSe) open dialog closes assert_false: invokee.open expected false got true
+PASS invoking to close (with invokeaction property as cLoSe) open dialog with preventDefault is no-op
+PASS invoking to close (with invokeaction property as cLoSe) open modal dialog with preventDefault is no-op
+FAIL invoking to close (with invokeaction property as cLoSe) open dialog while changing action still closes assert_false: invokee.open expected false got true
+FAIL invoking to close (with invokeaction property as cLoSe) open modal dialog while changing action still closes assert_false: invokee.open expected false got true
+FAIL invoking to close (with invokeaction attribute as cLoSe) open dialog closes assert_false: invokee.open expected false got true
+PASS invoking to close (with invokeaction attribute as cLoSe) open dialog with preventDefault is no-op
+PASS invoking to close (with invokeaction attribute as cLoSe) open modal dialog with preventDefault is no-op
+FAIL invoking to close (with invokeaction attribute as cLoSe) open dialog while changing action still closes assert_false: invokee.open expected false got true
+FAIL invoking to close (with invokeaction attribute as cLoSe) open modal dialog while changing action still closes assert_false: invokee.open expected false got true
+PASS invoking (as showmodal) open dialog is noop
+PASS invoking (as showmodal) open modal, while changing action still a no-op
+FAIL invoking (as showmodal) closed popover dialog opens as modal assert_true: invokee.open expected true got false
+PASS invoking (as close) already closed dialog is noop
+PASS invoking (as showmodal) dialog as open popover=manual is noop
+PASS invoking (as showmodal) dialog as open popover=auto is noop
+PASS invoking (as close) dialog as open popover=manual is noop
+PASS invoking (as close) dialog as open popover=auto is noop
+PASS invoking (as explicit empty) dialog as open popover=manual is noop
+PASS invoking (as explicit empty) dialog as open popover=auto is noop
+PASS invoking (as showmodal) dialog that is removed is noop
+PASS invoking (as showmodal) dialog from a detached invoker
+PASS invoking (as showmodal) detached dialog from a detached invoker
+PASS invoking (as close) dialog that is removed is noop
+PASS invoking (as close) dialog from a detached invoker
+PASS invoking (as close) detached dialog from a detached invoker
+PASS invoking (as explicit empty) dialog that is removed is noop
+PASS invoking (as explicit empty) dialog from a detached invoker
+PASS invoking (as explicit empty) detached dialog from a detached invoker
+

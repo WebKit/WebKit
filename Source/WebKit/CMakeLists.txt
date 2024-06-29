@@ -230,7 +230,6 @@ set(WebKit_MESSAGES_IN_FILES
     Shared/IPCStreamTesterProxy
     Shared/IPCTester
     Shared/IPCTesterReceiver
-    Shared/WebConnection
 
     Shared/Authentication/AuthenticationManager
 
@@ -346,6 +345,7 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/WebPage/EventDispatcher
     WebProcess/WebPage/VisitedLinkTableController
     WebProcess/WebPage/WebPage
+    WebProcess/WebPage/WebPageTesting
 
     WebProcess/WebStorage/StorageAreaMap
 
@@ -361,7 +361,6 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     GPUProcess/graphics/PathSegment.serialization.in
     GPUProcess/graphics/RemoteGraphicsContextGLInitializationState.serialization.in
-    GPUProcess/graphics/RemoteRenderingBackendCreationParameters.serialization.in
 
     GPUProcess/graphics/WebGPU/RemoteGPURequestAdapterResponse.serialization.in
 

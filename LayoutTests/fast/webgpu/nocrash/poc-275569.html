@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>WebGPU triangle</title>
+    <script>
+onload = async () => {
+  let adapter = await navigator.gpu.requestAdapter({});
+  let device = await adapter.requestDevice({
+    label: 'dev',
+    requiredFeatures: [
+      'depth-clip-control',
+      'texture-compression-etc2',
+      'texture-compression-astc',
+      'texture-compression-bc',
+      'indirect-first-instance',
+      'shader-f16',
+      'rg11b10ufloat-renderable',
+      'bgra8unorm-storage'
+    ],
+    requiredLimits: {
+      maxColorAttachmentBytesPerSample: 49,
+      maxVertexAttributes: 22,
+      maxVertexBufferArrayStride: 22731,
+      maxStorageTexturesPerShaderStage: 13,
+      maxBindingsPerBindGroup: 2463,
+      maxTextureArrayLayers: 2048,
+      maxTextureDimension1D: 9624,
+      maxTextureDimension2D: 12505,
+      maxVertexBuffers: 12,
+      minUniformBufferOffsetAlignment: 32,
+    },
+  });
+
+  // Clear color for GPURenderPassDescriptor
+  const clearColor = { r: 0.0, g: 0.5, b: 1.0, a: 1.0 };
+
+  // Vertex data for triangle
+  // Each vertex has 8 values representing position and color: X Y Z W R G B A
+
+  const vertices = new Float32Array([
+    0.0,  0.6, 0, 1, 1, 0, 0, 1,
+  -0.5, -0.6, 0, 1, 0, 1, 0, 1,
+    0.5, -0.6, 0, 1, 0, 0, 1, 1
+  ]);
+
+  // Vertex and fragment shaders
+  const shaders = `
+  struct VertexOut {
+    @builtin(position) position : vec4f,
+    @location(0) color : vec4f
+  }
+
+  @vertex
+  fn vertex_main(@location(0) position: vec4f,
+                @location(1) color: vec4f) -> VertexOut
+  {
+    var output : VertexOut;
+    output.position = position;
+    output.color = color;
+    return output;
+  }
+
+  @fragment
+  fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
+  {
+    return fragData.color;
+  }
+  `;
+
+  // 2: Create a shader module from the shaders template literal
+  const shaderModule = device.createShaderModule({
+    code: shaders
+  });
+
+  // 3: Get reference to the canvas to render on
+  const canvas = document.querySelector('#gpuCanvas');
+  const context = canvas.getContext('webgpu');
+
+  context.configure({
+    device: device,
+    format: navigator.gpu.getPreferredCanvasFormat(),
+    alphaMode: 'premultiplied'
+  });
+
+  // 4: Create vertex buffer to contain vertex data
+  const vertexBuffer = device.createBuffer({
+    size: vertices.byteLength, // make it big enough to store vertices in
+    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+  });
+
+  // Copy the vertex data over to the GPUBuffer using the writeBuffer() utility function
+  device.queue.writeBuffer(vertexBuffer, 0, vertices, 0, vertices.length);
+
+  // 5: Create a GPUVertexBufferLayout and GPURenderPipelineDescriptor to provide a definition of our render pipline
+  const vertexBuffers = [{
+    attributes: [{
+      shaderLocation: 0, // position
+      offset: 0,
+      format: 'float32x4'
+    }, {
+      shaderLocation: 1, // color
+      offset: 16,
+      format: 'float32x4'
+    }],
+    arrayStride: 32,
+    stepMode: 'vertex'
+  }];
+
+  const bindGroupLayout = device.createBindGroupLayout({
+  entries: [
+    {
+      binding: 0,
+      visibility: GPUShaderStage.COMPUTE,
+      buffer: {
+        type: "uniform",
+        hasDynamicOffset: true,
+      },
+    },
+    {
+      binding: 1,
+      visibility: GPUShaderStage.FRAGMENT,
+      buffer: {
+        type: "storage",
+        hasDynamicOffset: true,
+      },
+    },
+    {
+      binding: 2,
+      visibility: GPUShaderStage.FRAGMENT,
+      buffer: {
+        type: "storage",
+        hasDynamicOffset: true,
+      },
+    },
+  ],
+  });
+
+  const bindGroupLayout2 = device.createBindGroupLayout({
+  entries: [
+    {
+      binding: 0,
+      visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT,
+      buffer: {
+        type: "uniform",
+        hasDynamicOffset: true,
+      },
+    },
+    {
+      binding: 1,
+      visibility: GPUShaderStage.FRAGMENT,
+      buffer: {
+        type: "storage",
+        hasDynamicOffset: true,
+        minBindingSize: 0x12,
+      },
+    },
+    {
+      binding: 2,
+      visibility: GPUShaderStage.FRAGMENT,
+      buffer: {
+        type: "storage",
+        hasDynamicOffset: true,
+      },
+    },
+  ],
+  });
+
+  const pipelineLayout = device.createPipelineLayout({
+    bindGroupLayouts: [bindGroupLayout, bindGroupLayout2],
+  });
+
+  const pipelineDescriptor = {
+    vertex: {
+      module: shaderModule,
+      entryPoint: 'vertex_main',
+      buffers: vertexBuffers
+    },
+    fragment: {
+      module: shaderModule,
+      entryPoint: 'fragment_main',
+      targets: [{
+        format: navigator.gpu.getPreferredCanvasFormat()
+      }]
+    },
+    primitive: {
+      topology: 'triangle-list'
+    },
+    layout: pipelineLayout
+  };
+
+  // 6: Create the actual render pipeline
+
+  const renderPipeline = device.createRenderPipeline(pipelineDescriptor);
+
+  // 7: Create GPUCommandEncoder to issue commands to the GPU
+  // Note: render pass descriptor, command encoder, etc. are destroyed after use, fresh one needed for each frame.
+  let commandEncoder = device.createCommandEncoder();
+
+  // 8: Create GPURenderPassDescriptor to tell WebGPU which texture to draw into, then initiate render pass
+
+  const renderPassDescriptor = {
+    colorAttachments: [{
+      clearValue: clearColor,
+      loadOp: 'clear',
+      storeOp: 'store',
+      view: context.getCurrentTexture().createView()
+    }]
+  };
+
+  const output = device.createBuffer({
+      size: 1024,
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
+    });
+
+  const output2 = device.createBuffer({
+    size: 0x10000000,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
+  });
+
+  const outputUniform = device.createBuffer({
+      size: 1024,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_SRC
+    });
+
+  const bindGroup = device.createBindGroup({
+    layout: bindGroupLayout,
+    entries: [
+      {
+        binding: 0,
+        resource: {
+          buffer: outputUniform,
+          size: 500
+        },
+      },
+      {
+        binding: 1,
+        resource: {
+          buffer: output2,
+          size: 500
+        },
+      },
+      {
+        binding: 2,
+        resource: {
+          buffer: output,
+          size: 500
+        },
+      },
+    ],
+  });
+
+  const bindGroup2 = device.createBindGroup({
+    layout: bindGroupLayout2,
+    entries: [
+      {
+        binding: 0,
+        resource: {
+          buffer: outputUniform,
+          size: 512
+        },
+      },
+      {
+        binding: 1,
+        resource: {
+          buffer: output,
+          size: 512
+        },
+      },
+      {
+        binding: 2,
+        resource: {
+          buffer: output,
+          size: 512
+        },
+      },
+    ],
+  });
+
+  // 9: Draw the triangle
+
+  let passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+
+  passEncoder.setPipeline(renderPipeline);
+  // passEncoder.setVertexBuffer(0, vertexBuffer);
+  // const dynamicOffsets = new Uint32Array([256, 512, 256, 256, 256]);
+  // passEncoder.setBindGroup(0, bindGroup, dynamicOffsets, 1, 3);
+  // passEncoder.setBindGroup(1, bindGroup2, dynamicOffsets, 1, 3);
+
+  const indexCount = 16;
+  const indexBuffer = device.createBuffer({
+    size: indexCount * Uint16Array.BYTES_PER_ELEMENT,
+    usage: GPUBufferUsage.INDEX,
+    mappedAtCreation: true,
+  });
+  passEncoder.setIndexBuffer(indexBuffer, "uint16");
+
+  const drawValues = device.createBuffer({
+    size: 20,
+    usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.INDIRECT,
+  });
+  passEncoder.drawIndexedIndirect(drawValues, 0);
+
+  // passEncoder.draw(3);
+
+  // End the render pass
+  passEncoder.end();
+
+  // 10: End frame by passing array of command buffers to command queue for execution
+  device.queue.submit([commandEncoder.finish()]);
+
+  // commandEncoder = device.createCommandEncoder();
+  // passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+  // passEncoder.setIndexBuffer(indexBuffer, "uint16");
+  // passEncoder.end();
+  // device.queue.submit([commandEncoder.finish()]);
+
+
+};
+  </script>
+</head>
+<body>
+  <h1>WebGPU triangle</h1>
+  <canvas id="gpuCanvas" width="800" height="600"></canvas>
+</body>
+</html>

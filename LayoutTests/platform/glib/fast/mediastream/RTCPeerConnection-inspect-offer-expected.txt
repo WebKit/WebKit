@@ -26,6 +26,7 @@ a=extmap:1 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extension
 a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:mid
 a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id
 a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
+a=extmap:5 urn:ietf:params:rtp-hdrext:ssrc-audio-level
 a=fmtp:96 minptime=10;useinbandfec=1
 a=rtpmap:9 G722/8000
 a=rtcp-fb:9 transport-cc
@@ -74,6 +75,7 @@ a=extmap:1 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extension
 a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:mid
 a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id
 a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
+a=extmap:5 urn:ietf:params:rtp-hdrext:ssrc-audio-level
 a=fmtp:96 minptime=10;useinbandfec=1
 a=rtpmap:9 G722/8000
 a=rtcp-fb:9 transport-cc

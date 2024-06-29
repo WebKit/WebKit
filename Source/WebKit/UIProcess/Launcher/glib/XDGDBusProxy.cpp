@@ -31,6 +31,7 @@
 #include <WebCore/PlatformDisplay.h>
 #include <gio/gunixinputstream.h>
 #include <wtf/UniStdExtras.h>
+#include <wtf/glib/Application.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
@@ -74,12 +75,8 @@ std::optional<CString> XDGDBusProxy::dbusSessionProxy(const char* baseDirectory,
     });
 
 #if ENABLE(MEDIA_SESSION)
-    if (auto* app = g_application_get_default()) {
-        if (const char* appID = g_application_get_application_id(app)) {
-            auto mprisSessionID = makeString("--own=org.mpris.MediaPlayer2.", appID, ".Sandboxed.*");
-            m_args.append(mprisSessionID.ascii().data());
-        }
-    }
+    auto mprisSessionID = makeString("--own=org.mpris.MediaPlayer2."_s, WTF::applicationID().span(), ".Sandboxed.*"_s);
+    m_args.append(mprisSessionID.ascii().data());
 #endif
 
     if (allowPortals == AllowPortals::Yes)
@@ -105,7 +102,7 @@ std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirector
         return std::nullopt;
 
 #if USE(ATSPI)
-    setSandboxedAccessibilityBusAddress(makeString("unix:path=", sandboxedAccessibilityBusPath));
+    setSandboxedAccessibilityBusAddress(makeString("unix:path="_s, WTF::span(sandboxedAccessibilityBusPath)));
 #endif
 
     m_args.appendVector(Vector<CString> {

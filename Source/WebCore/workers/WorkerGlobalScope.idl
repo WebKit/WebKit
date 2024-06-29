@@ -33,7 +33,7 @@
     readonly attribute WorkerGlobalScope self;
     readonly attribute WorkerLocation location;
     readonly attribute WorkerNavigator navigator;
-    undefined importScripts(ScriptURLString... urls);
+    undefined importScripts((TrustedScriptURL or USVString)... urls);
 
     attribute OnErrorEventHandler onerror;
     // FIXME: Implement 'onlanguagechange'.
@@ -46,5 +46,3 @@
 
 WorkerGlobalScope includes WindowOrWorkerGlobalScope;
 WorkerGlobalScope includes FontFaceSource;
-
-typedef [StringContext=TrustedScriptURL] USVString ScriptURLString;

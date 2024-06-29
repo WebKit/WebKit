@@ -127,3 +127,14 @@ fn foo() {
 }`;
   t.expectCompileResult(kArgumentTypes[t.params.type] === Type.f32 || t.params.call === '', code);
 });
+
+g.test('must_use').
+desc('Tests that the result must be used').
+params((u) => u.combine('use', [true, false]).combine('func', kDerivativeBuiltins)).
+fn((t) => {
+  const code = `
+    fn foo() {
+      ${t.params.use ? '_ =' : ''} ${t.params.func}(1.0);
+    }`;
+  t.expectCompileResult(t.params.use, code);
+});

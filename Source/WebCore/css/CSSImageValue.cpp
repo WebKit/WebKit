@@ -128,6 +128,7 @@ void CSSImageValue::customSetReplacementURLForSubresources(const HashMap<String,
     auto replacementURLString = replacementURLStrings.get(m_location.resolvedURL.string());
     if (!replacementURLString.isNull())
         m_replacementURLString = replacementURLString;
+    m_shouldUseResolvedURLInCSSText = true;
 }
 
 bool CSSImageValue::customMayDependOnBaseURL() const
@@ -138,6 +139,7 @@ bool CSSImageValue::customMayDependOnBaseURL() const
 void CSSImageValue::customClearReplacementURLForSubresources()
 {
     m_replacementURLString = { };
+    m_shouldUseResolvedURLInCSSText = false;
 }
 
 bool CSSImageValue::equals(const CSSImageValue& other) const
@@ -152,6 +154,9 @@ String CSSImageValue::customCSSText() const
 
     if (!m_replacementURLString.isEmpty())
         return serializeURL(m_replacementURLString);
+
+    if (m_shouldUseResolvedURLInCSSText)
+        return serializeURL(m_location.resolvedURL.string());
 
     return serializeURL(m_location.specifiedURLString);
 }

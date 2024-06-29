@@ -1,0 +1,8 @@
+
+FAIL destroy() inside oncancel promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: CloseWatcher"
+FAIL destroy() inside onclose Can't find variable: CloseWatcher
+FAIL close() inside oncancel promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: CloseWatcher"
+FAIL close() inside onclose Can't find variable: CloseWatcher
+FAIL requestClose() inside oncancel promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: CloseWatcher"
+FAIL requestClose() inside onclose Can't find variable: CloseWatcher
+

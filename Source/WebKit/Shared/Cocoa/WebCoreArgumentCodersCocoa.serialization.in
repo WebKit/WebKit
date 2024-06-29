@@ -23,19 +23,64 @@
 headers: "ArgumentCodersCocoa.h"
 
 #if USE(CORE_TEXT)
+
 header: <WebCore/FontPlatformData.h>
+
+[CustomHeader] struct WebCore::FontPlatformSerializedTraits {
+    String uiFontDesign;
+    std::optional<RetainPtr<CFNumberRef>> weight;
+    std::optional<RetainPtr<CFNumberRef>> width;
+    std::optional<RetainPtr<CFNumberRef>> symbolic;
+    std::optional<RetainPtr<CFNumberRef>> grade;
+};
+
+[CustomHeader] struct WebCore::FontPlatformOpticalSize {
+    std::variant<RetainPtr<CFNumberRef>, String> opticalSize;
+};
+
+[CustomHeader] struct WebCore::FontPlatformSerializedAttributes {
+    String fontName;
+    String descriptorLanguage;
+    String descriptorTextStyle;
+
+    std::optional<RetainPtr<CFDataRef>> matrix;
+
+    std::optional<RetainPtr<CFBooleanRef>> ignoreLegibilityWeight;
+
+    std::optional<RetainPtr<CFNumberRef>> baselineAdjust;
+    std::optional<RetainPtr<CFNumberRef>> fallbackOption;
+    std::optional<RetainPtr<CFNumberRef>> fixedAdvance;
+    std::optional<RetainPtr<CFNumberRef>> orientation;
+    std::optional<RetainPtr<CFNumberRef>> palette;
+    std::optional<RetainPtr<CFNumberRef>> size;
+    std::optional<RetainPtr<CFNumberRef>> sizeCategory;
+    std::optional<RetainPtr<CFNumberRef>> track;
+    std::optional<RetainPtr<CFNumberRef>> unscaledTracking;
+
+    std::optional<Vector<std::pair<RetainPtr<CFNumberRef>, RetainPtr<CGColorRef>>>> paletteColors;
+    std::optional<Vector<std::pair<RetainPtr<CFNumberRef>, RetainPtr<CFNumberRef>>>> variations;
+
+    std::optional<WebCore::FontPlatformOpticalSize> opticalSize;
+    std::optional<WebCore::FontPlatformSerializedTraits> traits;
+
+    std::optional<RetainPtr<CFArrayRef>> featureSettings;
+
+#if HAVE(ADDITIONAL_FONT_PLATFORM_SERIALIZED_ATTRIBUTES)
+    std::optional<RetainPtr<CFNumberRef>> additionalNumber;
+#endif
+};
+
 [CustomHeader] struct WebCore::FontPlatformSerializedCreationData {
     Vector<uint8_t> fontFaceData;
-    RetainPtr<CFDictionaryRef> attributes;
+    std::optional<WebCore::FontPlatformSerializedAttributes> attributes;
     String itemInCollection;
 };
 
-header: <WebCore/FontPlatformData.h>
 [CustomHeader] struct WebCore::FontPlatformSerializedData {
     CTFontDescriptorOptions options;
     RetainPtr<CFStringRef> referenceURL;
     RetainPtr<CFStringRef> postScriptName;
-    RetainPtr<CFDictionaryRef> attributes;
+    std::optional<WebCore::FontPlatformSerializedAttributes> attributes;
 };
 
 header: <WebCore/FontCustomPlatformData.h>
@@ -44,7 +89,7 @@ header: <WebCore/FontCustomPlatformData.h>
     String itemInCollection;
     WebCore::RenderingResourceIdentifier renderingResourceIdentifier;
 };
-#endif
+#endif // USE(CORE_TEXT)
 
 #if ENABLE(CONTENT_FILTERING)
 class WebCore::ContentFilterUnblockHandler {
@@ -211,11 +256,15 @@ class WebCore::PaymentSessionError {
 #endif
 
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-    std::optional<WebCore::ApplePayDisbursementPaymentRequest> disbursementPaymentRequest();
+    std::optional<WebCore::ApplePayDisbursementRequest> disbursementRequest();
 #endif
 
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
     std::optional<WebCore::ApplePayLaterAvailability> applePayLaterAvailability();
+#endif
+
+#if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
+    String merchantCategoryCode();
 #endif
 };
 
@@ -305,12 +354,11 @@ enum class WebCore::PlatformCALayerLayerType : uint8_t {
     LayerTypeHost,
 };
 
-#if USE(APPKIT)
-using WebCore::CocoaColor = NSColor;
+#if HAVE(WK_SECURE_CODING_DATA_DETECTORS)
+DDScannerResult wrapped by CoreIPCDDScannerResult
+#if PLATFORM(MAC)
+WKDDActionContext wrapped by CoreIPCDDSecureActionContext
 #endif
-
-#if PLATFORM(IOS_FAMILY)
-using WebCore::CocoaColor = UIColor;
 #endif
 
 #if USE(AVFOUNDATION)
@@ -334,7 +382,6 @@ NSValue wrapped by CoreIPCNSValue
 NSURLCredential wrapped by CoreIPCNSURLCredential
 NSPersonNameComponents wrapped by CoreIPCPersonNameComponents
 NSDateComponents wrapped by CoreIPCDateComponents
-PlatformColor wrapped by CoreIPCColor
 NSData wrapped by CoreIPCData
 NSURL wrapped by CoreIPCURL
 NSNull wrapped by CoreIPCNull
@@ -349,10 +396,23 @@ NSDictionary wrapped by CoreIPCDictionary
 NSPresentationIntent wrapped by CoreIPCPresentationIntent
 
 #if PLATFORM(MAC)
-using NSColor = PlatformColor
 using CGDirectDisplayID = uint32_t
+using WebCore::CocoaColor = NSColor;
+NSColor wrapped by CoreIPCColor
+#else
+using WebCore::CocoaColor = UIColor;
+UIColor wrapped by CoreIPCColor
 #endif
 
 using CFTimeInterval = double
 using CGGlyph = uint16_t
 using NSRect = CGRect
+
+#if ENABLE(WRITING_TOOLS)
+using WebCore::WritingTools::TextSuggestion::ID = WTF::UUID
+using WebCore::WritingTools::Session::ID = WTF::UUID
+#endif
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
+using WebCore::MediaControlsContextMenuItem::ID = uint64_t;
+#endif

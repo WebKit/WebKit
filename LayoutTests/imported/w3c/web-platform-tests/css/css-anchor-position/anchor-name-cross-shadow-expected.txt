@@ -1,0 +1,4 @@
+
+FAIL Should be able to set anchor-name to a shadow DOM part and anchor to it assert_equals: expected 15 but got 0
+FAIL Should be able to set anchor-name to the shadow host and anchor to it assert_equals: expected 15 but got 0
+

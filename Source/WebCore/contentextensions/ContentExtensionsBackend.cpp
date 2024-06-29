@@ -308,14 +308,14 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
         if (results.summary.madeHTTPS) {
             ASSERT(url.protocolIs("http"_s) || url.protocolIs("ws"_s));
             String newProtocol = url.protocolIs("http"_s) ? "https"_s : "wss"_s;
-            currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Promoted URL from ", url.string(), " to ", newProtocol));
+            currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Promoted URL from "_s, url.string(), " to "_s, newProtocol));
         }
         if (results.summary.blockedLoad) {
             String consoleMessage;
             if (auto message = customTrackerBlockingMessageForConsole(results, url, mainDocumentURL))
                 consoleMessage = WTFMove(*message);
             else
-                consoleMessage = makeString("Content blocker prevented frame displaying ", mainDocumentURL.string(), " from loading a resource from ", url.string());
+                consoleMessage = makeString("Content blocker prevented frame displaying "_s, mainDocumentURL.string(), " from loading a resource from "_s, url.string());
             currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, WTFMove(consoleMessage));
         
             // Quirk for content-blocker interference with Google's anti-flicker optimization (rdar://problem/45968770).

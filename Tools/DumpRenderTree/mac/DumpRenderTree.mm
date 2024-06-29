@@ -112,6 +112,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
+#import <wtf/text/cf/StringConcatenateCF.h>
 
 #if !PLATFORM(IOS_FAMILY)
 #import <Carbon/Carbon.h>
@@ -1948,7 +1949,7 @@ static void runTest(const std::string& inputLine)
     if (!testPath)
         testPath = [url absoluteString];
 
-    auto message = makeString("CRASHING TEST: ", testPath.UTF8String);
+    auto message = makeString("CRASHING TEST: "_s, testPath);
     WTF::setCrashLogMessage(message.utf8().data());
 
     auto options = testOptionsForTest(command);

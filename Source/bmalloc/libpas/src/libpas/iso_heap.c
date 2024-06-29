@@ -58,87 +58,95 @@ pas_dynamic_primitive_heap_map iso_primitive_dynamic_heap_map =
 pas_dynamic_primitive_heap_map iso_flex_dynamic_heap_map =
     PAS_DYNAMIC_PRIMITIVE_HEAP_MAP_INITIALIZER(iso_primitive_heap_ref_construct);
 
-void* iso_try_allocate_common_primitive(size_t size)
+void* iso_try_allocate_common_primitive(size_t size, pas_allocation_mode allocation_mode)
 {
-    return iso_try_allocate_common_primitive_inline(size);
+    return iso_try_allocate_common_primitive_inline(size, allocation_mode);
 }
 
-void* iso_try_allocate_common_primitive_with_alignment(size_t size, size_t alignment)
+void* iso_try_allocate_common_primitive_with_alignment(size_t size, size_t alignment, pas_allocation_mode allocation_mode)
 {
-    return iso_try_allocate_common_primitive_with_alignment_inline(size, alignment);
+    return iso_try_allocate_common_primitive_with_alignment_inline(size, alignment, allocation_mode);
 }
 
-void* iso_try_allocate_common_primitive_zeroed(size_t size)
+void* iso_try_allocate_common_primitive_zeroed(size_t size, pas_allocation_mode allocation_mode)
 {
-    return iso_try_allocate_common_primitive_zeroed_inline(size);
+    return iso_try_allocate_common_primitive_zeroed_inline(size, allocation_mode);
 }
 
-void* iso_allocate_common_primitive(size_t size)
+void* iso_allocate_common_primitive(size_t size, pas_allocation_mode allocation_mode)
 {
-    return iso_allocate_common_primitive_inline(size);
+    return iso_allocate_common_primitive_inline(size, allocation_mode);
 }
 
-void* iso_allocate_common_primitive_with_alignment(size_t size, size_t alignment)
+void* iso_allocate_common_primitive_with_alignment(size_t size, size_t alignment, pas_allocation_mode allocation_mode)
 {
-    return iso_allocate_common_primitive_with_alignment_inline(size, alignment);
+    return iso_allocate_common_primitive_with_alignment_inline(size, alignment, allocation_mode);
 }
 
-void* iso_allocate_common_primitive_zeroed(size_t size)
+void* iso_allocate_common_primitive_zeroed(size_t size, pas_allocation_mode allocation_mode)
 {
-    return iso_allocate_common_primitive_zeroed_inline(size);
+    return iso_allocate_common_primitive_zeroed_inline(size, allocation_mode);
 }
 
 void* iso_try_reallocate_common_primitive(void* old_ptr, size_t new_size,
-                                          pas_reallocate_free_mode free_mode)
+                                          pas_reallocate_free_mode free_mode,
+                                          pas_allocation_mode allocation_mode)
 {
-    return iso_try_reallocate_common_primitive_inline(old_ptr, new_size, free_mode);
+    return iso_try_reallocate_common_primitive_inline(old_ptr, new_size, free_mode, allocation_mode);
 }
 
 void* iso_reallocate_common_primitive(void* old_ptr, size_t new_size,
-                                      pas_reallocate_free_mode free_mode)
+                                      pas_reallocate_free_mode free_mode,
+                                      pas_allocation_mode allocation_mode)
 {
-    return iso_reallocate_common_primitive_inline(old_ptr, new_size, free_mode);
+    return iso_reallocate_common_primitive_inline(old_ptr, new_size, free_mode, allocation_mode);
 }
 
-void* iso_try_allocate_dynamic_primitive(const void* key, size_t size)
+void* iso_try_allocate_dynamic_primitive(const void* key, size_t size, pas_allocation_mode allocation_mode)
 {
     return iso_try_allocate_primitive(
         pas_dynamic_primitive_heap_map_find(
             &iso_primitive_dynamic_heap_map, key, size),
-        size);
+        size, allocation_mode);
 }
 
 void* iso_try_allocate_dynamic_primitive_with_alignment(const void* key,
                                                         size_t size,
-                                                        size_t alignment)
+                                                        size_t alignment,
+                                                        pas_allocation_mode allocation_mode)
 {
     return iso_try_allocate_primitive_with_alignment(
         pas_dynamic_primitive_heap_map_find(
             &iso_primitive_dynamic_heap_map, key, size),
         size,
-        alignment);
+        alignment,
+        allocation_mode);
 }
 
 void* iso_try_allocate_dynamic_primitive_zeroed(const void* key,
-                                                size_t size)
+                                                size_t size,
+                                                pas_allocation_mode allocation_mode)
 {
     return iso_try_allocate_primitive_zeroed(
         pas_dynamic_primitive_heap_map_find(
             &iso_primitive_dynamic_heap_map, key, size),
-        size);
+        size,
+        allocation_mode);
 }
 
 void* iso_try_reallocate_dynamic_primitive(void* old_ptr,
                                            const void* key,
                                            size_t new_size,
-                                           pas_reallocate_free_mode free_mode)
+                                           pas_reallocate_free_mode free_mode,
+                                           pas_allocation_mode allocation_mode)
 {
     return iso_try_reallocate_primitive(
         old_ptr,
         pas_dynamic_primitive_heap_map_find(
             &iso_primitive_dynamic_heap_map, key, new_size),
         new_size,
-        free_mode);
+        free_mode,
+        allocation_mode);
 }
 
 void iso_heap_ref_construct(pas_heap_ref* heap_ref,
@@ -149,48 +157,50 @@ void iso_heap_ref_construct(pas_heap_ref* heap_ref,
     heap_ref->allocator_index = 0;
 }
 
-void* iso_try_allocate(pas_heap_ref* heap_ref)
+void* iso_try_allocate(pas_heap_ref* heap_ref, pas_allocation_mode allocation_mode)
 {
-    return iso_try_allocate_inline(heap_ref);
+    return iso_try_allocate_inline(heap_ref, allocation_mode);
 }
 
-void* iso_allocate(pas_heap_ref* heap_ref)
+void* iso_allocate(pas_heap_ref* heap_ref, pas_allocation_mode allocation_mode)
 {
-    return iso_allocate_inline(heap_ref);
+    return iso_allocate_inline(heap_ref, allocation_mode);
 }
 
-void* iso_try_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment)
+void* iso_try_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment, pas_allocation_mode allocation_mode)
 {
-    return iso_try_allocate_array_by_count_inline(heap_ref, count, alignment);
+    return iso_try_allocate_array_by_count_inline(heap_ref, count, alignment, allocation_mode);
 }
 
-void* iso_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment)
+void* iso_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment, pas_allocation_mode allocation_mode)
 {
-    return iso_allocate_array_by_count_inline(heap_ref, count, alignment);
+    return iso_allocate_array_by_count_inline(heap_ref, count, alignment, allocation_mode);
 }
 
-void* iso_try_allocate_array_by_count_zeroed(pas_heap_ref* heap_ref, size_t count, size_t alignment)
+void* iso_try_allocate_array_by_count_zeroed(pas_heap_ref* heap_ref, size_t count, size_t alignment, pas_allocation_mode allocation_mode)
 {
-    return iso_try_allocate_array_by_count_zeroed_inline(heap_ref, count, alignment);
+    return iso_try_allocate_array_by_count_zeroed_inline(heap_ref, count, alignment, allocation_mode);
 }
 
-void* iso_allocate_array_by_count_zeroed(pas_heap_ref* heap_ref, size_t count, size_t alignment)
+void* iso_allocate_array_by_count_zeroed(pas_heap_ref* heap_ref, size_t count, size_t alignment, pas_allocation_mode allocation_mode)
 {
-    return iso_allocate_array_by_count_zeroed_inline(heap_ref, count, alignment);
+    return iso_allocate_array_by_count_zeroed_inline(heap_ref, count, alignment, allocation_mode);
 }
 
 void* iso_try_reallocate_array_by_count(void* old_ptr, pas_heap_ref* heap_ref,
                                         size_t new_count,
-                                        pas_reallocate_free_mode free_mode)
+                                        pas_reallocate_free_mode free_mode,
+                                        pas_allocation_mode allocation_mode)
 {
-    return iso_try_reallocate_array_by_count_inline(old_ptr, heap_ref, new_count, free_mode);
+    return iso_try_reallocate_array_by_count_inline(old_ptr, heap_ref, new_count, free_mode, allocation_mode);
 }
 
 void* iso_reallocate_array_by_count(void* old_ptr, pas_heap_ref* heap_ref,
                                     size_t new_count,
-                                    pas_reallocate_free_mode free_mode)
+                                    pas_reallocate_free_mode free_mode,
+                                    pas_allocation_mode allocation_mode)
 {
-    return iso_reallocate_array_by_count_inline(old_ptr, heap_ref, new_count, free_mode);
+    return iso_reallocate_array_by_count_inline(old_ptr, heap_ref, new_count, free_mode, allocation_mode);
 }
 
 pas_heap* iso_heap_ref_get_heap(pas_heap_ref* heap_ref)
@@ -211,62 +221,68 @@ void iso_primitive_heap_ref_construct(pas_primitive_heap_ref* heap_ref,
 }
 
 void* iso_try_allocate_primitive(pas_primitive_heap_ref* heap_ref,
-                                 size_t size)
+                                 size_t size,
+                                 pas_allocation_mode allocation_mode)
 {
-    return iso_try_allocate_primitive_inline(heap_ref, size);
+    return iso_try_allocate_primitive_inline(heap_ref, size, allocation_mode);
 }
 
 void* iso_allocate_primitive(pas_primitive_heap_ref* heap_ref,
-                             size_t size)
+                             size_t size,
+                             pas_allocation_mode allocation_mode)
 {
-    return iso_allocate_primitive_inline(heap_ref, size);
+    return iso_allocate_primitive_inline(heap_ref, size, allocation_mode);
 }
 
 void* iso_try_allocate_primitive_zeroed(pas_primitive_heap_ref* heap_ref,
-                                        size_t size)
+                                        size_t size, pas_allocation_mode allocation_mode)
 {
-    return iso_try_allocate_primitive_zeroed_inline(heap_ref, size);
+    return iso_try_allocate_primitive_zeroed_inline(heap_ref, size, allocation_mode);
 }
 
 void* iso_allocate_primitive_zeroed(pas_primitive_heap_ref* heap_ref,
-                                    size_t size)
+                                    size_t size, pas_allocation_mode allocation_mode)
 {
-    return iso_allocate_primitive_zeroed_inline(heap_ref, size);
+    return iso_allocate_primitive_zeroed_inline(heap_ref, size, allocation_mode);
 }
 
 void* iso_try_allocate_primitive_with_alignment(pas_primitive_heap_ref* heap_ref,
                                                 size_t size,
-                                                size_t alignment)
+                                                size_t alignment,
+                                                pas_allocation_mode allocation_mode)
 {
-    return iso_try_allocate_primitive_with_alignment_inline(heap_ref, size, alignment);
+    return iso_try_allocate_primitive_with_alignment_inline(heap_ref, size, alignment, allocation_mode);
 }
 
 void* iso_allocate_primitive_with_alignment(pas_primitive_heap_ref* heap_ref,
                                             size_t size,
-                                            size_t alignment)
+                                            size_t alignment,
+                                            pas_allocation_mode allocation_mode)
 {
-    return iso_allocate_primitive_with_alignment_inline(heap_ref, size, alignment);
+    return iso_allocate_primitive_with_alignment_inline(heap_ref, size, alignment, allocation_mode);
 }
 
 void* iso_try_reallocate_primitive(void* old_ptr,
                                    pas_primitive_heap_ref* heap_ref,
                                    size_t new_size,
-                                   pas_reallocate_free_mode free_mode)
+                                   pas_reallocate_free_mode free_mode,
+                                   pas_allocation_mode allocation_mode)
 {
-    return iso_try_reallocate_primitive_inline(old_ptr, heap_ref, new_size, free_mode);
+    return iso_try_reallocate_primitive_inline(old_ptr, heap_ref, new_size, free_mode, allocation_mode);
 }
 
 void* iso_reallocate_primitive(void* old_ptr,
                                pas_primitive_heap_ref* heap_ref,
                                size_t new_size,
-                               pas_reallocate_free_mode free_mode)
+                               pas_reallocate_free_mode free_mode,
+                               pas_allocation_mode allocation_mode)
 {
-    return iso_reallocate_primitive_inline(old_ptr, heap_ref, new_size, free_mode);
+    return iso_reallocate_primitive_inline(old_ptr, heap_ref, new_size, free_mode, allocation_mode);
 }
 
-void* iso_try_allocate_for_flex(const void* cls, size_t size)
+void* iso_try_allocate_for_flex(const void* cls, size_t size, pas_allocation_mode allocation_mode)
 {
-    return iso_try_allocate_for_flex_inline(cls, size);
+    return iso_try_allocate_for_flex_inline(cls, size, allocation_mode);
 }
 
 bool iso_has_object(void* ptr)

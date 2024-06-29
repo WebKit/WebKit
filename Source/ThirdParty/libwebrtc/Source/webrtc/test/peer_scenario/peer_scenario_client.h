@@ -147,6 +147,7 @@ class PeerScenarioClient {
       std::function<void(SessionDescriptionInterface*)> munge_offer,
       std::function<void(std::string)> offer_handler);
   void SetSdpOfferAndGetAnswer(std::string remote_offer,
+                               std::function<void()> remote_description_set,
                                std::function<void(std::string)> answer_handler);
   void SetSdpAnswer(
       std::string remote_answer,

@@ -212,6 +212,11 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         return false;
     }
+    
+    deselectProperties() 
+    {
+        this._propertiesEditor.deselectProperties();
+    }
 
     // SpreadsheetRuleHeaderField delegate
 

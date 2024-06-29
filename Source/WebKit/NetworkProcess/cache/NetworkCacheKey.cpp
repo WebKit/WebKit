@@ -86,14 +86,7 @@ static void hashString(SHA1& sha1, const String& string)
     if (string.isNull())
         return;
 
-    if (string.is8Bit() && string.containsOnlyASCII()) {
-        const uint8_t nullByte = 0;
-        sha1.addBytes(string.span8());
-        sha1.addBytes(std::span { &nullByte, 1 });
-        return;
-    }
-
-    sha1.addBytes(string.utf8().spanIncludingNullTerminator());
+    sha1.addUTF8Bytes(string);
 }
 
 Key::HashType Key::computeHash(const Salt& salt) const

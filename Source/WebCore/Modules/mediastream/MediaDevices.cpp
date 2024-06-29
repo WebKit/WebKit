@@ -151,10 +151,26 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
     bool isUserGesturePriviledged = false;
 
     if (audioConstraints.isValid) {
+        if (audioConstraints.hasDisallowedRequiredConstraintForDeviceSelection(MediaConstraints::DeviceType::Microphone)) {
+            // Asynchronous rejection.
+            callOnMainThread([promise = WTFMove(promise)] () mutable {
+                promise.reject(Exception { ExceptionCode::TypeError, "A required constraint."_s });
+
+            });
+            return;
+        }
         isUserGesturePriviledged |= computeUserGesturePriviledge(GestureAllowedRequest::Microphone);
         audioConstraints.setDefaultAudioConstraints();
     }
     if (videoConstraints.isValid) {
+        if (videoConstraints.hasDisallowedRequiredConstraintForDeviceSelection(MediaConstraints::DeviceType::Camera)) {
+            // Asynchronous rejection.
+            callOnMainThread([promise = WTFMove(promise)] () mutable {
+                promise.reject(Exception { ExceptionCode::TypeError, "A required constraint."_s });
+
+            });
+            return;
+        }
         isUserGesturePriviledged |= computeUserGesturePriviledge(GestureAllowedRequest::Camera);
         videoConstraints.setDefaultVideoConstraints();
     }
@@ -233,6 +249,7 @@ static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constrai
         case MediaConstraintType::Zoom:
         case MediaConstraintType::Torch:
         case MediaConstraintType::BackgroundBlur:
+        case MediaConstraintType::PowerEfficient:
             // Ignored.
             break;
 
@@ -277,19 +294,19 @@ void MediaDevices::getDisplayMedia(DisplayMediaStreamConstraints&& constraints, 
 
 static inline bool checkCameraAccess(const Document& document)
 {
-    return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Camera, document, LogPermissionsPolicyFailure::No);
+    return PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Camera, document, PermissionsPolicy::ShouldReportViolation::No);
 }
 
 static inline bool checkMicrophoneAccess(const Document& document)
 {
-    return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, document, LogPermissionsPolicyFailure::No);
+    return PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Microphone, document, PermissionsPolicy::ShouldReportViolation::No);
 }
 
 static inline bool checkSpeakerAccess(const Document& document)
 {
     return document.frame()
         && document.frame()->settings().exposeSpeakersEnabled()
-        && isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::SpeakerSelection, document, LogPermissionsPolicyFailure::No);
+        && PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::SpeakerSelection, document, PermissionsPolicy::ShouldReportViolation::No);
 }
 
 void MediaDevices::exposeDevices(Vector<CaptureDeviceWithCapabilities>&& newDevices, MediaDeviceHashSalts&& deviceIDHashSalts, EnumerateDevicesPromise&& promise)
@@ -390,8 +407,8 @@ void MediaDevices::listenForDeviceChanges()
     if (!controller)
         return;
 
-    bool canAccessCamera = isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Camera, *document, LogPermissionsPolicyFailure::No);
-    bool canAccessMicrophone = isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, *document, LogPermissionsPolicyFailure::No);
+    bool canAccessCamera = PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Camera, *document, PermissionsPolicy::ShouldReportViolation::No);
+    bool canAccessMicrophone = PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Microphone, *document, PermissionsPolicy::ShouldReportViolation::No);
 
     if (m_listeningForDeviceChanges || (!canAccessCamera && !canAccessMicrophone))
         return;

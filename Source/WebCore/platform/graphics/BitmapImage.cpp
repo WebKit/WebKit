@@ -134,12 +134,18 @@ void BitmapImage::drawPattern(GraphicsContext& context, const FloatRect& destina
     if (tileRect.isEmpty())
         return;
 
-    if (!context.drawLuminanceMask()) {
+    if (context.drawLuminanceMask())
+        drawLuminanceMaskPattern(context, destinationRect, tileRect, transform, phase, spacing, options);
+    else
         Image::drawPattern(context, destinationRect, tileRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
-        return;
-    }
+}
 
-    auto buffer = context.createAlignedImageBuffer(expandedIntSize(tileRect.size()));
+void BitmapImage::drawLuminanceMaskPattern(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+{
+    ASSERT(!tileRect.isEmpty());
+    ASSERT(context.drawLuminanceMask());
+
+    auto buffer = context.createImageBuffer(expandedIntSize(tileRect.size()));
     if (!buffer)
         return;
 
@@ -148,7 +154,8 @@ void BitmapImage::drawPattern(GraphicsContext& context, const FloatRect& destina
     // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
     setImageObserver(nullptr);
 
-    draw(buffer->context(), tileRect, tileRect, { options, DecodingMode::Synchronous, ImageOrientation::Orientation::FromImage });
+    auto bufferRect = FloatRect { { }, buffer->logicalSize() };
+    draw(buffer->context(), bufferRect, tileRect, { options, DecodingMode::Synchronous, ImageOrientation::Orientation::FromImage });
 
     setImageObserver(WTFMove(observer));
     buffer->convertToLuminanceMask();
@@ -158,7 +165,7 @@ void BitmapImage::drawPattern(GraphicsContext& context, const FloatRect& destina
         return;
 
     context.setDrawLuminanceMask(false);
-    context.drawPattern(Ref { *image }, destinationRect, tileRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
+    context.drawPattern(Ref { *image }, destinationRect, bufferRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
 }
 
 void BitmapImage::dump(TextStream& ts) const

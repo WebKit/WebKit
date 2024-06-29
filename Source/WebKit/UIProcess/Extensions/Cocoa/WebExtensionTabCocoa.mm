@@ -58,7 +58,6 @@ WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, _WKWebExten
     , m_respondsToParentTab([delegate respondsToSelector:@selector(parentTabForWebExtensionContext:)])
     , m_respondsToSetParentTab([delegate respondsToSelector:@selector(setParentTab:forWebExtensionContext:completionHandler:)])
     , m_respondsToMainWebView([delegate respondsToSelector:@selector(mainWebViewForWebExtensionContext:)])
-    , m_respondsToWebViews([delegate respondsToSelector:@selector(webViewsForWebExtensionContext:)])
     , m_respondsToTabTitle([delegate respondsToSelector:@selector(tabTitleForWebExtensionContext:)])
     , m_respondsToIsSelected([delegate respondsToSelector:@selector(isSelectedForWebExtensionContext:)])
     , m_respondsToIsPinned([delegate respondsToSelector:@selector(isPinnedForWebExtensionContext:)])
@@ -120,9 +119,9 @@ WebExtensionTabParameters WebExtensionTab::parameters() const
         hasPermission ? url() : URL { },
         hasPermission ? title() : nullString(),
 
-        window ? std::optional(window->identifier()) : std::nullopt,
+        window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier,
+        index,
 
-        index != notFound ? std::optional(index) : std::nullopt,
         size(),
 
         parentTab ? std::optional(parentTab->identifier()) : std::nullopt,
@@ -335,38 +334,16 @@ WKWebView *WebExtensionTab::mainWebView() const
         return nil;
 
     THROW_UNLESS([mainWebView isKindOfClass:WKWebView.class], @"Object returned by mainWebViewForWebExtensionContext: is not a WKWebView");
-    THROW_UNLESS(mainWebView.configuration._webExtensionController, @"WKWebView returned by mainWebViewForWebExtensionContext: is not configured with a _WKWebExtensionController");
-    THROW_UNLESS(mainWebView.configuration._webExtensionController == extensionContext()->extensionController()->wrapper(), @"WKWebView returned by mainWebViewForWebExtensionContext: is not configured with the same _WKWebExtensionController as extension context");
 
-    if (m_respondsToWebViews) {
-        auto *webViews = [m_delegate webViewsForWebExtensionContext:m_extensionContext->wrapper()];
-        THROW_UNLESS([webViews isKindOfClass:NSArray.class], @"Object returned by webViewsForWebExtensionContext: is not an array");
-        THROW_UNLESS([webViews containsObject:mainWebView], @"Array returned by webViewsForWebExtensionContext: does not contain the main web view");
+    auto *configuration = mainWebView.configuration;
+    if (!configuration._webExtensionController || configuration._webExtensionController != extensionContext()->extensionController()->wrapper()) {
+        RELEASE_LOG_ERROR_IF(!configuration._webExtensionController, Extensions, "%{public}@ returned by mainWebViewForWebExtensionContext: is not configured with a _WKWebExtensionController", mainWebView);
+        RELEASE_LOG_ERROR_IF(configuration._webExtensionController && configuration._webExtensionController != extensionContext()->extensionController()->wrapper(), Extensions, "%{public}@ returned by mainWebViewForWebExtensionContext: is not configured with the same _WKWebExtensionController as extension context; %{public}@ != %{public}@", mainWebView, configuration._webExtensionController, extensionContext()->extensionController()->wrapper());
+        ASSERT_NOT_REACHED();
+        return nil;
     }
 
     return mainWebView;
-}
-
-NSArray *WebExtensionTab::webViews() const
-{
-    if (!isValid() || !m_respondsToWebViews || !m_respondsToMainWebView) {
-        // This approach is nil-safe, unlike using @[ mainWebView() ].
-        return [NSArray arrayWithObjects:mainWebView(), nil];
-    }
-
-    auto *webViews = [m_delegate webViewsForWebExtensionContext:m_extensionContext->wrapper()];
-    THROW_UNLESS([webViews isKindOfClass:NSArray.class], @"Object returned by webViewsForWebExtensionContext: is not an array");
-
-    for (WKWebView *webView in webViews) {
-        THROW_UNLESS([webView isKindOfClass:WKWebView.class], @"Object in array returned by webViewsForWebExtensionContext: is not a WKWebView");
-        THROW_UNLESS(webView.configuration._webExtensionController, @"WKWebView returned by webViewsForWebExtensionContext: is not configured with a _WKWebExtensionController");
-        THROW_UNLESS(webView.configuration._webExtensionController == extensionContext()->extensionController()->wrapper(), @"WKWebView returned by webViewsForWebExtensionContext: is not configured with the same _WKWebExtensionController as extension context");
-    }
-
-    if (auto *mainWebView = [m_delegate mainWebViewForWebExtensionContext:m_extensionContext->wrapper()])
-        THROW_UNLESS([webViews containsObject:mainWebView], @"Array returned by webViewsForWebExtensionContext: does not contain the main web view");
-
-    return webViews;
 }
 
 String WebExtensionTab::title() const
@@ -933,25 +910,23 @@ bool WebExtensionTab::shouldGrantTabPermissionsOnUserGesture() const
     return [m_delegate shouldGrantTabPermissionsOnUserGestureForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
-WebExtensionTab::WebProcessProxySet WebExtensionTab::processes(WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType, MainWebViewOnly mainWebViewOnly) const
+WebExtensionTab::WebProcessProxySet WebExtensionTab::processes(WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType) const
 {
     if (!isValid())
         return { };
 
-    // This approach is nil-safe, unlike using @[ mainWebView() ] or [NSArray arrayWithObject:].
-    auto *webViews = mainWebViewOnly == MainWebViewOnly::Yes ? [NSArray arrayWithObjects:mainWebView(), nil] : this->webViews();
+    auto *webView = mainWebView();
+    if (!webView)
+        return { };
 
-    WebProcessProxySet result;
-    for (WKWebView *webView in webViews) {
-        if (!extensionContext()->pageListensForEvent(*webView._page, type, contentWorldType))
-            continue;
+    if (!extensionContext()->pageListensForEvent(*webView._page, type, contentWorldType))
+        return { };
 
-        Ref process = webView._page->process();
-        if (process->canSendMessage())
-            result.add(WTFMove(process));
-    }
+    Ref process = webView._page->legacyMainFrameProcess();
+    if (!process->canSendMessage())
+        return { };
 
-    return result;
+    return { WTFMove(process) };
 }
 
 } // namespace WebKit

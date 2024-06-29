@@ -474,7 +474,7 @@ class ConvolveTestBase : public ::testing::TestWithParam<ConvolveParam> {
       ref = CONVERT_TO_BYTEPTR(ref16_);
     }
     int subpel_search;
-    for (subpel_search = USE_4_TAPS; subpel_search <= USE_8_TAPS;
+    for (subpel_search = USE_2_TAPS; subpel_search <= USE_8_TAPS;
          ++subpel_search) {
       for (int filter_bank = 0; filter_bank < kNumFilterBanks; ++filter_bank) {
         const InterpFilter filter = (InterpFilter)filter_bank;
@@ -555,7 +555,7 @@ class ConvolveTestBase : public ::testing::TestWithParam<ConvolveParam> {
         }
         if (axis) seed_val += 8;
         int subpel_search;
-        for (subpel_search = USE_4_TAPS; subpel_search <= USE_8_TAPS;
+        for (subpel_search = USE_2_TAPS; subpel_search <= USE_8_TAPS;
              ++subpel_search) {
           for (int filter_bank = 0; filter_bank < kNumFilterBanks;
                ++filter_bank) {
@@ -687,7 +687,7 @@ TEST_P(LowbdConvolveTest, GuardBlocks) { CheckGuardBlocks(); }
 
 void FiltersWontSaturateWhenAddedPairwise() {
   int subpel_search;
-  for (subpel_search = USE_4_TAPS; subpel_search <= USE_8_TAPS;
+  for (subpel_search = USE_2_TAPS; subpel_search <= USE_8_TAPS;
        ++subpel_search) {
     for (int filter_bank = 0; filter_bank < kNumFilterBanks; ++filter_bank) {
       const InterpFilter filter = (InterpFilter)filter_bank;
@@ -773,6 +773,17 @@ WRAP(convolve8_vert_neon, 10)
 WRAP(convolve8_horiz_neon, 12)
 WRAP(convolve8_vert_neon, 12)
 #endif  // HAVE_NEON
+
+#if HAVE_SVE
+WRAP(convolve8_horiz_sve, 8)
+WRAP(convolve8_vert_sve, 8)
+
+WRAP(convolve8_horiz_sve, 10)
+WRAP(convolve8_vert_sve, 10)
+
+WRAP(convolve8_horiz_sve, 12)
+WRAP(convolve8_vert_sve, 12)
+#endif  // HAVE_SVE
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 
 #undef WRAP
@@ -832,12 +843,6 @@ const ConvolveParam kArrayHighbdConvolve_sse2[] = {
 INSTANTIATE_TEST_SUITE_P(SSE2, HighbdConvolveTest,
                          ::testing::ValuesIn(kArrayHighbdConvolve_sse2));
 #endif
-const ConvolveFunctions convolve8_sse2(aom_convolve8_horiz_sse2,
-                                       aom_convolve8_vert_sse2, 0);
-const ConvolveParam kArrayConvolve_sse2[] = { ALL_SIZES(convolve8_sse2) };
-
-INSTANTIATE_TEST_SUITE_P(SSE2, LowbdConvolveTest,
-                         ::testing::ValuesIn(kArrayConvolve_sse2));
 #endif
 
 #if HAVE_SSSE3
@@ -918,5 +923,23 @@ const ConvolveParam kArray_Convolve8_neon_i8mm[] = { ALL_SIZES(
 INSTANTIATE_TEST_SUITE_P(NEON_I8MM, LowbdConvolveTest,
                          ::testing::ValuesIn(kArray_Convolve8_neon_i8mm));
 #endif  // HAVE_NEON_I8MM
+
+#if HAVE_SVE
+#if CONFIG_AV1_HIGHBITDEPTH
+const ConvolveFunctions wrap_convolve8_sve(wrap_convolve8_horiz_sve_8,
+                                           wrap_convolve8_vert_sve_8, 8);
+const ConvolveFunctions wrap_convolve10_sve(wrap_convolve8_horiz_sve_10,
+                                            wrap_convolve8_vert_sve_10, 10);
+const ConvolveFunctions wrap_convolve12_sve(wrap_convolve8_horiz_sve_12,
+                                            wrap_convolve8_vert_sve_12, 12);
+const ConvolveParam kArray_HighbdConvolve8_sve[] = {
+  ALL_SIZES_64(wrap_convolve8_sve), ALL_SIZES_64(wrap_convolve10_sve),
+  ALL_SIZES_64(wrap_convolve12_sve)
+};
+
+INSTANTIATE_TEST_SUITE_P(SVE, HighbdConvolveTest,
+                         ::testing::ValuesIn(kArray_HighbdConvolve8_sve));
+#endif
+#endif  // HAVE_SVE
 
 }  // namespace

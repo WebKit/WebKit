@@ -39,7 +39,13 @@ namespace TextExtraction {
 
 WEBCORE_EXPORT Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, Page&);
 
-String extractRenderedText(Element&);
+struct RenderedText {
+    String textWithReplacedContent;
+    String textWithoutReplacedContent;
+    bool hasLargeReplacedDescendant { false };
+};
+
+RenderedText extractRenderedText(Element&);
 
 } // namespace TextExtraction
 } // namespace WebCore

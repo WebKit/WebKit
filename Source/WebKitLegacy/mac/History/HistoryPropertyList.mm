@@ -86,11 +86,17 @@ void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream&
 
     size_t itemDictionaryStart = stream.writeDictionaryStart();
 
+    const String& title = item->title();
+    const String& displayTitle = item->alternateTitle();
     double lastVisitedDate = webHistoryItem->_private->_lastVisitedTime;
     Vector<String>* redirectURLs = webHistoryItem->_private->_redirectURLs.get();
 
     // keys
     stream.writeString(m_urlKey);
+    if (!title.isEmpty())
+        stream.writeString(m_titleKey);
+    if (!displayTitle.isEmpty())
+        stream.writeString(m_displayTitleKey);
     if (lastVisitedDate)
         stream.writeString(m_lastVisitedDateKey);
     if (item->lastVisitWasFailure())
@@ -100,6 +106,10 @@ void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream&
 
     // values
     stream.writeUniqueString(item->urlString());
+    if (!title.isEmpty())
+        stream.writeString(title);
+    if (!displayTitle.isEmpty())
+        stream.writeString(displayTitle);
     if (lastVisitedDate) {
         char buffer[32];
         snprintf(buffer, sizeof(buffer), "%.1lf", lastVisitedDate);

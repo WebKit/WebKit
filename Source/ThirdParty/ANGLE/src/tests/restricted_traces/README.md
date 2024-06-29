@@ -235,25 +235,10 @@ the file system:
 ```
 adb shell ls -la /sdcard/Android/data/$PACKAGE_NAME/angle_capture
 ```
-Allow the app to run until the `*angledata.gz` file is non-zero and no longer growing. The app
-should continue rendering after that:
+Allow the app to run until the logcat entry indicating the end of the API
+capture. The app should continue rendering after that:
 ```
-$ adb shell ls -s -w 1 /sdcard/Android/data/$PACKAGE_NAME/angle_capture
-30528 angry_birds_2.angledata.gz
-    8 angry_birds_2.cpp
-    4 angry_birds_2.json
-  768 angry_birds_2_001.cpp
-  100 angry_birds_2_002.cpp
-  100 angry_birds_2_003.cpp
-  100 angry_birds_2_004.cpp
-  100 angry_birds_2_005.cpp
-  104 angry_birds_2_006.cpp
-  100 angry_birds_2_007.cpp
-  100 angry_birds_2_008.cpp
-  100 angry_birds_2_009.cpp
-  100 angry_birds_2_010.cpp
-  120 angry_birds_2_011.cpp
-    8 angry_birds_2.h
+ANGLE   : INFO: Finished recording graphics API capture
 ```
 
 ## Pull the trace files

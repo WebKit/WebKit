@@ -87,7 +87,7 @@ void MediaRecorderPrivateMock::audioSamplesAvailable(const MediaTime&, const Pla
 
 void MediaRecorderPrivateMock::generateMockCounterString()
 {
-    m_buffer.append(" Counter: ", ++m_counter, "\r\n---------\r\n"_s);
+    m_buffer.append(" Counter: "_s, ++m_counter, "\r\n---------\r\n"_s);
 }
 
 void MediaRecorderPrivateMock::fetchData(FetchDataCallback&& completionHandler)

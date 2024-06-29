@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (28,11) size 705x469
-      RenderSVGText {text} at (201,6) size 78x24 contains 1 chunk(s)
+      RenderSVGText {text} at (201,7) size 78x23 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 77x23
           chunk 1 (middle anchor) text run 1 at (201.60,25.00) startOffset 0 endOffset 8 width 76.80: "graphics"
       RenderSVGContainer {g} at (28,75) size 705x405 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,75.00)}]

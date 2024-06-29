@@ -600,11 +600,11 @@ WEBKIT_CLASS_DEPRECATED_MAC(10_3, 10_14, "No longer supported; please adopt WKWe
 
 // WebView editing support
 
-extern NSString * const WebViewDidBeginEditingNotification;
-extern NSString * const WebViewDidChangeNotification;
-extern NSString * const WebViewDidEndEditingNotification;
-extern NSString * const WebViewDidChangeTypingStyleNotification;
-extern NSString * const WebViewDidChangeSelectionNotification;
+extern NSString * const WebViewDidBeginEditingNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebViewDidChangeNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebViewDidEndEditingNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebViewDidChangeTypingStyleNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
+extern NSString * const WebViewDidChangeSelectionNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 
 @interface WebView (WebViewCSS)
 - (DOMCSSStyleDeclaration *)computedStyleForElement:(DOMElement *)element pseudoElement:(NSString *)pseudoElement;

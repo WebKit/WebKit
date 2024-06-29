@@ -1,0 +1,5 @@
+
+FAIL Inner nodes with 'inert' attribute become inert anyways assert_false: expected false got true
+FAIL If the modal dialog has the 'inert' attribute, everything becomes inert assert_false: expected false got true
+FAIL If an ancestor of the dialog has the 'inert' attribute, the dialog escapes inertness assert_false: expected false got true
+find wrapper

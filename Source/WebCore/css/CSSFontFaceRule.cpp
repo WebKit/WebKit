@@ -69,7 +69,7 @@ String CSSFontFaceRule::cssTextInternal(const String& declarations) const
     if (declarations.isEmpty())
         return "@font-face { }"_s;
 
-    return makeString("@font-face { ", declarations, " }");
+    return makeString("@font-face { "_s, declarations, " }"_s);
 }
 
 void CSSFontFaceRule::reattach(StyleRuleBase& rule)

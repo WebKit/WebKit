@@ -39,10 +39,10 @@ public:
 
     Node* firstChild() const { return m_firstChild; }
     RefPtr<Node> protectedFirstChild() const { return m_firstChild; }
-    static ptrdiff_t firstChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_firstChild); }
+    static constexpr ptrdiff_t firstChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_firstChild); }
     Node* lastChild() const { return m_lastChild; }
     RefPtr<Node> protectedLastChild() const { return m_lastChild; }
-    static ptrdiff_t lastChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_lastChild); }
+    static constexpr ptrdiff_t lastChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_lastChild); }
     bool hasChildNodes() const { return m_firstChild; }
     bool hasOneChild() const { return m_firstChild && m_firstChild == m_lastChild; }
 

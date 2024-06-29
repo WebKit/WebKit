@@ -573,6 +573,16 @@ bool CommandQueue::resourceHasPendingWorks(const Resource *resource) const
     return mCommittedBufferSerial.load() < resource->getCommandBufferQueueSerial();
 }
 
+bool CommandQueue::resourceHasPendingRenderWorks(const Resource *resource) const
+{
+    if (!resource)
+    {
+        return false;
+    }
+
+    return mCommittedBufferSerial.load() < resource->getLastRenderEncoderSerial();
+}
+
 bool CommandQueue::isSerialCompleted(uint64_t serial) const
 {
     return mCompletedBufferSerial.load() >= serial;
@@ -887,7 +897,7 @@ void CommandBuffer::clearResourceListAndSize()
     mWorkingResourceSize = 0;
 }
 
-void CommandBuffer::setWriteDependency(const ResourceRef &resource)
+void CommandBuffer::setWriteDependency(const ResourceRef &resource, bool isRenderCommand)
 {
     if (!resource)
     {
@@ -901,17 +911,17 @@ void CommandBuffer::setWriteDependency(const ResourceRef &resource)
         return;
     }
 
-    resource->setUsedByCommandBufferWithQueueSerial(mQueueSerial, true);
+    resource->setUsedByCommandBufferWithQueueSerial(mQueueSerial, true, isRenderCommand);
     setResourceUsedByCommandBuffer(resource);
 }
 
-void CommandBuffer::setReadDependency(const ResourceRef &resource)
+void CommandBuffer::setReadDependency(const ResourceRef &resource, bool isRenderCommand)
 {
-    setReadDependency(resource.get());
+    setReadDependency(resource.get(), isRenderCommand);
     setResourceUsedByCommandBuffer(resource);
 }
 
-void CommandBuffer::setReadDependency(Resource *resource)
+void CommandBuffer::setReadDependency(Resource *resource, bool isRenderCommand)
 {
     if (!resource)
     {
@@ -925,7 +935,7 @@ void CommandBuffer::setReadDependency(Resource *resource)
         return;
     }
 
-    resource->setUsedByCommandBufferWithQueueSerial(mQueueSerial, false);
+    resource->setUsedByCommandBufferWithQueueSerial(mQueueSerial, false, isRenderCommand);
 }
 
 bool CommandBuffer::needsFlushForDrawCallLimits() const
@@ -961,7 +971,7 @@ void CommandBuffer::restart()
 
 void CommandBuffer::insertDebugSign(const std::string &marker)
 {
-    mtl::CommandEncoder *currentEncoder = mActiveCommandEncoder;
+    mtl::CommandEncoder *currentEncoder = getPendingCommandEncoder();
     if (currentEncoder)
     {
         ANGLE_MTL_OBJC_SCOPE
@@ -1010,7 +1020,9 @@ uint64_t CommandBuffer::queueEventSignal(id<MTLEvent> event, uint64_t value)
 
     ASSERT(readyImpl());
 
-    if (mActiveCommandEncoder)
+    CommandEncoder *currentEncoder = getPendingCommandEncoder();
+
+    if (currentEncoder)
     {
         // We cannot set event when there is an active render pass, defer the setting until the pass
         // end.
@@ -1030,7 +1042,7 @@ void CommandBuffer::serverWaitEvent(id<MTLEvent> event, uint64_t value)
 {
     std::lock_guard<std::mutex> lg(mLock);
     ASSERT(readyImpl());
-    ASSERT(!mActiveCommandEncoder);
+    ASSERT(!getPendingCommandEncoder());
     setPendingEvents();
     [get() encodeWaitForEvent:event value:value];
 }
@@ -1044,7 +1056,15 @@ void CommandBuffer::set(id<MTLCommandBuffer> metalBuffer)
 
 void CommandBuffer::setActiveCommandEncoder(CommandEncoder *encoder)
 {
-    mActiveCommandEncoder = encoder;
+    if (encoder->getType() == CommandEncoder::Type::RENDER)
+    {
+        mActiveRenderEncoder = encoder;
+    }
+    else
+    {
+        mActiveBlitOrComputeEncoder = encoder;
+    }
+
     for (std::string &marker : mPendingDebugSigns)
     {
         ANGLE_MTL_OBJC_SCOPE
@@ -1058,18 +1078,32 @@ void CommandBuffer::setActiveCommandEncoder(CommandEncoder *encoder)
 
 void CommandBuffer::invalidateActiveCommandEncoder(CommandEncoder *encoder)
 {
-    if (mActiveCommandEncoder == encoder)
+    if (mActiveRenderEncoder == encoder)
     {
-        mActiveCommandEncoder = nullptr;
+        mActiveRenderEncoder = nullptr;
+    }
+    else if (mActiveBlitOrComputeEncoder == encoder)
+    {
+        mActiveBlitOrComputeEncoder = nullptr;
+    }
 
+    if (getPendingCommandEncoder() == nullptr)
+    {
         // No active command encoder, we can safely encode event signalling now.
         setPendingEvents();
     }
 }
 
+CommandEncoder *CommandBuffer::getPendingCommandEncoder()
+{
+    // blit/compute encoder takes precedence over render encoder because the former is immediate
+    // encoder i.e its native MTLCommandEncoder is already created.
+    return mActiveBlitOrComputeEncoder ? mActiveBlitOrComputeEncoder : mActiveRenderEncoder;
+}
+
 void CommandBuffer::cleanup()
 {
-    mActiveCommandEncoder = nullptr;
+    mActiveBlitOrComputeEncoder = mActiveRenderEncoder = nullptr;
 
     ParentClass::set(nil);
 }
@@ -1091,8 +1125,8 @@ bool CommandBuffer::commitImpl()
         return false;
     }
 
-    // End the current encoder
-    forceEndingCurrentEncoder();
+    // End the current encoders
+    forceEndingAllEncoders();
 
     // Encoding any pending event's signalling.
     setPendingEvents();
@@ -1109,12 +1143,20 @@ bool CommandBuffer::commitImpl()
     return true;
 }
 
-void CommandBuffer::forceEndingCurrentEncoder()
+void CommandBuffer::forceEndingAllEncoders()
 {
-    if (mActiveCommandEncoder)
+    // End active blit/compute encoder first since it's immediate encoder.
+    if (mActiveBlitOrComputeEncoder)
     {
-        mActiveCommandEncoder->endEncoding();
-        mActiveCommandEncoder = nullptr;
+        mActiveBlitOrComputeEncoder->endEncoding();
+        mActiveBlitOrComputeEncoder = nullptr;
+    }
+
+    // End render encoder last. This is possible because it is deferred encoder.
+    if (mActiveRenderEncoder)
+    {
+        mActiveRenderEncoder->endEncoding();
+        mActiveRenderEncoder = nullptr;
     }
 }
 
@@ -1132,7 +1174,7 @@ void CommandBuffer::setPendingEvents()
 #if ANGLE_MTL_EVENT_AVAILABLE
 void CommandBuffer::setEventImpl(id<MTLEvent> event, uint64_t value)
 {
-    ASSERT(!mActiveCommandEncoder);
+    ASSERT(!getPendingCommandEncoder());
     [get() encodeSignalEvent:event value:value];
 }
 #endif  // #if ANGLE_MTL_EVENT_AVAILABLE
@@ -1144,18 +1186,20 @@ void CommandBuffer::pushDebugGroupImpl(const std::string &marker)
         NSString *label = cppLabelToObjC(marker);
         [get() pushDebugGroup:label];
 
-        if (mActiveCommandEncoder)
+        CommandEncoder *currentEncoder = getPendingCommandEncoder();
+        if (currentEncoder)
         {
-            mActiveCommandEncoder->pushDebugGroup(label);
+            currentEncoder->pushDebugGroup(label);
         }
     }
 }
 
 void CommandBuffer::popDebugGroupImpl()
 {
-    if (mActiveCommandEncoder)
+    CommandEncoder *currentEncoder = getPendingCommandEncoder();
+    if (currentEncoder)
     {
-        mActiveCommandEncoder->popDebugGroup();
+        currentEncoder->popDebugGroup();
     }
     [get() popDebugGroup];
 }
@@ -1193,13 +1237,13 @@ void CommandEncoder::set(id<MTLCommandEncoder> metalCmdEncoder)
 
 CommandEncoder &CommandEncoder::markResourceBeingWrittenByGPU(const BufferRef &buffer)
 {
-    cmdBuffer().setWriteDependency(buffer);
+    cmdBuffer().setWriteDependency(buffer, isRenderEncoder());
     return *this;
 }
 
 CommandEncoder &CommandEncoder::markResourceBeingWrittenByGPU(const TextureRef &texture)
 {
-    cmdBuffer().setWriteDependency(texture);
+    cmdBuffer().setWriteDependency(texture, isRenderEncoder());
     return *this;
 }
 
@@ -1476,7 +1520,7 @@ inline void RenderCommandEncoder::initAttachmentWriteDependencyAndScissorRect(
     TextureRef texture = attachment.texture;
     if (texture)
     {
-        cmdBuffer().setWriteDependency(texture);
+        cmdBuffer().setWriteDependency(texture, /*isRenderCommand=*/true);
 
         const MipmapNativeLevel &mipLevel = attachment.level;
 
@@ -1491,7 +1535,7 @@ inline void RenderCommandEncoder::initWriteDependency(const TextureRef &texture)
 {
     if (texture)
     {
-        cmdBuffer().setWriteDependency(texture);
+        cmdBuffer().setWriteDependency(texture, /*isRenderCommand=*/true);
     }
 }
 
@@ -1756,26 +1800,9 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilRefVal(uint32_t ref)
     return setStencilRefVals(ref, ref);
 }
 
-RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &intialViewport,
+RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewport,
                                                         id<MTLRasterizationRateMap> map)
 {
-    auto viewport = intialViewport;
-    if (map)
-    {
-        auto adjustedOrigin =
-            [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(viewport.originX, (int)viewport.originY)
-                                       forLayer:0];
-        auto adjustedSize =
-            [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(viewport.width, viewport.height)
-                                       forLayer:0];
-
-        viewport.originX      = std::max<double>(0, adjustedOrigin.x);
-        viewport.originY      = std::max<double>(0, adjustedOrigin.y);
-        MTLSize screenSize = [map screenSize];
-        viewport.width  = std::min<double>(screenSize.width, ceilf(adjustedSize.x));
-        viewport.height = std::min<double>(screenSize.height, ceilf(adjustedSize.y));
-    }
-
     if (mStateCache.viewport.valid() && mStateCache.viewport.value() == viewport)
     {
         return *this;
@@ -1824,11 +1851,11 @@ RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect 
                                                                     clampedRect.height)
                                        forLayer:0];
 
-        clampedRect.x      = (NSUInteger)floorf(adjustedOrigin.x);
-        clampedRect.y      = (NSUInteger)floorf(adjustedOrigin.y);
+        clampedRect.x      = (NSUInteger)roundf(adjustedOrigin.x);
+        clampedRect.y      = (NSUInteger)roundf(adjustedOrigin.y);
         MTLSize screenSize = [map screenSize];
-        clampedRect.width  = std::min<NSUInteger>(screenSize.width, ceilf(adjustedSize.x));
-        clampedRect.height = std::min<NSUInteger>(screenSize.height, ceilf(adjustedSize.y));
+        clampedRect.width  = std::min<NSUInteger>(screenSize.width, roundf(adjustedSize.x));
+        clampedRect.height = std::min<NSUInteger>(screenSize.height, roundf(adjustedSize.y));
     }
 
     mCommands.push(CmdType::SetScissorRect).push(clampedRect);
@@ -1863,7 +1890,7 @@ RenderCommandEncoder &RenderCommandEncoder::setBuffer(gl::ShaderType shaderType,
         return *this;
     }
 
-    cmdBuffer().setReadDependency(buffer);
+    cmdBuffer().setReadDependency(buffer, /*isRenderCommand=*/true);
 
     id<MTLBuffer> mtlBuffer = (buffer ? buffer->get() : nil);
 
@@ -1880,8 +1907,7 @@ RenderCommandEncoder &RenderCommandEncoder::setBufferForWrite(gl::ShaderType sha
         return *this;
     }
 
-    buffer->setLastWritingRenderEncoderSerial(mSerial);
-    cmdBuffer().setWriteDependency(buffer);
+    cmdBuffer().setWriteDependency(buffer, /*isRenderCommand=*/true);
 
     id<MTLBuffer> mtlBuffer = (buffer ? buffer->get() : nil);
 
@@ -1987,7 +2013,7 @@ RenderCommandEncoder &RenderCommandEncoder::setTexture(gl::ShaderType shaderType
         return *this;
     }
 
-    cmdBuffer().setReadDependency(texture);
+    cmdBuffer().setReadDependency(texture, /*isRenderCommand=*/true);
 
     id<MTLTexture> mtlTexture = (texture ? texture->get() : nil);
 
@@ -2014,7 +2040,7 @@ RenderCommandEncoder &RenderCommandEncoder::setRWTexture(gl::ShaderType shaderTy
         return *this;
     }
 
-    cmdBuffer().setWriteDependency(texture);
+    cmdBuffer().setWriteDependency(texture, /*isRenderCommand=*/true);
     return setTexture(shaderType, texture, index);
 }
 
@@ -2085,7 +2111,7 @@ RenderCommandEncoder &RenderCommandEncoder::drawIndexed(MTLPrimitiveType primiti
     }
 
     mHasDrawCalls = true;
-    cmdBuffer().setReadDependency(indexBuffer);
+    cmdBuffer().setReadDependency(indexBuffer, /*isRenderCommand=*/true);
 
     mCommands.push(CmdType::DrawIndexed)
         .push(primitiveType)
@@ -2113,7 +2139,7 @@ RenderCommandEncoder &RenderCommandEncoder::drawIndexedInstanced(MTLPrimitiveTyp
     }
 
     mHasDrawCalls = true;
-    cmdBuffer().setReadDependency(indexBuffer);
+    cmdBuffer().setReadDependency(indexBuffer, /*isRenderCommand=*/true);
 
     mCommands.push(CmdType::DrawIndexedInstanced)
         .push(primitiveType)
@@ -2145,7 +2171,7 @@ RenderCommandEncoder &RenderCommandEncoder::drawIndexedInstancedBaseVertexBaseIn
     }
 
     mHasDrawCalls = true;
-    cmdBuffer().setReadDependency(indexBuffer);
+    cmdBuffer().setReadDependency(indexBuffer, /*isRenderCommand=*/true);
 
     mCommands.push(CmdType::DrawIndexedInstancedBaseVertexBaseInstance)
         .push(primitiveType)
@@ -2184,7 +2210,7 @@ RenderCommandEncoder &RenderCommandEncoder::useResource(const BufferRef &resourc
         return *this;
     }
 
-    cmdBuffer().setReadDependency(resource);
+    cmdBuffer().setReadDependency(resource, /*isRenderCommand=*/true);
 
     mCommands.push(CmdType::UseResource)
         .push([resource->get() ANGLE_MTL_RETAIN])
@@ -2211,7 +2237,7 @@ RenderCommandEncoder &RenderCommandEncoder::memoryBarrierWithResource(const Buff
         return *this;
     }
 
-    cmdBuffer().setWriteDependency(resource);
+    cmdBuffer().setWriteDependency(resource, /*isRenderCommand=*/true);
 
     mCommands.push(CmdType::MemoryBarrierWithResource)
         .push([resource->get() ANGLE_MTL_RETAIN])
@@ -2401,8 +2427,8 @@ BlitCommandEncoder &BlitCommandEncoder::copyBuffer(const BufferRef &src,
         return *this;
     }
 
-    cmdBuffer().setReadDependency(src);
-    cmdBuffer().setWriteDependency(dst);
+    cmdBuffer().setReadDependency(src, /*isRenderCommand=*/false);
+    cmdBuffer().setWriteDependency(dst, /*isRenderCommand=*/false);
 
     [get() copyFromBuffer:src->get()
              sourceOffset:srcOffset
@@ -2429,8 +2455,8 @@ BlitCommandEncoder &BlitCommandEncoder::copyBufferToTexture(const BufferRef &src
         return *this;
     }
 
-    cmdBuffer().setReadDependency(src);
-    cmdBuffer().setWriteDependency(dst);
+    cmdBuffer().setReadDependency(src, /*isRenderCommand=*/false);
+    cmdBuffer().setWriteDependency(dst, /*isRenderCommand=*/false);
 
     [get() copyFromBuffer:src->get()
                sourceOffset:srcOffset
@@ -2463,8 +2489,8 @@ BlitCommandEncoder &BlitCommandEncoder::copyTextureToBuffer(const TextureRef &sr
         return *this;
     }
 
-    cmdBuffer().setReadDependency(src);
-    cmdBuffer().setWriteDependency(dst);
+    cmdBuffer().setReadDependency(src, /*isRenderCommand=*/false);
+    cmdBuffer().setWriteDependency(dst, /*isRenderCommand=*/false);
 
     [get() copyFromTexture:src->get()
                      sourceSlice:srcSlice
@@ -2494,8 +2520,8 @@ BlitCommandEncoder &BlitCommandEncoder::copyTexture(const TextureRef &src,
         return *this;
     }
 
-    cmdBuffer().setReadDependency(src);
-    cmdBuffer().setWriteDependency(dst);
+    cmdBuffer().setReadDependency(src, /*isRenderCommand=*/false);
+    cmdBuffer().setWriteDependency(dst, /*isRenderCommand=*/false);
 
     MTLOrigin origin = MTLOriginMake(0, 0, 0);
     for (uint32_t slice = 0; slice < sliceCount; ++slice)
@@ -2533,6 +2559,7 @@ BlitCommandEncoder &BlitCommandEncoder::fillBuffer(const BufferRef &buffer,
         return *this;
     }
 
+    cmdBuffer().setWriteDependency(buffer, /*isRenderCommand=*/false);
     [get() fillBuffer:buffer->get() range:range value:value];
     return *this;
 }
@@ -2544,7 +2571,7 @@ BlitCommandEncoder &BlitCommandEncoder::generateMipmapsForTexture(const TextureR
         return *this;
     }
 
-    cmdBuffer().setWriteDependency(texture);
+    cmdBuffer().setWriteDependency(texture, /*isRenderCommand=*/false);
     [get() generateMipmapsForTexture:texture->get()];
 
     return *this;
@@ -2561,7 +2588,7 @@ BlitCommandEncoder &BlitCommandEncoder::synchronizeResource(Buffer *buffer)
     {
         // Only MacOS has separated storage for resource on CPU and GPU and needs explicit
         // synchronization
-        cmdBuffer().setReadDependency(buffer);
+        cmdBuffer().setReadDependency(buffer, /*isRenderCommand=*/false);
 
         [get() synchronizeResource:buffer->get()];
     }
@@ -2578,7 +2605,7 @@ BlitCommandEncoder &BlitCommandEncoder::synchronizeResource(Texture *texture)
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     // Only MacOS has separated storage for resource on CPU and GPU and needs explicit
     // synchronization
-    cmdBuffer().setReadDependency(texture);
+    cmdBuffer().setReadDependency(texture, /*isRenderCommand=*/false);
     if (texture->get().parentTexture)
     {
         [get() synchronizeResource:texture->get().parentTexture];
@@ -2639,7 +2666,7 @@ ComputeCommandEncoder &ComputeCommandEncoder::setBuffer(const BufferRef &buffer,
         return *this;
     }
 
-    cmdBuffer().setReadDependency(buffer);
+    cmdBuffer().setReadDependency(buffer, /*isRenderCommand=*/false);
 
     [get() setBuffer:(buffer ? buffer->get() : nil) offset:offset atIndex:index];
 
@@ -2655,7 +2682,7 @@ ComputeCommandEncoder &ComputeCommandEncoder::setBufferForWrite(const BufferRef 
         return *this;
     }
 
-    cmdBuffer().setWriteDependency(buffer);
+    cmdBuffer().setWriteDependency(buffer, /*isRenderCommand=*/false);
     return setBuffer(buffer, offset, index);
 }
 
@@ -2694,7 +2721,7 @@ ComputeCommandEncoder &ComputeCommandEncoder::setTexture(const TextureRef &textu
         return *this;
     }
 
-    cmdBuffer().setReadDependency(texture);
+    cmdBuffer().setReadDependency(texture, /*isRenderCommand=*/false);
     [get() setTexture:(texture ? texture->get() : nil) atIndex:index];
 
     return *this;
@@ -2707,7 +2734,7 @@ ComputeCommandEncoder &ComputeCommandEncoder::setTextureForWrite(const TextureRe
         return *this;
     }
 
-    cmdBuffer().setWriteDependency(texture);
+    cmdBuffer().setWriteDependency(texture, /*isRenderCommand=*/false);
     return setTexture(texture, index);
 }
 

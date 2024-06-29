@@ -41,7 +41,7 @@ public:
     const String& sheet() const { return m_sheet; }
 
 private:
-    void checkNotify(const NetworkLoadMetrics&) final;
+    void checkNotify(const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No) final;
     bool mayTryReplaceEncodedData() const final { return true; }
     void didAddClient(CachedResourceClient&) final;
     void setEncoding(const String&) final;

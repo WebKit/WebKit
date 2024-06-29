@@ -30,6 +30,7 @@
 #include <WebCore/VideoPresentationInterfaceIOS.h>
 
 OBJC_CLASS LMPlayableViewController;
+OBJC_CLASS WKCaptionLayerLayoutManager;
 OBJC_CLASS WKSLinearMediaPlayer;
 
 namespace WebCore {
@@ -38,25 +39,25 @@ class PlaybackSessionInterfaceIOS;
 
 namespace WebKit {
 
-using namespace WebCore;
-
-class VideoPresentationInterfaceLMK final : public VideoPresentationInterfaceIOS {
+class VideoPresentationInterfaceLMK final : public WebCore::VideoPresentationInterfaceIOS {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoPresentationInterfaceLMK);
 public:
-    static Ref<VideoPresentationInterfaceLMK> create(PlaybackSessionInterfaceIOS&);
+    static Ref<VideoPresentationInterfaceLMK> create(WebCore::PlaybackSessionInterfaceIOS&);
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const { return "VideoPresentationInterfaceLMK"_s; };
 #endif
     ~VideoPresentationInterfaceLMK();
 
+    void captionsLayerBoundsChanged(const WebCore::FloatRect&);
+
 private:
-    VideoPresentationInterfaceLMK(PlaybackSessionInterfaceIOS&);
+    VideoPresentationInterfaceLMK(WebCore::PlaybackSessionInterfaceIOS&);
 
     bool pictureInPictureWasStartedWhenEnteringBackground() const final { return false; }
     bool mayAutomaticallyShowVideoPictureInPicture() const final { return false; }
     bool isPlayingVideoInEnhancedFullscreen() const final { return false; }
-    void setupFullscreen(UIView&, const FloatRect&, const FloatSize&, UIView*, HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) final;
+    void setupFullscreen(UIView&, const WebCore::FloatRect&, const WebCore::FloatSize&, UIView*, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) final;
     void hasVideoChanged(bool) final { }
     void finalizeSetup() final;
     void updateRouteSharingPolicy() final { }
@@ -68,18 +69,24 @@ private:
     void presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) final;
     void dismissFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) final;
     void setShowsPlaybackControls(bool) final;
-    void setContentDimensions(const FloatSize&) final;
+    void setContentDimensions(const WebCore::FloatSize&) final;
     void setAllowsPictureInPicturePlayback(bool) final { }
     bool isExternalPlaybackActive() const final { return false; }
     bool willRenderToLayer() const final { return false; }
     AVPlayerViewController *avPlayerViewController() const final { return nullptr; }
-    void setupCaptionsLayer(CALayer *parent, const FloatSize&) final;
+    CALayer *captionsLayer() final;
+    void setupCaptionsLayer(CALayer *parent, const WebCore::FloatSize&) final;
     LMPlayableViewController *playableViewController() final;
 
     WKSLinearMediaPlayer *linearMediaPlayer() const;
     void ensurePlayableViewController();
 
     RetainPtr<LMPlayableViewController> m_playerViewController;
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    String m_spatialTrackingLabel;
+    RetainPtr<CALayer> m_spatialTrackingLayer;
+#endif
 };
 
 } // namespace WebKit

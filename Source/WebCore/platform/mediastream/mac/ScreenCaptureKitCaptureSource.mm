@@ -284,7 +284,7 @@ void ScreenCaptureKitCaptureSource::sessionFilterDidChange(SCContentFilter* cont
     }
     case SCContentFilterTypeDisplay: {
         auto *display = [contentFilter displayInfo].display;
-        device = CaptureDevice(String::number(display.displayID), CaptureDevice::DeviceType::Screen, makeString("Screen"), emptyString(), true);
+        device = CaptureDevice(String::number(display.displayID), CaptureDevice::DeviceType::Screen, "Screen"_str, emptyString(), true);
         m_content = display;
         break;
     }
@@ -522,7 +522,7 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
     double contentScale = 1;
     double scaleFactor = 1;
     FloatRect contentRect;
-    auto hasLargePresenterOverlay = false;
+    bool shouldDisallowReconfiguration = false;
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     auto canCheckForOverlayMode = PAL::canLoad_ScreenCaptureKit_SCStreamFrameInfoPresenterOverlayContentRect();
 #endif
@@ -544,7 +544,7 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
             if (auto overlayRectDictionary = (CFDictionaryRef)attachment[SCStreamFrameInfoPresenterOverlayContentRect]) {
                 CGRect overlayRect;
                 if (CGRectMakeWithDictionaryRepresentation(overlayRectDictionary, &overlayRect))
-                    hasLargePresenterOverlay = overlayRect.origin.x > 0 && overlayRect.origin.x != std::numeric_limits<double>::infinity() && overlayRect.origin.y > 0 && overlayRect.origin.y != std::numeric_limits<double>::infinity();
+                    shouldDisallowReconfiguration = overlayRect.origin.x && overlayRect.origin.y;
             }
         }
 #endif
@@ -578,7 +578,7 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
 
     // FIXME: for now we will rely on cropping to handle large presenter overlay.
     // We might further want to reduce calling updateStreamConfiguration once we crop when user is resizing.
-    if (m_contentSize != scaledContentRect.size() && !hasLargePresenterOverlay) {
+    if (m_contentSize != scaledContentRect.size() && !shouldDisallowReconfiguration) {
         m_contentSize = scaledContentRect.size();
         m_streamConfiguration = nullptr;
         updateStreamConfiguration();

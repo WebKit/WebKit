@@ -113,8 +113,8 @@ private:
 @end
 
 @implementation WKTextFinderMatch {
-    WKTextFinderClient *_client;
-    NSView *_view;
+    __weak WKTextFinderClient *_client;
+    __weak NSView *_view;
     RetainPtr<NSArray> _rects;
     unsigned _index;
 }
@@ -136,6 +136,7 @@ private:
 
 - (NSView *)containingView
 {
+    // To maintain binary compatibility, this is weakly held even though `containingView` is marked `retain`.
     return _view;
 }
 
@@ -146,7 +147,11 @@ private:
 
 - (void)generateTextImage:(void (^)(NSImage *generatedImage))completionHandler
 {
-    [_client getImageForMatchResult:self completionHandler:completionHandler];
+    RetainPtr strongClient = _client;
+    if (!strongClient)
+        return completionHandler(nil);
+
+    [strongClient getImageForMatchResult:self completionHandler:completionHandler];
 }
 
 - (unsigned)index

@@ -68,7 +68,7 @@ void IOChannel::read(size_t offset, size_t size, WTF::WorkQueueBase& queue, Func
         readSize = std::min(size, readSize);
         Vector<uint8_t> buffer(readSize);
         FileSystem::seekFile(m_fileDescriptor, offset, FileSystem::FileSeekOrigin::Beginning);
-        int err = FileSystem::readFromFile(m_fileDescriptor, buffer.data(), readSize);
+        int err = FileSystem::readFromFile(m_fileDescriptor, buffer.mutableSpan());
         err = err < 0 ? err : 0;
         auto data = Data(WTFMove(buffer));
         completionHandler(data, err);
@@ -79,7 +79,7 @@ void IOChannel::write(size_t offset, const Data& data, WTF::WorkQueueBase& queue
 {
     queue.dispatch([this, protectedThis = Ref { *this }, offset, data, completionHandler = WTFMove(completionHandler)] {
         FileSystem::seekFile(m_fileDescriptor, offset, FileSystem::FileSeekOrigin::Beginning);
-        int err = FileSystem::writeToFile(m_fileDescriptor, data.data(), data.size());
+        int err = FileSystem::writeToFile(m_fileDescriptor, data.span());
         err = err < 0 ? err : 0;
         completionHandler(err);
     });

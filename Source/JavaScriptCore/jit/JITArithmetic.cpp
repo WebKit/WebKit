@@ -244,7 +244,7 @@ ALWAYS_INLINE void JIT::emit_compareImpl(VirtualRegister op1, VirtualRegister op
         JumpList failures;
         emitLoadCharacterString(jsRegT10.payloadGPR(), jsRegT10.payloadGPR(), failures);
         addSlowCase(failures);
-        emitCompare(commute(cond), jsRegT10, Imm32(asString(getConstantOperand(left))->tryGetValue(disallowAllocation)[0]));
+        emitCompare(commute(cond), jsRegT10, Imm32(asString(getConstantOperand(left))->tryGetValue(disallowAllocation).data[0]));
         return true;
     };
 

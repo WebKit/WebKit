@@ -61,6 +61,7 @@ public:
     // nullptr represents an absent snapshot on an capturable element.
     std::optional<RefPtr<ImageBuffer>> oldImage;
     LayoutRect oldOverflowRect;
+    LayoutPoint oldLayerToLayoutOffset;
     LayoutSize oldSize;
     RefPtr<MutableStyleProperties> oldProperties;
     WeakStyleable newElement;
@@ -175,6 +176,7 @@ private:
     void callUpdateCallback();
 
     ExceptionOr<void> updatePseudoElementStyles();
+    ExceptionOr<void> checkForViewportSizeChange();
 
     void clearViewTransition();
 
@@ -184,6 +186,7 @@ private:
     OrderedNamedElementsMap m_namedElements;
     ViewTransitionPhase m_phase { ViewTransitionPhase::PendingCapture };
     FloatSize m_initialLargeViewportSize;
+    float m_initialPageZoom;
 
     RefPtr<ViewTransitionUpdateCallback> m_updateCallback;
 

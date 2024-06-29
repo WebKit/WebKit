@@ -1,0 +1,5 @@
+
+FAIL anchor-scroll-position-try-013 assert_equals: Anchored element should be at the top of anchor expected 159 but got 259
+FAIL anchor-scroll-position-try-013 1 assert_equals: Anchored element should be at the bottom of anchor expected 159 but got 209
+FAIL anchor-scroll-position-try-013 2 assert_equals: Anchored element should be at the top of anchor expected 119 but got 259
+

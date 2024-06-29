@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <div><template shadowrootmode="closed"><img src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=d8ca7a97-e8c3-4d61-8912-aff8350abd50&amp;encodingcheck=&Gbreve;"></template></div>
+
+
+
+PASS Speculative parsing, document.write(): template-shadowrootmode-img-src
+

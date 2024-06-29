@@ -15,12 +15,6 @@ namespace angle
 {
 namespace
 {
-struct NoOpMutex
-{
-    void lock() {}
-    void unlock() {}
-};
-
 template <typename TestMutex>
 bool runBasicMutexTest()
 {

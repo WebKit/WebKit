@@ -1,10 +1,6 @@
 
 PASS :create_texture:
 PASS :create_bind_group_layout:
-PASS :create_shader_module_with_bgra8unorm_storage:shaderType="fragment"
-PASS :create_shader_module_with_bgra8unorm_storage:shaderType="compute"
-PASS :create_shader_module_without_bgra8unorm_storage:shaderType="fragment"
-PASS :create_shader_module_without_bgra8unorm_storage:shaderType="compute"
 PASS :configure_storage_usage_on_canvas_context_without_bgra8unorm_storage:canvasType="onscreen"
 PASS :configure_storage_usage_on_canvas_context_without_bgra8unorm_storage:canvasType="offscreen"
 PASS :configure_storage_usage_on_canvas_context_with_bgra8unorm_storage:canvasType="onscreen"

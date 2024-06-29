@@ -64,9 +64,7 @@ JITCompiler::JITCompiler(Graph& dfg)
 #endif
 }
 
-JITCompiler::~JITCompiler()
-{
-}
+JITCompiler::~JITCompiler() = default;
 
 void JITCompiler::linkOSRExits()
 {
@@ -135,7 +133,7 @@ void JITCompiler::linkOSRExits()
         store32(GPRInfo::numberTagRegister, &vm().osrExitIndex);
         loadPtr(Address(GPRInfo::jitDataRegister, JITData::offsetOfExits()), GPRInfo::jitDataRegister);
         static_assert(sizeof(JITData::ExitVector::value_type) == 16);
-        ASSERT(!JITData::ExitVector::value_type::offsetOfCodePtr());
+        static_assert(!JITData::ExitVector::value_type::offsetOfCodePtr());
         lshiftPtr(TrustedImm32(4), GPRInfo::numberTagRegister);
         addPtr(GPRInfo::numberTagRegister, GPRInfo::jitDataRegister);
         emitMaterializeTagCheckRegisters();
@@ -282,12 +280,6 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         ASSERT(m_jitCode->common.m_stubInfos.isEmpty());
     }
 
-    for (auto& record : m_jsCalls) {
-        std::visit([&](auto* info) {
-            info->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(record.doneLocation));
-        }, record.info);
-    }
-    
     for (auto& record : m_jsDirectCalls) {
         auto& info = *record.info;
         info.setSlowPathStart(linkBuffer.locationOf<JSInternalPtrTag>(record.slowPath));

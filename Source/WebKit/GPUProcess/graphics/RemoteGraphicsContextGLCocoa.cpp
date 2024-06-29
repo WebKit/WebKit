@@ -30,6 +30,7 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "IPCUtilities.h"
+#include "RemoteSharedResourceCache.h"
 #include <WebCore/ProcessIdentity.h>
 #include <wtf/MachSendRight.h>
 
@@ -114,7 +115,7 @@ RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa(GPUConnectionToWebPro
 void RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
     assertIsCurrent(workQueue());
-    m_context = WebCore::GraphicsContextGLCocoa::create(WTFMove(attributes), WebCore::ProcessIdentity { m_resourceOwner });
+    m_context = WebCore::GraphicsContextGLCocoa::create(WTFMove(attributes), WebCore::ProcessIdentity { m_sharedResourceCache->resourceOwner() });
 }
 
 void RemoteGraphicsContextGLCocoa::prepareForDisplay(IPC::Semaphore&& finishedSemaphore, CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)

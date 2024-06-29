@@ -50,9 +50,9 @@ static CurlResponse createCurlResponse(std::optional<String> contentType = "mult
     response.headers.append("x-dummy-pre-header: dummy\r\n"_s);
 
     if (contentType && boundary)
-        response.headers.append(makeString("Content-type: ", *contentType, "; boundary=\"", *boundary, "\"", "\r\n"));
+        response.headers.append(makeString("Content-type: "_s, *contentType, "; boundary=\""_s, *boundary, '"', "\r\n"_s));
     else if (contentType)
-        response.headers.append(makeString("Content-type: ", *contentType, ";\r\n"));
+        response.headers.append(makeString("Content-type: "_s, *contentType, ";\r\n"_s));
 
     response.headers.append("x-dummy-post-header: dummy\r\n"_s);
 

@@ -1,0 +1,3 @@
+
+FAIL No transition for initial style with @position-try assert_equals: expected "50px" but got "10px"
+

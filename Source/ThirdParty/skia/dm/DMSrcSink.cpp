@@ -8,6 +8,7 @@
 #include "dm/DMSrcSink.h"
 #include "include/codec/SkAndroidCodec.h"
 #include "include/codec/SkCodec.h"
+#include "include/codec/SkPixmapUtils.h"
 #include "include/core/SkColorSpace.h"
 #include "include/core/SkData.h"
 #include "include/core/SkDocument.h"
@@ -21,7 +22,6 @@
 #include "include/core/SkSurface.h"
 #include "include/core/SkSurfaceProps.h"
 #include "include/docs/SkMultiPictureDocument.h"
-#include "include/codec/SkPixmapUtils.h"
 #include "include/docs/SkPDFDocument.h"
 #include "include/encode/SkPngEncoder.h"
 #include "include/gpu/GrBackendSurface.h"
@@ -113,6 +113,7 @@
 #include "src/gpu/graphite/GraphicsPipelineDesc.h"
 #include "src/gpu/graphite/PublicPrecompile.h"
 #include "src/gpu/graphite/RecorderPriv.h"
+#include "src/gpu/graphite/RenderPassDesc.h"
 #include "src/gpu/graphite/RendererProvider.h"
 #include "tools/graphite/UniqueKeyUtils.h"
 #endif // SK_ENABLE_PRECOMPILE
@@ -2317,6 +2318,7 @@ Result GraphitePrecompileTestingSink::resetAndRecreatePipelines(
 
 #ifdef SK_DEBUG
                 const RendererProvider* rendererProvider = context->priv().rendererProvider();
+                const ShaderCodeDictionary* dict = context->priv().shaderCodeDictionary();
 
                 {
                     GraphicsPipelineDesc originalPipelineDesc;
@@ -2327,7 +2329,7 @@ Result GraphitePrecompileTestingSink::resetAndRecreatePipelines(
 
                     SkDebugf("------- Missing key from rebuilt keys:\n");
                     origKey.dump("original key:");
-                    UniqueKeyUtils::DumpDescs(rendererProvider,
+                    UniqueKeyUtils::DumpDescs(rendererProvider, dict,
                                               originalPipelineDesc,
                                               originalRenderPassDesc);
                 }
@@ -2344,7 +2346,7 @@ Result GraphitePrecompileTestingSink::resetAndRecreatePipelines(
 
                     SkDebugf("%d ----\n", count++);
                     recreatedKey.dump("recreated key:");
-                    UniqueKeyUtils::DumpDescs(rendererProvider,
+                    UniqueKeyUtils::DumpDescs(rendererProvider, dict,
                                               recreatedPipelineDesc,
                                               recreatedRenderPassDesc);
                 }

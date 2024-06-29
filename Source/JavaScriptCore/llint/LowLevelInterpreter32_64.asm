@@ -148,12 +148,6 @@ macro cCall2(function)
         cloopCallSlowPath function, a0, a1
     elsif ARMv7
         call function
-    elsif X86 or X86_WIN
-        subp 8, sp
-        push a1
-        push a0
-        call function
-        addp 16, sp
     else
         error
     end
@@ -172,13 +166,6 @@ macro cCall3(function)
         cloopCallSlowPath3 function, a0, a1, a2
     elsif ARMv7
         call function
-    elsif X86 or X86_WIN
-        subp 4, sp
-        push a2
-        push a1
-        push a0
-        call function
-        addp 16, sp
     else
         error
     end
@@ -189,15 +176,6 @@ macro cCall4(function)
         cloopCallSlowPath4 function, a0, a1, a2, a3
     elsif ARMv7
         call function
-    elsif X86 or X86_WIN
-        push a3
-        push a2
-        push a1
-        push a0
-        call function
-        addp 16, sp
-    elsif C_LOOP or C_LOOP_WIN
-        error
     else
         error
     end
@@ -227,13 +205,6 @@ macro doVMEntry(makeCall)
     functionPrologue()
     pushCalleeSaves()
 
-    # x86 needs to load arguments from the stack
-    if X86 or X86_WIN
-        loadp 16[cfr], a2
-        loadp 12[cfr], a1
-        loadp 8[cfr], a0
-    end
-
     const entry = a0
     const vm = a1
     const protoCallFrame = a2
@@ -256,11 +227,7 @@ macro doVMEntry(makeCall)
     storep t4, VMEntryRecord::m_prevTopEntryFrame[sp]
 
     # Align stack pointer
-    if X86_WIN 
-        addp CallFrameAlignSlots * SlotSize, sp, t3
-        andp ~StackAlignmentMask, t3
-        subp t3, CallFrameAlignSlots * SlotSize, sp
-    elsif ARMv7
+    if ARMv7
         addp CallFrameAlignSlots * SlotSize, sp, t3
         clrbp t3, StackAlignmentMask, t3
         subp t3, CallFrameAlignSlots * SlotSize, t3
@@ -421,16 +388,6 @@ macro makeHostFunctionCall(entry, protoCallFrame, temp1, temp2)
         move sp, a1
         storep lr, PtrSize[sp]
         cloopCallNative temp1
-    elsif X86 or X86_WIN
-        # Put callee frame pointer on stack as arg1, also put it in ecx for "fastcall" targets
-        move 0, temp2
-        move temp2, 4[sp] # put 0 in ReturnPC
-        move sp, a1 # a1 is edx
-        loadp ProtoCallFrame::globalObject[protoCallFrame], a0
-        push a1
-        push a0
-        call temp1
-        addp 8, sp
     else
         loadp ProtoCallFrame::globalObject[protoCallFrame], a0
         move sp, a1
@@ -2640,12 +2597,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     functionPrologue()
     storep 0, CodeBlock[cfr]
 
-    if X86 or X86_WIN
-        subp 8, sp # align stack pointer
-        storep cfr, [sp]
-    else
-        subp 8, sp # align stack pointer
-    end
+    subp 8, sp # align stack pointer
 
     loadp Callee + PayloadOffset[cfr], a0
     loadp JSFunction::m_executableOrRareData[a0], a2
@@ -2676,9 +2628,6 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     ret
 
 .handleException:
-    if X86 or X86_WIN
-        subp 8, sp # align stack pointer
-    end
     storep cfr, VM::topCallFrame[t3]
     jmp _llint_throw_from_slow_path_trampoline
 end
@@ -2689,12 +2638,7 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     storep 0, CodeBlock[cfr]
 
     // Callee is still in t1 for code below
-    if X86 or X86_WIN
-        subp 8, sp # align stack pointer
-        storep cfr, [sp]
-    else
-        subp 8, sp # align stack pointer
-    end
+    subp 8, sp # align stack pointer
 
     loadp Callee + PayloadOffset[cfr], a2
     loadp InternalFunction::m_globalObject[a2], a0
@@ -2721,9 +2665,6 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     ret
 
 .handleException:
-    if X86 or X86_WIN
-        subp 8, sp # align stack pointer
-    end
     storep cfr, VM::topCallFrame[t3]
     jmp _llint_throw_from_slow_path_trampoline
 end

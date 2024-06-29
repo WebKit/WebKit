@@ -53,6 +53,8 @@ default_args = {
   # Use base level API level 29 support for AHardwareBuffer ANGLE tests.
   android32_ndk_api_level = 29
   android64_ndk_api_level = 29
+
+  vma_vulkan_headers_dir = "//third_party/vulkan-headers/src"
 }
 
 no_check_targets = [ "third_party/dawn/*" ]

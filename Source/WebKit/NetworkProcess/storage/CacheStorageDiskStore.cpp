@@ -325,8 +325,7 @@ std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(
             return std::nullopt;
 
         auto sharedBuffer = WebCore::SharedBuffer::create(WTFMove(blobBuffer));
-        auto bodyData = std::span(sharedBuffer->data(), sharedBuffer->size());
-        if (storedInfo->metaData.bodyHash != computeSHA1(bodyData, m_salt))
+        if (storedInfo->metaData.bodyHash != computeSHA1(sharedBuffer->span(), m_salt))
             return std::nullopt;
 
         responseBody = sharedBuffer;

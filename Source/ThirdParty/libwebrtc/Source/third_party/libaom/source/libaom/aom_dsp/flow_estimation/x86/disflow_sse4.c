@@ -1,13 +1,12 @@
 /*
- * Copyright (c) 2022, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2024, Alliance for Open Media. All rights reserved
  *
- * This source code is subject to the terms of the BSD 3-Clause Clear License
- * and the Alliance for Open Media Patent License 1.0. If the BSD 3-Clause Clear
- * License was not distributed with this source code in the LICENSE file, you
- * can obtain it at aomedia.org/license/software-license/bsd-3-c-c/.  If the
- * Alliance for Open Media Patent License 1.0 was not distributed with this
- * source code in the PATENTS file, you can obtain it at
- * aomedia.org/license/patent-license/.
+ * This source code is subject to the terms of the BSD 2 Clause License and
+ * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
+ * was not distributed with this source code in the LICENSE file, you can
+ * obtain it at www.aomedia.org/license/software. If the Alliance for Open
+ * Media Patent License 1.0 was not distributed with this source code in the
+ * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
 #include <assert.h>
@@ -20,39 +19,59 @@
 
 #include "config/aom_dsp_rtcd.h"
 
-// Internal cross-check against C code
-// If you set this to 1 and compile in debug mode, then the outputs of the two
-// convolution stages will be checked against the plain C version of the code,
-// and an assertion will be fired if the results differ.
-#define CHECK_RESULTS 0
+#if DISFLOW_PATCH_SIZE != 8
+#error "Need to change disflow_sse4.c if DISFLOW_PATCH_SIZE != 8"
+#endif
 
-// Note: Max sum(+ve coefficients) = 1.125 * scale
-static INLINE void get_cubic_kernel_dbl(double x, double *kernel) {
-  assert(0 <= x && x < 1);
-  double x2 = x * x;
-  double x3 = x2 * x;
-  kernel[0] = -0.5 * x + x2 - 0.5 * x3;
-  kernel[1] = 1.0 - 2.5 * x2 + 1.5 * x3;
-  kernel[2] = 0.5 * x + 2.0 * x2 - 1.5 * x3;
-  kernel[3] = -0.5 * x2 + 0.5 * x3;
+// Compute horizontal and vertical kernels and return them packed into a
+// register. The coefficient ordering is:
+//   h0, h1, v0, v1, h2, h3, v2, v3
+// This is chosen because it takes less work than fully separating the kernels,
+// but it is separated enough that we can pick out each coefficient pair in the
+// main compute_flow_at_point function
+static INLINE __m128i compute_cubic_kernels(double u, double v) {
+  const __m128d x = _mm_set_pd(v, u);
+
+  const __m128d x2 = _mm_mul_pd(x, x);
+  const __m128d x3 = _mm_mul_pd(x2, x);
+
+  // Macro to multiply a value v by a constant coefficient c
+#define MULC(c, v) _mm_mul_pd(_mm_set1_pd(c), v)
+
+  // Compute floating-point kernel
+  // Note: To ensure results are bit-identical to the C code, we need to perform
+  // exactly the same sequence of operations here as in the C code.
+  __m128d k0 = _mm_sub_pd(_mm_add_pd(MULC(-0.5, x), x2), MULC(0.5, x3));
+  __m128d k1 =
+      _mm_add_pd(_mm_sub_pd(_mm_set1_pd(1.0), MULC(2.5, x2)), MULC(1.5, x3));
+  __m128d k2 =
+      _mm_sub_pd(_mm_add_pd(MULC(0.5, x), MULC(2.0, x2)), MULC(1.5, x3));
+  __m128d k3 = _mm_add_pd(MULC(-0.5, x2), MULC(0.5, x3));
+#undef MULC
+
+  // Integerize
+  __m128d prec = _mm_set1_pd((double)(1 << DISFLOW_INTERP_BITS));
+
+  k0 = _mm_round_pd(_mm_mul_pd(k0, prec),
+                    _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
+  k1 = _mm_round_pd(_mm_mul_pd(k1, prec),
+                    _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
+  k2 = _mm_round_pd(_mm_mul_pd(k2, prec),
+                    _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
+  k3 = _mm_round_pd(_mm_mul_pd(k3, prec),
+                    _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
+
+  const __m128i c0 = _mm_cvtpd_epi32(k0);
+  const __m128i c1 = _mm_cvtpd_epi32(k1);
+  const __m128i c2 = _mm_cvtpd_epi32(k2);
+  const __m128i c3 = _mm_cvtpd_epi32(k3);
+
+  // Rearrange results and convert down to 16 bits, giving the target output
+  // ordering
+  const __m128i c01 = _mm_unpacklo_epi32(c0, c1);
+  const __m128i c23 = _mm_unpacklo_epi32(c2, c3);
+  return _mm_packs_epi32(c01, c23);
 }
-
-static INLINE void get_cubic_kernel_int(double x, int16_t *kernel) {
-  double kernel_dbl[4];
-  get_cubic_kernel_dbl(x, kernel_dbl);
-
-  kernel[0] = (int16_t)rint(kernel_dbl[0] * (1 << DISFLOW_INTERP_BITS));
-  kernel[1] = (int16_t)rint(kernel_dbl[1] * (1 << DISFLOW_INTERP_BITS));
-  kernel[2] = (int16_t)rint(kernel_dbl[2] * (1 << DISFLOW_INTERP_BITS));
-  kernel[3] = (int16_t)rint(kernel_dbl[3] * (1 << DISFLOW_INTERP_BITS));
-}
-
-#if CHECK_RESULTS
-static INLINE int get_cubic_value_int(const int *p, const int16_t *kernel) {
-  return kernel[0] * p[0] + kernel[1] * p[1] + kernel[2] * p[2] +
-         kernel[3] * p[3];
-}
-#endif  // CHECK_RESULTS
 
 // Compare two regions of width x height pixels, one rooted at position
 // (x, y) in src and the other at (x + u, y + v) in ref.
@@ -73,10 +92,6 @@ static INLINE void compute_flow_vector(const uint8_t *src, const uint8_t *ref,
   // These will be flattened at the end.
   __m128i b0_acc = _mm_setzero_si128();
   __m128i b1_acc = _mm_setzero_si128();
-#if CHECK_RESULTS
-  // Also keep a running sum using the C algorithm, for cross-checking
-  int c_result[2] = { 0 };
-#endif  // CHECK_RESULTS
 
   // Split offset into integer and fractional parts, and compute cubic
   // interpolation kernels
@@ -85,13 +100,11 @@ static INLINE void compute_flow_vector(const uint8_t *src, const uint8_t *ref,
   const double u_frac = u - floor(u);
   const double v_frac = v - floor(v);
 
-  int16_t h_kernel[4];
-  int16_t v_kernel[4];
-  get_cubic_kernel_int(u_frac, h_kernel);
-  get_cubic_kernel_int(v_frac, v_kernel);
+  const __m128i kernels = compute_cubic_kernels(u_frac, v_frac);
 
   // Storage for intermediate values between the two convolution directions
-  int16_t tmp_[DISFLOW_PATCH_SIZE * (DISFLOW_PATCH_SIZE + 3)];
+  DECLARE_ALIGNED(16, int16_t,
+                  tmp_[DISFLOW_PATCH_SIZE * (DISFLOW_PATCH_SIZE + 3)]);
   int16_t *tmp = tmp_ + DISFLOW_PATCH_SIZE;  // Offset by one row
 
   // Clamp coordinates so that all pixels we fetch will remain within the
@@ -114,8 +127,8 @@ static INLINE void compute_flow_vector(const uint8_t *src, const uint8_t *ref,
   // We split the kernel into two vectors with kernel indices:
   // 0, 1, 0, 1, 0, 1, 0, 1, and
   // 2, 3, 2, 3, 2, 3, 2, 3
-  __m128i h_kernel_01 = xx_set2_epi16(h_kernel[0], h_kernel[1]);
-  __m128i h_kernel_23 = xx_set2_epi16(h_kernel[2], h_kernel[3]);
+  __m128i h_kernel_01 = _mm_set1_epi32(_mm_extract_epi32(kernels, 0));
+  __m128i h_kernel_23 = _mm_set1_epi32(_mm_extract_epi32(kernels, 2));
 
   __m128i round_const_h = _mm_set1_epi32(1 << (DISFLOW_INTERP_BITS - 6 - 1));
 
@@ -133,10 +146,6 @@ static INLINE void compute_flow_vector(const uint8_t *src, const uint8_t *ref,
     // Expand pixels to int16s
     __m128i px_0to7_i16 = _mm_cvtepu8_epi16(row);
     __m128i px_4to10_i16 = _mm_cvtepu8_epi16(_mm_srli_si128(row, 4));
-
-    // Relevant multiply instruction
-    // This multiplies pointwise, then sums in pairs.
-    //_mm_madd_epi16();
 
     // Compute first four outputs
     // input pixels 0, 1, 1, 2, 2, 3, 3, 4
@@ -173,43 +182,14 @@ static INLINE void compute_flow_vector(const uint8_t *src, const uint8_t *ref,
                                   DISFLOW_INTERP_BITS - 6);
 
     _mm_storeu_si128((__m128i *)tmp_row, _mm_packs_epi32(out0, out1));
-
-#if CHECK_RESULTS && !defined(NDEBUG)
-    // Cross-check
-    for (int j = 0; j < DISFLOW_PATCH_SIZE; ++j) {
-      const int x_w = x0 + j;
-      int arr[4];
-
-      arr[0] = (int)ref[y_w * stride + (x_w - 1)];
-      arr[1] = (int)ref[y_w * stride + (x_w + 0)];
-      arr[2] = (int)ref[y_w * stride + (x_w + 1)];
-      arr[3] = (int)ref[y_w * stride + (x_w + 2)];
-
-      // Apply kernel and round, keeping 6 extra bits of precision.
-      //
-      // 6 is the maximum allowable number of extra bits which will avoid
-      // the intermediate values overflowing an int16_t. The most extreme
-      // intermediate value occurs when:
-      // * The input pixels are [0, 255, 255, 0]
-      // * u_frac = 0.5
-      // In this case, the un-scaled output is 255 * 1.125 = 286.875.
-      // As an integer with 6 fractional bits, that is 18360, which fits
-      // in an int16_t. But with 7 fractional bits it would be 36720,
-      // which is too large.
-      const int c_value = ROUND_POWER_OF_TWO(get_cubic_value_int(arr, h_kernel),
-                                             DISFLOW_INTERP_BITS - 6);
-      (void)c_value;  // Suppress warnings
-      assert(tmp_row[j] == c_value);
-    }
-#endif  // CHECK_RESULTS
   }
 
   // Vertical convolution
   const int round_bits = DISFLOW_INTERP_BITS + 6 - DISFLOW_DERIV_SCALE_LOG2;
   __m128i round_const_v = _mm_set1_epi32(1 << (round_bits - 1));
 
-  __m128i v_kernel_01 = xx_set2_epi16(v_kernel[0], v_kernel[1]);
-  __m128i v_kernel_23 = xx_set2_epi16(v_kernel[2], v_kernel[3]);
+  __m128i v_kernel_01 = _mm_set1_epi32(_mm_extract_epi32(kernels, 1));
+  __m128i v_kernel_23 = _mm_set1_epi32(_mm_extract_epi32(kernels, 3));
 
   for (int i = 0; i < DISFLOW_PATCH_SIZE; ++i) {
     int16_t *tmp_row = &tmp[i * DISFLOW_PATCH_SIZE];
@@ -252,30 +232,6 @@ static INLINE void compute_flow_vector(const uint8_t *src, const uint8_t *ref,
     __m128i dy_row = _mm_loadu_si128((__m128i *)&dy[i * DISFLOW_PATCH_SIZE]);
     b0_acc = _mm_add_epi32(b0_acc, _mm_madd_epi16(dx_row, dt));
     b1_acc = _mm_add_epi32(b1_acc, _mm_madd_epi16(dy_row, dt));
-
-#if CHECK_RESULTS
-    int16_t dt_arr[8];
-    memcpy(dt_arr, &dt, 8 * sizeof(*dt_arr));
-    for (int j = 0; j < DISFLOW_PATCH_SIZE; ++j) {
-      int16_t *p = &tmp[i * DISFLOW_PATCH_SIZE + j];
-      int arr[4] = { p[-DISFLOW_PATCH_SIZE], p[0], p[DISFLOW_PATCH_SIZE],
-                     p[2 * DISFLOW_PATCH_SIZE] };
-      const int result = get_cubic_value_int(arr, v_kernel);
-
-      // Apply kernel and round.
-      // This time, we have to round off the 6 extra bits which were kept
-      // earlier, but we also want to keep DISFLOW_DERIV_SCALE_LOG2 extra bits
-      // of precision to match the scale of the dx and dy arrays.
-      const int c_warped = ROUND_POWER_OF_TWO(result, round_bits);
-      const int c_src_px = src[(x + j) + (y + i) * stride] << 3;
-      const int c_dt = c_warped - c_src_px;
-
-      assert(dt_arr[j] == c_dt);
-
-      c_result[0] += dx[i * DISFLOW_PATCH_SIZE + j] * c_dt;
-      c_result[1] += dy[i * DISFLOW_PATCH_SIZE + j] * c_dt;
-    }
-#endif  // CHECK_RESULTS
   }
 
   // Flatten the two sets of partial sums to find the final value of b
@@ -285,156 +241,66 @@ static INLINE void compute_flow_vector(const uint8_t *src, const uint8_t *ref,
   __m128i partial_sum = _mm_hadd_epi32(b0_acc, b1_acc);
   b[0] = _mm_extract_epi32(partial_sum, 0) + _mm_extract_epi32(partial_sum, 1);
   b[1] = _mm_extract_epi32(partial_sum, 2) + _mm_extract_epi32(partial_sum, 3);
-
-#if CHECK_RESULTS
-  assert(b[0] == c_result[0]);
-  assert(b[1] == c_result[1]);
-#endif  // CHECK_RESULTS
 }
 
-static INLINE void sobel_filter_x(const uint8_t *src, int src_stride,
-                                  int16_t *dst, int dst_stride) {
-  int16_t tmp_[DISFLOW_PATCH_SIZE * (DISFLOW_PATCH_SIZE + 2)];
-  int16_t *tmp = tmp_ + DISFLOW_PATCH_SIZE;
-#if CHECK_RESULTS
-  const int taps = 3;
-#endif  // CHECK_RESULTS
+// Compute the x and y gradients of the source patch in a single pass,
+// and store into dx and dy respectively.
+static INLINE void sobel_filter(const uint8_t *src, int src_stride, int16_t *dx,
+                                int16_t *dy) {
+  // Loop setup: Load the first two rows (of 10 input rows) and apply
+  // the horizontal parts of the two filters
+  __m128i row_m1 = _mm_loadu_si128((__m128i *)(src - src_stride - 1));
+  __m128i row_m1_a = _mm_cvtepu8_epi16(row_m1);
+  __m128i row_m1_b = _mm_cvtepu8_epi16(_mm_srli_si128(row_m1, 1));
+  __m128i row_m1_c = _mm_cvtepu8_epi16(_mm_srli_si128(row_m1, 2));
 
-  // Horizontal filter
-  // As the kernel is simply {1, 0, -1}, we implement this as simply
-  //  out[x] = image[x-1] - image[x+1]
-  // rather than doing a "proper" convolution operation
-  for (int y = -1; y < DISFLOW_PATCH_SIZE + 1; ++y) {
-    const uint8_t *src_row = src + y * src_stride;
-    int16_t *tmp_row = tmp + y * DISFLOW_PATCH_SIZE;
+  __m128i row_m1_hsmooth = _mm_add_epi16(_mm_add_epi16(row_m1_a, row_m1_c),
+                                         _mm_slli_epi16(row_m1_b, 1));
+  __m128i row_m1_hdiff = _mm_sub_epi16(row_m1_a, row_m1_c);
 
-    // Load pixels and expand to 16 bits
-    __m128i row = _mm_loadu_si128((__m128i *)(src_row - 1));
-    __m128i px0 = _mm_cvtepu8_epi16(row);
-    __m128i px2 = _mm_cvtepu8_epi16(_mm_srli_si128(row, 2));
+  __m128i row = _mm_loadu_si128((__m128i *)(src - 1));
+  __m128i row_a = _mm_cvtepu8_epi16(row);
+  __m128i row_b = _mm_cvtepu8_epi16(_mm_srli_si128(row, 1));
+  __m128i row_c = _mm_cvtepu8_epi16(_mm_srli_si128(row, 2));
 
-    __m128i out = _mm_sub_epi16(px0, px2);
+  __m128i row_hsmooth =
+      _mm_add_epi16(_mm_add_epi16(row_a, row_c), _mm_slli_epi16(row_b, 1));
+  __m128i row_hdiff = _mm_sub_epi16(row_a, row_c);
 
-    // Store to intermediate array
-    _mm_storeu_si128((__m128i *)tmp_row, out);
+  // Main loop: For each of the 8 output rows:
+  // * Load row i+1 and apply both horizontal filters
+  // * Apply vertical filters and store results
+  // * Shift rows for next iteration
+  for (int i = 0; i < DISFLOW_PATCH_SIZE; i++) {
+    // Load row i+1 and apply both horizontal filters
+    const __m128i row_p1 =
+        _mm_loadu_si128((__m128i *)(src + (i + 1) * src_stride - 1));
+    const __m128i row_p1_a = _mm_cvtepu8_epi16(row_p1);
+    const __m128i row_p1_b = _mm_cvtepu8_epi16(_mm_srli_si128(row_p1, 1));
+    const __m128i row_p1_c = _mm_cvtepu8_epi16(_mm_srli_si128(row_p1, 2));
 
-#if CHECK_RESULTS
-    // Cross-check
-    static const int16_t h_kernel[3] = { 1, 0, -1 };
-    for (int x = 0; x < DISFLOW_PATCH_SIZE; ++x) {
-      int sum = 0;
-      for (int k = 0; k < taps; ++k) {
-        sum += h_kernel[k] * src_row[x + k - 1];
-      }
-      (void)sum;
-      assert(tmp_row[x] == sum);
-    }
-#endif  // CHECK_RESULTS
-  }
+    const __m128i row_p1_hsmooth = _mm_add_epi16(
+        _mm_add_epi16(row_p1_a, row_p1_c), _mm_slli_epi16(row_p1_b, 1));
+    const __m128i row_p1_hdiff = _mm_sub_epi16(row_p1_a, row_p1_c);
 
-  // Vertical filter
-  // Here the kernel is {1, 2, 1}, which can be implemented
-  // with simple sums rather than multiplies and adds.
-  // In order to minimize dependency chains, we evaluate in the order
-  // (image[y - 1] + image[y + 1]) + (image[y] << 1)
-  // This way, the first addition and the shift can happen in parallel
-  for (int y = 0; y < DISFLOW_PATCH_SIZE; ++y) {
-    const int16_t *tmp_row = tmp + y * DISFLOW_PATCH_SIZE;
-    int16_t *dst_row = dst + y * dst_stride;
+    // Apply vertical filters and store results
+    // dx = vertical smooth(horizontal diff(input))
+    // dy = vertical diff(horizontal smooth(input))
+    const __m128i dx_row =
+        _mm_add_epi16(_mm_add_epi16(row_m1_hdiff, row_p1_hdiff),
+                      _mm_slli_epi16(row_hdiff, 1));
+    const __m128i dy_row = _mm_sub_epi16(row_m1_hsmooth, row_p1_hsmooth);
 
-    __m128i px0 = _mm_loadu_si128((__m128i *)(tmp_row - DISFLOW_PATCH_SIZE));
-    __m128i px1 = _mm_loadu_si128((__m128i *)tmp_row);
-    __m128i px2 = _mm_loadu_si128((__m128i *)(tmp_row + DISFLOW_PATCH_SIZE));
+    _mm_storeu_si128((__m128i *)(dx + i * DISFLOW_PATCH_SIZE), dx_row);
+    _mm_storeu_si128((__m128i *)(dy + i * DISFLOW_PATCH_SIZE), dy_row);
 
-    __m128i out =
-        _mm_add_epi16(_mm_add_epi16(px0, px2), _mm_slli_epi16(px1, 1));
-
-    _mm_storeu_si128((__m128i *)dst_row, out);
-
-#if CHECK_RESULTS
-    static const int16_t v_kernel[3] = { 1, 2, 1 };
-    for (int x = 0; x < DISFLOW_PATCH_SIZE; ++x) {
-      int sum = 0;
-      for (int k = 0; k < taps; ++k) {
-        sum += v_kernel[k] * tmp[(y + k - 1) * DISFLOW_PATCH_SIZE + x];
-      }
-      (void)sum;
-      assert(dst_row[x] == sum);
-    }
-#endif  // CHECK_RESULTS
-  }
-}
-
-static INLINE void sobel_filter_y(const uint8_t *src, int src_stride,
-                                  int16_t *dst, int dst_stride) {
-  int16_t tmp_[DISFLOW_PATCH_SIZE * (DISFLOW_PATCH_SIZE + 2)];
-  int16_t *tmp = tmp_ + DISFLOW_PATCH_SIZE;
-#if CHECK_RESULTS
-  const int taps = 3;
-#endif  // CHECK_RESULTS
-
-  // Horizontal filter
-  // Here the kernel is {1, 2, 1}, which can be implemented
-  // with simple sums rather than multiplies and adds.
-  // In order to minimize dependency chains, we evaluate in the order
-  // (image[y - 1] + image[y + 1]) + (image[y] << 1)
-  // This way, the first addition and the shift can happen in parallel
-  for (int y = -1; y < DISFLOW_PATCH_SIZE + 1; ++y) {
-    const uint8_t *src_row = src + y * src_stride;
-    int16_t *tmp_row = tmp + y * DISFLOW_PATCH_SIZE;
-
-    // Load pixels and expand to 16 bits
-    __m128i row = _mm_loadu_si128((__m128i *)(src_row - 1));
-    __m128i px0 = _mm_cvtepu8_epi16(row);
-    __m128i px1 = _mm_cvtepu8_epi16(_mm_srli_si128(row, 1));
-    __m128i px2 = _mm_cvtepu8_epi16(_mm_srli_si128(row, 2));
-
-    __m128i out =
-        _mm_add_epi16(_mm_add_epi16(px0, px2), _mm_slli_epi16(px1, 1));
-
-    // Store to intermediate array
-    _mm_storeu_si128((__m128i *)tmp_row, out);
-
-#if CHECK_RESULTS
-    // Cross-check
-    static const int16_t h_kernel[3] = { 1, 2, 1 };
-    for (int x = 0; x < DISFLOW_PATCH_SIZE; ++x) {
-      int sum = 0;
-      for (int k = 0; k < taps; ++k) {
-        sum += h_kernel[k] * src_row[x + k - 1];
-      }
-      (void)sum;
-      assert(tmp_row[x] == sum);
-    }
-#endif  // CHECK_RESULTS
-  }
-
-  // Vertical filter
-  // As the kernel is simply {1, 0, -1}, we implement this as simply
-  //  out[x] = image[x-1] - image[x+1]
-  // rather than doing a "proper" convolution operation
-  for (int y = 0; y < DISFLOW_PATCH_SIZE; ++y) {
-    const int16_t *tmp_row = tmp + y * DISFLOW_PATCH_SIZE;
-    int16_t *dst_row = dst + y * dst_stride;
-
-    __m128i px0 = _mm_loadu_si128((__m128i *)(tmp_row - DISFLOW_PATCH_SIZE));
-    __m128i px2 = _mm_loadu_si128((__m128i *)(tmp_row + DISFLOW_PATCH_SIZE));
-
-    __m128i out = _mm_sub_epi16(px0, px2);
-
-    _mm_storeu_si128((__m128i *)dst_row, out);
-
-#if CHECK_RESULTS
-    static const int16_t v_kernel[3] = { 1, 0, -1 };
-    for (int x = 0; x < DISFLOW_PATCH_SIZE; ++x) {
-      int sum = 0;
-      for (int k = 0; k < taps; ++k) {
-        sum += v_kernel[k] * tmp[(y + k - 1) * DISFLOW_PATCH_SIZE + x];
-      }
-      (void)sum;
-      assert(dst_row[x] == sum);
-    }
-#endif  // CHECK_RESULTS
+    // Shift rows for next iteration
+    // This allows a lot of work to be reused, reducing the number of
+    // horizontal filtering operations from 2*3*8 = 48 to 2*10 = 20
+    row_m1_hsmooth = row_hsmooth;
+    row_m1_hdiff = row_hdiff;
+    row_hsmooth = row_p1_hsmooth;
+    row_hdiff = row_p1_hdiff;
   }
 }
 
@@ -469,30 +335,6 @@ static INLINE void compute_flow_matrix(const int16_t *dx, int dx_stride,
   // which is convenient for integerized SIMD implementation.
   result = _mm_add_epi32(result, _mm_set_epi32(1, 0, 0, 1));
 
-#if CHECK_RESULTS
-  int tmp[4] = { 0 };
-
-  for (int i = 0; i < DISFLOW_PATCH_SIZE; i++) {
-    for (int j = 0; j < DISFLOW_PATCH_SIZE; j++) {
-      tmp[0] += dx[i * dx_stride + j] * dx[i * dx_stride + j];
-      tmp[1] += dx[i * dx_stride + j] * dy[i * dy_stride + j];
-      // Don't compute tmp[2], as it should be equal to tmp[1]
-      tmp[3] += dy[i * dy_stride + j] * dy[i * dy_stride + j];
-    }
-  }
-
-  // Apply regularization
-  tmp[0] += 1;
-  tmp[3] += 1;
-
-  tmp[2] = tmp[1];
-
-  assert(tmp[0] == _mm_extract_epi32(result, 0));
-  assert(tmp[1] == _mm_extract_epi32(result, 1));
-  assert(tmp[2] == _mm_extract_epi32(result, 2));
-  assert(tmp[3] == _mm_extract_epi32(result, 3));
-#endif  // CHECK_RESULTS
-
   // Convert results to doubles and store
   _mm_storeu_pd(M, _mm_cvtepi32_pd(result));
   _mm_storeu_pd(M + 2, _mm_cvtepi32_pd(_mm_srli_si128(result, 8)));
@@ -518,16 +360,15 @@ static INLINE void invert_2x2(const double *M, double *M_inv) {
 void aom_compute_flow_at_point_sse4_1(const uint8_t *src, const uint8_t *ref,
                                       int x, int y, int width, int height,
                                       int stride, double *u, double *v) {
-  double M[4];
-  double M_inv[4];
+  DECLARE_ALIGNED(16, double, M[4]);
+  DECLARE_ALIGNED(16, double, M_inv[4]);
+  DECLARE_ALIGNED(16, int16_t, dx[DISFLOW_PATCH_SIZE * DISFLOW_PATCH_SIZE]);
+  DECLARE_ALIGNED(16, int16_t, dy[DISFLOW_PATCH_SIZE * DISFLOW_PATCH_SIZE]);
   int b[2];
-  int16_t dx[DISFLOW_PATCH_SIZE * DISFLOW_PATCH_SIZE];
-  int16_t dy[DISFLOW_PATCH_SIZE * DISFLOW_PATCH_SIZE];
 
   // Compute gradients within this patch
   const uint8_t *src_patch = &src[y * stride + x];
-  sobel_filter_x(src_patch, stride, dx, DISFLOW_PATCH_SIZE);
-  sobel_filter_y(src_patch, stride, dy, DISFLOW_PATCH_SIZE);
+  sobel_filter(src_patch, stride, dx, dy);
 
   compute_flow_matrix(dx, DISFLOW_PATCH_SIZE, dy, DISFLOW_PATCH_SIZE, M);
   invert_2x2(M, M_inv);

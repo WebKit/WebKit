@@ -49,7 +49,7 @@ public:
     void close();
     
 private:
-    IPC::MessageSender& messageSender() final;
+    MessageSender messageSender() final;
     uint64_t messageDestinationID() final;
 
     WeakRef<WebPage> m_page;

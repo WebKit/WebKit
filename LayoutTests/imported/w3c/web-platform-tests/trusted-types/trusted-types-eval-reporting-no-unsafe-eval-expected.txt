@@ -1,9 +1,10 @@
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
 CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Trusted Type violation report: evaluating a string violates both script-src and trusted-types. Test timed out
-NOTRUN Trusted Type violation report: evaluating a Trusted Script violates script-src.
-NOTRUN Trusted Type violation report: script-src restrictions apply after the default policy runs.
+PASS Trusted Type violation report: evaluating a string violates both script-src and trusted-types.
+PASS Trusted Type violation report: evaluating a Trusted Script violates script-src.
+PASS Trusted Type violation report: script-src restrictions apply after the default policy runs.
 

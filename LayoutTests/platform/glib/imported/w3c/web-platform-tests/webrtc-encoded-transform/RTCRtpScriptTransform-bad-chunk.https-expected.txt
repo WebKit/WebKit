@@ -1,0 +1,4 @@
+
+
+FAIL Writing bad chunks should error the stream assert_true: receiver should be set expected true got false
+

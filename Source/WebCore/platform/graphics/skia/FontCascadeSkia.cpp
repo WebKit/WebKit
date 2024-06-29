@@ -88,34 +88,7 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
     }
 
     auto blob = builder.make();
-    auto* canvas = graphicsContext.platformContext();
-    auto* skiaGraphicsContext = static_cast<GraphicsContextSkia*>(&graphicsContext);
-
-    if (isVertical) {
-        canvas->save();
-
-        SkMatrix matrix;
-        matrix.setSinCos(-1, 0, position.x(), position.y());
-        canvas->concat(matrix);
-    }
-
-    if (graphicsContext.textDrawingMode().contains(TextDrawingMode::Fill)) {
-        SkPaint paint = skiaGraphicsContext->createFillPaint();
-        paint.setAntiAlias(edging != SkFont::Edging::kAlias);
-        paint.setImageFilter(skiaGraphicsContext->createDropShadowFilterIfNeeded(GraphicsContextSkia::ShadowStyle::Outset));
-        skiaGraphicsContext->setupFillSource(paint);
-        canvas->drawTextBlob(blob, SkFloatToScalar(position.x()), SkFloatToScalar(position.y()), paint);
-    }
-
-    if (graphicsContext.textDrawingMode().contains(TextDrawingMode::Stroke)) {
-        SkPaint paint = skiaGraphicsContext->createStrokePaint();
-        paint.setAntiAlias(edging != SkFont::Edging::kAlias);
-        skiaGraphicsContext->setupStrokeSource(paint);
-        canvas->drawTextBlob(blob, SkFloatToScalar(position.x()), SkFloatToScalar(position.y()), paint);
-    }
-
-    if (isVertical)
-        canvas->restore();
+    static_cast<GraphicsContextSkia*>(&graphicsContext)->drawSkiaText(blob, SkFloatToScalar(position.x()), SkFloatToScalar(position.y()), edging != SkFont::Edging::kAlias, isVertical);
 }
 
 bool FontCascade::canReturnFallbackFontsForComplexText()

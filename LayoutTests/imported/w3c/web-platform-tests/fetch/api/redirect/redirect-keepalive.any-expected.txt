@@ -1,0 +1,14 @@
+
+PASS [keepalive][new window][unload] same-origin redirect; setting up
+PASS [keepalive][new window][unload] same-origin redirect + preflight; setting up
+PASS [keepalive][new window][unload] cross-origin redirect; setting up
+PASS [keepalive][new window][unload] cross-origin redirect + preflight; setting up
+PASS [keepalive][new window][unload] redirect to file URL; setting up
+PASS [keepalive][new window][unload] redirect to data URL; setting up
+PASS [keepalive][new window][unload] same-origin redirect
+PASS [keepalive][new window][unload] same-origin redirect + preflight
+PASS [keepalive][new window][unload] cross-origin redirect
+PASS [keepalive][new window][unload] cross-origin redirect + preflight
+PASS [keepalive][new window][unload] redirect to file URL
+PASS [keepalive][new window][unload] redirect to data URL
+

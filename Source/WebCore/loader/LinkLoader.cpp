@@ -91,7 +91,7 @@ void LinkLoader::triggerError()
     m_client->linkLoadingErrored();
 }
 
-void LinkLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
+void LinkLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     ASSERT_UNUSED(resource, m_cachedLinkResource.get() == &resource);
 

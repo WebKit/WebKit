@@ -20,5 +20,3 @@ const earlier = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC");
 const later = new Temporal.ZonedDateTime(1_000_000_000_000_000_005n, "UTC");
 const result = later.since(earlier, { roundingIncrement: 2.5, roundingMode: "trunc" });
 TemporalHelpers.assertDuration(result, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, "roundingIncrement 2.5 truncates to 2");
-const result2 = later.since(earlier, { smallestUnit: "days", roundingIncrement: 1e9 + 0.5, roundingMode: "expand" });
-TemporalHelpers.assertDuration(result2, 0, 0, 0, 1e9, 0, 0, 0, 0, 0, 0, "roundingIncrement 1e9 + 0.5 truncates to 1e9");

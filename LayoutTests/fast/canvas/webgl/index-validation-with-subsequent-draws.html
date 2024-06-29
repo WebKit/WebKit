@@ -13,6 +13,9 @@
 if (window.testRunner)
     testRunner.dumpAsText();
 
+if (window.internals)
+    internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 // Boilerplate set-up.
 let canvas = document.getElementById('canvas1');
 let gl = canvas.getContext('webgl');

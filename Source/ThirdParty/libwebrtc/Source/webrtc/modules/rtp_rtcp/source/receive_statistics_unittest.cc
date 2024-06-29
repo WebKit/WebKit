@@ -898,5 +898,22 @@ TEST(ReviseJitterTest,
   EXPECT_EQ(GetJitter(*statistics), 172U);
 }
 
+TEST(ReviseJitterTest, TwoPacketsWithMaximumRtpTimestampDifference) {
+  SimulatedClock clock(0);
+  std::unique_ptr<ReceiveStatistics> statistics =
+      ReceiveStatistics::Create(&clock);
+  RtpPacketReceived packet1 = MakeRtpPacket(/*payload_type_frequency=*/90'000,
+                                            /*timestamp=*/0x01234567);
+  RtpPacketReceived packet2 =
+      MakeNextRtpPacket(packet1,
+                        /*payload_type_frequency=*/90'000,
+                        /*timestamp=*/0x81234567);
+  statistics->OnRtpPacket(packet1);
+  statistics->OnRtpPacket(packet2);
+
+  // Expect large jump in RTP timestamp is ignored for jitter calculation.
+  EXPECT_EQ(GetJitter(*statistics), 0U);
+}
+
 }  // namespace
 }  // namespace webrtc

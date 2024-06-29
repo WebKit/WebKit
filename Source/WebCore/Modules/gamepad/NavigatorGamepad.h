@@ -28,6 +28,7 @@
 #if ENABLE(GAMEPAD)
 
 #include "Supplementable.h"
+#include <wtf/MonotonicTime.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -64,10 +65,14 @@ public:
 
     Ref<Gamepad> gamepadFromPlatformGamepad(PlatformGamepad&);
 
+    WEBCORE_EXPORT static void setGamepadsRecentlyAccessedThreshold(Seconds);
+    static Seconds gamepadsRecentlyAccessedThreshold();
+
 private:
     static ASCIILiteral supplementName();
 
     void gamepadsBecameVisible();
+    void maybeNotifyRecentAccess();
 
     const Vector<RefPtr<Gamepad>>& gamepads();
 

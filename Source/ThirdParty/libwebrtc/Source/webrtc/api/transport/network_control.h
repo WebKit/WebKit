@@ -15,6 +15,7 @@
 #include <memory>
 
 #include "absl/base/attributes.h"
+#include "api/environment/environment.h"
 #include "api/field_trials_view.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/transport/network_types.h"
@@ -35,6 +36,12 @@ class TargetTransferRateObserver {
 // Configuration sent to factory create function. The parameters here are
 // optional to use for a network controller implementation.
 struct NetworkControllerConfig {
+  // TODO: bugs.webrtc.org/42220378 - Delete the default constructor and
+  // thus make Environment (including field trials) a required parameter.
+  [[deprecated]] NetworkControllerConfig() = default;
+  explicit NetworkControllerConfig(const Environment& env)
+      : key_value_config(&env.field_trials()), event_log(&env.event_log()) {}
+
   // The initial constraints to start with, these can be changed at any later
   // time by calls to OnTargetRateConstraints. Note that the starting rate
   // has to be set initially to provide a starting state for the network

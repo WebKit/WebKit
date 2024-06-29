@@ -35,4 +35,4 @@ bool waitForSignal(QObject* obj, const char* signal, int timeout)
     return timeoutSpy.isEmpty();
 }
 
-#include "WPEQtTest.moc"
+#include "moc_WPEQtTest.cpp"

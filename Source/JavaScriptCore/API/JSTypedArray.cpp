@@ -179,7 +179,7 @@ JSObjectRef JSObjectMakeTypedArrayWithBytesNoCopy(JSContextRef ctx, JSTypedArray
 
     unsigned elementByteSize = elementSize(toTypedArrayType(arrayType));
 
-    auto buffer = ArrayBuffer::createFromBytes(bytes, length, createSharedTask<void(void*)>([=](void* p) {
+    auto buffer = ArrayBuffer::createFromBytes({ static_cast<const uint8_t*>(bytes), length }, createSharedTask<void(void*)>([=](void* p) {
         if (destructor)
             destructor(p, destructorContext);
     }));
@@ -311,7 +311,7 @@ JSObjectRef JSObjectMakeArrayBufferWithBytesNoCopy(JSContextRef ctx, void* bytes
 
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    auto buffer = ArrayBuffer::createFromBytes(bytes, byteLength, createSharedTask<void(void*)>([=](void* p) {
+    auto buffer = ArrayBuffer::createFromBytes({ static_cast<const uint8_t*>(bytes), byteLength }, createSharedTask<void(void*)>([=](void* p) {
         if (bytesDeallocator)
             bytesDeallocator(p, deallocatorContext);
     }));

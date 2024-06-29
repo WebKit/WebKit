@@ -12,9 +12,13 @@
 #ifndef AOM_AV1_ENCODER_ENC_ENUMS_H_
 #define AOM_AV1_ENCODER_ENC_ENUMS_H_
 
+#include "aom_ports/mem.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define MAX_NUM_THREADS 64
 
 // This enumerator type needs to be kept aligned with the mode order in
 // const MODE_DEFINITION av1_mode_defs[MAX_MODES] used in the rd code.

@@ -138,6 +138,7 @@ void MediaRecorderPrivateBackend::stopRecording(CompletionHandler<void()>&& comp
     GST_DEBUG_OBJECT(m_transcoder.get(), "Stop requested, pushing EOS event");
 
     auto scopeExit = makeScopeExit([this, completionHandler = WTFMove(completionHandler)]() mutable {
+        unregisterPipeline(m_pipeline);
         m_pipeline.clear();
         GST_DEBUG_OBJECT(m_transcoder.get(), "Stopping");
         m_transcoder.clear();
@@ -282,12 +283,11 @@ GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateBackend::containerProfi
 void MediaRecorderPrivateBackend::setSource(GstElement* element)
 {
     auto selectedTracks = MediaRecorderPrivate::selectTracks(stream());
-    bool onlyTrack = (selectedTracks.audioTrack && !selectedTracks.videoTrack) || (selectedTracks.videoTrack && !selectedTracks.audioTrack);
     auto* src = WEBKIT_MEDIA_STREAM_SRC(element);
     if (selectedTracks.audioTrack)
-        webkitMediaStreamSrcAddTrack(src, selectedTracks.audioTrack, onlyTrack);
+        webkitMediaStreamSrcAddTrack(src, selectedTracks.audioTrack);
     if (selectedTracks.videoTrack)
-        webkitMediaStreamSrcAddTrack(src, selectedTracks.videoTrack, onlyTrack);
+        webkitMediaStreamSrcAddTrack(src, selectedTracks.videoTrack);
     if (m_selectTracksCallback) {
         auto& callback = *m_selectTracksCallback;
         callback(selectedTracks);

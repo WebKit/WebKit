@@ -54,6 +54,36 @@ class AccessibilityObject;
 class Page;
 enum class AXStreamOptions : uint8_t;
 
+// The most common boolean properties are stored in a bitfield rather than in a HashMap.
+// If you edit these, update AXIsolatedObject::boolAttributeValue and AXIsolatedObject::setProperty.
+enum class AXPropertyFlag : uint32_t {
+    CanSetFocusAttribute                          = 1 << 0,
+    CanSetSelectedAttribute                       = 1 << 1,
+    CanSetValueAttribute                          = 1 << 2,
+    HasBoldFont                                   = 1 << 3,
+    HasItalicFont                                 = 1 << 4,
+    HasPlainText                                  = 1 << 5,
+    IsControl                                     = 1 << 6,
+    IsEnabled                                     = 1 << 7,
+    IsExposedTableCell                            = 1 << 8,
+    IsGrabbed                                     = 1 << 9,
+    IsInlineText                                  = 1 << 10,
+    IsKeyboardFocusable                           = 1 << 11,
+    IsLink                                        = 1 << 12,
+    IsList                                        = 1 << 13,
+    IsNonLayerSVGObject                           = 1 << 14,
+    IsTableColumn                                 = 1 << 15,
+    IsTableRow                                    = 1 << 16,
+    SupportsCheckedState                          = 1 << 17,
+    SupportsDragging                              = 1 << 18,
+    SupportsExpanded                              = 1 << 19,
+    SupportsPath                                  = 1 << 20,
+    SupportsPosInSet                              = 1 << 21,
+    SupportsPressAction                           = 1 << 22,
+    SupportsRequiredAttribute                     = 1 << 23,
+    SupportsSetSize                               = 1 << 24
+};
+
 enum class AXPropertyName : uint16_t {
     ARIATreeRows,
     AttributedText,
@@ -156,7 +186,6 @@ enum class AXPropertyName : uint16_t {
     IsMeter,
     IsMultiSelectable,
     IsNonLayerSVGObject,
-    IsNonNativeTextControl,
     IsPlugin,
     IsPressed,
     IsRequired,
@@ -259,7 +288,7 @@ enum class AXPropertyName : uint16_t {
 using AXPropertyNameSet = HashSet<AXPropertyName, IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>>;
 
 // If this type is modified, the switchOn statment in AXIsolatedObject::setProperty must be updated as well.
-using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, WallTime, DateComponentsType, AccessibilityButtonState, Color, URL, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>, InsideLink, Vector<Vector<AXID>>, CharacterRange, std::pair<AXID, CharacterRange>
+using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, WallTime, DateComponentsType, AccessibilityButtonState, Color, std::shared_ptr<URL>, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, std::shared_ptr<Path>, OptionSet<AXAncestorFlag>, InsideLink, Vector<Vector<AXID>>, CharacterRange, std::pair<AXID, CharacterRange>
 #if PLATFORM(COCOA)
     , RetainPtr<NSAttributedString>
     , RetainPtr<id>

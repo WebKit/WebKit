@@ -3691,12 +3691,9 @@ void GL_APIENTRY GL_PolygonMode(GLenum face, GLenum mode)
         PolygonMode modePacked = PackParam<PolygonMode>(mode);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context->getPrivateState(),
-                                                context->getMutableErrorSetForValidation(),
-                                                angle::EntryPoint::GLPolygonMode) &&
-              ValidatePolygonMode(context->getPrivateState(),
-                                  context->getMutableErrorSetForValidation(),
-                                  angle::EntryPoint::GLPolygonMode, face, modePacked)));
+             ValidatePolygonMode(context->getPrivateState(),
+                                 context->getMutableErrorSetForValidation(),
+                                 angle::EntryPoint::GLPolygonMode, face, modePacked));
         if (isCallValid)
         {
             ContextPrivatePolygonMode(context->getMutablePrivateState(),

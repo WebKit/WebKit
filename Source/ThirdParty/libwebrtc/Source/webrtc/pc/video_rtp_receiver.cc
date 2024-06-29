@@ -98,7 +98,7 @@ VideoRtpReceiver::GetFrameDecryptor() const {
   return frame_decryptor_;
 }
 
-void VideoRtpReceiver::SetDepacketizerToDecoderFrameTransformer(
+void VideoRtpReceiver::SetFrameTransformer(
     rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) {
   RTC_DCHECK_RUN_ON(worker_thread_);
   frame_transformer_ = std::move(frame_transformer);

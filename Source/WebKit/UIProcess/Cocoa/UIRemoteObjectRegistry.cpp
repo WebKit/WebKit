@@ -33,7 +33,7 @@ namespace WebKit {
 
 std::unique_ptr<ProcessThrottler::BackgroundActivity> UIRemoteObjectRegistry::backgroundActivity(ASCIILiteral name)
 {
-    return protectedPage()->process().throttler().backgroundActivity(name).moveToUniquePtr();
+    return protectedPage()->legacyMainFrameProcess().throttler().backgroundActivity(name).moveToUniquePtr();
 }
 
 UIRemoteObjectRegistry::UIRemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry, WebPageProxy& page)
@@ -57,14 +57,14 @@ void UIRemoteObjectRegistry::sendInvocation(const RemoteObjectInvocation& invoca
     RemoteObjectRegistry::sendInvocation(invocation);
 }
 
-IPC::MessageSender& UIRemoteObjectRegistry::messageSender()
+auto UIRemoteObjectRegistry::messageSender() -> MessageSender
 {
-    return m_page.get();
+    return m_page->legacyMainFrameProcess();
 }
 
 uint64_t UIRemoteObjectRegistry::messageDestinationID()
 {
-    return protectedPage()->webPageID().toUInt64();
+    return protectedPage()->webPageIDInMainFrameProcess().toUInt64();
 }
 
 } // namespace WebKit

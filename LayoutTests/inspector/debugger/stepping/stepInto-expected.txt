@@ -341,6 +341,15 @@ PAUSE AT testCommas:45:5
      46
      47    function testChainedExpressions() {
 
+PAUSE AT testCommas:45:14
+     41            y = 2,
+     42            z = 3;
+     43        a(), b(), c();
+ ->  44        true && (|a(), b(), c()) && true;
+     45    }
+     46
+     47    function testChainedExpressions() {
+
 PAUSE AT a:7:16
       3    <script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
       4    <script src="../resources/log-pause-location.js"></script>

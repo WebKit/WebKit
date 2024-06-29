@@ -388,7 +388,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSearchFast, (JSGlobalObject* globalObjec
     RegExp* regExp = jsCast<RegExpObject*>(thisValue)->regExp();
 
     JSString* string = callFrame->uncheckedArgument(0).toString(globalObject);
-    String s = string->value(globalObject);
+    auto s = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, string, s, 0);
@@ -509,9 +509,9 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
 
     // 3. [handled by JS builtin] Let S be ? ToString(string).
     JSString* inputString = callFrame->argument(0).toString(globalObject);
-    String input = inputString->value(globalObject);
+    auto input = inputString->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    ASSERT(!input.isNull());
+    ASSERT(!input->isNull());
 
     // 4. [handled by JS builtin] Let C be ? SpeciesConstructor(rx, %RegExp%).
     // 5. [handled by JS builtin] Let flags be ? ToString(? Get(rx, "flags")).
@@ -531,7 +531,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
     RETURN_IF_EXCEPTION(scope, { });
 
     // 14. Let size be the number of elements in S.
-    unsigned inputSize = input.length();
+    unsigned inputSize = input->length();
 
     // 15. Let p = 0.
     unsigned position = 0;
@@ -541,7 +541,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
         RELEASE_AND_RETURN(scope, JSValue::encode(constructEmptyArray(globalObject, nullptr)));
 
     // 17. If size == 0, then
-    if (input.isEmpty()) {
+    if (input->isEmpty()) {
         // a. Let z be ? RegExpExec(splitter, S).
         // b. If z is not null, return A.
         // c. Perform ! CreateDataProperty(A, "0", S).

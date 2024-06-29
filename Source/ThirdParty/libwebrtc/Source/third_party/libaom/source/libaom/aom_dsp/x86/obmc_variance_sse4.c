@@ -13,6 +13,7 @@
 #include <immintrin.h>
 
 #include "config/aom_config.h"
+#include "config/aom_dsp_rtcd.h"
 
 #include "aom_ports/mem.h"
 #include "aom/aom_integer.h"
@@ -21,20 +22,11 @@
 #include "aom_dsp/aom_filter.h"
 #include "aom_dsp/x86/obmc_intrinsic_sse4.h"
 #include "aom_dsp/x86/synonyms.h"
+#include "aom_dsp/x86/variance_impl_ssse3.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // 8 bit
 ////////////////////////////////////////////////////////////////////////////////
-
-void aom_var_filter_block2d_bil_first_pass_ssse3(
-    const uint8_t *a, uint16_t *b, unsigned int src_pixels_per_line,
-    unsigned int pixel_step, unsigned int output_height,
-    unsigned int output_width, const uint8_t *filter);
-
-void aom_var_filter_block2d_bil_second_pass_ssse3(
-    const uint16_t *a, uint8_t *b, unsigned int src_pixels_per_line,
-    unsigned int pixel_step, unsigned int output_height,
-    unsigned int output_width, const uint8_t *filter);
 
 static INLINE void obmc_variance_w8n(const uint8_t *pre, const int pre_stride,
                                      const int32_t *wsrc, const int32_t *mask,

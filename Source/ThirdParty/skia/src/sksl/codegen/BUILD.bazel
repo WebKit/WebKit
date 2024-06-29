@@ -1,5 +1,9 @@
 load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_deps", "skia_cc_library", "skia_filegroup", "split_srcs_and_hdrs")
 
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
 licenses(["notice"])
 
 exports_files_legacy()
@@ -127,6 +131,23 @@ skia_cc_library(
     hdrs = ["SkSLGLSLCodeGenerator.h"],
     features = ["layering_check"],
     visibility = ["//src/gpu/ganesh/gl:__pkg__"],
+    deps = [
+        ":gpu",
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "metal",
+    srcs = [
+        "SkSLCodeGenerator.h",
+        "SkSLMetalCodeGenerator.cpp",
+    ],
+    hdrs = ["SkSLMetalCodeGenerator.h"],
+    features = ["layering_check"],
+    visibility = ["//src/gpu/ganesh/mtl:__pkg__"],
     deps = [
         ":gpu",
         "//:core",

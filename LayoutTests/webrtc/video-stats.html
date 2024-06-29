@@ -197,7 +197,7 @@ promise_test(async (test) => {
     await checkInboundFramesNumberIncreased(secondConnection, statsSecondConnection, 0);
     await checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnection, 0);
 
-    const expectedTypes = ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "media-source", "outbound-rtp", "peer-connection", "remote-candidate", "remote-inbound-rtp", "transport"];
+    const expectedTypes = ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "media-source", "outbound-rtp", "peer-connection", "remote-candidate", "remote-inbound-rtp", "remote-outbound-rtp", "transport"];
     let types;
     do {
         types = await getStatsType(firstConnection);

@@ -102,7 +102,7 @@ static String osVersionForUAString()
         break;
     }
 
-    const char* familyName = (version >= WindowsNT3) ? "Windows NT " : "Windows CE ";
+    auto familyName = (version >= WindowsNT3) ? "Windows NT "_s : "Windows CE "_s;
     return makeString(familyName, major, '.', minor);
 }
 

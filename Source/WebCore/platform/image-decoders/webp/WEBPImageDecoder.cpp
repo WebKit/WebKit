@@ -130,8 +130,9 @@ void WEBPImageDecoder::decode(size_t frameIndex, bool allDataReceived)
     // This can be executed both in the main thread (when not using async decoding) or in the decoding thread.
     // When executed in the decoding thread, a call to setData() from the main thread may change the data
     // the WebPDemuxer is using, leaving it in an inconsistent state, so we need to protect the data.
-    RefPtr<const SharedBuffer> protectedData(m_data);
-    WebPData inputData = { protectedData->data(), protectedData->size() };
+    RefPtr protectedData = m_data;
+    auto dataSpan = protectedData->span();
+    WebPData inputData { dataSpan.data(), dataSpan.size() };
     WebPDemuxState demuxerState;
     WebPDemuxer* demuxer = WebPDemuxPartial(&inputData, &demuxerState);
     if (!demuxer) {
@@ -296,7 +297,8 @@ void WEBPImageDecoder::parseHeader()
     if (m_data->size() < webpHeaderSize)
         return; // Await VP8X header so WebPDemuxPartial succeeds.
 
-    WebPData inputData = { m_data->data(), m_data->size() };
+    auto dataSpan = m_data->span();
+    WebPData inputData { dataSpan.data(), dataSpan.size() };
     WebPDemuxState demuxerState;
     WebPDemuxer* demuxer = WebPDemuxPartial(&inputData, &demuxerState);
     if (!demuxer) {

@@ -11,7 +11,7 @@
 #ifndef API_METRONOME_METRONOME_H_
 #define API_METRONOME_METRONOME_H_
 
-#include "api/task_queue/task_queue_base.h"
+#include "absl/functional/any_invocable.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/system/rtc_export.h"
 

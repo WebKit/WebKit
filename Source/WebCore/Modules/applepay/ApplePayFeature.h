@@ -46,6 +46,9 @@ enum class ApplePayFeature : uint8_t {
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     PaymentRequestCouponCode,
 #endif
+#if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
+    PaymentRequestMerchantCategoryCode,
+#endif
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
     PaymentRequestMultiTokenContexts,
 #endif

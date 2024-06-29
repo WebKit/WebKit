@@ -466,6 +466,9 @@ class Texture2DTestES3 : public Texture2DTest
         EXPECT_PIXEL_NEAR(0, 0, referenceColor[0], referenceColor[1], referenceColor[2],
                           referenceColor[3], 1);
     }
+
+    void testCopyImage(const APIExtensionVersion usedExtension);
+    void testCopyImageDepthStencil(const APIExtensionVersion usedExtension);
 };
 
 class Texture2DMemoryTestES3 : public Texture2DTestES3
@@ -1254,7 +1257,7 @@ class Texture3DTestES2 : public TexCoordDrawTest
 
     void testSetUp() override
     {
-        // http://anglebug.com/5728
+        // http://anglebug.com/42264265
         ANGLE_SKIP_TEST_IF(IsOzone());
 
         TexCoordDrawTest::testSetUp();
@@ -1278,7 +1281,7 @@ class Texture3DTestES2 : public TexCoordDrawTest
 
     bool hasTexture3DExt() const
     {
-        // http://anglebug.com/4927
+        // http://anglebug.com/42263501
         if ((IsPixel2() || IsNexus5X()) && IsOpenGLES())
         {
             return false;
@@ -2092,6 +2095,29 @@ TEST_P(Texture2DTest, ZeroSizedUploads)
     EXPECT_GL_NO_ERROR();
 }
 
+// Tests uploading a red texture and immediately reading from it.
+TEST_P(Texture2DTest, SimpleUpload)
+{
+    const GLuint width            = getWindowWidth();
+    const GLuint height           = getWindowHeight();
+    const GLuint windowPixelCount = width * height;
+    std::vector<GLColor> pixelsRed(windowPixelCount, GLColor::red);
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 pixelsRed.data());
+    EXPECT_GL_ERROR(GL_NO_ERROR);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexture2D, 0);
+
+    EXPECT_GL_ERROR(GL_NO_ERROR);
+    std::vector<GLColor> output(windowPixelCount, GLColor::green);
+    glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, output.data());
+    EXPECT_EQ(pixelsRed, output);
+}
+
 // Test that interleaved superseded updates work as expected
 TEST_P(Texture2DTest, InterleavedSupersedingTextureUpdates)
 {
@@ -2363,7 +2389,7 @@ TEST_P(SamplerArrayTest, SamplerArrayDraw)
 // user-defined function in the shader.
 TEST_P(SamplerArrayAsFunctionParameterTest, SamplerArrayAsFunctionParameter)
 {
-    // TODO: Diagnose and fix. http://anglebug.com/2955
+    // TODO: Diagnose and fix. http://anglebug.com/42261649
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
 
     testSamplerArrayDraw();
@@ -2419,7 +2445,7 @@ TEST_P(Texture2DTestWithDrawScale, MipmapsTwice)
 // https://code.google.com/p/angleproject/issues/detail?id=849
 TEST_P(TextureCubeTest, CubeMapFBO)
 {
-    // http://anglebug.com/3145
+    // http://anglebug.com/42261821
     ANGLE_SKIP_TEST_IF(IsFuchsia() && IsIntel() && IsVulkan());
 
     GLFramebuffer fbo;
@@ -2461,7 +2487,7 @@ TEST_P(TextureCubeTest, CubeMapFBO)
 // Tests clearing a cube map with a scissor enabled.
 TEST_P(TextureCubeTest, CubeMapFBOScissoredClear)
 {
-    // http://anglebug.com/3145
+    // http://anglebug.com/42261821
     ANGLE_SKIP_TEST_IF(IsFuchsia() && IsIntel() && IsVulkan());
 
     constexpr size_t kSize = 16;
@@ -3194,7 +3220,7 @@ TEST_P(Texture2DTestES3, TexImageWithDepthPBO)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_NV_pixel_buffer_object"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_storage"));
 
-    // http://anglebug.com/5315
+    // http://anglebug.com/42263861
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     constexpr GLsizei kSize = 4;
@@ -3407,7 +3433,7 @@ TEST_P(Texture2DTestES3, TexImageWithStencilPBO)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_NV_pixel_buffer_object"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_storage"));
 
-    // http://anglebug.com/5315
+    // http://anglebug.com/42263861
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     constexpr GLsizei kSize = 4;
@@ -3476,7 +3502,7 @@ TEST_P(Texture2DTestES3, TexImageWithDepthStencilPBO)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_NV_pixel_buffer_object"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_storage"));
 
-    // http://anglebug.com/5315
+    // http://anglebug.com/42263861
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     constexpr GLsizei kSize = 4;
@@ -3553,6 +3579,9 @@ TEST_P(Texture2DMemoryTestES3, TextureDataInLoopUntilFlush)
     // submissions.
     ANGLE_SKIP_TEST_IF(getEGLWindow()->isFeatureEnabled(Feature::SupportsHostImageCopy));
 
+    GLPerfMonitor monitor;
+    glBeginPerfMonitorAMD(monitor);
+
     uint64_t expectedSubmitCalls = getPerfCounters().commandQueueSubmitCallsTotal + 1;
 
     // Set up program
@@ -3613,6 +3642,8 @@ void main()
             break;
         }
     }
+    glEndPerfMonitorAMD(monitor);
+
     EXPECT_EQ(getPerfCounters().commandQueueSubmitCallsTotal, expectedSubmitCalls);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_NEAR(0, 0, 128, 191, 64, 255, 1);
@@ -3625,6 +3656,10 @@ TEST_P(Texture2DMemoryTestES3, TextureDataInLoopManyTimes)
 {
     // Run this test for Vulkan only.
     ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    GLPerfMonitor monitor;
+    glBeginPerfMonitorAMD(monitor);
+
     uint64_t expectedSubmitCalls           = getPerfCounters().commandQueueSubmitCallsTotal + 1;
     uint64_t expectedDeviceMemoryFallbacks = getPerfCounters().deviceMemoryImageAllocationFallbacks;
 
@@ -3688,6 +3723,9 @@ void main()
             break;
         }
     }
+
+    glEndPerfMonitorAMD(monitor);
+
     EXPECT_EQ(getPerfCounters().commandQueueSubmitCallsTotal, expectedSubmitCalls);
     EXPECT_EQ(getPerfCounters().deviceMemoryImageAllocationFallbacks,
               expectedDeviceMemoryFallbacks);
@@ -4100,7 +4138,7 @@ TEST_P(Texture2DTest, CopySubImageFloat_RGB_RG)
 
 TEST_P(Texture2DTest, CopySubImageFloat_RGB_RGB)
 {
-    // TODO(cwallez): Fix on Linux Intel drivers (http://anglebug.com/1346)
+    // TODO(cwallez): Fix on Linux Intel drivers (http://anglebug.com/40096350)
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     testFloatCopySubImage(3, 3);
@@ -4493,7 +4531,7 @@ TEST_P(Texture3DTestES2, RGBA)
 {
     ANGLE_SKIP_TEST_IF(!hasTexture3DExt());
 
-    // http://anglebug.com/5728
+    // http://anglebug.com/42264265
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     glActiveTexture(GL_TEXTURE0);
@@ -4519,7 +4557,7 @@ TEST_P(Texture3DTestES2, Luminance)
 {
     ANGLE_SKIP_TEST_IF(!hasTexture3DExt());
 
-    // http://anglebug.com/5728
+    // http://anglebug.com/42264265
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     glActiveTexture(GL_TEXTURE0);
@@ -4543,7 +4581,7 @@ TEST_P(Texture3DTestES2, CopySubImageRGBA)
 {
     ANGLE_SKIP_TEST_IF(!hasTexture3DExt());
 
-    // http://anglebug.com/5728
+    // http://anglebug.com/42264265
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     glClearColor(0, 0, 1, 1);
@@ -4580,7 +4618,7 @@ TEST_P(Texture3DTestES2, CopySubImageLuminance)
 {
     ANGLE_SKIP_TEST_IF(!hasTexture3DExt());
 
-    // http://anglebug.com/5728
+    // http://anglebug.com/42264265
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     glClearColor(1, 0, 0, 1);
@@ -4616,7 +4654,7 @@ TEST_P(Texture3DTestES2, CopySubImageAlpha)
 {
     ANGLE_SKIP_TEST_IF(!hasTexture3DExt());
 
-    // http://anglebug.com/5728
+    // http://anglebug.com/42264265
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     glClearColor(1, 0, 0, 0.5);
@@ -4650,7 +4688,7 @@ TEST_P(Texture3DTestES2, DefineTexture2DArrayShouldFail)
 {
     ANGLE_SKIP_TEST_IF(!hasTexture3DExt());
 
-    // http://anglebug.com/5728
+    // http://anglebug.com/42264265
     ANGLE_SKIP_TEST_IF(IsOzone());
 
     glClearColor(1, 0, 0, 1);
@@ -4672,7 +4710,7 @@ TEST_P(Texture3DTestES2, DefineTexture2DArrayShouldFail)
 // Verify shrinking a texture with glTexStorage2D works correctly
 TEST_P(Texture2DTestES3, ChangeTexSizeWithTexStorage)
 {
-    // TODO: http://anglebug.com/5256
+    // TODO: http://anglebug.com/42263810
     ANGLE_SKIP_TEST_IF(IsWindows() && IsOpenGL());
 
     constexpr uint32_t kSizeLarge = 128;
@@ -4741,11 +4779,11 @@ TEST_P(Texture2DTestES3, ChangeTexSizeWithTexStorage)
 TEST_P(Texture2DTestES3, TextureImplPropogatesDirtyBits)
 {
     ANGLE_SKIP_TEST_IF(IsIntel() && IsOpenGL());
-    // Flaky hangs on Win10 AMD RX 550 GL. http://anglebug.com/3371
+    // Flaky hangs on Win10 AMD RX 550 GL. http://anglebug.com/42262039
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsOpenGL());
-    // D3D Debug device reports an error. http://anglebug.com/3501
+    // D3D Debug device reports an error. http://anglebug.com/40096590
     ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D11());
-    // Support copy from levels outside the image range. http://anglebug.com/4733
+    // Support copy from levels outside the image range. http://anglebug.com/42263331
     ANGLE_SKIP_TEST_IF(IsVulkan());
 
     // The workaround in the GL backend required to trigger this bug generates driver warning
@@ -4789,7 +4827,7 @@ TEST_P(Texture2DTestES3, TextureImplPropogatesDirtyBits)
 // https://www.khronos.org/registry/webgl/sdk/tests/conformance2/rendering/framebuffer-texture-changing-base-level.html
 TEST_P(Texture2DTestES3, FramebufferTextureChangingBaselevel)
 {
-    // TODO(cnorthrop): Failing on Vulkan/Windows/AMD. http://anglebug.com/3996
+    // TODO(cnorthrop): Failing on Vulkan/Windows/AMD. http://anglebug.com/42262633
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsWindows() && IsAMD());
 
     setUpProgram();
@@ -4859,10 +4897,10 @@ TEST_P(Texture2DTestES3, FramebufferTextureChangingBaselevel)
 // preserves the other mips' data.
 TEST_P(Texture2DBaseMaxTestES3, ExtendMipChainAfterRedefine)
 {
-    // http://anglebug.com/4699
+    // http://anglebug.com/42263298
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
-    // http://anglebug.com/5153
+    // http://anglebug.com/42263714
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsNVIDIA() && IsMac());
 
     GLFramebuffer framebuffer;
@@ -4887,7 +4925,7 @@ TEST_P(Texture2DBaseMaxTestES3, ExtendMipChainAfterRedefine)
     // Mip 1 is green.  Verify this.
     EXPECT_PIXEL_COLOR_EQ(0, 0, kMipColors[1]);
 
-    // http://anglebug.com/4709
+    // http://anglebug.com/42263308
     ANGLE_SKIP_TEST_IF(IsOpenGL() && (IsIntel() || IsAMD()) && IsWindows());
 
     // Add mip 0 and rebase the mip chain.
@@ -4924,13 +4962,13 @@ TEST_P(Texture2DBaseMaxTestES3, PingPongBaseLevelImmutable)
 }
 void Texture2DBaseMaxTestES3::testPingPongBaseLevel(bool immutable)
 {
-    // http://anglebug.com/4710
+    // http://anglebug.com/42263310
     ANGLE_SKIP_TEST_IF(IsD3D());
 
-    // http://anglebug.com/4711
+    // http://anglebug.com/42263311
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsWindows());
 
-    // http://anglebug.com/4701
+    // http://anglebug.com/42263301
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     initTest(immutable);
@@ -5116,7 +5154,7 @@ TEST_P(Texture2DBaseMaxTestES3, RedefineEveryLevelToAnotherFormat)
 // Test that generating mipmaps after change base level.
 TEST_P(Texture2DBaseMaxTestES3, GenerateMipmapAfterRebase)
 {
-    // http://anglebug.com/5880
+    // http://anglebug.com/42264421
     ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     testGenerateMipmapAfterRebase(false);
@@ -5124,11 +5162,11 @@ TEST_P(Texture2DBaseMaxTestES3, GenerateMipmapAfterRebase)
 
 TEST_P(Texture2DBaseMaxTestES3, GenerateMipmapAfterRebaseImmutable)
 {
-    // http://anglebug.com/4710
+    // http://anglebug.com/42263310
     ANGLE_SKIP_TEST_IF(IsD3D());
-    // http://anglebug.com/5798
+    // http://anglebug.com/42264332
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsNVIDIA());
-    // http://anglebug.com/5880
+    // http://anglebug.com/42264421
     ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     testGenerateMipmapAfterRebase(true);
@@ -5243,7 +5281,7 @@ TEST_P(Texture2DBaseMaxTestES3, GenerateMipmapAfterRedefineAndRebase)
     // http://crbug.com/1100613
     ANGLE_SKIP_TEST_IF(IsNVIDIAShield());
 
-    // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
+    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
     ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     initTest(false);
@@ -5433,10 +5471,10 @@ TEST_P(Texture2DBaseMaxTestES3, StageInvalidLevels)
 // Test redefine a mutable texture into an immutable texture.
 TEST_P(Texture2DBaseMaxTestES3, RedefineMutableToImmutable)
 {
-    // http://anglebug.com/4710
+    // http://anglebug.com/42263310
     ANGLE_SKIP_TEST_IF(IsD3D());
 
-    // http://anglebug.com/4701
+    // http://anglebug.com/42263301
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     constexpr uint32_t kBaseLevel          = 1;
@@ -5793,10 +5831,9 @@ TEST_P(Texture2DTestES3, DrawWithBaseLevel1)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
-// Test basic GL_EXT_copy_image copy without any bound textures
-TEST_P(Texture2DTestES3, CopyImage)
+void Texture2DTestES3::testCopyImage(const APIExtensionVersion usedExtension)
 {
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
+    ASSERT(usedExtension == APIExtensionVersion::EXT || usedExtension == APIExtensionVersion::OES);
 
     std::vector<GLColor> texDataRed(4u * 4u, GLColor::red);
     GLTexture srcTexture;
@@ -5822,11 +5859,17 @@ TEST_P(Texture2DTestES3, CopyImage)
     glBindTexture(GL_TEXTURE_2D, 0);
 
     // copy
-    glCopyImageSubDataEXT(srcTexture, GL_TEXTURE_2D, 0, 2, 2, 0, destTexture, GL_TEXTURE_2D, 0, 2,
-                          2, 0, 2, 2, 1);
-
+    if (usedExtension == APIExtensionVersion::OES)
+    {
+        glCopyImageSubDataOES(srcTexture, GL_TEXTURE_2D, 0, 2, 2, 0, destTexture, GL_TEXTURE_2D, 0,
+                              2, 2, 0, 2, 2, 1);
+    }
+    else
+    {
+        glCopyImageSubDataEXT(srcTexture, GL_TEXTURE_2D, 0, 2, 2, 0, destTexture, GL_TEXTURE_2D, 0,
+                              2, 2, 0, 2, 2, 1);
+    }
     glBindTexture(GL_TEXTURE_2D, destTexture);
-
     EXPECT_GL_NO_ERROR();
 
     glViewport(0, 0, 4, 4);
@@ -5838,10 +5881,23 @@ TEST_P(Texture2DTestES3, CopyImage)
     EXPECT_PIXEL_RECT_EQ(0, 0, 2, 4, GLColor::red);
 }
 
-// Test basic GL_EXT_copy_image copy with a depth/stencil texture
-TEST_P(Texture2DTestES3, CopyImageDepthStencil)
+// Test basic GL_EXT_copy_image copy without any bound textures
+TEST_P(Texture2DTestES3, CopyImageEXT)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
+    testCopyImage(APIExtensionVersion::EXT);
+}
+
+// Test basic GL_OES_copy_image copy without any bound textures
+TEST_P(Texture2DTestES3, CopyImageOES)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_copy_image"));
+    testCopyImage(APIExtensionVersion::OES);
+}
+
+void Texture2DTestES3::testCopyImageDepthStencil(const APIExtensionVersion usedExtension)
+{
+    ASSERT(usedExtension == APIExtensionVersion::EXT || usedExtension == APIExtensionVersion::OES);
 
     std::vector<GLColor> texDataRed(4u * 4u, GLColor::red);
     GLTexture srcTexture;
@@ -5895,8 +5951,16 @@ TEST_P(Texture2DTestES3, CopyImageDepthStencil)
     ASSERT_GL_NO_ERROR();
 
     // Now that the depth stencil image is definitely initialized, copy it into the destination
-    glCopyImageSubDataEXT(src, GL_TEXTURE_2D, 0, 0, 0, 0, dst, GL_TEXTURE_2D, 0, 0, 0, 0, kSize,
-                          kSize, 1);
+    if (usedExtension == APIExtensionVersion::OES)
+    {
+        glCopyImageSubDataOES(src, GL_TEXTURE_2D, 0, 0, 0, 0, dst, GL_TEXTURE_2D, 0, 0, 0, 0, kSize,
+                              kSize, 1);
+    }
+    else
+    {
+        glCopyImageSubDataEXT(src, GL_TEXTURE_2D, 0, 0, 0, 0, dst, GL_TEXTURE_2D, 0, 0, 0, 0, kSize,
+                              kSize, 1);
+    }
     ASSERT_GL_NO_ERROR();
 
     // Verify the dst texture has the right depth/stencil values
@@ -5914,11 +5978,25 @@ TEST_P(Texture2DTestES3, CopyImageDepthStencil)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test basic GL_EXT_copy_image copy with a depth/stencil texture
+TEST_P(Texture2DTestES3, CopyImageEXTDepthStencil)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
+    testCopyImageDepthStencil(APIExtensionVersion::EXT);
+}
+
+// Test basic GL_OES_copy_image copy with a depth/stencil texture
+TEST_P(Texture2DTestES3, CopyImageOESDepthStencil)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_copy_image"));
+    testCopyImageDepthStencil(APIExtensionVersion::OES);
+}
+
 // Test GL_EXT_copy_image compressed texture copy with mipmaps smaller than the block size
 TEST_P(Texture2DTestES3, CopyCompressedImageMipMaps)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
-    // TODO(http://anglebug.com/5634): Fix calls to vkCmdCopyBufferToImage() with images smaller
+    // TODO(http://anglebug.com/42264170): Fix calls to vkCmdCopyBufferToImage() with images smaller
     // than the compressed format block size.
     ANGLE_SKIP_TEST_IF(getEGLWindow()->isFeatureEnabled(Feature::AllocateNonZeroMemory));
 
@@ -6602,6 +6680,118 @@ TEST_P(Texture2DTestES3, TextureCompletenessChangesWithMaxLevel)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
 }
 
+// Test a bug that staged clear overlaps with glTexSubImage with multiple layers may incorrectly
+// keep the staged clear. http://anglebug.com/345532371
+TEST_P(Texture2DArrayTestES3, ClearThenTexSubImageWithOverlappingLayersThenRead)
+{
+    constexpr GLsizei kTexWidth  = 128;
+    constexpr GLsizei kTexHeight = 128;
+    constexpr GLsizei kTexDepth  = 6;
+    // Create a single leveled texture with 6 layers
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, tex);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 4, GL_RGBA8, kTexWidth, kTexHeight, kTexDepth);
+
+    // Stage clear to red on all layers
+    GLFramebuffer drawFBO;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFBO);
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    for (GLsizei layer = 0; layer < kTexDepth; layer++)
+    {
+        glFramebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, layer);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    // TexSubImage with green color on half of the image of layer 2,3,4
+    std::vector<GLColor> updateData((kTexWidth / 2) * kTexHeight * 3, GLColor::green);
+    GLsizei layerStart = 2;
+    GLsizei layerCount = 3;
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, layerStart, kTexWidth / 2, kTexHeight, layerCount,
+                    GL_RGBA, GL_UNSIGNED_BYTE, updateData.data());
+
+    // Now read out layer 2/3/4
+    GLFramebuffer readFBO;
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFBO);
+    for (GLsizei layer = layerStart; layer < layerStart + layerCount; layer++)
+    {
+        glFramebufferTextureLayer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, layer);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_READ_FRAMEBUFFER);
+        EXPECT_PIXEL_EQ(kTexWidth / 4, kTexHeight / 2, GLColor::green.R, GLColor::green.G,
+                        GLColor::green.B, GLColor::green.A);
+        EXPECT_PIXEL_EQ(3 * kTexWidth / 4, kTexHeight / 2, GLColor::red.R, GLColor::red.G,
+                        GLColor::red.B, GLColor::red.A);
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test a bug that staged clear overlaps with glTexSubImage with multiple layers may incorrectly
+// keep the staged clear. http://anglebug.com/345532371
+TEST_P(Texture2DArrayTestES3, ClearThenTexSubImageWithOverlappingLayersThenDrawAndRead)
+{
+    constexpr GLsizei kTexWidth  = 128;
+    constexpr GLsizei kTexHeight = 128;
+    constexpr GLsizei kTexDepth  = 6;
+    // Create a single leveled texture with 6 layers
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, tex);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 4, GL_RGBA8, kTexWidth, kTexHeight, kTexDepth);
+
+    // Stage clear to red on all layers
+    GLFramebuffer drawFBO;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawFBO);
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    for (GLsizei layer = 0; layer < kTexDepth; layer++)
+    {
+        glFramebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, layer);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    // TexSubImage with green color on half of the image of layer 2,3,4
+    std::vector<GLColor> updateData((kTexWidth / 2) * kTexHeight * 3, GLColor::green);
+    GLsizei layerStart = 2;
+    GLsizei layerCount = 3;
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, layerStart, kTexWidth / 2, kTexHeight, layerCount,
+                    GL_RGBA, GL_UNSIGNED_BYTE, updateData.data());
+
+    // Now Draw to fbo on layerStart with blue color
+    GLsizei blueQuadLayer = 2;
+    glFramebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, blueQuadLayer);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    ANGLE_GL_PROGRAM(blueProgram, essl3_shaders::vs::Simple(), essl3_shaders::fs::Blue());
+    glUseProgram(blueProgram);
+    drawQuad(blueProgram, essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Now read out layer 2/3/4
+    GLFramebuffer readFBO;
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFBO);
+    for (GLsizei layer = layerStart; layer < layerStart + layerCount; layer++)
+    {
+        glFramebufferTextureLayer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, layer);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_READ_FRAMEBUFFER);
+        if (layer == blueQuadLayer)
+        {
+            // green + blue = cyan
+            EXPECT_PIXEL_EQ(kTexWidth / 4, kTexHeight / 2, GLColor::cyan.R, GLColor::cyan.G,
+                            GLColor::cyan.B, GLColor::cyan.A);
+            // red + blue = magenta
+            EXPECT_PIXEL_EQ(3 * kTexWidth / 4, kTexHeight / 2, GLColor::magenta.R,
+                            GLColor::magenta.G, GLColor::magenta.B, GLColor::magenta.A);
+        }
+        else
+        {
+            EXPECT_PIXEL_EQ(kTexWidth / 4, kTexHeight / 2, GLColor::green.R, GLColor::green.G,
+                            GLColor::green.B, GLColor::green.A);
+            EXPECT_PIXEL_EQ(3 * kTexWidth / 4, kTexHeight / 2, GLColor::red.R, GLColor::red.G,
+                            GLColor::red.B, GLColor::red.A);
+        }
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that compressed textures ignore the pixel unpack state.
 // (https://crbug.org/1267496)
 TEST_P(Texture3DTestES3, PixelUnpackStateTexImage)
@@ -6965,7 +7155,7 @@ TEST_P(SamplerTypeMixTestES3, SamplerTypeMixDraw)
     glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, 0, 0, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT,
                     depthTexData);
 
-    // http://anglebug.com/3949: TODO: Add a DS texture case
+    // http://anglebug.com/42262588: TODO: Add a DS texture case
 
     EXPECT_GL_NO_ERROR();
 
@@ -6992,7 +7182,7 @@ TEST_P(TextureSizeTextureArrayTest, BaseLevelVariesInTextureArray)
 {
     ANGLE_SKIP_TEST_IF(IsAMD() && IsD3D11());
 
-    // http://anglebug.com/4391
+    // http://anglebug.com/42263017
     ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsWindows() && IsD3D11());
 
     glActiveTexture(GL_TEXTURE0);
@@ -7240,7 +7430,7 @@ TEST_P(Texture2DTest, TextureLuminance16ImplicitAlpha1)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
     ANGLE_SKIP_TEST_IF(IsD3D9());
     ANGLE_SKIP_TEST_IF(IsVulkan());
-    // TODO(ynovikov): re-enable once root cause of http://anglebug.com/1420 is fixed
+    // TODO(ynovikov): re-enable once root cause of http://anglebug.com/42260416 is fixed
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsAdreno() && IsOpenGLES());
 
     setUpProgram();
@@ -7411,7 +7601,7 @@ TEST_P(Texture2DTestES3, TextureRGB9E5ImplicitAlpha1)
 // ES 3.0.4 table 3.24
 TEST_P(Texture2DTestES3, TextureCOMPRESSEDRGB8ETC2ImplicitAlpha1)
 {
-    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/3853
+    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/42262497
     ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
 
     glActiveTexture(GL_TEXTURE0);
@@ -7428,7 +7618,7 @@ TEST_P(Texture2DTestES3, TextureCOMPRESSEDRGB8ETC2ImplicitAlpha1)
 // ES 3.0.4 table 3.24
 TEST_P(Texture2DTestES3, TextureCOMPRESSEDSRGB8ETC2ImplicitAlpha1)
 {
-    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/3853
+    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/42262497
     ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
 
     glActiveTexture(GL_TEXTURE0);
@@ -7442,7 +7632,7 @@ TEST_P(Texture2DTestES3, TextureCOMPRESSEDSRGB8ETC2ImplicitAlpha1)
 }
 
 // ETC2 punchthrough alpha formats must be initialized to opaque black when emulated
-// http://anglebug.com/6936
+// http://anglebug.com/42265413
 TEST_P(Texture2DTestES3RobustInit, TextureCOMPRESSEDRGB8A1ETC2)
 {
     glActiveTexture(GL_TEXTURE0);
@@ -7457,7 +7647,7 @@ TEST_P(Texture2DTestES3RobustInit, TextureCOMPRESSEDRGB8A1ETC2)
 }
 
 // ETC2 punchthrough alpha formats must be initialized to opaque black when emulated
-// http://anglebug.com/6936
+// http://anglebug.com/42265413
 TEST_P(Texture2DTestES3RobustInit, TextureCOMPRESSEDSRGB8A1ETC2)
 {
     glActiveTexture(GL_TEXTURE0);
@@ -7506,7 +7696,7 @@ TEST_P(Texture2DTestES3, PixelUnpackStateTexSubImage)
     EXPECT_GL_NO_ERROR();
 }
 
-// Test for http://anglebug.com/6926.
+// Test for http://anglebug.com/42265405.
 TEST_P(Texture2DTestES3, TextureRGBUpdateWithPBO)
 {
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
@@ -7752,7 +7942,7 @@ TEST_P(SamplerInStructTest, SamplerInStruct)
 // Use a sampler in a uniform struct that's passed as a function parameter.
 TEST_P(SamplerInStructAsFunctionParameterTest, SamplerInStructAsFunctionParameter)
 {
-    // Fails on Nexus 5X due to a driver bug. http://anglebug.com/1427
+    // Fails on Nexus 5X due to a driver bug. http://anglebug.com/42260422
     ANGLE_SKIP_TEST_IF(IsNexus5X() && IsOpenGLES());
 
     runSamplerInStructTest();
@@ -7762,7 +7952,7 @@ TEST_P(SamplerInStructAsFunctionParameterTest, SamplerInStructAsFunctionParamete
 // parameter.
 TEST_P(SamplerInStructArrayAsFunctionParameterTest, SamplerInStructArrayAsFunctionParameter)
 {
-    // Fails on Nexus 5X due to a driver bug. http://anglebug.com/1427
+    // Fails on Nexus 5X due to a driver bug. http://anglebug.com/42260422
     ANGLE_SKIP_TEST_IF(IsNexus5X() && IsOpenGLES());
 
     runSamplerInStructTest();
@@ -7772,7 +7962,7 @@ TEST_P(SamplerInStructArrayAsFunctionParameterTest, SamplerInStructArrayAsFuncti
 // parameter.
 TEST_P(SamplerInNestedStructAsFunctionParameterTest, SamplerInNestedStructAsFunctionParameter)
 {
-    // Fails on Nexus 5X due to a driver bug. http://anglebug.com/1427
+    // Fails on Nexus 5X due to a driver bug. http://anglebug.com/42260422
     ANGLE_SKIP_TEST_IF(IsNexus5X() && IsOpenGLES());
 
     runSamplerInStructTest();
@@ -8396,7 +8586,7 @@ class TextureBorderClampIntegerTestES3 : public Texture2DTest
 // integer texture in GL_CLAMP_TO_BORDER wrap mode (set with glTexParameterIivOES).
 TEST_P(TextureBorderClampIntegerTestES3, TextureBorderClampInteger)
 {
-    // Fails on Win10 FYI x64 Release (AMD RX 550). http://anglebug.com/3760
+    // Fails on Win10 FYI x64 Release (AMD RX 550). http://anglebug.com/40096617
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsDesktopOpenGL());
 
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_border_clamp"));
@@ -8426,7 +8616,7 @@ TEST_P(TextureBorderClampIntegerTestES3, TextureBorderClampInteger)
 // integer texture in GL_CLAMP_TO_BORDER wrap mode (set with glTexParameterIivOES).
 TEST_P(TextureBorderClampIntegerTestES3, TextureBorderClampInteger2)
 {
-    // Fails on Win10 FYI x64 Release (AMD RX 550). http://anglebug.com/3760
+    // Fails on Win10 FYI x64 Release (AMD RX 550). http://anglebug.com/40096617
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsDesktopOpenGL());
 
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_border_clamp"));
@@ -9129,7 +9319,7 @@ class Texture2DNorm16TestES3 : public Texture2DTestES3
 
     void testNorm16Texture(GLint internalformat, GLenum format, GLenum type)
     {
-        // TODO(http://anglebug.com/4089) Fails on Win Intel OpenGL driver
+        // TODO(http://anglebug.com/40096653) Fails on Win Intel OpenGL driver
         ANGLE_SKIP_TEST_IF(IsIntel() && IsOpenGL());
         ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_norm16"));
 
@@ -9255,9 +9445,9 @@ class Texture2DNorm16TestES3 : public Texture2DTestES3
 
     void testNorm16RenderAndReadPixels(GLint internalformat, GLenum format, GLenum type)
     {
-        // TODO(http://anglebug.com/4089) Fails on Win Intel OpenGL driver
+        // TODO(http://anglebug.com/40096653) Fails on Win Intel OpenGL driver
         ANGLE_SKIP_TEST_IF(IsIntel() && IsOpenGL());
-        // TODO(http://anglebug.com/4245) Fails on Win AMD OpenGL driver
+        // TODO(http://anglebug.com/42262873) Fails on Win AMD OpenGL driver
         ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsDesktopOpenGL());
         ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_norm16"));
 
@@ -9399,7 +9589,7 @@ TEST_P(Texture2DNorm16TestES3, TextureNorm16RG16SNORMTextureTest)
 
 TEST_P(Texture2DNorm16TestES3, TextureNorm16RGB16TextureTest)
 {
-    // (http://anglebug.com/4215) Driver bug on some Qualcomm Adreno gpu
+    // (http://anglebug.com/40096662) Driver bug on some Qualcomm Adreno gpu
     ANGLE_SKIP_TEST_IF(IsNexus5X() && IsOpenGLES());
 
     testNorm16Texture(GL_RGB16_EXT, GL_RGB, GL_UNSIGNED_SHORT);
@@ -9407,7 +9597,7 @@ TEST_P(Texture2DNorm16TestES3, TextureNorm16RGB16TextureTest)
 
 TEST_P(Texture2DNorm16TestES3, TextureNorm16RGB16SNORMTextureTest)
 {
-    // (http://anglebug.com/4215) Driver bug on some Qualcomm Adreno gpu
+    // (http://anglebug.com/40096662) Driver bug on some Qualcomm Adreno gpu
     ANGLE_SKIP_TEST_IF(IsNexus5X() && IsOpenGLES());
 
     testNorm16Texture(GL_RGB16_SNORM_EXT, GL_RGB, GL_SHORT);
@@ -9425,7 +9615,7 @@ TEST_P(Texture2DNorm16TestES3, TextureNorm16RGBA16SNORMTextureTest)
 
 TEST_P(Texture2DNorm16TestES3, TextureNorm16R16RenderTest)
 {
-    // http://anglebug.com/5153
+    // http://anglebug.com/42263714
     ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL() && IsNVIDIA());
 
     testNorm16RenderAndReadPixels(GL_R16_EXT, GL_RED, GL_UNSIGNED_SHORT);
@@ -9433,7 +9623,7 @@ TEST_P(Texture2DNorm16TestES3, TextureNorm16R16RenderTest)
 
 TEST_P(Texture2DNorm16TestES3, TextureNorm16RG16RenderTest)
 {
-    // http://anglebug.com/5153
+    // http://anglebug.com/42263714
     ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL() && IsNVIDIA());
 
     testNorm16RenderAndReadPixels(GL_RG16_EXT, GL_RG, GL_UNSIGNED_SHORT);
@@ -9441,7 +9631,7 @@ TEST_P(Texture2DNorm16TestES3, TextureNorm16RG16RenderTest)
 
 TEST_P(Texture2DNorm16TestES3, TextureNorm16RGBA16RenderTest)
 {
-    // http://anglebug.com/5153
+    // http://anglebug.com/42263714
     ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL() && IsNVIDIA());
 
     testNorm16RenderAndReadPixels(GL_RGBA16_EXT, GL_RGBA, GL_UNSIGNED_SHORT);
@@ -9913,7 +10103,7 @@ TEST_P(Texture2DFloatTestES2, TextureHalfFloatSampleLegacyTest)
 // Test linear sampling for ES3 32F formats
 TEST_P(Texture2DFloatTestES3, TextureFloatLinearTest)
 {
-    // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
+    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
     ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && (IsDesktopOpenGL()));
 
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float_linear"));
@@ -9924,7 +10114,7 @@ TEST_P(Texture2DFloatTestES3, TextureFloatLinearTest)
 // Test linear sampling for ES2 32F formats
 TEST_P(Texture2DFloatTestES2, TextureFloatLinearTest)
 {
-    // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
+    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
     ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && (IsDesktopOpenGL()));
 
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float_linear"));
@@ -9952,7 +10142,7 @@ TEST_P(Texture2DFloatTestES2, TextureHalfFloatLinearTest)
 // Test linear sampling for legacy GLES 2.0 32F formats in ES3
 TEST_P(Texture2DFloatTestES3, TextureFloatLinearLegacyTest)
 {
-    // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
+    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
     ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && (IsDesktopOpenGL()));
 
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
@@ -9972,7 +10162,7 @@ TEST_P(Texture2DFloatTestES3, TextureFloatLinearLegacyTest)
 // Test linear sampling for legacy GLES 2.0 32F formats in ES2
 TEST_P(Texture2DFloatTestES2, TextureFloatLinearLegacyTest)
 {
-    // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
+    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
     ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && (IsDesktopOpenGL()));
 
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
@@ -10014,7 +10204,7 @@ TEST_P(Texture2DFloatTestES2, TextureHalfFloatLinearLegacyTest)
 // Test color-renderability for ES3 float and half float textures
 TEST_P(Texture2DFloatTestES3, TextureFloatRenderTest)
 {
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsD3D9());
     // EXT_color_buffer_float covers float, half float, and 11-11-10 float formats
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_color_buffer_float"));
@@ -10038,7 +10228,7 @@ TEST_P(Texture2DFloatTestES2, TextureFloatRenderTest)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_color_buffer_half_float"));
     // https://crbug.com/1003971
     ANGLE_SKIP_TEST_IF(IsOzone());
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsD3D9());
 
     bool atLeastOneSupported = false;
@@ -10066,7 +10256,7 @@ TEST_P(Texture2DFloatTestES2, TextureFloatRenderTest)
 // GLES 3.0.4 section 3.8.3.
 TEST_P(Texture2DTestES3, UnpackSkipImages2D)
 {
-    // Crashes on Nexus 5X due to a driver bug. http://anglebug.com/1429
+    // Crashes on Nexus 5X due to a driver bug. http://anglebug.com/42260424
     ANGLE_SKIP_TEST_IF(IsNexus5X() && IsOpenGLES());
 
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
@@ -10239,13 +10429,13 @@ TEST_P(Texture2DTestES3, DepthTexturesWithMipmaps)
 {
     // TODO(cwallez) this is failing on Intel Win7 OpenGL.
     // TODO(zmo) this is faling on Win Intel HD 530 Debug.
-    // http://anglebug.com/1706
+    // http://anglebug.com/42260646
     ANGLE_SKIP_TEST_IF(IsIntel() && IsWindows() && IsOpenGL());
 
-    // Seems to fail on AMD D3D11. Possibly driver bug. http://anglebug.com/3342
+    // Seems to fail on AMD D3D11. Possibly driver bug. http://anglebug.com/40096577
     ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsD3D11());
 
-    // TODO(cnorthrop): Also failing on Vulkan/Windows/AMD. http://anglebug.com/3950
+    // TODO(cnorthrop): Also failing on Vulkan/Windows/AMD. http://anglebug.com/42262590
     ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsVulkan());
 
     const int size = getWindowWidth();
@@ -10444,7 +10634,7 @@ TEST_P(Texture2DDepthTest, DepthTextureES2Compatibility)
     ANGLE_SKIP_TEST_IF(IsIntel() && IsD3D9());
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_depth_texture") &&
                        !IsGLExtensionEnabled("GL_OES_depth_texture"));
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsOpenGL() || IsOpenGLES());
     ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
@@ -10458,7 +10648,7 @@ TEST_P(Texture2DDepthTest, DepthTextureES3Compatibility)
 {
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
 
-    // http://anglebug.com/5243
+    // http://anglebug.com/42263796
     ANGLE_SKIP_TEST_IF(IsMetal() && !IsMetalTextureSwizzleAvailable());
 
     testBehavior(true);
@@ -10559,7 +10749,7 @@ TEST_P(Texture2DTestES3, TextureBaseMaxLevelRoundingValidation)
 // This test covers a D3D format redefinition bug for 3D textures. The base level format was not
 // being properly checked, and the texture storage of the previous texture format was persisting.
 // This would result in an ASSERT in debug and incorrect rendering in release.
-// See http://anglebug.com/1609 and WebGL 2 test conformance2/misc/views-with-offsets.html.
+// See http://anglebug.com/42260575 and WebGL 2 test conformance2/misc/views-with-offsets.html.
 TEST_P(Texture3DTestES3, FormatRedefinitionBug)
 {
     GLTexture tex;
@@ -10800,14 +10990,14 @@ TEST_P(Texture2DTestES3, SingleTextureMultipleSamplers)
     EXPECT_PIXEL_NEAR(0, 0, 128, 0, 0, 255, 2);
 }
 
-// The test is added to cover http://anglebug.com/2153. Cubemap completeness checks used to start
-// always at level 0 instead of the base level resulting in an incomplete texture if the faces at
-// level 0 are not created. The test creates a cubemap texture, specifies the images only for mip
+// The test is added to cover http://anglebug.com/42260889. Cubemap completeness checks used to
+// start always at level 0 instead of the base level resulting in an incomplete texture if the faces
+// at level 0 are not created. The test creates a cubemap texture, specifies the images only for mip
 // level 1 filled with white color, updates the base level to be 1 and renders a quad. The program
 // samples the cubemap using a direction vector (1,1,1).
 TEST_P(TextureCubeTestES3, SpecifyAndSampleFromBaseLevel1)
 {
-    // Check http://anglebug.com/2155.
+    // Check http://anglebug.com/42260891.
     ANGLE_SKIP_TEST_IF(IsMac() && IsNVIDIA());
 
     constexpr char kVS[] =
@@ -10867,7 +11057,7 @@ TEST_P(TextureCubeTestES3, SpecifyAndSampleFromBaseLevel1)
 // Test GL_PIXEL_UNPACK_BUFFER with GL_TEXTURE_CUBE_MAP.
 TEST_P(TextureCubeTestES3, CubeMapPixelUnpackBuffer)
 {
-    // Check http://anglebug.com/2155.
+    // Check http://anglebug.com/42260891.
     ANGLE_SKIP_TEST_IF(IsMac() && IsNVIDIA());
 
     constexpr char kVS[] =
@@ -11172,7 +11362,7 @@ TEST_P(Texture2DTestES3, NegativeTextureBaseLevelAndMaxLevel)
 }
 
 // Test setting base level after calling generateMipmap on a LUMA texture.
-// Covers http://anglebug.com/2498
+// Covers http://anglebug.com/42261204
 TEST_P(Texture2DTestES3, GenerateMipmapAndBaseLevelLUMA)
 {
     glActiveTexture(GL_TEXTURE0);
@@ -11198,10 +11388,10 @@ TEST_P(Texture2DTestES3, GenerateMipmapAndBaseLevelLUMA)
 // Incompatible levels with non-mipmap filtering should work.
 TEST_P(Texture2DTestES3, IncompatibleMipsButNoMipmapFiltering)
 {
-    // http://anglebug.com/4782
+    // http://anglebug.com/42263372
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsWindows() && (IsAMD() || IsIntel()));
 
-    // http://anglebug.com/4786
+    // http://anglebug.com/40096708
     ANGLE_SKIP_TEST_IF(IsOpenGLES() && IsNVIDIAShield());
 
     glActiveTexture(GL_TEXTURE0);
@@ -12026,7 +12216,7 @@ TEST_P(Texture2DTestES3, RespecifyWithMoreMips)
     }
 }
 
-// Covers a bug in the D3D11 backend: http://anglebug.com/2772
+// Covers a bug in the D3D11 backend: http://anglebug.com/42261476
 // When using a sampler the texture was created as if it has mipmaps,
 // regardless what you specified in GL_TEXTURE_MIN_FILTER via
 // glSamplerParameteri() -- mistakenly the default value
@@ -12306,13 +12496,72 @@ TEST_P(Texture2DTest, UploadThenFSThenNewRPThenFSThenVS)
     });
 }
 
+// Test that interleaved updates and draw calls many times work
+TEST_P(Texture2DTest, DrawThenUpdateMultipleTimes)
+{
+    constexpr uint32_t kTexWidth  = 16;
+    constexpr uint32_t kTexHeight = 16;
+    constexpr uint32_t kBpp       = 4;
+
+    // Create the texture
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kTexWidth, kTexHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    EXPECT_GL_ERROR(GL_NO_ERROR);
+
+    constexpr GLubyte kInitialColor = 16;
+    GLubyte expectedFinalColorValue = kInitialColor;
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // First draw the screen with initial color
+    {
+        ANGLE_GL_PROGRAM(colorProgram, angle::essl1_shaders::vs::Simple(),
+                         angle::essl1_shaders::fs::UniformColor());
+        glUseProgram(colorProgram);
+        GLint colorUniformLocation =
+            glGetUniformLocation(colorProgram, angle::essl1_shaders::ColorUniform());
+        ASSERT_NE(colorUniformLocation, -1);
+        glUniform4f(colorUniformLocation, kInitialColor / 256.f, kInitialColor / 256.f,
+                    kInitialColor / 256.f, kInitialColor / 256.f);
+        drawQuad(colorProgram, angle::essl1_shaders::PositionAttrib(), 0.5f);
+    }
+
+    // Then update the texture then draw it multiple times
+    constexpr GLubyte kColorsToUpdate[] = {16, 64, 64};
+    setUpProgram();
+    glUseProgram(mProgram);
+    glUniform1i(mTexture2DUniformLocation, 0);
+
+    for (auto color : kColorsToUpdate)
+    {
+        expectedFinalColorValue += color;
+        std::vector<GLubyte> fullTextureData(kTexWidth * kTexHeight * kBpp, color);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kTexWidth, kTexHeight, GL_RGBA, GL_UNSIGNED_BYTE,
+                        fullTextureData.data());
+
+        drawQuad(mProgram, "position", 0.5f);
+    }
+
+    // The final color should be sum of all updated colors.
+    const GLColor expectedFinalColor(expectedFinalColorValue, expectedFinalColorValue,
+                                     expectedFinalColorValue, expectedFinalColorValue);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(1 * getWindowWidth() / 4, getWindowHeight() / 2, expectedFinalColor);
+}
+
 // Test that clears due to emulated formats are to the correct level given non-zero base level.
 TEST_P(Texture2DTestES3, NonZeroBaseEmulatedClear)
 {
     // Tests behavior of the Vulkan backend with emulated formats.
     ANGLE_SKIP_TEST_IF(!IsVulkan());
 
-    // TODO(http://anglebug.com/8036): Skip when using VMA image suballocation on Linux/Intel.
+    // TODO(http://anglebug.com/42266496): Skip when using VMA image suballocation on Linux/Intel.
     ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() &&
                        getEGLWindow()->isFeatureEnabled(Feature::UseVmaForImageSuballocation));
 
@@ -12443,7 +12692,7 @@ TEST_P(Texture2DTestES3, AllocateMoreThan4096Textures)
 // texture is output.
 TEST_P(Texture2DIntegerTestES3, IntegerTextureNonZeroBaseLevel)
 {
-    // http://anglebug.com/3478
+    // http://anglebug.com/40644690
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsDesktopOpenGL());
 
     glActiveTexture(GL_TEXTURE0);
@@ -12579,7 +12828,7 @@ TEST_P(Texture2DIntegerProjectiveOffsetTestES3, NonZeroBaseLevel)
 // texture is output.
 TEST_P(Texture2DArrayIntegerTestES3, NonZeroBaseLevel)
 {
-    // Test fail: http://anglebug.com/5959
+    // Test fail: http://anglebug.com/42264492
     ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
 
     glActiveTexture(GL_TEXTURE0);
@@ -12630,9 +12879,9 @@ TEST_P(Texture3DIntegerTestES3, NonZeroBaseLevel)
 
 void PBOCompressedTextureTest::runCompressedSubImage()
 {
-    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/3853
+    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/42262497
     ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
-    // http://anglebug.com/4115
+    // http://anglebug.com/42262750
     ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsDesktopOpenGL());
     ANGLE_SKIP_TEST_IF(IsIntel() && IsWindows() && IsDesktopOpenGL());
 
@@ -12787,7 +13036,7 @@ void main()
 // Test using ETC1_RGB8 with subimage updates
 TEST_P(ETC1CompressedTextureTest, ETC1CompressedSubImage)
 {
-    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/3853
+    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/42262497
     ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
 
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
@@ -12832,7 +13081,7 @@ TEST_P(ETC1CompressedTextureTest, ETC1CompressedSubImage)
 // MAX_LEVEL and draw.  This used to cause Vulkan validation errors.
 TEST_P(ETC1CompressedTextureTest, ETC1CompressedImageNPOT)
 {
-    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/3853
+    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/42262497
     ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
 
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
@@ -12883,7 +13132,7 @@ TEST_P(ETC1CompressedTextureTest, ETC1CompressedImageNPOT)
 // that have not been flushed.
 TEST_P(ETC1CompressedTextureTest, ETC1CompressedImageDraws)
 {
-    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/3853
+    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/42262497
     ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
 
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
@@ -12967,7 +13216,7 @@ TEST_P(ETC1CompressedTextureTest, ETC1CompressedImageDraws)
 // MAX_LEVEL and draw.  This used to cause Vulkan validation errors.
 TEST_P(ETC1CompressedTextureTest, ETC1ShrinkThenGrowMaxLevels)
 {
-    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/3853
+    // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/42262497
     ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
 
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
@@ -13119,7 +13368,7 @@ TEST_P(TextureBufferTestES31, TexBufferDrawTwice)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_buffer"));
 
-    // TODO(http://anglebug.com/5832): Claims to support GL_OES_texture_buffer, but fails
+    // TODO(http://anglebug.com/42264369): Claims to support GL_OES_texture_buffer, but fails
     // compilation of shader because "extension 'GL_OES_texture_buffer' is not supported".
     ANGLE_SKIP_TEST_IF(IsQualcomm() && IsOpenGLES());
 
@@ -13161,7 +13410,7 @@ TEST_P(TextureBufferTestES31, UseAsUBOThenUpdateThenAsTextureBuffer)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_buffer"));
 
     // Claims to support GL_OES_texture_buffer, but fails compilation of shader because "extension
-    // 'GL_OES_texture_buffer' is not supported".  http://anglebug.com/5832
+    // 'GL_OES_texture_buffer' is not supported".  http://anglebug.com/42264369
     ANGLE_SKIP_TEST_IF(IsQualcomm() && IsOpenGLES());
 
     const std::array<GLColor, 4> kInitialData = {GLColor::red, GLColor::red, GLColor::red,
@@ -13230,11 +13479,11 @@ TEST_P(TextureBufferTestES31, MapTextureBufferInvalidateThenWrite)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_buffer"));
 
-    // TODO(http://anglebug.com/5832): Claims to support GL_OES_texture_buffer, but fails
+    // TODO(http://anglebug.com/42264369): Claims to support GL_OES_texture_buffer, but fails
     // compilation of shader because "extension 'GL_OES_texture_buffer' is not supported".
     ANGLE_SKIP_TEST_IF(IsQualcomm() && IsOpenGLES());
-    // TODO(http://anglebug.com/6396): The OpenGL backend doesn't correctly handle texture buffers
-    // being invalidated when mapped.
+    // TODO(http://anglebug.com/42264910): The OpenGL backend doesn't correctly handle texture
+    // buffers being invalidated when mapped.
     ANGLE_SKIP_TEST_IF(IsOpenGL());
 
     const std::array<GLColor, 4> kInitialData = {GLColor::red, GLColor::red, GLColor::red,
@@ -14314,7 +14563,15 @@ TEST_P(RGBTextureBufferTestES31, SSBOWrite)
 class TextureTestES31 : public ANGLETest<>
 {
   protected:
-    TextureTestES31() {}
+    TextureTestES31()
+    {
+        setWindowWidth(128);
+        setWindowHeight(128);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
 };
 
 // Verify that image uniforms can link in separable programs
@@ -14373,6 +14630,207 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that layer-related parameters are ignored when binding a 2D texture
+TEST_P(TextureTestES31, Texture2DLayered)
+{
+    constexpr char kFS[] = R"(#version 310 es
+precision highp float;
+precision highp image2D;
+layout(binding = 0, r32f) uniform image2D img;
+layout(location = 0) out vec4 color;
+
+void main()
+{
+    color = imageLoad(img, ivec2(0, 0));
+})";
+
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
+
+    GLTexture texture;
+    GLfloat value = 1.0;
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32F, 1, 1);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RED, GL_FLOAT, &value);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glClearColor(0.0, 1.0, 0.0, 1.0);
+    for (const bool layered : {true, false})
+    {
+        for (const GLint layer : {0, 1})
+        {
+            glClear(GL_COLOR_BUFFER_BIT);
+            glBindImageTexture(0, texture, 0, layered, layer, GL_READ_ONLY, GL_R32F);
+            ASSERT_GL_NO_ERROR();
+
+            drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
+            EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red)
+                << "Layered: " << (layered ? "true" : "false") << ", Layer: " << layer;
+        }
+    }
+}
+
+// Test that rebinding the shader image level without changing the program works
+TEST_P(TextureTestES31, Texture2DChangeLevel)
+{
+    constexpr char kFS[] = R"(#version 310 es
+precision highp float;
+precision highp image2D;
+layout(binding = 0, r32f) uniform image2D img;
+layout(location = 0) out vec4 color;
+
+void main()
+{
+    color = imageLoad(img, ivec2(0, 0));
+})";
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
+
+    // Must be active before calling drawQuad to avoid program switches
+    glUseProgram(program);
+
+    GLTexture texture;
+    const GLfloat level0[4] = {0.5, 0.5, 0.5, 0.5};
+    const GLfloat level1[1] = {1.0};
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 2, GL_R32F, 2, 2);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 2, 2, GL_RED, GL_FLOAT, level0);
+    glTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, 1, 1, GL_RED, GL_FLOAT, level1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_R32F);
+    ASSERT_GL_NO_ERROR();
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(127, 0, 0, 255), 1);
+
+    glBindImageTexture(0, texture, 1, GL_FALSE, 0, GL_READ_WRITE, GL_R32F);
+    ASSERT_GL_NO_ERROR();
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that rebinding the shader image layer/level without changing the program works
+TEST_P(TextureTestES31, Texture2DArrayChangeLayerLevel)
+{
+    constexpr char kFS[] = R"(#version 310 es
+precision highp float;
+precision highp image2D;
+layout(binding = 0, r32f) uniform image2D img;
+layout(location = 0) out vec4 color;
+
+void main()
+{
+    color = imageLoad(img, ivec2(0, 0));
+})";
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
+
+    // Must be active before calling drawQuad to avoid program switches
+    glUseProgram(program);
+
+    GLTexture texture;
+    const GLfloat level0layer0[4] = {0.25, 0.25, 0.25, 0.25};
+    const GLfloat level0layer1[4] = {0.50, 0.50, 0.50, 0.50};
+    const GLfloat level1layer0[1] = {0.75};
+    const GLfloat level1layer1[1] = {1.00};
+
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 2, GL_R32F, 2, 2, 2);
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, 2, 2, 1, GL_RED, GL_FLOAT, level0layer0);
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 1, 2, 2, 1, GL_RED, GL_FLOAT, level0layer1);
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 1, 0, 0, 0, 1, 1, 1, GL_RED, GL_FLOAT, level1layer0);
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 1, 0, 0, 1, 1, 1, 1, GL_RED, GL_FLOAT, level1layer1);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Level 0, layer 0
+    glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_R32F);
+    ASSERT_GL_NO_ERROR();
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(63, 0, 0, 255), 1);
+
+    // Level 0, layer 1
+    glBindImageTexture(0, texture, 0, GL_FALSE, 1, GL_READ_WRITE, GL_R32F);
+    ASSERT_GL_NO_ERROR();
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(127, 0, 0, 255), 1);
+
+    // Level 1, layer 0
+    glBindImageTexture(0, texture, 1, GL_FALSE, 0, GL_READ_WRITE, GL_R32F);
+    ASSERT_GL_NO_ERROR();
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(191, 0, 0, 255), 1);
+
+    // Level 1, layer 1
+    glBindImageTexture(0, texture, 1, GL_FALSE, 1, GL_READ_WRITE, GL_R32F);
+    ASSERT_GL_NO_ERROR();
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(255, 0, 0, 255), 1);
+}
+
+// Test that switching between a 2D texture and a layer of a 2D array texture works
+TEST_P(TextureTestES31, Texture2DTo2DArraySwitch)
+{
+    constexpr char kFS[] = R"(#version 310 es
+precision highp float;
+precision highp image2D;
+layout(binding = 0, r32f) uniform image2D img;
+layout(location = 0) out vec4 color;
+
+void main()
+{
+    color = imageLoad(img, ivec2(0, 0));
+})";
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
+
+    // Must be active before calling drawQuad to avoid program switches
+    glUseProgram(program);
+
+    GLTexture texture2D;
+    GLTexture texture2DArray;
+    const GLfloat data2D[1]       = {0.50};
+    const GLfloat data2DArray0[1] = {0.25};
+    const GLfloat data2DArray1[1] = {0.75};
+
+    glBindTexture(GL_TEXTURE_2D, texture2D);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32F, 1, 1);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RED, GL_FLOAT, data2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texture2DArray);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_R32F, 1, 1, 2);
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, 1, 1, 1, GL_RED, GL_FLOAT, data2DArray0);
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 1, 1, 1, 1, GL_RED, GL_FLOAT, data2DArray1);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Texture2D
+    glBindImageTexture(0, texture2D, 0, GL_FALSE, 0, GL_READ_WRITE, GL_R32F);
+    ASSERT_GL_NO_ERROR();
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(127, 0, 0, 255), 1);
+
+    // Texture2D array, layer 0
+    glBindImageTexture(0, texture2DArray, 0, GL_FALSE, 0, GL_READ_WRITE, GL_R32F);
+    ASSERT_GL_NO_ERROR();
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(63, 0, 0, 255), 1);
+
+    // Texture2D again
+    glBindImageTexture(0, texture2D, 0, GL_FALSE, 0, GL_READ_WRITE, GL_R32F);
+    ASSERT_GL_NO_ERROR();
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(127, 0, 0, 255), 1);
+
+    // Texture2D array, layer 1
+    glBindImageTexture(0, texture2DArray, 0, GL_FALSE, 1, GL_READ_WRITE, GL_R32F);
+    ASSERT_GL_NO_ERROR();
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(191, 0, 0, 255), 1);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 #define ES2_EMULATE_COPY_TEX_IMAGE_VIA_SUB()             \
@@ -14390,7 +14848,8 @@ void main()
 ANGLE_INSTANTIATE_TEST(Texture2DTest,
                        ANGLE_ALL_TEST_PLATFORMS_ES2,
                        ES2_EMULATE_COPY_TEX_IMAGE_VIA_SUB(),
-                       ES2_EMULATE_COPY_TEX_IMAGE());
+                       ES2_EMULATE_COPY_TEX_IMAGE(),
+                       ES2_WEBGPU());
 ANGLE_INSTANTIATE_TEST_ES2(TextureCubeTest);
 ANGLE_INSTANTIATE_TEST_ES2(Texture2DTestWithDrawScale);
 ANGLE_INSTANTIATE_TEST_ES2(Sampler2DAsFunctionParameterTest);

@@ -99,14 +99,18 @@ public:
     JSGlobalObject* globalObject() const { return m_globalObject.get(); }
     JSWebAssemblyModule* module() const { return m_module.get(); }
 
-    static ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_instance); }
-    static ptrdiff_t offsetOfModule() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_module); }
-    static ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_globalObject); }
-    static ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_vm); }
-    static ptrdiff_t offsetOfModuleRecord() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_moduleRecord); }
+    void clearJSCallICs(VM&);
+    void finalizeUnconditionally(VM&, CollectionScope);
+
+    static constexpr ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_instance); }
+    static constexpr ptrdiff_t offsetOfModule() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_module); }
+    static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_globalObject); }
+    static constexpr ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_vm); }
+    static constexpr ptrdiff_t offsetOfModuleRecord() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_moduleRecord); }
 
 private:
     JSWebAssemblyInstance(VM&, Structure*, Ref<Wasm::Instance>&&, JSWebAssemblyModule*, WebAssemblyModuleRecord*);
+    ~JSWebAssemblyInstance();
     void finishCreation(VM&);
     DECLARE_VISIT_CHILDREN;
 

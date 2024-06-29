@@ -69,6 +69,8 @@ private:
     RemoteTextDetector& operator=(RemoteTextDetector&&) = delete;
 
     WebCore::ShapeDetection::TextDetector& backing() { return m_backing; }
+    Ref<WebCore::ShapeDetection::TextDetector> protectedBacking();
+    Ref<RemoteRenderingBackend> protectedBackend();
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

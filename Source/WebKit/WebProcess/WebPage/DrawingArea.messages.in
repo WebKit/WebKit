@@ -43,7 +43,7 @@ messages -> DrawingArea NotRefCounted {
 #endif
 
 #if USE(GRAPHICS_LAYER_WC)
-    UpdateGeometryWC(uint64_t backingStoreStateID, WebCore::IntSize viewSize)
+    UpdateGeometryWC(uint64_t backingStoreStateID, WebCore::IntSize viewSize, float deviceScaleFactor)
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)

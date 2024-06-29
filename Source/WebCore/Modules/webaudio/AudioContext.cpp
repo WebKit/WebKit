@@ -662,6 +662,14 @@ void AudioContext::defaultDestinationWillBecomeConnected()
     m_canOverrideBackgroundPlaybackRestriction = true;
 }
 
+void AudioContext::isActiveNowPlayingSessionChanged()
+{
+    if (RefPtr document = this->document()) {
+        if (RefPtr page = document->protectedPage())
+            page->hasActiveNowPlayingSessionChanged();
+    }
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger& AudioContext::logger() const
 {

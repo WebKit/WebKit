@@ -21,25 +21,25 @@
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "net/dcsctp/common/internal_types.h"
-#include "net/dcsctp/common/str_join.h"
 #include "net/dcsctp/packet/data.h"
 #include "net/dcsctp/public/dcsctp_message.h"
 #include "net/dcsctp/public/dcsctp_socket.h"
 #include "net/dcsctp/public/types.h"
 #include "net/dcsctp/tx/send_queue.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/strings/str_join.h"
 
 namespace dcsctp {
+using ::webrtc::TimeDelta;
+using ::webrtc::Timestamp;
 
 RRSendQueue::RRSendQueue(absl::string_view log_prefix,
                          DcSctpSocketCallbacks* callbacks,
-                         size_t buffer_size,
                          size_t mtu,
                          StreamPriority default_priority,
                          size_t total_buffered_amount_low_threshold)
     : log_prefix_(log_prefix),
       callbacks_(*callbacks),
-      buffer_size_(buffer_size),
       default_priority_(default_priority),
       scheduler_(log_prefix_, mtu),
       total_buffered_amount_(
@@ -137,7 +137,7 @@ void RRSendQueue::OutgoingStream::Add(DcSctpMessage message,
 }
 
 absl::optional<SendQueue::DataToSend> RRSendQueue::OutgoingStream::Produce(
-    TimeMs now,
+    Timestamp now,
     size_t max_size) {
   RTC_DCHECK(pause_state_ != PauseState::kPaused &&
              pause_state_ != PauseState::kResetting);
@@ -349,7 +349,7 @@ bool RRSendQueue::OutgoingStream::has_partially_sent_message() const {
   return items_.front().mid.has_value();
 }
 
-void RRSendQueue::Add(TimeMs now,
+void RRSendQueue::Add(Timestamp now,
                       DcSctpMessage message,
                       const SendOptions& send_options) {
   RTC_DCHECK(!message.payload().empty());
@@ -366,24 +366,22 @@ void RRSendQueue::Add(TimeMs now,
               ? MaxRetransmits(send_options.max_retransmissions.value())
               : MaxRetransmits::NoLimit(),
       .expires_at = send_options.lifetime.has_value()
-                        ? now + *send_options.lifetime + DurationMs(1)
-                        : TimeMs::InfiniteFuture(),
+                        ? now + send_options.lifetime->ToTimeDelta() +
+                              TimeDelta::Millis(1)
+                        : Timestamp::PlusInfinity(),
       .lifecycle_id = send_options.lifecycle_id,
   };
-  GetOrCreateStreamInfo(message.stream_id())
-      .Add(std::move(message), std::move(attributes));
+  StreamID stream_id = message.stream_id();
+  GetOrCreateStreamInfo(stream_id).Add(std::move(message),
+                                       std::move(attributes));
   RTC_DCHECK(IsConsistent());
-}
-
-bool RRSendQueue::IsFull() const {
-  return total_buffered_amount() >= buffer_size_;
 }
 
 bool RRSendQueue::IsEmpty() const {
   return total_buffered_amount() == 0;
 }
 
-absl::optional<SendQueue::DataToSend> RRSendQueue::Produce(TimeMs now,
+absl::optional<SendQueue::DataToSend> RRSendQueue::Produce(Timestamp now,
                                                            size_t max_size) {
   return scheduler_.Produce(now, max_size);
 }

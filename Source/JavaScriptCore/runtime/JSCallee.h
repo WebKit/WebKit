@@ -84,7 +84,7 @@ public:
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static inline ptrdiff_t offsetOfScopeChain()
+    static constexpr ptrdiff_t offsetOfScopeChain()
     {
         return OBJECT_OFFSETOF(JSCallee, m_scope);
     }

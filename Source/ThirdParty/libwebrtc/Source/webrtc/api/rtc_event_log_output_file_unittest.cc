@@ -34,7 +34,8 @@ class RtcEventLogOutputFileTest : public ::testing::Test {
  protected:
   std::string GetOutputFilePath() const {
     auto test_info = ::testing::UnitTest::GetInstance()->current_test_info();
-    return test::OutputPath() + test_info->test_case_name() + test_info->name();
+    return test::OutputPathWithRandomDirectory() + test_info->test_case_name() +
+           test_info->name();
   }
 
   std::string GetOutputFileContents() const {

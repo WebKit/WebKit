@@ -74,7 +74,7 @@ class IOSurfaceSurfaceCGL : public SurfaceGL
     angle::Result initializeAlphaChannel(const gl::Context *context, GLuint texture);
 
     // TODO(geofflang): Don't store these, they are potentially specific to a single GL context.
-    // http://anglebug.com/2464
+    // http://anglebug.com/40096492
     const FunctionsGL *mFunctions;
     StateManagerGL *mStateManager;
 

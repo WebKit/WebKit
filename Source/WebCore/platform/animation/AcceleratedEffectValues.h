@@ -63,10 +63,8 @@ struct AcceleratedEffectValues {
     FilterOperations filter { };
     FilterOperations backdropFilter { };
 
-    AcceleratedEffectValues()
-    {
-    }
-
+    AcceleratedEffectValues() = default;
+    AcceleratedEffectValues(const RenderStyle&, const IntRect&, const RenderLayerModelObject* = nullptr);
     AcceleratedEffectValues(float opacity, std::optional<TransformOperationData>&& transformOperationData, LengthPoint&& transformOrigin, TransformBox transformBox, TransformOperations&& transform, RefPtr<TransformOperation>&& translate, RefPtr<TransformOperation>&& scale, RefPtr<TransformOperation>&& rotate, RefPtr<PathOperation>&& offsetPath, Length&& offsetDistance, LengthPoint&& offsetPosition, LengthPoint&& offsetAnchor, OffsetRotation&& offsetRotate, FilterOperations&& filter, FilterOperations&& backdropFilter)
         : opacity(opacity)
         , transformOperationData(WTFMove(transformOperationData))
@@ -87,11 +85,6 @@ struct AcceleratedEffectValues {
     }
 
     WEBCORE_EXPORT AcceleratedEffectValues clone() const;
-
-    WEBCORE_EXPORT AcceleratedEffectValues(const AcceleratedEffectValues&);
-    AcceleratedEffectValues(const RenderStyle&, const IntRect&, const RenderLayerModelObject* = nullptr);
-    AcceleratedEffectValues& operator=(const AcceleratedEffectValues&) = default;
-
     WEBCORE_EXPORT TransformationMatrix computedTransformationMatrix(const FloatRect&) const;
 };
 

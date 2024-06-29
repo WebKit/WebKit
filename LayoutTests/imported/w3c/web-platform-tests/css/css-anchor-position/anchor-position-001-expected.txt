@@ -1,0 +1,5 @@
+
+FAIL #target 1 assert_equals:
+<div id="target" data-offset-x="200" data-offset-y="100" data-expected-width="300" data-expected-height="100"></div>
+width expected 300 but got 784
+

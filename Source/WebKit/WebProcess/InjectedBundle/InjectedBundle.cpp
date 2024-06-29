@@ -34,7 +34,6 @@
 #include "NetworkSessionCreationParameters.h"
 #include "NotificationPermissionRequestManager.h"
 #include "UserData.h"
-#include "WebConnectionToUIProcess.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebFrameNetworkingContext.h"
@@ -140,11 +139,6 @@ void InjectedBundle::postSynchronousMessage(const String& messageName, API::Obje
         returnData = webProcess.transformHandlesToObjects(returnUserData.object());
     } else
         returnData = nullptr;
-}
-
-WebConnection* InjectedBundle::webConnectionToUIProcess() const
-{
-    return WebProcess::singleton().webConnectionToUIProcess();
 }
 
 void InjectedBundle::addOriginAccessAllowListEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains)
@@ -278,17 +272,6 @@ void InjectedBundle::setUserStyleSheetLocation(const String& location)
     Page::forEachPage([location](Page& page) {
         page.settings().setUserStyleSheetLocation(URL { location });
     });
-}
-
-void InjectedBundle::setWebNotificationPermission(WebPage* page, const String& originString, bool allowed)
-{
-#if ENABLE(NOTIFICATIONS)
-    page->notificationPermissionRequestManager()->setPermissionLevelForTesting(originString, allowed);
-#else
-    UNUSED_PARAM(page);
-    UNUSED_PARAM(originString);
-    UNUSED_PARAM(allowed);
-#endif
 }
 
 void InjectedBundle::removeAllWebNotificationPermissions(WebPage* page)

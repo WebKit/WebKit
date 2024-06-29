@@ -56,6 +56,7 @@ public:
     class JS_EXPORT_PRIVATE CallbackBase : public RefCounted<CallbackBase> {
     public:
         CallbackBase(Ref<BackendDispatcher>&&, long requestId);
+        virtual ~CallbackBase() { }
 
         bool isActive() const;
         void disable() { m_alreadySent = true; }

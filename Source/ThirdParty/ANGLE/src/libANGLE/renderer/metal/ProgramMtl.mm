@@ -84,7 +84,7 @@ class CompileMslTask final : public LinkSubTask
 
   private:
     // TODO: remove this, inherit from mtl::Context and ensure thread-safety.
-    // http://anglebug.com/8297
+    // http://anglebug.com/41488637
     ContextMtl *mContext;
     gl::InfoLog mInfoLog;
     mtl::TranslatedShaderInfo *mTranslatedMslInfo;
@@ -120,7 +120,7 @@ class ProgramMtl::LinkTaskMtl final : public LinkTask
 
   private:
     // TODO: remove this, inherit from mtl::Context and ensure thread-safety.
-    // http://anglebug.com/8297
+    // http://anglebug.com/41488637
     const gl::Context *mContext;
     ProgramMtl *mProgram;
     angle::Result mResult = angle::Result::Continue;
@@ -191,7 +191,7 @@ angle::Result ProgramMtl::load(const gl::Context *context,
 
     ANGLE_TRY(getExecutable()->load(contextMtl, stream));
 
-    // TODO: parallelize the above too.  http://anglebug.com/8297
+    // TODO: parallelize the above too.  http://anglebug.com/41488637
     std::vector<std::shared_ptr<LinkSubTask>> subTasks;
 
     ANGLE_TRY(compileMslShaderLibs(context, &subTasks));

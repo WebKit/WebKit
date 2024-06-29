@@ -31,6 +31,7 @@
 #include "CoreCryptoSPI.h"
 #include "Test.h"
 #include <WebCore/PrivateClickMeasurement.h>
+#include <wtf/cocoa/SpanCocoa.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
 
 namespace TestWebKitAPI {
@@ -75,7 +76,7 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
     auto wrappedKeyBytes = wrapPublicKeyWithRSAPSSOID(WTFMove(rawKeyBytes));
 
     // Continue the test.
-    auto errorMessage = pcm.calculateAndUpdateSourceUnlinkableToken(base64URLEncodeToString(wrappedKeyBytes.data(), wrappedKeyBytes.size()));
+    auto errorMessage = pcm.calculateAndUpdateSourceUnlinkableToken(base64URLEncodeToString(wrappedKeyBytes));
     EXPECT_FALSE(errorMessage);
     
     auto sourceUnlinkableToken = pcm.tokenSignatureJSON();
@@ -88,11 +89,11 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
     // Generate the signature.
     auto blindedMessage = base64URLDecode(sourceUnlinkableToken->getString("source_unlinkable_token"_s));
 
-    auto blindedSignature = adoptNS([[NSMutableData alloc] initWithLength:modulusNBytes]);
+    RetainPtr blindedSignature = adoptNS([[NSMutableData alloc] initWithLength:modulusNBytes]);
     ccrsabssa_sign_blinded_message(ciphersuite, rsaPrivateKey, blindedMessage->data(), blindedMessage->size(), static_cast<uint8_t *>([blindedSignature mutableBytes]), [blindedSignature length], rng);
 
     // Continue the test.
-    errorMessage = pcm.calculateAndUpdateSourceSecretToken(base64URLEncodeToString([blindedSignature bytes], [blindedSignature length]));
+    errorMessage = pcm.calculateAndUpdateSourceSecretToken(base64URLEncodeToString(span(blindedSignature.get())));
     EXPECT_FALSE(errorMessage);
     auto& persistentToken = pcm.sourceSecretToken();
     EXPECT_TRUE(persistentToken);

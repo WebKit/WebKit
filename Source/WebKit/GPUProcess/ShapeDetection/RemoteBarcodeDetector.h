@@ -70,6 +70,8 @@ private:
     RemoteBarcodeDetector& operator=(RemoteBarcodeDetector&&) = delete;
 
     WebCore::ShapeDetection::BarcodeDetector& backing() { return m_backing; }
+    Ref<WebCore::ShapeDetection::BarcodeDetector> protectedBacking();
+    Ref<RemoteRenderingBackend> protectedBackend();
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

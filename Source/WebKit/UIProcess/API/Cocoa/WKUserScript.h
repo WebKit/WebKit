@@ -42,6 +42,7 @@ typedef NS_ENUM(NSInteger, WKUserScriptInjectionTime) {
 
 /*! A @link WKUserScript @/link object represents a script that can be injected into webpages.
  */
+WK_SWIFT_UI_ACTOR
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKUserScript : NSObject <NSCopying>
 

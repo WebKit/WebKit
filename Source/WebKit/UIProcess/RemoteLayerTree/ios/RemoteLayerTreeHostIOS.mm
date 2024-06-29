@@ -85,7 +85,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
         }
 #endif
 
-        auto view = adoptNS([[WKUIRemoteView alloc] initWithFrame:CGRectZero pid:m_drawingArea->page().processID() contextID:properties.hostingContextID()]);
+        auto view = adoptNS([[WKUIRemoteView alloc] initWithFrame:CGRectZero pid:m_drawingArea->page().legacyMainFrameProcessID() contextID:properties.hostingContextID()]);
         return makeWithView(WTFMove(view));
     }
     case PlatformCALayer::LayerType::LayerTypeShapeLayer:

@@ -245,15 +245,17 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
                 break;
             case ClipboardTargetType::Custom:
                 if (data.selectionData.hasCustomData()) {
-                    auto& buffer = data.selectionData.customData();
-                    gtk_selection_data_set(selection, gdk_atom_intern_static_string(WebCore::PasteboardCustomData::gtkType().characters()), 8, reinterpret_cast<const guchar*>(buffer->data()), buffer->size());
+                    auto buffer = data.selectionData.customData()->span();
+                    gtk_selection_data_set(selection, gdk_atom_intern_static_string(WebCore::PasteboardCustomData::gtkType().characters()), 8, reinterpret_cast<const guchar*>(buffer.data()), buffer.size());
                 }
                 break;
             case ClipboardTargetType::Buffer: {
                 auto* atom = gtk_selection_data_get_target(selection);
                 GUniquePtr<char> type(gdk_atom_name(atom));
-                if (auto* buffer = data.selectionData.buffer(String::fromUTF8(type.get())))
-                    gtk_selection_data_set(selection, atom, 8, reinterpret_cast<const guchar*>(buffer->data()), buffer->size());
+                if (auto* buffer = data.selectionData.buffer(String::fromUTF8(type.get()))) {
+                    auto span = buffer->span();
+                    gtk_selection_data_set(selection, atom, 8, reinterpret_cast<const guchar*>(span.data()), span.size());
+                }
                 break;
             }
             }

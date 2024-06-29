@@ -17,9 +17,9 @@
 
 #include "api/transport/network_types.h"
 #include "api/transport/test/feedback_generator_interface.h"
-#include "call/simulated_network.h"
 #include "test/network/network_emulation.h"
 #include "test/network/network_emulation_manager.h"
+#include "test/network/simulated_network.h"
 #include "test/time_controller/simulated_time_controller.h"
 
 namespace webrtc {

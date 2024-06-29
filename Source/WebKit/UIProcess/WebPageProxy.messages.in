@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+Copyright (C) 2010-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@ messages -> WebPageProxy {
     MouseDidMoveOverElement(struct WebKit::WebHitTestResultData hitTestResultData, OptionSet<WebKit::WebEventModifier> modifiers, WebKit::UserData userData)
 
     DidChangeViewportProperties(struct WebCore::ViewportAttributes attributes)
-    DidReceiveEvent(enum:uint8_t WebKit::WebEventType eventType, bool handled)
+    DidReceiveEvent(enum:uint8_t WebKit::WebEventType eventType, bool handled, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
     SetCursor(WebCore::Cursor cursor)
     SetCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
     SetStatusText(String statusText)
@@ -193,7 +193,7 @@ messages -> WebPageProxy {
 #endif
 
     # BackForward messages
-    BackForwardAddItem(struct WebKit::BackForwardListItemState itemState)
+    BackForwardAddItem(WebCore::FrameIdentifier targetFrameID, struct WebKit::BackForwardListItemState itemState)
     BackForwardGoToItem(WebCore::BackForwardItemIdentifier itemID) -> (struct WebKit::WebBackForwardListCounts counts) Synchronous
     BackForwardItemAtIndex(int32_t itemIndex) -> (std::optional<WebCore::BackForwardItemIdentifier> itemID) Synchronous
     BackForwardListContainsItem(WebCore::BackForwardItemIdentifier itemID) -> (bool contains) Synchronous
@@ -232,14 +232,14 @@ messages -> WebPageProxy {
     HandleContextMenuTranslation(struct WebCore::TranslationContextMenuInfo info)
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
-    HandleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView)
+#if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
+    HandleContextMenuWritingTools(WebCore::IntRect selectionBoundsInRootView)
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    TextReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(WTF::UUID sessionUUID, WTF::UUID replacementUUID, WebCore::IntRect selectionBoundsInRootView)
+#if ENABLE(WRITING_TOOLS)
+    ProofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(struct WebCore::WritingTools::Session::ID sessionID, struct WebCore::WritingTools::TextSuggestion::ID replacementID, WebCore::IntRect selectionBoundsInRootView)
 
-    TextReplacementSessionUpdateStateForReplacementWithUUID(WTF::UUID sessionUUID, enum:uint8_t WebKit::WebTextReplacementDataState state, WTF::UUID replacementUUID)
+    ProofreadingSessionUpdateStateForSuggestionWithID(struct WebCore::WritingTools::Session::ID sessionID, enum:uint8_t WebCore::WritingTools::TextSuggestionState state, struct WebCore::WritingTools::TextSuggestion::ID replacementID)
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
@@ -251,7 +251,7 @@ messages -> WebPageProxy {
     SetIsNeverRichlyEditableForTouchBar(bool isNeverRichlyEditable)
 #endif
 
-    RequestDOMPasteAccess(enum:uint8_t WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::IntRect elementRect, String originIdentifier) -> (enum:uint8_t WebCore::DOMPasteAccessResponse response) Synchronous
+    RequestDOMPasteAccess(enum:uint8_t WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::FrameIdentifier frameID, WebCore::IntRect elementRect, String originIdentifier) -> (enum:uint8_t WebCore::DOMPasteAccessResponse response) Synchronous
 
     # Find messages
     SetTextIndicatorFromFrame(WebCore::FrameIdentifier frameID, struct WebCore::TextIndicatorData indicator, uint64_t lifetime)
@@ -389,7 +389,7 @@ messages -> WebPageProxy {
     FocusedElementDidChangeInputMode(enum:uint8_t WebCore::InputMode mode)
     ScrollingNodeScrollWillStartScroll(std::optional<WebCore::ScrollingNodeID> nodeID)
     ScrollingNodeScrollDidEndScroll(std::optional<WebCore::ScrollingNodeID> nodeID)
-    ShowInspectorHighlight(struct WebCore::InspectorOverlay::Highlight highlight)
+    ShowInspectorHighlight(struct WebCore::InspectorOverlayHighlight highlight)
     HideInspectorHighlight()
 
     ShowInspectorIndication()
@@ -417,7 +417,7 @@ messages -> WebPageProxy {
     DidUpdateActivityState() CanDispatchOutOfOrder
 
     WrapCryptoKey(Vector<uint8_t> key) -> (std::optional<Vector<uint8_t>> wrappedKey) Synchronous
-    UnwrapCryptoKey(Vector<uint8_t> wrappedKey) -> (std::optional<Vector<uint8_t>> key) Synchronous
+    UnwrapCryptoKey(struct WebCore::WrappedCryptoKey wrappedKey) -> (std::optional<Vector<uint8_t>> key) Synchronous
 
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
@@ -465,7 +465,7 @@ messages -> WebPageProxy {
     ShowPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier contextId, WebCore::FloatRect pickerLocation, bool hasVideo)
     PlaybackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier contextId, OptionSet<WebCore::MediaProducerMediaState> mediaState)
     SetMockMediaPlaybackTargetPickerEnabled(bool enabled)
-    SetMockMediaPlaybackTargetPickerState(String name, enum:uint8_t WebCore::MediaPlaybackTargetContext::MockState pickerState)
+    SetMockMediaPlaybackTargetPickerState(String name, enum:uint8_t WebCore::MediaPlaybackTargetContextMockState pickerState)
     MockMediaPlaybackTargetPickerDismissPopup()
 #endif
 
@@ -519,14 +519,12 @@ messages -> WebPageProxy {
     [EnabledIf='attachmentElementEnabled()'] RequestAttachmentIcon(String identifier, String contentType, String path, String title, WebCore::FloatSize size)
 #endif
 
-#if ENABLE(APP_HIGHLIGHTS)
-    StoreAppHighlight(struct WebCore::AppHighlight info)
+#if ENABLE(WRITING_TOOLS_UI)
+    AddTextAnimationForAnimationID(WTF::UUID uuid, struct WebKit::TextAnimationData styleData, struct WebCore::TextIndicatorData indicatorData)
+    RemoveTextAnimationForAnimationID(WTF::UUID uuid)
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    RemoveTextIndicatorStyleForID(WTF::UUID uuid)
-#endif
-
+CreateAppHighlightInSelectedRange)
 #if ENABLE(SPEECH_SYNTHESIS)
     SpeechSynthesisVoiceList() -> (Vector<WebKit::WebSpeechSynthesisVoice> voiceList) Synchronous
     SpeechSynthesisSpeak(String text, String lang, float volume, float rate, float pitch, MonotonicTime startTime, String voiceURI, String voiceName, String voiceLang, bool localService, bool defaultVoice) -> ()
@@ -636,7 +634,7 @@ messages -> WebPageProxy {
     PostMessageToRemote(WebCore::FrameIdentifier source, String sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, struct WebCore::MessageWithMessagePorts message)
     RenderTreeAsTextForTesting(WebCore::FrameIdentifier identifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior) -> (String renderTreeDump) Synchronous
     FrameTextForTesting(WebCore::FrameIdentifier frameID) -> (String text) Synchronous
-    BindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, std::span<const uint8_t> dataToken) -> (std::span<const uint8_t> token, int processIdentifier) Synchronous
+    BindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, Vector<uint8_t> dataToken) -> (Vector<uint8_t> token, int processIdentifier) Synchronous
     UpdateRemoteFrameAccessibilityOffset(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset)
     DocumentURLForConsoleLog(WebCore::FrameIdentifier frameID) -> (URL url)
 
@@ -645,4 +643,12 @@ messages -> WebPageProxy {
     DidAdjustVisibilityWithSelectors(Vector<String> selectors)
 
     FrameNameChanged(WebCore::FrameIdentifier frameID, String frameName)
+
+#if ENABLE(GAMEPAD)
+    GamepadsRecentlyAccessed()
+#endif
+
+    HasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSessionChanged)
+
+    SetAllowsLayoutViewportHeightExpansion(bool newValue)
 }

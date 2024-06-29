@@ -142,7 +142,7 @@ void InspectorFrontendAPIDispatcher::dispatchCommandWithResultAsync(const String
 
 void InspectorFrontendAPIDispatcher::dispatchMessageAsync(const String& message)
 {
-    evaluateOrQueueExpression(makeString("InspectorFrontendAPI.dispatchMessageAsync(", message, ")"));
+    evaluateOrQueueExpression(makeString("InspectorFrontendAPI.dispatchMessageAsync("_s, message, ')'));
 }
 
 void InspectorFrontendAPIDispatcher::evaluateOrQueueExpression(const String& expression, EvaluationResultHandler&& optionalResultHandler)

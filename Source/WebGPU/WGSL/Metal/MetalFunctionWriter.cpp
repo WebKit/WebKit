@@ -76,6 +76,7 @@ public:
     void visit(AST::Function&) override;
     void visit(AST::Structure&) override;
     void visit(AST::Variable&) override;
+    void visit(AST::ConstAssert&) override;
 
     void visit(const Type*, AST::Expression&);
     void visit(const Type*, AST::CallExpression&);
@@ -130,11 +131,14 @@ private:
     void serializeConstant(const Type*, ConstantValue);
     void serializeBinaryExpression(AST::Expression&, AST::BinaryOperation, AST::Expression&);
     void visitStatements(AST::Statement::List&);
+    bool shouldPackType() const;
 
     StringBuilder& m_stringBuilder;
     ShaderModule& m_shaderModule;
     Indentation<4> m_indent { 0 };
     std::optional<AST::StructureRole> m_structRole;
+    std::optional<AST::VariableRole> m_variableRole;
+    std::optional<AST::ParameterRole> m_parameterRole;
     std::optional<ShaderStage> m_entryPointStage;
     AST::Function* m_currentFunction { nullptr };
     unsigned m_functionConstantIndex { 0 };
@@ -186,6 +190,36 @@ void FunctionDefinitionWriter::write()
 
 void FunctionDefinitionWriter::emitNecessaryHelpers()
 {
+    if (m_shaderModule.usesPackedVec3()) {
+        m_stringBuilder.append(
+            m_indent, "template<typename T>\n"_s,
+            m_indent, "struct PackedVec3 {\n"_s
+        );
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(
+                m_indent, "T x;\n"_s,
+                m_indent, "T y;\n"_s,
+                m_indent, "T z;\n"_s,
+                m_indent, "uint8_t __padding[sizeof(T)];\n"_s,
+                m_indent, "\n"_s,
+                m_indent, "PackedVec3() { }\n"_s,
+                m_indent, "\n"_s,
+                m_indent, "PackedVec3(packed_vec<T, 3> v) : x(v.x), y(v.y), z(v.z) { }\n"_s,
+                m_indent, "\n"_s,
+                m_indent, "operator vec<T, 3>() { return vec<T, 3>(x, y, z); }\n"_s,
+                m_indent, "operator packed_vec<T, 3>() { return packed_vec<T, 3>(x, y, z); }\n"_s,
+                m_indent, "\n"_s,
+                m_indent, "T operator[](int i) const { return i ? i == 2 ? z : y : x; }\n"_s,
+                m_indent, "device T& operator[](int i) device { return i ? i == 2 ? z : y : x; }\n"_s,
+                m_indent, "constant T& operator[](int i) constant { return i ? i == 2 ? z : y : x; }\n"_s,
+                m_indent, "thread T& operator[](int i) thread { return i ? i == 2 ? z : y : x; }\n"_s,
+                m_indent, "threadgroup T& operator[](int i) threadgroup { return i ? i == 2 ? z : y : x; }\n"_s
+            );
+        }
+        m_stringBuilder.append(m_indent, "};\n\n"_s);
+    }
+
     if (m_shaderModule.usesExternalTextures()) {
         m_shaderModule.clearUsesExternalTextures();
         m_stringBuilder.append("struct texture_external {\n"_s);
@@ -217,6 +251,23 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
             m_stringBuilder.append(m_indent, "return packed;\n"_s);
         }
         m_stringBuilder.append(m_indent, "}\n\n"_s);
+
+        if (m_shaderModule.usesPackedVec3()) {
+            m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
+                m_indent, "array<PackedVec3<T>, N> __pack(array<vec<T, 3>, N> unpacked)\n"_s,
+                m_indent, "{\n"_s);
+            {
+                IndentationScope scope(m_indent);
+                m_stringBuilder.append(m_indent, "array<PackedVec3<T>, N> packed;\n"_s,
+                    m_indent, "for (size_t i = 0; i < N; ++i)\n"_s);
+                {
+                    IndentationScope scope(m_indent);
+                    m_stringBuilder.append(m_indent, "packed[i] = PackedVec3<T>(unpacked[i]);\n"_s);
+                }
+                m_stringBuilder.append(m_indent, "return packed;\n"_s);
+            }
+            m_stringBuilder.append(m_indent, "}\n\n"_s);
+        }
     }
 
     if (m_shaderModule.usesUnpackArray()) {
@@ -235,6 +286,40 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
             m_stringBuilder.append(m_indent, "return unpacked;\n"_s);
         }
         m_stringBuilder.append(m_indent, "}\n\n"_s);
+
+        if (m_shaderModule.usesPackedVec3()) {
+            m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
+                m_indent, "array<vec<T, 3>, N> __unpack(array<PackedVec3<T>, N> packed)\n"_s,
+                m_indent, "{\n"_s);
+            {
+                IndentationScope scope(m_indent);
+                m_stringBuilder.append(m_indent, "array<vec<T, 3>, N> unpacked;\n"_s,
+                    m_indent, "for (size_t i = 0; i < N; ++i)\n"_s);
+                {
+                    IndentationScope scope(m_indent);
+                    m_stringBuilder.append(m_indent, "unpacked[i] = vec<T, 3>(packed[i]);\n"_s);
+                }
+                m_stringBuilder.append(m_indent, "return unpacked;\n"_s);
+            }
+            m_stringBuilder.append(m_indent, "}\n\n"_s);
+        }
+    }
+
+    if (m_shaderModule.usesPackVector()) {
+        m_shaderModule.clearUsesPackVector();
+        m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
+            m_indent, "packed_vec<T, 3> __pack(vec<T, 3> unpacked) { return unpacked; }\n\n"_s);
+    }
+
+    if (m_shaderModule.usesUnpackVector()) {
+        m_shaderModule.clearUsesUnpackVector();
+        m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
+            m_indent, "vec<T, 3> __unpack(packed_vec<T, 3> packed) { return packed; }\n\n"_s);
+
+        if (m_shaderModule.usesPackedVec3()) {
+            m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
+                m_indent, "vec<T, 3> __unpack(PackedVec3<T> packed) { return packed; }\n\n"_s);
+        }
     }
 
     if (m_shaderModule.usesWorkgroupUniformLoad()) {
@@ -433,6 +518,8 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         }
         m_stringBuilder.append(m_indent, "}\n"_s);
     }
+
+    m_shaderModule.clearUsesPackedVec3();
 }
 
 void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
@@ -461,6 +548,7 @@ void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
             m_stringBuilder.append(", "_s);
         switch (parameter.role()) {
         case AST::ParameterRole::UserDefined:
+        case AST::ParameterRole::PackedResource:
             checkErrorAndVisit(parameter);
             break;
         case AST::ParameterRole::StageIn:
@@ -573,7 +661,7 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
         m_stringBuilder.append(m_indent, packedName, " packed;\n"_s);
         for (auto& member : structure.members()) {
             auto& name = member.name();
-            if (member.type().inferredType()->packing() == Packing::PackedStruct)
+            if (member.type().inferredType()->packing() & (Packing::PStruct | Packing::PArray))
                 m_stringBuilder.append(m_indent, "packed."_s, name, " = __pack(unpacked."_s, name, ");\n"_s);
             else
                 m_stringBuilder.append(m_indent, "packed."_s, name, " = unpacked."_s, name, ";\n"_s);
@@ -588,7 +676,7 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
         m_stringBuilder.append(m_indent, unpackedName, " unpacked;\n"_s);
         for (auto& member : structure.members()) {
             auto& name = member.name();
-            if (member.type().inferredType()->packing() == Packing::PackedStruct)
+            if (member.type().inferredType()->packing() & (Packing::PStruct | Packing::PArray))
                 m_stringBuilder.append(m_indent, "unpacked."_s, name, " = __unpack(packed."_s, name, ");\n"_s);
             else
                 m_stringBuilder.append(m_indent, "unpacked."_s, name, " = packed."_s, name, ";\n"_s);
@@ -598,17 +686,28 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
     m_stringBuilder.append(m_indent, "}\n\n"_s);
 }
 
+bool FunctionDefinitionWriter::shouldPackType() const
+{
+    if (m_structRole.has_value() && (*m_structRole == AST::StructureRole::PackedResource || *m_structRole == AST::StructureRole::BindGroup))
+        return true;
+    if (m_variableRole.has_value() && *m_variableRole == AST::VariableRole::PackedResource)
+        return true;
+    if (m_parameterRole.has_value() && (*m_parameterRole == AST::ParameterRole::PackedResource))
+        return true;
+    return false;
+}
+
 bool FunctionDefinitionWriter::emitPackedVector(const Types::Vector& vector)
 {
-    if (!m_structRole.has_value())
+    if (!shouldPackType())
         return false;
-    if (*m_structRole != AST::StructureRole::PackedResource)
-        return false;
+
     // The only vectors that need to be packed are the vectors with 3 elements,
     // because their size differs between Metal and WGSL (4 * element size vs
     // 3 * element size, respectively)
     if (vector.size != 3)
         return false;
+
     auto& primitive = std::get<Types::Primitive>(*vector.element);
     switch (primitive.kind) {
     case Types::Primitive::AbstractInt:
@@ -643,6 +742,11 @@ void FunctionDefinitionWriter::visit(AST::Variable& variable)
     serializeVariable(variable);
 }
 
+void FunctionDefinitionWriter::visit(AST::ConstAssert&)
+{
+    // const_assert should not generate any code
+}
+
 void FunctionDefinitionWriter::visitGlobal(AST::Variable& variable)
 {
     if (variable.flavor() != AST::VariableFlavor::Override)
@@ -667,6 +771,8 @@ void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
 {
     if (variable.flavor() == AST::VariableFlavor::Const)
         return;
+
+    auto variableRoleScope = SetForScope(m_variableRole, std::optional<AST::VariableRole> { variable.role() });
 
     const Type* type = variable.storeType();
     if (isPrimitiveReference(type, Types::Primitive::TextureExternal)) {
@@ -926,7 +1032,13 @@ void FunctionDefinitionWriter::visit(const Type* type)
         },
         [&](const Array& array) {
             m_stringBuilder.append("array<"_s);
-            visit(array.element);
+            auto* vector = std::get_if<Types::Vector>(array.element);
+            if (vector && vector->size == 3 && shouldPackType()) {
+                m_stringBuilder.append("PackedVec3<"_s);
+                visit(vector->element);
+                m_stringBuilder.append(">"_s);
+            } else
+                visit(array.element);
             m_stringBuilder.append(", "_s);
             WTF::switchOn(array.size,
                 [&](unsigned size) { m_stringBuilder.append(size); },
@@ -938,7 +1050,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
         },
         [&](const Struct& structure) {
             m_stringBuilder.append(structure.structure.name());
-            if (m_structRole.has_value() && *m_structRole == AST::StructureRole::PackedResource && structure.structure.role() == AST::StructureRole::UserDefinedResource)
+            if (shouldPackType() && type->isConstructible() && structure.structure.role() == AST::StructureRole::UserDefinedResource)
                 m_stringBuilder.append("::PackedType"_s);
         },
         [&](const PrimitiveStruct& structure) {
@@ -1076,6 +1188,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
 
 void FunctionDefinitionWriter::visit(AST::Parameter& parameter)
 {
+    auto parameterRoleScope = SetForScope(m_parameterRole, parameter.role());
     visit(parameter.typeName().inferredType());
     m_stringBuilder.append(' ', parameter.name());
     for (auto& attribute : parameter.attributes()) {
@@ -1795,7 +1908,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
 
     auto isArray = is<AST::ArrayTypeExpression>(call.target());
     auto isStruct = !isArray && std::holds_alternative<Types::Struct>(*call.target().inferredType());
-    if (isArray || isStruct) {
+    if (call.isConstructor() && (isArray || isStruct)) {
         visit(type);
         m_stringBuilder.append('(');
         const Type* arrayElementType = nullptr;
@@ -2054,7 +2167,12 @@ void FunctionDefinitionWriter::visit(AST::PointerDereferenceExpression& pointerD
 }
 void FunctionDefinitionWriter::visit(AST::IndexAccessExpression& access)
 {
+    bool isPointer = std::holds_alternative<Types::Pointer>(*access.base().inferredType());
+    if (isPointer)
+        m_stringBuilder.append("(*("_s);
     visit(access.base());
+    if (isPointer)
+        m_stringBuilder.append("))"_s);
     m_stringBuilder.append('[');
     visit(access.index());
     m_stringBuilder.append(']');
@@ -2303,6 +2421,8 @@ void FunctionDefinitionWriter::visit(AST::LoopStatement& statement)
 {
     m_stringBuilder.append("while (true) {\n"_s);
     {
+        if (statement.containsSwitch())
+            m_stringBuilder.append("bool __continuing = false;\n"_s, m_indent);
         auto& continuing = statement.continuing();
         SetForScope continuingScope(m_continuing, continuing.has_value() ? &*continuing : nullptr);
 
@@ -2371,6 +2491,21 @@ void FunctionDefinitionWriter::visit(AST::SwitchStatement& statement)
         visitClause(clause);
     visitClause(statement.defaultClause(), true);
     m_stringBuilder.append('\n', m_indent, '}');
+    if (statement.isInsideLoop()) {
+        m_stringBuilder.append('\n', m_indent, "if (__continuing) {"_s);
+        {
+            auto scope = IndentationScope(m_indent);
+            visit(*m_continuing);
+        }
+        m_stringBuilder.append('\n', m_indent, '}');
+    } else if (statement.isNestedInsideLoop()) {
+        m_stringBuilder.append('\n', m_indent, "if (__continuing) {"_s);
+        {
+            auto scope = IndentationScope(m_indent);
+            m_stringBuilder.append('\n', m_indent, "break;"_s);
+        }
+        m_stringBuilder.append('\n', m_indent, '}');
+    }
 }
 
 void FunctionDefinitionWriter::visit(AST::BreakStatement&)
@@ -2378,8 +2513,13 @@ void FunctionDefinitionWriter::visit(AST::BreakStatement&)
     m_stringBuilder.append("break"_s);
 }
 
-void FunctionDefinitionWriter::visit(AST::ContinueStatement&)
+void FunctionDefinitionWriter::visit(AST::ContinueStatement& statement)
 {
+    if (statement.isFromSwitchToContinuing()) {
+        m_stringBuilder.append("__continuing = true;\n"_s);
+        m_stringBuilder.append(m_indent, "break"_s);
+        return;
+    }
     if (m_continuing) {
         visit(*m_continuing);
         m_stringBuilder.append(m_indent);

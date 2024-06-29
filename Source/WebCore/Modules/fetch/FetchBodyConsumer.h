@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc.
+ * Copyright (C) 2016-2024 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -47,7 +47,7 @@ class ReadableStream;
 
 class FetchBodyConsumer {
 public:
-    enum class Type { None, ArrayBuffer, Blob, JSON, Text, FormData };
+    enum class Type { None, ArrayBuffer, Blob, Bytes, JSON, Text, FormData };
 
     explicit FetchBodyConsumer(Type);
     FetchBodyConsumer(FetchBodyConsumer&&);

@@ -1,5 +1,6 @@
 Name: vulkan_command_buffer_utils.h, vulkan_command_buffer_utils.cpp
 URL: https://github.com/LunarG/VulkanSamples/tree/master/API-Samples/utils
+Revision: 9cbde4db68a38f8e108560741a97d759f76a9eb3
 License: Apache License, Version 2.0
 License File: http://www.apache.org/licenses/LICENSE-2.0
 Security Critical: no

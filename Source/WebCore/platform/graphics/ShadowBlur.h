@@ -75,7 +75,7 @@ public:
     void drawInsetShadow(const AffineTransform&, const IntRect& clipBounds, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const DrawBufferCallback&, const DrawImageCallback&, const FillRectWithHoleCallback&);
     void drawShadowLayer(const AffineTransform&, const IntRect& clipBounds, const FloatRect& layerArea, const DrawShadowCallback&, const DrawBufferCallback&);
 
-    void blurLayerImage(unsigned char*, const IntSize&, int stride);
+    void blurLayerImage(std::span<uint8_t>, const IntSize&, int stride);
 
     void clear();
 

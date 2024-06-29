@@ -21,9 +21,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 header: "APIObject.h"
-#if PLATFORM(COCOA)
-header: "ObjCObjectGraph.h"
-#endif
 
 [RefCounted, CustomHeader] class API::Object subclasses {
     API::Array
@@ -46,7 +43,4 @@ header: "ObjCObjectGraph.h"
     API::UInt64
     API::Int64
     API::UserContentURLPattern
-#if PLATFORM(COCOA)
-    WebKit::ObjCObjectGraph
-#endif
 }

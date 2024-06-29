@@ -959,13 +959,13 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @property (nonatomic, strong) UIImage *image;
 @end
 
-#if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
+#if USE(UICONTEXTMENU)
 @interface _UIClickInteraction : NSObject <UIInteraction>
 @end
 
 @interface _UIClickPresentationInteraction : NSObject <UIInteraction>
 @end
-#endif // HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
+#endif // USE(UICONTEXTMENU)
 
 @interface NSTextAlternatives : NSObject
 - (id)initWithPrimaryString:(NSString *)primaryString alternativeStrings:(NSArray<NSString *> *)alternativeStrings;
@@ -1005,10 +1005,6 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 #endif // HAVE(UIKIT_RESIZABLE_WINDOWS)
 
 #if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
-
-@interface UIWindowScene ()
-@property (nonatomic, readonly, getter=_isInLiveResize) BOOL _inLiveResize;
-@end
 
 extern NSNotificationName const _UIWindowSceneDidBeginLiveResizeNotification;
 extern NSNotificationName const _UIWindowSceneDidEndLiveResizeNotification;

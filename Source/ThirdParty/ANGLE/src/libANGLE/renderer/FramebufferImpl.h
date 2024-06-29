@@ -83,6 +83,11 @@ class FramebufferImpl : angle::NonCopyable
 
     virtual gl::FramebufferStatus checkStatus(const gl::Context *context) const = 0;
 
+    virtual angle::Result ensureAttachmentsInitialized(const gl::Context *context,
+                                                       const gl::DrawBufferMask &colorAttachments,
+                                                       bool depth,
+                                                       bool stencil);
+
     virtual angle::Result syncState(const gl::Context *context,
                                     GLenum binding,
                                     const gl::Framebuffer::DirtyBits &dirtyBits,

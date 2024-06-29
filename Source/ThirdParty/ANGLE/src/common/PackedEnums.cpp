@@ -250,6 +250,21 @@ bool IsArrayTextureType(TextureType type)
     }
 }
 
+bool IsLayeredTextureType(TextureType type)
+{
+    switch (type)
+    {
+        case TextureType::_2DArray:
+        case TextureType::_2DMultisampleArray:
+        case TextureType::_3D:
+        case TextureType::CubeMap:
+        case TextureType::CubeMapArray:
+            return true;
+        default:
+            return false;
+    }
+}
+
 bool IsStaticBufferUsage(BufferUsage useage)
 {
     switch (useage)
@@ -582,7 +597,8 @@ bool operator<(const UniformLocation &lhs, const UniformLocation &rhs)
 
 bool IsEmulatedCompressedFormat(GLenum format)
 {
-    // TODO(anglebug.com/6177): Check for all formats ANGLE will use to emulate a compressed texture
+    // TODO(anglebug.com/42264702): Check for all formats ANGLE will use to emulate a compressed
+    // texture
     return format == GL_RGBA || format == GL_RG || format == GL_RED;
 }
 }  // namespace gl

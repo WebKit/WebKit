@@ -58,7 +58,7 @@ void writeToDisk(std::unique_ptr<KeyedEncoder>&& encoder, String&& path)
     if (handle == FileSystem::invalidPlatformFileHandle)
         return;
 
-    auto writtenBytes = FileSystem::writeToFile(handle, rawData->data(), rawData->size());
+    auto writtenBytes = FileSystem::writeToFile(handle, rawData->span());
     FileSystem::unlockAndCloseFile(handle);
 
     if (writtenBytes != static_cast<int64_t>(rawData->size()))

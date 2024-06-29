@@ -87,7 +87,7 @@ void MockContentFilterSettings::setModifiedRequestURL(const String& modifiedRequ
 
 const String& MockContentFilterSettings::unblockRequestURL() const
 {
-    static NeverDestroyed<String> unblockRequestURL = makeString(ContentFilter::urlScheme(), "://", unblockURLHost());
+    static NeverDestroyed<String> unblockRequestURL = makeString(ContentFilter::urlScheme(), "://"_s, unblockURLHost());
     return unblockRequestURL;
 }
 

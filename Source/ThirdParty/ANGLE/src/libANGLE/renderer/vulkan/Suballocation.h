@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_SUBALLOCATION_H_
 #define LIBANGLE_RENDERER_VULKAN_SUBALLOCATION_H_
 
+#include "common/SimpleMutex.h"
 #include "common/debug.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/serial_utils.h"
@@ -95,7 +96,7 @@ class BufferBlock final : angle::NonCopyable
     }
 
   private:
-    mutable std::mutex mVirtualBlockMutex;
+    mutable angle::SimpleMutex mVirtualBlockMutex;
     VirtualBlock mVirtualBlock;
 
     Buffer mBuffer;
@@ -131,7 +132,7 @@ class BufferBlockGarbageList final : angle::NonCopyable
 
     void add(BufferBlock *bufferBlock)
     {
-        std::unique_lock<std::mutex> lock(mMutex);
+        std::unique_lock<angle::SimpleMutex> lock(mMutex);
         if (mBufferBlockQueue.full())
         {
             size_t newCapacity = mBufferBlockQueue.capacity() << 1;
@@ -144,7 +145,7 @@ class BufferBlockGarbageList final : angle::NonCopyable
     {
         if (!mBufferBlockQueue.empty())
         {
-            std::unique_lock<std::mutex> lock(mMutex);
+            std::unique_lock<angle::SimpleMutex> lock(mMutex);
             size_t count = mBufferBlockQueue.size();
             for (size_t i = 0; i < count; i++)
             {
@@ -166,7 +167,7 @@ class BufferBlockGarbageList final : angle::NonCopyable
 
   private:
     static constexpr size_t kInitialQueueCapacity = 4;
-    std::mutex mMutex;
+    angle::SimpleMutex mMutex;
     angle::FixedQueue<BufferBlock *> mBufferBlockQueue;
 };
 
@@ -275,7 +276,7 @@ ANGLE_INLINE VkDeviceSize BufferBlock::getMemorySize() const
 
 ANGLE_INLINE VkBool32 BufferBlock::isEmpty()
 {
-    std::unique_lock<std::mutex> lock(mVirtualBlockMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mVirtualBlockMutex);
     return vma::IsVirtualBlockEmpty(mVirtualBlock.getHandle());
 }
 

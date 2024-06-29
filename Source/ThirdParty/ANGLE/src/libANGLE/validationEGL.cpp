@@ -2642,7 +2642,7 @@ bool ValidateCreateContext(const ValidationContext *val,
                 val->setError(EGL_BAD_CONFIG);
                 return false;
             }
-            // TODO(http://anglebug.com/7533): validate desktop OpenGL versions and profile mask
+            // TODO(http://anglebug.com/42266001): validate desktop OpenGL versions and profile mask
             break;
 
         default:
@@ -6416,8 +6416,14 @@ bool ValidateQueryDeviceAttribEXT(const ValidationContext *val,
     switch (attribute)
     {
         case EGL_D3D11_DEVICE_ANGLE:
+            if (!device->getExtensions().deviceD3D11)
+            {
+                val->setError(EGL_BAD_ATTRIBUTE);
+                return false;
+            }
+            break;
         case EGL_D3D9_DEVICE_ANGLE:
-            if (!device->getExtensions().deviceD3D || device->getType() != attribute)
+            if (!device->getExtensions().deviceD3D9)
             {
                 val->setError(EGL_BAD_ATTRIBUTE);
                 return false;
@@ -6977,4 +6983,17 @@ bool ValidateReleaseExternalContextANGLE(const ValidationContext *val, const egl
 
     return true;
 }
+
+bool ValidateSetValidationEnabledANGLE(const ValidationContext *val, EGLBoolean validationState)
+{
+    const ClientExtensions &clientExtensions = Display::GetClientExtensions();
+    if (!clientExtensions.noErrorANGLE)
+    {
+        val->setError(EGL_BAD_ACCESS, "EGL_ANGLE_no_error is not available.");
+        return false;
+    }
+
+    return true;
+}
+
 }  // namespace egl

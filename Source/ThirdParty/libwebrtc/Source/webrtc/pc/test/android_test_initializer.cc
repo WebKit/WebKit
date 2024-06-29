@@ -39,7 +39,7 @@ void EnsureInitializedOnce() {
 
   RTC_CHECK(rtc::InitializeSSL()) << "Failed to InitializeSSL()";
 
-  webrtc::JVM::Initialize(jvm);
+  JVM::Initialize(jvm);
 }
 
 }  // anonymous namespace

@@ -45,8 +45,9 @@ int ACMResampler::Resample10Msec(const int16_t* in_audio,
     return -1;
   }
 
-  int out_length =
-      resampler_.Resample(in_audio, in_length, out_audio, out_capacity_samples);
+  int out_length = resampler_.Resample(
+      rtc::ArrayView<const int16_t>(in_audio, in_length),
+      rtc::ArrayView<int16_t>(out_audio, out_capacity_samples));
   if (out_length == -1) {
     RTC_LOG(LS_ERROR) << "Resample(" << in_audio << ", " << in_length << ", "
                       << out_audio << ", " << out_capacity_samples

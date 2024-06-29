@@ -156,8 +156,10 @@ static std::optional<Result> decodeSynchronously(DecodeTask& task)
         return std::nullopt;
 
     if (task.isBase64) {
-        auto mode = task.shouldValidatePadding == ShouldValidatePadding::Yes ? Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace : Base64DecodeMode::DefaultIgnoreWhitespaceForQuirk;
-        auto decodedData = base64Decode(PAL::decodeURLEscapeSequences(task.encodedData), mode);
+        OptionSet<Base64DecodeOption> options = { Base64DecodeOption::IgnoreWhitespace };
+        if (task.shouldValidatePadding == ShouldValidatePadding::Yes)
+            options.add(Base64DecodeOption::ValidatePadding);
+        auto decodedData = base64Decode(PAL::decodeURLEscapeSequences(task.encodedData), options);
         if (!decodedData)
             return std::nullopt;
         task.result.data = WTFMove(*decodedData);

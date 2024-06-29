@@ -31,7 +31,6 @@
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/task_queue.h"
 #include "rtc_base/trace_event.h"
 
 namespace webrtc {
@@ -215,8 +214,6 @@ std::vector<RtpStreamSender> CreateRtpStreamSenders(
   configuration.network_link_rtcp_observer = transport->GetRtcpObserver();
   configuration.network_state_estimate_observer =
       transport->network_state_estimate_observer();
-  configuration.transport_feedback_callback =
-      transport->transport_feedback_observer();
   configuration.rtt_stats = observers.rtcp_rtt_stats;
   configuration.rtcp_packet_type_counter_observer =
       observers.rtcp_type_observer;
@@ -403,6 +400,10 @@ RtpVideoSender::RtpVideoSender(
       rtp_config_(rtp_config),
       codec_type_(GetVideoCodecType(rtp_config)),
       transport_(transport),
+      independent_frame_ids_(
+          field_trials_.IsEnabled(
+              "WebRTC-Video-SimulcastIndependentFrameIds") &&
+          field_trials_.IsDisabled("WebRTC-GenericDescriptorAuth")),
       transport_overhead_bytes_per_packet_(0),
       encoder_target_rate_bps_(0),
       frame_counts_(rtp_config.ssrcs.size()),
@@ -470,85 +471,41 @@ RtpVideoSender::RtpVideoSender(
 }
 
 RtpVideoSender::~RtpVideoSender() {
-  // TODO(bugs.webrtc.org/13517): Remove once RtpVideoSender gets deleted on the
-  // transport task queue.
-  transport_checker_.Detach();
-
+  RTC_DCHECK_RUN_ON(&transport_checker_);
   SetActiveModulesLocked(
-      std::vector<bool>(rtp_streams_.size(), /*active=*/false));
-
-  RTC_DCHECK(!registered_for_feedback_);
+      /*sending=*/false);
 }
 
-void RtpVideoSender::Stop() {
+void RtpVideoSender::SetSending(bool enabled) {
   RTC_DCHECK_RUN_ON(&transport_checker_);
   MutexLock lock(&mutex_);
-  if (!active_)
+  if (enabled == active_) {
     return;
-
-  const std::vector<bool> active_modules(rtp_streams_.size(), false);
-  SetActiveModulesLocked(active_modules);
+  }
+  SetActiveModulesLocked(/*sending=*/enabled);
 }
 
-void RtpVideoSender::SetActiveModules(const std::vector<bool>& active_modules) {
+void RtpVideoSender::SetActiveModulesLocked(bool sending) {
   RTC_DCHECK_RUN_ON(&transport_checker_);
-  MutexLock lock(&mutex_);
-  return SetActiveModulesLocked(active_modules);
-}
-
-void RtpVideoSender::SetActiveModulesLocked(
-    const std::vector<bool>& active_modules) {
-  RTC_DCHECK_RUN_ON(&transport_checker_);
-  RTC_CHECK_EQ(rtp_streams_.size(), active_modules.size());
-  active_ = false;
-  for (size_t i = 0; i < active_modules.size(); ++i) {
-    if (active_modules[i]) {
-      active_ = true;
-    }
-
+  if (active_ == sending) {
+    return;
+  }
+  active_ = sending;
+  for (size_t i = 0; i < rtp_streams_.size(); ++i) {
     RtpRtcpInterface& rtp_module = *rtp_streams_[i].rtp_rtcp;
-    const bool was_active = rtp_module.Sending();
-    const bool should_be_active = active_modules[i];
-
-    rtp_module.SetSendingStatus(active_modules[i]);
-
-    if (was_active && !should_be_active) {
-      // Disabling media, remove from packet router map to reduce size and
-      // prevent any stray packets in the pacer from asynchronously arriving
-      // to a disabled module.
-      transport_->packet_router()->RemoveSendRtpModule(&rtp_module);
-
-      // Clear the pacer queue of any packets pertaining to this module.
-      transport_->packet_sender()->RemovePacketsForSsrc(rtp_module.SSRC());
-      if (rtp_module.RtxSsrc().has_value()) {
-        transport_->packet_sender()->RemovePacketsForSsrc(
-            *rtp_module.RtxSsrc());
-      }
-      if (rtp_module.FlexfecSsrc().has_value()) {
-        transport_->packet_sender()->RemovePacketsForSsrc(
-            *rtp_module.FlexfecSsrc());
-      }
-    }
-
-    // If set to false this module won't send media.
-    rtp_module.SetSendingMediaStatus(active_modules[i]);
-
-    if (!was_active && should_be_active) {
-      // Turning on media, register with packet router.
-      transport_->packet_router()->AddSendRtpModule(&rtp_module,
-                                                    /*remb_candidate=*/true);
+    rtp_module.SetSendingStatus(sending);
+    rtp_module.SetSendingMediaStatus(sending);
+    if (sending) {
+      transport_->RegisterSendingRtpStream(rtp_module);
+    } else {
+      transport_->DeRegisterSendingRtpStream(rtp_module);
     }
   }
-  if (!active_) {
-    auto* feedback_provider = transport_->GetStreamFeedbackProvider();
-    if (registered_for_feedback_) {
-      feedback_provider->DeRegisterStreamFeedbackObserver(this);
-      registered_for_feedback_ = false;
-    }
-  } else if (!registered_for_feedback_) {
-    auto* feedback_provider = transport_->GetStreamFeedbackProvider();
+  auto* feedback_provider = transport_->GetStreamFeedbackProvider();
+  if (!sending) {
+    feedback_provider->DeRegisterStreamFeedbackObserver(this);
+  } else {
     feedback_provider->RegisterStreamFeedbackObserver(rtp_config_.ssrcs, this);
-    registered_for_feedback_ = true;
   }
 }
 
@@ -619,11 +576,16 @@ EncodedImageCallback::Result RtpVideoSender::OnEncodedImage(
     }
   }
 
+  absl::optional<int64_t> frame_id;
+  if (!independent_frame_ids_) {
+    frame_id = shared_frame_id_;
+  }
+
   bool send_result =
       rtp_streams_[simulcast_index].sender_video->SendEncodedImage(
           rtp_config_.payload_type, codec_type_, rtp_timestamp, encoded_image,
           params_[simulcast_index].GetRtpVideoHeader(
-              encoded_image, codec_specific_info, shared_frame_id_),
+              encoded_image, codec_specific_info, frame_id),
           expected_retransmission_time);
   if (frame_count_observer_) {
     FrameCounts& counts = frame_counts_[simulcast_index];

@@ -27,6 +27,10 @@
 #import <Metal/MTLCommandBuffer_Private.h>
 #import <Metal/MTLResource_Private.h>
 #else
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_420_2P_PACKED = static_cast<MTLPixelFormat>(508);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_422_2P_PACKED = static_cast<MTLPixelFormat>(509);
+constexpr MTLPixelFormat MTLPixelFormatYCBCR10_444_2P_PACKED = static_cast<MTLPixelFormat>(510);
+
 @protocol MTLResourceSPI <MTLResource>
 @optional
 - (kern_return_t)setOwnerWithIdentity:(mach_port_t)task_id_token;

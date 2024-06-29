@@ -34,12 +34,13 @@ namespace JSC {
 
 #define FOR_EACH_BLOCK_DIRECTORY_BIT(macro) \
     macro(live, Live) /* The set of block indices that have actual blocks. */\
-    macro(empty, Empty) /* The set of all blocks that have no live objects. */ \
+    macro(empty, Empty) /* The set of all blocks that have no live objects and are not free listed. */ \
     macro(allocated, Allocated) /* The set of all blocks that are full of live objects. */\
     macro(canAllocateButNotEmpty, CanAllocateButNotEmpty) /* The set of all blocks are neither empty nor retired (i.e. are more than minMarkedBlockUtilization full). */ \
     macro(destructible, Destructible) /* The set of all blocks that may have destructors to run. */\
     macro(eden, Eden) /* The set of all blocks that have new objects since the last GC. */\
     macro(unswept, Unswept) /* The set of all blocks that could be swept by the incremental sweeper. */\
+    macro(inUse, InUse) /* This tells us if a block is currently being allocated from or swept. This acts like a lock bit. */\
     \
     /* These are computed during marking. */\
     macro(markingNotEmpty, MarkingNotEmpty) /* The set of all blocks that are not empty. */ \

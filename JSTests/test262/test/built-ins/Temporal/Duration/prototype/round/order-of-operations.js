@@ -122,25 +122,22 @@ actual.splice(0); // clear
 
 // code path through RoundDuration that rounds to the nearest year, with minimal calendar calls:
 const expectedMinimalOpsForYearRounding = expectedOpsForPlainRelativeTo.concat([
-  // 7.e and 7.g not called because years, months, weeks are 0
-  "call options.relativeTo.calendar.dateUntil",  // 7.o
-  // 7.s not called because years, months, weeks are 0
-  "call options.relativeTo.calendar.dateAdd",    // 7.y MoveRelativeDate
+  // initial AddDate in Duration.p.round 39.c not called because no calendar units
+  "call options.relativeTo.calendar.dateUntil",  // DifferencePlainDateTimeWithRounding → DifferenceISODateTime
+  "call options.relativeTo.calendar.dateAdd",
 ]);
-instance.round(createOptionsObserver({ smallestUnit: "years", relativeTo: plainRelativeTo }));
+const instanceMinimal = new Temporal.Duration(0, 0, 0, 0, /* hours = */ 100);
+instanceMinimal.round(createOptionsObserver({ smallestUnit: "years", relativeTo: plainRelativeTo }));
 assert.compareArray(actual, expectedMinimalOpsForYearRounding, "order of operations with years = 0 and smallestUnit = years");
 actual.splice(0); // clear
 
-// code path through RoundDuration that rounds to the nearest year:
+// code path through Duration.prototype.round that rounds to the nearest year:
 const expectedOpsForYearRounding = expectedOpsForPlainRelativeTo.concat([
-  "call options.relativeTo.calendar.dateAdd",    // 12.d
-  "call options.relativeTo.calendar.dateAdd",    // 12.f
-  "call options.relativeTo.calendar.dateUntil",  // 12.n
-  "call options.relativeTo.calendar.dateAdd",    // 12.r MoveRelativeDate
-  "call options.relativeTo.calendar.dateAdd",    // 12.x MoveRelativeDate
-  // BalanceDateDurationRelative
-  "call options.relativeTo.calendar.dateAdd",    // 9.c
-  "call options.relativeTo.calendar.dateUntil",  // 9.d
+  "call options.relativeTo.calendar.dateAdd",    // 39.c
+  "call options.relativeTo.calendar.dateUntil",  // DifferencePlainDateTimeWithRounding → DifferenceISODateTime
+  // RoundRelativeDuration
+  "call options.relativeTo.calendar.dateAdd",
+  "call options.relativeTo.calendar.dateAdd",
 ]);
 const instanceYears = new Temporal.Duration(1, 12, 0, 0, /* hours = */ 2400);
 instanceYears.round(createOptionsObserver({ smallestUnit: "years", relativeTo: plainRelativeTo }));
@@ -149,18 +146,11 @@ actual.splice(0); // clear
 
 // code path through Duration.prototype.round that rounds to the nearest month:
 const expectedOpsForMonthRounding = expectedOpsForPlainRelativeTo.concat([
-  // UnbalanceDateDurationRelative
-  "call options.relativeTo.calendar.dateAdd",    // 3.f
-  "call options.relativeTo.calendar.dateUntil",  // 3.i
-  // RoundDuration
-  "call options.relativeTo.calendar.dateAdd",    // 13.c
-  "call options.relativeTo.calendar.dateAdd",    // 13.e
-  "call options.relativeTo.calendar.dateUntil",  // 13.m
-  "call options.relativeTo.calendar.dateAdd",    // 13.q MoveRelativeDate
-  "call options.relativeTo.calendar.dateAdd",    // 13.w MoveRelativeDate
-  // BalanceDateDurationRelative
-  "call options.relativeTo.calendar.dateAdd",    // 10.d
-  "call options.relativeTo.calendar.dateUntil",  // 10.e
+  "call options.relativeTo.calendar.dateAdd",    // 39.c
+  "call options.relativeTo.calendar.dateUntil",  // DifferencePlainDateTimeWithRounding → DifferenceISODateTime
+  // RoundRelativeDuration
+  "call options.relativeTo.calendar.dateAdd",
+  "call options.relativeTo.calendar.dateAdd",
 ]);
 const instance2 = new Temporal.Duration(1, 0, 0, 62);
 instance2.round(createOptionsObserver({ largestUnit: "months", smallestUnit: "months", relativeTo: plainRelativeTo }));
@@ -169,24 +159,21 @@ actual.splice(0); // clear
 
 // code path through Duration.prototype.round that rounds to the nearest week:
 const expectedOpsForWeekRounding = expectedOpsForPlainRelativeTo.concat([
-  // UnbalanceDateDurationRelative
-  "call options.relativeTo.calendar.dateAdd",  // 4.e
-  // RoundDuration
-  "call options.relativeTo.calendar.dateUntil",  // 14.f
-  "call options.relativeTo.calendar.dateAdd",    // 14.j MoveRelativeDate
-  "call options.relativeTo.calendar.dateAdd",    // 14.p MoveRelativeDate
-  // BalanceDateDurationRelative
-  "call options.relativeTo.calendar.dateAdd",    // 16
-  "call options.relativeTo.calendar.dateUntil",  // 17
+  "call options.relativeTo.calendar.dateAdd",    // 39.c
+  "call options.relativeTo.calendar.dateUntil",  // DifferencePlainDateTimeWithRounding → DifferenceISODateTime
+  // RoundRelativeDuration
+  "call options.relativeTo.calendar.dateUntil",
+  "call options.relativeTo.calendar.dateAdd",
+  "call options.relativeTo.calendar.dateAdd",
 ]);
 const instance3 = new Temporal.Duration(1, 1, 0, 15);
 instance3.round(createOptionsObserver({ largestUnit: "weeks", smallestUnit: "weeks", relativeTo: plainRelativeTo }));
 assert.compareArray(actual, expectedOpsForWeekRounding, "order of operations with largestUnit = smallestUnit = weeks");
 actual.splice(0);  // clear
 
-// code path through UnbalanceDurationRelative that rounds to the nearest day:
+// code path through Duration.prototype.round that rounds to the nearest day:
 const expectedOpsForDayRounding = expectedOpsForPlainRelativeTo.concat([
-  "call options.relativeTo.calendar.dateAdd",  // 9
+  "call options.relativeTo.calendar.dateAdd",  // 39.c
 ]);
 const instance4 = new Temporal.Duration(1, 1, 1)
 instance4.round(createOptionsObserver({ largestUnit: "days", smallestUnit: "days", relativeTo: plainRelativeTo }));
@@ -195,8 +182,8 @@ actual.splice(0);  // clear
 
 // code path through BalanceDateDurationRelative balancing from days up to years:
 const expectedOpsForDayToYearBalancing = expectedOpsForPlainRelativeTo.concat([
-  // BalanceDateDurationRelative
-  "call options.relativeTo.calendar.dateUntil",  // 9.d
+  "call options.relativeTo.calendar.dateUntil",  // DifferencePlainDateTimeWithRounding → DifferenceISODateTime
+  "call options.relativeTo.calendar.dateAdd",
 ]);
 const instance5 = new Temporal.Duration(0, 0, 0, 0, /* hours = */ 396 * 24);
 instance5.round(createOptionsObserver({ largestUnit: "years", smallestUnit: "days", relativeTo: plainRelativeTo }));
@@ -205,13 +192,11 @@ actual.splice(0);  // clear
 
 // code path through Duration.prototype.round balancing from months up to years:
 const expectedOpsForMonthToYearBalancing = expectedOpsForPlainRelativeTo.concat([
-  // RoundDuration
-  "call options.relativeTo.calendar.dateAdd",    // 13.c
-  "call options.relativeTo.calendar.dateAdd",    // 13.e
-  "call options.relativeTo.calendar.dateAdd",    // 13.w MoveRelativeDate
-  // BalanceDateDurationRelative
-  "call options.relativeTo.calendar.dateAdd",    // 9.c
-  "call options.relativeTo.calendar.dateUntil",  // 9.d
+  "call options.relativeTo.calendar.dateAdd",    // 39.c
+  "call options.relativeTo.calendar.dateUntil",  // DifferencePlainDateTimeWithRounding → DifferenceISODateTime
+  // RoundRelativeDuration
+  "call options.relativeTo.calendar.dateAdd",
+  "call options.relativeTo.calendar.dateAdd",
 ]);
 const instance6 = new Temporal.Duration(0, 12);
 instance6.round(createOptionsObserver({ largestUnit: "years", smallestUnit: "months", relativeTo: plainRelativeTo }));
@@ -219,8 +204,7 @@ assert.compareArray(actual, expectedOpsForMonthToYearBalancing, "order of operat
 actual.splice(0); // clear
 
 const expectedOpsForDayToMonthBalancing = expectedOpsForPlainRelativeTo.concat([
-  // BalanceDateDurationRelative
-  "call options.relativeTo.calendar.dateUntil",  // 10.e
+  "call options.relativeTo.calendar.dateUntil",  // DifferencePlainDateTimeWithRounding → DifferenceISODateTime
 ]);
 const instance7 = new Temporal.Duration(0, 0, 0, 0, /* hours = */ 32 * 24);
 instance7.round(createOptionsObserver({ largestUnit: "months", smallestUnit: "days", relativeTo: plainRelativeTo }));
@@ -228,8 +212,7 @@ assert.compareArray(actual, expectedOpsForDayToMonthBalancing, "order of operati
 actual.splice(0); // clear
 
 const expectedOpsForDayToWeekBalancing = expectedOpsForPlainRelativeTo.concat([
-  // BalanceDateDurationRelative
-  "call options.relativeTo.calendar.dateUntil",  // 17
+  "call options.relativeTo.calendar.dateUntil",  // DifferencePlainDateTimeWithRounding → DifferenceISODateTime
 ]);
 const instance8 = new Temporal.Duration(0, 0, 0, 0, /* hours = */ 8 * 24);
 instance8.round(createOptionsObserver({ largestUnit: "weeks", smallestUnit: "days", relativeTo: plainRelativeTo }));
@@ -351,18 +334,14 @@ const expectedOpsForMinimalYearRoundingZoned = expectedOpsForZonedRelativeTo.con
   // lookup in Duration.p.round
   "get options.relativeTo.calendar.dateAdd",
   "get options.relativeTo.calendar.dateUntil",
-  // NanosecondsToDays
-  "call options.relativeTo.timeZone.getOffsetNanosecondsFor",  // 7. GetPlainDateTimeFor
-  "call options.relativeTo.timeZone.getOffsetNanosecondsFor",  // 11. GetPlainDateTimeFor
-  // NanosecondsToDays → AddDaysToZonedDateTime
+  // DifferenceZonedDateTimeWithRounding → DifferenceZonedDateTime
+  "call options.relativeTo.timeZone.getOffsetNanosecondsFor",  // 5
+  "call options.relativeTo.timeZone.getPossibleInstantsFor",   // 12.c
+  "call options.relativeTo.calendar.dateUntil",                // 13.f
+  // RoundRelativeDuration
+  "call options.relativeTo.calendar.dateAdd",
   "call options.relativeTo.timeZone.getPossibleInstantsFor",
-  // NanosecondsToDays → AddDaysToZonedDateTime
   "call options.relativeTo.timeZone.getPossibleInstantsFor",
-  // RoundDuration
-  // 7.e and 7.g not called because years, months, weeks are 0
-  "call options.relativeTo.calendar.dateUntil",  // 7.o
-  // 7.s not called because years, months, weeks are 0
-  "call options.relativeTo.calendar.dateAdd",    // 7.y MoveRelativeDate
 ]);
 instance.round(createOptionsObserver({ smallestUnit: "years", relativeTo: zonedRelativeTo }));
 assert.compareArray(
@@ -372,31 +351,25 @@ assert.compareArray(
 );
 actual.splice(0); // clear
 
-// code path through RoundDuration that rounds to the nearest year:
+// code path through Duration.p.round that rounds to the nearest year:
 const expectedOpsForYearRoundingZoned = expectedOpsForZonedRelativeTo.concat([
   // ToTemporalDate
   "call options.relativeTo.timeZone.getOffsetNanosecondsFor",
   // lookup in Duration.p.round
   "get options.relativeTo.calendar.dateAdd",
   "get options.relativeTo.calendar.dateUntil",
-  // MoveRelativeZonedDateTime → AddZonedDateTime
+  // AddZonedDateTime
   "call options.relativeTo.calendar.dateAdd",
   "call options.relativeTo.timeZone.getPossibleInstantsFor",
-  // NanosecondsToDays
-  "call options.relativeTo.timeZone.getOffsetNanosecondsFor",  // 8. GetPlainDateTimeFor
-  "call options.relativeTo.timeZone.getOffsetNanosecondsFor",  // 9. GetPlainDateTimeFor
-  // NanosecondsToDays → AddDaysToZonedDateTime
+  // DifferenceZonedDateTimeWithRounding → DifferenceZonedDateTime
+  "call options.relativeTo.timeZone.getOffsetNanosecondsFor",  // 5
+  "call options.relativeTo.timeZone.getPossibleInstantsFor",   // 12.c
+  "call options.relativeTo.calendar.dateUntil",                // 13.f
+  // RoundRelativeDuration
+  "call options.relativeTo.calendar.dateAdd",
+  "call options.relativeTo.calendar.dateAdd",
   "call options.relativeTo.timeZone.getPossibleInstantsFor",
-  // NanosecondsToDays → AddDaysToZonedDateTime
   "call options.relativeTo.timeZone.getPossibleInstantsFor",
-  "call options.relativeTo.calendar.dateAdd",    // 12.d
-  "call options.relativeTo.calendar.dateAdd",    // 12.f
-  "call options.relativeTo.calendar.dateUntil",  // 12.n
-  "call options.relativeTo.calendar.dateAdd",    // 12.r MoveRelativeDate
-  "call options.relativeTo.calendar.dateAdd",    // 12.x MoveRelativeDate
-  // BalanceDateDurationRelative
-  "call options.relativeTo.calendar.dateAdd",    // 9.c
-  "call options.relativeTo.calendar.dateUntil",  // 9.d
 ]);
 instanceYears.round(createOptionsObserver({ smallestUnit: "years", relativeTo: zonedRelativeTo }));
 assert.compareArray(
@@ -406,9 +379,8 @@ assert.compareArray(
 );
 actual.splice(0); // clear
 
-// code path that hits UnbalanceDateDurationRelative, RoundDuration, and
-// BalanceDateDurationRelative
-const expectedOpsForUnbalanceRoundBalance = expectedOpsForZonedRelativeTo.concat([
+// code path that hits the special weeks/years case in BalanceDateDurationRelative
+const expectedOpsForYearsWeeksSpecialCase = expectedOpsForZonedRelativeTo.concat([
   // ToTemporalDate
   "call options.relativeTo.timeZone.getOffsetNanosecondsFor",
   // lookup in Duration.p.round
@@ -418,23 +390,28 @@ const expectedOpsForUnbalanceRoundBalance = expectedOpsForZonedRelativeTo.concat
   // RoundDuration → MoveRelativeZonedDateTime → AddZonedDateTime
   "call options.relativeTo.calendar.dateAdd",
   "call options.relativeTo.timeZone.getPossibleInstantsFor",   // 13. GetInstantFor
-  // RoundDuration
-  "call options.relativeTo.calendar.dateAdd",  // 14.p MoveRelativeDate
-  // BalanceDateDurationRelative
-  "call options.relativeTo.calendar.dateAdd",    // 10.d
-  "call options.relativeTo.calendar.dateUntil",  // 10.e
+  // DifferenceZonedDateTimeWithRounding → DifferenceZonedDateTime
+  "call options.relativeTo.timeZone.getOffsetNanosecondsFor",  // 5
+  "call options.relativeTo.timeZone.getPossibleInstantsFor",   // 12.c
+  "call options.relativeTo.calendar.dateUntil",                // 13.f
+  // RoundRelativeDuration
+  "call options.relativeTo.calendar.dateUntil",
+  "call options.relativeTo.calendar.dateAdd",
+  "call options.relativeTo.calendar.dateAdd",
+  "call options.relativeTo.timeZone.getPossibleInstantsFor",
+  "call options.relativeTo.timeZone.getPossibleInstantsFor",
 ]);
 new Temporal.Duration(0, 1, 1).round(createOptionsObserver({ largestUnit: "years", smallestUnit: "weeks", relativeTo: zonedRelativeTo }));
 assert.compareArray(
   actual,
-  expectedOpsForUnbalanceRoundBalance,
+  expectedOpsForYearsWeeksSpecialCase,
   "order of operations with largestUnit = years, smallestUnit = weeks, and ZonedDateTime relativeTo"
 );
 actual.splice(0); // clear
 
 // code path that skips user code calls in BalanceDateDurationRelative due to
 // special case for largestUnit months and smallestUnit weeks
-const expectedOpsForWeeksSpecialCase = expectedOpsForZonedRelativeTo.concat([
+const expectedOpsForMonthsWeeksSpecialCase = expectedOpsForZonedRelativeTo.concat([
   // ToTemporalDate
   "call options.relativeTo.timeZone.getOffsetNanosecondsFor",
   // lookup in Duration.p.round
@@ -443,13 +420,21 @@ const expectedOpsForWeeksSpecialCase = expectedOpsForZonedRelativeTo.concat([
   // RoundDuration → MoveRelativeZonedDateTime → AddZonedDateTime
   "call options.relativeTo.calendar.dateAdd",
   "call options.relativeTo.timeZone.getPossibleInstantsFor",   // 13. GetInstantFor
-  // RoundDuration
-  "call options.relativeTo.calendar.dateAdd",  // 14.p MoveRelativeDate
+  // DifferenceZonedDateTimeWithRounding → DifferenceZonedDateTime
+  "call options.relativeTo.timeZone.getOffsetNanosecondsFor",  // 5
+  "call options.relativeTo.timeZone.getPossibleInstantsFor",   // 12.c
+  "call options.relativeTo.calendar.dateUntil",                // 13.f
+  // RoundRelativeDuration
+  "call options.relativeTo.calendar.dateUntil",
+  "call options.relativeTo.calendar.dateAdd",
+  "call options.relativeTo.calendar.dateAdd",
+  "call options.relativeTo.timeZone.getPossibleInstantsFor",
+  "call options.relativeTo.timeZone.getPossibleInstantsFor",
 ]);
 new Temporal.Duration(0, 1, 1).round(createOptionsObserver({ largestUnit: "months", smallestUnit: "weeks", relativeTo: zonedRelativeTo }));
 assert.compareArray(
   actual,
-  expectedOpsForWeeksSpecialCase,
+  expectedOpsForMonthsWeeksSpecialCase,
   "order of operations with largestUnit = months, smallestUnit = weeks, and ZonedDateTime relativeTo"
 );
 actual.splice(0); // clear

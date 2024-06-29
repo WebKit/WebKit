@@ -115,9 +115,9 @@ JSValue IntlSegmenter::segment(JSGlobalObject* globalObject, JSValue stringValue
 
     JSString* jsString = stringValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    String string = jsString->value(globalObject);
+    auto string = jsString->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    auto expectedCharacters = string.charactersWithoutNullTermination();
+    auto expectedCharacters = string->charactersWithoutNullTermination();
     if (!expectedCharacters) {
         throwOutOfMemoryError(globalObject, scope);
         return { };

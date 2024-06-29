@@ -355,7 +355,7 @@ String PlatformTimeRanges::toString() const
     StringBuilder result;
 
     for (size_t i = 0; i < length(); ++i)
-        result.append("[", start(i).toString(), "..", end(i).toString(), "] ");
+        result.append('[', start(i).toString(), ".."_s, end(i).toString(), "] "_s);
 
     return result.toString();
 }

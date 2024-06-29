@@ -102,7 +102,7 @@ public:
     Vector<MediaSelectionOption> audioMediaSelectionOptions() const final;
     uint64_t audioMediaSelectedIndex() const final;
     Vector<MediaSelectionOption> legibleMediaSelectionOptions() const final;
-    uint64_t legibleMediaSelectedIndex() const final;
+    WEBCORE_EXPORT uint64_t legibleMediaSelectedIndex() const final;
     bool externalPlaybackEnabled() const final;
     ExternalPlaybackTargetType externalPlaybackTargetType() const final;
     String externalPlaybackLocalizedDeviceName() const final;
@@ -112,6 +112,8 @@ public:
     bool isPictureInPictureSupported() const final;
     bool isPictureInPictureActive() const final;
     bool isInWindowFullscreenActive() const final;
+    AudioSessionSoundStageSize soundStageSize() const final { return m_soundStageSize; }
+    void setSoundStageSize(AudioSessionSoundStageSize size) final { m_soundStageSize = size; }
 
 private:
     WEBCORE_EXPORT PlaybackSessionModelMediaElement();
@@ -130,6 +132,7 @@ private:
     HashSet<CheckedPtr<PlaybackSessionModelClient>> m_clients;
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;
     Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
+    AudioSessionSoundStageSize m_soundStageSize;
 
     double playbackStartedTime() const;
     void updateMediaSelectionOptions();

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,6 +58,38 @@ RefPtr<CSSPrimitiveValue> consumeIdentRange(CSSParserTokenRange& range, CSSValue
     if (!value)
         return nullptr;
     return CSSPrimitiveValue::create(*value);
+}
+
+// MARK: <custom-ident>
+// https://drafts.csswg.org/css-values/#custom-idents
+
+String consumeCustomIdentRaw(CSSParserTokenRange& range, bool shouldLowercase)
+{
+    if (range.peek().type() != IdentToken || !isValidCustomIdentifier(range.peek().id()))
+        return String();
+    auto identifier = range.consumeIncludingWhitespace().value();
+    return shouldLowercase ? identifier.convertToASCIILowercase() : identifier.toString();
+}
+
+RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange& range, bool shouldLowercase)
+{
+    auto identifier = consumeCustomIdentRaw(range, shouldLowercase);
+    if (identifier.isNull())
+        return nullptr;
+    return CSSPrimitiveValue::createCustomIdent(WTFMove(identifier));
+}
+
+// MARK: <dashed-ident>
+// https://drafts.csswg.org/css-values/#dashed-idents
+
+RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange& range, bool shouldLowercase)
+{
+    auto rangeCopy = range;
+    auto result = consumeCustomIdent(range, shouldLowercase);
+    if (result && result->stringValue().startsWith("--"_s))
+        return result;
+    range = rangeCopy;
+    return nullptr;
 }
 
 } // namespace CSSPropertyParserHelpers

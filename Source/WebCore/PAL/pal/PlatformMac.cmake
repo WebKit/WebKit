@@ -30,6 +30,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/VisionKitCoreSoftLink.h
     cocoa/VisionSoftLink.h
     cocoa/WebPrivacySoftLink.h
+    cocoa/WritingToolsUISoftLink.h
 
     mac/DataDetectorsSoftLink.h
     mac/LookupSoftLink.h
@@ -191,6 +192,7 @@ list(APPEND PAL_SOURCES
     cocoa/UsageTrackingSoftLink.mm
     cocoa/VisionKitCoreSoftLink.mm
     cocoa/WebPrivacySoftLink.mm
+    cocoa/WritingToolsUISoftLink.mm
 
     crypto/commoncrypto/CryptoDigestCommonCrypto.mm
 

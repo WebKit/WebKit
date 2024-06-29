@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Permission policy 'Fullscreen' check failed for element with origin '' and allow attribute 'fullscreen 'none''.
+CONSOLE MESSAGE: Permission policy 'Fullscreen' check failed for document with origin ''.
 This tests the fullscreenEnabled property laid out in section 4 of the W3C Full Screen API
 EXPECTED (iframe.contentDocument.webkitFullscreenEnabled == 'true') OK
 EXPECTED (iframe2.contentDocument.webkitFullscreenEnabled == 'false') OK

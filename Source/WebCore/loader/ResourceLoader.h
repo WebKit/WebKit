@@ -29,6 +29,7 @@
 #pragma once
 
 #include "CachedResourceHandle.h"
+#include "FrameLoaderTypes.h"
 #include "ResourceHandleClient.h"
 #include "ResourceLoadTiming.h"
 #include "ResourceLoaderIdentifier.h"
@@ -86,7 +87,7 @@ public:
     const ResourceRequest& originalRequest() const { return m_originalRequest; }
 
     WEBCORE_EXPORT void start();
-    WEBCORE_EXPORT void cancel(const ResourceError&);
+    WEBCORE_EXPORT void cancel(const ResourceError&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
     WEBCORE_EXPORT ResourceError cancelledError();
     WEBCORE_EXPORT ResourceError blockedError();
     ResourceError blockedByContentBlockerError();
@@ -197,7 +198,7 @@ protected:
 
 private:
     virtual void willCancel(const ResourceError&) = 0;
-    virtual void didCancel(const ResourceError&) = 0;
+    virtual void didCancel(LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No) = 0;
 
     void addBuffer(const FragmentedSharedBuffer&, DataPayloadType);
     void loadDataURL();

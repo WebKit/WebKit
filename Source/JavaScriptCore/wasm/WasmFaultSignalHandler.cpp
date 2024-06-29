@@ -124,7 +124,7 @@ void activateSignalingMemory()
         if (!Wasm::isSupported())
             return;
 
-        if (!Options::useWasmFaultSignalHandler())
+        if (!Options::useWebAssemblyFaultSignalHandler())
             return;
 
         activateSignalHandlersFor(Signal::AccessFault);
@@ -138,7 +138,7 @@ void prepareSignalingMemory()
         if (!Wasm::isSupported())
             return;
 
-        if (!Options::useWasmFaultSignalHandler())
+        if (!Options::useWebAssemblyFaultSignalHandler())
             return;
 
 #if CPU(ARM64E) && HAVE(HARDENED_MACH_EXCEPTIONS)

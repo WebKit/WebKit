@@ -352,7 +352,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 
         if (snapshot->hasImage() && shouldUseSnapshotForSize(*snapshot, viewSize, 0))
 #if USE(GTK4)
-            m_currentSwipeSnapshotPattern = gsk_texture_node_new(snapshot->texture(), &bounds);
+            m_currentSwipeSnapshotPattern = adoptGRef(gsk_texture_node_new(snapshot->texture(), &bounds));
 #else
             m_currentSwipeSnapshotPattern = adoptRef(cairo_pattern_create_for_surface(snapshot->surface()));
 #endif

@@ -142,9 +142,9 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 {
     if (!(self = [super init]))
         return nil;
-    
+
     _cache = cache;
-    memcpy(&_textMarkerData, data, sizeof(TextMarkerData));
+    _textMarkerData = *data;
     return self;
 }
 
@@ -154,7 +154,9 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return nil;
     
     _cache = cache;
-    [data getBytes:&_textMarkerData length:sizeof(TextMarkerData)];
+    RawTextMarkerData rawTextMarkerData;
+    [data getBytes:&rawTextMarkerData length:sizeof(rawTextMarkerData)];
+    _textMarkerData = rawTextMarkerData.toTextMarkerData();
     
     return self;
 }
@@ -201,7 +203,8 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 
 - (NSData *)dataRepresentation
 {
-    return [NSData dataWithBytes:&_textMarkerData length:sizeof(TextMarkerData)];
+    auto rawTextMarkerData = _textMarkerData.toRawTextMarkerData();
+    return [NSData dataWithBytes:&rawTextMarkerData length:sizeof(rawTextMarkerData)];
 }
 
 - (VisiblePosition)visiblePosition
@@ -221,14 +224,12 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 
 - (AccessibilityObject*)accessibilityObject
 {
-    if (_textMarkerData.ignored)
-        return nullptr;
     return _cache->accessibilityObjectForTextMarkerData(_textMarkerData);
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"[AXTextMarker %p] = node: %p offset: %d", self, _textMarkerData.node, _textMarkerData.offset];
+    return [NSString stringWithFormat:@"[AXTextMarker %p] = node: %p offset: %d", self, _textMarkerData.node.get(), _textMarkerData.offset];
 }
 
 - (TextMarkerData)textMarkerData
@@ -867,9 +868,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         break;
     }
 
-    if ([self accessibilityIsInNonNativeTextControl])
-        traits |= [self _accessibilityTextEntryTraits];
-
     if (self.axBackingObject->isAttachmentElement())
         traits |= [self _axUpdatesFrequentlyTrait];
     
@@ -961,6 +959,9 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         return ![self accessibilityElementCount];
     case AccessibilityRole::Video:
         return [self accessibilityIsWebInteractiveVideo];
+
+    // Links can sometimes be elements (when they only contain static text or don't contain anything).
+    // They should not be elements when containing text and other types.
     case AccessibilityRole::WebCoreLink:
     case AccessibilityRole::Link:
         // Links can sometimes be elements (when they only contain static text or don't contain anything).
@@ -2716,16 +2717,6 @@ static RenderObject* rendererForView(WAKView* view)
     return Accessibility::findAncestor(*self.axBackingObject, false, [] (const auto& object) {
         return object.roleValue() == AccessibilityRole::Deletion;
     }) != nullptr;
-}
-
-- (BOOL)accessibilityIsInNonNativeTextControl
-{
-    if (![self _prepareAccessibilityCall])
-        return NO;
-
-    return !!Accessibility::findAncestor(*self.axBackingObject, true, [] (const auto& object) {
-        return object.isNonNativeTextControl();
-    });
 }
 
 - (BOOL)accessibilityIsFirstItemInSuggestion

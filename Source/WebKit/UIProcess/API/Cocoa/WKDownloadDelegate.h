@@ -40,6 +40,7 @@ typedef NS_ENUM(NSInteger, WKDownloadRedirectPolicy) {
 
 NS_ASSUME_NONNULL_BEGIN
 
+WK_SWIFT_UI_ACTOR
 @protocol WKDownloadDelegate <NSObject>
 
 @required
@@ -56,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
  URL is non-null, it must be a file that does not exist in a directory that does exist
  and can be written to.
  */
-- (void)download:(WKDownload *)download decideDestinationUsingResponse:(NSURLResponse *)response suggestedFilename:(NSString *)suggestedFilename completionHandler:(void (^)(NSURL * _Nullable destination))completionHandler;
+- (void)download:(WKDownload *)download decideDestinationUsingResponse:(NSURLResponse *)response suggestedFilename:(NSString *)suggestedFilename completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSURL * _Nullable destination))completionHandler;
 
 @optional
 
@@ -68,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
  to proceed with the redirection.
  @discussion If you do not implement this method, all server suggested redirects will be taken.
  */
-- (void)download:(WKDownload *)download willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request decisionHandler:(void (^)(WKDownloadRedirectPolicy))decisionHandler WK_SWIFT_ASYNC_NAME(download(_:decidedPolicyForHTTPRedirection:newRequest:)) WK_SWIFT_ASYNC(4);
+- (void)download:(WKDownload *)download willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request decisionHandler:(WK_SWIFT_UI_ACTOR void (^)(WKDownloadRedirectPolicy))decisionHandler WK_SWIFT_ASYNC_NAME(download(_:decidedPolicyForHTTPRedirection:newRequest:)) WK_SWIFT_ASYNC(4);
 
 /* @abstract Invoked when the download needs to respond to an authentication challenge.
  @param download The download that received the authentication challenge.
@@ -80,7 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
  credential.
  @discussion If you do not implement this method, the web view will respond to the authentication challenge with the NSURLSessionAuthChallengeRejectProtectionSpace disposition.
  */
-- (void)download:(WKDownload *)download didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler WK_SWIFT_ASYNC_NAME(download(_:respondTo:));
+- (void)download:(WKDownload *)download didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler WK_SWIFT_ASYNC_NAME(download(_:respondTo:));
 
 /* @abstract Invoked when the download has finished successfully.
  @param download The download that finished.

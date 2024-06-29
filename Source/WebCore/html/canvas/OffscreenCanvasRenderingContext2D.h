@@ -54,6 +54,7 @@ public:
 private:
     OffscreenCanvasRenderingContext2D(CanvasBase&, CanvasRenderingContext2DSettings&&);
     bool isOffscreen2d() const final { return true; }
+    RefPtr<ImageBuffer> transferToImageBuffer() final;
     const FontProxy* fontProxy() final;
 };
 

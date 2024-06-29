@@ -457,7 +457,7 @@ bool RemoveDynamicIndexingTraverser::visitBinary(Visit visit, TIntermBinary *nod
                 }
 
                 // TODO(oetuaho@nvidia.com): This is not optimal if the expression using the value
-                // only writes it and doesn't need the previous value. http://anglebug.com/1116
+                // only writes it and doesn't need the previous value. http://anglebug.com/42260123
 
                 TFunction *indexedWriteFunction = nullptr;
                 if (mWrittenVecAndMatrixTypes.find(type) == mWrittenVecAndMatrixTypes.end())
@@ -492,7 +492,7 @@ bool RemoveDynamicIndexingTraverser::visitBinary(Visit visit, TIntermBinary *nod
                 TIntermTyped *indexInitializer               = EnsureSignedInt(node->getRight());
                 TIntermDeclaration *indexVariableDeclaration = nullptr;
                 TVariable *indexVariable                     = DeclareTempVariable(
-                                        mSymbolTable, indexInitializer, EvqTemporary, &indexVariableDeclaration);
+                    mSymbolTable, indexInitializer, EvqTemporary, &indexVariableDeclaration);
                 insertionsBefore.push_back(indexVariableDeclaration);
 
                 // s1 = dyn_index(v_expr, s0);
@@ -500,7 +500,7 @@ bool RemoveDynamicIndexingTraverser::visitBinary(Visit visit, TIntermBinary *nod
                     node, CreateTempSymbolNode(indexVariable), indexingFunction);
                 TIntermDeclaration *fieldVariableDeclaration = nullptr;
                 TVariable *fieldVariable                     = DeclareTempVariable(
-                                        mSymbolTable, indexingCall, EvqTemporary, &fieldVariableDeclaration);
+                    mSymbolTable, indexingCall, EvqTemporary, &fieldVariableDeclaration);
                 insertionsBefore.push_back(fieldVariableDeclaration);
 
                 // dyn_index_write(v_expr, s0, s1);

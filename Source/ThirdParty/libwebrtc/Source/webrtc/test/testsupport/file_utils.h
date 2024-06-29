@@ -42,6 +42,11 @@ ABSL_CONST_INIT extern const absl::string_view kPathDelimiter;
 // found, the current working directory ("./") is returned as a fallback.
 std::string OutputPath();
 
+// Same as the above but appends a randomly named folder at the end of the path
+// Primerly used to provide a solution for stress testing environments to
+// prevent colission of files and folders.
+std::string OutputPathWithRandomDirectory();
+
 // Generates an empty file with a unique name in the specified directory and
 // returns the file name and path.
 // TODO(titovartem) rename to TempFile and next method to TempFilename

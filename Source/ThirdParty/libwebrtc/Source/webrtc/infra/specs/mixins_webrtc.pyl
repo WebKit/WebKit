@@ -14,20 +14,6 @@
       },
     },
   },
-  'baremetal-pool': {
-    'swarming': {
-      'dimensions': {
-        'pool': 'WebRTC-baremetal',
-      },
-    },
-  },
-  'baremetal-try-pool': {
-    'swarming': {
-      'dimensions': {
-        'pool': 'WebRTC-baremetal-try',
-      },
-    },
-  },
   'cores-12': {
     'swarming': {
       'dimensions': {
@@ -52,10 +38,10 @@
       '--test-arg=--undefok=test_launcher_summary_output'
     ],
   },
-  'ios-device-16.6': {
+  'ios-device-16.7': {
     'swarming': {
       'dimensions': {
-        'os': 'iOS-16.6',
+        'os': 'iOS-16.7.1',
         'pool': 'chrome.tests',
         'device_status': 'available'
       }
@@ -72,19 +58,11 @@
       },
     },
   },
-  'ios_runtime_cache_14_5': {
+  'ios_runtime_cache_15_5': {
     'swarming': {
       'named_caches': [{
-        'name': 'runtime_ios_14_5',
-        'path': 'Runtime-ios-14.5'
-      }]
-    }
-  },
-  'ios_runtime_cache_16_2': {
-    'swarming': {
-      'named_caches': [{
-        'name': 'runtime_ios_16_2',
-        'path': 'Runtime-ios-16.2'
+        'name': 'runtime_ios_15_5',
+        'path': 'Runtime-ios-15.5'
       }]
     }
   },
@@ -221,18 +199,12 @@
       '--xctest',
     ],
   },
-  'xcode_13_main': {
-    'args': ['--xcode-build-version', '13c100'],
-    'swarming': {
-      'named_caches': [{
-        'name': 'xcode_ios_13c100',
-        'path': 'Xcode.app'
-      }]
-    }
-  },
   'xcode_14_main': {
     'args': ['--xcode-build-version', '14c18'],
     'swarming': {
+      'dimensions': {
+        'caches': 'xcode_ios_14c18',
+      },
       'named_caches': [{
         'name': 'xcode_ios_14c18',
         'path': 'Xcode.app'

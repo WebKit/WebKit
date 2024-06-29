@@ -70,6 +70,8 @@ public:
     friend class WebSocketTask;
 
 private:
+    Ref<NetworkConnectionToWebProcess> protectedConnectionToWebProcess();
+
     void didConnect(const String& subprotocol, const String& extensions);
     void didReceiveText(const String&);
     void didReceiveBinaryData(std::span<const uint8_t>);
@@ -90,7 +92,7 @@ private:
 
     void finishClosingIfPossible();
 
-    NetworkConnectionToWebProcess& m_connectionToWebProcess;
+    WeakRef<NetworkConnectionToWebProcess> m_connectionToWebProcess;
     WebCore::WebSocketIdentifier m_identifier;
     WeakPtr<NetworkSession> m_session;
     std::unique_ptr<WebSocketTask> m_socket;

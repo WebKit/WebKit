@@ -59,6 +59,8 @@ public:
     size_t length() const { return hasDetachedChannelBuffer() ? 0 : m_originalLength; }
     double duration() const { return length() / static_cast<double>(sampleRate()); }
 
+    void markBuffersAsNonDetachable();
+
     // Channel data access
     unsigned numberOfChannels() const { return m_channels.size(); }
     ExceptionOr<JSC::JSValue> getChannelData(JSDOMGlobalObject&, unsigned channelIndex);
@@ -86,7 +88,8 @@ public:
     
     bool topologyMatches(const AudioBuffer&) const;
 
-    void setNeedsAdditionalNoise() { m_needsAdditionalNoise = true; }
+    void increaseNoiseInjectionMultiplier(float amount = 0.001) { m_noiseInjectionMultiplier += amount; }
+    float noiseInjectionMultiplier() const { return m_noiseInjectionMultiplier; }
 
 private:
     AudioBuffer(unsigned numberOfChannels, size_t length, float sampleRate, LegacyPreventDetaching = LegacyPreventDetaching::No);
@@ -109,7 +112,7 @@ private:
     FixedVector<JSValueInWrappedObject> m_channelWrappers;
     bool m_isDetachable { true };
     mutable Lock m_channelsLock;
-    bool m_needsAdditionalNoise { false };
+    float m_noiseInjectionMultiplier { 0 };
 };
 
 WebCoreOpaqueRoot root(AudioBuffer*);

@@ -93,7 +93,7 @@ ANGLE_INLINE bool operator==(const ContentsObserver &lhs, const ContentsObserver
     return lhs.bufferIndex == rhs.bufferIndex && lhs.observer == rhs.observer;
 }
 
-class Buffer final : public RefCountObject<BufferID>,
+class Buffer final : public ThreadSafeRefCountObject<BufferID>,
                      public LabeledObject,
                      public angle::ObserverInterface,
                      public angle::Subject

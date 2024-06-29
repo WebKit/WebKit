@@ -1,4 +1,4 @@
 
-FAIL navigate() navigates same-document and fires onnavigate (async) assert_true: expected true got false
+PASS navigate() navigates same-document and fires onnavigate (async)
 PASS navigate() navigates same-document and fires onnavigate (sync)
 

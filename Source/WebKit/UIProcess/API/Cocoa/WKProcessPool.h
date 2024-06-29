@@ -33,6 +33,7 @@
  implementation-defined process limit is reached; after that, web views
  with the same process pool end up sharing web content processes.
  */
+WK_SWIFT_UI_ACTOR
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKProcessPool : NSObject <NSSecureCoding>
 @end

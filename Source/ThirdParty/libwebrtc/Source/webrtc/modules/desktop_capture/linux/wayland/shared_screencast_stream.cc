@@ -14,7 +14,6 @@
 #include <libdrm/drm_fourcc.h>
 #include <pipewire/pipewire.h>
 #include <spa/param/video/format-utils.h>
-#include <sys/mman.h>
 
 #include <vector>
 
@@ -41,33 +40,6 @@ constexpr int CursorMetaSize(int w, int h) {
 
 constexpr PipeWireVersion kDmaBufModifierMinVersion = {0, 3, 33};
 constexpr PipeWireVersion kDropSingleModifierMinVersion = {0, 3, 40};
-
-class ScopedBuf {
- public:
-  ScopedBuf() {}
-  ScopedBuf(uint8_t* map, int map_size, int fd)
-      : map_(map), map_size_(map_size), fd_(fd) {}
-  ~ScopedBuf() {
-    if (map_ != MAP_FAILED) {
-      munmap(map_, map_size_);
-    }
-  }
-
-  explicit operator bool() { return map_ != MAP_FAILED; }
-
-  void initialize(uint8_t* map, int map_size, int fd) {
-    map_ = map;
-    map_size_ = map_size;
-    fd_ = fd;
-  }
-
-  uint8_t* get() { return map_; }
-
- protected:
-  uint8_t* map_ = static_cast<uint8_t*>(MAP_FAILED);
-  int map_size_;
-  int fd_;
-};
 
 class SharedScreenCastStreamPrivate {
  public:

@@ -20,11 +20,11 @@
 
 #pragma once
 
-#include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
-#include <utility>
 #include <memory>
 #include <type_traits>
+#include <utility>
+#include <wtf/RefPtr.h>
+#include <wtf/UniqueRef.h>
 
 namespace WTF {
 
@@ -70,6 +70,7 @@ namespace WTF {
 
     template<typename P> struct VectorTraits<RefPtr<P>> : SimpleClassVectorTraits { };
     template<typename P> struct VectorTraits<std::unique_ptr<P>> : SimpleClassVectorTraits { };
+    template<typename P> struct VectorTraits<UniqueRef<P>> : SimpleClassVectorTraits { };
     template<typename P> struct VectorTraits<std::reference_wrapper<P>> : SimpleClassVectorTraits { };
     template<typename P> struct VectorTraits<Ref<P>> : SimpleClassVectorTraits { };
     template<> struct VectorTraits<AtomString> : SimpleClassVectorTraits { };

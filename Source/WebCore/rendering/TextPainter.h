@@ -66,7 +66,7 @@ public:
         if (!TextPainter::shouldUseGlyphDisplayList(paintInfo))
             const_cast<LayoutRun&>(run).removeFromGlyphDisplayListCache();
         else
-            m_glyphDisplayList = GlyphDisplayListCache::singleton().get(run, m_font, m_context, textRun);
+            m_glyphDisplayList = GlyphDisplayListCache::singleton().get(run, m_font, m_context, textRun, paintInfo);
     }
 
     static bool shouldUseGlyphDisplayList(const PaintInfo&);

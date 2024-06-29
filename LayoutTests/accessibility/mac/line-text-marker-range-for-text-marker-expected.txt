@@ -1,0 +1,8 @@
+This tests that when there are <br> elements with contenteditable=false in a contenteditable text area, we can get the correct range for a line.
+
+PASS: rangeStr === "First line of text"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

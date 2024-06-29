@@ -186,3 +186,34 @@ fn((t) => {
 
   t.expectCompileResult(expr.result, wgsl);
 });
+
+const kLHSExpressions = {
+  deref_invalid1: { expr: `*p.b`, result: false },
+  deref_invalid2: { expr: `*p.a[0]`, result: false },
+  deref_valid1: { expr: `(*p).b`, result: true },
+  deref_valid2: { expr: `(*p).a[2]`, result: true },
+  addr_valid1: { expr: `*&v.b`, result: true },
+  addr_valid2: { expr: `(*&v).b`, result: true },
+  addr_valid3: { expr: `*&(v.b)`, result: true }
+};
+
+g.test('other_lhs').
+desc('Test precedence of * and [] in LHS').
+params((u) => u.combine('expr', keysOf(kLHSExpressions))).
+fn((t) => {
+  const expr = kLHSExpressions[t.params.expr];
+  const code = `
+    struct S {
+      a : array<i32, 4>,
+      b : i32,
+    }
+    fn main() {
+      var v : S;
+      let p = &v;
+      let q = &v.a;
+
+      ${expr.expr} = 1i;
+    }`;
+
+  t.expectCompileResult(expr.result, code);
+});

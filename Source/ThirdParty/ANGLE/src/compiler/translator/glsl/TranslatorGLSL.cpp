@@ -256,6 +256,7 @@ void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root,
 {
     bool usesTextureCubeMapArray = false;
     bool usesTextureBuffer       = false;
+    bool usesGPUShader5          = false;
 
     TInfoSinkBase &sink                   = getInfoSink().obj;
     const TExtensionBehavior &extBehavior = getExtensionBehavior();
@@ -339,6 +340,13 @@ void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root,
         {
             usesTextureBuffer = true;
         }
+
+        if ((iter.first == TExtension::OES_gpu_shader5 ||
+             iter.first == TExtension::EXT_gpu_shader5) &&
+            (iter.second == EBhRequire || iter.second == EBhEnable))
+        {
+            usesGPUShader5 = true;
+        }
     }
 
     // GLSL ES 3 explicit location qualifiers need to use an extension before GLSL 330
@@ -349,15 +357,24 @@ void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root,
     }
 
     // Need to enable gpu_shader5 to have index constant sampler array indexing
-    if (getOutputType() != SH_ESSL_OUTPUT && getOutputType() < SH_GLSL_400_CORE_OUTPUT &&
-        getShaderVersion() == 100)
+    if (usesGPUShader5)
     {
-        // Don't use "require" on to avoid breaking WebGL 1 on drivers that silently
-        // support index constant sampler array indexing, but don't have the extension or
-        // on drivers that don't have the extension at all as it would break WebGL 1 for
-        // some users.
-        sink << "#extension GL_ARB_gpu_shader5 : enable\n";
-        sink << "#extension GL_EXT_gpu_shader5 : enable\n";
+        if (getOutputType() >= SH_GLSL_COMPATIBILITY_OUTPUT &&
+            getOutputType() < SH_GLSL_400_CORE_OUTPUT && getShaderVersion() == 100)
+        {
+            // Don't use "require" on to avoid breaking WebGL 1 on drivers that silently
+            // support index constant sampler array indexing, but don't have the extension or
+            // on drivers that don't have the extension at all as it would break WebGL 1 for
+            // some users.
+            sink << "#extension GL_ARB_gpu_shader5 : enable\n";
+            sink << "#extension GL_OES_gpu_shader5 : enable\n";
+            sink << "#extension GL_EXT_gpu_shader5 : enable\n";
+        }
+        else if (getOutputType() == SH_ESSL_OUTPUT && getShaderVersion() < 320)
+        {
+            sink << "#extension GL_OES_gpu_shader5 : enable\n";
+            sink << "#extension GL_EXT_gpu_shader5 : enable\n";
+        }
     }
 
     if (usesTextureCubeMapArray)

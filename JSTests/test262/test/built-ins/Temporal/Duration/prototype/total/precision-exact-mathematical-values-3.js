@@ -25,7 +25,7 @@ info: |
     12. If _unit_ is *"week"*, then
       ...
       s. Let _fractionalWeeks_ be _weeks_ + _fractionalDays_ / abs(_oneWeekDays_).
-includes: [compareArray.js]
+includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
@@ -68,51 +68,48 @@ function f64Repr(f) {
 
 // ============
 
-const tz = new (class extends Temporal.TimeZone {
-  getPossibleInstantsFor() {
-    // Called in NormalizedTimeDurationToDays 19 from RoundDuration 7.b.
-    // Sets _result_.[[DayLength]] to 2⁵³ - 1 ns, its largest possible value
-    return [new Temporal.Instant(-86400_0000_0000_000_000_000n + 2n ** 53n - 1n)];
-  }
-})("UTC");
+function createTimeZone() {
+  const tz = new Temporal.TimeZone("UTC");
+  TemporalHelpers.substituteMethod(tz, "getPossibleInstantsFor", [
+    TemporalHelpers.SUBSTITUTE_SKIP,
+    [new Temporal.Instant(-86400_0000_0000_000_000_000n)],
+    [new Temporal.Instant(86400_0000_0000_000_000_000n - 100_000_000n)],
+  ]);
+  return tz;
+}
 
-const cal = new (class extends Temporal.Calendar {
-  dateAdd() {
-    // Called in MoveRelativeDate from RoundDuration 10.x, 11.x, or 12.q.
-    // Sets _oneYearDays_, _oneMonthDays_, or _oneWeekDays_ respectively to
-    // 200_000_000, its largest possible value.
-    return new Temporal.PlainDate(275760, 9, 13);
-  }
-})("iso8601");
+function createRelativeTo() {
+  return new Temporal.ZonedDateTime(-86400_0000_0000_000_000_000n, createTimeZone());
+}
 
-const relativeTo = new Temporal.ZonedDateTime(-86400_0000_0000_000_000_000n, tz, cal);
 const d = new Temporal.Duration(0, 0, 0, 0, 0, 0, 0, 0, 0, /* nanoseconds = */ 1);
 
-/*
- * RoundDuration step 7:
- *   ii. result = { [[Days]] = 0, [[Remainder]] = normalized time duration of 1 ns,
- *     [[DayLength]] = Number.MAX_SAFE_INTEGER }
- *   iii. fractionalDays = 0 + 0 + 1 / Number.MAX_SAFE_INTEGER
- * step 10:
- *   y. oneYearDays = 200_000_000
- *   z. fractionalYears = 0 + (1 / Number.MAX_SAFE_INTEGER) / 200_000_000
- */
+// NS_MAX_INSTANT = 86400 × 1e8 × 1e9
+// startEpochNs = -NS_MAX_INSTANT
+// destEpochNs = -NS_MAX_INSTANT + 1
+// endEpochNs = NS_MAX_INSTANT - 1e8
+// progress = (destEpochNs - startEpochNs) / (endEpochNs - startEpochNs)
+//   = 1 / (2 × NS_MAX_INSTANT - 1e8)
+// total = startDuration.years + progress = 0 + 1 / (2 × NS_MAX_INSTANT - 1e8)
+//
 // Calculated with Python's Decimal module to 50 decimal places
-const expected = 5.55111512312578_3318415740544369642963189519987393e-25;
+const expected = 5.7870370370370_705268347050756396228860247432848547e-23;
+// This is float 5.7870370370370_6998177e-23
+// Note: if calculated using floating point arithmetic, this will give the less
+// precise value 5.7870370370370_7115726e-23
 
 // Check that we are not accidentally losing precision in our expected value:
-
-assert.sameValue(expected, 5.55111512312578_373662e-25, "the float representation of the result is 5.55111512312578373662e-25");
+assert.sameValue(expected, 5.7870370370370_6998177e-23, "the float representation of the result is 5.7870370370370_6998177e-23");
 assert.compareArray(
   f64Repr(expected),
-  [0x3a, 0xe5, 0x79, 0x8e, 0xe2, 0x30, 0x8c, 0x3b],
-  "the bit representation of the result is 0x3ae5798ee2308c3b"
+  [0x3b, 0x51, 0x7d, 0x80, 0xc6, 0xf1, 0x14, 0xa8],
+  "the bit representation of the result is 0x3b517d80c6f114a8"
 );
 // The next Number in direction -Infinity is less precise.
-assert.sameValue(nextDown(expected), 5.55111512312578_281826e-25, "the next Number in direction -Infinity is less precise");
+assert.sameValue(nextDown(expected), 5.7870370370370_6880628e-23, "the next Number in direction -Infinity is less precise");
 // The next Number in direction +Infinity is less precise.
-assert.sameValue(nextUp(expected), 5.55111512312578_465497e-25, "the next Number in direction +Infinity is less precise");
+assert.sameValue(nextUp(expected), 5.7870370370370_7115727e-23, "the next Number in direction +Infinity is less precise");
 
-assert.sameValue(d.total({ unit: "years", relativeTo }), expected, "Correct division by large number in years total");
-assert.sameValue(d.total({ unit: "months", relativeTo }), expected, "Correct division by large number in months total");
-assert.sameValue(d.total({ unit: "weeks", relativeTo }), expected, "Correct division by large number in weeks total");
+assert.sameValue(d.total({ unit: "years", relativeTo: createRelativeTo() }), expected, "Correct division by large number in years total");
+assert.sameValue(d.total({ unit: "months", relativeTo: createRelativeTo() }), expected, "Correct division by large number in months total");
+assert.sameValue(d.total({ unit: "weeks", relativeTo: createRelativeTo() }), expected, "Correct division by large number in weeks total");

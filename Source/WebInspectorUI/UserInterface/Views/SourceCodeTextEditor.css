@@ -151,6 +151,7 @@
     padding-top: 2px;
     border-top: 1px solid var(--text-color-quaternary);
     overflow: auto;
+    display: flex;
 }
 
 .popover .debugger-popover-content.function > .body {

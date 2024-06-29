@@ -29,6 +29,7 @@ rtc_library("rtp_rtcp_format") {
     "source/rtcp_packet/bye.h",
     "source/rtcp_packet/common_header.h",
     "source/rtcp_packet/compound_packet.h",
+    "source/rtcp_packet/congestion_control_feedback.h",
     "source/rtcp_packet/dlrr.h",
     "source/rtcp_packet/extended_reports.h",
     "source/rtcp_packet/fir.h",
@@ -68,6 +69,7 @@ rtc_library("rtp_rtcp_format") {
     "source/rtcp_packet/bye.cc",
     "source/rtcp_packet/common_header.cc",
     "source/rtcp_packet/compound_packet.cc",
+    "source/rtcp_packet/congestion_control_feedback.cc",
     "source/rtcp_packet/dlrr.cc",
     "source/rtcp_packet/extended_reports.cc",
     "source/rtcp_packet/fir.cc",
@@ -133,6 +135,7 @@ rtc_library("rtp_rtcp_format") {
     "../../rtc_base:macromagic",
     "../../rtc_base:safe_conversions",
     "../../rtc_base:stringutils",
+    "../../rtc_base/network:ecn_marking",
     "../../system_wrappers",
     "../video_coding:codec_globals_headers",
   ]
@@ -209,6 +212,7 @@ rtc_library("rtp_rtcp") {
     "source/rtp_header_extension_size.h",
     "source/rtp_packet_history.cc",
     "source/rtp_packet_history.h",
+    "source/rtp_packet_send_info.cc",
     "source/rtp_packetizer_av1.cc",
     "source/rtp_packetizer_av1.h",
     "source/rtp_rtcp_config.h",
@@ -258,6 +262,16 @@ rtc_library("rtp_rtcp") {
     "source/video_rtp_depacketizer_vp9.h",
   ]
 
+  if (rtc_use_h265) {
+    sources += [
+      "source/rtp_packet_h265_common.h",
+      "source/rtp_packetizer_h265.cc",
+      "source/rtp_packetizer_h265.h",
+      "source/video_rtp_depacketizer_h265.cc",
+      "source/video_rtp_depacketizer_h265.h",
+    ]
+  }
+
   if (rtc_enable_bwe_test_logging) {
     defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=1" ]
   } else {
@@ -285,6 +299,7 @@ rtc_library("rtp_rtcp") {
     "../../api/rtc_event_log",
     "../../api/task_queue:pending_task_safety_flag",
     "../../api/task_queue:task_queue",
+    "../../api/transport:field_trial_based_config",
     "../../api/transport/rtp:dependency_descriptor",
     "../../api/transport/rtp:rtp_source",
     "../../api/units:data_rate",
@@ -563,6 +578,7 @@ if (rtc_include_tests) {
       "source/rtcp_packet/bye_unittest.cc",
       "source/rtcp_packet/common_header_unittest.cc",
       "source/rtcp_packet/compound_packet_unittest.cc",
+      "source/rtcp_packet/congestion_control_feedback_unittest.cc",
       "source/rtcp_packet/dlrr_unittest.cc",
       "source/rtcp_packet/extended_reports_unittest.cc",
       "source/rtcp_packet/fir_unittest.cc",
@@ -599,6 +615,7 @@ if (rtc_include_tests) {
       "source/rtp_header_extension_map_unittest.cc",
       "source/rtp_header_extension_size_unittest.cc",
       "source/rtp_packet_history_unittest.cc",
+      "source/rtp_packet_send_info_unittest.cc",
       "source/rtp_packet_unittest.cc",
       "source/rtp_packetizer_av1_unittest.cc",
       "source/rtp_rtcp_impl2_unittest.cc",
@@ -624,6 +641,13 @@ if (rtc_include_tests) {
       "source/video_rtp_depacketizer_vp8_unittest.cc",
       "source/video_rtp_depacketizer_vp9_unittest.cc",
     ]
+    if (rtc_use_h265) {
+      sources += [
+        "source/rtp_packetizer_h265_unittest.cc",
+        "source/video_rtp_depacketizer_h265_unittest.cc",
+      ]
+    }
+
     deps = [
       ":fec_test_helper",
       ":frame_transformer_factory_unittest",
@@ -641,6 +665,7 @@ if (rtc_include_tests) {
       "../../api:frame_transformer_factory",
       "../../api:make_ref_counted",
       "../../api:mock_frame_encryptor",
+      "../../api:mock_frame_transformer",
       "../../api:mock_transformable_video_frame",
       "../../api:rtp_headers",
       "../../api:rtp_packet_info",
@@ -685,12 +710,13 @@ if (rtc_include_tests) {
       "../../rtc_base:task_queue_for_test",
       "../../rtc_base:threading",
       "../../rtc_base:timeutils",
+      "../../rtc_base/network:ecn_marking",
       "../../system_wrappers",
       "../../test:explicit_key_value_config",
-      "../../test:mock_frame_transformer",
       "../../test:mock_transport",
       "../../test:rtp_test_utils",
       "../../test:run_loop",
+      "../../test:scoped_key_value_config",
       "../../test:test_support",
       "../../test/time_controller:time_controller",
       "../video_coding:codec_globals_headers",
@@ -709,13 +735,13 @@ if (rtc_include_tests) {
     sources = [ "source/frame_transformer_factory_unittest.cc" ]
     deps = [
       "../../api:frame_transformer_factory",
+      "../../api:mock_frame_transformer",
       "../../api:mock_transformable_audio_frame",
       "../../api:mock_transformable_video_frame",
       "../../api:transport_api",
       "../../call:video_stream_api",
       "../../modules/rtp_rtcp",
       "../../rtc_base:rtc_event",
-      "../../test:mock_frame_transformer",
       "../../test:test_support",
       "../../video",
     ]

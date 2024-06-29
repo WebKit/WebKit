@@ -416,6 +416,9 @@ protected:
     Chrome* chrome() const;
     Decimal parseToNumberOrNaN(const String&) const;
 
+    // Derive the step base, following the HTML algorithm steps.
+    Decimal findStepBase(const Decimal&) const;
+
 private:
     // Helper for stepUp()/stepDown(). Adds step value * count to the current value.
     ExceptionOr<void> applyStep(int count, AnyStepHandling, TextFieldEventBehavior);

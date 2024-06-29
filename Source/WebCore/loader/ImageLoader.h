@@ -104,7 +104,7 @@ public:
 
 protected:
     explicit ImageLoader(Element&);
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No) override;
 
 private:
     void resetLazyImageLoading(Document&);

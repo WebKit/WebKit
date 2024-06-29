@@ -67,7 +67,7 @@ class FakeClockForTest : public rtc::ScopedFakeClock {
     // Some things use a time of "0" as a special value, so we need to start out
     // the fake clock at a nonzero time.
     // TODO(deadbeef): Fix this.
-    AdvanceTime(webrtc::TimeDelta::Seconds(1000));
+    AdvanceTime(TimeDelta::Seconds(1000));
   }
 
   // Explicit handle.
@@ -170,20 +170,20 @@ TEST_P(PeerConnectionIntegrationTest,
   CreateTurnServer(turn_server_internal_address, turn_server_external_address,
                    cricket::PROTO_TLS, "88.88.88.0");
 
-  webrtc::PeerConnectionInterface::IceServer ice_server;
+  PeerConnectionInterface::IceServer ice_server;
   ice_server.urls.push_back("turns:88.88.88.0:3478?transport=tcp");
   ice_server.username = "test";
   ice_server.password = "test";
 
   PeerConnectionInterface::RTCConfiguration client_1_config;
   client_1_config.servers.push_back(ice_server);
-  client_1_config.type = webrtc::PeerConnectionInterface::kRelay;
+  client_1_config.type = PeerConnectionInterface::kRelay;
 
   PeerConnectionInterface::RTCConfiguration client_2_config;
   client_2_config.servers.push_back(ice_server);
   // Setting the type to kRelay forces the connection to go through a TURN
   // server.
-  client_2_config.type = webrtc::PeerConnectionInterface::kRelay;
+  client_2_config.type = PeerConnectionInterface::kRelay;
 
   // Get a copy to the pointer so we can verify calls later.
   rtc::TestCertificateVerifier* client_1_cert_verifier =
@@ -194,10 +194,10 @@ TEST_P(PeerConnectionIntegrationTest,
   client_2_cert_verifier->verify_certificate_ = false;
 
   // Create the dependencies with the test certificate verifier.
-  webrtc::PeerConnectionDependencies client_1_deps(nullptr);
+  PeerConnectionDependencies client_1_deps(nullptr);
   client_1_deps.tls_cert_verifier =
       std::unique_ptr<rtc::TestCertificateVerifier>(client_1_cert_verifier);
-  webrtc::PeerConnectionDependencies client_2_deps(nullptr);
+  PeerConnectionDependencies client_2_deps(nullptr);
   client_2_deps.tls_cert_verifier =
       std::unique_ptr<rtc::TestCertificateVerifier>(client_2_cert_verifier);
 
@@ -262,8 +262,8 @@ class PeerConnectionIntegrationIceStatesTest
   }
 
   void StartStunServer(const SocketAddress& server_address) {
-    stun_server_.reset(
-        cricket::TestStunServer::Create(firewall(), server_address));
+    stun_server_ = cricket::TestStunServer::Create(firewall(), server_address,
+                                                   *network_thread());
   }
 
   bool TestIPv6() {
@@ -309,7 +309,7 @@ class PeerConnectionIntegrationIceStatesTest
 
  private:
   uint32_t port_allocator_flags_;
-  std::unique_ptr<cricket::TestStunServer> stun_server_;
+  cricket::TestStunServer::StunServerPtr stun_server_;
 };
 
 // Ensure FakeClockForTest is constructed first (see class for rationale).

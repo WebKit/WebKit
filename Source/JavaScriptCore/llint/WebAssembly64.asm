@@ -155,11 +155,7 @@ end)
 
 wasmOp(i32_div_s, WasmI32DivS, macro (ctx)
     const dividend = t0
-    if X86_64_WIN
-        const divisor = t2
-    else
-        const divisor = t1
-    end
+    const divisor = t1
 
     mloadi(ctx, m_lhs, dividend)
     mloadi(ctx, m_rhs, divisor)
@@ -192,13 +188,8 @@ end)
 
 wasmOp(i32_div_u, WasmI32DivU, macro (ctx)
     const dividend = t0
-    if X86_64_WIN
-        const divisor = t2
-        const r_rdx = t1
-    else
-        const divisor = t1
-        const r_rdx = t2
-    end
+    const divisor = t1
+    const r_rdx = t2
 
     mloadi(ctx, m_lhs, dividend)
     mloadi(ctx, m_rhs, divisor)
@@ -221,13 +212,8 @@ end)
 
 wasmOp(i32_rem_s, WasmI32RemS, macro (ctx)
     const dividend = t0
-    if X86_64_WIN
-        const divisor = t2
-        const r_rdx = t1
-    else
-        const divisor = t1
-        const r_rdx = t2
-    end
+    const divisor = t1
+    const r_rdx = t2
 
     mloadi(ctx, m_lhs, dividend)
     mloadi(ctx, m_rhs, divisor)
@@ -265,13 +251,8 @@ end)
 
 wasmOp(i32_rem_u, WasmI32RemU, macro (ctx)
     const dividend = t0
-    if X86_64_WIN
-        const divisor = t2
-        const r_rdx = t1
-    else
-        const divisor = t1
-        const r_rdx = t2
-    end
+    const divisor = t1
+    const r_rdx = t2
 
     mloadi(ctx, m_lhs, dividend)
     mloadi(ctx, m_rhs, divisor)
@@ -322,11 +303,7 @@ end)
 
 wasmOp(i64_div_s, WasmI64DivS, macro (ctx)
     const dividend = t0
-    if X86_64_WIN
-        const divisor = t2
-    else
-        const divisor = t1
-    end
+    const divisor = t1
 
     mloadq(ctx, m_lhs, dividend)
     mloadq(ctx, m_rhs, divisor)
@@ -358,13 +335,8 @@ end)
 
 wasmOp(i64_div_u, WasmI64DivU, macro (ctx)
     const dividend = t0
-    if X86_64_WIN
-        const divisor = t2
-        const r_rdx = t1
-    else
-        const divisor = t1
-        const r_rdx = t2
-    end
+    const divisor = t1
+    const r_rdx = t2
 
     mloadq(ctx, m_lhs, dividend)
     mloadq(ctx, m_rhs, divisor)
@@ -387,13 +359,8 @@ end)
 
 wasmOp(i64_rem_s, WasmI64RemS, macro (ctx)
     const dividend = t0
-    if X86_64_WIN
-        const divisor = t2
-        const r_rdx = t1
-    else
-        const divisor = t1
-        const r_rdx = t2
-    end
+    const divisor = t1
+    const r_rdx = t2
 
     mloadq(ctx, m_lhs, dividend)
     mloadq(ctx, m_rhs, divisor)
@@ -431,13 +398,8 @@ end)
 
 wasmOp(i64_rem_u, WasmI64RemU, macro (ctx)
     const dividend = t0
-    if X86_64_WIN
-        const divisor = t2
-        const r_rdx = t1
-    else
-        const divisor = t1
-        const r_rdx = t2
-    end
+    const divisor = t1
+    const r_rdx = t2
 
     mloadq(ctx, m_lhs, dividend)
     mloadq(ctx, m_rhs, divisor)

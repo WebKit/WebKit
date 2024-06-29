@@ -61,7 +61,7 @@ class Traverser : public TIntermTraverser
             return false;
         }
 
-        // TODO(anglebug.com/5557): Determine if we should check loops as well.
+        // TODO(anglebug.com/42264094): Determine if we should check loops as well.
         if (mBranchCount > 0)
         {
             mDiagnostics->error(

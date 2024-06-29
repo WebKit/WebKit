@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,11 +48,13 @@ enum class LineRangeType : uint8_t {
     Right,
 };
 
-struct TextMarkerData {
+struct TextMarkerData;
+
+struct RawTextMarkerData {
     unsigned treeID;
     unsigned objectID;
 
-    Node* node; // FIXME: This should use a smart pointer.
+    Node* node;
     unsigned offset;
     Position::AnchorType anchorType;
     Affinity affinity;
@@ -61,15 +63,15 @@ struct TextMarkerData {
     unsigned characterOffset;
     bool ignored;
 
-    // Constructors of TextMarkerData must zero the struct's block of memory because platform client code may rely on a byte-comparison to determine instances equality.
+    // Constructors of RawTextMarkerData must zero the struct's block of memory because platform client code may rely on a byte-comparison to determine instances equality.
     // Members initialization alone is not enough to guaranty that all bytes in the struct memeory are initialized, and may cause random inequalities when doing byte-comparisons.
-    // For an exampel of such byte-comparison, see the TestRunner WTR::AccessibilityTextMarker::isEqual.
-    TextMarkerData()
+    // For an example of such byte-comparison, see the TestRunner WTR::AccessibilityTextMarker::isEqual.
+    RawTextMarkerData()
     {
         memset(static_cast<void*>(this), 0, sizeof(*this));
     }
 
-    TextMarkerData(AXID axTreeID, AXID axObjectID,
+    RawTextMarkerData(AXID axTreeID, AXID axObjectID,
         Node* nodeParam = nullptr, unsigned offsetParam = 0,
         Position::AnchorType anchorTypeParam = Position::PositionIsOffsetInAnchor,
         Affinity affinityParam = Affinity::Downstream,
@@ -87,21 +89,47 @@ struct TextMarkerData {
         ignored = ignoredParam;
     }
 
+    TextMarkerData toTextMarkerData() const;
+};
+
+// Safer version of RawTextMarkerData with a WeakPtr for Node.
+// RawTextMarkerData uses a raw pointer for Node because it is
+// used with memset / memcmp.
+struct TextMarkerData {
+    AXID treeID;
+    AXID objectID;
+
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> node;
+    unsigned offset { 0 };
+    Position::AnchorType anchorType { Position::AnchorType::PositionIsOffsetInAnchor };
+    Affinity affinity { Affinity::Upstream };
+
+    unsigned characterStart { 0 };
+    unsigned characterOffset { 0 };
+    bool ignored { false };
+
+    TextMarkerData() = default;
     TextMarkerData(AXObjectCache&, Node*, const VisiblePosition&, int charStart = 0, int charOffset = 0, bool ignoredParam = false);
+    TextMarkerData(AXID treeID, AXID objectID, Node* node, unsigned offset, Position::AnchorType anchorType = Position::AnchorType::PositionIsOffsetInAnchor, Affinity affinity = Affinity::Upstream, unsigned characterStart = 0, unsigned characterOffset = 0, bool ignored = false)
+        : treeID(treeID)
+        , objectID(objectID)
+        , node(node)
+        , offset(offset)
+        , anchorType(anchorType)
+        , affinity(affinity)
+        , characterStart(characterStart)
+        , characterOffset(characterOffset)
+        , ignored(ignored)
+    { }
     TextMarkerData(AXObjectCache&, const CharacterOffset&, bool ignoredParam = false);
 
-    AXID axTreeID() const
-    {
-        return ObjectIdentifier<AXIDType>(treeID);
-    }
-
-    AXID axObjectID() const
-    {
-        return ObjectIdentifier<AXIDType>(objectID);
-    }
-private:
-    void initializeAXIDs(AXObjectCache&, Node*);
+    RawTextMarkerData toRawTextMarkerData() const;
 };
+
+inline RawTextMarkerData TextMarkerData::toRawTextMarkerData() const
+{
+    return { treeID, objectID, node.get(), offset, anchorType, affinity, characterStart, characterOffset, ignored };
+}
 
 #if PLATFORM(MAC)
 using PlatformTextMarkerData = AXTextMarkerRef;
@@ -122,7 +150,7 @@ public:
         : m_data(data)
     { }
     AXTextMarker(TextMarkerData&& data)
-        : m_data(data)
+        : m_data(WTFMove(data))
     { }
 #if PLATFORM(COCOA)
     AXTextMarker(PlatformTextMarkerData);
@@ -143,8 +171,8 @@ public:
     operator PlatformTextMarkerData() const { return platformData().autorelease(); }
 #endif
 
-    AXID treeID() const { return m_data.axTreeID(); }
-    AXID objectID() const { return m_data.axObjectID(); }
+    AXID treeID() const { return m_data.treeID; }
+    AXID objectID() const { return m_data.objectID; }
     unsigned offset() const { return m_data.offset; }
     bool isNull() const { return !treeID().isValid() || !objectID().isValid(); }
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -261,7 +289,7 @@ private:
 inline Node* AXTextMarker::node() const
 {
     ASSERT(isMainThread());
-    return m_data.node;
+    return m_data.node.get();
 }
 
 } // namespace WebCore

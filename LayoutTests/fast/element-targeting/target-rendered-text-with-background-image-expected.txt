@@ -1,0 +1,6 @@
+PASS text is "{320,240} This is an image of dice"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is an image of dice.
+This test requires WebKitTestRunner

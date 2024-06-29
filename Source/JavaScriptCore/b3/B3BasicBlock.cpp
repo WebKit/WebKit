@@ -47,9 +47,7 @@ BasicBlock::BasicBlock(unsigned index, double frequency)
 {
 }
 
-BasicBlock::~BasicBlock()
-{
-}
+BasicBlock::~BasicBlock() = default;
 
 void BasicBlock::append(Value* value)
 {

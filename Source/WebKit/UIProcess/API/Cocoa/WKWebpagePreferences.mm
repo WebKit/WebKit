@@ -35,6 +35,7 @@
 #import "WebProcessPool.h"
 #import "_WKCustomHeaderFieldsInternal.h"
 #import <WebCore/DocumentLoader.h>
+#import <WebCore/ElementTargetingTypes.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RetainPtr.h>
 
@@ -658,10 +659,10 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 
 - (void)_setVisibilityAdjustmentSelectorsIncludingShadowHosts:(NSArray<NSArray<NSSet<NSString *> *> *> *)elements
 {
-    Vector<Vector<HashSet<String>>> result;
+    Vector<WebCore::TargetedElementSelectors> result;
     result.reserveInitialCapacity(elements.count);
     for (NSArray<NSSet<NSString *> *> *nsSelectorsForElement in elements) {
-        Vector<HashSet<String>> selectorsForElement;
+        WebCore::TargetedElementSelectors selectorsForElement;
         selectorsForElement.reserveInitialCapacity(nsSelectorsForElement.count);
         for (NSSet<NSString *> *nsSelectors in nsSelectorsForElement) {
             HashSet<String> selectors;

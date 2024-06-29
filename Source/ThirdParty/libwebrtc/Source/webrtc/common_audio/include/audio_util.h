@@ -94,6 +94,7 @@ inline float FloatS16ToDbfs(float v) {
 // Copy audio from `src` channels to `dest` channels unless `src` and `dest`
 // point to the same address. `src` and `dest` must have the same number of
 // channels, and there must be sufficient space allocated in `dest`.
+// TODO: b/335805780 - Accept ArrayView.
 template <typename T>
 void CopyAudioIfNeeded(const T* const* src,
                        int num_frames,
@@ -110,6 +111,7 @@ void CopyAudioIfNeeded(const T* const* src,
 // by `deinterleaved`. There must be sufficient space allocated in the
 // `deinterleaved` buffers (`num_channel` buffers with `samples_per_channel`
 // per buffer).
+// TODO: b/335805780 - Accept ArrayView.
 template <typename T>
 void Deinterleave(const T* interleaved,
                   size_t samples_per_channel,
@@ -128,6 +130,7 @@ void Deinterleave(const T* interleaved,
 // Interleave audio from the channel buffers pointed to by `deinterleaved` to
 // `interleaved`. There must be sufficient space allocated in `interleaved`
 // (`samples_per_channel` * `num_channels`).
+// TODO: b/335805780 - Accept ArrayView.
 template <typename T>
 void Interleave(const T* const* deinterleaved,
                 size_t samples_per_channel,
@@ -146,6 +149,7 @@ void Interleave(const T* const* deinterleaved,
 // Copies audio from a single channel buffer pointed to by `mono` to each
 // channel of `interleaved`. There must be sufficient space allocated in
 // `interleaved` (`samples_per_channel` * `num_channels`).
+// TODO: b/335805780 - Accept ArrayView.
 template <typename T>
 void UpmixMonoToInterleaved(const T* mono,
                             int num_frames,
@@ -159,6 +163,7 @@ void UpmixMonoToInterleaved(const T* mono,
   }
 }
 
+// TODO: b/335805780 - Accept ArrayView.
 template <typename T, typename Intermediate>
 void DownmixToMono(const T* const* input_channels,
                    size_t num_frames,
@@ -175,6 +180,7 @@ void DownmixToMono(const T* const* input_channels,
 
 // Downmixes an interleaved multichannel signal to a single channel by averaging
 // all channels.
+// TODO: b/335805780 - Accept ArrayView.
 template <typename T, typename Intermediate>
 void DownmixInterleavedToMonoImpl(const T* interleaved,
                                   size_t num_frames,
@@ -197,12 +203,14 @@ void DownmixInterleavedToMonoImpl(const T* interleaved,
   }
 }
 
+// TODO: b/335805780 - Accept ArrayView.
 template <typename T>
 void DownmixInterleavedToMono(const T* interleaved,
                               size_t num_frames,
                               int num_channels,
                               T* deinterleaved);
 
+// TODO: b/335805780 - Accept ArrayView.
 template <>
 void DownmixInterleavedToMono<int16_t>(const int16_t* interleaved,
                                        size_t num_frames,

@@ -65,51 +65,30 @@ public:
     static constexpr bool exceedsOneByte(LChar) { return false; }
     static constexpr bool exceedsOneByte(UChar c) { return c > 0xff; }
 
-    template <typename T, typename U>
-    static inline T alignDown(T value, U alignment)
-    {
-        return reinterpret_cast<T>((reinterpret_cast<uintptr_t>(value) & ~(alignment - 1)));
-    }
-
-    static constexpr uint8_t getHighestValueByte(LChar character) { return character; }
-
-    static constexpr uint8_t getHighestValueByte(UChar character)
-    {
-        return std::max<unsigned>(static_cast<uint8_t>(character & 0xFF), static_cast<uint8_t>(character >> 8));
-    }
-
     template <typename PatternChar, typename SubjectChar>
     static inline int findFirstCharacter(std::span<const PatternChar> pattern, std::span<const SubjectChar> subject, int index)
     {
         const auto* subjectPtr = subject.data();
-        const PatternChar patternFirstChar = pattern[0];
-        const int maxN = (subject.size() - pattern.size() + 1);
+        PatternChar patternFirstChar = pattern[0];
 
-        if (sizeof(SubjectChar) == 2 && !patternFirstChar) {
-            // Special-case looking for the 0 char in other than one-byte strings.
-            // memchr mostly fails in this case due to every other byte being 0 in text
-            // that is mostly ascii characters.
-            for (int i = index; i < maxN; ++i) {
-                if (!subjectPtr[i])
-                    return i;
-            }
-            return -1;
-        }
-        const uint8_t searchByte = getHighestValueByte(patternFirstChar);
-        const SubjectChar searchChar = static_cast<SubjectChar>(patternFirstChar);
-        int pos = index;
-        do {
-            ASSERT(maxN - pos >= 0);
-            const SubjectChar* charPos = reinterpret_cast<const SubjectChar*>(memchr(subjectPtr + pos, searchByte, (maxN - pos) * sizeof(SubjectChar)));
-            if (charPos == nullptr)
+        if constexpr (sizeof(PatternChar) == 2 && sizeof(SubjectChar) == 1) {
+            if (!isLatin1(patternFirstChar))
                 return -1;
-            charPos = alignDown(charPos, sizeof(SubjectChar));
-            pos = static_cast<int>(charPos - subjectPtr);
-            if (subjectPtr[pos] == searchChar)
-                return pos;
-        } while (++pos < maxN);
+        }
 
-        return -1;
+        const int maxN = (subject.size() - pattern.size() + 1);
+        const SubjectChar searchCharacter = static_cast<SubjectChar>(patternFirstChar);
+        const auto* start = subjectPtr + index;
+        const auto searchLength = maxN - index;
+        const SubjectChar* charPos = nullptr;
+        ASSERT(maxN - index >= 0);
+        if constexpr (sizeof(SubjectChar) == 2)
+            charPos = bitwise_cast<const SubjectChar*>(find16(bitwise_cast<const uint16_t*>(start), searchCharacter, searchLength));
+        else
+            charPos = bitwise_cast<const SubjectChar*>(find8(bitwise_cast<const uint8_t*>(start), searchCharacter, searchLength));
+        if (charPos == nullptr)
+            return -1;
+        return static_cast<int>(charPos - subjectPtr);
     }
 };
 

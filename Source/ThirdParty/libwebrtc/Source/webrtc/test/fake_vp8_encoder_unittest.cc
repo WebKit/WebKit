@@ -27,15 +27,16 @@ namespace {
 
 std::unique_ptr<SimulcastTestFixture> CreateSpecificSimulcastTestFixture() {
   std::unique_ptr<VideoEncoderFactory> encoder_factory =
-      std::make_unique<FunctionVideoEncoderFactory>([]() {
-        return std::make_unique<FakeVp8Encoder>(Clock::GetRealTimeClock());
-      });
+      std::make_unique<FunctionVideoEncoderFactory>(
+          [](const Environment& env, const SdpVideoFormat& format) {
+            return std::make_unique<FakeVp8Encoder>(env);
+          });
   std::unique_ptr<VideoDecoderFactory> decoder_factory =
       std::make_unique<FunctionVideoDecoderFactory>(
           []() { return std::make_unique<FakeVp8Decoder>(); });
   return CreateSimulcastTestFixture(std::move(encoder_factory),
                                     std::move(decoder_factory),
-                                    SdpVideoFormat("VP8"));
+                                    SdpVideoFormat::VP8());
 }
 }  // namespace
 

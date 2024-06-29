@@ -43,7 +43,8 @@ public:
         WebGL,
         Video,
         OffscreenCanvas,
-        HolePunch
+        HolePunch,
+        Canvas
     };
 
     class Compositor {

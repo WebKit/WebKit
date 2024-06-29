@@ -68,7 +68,7 @@ public:
         using iterator_category = std::forward_iterator_tag;
         reference operator*() const { return *m_ptr; }
         pointer operator->() const { return m_ptr; }
-        bool operator!=(const const_iterator& other) const { return m_ptr != other.m_ptr; }
+        bool operator==(const const_iterator&) const = default;
         const_iterator() = default;
         const_iterator(pointer ptr) : m_ptr(ptr) { };
         const_iterator& operator++()
@@ -92,6 +92,7 @@ public:
     unsigned listSize() const;
 
     CSSSelectorList& operator=(CSSSelectorList&&) = default;
+
 private:
     // End of a multipart selector is indicated by m_isLastInTagHistory bit in the last item.
     // End of the array is indicated by m_isLastInSelectorList bit in the last item.

@@ -58,16 +58,16 @@ class IntRect;
 
 class IntPoint {
 public:
-    IntPoint() : m_x(0), m_y(0) { }
-    IntPoint(int x, int y) : m_x(x), m_y(y) { }
+    constexpr IntPoint() : m_x(0), m_y(0) { }
+    constexpr IntPoint(int x, int y) : m_x(x), m_y(y) { }
     explicit IntPoint(const IntSize& size) : m_x(size.width()), m_y(size.height()) { }
     WEBCORE_EXPORT explicit IntPoint(const FloatPoint&); // don't do this implicitly since it's lossy
 
-    static IntPoint zero() { return IntPoint(); }
-    bool isZero() const { return !m_x && !m_y; }
+    static constexpr IntPoint zero() { return IntPoint(); }
+    constexpr bool isZero() const { return !m_x && !m_y; }
 
-    int x() const { return m_x; }
-    int y() const { return m_y; }
+    constexpr int x() const { return m_x; }
+    constexpr int y() const { return m_y; }
 
     void setX(int x) { m_x = x; }
     void setY(int y) { m_y = y; }
@@ -86,7 +86,7 @@ public:
         this->scale(scale, scale);
     }
     
-    IntPoint expandedTo(const IntPoint& other) const
+    constexpr IntPoint expandedTo(const IntPoint& other) const
     {
         return {
             m_x > other.m_x ? m_x : other.m_x,
@@ -94,7 +94,7 @@ public:
         };
     }
 
-    IntPoint shrunkTo(const IntPoint& other) const
+    constexpr IntPoint shrunkTo(const IntPoint& other) const
     {
         return {
             m_x < other.m_x ? m_x : other.m_x,

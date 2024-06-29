@@ -505,13 +505,13 @@ TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
     using namespace TestWebKitAPI;
 
     unsigned serversConnected { 0 };
-    const char* header = "HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\n";
+    constexpr auto header = "HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\n"_s;
 
     HTTPServer httpsServer([&] (const Connection& connection) {
         serversConnected++;
         waitUntilTwoServersConnected(serversConnected, [=] {
             connection.receiveHTTPRequest([=](Vector<char>&&) {
-                connection.send(makeString(header, "<script>alert('1')</script>"));
+                connection.send(makeString(header, "<script>alert('1')</script>"_s));
             });
         });
     }, HTTPServer::Protocol::HttpsProxy);
@@ -520,7 +520,7 @@ TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
         serversConnected++;
         waitUntilTwoServersConnected(serversConnected, [=] {
             connection.receiveHTTPRequest([=](Vector<char>&&) {
-                connection.send(makeString(header, "<script>alert('2')</script>"));
+                connection.send(makeString(header, "<script>alert('2')</script>"_s));
             });
         });
     });
@@ -1155,7 +1155,7 @@ TEST(ResourceLoadStatistics, DataSummaryWithCachedProcess)
     [webView setNavigationDelegate:delegate.get()];
 
     for (unsigned i = 0; i < maxSuspendedPageCount + 1; i++) {
-        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:makeString("resource-load-statistics://www.domain-", i, ".com")]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:makeString("resource-load-statistics://www.domain-"_s, i, ".com"_s)]];
         [webView loadRequest:request];
         [delegate waitForDidFinishNavigation];
 
@@ -1164,7 +1164,7 @@ TEST(ResourceLoadStatistics, DataSummaryWithCachedProcess)
         EXPECT_FALSE([processPool _hasPrewarmedWebProcess]);
     }
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:makeString("resource-load-statistics://www.domain-", maxSuspendedPageCount + 1, ".com")]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:makeString("resource-load-statistics://www.domain-"_s, maxSuspendedPageCount + 1, ".com"_s)]];
     [webView loadRequest:request];
     [delegate waitForDidFinishNavigation];
 
@@ -1311,7 +1311,7 @@ TEST(ResourceLoadStatistics, MigrateDistinctDataFromTableWithMissingIndexes)
 
 static Vector<String> columnsForTable(WebCore::SQLiteDatabase& database, ASCIILiteral tableName)
 {
-    auto statement = database.prepareStatementSlow(makeString("PRAGMA table_info(", tableName, ")"));
+    auto statement = database.prepareStatementSlow(makeString("PRAGMA table_info("_s, tableName, ')'));
     EXPECT_NOT_NULL(statement);
 
     Vector<String> columns;

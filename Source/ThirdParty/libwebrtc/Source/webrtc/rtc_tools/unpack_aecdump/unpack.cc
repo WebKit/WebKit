@@ -29,13 +29,11 @@
 #include "common_audio/wav_file.h"
 #include "modules/audio_processing/test/protobuf_utils.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/ignore_wundef.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/system/arch.h"
 
-RTC_PUSH_IGNORING_WUNDEF()
+// Generated at build-time by the protobuf compiler.
 #include "modules/audio_processing/debug.pb.h"
-RTC_POP_IGNORING_WUNDEF()
 
 ABSL_FLAG(std::string,
           input_file,

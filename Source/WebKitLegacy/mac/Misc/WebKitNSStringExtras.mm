@@ -46,11 +46,11 @@ using namespace WebCore;
 
 #if PLATFORM(MAC)
 
-static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
+static bool canUseFastRenderer(std::span<const UniChar> buffer)
 {
-    for (unsigned i = 0; i < length; i++) {
-        if (!isLatin1(buffer[i])) {
-            auto direction = u_charDirection(buffer[i]);
+    for (auto character : buffer) {
+        if (!isLatin1(character)) {
+            auto direction = u_charDirection(character);
             if (direction == U_RIGHT_TO_LEFT || (direction > U_OTHER_NEUTRAL && direction != U_DIR_NON_SPACING_MARK && direction != U_BOUNDARY_NEUTRAL))
                 return false;
         }
@@ -67,9 +67,9 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
     Vector<UniChar, 2048> buffer(length);
     [self getCharacters:buffer.data()];
 
-    if (canUseFastRenderer(buffer.data(), length)) {
+    if (canUseFastRenderer(buffer)) {
         FontCascade webCoreFont(FontPlatformData((__bridge CTFontRef)font, [font pointSize]));
-        TextRun run(StringView(std::span { reinterpret_cast<const UChar*>(buffer.data()), length }));
+        TextRun run(StringView(spanReinterpretCast<const UChar>(std::span { buffer })));
 
         // The following is a half-assed attempt to match AppKit's rounding rules for drawAtPoint.
         // If you change it, be sure to test all the text drawn this way in Safari, including
@@ -107,9 +107,9 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
     Vector<UniChar, 2048> buffer(length);
     [self getCharacters:buffer.data()];
 
-    if (canUseFastRenderer(buffer.data(), length)) {
+    if (canUseFastRenderer(buffer)) {
         FontCascade webCoreFont(FontPlatformData((__bridge CTFontRef)font, [font pointSize]));
-        TextRun run(StringView(std::span { reinterpret_cast<const UChar*>(buffer.data()), length }));
+        TextRun run(StringView(spanReinterpretCast<const UChar>(std::span { buffer })));
         return webCoreFont.width(run);
     }
 

@@ -83,7 +83,7 @@ NSDictionary *WebPushMessage::toDictionary() const
 {
     RetainPtr<NSData> nsData;
     if (pushData)
-        nsData = nsData = adoptNS([[NSData alloc] initWithBytes:pushData->data() length:pushData->size()]);
+        nsData = nsData = toNSData(pushData->span());
 
     NSDictionary *nsPayload = nil;
 #if ENABLE(DECLARATIVE_WEB_PUSH)

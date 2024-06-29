@@ -35,6 +35,7 @@
 namespace WebKit {
 
 class WebPageProxy;
+class WebProcessProxy;
 
 class GeolocationPermissionRequestManagerProxy {
 public:
@@ -43,7 +44,7 @@ public:
     void invalidateRequests();
 
     // Create a request to be presented to the user.
-    Ref<GeolocationPermissionRequestProxy> createRequest(GeolocationIdentifier);
+    Ref<GeolocationPermissionRequestProxy> createRequest(GeolocationIdentifier, WebProcessProxy&);
     
     // Called by GeolocationPermissionRequestProxy when a decision is made by the user.
     void didReceiveGeolocationPermissionDecision(GeolocationIdentifier, bool allow);

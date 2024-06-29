@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@ from .clean import Clean, DeletePRBranches
 from .clone import Clone
 from .command import Command
 from .commit import Commit
+from .conflict import Conflict
 from .squash import Squash
 from .checkout import Checkout
 from .classify import Classify
@@ -47,6 +48,7 @@ from .log import Log
 from .pull import Pull
 from .pull_request import PullRequest
 from .revert import Revert
+from .review import Review
 from .setup_git_svn import SetupGitSvn
 from .setup import Setup
 from .show import Show
@@ -92,8 +94,8 @@ def main(
 
     programs = [
         Blame, Branch, Canonicalize, Checkout,
-        Clean, Clone, Find, Info, Land, Log, Pull,
-        PullRequest, Revert, Setup, InstallGitLFS,
+        Clean, Clone, Conflict, Find, Info, Land, Log, Pull,
+        PullRequest, Revert, Review, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
         Pickable, CherryPick, Trace, Track, Show, Publish,
         Classify, InstallHooks,

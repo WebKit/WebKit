@@ -36,8 +36,11 @@ def teardown(arg='Tearing down'):
     logger.warning(arg)
 
 
-def action(argument):
-    print('action({})'.format(argument))
+def action(argument, include_worker=False):
+    print('{}action({})'.format(
+        '{} '.format(TaskPool.Process.name) if include_worker else '',
+        argument,
+    ))
     return argument
 
 
@@ -170,3 +173,112 @@ class TaskPoolUnittest(unittest.TestCase):
                 sorted(captured.webkitcorepy.log.getvalue().splitlines()),
                 ['worker/{} Teardown argument'.format(x) for x in range(4)],
             )
+
+        def test_mutually_exclusive_group(self):
+            with OutputCapture(level=logging.INFO) as captured:
+                with TaskPool(workers=4, mutually_exclusive_groups=['group']) as pool:
+                    for character in self.alphabet:
+                        pool.do(
+                            action, character,
+                            include_worker=True,
+                            group='group' if character in ('a', 'b', 'c', 'd') else None,
+                        )
+                    pool.wait()
+
+            self.assertEqual(
+                sorted(captured.webkitcorepy.log.getvalue().splitlines()), [
+                    'worker/0 starting (group)', 'worker/0 stopping (group)',
+                    'worker/1 starting', 'worker/1 stopping',
+                    'worker/2 starting', 'worker/2 stopping',
+                    'worker/3 starting', 'worker/3 stopping',
+                ],
+            )
+            self.assertEqual(
+                sorted(captured.stdout.getvalue().splitlines())[:4], [
+                    'worker/0 action(a)',
+                    'worker/0 action(b)',
+                    'worker/0 action(c)',
+                    'worker/0 action(d)',
+                ]
+            )
+
+        def test_mutually_exclusive_group_single_worker(self):
+            with OutputCapture(level=logging.INFO) as captured:
+                with TaskPool(workers=1, mutually_exclusive_groups=['group']) as pool:
+                    for character in self.alphabet:
+                        pool.do(
+                            action, character,
+                            include_worker=True,
+                            group='group' if character in ('a', 'b', 'c', 'd') else None,
+                        )
+                    pool.wait()
+
+            self.assertEqual(
+                sorted(captured.stdout.getvalue().splitlines())[:4], [
+                    'worker/0 action(a)',
+                    'worker/0 action(b)',
+                    'worker/0 action(c)',
+                    'worker/0 action(d)',
+                ]
+            )
+
+        def test_mutually_exclusive_groups(self):
+            with OutputCapture(level=logging.INFO) as captured:
+                with TaskPool(workers=4, mutually_exclusive_groups=[
+                    'alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot',
+                ]) as pool:
+                    for character in self.alphabet:
+                        pool.do(
+                            action,
+                            character,
+                            include_worker=True,
+                            group=dict(
+                                a='alpha',
+                                b='bravo',
+                                c='charlie',
+                                d='delta',
+                                e='echo',
+                                f='foxtrot',
+                            ).get(character, None)
+                        )
+                    pool.wait()
+
+            self.assertEqual(
+                sorted(captured.webkitcorepy.log.getvalue().splitlines()), [
+                    'worker/0 starting (alpha, bravo)', 'worker/0 stopping (alpha, bravo)',
+                    'worker/1 starting (charlie, delta)', 'worker/1 stopping (charlie, delta)',
+                    'worker/2 starting (echo)', 'worker/2 stopping (echo)',
+                    'worker/3 starting (foxtrot)', 'worker/3 stopping (foxtrot)',
+                ],
+            )
+
+            logging_by_worker = {}
+            for line in captured.stdout.getvalue().splitlines():
+                worker = line.split(' ')[0]
+                if worker not in logging_by_worker:
+                    logging_by_worker[worker] = []
+                logging_by_worker[worker].append(line)
+
+            self.assertEqual(
+                sorted(logging_by_worker['worker/0'])[:2],
+                ['worker/0 action(a)', 'worker/0 action(b)'],
+            )
+            self.assertEqual(
+                sorted(logging_by_worker['worker/1'])[:2],
+                ['worker/1 action(c)', 'worker/1 action(d)'],
+            )
+            self.assertEqual(
+                sorted(logging_by_worker['worker/2'])[0],
+                'worker/2 action(e)',
+            )
+            self.assertEqual(
+                sorted(logging_by_worker['worker/3'])[0],
+                'worker/3 action(f)',
+            )
+
+        def test_invalid_group(self):
+            with OutputCapture(level=logging.INFO) as captured:
+                with TaskPool(workers=2) as pool:
+                    with self.assertRaises(ValueError):
+                        pool.do(action, 'a', group='invalid')
+                    pool.wait()

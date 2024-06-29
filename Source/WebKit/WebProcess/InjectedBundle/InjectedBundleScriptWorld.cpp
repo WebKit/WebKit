@@ -48,7 +48,7 @@ static WorldMap& allWorlds()
 static String uniqueWorldName()
 {
     static uint64_t uniqueWorldNameNumber = 0;
-    return makeString("UniqueWorld_", uniqueWorldNameNumber++);
+    return makeString("UniqueWorld_"_s, uniqueWorldNameNumber++);
 }
 
 Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create(Type type)

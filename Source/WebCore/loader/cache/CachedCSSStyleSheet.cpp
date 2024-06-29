@@ -128,7 +128,7 @@ Ref<TextResourceDecoder> CachedCSSStyleSheet::protectedDecoder() const
     return m_decoder;
 }
 
-void CachedCSSStyleSheet::checkNotify(const NetworkLoadMetrics&)
+void CachedCSSStyleSheet::checkNotify(const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     if (isLoading())
         return;

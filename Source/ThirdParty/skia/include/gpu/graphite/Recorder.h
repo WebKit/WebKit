@@ -16,7 +16,6 @@
 #include "include/private/base/SkTArray.h"
 
 #include <chrono>
-#include <vector>
 
 struct AHardwareBuffer;
 class SkCanvas;
@@ -45,6 +44,7 @@ class DrawBufferManager;
 class GlobalCache;
 class ImageProvider;
 class ProxyCache;
+class ProxyReadCountMap;
 class RecorderPriv;
 class ResourceProvider;
 class RuntimeEffectDictionary;
@@ -229,7 +229,7 @@ private:
     // then either deletes the SkSurface or Recorder before calling restore. For simplicity we just
     // register every device for now, but if we see extra overhead in pushing back the extra
     // pointers, we can look into only registering SkSurface Devices.
-    void registerDevice(Device*);
+    void registerDevice(sk_sp<Device>);
     void deregisterDevice(const Device*);
 
     sk_sp<SharedContext> fSharedContext;
@@ -242,7 +242,14 @@ private:
     std::unique_ptr<TextureDataCache> fTextureDataCache;
     std::unique_ptr<DrawBufferManager> fDrawBufferManager;
     std::unique_ptr<UploadBufferManager> fUploadBufferManager;
-    std::vector<sk_sp<Device>> fTrackedDevices;
+    std::unique_ptr<ProxyReadCountMap> fProxyReadCounts;
+
+    // Iterating over tracked devices in flushTrackedDevices() needs to be re-entrant and support
+    // additions to fTrackedDevices if registerDevice() is triggered by a temporary device during
+    // flushing. Removals are handled by setting elements to null; final clean up is handled at the
+    // end of the initial call to flushTrackedDevices().
+    skia_private::TArray<sk_sp<Device>> fTrackedDevices;
+    int fFlushingDevicesIndex = -1;
 
     uint32_t fUniqueID;  // Needed for MessageBox handling for text
     uint32_t fNextRecordingID = 1;

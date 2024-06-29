@@ -13,8 +13,8 @@
 
 #include <memory>
 
+#include "api/audio/audio_device.h"
 #include "api/task_queue/task_queue_factory.h"
-#include "modules/audio_device/include/audio_device.h"
 
 namespace webrtc {
 

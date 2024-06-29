@@ -17,12 +17,12 @@
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/audio/audio_device_defines.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "common_audio/wav_file.h"
 #include "common_audio/wav_header.h"
-#include "modules/audio_device/include/audio_device_defines.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/synchronization/mutex.h"
@@ -39,9 +39,9 @@ void RunWavTest(const std::vector<int16_t>& input_samples,
   const ::testing::TestInfo* const test_info =
       ::testing::UnitTest::GetInstance()->current_test_info();
 
-  const std::string output_filename =
-      test::OutputPath() + "BoundedWavFileWriterTest_" + test_info->name() +
-      "_" + std::to_string(std::rand()) + ".wav";
+  const std::string output_filename = test::OutputPathWithRandomDirectory() +
+                                      "BoundedWavFileWriterTest_" +
+                                      test_info->name() + ".wav";
 
   static const size_t kSamplesPerFrame = 8;
   static const int kSampleRate = kSamplesPerFrame * 100;
@@ -136,9 +136,9 @@ TEST(WavFileReaderTest, RepeatedTrueWithSingleFrameFileReadTwice) {
   static const rtc::BufferT<int16_t> kExpectedSamples(kInputSamples.data(),
                                                       kInputSamples.size());
 
-  const std::string output_filename = test::OutputPath() +
+  const std::string output_filename = test::OutputPathWithRandomDirectory() +
                                       "WavFileReaderTest_RepeatedTrue_" +
-                                      std::to_string(std::rand()) + ".wav";
+                                      ".wav";
 
   static const size_t kSamplesPerFrame = 8;
   static const int kSampleRate = kSamplesPerFrame * 100;
@@ -175,9 +175,9 @@ void RunRawTestNoRepeat(const std::vector<int16_t>& input_samples,
   const ::testing::TestInfo* const test_info =
       ::testing::UnitTest::GetInstance()->current_test_info();
 
-  const std::string output_filename = test::OutputPath() + "RawFileTest_" +
-                                      test_info->name() + "_" +
-                                      std::to_string(std::rand()) + ".raw";
+  const std::string output_filename = test::OutputPathWithRandomDirectory() +
+                                      "RawFileTest_" + test_info->name() +
+                                      ".raw";
 
   static const size_t kSamplesPerFrame = 8;
   static const int kSampleRate = kSamplesPerFrame * 100;
@@ -281,8 +281,8 @@ TEST(RawFileWriterTest, Repeat) {
   const ::testing::TestInfo* const test_info =
       ::testing::UnitTest::GetInstance()->current_test_info();
 
-  const std::string output_filename = test::OutputPath() + "RawFileTest_" +
-                                      test_info->name() + "_" +
+  const std::string output_filename = test::OutputPathWithRandomDirectory() +
+                                      "RawFileTest_" + test_info->name() + "_" +
                                       std::to_string(std::rand()) + ".raw";
 
   static const size_t kSamplesPerFrame = 8;

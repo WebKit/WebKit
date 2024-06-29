@@ -36,6 +36,7 @@
 #import <pal/spi/cocoa/NSURLConnectionSPI.h>
 #import <pal/text/TextEncoding.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 using namespace WebKit;
 
@@ -188,7 +189,7 @@ void LegacyCustomProtocolManager::didLoadData(LegacyCustomProtocolID customProto
     if (!protocol)
         return;
 
-    RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
+    RetainPtr nsData = toNSData(data);
 
     dispatchOnInitializationRunLoop(protocol.get(), ^ {
         [[protocol client] URLProtocol:protocol.get() didLoadData:nsData.get()];

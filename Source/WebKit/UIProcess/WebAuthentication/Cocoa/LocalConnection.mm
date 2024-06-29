@@ -33,6 +33,7 @@
 #import <WebCore/WebAuthenticationConstants.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 #import "AppAttestInternalSoftLink.h"
 #import "LocalAuthenticationSoftLink.h"
@@ -80,10 +81,12 @@ void LocalConnection::verifyUser(const String& rpId, ClientDataType type, SecAcc
     m_context = [allocLAContextInstance() init];
 
     auto options = adoptNS([[NSMutableDictionary alloc] init]);
+#if HAVE(UNIFIED_ASC_AUTH_UI)
     if ([m_context biometryType] == LABiometryTypeTouchID) {
         [options setObject:title forKey:@(LAOptionAuthenticationTitle)];
         [options setObject:@NO forKey:@(LAOptionFallbackVisible)];
     }
+#endif
 
     auto reply = makeBlockPtr([context = m_context, completionHandler = WTFMove(completionHandler)] (NSDictionary *information, NSError *error) mutable {
         UserVerification verification = UserVerification::Yes;
@@ -197,6 +200,31 @@ RetainPtr<SecKeyRef> LocalConnection::createCredentialPrivateKey(LAContext *cont
         return nullptr;
     }
     return credentialPrivateKey;
+}
+
+RetainPtr<NSArray> LocalConnection::getExistingCredentials(const String& rpId)
+{
+    // Search Keychain for existing credential matched the RP ID.
+    NSDictionary *query = @{
+        (id)kSecClass: (id)kSecClassKey,
+        (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
+        (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
+        (id)kSecAttrAccessGroup: @(LocalAuthenticatorAccessGroup),
+        (id)kSecAttrLabel: rpId,
+        (id)kSecReturnAttributes: @YES,
+        (id)kSecMatchLimit: (id)kSecMatchLimitAll,
+        (id)kSecUseDataProtectionKeychain: @YES
+    };
+
+    CFTypeRef attributesArrayRef = nullptr;
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
+    if (status && status != errSecItemNotFound)
+        return nullptr;
+    auto retainAttributesArray = adoptCF(attributesArrayRef);
+    NSArray *sortedAttributesArray = [(NSArray *)attributesArrayRef sortedArrayUsingComparator:^(NSDictionary *a, NSDictionary *b) {
+        return [b[(id)kSecAttrModificationDate] compare:a[(id)kSecAttrModificationDate]];
+    }];
+    return retainPtr(sortedAttributesArray);
 }
 
 } // namespace WebKit

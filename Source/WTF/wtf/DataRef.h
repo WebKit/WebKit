@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <wtf/HashTraits.h>
 #include <wtf/Ref.h>
 
 namespace WTF {
@@ -88,8 +89,35 @@ public:
         return m_data.ptr() == other.m_data.ptr() || m_data.get() == other.m_data.get();
     }
 
+    DataRef(HashTableDeletedValueType)
+        : m_data(HashTableDeletedValue)
+    {
+    }
+    bool isHashTableDeletedValue() const { return m_data.isHashTableDeletedValue(); }
+
+    DataRef(HashTableEmptyValueType)
+        : m_data(HashTableEmptyValue)
+    {
+    }
+    bool isHashTableEmptyValue() const { return m_data.isHashTableEmptyValue(); }
+    static T* hashTableEmptyValue() { return nullptr; }
+
 private:
     Ref<T> m_data;
+};
+
+template<typename T> struct HashTraits<DataRef<T>> : SimpleClassHashTraits<DataRef<T>> {
+    static constexpr bool emptyValueIsZero = true;
+    static DataRef<T> emptyValue() { return HashTableEmptyValue; }
+
+    template <typename>
+    static void constructEmptyValue(DataRef<T>& slot)
+    {
+        new (NotNull, std::addressof(slot)) DataRef<T>(HashTableEmptyValue);
+    }
+
+    static constexpr bool hasIsEmptyValueFunction = true;
+    static bool isEmptyValue(const DataRef<T>& value) { return value.isHashTableEmptyValue(); }
 };
 
 } // namespace WTF

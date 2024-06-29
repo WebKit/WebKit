@@ -14,8 +14,8 @@
 
 #include "aom/aom_integer.h"
 #include "aom_dsp/flow_estimation/flow_estimation.h"
-#include "aom_scale/yv12config.h"
-#include "aom_util/aom_thread.h"
+#include "aom_util/aom_pthread.h"
+#include "av1/encoder/enc_enums.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,11 +57,11 @@ typedef struct {
   // next_frame_to_process[i] will hold the count of next reference frame to be
   // processed in the direction 'i'.
   int8_t next_frame_to_process[MAX_DIRECTIONS];
-} JobInfo;
+} GlobalMotionJobInfo;
 
 typedef struct {
   // Data related to assigning jobs for global motion multi-threading.
-  JobInfo job_info;
+  GlobalMotionJobInfo job_info;
 
 #if CONFIG_MULTITHREAD
   // Mutex lock used while dispatching jobs.
@@ -96,42 +96,6 @@ int av1_is_enough_erroradvantage(double best_erroradvantage, int params_cost);
 void av1_compute_feature_segmentation_map(uint8_t *segment_map, int width,
                                           int height, int *inliers,
                                           int num_inliers);
-
-extern const int error_measure_lut[513];
-
-static INLINE int error_measure(int err) {
-  return error_measure_lut[256 + err];
-}
-
-#if CONFIG_AV1_HIGHBITDEPTH
-static INLINE int highbd_error_measure(int err, int bd) {
-  const int b = bd - 8;
-  const int bmask = (1 << b) - 1;
-  const int v = (1 << b);
-
-  // Split error into two parts and do an interpolated table lookup
-  // To compute the table index and interpolation value, we want to calculate
-  // the quotient and remainder of err / 2^b. But it is very important that
-  // the division must round down, and the remainder must be positive,
-  // ie. in the range [0, 2^b).
-  //
-  // In C, the >> and & operators do what we want, but the / and % operators
-  // give the wrong results for negative inputs. So we must use >> and & here.
-  //
-  // For example, if bd == 10 and err == -5, compare the results:
-  //       (-5) >> 2 = -2, (-5) & 3 =  3
-  //   vs. (-5) / 4  = -1, (-5) % 4 = -1
-  const int e1 = err >> b;
-  const int e2 = err & bmask;
-  return error_measure_lut[256 + e1] * (v - e2) +
-         error_measure_lut[257 + e1] * e2;
-}
-#endif  // CONFIG_AV1_HIGHBITDEPTH
-
-// Returns the error between the frame described by 'ref' and the frame
-// described by 'dst'.
-int64_t av1_frame_error(int use_hbd, int bd, const uint8_t *ref, int stride,
-                        uint8_t *dst, int p_width, int p_height, int p_stride);
 
 int64_t av1_segmented_frame_error(int use_hbd, int bd, const uint8_t *ref,
                                   int ref_stride, uint8_t *dst, int dst_stride,

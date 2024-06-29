@@ -10,8 +10,11 @@
 
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder_new_format.h"
 
+#include <type_traits>
+
 #include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/field_trials_view.h"
 #include "api/network_state_predictor.h"
 #include "logging/rtc_event_log/dependency_descriptor_encoder_decoder.h"
 #include "logging/rtc_event_log/encoder/blob_encoding.h"
@@ -61,18 +64,14 @@
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/ignore_wundef.h"
 #include "rtc_base/logging.h"
-#include "system_wrappers/include/field_trial.h"
 
 // *.pb.h files are generated at build-time by the protobuf compiler.
-RTC_PUSH_IGNORING_WUNDEF()
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/logging/rtc_event_log/rtc_event_log2.pb.h"
 #else
 #include "logging/rtc_event_log/rtc_event_log2.pb.h"
 #endif
-RTC_POP_IGNORING_WUNDEF()
 
 using webrtc_event_logging::ToUnsigned;
 
@@ -107,9 +106,6 @@ rtclog2::FrameDecodedEvents::Codec ConvertToProtoFormat(VideoCodecType codec) {
       return rtclog2::FrameDecodedEvents::CODEC_AV1;
     case VideoCodecType::kVideoCodecH264:
       return rtclog2::FrameDecodedEvents::CODEC_H264;
-    case VideoCodecType::kVideoCodecMultiplex:
-      // This codec type is afaik not used.
-      return rtclog2::FrameDecodedEvents::CODEC_UNKNOWN;
     case VideoCodecType::kVideoCodecH265:
       return rtclog2::FrameDecodedEvents::CODEC_H265;
   }
@@ -201,18 +197,14 @@ ConvertToProtoFormat(IceCandidatePairConfigType type) {
 rtclog2::IceCandidatePairConfig::IceCandidateType ConvertToProtoFormat(
     IceCandidateType type) {
   switch (type) {
-    case IceCandidateType::kUnknown:
-      return rtclog2::IceCandidatePairConfig::UNKNOWN_CANDIDATE_TYPE;
-    case IceCandidateType::kLocal:
+    case IceCandidateType::kHost:
       return rtclog2::IceCandidatePairConfig::LOCAL;
-    case IceCandidateType::kStun:
+    case IceCandidateType::kSrflx:
       return rtclog2::IceCandidatePairConfig::STUN;
     case IceCandidateType::kPrflx:
       return rtclog2::IceCandidatePairConfig::PRFLX;
     case IceCandidateType::kRelay:
       return rtclog2::IceCandidatePairConfig::RELAY;
-    case IceCandidateType::kNumValues:
-      RTC_DCHECK_NOTREACHED();
   }
   RTC_DCHECK_NOTREACHED();
   return rtclog2::IceCandidatePairConfig::UNKNOWN_CANDIDATE_TYPE;
@@ -388,10 +380,12 @@ void EncodeRtcpPacket(rtc::ArrayView<const EventType*> batch,
   }
   proto_batch->set_raw_packet_blobs(EncodeBlobs(scrubed_packets));
 }
+}  // namespace
 
-template <typename EventType, typename ProtoType>
-void EncodeRtpPacket(const std::vector<const EventType*>& batch,
-                     ProtoType* proto_batch) {
+template <typename Batch, typename ProtoType>
+void RtcEventLogEncoderNewFormat::EncodeRtpPacket(const Batch& batch,
+                                                  ProtoType* proto_batch) {
+  using EventType = std::remove_pointer_t<typename Batch::value_type>;
   if (batch.empty()) {
     return;
   }
@@ -450,24 +444,21 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   absl::optional<uint64_t> base_audio_level;
   absl::optional<uint64_t> base_voice_activity;
   {
-    bool voice_activity;
-    uint8_t audio_level;
-    if (base_event->template GetExtension<AudioLevel>(&voice_activity,
-                                                      &audio_level)) {
-      RTC_DCHECK_LE(audio_level, 0x7Fu);
-      base_audio_level = audio_level;
-      proto_batch->set_audio_level(audio_level);
+    AudioLevel audio_level;
+    if (base_event->template GetExtension<AudioLevelExtension>(&audio_level)) {
+      RTC_DCHECK_LE(audio_level.level(), 0x7Fu);
+      base_audio_level = audio_level.level();
+      proto_batch->set_audio_level(audio_level.level());
 
-      base_voice_activity = voice_activity;
-      proto_batch->set_voice_activity(voice_activity);
+      base_voice_activity = audio_level.voice_activity();
+      proto_batch->set_voice_activity(audio_level.voice_activity());
     }
   }
 
   {
     // TODO(webrtc:14975) Remove this kill switch after DD in RTC event log has
     //                    been rolled out.
-    if (!webrtc::field_trial::IsDisabled(
-            "WebRTC-RtcEventLogEncodeDependencyDescriptor")) {
+    if (encode_dependency_descriptor_) {
       std::vector<rtc::ArrayView<const uint8_t>> raw_dds(batch.size());
       bool has_dd = false;
       for (size_t i = 0; i < batch.size(); ++i) {
@@ -648,12 +639,10 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   // audio_level (RTP extension)
   for (size_t i = 0; i < values.size(); ++i) {
     const EventType* event = batch[i + 1];
-    bool voice_activity;
-    uint8_t audio_level;
-    if (event->template GetExtension<AudioLevel>(&voice_activity,
-                                                 &audio_level)) {
-      RTC_DCHECK_LE(audio_level, 0x7Fu);
-      values[i] = audio_level;
+    AudioLevel audio_level;
+    if (event->template GetExtension<AudioLevelExtension>(&audio_level)) {
+      RTC_DCHECK_LE(audio_level.level(), 0x7F);
+      values[i] = audio_level.level();
     } else {
       values[i].reset();
     }
@@ -666,12 +655,10 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   // voice_activity (RTP extension)
   for (size_t i = 0; i < values.size(); ++i) {
     const EventType* event = batch[i + 1];
-    bool voice_activity;
-    uint8_t audio_level;
-    if (event->template GetExtension<AudioLevel>(&voice_activity,
-                                                 &audio_level)) {
-      RTC_DCHECK_LE(audio_level, 0x7Fu);
-      values[i] = voice_activity;
+    AudioLevel audio_level;
+    if (event->template GetExtension<AudioLevelExtension>(&audio_level)) {
+      RTC_DCHECK_LE(audio_level.level(), 0x7F);
+      values[i] = audio_level.voice_activity();
     } else {
       values[i].reset();
     }
@@ -681,15 +668,13 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
     proto_batch->set_voice_activity_deltas(encoded_deltas);
   }
 }
-}  // namespace
 
-RtcEventLogEncoderNewFormat::RtcEventLogEncoderNewFormat() {
-  encode_neteq_set_minimum_delay_kill_switch_ = false;
-  if (webrtc::field_trial::IsEnabled(
-          "WebRTC-RtcEventLogEncodeNetEqSetMinimumDelayKillSwitch")) {
-    encode_neteq_set_minimum_delay_kill_switch_ = true;
-  }
-}
+RtcEventLogEncoderNewFormat::RtcEventLogEncoderNewFormat(
+    const FieldTrialsView& field_trials)
+    : encode_neteq_set_minimum_delay_kill_switch_(field_trials.IsEnabled(
+          "WebRTC-RtcEventLogEncodeNetEqSetMinimumDelayKillSwitch")),
+      encode_dependency_descriptor_(!field_trials.IsDisabled(
+          "WebRTC-RtcEventLogEncodeDependencyDescriptor")) {}
 
 std::string RtcEventLogEncoderNewFormat::EncodeLogStart(int64_t timestamp_us,
                                                         int64_t utc_time_us) {

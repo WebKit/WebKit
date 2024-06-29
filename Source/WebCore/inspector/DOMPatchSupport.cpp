@@ -398,7 +398,7 @@ ExceptionOr<void> DOMPatchSupport::innerPatchChildren(ContainerNode& parentNode,
 
 static void addStringToSHA1(SHA1& sha1, const String& string)
 {
-    sha1.addBytes(string.utf8().span());
+    sha1.addUTF8Bytes(string);
 }
 
 std::unique_ptr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node& node, UnusedNodesMap* unusedNodesMap)
@@ -430,14 +430,14 @@ std::unique_ptr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node& nod
             }
             SHA1::Digest attrsHash;
             attrsSHA1.computeHash(attrsHash);
-            digest->attrsSHA1 = base64EncodeToString(attrsHash.data(), 10);
+            digest->attrsSHA1 = base64EncodeToString(std::span { attrsHash }.first(10));
             addStringToSHA1(sha1, digest->attrsSHA1);
         }
     }
 
     SHA1::Digest hash;
     sha1.computeHash(hash);
-    digest->sha1 = base64EncodeToString(hash.data(), 10);
+    digest->sha1 = base64EncodeToString(std::span { hash }.first(10));
     if (unusedNodesMap)
         unusedNodesMap->add(digest->sha1, digest.get());
 

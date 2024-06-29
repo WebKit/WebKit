@@ -32,6 +32,7 @@
 
 #include "gtest/gtest.h"
 #include "absl/base/config.h"
+#include "absl/meta/type_traits.h"
 
 #if defined(ABSL_HAVE_STD_STRING_VIEW) || defined(__ANDROID__)
 // We don't control the death messaging when using std::string_view.
@@ -45,6 +46,14 @@
 #endif
 
 namespace {
+
+static_assert(!absl::type_traits_internal::IsOwner<absl::string_view>::value &&
+                  absl::type_traits_internal::IsView<absl::string_view>::value,
+              "string_view is a view, not an owner");
+
+static_assert(absl::type_traits_internal::IsLifetimeBoundAssignment<
+                  absl::string_view, std::string>::value,
+              "lifetimebound assignment not detected");
 
 // A minimal allocator that uses malloc().
 template <typename T>
@@ -1051,9 +1060,6 @@ TEST(StringViewTest, ConstexprNullSafeStringView) {
     EXPECT_EQ(0u, s.size());
     EXPECT_EQ(absl::string_view(), s);
   }
-#if !defined(_MSC_VER) || _MSC_VER >= 1910
-  // MSVC 2017+ is required for good constexpr string_view support.
-  // See the implementation of `absl::string_view::StrlenInternal()`.
   {
     static constexpr char kHi[] = "hi";
     absl::string_view s = absl::NullSafeStringView(kHi);
@@ -1066,7 +1072,6 @@ TEST(StringViewTest, ConstexprNullSafeStringView) {
     EXPECT_EQ(s.size(), 5u);
     EXPECT_EQ("hello", s);
   }
-#endif
 }
 
 TEST(StringViewTest, ConstexprCompiles) {

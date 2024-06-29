@@ -495,13 +495,6 @@ const ElementBox* Box::associatedRubyAnnotationBox() const
     return dynamicDowncast<ElementBox>(next);
 }
 
-void Box::setCachedGeometryForLayoutState(LayoutState& layoutState, std::unique_ptr<BoxGeometry> geometry) const
-{
-    ASSERT(!m_cachedLayoutState);
-    m_cachedLayoutState = layoutState;
-    m_cachedGeometryForLayoutState = WTFMove(geometry);
-}
-
 Box::RareDataMap& Box::rareDataMap()
 {
     static NeverDestroyed<RareDataMap> map;

@@ -44,7 +44,7 @@ public:
         virtual void graphicsLayerAdded(GraphicsLayerWC&) = 0;
         virtual void graphicsLayerRemoved(GraphicsLayerWC&) = 0;
         virtual void commitLayerUpdateInfo(WCLayerUpdateInfo&&) = 0;
-        virtual RefPtr<WebCore::ImageBuffer> createImageBuffer(WebCore::FloatSize) = 0;
+        virtual RefPtr<WebCore::ImageBuffer> createImageBuffer(WebCore::FloatSize, float deviceScaleFactor) = 0;
     };
 
     GraphicsLayerWC(Type layerType, WebCore::GraphicsLayerClient&, Observer&);
@@ -104,7 +104,7 @@ public:
 protected:
     friend WCTiledBacking;
 
-    RefPtr<WebCore::ImageBuffer> createImageBuffer(WebCore::FloatSize);
+    RefPtr<WebCore::ImageBuffer> createImageBuffer(WebCore::FloatSize, float deviceScaleFactor);
     
 private:
     struct VisibleAndCoverageRects {

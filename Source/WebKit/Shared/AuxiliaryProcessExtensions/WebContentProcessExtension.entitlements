@@ -8,6 +8,8 @@
 	<true/>
 	<key>com.apple.developer.web-browser-engine.webcontent</key>
 	<true/>
+	<key>com.apple.developer.web-browser-engine.restrict.notifyd</key>
+	<true/>
 	<key>com.apple.private.extensionkit.host-requirement-exemption</key>
 	<true/>
 </dict>

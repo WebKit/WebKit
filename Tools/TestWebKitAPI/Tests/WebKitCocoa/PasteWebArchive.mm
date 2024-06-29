@@ -232,6 +232,33 @@ TEST(PasteWebArchive, StripsMSOListWhenMissingMSOHTMLElement)
     EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:@"document.queryCommandValue('foreColor')"]);
 }
 
+TEST(PasteWebArchive, PreservesPictureInsideSpan)
+{
+    NSData *markupData = [@"<span class='s1'><picture><source srcset='1.png' type='image/png'><img src='2.gif'></picture></span>" dataUsingEncoding:NSUTF8StringEncoding];
+
+    auto mainResource = adoptNS([[WebResource alloc] initWithData:markupData URL:[NSURL URLWithString:@"foo.html"] MIMEType:@"text/html" textEncodingName:@"utf-8" frameName:nil]);
+
+    auto pngData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    auto pngResource = adoptNS([[WebResource alloc] initWithData:pngData URL:[NSURL URLWithString:@"1.png"] MIMEType:@"image/png" textEncodingName:nil frameName:nil]);
+
+    auto gifData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"apple" withExtension:@"gif" subdirectory:@"TestWebKitAPI.resources"]];
+    auto gifResource = adoptNS([[WebResource alloc] initWithData:gifData URL:[NSURL URLWithString:@"2.gif"] MIMEType:@"image/gif" textEncodingName:nil frameName:nil]);
+
+    auto archive = adoptNS([[WebArchive alloc] initWithMainResource:mainResource.get() subresources:@[ pngResource.get(), gifResource.get() ] subframeArchives:@[ ]]);
+
+    [[NSPasteboard generalPasteboard] declareTypes:@[WebArchivePboardType] owner:nil];
+    [[NSPasteboard generalPasteboard] setData:[archive data] forType:WebArchivePboardType];
+
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
+    [webView paste:nil];
+
+    EXPECT_WK_STREQ("SPAN", [webView stringByEvaluatingJavaScript:@"editor.children[0].tagName"]);
+    EXPECT_WK_STREQ("PICTURE", [webView stringByEvaluatingJavaScript:@"editor.children[0].children[0].tagName"]);
+    EXPECT_WK_STREQ("SOURCE", [webView stringByEvaluatingJavaScript:@"editor.children[0].children[0].children[0].tagName"]);
+    EXPECT_WK_STREQ("IMG", [webView stringByEvaluatingJavaScript:@"editor.children[0].children[0].children[1].tagName"]);
+}
+
 TEST(PasteWebArchive, WebArchiveTypeIdentifier)
 {
     NSURL *url = [NSURL URLWithString:@"file:///some-file.html"];

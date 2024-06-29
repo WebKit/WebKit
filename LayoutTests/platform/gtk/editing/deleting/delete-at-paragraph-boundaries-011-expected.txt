@@ -25,12 +25,12 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,111) size 756x108
           RenderText {#text} at (0,0) size 183x26
             text run at (0,0) width 183: "Expected Results:"
-          RenderBR {BR} at (182,0) size 1x26
+          RenderBR {BR} at (183,0) size 0x26
           RenderText {#text} at (0,27) size 720x53
             text run at (0,27) width 240: "Red box with four lines. "
-            text run at (239,27) width 481: "The second line is a nested red box with the word"
+            text run at (240,27) width 480: "The second line is a nested red box with the word"
             text run at (0,54) width 81: "\"hello\". "
-            text run at (80,54) width 310: "The other three lines are empty."
+            text run at (81,54) width 309: "The other three lines are empty."
           RenderBR {BR} at (389,54) size 1x26
           RenderText {#text} at (0,81) size 468x26
             text run at (0,81) width 468: "Selection is a caret at the start of the fourth line."

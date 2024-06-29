@@ -345,21 +345,27 @@ static INLINE void compute_stats_highbd_win5_opt_avx2(
 }
 
 void av1_compute_stats_highbd_avx2(int wiener_win, const uint8_t *dgd8,
-                                   const uint8_t *src8, int h_start, int h_end,
+                                   const uint8_t *src8, int16_t *dgd_avg,
+                                   int16_t *src_avg, int h_start, int h_end,
                                    int v_start, int v_end, int dgd_stride,
                                    int src_stride, int64_t *M, int64_t *H,
                                    aom_bit_depth_t bit_depth) {
   if (wiener_win == WIENER_WIN) {
+    (void)dgd_avg;
+    (void)src_avg;
     compute_stats_highbd_win7_opt_avx2(dgd8, src8, h_start, h_end, v_start,
                                        v_end, dgd_stride, src_stride, M, H,
                                        bit_depth);
   } else if (wiener_win == WIENER_WIN_CHROMA) {
+    (void)dgd_avg;
+    (void)src_avg;
     compute_stats_highbd_win5_opt_avx2(dgd8, src8, h_start, h_end, v_start,
                                        v_end, dgd_stride, src_stride, M, H,
                                        bit_depth);
   } else {
-    av1_compute_stats_highbd_c(wiener_win, dgd8, src8, h_start, h_end, v_start,
-                               v_end, dgd_stride, src_stride, M, H, bit_depth);
+    av1_compute_stats_highbd_c(wiener_win, dgd8, src8, dgd_avg, src_avg,
+                               h_start, h_end, v_start, v_end, dgd_stride,
+                               src_stride, M, H, bit_depth);
   }
 }
 #endif  // CONFIG_AV1_HIGHBITDEPTH

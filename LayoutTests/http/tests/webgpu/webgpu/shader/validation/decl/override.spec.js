@@ -169,6 +169,10 @@ const kInitCases = {
     code: `override x : u32 = 1i;`,
     valid: false
   },
+  init_mismatch_vector: {
+    code: `override x : u32 = vec2i();`,
+    valid: false
+  },
   abs_int_init_convert: {
     code: `override x : f32 = 1;`,
     valid: true
@@ -188,6 +192,20 @@ const kInitCases = {
   init_runtime_expr: {
     code: `var<private> x = 2;\noverride y = x;`,
     valid: false
+  },
+  const_func_init: {
+    code: `override x = max(1, 2);`,
+    valid: true
+  },
+  non_const_func_init: {
+    code: `override x = foo(1);
+    fn foo(p : i32) -> i32 { return p; }`,
+    valid: false
+  },
+  mix_order_init: {
+    code: `override x = y;
+    override y : i32;`,
+    valid: true
   }
 };
 

@@ -77,7 +77,7 @@ public:
     bool hasVideo() const final { return false; };
     bool hasAudio() const final { return false; };
 
-    void setPageIsVisible(bool, String&&) final { };
+    void setPageIsVisible(bool) final { };
 
     bool seeking() const final { return false; }
     void seekToTarget(const SeekTarget&) final { }

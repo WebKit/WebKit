@@ -20,6 +20,7 @@
 #include "tokenize.h"
 #include "vp8/common/onyxc_int.h"
 #include "vpx_dsp/variance.h"
+#include "vpx_util/vpx_pthread.h"
 #include "encodemb.h"
 #include "vp8/encoder/quantize.h"
 #include "vp8/common/entropy.h"
@@ -215,7 +216,7 @@ enum {
 typedef struct {
   /* Layer configuration */
   double framerate;
-  int target_bandwidth;
+  int target_bandwidth; /* bits per second */
 
   /* Layer specific coding parameters */
   int64_t starting_buffer_level;
@@ -438,7 +439,7 @@ typedef struct VP8_COMP {
   int kf_boost;
   int last_boost;
 
-  int target_bandwidth;
+  int target_bandwidth; /* bits per second */
   struct vpx_codec_pkt_list *output_pkt_list;
 
 #if 0
@@ -540,10 +541,10 @@ typedef struct VP8_COMP {
   LPFTHREAD_DATA lpf_thread_data;
 
   /* events */
-  sem_t *h_event_start_encoding;
-  sem_t *h_event_end_encoding;
-  sem_t h_event_start_lpf;
-  sem_t h_event_end_lpf;
+  vp8_sem_t *h_event_start_encoding;
+  vp8_sem_t *h_event_end_encoding;
+  vp8_sem_t h_event_start_lpf;
+  vp8_sem_t h_event_end_lpf;
 #endif
 
   TOKENLIST *tplist;
@@ -622,7 +623,7 @@ typedef struct VP8_COMP {
   double totalp_v;
   double totalp;
   double total_sq_error2;
-  int bytes;
+  uint64_t bytes;
   double summed_quality;
   double summed_weights;
   unsigned int tot_recode_hits;
@@ -708,6 +709,10 @@ typedef struct VP8_COMP {
   // Always update correction factor used for rate control after each frame for
   // realtime encoding.
   int rt_always_update_correction_factor;
+
+  // Flag to indicate frame may be dropped due to large expected overshoot,
+  // and re-encoded on next frame at max_qp.
+  int rt_drop_recode_on_overshoot;
 } VP8_COMP;
 
 void vp8_initialize_enc(void);
@@ -731,6 +736,8 @@ void vp8_pack_bitstream(VP8_COMP *cpi, unsigned char *dest,
 void vp8_tokenize_mb(VP8_COMP *, MACROBLOCK *, TOKENEXTRA **);
 
 void vp8_set_speed_features(VP8_COMP *cpi);
+
+int vp8_check_drop_buffer(VP8_COMP *cpi);
 
 #ifdef __cplusplus
 }  // extern "C"

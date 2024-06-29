@@ -59,8 +59,13 @@ class LayoutState : public CanMakeWeakPtr<LayoutState> {
     WTF_MAKE_NONCOPYABLE(LayoutState);
     WTF_MAKE_ISO_ALLOCATED(LayoutState);
 public:
-    LayoutState(const Document&, const ElementBox& rootContainer);
+    // Primary layout state has a direct geometry cache in layout boxes.
+    enum class Type { Primary, Secondary };
+
+    LayoutState(const Document&, const ElementBox& rootContainer, Type);
     ~LayoutState();
+
+    Type type() const { return m_type; }
 
     void updateQuirksMode(const Document&);
 
@@ -102,6 +107,8 @@ private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
     BoxGeometry& ensureGeometryForBoxSlow(const Box&);
 
+    const Type m_type;
+
     HashMap<const ElementBox*, std::unique_ptr<InlineContentCache>> m_inlineContentCaches;
 
     HashMap<const ElementBox*, std::unique_ptr<BlockFormattingState>> m_blockFormattingStates;
@@ -119,22 +126,31 @@ private:
 
 inline bool LayoutState::hasBoxGeometry(const Box& layoutBox) const
 {
-    if (layoutBox.cachedGeometryForLayoutState(*this))
-        return true;
+    if (LIKELY(m_type == Type::Primary))
+        return !!layoutBox.m_cachedGeometryForPrimaryLayoutState;
+
     return m_layoutBoxToBoxGeometry.contains(&layoutBox);
 }
 
 inline BoxGeometry& LayoutState::ensureGeometryForBox(const Box& layoutBox)
 {
-    if (auto* boxGeometry = layoutBox.cachedGeometryForLayoutState(*this))
-        return *boxGeometry;
+    if (LIKELY(m_type == Type::Primary)) {
+        if (auto* boxGeometry = layoutBox.m_cachedGeometryForPrimaryLayoutState.get()) {
+            ASSERT(layoutBox.m_primaryLayoutState == this);
+            return *boxGeometry;
+        }
+    }
     return ensureGeometryForBoxSlow(layoutBox);
 }
 
 inline const BoxGeometry& LayoutState::geometryForBox(const Box& layoutBox) const
 {
-    if (auto* boxGeometry = layoutBox.cachedGeometryForLayoutState(*this))
-        return *boxGeometry;
+    if (LIKELY(m_type == Type::Primary)) {
+        ASSERT(layoutBox.m_primaryLayoutState == this);
+        return *layoutBox.m_cachedGeometryForPrimaryLayoutState;
+    }
+
+    ASSERT(layoutBox.m_primaryLayoutState != this);
     ASSERT(m_layoutBoxToBoxGeometry.contains(&layoutBox));
     return *m_layoutBoxToBoxGeometry.get(&layoutBox);
 }
@@ -147,19 +163,6 @@ inline void LayoutState::registerFormattingContext(const FormattingContext& form
     m_formattingContextList.add(&formattingContext);
 }
 #endif
-
-// These Layout::Box function are here to allow inlining.
-inline bool Box::canCacheForLayoutState(const LayoutState& layoutState) const
-{
-    return !m_cachedLayoutState || m_cachedLayoutState.get() == &layoutState;
-}
-
-inline BoxGeometry* Box::cachedGeometryForLayoutState(const LayoutState& layoutState) const
-{
-    if (m_cachedLayoutState.get() != &layoutState)
-        return nullptr;
-    return m_cachedGeometryForLayoutState.get();
-}
 
 }
 }

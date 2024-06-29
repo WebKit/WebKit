@@ -90,7 +90,7 @@ public:
         m_data.key.copyFrom(from.m_data.key);
     }
 
-    static ptrdiff_t offsetOfKey()
+    static constexpr ptrdiff_t offsetOfKey()
     {
         return OBJECT_OFFSETOF(WeakMapBucket, m_data) + OBJECT_OFFSETOF(Data, key);
     }
@@ -257,12 +257,12 @@ public:
 
     void takeSnapshot(MarkedArgumentBuffer&, unsigned limit = 0);
 
-    static ptrdiff_t offsetOfBuffer()
+    static constexpr ptrdiff_t offsetOfBuffer()
     {
         return OBJECT_OFFSETOF(WeakMapImpl<WeakMapBucketType>, m_buffer);
     }
 
-    static ptrdiff_t offsetOfCapacity()
+    static constexpr ptrdiff_t offsetOfCapacity()
     {
         return OBJECT_OFFSETOF(WeakMapImpl<WeakMapBucketType>, m_capacity);
     }

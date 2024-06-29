@@ -1,0 +1,4 @@
+button
+
+FAIL Create a CloseWatcher without user activation; create a dialog without user activation; create a popover without user activation promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: CloseWatcher"
+

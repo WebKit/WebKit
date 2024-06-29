@@ -691,8 +691,6 @@ template<> std::optional<Protocol::Test::CastedAnimals> parseEnumValueFromString
 
 } // namespace TestHelpers
 
-
-
 void BindingTraits<Protocol::Test::CastedAnimals>::assertValueHasExpectedType(JSON::Value* value)
 {
     ASSERT_UNUSED(value, value);

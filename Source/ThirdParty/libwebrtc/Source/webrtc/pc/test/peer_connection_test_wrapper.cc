@@ -19,8 +19,11 @@
 
 #include "absl/strings/match.h"
 #include "absl/types/optional.h"
+#include "api/audio/audio_device.h"
 #include "api/audio/audio_mixer.h"
+#include "api/audio/audio_processing.h"
 #include "api/create_peerconnection_factory.h"
+#include "api/environment/environment.h"
 #include "api/media_types.h"
 #include "api/sequence_checker.h"
 #include "api/video_codecs/video_decoder_factory.h"
@@ -36,8 +39,6 @@
 #include "api/video_codecs/video_encoder_factory_template_libvpx_vp9_adapter.h"
 #include "api/video_codecs/video_encoder_factory_template_open_h264_adapter.h"
 #include "media/engine/simulcast_encoder_adapter.h"
-#include "modules/audio_device/include/audio_device.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "p2p/base/fake_port_allocator.h"
 #include "p2p/base/port_allocator.h"
 #include "pc/test/fake_periodic_video_source.h"
@@ -50,18 +51,20 @@
 #include "rtc_base/time_utils.h"
 #include "test/gtest.h"
 
-using webrtc::FakeVideoTrackRenderer;
-using webrtc::IceCandidateInterface;
-using webrtc::MediaStreamInterface;
-using webrtc::MediaStreamTrackInterface;
-using webrtc::MockSetSessionDescriptionObserver;
-using webrtc::PeerConnectionInterface;
-using webrtc::RtpReceiverInterface;
-using webrtc::SdpType;
-using webrtc::SessionDescriptionInterface;
-using webrtc::VideoTrackInterface;
-
 namespace {
+
+using ::webrtc::Environment;
+using ::webrtc::FakeVideoTrackRenderer;
+using ::webrtc::IceCandidateInterface;
+using ::webrtc::MediaStreamInterface;
+using ::webrtc::MediaStreamTrackInterface;
+using ::webrtc::MockSetSessionDescriptionObserver;
+using ::webrtc::PeerConnectionInterface;
+using ::webrtc::RtpReceiverInterface;
+using ::webrtc::SdpType;
+using ::webrtc::SessionDescriptionInterface;
+using ::webrtc::VideoTrackInterface;
+
 const char kStreamIdBase[] = "stream_id";
 const char kVideoTrackLabelBase[] = "video_track";
 const char kAudioTrackLabelBase[] = "audio_track";
@@ -75,13 +78,14 @@ class FuzzyMatchedVideoEncoderFactory : public webrtc::VideoEncoderFactory {
     return factory_.GetSupportedFormats();
   }
 
-  std::unique_ptr<webrtc::VideoEncoder> CreateVideoEncoder(
+  std::unique_ptr<webrtc::VideoEncoder> Create(
+      const Environment& env,
       const webrtc::SdpVideoFormat& format) override {
     if (absl::optional<webrtc::SdpVideoFormat> original_format =
             webrtc::FuzzyMatchSdpVideoFormat(factory_.GetSupportedFormats(),
                                              format)) {
       return std::make_unique<webrtc::SimulcastEncoderAdapter>(
-          &factory_, *original_format);
+          env, &factory_, nullptr, *original_format);
     }
 
     return nullptr;

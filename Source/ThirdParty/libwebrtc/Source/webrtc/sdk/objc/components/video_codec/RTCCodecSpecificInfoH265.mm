@@ -11,8 +11,6 @@
 
 #import "RTCCodecSpecificInfoH265+Private.h"
 
-#include "modules/video_coding/codecs/h265/include/h265_globals.h"
-
 // H265 specific settings.
 @implementation RTCCodecSpecificInfoH265
 
@@ -21,8 +19,8 @@
 - (webrtc::CodecSpecificInfo)nativeCodecSpecificInfo {
   webrtc::CodecSpecificInfo codecSpecificInfo;
   codecSpecificInfo.codecType = webrtc::kVideoCodecH265;
-  codecSpecificInfo.codecSpecific.H265.packetization_mode =
-      (webrtc::H265PacketizationMode)_packetizationMode;
+  codecSpecificInfo.codecSpecific.H264.packetization_mode =
+      (webrtc::H264PacketizationMode)_packetizationMode;
 
   return codecSpecificInfo;
 }

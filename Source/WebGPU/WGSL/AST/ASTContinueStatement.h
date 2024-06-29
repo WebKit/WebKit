@@ -36,10 +36,15 @@ class ContinueStatement final : public Statement {
 public:
     NodeKind kind() const override;
 
+    void setIsFromSwitchToContinuing() { m_isFromSwitchToContinuing = true; };
+    bool isFromSwitchToContinuing() const { return m_isFromSwitchToContinuing; };
+
 private:
     ContinueStatement(SourceSpan span)
         : Statement(span)
     { }
+
+    bool m_isFromSwitchToContinuing { false };
 };
 
 } // namespace WGSL::AST

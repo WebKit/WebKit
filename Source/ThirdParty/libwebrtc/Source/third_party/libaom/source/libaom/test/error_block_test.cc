@@ -245,7 +245,7 @@ TEST_P(ErrorBlockTest, DISABLED_Speed) {
 
 using std::make_tuple;
 
-#if (HAVE_SSE2)
+#if HAVE_SSE2
 const ErrorBlockParam kErrorBlockTestParamsSse2[] = {
 #if CONFIG_AV1_HIGHBITDEPTH
   make_tuple(&av1_highbd_block_error_sse2, &av1_highbd_block_error_c,
@@ -265,7 +265,7 @@ INSTANTIATE_TEST_SUITE_P(SSE2, ErrorBlockTest,
                          ::testing::ValuesIn(kErrorBlockTestParamsSse2));
 #endif  // HAVE_SSE2
 
-#if (HAVE_AVX2)
+#if HAVE_AVX2
 const ErrorBlockParam kErrorBlockTestParamsAvx2[] = {
 #if CONFIG_AV1_HIGHBITDEPTH
   make_tuple(&av1_highbd_block_error_avx2, &av1_highbd_block_error_c,
@@ -285,7 +285,7 @@ INSTANTIATE_TEST_SUITE_P(AVX2, ErrorBlockTest,
                          ::testing::ValuesIn(kErrorBlockTestParamsAvx2));
 #endif  // HAVE_AVX2
 
-#if (HAVE_NEON)
+#if HAVE_NEON
 const ErrorBlockParam kErrorBlockTestParamsNeon[] = {
 #if CONFIG_AV1_HIGHBITDEPTH
   make_tuple(&av1_highbd_block_error_neon, &av1_highbd_block_error_c,
@@ -304,4 +304,16 @@ const ErrorBlockParam kErrorBlockTestParamsNeon[] = {
 INSTANTIATE_TEST_SUITE_P(NEON, ErrorBlockTest,
                          ::testing::ValuesIn(kErrorBlockTestParamsNeon));
 #endif  // HAVE_NEON
+
+#if HAVE_SVE
+const ErrorBlockParam kErrorBlockTestParamsSVE[] = {
+  make_tuple(&BlockError8BitWrapper<av1_block_error_sve>,
+             &BlockError8BitWrapper<av1_block_error_c>, AOM_BITS_8),
+  make_tuple(&BlockErrorLpWrapper<av1_block_error_lp_sve>,
+             &BlockErrorLpWrapper<av1_block_error_lp_c>, AOM_BITS_8)
+};
+
+INSTANTIATE_TEST_SUITE_P(SVE, ErrorBlockTest,
+                         ::testing::ValuesIn(kErrorBlockTestParamsSVE));
+#endif  // HAVE_SVE
 }  // namespace

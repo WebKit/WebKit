@@ -110,7 +110,7 @@ bool ValidateProgramResourceProperty(const Context *context,
         case GL_REFERENCED_BY_TESS_CONTROL_SHADER_EXT:
         case GL_REFERENCED_BY_TESS_EVALUATION_SHADER_EXT:
         case GL_IS_PER_PATCH_EXT:
-            return context->getExtensions().tessellationShaderEXT ||
+            return context->getExtensions().tessellationShaderAny() ||
                    context->getClientVersion() >= ES_3_2;
 
         case GL_LOCATION_INDEX_EXT:
@@ -1741,7 +1741,7 @@ bool ValidateUseProgramStagesBase(const Context *context,
         knownShaderBits |= GL_GEOMETRY_SHADER_BIT;
     }
 
-    if (context->getClientVersion() >= ES_3_2 || context->getExtensions().tessellationShaderEXT)
+    if (context->getClientVersion() >= ES_3_2 || context->getExtensions().tessellationShaderAny())
     {
         knownShaderBits |= GL_TESS_CONTROL_SHADER_BIT;
         knownShaderBits |= GL_TESS_EVALUATION_SHADER_BIT;
@@ -1865,7 +1865,7 @@ bool ValidateCreateShaderProgramvBase(const Context *context,
             break;
         case ShaderType::TessControl:
         case ShaderType::TessEvaluation:
-            if (!context->getExtensions().tessellationShaderEXT &&
+            if (!context->getExtensions().tessellationShaderAny() &&
                 context->getClientVersion() < ES_3_2)
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidShaderType);
@@ -1928,7 +1928,7 @@ bool ValidateGetProgramPipelineivBase(const Context *context,
                    context->getClientVersion() >= ES_3_2;
         case GL_TESS_CONTROL_SHADER:
         case GL_TESS_EVALUATION_SHADER:
-            return context->getExtensions().tessellationShaderEXT ||
+            return context->getExtensions().tessellationShaderAny() ||
                    context->getClientVersion() >= ES_3_2;
 
         default:
@@ -3141,6 +3141,39 @@ bool ValidateTexBufferRangeBase(const Context *context,
     }
 
     return ValidateTexBufferBase(context, entryPoint, target, internalformat, bufferPacked);
+}
+
+bool ValidatePatchParameteriBase(const PrivateState &state,
+                                 ErrorSet *errors,
+                                 angle::EntryPoint entryPoint,
+                                 GLenum pname,
+                                 GLint value)
+{
+    if (state.getClientVersion() < ES_3_1)
+    {
+        errors->validationError(entryPoint, GL_INVALID_OPERATION, kES31Required);
+        return false;
+    }
+
+    if (pname != GL_PATCH_VERTICES)
+    {
+        errors->validationError(entryPoint, GL_INVALID_ENUM, kInvalidPname);
+        return false;
+    }
+
+    if (value <= 0)
+    {
+        errors->validationError(entryPoint, GL_INVALID_VALUE, kInvalidValueNonPositive);
+        return false;
+    }
+
+    if (value > state.getCaps().maxPatchVertices)
+    {
+        errors->validationError(entryPoint, GL_INVALID_VALUE, kInvalidValueExceedsMaxPatchSize);
+        return false;
+    }
+
+    return true;
 }
 
 }  // namespace gl

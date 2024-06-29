@@ -37,7 +37,7 @@ ModuleInformation::ModuleInformation()
 {
 }
 
-ModuleInformation::~ModuleInformation() { }
+ModuleInformation::~ModuleInformation() = default;
 
 } } // namespace JSC::Wasm
 

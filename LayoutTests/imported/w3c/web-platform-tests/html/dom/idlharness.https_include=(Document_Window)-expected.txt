@@ -211,7 +211,7 @@ PASS Window interface: attribute parent
 PASS Window interface: attribute frameElement
 PASS Window interface: operation open(optional USVString, optional DOMString, optional DOMString)
 PASS Window interface: attribute navigator
-FAIL Window interface: attribute clientInformation assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function set clientInformation() {
+FAIL Window interface: attribute clientInformation assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function clientInformation() {
     [native code]
 }"
 FAIL Window interface: attribute originAgentCluster assert_own_property: The global object must have a property "originAgentCluster" expected property "originAgentCluster" missing

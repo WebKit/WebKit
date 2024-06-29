@@ -18,7 +18,7 @@
 #include <memory.h>
 
 #include "aom_dsp/pyramid.h"
-#include "aom_util/aom_thread.h"
+#include "aom_util/aom_pthread.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,7 +57,8 @@ size_t av1_get_corner_list_size(void);
 
 CornerList *av1_alloc_corner_list(void);
 
-bool av1_compute_corner_list(const ImagePyramid *pyr, CornerList *corners);
+bool av1_compute_corner_list(const YV12_BUFFER_CONFIG *frame, int bit_depth,
+                             int downsample_level, CornerList *corners);
 
 #ifndef NDEBUG
 // Check if a corner list has already been computed.

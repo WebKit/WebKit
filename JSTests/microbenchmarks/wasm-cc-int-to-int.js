@@ -1,4 +1,7 @@
-//@runDefault("--useWebAssembly=1")
+//@ skip unless $isWasmPlatform
+//@ $skipModes << :lockdown
+//@ runDefaultWasm("--useWebAssembly=1")
+
 var wasm_code;
 try {
     wasm_code = read('../../JSTests/microbenchmarks/wasm-cc-int-to-int.wasm', 'binary')

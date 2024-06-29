@@ -1,0 +1,5 @@
+
+
+PASS The width of an empty textarea should be same as the caret width
+PASS The height of an empty textarea should be same as the caret height in a vertical writing-mode
+

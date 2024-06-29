@@ -13,8 +13,6 @@
 
 #include <assert.h>
 
-#include "vpx_ports/msvc.h"
-
 #ifdef _MSC_VER
 #if defined(_M_X64) || defined(_M_IX86)
 #include <intrin.h>

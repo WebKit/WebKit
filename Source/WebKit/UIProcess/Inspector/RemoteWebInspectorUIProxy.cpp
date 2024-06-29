@@ -67,7 +67,8 @@ void RemoteWebInspectorUIProxy::invalidate()
 void RemoteWebInspectorUIProxy::setDiagnosticLoggingAvailable(bool available)
 {
 #if ENABLE(INSPECTOR_TELEMETRY)
-    protectedInspectorPage()->send(Messages::RemoteWebInspectorUI::SetDiagnosticLoggingAvailable(available));
+    if (RefPtr page = protectedInspectorPage())
+        page->legacyMainFrameProcess().send(Messages::RemoteWebInspectorUI::SetDiagnosticLoggingAvailable(available), page->webPageIDInMainFrameProcess());
 #else
     UNUSED_PARAM(available);
 #endif
@@ -81,7 +82,7 @@ void RemoteWebInspectorUIProxy::initialize(Ref<API::DebuggableInfo>&& debuggable
     createFrontendPageAndWindow();
 
     auto inspectorPage = protectedInspectorPage();
-    inspectorPage->send(Messages::RemoteWebInspectorUI::Initialize(m_debuggableInfo->debuggableInfoData(), backendCommandsURL));
+    inspectorPage->legacyMainFrameProcess().send(Messages::RemoteWebInspectorUI::Initialize(m_debuggableInfo->debuggableInfoData(), backendCommandsURL), m_inspectorPage->webPageIDInMainFrameProcess());
     inspectorPage->loadRequest(URL { WebInspectorUIProxy::inspectorPageURL() });
 }
 
@@ -103,17 +104,20 @@ void RemoteWebInspectorUIProxy::show()
 
 void RemoteWebInspectorUIProxy::showConsole()
 {
-    protectedInspectorPage()->send(Messages::RemoteWebInspectorUI::ShowConsole { });
+    if (RefPtr page = protectedInspectorPage())
+        page->legacyMainFrameProcess().send(Messages::RemoteWebInspectorUI::ShowConsole { }, page->webPageIDInMainFrameProcess());
 }
 
 void RemoteWebInspectorUIProxy::showResources()
 {
-    protectedInspectorPage()->send(Messages::RemoteWebInspectorUI::ShowResources { });
+    if (RefPtr page = protectedInspectorPage())
+        page->legacyMainFrameProcess().send(Messages::RemoteWebInspectorUI::ShowResources { }, page->webPageIDInMainFrameProcess());
 }
 
 void RemoteWebInspectorUIProxy::sendMessageToFrontend(const String& message)
 {
-    protectedInspectorPage()->send(Messages::RemoteWebInspectorUI::SendMessageToFrontend(message));
+    if (RefPtr page = protectedInspectorPage())
+        page->legacyMainFrameProcess().send(Messages::RemoteWebInspectorUI::SendMessageToFrontend(message), page->webPageIDInMainFrameProcess());
 }
 
 void RemoteWebInspectorUIProxy::frontendLoaded()
@@ -221,7 +225,7 @@ void RemoteWebInspectorUIProxy::createFrontendPageAndWindow()
 
     trackInspectorPage(inspectorPage.get(), nullptr);
 
-    inspectorPage->process().addMessageReceiver(Messages::RemoteWebInspectorUIProxy::messageReceiverName(), inspectorPage->webPageID(), *this);
+    inspectorPage->legacyMainFrameProcess().addMessageReceiver(Messages::RemoteWebInspectorUIProxy::messageReceiverName(), inspectorPage->webPageIDInMainFrameProcess(), *this);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     m_extensionController = WebInspectorUIExtensionControllerProxy::create(*inspectorPage);
@@ -234,7 +238,7 @@ void RemoteWebInspectorUIProxy::closeFrontendPageAndWindow()
     if (!inspectorPage)
         return;
 
-    inspectorPage->process().removeMessageReceiver(Messages::RemoteWebInspectorUIProxy::messageReceiverName(), inspectorPage->webPageID());
+    inspectorPage->legacyMainFrameProcess().removeMessageReceiver(Messages::RemoteWebInspectorUIProxy::messageReceiverName(), inspectorPage->webPageIDInMainFrameProcess());
 
     untrackInspectorPage(inspectorPage.get());
 

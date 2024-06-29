@@ -1,3 +1,3 @@
 
-FAIL entry.getState() after history.replaceState() assert_equals: expected (undefined) undefined but got (object) object "[object Object]"
+PASS entry.getState() after history.replaceState()
 

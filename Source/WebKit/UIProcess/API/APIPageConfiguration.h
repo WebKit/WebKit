@@ -31,6 +31,7 @@
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
+#include <WebCore/WritingToolsTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 #include <wtf/HashMap.h>
@@ -307,6 +308,11 @@ public:
     void setAppHighlightsEnabled(bool enabled) { m_data.appHighlightsEnabled = enabled; }
 #endif
 
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    bool multiRepresentationHEICInsertionEnabled() const { return m_data.multiRepresentationHEICInsertionEnabled; }
+    void setMultiRepresentationHEICInsertionEnabled(bool enabled) { m_data.multiRepresentationHEICInsertionEnabled = enabled; }
+#endif
+
     const WTF::String& groupIdentifier() const { return m_data.groupIdentifier; }
     void setGroupIdentifier(WTF::String&& identifier) { m_data.groupIdentifier = WTFMove(identifier); }
 
@@ -375,6 +381,11 @@ public:
 
     bool allowsInlinePredictions() const { return m_data.allowsInlinePredictions; }
     void setAllowsInlinePredictions(bool allows) { m_data.allowsInlinePredictions = allows; }
+
+#if ENABLE(WRITING_TOOLS)
+    WebCore::WritingTools::Behavior writingToolsBehavior() const { return m_data.writingToolsBehavior; }
+    void setWritingToolsBehavior(WebCore::WritingTools::Behavior behavior) { m_data.writingToolsBehavior = behavior; }
+#endif
 
     void setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking value) { m_data.shouldRelaxThirdPartyCookieBlocking = value; }
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_data.shouldRelaxThirdPartyCookieBlocking; }
@@ -546,6 +557,9 @@ private:
 #if ENABLE(APP_HIGHLIGHTS)
         bool appHighlightsEnabled { DEFAULT_VALUE_FOR_AppHighlightsEnabled };
 #endif
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+        bool multiRepresentationHEICInsertionEnabled { false };
+#endif
         WTF::String groupIdentifier;
         WTF::String mediaContentTypesRequiringHardwareSupport;
         std::optional<WTF::String> applicationNameForUserAgent;
@@ -571,6 +585,10 @@ private:
         bool allowsInlinePredictions { false };
         bool scrollToTextFragmentIndicatorEnabled { true };
         bool scrollToTextFragmentMarkingEnabled { true };
+
+#if ENABLE(WRITING_TOOLS)
+        WebCore::WritingTools::Behavior writingToolsBehavior { WebCore::WritingTools::Behavior::Default };
+#endif
 
         WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
         WTF::String attributedBundleIdentifier;

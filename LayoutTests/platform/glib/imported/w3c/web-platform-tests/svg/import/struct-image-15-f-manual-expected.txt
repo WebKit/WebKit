@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (16,185) size 258x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 258x18
           chunk 1 text run 1 at (16.00,200.00) startOffset 0 endOffset 35 width 257.12: "Background color, with transparency"
-      RenderSVGText {text} at (16,238) size 269x28 contains 1 chunk(s)
+      RenderSVGText {text} at (16,238) size 269x27 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 269x27
           chunk 1 text run 1 at (16.00,260.00) startOffset 0 endOffset 22 width 268.20: "Handling bKGd and tRNs"
     RenderSVGContainer {g} at (16,518) size 388x60

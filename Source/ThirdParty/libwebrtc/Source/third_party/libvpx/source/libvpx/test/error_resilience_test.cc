@@ -13,6 +13,7 @@
 #include "test/encode_test_driver.h"
 #include "test/i420_video_source.h"
 #include "test/util.h"
+#include "vpx_config.h"
 
 namespace {
 
@@ -194,6 +195,10 @@ class ErrorResilienceTestLarge
 };
 
 TEST_P(ErrorResilienceTestLarge, OnVersusOff) {
+#if CONFIG_REALTIME_ONLY
+  GTEST_SKIP()
+      << "Non-zero g_lag_in_frames is unsupported with CONFIG_REALTIME_ONLY";
+#else
   const vpx_rational timebase = { 33333333, 1000000000 };
   cfg_.g_timebase = timebase;
   cfg_.rc_target_bitrate = 2000;
@@ -222,6 +227,7 @@ TEST_P(ErrorResilienceTestLarge, OnVersusOff) {
     EXPECT_GE(psnr_ratio, 0.9);
     EXPECT_LE(psnr_ratio, 1.1);
   }
+#endif  // CONFIG_REALTIME_ONLY
 }
 
 // Check for successful decoding and no encoder/decoder mismatch

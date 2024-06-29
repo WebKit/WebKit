@@ -497,7 +497,7 @@ JSCValue* jsc_value_new_array(JSCContext* context, GType firstItemType, ...)
         GUniqueOutPtr<char> error;
         G_VALUE_COLLECT_INIT(&item, itemType, args, G_VALUE_NOCOPY_CONTENTS, &error.outPtr());
         if (error) {
-            exception = toRef(JSC::createTypeError(globalObject, makeString("failed to collect array item: "_s, error.get())));
+            exception = toRef(JSC::createTypeError(globalObject, makeString("failed to collect array item: "_s, span(error.get()))));
             jscContextHandleExceptionIfNeeded(context, exception);
             jsArray = nullptr;
             break;
@@ -853,10 +853,10 @@ char** jsc_value_object_enumerate_properties(JSCValue* value)
 
     auto* result = static_cast<char**>(g_new0(char*, propertiesArraySize + 1));
     for (unsigned i = 0; i < propertiesArraySize; ++i) {
-        auto* jsString = JSPropertyNameArrayGetNameAtIndex(propertiesArray, i);
-        size_t maxSize = JSStringGetMaximumUTF8CStringSize(jsString);
+        RefPtr jsString = JSPropertyNameArrayGetNameAtIndex(propertiesArray, i);
+        size_t maxSize = JSStringGetMaximumUTF8CStringSize(jsString.get());
         auto* string = static_cast<char*>(g_malloc(maxSize));
-        JSStringGetUTF8CString(jsString, string, maxSize);
+        JSStringGetUTF8CString(jsString.get(), string, maxSize);
         result[i] = string;
     }
     JSPropertyNameArrayRelease(propertiesArray);
@@ -893,7 +893,7 @@ static GRefPtr<JSCValue> jscValueCallFunction(JSCValue* value, JSObjectRef funct
         GUniqueOutPtr<char> error;
         G_VALUE_COLLECT_INIT(&parameter, parameterType, args, G_VALUE_NOCOPY_CONTENTS, &error.outPtr());
         if (error) {
-            exception = toRef(JSC::createTypeError(globalObject, makeString("failed to collect function paramater: "_s, error.get())));
+            exception = toRef(JSC::createTypeError(globalObject, makeString("failed to collect function paramater: "_s, span(error.get()))));
             jscContextHandleExceptionIfNeeded(priv->context.get(), exception);
             return adoptGRef(jsc_value_new_undefined(priv->context.get()));
         }
@@ -1043,8 +1043,8 @@ void jsc_value_object_define_property_data(JSCValue* value, const char* property
     JSCValuePrivate* priv = value->priv;
     auto* jsContext = jscContextGetJSContext(priv->context.get());
     JSC::JSGlobalObject* globalObject = toJS(jsContext);
-    JSC::VM& vm = globalObject->vm();
-
+    Ref vm = globalObject->vm();
+    JSC::JSLockHolder locker(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSC::JSValue jsValue = toJS(globalObject, priv->jsValue);
@@ -1064,7 +1064,7 @@ void jsc_value_object_define_property_data(JSCValue* value, const char* property
     descriptor.setEnumerable(flags & JSC_VALUE_PROPERTY_ENUMERABLE);
     descriptor.setConfigurable(flags & JSC_VALUE_PROPERTY_CONFIGURABLE);
     descriptor.setWritable(flags & JSC_VALUE_PROPERTY_WRITABLE);
-    object->methodTable()->defineOwnProperty(object, globalObject, name->identifier(&vm), descriptor, true);
+    object->methodTable()->defineOwnProperty(object, globalObject, name->identifier(vm.ptr()), descriptor, true);
     if (handleExceptionIfNeeded(scope, jsContext, &exception) == ExceptionStatus::DidThrow) {
         jscContextHandleExceptionIfNeeded(priv->context.get(), exception);
         return;
@@ -1076,8 +1076,8 @@ static void jscValueObjectDefinePropertyAccessor(JSCValue* value, const char* pr
     JSCValuePrivate* priv = value->priv;
     auto* jsContext = jscContextGetJSContext(priv->context.get());
     JSC::JSGlobalObject* globalObject = toJS(jsContext);
-    JSC::VM& vm = globalObject->vm();
-
+    Ref vm = globalObject->vm();
+    JSC::JSLockHolder locker(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSC::JSValue jsValue = toJS(globalObject, priv->jsValue);
@@ -1109,7 +1109,7 @@ static void jscValueObjectDefinePropertyAccessor(JSCValue* value, const char* pr
         auto function = JSC::JSCCallbackFunction::create(vm, globalObject, "set"_s, functionType, nullptr, WTFMove(closure), G_TYPE_NONE, Vector<GType> { propertyType });
         descriptor.setSetter(function);
     }
-    object->methodTable()->defineOwnProperty(object, globalObject, name->identifier(&vm), descriptor, true);
+    object->methodTable()->defineOwnProperty(object, globalObject, name->identifier(vm.ptr()), descriptor, true);
     if (handleExceptionIfNeeded(scope, jsContext, &exception) == ExceptionStatus::DidThrow) {
         jscContextHandleExceptionIfNeeded(priv->context.get(), exception);
         return;
@@ -1166,8 +1166,8 @@ static GRefPtr<JSCValue> jscValueFunctionCreate(JSCContext* context, const char*
     else
         closure = adoptGRef(g_cclosure_new(callback, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
     JSC::JSGlobalObject* globalObject = toJS(jscContextGetJSContext(context));
-    JSC::VM& vm = globalObject->vm();
-
+    Ref vm = globalObject->vm();
+    JSC::JSLockHolder locker(vm);
     auto* functionObject = toRef(JSC::JSCCallbackFunction::create(vm, globalObject, name ? String::fromUTF8(name) : "anonymous"_s,
         JSC::JSCCallbackFunction::Type::Function, nullptr, WTFMove(closure), returnType, WTFMove(parameters)));
     return jscContextGetOrCreateValue(context, functionObject);
@@ -1535,7 +1535,7 @@ gboolean jsc_value_is_array_buffer(JSCValue* value)
     using namespace JSC;
 
     JSGlobalObject* globalObject = toJS(jscContextGetJSContext(value->priv->context.get()));
-    VM& vm = globalObject->vm();
+    Ref vm = globalObject->vm();
     JSLockHolder locker(vm);
 
     JSValue jsValue = toJS(globalObject, value->priv->jsValue);
@@ -1833,7 +1833,7 @@ JSCTypedArrayType jsc_value_typed_array_get_type(JSCValue *value)
     g_return_val_if_fail(JSC_IS_VALUE(value), JSC_TYPED_ARRAY_NONE);
 
     JSC::JSGlobalObject* globalObject = toJS(jscContextGetJSContext(value->priv->context.get()));
-    JSC::VM& vm = globalObject->vm();
+    Ref vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
 
     JSC::JSValue jsValue = toJS(globalObject, value->priv->jsValue);

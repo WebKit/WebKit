@@ -52,7 +52,6 @@ var gniExportDescs = []exporter.GNIExportDesc{
 		{Var: "skia_core_public",
 			Rules: []string{
 				"//include/core:public_hdrs",
-				"//include/core:legacy_draw_looper",
 			}},
 		{Var: "skia_core_sources",
 			Rules: []string{
@@ -68,7 +67,6 @@ var gniExportDescs = []exporter.GNIExportDesc{
 				"//src/core:legacy_core_srcs",
 				"//src/core:core_skslc_hdrs",
 				"//src/core:core_skslc_srcs",
-				"//src/core:legacy_draw_looper",
 				"//src/image:image_hdrs",
 				"//src/image:image_srcs",
 				"//src/lazy:lazy_hdrs",
@@ -130,7 +128,6 @@ var gniExportDescs = []exporter.GNIExportDesc{
 			Rules: []string{
 				"//src/effects:effects_hdrs",
 				"//src/effects:effects_srcs",
-				"//src/effects:legacy_draw_looper",
 				"//src/shaders/gradients:gradient_hdrs",
 				"//src/shaders/gradients:gradient_srcs",
 			}},
@@ -232,7 +229,7 @@ var gniExportDescs = []exporter.GNIExportDesc{
 		{Var: "skia_utils_chromium",
 			Rules: []string{
 				"//include/docs:multi_picture_document_hdrs",
-				"//src/utils:chromium_hdrs"}},
+			}},
 		{Var: "skia_utils_private",
 			Rules: []string{
 				"//src/utils:utils_hdrs",
@@ -389,6 +386,9 @@ var gniExportDescs = []exporter.GNIExportDesc{
 				"//include/gpu/gl/egl:public_hdrs",
 				"//include/gpu/gl/epoxy:public_hdrs",
 				"//include/gpu/gl/glx:public_hdrs",
+				"//include/gpu/ganesh/gl/egl:public_hdrs",
+				"//include/gpu/ganesh/gl/epoxy:public_hdrs",
+				"//include/gpu/ganesh/gl/glx:public_hdrs",
 				"//src/gpu/ganesh/gl/android:srcs",
 				"//src/gpu/ganesh/gl/egl:srcs",
 				"//src/gpu/ganesh/gl/epoxy:srcs",
@@ -527,12 +527,14 @@ var gniExportDescs = []exporter.GNIExportDesc{
 			Rules: []string{"//modules/skottie/include:hdrs"}},
 		{Var: "skia_skottie_sources",
 			Rules: []string{
-				"//modules/skottie/src:srcs",
+				"//modules/skottie/src:core_hdrs",
+				"//modules/skottie/src:core_srcs",
 				"//modules/skottie/src/animator:srcs",
 				"//modules/skottie/src/effects:srcs",
 				"//modules/skottie/src/layers:srcs",
 				"//modules/skottie/src/layers/shapelayer:srcs",
-				"//modules/skottie/src/text:srcs",
+				"//modules/skottie/src/text:text_hdrs",
+				"//modules/skottie/src/text:text_srcs",
 				"//modules/skottie/src/text:text_shaper_srcs",
 			}},
 	}},

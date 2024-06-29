@@ -22,7 +22,6 @@
 #include <atomic>
 #include <cstring>
 #include <memory>
-#include <new>
 #include <string>
 #include <type_traits>
 #include <typeinfo>
@@ -54,13 +53,8 @@ template <typename T>
 class Flag;
 }  // namespace flags_internal
 
-#if defined(_MSC_VER) && !defined(__clang__)
-template <typename T>
-class Flag;
-#else
 template <typename T>
 using Flag = flags_internal::Flag<T>;
-#endif
 
 template <typename T>
 ABSL_MUST_USE_RESULT T GetFlag(const absl::Flag<T>& flag);
@@ -430,6 +424,13 @@ struct DynValueDeleter {
 
 class FlagState;
 
+// These are only used as constexpr global objects.
+// They do not use a virtual destructor to simplify their implementation.
+// They are not destroyed except at program exit, so leaks do not matter.
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
+#endif
 class FlagImpl final : public CommandLineFlag {
  public:
   constexpr FlagImpl(const char* name, const char* filename, FlagOpFn op,
@@ -629,6 +630,9 @@ class FlagImpl final : public CommandLineFlag {
   // problems.
   alignas(absl::Mutex) mutable char data_guard_[sizeof(absl::Mutex)];
 };
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // The Flag object parameterized by the flag's value type. This class implements
@@ -759,8 +763,7 @@ void* FlagOps(FlagOp op, const void* v1, void* v2, void* v3) {
       // Round sizeof(FlagImp) to a multiple of alignof(FlagValue<T>) to get the
       // offset of the data.
       size_t round_to = alignof(FlagValue<T>);
-      size_t offset =
-          (sizeof(FlagImpl) + round_to - 1) / round_to * round_to;
+      size_t offset = (sizeof(FlagImpl) + round_to - 1) / round_to * round_to;
       return reinterpret_cast<void*>(offset);
     }
   }
@@ -775,7 +778,8 @@ struct FlagRegistrarEmpty {};
 template <typename T, bool do_register>
 class FlagRegistrar {
  public:
-  explicit FlagRegistrar(Flag<T>& flag, const char* filename) : flag_(flag) {
+  constexpr explicit FlagRegistrar(Flag<T>& flag, const char* filename)
+      : flag_(flag) {
     if (do_register)
       flags_internal::RegisterCommandLineFlag(flag_.impl_, filename);
   }
@@ -788,7 +792,7 @@ class FlagRegistrar {
   // Make the registrar "die" gracefully as an empty struct on a line where
   // registration happens. Registrar objects are intended to live only as
   // temporary.
-  operator FlagRegistrarEmpty() const { return {}; }  // NOLINT
+  constexpr operator FlagRegistrarEmpty() const { return {}; }  // NOLINT
 
  private:
   Flag<T>& flag_;  // Flag being registered (not owned).

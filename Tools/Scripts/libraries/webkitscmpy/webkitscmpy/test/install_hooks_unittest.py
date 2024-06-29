@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Apple Inc. All rights reserved.
+# Copyright (C) 2023-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,7 +24,8 @@ import logging
 import os
 import sys
 
-from webkitcorepy import OutputCapture, testing, Version
+from webkitcorepy import OutputCapture, Version, run, testing
+from webkitcorepy.mocks import Terminal as MockTerminal
 from webkitscmpy import local, program, mocks
 
 
@@ -127,6 +128,104 @@ class TestInstallHooks(testing.PathTestCase):
                 f.read(),
                 "#!/usr/bin/env {}\nprint('Hello, world!\\n')\n".format(os.path.basename(sys.executable)),
             )
+
+    def test_install_hook_alternate_hook_path_change(self):
+        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('Change'), mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
+            run(
+                [local.Git.executable(), 'config', 'core.hookspath', os.path.join(self.path, 'alternate-hooks-path')],
+                capture_output=True, cwd=self.path,
+            )
+            self.write_hook(os.path.join(self.path, 'hooks', 'pre-commit'))
+            self.assertEqual(0, program.main(
+                args=('install-hooks', '-v'),
+                path=self.path,
+                hooks=os.path.join(self.path, 'hooks'),
+            ))
+            self.assertEqual(
+                local.Git(self.path).config().get('core.hookspath'),
+                os.path.join(self.path, '.git/hooks'),
+            )
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "git believes hooks for this repository are in '{}', but they should be in '{}' ([Change]/Use/Exit): \n"
+            'Successfully installed 1 of 1 repository hooks\n'.format(
+                os.path.join(self.path, 'alternate-hooks-path'),
+                os.path.join(self.path, '.git/hooks'),
+            )
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "Configuring and copying hook 'pre-commit' for this repository\n",
+        )
+
+        resolved_hook = os.path.join(self.path, '.git', 'hooks', 'pre-commit')
+        self.assertTrue(os.path.isfile(resolved_hook))
+        with open(resolved_hook, 'r') as f:
+            self.assertEqual(
+                f.read(),
+                "#!/usr/bin/env {}\nprint('Hello, world!\\n')\n".format(os.path.basename(sys.executable)),
+            )
+
+    def test_install_hook_alternate_hook_path_use(self):
+        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('Use'), mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
+            run(
+                [local.Git.executable(), 'config', 'core.hookspath', os.path.join(self.path, 'alternate-hooks-path')],
+                capture_output=True, cwd=self.path,
+            )
+            self.write_hook(os.path.join(self.path, 'hooks', 'pre-commit'))
+            self.assertEqual(0, program.main(
+                args=('install-hooks', '-v'),
+                path=self.path,
+                hooks=os.path.join(self.path, 'hooks'),
+            ))
+            self.assertEqual(
+                local.Git(self.path).config().get('core.hookspath'),
+                os.path.join(self.path, 'alternate-hooks-path'),
+            )
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "git believes hooks for this repository are in '{}', but they should be in '{}' ([Change]/Use/Exit): \n"
+            'Successfully installed 1 of 1 repository hooks\n'.format(
+                os.path.join(self.path, 'alternate-hooks-path'),
+                os.path.join(self.path, '.git/hooks'),
+            )
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "Configuring and copying hook 'pre-commit' for this repository\n",
+        )
+
+        resolved_hook = os.path.join(self.path, 'alternate-hooks-path', 'pre-commit')
+        self.assertTrue(os.path.isfile(resolved_hook))
+        with open(resolved_hook, 'r') as f:
+            self.assertEqual(
+                f.read(),
+                "#!/usr/bin/env {}\nprint('Hello, world!\\n')\n".format(os.path.basename(sys.executable)),
+            )
+
+    def test_install_hook_alternate_hook_path_exit(self):
+        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('Exit'), mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
+            run(
+                [local.Git.executable(), 'config', 'core.hookspath', os.path.join(self.path, 'alternate-hooks-path')],
+                capture_output=True, cwd=self.path,
+            )
+            self.write_hook(os.path.join(self.path, 'hooks', 'pre-commit'))
+            self.assertEqual(1, program.main(
+                args=('install-hooks', '-v'),
+                path=self.path,
+                hooks=os.path.join(self.path, 'hooks'),
+            ))
+
+        self.assertEqual(captured.stdout.getvalue(), "git believes hooks for this repository are in '{}', but they should be in '{}' ([Change]/Use/Exit): \n".format(
+            os.path.join(self.path, 'alternate-hooks-path'),
+            os.path.join(self.path, '.git/hooks'),
+        ))
+        self.assertEqual(captured.stderr.getvalue(), 'No hooks installed because user canceled hook installation\n')
+        self.assertEqual(captured.root.log.getvalue(), '')
 
     def test_security_level_in_hook(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():

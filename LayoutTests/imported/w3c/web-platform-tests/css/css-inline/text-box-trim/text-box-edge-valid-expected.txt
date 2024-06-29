@@ -1,0 +1,12 @@
+
+PASS e.style['text-box-edge'] = "leading" should set the property value
+PASS e.style['text-box-edge'] = "text" should set the property value
+PASS e.style['text-box-edge'] = "ex" should set the property value
+PASS e.style['text-box-edge'] = "cap" should set the property value
+PASS e.style['text-box-edge'] = "text alphabetic" should set the property value
+FAIL e.style['text-box-edge'] = "text text" should set the property value assert_equals: serialization should be canonical expected "text" but got "text text"
+PASS e.style['text-box-edge'] = "cap alphabetic" should set the property value
+FAIL e.style['text-box-edge'] = "cap text" should set the property value assert_equals: serialization should be canonical expected "cap" but got "cap text"
+PASS e.style['text-box-edge'] = "ex alphabetic" should set the property value
+FAIL e.style['text-box-edge'] = "ex text" should set the property value assert_equals: serialization should be canonical expected "ex" but got "ex text"
+

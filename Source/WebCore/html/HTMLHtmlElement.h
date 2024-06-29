@@ -33,12 +33,8 @@ public:
     WEBCORE_EXPORT static Ref<HTMLHtmlElement> create(Document&);
     static Ref<HTMLHtmlElement> create(const QualifiedName&, Document&);
 
-    void insertedByParser();
-
 private:
     HTMLHtmlElement(const QualifiedName&, Document&);
-
-    bool isURLAttribute(const Attribute&) const final;
 };
 
 } // namespace WebCore

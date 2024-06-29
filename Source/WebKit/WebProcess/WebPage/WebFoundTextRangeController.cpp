@@ -26,16 +26,13 @@
 #include "config.h"
 #include "WebFoundTextRangeController.h"
 
-#include "WebFrame.h"
 #include "WebPage.h"
-#include "WebProcess.h"
 #include <WebCore/CharacterRange.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FocusController.h>
-#include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameSelection.h>
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
@@ -67,7 +64,7 @@ void WebFoundTextRangeController::findTextRangesForStringMatches(const String& s
     if (!findMatches.isEmpty())
         m_cachedFoundRanges.clear();
 
-    auto frameID = m_webPage->corePage()->mainFrame().frameID();
+    AtomString frameName;
     uint64_t order = 0;
     Vector<WebFoundTextRange> foundTextRanges;
     for (auto& simpleRange : findMatches) {
@@ -77,15 +74,15 @@ void WebFoundTextRangeController::findTextRangesForStringMatches(const String& s
         if (!element)
             continue;
 
-        auto currentFrameID = document->frame()->frameID();
-        if (frameID != currentFrameID) {
-            frameID = currentFrameID;
+        auto currentFrameName = document->frame()->tree().uniqueName();
+        if (frameName != currentFrameName) {
+            frameName = currentFrameName;
             order++;
         }
 
         // FIXME: We should get the character ranges at the same time as the SimpleRanges to avoid additional traversals.
         auto range = characterRange(makeBoundaryPointBeforeNodeContents(*element), simpleRange, WebCore::findIteratorOptions());
-        auto foundTextRange = WebFoundTextRange { range.location, range.length, frameID, order };
+        auto foundTextRange = WebFoundTextRange { range.location, range.length, frameName.length() ? frameName : emptyAtom(), order };
 
         m_cachedFoundRanges.add(foundTextRange, simpleRange);
         foundTextRanges.append(foundTextRange);
@@ -383,19 +380,18 @@ Vector<WebCore::FloatRect> WebFoundTextRangeController::rectsForTextMatchesInRec
 
 WebCore::Document* WebFoundTextRangeController::documentForFoundTextRange(const WebFoundTextRange& range) const
 {
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_webPage->corePage()->mainFrame());
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_webPage->corePage()->mainFrame());
     if (!localMainFrame)
         return nullptr;
 
-    RefPtr frame = WebProcess::singleton().webFrame(range.frameIdentifier);
-    if (!frame)
-        return nullptr;
+    auto& mainFrame = *localMainFrame;
+    if (range.frameIdentifier.isEmpty())
+        return mainFrame.document();
 
-    RefPtr coreLocalFrame = frame->coreLocalFrame();
-    if (!coreLocalFrame)
-        return nullptr;
+    if (auto* frame = dynamicDowncast<WebCore::LocalFrame>(mainFrame.tree().findByUniqueName(AtomString { range.frameIdentifier }, mainFrame)))
+        return frame->document();
 
-    return coreLocalFrame->document();
+    return nullptr;
 }
 
 std::optional<WebCore::SimpleRange> WebFoundTextRangeController::simpleRangeFromFoundTextRange(WebFoundTextRange range)

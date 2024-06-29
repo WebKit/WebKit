@@ -29,4 +29,5 @@ messages -> ServiceWorkerFetchTask NotRefCounted {
     DidReceiveFormData(IPC::FormDataReference data)
     DidFinish(WebCore::NetworkLoadMetrics metrics)
     UsePreload()
+    ContextClosed()
 }

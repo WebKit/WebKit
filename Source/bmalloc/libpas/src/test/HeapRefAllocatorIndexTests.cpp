@@ -35,11 +35,11 @@ void testIsoAllocate(size_t requestedSize, size_t actualSize)
 {
     pas_heap_ref heap = ISO_HEAP_REF_INITIALIZER(requestedSize);
 
-    void* object = iso_allocate(&heap);
+    void* object = iso_allocate(&heap, pas_non_compact_allocation_mode);
     CHECK_EQUAL(iso_get_allocation_size(object), actualSize);
     CHECK_LESS(heap.allocator_index, 10000);
 
-    void* object2 = iso_allocate(&heap);
+    void* object2 = iso_allocate(&heap, pas_non_compact_allocation_mode);
     CHECK_NOT_EQUAL(object, object2);
     CHECK_EQUAL(iso_get_allocation_size(object2), actualSize);
 }
@@ -48,11 +48,11 @@ void testAllocatePrimitive(size_t requestedSize, size_t actualSize)
 {
     pas_primitive_heap_ref heap = ISO_PRIMITIVE_HEAP_REF_INITIALIZER;
 
-    void* object = iso_allocate_primitive(&heap, requestedSize);
+    void* object = iso_allocate_primitive(&heap, requestedSize, pas_non_compact_allocation_mode);
     CHECK_EQUAL(iso_get_allocation_size(object), actualSize);
     CHECK_LESS(heap.base.allocator_index, 10000);
 
-    void* object2 = iso_allocate_primitive(&heap, requestedSize);
+    void* object2 = iso_allocate_primitive(&heap, requestedSize, pas_non_compact_allocation_mode);
     CHECK_NOT_EQUAL(object, object2);
     CHECK_EQUAL(iso_get_allocation_size(object2), actualSize);
 }

@@ -29,7 +29,7 @@
 extern "C" {
 #endif
 
-#include "./vpx_codec.h"
+#include "./vpx_codec.h"  // IWYU pragma: export
 #include "./vpx_frame_buffer.h"
 
 /*!\brief Current ABI version number
@@ -205,6 +205,8 @@ vpx_codec_err_t vpx_codec_get_stream_info(vpx_codec_ctx_t *ctx,
  *                         this frame.
  * \param[in] deadline     Soft deadline the decoder should attempt to meet,
  *                         in us. Set to zero for unlimited.
+ *                         NOTE: The deadline parameter is ignored. Always
+ *                         pass 0.
  *
  * \return Returns #VPX_CODEC_OK if the coded data was processed completely
  *         and future pictures can be decoded without error. Otherwise,

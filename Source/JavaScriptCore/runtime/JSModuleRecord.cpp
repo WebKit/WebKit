@@ -204,7 +204,7 @@ void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, Modul
                         return;
                     }
                 }
-                throwSyntaxError(globalObject, scope, makeString("Missing 'default' export in module '"_s, importedModule->moduleKey().string(), "'."));
+                throwSyntaxError(globalObject, scope, makeString("Missing 'default' export in module '"_s, importedModule->moduleKey().string(), "'."_s));
                 return;
             }
 

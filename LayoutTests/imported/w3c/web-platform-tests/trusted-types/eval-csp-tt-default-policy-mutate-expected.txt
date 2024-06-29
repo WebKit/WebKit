@@ -1,0 +1,5 @@
+
+PASS eval of string where default policy mutates value throws.
+PASS indirect eval of string where default policy mutates value throws.
+FAIL Function constructor with string where default policy mutates value throws. assert_throws_js: function "_ => new Function('return 1+1')" did not throw
+

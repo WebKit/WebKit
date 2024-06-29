@@ -162,7 +162,7 @@ void ViewGestureController::handleSmartMagnificationGesture(FloatPoint gestureLo
 
     LOG_WITH_STREAM(ViewGestures, stream << "ViewGestureController::handleSmartMagnificationGesture - gesture location " << gestureLocationInViewCoordinates);
 
-    m_webPageProxy.send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(gestureLocationInViewCoordinates));
+    m_webPageProxy.legacyMainFrameProcess().send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(gestureLocationInViewCoordinates), m_webPageProxy.webPageIDInMainFrameProcess());
 }
 
 static float maximumRectangleComponentDelta(FloatRect a, FloatRect b)

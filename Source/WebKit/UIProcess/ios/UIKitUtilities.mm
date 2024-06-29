@@ -230,6 +230,15 @@ static UIAxis axesForDelta(WebCore::FloatSize delta)
 
 @end
 
+@implementation UIViewController (WebKitInternal)
+
+- (BOOL)_wk_isInFullscreenPresentation
+{
+    return self.activePresentationController && self.modalPresentationStyle == UIModalPresentationFullScreen;
+}
+
+@end
+
 @implementation UIGestureRecognizer (WebKitInternal)
 
 - (BOOL)_wk_isTextInteractionLoupeGesture

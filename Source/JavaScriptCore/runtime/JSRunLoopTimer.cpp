@@ -241,9 +241,7 @@ JSRunLoopTimer::JSRunLoopTimer(VM& vm)
 {
 }
 
-JSRunLoopTimer::~JSRunLoopTimer()
-{
-}
+JSRunLoopTimer::~JSRunLoopTimer() = default;
 
 std::optional<Seconds> JSRunLoopTimer::timeUntilFire()
 {

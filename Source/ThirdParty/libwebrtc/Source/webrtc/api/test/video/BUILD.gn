@@ -18,6 +18,7 @@ rtc_library("function_video_factory") {
 
   deps = [
     "../../../rtc_base:checks",
+    "../../environment",
     "../../video_codecs:video_codecs_api",
   ]
 }

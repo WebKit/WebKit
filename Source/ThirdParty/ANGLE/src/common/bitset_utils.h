@@ -652,7 +652,7 @@ class BitSetArray final
     Iterator end() const { return Iterator(*this, kArraySize); }
     constexpr unsigned long to_ulong() const
     {
-        // TODO(anglebug.com/5628): Handle serializing more than kDefaultBitSetSize
+        // TODO(anglebug.com/42264163): Handle serializing more than kDefaultBitSetSize
         for (std::size_t index = 1; index < kArraySize; index++)
         {
             ASSERT(mBaseBitSetArray[index].none());

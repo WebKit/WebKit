@@ -30,6 +30,7 @@
 #import "FloatRect.h"
 #import "GraphicsContext.h"
 #import "SharedBuffer.h"
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -105,7 +106,7 @@ WebMultiRepresentationHEICAttachment *ImageAdapter::multiRepresentationHEIC()
 
     Vector<uint8_t> data = buffer->copyData();
 
-    RetainPtr nsData = adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
+    RetainPtr nsData = toNSData(data.span());
     m_multiRepHEIC = adoptNS([[PlatformWebMultiRepresentationHEICAttachment alloc] initWithImageContent:nsData.get()]);
 
     return m_multiRepHEIC.get();
