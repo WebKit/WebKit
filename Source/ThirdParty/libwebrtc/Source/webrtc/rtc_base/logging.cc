@@ -57,7 +57,7 @@ namespace rtc {
 namespace {
 
 // By default, release builds don't log, debug builds at info level
-#if !defined(NDEBUG)
+#if !defined(NDEBUG) && !defined(WEBRTC_WEBKIT_BUILD)
 constexpr LoggingSeverity kDefaultLoggingSeverity = LS_INFO;
 #else
 constexpr LoggingSeverity kDefaultLoggingSeverity = LS_NONE;
