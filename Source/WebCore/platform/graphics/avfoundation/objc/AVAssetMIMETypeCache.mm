@@ -145,7 +145,7 @@ bool AVAssetMIMETypeCache::isUnsupportedContainerType(const String& type)
         return true;
 
     // Reject types we know AVFoundation does not support that sites commonly ask about.
-    static constexpr ComparableASCIILiteral unsupportedTypesArray[] = { "application/ogg", "audio/ogg", "video/h264", "video/ogg", "video/x-flv" };
+    static constexpr ComparableASCIILiteral unsupportedTypesArray[] = { "video/h264", "video/x-flv" };
     static constexpr SortedArraySet unsupportedTypesSet { unsupportedTypesArray };
     return unsupportedTypesSet.contains(lowerCaseType);
 }

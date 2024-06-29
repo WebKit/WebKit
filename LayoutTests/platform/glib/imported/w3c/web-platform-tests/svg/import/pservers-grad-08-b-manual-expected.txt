@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (28,55) size 760x422
+    RenderSVGContainer {g} at (28,56) size 760x421
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGContainer {g} at (28,55) size 760x353 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
+      RenderSVGContainer {g} at (28,56) size 760x352 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
         RenderSVGResourceLinearGradient {linearGradient} [id="Gradient"] [gradientUnits=userSpaceOnUse] [start=(10,10)] [end=(440,10)]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#00FF00]

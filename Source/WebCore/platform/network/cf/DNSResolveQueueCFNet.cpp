@@ -30,6 +30,8 @@
 
 #include "Timer.h"
 #include <dns_sd.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
+#include <wtf/BlockPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
@@ -38,10 +40,6 @@
 #include <wtf/URL.h>
 #include <wtf/cf/VectorCF.h>
 #include <wtf/text/StringHash.h>
-
-#if PLATFORM(IOS_FAMILY)
-#include <CFNetwork/CFNetwork.h>
-#endif
 
 namespace WebCore {
 
@@ -77,20 +75,10 @@ class DNSResolveQueueCFNet::CompletionHandlerWrapper : public RefCounted<Complet
 public:
     static Ref<CompletionHandlerWrapper> create(DNSCompletionHandler&& completionHandler, std::optional<uint64_t> identifier) { return adoptRef(*new CompletionHandlerWrapper(WTFMove(completionHandler), identifier)); }
 
-    void complete(std::optional<DNSError> error)
+    void complete(DNSAddressesOrError&& result)
     {
-        if (!m_completionHandler)
-            return;
-
-        if (error)
-            m_completionHandler(makeUnexpected(*error));
-        else if (m_addresses.isEmpty()) {
-            ASSERT(receivedIPv4AndIPv6());
-            m_completionHandler(makeUnexpected(WebCore::DNSError::CannotResolve));
-        } else {
-            ASSERT(receivedIPv4AndIPv6());
-            m_completionHandler(std::exchange(m_addresses, { }));
-        }
+        if (m_completionHandler)
+            m_completionHandler(WTFMove(result));
 
         // This is currently necessary to prevent unbounded growth of m_pendingRequests.
         // FIXME: NetworkRTCProvider::CreateResolver should use sendWithAsyncReply, and there's
@@ -99,34 +87,19 @@ public:
             stopResolveDNS(*m_identifier);
     }
 
-    void addIPAddress(IPAddress&& address)
-    {
-        m_hasReceivedIPv4 |= address.isIPv4();
-        m_hasReceivedIPv6 |= address.isIPv6();
-        if (!address.containsOnlyZeros())
-            m_addresses.append(WTFMove(address));
-    }
-
-    bool receivedIPv4AndIPv6() const { return m_hasReceivedIPv4 && m_hasReceivedIPv6; }
-
 private:
     CompletionHandlerWrapper(DNSCompletionHandler&& completionHandler, std::optional<uint64_t> identifier)
         : m_completionHandler(WTFMove(completionHandler))
         , m_identifier(identifier) { }
 
     DNSCompletionHandler m_completionHandler;
-    Vector<IPAddress> m_addresses;
     std::optional<uint64_t> m_identifier;
-    bool m_hasReceivedIPv4 { false };
-    bool m_hasReceivedIPv6 { false };
 };
 
 static std::optional<IPAddress> extractIPAddress(const struct sockaddr* address)
 {
-    if (!address) {
-        ASSERT_NOT_REACHED();
+    if (!address)
         return std::nullopt;
-    }
     if (address->sa_family == AF_INET)
         return IPAddress { reinterpret_cast<const struct sockaddr_in*>(address)->sin_addr };
     if (address->sa_family == AF_INET6)
@@ -135,45 +108,36 @@ static std::optional<IPAddress> extractIPAddress(const struct sockaddr* address)
     return std::nullopt;
 }
 
-static void dnsLookupCallback(DNSServiceRef serviceRef, DNSServiceFlags flags, uint32_t, DNSServiceErrorType errorCode, const char*, const struct sockaddr* address, uint32_t, void* wrapperPointer)
+void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<CompletionHandlerWrapper>&& completionHandler)
 {
-    ASSERT(isMainThread());
-    ASSERT(wrapperPointer);
-    auto wrapper = adoptRef(*static_cast<DNSResolveQueueCFNet::CompletionHandlerWrapper*>(wrapperPointer));
-    ASSERT(wrapper->refCount());
+    auto hostEndpoint = adoptCF(nw_endpoint_create_host(hostname.utf8().data(), "0"));
+    auto context = adoptCF(nw_context_create("WebKit DNS Lookup"));
+    auto parameters = adoptCF(nw_parameters_create());
+    nw_context_set_privacy_level(context.get(), nw_context_privacy_level_silent);
+    nw_parameters_set_context(parameters.get(), context.get());
+    auto resolver = adoptCF(nw_resolver_create_with_endpoint(hostEndpoint.get(), parameters.get()));
 
-    struct DNSServiceDeallocator {
-        void operator()(DNSServiceRef service) const { DNSServiceRefDeallocate(service); }
-    };
-    auto service = std::unique_ptr<_DNSServiceRef_t, DNSServiceDeallocator>(serviceRef);
+    nw_resolver_set_update_handler(resolver.get(), dispatch_get_main_queue(), makeBlockPtr([completionHandler = WTFMove(completionHandler)] (nw_resolver_status_t status, nw_array_t resolvedEndpoints) mutable {
+        if (status == nw_resolver_status_in_progress)
+            return;
+        if (!resolvedEndpoints)
+            return completionHandler->complete(makeUnexpected(DNSError::CannotResolve));
 
-    if (errorCode != kDNSServiceErr_NoError && errorCode != kDNSServiceErr_NoSuchRecord)
-        return wrapper->complete(WebCore::DNSError::Unknown);
+        size_t count = nw_array_get_count(resolvedEndpoints);
+        Vector<IPAddress> result;
+        result.reserveInitialCapacity(count);
+        for (size_t i = 0; i < count; i++) {
+            nw_endpoint_t resolvedEndpoint = reinterpret_cast<nw_endpoint_t>(nw_array_get_object_at_index(resolvedEndpoints, i));
+            if (auto address = extractIPAddress(nw_endpoint_get_address(resolvedEndpoint)))
+                result.append(WTFMove(*address));
+        }
+        result.shrinkToFit();
 
-    if (auto ipAddress = extractIPAddress(address))
-        wrapper->addIPAddress(WTFMove(*ipAddress));
-
-    if (flags & kDNSServiceFlagsMoreComing || !wrapper->receivedIPv4AndIPv6()) {
-        // These will be adopted again by a future callback.
-        UNUSED_VARIABLE(wrapper.leakRef());
-        service.release();
-        return;
-    }
-    wrapper->complete(std::nullopt);
-}
-
-void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<CompletionHandlerWrapper>&& wrapper)
-{
-    ASSERT(isMainThread());
-    DNSServiceRef service { nullptr };
-    auto& leakedWrapper = wrapper.leakRef();
-    DNSServiceErrorType result = DNSServiceGetAddrInfo(&service, kDNSServiceFlagsReturnIntermediates, kDNSServiceInterfaceIndexAny, kDNSServiceProtocol_IPv4 | kDNSServiceProtocol_IPv6, hostname.utf8().data(), dnsLookupCallback, &leakedWrapper);
-    if (result != kDNSServiceErr_NoError) {
-        ASSERT(!service);
-        return adoptRef(leakedWrapper)->complete(DNSError::CannotResolve);
-    }
-    result = DNSServiceSetDispatchQueue(service, dispatch_get_main_queue());
-    ASSERT(result == kDNSServiceErr_NoError);
+        if (result.isEmpty())
+            completionHandler->complete(makeUnexpected(DNSError::CannotResolve));
+        else
+            completionHandler->complete(WTFMove(result));
+    }).get());
 }
 
 void DNSResolveQueueCFNet::platformResolve(const String& hostname)
@@ -195,7 +159,7 @@ void DNSResolveQueueCFNet::stopResolve(uint64_t identifier)
     auto wrapper = m_pendingRequests.take(identifier);
     if (!wrapper)
         return;
-    wrapper->complete(DNSError::Cancelled);
+    wrapper->complete(makeUnexpected(DNSError::Cancelled));
 }
 
 }

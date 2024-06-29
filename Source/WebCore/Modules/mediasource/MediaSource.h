@@ -201,7 +201,6 @@ private:
     Ref<MediaPromise> seekToTime(const MediaTime&);
     using RendererType = MediaSourcePrivateClient::RendererType;
     void failedToCreateRenderer(RendererType);
-    void seeked(const MediaTime&);
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

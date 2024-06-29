@@ -252,4 +252,18 @@ TEST(WKWebViewCandidateTests, CandidateRectForEmptyParagraph)
     EXPECT_NE(0, candidateRect.origin.y);
 }
 
+TEST(WKWebViewCandidateTests, CandidateRectForMultipleLines)
+{
+    RetainPtr wkWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [wkWebView synchronouslyLoadHTMLString:@"<body contenteditable><p>AAA</p><p>BBB</p></body>"];
+
+    [wkWebView waitForNextPresentationUpdate];
+    [wkWebView _setEditable:YES];
+    [wkWebView selectAll:nil];
+    [wkWebView waitForNextPresentationUpdate];
+
+    NSRect candidateRect = [wkWebView _candidateRect];
+    EXPECT_EQ(52, candidateRect.size.height);
+}
+
 #endif // PLATFORM(MAC)

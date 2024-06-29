@@ -59,17 +59,20 @@ struct Extensions
     }
     bool framebufferBlitAny() const { return (framebufferBlitANGLE || framebufferBlitNV); }
     bool geometryShaderAny() const { return (geometryShaderEXT || geometryShaderOES); }
+    bool gpuShader5Any() const { return (gpuShader5EXT || gpuShader5OES); }
     bool instancedArraysAny() const { return (instancedArraysANGLE || instancedArraysEXT); }
     bool polygonModeAny() const { return (polygonModeANGLE || polygonModeNV); }
     bool primitiveBoundingBoxAny() const
     {
         return (primitiveBoundingBoxEXT || primitiveBoundingBoxOES);
     }
+    bool robustnessAny() const { return (robustnessEXT || robustnessKHR); }
     bool shaderFramebufferFetchAny() const
     {
         return (shaderFramebufferFetchARM || shaderFramebufferFetchEXT);
     }
     bool shaderIoBlocksAny() const { return (shaderIoBlocksEXT || shaderIoBlocksOES); }
+    bool tessellationShaderAny() const { return (tessellationShaderEXT || tessellationShaderOES); }
     bool textureBorderClampAny() const { return (textureBorderClampEXT || textureBorderClampOES); }
     bool textureBufferAny() const { return (textureBufferEXT || textureBufferOES); }
     bool textureCubeMapArrayAny() const
@@ -86,6 +89,9 @@ struct Extensions
     // GL_KHR_blend_equation_advanced
     bool blendEquationAdvancedKHR = false;
 
+    // GL_KHR_blend_equation_advanced_coherent
+    bool blendEquationAdvancedCoherentKHR = false;
+
     // GL_EXT_blend_func_extended
     bool blendFuncExtendedEXT = false;
 
@@ -94,6 +100,9 @@ struct Extensions
 
     // GL_EXT_buffer_storage
     bool bufferStorageEXT = false;
+
+    // GL_EXT_clear_texture
+    bool clearTextureEXT = false;
 
     // GL_EXT_clip_control
     bool clipControlEXT = false;
@@ -278,6 +287,9 @@ struct Extensions
     // GL_EXT_gpu_shader5
     bool gpuShader5EXT = false;
 
+    // GL_OES_gpu_shader5
+    bool gpuShader5OES = false;
+
     // GL_ANGLE_instanced_arrays
     bool instancedArraysANGLE = false;
 
@@ -383,6 +395,9 @@ struct Extensions
     // GL_EXT_robustness
     bool robustnessEXT = false;
 
+    // GL_KHR_robustness
+    bool robustnessKHR = false;
+
     // GL_NV_robustness_video_memory_purge
     bool robustnessVideoMemoryPurgeNV = false;
 
@@ -454,6 +469,9 @@ struct Extensions
 
     // GL_EXT_tessellation_shader
     bool tessellationShaderEXT = false;
+
+    // GL_OES_tessellation_shader
+    bool tessellationShaderOES = false;
 
     // GL_OES_texture_3D
     bool texture3DOES = false;
@@ -577,6 +595,9 @@ struct Extensions
 
     // GL_ANGLE_texture_usage
     bool textureUsageANGLE = false;
+
+    // GL_QCOM_tiled_rendering
+    bool tiledRenderingQCOM = false;
 
     // GL_ANGLE_translated_shader_source
     bool translatedShaderSourceANGLE = false;

@@ -50,7 +50,6 @@ class InstallGitLFS(Command):
     @classmethod
     def url(cls, mirror_resolver_func=None):
         _url = None
-        from whichcraft import which
         if platform.system() == 'Darwin':
             version_str = '{}.{}.{}'.format(cls.VERSION[0], cls.VERSION[1], cls.VERSION[2])
             if platform.machine() == 'arm64':

@@ -28,11 +28,16 @@ extern "C" {
 typedef int16_t InterpKernel[SUBPEL_TAPS];
 
 static INLINE int vpx_get_filter_taps(const int16_t *const filter) {
-  assert(filter[3] != 128);
-  if (!filter[0] && !filter[1] && !filter[2])
-    return 2;
-  else
+  if (filter[0] | filter[7]) {
     return 8;
+  }
+  if (filter[1] | filter[6]) {
+    return 6;
+  }
+  if (filter[2] | filter[5]) {
+    return 4;
+  }
+  return 2;
 }
 
 #ifdef __cplusplus

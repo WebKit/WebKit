@@ -60,13 +60,6 @@ ALWAYS_INLINE UnlinkedMetadataTable::UnlinkedMetadataTable(EmptyTag)
 {
 }
 
-ALWAYS_INLINE UnlinkedMetadataTable::~UnlinkedMetadataTable()
-{
-    ASSERT(!m_isLinked);
-    if (m_hasMetadata)
-        MetadataTableMalloc::free(m_rawBuffer);
-}
-
 ALWAYS_INLINE unsigned UnlinkedMetadataTable::addEntry(OpcodeID opcodeID)
 {
     ASSERT(!m_isFinalized && opcodeID < s_offsetTableEntries - 1);
@@ -138,7 +131,7 @@ ALWAYS_INLINE RefPtr<MetadataTable> UnlinkedMetadataTable::link()
         MetadataStatistics::numberOfCopiesFromLinking++;
         MetadataStatistics::linkingCopyMemory += sizeof(LinkingData) + totalSize;
 #endif
-        buffer = reinterpret_cast<uint8_t*>(MetadataTableMalloc::malloc(sizeof(LinkingData) + totalSize));
+        buffer = static_cast<uint8_t*>(MetadataTableMalloc::malloc(sizeof(LinkingData) + totalSize));
         memcpy(buffer + valueProfileSize + sizeof(LinkingData), m_rawBuffer + valueProfileSize + sizeof(LinkingData), offsetTableSize);
     }
     // FIXME: Is this needed since we'll clear the data in the CodeBlock Constructor... Plus I could see caching value profiles being profitable.

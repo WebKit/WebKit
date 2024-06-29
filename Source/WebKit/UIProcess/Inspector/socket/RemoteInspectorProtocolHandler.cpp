@@ -31,6 +31,7 @@
 #include "APIContentWorld.h"
 #include "APILoaderClient.h"
 #include "APINavigation.h"
+#include "APIPageConfiguration.h"
 #include "PageLoadState.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
@@ -157,9 +158,9 @@ void RemoteInspectorProtocolHandler::targetListChanged(RemoteInspectorClient& cl
             for (auto& target : client.targets().get(connectionID)) {
                 html.append(makeString(
                     "<tbody><tr>"
-                    "<td class=\"data\"><div class=\"targetname\">", target.name, "</div><div class=\"targeturl\">", target.url, "</div></td>"
-                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick=\"window.webkit.messageHandlers.inspector.postMessage(\\'", connectionID, ":", target.id, ":", target.type, "\\');\"></td>"
-                    "</tr></tbody>"
+                    "<td class=\"data\"><div class=\"targetname\">"_s, target.name, "</div><div class=\"targeturl\">"_s, target.url, "</div></td>"
+                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick=\"window.webkit.messageHandlers.inspector.postMessage(\\'"_s, connectionID, ':', target.id, ':', target.type, "\\');\"></td>"
+                    "</tr></tbody>"_s
                 ));
             }
         }
@@ -173,7 +174,7 @@ void RemoteInspectorProtocolHandler::targetListChanged(RemoteInspectorClient& cl
 void RemoteInspectorProtocolHandler::updateTargetList()
 {
     if (!m_targetListsHtml.isEmpty()) {
-        runScript(makeString("updateTargets(`", m_targetListsHtml, "`);"));
+        runScript(makeString("updateTargets(`"_s, m_targetListsHtml, "`);"_s));
         m_targetListsHtml = { };
     }
 }
@@ -188,7 +189,7 @@ void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, 
 
     // Setup target postMessage listener
     auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClient>(*this), "inspector"_s, API::ContentWorld::pageContentWorld());
-    pageProxy.pageGroup().userContentController().addUserScriptMessageHandler(handler.get());
+    pageProxy.configuration().userContentController().addUserScriptMessageHandler(handler.get());
 
     // Setup loader client to get notified of page load
     m_page.setLoaderClient(makeUnique<LoaderClient>([this] {

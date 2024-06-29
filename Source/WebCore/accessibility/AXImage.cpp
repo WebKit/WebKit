@@ -75,7 +75,7 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AXImage::imageOverlayEl
         if (!imageOverlayHost)
             return;
 
-        if (auto* axObjectCache = imageOverlayHost->document().existingAXObjectCache())
+        if (CheckedPtr axObjectCache = imageOverlayHost->document().existingAXObjectCache())
             axObjectCache->postNotification(imageOverlayHost.get(), AXObjectCache::AXImageOverlayChanged);
     });
 #endif

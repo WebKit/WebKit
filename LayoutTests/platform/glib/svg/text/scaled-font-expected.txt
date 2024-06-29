@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (0,188) size 492x327
       RenderSVGContainer {g} at (0,188) size 492x133 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,70.00)}]
         RenderSVGText {text} at (0,-39) size 177x49 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,26) size 10x15
+          RenderSVGTSpan {tspan} at (0,26) size 10x16
             RenderSVGInlineText {#text} at (0,26) size 10x15
               chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 9.72: "A"
           RenderSVGInlineText {#text} at (9,26) size 4x15
@@ -35,8 +35,8 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (89.28,0.00) startOffset 0 endOffset 1 width 23.04: "A"
           RenderSVGInlineText {#text} at (112,26) size 4x15
             chunk 1 text run 1 at (112.32,0.00) startOffset 0 endOffset 1 width 3.24: " "
-          RenderSVGTSpan {tspan} at (115,4) size 28x43
-            RenderSVGInlineText {#text} at (115,4) size 27x42
+          RenderSVGTSpan {tspan} at (115,5) size 28x42
+            RenderSVGInlineText {#text} at (115,5) size 27x42
               chunk 1 text run 1 at (115.56,0.00) startOffset 0 endOffset 1 width 27.00: "A"
           RenderSVGInlineText {#text} at (142,26) size 4x15
             chunk 1 text run 1 at (142.56,0.00) startOffset 0 endOffset 1 width 3.24: " "

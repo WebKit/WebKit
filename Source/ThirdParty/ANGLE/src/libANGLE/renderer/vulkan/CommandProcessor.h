@@ -17,6 +17,7 @@
 #include <thread>
 
 #include "common/FixedQueue.h"
+#include "common/SimpleMutex.h"
 #include "common/vulkan/vk_headers.h"
 #include "libANGLE/renderer/vulkan/PersistentCommandPool.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
@@ -97,7 +98,7 @@ class FenceRecycler
     void recycle(Fence &&fence);
 
   private:
-    std::mutex mMutex;
+    angle::SimpleMutex mMutex;
     Recycler<Fence> mRecyler;
 };
 
@@ -274,7 +275,7 @@ struct CommandBatch final : angle::NonCopyable
     VkResult waitFence(VkDevice device, uint64_t timeout) const;
     VkResult waitFenceUnlocked(VkDevice device,
                                uint64_t timeout,
-                               std::unique_lock<std::mutex> *lock) const;
+                               std::unique_lock<angle::SimpleMutex> *lock) const;
 
     PrimaryCommandBuffer primaryCommands;
     SecondaryCommandBufferCollector secondaryCommands;
@@ -299,12 +300,13 @@ class QueueFamily final : angle::NonCopyable
     static const uint32_t kQueueCount = static_cast<uint32_t>(egl::ContextPriority::EnumCount);
     static const float kQueuePriorities[static_cast<uint32_t>(egl::ContextPriority::EnumCount)];
 
-    QueueFamily() : mProperties{}, mIndex(kInvalidIndex) {}
+    QueueFamily() : mProperties{}, mQueueFamilyIndex(kInvalidIndex) {}
     ~QueueFamily() {}
 
-    void initialize(const VkQueueFamilyProperties &queueFamilyProperties, uint32_t index);
-    bool valid() const { return (mIndex != kInvalidIndex); }
-    uint32_t getIndex() const { return mIndex; }
+    void initialize(const VkQueueFamilyProperties &queueFamilyProperties,
+                    uint32_t queueFamilyIndex);
+    bool valid() const { return (mQueueFamilyIndex != kInvalidIndex); }
+    uint32_t getQueueFamilyIndex() const { return mQueueFamilyIndex; }
     const VkQueueFamilyProperties *getProperties() const { return &mProperties; }
     bool isGraphics() const { return ((mProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT) > 0); }
     bool isCompute() const { return ((mProperties.queueFlags & VK_QUEUE_COMPUTE_BIT) > 0); }
@@ -314,40 +316,52 @@ class QueueFamily final : angle::NonCopyable
     }
     uint32_t getDeviceQueueCount() const { return mProperties.queueCount; }
 
-    DeviceQueueMap initializeQueueMap(VkDevice device,
-                                      bool makeProtected,
-                                      uint32_t queueIndex,
-                                      uint32_t queueCount);
-
   private:
     VkQueueFamilyProperties mProperties;
-    uint32_t mIndex;
-
-    void getDeviceQueue(VkDevice device, bool makeProtected, uint32_t queueIndex, VkQueue *queue);
+    uint32_t mQueueFamilyIndex;
 };
 
-class DeviceQueueMap : public angle::PackedEnumMap<egl::ContextPriority, VkQueue>
+class DeviceQueueMap final
 {
-    friend QueueFamily;
-
   public:
-    DeviceQueueMap() : mIndex(QueueFamily::kInvalidIndex), mIsProtected(false) {}
-    DeviceQueueMap(uint32_t queueFamilyIndex, bool isProtected)
-        : mIndex(queueFamilyIndex), mIsProtected(isProtected)
-    {}
-    DeviceQueueMap(const DeviceQueueMap &other) = default;
+    DeviceQueueMap() : mQueueFamilyIndex(QueueFamily::kInvalidIndex), mIsProtected(false) {}
     ~DeviceQueueMap();
-    DeviceQueueMap &operator=(const DeviceQueueMap &other);
 
-    bool valid() const { return (mIndex != QueueFamily::kInvalidIndex); }
-    uint32_t getIndex() const { return mIndex; }
+    void initialize(VkDevice device,
+                    const QueueFamily &queueFamily,
+                    bool makeProtected,
+                    uint32_t queueIndex,
+                    uint32_t queueCount);
+    void destroy();
+
+    bool valid() const { return (mQueueFamilyIndex != QueueFamily::kInvalidIndex); }
+    uint32_t getQueueFamilyIndex() const { return mQueueFamilyIndex; }
     bool isProtected() const { return mIsProtected; }
-    egl::ContextPriority getDevicePriority(egl::ContextPriority priority) const;
+    egl::ContextPriority getDevicePriority(egl::ContextPriority priority) const
+    {
+        return mQueueAndIndices[priority].devicePriority;
+    }
+    DeviceQueueIndex getDeviceQueueIndex(egl::ContextPriority priority) const
+    {
+        return DeviceQueueIndex(mQueueFamilyIndex, mQueueAndIndices[priority].index);
+    }
+    const VkQueue &getQueue(egl::ContextPriority priority) const
+    {
+        return mQueueAndIndices[priority].queue;
+    }
 
   private:
-    uint32_t mIndex;
+    uint32_t mQueueFamilyIndex;
     bool mIsProtected;
-    angle::PackedEnumMap<egl::ContextPriority, egl::ContextPriority> mPriorities;
+    struct QueueAndIndex
+    {
+        // The actual priority that used
+        egl::ContextPriority devicePriority;
+        VkQueue queue;
+        // The queueIndex used for VkGetDeviceQueue
+        uint32_t index;
+    };
+    angle::PackedEnumMap<egl::ContextPriority, QueueAndIndex> mQueueAndIndices;
 };
 
 // Note all public APIs of CommandQueue class must be thread safe.
@@ -357,7 +371,11 @@ class CommandQueue : angle::NonCopyable
     CommandQueue();
     ~CommandQueue();
 
-    angle::Result init(Context *context, const DeviceQueueMap &queueMap);
+    angle::Result init(Context *context,
+                       const QueueFamily &queueFamily,
+                       bool enableProtectedContent,
+                       uint32_t queueCount);
+
     void destroy(Context *context);
 
     void handleDeviceLost(Renderer *renderer);
@@ -368,9 +386,13 @@ class CommandQueue : angle::NonCopyable
     {
         return mQueueMap.getDevicePriority(priority);
     }
-    uint32_t getDeviceQueueIndex() const { return mQueueMap.getIndex(); }
 
-    VkQueue getQueue(egl::ContextPriority priority) const { return mQueueMap[priority]; }
+    DeviceQueueIndex getDeviceQueueIndex(egl::ContextPriority priority) const
+    {
+        return mQueueMap.getDeviceQueueIndex(priority);
+    }
+
+    VkQueue getQueue(egl::ContextPriority priority) const { return mQueueMap.getQueue(priority); }
 
     Serial getLastSubmittedSerial(SerialIndex index) const { return mLastSubmittedSerials[index]; }
 
@@ -428,7 +450,7 @@ class CommandQueue : angle::NonCopyable
 
     angle::Result checkCompletedCommands(Context *context)
     {
-        std::lock_guard<std::mutex> lock(mMutex);
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
         return checkCompletedCommandsLocked(context);
     }
 
@@ -469,7 +491,7 @@ class CommandQueue : angle::NonCopyable
     angle::Result retireFinishedCommandsAndCleanupGarbage(Context *context);
     angle::Result retireFinishedCommands(Context *context)
     {
-        std::lock_guard<std::mutex> lock(mMutex);
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
         return retireFinishedCommandsLocked(context);
     }
     angle::Result postSubmitCheck(Context *context);
@@ -494,7 +516,7 @@ class CommandQueue : angle::NonCopyable
     angle::Result checkCompletedCommandsLocked(Context *context);
 
     angle::Result queueSubmit(Context *context,
-                              std::unique_lock<std::mutex> &&dequeueLock,
+                              std::unique_lock<angle::SimpleMutex> &&dequeueLock,
                               egl::ContextPriority contextPriority,
                               const VkSubmitInfo &submitInfo,
                               DeviceScoped<CommandBatch> &commandBatch,
@@ -512,15 +534,15 @@ class CommandQueue : angle::NonCopyable
     angle::Result initCommandPool(Context *context, ProtectionType protectionType)
     {
         PersistentCommandPool &commandPool = mPrimaryCommandPoolMap[protectionType];
-        return commandPool.init(context, protectionType, mQueueMap.getIndex());
+        return commandPool.init(context, protectionType, mQueueMap.getQueueFamilyIndex());
     }
 
     // Protect multi-thread access to mInFlightCommands.pop and ensure ordering of submission.
-    mutable std::mutex mMutex;
+    mutable angle::SimpleMutex mMutex;
     // Protect multi-thread access to mInFlightCommands.push as well as does lock relay for mMutex
     // so that we can release mMutex while doing potential lengthy vkQueueSubmit and vkQueuePresent
     // call.
-    std::mutex mQueueSubmitMutex;
+    angle::SimpleMutex mQueueSubmitMutex;
     CommandBatchQueue mInFlightCommands;
     // Temporary storage for finished command batches that should be reset.
     CommandBatchQueue mFinishedCommandBatches;
@@ -635,10 +657,12 @@ class CommandProcessor : public Context
     }
     Serial getLastEnqueuedSerial(SerialIndex index) const { return mLastEnqueuedSerials[index]; }
 
+    std::thread::id getThreadId() const { return mTaskThread.get_id(); }
+
   private:
     bool hasPendingError() const
     {
-        std::lock_guard<std::mutex> queueLock(mErrorMutex);
+        std::lock_guard<angle::SimpleMutex> queueLock(mErrorMutex);
         return !mErrors.empty();
     }
     angle::Result checkAndPopPendingError(Context *errorHandlingContext);
@@ -664,7 +688,7 @@ class CommandProcessor : public Context
 
     // The mutex lock that serializes dequeue from mTask and submit to mCommandQueue so that only
     // one mTaskQueue consumer at a time
-    std::mutex mTaskDequeueMutex;
+    angle::SimpleMutex mTaskDequeueMutex;
 
     CommandProcessorTaskQueue mTaskQueue;
     mutable std::mutex mTaskEnqueueMutex;
@@ -677,7 +701,7 @@ class CommandProcessor : public Context
     // CommandProcessor to CommandQueue occur in a separate thread.
     AtomicQueueSerialFixedArray mLastEnqueuedSerials;
 
-    mutable std::mutex mErrorMutex;
+    mutable angle::SimpleMutex mErrorMutex;
     std::queue<Error> mErrors;
 
     // Command queue worker thread.

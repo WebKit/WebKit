@@ -41,9 +41,9 @@ public:
     void deref() const final { CanvasRenderingContext::deref(); }
 
     bool isGPUBased() const override { return true; }
-    bool isAccelerated() const override { return true; }
+    bool delegatesDisplay() const override { return true; }
 
-    virtual void reshape(int width, int height, int oldWidth, int oldHeight) = 0;
+    virtual void reshape() = 0;
 protected:
     explicit GPUBasedCanvasRenderingContext(CanvasBase&);
 

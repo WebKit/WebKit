@@ -90,7 +90,8 @@ TEST(HandleAllocatorTest, Reallocation)
     EXPECT_EQ(finalResult, 1);
 }
 
-// The following test covers reserving a handle with max uint value. See http://anglebug.com/1052
+// The following test covers reserving a handle with max uint value. See
+// http://anglebug.com/42260058
 TEST(HandleAllocatorTest, ReserveMaxUintHandle)
 {
     gl::HandleAllocator allocator;

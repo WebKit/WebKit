@@ -23,9 +23,8 @@ load("exceptions-utils.js");
       .exportFunc();
   var instance = builder.instantiate();
 
-  // NOTE: changed from original test since this part of the spec is still in flux.
   for (let i = 0; i < 1000; ++i)
-    assertThrows(() => instance.exports.throw_simd());
+    assertThrows(() => instance.exports.throw_simd(), WebAssembly.Exception);
 })();
 
 (function TestThrowCatchS128Default() {
@@ -49,7 +48,7 @@ load("exceptions-utils.js");
   var instance = builder.instantiate();
 
   for (let i = 0; i < 1000; ++i)
-    assertThrows(() => instance.exports.throw_catch_simd());
+    assertEquals(1, instance.exports.throw_catch_simd());
 })();
 
 (function TestThrowCatchS128WithValue() {
@@ -78,8 +77,9 @@ load("exceptions-utils.js");
   var ref = [0x01, 0x12, 0x23, 0x34, 0x45, 0x56, 0x67, 0x78,
              0x89, 0x9a, 0xab, 0xbc, 0xcd, 0xde, 0xef, 0xf0];
   var array = new Uint8Array(memory.buffer);
-  array.set(ref, in_idx);  // Store reference value in memory.
-  for (let i = 0; i < 1000; ++i)
-    assertThrows(() => instance.exports.throw_catch_simd());
-  // assertArrayEquals(ref, array.slice(out_idx, out_idx + 0x10));
+  for (let i = 0; i < 1000; ++i) {
+    array.set(ref, in_idx);  // Store reference value in memory.
+    instance.exports.throw_catch_simd();
+    assertArrayEquals(ref, array.slice(out_idx, out_idx + 0x10));
+  }
 })();

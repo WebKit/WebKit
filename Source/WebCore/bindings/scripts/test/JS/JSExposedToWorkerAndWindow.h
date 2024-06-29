@@ -91,7 +91,7 @@ template<> struct JSDOMWrapperConverterTraits<ExposedToWorkerAndWindow> {
     using WrapperClass = JSExposedToWorkerAndWindow;
     using ToWrappedReturnType = ExposedToWorkerAndWindow*;
 };
-template<> ExposedToWorkerAndWindow::Dict convertDictionary<ExposedToWorkerAndWindow::Dict>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> ConversionResult<IDLDictionary<ExposedToWorkerAndWindow::Dict>> convertDictionary<ExposedToWorkerAndWindow::Dict>(JSC::JSGlobalObject&, JSC::JSValue);
 
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject&, JSDOMGlobalObject&, const ExposedToWorkerAndWindow::Dict&);
 

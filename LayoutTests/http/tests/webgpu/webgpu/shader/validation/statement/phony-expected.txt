@@ -1,0 +1,176 @@
+
+PASS :rhs_constructible:type="bool"
+PASS :rhs_constructible:type="i32"
+PASS :rhs_constructible:type="u32"
+PASS :rhs_constructible:type="f32"
+PASS :rhs_constructible:type="f16"
+PASS :rhs_constructible:type="vec2f"
+PASS :rhs_constructible:type="vec3h"
+PASS :rhs_constructible:type="vec4u"
+PASS :rhs_constructible:type="vec3b"
+PASS :rhs_constructible:type="mat2x3f"
+PASS :rhs_constructible:type="mat4x2h"
+PASS :rhs_constructible:type="abstractInt"
+PASS :rhs_constructible:type="abstractFloat"
+PASS :rhs_constructible:type="array"
+PASS :rhs_constructible:type="struct"
+FAIL :rhs_constructible:type="atomic_u32" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    var<workgroup> xu: atomic<u32>;
+    fn f() {
+      _ = xu;
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/phony.spec.js:69:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :rhs_constructible:type="atomic_i32" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    var<workgroup> xi: atomic<i32>;
+    fn f() {
+      _ = xi;
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/phony.spec.js:69:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :rhs_with_decl:test="storage"
+FAIL :rhs_with_decl:test="storage_unsized" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var<storage> x: array<u32>;
+    @compute @workgroup_size(1)
+    fn f() {
+
+      _ = x;
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/phony.spec.js:130:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :rhs_with_decl:test="storage_atomic" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @group(0) @binding(0) var<storage,read_write> x: atomic<u32>;
+    @compute @workgroup_size(1)
+    fn f() {
+
+      _ = x;
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/phony.spec.js:130:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :rhs_with_decl:test="uniform"
+PASS :rhs_with_decl:test="texture"
+PASS :rhs_with_decl:test="sampler"
+PASS :rhs_with_decl:test="sampler_comparison"
+PASS :rhs_with_decl:test="private"
+PASS :rhs_with_decl:test="workgroup"
+FAIL :rhs_with_decl:test="workgroup_atomic" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    var<workgroup> x: atomic<u32>;
+    @compute @workgroup_size(1)
+    fn f() {
+
+      _ = x;
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/phony.spec.js:130:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :rhs_with_decl:test="override"
+PASS :rhs_with_decl:test="function_var"
+PASS :rhs_with_decl:test="let"
+PASS :rhs_with_decl:test="const"
+PASS :rhs_with_decl:test="function_const"
+PASS :rhs_with_decl:test="ptr"
+PASS :rhs_with_decl:test="ptr_to_unsized"
+PASS :rhs_with_decl:test="indexed"
+PASS :rhs_with_decl:test="user_fn"
+PASS :rhs_with_decl:test="builtin"
+PASS :rhs_with_decl:test="builtin_call"
+PASS :rhs_with_decl:test="user_call"
+PASS :rhs_with_decl:test="undeclared"
+PASS :parse:test="literal"
+PASS :parse:test="expr"
+PASS :parse:test="var"
+FAIL :parse:test="in_for_init" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    4:3: error: Invalid for-loop initialization clause
+
+    ---- shader ----
+
+    fn f() {
+      var v: u32;
+      for (_ = v;false;) {}
+    }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    4:2: Invalid for-loop initialization clause
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :parse:test="in_for_init_semi"
+FAIL :parse:test="in_for_update" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    4:3: error: Invalid for-loop update clause
+
+    ---- shader ----
+
+    fn f() {
+      var v: u32;
+      for (;false; _ = v) {}
+    }
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    4:2: Invalid for-loop update clause
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :parse:test="in_for_update_semi"
+PASS :parse:test="in_block"
+PASS :parse:test="in_continuing"
+PASS :parse:test="in_paren"
+PASS :parse:test="underscore"
+PASS :parse:test="underscore_semi"
+PASS :parse:test="underscore_equal"
+PASS :parse:test="underscore_equal_semi"
+PASS :parse:test="underscore_equal_underscore_semi"
+PASS :parse:test="paren_underscore_paren"
+PASS :parse:test="star_ampersand_undsscore"
+PASS :parse:test="compound"
+PASS :parse:test="equality"
+PASS :parse:test="block"
+PASS :parse:test="return"
+

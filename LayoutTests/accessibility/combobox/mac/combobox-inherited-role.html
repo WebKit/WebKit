@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+    <div role="combobox" aria-label="Color picker" aria-owns="listbox" aria-haspopup="listbox">
+        <input type="search" id="input" aria-controls="listbox" aria-expanded="false">
+    </div>
+    <div id="listboxwrapper">
+        <div id="listbox" role="listbox" hidden="">
+            <div id="option1" role="option">Red</div>
+            <div id="option2" role="option">Green</div>
+            <div id="option3" role="option">Blue</div>
+        </div>
+    </div>
+</div>
+
+<script>
+let output = "Tests that input text elements contained in a combobox inherit the combobox role.\n\n";
+
+if (window.accessibilityController) {
+    var input = accessibilityController.accessibleElementById("input");
+    output += expect("input.role", "'AXRole: AXComboBox'");
+
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
+</html>

@@ -82,6 +82,7 @@
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
@@ -582,7 +583,7 @@ void PageClientImpl::setTextIndicatorAnimationProgress(float progress)
 
 void PageClientImpl::accessibilityWebProcessTokenReceived(std::span<const uint8_t> data, WebCore::FrameIdentifier frameID, pid_t pid)
 {
-    m_impl->setAccessibilityWebProcessToken([NSData dataWithBytes:data.data() length:data.size()], frameID, pid);
+    m_impl->setAccessibilityWebProcessToken(toNSData(data).get(), frameID, pid);
 }
     
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
@@ -761,6 +762,21 @@ void PageClientImpl::didCommitLayerTree(const RemoteLayerTreeTransaction& layerT
 
 void PageClientImpl::layerTreeCommitComplete()
 {
+}
+
+void PageClientImpl::scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID)
+{
+    m_impl->suppressContentRelativeChildViews(WebViewImpl::ContentRelativeChildViewsSuppressionType::TemporarilyRemove);
+}
+
+void PageClientImpl::willBeginViewGesture()
+{
+    m_impl->suppressContentRelativeChildViews(WebViewImpl::ContentRelativeChildViewsSuppressionType::Remove);
+}
+
+void PageClientImpl::didEndViewGesture()
+{
+    m_impl->suppressContentRelativeChildViews(WebViewImpl::ContentRelativeChildViewsSuppressionType::Restore);
 }
 
 #if ENABLE(FULLSCREEN_API)
@@ -1031,9 +1047,9 @@ void PageClientImpl::performSwitchHapticFeedback()
     [[NSHapticFeedbackManager defaultPerformer] performFeedbackPattern:NSHapticFeedbackPatternLevelChange performanceTime:NSHapticFeedbackPerformanceTimeDefault];
 }
 
-void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completion)
+void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::DOMPasteRequiresInteraction requiresInteraction, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completion)
 {
-    m_impl->requestDOMPasteAccess(pasteAccessCategory, elementRect, originIdentifier, WTFMove(completion));
+    m_impl->requestDOMPasteAccess(pasteAccessCategory, requiresInteraction, elementRect, originIdentifier, WTFMove(completion));
 }
 
 void PageClientImpl::makeViewBlank(bool makeBlank)
@@ -1080,16 +1096,16 @@ void PageClientImpl::handleContextMenuTranslation(const TranslationContextMenuIn
 
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+#if ENABLE(WRITING_TOOLS) && ENABLE(CONTEXT_MENUS)
 
-bool PageClientImpl::canHandleSwapCharacters() const
+bool PageClientImpl::canHandleContextMenuWritingTools() const
 {
-    return m_impl->canHandleSwapCharacters();
+    return m_impl->canHandleContextMenuWritingTools();
 }
 
-void PageClientImpl::handleContextMenuSwapCharacters(IntRect selectionBoundsInRootView)
+void PageClientImpl::handleContextMenuWritingTools(IntRect selectionBoundsInRootView)
 {
-    m_impl->handleContextMenuSwapCharacters(selectionBoundsInRootView);
+    m_impl->handleContextMenuWritingTools(selectionBoundsInRootView);
 }
 
 #endif

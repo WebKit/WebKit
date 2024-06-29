@@ -38,7 +38,7 @@ ExceptionOr<String> Base64Utilities::btoa(const String& stringToEncode)
     if (!stringToEncode.containsOnlyLatin1())
         return Exception { ExceptionCode::InvalidCharacterError };
 
-    return base64EncodeToString(stringToEncode.latin1());
+    return base64EncodeToString(stringToEncode.latin1().span());
 }
 
 ExceptionOr<String> Base64Utilities::atob(const String& encodedString)
@@ -46,7 +46,7 @@ ExceptionOr<String> Base64Utilities::atob(const String& encodedString)
     if (encodedString.isNull())
         return String();
 
-    auto decodedData = base64DecodeToString(encodedString, Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace);
+    auto decodedData = base64DecodeToString(encodedString, { Base64DecodeOption::ValidatePadding, Base64DecodeOption::IgnoreWhitespace });
     if (decodedData.isNull())
         return Exception { ExceptionCode::InvalidCharacterError };
 

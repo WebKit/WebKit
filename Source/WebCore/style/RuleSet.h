@@ -94,6 +94,7 @@ public:
     const RuleDataVector* tagRules(const AtomString& key, bool isHTMLName) const;
     const RuleDataVector* userAgentPartRules(const AtomString& key) const { return m_userAgentPartRules.get(key); }
     const RuleDataVector* linkPseudoClassRules() const { return &m_linkPseudoClassRules; }
+    const RuleDataVector* namedPseudoElementRules(const AtomString& key) const { return m_namedPseudoElementRules.get(key); }
 #if ENABLE(VIDEO)
     const RuleDataVector& cuePseudoRules() const { return m_cuePseudoRules; }
 #endif
@@ -190,6 +191,7 @@ private:
     AtomRuleMap m_tagLocalNameRules;
     AtomRuleMap m_tagLowercaseLocalNameRules;
     AtomRuleMap m_userAgentPartRules;
+    AtomRuleMap m_namedPseudoElementRules;
     RuleDataVector m_linkPseudoClassRules;
 #if ENABLE(VIDEO)
     RuleDataVector m_cuePseudoRules;

@@ -259,29 +259,6 @@
             "filename": r"Source/WebCore/page/(Content|DOM)SecurityPolicy\."
                         r"|LayoutTests/http/tests/security/contentSecurityPolicy"
         },
-        "RegionsDevelopment": {
-            "filename": r"Source/WebCore/rendering/RenderRegion\.(h|cpp)"
-                        r"|Source/WebCore/rendering/RenderFlowThread\.(h|cpp)"
-                        r"|Source/WebCore/rendering/FlowThreadController\.(h|cpp)"
-                        r"|Source/WebCore/rendering/RenderRegionSet\.(h|cpp)"
-                        r"|Source/WebCore/rendering/RenderNamedFlowThread\.(h|cpp)"
-                        r"|Source/WebCore/rendering/RenderBoxRegionInfo\.h"
-                        r"|Source/WebCore/dom/WebKitNamedFlow\.(h|cpp|idl)"
-                        r"|Source/WebCore/dom/(DOM)?NamedFlowCollection\.(h|cpp|idl)"
-                        r"|Source/WebCore/css/WebKitCSSRegionRule\.(h|cpp|idl)"
-                        r"|LayoutTests/fast/regions",
-        },
-        "RegionsExpectationsMore": {
-            "filename": r"LayoutTests/platform/.*TestExpectations",
-            "more": r"fast/regions/.*\.html",
-        },
-        "RegionsExpectationsLess": {
-            "filename": r"LayoutTests/platform/.*TestExpectations",
-            "less": r"fast/regions/.*\.html",
-        },
-        "RegionsUsage": {
-            "more": r"(RenderRegion|RenderFlowThread|RenderNamedFlowThread)(?!\.(h|cpp))",
-        },
         "IndexedDB": {
             "filename": r"Source/WebCore/Modules/indexeddb"
                         r"|Source/WebCore/bindings/.*IDB.*\.(h|cpp)"
@@ -452,7 +429,6 @@
         "MediaStream": [ "tommyw@google.com", "hta@google.com", "sergio@correia.cc", "eric.carlson@apple.com" ],
         "OpenGL" : [ "dino@apple.com", "kondapallykalyan@gmail.com" ],
         "PerformanceTests": [ "rniwa@webkit.org", "cdumez@apple.com", "jbedard@apple.com" ],
-        "RegionsDevelopment|RegionsExpectationsMore|RegionsExpectationsLess|RegionsUsage": [ "WebkitBugTracker@adobe.com" ],
         "Rendering": [ "esprehn+autocc@chromium.org", "glenn@skynav.com", "kondapallykalyan@gmail.com", "pdr@google.com", "changseok@webkit.org" ],
         "RenderLayers" : [ "simon.fraser@apple.com", "kondapallykalyan@gmail.com", "fred.wang@free.fr" ],
         "SVG": ["schenney@chromium.org", "pdr@google.com", "fmalita@chromium.org", "gyuyoung.kim@webkit.org", "sergio@correia.cc", "sabouhallawa@apple.com", "dino@apple.com" ],

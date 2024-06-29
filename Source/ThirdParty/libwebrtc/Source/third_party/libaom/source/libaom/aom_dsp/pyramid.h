@@ -19,7 +19,7 @@
 #include "config/aom_config.h"
 
 #include "aom_scale/yv12config.h"
-#include "aom_util/aom_thread.h"
+#include "aom_util/aom_pthread.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,23 +57,31 @@ typedef struct image_pyramid {
   // same time
   //
   // Semantics:
-  // * This mutex must be held whenever reading or writing the `valid` flag
+  // * This mutex must be held whenever reading or writing the
+  //   `filled_levels` field
   //
   // * This mutex must also be held while computing the image pyramid,
   //   to ensure that only one thread may do so at a time.
   //
-  // * However, once you have read the valid flag and seen a true value,
-  //   it is safe to drop the mutex and read from the remaining fields.
-  //   This is because, once the image pyramid is computed, its contents
+  // * However, once you have read the filled_levels field and observed
+  //   a value N, it is safe to drop the mutex and read from the remaining
+  //   fields, including the first N pyramid levels (but no higher).
+  //   Note that filled_levels must be read once and cached in a local variable
+  //   in order for this to be safe - it cannot be re-read without retaking
+  //   the mutex.
+  //
+  //   This works because, once the image pyramid is computed, its contents
   //   will not be changed until the parent frame buffer is recycled,
   //   which will not happen until there are no more outstanding references
   //   to the frame buffer.
   pthread_mutex_t mutex;
 #endif
-  // Flag indicating whether the pyramid contains valid data
-  bool valid;
-  // Number of allocated/filled levels in this pyramid
-  int n_levels;
+  // Maximum number of levels for the given frame size
+  // We always allocate enough memory for this many levels, as the memory
+  // cost of higher levels of the pyramid is minimal.
+  int max_levels;
+  // Number of levels which currently hold valid data
+  int filled_levels;
   // Pointer to allocated buffer
   uint8_t *buffer_alloc;
   // Data for each level
@@ -82,11 +90,9 @@ typedef struct image_pyramid {
   PyramidLayer *layers;
 } ImagePyramid;
 
-size_t aom_get_pyramid_alloc_size(int width, int height, int n_levels,
-                                  bool image_is_16bit);
+size_t aom_get_pyramid_alloc_size(int width, int height, bool image_is_16bit);
 
-ImagePyramid *aom_alloc_pyramid(int width, int height, int n_levels,
-                                bool image_is_16bit);
+ImagePyramid *aom_alloc_pyramid(int width, int height, bool image_is_16bit);
 
 // Fill out a downsampling pyramid for a given frame.
 //
@@ -94,23 +100,28 @@ ImagePyramid *aom_alloc_pyramid(int width, int height, int n_levels,
 // regardless of the input bit depth. Additional levels are then downscaled
 // by powers of 2.
 //
-// For small input frames, the number of levels actually constructed
-// will be limited so that the smallest image is at least MIN_PYRAMID_SIZE
-// pixels along each side.
+// This function will ensure that the first `n_levels` levels of the pyramid
+// are filled, unless the frame is too small to have this many levels.
+// In that case, we will fill all available levels and then stop.
 //
-// However, if the input frame has a side of length < MIN_PYRAMID_SIZE,
-// we will still construct the top level.
-bool aom_compute_pyramid(const YV12_BUFFER_CONFIG *frame, int bit_depth,
-                         ImagePyramid *pyr);
+// Returns the actual number of levels filled, capped at n_levels,
+// or -1 on error.
+int aom_compute_pyramid(const YV12_BUFFER_CONFIG *frame, int bit_depth,
+                        int n_levels, ImagePyramid *pyr);
 
 #ifndef NDEBUG
-// Check if a pyramid has already been computed.
+// Check if a pyramid has already been computed to at least n levels
 // This is mostly a debug helper - as it is necessary to hold pyr->mutex
-// while reading the valid flag, we cannot just write:
-//   assert(pyr->valid);
+// while reading the number of already-computed levels, we cannot just write:
+//   assert(pyr->filled_levels >= n_levels);
 // This function allows the check to be correctly written as:
-//   assert(aom_is_pyramid_valid(pyr));
-bool aom_is_pyramid_valid(ImagePyramid *pyr);
+//   assert(aom_is_pyramid_valid(pyr, n_levels));
+//
+// Note: This deliberately does not restrict n_levels based on the maximum
+// number of permitted levels for the frame size. This allows the check to
+// catch cases where the caller forgets to handle the case where
+// max_levels is less than the requested number of levels
+bool aom_is_pyramid_valid(ImagePyramid *pyr, int n_levels);
 #endif
 
 // Mark a pyramid as no longer containing valid data.

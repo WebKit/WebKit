@@ -16,6 +16,8 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
+
 #include "config/aom_config.h"
 
 #include "aom/aom_codec.h"
@@ -45,18 +47,29 @@ typedef struct yv12_buffer_config {
   /*!\cond */
   union {
     struct {
+      // The aligned frame width of luma.
+      // It is aligned to a multiple of 8:
+      // y_width = (y_crop_width + 7) & ~7
       int y_width;
+      // The aligned frame width of chroma.
+      // uv_width = y_width >> subsampling_x
       int uv_width;
     };
     int widths[2];
   };
   union {
     struct {
+      // The aligned frame height of luma.
+      // It is aligned to a multiple of 8:
+      // y_height = (y_crop_height + 7) & ~7
       int y_height;
+      // The aligned frame height of chroma.
+      // uv_height = y_height >> subsampling_y
       int uv_height;
     };
     int heights[2];
   };
+  // The frame size en/decoded by AV1
   union {
     struct {
       int y_crop_width;
@@ -139,7 +152,7 @@ typedef struct yv12_buffer_config {
 // available return values.
 int aom_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf, int width, int height,
                            int ss_x, int ss_y, int use_highbitdepth, int border,
-                           int byte_alignment, int num_pyramid_levels,
+                           int byte_alignment, bool alloc_pyramid,
                            int alloc_y_plane_only);
 
 // Updates the yv12 buffer config with the frame buffer. |byte_alignment| must
@@ -149,15 +162,11 @@ int aom_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf, int width, int height,
 // to decode the current frame. If cb is NULL, libaom will allocate memory
 // internally to decode the current frame.
 //
-// If num_pyramid_levels > 0, then an image pyramid will be allocated with
-// the specified number of levels.
-//
-// Any buffer which may become a source or ref frame buffer in the encoder
-// must have num_pyramid_levels = cpi->image_pyramid_levels. This will cause
-// an image pyramid to be allocated if one is needed.
-//
-// Any other buffers (in particular, any buffers inside the decoder)
-// must have cpi->image_pyramid_levels = 0, as a pyramid is unneeded there.
+// If alloc_pyramid is true, then an image pyramid will be allocated
+// for use in global motion estimation. This is only needed if this frame
+// buffer will be used to store a source frame or a reference frame in
+// the encoder. Any other framebuffers (eg, intermediates for filtering,
+// or any buffer in the decoder) can set alloc_pyramid = false.
 //
 // Returns 0 on success. Returns < 0  on failure.
 int aom_realloc_frame_buffer(YV12_BUFFER_CONFIG *ybf, int width, int height,
@@ -165,7 +174,7 @@ int aom_realloc_frame_buffer(YV12_BUFFER_CONFIG *ybf, int width, int height,
                              int border, int byte_alignment,
                              aom_codec_frame_buffer_t *fb,
                              aom_get_frame_buffer_cb_fn_t cb, void *cb_priv,
-                             int num_pyramid_levels, int alloc_y_plane_only);
+                             bool alloc_pyramid, int alloc_y_plane_only);
 
 int aom_free_frame_buffer(YV12_BUFFER_CONFIG *ybf);
 

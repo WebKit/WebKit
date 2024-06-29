@@ -1181,7 +1181,8 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const S
         gst_structure_new("webkit-network-statistics", "read-position", G_TYPE_UINT64, members->readPosition, "size", G_TYPE_UINT64, members->size, nullptr)));
 
     checkUpdateBlocksize(length);
-    GstBuffer* buffer = gstBufferNewWrappedFast(fastMemDup(data.data(), length), length);
+    auto dataSpan = data.span();
+    GstBuffer* buffer = gstBufferNewWrappedFast(fastMemDup(dataSpan.data(), dataSpan.size()), length);
     gst_adapter_push(members->adapter.get(), buffer);
 
     stopLoaderIfNeeded(src.get(), members);

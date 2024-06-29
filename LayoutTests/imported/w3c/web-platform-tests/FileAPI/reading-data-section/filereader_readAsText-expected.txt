@@ -1,4 +1,0 @@
-
-PASS readAsText should correctly read UTF-8.
-PASS readAsText should correctly read UTF-16.
-

@@ -68,6 +68,7 @@
 #include "JITCompilation.h"
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
+#include "OperationResult.h"
 #include "PureNaN.h"
 #include <cmath>
 #include <regex>
@@ -1202,6 +1203,8 @@ void addLoadTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
 void addTupleTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
 
 bool shouldRun(const TestConfig*, const char* testName);
+
+void testCSEStoreWithLoop();
 
 void testLoadPreIndex32();
 void testLoadPreIndex64();

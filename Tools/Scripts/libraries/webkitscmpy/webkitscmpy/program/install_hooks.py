@@ -27,7 +27,7 @@ import shutil
 
 from .command import Command
 from webkitbugspy import radar
-from webkitcorepy import run, string_utils, Version
+from webkitcorepy import run, string_utils, Terminal, Version
 from webkitscmpy import log, local, remote
 
 
@@ -54,7 +54,9 @@ class InstallHooks(Command):
     def hook_needs_update(cls, repository, path):
         if not os.path.isfile(path):
             return False
-        hook_path = os.path.join(repository.common_directory, 'hooks', os.path.basename(path))
+
+        hooks_directory_path = repository.config().get('core.hookspath', os.path.join(repository.common_directory, 'hooks'))
+        hook_path = os.path.join(hooks_directory_path, os.path.basename(path))
         if not os.path.isfile(hook_path):
             return True
         repo_version = cls.version_for(path)
@@ -186,12 +188,33 @@ class InstallHooks(Command):
         if sys.version_info >= (3, 3):
             perl = shutil.which('perl')
 
+        default_target_directory = os.path.join(repository.common_directory, 'hooks')
+        target_directory = repository.config().get('core.hookspath', default_target_directory)
+        if default_target_directory != target_directory:
+            response = Terminal.choose(
+                "git believes hooks for this repository are in '{}', but they should be in '{}'".format(target_directory, default_target_directory),
+                options=('Change', 'Use', 'Exit'),
+                default='Change',
+            )
+            if response == 'Exit':
+                sys.stderr.write('No hooks installed because user canceled hook installation\n')
+                return 1
+            elif response == 'Change':
+                if run(
+                    [local.Git.executable(), 'config', 'core.hookspath', default_target_directory],
+                    capture_output=True, cwd=repository.root_path,
+                ).returncode:
+                    sys.stderr.write('No hooks installed')
+                    sys.stderr.write("Failed to set 'core.hookspath' to '{}'\n".format(default_target_directory))
+                    return 1
+                target_directory = default_target_directory
+
         installed_hooks = 0
         for hook in hook_names:
             source_path = os.path.join(hooks, hook)
             if not os.path.isfile(source_path):
                 continue
-            target = os.path.join(repository.common_directory, 'hooks', hook)
+            target = os.path.join(target_directory, hook)
             if os.path.islink(target):
                 sys.stderr.write("'{}' is a symlink, refusing to overwrite it\n".format(hook))
                 continue

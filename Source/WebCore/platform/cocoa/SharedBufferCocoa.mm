@@ -82,7 +82,7 @@
 
 - (const void *)bytes
 {
-    return _dataSegment->data() + _position;
+    return _dataSegment->span().subspan(_position).data();
 }
 
 @end

@@ -383,8 +383,11 @@ bool D3DVertexExecutable::matchesSignature(const Signature &signature) const
 }
 
 D3DPixelExecutable::D3DPixelExecutable(const std::vector<GLenum> &outputSignature,
+                                       const gl::ImageUnitTextureTypeMap &image2DSignature,
                                        ShaderExecutableD3D *shaderExecutable)
-    : mOutputSignature(outputSignature), mShaderExecutable(shaderExecutable)
+    : mOutputSignature(outputSignature),
+      mImage2DSignature(image2DSignature),
+      mShaderExecutable(shaderExecutable)
 {}
 
 D3DPixelExecutable::~D3DPixelExecutable()
@@ -762,6 +765,17 @@ angle::Result ProgramExecutableD3D::loadBinaryShaderExecutables(d3d::Context *co
             stream->readInt(&outputs[outputIndex]);
         }
 
+        const size_t image2DCount = stream->readInt<size_t>();
+        gl::ImageUnitTextureTypeMap image2Ds;
+        for (size_t index = 0; index < image2DCount; index++)
+        {
+            unsigned int imageUint;
+            gl::TextureType textureType;
+            stream->readInt(&imageUint);
+            stream->readEnum(&textureType);
+            image2Ds.insert({imageUint, textureType});
+        }
+
         size_t pixelShaderSize                   = stream->readInt<size_t>();
         const unsigned char *pixelShaderFunction = binary + stream->offset();
         ShaderExecutableD3D *shaderExecutable    = nullptr;
@@ -777,8 +791,8 @@ angle::Result ProgramExecutableD3D::loadBinaryShaderExecutables(d3d::Context *co
         }
 
         // add new binary
-        mPixelExecutables.push_back(
-            std::unique_ptr<D3DPixelExecutable>(new D3DPixelExecutable(outputs, shaderExecutable)));
+        mPixelExecutables.push_back(std::unique_ptr<D3DPixelExecutable>(
+            new D3DPixelExecutable(outputs, image2Ds, shaderExecutable)));
 
         stream->skip(pixelShaderSize);
     }
@@ -846,12 +860,15 @@ angle::Result ProgramExecutableD3D::loadBinaryShaderExecutables(d3d::Context *co
         stream->skip(computeShaderSize);
     }
 
-    size_t bindLayoutCount = stream->readInt<size_t>();
-    for (size_t bindLayoutIndex = 0; bindLayoutIndex < bindLayoutCount; bindLayoutIndex++)
+    for (const gl::ShaderType shaderType :
+         {gl::ShaderType::Vertex, gl::ShaderType::Fragment, gl::ShaderType::Compute})
     {
-        mImage2DBindLayoutCache[gl::ShaderType::Compute].insert(
-            std::pair<unsigned int, gl::TextureType>(stream->readInt<unsigned int>(),
-                                                     gl::TextureType::_2D));
+        size_t bindLayoutCount = stream->readInt<size_t>();
+        for (size_t bindLayoutIndex = 0; bindLayoutIndex < bindLayoutCount; bindLayoutIndex++)
+        {
+            mImage2DBindLayoutCache[shaderType].insert(std::pair<unsigned int, gl::TextureType>(
+                stream->readInt<unsigned int>(), gl::TextureType::_2D));
+        }
     }
 
     initializeUniformStorage(renderer, mExecutable->getLinkedShaderStages());
@@ -1038,6 +1055,14 @@ void ProgramExecutableD3D::save(const gl::Context *context,
             stream->writeInt(outputs[outputIndex]);
         }
 
+        const gl::ImageUnitTextureTypeMap &image2Ds = pixelExecutable->image2DSignature();
+        stream->writeInt(image2Ds.size());
+        for (const auto &image2D : image2Ds)
+        {
+            stream->writeInt(image2D.first);
+            stream->writeEnum(image2D.second);
+        }
+
         size_t pixelShaderSize = pixelExecutable->shaderExecutable()->getLength();
         stream->writeInt(pixelShaderSize);
 
@@ -1079,7 +1104,8 @@ void ProgramExecutableD3D::save(const gl::Context *context,
         stream->writeBytes(computeBlob, computeShaderSize);
     }
 
-    for (gl::ShaderType shaderType : {gl::ShaderType::Compute})
+    for (const gl::ShaderType shaderType :
+         {gl::ShaderType::Vertex, gl::ShaderType::Fragment, gl::ShaderType::Compute})
     {
         stream->writeInt(mImage2DBindLayoutCache[shaderType].size());
         for (auto &image2DBindLayout : mImage2DBindLayoutCache[shaderType])
@@ -1135,7 +1161,7 @@ unsigned int ProgramExecutableD3D::getAtomicCounterBufferRegisterIndex(
     if (shaderType != gl::ShaderType::Compute)
     {
         // Implement atomic counters for non-compute shaders
-        // http://anglebug.com/1729
+        // http://anglebug.com/42260658
         UNIMPLEMENTED();
     }
     return mComputeAtomicCounterBufferRegisterIndices[binding];
@@ -1455,8 +1481,9 @@ angle::Result ProgramExecutableD3D::getPixelExecutableForCachedOutputLayout(
 
     if (pixelExecutable)
     {
-        mPixelExecutables.push_back(std::unique_ptr<D3DPixelExecutable>(
-            new D3DPixelExecutable(mPixelShaderOutputLayoutCache, pixelExecutable)));
+        mPixelExecutables.push_back(std::unique_ptr<D3DPixelExecutable>(new D3DPixelExecutable(
+            mPixelShaderOutputLayoutCache, mImage2DBindLayoutCache[gl::ShaderType::Fragment],
+            pixelExecutable)));
         mCachedPixelExecutableIndex = mPixelExecutables.size() - 1;
     }
     else if (!infoLog)
@@ -1810,10 +1837,11 @@ void ProgramExecutableD3D::updateCachedOutputLayout(const gl::Context *context,
     updateCachedPixelExecutableIndex();
 }
 
-void ProgramExecutableD3D::updateCachedComputeImage2DBindLayout(const gl::Context *context)
+void ProgramExecutableD3D::updateCachedImage2DBindLayout(const gl::Context *context,
+                                                         const gl::ShaderType shaderType)
 {
     const auto &glState = context->getState();
-    for (auto &image2DBindLayout : mImage2DBindLayoutCache[gl::ShaderType::Compute])
+    for (auto &image2DBindLayout : mImage2DBindLayoutCache[shaderType])
     {
         const gl::ImageUnit &imageUnit = glState.getImageUnit(image2DBindLayout.first);
         if (imageUnit.texture.get())
@@ -1826,7 +1854,21 @@ void ProgramExecutableD3D::updateCachedComputeImage2DBindLayout(const gl::Contex
         }
     }
 
-    updateCachedComputeExecutableIndex();
+    switch (shaderType)
+    {
+        case gl::ShaderType::Vertex:
+            updateCachedVertexExecutableIndex();
+            break;
+        case gl::ShaderType::Fragment:
+            updateCachedPixelExecutableIndex();
+            break;
+        case gl::ShaderType::Compute:
+            updateCachedComputeExecutableIndex();
+            break;
+        default:
+            ASSERT(false);
+            break;
+    }
 }
 
 void ProgramExecutableD3D::updateCachedVertexExecutableIndex()
@@ -1847,7 +1889,8 @@ void ProgramExecutableD3D::updateCachedPixelExecutableIndex()
     mCachedPixelExecutableIndex.reset();
     for (size_t executableIndex = 0; executableIndex < mPixelExecutables.size(); executableIndex++)
     {
-        if (mPixelExecutables[executableIndex]->matchesSignature(mPixelShaderOutputLayoutCache))
+        if (mPixelExecutables[executableIndex]->matchesSignature(
+                mPixelShaderOutputLayoutCache, mImage2DBindLayoutCache[gl::ShaderType::Fragment]))
         {
             mCachedPixelExecutableIndex = executableIndex;
             break;
@@ -2160,7 +2203,7 @@ void ProgramExecutableD3D::assignAllAtomicCounterRegisters()
     else
     {
         // Implement atomic counters for non-compute shaders
-        // http://anglebug.com/1729
+        // http://anglebug.com/42260658
         UNIMPLEMENTED();
     }
 }

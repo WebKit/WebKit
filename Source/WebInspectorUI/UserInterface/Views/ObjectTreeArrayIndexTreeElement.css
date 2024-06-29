@@ -25,16 +25,24 @@
 
 .tree-outline .item.object-tree-array-index {
     position: relative;
-    left: -12px;
     margin-top: 2px;
     margin-bottom: 1px;
+}
+
+.tree-outline .item.object-tree-array-index:not(.object-tree-map-entry) {
+    inset-inline-start: -12px;
+    margin-inline-end: -12px;
 }
 
 .object-tree .object-tree-array-index > .icon {
     display: none;
 }
 
-.object-tree-array-index .index-name {
+.object-tree-array-index > .titles > .title {
+    display: flex;
+}
+
+.object-tree-array-index > .titles > .title > .index-name {
     font-family: -webkit-system-font, sans-serif;
     font-size: 11px;
     font-variant-numeric: tabular-nums;
@@ -45,18 +53,19 @@
     top: -1px;
 
     display: inline-block;
-    width: 30px;
-    text-align: right;
+    min-width: 30px;
+    text-align: end;
+}
+
+.object-tree-array-index > .titles > .title > .index-value {
+    overflow: hidden;
+    margin-inline-start: 8px;
+    text-overflow: ellipsis;
 }
 
 /* An array inside an array we should reduce the padding-start. */
 .object-tree-array-index .index-value .object-tree .tree-outline.object {
     padding-inline-start: 6px;
-}
-
-/* An array inside an ObjectTreePropertyTreeElement needs more left shift */
-.object-tree-property + ol .object-tree-array-index {
-    left: -18px;
 }
 
 /* A node inside an array we should reduce the padding-start. */

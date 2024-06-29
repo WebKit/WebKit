@@ -19,13 +19,13 @@
 #include "test/testsupport/file_utils.h"
 
 #ifdef WEBRTC_NETEQ_UNITTEST_BITEXACT
-RTC_PUSH_IGNORING_WUNDEF()
+
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/modules/audio_coding/neteq/neteq_unittest.pb.h"
 #else
 #include "modules/audio_coding/neteq/neteq_unittest.pb.h"
 #endif
-RTC_POP_IGNORING_WUNDEF()
+
 #endif
 
 namespace webrtc {

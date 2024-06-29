@@ -80,17 +80,17 @@ public:
 
     static JSBigInt* createFrom(JSGlobalObject*, VM&, int32_t value);
 
-    static size_t offsetOfLength()
+    static constexpr size_t offsetOfLength()
     {
         return OBJECT_OFFSETOF(JSBigInt, m_length);
     }
 
-    static size_t offsetOfSign()
+    static constexpr size_t offsetOfSign()
     {
         return OBJECT_OFFSETOF(JSBigInt, m_sign);
     }
 
-    inline static size_t offsetOfData()
+    static constexpr size_t offsetOfData()
     {
         return OBJECT_OFFSETOF(JSBigInt, m_data);
     }

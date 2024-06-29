@@ -1,7 +1,7 @@
 webkit.org/b/267710 imported/w3c/web-platform-tests/accname/name/comp_host_language_label.html [ Failure ]
 
 # webkit.org/b/271916 [ Ventura WK1 Release ] 3x media/track/track and http/tests/media/hls/hls-we bvtt-flashing.html are constant timeout
-[ Release ] http/tests/media/hls/hls-webvtt-flashing.html [ Timeout ]
-[ Release ] media/track/track-in-band-cues-added-once.html [ Timeout ]
-[ Release ] media/track/track-in-band-layout.html [ Timeout ]
-[ Release ] media/track/track-paint-on-captions.html [ Timeout ]
+http/tests/media/hls/hls-webvtt-flashing.html [ Timeout ]
+media/track/track-in-band-cues-added-once.html [ Timeout ]
+media/track/track-in-band-layout.html [ Timeout Failure ]
+media/track/track-paint-on-captions.html [ Timeout ]

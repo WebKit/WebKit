@@ -481,10 +481,11 @@ bool BMPImageReader::processColorTable()
     if ((m_decodedOffset > m_data->size()) || ((m_data->size() - m_decodedOffset) < tableSizeInBytes))
         return false;
     m_colorTable = Vector<RGBTriple>(m_infoHeader.biClrUsed, [&](size_t) {
+        auto span = m_data->span();
         RGBTriple triple {
-            .rgbBlue = m_data->data()[m_decodedOffset++],
-            .rgbGreen = m_data->data()[m_decodedOffset++],
-            .rgbRed = m_data->data()[m_decodedOffset++]
+            .rgbBlue = span[m_decodedOffset++],
+            .rgbGreen = span[m_decodedOffset++],
+            .rgbRed = span[m_decodedOffset++]
         };
         // Skip padding byte (not present on OS/2 1.x).
         if (!m_isOS21x)
@@ -536,8 +537,9 @@ bool BMPImageReader::processRLEData()
 
         // For every entry except EOF, we'd better not have reached the end of
         // the image.
-        const uint8_t count = m_data->data()[m_decodedOffset];
-        const uint8_t code = m_data->data()[m_decodedOffset + 1];
+        auto span = m_data->span();
+        const uint8_t count = span[m_decodedOffset];
+        const uint8_t code = span[m_decodedOffset + 1];
         if ((count || (code != 1)) && pastEndOfImage(0))
             return m_parent->setFailed();
 
@@ -567,8 +569,8 @@ bool BMPImageReader::processRLEData()
 
                 // Fail if this takes us past the end of the desired row or
                 // past the end of the image.
-                const uint8_t dx = m_data->data()[m_decodedOffset + 2];
-                const uint8_t dy = m_data->data()[m_decodedOffset + 3];
+                const uint8_t dx = span[m_decodedOffset + 2];
+                const uint8_t dy = span[m_decodedOffset + 3];
                 if (dx || dy)
                     m_buffer->setHasAlpha(true);
                 if (((m_coord.x() + dx) > m_parent->size().width()) || pastEndOfImage(dy))
@@ -610,7 +612,7 @@ bool BMPImageReader::processRLEData()
                     return false;
 
                 // One BGR triple that we copy |count| times.
-                fillRGBA(endX, m_data->data()[m_decodedOffset + 3], m_data->data()[m_decodedOffset + 2], code, 0xff);
+                fillRGBA(endX, span[m_decodedOffset + 3], span[m_decodedOffset + 2], code, 0xff);
                 m_decodedOffset += 4;
             } else {
                 // RLE8 has one color index that gets repeated; RLE4 has two
@@ -670,7 +672,7 @@ BMPImageReader::ProcessingResult BMPImageReader::processNonRLEData(bool inRLE, i
             // the most significant bits in the byte).
             const uint8_t mask = (1 << m_infoHeader.biBitCount) - 1;
             for (size_t byte = 0; byte < unpaddedNumBytes; ++byte) {
-                uint8_t pixelData = m_data->data()[m_decodedOffset + byte];
+                uint8_t pixelData = m_data->span()[m_decodedOffset + byte];
                 for (size_t pixel = 0; (pixel < pixelsPerByte) && (m_coord.x() < endX); ++pixel) {
                     const size_t colorIndex = (pixelData >> (8 - m_infoHeader.biBitCount)) & mask;
                     if (m_andMaskState == Decoding) {

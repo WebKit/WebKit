@@ -16,13 +16,13 @@
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/environment/environment.h"
 #include "api/units/data_rate.h"
 #include "api/video/render_resolution.h"
 #include "api/video_codecs/sdp_video_format.h"
+#include "api/video_codecs/video_encoder.h"
 
 namespace webrtc {
-
-class VideoEncoder;
 
 // A factory that creates VideoEncoders.
 // NOTE: This class is still under development and may change without notice.
@@ -96,7 +96,8 @@ class VideoEncoderFactory {
   }
 
   // Creates a VideoEncoder for the specified format.
-  virtual std::unique_ptr<VideoEncoder> CreateVideoEncoder(
+  virtual std::unique_ptr<VideoEncoder> Create(
+      const Environment& env,
       const SdpVideoFormat& format) = 0;
 
   // This method creates a EncoderSelector to use for a VideoSendStream.

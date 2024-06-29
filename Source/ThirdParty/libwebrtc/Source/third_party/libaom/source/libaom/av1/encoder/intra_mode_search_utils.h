@@ -604,11 +604,11 @@ static AOM_INLINE int intra_mode_info_cost_uv(const AV1_COMP *cpi,
       total_rate += palette_mode_cost;
     }
   }
-  const PREDICTION_MODE equiv_mode = get_uv_mode(uv_mode);
-  if (av1_is_directional_mode(equiv_mode)) {
+  const PREDICTION_MODE intra_mode = get_uv_mode(uv_mode);
+  if (av1_is_directional_mode(intra_mode)) {
     if (av1_use_angle_delta(bsize)) {
       total_rate +=
-          mode_costs->angle_delta_cost[equiv_mode - V_PRED]
+          mode_costs->angle_delta_cost[intra_mode - V_PRED]
                                       [mbmi->angle_delta[PLANE_TYPE_UV] +
                                        MAX_ANGLE_DELTA];
     }

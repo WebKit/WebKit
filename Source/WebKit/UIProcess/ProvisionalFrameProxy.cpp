@@ -27,31 +27,38 @@
 #include "ProvisionalFrameProxy.h"
 
 #include "FrameProcess.h"
+#include "ProvisionalFrameCreationParameters.h"
 #include "VisitedLinkStore.h"
 #include "WebFrameProxy.h"
+#include "WebPageMessages.h"
 #include "WebPageProxy.h"
 
 namespace WebKit {
 
-ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProcess>&& frameProcess, bool isCrossSiteRedirect)
+ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProcess>&& frameProcess)
     : m_frame(frame)
     , m_frameProcess(WTFMove(frameProcess))
     , m_visitedLinkStore(frame.page()->visitedLinkStore())
-    , m_isCrossSiteRedirect(isCrossSiteRedirect)
-    , m_layerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier::generate())
 {
     process().markProcessAsRecentlyUsed();
+    process().send(Messages::WebPage::CreateProvisionalFrame({ frame.layerHostingContextIdentifier() }, frame.frameID()), frame.page()->webPageIDInProcess(process()));
 }
 
-ProvisionalFrameProxy::~ProvisionalFrameProxy() = default;
-
-Ref<FrameProcess> ProvisionalFrameProxy::takeFrameProcess()
+ProvisionalFrameProxy::~ProvisionalFrameProxy()
 {
-    return WTFMove(m_frameProcess);
+    if (m_frameProcess && m_frame->page())
+        process().send(Messages::WebPage::DestroyProvisionalFrame(m_frame->frameID()), m_frame->page()->webPageIDInProcess(process()));
+}
+
+RefPtr<FrameProcess> ProvisionalFrameProxy::takeFrameProcess()
+{
+    ASSERT(m_frameProcess);
+    return std::exchange(m_frameProcess, nullptr).releaseNonNull();
 }
 
 WebProcessProxy& ProvisionalFrameProxy::process() const
 {
+    ASSERT(m_frameProcess);
     return m_frameProcess->process();
 }
 

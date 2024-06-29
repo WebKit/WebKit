@@ -42,6 +42,10 @@ struct ProbeControllerConfig {
   FieldTrialOptional<double> second_exponential_probe_scale;
   FieldTrialParameter<double> further_exponential_probe_scale;
   FieldTrialParameter<double> further_probe_threshold;
+  FieldTrialParameter<bool> abort_further_probe_if_max_lower_than_current;
+  // Duration of time from the first initial probe where repeated initial probes
+  // are sent if repeated initial probing is enabled.
+  FieldTrialParameter<TimeDelta> repeated_initial_probing_duration;
 
   // Configures how often we send ALR probes and how big they are.
   FieldTrialParameter<TimeDelta> alr_probing_interval;
@@ -49,7 +53,7 @@ struct ProbeControllerConfig {
 
   // Configures how often we send probes if NetworkStateEstimate is available.
   FieldTrialParameter<TimeDelta> network_state_estimate_probing_interval;
-  // Periodically probe as long as the the ratio beteeen current estimate and
+  // Periodically probe as long as the ratio between current estimate and
   // NetworkStateEstimate is lower then this.
   FieldTrialParameter<double>
       probe_if_estimate_lower_than_network_state_estimate_ratio;
@@ -64,15 +68,14 @@ struct ProbeControllerConfig {
   FieldTrialParameter<bool> probe_on_max_allocated_bitrate_change;
   FieldTrialOptional<double> first_allocation_probe_scale;
   FieldTrialOptional<double> second_allocation_probe_scale;
-  FieldTrialFlag allocation_allow_further_probing;
-  FieldTrialParameter<DataRate> allocation_probe_max;
+  FieldTrialOptional<double> allocation_probe_limit_by_current_scale;
 
   // The minimum number probing packets used.
   FieldTrialParameter<int> min_probe_packets_sent;
   // The minimum probing duration.
   FieldTrialParameter<TimeDelta> min_probe_duration;
   FieldTrialParameter<double> loss_limited_probe_scale;
-  // Dont send a probe if min(estimate, network state estimate) is larger than
+  // Don't send a probe if min(estimate, network state estimate) is larger than
   // this fraction of the set max bitrate.
   FieldTrialParameter<double> skip_if_estimate_larger_than_fraction_of_max;
 };
@@ -122,6 +125,11 @@ class ProbeController {
 
   void EnablePeriodicAlrProbing(bool enable);
 
+  // Probes are sent periodically every 1s during the first 5s after the network
+  // becomes available. The probes ignores allocated bitrate constraints and
+  // probe up to max configured bitrate configured via SetBitrates.
+  void EnableRepeatedInitialProbing(bool enable);
+
   void SetAlrStartTimeMs(absl::optional<int64_t> alr_start_time);
   void SetAlrEndedTimeMs(int64_t alr_end_time);
 
@@ -148,6 +156,7 @@ class ProbeController {
     kProbingComplete,
   };
 
+  void UpdateState(State new_state);
   ABSL_MUST_USE_RESULT std::vector<ProbeClusterConfig>
   InitiateExponentialProbing(Timestamp at_time);
   ABSL_MUST_USE_RESULT std::vector<ProbeClusterConfig> InitiateProbing(
@@ -156,8 +165,12 @@ class ProbeController {
       bool probe_further);
   bool TimeForAlrProbe(Timestamp at_time) const;
   bool TimeForNetworkStateProbe(Timestamp at_time) const;
+  bool TimeForNextRepeatedInitialProbe(Timestamp at_time) const;
 
   bool network_available_;
+  bool waiting_for_initial_probe_result_ = false;
+  bool repeated_initial_probing_enabled_ = false;
+  Timestamp last_allowed_repeated_initial_probe_ = Timestamp::MinusInfinity();
   BandwidthLimitedCause bandwidth_limited_cause_ =
       BandwidthLimitedCause::kDelayBasedLimited;
   State state_;

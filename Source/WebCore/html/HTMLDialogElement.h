@@ -49,6 +49,9 @@ public:
 
     void runFocusingSteps();
 
+    bool isValidInvokeAction(const InvokeAction) final;
+    bool handleInvokeInternal(const HTMLFormControlElement& invoker, const InvokeAction&) final;
+
 private:
     HTMLDialogElement(const QualifiedName&, Document&);
 

@@ -409,6 +409,17 @@ void Recorder::beginTransparencyLayer(float opacity)
     m_stateStack.append(m_stateStack.last().cloneForTransparencyLayer());
 }
 
+void Recorder::beginTransparencyLayer(CompositeOperator compositeOperator, BlendMode blendMode)
+{
+    GraphicsContext::beginTransparencyLayer(compositeOperator, blendMode);
+
+    appendStateChangeItemIfNecessary();
+    recordBeginTransparencyLayer(compositeOperator, blendMode);
+
+    GraphicsContext::save(GraphicsContextState::Purpose::TransparencyLayer);
+    m_stateStack.append(m_stateStack.last().cloneForTransparencyLayer());
+}
+
 void Recorder::endTransparencyLayer()
 {
     GraphicsContext::endTransparencyLayer();

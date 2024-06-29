@@ -14,10 +14,10 @@
 
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
+#include "api/audio/audio_processing.h"
 #include "api/scoped_refptr.h"
 #include "api/test/pclf/media_configuration.h"
 #include "api/test/pclf/peer_configurer.h"
-#include "modules/audio_processing/include/audio_processing.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {

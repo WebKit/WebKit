@@ -86,20 +86,16 @@ const Vector<uint8_t>& PushSubscription::sharedAuthenticationSecret() const
 
 ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushSubscription::getKey(PushEncryptionKeyName name) const
 {
-    const Vector<uint8_t>* source = nullptr;
+    auto& source = [&]() -> const Vector<uint8_t>& {
+        switch (name) {
+        case PushEncryptionKeyName::P256dh:
+            return clientECDHPublicKey();
+        case PushEncryptionKeyName::Auth:
+            return sharedAuthenticationSecret();
+        }
+    }();
 
-    switch (name) {
-    case PushEncryptionKeyName::P256dh:
-        source = &clientECDHPublicKey();
-        break;
-    case PushEncryptionKeyName::Auth:
-        source = &sharedAuthenticationSecret();
-        break;
-    default:
-        return nullptr;
-    }
-
-    auto buffer = ArrayBuffer::tryCreate(source->data(), source->size());
+    auto buffer = ArrayBuffer::tryCreate(source);
     if (!buffer)
         return Exception { ExceptionCode::OutOfMemoryError };
     return buffer;

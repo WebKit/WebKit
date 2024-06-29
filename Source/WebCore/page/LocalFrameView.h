@@ -724,6 +724,8 @@ public:
 
     WEBCORE_EXPORT void scrollbarStyleDidChange();
 
+    FrameIdentifier rootFrameID() const final;
+
 private:
     explicit LocalFrameView(LocalFrame&);
 
@@ -888,7 +890,7 @@ private:
     RenderElement* viewportRenderer() const;
     
     void willDoLayout(SingleThreadWeakPtr<RenderElement> layoutRoot);
-    void didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot);
+    void didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot, bool didRunSimplifiedLayout);
 
     FloatSize calculateSizeForCSSViewportUnitsOverride(std::optional<OverrideViewportSize>) const;
 

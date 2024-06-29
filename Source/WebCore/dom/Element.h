@@ -64,6 +64,7 @@ class ElementRareData;
 class FormAssociatedCustomElement;
 class FormListedElement;
 class HTMLDocument;
+class HTMLElement;
 class HTMLFormControlElement;
 class IntSize;
 class JSCustomElementInterface;
@@ -82,6 +83,9 @@ class SpaceSplitString;
 class StylePropertyMap;
 class StylePropertyMapReadOnly;
 class Text;
+class TrustedHTML;
+class TrustedScript;
+class TrustedScriptURL;
 class UniqueElementData;
 class ValidatedFormListedElement;
 class WebAnimation;
@@ -114,6 +118,9 @@ enum class InvokeAction: uint8_t {
     TogglePopover,
     HidePopover,
     ShowPopover,
+
+    ShowModal,
+    Close,
 };
 
 struct CheckVisibilityOptions;
@@ -131,6 +138,7 @@ struct ShadowRootInit;
 
 using ElementName = NodeName;
 using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>>;
+using TrustedTypeOrString = std::variant<RefPtr<TrustedHTML>, RefPtr<TrustedScript>, RefPtr<TrustedScriptURL>, AtomString>;
 
 // https://drafts.csswg.org/css-contain/#relevant-to-the-user
 enum class ContentRelevancy : uint8_t {
@@ -159,7 +167,7 @@ public:
     AtomString getAttributeForBindings(const QualifiedName&, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy) const;
     template<typename... QualifiedNames>
     inline const AtomString& getAttribute(const QualifiedName&, const QualifiedNames&...) const;
-    WEBCORE_EXPORT void setAttribute(const QualifiedName&, const AtomString& value);
+    WEBCORE_EXPORT ExceptionOr<void> setAttribute(const QualifiedName&, const AtomString& value, bool enforceTrustedTypes = false);
     void setAttributeWithoutOverwriting(const QualifiedName&, const AtomString& value);
     WEBCORE_EXPORT void setAttributeWithoutSynchronization(const QualifiedName&, const AtomString& value);
     void setSynchronizedLazyAttribute(const QualifiedName&, const AtomString& value);
@@ -185,6 +193,9 @@ public:
     inline const AtomString& attributeWithDefaultARIA(const QualifiedName&) const;
     inline String attributeTrimmedWithDefaultARIA(const QualifiedName&) const;
 
+    enum class TopLayerElementType : bool { Other, Popover };
+    HTMLElement* topmostPopoverAncestor(TopLayerElementType topLayerType);
+
 #if DUMP_NODE_STATISTICS
     bool hasNamedNodeMap() const;
 #endif
@@ -204,8 +215,11 @@ public:
     inline AtomString getAttributeNSForBindings(const AtomString& namespaceURI, const AtomString& localName, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy) const;
 
     WEBCORE_EXPORT ExceptionOr<void> setAttribute(const AtomString& qualifiedName, const AtomString& value);
+    ExceptionOr<void> setAttribute(const AtomString& qualifiedName, const TrustedTypeOrString& value);
+    unsigned validateAttributeIndex(unsigned index, const QualifiedName& qname) const;
     static ExceptionOr<QualifiedName> parseAttributeName(const AtomString& namespaceURI, const AtomString& qualifiedName);
     WEBCORE_EXPORT ExceptionOr<void> setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const AtomString& value);
+    ExceptionOr<void> setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const TrustedTypeOrString& value);
 
     ExceptionOr<bool> toggleAttribute(const AtomString& qualifiedName, std::optional<bool> force);
 
@@ -303,7 +317,7 @@ public:
 
     const QualifiedName& tagQName() const { return m_tagName; }
 #if ENABLE(JIT)
-    static ptrdiff_t tagQNameMemoryOffset() { return OBJECT_OFFSETOF(Element, m_tagName); }
+    static constexpr ptrdiff_t tagQNameMemoryOffset() { return OBJECT_OFFSETOF(Element, m_tagName); }
 #endif
     String tagName() const { return nodeName(); }
     bool hasTagName(const QualifiedName& tagName) const { return m_tagName.matches(tagName); }
@@ -358,7 +372,7 @@ public:
     void stripScriptingAttributes(Vector<Attribute>&) const;
 
     const ElementData* elementData() const { return m_elementData.get(); }
-    static ptrdiff_t elementDataMemoryOffset() { return OBJECT_OFFSETOF(Element, m_elementData); }
+    static constexpr ptrdiff_t elementDataMemoryOffset() { return OBJECT_OFFSETOF(Element, m_elementData); }
     inline UniqueElementData& ensureUniqueElementData();
 
     void synchronizeAllAttributes() const;
@@ -438,7 +452,7 @@ public:
     ExceptionOr<void> insertAdjacentHTML(const String& where, const String& html, NodeVector* addedNodes);
 
     WEBCORE_EXPORT ExceptionOr<Element*> insertAdjacentElement(const String& where, Element& newChild);
-    WEBCORE_EXPORT ExceptionOr<void> insertAdjacentHTML(const String& where, const String& html);
+    WEBCORE_EXPORT ExceptionOr<void> insertAdjacentHTML(const String& where, std::variant<RefPtr<TrustedHTML>, String>&&);
     WEBCORE_EXPORT ExceptionOr<void> insertAdjacentText(const String& where, String&& text);
 
     using Node::computedStyle;
@@ -511,13 +525,13 @@ public:
     virtual void blur();
     virtual void runFocusingStepsForAutofocus();
 
-    ExceptionOr<void> setHTMLUnsafe(const String&);
+    ExceptionOr<void> setHTMLUnsafe(std::variant<RefPtr<TrustedHTML>, String>&&);
     String getHTML(GetHTMLOptions&&) const;
 
     WEBCORE_EXPORT String innerHTML() const;
     WEBCORE_EXPORT String outerHTML() const;
-    WEBCORE_EXPORT ExceptionOr<void> setInnerHTML(const String&);
-    WEBCORE_EXPORT ExceptionOr<void> setOuterHTML(const String&);
+    WEBCORE_EXPORT ExceptionOr<void> setInnerHTML(std::variant<RefPtr<TrustedHTML>, String>&&);
+    WEBCORE_EXPORT ExceptionOr<void> setOuterHTML(std::variant<RefPtr<TrustedHTML>, String>&&);
     WEBCORE_EXPORT String innerText();
     WEBCORE_EXPORT String outerText();
  
@@ -664,6 +678,7 @@ public:
     inline bool hasClass() const;
     inline bool hasName() const;
     inline const SpaceSplitString& classNames() const;
+    inline bool hasClassName(const AtomString& className) const;
 
     ScrollPosition savedLayerScrollPosition() const;
     void setSavedLayerScrollPosition(const ScrollPosition&);
@@ -811,7 +826,7 @@ protected:
 
     void setTabIndexExplicitly(std::optional<int>);
 
-    void classAttributeChanged(const AtomString& newClassString);
+    void classAttributeChanged(const AtomString& newClassString, AttributeModificationReason);
     void partAttributeChanged(const AtomString& newValue);
 
     void addShadowRoot(Ref<ShadowRoot>&&);

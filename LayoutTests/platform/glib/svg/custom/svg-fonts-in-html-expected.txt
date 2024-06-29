@@ -83,7 +83,7 @@ layer at (173,379) size 454x107
     RenderText {#text} at (0,0) size 0x0
 layer at (321,235) size 306x80
   RenderBlock (positioned) {h3} at (148,-144) size 306x81 [color=#CCCC77] [bgcolor=#888811] [border: (3px solid #888811) none (3px solid #888811)]
-    RenderInline {span} at (52,0) size 224x79
-      RenderText {#text} at (52,0) size 224x79
-        text run at (90,0) width 186: "The Road to"
-        text run at (52,37) width 224: "Enlightenment"
+    RenderInline {span} at (56,0) size 220x79
+      RenderText {#text} at (56,0) size 220x79
+        text run at (91,0) width 185: "The Road to"
+        text run at (56,37) width 220: "Enlightenment"

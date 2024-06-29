@@ -35,6 +35,7 @@
 #import "APIUIClient.h"
 #import "Logging.h"
 #import "SOAuthorizationLoadPolicy.h"
+#import "UIKitUtilities.h"
 #import "WKSOAuthorizationDelegate.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewInternal.h"
@@ -398,7 +399,7 @@ void SOAuthorizationSession::presentViewController(SOAuthorizationViewController
     UIViewController *presentingViewController = m_page->uiClient().presentingViewController();
 #if !PLATFORM(VISION)
     if (!presentingViewController)
-        presentingViewController = [m_page->cocoaView() window].rootViewController;
+        presentingViewController = [m_page->cocoaView() _wk_viewControllerForFullScreenPresentation];
 #endif
     if (!presentingViewController) {
         uiCallback(NO, adoptNS([[NSError alloc] initWithDomain:SOErrorDomain code:kSOErrorAuthorizationPresentationFailed userInfo:nil]).get());

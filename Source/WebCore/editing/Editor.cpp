@@ -1280,6 +1280,9 @@ void Editor::unappliedEditing(EditCommandComposition& composition)
     updateEditorUINowIfScheduled();
 
     m_alternativeTextController->respondToUnappliedEditing(&composition);
+#if ENABLE(WRITING_TOOLS)
+    protectedDocument()->page()->respondToUnappliedWritingToolsEditing(&composition);
+#endif
 
     m_lastEditCommand = nullptr;
     if (auto* client = this->client())
@@ -1303,6 +1306,10 @@ void Editor::reappliedEditing(EditCommandComposition& composition)
     dispatchInputEvents(composition.startingRootEditableElement(), composition.endingRootEditableElement(), "historyRedo"_s, IsInputMethodComposing::No);
     
     updateEditorUINowIfScheduled();
+
+#if ENABLE(WRITING_TOOLS)
+    protectedDocument()->page()->respondToReappliedWritingToolsEditing(&composition);
+#endif
 
     m_lastEditCommand = nullptr;
     if (auto* client = this->client())
@@ -4451,13 +4458,12 @@ PromisedAttachmentInfo Editor::promisedAttachmentInfo(Element& element)
     if (!attachment)
         return { };
 
-    Vector<String> additionalTypes;
-    Vector<RefPtr<SharedBuffer>> additionalData;
+    Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>>  additionalTypesAndData;
 #if PLATFORM(COCOA)
-    getPasteboardTypesAndDataForAttachment(element, additionalTypes, additionalData);
+    getPasteboardTypesAndDataForAttachment(element, additionalTypesAndData);
 #endif
 
-    return { attachment->uniqueIdentifier(), WTFMove(additionalTypes), WTFMove(additionalData) };
+    return { attachment->uniqueIdentifier(), WTFMove(additionalTypesAndData) };
 }
 
 void Editor::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& preferredFileName, Ref<FragmentedSharedBuffer>&& data)

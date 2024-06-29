@@ -109,11 +109,11 @@ TEST(VideoRtpTrackSourceTest, NoCallbacksAfterClearedCallback) {
 
 class TestFrame : public RecordableEncodedFrame {
  public:
-  rtc::scoped_refptr<const webrtc::EncodedImageBufferInterface> encoded_buffer()
+  rtc::scoped_refptr<const EncodedImageBufferInterface> encoded_buffer()
       const override {
     return nullptr;
   }
-  absl::optional<webrtc::ColorSpace> color_space() const override {
+  absl::optional<ColorSpace> color_space() const override {
     return absl::nullopt;
   }
   VideoCodecType codec() const override { return kVideoCodecGeneric; }

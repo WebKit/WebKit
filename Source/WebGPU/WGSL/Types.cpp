@@ -29,6 +29,7 @@
 #include "ASTStringDumper.h"
 #include "ASTStructure.h"
 #include "TypeStore.h"
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/StringHash.h>
@@ -322,16 +323,26 @@ unsigned Type::size() const
             return matrix.columns * WTF::roundUpToMultipleOf(rowAlignment, rowSize);
         },
         [&](const Array& array) -> unsigned {
-            unsigned size = 1;
+            CheckedUint32 size = 1;
             if (auto* constantSize = std::get_if<unsigned>(&array.size))
                 size = *constantSize;
-            return size * WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
+            auto elementSize = array.element->size();
+            auto stride = WTF::roundUpToMultipleOf(array.element->alignment(), elementSize);
+            if (stride < elementSize)
+                return std::numeric_limits<unsigned>::max();
+            size *= stride;
+            if (size.hasOverflowed())
+                return std::numeric_limits<unsigned>::max();
+            return size.value();
         },
         [&](const Struct& structure) -> unsigned {
             return structure.structure.size();
         },
-        [&](const PrimitiveStruct&) -> unsigned {
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const PrimitiveStruct& structure) -> unsigned {
+            unsigned size = 0;
+            for (auto* type : structure.values)
+                size += type->size();
+            return size;
         },
         [&](const Function&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
@@ -450,8 +461,12 @@ Packing Type::packing() const
     } else if (auto* vectorType = std::get_if<Types::Vector>(this)) {
         if (vectorType->size == 3)
             return Packing::PackedVec3;
-    } else if (auto* arrayType = std::get_if<Types::Array>(this))
-        return arrayType->element->packing();
+    } else if (auto* arrayType = std::get_if<Types::Array>(this)) {
+        auto elementPacking = arrayType->element->packing();
+        if (elementPacking & Packing::Packed)
+            elementPacking = static_cast<Packing>(elementPacking | Packing::PArray);
+        return elementPacking;
+    }
 
     return Packing::Unpacked;
 }

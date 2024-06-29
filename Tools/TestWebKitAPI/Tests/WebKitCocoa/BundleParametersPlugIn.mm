@@ -32,6 +32,13 @@
 #import <WebKit/WKWebProcessPlugInScriptWorld.h>
 #import <wtf/RetainPtr.h>
 
+#if WK_HAVE_C_SPI
+#import <WebKit/WKBundlePage.h>
+#import <WebKit/WKBundlePageLoaderClient.h>
+#import <WebKit/WKObjCTypeWrapperRef.h>
+#import <WebKit/WKType.h>
+#endif
+
 static NSString * const testParameter1 = @"TestParameter1";
 static NSString * const testParameter2 = @"TestParameter2";
 
@@ -52,6 +59,16 @@ static NSString * const testParameter2 = @"TestParameter2";
     [plugInController.parameters addObserver:self forKeyPath:testParameter1 options:NSKeyValueObservingOptionInitial context:NULL];
     [plugInController.parameters addObserver:self forKeyPath:testParameter2 options:NSKeyValueObservingOptionInitial context:NULL];
     [plugInController.parameters addObserver:self forKeyPath:TestWebKitAPI::Util::TestPlugInClassNameParameter options:NSKeyValueObservingOptionInitial context:NULL];
+
+#if WK_HAVE_C_SPI
+    WKBundlePageLoaderClientV6 loaderClient = { };
+    loaderClient.base.version = 6;
+    loaderClient.willLoadDataRequest = [] (WKBundlePageRef page, WKURLRequestRef, WKDataRef, WKStringRef, WKStringRef, WKURLRef, WKTypeRef userData, const void*) {
+        id data = WKObjCTypeWrapperGetObject((WKObjCTypeWrapperRef)userData);
+        RELEASE_ASSERT([data isKindOfClass:NSData.class]);
+    };
+    WKBundlePageSetPageLoaderClient(static_cast<WKBundlePageRef>(browserContextController), &loaderClient.base);
+#endif
 }
 
 - (void)dealloc

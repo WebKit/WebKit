@@ -1,5 +1,16 @@
 
 
-PASS audio exchange with transform
-PASS video exchange with transform
+FAIL audio metadata: timestamp assert_equals: timestamp matches (for sender before and after write) expected 0 but got 879366111
+PASS audio metadata: synchronizationSource
+FAIL audio metadata: payloadType assert_equals: expected "number" but got "undefined"
+PASS audio metadata: contributingSources
+FAIL audio metadata: sequenceNumber assert_equals: expected "number" but got "undefined"
+FAIL video metadata: timestamp assert_equals: timestamp matches (for sender before and after write) expected 0 but got 1674909870
+PASS video metadata: ssrc
+FAIL video metadata: csrcs assert_array_equals: csrcs are arrays, and match (for sender before and after write) value is undefined, expected array
+PASS video metadata: width and height
+PASS video metadata: spatial and temporal index
+PASS video metadata: dependencies
+FAIL video metadata: frameId assert_equals: frameId matches (for sender and receiver) expected (undefined) undefined but got (number) 1
+PASS video metadata: type
 

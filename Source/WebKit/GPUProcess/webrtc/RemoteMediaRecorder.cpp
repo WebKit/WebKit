@@ -99,9 +99,7 @@ void RemoteMediaRecorder::videoFrameAvailable(SharedVideoFrame&& sharedVideoFram
 void RemoteMediaRecorder::fetchData(CompletionHandler<void(std::span<const uint8_t>, double)>&& completionHandler)
 {
     m_writer->fetchData([completionHandler = WTFMove(completionHandler)](auto&& data, auto timeCode) mutable {
-        auto buffer = data ? data->makeContiguous() : RefPtr<WebCore::SharedBuffer>();
-        auto* pointer = buffer ? buffer->data() : nullptr;
-        completionHandler(std::span { pointer, data ? data->size() : 0 }, timeCode);
+        completionHandler(data ? data->makeContiguous()->span() : std::span<const uint8_t> { }, timeCode);
     });
 }
 

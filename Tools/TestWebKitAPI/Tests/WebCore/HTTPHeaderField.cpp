@@ -36,7 +36,7 @@ static String canonicalizeHTTPHeader(const String& string)
     auto field = WebCore::HTTPHeaderField::create(string.left(colonLocation), string.substring(colonLocation + 1));
     if (!field)
         return { };
-    return makeString(field->name(), ": ", field->value());
+    return makeString(field->name(), ": "_s, field->value());
 }
 
 static void shouldRemainUnchanged(Vector<String>&& strings)

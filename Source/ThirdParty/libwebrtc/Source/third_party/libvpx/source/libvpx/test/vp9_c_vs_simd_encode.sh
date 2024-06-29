@@ -384,16 +384,14 @@ vp9_c_vs_simd_enc_test() {
   # Test Generic
   vp9_test_generic
 
-  # TODO(webm:1816): Enable x86 test once issue 1816 is fixed.
-  # Details: https://bugs.chromium.org/p/webm/issues/detail?id=1816
   # Test x86 (32 bit)
-  # echo "vp9 test for x86 (32 bit): Started."
-  # if ! vp9_test_x86 "x86"; then
-  #   echo "vp9 test for x86 (32 bit): Done, test failed."
-  #   return 1
-  # else
-  #   echo "vp9 test for x86 (32 bit): Done, all tests passed."
-  # fi
+  echo "vp9 test for x86 (32 bit): Started."
+  if ! vp9_test_x86 "x86"; then
+    echo "vp9 test for x86 (32 bit): Done, test failed."
+    return 1
+  else
+    echo "vp9 test for x86 (32 bit): Done, all tests passed."
+  fi
 
   # Test x86_64 (64 bit)
   if [ "$(eval uname -m)" = "x86_64" ]; then

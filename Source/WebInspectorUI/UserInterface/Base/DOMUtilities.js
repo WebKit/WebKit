@@ -365,7 +365,7 @@ WI.xpathIndex = function(node)
     //   - look for a unique localName
     //   - fallback to index
 
-    function isSimiliarNode(a, b) {
+    function isSimilarNode(a, b) {
         if (a === b)
             return true;
 
@@ -389,7 +389,7 @@ WI.xpathIndex = function(node)
 
     let xPathIndexCounter = 1; // XPath indices start at 1.
     for (let sibling of siblings) {
-        if (!isSimiliarNode(node, sibling))
+        if (!isSimilarNode(node, sibling))
             continue;
 
         if (node === sibling) {

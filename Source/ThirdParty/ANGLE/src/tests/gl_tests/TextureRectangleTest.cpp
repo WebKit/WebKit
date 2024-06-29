@@ -50,7 +50,7 @@ TEST_P(TextureRectangleTest, TexImage2D)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensionSupported());
 
-    // http://anglebug.com/5651
+    // http://anglebug.com/42264188
     ANGLE_SKIP_TEST_IF(IsLinux() && IsNVIDIA() && IsOpenGL());
 
     GLTexture tex;
@@ -122,7 +122,7 @@ TEST_P(TextureRectangleTest, TexStorage2D)
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_EXT_texture_storage"));
 
-    // http://anglebug.com/5651
+    // http://anglebug.com/42264188
     ANGLE_SKIP_TEST_IF(IsLinux() && IsNVIDIA() && IsOpenGL());
 
     bool useES3       = getClientMajorVersion() >= 3;

@@ -498,7 +498,8 @@ public:
     bool canRender3DTransforms() const;
 
     void updateLayerPositionsAfterStyleChange();
-    void updateLayerPositionsAfterLayout(bool isRelayoutingSubtree, bool didFullRepaint);
+    enum class CanUseSimplifiedRepaintPass : uint8_t { No, Yes };
+    void updateLayerPositionsAfterLayout(bool isRelayoutingSubtree, bool didFullRepaint, CanUseSimplifiedRepaintPass);
     void updateLayerPositionsAfterOverflowScroll();
     void updateLayerPositionsAfterDocumentScroll();
 
@@ -997,7 +998,7 @@ private:
     // Returns true if the position changed.
     bool updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* = nullptr);
 
-    void recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFlag>);
+    void recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFlag>, CanUseSimplifiedRepaintPass = CanUseSimplifiedRepaintPass::No);
 
     enum UpdateLayerPositionsAfterScrollFlag {
         IsOverflowScroll                        = 1 << 0,
@@ -1114,7 +1115,7 @@ private:
     void beginTransparencyLayers(GraphicsContext&, const LayerPaintingInfo&, const LayoutRect& dirtyRect);
 
     struct HitLayer {
-        RenderLayer* layer;
+        RenderLayer* layer { nullptr };
         double zOffset = 0;
     };
     HitLayer hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,

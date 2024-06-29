@@ -38,11 +38,17 @@ struct ContactInfo;
 struct ContactsRequestData;
 }
 
+namespace WebKit {
+enum class PickerDismissalReason : uint8_t;
+}
+
 @interface WKContactPicker : NSObject
 
 - (instancetype)initWithView:(WKWebView *)view;
 
 - (void)presentWithRequestData:(const WebCore::ContactsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&&)completionHandler;
+
+- (BOOL)dismissIfNeededWithReason:(WebKit::PickerDismissalReason)reason;
 
 @property (nonatomic, weak) id<WKContactPickerDelegate> delegate;
 

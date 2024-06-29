@@ -576,8 +576,6 @@ namespace Inspector {
 
 namespace Protocol {
 
-
-
 } // namespace Protocol
 
 } // namespace Inspector

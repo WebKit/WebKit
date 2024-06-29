@@ -169,7 +169,7 @@ id toNSObject(JSContextRef context, JSValueRef valueRef, Class containingObjects
     if (!valueRef)
         return nil;
 
-    JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:[JSContext contextWithJSGlobalContextRef:JSContextGetGlobalContext(context)]];
+    JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:toJSContext(context)];
 
     if (value.isArray) {
         NSUInteger length = [value[@"length"] toUInt32];
@@ -236,7 +236,7 @@ NSDictionary *toNSDictionary(JSContextRef context, JSValueRef valueRef, NullValu
     if (!object)
         return nil;
 
-    JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:[JSContext contextWithJSGlobalContextRef:JSContextGetGlobalContext(context)]];
+    JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:toJSContext(context)];
     if (!value._isDictionary)
         return nil;
 

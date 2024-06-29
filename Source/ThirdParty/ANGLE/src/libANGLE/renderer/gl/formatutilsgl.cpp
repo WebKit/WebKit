@@ -178,7 +178,7 @@ static inline void InsertFormatMapping(InternalFormatInfoMap *map,
 // support, like it is done in GenerateTextureFormatCaps().
 // On the other hand, "Texture Attachment" support formula is self-contained.
 //
-// TODO(ynovikov): http://anglebug.com/2846 Verify support fields of BGRA, depth, stencil and
+// TODO(ynovikov): http://anglebug.com/42261549 Verify support fields of BGRA, depth, stencil and
 // compressed formats, and all formats for Desktop GL.
 static InternalFormatInfoMap BuildInternalFormatInfoMap()
 {

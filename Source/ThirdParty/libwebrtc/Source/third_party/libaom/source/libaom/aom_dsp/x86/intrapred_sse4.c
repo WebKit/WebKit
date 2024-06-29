@@ -12,7 +12,7 @@
 #include <emmintrin.h>  // SSE2
 #include <smmintrin.h>  /* SSE4.1 */
 
-#include "config/aom_dsp_rtcd.h"
+#include "config/av1_rtcd.h"
 #include "aom_dsp/x86/intrapred_x86.h"
 #include "aom_dsp/x86/intrapred_utils.h"
 #include "aom_dsp/x86/lpf_common_sse2.h"

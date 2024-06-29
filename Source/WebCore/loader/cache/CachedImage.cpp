@@ -383,11 +383,6 @@ bool CachedImage::isPDFResource() const
     return Image::isPDFResource(response().mimeType(), url());
 }
 
-bool CachedImage::isPostScriptResource() const
-{
-    return Image::isPostScriptResource(response().mimeType(), url());
-}
-
 void CachedImage::clear()
 {
     destroyDecodedData();
@@ -521,21 +516,10 @@ void CachedImage::updateBufferInternal(const FragmentedSharedBuffer& data)
 
     EncodedDataStatus encodedDataStatus = EncodedDataStatus::Unknown;
 
-    if (isPostScriptResource()) {
-#if PLATFORM(MAC) && !USE(WEBKIT_IMAGE_DECODERS)
-        // Delay updating the image with the PostScript data till all the data
-        // is received so it can be converted to PDF data.
-        return;
-#else
-        // Set the encodedDataStatus to Error so loading this image will be canceled.
-        encodedDataStatus = EncodedDataStatus::Error;
-#endif
-    } else {
-        // Have the image update its data from its internal buffer. Decoding the image data
-        // will be delayed until info (like size or specific image frames) are queried which
-        // usually happens when the observers are repainted.
-        encodedDataStatus = updateImageData(false);
-    }
+    // Have the image update its data from its internal buffer. Decoding the image data
+    // will be delayed until info (like size or specific image frames) are queried which
+    // usually happens when the observers are repainted.
+    encodedDataStatus = updateImageData(false);
 
     if (encodedDataStatus > EncodedDataStatus::Error && encodedDataStatus < EncodedDataStatus::SizeAvailable)
         return;

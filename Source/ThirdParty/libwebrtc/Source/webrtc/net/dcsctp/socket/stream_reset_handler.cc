@@ -16,8 +16,8 @@
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/units/time_delta.h"
 #include "net/dcsctp/common/internal_types.h"
-#include "net/dcsctp/common/str_join.h"
 #include "net/dcsctp/packet/chunk/reconfig_chunk.h"
 #include "net/dcsctp/packet/parameter/add_incoming_streams_request_parameter.h"
 #include "net/dcsctp/packet/parameter/add_outgoing_streams_request_parameter.h"
@@ -35,9 +35,11 @@
 #include "net/dcsctp/timer/timer.h"
 #include "net/dcsctp/tx/retransmission_queue.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/strings/str_join.h"
 
 namespace dcsctp {
 namespace {
+using ::webrtc::TimeDelta;
 using ResponseResult = ReconfigurationResponseParameter::Result;
 
 bool DescriptorsAre(const std::vector<ParameterDescriptor>& c,
@@ -347,13 +349,13 @@ void StreamResetHandler::ResetStreams(
   }
 }
 
-absl::optional<DurationMs> StreamResetHandler::OnReconfigTimerExpiry() {
+TimeDelta StreamResetHandler::OnReconfigTimerExpiry() {
   if (current_request_->has_been_sent()) {
     // There is an outstanding request, which timed out while waiting for a
     // response.
     if (!ctx_->IncrementTxErrorCounter("RECONFIG timeout")) {
       // Timed out. The connection will close after processing the timers.
-      return absl::nullopt;
+      return TimeDelta::Zero();
     }
   } else {
     // There is no outstanding request, but there is a prepared one. This means

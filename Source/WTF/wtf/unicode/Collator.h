@@ -46,7 +46,7 @@ public:
     explicit Collator(const char* = nullptr, bool = false) { }
 
     WTF_EXPORT_PRIVATE static int collate(StringView, StringView);
-    WTF_EXPORT_PRIVATE static int collateUTF8(const char*, const char*);
+    WTF_EXPORT_PRIVATE static int collate(const char8_t*, const char8_t*);
 };
 
 #else
@@ -61,7 +61,7 @@ public:
     WTF_EXPORT_PRIVATE ~Collator();
 
     WTF_EXPORT_PRIVATE int collate(StringView, StringView) const;
-    WTF_EXPORT_PRIVATE int collateUTF8(const char*, const char*) const;
+    WTF_EXPORT_PRIVATE int collate(const char8_t*, const char8_t*) const;
 
 private:
     char* m_locale;

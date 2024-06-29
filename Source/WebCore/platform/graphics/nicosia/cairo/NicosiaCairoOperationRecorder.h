@@ -92,6 +92,7 @@ private:
     WebCore::AffineTransform getCTM(WebCore::GraphicsContext::IncludeDeviceScale) const override;
 
     void beginTransparencyLayer(float) override;
+    void beginTransparencyLayer(WebCore::CompositeOperator, WebCore::BlendMode) override;
     void endTransparencyLayer() override;
 
     void resetClip() override;

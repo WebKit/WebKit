@@ -190,7 +190,7 @@ void ServiceWorkerDownloadTask::didReceiveData(const IPC::SharedBufferReference&
     if (m_downloadFile == FileSystem::invalidPlatformFileHandle)
         return;
 
-    size_t bytesWritten = FileSystem::writeToFile(m_downloadFile, data.data(), data.size());
+    size_t bytesWritten = FileSystem::writeToFile(m_downloadFile, data.span());
 
     if (bytesWritten != data.size()) {
         didFailDownload();

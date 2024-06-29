@@ -306,9 +306,12 @@ void TestRunner::keepWebHistory()
     InjectedBundle::singleton().postSetAddsVisitedLinks(true);
 }
 
-void TestRunner::execCommand(JSStringRef name, JSStringRef showUI, JSStringRef value)
+void TestRunner::execCommand(JSStringRef command, JSStringRef, JSStringRef value)
 {
-    WKBundlePageExecuteEditingCommand(page(), toWK(name).get(), toWK(value).get());
+    postSynchronousPageMessage("ExecuteCommand", createWKDictionary({
+        { "Command", toWK(command) },
+        { "Value", toWK(value) },
+    }));
 }
 
 static std::optional<WKFindOptions> findOptionsFromArray(JSContextRef context, JSValueRef optionsArrayAsValue)
@@ -388,7 +391,7 @@ void TestRunner::syncLocalStorage()
 
 bool TestRunner::isCommandEnabled(JSStringRef name)
 {
-    return WKBundlePageIsEditingCommandEnabled(page(), toWK(name).get());
+    return postSynchronousPageMessageReturningBoolean("IsCommandEnabled", toWK(name));
 }
 
 void TestRunner::preventPopupWindows()
@@ -620,7 +623,7 @@ static void cacheTestRunnerCallback(JSContextRef context, unsigned index, JSValu
     if (!JSValueIsObject(context, callback))
         return;
     if (callbackMap().contains(index)) {
-        InjectedBundle::singleton().outputText(makeString("FAIL: Tried to install a second TestRunner callback for the same event (id ", index, ")\n\n"));
+        InjectedBundle::singleton().outputText(makeString("FAIL: Tried to install a second TestRunner callback for the same event (id "_s, index, ")\n\n"_s));
         return;
     }
     JSValueProtect(context, callback);
@@ -797,13 +800,11 @@ void TestRunner::setAsynchronousSpellCheckingEnabled(bool enabled)
 
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)
 {
-    WKBundleSetWebNotificationPermission(InjectedBundle::singleton().bundle(), page(), toWK(origin).get(), true);
     postSynchronousPageMessageWithReturnValue("GrantNotificationPermission", toWK(origin));
 }
 
 void TestRunner::denyWebNotificationPermission(JSStringRef origin)
 {
-    WKBundleSetWebNotificationPermission(InjectedBundle::singleton().bundle(), page(), toWK(origin).get(), false);
     postSynchronousPageMessageWithReturnValue("DenyNotificationPermission", toWK(origin));
 }
 
@@ -953,7 +954,7 @@ void TestRunner::queueLoadHTMLString(JSStringRef content, JSStringRef baseURL, J
 
 void TestRunner::stopLoading()
 {
-    WKBundlePageStopLoading(page());
+    postPageMessage("StopLoading");
 }
 
 void TestRunner::queueReload()

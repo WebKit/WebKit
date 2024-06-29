@@ -13,7 +13,6 @@
 
 #include "./vpx_config.h"
 #include "vpx/internal/vpx_codec_internal.h"
-#include "vpx_util/vpx_thread.h"
 #include "./vp9_rtcd.h"
 #include "vp9/common/vp9_alloccommon.h"
 #include "vp9/common/vp9_loopfilter.h"

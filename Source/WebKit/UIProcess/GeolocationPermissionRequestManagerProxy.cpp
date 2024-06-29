@@ -47,9 +47,9 @@ void GeolocationPermissionRequestManagerProxy::invalidateRequests()
     m_pendingRequests.clear();
 }
 
-Ref<GeolocationPermissionRequestProxy> GeolocationPermissionRequestManagerProxy::createRequest(GeolocationIdentifier geolocationID)
+Ref<GeolocationPermissionRequestProxy> GeolocationPermissionRequestManagerProxy::createRequest(GeolocationIdentifier geolocationID, WebProcessProxy& process)
 {
-    auto request = GeolocationPermissionRequestProxy::create(this, geolocationID);
+    auto request = GeolocationPermissionRequestProxy::create(this, geolocationID, process);
     m_pendingRequests.add(geolocationID, request.ptr());
     return request;
 }
@@ -67,7 +67,8 @@ void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDe
     String authorizationToken = allowed ? createVersion4UUIDString() : String();
     if (!authorizationToken.isNull())
         m_validAuthorizationTokens.add(authorizationToken);
-    m_page.send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, authorizationToken));
+    if (RefPtr process = it->value->process())
+        process->send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, authorizationToken), m_page.webPageIDInMainFrameProcess());
 #else
     UNUSED_PARAM(allowed);
 #endif

@@ -70,6 +70,12 @@ void VP9TestingOverrides::setVP9DecoderDisabled(std::optional<bool>&& disabled)
         m_configurationChangedCallback(false);
 }
 
+void VP9TestingOverrides::setSWVPDecodersAlwaysEnabled(bool enabled)
+{
+    m_swVPDecodersAlwaysEnabled = enabled;
+    // We don't call the configurationChangedCallback to prevent unnecessarily starting the GPU process.
+}
+
 void VP9TestingOverrides::setVP9ScreenSizeAndScale(std::optional<ScreenDataOverrides>&& overrides)
 {
     m_screenSizeAndScale = WTFMove(overrides);
@@ -138,10 +144,15 @@ void registerSupplementalVP9Decoder()
         softLink_VideoToolbox_VTRegisterSupplementalVideoDecoderIfAvailable(kCMVideoCodecType_VP9);
 }
 
+static bool isSWDecodersAlwaysEnabled()
+{
+    return VP9TestingOverrides::singleton().swVPDecodersAlwaysEnabled();
+}
+
 bool isVP9DecoderAvailable()
 {
-    if (auto disabledForTesting = VP9TestingOverrides::singleton().vp9DecoderDisabled())
-        return !*disabledForTesting;
+    if (isSWDecodersAlwaysEnabled())
+        return true;
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
     return canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9);
@@ -154,6 +165,8 @@ bool isVP9DecoderAvailable()
 
 bool isVP8DecoderAvailable()
 {
+    if (isSWDecodersAlwaysEnabled())
+        return true;
     if (!VideoToolboxLibrary(true))
         return false;
     return noErr == VTSelectAndCreateVideoDecoderInstance('vp08', kCFAllocatorDefault, nullptr, nullptr);
@@ -187,6 +200,9 @@ static bool isVP9CodecConfigurationRecordSupported(const VPCodecConfigurationRec
     // HW & SW VP9 Decoders support up to Level 6:
     if (codecConfiguration.level > VPConfigurationLevel::Level_6)
         return false;
+
+    if (isSWDecodersAlwaysEnabled())
+        return true;
 
     // Hardware decoders are always available.
     if (vp9HardwareDecoderAvailable())
@@ -314,6 +330,11 @@ std::optional<MediaCapabilitiesInfo> computeVPParameters(const VideoConfiguratio
     // FIXME: Add a lookup table for device-to-capabilities. For now, assume that the SW VP9
     // decoder can support 4K @ 30.
     info.smooth = isVPSoftwareDecoderSmooth(videoConfiguration);
+
+    if (isSWDecodersAlwaysEnabled()) {
+        info.supported = true;
+        return info;
+    }
 
     // For wall-powered devices, always report VP9 as supported, even if not powerEfficient.
     if (!systemHasBattery()) {
@@ -723,7 +744,7 @@ std::optional<VP8FrameHeader> parseVP8FrameHeader(std::span<const uint8_t> frame
     VP8FrameHeader header;
     size_t headerSize = 11;
 
-    auto view = JSC::DataView::create(ArrayBuffer::create(frameData.data(), headerSize), 0, headerSize);
+    auto view = JSC::DataView::create(ArrayBuffer::create(frameData.first(headerSize)), 0, headerSize);
     bool status = true;
 
     auto uncompressedChunk = view->get<uint32_t>(0, true, &status);

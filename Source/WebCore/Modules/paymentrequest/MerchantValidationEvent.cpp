@@ -51,7 +51,7 @@ ExceptionOr<Ref<MerchantValidationEvent>> MerchantValidationEvent::create(Docume
     if (!methodName.isEmpty()) {
         auto validatedMethodName = convertAndValidatePaymentMethodIdentifier(methodName);
         if (!validatedMethodName)
-            return Exception { ExceptionCode::RangeError, makeString('"', methodName, "\" is an invalid payment method identifier.") };
+            return Exception { ExceptionCode::RangeError, makeString('"', methodName, "\" is an invalid payment method identifier."_s) };
     }
 
     return adoptRef(*new MerchantValidationEvent(type, WTFMove(methodName), WTFMove(validationURL), WTFMove(eventInit)));

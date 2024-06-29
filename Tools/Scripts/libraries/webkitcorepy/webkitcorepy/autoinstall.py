@@ -412,9 +412,13 @@ class Package(object):
                         )
                     ):
                         raise OSError('Cannot install {}, could not find setup.py'.format(self.name))
-                    for directory in to_be_moved:
-                        shutil.rmtree(os.path.join(AutoInstall.directory, directory), ignore_errors=True)
-                        shutil.move(os.path.join(temp_location, directory), AutoInstall.directory)
+                    for file in to_be_moved:
+                        target = os.path.join(AutoInstall.directory, file)
+                        if os.path.isdir(target):
+                            shutil.rmtree(target, ignore_errors=True)
+                        elif os.path.exists(target):
+                            os.remove(target)
+                        shutil.move(os.path.join(temp_location, file), AutoInstall.directory)
 
                 self.do_post_install(temp_location)
 
@@ -440,6 +444,8 @@ class Package(object):
 
 
 def _default_pypi_index():
+    return 'pypi.org'
+
     pypi_url = re.compile(r'\Aindex\S* = https?://(?P<host>\S+)/.*')
     pip_config = '/Library/Application Support/pip/pip.conf'
     if os.path.isfile(pip_config):

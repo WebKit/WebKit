@@ -146,16 +146,16 @@ std::optional<CSSNumericType> CSSNumericType::multiplyTypes(const Vector<Ref<CSS
 
 String CSSNumericType::debugString() const
 {
-    return makeString("{",
-        length ? makeString(" length:", *length) : String(),
-        angle ? makeString(" angle:", *angle) : String(),
-        time ? makeString(" time:", *time) : String(),
-        frequency ? makeString(" frequency:", *frequency) : String(),
-        resolution ? makeString(" resolution:", *resolution) : String(),
-        flex ? makeString(" flex:", *flex) : String(),
-        percent ? makeString(" percent:", *percent) : String(),
-        percentHint ? makeString(" percentHint:", WebCore::debugString(*percentHint)) : String(),
-    " }");
+    return makeString('{',
+        length ? makeString(" length:"_s, *length) : String(),
+        angle ? makeString(" angle:"_s, *angle) : String(),
+        time ? makeString(" time:"_s, *time) : String(),
+        frequency ? makeString(" frequency:"_s, *frequency) : String(),
+        resolution ? makeString(" resolution:"_s, *resolution) : String(),
+        flex ? makeString(" flex:"_s, *flex) : String(),
+        percent ? makeString(" percent:"_s, *percent) : String(),
+        percentHint ? makeString(" percentHint:"_s, WebCore::debugString(*percentHint)) : String(),
+    " }"_s);
 }
 
 auto CSSNumericType::valueForType(CSSNumericBaseType type) -> BaseTypeStorage&

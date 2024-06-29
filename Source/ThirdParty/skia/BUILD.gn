@@ -466,9 +466,6 @@ optional("fontmgr_win") {
   ]
   public = [ "include/ports/SkTypeface_win.h" ]
   sources = [
-    "include/ports/SkFontMgr_indirect.h",
-    "include/ports/SkRemotableFontMgr.h",
-    "src/fonts/SkFontMgr_indirect.cpp",
     "src/ports/SkFontMgr_win_dw.cpp",
     "src/ports/SkScalerContext_win_dw.cpp",
     "src/ports/SkScalerContext_win_dw.h",
@@ -1114,6 +1111,7 @@ optional("jpeg_decode") {
   sources = [
     "src/codec/SkJpegCodec.cpp",
     "src/codec/SkJpegDecoderMgr.cpp",
+    "src/codec/SkJpegMetadataDecoderImpl.cpp",
     "src/codec/SkJpegSourceMgr.cpp",
     "src/codec/SkJpegUtility.cpp",
   ]
@@ -2368,6 +2366,9 @@ if (skia_enable_tools) {
       test_app("skottie_tool_gpu") {
         deps = [ "modules/skottie:tool_gpu" ]
       }
+      test_app("skottie_preshape_tool") {
+        deps = [ "modules/skottie:preshape_tool" ]
+      }
     }
     if (skia_enable_svg && skia_use_expat && defined(is_skia_standalone)) {
       test_app("svg_tool") {
@@ -2624,6 +2625,7 @@ if (skia_enable_tools) {
       "fuzz/oss_fuzz/FuzzImageFilterDeserialize.cpp",
       "fuzz/oss_fuzz/FuzzIncrementalImage.cpp",
       "fuzz/oss_fuzz/FuzzJSON.cpp",
+      "fuzz/oss_fuzz/FuzzParsePath.cpp",
       "fuzz/oss_fuzz/FuzzPathDeserialize.cpp",
       "fuzz/oss_fuzz/FuzzRegionDeserialize.cpp",
       "fuzz/oss_fuzz/FuzzRegionSetPath.cpp",
@@ -3411,6 +3413,11 @@ if (skia_enable_tools) {
 
     libfuzzer_app("skcolorspace") {
       sources = [ "fuzz/oss_fuzz/FuzzColorspace.cpp" ]
+      deps = []
+    }
+
+    libfuzzer_app("parse_path") {
+      sources = [ "fuzz/oss_fuzz/FuzzParsePath.cpp" ]
       deps = []
     }
   }

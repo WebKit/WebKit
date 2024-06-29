@@ -224,7 +224,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 #endif
         m_delegateMethods.webViewStartXRSessionWithCompletionHandler = [delegate respondsToSelector:@selector(_webView:startXRSessionWithCompletionHandler:)];
 
-    m_delegateMethods.webViewEndXRSession = [delegate respondsToSelector:@selector(_webViewEndXRSession:)];
+    m_delegateMethods.webViewEndXRSession = [delegate respondsToSelector:@selector(_webViewEndXRSession:withReason:)] || [delegate respondsToSelector:@selector(_webViewEndXRSession:)];
 #endif // ENABLE(WEBXR)
 
     m_delegateMethods.webViewRequestNotificationPermissionForSecurityOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:)];
@@ -234,6 +234,11 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewUpdatedClientBadge = [delegate respondsToSelector:@selector(_webView:updatedClientBadge:fromSecurityOrigin:)];
 
     m_delegateMethods.webViewDidAdjustVisibilityWithSelectors = [delegate respondsToSelector:@selector(_webView:didAdjustVisibilityWithSelectors:)];
+
+#if ENABLE(GAMEPAD)
+    m_delegateMethods.webViewRecentlyAccessedGamepadsForTesting = [delegate respondsToSelector:@selector(_webViewRecentlyAccessedGamepadsForTesting:)];
+    m_delegateMethods.webViewStoppedAccessingGamepadsForTesting = [delegate respondsToSelector:@selector(_webViewStoppedAccessingGamepadsForTesting:)];
+#endif
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -1216,18 +1221,10 @@ void UIDelegate::UIClient::didChangeFontAttributes(const WebCore::FontAttributes
     [privateUIDelegate _webView:m_uiDelegate->m_webView.get().get() didChangeFontAttributes:fontAttributes.createDictionary().get()];
 }
 
-void UIDelegate::UIClient::promptForDisplayCapturePermission(WebPageProxy& page, WebFrameProxy& frame, API::SecurityOrigin& userMediaOrigin, API::SecurityOrigin& topLevelOrigin, UserMediaPermissionRequestProxy& request)
+void UIDelegate::UIClient::callDisplayCapturePermissionDelegate(WebPageProxy& page, WebFrameProxy& frame, API::SecurityOrigin& userMediaOrigin, API::SecurityOrigin& topLevelOrigin, UserMediaPermissionRequestProxy& request)
 {
-    if (request.canRequestDisplayCapturePermission()) {
-        request.promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::UserChoose);
-        return;
-    }
-
     auto delegate = (id<WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
-    if (![delegate respondsToSelector:@selector(_webView:requestDisplayCapturePermissionForOrigin:initiatedByFrame:withSystemAudio:decisionHandler:)]) {
-        request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-        return;
-    }
+    ASSERT([delegate respondsToSelector:@selector(_webView:requestDisplayCapturePermissionForOrigin:initiatedByFrame:withSystemAudio:decisionHandler:)]);
 
     auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestDisplayCapturePermissionForOrigin:initiatedByFrame:withSystemAudio:decisionHandler:));
     auto decisionHandler = makeBlockPtr([protectedRequest = Ref { request }, checker = WTFMove(checker)](WKDisplayCapturePermissionDecision decision) mutable {
@@ -1275,24 +1272,29 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         return;
     }
 
+    if (request.requiresDisplayCapture()) {
+        bool respondsToRequestDisplayCapturePermission = [delegate respondsToSelector:@selector(_webView:requestDisplayCapturePermissionForOrigin:initiatedByFrame:withSystemAudio:decisionHandler:)];
+        if (!respondsToRequestDisplayCapturePermission || request.canRequestDisplayCapturePermission()) {
+            request.promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::UserChoose);
+            return;
+        }
+
+        callDisplayCapturePermissionDelegate(page, frame, userMediaOrigin, topLevelOrigin, request);
+        return;
+    }
+
     bool respondsToRequestMediaCapturePermission = [delegate respondsToSelector:@selector(webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:type:decisionHandler:)];
     bool respondsToRequestUserMediaAuthorizationForDevices = [delegate respondsToSelector:@selector(_webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:)];
-    bool respondsToRequestDisplayCapturePermissionForOrigin = [delegate respondsToSelector:@selector(_webView:requestDisplayCapturePermissionForOrigin:initiatedByFrame:withSystemAudio:decisionHandler:)];
 
-    if (!respondsToRequestMediaCapturePermission && !respondsToRequestUserMediaAuthorizationForDevices && !respondsToRequestDisplayCapturePermissionForOrigin) {
+    if (!respondsToRequestMediaCapturePermission && !respondsToRequestUserMediaAuthorizationForDevices) {
         ensureOnMainRunLoop([protectedRequest = Ref { request }]() {
             protectedRequest->doDefaultAction();
         });
         return;
     }
 
-    if (request.requiresDisplayCapture()) {
-        promptForDisplayCapturePermission(page, frame, userMediaOrigin, topLevelOrigin, request);
-        return;
-    }
-
-    // FIXME: Provide a specific delegate for display capture.
-    if (!request.requiresDisplayCapture() && respondsToRequestMediaCapturePermission) {
+    ASSERT(!request.requiresDisplayCapture());
+    if (respondsToRequestMediaCapturePermission) {
         auto checker = CompletionHandlerCallChecker::create(delegate, @selector(webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:type:decisionHandler:));
         auto decisionHandler = makeBlockPtr([protectedRequest = Ref { request }, checker = WTFMove(checker)](WKPermissionDecision decision) mutable {
             if (checker->completionHandlerHasBeenCalled())
@@ -1345,10 +1347,6 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         devices |= _WKCaptureDeviceMicrophone;
     if (request.requiresVideoCapture())
         devices |= _WKCaptureDeviceCamera;
-    if (request.requiresDisplayCapture()) {
-        devices |= _WKCaptureDeviceDisplay;
-        ASSERT(!(devices & _WKCaptureDeviceCamera));
-    }
 
     auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:));
     auto decisionHandler = makeBlockPtr([protectedRequest = Ref { request }, checker = WTFMove(checker)](BOOL authorized) {
@@ -1360,7 +1358,7 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
             protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
             return;
         }
-        const String& videoDeviceUID = (protectedRequest->requiresVideoCapture() || protectedRequest->requiresDisplayCapture()) ? protectedRequest->videoDeviceUIDs().first() : String();
+        const String& videoDeviceUID = protectedRequest->requiresVideoCapture() ? protectedRequest->videoDeviceUIDs().first() : String();
         const String& audioDeviceUID = protectedRequest->requiresAudioCapture() ? protectedRequest->audioDeviceUIDs().first() : String();
         protectedRequest->allow(audioDeviceUID, videoDeviceUID);
     });
@@ -1937,6 +1935,38 @@ void UIDelegate::UIClient::didAdjustVisibilityWithSelectors(WebPageProxy&, Vecto
     [delegate _webView:m_uiDelegate->m_webView.get().get() didAdjustVisibilityWithSelectors:nsSelectors.get()];
 }
 
+#if ENABLE(GAMEPAD)
+void UIDelegate::UIClient::recentlyAccessedGamepadsForTesting(WebPageProxy&)
+{
+    if (!m_uiDelegate)
+        return;
+
+    if (!m_uiDelegate->m_delegateMethods.webViewRecentlyAccessedGamepadsForTesting)
+        return;
+
+    auto delegate = (id<WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return;
+
+    [delegate _webViewRecentlyAccessedGamepadsForTesting:m_uiDelegate->m_webView.get().get()];
+}
+
+void UIDelegate::UIClient::stoppedAccessingGamepadsForTesting(WebPageProxy&)
+{
+    if (!m_uiDelegate)
+        return;
+
+    if (!m_uiDelegate->m_delegateMethods.webViewStoppedAccessingGamepadsForTesting)
+        return;
+
+    auto delegate = (id<WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return;
+
+    [delegate _webViewStoppedAccessingGamepadsForTesting:m_uiDelegate->m_webView.get().get()];
+}
+#endif
+
 #if ENABLE(WEBXR)
 static _WKXRSessionMode toWKXRSessionMode(PlatformXR::SessionMode mode)
 {
@@ -2073,7 +2103,7 @@ void UIDelegate::UIClient::startXRSession(WebPageProxy&, const PlatformXR::Devic
     }).get()];
 }
 
-void UIDelegate::UIClient::endXRSession(WebPageProxy&)
+void UIDelegate::UIClient::endXRSession(WebPageProxy&, PlatformXRSessionEndReason reason)
 {
     if (!m_uiDelegate || !m_uiDelegate->m_delegateMethods.webViewEndXRSession)
         return;
@@ -2081,6 +2111,11 @@ void UIDelegate::UIClient::endXRSession(WebPageProxy&)
     auto delegate = (id<WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
     if (!delegate)
         return;
+
+    if ([delegate respondsToSelector:@selector(_webViewEndXRSession:withReason:)]) {
+        [delegate _webViewEndXRSession:m_uiDelegate->m_webView.get().get() withReason:static_cast<_WKXRSessionEndReason>(reason)];
+        return;
+    }
 
     [delegate _webViewEndXRSession:m_uiDelegate->m_webView.get().get()];
 }

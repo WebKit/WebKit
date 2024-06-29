@@ -26,7 +26,7 @@ promise_test(async (test) => {
     await video.play();
 
     assert_equals(video.videoWidth, 100, "width");
-    assert_equals(video.videoHeight, 75, "height");
+    assert_equals(video.videoHeight, 56, "height");
 }, "width 100 video");
 
 promise_test(async (test) => {
@@ -35,7 +35,7 @@ promise_test(async (test) => {
     video.srcObject = localStream;
     await video.play();
 
-    assert_equals(video.videoWidth, 133, "width");
+    assert_equals(video.videoWidth, 177, "width");
     assert_equals(video.videoHeight, 100, "height");
 }, "height 100 video ");
         </script>

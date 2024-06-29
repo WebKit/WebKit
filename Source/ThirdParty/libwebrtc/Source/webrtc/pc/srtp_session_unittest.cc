@@ -251,4 +251,36 @@ TEST_F(SrtpSessionTest, TestReplay) {
       s1_.ProtectRtp(rtp_packet_, rtp_len_, sizeof(rtp_packet_), &out_len));
 }
 
+TEST_F(SrtpSessionTest, RemoveSsrc) {
+  EXPECT_TRUE(s1_.SetSend(kSrtpAes128CmSha1_80, kTestKey1, kTestKeyLen,
+                          kEncryptedHeaderExtensionIds));
+  EXPECT_TRUE(s2_.SetRecv(kSrtpAes128CmSha1_80, kTestKey1, kTestKeyLen,
+                          kEncryptedHeaderExtensionIds));
+  int out_len;
+  // Encrypt and decrypt the packet once.
+  EXPECT_TRUE(
+      s1_.ProtectRtp(rtp_packet_, rtp_len_, sizeof(rtp_packet_), &out_len));
+  EXPECT_TRUE(s2_.UnprotectRtp(rtp_packet_, out_len, &out_len));
+  EXPECT_EQ(rtp_len_, out_len);
+  EXPECT_EQ(0, memcmp(rtp_packet_, kPcmuFrame, out_len));
+
+  // Recreate the original packet and encrypt again.
+  memcpy(rtp_packet_, kPcmuFrame, rtp_len_);
+  EXPECT_TRUE(
+      s1_.ProtectRtp(rtp_packet_, rtp_len_, sizeof(rtp_packet_), &out_len));
+  // Attempting to decrypt will fail as a replay attack.
+  // (srtp_err_status_replay_fail) since the sequence number was already seen.
+  EXPECT_FALSE(s2_.UnprotectRtp(rtp_packet_, out_len, &out_len));
+
+  // Remove the fake packet SSRC 1 from the session.
+  EXPECT_TRUE(s2_.RemoveSsrcFromSession(1));
+  EXPECT_FALSE(s2_.RemoveSsrcFromSession(1));
+
+  // Since the SRTP state was discarded, this is no longer a replay attack.
+  EXPECT_TRUE(s2_.UnprotectRtp(rtp_packet_, out_len, &out_len));
+  EXPECT_EQ(rtp_len_, out_len);
+  EXPECT_EQ(0, memcmp(rtp_packet_, kPcmuFrame, out_len));
+  EXPECT_TRUE(s2_.RemoveSsrcFromSession(1));
+}
+
 }  // namespace rtc

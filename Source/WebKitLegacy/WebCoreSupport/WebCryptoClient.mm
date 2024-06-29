@@ -28,6 +28,7 @@
 #import "WebDelegateImplementationCaching.h"
 #import "WebUIDelegatePrivate.h"
 #import <WebCore/SerializedCryptoKeyWrap.h>
+#import <WebCore/WrappedCryptoKey.h>
 #import <optional>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -50,23 +51,19 @@ std::optional<Vector<uint8_t>> WebCryptoClient::wrapCryptoKey(const Vector<uint8
     return wrappedKey;
 }
 
-std::optional<Vector<uint8_t>> WebCryptoClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey) const
+std::optional<Vector<uint8_t>> WebCryptoClient::unwrapCryptoKey(const Vector<uint8_t>& serializedKey) const
 {
+    auto wrappedKey = WebCore::readSerializedCryptoKey(serializedKey);
+    if (!wrappedKey)
+        return std::nullopt;
     SEL selector = @selector(webCryptoMasterKeyForWebView:);
-    Vector<uint8_t> key;
     if ([[m_webView UIDelegate] respondsToSelector:selector]) {
         auto masterKey = makeVector(CallUIDelegate(m_webView, selector));
-        if (!WebCore::unwrapSerializedCryptoKey(masterKey, wrappedKey, key))
-            return std::nullopt;
-        return key;
+        return WebCore::unwrapCryptoKey(masterKey, *wrappedKey);
     }
-
-    auto masterKey = WebCore::defaultWebCryptoMasterKey();
-    if (!masterKey)
-        return std::nullopt;
-    if (!WebCore::unwrapSerializedCryptoKey(WTFMove(*masterKey), wrappedKey, key))
-        return std::nullopt;
-    return key;
+    if (auto masterKey = WebCore::defaultWebCryptoMasterKey())
+        return WebCore::unwrapCryptoKey(*masterKey, *wrappedKey);
+    return std::nullopt;
 }
 
 WebCryptoClient::WebCryptoClient(WebView* webView)

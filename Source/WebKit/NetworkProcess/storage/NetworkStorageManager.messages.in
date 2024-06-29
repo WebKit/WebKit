@@ -87,7 +87,7 @@
     CacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, struct WebCore::RetrieveRecordsOptions options) -> (WebCore::DOMCacheEngine::CrossThreadRecordsOrError result)
     CacheStorageRemoveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest request, struct WebCore::CacheQueryOptions options) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)
     CacheStoragePutRecords(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::CrossThreadRecord> records) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)
-    CacheStorageClearMemoryRepresentation(struct WebCore::ClientOrigin origin) -> (std::optional<WebCore::DOMCacheEngine::Error> error)
+    CacheStorageClearMemoryRepresentation(struct WebCore::ClientOrigin origin) -> ()
     CacheStorageRepresentation() -> (String representation)
 
     ResetQuotaUpdatedBasedOnUsageForTesting(struct WebCore::ClientOrigin origin)

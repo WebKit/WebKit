@@ -20,10 +20,10 @@ layer at (0,0) size 800x600
           chunk 1 text run 1 at (5.00,225.00) startOffset 0 endOffset 21 width 252.00: "Animation on the 'd' "
           chunk 1 text run 1 at (257.00,225.00) startOffset 0 endOffset 18 width 202.80: "attribute of path."
       RenderSVGText {text} at (5,238) size 350x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 350x21
+        RenderSVGInlineText {#text} at (0,0) size 350x20
           chunk 1 text run 1 at (5.00,255.00) startOffset 0 endOffset 45 width 349.80: "Digit should match outline at indicated time."
       RenderSVGText {text} at (5,258) size 407x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 407x21
+        RenderSVGInlineText {#text} at (0,0) size 407x20
           chunk 1 text run 1 at (5.00,275.00) startOffset 0 endOffset 54 width 406.06: "Filled circle should follow morphing digit discretely."
     RenderSVGContainer {g} at (16,518) size 388x60
       RenderSVGText {text} at (10,311) size 233x36 contains 1 chunk(s)

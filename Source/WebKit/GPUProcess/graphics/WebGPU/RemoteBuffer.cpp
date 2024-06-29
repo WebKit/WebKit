@@ -32,6 +32,7 @@
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 
+#include <WebCore/SharedMemory.h>
 #include <wtf/CheckedArithmetic.h>
 
 namespace WebKit {
@@ -86,21 +87,30 @@ void RemoteBuffer::unmap()
     m_mapModeFlags = { };
 }
 
-void RemoteBuffer::copy(Vector<uint8_t>&& data, size_t offset)
+void RemoteBuffer::copy(std::optional<WebCore::SharedMemoryHandle>&& dataHandle, size_t offset, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!m_isMapped || !m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write))
+    auto sharedData = dataHandle ? WebCore::SharedMemory::map(WTFMove(*dataHandle), WebCore::SharedMemory::Protection::ReadOnly) : nullptr;
+    auto data = sharedData ? sharedData->span() : std::span<const uint8_t> { };
+    if (!m_isMapped || !m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write)) {
+        completionHandler(false);
         return;
+    }
 
     auto [buffer, bufferLength] = m_backing->getBufferContents();
-    if (!buffer || !bufferLength)
+    if (!buffer || !bufferLength) {
+        completionHandler(false);
         return;
+    }
 
     auto dataSize = data.size();
     auto endOffset = checkedSum<size_t>(offset, dataSize);
-    if (endOffset.hasOverflowed() || endOffset.value() > bufferLength)
+    if (endOffset.hasOverflowed() || endOffset.value() > bufferLength) {
+        completionHandler(false);
         return;
+    }
 
-    memcpy(buffer + offset, data.data(), data.size());
+    memcpySpan(std::span { buffer + offset, dataSize }, data);
+    completionHandler(true);
 }
 
 void RemoteBuffer::destroy()

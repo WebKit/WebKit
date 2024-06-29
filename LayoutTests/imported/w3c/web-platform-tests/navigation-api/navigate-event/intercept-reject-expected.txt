@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT event.intercept() should abort if the given promise rejects Test timed out
+FAIL event.intercept() should abort if the given promise rejects assert_unreached: [object Event] Reached unreachable code
 

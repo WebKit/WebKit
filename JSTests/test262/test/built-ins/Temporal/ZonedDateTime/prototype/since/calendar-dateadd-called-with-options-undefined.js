@@ -17,11 +17,8 @@ const later = new Temporal.ZonedDateTime(1_213_200_000_000_000n, timeZone, calen
 
 // Difference with rounding, with smallestUnit a calendar unit.
 // The calls come from these paths:
-// ZonedDateTime.since() ->
-//   RoundDuration ->
-//     MoveRelativeZonedDateTime -> AddZonedDateTime -> calendar.dateAdd()
-//     MoveRelativeDate -> calendar.dateAdd()
-//   BalanceDurationRelative -> MoveRelativeDate -> calendar.dateAdd()
+// ZonedDateTime.since() -> DifferenceZonedDateTimeWithRounding -> RoundRelativeDuration -> NudgeToCalendarUnit ->
+//   AddDateTime -> calendar.dateAdd()
 
 later.since(earlier, { smallestUnit: "weeks" });
-assert.sameValue(calendar.dateAddCallCount, 3, "rounding difference with calendar smallestUnit");
+assert.sameValue(calendar.dateAddCallCount, 2, "rounding difference with calendar smallestUnit");

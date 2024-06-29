@@ -645,11 +645,6 @@ bool MIMETypeRegistry::isPDFMIMEType(const String& mimeType)
     return set.contains(mimeType);
 }
 
-bool MIMETypeRegistry::isPostScriptMIMEType(const String& mimeType)
-{
-    return equalLettersIgnoringASCIICase(mimeType, "application/postscript"_s);
-}
-
 bool MIMETypeRegistry::canShowMIMEType(const String& mimeType)
 {
     if (isSupportedImageMIMEType(mimeType) || isSupportedNonImageMIMEType(mimeType) || isSupportedMediaMIMEType(mimeType))

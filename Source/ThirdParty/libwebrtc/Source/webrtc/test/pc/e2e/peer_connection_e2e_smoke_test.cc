@@ -22,10 +22,10 @@
 #include "api/test/pclf/media_quality_test_params.h"
 #include "api/test/pclf/peer_configurer.h"
 #include "api/test/peerconnection_quality_test_fixture.h"
-#include "call/simulated_network.h"
 #include "system_wrappers/include/field_trial.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
+#include "test/network/simulated_network.h"
 #include "test/pc/e2e/analyzer/audio/default_audio_quality_analyzer.h"
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer.h"
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_shared_objects.h"
@@ -177,71 +177,6 @@ TEST_F(PeerConnectionE2EQualityTestSmokeTest, MAYBE_Smoke) {
           network_emulation(), test::GetGlobalMetricsLogger()));
   RunParams run_params(TimeDelta::Seconds(2));
   run_params.enable_flex_fec_support = true;
-  RunAndCheckEachVideoStreamReceivedFrames(run_params);
-}
-
-// IOS debug builds can be quite slow, disabling to avoid issues with timeouts.
-#if defined(WEBRTC_IOS) && defined(WEBRTC_ARCH_ARM64) && !defined(NDEBUG)
-#define MAYBE_Smoke DISABLED_Smoke
-#else
-#define MAYBE_SendAndReceivePacketsOnOneThread \
-  SmokeSendAndReceivePacketsOnOneThread
-#endif
-// Only use the network thread for sending and receiving packets.
-// The one and only network thread is used as a worker thread in all
-// PeerConnections. Pacing when sending packets is done on the worker thread.
-// See bugs.webrtc.org/14502.
-TEST_F(PeerConnectionE2EQualityTestSmokeTest,
-       MAYBE_SendAndReceivePacketsOnOneThread) {
-  test::ScopedFieldTrials trials(
-      std::string(field_trial::GetFieldTrialString()) +
-      "WebRTC-SendPacketsOnWorkerThread/Enabled/");
-
-  std::pair<EmulatedNetworkManagerInterface*, EmulatedNetworkManagerInterface*>
-      network_links = CreateNetwork();
-  AddPeer(network_links.first, [](PeerConfigurer* alice) {
-    // Peerconnection use the network thread as the worker thread.
-    alice->SetUseNetworkThreadAsWorkerThread();
-    VideoConfig video(160, 120, 15);
-    video.stream_label = "alice-video";
-    video.sync_group = "alice-media";
-    alice->AddVideoConfig(std::move(video));
-
-    AudioConfig audio;
-    audio.stream_label = "alice-audio";
-    audio.input_file_name =
-        test::ResourcePath("pc_quality_smoke_test_alice_source", "wav");
-    audio.sampling_frequency_in_hz = 48000;
-    audio.sync_group = "alice-media";
-    alice->SetAudioConfig(std::move(audio));
-    alice->SetVideoCodecs(
-        {VideoCodecConfig(cricket::kVp9CodecName, {{"profile-id", "0"}})});
-  });
-  AddPeer(network_links.second, [](PeerConfigurer* charlie) {
-    // Peerconnection use the network thread as the worker thread.
-    charlie->SetUseNetworkThreadAsWorkerThread();
-    charlie->SetName("charlie");
-    VideoConfig video(160, 120, 15);
-    video.stream_label = "charlie-video";
-    video.temporal_layers_count = 2;
-    charlie->AddVideoConfig(std::move(video));
-
-    AudioConfig audio;
-    audio.stream_label = "charlie-audio";
-    audio.input_file_name =
-        test::ResourcePath("pc_quality_smoke_test_bob_source", "wav");
-    charlie->SetAudioConfig(std::move(audio));
-    charlie->SetVideoCodecs(
-        {VideoCodecConfig(cricket::kVp9CodecName, {{"profile-id", "0"}})});
-    charlie->SetVideoEncoderBitrateMultiplier(1.1);
-  });
-  fixture()->AddQualityMetricsReporter(
-      std::make_unique<StatsBasedNetworkQualityMetricsReporter>(
-          std::map<std::string, std::vector<EmulatedEndpoint*>>(
-              {{"alice", network_links.first->endpoints()},
-               {"charlie", network_links.second->endpoints()}}),
-          network_emulation(), test::GetGlobalMetricsLogger()));
-  RunParams run_params(TimeDelta::Seconds(2));
   RunAndCheckEachVideoStreamReceivedFrames(run_params);
 }
 

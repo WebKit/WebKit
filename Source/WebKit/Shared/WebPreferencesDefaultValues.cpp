@@ -46,6 +46,10 @@
 #include <WebCore/LibWebRTCProvider.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebPreferencesDefaultValuesAdditions.h>
+#endif
+
 namespace WebKit {
 
 #if PLATFORM(IOS_FAMILY)
@@ -75,6 +79,11 @@ bool defaultAlternateFormControlDesignEnabled()
 
 bool defaultVideoFullscreenRequiresElementFullscreen()
 {
+#if USE(APPLE_INTERNAL_SDK)
+    if (videoFullscreenRequiresElementFullscreenFromAdditions())
+        return true;
+#endif
+
     return PAL::currentUserInterfaceIdiomIsVision();
 }
 
@@ -129,8 +138,8 @@ bool defaultAppleMailPaginationQuirkEnabled()
 
 bool defaultCaptureAudioInGPUProcessEnabled()
 {
-#if PLATFORM(MAC)
-    // FIXME: Enable GPU process audio capture when <rdar://problem/29448368> is fixed.
+#if HAVE(REQUIRE_MICROPHONE_CAPTURE_IN_UIPROCESS)
+    // Newer versions can capture microphone in GPUProcess.
     if (!WebCore::MacApplication::isSafari())
         return false;
 #endif

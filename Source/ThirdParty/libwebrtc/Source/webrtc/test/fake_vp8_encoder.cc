@@ -45,7 +45,7 @@ namespace webrtc {
 
 namespace test {
 
-FakeVp8Encoder::FakeVp8Encoder(Clock* clock) : FakeEncoder(clock) {
+FakeVp8Encoder::FakeVp8Encoder(const Environment& env) : FakeEncoder(env) {
   sequence_checker_.Detach();
 }
 

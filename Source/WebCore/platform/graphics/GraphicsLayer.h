@@ -156,9 +156,8 @@ public:
 
     TransformAnimationValue(double keyTime, TransformOperation* value, TimingFunction* timingFunction = nullptr)
         : AnimationValue(keyTime, timingFunction)
+        , m_value(value ? TransformOperations { *value } : TransformOperations { })
     {
-        if (value)
-            m_value.operations().append(value);
     }
 
     std::unique_ptr<AnimationValue> clone() const override
@@ -168,10 +167,8 @@ public:
 
     TransformAnimationValue(const TransformAnimationValue& other)
         : AnimationValue(other)
+        , m_value(other.m_value.clone())
     {
-        m_value.operations().appendContainerWithMapping(other.m_value.operations(), [](auto& operation) {
-            return operation->clone();
-        });
     }
 
     TransformAnimationValue(TransformAnimationValue&&) = default;
@@ -199,10 +196,8 @@ public:
 
     FilterAnimationValue(const FilterAnimationValue& other)
         : AnimationValue(other)
+        , m_value(other.m_value.clone())
     {
-        m_value.operations().appendContainerWithMapping(other.m_value.operations(), [](auto& operation) {
-            return operation->clone();
-        });
     }
 
     FilterAnimationValue(FilterAnimationValue&&) = default;
@@ -481,6 +476,8 @@ public:
 
     virtual void setContentsNeedsDisplay() { };
 
+    virtual void markDamageRectsUnreliable() { };
+
     // The tile phase is relative to the GraphicsLayer bounds.
     virtual void setContentsTilePhase(const FloatSize& p) { m_contentsTilePhase = p; }
     FloatSize contentsTilePhase() const { return m_contentsTilePhase; }
@@ -679,6 +676,9 @@ public:
     bool shouldPaintUsingCompositeCopy() const { return m_shouldPaintUsingCompositeCopy; }
     void setShouldPaintUsingCompositeCopy(bool copy) { m_shouldPaintUsingCompositeCopy = copy; }
 
+    bool renderingIsSuppressedIncludingDescendants() const { return m_renderingIsSuppressedIncludingDescendants; }
+    void setRenderingIsSuppressedIncludingDescendants(bool suppressed) { m_renderingIsSuppressedIncludingDescendants = suppressed; }
+
     const std::optional<FloatRect>& animationExtent() const { return m_animationExtent; }
     void setAnimationExtent(std::optional<FloatRect> animationExtent) { m_animationExtent = animationExtent; }
 
@@ -706,8 +706,8 @@ protected:
     // This method is used by platform GraphicsLayer classes to clear the filters
     // when compositing is not done in hardware. It is not virtual, so the caller
     // needs to notifiy the change to the platform layer as needed.
-    void clearFilters() { m_filters.clear(); }
-    void clearBackdropFilters() { m_backdropFilters.clear(); }
+    void clearFilters() { m_filters = { }; }
+    void clearBackdropFilters() { m_backdropFilters = { }; }
 
     // Given a KeyframeValueList containing filterOperations, return true if the operations are valid.
     static int validateFilterOperations(const KeyframeValueList&);
@@ -798,6 +798,7 @@ protected:
     bool m_userInteractionEnabled : 1;
     bool m_canDetachBackingStore : 1;
     bool m_shouldPaintUsingCompositeCopy : 1;
+    bool m_renderingIsSuppressedIncludingDescendants : 1 { false };
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     bool m_isSeparated : 1;
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)

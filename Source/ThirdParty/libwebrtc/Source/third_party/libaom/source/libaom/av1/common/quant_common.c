@@ -9,10 +9,15 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include "config/aom_config.h"
+
+#include "aom/aom_frame_buffer.h"
+#include "aom_scale/yv12config.h"
 #include "av1/common/av1_common_int.h"
 #include "av1/common/blockd.h"
 #include "av1/common/common.h"
 #include "av1/common/entropy.h"
+#include "av1/common/filter.h"
 #include "av1/common/quant_common.h"
 #include "av1/common/seg_common.h"
 
@@ -274,13 +279,16 @@ const qm_val_t *av1_get_qmatrix(const CommonQuantParams *quant_params,
              : quant_params->gqmatrix[NUM_QM_LEVELS - 1][0][qm_tx_size];
 }
 
+#if CONFIG_QUANT_MATRIX || CONFIG_AV1_DECODER
 #define QM_TOTAL_SIZE 3344
 // We only use wt_matrix_ref[q] and iwt_matrix_ref[q]
 // for q = 0, ..., NUM_QM_LEVELS - 2.
 static const qm_val_t wt_matrix_ref[NUM_QM_LEVELS - 1][2][QM_TOTAL_SIZE];
 static const qm_val_t iwt_matrix_ref[NUM_QM_LEVELS - 1][2][QM_TOTAL_SIZE];
+#endif
 
 void av1_qm_init(CommonQuantParams *quant_params, int num_planes) {
+#if CONFIG_QUANT_MATRIX || CONFIG_AV1_DECODER
   for (int q = 0; q < NUM_QM_LEVELS; ++q) {
     for (int c = 0; c < num_planes; ++c) {
       int current = 0;
@@ -306,6 +314,10 @@ void av1_qm_init(CommonQuantParams *quant_params, int num_planes) {
       }
     }
   }
+#else
+  (void)quant_params;
+  (void)num_planes;
+#endif  // CONFIG_QUANT_MATRIX || CONFIG_AV1_DECODER
 }
 
 /* Provide 15 sets of quantization matrices for chroma and luma
@@ -320,6 +332,8 @@ void av1_qm_init(CommonQuantParams *quant_params, int num_planes) {
    distances. Matrices for QM level 15 are omitted because they are
    not used.
  */
+
+#if CONFIG_QUANT_MATRIX || CONFIG_AV1_DECODER
 static const qm_val_t iwt_matrix_ref[NUM_QM_LEVELS - 1][2][QM_TOTAL_SIZE] = {
   {
       { /* Luma */
@@ -12874,3 +12888,5 @@ static const qm_val_t wt_matrix_ref[NUM_QM_LEVELS - 1][2][QM_TOTAL_SIZE] = {
         32, 32, 32, 32 },
   },
 };
+
+#endif  // CONFIG_QUANT_MATRIX || CONFIG_AV1_DECODER

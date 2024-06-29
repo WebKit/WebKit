@@ -1,6 +1,6 @@
 /*
  * Copyright 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -297,8 +297,8 @@ bool evaluatePredicate(const Expression& expression)
 
 bool predicateIsContextPositionSensitive(const Expression& expression)
 {
-    return expression.isContextPositionSensitive() || expression.resultType() == Value::NumberValue;
+    return expression.isContextPositionSensitive() || expression.resultType() == Value::Type::Number;
 }
 
-}
-}
+} // namespace XPath
+} // namespace WebCore

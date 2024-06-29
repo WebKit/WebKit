@@ -185,6 +185,12 @@ ALWAYS_INLINE void AbstractSlotVisitor::append(Iterator begin, Iterator end)
         append(*it);
 }
 
+ALWAYS_INLINE void AbstractSlotVisitor::appendValues(std::span<const WriteBarrier<Unknown, RawValueTraits<Unknown>>> barriers)
+{
+    for (auto& barrier : barriers)
+        append(barrier);
+}
+
 ALWAYS_INLINE void AbstractSlotVisitor::appendValues(const WriteBarrierBase<Unknown>* barriers, size_t count)
 {
     for (size_t i = 0; i < count; ++i)

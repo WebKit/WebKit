@@ -44,7 +44,7 @@ inline bool requiresContextForWordBoundary(char32_t character)
 unsigned endOfFirstWordBoundaryContext(StringView);
 unsigned startOfLastWordBoundaryContext(StringView);
 
-void findWordBoundary(StringView, int position, int* start, int* end);
+WEBCORE_EXPORT void findWordBoundary(StringView, int position, int* start, int* end);
 void findEndWordBoundary(StringView, int position, int* end);
 int findNextWordFromIndex(StringView, int position, bool forward);
 

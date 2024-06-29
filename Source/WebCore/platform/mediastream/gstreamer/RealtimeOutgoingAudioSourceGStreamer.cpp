@@ -41,7 +41,7 @@ RealtimeOutgoingAudioSourceGStreamer::RealtimeOutgoingAudioSourceGStreamer(const
         GST_DEBUG_CATEGORY_INIT(webkit_webrtc_outgoing_audio_debug, "webkitwebrtcoutgoingaudio", 0, "WebKit WebRTC outgoing audio");
     });
     static Atomic<uint64_t> sourceCounter = 0;
-    gst_element_set_name(m_bin.get(), makeString("outgoing-audio-source-", sourceCounter.exchangeAdd(1)).ascii().data());
+    gst_element_set_name(m_bin.get(), makeString("outgoing-audio-source-"_s, sourceCounter.exchangeAdd(1)).ascii().data());
     m_audioconvert = makeGStreamerElement("audioconvert", nullptr);
     m_audioresample = makeGStreamerElement("audioresample", nullptr);
     m_inputCapsFilter = gst_element_factory_make("capsfilter", nullptr);
@@ -67,7 +67,7 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
         return false;
     }
 
-    auto encoding = makeString(encodingName).convertToASCIILowercase();
+    auto encoding = String(WTF::span(encodingName)).convertToASCIILowercase();
     m_payloader = makeGStreamerElement(makeString("rtp"_s, encoding, "pay"_s).ascii().data(), nullptr);
     if (UNLIKELY(!m_payloader)) {
         GST_ERROR_OBJECT(m_bin.get(), "RTP payloader not found for encoding %s", encodingName);
@@ -131,9 +131,8 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
         gst_structure_remove_field(structure.get(), "minptime");
     }
 
-    int payloadType;
-    if (gst_structure_get_int(structure.get(), "payload", &payloadType)) {
-        g_object_set(m_payloader.get(), "pt", payloadType, nullptr);
+    if (auto payloadType = gstStructureGet<int>(structure.get(), "payload"_s)) {
+        g_object_set(m_payloader.get(), "pt", *payloadType, nullptr);
         gst_structure_remove_field(structure.get(), "payload");
     }
 
@@ -143,6 +142,11 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     }
 
     auto rtpCaps = adoptGRef(gst_caps_new_empty());
+
+    // When not present in caps, the vad support of the ssrc-audio-level extension should be
+    // enabled. In order to prevent caps negotiation issues with downstream, explicitely set it.
+    setSsrcAudioLevelVadOn(structure.get());
+
     gst_caps_append_structure(rtpCaps.get(), structure.release());
 
     g_object_set(m_inputCapsFilter.get(), "caps", m_inputCaps.get(), nullptr);

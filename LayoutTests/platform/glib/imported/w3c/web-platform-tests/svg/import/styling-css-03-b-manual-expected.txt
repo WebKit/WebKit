@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (66,42) size 584x425
+    RenderSVGContainer {g} at (66,41) size 584x426
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGText {text} at (40,25) size 185x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 185x14
@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
         RenderSVGContainer {g} at (500,116) size 150x84
           RenderSVGContainer {g} at (500,116) size 150x84
             RenderSVGPath {polygon} at (500,116) size 150x84 [fill={[type=SOLID] [color=#008000]}] [points="300 100 320 120 340 110 360 120 390 90 340 70"]
-      RenderSVGContainer {g} at (66,292) size 584x175 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
+      RenderSVGContainer {g} at (66,291) size 584x176 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
         RenderSVGText {text} at (40,25) size 259x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 259x14
             chunk 1 text run 1 at (40.00,36.00) startOffset 0 endOffset 54 width 258.72: "ancestor, immediate-sibling and first-child selectors:"

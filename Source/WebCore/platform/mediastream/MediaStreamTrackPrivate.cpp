@@ -475,13 +475,12 @@ Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::clone()
     ASSERT(isOnCreationThread());
 
     auto postTask = m_sourceObserver->getPostTask();
-    auto clonedMediaStreamTrackPrivate = create(m_logger.copyRef(), m_sourceObserver->source().clone(), WTFMove(postTask));
+    auto clonedMediaStreamTrackPrivate = create(m_logger.copyRef(), toDataHolder(ShouldClone::Yes), WTFMove(postTask));
 
     ALWAYS_LOG(LOGIDENTIFIER, clonedMediaStreamTrackPrivate->logIdentifier());
 
-    clonedMediaStreamTrackPrivate->m_isEnabled = this->m_isEnabled;
-    clonedMediaStreamTrackPrivate->m_isEnded = this->m_isEnded;
-    clonedMediaStreamTrackPrivate->m_contentHint = this->m_contentHint;
+    clonedMediaStreamTrackPrivate->m_isCaptureTrack = this->m_isCaptureTrack;
+    clonedMediaStreamTrackPrivate->m_captureDidFail = this->m_captureDidFail;
     clonedMediaStreamTrackPrivate->updateReadyState();
 
     if (m_isProducingData)
@@ -657,10 +656,10 @@ void MediaStreamTrackPrivate::updateReadyState()
     });
 }
 
-UniqueRef<MediaStreamTrackDataHolder> MediaStreamTrackPrivate::toDataHolder()
+UniqueRef<MediaStreamTrackDataHolder> MediaStreamTrackPrivate::toDataHolder(ShouldClone shouldClone)
 {
     return makeUniqueRef<MediaStreamTrackDataHolder>(
-        m_id.isolatedCopy(),
+        shouldClone == ShouldClone::Yes ? createVersion4UUIDString() : m_id.isolatedCopy(),
         m_label.isolatedCopy(),
         m_type,
         m_deviceType,
@@ -672,7 +671,7 @@ UniqueRef<MediaStreamTrackDataHolder> MediaStreamTrackPrivate::toDataHolder()
         m_isInterrupted,
         m_settings.isolatedCopy(),
         m_capabilities.isolatedCopy(),
-        Ref { m_sourceObserver->source() });
+        shouldClone == ShouldClone::Yes ? m_sourceObserver->source().clone() : Ref { m_sourceObserver->source() });
 }
 
 #if !RELEASE_LOG_DISABLED

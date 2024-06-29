@@ -1680,6 +1680,8 @@ angle::Result Framebuffer::discard(const Context *context, size_t count, const G
     // Back-ends might make the contents of the FBO undefined. In WebGL 2.0, invalidate operations
     // can be no-ops, so we should probably do that to ensure consistency.
     // TODO(jmadill): WebGL behaviour, and robust resource init behaviour without WebGL.
+    if (context->isRobustResourceInitEnabled())
+        markDrawAttachmentsNeedInit(count, attachments);
 
     return mImpl->discard(context, count, attachments);
 }
@@ -1691,6 +1693,8 @@ angle::Result Framebuffer::invalidate(const Context *context,
     // Back-ends might make the contents of the FBO undefined. In WebGL 2.0, invalidate operations
     // can be no-ops, so we should probably do that to ensure consistency.
     // TODO(jmadill): WebGL behaviour, and robust resource init behaviour without WebGL.
+    if (context->isRobustResourceInitEnabled())
+        markDrawAttachmentsNeedInit(count, attachments);
 
     return mImpl->invalidate(context, count, attachments);
 }
@@ -2505,7 +2509,9 @@ angle::Result Framebuffer::ensureClearAttachmentsInitialized(const Context *cont
     // If the impl encounters an error during a a full (non-partial) clear, the attachments will
     // still be marked initialized. This simplifies design, allowing this method to be called before
     // the clear.
-    markDrawAttachmentsInitialized(color, depth, stencil);
+    DrawBufferMask clearedColorAttachments =
+        color ? mState.getEnabledDrawBuffers() : DrawBufferMask();
+    markAttachmentsInitialized(clearedColorAttachments, depth, stencil);
 
     return angle::Result::Continue;
 }
@@ -2516,20 +2522,67 @@ angle::Result Framebuffer::ensureClearBufferAttachmentsInitialized(const Context
 {
     if (!context->isRobustResourceInitEnabled() ||
         context->getState().isRasterizerDiscardEnabled() ||
-        context->isClearBufferMaskedOut(buffer, drawbuffer))
+        context->isClearBufferMaskedOut(buffer, drawbuffer) || mState.mResourceNeedsInit.none())
     {
         return angle::Result::Continue;
     }
 
-    if (partialBufferClearNeedsInit(context, buffer))
+    DrawBufferMask clearColorAttachments;
+    bool clearDepth   = false;
+    bool clearStencil = false;
+
+    switch (buffer)
     {
-        ANGLE_TRY(ensureBufferInitialized(context, buffer, drawbuffer));
+        case GL_COLOR:
+        {
+            ASSERT(drawbuffer < static_cast<GLint>(mState.mColorAttachments.size()));
+            if (mState.mResourceNeedsInit[drawbuffer])
+            {
+                clearColorAttachments.set(drawbuffer);
+            }
+            break;
+        }
+        case GL_DEPTH:
+        {
+            if (mState.mResourceNeedsInit[DIRTY_BIT_DEPTH_ATTACHMENT])
+            {
+                clearDepth = true;
+            }
+            break;
+        }
+        case GL_STENCIL:
+        {
+            if (mState.mResourceNeedsInit[DIRTY_BIT_STENCIL_ATTACHMENT])
+            {
+                clearStencil = true;
+            }
+            break;
+        }
+        case GL_DEPTH_STENCIL:
+        {
+            if (mState.mResourceNeedsInit[DIRTY_BIT_DEPTH_ATTACHMENT])
+            {
+                clearDepth = true;
+            }
+            if (mState.mResourceNeedsInit[DIRTY_BIT_STENCIL_ATTACHMENT])
+            {
+                clearStencil = true;
+            }
+            break;
+        }
+        default:
+            UNREACHABLE();
+            break;
     }
 
-    // If the impl encounters an error during a a full (non-partial) clear, the attachments will
-    // still be marked initialized. This simplifies design, allowing this method to be called before
-    // the clear.
-    markBufferInitialized(buffer, drawbuffer);
+    if (partialBufferClearNeedsInit(context, buffer) &&
+        (clearColorAttachments.any() || clearDepth || clearStencil))
+    {
+        ANGLE_TRY(mImpl->ensureAttachmentsInitialized(context, clearColorAttachments, clearDepth,
+                                                      clearStencil));
+    }
+
+    markAttachmentsInitialized(clearColorAttachments, clearDepth, clearStencil);
 
     return angle::Result::Continue;
 }
@@ -2541,24 +2594,34 @@ angle::Result Framebuffer::ensureDrawAttachmentsInitialized(const Context *conte
         return angle::Result::Continue;
     }
 
+    DrawBufferMask clearColorAttachments;
+    bool clearDepth   = false;
+    bool clearStencil = false;
+
     // Note: we don't actually filter by the draw attachment enum. Just init everything.
     for (size_t bit : mState.mResourceNeedsInit)
     {
         switch (bit)
         {
             case DIRTY_BIT_DEPTH_ATTACHMENT:
-                ANGLE_TRY(InitAttachment(context, &mState.mDepthAttachment));
+                clearDepth = true;
                 break;
             case DIRTY_BIT_STENCIL_ATTACHMENT:
-                ANGLE_TRY(InitAttachment(context, &mState.mStencilAttachment));
+                clearStencil = true;
                 break;
             default:
-                ANGLE_TRY(InitAttachment(context, &mState.mColorAttachments[bit]));
+                clearColorAttachments[bit] = true;
                 break;
         }
     }
 
-    mState.mResourceNeedsInit.reset();
+    if (clearColorAttachments.any() || clearDepth || clearStencil)
+    {
+        ANGLE_TRY(mImpl->ensureAttachmentsInitialized(context, clearColorAttachments, clearDepth,
+                                                      clearStencil));
+        markAttachmentsInitialized(clearColorAttachments, clearDepth, clearStencil);
+    }
+
     return angle::Result::Continue;
 }
 
@@ -2570,6 +2633,10 @@ angle::Result Framebuffer::ensureReadAttachmentsInitialized(const Context *conte
     {
         return angle::Result::Continue;
     }
+
+    DrawBufferMask clearColorAttachments;
+    bool clearDepth   = false;
+    bool clearStencil = false;
 
     if (mState.mReadBufferState != GL_NONE)
     {
@@ -2586,47 +2653,42 @@ angle::Result Framebuffer::ensureReadAttachmentsInitialized(const Context *conte
             size_t readIndex = mState.getReadIndex();
             if (mState.mResourceNeedsInit[readIndex])
             {
-                ANGLE_TRY(InitAttachment(context, &mState.mColorAttachments[readIndex]));
-                mState.mResourceNeedsInit.reset(readIndex);
+                clearColorAttachments[readIndex] = true;
             }
         }
     }
 
     // Conservatively init depth since it can be read by BlitFramebuffer.
-    if (hasDepth())
+    if (hasDepth() && mState.mResourceNeedsInit[DIRTY_BIT_DEPTH_ATTACHMENT])
     {
-        if (mState.mResourceNeedsInit[DIRTY_BIT_DEPTH_ATTACHMENT])
-        {
-            ANGLE_TRY(InitAttachment(context, &mState.mDepthAttachment));
-            mState.mResourceNeedsInit.reset(DIRTY_BIT_DEPTH_ATTACHMENT);
-        }
+        clearDepth = true;
     }
 
     // Conservatively init stencil since it can be read by BlitFramebuffer.
-    if (hasStencil())
+    if (hasStencil() && mState.mResourceNeedsInit[DIRTY_BIT_STENCIL_ATTACHMENT])
     {
-        if (mState.mResourceNeedsInit[DIRTY_BIT_STENCIL_ATTACHMENT])
-        {
-            ANGLE_TRY(InitAttachment(context, &mState.mStencilAttachment));
-            mState.mResourceNeedsInit.reset(DIRTY_BIT_STENCIL_ATTACHMENT);
-        }
+        clearStencil = true;
+    }
+
+    if (clearColorAttachments.any() || clearDepth || clearStencil)
+    {
+        ANGLE_TRY(mImpl->ensureAttachmentsInitialized(context, clearColorAttachments, clearDepth,
+                                                      clearStencil));
+        markAttachmentsInitialized(clearColorAttachments, clearDepth, clearStencil);
     }
 
     return angle::Result::Continue;
 }
 
-void Framebuffer::markDrawAttachmentsInitialized(bool color, bool depth, bool stencil)
+void Framebuffer::markAttachmentsInitialized(const DrawBufferMask &color, bool depth, bool stencil)
 {
     // Mark attachments as initialized.
-    if (color)
+    for (auto colorIndex : color)
     {
-        for (auto colorIndex : mState.mEnabledDrawBuffers)
-        {
-            auto &colorAttachment = mState.mColorAttachments[colorIndex];
-            ASSERT(colorAttachment.isAttached());
-            colorAttachment.setInitState(InitState::Initialized);
-            mState.mResourceNeedsInit.reset(colorIndex);
-        }
+        auto &colorAttachment = mState.mColorAttachments[colorIndex];
+        ASSERT(colorAttachment.isAttached());
+        colorAttachment.setInitState(InitState::Initialized);
+        mState.mResourceNeedsInit.reset(colorIndex);
     }
 
     if (depth && mState.mDepthAttachment.isAttached())
@@ -2639,58 +2701,6 @@ void Framebuffer::markDrawAttachmentsInitialized(bool color, bool depth, bool st
     {
         mState.mStencilAttachment.setInitState(InitState::Initialized);
         mState.mResourceNeedsInit.reset(DIRTY_BIT_STENCIL_ATTACHMENT);
-    }
-}
-
-void Framebuffer::markBufferInitialized(GLenum bufferType, GLint bufferIndex)
-{
-    switch (bufferType)
-    {
-        case GL_COLOR:
-        {
-            ASSERT(bufferIndex < static_cast<GLint>(mState.mColorAttachments.size()));
-            if (mState.mColorAttachments[bufferIndex].isAttached())
-            {
-                mState.mColorAttachments[bufferIndex].setInitState(InitState::Initialized);
-                mState.mResourceNeedsInit.reset(bufferIndex);
-            }
-            break;
-        }
-        case GL_DEPTH:
-        {
-            if (mState.mDepthAttachment.isAttached())
-            {
-                mState.mDepthAttachment.setInitState(InitState::Initialized);
-                mState.mResourceNeedsInit.reset(DIRTY_BIT_DEPTH_ATTACHMENT);
-            }
-            break;
-        }
-        case GL_STENCIL:
-        {
-            if (mState.mStencilAttachment.isAttached())
-            {
-                mState.mStencilAttachment.setInitState(InitState::Initialized);
-                mState.mResourceNeedsInit.reset(DIRTY_BIT_STENCIL_ATTACHMENT);
-            }
-            break;
-        }
-        case GL_DEPTH_STENCIL:
-        {
-            if (mState.mDepthAttachment.isAttached())
-            {
-                mState.mDepthAttachment.setInitState(InitState::Initialized);
-                mState.mResourceNeedsInit.reset(DIRTY_BIT_DEPTH_ATTACHMENT);
-            }
-            if (mState.mStencilAttachment.isAttached())
-            {
-                mState.mStencilAttachment.setInitState(InitState::Initialized);
-                mState.mResourceNeedsInit.reset(DIRTY_BIT_STENCIL_ATTACHMENT);
-            }
-            break;
-        }
-        default:
-            UNREACHABLE();
-            break;
     }
 }
 
@@ -2758,69 +2768,6 @@ const FocalPoint &Framebuffer::getFocalPoint(uint32_t layer, uint32_t focalPoint
 GLuint Framebuffer::getSupportedFoveationFeatures() const
 {
     return mState.mFoveationState.getSupportedFoveationFeatures();
-}
-
-angle::Result Framebuffer::ensureBufferInitialized(const Context *context,
-                                                   GLenum bufferType,
-                                                   GLint bufferIndex)
-{
-    ASSERT(context->isRobustResourceInitEnabled());
-
-    if (mState.mResourceNeedsInit.none())
-    {
-        return angle::Result::Continue;
-    }
-
-    switch (bufferType)
-    {
-        case GL_COLOR:
-        {
-            ASSERT(bufferIndex < static_cast<GLint>(mState.mColorAttachments.size()));
-            if (mState.mResourceNeedsInit[bufferIndex])
-            {
-                ANGLE_TRY(InitAttachment(context, &mState.mColorAttachments[bufferIndex]));
-                mState.mResourceNeedsInit.reset(bufferIndex);
-            }
-            break;
-        }
-        case GL_DEPTH:
-        {
-            if (mState.mResourceNeedsInit[DIRTY_BIT_DEPTH_ATTACHMENT])
-            {
-                ANGLE_TRY(InitAttachment(context, &mState.mDepthAttachment));
-                mState.mResourceNeedsInit.reset(DIRTY_BIT_DEPTH_ATTACHMENT);
-            }
-            break;
-        }
-        case GL_STENCIL:
-        {
-            if (mState.mResourceNeedsInit[DIRTY_BIT_STENCIL_ATTACHMENT])
-            {
-                ANGLE_TRY(InitAttachment(context, &mState.mStencilAttachment));
-                mState.mResourceNeedsInit.reset(DIRTY_BIT_STENCIL_ATTACHMENT);
-            }
-            break;
-        }
-        case GL_DEPTH_STENCIL:
-        {
-            if (mState.mResourceNeedsInit[DIRTY_BIT_DEPTH_ATTACHMENT])
-            {
-                ANGLE_TRY(InitAttachment(context, &mState.mDepthAttachment));
-                mState.mResourceNeedsInit.reset(DIRTY_BIT_DEPTH_ATTACHMENT);
-            }
-            if (mState.mResourceNeedsInit[DIRTY_BIT_STENCIL_ATTACHMENT])
-            {
-                ANGLE_TRY(InitAttachment(context, &mState.mStencilAttachment));
-                mState.mResourceNeedsInit.reset(DIRTY_BIT_STENCIL_ATTACHMENT);
-            }
-            break;
-        }
-        default:
-            UNREACHABLE();
-            break;
-    }
-
-    return angle::Result::Continue;
 }
 
 bool Framebuffer::partialBufferClearNeedsInit(const Context *context, GLenum bufferType)
@@ -2895,5 +2842,57 @@ angle::Result Framebuffer::syncAttachmentState(const Context *context,
     }
 
     return angle::Result::Continue;
+}
+
+void Framebuffer::markDrawAttachmentsNeedInit(size_t count, const GLenum *attachments)
+{
+    bool stateChanged = false;
+    for (size_t attachmentIdx = 0; attachmentIdx < count; attachmentIdx++)
+    {
+        GLenum attachmentBindPoint = attachments[attachmentIdx];
+        switch (attachmentBindPoint)
+        {
+            case GL_DEPTH_ATTACHMENT:
+            case GL_DEPTH_EXT:
+                if (mState.mDepthAttachment.isAttached())
+                {
+                    mDirtyBits.set(DIRTY_BIT_DEPTH_ATTACHMENT);
+                    mState.mResourceNeedsInit.set(DIRTY_BIT_DEPTH_ATTACHMENT);
+                    mState.mDepthAttachment.setInitState(InitState::MayNeedInit);
+                    stateChanged = true;
+                }
+                break;
+            case GL_STENCIL_ATTACHMENT:
+            case GL_STENCIL_EXT:
+                if (mState.mStencilAttachment.isAttached())
+                {
+                    mDirtyBits.set(DIRTY_BIT_STENCIL_ATTACHMENT);
+                    mState.mResourceNeedsInit.set(DIRTY_BIT_STENCIL_ATTACHMENT);
+                    mState.mStencilAttachment.setInitState(InitState::MayNeedInit);
+                    stateChanged = true;
+                }
+                break;
+            default:
+                if (attachmentBindPoint == GL_COLOR_EXT)
+                {
+                    attachmentBindPoint = GL_COLOR_ATTACHMENT0;
+                }
+                int colorDirtyBit = attachmentBindPoint - GL_COLOR_ATTACHMENT0;
+                if (colorDirtyBit >= 0 && colorDirtyBit < IMPLEMENTATION_MAX_DRAW_BUFFERS &&
+                    mState.mColorAttachments[colorDirtyBit].isAttached())
+                {
+                    mDirtyBits.set(colorDirtyBit);
+                    mState.mResourceNeedsInit.set(colorDirtyBit);
+                    mState.mColorAttachments[colorDirtyBit].setInitState(InitState::MayNeedInit);
+                    stateChanged = true;
+                }
+                break;
+        }
+    }
+
+    if (stateChanged)
+    {
+        onStateChange(angle::SubjectMessage::DirtyBitsFlagged);
+    }
 }
 }  // namespace gl

@@ -94,8 +94,12 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, 
 
 static auto makeArrayBuffer(auto source, size_t offset, auto byteLength, auto& cachedArrayBuffers, auto& device, auto& buffer)
 {
-    auto arrayBuffer = ArrayBuffer::create(source, byteLength);
-    cachedArrayBuffers.append({ arrayBuffer.ptr(), offset });
+    RefPtr<ArrayBuffer> arrayBuffer;
+    if constexpr (std::is_pointer_v<decltype(source)>)
+        arrayBuffer = ArrayBuffer::create({ source, static_cast<size_t>(byteLength) });
+    else
+        arrayBuffer = ArrayBuffer::create(source, byteLength);
+    cachedArrayBuffers.append({ arrayBuffer.get(), offset });
     cachedArrayBuffers.last().buffer->pin();
     if (device)
         device->addBufferToUnmap(buffer);
@@ -209,7 +213,7 @@ void GPUBuffer::internalUnmap(ScriptExecutionContext& scriptExecutionContext)
     for (auto& arrayBufferAndOffset : m_arrayBuffers) {
         auto& arrayBuffer = arrayBufferAndOffset.buffer;
         if (arrayBuffer && arrayBuffer->data() && arrayBuffer->byteLength()) {
-            m_backing->copy(arrayBuffer->toVector(), arrayBufferAndOffset.offset);
+            m_backing->copy(arrayBuffer->span(), arrayBufferAndOffset.offset);
             JSC::ArrayBufferContents emptyBuffer;
             arrayBuffer->unpin();
             arrayBuffer->transferTo(scriptExecutionContext.vm(), emptyBuffer);

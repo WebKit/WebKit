@@ -192,17 +192,17 @@ TEST_F(PublicSuffix, PublicSuffixCache)
     WTF::URL abExampleURL { "http://a.b.example.example"_s };
     auto& publicSuffixStore = PublicSuffixStore::singleton();
     EXPECT_FALSE(publicSuffixStore.isPublicSuffix("example.example"_s));
-    EXPECT_EQ(String("example"_s), publicSuffixStore.publicSuffix(abExampleURL));
+    EXPECT_EQ(String("example"_s), publicSuffixStore.publicSuffix(abExampleURL).string());
     // Non-cocoa platforms currently do not use public suffix cache for topPrivatelyControlledDomain().
     EXPECT_EQ(String("example.example"_s), publicSuffixStore.topPrivatelyControlledDomain("a.b.example.example"_s));
     EXPECT_FALSE(publicSuffixStore.isPublicSuffix(""_s));
 
-    publicSuffixStore.enablePublicSuffixCache(PublicSuffixStore::CanAcceptCustomPublicSuffix::Yes);
+    publicSuffixStore.enablePublicSuffixCache();
     publicSuffixStore.clearHostTopPrivatelyControlledDomainCache();
-    publicSuffixStore.addPublicSuffix("example.example"_s);
-    publicSuffixStore.addPublicSuffix(""_s);
+    publicSuffixStore.addPublicSuffix(WebCore::PublicSuffix::fromRawString("example.example"_s));
+    publicSuffixStore.addPublicSuffix(WebCore::PublicSuffix { });
     EXPECT_TRUE(publicSuffixStore.isPublicSuffix("example.example"_s));
-    EXPECT_EQ(String("example.example"_s), publicSuffixStore.publicSuffix(abExampleURL));
+    EXPECT_EQ(String("example.example"_s), publicSuffixStore.publicSuffix(abExampleURL).string());
     EXPECT_EQ(String("b.example.example"_s), publicSuffixStore.topPrivatelyControlledDomain("a.b.example.example"_s));
     EXPECT_FALSE(publicSuffixStore.isPublicSuffix(""_s));
 }

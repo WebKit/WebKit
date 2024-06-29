@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,11 +37,11 @@
     const unsigned short SVG_LENGTHTYPE_PC = 10;
 
     readonly attribute unsigned short unitType;
-    [ImplementedAs=valueForBindings] attribute unrestricted float value;
+    [ImplementedAs=valueForBindings] attribute float value;
 
-    attribute unrestricted float valueInSpecifiedUnits;
+    attribute float valueInSpecifiedUnits;
     attribute DOMString valueAsString;
 
-    undefined newValueSpecifiedUnits(unsigned short unitType, unrestricted float valueInSpecifiedUnits);
+    undefined newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
     undefined convertToSpecifiedUnits(unsigned short unitType);
 };

@@ -26,11 +26,11 @@
 #include "api/test/simulated_network.h"
 #include "api/test/time_controller.h"
 #include "api/video_codecs/vp9_profile.h"
-#include "call/simulated_network.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
 #include "system_wrappers/include/field_trial.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
+#include "test/network/simulated_network.h"
 #include "test/pc/e2e/network_quality_metrics_reporter.h"
 #include "test/testsupport/file_utils.h"
 
@@ -98,7 +98,7 @@ std::vector<PCFullStackTestParams> ParameterizedTestParams() {
           // Use the worker thread for sending packets.
           // https://bugs.chromium.org/p/webrtc/issues/detail?id=14502
           {.use_network_thread_as_worker_thread = true,
-           .field_trials = "WebRTC-SendPacketsOnWorkerThread/Enabled/",
+           .field_trials = "",
            .test_case_name_postfix = "_ReducedThreads"}};
 }
 
@@ -217,36 +217,6 @@ TEST(PCFullStackTest, MAYBE_Pc_Generator_Net_Delay_0_0_Plr_0_VP9Profile2) {
   fixture->Run(RunParams(TimeDelta::Seconds(kTestDurationSec)));
 }
 
-/*
-// TODO(bugs.webrtc.org/10639) migrate commented out test, when required
-// functionality will be supported in PeerConnection level framework.
-TEST(PCFullStackTest, ForemanCifWithoutPacketLossMultiplexI420Frame) {
-  auto fixture = CreateVideoQualityTestFixture();
-  ParamsWithLogging foreman_cif;
-  foreman_cif.call.send_side_bwe = true;
-  foreman_cif.video[0] = {
-      true,        352,    288,    30,
-      700000,      700000, 700000, false,
-      "multiplex", 1,      0,      0,
-      false,       false,  false,  ClipNameToClipPath("foreman_cif")};
-  foreman_cif.analyzer = {"foreman_cif_net_delay_0_0_plr_0_Multiplex", 0.0, 0.0,
-                          kTestDurationSec};
-  fixture->RunWithAnalyzer(foreman_cif);
-}
-
-TEST(PCFullStackTest, GeneratorWithoutPacketLossMultiplexI420AFrame) {
-  auto fixture = CreateVideoQualityTestFixture();
-
-  ParamsWithLogging generator;
-  generator.call.send_side_bwe = true;
-  generator.video[0] = {
-      true,        352, 288, 30, 700000, 700000, 700000, false,
-      "multiplex", 1,   0,   0,  false,  false,  false,  "GeneratorI420A"};
-  generator.analyzer = {"generator_net_delay_0_0_plr_0_Multiplex", 0.0, 0.0,
-                        kTestDurationSec};
-  fixture->RunWithAnalyzer(generator);
-}
-*/
 #endif  // defined(RTC_ENABLE_VP9)
 
 TEST(PCFullStackTest, Pc_Net_Delay_0_0_Plr_0) {
@@ -944,58 +914,6 @@ TEST(PCFullStackTest, ConferenceMotionHd4TLModerateLimits) {
   fixture->RunWithAnalyzer(conf_motion_hd);
 }
 
-// TODO(bugs.webrtc.org/10639) requires simulcast/SVC support in PC framework
-TEST(PCFullStackTest, ConferenceMotionHd3TLModerateLimitsAltTLPattern) {
-  test::ScopedFieldTrials field_trial(
-      AppendFieldTrials("WebRTC-UseShortVP8TL3Pattern/Enabled/"));
-  auto fixture = CreateVideoQualityTestFixture();
-  ParamsWithLogging conf_motion_hd;
-  conf_motion_hd.call.send_side_bwe = true;
-  conf_motion_hd.video[0] = {
-      true,    1280,
-      720,     50,
-      30000,   3000000,
-      3000000, false,
-      "VP8",   3,
-      -1,      0,
-      false,   false,
-      false,   ClipNameToClipPath("ConferenceMotion_1280_720_50")};
-  conf_motion_hd.analyzer = {"conference_motion_hd_3tl_alt_moderate_limits",
-                             0.0, 0.0, kTestDurationSec};
-  conf_motion_hd.config->queue_length_packets = 50;
-  conf_motion_hd.config->loss_percent = 3;
-  conf_motion_hd.config->queue_delay_ms = 100;
-  conf_motion_hd.config->link_capacity_kbps = 2000;
-  fixture->RunWithAnalyzer(conf_motion_hd);
-}
-
-// TODO(bugs.webrtc.org/10639) requires simulcast/SVC support in PC framework
-TEST(PCFullStackTest,
-     ConferenceMotionHd3TLModerateLimitsAltTLPatternAndBaseHeavyTLAllocation) {
-  auto fixture = CreateVideoQualityTestFixture();
-  test::ScopedFieldTrials field_trial(
-      AppendFieldTrials("WebRTC-UseShortVP8TL3Pattern/Enabled/"
-                        "WebRTC-UseBaseHeavyVP8TL3RateAllocation/Enabled/"));
-  ParamsWithLogging conf_motion_hd;
-  conf_motion_hd.call.send_side_bwe = true;
-  conf_motion_hd.video[0] = {
-      true,    1280,
-      720,     50,
-      30000,   3000000,
-      3000000, false,
-      "VP8",   3,
-      -1,      0,
-      false,   false,
-      false,   ClipNameToClipPath("ConferenceMotion_1280_720_50")};
-  conf_motion_hd.analyzer = {
-      "conference_motion_hd_3tl_alt_heavy_moderate_limits", 0.0, 0.0,
-      kTestDurationSec};
-  conf_motion_hd.config->queue_length_packets = 50;
-  conf_motion_hd.config->loss_percent = 3;
-  conf_motion_hd.config->queue_delay_ms = 100;
-  conf_motion_hd.config->link_capacity_kbps = 2000;
-  fixture->RunWithAnalyzer(conf_motion_hd);
-}
 */
 
 #if defined(RTC_ENABLE_VP9)

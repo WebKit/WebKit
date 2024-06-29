@@ -12,6 +12,7 @@
 #define TEST_NETWORK_NETWORK_EMULATION_H_
 
 #include <cstdint>
+#include <cstring>
 #include <deque>
 #include <map>
 #include <memory>
@@ -19,10 +20,12 @@
 #include <utility>
 #include <vector>
 
+#include "absl/base/nullability.h"
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/numerics/samples_stats_counter.h"
 #include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/test/network_emulation/network_emulation_interfaces.h"
 #include "api/test/network_emulation_manager.h"
 #include "api/test/simulated_network.h"
@@ -145,15 +148,11 @@ class EmulatedNetworkNodeStatsBuilder {
 class LinkEmulation : public EmulatedNetworkReceiverInterface {
  public:
   LinkEmulation(Clock* clock,
-                rtc::TaskQueue* task_queue,
+                absl::Nonnull<TaskQueueBase*> task_queue,
                 std::unique_ptr<NetworkBehaviorInterface> network_behavior,
                 EmulatedNetworkReceiverInterface* receiver,
-                EmulatedNetworkStatsGatheringMode stats_gathering_mode)
-      : clock_(clock),
-        task_queue_(task_queue),
-        network_behavior_(std::move(network_behavior)),
-        receiver_(receiver),
-        stats_builder_(stats_gathering_mode) {}
+                EmulatedNetworkStatsGatheringMode stats_gathering_mode,
+                bool fake_dtls_handshake_sizes);
   void OnPacketReceived(EmulatedIpPacket packet) override;
 
   EmulatedNetworkNodeStats stats() const;
@@ -165,13 +164,16 @@ class LinkEmulation : public EmulatedNetworkReceiverInterface {
     EmulatedIpPacket packet;
     bool removed;
   };
+  void UpdateProcessSchedule() RTC_RUN_ON(task_queue_);
   void Process(Timestamp at_time) RTC_RUN_ON(task_queue_);
+  size_t GetPacketSizeForEmulation(const EmulatedIpPacket& packet) const;
 
   Clock* const clock_;
-  rtc::TaskQueue* const task_queue_;
+  const absl::Nonnull<TaskQueueBase*> task_queue_;
   const std::unique_ptr<NetworkBehaviorInterface> network_behavior_
       RTC_GUARDED_BY(task_queue_);
   EmulatedNetworkReceiverInterface* const receiver_;
+  const bool fake_dtls_handshake_sizes_;
 
   RepeatingTaskHandle process_task_ RTC_GUARDED_BY(task_queue_);
   std::deque<StoredPacket> packets_ RTC_GUARDED_BY(task_queue_);
@@ -186,7 +188,7 @@ class LinkEmulation : public EmulatedNetworkReceiverInterface {
 // the packet will be silently dropped.
 class NetworkRouterNode : public EmulatedNetworkReceiverInterface {
  public:
-  explicit NetworkRouterNode(rtc::TaskQueue* task_queue);
+  explicit NetworkRouterNode(absl::Nonnull<TaskQueueBase*> task_queue);
 
   void OnPacketReceived(EmulatedIpPacket packet) override;
   void SetReceiver(const rtc::IPAddress& dest_ip,
@@ -200,7 +202,7 @@ class NetworkRouterNode : public EmulatedNetworkReceiverInterface {
   void SetFilter(std::function<bool(const EmulatedIpPacket&)> filter);
 
  private:
-  rtc::TaskQueue* const task_queue_;
+  const absl::Nonnull<TaskQueueBase*> task_queue_;
   absl::optional<EmulatedNetworkReceiverInterface*> default_receiver_
       RTC_GUARDED_BY(task_queue_);
   std::map<rtc::IPAddress, EmulatedNetworkReceiverInterface*> routing_
@@ -224,9 +226,10 @@ class EmulatedNetworkNode : public EmulatedNetworkReceiverInterface {
   // they are ready.
   EmulatedNetworkNode(
       Clock* clock,
-      rtc::TaskQueue* task_queue,
+      absl::Nonnull<TaskQueueBase*> task_queue,
       std::unique_ptr<NetworkBehaviorInterface> network_behavior,
-      EmulatedNetworkStatsGatheringMode stats_gathering_mode);
+      EmulatedNetworkStatsGatheringMode stats_gathering_mode,
+      bool fake_dtls_handshake_sizes);
   ~EmulatedNetworkNode() override;
 
   EmulatedNetworkNode(const EmulatedNetworkNode&) = delete;
@@ -283,7 +286,7 @@ class EmulatedEndpointImpl : public EmulatedEndpoint {
 
   EmulatedEndpointImpl(const Options& options,
                        bool is_enabled,
-                       rtc::TaskQueue* task_queue,
+                       absl::Nonnull<TaskQueueBase*> task_queue,
                        Clock* clock);
   ~EmulatedEndpointImpl() override;
 
@@ -341,7 +344,7 @@ class EmulatedEndpointImpl : public EmulatedEndpoint {
   const Options options_;
   bool is_enabled_ RTC_GUARDED_BY(enabled_state_checker_);
   Clock* const clock_;
-  rtc::TaskQueue* const task_queue_;
+  const absl::Nonnull<TaskQueueBase*> task_queue_;
   std::unique_ptr<rtc::Network> network_;
   NetworkRouterNode router_;
 
@@ -410,6 +413,7 @@ class FakePacketRoute : public EmulatedNetworkReceiverInterface {
     RTC_CHECK_GE(size, sizeof(int));
     sent_.emplace(next_packet_id_, packet);
     rtc::CopyOnWriteBuffer buf(size);
+    memset(buf.MutableData(), 0, size);
     reinterpret_cast<int*>(buf.MutableData())[0] = next_packet_id_++;
     route_->from->SendPacket(send_addr_, recv_addr_, buf);
   }

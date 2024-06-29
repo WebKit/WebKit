@@ -13,6 +13,8 @@
 #include <stdint.h>
 
 #include "absl/types/optional.h"
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_frame.h"
 #include "api/video_codecs/video_decoder.h"
@@ -20,7 +22,7 @@
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_error_codes.h"
 #include "rtc_base/checks.h"
-#include "test/field_trial.h"
+#include "test/explicit_key_value_config.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -31,10 +33,12 @@ class VideoDecoderSoftwareFallbackWrapperTest : public ::testing::Test {
       : VideoDecoderSoftwareFallbackWrapperTest("") {}
   explicit VideoDecoderSoftwareFallbackWrapperTest(
       const std::string& field_trials)
-      : override_field_trials_(field_trials),
+      : field_trials_(field_trials),
+        env_(CreateEnvironment(&field_trials_)),
         fake_decoder_(new CountingFakeDecoder()),
         fallback_wrapper_(CreateVideoDecoderSoftwareFallbackWrapper(
-            std::unique_ptr<VideoDecoder>(VP8Decoder::Create()),
+            env_,
+            CreateVp8Decoder(env_),
             std::unique_ptr<VideoDecoder>(fake_decoder_))) {}
 
   class CountingFakeDecoder : public VideoDecoder {
@@ -71,7 +75,8 @@ class VideoDecoderSoftwareFallbackWrapperTest : public ::testing::Test {
     int release_count_ = 0;
     int reset_count_ = 0;
   };
-  test::ScopedFieldTrials override_field_trials_;
+  test::ExplicitKeyValueConfig field_trials_;
+  const Environment env_;
   // `fake_decoder_` is owned and released by `fallback_wrapper_`.
   CountingFakeDecoder* fake_decoder_;
   std::unique_ptr<VideoDecoder> fallback_wrapper_;
@@ -275,7 +280,7 @@ class ForcedSoftwareDecoderFallbackTest
     fake_decoder_ = new CountingFakeDecoder();
     sw_fallback_decoder_ = new CountingFakeDecoder();
     fallback_wrapper_ = CreateVideoDecoderSoftwareFallbackWrapper(
-        std::unique_ptr<VideoDecoder>(sw_fallback_decoder_),
+        env_, std::unique_ptr<VideoDecoder>(sw_fallback_decoder_),
         std::unique_ptr<VideoDecoder>(fake_decoder_));
   }
 

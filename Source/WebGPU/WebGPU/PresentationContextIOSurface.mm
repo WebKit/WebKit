@@ -190,7 +190,6 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
 #else
     textureDescriptor.storageMode = MTLStorageModeShared;
 #endif
-    bool needsLuminanceClampFunction = false;
     for (IOSurface *iosurface in m_ioSurfaces) {
         if (iosurface.height != static_cast<NSInteger>(height) || iosurface.width != static_cast<NSInteger>(width))
             return generateAValidationError(device, [NSString stringWithFormat:@"Invalid surface size. Backing surface has size (%d, %d) but attempting to configure a size of (%u, %u)", static_cast<int>(iosurface.width), static_cast<int>(iosurface.height), width, height], reportValidationErrors);
@@ -230,10 +229,14 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     }
 
     textureDescriptor.usage |= MTLTextureUsageRenderTarget;
+    bool needsLuminanceClampFunction = textureDescriptor.pixelFormat == MTLPixelFormatRGBA16Float;
+    auto existingUsage = textureDescriptor.usage;
     for (IOSurface *iosurface in m_ioSurfaces) {
         RefPtr<Texture> parentLuminanceClampTexture;
-        if (textureDescriptor.pixelFormat == MTLPixelFormatRGBA16Float) {
-            auto existingUsage = textureDescriptor.usage;
+        if (needsLuminanceClampFunction) {
+            textureDescriptor.pixelFormat = MTLPixelFormatRGBA16Float;
+            wgpuTextureDescriptor.format = WGPUTextureFormat_RGBA16Float;
+            textureDescriptor.usage = existingUsage;
             textureDescriptor.usage |= MTLTextureUsageShaderRead;
             id<MTLTexture> luminanceClampTexture = device.newTextureWithDescriptor(textureDescriptor);
             luminanceClampTexture.label = fromAPI(descriptor.label);
@@ -243,7 +246,6 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
             textureDescriptor.pixelFormat = MTLPixelFormatBGRA8Unorm;
             wgpuTextureDescriptor.format = WGPUTextureFormat_BGRA8Unorm;
             textureDescriptor.usage = existingUsage | MTLTextureUsageShaderWrite;
-            needsLuminanceClampFunction = true;
         }
 
         id<MTLTexture> texture = device.newTextureWithDescriptor(textureDescriptor, bridge_cast(iosurface));
@@ -316,6 +318,7 @@ void PresentationContextIOSurface::present()
         computeDescriptor.dispatchType = MTLDispatchTypeSerial;
 
         id<MTLComputeCommandEncoder> computeEncoder = [commandBuffer computeCommandEncoderWithDescriptor:computeDescriptor];
+        m_device->getQueue().setEncoderForBuffer(commandBuffer, computeEncoder);
         [computeEncoder setComputePipelineState:m_computePipelineState];
         id<MTLTexture> inputTexture = texturePtr->texture();
         [computeEncoder setTexture:inputTexture atIndex:0];
@@ -327,7 +330,7 @@ void PresentationContextIOSurface::present()
         threadgroupCount.height = (inputTexture.height + threadgroupSize.height - 1) / threadgroupSize.height;
         threadgroupCount.depth = 1;
         [computeEncoder dispatchThreadgroups:threadgroupCount threadsPerThreadgroup:threadgroupSize];
-        [computeEncoder endEncoding];
+        m_device->getQueue().endEncoding(computeEncoder, commandBuffer);
         m_device->getQueue().commitMTLCommandBuffer(commandBuffer);
     }
 

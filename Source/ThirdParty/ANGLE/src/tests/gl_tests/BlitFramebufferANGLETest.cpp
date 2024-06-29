@@ -828,7 +828,7 @@ TEST_P(BlitFramebufferANGLETest, ReverseColorBlit)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_framebuffer_blit"));
 
-    // TODO(jmadill): Fix this. http://anglebug.com/2743
+    // TODO(jmadill): Fix this. http://anglebug.com/42261451
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
 
     glBindFramebuffer(GL_FRAMEBUFFER, mOriginalFBO);
@@ -997,8 +997,8 @@ TEST_P(BlitFramebufferANGLETest, ReverseOversizedBlit)
 // blit from user-created FBO to system framebuffer, with depth buffer.
 TEST_P(BlitFramebufferANGLETest, BlitWithDepthUserToDefault)
 {
-    // TODO(http://anglebug.com/6154): glBlitFramebufferANGLE() generates GL_INVALID_OPERATION for
-    // the ES2_OpenGL backend.
+    // TODO(http://anglebug.com/42264679): glBlitFramebufferANGLE() generates GL_INVALID_OPERATION
+    // for the ES2_OpenGL backend.
     ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsOpenGL());
 
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_framebuffer_blit"));
@@ -1243,10 +1243,10 @@ TEST_P(BlitFramebufferANGLETest, BlitStencil)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_framebuffer_blit"));
 
-    // http://anglebug.com/2205
+    // http://anglebug.com/40096473
     ANGLE_SKIP_TEST_IF(IsIntel() && IsD3D9());
 
-    // http://anglebug.com/5396
+    // http://anglebug.com/42263934
     ANGLE_SKIP_TEST_IF(IsAMD() && IsD3D9());
 
     BlitStencilTestHelper(false /* mesaFlipY */);
@@ -1258,10 +1258,10 @@ TEST_P(BlitFramebufferANGLETest, BlitStencilWithMesaYFlip)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_framebuffer_blit") ||
                        !IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"));
 
-    // http://anglebug.com/2205
+    // http://anglebug.com/40096473
     ANGLE_SKIP_TEST_IF(IsIntel() && IsD3D9());
 
-    // http://anglebug.com/5396
+    // http://anglebug.com/42263934
     ANGLE_SKIP_TEST_IF(IsAMD() && IsD3D9());
 
     BlitStencilTestHelper(true /* mesaFlipY */);
@@ -1477,7 +1477,7 @@ TEST_P(BlitFramebufferANGLETest, Errors)
 }
 
 // TODO(geofflang): Fix the dependence on glBlitFramebufferANGLE without checks and assuming the
-// default framebuffer is BGRA to enable the GL and GLES backends. (http://anglebug.com/1289)
+// default framebuffer is BGRA to enable the GL and GLES backends. (http://anglebug.com/42260299)
 
 class BlitFramebufferTest : public ANGLETest<>
 {
@@ -1787,7 +1787,7 @@ TEST_P(BlitFramebufferTest, MultisampleDepth)
 // Blit multisample stencil buffer to default framebuffer without prerotaion.
 TEST_P(BlitFramebufferTest, BlitMultisampleStencilToDefault)
 {
-    // http://anglebug.com/3496
+    // http://anglebug.com/42262159
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -1855,7 +1855,7 @@ TEST_P(BlitFramebufferTest, BlitMultisampleStencilToDefault)
 // Tests clearing a multisampled depth buffer.
 TEST_P(BlitFramebufferTest, MultisampleDepthClear)
 {
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
     GLRenderbuffer depthMS;
@@ -1912,7 +1912,7 @@ TEST_P(BlitFramebufferTest, MultisampleDepthClear)
 // Tests clearing a multisampled depth buffer with a glFenceSync in between.
 TEST_P(BlitFramebufferTest, MultisampleDepthClearWithFenceSync)
 {
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
     GLRenderbuffer depthMS;
@@ -2132,7 +2132,7 @@ TEST_P(BlitFramebufferTest, ScissoredMultisampleStencil)
 // identical formats so that the path that uses vkCmdBlitImage is taken.
 TEST_P(BlitFramebufferTest, NonZeroBaseSource)
 {
-    // http://anglebug.com/5001
+    // http://anglebug.com/40644751
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     ANGLE_GL_PROGRAM(drawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
@@ -2224,7 +2224,7 @@ TEST_P(BlitFramebufferTest, NonZeroBaseDestination)
 // Test blitting from a stencil buffer with non-zero base.
 TEST_P(BlitFramebufferTest, NonZeroBaseSourceStencil)
 {
-    // http://anglebug.com/5001
+    // http://anglebug.com/40644751
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     ANGLE_GL_PROGRAM(drawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
@@ -2288,10 +2288,10 @@ TEST_P(BlitFramebufferTest, NonZeroBaseSourceStencil)
 // Test blitting to a stencil buffer with non-zero base.
 TEST_P(BlitFramebufferTest, NonZeroBaseDestinationStencil)
 {
-    // http://anglebug.com/5001
+    // http://anglebug.com/40644751
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
-    // http://anglebug.com/5003
+    // http://anglebug.com/42263576
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
 
     ANGLE_GL_PROGRAM(drawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
@@ -2356,10 +2356,10 @@ TEST_P(BlitFramebufferTest, NonZeroBaseDestinationStencil)
 // backend if stencil export is not supported.  The blit is not 1-to-1 for this path to be taken.
 TEST_P(BlitFramebufferTest, NonZeroBaseDestinationStencilStretch)
 {
-    // http://anglebug.com/5000
+    // http://anglebug.com/40644750
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
 
-    // http://anglebug.com/5001
+    // http://anglebug.com/40644751
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     ANGLE_GL_PROGRAM(drawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());

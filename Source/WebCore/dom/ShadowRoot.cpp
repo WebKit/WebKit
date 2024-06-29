@@ -42,6 +42,7 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "StyleSheetList.h"
+#include "TrustedType.h"
 #include "WebAnimation.h"
 #include "markup.h"
 #include <wtf/IsoMallocInlines.h>
@@ -206,9 +207,14 @@ ExceptionOr<void> ShadowRoot::replaceChildrenWithMarkup(const String& markup, Op
     return replaceChildrenWithFragment(*this, fragment.releaseReturnValue());
 }
 
-ExceptionOr<void> ShadowRoot::setHTMLUnsafe(const String& html)
+ExceptionOr<void> ShadowRoot::setHTMLUnsafe(std::variant<RefPtr<TrustedHTML>, String>&& html)
 {
-    return replaceChildrenWithMarkup(html, { ParserContentPolicy::AllowDeclarativeShadowRoots, ParserContentPolicy::AlwaysParseAsHTML });
+    auto stringValueHolder = trustedTypeCompliantString(*document().scriptExecutionContext(), WTFMove(html), "ShadowRoot setHTMLUnsafe"_s);
+
+    if (stringValueHolder.hasException())
+        return stringValueHolder.releaseException();
+
+    return replaceChildrenWithMarkup(stringValueHolder.releaseReturnValue(), { ParserContentPolicy::AllowDeclarativeShadowRoots, ParserContentPolicy::AlwaysParseAsHTML });
 }
 
 String ShadowRoot::getHTML(GetHTMLOptions&& options) const
@@ -221,9 +227,14 @@ String ShadowRoot::innerHTML() const
     return serializeFragment(*this, SerializedNodes::SubtreesOfChildren, nullptr, ResolveURLs::NoExcludingURLsForPrivacy);
 }
 
-ExceptionOr<void> ShadowRoot::setInnerHTML(const String& markup)
+ExceptionOr<void> ShadowRoot::setInnerHTML(std::variant<RefPtr<TrustedHTML>, String>&& html)
 {
-    return replaceChildrenWithMarkup(markup, { });
+    auto stringValueHolder = trustedTypeCompliantString(*document().scriptExecutionContext(), WTFMove(html), "ShadowRoot innerHTML"_s);
+
+    if (stringValueHolder.hasException())
+        return stringValueHolder.releaseException();
+
+    return replaceChildrenWithMarkup(stringValueHolder.releaseReturnValue(), { });
 }
 
 bool ShadowRoot::childTypeAllowed(NodeType type) const

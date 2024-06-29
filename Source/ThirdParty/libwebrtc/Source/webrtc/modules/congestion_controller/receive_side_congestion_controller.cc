@@ -10,6 +10,8 @@
 
 #include "modules/congestion_controller/include/receive_side_congestion_controller.h"
 
+#include "absl/base/nullability.h"
+#include "api/environment/environment.h"
 #include "api/media_types.h"
 #include "api/units/data_rate.h"
 #include "modules/pacing/packet_router.h"
@@ -67,6 +69,21 @@ void ReceiveSideCongestionController::PickEstimator(
     }
   }
 }
+
+ReceiveSideCongestionController::ReceiveSideCongestionController(
+    const Environment& env,
+    RemoteEstimatorProxy::TransportFeedbackSender feedback_sender,
+    RembThrottler::RembSender remb_sender,
+    absl::Nullable<NetworkStateEstimator*> network_state_estimator)
+    : clock_(env.clock()),
+      remb_throttler_(std::move(remb_sender), &clock_),
+      remote_estimator_proxy_(std::move(feedback_sender),
+                              network_state_estimator),
+      rbe_(
+          std::make_unique<RemoteBitrateEstimatorSingleStream>(&remb_throttler_,
+                                                               &clock_)),
+      using_absolute_send_time_(false),
+      packets_since_absolute_send_time_(0) {}
 
 ReceiveSideCongestionController::ReceiveSideCongestionController(
     Clock* clock,

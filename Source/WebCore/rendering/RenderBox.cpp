@@ -114,16 +114,16 @@ static_assert(sizeof(RenderBox) == sizeof(SameSizeAsRenderBox), "RenderBox shoul
 
 using namespace HTMLNames;
 
-using OverrideSizeMap = HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit>;
+using OverrideSizeMap = SingleThreadWeakHashMap<const RenderBox, LayoutUnit>;
 static OverrideSizeMap* gOverridingLogicalHeightMap = nullptr;
 static OverrideSizeMap* gOverridingLogicalWidthMap = nullptr;
 
-using OverridingLengthMap = HashMap<SingleThreadWeakRef<const RenderBox>, Length>;
+using OverridingLengthMap = SingleThreadWeakHashMap<const RenderBox, Length>;
 static OverridingLengthMap* gOverridingLogicalHeightLengthMap = nullptr;
 static OverridingLengthMap* gOverridingLogicalWidthLengthMap = nullptr;
 
 // FIXME: We should store these based on physical direction.
-using OverrideOptionalSizeMap = HashMap<SingleThreadWeakRef<const RenderBox>, std::optional<LayoutUnit>>;
+using OverrideOptionalSizeMap = SingleThreadWeakHashMap<const RenderBox, RenderBox::ContainingBlockOverrideValue>;
 static OverrideOptionalSizeMap* gOverridingContainingBlockContentLogicalHeightMap = nullptr;
 static OverrideOptionalSizeMap* gOverridingContainingBlockContentLogicalWidthMap = nullptr;
 
@@ -155,13 +155,6 @@ void RenderBox::willBeDestroyed()
 {
     if (frame().eventHandler().autoscrollRenderer() == this)
         frame().eventHandler().stopAutoscrollTimer(true);
-
-    clearOverridingContentSize();
-    clearOverridingContainingBlockContentSize();
-
-    RenderBlock::removePercentHeightDescendantIfNeeded(*this);
-
-    ShapeOutsideInfo::removeInfo(*this);
 
     if (hasInitializedStyle()) {
         if (style().hasSnapPosition())
@@ -441,9 +434,9 @@ void RenderBox::updateShapeOutsideInfoAfterStyleChange(const RenderStyle& style,
         return;
 
     if (!shapeOutside)
-        ShapeOutsideInfo::removeInfo(*this);
+        removeShapeOutsideInfo();
     else
-        ShapeOutsideInfo::ensureInfo(*this).markShapeAsDirty();
+        ensureShapeOutsideInfo().markShapeAsDirty();
 
     if (shapeOutside || shapeOutside != oldShapeOutside)
         markShapeOutsideDependentsForLayout();
@@ -863,8 +856,7 @@ FloatQuad RenderBox::absoluteContentQuad() const
 LayoutRect RenderBox::localOutlineBoundsRepaintRect() const
 {
     auto box = borderBoundingBox();
-    applyVisualEffectOverflow(box);
-    return box;
+    return applyVisualEffectOverflow(box);
 }
 
 LayoutRect RenderBox::outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap* geometryMap) const
@@ -1271,16 +1263,6 @@ LayoutUnit RenderBox::maxPreferredLogicalWidth() const
     return m_maxPreferredLogicalWidth;
 }
 
-bool RenderBox::hasOverridingLogicalHeight() const
-{
-    return gOverridingLogicalHeightMap && gOverridingLogicalHeightMap->contains(*this);
-}
-
-bool RenderBox::hasOverridingLogicalWidth() const
-{
-    return gOverridingLogicalWidthMap && gOverridingLogicalWidthMap->contains(*this);
-}
-
 void RenderBox::setOverridingLogicalHeight(LayoutUnit height)
 {
     if (!gOverridingLogicalHeightMap)
@@ -1313,86 +1295,64 @@ void RenderBox::clearOverridingContentSize()
     clearOverridingLogicalWidth();
 }
 
-LayoutUnit RenderBox::overridingLogicalWidth() const
+std::optional<LayoutUnit> RenderBox::overridingLogicalWidth() const
 {
-    ASSERT(hasOverridingLogicalWidth());
-    return gOverridingLogicalWidthMap->get(*this);
+    if (!gOverridingLogicalWidthMap)
+        return { };
+    if (auto result = gOverridingLogicalWidthMap->find(*this); result != gOverridingLogicalWidthMap->end())
+        return result->value;
+    return { };
 }
 
-LayoutUnit RenderBox::overridingLogicalHeight() const
+std::optional<LayoutUnit> RenderBox::overridingLogicalHeight() const
 {
-    ASSERT(hasOverridingLogicalHeight());
-    return gOverridingLogicalHeightMap->get(*this);
+    if (!gOverridingLogicalHeightMap)
+        return { };
+    if (auto result = gOverridingLogicalHeightMap->find(*this); result != gOverridingLogicalHeightMap->end())
+        return result->value;
+    return { };
 }
 
-std::optional<LayoutUnit> RenderBox::overridingContainingBlockContentWidth() const
+std::optional<RenderBox::ContainingBlockOverrideValue> RenderBox::overridingContainingBlockContentWidth(WritingMode writingMode) const
 {
-    ASSERT(hasOverridingContainingBlockContentWidth());
-    return containingBlock()->style().isHorizontalWritingMode()
-        ? gOverridingContainingBlockContentLogicalWidthMap->get(*this)
-        : gOverridingContainingBlockContentLogicalHeightMap->get(*this);
+    if (WebCore::isHorizontalWritingMode(writingMode))
+        return overridingContainingBlockContentLogicalWidth();
+    return overridingContainingBlockContentLogicalHeight();
 }
 
-std::optional<LayoutUnit> RenderBox::overridingContainingBlockContentHeight() const
+std::optional<RenderBox::ContainingBlockOverrideValue> RenderBox::overridingContainingBlockContentHeight(WritingMode writingMode) const
 {
-    ASSERT(hasOverridingContainingBlockContentHeight());
-    return containingBlock()->style().isHorizontalWritingMode()
-        ? gOverridingContainingBlockContentLogicalHeightMap->get(*this)
-        : gOverridingContainingBlockContentLogicalWidthMap->get(*this);
+    if (WebCore::isHorizontalWritingMode(writingMode))
+        return overridingContainingBlockContentLogicalHeight();
+    return overridingContainingBlockContentLogicalWidth();
 }
 
-bool RenderBox::hasOverridingContainingBlockContentWidth() const
+std::optional<RenderBox::ContainingBlockOverrideValue> RenderBox::overridingContainingBlockContentLogicalWidth() const
 {
-    RenderBlock* cb = containingBlock();
-    if (!cb)
-        return false;
-
-    return cb->style().isHorizontalWritingMode()
-        ? gOverridingContainingBlockContentLogicalWidthMap && gOverridingContainingBlockContentLogicalWidthMap->contains(*this)
-        : gOverridingContainingBlockContentLogicalHeightMap && gOverridingContainingBlockContentLogicalHeightMap->contains(*this);
+    if (!gOverridingContainingBlockContentLogicalWidthMap)
+        return { };
+    if (auto result = gOverridingContainingBlockContentLogicalWidthMap->find(*this); result != gOverridingContainingBlockContentLogicalWidthMap->end())
+        return result->value;
+    return { };
 }
 
-bool RenderBox::hasOverridingContainingBlockContentHeight() const
+std::optional<RenderBox::ContainingBlockOverrideValue> RenderBox::overridingContainingBlockContentLogicalHeight() const
 {
-    RenderBlock* cb = containingBlock();
-    if (!cb)
-        return false;
-
-    return cb->style().isHorizontalWritingMode()
-        ? gOverridingContainingBlockContentLogicalHeightMap && gOverridingContainingBlockContentLogicalHeightMap->contains(*this)
-        : gOverridingContainingBlockContentLogicalWidthMap && gOverridingContainingBlockContentLogicalWidthMap->contains(*this);
+    if (!gOverridingContainingBlockContentLogicalHeightMap)
+        return { };
+    if (auto result = gOverridingContainingBlockContentLogicalHeightMap->find(*this); result != gOverridingContainingBlockContentLogicalHeightMap->end())
+        return result->value;
+    return { };
 }
 
-std::optional<LayoutUnit> RenderBox::overridingContainingBlockContentLogicalWidth() const
-{
-    ASSERT(hasOverridingContainingBlockContentLogicalWidth());
-    return gOverridingContainingBlockContentLogicalWidthMap->get(*this);
-}
-
-std::optional<LayoutUnit> RenderBox::overridingContainingBlockContentLogicalHeight() const
-{
-    ASSERT(hasOverridingContainingBlockContentLogicalHeight());
-    return gOverridingContainingBlockContentLogicalHeightMap->get(*this);
-}
-
-bool RenderBox::hasOverridingContainingBlockContentLogicalWidth() const
-{
-    return gOverridingContainingBlockContentLogicalWidthMap && gOverridingContainingBlockContentLogicalWidthMap->contains(*this);
-}
-
-bool RenderBox::hasOverridingContainingBlockContentLogicalHeight() const
-{
-    return gOverridingContainingBlockContentLogicalHeightMap && gOverridingContainingBlockContentLogicalHeightMap->contains(*this);
-}
-
-void RenderBox::setOverridingContainingBlockContentLogicalWidth(std::optional<LayoutUnit> logicalWidth)
+void RenderBox::setOverridingContainingBlockContentLogicalWidth(ContainingBlockOverrideValue logicalWidth)
 {
     if (!gOverridingContainingBlockContentLogicalWidthMap)
         gOverridingContainingBlockContentLogicalWidthMap = new OverrideOptionalSizeMap;
     gOverridingContainingBlockContentLogicalWidthMap->set(*this, logicalWidth);
 }
 
-void RenderBox::setOverridingContainingBlockContentLogicalHeight(std::optional<LayoutUnit> logicalHeight)
+void RenderBox::setOverridingContainingBlockContentLogicalHeight(ContainingBlockOverrideValue logicalHeight)
 {
     if (!gOverridingContainingBlockContentLogicalHeightMap)
         gOverridingContainingBlockContentLogicalHeightMap = new OverrideOptionalSizeMap;
@@ -1412,10 +1372,13 @@ void RenderBox::clearOverridingContainingBlockContentLogicalHeight()
         gOverridingContainingBlockContentLogicalHeightMap->remove(*this);
 }
 
-Length RenderBox::overridingLogicalHeightLength() const
+std::optional<Length> RenderBox::overridingLogicalHeightLength() const
 {
-    ASSERT(hasOverridingLogicalHeightLength());
-    return gOverridingLogicalHeightLengthMap->get(*this);
+    if (!gOverridingLogicalHeightLengthMap)
+        return { };
+    if (auto result = gOverridingLogicalHeightLengthMap->find(*this); result != gOverridingLogicalHeightLengthMap->end())
+        return result->value;
+    return { };
 }
 
 void RenderBox::setOverridingLogicalHeightLength(const Length& height)
@@ -1425,21 +1388,19 @@ void RenderBox::setOverridingLogicalHeightLength(const Length& height)
     gOverridingLogicalHeightLengthMap->set(*this, height);
 }
 
-bool RenderBox::hasOverridingLogicalHeightLength() const
-{
-    return gOverridingLogicalHeightLengthMap && gOverridingLogicalHeightLengthMap->contains(*this);
-}
-
 void RenderBox::clearOverridingLogicalHeightLength()
 {
     if (gOverridingLogicalHeightLengthMap)
         gOverridingLogicalHeightLengthMap->remove(*this);
 }
 
-Length RenderBox::overridingLogicalWidthLength() const
+std::optional<Length> RenderBox::overridingLogicalWidthLength() const
 {
-    ASSERT(hasOverridingLogicalWidthLength());
-    return gOverridingLogicalWidthLengthMap->get(*this);
+    if (!gOverridingLogicalWidthLengthMap)
+        return { };
+    if (auto result = gOverridingLogicalWidthLengthMap->find(*this); result != gOverridingLogicalWidthLengthMap->end())
+        return result->value;
+    return { };
 }
 
 void RenderBox::setOverridingLogicalWidthLength(const Length& height)
@@ -1447,11 +1408,6 @@ void RenderBox::setOverridingLogicalWidthLength(const Length& height)
     if (!gOverridingLogicalWidthLengthMap)
         gOverridingLogicalWidthLengthMap = new OverridingLengthMap();
     gOverridingLogicalWidthLengthMap->set(*this, height);
-}
-
-bool RenderBox::hasOverridingLogicalWidthLength() const
-{
-    return gOverridingLogicalWidthLengthMap && gOverridingLogicalWidthLengthMap->contains(*this);
 }
 
 void RenderBox::clearOverridingLogicalWidthLength()
@@ -2050,7 +2006,7 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 
     ShapeValue* shapeOutsideValue = style().shapeOutside();
     if (!view().frameView().layoutContext().isInRenderTreeLayout() && isFloating() && shapeOutsideValue && shapeOutsideValue->image() && shapeOutsideValue->image()->data() == image) {
-        ShapeOutsideInfo::ensureInfo(*this).markShapeAsDirty();
+        ensureShapeOutsideInfo().markShapeAsDirty();
         markShapeOutsideDependentsForLayout();
     }
 
@@ -2307,28 +2263,28 @@ LayoutUnit RenderBox::shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStar
 
 LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
 {
-    if (hasOverridingContainingBlockContentLogicalWidth())
-        return overridingContainingBlockContentLogicalWidth().value_or(0_lu);
+    if (auto overridingContainingBlockContentLogicalWidth = this->overridingContainingBlockContentLogicalWidth())
+        return overridingContainingBlockContentLogicalWidth->value_or(0_lu);
 
-    if (RenderBlock* cb = containingBlock()) {
-        if (isOutOfFlowPositioned())
-            return cb->clientLogicalWidth();
-        return cb->availableLogicalWidth();
-    }
+    if (auto* containingBlock = this->containingBlock())
+        return isOutOfFlowPositioned() ? containingBlock->clientLogicalWidth() : containingBlock->availableLogicalWidth();
+
+    ASSERT_NOT_REACHED();
     return 0_lu;
 }
 
 LayoutUnit RenderBox::containingBlockLogicalHeightForContent(AvailableLogicalHeightType heightType) const
 {
-    if (hasOverridingContainingBlockContentLogicalHeight()) {
+    if (auto overridingContainingBlockContentLogicalHeight = this->overridingContainingBlockContentLogicalHeight(); overridingContainingBlockContentLogicalHeight && *overridingContainingBlockContentLogicalHeight) {
         // FIXME: Containing block for a grid item is the grid area it's located in. We need to return whatever
         // height value we get from overridingContainingBlockContentLogicalHeight() here, including std::nullopt.
-        if (auto height = overridingContainingBlockContentLogicalHeight())
-            return height.value();
+        return overridingContainingBlockContentLogicalHeight->value();
     }
 
-    if (RenderBlock* cb = containingBlock())
-        return cb->availableLogicalHeight(heightType);
+    if (auto* containingBlock = this->containingBlock())
+        return containingBlock->availableLogicalHeight(heightType);
+
+    ASSERT_NOT_REACHED();
     return 0_lu;
 }
 
@@ -2363,29 +2319,27 @@ LayoutUnit RenderBox::containingBlockAvailableLineWidthInFragment(RenderFragment
 
 LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
 {
-    if (hasOverridingContainingBlockContentLogicalHeight()) {
-        if (auto height = overridingContainingBlockContentLogicalHeight())
-            return height.value();
-    }
+    if (auto overridingContainingBlockContentLogicalHeight = this->overridingContainingBlockContentLogicalHeight(); overridingContainingBlockContentLogicalHeight && *overridingContainingBlockContentLogicalHeight)
+        return overridingContainingBlockContentLogicalHeight->value();
 
-    RenderBlock* cb = containingBlock();
-    if (cb->hasOverridingLogicalHeight())
-        return cb->overridingContentLogicalHeight();
+    auto* containingBlock = this->containingBlock();
+    if (auto overridingLogicalHeight = containingBlock->overridingLogicalHeight())
+        return containingBlock->overridingContentLogicalHeight(*overridingLogicalHeight);
 
-    const RenderStyle& containingBlockStyle = cb->style();
+    const RenderStyle& containingBlockStyle = containingBlock->style();
     Length logicalHeightLength = containingBlockStyle.logicalHeight();
 
     // FIXME: For now just support fixed heights.  Eventually should support percentage heights as well.
     if (!logicalHeightLength.isFixed()) {
         LayoutUnit fillFallbackExtent = containingBlockStyle.isHorizontalWritingMode() ? view().frameView().layoutSize().height() : view().frameView().layoutSize().width();
-        LayoutUnit fillAvailableExtent = containingBlock()->availableLogicalHeight(ExcludeMarginBorderPadding);
+        LayoutUnit fillAvailableExtent = containingBlock->availableLogicalHeight(ExcludeMarginBorderPadding);
         view().addPercentHeightDescendant(const_cast<RenderBox&>(*this));
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=158286 We also need to perform the same percentHeightDescendant treatment to the element which dictates the return value for containingBlock()->availableLogicalHeight() above.
         return std::min(fillAvailableExtent, fillFallbackExtent);
     }
 
     // Use the content box logical height as specified by the style.
-    return cb->adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit(logicalHeightLength.value()));
+    return containingBlock->adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit(logicalHeightLength.value()));
 }
 
 void RenderBox::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
@@ -2589,9 +2543,9 @@ auto RenderBox::computeVisibleRectsInContainer(const RepaintRects& rects, const 
     // We are now in our parent container's coordinate space. Apply our transform to obtain a bounding box
     // in the parent's coordinate space that encloses us.
     auto position = styleToUse.position();
-    if (hasLayer() && layer()->transform()) {
+    if (hasLayer() && layer()->isTransformed()) {
         context.hasPositionFixedDescendant = position == PositionType::Fixed;
-        adjustedRects.transform(*layer()->transform(), document().deviceScaleFactor());
+        adjustedRects.transform(layer()->currentTransform(), document().deviceScaleFactor());
     } else if (position == PositionType::Fixed)
         context.hasPositionFixedDescendant = true;
 
@@ -2683,8 +2637,8 @@ void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& compu
     // width.  Use the width from the style context.
     // FIXME: Account for block-flow in flexible boxes.
     // https://bugs.webkit.org/show_bug.cgi?id=46418
-    if (hasOverridingLogicalWidth() && parent()->isFlexibleBoxIncludingDeprecated()) {
-        computedValues.m_extent = overridingLogicalWidth();
+    if (auto overridingLogicalWidth = (parent()->isFlexibleBoxIncludingDeprecated() ? this->overridingLogicalWidth() : std::nullopt)) {
+        computedValues.m_extent = *overridingLogicalWidth;
         return;
     }
 
@@ -2699,9 +2653,11 @@ void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& compu
 
     const RenderStyle& styleToUse = style();
     Length logicalWidthLength;
-    if (hasOverridingLogicalWidthLength())
-        logicalWidthLength = overridingLogicalWidthLength();
-    else
+    auto hasOverridingLogicalWidthLength = false;
+    if (auto overridingLogicalWidthLength = this->overridingLogicalWidthLength()) {
+        logicalWidthLength = *overridingLogicalWidthLength;
+        hasOverridingLogicalWidthLength = true;
+    } else
         logicalWidthLength = treatAsReplaced ? Length(computeReplacedLogicalWidth(), LengthType::Fixed) : styleToUse.logicalWidth();
 
     RenderBlock& cb = *containingBlock();
@@ -2722,14 +2678,14 @@ void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& compu
         containerWidthInInlineDirection = perpendicularContainingBlockLogicalHeight();
 
     // Width calculations
-    if (isGridItem() && hasOverridingLogicalWidth()) {
-        computedValues.m_extent = overridingLogicalWidth();
-    } else if (treatAsReplaced) {
+    if (auto overridingLogicalWidth = (isGridItem() ? this->overridingLogicalWidth() : std::nullopt))
+        computedValues.m_extent = *overridingLogicalWidth;
+    else if (treatAsReplaced)
         computedValues.m_extent = logicalWidthLength.value() + borderAndPaddingLogicalWidth();
-    } else if (shouldComputeLogicalWidthFromAspectRatio() && style().logicalWidth().isAuto()) {
+    else if (shouldComputeLogicalWidthFromAspectRatio() && style().logicalWidth().isAuto())
         computedValues.m_extent = computeLogicalWidthFromAspectRatio(fragment);
-    } else {
-        LayoutUnit preferredWidth = computeLogicalWidthInFragmentUsing(MainOrPreferredSize, hasOverridingLogicalWidthLength() ? logicalWidthLength : styleToUse.logicalWidth(), containerWidthInInlineDirection, cb, fragment);
+    else {
+        auto preferredWidth = computeLogicalWidthInFragmentUsing(MainOrPreferredSize, hasOverridingLogicalWidthLength ? logicalWidthLength : styleToUse.logicalWidth(), containerWidthInInlineDirection, cb, fragment);
         computedValues.m_extent = constrainLogicalWidthInFragmentByMinMax(preferredWidth, containerWidthInInlineDirection, cb, fragment);
     }
 
@@ -3134,7 +3090,7 @@ void RenderBox::cacheIntrinsicContentLogicalHeightForFlexItem(LayoutUnit height)
     CheckedPtr flexibleBox = dynamicDowncast<RenderFlexibleBox>(parent());
     if (!flexibleBox)
         return;
-    if (hasOverridingLogicalHeight() || shouldComputeLogicalHeightFromAspectRatio())
+    if (overridingLogicalHeight() || shouldComputeLogicalHeightFromAspectRatio())
         return;
     flexibleBox->setCachedChildIntrinsicContentLogicalHeight(*this, height);
 }
@@ -3214,18 +3170,20 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
         bool stretching = parent()->style().boxAlign() == BoxAlignment::Stretch;
         bool treatAsReplaced = shouldComputeSizeAsReplaced() && (!inHorizontalBox || !stretching);
         bool checkMinMaxHeight = false;
-        const auto& logicalHeightInUse = hasOverridingLogicalHeightLength() ? overridingLogicalHeightLength() : style().logicalHeight();
 
         // The parent box is flexing us, so it has increased or decreased our height.  We have to
         // grab our cached flexible height.
         // FIXME: Account for block-flow in flexible boxes.
         // https://bugs.webkit.org/show_bug.cgi?id=46418
-        if (hasOverridingLogicalHeight() && (parent()->isFlexibleBoxIncludingDeprecated() || parent()->isRenderGrid())) {
-            h = Length(overridingLogicalHeight(), LengthType::Fixed);
-        } else if (treatAsReplaced)
+        if (auto overridingLogicalHeightForFlexOrGrid = (parent()->isFlexibleBoxIncludingDeprecated() || parent()->isRenderGrid() ? overridingLogicalHeight() : std::nullopt))
+            h = Length(*overridingLogicalHeightForFlexOrGrid, LengthType::Fixed);
+        else if (treatAsReplaced)
             h = Length(computeReplacedLogicalHeight() + borderAndPaddingLogicalHeight(), LengthType::Fixed);
         else {
-            h = logicalHeightInUse;
+            if (auto overridingLogicalHeightLength = this->overridingLogicalHeightLength())
+                h = *overridingLogicalHeightLength;
+            else
+                h = style().logicalHeight();
             checkMinMaxHeight = true;
         }
 
@@ -3252,7 +3210,7 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
             } else {
                 if (intrinsicHeight)
                     *intrinsicHeight -= borderAndPaddingLogicalHeight();
-                heightResult = computeLogicalHeightUsing(MainOrPreferredSize, logicalHeightInUse, intrinsicHeight).value_or(computedValues.m_extent);
+                heightResult = computeLogicalHeightUsing(MainOrPreferredSize, h, intrinsicHeight).value_or(computedValues.m_extent);
             }
             heightResult = constrainLogicalHeightByMinMax(heightResult, intrinsicHeight);
         } else {
@@ -3423,8 +3381,6 @@ static bool tableCellShouldHaveZeroInitialSize(const RenderBlock& block, const R
 
 std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length& height, UpdatePercentageHeightDescendants updateDescendants) const
 {
-    std::optional<LayoutUnit> availableHeight;
-
     bool skippedAutoHeightContainingBlock = false;
     RenderBlock* cb = containingBlock();
     const RenderBox* containingBlockChild = this;
@@ -3440,26 +3396,27 @@ std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length
     if (updateDescendants == UpdatePercentageHeightDescendants::Yes)
         cb->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
 
-    bool isOrthogonal = isHorizontal != cb->isHorizontalWritingMode();
-    if (hasOverridingContainingBlockContentLogicalWidth() && isOrthogonal)
-        availableHeight = overridingContainingBlockContentLogicalWidth();
-    else if (hasOverridingContainingBlockContentLogicalHeight() && !isOrthogonal)
-        availableHeight = overridingContainingBlockContentLogicalHeight();
-    else if (isOrthogonal)
-        availableHeight = containingBlockChild->containingBlockLogicalWidthForContent();
-    else if (is<RenderTableCell>(*cb)) {
-        if (!skippedAutoHeightContainingBlock) {
-            // Table cells violate what the CSS spec says to do with heights. Basically we
-            // don't care if the cell specified a height or not. We just always make ourselves
-            // be a percentage of the cell's current content height.
-            if (!cb->hasOverridingLogicalHeight())
-                return tableCellShouldHaveZeroInitialSize(*cb, *this, scrollsOverflowY()) ? std::optional<LayoutUnit>(0) : std::nullopt;
+    auto availableHeight = std::optional<LayoutUnit> { };
+    auto isOrthogonal = isHorizontal != cb->isHorizontalWritingMode();
+    if (auto overridingAvailableHeight = isOrthogonal ? overridingContainingBlockContentLogicalWidth() : overridingContainingBlockContentLogicalHeight())
+        availableHeight = *overridingAvailableHeight;
+    else {
+        if (isOrthogonal)
+            availableHeight = containingBlockChild->containingBlockLogicalWidthForContent();
+        else if (is<RenderTableCell>(*cb)) {
+            if (!skippedAutoHeightContainingBlock) {
+                // Table cells violate what the CSS spec says to do with heights. Basically we
+                // don't care if the cell specified a height or not. We just always make ourselves
+                // be a percentage of the cell's current content height.
+                auto overridingLogicalHeight = cb->overridingLogicalHeight();
+                if (!overridingLogicalHeight)
+                    return tableCellShouldHaveZeroInitialSize(*cb, *this, scrollsOverflowY()) ? std::optional<LayoutUnit>(0) : std::nullopt;
+                availableHeight = *overridingLogicalHeight - cb->computedCSSPaddingBefore() - cb->computedCSSPaddingAfter() - cb->borderBefore() - cb->borderAfter() - cb->scrollbarLogicalHeight();
+            }
+        } else
+            availableHeight = cb->availableLogicalHeightForPercentageComputation();
+    }
 
-            availableHeight = cb->overridingLogicalHeight() - cb->computedCSSPaddingBefore() - cb->computedCSSPaddingAfter() - cb->borderBefore() - cb->borderAfter() - cb->scrollbarLogicalHeight();
-        }
-    } else
-        availableHeight = cb->availableLogicalHeightForPercentageComputation();
-    
     if (!availableHeight)
         return availableHeight;
 
@@ -3471,7 +3428,7 @@ std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length
     // then we must subtract the border and padding from the cell's
     // |availableHeight| (given by |overridingLogicalHeight|) to arrive
     // at the child's computed height.
-    bool subtractBorderAndPadding = isRenderTable() || (is<RenderTableCell>(*cb) && !skippedAutoHeightContainingBlock && cb->hasOverridingLogicalHeight() && style().boxSizing() == BoxSizing::ContentBox);
+    bool subtractBorderAndPadding = isRenderTable() || (is<RenderTableCell>(*cb) && !skippedAutoHeightContainingBlock && cb->overridingLogicalHeight() && style().boxSizing() == BoxSizing::ContentBox);
     if (subtractBorderAndPadding) {
         result -= borderAndPaddingLogicalHeight();
         return std::max(0_lu, result);
@@ -3605,8 +3562,10 @@ bool RenderBox::replacedMinMaxLogicalHeightComputesAsNone(SizeType sizeType) con
     if (logicalHeight == initialLogicalHeight)
         return true;
     
-    if (logicalHeight.isPercentOrCalculated() && hasOverridingContainingBlockContentLogicalHeight())
-        return overridingContainingBlockContentLogicalHeight() == std::nullopt;
+    if (logicalHeight.isPercentOrCalculated()) {
+        if (auto overridingContainingBlockContentLogicalHeight = this->overridingContainingBlockContentLogicalHeight())
+            return !*overridingContainingBlockContentLogicalHeight;
+    }
 
     // Make sure % min-height and % max-height resolve to none if the containing block has auto height.
     // Note that the "height" case for replaced elements was handled by hasReplacedLogicalHeight, which is why
@@ -3658,10 +3617,10 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
         std::optional<LayoutUnit> stretchedHeight;
         if (auto* block = dynamicDowncast<RenderBlock>(container)) {
             block->addPercentHeightDescendant(*const_cast<RenderBox*>(this));
-            if (block->isFlexItem() && downcast<RenderFlexibleBox>(block->parent())->useChildOverridingLogicalHeightForPercentageResolution(*block))
-                stretchedHeight = block->overridingContentLogicalHeight();
-            else if (block->isGridItem() && block->hasOverridingLogicalHeight() && !hasPerpendicularContainingBlock)
-                stretchedHeight = block->overridingContentLogicalHeight();
+            if (auto usedChildOverridingLogicalHeightForPercentageResolutionForFlex = (block->isFlexItem() ? downcast<RenderFlexibleBox>(block->parent())->usedChildOverridingLogicalHeightForPercentageResolution(*block) : std::nullopt))
+                stretchedHeight = block->overridingContentLogicalHeight(*usedChildOverridingLogicalHeightForPercentageResolutionForFlex);
+            else if (auto usedChildOverridingLogicalHeightForGrid = (block->isGridItem() && !hasPerpendicularContainingBlock ? block->overridingLogicalHeight() : std::nullopt))
+                stretchedHeight = block->overridingContentLogicalHeight(*usedChildOverridingLogicalHeightForGrid);
         }
 
         // FIXME: This calculation is not patched for block-flow yet.
@@ -3722,13 +3681,13 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
     // artificially.  We're going to rely on this cell getting expanded to some new
     // height, and then when we lay out again we'll use the calculation below.
     if (isRenderTableCell() && (h.isAuto() || h.isPercentOrCalculated())) {
-        if (hasOverridingLogicalHeight())
-            return overridingLogicalHeight() - computedCSSPaddingBefore() - computedCSSPaddingAfter() - borderBefore() - borderAfter() - scrollbarLogicalHeight();
+        if (auto overridingLogicalHeight = this->overridingLogicalHeight())
+            return *overridingLogicalHeight - computedCSSPaddingBefore() - computedCSSPaddingAfter() - borderBefore() - borderAfter() - scrollbarLogicalHeight();
         return logicalHeight() - borderAndPaddingLogicalHeight();
     }
 
-    if (isFlexItem() && downcast<RenderFlexibleBox>(*parent()).useChildOverridingLogicalHeightForPercentageResolution(*this))
-        return overridingContentLogicalHeight();
+    if (auto usedChildOverridingLogicalHeightForPercentageResolutionForFlex = (isFlexItem() ? downcast<RenderFlexibleBox>(*parent()).usedChildOverridingLogicalHeightForPercentageResolution(*this) : std::nullopt))
+        return overridingContentLogicalHeight(*usedChildOverridingLogicalHeightForPercentageResolutionForFlex);
 
     if (shouldComputeLogicalHeightFromAspectRatio()) {
         auto borderAndPaddingLogicalHeight = this->borderAndPaddingLogicalHeight();
@@ -3811,10 +3770,8 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
     if (checkForPerpendicularWritingMode && containingBlock.isHorizontalWritingMode() != isHorizontalWritingMode())
         return containingBlockLogicalHeightForPositioned(containingBlock, false);
 
-    if (hasOverridingContainingBlockContentLogicalWidth()) {
-        if (auto width = overridingContainingBlockContentLogicalWidth())
-            return width.value();
-    }
+    if (auto overridingContainingBlockContentLogicalWidth = this->overridingContainingBlockContentLogicalWidth(); overridingContainingBlockContentLogicalWidth && *overridingContainingBlockContentLogicalWidth)
+        return overridingContainingBlockContentLogicalWidth->value();
 
     if (auto* box = dynamicDowncast<RenderBox>(containingBlock)) {
         bool isFixedPosition = isFixedPositioned();
@@ -3863,10 +3820,8 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
     if (checkForPerpendicularWritingMode && containingBlock.isHorizontalWritingMode() != isHorizontalWritingMode())
         return containingBlockLogicalWidthForPositioned(containingBlock, nullptr, false);
 
-    if (hasOverridingContainingBlockContentLogicalHeight()) {
-        if (auto height = overridingContainingBlockContentLogicalHeight())
-            return height.value();
-    }
+    if (auto overridingContainingBlockContentLogicalHeight = this->overridingContainingBlockContentLogicalHeight(); overridingContainingBlockContentLogicalHeight && *overridingContainingBlockContentLogicalHeight)
+        return overridingContainingBlockContentLogicalHeight->value();
 
     if (auto* box = dynamicDowncast<RenderBox>(containingBlock)) {
         bool isFixedPosition = isFixedPositioned();
@@ -5600,7 +5555,7 @@ bool RenderBox::shouldComputeLogicalWidthFromAspectRatio() const
     auto isResolvablePercentageHeight = [&] {
         return style().logicalHeight().isPercentOrCalculated() && (isOutOfFlowPositioned() || percentageLogicalHeightIsResolvable());
     };
-    return hasOverridingLogicalHeight() || shouldComputeLogicalWidthFromAspectRatioAndInsets(*this) || style().logicalHeight().isFixed() || isResolvablePercentageHeight();
+    return overridingLogicalHeight() || shouldComputeLogicalWidthFromAspectRatioAndInsets(*this) || style().logicalHeight().isFixed() || isResolvablePercentageHeight();
 }
 
 LayoutUnit RenderBox::computeLogicalWidthFromAspectRatioInternal() const
@@ -5849,6 +5804,41 @@ void RenderBox::updateFloatPainterAfterSelfPaintingLayerChange()
     };
     if (auto* floatingObject = floatingObjectForFloatPainting())
         floatingObject->setPaintsFloat(true);
+}
+
+using ShapeOutsideInfoMap = SingleThreadWeakHashMap<const RenderBox, std::unique_ptr<ShapeOutsideInfo>>;
+static ShapeOutsideInfoMap& shapeOutsideInfoMap()
+{
+    static NeverDestroyed<ShapeOutsideInfoMap> staticInfoMap;
+    return staticInfoMap;
+}
+
+ShapeOutsideInfo* RenderBox::shapeOutsideInfo() const
+{
+    if (!renderBoxHasShapeOutsideInfo())
+        return nullptr;
+
+    if (!ShapeOutsideInfo::isEnabledFor(*this))
+        return nullptr;
+
+    return shapeOutsideInfoMap().get(*this);
+}
+
+ShapeOutsideInfo& RenderBox::ensureShapeOutsideInfo()
+{
+    setRenderBoxHasShapeOutsideInfo(true);
+    return *shapeOutsideInfoMap().ensure(*this, [&] {
+        return makeUnique<ShapeOutsideInfo>(*this);
+    }).iterator->value;
+}
+
+void RenderBox::removeShapeOutsideInfo()
+{
+    if (!renderBoxHasShapeOutsideInfo())
+        return;
+
+    setRenderBoxHasShapeOutsideInfo(false);
+    shapeOutsideInfoMap().remove(*this);
 }
 
 } // namespace WebCore

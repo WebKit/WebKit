@@ -17,6 +17,7 @@
 #include <utility>
 #include <vector>
 
+#include "api/audio/audio_device.h"
 #include "api/crypto/frame_decryptor_interface.h"
 #include "api/frame_transformer_interface.h"
 #include "api/rtc_event_log/rtc_event_log.h"
@@ -32,7 +33,6 @@
 #include "logging/rtc_event_log/events/rtc_event_neteq_set_minimum_delay.h"
 #include "modules/audio_coding/acm2/acm_receiver.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
-#include "modules/audio_device/include/audio_device.h"
 #include "modules/pacing/packet_router.h"
 #include "modules/rtp_rtcp/include/receive_statistics.h"
 #include "modules/rtp_rtcp/include/remote_ntp_time_estimator.h"
@@ -47,6 +47,7 @@
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/numerics/sequence_number_unwrapper.h"
 #include "rtc_base/race_checker.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/time_utils.h"
@@ -312,6 +313,8 @@ class ChannelReceive : public ChannelReceiveInterface,
   mutable Mutex rtcp_counter_mutex_;
   RtcpPacketTypeCounter rtcp_packet_type_counter_
       RTC_GUARDED_BY(rtcp_counter_mutex_);
+
+  std::map<int, SdpAudioFormat> payload_type_map_;
 };
 
 void ChannelReceive::OnReceivedPayloadData(
@@ -388,9 +391,7 @@ AudioMixer::Source::AudioFrameInfo ChannelReceive::GetAudioFrameWithInfo(
   event_log_->Log(std::make_unique<RtcEventAudioPlayout>(remote_ssrc_));
 
   // Get 10ms raw PCM data from the ACM (mixer limits output frequency)
-  bool muted;
-  if (acm_receiver_.GetAudio(audio_frame->sample_rate_hz_, audio_frame,
-                             &muted) == -1) {
+  if (acm_receiver_.GetAudio(audio_frame->sample_rate_hz_, audio_frame) == -1) {
     RTC_DLOG(LS_ERROR)
         << "ChannelReceive::GetAudioFrame() PlayoutData10Ms() failed!";
     // In all likelihood, the audio in this frame is garbage. We return an
@@ -401,13 +402,6 @@ AudioMixer::Source::AudioFrameInfo ChannelReceive::GetAudioFrameWithInfo(
     TRACE_EVENT_END1("webrtc", "ChannelReceive::GetAudioFrameWithInfo", "error",
                      1);
     return AudioMixer::Source::AudioFrameInfo::kError;
-  }
-
-  if (muted) {
-    // TODO(henrik.lundin): We should be able to do better than this. But we
-    // will have to go through all the cases below where the audio samples may
-    // be used, and handle the muted case in some way.
-    AudioFrameOperations::Mute(audio_frame);
   }
 
   {
@@ -506,9 +500,9 @@ AudioMixer::Source::AudioFrameInfo ChannelReceive::GetAudioFrameWithInfo(
   }
 
   TRACE_EVENT_END2("webrtc", "ChannelReceive::GetAudioFrameWithInfo", "gain",
-                   output_gain, "muted", muted);
-  return muted ? AudioMixer::Source::AudioFrameInfo::kMuted
-               : AudioMixer::Source::AudioFrameInfo::kNormal;
+                   output_gain, "muted", audio_frame->muted());
+  return audio_frame->muted() ? AudioMixer::Source::AudioFrameInfo::kMuted
+                              : AudioMixer::Source::AudioFrameInfo::kNormal;
 }
 
 int ChannelReceive::PreferredSampleRate() const {
@@ -565,13 +559,6 @@ ChannelReceive::ChannelReceive(
   RTC_DCHECK(audio_device_module);
 
   network_thread_checker_.Detach();
-
-  acm_receiver_.ResetInitialDelay();
-  acm_receiver_.SetMinimumDelay(0);
-  acm_receiver_.SetMaximumDelay(0);
-  acm_receiver_.FlushBuffers();
-
-  _outputAudioLevel.ResetLevelFullRange();
 
   rtp_receive_statistics_->EnableRetransmitDetection(remote_ssrc_, true);
   RtpRtcpInterface::Configuration configuration;
@@ -636,6 +623,7 @@ void ChannelReceive::SetReceiveCodecs(
     RTC_DCHECK_GE(kv.second.clockrate_hz, 1000);
     payload_type_frequencies_[kv.first] = kv.second.clockrate_hz;
   }
+  payload_type_map_ = codecs;
   acm_receiver_.SetCodecs(codecs);
 }
 
@@ -722,7 +710,14 @@ void ChannelReceive::ReceivePacket(const uint8_t* packet,
   if (frame_transformer_delegate_) {
     // Asynchronously transform the received payload. After the payload is
     // transformed, the delegate will call OnReceivedPayloadData to handle it.
-    frame_transformer_delegate_->Transform(payload_data, header, remote_ssrc_);
+    char buf[1024];
+    rtc::SimpleStringBuilder mime_type(buf);
+    auto it = payload_type_map_.find(header.payloadType);
+    mime_type << MediaTypeToString(cricket::MEDIA_TYPE_AUDIO) << "/"
+              << (it != payload_type_map_.end() ? it->second.name
+                                                : "x-unknown");
+    frame_transformer_delegate_->Transform(payload_data, header, remote_ssrc_,
+                                           mime_type.str());
   } else {
     OnReceivedPayloadData(payload_data, header);
   }
@@ -914,10 +909,17 @@ void ChannelReceive::SetAssociatedSendChannel(
 void ChannelReceive::SetDepacketizerToDecoderFrameTransformer(
     rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer) {
   RTC_DCHECK_RUN_ON(&worker_thread_checker_);
-  // Depending on when the channel is created, the transformer might be set
-  // twice. Don't replace the delegate if it was already initialized.
-  if (!frame_transformer || frame_transformer_delegate_) {
+  if (!frame_transformer) {
     RTC_DCHECK_NOTREACHED() << "Not setting the transformer?";
+    return;
+  }
+  if (frame_transformer_delegate_) {
+    // Depending on when the channel is created, the transformer might be set
+    // twice. Don't replace the delegate if it was already initialized.
+    // TODO(crbug.com/webrtc/15674): Prevent multiple calls during
+    // reconfiguration.
+    RTC_CHECK_EQ(frame_transformer_delegate_->FrameTransformer(),
+                 frame_transformer);
     return;
   }
 

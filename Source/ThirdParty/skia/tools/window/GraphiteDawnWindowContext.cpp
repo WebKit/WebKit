@@ -100,17 +100,7 @@ sk_sp<SkSurface> GraphiteDawnWindowContext::getBackbufferSurface() {
 }
 
 void GraphiteDawnWindowContext::onSwapBuffers() {
-    if (fGraphiteContext) {
-        SkASSERT(fGraphiteRecorder);
-        std::unique_ptr<skgpu::graphite::Recording> recording = fGraphiteRecorder->snap();
-        if (recording) {
-            skgpu::graphite::InsertRecordingInfo info;
-            info.fRecording = recording.get();
-            fGraphiteContext->insertRecording(info);
-            fGraphiteContext->submit(skgpu::graphite::SyncToCpu::kNo);
-        }
-    }
-
+    this->snapRecordingAndSubmit();
     fSwapChain.Present();
 }
 
@@ -124,17 +114,17 @@ wgpu::Device GraphiteDawnWindowContext::createDevice(wgpu::BackendType type) {
     DawnProcTable backendProcs = dawn::native::GetProcs();
     dawnProcSetProcs(&backendProcs);
 
-    static constexpr const char* kToggles[] = {
+    static constexpr const char* kAdapterToggles[] = {
         "allow_unsafe_apis",  // Needed for dual-source blending, BufferMapExtendedUsages.
         "use_user_defined_labels_in_backend",
     };
-    wgpu::DawnTogglesDescriptor togglesDesc;
-    togglesDesc.enabledToggleCount  = std::size(kToggles);
-    togglesDesc.enabledToggles      = kToggles;
+    wgpu::DawnTogglesDescriptor adapterTogglesDesc;
+    adapterTogglesDesc.enabledToggleCount  = std::size(kAdapterToggles);
+    adapterTogglesDesc.enabledToggles      = kAdapterToggles;
 
     wgpu::RequestAdapterOptions adapterOptions;
     adapterOptions.backendType = type;
-    adapterOptions.nextInChain = &togglesDesc;
+    adapterOptions.nextInChain = &adapterTogglesDesc;
 
     std::vector<dawn::native::Adapter> adapters = fInstance->EnumerateAdapters(&adapterOptions);
     if (adapters.empty()) {
@@ -151,8 +141,8 @@ wgpu::Device GraphiteDawnWindowContext::createDevice(wgpu::BackendType type) {
     if (adapter.HasFeature(wgpu::FeatureName::TransientAttachments)) {
         features.push_back(wgpu::FeatureName::TransientAttachments);
     }
-    if (adapter.HasFeature(wgpu::FeatureName::Norm16TextureFormats)) {
-        features.push_back(wgpu::FeatureName::Norm16TextureFormats);
+    if (adapter.HasFeature(wgpu::FeatureName::Unorm16TextureFormats)) {
+        features.push_back(wgpu::FeatureName::Unorm16TextureFormats);
     }
     if (adapter.HasFeature(wgpu::FeatureName::DualSourceBlending)) {
         features.push_back(wgpu::FeatureName::DualSourceBlending);
@@ -169,10 +159,34 @@ wgpu::Device GraphiteDawnWindowContext::createDevice(wgpu::BackendType type) {
     if (adapter.HasFeature(wgpu::FeatureName::TextureCompressionBC)) {
         features.push_back(wgpu::FeatureName::TextureCompressionBC);
     }
+    if (adapter.HasFeature(wgpu::FeatureName::R8UnormStorage)) {
+        features.push_back(wgpu::FeatureName::R8UnormStorage);
+    }
 
     wgpu::DeviceDescriptor deviceDescriptor;
     deviceDescriptor.requiredFeatures = features.data();
     deviceDescriptor.requiredFeatureCount = features.size();
+    deviceDescriptor.deviceLostCallbackInfo.callback =
+        [](WGPUDeviceImpl *const *, WGPUDeviceLostReason reason, const char* message, void*) {
+            if (reason != WGPUDeviceLostReason_Destroyed) {
+                SK_ABORT("Device lost: %s\n", message);
+            }
+        };
+
+    wgpu::DawnTogglesDescriptor deviceTogglesDesc;
+
+    if (fDisplayParams.fDisableTintSymbolRenaming) {
+        static constexpr const char* kOptionalDeviceToggles[] = {
+            "disable_symbol_renaming",
+        };
+        deviceTogglesDesc.enabledToggleCount = std::size(kOptionalDeviceToggles);
+        deviceTogglesDesc.enabledToggles     = kOptionalDeviceToggles;
+
+        // Insert the toggles descriptor ahead of any existing entries in the chain that might have
+        // been added above.
+        deviceTogglesDesc.nextInChain = deviceDescriptor.nextInChain;
+        deviceDescriptor.nextInChain  = &deviceTogglesDesc;
+    }
 
     auto device = adapter.CreateDevice(&deviceDescriptor);
     if (!device) {

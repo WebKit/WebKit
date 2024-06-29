@@ -9,6 +9,7 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_VK_FORMAT_UTILS_H_
 #define LIBANGLE_RENDERER_VULKAN_VK_FORMAT_UTILS_H_
 
+#include "common/SimpleMutex.h"
 #include "common/vulkan/vk_headers.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/Format.h"
@@ -257,7 +258,7 @@ class ExternalFormatTable final : angle::NonCopyable
         ToUnderlying(angle::FormatID::EXTERNAL7) - ToUnderlying(angle::FormatID::EXTERNAL0) + 1;
     // YUV rendering format cache. We build this table at run time when external formats are used.
     angle::FixedVector<ExternalYuvFormatInfo, kMaxExternalFormatCountSupported> mExternalYuvFormats;
-    mutable std::mutex mExternalYuvFormatMutex;
+    mutable angle::SimpleMutex mExternalYuvFormatMutex;
 };
 
 bool IsYUVExternalFormat(angle::FormatID formatID);

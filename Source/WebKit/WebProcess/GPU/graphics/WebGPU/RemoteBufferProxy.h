@@ -82,7 +82,7 @@ private:
     void getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64>, Function<void(MappedRange)>&&) final;
     MappedRange getBufferContents() final;
     void unmap() final;
-    void copy(Vector<uint8_t>&&, size_t offset) final;
+    void copy(std::span<const uint8_t>, size_t offset) final;
 
     void destroy() final;
 

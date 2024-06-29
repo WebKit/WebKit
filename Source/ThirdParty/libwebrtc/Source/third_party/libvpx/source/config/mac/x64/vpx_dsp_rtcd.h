@@ -6525,6 +6525,31 @@ int vpx_highbd_satd_c(const tran_low_t* coeff, int length);
 int vpx_highbd_satd_avx2(const tran_low_t* coeff, int length);
 RTCD_EXTERN int (*vpx_highbd_satd)(const tran_low_t* coeff, int length);
 
+int64_t vpx_highbd_sse_c(const uint8_t* a8,
+                         int a_stride,
+                         const uint8_t* b8,
+                         int b_stride,
+                         int width,
+                         int height);
+int64_t vpx_highbd_sse_sse4_1(const uint8_t* a8,
+                              int a_stride,
+                              const uint8_t* b8,
+                              int b_stride,
+                              int width,
+                              int height);
+int64_t vpx_highbd_sse_avx2(const uint8_t* a8,
+                            int a_stride,
+                            const uint8_t* b8,
+                            int b_stride,
+                            int width,
+                            int height);
+RTCD_EXTERN int64_t (*vpx_highbd_sse)(const uint8_t* a8,
+                                      int a_stride,
+                                      const uint8_t* b8,
+                                      int b_stride,
+                                      int width,
+                                      int height);
+
 void vpx_highbd_subtract_block_c(int rows,
                                  int cols,
                                  int16_t* diff_ptr,
@@ -8483,6 +8508,31 @@ void vpx_scaled_vert_c(const uint8_t* src,
                        int h);
 #define vpx_scaled_vert vpx_scaled_vert_c
 
+int64_t vpx_sse_c(const uint8_t* src,
+                  int src_stride,
+                  const uint8_t* ref,
+                  int ref_stride,
+                  int width,
+                  int height);
+int64_t vpx_sse_sse4_1(const uint8_t* src,
+                       int src_stride,
+                       const uint8_t* ref,
+                       int ref_stride,
+                       int width,
+                       int height);
+int64_t vpx_sse_avx2(const uint8_t* src,
+                     int src_stride,
+                     const uint8_t* ref,
+                     int ref_stride,
+                     int width,
+                     int height);
+RTCD_EXTERN int64_t (*vpx_sse)(const uint8_t* src,
+                               int src_stride,
+                               const uint8_t* ref,
+                               int ref_stride,
+                               int width,
+                               int height);
+
 uint32_t vpx_sub_pixel_avg_variance16x16_c(const uint8_t* src_ptr,
                                            int src_stride,
                                            int x_offset,
@@ -10174,6 +10224,7 @@ static void setup_rtcd_internal(void) {
   vpx_highbd_sad_skip_64x64 = vpx_highbd_sad_skip_64x64_sse2;
   vpx_highbd_sad_skip_64x64x4d = vpx_highbd_sad_skip_64x64x4d_sse2;
   vpx_highbd_satd = vpx_highbd_satd_c;
+  vpx_highbd_sse = vpx_highbd_sse_c;
   vpx_highbd_subtract_block = vpx_highbd_subtract_block_c;
   vpx_idct16x16_256_add = vpx_idct16x16_256_add_sse2;
   vpx_idct32x32_1024_add = vpx_idct32x32_1024_add_sse2;
@@ -10222,6 +10273,7 @@ static void setup_rtcd_internal(void) {
   vpx_scaled_2d = vpx_scaled_2d_c;
   if (flags & HAS_SSSE3)
     vpx_scaled_2d = vpx_scaled_2d_ssse3;
+  vpx_sse = vpx_sse_c;
   vpx_sub_pixel_avg_variance16x16 = vpx_sub_pixel_avg_variance16x16_sse2;
   if (flags & HAS_SSSE3)
     vpx_sub_pixel_avg_variance16x16 = vpx_sub_pixel_avg_variance16x16_ssse3;

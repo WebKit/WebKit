@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-class DOMTokenList {
+class DOMTokenList final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using IsSupportedTokenFunction = Function<bool(Document&, StringView)>;
     DOMTokenList(Element&, const QualifiedName& attributeName, IsSupportedTokenFunction&& isSupportedToken = { });
 
-    void associatedAttributeValueChanged(const AtomString&);
+    inline void associatedAttributeValueChanged();
 
     void ref() { m_element.ref(); }
     void deref() { m_element.deref(); }
@@ -67,9 +67,9 @@ private:
     const Vector<AtomString, 1>& tokens() const { return const_cast<DOMTokenList&>(*this).tokens(); }
 
     static ExceptionOr<void> validateToken(StringView);
-    static ExceptionOr<void> validateTokens(const AtomString* tokens, size_t length);
-    ExceptionOr<void> addInternal(const AtomString* tokens, size_t length);
-    ExceptionOr<void> removeInternal(const AtomString* tokens, size_t length);
+    static ExceptionOr<void> validateTokens(std::span<const AtomString> tokens);
+    ExceptionOr<void> addInternal(std::span<const AtomString> tokens);
+    ExceptionOr<void> removeInternal(std::span<const AtomString> tokens);
 
     Element& m_element;
     const WebCore::QualifiedName& m_attributeName;
@@ -88,6 +88,14 @@ inline const AtomString& DOMTokenList::item(unsigned index) const
 {
     auto& tokens = this->tokens();
     return index < tokens.size() ? tokens[index] : nullAtom();
+}
+
+inline void DOMTokenList::associatedAttributeValueChanged()
+{
+    // Do not reset the DOMTokenList value if the attribute value was changed by us.
+    if (m_inUpdateAssociatedAttributeFromTokens)
+        return;
+    m_tokensNeedUpdating = true;
 }
 
 } // namespace WebCore

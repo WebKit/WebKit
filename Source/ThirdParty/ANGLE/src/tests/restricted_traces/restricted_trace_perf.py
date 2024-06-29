@@ -917,45 +917,7 @@ def run_traces(args):
                 if args.min_battery_level:
                     sleep_until_battery_level(args.min_battery_level)
 
-    # Generate the SUMMARY output
-
-    summary_file = open("summary." + args.output_tag + ".csv", 'w', newline='')
-    summary_writer = csv.writer(summary_file)
-
-    android_version = run_adb_command('shell getprop ro.build.fingerprint').stdout.strip()
-    angle_version = run_command('git rev-parse HEAD').stdout.strip()
-    # test_time = run_command('date \"+%Y%m%d\"').stdout.read().strip()
-
-    summary_writer.writerow([
-        "\"Android: " + android_version + "\n" + "ANGLE: " + angle_version + "\n" +
-        #  "Date: " + test_time + "\n" +
-        "Source: " + raw_data_filename + "\n" + "Args: " + logged_args() + "\""
-    ])
-    summary_writer.writerow([
-        "#", "\"Trace\"", "\"Native\nwall\ntime\nper\nframe\n(ms)\"",
-        "\"Native\nwall\ntime\nvariance\"", "\"ANGLE\nwall\ntime\nper\nframe\n(ms)\"",
-        "\"ANGLE\nwall\ntime\nvariance\"", "\"wall\ntime\ncompare\"",
-        "\"Native\nGPU\ntime\nper\nframe\n(ms)\"", "\"Native\nGPU\ntime\nvariance\"",
-        "\"ANGLE\nGPU\ntime\nper\nframe\n(ms)\"", "\"ANGLE\nGPU\ntime\nvariance\"",
-        "\"GPU\ntime\ncompare\"", "\"Native\nCPU\ntime\nper\nframe\n(ms)\"",
-        "\"Native\nCPU\ntime\nvariance\"", "\"ANGLE\nCPU\ntime\nper\nframe\n(ms)\"",
-        "\"ANGLE\nCPU\ntime\nvariance\"", "\"CPU\ntime\ncompare\"", "\"Native\nGPU\npower\n(W)\"",
-        "\"Native\nGPU\npower\nvariance\"", "\"ANGLE\nGPU\npower\n(W)\"",
-        "\"ANGLE\nGPU\npower\nvariance\"", "\"GPU\npower\ncompare\"",
-        "\"Native\nCPU\npower\n(W)\"", "\"Native\nCPU\npower\nvariance\"",
-        "\"ANGLE\nCPU\npower\n(W)\"", "\"ANGLE\nCPU\npower\nvariance\"", "\"CPU\npower\ncompare\"",
-        "\"Native\nGPU\nmem\n(B)\"", "\"Native\nGPU\nmem\nvariance\"", "\"ANGLE\nGPU\nmem\n(B)\"",
-        "\"ANGLE\nGPU\nmem\nvariance\"", "\"GPU\nmem\ncompare\"",
-        "\"Native\npeak\nGPU\nmem\n(B)\"", "\"Native\npeak\nGPU\nmem\nvariance\"",
-        "\"ANGLE\npeak\nGPU\nmem\n(B)\"", "\"ANGLE\npeak\nGPU\nmem\nvariance\"",
-        "\"GPU\npeak\nmem\ncompare\"", "\"Native\nprocess\nmem\n(B)\"",
-        "\"Native\nprocess\nmem\nvariance\"", "\"ANGLE\nprocess\nmem\n(B)\"",
-        "\"ANGLE\nprocess\nmem\nvariance\"", "\"process\nmem\ncompare\"",
-        "\"Native\npeak\nprocess\nmem\n(B)\"", "\"Native\npeak\nprocess\nmem\nvariance\"",
-        "\"ANGLE\npeak\nprocess\nmem\n(B)\"", "\"ANGLE\npeak\nprocess\nmem\nvariance\"",
-        "\"process\npeak\nmem\ncompare\""
-    ])
-
+    # Organize the data for writing out
     rows = defaultdict(dict)
 
     def populate_row(rows, name, results):
@@ -993,76 +955,163 @@ def run_traces(args):
     for name, results in proc_mem_peaks.items():
         populate_row(rows, name, results)
 
-    for name, data in rows.items():
-        if "native" in data and "vulkan" in data:
-            # The remaining code in this script expects both native and vulkan results
-            break
-        else:
-            logging.info("Skipping summary file due to single renderer")
-            exit()
+    # Generate the SUMMARY output
+    summary_file = open("summary." + args.output_tag + ".csv", 'w', newline='')
+    summary_writer = csv.writer(summary_file)
+
+    android_version = run_adb_command('shell getprop ro.build.fingerprint').stdout.strip()
+    angle_version = run_command('git rev-parse HEAD').stdout.strip()
+    # test_time = run_command('date \"+%Y%m%d\"').stdout.read().strip()
+
+    summary_writer.writerow([
+        "\"Android: " + android_version + "\n" + "ANGLE: " + angle_version + "\n" +
+        #  "Date: " + test_time + "\n" +
+        "Source: " + raw_data_filename + "\n" + "Args: " + logged_args() + "\""
+    ])
 
     # Write the summary file
     trace_number = 0
-    for name, data in rows.items():
-        trace_number += 1
+
+    if (len(renderers) == 1) and (renderers[0] != "both"):
+        renderer_name = renderers[0]
         summary_writer.writerow([
-            trace_number,
-            name,
-            # wall_time
-            "%.3f" % data["native"][0],
-            percent(data["native"][1]),
-            "%.3f" % data["vulkan"][0],
-            percent(data["vulkan"][1]),
-            percent(safe_divide(data["native"][0], data["vulkan"][0])),
-            # GPU time
-            "%.3f" % data["native"][2],
-            percent(data["native"][3]),
-            "%.3f" % data["vulkan"][2],
-            percent(data["vulkan"][3]),
-            percent(safe_divide(data["native"][2], data["vulkan"][2])),
-            # CPU time
-            "%.3f" % data["native"][4],
-            percent(data["native"][5]),
-            "%.3f" % data["vulkan"][4],
-            percent(data["vulkan"][5]),
-            percent(safe_divide(data["native"][4], data["vulkan"][4])),
-            # GPU power
-            "%.3f" % data["native"][6],
-            percent(data["native"][7]),
-            "%.3f" % data["vulkan"][6],
-            percent(data["vulkan"][7]),
-            percent(safe_divide(data["native"][6], data["vulkan"][6])),
-            # CPU power
-            "%.3f" % data["native"][8],
-            percent(data["native"][9]),
-            "%.3f" % data["vulkan"][8],
-            percent(data["vulkan"][9]),
-            percent(safe_divide(data["native"][8], data["vulkan"][8])),
-            # GPU mem
-            int(data["native"][10]),
-            percent(data["native"][11]),
-            int(data["vulkan"][10]),
-            percent(data["vulkan"][11]),
-            percent(safe_divide(data["native"][10], data["vulkan"][10])),
-            # GPU peak mem
-            int(data["native"][12]),
-            percent(data["native"][13]),
-            int(data["vulkan"][12]),
-            percent(data["vulkan"][13]),
-            percent(safe_divide(data["native"][12], data["vulkan"][12])),
-            # process mem
-            int(data["native"][14]),
-            percent(data["native"][15]),
-            int(data["vulkan"][14]),
-            percent(data["vulkan"][15]),
-            percent(safe_divide(data["native"][14], data["vulkan"][14])),
-            # process peak mem
-            int(data["native"][16]),
-            percent(data["native"][17]),
-            int(data["vulkan"][16]),
-            percent(data["vulkan"][17]),
-            percent(safe_divide(data["native"][16], data["vulkan"][16]))
+            "#", "\"Trace\"", f"\"{renderer_name}\nwall\ntime\nper\nframe\n(ms)\"",
+            f"\"{renderer_name}\nwall\ntime\nvariance\"",
+            f"\"{renderer_name}\nGPU\ntime\nper\nframe\n(ms)\"",
+            f"\"{renderer_name}\nGPU\ntime\nvariance\"",
+            f"\"{renderer_name}\nCPU\ntime\nper\nframe\n(ms)\"",
+            f"\"{renderer_name}\nCPU\ntime\nvariance\"", f"\"{renderer_name}\nGPU\npower\n(W)\"",
+            f"\"{renderer_name}\nGPU\npower\nvariance\"", f"\"{renderer_name}\nCPU\npower\n(W)\"",
+            f"\"{renderer_name}\nCPU\npower\nvariance\"", f"\"{renderer_name}\nGPU\nmem\n(B)\"",
+            f"\"{renderer_name}\nGPU\nmem\nvariance\"",
+            f"\"{renderer_name}\npeak\nGPU\nmem\n(B)\"",
+            f"\"{renderer_name}\npeak\nGPU\nmem\nvariance\"",
+            f"\"{renderer_name}\nprocess\nmem\n(B)\"",
+            f"\"{renderer_name}\nprocess\nmem\nvariance\"",
+            f"\"{renderer_name}\npeak\nprocess\nmem\n(B)\"",
+            f"\"{renderer_name}\npeak\nprocess\nmem\nvariance\""
         ])
+
+        for name, data in rows.items():
+            trace_number += 1
+            summary_writer.writerow([
+                trace_number,
+                name,
+                # wall_time
+                "%.3f" % data[renderer_name][0],
+                percent(data[renderer_name][1]),
+                # GPU time
+                "%.3f" % data[renderer_name][2],
+                percent(data[renderer_name][3]),
+                # CPU time
+                "%.3f" % data[renderer_name][4],
+                percent(data[renderer_name][5]),
+                # GPU power
+                "%.3f" % data[renderer_name][6],
+                percent(data[renderer_name][7]),
+                # CPU power
+                "%.3f" % data[renderer_name][8],
+                percent(data[renderer_name][9]),
+                # GPU mem
+                int(data[renderer_name][10]),
+                percent(data[renderer_name][11]),
+                # GPU peak mem
+                int(data[renderer_name][12]),
+                percent(data[renderer_name][13]),
+                # process mem
+                int(data[renderer_name][14]),
+                percent(data[renderer_name][15]),
+                # process peak mem
+                int(data[renderer_name][16]),
+                percent(data[renderer_name][17]),
+            ])
+    else:
+        summary_writer.writerow([
+            "#", "\"Trace\"", "\"Native\nwall\ntime\nper\nframe\n(ms)\"",
+            "\"Native\nwall\ntime\nvariance\"", "\"ANGLE\nwall\ntime\nper\nframe\n(ms)\"",
+            "\"ANGLE\nwall\ntime\nvariance\"", "\"wall\ntime\ncompare\"",
+            "\"Native\nGPU\ntime\nper\nframe\n(ms)\"", "\"Native\nGPU\ntime\nvariance\"",
+            "\"ANGLE\nGPU\ntime\nper\nframe\n(ms)\"", "\"ANGLE\nGPU\ntime\nvariance\"",
+            "\"GPU\ntime\ncompare\"", "\"Native\nCPU\ntime\nper\nframe\n(ms)\"",
+            "\"Native\nCPU\ntime\nvariance\"", "\"ANGLE\nCPU\ntime\nper\nframe\n(ms)\"",
+            "\"ANGLE\nCPU\ntime\nvariance\"", "\"CPU\ntime\ncompare\"",
+            "\"Native\nGPU\npower\n(W)\"", "\"Native\nGPU\npower\nvariance\"",
+            "\"ANGLE\nGPU\npower\n(W)\"", "\"ANGLE\nGPU\npower\nvariance\"",
+            "\"GPU\npower\ncompare\"", "\"Native\nCPU\npower\n(W)\"",
+            "\"Native\nCPU\npower\nvariance\"", "\"ANGLE\nCPU\npower\n(W)\"",
+            "\"ANGLE\nCPU\npower\nvariance\"", "\"CPU\npower\ncompare\"",
+            "\"Native\nGPU\nmem\n(B)\"", "\"Native\nGPU\nmem\nvariance\"",
+            "\"ANGLE\nGPU\nmem\n(B)\"", "\"ANGLE\nGPU\nmem\nvariance\"", "\"GPU\nmem\ncompare\"",
+            "\"Native\npeak\nGPU\nmem\n(B)\"", "\"Native\npeak\nGPU\nmem\nvariance\"",
+            "\"ANGLE\npeak\nGPU\nmem\n(B)\"", "\"ANGLE\npeak\nGPU\nmem\nvariance\"",
+            "\"GPU\npeak\nmem\ncompare\"", "\"Native\nprocess\nmem\n(B)\"",
+            "\"Native\nprocess\nmem\nvariance\"", "\"ANGLE\nprocess\nmem\n(B)\"",
+            "\"ANGLE\nprocess\nmem\nvariance\"", "\"process\nmem\ncompare\"",
+            "\"Native\npeak\nprocess\nmem\n(B)\"", "\"Native\npeak\nprocess\nmem\nvariance\"",
+            "\"ANGLE\npeak\nprocess\nmem\n(B)\"", "\"ANGLE\npeak\nprocess\nmem\nvariance\"",
+            "\"process\npeak\nmem\ncompare\""
+        ])
+
+        for name, data in rows.items():
+            trace_number += 1
+            summary_writer.writerow([
+                trace_number,
+                name,
+                # wall_time
+                "%.3f" % data["native"][0],
+                percent(data["native"][1]),
+                "%.3f" % data["vulkan"][0],
+                percent(data["vulkan"][1]),
+                percent(safe_divide(data["native"][0], data["vulkan"][0])),
+                # GPU time
+                "%.3f" % data["native"][2],
+                percent(data["native"][3]),
+                "%.3f" % data["vulkan"][2],
+                percent(data["vulkan"][3]),
+                percent(safe_divide(data["native"][2], data["vulkan"][2])),
+                # CPU time
+                "%.3f" % data["native"][4],
+                percent(data["native"][5]),
+                "%.3f" % data["vulkan"][4],
+                percent(data["vulkan"][5]),
+                percent(safe_divide(data["native"][4], data["vulkan"][4])),
+                # GPU power
+                "%.3f" % data["native"][6],
+                percent(data["native"][7]),
+                "%.3f" % data["vulkan"][6],
+                percent(data["vulkan"][7]),
+                percent(safe_divide(data["native"][6], data["vulkan"][6])),
+                # CPU power
+                "%.3f" % data["native"][8],
+                percent(data["native"][9]),
+                "%.3f" % data["vulkan"][8],
+                percent(data["vulkan"][9]),
+                percent(safe_divide(data["native"][8], data["vulkan"][8])),
+                # GPU mem
+                int(data["native"][10]),
+                percent(data["native"][11]),
+                int(data["vulkan"][10]),
+                percent(data["vulkan"][11]),
+                percent(safe_divide(data["native"][10], data["vulkan"][10])),
+                # GPU peak mem
+                int(data["native"][12]),
+                percent(data["native"][13]),
+                int(data["vulkan"][12]),
+                percent(data["vulkan"][13]),
+                percent(safe_divide(data["native"][12], data["vulkan"][12])),
+                # process mem
+                int(data["native"][14]),
+                percent(data["native"][15]),
+                int(data["vulkan"][14]),
+                percent(data["vulkan"][15]),
+                percent(safe_divide(data["native"][14], data["vulkan"][14])),
+                # process peak mem
+                int(data["native"][16]),
+                percent(data["native"][17]),
+                int(data["vulkan"][16]),
+                percent(data["vulkan"][17]),
+                percent(safe_divide(data["native"][16], data["vulkan"][16]))
+            ])
 
 
 if __name__ == '__main__':

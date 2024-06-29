@@ -67,9 +67,10 @@ private:
     ImageBitmapRenderingContext(CanvasBase&, ImageBitmapRenderingContextSettings&&);
 
     bool isBitmapRenderer() const final { return true; }
-    bool isAccelerated() const override;
+    RefPtr<ImageBuffer> transferToImageBuffer() final;
 
     void setOutputBitmap(RefPtr<ImageBitmap>);
+    void setBlank();
 
     BitmapMode m_bitmapMode { BitmapMode::Blank };
     ImageBitmapRenderingContextSettings m_settings;

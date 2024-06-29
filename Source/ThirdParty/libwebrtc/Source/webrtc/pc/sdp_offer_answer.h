@@ -674,8 +674,8 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
   // or else the CreateBuiltinVideoBitrateAllocatorFactory() will be called.
   // Note that one can still choose to override this in a MediaEngine
   // if one wants too.
-  std::unique_ptr<webrtc::VideoBitrateAllocatorFactory>
-      video_bitrate_allocator_factory_ RTC_GUARDED_BY(signaling_thread());
+  std::unique_ptr<VideoBitrateAllocatorFactory> video_bitrate_allocator_factory_
+      RTC_GUARDED_BY(signaling_thread());
 
   // Whether we are the initial offerer on the association. This
   // determines the SSL role.

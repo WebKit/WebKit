@@ -23,6 +23,6 @@
 struct WebKit::WebFoundTextRange {
     uint64_t location;
     uint64_t length;
-    WebCore::FrameIdentifier frameIdentifier;
+    AtomString frameIdentifier;
     uint64_t order;
 }

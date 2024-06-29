@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#import "LocalAuthenticator.h"
 #import "MockLocalConnection.h"
 #import <wtf/RunLoop.h>
 

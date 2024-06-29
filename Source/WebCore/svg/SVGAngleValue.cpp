@@ -73,13 +73,13 @@ String SVGAngleValue::valueAsString() const
 {
     switch (m_unitType) {
     case SVG_ANGLETYPE_DEG:
-        return makeString(m_valueInSpecifiedUnits, "deg");
+        return makeString(m_valueInSpecifiedUnits, "deg"_s);
     case SVG_ANGLETYPE_RAD:
-        return makeString(m_valueInSpecifiedUnits, "rad");
+        return makeString(m_valueInSpecifiedUnits, "rad"_s);
     case SVG_ANGLETYPE_TURN:
-        return makeString(m_valueInSpecifiedUnits, "turn");
+        return makeString(m_valueInSpecifiedUnits, "turn"_s);
     case SVG_ANGLETYPE_GRAD:
-        return makeString(m_valueInSpecifiedUnits, "grad");
+        return makeString(m_valueInSpecifiedUnits, "grad"_s);
     case SVG_ANGLETYPE_UNSPECIFIED:
     case SVG_ANGLETYPE_UNKNOWN:
         return String::number(m_valueInSpecifiedUnits);

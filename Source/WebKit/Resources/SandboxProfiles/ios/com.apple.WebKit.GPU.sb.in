@@ -576,6 +576,8 @@
         "kern.osvariant_status"
         "kern.secure_kernel"
         "kern.osversion"
+        "kern.willshutdown" ;; <rdar://122511261>
+        "machdep.ptrauth_enabled"
         "vm.footprint_suspend"
         "vm.malloc_ranges")) ;; <rdar://problem/105161083>
 
@@ -987,4 +989,8 @@
     (require-all
         (extension-class "com.apple.mediaserverd.read")
         (apply subpath issue-extension-secondary-paths)))
+#endif
+
+#if __has_include(<WebKitAdditions/com.apple.WebKit.GPU.sb.in>)
+#include <WebKitAdditions/com.apple.WebKit.GPU.sb.in>
 #endif

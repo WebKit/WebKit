@@ -113,11 +113,7 @@ static double highResUpTime()
         if (tickCount >= tickCountLast)
             tickCountElapsed = (tickCount - tickCountLast);
         else {
-#if COMPILER(MINGW)
-            __int64 tickCountLarge = tickCount + 0x100000000ULL;
-#else
             __int64 tickCountLarge = tickCount + 0x100000000I64;
-#endif
             tickCountElapsed = tickCountLarge - tickCountLast;
         }
 

@@ -22,7 +22,6 @@
 
 #include "APIAutomationClient.h"
 #include "APIInjectedBundleClient.h"
-#include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"
 #include "APIString.h"
 #include "LegacyGlobalSettings.h"
@@ -44,7 +43,6 @@
 #include "WebKitSecurityOriginPrivate.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebKitURISchemeRequestPrivate.h"
-#include "WebKitUserContentManagerPrivate.h"
 #include "WebKitUserMessagePrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
@@ -208,7 +206,31 @@ private:
 
 typedef HashMap<String, RefPtr<WebKitURISchemeHandler> > URISchemeHandlerMap;
 
-class WebKitAutomationClient;
+#if ENABLE(REMOTE_INSPECTOR)
+class WebKitAutomationClient final : Inspector::RemoteInspector::Client {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit WebKitAutomationClient(WebKitWebContext* context)
+        : m_webContext(context)
+    {
+        Inspector::RemoteInspector::singleton().setClient(this);
+    }
+
+    ~WebKitAutomationClient()
+    {
+        Inspector::RemoteInspector::singleton().setClient(nullptr);
+    }
+
+private:
+    bool remoteAutomationAllowed() const override { return true; }
+
+    String browserName() const override;
+    String browserVersion() const override;
+    void requestAutomationSession(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities&) override;
+
+    WebKitWebContext* m_webContext;
+};
+#endif
 
 struct _WebKitWebContextPrivate {
 #if !ENABLE(2022_GLIB_API)
@@ -274,49 +296,29 @@ WEBKIT_DEFINE_FINAL_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT, GO
 std::unique_ptr<WebKitNotificationProvider> s_serviceWorkerNotificationProvider;
 
 #if ENABLE(REMOTE_INSPECTOR)
-class WebKitAutomationClient final : Inspector::RemoteInspector::Client {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit WebKitAutomationClient(WebKitWebContext* context)
-        : m_webContext(context)
-    {
-        Inspector::RemoteInspector::singleton().setClient(this);
-    }
+String WebKitAutomationClient::browserName() const
+{
+    if (!m_webContext->priv->automationSession)
+        return { };
 
-    ~WebKitAutomationClient()
-    {
-        Inspector::RemoteInspector::singleton().setClient(nullptr);
-    }
+    return webkitAutomationSessionGetBrowserName(m_webContext->priv->automationSession.get());
+}
 
-private:
-    bool remoteAutomationAllowed() const override { return true; }
+String WebKitAutomationClient::browserVersion() const
+{
+    if (!m_webContext->priv->automationSession)
+        return { };
 
-    String browserName() const override
-    {
-        if (!m_webContext->priv->automationSession)
-            return { };
+    return webkitAutomationSessionGetBrowserVersion(m_webContext->priv->automationSession.get());
+}
 
-        return webkitAutomationSessionGetBrowserName(m_webContext->priv->automationSession.get());
-    }
-
-    String browserVersion() const override
-    {
-        if (!m_webContext->priv->automationSession)
-            return { };
-
-        return webkitAutomationSessionGetBrowserVersion(m_webContext->priv->automationSession.get());
-    }
-
-    void requestAutomationSession(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities) override
-    {
-        ASSERT(!m_webContext->priv->automationSession);
-        m_webContext->priv->automationSession = adoptGRef(webkitAutomationSessionCreate(m_webContext, sessionIdentifier.utf8().data(), capabilities));
-        g_signal_emit(m_webContext, signals[AUTOMATION_STARTED], 0, m_webContext->priv->automationSession.get());
-        m_webContext->priv->processPool->setAutomationSession(&webkitAutomationSessionGetSession(m_webContext->priv->automationSession.get()));
-    }
-
-    WebKitWebContext* m_webContext;
-};
+void WebKitAutomationClient::requestAutomationSession(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
+{
+    ASSERT(!m_webContext->priv->automationSession);
+    m_webContext->priv->automationSession = adoptGRef(webkitAutomationSessionCreate(m_webContext, sessionIdentifier.utf8().data(), capabilities));
+    g_signal_emit(m_webContext, signals[AUTOMATION_STARTED], 0, m_webContext->priv->automationSession.get());
+    m_webContext->priv->processPool->setAutomationSession(&webkitAutomationSessionGetSession(m_webContext->priv->automationSession.get()));
+}
 
 void webkitWebContextWillCloseAutomationSession(WebKitWebContext* webContext)
 {
@@ -363,7 +365,9 @@ static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* v
         g_value_set_boolean(value, context->priv->psonEnabled);
         break;
     case PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS:
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         g_value_set_boolean(value, webkit_web_context_get_use_system_appearance_for_scrollbars(context));
+        ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 #endif
     case PROP_TIME_ZONE_OVERRIDE:
@@ -396,7 +400,9 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
         context->priv->psonEnabled = g_value_get_boolean(value);
         break;
     case PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS:
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         webkit_web_context_set_use_system_appearance_for_scrollbars(context, g_value_get_boolean(value));
+        ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 #endif
     case PROP_MEMORY_PRESSURE_SETTINGS: {
@@ -577,13 +583,15 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
      * consistency, or when consistency with other applications is required too.
      *
      * Since: 2.30
+     *
+     * Deprecated: 2.46
      */
     sObjProperties[PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS] =
         g_param_spec_boolean(
             "use-system-appearance-for-scrollbars",
             nullptr, nullptr,
-            TRUE,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+            FALSE,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_DEPRECATED));
 #endif
 
     /**
@@ -1932,7 +1940,11 @@ void webkit_web_context_send_message_to_all_extensions(WebKitWebContext* context
  *
  * Set the #WebKitWebContext:use-system-appearance-for-scrollbars property.
  *
+ * This is now deprecated and when WebKit is built with Skia this method does nothing.
+ *
  * Since: 2.30
+ *
+ * Deprecated: 2.46
  */
 void webkit_web_context_set_use_system_appearance_for_scrollbars(WebKitWebContext* context, gboolean enabled)
 {
@@ -1951,8 +1963,8 @@ void webkit_web_context_set_use_system_appearance_for_scrollbars(WebKitWebContex
     context->priv->processPool->configuration().setUseSystemAppearanceForScrollbars(enabled);
     context->priv->processPool->sendToAllProcesses(Messages::WebProcess::SetUseSystemAppearanceForScrollbars(enabled));
 #else
-    // FIXME: deprecate this when switching to Skia.
-    UNUSED_PARAM(enabled);
+    if (enabled)
+        g_warning("WebKitWebContext:use-system-appearance-for-scrollbars property is deprecated and does nothing");
 #endif
 }
 
@@ -1965,6 +1977,8 @@ void webkit_web_context_set_use_system_appearance_for_scrollbars(WebKitWebContex
  * Returns: %TRUE if scrollbars are rendering using the system appearance, or %FALSE otherwise
  *
  * Since: 2.30
+ *
+ * Deprecated: 2.46
  */
 gboolean webkit_web_context_get_use_system_appearance_for_scrollbars(WebKitWebContext* context)
 {
@@ -1973,7 +1987,6 @@ gboolean webkit_web_context_get_use_system_appearance_for_scrollbars(WebKitWebCo
 #if USE(CAIRO)
     return context->priv->useSystemAppearanceForScrollbars;
 #else
-    // FIXME: deprecate this when switching to Skia.
     return FALSE;
 #endif
 }
@@ -2021,42 +2034,15 @@ WebProcessPool& webkitWebContextGetProcessPool(WebKitWebContext* context)
     return *context->priv->processPool;
 }
 
-void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebView* webView, WebKitUserContentManager* userContentManager, WebKitWebView* relatedView, WebKitWebsitePolicies* defaultWebsitePolicies)
+void webkitWebContextWebViewCreated(WebKitWebContext* context, WebKitWebView* webView)
 {
-    auto pageConfiguration = API::PageConfiguration::create();
-    pageConfiguration->setProcessPool(context->priv->processPool.get());
-    pageConfiguration->setPreferences(webkitSettingsGetPreferences(webkit_web_view_get_settings(webView)));
-    pageConfiguration->setRelatedPage(relatedView ? &webkitWebViewGetPage(relatedView) : nullptr);
-    pageConfiguration->setUserContentController(userContentManager ? webkitUserContentManagerGetUserContentControllerProxy(userContentManager) : nullptr);
-    pageConfiguration->setControlledByAutomation(webkit_web_view_is_controlled_by_automation(webView));
-
-    WebKitWebExtensionMode webExtensionMode = webkit_web_view_get_web_extension_mode(webView);
-    const char* defaultContentSecurityPolicy = webkit_web_view_get_default_content_security_policy(webView);
-
-    if (webExtensionMode == WEBKIT_WEB_EXTENSION_MODE_MANIFESTV3)
-        pageConfiguration->setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension::ManifestV3);
-    else if (webExtensionMode == WEBKIT_WEB_EXTENSION_MODE_MANIFESTV2)
-        pageConfiguration->setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension::ManifestV2);
-
-    if (defaultContentSecurityPolicy)
-        pageConfiguration->setOverrideContentSecurityPolicy(String::fromUTF8(defaultContentSecurityPolicy));
-
-    WebKitWebsiteDataManager* manager = webkitWebViewGetWebsiteDataManager(webView);
-#if !ENABLE(2022_GLIB_API)
-    if (!manager)
-        manager = context->priv->websiteDataManager.get();
-#endif
-    pageConfiguration->setWebsiteDataStore(&webkitWebsiteDataManagerGetDataStore(manager));
-    pageConfiguration->setDefaultWebsitePolicies(webkitWebsitePoliciesGetWebsitePolicies(defaultWebsitePolicies));
-    webkitWebViewCreatePage(webView, WTFMove(pageConfiguration));
-
-    auto& page = webkitWebViewGetPage(webView);
+    Ref page = webkitWebViewGetPage(webView);
     for (auto& it : context->priv->uriSchemeHandlers) {
         Ref<WebURLSchemeHandler> handler(*it.value);
-        page.setURLSchemeHandlerForScheme(WTFMove(handler), it.key);
+        page->setURLSchemeHandlerForScheme(WTFMove(handler), it.key);
     }
 
-    context->priv->webViews.set(page.identifier(), webView);
+    context->priv->webViews.set(page->identifier(), webView);
 }
 
 void webkitWebContextWebViewDestroyed(WebKitWebContext* context, WebKitWebView* webView)

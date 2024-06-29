@@ -26,9 +26,6 @@
 #include "api/video/video_rotation.h"
 #include "api/video/video_timing.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
-#ifdef WEBRTC_USE_H265
-#include "modules/video_coding/codecs/h265/include/h265_globals.h"
-#endif
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 
@@ -44,9 +41,6 @@ using RTPVideoTypeHeader = absl::variant<absl::monostate,
                                          RTPVideoHeaderVP8,
                                          RTPVideoHeaderVP9,
                                          RTPVideoHeaderH264,
-#ifdef WEBRTC_USE_H265
-                                         RTPVideoHeaderH265,
-#endif
                                          RTPVideoHeaderLegacyGeneric>;
 
 struct RTPVideoHeader {

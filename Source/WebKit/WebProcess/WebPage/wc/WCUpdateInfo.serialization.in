@@ -66,6 +66,7 @@ header: "WCUpdateInfo.h"
 [Nested] struct WebKit::WCLayerUpdateInfo::BackgroundChanges {
     WebCore::Color color;
     bool hasBackingStore;
+    WebCore::IntSize backingStoreSize;
     Vector<WebKit::WCTileUpdate> tileUpdates;
 }
 
@@ -109,6 +110,7 @@ header: "WCUpdateInfo.h"
 }
 
 struct WebKit::WCUpdateInfo {
+    WebCore::IntSize viewport;
     Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostedIdentifier;
     WebCore::PlatformLayerIdentifier rootLayer;
     Vector<WebCore::PlatformLayerIdentifier> addedLayers;

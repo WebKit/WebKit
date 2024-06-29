@@ -256,7 +256,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
         // greater than maximum tokens), then jump to the step labeled default
         if (index > maxTokensForAutofillFieldCategory(category) - 1)
             return defaultLabel();
-        idlValue = makeString(tokens[index], " ", idlValue);
+        idlValue = makeString(tokens[index], ' ', idlValue);
     }
 
     // 12, If the indexth token in tokens is the first entry, then skip to the step labeled done.
@@ -280,7 +280,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
 
         // 4. Let IDL value be the concatenation of contact, a U+0020 SPACE character, and the previous
         // value of IDL value (which at this point will always be field).
-        idlValue = makeString(contact, " ", idlValue);
+        idlValue = makeString(contact, ' ', idlValue);
 
         // 5. If the indexth entry in tokens is the first entry, then skip to the step labeled done.
         if (index == 0)
@@ -305,7 +305,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
         // 4. Let IDL value be the concatenation of mode, a U+0020 SPACE character, and the previous
         // value of IDL value (which at this point will either be field or the concatenation of contact,
         // a space, and field).
-        idlValue = makeString(mode, " ", idlValue);
+        idlValue = makeString(mode, ' ', idlValue);
 
         // 5. If the indexth entry in tokens is the first entry, then skip to the step labeled done.
         if (index == 0)
@@ -334,7 +334,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
 
     // 20. Let IDL value be the concatenation of section, a U+0020 SPACE character, and the previous
     // value of IDL value.
-    idlValue = makeString(section, " ", idlValue);
+    idlValue = makeString(section, ' ', idlValue);
 
     return { field, idlValue, credentialType };
 }

@@ -7,6 +7,7 @@
 
 #include "src/gpu/graphite/vk/VulkanRenderPass.h"
 
+#include "src/gpu/graphite/RenderPassDesc.h"
 #include "src/gpu/graphite/Texture.h"
 #include "src/gpu/graphite/vk/VulkanCommandBuffer.h"
 #include "src/gpu/graphite/vk/VulkanGraphiteUtilsPriv.h"
@@ -417,10 +418,9 @@ sk_sp<VulkanRenderPass> VulkanRenderPass::MakeRenderPass(const VulkanSharedConte
     renderPassInfo.pAttachments = attachmentDescs.begin();
 
     VkResult result;
-    VULKAN_CALL_RESULT(context->interface(), result, CreateRenderPass(context->device(),
-                                                                      &renderPassInfo,
-                                                                      nullptr,
-                                                                      &renderPass));
+    VULKAN_CALL_RESULT(context,
+                       result,
+                       CreateRenderPass(context->device(), &renderPassInfo, nullptr, &renderPass));
     if (result != VK_SUCCESS) {
         return nullptr;
     }

@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Not allowed to use restricted network host "0.0.0.0": http://0.0.0.0:8000/media/resources/test.mp4
+PASS Received error
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test passes if loading video is not successful

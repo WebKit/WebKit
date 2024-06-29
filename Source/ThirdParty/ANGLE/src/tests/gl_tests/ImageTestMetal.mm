@@ -157,6 +157,40 @@ ScopedMetalTextureRef CreateMetalTexture2D(id<MTLDevice> deviceMtl,
     }
 }
 
+id<MTLSharedEvent> CreateMetalSharedEvent(id<MTLDevice> deviceMtl)
+{
+    id<MTLSharedEvent> sharedEvent = [deviceMtl newSharedEvent];
+    sharedEvent.label              = @"TestSharedEvent";
+    return sharedEvent;
+}
+
+EGLSync CreateEGLSyncFromMetalSharedEvent(EGLDisplay display,
+                                          id<MTLSharedEvent> sharedEvent,
+                                          uint64_t signalValue,
+                                          bool signaled)
+{
+    EGLAttrib signalValueHi            = signalValue >> 32;
+    EGLAttrib signalValueLo            = signalValue & 0xffffffff;
+    std::vector<EGLAttrib> syncAttribs = {
+        EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE,          reinterpret_cast<EGLAttrib>(sharedEvent),
+        EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE, signalValueHi,
+        EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE, signalValueLo};
+
+    if (signaled)
+    {
+        syncAttribs.push_back(EGL_SYNC_CONDITION);
+        syncAttribs.push_back(EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE);
+    }
+
+    syncAttribs.push_back(EGL_NONE);
+
+    EGLSync syncWithSharedEvent =
+        eglCreateSync(display, EGL_SYNC_METAL_SHARED_EVENT_ANGLE, syncAttribs.data());
+    EXPECT_NE(syncWithSharedEvent, EGL_NO_SYNC);
+
+    return syncWithSharedEvent;
+}
+
 class ImageTestMetal : public ANGLETest<>
 {
   protected:
@@ -843,6 +877,168 @@ TEST_P(ImageTestMetal, OverrideMetalTextureInternalFormatIncompatibleFormat)
                           reinterpret_cast<EGLClientBuffer>(textureMtl.get()), attribs);
     EXPECT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
     EXPECT_EQ(image, nullptr);
+}
+
+// Test this scenario:
+// Metal and GL share the same MTL texture (called texture1).
+// GL Context draws to texture1:
+// - draw.
+// - upload texture2
+// - draw using the texture2 as source.
+// - place a sync object.
+//
+// Metal reads the texture1:
+// - wait for the shared event sync object.
+// - copy the texture1 to a buffer.
+// - The buffer should contain color from texture2 after being uploaded.
+//
+// Previously this would cause a bug in Metal backend because texture upload would
+// create a new blit encoder in a middle of a render pass and the command buffer would mistrack the
+// ongoing render encoder. Thus making the metal sync object being placed incorrectly.
+TEST_P(ImageTestMetal, SharedEventSyncWhenThereIsTextureUploadBetweenDraws)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt());
+    ANGLE_SKIP_TEST_IF(!hasImageNativeMetalTextureExt());
+
+    EGLDisplay display1 = getEGLWindow()->getDisplay();
+
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    ANGLE_SKIP_TEST_IF(
+        !IsEGLDisplayExtensionEnabled(display1, "EGL_ANGLE_metal_shared_event_sync"));
+
+    @autoreleasepool
+    {
+        // Create MTLTexture
+        constexpr int kSharedTextureSize = 1024;
+        ScopedMetalTextureRef textureMtl =
+            createMtlTexture2D(kSharedTextureSize, kSharedTextureSize, MTLPixelFormatR32Sint);
+
+        // Create SharedEvent
+        id<MTLDevice> deviceMtl           = getMtlDevice();
+        id<MTLSharedEvent> sharedEventMtl = CreateMetalSharedEvent(deviceMtl);
+
+        // -------------------------- Metal ---------------------------
+        // Create a buffer on Metal to store the final value.
+        ScopedMetalBufferRef dstBuffer(
+            [deviceMtl newBufferWithLength:sizeof(float) options:MTLResourceStorageModeShared]);
+        ScopedMetalCommandQueueRef commandQueue([deviceMtl newCommandQueue]);
+        id<MTLCommandBuffer> commandBuffer = [commandQueue commandBuffer];
+
+        // Wait for drawing on GL context to finish on server side.
+        // Note: we issue a wait even before the draw calls are issued on GL context.
+        // GL context will issue a signaling later (see below).
+        constexpr uint64_t kSignalValue = 0xff;
+        [commandBuffer encodeWaitForEvent:sharedEventMtl value:kSignalValue];
+
+        // Copy a pixel from texture1 to dstBuffer
+        id<MTLBlitCommandEncoder> blitEncoder = [commandBuffer blitCommandEncoder];
+        [blitEncoder copyFromTexture:textureMtl
+                         sourceSlice:0
+                         sourceLevel:0
+                        sourceOrigin:MTLOriginMake(kSharedTextureSize - 1, kSharedTextureSize - 2,
+                                                   0)
+                          sourceSize:MTLSizeMake(1, 1, 1)
+                            toBuffer:dstBuffer
+                   destinationOffset:0
+              destinationBytesPerRow:sizeof(float) * kSharedTextureSize
+            destinationBytesPerImage:0];
+        [blitEncoder endEncoding];
+        [commandBuffer commit];
+
+        // -------------------------- GL context ---------------------------
+        constexpr int kNumValues = 1000;
+        // A deliberately slow shader that reads a texture many times then write
+        // the sum value to an ouput varible.
+        constexpr char kFS[] = R"(#version 300 es
+out highp ivec4 outColor;
+
+uniform highp isampler2D u_valuesTex;
+
+void main()
+{
+    highp int value = 0;
+    for (int i = 0; i < 1000; ++i) {
+        highp float uCoords = (float(i) + 0.5) / float(1000);
+        value += textureLod(u_valuesTex, vec2(uCoords, 0.0), 0.0).r;
+    }
+
+    outColor = ivec4(value);
+})";
+
+        ANGLE_GL_PROGRAM(complexProgram, essl3_shaders::vs::Simple(), kFS);
+        GLint valuesTexLocation = glGetUniformLocation(complexProgram, "u_valuesTex");
+        ASSERT_NE(valuesTexLocation, -1);
+
+        // Create the shared texture from MTLTexture.
+        EGLImageKHR image =
+            eglCreateImageKHR(display1, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE,
+                              reinterpret_cast<EGLClientBuffer>(textureMtl.get()), kDefaultAttribs);
+        EXPECT_EGL_SUCCESS();
+        GLTexture texture1;
+        glBindTexture(GL_TEXTURE_2D, texture1);
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
+        EXPECT_GL_ERROR(GL_NO_ERROR);
+        glViewport(0, 0, kSharedTextureSize, kSharedTextureSize);
+
+        // Create texture holding multiple values to be accumulated in shader.
+        GLTexture texture2;
+        glBindTexture(GL_TEXTURE_2D, texture2);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_R32I, kNumValues, 1, 0, GL_RED_INTEGER, GL_INT, nullptr);
+        glFlush();
+        EXPECT_GL_ERROR(GL_NO_ERROR);
+
+        // Using GL context to draw to the texture1
+        glBindTexture(GL_TEXTURE_2D, texture1);
+        GLFramebuffer framebuffer1;
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer1);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture1, 0);
+
+        // First draw with initial color
+        {
+            constexpr char kSimpleFS[] = R"(#version 300 es
+out highp ivec4 outColor;
+
+void main()
+{
+    outColor = ivec4(1);
+})";
+            ANGLE_GL_PROGRAM(colorProgram, angle::essl3_shaders::vs::Simple(), kSimpleFS);
+            drawQuad(colorProgram, angle::essl3_shaders::PositionAttrib(), 0.5f);
+        }
+
+        // Upload the texture2
+        std::vector<int32_t> values(kNumValues);
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            values[i] = i;
+        }
+        glBindTexture(GL_TEXTURE_2D, texture2);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kNumValues, 1, GL_RED_INTEGER, GL_INT,
+                        values.data());
+
+        // 2nd draw call draw the texture2 to texture1.
+        glUseProgram(complexProgram);
+        drawQuad(complexProgram, angle::essl1_shaders::PositionAttrib(), 0.5f);
+
+        // Place a sync object on GL context's commands stream.
+        EGLSync syncGL = CreateEGLSyncFromMetalSharedEvent(display1, sharedEventMtl, kSignalValue,
+                                                           /*signaled=*/false);
+        glFlush();
+
+        // -------------------------- Metal ---------------------------
+        [commandBuffer waitUntilCompleted];
+
+        // Read dstBuffer
+        const int32_t kExpectedSum = kNumValues * (kNumValues - 1) / 2;
+        int32_t *mappedInts        = static_cast<int32_t *>(dstBuffer.get().contents);
+        EXPECT_EQ(mappedInts[0], kExpectedSum);
+
+        eglDestroySync(display1, syncGL);
+        eglDestroyImage(display1, image);
+
+    }  // @autoreleasepool
 }
 
 class ImageClearTestMetal : public ImageTestMetal

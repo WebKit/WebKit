@@ -109,10 +109,16 @@ static String getFileNameFromURIComponent(StringView input)
     return result.toString();
 }
 
-static String generateValidFileName(const URL& url, const HashSet<String>& existingFileNames)
+static String generateValidFileName(const URL& url, const HashSet<String>& existingFileNames, const String& extension = { })
 {
+    String suffix = extension.isEmpty() ? emptyString() : makeString('.', extension);
     auto extractedFileName = getFileNameFromURIComponent(url.lastPathComponent());
+    if (extractedFileName.endsWith(suffix))
+        extractedFileName = extractedFileName.left(extractedFileName.length() - suffix.length());
     auto fileName = extractedFileName.isEmpty() ? String::fromLatin1(defaultFileName) : extractedFileName;
+
+    RELEASE_ASSERT(suffix.length() < maxFileNameSizeInBytes);
+    unsigned maxUniqueFileNameLength = maxFileNameSizeInBytes - suffix.length();
     String uniqueFileName;
 
     unsigned count = 0;
@@ -120,8 +126,9 @@ static String generateValidFileName(const URL& url, const HashSet<String>& exist
         uniqueFileName = fileName;
         if (count)
             uniqueFileName = makeString(fileName, '-', count);
-        if (uniqueFileName.sizeInBytes() > maxFileNameSizeInBytes)
-            uniqueFileName = uniqueFileName.substring(fileName.sizeInBytes() - maxFileNameSizeInBytes, maxFileNameSizeInBytes);
+        if (uniqueFileName.sizeInBytes() > maxUniqueFileNameLength)
+            uniqueFileName = uniqueFileName.right(maxUniqueFileNameLength);
+        uniqueFileName = makeString(uniqueFileName, suffix);
         ++count;
     } while (existingFileNames.contains(uniqueFileName));
 
@@ -623,7 +630,8 @@ static HashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIf
                 subresources.remove(index);
             }
 
-            String subresourceFileName = generateValidFileName(url, uniqueFileNames);
+            auto extension = MIMETypeRegistry::preferredExtensionForMIMEType(cssContentTypeAtom());
+            String subresourceFileName = generateValidFileName(url, uniqueFileNames, extension);
             uniqueFileNames.add(subresourceFileName);
             addResult.iterator->value = FileSystem::pathByAppendingComponent(subresourcesDirectoryName, subresourceFileName);
             relativeUniqueCSSStyleSheets.add(currentCSSStyleSheet, subresourceFileName);
@@ -664,7 +672,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
     Vector<Ref<ArchiveResource>> subresources;
     HashMap<String, String> uniqueSubresources;
     HashSet<String> uniqueFileNames;
-    String subresourcesDirectoryName = mainFrameFilePath.isNull() ? String { } : makeString(mainFrameFilePath, "_files");
+    String subresourcesDirectoryName = mainFrameFilePath.isNull() ? String { } : makeString(mainFrameFilePath, "_files"_s);
 
     for (auto& node : nodes) {
         RefPtr<LocalFrame> childFrame;
@@ -753,7 +761,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
 
         auto extension = MIMETypeRegistry::preferredExtensionForMIMEType(textHTMLContentTypeAtom());
         if (!extension.isEmpty())
-            extension = makeString(".", extension);
+            extension = makeString('.', extension);
         auto mainFrameFilePathWithExtension = mainFrameFilePath.endsWith(extension) ? mainFrameFilePath : makeString(mainFrameFilePath, extension);
         auto filePathWithExtension = frame.isMainFrame() ? mainFrameFilePathWithExtension : makeString(subresourcesDirectoryName, "/frame_"_s, frame.frameID().toString(), extension);
 
@@ -796,7 +804,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(LocalFrame* frame
 
     // Wrap the frameset document in an iframe so it can be pasted into
     // another document (which will have a body or frameset of its own). 
-    String iframeMarkup = "<iframe frameborder=\"no\" marginwidth=\"0\" marginheight=\"0\" width=\"98%%\" height=\"98%%\" src=\"" + frame->loader().documentLoader()->response().url().string() + "\"></iframe>";
+    auto iframeMarkup = makeString("<iframe frameborder=\"no\" marginwidth=\"0\" marginheight=\"0\" width=\"98%%\" height=\"98%%\" src=\""_s, frame->loader().documentLoader()->response().url().string(), "\"></iframe>"_s);
     auto iframeResource = ArchiveResource::create(utf8Buffer(iframeMarkup), aboutBlankURL(), textHTMLContentTypeAtom(), "UTF-8"_s, String());
 
     return create(iframeResource.releaseNonNull(), { }, { archive.releaseNonNull() });

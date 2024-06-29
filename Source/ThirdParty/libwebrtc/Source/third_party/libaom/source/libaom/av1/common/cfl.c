@@ -159,8 +159,9 @@ static INLINE void cfl_predict_lbd_c(const int16_t *ac_buf_q3, uint8_t *dst,
 CFL_PREDICT_FN(c, lbd)
 
 #if CONFIG_AV1_HIGHBITDEPTH
-void cfl_predict_hbd_c(const int16_t *ac_buf_q3, uint16_t *dst, int dst_stride,
-                       int alpha_q3, int bit_depth, int width, int height) {
+static INLINE void cfl_predict_hbd_c(const int16_t *ac_buf_q3, uint16_t *dst,
+                                     int dst_stride, int alpha_q3,
+                                     int bit_depth, int width, int height) {
   for (int j = 0; j < height; j++) {
     for (int i = 0; i < width; i++) {
       dst[i] = clip_pixel_highbd(

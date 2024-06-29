@@ -69,7 +69,7 @@ GstSpeechSynthesisWrapper::GstSpeechSynthesisWrapper(const PlatformSpeechSynthes
     registerWebKitGStreamerElements();
 
     static Atomic<uint32_t> pipelineId;
-    m_pipeline = gst_pipeline_new(makeString("speech-synthesizer-", pipelineId.exchangeAdd(1)).ascii().data());
+    m_pipeline = gst_pipeline_new(makeString("speech-synthesizer-"_s, pipelineId.exchangeAdd(1)).ascii().data());
     registerActivePipeline(m_pipeline);
     connectSimpleBusMessageCallback(m_pipeline.get(), [this](GstMessage* message) {
         this->handleMessage(message);

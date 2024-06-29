@@ -25,12 +25,14 @@ public:
     static sk_sp<Texture> Make(const MtlSharedContext*,
                                SkISize dimensions,
                                const TextureInfo&,
+                               std::string_view label,
                                skgpu::Budgeted);
 
     static sk_sp<Texture> MakeWrapped(const MtlSharedContext*,
                                       SkISize dimensions,
                                       const TextureInfo&,
-                                      sk_cfp<id<MTLTexture>>);
+                                      sk_cfp<id<MTLTexture>>,
+                                      std::string_view label);
 
     ~MtlTexture() override {}
 
@@ -41,10 +43,13 @@ private:
                SkISize dimensions,
                const TextureInfo& info,
                sk_cfp<id<MTLTexture>>,
+               std::string_view label,
                Ownership,
                skgpu::Budgeted);
 
     void freeGpuData() override;
+
+    void setBackendLabel(char const* label) override;
 
     sk_cfp<id<MTLTexture>> fTexture;
 };

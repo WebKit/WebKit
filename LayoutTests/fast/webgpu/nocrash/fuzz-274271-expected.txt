@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: OperationError: popErrorScope failed
+layer at (0,0) size 785x627
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x627
+  RenderBlock {HTML} at (0,0) size 785x627 [color=#99DDBBCC] [bgcolor=#102030E0]
+    RenderBody {BODY} at (8,8) size 769x611
+      RenderImage {IMG} at (0,349) size 295x27
+      RenderImage {IMG} at (295,187) size 244x189
+      RenderImage {IMG} at (539,150) size 137x226
+      RenderImage {IMG} at (96,417) size 201x109
+layer at (8,8) size 300x150
+  RenderHTMLCanvas {CANVAS} at (0,0) size 300x150
+layer at (308,8) size 300x150
+  RenderHTMLCanvas {CANVAS} at (300,0) size 300x150
+layer at (8,438) size 96x96
+  RenderVideo {VIDEO} at (0,430) size 96x96
+layer at (305,384) size 369x150
+  RenderHTMLCanvas {CANVAS} at (297,376) size 369x150
+layer at (8,534) size 300x85
+  RenderHTMLCanvas {CANVAS} at (0,526) size 300x85

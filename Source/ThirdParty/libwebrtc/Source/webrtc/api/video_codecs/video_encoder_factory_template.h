@@ -13,10 +13,12 @@
 
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include "absl/algorithm/container.h"
 #include "api/array_view.h"
+#include "api/environment/environment.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_encoder.h"
 #include "api/video_codecs/video_encoder_factory.h"
@@ -34,7 +36,8 @@ namespace webrtc {
 //
 //   // Creates an encoder instance for the given format.
 //   static std::unique_ptr<VideoEncoder>
-//       CreateEncoder(const SdpVideoFormat& format);
+//       CreateEncoder(const Environment& env,
+//                     const SdpVideoFormat& format);
 //
 //   // Returns true if the encoder supports the given scalability mode.
 //   static bool
@@ -50,18 +53,18 @@ class VideoEncoderFactoryTemplate : public VideoEncoderFactory {
     return GetSupportedFormatsInternal<Ts...>();
   }
 
-  std::unique_ptr<VideoEncoder> CreateVideoEncoder(
-      const SdpVideoFormat& format) override {
+  std::unique_ptr<VideoEncoder> Create(const Environment& env,
+                                       const SdpVideoFormat& format) override {
     // We fuzzy match the specified format for both valid and not so valid
     // reasons. The valid reason is that there are many standardized codec
     // specific fmtp parameters that have not been implemented, and in those
     // cases we should not fail to instantiate an encoder just because we don't
     // recognize the parameter. The not so valid reason is that we have started
     // adding parameters completely unrelated to the SDP to the SdpVideoFormat.
-    // TODO(bugs.webrtc.org/13868): Remove FuzzyMatchSdpVideoFormat
+    // TODO: bugs.webrtc.org/13868 - Remove FuzzyMatchSdpVideoFormat
     absl::optional<SdpVideoFormat> matched =
         FuzzyMatchSdpVideoFormat(GetSupportedFormats(), format);
-    return CreateVideoEncoderInternal<Ts...>(matched.value_or(format));
+    return CreateInternal<Ts...>(env, matched.value_or(format));
   }
 
   CodecSupport QueryCodecSupport(
@@ -111,14 +114,14 @@ class VideoEncoderFactoryTemplate : public VideoEncoderFactory {
   }
 
   template <typename V, typename... Vs>
-  std::unique_ptr<VideoEncoder> CreateVideoEncoderInternal(
-      const SdpVideoFormat& format) {
+  std::unique_ptr<VideoEncoder> CreateInternal(const Environment& env,
+                                               const SdpVideoFormat& format) {
     if (IsFormatInList(format, V::SupportedFormats())) {
-      return V::CreateEncoder(format);
+      return V::CreateEncoder(env, format);
     }
 
     if constexpr (sizeof...(Vs) > 0) {
-      return CreateVideoEncoderInternal<Vs...>(format);
+      return CreateInternal<Vs...>(env, format);
     }
 
     return nullptr;

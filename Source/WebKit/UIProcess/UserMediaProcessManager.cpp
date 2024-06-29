@@ -80,7 +80,7 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
     ASSERT(request.hasAudioDevice() || request.hasVideoDevice());
 
 #if ENABLE(SANDBOX_EXTENSIONS) && USE(APPLE_INTERNAL_SDK)
-    Ref process = proxy.page().process();
+    Ref process = proxy.page().legacyMainFrameProcess();
     size_t extensionCount = 0;
 
     bool needsAudioSandboxExtension = request.hasAudioDevice() && !process->hasAudioCaptureExtension() && !proxy.page().preferences().captureAudioInUIProcessEnabled() && !proxy.page().preferences().captureAudioInGPUProcessEnabled();
@@ -189,7 +189,7 @@ void UserMediaProcessManager::revokeSandboxExtensionsIfNeeded(WebProcessProxy& p
     bool hasPendingCapture = false;
 
     UserMediaPermissionRequestManagerProxy::forEach([&hasAudioCapture, &hasVideoCapture, &hasPendingCapture, &process](auto& managerProxy) {
-        if (&process != &managerProxy.page().process())
+        if (&process != &managerProxy.page().legacyMainFrameProcess())
             return;
         hasAudioCapture |= managerProxy.page().isCapturingAudio();
         hasVideoCapture |= managerProxy.page().isCapturingVideo();

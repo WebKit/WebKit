@@ -2932,7 +2932,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_imageStore(
 }
 )")
 
-// TODO(anglebug.com/7279): When using raster order groups and pixel local storage, which only
+// TODO(anglebug.com/40096838): When using raster order groups and pixel local storage, which only
 // accesses the pixel coordinate, we probably only need an execution barrier (mem_flags::mem_none).
 PROGRAM_PRELUDE_DECLARE(memoryBarrierImage, R"(
 ANGLE_ALWAYS_INLINE void ANGLE_memoryBarrierImage()

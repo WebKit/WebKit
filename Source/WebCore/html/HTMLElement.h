@@ -160,8 +160,8 @@ public:
     void setPopover(const AtomString& value) { setAttributeWithoutSynchronization(HTMLNames::popoverAttr, value); };
     void popoverAttributeChanged(const AtomString& value);
 
-    bool isValidInvokeAction(const InvokeAction) final;
-    bool handleInvokeInternal(const HTMLFormControlElement& invoker, const InvokeAction&) final;
+    bool isValidInvokeAction(const InvokeAction) override;
+    bool handleInvokeInternal(const HTMLFormControlElement& invoker, const InvokeAction&) override;
 
 #if PLATFORM(IOS_FAMILY)
     static SelectionRenderingBehavior selectionRenderingBehavior(const Node*);

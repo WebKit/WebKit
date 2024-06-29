@@ -43,8 +43,6 @@ public:
 
     void dump(bool forceRepaint);
 
-    void stopLoading();
-
     void prepare();
     void resetAfterTest();
 

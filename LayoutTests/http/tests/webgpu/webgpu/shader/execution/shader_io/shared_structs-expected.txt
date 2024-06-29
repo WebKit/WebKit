@@ -1,1 +1,5 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :shared_with_buffer:
+PASS :shared_between_stages:
+PASS :shared_with_non_entry_point_function:
+

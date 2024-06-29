@@ -377,7 +377,7 @@ int BlobResourceHandle::readDataSync(const BlobDataItem& item, std::span<uint8_t
 
     long long remaining = item.length() - m_currentItemReadSize;
     long long bytesToRead = std::min(std::min<long long>(remaining, buffer.size()), m_totalRemainingSize);
-    memcpy(buffer.data(), item.data()->data() + item.offset() + m_currentItemReadSize, bytesToRead);
+    memcpy(buffer.data(), item.data()->span().subspan(item.offset() + m_currentItemReadSize).data(), bytesToRead);
     m_totalRemainingSize -= bytesToRead;
 
     m_currentItemReadSize += bytesToRead;

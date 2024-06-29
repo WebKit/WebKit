@@ -72,7 +72,6 @@ rtc_library("parameter") {
     "../../../rtc_base:stringutils",
     "../common:internal_types",
     "../common:math",
-    "../common:str_join",
     "../public:types",
   ]
   sources = [
@@ -120,7 +119,6 @@ rtc_library("error_cause") {
     "../../../rtc_base:stringutils",
     "../common:internal_types",
     "../common:math",
-    "../common:str_join",
     "../packet:bounded_io",
     "../public:types",
   ]
@@ -172,7 +170,6 @@ rtc_library("chunk") {
     "../../../rtc_base:logging",
     "../../../rtc_base:stringutils",
     "../common:math",
-    "../common:str_join",
     "../packet:bounded_io",
   ]
   sources = [

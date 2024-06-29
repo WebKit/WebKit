@@ -149,7 +149,7 @@ class GLES1ConformanceTest : public ANGLETest<>
 
 TEST_P(GLES1ConformanceTest, AmbLight)
 {
-    // Flaky timeouts due to slow test. http://anglebug.com/5234
+    // Flaky timeouts due to slow test. http://anglebug.com/42263787
     ANGLE_SKIP_TEST_IF(IsVulkan());
     ASSERT_NE(CONFORMANCE_TEST_ERROR, AmbLightExec());
 }
@@ -196,7 +196,7 @@ TEST_P(GLES1ConformanceTest, BCorner)
 
 TEST_P(GLES1ConformanceTest, Blend)
 {
-    // Slow test, takes over 20 seconds in some configs. http://anglebug.com/5171
+    // Slow test, takes over 20 seconds in some configs. http://anglebug.com/42263732
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsIntel() && IsWindows());
     ASSERT_NE(CONFORMANCE_TEST_ERROR, BlendExec());
 }
@@ -370,14 +370,14 @@ TEST_P(GLES1ConformanceTest, Scissor)
 
 TEST_P(GLES1ConformanceTest, SPClear)
 {
-    // http://anglebug.com/7676
+    // http://anglebug.com/42266142
     ANGLE_SKIP_TEST_IF(IsQualcomm() && IsVulkan());
     ASSERT_NE(CONFORMANCE_TEST_ERROR, SPClearExec());
 }
 
 TEST_P(GLES1ConformanceTest, SPCorner)
 {
-    // http://anglebug.com/7676
+    // http://anglebug.com/42266142
     ANGLE_SKIP_TEST_IF(IsQualcomm());
     ASSERT_NE(CONFORMANCE_TEST_ERROR, SPCornerExec());
 }
@@ -414,7 +414,7 @@ TEST_P(GLES1ConformanceTest, SPFunc)
 
 TEST_P(GLES1ConformanceTest, SPOp)
 {
-    // http://anglebug.com/7676
+    // http://anglebug.com/42266142
     ANGLE_SKIP_TEST_IF(IsQualcomm());
     ASSERT_NE(CONFORMANCE_TEST_ERROR, SPOpExec());
 }
@@ -528,7 +528,7 @@ TEST_P(GLES1ConformanceTest, PointSizeArray)
 
 TEST_P(GLES1ConformanceTest, PointSprite)
 {
-    // http://anglebug.com/6652
+    // http://anglebug.com/42265148
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     ASSERT_NE(CONFORMANCE_TEST_ERROR, PointSpriteExec());

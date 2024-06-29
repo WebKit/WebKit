@@ -545,10 +545,20 @@ Vector<LayoutRect> FontCascade::characterSelectionRectsForText(const TextRun& ru
     });
 }
 
-void FontCascade::adjustSelectionRectForText(const TextRun& run, LayoutRect& selectionRect, unsigned from, std::optional<unsigned> to) const
+void FontCascade::adjustSelectionRectForText(bool canUseSimplifiedTextMeasuring, const TextRun& run, LayoutRect& selectionRect, unsigned from, std::optional<unsigned> to) const
 {
     unsigned destination = to.value_or(run.length());
-    if (codePath(run, from, to) != CodePath::Complex)
+
+    // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
+    CodePath codePathToUse = codePath(run);
+    if (codePathToUse != CodePath::Complex) {
+        if (canUseSimplifiedTextMeasuring && canTakeFixedPitchFastContentMeasuring())
+            return adjustSelectionRectForSimpleTextWithFixedPitch(run, selectionRect, from, destination);
+
+        if ((enableKerning() || requiresShaping()) && (from || destination != run.length()))
+            codePathToUse = CodePath::Complex;
+    }
+    if (codePathToUse != CodePath::Complex)
         return adjustSelectionRectForSimpleText(run, selectionRect, from, destination);
 
     return adjustSelectionRectForComplexText(run, selectionRect, from, destination);
@@ -1606,6 +1616,19 @@ void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRe
     if (run.rtl())
         selectionRect.move(controller.totalAdvance().width() - afterWidth, 0);
     else
+        selectionRect.move(beforeWidth, 0);
+    selectionRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
+}
+
+void FontCascade::adjustSelectionRectForSimpleTextWithFixedPitch(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
+{
+    bool whitespaceIsCollapsed = !run.allowTabs();
+    float beforeWidth = widthForSimpleTextWithFixedPitch(run.text().left(from), whitespaceIsCollapsed);
+    float afterWidth = widthForSimpleTextWithFixedPitch(run.text().left(to), whitespaceIsCollapsed);
+    if (run.rtl()) {
+        float totalWidth = widthForSimpleTextWithFixedPitch(run.text(), whitespaceIsCollapsed);
+        selectionRect.move(totalWidth - afterWidth, 0);
+    } else
         selectionRect.move(beforeWidth, 0);
     selectionRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
 }

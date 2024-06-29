@@ -318,7 +318,8 @@ typedef struct {
 typedef void (*rest_unit_visitor_t)(const RestorationTileLimits *limits,
                                     int rest_unit_idx, void *priv,
                                     int32_t *tmpbuf,
-                                    RestorationLineBuffers *rlbs);
+                                    RestorationLineBuffers *rlbs,
+                                    struct aom_internal_error_info *error_info);
 
 typedef struct FilterFrameCtxt {
   const RestorationInfo *rsi;
@@ -357,47 +358,47 @@ void av1_decode_xq(const int *xqd, int *xq, const sgr_params_type *params);
  * This function applies the loop restoration filter to a single
  * loop restoration unit.
  *
- * \param[in]  limits        Limits of the unit
- * \param[in]  rui           The parameters to use for this unit and its
- *                           coefficients
- * \param[in]  rsb           Deblocked pixels to use for stripe boundaries
- * \param[in]  rlbs          Space to use as a scratch buffer
- * \param[in]  ss_x          Horizontal subsampling for plane
- * \param[in]  ss_y          Vertical subsampling for plane
- * \param[in]  plane_w       Width of the current plane
- * \param[in]  plane_h       Height of the current plane
- * \param[in]  highbd        Whether high bitdepth pipeline is used
- * \param[in]  bit_depth     Bit-depth of the video
- * \param[in]  data8         Frame data (pointing at the top-left corner of
- *                           the frame, not the restoration unit).
- * \param[in]  stride        Stride of \c data8
- * \param[out] dst8          Buffer where the results will be written. Like
- *                           \c data8, \c dst8 should point at the top-left
- *                           corner of the frame
- * \param[in]  dst_stride    Stride of \c dst8
- * \param[in]  tmpbuf        Scratch buffer used by the sgrproj filter which
- *                           should be at least SGRPROJ_TMPBUF_SIZE big.
- * \param[in]  optimized_lr  Whether to use fast optimized Loop Restoration
+ * \param[in]       limits        Limits of the unit
+ * \param[in]       rui           The parameters to use for this unit and its
+ *                                coefficients
+ * \param[in]       rsb           Deblocked pixels to use for stripe boundaries
+ * \param[in]       rlbs          Space to use as a scratch buffer
+ * \param[in]       ss_x          Horizontal subsampling for plane
+ * \param[in]       ss_y          Vertical subsampling for plane
+ * \param[in]       plane_w       Width of the current plane
+ * \param[in]       plane_h       Height of the current plane
+ * \param[in]       highbd        Whether high bitdepth pipeline is used
+ * \param[in]       bit_depth     Bit-depth of the video
+ * \param[in]       data8         Frame data (pointing at the top-left corner of
+ *                                the frame, not the restoration unit).
+ * \param[in]       stride        Stride of \c data8
+ * \param[out]      dst8          Buffer where the results will be written. Like
+ *                                \c data8, \c dst8 should point at the top-left
+ *                                corner of the frame
+ * \param[in]       dst_stride    Stride of \c dst8
+ * \param[in]       tmpbuf        Scratch buffer used by the sgrproj filter
+ *                                which should be at least SGRPROJ_TMPBUF_SIZE
+ *                                big.
+ * \param[in]       optimized_lr  Whether to use fast optimized Loop Restoration
+ * \param[in,out]   error_info    Error info for reporting errors
  *
  * \remark Nothing is returned. Instead, the filtered unit is output in
  * \c dst8 at the proper restoration unit offset.
  */
-void av1_loop_restoration_filter_unit(const RestorationTileLimits *limits,
-                                      const RestorationUnitInfo *rui,
-                                      const RestorationStripeBoundaries *rsb,
-                                      RestorationLineBuffers *rlbs, int plane_w,
-                                      int plane_h, int ss_x, int ss_y,
-                                      int highbd, int bit_depth, uint8_t *data8,
-                                      int stride, uint8_t *dst8, int dst_stride,
-                                      int32_t *tmpbuf, int optimized_lr);
+void av1_loop_restoration_filter_unit(
+    const RestorationTileLimits *limits, const RestorationUnitInfo *rui,
+    const RestorationStripeBoundaries *rsb, RestorationLineBuffers *rlbs,
+    int plane_w, int plane_h, int ss_x, int ss_y, int highbd, int bit_depth,
+    uint8_t *data8, int stride, uint8_t *dst8, int dst_stride, int32_t *tmpbuf,
+    int optimized_lr, struct aom_internal_error_info *error_info);
 
 /*!\brief Function for applying loop restoration filter to a frame
  *
  * \ingroup in_loop_restoration
  * This function applies the loop restoration filter to a frame.
  *
- * \param[in, out]  frame         Compressed frame buffer
- * \param[in, out]  cm            Pointer to top level common structure
+ * \param[in,out]   frame         Compressed frame buffer
+ * \param[in,out]   cm            Pointer to top level common structure
  * \param[in]       optimized_lr  Whether to use fast optimized Loop Restoration
  * \param[in]       lr_ctxt       Loop restoration context
  *
@@ -409,7 +410,7 @@ void av1_loop_restoration_filter_frame(YV12_BUFFER_CONFIG *frame,
                                        void *lr_ctxt);
 /*!\cond */
 
-void av1_loop_restoration_precal();
+void av1_loop_restoration_precal(void);
 
 struct AV1LrSyncData;
 

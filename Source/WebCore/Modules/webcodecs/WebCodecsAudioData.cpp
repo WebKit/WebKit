@@ -144,8 +144,7 @@ ExceptionOr<void> WebCodecsAudioData::copyTo(BufferSource&& source, CopyToOption
     if (allocationSize > source.length())
         return Exception { ExceptionCode::RangeError, "Buffer is too small"_s };
 
-    std::span buffer { static_cast<uint8_t*>(source.mutableData()), source.length() };
-    m_data.audioData->copyTo(buffer, destFormat, options.planeIndex, options.frameOffset, options.frameCount, maxCopyElementCount);
+    m_data.audioData->copyTo(source.mutableSpan(), destFormat, options.planeIndex, options.frameOffset, options.frameCount, maxCopyElementCount);
     return { };
 }
 

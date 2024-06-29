@@ -86,6 +86,7 @@ public:
     AffineTransform getCTM(GraphicsContext::IncludeDeviceScale) const final;
 
     void beginTransparencyLayer(float) final;
+    void beginTransparencyLayer(CompositeOperator, BlendMode) final;
     void endTransparencyLayer() final;
 
     void resetClip() final;
@@ -98,17 +99,23 @@ public:
 
     RenderingMode renderingMode() const final;
 
-    enum class ShadowStyle : uint8_t { Outset, Inset };
-    sk_sp<SkImageFilter> createDropShadowFilterIfNeeded(ShadowStyle) const;
-
     SkPaint createFillPaint() const;
     SkPaint createStrokePaint() const;
+
+    void drawSkiaText(const sk_sp<SkTextBlob>&, SkScalar, SkScalar, bool, bool);
+
+private:
+    bool makeGLContextCurrentIfNeeded() const;
 
     void setupFillSource(SkPaint&) const;
     void setupStrokeSource(SkPaint&) const;
 
-private:
-    bool makeGLContextCurrentIfNeeded() const;
+    enum class ShadowStyle : uint8_t { Outset, Inset };
+    sk_sp<SkImageFilter> createDropShadowFilterIfNeeded(ShadowStyle) const;
+    bool drawOutsetShadow(SkPaint&, Function<void(const SkPaint&)>&&);
+
+    void drawSkiaRect(const SkRect&, SkPaint&);
+    void drawSkiaPath(const SkPath&, SkPaint&);
 
     class SkiaState {
     public:
@@ -122,12 +129,17 @@ private:
         } m_stroke;
     };
 
+    struct LayerState {
+        std::optional<CompositeMode> compositeMode;
+    };
+
     SkCanvas& m_canvas;
     RenderingMode m_renderingMode { RenderingMode::Accelerated };
     RenderingPurpose m_renderingPurpose { RenderingPurpose::Unspecified };
     CompletionHandler<void()> m_destroyNotify;
     SkiaState m_skiaState;
     Vector<SkiaState, 1> m_skiaStateStack;
+    Vector<LayerState, 1> m_layerStateStack;
     const DestinationColorSpace m_colorSpace;
 };
 

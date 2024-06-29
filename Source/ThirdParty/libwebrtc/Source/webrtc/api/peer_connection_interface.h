@@ -80,12 +80,10 @@
 #include "absl/types/optional.h"
 #include "api/adaptation/resource.h"
 #include "api/async_dns_resolver.h"
-#include "api/async_resolver_factory.h"
 #include "api/audio/audio_mixer.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_encoder_factory.h"
 #include "api/audio_options.h"
-#include "api/call/call_factory_interface.h"
 #include "api/candidate.h"
 #include "api/crypto/crypto_options.h"
 #include "api/data_channel_interface.h"
@@ -114,23 +112,26 @@
 #include "api/set_remote_description_observer_interface.h"
 #include "api/stats/rtc_stats_collector_callback.h"
 #include "api/task_queue/task_queue_factory.h"
+#include "api/transport/bandwidth_estimation_settings.h"
 #include "api/transport/bitrate_settings.h"
 #include "api/transport/enums.h"
 #include "api/transport/network_control.h"
 #include "api/transport/sctp_transport_factory_interface.h"
 #include "api/turn_customizer.h"
 #include "api/video/video_bitrate_allocator_factory.h"
+#include "api/video_codecs/video_decoder_factory.h"
+#include "api/video_codecs/video_encoder_factory.h"
 #include "call/rtp_transport_controller_send_factory_interface.h"
 #include "media/base/media_config.h"
 #include "media/base/media_engine.h"
 // TODO(bugs.webrtc.org/7447): We plan to provide a way to let applications
 // inject a PacketSocketFactory and/or NetworkManager, and not expose
 // PortAllocator in the PeerConnection api.
+#include "api/ref_count.h"
 #include "p2p/base/port_allocator.h"
 #include "rtc_base/network.h"
 #include "rtc_base/network_constants.h"
 #include "rtc_base/network_monitor_factory.h"
-#include "rtc_base/ref_count.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/rtc_certificate_generator.h"
 #include "rtc_base/socket_address.h"
@@ -145,8 +146,11 @@ class Thread;
 
 namespace webrtc {
 
+// MediaFactory class definition is not part of the api.
+class MediaFactory;
+
 // MediaStream container interface.
-class StreamCollectionInterface : public rtc::RefCountInterface {
+class StreamCollectionInterface : public webrtc::RefCountInterface {
  public:
   // TODO(ronghuawu): Update the function names to c++ style, e.g. find -> Find.
   virtual size_t count() = 0;
@@ -160,7 +164,7 @@ class StreamCollectionInterface : public rtc::RefCountInterface {
   ~StreamCollectionInterface() override = default;
 };
 
-class StatsObserver : public rtc::RefCountInterface {
+class StatsObserver : public webrtc::RefCountInterface {
  public:
   virtual void OnComplete(const StatsReports& reports) = 0;
 
@@ -175,7 +179,7 @@ enum class SdpSemantics {
   kUnifiedPlan,
 };
 
-class RTC_EXPORT PeerConnectionInterface : public rtc::RefCountInterface {
+class RTC_EXPORT PeerConnectionInterface : public webrtc::RefCountInterface {
  public:
   // See https://w3c.github.io/webrtc-pc/#dom-rtcsignalingstate
   enum SignalingState {
@@ -447,15 +451,6 @@ class RTC_EXPORT PeerConnectionInterface : public rtc::RefCountInterface {
     // This means adding padding bits up to this bitrate, which can help
     // when switching from a static scene to one with motion.
     absl::optional<int> screencast_min_bitrate;
-
-#if defined(WEBRTC_FUCHSIA)
-    // TODO(bugs.webrtc.org/11066): Remove entirely once Fuchsia does not use.
-    // TODO(bugs.webrtc.org/9891) - Move to crypto_options
-    // Can be used to disable DTLS-SRTP. This should never be done, but can be
-    // useful for testing purposes, for example in setting up a loopback call
-    // with a single PeerConnection.
-    absl::optional<bool> enable_dtls_srtp;
-#endif
 
     /////////////////////////////////////////////////
     // The below fields are not part of the standard.
@@ -1010,8 +1005,6 @@ class RTC_EXPORT PeerConnectionInterface : public rtc::RefCountInterface {
   // for negotiation and subsequent CreateOffer() calls will act as if
   // RTCOfferAnswerOptions::ice_restart is true.
   // https://w3c.github.io/webrtc-pc/#dom-rtcpeerconnection-restartice
-  // TODO(hbos): Remove default implementation when downstream projects
-  // implement this.
   virtual void RestartIce() = 0;
 
   // Create a new offer.
@@ -1082,9 +1075,7 @@ class RTC_EXPORT PeerConnectionInterface : public rtc::RefCountInterface {
   // sure that even if there was a delay (e.g. due to a PostTask) between the
   // event being generated and the time of firing, the Operations Chain is empty
   // and the event is still valid to be fired.
-  virtual bool ShouldFireNegotiationNeededEvent(uint32_t event_id) {
-    return true;
-  }
+  virtual bool ShouldFireNegotiationNeededEvent(uint32_t event_id) = 0;
 
   virtual PeerConnectionInterface::RTCConfiguration GetConfiguration() = 0;
 
@@ -1141,18 +1132,25 @@ class RTC_EXPORT PeerConnectionInterface : public rtc::RefCountInterface {
   // to the provided value.
   virtual RTCError SetBitrate(const BitrateSettings& bitrate) = 0;
 
+  // Allows an application to reconfigure bandwidth estimation.
+  // The method can be called both before and after estimation has started.
+  // Estimation starts when the first RTP packet is sent.
+  // Estimation will be restarted if already started.
+  virtual void ReconfigureBandwidthEstimation(
+      const BandwidthEstimationSettings& settings) = 0;
+
   // Enable/disable playout of received audio streams. Enabled by default. Note
   // that even if playout is enabled, streams will only be played out if the
   // appropriate SDP is also applied. Setting `playout` to false will stop
   // playout of the underlying audio device but starts a task which will poll
   // for audio data every 10ms to ensure that audio processing happens and the
   // audio statistics are updated.
-  virtual void SetAudioPlayout(bool playout) {}
+  virtual void SetAudioPlayout(bool playout) = 0;
 
   // Enable/disable recording of transmitted audio streams. Enabled by default.
   // Note that even if recording is enabled, streams will only be recorded if
   // the appropriate SDP is also applied.
-  virtual void SetAudioRecording(bool recording) {}
+  virtual void SetAudioRecording(bool recording) = 0;
 
   // Looks up the DtlsTransport associated with a MID value.
   // In the Javascript API, DtlsTransport is a property of a sender, but
@@ -1184,28 +1182,25 @@ class RTC_EXPORT PeerConnectionInterface : public rtc::RefCountInterface {
 
   // Returns the current state of canTrickleIceCandidates per
   // https://w3c.github.io/webrtc-pc/#attributes-1
-  virtual absl::optional<bool> can_trickle_ice_candidates() {
-    // TODO(crbug.com/708484): Remove default implementation.
-    return absl::nullopt;
-  }
+  virtual absl::optional<bool> can_trickle_ice_candidates() = 0;
 
   // When a resource is overused, the PeerConnection will try to reduce the load
   // on the sysem, for example by reducing the resolution or frame rate of
   // encoded streams. The Resource API allows injecting platform-specific usage
   // measurements. The conditions to trigger kOveruse or kUnderuse are up to the
   // implementation.
-  // TODO(hbos): Make pure virtual when implemented by downstream projects.
-  virtual void AddAdaptationResource(rtc::scoped_refptr<Resource> resource) {}
+  virtual void AddAdaptationResource(rtc::scoped_refptr<Resource> resource) = 0;
 
   // Start RtcEventLog using an existing output-sink. Takes ownership of
-  // `output` and passes it on to Call, which will take the ownership. If the
-  // operation fails the output will be closed and deallocated. The event log
-  // will send serialized events to the output object every `output_period_ms`.
-  // Applications using the event log should generally make their own trade-off
-  // regarding the output period. A long period is generally more efficient,
-  // with potential drawbacks being more bursty thread usage, and more events
-  // lost in case the application crashes. If the `output_period_ms` argument is
-  // omitted, webrtc selects a default deemed to be workable in most cases.
+  // `output` and passes it on to Call, which will take the ownership. If
+  // the operation fails the output will be closed and deallocated. The
+  // event log will send serialized events to the output object every
+  // `output_period_ms`. Applications using the event log should generally
+  // make their own trade-off regarding the output period. A long period is
+  // generally more efficient, with potential drawbacks being more bursty
+  // thread usage, and more events lost in case the application crashes. If
+  // the `output_period_ms` argument is omitted, webrtc selects a default
+  // deemed to be workable in most cases.
   virtual bool StartRtcEventLog(std::unique_ptr<RtcEventLogOutput> output,
                                 int64_t output_period_ms) = 0;
   virtual bool StartRtcEventLog(std::unique_ptr<RtcEventLogOutput> output) = 0;
@@ -1226,8 +1221,7 @@ class RTC_EXPORT PeerConnectionInterface : public rtc::RefCountInterface {
   //
   // Also the only thread on which it's safe to use SessionDescriptionInterface
   // pointers.
-  // TODO(deadbeef): Make pure virtual when all subclasses implement it.
-  virtual rtc::Thread* signaling_thread() const { return nullptr; }
+  virtual rtc::Thread* signaling_thread() const = 0;
 
  protected:
   // Dtor protected as objects shouldn't be deleted via this interface.
@@ -1384,14 +1378,6 @@ struct RTC_EXPORT PeerConnectionDependencies final {
   // Factory for creating resolvers that look up hostnames in DNS
   std::unique_ptr<webrtc::AsyncDnsResolverFactoryInterface>
       async_dns_resolver_factory;
-  // Deprecated - use async_dns_resolver_factory
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  [[deprecated("Use async_dns_resolver_factory")]]
-    std::unique_ptr<
-      webrtc::AsyncResolverFactory>
-      async_resolver_factory;
-#pragma clang diagnostic pop
   std::unique_ptr<webrtc::IceTransportFactory> ice_transport_factory;
   std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator;
   std::unique_ptr<rtc::SSLCertificateVerifier> tls_cert_verifier;
@@ -1430,8 +1416,6 @@ struct RTC_EXPORT PeerConnectionFactoryDependencies final {
   // called without a `port_allocator`.
   std::unique_ptr<rtc::PacketSocketFactory> packet_socket_factory;
   std::unique_ptr<TaskQueueFactory> task_queue_factory;
-  std::unique_ptr<cricket::MediaEngineInterface> media_engine;
-  std::unique_ptr<CallFactoryInterface> call_factory;
   std::unique_ptr<RtcEventLogFactoryInterface> event_log_factory;
   std::unique_ptr<FecControllerFactoryInterface> fec_controller_factory;
   std::unique_ptr<NetworkStatePredictorFactoryInterface>
@@ -1449,7 +1433,29 @@ struct RTC_EXPORT PeerConnectionFactoryDependencies final {
   std::unique_ptr<FieldTrialsView> trials;
   std::unique_ptr<RtpTransportControllerSendFactoryInterface>
       transport_controller_send_factory;
-  std::unique_ptr<Metronome> metronome;
+  // Metronome used for decoding, must be called on the worker thread.
+  std::unique_ptr<Metronome> decode_metronome;
+  // Metronome used for encoding, must be called on the worker thread.
+  // TODO(b/304158952): Consider merging into a single metronome for all codec
+  // usage.
+  std::unique_ptr<Metronome> encode_metronome;
+
+  // Media specific dependencies. Unused when `media_factory == nullptr`.
+  rtc::scoped_refptr<AudioDeviceModule> adm;
+  rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory;
+  rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory;
+  rtc::scoped_refptr<AudioMixer> audio_mixer;
+  rtc::scoped_refptr<AudioProcessing> audio_processing;
+  std::unique_ptr<AudioFrameProcessor> audio_frame_processor;
+  std::unique_ptr<VideoEncoderFactory> video_encoder_factory;
+  std::unique_ptr<VideoDecoderFactory> video_decoder_factory;
+
+  // The `media_factory` members allows webrtc to be optionally built without
+  // media support (i.e., if only being used for data channels).
+  // By default media is disabled. To enable media call
+  // `EnableMedia(PeerConnectionFactoryDependencies&)`. Definition of the
+  // `MediaFactory` interface is a webrtc implementation detail.
+  std::unique_ptr<MediaFactory> media_factory;
 };
 
 // PeerConnectionFactoryInterface is the factory interface used for creating
@@ -1466,7 +1472,7 @@ struct RTC_EXPORT PeerConnectionFactoryDependencies final {
 // CreatePeerConnectionFactory method which accepts threads as input, and use
 // the CreatePeerConnection version that takes a PortAllocator as an argument.
 class RTC_EXPORT PeerConnectionFactoryInterface
-    : public rtc::RefCountInterface {
+    : public webrtc::RefCountInterface {
  public:
   class Options {
    public:

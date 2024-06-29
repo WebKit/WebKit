@@ -34,6 +34,10 @@ if (USE_SKIA)
     add_subdirectory(ThirdParty/skia)
 endif ()
 
+if (USE_SYSPROF_CAPTURE)
+    add_subdirectory(ThirdParty/libsysprof-capture)
+endif ()
+
 if (ENABLE_WEBINSPECTORUI)
     add_subdirectory(WebInspectorUI)
 endif ()

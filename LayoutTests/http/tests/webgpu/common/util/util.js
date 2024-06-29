@@ -90,6 +90,7 @@ export function skipTestCase(msg) {
  * The `performance` interface.
  * It is available in all browsers, but it is not in scope by default in Node.
  */
+
 const perf = typeof performance !== 'undefined' ? performance : require('perf_hooks').performance;
 
 /**

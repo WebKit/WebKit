@@ -152,4 +152,34 @@ JS_EXPORT void JSGarbageCollect(JSContextRef ctx);
 #endif
 #endif
 
+#if JSC_OBJC_API_ENABLED
+#define JSC_CF_ENUM(enumName, ...)       \
+    typedef CF_ENUM(uint32_t, enumName) { \
+        __VA_ARGS__                       \
+    }
+#else
+#define JSC_CF_ENUM(enumName, ...) \
+    typedef enum {                  \
+        __VA_ARGS__                 \
+    } enumName
+#endif
+
+#if JSC_OBJC_API_ENABLED
+#define JSC_ASSUME_NONNULL_BEGIN _Pragma("clang assume_nonnull begin")
+#define JSC_ASSUME_NONNULL_END _Pragma("clang assume_nonnull end")
+#else
+#define JSC_ASSUME_NONNULL_BEGIN
+#define JSC_ASSUME_NONNULL_END
+#endif
+
+#if JSC_OBJC_API_ENABLED
+#define JSC_NULL_UNSPECIFIED _Null_unspecified
+#define JSC_NULLABLE _Nullable
+#define JSC_NONNULL _Nonnull
+#else
+#define JSC_NULL_UNSPECIFIED
+#define JSC_NULLABLE
+#define JSC_NONNULL
+#endif
+
 #endif /* JSBase_h */

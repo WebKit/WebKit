@@ -44,7 +44,7 @@ void testMemalignArray(size_t size, size_t typeSize, size_t typeAlignment)
     pas_segregated_view view;
     pas_segregated_size_directory* directory;
 
-    void* ptr = bmalloc_iso_allocate_zeroed_array_by_size(&heapRef, size);
+    void* ptr = bmalloc_iso_allocate_zeroed_array_by_size(&heapRef, size, pas_non_compact_allocation_mode);
     CHECK(ptr);
 
     view = pas_segregated_view_for_object(reinterpret_cast<uintptr_t>(ptr), &bmalloc_heap_config);

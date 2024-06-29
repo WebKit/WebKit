@@ -24,24 +24,29 @@
 
 #include "config/aom_dsp_rtcd.h"
 
-// TODO(rachelbarker):
-// Implement specialized functions for upscaling flow fields,
-// replacing av1_upscale_plane_double_prec().
-// Then we can avoid needing to include code from av1/
-#include "av1/common/resize.h"
-
 // Amount to downsample the flow field by.
-// eg. DOWNSAMPLE_SHIFT = 2 (DOWNSAMPLE_FACTOR == 4) means we calculate
+// e.g., DOWNSAMPLE_SHIFT = 2 (DOWNSAMPLE_FACTOR == 4) means we calculate
 // one flow point for each 4x4 pixel region of the frame
 // Must be a power of 2
 #define DOWNSAMPLE_SHIFT 3
 #define DOWNSAMPLE_FACTOR (1 << DOWNSAMPLE_SHIFT)
+
+// Filters used when upscaling the flow field from one pyramid level
+// to another. See upscale_flow_component for details on kernel selection
+#define FLOW_UPSCALE_TAPS 4
+
 // Number of outermost flow field entries (on each edge) which can't be
 // computed, because the patch they correspond to extends outside of the
 // frame
 // The border is (DISFLOW_PATCH_SIZE >> 1) pixels, which is
 // (DISFLOW_PATCH_SIZE >> 1) >> DOWNSAMPLE_SHIFT many flow field entries
-#define FLOW_BORDER ((DISFLOW_PATCH_SIZE >> 1) >> DOWNSAMPLE_SHIFT)
+#define FLOW_BORDER_INNER ((DISFLOW_PATCH_SIZE >> 1) >> DOWNSAMPLE_SHIFT)
+
+// Number of extra padding entries on each side of the flow field.
+// These samples are added so that we do not need to apply clamping when
+// interpolating or upsampling the flow field
+#define FLOW_BORDER_OUTER (FLOW_UPSCALE_TAPS / 2)
+
 // When downsampling the flow field, each flow field entry covers a square
 // region of pixels in the image pyramid. This value is equal to the position
 // of the center of that region, as an offset from the top/left edge.
@@ -52,8 +57,21 @@
 // this gives the correct offset of 0 instead of -1.
 #define UPSAMPLE_CENTER_OFFSET ((DOWNSAMPLE_FACTOR - 1) / 2)
 
-static INLINE void get_cubic_kernel_dbl(double x, double *kernel) {
-  assert(0 <= x && x < 1);
+static double flow_upscale_filter[2][FLOW_UPSCALE_TAPS] = {
+  // Cubic interpolation kernels for phase=0.75 and phase=0.25, respectively
+  { -3 / 128., 29 / 128., 111 / 128., -9 / 128. },
+  { -9 / 128., 111 / 128., 29 / 128., -3 / 128. }
+};
+
+static INLINE void get_cubic_kernel_dbl(double x, double kernel[4]) {
+  // Check that the fractional position is in range.
+  //
+  // Note: x is calculated from, e.g., `u_frac = u - floor(u)`.
+  // Mathematically, this implies that 0 <= x < 1. However, in practice it is
+  // possible to have x == 1 due to floating point rounding. This is fine,
+  // and we still interpolate correctly if we allow x = 1.
+  assert(0 <= x && x <= 1);
+
   double x2 = x * x;
   double x3 = x2 * x;
   kernel[0] = -0.5 * x + x2 - 0.5 * x3;
@@ -62,7 +80,7 @@ static INLINE void get_cubic_kernel_dbl(double x, double *kernel) {
   kernel[3] = -0.5 * x2 + 0.5 * x3;
 }
 
-static INLINE void get_cubic_kernel_int(double x, int *kernel) {
+static INLINE void get_cubic_kernel_int(double x, int kernel[4]) {
   double kernel_dbl[4];
   get_cubic_kernel_dbl(x, kernel_dbl);
 
@@ -73,18 +91,19 @@ static INLINE void get_cubic_kernel_int(double x, int *kernel) {
 }
 
 static INLINE double get_cubic_value_dbl(const double *p,
-                                         const double *kernel) {
+                                         const double kernel[4]) {
   return kernel[0] * p[0] + kernel[1] * p[1] + kernel[2] * p[2] +
          kernel[3] * p[3];
 }
 
-static INLINE int get_cubic_value_int(const int *p, const int *kernel) {
+static INLINE int get_cubic_value_int(const int *p, const int kernel[4]) {
   return kernel[0] * p[0] + kernel[1] * p[1] + kernel[2] * p[2] +
          kernel[3] * p[3];
 }
 
 static INLINE double bicubic_interp_one(const double *arr, int stride,
-                                        double *h_kernel, double *v_kernel) {
+                                        const double h_kernel[4],
+                                        const double v_kernel[4]) {
   double tmp[1 * 4];
 
   // Horizontal convolution
@@ -96,7 +115,9 @@ static INLINE double bicubic_interp_one(const double *arr, int stride,
   return get_cubic_value_dbl(tmp, v_kernel);
 }
 
-static int determine_disflow_correspondence(CornerList *corners,
+static int determine_disflow_correspondence(const ImagePyramid *src_pyr,
+                                            const ImagePyramid *ref_pyr,
+                                            CornerList *corners,
                                             const FlowField *flow,
                                             Correspondence *correspondences) {
   const int width = flow->width;
@@ -125,7 +146,15 @@ static int determine_disflow_correspondence(CornerList *corners,
     const double flow_sub_y =
         (y & (DOWNSAMPLE_FACTOR - 1)) / (double)DOWNSAMPLE_FACTOR;
 
-    // Make sure that bicubic interpolation won't read outside of the flow field
+    // Exclude points which would sample from the outer border of the flow
+    // field, as this would give lower-quality results.
+    //
+    // Note: As we never read from the border region at pyramid level 0, we
+    // can skip filling it in. If the conditions here are removed, or any
+    // other logic is added which reads from this border region, then
+    // compute_flow_field() will need to be modified to call
+    // fill_flow_field_borders() at pyramid level 0 to set up the correct
+    // border data.
     if (flow_x < 1 || (flow_x + 2) >= width) continue;
     if (flow_y < 1 || (flow_y + 2) >= height) continue;
 
@@ -134,10 +163,18 @@ static int determine_disflow_correspondence(CornerList *corners,
     get_cubic_kernel_dbl(flow_sub_x, h_kernel);
     get_cubic_kernel_dbl(flow_sub_y, v_kernel);
 
-    const double flow_u = bicubic_interp_one(&flow->u[flow_y * stride + flow_x],
-                                             stride, h_kernel, v_kernel);
-    const double flow_v = bicubic_interp_one(&flow->v[flow_y * stride + flow_x],
-                                             stride, h_kernel, v_kernel);
+    double flow_u = bicubic_interp_one(&flow->u[flow_y * stride + flow_x],
+                                       stride, h_kernel, v_kernel);
+    double flow_v = bicubic_interp_one(&flow->v[flow_y * stride + flow_x],
+                                       stride, h_kernel, v_kernel);
+
+    // Refine the interpolated flow vector one last time
+    const int patch_tl_x = x0 - DISFLOW_PATCH_CENTER;
+    const int patch_tl_y = y0 - DISFLOW_PATCH_CENTER;
+    aom_compute_flow_at_point(
+        src_pyr->layers[0].buffer, ref_pyr->layers[0].buffer, patch_tl_x,
+        patch_tl_y, src_pyr->layers[0].width, src_pyr->layers[0].height,
+        src_pyr->layers[0].stride, &flow_u, &flow_v);
 
     // Use original points (without offsets) when filling in correspondence
     // array
@@ -413,16 +450,16 @@ static void fill_flow_field_borders(double *flow, int width, int height,
   // Calculate the bounds of the rectangle which was filled in by
   // compute_flow_field() before calling this function.
   // These indices are inclusive on both ends.
-  const int left_index = FLOW_BORDER;
-  const int right_index = (width - FLOW_BORDER - 1);
-  const int top_index = FLOW_BORDER;
-  const int bottom_index = (height - FLOW_BORDER - 1);
+  const int left_index = FLOW_BORDER_INNER;
+  const int right_index = (width - FLOW_BORDER_INNER - 1);
+  const int top_index = FLOW_BORDER_INNER;
+  const int bottom_index = (height - FLOW_BORDER_INNER - 1);
 
   // Left area
   for (int i = top_index; i <= bottom_index; i += 1) {
     double *row = flow + i * stride;
     const double left = row[left_index];
-    for (int j = 0; j < left_index; j++) {
+    for (int j = -FLOW_BORDER_OUTER; j < left_index; j++) {
       row[j] = left;
     }
   }
@@ -431,45 +468,178 @@ static void fill_flow_field_borders(double *flow, int width, int height,
   for (int i = top_index; i <= bottom_index; i += 1) {
     double *row = flow + i * stride;
     const double right = row[right_index];
-    for (int j = right_index + 1; j < width; j++) {
+    for (int j = right_index + 1; j < width + FLOW_BORDER_OUTER; j++) {
       row[j] = right;
     }
   }
 
   // Top area
-  const double *top_row = flow + top_index * stride;
-  for (int i = 0; i < top_index; i++) {
-    double *row = flow + i * stride;
-    memcpy(row, top_row, width * sizeof(*row));
+  const double *top_row = flow + top_index * stride - FLOW_BORDER_OUTER;
+  for (int i = -FLOW_BORDER_OUTER; i < top_index; i++) {
+    double *row = flow + i * stride - FLOW_BORDER_OUTER;
+    size_t length = width + 2 * FLOW_BORDER_OUTER;
+    memcpy(row, top_row, length * sizeof(*row));
   }
 
   // Bottom area
-  const double *bottom_row = flow + bottom_index * stride;
-  for (int i = bottom_index + 1; i < height; i++) {
-    double *row = flow + i * stride;
-    memcpy(row, bottom_row, width * sizeof(*row));
+  const double *bottom_row = flow + bottom_index * stride - FLOW_BORDER_OUTER;
+  for (int i = bottom_index + 1; i < height + FLOW_BORDER_OUTER; i++) {
+    double *row = flow + i * stride - FLOW_BORDER_OUTER;
+    size_t length = width + 2 * FLOW_BORDER_OUTER;
+    memcpy(row, bottom_row, length * sizeof(*row));
+  }
+}
+
+// Upscale one component of the flow field, from a size of
+// cur_width x cur_height to a size of (2*cur_width) x (2*cur_height), storing
+// the result back into the same buffer. This function also scales the flow
+// vector by 2, so that when we move to the next pyramid level down, the implied
+// motion vector is the same.
+//
+// The temporary buffer tmpbuf must be large enough to hold an intermediate
+// array of size stride * cur_height, *plus* FLOW_BORDER_OUTER rows above and
+// below. In other words, indices from -FLOW_BORDER_OUTER * stride to
+// (cur_height + FLOW_BORDER_OUTER) * stride - 1 must be valid.
+//
+// Note that the same stride is used for u before and after upscaling
+// and for the temporary buffer, for simplicity.
+//
+// A note on phasing:
+//
+// The flow fields at two adjacent pyramid levels are offset from each other,
+// and we need to account for this in the construction of the interpolation
+// kernels.
+//
+// Consider an 8x8 pixel patch at pyramid level n. This is split into four
+// patches at pyramid level n-1. Bringing these patches back up to pyramid level
+// n, each sub-patch covers 4x4 pixels, and between them they cover the same
+// 8x8 region.
+//
+// Therefore, at pyramid level n, two adjacent patches look like this:
+//
+//    + - - - - - - - + - - - - - - - +
+//    |               |               |
+//    |   x       x   |   x       x   |
+//    |               |               |
+//    |       #       |       #       |
+//    |               |               |
+//    |   x       x   |   x       x   |
+//    |               |               |
+//    + - - - - - - - + - - - - - - - +
+//
+// where # marks the center of a patch at pyramid level n (the input to this
+// function), and x marks the center of a patch at pyramid level n-1 (the output
+// of this function).
+//
+// By counting pixels (marked by +, -, and |), we can see that the flow vectors
+// at pyramid level n-1 are offset relative to the flow vectors at pyramid
+// level n, by 1/4 of the larger (input) patch size. Therefore, our
+// interpolation kernels need to have phases of 0.25 and 0.75.
+//
+// In addition, in order to handle the frame edges correctly, we need to
+// generate one output vector to the left and one to the right of each input
+// vector, even though these must be interpolated using different source points.
+static void upscale_flow_component(double *flow, int cur_width, int cur_height,
+                                   int stride, double *tmpbuf) {
+  const int half_len = FLOW_UPSCALE_TAPS / 2;
+
+  // Check that the outer border is large enough to avoid needing to clamp
+  // the source locations
+  assert(half_len <= FLOW_BORDER_OUTER);
+
+  // Horizontal upscale and multiply by 2
+  for (int i = 0; i < cur_height; i++) {
+    for (int j = 0; j < cur_width; j++) {
+      double left = 0;
+      for (int k = -half_len; k < half_len; k++) {
+        left +=
+            flow[i * stride + (j + k)] * flow_upscale_filter[0][k + half_len];
+      }
+      tmpbuf[i * stride + (2 * j + 0)] = 2.0 * left;
+
+      // Right output pixel is 0.25 units to the right of the input pixel
+      double right = 0;
+      for (int k = -(half_len - 1); k < (half_len + 1); k++) {
+        right += flow[i * stride + (j + k)] *
+                 flow_upscale_filter[1][k + (half_len - 1)];
+      }
+      tmpbuf[i * stride + (2 * j + 1)] = 2.0 * right;
+    }
+  }
+
+  // Fill in top and bottom borders of tmpbuf
+  const double *top_row = &tmpbuf[0];
+  for (int i = -FLOW_BORDER_OUTER; i < 0; i++) {
+    double *row = &tmpbuf[i * stride];
+    memcpy(row, top_row, 2 * cur_width * sizeof(*row));
+  }
+
+  const double *bottom_row = &tmpbuf[(cur_height - 1) * stride];
+  for (int i = cur_height; i < cur_height + FLOW_BORDER_OUTER; i++) {
+    double *row = &tmpbuf[i * stride];
+    memcpy(row, bottom_row, 2 * cur_width * sizeof(*row));
+  }
+
+  // Vertical upscale
+  int upscaled_width = cur_width * 2;
+  for (int i = 0; i < cur_height; i++) {
+    for (int j = 0; j < upscaled_width; j++) {
+      double top = 0;
+      for (int k = -half_len; k < half_len; k++) {
+        top +=
+            tmpbuf[(i + k) * stride + j] * flow_upscale_filter[0][k + half_len];
+      }
+      flow[(2 * i) * stride + j] = top;
+
+      double bottom = 0;
+      for (int k = -(half_len - 1); k < (half_len + 1); k++) {
+        bottom += tmpbuf[(i + k) * stride + j] *
+                  flow_upscale_filter[1][k + (half_len - 1)];
+      }
+      flow[(2 * i + 1) * stride + j] = bottom;
+    }
   }
 }
 
 // make sure flow_u and flow_v start at 0
 static bool compute_flow_field(const ImagePyramid *src_pyr,
-                               const ImagePyramid *ref_pyr, FlowField *flow) {
+                               const ImagePyramid *ref_pyr, int n_levels,
+                               FlowField *flow) {
   bool mem_status = true;
-  assert(src_pyr->n_levels == ref_pyr->n_levels);
 
   double *flow_u = flow->u;
   double *flow_v = flow->v;
 
-  const size_t flow_size = flow->stride * (size_t)flow->height;
-  double *u_upscale = aom_malloc(flow_size * sizeof(*u_upscale));
-  double *v_upscale = aom_malloc(flow_size * sizeof(*v_upscale));
-  if (!u_upscale || !v_upscale) {
-    mem_status = false;
-    goto free_uvscale;
+  double *tmpbuf0;
+  double *tmpbuf;
+
+  if (n_levels < 2) {
+    // tmpbuf not needed
+    tmpbuf0 = NULL;
+    tmpbuf = NULL;
+  } else {
+    // This line must match the calculation of cur_flow_height below
+    const int layer1_height = src_pyr->layers[1].height >> DOWNSAMPLE_SHIFT;
+
+    const size_t tmpbuf_size =
+        (layer1_height + 2 * FLOW_BORDER_OUTER) * flow->stride;
+    tmpbuf0 = aom_malloc(tmpbuf_size * sizeof(*tmpbuf0));
+    if (!tmpbuf0) {
+      mem_status = false;
+      goto free_tmpbuf;
+    }
+    tmpbuf = tmpbuf0 + FLOW_BORDER_OUTER * flow->stride;
   }
 
   // Compute flow field from coarsest to finest level of the pyramid
-  for (int level = src_pyr->n_levels - 1; level >= 0; --level) {
+  //
+  // Note: We stop after refining pyramid level 1 and interpolating it to
+  // generate an initial flow field at level 0. We do *not* refine the dense
+  // flow field at level 0. Instead, we wait until we have generated
+  // correspondences by interpolating this flow field, and then refine the
+  // correspondences themselves. This is both faster and gives better output
+  // compared to refining the flow field at level 0 and then interpolating.
+  for (int level = n_levels - 1; level >= 1; --level) {
     const PyramidLayer *cur_layer = &src_pyr->layers[level];
     const int cur_width = cur_layer->width;
     const int cur_height = cur_layer->height;
@@ -482,8 +652,10 @@ static bool compute_flow_field(const ImagePyramid *src_pyr,
     const int cur_flow_height = cur_height >> DOWNSAMPLE_SHIFT;
     const int cur_flow_stride = flow->stride;
 
-    for (int i = FLOW_BORDER; i < cur_flow_height - FLOW_BORDER; i += 1) {
-      for (int j = FLOW_BORDER; j < cur_flow_width - FLOW_BORDER; j += 1) {
+    for (int i = FLOW_BORDER_INNER; i < cur_flow_height - FLOW_BORDER_INNER;
+         i += 1) {
+      for (int j = FLOW_BORDER_INNER; j < cur_flow_width - FLOW_BORDER_INNER;
+           j += 1) {
         const int flow_field_idx = i * cur_flow_stride + j;
 
         // Calculate the position of a patch of size DISFLOW_PATCH_SIZE pixels,
@@ -516,28 +688,10 @@ static bool compute_flow_field(const ImagePyramid *src_pyr,
       const int upscale_flow_height = cur_flow_height << 1;
       const int upscale_stride = flow->stride;
 
-      bool upscale_u_plane = av1_upscale_plane_double_prec(
-          flow_u, cur_flow_height, cur_flow_width, cur_flow_stride, u_upscale,
-          upscale_flow_height, upscale_flow_width, upscale_stride);
-      bool upscale_v_plane = av1_upscale_plane_double_prec(
-          flow_v, cur_flow_height, cur_flow_width, cur_flow_stride, v_upscale,
-          upscale_flow_height, upscale_flow_width, upscale_stride);
-      if (!upscale_u_plane || !upscale_v_plane) {
-        mem_status = false;
-        goto free_uvscale;
-      }
-
-      // Multiply all flow vectors by 2.
-      // When we move down a pyramid level, the image resolution doubles.
-      // Thus we need to double all vectors in order for them to represent
-      // the same translation at the next level down
-      for (int i = 0; i < upscale_flow_height; i++) {
-        for (int j = 0; j < upscale_flow_width; j++) {
-          const int index = i * upscale_stride + j;
-          flow_u[index] = u_upscale[index] * 2.0;
-          flow_v[index] = v_upscale[index] * 2.0;
-        }
-      }
+      upscale_flow_component(flow_u, cur_flow_width, cur_flow_height,
+                             cur_flow_stride, tmpbuf);
+      upscale_flow_component(flow_v, cur_flow_width, cur_flow_height,
+                             cur_flow_stride, tmpbuf);
 
       // If we didn't fill in the rightmost column or bottommost row during
       // upsampling (in order to keep the ratio to exactly 2), fill them
@@ -567,9 +721,9 @@ static bool compute_flow_field(const ImagePyramid *src_pyr,
       }
     }
   }
-free_uvscale:
-  aom_free(u_upscale);
-  aom_free(v_upscale);
+
+free_tmpbuf:
+  aom_free(tmpbuf0);
   return mem_status;
 }
 
@@ -580,25 +734,25 @@ static FlowField *alloc_flow_field(int frame_width, int frame_height) {
   // Calculate the size of the bottom (largest) layer of the flow pyramid
   flow->width = frame_width >> DOWNSAMPLE_SHIFT;
   flow->height = frame_height >> DOWNSAMPLE_SHIFT;
-  flow->stride = flow->width;
+  flow->stride = flow->width + 2 * FLOW_BORDER_OUTER;
 
-  const size_t flow_size = flow->stride * (size_t)flow->height;
-  flow->u = aom_calloc(flow_size, sizeof(*flow->u));
-  flow->v = aom_calloc(flow_size, sizeof(*flow->v));
+  const size_t flow_size =
+      flow->stride * (size_t)(flow->height + 2 * FLOW_BORDER_OUTER);
 
-  if (flow->u == NULL || flow->v == NULL) {
-    aom_free(flow->u);
-    aom_free(flow->v);
+  flow->buf0 = aom_calloc(2 * flow_size, sizeof(*flow->buf0));
+  if (!flow->buf0) {
     aom_free(flow);
     return NULL;
   }
+
+  flow->u = flow->buf0 + FLOW_BORDER_OUTER * flow->stride + FLOW_BORDER_OUTER;
+  flow->v = flow->u + flow_size;
 
   return flow;
 }
 
 static void free_flow_field(FlowField *flow) {
-  aom_free(flow->u);
-  aom_free(flow->v);
+  aom_free(flow->buf0);
   aom_free(flow);
 }
 
@@ -608,28 +762,30 @@ static void free_flow_field(FlowField *flow) {
 // Following the convention in flow_estimation.h, the flow vectors are computed
 // at fixed points in `src` and point to the corresponding locations in `ref`,
 // regardless of the temporal ordering of the frames.
-bool av1_compute_global_motion_disflow(TransformationType type,
-                                       YV12_BUFFER_CONFIG *src,
-                                       YV12_BUFFER_CONFIG *ref, int bit_depth,
-                                       MotionModel *motion_models,
-                                       int num_motion_models,
-                                       bool *mem_alloc_failed) {
+bool av1_compute_global_motion_disflow(
+    TransformationType type, YV12_BUFFER_CONFIG *src, YV12_BUFFER_CONFIG *ref,
+    int bit_depth, int downsample_level, MotionModel *motion_models,
+    int num_motion_models, bool *mem_alloc_failed) {
   // Precompute information we will need about each frame
   ImagePyramid *src_pyramid = src->y_pyramid;
   CornerList *src_corners = src->corners;
   ImagePyramid *ref_pyramid = ref->y_pyramid;
-  if (!aom_compute_pyramid(src, bit_depth, src_pyramid)) {
+
+  const int src_layers =
+      aom_compute_pyramid(src, bit_depth, DISFLOW_PYRAMID_LEVELS, src_pyramid);
+  const int ref_layers =
+      aom_compute_pyramid(ref, bit_depth, DISFLOW_PYRAMID_LEVELS, ref_pyramid);
+
+  if (src_layers < 0 || ref_layers < 0) {
     *mem_alloc_failed = true;
     return false;
   }
-  if (!av1_compute_corner_list(src_pyramid, src_corners)) {
+  if (!av1_compute_corner_list(src, bit_depth, downsample_level, src_corners)) {
     *mem_alloc_failed = true;
     return false;
   }
-  if (!aom_compute_pyramid(ref, bit_depth, ref_pyramid)) {
-    *mem_alloc_failed = true;
-    return false;
-  }
+
+  assert(src_layers == ref_layers);
 
   const int src_width = src_pyramid->layers[0].width;
   const int src_height = src_pyramid->layers[0].height;
@@ -642,7 +798,7 @@ bool av1_compute_global_motion_disflow(TransformationType type,
     return false;
   }
 
-  if (!compute_flow_field(src_pyramid, ref_pyramid, flow)) {
+  if (!compute_flow_field(src_pyramid, ref_pyramid, src_layers, flow)) {
     *mem_alloc_failed = true;
     free_flow_field(flow);
     return false;
@@ -657,8 +813,8 @@ bool av1_compute_global_motion_disflow(TransformationType type,
     return false;
   }
 
-  const int num_correspondences =
-      determine_disflow_correspondence(src_corners, flow, correspondences);
+  const int num_correspondences = determine_disflow_correspondence(
+      src_pyramid, ref_pyramid, src_corners, flow, correspondences);
 
   bool result = ransac(correspondences, num_correspondences, type,
                        motion_models, num_motion_models, mem_alloc_failed);

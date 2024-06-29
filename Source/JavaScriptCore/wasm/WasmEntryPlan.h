@@ -41,6 +41,8 @@ class CallLinkInfo;
 
 namespace Wasm {
 
+enum class BindingFailure;
+
 class EntryPlan : public Plan, public StreamingParserClient {
 public:
     using Base = Plan;
@@ -71,6 +73,12 @@ public:
     {
         RELEASE_ASSERT(!failed() && !hasWork());
         return WTFMove(m_unlinkedWasmToWasmCalls);
+    }
+
+    Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> takeWasmToJSExitStubs()
+    {
+        RELEASE_ASSERT(!failed() && !hasWork());
+        return WTFMove(m_wasmToJSExitStubs);
     }
 
     enum class State : uint8_t {
@@ -113,14 +121,23 @@ protected:
         return true;
     }
 
+#if ENABLE(JIT)
+    bool generateWasmToJSStubs();
+    bool generateWasmToWasmStubs();
+#endif
+    void generateStubsIfNecessary() WTF_REQUIRES_LOCK(m_lock);
+
     Vector<uint8_t> m_source;
     Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;
+    Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToJSExitStubs;
     HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_exportedFunctionIndices;
 
     Vector<Vector<UnlinkedWasmToWasmCall>> m_unlinkedWasmToWasmCalls;
     StreamingParser m_streamingParser;
     State m_state;
 
+    bool m_areWasmToWasmStubsCompiled { false };
+    bool m_areWasmToJSStubsCompiled { false };
     const CompilerMode m_compilerMode;
     uint8_t m_numberOfActiveThreads { 0 };
     uint32_t m_currentIndex { 0 };

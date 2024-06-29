@@ -1,4 +1,4 @@
-//@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
+//@ requireOptions("--useBBQJIT=1", "--useWebAssemblyLLInt=1", "--webAssemblyLLIntTiersUpToBBQ=1")
 //@ skip
 // This uses worker-ping-test.js which has %calls that haven't been resolved.
 

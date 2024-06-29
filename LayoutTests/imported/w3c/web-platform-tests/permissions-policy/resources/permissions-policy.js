@@ -33,7 +33,7 @@ function test_feature_availability(
     feature_descriptionOrObject, test, src, expect_feature_available, feature_name,
     allowfullscreen, is_promise_test = false) {
 
-  if (typeof feature_descriptionOrObject === "object") {
+  if (feature_descriptionOrObject && feature_descriptionOrObject instanceof Object) {
     const {
       feature_description,
       test,
@@ -55,7 +55,6 @@ function test_feature_availability(
   }
 
   const feature_description = feature_descriptionOrObject;
-
   let frame = document.createElement('iframe');
   frame.src = src;
 

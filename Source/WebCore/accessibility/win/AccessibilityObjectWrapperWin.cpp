@@ -67,7 +67,7 @@ void AccessibilityObjectWrapper::accessibilityAttributeValue(const AtomString& a
         ASSERT(V_VT(result) == VT_EMPTY);
         V_VT(result) = VT_BSTR;
         CharacterRange textRange = m_object->selectedTextRange();
-        String range = makeString('{', textRange.location, ", ", textRange.length, '}');
+        String range = makeString('{', textRange.location, ", "_s, textRange.length, '}');
         V_BSTR(result) = WebCore::BString(range).release();
         return;
     }

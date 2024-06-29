@@ -11,14 +11,16 @@
 #include "video/config/encoder_stream_factory.h"
 
 #include "call/adaptation/video_source_restrictions.h"
+#include "test/explicit_key_value_config.h"
 #include "test/gtest.h"
 
 namespace webrtc {
-
-using cricket::EncoderStreamFactory;
-constexpr int kMaxQp = 48;
-
 namespace {
+
+using ::cricket::EncoderStreamFactory;
+using test::ExplicitKeyValueConfig;
+
+constexpr int kMaxQp = 48;
 
 std::vector<Resolution> GetStreamResolutions(
     const std::vector<VideoStream>& streams) {
@@ -41,6 +43,7 @@ VideoStream LayerWithRequestedResolution(Resolution res) {
 }  // namespace
 
 TEST(EncoderStreamFactory, SinglecastRequestedResolution) {
+  ExplicitKeyValueConfig field_trials("");
   VideoEncoder::EncoderInfo encoder_info;
   auto factory = rtc::make_ref_counted<EncoderStreamFactory>(
       "VP8", kMaxQp,
@@ -50,7 +53,8 @@ TEST(EncoderStreamFactory, SinglecastRequestedResolution) {
   encoder_config.number_of_streams = 1;
   encoder_config.simulcast_layers.push_back(
       LayerWithRequestedResolution({.width = 640, .height = 360}));
-  auto streams = factory->CreateEncoderStreams(1280, 720, encoder_config);
+  auto streams =
+      factory->CreateEncoderStreams(field_trials, 1280, 720, encoder_config);
   EXPECT_EQ(streams[0].requested_resolution,
             (Resolution{.width = 640, .height = 360}));
   EXPECT_EQ(GetStreamResolutions(streams), (std::vector<Resolution>{
@@ -59,6 +63,7 @@ TEST(EncoderStreamFactory, SinglecastRequestedResolution) {
 }
 
 TEST(EncoderStreamFactory, SinglecastRequestedResolutionWithAdaptation) {
+  ExplicitKeyValueConfig field_trials("");
   VideoSourceRestrictions restrictions(
       /* max_pixels_per_frame= */ (320 * 320),
       /* target_pixels_per_frame= */ absl::nullopt,
@@ -72,7 +77,8 @@ TEST(EncoderStreamFactory, SinglecastRequestedResolutionWithAdaptation) {
   encoder_config.number_of_streams = 1;
   encoder_config.simulcast_layers.push_back(
       LayerWithRequestedResolution({.width = 640, .height = 360}));
-  auto streams = factory->CreateEncoderStreams(1280, 720, encoder_config);
+  auto streams =
+      factory->CreateEncoderStreams(field_trials, 1280, 720, encoder_config);
   EXPECT_EQ(streams[0].requested_resolution,
             (Resolution{.width = 640, .height = 360}));
   EXPECT_EQ(GetStreamResolutions(streams), (std::vector<Resolution>{

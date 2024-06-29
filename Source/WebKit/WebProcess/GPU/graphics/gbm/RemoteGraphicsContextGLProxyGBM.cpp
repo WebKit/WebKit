@@ -101,7 +101,7 @@ void NicosiaDisplayDelegate::swapBuffersIfNeeded()
 
 class RemoteGraphicsContextGLProxyGBM final : public RemoteGraphicsContextGLProxy {
 public:
-    RemoteGraphicsContextGLProxyGBM(IPC::Connection&, Ref<IPC::StreamClientConnection>, const WebCore::GraphicsContextGLAttributes&, Ref<RemoteVideoFrameObjectHeapProxy>&&);
+    RemoteGraphicsContextGLProxyGBM(const WebCore::GraphicsContextGLAttributes&, WTF::SerialFunctionDispatcher&);
     virtual ~RemoteGraphicsContextGLProxyGBM() = default;
 
 private:
@@ -112,8 +112,8 @@ private:
     Ref<NicosiaDisplayDelegate> m_layerContentsDisplayDelegate;
 };
 
-RemoteGraphicsContextGLProxyGBM::RemoteGraphicsContextGLProxyGBM(IPC::Connection& connection, Ref<IPC::StreamClientConnection> streamConnection, const WebCore::GraphicsContextGLAttributes& attributes, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
-    : RemoteGraphicsContextGLProxy(connection, WTFMove(streamConnection), attributes, WTFMove(videoFrameObjectHeapProxy))
+RemoteGraphicsContextGLProxyGBM::RemoteGraphicsContextGLProxyGBM(const WebCore::GraphicsContextGLAttributes& attributes, WTF::SerialFunctionDispatcher& dispatcher)
+    : RemoteGraphicsContextGLProxy(attributes, dispatcher)
     , m_layerContentsDisplayDelegate(adoptRef(*new NicosiaDisplayDelegate(!attributes.alpha)))
 { }
 
@@ -137,9 +137,9 @@ void RemoteGraphicsContextGLProxyGBM::prepareForDisplay()
     m_layerContentsDisplayDelegate->present(WTFMove(dmabufObject));
 }
 
-Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(IPC::Connection& connection, Ref<IPC::StreamClientConnection> streamConnection, const WebCore::GraphicsContextGLAttributes& attributes, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
+Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(const WebCore::GraphicsContextGLAttributes& attributes, SerialFunctionDispatcher& dispatcher)
 {
-    return adoptRef(*new RemoteGraphicsContextGLProxyGBM(connection, WTFMove(streamConnection), attributes, WTFMove(videoFrameObjectHeapProxy)));
+    return adoptRef(*new RemoteGraphicsContextGLProxyGBM(attributes, dispatcher));
 }
 
 } // namespace WebKit

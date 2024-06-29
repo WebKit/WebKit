@@ -1312,7 +1312,7 @@ TEST(URLSchemeHandler, AllowedNetworkHostsRedirect)
     TestWebKitAPI::HTTPServer server127001({
         { "/"_s, { 301, {
             { "Access-Control-Allow-Origin"_s, "*"_s },
-            { "Location"_s, makeString("http://localhost:", serverLocalhost.port(), "/redirectTarget") }
+            { "Location"_s, makeString("http://localhost:"_s, serverLocalhost.port(), "/redirectTarget"_s) }
         }}},
     });
 

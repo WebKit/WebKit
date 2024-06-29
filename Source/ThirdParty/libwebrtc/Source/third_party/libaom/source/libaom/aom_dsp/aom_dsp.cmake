@@ -52,16 +52,12 @@ list(APPEND AOM_DSP_COMMON_SOURCES
 list(APPEND AOM_DSP_COMMON_ASM_SSE2
             "${AOM_ROOT}/aom_dsp/x86/aom_high_subpixel_8t_sse2.asm"
             "${AOM_ROOT}/aom_dsp/x86/aom_high_subpixel_bilinear_sse2.asm"
-            "${AOM_ROOT}/aom_dsp/x86/aom_subpixel_8t_sse2.asm"
-            "${AOM_ROOT}/aom_dsp/x86/aom_subpixel_bilinear_sse2.asm"
             "${AOM_ROOT}/aom_dsp/x86/highbd_intrapred_asm_sse2.asm"
             "${AOM_ROOT}/aom_dsp/x86/intrapred_asm_sse2.asm"
             "${AOM_ROOT}/aom_dsp/x86/inv_wht_sse2.asm")
 
 list(APPEND AOM_DSP_COMMON_INTRIN_SSE2
             "${AOM_ROOT}/aom_dsp/x86/aom_convolve_copy_sse2.c"
-            "${AOM_ROOT}/aom_dsp/x86/aom_subpixel_8t_intrin_sse2.c"
-            "${AOM_ROOT}/aom_dsp/x86/aom_asm_stubs.c"
             "${AOM_ROOT}/aom_dsp/x86/convolve.h"
             "${AOM_ROOT}/aom_dsp/x86/convolve_sse2.h"
             "${AOM_ROOT}/aom_dsp/x86/fft_sse2.c"
@@ -145,6 +141,9 @@ if(CONFIG_AV1_HIGHBITDEPTH)
               "${AOM_ROOT}/aom_dsp/arm/highbd_convolve8_neon.c"
               "${AOM_ROOT}/aom_dsp/arm/highbd_intrapred_neon.c"
               "${AOM_ROOT}/aom_dsp/arm/highbd_loopfilter_neon.c")
+
+  list(APPEND AOM_DSP_COMMON_INTRIN_SVE
+              "${AOM_ROOT}/aom_dsp/arm/highbd_convolve8_sve.c")
 endif()
 
 if(CONFIG_AV1_DECODER)
@@ -200,15 +199,18 @@ if(CONFIG_AV1_ENCODER)
                 "${AOM_ROOT}/aom_dsp/flow_estimation/x86/disflow_sse4.c")
 
     list(APPEND AOM_DSP_ENCODER_INTRIN_AVX2
-                "${AOM_ROOT}/aom_dsp/flow_estimation/x86/corner_match_avx2.c")
+                "${AOM_ROOT}/aom_dsp/flow_estimation/x86/corner_match_avx2.c"
+                "${AOM_ROOT}/aom_dsp/flow_estimation/x86/disflow_avx2.c")
 
     list(APPEND AOM_DSP_ENCODER_INTRIN_NEON
                 "${AOM_ROOT}/aom_dsp/flow_estimation/arm/disflow_neon.c")
+
+    list(APPEND AOM_DSP_ENCODER_INTRIN_SVE
+                "${AOM_ROOT}/aom_dsp/flow_estimation/arm/disflow_sve.c")
   endif()
 
   list(APPEND AOM_DSP_ENCODER_ASM_SSE2 "${AOM_ROOT}/aom_dsp/x86/sad4d_sse2.asm"
               "${AOM_ROOT}/aom_dsp/x86/sad_sse2.asm"
-              "${AOM_ROOT}/aom_dsp/x86/subpel_variance_sse2.asm"
               "${AOM_ROOT}/aom_dsp/x86/subtract_sse2.asm")
 
   list(APPEND AOM_DSP_ENCODER_ASM_SSE2_X86_64
@@ -226,6 +228,9 @@ if(CONFIG_AV1_ENCODER)
               "${AOM_ROOT}/aom_dsp/x86/sum_squares_sse2.c"
               "${AOM_ROOT}/aom_dsp/x86/variance_sse2.c"
               "${AOM_ROOT}/aom_dsp/x86/jnt_sad_sse2.c")
+
+  list(APPEND AOM_DSP_ENCODER_ASM_SSSE3
+              "${AOM_ROOT}/aom_dsp/x86/subpel_variance_ssse3.asm")
 
   list(APPEND AOM_DSP_ENCODER_ASM_SSSE3_X86_64
               "${AOM_ROOT}/aom_dsp/x86/fwd_txfm_ssse3_x86_64.asm"
@@ -292,6 +297,10 @@ if(CONFIG_AV1_ENCODER)
               "${AOM_ROOT}/aom_dsp/arm/sum_squares_neon_dotprod.c"
               "${AOM_ROOT}/aom_dsp/arm/variance_neon_dotprod.c")
 
+  list(APPEND AOM_DSP_ENCODER_INTRIN_SVE "${AOM_ROOT}/aom_dsp/arm/avg_sve.c"
+              "${AOM_ROOT}/aom_dsp/arm/blk_sse_sum_sve.c"
+              "${AOM_ROOT}/aom_dsp/arm/sum_squares_sve.c")
+
   if(CONFIG_AV1_HIGHBITDEPTH)
     list(APPEND AOM_DSP_ENCODER_ASM_SSE2
                 "${AOM_ROOT}/aom_dsp/x86/highbd_sad4d_sse2.asm"
@@ -327,6 +336,10 @@ if(CONFIG_AV1_ENCODER)
 
     list(APPEND AOM_DSP_ENCODER_INTRIN_NEON_DOTPROD
                 "${AOM_ROOT}/aom_dsp/arm/highbd_variance_neon_dotprod.c")
+
+    list(APPEND AOM_DSP_ENCODER_INTRIN_SVE
+                "${AOM_ROOT}/aom_dsp/arm/highbd_sse_sve.c"
+                "${AOM_ROOT}/aom_dsp/arm/highbd_variance_sve.c")
   endif()
 
   if(CONFIG_INTERNAL_STATS)
@@ -482,6 +495,15 @@ function(setup_aom_dsp_targets)
     add_intrinsics_object_library("${AOM_NEON_I8MM_FLAG}" "neon_i8mm"
                                   "aom_dsp_common"
                                   "AOM_DSP_COMMON_INTRIN_NEON_I8MM")
+  endif()
+
+  if(HAVE_SVE)
+    add_intrinsics_object_library("${AOM_SVE_FLAG}" "sve" "aom_dsp_common"
+                                  "AOM_DSP_COMMON_INTRIN_SVE")
+    if(CONFIG_AV1_ENCODER)
+      add_intrinsics_object_library("${AOM_SVE_FLAG}" "sve" "aom_dsp_encoder"
+                                    "AOM_DSP_ENCODER_INTRIN_SVE")
+    endif()
   endif()
 
   target_sources(aom PRIVATE $<TARGET_OBJECTS:aom_dsp>)

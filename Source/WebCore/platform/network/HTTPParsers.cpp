@@ -722,13 +722,13 @@ size_t parseHTTPHeader(std::span<const uint8_t> data, String& failureReason, Str
             if (name.isEmpty()) {
                 if (p + 1 < end && *(p + 1) == '\n')
                     return (p + 2) - data.data();
-                failureReason = makeString("CR doesn't follow LF in header name at ", trimInputSample(std::span { p, end }));
+                failureReason = makeString("CR doesn't follow LF in header name at "_s, trimInputSample(std::span { p, end }));
                 return 0;
             }
-            failureReason = makeString("Unexpected CR in header name at ", trimInputSample(name.span()));
+            failureReason = makeString("Unexpected CR in header name at "_s, trimInputSample(name.span()));
             return 0;
         case '\n':
-            failureReason = makeString("Unexpected LF in header name at ", trimInputSample(name.span()));
+            failureReason = makeString("Unexpected LF in header name at "_s, trimInputSample(name.span()));
             return 0;
         case ':':
             break;
@@ -737,7 +737,7 @@ size_t parseHTTPHeader(std::span<const uint8_t> data, String& failureReason, Str
                 if (name.size() < 1)
                     failureReason = "Unexpected start character in header name"_s;
                 else
-                    failureReason = makeString("Unexpected character in header name at ", trimInputSample(name.span()));
+                    failureReason = makeString("Unexpected character in header name at "_s, trimInputSample(name.span()));
                 return 0;
             }
             name.append(*p);
@@ -764,7 +764,7 @@ size_t parseHTTPHeader(std::span<const uint8_t> data, String& failureReason, Str
             break;
         case '\n':
             if (strict) {
-                failureReason = makeString("Unexpected LF in header value at ", trimInputSample(value.span()));
+                failureReason = makeString("Unexpected LF in header value at "_s, trimInputSample(value.span()));
                 return 0;
             }
             break;
@@ -777,7 +777,7 @@ size_t parseHTTPHeader(std::span<const uint8_t> data, String& failureReason, Str
         }
     }
     if (p >= end || (strict && *p != '\n')) {
-        failureReason = makeString("CR doesn't follow LF after header value at ", trimInputSample(std::span { p, end }));
+        failureReason = makeString("CR doesn't follow LF after header value at "_s, trimInputSample(std::span { p, end }));
         return 0;
     }
     valueStr = String::fromUTF8(value.span());

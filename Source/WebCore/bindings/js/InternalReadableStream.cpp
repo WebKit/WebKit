@@ -188,7 +188,11 @@ ExceptionOr<std::pair<Ref<InternalReadableStream>, Ref<InternalReadableStream>>>
     if (UNLIKELY(scope.exception()))
         return Exception { ExceptionCode::ExistingExceptionError };
 
-    auto results = Detail::SequenceConverter<IDLObject>::convert(*globalObject, result);
+    auto resultsConversionResult = convert<IDLSequence<IDLObject>>(*globalObject, result);
+    if (UNLIKELY(resultsConversionResult.hasException(scope)))
+        return Exception { ExceptionCode::ExistingExceptionError };
+
+    auto results = resultsConversionResult.releaseReturnValue();
     ASSERT(results.size() == 2);
 
     auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalObject);

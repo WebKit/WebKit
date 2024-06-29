@@ -15,8 +15,8 @@
 
 #include <type_traits>
 
+#include "api/audio/audio_processing.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
-#include "modules/audio_processing/include/audio_processing.h"
 
 namespace webrtc {
 class ApmDataDumper;

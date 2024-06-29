@@ -1,0 +1,8 @@
+before anchor after target
+
+before anchor after target
+
+FAIL Initial position of the targets assert_equals: expected 140 but got 0
+FAIL #target1 should scroll with #anchor1 assert_equals: expected 120 but got 0
+FAIL #target2 should scroll with #anchor2 assert_equals: expected 100 but got 0
+

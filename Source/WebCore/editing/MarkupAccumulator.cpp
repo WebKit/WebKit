@@ -421,7 +421,7 @@ void MarkupAccumulator::appendEndTag(StringBuilder& result, const Element& eleme
 {
     if (shouldSelfClose(element, m_serializationSyntax) || (!element.hasChildNodes() && elementCannotHaveEndTag(element)))
         return;
-    result.append("</", element.tagQName().toString(), '>');
+    result.append("</"_s, element.tagQName().toString(), '>');
 }
 
 StringBuilder MarkupAccumulator::takeMarkup()
@@ -475,7 +475,7 @@ void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomString&
     if (namespaceURI.isEmpty()) {
         // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-xhtml-syntax.html#xml-fragment-serialization-algorithm
         if (allowEmptyDefaultNS && namespaces.get(emptyAtom().impl()))
-            result.append(' ', xmlnsAtom(), "=\"\"");
+            result.append(' ', xmlnsAtom(), "=\"\""_s);
         return;
     }
 
@@ -495,7 +495,7 @@ void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomString&
     if (namespaceURI == XMLNames::xmlNamespaceURI)
         return;
 
-    result.append(' ', xmlnsAtom(), prefix.isEmpty() ? "" : ":", prefix, "=\"");
+    result.append(' ', xmlnsAtom(), prefix.isEmpty() ? ""_s : ":"_s, prefix, "=\""_s);
     appendAttributeValue(result, namespaceURI, false);
     result.append('"');
 }
@@ -547,12 +547,12 @@ static void appendXMLDeclaration(StringBuilder& result, const Document& document
     auto encoding = document.xmlEncoding();
     bool isStandaloneSpecified = document.xmlStandaloneStatus() != Document::StandaloneStatus::Unspecified;
 
-    result.append("<?xml version=\"",
+    result.append("<?xml version=\""_s,
         document.xmlVersion(),
-        encoding.isEmpty() ? "" : "\" encoding=\"",
+        encoding.isEmpty() ? ""_s : "\" encoding=\""_s,
         encoding,
-        isStandaloneSpecified ? (document.xmlStandalone() ? "\" standalone=\"yes" : "\" standalone=\"no") : "",
-        "\"?>");
+        isStandaloneSpecified ? (document.xmlStandalone() ? "\" standalone=\"yes"_s : "\" standalone=\"no"_s) : ""_s,
+        "\"?>"_s);
 }
 
 static void appendDocumentType(StringBuilder& result, const DocumentType& documentType)
@@ -561,14 +561,14 @@ static void appendDocumentType(StringBuilder& result, const DocumentType& docume
         return;
 
     result.append(
-        "<!DOCTYPE ",
+        "<!DOCTYPE "_s,
         documentType.name(),
-        documentType.publicId().isEmpty() ? "" : " PUBLIC \"",
+        documentType.publicId().isEmpty() ? ""_s : " PUBLIC \""_s,
         documentType.publicId(),
-        documentType.publicId().isEmpty() ? "" : "\"",
-        documentType.systemId().isEmpty() ? "" : (documentType.publicId().isEmpty() ? " SYSTEM \"" : " \""),
+        documentType.publicId().isEmpty() ? ""_s : "\""_s,
+        documentType.systemId().isEmpty() ? ""_s : (documentType.publicId().isEmpty() ? " SYSTEM \""_s : " \""_s),
         documentType.systemId(),
-        documentType.systemId().isEmpty() ? ">" : "\">"
+        documentType.systemId().isEmpty() ? ">"_s : "\">"_s
     );
 }
 
@@ -809,7 +809,7 @@ void MarkupAccumulator::appendNonElementNode(StringBuilder& result, const Node& 
         break;
     case Node::COMMENT_NODE:
         // FIXME: Comment content is not escaped, but that may be OK because XMLSerializer (and possibly other callers) should raise an exception if it includes "-->".
-        result.append("<!--", uncheckedDowncast<Comment>(node).data(), "-->");
+        result.append("<!--"_s, uncheckedDowncast<Comment>(node).data(), "-->"_s);
         break;
     case Node::DOCUMENT_NODE:
         appendXMLDeclaration(result, uncheckedDowncast<Document>(node));
@@ -822,7 +822,7 @@ void MarkupAccumulator::appendNonElementNode(StringBuilder& result, const Node& 
     case Node::PROCESSING_INSTRUCTION_NODE: {
         auto& instruction = uncheckedDowncast<ProcessingInstruction>(node);
         // FIXME: PI data is not escaped, but XMLSerializer (and possibly other callers) this should raise an exception if it includes "?>".
-        result.append("<?", instruction.target(), ' ', instruction.data(), "?>");
+        result.append("<?"_s, instruction.target(), ' ', instruction.data(), "?>"_s);
         break;
     }
     case Node::ELEMENT_NODE:
@@ -830,7 +830,7 @@ void MarkupAccumulator::appendNonElementNode(StringBuilder& result, const Node& 
         break;
     case Node::CDATA_SECTION_NODE:
         // FIXME: CDATA content is not escaped, but XMLSerializer (and possibly other callers) should raise an exception if it includes "]]>".
-        result.append("<![CDATA[", uncheckedDowncast<CDATASection>(node).data(), "]]>");
+        result.append("<![CDATA["_s, uncheckedDowncast<CDATASection>(node).data(), "]]>"_s);
         break;
     case Node::ATTRIBUTE_NODE:
         // Only XMLSerializer can pass an Attr. So, |documentIsHTML| flag is false.

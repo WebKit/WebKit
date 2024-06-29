@@ -253,11 +253,6 @@ void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadCli
     WebKit::toImpl(context)->setLegacyDownloadClient(adoptRef(*new LegacyDownloadClient(wkClient, context)));
 }
 
-void WKContextSetConnectionClient(WKContextRef contextRef, const WKContextConnectionClientBase* wkClient)
-{
-    WebKit::toImpl(contextRef)->initializeConnectionClient(wkClient);
-}
-
 WKDownloadRef WKContextDownloadURLRequest(WKContextRef, WKURLRequestRef)
 {
     return nullptr;

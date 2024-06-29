@@ -142,7 +142,7 @@ void DeviceMotionEvent::requestPermission(Document& document, PermissionPromise&
 
     String errorMessage;
     if (!window->isAllowedToUseDeviceMotion(errorMessage)) {
-        document.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("Call to requestPermission() failed, reason: ", errorMessage, "."));
+        document.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("Call to requestPermission() failed, reason: "_s, errorMessage, '.'));
         return promise.resolve(PermissionState::Denied);
     }
 

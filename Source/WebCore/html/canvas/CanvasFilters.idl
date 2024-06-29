@@ -24,7 +24,9 @@
  */
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasfilters
-interface mixin CanvasFilters {
+[
+    EnabledBySetting=CanvasFiltersEnabled
+] interface mixin CanvasFilters {
     // filters
     [ImplementedAs=filterString] attribute DOMString filter; // (default "none")
 };

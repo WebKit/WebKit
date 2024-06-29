@@ -135,8 +135,8 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     BOOL _backgroundColorSetByClient;
     BOOL _indicatorStyleSetByClient;
     BOOL _decelerationRateSetByClient;
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+// FIXME: Likely we can remove this special case for watchOS.
+#if !PLATFORM(WATCHOS)
     BOOL _contentInsetAdjustmentBehaviorWasExternallyOverridden;
 #endif
     BOOL _contentInsetWasExternallyOverridden;
@@ -181,8 +181,8 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 #endif
 
 
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+// FIXME: Likely we can remove this special case for watchOS.
+#if !PLATFORM(WATCHOS)
     _contentInsetAdjustmentBehaviorWasExternallyOverridden = (self.contentInsetAdjustmentBehavior != UIScrollViewContentInsetAdjustmentAutomatic);
 #endif
     
@@ -329,8 +329,8 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     [_internalDelegate _scheduleVisibleContentRectUpdate];
 }
 
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+// FIXME: Likely we can remove this special case for watchOS.
+#if !PLATFORM(WATCHOS)
 
 - (BOOL)_contentInsetAdjustmentBehaviorWasExternallyOverridden
 {

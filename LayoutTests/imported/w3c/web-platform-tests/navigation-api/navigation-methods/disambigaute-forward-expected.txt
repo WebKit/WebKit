@@ -1,4 +1,4 @@
 
 
-FAIL navigation.forward() goes to the nearest forward entry null is not an object (evaluating 'navigation.currentEntry.index')
+PASS navigation.forward() goes to the nearest forward entry
 

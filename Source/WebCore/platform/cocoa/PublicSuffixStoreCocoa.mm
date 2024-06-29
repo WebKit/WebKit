@@ -42,48 +42,46 @@ bool PublicSuffixStore::platformIsPublicSuffix(StringView domain) const
     auto domainString = domain.toStringWithoutCopying();
     {
         Locker locker { m_publicSuffixCacheLock };
-        if (m_publicSuffixCache && m_publicSuffixCache->contains(domainString))
-            return true;
+        if (m_publicSuffixCache) {
+            auto publicSuffix = PublicSuffix::fromRawString(String { domainString });
+            if (m_publicSuffixCache->contains(publicSuffix))
+                return true;
+        }
     }
 
     return isPublicSuffixCF(domainString);
 }
 
-String PublicSuffixStore::platformTopPrivatelyControlledDomain(const String& host) const
+String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView host) const
 {
     size_t separatorPosition;
     for (unsigned labelStart = 0; (separatorPosition = host.find('.', labelStart)) != notFound; labelStart = separatorPosition + 1) {
         if (isPublicSuffix(host.substring(separatorPosition + 1)))
-            return host.substring(labelStart);
+            return host.substring(labelStart).toString();
     }
 
     return { };
 }
 
-void PublicSuffixStore::enablePublicSuffixCache(CanAcceptCustomPublicSuffix canAcceptCustomPublicSuffix)
+void PublicSuffixStore::enablePublicSuffixCache()
 {
+    RELEASE_ASSERT(isMainThread());
+
     Locker locker { m_publicSuffixCacheLock };
     ASSERT(!m_publicSuffixCache);
-
-    m_canAcceptCustomPublicSuffix = (canAcceptCustomPublicSuffix == CanAcceptCustomPublicSuffix::Yes);
-    m_publicSuffixCache = HashSet<String, ASCIICaseInsensitiveHash> { };
+    m_publicSuffixCache = HashSet<PublicSuffix> { };
 }
 
-void PublicSuffixStore::addPublicSuffix(const String& publicSuffix)
+void PublicSuffixStore::addPublicSuffix(const PublicSuffix& publicSuffix)
 {
-    if (publicSuffix.isEmpty())
+    RELEASE_ASSERT(isMainThread());
+
+    if (!publicSuffix.isValid())
         return;
 
     Locker locker { m_publicSuffixCacheLock };
-
-    if (!m_publicSuffixCache)
-        return;
-
-    if (LIKELY(!m_canAcceptCustomPublicSuffix))
-        RELEASE_ASSERT(isPublicSuffixCF(publicSuffix));
-
-    if (m_publicSuffixCache)
-        m_publicSuffixCache->add(crossThreadCopy(publicSuffix));
+    ASSERT(m_publicSuffixCache);
+    m_publicSuffixCache->add(crossThreadCopy(publicSuffix));
 }
 
 } // namespace WebCore

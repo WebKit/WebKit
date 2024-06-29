@@ -1,5 +1,6 @@
 // Copyright 2016 The Chromium Authors. All rights reserved.
 // Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+// Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -51,7 +52,6 @@ namespace WebKitFontFamilyNames {
 enum class FamilyNamesIndex;
 }
 
-enum class BoxOrient : bool;
 enum class FontTechnology : uint8_t;
 
 // When these functions are successful, they will consume all the relevant
@@ -61,37 +61,6 @@ enum class FontTechnology : uint8_t;
 namespace CSSPropertyParserHelpers {
 
 RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange&);
-
-RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange&, bool shouldLowercase = false);
-RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange&, bool shouldLowercase = false);
-RefPtr<CSSPrimitiveValue> consumeString(CSSParserTokenRange&);
-
-StringView consumeURLRaw(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeURL(CSSParserTokenRange&);
-
-enum class PositionSyntax {
-    Position, // <position>
-    BackgroundPosition // <bg-position>
-};
-
-struct PositionCoordinates {
-    Ref<CSSValue> x;
-    Ref<CSSValue> y;
-};
-
-RefPtr<CSSValue> consumePosition(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, PositionSyntax);
-std::optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, PositionSyntax, NegativePercentagePolicy = NegativePercentagePolicy::Forbid);
-std::optional<PositionCoordinates> consumeOneOrTwoValuedPositionCoordinates(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk);
-
-enum class AllowedImageType : uint8_t {
-    URLFunction = 1 << 0,
-    RawStringAsURL = 1 << 1,
-    ImageSet = 1 << 2,
-    GeneratedImage = 1 << 3
-};
-
-RefPtr<CSSValue> consumeImage(CSSParserTokenRange&, const CSSParserContext&, OptionSet<AllowedImageType> = { AllowedImageType::URLFunction, AllowedImageType::ImageSet, AllowedImageType::GeneratedImage });
-RefPtr<CSSValue> consumeImageOrNone(CSSParserTokenRange&, const CSSParserContext&);
 
 enum class AllowedFilterFunctions {
     PixelFilters,
@@ -106,8 +75,8 @@ struct FontStyleRaw {
     std::optional<AngleRaw> angle;
 };
 using FontWeightRaw = std::variant<CSSValueID, double>;
-using FontSizeRaw = std::variant<CSSValueID, CSSPropertyParserHelpers::LengthOrPercentRaw>;
-using LineHeightRaw = std::variant<CSSValueID, double, CSSPropertyParserHelpers::LengthOrPercentRaw>;
+using FontSizeRaw = std::variant<CSSValueID, LengthOrPercentRaw>;
+using LineHeightRaw = std::variant<CSSValueID, double, LengthOrPercentRaw>;
 using FontFamilyRaw = std::variant<CSSValueID, AtomString>;
 
 struct FontRaw {
@@ -166,7 +135,8 @@ RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeTextTransform(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeMarginSide(CSSParserTokenRange&, CSSPropertyID currentShorthand, CSSParserMode);
 RefPtr<CSSValue> consumeMarginTrim(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeSide(CSSParserTokenRange&, CSSPropertyID currentShorthand, CSSParserMode);
+RefPtr<CSSValue> consumeSide(CSSParserTokenRange&, CSSPropertyID currentShorthand, const CSSParserContext&);
+RefPtr<CSSValue> consumeInsetLogicalStartEnd(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeClip(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeTouchAction(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeKeyframesName(CSSParserTokenRange&, const CSSParserContext&);
@@ -186,8 +156,6 @@ RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeScale(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeRotate(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeRepeatStyle(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumePositionX(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumePositionY(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumePaintStroke(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeListStyleType(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange&);
@@ -254,6 +222,7 @@ RefPtr<CSSValue> consumeAnimationTimelineScroll(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeAnimationTimelineView(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeViewTimelineInsetListItem(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeViewTimelineInset(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSPrimitiveValue> consumeAnchor(CSSParserTokenRange&, CSSParserMode);
 
 RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange&, const CSSParserContext&);
 

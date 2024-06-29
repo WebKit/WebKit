@@ -111,19 +111,19 @@ JSC_DEFINE_HOST_FUNCTION(regExpConstructorEscape, (JSGlobalObject* globalObject,
     if (UNLIKELY(!value.isString()))
         return throwVMTypeError(globalObject, scope, "RegExp.escape requires a string"_s);
 
-    const String& string = asString(value)->value(globalObject);
+    auto string = asString(value)->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     StringBuilder builder;
-    builder.reserveCapacity(string.length());
+    builder.reserveCapacity(string->length());
 
-    for (unsigned i = 0; i < string.length();) {
+    for (unsigned i = 0; i < string->length();) {
         char32_t codePoint;
-        if (string.is8Bit())
-            codePoint = string.span8()[i++];
+        if (string->is8Bit())
+            codePoint = string->span8()[i++];
         else {
-            auto characters = string.span16();
-            U16_NEXT(characters, i, string.length(), codePoint);
+            auto characters = string->span16();
+            U16_NEXT(characters, i, string->length(), codePoint);
         }
 
         if (builder.isEmpty() && isASCIIAlphanumeric(codePoint)) {

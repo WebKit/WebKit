@@ -18,9 +18,9 @@
 #include <string>
 
 #include "absl/types/optional.h"
+#include "api/audio/audio_processing.h"
 #include "common_audio/channel_buffer.h"
 #include "common_audio/include/audio_util.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/test/api_call_statistics.h"
 #include "modules/audio_processing/test/fake_recording_device.h"
 #include "modules/audio_processing/test/test_utils.h"

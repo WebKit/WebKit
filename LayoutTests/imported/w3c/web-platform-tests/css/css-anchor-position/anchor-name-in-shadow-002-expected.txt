@@ -1,0 +1,3 @@
+
+FAIL Anchor names in different tree scopes should not be confused assert_equals: expected 100 but got 0
+

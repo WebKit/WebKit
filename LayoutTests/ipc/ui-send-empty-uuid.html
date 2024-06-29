@@ -1,0 +1,21 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<body>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText()
+
+    if (window.IPC) {
+        IPC.sendMessage(
+          'UI',
+          IPC.webPageProxyID,
+          IPC.messages.WebPageProxy_ModelElementLoadRemotePreview.name,
+          [
+            {type: 'String', value: ''},
+            {type: 'String', value: ''}
+          ]
+        );
+    } else {
+        testRunner.notifyDone();
+    }
+</script>
+</body>

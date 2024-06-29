@@ -64,7 +64,7 @@ static auto *commandsManifest = @{
         },
         @"test-command": @{
             @"suggested_key": @{
-                @"default": @"",
+                @"default": @"Command+Alt+Z",
                 @"mac": @"Command+Alt+Z"
             },
             @"description": @"Test Command"
@@ -215,7 +215,7 @@ TEST(WKWebExtensionAPICommands, PerformKeyCommand)
 
     auto *command = filteredCommands.firstObject;
 
-    [command.keyCommand performWithSender:nil target:UIApplication.sharedApplication];
+    [manager.get().context performCommandForKeyCommand:command.keyCommand];
 
     [manager run];
 }

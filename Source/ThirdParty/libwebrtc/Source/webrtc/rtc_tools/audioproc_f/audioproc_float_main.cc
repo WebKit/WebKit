@@ -10,8 +10,8 @@
 
 #include <memory>
 
+#include "api/audio/audio_processing.h"
 #include "api/test/audioproc_float.h"
-#include "modules/audio_processing/include/audio_processing.h"
 
 int main(int argc, char* argv[]) {
   return webrtc::test::AudioprocFloat(

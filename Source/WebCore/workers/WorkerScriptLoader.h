@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "AdvancedPrivacyProtections.h"
 #include "CertificateInfo.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "CrossOriginEmbedderPolicy.h"
@@ -40,6 +41,7 @@
 #include "ThreadableLoaderClient.h"
 #include <memory>
 #include <wtf/FastMalloc.h>
+#include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/URL.h>
@@ -69,7 +71,9 @@ public:
     std::optional<Exception> loadSynchronously(ScriptExecutionContext*, const URL&, Source, FetchOptions::Mode, FetchOptions::Cache, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier);
     void loadAsynchronously(ScriptExecutionContext&, ResourceRequest&&, Source, FetchOptions&&, ContentSecurityPolicyEnforcement, ServiceWorkersMode, WorkerScriptLoaderClient&, String&& taskMode, ScriptExecutionContextIdentifier clientIdentifier = { });
 
-    void notifyError();
+    void notifyError(ScriptExecutionContextIdentifier);
+
+    OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const { return m_advancedPrivacyProtections; }
 
     const ScriptBuffer& script() const { return m_script; }
     const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy() const { return m_contentSecurityPolicy; }
@@ -88,10 +92,10 @@ public:
 
     WorkerFetchResult fetchResult() const;
 
-    void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) override;
+    void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse&) override;
     void didReceiveData(const SharedBuffer&) override;
-    void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) override;
-    void didFail(const ResourceError&) override;
+    void didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&) override;
+    void didFail(ScriptExecutionContextIdentifier, const ResourceError&) override;
 
     void cancel();
 
@@ -131,7 +135,7 @@ private:
     ~WorkerScriptLoader();
 
     std::unique_ptr<ResourceRequest> createResourceRequest(const String& initiatorIdentifier);
-    void notifyFinished();
+    void notifyFinished(ScriptExecutionContextIdentifier);
 
     WeakPtr<WorkerScriptLoaderClient> m_client;
     RefPtr<ThreadableLoader> m_threadableLoader;
@@ -161,6 +165,7 @@ private:
     RefPtr<ServiceWorkerDataManager> m_serviceWorkerDataManager;
     WeakPtr<ScriptExecutionContext> m_context;
     String m_userAgentForSharedWorker;
+    OptionSet<AdvancedPrivacyProtections> m_advancedPrivacyProtections;
 };
 
 } // namespace WebCore

@@ -162,9 +162,10 @@ String CharacterData::nodeValue() const
     return m_data;
 }
 
-void CharacterData::setNodeValue(const String& nodeValue)
+ExceptionOr<void> CharacterData::setNodeValue(const String& nodeValue)
 {
     setData(nodeValue);
+    return { };
 }
 
 void CharacterData::setDataWithoutUpdate(const String& data)

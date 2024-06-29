@@ -386,7 +386,7 @@ static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOp
 
     PrintInfo printInfo(priv->printJob.get(), printOperation->priv->printMode);
     auto& page = webkitWebViewGetPage(printOperation->priv->webView.get());
-    page.drawPagesForPrinting(webFrame, printInfo, [printOperation = GRefPtr<WebKitPrintOperation>(printOperation)](std::optional<WebCore::SharedMemory::Handle>&& data, WebCore::ResourceError&& error) mutable {
+    page.drawPagesForPrinting(*webFrame, printInfo, [printOperation = GRefPtr<WebKitPrintOperation>(printOperation)](std::optional<WebCore::SharedMemory::Handle>&& data, WebCore::ResourceError&& error) mutable {
         auto* priv = printOperation->priv;
         // When running synchronously, WebPageProxy::printFrame() calls endPrinting().
         if (priv->printMode == PrintInfo::PrintMode::Async && priv->webView)
@@ -481,7 +481,7 @@ static void webkitPrintOperationSendPagesToPrintPortal(WebKitPrintOperation* pri
 
     PrintInfo printInfo(priv->printJob.get(), printOperation->priv->printMode);
     auto& page = webkitWebViewGetPage(printOperation->priv->webView.get());
-    page.drawPagesForPrinting(webFrame, printInfo, [printOperation = GRefPtr<WebKitPrintOperation>(printOperation), token = *preparePrintResponse->token](std::optional<WebCore::SharedMemory::Handle>&& data, WebCore::ResourceError&& error) mutable {
+    page.drawPagesForPrinting(*webFrame, printInfo, [printOperation = GRefPtr<WebKitPrintOperation>(printOperation), token = *preparePrintResponse->token](std::optional<WebCore::SharedMemory::Handle>&& data, WebCore::ResourceError&& error) mutable {
         auto* priv = printOperation->priv;
         // When running synchronously, WebPageProxy::printFrame() calls endPrinting().
         if (priv->printMode == PrintInfo::PrintMode::Async && priv->webView)
@@ -572,8 +572,8 @@ static void webkitPrintOperationPreparePrint(WebKitPrintOperation* printOperatio
     auto* connection = g_dbus_proxy_get_connection(priv->portalProxy.get());
     auto uniqueName = String::fromUTF8(g_dbus_connection_get_unique_name(connection));
     auto senderName = makeStringByReplacingAll(uniqueName.substring(1), '.', '_');
-    auto token = makeString("WebKitGTK", weakRandomNumber<uint32_t>());
-    auto requestPath = makeString("/org/freedesktop/portal/desktop/request/", senderName, "/", token);
+    auto token = makeString("WebKitGTK"_s, weakRandomNumber<uint32_t>());
+    auto requestPath = makeString("/org/freedesktop/portal/desktop/request/"_s, senderName, '/', token);
 
     RELEASE_ASSERT(!priv->signalId);
 
@@ -871,7 +871,10 @@ static GRefPtr<GtkPrinter> printerFromSettingsOrDefault(GtkPrintSettings* settin
  * operation finishes. If an error occurs while printing the signal
  * #WebKitPrintOperation::failed is emitted before #WebKitPrintOperation::finished.
  *
- * Deprecated: 2.46. This function does nothing if the app is sandboxed.
+ * If the app is running in a sandbox, this function only works if printing to
+ * a file that is in a location accessible to the sandbox, usually acquired
+ * through the File Chooser portal. This function will not work for physical
+ * printers when running in a sandbox.
  */
 void webkit_print_operation_print(WebKitPrintOperation* printOperation)
 {

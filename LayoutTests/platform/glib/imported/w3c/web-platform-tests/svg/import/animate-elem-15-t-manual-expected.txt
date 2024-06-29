@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (5,14) size 762x466
-      RenderSVGText {text} at (3,8) size 332x46 contains 1 chunk(s)
+    RenderSVGContainer {g} at (5,15) size 762x465
+      RenderSVGText {text} at (3,9) size 332x45 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 332x45
           chunk 1 text run 1 at (3.00,45.00) startOffset 0 endOffset 16 width 331.80: "calcMode=\"paced\""
-      RenderSVGText {text} at (3,63) size 390x46 contains 1 chunk(s)
+      RenderSVGText {text} at (3,64) size 390x45 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 390x45
           chunk 1 text run 1 at (3.00,100.00) startOffset 0 endOffset 21 width 389.72: "keyTimes=\"0;.25;.5;1\""
       RenderSVGContainer {g} at (16,230) size 751x250

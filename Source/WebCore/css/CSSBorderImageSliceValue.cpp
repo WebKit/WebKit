@@ -47,7 +47,7 @@ Ref<CSSBorderImageSliceValue> CSSBorderImageSliceValue::create(Quad slices, bool
 String CSSBorderImageSliceValue::customCSSText() const
 {
     if (m_fill)
-        return m_slices.cssText() + " fill";
+        return makeString(m_slices.cssText(), " fill"_s);
     return m_slices.cssText();
 }
 

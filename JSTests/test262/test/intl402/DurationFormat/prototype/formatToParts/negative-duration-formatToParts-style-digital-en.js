@@ -43,7 +43,8 @@ const duration = {
   nanoseconds: -789,
 };
 
-const expected = partitionDurationFormatPattern(duration, style);
-
 const df = new Intl.DurationFormat("en", { style });
+
+const expected = partitionDurationFormatPattern(df, duration);
+
 compare(df.formatToParts(duration), expected, `Using style : ${style}`);

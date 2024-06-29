@@ -1,4 +1,4 @@
-Check stepUp() and stepDown() bahevior for type=month.
+Check stepUp() and stepDown() behavior for type=month.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -24,7 +24,7 @@ Step=any
 PASS stepUp("2010-02", "any", null) threw exception InvalidStateError: The object is in an invalid state..
 PASS stepDown("2010-02", "any", null) threw exception InvalidStateError: The object is in an invalid state..
 Overflow/underflow
-PASS stepUp("2010-02", "3.40282346e+38", null) is "2010-02"
+PASS stepUp("2010-02", "3.40282346e+38", null) is "1970-01"
 PASS stepDown("2010-02", "3.40282346e+38", null) is "1970-01"
 PASS stepUp("2010-02", "1", "2010-02") is "2010-02"
 PASS stepDown("2010-02", "1", "2010-02") is "2010-02"

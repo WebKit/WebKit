@@ -35,6 +35,7 @@
 #include "PlatformScreen.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
 namespace WebCore {
@@ -131,7 +132,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& imag
     if (!pixels)
         return nullptr;
 
-    const auto* bytes = reinterpret_cast<const uint8_t*>(CFDataGetBytePtr(pixels.get()));
+    const auto* bytes = byteCast<uint8_t>(CFDataGetBytePtr(pixels.get()));
     CheckedUint32 sizeInBytes = CFDataGetLength(pixels.get());
     if (!bytes || !sizeInBytes || sizeInBytes.hasOverflowed())
         return nullptr;
@@ -151,7 +152,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& imag
     if (!sharedMemory)
         return nullptr;
 
-    memcpy(sharedMemory->data(), bytes, sizeInBytes);
+    memcpySpan(sharedMemory->mutableSpan(), std::span { bytes, static_cast<size_t>(sizeInBytes) });
 
     return adoptRef(new ShareableBitmap(configuration, sharedMemory.releaseNonNull()));
 }
@@ -164,14 +165,14 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
     ref(); // Balanced by deref in releaseBitmapContextData.
 
     m_releaseBitmapContextDataCalled = false;
-    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(data(), size().width(), size().height(), bitsPerComponent, bytesPerRow, m_configuration.platformColorSpace(), m_configuration.bitmapInfo(), releaseBitmapContextData, this));
+    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(mutableSpan().data(), size().width(), size().height(), bitsPerComponent, bytesPerRow, m_configuration.platformColorSpace(), m_configuration.bitmapInfo(), releaseBitmapContextData, this));
     if (!bitmapContext) {
         // When CGBitmapContextCreateWithData fails and returns null, it will only
         // call the release callback in some circumstances <rdar://82228446>. We
         // work around this by recording whether it was called, and calling it
         // ourselves if needed.
         if (!m_releaseBitmapContextDataCalled)
-            releaseBitmapContextData(this, this->data());
+            releaseBitmapContextData(this, this->mutableSpan().data());
         return nullptr;
     }
     ASSERT(!m_releaseBitmapContextDataCalled);
@@ -219,11 +220,11 @@ RetainPtr<CGImageRef> ShareableBitmap::makeCGImageCopy()
 
 RetainPtr<CGImageRef> ShareableBitmap::makeCGImage(ShouldInterpolate shouldInterpolate)
 {
-    verifyImageBufferIsBigEnough(data(), sizeInBytes());
+    verifyImageBufferIsBigEnough(span());
 
-    auto dataProvider = adoptCF(CGDataProviderCreateWithData(this, data(), sizeInBytes(), [](void* typelessBitmap, const void* typelessData, size_t) {
+    auto dataProvider = adoptCF(CGDataProviderCreateWithData(this, mutableSpan().data(), sizeInBytes(), [](void* typelessBitmap, const void* typelessData, size_t) {
         auto* bitmap = static_cast<ShareableBitmap*>(typelessBitmap);
-        ASSERT_UNUSED(typelessData, bitmap->data() == typelessData);
+        ASSERT_UNUSED(typelessData, bitmap->span().data() == typelessData);
         bitmap->deref();
     }));
 
@@ -255,7 +256,7 @@ RetainPtr<CGImageRef> ShareableBitmap::createCGImage(CGDataProviderRef dataProvi
 void ShareableBitmap::releaseBitmapContextData(void* typelessBitmap, void* typelessData)
 {
     ShareableBitmap* bitmap = static_cast<ShareableBitmap*>(typelessBitmap);
-    ASSERT_UNUSED(typelessData, bitmap->data() == typelessData);
+    ASSERT_UNUSED(typelessData, bitmap->span().data() == typelessData);
     bitmap->m_releaseBitmapContextDataCalled = true;
     bitmap->deref(); // Balanced by ref in createGraphicsContext.
 }

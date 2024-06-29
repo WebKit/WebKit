@@ -86,7 +86,7 @@ private:
     void didFinishLoading(const NetworkLoadMetrics&) final;
     void didFail(const ResourceError&) final;
     void willCancel(const ResourceError&) final;
-    void didCancel(const ResourceError&) final;
+    void didCancel(LoadWillContinueInAnotherProcess) final;
     
     void updateReferrerPolicy(const String&);
 
@@ -121,9 +121,7 @@ private:
     };
 
     class RequestCountTracker {
-#if !COMPILER(MSVC)
         WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
-#endif
     public:
         RequestCountTracker(CachedResourceLoader&, const CachedResource&);
         RequestCountTracker(RequestCountTracker&&);

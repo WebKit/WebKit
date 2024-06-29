@@ -116,8 +116,10 @@ String MediaControlsHost::layoutTraitsClassName() const
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     return "MacOSLayoutTraits"_s;
-#elif PLATFORM(IOS) || PLATFORM(APPLETV)
+#elif PLATFORM(IOS)
     return "IOSLayoutTraits"_s;
+#elif PLATFORM(APPLETV)
+    return "TVOSLayoutTraits"_s;
 #elif PLATFORM(VISION)
     return "VisionLayoutTraits"_s;
 #elif PLATFORM(WATCHOS)
@@ -228,10 +230,23 @@ void MediaControlsHost::updateTextTrackContainer()
         m_textTrackContainer->updateDisplay();
 }
 
+TextTrackRepresentation* MediaControlsHost::textTrackRepresentation() const
+{
+    if (m_textTrackContainer)
+        return m_textTrackContainer->textTrackRepresentation();
+    return nullptr;
+}
+
 void MediaControlsHost::updateTextTrackRepresentationImageIfNeeded()
 {
     if (m_textTrackContainer)
         m_textTrackContainer->updateTextTrackRepresentationImageIfNeeded();
+}
+
+void MediaControlsHost::requiresTextTrackRepresentationChanged()
+{
+    if (m_textTrackContainer)
+        m_textTrackContainer->requiresTextTrackRepresentationChanged();
 }
 
 void MediaControlsHost::enteredFullscreen()
@@ -280,6 +295,33 @@ bool MediaControlsHost::userGestureRequired() const
 bool MediaControlsHost::shouldForceControlsDisplay() const
 {
     return m_mediaElement && m_mediaElement->shouldForceControlsDisplay();
+}
+
+bool MediaControlsHost::supportsSeeking() const
+{
+    return m_mediaElement && m_mediaElement->supportsSeeking();
+}
+
+bool MediaControlsHost::inWindowFullscreen() const
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (!m_mediaElement)
+        return false;
+
+    auto& mediaElement = *m_mediaElement;
+    if (is<HTMLVideoElement>(mediaElement))
+        return downcast<HTMLVideoElement>(mediaElement).webkitPresentationMode() == HTMLVideoElement::VideoPresentationMode::InWindow;
+#endif
+    return false;
+}
+
+bool MediaControlsHost::supportsRewind() const
+{
+#if ENABLE(MODERN_MEDIA_CONTROLS)
+    if (auto sourceType = this->sourceType())
+        return *sourceType == SourceType::HLS || *sourceType == SourceType::File;
+#endif
+    return false;
 }
 
 String MediaControlsHost::externalDeviceDisplayName() const

@@ -11,6 +11,7 @@
 #include "modules/pacing/task_queue_paced_sender.h"
 
 #include <algorithm>
+#include <any>
 #include <atomic>
 #include <list>
 #include <memory>
@@ -24,6 +25,7 @@
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
+#include "modules/pacing/pacing_controller.h"
 #include "modules/pacing/packet_router.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "test/gmock.h"
@@ -33,6 +35,9 @@
 
 using ::testing::_;
 using ::testing::AtLeast;
+using ::testing::AtMost;
+using ::testing::Lt;
+using ::testing::NiceMock;
 using ::testing::Return;
 using ::testing::SaveArg;
 
@@ -167,9 +172,10 @@ TEST(TaskQueuePacedSenderTest, PacesPacketsWithBurst) {
   TaskQueuePacedSender pacer(time_controller.GetClock(), &packet_router, trials,
 
                              PacingController::kMinSleepTime,
-                             TaskQueuePacedSender::kNoPacketHoldback,
-                             // Half a second of bursting.
-                             TimeDelta::Seconds(0.5));
+                             TaskQueuePacedSender::kNoPacketHoldback);
+  pacer.SetSendBurstInterval(
+      // Half a second of bursting.
+      TimeDelta::Seconds(0.5));
 
   // Insert a number of packets, covering one second.
   static constexpr size_t kPacketsToSend = 42;
@@ -262,7 +268,7 @@ TEST(TaskQueuePacedSenderTest, ReschedulesProcessOnRateChange) {
 
 TEST(TaskQueuePacedSenderTest, SendsAudioImmediately) {
   GlobalSimulatedTimeController time_controller(Timestamp::Millis(1234));
-  MockPacketRouter packet_router;
+  NiceMock<MockPacketRouter> packet_router;
   ScopedKeyValueConfig trials;
   TaskQueuePacedSender pacer(time_controller.GetClock(), &packet_router, trials,
 
@@ -270,20 +276,15 @@ TEST(TaskQueuePacedSenderTest, SendsAudioImmediately) {
                              TaskQueuePacedSender::kNoPacketHoldback);
 
   const DataRate kPacingDataRate = DataRate::KilobitsPerSec(125);
-  const DataSize kPacketSize = DataSize::Bytes(kDefaultPacketSize);
-  const TimeDelta kPacketPacingTime = kPacketSize / kPacingDataRate;
 
   pacer.SetPacingRates(kPacingDataRate, DataRate::Zero());
   pacer.EnsureStarted();
 
-  // Add some initial video packets, only one should be sent.
-  EXPECT_CALL(packet_router, SendPacket);
+  // Add some initial video packets. Not all should be sent immediately.
+  EXPECT_CALL(packet_router, SendPacket).Times(AtMost(9));
   pacer.EnqueuePackets(GeneratePackets(RtpPacketMediaType::kVideo, 10));
   time_controller.AdvanceTime(TimeDelta::Zero());
   ::testing::Mock::VerifyAndClearExpectations(&packet_router);
-
-  // Advance time, but still before next packet should be sent.
-  time_controller.AdvanceTime(kPacketPacingTime / 2);
 
   // Insert an audio packet, it should be sent immediately.
   EXPECT_CALL(packet_router, SendPacket);
@@ -295,12 +296,13 @@ TEST(TaskQueuePacedSenderTest, SendsAudioImmediately) {
 TEST(TaskQueuePacedSenderTest, SleepsDuringCoalscingWindow) {
   const TimeDelta kCoalescingWindow = TimeDelta::Millis(5);
   GlobalSimulatedTimeController time_controller(Timestamp::Millis(1234));
-  MockPacketRouter packet_router;
+  NiceMock<MockPacketRouter> packet_router;
   ScopedKeyValueConfig trials;
   TaskQueuePacedSender pacer(time_controller.GetClock(), &packet_router, trials,
 
                              kCoalescingWindow,
                              TaskQueuePacedSender::kNoPacketHoldback);
+  pacer.SetSendBurstInterval(TimeDelta::Zero());
 
   // Set rates so one packet adds one ms of buffer level.
   const DataSize kPacketSize = DataSize::Bytes(kDefaultPacketSize);
@@ -310,9 +312,9 @@ TEST(TaskQueuePacedSenderTest, SleepsDuringCoalscingWindow) {
   pacer.SetPacingRates(kPacingDataRate, DataRate::Zero());
   pacer.EnsureStarted();
 
-  // Add 10 packets. The first should be sent immediately since the buffers
-  // are clear.
-  EXPECT_CALL(packet_router, SendPacket);
+  // Add 10 packets. The first burst should be sent immediately since the
+  // buffers are clear.
+  EXPECT_CALL(packet_router, SendPacket).Times(AtMost(9));
   pacer.EnqueuePackets(GeneratePackets(RtpPacketMediaType::kVideo, 10));
   time_controller.AdvanceTime(TimeDelta::Zero());
   ::testing::Mock::VerifyAndClearExpectations(&packet_router);
@@ -370,11 +372,12 @@ TEST(TaskQueuePacedSenderTest, SchedulesProbeAtSentTime) {
   ScopedKeyValueConfig trials(
       "WebRTC-Bwe-ProbingBehavior/min_probe_delta:1ms/");
   GlobalSimulatedTimeController time_controller(Timestamp::Millis(1234));
-  MockPacketRouter packet_router;
+  NiceMock<MockPacketRouter> packet_router;
   TaskQueuePacedSender pacer(time_controller.GetClock(), &packet_router, trials,
 
                              PacingController::kMinSleepTime,
                              TaskQueuePacedSender::kNoPacketHoldback);
+  pacer.SetSendBurstInterval(TimeDelta::Zero());
 
   // Set rates so one packet adds 4ms of buffer level.
   const DataSize kPacketSize = DataSize::Bytes(kDefaultPacketSize);
@@ -504,11 +507,12 @@ TEST(TaskQueuePacedSenderTest, PacketBasedCoalescing) {
   const int kPacketBasedHoldback = 5;
 
   GlobalSimulatedTimeController time_controller(Timestamp::Millis(1234));
-  MockPacketRouter packet_router;
+  NiceMock<MockPacketRouter> packet_router;
   ScopedKeyValueConfig trials;
   TaskQueuePacedSender pacer(time_controller.GetClock(), &packet_router, trials,
 
                              kFixedCoalescingWindow, kPacketBasedHoldback);
+  pacer.SetSendBurstInterval(TimeDelta::Zero());
 
   // Set rates so one packet adds one ms of buffer level.
   const DataSize kPacketSize = DataSize::Bytes(kDefaultPacketSize);
@@ -559,6 +563,7 @@ TEST(TaskQueuePacedSenderTest, FixedHoldBackHasPriorityOverPackets) {
   TaskQueuePacedSender pacer(time_controller.GetClock(), &packet_router, trials,
 
                              kFixedCoalescingWindow, kPacketBasedHoldback);
+  pacer.SetSendBurstInterval(TimeDelta::Zero());
 
   // Set rates so one packet adds one ms of buffer level.
   const DataSize kPacketSize = DataSize::Bytes(kDefaultPacketSize);
@@ -691,7 +696,7 @@ TEST(TaskQueuePacedSenderTest, PostedPacketsNotSendFromRemovePacketsForSsrc) {
 TEST(TaskQueuePacedSenderTest, Stats) {
   static constexpr Timestamp kStartTime = Timestamp::Millis(1234);
   GlobalSimulatedTimeController time_controller(kStartTime);
-  MockPacketRouter packet_router;
+  NiceMock<MockPacketRouter> packet_router;
   ScopedKeyValueConfig trials;
   TaskQueuePacedSender pacer(time_controller.GetClock(), &packet_router, trials,
 
@@ -708,7 +713,8 @@ TEST(TaskQueuePacedSenderTest, Stats) {
   // Allowed `QueueSizeData` and `ExpectedQueueTime` deviation.
   static constexpr size_t kAllowedPacketsDeviation = 1;
   static constexpr DataSize kAllowedQueueSizeDeviation =
-      DataSize::Bytes(kDefaultPacketSize * kAllowedPacketsDeviation);
+      DataSize::Bytes(kDefaultPacketSize * kAllowedPacketsDeviation) +
+      kPacingRate * PacingController::kDefaultBurstInterval;
   static constexpr TimeDelta kAllowedQueueTimeDeviation =
       kAllowedQueueSizeDeviation / kPacingRate;
 

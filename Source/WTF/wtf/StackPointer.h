@@ -27,7 +27,7 @@
 
 namespace WTF {
 
-#if defined(NDEBUG) && COMPILER(GCC_COMPATIBLE) \
+#if defined(NDEBUG) \
     && (CPU(X86_64) || CPU(X86) || CPU(ARM64) || CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL))
 
 // We can only use the inline asm implementation on release builds because it
@@ -52,7 +52,7 @@ ALWAYS_INLINE void* currentStackPointer()
 #elif !ENABLE(C_LOOP)
 
 #define USE_ASM_CURRENT_STACK_POINTER 1
-extern "C" WTF_EXPORT_PRIVATE void* currentStackPointer(void);
+extern "C" WTF_EXPORT_PRIVATE void* CDECL currentStackPointer(void);
 
 #else
 

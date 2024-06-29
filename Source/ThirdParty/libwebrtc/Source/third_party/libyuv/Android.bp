@@ -1,5 +1,5 @@
 package {
-    default_applicable_licenses: ["external_libyuv_files_license"],
+    default_applicable_licenses: ["external_libyuv_license"],
 }
 
 // Added automatically by a large-scale-change
@@ -10,7 +10,7 @@ package {
 // Please consider removing redundant or irrelevant files from 'license_text:'.
 // See: http://go/android-license-faq
 license {
-    name: "external_libyuv_files_license",
+    name: "external_libyuv_license",
     visibility: [":__subpackages__"],
     license_kinds: [
         "SPDX-license-identifier-BSD",
@@ -133,6 +133,7 @@ cc_test {
         "unit_test/rotate_argb_test.cc",
         "unit_test/rotate_test.cc",
         "unit_test/scale_argb_test.cc",
+        "unit_test/scale_plane_test.cc",
         "unit_test/scale_rgb_test.cc",
         "unit_test/scale_test.cc",
         "unit_test/scale_uv_test.cc",

@@ -503,7 +503,7 @@ void DisplayMtl::generateExtensions(egl::DisplayExtensions *outExtensions) const
 
     // Note that robust resource initialization is not yet implemented. We only expose
     // this extension so that ANGLE can be initialized in Chrome. WebGL will fail to use
-    // this extension (anglebug.com/4929)
+    // this extension (anglebug.com/42263503)
     outExtensions->robustResourceInitializationANGLE = true;
 
     // EGL_KHR_image
@@ -541,7 +541,7 @@ void DisplayMtl::populateFeatureList(angle::FeatureList *features)
 
 EGLenum DisplayMtl::EGLDrawingBufferTextureTarget()
 {
-    // TODO(anglebug.com/6395): Apple's implementation conditionalized this on
+    // TODO(anglebug.com/42264909): Apple's implementation conditionalized this on
     // MacCatalyst and whether it was running on ARM64 or X64, preferring
     // EGL_TEXTURE_RECTANGLE_ANGLE. Metal can bind IOSurfaces to regular 2D
     // textures, and rectangular textures don't work in the SPIR-V Metal
@@ -771,7 +771,7 @@ void DisplayMtl::ensureCapsInitialized() const
     mNativeCaps.minAliasedPointSize   = 1;
     // NOTE(hqle): Metal has some problems drawing big point size even though
     // Metal-Feature-Set-Tables.pdf says that max supported point size is 511. We limit it to 64
-    // for now. http://anglebug.com/4816
+    // for now. http://anglebug.com/42263403
 
     // NOTE(kpiddington): This seems to be fixed in macOS Monterey
     if (ANGLE_APPLE_AVAILABLE_XCI(12.0, 15.0, 15.0))
@@ -982,25 +982,26 @@ void DisplayMtl::initializeExtensions() const
     }
 
     // EXT_debug_marker is not implemented yet, but the entry points must be exposed for the
-    // Metal backend to be used in Chrome (http://anglebug.com/4946)
+    // Metal backend to be used in Chrome (http://anglebug.com/42263519)
     mNativeExtensions.debugMarkerEXT = true;
 
     mNativeExtensions.robustnessEXT               = true;
+    mNativeExtensions.robustnessKHR               = true;
     mNativeExtensions.textureBorderClampOES       = false;  // not implemented yet
     mNativeExtensions.multiDrawIndirectEXT        = true;
     mNativeExtensions.translatedShaderSourceANGLE = true;
     mNativeExtensions.discardFramebufferEXT       = true;
-    // TODO(anglebug.com/6395): Apple's implementation exposed
+    // TODO(anglebug.com/42264909): Apple's implementation exposed
     // mNativeExtensions.textureRectangle = true here and
     // EGL_TEXTURE_RECTANGLE_ANGLE as the eglBindTexImage texture target on
     // macOS. This no longer seems necessary as IOSurfaces can be bound to
     // regular 2D textures with Metal, and causes other problems such as
     // breaking the SPIR-V Metal compiler.
 
-    // TODO(anglebug.com/6395): figure out why WebGL drawing buffer
+    // TODO(anglebug.com/42264909): figure out why WebGL drawing buffer
     // creation fails on macOS when the Metal backend advertises the
     // EXT_multisampled_render_to_texture extension.
-    // TODO(anglebug.com/3107): Metal doesn't implement render to texture
+    // TODO(anglebug.com/42261786): Metal doesn't implement render to texture
     // correctly. A texture (if used as a color attachment for a framebuffer)
     // is always created with sample count == 1, which results in creation of a
     // render pipeline with the same value. Moreover, if there is a more
@@ -1091,6 +1092,8 @@ void DisplayMtl::initializeExtensions() const
     // GL_NV_pixel_buffer_object
     mNativeExtensions.pixelBufferObjectNV = true;
 
+    mNativeExtensions.packReverseRowOrderANGLE = true;
+
     if (mFeatures.hasEvents.enabled)
     {
         // MTLSharedEvent is only available since Metal 2.1
@@ -1162,7 +1165,7 @@ void DisplayMtl::initializeExtensions() const
 
             if (rasterOrderGroupsSupported && isAMD())
             {
-                // anglebug.com/7792 -- [[raster_order_group()]] does not work for read_write
+                // anglebug.com/42266263 -- [[raster_order_group()]] does not work for read_write
                 // textures on AMD when the render pass doesn't have a color attachment on slot 0.
                 // To work around this we attach one of the PLS textures to GL_COLOR_ATTACHMENT0, if
                 // there isn't one already.
@@ -1276,7 +1279,7 @@ void DisplayMtl::initializeFeatures()
                             supportsEitherGPUFamily(3, 1) && !isAMD());
     ANGLE_FEATURE_CONDITION((&mFeatures), allowSamplerCompareLod, supportsEitherGPUFamily(3, 1));
 
-    // http://anglebug.com/4919
+    // http://anglebug.com/40644746
     // Stencil blit shader is not compiled on Intel & NVIDIA, need investigation.
     ANGLE_FEATURE_CONDITION((&mFeatures), hasShaderStencilOutput,
                             supportsMetal2_1() && !isIntel() && !isNVIDIA());
@@ -1292,7 +1295,7 @@ void DisplayMtl::initializeFeatures()
 
     ANGLE_FEATURE_CONDITION((&mFeatures), hasCheapRenderPass, (isOSX || isCatalyst) && !isARM);
 
-    // http://anglebug.com/5235
+    // http://anglebug.com/42263788
     // D24S8 is unreliable on AMD.
     ANGLE_FEATURE_CONDITION((&mFeatures), forceD24S8AsUnsupported, isAMD());
 
@@ -1346,30 +1349,30 @@ void DisplayMtl::initializeFeatures()
     ANGLE_FEATURE_CONDITION((&mFeatures), enableParallelMtlLibraryCompilation, true);
 
     // Uploading texture data via staging buffers improves performance on all tested systems.
-    // http://anglebug.com/8092: Disabled on intel due to some texture formats uploading incorrectly
-    // with staging buffers
+    // http://anglebug.com/40644905: Disabled on intel due to some texture formats uploading
+    // incorrectly with staging buffers
     ANGLE_FEATURE_CONDITION(&mFeatures, alwaysPreferStagedTextureUploads, true);
     ANGLE_FEATURE_CONDITION(&mFeatures, disableStagedInitializationOfPackedTextureFormats,
                             isIntel() || isAMD());
 
     ANGLE_FEATURE_CONDITION((&mFeatures), generateShareableShaders, true);
 
-    // http://anglebug.com/8170: NVIDIA GPUs are unsupported due to scarcity of the hardware.
+    // http://anglebug.com/42266609: NVIDIA GPUs are unsupported due to scarcity of the hardware.
     ANGLE_FEATURE_CONDITION((&mFeatures), disableMetalOnNvidia, true);
 
     // The AMDMTLBronzeDriver seems to have bugs flushing vertex data to the GPU during some kinds
     // of buffer uploads which require a flush to work around.
     ANGLE_FEATURE_CONDITION((&mFeatures), flushAfterStreamVertexData, isAMDBronzeDriver());
 
-    // TODO(anglebug.com/7952): GPUs that don't support Mac GPU family 2 or greater are
+    // TODO(anglebug.com/40096869): GPUs that don't support Mac GPU family 2 or greater are
     // unsupported by the Metal backend.
     ANGLE_FEATURE_CONDITION((&mFeatures), requireGpuFamily2, true);
 
-    // anglebug.com/8258 Builtin shaders currently require MSL 2.1
+    // anglebug.com/42266694 Builtin shaders currently require MSL 2.1
     ANGLE_FEATURE_CONDITION((&mFeatures), requireMsl21, true);
 
-    // http://anglebug.com/8311: Rescope global variables which are only used in one function to be
-    // function local. Disabled on AMD FirePro devices: http://anglebug.com/8317
+    // http://anglebug.com/42266744: Rescope global variables which are only used in one function to
+    // be function local. Disabled on AMD FirePro devices: http://anglebug.com/40096898
     ANGLE_FEATURE_CONDITION((&mFeatures), rescopeGlobalVariables, !isAMDFireProDevice());
 
     // Apple-specific pre-transform for explicit cubemap derivatives

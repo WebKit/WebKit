@@ -28,6 +28,7 @@
 #include "ExtensionCapability.h"
 #include "ExtensionCapabilityGrant.h"
 
+#include <wtf/BlockPtr.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
 
@@ -48,8 +49,6 @@ using ExtensionProcessVariant = std::variant<RetainPtr<BEWebContentProcess>, Ret
 using ExtensionProcessVariant = std::variant<RetainPtr<BEWebContentProcess>, RetainPtr<BENetworkingProcess>, RetainPtr<BERenderingProcess>>;
 #endif
 
-class ExtensionCapability;
-
 class ExtensionProcess {
 public:
     ExtensionProcess(BEWebContentProcess *);
@@ -61,8 +60,7 @@ public:
 
     void invalidate() const;
     OSObjectPtr<xpc_connection_t> makeLibXPCConnection() const;
-    RetainPtr<BEProcessCapabilityGrant> grantCapability(BEProcessCapability *) const;
-    PlatformGrant grantCapability(const PlatformCapability&) const;
+    PlatformGrant grantCapability(const PlatformCapability&, BlockPtr<void()>&& invalidationHandler = ^{ }) const;
     RetainPtr<UIInteraction> createVisibilityPropagationInteraction() const;
 
 private:

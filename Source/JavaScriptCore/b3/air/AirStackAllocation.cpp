@@ -46,7 +46,7 @@ void updateFrameSizeBasedOnStackSlotsImpl(Code& code, const Collection& collecti
     unsigned frameSize = 0;
     for (StackSlot* slot : collection)
         frameSize = std::max(frameSize, static_cast<unsigned>(-slot->offsetFromFP()));
-    code.setFrameSize(WTF::roundUpToMultipleOf(stackAlignmentBytes(), frameSize) + stackAdjustmentForAlignment());
+    code.setFrameSize(WTF::roundUpToMultipleOf<stackAlignmentBytes()>(frameSize) + stackAdjustmentForAlignment());
 }
 
 } // anonymous namespace

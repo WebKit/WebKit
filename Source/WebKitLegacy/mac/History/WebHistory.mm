@@ -291,8 +291,8 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
         // as seen in <rdar://problem/6570573>.
         BOOL itemWasInDateCaches = [self removeItemFromDateCaches:entry.get()];
         ASSERT_UNUSED(itemWasInDateCaches, itemWasInDateCaches);
-        [entry _visited];
 
+        [entry _visitedWithTitle:title];
     } else {
         LOG(History, "Adding new global history entry for %@", url);
         entry = adoptNS([[WebHistoryItem alloc] initWithURLString:URLString title:title lastVisitedTimeInterval:[NSDate timeIntervalSinceReferenceDate]]);

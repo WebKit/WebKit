@@ -60,7 +60,7 @@ void webkit_input_method_underline_set_color(WebKitInputMethodUnderline* underli
  *
  * Since: 2.28
  */
-gboolean webkit_input_method_context_filter_key_event(WebKitInputMethodContext* context, struct wpe_input_keyboard_event* keyEvent)
+gboolean webkit_input_method_context_filter_key_event(WebKitInputMethodContext* context, void* keyEvent)
 {
     g_return_val_if_fail(WEBKIT_IS_INPUT_METHOD_CONTEXT(context), FALSE);
     g_return_val_if_fail(keyEvent, FALSE);

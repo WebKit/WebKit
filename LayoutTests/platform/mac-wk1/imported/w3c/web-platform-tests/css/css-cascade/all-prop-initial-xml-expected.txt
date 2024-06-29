@@ -7,6 +7,7 @@ PASS align-content
 PASS align-items
 PASS align-self
 PASS alignment-baseline
+PASS anchor-name
 PASS animation-composition
 PASS animation-delay
 PASS animation-direction
@@ -259,6 +260,7 @@ PASS perspective
 PASS perspective-origin
 PASS pointer-events
 PASS position
+PASS position-anchor
 PASS print-color-adjust
 PASS quotes
 PASS r

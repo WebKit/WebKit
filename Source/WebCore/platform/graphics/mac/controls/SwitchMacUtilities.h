@@ -26,7 +26,20 @@
 
 #if PLATFORM(MAC)
 
-namespace WebCore::SwitchMacUtilities {
+namespace WebCore {
+
+class FloatRect;
+class FloatSize;
+class GraphicsContext;
+class ImageBuffer;
+class IntSize;
+
+struct ControlStyle;
+
+template<typename> class RectEdges;
+using IntOutsets = RectEdges<int>;
+
+namespace SwitchMacUtilities {
 
 IntSize cellSize(NSControlSize);
 FloatSize visualCellSize(IntSize, const ControlStyle&);
@@ -40,6 +53,8 @@ FloatRect trackRectForBounds(const FloatRect&, const FloatSize&);
 void rotateContextForVerticalWritingMode(GraphicsContext&, const FloatRect&);
 RefPtr<ImageBuffer> trackMaskImage(GraphicsContext&, FloatSize, float, bool, NSString *);
 
-} // namespace WebCore::SwitchMacUtilities
+} // namespace SwitchMacUtilities
+
+} // namespace WebCore
 
 #endif // PLATFORM(MAC)

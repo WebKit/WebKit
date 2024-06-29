@@ -1,8 +1,8 @@
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
-
-FAIL Test TT application when manipulating <script> elements during loading. promise_test: Unhandled rejection with value: "First message should have been blocked: first script element executed"
+PASS Test TT application when manipulating <script> elements during loading.
 PASS Script set via .textContent executes on a connected HTMLScriptElement.
 PASS Script set via .textContent executes on an unconnected HTMLScriptElement.
 PASS Script set via .innerText executes on a connected HTMLScriptElement.

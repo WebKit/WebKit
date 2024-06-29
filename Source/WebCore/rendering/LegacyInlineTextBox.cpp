@@ -197,7 +197,7 @@ LayoutRect LegacyInlineTextBox::localSelectionRect(unsigned startPos, unsigned e
     LayoutRect selectionRect { LayoutUnit(logicalLeft()), selectionTop, LayoutUnit(logicalWidth()), selectionHeight };
     // Avoid measuring the text when the entire line box is selected as an optimization.
     if (clampedStart || clampedEnd != textRun.length())
-        lineFont().adjustSelectionRectForText(textRun, selectionRect, clampedStart, clampedEnd);
+        lineFont().adjustSelectionRectForText(renderer().canUseSimplifiedTextMeasuring().value_or(false), textRun, selectionRect, clampedStart, clampedEnd);
     // FIXME: The computation of the snapped selection rect differs from the computation of this rect
     // in paintMarkedTextBackground(). See <https://bugs.webkit.org/show_bug.cgi?id=138913>.
     return snappedSelectionRect(selectionRect, logicalRight(), selectionTop, selectionHeight, isHorizontal());

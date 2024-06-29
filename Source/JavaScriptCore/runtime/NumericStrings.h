@@ -55,7 +55,7 @@ public:
         String value;
         JSString* jsString { nullptr };
 
-        static ptrdiff_t offsetOfJSString() { return OBJECT_OFFSETOF(StringWithJSString, jsString); }
+        static constexpr ptrdiff_t offsetOfJSString() { return OBJECT_OFFSETOF(StringWithJSString, jsString); }
     };
 
     ALWAYS_INLINE const String& add(double d)

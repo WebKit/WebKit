@@ -2119,7 +2119,7 @@ void indentForNestingLevel(PrintStream& out, unsigned nestingDepth)
 
 void dumpUChar32(PrintStream& out, char32_t c)
 {
-    if (c >= ' '&& c <= 0xff)
+    if (c >= ' ' && c <= 0xff)
         out.printf("'%c'", static_cast<char>(c));
     else
         out.printf("0x%04x", c);

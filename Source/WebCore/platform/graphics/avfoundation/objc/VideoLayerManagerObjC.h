@@ -70,7 +70,6 @@ public:
     WEBCORE_EXPORT void updateVideoFullscreenInlineImage(PlatformImagePtr) final;
 #endif
 
-    WEBCORE_EXPORT bool requiresTextTrackRepresentation() const final;
     WEBCORE_EXPORT void setTextTrackRepresentationLayer(PlatformLayer*) final;
     WEBCORE_EXPORT void syncTextTrackBounds() final;
 

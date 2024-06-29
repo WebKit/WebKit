@@ -45,11 +45,6 @@ Ref<AccessCase> IntrinsicGetterAccessCase::create(VM& vm, JSCell* owner, Cacheab
     return adoptRef(*new IntrinsicGetterAccessCase(vm, owner, identifier, offset, structure, conditionSet, intrinsicFunction, WTFMove(prototypeAccessChain)));
 }
 
-Ref<AccessCase> IntrinsicGetterAccessCase::cloneImpl() const
-{
-    return adoptRef(*new IntrinsicGetterAccessCase(*this));
-}
-
 bool IntrinsicGetterAccessCase::doesCalls() const
 {
     switch (intrinsic()) {

@@ -9,6 +9,7 @@
 #include "include/core/SkCanvas.h"
 #include "include/core/SkPath.h"
 #include "include/core/SkPathUtils.h"
+#include "src/base/SkFloatBits.h"
 
 static SkPath get_path() {
     SkPath path;

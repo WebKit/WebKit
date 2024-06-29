@@ -63,7 +63,7 @@ static RefPtr<JSON::Value> jsToInspectorValue(JSC::JSGlobalObject* globalObject,
     if (value.isInt32())
         return JSON::Value::create(value.asInt32());
     if (value.isString())
-        return JSON::Value::create(asString(value)->value(globalObject));
+        return JSON::Value::create(asString(value)->value(globalObject).data);
 
     if (value.isObject()) {
         if (isJSArray(value)) {
@@ -117,9 +117,7 @@ InjectedScriptBase::InjectedScriptBase(const String& name, JSC::JSGlobalObject* 
 {
 }
 
-InjectedScriptBase::~InjectedScriptBase()
-{
-}
+InjectedScriptBase::~InjectedScriptBase() = default;
 
 bool InjectedScriptBase::hasAccessToInspectedScriptState() const
 {

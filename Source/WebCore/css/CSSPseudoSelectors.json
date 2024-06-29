@@ -72,6 +72,9 @@
             "status": "non-standard"
         },
         "active": {},
+        "active-view-transition": {
+            "settings-flag": "viewTransitionsEnabled"
+        },
         "any-link": {
             "aliases": [
                 "-webkit-any-link"

@@ -18,49 +18,49 @@ layer at (0,0) size 800x255
         RenderImage {IMG} at (68,8) size 11x11
         RenderText {#text} at (78,8) size 16x16
           text run at (78,8) width 16: " "
-        RenderInline {SPAN} at (93,7) size 115x39
-          RenderText {#text} at (93,7) size 115x39
-            text run at (93,7) width 115: "xxx"
-        RenderText {#text} at (207,8) size 16x16
-          text run at (207,8) width 16: " "
-        RenderImage {IMG} at (222,8) size 11x11
-        RenderText {#text} at (232,8) size 16x16
-          text run at (232,8) width 16: " "
-        RenderInline {SPAN} at (247,8) size 46x16
-          RenderText {#text} at (247,8) size 46x16
-            text run at (247,8) width 46: "xxx"
-        RenderText {#text} at (292,8) size 16x16
-          text run at (292,8) width 16: " "
-        RenderImage {IMG} at (307,8) size 11x11
-        RenderText {#text} at (317,8) size 16x16
-          text run at (317,8) width 16: " "
-        RenderInline {SPAN} at (332,8) size 46x16
-          RenderText {#text} at (332,8) size 46x16
-            text run at (332,8) width 46: "xxx"
-        RenderText {#text} at (377,8) size 16x16
-          text run at (377,8) width 16: " "
-        RenderImage {IMG} at (392,8) size 11x11
-        RenderText {#text} at (402,8) size 16x16
-          text run at (402,8) width 16: " "
-        RenderInline {BIG} at (417,8) size 61x21
-          RenderText {#text} at (417,8) size 61x21
-            text run at (417,8) width 61: "xxx"
-        RenderText {#text} at (477,8) size 16x16
-          text run at (477,8) width 16: " "
-        RenderImage {IMG} at (492,8) size 21x21
-        RenderText {#text} at (512,8) size 16x16
-          text run at (512,8) width 16: " "
-        RenderInline {SPAN} at (527,8) size 46x16
-          RenderText {#text} at (527,8) size 46x16
-            text run at (527,8) width 46: "xxx"
-        RenderText {#text} at (572,8) size 16x16
-          text run at (572,8) width 16: " "
-        RenderImage {IMG} at (587,8) size 66x66
-        RenderText {#text} at (652,8) size 16x16
-          text run at (652,8) width 16: " "
-        RenderInline {SPAN} at (667,8) size 46x16
-          RenderText {#text} at (667,8) size 46x16
-            text run at (667,8) width 46: "xxx"
+        RenderInline {SPAN} at (93,7) size 112x39
+          RenderText {#text} at (93,7) size 112x39
+            text run at (93,7) width 112: "xxx"
+        RenderText {#text} at (204,8) size 16x16
+          text run at (204,8) width 16: " "
+        RenderImage {IMG} at (219,8) size 11x11
+        RenderText {#text} at (229,8) size 16x16
+          text run at (229,8) width 16: " "
+        RenderInline {SPAN} at (244,8) size 46x16
+          RenderText {#text} at (244,8) size 46x16
+            text run at (244,8) width 46: "xxx"
+        RenderText {#text} at (289,8) size 16x16
+          text run at (289,8) width 16: " "
+        RenderImage {IMG} at (304,8) size 11x11
+        RenderText {#text} at (314,8) size 16x16
+          text run at (314,8) width 16: " "
+        RenderInline {SPAN} at (329,8) size 46x16
+          RenderText {#text} at (329,8) size 46x16
+            text run at (329,8) width 46: "xxx"
+        RenderText {#text} at (374,8) size 16x16
+          text run at (374,8) width 16: " "
+        RenderImage {IMG} at (389,8) size 11x11
+        RenderText {#text} at (399,8) size 16x16
+          text run at (399,8) width 16: " "
+        RenderInline {BIG} at (414,8) size 61x21
+          RenderText {#text} at (414,8) size 61x21
+            text run at (414,8) width 61: "xxx"
+        RenderText {#text} at (474,8) size 16x16
+          text run at (474,8) width 16: " "
+        RenderImage {IMG} at (489,8) size 21x21
+        RenderText {#text} at (509,8) size 16x16
+          text run at (509,8) width 16: " "
+        RenderInline {SPAN} at (524,8) size 46x16
+          RenderText {#text} at (524,8) size 46x16
+            text run at (524,8) width 46: "xxx"
+        RenderText {#text} at (569,8) size 16x16
+          text run at (569,8) width 16: " "
+        RenderImage {IMG} at (584,8) size 66x66
+        RenderText {#text} at (649,8) size 16x16
+          text run at (649,8) width 16: " "
+        RenderInline {SPAN} at (664,8) size 46x16
+          RenderText {#text} at (664,8) size 46x16
+            text run at (664,8) width 46: "xxx"
         RenderText {#text} at (0,0) size 0x0
         RenderImage {IMG} at (8,73) size 36x36
         RenderText {#text} at (43,73) size 16x16

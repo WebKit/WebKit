@@ -156,7 +156,7 @@ public:
     int tpixel; // Index of transparent pixel.
     WebCore::ScalableImageDecoderFrame::DisposalMethod disposalMethod; // Restore to background, leave in place, etc.
     size_t localColormapPosition; // Per-image colormap.
-    int localColormapSize; // Size of local colormap array.
+    int localColormapSize; // Size of local colormap array (in 3-byte units)
     int datasize;
     
     bool isLocalColormapDefined : 1;
@@ -255,12 +255,12 @@ public:
 
     std::span<const uint8_t> globalColormap() const
     {
-        return m_isGlobalColormapDefined ? data(m_globalColormapPosition, m_globalColormapSize) : std::span<const uint8_t> { };
+        return m_isGlobalColormapDefined ? data(m_globalColormapPosition, m_globalColormapSize * 3) : std::span<const uint8_t> { };
     }
 
     std::span<const uint8_t> localColormap(const GIFFrameContext* frame) const
     {
-        return frame->isLocalColormapDefined ? data(frame->localColormapPosition, frame->localColormapSize) : std::span<const uint8_t> { };
+        return frame->isLocalColormapDefined ? data(frame->localColormapPosition, frame->localColormapSize * 3) : std::span<const uint8_t> { };
     }
 
     const GIFFrameContext* frameContext() const
@@ -302,7 +302,7 @@ private:
     unsigned m_screenHeight;
     bool m_isGlobalColormapDefined;
     size_t m_globalColormapPosition; // (3* MAX_COLORS in size) Default colormap if local not supplied, 3 bytes for each color.
-    int m_globalColormapSize; // Size of global colormap array.
+    int m_globalColormapSize; // Size of global colormap array (in 3-byte units)
     int m_loopCount; // Netscape specific extension block to control the number of animation loops a GIF renders.
     
     Vector<std::unique_ptr<GIFFrameContext> > m_frames;

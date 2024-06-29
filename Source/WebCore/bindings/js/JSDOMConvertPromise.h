@@ -33,17 +33,17 @@
 namespace WebCore {
 
 template<typename T> struct Converter<IDLPromise<T>> : DefaultConverter<IDLPromise<T>> {
-    using ReturnType = RefPtr<DOMPromise>;
+    using ReturnType = Ref<DOMPromise>;
+    using Result = ConversionResult<IDLPromise<T>>;
 
     // https://webidl.spec.whatwg.org/#es-promise
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
         JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
         auto* globalObject = JSC::jsDynamicCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
-        if (!globalObject)
-            return nullptr;
+        RELEASE_ASSERT(globalObject);
 
         // 1. Let resolve be the original value of %Promise%.resolve.
         // 2. Let promise be the result of calling resolve with %Promise% as the this value and V as the single argument value.
@@ -55,11 +55,11 @@ template<typename T> struct Converter<IDLPromise<T>> : DefaultConverter<IDLPromi
                 bool terminatorCausedException = vm.isTerminationException(scope.exception());
                 if (terminatorCausedException || (scriptController && scriptController->isTerminatingExecution())) {
                     scriptController->forbidExecution();
-                    return nullptr;
+                    return Result::exception();
                 }
             }
             exceptionThrower(lexicalGlobalObject, scope);
-            return nullptr;
+            return Result::exception();
         }
         ASSERT(promise);
 

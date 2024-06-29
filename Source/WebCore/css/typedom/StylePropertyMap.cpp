@@ -31,6 +31,7 @@
 #include "CSSPropertyParser.h"
 #include "CSSStyleValueFactory.h"
 #include "CSSUnparsedValue.h"
+#include "CSSValuePair.h"
 #include "CSSVariableReferenceValue.h"
 #include "Document.h"
 #include "StylePropertyShorthand.h"
@@ -80,7 +81,7 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
     }
     auto propertyID = cssPropertyID(property);
     if (propertyID == CSSPropertyInvalid || !isExposed(propertyID, document.settings()))
-        return Exception { ExceptionCode::TypeError, makeString("Invalid property ", property) };
+        return Exception { ExceptionCode::TypeError, makeString("Invalid property "_s, property) };
 
     if (!CSSProperty::isListValuedProperty(propertyID) && values.size() > 1)
         return Exception { ExceptionCode::TypeError, makeString(property, " is not a list-valued property but more than one value was provided"_s) };
@@ -122,6 +123,13 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
             return Exception { ExceptionCode::TypeError, "Invalid value: This property doesn't allow <number> input"_s };
     }
 
+    // FIXME: CSSValuePair has specific behavior related to coalescing its 2 values when they are equal.
+    // Throw an error when using them with Typed OM to avoid subtle bugs when the serialization isn't representative of the value.
+    if (auto pair = dynamicDowncast<CSSValuePair>(value)) {
+        if (pair->canBeCoalesced())
+            return Exception { ExceptionCode::NotSupportedError, "Invalid values"_s };
+    }
+
     if (!setProperty(propertyID, value.releaseNonNull()))
         return Exception { ExceptionCode::TypeError, "Invalid values"_s };
 
@@ -139,7 +147,7 @@ ExceptionOr<void> StylePropertyMap::append(Document& document, const AtomString&
 
     auto propertyID = cssPropertyID(property);
     if (propertyID == CSSPropertyInvalid || !isExposed(propertyID, document.settings()))
-        return Exception { ExceptionCode::TypeError, makeString("Invalid property ", property) };
+        return Exception { ExceptionCode::TypeError, makeString("Invalid property "_s, property) };
 
     if (!CSSProperty::isListValuedProperty(propertyID))
         return Exception { ExceptionCode::TypeError, makeString(property, " does not support multiple values"_s) };
@@ -179,7 +187,7 @@ ExceptionOr<void> StylePropertyMap::remove(Document& document, const AtomString&
 
     auto propertyID = cssPropertyID(property);
     if (!isExposed(propertyID, document.settings()))
-        return Exception { ExceptionCode::TypeError, makeString("Invalid property ", property) };
+        return Exception { ExceptionCode::TypeError, makeString("Invalid property "_s, property) };
 
     removeProperty(propertyID);
     return { };

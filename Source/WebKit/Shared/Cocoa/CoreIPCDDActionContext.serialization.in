@@ -20,9 +20,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE(DATA_DETECTION) && PLATFORM(MAC)
+#if PLATFORM(MAC) && HAVE(WK_SECURE_CODING_DATA_DETECTORS)
 secure_coding_header: <pal/mac/DataDetectorsSoftLink.h>
-[WebKitSecureCodingClass=PAL::getWKDDActionContextClass()] webkit_secure_coding DDActionContext {
+
+[WebKitSecureCodingClass=PAL::getWKDDActionContextClass()] webkit_secure_coding DDSecureActionContext {
     highlightFrame: NSValue
     aimFrame: NSValue
     eventTitle: String
@@ -49,4 +50,5 @@ secure_coding_header: <pal/mac/DataDetectorsSoftLink.h>
     isRightClick: Number
     authorNameComponents: PersonNameComponents
 }
-#endif // ENABLE(DATA_DETECTION) && PLATFORM(MAC)
+
+#endif // PLATFORM(MAC) && HAVE(WK_SECURE_CODING_DATA_DETECTORS)

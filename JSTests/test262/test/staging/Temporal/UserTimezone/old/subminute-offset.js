@@ -97,7 +97,5 @@ assert.sameValue(obj.getPreviousTransition(), null)
 
 // works in Temporal.Now
 assert(Temporal.Now.plainDateTimeISO(obj) instanceof Temporal.PlainDateTime);
-assert(Temporal.Now.plainDateTime(fakeGregorian, obj) instanceof Temporal.PlainDateTime);
 assert(Temporal.Now.plainDateISO(obj) instanceof Temporal.PlainDate);
-assert(Temporal.Now.plainDate(fakeGregorian, obj) instanceof Temporal.PlainDate);
 assert(Temporal.Now.plainTimeISO(obj) instanceof Temporal.PlainTime);

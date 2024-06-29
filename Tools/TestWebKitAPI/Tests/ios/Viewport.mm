@@ -43,7 +43,7 @@ namespace TestWebKitAPI {
 
 static inline String makeViewportMetaTag(unsigned viewportWidth, float initialScale)
 {
-    return makeString("<meta name='viewport' content='width=", viewportWidth, ", initial-scale=", initialScale, "'>");
+    return makeString("<meta name='viewport' content='width="_s, viewportWidth, ", initial-scale="_s, initialScale, "'>"_s);
 }
 
 TEST(Viewport, MinimumEffectiveDeviceWidthWithInitialScale)

@@ -55,13 +55,7 @@ private:
     void generateInternal(SpeculativeJIT* jit) final
     {
         linkFrom(jit);
-        for (unsigned i = 0; i < m_plans.size(); ++i)
-            jit->silentSpill(m_plans[i]);
-        jit->callOperation(
-            operationCreateDirectArguments, m_resultGPR, SpeculativeJIT::TrustedImmPtr(&jit->vm()), m_structure, m_lengthGPR, m_minCapacity);
-        for (unsigned i = m_plans.size(); i--;)
-            jit->silentFill(m_plans[i]);
-        jit->exceptionCheck();
+        jit->callOperationWithSilentSpill(m_plans.span(), operationCreateDirectArguments, m_resultGPR, SpeculativeJIT::TrustedImmPtr(&jit->vm()), m_structure, m_lengthGPR, m_minCapacity);
         jit->loadPtr(
             MacroAssembler::Address(m_resultGPR, DirectArguments::offsetOfLength()), m_lengthGPR);
         jumpTo(jit);

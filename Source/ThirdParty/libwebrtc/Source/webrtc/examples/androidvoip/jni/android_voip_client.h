@@ -23,8 +23,8 @@
 #include "api/voip/voip_engine.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/async_udp_socket.h"
+#include "rtc_base/network/received_packet.h"
 #include "rtc_base/socket_address.h"
-#include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
 #include "sdk/android/native_api/jni/scoped_java_ref.h"
 
@@ -40,8 +40,7 @@ namespace webrtc_examples {
 // with consistent thread usage requirement with ProcessThread used
 // within VoipEngine, as well as providing asynchronicity to the
 // caller. AndroidVoipClient is meant to be used by Java through JNI.
-class AndroidVoipClient : public webrtc::Transport,
-                          public sigslot::has_slots<> {
+class AndroidVoipClient : public webrtc::Transport {
  public:
   // Returns a pointer to an AndroidVoipClient object. Clients should
   // use this factory method to create AndroidVoipClient objects. The
@@ -122,17 +121,10 @@ class AndroidVoipClient : public webrtc::Transport,
                const webrtc::PacketOptions& options) override;
   bool SendRtcp(rtc::ArrayView<const uint8_t> packet) override;
 
-  // Slots for sockets to connect to.
   void OnSignalReadRTPPacket(rtc::AsyncPacketSocket* socket,
-                             const char* rtp_packet,
-                             size_t size,
-                             const rtc::SocketAddress& addr,
-                             const int64_t& timestamp);
+                             const rtc::ReceivedPacket& packet);
   void OnSignalReadRTCPPacket(rtc::AsyncPacketSocket* socket,
-                              const char* rtcp_packet,
-                              size_t size,
-                              const rtc::SocketAddress& addr,
-                              const int64_t& timestamp);
+                              const rtc::ReceivedPacket& packet);
 
  private:
   AndroidVoipClient(JNIEnv* env,

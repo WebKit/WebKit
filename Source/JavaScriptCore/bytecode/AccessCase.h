@@ -86,7 +86,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(ProxyObjectStore) \
     macro(InstanceOfHit) \
     macro(InstanceOfMiss) \
-    macro(InstanceOfGeneric) \
+    macro(InstanceOfMegamorphic) \
     macro(CheckPrivateBrand) \
     macro(SetPrivateBrand) \
     macro(IndexedProxyObjectLoad) \
@@ -211,22 +211,33 @@ public:
         return m_structureID.get();
     }
 
+    StructureID structureID() const
+    {
+        if (auto* result = structure())
+            return result->id();
+        return StructureID();
+    }
+
     Structure* newStructure() const
     {
         ASSERT(m_type == Transition || m_type == Delete || m_type == SetPrivateBrand);
         return m_structureID.get();
     }
 
-    ObjectPropertyConditionSet conditionSet() const { return m_conditionSet; }
+    StructureID newStructureID() const
+    {
+        ASSERT(m_type == Transition || m_type == Delete || m_type == SetPrivateBrand);
+        return m_structureID.value();
+    }
+
+    const ObjectPropertyConditionSet& conditionSet() const { return m_conditionSet; }
 
     JSObject* tryGetAlternateBase() const;
 
     WatchpointSet* additionalSet() const;
     bool viaGlobalProxy() const { return m_viaGlobalProxy; }
 
-    // If you supply the optional vector, this will append the set of cells that this will need to keep alive
-    // past the call.
-    bool doesCalls(VM&, Vector<JSCell*>* cellsToMark = nullptr) const;
+    bool doesCalls(VM&) const;
 
     bool isCustom() const
     {
@@ -294,6 +305,8 @@ public:
 
     static bool canBeShared(const AccessCase&, const AccessCase&);
 
+    void collectDependentCells(VM&, Vector<JSCell*>&) const;
+
     template<typename Func>
     void runWithDowncast(const Func&);
 
@@ -323,7 +336,6 @@ protected:
 
     AccessCase& operator=(const AccessCase&) = delete;
 
-    Ref<AccessCase> cloneImpl() const;
     WatchpointSet* additionalSetImpl() const { return nullptr; }
     JSObject* tryGetAlternateBaseImpl() const;
     void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const { }
@@ -346,10 +358,6 @@ private:
     DECLARE_VISIT_AGGREGATE_WITH_MODIFIER(const);
     bool visitWeak(VM&) const;
     template<typename Visitor> void propagateTransitions(Visitor&) const;
-
-    // FIXME: This only exists because of how AccessCase puts post-generation things into itself.
-    // https://bugs.webkit.org/show_bug.cgi?id=156456
-    Ref<AccessCase> clone() const;
 
     AccessType m_type;
 protected:

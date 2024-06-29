@@ -91,6 +91,10 @@
 #include <WebCore/CairoUtilities.h>
 #endif
 
+#if USE(SKIA)
+#include <WebCore/ProcessCapabilities.h>
+#endif
+
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #define WEBPROCESS_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 #define WEBPROCESS_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
@@ -128,6 +132,12 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+#if USE(SKIA)
+    const char* enableCPURendering = getenv("WEBKIT_SKIA_ENABLE_CPU_RENDERING");
+    if (enableCPURendering && strcmp(enableCPURendering, "0"))
+        ProcessCapabilities::setCanUseAcceleratedBuffers(false);
+#endif
+
 #if ENABLE(MEDIA_STREAM)
     addSupplement<UserMediaCaptureManager>();
 #endif

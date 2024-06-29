@@ -158,7 +158,7 @@ private:
         void decidePolicyForUserMediaPermissionRequest(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionRequestProxy&) final;
         void checkUserMediaPermissionForOrigin(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionCheckProxy&) final;
         void mediaCaptureStateDidChange(WebCore::MediaProducerMediaStateFlags) final;
-        void promptForDisplayCapturePermission(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionRequestProxy&);
+        void callDisplayCapturePermissionDelegate(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionRequestProxy&);
         void printFrame(WebPageProxy&, WebFrameProxy&, const WebCore::FloatSize& pdfFirstPageSize, CompletionHandler<void()>&&) final;
 #if PLATFORM(IOS_FAMILY)
 #if HAVE(APP_LINKS)
@@ -195,7 +195,7 @@ private:
         void requestPermissionOnXRSessionFeatures(WebPageProxy&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& /* granted */, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, const PlatformXR::Device::FeatureList& /* requiredFeaturesRequested */, const PlatformXR::Device::FeatureList& /* optionalFeaturesRequested */, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&&) final;
 #if PLATFORM(IOS_FAMILY)
         void startXRSession(WebPageProxy&, const PlatformXR::Device::FeatureList&, CompletionHandler<void(RetainPtr<id>, PlatformViewController *)>&&) final;
-        void endXRSession(WebPageProxy&) final;
+        void endXRSession(WebPageProxy&, PlatformXRSessionEndReason) final;
 #endif
 #endif
 
@@ -203,6 +203,11 @@ private:
         void updateClientBadge(WebPageProxy&, const WebCore::SecurityOriginData&, std::optional<uint64_t>) final;
 
         void didAdjustVisibilityWithSelectors(WebPageProxy&, Vector<String>&&) final;
+
+#if ENABLE(GAMEPAD)
+        void recentlyAccessedGamepadsForTesting(WebPageProxy&) final;
+        void stoppedAccessingGamepadsForTesting(WebPageProxy&) final;
+#endif
 
         WeakPtr<UIDelegate> m_uiDelegate;
     };
@@ -312,6 +317,11 @@ private:
         bool webViewUpdatedAppBadge : 1;
         bool webViewUpdatedClientBadge : 1;
         bool webViewDidAdjustVisibilityWithSelectors : 1;
+
+#if ENABLE(GAMEPAD)
+        bool webViewRecentlyAccessedGamepadsForTesting : 1;
+        bool webViewStoppedAccessingGamepadsForTesting : 1;
+#endif
     } m_delegateMethods;
 };
 

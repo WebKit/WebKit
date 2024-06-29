@@ -1,0 +1,4 @@
+
+FAIL anchor() computes to pixels assert_equals: expected 30 but got 0
+FAIL anchor-size() computes to pixels assert_true: expected true got false
+

@@ -1,0 +1,59 @@
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+layer at (0,0) size 2892x3096
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x3096
+  RenderBlock {HTML} at (0,0) size 785x3096 [color=#99DDBBCC] [bgcolor=#102030E0]
+    RenderBody {BODY} at (8,8) size 769x3080
+      RenderImage {IMG} at (0,85) size 187x65
+      RenderHTMLCanvas {CANVAS} at (0,150) size 300x150
+      RenderImage {IMG} at (300,214) size 244x86
+      RenderImage {IMG} at (0,545) size 171x265
+      RenderImage {IMG} at (171,601) size 285x209
+      RenderImage {IMG} at (300,960) size 205x218
+      RenderHTMLCanvas {CANVAS} at (0,1258) size 300x150
+      RenderImage {IMG} at (440,1178) size 17x230
+      RenderImage {IMG} at (457,1307) size 275x101
+      RenderImage {IMG} at (0,1493) size 300x89
+      RenderImage {IMG} at (300,1408) size 7x174
+      RenderImage {IMG} at (0,1582) size 251x289
+      RenderHTMLCanvas {CANVAS} at (361,1737) size 300x134
+      RenderHTMLCanvas {CANVAS} at (374,2693) size 388x150
+      RenderImage {IMG} at (0,3015) size 290x65
+      RenderImage {IMG} at (290,2843) size 284x237
+layer at (195,142) size 16x16
+  RenderVideo {VIDEO} at (187,134) size 16x16
+layer at (211,8) size 300x150
+  RenderHTMLCanvas {CANVAS} at (203,0) size 300x150
+layer at (8,403) size 300x150
+  RenderHTMLCanvas {CANVAS} at (0,395) size 300x150
+layer at (308,537) size 16x16
+  RenderVideo {VIDEO} at (300,529) size 16x16
+layer at (324,537) size 16x16
+  RenderVideo {VIDEO} at (316,529) size 16x16
+layer at (340,324) size 93x229
+  RenderVideo {VIDEO} at (332,316) size 93x229
+layer at (433,308) size 245x245
+  RenderVideo {VIDEO} at (425,300) size 245x245
+layer at (464,705) size 300x113
+  RenderHTMLCanvas {CANVAS} at (456,697) size 300x113
+layer at (8,818) size 1500x150
+  RenderHTMLCanvas {CANVAS} at (0,810) size 1500x150
+layer at (8,1123) size 300x63
+  RenderHTMLCanvas {CANVAS} at (0,1115) size 300x63
+layer at (308,1292) size 124x124
+  RenderVideo {VIDEO} at (300,1284) size 124x124
+layer at (432,1400) size 16x16
+  RenderVideo {VIDEO} at (424,1392) size 16x16
+layer at (315,1440) size 300x150
+  RenderHTMLCanvas {CANVAS} at (307,1432) size 300x150
+layer at (259,1769) size 110x110
+  RenderVideo {VIDEO} at (251,1761) size 110x110
+layer at (8,1879) size 300x672
+  RenderHTMLCanvas {CANVAS} at (0,1871) size 300x672
+layer at (8,2551) size 2884x150
+  RenderHTMLCanvas {CANVAS} at (0,2543) size 2884x150
+layer at (8,2701) size 300x150
+  RenderHTMLCanvas {CANVAS} at (0,2693) size 300x150
+layer at (308,2777) size 74x74
+  RenderVideo {VIDEO} at (300,2769) size 74x74

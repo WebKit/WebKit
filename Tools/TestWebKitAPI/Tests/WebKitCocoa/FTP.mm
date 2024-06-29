@@ -38,6 +38,7 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WebKit.h>
+#import <wtf/text/StringConcatenateNumbers.h>
 #import <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
@@ -133,7 +134,7 @@ TEST(WKWebView, FTPSubresourceRedirect)
     
     consoleMessages = [NSMutableArray arrayWithCapacity:2];
     
-    auto htmlString = makeString("<img src='http://127.0.0.1:", String::number(httpServer.port()), "/webkitten.png'>");
+    auto htmlString = makeString("<img src='http://127.0.0.1:"_s, httpServer.port(), "/webkitten.png'>"_s);
     [webView synchronouslyLoadHTMLString:[NSString stringWithUTF8String:htmlString.utf8().data()]];
 
     EXPECT_EQ([consoleMessages count], 2u);

@@ -26,7 +26,6 @@
 #pragma once
 
 #include "Connection.h"
-#include <WebCore/FetchEvent.h>
 #include <WebCore/FetchLoader.h>
 #include <WebCore/FetchLoaderClient.h>
 #include <WebCore/NetworkLoadMetrics.h>
@@ -34,6 +33,7 @@
 #include <WebCore/ServiceWorkerFetch.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/Lock.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebKit {
@@ -44,6 +44,9 @@ public:
     {
         return adoptRef(*new WebServiceWorkerFetchTaskClient(WTFMove(connection), serviceWorkerIdentifier, serverConnectionIdentifier, fetchTaskIdentifier, needsContinueDidReceiveResponseMessage));
     }
+
+    void continueDidReceiveResponse();
+    void convertFetchToDownload();
 
 private:
     WebServiceWorkerFetchTaskClient(Ref<IPC::Connection>&&, WebCore::ServiceWorkerIdentifier, WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, bool needsContinueDidReceiveResponseMessage);
@@ -56,15 +59,17 @@ private:
     void didFinish(const WebCore::NetworkLoadMetrics&) final;
     void didNotHandle() final;
     void cancel() final;
-    void continueDidReceiveResponse() final;
-    void convertFetchToDownload() final;
     void setCancelledCallback(Function<void()>&&) final;
-    void setFetchEvent(Ref<WebCore::FetchEvent>&&);
-    void navigationPreloadIsReady(WebCore::ResourceResponse::CrossThreadData&&) final;
-    void navigationPreloadFailed(WebCore::ResourceError&&) final;
     void usePreload() final;
+    void contextIsStopping() final;
 
-    void cleanup();
+    void didReceiveDataInternal(const WebCore::SharedBuffer&) WTF_REQUIRES_LOCK(m_connectionLock);
+    void didReceiveFormDataAndFinishInternal(Ref<WebCore::FormData>&&) WTF_REQUIRES_LOCK(m_connectionLock);
+    void didFailInternal(const WebCore::ResourceError&) WTF_REQUIRES_LOCK(m_connectionLock);
+    void didFinishInternal(const WebCore::NetworkLoadMetrics&) WTF_REQUIRES_LOCK(m_connectionLock);
+    void didNotHandleInternal() WTF_REQUIRES_LOCK(m_connectionLock);
+
+    void cleanup() WTF_REQUIRES_LOCK(m_connectionLock);
 
     void didReceiveBlobChunk(const WebCore::SharedBuffer&);
     void didFinishBlobLoading();
@@ -82,7 +87,8 @@ private:
         std::unique_ptr<WebCore::FetchLoader> loader;
     };
 
-    RefPtr<IPC::Connection> m_connection;
+    Lock m_connectionLock;
+    RefPtr<IPC::Connection> m_connection WTF_GUARDED_BY_LOCK(m_connectionLock);
     WebCore::SWServerConnectionIdentifier m_serverConnectionIdentifier;
     WebCore::ServiceWorkerIdentifier m_serviceWorkerIdentifier;
     WebCore::FetchIdentifier m_fetchIdentifier;
@@ -93,10 +99,8 @@ private:
     WebCore::NetworkLoadMetrics m_networkLoadMetrics;
     bool m_didFinish { false };
     bool m_isDownload { false };
-    RefPtr<WebCore::FetchEvent> m_event;
+    bool m_didSendResponse { false };
     Function<void()> m_cancelledCallback;
-    std::optional<WebCore::ResourceResponse::CrossThreadData> m_preloadResponse;
-    WebCore::ResourceError m_preloadError;
 };
 
 } // namespace WebKit

@@ -1,0 +1,7 @@
+
+PASS Static script did not load as it failed its integrity check
+PASS Static script loaded as its integrity check passed
+PASS Static script did not load as it failed its integrity check, even without an import defined
+PASS Static script loaded as its integrity check passed without an import defined
+PASS HTML-based module script did not load as its integrity check failed.
+

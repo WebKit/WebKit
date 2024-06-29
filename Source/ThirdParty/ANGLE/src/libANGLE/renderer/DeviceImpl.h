@@ -33,7 +33,6 @@ class DeviceImpl : angle::NonCopyable
     virtual egl::Error getAttribute(const egl::Display *display,
                                     EGLint attribute,
                                     void **outValue)                            = 0;
-    virtual EGLint getType()                                                    = 0;
     virtual void generateExtensions(egl::DeviceExtensions *outExtensions) const = 0;
     virtual const std::string getDeviceString(EGLint name);
 };

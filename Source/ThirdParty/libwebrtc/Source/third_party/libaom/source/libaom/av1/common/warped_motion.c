@@ -291,9 +291,7 @@ void av1_highbd_warp_affine_c(const int32_t *mat, const uint16_t *ref,
                               ConvolveParams *conv_params, int16_t alpha,
                               int16_t beta, int16_t gamma, int16_t delta) {
   int32_t tmp[15 * 8];
-  const int reduce_bits_horiz =
-      conv_params->round_0 +
-      AOMMAX(bd + FILTER_BITS - conv_params->round_0 - 14, 0);
+  const int reduce_bits_horiz = conv_params->round_0;
   const int reduce_bits_vert = conv_params->is_compound
                                    ? conv_params->round_1
                                    : 2 * FILTER_BITS - reduce_bits_horiz;
@@ -305,6 +303,10 @@ void av1_highbd_warp_affine_c(const int32_t *mat, const uint16_t *ref,
   const int offset_bits = bd + 2 * FILTER_BITS - conv_params->round_0;
   (void)max_bits_horiz;
   assert(IMPLIES(conv_params->is_compound, conv_params->dst != NULL));
+
+  // Check that, even with 12-bit input, the intermediate values will fit
+  // into an unsigned 16-bit intermediate array.
+  assert(bd + FILTER_BITS + 2 - conv_params->round_0 <= 16);
 
   for (int i = p_row; i < p_row + p_height; i += 8) {
     for (int j = p_col; j < p_col + p_width; j += 8) {

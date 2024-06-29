@@ -15,6 +15,7 @@
 
 #include "absl/flags/flag.h"
 #include "absl/strings/string_view.h"
+#include "api/audio/audio_device.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/numerics/samples_stats_counter.h"
 #include "api/rtc_event_log/rtc_event_log.h"
@@ -28,11 +29,9 @@
 #include "api/video_codecs/video_encoder.h"
 #include "call/call.h"
 #include "call/fake_network_pipe.h"
-#include "call/simulated_network.h"
 #include "media/engine/internal_encoder_factory.h"
 #include "media/engine/simulcast_encoder_adapter.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
-#include "modules/audio_device/include/audio_device.h"
 #include "modules/audio_device/include/test_audio_device.h"
 #include "modules/audio_mixer/audio_mixer_impl.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
@@ -51,6 +50,7 @@
 #include "test/field_trial.h"
 #include "test/frame_generator_capturer.h"
 #include "test/gtest.h"
+#include "test/network/simulated_network.h"
 #include "test/null_transport.h"
 #include "test/rtp_rtcp_observer.h"
 #include "test/test_flags.h"
@@ -212,7 +212,7 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
     metrics::Reset();
     rtc::scoped_refptr<AudioDeviceModule> fake_audio_device =
         TestAudioDeviceModule::Create(
-            task_queue_factory_.get(),
+            &env().task_queue_factory(),
             TestAudioDeviceModule::CreatePulsedNoiseCapturer(256, 48000),
             TestAudioDeviceModule::CreateDiscardRenderer(48000),
             audio_rtp_speed);
@@ -223,12 +223,12 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
     send_audio_state_config.audio_processing =
         AudioProcessingBuilder().Create();
     send_audio_state_config.audio_device_module = fake_audio_device;
-    CallConfig sender_config(send_event_log_.get());
+    CallConfig sender_config = SendCallConfig();
 
     auto audio_state = AudioState::Create(send_audio_state_config);
     fake_audio_device->RegisterAudioCallback(audio_state->audio_transport());
     sender_config.audio_state = audio_state;
-    CallConfig receiver_config(recv_event_log_.get());
+    CallConfig receiver_config = RecvCallConfig();
     receiver_config.audio_state = audio_state;
     CreateCalls(sender_config, receiver_config);
 
@@ -319,7 +319,8 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
     }
     EXPECT_EQ(1u, video_receive_streams_.size());
     observer->set_receive_stream(video_receive_streams_[0]);
-    drifting_clock = std::make_unique<DriftingClock>(clock_, video_ntp_speed);
+    drifting_clock =
+        std::make_unique<DriftingClock>(&env().clock(), video_ntp_speed);
     CreateFrameGeneratorCapturerWithDrift(
         drifting_clock.get(), video_rtp_speed,
         test::VideoTestConstants::kDefaultFramerate,
@@ -455,7 +456,7 @@ void CallPerfTest::TestCaptureNtpTime(
       }
 
       FrameCaptureTimeList::iterator iter =
-          capture_time_list_.find(video_frame.timestamp());
+          capture_time_list_.find(video_frame.rtp_timestamp());
       EXPECT_TRUE(iter != capture_time_list_.end());
 
       // The real capture time has been wrapped to uint32_t before converted
@@ -584,32 +585,34 @@ TEST_F(CallPerfTest, ReceivesCpuOveruseAndUnderuse) {
     // TODO(sprang): Add integration test for maintain-framerate mode?
     void OnSinkWantsChanged(rtc::VideoSinkInterface<VideoFrame>* sink,
                             const rtc::VideoSinkWants& wants) override {
-      // The sink wants can change either because an adaptation happened (i.e.
-      // the pixels or frame rate changed) or for other reasons, such as encoded
-      // resolutions being communicated (happens whenever we capture a new frame
-      // size). In this test, we only care about adaptations.
+      RTC_LOG(LS_INFO) << "OnSinkWantsChanged fps:" << wants.max_framerate_fps
+                       << " max_pixel_count " << wants.max_pixel_count
+                       << " target_pixel_count"
+                       << wants.target_pixel_count.value_or(-1);
+      // The sink wants can change either because an adaptation happened
+      // (i.e. the pixels or frame rate changed) or for other reasons, such
+      // as encoded resolutions being communicated (happens whenever we
+      // capture a new frame size). In this test, we only care about
+      // adaptations.
       bool did_adapt =
           last_wants_.max_pixel_count != wants.max_pixel_count ||
           last_wants_.target_pixel_count != wants.target_pixel_count ||
           last_wants_.max_framerate_fps != wants.max_framerate_fps;
       last_wants_ = wants;
       if (!did_adapt) {
+        if (test_phase_ == TestPhase::kInit) {
+          test_phase_ = TestPhase::kStart;
+        }
         return;
       }
       // At kStart expect CPU overuse. Then expect CPU underuse when the encoder
       // delay has been decreased.
       switch (test_phase_) {
         case TestPhase::kInit:
-          // Max framerate should be set initially.
-          if (wants.max_framerate_fps != std::numeric_limits<int>::max() &&
-              wants.max_pixel_count == std::numeric_limits<int>::max()) {
-            test_phase_ = TestPhase::kStart;
-          } else {
-            ADD_FAILURE() << "Got unexpected adaptation request, max res = "
-                          << wants.max_pixel_count << ", target res = "
-                          << wants.target_pixel_count.value_or(-1)
-                          << ", max fps = " << wants.max_framerate_fps;
-          }
+          ADD_FAILURE() << "Got unexpected adaptation request, max res = "
+                        << wants.max_pixel_count << ", target res = "
+                        << wants.target_pixel_count.value_or(-1)
+                        << ", max fps = " << wants.max_framerate_fps;
           break;
         case TestPhase::kStart:
           if (wants.max_pixel_count < std::numeric_limits<int>::max()) {
@@ -792,6 +795,7 @@ TEST_F(CallPerfTest, MAYBE_KeepsHighBitrateWhenReconfiguringSender) {
 
    private:
     std::vector<VideoStream> CreateEncoderStreams(
+        const FieldTrialsView& /*field_trials*/,
         int frame_width,
         int frame_height,
         const webrtc::VideoEncoderConfig& encoder_config) override {
@@ -805,9 +809,9 @@ TEST_F(CallPerfTest, MAYBE_KeepsHighBitrateWhenReconfiguringSender) {
 
   class BitrateObserver : public test::EndToEndTest, public test::FakeEncoder {
    public:
-    explicit BitrateObserver(TaskQueueBase* task_queue)
+    explicit BitrateObserver(const Environment& env, TaskQueueBase* task_queue)
         : EndToEndTest(test::VideoTestConstants::kDefaultTimeout),
-          FakeEncoder(Clock::GetRealTimeClock()),
+          FakeEncoder(env),
           encoder_inits_(0),
           last_set_bitrate_kbps_(0),
           send_stream_(nullptr),
@@ -907,7 +911,7 @@ TEST_F(CallPerfTest, MAYBE_KeepsHighBitrateWhenReconfiguringSender) {
     std::unique_ptr<VideoBitrateAllocatorFactory> bitrate_allocator_factory_;
     VideoEncoderConfig encoder_config_;
     TaskQueueBase* task_queue_;
-  } test(task_queue());
+  } test(env(), task_queue());
 
   RunBaseTest(&test);
 }
@@ -1185,9 +1189,10 @@ void CallPerfTest::TestEncodeFramerate(VideoEncoderFactory* encoder_factory,
 TEST_F(CallPerfTest, TestEncodeFramerateVp8Simulcast) {
   InternalEncoderFactory internal_encoder_factory;
   test::FunctionVideoEncoderFactory encoder_factory(
-      [&internal_encoder_factory]() {
+      [&internal_encoder_factory](const Environment& env,
+                                  const SdpVideoFormat& format) {
         return std::make_unique<SimulcastEncoderAdapter>(
-            &internal_encoder_factory, SdpVideoFormat("VP8"));
+            env, &internal_encoder_factory, nullptr, SdpVideoFormat::VP8());
       });
 
   TestEncodeFramerate(&encoder_factory, "VP8",
@@ -1197,9 +1202,10 @@ TEST_F(CallPerfTest, TestEncodeFramerateVp8Simulcast) {
 TEST_F(CallPerfTest, TestEncodeFramerateVp8SimulcastLowerInputFps) {
   InternalEncoderFactory internal_encoder_factory;
   test::FunctionVideoEncoderFactory encoder_factory(
-      [&internal_encoder_factory]() {
+      [&internal_encoder_factory](const Environment& env,
+                                  const SdpVideoFormat& format) {
         return std::make_unique<SimulcastEncoderAdapter>(
-            &internal_encoder_factory, SdpVideoFormat("VP8"));
+            env, &internal_encoder_factory, nullptr, SdpVideoFormat::VP8());
       });
 
   TestEncodeFramerate(&encoder_factory, "VP8",

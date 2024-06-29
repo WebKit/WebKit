@@ -28,6 +28,7 @@
 
 #include "BlockFormattingState.h"
 #include "BlockLayoutState.h"
+#include "ElementInlines.h"
 #include "EventRegion.h"
 #include "FormattingContextBoxIterator.h"
 #include "HitTestLocation.h"
@@ -180,13 +181,16 @@ LineLayout* LineLayout::containing(RenderObject& renderer)
         }
         auto adjustedContainingBlock = [&] {
             RenderElement* containingBlock = nullptr;
+            // Only out of flow and floating block level boxes may participate in IFC.
             if (renderer.isOutOfFlowPositioned()) {
                 // Here we are looking for the containing block as if the out-of-flow box was inflow (for static position purpose).
                 containingBlock = renderer.parent();
                 if (is<RenderInline>(containingBlock))
                     containingBlock = containingBlock->containingBlock();
-            } else if (renderer.isFloating())
-                containingBlock = renderer.containingBlock();
+            } else if (renderer.isFloating()) {
+                // Note that containigBlock() on boxes in top layer (i.e. dialog) may return incorrect result during style change even with not-yet-updated style.
+                containingBlock = RenderObject::containingBlockForPositionType(renderer.style().position(), renderer);
+            }
             return dynamicDowncast<RenderBlockFlow>(containingBlock);
         };
         if (auto* blockContainer = adjustedContainingBlock())

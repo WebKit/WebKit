@@ -236,7 +236,6 @@ class RandomVideoSource : public DummyVideoSource {
   RandomVideoSource(int seed = ACMRandom::DeterministicSeed())
       : rnd_(seed), seed_(seed) {}
 
- protected:
   // Reset the RNG to get a matching stream for the second pass
   void Begin() override {
     frame_ = 0;
@@ -244,6 +243,7 @@ class RandomVideoSource : public DummyVideoSource {
     FillFrame();
   }
 
+ protected:
   // 15 frames of noise, followed by 15 static frames. Reset to 0 rather
   // than holding previous frames to encourage keyframes to be thrown.
   void FillFrame() override {

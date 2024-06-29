@@ -262,6 +262,9 @@ GLContext* PlatformDisplay::sharingGLContext()
 
 void PlatformDisplay::clearSharingGLContext()
 {
+#if USE(SKIA)
+    invalidateSkiaGLContexts();
+#endif
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
     m_gstGLContext = nullptr;
 #endif

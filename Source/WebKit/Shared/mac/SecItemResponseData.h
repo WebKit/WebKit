@@ -26,23 +26,31 @@
 #pragma once
 
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
 class SecItemResponseData {
 public:
-    SecItemResponseData(OSStatus code, RetainPtr<CFTypeRef>&& result)
+    using Result = std::variant<
+        std::nullptr_t,
+        Vector<RetainPtr<SecCertificateRef>>
+#if HAVE(SEC_KEYCHAIN)
+        , Vector<RetainPtr<SecKeychainItemRef>>
+#endif
+        , RetainPtr<CFTypeRef>
+    >;
+    SecItemResponseData(OSStatus code, Result&& result)
         : m_resultCode(code)
         , m_resultObject(WTFMove(result)) { }
 
-    RetainPtr<CFTypeRef>& resultObject() { return m_resultObject; }
+    Result& resultObject() { return m_resultObject; }
+    const Result& resultObject() const { return m_resultObject; }
     OSStatus resultCode() const { return m_resultCode; }
 
 private:
-    friend struct IPC::ArgumentCoder<WebKit::SecItemResponseData, void>;
-
     OSStatus m_resultCode;
-    RetainPtr<CFTypeRef> m_resultObject;
+    Result m_resultObject;
 };
     
 } // namespace WebKit

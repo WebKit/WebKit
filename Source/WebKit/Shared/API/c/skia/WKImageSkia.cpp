@@ -29,6 +29,7 @@
 #if USE(SKIA)
 #include "WKSharedAPICast.h"
 #include "WebImage.h"
+#include <WebCore/NativeImage.h>
 
 SkImage* WKImageCreateSkImage(WKImageRef imageRef)
 {

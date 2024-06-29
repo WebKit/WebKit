@@ -85,9 +85,7 @@ RegularExpression::RegularExpression(const RegularExpression& re)
 {
 }
 
-RegularExpression::~RegularExpression()
-{
-}
+RegularExpression::~RegularExpression() = default;
 
 RegularExpression& RegularExpression::operator=(const RegularExpression& re)
 {

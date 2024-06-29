@@ -42,6 +42,25 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGContainer);
 
+static bool shouldSuspendRepaintForChildren(const LegacyRenderSVGContainer& container)
+{
+    // Issuing repaint requires absolute rect which means ancestor tree walk.
+    // In cases when a container has many direct children, the overhead of resolving each individual repaint rects
+    // is so large that issuing repaint for the container itself ends up being cheaper.
+    static constexpr size_t maximumRequiredChildren = 200;
+    static constexpr size_t minimumRequiredChildren = 50;
+
+    size_t numberOfChildren = 0;
+    for (auto& child : childrenOfType<RenderElement>(container)) {
+        ++numberOfChildren;
+        if (!child.needsLayout() || child.firstChild())
+            return false;
+        if (numberOfChildren >= maximumRequiredChildren)
+            return true;
+    }
+    return numberOfChildren >= minimumRequiredChildren;
+}
+
 LegacyRenderSVGContainer::LegacyRenderSVGContainer(Type type, SVGElement& element, RenderStyle&& style, OptionSet<SVGModelObjectFlag> svgFlags)
     : LegacyRenderSVGModelObject(type, element, WTFMove(style), svgFlags | SVGModelObjectFlag::IsContainer | SVGModelObjectFlag::UsesBoundaryCaching)
 {
@@ -56,8 +75,11 @@ void LegacyRenderSVGContainer::layout()
 
     // LegacyRenderSVGRoot disables paint offset cache for the SVG rendering tree.
     ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
+    auto repaintIsSuspendedForChildrenDuringLayoutScope = SetForScope { m_repaintIsSuspendedForChildrenDuringLayout, shouldSuspendRepaintForChildren(*this) };
 
-    LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(*this) || selfWillPaint(), RepaintOutlineBounds::No);
+    auto checkForRepaintOverride = m_repaintIsSuspendedForChildrenDuringLayout || selfWillPaint() ? LayoutRepainter::CheckForRepaint::Yes : SVGRenderSupport::checkForSVGRepaintDuringLayout(*this);
+    auto shouldIssueFullRepaint = m_repaintIsSuspendedForChildrenDuringLayout ? LayoutRepainter::ShouldAlwaysIssueFullRepaint::Yes : LayoutRepainter::ShouldAlwaysIssueFullRepaint::No;
+    LayoutRepainter repainter(*this, checkForRepaintOverride, shouldIssueFullRepaint, RepaintOutlineBounds::No);
 
     // Allow LegacyRenderSVGViewportContainer to update its viewport.
     calcViewport();

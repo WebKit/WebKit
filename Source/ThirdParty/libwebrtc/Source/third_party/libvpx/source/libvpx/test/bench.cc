@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <algorithm>
+#include <cstdlib>
 
 #include "test/bench.h"
 #include "vpx_ports/vpx_timer.h"

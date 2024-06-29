@@ -498,12 +498,12 @@ static void* openFunc(const char* uri)
 
             if (response.url().isEmpty()) {
                 if (Page* page = document ? document->page() : nullptr)
-                    page->console().addMessage(MessageSource::Security, MessageLevel::Error, makeString("Did not parse external entity resource at '", url.stringCenterEllipsizedToLength(), "' because cross-origin loads are not allowed."));
+                    page->console().addMessage(MessageSource::Security, MessageLevel::Error, makeString("Did not parse external entity resource at '"_s, url.stringCenterEllipsizedToLength(), "' because cross-origin loads are not allowed."_s));
                 return &globalDescriptor;
             }
             if (!externalEntityMimeTypeAllowed(response)) {
                 if (Page* page = document ? document->page() : nullptr)
-                    page->console().addMessage(MessageSource::Security, MessageLevel::Error, makeString("Did not parse external entity resource at '", url.stringCenterEllipsizedToLength(), "' because only XML MIME types are allowed."));
+                    page->console().addMessage(MessageSource::Security, MessageLevel::Error, makeString("Did not parse external entity resource at '"_s, url.stringCenterEllipsizedToLength(), "' because only XML MIME types are allowed."_s));
                 return &globalDescriptor;
             }
         }
@@ -607,8 +607,8 @@ RefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerPtr h
     parser->sax2 = 1;
     parser->instate = XML_PARSER_CONTENT; // We are parsing a CONTENT
     parser->depth = 0;
-    parser->str_xml = xmlDictLookup(parser->dict, reinterpret_cast<xmlChar*>(const_cast<char*>("xml")), 3);
-    parser->str_xmlns = xmlDictLookup(parser->dict, reinterpret_cast<xmlChar*>(const_cast<char*>("xmlns")), 5);
+    parser->str_xml = xmlDictLookup(parser->dict, byteCast<xmlChar>(const_cast<char*>("xml")), 3);
+    parser->str_xmlns = xmlDictLookup(parser->dict, byteCast<xmlChar>(const_cast<char*>("xmlns")), 5);
     parser->str_xml_ns = xmlDictLookup(parser->dict, XML_XML_NAMESPACE, 36);
     parser->_private = userData;
 
@@ -698,22 +698,22 @@ void XMLDocumentParser::doWrite(const String& parseString)
 
 static inline String toString(const xmlChar* string, size_t size)
 {
-    return String::fromUTF8({ reinterpret_cast<const char*>(string), size });
+    return String::fromUTF8({ byteCast<char>(string), size });
 }
 
 static inline String toString(const xmlChar* string)
 {
-    return String::fromUTF8(reinterpret_cast<const char*>(string));
+    return String::fromUTF8(byteCast<char>(string));
 }
 
 static inline AtomString toAtomString(const xmlChar* string, size_t size)
 {
-    return AtomString::fromUTF8({ reinterpret_cast<const char*>(string), size });
+    return AtomString::fromUTF8({ byteCast<char>(string), size });
 }
 
 static inline AtomString toAtomString(const xmlChar* string)
 {
-    return AtomString::fromUTF8(reinterpret_cast<const char*>(string));
+    return AtomString::fromUTF8(byteCast<char>(string));
 }
 
 struct _xmlSAX2Namespace {
@@ -729,7 +729,7 @@ static inline bool handleNamespaceAttributes(Vector<Attribute>& prefixedAttribut
         AtomString namespaceQName = xmlnsAtom();
         AtomString namespaceURI = toAtomString(namespaces[i].uri);
         if (namespaces[i].prefix)
-            namespaceQName = makeAtomString("xmlns:", toString(namespaces[i].prefix));
+            namespaceQName = makeAtomString("xmlns:"_s, toString(namespaces[i].prefix));
 
         auto result = Element::parseAttributeName(XMLNSNames::xmlnsNamespaceURI, namespaceQName);
         if (result.hasException())
@@ -850,9 +850,6 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         pushCurrentNode(&templateElement->content());
     else
         pushCurrentNode(newElement.ptr());
-
-    if (is<HTMLHtmlElement>(newElement))
-        downcast<HTMLHtmlElement>(newElement.get()).insertedByParser();
 
     if (!m_parsingFragment && isFirstElement && document()->frame())
         document()->frame()->injectUserScripts(UserScriptInjectionTime::DocumentStart);
@@ -1142,23 +1139,23 @@ static void normalErrorHandler(void* closure, const char* message, ...)
 // Using a static entity and marking it XML_INTERNAL_PREDEFINED_ENTITY is
 // a hack to avoid malloc/free. Using a global variable like this could cause trouble
 // if libxml implementation details were to change
-static xmlChar sharedXHTMLEntityResult[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+static std::array<xmlChar, 9> sharedXHTMLEntityResult = { };
 
 static xmlEntityPtr sharedXHTMLEntity()
 {
     static xmlEntity entity;
     if (!entity.type) {
         entity.type = XML_ENTITY_DECL;
-        entity.orig = sharedXHTMLEntityResult;
-        entity.content = sharedXHTMLEntityResult;
+        entity.orig = sharedXHTMLEntityResult.data();
+        entity.content = sharedXHTMLEntityResult.data();
         entity.etype = XML_INTERNAL_PREDEFINED_ENTITY;
     }
     return &entity;
 }
 
-static size_t convertUTF16EntityToUTF8(std::span<const UChar> utf16Entity, char* target, size_t targetSize)
+static size_t convertUTF16EntityToUTF8(std::span<const UChar> utf16Entity, std::span<char8_t> target)
 {
-    auto result = WTF::Unicode::convert(utf16Entity, { reinterpret_cast<char8_t*>(target), targetSize });
+    auto result = WTF::Unicode::convert(utf16Entity, target);
     if (result.code != WTF::Unicode::ConversionResultCode::Success)
         return 0;
 
@@ -1170,13 +1167,12 @@ static size_t convertUTF16EntityToUTF8(std::span<const UChar> utf16Entity, char*
 
 static xmlEntityPtr getXHTMLEntity(const xmlChar* name)
 {
-    auto decodedEntity = decodeNamedHTMLEntityForXMLParser(reinterpret_cast<const char*>(name));
+    auto decodedEntity = decodeNamedHTMLEntityForXMLParser(byteCast<char>(name));
     if (decodedEntity.failed())
         return nullptr;
 
     auto utf16DecodedEntity = decodedEntity.span();
 
-    constexpr size_t kSharedXhtmlEntityResultLength = std::size(sharedXHTMLEntityResult);
     size_t entityLengthInUTF8;
     // Unlike HTML parser, XML parser parses the content of named
     // entities. So we need to escape '&' and '<'.
@@ -1207,12 +1203,11 @@ static xmlEntityPtr getXHTMLEntity(const xmlChar* name)
         entityLengthInUTF8 = 8;
     } else {
         ASSERT(utf16DecodedEntity.size() <= 4);
-        entityLengthInUTF8 = convertUTF16EntityToUTF8(utf16DecodedEntity,
-            reinterpret_cast<char*>(sharedXHTMLEntityResult), kSharedXhtmlEntityResultLength);
+        entityLengthInUTF8 = convertUTF16EntityToUTF8(utf16DecodedEntity, byteCast<char8_t>(std::span { sharedXHTMLEntityResult }));
         if (!entityLengthInUTF8)
             return 0;
     }
-    ASSERT(entityLengthInUTF8 <= kSharedXhtmlEntityResultLength);
+    ASSERT(entityLengthInUTF8 <= sharedXHTMLEntityResult.size());
 
     xmlEntityPtr entity = sharedXHTMLEntity();
     entity->length = entityLengthInUTF8;
@@ -1377,7 +1372,7 @@ xmlDocPtr xmlDocPtrForString(CachedResourceLoader& cachedResourceLoader, const S
     // good error messages.
 
     const bool is8Bit = source.is8Bit();
-    auto characters = is8Bit ? spanReinterpretCast<const char>(source.span8()) : spanReinterpretCast<const char>(source.span16());
+    auto characters = is8Bit ? byteCast<char>(source.span8()) : spanReinterpretCast<const char>(source.span16());
     size_t sizeInBytes = source.length() * (is8Bit ? sizeof(LChar) : sizeof(UChar));
     const char* encoding = is8Bit ? "iso-8859-1" : nativeEndianUTF16Encoding();
 
@@ -1476,7 +1471,7 @@ using AttributeParseState = std::optional<HashMap<String, String>>;
 
 static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLocalName, const xmlChar* /*xmlPrefix*/, const xmlChar* /*xmlURI*/, int /*numNamespaces*/, const xmlChar** /*namespaces*/, int numAttributes, int /*numDefaulted*/, const xmlChar** libxmlAttributes)
 {
-    if (strcmp(reinterpret_cast<const char*>(xmlLocalName), "attrs") != 0)
+    if (strcmp(byteCast<char>(xmlLocalName), "attrs"))
         return;
 
     auto& state = *static_cast<AttributeParseState*>(static_cast<xmlParserCtxtPtr>(closure)->_private);
@@ -1489,7 +1484,7 @@ static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLoc
         int valueLength = (int) (attributes[i].end - attributes[i].value);
         String attrValue = toString(attributes[i].value, valueLength);
         String attrPrefix = toString(attributes[i].prefix);
-        String attrQName = attrPrefix.isEmpty() ? attrLocalName : attrPrefix + ":" + attrLocalName;
+        String attrQName = attrPrefix.isEmpty() ? attrLocalName : makeString(attrPrefix, ':', attrLocalName);
 
         state->set(attrQName, attrValue);
     }
@@ -1497,7 +1492,7 @@ static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLoc
 
 std::optional<HashMap<String, String>> parseAttributes(CachedResourceLoader& cachedResourceLoader, const String& string)
 {
-    String parseString = "<?xml version=\"1.0\"?><attrs " + string + " />";
+    auto parseString = makeString("<?xml version=\"1.0\"?><attrs "_s, string, " />"_s);
 
     AttributeParseState attributes;
 

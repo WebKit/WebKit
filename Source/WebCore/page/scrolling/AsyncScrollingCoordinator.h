@@ -29,9 +29,11 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingCoordinator.h"
+#include "ScrollingStateNode.h"
 #include "ScrollingTree.h"
 #include "Timer.h"
 #include <wtf/RefPtr.h>
+#include <wtf/SmallMap.h>
 
 namespace WebCore {
 
@@ -79,12 +81,16 @@ public:
     WEBCORE_EXPORT void setLayerHostingContextIdentifierForFrameHostingNode(ScrollingNodeID, std::optional<LayerHostingContextIdentifier>) override;
     LocalFrameView* frameViewForScrollingNode(LocalFrame& localMainFrame, ScrollingNodeID) const;
 
+    WEBCORE_EXPORT ScrollingStateTree& ensureScrollingStateTreeForRootFrameID(FrameIdentifier);
+    const ScrollingStateTree* existingScrollingStateTreeForRootFrameID(FrameIdentifier) const;
+    ScrollingStateTree* stateTreeForNodeID(ScrollingNodeID) const;
+    std::unique_ptr<ScrollingStateTree> commitTreeStateForRootFrameID(FrameIdentifier, LayerRepresentation::Type);
+
 protected:
     WEBCORE_EXPORT AsyncScrollingCoordinator(Page*);
 
     void setScrollingTree(Ref<ScrollingTree>&& scrollingTree) { m_scrollingTree = WTFMove(scrollingTree); }
-
-    ScrollingStateTree* scrollingStateTree() { return m_scrollingStateTree.get(); }
+    const SmallMap<FrameIdentifier, UniqueRef<ScrollingStateTree>>& scrollingStateTrees() const { return m_scrollingStateTrees; }
 
     RefPtr<ScrollingTree> releaseScrollingTree() { return WTFMove(m_scrollingTree); }
 
@@ -92,7 +98,7 @@ protected:
     WEBCORE_EXPORT String scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const override;
     WEBCORE_EXPORT bool haveScrollingTree() const override;
 
-    WEBCORE_EXPORT void willCommitTree() override;
+    WEBCORE_EXPORT void willCommitTree(FrameIdentifier rootFrameID) override;
     void synchronizeStateFromScrollingTree();
     void scheduleRenderingUpdate();
 
@@ -113,6 +119,7 @@ private:
     WEBCORE_EXPORT void frameViewVisualViewportChanged(LocalFrameView&) override;
     WEBCORE_EXPORT void frameViewEventTrackingRegionsChanged(LocalFrameView&) override;
     WEBCORE_EXPORT void frameViewWillBeDetached(LocalFrameView&) override;
+    WEBCORE_EXPORT void rootFrameWasRemoved(FrameIdentifier rootFrameID) final;
 
     WEBCORE_EXPORT bool requestStartKeyboardScrollAnimation(ScrollableArea&, const KeyboardScroll&) final;
     WEBCORE_EXPORT bool requestStopKeyboardScrollAnimation(ScrollableArea&, bool) final;
@@ -122,12 +129,12 @@ private:
 
     WEBCORE_EXPORT void applyScrollingTreeLayerPositions() override;
 
-    WEBCORE_EXPORT ScrollingNodeID createNode(ScrollingNodeType, ScrollingNodeID newNodeID) override;
-    WEBCORE_EXPORT ScrollingNodeID insertNode(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID, size_t childIndex) override;
+    WEBCORE_EXPORT ScrollingNodeID createNode(FrameIdentifier rootFrameID, ScrollingNodeType, ScrollingNodeID newNodeID) override;
+    WEBCORE_EXPORT ScrollingNodeID insertNode(FrameIdentifier rootFrameID, ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID, size_t childIndex) override;
     WEBCORE_EXPORT void unparentNode(ScrollingNodeID) override;
     WEBCORE_EXPORT void unparentChildrenAndDestroyNode(ScrollingNodeID) override;
     WEBCORE_EXPORT void detachAndDestroySubtree(ScrollingNodeID) override;
-    WEBCORE_EXPORT void clearAllNodes() override;
+    WEBCORE_EXPORT void clearAllNodes(FrameIdentifier rootFrameID) override;
 
     WEBCORE_EXPORT ScrollingNodeID parentOfNode(ScrollingNodeID) const override;
     WEBCORE_EXPORT Vector<ScrollingNodeID> childrenOfNode(ScrollingNodeID) const override;
@@ -160,13 +167,13 @@ private:
 
     WEBCORE_EXPORT void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond> nominalFramesPerSecond) final;
 
-    WEBCORE_EXPORT bool hasSubscrollers() const final;
+    WEBCORE_EXPORT bool hasSubscrollers(FrameIdentifier) const final;
 
     virtual void scheduleTreeStateCommit() = 0;
 
     void ensureRootStateNodeForFrameView(LocalFrameView&);
 
-    void updateEventTrackingRegions();
+    void updateEventTrackingRegions(FrameIdentifier rootFrameID);
     
     void applyScrollPositionUpdate(ScrollUpdate&&, ScrollType);
     void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, std::optional<FloatPoint> layoutViewportOrigin, ScrollingLayerPositionAction, ScrollType);
@@ -180,7 +187,7 @@ private:
 
     void hysterisisTimerFired(PAL::HysteresisState);
 
-    std::unique_ptr<ScrollingStateTree> m_scrollingStateTree;
+    SmallMap<FrameIdentifier, UniqueRef<ScrollingStateTree>> m_scrollingStateTrees;
     RefPtr<ScrollingTree> m_scrollingTree;
 
     bool m_eventTrackingRegionsDirty { false };

@@ -301,8 +301,8 @@ UCollationResult IntlCollator::compareStrings(JSGlobalObject* globalObject, Stri
         }
 
         if (x.is8Bit() && y.is8Bit() && x.containsOnlyASCII() && y.containsOnlyASCII()) {
-            auto xCharacters = spanReinterpretCast<const char>(x.span8());
-            auto yCharacters = spanReinterpretCast<const char>(y.span8());
+            auto xCharacters = byteCast<char>(x.span8());
+            auto yCharacters = byteCast<char>(y.span8());
             return ucol_strcollUTF8(m_collator.get(), xCharacters.data(), xCharacters.size(), yCharacters.data(), yCharacters.size(), &status);
         }
 

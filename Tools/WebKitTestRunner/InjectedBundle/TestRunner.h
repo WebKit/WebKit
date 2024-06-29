@@ -66,6 +66,15 @@ public:
 #endif
     }
 
+    bool keyboardAppearsOverContent() const
+    {
+#if PLATFORM(VISION)
+        return true;
+#else
+        return false;
+#endif
+    }
+
     bool isKeyboardImmediatelyAvailable()
     {
 #if PLATFORM(VISION)

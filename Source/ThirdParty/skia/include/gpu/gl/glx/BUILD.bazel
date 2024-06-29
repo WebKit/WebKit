@@ -1,5 +1,9 @@
 load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
 
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
 licenses(["notice"])
 
 exports_files_legacy()
@@ -9,7 +13,5 @@ skia_filegroup(
     srcs = ["GrGLMakeGLXInterface.h"],
     visibility = [
         "//include/gpu/gl:__pkg__",
-        "//src/gpu/ganesh/gl/glx:__pkg__",
-        "//tools/gpu/gl/glx:__pkg__",
     ],
 )

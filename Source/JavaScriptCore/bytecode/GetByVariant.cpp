@@ -50,7 +50,7 @@ GetByVariant::GetByVariant(CacheableIdentifier identifier, const StructureSet& s
         ASSERT(intrinsic() != NoIntrinsic);
 }
 
-GetByVariant::~GetByVariant() { }
+GetByVariant::~GetByVariant() = default;
 
 GetByVariant::GetByVariant(const GetByVariant& other)
     : GetByVariant(other.m_identifier)

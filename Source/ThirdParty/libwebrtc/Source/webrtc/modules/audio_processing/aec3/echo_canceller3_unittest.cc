@@ -924,6 +924,16 @@ TEST(EchoCanceller3FieldTrials, Aec3UseNearendReverb) {
   EXPECT_FLOAT_EQ(adjusted_config.ep_strength.nearend_len, 0.8);
 }
 
+// Testing the field trial-based that overrides the maximum allowed ecess render
+// blocks in the render buffering.
+TEST(EchoCanceller3FieldTrials, Aec3BufferingMaxAllowedExcessRenderBlocks) {
+  webrtc::test::ScopedFieldTrials field_trials(
+      "WebRTC-Aec3BufferingMaxAllowedExcessRenderBlocksOverride/2/");
+  EchoCanceller3Config default_config;
+  EchoCanceller3Config adjusted_config = AdjustConfig(default_config);
+  EXPECT_EQ(adjusted_config.buffering.max_allowed_excess_render_blocks, 2ul);
+}
+
 TEST(EchoCanceller3, DetectionOfProperStereo) {
   constexpr int kSampleRateHz = 16000;
   constexpr int kNumChannels = 2;

@@ -2,11 +2,16 @@ load("//bazel:flags.bzl", "selects", "string_flag_with_values")
 load(
     "//bazel:skia_rules.bzl",
     "exports_files_legacy",
+    "generate_cpp_files_for_headers",
     "select_multi",
     "skia_cc_deps",
     "skia_cc_library",
     "skia_filegroup",
     "split_srcs_and_hdrs",
+)
+
+package(
+    default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
@@ -89,6 +94,8 @@ DECODE_JPEG_FILES = [
     "SkJpegCodec.h",
     "SkJpegDecoderMgr.cpp",
     "SkJpegDecoderMgr.h",
+    "SkJpegMetadataDecoderImpl.cpp",
+    "SkJpegMetadataDecoderImpl.h",
     "SkJpegSourceMgr.cpp",
     "SkJpegSourceMgr.h",
     "SkJpegUtility.cpp",
@@ -102,7 +109,7 @@ split_srcs_and_hdrs(
     files = DECODE_JPEG_FILES,
 )
 
-filegroup(
+skia_filegroup(
     name = "shared_jpeg_hdrs",  # needed for both encoding and decoding
     srcs = [
         "SkJpegConstants.h",
@@ -110,7 +117,7 @@ filegroup(
     visibility = ["//src/encode:__pkg__"],
 )
 
-filegroup(
+skia_filegroup(
     name = "xmp_srcs",
     srcs = [
         "SkXmp.cpp",
@@ -325,6 +332,9 @@ skia_cc_library(
     hdrs = PRIVATE_CODEC_HEADERS,
     features = ["layering_check"],
     local_defines = ["SK_DISABLE_LEGACY_INIT_DECODERS"],
+    visibility = [
+        "//src/ports:__pkg__",
+    ],
     deps = [
         "//modules/skcms",
         "//src/base",
@@ -484,6 +494,8 @@ skia_cc_library(
         "SkJpegCodec.h",
         "SkJpegDecoderMgr.cpp",
         "SkJpegDecoderMgr.h",
+        "SkJpegMetadataDecoderImpl.cpp",
+        "SkJpegMetadataDecoderImpl.h",
         "SkJpegSourceMgr.cpp",
         "SkJpegSourceMgr.h",
         "SkJpegUtility.cpp",
@@ -620,5 +632,13 @@ skia_cc_library(
         "//src/core",
         "//src/core:core_priv",
         "@libwebp",
+    ],
+)
+
+generate_cpp_files_for_headers(
+    name = "headers_to_compile",
+    headers = [
+        "SkPixmapUtilsPriv.h",
+        "SkScalingCodec.h",
     ],
 )

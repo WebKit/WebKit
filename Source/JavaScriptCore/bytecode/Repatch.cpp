@@ -55,6 +55,7 @@
 #include "JSWebAssembly.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyModule.h"
+#include "LLIntData.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "ModuleNamespaceAccessCase.h"
@@ -73,6 +74,205 @@
 #include <wtf/StringPrintStream.h>
 
 namespace JSC {
+
+static void linkSlowFor(VM& vm, CallLinkInfo& callLinkInfo)
+{
+    if (callLinkInfo.type() == CallLinkInfo::Type::Optimizing)
+        callLinkInfo.setVirtualCall(vm);
+}
+
+void linkMonomorphicCall(VM& vm, JSCell* owner, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock, JSObject* callee, CodePtr<JSEntryPtrTag> codePtr)
+{
+    ASSERT(!callLinkInfo.stub());
+
+    CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner); // WebAssembly -> JS stubs don't have a valid CodeBlock.
+    ASSERT(owner);
+
+    ASSERT(!callLinkInfo.isLinked());
+    callLinkInfo.setMonomorphicCallee(vm, owner, callee, calleeCodeBlock, codePtr);
+    callLinkInfo.setLastSeenCallee(vm, owner, callee);
+
+    if (shouldDumpDisassemblyFor(callerCodeBlock))
+        dataLog("Linking call in ", FullCodeOrigin(callerCodeBlock, callLinkInfo.codeOrigin()), " to ", pointerDump(calleeCodeBlock), ", entrypoint at ", codePtr, "\n");
+
+    if (calleeCodeBlock)
+        calleeCodeBlock->linkIncomingCall(owner, &callLinkInfo);
+
+    if (callLinkInfo.specializationKind() == CodeForCall)
+        return;
+    linkSlowFor(vm, callLinkInfo);
+}
+
+CodePtr<JSEntryPtrTag> jsToWasmICCodePtr(CodeSpecializationKind kind, JSObject* callee)
+{
+#if ENABLE(WEBASSEMBLY)
+    if (!callee)
+        return nullptr;
+    if (kind != CodeForCall)
+        return nullptr;
+    if (auto* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(callee))
+        return wasmFunction->jsCallEntrypoint();
+#else
+    UNUSED_PARAM(kind);
+    UNUSED_PARAM(callee);
+#endif
+    return nullptr;
+}
+
+void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkInfo& callLinkInfo, CallVariant newVariant)
+{
+    // During execution of linkPolymorphicCall, we strongly assume that we never do GC.
+    // GC jettisons CodeBlocks, changes CallLinkInfo etc. and breaks assumption done before and after this call.
+    DeferGCForAWhile deferGCForAWhile(vm);
+
+    if (!newVariant) {
+        callLinkInfo.setVirtualCall(vm);
+        return;
+    }
+
+    CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner); // WebAssembly -> JS stubs don't have a valid CodeBlock.
+    ASSERT(owner);
+#if ENABLE(WEBASSEMBLY)
+    bool isWebAssembly = owner->inherits<JSWebAssemblyModule>();
+#else
+    bool isWebAssembly = false;
+#endif
+    bool isTailCall = callLinkInfo.isTailCall();
+
+    bool isClosureCall = false;
+    CallVariantList list;
+    if (PolymorphicCallStubRoutine* stub = callLinkInfo.stub()) {
+        list = stub->variants();
+        isClosureCall = stub->isClosureCall();
+    } else if (JSObject* oldCallee = callLinkInfo.callee())
+        list = CallVariantList { CallVariant(oldCallee) };
+
+    list = variantListWithVariant(list, newVariant);
+
+    // If there are any closure calls then it makes sense to treat all of them as closure calls.
+    // This makes switching on callee cheaper. It also produces profiling that's easier on the DFG;
+    // the DFG doesn't really want to deal with a combination of closure and non-closure callees.
+    if (!isClosureCall) {
+        for (CallVariant variant : list)  {
+            if (variant.isClosureCall()) {
+                list = despecifiedVariantList(list);
+                isClosureCall = true;
+                break;
+            }
+        }
+    }
+
+    if (isClosureCall)
+        callLinkInfo.setHasSeenClosure();
+
+    // If we are over the limit, just use a normal virtual call.
+    unsigned maxPolymorphicCallVariantListSize;
+    if (isWebAssembly)
+        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSizeForWebAssemblyToJS();
+    else if (callerCodeBlock->jitType() == JITCode::topTierJIT())
+        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSizeForTopTier();
+    else
+        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSize();
+
+    // We use list.size() instead of callSlots.size() because we respect CallVariant size for now.
+    if (list.size() > maxPolymorphicCallVariantListSize) {
+        callLinkInfo.setVirtualCall(vm);
+        return;
+    }
+
+    Vector<CallSlot, 16> callSlots;
+
+    // Figure out what our cases are.
+    for (CallVariant variant : list) {
+        CodeBlock* codeBlock = nullptr;
+        if (variant.executable() && !variant.executable()->isHostFunction()) {
+            ExecutableBase* executable = variant.executable();
+            codeBlock = jsCast<FunctionExecutable*>(executable)->codeBlockForCall();
+            // If we cannot handle a callee, because we don't have a CodeBlock,
+            // assume that it's better for this whole thing to be a virtual call.
+            if (!codeBlock) {
+                callLinkInfo.setVirtualCall(vm);
+                return;
+            }
+        }
+
+        JSCell* caseValue = nullptr;
+        if (isClosureCall) {
+            caseValue = variant.executable();
+            // FIXME: We could add a fast path for InternalFunction with closure call.
+            // https://bugs.webkit.org/show_bug.cgi?id=179311
+            if (!caseValue)
+                continue;
+        } else {
+            if (auto* function = variant.function())
+                caseValue = function;
+            else
+                caseValue = variant.internalFunction();
+        }
+
+        CallSlot slot;
+
+        CodePtr<JSEntryPtrTag> codePtr;
+        if (variant.executable()) {
+            ASSERT(variant.executable()->hasJITCodeForCall());
+
+            codePtr = jsToWasmICCodePtr(callLinkInfo.specializationKind(), variant.function());
+            if (!codePtr) {
+                ArityCheckMode arityCheck = ArityCheckNotRequired;
+                if (codeBlock) {
+                    ASSERT(!variant.executable()->isHostFunction());
+                    if ((callFrame->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.isVarargs()))
+                        arityCheck = MustCheckArity;
+
+                }
+                codePtr = variant.executable()->generatedJITCodeForCall()->addressForCall(arityCheck);
+                slot.m_arityCheckMode = arityCheck;
+            }
+        } else {
+            ASSERT(variant.internalFunction());
+            codePtr = vm.getCTIInternalFunctionTrampolineFor(CodeForCall);
+        }
+
+        slot.m_index = callSlots.size();
+        slot.m_target = codePtr;
+        slot.m_codeBlock = codeBlock;
+        slot.m_calleeOrExecutable = caseValue;
+
+        callSlots.append(WTFMove(slot));
+    }
+
+    bool notUsingCounting = isWebAssembly || callerCodeBlock->jitType() == JITCode::topTierJIT();
+    if (callSlots.isEmpty())
+        notUsingCounting = true;
+
+    CallFrame* callerFrame = nullptr;
+    if (!isTailCall)
+        callerFrame = callFrame->callerFrame();
+
+    MacroAssemblerCodeRef<JITStubRoutinePtrTag> code;
+#if ENABLE(JIT)
+    if (Options::useJIT()) {
+        CommonJITThunkID jitThunk = CommonJITThunkID::PolymorphicThunkForClosure;
+        if (notUsingCounting)
+            jitThunk = isClosureCall ? CommonJITThunkID::PolymorphicTopTierThunkForClosure : CommonJITThunkID::PolymorphicTopTierThunk;
+        else
+            jitThunk = isClosureCall ? CommonJITThunkID::PolymorphicThunkForClosure : CommonJITThunkID::PolymorphicThunk;
+        code = vm.getCTIStub(jitThunk).retagged<JITStubRoutinePtrTag>();
+    }
+#endif
+    if (!code) {
+        if (isClosureCall)
+            code = LLInt::getCodeRef<JITStubRoutinePtrTag>(llint_polymorphic_closure_call_trampoline);
+        else
+            code = LLInt::getCodeRef<JITStubRoutinePtrTag>(llint_polymorphic_normal_call_trampoline);
+    }
+
+    auto stubRoutine = PolymorphicCallStubRoutine::create(WTFMove(code), vm, owner, callerFrame, callLinkInfo, callSlots, notUsingCounting, isClosureCall);
+
+    // If there had been a previous stub routine, that one will die as soon as the GC runs and sees
+    // that it's no longer on stack.
+    callLinkInfo.setStub(WTFMove(stubRoutine));
+}
 
 #if ENABLE(JIT)
 
@@ -98,54 +298,7 @@ static ECMAMode ecmaModeFor(PutByKind putByKind)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static void linkSlowFor(VM& vm, CallLinkInfo& callLinkInfo)
-{
-    if (callLinkInfo.type() == CallLinkInfo::Type::Optimizing)
-        static_cast<OptimizingCallLinkInfo&>(callLinkInfo).setSlowPathCallDestination(vm.getCTIVirtualCall(callLinkInfo.callMode()).code().template retagged<JSEntryPtrTag>());
-}
-#endif
 
-void linkMonomorphicCall(VM& vm, JSCell* owner, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock, JSObject* callee, CodePtr<JSEntryPtrTag> codePtr)
-{
-    ASSERT(!callLinkInfo.stub());
-
-    CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner); // WebAssembly -> JS stubs don't have a valid CodeBlock.
-    ASSERT(owner);
-
-    ASSERT(!callLinkInfo.isLinked());
-    callLinkInfo.setMonomorphicCallee(vm, owner, callee, calleeCodeBlock, codePtr);
-    callLinkInfo.setLastSeenCallee(vm, owner, callee);
-
-    if (shouldDumpDisassemblyFor(callerCodeBlock))
-        dataLog("Linking call in ", FullCodeOrigin(callerCodeBlock, callLinkInfo.codeOrigin()), " to ", pointerDump(calleeCodeBlock), ", entrypoint at ", codePtr, "\n");
-
-    if (calleeCodeBlock)
-        calleeCodeBlock->linkIncomingCall(owner, &callLinkInfo);
-
-#if ENABLE(JIT)
-    if (callLinkInfo.specializationKind() == CodeForCall && callLinkInfo.allowStubs())
-        return;
-    linkSlowFor(vm, callLinkInfo);
-#endif
-}
-
-CodePtr<JSEntryPtrTag> jsToWasmICCodePtr(CodeSpecializationKind kind, JSObject* callee)
-{
-#if ENABLE(WEBASSEMBLY)
-    if (!callee)
-        return nullptr;
-    if (kind != CodeForCall)
-        return nullptr;
-    if (auto* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(callee))
-        return wasmFunction->jsCallEntrypoint();
-#else
-    UNUSED_PARAM(kind);
-    UNUSED_PARAM(callee);
-#endif
-    return nullptr;
-}
-
-#if ENABLE(JIT)
 
 void ftlThunkAwareRepatchCall(CodeBlock* codeBlock, CodeLocationCall<JSInternalPtrTag> call, CodePtr<CFunctionPtrTag> newCalleeFunction)
 {
@@ -167,7 +320,7 @@ void ftlThunkAwareRepatchCall(CodeBlock* codeBlock, CodeLocationCall<JSInternalP
 
 static void repatchSlowPathCall(CodeBlock* codeBlock, StructureStubInfo& stubInfo, CodePtr<CFunctionPtrTag> newCalleeFunction)
 {
-    if (codeBlock->useDataIC()) {
+    if (stubInfo.useDataIC) {
         stubInfo.m_slowOperation = newCalleeFunction.retagged<OperationPtrTag>();
         return;
     }
@@ -290,9 +443,9 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
             if (isJSArray(baseCell)) {
                 if (stubInfo.cacheType() == CacheType::Unset
                     && slot.slotBase() == baseCell
-                    && InlineAccess::isCacheableArrayLength(codeBlock, stubInfo, jsCast<JSArray*>(baseCell))) {
+                    && InlineAccess::isCacheableArrayLength(stubInfo, jsCast<JSArray*>(baseCell))) {
 
-                    bool generatedCodeInline = InlineAccess::generateArrayLength(codeBlock, stubInfo, jsCast<JSArray*>(baseCell));
+                    bool generatedCodeInline = InlineAccess::generateArrayLength(stubInfo, jsCast<JSArray*>(baseCell));
                     if (generatedCodeInline) {
                         repatchSlowPathCall(codeBlock, stubInfo, appropriateGetByOptimizeFunction(kind));
                         stubInfo.initArrayLength(locker);
@@ -303,8 +456,8 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                 newCase = AccessCase::create(vm, codeBlock, AccessCase::ArrayLength, lengthPropertyName);
             } else if (isJSString(baseCell)) {
                 if (stubInfo.cacheType() == CacheType::Unset
-                    && InlineAccess::isCacheableStringLength(codeBlock, stubInfo)) {
-                    bool generatedCodeInline = InlineAccess::generateStringLength(codeBlock, stubInfo);
+                    && InlineAccess::isCacheableStringLength(stubInfo)) {
+                    bool generatedCodeInline = InlineAccess::generateStringLength(stubInfo);
                     if (generatedCodeInline) {
                         repatchSlowPathCall(codeBlock, stubInfo, appropriateGetByOptimizeFunction(kind));
                         stubInfo.initStringLength(locker);
@@ -376,9 +529,9 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                 && !slot.watchpointSet()
                 && !structure->needImpurePropertyWatchpoint()
                 && !loadTargetFromProxy) {
-                bool generatedCodeInline = InlineAccess::generateSelfPropertyAccess(codeBlock, stubInfo, structure, slot.cachedOffset());
+                bool generatedCodeInline = InlineAccess::generateSelfPropertyAccess(stubInfo, structure, slot.cachedOffset());
                 if (generatedCodeInline) {
-                    LOG_IC((ICEvent::GetBySelfPatch, structure->classInfoForCells(), Identifier::fromUid(vm, propertyName.uid()), slot.slotBase() == baseValue));
+                    LOG_IC((vm, ICEvent::GetBySelfPatch, structure->classInfoForCells(), Identifier::fromUid(vm, propertyName.uid()), slot.slotBase() == baseValue));
                     structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
                     repatchSlowPathCall(codeBlock, stubInfo, appropriateGetByOptimizeFunction(kind));
                     stubInfo.initGetByIdSelf(locker, codeBlock, structure, slot.cachedOffset());
@@ -513,12 +666,12 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
             }
         }
 
-        LOG_IC((ICEvent::GetByAddAccessCase, baseValue.classInfoOrNull(), Identifier::fromUid(vm, propertyName.uid()), slot.slotBase() == baseValue));
+        LOG_IC((vm, ICEvent::GetByAddAccessCase, baseValue.classInfoOrNull(), Identifier::fromUid(vm, propertyName.uid()), slot.slotBase() == baseValue));
 
         result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), propertyName, WTFMove(newCase));
 
         if (result.generatedSomeCode())
-            LOG_IC((ICEvent::GetByReplaceWithJump, baseValue.classInfoOrNull(), Identifier::fromUid(vm, propertyName.uid()), slot.slotBase() == baseValue));
+            LOG_IC((vm, ICEvent::GetByReplaceWithJump, baseValue.classInfoOrNull(), Identifier::fromUid(vm, propertyName.uid()), slot.slotBase() == baseValue));
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
@@ -685,17 +838,45 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
         result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), nullptr, newCase.releaseNonNull());
 
         if (result.generatedSomeCode())
-            LOG_IC((ICEvent::GetByReplaceWithJump, baseValue.classInfoOrNull(), Identifier()));
+            LOG_IC((vm, ICEvent::GetByReplaceWithJump, baseValue.classInfoOrNull(), Identifier()));
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
+    if (result.generatedMegamorphicCode())
+        return PromoteToMegamorphic;
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
 void repatchArrayGetByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue base, JSValue index, StructureStubInfo& stubInfo, GetByKind kind)
 {
-    if (tryCacheArrayGetByVal(globalObject, codeBlock, base, index, stubInfo) == GiveUpOnCache)
+    switch (tryCacheArrayGetByVal(globalObject, codeBlock, base, index, stubInfo)) {
+    case PromoteToMegamorphic: {
+        switch (kind) {
+        case GetByKind::ById:
+            repatchSlowPathCall(codeBlock, stubInfo, operationGetByIdMegamorphic);
+            break;
+        case GetByKind::ByIdWithThis:
+            repatchSlowPathCall(codeBlock, stubInfo, operationGetByIdWithThisMegamorphic);
+            break;
+        case GetByKind::ByVal:
+            repatchSlowPathCall(codeBlock, stubInfo, operationGetByValMegamorphic);
+            break;
+        case GetByKind::ByValWithThis:
+            repatchSlowPathCall(codeBlock, stubInfo, operationGetByValWithThisMegamorphic);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+    case GiveUpOnCache:
         repatchSlowPathCall(codeBlock, stubInfo, appropriateGetByGaveUpFunction(kind));
+        break;
+    case RetryCacheLater:
+    case AttemptToCache:
+        break;
+    }
 }
 
 static CodePtr<CFunctionPtrTag> appropriatePutByGaveUpFunction(PutByKind putByKind)
@@ -852,13 +1033,13 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                 oldStructure->didCachePropertyReplacement(vm, slot.cachedOffset());
             
                 if (stubInfo.cacheType() == CacheType::Unset
-                    && InlineAccess::canGenerateSelfPropertyReplace(codeBlock, stubInfo, slot.cachedOffset())
+                    && InlineAccess::canGenerateSelfPropertyReplace(stubInfo, slot.cachedOffset())
                     && !oldStructure->needImpurePropertyWatchpoint()
                     && !isGlobalProxy) {
                     
-                    bool generatedCodeInline = InlineAccess::generateSelfPropertyReplace(codeBlock, stubInfo, oldStructure, slot.cachedOffset());
+                    bool generatedCodeInline = InlineAccess::generateSelfPropertyReplace(stubInfo, oldStructure, slot.cachedOffset());
                     if (generatedCodeInline) {
-                        LOG_IC((ICEvent::PutBySelfPatch, oldStructure->classInfoForCells(), ident, slot.base() == baseValue));
+                        LOG_IC((vm, ICEvent::PutBySelfPatch, oldStructure->classInfoForCells(), ident, slot.base() == baseValue));
                         repatchSlowPathCall(codeBlock, stubInfo, appropriatePutByOptimizeFunction(putByKind));
                         stubInfo.initPutByIdReplace(locker, codeBlock, oldStructure, slot.cachedOffset());
                         return RetryCacheLater;
@@ -1014,16 +1195,15 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
             newCase = ProxyObjectAccessCase::create(vm, codeBlock, AccessCase::ProxyObjectStore, propertyName);
         }
 
-        LOG_IC((ICEvent::PutByAddAccessCase, oldStructure->classInfoForCells(), ident, slot.base() == baseValue));
+        LOG_IC((vm, ICEvent::PutByAddAccessCase, oldStructure->classInfoForCells(), ident, slot.base() == baseValue));
         
         result = stubInfo.addAccessCase(locker, globalObject, codeBlock, slot.isStrictMode() ? ECMAMode::strict() : ECMAMode::sloppy(), propertyName, WTFMove(newCase));
 
         if (result.generatedSomeCode())
-            LOG_IC((ICEvent::PutByReplaceWithJump, oldStructure->classInfoForCells(), ident, slot.base() == baseValue));
+            LOG_IC((vm, ICEvent::PutByReplaceWithJump, oldStructure->classInfoForCells(), ident, slot.base() == baseValue));
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
-
     if (result.generatedMegamorphicCode())
         return PromoteToMegamorphic;
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
@@ -1145,17 +1325,45 @@ static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, Cod
         result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ecmaModeFor(putByKind), nullptr, AccessCase::create(vm, codeBlock, accessType, nullptr));
 
         if (result.generatedSomeCode())
-            LOG_IC((ICEvent::PutByReplaceWithJump, baseValue.classInfoOrNull(), Identifier()));
+            LOG_IC((vm, ICEvent::PutByReplaceWithJump, baseValue.classInfoOrNull(), Identifier()));
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
+    if (result.generatedMegamorphicCode())
+        return PromoteToMegamorphic;
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
 void repatchArrayPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue base, JSValue index, StructureStubInfo& stubInfo, PutByKind putByKind)
 {
-    if (tryCacheArrayPutByVal(globalObject, codeBlock, base, index, stubInfo, putByKind) == GiveUpOnCache)
+    switch (tryCacheArrayPutByVal(globalObject, codeBlock, base, index, stubInfo, putByKind)) {
+    case PromoteToMegamorphic: {
+        switch (putByKind) {
+        case PutByKind::ByIdStrict:
+            repatchSlowPathCall(codeBlock, stubInfo, operationPutByIdStrictMegamorphic);
+            break;
+        case PutByKind::ByIdSloppy:
+            repatchSlowPathCall(codeBlock, stubInfo, operationPutByIdSloppyMegamorphic);
+            break;
+        case PutByKind::ByValStrict:
+            repatchSlowPathCall(codeBlock, stubInfo, operationPutByValStrictMegamorphic);
+            break;
+        case PutByKind::ByValSloppy:
+            repatchSlowPathCall(codeBlock, stubInfo, operationPutByValSloppyMegamorphic);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+    case GiveUpOnCache:
         repatchSlowPathCall(codeBlock, stubInfo, appropriatePutByGaveUpFunction(putByKind));
+        break;
+    case RetryCacheLater:
+    case AttemptToCache:
+        break;
+    }
 }
 
 static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, DeletePropertySlot& slot, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, StructureStubInfo& stubInfo, DelByKind, ECMAMode ecmaMode)
@@ -1218,11 +1426,10 @@ static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBloc
         result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ecmaMode, propertyName, WTFMove(newCase));
 
         if (result.generatedSomeCode())
-            LOG_IC((ICEvent::DelByReplaceWithJump, oldStructure->classInfoForCells(), Identifier::fromUid(vm, propertyName.uid())));
+            LOG_IC((vm, ICEvent::DelByReplaceWithJump, oldStructure->classInfoForCells(), Identifier::fromUid(vm, propertyName.uid())));
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
-
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
@@ -1231,7 +1438,7 @@ void repatchDeleteBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, DeleteP
     SuperSamplerScope superSamplerScope(false);
 
     if (tryCacheDeleteBy(globalObject, codeBlock, slot, baseValue, oldStructure, propertyName, stubInfo, kind, ecmaMode) == GiveUpOnCache) {
-        LOG_IC((ICEvent::DelByReplaceWithGeneric, baseValue.classInfoOrNull(), Identifier::fromUid(globalObject->vm(), propertyName.uid())));
+        LOG_IC((globalObject->vm(), ICEvent::DelByReplaceWithGeneric, baseValue.classInfoOrNull(), Identifier::fromUid(globalObject->vm(), propertyName.uid())));
         switch (kind) {
         case DelByKind::ByIdStrict:
             repatchSlowPathCall(codeBlock, stubInfo, operationDeleteByIdStrictGaveUp);
@@ -1320,9 +1527,9 @@ static InlineCacheAction tryCacheInBy(
                 && slot.slotBase() == base
                 && !slot.watchpointSet()
                 && !structure->needImpurePropertyWatchpoint()) {
-                bool generatedCodeInline = InlineAccess::generateSelfInAccess(codeBlock, stubInfo, structure);
+                bool generatedCodeInline = InlineAccess::generateSelfInAccess(stubInfo, structure);
                 if (generatedCodeInline) {
-                    LOG_IC((ICEvent::InBySelfPatch, structure->classInfoForCells(), ident, slot.slotBase() == base));
+                    LOG_IC((vm, ICEvent::InBySelfPatch, structure->classInfoForCells(), ident, slot.slotBase() == base));
                     structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
                     repatchSlowPathCall(codeBlock, stubInfo, operationInByIdOptimize);
                     stubInfo.initInByIdSelf(locker, codeBlock, structure, slot.cachedOffset());
@@ -1372,7 +1579,7 @@ static InlineCacheAction tryCacheInBy(
             }
         }
 
-        LOG_IC((ICEvent::InAddAccessCase, structure->classInfoForCells(), ident, slot.slotBase() == base));
+        LOG_IC((vm, ICEvent::InAddAccessCase, structure->classInfoForCells(), ident, slot.slotBase() == base));
 
         if (!newCase)
             newCase = AccessCase::create(vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, propertyName, wasFound ? slot.cachedOffset() : invalidOffset, structure, conditionSet, WTFMove(prototypeAccessChain));
@@ -1380,14 +1587,12 @@ static InlineCacheAction tryCacheInBy(
         result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), propertyName, WTFMove(newCase));
 
         if (result.generatedSomeCode())
-            LOG_IC((ICEvent::InReplaceWithJump, structure->classInfoForCells(), ident, slot.slotBase() == base));
+            LOG_IC((vm, ICEvent::InReplaceWithJump, structure->classInfoForCells(), ident, slot.slotBase() == base));
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
-
     if (result.generatedMegamorphicCode())
         return PromoteToMegamorphic;
-
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
@@ -1411,7 +1616,7 @@ void repatchInBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* b
         break;
     }
     case GiveUpOnCache:
-        LOG_IC((ICEvent::InReplaceWithGeneric, baseObject->classInfo(), Identifier::fromUid(globalObject->vm(), propertyName.uid())));
+        LOG_IC((globalObject->vm(), ICEvent::InReplaceWithGeneric, baseObject->classInfo(), Identifier::fromUid(globalObject->vm(), propertyName.uid())));
         repatchSlowPathCall(codeBlock, stubInfo, appropriateInByGaveUpFunction(kind));
         break;
     case RetryCacheLater:
@@ -1438,18 +1643,17 @@ static InlineCacheAction tryCacheHasPrivateBrand(JSGlobalObject* globalObject, C
             return action;
 
         bool isBaseProperty = true;
-        LOG_IC((ICEvent::InAddAccessCase, structure->classInfoForCells(), ident, isBaseProperty));
+        LOG_IC((vm, ICEvent::InAddAccessCase, structure->classInfoForCells(), ident, isBaseProperty));
 
         Ref<AccessCase> newCase = AccessCase::create(vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, brandID, invalidOffset, structure, { }, { });
 
         result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), brandID, WTFMove(newCase));
 
         if (result.generatedSomeCode())
-            LOG_IC((ICEvent::InReplaceWithJump, structure->classInfoForCells(), ident, isBaseProperty));
+            LOG_IC((vm, ICEvent::InReplaceWithJump, structure->classInfoForCells(), ident, isBaseProperty));
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
-
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
@@ -1481,18 +1685,17 @@ static InlineCacheAction tryCacheCheckPrivateBrand(
             return action;
 
         bool isBaseProperty = true;
-        LOG_IC((ICEvent::CheckPrivateBrandAddAccessCase, structure->classInfoForCells(), ident, isBaseProperty));
+        LOG_IC((vm, ICEvent::CheckPrivateBrandAddAccessCase, structure->classInfoForCells(), ident, isBaseProperty));
 
         Ref<AccessCase> newCase = AccessCase::createCheckPrivateBrand(vm, codeBlock, brandID, structure);
 
         result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), brandID, WTFMove(newCase));
 
         if (result.generatedSomeCode())
-            LOG_IC((ICEvent::CheckPrivateBrandReplaceWithJump, structure->classInfoForCells(), ident, isBaseProperty));
+            LOG_IC((vm, ICEvent::CheckPrivateBrandReplaceWithJump, structure->classInfoForCells(), ident, isBaseProperty));
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
-
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
@@ -1536,18 +1739,17 @@ static InlineCacheAction tryCacheSetPrivateBrand(
         ASSERT(newStructure->isObject());
         
         bool isBaseProperty = true;
-        LOG_IC((ICEvent::SetPrivateBrandAddAccessCase, oldStructure->classInfoForCells(), ident, isBaseProperty));
+        LOG_IC((vm, ICEvent::SetPrivateBrandAddAccessCase, oldStructure->classInfoForCells(), ident, isBaseProperty));
 
         Ref<AccessCase> newCase = AccessCase::createSetPrivateBrand(vm, codeBlock, brandID, oldStructure, newStructure);
 
         result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), brandID, WTFMove(newCase));
 
         if (result.generatedSomeCode())
-            LOG_IC((ICEvent::SetPrivateBrandReplaceWithJump, oldStructure->classInfoForCells(), ident, isBaseProperty));
+            LOG_IC((vm, ICEvent::SetPrivateBrandReplaceWithJump, oldStructure->classInfoForCells(), ident, isBaseProperty));
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
-    
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
@@ -1559,9 +1761,7 @@ void repatchSetPrivateBrand(JSGlobalObject* globalObject, CodeBlock* codeBlock, 
         repatchSlowPathCall(codeBlock, stubInfo, operationSetPrivateBrandGaveUp);
 }
 
-static InlineCacheAction tryCacheInstanceOf(
-    JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue valueValue, JSValue prototypeValue, StructureStubInfo& stubInfo,
-    bool wasFound)
+static InlineCacheAction tryCacheInstanceOf(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue valueValue, JSValue prototypeValue, StructureStubInfo& stubInfo, bool wasFound)
 {
     VM& vm = globalObject->vm();
     AccessGenerationResult result;
@@ -1600,18 +1800,19 @@ static InlineCacheAction tryCacheInstanceOf(
         }
         
         if (!newCase)
-            newCase = AccessCase::create(vm, codeBlock, AccessCase::InstanceOfGeneric, nullptr);
+            newCase = AccessCase::create(vm, codeBlock, AccessCase::InstanceOfMegamorphic, nullptr);
         
-        LOG_IC((ICEvent::InstanceOfAddAccessCase, structure->classInfoForCells(), Identifier()));
+        LOG_IC((vm, ICEvent::InstanceOfAddAccessCase, structure->classInfoForCells(), Identifier()));
         
         result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), nullptr, WTFMove(newCase));
 
         if (result.generatedSomeCode())
-            LOG_IC((ICEvent::InstanceOfReplaceWithJump, structure->classInfoForCells(), Identifier()));
+            LOG_IC((vm, ICEvent::InstanceOfReplaceWithJump, structure->classInfoForCells(), Identifier()));
     }
     
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
-    
+    if (result.generatedMegamorphicCode())
+        return GiveUpOnCache; // In this case, we give up since we do not cache the results in the megamorphic table.
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
@@ -1731,13 +1932,35 @@ static InlineCacheAction tryCacheArrayInByVal(JSGlobalObject* globalObject, Code
     }
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
+    if (result.generatedMegamorphicCode())
+        return PromoteToMegamorphic;
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
 void repatchArrayInByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue base, JSValue index, StructureStubInfo& stubInfo, InByKind kind)
 {
-    if (tryCacheArrayInByVal(globalObject, codeBlock, base, index, stubInfo) == GiveUpOnCache)
+    switch (tryCacheArrayInByVal(globalObject, codeBlock, base, index, stubInfo)) {
+    case PromoteToMegamorphic: {
+        switch (kind) {
+        case InByKind::ById:
+            repatchSlowPathCall(codeBlock, stubInfo, operationInByIdMegamorphic);
+            break;
+        case InByKind::ByVal:
+            repatchSlowPathCall(codeBlock, stubInfo, operationInByValMegamorphic);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+    case GiveUpOnCache:
         repatchSlowPathCall(codeBlock, stubInfo, appropriateInByGaveUpFunction(kind));
+        break;
+    case RetryCacheLater:
+    case AttemptToCache:
+        break;
+    }
 }
 
 void repatchInstanceOf(
@@ -1755,273 +1978,6 @@ void linkDirectCall(DirectCallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock
     callLinkInfo.setCallTarget(jsCast<FunctionCodeBlock*>(calleeCodeBlock), CodeLocationLabel<JSEntryPtrTag>(codePtr));
     if (calleeCodeBlock)
         calleeCodeBlock->linkIncomingCall(callLinkInfo.owner(), &callLinkInfo);
-}
-
-void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkInfo& callLinkInfo, CallVariant newVariant)
-{
-    RELEASE_ASSERT(callLinkInfo.allowStubs());
-
-    // During execution of linkPolymorphicCall, we strongly assume that we never do GC.
-    // GC jettisons CodeBlocks, changes CallLinkInfo etc. and breaks assumption done before and after this call.
-    DeferGCForAWhile deferGCForAWhile(vm);
-    
-    if (!newVariant) {
-        callLinkInfo.setVirtualCall(vm);
-        return;
-    }
-
-    CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner); // WebAssembly -> JS stubs don't have a valid CodeBlock.
-    ASSERT(owner);
-#if ENABLE(WEBASSEMBLY)
-    bool isWebAssembly = owner->inherits<JSWebAssemblyModule>();
-#else
-    bool isWebAssembly = false;
-#endif
-    bool isDataIC = callLinkInfo.isDataIC();
-    bool isTailCall = callLinkInfo.isTailCall();
-
-    bool isClosureCall = false;
-    CallVariantList list;
-    if (PolymorphicCallStubRoutine* stub = callLinkInfo.stub()) {
-        list = stub->variants();
-        isClosureCall = stub->isClosureCall();
-    } else if (JSObject* oldCallee = callLinkInfo.callee())
-        list = CallVariantList { CallVariant(oldCallee) };
-    
-    list = variantListWithVariant(list, newVariant);
-
-    // If there are any closure calls then it makes sense to treat all of them as closure calls.
-    // This makes switching on callee cheaper. It also produces profiling that's easier on the DFG;
-    // the DFG doesn't really want to deal with a combination of closure and non-closure callees.
-    if (!isClosureCall) {
-        for (CallVariant variant : list)  {
-            if (variant.isClosureCall()) {
-                list = despecifiedVariantList(list);
-                isClosureCall = true;
-                break;
-            }
-        }
-    }
-
-    if (isClosureCall)
-        callLinkInfo.setHasSeenClosure();
-
-    // If we are over the limit, just use a normal virtual call.
-    unsigned maxPolymorphicCallVariantListSize;
-    if (isWebAssembly)
-        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSizeForWebAssemblyToJS();
-    else if (callerCodeBlock->jitType() == JITCode::topTierJIT())
-        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSizeForTopTier();
-    else
-        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSize();
-
-    // We use list.size() instead of callSlots.size() because we respect CallVariant size for now.
-    if (list.size() > maxPolymorphicCallVariantListSize) {
-        callLinkInfo.setVirtualCall(vm);
-        return;
-    }
-
-    Vector<CallSlot, 16> callSlots;
-    
-    // Figure out what our cases are.
-    for (CallVariant variant : list) {
-        CodeBlock* codeBlock = nullptr;
-        if (variant.executable() && !variant.executable()->isHostFunction()) {
-            ExecutableBase* executable = variant.executable();
-            codeBlock = jsCast<FunctionExecutable*>(executable)->codeBlockForCall();
-            // If we cannot handle a callee, because we don't have a CodeBlock,
-            // assume that it's better for this whole thing to be a virtual call.
-            if (!codeBlock) {
-                callLinkInfo.setVirtualCall(vm);
-                return;
-            }
-        }
-
-        JSCell* caseValue = nullptr;
-        if (isClosureCall) {
-            caseValue = variant.executable();
-            // FIXME: We could add a fast path for InternalFunction with closure call.
-            // https://bugs.webkit.org/show_bug.cgi?id=179311
-            if (!caseValue)
-                continue;
-        } else {
-            if (auto* function = variant.function())
-                caseValue = function;
-            else
-                caseValue = variant.internalFunction();
-        }
-
-        CallSlot slot;
-
-        CodePtr<JSEntryPtrTag> codePtr;
-        if (variant.executable()) {
-            ASSERT(variant.executable()->hasJITCodeForCall());
-
-            codePtr = jsToWasmICCodePtr(callLinkInfo.specializationKind(), variant.function());
-            if (!codePtr) {
-                ArityCheckMode arityCheck = ArityCheckNotRequired;
-                if (codeBlock) {
-                    ASSERT(!variant.executable()->isHostFunction());
-                    if ((callFrame->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.isVarargs()))
-                        arityCheck = MustCheckArity;
-
-                }
-                codePtr = variant.executable()->generatedJITCodeForCall()->addressForCall(arityCheck);
-                slot.m_arityCheckMode = arityCheck;
-            }
-        } else {
-            ASSERT(variant.internalFunction());
-            codePtr = vm.getCTIInternalFunctionTrampolineFor(CodeForCall);
-        }
-
-        slot.m_index = callSlots.size();
-        slot.m_target = codePtr;
-        slot.m_codeBlock = codeBlock;
-        slot.m_calleeOrExecutable = caseValue;
-
-        callSlots.append(WTFMove(slot));
-    }
-
-    bool notUsingCounting = isWebAssembly || callerCodeBlock->jitType() == JITCode::topTierJIT();
-    if (callSlots.isEmpty())
-        notUsingCounting = true;
-
-    CallFrame* callerFrame = nullptr;
-    if (!isTailCall)
-        callerFrame = callFrame->callerFrame();
-
-    if (isDataIC) {
-        CommonJITThunkID jitThunk = CommonJITThunkID::PolymorphicThunkForRegularCall;
-        if (isClosureCall)
-            jitThunk = isTailCall ? CommonJITThunkID::PolymorphicThunkForTailCallForClosure : CommonJITThunkID::PolymorphicThunkForRegularCallForClosure;
-        else
-            jitThunk = isTailCall ? CommonJITThunkID::PolymorphicThunkForTailCall : CommonJITThunkID::PolymorphicThunkForRegularCall;
-
-        auto stubRoutine = PolymorphicCallStubRoutine::create(vm.getCTIStub(jitThunk).retagged<JITStubRoutinePtrTag>(), vm, owner, callerFrame, callLinkInfo, callSlots, nullptr, notUsingCounting, isClosureCall);
-
-        // If there had been a previous stub routine, that one will die as soon as the GC runs and sees
-        // that it's no longer on stack.
-        callLinkInfo.setStub(WTFMove(stubRoutine));
-        return;
-    }
-
-    ASSERT(callLinkInfo.type() == CallLinkInfo::Type::Optimizing);
-
-    CCallHelpers jit(callerCodeBlock);
-    GPRReg calleeGPR = BaselineJITRegisters::Call::calleeGPR;
-
-    UniqueArray<uint32_t> fastCounts;
-
-    if (!notUsingCounting) {
-        fastCounts = makeUniqueArray<uint32_t>(callSlots.size());
-        memset(fastCounts.get(), 0, callSlots.size() * sizeof(uint32_t));
-    }
-
-    Vector<int64_t, 16> caseValues;
-    caseValues.reserveInitialCapacity(callSlots.size());
-    for (auto& slot : callSlots) {
-        int64_t caseValue = bitwise_cast<intptr_t>(slot.m_calleeOrExecutable);
-#if ASSERT_ENABLED
-        if (caseValues.contains(caseValue)) {
-            dataLog("ERROR: Attempt to add duplicate case value.\n");
-            dataLog("Existing case values: ");
-            CommaPrinter comma;
-            for (auto& value : caseValues)
-                dataLog(comma, value);
-            dataLog("\n");
-            dataLog("Attempting to add: ", caseValue, "\n");
-            dataLog("Variant list: ", listDump(callSlots.map([&](auto& slot) {
-                return PolymorphicCallCase(CallVariant(slot.m_calleeOrExecutable), slot.m_codeBlock);
-            })), "\n");
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-#endif
-        caseValues.append(caseValue);
-    }
-
-    GPRReg comparisonValueGPR = calleeGPR;
-    if (isClosureCall)
-        comparisonValueGPR = AssemblyHelpers::selectScratchGPR(calleeGPR);
-
-    GPRReg fastCountsBaseGPR = AssemblyHelpers::selectScratchGPR(calleeGPR, comparisonValueGPR);
-    jit.move(CCallHelpers::TrustedImmPtr(fastCounts.get()), fastCountsBaseGPR);
-
-    CCallHelpers::JumpList slowPath;
-    if (isClosureCall) {
-        // Verify that we have a function and stash the executable in scratchGPR.
-#if USE(JSVALUE64)
-        if (isTailCall)
-            slowPath.append(jit.branchIfNotCell(calleeGPR, DoNotHaveTagRegisters));
-        else
-            slowPath.append(jit.branchIfNotCell(calleeGPR));
-#else
-        // We would have already checked that the callee is a cell.
-#endif
-        // FIXME: We could add a fast path for InternalFunction with closure call.
-        slowPath.append(jit.branchIfNotFunction(calleeGPR));
-
-        jit.loadPtr(CCallHelpers::Address(calleeGPR, JSFunction::offsetOfExecutableOrRareData()), comparisonValueGPR);
-        auto hasExecutable = jit.branchTestPtr(CCallHelpers::Zero, comparisonValueGPR, CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
-        jit.loadPtr(CCallHelpers::Address(comparisonValueGPR, FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), comparisonValueGPR);
-        hasExecutable.link(&jit);
-    }
-
-    BinarySwitch binarySwitch(comparisonValueGPR, caseValues.span(), BinarySwitch::IntPtr);
-    while (binarySwitch.advance(jit)) {
-        size_t caseIndex = binarySwitch.caseIndex();
-        auto& slot = callSlots[caseIndex];
-        CallVariant variant(slot.m_calleeOrExecutable);
-        CodeBlock* codeBlock = slot.m_codeBlock;
-        CodePtr<JSEntryPtrTag> codePtr = slot.m_target;
-        if (fastCounts) {
-            jit.add32(
-                CCallHelpers::TrustedImm32(1),
-                CCallHelpers::Address(fastCountsBaseGPR, caseIndex * sizeof(uint32_t)));
-        }
-        if (isTailCall) {
-            if (codeBlock)
-                jit.storePtr(CCallHelpers::TrustedImmPtr(codeBlock), CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
-            jit.nearTailCallThunk(CodeLocationLabel { codePtr });
-        } else {
-            if (codeBlock)
-                jit.storePtr(CCallHelpers::TrustedImmPtr(codeBlock), CCallHelpers::calleeFrameCodeBlockBeforeCall());
-            jit.nearCallThunk(CodeLocationLabel { codePtr });
-            jit.jumpThunk(static_cast<OptimizingCallLinkInfo&>(callLinkInfo).doneLocation());
-        }
-    }
-
-    slowPath.link(&jit);
-    binarySwitch.fallThrough().link(&jit);
-    jit.move(CCallHelpers::TrustedImmPtr(&callLinkInfo), GPRInfo::regT2);
-    if (isTailCall)
-        jit.nearTailCallThunk(CodeLocationLabel { vm.getCTIStub(CommonJITThunkID::PolymorphicRepatchThunk).code() });
-    else {
-        jit.nearCallThunk(CodeLocationLabel { vm.getCTIStub(CommonJITThunkID::PolymorphicRepatchThunk).code() });
-        jit.jumpThunk(static_cast<OptimizingCallLinkInfo&>(callLinkInfo).doneLocation());
-    }
-
-    LinkBuffer patchBuffer(jit, owner, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
-    if (patchBuffer.didFailToAllocate()) {
-        callLinkInfo.setVirtualCall(vm);
-        return;
-    }
-    
-    auto stubRoutine = PolymorphicCallStubRoutine::create(
-        FINALIZE_CODE_FOR(
-            callerCodeBlock, patchBuffer, JITStubRoutinePtrTag, "PolymorphicCall"_s,
-            "Polymorphic call stub for %s, return point %p, targets %s",
-                isWebAssembly ? "WebAssembly" : toCString(*callerCodeBlock).data(), static_cast<OptimizingCallLinkInfo&>(callLinkInfo).doneLocation().taggedPtr(),
-                toCString(listDump(callSlots.map([&](auto& slot) { return PolymorphicCallCase(CallVariant(slot.m_calleeOrExecutable), slot.m_codeBlock); }))).data()),
-        vm, owner, callerFrame, callLinkInfo, callSlots, WTFMove(fastCounts), notUsingCounting, isClosureCall);
-
-    // The original slow path is unreachable on 64-bits, but still
-    // reachable on 32-bits since a non-cell callee will always
-    // trigger the slow path
-    linkSlowFor(vm, callLinkInfo);
-
-    // If there had been a previous stub routine, that one will die as soon as the GC runs and sees
-    // that it's no longer on stack.
-    callLinkInfo.setStub(WTFMove(stubRoutine));
 }
 
 void resetGetBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, GetByKind kind)

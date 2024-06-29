@@ -56,6 +56,10 @@
 @property (nonatomic, readonly) UIViewController *_wk_viewControllerForFullScreenPresentation;
 @end
 
+@interface UIViewController (WebKitInternal)
+@property (nonatomic, readonly) BOOL _wk_isInFullscreenPresentation;
+@end
+
 namespace WebKit {
 
 RetainPtr<UIAlertController> createUIAlertController(NSString *title, NSString *message);

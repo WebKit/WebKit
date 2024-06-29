@@ -38,7 +38,8 @@ using ::testing::SizeIs;
 constexpr VerificationTag kVerificationTag = VerificationTag(0x12345678);
 constexpr DcSctpOptions kVerifyChecksumOptions =
     DcSctpOptions{.disable_checksum_verification = false,
-                  .enable_zero_checksum = false};
+                  .zero_checksum_alternate_error_detection_method =
+                      ZeroChecksumAlternateErrorDetectionMethod::None()};
 
 TEST(SctpPacketTest, DeserializeSimplePacketFromCapture) {
   /*
@@ -208,8 +209,10 @@ TEST(SctpPacketTest, DeserializePacketDontValidateChecksum) {
 
   ASSERT_HAS_VALUE_AND_ASSIGN(
       SctpPacket packet,
-      SctpPacket::Parse(data, {.disable_checksum_verification = true,
-                               .enable_zero_checksum = false}));
+      SctpPacket::Parse(
+          data, {.disable_checksum_verification = true,
+                 .zero_checksum_alternate_error_detection_method =
+                     ZeroChecksumAlternateErrorDetectionMethod::None()}));
   EXPECT_EQ(packet.common_header().source_port, 5000);
   EXPECT_EQ(packet.common_header().destination_port, 5000);
   EXPECT_EQ(packet.common_header().verification_tag,
@@ -375,8 +378,11 @@ TEST(SctpPacketTest, AcceptsZeroSetZeroChecksum) {
 
   ASSERT_HAS_VALUE_AND_ASSIGN(
       SctpPacket packet,
-      SctpPacket::Parse(data, {.disable_checksum_verification = false,
-                               .enable_zero_checksum = true}));
+      SctpPacket::Parse(
+          data,
+          {.disable_checksum_verification = false,
+           .zero_checksum_alternate_error_detection_method =
+               ZeroChecksumAlternateErrorDetectionMethod::LowerLayerDtls()}));
   EXPECT_EQ(packet.common_header().source_port, 5000);
   EXPECT_EQ(packet.common_header().destination_port, 5000);
   EXPECT_EQ(packet.common_header().verification_tag,
@@ -409,9 +415,13 @@ TEST(SctpPacketTest, RejectsNonZeroIncorrectChecksumWhenZeroChecksumIsActive) {
                     0x00, 0x00, 0x03, 0x00, 0x00, 0x10, 0x55, 0x08, 0x36, 0x40,
                     0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-  EXPECT_FALSE(SctpPacket::Parse(data, {.disable_checksum_verification = false,
-                                        .enable_zero_checksum = true})
-                   .has_value());
+  EXPECT_FALSE(
+      SctpPacket::Parse(
+          data,
+          {.disable_checksum_verification = false,
+           .zero_checksum_alternate_error_detection_method =
+               ZeroChecksumAlternateErrorDetectionMethod::LowerLayerDtls()})
+          .has_value());
 }
 
 TEST(SctpPacketTest, WritePacketWithCalculatedChecksum) {

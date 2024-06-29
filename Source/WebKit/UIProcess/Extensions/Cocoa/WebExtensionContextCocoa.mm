@@ -180,7 +180,7 @@ WebExtensionContext::WebExtensionContext(Ref<WebExtension>&& extension)
     : WebExtensionContext()
 {
     m_extension = extension.ptr();
-    m_baseURL = URL { makeString("webkit-extension://", uniqueIdentifier(), '/') };
+    m_baseURL = URL { makeString("webkit-extension://"_s, uniqueIdentifier(), '/') };
     m_delegate = [[_WKWebExtensionContextDelegate alloc] initWithWebExtensionContext:*this];
     m_tabDelegateToIdentifierMap = [NSMapTable weakToStrongObjectsMapTable];
 }
@@ -258,7 +258,7 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
 
     m_storageDirectory = storageDirectory;
     m_extensionController = controller;
-    m_contentScriptWorld = API::ContentWorld::sharedWorldWithName(makeString("WebExtension-", m_uniqueIdentifier));
+    m_contentScriptWorld = API::ContentWorld::sharedWorldWithName(makeString("WebExtension-"_s, m_uniqueIdentifier));
 
     readStateFromStorage();
 
@@ -313,15 +313,25 @@ bool WebExtensionContext::unload(NSError **outError)
     writeStateToStorage();
 
     unloadBackgroundWebView();
-    m_safeToLoadBackgroundContent = false;
-
     removeInjectedContent();
-    m_registeredScriptsMap.clear();
 
     invalidateStorage();
     unloadDeclarativeNetRequestState();
 
-    m_extensionController = nil;
+    m_actionsToPerformAfterBackgroundContentLoads.clear();
+    m_backgroundContentEventListeners.clear();
+    m_eventListenerPages.clear();
+    m_installReason = InstallReason::None;
+    m_previousVersion = nullString();
+    m_safeToLoadBackgroundContent = false;
+    m_backgroundContentLoadError = nil;
+
+    m_registeredScriptsMap.clear();
+    m_dynamicallyInjectedUserStyleSheets.clear();
+    m_injectedScriptsPerPatternMap.clear();
+    m_injectedStyleSheetsPerPatternMap.clear();
+
+    m_extensionController = nullptr;
     m_contentScriptWorld = nullptr;
 
     m_tabMap.clear();
@@ -338,8 +348,24 @@ bool WebExtensionContext::unload(NSError **outError)
     m_popupPageActionMap.clear();
 
     m_ports.clear();
+    m_pagePortMap.clear();
     m_portQueuedMessages.clear();
     m_nativePortMap.clear();
+
+    m_alarmMap.clear();
+
+    m_commands.clear();
+    m_populatedCommands = false;
+
+    m_menuItems.clear();
+    m_mainMenuItems.clear();
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    m_inspectorBackgroundPageMap.clear();
+    m_inspectorExtensionMap.clear();
+#endif
+
+    m_pendingPermissionRequests = 0;
 
     return true;
 }
@@ -476,12 +502,17 @@ void WebExtensionContext::setBaseURL(URL&& url)
     if (!url.isValid())
         return;
 
-    m_baseURL = URL { makeString(url.protocol(), "://", url.host(), '/') };
+    m_baseURL = URL { makeString(url.protocol(), "://"_s, url.host(), '/') };
 }
 
 bool WebExtensionContext::isURLForThisExtension(const URL& url) const
 {
     return url.isValid() && protocolHostAndPortAreEqual(baseURL(), url);
+}
+
+bool WebExtensionContext::isURLForAnyExtension(const URL& url)
+{
+    return url.isValid() && WebExtensionMatchPattern::extensionSchemes().contains(url.protocol().toString());
 }
 
 void WebExtensionContext::setUniqueIdentifier(String&& uniqueIdentifier)
@@ -1793,11 +1824,18 @@ Ref<WebExtensionTab> WebExtensionContext::getOrCreateTab(_WKWebExtensionTab *del
     ASSERT(delegate);
 
     if (NSNumber *tabIdentifier = [m_tabDelegateToIdentifierMap objectForKey:delegate]) {
-        if (RefPtr tab = getTab(WebExtensionTabIdentifier(tabIdentifier.unsignedLongLongValue)))
-            return tab.releaseNonNull();
+        // Pass IgnoreExtensionAccess::Yes here to always get the tab. Otherwise getTab() can return null if it is as private
+        // tab and the extension does not have private access. This prevents us from falling through and making a new tab
+        // object that wraps the same delegate but have a different identifier.
+        if (RefPtr tab = getTab(WebExtensionTabIdentifier(tabIdentifier.unsignedLongLongValue), IgnoreExtensionAccess::Yes)) {
+            Ref result = tab.releaseNonNull();
+            reportWebViewConfigurationErrorIfNeeded(result);
+            return result;
+        }
     }
 
     Ref tab = adoptRef(*new WebExtensionTab(*this, delegate));
+    reportWebViewConfigurationErrorIfNeeded(tab);
 
     auto tabIdentifier = tab->identifier();
     m_tabMap.set(tabIdentifier, tab);
@@ -1881,7 +1919,7 @@ RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifie
 
     // Search open tabs for the page.
     for (Ref tab : openTabs()) {
-        for (WKWebView *webView in tab->webViews()) {
+        if (WKWebView *webView = tab->mainWebView()) {
             if (webView._page->identifier() != webPageProxyIdentifier)
                 continue;
 
@@ -2002,6 +2040,8 @@ WebExtensionContext::WindowVector WebExtensionContext::openWindows(IgnoreExtensi
 WebExtensionContext::TabVector WebExtensionContext::openTabs(IgnoreExtensionAccess ignoreExtensionAccess) const
 {
     return WTF::compactMap(m_tabMap, [&](auto& entry) -> std::optional<Ref<WebExtensionTab>> {
+        if (!entry.value->isOpen())
+            return std::nullopt;
         if (ignoreExtensionAccess == IgnoreExtensionAccess::No && !entry.value->extensionHasAccess())
             return std::nullopt;
         return entry.value;
@@ -2127,8 +2167,10 @@ void WebExtensionContext::didCloseTab(WebExtensionTab& tab, WindowIsClosing wind
     ASSERT(isValidTab(tab));
 
     // The tab might already be closed, don't log an error.
-    if (!tab.isOpen())
+    if (!tab.isOpen()) {
+        forgetTab(tab.identifier());
         return;
+    }
 
     RELEASE_LOG_DEBUG(Extensions, "Closed tab %{public}llu %{public}s", tab.identifier().toUInt64(), windowIsClosing == WindowIsClosing::Yes ? "(window closing)" : "");
 
@@ -2222,7 +2264,7 @@ void WebExtensionContext::didMoveTab(WebExtensionTab& tab, size_t oldIndex, cons
     RefPtr newWindow = tab.window();
     size_t newIndex = tab.index();
 
-    if (oldWindow == newWindow)
+    if (newWindow && oldWindow == newWindow)
         RELEASE_LOG_DEBUG(Extensions, "Moved tab %{public}llu from index %{public}zu to index %{public}zu (in same window)", tab.identifier().toUInt64(), oldIndex, newIndex);
     else if (oldWindow && newWindow)
         RELEASE_LOG_DEBUG(Extensions, "Moved tab %{public}llu to window %{public}llu at index %{public}zu", tab.identifier().toUInt64(), newWindow->identifier().toUInt64(), newIndex);
@@ -2237,12 +2279,10 @@ void WebExtensionContext::didMoveTab(WebExtensionTab& tab, size_t oldIndex, cons
     if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
-    if (oldWindow == newWindow) {
+    if (newWindow && oldWindow == newWindow) {
         // Window did not change, only the index.
-        if (newIndex == oldIndex)
-            return;
-
-        fireTabsMovedEventIfNeeded(tab.identifier(), newWindow->identifier(), oldIndex, newIndex);
+        if (newIndex != oldIndex)
+            fireTabsMovedEventIfNeeded(tab.identifier(), newWindow->identifier(), oldIndex, newIndex);
     } else if (oldWindow && newWindow) {
         // Window changed to another.
         fireTabsDetachedEventIfNeeded(tab.identifier(), oldWindow->identifier(), oldIndex);
@@ -2258,25 +2298,32 @@ void WebExtensionContext::didMoveTab(WebExtensionTab& tab, size_t oldIndex, cons
     }
 }
 
-void WebExtensionContext::didReplaceTab(WebExtensionTab& oldTab, WebExtensionTab& newTab)
+void WebExtensionContext::didReplaceTab(WebExtensionTab& oldTab, WebExtensionTab& newTab, SuppressEvents suppressEvents)
 {
     ASSERT(isValidTab(oldTab));
     ASSERT(isValidTab(newTab));
 
-    if (!oldTab.isOpen()) {
-        RELEASE_LOG_ERROR(Extensions, "Replaced tab %{public}llu with tab %{public}llu, but old tab is not open", oldTab.identifier().toUInt64(), newTab.identifier().toUInt64());
+    if (oldTab == newTab) {
+        RELEASE_LOG_ERROR(Extensions, "Replaced tab %{public}llu with the same tab", newTab.identifier().toUInt64());
         return;
     }
 
-    didCloseTab(oldTab, WindowIsClosing::No, SuppressEvents::Yes);
-    didOpenTab(newTab, SuppressEvents::Yes);
+    Ref protectedOldTab { oldTab };
+
+    didOpenTab(newTab, suppressEvents);
+
+    if (!oldTab.isOpen()) {
+        RELEASE_LOG_ERROR(Extensions, "Replaced tab %{public}llu with tab %{public}llu, but old tab is not open", oldTab.identifier().toUInt64(), newTab.identifier().toUInt64());
+        forgetTab(oldTab.identifier());
+        return;
+    }
 
     RELEASE_LOG_DEBUG(Extensions, "Replaced tab %{public}llu with tab %{public}llu", oldTab.identifier().toUInt64(), newTab.identifier().toUInt64());
 
-    if (!isLoaded() || !newTab.extensionHasAccess())
-        return;
+    if (isLoaded() && newTab.extensionHasAccess() && suppressEvents == SuppressEvents::No)
+        fireTabsReplacedEventIfNeeded(oldTab.identifier(), newTab.identifier());
 
-    fireTabsReplacedEventIfNeeded(oldTab.identifier(), newTab.identifier());
+    didCloseTab(oldTab, WindowIsClosing::No, suppressEvents);
 }
 
 void WebExtensionContext::didChangeTabProperties(WebExtensionTab& tab, OptionSet<WebExtensionTab::ChangedProperties> properties)
@@ -2353,7 +2400,7 @@ void WebExtensionContext::didCommitLoadForFrame(WebPageProxyIdentifier pageID, W
         auto& userContentController = page.get()->userContentController();
         m_dynamicallyInjectedUserStyleSheets.removeAllMatching([&](auto& styleSheet) {
             auto styleSheetPageID = styleSheet->userStyleSheet().pageID();
-            if (!styleSheetPageID || styleSheetPageID.value() != page->webPageID())
+            if (!styleSheetPageID || styleSheetPageID.value() != page->webPageIDInMainFrameProcess())
                 return false;
 
             userContentController.removeUserStyleSheet(styleSheet);
@@ -2619,6 +2666,33 @@ void WebExtensionContext::performCommand(WebExtensionCommand& command, UserTrigg
     fireCommandEventIfNeeded(command, activeTab.get());
 }
 
+#if TARGET_OS_IPHONE
+WebExtensionCommand* WebExtensionContext::commandMatchingKeyCommand(UIKeyCommand *keyCommand)
+{
+    ASSERT(keyCommand);
+    for (auto& command : commands()) {
+        if (command->matchesKeyCommand(keyCommand))
+            return command.ptr();
+    }
+
+    return nullptr;
+}
+
+bool WebExtensionContext::performCommand(UIKeyCommand *keyCommand)
+{
+    ASSERT(isLoaded());
+    if (!isLoaded())
+        return false;
+
+    if (RefPtr result = commandMatchingKeyCommand(keyCommand)) {
+        performCommand(*result, UserTriggered::Yes);
+        return true;
+    }
+
+    return false;
+}
+#endif
+
 #if USE(APPKIT)
 WebExtensionCommand* WebExtensionContext::command(NSEvent *event)
 {
@@ -2875,7 +2949,7 @@ std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdenti
     if (!m_backgroundWebView || extension().backgroundContentIsServiceWorker())
         return std::nullopt;
 
-    return m_backgroundWebView.get()._page->webPageID();
+    return m_backgroundWebView.get()._page->webPageIDInMainFrameProcess();
 }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -2892,7 +2966,7 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::inspectorB
 
         RetainPtr webView = std::get<RetainPtr<WKWebView>>(entry.value);
 
-        result.append({ webView.get()._page->webPageID(), tabIdentifier, windowIdentifier });
+        result.append({ webView.get()._page->webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier });
     }
 
     return result;
@@ -2908,7 +2982,7 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::inspectorP
         auto tabIdentifier = tab ? std::optional(tab->identifier()) : std::nullopt;
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-        result.append({ inspector->inspectorPage()->webPageID(), tabIdentifier, windowIdentifier });
+        result.append({ inspector->inspectorPage()->webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier });
     }
 
     return result;
@@ -2926,7 +3000,7 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::popupPageI
         auto tabIdentifier = tab ? std::optional(tab->identifier()) : std::nullopt;
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-        result.append({ entry.key.webPageID(), tabIdentifier, windowIdentifier });
+        result.append({ entry.key.webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier });
     }
 
     return result;
@@ -2944,7 +3018,7 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::tabPageIde
         RefPtr window = tab->window();
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-        result.append({ entry.key.webPageID(), tab->identifier(), windowIdentifier });
+        result.append({ entry.key.webPageIDInMainFrameProcess(), tab->identifier(), windowIdentifier });
     }
 
     return result;
@@ -2960,7 +3034,7 @@ void WebExtensionContext::addPopupPage(WebPageProxy& page, WebExtensionAction& a
     auto tabIdentifier = tab ? std::optional(tab->identifier()) : std::nullopt;
     auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-    page.process().send(Messages::WebExtensionContextProxy::AddPopupPageIdentifier(page.webPageID(), tabIdentifier, windowIdentifier), identifier());
+    page.legacyMainFrameProcess().send(Messages::WebExtensionContextProxy::AddPopupPageIdentifier(page.webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier), identifier());
 }
 
 void WebExtensionContext::addExtensionTabPage(WebPageProxy& page, WebExtensionTab& tab)
@@ -2970,7 +3044,7 @@ void WebExtensionContext::addExtensionTabPage(WebPageProxy& page, WebExtensionTa
     RefPtr window = tab.window();
     auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-    page.process().send(Messages::WebExtensionContextProxy::AddTabPageIdentifier(page.webPageID(), tab.identifier(), windowIdentifier), identifier());
+    page.legacyMainFrameProcess().send(Messages::WebExtensionContextProxy::AddTabPageIdentifier(page.webPageIDInMainFrameProcess(), tab.identifier(), windowIdentifier), identifier());
 }
 
 void WebExtensionContext::enumerateExtensionPages(Function<void(WebPageProxy&, bool&)>&& action)
@@ -3185,7 +3259,7 @@ void WebExtensionContext::loadBackgroundWebView()
 
     if (!extension().backgroundContentIsServiceWorker()) {
         auto backgroundPage = m_backgroundWebView.get()._page;
-        backgroundPage->process().send(Messages::WebExtensionContextProxy::SetBackgroundPageIdentifier(backgroundPage->webPageID()), identifier());
+        backgroundPage->legacyMainFrameProcess().send(Messages::WebExtensionContextProxy::SetBackgroundPageIdentifier(backgroundPage->webPageIDInMainFrameProcess()), identifier());
 
         [m_backgroundWebView loadRequest:[NSURLRequest requestWithURL:backgroundContentURL()]];
         return;
@@ -3207,6 +3281,7 @@ void WebExtensionContext::unloadBackgroundWebView()
         return;
 
     m_backgroundContentIsLoaded = false;
+    m_unloadBackgroundWebViewTimer = nullptr;
 
     [m_backgroundWebView _close];
     m_backgroundWebView = nil;
@@ -3240,7 +3315,6 @@ void WebExtensionContext::scheduleBackgroundContentToUnload()
 {
     if (!m_backgroundWebView || extension().backgroundContentIsPersistent())
         return;
-
 
 #ifdef NDEBUG
     static const auto testRunnerDelayBeforeUnloading = 3_s;
@@ -3458,6 +3532,17 @@ void WebExtensionContext::wakeUpBackgroundContentIfNecessaryToFireEvents(EventLi
     wakeUpBackgroundContentIfNecessary(WTFMove(completionHandler));
 }
 
+void WebExtensionContext::reportWebViewConfigurationErrorIfNeeded(const WebExtensionTab& tab) const
+{
+    if (!isLoaded())
+        return;
+
+    // Access the method(s) below to trigger time-of-use logging with this stack trace
+    // so it is easy to catch errors where they are actionable by the app.
+
+    tab.mainWebView();
+}
+
 bool WebExtensionContext::decidePolicyForNavigationAction(WKWebView *webView, WKNavigationAction *navigationAction)
 {
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -3491,13 +3576,14 @@ void WebExtensionContext::didFailNavigation(WKWebView *webView, WKNavigation *, 
         return;
 
     m_backgroundContentLoadError = createError(Error::BackgroundContentFailedToLoad, nil, error);
+
+    unloadBackgroundWebView();
 }
 
 void WebExtensionContext::webViewWebContentProcessDidTerminate(WKWebView *webView)
 {
     if (webView == m_backgroundWebView) {
-        m_backgroundWebView = nil;
-        m_backgroundContentIsLoaded = false;
+        unloadBackgroundWebView();
 
         if (extension().backgroundContentIsPersistent())
             loadBackgroundWebView();
@@ -3533,7 +3619,7 @@ WebExtensionContext::InspectorTabVector WebExtensionContext::openInspectors(Func
     InspectorTabVector result;
 
     for (Ref tab : openTabs()) {
-        for (WKWebView *webView in tab->webViews()) {
+        if (WKWebView *webView = tab->mainWebView()) {
             auto *webInspector = webView._inspector;
             if (!webInspector)
                 continue;
@@ -3617,7 +3703,7 @@ HashSet<Ref<WebProcessProxy>> WebExtensionContext::processes(const API::Inspecto
     auto [tabIdentifier, webView] = m_inspectorBackgroundPageMap.get(*inspectorProxy);
     ASSERT(webView);
 
-    result.add(webView->_page->process());
+    result.add(webView->_page->legacyMainFrameProcess());
 
     return result;
 }
@@ -3776,10 +3862,10 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
 
         auto appearance = inspector->inspectorPage()->useDarkAppearance() ? Inspector::ExtensionAppearance::Dark : Inspector::ExtensionAppearance::Light;
 
-        Ref process = webView._page->process();
-        ASSERT(inspectorWebView._page->process() == process);
-        process->send(Messages::WebExtensionContextProxy::AddInspectorPageIdentifier(inspectorWebView._page->webPageID(), tab->identifier(), windowIdentifier), identifier());
-        process->send(Messages::WebExtensionContextProxy::AddInspectorBackgroundPageIdentifier(webView._page->webPageID(), tab->identifier(), windowIdentifier), identifier());
+        Ref process = webView._page->legacyMainFrameProcess();
+        ASSERT(inspectorWebView._page->legacyMainFrameProcess() == process);
+        process->send(Messages::WebExtensionContextProxy::AddInspectorPageIdentifier(inspectorWebView._page->webPageIDInMainFrameProcess(), tab->identifier(), windowIdentifier), identifier());
+        process->send(Messages::WebExtensionContextProxy::AddInspectorBackgroundPageIdentifier(webView._page->webPageIDInMainFrameProcess(), tab->identifier(), windowIdentifier), identifier());
         process->send(Messages::WebExtensionContextProxy::DispatchDevToolsPanelsThemeChangedEvent(appearance), identifier());
 
         [webView loadRequest:[NSURLRequest requestWithURL:inspectorBackgroundPageURL()]];
@@ -4156,6 +4242,7 @@ void WebExtensionContext::unloadDeclarativeNetRequestState()
     m_sessionRulesIDs.clear();
     m_dynamicRulesIDs.clear();
     m_matchedRules.clear();
+    m_enabledStaticRulesetIDs.clear();
 
     m_declarativeNetRequestDynamicRulesStore = nullptr;
     m_declarativeNetRequestSessionRulesStore = nullptr;
@@ -4206,7 +4293,7 @@ bool WebExtensionContext::hasContentModificationRules()
 static NSString *computeStringHashForContentBlockerRules(NSString *rules)
 {
     SHA1 sha1;
-    sha1.addBytes(String(rules).span8());
+    sha1.addUTF8Bytes(rules);
 
     SHA1::Digest digest;
     sha1.computeHash(digest);
@@ -4303,7 +4390,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
 
     auto addStaticRulesets = [this, protectedThis = Ref { *this }, applyDeclarativeNetRequestRules = WTFMove(applyDeclarativeNetRequestRules), allJSONData = RetainPtr { allJSONData }] () mutable {
         for (auto& ruleset : extension().declarativeNetRequestRulesets()) {
-            if (!ruleset.enabled)
+            if (!m_enabledStaticRulesetIDs.contains(ruleset.rulesetID))
                 continue;
 
             auto *jsonData = extension().resourceDataForPath(ruleset.jsonPath);
@@ -4364,7 +4451,6 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
         addDynamicAndStaticRules();
     }).get()];
 }
-
 
 bool WebExtensionContext::handleContentRuleListNotificationForTab(WebExtensionTab& tab, const URL& url, WebCore::ContentRuleListResults::Result)
 {

@@ -304,7 +304,7 @@ void MediaResource::dataReceived(CachedResource& resource, const SharedBuffer& b
         client->dataReceived(*this, buffer);
 }
 
-void MediaResource::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics)
+void MediaResource::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess)
 {
     assertIsMainThread();
 

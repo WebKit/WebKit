@@ -94,7 +94,7 @@ String CSSCustomPropertyValue::customCSSText() const
         }, [&](const String& value) {
             return value;
         }, [&](const TransformSyntaxValue& value) {
-            auto cssValue = transformOperationAsCSSValue(*value.transform, RenderStyle::defaultStyle());
+            auto cssValue = transformOperationAsCSSValue(value.transform, RenderStyle::defaultStyle());
             if (!cssValue)
                 return emptyString();
             return cssValue->cssText();
@@ -190,6 +190,56 @@ bool CSSCustomPropertyValue::isCurrentColor() const
 bool CSSCustomPropertyValue::isAnimatable() const
 {
     return std::holds_alternative<SyntaxValue>(m_value) || std::holds_alternative<SyntaxValueList>(m_value);
+}
+
+static bool mayDependOnBaseURL(const CSSCustomPropertyValue::SyntaxValue& syntaxValue)
+{
+    return WTF::switchOn(syntaxValue,
+        [](const Length&) {
+            return false;
+        },
+        [](const CSSCustomPropertyValue::NumericSyntaxValue&) {
+            return false;
+        },
+        [](const StyleColor&) {
+            return false;
+        },
+        [](const RefPtr<StyleImage>&) {
+            return true;
+        },
+        [](const URL&) {
+            return true;
+        },
+        [](const String&) {
+            return false;
+        },
+        [](const CSSCustomPropertyValue::TransformSyntaxValue&) {
+            return false;
+        });
+}
+
+bool CSSCustomPropertyValue::customMayDependOnBaseURL() const
+{
+    return WTF::switchOn(m_value,
+        [](const Ref<CSSVariableReferenceValue>&) {
+            return false;
+        },
+        [](const CSSValueID&) {
+            return false;
+        },
+        [](const Ref<CSSVariableData>&) {
+            return false;
+        },
+        [](const SyntaxValue& syntaxValue) {
+            return WebCore::mayDependOnBaseURL(syntaxValue);
+        },
+        [](const SyntaxValueList& syntaxValueList) {
+            for (auto& syntaxValue : syntaxValueList.values) {
+                if (WebCore::mayDependOnBaseURL(syntaxValue))
+                    return true;
+            }
+            return false;
+        });
 }
 
 }

@@ -59,7 +59,7 @@ class WebExtensionAPINamespace : public WebExtensionAPIObject, public JSWebExten
 
 public:
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
+    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
     WebExtensionAPIAction& action();
     WebExtensionAPIAlarms& alarms();

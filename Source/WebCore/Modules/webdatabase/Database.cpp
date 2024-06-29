@@ -90,7 +90,7 @@ namespace WebCore {
 // The ref counting mechanims will automatically destruct the un-added
 // (and un-returned) databases instances.
 
-static const char versionKey[] = "WebKitDatabaseVersionKey";
+static constexpr auto versionKey = "WebKitDatabaseVersionKey"_s;
 static constexpr auto unqualifiedInfoTableName = "__WebKitDatabaseInfoTable__"_s;
 const unsigned long long quotaIncreaseSize = 5 * 1024 * 1024;
 
@@ -106,7 +106,7 @@ static const String& fullyQualifiedInfoTableName()
 
 static String formatErrorMessage(ASCIILiteral message, int sqliteErrorCode, const char* sqliteErrorMessage)
 {
-    return makeString(message, " ("_s, sqliteErrorCode, ' ', sqliteErrorMessage, ')');
+    return makeString(message, " ("_s, sqliteErrorCode, ' ', span(sqliteErrorMessage), ')');
 }
 
 static bool setTextValueInDatabase(SQLiteDatabase& db, StringView query, const String& value)
@@ -405,7 +405,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
     // If the expected version is the empty string, then we always return with whatever version of the database we have.
     if ((!m_new || shouldSetVersionInNewDatabase) && m_expectedVersion.length() && m_expectedVersion != currentVersion) {
         m_sqliteDatabase.close();
-        return Exception { ExceptionCode::InvalidStateError, "unable to open database, version mismatch, '" + m_expectedVersion + "' does not match the currentVersion of '" + currentVersion + "'" };
+        return Exception { ExceptionCode::InvalidStateError, makeString("unable to open database, version mismatch, '"_s, m_expectedVersion, "' does not match the currentVersion of '"_s, currentVersion, '\'') };
     }
 
     m_sqliteDatabase.setAuthorizer(m_databaseAuthorizer.get());
@@ -448,7 +448,7 @@ void Database::closeDatabase()
 
 bool Database::getVersionFromDatabase(String& version, bool shouldCacheVersion)
 {
-    auto query = makeString("SELECT value FROM ", fullyQualifiedInfoTableName(),  " WHERE key = '", versionKey, "';");
+    auto query = makeString("SELECT value FROM "_s, fullyQualifiedInfoTableName(),  " WHERE key = '"_s, versionKey, "';"_s);
 
     m_databaseAuthorizer->disable();
 
@@ -468,7 +468,7 @@ bool Database::setVersionInDatabase(const String& version, bool shouldCacheVersi
 {
     // The INSERT will replace an existing entry for the database with the new version number, due to the UNIQUE ON CONFLICT REPLACE
     // clause in the CREATE statement (see Database::performOpenAndVerify()).
-    auto query = makeString("INSERT INTO ", fullyQualifiedInfoTableName(),  " (key, value) VALUES ('", versionKey, "', ?);");
+    auto query = makeString("INSERT INTO "_s, fullyQualifiedInfoTableName(),  " (key, value) VALUES ('"_s, versionKey, "', ?);"_s);
 
     m_databaseAuthorizer->disable();
 
@@ -804,7 +804,7 @@ bool Database::didExceedQuota()
 
 String Database::databaseDebugName() const
 {
-    return m_contextThreadSecurityOrigin->toString() + "::" + m_name;
+    return makeString(m_contextThreadSecurityOrigin->toString(), "::"_s, m_name);
 }
 
 #endif

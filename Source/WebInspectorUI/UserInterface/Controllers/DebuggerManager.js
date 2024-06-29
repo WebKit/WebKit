@@ -82,6 +82,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         this._breakpointContentIdentifierMap = new Multimap;
         this._breakpointScriptIdentifierMap = new Multimap;
         this._breakpointIdMap = new Map;
+        this._sourceCodeContentIdentifierMap = new Map;
 
         this._symbolicBreakpoints = [];
 
@@ -131,9 +132,14 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
                 const key = null;
                 WI.objectStores.breakpoints.associateObject(breakpoint, key, serializedBreakpoint);
 
+                let sourceCode = this._sourceCodeContentIdentifierMap.get(breakpoint.contentIdentifier);
+                if (sourceCode)
+                    this._associateBreakpointsWithSourceCode([breakpoint], sourceCode);
+
                 this.addBreakpoint(breakpoint);
             }
             this._restoringBreakpoints = false;
+            this._sourceCodeContentIdentifierMap = undefined;
         })());
 
         if (WI.SymbolicBreakpoint.supported()) {
@@ -410,6 +416,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         if (sourceCode instanceof WI.SourceMapResource)
             return Array.from(this.breakpointsForSourceCode(sourceCode.sourceMap.originalSourceCode)).filter((breakpoint) => breakpoint.sourceCodeLocation.displaySourceCode === sourceCode);
+
+        this._sourceCodeContentIdentifierMap?.set(sourceCode.contentIdentifier, sourceCode);
 
         let contentIdentifierBreakpoints = this._breakpointContentIdentifierMap.get(sourceCode.contentIdentifier);
         if (contentIdentifierBreakpoints) {
@@ -1090,12 +1098,12 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker) {
             // A ServiceWorker starts with a LocalScript for the main resource but we can replace it during initialization.
             if (target.mainResource instanceof WI.LocalScript) {
-                if (script.url === target.name)
+                if (script.couldBeMainResource(target))
                     target.mainResource = script;
             }
         } else if (!target.mainResource && target !== WI.mainTarget) {
             // A Worker starts without a main resource and we insert one.
-            if (script.url === target.name) {
+            if (script.couldBeMainResource(target)) {
                 target.mainResource = script;
                 if (script.resource)
                     target.resourceCollection.remove(script.resource);
@@ -1664,12 +1672,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     {
         this._ignoreBreakpointDisplayLocationDidChangeEvent = true;
 
-        for (let breakpoint of breakpoints) {
-            if (!breakpoint.sourceCodeLocation.sourceCode)
-                breakpoint.sourceCodeLocation.sourceCode = sourceCode;
-            // SourceCodes can be unequal if the SourceCodeLocation is associated with a Script and we are looking at the Resource.
-            console.assert(breakpoint.sourceCodeLocation.sourceCode === sourceCode || breakpoint.sourceCodeLocation.sourceCode.contentIdentifier === sourceCode.contentIdentifier);
-        }
+        for (let breakpoint of breakpoints)
+            breakpoint.sourceCodeLocation.sourceCode = sourceCode;
 
         this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
     }

@@ -1,0 +1,133 @@
+
+PASS :condition_type:type="bool"
+PASS :condition_type:type="i32"
+PASS :condition_type:type="u32"
+PASS :condition_type:type="f32"
+PASS :condition_type:type="f16"
+PASS :condition_type:type="abstract-int"
+PASS :condition_type:type="abstract-float"
+PASS :condition_type:type="vec2af"
+PASS :condition_type:type="vec3af"
+PASS :condition_type:type="vec4af"
+PASS :condition_type:type="vec2ai"
+PASS :condition_type:type="vec3ai"
+PASS :condition_type:type="vec4ai"
+PASS :condition_type:type="vec2f"
+PASS :condition_type:type="vec3h"
+PASS :condition_type:type="vec4u"
+PASS :condition_type:type="vec3b"
+PASS :condition_type:type="mat2x3f"
+PASS :condition_type:type="mat4x2h"
+PASS :condition_type:type="array"
+PASS :condition_type:type="atomic"
+PASS :condition_type:type="struct"
+PASS :condition_type:type="texture"
+PASS :condition_type:type="sampler"
+PASS :parse:test="break"
+PASS :parse:test="init_var"
+PASS :parse:test="init_var_type"
+PASS :parse:test="init_var_function"
+PASS :parse:test="init_var_function_type"
+PASS :parse:test="init_let"
+PASS :parse:test="init_let_type"
+PASS :parse:test="init_const"
+PASS :parse:test="init_const_type"
+FAIL :parse:test="init_call" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    4:9: error: Expected one of `=`, `++`, or `--`
+
+    ---- shader ----
+
+    fn f() {
+      var v = 1;
+      for (x();;) { break; }
+    }
+
+    fn x() {}
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    4:8: Expected one of `=`, `++`, or `--`
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :parse:test="init_phony" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    4:3: error: Invalid for-loop initialization clause
+
+    ---- shader ----
+
+    fn f() {
+      var v = 1;
+      for (_ = v;;) { break; }
+    }
+
+    fn x() {}
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    4:2: Invalid for-loop initialization clause
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :parse:test="init_increment"
+PASS :parse:test="init_compound_assign"
+PASS :parse:test="cond_true"
+FAIL :parse:test="cont_call" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    4:11: error: Expected one of `=`, `++`, or `--`
+
+    ---- shader ----
+
+    fn f() {
+      var v = 1;
+      for (;;x()) { break; }
+    }
+
+    fn x() {}
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    4:10: Expected one of `=`, `++`, or `--`
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :parse:test="cont_phony" assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    4:3: error: Invalid for-loop update clause
+
+    ---- shader ----
+
+    fn f() {
+      var v = 1;
+      for (;;_ = v) { break; }
+    }
+
+    fn x() {}
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    4:2: Invalid for-loop update clause
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :parse:test="cont_increment"
+PASS :parse:test="cont_compound_assign"
+PASS :parse:test="init_cond"
+PASS :parse:test="cond_cont"
+PASS :parse:test="init_cond_cont"
+PASS :parse:test="init_shadow"
+PASS :parse:test="no_semicolon"
+PASS :parse:test="one_semicolon"
+PASS :parse:test="no_paren"
+PASS :parse:test="empty"
+PASS :parse:test="init_expr"
+PASS :parse:test="cond_stmt"
+PASS :parse:test="cont_expr"
+PASS :parse:test="cont_var"
+PASS :parse:test="cont_var_type"
+PASS :parse:test="cont_var_function"
+PASS :parse:test="cont_var_function_type"
+PASS :parse:test="cont_let"
+PASS :parse:test="cont_let_type"
+

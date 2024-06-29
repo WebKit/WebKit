@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script src ="routines.js"></script>
+        <script>
+var track, firstConnection, secondConnection;
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    let pc = new RTCPeerConnection();
+    let stream = await navigator.mediaDevices.getUserMedia({ video: true });
+	let track = stream.getVideoTracks()[0];
+    pc.addTrack(track, stream);
+    pc.getTransceivers()[0].setCodecPreferences([{mimeType: "video/VP8", clockRate: 90000}]);
+    let offer = await pc.createOffer();
+    assert_true(offer.sdp.includes(`a=msid:${stream.id} ${track.id}`), 'offer SDP includes a=msid line');
+}, "msid present in offer SDP after setting codec preferences");
+        </script>
+    </body>
+</html>

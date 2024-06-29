@@ -690,7 +690,7 @@ void dEQPTest::SetUpTestSuite()
         argv.push_back("--deqp-log-images=disable");
     }
 
-    // Flushing during multi-process execution punishes HDDs. http://anglebug.com/5157
+    // Flushing during multi-process execution punishes HDDs. http://anglebug.com/42263718
     if (testSuite->getBatchId() != -1)
     {
         argv.push_back("--deqp-log-flush=disable");

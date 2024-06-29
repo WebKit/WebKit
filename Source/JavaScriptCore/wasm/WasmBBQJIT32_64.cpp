@@ -2898,13 +2898,14 @@ void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& excepti
         ScratchScope<1, 0> scratches(*this);
         GPRReg bufferGPR = scratches.gpr(0);
         m_jit.loadPtr(Address(GPRInfo::returnValueGPR, JSWebAssemblyException::offsetOfPayload() + JSWebAssemblyException::Payload::offsetOfStorage()), bufferGPR);
+        unsigned offset = 0;
         for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i) {
             Type type = exceptionSignature.as<FunctionSignature>()->argumentType(i);
             Value result = Value::fromTemp(type.kind, dataCatch.enclosedHeight() + dataCatch.implicitSlots() + i);
             Location slot = canonicalSlot(result);
             switch (type.kind) {
             case TypeKind::I32:
-                m_jit.load32(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + i * sizeof(uint64_t)), wasmScratchGPR);
+                m_jit.load32(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), wasmScratchGPR);
                 m_jit.store32(wasmScratchGPR, slot.asAddress());
                 break;
             case TypeKind::I31ref:
@@ -2926,20 +2927,20 @@ void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& excepti
             case TypeKind::Array:
             case TypeKind::Struct:
             case TypeKind::Func: {
-                m_jit.loadPair32(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + i * sizeof(uint64_t)), wasmScratchGPR, wasmScratchGPR2);
+                m_jit.loadPair32(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), wasmScratchGPR, wasmScratchGPR2);
                 m_jit.storePair32(wasmScratchGPR, wasmScratchGPR2, slot.asAddress());
                 break;
             }
             case TypeKind::F32:
-                m_jit.loadFloat(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + i * sizeof(uint64_t)), wasmScratchFPR);
+                m_jit.loadFloat(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), wasmScratchFPR);
                 m_jit.storeFloat(wasmScratchFPR, slot.asAddress());
                 break;
             case TypeKind::F64:
-                m_jit.loadDouble(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + i * sizeof(uint64_t)), wasmScratchFPR);
+                m_jit.loadDouble(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), wasmScratchFPR);
                 m_jit.storeDouble(wasmScratchFPR, slot.asAddress());
                 break;
             case TypeKind::V128:
-                materializeVectorConstant(v128_t { }, Location::fromFPR(wasmScratchFPR));
+                m_jit.loadVector(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), wasmScratchFPR);
                 m_jit.storeVector(wasmScratchFPR, slot.asAddress());
                 break;
             case TypeKind::Void:
@@ -2948,6 +2949,7 @@ void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& excepti
             }
             bind(result, slot);
             results.append(result);
+            offset += type.kind == TypeKind::V128 ? 2 : 1;
         }
     }
 }
@@ -3028,11 +3030,11 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addBranchCast(ControlData& data, Expres
     return { };
 }
 
-int BBQJIT::alignedFrameSize(int frameSize)
+int BBQJIT::alignedFrameSize(int frameSize) const
 {
     // On armv7 account for misalignment due to of saved {FP, PC}
     constexpr int misalignment = 4 + 4;
-    return WTF::roundUpToMultipleOf(stackAlignmentBytes(), frameSize + misalignment) - misalignment;
+    return WTF::roundUpToMultipleOf<stackAlignmentBytes()>(frameSize + misalignment) - misalignment;
 }
 
 void BBQJIT::restoreWebAssemblyGlobalState()
@@ -3455,7 +3457,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& origin
     ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
 
     CallInformation callInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
-    Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), callInfo.headerAndArgumentStackSizeInBytes);
+    Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callInfo.headerAndArgumentStackSizeInBytes);
     m_maxCalleeStackSize = std::max<int>(calleeStackSize, m_maxCalleeStackSize);
 
     GPRReg calleePtr;

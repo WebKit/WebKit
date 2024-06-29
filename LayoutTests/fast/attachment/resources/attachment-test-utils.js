@@ -1,24 +1,28 @@
-function takeScreenshotWhenAttachmentsSettled() {
+function takeScreenshot() {
+    document.documentElement.classList.remove("reftest-wait");
+}
+
+function takeScreenshotWhenAttachmentsSettled(message) {
     console.assert(document.documentElement.classList.contains("reftest-wait"));
 
     const attachments = [...document.getElementsByTagName("attachment")];
     console.assert(attachments.length);
     if (!attachments.length)
-        return document.documentElement.classList.remove("reftest-wait");
+        return takeScreenshot();
 
     const states = new Map(attachments.map(a => [a, []]));
 
     const onFailure = () => {
         for (const [attachment, events] of states)
             attachment.insertAdjacentText("afterend", "<- (" + message + ") - events = [" + events.join() + "]");
-        document.documentElement.classList.remove("reftest-wait");
+        takeScreenshot();
     };
 
     const timeoutId = setTimeout(onFailure, 5000);
 
     const onSuccess = () => {
         clearTimeout(timeoutId);
-        document.documentElement.classList.remove("reftest-wait");
+        takeScreenshot();
     };
 
     const promises = attachments.map((attachment) => new Promise((resolve, reject) => {

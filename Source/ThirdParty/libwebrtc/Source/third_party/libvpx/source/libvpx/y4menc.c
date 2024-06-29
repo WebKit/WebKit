@@ -9,6 +9,7 @@
  */
 
 #include <assert.h>
+#include <stdio.h>
 #include "./y4menc.h"
 
 int y4m_write_file_header(char *buf, size_t len, int width, int height,

@@ -28,6 +28,7 @@
 
 #include <fcntl.h>
 #include <wtf/FileSystem.h>
+#include <wtf/StdLibExtras.h>
 
 #if !OS(WINDOWS)
 #include <sys/mman.h>
@@ -97,9 +98,7 @@ bool bytesEqual(const Data& a, const Data& b)
 {
     if (a.isNull() || b.isNull())
         return false;
-    if (a.size() != b.size())
-        return false;
-    return !memcmp(a.data(), b.data(), a.size());
+    return equalSpans(a.span(), b.span());
 }
 
 } // namespace NetworkCache

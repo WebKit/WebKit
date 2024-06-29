@@ -158,11 +158,11 @@ public:
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
     
-    static ptrdiff_t offsetOfOverrodeThings() { return OBJECT_OFFSETOF(ScopedArguments, m_overrodeThings); }
-    static ptrdiff_t offsetOfTotalLength() { return OBJECT_OFFSETOF(ScopedArguments, m_totalLength); }
-    static ptrdiff_t offsetOfTable() { return OBJECT_OFFSETOF(ScopedArguments, m_table); }
-    static ptrdiff_t offsetOfScope() { return OBJECT_OFFSETOF(ScopedArguments, m_scope); }
-    static ptrdiff_t offsetOfStorage() { return OBJECT_OFFSETOF(ScopedArguments, m_storage); }
+    static constexpr ptrdiff_t offsetOfOverrodeThings() { return OBJECT_OFFSETOF(ScopedArguments, m_overrodeThings); }
+    static constexpr ptrdiff_t offsetOfTotalLength() { return OBJECT_OFFSETOF(ScopedArguments, m_totalLength); }
+    static constexpr ptrdiff_t offsetOfTable() { return OBJECT_OFFSETOF(ScopedArguments, m_table); }
+    static constexpr ptrdiff_t offsetOfScope() { return OBJECT_OFFSETOF(ScopedArguments, m_scope); }
+    static constexpr ptrdiff_t offsetOfStorage() { return OBJECT_OFFSETOF(ScopedArguments, m_storage); }
     
 private:
     WriteBarrier<Unknown>* storage() const

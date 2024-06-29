@@ -1,5 +1,6 @@
+CONSOLE MESSAGE: TypeError: a message
 
-Harness Error (TIMEOUT), message = null
+Harness Error (FAIL), message = TypeError: a message
 
-TIMEOUT event.intercept() should abort if the handler throws Test timed out
+FAIL event.intercept() should abort if the handler throws assert_equals: expected "#1" but got ""
 

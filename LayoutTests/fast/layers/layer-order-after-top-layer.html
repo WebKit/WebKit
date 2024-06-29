@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <style>
+        
+        dialog, .above {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            width: 400px;
+            height: 300px;
+            background-color: red;
+            border: none;
+            display: block;
+            padding: 0;
+            margin: 0;
+        }
+
+        dialog {
+            background-color: red;
+            display: block;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .above {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            width: 400px;
+            height: 300px;
+            padding: 0;
+            margin: 0;
+            background-color: Canvas;
+            color: white;
+            background-color: green;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', async () => {
+            document.querySelector("dialog").showModal();
+            await UIHelper.renderingUpdate();
+            document.querySelector("dialog").close();
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, false);        
+    </script>
+</head>
+<body>
+    <dialog></dialog>
+    <div class="above"></div>
+</body>
+</html>

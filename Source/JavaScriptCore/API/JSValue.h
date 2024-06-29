@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @property
 @abstract The JSContext that this value originates from.
 */
-@property (readonly, strong) JSContext *context;
+@property (readonly, strong) JSContext * _Null_unspecified context;
 
 /*!
 @methodgroup Creating JavaScript Values
@@ -63,7 +63,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param value The Objective-C object to be converted.
 @result The new JSValue.
 */
-+ (JSValue *)valueWithObject:(id)value inContext:(JSContext *)context;
++ (JSValue * _Null_unspecified)valueWithObject:(id _Null_unspecified)value inContext:(JSContext * _Null_unspecified)context;
 
 /*!
 @method
@@ -71,7 +71,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param context The JSContext in which the resulting JSValue will be created.
 @result The new JSValue representing the equivalent boolean value.
 */
-+ (JSValue *)valueWithBool:(BOOL)value inContext:(JSContext *)context;
++ (JSValue * _Null_unspecified)valueWithBool:(BOOL)value inContext:(JSContext * _Null_unspecified)context;
 
 /*!
 @method
@@ -79,7 +79,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param context The JSContext in which the resulting JSValue will be created.
 @result The new JSValue representing the equivalent boolean value.
 */
-+ (JSValue *)valueWithDouble:(double)value inContext:(JSContext *)context;
++ (JSValue * _Null_unspecified)valueWithDouble:(double)value inContext:(JSContext * _Null_unspecified)context;
 
 /*!
 @method
@@ -87,7 +87,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param context The JSContext in which the resulting JSValue will be created.
 @result The new JSValue representing the equivalent boolean value.
 */
-+ (JSValue *)valueWithInt32:(int32_t)value inContext:(JSContext *)context;
++ (JSValue * _Null_unspecified)valueWithInt32:(int32_t)value inContext:(JSContext * _Null_unspecified)context;
 
 /*!
 @method
@@ -95,7 +95,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param context The JSContext in which the resulting JSValue will be created.
 @result The new JSValue representing the equivalent boolean value.
 */
-+ (JSValue *)valueWithUInt32:(uint32_t)value inContext:(JSContext *)context;
++ (JSValue * _Null_unspecified)valueWithUInt32:(uint32_t)value inContext:(JSContext * _Null_unspecified)context;
 
 /*!
 @method
@@ -103,7 +103,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param context The JSContext in which the resulting object will be created.
 @result The new JavaScript object.
 */
-+ (JSValue *)valueWithNewObjectInContext:(JSContext *)context;
++ (JSValue * _Null_unspecified)valueWithNewObjectInContext:(JSContext * _Null_unspecified)context;
 
 /*!
 @method
@@ -111,7 +111,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param context The JSContext in which the resulting array will be created.
 @result The new JavaScript array.
 */
-+ (JSValue *)valueWithNewArrayInContext:(JSContext *)context;
++ (JSValue * _Null_unspecified)valueWithNewArrayInContext:(JSContext * _Null_unspecified)context;
 
 /*!
 @method
@@ -121,7 +121,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param context The JSContext in which the resulting regular expression object will be created.
 @result The new JavaScript regular expression object.
 */
-+ (JSValue *)valueWithNewRegularExpressionFromPattern:(NSString *)pattern flags:(NSString *)flags inContext:(JSContext *)context;
++ (JSValue * _Null_unspecified)valueWithNewRegularExpressionFromPattern:(NSString * _Null_unspecified)pattern flags:(NSString * _Null_unspecified)flags inContext:(JSContext * _Null_unspecified)context;
 
 /*!
 @method
@@ -130,7 +130,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param context The JSContext in which the resulting error object will be created.
 @result The new JavaScript error object.
 */
-+ (JSValue *)valueWithNewErrorFromMessage:(NSString *)message inContext:(JSContext *)context;
++ (JSValue * _Null_unspecified)valueWithNewErrorFromMessage:(NSString * _Null_unspecified)message inContext:(JSContext * _Null_unspecified)context;
 
 /*!
 @method
@@ -140,7 +140,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result The JSValue representing a new promise JavaScript object.
 @discussion This method is equivalent to calling the Promise constructor in JavaScript. the resolve and reject callbacks each normally take a single value, which they forward to all relevent pending reactions. While inside the executor callback context will act as if it were in any other callback, except calleeFunction will be <code>nil</code>. This also means means the new promise object may be accessed via <code>[context thisValue]</code>.
 */
-+ (JSValue *)valueWithNewPromiseInContext:(JSContext *)context fromExecutor:(void (^)(JSValue *resolve, JSValue *reject))callback JSC_API_AVAILABLE(macos(10.15), ios(13.0));
++ (JSValue * _Null_unspecified)valueWithNewPromiseInContext:(JSContext * _Null_unspecified)context fromExecutor:(void (^ _Null_unspecified)(JSValue * _Null_unspecified resolve, JSValue * _Null_unspecified reject))callback JSC_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /*!
 @method
@@ -150,7 +150,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result The JSValue representing a new promise JavaScript object.
 @discussion This method is equivalent to calling <code>[JSValue valueWithNewPromiseFromExecutor:^(JSValue *resolve, JSValue *reject) { [resolve callWithArguments:@[result]]; } inContext:context]</code>
 */
-+ (JSValue *)valueWithNewPromiseResolvedWithResult:(id)result inContext:(JSContext *)context JSC_API_AVAILABLE(macos(10.15), ios(13.0));
++ (JSValue * _Null_unspecified)valueWithNewPromiseResolvedWithResult:(id _Null_unspecified)result inContext:(JSContext * _Null_unspecified)context JSC_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /*!
 @method
@@ -160,7 +160,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result The JSValue representing a new promise JavaScript object.
 @discussion This method is equivalent to calling <code>[JSValue valueWithNewPromiseFromExecutor:^(JSValue *resolve, JSValue *reject) { [reject callWithArguments:@[reason]]; } inContext:context]</code>
 */
-+ (JSValue *)valueWithNewPromiseRejectedWithReason:(id)reason inContext:(JSContext *)context JSC_API_AVAILABLE(macos(10.15), ios(13.0));
++ (JSValue * _Null_unspecified)valueWithNewPromiseRejectedWithReason:(id _Null_unspecified)reason inContext:(JSContext * _Null_unspecified)context JSC_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /*!
 @method
@@ -169,7 +169,45 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param context The JSContext to which the resulting JSValue belongs.
 @result The JSValue representing a unique JavaScript value with type symbol.
 */
-+ (JSValue *)valueWithNewSymbolFromDescription:(NSString *)description inContext:(JSContext *)context JSC_API_AVAILABLE(macos(10.15), ios(13.0));
++ (JSValue * _Null_unspecified)valueWithNewSymbolFromDescription:(NSString * _Null_unspecified)description inContext:(JSContext * _Null_unspecified)context JSC_API_AVAILABLE(macos(10.15), ios(13.0));
+
+/*!
+@method
+@abstract Create a new BigInt value from a numeric string.
+@param string The string representation of the BigInt JavaScript value being created.
+@param context The JSContext to which the resulting JSValue belongs.
+@result The JSValue representing a JavaScript value with type BigInt.
+@discussion This is equivalent to calling the <code>BigInt</code> constructor from JavaScript with a string argument.
+*/
++ (nullable JSValue *)valueWithNewBigIntFromString:(nonnull NSString *)string inContext:(nonnull JSContext *)context JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+@method
+@abstract Create a new BigInt value from a <code>int64_t</code>.
+@param int64 The signed 64-bit integer of the BigInt JavaScript value being created.
+@param context The JSContext to which the resulting JSValue belongs.
+@result The JSValue representing a JavaScript value with type BigInt.
+*/
++ (nullable JSValue *)valueWithNewBigIntFromInt64:(int64_t)int64 inContext:(nonnull JSContext *)context JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+@method
+@abstract Create a new BigInt value from a <code>uint64_t</code>.
+@param uint64 The unsigned 64-bit integer of the BigInt JavaScript value being created.
+@param context The JSContext to which the resulting JSValue belongs.
+@result The JSValue representing a JavaScript value with type BigInt.
+*/
++ (nullable JSValue *)valueWithNewBigIntFromUInt64:(uint64_t)uint64 inContext:(nonnull JSContext *)context JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+@method
+@abstract Create a new BigInt value from a double.
+@param value The value of the BigInt JavaScript value being created.
+@param context The JSContext to which the resulting JSValue belongs.
+@result The JSValue representing a JavaScript value with type BigInt.
+@discussion If the value is not an integer, an exception is thrown.
+*/
++ (nullable JSValue *)valueWithNewBigIntFromDouble:(double)value inContext:(nonnull JSContext *)context JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /*!
 @method
@@ -177,7 +215,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param context The JSContext to which the resulting JSValue belongs.
 @result The JSValue representing the JavaScript value <code>null</code>.
 */
-+ (JSValue *)valueWithNullInContext:(JSContext *)context;
++ (JSValue * _Null_unspecified)valueWithNullInContext:(JSContext * _Null_unspecified)context;
 
 /*!
 @method
@@ -185,7 +223,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param context The JSContext to which the resulting JSValue belongs.
 @result The JSValue representing the JavaScript value <code>undefined</code>.
 */
-+ (JSValue *)valueWithUndefinedInContext:(JSContext *)context;
++ (JSValue * _Null_unspecified)valueWithUndefinedInContext:(JSContext * _Null_unspecified)context;
 
 /*!
 @methodgroup Converting to Objective-C Types
@@ -240,7 +278,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  to the conversion rules specified above.
 @result The Objective-C representation of this JSValue.
 */
-- (id)toObject;
+- (id _Null_unspecified)toObject;
 
 /*!
 @method
@@ -249,7 +287,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  If the result is not of the specified Class then <code>nil</code> will be returned.
 @result An Objective-C object of the specified Class or <code>nil</code>.
 */
-- (id)toObjectOfClass:(Class)expectedClass;
+- (id _Null_unspecified)toObjectOfClass:(Class _Null_unspecified)expectedClass;
 
 /*!
 @method
@@ -263,17 +301,15 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 /*!
 @method
 @abstract Convert a JSValue to a double.
-@discussion The JSValue is converted to a number according to the rules specified 
- by the JavaScript language.
 @result The double result of the conversion.
+@discussion Convert the JSValue to a number according to the rules specified by the JavaScript language. Unless the JSValue is a BigInt then this is equivalent to <code>Number(value)</code> in JavaScript.
 */
 - (double)toDouble;
 
 /*!
 @method
 @abstract Convert a JSValue to an <code>int32_t</code>.
-@discussion The JSValue is converted to an integer according to the rules specified 
- by the JavaScript language.
+@discussion The JSValue is converted to an integer according to the rules specified by the JavaScript language. If the JSValue is a BigInt, then the value is truncated to an <code>int32_t</code>.
 @result The <code>int32_t</code> result of the conversion.
 */
 - (int32_t)toInt32;
@@ -281,21 +317,33 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 /*!
 @method
 @abstract Convert a JSValue to a <code>uint32_t</code>.
-@discussion The JSValue is converted to an integer according to the rules specified 
- by the JavaScript language.
+@discussion The JSValue is converted to an integer according to the rules specified by the JavaScript language. If the JSValue is a BigInt, then the value is truncated to a <code>uint32_t</code>.
 @result The <code>uint32_t</code> result of the conversion.
 */
 - (uint32_t)toUInt32;
 
 /*!
 @method
+@abstract Convert a JSValue to a <code>int64_t</code>.
+@discussion The JSValue is converted to an integer according to the rules specified by the JavaScript language. If the value is a BigInt, then the value is truncated to an <code>int64_t</code>.
+*/
+- (int64_t)toInt64 JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+@method
+@abstract Convert a JSValue to a <code>uint64_t</code>.
+@discussion The JSValue is converted to an integer according to the rules specified by the JavaScript language. If the value is a BigInt, then the value is truncated to a <code>uint64_t</code>.
+*/
+- (uint64_t)toUInt64 JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+@method
 @abstract Convert a JSValue to a NSNumber.
-@discussion If the JSValue represents a boolean, a NSNumber value of YES or NO 
- will be returned. For all other types the value will be converted to a number according 
- to the rules specified by the JavaScript language.
+@discussion If the JSValue represents a boolean, a NSNumber value of YES or NO
+ will be returned. For all other types, the result is equivalent to <code>Number(value)</code> in JavaScript.
 @result The NSNumber result of the conversion.
 */
-- (NSNumber *)toNumber;
+- (NSNumber * _Null_unspecified)toNumber;
 
 /*!
 @method
@@ -304,7 +352,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  by the JavaScript language.
 @result The NSString containing the result of the conversion.
 */
-- (NSString *)toString;
+- (NSString * _Null_unspecified)toString;
 
 /*!
 @method
@@ -313,7 +361,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  since 1970 which is then used to create a new NSDate instance.
 @result The NSDate created using the converted time interval.
 */
-- (NSDate *)toDate;
+- (NSDate * _Null_unspecified)toDate;
 
 /*!
 @method
@@ -327,7 +375,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result The NSArray containing the recursively converted contents of the 
  converted JavaScript array.
 */
-- (NSArray *)toArray;
+- (NSArray * _Null_unspecified)toArray;
 
 /*!
 @method
@@ -339,10 +387,10 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result The NSDictionary containing the recursively converted contents of
  the converted JavaScript object.
 */
-- (NSDictionary *)toDictionary;
+- (NSDictionary * _Null_unspecified)toDictionary;
 
 /*!
-@functiongroup Checking JavaScript Types
+@methodgroup Checking JavaScript Types
 */
 
 /*!
@@ -403,16 +451,10 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @property (readonly) BOOL isSymbol JSC_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /*!
-@method
-@abstract Compare two JSValues using JavaScript's <code>===</code> operator.
+@property
+@abstract Check if a JSValue is a BigInt.
 */
-- (BOOL)isEqualToObject:(id)value;
-
-/*!
-@method
-@abstract Compare two JSValues using JavaScript's <code>==</code> operator.
-*/
-- (BOOL)isEqualWithTypeCoercionToObject:(id)value;
+@property (readonly) BOOL isBigInt JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /*!
 @method
@@ -421,7 +463,59 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  If an object other than a JSValue is passed, it will first be converted according to
  the aforementioned rules.
 */
-- (BOOL)isInstanceOf:(id)value;
+- (BOOL)isInstanceOf:(id _Null_unspecified)value;
+
+/*!
+@methodgroup Compare JavaScript values
+*/
+
+/*!
+@method
+@abstract Compare two JSValues using JavaScript's <code>===</code> operator.
+*/
+- (BOOL)isEqualToObject:(id _Null_unspecified)value;
+
+/*!
+@method
+@abstract Compare two JSValues using JavaScript's <code>==</code> operator.
+*/
+- (BOOL)isEqualWithTypeCoercionToObject:(id _Null_unspecified)value;
+
+/*!
+@method
+@abstract Compare two JSValues.
+@other The JSValue to compare with.
+@result A value of JSRelationCondition, a kJSRelationConditionUndefined is returned if an exception is thrown.
+@discussion The result is computed by comparing the results of JavaScript's <code>==</code>, <code><</code>, and <code>></code> operators. If either <code>self</code> or <code>other</code> is (or would coerce to) <code>NaN</code> in JavaScript, then the result is kJSRelationConditionUndefined.
+*/
+- (JSRelationCondition)compareJSValue:(nonnull JSValue *)other JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+@method
+@abstract Compare a JSValue with a <code>int64_t</code>.
+@other The <code>int64_t</code> to compare with.
+@result A value of JSRelationCondition, a kJSRelationConditionUndefined is returned if an exception is thrown.
+@discussion The JSValue is converted to an integer according to the rules specified by the JavaScript language then compared with <code>other</code>.
+*/
+- (JSRelationCondition)compareInt64:(int64_t)other JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+@method
+@abstract Compare a JSValue with a <code>uint64_t</code>.
+@other The <code>uint64_t</code> to compare with.
+@result A value of JSRelationCondition, a kJSRelationConditionUndefined is returned if an exception is thrown.
+@discussion The JSValue is converted to an integer according to the rules specified by the JavaScript language then compared with <code>other</code>.
+*/
+- (JSRelationCondition)compareUInt64:(uint64_t)other JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+@method
+@abstract Compare a JSValue with a double.
+@other The double to compare with.
+@result A value of JSRelationCondition, a kJSRelationConditionUndefined is returned if an exception is thrown.
+@discussion The JSValue is converted to a double according to the rules specified by the JavaScript language then compared with <code>other</code>.
+*/
+- (JSRelationCondition)compareDouble:(double)other JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /*!
 @methodgroup Calling Functions and Constructors
@@ -434,7 +528,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param arguments The arguments to pass to the function.
 @result The return value of the function call. 
 */
-- (JSValue *)callWithArguments:(NSArray *)arguments;
+- (JSValue * _Null_unspecified)callWithArguments:(NSArray * _Null_unspecified)arguments;
 
 /*!
 @method
@@ -443,7 +537,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param arguments The arguments to pass to the constructor.
 @result The return value of the constructor call.
 */
-- (JSValue *)constructWithArguments:(NSArray *)arguments;
+- (JSValue * _Null_unspecified)constructWithArguments:(NSArray * _Null_unspecified)arguments;
 
 /*!
 @method
@@ -455,7 +549,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @param arguments The arguments to pass to the method.
 @result The return value of the method call.
 */
-- (JSValue *)invokeMethod:(NSString *)method withArguments:(NSArray *)arguments;
+- (JSValue * _Null_unspecified)invokeMethod:(NSString * _Null_unspecified)method withArguments:(NSArray * _Null_unspecified)arguments;
 
 @end
 
@@ -478,7 +572,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result A newly allocated JavaScript object containing properties
  named <code>x</code> and <code>y</code>, with values from the CGPoint.
 */
-+ (JSValue *)valueWithPoint:(CGPoint)point inContext:(JSContext *)context;
++ (JSValue * _Null_unspecified)valueWithPoint:(CGPoint)point inContext:(JSContext * _Null_unspecified)context;
 
 /*!
 @method
@@ -486,7 +580,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result A newly allocated JavaScript object containing properties
  named <code>location</code> and <code>length</code>, with values from the NSRange.
 */
-+ (JSValue *)valueWithRange:(NSRange)range inContext:(JSContext *)context;
++ (JSValue * _Null_unspecified)valueWithRange:(NSRange)range inContext:(JSContext * _Null_unspecified)context;
 
 /*!
 @method
@@ -495,7 +589,7 @@ Create a JSValue from a CGRect.
 @result A newly allocated JavaScript object containing properties
  named <code>x</code>, <code>y</code>, <code>width</code>, and <code>height</code>, with values from the CGRect.
 */
-+ (JSValue *)valueWithRect:(CGRect)rect inContext:(JSContext *)context;
++ (JSValue * _Null_unspecified)valueWithRect:(CGRect)rect inContext:(JSContext * _Null_unspecified)context;
 
 /*!
 @method
@@ -503,7 +597,7 @@ Create a JSValue from a CGRect.
 @result A newly allocated JavaScript object containing properties
  named <code>width</code> and <code>height</code>, with values from the CGSize.
 */
-+ (JSValue *)valueWithSize:(CGSize)size inContext:(JSContext *)context;
++ (JSValue * _Null_unspecified)valueWithSize:(CGSize)size inContext:(JSContext * _Null_unspecified)context;
 
 /*!
 @method
@@ -550,9 +644,9 @@ Create a JSValue from a CGRect.
 @interface JSValue (PropertyAccess)
 
 #if (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500) || (defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED < 130000)
-typedef NSString *JSValueProperty;
+typedef NSString * _Null_unspecified JSValueProperty;
 #else
-typedef id JSValueProperty;
+typedef id _Null_unspecified JSValueProperty;
 #endif
 
 /*!
@@ -562,14 +656,14 @@ typedef id JSValueProperty;
  if the property does not exist.
  @discussion Corresponds to the JavaScript operation <code>object[property]</code>. Starting with macOS 10.15 and iOS 13, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS 10.15 and iOS 13, 'property' was expected to be an NSString *.
  */
-- (JSValue *)valueForProperty:(JSValueProperty)property;
+- (JSValue * _Null_unspecified)valueForProperty:(JSValueProperty)property;
 
 /*!
  @method
  @abstract Set a property on a JSValue.
  @discussion Corresponds to the JavaScript operation <code>object[property] = value</code>. Starting with macOS 10.15 and iOS 13, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS 10.15 and iOS 13, 'property' was expected to be an NSString *.
  */
-- (void)setValue:(id)value forProperty:(JSValueProperty)property;
+- (void)setValue:(id _Null_unspecified)value forProperty:(JSValueProperty)property;
 
 /*!
  @method
@@ -594,7 +688,7 @@ typedef id JSValueProperty;
  @discussion This method may be used to create a data or accessor property on an object.
  This method operates in accordance with the Object.defineProperty method in the JavaScript language. Starting with macOS 10.15 and iOS 13, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS 10.15 and iOS 13, 'property' was expected to be an NSString *.
  */
-- (void)defineProperty:(JSValueProperty)property descriptor:(id)descriptor;
+- (void)defineProperty:(JSValueProperty)property descriptor:(id _Null_unspecified)descriptor;
 
 /*!
  @method
@@ -602,7 +696,7 @@ typedef id JSValueProperty;
  @result The JSValue for the property at the specified index.
  Returns the JavaScript value <code>undefined</code> if no property exists at that index.
  */
-- (JSValue *)valueAtIndex:(NSUInteger)index;
+- (JSValue * _Null_unspecified)valueAtIndex:(NSUInteger)index;
 
 /*!
  @method
@@ -610,7 +704,7 @@ typedef id JSValueProperty;
  @discussion For JSValues that are JavaScript arrays, indices greater than
  UINT_MAX - 1 will not affect the length of the array.
  */
-- (void)setValue:(id)value atIndex:(NSUInteger)index;
+- (void)setValue:(id _Null_unspecified)value atIndex:(NSUInteger)index;
 
 @end
 
@@ -635,10 +729,10 @@ typedef id JSValueProperty;
 */
 @interface JSValue (SubscriptSupport)
 
-- (JSValue *)objectForKeyedSubscript:(id)key;
-- (JSValue *)objectAtIndexedSubscript:(NSUInteger)index;
-- (void)setObject:(id)object forKeyedSubscript:(id)key;
-- (void)setObject:(id)object atIndexedSubscript:(NSUInteger)index;
+- (JSValue * _Null_unspecified)objectForKeyedSubscript:(id _Null_unspecified)key;
+- (JSValue * _Null_unspecified)objectAtIndexedSubscript:(NSUInteger)index;
+- (void)setObject:(id _Null_unspecified)object forKeyedSubscript:(id _Null_unspecified)key;
+- (void)setObject:(id _Null_unspecified)object atIndexedSubscript:(NSUInteger)index;
 
 @end
 
@@ -653,14 +747,14 @@ typedef id JSValueProperty;
 @abstract Creates a JSValue, wrapping its C API counterpart.
 @result The Objective-C API equivalent of the specified JSValueRef.
 */
-+ (JSValue *)valueWithJSValueRef:(JSValueRef)value inContext:(JSContext *)context;
++ (JSValue * _Null_unspecified)valueWithJSValueRef:(JSValueRef _Null_unspecified)value inContext:(JSContext * _Null_unspecified)context;
 
 /*!
 @property
 @abstract Returns the C API counterpart wrapped by a JSContext.
 @result The C API equivalent of this JSValue.
 */
-@property (readonly) JSValueRef JSValueRef;
+@property (readonly) JSValueRef _Null_unspecified JSValueRef;
 @end
 
 #ifdef __cplusplus
@@ -699,27 +793,27 @@ extern "C" {
 /*!
 @const 
 */
-JS_EXPORT extern NSString * const JSPropertyDescriptorWritableKey;
+JS_EXPORT extern NSString * _Null_unspecified const JSPropertyDescriptorWritableKey;
 /*!
 @const 
 */
-JS_EXPORT extern NSString * const JSPropertyDescriptorEnumerableKey;
+JS_EXPORT extern NSString * _Null_unspecified const JSPropertyDescriptorEnumerableKey;
 /*!
 @const 
 */
-JS_EXPORT extern NSString * const JSPropertyDescriptorConfigurableKey;
+JS_EXPORT extern NSString * _Null_unspecified const JSPropertyDescriptorConfigurableKey;
 /*!
 @const 
 */
-JS_EXPORT extern NSString * const JSPropertyDescriptorValueKey;
+JS_EXPORT extern NSString * _Null_unspecified const JSPropertyDescriptorValueKey;
 /*!
 @const 
 */
-JS_EXPORT extern NSString * const JSPropertyDescriptorGetKey;
+JS_EXPORT extern NSString * _Null_unspecified const JSPropertyDescriptorGetKey;
 /*!
 @const 
 */
-JS_EXPORT extern NSString * const JSPropertyDescriptorSetKey;
+JS_EXPORT extern NSString * _Null_unspecified const JSPropertyDescriptorSetKey;
 
 #ifdef __cplusplus
 } // extern "C"

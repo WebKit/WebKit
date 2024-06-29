@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT history.replaceState() fires the navigate event Test timed out
+PASS history.replaceState() fires the navigate event
 

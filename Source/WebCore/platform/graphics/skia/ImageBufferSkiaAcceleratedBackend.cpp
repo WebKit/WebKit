@@ -32,11 +32,24 @@
 #include "IntRect.h"
 #include "PixelBuffer.h"
 #include "PlatformDisplay.h"
+#include "ProcessCapabilities.h"
 #include <skia/core/SkBitmap.h>
 #include <skia/core/SkPixmap.h>
 #include <skia/gpu/ganesh/SkSurfaceGanesh.h>
 #include <skia/gpu/gl/GrGLTypes.h>
 #include <wtf/IsoMallocInlines.h>
+
+#if USE(NICOSIA)
+#include "BitmapTexture.h"
+#include "GLFence.h"
+#include "PlatformLayerDisplayDelegate.h"
+#include "TextureMapperFlags.h"
+#include "TextureMapperPlatformLayerBuffer.h"
+#include "TextureMapperPlatformLayerProxyGL.h"
+#include <skia/gpu/GrBackendSurface.h>
+#include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
+#include <skia/gpu/ganesh/gl/GrGLDirectContext.h>
+#endif
 
 namespace WebCore {
 
@@ -46,6 +59,10 @@ std::unique_ptr<ImageBufferSkiaAcceleratedBackend> ImageBufferSkiaAcceleratedBac
 {
     IntSize backendSize = calculateSafeBackendSize(parameters);
     if (backendSize.isEmpty())
+        return nullptr;
+
+    // We always want to accelerate the canvas when Accelerated2DCanvas setting is true, even if skia CPU is enabled.
+    if (parameters.purpose != RenderingPurpose::Canvas && !ProcessCapabilities::canUseAcceleratedBuffers())
         return nullptr;
 
     auto* glContext = PlatformDisplay::sharedDisplayForCompositing().skiaGLContext();
@@ -66,9 +83,28 @@ std::unique_ptr<ImageBufferSkiaAcceleratedBackend> ImageBufferSkiaAcceleratedBac
 ImageBufferSkiaAcceleratedBackend::ImageBufferSkiaAcceleratedBackend(const Parameters& parameters, sk_sp<SkSurface>&& surface)
     : ImageBufferSkiaSurfaceBackend(parameters, WTFMove(surface), RenderingMode::Accelerated)
 {
+#if USE(NICOSIA)
+    // Use a content layer for canvas.
+    if (parameters.purpose == RenderingPurpose::Canvas) {
+        m_contentLayer = Nicosia::ContentLayer::create(*this, adoptRef(*new TextureMapperPlatformLayerProxyGL(TextureMapperPlatformLayerProxy::ContentType::Canvas)));
+        m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(m_contentLayer.get());
+    }
+#endif
 }
 
-ImageBufferSkiaAcceleratedBackend::~ImageBufferSkiaAcceleratedBackend() = default;
+ImageBufferSkiaAcceleratedBackend::~ImageBufferSkiaAcceleratedBackend()
+{
+#if USE(NICOSIA)
+    if (m_texture.back || m_texture.front) {
+        GLContext::ScopedGLContextCurrent scopedContext(*PlatformDisplay::sharedDisplayForCompositing().sharingGLContext());
+        m_texture.back = nullptr;
+        m_texture.front = nullptr;
+    }
+
+    if (m_contentLayer)
+        m_contentLayer->invalidateClient();
+#endif
+}
 
 RefPtr<NativeImage> ImageBufferSkiaAcceleratedBackend::copyNativeImage()
 {
@@ -106,6 +142,57 @@ void ImageBufferSkiaAcceleratedBackend::putPixelBuffer(const PixelBuffer& pixelB
     SkPixmap pixmap(info, pixels, info.minRowBytes64());
     m_surface->writePixels(pixmap, 0, 0);
 }
+
+#if USE(NICOSIA)
+RefPtr<GraphicsLayerContentsDisplayDelegate> ImageBufferSkiaAcceleratedBackend::layerContentsDisplayDelegate() const
+{
+    return m_layerContentsDisplayDelegate;
+}
+
+void ImageBufferSkiaAcceleratedBackend::swapBuffersIfNeeded()
+{
+    auto& display = PlatformDisplay::sharedDisplayForCompositing();
+    if (!display.skiaGLContext()->makeContextCurrent())
+        return;
+
+    RELEASE_ASSERT(m_contentLayer);
+
+    auto* grContext = display.skiaGrContext();
+    RELEASE_ASSERT(grContext);
+    grContext->flushAndSubmit(m_surface.get(), GLFence::isSupported() ? GrSyncCpu::kNo : GrSyncCpu::kYes);
+
+    auto texture = SkSurfaces::GetBackendTexture(m_surface.get(), SkSurface::BackendHandleAccess::kFlushRead);
+    ASSERT(texture.isValid());
+    GrGLTextureInfo textureInfo;
+    bool retrievedTextureInfo = GrBackendTextures::GetGLTextureInfo(texture, &textureInfo);
+    ASSERT_UNUSED(retrievedTextureInfo, retrievedTextureInfo);
+    std::unique_ptr<GLFence> fence = GLFence::create();
+
+    // Switch to the sharing context for the texture copy.
+    if (!display.sharingGLContext()->makeContextCurrent())
+        return;
+
+    auto info = m_surface->imageInfo();
+    IntSize textureSize(info.width(), info.height());
+    if (!m_texture.back)
+        m_texture.back = BitmapTexture::create(textureSize, BitmapTexture::Flags::SupportsAlpha);
+    fence->wait(GLFence::FlushCommands::No);
+    m_texture.back->copyFromExternalTexture(textureInfo.fID);
+    fence = GLFence::create();
+    std::swap(m_texture.back, m_texture.front);
+
+    if (!display.skiaGLContext()->makeContextCurrent())
+        return;
+
+    auto& proxy = m_contentLayer->proxy();
+    Locker locker { proxy.lock() };
+    auto layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(m_texture.front->id(), textureSize, TextureMapperFlags::ShouldBlend, GL_DONT_CARE);
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    layerBuffer->setFence(WTFMove(fence));
+#endif
+    downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
+}
+#endif
 
 } // namespace WebCore
 

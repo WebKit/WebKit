@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--useTrustedTypes=true ] -->
 <head>
   <script nonce="123" src="/resources/testharness.js"></script>
   <script nonce="123"src="/resources/testharnessreport.js"></script>
@@ -94,11 +94,11 @@
 
   promise_test(t => {
     trustedTypes.createPolicy('default', {
-      createScript: s => s.replace('payload', 'default policy'),
+      createScript: s => s,
     }, true);
     let p = promise_flush()();
     eval('script_run_beacon="payload"');
-    assert_equals(script_run_beacon, 'default policy');
+    assert_equals(script_run_beacon, 'payload');
     flush();
     return p;
   }, "Trusted Type violation report: default policy runs in report-only mode.");

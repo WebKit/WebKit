@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: 0
+CONSOLE MESSAGE: buffer length(16) minus offset(0), (resourceOffset(0) + dynamicOffset(0)), is less than required bufferSize(2147483648)
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584

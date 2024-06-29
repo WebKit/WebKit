@@ -32,6 +32,7 @@ messages -> PlatformXRSystem NotRefCounted {
     [EnabledIf='webXREnabled()'] ShutDownTrackingAndRendering()
     [EnabledIf='webXREnabled()'] RequestFrame() -> (struct PlatformXR::FrameData frameData)
     [EnabledIf='webXREnabled()'] SubmitFrame()
+    [EnabledIf='webXREnabled()'] DidCompleteShutdownTriggeredBySystem()
 }
 
 #endif

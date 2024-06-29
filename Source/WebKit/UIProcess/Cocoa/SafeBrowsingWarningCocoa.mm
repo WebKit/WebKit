@@ -97,12 +97,12 @@ static void addLinkAndReplace(NSMutableAttributedString *string, NSString *toRep
 
 static NSURL *reportAnErrorURL(const URL& url, SSBServiceLookupResult *result)
 {
-    return URL({ }, makeString(reportAnErrorBase(result), "&url=", encodeWithURLEscapeSequences(url.string()), "&hl=", defaultLanguage()));
+    return URL({ }, makeString(reportAnErrorBase(result), "&url="_s, encodeWithURLEscapeSequences(url.string()), "&hl="_s, defaultLanguage()));
 }
 
 static NSURL *malwareDetailsURL(const URL& url, SSBServiceLookupResult *result)
 {
-    return URL({ }, makeString(malwareDetailsBase(result), "&site=", url.host(), "&hl=", defaultLanguage()));
+    return URL({ }, makeString(malwareDetailsBase(result), "&site="_s, url.host(), "&hl="_s, defaultLanguage()));
 }
 
 static NSString *safeBrowsingTitleText(SSBServiceLookupResult *result)

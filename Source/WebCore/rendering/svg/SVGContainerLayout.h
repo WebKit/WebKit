@@ -45,7 +45,7 @@ public:
 private:
     bool layoutSizeOfNearestViewportChanged() const;
 
-    RenderLayerModelObject& m_container;
+    SingleThreadWeakRef<RenderLayerModelObject> m_container;
     Vector<std::reference_wrapper<RenderLayerModelObject>> m_positionedChildren;
 };
 

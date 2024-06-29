@@ -7,17 +7,17 @@
 
 #include "include/core/SkCubicMap.h"
 
-#include "include/private/base/SkFloatingPoint.h"
 #include "include/private/base/SkTPin.h"
 #include "src/base/SkVx.h"
 
 #include <algorithm>
+#include <cmath>
 
 static float eval_poly(float t, float b) { return b; }
 
 template <typename... Rest>
 static float eval_poly(float t, float m, float b, Rest... rest) {
-    return eval_poly(t, sk_fmaf(m, t, b), rest...);
+    return eval_poly(t, std::fma(m, t, b), rest...);
 }
 
 static float cubic_solver(float A, float B, float C, float D) {
@@ -33,14 +33,14 @@ static float cubic_solver(float A, float B, float C, float D) {
     for (; iters < MAX_ITERS; ++iters) {
         SkASSERT(valid(t));
         float f = eval_poly(t, A, B, C, D);        // f   = At^3 + Bt^2 + Ct + D
-        if (sk_float_abs(f) <= 0.00005f) {
+        if (std::fabs(f) <= 0.00005f) {
             break;
         }
         float fp = eval_poly(t, 3*A, 2*B, C);      // f'  = 3At^2 + 2Bt + C
         float fpp = eval_poly(t, 3*A + 3*A, 2*B);  // f'' = 6At + 2B
 
         float numer = 2 * fp * f;
-        float denom = sk_fmaf(2 * fp, fp, -(f * fpp));
+        float denom = std::fma(2 * fp, fp, -(f * fpp));
 
         t -= numer / denom;
     }
@@ -69,7 +69,7 @@ float SkCubicMap::computeYFromX(float x) const {
     }
     float t;
     if (fType == kCubeRoot_Type) {
-        t = sk_float_pow(x / fCoeff[0].fX, 1.0f / 3);
+        t = std::pow(x / fCoeff[0].fX, 1.0f / 3);
     } else {
         t = compute_t_from_x(fCoeff[0].fX, fCoeff[1].fX, fCoeff[2].fX, x);
     }
@@ -82,7 +82,7 @@ float SkCubicMap::computeYFromX(float x) const {
 }
 
 static inline bool coeff_nearly_zero(float delta) {
-    return sk_float_abs(delta) <= 0.0000001f;
+    return std::fabs(delta) <= 0.0000001f;
 }
 
 SkCubicMap::SkCubicMap(SkPoint p1, SkPoint p2) {

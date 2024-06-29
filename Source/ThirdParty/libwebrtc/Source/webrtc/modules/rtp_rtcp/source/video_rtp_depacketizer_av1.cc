@@ -188,8 +188,7 @@ VectorObuInfo ParseObus(
   VectorObuInfo obu_infos;
   bool expect_continues_obu = false;
   for (rtc::ArrayView<const uint8_t> rtp_payload : rtp_payloads) {
-    rtc::ByteBufferReader payload(
-        reinterpret_cast<const char*>(rtp_payload.data()), rtp_payload.size());
+    rtc::ByteBufferReader payload(rtp_payload);
     uint8_t aggregation_header;
     if (!payload.ReadUInt8(&aggregation_header)) {
       RTC_DLOG(LS_WARNING)

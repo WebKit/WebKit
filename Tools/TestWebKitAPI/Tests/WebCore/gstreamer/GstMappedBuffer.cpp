@@ -111,7 +111,7 @@ TEST_F(GStreamerTest, mappedOwnedBufferReadSanity)
     ASSERT_TRUE(mappedBuf);
     EXPECT_EQ(mappedBuf->size(), 16);
     EXPECT_EQ(memcmp(memory, mappedBuf->data(), 16), 0);
-    EXPECT_EQ(memcmp(memory, mappedBuf->createSharedBuffer()->data(), 16), 0);
+    EXPECT_EQ(memcmp(memory, mappedBuf->createSharedBuffer()->span().data(), 16), 0);
 }
 
 TEST_F(GStreamerTest, mappedOwnedBufferCachesSharedBuffers)
@@ -122,7 +122,7 @@ TEST_F(GStreamerTest, mappedOwnedBufferCachesSharedBuffers)
     auto sharedBuf = mappedBuf->createSharedBuffer();
     // We expect the same data pointer wrapped by shared buffer, no
     // copies need to be made.
-    EXPECT_EQ(sharedBuf->data(), mappedBuf->createSharedBuffer()->data());
+    EXPECT_EQ(sharedBuf->span().data(), mappedBuf->createSharedBuffer()->span().data());
 }
 
 TEST_F(GStreamerTest, mappedOwnedBufferDoesAddsExtraRefs)

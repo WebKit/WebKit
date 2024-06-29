@@ -59,6 +59,10 @@
 @property (nonatomic, strong) UIColor *selectionHandleColor;
 @property (nonatomic, strong) UIColor *selectionHighlightColor;
 
+#if ENABLE(WRITING_TOOLS)
+@property UIWritingToolsBehavior writingToolsBehavior;
+#endif
+
 - (void)setSelectionColorsToMatchTintColor:(UIColor *)tintColor;
 - (void)restoreDefaultValues;
 

@@ -79,6 +79,14 @@ public:
     void setUsesUnpackArray() { m_usesUnpackArray = true; }
     void clearUsesUnpackArray() { m_usesUnpackArray = false; }
 
+    bool usesPackVector() const { return m_usesPackVector; }
+    void setUsesPackVector() { m_usesPackVector = true; }
+    void clearUsesPackVector() { m_usesPackVector = false; }
+
+    bool usesUnpackVector() const { return m_usesUnpackVector; }
+    void setUsesUnpackVector() { m_usesUnpackVector = true; }
+    void clearUsesUnpackVector() { m_usesUnpackVector = false; }
+
     bool usesWorkgroupUniformLoad() const { return m_usesWorkgroupUniformLoad; }
     void setUsesWorkgroupUniformLoad() { m_usesWorkgroupUniformLoad = true; }
 
@@ -96,6 +104,7 @@ public:
 
     bool usesAtomicCompareExchange() const { return m_usesAtomicCompareExchange; }
     void setUsesAtomicCompareExchange() { m_usesAtomicCompareExchange = true; }
+
     bool usesFragDepth() const { return m_usesFragDepth; }
     void setUsesFragDepth() { m_usesFragDepth = true; }
 
@@ -128,6 +137,10 @@ public:
 
     bool usesExtractBits() const { return m_usesExtractBits; }
     void setUsesExtractBits() { m_usesExtractBits = true; }
+
+    bool usesPackedVec3() const { return m_usesPackedVec3; }
+    void setUsesPackedVec3() { m_usesPackedVec3 = true; }
+    void clearUsesPackedVec3() { m_usesPackedVec3 = false; }
 
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
@@ -258,6 +271,8 @@ private:
     bool m_usesExternalTextures { false };
     bool m_usesPackArray { false };
     bool m_usesUnpackArray { false };
+    bool m_usesPackVector { false };
+    bool m_usesUnpackVector { false };
     bool m_usesWorkgroupUniformLoad { false };
     bool m_usesDivision { false };
     bool m_usesModulo { false };
@@ -275,6 +290,7 @@ private:
     bool m_usesDot4I8Packed { false };
     bool m_usesDot4U8Packed { false };
     bool m_usesExtractBits { false };
+    bool m_usesPackedVec3 { false };
     OptionSet<Extension> m_enabledExtensions;
     OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;

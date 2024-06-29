@@ -349,6 +349,19 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-test-results',
             'set-permissions',
         ],
+        'Apple-Sonoma-Smart-Pointer-Static-Analyzer-Build': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'prune-coresymbolicationd-cache-if-too-large',
+            'print-clang-version',
+            'scan-build-smart-pointer'
+        ],
         'Apple-Ventura-Release-Build': [
             'configure-build',
             'configuration',
@@ -782,6 +795,89 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
+        'Apple-visionOS-1-Release-Build': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'compile-webkit'
+        ],
+        'Apple-visionOS-1-Simulator-Release-Build': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'compile-webkit',
+            'trigger'
+        ],
+        'Apple-visionOS-1-Simulator-Debug-Build': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'compile-webkit',
+            'trigger'
+        ],
+        'Apple-visionOS-1-Simulator-Release-WK2-Tests': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'download-built-product',
+            'extract-built-product',
+            'wait-for-crash-collection',
+            'layout-test',
+            'dashboard-tests',
+            'archive-test-results',
+            'upload',
+            'extract-test-results',
+            'set-permissions',
+            'webkitpy-test',
+            'webkitperl-test',
+            'bindings-generation-tests',
+            'builtins-generator-tests',
+            'trigger-crash-log-submission'
+        ],
+        'Apple-visionOS-1-Simulator-Debug-WK2-Tests': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'download-built-product',
+            'extract-built-product',
+            'wait-for-crash-collection',
+            'layout-test',
+            'dashboard-tests',
+            'archive-test-results',
+            'upload',
+            'extract-test-results',
+            'set-permissions',
+            'webkitpy-test',
+            'webkitperl-test',
+            'bindings-generation-tests',
+            'builtins-generator-tests',
+            'trigger-crash-log-submission'
+        ],
         'Apple-tvOS-17-Release-Build': [
             'configure-build',
             'configuration',
@@ -1046,7 +1142,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'GTK-Linux-64-bit-Release-Ubuntu-2004-Build': [
+        'GTK-Linux-64-bit-Release-Ubuntu-2204-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1058,6 +1154,19 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit'
         ],
         'GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'jhbuild',
+            'compile-webkit',
+            'generate-minibrowser-bundle'
+        ],
+        'GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2204': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1448,6 +1557,19 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit',
             'generate-minibrowser-bundle'
         ],
+        'WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2204': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'jhbuild',
+            'compile-webkit',
+            'generate-minibrowser-bundle'
+        ],
         'WPE-Linux-64-bit-Release-Non-Unified-Build': [
             'configure-build',
             'configuration',
@@ -1471,7 +1593,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'WPE-Linux-64-bit-Release-Ubuntu-2004-Build': [
+        'WPE-Linux-64-bit-Release-Ubuntu-2204-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1570,7 +1692,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-built-product',
             'benchmark-test'
         ],
-        'WPE-Linux-64-bit-Release-Skia-Build': [
+        'WPE-Linux-64-bit-Release-Cairo-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',

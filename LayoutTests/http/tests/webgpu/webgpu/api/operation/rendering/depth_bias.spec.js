@@ -119,8 +119,8 @@ class DepthBiasTest extends TextureTestMixin(GPUTest) {
       colorAttachments: [
       {
         view: renderTarget.createView(),
-        storeOp: 'store',
-        loadOp: 'load'
+        loadOp: 'load',
+        storeOp: 'store'
       }],
 
       depthStencilAttachment

@@ -32,12 +32,14 @@
 #import <Foundation/Foundation.h>
 #import <WebKitLegacy/WebKitAvailability.h>
 
-#if defined(TARGET_OS_MACCATALYST) && TARGET_OS_MACCATALYST
-#import <CFNetwork/CFNSURLConnection.h>
-#elif !TARGET_OS_IPHONE || (defined(USE_APPLE_INTERNAL_SDK) && USE_APPLE_INTERNAL_SDK)
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST || (defined(USE_APPLE_INTERNAL_SDK) && USE_APPLE_INTERNAL_SDK)
 #import <Foundation/NSURLDownload.h>
 #else
-#import <WebKitLegacy/NSURLDownloadSPI.h>
+__attribute__((visibility("hidden")))
+@interface NSURLDownload : NSObject
+@end
+
+@protocol NSURLDownloadDelegate;
 #endif
 
 #if TARGET_OS_IPHONE

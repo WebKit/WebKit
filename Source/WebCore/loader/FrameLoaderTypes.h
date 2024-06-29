@@ -88,6 +88,12 @@ enum class NavigationType : uint8_t {
     Other
 };
 
+enum class NavigationHistoryBehavior : uint8_t {
+    Auto,
+    Push,
+    Replace
+};
+
 enum class ShouldOpenExternalURLsPolicy : uint8_t {
     ShouldNotAllow,
     ShouldAllowExternalSchemesButNotAppLinks,

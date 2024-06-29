@@ -2,9 +2,9 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (15,14) size 770x487
+    RenderSVGContainer {g} at (15,15) size 770x486
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGText {text} at (60,8) size 323x46 contains 1 chunk(s)
+      RenderSVGText {text} at (60,9) size 323x45 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 323x45
           chunk 1 text run 1 at (60.00,45.00) startOffset 0 endOffset 18 width 322.80: "Event bubbling - b"
       RenderSVGContainer {g} at (15,99) size 770x402
@@ -14,19 +14,19 @@ layer at (0,0) size 800x600
         RenderSVGContainer {a} at (33,116) size 167x368
           RenderSVGEllipse {circle} at (33,116) size 167x168 [fill={[type=SOLID] [color=#000000]}] [cx=70.00] [cy=120.00] [r=50.00]
           RenderSVGEllipse {circle} at (33,316) size 167x168 [fill={[type=SOLID] [color=#000000]}] [cx=70.00] [cy=240.00] [r=50.00]
-        RenderSVGText {text} at (135,73) size 258x46 contains 1 chunk(s)
+        RenderSVGText {text} at (135,74) size 258x45 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 258x45
             chunk 1 text run 1 at (135.00,110.00) startOffset 0 endOffset 16 width 258.00: "Click on circle,"
-        RenderSVGText {text} at (135,113) size 263x46 contains 1 chunk(s)
+        RenderSVGText {text} at (135,114) size 263x45 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 263x45
             chunk 1 text run 1 at (135.00,150.00) startOffset 0 endOffset 16 width 262.20: "circle turns red"
-        RenderSVGText {text} at (135,193) size 258x46 contains 1 chunk(s)
+        RenderSVGText {text} at (135,194) size 258x45 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 258x45
             chunk 1 text run 1 at (135.00,230.00) startOffset 0 endOffset 16 width 258.00: "Click on circle,"
-        RenderSVGText {text} at (135,233) size 160x46 contains 1 chunk(s)
+        RenderSVGText {text} at (135,234) size 160x45 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 160x45
             chunk 1 text run 1 at (135.00,270.00) startOffset 0 endOffset 9 width 159.60: "hyperlink"
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 264x45
+      RenderSVGInlineText {#text} at (0,0) size 264x44
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.40: "$Revision: 1.3 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

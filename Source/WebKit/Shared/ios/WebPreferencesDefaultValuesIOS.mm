@@ -71,7 +71,11 @@ void setAllowsDeprecatedSynchronousXMLHttpRequestDuringUnload(bool allowsRequest
 
 bool defaultMediaSourceEnabled()
 {
+#if PLATFORM(APPLETV)
+    return true;
+#else
     return !PAL::deviceClassIsSmallScreen();
+#endif
 }
 
 #endif
@@ -107,6 +111,18 @@ bool defaultWriteRichTextDataWhenCopyingOrDragging()
     // iOS with the requisite support for async text input *no longer* require
     // WebKit to write RTF and attributed string data.
     return !isAsyncTextInputFeatureFlagEnabled();
+}
+
+bool defaultAutomaticLiveResizeEnabled()
+{
+#if PLATFORM(VISION)
+    return true;
+#elif USE(BROWSERENGINEKIT)
+    static bool enabled = PAL::deviceHasIPadCapability() && os_feature_enabled(UIKit, async_text_input_ipad);
+    return enabled;
+#else
+    return false;
+#endif
 }
 
 } // namespace WebKit

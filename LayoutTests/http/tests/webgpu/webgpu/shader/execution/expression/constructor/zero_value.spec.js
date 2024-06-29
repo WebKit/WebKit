@@ -55,6 +55,28 @@ fn(async (t) => {
   );
 });
 
+g.test('vector_prefix').
+desc(`Test that a zero value vector constructor produces the expected zero value`).
+params((u) =>
+u.combine('type', ['i32', 'u32', 'f32', 'f16']).combine('width', [2, 3, 4])
+).
+beforeAllSubcases((t) => {
+  if (t.params.type === 'f16') {
+    t.selectDeviceOrSkipTestCase('shader-f16');
+  }
+}).
+fn(async (t) => {
+  const type = Type.vec(t.params.width, Type[t.params.type]);
+  await run(
+    t,
+    basicExpressionBuilder((ops) => `vec${t.params.width}()`),
+    [],
+    type,
+    { inputSource: 'const', constEvaluationMode: 'direct' },
+    [{ input: [], expected: type.create(0) }]
+  );
+});
+
 g.test('matrix').
 specURL('https://www.w3.org/TR/WGSL/#zero-value-builtin-function').
 desc(`Test that a zero value matrix constructor produces the expected zero value`).
@@ -138,11 +160,11 @@ fn(async (t) => {
   );
   await run(
     t,
-    (parameterTypes, resultType, cases, inputSource) => {
+    (params) => {
       return `
 ${t.params.member_types.includes('f16') ? 'enable f16;' : ''}
 
-${builder(parameterTypes, resultType, cases, inputSource)}
+${builder(params)}
 
 struct MyStruct {
 ${t.params.member_types.map((ty, i) => `  member_${i} : ${ty},`).join('\n')}

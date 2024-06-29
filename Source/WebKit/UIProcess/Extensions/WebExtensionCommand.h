@@ -50,13 +50,9 @@ using CocoaMenuItem = UIMenuElement;
 #endif
 
 #if defined(__OBJC__) && PLATFORM(IOS_FAMILY)
-using WebExtensionKeyCommandHandlerBlock = void (^)(void);
-
 @interface _WKWebExtensionKeyCommand : UIKeyCommand
 
-+ (instancetype)commandWithTitle:(NSString *)title image:(UIImage *)image input:(NSString *)input modifierFlags:(UIKeyModifierFlags)modifierFlags handler:(WebExtensionKeyCommandHandlerBlock)handler;
-
-@property (nonatomic, copy) WebExtensionKeyCommandHandlerBlock handler;
++ (UIKeyCommand *)commandWithTitle:(NSString *)title image:(UIImage *)image input:(NSString *)input modifierFlags:(UIKeyModifierFlags)modifierFlags identifier:(NSString *)identifier;
 
 @end
 #endif // PLATFORM(IOS_FAMILY)
@@ -103,6 +99,7 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     UIKeyCommand *keyCommand() const;
+    bool matchesKeyCommand(UIKeyCommand *) const;
 #endif
 
 #if USE(APPKIT)

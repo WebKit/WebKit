@@ -15,6 +15,7 @@ namespace rx
 
 namespace webgpu
 {
+
 ContextWgpu *GetImpl(const gl::Context *context)
 {
     return GetImplAs<ContextWgpu>(context);
@@ -38,14 +39,45 @@ wgpu::Instance GetInstance(const gl::Context *context)
     return display->getInstance();
 }
 
-bool IsError(wgpu::WaitStatus waitStatus)
+wgpu::RenderPassColorAttachment CreateNewClearColorAttachment(wgpu::Color clearValue,
+                                                              uint32_t depthSlice,
+                                                              wgpu::TextureView textureView)
+{
+    wgpu::RenderPassColorAttachment colorAttachment;
+    colorAttachment.view       = textureView;
+    colorAttachment.depthSlice = depthSlice;
+    colorAttachment.loadOp     = wgpu::LoadOp::Clear;
+    colorAttachment.storeOp    = wgpu::StoreOp::Store;
+    colorAttachment.clearValue = clearValue;
+
+    return colorAttachment;
+}
+
+bool IsWgpuError(wgpu::WaitStatus waitStatus)
 {
     return waitStatus != wgpu::WaitStatus::Success;
 }
 
-bool IsError(WGPUBufferMapAsyncStatus mapBufferStatus)
+bool IsWgpuError(WGPUBufferMapAsyncStatus mapBufferStatus)
 {
     return mapBufferStatus != WGPUBufferMapAsyncStatus_Success;
+}
+
+ClearValuesArray::ClearValuesArray() : mValues{}, mEnabled{} {}
+ClearValuesArray::~ClearValuesArray() = default;
+
+ClearValuesArray::ClearValuesArray(const ClearValuesArray &other)          = default;
+ClearValuesArray &ClearValuesArray::operator=(const ClearValuesArray &rhs) = default;
+
+void ClearValuesArray::store(uint32_t index, ClearValues clearValues)
+{
+    mValues[index] = clearValues;
+    mEnabled.set(index);
+}
+
+gl::DrawBufferMask ClearValuesArray::getColorMask() const
+{
+    return gl::DrawBufferMask(mEnabled.bits() & kUnpackedColorBuffersMask);
 }
 
 void EnsureCapsInitialized(const wgpu::Device &device, gl::Caps *nativeCaps)

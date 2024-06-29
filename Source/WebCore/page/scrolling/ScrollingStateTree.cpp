@@ -491,7 +491,7 @@ String ScrollingStateTree::scrollingStateTreeAsText(OptionSet<ScrollingStateTree
     StringBuilder stateTreeAsString;
     stateTreeAsString.append(rootStateNode()->scrollingStateTreeAsText(behavior));
     if (!m_unparentedNodes.isEmpty())
-        stateTreeAsString.append("\nunparented node count: ", m_unparentedNodes.size());
+        stateTreeAsString.append("\nunparented node count: "_s, m_unparentedNodes.size());
     return stateTreeAsString.toString();
 }
 

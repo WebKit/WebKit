@@ -23,7 +23,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-usv.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-default-action.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-multiple-targets.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-preventdefault-click.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-preventdefault.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-requestsubmit.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-to-different-origin-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-echo.py

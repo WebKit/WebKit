@@ -67,7 +67,7 @@ public:
     virtual void closeFullScreenManager() = 0;
     virtual bool isFullScreen() = 0;
 #if PLATFORM(IOS_FAMILY)
-    virtual void enterFullScreen(WebCore::FloatSize videoDimensions) = 0;
+    virtual void enterFullScreen(WebCore::FloatSize mediaDimensions) = 0;
 #else
     virtual void enterFullScreen() = 0;
 #endif
@@ -87,13 +87,13 @@ public:
 
     bool isFullScreen();
     bool blocksReturnToFullscreenFromPictureInPicture() const;
-#if PLATFORM(VISION)
+#if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
     bool isVideoElement() const { return m_isVideoElement; }
+#endif
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     bool isImageElement() const { return m_imageBuffer; }
     void prepareQuickLookImageURL(CompletionHandler<void(URL&&)>&&) const;
 #endif // QUICKLOOK_FULLSCREEN
-#endif
     void close();
 
     enum class FullscreenState : uint8_t {
@@ -108,7 +108,7 @@ public:
     void willExitFullScreen();
     void didExitFullScreen();
     void setAnimatingFullScreen(bool);
-    void requestRestoreFullScreen();
+    void requestRestoreFullScreen(CompletionHandler<void(bool)>&&);
     void requestExitFullScreen();
     void saveScrollPosition();
     void restoreScrollPosition();
@@ -140,13 +140,13 @@ private:
     WebFullScreenManagerProxyClient& m_client;
     FullscreenState m_fullscreenState { FullscreenState::NotInFullscreen };
     bool m_blocksReturnToFullscreenFromPictureInPicture { false };
-#if PLATFORM(VISION)
+#if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
     bool m_isVideoElement { false };
+#endif
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     String m_imageMIMEType;
     RefPtr<WebCore::SharedBuffer> m_imageBuffer;
 #endif // QUICKLOOK_FULLSCREEN
-#endif
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
 
 #if !RELEASE_LOG_DISABLED

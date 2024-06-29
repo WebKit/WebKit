@@ -53,10 +53,10 @@ except NotImplementedError as e:
 scm = local.Git(os.getcwd())
 
 filter_dirs = [ 'gobject', 'glib', 'soup', 'cairo', 'gstreamer', 'atspi', 'adwaita',
-                'unix', 'linux', 'CoordinatedGraphics', 'texmap', 'nicosia',
+                'unix', 'linux', 'CoordinatedGraphics', 'texmap', 'nicosia', 'skia',
                 'WebDriver', 'harfbuzz', 'freetype', 'egl', 'buildstream' ]
 if port.name() == 'gtk':
-    filter_dirs.extend([ 'gtk', 'wayland', 'x11', 'glx' ])
+    filter_dirs.extend([ 'gtk', 'wayland', 'x11' ])
 elif port.name() == 'wpe':
     filter_dirs.extend([ 'wpe', 'libwpe', 'epoxy' ])
 

@@ -98,7 +98,6 @@ TEST_P(UnsignaledStreamTest, ReplacesUnsignaledStreamOnCompletedSignaling) {
   PeerScenarioClient::Config config = PeerScenarioClient::Config();
   // Disable encryption so that we can inject a fake early media packet without
   // triggering srtp failures.
-  config.disable_encryption = true;
   auto* caller = s.CreateClient(config);
   auto* callee = s.CreateClient(config);
 

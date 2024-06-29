@@ -70,11 +70,11 @@ public:
 
     Ref<ComputePassEncoder> beginComputePass(const WGPUComputePassDescriptor&);
     Ref<RenderPassEncoder> beginRenderPass(const WGPURenderPassDescriptor&);
-    void copyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size);
+    void copyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, Buffer& destination, uint64_t destinationOffset, uint64_t size);
     void copyBufferToTexture(const WGPUImageCopyBuffer& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize);
     void copyTextureToBuffer(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize);
     void copyTextureToTexture(const WGPUImageCopyTexture& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize);
-    void clearBuffer(const Buffer&, uint64_t offset, uint64_t size);
+    void clearBuffer(Buffer&, uint64_t offset, uint64_t size);
     Ref<CommandBuffer> finish(const WGPUCommandBufferDescriptor&);
     void insertDebugMarker(String&& markerLabel);
     void popDebugGroup();
@@ -96,7 +96,7 @@ public:
     void runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, float depthClearValue = 0, uint32_t stencilClearValue = 0, id<MTLRenderCommandEncoder> existingEncoder = nil);
     static void clearTextureIfNeeded(const WGPUImageCopyTexture&, NSUInteger, id<MTLDevice>, id<MTLBlitCommandEncoder>);
     static void clearTextureIfNeeded(Texture&, NSUInteger, NSUInteger, id<MTLDevice>, id<MTLBlitCommandEncoder>);
-    void makeInvalid(NSString* = nil);
+    void makeInvalid(NSString*);
     void makeSubmitInvalid(NSString* = nil);
     void incrementBufferMapCount();
     void decrementBufferMapCount();
@@ -104,6 +104,7 @@ public:
     void setLastError(NSString*);
     void waitForCommandBufferCompletion();
     bool encoderIsCurrent(id<MTLCommandEncoder>) const;
+    bool submitWillBeInvalid() const;
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, id<MTLSharedEvent>, Device&);
@@ -121,6 +122,7 @@ private:
     NSString* errorValidatingImageCopyBuffer(const WGPUImageCopyBuffer&) const;
     NSString* errorValidatingCopyBufferToTexture(const WGPUImageCopyBuffer&, const WGPUImageCopyTexture&, const WGPUExtent3D&) const;
     NSString* errorValidatingCopyTextureToBuffer(const WGPUImageCopyTexture&, const WGPUImageCopyBuffer&, const WGPUExtent3D&) const;
+    void discardCommandBuffer();
 
     id<MTLCommandBuffer> m_commandBuffer { nil };
     id<MTLSharedEvent> m_abortCommandBuffer { nil };

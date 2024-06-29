@@ -547,7 +547,7 @@ void main()
 // Test that binds UAV with type image to slot 0, then binds UAV with type buffer to slot 0.
 TEST_P(ComputeShaderTest, ImageAtomicCounterBuffer)
 {
-    // Flaky hang. http://anglebug.com/3636
+    // Flaky hang. http://anglebug.com/40644695
     ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsDesktopOpenGL());
 
     constexpr char kCS0[] = R"(#version 310 es
@@ -704,7 +704,7 @@ void main()
 // Basic test for DispatchComputeIndirect.
 TEST_P(ComputeShaderTest, DispatchComputeIndirect)
 {
-    // Flaky crash on teardown, see http://anglebug.com/3349
+    // Flaky crash on teardown, see http://anglebug.com/40096579
     ANGLE_SKIP_TEST_IF(IsD3D11() && IsIntel() && IsWindows());
 
     const char kCSSource[] = R"(#version 310 es
@@ -764,7 +764,7 @@ void main()
 // Test that uploading data to buffer that's in use then using it as indirect buffer works.
 TEST_P(ComputeShaderTest, UseAsUBOThenUpdateThenDispatchComputeIndirect)
 {
-    // Flaky crash on teardown, see http://anglebug.com/3349
+    // Flaky crash on teardown, see http://anglebug.com/40096579
     ANGLE_SKIP_TEST_IF(IsD3D11() && IsIntel() && IsWindows());
 
     constexpr GLsizei kWidth = 4, kHeight = 6;
@@ -1049,7 +1049,7 @@ TEST_P(ComputeShaderTest, ImageArrayUnusedElement)
     ANGLE_SKIP_TEST_IF(IsAMD() && IsDesktopOpenGL());
 
     // Vulkan is currently unable to handle unbound image units in compute shaders.
-    // http://anglebug.com/5026
+    // http://anglebug.com/42263596
     ANGLE_SKIP_TEST_IF(IsVulkan());
 
     GLFramebuffer framebuffer;
@@ -1848,7 +1848,7 @@ void main()
 TEST_P(ComputeShaderTest, BindImageTextureWithOneLayerTexture3D)
 {
     // Vulkan validation error creating a 2D image view of a 3D image layer.
-    // http://anglebug.com/3886
+    // http://anglebug.com/42262531
     ANGLE_SKIP_TEST_IF(IsVulkan());
 
     GLTexture texture[2];
@@ -1919,7 +1919,7 @@ void main()
 TEST_P(ComputeShaderTest, BindImageTextureWithOneLayerTextureCube)
 {
     // GL_FRAMEBUFFER_BARRIER_BIT is invalid on Nvidia Linux platform.
-    // http://anglebug.com/3736
+    // http://anglebug.com/42262394
     ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsOpenGL() && IsLinux());
 
     GLTexture texture[2];
@@ -2005,10 +2005,10 @@ void main()
 TEST_P(ComputeShaderTest, BindImageTextureWithMixTextureTypes)
 {
     // GL_FRAMEBUFFER_BARRIER_BIT is invalid on Nvidia Linux platform.
-    // http://anglebug.com/3736
+    // http://anglebug.com/42262394
     ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsOpenGL() && IsLinux());
 
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     GLTexture texture[4];
@@ -2158,7 +2158,7 @@ TEST_P(ComputeShaderTest, GroupMemoryBarrierAndBarrierTest)
     ANGLE_SKIP_TEST_IF((IsAMD() || IsNVIDIA()) && IsD3D11());
     ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     GLTexture texture;
@@ -2317,7 +2317,7 @@ void main()
 // Verify shared non-array variables can work correctly.
 TEST_P(ComputeShaderTest, NonArraySharedVariable)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     const char kCSShader[] = R"(#version 310 es
@@ -2353,7 +2353,7 @@ void main()
 // Verify shared non-struct array variables can work correctly.
 TEST_P(ComputeShaderTest, NonStructArrayAsSharedVariable)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     const char kCSShader[] = R"(#version 310 es
@@ -2380,7 +2380,7 @@ void main()
 // Verify shared struct array variables work correctly.
 TEST_P(ComputeShaderTest, StructArrayAsSharedVariable)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     const char kCSShader[] = R"(#version 310 es
@@ -2411,10 +2411,10 @@ void main()
 // Verify using atomic functions without return value can work correctly.
 TEST_P(ComputeShaderTest, AtomicFunctionsNoReturnValue)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
-    // Fails to link on Android.  http://anglebug.com/3874
+    // Fails to link on Android.  http://anglebug.com/42262519
     ANGLE_SKIP_TEST_IF(IsAndroid());
 
     ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
@@ -2477,7 +2477,7 @@ void main()
 // Verify using atomic functions in a non-initializer single assignment can work correctly.
 TEST_P(ComputeShaderTest, AtomicFunctionsInNonInitializerSingleAssignment)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     const char kCSShader[] = R"(#version 310 es
@@ -2526,7 +2526,7 @@ void main()
 // Verify using atomic functions in an initializers and using unsigned int works correctly.
 TEST_P(ComputeShaderTest, AtomicFunctionsInitializerWithUnsigned)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     constexpr char kCShader[] = R"(#version 310 es
@@ -2586,7 +2586,7 @@ void main()
 // Verify using atomic functions inside expressions as unsigned int.
 TEST_P(ComputeShaderTest, AtomicFunctionsReturnWithUnsigned)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     constexpr char kCShader[] = R"(#version 310 es
@@ -2636,7 +2636,7 @@ void main()
 // Verify using nested atomic functions in expressions.
 TEST_P(ComputeShaderTest, AtomicFunctionsReturnWithMultipleTypes)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     constexpr char kCShader[] = R"(#version 310 es
@@ -2684,7 +2684,7 @@ void main()
 // Basic uniform buffer functionality.
 TEST_P(ComputeShaderTest, UniformBuffer)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     GLTexture texture;
@@ -2748,7 +2748,7 @@ void main()
 // Test that storing data to image and then loading the same image data works correctly.
 TEST_P(ComputeShaderTest, StoreImageThenLoad)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     const char kCSSource[] = R"(#version 310 es
@@ -2808,7 +2808,7 @@ void main()
 // Test that loading image data and then storing data to the same image works correctly.
 TEST_P(ComputeShaderTest, LoadImageThenStore)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     const char kCSSource[] = R"(#version 310 es
@@ -3180,15 +3180,15 @@ TEST_P(ComputeShaderTestES3, NotSupported)
 // The contents of shared variables should be cleared to zero at the beginning of shader execution.
 TEST_P(WebGL2ComputeTest, sharedVariablesShouldBeZero)
 {
-    // http://anglebug.com/3226
+    // http://anglebug.com/40644676
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     // Fails on Android, AMD/windows and Intel/windows.  Probably works by chance on other
     // platforms, so suppressing on all platforms to avoid possible flakiness.
-    // http://anglebug.com/3869
+    // http://anglebug.com/42262513
     ANGLE_SKIP_TEST_IF(IsVulkan());
 
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
     ANGLE_SKIP_TEST_IF(IsOpenGL() &&
                        ((getClientMajorVersion() == 3) && (getClientMinorVersion() >= 1)));
@@ -3233,7 +3233,7 @@ void main()
 // Test uniform dirty in compute shader, and verify the contents.
 TEST_P(ComputeShaderTest, UniformDirty)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     GLTexture texture[2];
@@ -3307,7 +3307,7 @@ void main()
 // Test storage buffer bound is unchanged, shader writes it, buffer content should be updated.
 TEST_P(ComputeShaderTest, StorageBufferBoundUnchanged)
 {
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(isSwiftshader());
     constexpr char kCS[] = R"(#version 310 es
 layout(local_size_x=16, local_size_y=16) in;
@@ -3391,10 +3391,10 @@ void main()
 // Test imageSize to access mipmap slice.
 TEST_P(ComputeShaderTest, ImageSizeMipmapSlice)
 {
-    // TODO(xinghua.cao@intel.com): http://anglebug.com/3101
+    // TODO(xinghua.cao@intel.com): http://anglebug.com/42261780
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux());
 
-    // http://anglebug.com/4392
+    // http://anglebug.com/42263018
     ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsD3D11());
 
     GLTexture texture[2];
@@ -3452,7 +3452,7 @@ void main()
 // Test imageLoad to access mipmap slice.
 TEST_P(ComputeShaderTest, ImageLoadMipmapSlice)
 {
-    // TODO(xinghua.cao@intel.com): http://anglebug.com/3101
+    // TODO(xinghua.cao@intel.com): http://anglebug.com/42261780
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux());
 
     GLTexture texture[2];
@@ -3511,7 +3511,7 @@ void main()
 // Test imageStore to access mipmap slice.
 TEST_P(ComputeShaderTest, ImageStoreMipmapSlice)
 {
-    // TODO(xinghua.cao@intel.com): http://anglebug.com/3101
+    // TODO(xinghua.cao@intel.com): http://anglebug.com/42261780
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     GLTexture texture[2];
@@ -3568,10 +3568,10 @@ void main()
 }
 
 // Test that a resource is bound on render pipeline output, and then it's bound as the compute
-// pipeline input. It works well. See http://anglebug.com/3658
+// pipeline input. It works well. See http://anglebug.com/42262319
 TEST_P(ComputeShaderTest, DrawTexture1DispatchTexture2)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_color_buffer_float"));
@@ -3679,7 +3679,7 @@ void main(void) {
 //   2. DrawArrays.
 TEST_P(ComputeShaderTest, DispatchDraw)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     const char kCSSource[] = R"(#version 310 es
@@ -3749,7 +3749,7 @@ void main(void) {
 //   4. DrawArrays.
 TEST_P(ComputeShaderTest, DrawDispatchDispatchDraw)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     const char kCSSource[] = R"(#version 310 es
@@ -3828,7 +3828,7 @@ void main(void) {
 //   4. DispatchCompute.
 TEST_P(ComputeShaderTest, DispatchDrawDrawDispatch)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     const char kCSSource[] = R"(#version 310 es
@@ -4004,7 +4004,7 @@ TEST_P(ComputeShaderTest, InvalidMemoryBarrier)
 }
 
 // test atomic counter increment
-// http://anglebug.com/3246
+// http://anglebug.com/42261924
 TEST_P(ComputeShaderTest, AtomicCounterIncrement)
 {
     constexpr char kComputeShader[] = R"(#version 310 es
@@ -4118,7 +4118,7 @@ void main()
 //   3. DrawArrays and check data.
 TEST_P(ComputeShaderTest, DrawDispatchDrawPreserve)
 {
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     const char kCSSource[] = R"(#version 310 es
@@ -4382,10 +4382,10 @@ void main() {
 // made.  Blit stencil may issue a dispatch call.
 TEST_P(ComputeShaderTest, DispatchBlitStencilDispatch)
 {
-    // http://anglebug.com/5533
+    // http://anglebug.com/42264069
     ANGLE_SKIP_TEST_IF(IsQualcomm() && IsOpenGLES());
 
-    // http://anglebug.com/5072
+    // http://anglebug.com/42263641
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     constexpr GLsizei kSize = 1;
@@ -4577,7 +4577,7 @@ void main()
 // Write to image array with an aliasing format.
 TEST_P(ComputeShaderTest, AliasingFormatForImageArray)
 {
-    // http://anglebug.com/5352
+    // http://anglebug.com/42263894
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     constexpr char kCS[] = R"(#version 310 es
@@ -4628,7 +4628,7 @@ void main()
 // Write to one layer of image array with an aliasing format.
 TEST_P(ComputeShaderTest, AliasingFormatForOneLayerOfImageArray)
 {
-    // http://anglebug.com/5352
+    // http://anglebug.com/42263894
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     constexpr char kCS[] = R"(#version 310 es
@@ -4801,7 +4801,7 @@ TEST_P(ComputeShaderTest, ImageBufferMapWrite)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_buffer"));
 
     // Claims to support GL_OES_texture_buffer, but fails compilation of shader because "extension
-    // 'GL_OES_texture_buffer' is not supported".  http://anglebug.com/5832
+    // 'GL_OES_texture_buffer' is not supported".  http://anglebug.com/42264369
     ANGLE_SKIP_TEST_IF(IsQualcomm() && IsOpenGLES());
 
     constexpr char kComputeImageBuffer[] = R"(#version 310 es
@@ -4872,7 +4872,7 @@ TEST_P(ComputeShaderTest, ImageBufferMapWriteAndBufferSubData)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_buffer"));
 
     // Claims to support GL_OES_texture_buffer, but fails compilation of shader because "extension
-    // 'GL_OES_texture_buffer' is not supported".  http://anglebug.com/5832
+    // 'GL_OES_texture_buffer' is not supported".  http://anglebug.com/42264369
     ANGLE_SKIP_TEST_IF(IsQualcomm() && IsOpenGLES());
 
     // angleporject:6545. Known bug.

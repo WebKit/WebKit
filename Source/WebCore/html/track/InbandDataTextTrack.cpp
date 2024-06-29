@@ -52,11 +52,11 @@ Ref<InbandDataTextTrack> InbandDataTextTrack::create(ScriptExecutionContext& con
 
 InbandDataTextTrack::~InbandDataTextTrack() = default;
 
-void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
+void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& end, std::span<const uint8_t> data)
 {
     // FIXME: handle datacue creation on worker.
     if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext()))
-        addCue(DataCue::create(*document, start, end, data, length));
+        addCue(DataCue::create(*document, start, end, data));
 }
 
 #if ENABLE(DATACUE_VALUE)

@@ -217,6 +217,18 @@ void RemoteAudioSession::endInterruptionForTesting()
     ensureConnection().send(Messages::RemoteAudioSessionProxy::TriggerEndInterruptionForTesting(), { });
 }
 
+void RemoteAudioSession::setSceneIdentifier(const String& sceneIdentifier)
+{
+    configuration().sceneIdentifier = sceneIdentifier;
+    ensureConnection().send(Messages::RemoteAudioSessionProxy::SetSceneIdentifier(sceneIdentifier), { });
+}
+
+void RemoteAudioSession::setSoundStageSize(AudioSession::SoundStageSize size)
+{
+    configuration().soundStageSize = size;
+    ensureConnection().send(Messages::RemoteAudioSessionProxy::SetSoundStageSize(size), { });
+}
+
 }
 
 #endif

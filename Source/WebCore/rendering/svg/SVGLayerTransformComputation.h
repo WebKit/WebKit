@@ -49,7 +49,7 @@ public:
         // anonymous RenderSVGViewportContainer (most noticeable: viewBox). Therefore we have to start
         // calling mapLocalToContainer() starting from the anonymous RenderSVGViewportContainer, and
         // not from its parent - RenderSVGRoot.
-        auto* renderer = &m_renderer;
+        auto* renderer = m_renderer.ptr();
         if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderer)) {
             renderer = svgRoot->viewportContainer();
             if (trackingMode == TransformState::TrackSVGCTMMatrix)
@@ -75,7 +75,7 @@ public:
         renderer->mapLocalToContainer(ancestorContainer, transformState, { UseTransforms, ApplyContainerFlip });
 
         if (trackingMode == TransformState::TrackSVGCTMMatrix) {
-            if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(m_renderer))
+            if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(m_renderer.get()))
                 transformState.move(-toLayoutSize(svgRoot->contentBoxLocation()));
             else if (ancestorContainer) {
                 // Continue to accumulate container offsets, excluding transforms, from the container of the current element ('ancestorContainer') up to RenderSVGRoot.
@@ -96,17 +96,17 @@ public:
 
         // When we've climbed the ancestor tree up to and including RenderSVGRoot, the CTM is aligned with the top-left of the renderers bounding box (= nominal SVG layout location).
         // However, for getCTM/getScreenCTM we're supposed to align by the top-left corner of the enclosing "viewport element" -- correct for that.
-        if (m_renderer.isRenderSVGRoot())
+        if (m_renderer->isRenderSVGRoot())
             return ctm;
 
-        ctm.translate(-toFloatSize(m_renderer.nominalSVGLayoutLocation()));
+        ctm.translate(-toFloatSize(m_renderer->nominalSVGLayoutLocation()));
         return ctm;
     }
 
     float calculateScreenFontSizeScalingFactor() const
     {
         // Walk up the render tree, accumulating transforms
-        auto* layer = m_renderer.enclosingLayer();
+        auto* layer = m_renderer->enclosingLayer();
 
         RenderLayer* stopAtLayer = nullptr;
         while (layer) {
@@ -120,14 +120,14 @@ public:
         }
 
         auto ctm = computeAccumulatedTransform(stopAtLayer ? &stopAtLayer->renderer() : nullptr, TransformState::TrackSVGScreenCTMMatrix);
-        ctm.scale(m_renderer.document().deviceScaleFactor());
-        if (!m_renderer.document().isSVGDocument())
-            ctm.scale(m_renderer.style().usedZoom());
+        ctm.scale(m_renderer->document().deviceScaleFactor());
+        if (!m_renderer->document().isSVGDocument())
+            ctm.scale(m_renderer->style().usedZoom());
         return narrowPrecisionToFloat(std::hypot(ctm.xScale(), ctm.yScale()) / sqrtOfTwoDouble);
     }
 
 private:
-    const RenderLayerModelObject& m_renderer;
+    SingleThreadWeakRef<const RenderLayerModelObject> m_renderer;
 };
 
 } // namespace WebCore

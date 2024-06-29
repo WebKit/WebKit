@@ -10,6 +10,8 @@ Validation tests for the ${builtin}() builtin.
 * test textureSampleBias offset parameter must be correct type
 * test textureSampleBias offset parameter must be a const-expression
 * test textureSampleBias offset parameter must be between -8 and +7 inclusive
+* test textureSampleBias returns the correct type
+* test textureSampleBias doesn't work with texture types it's not supposed to
 
 note: uniformity validation is covered in src/webgpu/shader/validation/uniformity/uniformity.spec.ts
 `;
@@ -27,7 +29,10 @@ import {
 '../../../../../util/conversion.js';
 import { ShaderValidationTest } from '../../../shader_validation_test.js';
 
-import { kEntryPointsToValidateFragmentOnlyBuiltins } from './shader_builtin_utils.js';
+import {
+  kEntryPointsToValidateFragmentOnlyBuiltins,
+  kTestTextureTypes } from
+'./shader_builtin_utils.js';
 
 
 
@@ -51,6 +56,45 @@ const kTextureTypes = keysOf(kValidTextureSampleBiasParameterTypes);
 const kValuesTypes = objectsToRecord(kAllScalarsAndVectors);
 
 export const g = makeTestGroup(ShaderValidationTest);
+
+g.test('return_type').
+specURL('https://gpuweb.github.io/gpuweb/wgsl/#texturesamplebias').
+desc(
+  `
+Validates the return type of ${builtin} is the expected type.
+`
+).
+params((u) =>
+u.
+combine('returnType', keysOf(kValuesTypes)).
+combine('textureType', keysOf(kValidTextureSampleBiasParameterTypes)).
+beginSubcases().
+expand('offset', (t) =>
+kValidTextureSampleBiasParameterTypes[t.textureType].offsetArgType ? [false, true] : [false]
+)
+).
+fn((t) => {
+  const { returnType, textureType, offset } = t.params;
+  const returnVarType = kValuesTypes[returnType];
+  const { offsetArgType, coordsArgType, hasArrayIndexArg } =
+  kValidTextureSampleBiasParameterTypes[textureType];
+
+  const varWGSL = returnVarType.toString();
+  const coordWGSL = coordsArgType.create(0).wgsl();
+  const arrayWGSL = hasArrayIndexArg ? ', 0' : '';
+  const offsetWGSL = offset ? `, ${offsetArgType?.create(0).wgsl()}` : '';
+
+  const code = `
+@group(0) @binding(0) var s: sampler;
+@group(0) @binding(1) var t: ${textureType};
+@fragment fn fs() -> @location(0) vec4f {
+  let v: ${varWGSL} = textureSampleBias(t, s, ${coordWGSL}${arrayWGSL}, 0${offsetWGSL});
+  return vec4f(0);
+}
+`;
+  const expectSuccess = isConvertible(Type.vec4f, returnVarType);
+  t.expectCompileResult(expectSuccess, code);
+});
 
 g.test('coords_argument').
 specURL('https://gpuweb.github.io/gpuweb/wgsl/#texturesamplebias').
@@ -306,4 +350,62 @@ fn foo() {
   _ = textureSampleBias(t, s, ${coordWGSL}${arrayWGSL}, 0${offsetWGSL});
 }`;
   t.expectCompileResult(config.expectSuccess, code);
+});
+
+g.test('texture_type').
+specURL('https://gpuweb.github.io/gpuweb/wgsl/#texturesamplebias').
+desc(
+  `
+Validates that incompatible texture types don't work with ${builtin}
+`
+).
+params((u) =>
+u.
+combine('testTextureType', kTestTextureTypes).
+combine('textureType', keysOf(kValidTextureSampleBiasParameterTypes)).
+beginSubcases().
+expand('offset', (t) =>
+kValidTextureSampleBiasParameterTypes[t.textureType].offsetArgType ? [false, true] : [false]
+)
+).
+fn((t) => {
+  const { testTextureType, textureType, offset } = t.params;
+  const { coordsArgType, offsetArgType, hasArrayIndexArg } =
+  kValidTextureSampleBiasParameterTypes[textureType];
+
+  const coordWGSL = coordsArgType.create(0).wgsl();
+  const arrayWGSL = hasArrayIndexArg ? ', 0' : '';
+  const offsetWGSL = offset ? `, ${offsetArgType?.create(0).wgsl()}` : '';
+
+  const code = `
+@group(0) @binding(0) var s: sampler;
+@group(0) @binding(1) var t: ${testTextureType};
+@fragment fn fs() -> @location(0) vec4f {
+  let v = textureSampleBias(t, s, ${coordWGSL}${arrayWGSL}, 0${offsetWGSL});
+  return vec4f(0);
+}
+`;
+
+  const types = kValidTextureSampleBiasParameterTypes[testTextureType];
+  const typesMatch = types ?
+  types.coordsArgType === coordsArgType &&
+  types.hasArrayIndexArg === hasArrayIndexArg && (
+  offset ? types.offsetArgType === offsetArgType : true) :
+  false;
+
+  const expectSuccess = testTextureType === textureType || typesMatch;
+  t.expectCompileResult(expectSuccess, code);
+});
+
+g.test('must_use').
+desc('Tests that the result must be used').
+params((u) => u.combine('use', [true, false])).
+fn((t) => {
+  const code = `
+    @group(0) @binding(0) var t : texture_2d<f32>;
+    @group(0) @binding(1) var s : sampler;
+    fn foo() {
+      ${t.params.use ? '_ =' : ''} textureSampleBias(t, s, vec2(0,0), 0);
+    }`;
+  t.expectCompileResult(t.params.use, code);
 });

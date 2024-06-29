@@ -399,7 +399,7 @@ TEST_P(ProgramBinaryES3Test, UniformBlockBindingWithDraw)
 }
 
 // Same as UniformBlockBindingWithDraw, but does not do an initial draw with the program. Covers an
-// ANGLE crash.  http://anglebug.com/1637
+// ANGLE crash.  http://anglebug.com/42260591
 TEST_P(ProgramBinaryES3Test, UniformBlockBindingNoDraw)
 {
     testBinaryAndUBOBlockIndexes(false);
@@ -1025,7 +1025,7 @@ TEST_P(ProgramBinaryTest, SRGBDecodeWithSamplerAndTexelFetchTest)
                        getClientMajorVersion() < 3);
 
     // These OpenGL drivers appear not to respect the texelFetch exception
-    // http://anglebug.com/4991
+    // http://anglebug.com/42263564
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsWindows());
     ANGLE_SKIP_TEST_IF(IsOpenGL() && (IsNVIDIA() || IsARM64()) && IsMac());
@@ -1444,9 +1444,9 @@ TEST_P(ProgramBinaryTransformFeedbackTest, GetTransformFeedbackVarying)
 
     ANGLE_SKIP_TEST_IF(getAvailableProgramBinaryFormatCount() == 0);
 
-    // http://anglebug.com/3690
+    // http://anglebug.com/42262347
     ANGLE_SKIP_TEST_IF(IsAndroid() && (IsPixel2() || IsPixel2XL()) && IsVulkan());
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
 
     std::vector<uint8_t> binary(0);

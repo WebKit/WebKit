@@ -13,7 +13,7 @@ rtc_source_set("metronome") {
   sources = [ "metronome.h" ]
   deps = [
     "../../rtc_base/system:rtc_export",
-    "../task_queue",
     "../units:time_delta",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/functional:any_invocable" ]
 }

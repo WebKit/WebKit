@@ -1,5 +1,9 @@
 load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
 
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
 licenses(["notice"])
 
 exports_files_legacy()
@@ -15,8 +19,14 @@ skia_filegroup(
         "GrGLInterface.h",
         "GrGLTypes.h",
     ] + select({
-        "@platforms//os:android": ["//include/gpu/gl/egl:public_hdrs"],
-        "@platforms//os:linux": ["//include/gpu/gl/glx:public_hdrs"],
+        "@platforms//os:android": [
+            "//include/gpu/ganesh/gl/egl:public_hdrs",
+            "//include/gpu/gl/egl:public_hdrs",
+        ],
+        "@platforms//os:linux": [
+            "//include/gpu/ganesh/gl/glx:public_hdrs",
+            "//include/gpu/gl/glx:public_hdrs",
+        ],
         "//conditions:default": [],
     }),
     visibility = ["//include/gpu:__pkg__"],

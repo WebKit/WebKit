@@ -300,7 +300,7 @@ static String attributesOfElement(AccessibilityUIElement& element)
 
     String description = element.description()->string();
     if (!description.isEmpty())
-        builder.append(description.utf8().data(), '\n');
+        builder.append(description, '\n');
 
     String value = element.stringValue()->string();
     if (!value.isEmpty())
@@ -344,7 +344,7 @@ static String attributesOfElements(Vector<RefPtr<AccessibilityUIElement>>& eleme
 {
     StringBuilder builder;
     for (auto& element : elements)
-        builder.append(attributesOfElement(*element), "\n------------\n");
+        builder.append(attributesOfElement(*element), "\n------------\n"_s);
     return builder.toString();
 }
 
@@ -877,7 +877,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
     if (roleValueString.isEmpty())
         return JSStringCreateWithCharacters(nullptr, 0);
 
-    return OpaqueJSString::tryCreate(makeString("AXRole: ", roleValueString)).leakRef();
+    return OpaqueJSString::tryCreate(makeString("AXRole: "_s, roleValueString)).leakRef();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::subrole()
@@ -889,7 +889,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::roleDescription()
 {
     m_element->updateBackingStore();
     auto roleDescription = m_element->attributes().get("roledescription"_s);
-    return OpaqueJSString::tryCreate(makeString("AXRoleDescription: ", roleDescription)).leakRef();
+    return OpaqueJSString::tryCreate(makeString("AXRoleDescription: "_s, roleDescription)).leakRef();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString()
@@ -905,29 +905,29 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::title()
 {
     m_element->updateBackingStore();
-    auto titleValue = makeString("AXTitle: ", String::fromUTF8(m_element->name().span()));
+    auto titleValue = makeString("AXTitle: "_s, m_element->name().span());
     return OpaqueJSString::tryCreate(titleValue).leakRef();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
 {
     m_element->updateBackingStore();
-    auto descriptionValue = makeString("AXDescription: ", String::fromUTF8(m_element->description().span()));
+    auto descriptionValue = makeString("AXDescription: "_s, m_element->description().span());
     return OpaqueJSString::tryCreate(descriptionValue).leakRef();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
 {
     m_element->updateBackingStore();
-    const char* orientation = nullptr;
+    ASCIILiteral orientation;
     if (checkElementState(m_element.get(), WebCore::Atspi::State::Horizontal))
-        orientation = "AXHorizontalOrientation";
+        orientation = "AXHorizontalOrientation"_s;
     else if (checkElementState(m_element.get(), WebCore::Atspi::State::Vertical))
-        orientation = "AXVerticalOrientation";
+        orientation = "AXVerticalOrientation"_s;
     else
-        orientation = "AXUnknownOrientation";
+        orientation = "AXUnknownOrientation"_s;
 
-    auto orientationValue = makeString("AXOrientation: ", orientation);
+    auto orientationValue = makeString("AXOrientation: "_s, orientation);
     return OpaqueJSString::tryCreate(orientationValue).leakRef();
 }
 
@@ -953,14 +953,14 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
         // Tests expect the combo box to expose the selected element name as the string value.
         if (auto menu = childAtIndex(0)) {
             if (auto* selectedChild = menu->m_element->selectedChild(0))
-                return OpaqueJSString::tryCreate(makeString("AXValue: ", String::fromUTF8(selectedChild->name().span()))).leakRef();
+                return OpaqueJSString::tryCreate(makeString("AXValue: "_s, selectedChild->name().span())).leakRef();
         }
     }
 
     if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Text))
         return JSStringCreateWithCharacters(nullptr, 0);
 
-    auto value = makeString("AXValue: ", makeStringByReplacingAll(makeStringByReplacingAll(m_element->text(), '\n', "<\\n>"_s), objectReplacementCharacter, "<obj>"_s));
+    auto value = makeString("AXValue: "_s, makeStringByReplacingAll(makeStringByReplacingAll(m_element->text(), '\n', "<\\n>"_s), objectReplacementCharacter, "<obj>"_s));
     return OpaqueJSString::tryCreate(value).leakRef();
 }
 
@@ -971,7 +971,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::language()
     if (locale.isEmpty())
         return JSStringCreateWithCharacters(nullptr, 0);
 
-    return OpaqueJSString::tryCreate(makeString("AXLanguage: ", locale)).leakRef();
+    return OpaqueJSString::tryCreate(makeString("AXLanguage: "_s, locale)).leakRef();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
@@ -1070,7 +1070,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::valueDescription()
 {
     m_element->updateBackingStore();
     auto attributes = m_element->attributes();
-    auto value = makeString("AXValueDescription: ", attributes.get("valuetext"_s));
+    auto value = makeString("AXValueDescription: "_s, attributes.get("valuetext"_s));
     return OpaqueJSString::tryCreate(value).leakRef();
 }
 
@@ -1209,7 +1209,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForLine(int line)
     for (int i = 0; i <= line; ++i)
         offset = m_element->boundaryOffset(offset.y(), WebCore::AccessibilityObjectAtspi::TextGranularity::LineStart);
 
-    auto range = makeString('{', offset.x(), ", ", offset.y() - offset.x(), '}');
+    auto range = makeString('{', offset.x(), ", "_s, offset.y() - offset.x(), '}');
     return OpaqueJSString::tryCreate(range).leakRef();
 }
 
@@ -1225,7 +1225,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::boundsForRange(unsigned locatio
 
     m_element->updateBackingStore();
     auto rect = m_element->boundsForRange(location, length, WebCore::Atspi::CoordinateType::WindowCoordinates);
-    auto bounds = makeString('{', rect.x(), ", ", rect.y(), ", ", rect.width(), ", ", rect.height(), '}');
+    auto bounds = makeString('{', rect.x(), ", "_s, rect.y(), ", "_s, rect.width(), ", "_s, rect.height(), '}');
     return OpaqueJSString::tryCreate(bounds).leakRef();
 }
 
@@ -1376,7 +1376,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::rowIndexRange()
     if (!position || !span)
         return JSStringCreateWithCharacters(nullptr, 0);
 
-    return OpaqueJSString::tryCreate(makeString('{', *position, ", ", span, '}')).leakRef();
+    return OpaqueJSString::tryCreate(makeString('{', *position, ", "_s, span, '}')).leakRef();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::columnIndexRange()
@@ -1390,7 +1390,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::columnIndexRange()
     if (!position || !span)
         return JSStringCreateWithCharacters(nullptr, 0);
 
-    return OpaqueJSString::tryCreate(makeString('{', *position, ", ", span, '}')).leakRef();
+    return OpaqueJSString::tryCreate(makeString('{', *position, ", "_s, span, '}')).leakRef();
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::cellForColumnAndRow(unsigned column, unsigned row)
@@ -1421,7 +1421,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
 
     m_element->updateBackingStore();
     auto offset = m_element->selectedRange();
-    auto range = makeString('{', offset.x(), ", ", offset.y() - offset.x(), '}');
+    auto range = makeString('{', offset.x(), ", "_s, offset.y() - offset.x(), '}');
     return OpaqueJSString::tryCreate(range).leakRef();
 }
 
@@ -1544,7 +1544,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
         if (index != notFound)
             stringURL = stringURL.substring(index);
     }
-    return OpaqueJSString::tryCreate(makeString("AXURL: ", stringURL)).leakRef();
+    return OpaqueJSString::tryCreate(makeString("AXURL: "_s, stringURL)).leakRef();
 }
 
 bool AccessibilityUIElement::addNotificationListener(JSContextRef, JSValueRef functionCallback)
@@ -1812,7 +1812,7 @@ static String stringAtOffset(WebCore::AccessibilityObjectAtspi* element, int off
     auto bounds = element->boundaryOffset(offset, granularity);
     unsigned startOffset = std::max<int>(bounds.x(), 0);
     unsigned endOffset = std::min<int>(bounds.y(), text.length());
-    return makeString(text.substring(startOffset, endOffset - startOffset), ", ", startOffset, ", ", endOffset);
+    return makeString(text.substring(startOffset, endOffset - startOffset), ", "_s, startOffset, ", "_s, endOffset);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::characterAtOffset(int offset)
@@ -1825,7 +1825,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::characterAtOffset(int offset)
     if (offset < 0 || offset > static_cast<int>(text.length()))
         return JSStringCreateWithCharacters(nullptr, 0);
 
-    auto string = makeString(text.substring(offset, 1), ", ", offset, ", ", offset + 1);
+    auto string = makeString(text.substring(offset, 1), ", "_s, offset, ", "_s, offset + 1);
     return OpaqueJSString::tryCreate(string).leakRef();
 }
 
@@ -1875,11 +1875,6 @@ bool AccessibilityUIElement::isFirstItemInSuggestion() const
 }
 
 bool AccessibilityUIElement::isLastItemInSuggestion() const
-{
-    return false;
-}
-
-bool AccessibilityUIElement::isInNonNativeTextControl() const
 {
     return false;
 }

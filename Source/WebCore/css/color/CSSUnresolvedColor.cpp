@@ -25,9 +25,9 @@
 
 #include "config.h"
 #include "CSSUnresolvedColor.h"
-#include "StyleColor.h"
 
 #include "StyleBuilderState.h"
+#include "StyleColor.h"
 
 namespace WebCore {
 
@@ -35,36 +35,22 @@ CSSUnresolvedColor::~CSSUnresolvedColor() = default;
 
 bool CSSUnresolvedColor::containsCurrentColor() const
 {
-    return WTF::switchOn(m_value,
-        [&] (const CSSUnresolvedColorMix& unresolved) {
-            return StyleColor::containsCurrentColor(unresolved.mixComponents1.color) || StyleColor::containsCurrentColor(unresolved.mixComponents2.color);
-        },
-        [&] (const CSSUnresolvedLightDark& unresolved) {
-            return StyleColor::containsCurrentColor(unresolved.lightColor) || StyleColor::containsCurrentColor(unresolved.darkColor);
-        }
-    );
+    return WTF::switchOn(m_value, [](auto& unresolved) { return WebCore::containsCurrentColor(unresolved); });
 }
 
 bool CSSUnresolvedColor::containsColorSchemeDependentColor() const
 {
-    return WTF::switchOn(m_value,
-        [] (const CSSUnresolvedColorMix& unresolved) {
-            return StyleColor::containsColorSchemeDependentColor(unresolved.mixComponents1.color) || StyleColor::containsColorSchemeDependentColor(unresolved.mixComponents2.color);
-        },
-        [] (const CSSUnresolvedLightDark&) {
-            return true;
-        }
-    );
+    return WTF::switchOn(m_value, [](auto& unresolved) { return WebCore::containsColorSchemeDependentColor(unresolved); });
 }
 
 void CSSUnresolvedColor::serializationForCSS(StringBuilder& builder) const
 {
-    return WTF::switchOn(m_value, [&] (auto& unresolved) { WebCore::serializationForCSS(builder, unresolved); });
+    return WTF::switchOn(m_value, [&](auto& unresolved) { WebCore::serializationForCSS(builder, unresolved); });
 }
 
 String CSSUnresolvedColor::serializationForCSS() const
 {
-    return WTF::switchOn(m_value, [] (auto& unresolved) -> String { return WebCore::serializationForCSS(unresolved); });
+    return WTF::switchOn(m_value, [](auto& unresolved) -> String { return WebCore::serializationForCSS(unresolved); });
 }
 
 bool CSSUnresolvedColor::equals(const CSSUnresolvedColor& other) const
@@ -74,11 +60,48 @@ bool CSSUnresolvedColor::equals(const CSSUnresolvedColor& other) const
 
 StyleColor CSSUnresolvedColor::createStyleColor(const Document& document, RenderStyle& style, Style::ForVisitedLink forVisitedLink) const
 {
-    return WTF::switchOn(m_value,
-        [&] (const auto& unresolved) {
-            return WebCore::createStyleColor(unresolved, document, style, forVisitedLink);
-        }
-    );
+    return WTF::switchOn(m_value, [&](auto& unresolved) { return WebCore::createStyleColor(unresolved, document, style, forVisitedLink); });
+}
+
+Color CSSUnresolvedColor::createColor(const CSSUnresolvedColorResolutionContext& context) const
+{
+    return WTF::switchOn(m_value, [&](auto& unresolved) { return WebCore::createColor(unresolved, context); });
+}
+
+std::optional<CSSUnresolvedAbsoluteColor> CSSUnresolvedColor::absolute() const
+{
+    if (auto* absolute = std::get_if<CSSUnresolvedAbsoluteColor>(&m_value))
+        return *absolute;
+    return std::nullopt;
+}
+
+std::optional<CSSUnresolvedColorKeyword> CSSUnresolvedColor::keyword() const
+{
+    if (auto* keyword = std::get_if<CSSUnresolvedColorKeyword>(&m_value))
+        return *keyword;
+    return std::nullopt;
+}
+
+std::optional<CSSUnresolvedColorHex> CSSUnresolvedColor::hex() const
+{
+    if (auto* hex = std::get_if<CSSUnresolvedColorHex>(&m_value))
+        return *hex;
+    return std::nullopt;
+}
+
+void serializationForCSS(StringBuilder& builder, const CSSUnresolvedColor& unresolved)
+{
+    return unresolved.serializationForCSS(builder);
+}
+
+String serializationForCSS(const CSSUnresolvedColor& unresolved)
+{
+    return unresolved.serializationForCSS();
+}
+
+bool operator==(const UniqueRef<CSSUnresolvedColor>& a, const UniqueRef<CSSUnresolvedColor>& b)
+{
+    return a->equals(b.get());
 }
 
 } // namespace WebCore

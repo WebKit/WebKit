@@ -232,10 +232,7 @@ LocalFrame::~LocalFrame()
     if (!isMainFrame() && localMainFrame)
         localMainFrame->selfOnlyDeref();
 
-    if (isRootFrame()) {
-        if (RefPtr page = this->page())
-            page->removeRootFrame(*this);
-    }
+    detachFromPage();
 }
 
 void LocalFrame::addDestructionObserver(FrameDestructionObserver& observer)
@@ -433,7 +430,7 @@ static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& 
 
         // Search for word boundaries only if label starts/ends with "word characters".
         // If we always searched for word boundaries, this wouldn't work for languages such as Japanese.
-        pattern.append(i ? "|" : "", startsWithWordCharacter ? "\\b" : "", label, endsWithWordCharacter ? "\\b" : "");
+        pattern.append(i ? "|"_s : ""_s, startsWithWordCharacter ? "\\b"_s : ""_s, label, endsWithWordCharacter ? "\\b"_s : ""_s);
     }
     pattern.append(')');
     return JSC::Yarr::RegularExpression(pattern.toString(), { JSC::Yarr::Flags::IgnoreCase });
@@ -623,7 +620,7 @@ bool LocalFrame::requestDOMPasteAccess(DOMPasteAccessCategory pasteAccessCategor
         if (!client)
             return false;
 
-        auto response = client->requestDOMPasteAccess(pasteAccessCategory, m_doc->originIdentifierForPasteboard());
+        auto response = client->requestDOMPasteAccess(pasteAccessCategory, frameID(), m_doc->originIdentifierForPasteboard());
         gestureToken->didRequestDOMPasteAccess(response);
         switch (response) {
         case DOMPasteAccessResponse::GrantedForCommand:
@@ -1296,19 +1293,35 @@ bool LocalFrame::requestSkipUserActivationCheckForStorageAccess(const Registrabl
 
 void LocalFrame::didAccessWindowProxyPropertyViaOpener(WindowProxyProperty property)
 {
+    // FIXME: until we support restricted openers, report all property accesses as "other" to reduce
+    // the number of events logged.
+    property = WindowProxyProperty::Other;
+
     if (m_accessedWindowProxyPropertiesViaOpener.contains(property))
         return;
+
+    auto origin = SecurityOriginData::fromFrame(this);
+    if (origin.isNull() || origin.isOpaque())
+        return;
+
+    if (!opener())
+        return;
+
+    auto openerMainFrame = dynamicDowncast<LocalFrame>(opener()->mainFrame());
+    if (!openerMainFrame)
+        return;
+
+    auto openerMainFrameOrigin = SecurityOriginData::fromFrame(openerMainFrame);
+    if (openerMainFrameOrigin.isNull() || openerMainFrameOrigin.isOpaque())
+        return;
+
+    auto site = RegistrableDomain(origin);
+    auto openerMainFrameSite = RegistrableDomain(openerMainFrameOrigin);
+    if (site == openerMainFrameSite)
+        return;
+
     m_accessedWindowProxyPropertiesViaOpener.add(property);
-
-    RefPtr parentWindow { opener() ? opener()->window() : nullptr };
-    if (!parentWindow)
-        return;
-
-    auto parentOrigin = SecurityOriginData::fromURL(parentWindow->location().url());
-    if (parentOrigin.isNull() || parentOrigin.isOpaque())
-        return;
-
-    checkedLoader()->client().didAccessWindowProxyPropertyViaOpener(WTFMove(parentOrigin), property);
+    checkedLoader()->client().didAccessWindowProxyPropertyViaOpener(WTFMove(openerMainFrameOrigin), property);
 }
 
 #endif
@@ -1324,6 +1337,20 @@ String LocalFrame::customUserAgentAsSiteSpecificQuirks() const
 {
     if (RefPtr documentLoader = loader().activeDocumentLoader())
         return documentLoader->customUserAgentAsSiteSpecificQuirks();
+    return { };
+}
+
+String LocalFrame::customNavigatorPlatform() const
+{
+    if (RefPtr documentLoader = loader().activeDocumentLoader())
+        return documentLoader->customNavigatorPlatform();
+    return { };
+}
+
+OptionSet<AdvancedPrivacyProtections> LocalFrame::advancedPrivacyProtections() const
+{
+    if (auto* documentLoader = loader().activeDocumentLoader())
+        return documentLoader->advancedPrivacyProtections();
     return { };
 }
 

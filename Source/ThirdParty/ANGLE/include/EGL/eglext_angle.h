@@ -439,6 +439,14 @@ EGLAPI void *EGLAPIENTRY eglCopyMetalSharedEventANGLE(EGLDisplay dpy, EGLSync sy
 #define EGL_SYNC_GLOBAL_FENCE_ANGLE 0x34DE
 #endif /* EGL_ANGLE_global_fence_sync */
 
+#ifndef EGL_ANGLE_no_error
+#define EGL_ANGLE_no_error 1
+typedef void (EGLAPIENTRYP PFNEGLSETVALIDATIONENABLEDANGLEPROC)(EGLBoolean validationState);
+#ifdef EGL_EGLEXT_PROTOTYPES
+EGLAPI void EGLAPIENTRY eglSetValidationEnabledANGLE(EGLBoolean validationState);
+#endif
+#endif /* EGL_ANGLE_no_error */
+
 // clang-format on
 
 #endif  // INCLUDE_EGL_EGLEXT_ANGLE_

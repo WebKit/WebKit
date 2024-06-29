@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: 0
+CONSOLE MESSAGE: validation error
+CONSOLE MESSAGE: Buffer[0] fails: (strideCount(4294967296) - 1) * stride(256) + lastStride(4) > bufferSize(0) / mtlBufferSize(1)
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584

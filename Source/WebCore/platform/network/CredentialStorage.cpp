@@ -37,7 +37,7 @@ namespace WebCore {
 
 static String originStringFromURL(const URL& url)
 {
-    return makeString(url.protocol(), "://", url.hostAndPort(), '/');
+    return makeString(url.protocol(), "://"_s, url.hostAndPort(), '/');
 }
 
 static String protectionSpaceMapKeyFromURL(const URL& url)

@@ -99,7 +99,8 @@ void EllipsisBoxPainter::paintSelection()
     visualRect.move(m_paintOffset.x(), m_paintOffset.y());
 
     auto ellipsisText = m_lineBox.ellipsisText();
-    style.fontCascade().adjustSelectionRectForText(ellipsisText, visualRect);
+    constexpr bool canUseSimplifiedTextMeasuring = false;
+    style.fontCascade().adjustSelectionRectForText(canUseSimplifiedTextMeasuring, ellipsisText, visualRect);
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(visualRect, m_lineBox.formattingContextRoot().document().deviceScaleFactor(), ellipsisText.ltr()), backgroundColor);
 }
 

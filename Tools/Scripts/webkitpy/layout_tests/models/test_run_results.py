@@ -310,20 +310,13 @@ def summarize_results(port_obj, expectations_by_type, initial_results, retry_res
                 test_dict['report'] = 'MISSING'
         elif test_name in initial_results.unexpected_results_by_name:
             if retry_results and test_name in retry_results.unexpected_results_by_name:
+                num_regressions += 1
+                test_dict['report'] = 'REGRESSION'
                 retry_result_type = retry_results.unexpected_results_by_name[test_name].type
                 if result_type != retry_result_type:
-                    if enabled_pixel_tests_in_retry and result_type == test_expectations.TEXT and (retry_result_type == test_expectations.IMAGE_PLUS_TEXT or retry_result_type == test_expectations.MISSING):
-                        if retry_result_type == test_expectations.MISSING:
-                            num_missing += 1
-                        num_regressions += 1
-                        test_dict['report'] = 'REGRESSION'
-                    else:
-                        num_flaky += 1
-                        test_dict['report'] = 'FLAKY'
                     actual.append(keywords[retry_result_type])
-                else:
-                    num_regressions += 1
-                    test_dict['report'] = 'REGRESSION'
+                    if enabled_pixel_tests_in_retry and result_type == test_expectations.TEXT and retry_result_type == test_expectations.MISSING:
+                        num_missing += 1
             elif retry_results and test_name in retry_results.expected_results_by_name:
                 retry_result_name = keywords[retry_results.expected_results_by_name[test_name].type]
                 if retry_result_name not in actual:

@@ -25,7 +25,7 @@
 
 .object-tree {
     position: relative;
-    display: inline-block;
+    display: inline;
     color: var(--text-color);
     font-family: Menlo, monospace;
     font-size: 11px;
@@ -84,10 +84,16 @@
 
 .tree-outline.object {
     margin: 0;
-    padding: 0 6px 2px;
+    padding-top: 0;
+    padding-bottom: 2px;
+    padding-inline: 6px 0;
     list-style: none;
     min-height: 18px;
     outline: none;
+}
+
+.tree-outline.object > .item {
+    padding-inline-end: 0;
 }
 
 .object-tree .tree-outline.object.compact {

@@ -1386,13 +1386,20 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
 
         if (canBlitWithCommand && areChannelsBlitCompatible && !reinterpretsColorspace)
         {
+            // Stash all images that involved with blit so that we can track them all at once.
+            angle::FixedVector<vk::ImageHelper *, 1 + gl::IMPLEMENTATION_MAX_DRAW_BUFFERS>
+                accessedImages;
+            accessedImages.push_back(&readRenderTarget->getImageForCopy());
             for (size_t colorIndexGL : mState.getEnabledDrawBuffers())
             {
                 RenderTargetVk *drawRenderTarget = mRenderTargetCache.getColors()[colorIndexGL];
                 ANGLE_TRY(blitWithCommand(contextVk, sourceArea, destArea, readRenderTarget,
                                           drawRenderTarget, filter, true, false, false, flipX,
                                           flipY));
+                accessedImages.push_back(&drawRenderTarget->getImageForWrite());
             }
+            contextVk->trackImagesWithOutsideRenderPassEvent(accessedImages.data(),
+                                                             accessedImages.size());
         }
         // If we're not flipping or rotating, use Vulkan's builtin resolve.
         else if (isColorResolve && !flipX && !flipY && areChannelsBlitCompatible &&
@@ -1500,6 +1507,8 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
             ANGLE_TRY(blitWithCommand(contextVk, sourceArea, destArea, readRenderTarget,
                                       drawRenderTarget, filter, false, blitDepthBuffer,
                                       blitStencilBuffer, flipX, flipY));
+            contextVk->trackImagesWithOutsideRenderPassEvent(&readRenderTarget->getImageForCopy(),
+                                                             &drawRenderTarget->getImageForWrite());
         }
         else
         {
@@ -1843,6 +1852,9 @@ angle::Result FramebufferVk::generateFragmentShadingRateWithCPU(
     dataUpload->copyBufferToImage(buffer->getBuffer().getHandle(),
                                   mFragmentShadingRateImage.getImage(),
                                   VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copy);
+
+    contextVk->trackImageWithOutsideRenderPassEvent(&mFragmentShadingRateImage);
+
     return angle::Result::Continue;
 }
 
@@ -1888,8 +1900,7 @@ angle::Result FramebufferVk::updateFoveationState(ContextVk *contextVk,
                                                   const gl::FoveationState &newFoveationState,
                                                   const gl::Extents &foveatedAttachmentSize)
 {
-    mFoveationState                               = newFoveationState;
-    const bool isFoveationEnabled                 = mFoveationState.isFoveated();
+    const bool isFoveationEnabled                 = newFoveationState.isFoveated();
     vk::ImageOrBufferViewSubresourceSerial serial = vk::kInvalidImageOrBufferViewSubresourceSerial;
     if (isFoveationEnabled)
     {
@@ -1902,8 +1913,11 @@ angle::Result FramebufferVk::updateFoveationState(ContextVk *contextVk,
             gl::SrgbOverride::Default);
     }
 
+    // Update state after the possible failure point.
+    mFoveationState = newFoveationState;
     mCurrentFramebufferDesc.updateFragmentShadingRate(serial);
-    mRenderPassDesc.setFragmentShadingAttachment(isFoveationEnabled);
+    // mRenderPassDesc will be updated later in updateRenderPassDesc() in case if
+    // mCurrentFramebufferDesc was changed.
     return angle::Result::Continue;
 }
 
@@ -1997,6 +2011,8 @@ angle::Result FramebufferVk::resolveColorWithCommand(ContextVk *contextVk,
     resolveRegion.extent.depth                  = 1;
 
     angle::VulkanPerfCounters &perfCounters = contextVk->getPerfCounters();
+    angle::FixedVector<vk::ImageHelperPtr, 1 + gl::IMPLEMENTATION_MAX_DRAW_BUFFERS> accessedImages;
+    accessedImages.push_back(srcImage);
     for (size_t colorIndexGL : mState.getEnabledDrawBuffers())
     {
         RenderTargetVk *drawRenderTarget = mRenderTargetCache.getColors()[colorIndexGL];
@@ -2009,7 +2025,9 @@ angle::Result FramebufferVk::resolveColorWithCommand(ContextVk *contextVk,
         srcImage->resolve(&dstImage, resolveRegion, commandBuffer);
 
         perfCounters.resolveImageCommands++;
+        accessedImages.push_back(&dstImage);
     }
+    contextVk->trackImagesWithOutsideRenderPassEvent(accessedImages.data(), accessedImages.size());
 
     return angle::Result::Continue;
 }
@@ -2455,7 +2473,8 @@ angle::Result FramebufferVk::syncState(const gl::Context *context,
         // descriptor to reflect the new state.
         gl::SrgbWriteControlMode newSrgbWriteControlMode = mState.getWriteControlMode();
         mCurrentFramebufferDesc.setWriteControlMode(newSrgbWriteControlMode);
-        mRenderPassDesc.setWriteControlMode(newSrgbWriteControlMode);
+        // mRenderPassDesc will be updated later in updateRenderPassDesc() in case if
+        // mCurrentFramebufferDesc was changed.
     }
 
     if (shouldUpdateColorMaskAndBlend)
@@ -2845,7 +2864,7 @@ angle::Result FramebufferVk::createNewFramebuffer(
                                      ? &info.renderTarget->getResolveImageForRenderPass()
                                      : &info.renderTarget->getImageForRenderPass();
 
-        const gl::LevelIndex level = info.renderTarget->getLevelIndex();
+        const gl::LevelIndex level = info.renderTarget->getLevelIndexForImage(*image);
         const uint32_t layerCount  = info.renderTarget->getLayerCount();
         const gl::Extents extents  = image->getLevelExtents2D(image->toVkLevel(level));
 
@@ -3025,7 +3044,7 @@ angle::Result FramebufferVk::clearWithDraw(
         // TODO: implement clear of layered framebuffers.  UtilsVk::clearFramebuffer should add a
         // geometry shader that is instanced layerCount times (or loops layerCount times), each time
         // selecting a different layer.
-        // http://anglebug.com/5453
+        // http://anglebug.com/42263992
         ASSERT(mCurrentFramebufferDesc.isMultiview() || colorRenderTarget->getLayerCount() == 1);
 
         ANGLE_TRY(contextVk->getUtils().clearFramebuffer(contextVk, this, params));
@@ -3325,6 +3344,12 @@ angle::Result FramebufferVk::startNewRenderPass(ContextVk *contextVk,
     // Make sure render pass and framebuffer are in agreement w.r.t unresolve attachments.
     ASSERT(mCurrentFramebufferDesc.getUnresolveAttachmentMask() ==
            MakeUnresolveAttachmentMask(mRenderPassDesc));
+    // ... w.r.t sRGB write control.
+    ASSERT(mCurrentFramebufferDesc.getWriteControlMode() ==
+           mRenderPassDesc.getSRGBWriteControlMode());
+    // ... w.r.t foveation.
+    ASSERT(mCurrentFramebufferDesc.hasFragmentShadingRateAttachment() ==
+           mRenderPassDesc.hasFragmentShadingAttachment());
 
     // Color attachments.
     const auto &colorRenderTargets = mRenderTargetCache.getColors();

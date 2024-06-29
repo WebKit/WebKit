@@ -171,6 +171,11 @@ class VulkanSecondaryCommandBuffer : public priv::CommandBuffer
                       VkPipelineStageFlags dstStageMask,
                       const VkImageMemoryBarrier &imageMemoryBarrier);
 
+    void imageWaitEvent(const VkEvent &event,
+                        VkPipelineStageFlags srcStageMask,
+                        VkPipelineStageFlags dstStageMask,
+                        const VkImageMemoryBarrier &imageMemoryBarrier);
+
     void memoryBarrier(VkPipelineStageFlags srcStageMask,
                        VkPipelineStageFlags dstStageMask,
                        const VkMemoryBarrier &memoryBarrier);
@@ -546,6 +551,17 @@ ANGLE_INLINE void VulkanSecondaryCommandBuffer::imageBarrier(
 {
     onRecordCommand();
     CommandBuffer::imageBarrier(srcStageMask, dstStageMask, imageMemoryBarrier);
+}
+
+ANGLE_INLINE void VulkanSecondaryCommandBuffer::imageWaitEvent(
+    const VkEvent &event,
+    VkPipelineStageFlags srcStageMask,
+    VkPipelineStageFlags dstStageMask,
+    const VkImageMemoryBarrier &imageMemoryBarrier)
+{
+    onRecordCommand();
+    CommandBuffer::waitEvents(1, &event, srcStageMask, dstStageMask, 0, nullptr, 0, nullptr, 1,
+                              &imageMemoryBarrier);
 }
 
 ANGLE_INLINE void VulkanSecondaryCommandBuffer::nextSubpass(VkSubpassContents subpassContents)

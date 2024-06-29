@@ -128,14 +128,6 @@ heading with two nested links referencing image using aria-labelledby
 
 link1 link2   link3
 
-heading with link referencing image using aria-labelledby, that in turn references text element via aria-labelledby
-
-link
-
-heading with link referencing image using aria-labelledby, that in turn references itself and another element via aria-labelledby
-
-link
-
 simple w/ for each child (w/o spaces and display:inline)
 
 onetwothree
@@ -225,14 +217,6 @@ FAIL heading name from content for each child including two nested links using a
   </a>
 </h3> expected "image link2 link3" but got "image link2 image link3"
 PASS link name from content for each child including nested image (referenced elsewhere via labelledby)
-PASS heading with link referencing image using aria-labelledby, that in turn references text element via aria-labelledby
-FAIL heading with link referencing image using aria-labelledby, that in turn references itself and another element via aria-labelledby assert_equals: <h3 data-expectedlabel="image link" data-testname="heading with link referencing image using aria-labelledby, that in turn references itself and another element via aria-labelledby" class="ex">
-  <a href="#" aria-labelledby="nested_image_label4">
-    <span class="note" id="crossref_link2">link</span><!-- this text is skipped the first time around because of aria-labelledby on parent element -->
-  </a>
-  <!-- but it's picked up again (after the self-referencial image alt) in inverse order b/c of cross-referencial aria-labelledby edge case -->
-  <img id="nested_image_label4" alt="image" aria-labelledby="nested_image_label4 crossref_link2" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
-</h3> expected "image link" but got "image image link"
 PASS button name from content for each child (no space, inline)
 PASS heading name from content for each child (no space, inline)
 PASS link name from content for each child (no space, inline)

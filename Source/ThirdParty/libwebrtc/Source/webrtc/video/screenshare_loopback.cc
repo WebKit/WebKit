@@ -257,6 +257,14 @@ ABSL_FLAG(bool, generic_descriptor, false, "Use the generic frame descriptor.");
 
 ABSL_FLAG(bool, allow_reordering, false, "Allow packet reordering to occur");
 
+ABSL_FLAG(std::string,
+          clip,
+          "",
+          "Name of the clip to show. If empty, use frame generator.");
+std::string Clip() {
+  return absl::GetFlag(FLAGS_clip);
+}
+
 // Screenshare-specific flags.
 ABSL_FLAG(int,
           min_transmit_bitrate,
@@ -331,11 +339,14 @@ void Loopback() {
   params.video[0].num_temporal_layers = NumTemporalLayers();
   params.video[0].selected_tl = SelectedTL();
   params.video[0].min_transmit_bps = MinTransmitBitrateKbps() * 1000;
+  params.video[0].clip_path = Clip();
   params.screenshare[0].enabled = true;
   params.screenshare[0].generate_slides = GenerateSlides();
   params.screenshare[0].slide_change_interval = SlideChangeInterval();
   params.screenshare[0].scroll_duration = ScrollDuration();
   params.screenshare[0].slides = Slides();
+  params.analyzer.test_label = "screenshare";
+  params.analyzer.test_durations_secs = DurationSecs();
   params.config = pipe_config;
   params.logging.rtc_event_log_name = RtcEventLogName();
   params.logging.rtp_dump_name = RtpDumpName();
@@ -351,15 +362,16 @@ void Loopback() {
   std::vector<std::string> SL_descriptors;
   SL_descriptors.push_back(SL0());
   SL_descriptors.push_back(SL1());
-  VideoQualityTest::FillScalabilitySettings(
+
+  VideoQualityTest fixture(nullptr);
+  fixture.FillScalabilitySettings(
       &params, 0, stream_descriptors, NumStreams(), SelectedStream(),
       NumSpatialLayers(), SelectedSL(), InterLayerPred(), SL_descriptors);
 
-  auto fixture = std::make_unique<VideoQualityTest>(nullptr);
   if (DurationSecs()) {
-    fixture->RunWithAnalyzer(params);
+    fixture.RunWithAnalyzer(params);
   } else {
-    fixture->RunWithRenderers(params);
+    fixture.RunWithRenderers(params);
   }
 }
 

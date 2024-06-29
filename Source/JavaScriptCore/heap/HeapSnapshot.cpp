@@ -38,9 +38,7 @@ HeapSnapshot::HeapSnapshot(HeapSnapshot* previousSnapshot)
 {
 }
 
-HeapSnapshot::~HeapSnapshot()
-{
-}
+HeapSnapshot::~HeapSnapshot() = default;
 
 void HeapSnapshot::appendNode(const HeapSnapshotNode& node)
 {

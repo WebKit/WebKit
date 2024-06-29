@@ -81,6 +81,13 @@ class GeometryShaderTest : public ANGLETest<>
     void layeredFramebufferClearTest(GLenum colorTarget);
     void layeredFramebufferPreRenderClearTest(GLenum colorTarget, bool doubleClear);
     void layeredFramebufferMidRenderClearTest(GLenum colorTarget);
+    void callFramebufferTextureAPI(APIExtensionVersion usedExtension,
+                                   GLenum target,
+                                   GLenum attachment,
+                                   GLuint texture,
+                                   GLint level);
+    void testNegativeFramebufferTexture(APIExtensionVersion usedExtension);
+    void testCreateAndAttachGeometryShader(APIExtensionVersion usedExtension);
 
     static constexpr GLsizei kWidth              = 16;
     static constexpr GLsizei kHeight             = 16;
@@ -94,10 +101,11 @@ class GeometryShaderTest : public ANGLETest<>
 class GeometryShaderTestES3 : public ANGLETest<>
 {};
 
-class GeometryShaderTestES32 : public ANGLETest<>
+class GeometryShaderTestES32 : public GeometryShaderTest
 {};
 
-// Verify that Geometry Shader cannot be created in an OpenGL ES 3.0 context.
+// Verify that a geometry shader cannot be created in an OpenGL ES 3.0 context, since at least
+// ES 3.1 is required.
 TEST_P(GeometryShaderTestES3, CreateGeometryShaderInES3)
 {
     EXPECT_TRUE(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
@@ -106,13 +114,38 @@ TEST_P(GeometryShaderTestES3, CreateGeometryShaderInES3)
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 }
 
-// Verify that Geometry Shader can be created and attached to a program.
-TEST_P(GeometryShaderTest, CreateAndAttachGeometryShader)
+void GeometryShaderTest::testCreateAndAttachGeometryShader(APIExtensionVersion usedExtension)
 {
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+    ASSERT(usedExtension == APIExtensionVersion::EXT || usedExtension == APIExtensionVersion::OES ||
+           usedExtension == APIExtensionVersion::Core);
 
-    constexpr char kGS[] = R"(#version 310 es
-#extension GL_EXT_geometry_shader : require
+    std::string gs;
+
+    constexpr char kGLSLVersion31[] = R"(#version 310 es
+)";
+    constexpr char kGLSLVersion32[] = R"(#version 320 es
+)";
+    constexpr char kGeometryEXT[]   = R"(#extension GL_EXT_geometry_shader : require
+)";
+    constexpr char kGeometryOES[]   = R"(#extension GL_OES_geometry_shader : require
+)";
+
+    if (usedExtension == APIExtensionVersion::EXT)
+    {
+        gs.append(kGLSLVersion31);
+        gs.append(kGeometryEXT);
+    }
+    else if (usedExtension == APIExtensionVersion::OES)
+    {
+        gs.append(kGLSLVersion31);
+        gs.append(kGeometryOES);
+    }
+    else
+    {
+        gs.append(kGLSLVersion32);
+    }
+
+    constexpr char kGSBody[] = R"(
 layout (invocations = 3, triangles) in;
 layout (triangle_strip, max_vertices = 3) out;
 in vec4 texcoord[];
@@ -129,9 +162,9 @@ void main()
     }
     EndPrimitive();
 })";
+    gs.append(kGSBody);
 
-    GLuint geometryShader = CompileShader(GL_GEOMETRY_SHADER_EXT, kGS);
-
+    GLuint geometryShader = CompileShader(GL_GEOMETRY_SHADER_EXT, gs.c_str());
     EXPECT_NE(0u, geometryShader);
 
     GLuint programID = glCreateProgram();
@@ -144,9 +177,29 @@ void main()
     EXPECT_GL_NO_ERROR();
 }
 
+// Verify that a geometry shader can be created and attached to a program using the EXT extension.
+TEST_P(GeometryShaderTest, CreateAndAttachGeometryShaderEXT)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+    testCreateAndAttachGeometryShader(APIExtensionVersion::EXT);
+}
+
+// Verify that a geometry shader can be created and attached to a program using the OES extension.
+TEST_P(GeometryShaderTest, CreateAndAttachGeometryShaderOES)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_geometry_shader"));
+    testCreateAndAttachGeometryShader(APIExtensionVersion::OES);
+}
+
+// Verify that a geometry shader can be created and attached to a program in GLES 3.2.
+TEST_P(GeometryShaderTestES32, CreateAndAttachGeometryShader)
+{
+    testCreateAndAttachGeometryShader(APIExtensionVersion::Core);
+}
+
 // Verify that Geometry Shader can be compiled when geometry shader array input size
 // is set after shader input variables.
-// http://anglebug.com/7125 GFXBench Car Chase uses this pattern
+// http://anglebug.com/42265598 GFXBench Car Chase uses this pattern
 TEST_P(GeometryShaderTest, DeferredSetOfArrayInputSize)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
@@ -186,7 +239,7 @@ TEST_P(GeometryShaderTest, GeometryShaderImplementationDependentLimits)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
 
-    // http://anglebug.com/5510
+    // http://anglebug.com/42264048
     ANGLE_SKIP_TEST_IF(IsIntel() && IsVulkan() && IsLinux());
 
     const std::map<GLenum, int> limits = {{GL_MAX_FRAMEBUFFER_LAYERS_EXT, 256},
@@ -224,7 +277,7 @@ TEST_P(GeometryShaderTest, CombinedResourceLimits)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
 
-    // See http://anglebug.com/2261.
+    // See http://anglebug.com/42260977.
     ANGLE_SKIP_TEST_IF(IsAndroid());
 
     const std::map<GLenum, int> limits = {{GL_MAX_UNIFORM_BUFFER_BINDINGS, 48},
@@ -763,10 +816,32 @@ void main()
     }
 }
 
-// Verify correct errors can be reported when we use illegal parameters on FramebufferTextureEXT.
-TEST_P(GeometryShaderTest, NegativeFramebufferTextureEXT)
+void GeometryShaderTest::callFramebufferTextureAPI(APIExtensionVersion usedExtension,
+                                                   GLenum target,
+                                                   GLenum attachment,
+                                                   GLuint texture,
+                                                   GLint level)
 {
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+    ASSERT(usedExtension == APIExtensionVersion::EXT || usedExtension == APIExtensionVersion::OES ||
+           usedExtension == APIExtensionVersion::Core);
+    if (usedExtension == APIExtensionVersion::EXT)
+    {
+        glFramebufferTextureEXT(target, attachment, texture, level);
+    }
+    else if (usedExtension == APIExtensionVersion::OES)
+    {
+        glFramebufferTextureOES(target, attachment, texture, level);
+    }
+    else
+    {
+        glFramebufferTexture(target, attachment, texture, level);
+    }
+}
+
+void GeometryShaderTest::testNegativeFramebufferTexture(APIExtensionVersion usedExtension)
+{
+    ASSERT(usedExtension == APIExtensionVersion::EXT || usedExtension == APIExtensionVersion::OES ||
+           usedExtension == APIExtensionVersion::Core);
 
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -778,17 +853,17 @@ TEST_P(GeometryShaderTest, NegativeFramebufferTextureEXT)
     // [EXT_geometry_shader] Section 9.2.8, "Attaching Texture Images to a Framebuffer"
     // An INVALID_ENUM error is generated if <target> is not DRAW_FRAMEBUFFER, READ_FRAMEBUFFER, or
     // FRAMEBUFFER.
-    glFramebufferTextureEXT(GL_TEXTURE_2D, GL_COLOR_ATTACHMENT0, tex, 0);
+    callFramebufferTextureAPI(usedExtension, GL_TEXTURE_2D, GL_COLOR_ATTACHMENT0, tex, 0);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 
     // An INVALID_ENUM error is generated if <attachment> is not one of the attachments in Table
     // 9.1.
-    glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_TEXTURE_2D, tex, 0);
+    callFramebufferTextureAPI(usedExtension, GL_FRAMEBUFFER, GL_TEXTURE_2D, tex, 0);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 
     // An INVALID_OPERATION error is generated if zero is bound to <target>.
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0);
+    callFramebufferTextureAPI(usedExtension, GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -799,14 +874,29 @@ TEST_P(GeometryShaderTest, NegativeFramebufferTextureEXT)
     glGenTextures(1, &tex2);
     glDeleteTextures(1, &tex2);
     ASSERT_FALSE(glIsTexture(tex2));
-    glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex2, 0);
+    callFramebufferTextureAPI(usedExtension, GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex2, 0);
     EXPECT_GL_ERROR(GL_INVALID_VALUE);
 
     GLint max3DSize;
     glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &max3DSize);
     GLint max3DLevel = static_cast<GLint>(std::log2(max3DSize));
-    glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, max3DLevel + 1);
+    callFramebufferTextureAPI(usedExtension, GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex,
+                              max3DLevel + 1);
     EXPECT_GL_ERROR(GL_INVALID_VALUE);
+}
+
+// Verify that correct errors are reported when we use illegal parameters in FramebufferTextureEXT.
+TEST_P(GeometryShaderTest, NegativeFramebufferTextureEXT)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+    testNegativeFramebufferTexture(APIExtensionVersion::EXT);
+}
+
+// Verify that correct errors are reported when we use illegal parameters in FramebufferTextureOES.
+TEST_P(GeometryShaderTest, NegativeFramebufferTextureOES)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_geometry_shader"));
+    testNegativeFramebufferTexture(APIExtensionVersion::OES);
 }
 
 // Verify CheckFramebufferStatus can work correctly on layered depth and stencil attachments.
@@ -1214,7 +1304,7 @@ void GeometryShaderTest::layeredFramebufferClearTest(GLenum colorTarget)
 TEST_P(GeometryShaderTest, LayeredFramebufferClear3DColor)
 {
     // Mesa considers the framebuffer with mixed 3D and 2D array attachments to be incomplete.
-    // http://anglebug.com/5463
+    // http://anglebug.com/42264003
     ANGLE_SKIP_TEST_IF((IsAMD() || IsIntel()) && IsOpenGL() && IsLinux());
 
     layeredFramebufferClearTest(GL_TEXTURE_3D);
@@ -1296,7 +1386,7 @@ void GeometryShaderTest::layeredFramebufferPreRenderClearTest(GLenum colorTarget
 TEST_P(GeometryShaderTest, LayeredFramebufferPreRenderClear3DColor)
 {
     // Mesa considers the framebuffer with mixed 3D and 2D array attachments to be incomplete.
-    // http://anglebug.com/5463
+    // http://anglebug.com/42264003
     ANGLE_SKIP_TEST_IF((IsAMD() || IsIntel()) && IsOpenGL() && IsLinux());
 
     layeredFramebufferPreRenderClearTest(GL_TEXTURE_3D, false);
@@ -1306,7 +1396,7 @@ TEST_P(GeometryShaderTest, LayeredFramebufferPreRenderClear3DColor)
 TEST_P(GeometryShaderTest, LayeredFramebufferPreRenderDoubleClear3DColor)
 {
     // Mesa considers the framebuffer with mixed 3D and 2D array attachments to be incomplete.
-    // http://anglebug.com/5463
+    // http://anglebug.com/42264003
     ANGLE_SKIP_TEST_IF((IsAMD() || IsIntel()) && IsOpenGL() && IsLinux());
 
     layeredFramebufferPreRenderClearTest(GL_TEXTURE_3D, true);
@@ -1328,7 +1418,8 @@ void GeometryShaderTest::layeredFramebufferMidRenderClearTest(GLenum colorTarget
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
 
-    // Vulkan's draw path for clear doesn't support layered framebuffers.  http://anglebug.com/5453
+    // Vulkan's draw path for clear doesn't support layered framebuffers.
+    // http://anglebug.com/42263992
     ANGLE_SKIP_TEST_IF(IsVulkan());
 
     const GLColor kColor0InitColor(10, 20, 30, 40);
@@ -1394,7 +1485,7 @@ void GeometryShaderTest::layeredFramebufferMidRenderClearTest(GLenum colorTarget
 TEST_P(GeometryShaderTest, LayeredFramebufferMidRenderClear3DColor)
 {
     // Mesa considers the framebuffer with mixed 3D and 2D array attachments to be incomplete.
-    // http://anglebug.com/5463
+    // http://anglebug.com/42264003
     ANGLE_SKIP_TEST_IF((IsAMD() || IsIntel()) && IsOpenGL() && IsLinux());
 
     layeredFramebufferMidRenderClearTest(GL_TEXTURE_3D);
@@ -1468,6 +1559,12 @@ void main()
     EXPECT_PIXEL_RECT_EQ(0, 0, w / 2, h / 2, GLColor::green);
     EXPECT_PIXEL_RECT_EQ(0, h / 2, w, h / 2, GLColor::red);
     EXPECT_PIXEL_RECT_EQ(w / 2, 0, w / 2, h / 2, GLColor::red);
+}
+
+// Verify that correct errors are reported when we use illegal parameters in FramebufferTexture.
+TEST_P(GeometryShaderTestES32, NegativeFramebufferTexture)
+{
+    testNegativeFramebufferTexture(APIExtensionVersion::Core);
 }
 
 // Verify that we can have the max amount of uniforms with a geometry shader.

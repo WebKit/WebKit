@@ -81,10 +81,13 @@ void* SurfaceThread::pthread_main(void* arg) {
                surfaceThread->message_callback, surfaceThread);
 
     while (surfaceThread->fRunning) {
-        const int ident = ALooper_pollAll(0, nullptr, nullptr, nullptr);
+        int ident = 0;
+        while (ident == ALOOPER_POLL_CALLBACK) {
+            ident = ALooper_pollOnce(0, nullptr, nullptr, nullptr);
+        }
 
         if (ident >= 0) {
-            SkDebugf("Unhandled ALooper_pollAll ident=%d !", ident);
+            SkDebugf("Unhandled ALooper_pollOnce ident=%d !", ident);
         }
     }
     return nullptr;

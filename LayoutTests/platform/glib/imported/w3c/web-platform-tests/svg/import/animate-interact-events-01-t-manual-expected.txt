@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (50,10) size 717x474
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGRect {rect} at (0,0) size 84x84 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
-      RenderSVGText {text} at (120,6) size 221x18 contains 1 chunk(s)
+      RenderSVGText {text} at (120,6) size 221x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 221x17
           chunk 1 text run 1 at (120.00,20.00) startOffset 0 endOffset 32 width 220.20: "Shadow tree event listener chain"
       RenderSVGContainer {use} at (50,50) size 84x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,30.00)}]

@@ -215,7 +215,7 @@ void MediaSessionManageriOS::activeVideoRouteDidChange(SupportsAirPlayVideo supp
     m_playbackTargetSupportsAirPlayVideo = supportsAirPlayVideo == SupportsAirPlayVideo::Yes;
 #endif
 
-    auto nowPlayingSession = nowPlayingEligibleSession();
+    CheckedPtr nowPlayingSession = nowPlayingEligibleSession().get();
     if (!nowPlayingSession)
         return;
 

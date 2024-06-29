@@ -394,7 +394,7 @@ ExceptionOr<int> CSSStyleSheet::addRule(const String& selector, const String& st
 {
     LOG_WITH_STREAM(StyleSheets, stream << "CSSStyleSheet " << this << " addRule() selector " << selector << " style " << style << " at " << index);
 
-    auto text = makeString(selector, " { ", style, !style.isEmpty() ? " " : "", '}');
+    auto text = makeString(selector, " { "_s, style, !style.isEmpty() ? " "_s : ""_s, '}');
     auto insertRuleResult = insertRule(text, index.value_or(length()));
     if (insertRuleResult.hasException())
         return insertRuleResult.releaseException();

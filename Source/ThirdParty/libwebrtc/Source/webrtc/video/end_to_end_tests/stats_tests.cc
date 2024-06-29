@@ -16,7 +16,6 @@
 #include "api/test/simulated_network.h"
 #include "api/test/video/function_video_encoder_factory.h"
 #include "call/fake_network_pipe.h"
-#include "call/simulated_network.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/video_coding/include/video_coding_defines.h"
 #include "rtc_base/strings/string_builder.h"
@@ -27,6 +26,7 @@
 #include "test/call_test.h"
 #include "test/fake_encoder.h"
 #include "test/gtest.h"
+#include "test/network/simulated_network.h"
 #include "test/rtcp_packet_parser.h"
 #include "test/video_test_constants.h"
 
@@ -53,10 +53,10 @@ TEST_F(StatsEndToEndTest, GetStats) {
    public:
     StatsObserver()
         : EndToEndTest(test::VideoTestConstants::kLongTimeout),
-          encoder_factory_([]() {
-            return std::make_unique<test::DelayedEncoder>(
-                Clock::GetRealTimeClock(), 10);
-          }) {}
+          encoder_factory_(
+              [](const Environment& env, const SdpVideoFormat& format) {
+                return std::make_unique<test::DelayedEncoder>(env, 10);
+              }) {}
 
    private:
     Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
@@ -518,9 +518,9 @@ TEST_F(StatsEndToEndTest, MAYBE_ContentTypeSwitches) {
 
   metrics::Reset();
 
-  CallConfig send_config(send_event_log_.get());
+  CallConfig send_config = SendCallConfig();
   test.ModifySenderBitrateConfig(&send_config.bitrate_config);
-  CallConfig recv_config(recv_event_log_.get());
+  CallConfig recv_config = RecvCallConfig();
   test.ModifyReceiverBitrateConfig(&recv_config.bitrate_config);
 
   VideoEncoderConfig encoder_config_with_screenshare;
@@ -732,13 +732,13 @@ TEST_F(StatsEndToEndTest, CallReportsRttForSender) {
     Start();
   });
 
-  int64_t start_time_ms = clock_->TimeInMilliseconds();
+  int64_t start_time_ms = env().clock().TimeInMilliseconds();
   while (true) {
     Call::Stats stats;
     SendTask(task_queue(),
              [this, &stats]() { stats = sender_call_->GetStats(); });
     ASSERT_GE(start_time_ms + test::VideoTestConstants::kDefaultTimeout.ms(),
-              clock_->TimeInMilliseconds())
+              env().clock().TimeInMilliseconds())
         << "No RTT stats before timeout!";
     if (stats.rtt_ms != -1) {
       // To avoid failures caused by rounding or minor ntp clock adjustments,

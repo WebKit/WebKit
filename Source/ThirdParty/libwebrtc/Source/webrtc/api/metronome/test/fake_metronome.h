@@ -11,18 +11,12 @@
 #ifndef API_METRONOME_TEST_FAKE_METRONOME_H_
 #define API_METRONOME_TEST_FAKE_METRONOME_H_
 
-#include <memory>
-#include <set>
+#include <cstddef>
 #include <vector>
 
+#include "absl/functional/any_invocable.h"
 #include "api/metronome/metronome.h"
-#include "api/task_queue/task_queue_base.h"
-#include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
-#include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/task_queue.h"
-#include "rtc_base/task_utils/repeating_task.h"
-#include "rtc_base/thread_annotations.h"
 
 namespace webrtc::test {
 
@@ -48,19 +42,18 @@ class ForcedTickMetronome : public Metronome {
 // FakeMetronome is a metronome that ticks based on a repeating task at the
 // `tick_period` provided in the constructor. It is designed for use with
 // simulated task queues for unit tests.
-//
-// `Stop()` must be called before destruction, as it cancels the metronome tick
-// on the proper task queue.
 class FakeMetronome : public Metronome {
  public:
   explicit FakeMetronome(TimeDelta tick_period);
+
+  void SetTickPeriod(TimeDelta tick_period);
 
   // Metronome implementation.
   void RequestCallOnNextTick(absl::AnyInvocable<void() &&> callback) override;
   TimeDelta TickPeriod() const override;
 
  private:
-  const TimeDelta tick_period_;
+  TimeDelta tick_period_;
   std::vector<absl::AnyInvocable<void() &&>> callbacks_;
 };
 

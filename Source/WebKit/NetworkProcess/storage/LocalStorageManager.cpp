@@ -57,7 +57,7 @@ static std::optional<WebCore::SecurityOriginData> fileNameToOrigin(const String&
 
 static String originToFileName(const WebCore::ClientOrigin& origin)
 {
-    return origin.clientOrigin.databaseIdentifier() + ".localstorage";
+    return makeString(origin.clientOrigin.databaseIdentifier(), ".localstorage"_s);
 }
 
 Vector<WebCore::SecurityOriginData> LocalStorageManager::originsOfLocalStorageData(const String& path)

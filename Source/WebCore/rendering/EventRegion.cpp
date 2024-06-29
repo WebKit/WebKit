@@ -62,7 +62,7 @@ void EventRegionContext::unite(const FloatRoundedRect& roundedRect, RenderObject
     auto region = transformAndClipIfNeeded(approximateAsRegion(roundedRect), [](auto affineTransform, auto region) {
         return affineTransform.mapRegion(region);
     });
-    m_eventRegion.unite(region, style, overrideUserModifyIsEditable);
+    m_eventRegion.unite(region, renderer, style, overrideUserModifyIsEditable);
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     auto rect = roundedRect.rect();
@@ -257,6 +257,27 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(RenderObject& render
     return false;
 }
 
+void EventRegionContext::convertGuardContainersToInterationIfNeeded(float minimumCornerRadius)
+{
+    for (auto& region : m_interactionRegions) {
+        if (region.type != InteractionRegion::Type::Guard)
+            continue;
+
+        if (!m_discoveredRegionsByElement.contains(region.elementIdentifier)) {
+            auto rectForTracking = enclosingIntRect(region.rectInLayerCoordinates);
+            if (!m_interactionRectsAndContentHints.contains(rectForTracking)) {
+                region.type = InteractionRegion::Type::Interaction;
+                region.cornerRadius = minimumCornerRadius;
+
+                m_interactionRectsAndContentHints.add(rectForTracking, region.contentHint);
+                Vector<InteractionRegion, 1> discoveredRegions;
+                discoveredRegions.append(region);
+                m_discoveredRegionsByElement.add(region.elementIdentifier, discoveredRegions);
+            }
+        }
+    }
+}
+
 void EventRegionContext::shrinkWrapInteractionRegions()
 {
     for (size_t i = 0; i < m_interactionRegions.size(); ++i) {
@@ -357,8 +378,9 @@ void EventRegionContext::removeSuperfluousInteractionRegions()
     });
 }
 
-void EventRegionContext::copyInteractionRegionsToEventRegion()
+void EventRegionContext::copyInteractionRegionsToEventRegion(float minimumCornerRadius)
 {
+    convertGuardContainersToInterationIfNeeded(minimumCornerRadius);
     removeSuperfluousInteractionRegions();
     shrinkWrapInteractionRegions();
     m_eventRegion.appendInteractionRegions(m_interactionRegions);
@@ -400,9 +422,9 @@ EventRegion::EventRegion(Region&& region
 {
 }
 
-void EventRegion::unite(const Region& region, const RenderStyle& style, bool overrideUserModifyIsEditable)
+void EventRegion::unite(const Region& region, RenderObject& renderer, const RenderStyle& style, bool overrideUserModifyIsEditable)
 {
-    if (style.usedPointerEvents() == PointerEvents::None)
+    if (renderer.usedPointerEvents() == PointerEvents::None)
         return;
 
     m_region.unite(region);

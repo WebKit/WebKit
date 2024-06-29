@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AdvancedPrivacyProtections.h"
 #include "Settings.h"
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <wtf/URL.h>
@@ -40,10 +41,11 @@ struct WorkletParameters {
     Settings::Values settingsValues;
     ReferrerPolicy referrerPolicy;
     bool isAudioContextRealTime;
+    OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections;
     std::optional<uint64_t> noiseInjectionHashSalt;
 
-    WorkletParameters isolatedCopy() const & { return { windowURL.isolatedCopy(), jsRuntimeFlags, sampleRate, identifier.isolatedCopy(), sessionID, settingsValues.isolatedCopy(), referrerPolicy, isAudioContextRealTime, noiseInjectionHashSalt }; }
-    WorkletParameters isolatedCopy() && { return { WTFMove(windowURL).isolatedCopy(), jsRuntimeFlags, sampleRate, WTFMove(identifier).isolatedCopy(), sessionID, WTFMove(settingsValues).isolatedCopy(), referrerPolicy, isAudioContextRealTime, WTFMove(noiseInjectionHashSalt) }; }
+    WorkletParameters isolatedCopy() const & { return { windowURL.isolatedCopy(), jsRuntimeFlags, sampleRate, identifier.isolatedCopy(), sessionID, settingsValues.isolatedCopy(), referrerPolicy, isAudioContextRealTime, advancedPrivacyProtections, noiseInjectionHashSalt }; }
+    WorkletParameters isolatedCopy() && { return { WTFMove(windowURL).isolatedCopy(), jsRuntimeFlags, sampleRate, WTFMove(identifier).isolatedCopy(), sessionID, WTFMove(settingsValues).isolatedCopy(), referrerPolicy, isAudioContextRealTime, advancedPrivacyProtections, WTFMove(noiseInjectionHashSalt) }; }
 };
 
 } // namespace WebCore

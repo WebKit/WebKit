@@ -120,3 +120,15 @@ fn foo() {
 }`;
   t.expectCompileResult(t.params.type === 'bool' || t.params.call === 'bar()', code);
 });
+
+g.test('must_use').
+desc('Tests that the result must be used').
+params((u) => u.combine('use', [true, false])).
+fn((t) => {
+  const code = `
+    var<workgroup> v : u32;
+    fn foo() {
+      ${t.params.use ? '_ =' : ''} workgroupUniformLoad(&v);
+    }`;
+  t.expectCompileResult(t.params.use, code);
+});

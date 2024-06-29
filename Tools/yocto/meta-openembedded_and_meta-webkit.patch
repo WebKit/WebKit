@@ -1,0 +1,41 @@
+diff --git a/sources/meta-openembedded/meta-python/recipes-devtools/python/python3-twisted_24.3.0.bb b/sources/meta-openembedded/meta-python/recipes-devtools/python/python3-twisted_24.3.0.bb
+index e5223cc..1454b62 100644
+--- a/sources/meta-openembedded/meta-python/recipes-devtools/python/python3-twisted_24.3.0.bb
++++ b/sources/meta-openembedded/meta-python/recipes-devtools/python/python3-twisted_24.3.0.bb
+@@ -15,7 +15,7 @@ do_install:append() {
+     find ${D} \( -name "*.bat" -o -name "*.c" -o -name "*.h" \) -exec rm -f {} \;
+ }
+ 
+-PACKAGES += "\
++PACKAGES =+ "\
+     ${PN}-zsh \
+     ${PN}-test \
+     ${PN}-protocols \
+diff --git a/sources/meta-openembedded/meta-webserver/recipes-webadmin/netdata/netdata/netdata.service b/sources/meta-openembedded/meta-webserver/recipes-webadmin/netdata/netdata/netdata.service
+index f4911f3..b13abad 100644
+--- a/sources/meta-openembedded/meta-webserver/recipes-webadmin/netdata/netdata/netdata.service
++++ b/sources/meta-openembedded/meta-webserver/recipes-webadmin/netdata/netdata/netdata.service
+@@ -10,6 +10,9 @@ ExecStartPre=/bin/mkdir -p /var/log/netdata
+ ExecStartPre=/bin/chown -R netdata:netdata /var/log/netdata
+ ExecStart=/usr/sbin/netdata -D -u netdata
+ 
++# restart netdata if it crashes
++Restart=on-failure
++RestartSec=10
+ 
+ [Install]
+ WantedBy=multi-user.target
+diff --git a/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bb b/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bb
+index 9459f4c..e74a20c 100644
+--- a/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bb
++++ b/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bb
+@@ -170,9 +170,6 @@ RDEPENDS:packagegroup-wpewebkit-depends-desktop = "\
+     libxtst \
+     libx11-locale \
+     xorg-minimal-fonts \
+-    gdk-pixbuf-loader-ico \
+-    gdk-pixbuf-loader-bmp \
+-    gdk-pixbuf-loader-ani \
+     gdk-pixbuf-xlib \
+     liberation-fonts \
+     atk \

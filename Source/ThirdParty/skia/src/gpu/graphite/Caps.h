@@ -19,6 +19,7 @@
 #include "src/gpu/ResourceKey.h"
 #include "src/gpu/Swizzle.h"
 #include "src/gpu/graphite/ResourceTypes.h"
+#include "src/gpu/graphite/TextureProxy.h"
 #include "src/text/gpu/SDFTControl.h"
 
 #if defined(GRAPHITE_TEST_UTILS)
@@ -118,6 +119,12 @@ public:
     // TODO: Rather than going through a GraphiteResourceKey, migrate to having a cache of samplers
     // keyed off of SamplerDesc to minimize heap allocations.
     virtual GraphiteResourceKey makeSamplerKey(const SamplerDesc& samplerDesc) const;
+
+    // Backends can optionally override this method to return meaningful sampler conversion info.
+    // By default, simply return a default ImmutableSamplerInfo.
+    virtual ImmutableSamplerInfo getImmutableSamplerInfo(sk_sp<TextureProxy> proxy) const {
+        return {};
+    }
 
     virtual bool extractGraphicsDescs(const UniqueKey&,
                                       GraphicsPipelineDesc*,
@@ -287,6 +294,8 @@ public:
 
     sktext::gpu::SDFTControl getSDFTControl(bool useSDFTForSmallText) const;
 
+    bool setBackendLabels() const { return fSetBackendLabels; }
+
 protected:
     Caps();
 
@@ -391,6 +400,8 @@ protected:
 
     // Set based on client options
     bool fRequireOrderedRecordings = false;
+
+    bool fSetBackendLabels = false;
 
 private:
     virtual bool onIsTexturable(const TextureInfo&) const = 0;

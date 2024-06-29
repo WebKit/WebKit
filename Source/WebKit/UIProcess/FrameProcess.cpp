@@ -33,10 +33,10 @@
 
 namespace WebKit {
 
-FrameProcess::FrameProcess(WebProcessProxy& process, BrowsingContextGroup& group, const WebCore::RegistrableDomain& domain, const WebPreferences& preferences)
+FrameProcess::FrameProcess(WebProcessProxy& process, BrowsingContextGroup& group, const Site& site, const WebPreferences& preferences)
     : m_process(process)
     , m_browsingContextGroup(group)
-    , m_domain(domain)
+    , m_site(site)
 {
     if (preferences.siteIsolationEnabled())
         group.addFrameProcess(*this);

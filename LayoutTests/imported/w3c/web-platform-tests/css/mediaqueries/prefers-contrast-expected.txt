@@ -3,7 +3,7 @@ PASS Should be known: '(prefers-contrast)'
 PASS Should be known: '(prefers-contrast: no-preference)'
 PASS Should be known: '(prefers-contrast: more)'
 PASS Should be known: '(prefers-contrast: less)'
-FAIL Should be known: '(prefers-contrast: custom)' assert_true: expected true got false
+PASS Should be known: '(prefers-contrast: custom)'
 PASS Should be parseable: '(prefers-contrast: increase)'
 PASS Should be unknown: '(prefers-contrast: increase)'
 PASS Should be parseable: '(prefers-contrast: none)'

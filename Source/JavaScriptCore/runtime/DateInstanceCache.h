@@ -37,10 +37,10 @@ class DateInstanceData : public RefCounted<DateInstanceData> {
 public:
     static Ref<DateInstanceData> create() { return adoptRef(*new DateInstanceData); }
 
-    static ptrdiff_t offsetOfGregorianDateTimeCachedForMS() { return OBJECT_OFFSETOF(DateInstanceData, m_gregorianDateTimeCachedForMS); }
-    static ptrdiff_t offsetOfCachedGregorianDateTime() { return OBJECT_OFFSETOF(DateInstanceData, m_cachedGregorianDateTime); }
-    static ptrdiff_t offsetOfGregorianDateTimeUTCCachedForMS() { return OBJECT_OFFSETOF(DateInstanceData, m_gregorianDateTimeUTCCachedForMS); }
-    static ptrdiff_t offsetOfCachedGregorianDateTimeUTC() { return OBJECT_OFFSETOF(DateInstanceData, m_cachedGregorianDateTimeUTC); }
+    static constexpr ptrdiff_t offsetOfGregorianDateTimeCachedForMS() { return OBJECT_OFFSETOF(DateInstanceData, m_gregorianDateTimeCachedForMS); }
+    static constexpr ptrdiff_t offsetOfCachedGregorianDateTime() { return OBJECT_OFFSETOF(DateInstanceData, m_cachedGregorianDateTime); }
+    static constexpr ptrdiff_t offsetOfGregorianDateTimeUTCCachedForMS() { return OBJECT_OFFSETOF(DateInstanceData, m_gregorianDateTimeUTCCachedForMS); }
+    static constexpr ptrdiff_t offsetOfCachedGregorianDateTimeUTC() { return OBJECT_OFFSETOF(DateInstanceData, m_cachedGregorianDateTimeUTC); }
 
     double m_gregorianDateTimeCachedForMS { PNaN };
     GregorianDateTime m_cachedGregorianDateTime;

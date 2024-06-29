@@ -15,11 +15,17 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/bare-specifiers.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/data-url-specifiers.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/dynamic-integrity.html
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/http-url-like-specifiers.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/import-maps-base-url.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/module-map-key.html
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/no-referencing-script-integrity-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/no-referencing-script-integrity.html
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/nonimport-integrity.html
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/not-as-classic-script.html
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/script-supports-importmap.html
 /LayoutTests/imported/w3c/web-platform-tests/import-maps/static-import.py
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/static-integrity.html

@@ -81,8 +81,7 @@ public:
     // It relies on an implementation detail that makes m_buffer become a contiguous SharedBuffer
     // once it's deserialised over IPC.
     RefPtr<WebCore::SharedBuffer> unsafeBuffer() const;
-    const uint8_t* data() const;
-    std::span<const uint8_t> span() const { return { data(), size() }; }
+    std::span<const uint8_t> span() const;
     RefPtr<WebCore::SharedMemory> sharedCopy() const;
 
 private:

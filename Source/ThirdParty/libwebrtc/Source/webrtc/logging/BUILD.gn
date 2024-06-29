@@ -82,6 +82,7 @@ rtc_library("rtc_stream_config") {
 }
 
 rtc_library("rtc_event_pacing") {
+  visibility = [ "*" ]
   sources = [
     "rtc_event_log/events/rtc_event_alr_state.cc",
     "rtc_event_log/events/rtc_event_alr_state.h",
@@ -99,6 +100,7 @@ rtc_library("rtc_event_pacing") {
 }
 
 rtc_library("rtc_event_audio") {
+  visibility = [ "*" ]
   sources = [
     "rtc_event_log/events/rtc_event_audio_network_adaptation.cc",
     "rtc_event_log/events/rtc_event_audio_network_adaptation.h",
@@ -143,6 +145,7 @@ rtc_library("rtc_event_begin_end") {
 }
 
 rtc_library("rtc_event_bwe") {
+  visibility = [ "*" ]
   sources = [
     "rtc_event_log/events/rtc_event_bwe_update_delay_based.cc",
     "rtc_event_log/events/rtc_event_bwe_update_delay_based.h",
@@ -174,6 +177,7 @@ rtc_library("rtc_event_bwe") {
 }
 
 rtc_library("rtc_event_frame_events") {
+  visibility = [ "*" ]
   sources = [
     "rtc_event_log/events/rtc_event_frame_decoded.cc",
     "rtc_event_log/events/rtc_event_frame_decoded.h",
@@ -216,6 +220,7 @@ rtc_library("rtc_event_generic_packet_events") {
 }
 
 rtc_library("rtc_event_rtp_rtcp") {
+  visibility = [ "*" ]
   sources = [
     "rtc_event_log/events/logged_rtp_rtcp.h",
     "rtc_event_log/events/rtc_event_rtcp_packet_incoming.cc",
@@ -245,6 +250,7 @@ rtc_library("rtc_event_rtp_rtcp") {
 }
 
 rtc_library("rtc_event_video") {
+  visibility = [ "*" ]
   sources = [
     "rtc_event_log/events/rtc_event_video_receive_stream_config.cc",
     "rtc_event_log/events/rtc_event_video_receive_stream_config.h",
@@ -281,7 +287,6 @@ rtc_library("rtc_event_number_encodings") {
     "../rtc_base:bit_buffer",
     "../rtc_base:bitstream_reader",
     "../rtc_base:checks",
-    "../rtc_base:ignore_wundef",
     "../rtc_base:macromagic",
   ]
   absl_deps = [
@@ -348,6 +353,7 @@ rtc_library("rtc_event_log_impl_encoder") {
 
   deps = [
     ":rtc_event_number_encodings",
+    "../api:field_trials_view",
     "../api:rtp_headers",
     "../api:rtp_parameters",
     "../api/transport:network_control",
@@ -355,10 +361,8 @@ rtc_library("rtc_event_log_impl_encoder") {
     "../rtc_base:bitstream_reader",
     "../rtc_base:buffer",
     "../rtc_base:checks",
-    "../rtc_base:ignore_wundef",
     "../rtc_base:logging",
     "../rtc_base:safe_conversions",
-    "../system_wrappers:field_trial",
   ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/memory",
@@ -427,10 +431,7 @@ if (rtc_enable_protobuf) {
 if (rtc_enable_protobuf) {
   rtc_source_set("rtc_event_log2_proto_include") {
     sources = [ "rtc_event_log/rtc_event_log2_proto_include.h" ]
-    deps = [
-      ":rtc_event_log2_proto",
-      "../rtc_base:ignore_wundef",
-    ]
+    deps = [ ":rtc_event_log2_proto" ]
   }
 }
 
@@ -455,8 +456,10 @@ if (rtc_enable_protobuf) {
       ":ice_log",
       ":rtc_event_log_api",
       ":rtc_event_log_impl_encoder",
+      "../api:field_trials_view",
       "../api:libjingle_logging_api",
       "../api:sequence_checker",
+      "../api/environment",
       "../api/rtc_event_log",
       "../api/task_queue",
       "../api/units:time_delta",
@@ -464,7 +467,6 @@ if (rtc_enable_protobuf) {
       "../rtc_base:logging",
       "../rtc_base:macromagic",
       "../rtc_base:rtc_event",
-      "../rtc_base:rtc_task_queue",
       "../rtc_base:safe_conversions",
       "../rtc_base:safe_minmax",
       "../rtc_base:timeutils",
@@ -487,10 +489,12 @@ rtc_library("fake_rtc_event_log") {
   ]
 
   deps = [
+    "../api/environment",
     "../api/rtc_event_log",
     "../rtc_base:macromagic",
     "../rtc_base/synchronization:mutex",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/base:nullability" ]
 }
 
 if (rtc_enable_protobuf) {
@@ -549,7 +553,6 @@ if (rtc_enable_protobuf) {
       "../modules/rtp_rtcp:rtp_rtcp_format",
       "../rtc_base:checks",
       "../rtc_base:copy_on_write_buffer",
-      "../rtc_base:ignore_wundef",
       "../rtc_base:logging",
       "../rtc_base:protobuf_utils",
       "../rtc_base:rtc_numerics",
@@ -606,13 +609,15 @@ if (rtc_enable_protobuf) {
         ":rtc_event_video",
         ":rtc_stream_config",
         "../api:array_view",
+        "../api:field_trials_view",
         "../api:network_state_predictor_api",
         "../api:rtc_event_log_output_file",
         "../api:rtp_headers",
         "../api:rtp_parameters",
+        "../api/environment",
+        "../api/environment:environment_factory",
         "../api/rtc_event_log",
         "../api/rtc_event_log:rtc_event_log_factory",
-        "../api/task_queue:default_task_queue_factory",
         "../api/units:time_delta",
         "../api/units:timestamp",
         "../call",
@@ -626,8 +631,7 @@ if (rtc_enable_protobuf) {
         "../rtc_base:rtc_base_tests_utils",
         "../rtc_base:timeutils",
         "../system_wrappers",
-        "../system_wrappers:field_trial",
-        "../test:field_trial",
+        "../test:explicit_key_value_config",
         "../test:fileutils",
         "../test:test_support",
         "../test/logging:log_writer",
@@ -668,6 +672,7 @@ if (rtc_enable_protobuf) {
 }
 
 rtc_library("ice_log") {
+  visibility = [ "*" ]
   sources = [
     "rtc_event_log/events/rtc_event_dtls_transport_state.cc",
     "rtc_event_log/events/rtc_event_dtls_transport_state.h",
@@ -683,6 +688,7 @@ rtc_library("ice_log") {
 
   deps = [
     ":rtc_event_field",
+    "../api:candidate",
     "../api:dtls_transport_interface",
     "../api:libjingle_logging_api",
     "../api/rtc_event_log",

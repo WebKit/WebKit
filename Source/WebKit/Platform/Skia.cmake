@@ -12,6 +12,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
 
 list(APPEND WebKit_SERIALIZATION_IN_FILES
     Shared/skia/CoreIPCSkColorSpace.serialization.in
+    Shared/skia/CoreIPCSkData.serialization.in
 )
 
 list(APPEND WebKit_LIBRARIES

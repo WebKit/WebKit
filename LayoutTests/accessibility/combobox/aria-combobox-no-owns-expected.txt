@@ -1,6 +1,6 @@
 A combobox should still support aria-activedescendant even if it doesn't use aria-owns.
 Received AXActiveElementChanged for Combobox
-PASS: list.activeElement.isEqual(listitem1) === true
+PASS: combobox.activeElement.isEqual(listitem1) === true
 
 PASS successfullyParsed is true
 

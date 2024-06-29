@@ -14,7 +14,9 @@
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/audio/audio_device.h"
 #include "api/audio/audio_mixer.h"
+#include "api/audio/audio_processing.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/audio_options.h"
@@ -39,8 +41,6 @@
 #include "api/video_codecs/video_encoder_factory_template_libvpx_vp8_adapter.h"
 #include "api/video_codecs/video_encoder_factory_template_libvpx_vp9_adapter.h"
 #include "api/video_codecs/video_encoder_factory_template_open_h264_adapter.h"
-#include "modules/audio_device/include/audio_device.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "p2p/base/port_allocator.h"
 #include "p2p/base/port_interface.h"
 #include "p2p/base/test_turn_server.h"
@@ -201,7 +201,7 @@ class PeerConnectionRampUpTest : public ::testing::Test {
     fake_network_managers_.emplace_back(fake_network_manager);
 
     auto observer = std::make_unique<MockPeerConnectionObserver>();
-    webrtc::PeerConnectionDependencies dependencies(observer.get());
+    PeerConnectionDependencies dependencies(observer.get());
     cricket::BasicPortAllocator* port_allocator =
         new cricket::BasicPortAllocator(fake_network_manager,
                                         firewall_socket_factory_.get());
@@ -309,15 +309,17 @@ class PeerConnectionRampUpTest : public ::testing::Test {
     auto stats = caller_->GetStats();
     auto transport_stats = stats->GetStatsOfType<RTCTransportStats>();
     if (transport_stats.size() == 0u ||
-        !transport_stats[0]->selected_candidate_pair_id.is_defined()) {
+        !transport_stats[0]->selected_candidate_pair_id.has_value()) {
       return 0;
     }
     std::string selected_ice_id =
-        transport_stats[0]->selected_candidate_pair_id.ValueToString();
+        transport_stats[0]
+            ->GetAttribute(transport_stats[0]->selected_candidate_pair_id)
+            .ToString();
     // Use the selected ICE candidate pair ID to get the appropriate ICE stats.
     const RTCIceCandidatePairStats ice_candidate_pair_stats =
         stats->Get(selected_ice_id)->cast_to<const RTCIceCandidatePairStats>();
-    if (ice_candidate_pair_stats.available_outgoing_bitrate.is_defined()) {
+    if (ice_candidate_pair_stats.available_outgoing_bitrate.has_value()) {
       return *ice_candidate_pair_stats.available_outgoing_bitrate;
     }
     // We couldn't get the `available_outgoing_bitrate` for the active candidate

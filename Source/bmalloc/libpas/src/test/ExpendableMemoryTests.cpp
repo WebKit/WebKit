@@ -46,7 +46,7 @@ pas_heap_ref theHeap = BMALLOC_HEAP_REF_INITIALIZER(&theType);
 
 void testPayloadImpl(pas_heap_ref& heap, bool firstRun)
 {
-    void* object = bmalloc_iso_allocate(&heap);
+    void* object = bmalloc_iso_allocate(&heap, pas_non_compact_allocation_mode);
     CHECK(object);
     CHECK_EQUAL(bmalloc_get_allocation_size(object), 48);
 
@@ -58,23 +58,23 @@ void testPayloadImpl(pas_heap_ref& heap, bool firstRun)
         CHECK(!pas_large_expendable_memory_head);
     }
 
-    void* smallArray = bmalloc_iso_allocate_array_by_size(&heap, 100);
+    void* smallArray = bmalloc_iso_allocate_array_by_size(&heap, 100, pas_non_compact_allocation_mode);
     CHECK(smallArray);
     CHECK_EQUAL(bmalloc_get_allocation_size(smallArray), 112);
 
-    void* mediumArray = bmalloc_iso_allocate_array_by_size(&heap, 400);
+    void* mediumArray = bmalloc_iso_allocate_array_by_size(&heap, 400, pas_non_compact_allocation_mode);
     CHECK(mediumArray);
     CHECK_EQUAL(bmalloc_get_allocation_size(mediumArray), 400);
 
-    void* largeArray = bmalloc_iso_allocate_array_by_size(&heap, 2000);
+    void* largeArray = bmalloc_iso_allocate_array_by_size(&heap, 2000, pas_non_compact_allocation_mode);
     CHECK(largeArray);
     CHECK_EQUAL(bmalloc_get_allocation_size(largeArray), 2016);
 
-    void* largerArray = bmalloc_iso_allocate_array_by_size(&heap, 10000);
+    void* largerArray = bmalloc_iso_allocate_array_by_size(&heap, 10000, pas_non_compact_allocation_mode);
     CHECK(largerArray);
     CHECK_EQUAL(bmalloc_get_allocation_size(largerArray), 10752);
 
-    void* largestArray = bmalloc_iso_allocate_array_by_size(&heap, 100000);
+    void* largestArray = bmalloc_iso_allocate_array_by_size(&heap, 100000, pas_non_compact_allocation_mode);
     CHECK(largestArray);
     CHECK_EQUAL(bmalloc_get_allocation_size(largestArray), 100000);
 
@@ -232,7 +232,7 @@ void testRage(unsigned numHeaps, function<unsigned(unsigned)> allocationSize, un
             for (unsigned j = 0; j < count; ++j) {
                 pas_primitive_heap_ref* heap = heaps + deterministicRandomNumber(numHeaps);
                 size_t size = allocationSize(j);
-                void* ptr = bmalloc_allocate_flex(heap, size);
+                void* ptr = bmalloc_allocate_flex(heap, size, pas_non_compact_allocation_mode);
                 CHECK(ptr);
                 CHECK_GREATER_EQUAL(bmalloc_get_allocation_size(ptr), size);
                 CHECK_EQUAL(bmalloc_get_heap(ptr),
@@ -260,12 +260,12 @@ void testRematerializeAfterSearchOfDecommitted()
         new bmalloc_type(BMALLOC_TYPE_INITIALIZER(1, 1, "test")));
     pas_heap* heap = bmalloc_flex_heap_ref_get_heap(&heapRef);
 
-    void* ptr = bmalloc_allocate_flex(&heapRef, initialSize);
+    void* ptr = bmalloc_allocate_flex(&heapRef, initialSize, pas_non_compact_allocation_mode);
     CHECK_EQUAL(bmalloc_get_allocation_size(ptr), initialSize);
     CHECK_EQUAL(bmalloc_get_heap(ptr), heap);
     CHECK_EQUAL(heapRef.cached_index, pas_segregated_heap_index_for_size(initialSize, BMALLOC_HEAP_CONFIG));
 
-    ptr = bmalloc_allocate_flex(&heapRef, size);
+    ptr = bmalloc_allocate_flex(&heapRef, size, pas_non_compact_allocation_mode);
     CHECK_EQUAL(bmalloc_get_allocation_size(ptr), size);
     CHECK_EQUAL(bmalloc_get_heap(ptr), heap);
 
@@ -314,10 +314,10 @@ void testBasicSizeClass(unsigned firstSize, unsigned secondSize)
 
     if (verbose)
         cout << "Allocating " << firstSize << "\n";
-    void* ptr = bmalloc_allocate_flex(&heapRef, firstSize);
+    void* ptr = bmalloc_allocate_flex(&heapRef, firstSize, pas_non_compact_allocation_mode);
     if (verbose)
         cout << "Allocating " << secondSize << "\n";
-    bmalloc_allocate_flex(&heapRef, secondSize);
+    bmalloc_allocate_flex(&heapRef, secondSize, pas_non_compact_allocation_mode);
 
     if (verbose)
         cout << "Doing some checks.\n";

@@ -9,6 +9,7 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include <assert.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,10 +37,19 @@ static aom_image_t *img_alloc_helper(
   /* NOTE: In this function, bit_depth is either 8 or 16 (if
    * AOM_IMG_FMT_HIGHBITDEPTH is set), never 10 or 12.
    */
-  unsigned int h, w, s, xcs, ycs, bps, bit_depth;
-  unsigned int stride_in_bytes;
+  unsigned int xcs, ycs, bps, bit_depth;
 
   if (img != NULL) memset(img, 0, sizeof(aom_image_t));
+
+  if (fmt == AOM_IMG_FMT_NONE) goto fail;
+
+  /* Impose maximum values on input parameters so that this function can
+   * perform arithmetic operations without worrying about overflows.
+   */
+  if (d_w > 0x08000000 || d_h > 0x08000000 || buf_align > 65536 ||
+      stride_align > 65536 || size_align > 65536 || border > 65536) {
+    goto fail;
+  }
 
   /* Treat align==0 like align==1 */
   if (!buf_align) buf_align = 1;
@@ -103,12 +113,17 @@ static aom_image_t *img_alloc_helper(
   }
 
   /* Calculate storage sizes given the chroma subsampling */
-  w = align_image_dimension(d_w, xcs, size_align);
-  h = align_image_dimension(d_h, ycs, size_align);
+  const unsigned int w = align_image_dimension(d_w, xcs, size_align);
+  assert(d_w <= w);
+  const unsigned int h = align_image_dimension(d_h, ycs, size_align);
+  assert(d_h <= h);
 
-  s = (fmt & AOM_IMG_FMT_PLANAR) ? w : bps * w / bit_depth;
-  s = (s + 2 * border + stride_align - 1) & ~(stride_align - 1);
-  stride_in_bytes = s * bit_depth / 8;
+  uint64_t s = (uint64_t)w + 2 * border;
+  s = (fmt & AOM_IMG_FMT_PLANAR) ? s : s * bps / bit_depth;
+  s = s * bit_depth / 8;
+  s = (s + stride_align - 1) & ~((uint64_t)stride_align - 1);
+  if (s > INT_MAX) goto fail;
+  const int stride_in_bytes = (int)s;
 
   /* Allocate the new image */
   if (!img) {
@@ -230,7 +245,7 @@ int aom_img_set_rect(aom_image_t *img, unsigned int x, unsigned int y,
 
       img->planes[AOM_PLANE_Y] =
           data + x * bytes_per_sample + y * img->stride[AOM_PLANE_Y];
-      data += (img->h + 2 * border) * img->stride[AOM_PLANE_Y];
+      data += ((size_t)img->h + 2 * border) * img->stride[AOM_PLANE_Y];
 
       unsigned int uv_border_h = border >> img->y_chroma_shift;
       unsigned int uv_x = x >> img->x_chroma_shift;
@@ -242,14 +257,14 @@ int aom_img_set_rect(aom_image_t *img, unsigned int x, unsigned int y,
       } else if (!(img->fmt & AOM_IMG_FMT_UV_FLIP)) {
         img->planes[AOM_PLANE_U] =
             data + uv_x * bytes_per_sample + uv_y * img->stride[AOM_PLANE_U];
-        data += ((img->h >> img->y_chroma_shift) + 2 * uv_border_h) *
+        data += ((size_t)(img->h >> img->y_chroma_shift) + 2 * uv_border_h) *
                 img->stride[AOM_PLANE_U];
         img->planes[AOM_PLANE_V] =
             data + uv_x * bytes_per_sample + uv_y * img->stride[AOM_PLANE_V];
       } else {
         img->planes[AOM_PLANE_V] =
             data + uv_x * bytes_per_sample + uv_y * img->stride[AOM_PLANE_V];
-        data += ((img->h >> img->y_chroma_shift) + 2 * uv_border_h) *
+        data += ((size_t)(img->h >> img->y_chroma_shift) + 2 * uv_border_h) *
                 img->stride[AOM_PLANE_V];
         img->planes[AOM_PLANE_U] =
             data + uv_x * bytes_per_sample + uv_y * img->stride[AOM_PLANE_U];
@@ -289,15 +304,15 @@ void aom_img_free(aom_image_t *img) {
 }
 
 int aom_img_plane_width(const aom_image_t *img, int plane) {
-  if (plane > 0 && img->x_chroma_shift > 0)
-    return (img->d_w + 1) >> img->x_chroma_shift;
+  if (plane > 0)
+    return (img->d_w + img->x_chroma_shift) >> img->x_chroma_shift;
   else
     return img->d_w;
 }
 
 int aom_img_plane_height(const aom_image_t *img, int plane) {
-  if (plane > 0 && img->y_chroma_shift > 0)
-    return (img->d_h + 1) >> img->y_chroma_shift;
+  if (plane > 0)
+    return (img->d_h + img->y_chroma_shift) >> img->y_chroma_shift;
   else
     return img->d_h;
 }

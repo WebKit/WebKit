@@ -59,7 +59,7 @@ private:
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_REDIRECTED);
     }
 
-    void didFailProvisionalNavigationWithError(WebPageProxy&, FrameInfoData&& frameInfo, API::Navigation*, const ResourceError& resourceError, API::Object* /* userData */) override
+    void didFailProvisionalNavigationWithError(WebPageProxy&, FrameInfoData&& frameInfo, API::Navigation*, const URL&, const ResourceError& resourceError, API::Object* /* userData */) override
     {
         if (!frameInfo.isMainFrame)
             return;
@@ -82,7 +82,7 @@ private:
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_FINISHED);
     }
 
-    void didFailNavigationWithError(WebPageProxy&, const FrameInfoData& frameInfo, API::Navigation*, const ResourceError& resourceError, API::Object* /* userData */) override
+    void didFailNavigationWithError(WebPageProxy&, const FrameInfoData& frameInfo, API::Navigation*, const URL&, const ResourceError& resourceError, API::Object* /* userData */) override
     {
         if (!frameInfo.isMainFrame)
             return;

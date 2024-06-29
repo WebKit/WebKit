@@ -31,6 +31,7 @@ from webkitcorepy import Version, Timeout
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.systemhost import SystemHost
+from webkitpy.port.config import apple_additions
 from webkitpy.port.device import Device
 from webkitpy.xcode.device_type import DeviceType
 
@@ -367,6 +368,10 @@ class SimulatedDeviceManager(object):
     @staticmethod
     def _boot_device(device, host=None):
         host = host or SystemHost.get_default()
+
+        # FIXME: remove this workaround after rdar://129789675 has been resolved.
+        host.executive.run_command(['sh', '-c', "mkdir -m 700 -p " + "~/Library/Developer/CoreSimulator/Devices/" + device.udid + "/data/private/var/db"])
+
         _log.debug(u"Booting device '{}'".format(device.udid))
         device.platform_device.booted_by_script = True
         try:
@@ -448,6 +453,7 @@ class SimulatedDeviceManager(object):
         deadline = time.time() + timeout
         for device in SimulatedDeviceManager.INITIALIZED_DEVICES:
             cls._wait_until_device_is_usable(device, deadline)
+            device.set_up_environment_extras()
 
         return SimulatedDeviceManager.INITIALIZED_DEVICES
 
@@ -544,6 +550,11 @@ class SimulatedDevice(object):
         self.filesystem = host.filesystem
         self.platform = host.platform
 
+        self.environment_extras = []
+
+        if apple_additions():
+            self.environment_extras.extend(apple_additions().environment_extras(udid))
+
         # Determine tear down behavior
         self.booted_by_script = False
         self.managed_by_script = False
@@ -631,9 +642,11 @@ class SimulatedDevice(object):
             if exit_code == 0:
                 return True
 
+            # Return code 18 indicates that the app is not compatible with the current device, which can
+            # happen under load and may not occur on retry.
             # Return code 204 indicates that the device is booting, a retry may be successful.
-            if exit_code == 204:
-                time.sleep(5)
+            if exit_code in (18, 204):
+                time.sleep(15)
                 continue
             return False
         return False
@@ -673,6 +686,13 @@ class SimulatedDevice(object):
             raise RuntimeError(u'Failed to find process id for {}: {}'.format(bundle_id, output))
         _log.debug(u'Returning pid {} of launched process'.format(match.group('pid')))
         return int(match.group('pid'))
+
+    def set_up_environment_extras(self):
+        if len(self.environment_extras) == 0:
+            return
+        _log.debug(u'Running extra environment setup commands.')
+        for command in self.environment_extras:
+            self.executive.run_command(command)
 
     def __eq__(self, other):
         return self.udid == other.udid

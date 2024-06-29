@@ -11,13 +11,15 @@
 #ifndef VPX_VP9_ENCODER_VP9_ETHREAD_H_
 #define VPX_VP9_ENCODER_VP9_ETHREAD_H_
 
+#include "vpx_util/vpx_pthread.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #define MAX_NUM_TILE_COLS (1 << 6)
 #define MAX_NUM_TILE_ROWS 4
-#define MAX_NUM_THREADS 80
+#define MAX_NUM_THREADS 64
 
 struct VP9_COMP;
 struct ThreadData;

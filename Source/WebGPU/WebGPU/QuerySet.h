@@ -30,6 +30,7 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
 
 struct WGPUQuerySetImpl {
@@ -96,7 +97,7 @@ private:
         Ref<QuerySet> other;
         uint32_t otherIndex;
     };
-    mutable WeakPtr<CommandEncoder> m_cachedCommandEncoder;
+    mutable WeakHashSet<CommandEncoder> m_commandEncoders;
     bool m_destroyed { false };
 };
 

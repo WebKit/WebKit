@@ -26,16 +26,12 @@
 
 #include "EventTarget.h"
 #include "SecurityOrigin.h"
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 class RTCController;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::RTCController> : std::true_type { };
 }
 
 namespace WebCore {
@@ -48,9 +44,9 @@ class WeakPtrImplWithEventTargetData;
 class LibWebRTCLogSink;
 #endif
 
-class RTCController : public CanMakeWeakPtr<RTCController> {
+class RTCController : public RefCounted<RTCController>, public CanMakeWeakPtr<RTCController> {
 public:
-    RTCController();
+    static Ref<RTCController> create() { return adoptRef(*new RTCController); }
 
 #if ENABLE(WEB_RTC)
     ~RTCController();
@@ -67,8 +63,12 @@ public:
     using LogCallback = Function<void(String&& logType, String&& logMessage, String&& logLevel, RefPtr<RTCPeerConnection>&&)>;
     void startGatheringLogs(Document&, LogCallback&&);
     void stopGatheringLogs();
+#endif
 
 private:
+    RTCController();
+
+#if ENABLE(WEB_RTC)
     void startGatheringStatLogs(RTCPeerConnection&);
     bool shouldDisableICECandidateFiltering(Document&);
 

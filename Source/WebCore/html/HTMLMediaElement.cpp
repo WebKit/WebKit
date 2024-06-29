@@ -48,6 +48,7 @@
 #include "ContentSecurityPolicy.h"
 #include "ContentType.h"
 #include "CookieJar.h"
+#include "DNS.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
@@ -122,6 +123,7 @@
 #include "SpeechSynthesis.h"
 #include "TextTrackCueList.h"
 #include "TextTrackList.h"
+#include "TextTrackRepresentation.h"
 #include "ThreadableBlobRegistry.h"
 #include "TimeRanges.h"
 #include "UserContentController.h"
@@ -216,7 +218,7 @@ struct LogArgument<URL> {
 
         if (url.string().length() < maximumURLLengthForLogging)
             return url.string();
-        return makeString(StringView(url.string()).left(maximumURLLengthForLogging), "...");
+        return makeString(StringView(url.string()).left(maximumURLLengthForLogging), "..."_s);
 #else
         UNUSED_PARAM(url);
         return "[url]"_s;
@@ -464,6 +466,12 @@ static bool isInWindowOrStandardFullscreen(HTMLMediaElementEnums::VideoFullscree
     return mode == HTMLMediaElementEnums::VideoFullscreenModeStandard || mode == HTMLMediaElementEnums::VideoFullscreenModeInWindow;
 }
 
+struct HTMLMediaElement::CueData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    PODIntervalTree<MediaTime, TextTrackCue*> cueTree;
+    CueList currentlyActiveCues;
+};
+
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document, { TypeFlag::HasCustomStyleResolveCallbacks, TypeFlag::HasDidMoveToNewDocument })
     , ActiveDOMObject(document)
@@ -636,7 +644,7 @@ HTMLMediaElement::~HTMLMediaElement()
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) || m_remote->hasAvailabilityCallbacks()) {
+    if (hasTargetAvailabilityListeners()) {
         m_hasPlaybackTargetAvailabilityListeners = false;
         if (m_mediaSession)
             m_mediaSession->setHasPlaybackTargetAvailabilityListeners(false);
@@ -905,12 +913,13 @@ void HTMLMediaElement::attributeChanged(const QualifiedName& name, const AtomStr
         mediaSession().setWirelessVideoPlaybackDisabled(newValue != nullAtom());
         FALLTHROUGH;
     case AttributeNames::disableremoteplaybackAttr:
-#if ENABLE(MEDIA_SOURCE)
     case AttributeNames::webkitairplayAttr:
+        isWirelessPlaybackTargetDisabledChanged();
+#if ENABLE(MEDIA_SOURCE)
         if (RefPtr mediaSource = m_mediaSource; mediaSource && isWirelessPlaybackTargetDisabled())
             mediaSource->openIfDeferredOpen();
-        break;
 #endif
+        break;
 #endif
     default:
         break;
@@ -1678,6 +1687,12 @@ void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& in
         return;
     }
 
+    if (!m_player) {
+        ASSERT_NOT_REACHED("It should not be possible to enter loadResource without a valid m_player object");
+        mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
+        return;
+    }
+
     URL url = initialURL;
 #if PLATFORM(COCOA)
     if (url.protocolIsFile() && !frame->loader().willLoadMediaElementURL(url, *this)) {
@@ -1858,12 +1873,6 @@ void HTMLMediaElement::mediaSourceWasDetached()
     // https://github.com/w3c/media-source/issues/348 ; we do what's the most sensible for now.
     userCancelledLoad();
 }
-
-struct HTMLMediaElement::CueData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    PODIntervalTree<MediaTime, TextTrackCue*> cueTree;
-    CueList currentlyActiveCues;
-};
 
 static bool trackIndexCompare(const RefPtr<TextTrack>& a, const RefPtr<TextTrack>& b)
 {
@@ -2570,12 +2579,16 @@ bool HTMLMediaElement::isSafeToLoadURL(const URL& url, InvalidURLAction actionIf
         return false;
     }
 
-    if (!portAllowed(url)) {
+    if (!portAllowed(url) || isIPAddressDisallowed(url)) {
         if (actionIfInvalid == Complain) {
             if (frame)
                 FrameLoader::reportBlockedLoadFailed(*frame, url);
-            if (shouldLog)
-                ERROR_LOG(LOGIDENTIFIER, url , " was rejected because the port is not allowed");
+            if (shouldLog) {
+                if (isIPAddressDisallowed(url))
+                    ERROR_LOG(LOGIDENTIFIER, url , " was rejected because the address not allowed");
+                else
+                    ERROR_LOG(LOGIDENTIFIER, url , " was rejected because the port is not allowed");
+            }
         }
         return false;
     }
@@ -2686,7 +2699,7 @@ void HTMLMediaElement::mediaLoadingFailedFatally(MediaPlayer::NetworkState error
         if (!lastErrorMessage)
             return message;
 
-        return makeString(message, ": ", lastErrorMessage);
+        return makeString(message, ": "_s, lastErrorMessage);
     };
 
     // 2 - Set the error attribute to a new MediaError object whose code attribute is
@@ -2882,9 +2895,19 @@ void HTMLMediaElement::changeNetworkStateFromLoadingToIdle()
 void HTMLMediaElement::mediaPlayerReadyStateChanged()
 {
     if (isSuspended()) {
-        queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this] {
-            mediaPlayerReadyStateChanged();
-        });
+        // FIXME: In some situations the MediaSource closing procedure triggerring a readyState
+        // update on the player, while the media element is suspended would lead to infinite
+        // recursion. The workaround is to attempt a fixed amount of recursions.
+        if (!m_isChangingReadyStateWhileSuspended) {
+            m_isChangingReadyStateWhileSuspended = true;
+            m_remainingReadyStateChangedAttempts.store(128);
+        }
+
+        if (m_remainingReadyStateChangedAttempts.exchangeSub(1)) {
+            queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this] {
+                mediaPlayerReadyStateChanged();
+            });
+        }
         return;
     }
 
@@ -2893,6 +2916,9 @@ void HTMLMediaElement::mediaPlayerReadyStateChanged()
     setReadyState(m_player->readyState());
 
     endProcessingMediaPlayerCallback();
+
+    m_isChangingReadyStateWhileSuspended = false;
+    m_remainingReadyStateChangedAttempts.store(0);
 }
 
 Expected<void, MediaPlaybackDenialReason> HTMLMediaElement::canTransitionFromAutoplayToPlay() const
@@ -3041,7 +3067,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
             }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-            if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent))
+            if (hasEnabledTargetAvailabilityListeners())
                 enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::OnlyWhenChanged);
 #endif
             m_initiallyMuted = m_volume < 0.05 || muted();
@@ -3189,10 +3215,8 @@ void HTMLMediaElement::mediaPlayerKeyNeeded(const SharedBuffer& initData)
 
     WebKitMediaKeyNeededEvent::Init init;
 
-    if (auto initDataBuffer = initData.tryCreateArrayBuffer()) {
-        auto byteLength = initDataBuffer->byteLength();
-        init.initData = Uint8Array::tryCreate(initDataBuffer.releaseNonNull(), 0, byteLength);
-    }
+    if (auto initDataBuffer = initData.tryCreateArrayBuffer())
+        init.initData = Uint8Array::create(initDataBuffer.releaseNonNull());
 
     Ref event = WebKitMediaKeyNeededEvent::create(eventNames().webkitneedkeyEvent, init);
     scheduleEvent(WTFMove(event));
@@ -3482,6 +3506,9 @@ void HTMLMediaElement::progressEventTimerFired()
     ASSERT(m_player);
     if (m_networkState != NETWORK_LOADING)
         return;
+
+    updateSleepDisabling();
+
     if (!m_player->supportsProgressMonitoring())
         return;
 
@@ -5788,6 +5815,16 @@ void HTMLMediaElement::mediaPlayerMuteChanged()
     endProcessingMediaPlayerCallback();
 }
 
+void HTMLMediaElement::mediaPlayerSeeked(const MediaTime&)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+#if ENABLE(MEDIA_SOURCE)
+    if (m_mediaSource)
+        m_mediaSource->monitorSourceBuffers(); // Update readyState.
+#endif
+}
+
 void HTMLMediaElement::mediaPlayerDurationChanged()
 {
     beginProcessingMediaPlayerCallback();
@@ -5936,7 +5973,7 @@ void HTMLMediaElement::mediaEngineWasUpdated()
 #endif
 
     if (RefPtr page = document().page())
-        page->playbackControlsMediaEngineChanged();
+        page->mediaEngineChanged(*this);
 }
 
 void HTMLMediaElement::mediaPlayerEngineUpdated()
@@ -5981,7 +6018,7 @@ void HTMLMediaElement::mediaPlayerDidInitializeMediaEngine() WTF_IGNORES_THREAD_
 
 void HTMLMediaElement::mediaPlayerCharacteristicChanged()
 {
-    ALWAYS_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER, m_mediaSession ? m_mediaSession->description() : emptyString());
 
     beginProcessingMediaPlayerCallback();
 
@@ -6468,14 +6505,15 @@ void HTMLMediaElement::clearMediaPlayer()
     forgetResourceSpecificTracks();
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) || m_remote->hasAvailabilityCallbacks()) {
+    if (hasTargetAvailabilityListeners()) {
         m_hasPlaybackTargetAvailabilityListeners = false;
         if (m_mediaSession)
             m_mediaSession->setHasPlaybackTargetAvailabilityListeners(false);
 
         // Send an availability event in case scripts want to hide the picker when the element
         // doesn't support playback to a target.
-        enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::Always);
+        if (!isWirelessPlaybackTargetDisabled())
+            enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::Always);
     }
 
     if (m_isPlayingToWirelessTarget)
@@ -6727,19 +6765,35 @@ void HTMLMediaElement::visibilityStateChanged()
 
     updateSleepDisabling();
     mediaSession().visibilityChanged();
-    if (RefPtr player = m_player) {
-        auto page = document().page();
-        player->setPageIsVisible(!m_elementIsHidden, page ? page->sceneIdentifier() : ""_s);
-    }
+    if (RefPtr player = m_player)
+        player->setPageIsVisible(!m_elementIsHidden);
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     updateSpatialTrackingLabel();
 #endif
 }
 
+void HTMLMediaElement::setTextTrackRepresentataionBounds(const IntRect& bounds)
+{
+    if (!ensureMediaControls())
+        return;
+
+    if (auto* textTrackRepresentation = m_mediaControlsHost->textTrackRepresentation())
+        textTrackRepresentation->setBounds(bounds);
+}
+
+void HTMLMediaElement::setRequiresTextTrackRepresentation(bool requiresTextTrackRepresentation)
+{
+    if (m_requiresTextTrackRepresentation == requiresTextTrackRepresentation)
+        return;
+    m_requiresTextTrackRepresentation = requiresTextTrackRepresentation;
+    if (ensureMediaControls())
+        m_mediaControlsHost->requiresTextTrackRepresentationChanged();
+}
+
 bool HTMLMediaElement::requiresTextTrackRepresentation() const
 {
-    return (m_videoFullscreenMode != VideoFullscreenModeNone) && m_player ? m_player->requiresTextTrackRepresentation() : false;
+    return m_requiresTextTrackRepresentation;
 }
 
 void HTMLMediaElement::setTextTrackRepresentation(TextTrackRepresentation* representation)
@@ -6747,10 +6801,17 @@ void HTMLMediaElement::setTextTrackRepresentation(TextTrackRepresentation* repre
     if (RefPtr player = m_player)
         player->setTextTrackRepresentation(representation);
 
-    if (representation)
-        protectedDocument()->setMediaElementShowingTextTrack(*this);
-    else
+    if (!representation) {
         protectedDocument()->clearMediaElementShowingTextTrack();
+        return;
+    }
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (representation->bounds().isEmpty())
+        representation->setBounds(enclosingIntRect(m_videoFullscreenFrame));
+#endif
+
+    protectedDocument()->setMediaElementShowingTextTrack(*this);
 }
 
 void HTMLMediaElement::syncTextTrackBounds()
@@ -6770,6 +6831,9 @@ void HTMLMediaElement::webkitShowPlaybackTargetPicker()
 
 void HTMLMediaElement::wirelessRoutesAvailableDidChange()
 {
+    if (isWirelessPlaybackTargetDisabled())
+        return;
+
     bool hasTargets = mediaSession().hasWirelessPlaybackTargets();
     Ref { m_remote }->availabilityChanged(hasTargets);
 
@@ -6813,7 +6877,7 @@ void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarg
 
 void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior behavior)
 {
-    bool hasTargets = m_mediaSession && mediaSession().hasWirelessPlaybackTargets();
+    bool hasTargets = !isWirelessPlaybackTargetDisabled() && m_mediaSession && mediaSession().hasWirelessPlaybackTargets();
     if (behavior == EnqueueBehavior::OnlyWhenChanged && hasTargets == m_lastTargetAvailabilityEventState)
         return;
 
@@ -6851,7 +6915,7 @@ void HTMLMediaElement::playbackTargetPickerWasDismissed()
 
 void HTMLMediaElement::remoteHasAvailabilityCallbacksChanged()
 {
-    bool hasListeners = hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) || m_remote->hasAvailabilityCallbacks();
+    bool hasListeners = hasEnabledTargetAvailabilityListeners();
     if (m_hasPlaybackTargetAvailabilityListeners == hasListeners)
         return;
 
@@ -6863,6 +6927,8 @@ void HTMLMediaElement::remoteHasAvailabilityCallbacksChanged()
 
 bool HTMLMediaElement::hasWirelessPlaybackTargetAlternative() const
 {
+    if (m_loadState != LoadingFromSourceElement)
+        return false;
     for (auto& source : childrenOfType<HTMLSourceElement>(*this)) {
         auto mediaURL = source.getNonEmptyURLAttribute(srcAttr);
         bool maybeSuitable = !mediaURL.isEmpty();
@@ -6877,11 +6943,48 @@ bool HTMLMediaElement::hasWirelessPlaybackTargetAlternative() const
     return false;
 }
 
-bool HTMLMediaElement::isWirelessPlaybackTargetDisabled() const
+bool HTMLMediaElement::hasTargetAvailabilityListeners()
 {
-    return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::webkitairplayAttr), "deny"_s)
+    return hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) || m_remote->hasAvailabilityCallbacks();
+}
+
+bool HTMLMediaElement::hasEnabledTargetAvailabilityListeners()
+{
+    return !m_wirelessPlaybackTargetDisabled && hasTargetAvailabilityListeners();
+}
+
+void HTMLMediaElement::isWirelessPlaybackTargetDisabledChanged()
+{
+    bool disabled = equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::webkitairplayAttr), "deny"_s)
         || hasAttributeWithoutSynchronization(HTMLNames::webkitwirelessvideoplaybackdisabledAttr)
         || hasAttributeWithoutSynchronization(HTMLNames::disableremoteplaybackAttr);
+    if (m_wirelessPlaybackTargetDisabled == disabled)
+        return;
+
+    m_wirelessPlaybackTargetDisabled = disabled;
+
+    if (!m_wirelessPlaybackTargetDisabled && hasTargetAvailabilityListeners()) {
+        m_hasPlaybackTargetAvailabilityListeners = true;
+        mediaSession().setActive(true);
+        mediaSession().setHasPlaybackTargetAvailabilityListeners(true);
+        enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::Always);
+    } else if (m_wirelessPlaybackTargetDisabled && hasTargetAvailabilityListeners()) {
+        m_hasPlaybackTargetAvailabilityListeners = false;
+        mediaSession().setHasPlaybackTargetAvailabilityListeners(false);
+
+        // If the client has disabled remote playback, also has availability listeners,
+        // and the last state sent to the client was that targets were available,
+        // fire one last event indicating no pickable targets exist. This has the effect
+        // of having players disable their remote playback picker buttons.
+        if (m_lastTargetAvailabilityEventState)
+            enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::Always);
+    }
+    scheduleUpdateMediaState();
+}
+
+bool HTMLMediaElement::isWirelessPlaybackTargetDisabled() const
+{
+    return m_wirelessPlaybackTargetDisabled;
 }
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -6919,10 +7022,13 @@ bool HTMLMediaElement::addEventListener(const AtomString& eventType, Ref<EventLi
     if (eventType != eventNames().webkitplaybacktargetavailabilitychangedEvent)
         return Node::addEventListener(eventType, WTFMove(listener), options);
 
-    bool isFirstAvailabilityChangedListener = !hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) && !m_remote->hasAvailabilityCallbacks();
+    bool isFirstAvailabilityChangedListener = !hasTargetAvailabilityListeners();
 
     if (!Node::addEventListener(eventType, WTFMove(listener), options))
         return false;
+
+    if (isWirelessPlaybackTargetDisabled())
+        return true;
 
     if (isFirstAvailabilityChangedListener) {
         m_hasPlaybackTargetAvailabilityListeners = true;
@@ -6954,7 +7060,7 @@ bool HTMLMediaElement::removeEventListener(const AtomString& eventType, EventLis
     if (!listenerWasRemoved)
         return false;
 
-    bool didRemoveLastAvailabilityChangedListener = !hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) && !m_remote->hasAvailabilityCallbacks();
+    bool didRemoveLastAvailabilityChangedListener = !hasTargetAvailabilityListeners();
     ALWAYS_LOG(LOGIDENTIFIER, "removed last listener = ", didRemoveLastAvailabilityChangedListener);
     if (didRemoveLastAvailabilityChangedListener) {
         m_hasPlaybackTargetAvailabilityListeners = false;
@@ -7035,8 +7141,10 @@ bool HTMLMediaElement::videoUsesElementFullscreen() const
 {
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    if (document().settings().linearMediaPlayerEnabled())
-        return false;
+    if (document().settings().linearMediaPlayerEnabled()) {
+        if (RefPtr player = m_player; player && player->supportsLinearMediaPlayer())
+            return false;
+    }
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -7075,7 +7183,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     if (videoUsesElementFullscreen() && document().settings().fullScreenEnabled() && isInWindowOrStandardFullscreen(mode)) {
         m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
         m_waitingToEnterFullscreen = true;
-        protectedDocument()->checkedFullscreenManager()->requestFullscreenForElement(*this, nullptr, FullscreenManager::ExemptIFrameAllowFullscreenRequirement, mode);
+        protectedDocument()->checkedFullscreenManager()->requestFullscreenForElement(*this, nullptr, FullscreenManager::ExemptIFrameAllowFullscreenRequirement, [](bool) { }, mode);
         return;
     }
 #endif
@@ -7087,7 +7195,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
         if (isContextStopped())
             return;
 
-        if (document().hidden()) {
+        if (document().hidden() && mode != HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) {
             ALWAYS_LOG(logIdentifier, " returning because document is hidden");
             m_changingVideoFullscreenMode = false;
             return;
@@ -7678,7 +7786,7 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     player->setShouldDisableHDR(shouldDisableHDR());
     player->setMuted(effectiveMuted());
     RefPtr page = document().page();
-    player->setPageIsVisible(!m_elementIsHidden, page ? page->sceneIdentifier() : ""_s);
+    player->setPageIsVisible(!m_elementIsHidden);
     player->setVisibleInViewport(isVisibleInViewport());
     schedulePlaybackControlsManagerUpdate();
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
@@ -7698,7 +7806,7 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) || m_remote->hasAvailabilityCallbacks()) {
+    if (hasEnabledTargetAvailabilityListeners()) {
         m_hasPlaybackTargetAvailabilityListeners = true;
         mediaSession().setHasPlaybackTargetAvailabilityListeners(true);
         enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBehavior::Always); // Ensure the event listener gets at least one event.
@@ -8296,7 +8404,7 @@ RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality() const
 DOMWrapperWorld& HTMLMediaElement::ensureIsolatedWorld()
 {
     if (!m_isolatedWorld)
-        m_isolatedWorld = DOMWrapperWorld::create(Ref { commonVM() }, DOMWrapperWorld::Type::Internal, makeString("Media Controls (", localName(), ')'));
+        m_isolatedWorld = DOMWrapperWorld::create(Ref { commonVM() }, DOMWrapperWorld::Type::Internal, makeString("Media Controls ("_s, localName(), ')'));
     return *m_isolatedWorld;
 }
 
@@ -8686,7 +8794,7 @@ void HTMLMediaElement::resumeAutoplaying()
 void HTMLMediaElement::mayResumePlayback(bool shouldResume)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "paused = ", paused());
-    if (paused() && shouldResume)
+    if (!ended() && paused() && shouldResume)
         play();
 }
 
@@ -9491,6 +9599,12 @@ String HTMLMediaElement::localizedSourceType() const
 
     ASSERT_NOT_REACHED();
     return { };
+}
+
+void HTMLMediaElement::isActiveNowPlayingSessionChanged()
+{
+    if (RefPtr page = protectedDocument()->protectedPage())
+        page->hasActiveNowPlayingSessionChanged();
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)

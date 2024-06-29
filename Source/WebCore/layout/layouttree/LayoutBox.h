@@ -191,10 +191,6 @@ public:
 
     const ElementBox* associatedRubyAnnotationBox() const;
 
-    bool canCacheForLayoutState(const LayoutState&) const;
-    BoxGeometry* cachedGeometryForLayoutState(const LayoutState&) const;
-    void setCachedGeometryForLayoutState(LayoutState&, std::unique_ptr<BoxGeometry>) const;
-
     RenderObject* rendererForIntegration() const { return m_renderer.get(); }
     void setRendererForIntegration(RenderObject* renderer) { m_renderer = renderer; }
 
@@ -205,6 +201,7 @@ protected:
 
 private:
     friend class ElementBox;
+    friend class LayoutState;
 
     class BoxRareData {
         WTF_MAKE_FAST_ALLOCATED;
@@ -244,9 +241,11 @@ private:
     std::unique_ptr<Box> m_nextSibling;
     CheckedPtr<Box> m_previousSibling;
 
-    // First LayoutState gets a direct cache.
-    mutable WeakPtr<LayoutState> m_cachedLayoutState;
-    mutable std::unique_ptr<BoxGeometry> m_cachedGeometryForLayoutState;
+    // Primary LayoutState gets a direct cache.
+#if ASSERT_ENABLED
+    mutable WeakPtr<LayoutState> m_primaryLayoutState;
+#endif
+    mutable std::unique_ptr<BoxGeometry> m_cachedGeometryForPrimaryLayoutState;
 
     CheckedPtr<RenderObject> m_renderer;
 };

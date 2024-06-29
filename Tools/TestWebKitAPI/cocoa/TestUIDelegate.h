@@ -42,6 +42,7 @@
 @property (nonatomic, copy) void (^unfocusWebView)(WKWebView *);
 @property (nonatomic, copy) void (^webViewDidClose)(WKWebView *);
 @property (nonatomic, copy) void (^webViewDidAdjustVisibilityWithSelectors)(WKWebView *, NSArray<NSString *> *);
+@property (nonatomic, copy) void (^runOpenPanelWithParameters)(WKWebView *, WKOpenPanelParameters *, WKFrameInfo *, void (^)(NSArray<NSURL *> *));
 
 - (NSString *)waitForAlert;
 - (NSString *)waitForConfirm;

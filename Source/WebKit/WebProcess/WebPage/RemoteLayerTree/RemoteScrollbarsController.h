@@ -60,6 +60,8 @@ public:
 
     void updateScrollbarStyle() final;
 
+    bool isRemoteScrollbarsController() const final { return true; }
+
 private:
     bool m_horizontalOverlayScrollbarIsVisible { false };
     bool m_verticalOverlayScrollbarIsVisible { false };
@@ -70,5 +72,9 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::RemoteScrollbarsController)
+    static bool isType(const WebCore::ScrollbarsController& controller) { return controller.isRemoteScrollbarsController(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // PLATFORM(MAC)

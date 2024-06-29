@@ -87,7 +87,7 @@ GStreamerDataChannelHandler::GStreamerDataChannelHandler(GRefPtr<GstWebRTCDataCh
     : m_channel(WTFMove(channel))
 {
     static Atomic<uint64_t> nChannel = 0;
-    m_channelId = makeString("webkit-webrtc-data-channel-", nChannel.exchangeAdd(1));
+    m_channelId = makeString("webkit-webrtc-data-channel-"_s, nChannel.exchangeAdd(1));
 
     ASSERT(m_channel);
     static std::once_flag debugRegisteredFlag;
@@ -193,8 +193,17 @@ bool GStreamerDataChannelHandler::sendStringData(const CString& text)
 {
     DC_DEBUG("Sending string of length: %zu", text.length());
     DC_TRACE("Sending string %s", text.data());
+#if GST_CHECK_VERSION(1, 22, 0)
+    GUniqueOutPtr<GError> error;
+    // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/1958
+    gst_webrtc_data_channel_send_string_full(GST_WEBRTC_DATA_CHANNEL(m_channel.get()), text.data(), &error.outPtr());
+    if (error)
+        DC_WARNING("Unable to send string, error: %s", error->message);
+    return !error;
+#else
     g_signal_emit_by_name(m_channel.get(), "send-string", text.data());
     return true;
+#endif
 }
 
 bool GStreamerDataChannelHandler::sendRawData(std::span<const uint8_t> data)
@@ -202,8 +211,17 @@ bool GStreamerDataChannelHandler::sendRawData(std::span<const uint8_t> data)
     DC_DEBUG("Sending raw data of length: %zu", data.size());
     DC_MEMDUMP("Sending raw data", data.data(), data.size());
     auto bytes = adoptGRef(g_bytes_new(data.data(), data.size()));
+#if GST_CHECK_VERSION(1, 22, 0)
+    GUniqueOutPtr<GError> error;
+    // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/1958
+    gst_webrtc_data_channel_send_data_full(GST_WEBRTC_DATA_CHANNEL(m_channel.get()), bytes.get(), &error.outPtr());
+    if (error)
+        DC_WARNING("Unable to send raw data, error: %s", error->message);
+    return !error;
+#else
     g_signal_emit_by_name(m_channel.get(), "send-data", bytes.get());
     return true;
+#endif
 }
 
 void GStreamerDataChannelHandler::close()
@@ -240,7 +258,7 @@ bool GStreamerDataChannelHandler::checkState()
 
     RTCDataChannelState state;
     switch (channelState) {
-#if !GST_CHECK_VERSION(1, 21, 1)
+#if !GST_CHECK_VERSION(1, 22, 0)
     // Removed in https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/2099.
     case GST_WEBRTC_DATA_CHANNEL_STATE_NEW:
 #endif

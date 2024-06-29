@@ -51,7 +51,7 @@ SVGContainerLayout::SVGContainerLayout(RenderLayerModelObject& container)
 void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
 {
     bool layoutSizeChanged = layoutSizeOfNearestViewportChanged();
-    bool transformChanged = transformToRootChanged(&m_container);
+    bool transformChanged = transformToRootChanged(m_container.ptr());
 
     m_positionedChildren.clear();
     for (auto& child : childrenOfType<RenderObject>(m_container)) {
@@ -133,16 +133,16 @@ void SVGContainerLayout::positionChildrenRelativeToContainer()
         // only meaningful for the children of the RenderSVGRoot. RenderSVGRoot itself is positioned according to
         // the CSS box model object, where we need to respect border & padding, encoded in the contentBoxLocation().
         // -> Position all RenderSVGRoot children relative to the contentBoxLocation() to avoid intruding border/padding area.
-        if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(m_container))
+        if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(m_container.get()))
             return -svgRoot->contentBoxLocation();
 
         // For (inner) RenderSVGViewportContainer nominalSVGLayoutLocation() returns the viewport boundaries,
         // including the effect of the 'x'/'y' attribute values. Do not subtract the location, otherwise the
         // effect of the x/y translation is removed.
-        if (is<RenderSVGViewportContainer>(m_container) && !m_container.isAnonymous())
+        if (is<RenderSVGViewportContainer>(m_container) && !m_container->isAnonymous())
             return { };
 
-        return m_container.nominalSVGLayoutLocation();
+        return m_container->nominalSVGLayoutLocation();
     };
 
     // Arrange layout location for all child renderers relative to the container layout location.
@@ -204,7 +204,7 @@ void SVGContainerLayout::verifyLayoutLocationConsistency(const RenderLayerModelO
 
 bool SVGContainerLayout::layoutSizeOfNearestViewportChanged() const
 {
-    RenderElement* ancestor = &m_container;
+    RenderElement* ancestor = m_container.ptr();
     while (ancestor && !is<RenderSVGRoot>(ancestor) && !is<RenderSVGViewportContainer>(ancestor))
         ancestor = ancestor->parent();
 

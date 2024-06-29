@@ -100,7 +100,7 @@ Vector<Arg> computeCCallingConvention(Code& code, CCallValue* value)
     unsigned stackOffset = 0;
     for (unsigned i = 1; i < value->numChildren(); ++i)
         marshallCCallArgument(result, gpArgumentCount, fpArgumentCount, stackOffset, value->child(i));
-    code.requestCallArgAreaSizeInBytes(WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset));
+    code.requestCallArgAreaSizeInBytes(WTF::roundUpToMultipleOf<stackAlignmentBytes()>(stackOffset));
     return result;
 }
 
@@ -114,10 +114,13 @@ size_t cCallResultCount(Code& code, CCallValue* value)
             return 2;
         return 1;
     case Tuple:
-        // We only support tuples that return exactly two register sized ints.
+        // We only support functions that return each parameter in its own register for now.
         UNUSED_PARAM(code);
         ASSERT(code.proc().resultCount(value->type()) == 2);
-        ASSERT(code.proc().typeAtOffset(value->type(), 0) == pointerType());
+        if (is32Bit())
+            ASSERT(code.proc().typeAtOffset(value->type(), 0) == pointerType());
+        else
+            ASSERT(code.proc().typeAtOffset(value->type(), 0).isInt());
         ASSERT(code.proc().typeAtOffset(value->type(), 1) == pointerType());
         return 2;
     default:
@@ -171,7 +174,10 @@ Tmp cCallResult(Code& code, CCallValue* value, unsigned index)
     case Tuple:
         ASSERT_UNUSED(code, code.proc().resultCount(value->type()) == 2);
         // We only support functions that return each parameter in its own register for now.
-        ASSERT(code.proc().typeAtOffset(value->type(), 0) == registerType());
+        if (is32Bit())
+            ASSERT(code.proc().typeAtOffset(value->type(), 0) == registerType());
+        else
+            ASSERT(code.proc().typeAtOffset(value->type(), 0).isInt());
         ASSERT(code.proc().typeAtOffset(value->type(), 1) == registerType());
         return index ? Tmp(GPRInfo::returnValueGPR2) : Tmp(GPRInfo::returnValueGPR);
     case V128:

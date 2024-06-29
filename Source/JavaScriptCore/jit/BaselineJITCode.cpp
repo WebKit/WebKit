@@ -57,7 +57,7 @@ BaselineJITCode::~BaselineJITCode() = default;
 
 CodeLocationLabel<JSInternalPtrTag> BaselineJITCode::getCallLinkDoneLocationForBytecodeIndex(BytecodeIndex bytecodeIndex) const
 {
-    auto* result = binarySearch<const BaselineUnlinkedCallLinkInfo, BytecodeIndex>(m_unlinkedCalls.data(), m_unlinkedCalls.size(), bytecodeIndex,
+    auto* result = binarySearch<const BaselineUnlinkedCallLinkInfo, BytecodeIndex>(m_unlinkedCalls.span().data(), m_unlinkedCalls.size(), bytecodeIndex,
         [](const auto& value) {
             return value->bytecodeIndex;
         });

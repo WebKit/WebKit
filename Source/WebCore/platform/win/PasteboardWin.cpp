@@ -694,7 +694,7 @@ void Pasteboard::writeURLToDataObject(const URL& kurl, const String& titleStr)
     ASSERT(url.containsOnlyASCII()); // URL::string() is URL encoded.
 
     String fsPath = fileSystemPathFromURLOrTitle(url, titleStr, ".URL"_s, true);
-    String contentString("[InternetShortcut]\r\nURL=" + url + "\r\n");
+    auto contentString = makeString("[InternetShortcut]\r\nURL="_s, url, "\r\n"_s);
     CString content = contentString.latin1();
 
     if (fsPath.length() <= 0)
@@ -978,8 +978,11 @@ static HGLOBAL createGlobalImageFileContent(FragmentedSharedBuffer* data)
         return 0;
     }
 
-    if (data->size())
-        CopyMemory(fileContents, data->makeContiguous()->data(), data->size());
+    if (data->size()) {
+        auto contiguousData = data->makeContiguous();
+        auto span = contiguousData->span();
+        CopyMemory(fileContents, span.data(), span.size());
+    }
 
     GlobalUnlock(memObj);
 
@@ -1030,8 +1033,11 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Fragme
         // Write the data to this temp file.
         DWORD written;
         BOOL tempWriteSucceeded = FALSE;
-        if (data->size())
-            tempWriteSucceeded = WriteFile(tempFileHandle, data->makeContiguous()->data(), data->size(), &written, 0);
+        if (data->size()) {
+            auto contiguousData = data->makeContiguous();
+            auto span = contiguousData->span();
+            tempWriteSucceeded = WriteFile(tempFileHandle, span.data(), span.size(), &written, 0);
+        }
         CloseHandle(tempFileHandle);
         if (!tempWriteSucceeded)
             return 0;

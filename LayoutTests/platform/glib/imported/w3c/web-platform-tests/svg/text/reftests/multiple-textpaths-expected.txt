@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (47,36) size 304x75
     RenderSVGContainer {g} at (0,0) size 0x0
-    RenderSVGText {text} at (47,36) size 70x68 contains 1 chunk(s)
-      RenderSVGTextPath {textPath} at (0,38) size 70x30
-        RenderSVGInlineText {#text} at (0,38) size 70x29
+    RenderSVGText {text} at (47,36) size 70x67 contains 1 chunk(s)
+      RenderSVGTextPath {textPath} at (0,38) size 69x29
+        RenderSVGInlineText {#text} at (0,38) size 69x28
           chunk 1 text run 1 at (54.44,99.26) startOffset 0 endOffset 1 width 9.00: "S"
           chunk 1 text run 2 at (62.82,97.86) startOffset 1 endOffset 2 width 8.00: "o"
           chunk 1 text run 3 at (72.69,96.22) startOffset 2 endOffset 3 width 12.00: "m"
@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
           chunk 1 text run 8 at (104.25,90.96) startOffset 7 endOffset 8 width 8.00: "x"
           chunk 1 text run 9 at (110.17,89.97) startOffset 8 endOffset 9 width 4.00: "t"
           chunk 1 text run 10 at (114.12,89.31) startOffset 9 endOffset 10 width 4.00: "."
-      RenderSVGTextPath {textPath} at (1,0) size 68x31
-        RenderSVGInlineText {#text} at (1,0) size 68x31
+      RenderSVGTextPath {textPath} at (1,0) size 68x30
+        RenderSVGInlineText {#text} at (1,0) size 68x30
           chunk 1 text run 1 at (56.86,51.37) startOffset 0 endOffset 1 width 14.00: "M"
           chunk 1 text run 2 at (67.65,53.53) startOffset 1 endOffset 2 width 8.00: "o"
           chunk 1 text run 3 at (74.02,54.80) startOffset 2 endOffset 3 width 5.00: "r"

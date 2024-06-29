@@ -1,5 +1,5 @@
-//@ skip if $architecture != "arm64" and $architecture != "x86_64"
-//@ runDefault("-m", "--useJIT=0", "--useWebAssembly=1", "--useIPIntWrappers=1")
+//@ skip
+//@ runDefaultWasm("-m", "--useJIT=0", "--useWebAssembly=1", "--useInterpretedJSEntryWrappers=1")
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
 

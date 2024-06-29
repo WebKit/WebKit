@@ -44,6 +44,8 @@ public:
     // ExtensionCapability
     String environmentIdentifier() const final { return m_environmentIdentifier; }
 
+    BlockPtr<void()> didInvalidateBlock() const { return m_didInvalidateBlock; }
+
 private:
     String m_environmentIdentifier;
     String m_domain;

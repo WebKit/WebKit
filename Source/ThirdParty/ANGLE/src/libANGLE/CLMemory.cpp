@@ -109,7 +109,7 @@ angle::Result Memory::getInfo(MemInfo name,
             copySize  = sizeof(mOffset);
             break;
         case MemInfo::UsesSVM_Pointer:
-            valUInt   = CL_FALSE;  // TODO(jplate) Check for SVM pointer anglebug.com/6002
+            valUInt   = CL_FALSE;  // TODO(jplate) Check for SVM pointer anglebug.com/42264535
             copyValue = &valUInt;
             copySize  = sizeof(valUInt);
             break;

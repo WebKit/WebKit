@@ -50,7 +50,7 @@ JSTestCallbackFunctionWithVariadic::~JSTestCallbackFunctionWithVariadic()
 #endif
 }
 
-CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunctionWithVariadic::handleEvent(FixedVector<typename VariadicConverter<IDLAny>::Item>&& arguments)
+CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunctionWithVariadic::handleEvent(VariadicArguments<IDLAny>&& arguments)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
@@ -79,8 +79,9 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunction
 
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto returnValue = convert<IDLDOMString>(lexicalGlobalObject, jsResult);
-    RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);
-    return { WTFMove(returnValue) };
+    if (UNLIKELY(returnValue.hasException(throwScope)))
+        return CallbackResultType::ExceptionThrown;
+    return { returnValue.releaseReturnValue() };
 }
 
 JSC::JSValue toJS(TestCallbackFunctionWithVariadic& impl)

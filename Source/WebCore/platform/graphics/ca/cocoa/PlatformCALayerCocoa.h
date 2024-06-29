@@ -47,6 +47,7 @@ public:
 
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const FloatRect& dirtyRect) override;
+    bool needsDisplay() const override;
 
     void copyContentsFromLayer(PlatformCALayer*) override;
 

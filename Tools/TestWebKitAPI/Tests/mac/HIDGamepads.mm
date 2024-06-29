@@ -36,6 +36,25 @@
 #import <WebCore/GameControllerSoftLink.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 
+static bool gamepadsNotRecentlyAccessed = true;
+
+@interface GamepadUIDelegate : NSObject <WKUIDelegate>
+@end
+
+@implementation GamepadUIDelegate
+
+- (void)_webViewRecentlyAccessedGamepadsForTesting:(WKWebView *)webView
+{
+    gamepadsNotRecentlyAccessed = false;
+}
+
+- (void)_webViewStoppedAccessingGamepadsForTesting:(WKWebView *)webView
+{
+    gamepadsNotRecentlyAccessed = true;
+}
+
+@end
+
 @interface GamepadMessageHandler : NSObject <WKScriptMessageHandler>
 @property (readonly, nonatomic) Vector<RetainPtr<NSString>> messages;
 @end
@@ -279,6 +298,10 @@ TEST(Gamepad, GamepadState)
     }];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr uiDelegate = adoptNS([[GamepadUIDelegate alloc] init]);
+    webView.get().UIDelegate = uiDelegate.get();
+
     keyWindowForTesting = [webView window];
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"gamepad://host/main.html"]]];
 
@@ -367,6 +390,11 @@ TEST(Gamepad, GamepadState)
 
     NSString *lastMessage = [NSString stringWithFormat:@"Disconnect: %@", expectedName];
     EXPECT_TRUE([messageHandler.get().messages[1] isEqualToString:lastMessage]);
+
+    // Now that we're done polling the gamepads, make sure WebKit knows that
+    // gamepads are no longer being accessed.
+    EXPECT_FALSE(gamepadsNotRecentlyAccessed);
+    Util::run(&gamepadsNotRecentlyAccessed);
 }
 
 TEST(Gamepad, Dualshock3Basic)

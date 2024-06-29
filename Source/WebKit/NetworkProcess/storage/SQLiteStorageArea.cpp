@@ -335,9 +335,14 @@ Expected<void, StorageError> SQLiteStorageArea::setItem(IPC::Connection::UniqueI
         return makeUnexpected(StorageError::QuotaExceeded);
 
     startTransactionIfNecessary();
+
+    auto getItemResult = getItem(key);
+
     String oldValue;
-    if (auto valueOrError = getItem(key))
-        oldValue = valueOrError.value();
+    if (getItemResult.has_value()) {
+        oldValue = getItemResult.value();
+    } else if (getItemResult.error() != StorageError::ItemNotFound)
+        return makeUnexpected(getItemResult.error()); // Database error.
 
     auto statement = cachedStatement(StatementType::SetItem);
     if (!statement || statement->bindText(1, key) || statement->bindBlob(2, value)) {

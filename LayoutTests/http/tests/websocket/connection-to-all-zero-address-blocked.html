@@ -1,0 +1,26 @@
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<p>Test passes if websocket connection is not successful</p>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    const socket = new WebSocket("ws://0.0.0.0:8880");
+    socket.onerror = (e) => {
+        testPassed("Received error");
+        testRunner.notifyDone();
+    }
+    socket.onopen = (e) => {
+        testFailed("Received open");
+        testRunner.notifyDone();
+    }
+    socket.onmessage = (e) => {
+        testFailed("Received message");
+        testRunner.notifyDone();
+    }
+</script>
+</body>

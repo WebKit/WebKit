@@ -192,17 +192,6 @@ LogMessage::LogMessage(const char* file,
   }
 }
 
-#if defined(WEBRTC_WEBKIT_BUILD)
-static LogMessage::LogOutputCallback g_log_output_callback = nullptr;
-void LogMessage::SetLogOutput(LoggingSeverity min_sev, LogOutputCallback callback)
-{
-    g_dbg_sev = min_sev;
-    webrtc::MutexLock lock(&GetLoggingLock());
-    UpdateMinLogSeverity();
-    g_log_output_callback = callback;
-}
-#endif
-
 #if defined(WEBRTC_ANDROID)
 LogMessage::LogMessage(const char* file,
                        int line,
@@ -370,7 +359,7 @@ void LogMessage::UpdateMinLogSeverity()
 void LogMessage::OutputToDebug(const LogLineRef& log_line) {
   std::string msg_str = log_line.DefaultLogLine();
   bool log_to_stderr = log_to_stderr_;
-#if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS) && defined(NDEBUG)
+#if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS) && defined(NDEBUG) && !WEBRTC_WEBKIT_BUILD
   // On the Mac, all stderr output goes to the Console log and causes clutter.
   // So in opt builds, don't log to stderr unless the user specifically sets
   // a preference to do so.
@@ -444,11 +433,6 @@ void LogMessage::OutputToDebug(const LogLineRef& log_line) {
     }
   }
 #endif  // WEBRTC_ANDROID
-#if defined(WEBRTC_WEBKIT_BUILD)
-  if (g_log_output_callback) {
-    g_log_output_callback(log_line.severity(), msg_str.c_str());
-  }
-#endif
   if (log_to_stderr) {
     fprintf(stderr, "%s", msg_str.c_str());
     fflush(stderr);

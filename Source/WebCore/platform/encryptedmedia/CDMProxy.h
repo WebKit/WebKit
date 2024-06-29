@@ -74,6 +74,9 @@ public:
     {
         return adoptRef(*new KeyHandle(status, WTFMove(keyID), WTFMove(keyHandleValue)));
     }
+
+    virtual ~KeyHandle() { }
+
     Ref<SharedBuffer> idAsSharedBuffer() const { return SharedBuffer::create(m_id.span()); }
 
     bool takeValueIfDifferent(KeyHandleValueVariant&&);

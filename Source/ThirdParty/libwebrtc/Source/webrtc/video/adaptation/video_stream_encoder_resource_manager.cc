@@ -88,30 +88,6 @@ bool EqualFlags(const std::vector<bool>& a, const std::vector<bool>& b) {
   return std::equal(a.begin(), a.end(), b.begin());
 }
 
-absl::optional<DataRate> GetSingleActiveLayerMaxBitrate(
-    const VideoCodec& codec) {
-  int num_active = 0;
-  absl::optional<DataRate> max_bitrate;
-  if (codec.codecType == VideoCodecType::kVideoCodecVP9) {
-    for (int i = 0; i < codec.VP9().numberOfSpatialLayers; ++i) {
-      if (codec.spatialLayers[i].active) {
-        ++num_active;
-        max_bitrate =
-            DataRate::KilobitsPerSec(codec.spatialLayers[i].maxBitrate);
-      }
-    }
-  } else {
-    for (int i = 0; i < codec.numberOfSimulcastStreams; ++i) {
-      if (codec.simulcastStream[i].active) {
-        ++num_active;
-        max_bitrate =
-            DataRate::KilobitsPerSec(codec.simulcastStream[i].maxBitrate);
-      }
-    }
-  }
-  return (num_active > 1) ? absl::nullopt : max_bitrate;
-}
-
 }  // namespace
 
 class VideoStreamEncoderResourceManager::InitialFrameDropper {
@@ -298,8 +274,6 @@ VideoStreamEncoderResourceManager::VideoStreamEncoderResourceManager(
       pixel_limit_resource_experiment_enabled_(
           field_trials.IsEnabled(kPixelLimitResourceFieldTrialName)),
       encoder_target_bitrate_bps_(absl::nullopt),
-      quality_rampup_experiment_(
-          QualityRampUpExperimentHelper::CreateIfEnabled(this, clock_)),
       encoder_settings_(absl::nullopt) {
   TRACE_EVENT0(
       "webrtc",
@@ -442,12 +416,6 @@ void VideoStreamEncoderResourceManager::SetEncoderSettings(
   initial_frame_dropper_->OnEncoderSettingsUpdated(
       encoder_settings_->video_codec(), current_adaptation_counters_);
   MaybeUpdateTargetFrameRate();
-  if (quality_rampup_experiment_) {
-    quality_rampup_experiment_->ConfigureQualityRampupExperiment(
-        initial_frame_dropper_->last_stream_configuration_changed(),
-        initial_frame_dropper_->single_active_stream_pixels(),
-        GetSingleActiveLayerMaxBitrate(encoder_settings_->video_codec()));
-  }
 }
 
 void VideoStreamEncoderResourceManager::SetStartBitrate(
@@ -547,15 +515,6 @@ VideoStreamEncoderResourceManager::UseBandwidthAllocationBps() const {
 void VideoStreamEncoderResourceManager::OnMaybeEncodeFrame() {
   RTC_DCHECK_RUN_ON(encoder_queue_);
   initial_frame_dropper_->Disable();
-  if (quality_rampup_experiment_ && quality_scaler_resource_->is_started()) {
-    DataRate bandwidth = encoder_rates_.has_value()
-                             ? encoder_rates_->bandwidth_allocation
-                             : DataRate::Zero();
-    quality_rampup_experiment_->PerformQualityRampupExperiment(
-        quality_scaler_resource_, bandwidth,
-        DataRate::BitsPerSec(encoder_target_bitrate_bps_.value_or(0)),
-        GetSingleActiveLayerMaxBitrate(encoder_settings_->video_codec()));
-  }
 }
 
 void VideoStreamEncoderResourceManager::UpdateQualityScalerSettings(
@@ -744,15 +703,6 @@ void VideoStreamEncoderResourceManager::OnResourceLimitationChanged(
       adaptation_reason, limitations[VideoAdaptationReason::kCpu],
       limitations[VideoAdaptationReason::kQuality]);
 
-  if (quality_rampup_experiment_) {
-    bool cpu_limited = limitations.at(VideoAdaptationReason::kCpu).Total() > 0;
-    auto qp_resolution_adaptations =
-        limitations.at(VideoAdaptationReason::kQuality).resolution_adaptations;
-    quality_rampup_experiment_->cpu_adapted(cpu_limited);
-    quality_rampup_experiment_->qp_resolution_adaptations(
-        qp_resolution_adaptations);
-  }
-
   RTC_LOG(LS_INFO) << ActiveCountsToString(limitations);
 }
 
@@ -811,12 +761,6 @@ std::string VideoStreamEncoderResourceManager::ActiveCountsToString(
   ss << "}";
 
   return ss.Release();
-}
-
-void VideoStreamEncoderResourceManager::OnQualityRampUp() {
-  RTC_DCHECK_RUN_ON(encoder_queue_);
-  stream_adapter_->ClearRestrictions();
-  quality_rampup_experiment_.reset();
 }
 
 bool VideoStreamEncoderResourceManager::IsSimulcastOrMultipleSpatialLayers(

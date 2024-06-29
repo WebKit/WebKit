@@ -414,14 +414,14 @@ JSCValue* webkit_web_hit_test_result_get_js_node(WebKitWebHitTestResult* webHitT
     if (!webHitTestResult->priv->node)
         return nullptr;
 
-    auto* frame = webHitTestResult->priv->node->document().frame();
+    RefPtr frame = webHitTestResult->priv->node->document().frame();
     if (!frame)
         return nullptr;
 
     if (!world)
         world = webkit_script_world_get_default();
 
-    auto* wkWorld = webkitScriptWorldGetInjectedBundleScriptWorld(world);
+    RefPtr wkWorld = webkitScriptWorldGetInjectedBundleScriptWorld(world);
     auto* globalObject = frame->script().globalObject(wkWorld->coreWorld());
     auto jsContext = jscContextGetOrCreate(toGlobalRef(globalObject));
     JSValueRef jsValue = nullptr;

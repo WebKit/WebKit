@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2829,6 +2829,101 @@ static void testToString()
     }
 }
 
+static void testBigIntAPI()
+{
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        JSValue *posInfinity = [context evaluateScript:@"Infinity;"];
+        checkResult(@"Should be a bigint value", !posInfinity.toInt32);
+        checkResult(@"Should be a bigint value", !posInfinity.toUInt32);
+
+        JSValue *negInfinity = [context evaluateScript:@"-Infinity;"];
+        checkResult(@"Should be a bigint value", !negInfinity.toInt32);
+        checkResult(@"Should be a bigint value", !negInfinity.toUInt32);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        JSValue *bigInt = [context evaluateScript:@"BigInt('42');"];
+        JSValue *notBigInt = [context evaluateScript:@"'42'"];
+        checkResult(@"Should be a bigint value", bigInt.isBigInt);
+        checkResult(@"Should not be a bigint value", !notBigInt.isBigInt);
+        checkResult(@"Should equal to 42", [[bigInt toNumber] doubleValue] == 42.0);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        JSValue *bigInt = [JSValue valueWithNewBigIntFromString:@"42" inContext:context];
+        checkResult(@"Should be a created from Obj-C", bigInt.isBigInt);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        JSValue *bigInt = [JSValue valueWithNewBigIntFromInt64:(int64_t)42 inContext:context];
+        checkResult(@"Should be a created from Obj-C", bigInt.isBigInt);
+
+        JSRelationCondition condition = [bigInt compareInt64:(int64_t)42];
+        checkResult(@"Should be kJSRelationConditionEqual", condition == kJSRelationConditionEqual);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        JSValue *bigInt = [JSValue valueWithNewBigIntFromUInt64:(uint64_t)42 inContext:context];
+        checkResult(@"Should be a created from Obj-C", bigInt.isBigInt);
+
+        JSRelationCondition condition = [bigInt compareUInt64:(uint64_t)42];
+        checkResult(@"Should be kJSRelationConditionEqual", condition == kJSRelationConditionEqual);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        double value = 42.0;
+        JSValue *bigInt = [JSValue valueWithNewBigIntFromDouble:(double)value inContext:context];
+        checkResult(@"Should be a created from Obj-C", bigInt.isBigInt);
+
+        double toDoubleResult = [bigInt toDouble];
+        checkResult(@"Should equal to value", toDoubleResult == value);
+
+        JSRelationCondition condition = [bigInt compareDouble:(double)value];
+        checkResult(@"Should be kJSRelationConditionEqual", condition == kJSRelationConditionEqual);
+
+        bigInt = [JSValue valueWithNewBigIntFromDouble:(double)42.1 inContext:context];
+        checkResult(@"Should be a nullptr", !bigInt);
+        checkResult(@"Should throw an exception", [context exception]);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        JSValue *array = [JSValue valueWithNewArrayInContext:context];
+        checkResult(@"Should be 0", ![array toUInt64]);
+
+        JSValue *bigInt = [JSValue valueWithNewBigIntFromUInt64:(uint64_t)42 inContext:context];
+        checkResult(@"Should be a 42", [bigInt toUInt64] == 42);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        JSValue *array = [JSValue valueWithNewArrayInContext:context];
+        checkResult(@"Should be 0", ![array toInt64]);
+
+        JSValue *bigInt = [JSValue valueWithNewBigIntFromInt64:(int64_t)42 inContext:context];
+        checkResult(@"Should be a 42", [bigInt toInt64] == 42);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        JSValue *bigInt = [JSValue valueWithNewBigIntFromInt64:(int64_t)42 inContext:context];
+        checkResult(@"Should be a string `42`", [[bigInt toString] isEqualToString:@"42"]);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        JSValue *bigInt42 = [JSValue valueWithNewBigIntFromInt64:(int64_t)42 inContext:context];
+        JSValue *bigInt43 = [JSValue valueWithNewBigIntFromInt64:(int64_t)43 inContext:context];
+        checkResult(@"Should be kJSRelationConditionLessThan", [bigInt42 compareJSValue:bigInt43] == kJSRelationConditionLessThan);
+    }
+}
+
 #define RUN(test) do { \
         if (!shouldRun(#test)) \
             break; \
@@ -2850,6 +2945,7 @@ void testObjectiveCAPI(const char* filter)
     RUN(checkNegativeNSIntegers());
     RUN(runJITThreadLimitTests());
     RUN(testToString());
+    RUN(testBigIntAPI());
 
     RUN(testLoaderResolvesAbsoluteScriptURL());
     RUN(testFetch());

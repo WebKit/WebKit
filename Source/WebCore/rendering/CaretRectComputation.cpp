@@ -205,7 +205,7 @@ static LayoutRect computeCaretRectForText(const InlineBoxAndOffset& boxAndOffset
 
         auto selectionRect = LayoutRect { textBox->logicalLeftIgnoringInlineDirection(), 0, 0, 0 };
         auto textRun = textBox->textRun(InlineIterator::TextRunMode::Editing);
-        textBox->fontCascade().adjustSelectionRectForText(textRun, selectionRect, startOffset, endOffset);
+        textBox->fontCascade().adjustSelectionRectForText(textBox->renderer().canUseSimplifiedTextMeasuring().value_or(false), textRun, selectionRect, startOffset, endOffset);
         return snapRectToDevicePixelsWithWritingDirection(selectionRect, textBox->renderer().document().deviceScaleFactor(), textRun.ltr()).maxX();
     };
 

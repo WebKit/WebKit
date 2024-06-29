@@ -79,11 +79,13 @@ enum class Behavior : uint8_t {
 };
 using Behaviors = OptionSet<Behavior>;
 
-enum class BreakTarget : uint8_t {
-    Switch,
-    Loop,
-    Continuing
-};
+using BreakTarget = std::variant<
+    AST::SwitchStatement*,
+    AST::LoopStatement*,
+    AST::ForStatement*,
+    AST::WhileStatement*,
+    AST::Continuing*
+>;
 
 static ASCIILiteral bindingKindToString(Binding::Kind kind)
 {
@@ -211,6 +213,8 @@ private:
     bool convertValue(const SourceSpan&, const Type*, std::optional<ConstantValue>&);
     bool convertValueImpl(const SourceSpan&, const Type*, ConstantValue&);
 
+    void binaryExpression(const SourceSpan&, AST::Expression*, AST::BinaryOperation, AST::Expression&, AST::Expression&);
+
     template<typename TargetConstructor, typename Validator, typename... Arguments>
     void allocateSimpleConstructor(ASCIILiteral, TargetConstructor, const Validator&, Arguments&&...);
     void allocateTextureStorageConstructor(ASCIILiteral, Types::TextureStorage::Kind);
@@ -222,7 +226,7 @@ private:
     std::optional<AddressSpace> addressSpace(AST::Expression&);
 
     template<typename CallArguments>
-    const Type* chooseOverload(ASCIILiteral, AST::Expression&, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
+    const Type* chooseOverload(ASCIILiteral, const SourceSpan&, AST::Expression*, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
 
     template<typename Node>
     void setConstantValue(Node&, const Type*, const ConstantValue&);
@@ -638,6 +642,8 @@ void TypeChecker::visit(AST::Variable& variable)
     if (variable.flavor() != AST::VariableFlavor::Const || result == m_types.bottomType())
         value = nullptr;
 
+    variable.m_storeType = result;
+
     if (variable.flavor() == AST::VariableFlavor::Var) {
         result = m_types.referenceType(*variable.addressSpace(), result, *variable.accessMode());
         auto* typeName = variable.maybeTypeName();
@@ -720,12 +726,12 @@ void TypeChecker::visit(AST::Function& function)
         ContextScope functionContext(this);
         for (unsigned i = 0; i < parameters.size(); ++i)
             introduceValue(function.parameters()[i].name(), parameters[i]);
-        Base::visit(function.body());
+        AST::Visitor::visit(function.body());
 
         auto behaviors = analyze(function.body());
         if (behaviors.contains(Behavior::Next) && function.maybeReturnType())
             typeError(InferBottom::No, function.span(), "missing return at end of function"_s);
-        ASSERT(!behaviors.containsAny({ Behavior::Break, Behavior::Continue }));
+        ASSERT(!behaviors.containsAny({ Behavior::Break, Behavior::Continue }) || !m_errors.isEmpty());
     }
 
     const Type* functionType = m_types.functionType(WTFMove(parameters), m_returnType, mustUse);
@@ -844,30 +850,16 @@ void TypeChecker::visit(AST::CallStatement& statement)
 
 void TypeChecker::visit(AST::CompoundAssignmentStatement& statement)
 {
-    // FIXME: Implement type checking - infer is called to avoid ASSERT in
-    // TypeChecker::visit(AST::Expression&)
-    infer(statement.leftExpression(), Evaluation::Runtime);
-    infer(statement.rightExpression(), Evaluation::Runtime);
-
-    ASCIILiteral operationName;
-    if (statement.operation() == AST::BinaryOperation::Divide)
-        operationName = "division"_s;
-    else if (statement.operation() == AST::BinaryOperation::Modulo)
-        operationName = "modulo"_s;
-    if (!operationName.isNull()) {
-        auto* rightType = statement.rightExpression().inferredType();
-        if (auto* vectorType = std::get_if<Types::Vector>(rightType))
-            rightType = vectorType->element;
-        if (satisfies(rightType, Constraints::Integer)) {
-            if (statement.operation() == AST::BinaryOperation::Divide)
-                m_shaderModule.setUsesDivision();
-            else
-                m_shaderModule.setUsesModulo();
-            auto rightValue = statement.rightExpression().constantValue();
-            if (rightValue && containsZero(*rightValue, statement.rightExpression().inferredType()))
-                typeError(InferBottom::No, statement.span(), "invalid "_s, operationName, " by zero"_s);
-        }
+    auto* left = infer(statement.leftExpression(), Evaluation::Runtime);
+    auto* referenceType = std::get_if<Types::Reference>(left);
+    if (!referenceType) {
+        typeError(InferBottom::No, statement.span(), "cannot assign to a value of type '"_s, *left, '\'');
+        return;
     }
+
+    binaryExpression(statement.span(), nullptr, statement.operation(), statement.leftExpression(), statement.rightExpression());
+    // Reset the inferred type since this is a statement
+    m_inferredType = nullptr;
 }
 
 void TypeChecker::visit(AST::DecrementIncrementStatement& statement)
@@ -904,7 +896,7 @@ void TypeChecker::visit(AST::IfStatement& statement)
     auto* test = infer(statement.test(), Evaluation::Runtime);
 
     if (!unify(test, m_types.boolType()))
-        typeError(statement.test().span(), "expected 'bool', found "_s, *test);
+        typeError(InferBottom::No, statement.test().span(), "expected 'bool', found '"_s, *test, "'"_s);
 
     visit(statement.trueBody());
     if (statement.maybeFalseBody())
@@ -1184,26 +1176,31 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
 
 void TypeChecker::visit(AST::BinaryExpression& binary)
 {
-    chooseOverload("operator"_s, binary, toASCIILiteral(binary.operation()), ReferenceWrapperVector<AST::Expression, 2> { binary.leftExpression(), binary.rightExpression() }, { });
+    binaryExpression(binary.span(), &binary, binary.operation(), binary.leftExpression(), binary.rightExpression());
+}
+
+void TypeChecker::binaryExpression(const SourceSpan& span, AST::Expression* expression, AST::BinaryOperation operation, AST::Expression& leftExpression, AST::Expression& rightExpression)
+{
+    chooseOverload("operator"_s, span, expression, toASCIILiteral(operation), ReferenceWrapperVector<AST::Expression, 2> { leftExpression, rightExpression }, { });
 
     ASCIILiteral operationName;
-    if (binary.operation() == AST::BinaryOperation::Divide)
+    if (operation == AST::BinaryOperation::Divide)
         operationName = "division"_s;
-    else if (binary.operation() == AST::BinaryOperation::Modulo)
+    else if (operation == AST::BinaryOperation::Modulo)
         operationName = "modulo"_s;
     if (!operationName.isNull()) {
-        auto* rightType = binary.rightExpression().inferredType();
+        auto* rightType = rightExpression.inferredType();
         if (auto* vectorType = std::get_if<Types::Vector>(rightType))
             rightType = vectorType->element;
         if (satisfies(rightType, Constraints::Integer)) {
-            if (binary.operation() == AST::BinaryOperation::Divide)
+            if (operation == AST::BinaryOperation::Divide)
                 m_shaderModule.setUsesDivision();
             else
                 m_shaderModule.setUsesModulo();
-            auto leftValue = binary.leftExpression().constantValue();
-            auto rightValue = binary.rightExpression().constantValue();
-            if (!leftValue && rightValue && containsZero(*rightValue, binary.rightExpression().inferredType()))
-                typeError(InferBottom::No, binary.span(), "invalid "_s, operationName, " by zero"_s);
+            auto leftValue = leftExpression.constantValue();
+            auto rightValue = rightExpression.constantValue();
+            if (!leftValue && rightValue && containsZero(*rightValue, rightExpression.inferredType()))
+                typeError(InferBottom::No, span, "invalid "_s, operationName, " by zero"_s);
         }
     }
 }
@@ -1236,133 +1233,143 @@ void TypeChecker::visit(AST::CallExpression& call)
     auto& target = call.target();
     bool isNamedType = is<AST::IdentifierExpression>(target);
     bool isParameterizedType = is<AST::ElaboratedTypeExpression>(target);
-    if (isNamedType || isParameterizedType) {
-        Vector<const Type*> typeArguments;
-        String targetName = [&]() -> String {
-            if (isNamedType)
-                return downcast<AST::IdentifierExpression>(target).identifier();
-            auto& elaborated = downcast<AST::ElaboratedTypeExpression>(target);
-            for (auto& argument : elaborated.arguments())
-                typeArguments.append(resolve(argument));
-            return elaborated.base();
-        }();
+    bool isArrayType = is<AST::ArrayTypeExpression>(target);
 
-        auto* targetBinding = isNamedType ? readVariable(targetName) : nullptr;
-        if (targetBinding) {
-            target.m_inferredType = targetBinding->type;
-            if (targetBinding->kind == Binding::Type) {
-                if (auto* structType = std::get_if<Types::Struct>(targetBinding->type)) {
-                    if (!targetBinding->type->isConstructible()) {
-                        typeError(call.span(), "struct is not constructible"_s);
-                        return;
-                    }
+    Vector<const Type*> typeArguments;
+    String targetName = [&]() -> String {
+        if (isNamedType)
+            return downcast<AST::IdentifierExpression>(target).identifier();
+        if (isArrayType)
+            return "array"_s;
+        auto& elaborated = downcast<AST::ElaboratedTypeExpression>(target);
+        for (auto& argument : elaborated.arguments())
+            typeArguments.append(resolve(argument));
+        return elaborated.base();
+    }();
 
-                    if (UNLIKELY(m_discardResult == DiscardResult::Yes)) {
-                        typeError(call.span(), "value constructor evaluated but not used"_s);
-                        return;
-                    }
-
-                    auto numberOfArguments = call.arguments().size();
-                    auto numberOfFields = structType->fields.size();
-                    if (numberOfArguments && numberOfArguments != numberOfFields) {
-                        auto errorKind = numberOfArguments < numberOfFields ? "few"_s : "many"_s;
-                        typeError(call.span(), "struct initializer has too "_s, errorKind, " inputs: expected "_s, numberOfFields, ", found "_s, numberOfArguments);
-                        return;
-                    }
-
-                    HashMap<String, ConstantValue> constantFields;
-                    bool isConstant = true;
-                    for (unsigned i = 0; i < numberOfArguments; ++i) {
-                        auto& argument = call.arguments()[i];
-                        auto& member = structType->structure.members()[i];
-                        auto* fieldType = structType->fields.get(member.name());
-                        auto* argumentType = infer(argument, m_evaluation);
-                        if (!unify(fieldType, argumentType)) {
-                            typeError(argument.span(), "type in struct initializer does not match struct member type: expected '"_s, *fieldType, "', found '"_s, *argumentType, '\'');
-                            return;
-                        }
-                        argument.m_inferredType = fieldType;
-                        auto& value = argument.m_constantValue;
-                        if (value.has_value() && convertValue(argument.span(), argument.inferredType(), value)) {
-                            constantFields.set(member.name(), *value);
-                            continue;
-                        }
-                        isConstant = false;
-                    }
-                    if (isConstant) {
-                        if (numberOfArguments)
-                            setConstantValue(call, targetBinding->type, ConstantStruct { WTFMove(constantFields) });
-                        else
-                            setConstantValue(call, targetBinding->type, zeroValue(targetBinding->type));
-                    }
-                    inferred(targetBinding->type);
+    auto* targetBinding = readVariable(targetName);
+    if (targetBinding) {
+        target.m_inferredType = targetBinding->type;
+        if (targetBinding->kind == Binding::Type) {
+            call.m_isConstructor = true;
+            if (auto* structType = std::get_if<Types::Struct>(targetBinding->type)) {
+                if (!targetBinding->type->isConstructible()) {
+                    typeError(call.span(), "struct is not constructible"_s);
                     return;
                 }
 
-                if (auto* vectorType = std::get_if<Types::Vector>(targetBinding->type)) {
-                    typeArguments.append(vectorType->element);
-                    switch (vectorType->size) {
-                    case 2:
-                        targetName = "vec2"_s;
-                        break;
-                    case 3:
-                        targetName = "vec3"_s;
-                        break;
-                    case 4:
-                        targetName = "vec4"_s;
-                        break;
-                    default:
-                        RELEASE_ASSERT_NOT_REACHED();
-                    }
+                if (UNLIKELY(m_discardResult == DiscardResult::Yes)) {
+                    typeError(call.span(), "value constructor evaluated but not used"_s);
+                    return;
                 }
 
-                if (auto* matrixType = std::get_if<Types::Matrix>(targetBinding->type)) {
-                    typeArguments.append(matrixType->element);
-                    targetName = makeString("mat"_s, matrixType->columns, 'x', matrixType->rows);
-                }
-
-                if (std::holds_alternative<Types::Primitive>(*targetBinding->type))
-                    targetName = targetBinding->type->toString();
-            }
-
-            if (targetBinding->kind == Binding::Function) {
-                auto& functionType = std::get<Types::Function>(*targetBinding->type);
                 auto numberOfArguments = call.arguments().size();
-                auto numberOfParameters = functionType.parameters.size();
-                if (UNLIKELY(m_evaluation < Evaluation::Runtime)) {
-                    typeError(call.span(), "cannot call function from "_s, evaluationToString(m_evaluation), " context"_s);
+                auto numberOfFields = structType->fields.size();
+                if (numberOfArguments && numberOfArguments != numberOfFields) {
+                    auto errorKind = numberOfArguments < numberOfFields ? "few"_s : "many"_s;
+                    typeError(call.span(), "struct initializer has too "_s, errorKind, " inputs: expected "_s, numberOfFields, ", found "_s, numberOfArguments);
                     return;
                 }
 
-                if (UNLIKELY(numberOfArguments != numberOfParameters)) {
-                    auto errorKind = numberOfArguments < numberOfParameters ? "few"_s : "many"_s;
-                    typeError(call.span(), "funtion call has too "_s, errorKind, " arguments: expected "_s, numberOfParameters, ", found "_s, numberOfArguments);
-                    return;
-                }
-
-                if (m_discardResult == DiscardResult::Yes && functionType.mustUse)
-                    typeError(InferBottom::No, call.span(), "ignoring return value of function '"_s, targetName, "' annotated with @must_use"_s);
-
+                HashMap<String, ConstantValue> constantFields;
+                bool isConstant = true;
                 for (unsigned i = 0; i < numberOfArguments; ++i) {
                     auto& argument = call.arguments()[i];
-                    auto* parameterType = functionType.parameters[i];
+                    auto& member = structType->structure.members()[i];
+                    auto* fieldType = structType->fields.get(member.name());
                     auto* argumentType = infer(argument, m_evaluation);
-                    if (!unify(parameterType, argumentType)) {
-                        typeError(argument.span(), "type in function call does not match parameter type: expected '"_s, *parameterType, "', found '"_s, *argumentType, '\'');
+                    if (!unify(fieldType, argumentType)) {
+                        typeError(argument.span(), "type in struct initializer does not match struct member type: expected '"_s, *fieldType, "', found '"_s, *argumentType, '\'');
                         return;
                     }
-                    argument.m_inferredType = parameterType;
+                    argument.m_inferredType = fieldType;
                     auto& value = argument.m_constantValue;
-                    if (value.has_value())
-                        convertValue(argument.span(), argument.inferredType(), value);
+                    if (value.has_value() && convertValue(argument.span(), argument.inferredType(), value)) {
+                        constantFields.set(member.name(), *value);
+                        continue;
+                    }
+                    isConstant = false;
                 }
-                inferred(functionType.result);
+                if (isConstant) {
+                    if (numberOfArguments)
+                        setConstantValue(call, targetBinding->type, ConstantStruct { WTFMove(constantFields) });
+                    else
+                        setConstantValue(call, targetBinding->type, zeroValue(targetBinding->type));
+                }
+                inferred(targetBinding->type);
                 return;
             }
-        }
 
-        auto* result = chooseOverload("initializer"_s, call, targetName, call.arguments(), typeArguments);
+            if (auto* vectorType = std::get_if<Types::Vector>(targetBinding->type)) {
+                typeArguments.append(vectorType->element);
+                switch (vectorType->size) {
+                case 2:
+                    targetName = "vec2"_s;
+                    break;
+                case 3:
+                    targetName = "vec3"_s;
+                    break;
+                case 4:
+                    targetName = "vec4"_s;
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+            }
+
+            if (auto* matrixType = std::get_if<Types::Matrix>(targetBinding->type)) {
+                typeArguments.append(matrixType->element);
+                targetName = makeString("mat"_s, matrixType->columns, 'x', matrixType->rows);
+            }
+
+            if (std::holds_alternative<Types::Primitive>(*targetBinding->type))
+                targetName = targetBinding->type->toString();
+        } else if (targetBinding->kind == Binding::Function) {
+            auto& functionType = std::get<Types::Function>(*targetBinding->type);
+            auto numberOfArguments = call.arguments().size();
+            auto numberOfParameters = functionType.parameters.size();
+            if (UNLIKELY(m_evaluation < Evaluation::Runtime)) {
+                typeError(call.span(), "cannot call function from "_s, evaluationToString(m_evaluation), " context"_s);
+                return;
+            }
+
+            if (UNLIKELY(numberOfArguments != numberOfParameters)) {
+                auto errorKind = numberOfArguments < numberOfParameters ? "few"_s : "many"_s;
+                typeError(call.span(), "funtion call has too "_s, errorKind, " arguments: expected "_s, numberOfParameters, ", found "_s, numberOfArguments);
+                return;
+            }
+
+            if (m_discardResult == DiscardResult::Yes && functionType.mustUse)
+                typeError(InferBottom::No, call.span(), "ignoring return value of function '"_s, targetName, "' annotated with @must_use"_s);
+
+            for (unsigned i = 0; i < numberOfArguments; ++i) {
+                auto& argument = call.arguments()[i];
+                auto* parameterType = functionType.parameters[i];
+                auto* argumentType = infer(argument, m_evaluation);
+                if (!unify(parameterType, argumentType)) {
+                    typeError(argument.span(), "type in function call does not match parameter type: expected '"_s, *parameterType, "', found '"_s, *argumentType, '\'');
+                    return;
+                }
+                argument.m_inferredType = parameterType;
+                auto& value = argument.m_constantValue;
+                if (value.has_value())
+                    convertValue(argument.span(), argument.inferredType(), value);
+            }
+            inferred(functionType.result);
+            return;
+        } else {
+            typeError(target.span(), "cannot call value of type '"_s, *targetBinding->type, '\'');
+            return;
+        }
+    }
+
+    if (isNamedType || isParameterizedType) {
+        auto* result = chooseOverload("initializer"_s, call.span(), &call, targetName, call.arguments(), typeArguments);
         if (result) {
+            target.m_inferredType = result;
+            if (isBottom(result))
+                return;
+
             // FIXME: this will go away once we track used intrinsics properly
             if (targetName == "workgroupUniformLoad"_s)
                 m_shaderModule.setUsesWorkgroupUniformLoad();
@@ -1386,7 +1393,19 @@ void TypeChecker::visit(AST::CallExpression& call)
                 m_shaderModule.setUsesDot4U8Packed();
             else if (targetName == "extractBits"_s)
                 m_shaderModule.setUsesExtractBits();
-            target.m_inferredType = result;
+            else if (targetName == "textureGather"_s) {
+                auto& component = call.arguments()[0];
+                if (satisfies(component.inferredType(), Constraints::ConcreteInteger)) {
+                    auto& constant = component.constantValue();
+                    if (!constant)
+                        typeError(InferBottom::No, component.span(), "the component argument must be a const-expression"_s);
+                    else {
+                        auto componentValue = constant->integerValue();
+                        if (componentValue < 0 || componentValue > 3)
+                            typeError(InferBottom::No, component.span(), "the component argument must be at least 0 and at most 3. component is "_s, String::number(componentValue));
+                    }
+                }
+            }
             return;
         }
 
@@ -1396,130 +1415,130 @@ void TypeChecker::visit(AST::CallExpression& call)
             return;
         }
 
-        if (targetBinding)
-            typeError(target.span(), "cannot call value of type '"_s, *targetBinding->type, '\'');
-        else
-            typeError(target.span(), "unresolved call target '"_s, targetName, '\'');
+        typeError(target.span(), "unresolved call target '"_s, targetName, '\'');
         return;
     }
 
-    if (auto* array = dynamicDowncast<AST::ArrayTypeExpression>(target)) {
-        const Type* elementType = nullptr;
-        unsigned elementCount;
+    RELEASE_ASSERT(isArrayType);
+    auto& array = uncheckedDowncast<AST::ArrayTypeExpression>(target);
+    const Type* elementType = nullptr;
+    unsigned elementCount;
 
-        if (array->maybeElementType()) {
-            if (!array->maybeElementCount()) {
-                typeError(call.span(), "cannot construct a runtime-sized array"_s);
+    if (array.maybeElementType()) {
+        if (!array.maybeElementCount()) {
+            typeError(call.span(), "cannot construct a runtime-sized array"_s);
+            return;
+        }
+        elementType = resolve(*array.maybeElementType());
+        auto* elementCountType = infer(*array.maybeElementCount(), m_evaluation);
+
+        if (isBottom(elementType) || isBottom(elementCountType)) {
+            inferred(m_types.bottomType());
+            return;
+        }
+
+        if (!unify(m_types.i32Type(), elementCountType) && !unify(m_types.u32Type(), elementCountType)) {
+            typeError(array.span(), "array count must be an i32 or u32 value, found '"_s, *elementCountType, '\'');
+            return;
+        }
+
+        if (!elementType->isConstructible()) {
+            typeError(array.span(), '\'', *elementType, "' cannot be used as an element type of an array"_s);
+            return;
+        }
+
+        auto constantValue = array.maybeElementCount()->constantValue();
+        if (!constantValue) {
+            typeError(call.span(), "array must have constant size in order to be constructed"_s);
+            return;
+        }
+
+        auto intElementCount = constantValue->integerValue();
+        if (intElementCount < 1) {
+            typeError(call.span(), "array count must be greater than 0"_s);
+            return;
+        }
+
+        if (intElementCount > std::numeric_limits<uint16_t>::max()) {
+            typeError(call.span(), "array count ("_s, intElementCount, ") must be less than 65536"_s);
+            return;
+        }
+        elementCount = static_cast<unsigned>(intElementCount);
+
+        unsigned numberOfArguments = call.arguments().size();
+        if (numberOfArguments && numberOfArguments != elementCount) {
+            auto errorKind = call.arguments().size() < elementCount ? "few"_s : "many"_s;
+            typeError(call.span(), "array constructor has too "_s, errorKind, " elements: expected "_s, elementCount, ", found "_s, call.arguments().size());
+            return;
+        }
+        for (auto& argument : call.arguments()) {
+            auto* argumentType = infer(argument, m_evaluation);
+            if (!unify(elementType, argumentType)) {
+                typeError(argument.span(), '\'', *argumentType, "' cannot be used to construct an array of '"_s, *elementType, '\'');
                 return;
             }
-            elementType = resolve(*array->maybeElementType());
-            auto* elementCountType = infer(*array->maybeElementCount(), m_evaluation);
+            argument.m_inferredType = elementType;
+        }
+    } else {
+        ASSERT(!array.maybeElementCount());
+        elementCount = call.arguments().size();
+        if (!elementCount) {
+            typeError(call.span(), "cannot infer array element type from constructor"_s);
+            return;
+        }
+        for (auto& argument : call.arguments()) {
+            auto* argumentType = infer(argument, m_evaluation);
+            if (auto* reference = std::get_if<Types::Reference>(argumentType))
+                argumentType = reference->element;
 
-            if (isBottom(elementType) || isBottom(elementCountType)) {
-                inferred(m_types.bottomType());
-                return;
-            }
+            if (!elementType) {
+                elementType = argumentType;
 
-            if (!unify(m_types.i32Type(), elementCountType) && !unify(m_types.u32Type(), elementCountType)) {
-                typeError(array->span(), "array count must be an i32 or u32 value, found '"_s, *elementCountType, '\'');
-                return;
-            }
-
-            if (!elementType->isConstructible()) {
-                typeError(array->span(), '\'', *elementType, "' cannot be used as an element type of an array"_s);
-                return;
-            }
-
-            auto constantValue = array->maybeElementCount()->constantValue();
-            if (!constantValue) {
-                typeError(call.span(), "array must have constant size in order to be constructed"_s);
-                return;
-            }
-
-            auto intElementCount = constantValue->integerValue();
-            if (intElementCount < 1) {
-                typeError(call.span(), "array count must be greater than 0"_s);
-                return;
-            }
-
-            if (intElementCount > std::numeric_limits<uint16_t>::max()) {
-                typeError(call.span(), "array count ("_s, intElementCount, ") must be less than 65536"_s);
-                return;
-            }
-            elementCount = static_cast<unsigned>(intElementCount);
-
-            unsigned numberOfArguments = call.arguments().size();
-            if (numberOfArguments && numberOfArguments != elementCount) {
-                auto errorKind = call.arguments().size() < elementCount ? "few"_s : "many"_s;
-                typeError(call.span(), "array constructor has too "_s, errorKind, " elements: expected "_s, elementCount, ", found "_s, call.arguments().size());
-                return;
-            }
-            for (auto& argument : call.arguments()) {
-                auto* argumentType = infer(argument, m_evaluation);
-                if (!unify(elementType, argumentType)) {
-                    typeError(argument.span(), '\'', *argumentType, "' cannot be used to construct an array of '"_s, *elementType, '\'');
+                if (!elementType->isConstructible()) {
+                    typeError(array.span(), '\'', *elementType, "' cannot be used as an element type of an array"_s);
                     return;
                 }
-                argument.m_inferredType = elementType;
+
+                continue;
             }
-        } else {
-            ASSERT(!array->maybeElementCount());
-            elementCount = call.arguments().size();
-            if (!elementCount) {
-                typeError(call.span(), "cannot infer array element type from constructor"_s);
-                return;
+            if (unify(elementType, argumentType))
+                continue;
+            if (unify(argumentType, elementType)) {
+                elementType = argumentType;
+                continue;
             }
-            for (auto& argument : call.arguments()) {
-                auto* argumentType = infer(argument, m_evaluation);
-                if (auto* reference = std::get_if<Types::Reference>(argumentType))
-                    argumentType = reference->element;
-
-                if (!elementType) {
-                    elementType = argumentType;
-
-                    if (!elementType->isConstructible()) {
-                        typeError(array->span(), '\'', *elementType, "' cannot be used as an element type of an array"_s);
-                        return;
-                    }
-
-                    continue;
-                }
-                if (unify(elementType, argumentType))
-                    continue;
-                if (unify(argumentType, elementType)) {
-                    elementType = argumentType;
-                    continue;
-                }
-                typeError(argument.span(), "cannot infer common array element type from constructor arguments"_s);
-                return;
-            }
-            for (auto& argument : call.arguments())
-                argument.m_inferredType = elementType;
+            typeError(argument.span(), "cannot infer common array element type from constructor arguments"_s);
+            return;
         }
-        auto* result = m_types.arrayType(elementType, { elementCount });
-        inferred(result);
-
-        unsigned argumentCount = call.arguments().size();
-        FixedVector<ConstantValue> arguments(argumentCount);
-        bool isConstant = true;
-        for (unsigned i = 0; i < argumentCount; ++i) {
-            auto& argument = call.arguments()[i];
-            auto& value = argument.m_constantValue;
-            if (!value.has_value() || !convertValue(argument.span(), argument.inferredType(), value))
-                isConstant = false;
-            else
-                arguments[i] = *value;
-        }
-        if (isConstant) {
-            if (argumentCount)
-                setConstantValue(call, result, ConstantArray(WTFMove(arguments)));
-            else
-                setConstantValue(call, result, zeroValue(result));
-        }
-        return;
+        for (auto& argument : call.arguments())
+            argument.m_inferredType = elementType;
     }
 
-    RELEASE_ASSERT_NOT_REACHED();
+    call.m_isConstructor = true;
+    auto* result = m_types.arrayType(elementType, { elementCount });
+    inferred(result);
+
+    unsigned argumentCount = call.arguments().size();
+    FixedVector<ConstantValue> arguments(argumentCount);
+    bool isConstant = true;
+    for (unsigned i = 0; i < argumentCount; ++i) {
+        auto& argument = call.arguments()[i];
+        auto& value = argument.m_constantValue;
+        if (!value.has_value() || !convertValue(argument.span(), argument.inferredType(), value))
+            isConstant = false;
+        else
+            arguments[i] = *value;
+    }
+    if (isConstant) {
+        if (argumentCount) {
+            // https://www.w3.org/TR/WGSL/#limits
+            constexpr unsigned maximumConstantArraySize = 2047;
+            if (UNLIKELY(argumentCount > maximumConstantArraySize))
+                typeError(InferBottom::No, call.span(), "constant array cannot have more than "_s, String::number(maximumConstantArraySize), " elements"_s);
+            setConstantValue(call, result, ConstantArray(WTFMove(arguments)));
+        } else
+            setConstantValue(call, result, zeroValue(result));
+    }
 }
 
 void TypeChecker::bitcast(AST::CallExpression& call, const Vector<const Type*>& typeArguments)
@@ -1633,7 +1652,7 @@ void TypeChecker::visit(AST::UnaryExpression& unary)
         inferred(m_types.referenceType(pointer->addressSpace, pointer->element, pointer->accessMode));
         return;
     }
-    chooseOverload("operator"_s, unary, toASCIILiteral(unary.operation()), ReferenceWrapperVector<AST::Expression, 1> { unary.expression() }, { });
+    chooseOverload("operator"_s, unary.span(), &unary, toASCIILiteral(unary.operation()), ReferenceWrapperVector<AST::Expression, 1> { unary.expression() }, { });
 }
 
 // Literal Expressions
@@ -1708,10 +1727,13 @@ void TypeChecker::visit(AST::ArrayTypeExpression& array)
 
         auto value = array.maybeElementCount()->constantValue();
         if (value.has_value()) {
-            auto elementCount = value->integerValue();
-            if (elementCount < 1) {
-                typeError(array.span(), "array count must be greater than 0"_s);
-                return;
+            int64_t elementCount = 0;
+            if (convertValue(array.maybeElementCount()->span(), concretize(elementCountType, m_types), value)) {
+                elementCount = value->integerValue();
+                if (elementCount < 1) {
+                    typeError(array.span(), "array count must be greater than 0"_s);
+                    return;
+                }
             }
             size = { static_cast<unsigned>(elementCount) };
         } else
@@ -1886,7 +1908,7 @@ const Type* TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::Fie
 }
 
 template<typename CallArguments>
-const Type* TypeChecker::chooseOverload(ASCIILiteral kind, AST::Expression& expression, const String& target, CallArguments&& callArguments, const Vector<const Type*>& typeArguments)
+const Type* TypeChecker::chooseOverload(ASCIILiteral kind, const SourceSpan& span, AST::Expression* expression, const String& target, CallArguments&& callArguments, const Vector<const Type*>& typeArguments)
 {
     auto it = m_overloadedOperations.find(target);
     if (it == m_overloadedOperations.end())
@@ -1907,14 +1929,14 @@ const Type* TypeChecker::chooseOverload(ASCIILiteral kind, AST::Expression& expr
     if (overload.has_value()) {
         ASSERT(overload->parameters.size() == callArguments.size());
         if (m_discardResult == DiscardResult::Yes && it->value.mustUse)
-            typeError(InferBottom::No, expression.span(), "ignoring return value of builtin '"_s, target, '\'');
+            typeError(InferBottom::No, span, "ignoring return value of builtin '"_s, target, '\'');
 
         for (unsigned i = 0; i < callArguments.size(); ++i)
             callArguments[i].m_inferredType = overload->parameters[i];
         inferred(overload->result);
 
-        if (it->value.kind == OverloadedDeclaration::Constructor) {
-            if (auto* call = dynamicDowncast<AST::CallExpression>(expression))
+        if (expression && it->value.kind == OverloadedDeclaration::Constructor) {
+            if (auto* call = dynamicDowncast<AST::CallExpression>(*expression))
                 call->m_isConstructor = true;
         }
 
@@ -1932,16 +1954,16 @@ const Type* TypeChecker::chooseOverload(ASCIILiteral kind, AST::Expression& expr
 
         auto constantFunction = it->value.constantFunction;
         if (!constantFunction && m_evaluation < Evaluation::Runtime) {
-            typeError(InferBottom::No, expression.span(), "cannot call function from "_s, evaluationToString(m_evaluation), " context"_s);
+            typeError(InferBottom::No, span, "cannot call function from "_s, evaluationToString(m_evaluation), " context"_s);
             return m_types.bottomType();
         }
 
         if (isConstant && constantFunction) {
             auto result = constantFunction(overload->result, WTFMove(arguments));
             if (!result)
-                typeError(InferBottom::No, expression.span(), result.error());
-            else
-                setConstantValue(expression, overload->result, WTFMove(*result));
+                typeError(InferBottom::No, span, result.error());
+            else if (expression)
+                setConstantValue(*expression, overload->result, WTFMove(*result));
         }
 
         return overload->result;
@@ -1967,7 +1989,7 @@ const Type* TypeChecker::chooseOverload(ASCIILiteral kind, AST::Expression& expr
         }
         typeArgumentsStream.print(">");
     }
-    typeError(expression.span(), "no matching overload for "_s, kind, ' ', target, typeArgumentsStream.toString(), '(', valueArgumentsStream.toString(), ')');
+    typeError(span, "no matching overload for "_s, kind, ' ', target, typeArgumentsStream.toString(), '(', valueArgumentsStream.toString(), ')');
     return m_types.bottomType();
 }
 
@@ -2010,29 +2032,54 @@ Behaviors TypeChecker::analyze(AST::Statement& statement)
     case AST::NodeKind::BreakStatement:
         if (m_breakTargetStack.isEmpty())
             typeError(InferBottom::No, statement.span(), "break statement must be in a loop or switch case"_s);
-        else if (m_breakTargetStack.last() == BreakTarget::Continuing)
+        else if (std::holds_alternative<AST::Continuing*>(m_breakTargetStack.last()))
             typeError(InferBottom::No, statement.span(), "`break` must not be used to exit from a continuing block. Use `break-if` instead"_s);
         return Behavior::Break;
     case AST::NodeKind::ReturnStatement:
-        if (m_breakTargetStack.contains(BreakTarget::Continuing))
+        if (m_breakTargetStack.containsIf([&](auto& it) { return std::holds_alternative<AST::Continuing*>(it); }))
             typeError(InferBottom::No, statement.span(), "continuing blocks must not contain a return statement"_s);
         return Behavior::Return;
-    case AST::NodeKind::ContinueStatement:
-        if (m_breakTargetStack.isEmpty())
-            typeError(InferBottom::No, statement.span(), "break statement must be in a loop"_s);
-        else {
-            for (int i = m_breakTargetStack.size() - 1; i >= 0; --i) {
-                auto target = m_breakTargetStack[i];
-                if (target == BreakTarget::Continuing)
-                    typeError(InferBottom::No, statement.span(), "continuing blocks must not contain a continue statement"_s);
-                else if (target == BreakTarget::Switch)
-                    continue;
-                else // BreakTarget::Loop
-                    break;
+    case AST::NodeKind::ContinueStatement: {
+        bool hasLoopTarget = false;
+        for (int i = m_breakTargetStack.size() - 1; i >= 0; --i) {
+            auto& target = m_breakTargetStack[i];
+            if (std::holds_alternative<AST::SwitchStatement*>(target))
+                continue;
 
+            hasLoopTarget = true;
+
+            if (std::holds_alternative<AST::Continuing*>(target)) {
+                typeError(InferBottom::No, statement.span(), "continuing blocks must not contain a continue statement"_s);
+                break;
             }
+
+            if (auto** loop = std::get_if<AST::LoopStatement*>(&target)) {
+                if ((*loop)->continuing().has_value()) {
+                    (*loop)->setContainsSwitch();
+                    auto& continueStatement = downcast<AST::ContinueStatement>(statement);
+                    continueStatement.setIsFromSwitchToContinuing();
+                    for (size_t j = i + 1; j < m_breakTargetStack.size(); ++j) {
+                        auto* switchStatement = std::get<AST::SwitchStatement*>(m_breakTargetStack[j]);
+                        if (j == static_cast<size_t>(i + 1))
+                            switchStatement->setIsInsideLoop();
+                        else
+                            switchStatement->setIsNestedInsideLoop();
+                    }
+                }
+                break;
+            }
+
+            ASSERT(std::holds_alternative<AST::ForStatement*>(target) || std::holds_alternative<AST::WhileStatement*>(target));
+            break;
+
+        }
+
+        if (!hasLoopTarget) {
+            typeError(InferBottom::No, statement.span(), "continue statement must be in a loop"_s);
+            return Behavior::Next;
         }
         return Behavior::Continue;
+    }
     case AST::NodeKind::CompoundStatement:
         return analyze(uncheckedDowncast<AST::CompoundStatement>(statement));
     case AST::NodeKind::ForStatement:
@@ -2061,7 +2108,7 @@ Behaviors TypeChecker::analyze(AST::ForStatement& statement)
     if (statement.maybeTest())
         behaviors.add({ Behavior::Next, Behavior::Break });
 
-    m_breakTargetStack.append(BreakTarget::Loop);
+    m_breakTargetStack.append(&statement);
     behaviors.add(analyze(statement.body()));
     m_breakTargetStack.removeLast();
 
@@ -2089,10 +2136,10 @@ Behaviors TypeChecker::analyze(AST::IfStatement& statement)
 
 Behaviors TypeChecker::analyze(AST::LoopStatement& statement)
 {
-    m_breakTargetStack.append(BreakTarget::Loop);
+    m_breakTargetStack.append(&statement);
     auto behaviors = analyzeStatements(statement.body());
     if (auto& continuing = statement.continuing()) {
-        m_breakTargetStack.append(BreakTarget::Continuing);
+        m_breakTargetStack.append(&continuing.value());
         behaviors.add(analyzeStatements(continuing->body));
         m_breakTargetStack.removeLast();
         if (auto* breakIf = continuing->breakIf)
@@ -2113,7 +2160,7 @@ Behaviors TypeChecker::analyze(AST::LoopStatement& statement)
 
 Behaviors TypeChecker::analyze(AST::SwitchStatement& statement)
 {
-    m_breakTargetStack.append(BreakTarget::Switch);
+    m_breakTargetStack.append(&statement);
     auto behaviors = analyze(statement.defaultClause().body);
     for (auto& clause : statement.clauses())
         behaviors.add(analyze(clause.body));
@@ -2129,7 +2176,7 @@ Behaviors TypeChecker::analyze(AST::SwitchStatement& statement)
 Behaviors TypeChecker::analyze(AST::WhileStatement& statement)
 {
     auto behaviors = Behaviors({ Behavior::Next, Behavior::Break });
-    m_breakTargetStack.append(BreakTarget::Loop);
+    m_breakTargetStack.append(&statement);
     behaviors.add(analyze(statement.body()));
     m_breakTargetStack.removeLast();
     behaviors.remove({ Behavior::Break, Behavior::Continue });

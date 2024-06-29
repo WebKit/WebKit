@@ -236,6 +236,8 @@ const Vector<uint32_t>* PipelineLayout::offsetVectorForBindGroup(uint32_t bindGr
     if (auto it = stageOffsets.find(bindGroupIndex); it != stageOffsets.end()) {
         auto& container = it->value;
         uint32_t stageOffsetIndex = 0;
+        if (bindGroupIndex >= bindGroupLayouts.size())
+            return nullptr;
         auto& bindGroupLayout = bindGroupLayouts[bindGroupIndex];
         for (auto* entryPtr : bindGroupLayout->sortedEntries()) {
             auto& entry = *entryPtr;
@@ -245,7 +247,8 @@ const Vector<uint32_t>* PipelineLayout::offsetVectorForBindGroup(uint32_t bindGr
 
             if (entry.visibility & stage) {
                 auto dynamicOffsetsIndex = entry.dynamicOffsetsIndex;
-                RELEASE_ASSERT(container.size() > stageOffsetIndex && dynamicOffsets.size() > dynamicOffsetsIndex);
+                if (stageOffsetIndex >= container.size() || dynamicOffsetsIndex >= dynamicOffsets.size())
+                    return nullptr;
                 container[stageOffsetIndex] = dynamicOffsets[dynamicOffsetsIndex];
                 ++stageOffsetIndex;
             }
@@ -272,7 +275,7 @@ const Vector<uint32_t>* PipelineLayout::computeOffsets(uint32_t bindGroupIndex, 
     return offsetVectorForBindGroup(bindGroupIndex, m_computeOffsets, dynamicOffsets, WGPUShaderStage_Compute);
 }
 
-NSString* PipelineLayout::errorValidatingBindGroupCompatibility(const PipelineLayout::BindGroupHashMap& bindGroups, size_t vertexStageInBufferCount) const
+NSString* PipelineLayout::errorValidatingBindGroupCompatibility(const PipelineLayout::BindGroupHashMap& bindGroups) const
 {
     if (!m_bindGroupLayouts)
         return nil;
@@ -280,13 +283,13 @@ NSString* PipelineLayout::errorValidatingBindGroupCompatibility(const PipelineLa
     auto setBindGroupsSize = bindGroups.size();
     auto& bindGroupLayouts = *m_bindGroupLayouts;
     auto numberOfBindGroupsInPipeline = bindGroupLayouts.size();
-    if (setBindGroupsSize + vertexStageInBufferCount < numberOfBindGroupsInPipeline) {
+    if (setBindGroupsSize < numberOfBindGroupsInPipeline) {
         if (numberOfBindGroupsInPipeline == 1 && !bindGroupLayouts[0]->entries().size())
             return nil;
         return [NSString stringWithFormat:@"number of bind groups set(%u) is less than the pipeline uses(%zu)", setBindGroupsSize, numberOfBindGroupsInPipeline];
     }
 
-    for (size_t bindGroupIndex = vertexStageInBufferCount; bindGroupIndex < numberOfBindGroupsInPipeline; ++bindGroupIndex) {
+    for (size_t bindGroupIndex = 0; bindGroupIndex < numberOfBindGroupsInPipeline; ++bindGroupIndex) {
         auto it = bindGroups.find(bindGroupIndex);
         if (it == bindGroups.end() || !it->value.get())
             return [NSString stringWithFormat:@"can not find bind group in pipeline for bindGroup index %zu", bindGroupIndex];

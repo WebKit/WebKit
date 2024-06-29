@@ -246,8 +246,8 @@ void MathMLElement::defaultEventHandler(Event& event)
         if (MouseEvent::canTriggerActivationBehavior(event)) {
             const auto& href = attributeWithoutSynchronization(hrefAttr);
             event.setDefaultHandled();
-            if (auto* frame = document().frame())
-                frame->loader().changeLocation(document().completeURL(href), selfTargetFrameName(), &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
+            if (RefPtr frame = document().frame())
+                frame->checkedLoader()->changeLocation(document().completeURL(href), selfTargetFrameName(), &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
             return;
         }
     }

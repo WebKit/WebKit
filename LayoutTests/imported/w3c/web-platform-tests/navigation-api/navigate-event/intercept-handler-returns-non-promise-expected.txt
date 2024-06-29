@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT event.intercept() should resolve immediately if the handler doesn't return a promise Test timed out
+FAIL event.intercept() should resolve immediately if the handler doesn't return a promise assert_equals: expected "#1" but got ""
 

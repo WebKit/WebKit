@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CacheableIdentifier.h"
 #include "Identifier.h"
 #include "JSGlobalObjectFunctions.h"
 #include "PrivateName.h"
@@ -41,6 +42,11 @@ public:
 
     PropertyName(const Identifier& propertyName)
         : PropertyName(propertyName.impl())
+    {
+    }
+
+    PropertyName(const CacheableIdentifier& propertyName)
+        : PropertyName(propertyName.uid())
     {
     }
 

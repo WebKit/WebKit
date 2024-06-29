@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@ namespace WebCore {
 struct BackgroundFetchOptions : BackgroundFetchUIOptions {
     BackgroundFetchOptions() = default;
     BackgroundFetchOptions(Vector<ImageResource>&& icons, String title, uint64_t downloadTotal)
-        : BackgroundFetchUIOptions { WTFMove(icons), WTFMove(title) }
+        : BackgroundFetchUIOptions(WTFMove(icons), WTFMove(title))
         , downloadTotal(downloadTotal)
     {
     }

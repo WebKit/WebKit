@@ -262,11 +262,14 @@ desc(
 ).
 params((u) =>
 u.combine('isAsync', [false, true]).combineWithParams([
-// Number of user-defined output scalar components in test shader = device.limits.maxInterStageShaderComponents + numScalarDelta.
+// Number of user-defined output scalar components in test shader =
+//     Math.floor((device.limits.maxInterStageShaderComponents + numScalarDelta) / 4) * 4.
 { numScalarDelta: 0, topology: 'triangle-list', _success: true },
 { numScalarDelta: 1, topology: 'triangle-list', _success: false },
 { numScalarDelta: 0, topology: 'point-list', _success: false },
-{ numScalarDelta: -1, topology: 'point-list', _success: true }]
+{ numScalarDelta: -1, topology: 'point-list', _success: false },
+{ numScalarDelta: -3, topology: 'point-list', _success: false },
+{ numScalarDelta: -4, topology: 'point-list', _success: true }]
 )
 ).
 fn((t) => {
@@ -301,18 +304,20 @@ desc(
 ).
 params((u) =>
 u.combine('isAsync', [false, true]).combineWithParams([
-// Number of user-defined input scalar components in test shader = device.limits.maxInterStageShaderComponents + numScalarDelta.
+// Number of user-defined input scalar components in test shader =
+//     Math.floor((device.limits.maxInterStageShaderComponents + numScalarDelta) / 4) * 4.
 { numScalarDelta: 0, useExtraBuiltinInputs: false },
 { numScalarDelta: 1, useExtraBuiltinInputs: false },
 { numScalarDelta: 0, useExtraBuiltinInputs: true },
 { numScalarDelta: -3, useExtraBuiltinInputs: true },
-{ numScalarDelta: -2, useExtraBuiltinInputs: true }]
+{ numScalarDelta: -4, useExtraBuiltinInputs: true }]
 )
 ).
 fn((t) => {
   const { isAsync, numScalarDelta, useExtraBuiltinInputs } = t.params;
 
-  const numScalarComponents = t.device.limits.maxInterStageShaderComponents + numScalarDelta;
+  const numScalarComponents =
+  Math.floor((t.device.limits.maxInterStageShaderComponents + numScalarDelta) / 4) * 4;
   const numExtraComponents = useExtraBuiltinInputs ? t.isCompatibility ? 2 : 3 : 0;
   const numUsedComponents = numScalarComponents + numExtraComponents;
   const success = numUsedComponents <= t.device.limits.maxInterStageShaderComponents;

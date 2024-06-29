@@ -123,7 +123,9 @@ private:
     Vector<DeferredDecommit> m_deferredDecommits;
     bool m_isEnabled { true };
 };
+BALLOW_DEPRECATED_DECLARATIONS_BEGIN
 DECLARE_STATIC_PER_PROCESS_STORAGE(Scavenger);
+BALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace bmalloc
 

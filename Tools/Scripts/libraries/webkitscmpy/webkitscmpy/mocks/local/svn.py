@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -170,10 +170,9 @@ class Svn(mocks.Subprocess):
 
     def __enter__(self):
         from mock import patch
+        from shutil import which
 
-        # TODO: Use shutil directly when Python 2.7 is removed
-        from whichcraft import which
-        self.patches.append(patch('whichcraft.which', lambda cmd: dict(svn=self.executable).get(cmd, which(cmd))))
+        self.patches.append(patch('shutil.which', lambda cmd: dict(svn=self.executable).get(cmd, which(cmd))))
         return super(Svn, self).__enter__()
 
     @property

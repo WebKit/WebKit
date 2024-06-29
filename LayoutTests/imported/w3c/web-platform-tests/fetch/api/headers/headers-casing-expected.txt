@@ -1,6 +1,0 @@
-
-PASS Create headers, names use characters with different case
-PASS Check append method, names use characters with different case
-PASS Check set method, names use characters with different case
-PASS Check delete method, names use characters with different case
-

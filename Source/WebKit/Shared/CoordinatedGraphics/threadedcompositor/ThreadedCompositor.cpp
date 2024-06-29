@@ -55,24 +55,25 @@ static constexpr unsigned c_defaultRefreshRate = 60000;
 #endif
 
 #if HAVE(DISPLAY_LINK)
-Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY)
+Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY, DamagePropagation damagePropagation)
 {
-    return adoptRef(*new ThreadedCompositor(client, displayID, viewportSize, scaleFactor, flipY));
+    return adoptRef(*new ThreadedCompositor(client, displayID, viewportSize, scaleFactor, flipY, damagePropagation));
 }
 #else
-Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY)
+Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY, DamagePropagation damagePropagation)
 {
-    return adoptRef(*new ThreadedCompositor(client, displayRefreshMonitorClient, displayID, viewportSize, scaleFactor, flipY));
+    return adoptRef(*new ThreadedCompositor(client, displayRefreshMonitorClient, displayID, viewportSize, scaleFactor, flipY, damagePropagation));
 }
 #endif
 
 #if HAVE(DISPLAY_LINK)
-ThreadedCompositor::ThreadedCompositor(Client& client, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY)
+ThreadedCompositor::ThreadedCompositor(Client& client, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY, DamagePropagation damagePropagation)
 #else
-ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY)
+ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY, DamagePropagation damagePropagation)
 #endif
     : m_client(client)
     , m_flipY(flipY)
+    , m_damagePropagation(damagePropagation)
     , m_compositingRunLoop(makeUnique<CompositingRunLoop>([this] { renderLayerTree(); }))
 #if !HAVE(DISPLAY_LINK)
     , m_displayRefreshMonitor(ThreadedDisplayRefreshMonitor::create(displayID, displayRefreshMonitorClient, WebCore::DisplayUpdate { 0, c_defaultRefreshRate / 1000 }))
@@ -103,7 +104,9 @@ ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMon
         m_display.updateTimer->startOneShot(Seconds { 1.0 / m_display.displayUpdate.updatesPerSecond });
 #endif
 
-        m_scene = adoptRef(new CoordinatedGraphicsScene(this));
+        const auto propagateDamage = (m_damagePropagation == DamagePropagation::None)
+            ? WebCore::Damage::ShouldPropagate::No : WebCore::Damage::ShouldPropagate::Yes;
+        m_scene = adoptRef(new CoordinatedGraphicsScene(this, propagateDamage));
         m_nativeSurfaceHandle = m_client.nativeSurfaceHandleForCompositing();
 
         createGLContext();
@@ -277,10 +280,22 @@ void ThreadedCompositor::renderLayerTree()
     m_scene->applyStateChanges(states);
     m_scene->paintToCurrentGLContext(viewportTransform, FloatRect { FloatPoint { }, viewportSize }, m_flipY);
 
-    m_context->swapBuffers();
+    WebCore::Damage boundsDamage;
+    const auto& frameDamage = ([this, &boundsDamage]() -> const WebCore::Damage& {
+        const auto& damage = m_scene->lastDamage();
+        if (m_damagePropagation != DamagePropagation::None && !damage.isInvalid()) {
+            if (m_damagePropagation == DamagePropagation::Unified) {
+                boundsDamage.add(damage.bounds());
+                return boundsDamage;
+            }
+            return damage;
+        }
+        return WebCore::Damage::invalid();
+    })();
 
+    m_context->swapBuffers();
     if (m_scene->isActive())
-        m_client.didRenderFrame(compositionRequestID);
+        m_client.didRenderFrame(compositionRequestID, frameDamage);
 }
 
 void ThreadedCompositor::sceneUpdateFinished()

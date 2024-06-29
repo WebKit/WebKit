@@ -128,6 +128,16 @@ bool URL::hasLocalScheme() const
         || protocolIsData();
 }
 
+bool URL::hasFetchScheme() const
+{
+    // https://fetch.spec.whatwg.org/#fetch-scheme
+    return protocolIsInHTTPFamily()
+        || protocolIsAbout()
+        || protocolIsBlob()
+        || protocolIsData()
+        || protocolIsFile();
+}
+
 unsigned URL::pathStart() const
 {
     unsigned start = m_hostEnd + m_portLength;
@@ -622,10 +632,9 @@ template<typename StringType>
 static String percentEncodeCharacters(const StringType& input, bool(*shouldEncode)(UChar))
 {
     auto encode = [shouldEncode] (const StringType& input) {
-        auto result = input.tryGetUTF8([&](std::span<const char> span) -> String {
+        auto result = input.tryGetUTF8([&](std::span<const char8_t> span) -> String {
             StringBuilder builder;
-            for (unsigned j = 0; j < span.size(); j++) {
-                auto c = span[j];
+            for (char c : span) {
                 if (shouldEncode(c))
                     builder.append('%', upperNibbleToASCIIHexDigit(c), lowerNibbleToASCIIHexDigit(c));
                 else

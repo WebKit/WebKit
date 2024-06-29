@@ -1313,6 +1313,34 @@ Related functions:
 
 All the related functions are listed in \ref coefficient_coding.
 
+\section architecture_simd SIMD usage
+
+In order to efficiently encode video on modern platforms, it is necessary to
+implement optimized versions of many core encoding and decoding functions using
+architecture-specific SIMD instructions.
+
+Functions which have optimized implementations will have multiple variants
+in the code, each suffixed with the name of the appropriate instruction set.
+There will additionally be an `_c` version, which acts as a reference
+implementation which the SIMD variants can be tested against.
+
+As different machines with the same nominal architecture may support different
+subsets of SIMD instructions, we have dynamic CPU detection logic which chooses
+the appropriate functions to use at run time. This process is handled by
+`build/cmake/rtcd.pl`, with function definitions in the files
+`*_rtcd_defs.pl` elsewhere in the codebase.
+
+Currently SIMD is supported on the following platforms:
+
+- x86: Requires SSE4.1 or above
+
+- Arm: Requires Neon (Armv7-A and above)
+
+We aim to provide implementations of all performance-critical functions which
+are compatible with the instruction sets listed above. Additional SIMD
+extensions (e.g. AVX on x86, SVE on Arm) are also used to provide even
+greater performance where available.
+
 */
 
 /*!\defgroup encoder_algo Encoder Algorithm

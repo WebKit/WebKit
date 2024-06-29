@@ -1,0 +1,134 @@
+
+FAIL :texture_intra_invocation_coherence:format="r32uint";dim="1d" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 456 through 1014.
+     Starting at index 455:
+       actual == 0x: 000001c7 00000000 00000000 000001ca 000001cb 00000000 000001cd 000001ce 000001cf 000001d0 000001d1 000001d2 ...
+       failed ->                    xx       xx                         xx                                                       ...
+     expected ==     000001c7 000001c8 000001c9 000001ca 000001cb 000001cc 000001cd 000001ce 000001cf 000001d0 000001d1 000001d2 ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_model/texture_intra_invocation_coherence.spec.js:332:31
+ Reached unreachable code
+FAIL :texture_intra_invocation_coherence:format="r32uint";dim="2d" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 269 through 996.
+     Starting at index 268:
+       actual == 0x: 0000010c 00000000 0000010e 0000010f 00000110 00000111 00000112 00000113 00000114 00000115 00000116 00000117 ...
+       failed ->                    xx                                                                                           ...
+     expected ==     0000010c 0000010d 0000010e 0000010f 00000110 00000111 00000112 00000113 00000114 00000115 00000116 00000117 ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_model/texture_intra_invocation_coherence.spec.js:332:31
+ Reached unreachable code
+FAIL :texture_intra_invocation_coherence:format="r32uint";dim="2d-array" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 222 through 952.
+     Starting at index 221:
+       actual == 0x: 000000dd 00000000 00000000 000000e0 000000e1 000000e2 000000e3 000000e4 000000e5 000000e6 000000e7 000000e8 ...
+       failed ->                    xx       xx                                                                                  ...
+     expected ==     000000dd 000000de 000000df 000000e0 000000e1 000000e2 000000e3 000000e4 000000e5 000000e6 000000e7 000000e8 ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_model/texture_intra_invocation_coherence.spec.js:332:31
+ Reached unreachable code
+FAIL :texture_intra_invocation_coherence:format="r32uint";dim="3d" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 303 through 1023.
+     Starting at index 302:
+       actual == 0x: 0000012e 00000000 00000130 00000131 00000132 00000133 00000134 00000135 00000136 00000137 00000138 00000139 ...
+       failed ->                    xx                                                                                           ...
+     expected ==     0000012e 0000012f 00000130 00000131 00000132 00000133 00000134 00000135 00000136 00000137 00000138 00000139 ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_model/texture_intra_invocation_coherence.spec.js:332:31
+ Reached unreachable code
+FAIL :texture_intra_invocation_coherence:format="r32sint";dim="1d" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 453 through 958.
+     Starting at index 452:
+       actual == 0x: 000001c4 00000000 000001c6 000001c7 000001c8 00000000 00000000 00000000 000001cc 000001cd 000001ce 000001cf ...
+       failed ->                    xx                                  xx       xx       xx                                     ...
+     expected ==     000001c4 000001c5 000001c6 000001c7 000001c8 000001c9 000001ca 000001cb 000001cc 000001cd 000001ce 000001cf ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_model/texture_intra_invocation_coherence.spec.js:332:31
+ Reached unreachable code
+FAIL :texture_intra_invocation_coherence:format="r32sint";dim="2d" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 316 through 1018.
+     Starting at index 315:
+       actual == 0x: 0000013b 00000000 0000013d 0000013e 0000013f 00000140 00000141 00000142 00000143 00000144 00000145 00000146 ...
+       failed ->                    xx                                                                                           ...
+     expected ==     0000013b 0000013c 0000013d 0000013e 0000013f 00000140 00000141 00000142 00000143 00000144 00000145 00000146 ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_model/texture_intra_invocation_coherence.spec.js:332:31
+ Reached unreachable code
+FAIL :texture_intra_invocation_coherence:format="r32sint";dim="2d-array" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 273 through 1022.
+     Starting at index 272:
+       actual == 0x: 00000110 00000000 00000112 00000113 00000000 00000115 00000116 00000117 00000118 00000000 0000011a 00000000 ...
+       failed ->                    xx                         xx                                           xx                xx ...
+     expected ==     00000110 00000111 00000112 00000113 00000114 00000115 00000116 00000117 00000118 00000119 0000011a 0000011b ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_model/texture_intra_invocation_coherence.spec.js:332:31
+ Reached unreachable code
+FAIL :texture_intra_invocation_coherence:format="r32sint";dim="3d" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 284 through 1023.
+     Starting at index 283:
+       actual == 0x: 0000011b 00000000 0000011d 0000011e 0000011f 00000120 00000121 00000122 00000123 00000124 00000125 00000126 ...
+       failed ->                    xx                                                                                           ...
+     expected ==     0000011b 0000011c 0000011d 0000011e 0000011f 00000120 00000121 00000122 00000123 00000124 00000125 00000126 ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_model/texture_intra_invocation_coherence.spec.js:332:31
+ Reached unreachable code
+FAIL :texture_intra_invocation_coherence:format="r32float";dim="1d" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 284 through 1023.
+     Starting at index 283:
+       actual == 0x: 0000011b 00000000 0000011d 0000011e 0000011f 00000120 00000121 00000122 00000123 00000124 00000125 00000126 ...
+       failed ->                    xx                                                                                           ...
+     expected ==     0000011b 0000011c 0000011d 0000011e 0000011f 00000120 00000121 00000122 00000123 00000124 00000125 00000126 ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_model/texture_intra_invocation_coherence.spec.js:332:31
+ Reached unreachable code
+FAIL :texture_intra_invocation_coherence:format="r32float";dim="2d" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 440 through 1023.
+     Starting at index 439:
+       actual == 0x: 000001b7 00000000 000001b9 000001ba 000001bb 000001bc 000001bd 000001be 000001bf 000001c0 000001c1 000001c2 ...
+       failed ->                    xx                                                                                           ...
+     expected ==     000001b7 000001b8 000001b9 000001ba 000001bb 000001bc 000001bd 000001be 000001bf 000001c0 000001c1 000001c2 ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_model/texture_intra_invocation_coherence.spec.js:332:31
+ Reached unreachable code
+FAIL :texture_intra_invocation_coherence:format="r32float";dim="2d-array" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 422 through 1021.
+     Starting at index 421:
+       actual == 0x: 000001a5 00000000 000001a7 000001a8 000001a9 000001aa 000001ab 000001ac 000001ad 000001ae 000001af 000001b0 ...
+       failed ->                    xx                                                                                           ...
+     expected ==     000001a5 000001a6 000001a7 000001a8 000001a9 000001aa 000001ab 000001ac 000001ad 000001ae 000001af 000001b0 ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_model/texture_intra_invocation_coherence.spec.js:332:31
+ Reached unreachable code
+FAIL :texture_intra_invocation_coherence:format="r32float";dim="3d" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 425 through 1022.
+     Starting at index 424:
+       actual == 0x: 000001a8 00000000 000001aa 00000000 000001ac 000001ad 000001ae 000001af 000001b0 000001b1 000001b2 000001b3 ...
+       failed ->                    xx                xx                                                                         ...
+     expected ==     000001a8 000001a9 000001aa 000001ab 000001ac 000001ad 000001ae 000001af 000001b0 000001b1 000001b2 000001b3 ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:529:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:545:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_model/texture_intra_invocation_coherence.spec.js:332:31
+ Reached unreachable code
+

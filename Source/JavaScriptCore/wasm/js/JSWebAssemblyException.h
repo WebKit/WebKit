@@ -64,7 +64,7 @@ public:
     const FixedVector<uint64_t>& payload() const { return m_payload; }
     JSValue getArg(JSGlobalObject*, unsigned) const;
 
-    static ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSWebAssemblyException, m_payload); }
+    static constexpr ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSWebAssemblyException, m_payload); }
 
 protected:
     JSWebAssemblyException(VM&, Structure*, const Wasm::Tag&, FixedVector<uint64_t>&&);

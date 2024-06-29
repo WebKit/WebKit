@@ -26,6 +26,7 @@
 #include "config.h"
 #include "APINavigation.h"
 
+#include "ProvisionalFrameProxy.h"
 #include "WebBackForwardListItem.h"
 #include "WebNavigationState.h"
 #include <WebCore/RegistrableDomain.h>
@@ -124,7 +125,7 @@ bool Navigation::currentRequestIsCrossSiteRedirect() const
 
 WTF::String Navigation::loggingString() const
 {
-    return makeString("Most recent URL: ", m_currentRequest.url().string(), " Back/forward list item URL: '", m_targetItem ? m_targetItem->url() : WTF::String { }, "' (0x", hex(reinterpret_cast<uintptr_t>(m_targetItem.get())), ')');
+    return makeString("Most recent URL: "_s, m_currentRequest.url().string(), " Back/forward list item URL: '"_s, m_targetItem ? m_targetItem->url() : WTF::String { }, "' (0x"_s, hex(reinterpret_cast<uintptr_t>(m_targetItem.get())), ')');
 }
 
 #endif

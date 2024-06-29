@@ -231,7 +231,7 @@ TEST_P(EGLSurfacelessContextTest, Switcheroo)
     ANGLE_SKIP_TEST_IF(!checkExtension());
     ANGLE_SKIP_TEST_IF(!mSupportsPbuffers);
 
-    // Fails on NVIDIA Shield TV (http://anglebug.com/4924)
+    // Fails on NVIDIA Shield TV (http://anglebug.com/42263498)
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsNVIDIA());
 
     EGLContext context = createContext();

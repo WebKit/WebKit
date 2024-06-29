@@ -66,7 +66,7 @@ void KeepaliveRequestTracker::registerRequest(CachedResource& resource)
     resource.addClient(*this);
 }
 
-void KeepaliveRequestTracker::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
+void KeepaliveRequestTracker::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     unregisterRequest(resource);
 }

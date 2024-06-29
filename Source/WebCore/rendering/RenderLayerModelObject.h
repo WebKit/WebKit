@@ -31,6 +31,7 @@ namespace WebCore {
 class BlendingKeyframes;
 class RenderLayer;
 class RenderSVGResourceClipper;
+class RenderSVGResourceFilter;
 class RenderSVGResourceMarker;
 class RenderSVGResourceMasker;
 class RenderSVGResourcePaintServer;
@@ -100,6 +101,7 @@ public:
     RenderSVGResourcePaintServer* svgStrokePaintServerResourceFromStyle(const RenderStyle&) const;
 
     RenderSVGResourceClipper* svgClipperResourceFromStyle() const;
+    RenderSVGResourceFilter* svgFilterResourceFromStyle() const;
     RenderSVGResourceMasker* svgMaskerResourceFromStyle() const;
     RenderSVGResourceMarker* svgMarkerStartResourceFromStyle() const;
     RenderSVGResourceMarker* svgMarkerMidResourceFromStyle() const;

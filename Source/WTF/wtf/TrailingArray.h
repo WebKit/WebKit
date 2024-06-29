@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <concepts>
 #include <type_traits>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -79,6 +80,33 @@ protected:
         VectorTypeOperations<T>::initializeWithArgs(begin(), end(), std::forward<Args>(args)...);
     }
 
+    // This constructor, which is used via the `Failable` token, will attempt
+    // to initialize the array from the generator. The generator returns
+    // `std::optional` values, and if one is `nullopt`, that indicates a failure.
+    // The constructor sets `m_size` to the index of the most recently successful
+    // item to be added in order for the destructor to destroy the right number
+    // of elements.
+    //
+    // It is the responsibility of the caller to check that `size()` is equal
+    // to the `size` the caller passed in. If it is not, that is failure, and
+    // should be used as appropriate.
+    struct Failable { };
+    template<std::invocable<size_t> Generator>
+    explicit TrailingArray(Failable, unsigned size, Generator&& generator)
+        : m_size(size)
+    {
+        static_assert(std::is_final_v<Derived>);
+
+        for (size_t i = 0; i < m_size; ++i) {
+            if (auto value = generator(i))
+                new (NotNull, std::addressof(begin()[i])) T(WTFMove(*value));
+            else {
+                m_size = i;
+                return;
+            }
+        }
+    }
+
     ~TrailingArray()
     {
         VectorTypeOperations<T>::destruct(begin(), end());
@@ -115,13 +143,13 @@ public:
 
     reference at(unsigned i)
     {
-        ASSERT(i < size());
+        RELEASE_ASSERT(i < size());
         return begin()[i];
     }
 
     const_reference at(unsigned i) const
     {
-        ASSERT(i < size());
+        RELEASE_ASSERT(i < size());
         return begin()[i];
     }
 
@@ -138,7 +166,7 @@ public:
         std::fill(begin(), end(), val);
     }
 
-    static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(Derived, m_size); }
+    static constexpr ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(Derived, m_size); }
     static constexpr ptrdiff_t offsetOfData()
     {
         return WTF::roundUpToMultipleOf<alignof(T)>(sizeof(Derived));

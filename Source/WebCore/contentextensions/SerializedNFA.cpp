@@ -40,7 +40,7 @@ bool writeAllToFile(FileSystem::PlatformFileHandle file, const T& container)
     size_t bytesLength = container.size() * sizeof(container[0]);
     auto end = bytes + bytesLength;
     while (bytes < end) {
-        auto written = FileSystem::writeToFile(file, bytes, bytesLength);
+        auto written = FileSystem::writeToFile(file, { bytes, bytesLength });
         if (written == -1)
             return false;
         bytes += written;

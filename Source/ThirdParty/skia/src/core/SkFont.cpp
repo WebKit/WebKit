@@ -19,6 +19,7 @@
 #include "include/core/SkTypeface.h"
 #include "include/core/SkTypes.h"
 #include "include/private/base/SkDebug.h"
+#include "include/private/base/SkFloatingPoint.h"
 #include "include/private/base/SkPoint_impl.h"
 #include "include/private/base/SkSpan_impl.h"
 #include "include/private/base/SkTemplates.h"
@@ -82,8 +83,8 @@ void SkFont::dump() const {
     SkDebugf("skewx %g\n", fSkewX);
     SkDebugf("scalex %g\n", fScaleX);
     SkDebugf("flags 0x%X\n", fFlags);
-    SkDebugf("edging %d\n", (unsigned)fEdging);
-    SkDebugf("hinting %d\n", (unsigned)fHinting);
+    SkDebugf("edging %u\n", (unsigned)fEdging);
+    SkDebugf("hinting %u\n", (unsigned)fHinting);
 }
 
 void SkFont::setTypeface(sk_sp<SkTypeface> tf) {
@@ -369,7 +370,7 @@ SkScalar SkFontPriv::ApproximateTransformedTextSize(const SkFont& font, const Sk
     } else {
         // approximate the scale since we can't get it directly from the matrix
         SkScalar maxScaleSq = SkMatrixPriv::DifferentialAreaScale(matrix, textLocation);
-        if (SkScalarIsFinite(maxScaleSq) && !SkScalarNearlyZero(maxScaleSq)) {
+        if (SkIsFinite(maxScaleSq) && !SkScalarNearlyZero(maxScaleSq)) {
             return font.getSize() * SkScalarSqrt(maxScaleSq);
         } else {
             return -font.getSize();

@@ -128,14 +128,14 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
     gst_app_src_push_sample(GST_APP_SRC_CAST(m_capturer->source()), videoFrame->sample());
 }
 
-void MockRealtimeVideoSourceGStreamer::setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
+void MockRealtimeVideoSourceGStreamer::setSizeFrameRateAndZoom(const VideoPresetConstraints& constraints)
 {
-    MockRealtimeVideoSource::setSizeFrameRateAndZoom(width, height, frameRate, zoom);
+    MockRealtimeVideoSource::setSizeFrameRateAndZoom(constraints);
 
-    if (!width || !height)
+    if (!constraints.width || !constraints.height)
         return;
 
-    m_capturer->setSize({ *width, *height });
+    m_capturer->setSize({ *constraints.width, *constraints.height });
 }
 
 } // namespace WebCore

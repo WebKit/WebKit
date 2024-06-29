@@ -29,6 +29,21 @@ bool UseChannelMappingAdjustmentsByDefault() {
       "WebRTC-VoIPChannelRemixingAdjustmentKillSwitch");
 }
 
+ChannelLayout CheckInputLayout(ChannelLayout input_layout,
+                               ChannelLayout output_layout) {
+  // Special case for 5.0, 5.1 with back channels when upmixed to 7.0, 7.1,
+  // which should map the back LR to side LR.
+  if (input_layout == CHANNEL_LAYOUT_5_0_BACK &&
+      output_layout == CHANNEL_LAYOUT_7_0) {
+    return CHANNEL_LAYOUT_5_0;
+  } else if (input_layout == CHANNEL_LAYOUT_5_1_BACK &&
+             output_layout == CHANNEL_LAYOUT_7_1) {
+    return CHANNEL_LAYOUT_5_1;
+  }
+
+  return input_layout;
+}
+
 }  // namespace
 
 static void ValidateLayout(ChannelLayout layout) {
@@ -68,7 +83,7 @@ ChannelMixingMatrix::ChannelMixingMatrix(ChannelLayout input_layout,
                                          int output_channels)
     : use_voip_channel_mapping_adjustments_(
           UseChannelMappingAdjustmentsByDefault()),
-      input_layout_(input_layout),
+      input_layout_(CheckInputLayout(input_layout, output_layout)),
       input_channels_(input_channels),
       output_layout_(output_layout),
       output_channels_(output_channels) {
@@ -80,16 +95,6 @@ ChannelMixingMatrix::ChannelMixingMatrix(ChannelLayout input_layout,
     ValidateLayout(input_layout);
   if (output_layout != CHANNEL_LAYOUT_DISCRETE)
     ValidateLayout(output_layout);
-
-  // Special case for 5.0, 5.1 with back channels when upmixed to 7.0, 7.1,
-  // which should map the back LR to side LR.
-  if (input_layout_ == CHANNEL_LAYOUT_5_0_BACK &&
-      output_layout_ == CHANNEL_LAYOUT_7_0) {
-    input_layout_ = CHANNEL_LAYOUT_5_0;
-  } else if (input_layout_ == CHANNEL_LAYOUT_5_1_BACK &&
-             output_layout_ == CHANNEL_LAYOUT_7_1) {
-    input_layout_ = CHANNEL_LAYOUT_5_1;
-  }
 }
 
 ChannelMixingMatrix::~ChannelMixingMatrix() = default;

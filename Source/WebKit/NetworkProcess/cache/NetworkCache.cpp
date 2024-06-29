@@ -638,8 +638,8 @@ void Cache::dumpContentsToFile()
     if (!isHandleValid(fd))
         return;
 
-    static const char prologue[] = "{\n\"entries\": [\n";
-    writeToFile(fd, prologue, strlen(prologue));
+    constexpr auto prologue = "{\n\"entries\": [\n"_s;
+    writeToFile(fd, prologue.span8());
 
     struct Totals {
         unsigned count { 0 };
@@ -655,13 +655,13 @@ void Cache::dumpContentsToFile()
                 "{}\n"
                 "],\n"
                 "\"totals\": {\n"
-                "\"capacity\": ", capacity, ",\n"
-                "\"count\": ", totals.count, ",\n"
-                "\"bodySize\": ", totals.bodySize, ",\n"
-                "\"averageWorth\": ", totals.count ? totals.worth / totals.count : 0, "\n"
-                "}\n}\n"
+                "\"capacity\": "_s, capacity, ",\n"
+                "\"count\": "_s, totals.count, ",\n"
+                "\"bodySize\": "_s, totals.bodySize, ",\n"
+                "\"averageWorth\": "_s, totals.count ? totals.worth / totals.count : 0, "\n"
+                "}\n}\n"_s
             ).utf8();
-            writeToFile(fd, writeData.data(), writeData.length());
+            writeToFile(fd, writeData.span());
             closeFile(fd);
             return;
         }
@@ -675,8 +675,7 @@ void Cache::dumpContentsToFile()
         StringBuilder json;
         entry->asJSON(json, info);
         json.append(",\n"_s);
-        auto writeData = json.toString().utf8();
-        writeToFile(fd, writeData.data(), writeData.length());
+        writeToFile(fd, json.toString().utf8().span());
     });
 }
 

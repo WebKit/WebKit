@@ -1,0 +1,6 @@
+
+FAIL anchor-scope:all appearing dynamically assert_equals: expected "40px" but got "0px"
+FAIL anchor-scope:--a appearing dynamically assert_equals: expected "40px" but got "0px"
+FAIL anchor-scope:--b appearing dynamically (--b never referenced) assert_equals: expected "40px" but got "0px"
+FAIL anchor-scope:--a appearing dynamically scopes only --a assert_equals: expected "40px" but got "0px"
+

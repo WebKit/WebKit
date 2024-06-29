@@ -263,10 +263,10 @@ public:
         Util::run(&paused);
     }
 
-    void listenForEventMessages(std::initializer_list<const char*> events)
+    void listenForEventMessages(std::initializer_list<ASCIILiteral> events)
     {
-        for (auto* event : events) {
-            auto eventMessage = makeString(event, " event");
+        for (auto event : events) {
+            auto eventMessage = makeString(event, " event"_s);
             [webView() performAfterReceivingMessage:eventMessage action:[this, eventMessage = WTFMove(eventMessage)] {
                 _eventListenersCalled.add(eventMessage);
             }];
@@ -275,7 +275,7 @@ public:
 
     bool eventListenerWasCalled(const String& event)
     {
-        return _eventListenersCalled.contains(makeString(event, " event"));
+        return _eventListenersCalled.contains(makeString(event, " event"_s));
     }
 
     void clearEventListenerState()
@@ -302,9 +302,9 @@ public:
         });
     }
 
-    void listenForMessagesPosted(std::initializer_list<const char*> handlers, const char* suffix)
+    void listenForMessagesPosted(std::initializer_list<ASCIILiteral> handlers, ASCIILiteral suffix)
     {
-        for (auto* handler : handlers) {
+        for (auto handler : handlers) {
             auto handlerMessage = makeString(handler, suffix);
             [_messageHandlers addObject:handlerMessage];
             [webView() performAfterReceivingMessage:handlerMessage action:[this, handlerMessage = WTFMove(handlerMessage)] {
@@ -318,14 +318,14 @@ public:
         _sessionMessagesPosted.clear();
     }
 
-    void listenForSessionHandlerMessages(std::initializer_list<const char*> handlers)
+    void listenForSessionHandlerMessages(std::initializer_list<ASCIILiteral> handlers)
     {
-        listenForMessagesPosted(handlers, " handler");
+        listenForMessagesPosted(handlers, " handler"_s);
     }
 
     bool sessionHandlerWasCalled(const String& handler)
     {
-        return _sessionMessagesPosted.contains(makeString(handler, " handler"));
+        return _sessionMessagesPosted.contains(makeString(handler, " handler"_s));
     }
 
     void waitForSessionHandlerToBeCalled(const String& handler)
@@ -335,26 +335,26 @@ public:
         });
     }
 
-    void listenForPromiseMessages(std::initializer_list<const char*> handlers)
+    void listenForPromiseMessages(std::initializer_list<ASCIILiteral> handlers)
     {
-        listenForMessagesPosted(handlers, " resolved");
-        listenForMessagesPosted(handlers, " rejected");
+        listenForMessagesPosted(handlers, " resolved"_s);
+        listenForMessagesPosted(handlers, " rejected"_s);
     }
 
     void clearPromiseMessages(const String& promise)
     {
-        _sessionMessagesPosted.remove(makeString(promise, " resolved"));
-        _sessionMessagesPosted.remove(makeString(promise, " rejected"));
+        _sessionMessagesPosted.remove(makeString(promise, " resolved"_s));
+        _sessionMessagesPosted.remove(makeString(promise, " rejected"_s));
     }
 
     bool promiseWasResolved(const String& promise)
     {
-        return _sessionMessagesPosted.contains(makeString(promise, " resolved"));
+        return _sessionMessagesPosted.contains(makeString(promise, " resolved"_s));
     }
 
     bool promiseWasRejected(const String& promise)
     {
-        return _sessionMessagesPosted.contains(makeString(promise, " rejected"));
+        return _sessionMessagesPosted.contains(makeString(promise, " rejected"_s));
     }
 
     void waitForPromise(const String& promise)

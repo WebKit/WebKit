@@ -31,6 +31,7 @@
  view. The preferences object associated with a web view is specified by
  its web view configuration.
  */
+WK_SWIFT_UI_ACTOR
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKPreferences : NSObject <NSSecureCoding>
 

@@ -177,7 +177,7 @@ angle::Result RenderTargetVk::getImageViewImpl(vk::Context *context,
                                                const vk::ImageView **imageViewOut) const
 {
     ASSERT(image.valid() && imageViews);
-    vk::LevelIndex levelVk = mImage->toVkLevel(mLevelIndexGL);
+    vk::LevelIndex levelVk = image.toVkLevel(getLevelIndexForImage(image));
     if (mLayerCount == 1)
     {
         return imageViews->getLevelLayerDrawImageView(context, image, levelVk, mLayerIndex, mode,
@@ -283,6 +283,12 @@ gl::Extents RenderTargetVk::getRotatedExtents() const
     ASSERT(mImage && mImage->valid());
     vk::LevelIndex levelVk = mImage->toVkLevel(mLevelIndexGL);
     return mImage->getRotatedLevelExtents2D(levelVk);
+}
+
+gl::LevelIndex RenderTargetVk::getLevelIndexForImage(const vk::ImageHelper &image) const
+{
+    return (getOwnerOfData()->getImageSerial() == image.getImageSerial()) ? mLevelIndexGL
+                                                                          : gl::LevelIndex(0);
 }
 
 void RenderTargetVk::updateSwapchainImage(vk::ImageHelper *image,

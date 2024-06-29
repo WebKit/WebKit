@@ -121,7 +121,7 @@ static ExceptionOr<void> validateCountryCode(const String& countryCode)
             return { };
     }
 
-    return Exception { ExceptionCode::TypeError, makeString("\"" + countryCode, "\" is not a valid country code.") };
+    return Exception { ExceptionCode::TypeError, makeString("\""_s, countryCode, "\" is not a valid country code."_s) };
 }
 
 static ExceptionOr<void> validateCurrencyCode(const String& currencyCode)
@@ -138,7 +138,7 @@ static ExceptionOr<void> validateCurrencyCode(const String& currencyCode)
             return { };
     }
 
-    return Exception { ExceptionCode::TypeError, makeString("\"" + currencyCode, "\" is not a valid currency code.") };
+    return Exception { ExceptionCode::TypeError, makeString("\""_s, currencyCode, "\" is not a valid currency code."_s) };
 }
 
 static ExceptionOr<void> validateMerchantCapabilities(const ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)

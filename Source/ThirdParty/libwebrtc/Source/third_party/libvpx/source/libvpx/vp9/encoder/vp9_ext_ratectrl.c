@@ -9,6 +9,7 @@
  */
 
 #include <stddef.h>
+#include <stdio.h>
 
 #include "vp9/encoder/vp9_ext_ratectrl.h"
 #include "vp9/encoder/vp9_encoder.h"
@@ -51,6 +52,14 @@ vpx_codec_err_t vp9_extrc_create(vpx_rc_funcs_t funcs,
   if (rc_firstpass_stats->frame_stats == NULL) {
     return VPX_CODEC_MEM_ERROR;
   }
+  if (funcs.rate_ctrl_log_path != NULL) {
+    ext_ratectrl->log_file = fopen(funcs.rate_ctrl_log_path, "w");
+    if (!ext_ratectrl->log_file) {
+      return VPX_CODEC_ERROR;
+    }
+  } else {
+    ext_ratectrl->log_file = NULL;
+  }
   ext_ratectrl->ready = 1;
   return VPX_CODEC_OK;
 }
@@ -60,6 +69,9 @@ vpx_codec_err_t vp9_extrc_delete(EXT_RATECTRL *ext_ratectrl) {
     return VPX_CODEC_INVALID_PARAM;
   }
   if (ext_ratectrl->ready) {
+    if (ext_ratectrl->log_file) {
+      fclose(ext_ratectrl->log_file);
+    }
     vpx_rc_status_t rc_status =
         ext_ratectrl->funcs.delete_model(ext_ratectrl->model);
     if (rc_status == VPX_RC_ERROR) {
@@ -156,32 +168,15 @@ static int extrc_get_frame_type(FRAME_UPDATE_TYPE update_type) {
 }
 
 vpx_codec_err_t vp9_extrc_get_encodeframe_decision(
-    EXT_RATECTRL *ext_ratectrl, int show_index, int coding_index, int gop_index,
-    FRAME_UPDATE_TYPE update_type, int gop_size, int use_alt_ref,
-    RefCntBuffer *ref_frame_bufs[MAX_INTER_REF_FRAMES], int ref_frame_flags,
+    EXT_RATECTRL *ext_ratectrl, int gop_index,
     vpx_rc_encodeframe_decision_t *encode_frame_decision) {
-  if (ext_ratectrl == NULL) {
-    return VPX_CODEC_INVALID_PARAM;
-  }
-  if (ext_ratectrl->ready && (ext_ratectrl->funcs.rc_type & VPX_RC_QP) != 0) {
-    vpx_rc_status_t rc_status;
-    vpx_rc_encodeframe_info_t encode_frame_info;
-    encode_frame_info.show_index = show_index;
-    encode_frame_info.coding_index = coding_index;
-    encode_frame_info.gop_index = gop_index;
-    encode_frame_info.frame_type = extrc_get_frame_type(update_type);
-    encode_frame_info.gop_size = gop_size;
-    encode_frame_info.use_alt_ref = use_alt_ref;
+  assert(ext_ratectrl != NULL);
+  assert(ext_ratectrl->ready && (ext_ratectrl->funcs.rc_type & VPX_RC_QP) != 0);
 
-    vp9_get_ref_frame_info(update_type, ref_frame_flags, ref_frame_bufs,
-                           encode_frame_info.ref_frame_coding_indexes,
-                           encode_frame_info.ref_frame_valid_list);
-
-    rc_status = ext_ratectrl->funcs.get_encodeframe_decision(
-        ext_ratectrl->model, &encode_frame_info, encode_frame_decision);
-    if (rc_status == VPX_RC_ERROR) {
-      return VPX_CODEC_ERROR;
-    }
+  vpx_rc_status_t rc_status = ext_ratectrl->funcs.get_encodeframe_decision(
+      ext_ratectrl->model, gop_index, encode_frame_decision);
+  if (rc_status == VPX_RC_ERROR) {
+    return VPX_CODEC_ERROR;
   }
   return VPX_CODEC_OK;
 }
@@ -222,29 +217,14 @@ vpx_codec_err_t vp9_extrc_update_encodeframe_result(
 }
 
 vpx_codec_err_t vp9_extrc_get_gop_decision(
-    EXT_RATECTRL *ext_ratectrl, const vpx_rc_gop_info_t *const gop_info,
-    vpx_rc_gop_decision_t *gop_decision) {
+    EXT_RATECTRL *ext_ratectrl, vpx_rc_gop_decision_t *gop_decision) {
   vpx_rc_status_t rc_status;
   if (ext_ratectrl == NULL || !ext_ratectrl->ready ||
       (ext_ratectrl->funcs.rc_type & VPX_RC_GOP) == 0) {
     return VPX_CODEC_INVALID_PARAM;
   }
-  rc_status = ext_ratectrl->funcs.get_gop_decision(ext_ratectrl->model,
-                                                   gop_info, gop_decision);
-  if (gop_decision->use_alt_ref) {
-    const int arf_constraint =
-        gop_decision->gop_coding_frames >= gop_info->min_gf_interval &&
-        gop_decision->gop_coding_frames < gop_info->lag_in_frames;
-    if (!arf_constraint || !gop_info->allow_alt_ref) return VPX_CODEC_ERROR;
-  }
-  // TODO(chengchen): Take min and max gf interval from the model
-  // and overwrite libvpx's decision so that we can get rid
-  // of one of the checks here.
-  if (gop_decision->gop_coding_frames > gop_info->frames_to_key ||
-      gop_decision->gop_coding_frames - gop_decision->use_alt_ref >
-          gop_info->max_gf_interval) {
-    return VPX_CODEC_ERROR;
-  }
+  rc_status =
+      ext_ratectrl->funcs.get_gop_decision(ext_ratectrl->model, gop_decision);
   if (rc_status == VPX_RC_ERROR) {
     return VPX_CODEC_ERROR;
   }

@@ -81,7 +81,7 @@ public:
     void addAuthorKeyframeRules(const StyleRuleKeyframe&);
 
 private:
-    void addElementStyleProperties(const StyleProperties*, CascadeLayerPriority, bool isCacheable = true, FromStyleAttribute = FromStyleAttribute::No);
+    void addElementStyleProperties(const StyleProperties*, CascadeLayerPriority, IsCacheable = IsCacheable::Yes, FromStyleAttribute = FromStyleAttribute::No);
 
     void matchUARules(const RuleSet&);
 

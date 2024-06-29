@@ -137,9 +137,7 @@ enum class SourceCodeRepresentation : uint8_t {
 };
 
 extern JS_EXPORT_PRIVATE const ASCIILiteral SymbolCoercionError;
-#if HAVE(OS_SIGNPOST)
 extern JS_EXPORT_PRIVATE std::atomic<unsigned> activeJSGlobalObjectSignpostIntervalCount;
-#endif
 
 class JSValue {
     friend struct EncodedJSValueHashTraits;
@@ -380,8 +378,8 @@ public:
     static constexpr const int64_t notInt52 = static_cast<int64_t>(1) << numberOfInt52Bits;
     static constexpr const unsigned int52ShiftAmount = 12;
     
-    static ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSValue, u.asBits.payload); }
-    static ptrdiff_t offsetOfTag() { return OBJECT_OFFSETOF(JSValue, u.asBits.tag); }
+    static constexpr ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSValue, u.asBits.payload); }
+    static constexpr ptrdiff_t offsetOfTag() { return OBJECT_OFFSETOF(JSValue, u.asBits.tag); }
 
 #if USE(JSVALUE32_64)
     /*
@@ -704,7 +702,6 @@ bool isThisValueAltered(const PutPropertySlot&, JSObject* baseObject);
 // See section 7.2.9: https://tc39.github.io/ecma262/#sec-samevalue
 bool sameValue(JSGlobalObject*, JSValue a, JSValue b);
 
-#if COMPILER(GCC_COMPATIBLE)
 ALWAYS_INLINE void ensureStillAliveHere(JSValue value)
 {
 #if USE(JSVALUE64)
@@ -713,9 +710,6 @@ ALWAYS_INLINE void ensureStillAliveHere(JSValue value)
     asm volatile ("" : : "g"(value.payload()) : "memory");
 #endif
 }
-#else
-JS_EXPORT_PRIVATE void ensureStillAliveHere(JSValue);
-#endif
 
 // Use EnsureStillAliveScope when you have a data structure that includes GC pointers, and you need
 // to remove it from the DOM and then use it in the same scope. For example, a 'once' event listener

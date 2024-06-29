@@ -110,7 +110,7 @@ void WorkerOrWorkletThread::runEventLoop()
 {
     // Does not return until terminated.
     if (auto* runLoop = dynamicDowncast<WorkerDedicatedRunLoop>(m_runLoop.get()))
-        runLoop->run(m_globalScope.get());
+        runLoop->run(RefPtr { m_globalScope }.get());
 }
 
 void WorkerOrWorkletThread::workerOrWorkletThread()

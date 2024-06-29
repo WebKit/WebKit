@@ -67,86 +67,57 @@ function f64Repr(f) {
 }
 
 // ============
-// Set up contrived custom time zone and calendar to give dayLengthNs,
-// oneYearDays, oneMonthDays, and oneWeekDays their largest possible values
+// Set up contrived custom time zone to give the denominator of the fraction its
+// largest possible value
 
 function createTimeZone() {
   const tz = new Temporal.TimeZone("UTC");
   TemporalHelpers.substituteMethod(tz, "getPossibleInstantsFor", [
-    TemporalHelpers.SUBSTITUTE_SKIP,  // Duration.total step 19.a MoveRelativeZonedDateTime → AddZonedDateTime
-    TemporalHelpers.SUBSTITUTE_SKIP,  // Duration.total step 19.e.ii AddDaysToZonedDateTime
-    TemporalHelpers.SUBSTITUTE_SKIP,  // Duration.total step 19.i.ii NormalizedTimeDurationToDays step 16
-    TemporalHelpers.SUBSTITUTE_SKIP,  // Duration.total step 19.i.ii NormalizedTimeDurationToDays step 19
-    [new Temporal.Instant(-86400_0000_0000_000_000_000n)],  // RoundDuration step 7.a.i MoveRelativeZonedDateTime → AddZonedDateTime
-    [new Temporal.Instant(-86400_0000_0000_000_000_000n + 2n ** 53n - 1n)],  // RoundDuration step 7.a.ii NormalizedTimeDurationToDays step 19
-    // sets dayLengthNs to Number.MAX_SAFE_INTEGER
+    TemporalHelpers.SUBSTITUTE_SKIP,  // Duration.total step 18.c AddZonedDateTime
+    TemporalHelpers.SUBSTITUTE_SKIP,  // DifferenceZonedDateTimeWithRounding → DifferenceZonedDateTime → AddZonedDateTime
+    [new Temporal.Instant(-86400_0000_0000_000_000_000n)],
+    [new Temporal.Instant(86400_0000_0000_000_000_000n)],
   ]);
   return tz;
 }
 
-function createCalendar() {
-  const cal = new Temporal.Calendar("iso8601");
-  TemporalHelpers.substituteMethod(cal, "dateAdd", [
-    TemporalHelpers.SUBSTITUTE_SKIP,  // Duration.total step 19.a MoveRelativeZonedDateTime → AddZonedDateTime
-    TemporalHelpers.SUBSTITUTE_SKIP,  // RoundDuration step 7.a.i MoveRelativeZonedDateTime → AddZonedDateTime
-    new Temporal.PlainDate(-271821, 4, 20),  // RoundDuration step 10.d/11.d AddDate
-    new Temporal.PlainDate(-271821, 4, 20),  // RoundDuration step 10.f/11.f AddDate
-    new Temporal.PlainDate(275760, 9, 13),  // RoundDuration step 10.r/11.r MoveRelativeDate
-    // sets one{Year,Month,Week}Days to 200_000_000
-  ]);
-  return cal;
+function createRelativeTo() {
+  return new Temporal.ZonedDateTime(-86400_0000_0000_000_000_000n, createTimeZone());
 }
 
 // ============
 
-// We will calculate the total years/months/weeks of durations with:
-//   1 year/month/week, 1 day, 0.199000001 s
+// We will calculate the total years of a duration of 1 year, 0.009254648 s
 
-// RoundDuration step 7:
-//   ii. result = { [[Days]] = 1, [[Remainder]] = normalized time duration of 199_000_001 ns,
-//     [[DayLength]] = Number.MAX_SAFE_INTEGER }
-//   iii. fractionalDays = 1 + 0 + 199_000_001 / Number.MAX_SAFE_INTEGER
-// step 10: (similar for steps 11 and 12 in the case of months/weeks)
-//   y. oneYearDays = 200_000_000
-//   z. fractionalYears = 1 + (1 + 199_000_001 / Number.MAX_SAFE_INTEGER) / 200_000_000
+// NS_MAX_INSTANT = 86400 × 1e8 × 1e9
+// startEpochNs = -NS_MAX_INSTANT
+// destEpochNs = -NS_MAX_INSTANT + 366 * 86400 * 1e9 + 9254648
+// endEpochNs = NS_MAX_INSTANT
+// progress = (destEpochNs - startEpochNs) / (endEpochNs - startEpochNs)
+//   = (366 * 86400 * 1e9 + 9254648) / (2 × NS_MAX_INSTANT)
+// total = startDuration.years + progress
+//   = 1 + (366 * 86400 * 1e9 + 9254648) / (2 × NS_MAX_INSTANT)
 //
-// Note: if calculated as 1 + 1/200_000_000 + 199_000_001 / Number.MAX_SAFE_INTEGER / 200_000_000
-// this will lose precision and give the result 1.000000005.
-
 // Calculated with Python's Decimal module to 50 decimal places
-const expected = 1.000000005000000_1104671915053146003490515686745299;
+const expected = 1.000001830000000_5355699074074074074074074074074074;
+// This is float 1.000001830000000_64659
+// Note: if calculated using floating point arithmetic, this will give the less
+// precise value 1.000001830000000_42454
 
 // Check that we are not accidentally losing precision in our expected value:
 
-assert.sameValue(expected, 1.000000005000000_2, "the float representation of the result is 1.0000000050000002");
+assert.sameValue(expected, 1.000001830000000_64659, "the float representation of the result is 1.00000183000000064659");
 assert.compareArray(
   f64Repr(expected),
-  [0x3f, 0xf0, 0x00, 0x00, 0x01, 0x57, 0x98, 0xef],
-  "the bit representation of the result is 0x3ff00000015798ef"
+  [0x3f, 0xf0, 0x00, 0x01, 0xeb, 0x3c, 0xa4, 0x79],
+  "the bit representation of the result is 0x3ff00001eb3ca479"
 );
 // The next Number in direction -Infinity is less precise.
-assert.sameValue(nextDown(expected), 1.000000004999999_96961, "the next Number in direction -Infinity is less precise");
+assert.sameValue(nextDown(expected), 1.000001830000000_42455, "the next Number in direction -Infinity is less precise");
 // The next Number in direction +Infinity is less precise.
-assert.sameValue(nextUp(expected), 1.000000005000000_4137, "the next Number in direction +Infinity is less precise");
+assert.sameValue(nextUp(expected), 1.000001830000000_86864, "the next Number in direction +Infinity is less precise");
 
 // ============
 
-let relativeTo = new Temporal.ZonedDateTime(-86400_0000_0000_000_000_000n, createTimeZone(), createCalendar());
-const dYears = new Temporal.Duration(/* years = */ 1, 0, 0, /* days = */ 1, 0, 0, 0, /* milliseconds = */ 199, 0, /* nanoseconds = */ 1);
-assert.sameValue(dYears.total({ unit: "years", relativeTo }), expected, "Correct division by large number in years total");
-
-relativeTo = new Temporal.ZonedDateTime(-86400_0000_0000_000_000_000n, createTimeZone(), createCalendar());
-const dMonths = new Temporal.Duration(0, /* months = */ 1, 0, /* days = */ 1, 0, 0, 0, /* milliseconds = */ 199, 0, /* nanoseconds = */ 1);
-assert.sameValue(dMonths.total({ unit: "months", relativeTo }), expected, "Correct division by large number in months total");
-
-// Weeks calculation doesn't have the AddDate calls to convert months/weeks to days
-const weeksCal = new Temporal.Calendar("iso8601");
-TemporalHelpers.substituteMethod(weeksCal, "dateAdd", [
-  TemporalHelpers.SUBSTITUTE_SKIP,  // Duration.total step 19.a MoveRelativeZonedDateTime → AddZonedDateTime
-  TemporalHelpers.SUBSTITUTE_SKIP,  // RoundDuration step 7.a.i MoveRelativeZonedDateTime → AddZonedDateTime
-  new Temporal.PlainDate(275760, 9, 13),  // RoundDuration step 12.q MoveRelativeDate
-  // sets one{Year,Month,Week}Days to 200_000_000
-]);
-relativeTo = new Temporal.ZonedDateTime(-86400_0000_0000_000_000_000n, createTimeZone(), weeksCal);
-const dWeeks = new Temporal.Duration(0, 0, /* weejs = */ 1, /* days = */ 1, 0, 0, 0, /* milliseconds = */ 199, 0, /* nanoseconds = */ 1);
-assert.sameValue(dWeeks.total({ unit: "weeks", relativeTo }), expected, "Correct division by large number in weeks total");
+const duration = new Temporal.Duration(/* years = */ 1, 0, 0, 0, 0, 0, 0, 9, 254, 648);
+assert.sameValue(duration.total({ unit: "years", relativeTo: createRelativeTo() }), expected, "Correct division by large number in years total");

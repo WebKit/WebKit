@@ -76,7 +76,7 @@ public:
     void ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&&);
     bool hasActiveImmersiveXRDevice() const { return !!m_activeImmersiveDevice.get(); }
 
-    bool hasActiveImmersiveSession() const;
+    RefPtr<WebXRSession> activeImmersiveSession() const;
     void sessionEnded(WebXRSession&);
 
     // For testing purpouses only.

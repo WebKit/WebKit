@@ -54,13 +54,15 @@ static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> devi
     return computePipelineState;
 }
 
-static MTLSize metalSize(auto workgroupSize, const HashMap<String, WGSL::ConstantValue>& wgslConstantValues)
+static std::optional<MTLSize> metalSize(auto workgroupSize, const HashMap<String, WGSL::ConstantValue>& wgslConstantValues)
 {
-    auto width = WGSL::evaluate(*workgroupSize.width, wgslConstantValues).integerValue();
-    auto height = workgroupSize.height ? WGSL::evaluate(*workgroupSize.height, wgslConstantValues).integerValue() : 1;
-    auto depth = workgroupSize.depth ? WGSL::evaluate(*workgroupSize.depth, wgslConstantValues).integerValue() : 1;
+    auto width = WGSL::evaluate(*workgroupSize.width, wgslConstantValues);
+    auto height = workgroupSize.height ? WGSL::evaluate(*workgroupSize.height, wgslConstantValues) : 1;
+    auto depth = workgroupSize.depth ? WGSL::evaluate(*workgroupSize.depth, wgslConstantValues) : 1;
+    if (!width.has_value() || !height.has_value() || !depth.has_value())
+        return std::nullopt;
 
-    return MTLSizeMake(width, height, depth);
+    return MTLSizeMake(width->integerValue(), height->integerValue(), depth->integerValue());
 }
 
 static std::pair<Ref<ComputePipeline>, NSString*> returnInvalidComputePipeline(WebGPU::Device &object, bool isAsync, NSString* error = nil)
@@ -84,9 +86,10 @@ std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const W
     auto label = fromAPI(descriptor.label);
     auto entryPointName = descriptor.compute.entryPoint ? fromAPI(descriptor.compute.entryPoint) : shaderModule.defaultComputeEntryPoint();
     NSError *error;
-    auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, entryPointName, label, descriptor.compute.constantCount, descriptor.compute.constants, &error);
+    BufferBindingSizesForPipeline minimumBufferSizes;
+    auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, entryPointName, label, descriptor.compute.constantCount, descriptor.compute.constants, minimumBufferSizes, &error);
     if (!libraryCreationResult || &pipelineLayout.device() != this)
-        return returnInvalidComputePipeline(*this, isAsync, error.description ?: @"Compute library failed creation");
+        return returnInvalidComputePipeline(*this, isAsync, error.localizedDescription ?: @"Compute library failed creation");
 
     auto library = libraryCreationResult->library;
     const auto& wgslConstantValues = libraryCreationResult->wgslConstantValues;
@@ -100,7 +103,10 @@ std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const W
     if (!function || function.functionType != MTLFunctionTypeKernel || entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
         return returnInvalidComputePipeline(*this, isAsync);
 
-    auto size = metalSize(computeInformation.workgroupSize, wgslConstantValues);
+    auto evaluatedSize = metalSize(computeInformation.workgroupSize, wgslConstantValues);
+    if (!evaluatedSize)
+        return returnInvalidComputePipeline(*this, isAsync, @"Failed to evaluate overrides");
+    auto size = *evaluatedSize;
     if (entryPointInformation.sizeForWorkgroupVariables > deviceLimits.maxComputeWorkgroupStorageSize)
         return returnInvalidComputePipeline(*this, isAsync);
 
@@ -116,11 +122,11 @@ std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const W
         if (!generatedPipelineLayout->isValid())
             return returnInvalidComputePipeline(*this, isAsync);
         auto computePipelineState = createComputePipelineState(m_device, function, generatedPipelineLayout, size, label);
-        return std::make_pair(ComputePipeline::create(computePipelineState, WTFMove(generatedPipelineLayout), size, *this), nil);
+        return std::make_pair(ComputePipeline::create(computePipelineState, WTFMove(generatedPipelineLayout), size, WTFMove(minimumBufferSizes), *this), nil);
     }
 
     auto computePipelineState = createComputePipelineState(m_device, function, pipelineLayout, size, label);
-    return std::make_pair(ComputePipeline::create(computePipelineState, pipelineLayout, size, *this), nil);
+    return std::make_pair(ComputePipeline::create(computePipelineState, pipelineLayout, size, WTFMove(minimumBufferSizes), *this), nil);
 }
 
 void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback)
@@ -131,11 +137,12 @@ void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& des
     });
 }
 
-ComputePipeline::ComputePipeline(id<MTLComputePipelineState> computePipelineState, Ref<PipelineLayout>&& pipelineLayout, MTLSize threadsPerThreadgroup, Device& device)
+ComputePipeline::ComputePipeline(id<MTLComputePipelineState> computePipelineState, Ref<PipelineLayout>&& pipelineLayout, MTLSize threadsPerThreadgroup, BufferBindingSizesForPipeline&& minimumBufferSizes, Device& device)
     : m_computePipelineState(computePipelineState)
     , m_device(device)
     , m_threadsPerThreadgroup(threadsPerThreadgroup)
     , m_pipelineLayout(WTFMove(pipelineLayout))
+    , m_minimumBufferSizes(WTFMove(minimumBufferSizes))
 {
 }
 
@@ -143,6 +150,7 @@ ComputePipeline::ComputePipeline(Device& device)
     : m_device(device)
     , m_threadsPerThreadgroup(MTLSizeMake(0, 0, 0))
     , m_pipelineLayout(PipelineLayout::createInvalid(device))
+    , m_minimumBufferSizes({ })
 {
 }
 
@@ -173,6 +181,12 @@ void ComputePipeline::setLabel(String&&)
 PipelineLayout& ComputePipeline::pipelineLayout() const
 {
     return m_pipelineLayout;
+}
+
+const BufferBindingSizesForBindGroup* ComputePipeline::minimumBufferSizes(uint32_t index) const
+{
+    auto it = m_minimumBufferSizes.find(index);
+    return it == m_minimumBufferSizes.end() ? nullptr : &it->value;
 }
 
 } // namespace WebGPU

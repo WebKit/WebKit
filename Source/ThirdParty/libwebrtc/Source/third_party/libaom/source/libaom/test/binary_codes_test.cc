@@ -59,7 +59,7 @@ TEST(AV1, TestPrimitiveRefsubexpfin) {
       }
     }
   }
-  aom_stop_encode(&bw);
+  GTEST_ASSERT_GE(aom_stop_encode(&bw), 0);
   aom_reader br;
   aom_reader_init(&br, bw_buffer, bw.pos);
   GTEST_ASSERT_GE(aom_reader_tell(&br), 0u);

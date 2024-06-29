@@ -14,6 +14,7 @@
 #include "test/acm_random.h"
 #include "test/buffer.h"
 #include "test/register_state_check.h"
+#include "vpx_config.h"
 #include "vpx_ports/vpx_timer.h"
 
 namespace {

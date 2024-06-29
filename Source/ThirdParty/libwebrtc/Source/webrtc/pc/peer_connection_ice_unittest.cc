@@ -19,7 +19,9 @@
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/audio/audio_device.h"
 #include "api/audio/audio_mixer.h"
+#include "api/audio/audio_processing.h"
 #include "api/candidate.h"
 #include "api/ice_transport_interface.h"
 #include "api/jsep.h"
@@ -27,8 +29,6 @@
 #include "api/peer_connection_interface.h"
 #include "api/rtc_error.h"
 #include "api/scoped_refptr.h"
-#include "modules/audio_device/include/audio_device.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "p2p/base/fake_port_allocator.h"
 #include "p2p/base/ice_transport_internal.h"
 #include "p2p/base/p2p_constants.h"
@@ -94,7 +94,6 @@ using ::testing::Values;
 
 constexpr int kIceCandidatesTimeout = 10000;
 constexpr int64_t kWaitTimeout = 10000;
-constexpr uint64_t kTiebreakerDefault = 44444;
 
 class PeerConnectionWrapperForIceTest : public PeerConnectionWrapper {
  public:
@@ -215,10 +214,10 @@ class PeerConnectionIceBaseTest : public ::testing::Test {
   cricket::Candidate CreateLocalUdpCandidate(
       const rtc::SocketAddress& address) {
     cricket::Candidate candidate;
+    RTC_DCHECK_EQ(candidate.type(), IceCandidateType::kHost);
     candidate.set_component(cricket::ICE_CANDIDATE_COMPONENT_DEFAULT);
     candidate.set_protocol(cricket::UDP_PROTOCOL_NAME);
     candidate.set_address(address);
-    candidate.set_type(cricket::LOCAL_PORT_TYPE);
     return candidate;
   }
 
@@ -342,7 +341,7 @@ class PeerConnectionIceTest
       public ::testing::WithParamInterface<SdpSemantics> {
  protected:
   PeerConnectionIceTest() : PeerConnectionIceBaseTest(GetParam()) {
-    webrtc::metrics::Reset();
+    metrics::Reset();
   }
 };
 
@@ -362,7 +361,7 @@ class PeerConnectionIceTest
                  << " != " << b.address().ToString();
   }
   if (a.type() != b.type()) {
-    failure_info << "\ntype: " << a.type() << " != " << b.type();
+    failure_info << "\ntype: " << a.type_name() << " != " << b.type_name();
   }
   std::string failure_info_str = failure_info.str();
   if (failure_info_str.empty()) {
@@ -514,7 +513,7 @@ TEST_P(PeerConnectionIceTest, CannotAddCandidateWhenRemoteDescriptionNotSet) {
 
   EXPECT_FALSE(caller->pc()->AddIceCandidate(jsep_candidate.get()));
   EXPECT_METRIC_THAT(
-      webrtc::metrics::Samples("WebRTC.PeerConnection.AddIceCandidate"),
+      metrics::Samples("WebRTC.PeerConnection.AddIceCandidate"),
       ElementsAre(Pair(kAddIceCandidateFailNoRemoteDescription, 2)));
 }
 
@@ -1448,7 +1447,6 @@ class PeerConnectionIceConfigTest : public ::testing::Test {
                                        packet_socket_factory_.get(),
                                        &field_trials_));
     port_allocator_ = port_allocator.get();
-    port_allocator_->SetIceTiebreaker(kTiebreakerDefault);
     PeerConnectionDependencies pc_dependencies(&observer_);
     pc_dependencies.allocator = std::move(port_allocator);
     auto result = pc_factory_->CreatePeerConnectionOrError(
@@ -1457,7 +1455,7 @@ class PeerConnectionIceConfigTest : public ::testing::Test {
     pc_ = result.MoveValue();
   }
 
-  webrtc::test::ScopedKeyValueConfig field_trials_;
+  test::ScopedKeyValueConfig field_trials_;
   std::unique_ptr<rtc::SocketServer> socket_server_;
   rtc::AutoSocketServerThread main_thread_;
   rtc::scoped_refptr<PeerConnectionFactoryInterface> pc_factory_ = nullptr;

@@ -42,10 +42,12 @@ public:
     PlatformGLObject object() const { return 0; }
     bool hasStencil() const { return m_hasStencil; }
     bool hasDepth() const { return m_hasDepth; }
+    IntSize size() const;
     void reshape(IntSize);
     GCGLbitfield dirtyBuffers() const { return m_dirtyBuffers; }
     void markBuffersClear(GCGLbitfield clearBuffers);
     void markAllUnpreservedBuffersDirty();
+    void markAllBuffersDirty();
 
 private:
     WebGLDefaultFramebuffer(WebGLRenderingContextBase&);

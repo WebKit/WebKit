@@ -64,9 +64,8 @@
     width: 100%;
     padding: 4px 0 2px;
     appearance: unset;
-    border: 1px solid hsl(0, 0%, 78%);
+    border: 1px solid var(--text-color-quaternary);
     background: var(--background-color-content);
-    border-color: var(--text-color-quaternary);
 }
 
 .popover .local-resource-override-popover-content .editor > .CodeMirror {

@@ -207,10 +207,11 @@ static inline bool setJSTestDefaultToJSONInheritFinal_finalLongAttributeFooSette
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLong>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLLong>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setFinalLongAttributeFoo(WTFMove(nativeValue));
+        return impl.setFinalLongAttributeFoo(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -239,10 +240,11 @@ static inline bool setJSTestDefaultToJSONInheritFinal_finalLongAttributeBarSette
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLong>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLLong>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setFinalLongAttributeBar(WTFMove(nativeValue));
+        return impl.setFinalLongAttributeBar(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }

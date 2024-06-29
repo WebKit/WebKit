@@ -27,31 +27,34 @@ __PAS_BEGIN_EXTERN_C;
 
 #pragma mark - Allocator functions
 
-__PAS_API void* __thingy_try_allocate_primitive(__pas_size_t size);
-__PAS_API void* __thingy_try_allocate_primitive_zeroed(__pas_size_t size);
-__PAS_API void* __thingy_try_allocate_primitive_with_alignment(__pas_size_t size, __pas_size_t alignment);
+__PAS_API void* __thingy_try_allocate_primitive(__pas_size_t size, __pas_allocation_mode allocation_mode);
+__PAS_API void* __thingy_try_allocate_primitive_zeroed(__pas_size_t size, __pas_allocation_mode allocation_mode);
+__PAS_API void* __thingy_try_allocate_primitive_with_alignment(__pas_size_t size, __pas_size_t alignment, __pas_allocation_mode allocation_mode);
 
 __PAS_API void* __thingy_try_reallocate_primitive(
-    void* old_ptr, __pas_size_t new_size);
+    void* old_ptr, __pas_size_t new_size, __pas_allocation_mode allocation_mode);
 
 __attribute__((malloc))
-__PAS_API void* __thingy_try_allocate(__pas_heap_ref* heap_ref);
+__PAS_API void* __thingy_try_allocate(__pas_heap_ref* heap_ref, __pas_allocation_mode allocation_mode);
 
-__PAS_API void* __thingy_try_allocate_zeroed(__pas_heap_ref* heap_ref);
+__PAS_API void* __thingy_try_allocate_zeroed(__pas_heap_ref* heap_ref, __pas_allocation_mode allocation_mode);
 
 /* FIXME: This should take the size, since the caller calculates it anyway. */
 __attribute__((malloc))
 __PAS_API void* __thingy_try_allocate_array(__pas_heap_ref* heap_ref,
                                             __pas_size_t count,
-                                            __pas_size_t alignment);
+                                            __pas_size_t alignment,
+                                            __pas_allocation_mode allocation_mode);
 
 __PAS_API void* __thingy_try_allocate_zeroed_array(__pas_heap_ref* heap_ref,
                                                    __pas_size_t count,
-                                                   __pas_size_t alignment);
+                                                   __pas_size_t alignment,
+                                                   __pas_allocation_mode allocation_mode);
 
 __PAS_API void* __thingy_try_reallocate_array(void* old_ptr,
                                               __pas_heap_ref* heap_ref,
-                                              __pas_size_t new_count);
+                                              __pas_size_t new_count,
+                                              __pas_allocation_mode allocation_mode);
 
 __PAS_API void __thingy_deallocate(void*);
 

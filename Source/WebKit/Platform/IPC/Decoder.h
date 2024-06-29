@@ -102,8 +102,8 @@ public:
 
     static std::unique_ptr<Decoder> unwrapForTesting(Decoder&);
 
-    std::span<const uint8_t> buffer() const { return m_buffer; }
-    size_t currentBufferOffset() const { return static_cast<size_t>(std::distance(m_buffer.begin(), m_bufferPosition)); }
+    std::span<const uint8_t> span() const { return m_buffer; }
+    size_t currentBufferOffset() const { return std::distance(m_buffer.begin(), m_bufferPosition); }
 
     WARN_UNUSED_RETURN bool isValid() const { return !!m_buffer.data(); }
     void markInvalid()

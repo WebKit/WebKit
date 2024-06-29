@@ -1,4 +1,4 @@
 
 
-FAIL <a download> fires navigate, but not navigatesuccess or navigateerror when not intercepted by intercept() assert_true: expected true got false
+PASS <a download> fires navigate, but not navigatesuccess or navigateerror when not intercepted by intercept()
 

@@ -772,7 +772,7 @@ TEST(ProcessSwap, PSONRedirectionToExternal)
     TestWebKitAPI::HTTPResponse redirectResponse(301, WTFMove(redirectHeaders));
 
     server.addResponse("/popup.html"_s, WTFMove(redirectResponse));
-    auto popupURL = makeString("https://localhost:", server.port(), "/popup.html");
+    auto popupURL = makeString("https://localhost:"_s, server.port(), "/popup.html"_s);
 
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
@@ -4097,7 +4097,7 @@ TEST(ProcessSwap, NumberOfCachedProcesses)
 
     const unsigned maxSuspendedPageCount = [processPool _maximumSuspendedPageCount];
     for (unsigned i = 0; i < maxSuspendedPageCount + 2; i++)
-        [handler addMappingFromURLString:makeString("pson://www.domain-", i, ".com") toData:pageCache1Bytes];
+        [handler addMappingFromURLString:makeString("pson://www.domain-"_s, i, ".com"_s) toData:pageCache1Bytes];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -4105,7 +4105,7 @@ TEST(ProcessSwap, NumberOfCachedProcesses)
     [webView setNavigationDelegate:delegate.get()];
 
     for (unsigned i = 0; i < maxSuspendedPageCount + 1; i++) {
-        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:makeString("pson://www.domain-", i, ".com")]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:makeString("pson://www.domain-"_s, i, ".com"_s)]];
         [webView loadRequest:request];
         TestWebKitAPI::Util::run(&done);
         done = false;
@@ -4115,7 +4115,7 @@ TEST(ProcessSwap, NumberOfCachedProcesses)
         EXPECT_FALSE([processPool _hasPrewarmedWebProcess]);
     }
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:makeString("pson://www.domain-", maxSuspendedPageCount + 1, ".com")]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:makeString("pson://www.domain-"_s, maxSuspendedPageCount + 1, ".com"_s)]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -4550,7 +4550,7 @@ TEST(ProcessSwap, CrossOriginBlobNavigation)
     EXPECT_TRUE(!!pid2);
 
     finishedRunningScript = false;
-    String script = "document.getElementById('link').href = '" + blobURL + "'";
+    auto script = makeString("document.getElementById('link').href = '"_s, blobURL, '\'');
     [webView _evaluateJavaScriptWithoutUserGesture:(NSString *)script completionHandler: [&] (id result, NSError *error) {
         finishedRunningScript = true;
     }];
@@ -7828,13 +7828,13 @@ static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceC
 
     HTTPServer server(std::initializer_list<std::pair<String, HTTPResponse>> { }, HTTPServer::Protocol::Https);
 
-    auto popupURL = isSameOrigin == IsSameOrigin::Yes ? "popup.html"_str : makeString("https://localhost:", server.port(), "/popup.html");
-    auto popupSource = makeString("<script>onload = () => { w = open('", popupURL, "', 'foo'); };</script>");
+    auto popupURL = isSameOrigin == IsSameOrigin::Yes ? "popup.html"_str : makeString("https://localhost:"_s, server.port(), "/popup.html"_s);
+    auto popupSource = makeString("<script>onload = () => { w = open('"_s, popupURL, "', 'foo'); };</script>"_s);
     server.addResponse("/main.html"_s, HTTPResponse { WTFMove(sourceHeaders), WTFMove(popupSource) });
 
     if (doServerSideRedirect == DoServerSideRedirect::Yes) {
         HashMap<String, String> redirectHeaders;
-        String redirectionURL = isSameOrigin == IsSameOrigin::Yes ? makeString("https://127.0.0.1:", server.port(), "/popup-after-redirection.html") : makeString("https://localhost:", server.port(), "/popup-after-redirection.html");
+        String redirectionURL = isSameOrigin == IsSameOrigin::Yes ? makeString("https://127.0.0.1:"_s, server.port(), "/popup-after-redirection.html"_s) : makeString("https://localhost:"_s, server.port(), "/popup-after-redirection.html"_s);
         redirectHeaders.add("location"_s, WTFMove(redirectionURL));
         HTTPResponse redirectResponse(301, WTFMove(redirectHeaders));
 
@@ -8334,9 +8334,9 @@ static void checkSettingsControlledByLockdownMode(WKWebView *webView, ShouldBeEn
     EXPECT_EQ(runJSCheck("!!window.VideoEncoder"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebCodecs.
     EXPECT_EQ(runJSCheck("!!window.VideoFrame"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebCodecs.
     EXPECT_EQ(runJSCheck("!!window.EncodedVideoChunk"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebCodecs.
-    String mathMLCheck = makeString("document.createElementNS('http://www.w3.org/1998/Math/MathML','mspace').__proto__ == ", shouldBeEnabled == ShouldBeEnabled::Yes ? "MathMLElement" : "Element", ".prototype");
+    String mathMLCheck = makeString("document.createElementNS('http://www.w3.org/1998/Math/MathML','mspace').__proto__ == "_s, shouldBeEnabled == ShouldBeEnabled::Yes ? "MathMLElement"_s : "Element"_s, ".prototype"_s);
     EXPECT_EQ(runJSCheck(mathMLCheck), true); // MathML.
-    String embedElementCheck = makeString("document.createElement('embed').__proto__ == ", shouldBeEnabled == ShouldBeEnabled::Yes ? "HTMLEmbedElement" : "HTMLUnknownElement", ".prototype");
+    String embedElementCheck = makeString("document.createElement('embed').__proto__ == "_s, shouldBeEnabled == ShouldBeEnabled::Yes ? "HTMLEmbedElement"_s : "HTMLUnknownElement"_s, ".prototype"_s);
     EXPECT_EQ(runJSCheck(embedElementCheck), true); // Embed Element.
 
     EXPECT_EQ(runJSCheck("CSS.supports('text-justify: auto')"_s), shouldBeEnabled == ShouldBeEnabled::Yes);

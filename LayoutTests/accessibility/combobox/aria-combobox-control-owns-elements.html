@@ -51,45 +51,45 @@ if (window.accessibilityController) {
 
     // Example 1: aria-controls a list.
     document.getElementById("combobox1").focus();
-    list = accessibilityController.accessibleElementById("list1");
+    combobox = accessibilityController.accessibleElementById("combobox1");
     // Set active-descendant, verify notification is sent and that list has correct active element.
     document.getElementById("combobox1").setAttribute("aria-activedescendant", "item1_1");
     setTimeout(async () => {
         listitem1 = accessibilityController.accessibleElementById("item1_1");
-        output += expect("list.activeElement.isEqual(listitem1)", "true");
+        output += expect("combobox.activeElement.isEqual(listitem1)", "true");
 
         // Example 2: aria-owns a listbox.
         document.getElementById("combobox2").focus();
-        listbox = accessibilityController.accessibleElementById("listbox2");
+        combobox = accessibilityController.accessibleElementById("combobox2");
         // Set active-descendant, verify notification is sent and that list has correct active element.
         document.getElementById("combobox2").setAttribute("aria-activedescendant", "option2_1");
         option2_1 = accessibilityController.accessibleElementById("option2_1");
         await waitFor(() => {
             return activeElementChangeCount == 2;
         });
-        output += expect("listbox.activeElement.isEqual(option2_1)", "true");
+        output += expect("combobox.activeElement.isEqual(option2_1)", "true");
 
         // Example 3: aria-owns a grid.
         document.getElementById("combobox3").focus();
-        grid = accessibilityController.accessibleElementById("grid3");
+        combobox = accessibilityController.accessibleElementById("combobox3");
         // Set active-descendant, verify notification is sent and that list has correct active element.
         document.getElementById("combobox3").setAttribute("aria-activedescendant", "row3_1");
         row3_1 = accessibilityController.accessibleElementById("row3_1");
         await waitFor(() => {
             return activeElementChangeCount == 3;
         });
-        output += expect("grid.activeElement.isEqual(row3_1)", "true");
+        output += expect("combobox.activeElement.isEqual(row3_1)", "true");
 
         // Example 4: aria-owns a tree.
         document.getElementById("combobox4").focus();
-        tree = accessibilityController.accessibleElementById("tree4");
+        combobox = accessibilityController.accessibleElementById("combobox4");
         // Set active-descendant, verify notification is sent and that tree has correct active descendant.
         document.getElementById("combobox4").setAttribute("aria-activedescendant", "treeitem4_1");
         treeitem4_1 = accessibilityController.accessibleElementById("treeitem4_1");
         await waitFor(() => {
             return activeElementChangeCount == 4;
         });
-        output += expect("tree.activeElement.isEqual(treeitem4_1)", "true");
+        output += expect("combobox.activeElement.isEqual(treeitem4_1)", "true");
 
         accessibilityController.removeNotificationListener();
         debug(output);

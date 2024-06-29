@@ -105,11 +105,15 @@ private:
     void setObjectProperty(AXPropertyName, AXCoreObject*);
     void setObjectVectorProperty(AXPropertyName, const AccessibilityChildrenVector&);
 
+    void setPropertyFlag(AXPropertyFlag, bool);
+    bool hasPropertyFlag(AXPropertyFlag) const;
+
     static bool canBeMultilineTextField(AccessibilityObject&, bool isNonNativeTextControl);
 
     // FIXME: consolidate all AttributeValue retrieval in a single template method.
     bool boolAttributeValue(AXPropertyName) const;
     String stringAttributeValue(AXPropertyName) const;
+    String stringAttributeValueNullIfMissing(AXPropertyName) const;
     int intAttributeValue(AXPropertyName) const;
     unsigned unsignedAttributeValue(AXPropertyName) const;
     double doubleAttributeValue(AXPropertyName) const;
@@ -292,7 +296,7 @@ private:
     AutoFillButtonType valueAutofillButtonType() const final { return static_cast<AutoFillButtonType>(intAttributeValue(AXPropertyName::ValueAutofillButtonType)); }
     AccessibilityChildrenVector ariaTreeRows() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::ARIATreeRows)); }
     URL url() const final { return urlAttributeValue(AXPropertyName::URL); }
-    String accessKey() const final { return stringAttributeValue(AXPropertyName::AccessKey); }
+    String accessKey() const final { return stringAttributeValueNullIfMissing(AXPropertyName::AccessKey); }
     String localizedActionVerb() const final { return stringAttributeValue(AXPropertyName::LocalizedActionVerb); }
     String actionVerb() const final { return stringAttributeValue(AXPropertyName::ActionVerb); }
     String autoCompleteValue() const final { return stringAttributeValue(AXPropertyName::AutoCompleteValue); }
@@ -429,7 +433,7 @@ private:
     void setPreventKeyboardDOMEventDispatch(bool) final;
 #endif
 
-    String textUnderElement(TextUnderElementMode = TextUnderElementMode()) const final;
+    String textUnderElement(TextUnderElementMode = { }) const final;
     std::optional<SimpleRange> misspellingRange(const SimpleRange&, AccessibilitySearchDirection) const final;
     FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const final;
     void increment() final;
@@ -453,7 +457,7 @@ private:
     bool isAXRemoteFrame() const final { return false; }
     bool isNativeTextControl() const final;
     bool isMockObject() const final;
-    bool isNonNativeTextControl() const final { return boolAttributeValue(AXPropertyName::IsNonNativeTextControl); }
+    bool isNonNativeTextControl() const final;
     bool isIndeterminate() const final { return boolAttributeValue(AXPropertyName::IsIndeterminate); }
     bool isLoaded() const final { return loadingProgress() >= 1; }
     bool isOnScreen() const final;
@@ -551,6 +555,7 @@ private:
     Vector<AXID> m_childrenIDs;
     Vector<RefPtr<AXCoreObject>> m_children;
     AXPropertyMap m_propertyMap;
+    OptionSet<AXPropertyFlag> m_propertyFlags;
     // Some objects (e.g. display:contents) form their geometry through their children.
     bool m_getsGeometryFromChildren { false };
 
@@ -575,6 +580,19 @@ inline T AXIsolatedObject::propertyValue(AXPropertyName propertyName) const
         [] (auto&) { ASSERT_NOT_REACHED();
             return T(); }
     );
+}
+
+inline void AXIsolatedObject::setPropertyFlag(AXPropertyFlag flag, bool set)
+{
+    if (set)
+        m_propertyFlags.add(flag);
+    else
+        m_propertyFlags.remove(flag);
+}
+
+inline bool AXIsolatedObject::hasPropertyFlag(AXPropertyFlag flag) const
+{
+    return m_propertyFlags.contains(flag);
 }
 
 } // namespace WebCore

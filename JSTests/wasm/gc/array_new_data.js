@@ -1,4 +1,9 @@
+//@ $skipModes << :wasm_aggressive_inline if $memoryLimited
 //@ runWebAssemblySuite("--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true")
+
+// This tests in the :wasm_aggressive_inline test configuration will use more than the
+// 600M that $memoryLimited devices are capped at due JSCTEST_memoryLimit. Skip it
+// for that test configuration to avoid the crash as a result of exceeding that limit.
 
 import * as assert from "../assert.js";
 import { compile, instantiate } from "./wast-wrapper.js";

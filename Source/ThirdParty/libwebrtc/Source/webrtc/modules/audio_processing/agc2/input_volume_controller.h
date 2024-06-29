@@ -16,9 +16,9 @@
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/audio/audio_processing.h"
 #include "modules/audio_processing/agc2/clipping_predictor.h"
 #include "modules/audio_processing/audio_buffer.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "rtc_base/gtest_prod_util.h"
 
 namespace webrtc {
@@ -50,7 +50,7 @@ class InputVolumeController final {
     // Limited to values higher than 0.
     int clipped_wait_frames = 300;
     // Enables clipping prediction functionality.
-    bool enable_clipping_predictor = false;
+    bool enable_clipping_predictor = true;
     // Speech level target range (dBFS). If the speech level is in the range
     // [`target_range_min_dbfs`, `target_range_max_dbfs`], no input volume
     // adjustments are done based on the speech level. For speech levels below

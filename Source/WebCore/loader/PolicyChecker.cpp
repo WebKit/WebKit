@@ -50,6 +50,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
 #include "Logging.h"
+#include "Navigation.h"
 #include "ThreadableBlobRegistry.h"
 #include "URLKeepingBlobAlive.h"
 #include <wtf/CompletionHandler.h>
@@ -206,6 +207,15 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
     bool isInitialEmptyDocumentLoad = !frameLoader->stateMachine().committedFirstRealDocumentLoad() && request.url().protocolIsAbout() && !substituteData.isValid();
     m_delegateIsDecidingNavigationPolicy = true;
     String suggestedFilename = action.downloadAttribute().isEmpty() ? nullAtom() : action.downloadAttribute();
+    if (!action.downloadAttribute().isNull()) {
+        RefPtr document = frame->document();
+        if (document && document->settings().navigationAPIEnabled()) {
+            if (RefPtr domWindow = document->domWindow()) {
+                if (!domWindow->protectedNavigation()->dispatchDownloadNavigateEvent(request.url(), action.downloadAttribute()))
+                    return function({ }, nullptr, NavigationPolicyDecision::IgnoreLoad);
+            }
+        }
+    }
     FramePolicyFunction decisionHandler = [
         this,
         weakThis = WeakPtr { *this },

@@ -141,11 +141,6 @@
     void bindTextures(GLuint first, GLsizei count, const GLuint *textures);                        \
     void bindVertexBuffers(GLuint first, GLsizei count, const BufferID *buffersPacked,             \
                            const GLintptr *offsets, const GLsizei *strides);                       \
-    void clearTexImage(TextureID texturePacked, GLint level, GLenum format, GLenum type,           \
-                       const void *data);                                                          \
-    void clearTexSubImage(TextureID texturePacked, GLint level, GLint xoffset, GLint yoffset,      \
-                          GLint zoffset, GLsizei width, GLsizei height, GLsizei depth,             \
-                          GLenum format, GLenum type, const void *data);                           \
     void bindTextureUnit(GLuint unit, TextureID texturePacked);                                    \
     void blitNamedFramebuffer(GLuint readFramebuffer, GLuint drawFramebuffer, GLint srcX0,         \
                               GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0,     \

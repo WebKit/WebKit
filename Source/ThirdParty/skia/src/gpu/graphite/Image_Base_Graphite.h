@@ -8,14 +8,21 @@
 #ifndef skgpu_graphite_Image_Base_Graphite_DEFINED
 #define skgpu_graphite_Image_Base_Graphite_DEFINED
 
+#include "include/gpu/GpuTypes.h"
 #include "include/private/base/SkTArray.h"
 #include "src/base/SkSpinlock.h"
 #include "src/image/SkImage_Base.h"
+
+#include <string_view>
+
+enum class SkBackingFit;
 
 namespace skgpu::graphite {
 
 class Context;
 class Device;
+class DrawContext;
+class Image;
 class Recorder;
 class TextureProxy;
 
@@ -24,14 +31,33 @@ public:
     ~Image_Base() override;
 
     // Must be called at the time of recording an action that reads from the image, be it a draw
-    // or a copy operation.
-    void notifyInUse(Recorder*) const;
+    // or a copy operation. `drawContext` can be null if the "use" is scoped by a draw.
+    void notifyInUse(Recorder*, DrawContext* drawContext) const;
+
+    // Returns true if this image is linked to a device that may render their shared texture(s).
+    bool isDynamic() const;
+
+    // Always copy this image, even if 'subset' and mipmapping match this image exactly.
+    // The base implementation performs all copies as draws.
+    virtual sk_sp<Image> copyImage(Recorder*,
+                                   const SkIRect& subset,
+                                   Budgeted,
+                                   Mipmapped,
+                                   SkBackingFit,
+                                   std::string_view label) const;
 
     // From SkImage.h
     // TODO(egdaniel) This feels wrong. Re-think how this method is used and works.
     bool isValid(GrRecordingContext*) const override { return true; }
 
     // From SkImage_Base.h
+    sk_sp<SkImage> onMakeSubset(Recorder*, const SkIRect&, RequiredProperties) const override;
+    sk_sp<SkImage> makeColorTypeAndColorSpace(Recorder*,
+                                              SkColorType targetCT,
+                                              sk_sp<SkColorSpace> targetCS,
+                                              RequiredProperties) const override;
+
+    // No-ops for Ganesh APIs
     bool onReadPixels(GrDirectContext*,
                       const SkImageInfo& dstInfo,
                       void* dstPixels,
@@ -66,8 +92,6 @@ public:
                                            RescaleMode,
                                            ReadPixelsCallback,
                                            ReadPixelsContext) const override;
-
-    virtual sk_sp<SkImage> makeTextureImage(Recorder*, RequiredProperties) const = 0;
 
 protected:
     Image_Base(const SkImageInfo& info, uint32_t uniqueID);

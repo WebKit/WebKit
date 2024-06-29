@@ -317,7 +317,8 @@ ImageIndexIterator ImageIndexIterator::MakeGeneric(TextureType type,
                                                    GLint minLayer,
                                                    GLint maxLayer)
 {
-    if (type == TextureType::CubeMap)
+    if (type == TextureType::CubeMap && minLayer == ImageIndex::kEntireLevel &&
+        maxLayer == ImageIndex::kEntireLevel)
     {
         return MakeCube(minMip, maxMip);
     }

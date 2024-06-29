@@ -207,7 +207,7 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
     m_updater.m_builder.updateAfterDescendants(*pseudoElementRenderer);
 }
 
-void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& renderer)
+void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& renderer, StyleDifference minimalStyleDifference)
 {
     auto destroyBackdropIfNeeded = [&renderer, this]() {
         if (WeakPtr backdropRenderer = renderer.backdropRenderer())
@@ -228,7 +228,7 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
 
     auto newStyle = RenderStyle::clone(*style);
     if (auto backdropRenderer = renderer.backdropRenderer())
-        backdropRenderer->setStyle(WTFMove(newStyle));
+        backdropRenderer->setStyle(WTFMove(newStyle), minimalStyleDifference);
     else {
         auto newBackdropRenderer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, renderer.document(), WTFMove(newStyle));
         newBackdropRenderer->initializeStyle();
@@ -266,7 +266,7 @@ void RenderTreeUpdater::GeneratedContent::removeAfterPseudoElement(Element& elem
     element.clearAfterPseudoElement();
 }
 
-void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(RenderElement& renderer)
+void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(RenderElement& renderer, StyleDifference minimalStyleDifference)
 {
     auto destroyWritingSuggestionsIfNeeded = [&renderer, this]() {
         if (!renderer.element())
@@ -304,8 +304,14 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         return;
     }
 
-    CheckedPtr nodeBeforeWritingSuggestionsTextRenderer = dynamicDowncast<RenderText>(nodeBeforeWritingSuggestions->renderer());
+    WeakPtr nodeBeforeWritingSuggestionsTextRenderer = dynamicDowncast<RenderText>(nodeBeforeWritingSuggestions->renderer());
     if (!nodeBeforeWritingSuggestionsTextRenderer) {
+        destroyWritingSuggestionsIfNeeded();
+        return;
+    }
+
+    WeakPtr parentForWritingSuggestions = nodeBeforeWritingSuggestionsTextRenderer->parent();
+    if (!parentForWritingSuggestions) {
         destroyWritingSuggestionsIfNeeded();
         return;
     }
@@ -319,8 +325,10 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
     nodeBeforeWritingSuggestionsTextRenderer->setText(prefix);
 
     auto newStyle = RenderStyle::clone(*style);
+    newStyle.setDisplay(DisplayType::Inline);
+
     if (auto writingSuggestionsRenderer = editor.writingSuggestionRenderer()) {
-        writingSuggestionsRenderer->setStyle(WTFMove(newStyle));
+        writingSuggestionsRenderer->setStyle(WTFMove(newStyle), minimalStyleDifference);
 
         auto* writingSuggestionsText = dynamicDowncast<RenderText>(writingSuggestionsRenderer->firstChild());
         if (!writingSuggestionsText) {
@@ -345,23 +353,18 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         auto newWritingSuggestionsRenderer = WebCore::createRenderer<RenderInline>(RenderObject::Type::Inline, renderer.document(), WTFMove(newStyle));
         newWritingSuggestionsRenderer->initializeStyle();
 
-        auto rendererAfterWritingSuggestions = [&]() -> CheckedPtr<RenderObject> {
-            CheckedPtr rendererBefore = nodeBeforeWritingSuggestions->renderer();
-            if (!rendererBefore || rendererBefore->parent() != &renderer)
-                return nullptr;
-
-            CheckedPtr rendererAfter = rendererBefore->nextSibling();
-            if (!rendererAfter || rendererAfter->parent() != &renderer)
-                return nullptr;
-
-            return rendererAfter;
-        }();
+        WeakPtr rendererAfterWritingSuggestions = nodeBeforeWritingSuggestionsTextRenderer->nextSibling();
 
         auto writingSuggestionsText = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, renderer.document(), writingSuggestionData->content());
         m_updater.m_builder.attach(*newWritingSuggestionsRenderer, WTFMove(writingSuggestionsText));
 
         editor.setWritingSuggestionRenderer(*newWritingSuggestionsRenderer.get());
-        m_updater.m_builder.attach(renderer, WTFMove(newWritingSuggestionsRenderer), rendererAfterWritingSuggestions.get());
+        m_updater.m_builder.attach(*parentForWritingSuggestions, WTFMove(newWritingSuggestionsRenderer), rendererAfterWritingSuggestions.get());
+
+        if (!parentForWritingSuggestions) {
+            destroyWritingSuggestionsIfNeeded();
+            return;
+        }
 
         auto* prefixNode = nodeBeforeWritingSuggestionsTextRenderer->textNode();
         if (!prefixNode) {
@@ -372,7 +375,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
 
         if (!suffix.isEmpty()) {
             auto suffixRenderer = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, *prefixNode, suffix);
-            m_updater.m_builder.attach(renderer, WTFMove(suffixRenderer), rendererAfterWritingSuggestions.get());
+            m_updater.m_builder.attach(*parentForWritingSuggestions, WTFMove(suffixRenderer), rendererAfterWritingSuggestions.get());
         }
     }
 }

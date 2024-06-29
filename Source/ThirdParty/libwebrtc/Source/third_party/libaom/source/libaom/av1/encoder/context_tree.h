@@ -131,7 +131,8 @@ static AOM_INLINE int av1_get_pc_tree_nodes(const int is_sb_size_128,
   return tree_nodes;
 }
 
-void av1_setup_sms_tree(struct AV1_COMP *const cpi, struct ThreadData *td);
+// Returns 0 on success, -1 on memory allocation failure.
+int av1_setup_sms_tree(struct AV1_COMP *const cpi, struct ThreadData *td);
 void av1_free_sms_tree(struct ThreadData *td);
 
 #ifdef __cplusplus

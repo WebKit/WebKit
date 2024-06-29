@@ -66,17 +66,17 @@ TEST(TestUtils, Sleep)
     EXPECT_GT(timer.getElapsedWallClockTime(), 0.48);
 }
 
-// TODO: android support. http://anglebug.com/3125
+// TODO: android support. http://anglebug.com/40096559
 #if defined(ANGLE_PLATFORM_ANDROID)
 #    define MAYBE_RunApp DISABLED_RunApp
 #    define MAYBE_RunAppAsync DISABLED_RunAppAsync
 #    define MAYBE_RunAppAsyncRedirectStderrToStdout DISABLED_RunAppAsyncRedirectStderrToStdout
-// TODO: fuchsia support. http://anglebug.com/7312
+// TODO: fuchsia support. http://anglebug.com/42265786
 #elif defined(ANGLE_PLATFORM_FUCHSIA)
 #    define MAYBE_RunApp DISABLED_RunApp
 #    define MAYBE_RunAppAsync DISABLED_RunAppAsync
 #    define MAYBE_RunAppAsyncRedirectStderrToStdout DISABLED_RunAppAsyncRedirectStderrToStdout
-// TODO: iOS simulator support. http://anglebug.com/8116
+// TODO: iOS simulator support. http://anglebug.com/42266562
 #elif ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR
 #    define MAYBE_RunApp DISABLED_RunApp
 #    define MAYBE_RunAppAsync DISABLED_RunAppAsync

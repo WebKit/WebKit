@@ -1,0 +1,5 @@
+
+FAIL
+View transitions: mismatched snapshot containing block size skips transition.
+ assert_implements: ViewTransition-on-navigation not implemented. undefined
+

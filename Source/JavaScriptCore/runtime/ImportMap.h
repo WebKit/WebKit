@@ -43,6 +43,7 @@ public:
         SpecifierMap m_map;
     };
     using Scopes = Vector<ScopeEntry>;
+    using IntegrityMap = HashMap<URL, String>;
 
     class Reporter {
     public:
@@ -58,6 +59,8 @@ public:
     bool isAcquiringImportMaps() const { return m_isAcquiringImportMaps; }
     void setAcquiringImportMaps() { m_isAcquiringImportMaps = false; }
 
+    JS_EXPORT_PRIVATE String integrityForURL(const URL&) const;
+
 private:
     ImportMap() = default;
 
@@ -65,6 +68,8 @@ private:
 
     SpecifierMap m_imports;
     Scopes m_scopes;
+    IntegrityMap m_integrity;
+
     bool m_isAcquiringImportMaps : 1 { true };
 };
 

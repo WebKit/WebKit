@@ -47,7 +47,7 @@ public:
     class Radii {
     WTF_MAKE_FAST_ALLOCATED;
     public:
-        Radii() { }
+        Radii() = default;
         Radii(const FloatSize& topLeft, const FloatSize& topRight, const FloatSize& bottomLeft, const FloatSize& bottomRight)
             : m_topLeft(topLeft)
             , m_topRight(topRight)

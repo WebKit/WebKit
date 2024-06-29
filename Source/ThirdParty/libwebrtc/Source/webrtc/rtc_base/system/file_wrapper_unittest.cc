@@ -21,7 +21,8 @@ TEST(FileWrapper, FileSize) {
   std::string test_name =
       std::string(test_info->test_case_name()) + "_" + test_info->name();
   std::replace(test_name.begin(), test_name.end(), '/', '_');
-  const std::string temp_filename = test::OutputPath() + test_name;
+  const std::string temp_filename =
+      test::OutputPathWithRandomDirectory() + test_name;
 
   // Write
   {

@@ -5,16 +5,16 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (40,71) size 608x397
       RenderSVGContainer {g} at (40,71) size 608x397
-        RenderSVGText {text} at (25,43) size 122x28 contains 1 chunk(s)
+        RenderSVGText {text} at (25,43) size 122x27 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 122x27
             chunk 1 text run 1 at (25.00,65.00) startOffset 0 endOffset 11 width 121.80: "Normal text"
-        RenderSVGText {text} at (25,113) size 225x28 contains 1 chunk(s)
+        RenderSVGText {text} at (25,113) size 225x27 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 225x27
             chunk 1 text run 1 at (25.00,135.00) startOffset 0 endOffset 22 width 224.74: "Text with line-through"
-        RenderSVGText {text} at (25,183) size 161x28 contains 1 chunk(s)
+        RenderSVGText {text} at (25,183) size 161x27 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 161x27
             chunk 1 text run 1 at (25.00,205.00) startOffset 0 endOffset 15 width 160.20: "Underlined text"
-        RenderSVGText {text} at (25,253) size 364x28 contains 1 chunk(s)
+        RenderSVGText {text} at (25,253) size 364x27 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 45x27
             RenderSVGInlineText {#text} at (0,0) size 45x27
               chunk 1 text run 1 at (25.00,275.00) startOffset 0 endOffset 3 width 45.00: "One"

@@ -15,7 +15,7 @@ const timeZone = TemporalHelpers.springForwardFallBackTimeZone();
 
 {
   // Date part of duration lands on skipped DST hour, causing disambiguation
-  const duration = new Temporal.Duration(0, 1, 0, 15, 12);
+  const duration = new Temporal.Duration(0, 1, 0, 15, 11, 30);
   const relativeTo = new Temporal.ZonedDateTime(
     950868000_000_000_000n /* = 2000-02-18T10Z */,
     timeZone); /* = 2000-02-18T02-08 in local time */
@@ -29,17 +29,35 @@ const timeZone = TemporalHelpers.springForwardFallBackTimeZone();
 }
 
 {
-  // Month-only part of duration lands on skipped DST hour, should not cause
-  // disambiguation
-  const duration = new Temporal.Duration(0, 1, 0, 15);
+  // Month-only part of duration lands on skipped DST hour
+  const duration = new Temporal.Duration(0, 1, 0, 15, 0, 30);
   const relativeTo = new Temporal.ZonedDateTime(
     951991200_000_000_000n /* = 2000-03-02T10Z */,
     timeZone); /* = 2000-03-02T02-08 in local time */
 
   TemporalHelpers.assertDuration(duration.round({ smallestUnit: "months", relativeTo }),
     0, 2, 0, 0, 0, 0, 0, 0, 0, 0,
-    "1 month 15 days should be exactly 1.5 months, which rounds up to 2 months");
+    "1 month 15 days 00:30 should be exactly 1.5 months, which rounds up to 2 months");
   TemporalHelpers.assertDuration(duration.round({ smallestUnit: "months", roundingMode: 'halfTrunc', relativeTo }),
     0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-    "1 month 15 days should be exactly 1.5 months, which rounds down to 1 month");
+    "1 month 15 days 00:30 should be exactly 1.5 months, which rounds down to 1 month");
+}
+
+{
+  // Day rounding
+  // DST spring-forward hour skipped at 2000-04-02T02:00 (23 hour day)
+  // 11.5 hours is 0.5
+  const duration = new Temporal.Duration(0, 0, 0, 0, 11, 30);
+  const instant = timeZone.getPossibleInstantsFor(Temporal.PlainDateTime.from("2000-04-02T00:00:00"))[0];
+  const relativeTo = instant.toZonedDateTimeISO(timeZone);
+
+  TemporalHelpers.assertDuration(
+    duration.round({ relativeTo, smallestUnit: "days" }),
+    0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+  );
+
+  TemporalHelpers.assertDuration(
+    duration.round({ relativeTo, smallestUnit: "days", roundingMode: "halfTrunc" }),
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  );
 }

@@ -142,10 +142,13 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
     m_deferredPaymentRequest = request.deferredPaymentRequest();
 #endif
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-    m_disbursementPaymentRequest = request.disbursementPaymentRequest();
+    m_disbursementRequest = request.disbursementRequest();
 #endif
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
     m_applePayLaterAvailability = request.applePayLaterAvailability();
+#endif
+#if ENABLE(APPLE_PAY_MERCHANT_CATEGORY_CODE)
+    m_merchantCategoryCode = request.merchantCategoryCode();
 #endif
 
     ASSERT(showCount == hideCount);
@@ -186,7 +189,7 @@ void MockPaymentCoordinator::completeShippingMethodSelection(std::optional<Apple
     m_deferredPaymentRequest = WTFMove(shippingMethodUpdate->newDeferredPaymentRequest);
 #endif
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-    m_disbursementPaymentRequest = WTFMove(shippingMethodUpdate->newDisbursementPaymentRequest);
+    m_disbursementRequest = WTFMove(shippingMethodUpdate->newDisbursementRequest);
 #endif
 }
 
@@ -219,7 +222,7 @@ void MockPaymentCoordinator::completeShippingContactSelection(std::optional<Appl
     m_deferredPaymentRequest = WTFMove(shippingContactUpdate->newDeferredPaymentRequest);
 #endif
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-    m_disbursementPaymentRequest = WTFMove(shippingContactUpdate->newDisbursementPaymentRequest);
+    m_disbursementRequest = WTFMove(shippingContactUpdate->newDisbursementRequest);
 #endif
 
 }
@@ -248,7 +251,7 @@ void MockPaymentCoordinator::completePaymentMethodSelection(std::optional<AppleP
     m_deferredPaymentRequest = WTFMove(paymentMethodUpdate->newDeferredPaymentRequest);
 #endif
 #if ENABLE(APPLE_PAY_DISBURSEMENTS)
-    m_disbursementPaymentRequest = WTFMove(paymentMethodUpdate->newDisbursementPaymentRequest);
+    m_disbursementRequest = WTFMove(paymentMethodUpdate->newDisbursementRequest);
 #endif
 }
 

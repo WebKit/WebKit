@@ -1950,7 +1950,7 @@ LinkMismatchError LinkValidateProgramVariables(const sh::ShaderVariable &variabl
         ASSERT(variable2IsArray);
         variable2IsArray = false;
     }
-    // TODO(anglebug.com/5557): Investigate interactions with arrays-of-arrays.
+    // TODO(anglebug.com/42264094): Investigate interactions with arrays-of-arrays.
     if (variable1IsArray != variable2IsArray)
     {
         return LinkMismatchError::ARRAYNESS_MISMATCH;

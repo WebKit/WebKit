@@ -48,6 +48,8 @@ public:
     void detachFromPluginElement();
     bool shouldLoadPluginManually() const { return m_shouldLoadPluginManually; }
 
+    void releaseMemory();
+
 private:
     PluginDocument(LocalFrame&, const URL&);
 

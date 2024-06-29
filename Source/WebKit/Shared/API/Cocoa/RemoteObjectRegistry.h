@@ -34,14 +34,12 @@
 
 OBJC_CLASS _WKRemoteObjectRegistry;
 
-namespace IPC {
-class MessageSender;
-}
-
 namespace WebKit {
 
 class RemoteObjectInvocation;
 class UserData;
+class WebPage;
+class WebProcessProxy;
 
 class RemoteObjectRegistry : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -54,11 +52,12 @@ public:
 
 protected:
     explicit RemoteObjectRegistry(_WKRemoteObjectRegistry *);
-    
+    using MessageSender = std::variant<std::reference_wrapper<WebProcessProxy>, std::reference_wrapper<WebPage>>;
 private:
     virtual std::unique_ptr<ProcessThrottler::BackgroundActivity> backgroundActivity(ASCIILiteral) { return nullptr; }
-    virtual IPC::MessageSender& messageSender() = 0;
+    virtual MessageSender messageSender() = 0;
     virtual uint64_t messageDestinationID() = 0;
+    template<typename M> void send(M&&);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

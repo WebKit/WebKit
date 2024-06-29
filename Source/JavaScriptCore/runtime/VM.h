@@ -243,10 +243,6 @@ private:
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(VM);
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 4200) // Disable "zero-sized array in struct/union" warning
-#endif
 struct ScratchBuffer {
     ScratchBuffer()
     {
@@ -276,9 +272,6 @@ struct ScratchBuffer {
     } u;
     void* m_buffer[0];
 };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 
 class ActiveScratchBufferScope {
 public:
@@ -696,37 +689,37 @@ public:
     MacroAssemblerCodeRef<JSEntryPtrTag> getCTIThrowExceptionFromCallSlowPath();
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> getCTIVirtualCall(CallMode);
 
-    static ptrdiff_t exceptionOffset()
+    static constexpr ptrdiff_t exceptionOffset()
     {
         return OBJECT_OFFSETOF(VM, m_exception);
     }
 
-    static ptrdiff_t callFrameForCatchOffset()
+    static constexpr ptrdiff_t callFrameForCatchOffset()
     {
         return OBJECT_OFFSETOF(VM, callFrameForCatch);
     }
 
-    static ptrdiff_t topEntryFrameOffset()
+    static constexpr ptrdiff_t topEntryFrameOffset()
     {
         return OBJECT_OFFSETOF(VM, topEntryFrame);
     }
 
-    static ptrdiff_t offsetOfEncodedHostCallReturnValue()
+    static constexpr ptrdiff_t offsetOfEncodedHostCallReturnValue()
     {
         return OBJECT_OFFSETOF(VM, encodedHostCallReturnValue);
     }
 
-    static ptrdiff_t offsetOfHeapBarrierThreshold()
+    static constexpr ptrdiff_t offsetOfHeapBarrierThreshold()
     {
         return OBJECT_OFFSETOF(VM, heap) + OBJECT_OFFSETOF(Heap, m_barrierThreshold);
     }
 
-    static ptrdiff_t offsetOfHeapMutatorShouldBeFenced()
+    static constexpr ptrdiff_t offsetOfHeapMutatorShouldBeFenced()
     {
         return OBJECT_OFFSETOF(VM, heap) + OBJECT_OFFSETOF(Heap, m_mutatorShouldBeFenced);
     }
 
-    static ptrdiff_t offsetOfSoftStackLimit()
+    static constexpr ptrdiff_t offsetOfSoftStackLimit()
     {
         return OBJECT_OFFSETOF(VM, m_softStackLimit);
     }
@@ -1201,7 +1194,7 @@ inline Heap* WeakSet::heap() const
 }
 
 #if !ENABLE(C_LOOP)
-extern "C" void sanitizeStackForVMImpl(VM*);
+extern "C" void SYSV_ABI sanitizeStackForVMImpl(VM*);
 #endif
 
 JS_EXPORT_PRIVATE void sanitizeStackForVM(VM&);

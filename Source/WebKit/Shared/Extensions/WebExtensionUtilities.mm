@@ -359,6 +359,13 @@ JSObjectRef toJSError(JSContextRef context, NSString *callingAPIName, NSString *
     return toJSError(context, toErrorString(callingAPIName, sourceKey, underlyingErrorString));
 }
 
+JSObjectRef toJSRejectedPromise(JSContextRef context, NSString *callingAPIName, NSString *sourceKey, NSString *underlyingErrorString)
+{
+    auto *error = toJSValue(context, toJSError(context, callingAPIName, sourceKey, underlyingErrorString));
+    auto *promise = [JSValue valueWithNewPromiseRejectedWithReason:error inContext:toJSContext(context)];
+    return JSValueToObject(context, promise.JSValueRef, nullptr);
+}
+
 NSString *toWebAPI(NSLocale *locale)
 {
     if (!locale.languageCode)

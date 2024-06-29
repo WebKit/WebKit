@@ -77,7 +77,6 @@ public:
 #endif
     bool shouldDisablePointerEventsQuirk() const;
     bool needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const;
-    bool shouldDisableContentChangeObserverTouchEventAdjustment() const;
     bool shouldTooltipPreventFromProceedingWithClick(const Element&) const;
     bool shouldHideSearchFieldResultsButton() const;
     bool shouldExposeShowModalDialog() const;
@@ -99,10 +98,13 @@ public:
     WEBCORE_EXPORT bool needsYouTubeMouseOutQuirk() const;
 
     WEBCORE_EXPORT bool shouldAvoidUsingIOS13ForGmail() const;
+    WEBCORE_EXPORT bool shouldDisableWritingSuggestionsByDefault() const;
 
     WEBCORE_EXPORT static void updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&&);
     WEBCORE_EXPORT String storageAccessUserAgentStringQuirkForDomain(const URL&);
-    WEBCORE_EXPORT static bool needsIpadMiniUserAgent(const URL&);
+    WEBCORE_EXPORT static bool needsIPadMiniUserAgent(const URL&);
+    WEBCORE_EXPORT static bool needsIPhoneUserAgent(const URL&);
+    WEBCORE_EXPORT static bool needsDesktopUserAgent(const URL&);
 
     bool needsGMailOverflowScrollQuirk() const;
     bool needsYouTubeOverflowScrollQuirk() const;
@@ -159,6 +161,10 @@ public:
     bool shouldEnableFontLoadingAPIQuirk() const;
     bool needsVideoShouldMaintainAspectRatioQuirk() const;
 
+#if ENABLE(TEXT_AUTOSIZING)
+    bool shouldIgnoreTextAutoSizing() const;
+#endif
+
 #if PLATFORM(VISION)
     WEBCORE_EXPORT bool shouldDisableFullscreenVideoAspectRatioAdaptiveSizing() const;
 #endif
@@ -191,7 +197,7 @@ public:
 
     bool needsGetElementsByNameQuirk() const;
     bool needsRelaxedCorsMixedContentCheckQuirk() const;
-    bool needsLaxSameSiteCookieQuirk() const;
+    bool needsLaxSameSiteCookieQuirk(const URL&) const;
 
 private:
     bool needsQuirks() const;
@@ -265,7 +271,6 @@ private:
     mutable std::optional<bool> m_shouldDisableElementFullscreen;
     mutable std::optional<bool> m_shouldIgnorePlaysInlineRequirementQuirk;
     mutable std::optional<bool> m_needsRelaxedCorsMixedContentCheckQuirk;
-    mutable std::optional<bool> m_needsLaxSameSiteCookieQuirk;
 
     Vector<RegistrableDomain> m_subFrameDomainsForStorageAccessQuirk;
 };

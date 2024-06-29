@@ -18,6 +18,7 @@
 
 #include "absl/types/optional.h"
 #include "api/task_queue/pending_task_safety_flag.h"
+#include "api/units/timestamp.h"
 #include "call/rtp_demuxer.h"
 #include "call/video_receive_stream.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
@@ -26,6 +27,7 @@
 #include "pc/session_description.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/copy_on_write_buffer.h"
+#include "rtc_base/network/received_packet.h"
 #include "rtc_base/network/sent_packet.h"
 #include "rtc_base/network_route.h"
 #include "rtc_base/socket.h"
@@ -90,20 +92,21 @@ class RtpTransport : public RtpTransportInternal {
 
  protected:
   // These methods will be used in the subclasses.
-  void DemuxPacket(rtc::CopyOnWriteBuffer packet, int64_t packet_time_us);
+  void DemuxPacket(rtc::CopyOnWriteBuffer packet,
+                   Timestamp arrival_time,
+                   rtc::EcnMarking ecn);
 
   bool SendPacket(bool rtcp,
                   rtc::CopyOnWriteBuffer* packet,
                   const rtc::PacketOptions& options,
                   int flags);
+  flat_set<uint32_t> GetSsrcsForSink(RtpPacketSinkInterface* sink);
 
   // Overridden by SrtpTransport.
   virtual void OnNetworkRouteChanged(
       absl::optional<rtc::NetworkRoute> network_route);
-  virtual void OnRtpPacketReceived(rtc::CopyOnWriteBuffer packet,
-                                   int64_t packet_time_us);
-  virtual void OnRtcpPacketReceived(rtc::CopyOnWriteBuffer packet,
-                                    int64_t packet_time_us);
+  virtual void OnRtpPacketReceived(const rtc::ReceivedPacket& packet);
+  virtual void OnRtcpPacketReceived(const rtc::ReceivedPacket& packet);
   // Overridden by SrtpTransport and DtlsSrtpTransport.
   virtual void OnWritableState(rtc::PacketTransportInternal* packet_transport);
 
@@ -112,10 +115,7 @@ class RtpTransport : public RtpTransportInternal {
   void OnSentPacket(rtc::PacketTransportInternal* packet_transport,
                     const rtc::SentPacket& sent_packet);
   void OnReadPacket(rtc::PacketTransportInternal* transport,
-                    const char* data,
-                    size_t len,
-                    const int64_t& packet_time_us,
-                    int flags);
+                    const rtc::ReceivedPacket& received_packet);
 
   // Updates "ready to send" for an individual channel and fires
   // SignalReadyToSend.
@@ -140,6 +140,7 @@ class RtpTransport : public RtpTransportInternal {
   RtpHeaderExtensionMap header_extension_map_;
   // Guard against recursive "ready to send" signals
   bool processing_ready_to_send_ = false;
+  bool processing_sent_packet_ = false;
   ScopedTaskSafety safety_;
 };
 

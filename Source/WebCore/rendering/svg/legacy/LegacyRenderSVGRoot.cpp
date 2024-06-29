@@ -176,7 +176,8 @@ void LegacyRenderSVGRoot::layout()
     LayoutStateDisabler layoutStateDisabler(view().frameView().layoutContext());
 
     bool needsLayout = selfNeedsLayout();
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && needsLayout);
+    auto checkForRepaintOverride = !needsLayout ? std::make_optional(LayoutRepainter::CheckForRepaint::No) : std::nullopt;
+    LayoutRepainter repainter(*this, checkForRepaintOverride);
 
     LayoutSize oldSize = size();
     updateLogicalWidth();

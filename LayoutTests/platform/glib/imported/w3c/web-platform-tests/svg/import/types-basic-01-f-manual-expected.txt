@@ -10,17 +10,17 @@ layer at (0,0) size 800x600
       RenderSVGPath {polyline} at (83,125) size 167x84 [stroke={[type=SOLID] [color=#66FF33] [stroke width=50.00]}] [fill={[type=SOLID] [color=#000000]}] [points="50 100 150 100"]
       RenderSVGPath {polyline} at (250,125) size 167x84 [stroke={[type=SOLID] [color=#66CC66] [stroke width=50.00]}] [fill={[type=SOLID] [color=#000000]}] [points="150 100 250 100"]
       RenderSVGPath {polyline} at (416,125) size 168x84 [stroke={[type=SOLID] [color=#3399FF] [stroke width=50.00]}] [fill={[type=SOLID] [color=#000000]}] [points="250 100 350 100"]
-      RenderSVGText {text} at (50,181) size 328x24 contains 1 chunk(s)
+      RenderSVGText {text} at (50,182) size 328x23 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 328x23
           chunk 1 text run 1 at (50.00,200.00) startOffset 0 endOffset 36 width 327.84: "Different forms of the <number> type"
       RenderSVGContainer {g} at (147,153) size 387x38
-        RenderSVGText {text} at (88,91) size 24x24 contains 1 chunk(s)
+        RenderSVGText {text} at (88,92) size 24x23 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 23x23
             chunk 1 (middle anchor) text run 1 at (88.60,110.00) startOffset 0 endOffset 2 width 22.80: "50"
-        RenderSVGText {text} at (182,91) size 36x24 contains 1 chunk(s)
+        RenderSVGText {text} at (182,92) size 36x23 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 35x23
             chunk 1 (middle anchor) text run 1 at (182.90,110.00) startOffset 0 endOffset 3 width 34.20: "5e1"
-        RenderSVGText {text} at (280,91) size 40x24 contains 1 chunk(s)
+        RenderSVGText {text} at (280,92) size 40x23 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 40x23
             chunk 1 (middle anchor) text run 1 at (280.20,110.00) startOffset 0 endOffset 4 width 39.60: ".5e2"
     RenderSVGContainer {g} at (16,518) size 388x60

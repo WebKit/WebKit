@@ -101,7 +101,11 @@ inline bool matchesFrame(const WebExtensionFrameIdentifier& identifier, const We
 inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(WebCore::FrameIdentifier frameIdentifier)
 {
     WebExtensionFrameIdentifier result { frameIdentifier.object().toUInt64() };
-    ASSERT(result.isValid());
+    if (!result.isValid()) {
+        ASSERT_NOT_REACHED();
+        return WebExtensionFrameConstants::NoneIdentifier;
+    }
+
     return result;
 }
 
@@ -136,7 +140,11 @@ inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(WKFrameInfo *fr
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WebExtensionFrameIdentifier result { frameInfo._handle.frameID };
 ALLOW_DEPRECATED_DECLARATIONS_END
-    ASSERT(result.isValid());
+    if (!result.isValid()) {
+        ASSERT_NOT_REACHED();
+        return WebExtensionFrameConstants::NoneIdentifier;
+    }
+
     return result;
 }
 #endif // __OBJC__

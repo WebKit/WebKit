@@ -55,7 +55,7 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    static ptrdiff_t valueOffset()
+    static constexpr ptrdiff_t valueOffset()
     {
         return OBJECT_OFFSETOF(Exception, m_value);
     }

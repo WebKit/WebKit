@@ -68,18 +68,13 @@ size_t ImageBufferIOSurfaceBackend::calculateMemoryCost(const Parameters& parame
     return ImageBufferBackend::calculateMemoryCost(parameters.backendSize, calculateBytesPerRow(parameters.backendSize));
 }
 
-size_t ImageBufferIOSurfaceBackend::calculateExternalMemoryCost(const Parameters& parameters)
-{
-    return calculateMemoryCost(parameters);
-}
-
 std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const ImageBufferCreationContext& creationContext)
 {
     IntSize backendSize = calculateSafeBackendSize(parameters);
     if (backendSize.isEmpty())
         return nullptr;
 
-    auto surface = IOSurface::create(creationContext.surfacePool, backendSize, parameters.colorSpace, IOSurface::Name::ImageBuffer, IOSurface::formatForPixelFormat(parameters.pixelFormat));
+    auto surface = IOSurface::create(creationContext.surfacePool, backendSize, parameters.colorSpace, IOSurface::Name::ImageBuffer, convertToIOSurfaceFormat(parameters.pixelFormat));
     if (!surface)
         return nullptr;
 
@@ -189,14 +184,14 @@ void ImageBufferIOSurfaceBackend::getPixelBuffer(const IntRect& srcRect, PixelBu
 {
     const_cast<ImageBufferIOSurfaceBackend*>(this)->prepareForExternalRead();
     if (auto lock = m_surface->lock<IOSurface::AccessMode::ReadOnly>())
-        ImageBufferBackend::getPixelBuffer(srcRect, lock->surfaceBaseAddress(), destination);
+        ImageBufferBackend::getPixelBuffer(srcRect, static_cast<const uint8_t*>(lock->surfaceBaseAddress()), destination);
 }
 
 void ImageBufferIOSurfaceBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     prepareForExternalWrite();
     if (auto lock = m_surface->lock<IOSurface::AccessMode::ReadWrite>())
-        ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, lock->surfaceBaseAddress());
+        ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, static_cast<uint8_t*>(lock->surfaceBaseAddress()));
 }
 
 bool ImageBufferIOSurfaceBackend::canMapBackingStore() const

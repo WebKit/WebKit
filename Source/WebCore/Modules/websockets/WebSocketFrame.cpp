@@ -94,7 +94,7 @@ WebSocketFrame::ParseFrameResult WebSocketFrame::parseFrame(uint8_t* data, size_
     constexpr uint64_t maxPayloadLength = UINT64_C(0x7FFFFFFFFFFFFFFF);
     size_t maskingKeyLength = masked ? maskingKeyWidthInBytes : 0;
     if (payloadLength64 > maxPayloadLength || payloadLength64 + maskingKeyLength > std::numeric_limits<size_t>::max()) {
-        errorString = makeString("WebSocket frame length too large: ", payloadLength64, " bytes");
+        errorString = makeString("WebSocket frame length too large: "_s, payloadLength64, " bytes"_s);
         return FrameError;
     }
     size_t payloadLength = static_cast<size_t>(payloadLength64);

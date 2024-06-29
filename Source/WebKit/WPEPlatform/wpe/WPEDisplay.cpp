@@ -29,6 +29,7 @@
 #include "WPEDisplayPrivate.h"
 #include "WPEEGLError.h"
 #include "WPEExtensions.h"
+#include "WPEInputMethodContextNone.h"
 #include <epoxy/egl.h>
 #include <gio/gio.h>
 #include <mutex>
@@ -57,6 +58,7 @@ struct _WPEDisplayPrivate {
     GUniqueOutPtr<GError> eglDisplayError;
     HashMap<String, bool> extensionsMap;
     GRefPtr<WPEBufferDMABufFormats> preferredDMABufFormats;
+    GRefPtr<WPEKeymap> keymap;
 };
 
 WEBKIT_DEFINE_ABSTRACT_TYPE(WPEDisplay, wpe_display, G_TYPE_OBJECT)
@@ -141,7 +143,7 @@ static void wpe_display_class_init(WPEDisplayClass* displayClass)
 WPEView* wpeDisplayCreateView(WPEDisplay* display)
 {
     auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
-    return wpeDisplayClass->create_view ? wpeDisplayClass->create_view(display) : nullptr;
+    return wpeDisplayClass->create_view(display);
 }
 
 bool wpeDisplayCheckEGLExtension(WPEDisplay* display, const char* extensionName)
@@ -151,6 +153,12 @@ bool wpeDisplayCheckEGLExtension(WPEDisplay* display, const char* extensionName)
         return eglDisplay ? epoxy_has_egl_extension(eglDisplay, extensionName) : false;
     });
     return addResult.iterator->value;
+}
+
+WPEInputMethodContext* wpeDisplayCreateInputMethodContext(WPEDisplay* display)
+{
+    auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
+    return wpeDisplayClass->create_input_method_context ? wpeDisplayClass->create_input_method_context(display) : wpeInputMethodContextNoneNew();
 }
 
 /**
@@ -295,6 +303,9 @@ gpointer wpe_display_get_egl_display(WPEDisplay* display, GError** error)
  *
  * Get the #WPEKeymap of @display
  *
+ * As a fallback, a #WPEKeymapXKB for the pc105 "US" layout is returned if the actual display
+ * implementation does not provide a keymap itself.
+ *
  * Returns: (transfer none): a #WPEKeymap or %NULL in case of error
  */
 WPEKeymap* wpe_display_get_keymap(WPEDisplay* display, GError** error)
@@ -303,8 +314,10 @@ WPEKeymap* wpe_display_get_keymap(WPEDisplay* display, GError** error)
 
     auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
     if (!wpeDisplayClass->get_keymap) {
-        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_NOT_SUPPORTED, "Operation not supported");
-        return nullptr;
+        auto* priv = display->priv;
+        if (!priv->keymap)
+            priv->keymap = adoptGRef(wpe_keymap_xkb_new());
+        return priv->keymap.get();
     }
 
     return wpeDisplayClass->get_keymap(display, error);
@@ -523,3 +536,4 @@ const char* wpe_display_get_drm_render_node(WPEDisplay* display)
     auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
     return wpeDisplayClass->get_drm_render_node ? wpeDisplayClass->get_drm_render_node(display) : nullptr;
 }
+

@@ -130,7 +130,7 @@ private:
 
     void addCommitHandlers();
     void startRenderingUpdateTimer();
-    void didCompleteRenderingUpdateDisplay() final;
+    void didCompleteRenderingUpdateDisplayFlush(bool flushSucceeded);
 
     TransactionID takeNextTransactionID() { return m_currentTransactionID.increment(); }
 
@@ -146,7 +146,8 @@ private:
     public:
         static Ref<BackingStoreFlusher> create(Ref<IPC::Connection>&&);
 
-        void flush(UniqueRef<IPC::Encoder>&&, Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>>&&);
+        // Returns true when flush succeeds. False if it failed, for example due to timeout.
+        bool flush(UniqueRef<IPC::Encoder>&&, Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>>&&);
 
         bool hasPendingFlush() const { return m_hasPendingFlush; }
         void markHasPendingFlush()
@@ -162,7 +163,7 @@ private:
         std::atomic<bool> m_hasPendingFlush { false };
     };
 
-    std::unique_ptr<RemoteLayerTreeContext> m_remoteLayerTreeContext;
+    Ref<RemoteLayerTreeContext> m_remoteLayerTreeContext;
     
     struct RootLayerInfo {
         Ref<WebCore::GraphicsLayer> layer;

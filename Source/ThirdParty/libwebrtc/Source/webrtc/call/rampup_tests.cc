@@ -16,9 +16,7 @@
 #include "absl/strings/string_view.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
 #include "api/rtc_event_log_output_file.h"
-#include "api/task_queue/default_task_queue_factory.h"
 #include "api/task_queue/task_queue_base.h"
-#include "api/task_queue/task_queue_factory.h"
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
 #include "api/test/metrics/metric.h"
 #include "call/fake_network_pipe.h"
@@ -135,6 +133,7 @@ class RampUpTester::VideoStreamFactory
 
  private:
   std::vector<VideoStream> CreateEncoderStreams(
+      const FieldTrialsView& /*field_trials*/,
       int frame_width,
       int frame_height,
       const VideoEncoderConfig& encoder_config) override {
@@ -565,30 +564,29 @@ void RampUpDownUpTester::EvolveTestState(int bitrate_bps, bool suspended) {
 
 class RampUpTest : public test::CallTest {
  public:
-  RampUpTest()
-      : task_queue_factory_(CreateDefaultTaskQueueFactory()),
-        rtc_event_log_factory_(task_queue_factory_.get()) {
+  RampUpTest() {
     std::string dump_name(absl::GetFlag(FLAGS_ramp_dump_name));
     if (!dump_name.empty()) {
-      send_event_log_ = rtc_event_log_factory_.CreateRtcEventLog(
-          RtcEventLog::EncodingType::Legacy);
-      recv_event_log_ = rtc_event_log_factory_.CreateRtcEventLog(
-          RtcEventLog::EncodingType::Legacy);
+      std::unique_ptr<RtcEventLog> send_event_log =
+          rtc_event_log_factory_.Create(env());
+      std::unique_ptr<RtcEventLog> recv_event_log =
+          rtc_event_log_factory_.Create(env());
       bool event_log_started =
-          send_event_log_->StartLogging(
+          send_event_log->StartLogging(
               std::make_unique<RtcEventLogOutputFile>(
                   dump_name + ".send.rtc.dat", RtcEventLog::kUnlimitedOutput),
               RtcEventLog::kImmediateOutput) &&
-          recv_event_log_->StartLogging(
+          recv_event_log->StartLogging(
               std::make_unique<RtcEventLogOutputFile>(
                   dump_name + ".recv.rtc.dat", RtcEventLog::kUnlimitedOutput),
               RtcEventLog::kImmediateOutput);
       RTC_DCHECK(event_log_started);
+      SetSendEventLog(std::move(send_event_log));
+      SetRecvEventLog(std::move(recv_event_log));
     }
   }
 
  private:
-  const std::unique_ptr<TaskQueueFactory> task_queue_factory_;
   RtcEventLogFactory rtc_event_log_factory_;
 };
 

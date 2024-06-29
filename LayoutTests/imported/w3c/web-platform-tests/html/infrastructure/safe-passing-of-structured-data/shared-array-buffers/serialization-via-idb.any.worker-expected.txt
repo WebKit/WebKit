@@ -1,12 +1,4 @@
 
-FAIL SharedArrayBuffer cloning via IndexedDB: basic case assert_throws_dom: function "() => {
-      store.put({ key: 1, property: sab });
-    }" did not throw
-FAIL SharedArrayBuffer cloning via the IndexedDB: is interleaved correctly assert_throws_dom: function "() => {
-      store.put({ key: 1, property: [
-        { get x() { getter1Called = true; return 5; } },
-        sab,
-        { get x() { getter2Called = true; return 5; } }
-      ]});
-    }" did not throw
+PASS SharedArrayBuffer cloning via IndexedDB: basic case
+PASS SharedArrayBuffer cloning via the IndexedDB: is interleaved correctly
 

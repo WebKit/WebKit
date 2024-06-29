@@ -1348,6 +1348,9 @@ typedef struct macroblock {
   //! Motion vector from superblock MV derived from int_pro_motion() in
   // the variance_partitioning.
   int_mv sb_me_mv;
+  //! Flag to indicate if a fixed partition should be used, only if the
+  // speed feature rt_sf->use_fast_fixed_part is enabled.
+  int sb_force_fixed_part;
   //! SSE of the current predictor.
   unsigned int pred_sse[REF_FRAMES];
   //! Prediction for ML based partition.
@@ -1394,6 +1397,13 @@ typedef struct macroblock {
    * first-pass when superblock is searched twice consecutively.
    */
   struct SB_FIRST_PASS_STATS *sb_fp_stats;
+
+#if CONFIG_PARTITION_SEARCH_ORDER
+  /*!\brief Pointer to RD_STATS structure to be used in
+   * av1_rd_partition_search().
+   */
+  RD_STATS *rdcost;
+#endif  // CONFIG_PARTITION_SEARCH_ORDER
 } MACROBLOCK;
 #undef SINGLE_REF_MODES
 

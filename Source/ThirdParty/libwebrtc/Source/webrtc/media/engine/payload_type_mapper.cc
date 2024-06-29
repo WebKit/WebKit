@@ -19,7 +19,7 @@
 
 namespace cricket {
 
-webrtc::SdpAudioFormat AudioCodecToSdpAudioFormat(const AudioCodec& ac) {
+webrtc::SdpAudioFormat AudioCodecToSdpAudioFormat(const Codec& ac) {
   return webrtc::SdpAudioFormat(ac.name, ac.clockrate, ac.channels, ac.params);
 }
 
@@ -122,7 +122,7 @@ absl::optional<int> PayloadTypeMapper::FindMappingFor(
   return absl::nullopt;
 }
 
-absl::optional<AudioCodec> PayloadTypeMapper::ToAudioCodec(
+absl::optional<Codec> PayloadTypeMapper::ToAudioCodec(
     const webrtc::SdpAudioFormat& format) {
   // TODO(ossu): We can safely set bitrate to zero here, since that field is
   // not presented in the SDP. It is used to ferry around some target bitrate
@@ -131,7 +131,7 @@ absl::optional<AudioCodec> PayloadTypeMapper::ToAudioCodec(
   // ACM or NetEq.
   auto opt_payload_type = GetMappingFor(format);
   if (opt_payload_type) {
-    AudioCodec codec =
+    Codec codec =
         cricket::CreateAudioCodec(*opt_payload_type, format.name,
                                   format.clockrate_hz, format.num_channels);
     codec.params = format.parameters;

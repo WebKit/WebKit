@@ -52,6 +52,11 @@ WebGLDefaultFramebuffer::WebGLDefaultFramebuffer(WebGLRenderingContextBase& cont
     }
 }
 
+IntSize WebGLDefaultFramebuffer::size() const
+{
+    return m_context.protectedGraphicsContextGL()->getInternalFramebufferSize();
+}
+
 void WebGLDefaultFramebuffer::reshape(IntSize size)
 {
     m_context.protectedGraphicsContextGL()->reshape(size.width(), size.height());
@@ -65,6 +70,15 @@ void WebGLDefaultFramebuffer::markBuffersClear(GCGLbitfield clearBuffers)
 void WebGLDefaultFramebuffer::markAllUnpreservedBuffersDirty()
 {
     m_dirtyBuffers = m_unpreservedBuffers;
+}
+
+void WebGLDefaultFramebuffer::markAllBuffersDirty()
+{
+    m_dirtyBuffers |= GraphicsContextGL::COLOR_BUFFER_BIT;
+    if (m_hasStencil)
+        m_dirtyBuffers |= GraphicsContextGL::STENCIL_BUFFER_BIT;
+    if (m_hasDepth)
+        m_dirtyBuffers |= GraphicsContextGL::DEPTH_BUFFER_BIT;
 }
 
 }

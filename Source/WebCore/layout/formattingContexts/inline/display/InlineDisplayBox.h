@@ -159,6 +159,7 @@ struct Box {
     void setIsFirstForLayoutBox(bool isFirstBox) { m_isFirstForLayoutBox = isFirstBox; }
     void setIsLastForLayoutBox(bool isLastBox) { m_isLastForLayoutBox = isLastBox; }
 
+    bool isInGlyphDisplayListCache() const { return m_isInGlyphDisplayListCache; }
     void setIsInGlyphDisplayListCache() { m_isInGlyphDisplayListCache = true; }
     void removeFromGlyphDisplayListCache();
 

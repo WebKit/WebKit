@@ -29,11 +29,16 @@
 #include "WPEDisplayWaylandPrivate.h"
 #include "WPEEGLError.h"
 #include "WPEExtensions.h"
+#include "WPEInputMethodContextWaylandV1.h"
+#include "WPEInputMethodContextWaylandV3.h"
 #include "WPEMonitorWaylandPrivate.h"
+#include "WPEToplevelWayland.h"
 #include "WPEViewWayland.h"
 #include "WPEWaylandCursor.h"
 #include "WPEWaylandSeat.h"
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
+#include "text-input-unstable-v1-client-protocol.h"
+#include "text-input-unstable-v3-client-protocol.h"
 #include "xdg-shell-client-protocol.h"
 #include <gio/gio.h>
 #include <wtf/HashSet.h>
@@ -68,6 +73,10 @@ struct _WPEDisplayWaylandPrivate {
 #if USE(LIBDRM)
     struct zwp_linux_dmabuf_feedback_v1* dmabufFeedback;
 #endif
+    struct zwp_text_input_manager_v1* textInputManagerV1;
+    struct zwp_text_input_v1* textInputV1;
+    struct zwp_text_input_manager_v3* textInputManagerV3;
+    struct zwp_text_input_v3* textInputV3;
     Vector<std::pair<uint32_t, uint64_t>> linuxDMABufFormats;
     std::unique_ptr<WPE::WaylandSeat> wlSeat;
     std::unique_ptr<WPE::WaylandCursor> wlCursor;
@@ -174,6 +183,14 @@ static void wpeDisplayWaylandDispose(GObject* object)
         auto monitor = priv->monitors.takeLast();
         wpe_monitor_invalidate(monitor.get());
     }
+    if (priv->textInputManagerV1) {
+        g_clear_pointer(&priv->textInputV1, zwp_text_input_v1_destroy);
+        g_clear_pointer(&priv->textInputManagerV1, zwp_text_input_manager_v1_destroy);
+    }
+    if (priv->textInputManagerV3) {
+        g_clear_pointer(&priv->textInputV3, zwp_text_input_v3_destroy);
+        g_clear_pointer(&priv->textInputManagerV3, zwp_text_input_manager_v3_destroy);
+    }
 #if USE(LIBDRM)
     g_clear_pointer(&priv->dmabufFeedback, zwp_linux_dmabuf_feedback_v1_destroy);
 #endif
@@ -209,6 +226,12 @@ const struct wl_registry_listener registryListener = {
             priv->wlSHM = static_cast<struct wl_shm*>(wl_registry_bind(registry, name, &wl_shm_interface, 1));
         else if (!std::strcmp(interface, "zwp_linux_dmabuf_v1"))
             priv->linuxDMABuf = static_cast<struct zwp_linux_dmabuf_v1*>(wl_registry_bind(registry, name, &zwp_linux_dmabuf_v1_interface, std::min<uint32_t>(version, 4)));
+        else if (!std::strcmp(interface, "zwp_text_input_manager_v1")) {
+            priv->textInputManagerV1 = static_cast<struct zwp_text_input_manager_v1*>(wl_registry_bind(registry, name, &zwp_text_input_manager_v1_interface, 1));
+            priv->textInputV1 = zwp_text_input_manager_v1_create_text_input(priv->textInputManagerV1);
+        } else if (!std::strcmp(interface, "zwp_text_input_manager_v3")) {
+            priv->textInputManagerV3 = static_cast<struct zwp_text_input_manager_v3*>(wl_registry_bind(registry, name, &zwp_text_input_manager_v3_interface, 1));
+        }
     },
     // global_remove
     [](void* data, struct wl_registry*, uint32_t name)
@@ -317,6 +340,52 @@ static void wpeDisplayWaylandInitializeDRMDeviceFromEGL(WPEDisplayWayland* displ
         priv->drmRenderNode = eglQueryDeviceStringEXT(eglDevice, EGL_DRM_RENDER_NODE_FILE_EXT);
 }
 
+static gboolean wpeDisplayWaylandSetup(WPEDisplayWayland* display, GError** error)
+{
+    auto* priv = display->priv;
+    priv->eventSource = wpeDisplayWaylandCreateEventSource(display);
+
+    auto* registry = wl_display_get_registry(priv->wlDisplay);
+    wl_registry_add_listener(registry, &registryListener, display);
+    if (wl_display_roundtrip(priv->wlDisplay) < 0) {
+        g_clear_pointer(&priv->wlDisplay, wl_display_disconnect);
+        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "Failed to connect to default Wayland display");
+        return FALSE;
+    }
+
+    if (priv->xdgWMBase)
+        xdg_wm_base_add_listener(priv->xdgWMBase, &xdgWMBaseListener, nullptr);
+    if (priv->wlSeat) {
+        priv->wlCursor = makeUnique<WPE::WaylandCursor>(display);
+        priv->wlSeat->startListening();
+    }
+
+    if (priv->textInputManagerV3) {
+        // Using this interface needs a valid seat. Do not keep around the object
+        // without a seat, to give a chance for a different IM interface to be used.
+        if (priv->wlSeat)
+            priv->textInputV3 = zwp_text_input_manager_v3_get_text_input(priv->textInputManagerV3, priv->wlSeat->seat());
+        else
+            g_clear_pointer(&priv->textInputManagerV3, zwp_text_input_manager_v3_destroy);
+    }
+
+    if (priv->linuxDMABuf) {
+#if USE(LIBDRM)
+        if (zwp_linux_dmabuf_v1_get_version(priv->linuxDMABuf) >= ZWP_LINUX_DMABUF_V1_GET_DEFAULT_FEEDBACK_SINCE_VERSION) {
+            priv->dmabufFeedback = zwp_linux_dmabuf_v1_get_default_feedback(priv->linuxDMABuf);
+            zwp_linux_dmabuf_feedback_v1_add_listener(priv->dmabufFeedback, &linuxDMABufFeedbackListener, display);
+        }
+#endif
+        zwp_linux_dmabuf_v1_add_listener(priv->linuxDMABuf, &linuxDMABufListener, display);
+        wl_display_roundtrip(priv->wlDisplay);
+    }
+
+    if (priv->drmDevice.isNull())
+        wpeDisplayWaylandInitializeDRMDeviceFromEGL(display);
+
+    return TRUE;
+}
+
 static gboolean wpeDisplayWaylandConnect(WPEDisplay* display, GError** error)
 {
     auto* displayWayland = WPE_DISPLAY_WAYLAND(display);
@@ -332,47 +401,33 @@ static gboolean wpeDisplayWaylandConnect(WPEDisplay* display, GError** error)
         return FALSE;
     }
 
-    priv->eventSource = wpeDisplayWaylandCreateEventSource(displayWayland);
-
-    auto* registry = wl_display_get_registry(priv->wlDisplay);
-    wl_registry_add_listener(registry, &registryListener, display);
-    if (wl_display_roundtrip(priv->wlDisplay) < 0) {
-        g_clear_pointer(&priv->wlDisplay, wl_display_disconnect);
-        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "Failed to connect to default Wayland display");
-        return FALSE;
-    }
-
-    if (priv->xdgWMBase)
-        xdg_wm_base_add_listener(priv->xdgWMBase, &xdgWMBaseListener, nullptr);
-    if (priv->wlSeat) {
-        priv->wlCursor = makeUnique<WPE::WaylandCursor>(displayWayland);
-        priv->wlSeat->startListening();
-    }
-
-    if (priv->linuxDMABuf) {
-#if USE(LIBDRM)
-        if (zwp_linux_dmabuf_v1_get_version(priv->linuxDMABuf) >= ZWP_LINUX_DMABUF_V1_GET_DEFAULT_FEEDBACK_SINCE_VERSION) {
-            priv->dmabufFeedback = zwp_linux_dmabuf_v1_get_default_feedback(priv->linuxDMABuf);
-            zwp_linux_dmabuf_feedback_v1_add_listener(priv->dmabufFeedback, &linuxDMABufFeedbackListener, display);
-        }
-#endif
-        zwp_linux_dmabuf_v1_add_listener(priv->linuxDMABuf, &linuxDMABufListener, display);
-        wl_display_roundtrip(priv->wlDisplay);
-    }
-
-    if (priv->drmDevice.isNull())
-        wpeDisplayWaylandInitializeDRMDeviceFromEGL(displayWayland);
-
-    return TRUE;
+    return wpeDisplayWaylandSetup(displayWayland, error);
 }
 
 static WPEView* wpeDisplayWaylandCreateView(WPEDisplay* display)
+{
+    auto* displayWayland = WPE_DISPLAY_WAYLAND(display);
+    auto* view = wpe_view_wayland_new(displayWayland);
+
+    // FIXME: create the toplevel conditionally.
+    GRefPtr<WPEToplevel> toplevel = adoptGRef(wpe_toplevel_wayland_new(displayWayland));
+    wpe_view_set_toplevel(view, toplevel.get());
+
+    return view;
+}
+
+static WPEInputMethodContext* wpeDisplayWaylandCreateInputMethodContext(WPEDisplay* display)
 {
     auto* priv = WPE_DISPLAY_WAYLAND(display)->priv;
     if (!priv->wlDisplay || !priv->wlCompositor)
         return nullptr;
 
-    return wpe_view_wayland_new(WPE_DISPLAY_WAYLAND(display));
+    if (priv->textInputManagerV3)
+        return wpe_im_context_wayland_v3_new(WPE_DISPLAY_WAYLAND(display));
+    if (priv->textInputManagerV1)
+        return wpe_im_context_wayland_v1_new(WPE_DISPLAY_WAYLAND(display));
+
+    return nullptr;
 }
 
 static gpointer wpeDisplayWaylandGetEGLDisplay(WPEDisplay* display, GError** error)
@@ -472,6 +527,16 @@ struct zwp_linux_dmabuf_v1* wpeDisplayWaylandGetLinuxDMABuf(WPEDisplayWayland* d
     return display->priv->linuxDMABuf;
 }
 
+struct zwp_text_input_v1* wpeDisplayWaylandGetTextInputV1(WPEDisplayWayland* display)
+{
+    return display->priv->textInputV1;
+}
+
+struct zwp_text_input_v3* wpeDisplayWaylandGetTextInputV3(WPEDisplayWayland* display)
+{
+    return display->priv->textInputV3;
+}
+
 static void wpe_display_wayland_class_init(WPEDisplayWaylandClass* displayWaylandClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(displayWaylandClass);
@@ -480,6 +545,7 @@ static void wpe_display_wayland_class_init(WPEDisplayWaylandClass* displayWaylan
     WPEDisplayClass* displayClass = WPE_DISPLAY_CLASS(displayWaylandClass);
     displayClass->connect = wpeDisplayWaylandConnect;
     displayClass->create_view = wpeDisplayWaylandCreateView;
+    displayClass->create_input_method_context = wpeDisplayWaylandCreateInputMethodContext;
     displayClass->get_egl_display = wpeDisplayWaylandGetEGLDisplay;
     displayClass->get_keymap = wpeDisplayWaylandGetKeymap;
     displayClass->get_preferred_dma_buf_formats = wpeDisplayWaylandGetPreferredDMABufFormats;
@@ -531,7 +597,7 @@ gboolean wpe_display_wayland_connect(WPEDisplayWayland* display, const char* nam
         return FALSE;
     }
 
-    return TRUE;
+    return wpeDisplayWaylandSetup(display, error);
 }
 
 /**

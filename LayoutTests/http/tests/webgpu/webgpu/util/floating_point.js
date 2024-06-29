@@ -5154,7 +5154,7 @@ class FPAbstractTraits extends FPTraits {
   faceForwardIntervals = this.unimplementedFaceForward.bind(this);
   floorInterval = this.floorIntervalImpl.bind(this);
   fmaInterval = this.unimplementedScalarTripleToInterval.bind(this, 'fmaInterval');
-  fractInterval = this.fractIntervalImpl.bind(this);
+  fractInterval = this.unimplementedScalarToInterval.bind(this, 'fractInterval');
   inverseSqrtInterval = this.unimplementedScalarToInterval.bind(
     this,
     'inverseSqrtInterval'
@@ -5175,15 +5175,22 @@ class FPAbstractTraits extends FPTraits {
   );
   mixIntervals = [this.mixImpreciseInterval, this.mixPreciseInterval];
   modfInterval = this.modfIntervalImpl.bind(this);
-  multiplicationInterval = this.multiplicationIntervalImpl.bind(this);
+  multiplicationInterval = this.unimplementedScalarPairToInterval.bind(
+    this,
+    'multiplicationInterval'
+  );
   multiplicationMatrixMatrixInterval = this.unimplementedMatrixPairToMatrix.bind(
     this,
     'multiplicationMatrixMatrixInterval'
   );
-  multiplicationMatrixScalarInterval =
-  this.multiplicationMatrixScalarIntervalImpl.bind(this);
-  multiplicationScalarMatrixInterval =
-  this.multiplicationScalarMatrixIntervalImpl.bind(this);
+  multiplicationMatrixScalarInterval = this.unimplementedMatrixScalarToMatrix.bind(
+    this,
+    'multiplicationMatrixScalarInterval'
+  );
+  multiplicationScalarMatrixInterval = this.unimplementedScalarMatrixToMatrix.bind(
+    this,
+    'multiplicationScalarMatrixInterval'
+  );
   multiplicationMatrixVectorInterval = this.unimplementedMatrixVectorToVector.bind(
     this,
     'multiplicationMatrixVectorInterval'
@@ -5219,9 +5226,14 @@ class FPAbstractTraits extends FPTraits {
   );
   sqrtInterval = this.unimplementedScalarToInterval.bind(this, 'sqrtInterval');
   stepInterval = this.stepIntervalImpl.bind(this);
-  subtractionInterval = this.subtractionIntervalImpl.bind(this);
-  subtractionMatrixMatrixInterval =
-  this.subtractionMatrixMatrixIntervalImpl.bind(this);
+  subtractionInterval = this.unimplementedScalarPairToInterval.bind(
+    this,
+    'subtractionInterval'
+  );
+  subtractionMatrixMatrixInterval = this.unimplementedMatrixPairToMatrix.bind(
+    this,
+    'subtractionMatrixMatrixInterval'
+  );
   tanInterval = this.unimplementedScalarToInterval.bind(this, 'tanInterval');
   tanhInterval = this.unimplementedScalarToInterval.bind(this, 'tanhInterval');
   transposeInterval = this.transposeIntervalImpl.bind(this);

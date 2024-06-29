@@ -44,7 +44,7 @@ bool WebExtensionContext::isAlarmsMessageAllowed()
 
 void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterval, Seconds repeatInterval)
 {
-    m_alarmMap.set(name, WebExtensionAlarm::create(name, initialInterval, repeatInterval, [&](const WebExtensionAlarm& alarm) {
+    m_alarmMap.set(name, WebExtensionAlarm::create(name, initialInterval, repeatInterval, [this, protectedThis = Ref { *this }](const WebExtensionAlarm& alarm) {
         fireAlarmsEventIfNeeded(alarm);
     }));
 }

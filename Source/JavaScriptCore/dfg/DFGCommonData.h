@@ -111,7 +111,7 @@ public:
     
     void validateReferences(const TrackedReferences&);
 
-    static ptrdiff_t frameRegisterCountOffset() { return OBJECT_OFFSETOF(CommonData, frameRegisterCount); }
+    static constexpr ptrdiff_t frameRegisterCountOffset() { return OBJECT_OFFSETOF(CommonData, frameRegisterCount); }
     
     void clearWatchpoints();
 

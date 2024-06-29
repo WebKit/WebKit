@@ -62,6 +62,7 @@
 #include "include/private/base/SkOnce.h"
 #include "include/utils/SkParsePath.h"
 #include "include/utils/SkShadowUtils.h"
+#include "src/base/SkFloatBits.h"
 #include "src/core/SkPathPriv.h"
 #include "src/core/SkResourceCache.h"
 #include "src/image/SkImage_Base.h"
@@ -975,8 +976,8 @@ public:
         fCallback.call<void>("freeSrc");
     }
 
-    std::unique_ptr<GrExternalTexture> generateExternalTexture(
-            GrRecordingContext* ctx, skgpu::Mipmapped mipmapped) override {
+    std::unique_ptr<GrExternalTexture> generateExternalTexture(GrRecordingContext* ctx,
+                                                               skgpu::Mipmapped) override {
         GrGLTextureInfo glInfo;
 
         // This callback is defined in webgl.js
@@ -987,8 +988,11 @@ public:
         glInfo.fFormat = GR_GL_RGBA8;
         glInfo.fTarget = GR_GL_TEXTURE_2D;
 
-        auto backendTexture =
-                GrBackendTextures::MakeGL(fInfo.width(), fInfo.height(), mipmapped, glInfo);
+        // These textures are unlikely to actually have mipmaps generated (we might even be on
+        // WebGL 1, where Skia doesn't support mipmapping at all). Therefore, we ignore any request
+        // for mipmapping here. See: b/338095525
+        auto backendTexture = GrBackendTextures::MakeGL(
+                fInfo.width(), fInfo.height(), skgpu::Mipmapped::kNo, glInfo);
 
         // In order to bind the image source to the texture, makeTexture has changed which
         // texture is "in focus" for the WebGL context.
@@ -1687,13 +1691,16 @@ EMSCRIPTEN_BINDINGS(Skia) {
                                  SkTileMode tx, SkTileMode ty,
                                  float B, float C, // See SkSamplingOptions.h for docs.
                                  WASMPointerF32 mPtr)->sk_sp<SkShader> {
-            return self->makeShader(tx, ty, SkSamplingOptions({B, C}), OptionalMatrix(mPtr));
+            OptionalMatrix localMatrix(mPtr);
+            return self->makeShader(tx, ty, SkSamplingOptions({B, C}), mPtr ? &localMatrix
+                                                                            : nullptr);
         }), allow_raw_pointers())
         .function("_makeShaderOptions", optional_override([](sk_sp<SkImage> self,
                                  SkTileMode tx, SkTileMode ty,
                                  SkFilterMode filter, SkMipmapMode mipmap,
                                  WASMPointerF32 mPtr)->sk_sp<SkShader> {
-            return self->makeShader(tx, ty, {filter, mipmap}, OptionalMatrix(mPtr));
+            OptionalMatrix localMatrix(mPtr);
+            return self->makeShader(tx, ty, {filter, mipmap}, mPtr ? &localMatrix : nullptr);
         }), allow_raw_pointers())
 #if defined(ENABLE_GPU)
         .function("_readPixels", optional_override([](sk_sp<SkImage> self,
@@ -2037,7 +2044,7 @@ EMSCRIPTEN_BINDINGS(Skia) {
                                  WASMPointerF32 mPtr, WASMPointerF32 rPtr) -> sk_sp<SkShader> {
             OptionalMatrix localMatrix(mPtr);
             SkRect* tileRect = reinterpret_cast<SkRect*>(rPtr);
-            return self.makeShader(tmx, tmy, mode, &localMatrix, tileRect);
+            return self.makeShader(tmx, tmy, mode, mPtr ? &localMatrix : nullptr, tileRect);
         }), allow_raw_pointers())
         .function("_cullRect", optional_override([](SkPicture& self,
                                                      WASMPointerF32 fPtr)->void {
@@ -2103,11 +2110,13 @@ EMSCRIPTEN_BINDINGS(Skia) {
              if (colorType == SkColorType::kRGBA_F32_SkColorType) {
                  const SkColor4f* colors  = reinterpret_cast<const SkColor4f*>(cPtr);
                  return SkGradientShader::MakeLinear(points, colors, colorSpace, positions, count,
-                                                     mode, flags, &localMatrix);
+                                                     mode, flags,
+                                                     mPtr ? &localMatrix : nullptr);
              } else if (colorType == SkColorType::kRGBA_8888_SkColorType) {
                  const SkColor* colors  = reinterpret_cast<const SkColor*>(cPtr);
                  return SkGradientShader::MakeLinear(points, colors, positions, count,
-                                                     mode, flags, &localMatrix);
+                                                     mode, flags,
+                                                     mPtr ? &localMatrix : nullptr);
              }
              SkDebugf("%d is not an accepted colorType\n", colorType);
              return nullptr;
@@ -2124,11 +2133,13 @@ EMSCRIPTEN_BINDINGS(Skia) {
             if (colorType == SkColorType::kRGBA_F32_SkColorType) {
                const SkColor4f* colors  = reinterpret_cast<const SkColor4f*>(cPtr);
                return SkGradientShader::MakeRadial({cx, cy}, radius, colors, colorSpace,
-                                                   positions, count, mode, flags, &localMatrix);
+                                                   positions, count, mode, flags,
+                                                   mPtr ? &localMatrix : nullptr);
             } else if (colorType == SkColorType::kRGBA_8888_SkColorType) {
                const SkColor* colors  = reinterpret_cast<const SkColor*>(cPtr);
                return SkGradientShader::MakeRadial({cx, cy}, radius, colors, positions,
-                                                   count, mode, flags, &localMatrix);
+                                                   count, mode, flags,
+                                                   mPtr ? &localMatrix : nullptr);
             }
             SkDebugf("%d is not an accepted colorType\n", colorType);
             return nullptr;
@@ -2147,12 +2158,12 @@ EMSCRIPTEN_BINDINGS(Skia) {
                const SkColor4f* colors  = reinterpret_cast<const SkColor4f*>(cPtr);
                return SkGradientShader::MakeSweep(cx, cy, colors, colorSpace, positions, count,
                                                   mode, startAngle, endAngle, flags,
-                                                  &localMatrix);
+                                                  mPtr ? &localMatrix : nullptr);
             } else if (colorType == SkColorType::kRGBA_8888_SkColorType) {
                const SkColor* colors  = reinterpret_cast<const SkColor*>(cPtr);
                return SkGradientShader::MakeSweep(cx, cy, colors, positions, count,
                                                   mode, startAngle, endAngle, flags,
-                                                  &localMatrix);
+                                                  mPtr ? &localMatrix : nullptr);
             }
             SkDebugf("%d is not an accepted colorType\n", colorType);
             return nullptr;
@@ -2182,7 +2193,8 @@ EMSCRIPTEN_BINDINGS(Skia) {
                return SkGradientShader::MakeTwoPointConical(startAndEnd[0], startRadius,
                                                             startAndEnd[1], endRadius,
                                                             colors, colorSpace, positions, count, mode,
-                                                            flags, &localMatrix);
+                                                            flags,
+                                                            mPtr ? &localMatrix : nullptr);
             } else if (colorType == SkColorType::kRGBA_8888_SkColorType) {
                 const SkColor* colors = reinterpret_cast<const SkColor*>(cPtr);
                 return SkGradientShader::MakeTwoPointConical(startAndEnd[0],
@@ -2194,7 +2206,7 @@ EMSCRIPTEN_BINDINGS(Skia) {
                                                              count,
                                                              mode,
                                                              flags,
-                                                             &localMatrix);
+                                                             mPtr ? &localMatrix : nullptr);
             }
             SkDebugf("%d is not an accepted colorType\n", colorType);
             return nullptr;
@@ -2259,7 +2271,7 @@ EMSCRIPTEN_BINDINGS(Skia) {
             }
 
             OptionalMatrix localMatrix(mPtr);
-            return self.makeShader(uniforms, nullptr, 0, &localMatrix);
+            return self.makeShader(uniforms, nullptr, 0, mPtr ? &localMatrix : nullptr);
         }))
         .function("_makeShaderWithChildren", optional_override([](SkRuntimeEffect& self,
                                                                   WASMPointerF32 fPtr,
@@ -2285,7 +2297,7 @@ EMSCRIPTEN_BINDINGS(Skia) {
                 children[i] = sk_ref_sp<SkShader>(childrenPtrs[i]);
             }
             OptionalMatrix localMatrix(mPtr);
-            auto s = self.makeShader(uniforms, children, cLen, &localMatrix);
+            auto s = self.makeShader(uniforms, children, cLen, mPtr ? &localMatrix : nullptr);
             delete[] children;
             return s;
         }))

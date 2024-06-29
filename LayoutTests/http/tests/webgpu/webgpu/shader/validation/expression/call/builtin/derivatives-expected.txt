@@ -1,0 +1,823 @@
+
+PASS :only_in_fragment:entry_point="none";call="bar"
+PASS :only_in_fragment:entry_point="none";call="dpdx"
+PASS :only_in_fragment:entry_point="none";call="dpdxCoarse"
+PASS :only_in_fragment:entry_point="none";call="dpdxFine"
+PASS :only_in_fragment:entry_point="none";call="dpdy"
+PASS :only_in_fragment:entry_point="none";call="dpdyCoarse"
+PASS :only_in_fragment:entry_point="none";call="dpdyFine"
+PASS :only_in_fragment:entry_point="none";call="fwidth"
+PASS :only_in_fragment:entry_point="none";call="fwidthCoarse"
+PASS :only_in_fragment:entry_point="none";call="fwidthFine"
+PASS :only_in_fragment:entry_point="fragment";call="bar"
+PASS :only_in_fragment:entry_point="fragment";call="dpdx"
+PASS :only_in_fragment:entry_point="fragment";call="dpdxCoarse"
+PASS :only_in_fragment:entry_point="fragment";call="dpdxFine"
+PASS :only_in_fragment:entry_point="fragment";call="dpdy"
+PASS :only_in_fragment:entry_point="fragment";call="dpdyCoarse"
+PASS :only_in_fragment:entry_point="fragment";call="dpdyFine"
+PASS :only_in_fragment:entry_point="fragment";call="fwidth"
+PASS :only_in_fragment:entry_point="fragment";call="fwidthCoarse"
+PASS :only_in_fragment:entry_point="fragment";call="fwidthFine"
+PASS :only_in_fragment:entry_point="vertex";call="bar"
+FAIL :only_in_fragment:entry_point="vertex";call="dpdx" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @vertex
+    fn main() -> @builtin(position) vec4f {
+      foo();
+      return vec4f();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdx(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="vertex";call="dpdxCoarse" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @vertex
+    fn main() -> @builtin(position) vec4f {
+      foo();
+      return vec4f();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdxCoarse(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="vertex";call="dpdxFine" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @vertex
+    fn main() -> @builtin(position) vec4f {
+      foo();
+      return vec4f();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdxFine(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="vertex";call="dpdy" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @vertex
+    fn main() -> @builtin(position) vec4f {
+      foo();
+      return vec4f();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdy(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="vertex";call="dpdyCoarse" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @vertex
+    fn main() -> @builtin(position) vec4f {
+      foo();
+      return vec4f();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdyCoarse(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="vertex";call="dpdyFine" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @vertex
+    fn main() -> @builtin(position) vec4f {
+      foo();
+      return vec4f();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdyFine(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="vertex";call="fwidth" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @vertex
+    fn main() -> @builtin(position) vec4f {
+      foo();
+      return vec4f();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = fwidth(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="vertex";call="fwidthCoarse" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @vertex
+    fn main() -> @builtin(position) vec4f {
+      foo();
+      return vec4f();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = fwidthCoarse(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="vertex";call="fwidthFine" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @vertex
+    fn main() -> @builtin(position) vec4f {
+      foo();
+      return vec4f();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = fwidthFine(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :only_in_fragment:entry_point="compute";call="bar"
+FAIL :only_in_fragment:entry_point="compute";call="dpdx" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @compute @workgroup_size(1)
+    fn main() {
+      foo();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdx(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="compute";call="dpdxCoarse" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @compute @workgroup_size(1)
+    fn main() {
+      foo();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdxCoarse(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="compute";call="dpdxFine" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @compute @workgroup_size(1)
+    fn main() {
+      foo();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdxFine(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="compute";call="dpdy" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @compute @workgroup_size(1)
+    fn main() {
+      foo();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdy(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="compute";call="dpdyCoarse" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @compute @workgroup_size(1)
+    fn main() {
+      foo();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdyCoarse(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="compute";call="dpdyFine" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @compute @workgroup_size(1)
+    fn main() {
+      foo();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdyFine(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="compute";call="fwidth" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @compute @workgroup_size(1)
+    fn main() {
+      foo();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = fwidth(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="compute";call="fwidthCoarse" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @compute @workgroup_size(1)
+    fn main() {
+      foo();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = fwidthCoarse(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="compute";call="fwidthFine" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @compute @workgroup_size(1)
+    fn main() {
+      foo();
+    }
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = fwidthFine(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :only_in_fragment:entry_point="fragment_and_compute";call="bar"
+FAIL :only_in_fragment:entry_point="fragment_and_compute";call="dpdx" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @fragment
+    fn main1() {
+      foo();
+    }
+
+    @compute @workgroup_size(1)
+    fn main2() {
+      foo();
+    }
+
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdx(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="fragment_and_compute";call="dpdxCoarse" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @fragment
+    fn main1() {
+      foo();
+    }
+
+    @compute @workgroup_size(1)
+    fn main2() {
+      foo();
+    }
+
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdxCoarse(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="fragment_and_compute";call="dpdxFine" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @fragment
+    fn main1() {
+      foo();
+    }
+
+    @compute @workgroup_size(1)
+    fn main2() {
+      foo();
+    }
+
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdxFine(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="fragment_and_compute";call="dpdy" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @fragment
+    fn main1() {
+      foo();
+    }
+
+    @compute @workgroup_size(1)
+    fn main2() {
+      foo();
+    }
+
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdy(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="fragment_and_compute";call="dpdyCoarse" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @fragment
+    fn main1() {
+      foo();
+    }
+
+    @compute @workgroup_size(1)
+    fn main2() {
+      foo();
+    }
+
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdyCoarse(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="fragment_and_compute";call="dpdyFine" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @fragment
+    fn main1() {
+      foo();
+    }
+
+    @compute @workgroup_size(1)
+    fn main2() {
+      foo();
+    }
+
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = dpdyFine(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="fragment_and_compute";call="fwidth" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @fragment
+    fn main1() {
+      foo();
+    }
+
+    @compute @workgroup_size(1)
+    fn main2() {
+      foo();
+    }
+
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = fwidth(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="fragment_and_compute";call="fwidthCoarse" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @fragment
+    fn main1() {
+      foo();
+    }
+
+    @compute @workgroup_size(1)
+    fn main2() {
+      foo();
+    }
+
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = fwidthCoarse(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :only_in_fragment:entry_point="fragment_and_compute";call="fwidthFine" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    @fragment
+    fn main1() {
+      foo();
+    }
+
+    @compute @workgroup_size(1)
+    fn main2() {
+      foo();
+    }
+
+    fn bar(f : f32) -> f32 { return f; }
+
+    fn foo() {
+      _ = fwidthFine(1.0);
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/derivatives.spec.js:94:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :only_in_fragment:entry_point="compute_without_call";call="bar"
+PASS :only_in_fragment:entry_point="compute_without_call";call="dpdx"
+PASS :only_in_fragment:entry_point="compute_without_call";call="dpdxCoarse"
+PASS :only_in_fragment:entry_point="compute_without_call";call="dpdxFine"
+PASS :only_in_fragment:entry_point="compute_without_call";call="dpdy"
+PASS :only_in_fragment:entry_point="compute_without_call";call="dpdyCoarse"
+PASS :only_in_fragment:entry_point="compute_without_call";call="dpdyFine"
+PASS :only_in_fragment:entry_point="compute_without_call";call="fwidth"
+PASS :only_in_fragment:entry_point="compute_without_call";call="fwidthCoarse"
+PASS :only_in_fragment:entry_point="compute_without_call";call="fwidthFine"
+PASS :invalid_argument_types:type="f32";call=""
+PASS :invalid_argument_types:type="f32";call="dpdx"
+PASS :invalid_argument_types:type="f32";call="dpdxCoarse"
+PASS :invalid_argument_types:type="f32";call="dpdxFine"
+PASS :invalid_argument_types:type="f32";call="dpdy"
+PASS :invalid_argument_types:type="f32";call="dpdyCoarse"
+PASS :invalid_argument_types:type="f32";call="dpdyFine"
+PASS :invalid_argument_types:type="f32";call="fwidth"
+PASS :invalid_argument_types:type="f32";call="fwidthCoarse"
+PASS :invalid_argument_types:type="f32";call="fwidthFine"
+PASS :invalid_argument_types:type="i32";call=""
+PASS :invalid_argument_types:type="i32";call="dpdx"
+PASS :invalid_argument_types:type="i32";call="dpdxCoarse"
+PASS :invalid_argument_types:type="i32";call="dpdxFine"
+PASS :invalid_argument_types:type="i32";call="dpdy"
+PASS :invalid_argument_types:type="i32";call="dpdyCoarse"
+PASS :invalid_argument_types:type="i32";call="dpdyFine"
+PASS :invalid_argument_types:type="i32";call="fwidth"
+PASS :invalid_argument_types:type="i32";call="fwidthCoarse"
+PASS :invalid_argument_types:type="i32";call="fwidthFine"
+PASS :invalid_argument_types:type="vec2%3Ci32%3E";call=""
+PASS :invalid_argument_types:type="vec2%3Ci32%3E";call="dpdx"
+PASS :invalid_argument_types:type="vec2%3Ci32%3E";call="dpdxCoarse"
+PASS :invalid_argument_types:type="vec2%3Ci32%3E";call="dpdxFine"
+PASS :invalid_argument_types:type="vec2%3Ci32%3E";call="dpdy"
+PASS :invalid_argument_types:type="vec2%3Ci32%3E";call="dpdyCoarse"
+PASS :invalid_argument_types:type="vec2%3Ci32%3E";call="dpdyFine"
+PASS :invalid_argument_types:type="vec2%3Ci32%3E";call="fwidth"
+PASS :invalid_argument_types:type="vec2%3Ci32%3E";call="fwidthCoarse"
+PASS :invalid_argument_types:type="vec2%3Ci32%3E";call="fwidthFine"
+PASS :invalid_argument_types:type="vec3%3Ci32%3E";call=""
+PASS :invalid_argument_types:type="vec3%3Ci32%3E";call="dpdx"
+PASS :invalid_argument_types:type="vec3%3Ci32%3E";call="dpdxCoarse"
+PASS :invalid_argument_types:type="vec3%3Ci32%3E";call="dpdxFine"
+PASS :invalid_argument_types:type="vec3%3Ci32%3E";call="dpdy"
+PASS :invalid_argument_types:type="vec3%3Ci32%3E";call="dpdyCoarse"
+PASS :invalid_argument_types:type="vec3%3Ci32%3E";call="dpdyFine"
+PASS :invalid_argument_types:type="vec3%3Ci32%3E";call="fwidth"
+PASS :invalid_argument_types:type="vec3%3Ci32%3E";call="fwidthCoarse"
+PASS :invalid_argument_types:type="vec3%3Ci32%3E";call="fwidthFine"
+PASS :invalid_argument_types:type="vec4%3Ci32%3E";call=""
+PASS :invalid_argument_types:type="vec4%3Ci32%3E";call="dpdx"
+PASS :invalid_argument_types:type="vec4%3Ci32%3E";call="dpdxCoarse"
+PASS :invalid_argument_types:type="vec4%3Ci32%3E";call="dpdxFine"
+PASS :invalid_argument_types:type="vec4%3Ci32%3E";call="dpdy"
+PASS :invalid_argument_types:type="vec4%3Ci32%3E";call="dpdyCoarse"
+PASS :invalid_argument_types:type="vec4%3Ci32%3E";call="dpdyFine"
+PASS :invalid_argument_types:type="vec4%3Ci32%3E";call="fwidth"
+PASS :invalid_argument_types:type="vec4%3Ci32%3E";call="fwidthCoarse"
+PASS :invalid_argument_types:type="vec4%3Ci32%3E";call="fwidthFine"
+PASS :invalid_argument_types:type="u32";call=""
+PASS :invalid_argument_types:type="u32";call="dpdx"
+PASS :invalid_argument_types:type="u32";call="dpdxCoarse"
+PASS :invalid_argument_types:type="u32";call="dpdxFine"
+PASS :invalid_argument_types:type="u32";call="dpdy"
+PASS :invalid_argument_types:type="u32";call="dpdyCoarse"
+PASS :invalid_argument_types:type="u32";call="dpdyFine"
+PASS :invalid_argument_types:type="u32";call="fwidth"
+PASS :invalid_argument_types:type="u32";call="fwidthCoarse"
+PASS :invalid_argument_types:type="u32";call="fwidthFine"
+PASS :invalid_argument_types:type="vec2%3Cu32%3E";call=""
+PASS :invalid_argument_types:type="vec2%3Cu32%3E";call="dpdx"
+PASS :invalid_argument_types:type="vec2%3Cu32%3E";call="dpdxCoarse"
+PASS :invalid_argument_types:type="vec2%3Cu32%3E";call="dpdxFine"
+PASS :invalid_argument_types:type="vec2%3Cu32%3E";call="dpdy"
+PASS :invalid_argument_types:type="vec2%3Cu32%3E";call="dpdyCoarse"
+PASS :invalid_argument_types:type="vec2%3Cu32%3E";call="dpdyFine"
+PASS :invalid_argument_types:type="vec2%3Cu32%3E";call="fwidth"
+PASS :invalid_argument_types:type="vec2%3Cu32%3E";call="fwidthCoarse"
+PASS :invalid_argument_types:type="vec2%3Cu32%3E";call="fwidthFine"
+PASS :invalid_argument_types:type="vec3%3Cu32%3E";call=""
+PASS :invalid_argument_types:type="vec3%3Cu32%3E";call="dpdx"
+PASS :invalid_argument_types:type="vec3%3Cu32%3E";call="dpdxCoarse"
+PASS :invalid_argument_types:type="vec3%3Cu32%3E";call="dpdxFine"
+PASS :invalid_argument_types:type="vec3%3Cu32%3E";call="dpdy"
+PASS :invalid_argument_types:type="vec3%3Cu32%3E";call="dpdyCoarse"
+PASS :invalid_argument_types:type="vec3%3Cu32%3E";call="dpdyFine"
+PASS :invalid_argument_types:type="vec3%3Cu32%3E";call="fwidth"
+PASS :invalid_argument_types:type="vec3%3Cu32%3E";call="fwidthCoarse"
+PASS :invalid_argument_types:type="vec3%3Cu32%3E";call="fwidthFine"
+PASS :invalid_argument_types:type="vec4%3Cu32%3E";call=""
+PASS :invalid_argument_types:type="vec4%3Cu32%3E";call="dpdx"
+PASS :invalid_argument_types:type="vec4%3Cu32%3E";call="dpdxCoarse"
+PASS :invalid_argument_types:type="vec4%3Cu32%3E";call="dpdxFine"
+PASS :invalid_argument_types:type="vec4%3Cu32%3E";call="dpdy"
+PASS :invalid_argument_types:type="vec4%3Cu32%3E";call="dpdyCoarse"
+PASS :invalid_argument_types:type="vec4%3Cu32%3E";call="dpdyFine"
+PASS :invalid_argument_types:type="vec4%3Cu32%3E";call="fwidth"
+PASS :invalid_argument_types:type="vec4%3Cu32%3E";call="fwidthCoarse"
+PASS :invalid_argument_types:type="vec4%3Cu32%3E";call="fwidthFine"
+PASS :invalid_argument_types:type="f16";call=""
+PASS :invalid_argument_types:type="f16";call="dpdx"
+PASS :invalid_argument_types:type="f16";call="dpdxCoarse"
+PASS :invalid_argument_types:type="f16";call="dpdxFine"
+PASS :invalid_argument_types:type="f16";call="dpdy"
+PASS :invalid_argument_types:type="f16";call="dpdyCoarse"
+PASS :invalid_argument_types:type="f16";call="dpdyFine"
+PASS :invalid_argument_types:type="f16";call="fwidth"
+PASS :invalid_argument_types:type="f16";call="fwidthCoarse"
+PASS :invalid_argument_types:type="f16";call="fwidthFine"
+PASS :invalid_argument_types:type="vec2%3Cf16%3E";call=""
+PASS :invalid_argument_types:type="vec2%3Cf16%3E";call="dpdx"
+PASS :invalid_argument_types:type="vec2%3Cf16%3E";call="dpdxCoarse"
+PASS :invalid_argument_types:type="vec2%3Cf16%3E";call="dpdxFine"
+PASS :invalid_argument_types:type="vec2%3Cf16%3E";call="dpdy"
+PASS :invalid_argument_types:type="vec2%3Cf16%3E";call="dpdyCoarse"
+PASS :invalid_argument_types:type="vec2%3Cf16%3E";call="dpdyFine"
+PASS :invalid_argument_types:type="vec2%3Cf16%3E";call="fwidth"
+PASS :invalid_argument_types:type="vec2%3Cf16%3E";call="fwidthCoarse"
+PASS :invalid_argument_types:type="vec2%3Cf16%3E";call="fwidthFine"
+PASS :invalid_argument_types:type="vec3%3Cf16%3E";call=""
+PASS :invalid_argument_types:type="vec3%3Cf16%3E";call="dpdx"
+PASS :invalid_argument_types:type="vec3%3Cf16%3E";call="dpdxCoarse"
+PASS :invalid_argument_types:type="vec3%3Cf16%3E";call="dpdxFine"
+PASS :invalid_argument_types:type="vec3%3Cf16%3E";call="dpdy"
+PASS :invalid_argument_types:type="vec3%3Cf16%3E";call="dpdyCoarse"
+PASS :invalid_argument_types:type="vec3%3Cf16%3E";call="dpdyFine"
+PASS :invalid_argument_types:type="vec3%3Cf16%3E";call="fwidth"
+PASS :invalid_argument_types:type="vec3%3Cf16%3E";call="fwidthCoarse"
+PASS :invalid_argument_types:type="vec3%3Cf16%3E";call="fwidthFine"
+PASS :invalid_argument_types:type="vec4%3Cf16%3E";call=""
+PASS :invalid_argument_types:type="vec4%3Cf16%3E";call="dpdx"
+PASS :invalid_argument_types:type="vec4%3Cf16%3E";call="dpdxCoarse"
+PASS :invalid_argument_types:type="vec4%3Cf16%3E";call="dpdxFine"
+PASS :invalid_argument_types:type="vec4%3Cf16%3E";call="dpdy"
+PASS :invalid_argument_types:type="vec4%3Cf16%3E";call="dpdyCoarse"
+PASS :invalid_argument_types:type="vec4%3Cf16%3E";call="dpdyFine"
+PASS :invalid_argument_types:type="vec4%3Cf16%3E";call="fwidth"
+PASS :invalid_argument_types:type="vec4%3Cf16%3E";call="fwidthCoarse"
+PASS :invalid_argument_types:type="vec4%3Cf16%3E";call="fwidthFine"
+PASS :invalid_argument_types:type="mat2x2%3Cf32%3E";call=""
+PASS :invalid_argument_types:type="mat2x2%3Cf32%3E";call="dpdx"
+PASS :invalid_argument_types:type="mat2x2%3Cf32%3E";call="dpdxCoarse"
+PASS :invalid_argument_types:type="mat2x2%3Cf32%3E";call="dpdxFine"
+PASS :invalid_argument_types:type="mat2x2%3Cf32%3E";call="dpdy"
+PASS :invalid_argument_types:type="mat2x2%3Cf32%3E";call="dpdyCoarse"
+PASS :invalid_argument_types:type="mat2x2%3Cf32%3E";call="dpdyFine"
+PASS :invalid_argument_types:type="mat2x2%3Cf32%3E";call="fwidth"
+PASS :invalid_argument_types:type="mat2x2%3Cf32%3E";call="fwidthCoarse"
+PASS :invalid_argument_types:type="mat2x2%3Cf32%3E";call="fwidthFine"
+PASS :must_use:use=true;func="dpdx"
+PASS :must_use:use=true;func="dpdxCoarse"
+PASS :must_use:use=true;func="dpdxFine"
+PASS :must_use:use=true;func="dpdy"
+PASS :must_use:use=true;func="dpdyCoarse"
+PASS :must_use:use=true;func="dpdyFine"
+PASS :must_use:use=true;func="fwidth"
+PASS :must_use:use=true;func="fwidthCoarse"
+PASS :must_use:use=true;func="fwidthFine"
+PASS :must_use:use=false;func="dpdx"
+PASS :must_use:use=false;func="dpdxCoarse"
+PASS :must_use:use=false;func="dpdxFine"
+PASS :must_use:use=false;func="dpdy"
+PASS :must_use:use=false;func="dpdyCoarse"
+PASS :must_use:use=false;func="dpdyFine"
+PASS :must_use:use=false;func="fwidth"
+PASS :must_use:use=false;func="fwidthCoarse"
+PASS :must_use:use=false;func="fwidthFine"
+

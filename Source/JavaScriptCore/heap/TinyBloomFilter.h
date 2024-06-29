@@ -41,7 +41,7 @@ public:
     void reset();
     Bits bits() const { return m_bits; }
 
-    static ptrdiff_t offsetOfBits() { return OBJECT_OFFSETOF(TinyBloomFilter, m_bits); }
+    static constexpr ptrdiff_t offsetOfBits() { return OBJECT_OFFSETOF(TinyBloomFilter, m_bits); }
 
 private:
     Bits m_bits { 0 };

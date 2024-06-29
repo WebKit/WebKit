@@ -38,6 +38,7 @@
 #include <dlfcn.h>
 #include <mutex>
 #include <wtf/ProcessPrivilege.h>
+#include <wtf/cf/VectorCF.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -99,7 +100,22 @@ static OSStatus webSecItemCopyMatching(CFDictionaryRef query, CFTypeRef* result)
     if (!response)
         return errSecInteractionNotAllowed;
 
-    *result = response->resultObject().leakRef();
+    WTF::switchOn(response->resultObject(), [&] (std::nullptr_t) {
+        *result = nullptr;
+    }, [&] (Vector<RetainPtr<SecCertificateRef>>& certificates) {
+        *result = createCFArray(certificates, [] (auto& certificate) {
+            return certificate.get();
+        }).leakRef();
+#if HAVE(SEC_KEYCHAIN)
+    }, [&] (Vector<RetainPtr<SecKeychainItemRef>>& items) {
+        *result = createCFArray(items, [] (auto& item) {
+            return item.get();
+        }).leakRef();
+#endif
+    }, [&] (RetainPtr<CFTypeRef>& type) {
+        *result = type.leakRef();
+    });
+
     return response->resultCode();
 }
 

@@ -160,9 +160,7 @@ void State::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, const Scop
     linkBuffer.didAlreadyDisassemble();
 }
 
-State::~State()
-{
-}
+State::~State() = default;
 
 StructureStubInfo* State::addStructureStubInfo()
 {

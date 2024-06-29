@@ -1,0 +1,38 @@
+
+FAIL .target 1 assert_equals:
+<div class="target" data-offset-x="50" data-offset-y="9" data-expected-width="31" data-expected-height="31"></div>
+width expected 31 but got 755
+FAIL .target 2 assert_equals:
+<div class="target" data-offset-x="50" data-offset-y="9" data-expected-width="31" data-expected-height="31"></div>
+width expected 31 but got 755
+FAIL .target 3 assert_equals:
+<div class="target" data-offset-x="58" data-offset-y="14" data-expected-width="31" data-expected-height="31"></div>
+width expected 31 but got 769
+FAIL .target 4 assert_equals:
+<div class="target" data-offset-x="58" data-offset-y="14" data-expected-width="31" data-expected-height="31"></div>
+width expected 31 but got 769
+FAIL .target 5 assert_equals:
+<div class="target" data-offset-x="58" data-offset-y="14" data-expected-width="31" data-expected-height="31"></div>
+width expected 31 but got 769
+FAIL .target 6 assert_equals:
+<div class="target" data-offset-x="58" data-offset-y="14" data-expected-width="31" data-expected-height="31"></div>
+width expected 31 but got 769
+FAIL .target 7 assert_equals:
+<div class="target" data-offset-x="50" data-offset-y="14" data-expected-width="31" data-expected-height="31"></div>
+width expected 31 but got 769
+FAIL .target 8 assert_equals:
+<div class="target" data-offset-x="50" data-offset-y="9" data-expected-width="45" data-expected-height="43"></div>
+width expected 45 but got 769
+FAIL .target 9 assert_equals:
+<div class="target" data-offset-x="50" data-offset-y="9" data-expected-width="45" data-expected-height="43"></div>
+width expected 45 but got 769
+FAIL .target 10 assert_equals:
+<div class="target margins" data-offset-x="58" data-offset-y="14" data-expected-width="17" data-expected-height="19"></div>
+width expected 17 but got 755
+FAIL .target 11 assert_equals:
+<div class="target borders" data-offset-x="50" data-offset-y="9" data-expected-width="31" data-expected-height="31"></div>
+width expected 31 but got 769
+FAIL .target 12 assert_equals:
+<div class="target paddings" data-offset-x="50" data-offset-y="9" data-expected-width="31" data-expected-height="31"></div>
+width expected 31 but got 769
+

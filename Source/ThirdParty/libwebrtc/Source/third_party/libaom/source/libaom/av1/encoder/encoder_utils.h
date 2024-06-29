@@ -83,9 +83,10 @@ static AOM_INLINE void set_mb_mi(CommonModeInfoParams *mi_params, int width,
 static AOM_INLINE void enc_free_mi(CommonModeInfoParams *mi_params) {
   aom_free(mi_params->mi_alloc);
   mi_params->mi_alloc = NULL;
+  mi_params->mi_alloc_size = 0;
   aom_free(mi_params->mi_grid_base);
   mi_params->mi_grid_base = NULL;
-  mi_params->mi_alloc_size = 0;
+  mi_params->mi_grid_size = 0;
   aom_free(mi_params->tx_type_map);
   mi_params->tx_type_map = NULL;
 }
@@ -1013,10 +1014,23 @@ static AOM_INLINE void set_size_independent_vars(AV1_COMP *cpi) {
 }
 
 static AOM_INLINE void release_scaled_references(AV1_COMP *cpi) {
-  // TODO(isbs): only refresh the necessary frames, rather than all of them
+  // Scaled references should only need to be released under certain conditions:
+  // if the reference will be updated, or if the scaled reference has same
+  // resolution. For now only apply this to Golden for non-svc RTC mode.
+  AV1_COMMON *const cm = &cpi->common;
+  const bool refresh_golden = (cpi->refresh_frame.golden_frame) ? 1 : 0;
+  bool release_golden = true;
   for (int i = 0; i < INTER_REFS_PER_FRAME; ++i) {
     RefCntBuffer *const buf = cpi->scaled_ref_buf[i];
-    if (buf != NULL) {
+    const int golden_ref = (i == GOLDEN_FRAME - 1);
+    if (golden_ref && is_one_pass_rt_params(cpi) && !cpi->ppi->use_svc &&
+        buf != NULL) {
+      const RefCntBuffer *const ref = get_ref_frame_buf(cm, GOLDEN_FRAME);
+      const bool same_resoln = buf->buf.y_crop_width == ref->buf.y_crop_width &&
+                               buf->buf.y_crop_height == ref->buf.y_crop_height;
+      release_golden = refresh_golden || same_resoln;
+    }
+    if (buf != NULL && (!golden_ref || (golden_ref && release_golden))) {
       --buf->ref_count;
       cpi->scaled_ref_buf[i] = NULL;
     }

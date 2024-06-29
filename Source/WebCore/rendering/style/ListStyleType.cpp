@@ -46,11 +46,6 @@ bool ListStyleType::isDisc() const
     return type == Type::CounterStyle && identifier == nameLiteral(CSSValueDisc);
 }
 
-bool ListStyleType::isDisclosureClosed() const
-{
-    return type == Type::CounterStyle && identifier == nameLiteral(CSSValueDisclosureClosed);
-}
-
 TextStream& operator<<(TextStream& ts, ListStyleType::Type styleType)
 {
     return ts << nameLiteral(toCSSValueID(styleType)).characters();

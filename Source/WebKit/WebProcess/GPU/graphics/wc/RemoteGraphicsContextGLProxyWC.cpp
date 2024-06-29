@@ -68,16 +68,8 @@ public:
     void prepareForDisplay() final;
     RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
 private:
-    RemoteGraphicsContextGLProxyWC(IPC::Connection& connection, Ref<IPC::StreamClientConnection> streamConnection, const WebCore::GraphicsContextGLAttributes& attributes
-#if ENABLE(VIDEO)
-    , Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy
-#endif
-    )
-#if ENABLE(VIDEO)
-        : RemoteGraphicsContextGLProxy(connection, WTFMove(streamConnection), attributes, WTFMove(videoFrameObjectHeapProxy))
-#else
-        : RemoteGraphicsContextGLProxy(connection, WTFMove(streamConnection), attributes)
-#endif
+    RemoteGraphicsContextGLProxyWC(const WebCore::GraphicsContextGLAttributes& attributes, WTF::SerialFunctionDispatcher& dispatcher)
+        : RemoteGraphicsContextGLProxy(attributes, dispatcher)
         , m_layerContentsDisplayDelegate(PlatformLayerDisplayDelegate::create(makeUnique<WCPlatformLayerGCGL>()))
     {
     }
@@ -102,17 +94,9 @@ void RemoteGraphicsContextGLProxyWC::prepareForDisplay()
 
 }
 
-Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(IPC::Connection& connection, Ref<IPC::StreamClientConnection> streamConnection, const WebCore::GraphicsContextGLAttributes& attributes
-#if ENABLE(VIDEO)
-    , Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy
-#endif
-    )
+Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(const WebCore::GraphicsContextGLAttributes& attributes, SerialFunctionDispatcher& dispatcher)
 {
-    return adoptRef(*new RemoteGraphicsContextGLProxyWC(connection, WTFMove(streamConnection), attributes
-#if ENABLE(VIDEO)
-        , WTFMove(videoFrameObjectHeapProxy)
-#endif
-    ));
+    return adoptRef(*new RemoteGraphicsContextGLProxyWC(attributes, dispatcher));
 }
 
 }

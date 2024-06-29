@@ -13,7 +13,7 @@
 #include <cmath>
 #include <limits>
 
-#include "modules/audio_processing/include/audio_processing.h"
+#include "api/audio/audio_processing.h"
 #include "modules/audio_processing/test/audio_processing_builder_for_testing.h"
 #include "rtc_base/checks.h"
 #include "test/fuzzers/fuzz_data_helper.h"

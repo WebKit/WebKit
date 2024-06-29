@@ -101,13 +101,13 @@ TEST(MediaLoading, UserAgentStringHLS)
                 "#EXT-X-MEDIA-SEQUENCE:0\n"
                 "#EXT-X-PLAYLIST-TYPE:VOD\n"
                 "#EXTINF:6.0272,\n"
-                "http://127.0.0.1:", mediaServerPort, "/main1.ts\n",
-                "#EXT-X-ENDLIST\n"
+                "http://127.0.0.1:"_s, mediaServerPort, "/main1.ts\n"_s,
+                "#EXT-X-ENDLIST\n"_s
             );
 
-            connection.send(makeString("HTTP/1.1 200 OK\r\n",
-                "Content-Length: ", payload.length(), "\r\n",
-                "\r\n",
+            connection.send(makeString("HTTP/1.1 200 OK\r\n"_s,
+                "Content-Length: "_s, payload.length(), "\r\n"_s,
+                "\r\n"_s,
                 payload
             ));
 
@@ -212,22 +212,22 @@ TEST(MediaLoading, LockdownModeHLS)
     });
     auto serverPort = server.port();
     auto m3u8Source = makeString(
-        "#EXTM3U\n",
-        "#EXT-X-PLAYLIST-TYPE:EVENT\n",
-        "#EXT-X-VERSION:3\n",
-        "#EXT-X-MEDIA-SEQUENCE:0\n",
-        "#EXT-X-TARGETDURATION:8\n",
-        "#EXT-X-PROGRAM-DATE-TIME:1970-01-01T00:00:00.001Z\n",
-        "#EXTINF:6.0272,\n",
-        "http://127.0.0.1:", serverPort, "/start-offset.ts\n",
-        "#EXTINF:6.0272,\n",
-        "http://127.0.0.1:", serverPort, "/start-offset.ts\n",
-        "#EXTINF:6.0272,\n",
-        "http://127.0.0.1:", serverPort, "/start-offset.ts\n",
-        "#EXTINF:6.0272,\n",
-        "http://127.0.0.1:", serverPort, "/start-offset.ts\n",
-        "#EXTINF:6.0272,\n",
-        "http://127.0.0.1:", serverPort, "/start-offset.ts\n"
+        "#EXTM3U\n"_s,
+        "#EXT-X-PLAYLIST-TYPE:EVENT\n"_s,
+        "#EXT-X-VERSION:3\n"_s,
+        "#EXT-X-MEDIA-SEQUENCE:0\n"_s,
+        "#EXT-X-TARGETDURATION:8\n"_s,
+        "#EXT-X-PROGRAM-DATE-TIME:1970-01-01T00:00:00.001Z\n"_s,
+        "#EXTINF:6.0272,\n"_s,
+        "http://127.0.0.1:"_s, serverPort, "/start-offset.ts\n"_s,
+        "#EXTINF:6.0272,\n"_s,
+        "http://127.0.0.1:"_s, serverPort, "/start-offset.ts\n"_s,
+        "#EXTINF:6.0272,\n"_s,
+        "http://127.0.0.1:"_s, serverPort, "/start-offset.ts\n"_s,
+        "#EXTINF:6.0272,\n"_s,
+        "http://127.0.0.1:"_s, serverPort, "/start-offset.ts\n"_s,
+        "#EXTINF:6.0272,\n"_s,
+        "http://127.0.0.1:"_s, serverPort, "/start-offset.ts\n"_s
     );
     server.addResponse("/video.m3u8"_s, { m3u8Source });
 

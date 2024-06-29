@@ -157,6 +157,10 @@ if (USE_CAIRO)
     )
 elseif (USE_SKIA)
     include(Platform/Skia.cmake)
+
+    list(APPEND WebKit_SOURCES
+        UIProcess/skia/BackingStoreSkia.cpp
+    )
 endif ()
 
 if (USE_COORDINATED_GRAPHICS)

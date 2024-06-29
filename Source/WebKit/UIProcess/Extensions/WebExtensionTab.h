@@ -98,7 +98,6 @@ public:
     using ImageFormat = WebExtensionTabImageFormat;
 
     enum class AssumeWindowMatches : bool { No, Yes };
-    enum class MainWebViewOnly : bool { No, Yes };
 
     using WebProcessProxySet = HashSet<Ref<WebProcessProxy>>;
 
@@ -132,7 +131,6 @@ public:
     void setParentTab(RefPtr<WebExtensionTab>, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     WKWebView *mainWebView() const;
-    NSArray *webViews() const;
 
     String title() const;
 
@@ -191,7 +189,7 @@ public:
 
     bool shouldGrantTabPermissionsOnUserGesture() const;
 
-    WebProcessProxySet processes(WebExtensionEventListenerType, WebExtensionContentWorldType, MainWebViewOnly = MainWebViewOnly::Yes) const;
+    WebProcessProxySet processes(WebExtensionEventListenerType, WebExtensionContentWorldType) const;
 
 #ifdef __OBJC__
     _WKWebExtensionTab *delegate() const { return m_delegate.getAutoreleased(); }
@@ -212,7 +210,6 @@ private:
     bool m_respondsToParentTab : 1 { false };
     bool m_respondsToSetParentTab : 1 { false };
     bool m_respondsToMainWebView : 1 { false };
-    bool m_respondsToWebViews : 1 { false };
     bool m_respondsToTabTitle : 1 { false };
     bool m_respondsToIsSelected : 1 { false };
     bool m_respondsToIsPinned : 1 { false };

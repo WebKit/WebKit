@@ -22,12 +22,7 @@ function runTest() {
             IPC.webPageProxyID,
             IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,
             [
-                { // creationParameters
-                    type: 'RemoteRenderingBackendCreationParameters',
-                    identifier: renderingBackendID,
-                    pageProxyID: IPC.webPageProxyID,
-                    pageID: IPC.pageID,
-                },
+                { type: 'uint64_t', value: renderingBackendID },
                 {
                     type: 'StreamServerConnectionHandle',
                     value: rrbStreamConnectionHandle,
@@ -39,7 +34,7 @@ function runTest() {
         var result = IPC.sendMessage(
             'GPU',
             IPC.webPageProxyID,
-            IPC.messages.GPUConnectionToWebProcess_CreateRemoteGPU.name,
+            IPC.messages.GPUConnectionToWebProcess_CreateGPU.name,
             [
                 { type: 'uint64_t', value: webGPUID }, // identifier
                 { type: 'uint64_t', value: renderingBackendID }, // renderingBackendIdentifier

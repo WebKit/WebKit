@@ -290,11 +290,10 @@ ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
     Structure* structure = this->structure();
 
     RefPtr<ArrayBuffer> buffer;
-    size_t byteLength = this->byteLength();
 
     switch (m_mode) {
     case FastTypedArray: {
-        buffer = ArrayBuffer::tryCreate(vector(), byteLength);
+        buffer = ArrayBuffer::tryCreate(span());
         if (!buffer)
             return nullptr;
         break;
@@ -304,7 +303,7 @@ ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
         // FIXME: consider doing something like "subtracting" from extra memory
         // cost, since right now this case will cause the GC to think that we reallocated
         // the whole buffer.
-        buffer = ArrayBuffer::createAdopted(vector(), byteLength);
+        buffer = ArrayBuffer::createAdopted(span());
         break;
     }
 

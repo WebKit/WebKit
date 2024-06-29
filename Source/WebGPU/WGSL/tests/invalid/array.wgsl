@@ -3,6 +3,9 @@
 // CHECK-L: 'array' requires at least 1 template argument
 var<private> a:array;
 
+// CHECK-L: value 4294967296 cannot be represented as 'i32'
+@group(0) @binding(0) var<storage, read_write> b: array<u32, (1<<32)>;
+
 fn testArrayLengthMismatch() {
   // CHECK-L: array count must be greater than 0
   let x1 = array<i32, 0>();

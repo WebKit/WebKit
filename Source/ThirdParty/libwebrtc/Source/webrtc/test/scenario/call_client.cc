@@ -13,6 +13,8 @@
 #include <memory>
 #include <utility>
 
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
 #include "api/media_types.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
@@ -60,38 +62,27 @@ CallClientFakeAudio InitAudio(TimeController* time_controller) {
 }
 
 std::unique_ptr<Call> CreateCall(
-    TimeController* time_controller,
-    RtcEventLog* event_log,
+    const Environment& env,
     CallClientConfig config,
     LoggingNetworkControllerFactory* network_controller_factory,
     rtc::scoped_refptr<AudioState> audio_state) {
-  CallConfig call_config(event_log);
+  CallConfig call_config(env);
   call_config.bitrate_config.max_bitrate_bps =
       config.transport.rates.max_rate.bps_or(-1);
   call_config.bitrate_config.min_bitrate_bps =
       config.transport.rates.min_rate.bps();
   call_config.bitrate_config.start_bitrate_bps =
       config.transport.rates.start_rate.bps();
-  call_config.task_queue_factory = time_controller->GetTaskQueueFactory();
   call_config.network_controller_factory = network_controller_factory;
   call_config.audio_state = audio_state;
-  call_config.pacer_burst_interval = config.pacer_burst_interval;
-  call_config.trials = config.field_trials;
-  Clock* clock = time_controller->GetClock();
-  return Call::Create(call_config, clock,
-                      RtpTransportControllerSendFactory().Create(
-                          call_config.ExtractTransportConfig(), clock));
+  return Call::Create(call_config);
 }
 
 std::unique_ptr<RtcEventLog> CreateEventLog(
-    TaskQueueFactory* task_queue_factory,
-    LogWriterFactoryInterface* log_writer_factory) {
-  if (!log_writer_factory) {
-    return std::make_unique<RtcEventLogNull>();
-  }
-  auto event_log = RtcEventLogFactory(task_queue_factory)
-                       .CreateRtcEventLog(RtcEventLog::EncodingType::NewFormat);
-  bool success = event_log->StartLogging(log_writer_factory->Create(".rtc.dat"),
+    const Environment& env,
+    LogWriterFactoryInterface& log_writer_factory) {
+  auto event_log = RtcEventLogFactory().Create(env);
+  bool success = event_log->StartLogging(log_writer_factory.Create(".rtc.dat"),
                                          kEventLogOutputIntervalMs);
   RTC_CHECK(success);
   return event_log;
@@ -219,22 +210,25 @@ CallClient::CallClient(
     std::unique_ptr<LogWriterFactoryInterface> log_writer_factory,
     CallClientConfig config)
     : time_controller_(time_controller),
-      clock_(time_controller->GetClock()),
+      env_(CreateEnvironment(time_controller_->CreateTaskQueueFactory(),
+                             time_controller_->GetClock())),
       log_writer_factory_(std::move(log_writer_factory)),
       network_controller_factory_(log_writer_factory_.get(), config.transport),
-      task_queue_(time_controller->GetTaskQueueFactory()->CreateTaskQueue(
+      task_queue_(env_.task_queue_factory().CreateTaskQueue(
           "CallClient",
           TaskQueueFactory::Priority::NORMAL)) {
-  config.field_trials = &field_trials_;
   SendTask([this, config] {
-    event_log_ = CreateEventLog(time_controller_->GetTaskQueueFactory(),
-                                log_writer_factory_.get());
+    if (log_writer_factory_ != nullptr) {
+      EnvironmentFactory env_factory(env_);
+      env_factory.Set(CreateEventLog(env_, *log_writer_factory_));
+      env_ = env_factory.Create();
+    }
     fake_audio_setup_ = InitAudio(time_controller_);
 
-    call_ =
-        CreateCall(time_controller_, event_log_.get(), config,
-                   &network_controller_factory_, fake_audio_setup_.audio_state);
-    transport_ = std::make_unique<NetworkNodeTransport>(clock_, call_.get());
+    call_ = CreateCall(env_, config, &network_controller_factory_,
+                       fake_audio_setup_.audio_state);
+    transport_ =
+        std::make_unique<NetworkNodeTransport>(&env_.clock(), call_.get());
   });
 }
 
@@ -243,9 +237,8 @@ CallClient::~CallClient() {
     call_.reset();
     fake_audio_setup_ = {};
     rtc::Event done;
-    event_log_->StopLogging([&done] { done.Set(); });
+    env_.event_log().StopLogging([&done] { done.Set(); });
     done.Wait(rtc::Event::kForever);
-    event_log_.reset();
   });
 }
 
@@ -283,7 +276,7 @@ DataRate CallClient::padding_rate() const {
 void CallClient::SetRemoteBitrate(DataRate bitrate) {
   RemoteBitrateReport msg;
   msg.bandwidth = bitrate;
-  msg.receive_time = clock_->CurrentTime();
+  msg.receive_time = env_.clock().CurrentTime();
   network_controller_factory_.SetRemoteBitrateEstimate(msg);
 }
 

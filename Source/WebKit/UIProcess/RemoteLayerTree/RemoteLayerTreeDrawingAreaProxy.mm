@@ -105,14 +105,14 @@ void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
     sendUpdateGeometry();
 }
 
-void RemoteLayerTreeDrawingAreaProxy::remotePageProcessCrashed(WebCore::ProcessIdentifier processIdentifier)
+void RemoteLayerTreeDrawingAreaProxy::remotePageProcessDidTerminate(WebCore::ProcessIdentifier processIdentifier)
 {
     if (!m_remoteLayerTreeHost)
         return;
 
     if (auto* scrollingCoordinator = m_webPageProxy->scrollingCoordinatorProxy()) {
         scrollingCoordinator->willCommitLayerAndScrollingTrees();
-        m_remoteLayerTreeHost->remotePageProcessCrashed(processIdentifier);
+        m_remoteLayerTreeHost->remotePageProcessDidTerminate(processIdentifier);
         scrollingCoordinator->didCommitLayerAndScrollingTrees();
     }
 }
@@ -281,25 +281,12 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
         if (layerTreeTransaction.hasAnyLayerChanges())
             ++m_countOfTransactionsWithNonEmptyLayerChanges;
 
-        if (m_remoteLayerTreeHost->updateLayerTree(layerTreeTransaction)) {
+        if (m_remoteLayerTreeHost->updateLayerTree(connection, layerTreeTransaction)) {
             if (!m_replyForUnhidingContent)
                 webPageProxy->setRemoteLayerTreeRootNode(m_remoteLayerTreeHost->rootNode());
             else
                 m_remoteLayerTreeHost->detachRootLayer();
         }
-
-        // TODO: rdar://126001790 properly handle commits from a web process with multiple root frames.
-        // Currently we get commits for each frame if a web process has multiple root frames. This
-        // currently results in sending across the same scrolling tree multiple times, which can result
-        // in a cycle when a web process has a granparent and grandchild frame, with another process having
-        // the intermediate frame. For now only do scrolling tree commits for the first root frame we see
-        // from a process.
-        auto it = m_commitsForFrameID.find(layerTreeTransaction.processIdentifier());
-        if (it != m_commitsForFrameID.end()) {
-            if (it->value != scrollingTreeTransaction.rootFrameIdentifier())
-                return;
-        } else
-            m_commitsForFrameID.set(layerTreeTransaction.processIdentifier(), scrollingTreeTransaction.rootFrameIdentifier());
 
 #if ENABLE(ASYNC_SCROLLING)
 #if PLATFORM(IOS_FAMILY)
@@ -308,7 +295,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
             return;
         }
 #endif
-        requestedScroll = webPageProxy->scrollingCoordinatorProxy()->commitScrollingTreeState(scrollingTreeTransaction, layerTreeTransaction.remoteContextHostedIdentifier());
+        requestedScroll = webPageProxy->scrollingCoordinatorProxy()->commitScrollingTreeState(connection, scrollingTreeTransaction, layerTreeTransaction.remoteContextHostedIdentifier());
 #endif
     };
 
@@ -347,7 +334,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
     if (m_debugIndicatorLayerTreeHost) {
         float scale = indicatorScale(layerTreeTransaction.contentsSize());
         webPageProxy->scrollingCoordinatorProxy()->willCommitLayerAndScrollingTrees();
-        bool rootLayerChanged = m_debugIndicatorLayerTreeHost->updateLayerTree(layerTreeTransaction, scale);
+        bool rootLayerChanged = m_debugIndicatorLayerTreeHost->updateLayerTree(connection, layerTreeTransaction, scale);
         webPageProxy->scrollingCoordinatorProxy()->didCommitLayerAndScrollingTrees();
         IntPoint scrollPosition;
 #if PLATFORM(MAC)

@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <div><template shadowrootmode="closed"><script src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=6f013501-95b1-4d24-abac-9e33c7c8ee6b&amp;encodingcheck=&Gbreve;"></script></template></div>
+
+
+
+PASS Speculative parsing, document.write(): template-shadowrootmode-script-src
+

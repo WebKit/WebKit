@@ -1,4 +1,65 @@
 ================
+WebKitGTK 2.45.4
+================
+
+What's new in WebKitGTK 2.45.4?
+
+  - Enable offscreen canvas by default in production builds too.
+  - Fix video flickering with DMA-BUF sink.
+  - Fix movement delta on mouse events in GTK3.
+  - Fix accelerated images dissapearing after scrolling.
+  - Bubblewrap sandbox no longer kills auxiliary process when UI process terminates.
+  - Fix rendering of shadows with several compositing operators.
+  - Implement FEDropShadow and FEComponentTransfer filters using Skia.
+  - Undeprecate webkit_back_forward_list_item_get_title().
+  - Undeprecate console message API and make it available in 2022 API.
+  - Fix several crashes and rendering issues.
+
+================
+WebKitGTK 2.45.3
+================
+
+What's new in WebKitGTK 2.45.3?
+
+  - Enable offscreen canvas by default.
+  - Enable ImageBitmap acceleration.
+  - Add support for accelerated offscreen canvas.
+  - Do not display WebGL front buffer before it's initialized.
+  - Fix text scaling.
+  - Add a new setting to enable or disable the 2D canvas acceleration (enabled by default).
+  - Deprecate WebKitWebContext:use-system-appearance-for-scrollbars property.
+  - Undeprecate and document webkit_print_operation_print() behavior.
+  - Fix several crashes and rendering issues.
+
+================
+WebKitGTK 2.45.2
+================
+
+What's new in WebKitGTK 2.45.2?
+
+  - Use cairo on big-endian for now, since skia doesn't support it.
+  - Fix a crash in GIF image decoder.
+  - Revert the text scaling fix, since it caused several issues in some sites.
+  - Add new API to load settings from a config file.
+  - Fix several crashes and rendering issues.
+
+================
+WebKitGTK 2.45.1
+================
+
+What's new in WebKitGTK 2.45.1?
+
+  - Use skia instead of cairo for rendering.
+  - Sync WebGL content with fences when available.
+  - Implement printing using the Print portal.
+  - Disable the gst-libav aac decoder.
+  - Fix text scaling.
+  - Consider keycode when activating application accelerators.
+  - Support AXActiveElement and AXSelectedChildren for comboboxes, lists and listboxes.
+  - Avoid notifying an empty cursor rectangle to input methods.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.43.4
 ================
 

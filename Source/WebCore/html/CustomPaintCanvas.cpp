@@ -29,9 +29,6 @@
 #include "BitmapImage.h"
 #include "CSSParserContext.h"
 #include "CanvasRenderingContext.h"
-#include "DisplayListDrawingContext.h"
-#include "DisplayListRecorder.h"
-#include "DisplayListReplayer.h"
 #include "ImageBitmap.h"
 #include "PaintRenderingContext2D.h"
 #include "ScriptExecutionContext.h"
@@ -59,11 +56,9 @@ CustomPaintCanvas::~CustomPaintCanvas()
 
 RefPtr<PaintRenderingContext2D> CustomPaintCanvas::getContext()
 {
-    if (m_context)
-        return &downcast<PaintRenderingContext2D>(*m_context);
-
-    m_context = PaintRenderingContext2D::create(*this);
-    return static_cast<PaintRenderingContext2D*>(m_context.get());
+    if (!m_context)
+        m_context = PaintRenderingContext2D::create(*this);
+    return m_context.get();
 }
 
 void CustomPaintCanvas::replayDisplayList(GraphicsContext& target)
@@ -77,17 +72,9 @@ void CustomPaintCanvas::replayDisplayList(GraphicsContext& target)
         return;
     auto& imageTarget = image->context();
     imageTarget.translate(-clipBounds.location());
-    replayDisplayListImpl(imageTarget);
+    if (m_context)
+        m_context->replayDisplayList(imageTarget);
     target.drawImageBuffer(*image, clipBounds);
-}
-
-AffineTransform CustomPaintCanvas::baseTransform() const
-{
-    // The base transform of the display list.
-    // FIXME: this is actually correct, but the display list will not behave correctly with respect to
-    // playback. The GraphicsContext should be fixed to start at identity transform, and the
-    // device transform should be a separate concept that the display list or context2d cannot reset.
-    return { };
 }
 
 Image* CustomPaintCanvas::copiedImage() const
@@ -95,9 +82,10 @@ Image* CustomPaintCanvas::copiedImage() const
     if (!width() || !height())
         return nullptr;
     m_copiedImage = nullptr;
-    auto buffer = ImageBuffer::create(size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto buffer = ImageBuffer::create(size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
     if (buffer) {
-        replayDisplayListImpl(buffer->context());
+        if (m_context)
+            m_context->replayDisplayList(buffer->context());
         m_copiedImage = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(buffer));
     }
     return m_copiedImage.get();
@@ -106,30 +94,6 @@ Image* CustomPaintCanvas::copiedImage() const
 void CustomPaintCanvas::clearCopiedImage() const
 {
     m_copiedImage = nullptr;
-}
-
-GraphicsContext* CustomPaintCanvas::drawingContext() const
-{
-    if (!m_recordingContext)
-        m_recordingContext = makeUnique<DisplayList::DrawingContext>(size());
-    return &m_recordingContext->context();
-}
-
-GraphicsContext* CustomPaintCanvas::existingDrawingContext() const
-{
-    return m_recordingContext ? &m_recordingContext->context() : nullptr;
-}
-
-void CustomPaintCanvas::replayDisplayListImpl(GraphicsContext& target) const
-{
-    if (!m_recordingContext)
-        return;
-    auto& displayList = m_recordingContext->displayList();
-    if (!displayList.isEmpty()) {
-        DisplayList::Replayer replayer(target, displayList);
-        replayer.replay(FloatRect { { }, size() });
-        displayList.clear();
-    }
 }
 
 const CSSParserContext& CustomPaintCanvas::cssParserContext() const

@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (16,19) size 768x498
+    RenderSVGContainer {g} at (16,20) size 768x497
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceLinearGradient {linearGradient} [id="lgSpreadPad"] [gradientUnits=userSpaceOnUse] [start=(50,0)] [end=(100,0)]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
         RenderSVGResourceRadialGradient {radialGradient} [id="rgSpreadDefault"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20] [focalRadius=0.00]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
-      RenderSVGText {text} at (97,11) size 286x24 contains 1 chunk(s)
+      RenderSVGText {text} at (97,12) size 286x23 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 285x23
           chunk 1 (middle anchor) text run 1 at (97.80,30.00) startOffset 0 endOffset 30 width 284.40: "Gradient 'spreadMethod' values"
       RenderSVGRect {rect} at (16,100) size 376x67 [fill={[type=LINEAR-GRADIENT] [id="lgSpreadPad"]}] [x=10.00] [y=60.00] [width=225.00] [height=40.00]

@@ -104,9 +104,6 @@ enum class CFType : uint8_t {
     CFString,
     CFURL,
     SecCertificate,
-#if HAVE(SEC_KEYCHAIN)
-    SecKeychainItem,
-#endif
 #if HAVE(SEC_ACCESS_CONTROL)
     SecAccessControl,
 #endif

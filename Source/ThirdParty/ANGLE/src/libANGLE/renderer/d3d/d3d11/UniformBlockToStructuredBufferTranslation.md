@@ -5,7 +5,7 @@ In ANGLE's D3D11 backend, we normally translate GLSL uniform blocks to
 HLSL constant buffers. We run into a compile performance issue with
 [fxc](https://docs.microsoft.com/en-us/windows/win32/direct3dtools/fxc)
 and dynamic constant buffer indexing,
-[anglebug.com/3682](https://bugs.chromium.org/p/angleproject/issues/detail?id=3682)
+[anglebug.com/40096608](https://bugs.chromium.org/p/angleproject/issues/detail?id=3682)
 
 ## Solution
 We translate a uniform block into a StructuredBuffer when the following three

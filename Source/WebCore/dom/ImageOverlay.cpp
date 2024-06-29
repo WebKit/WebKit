@@ -126,7 +126,7 @@ static RefPtr<HTMLElement> imageOverlayHost(const Node& node)
 
 bool isDataDetectorResult(const HTMLElement& element)
 {
-    return imageOverlayHost(element) && element.hasClass() && element.classNames().contains(imageOverlayDataDetectorClass());
+    return imageOverlayHost(element) && element.hasClassName(imageOverlayDataDetectorClass());
 }
 
 std::optional<CharacterRange> characterRange(const VisibleSelection& selection)
@@ -269,7 +269,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
 
         auto& containerClass = controlsHost->mediaControlsContainerClassName();
         for (auto& child : childrenOfType<HTMLDivElement>(shadowRoot.get())) {
-            if (child.hasClass() && child.classNames().contains(containerClass))
+            if (child.hasClassName(containerClass))
                 return &child;
         }
         ASSERT_NOT_REACHED();

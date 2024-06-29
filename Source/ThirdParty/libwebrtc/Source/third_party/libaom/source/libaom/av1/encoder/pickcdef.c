@@ -894,7 +894,7 @@ void av1_cdef_search(AV1_COMP *cpi) {
   int rdmult = cpi->td.mb.rdmult;
   for (int i = 0; i <= 3; i++) {
     if (i > max_signaling_bits) break;
-    int best_lev0[CDEF_MAX_STRENGTHS];
+    int best_lev0[CDEF_MAX_STRENGTHS] = { 0 };
     int best_lev1[CDEF_MAX_STRENGTHS] = { 0 };
     const int nb_strengths = 1 << i;
     uint64_t tot_mse;

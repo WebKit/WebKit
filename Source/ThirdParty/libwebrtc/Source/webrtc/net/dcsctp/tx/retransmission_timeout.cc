@@ -12,52 +12,55 @@
 #include <algorithm>
 #include <cstdint>
 
+#include "api/units/time_delta.h"
 #include "net/dcsctp/public/dcsctp_options.h"
 
 namespace dcsctp {
 
+// https://datatracker.ietf.org/doc/html/rfc4960#section-15.
+constexpr double kRtoAlpha = 0.125;
+constexpr double kRtoBeta = 0.25;
+
+// A factor that the `min_rtt_variance` configuration option will be divided by
+// (before later multiplied with K, which is 4 according to RFC6298). When this
+// value was introduced, it was unintentionally divided by 8 since that code
+// worked with scaled numbers (to avoid floating point math). That behavior is
+// kept as downstream users have measured good values for their use-cases.
+constexpr double kHeuristicVarianceAdjustment = 8.0;
+
 RetransmissionTimeout::RetransmissionTimeout(const DcSctpOptions& options)
-    : min_rto_(*options.rto_min),
-      max_rto_(*options.rto_max),
-      max_rtt_(*options.rtt_max),
-      min_rtt_variance_(*options.min_rtt_variance),
-      scaled_srtt_(*options.rto_initial << kRttShift),
-      rto_(*options.rto_initial) {}
+    : min_rto_(options.rto_min.ToTimeDelta()),
+      max_rto_(options.rto_max.ToTimeDelta()),
+      max_rtt_(options.rtt_max.ToTimeDelta()),
+      min_rtt_variance_(options.min_rtt_variance.ToTimeDelta() /
+                        kHeuristicVarianceAdjustment),
+      srtt_(options.rto_initial.ToTimeDelta()),
+      rto_(options.rto_initial.ToTimeDelta()) {}
 
-void RetransmissionTimeout::ObserveRTT(DurationMs measured_rtt) {
-  const int32_t rtt = *measured_rtt;
-
+void RetransmissionTimeout::ObserveRTT(webrtc::TimeDelta rtt) {
   // Unrealistic values will be skipped. If a wrongly measured (or otherwise
   // corrupt) value was processed, it could change the state in a way that would
   // take a very long time to recover.
-  if (rtt < 0 || rtt > max_rtt_) {
+  if (rtt < webrtc::TimeDelta::Zero() || rtt > max_rtt_) {
     return;
   }
 
-  // From https://tools.ietf.org/html/rfc4960#section-6.3.1, but avoiding
-  // floating point math by implementing algorithm from "V. Jacobson: Congestion
-  // avoidance and control", but adapted for SCTP.
+  // https://tools.ietf.org/html/rfc4960#section-6.3.1.
   if (first_measurement_) {
-    scaled_srtt_ = rtt << kRttShift;
-    scaled_rtt_var_ = (rtt / 2) << kRttVarShift;
+    srtt_ = rtt;
+    rtt_var_ = rtt / 2;
     first_measurement_ = false;
   } else {
-    int32_t rtt_diff = rtt - (scaled_srtt_ >> kRttShift);
-    scaled_srtt_ += rtt_diff;
-    if (rtt_diff < 0) {
-      rtt_diff = -rtt_diff;
-    }
-    rtt_diff -= (scaled_rtt_var_ >> kRttVarShift);
-    scaled_rtt_var_ += rtt_diff;
+    webrtc::TimeDelta rtt_diff = (srtt_ - rtt).Abs();
+    rtt_var_ = (1 - kRtoBeta) * rtt_var_ + kRtoBeta * rtt_diff;
+    srtt_ = (1 - kRtoAlpha) * srtt_ + kRtoAlpha * rtt;
   }
 
-  if (scaled_rtt_var_ < min_rtt_variance_) {
-    scaled_rtt_var_ = min_rtt_variance_;
+  if (rtt_var_ < min_rtt_variance_) {
+    rtt_var_ = min_rtt_variance_;
   }
 
-  rto_ = (scaled_srtt_ >> kRttShift) + scaled_rtt_var_;
-
-  // Clamp RTO between min and max.
-  rto_ = std::min(std::max(rto_, min_rto_), max_rto_);
+  rto_ = srtt_ + 4 * rtt_var_;
+  rto_ = std::clamp(rto_, min_rto_, max_rto_);
 }
 }  // namespace dcsctp

@@ -15,4 +15,4 @@
 
 #include "aom_ports/aom_once.h"
 
-void av1_rtcd() { aom_once(setup_rtcd_internal); }
+void av1_rtcd(void) { aom_once(setup_rtcd_internal); }

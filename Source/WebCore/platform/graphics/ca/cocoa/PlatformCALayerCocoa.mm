@@ -424,6 +424,14 @@ void PlatformCALayerCocoa::setNeedsDisplayInRect(const FloatRect& dirtyRect)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+bool PlatformCALayerCocoa::needsDisplay() const
+{
+    if (!m_backingStoreAttached)
+        return false;
+
+    return [m_layer needsDisplay];
+}
+
 void PlatformCALayerCocoa::copyContentsFromLayer(PlatformCALayer* layer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS

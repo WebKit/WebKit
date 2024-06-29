@@ -1,0 +1,5 @@
+Anchor1
+Anchor2
+
+FAIL Transition when the anchor attribute changes assert_equals: expected 50 but got 0
+

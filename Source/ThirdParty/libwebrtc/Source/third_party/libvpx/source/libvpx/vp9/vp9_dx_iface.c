@@ -19,7 +19,6 @@
 #include "vpx/vpx_decoder.h"
 #include "vpx_dsp/bitreader_buffer.h"
 #include "vpx_dsp/vpx_dsp_common.h"
-#include "vpx_util/vpx_thread.h"
 
 #include "vp9/common/vp9_alloccommon.h"
 #include "vp9/common/vp9_frame_buffers.h"
@@ -305,9 +304,7 @@ static INLINE void check_resync(vpx_codec_alg_priv_t *const ctx,
 
 static vpx_codec_err_t decode_one(vpx_codec_alg_priv_t *ctx,
                                   const uint8_t **data, unsigned int data_sz,
-                                  void *user_priv, int64_t deadline) {
-  (void)deadline;
-
+                                  void *user_priv) {
   // Determine the stream parameters. Note that we rely on peek_si to
   // validate that we have a buffer that does not wrap around the top
   // of the heap.
@@ -342,7 +339,7 @@ static vpx_codec_err_t decode_one(vpx_codec_alg_priv_t *ctx,
 
 static vpx_codec_err_t decoder_decode(vpx_codec_alg_priv_t *ctx,
                                       const uint8_t *data, unsigned int data_sz,
-                                      void *user_priv, long deadline) {
+                                      void *user_priv) {
   const uint8_t *data_start = data;
   vpx_codec_err_t res;
   uint32_t frame_sizes[8];
@@ -382,7 +379,7 @@ static vpx_codec_err_t decoder_decode(vpx_codec_alg_priv_t *ctx,
         return VPX_CODEC_CORRUPT_FRAME;
       }
 
-      res = decode_one(ctx, &data_start_copy, frame_size, user_priv, deadline);
+      res = decode_one(ctx, &data_start_copy, frame_size, user_priv);
       if (res != VPX_CODEC_OK) return res;
 
       data_start += frame_size;
@@ -391,7 +388,7 @@ static vpx_codec_err_t decoder_decode(vpx_codec_alg_priv_t *ctx,
     const uint8_t *const data_end = data + data_sz;
     while (data_start < data_end) {
       const uint32_t frame_size = (uint32_t)(data_end - data_start);
-      res = decode_one(ctx, &data_start, frame_size, user_priv, deadline);
+      res = decode_one(ctx, &data_start, frame_size, user_priv);
       if (res != VPX_CODEC_OK) return res;
 
       // Account for suboptimal termination by the encoder.

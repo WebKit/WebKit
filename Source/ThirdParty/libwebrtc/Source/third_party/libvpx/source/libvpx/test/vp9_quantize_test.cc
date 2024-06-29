@@ -9,6 +9,7 @@
  */
 
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <tuple>
@@ -29,7 +30,6 @@
 #include "vp9/encoder/vp9_block.h"
 #include "vpx/vpx_codec.h"
 #include "vpx/vpx_integer.h"
-#include "vpx_ports/msvc.h"
 #include "vpx_ports/vpx_timer.h"
 
 using libvpx_test::ACMRandom;

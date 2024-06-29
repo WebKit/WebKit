@@ -39,6 +39,7 @@
 #import <WebCore/LocalDefaultSystemAppearance.h>
 #import <WebCore/ShareableBitmap.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 #import "PDFKitSoftLink.h"
 
@@ -297,7 +298,7 @@ static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&&
             view->_printingCallbackCondition.notifyOne();
         }
     };
-    _expectedPrintCallback = _webFrame->page()->drawPagesToPDF(_webFrame.get(), printInfo, firstPage - 1, lastPage - firstPage + 1, WTFMove(callback));
+    _expectedPrintCallback = _webFrame->page()->drawPagesToPDF(*_webFrame, printInfo, firstPage - 1, lastPage - firstPage + 1, WTFMove(callback));
     context->view = self;
     context->callbackID = _expectedPrintCallback;
 }
@@ -544,7 +545,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                     std::unique_ptr<IPCCallbackContext> contextDeleter(context);
                     pageDidDrawToImage(WTFMove(imageHandle), context);
                 };
-                _latestExpectedPreviewCallback = _webFrame->page()->drawRectToImage(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]), scaledPrintingRect, imageSize, WTFMove(callback));
+                _latestExpectedPreviewCallback = _webFrame->page()->drawRectToImage(*_webFrame, WebKit::PrintInfo([_printOperation.get() printInfo]), scaledPrintingRect, imageSize, WTFMove(callback));
                 _expectedPreviewCallbacks.add(_latestExpectedPreviewCallback, scaledPrintingRect);
 
                 context->view = self;
@@ -586,7 +587,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(!_printedPagesData.isEmpty()); // Prepared by knowsPageRange:
 
     if (!_printedPagesPDFDocument) {
-        RetainPtr<NSData> pdfData = adoptNS([[NSData alloc] initWithBytes:_printedPagesData.data() length:_printedPagesData.size()]);
+        RetainPtr pdfData = toNSData(_printedPagesData.span());
         _printedPagesPDFDocument = adoptNS([WebKit::allocPDFDocumentInstance() initWithData:pdfData.get()]);
 
         unsigned pageCount = [_printedPagesPDFDocument pageCount];

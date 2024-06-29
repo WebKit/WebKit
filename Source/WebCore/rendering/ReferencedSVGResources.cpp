@@ -123,9 +123,8 @@ ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::
 
     if (style.hasFilter()) {
         const auto& filterOperations = style.filter();
-        for (auto& operation : filterOperations.operations()) {
-            auto& filterOperation = *operation;
-            if (auto* referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(filterOperation)) {
+        for (auto& operation : filterOperations) {
+            if (RefPtr referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(operation)) {
                 if (!referenceFilterOperation->fragment().isEmpty())
                     referencedResources.append({ referenceFilterOperation->fragment(), { SVGNames::filterTag } });
             }

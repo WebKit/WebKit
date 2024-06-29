@@ -16,6 +16,7 @@
 
 #include "absl/algorithm/container.h"
 #include "absl/types/optional.h"
+#include "api/audio/audio_processing_statistics.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/candidate.h"
 #include "api/data_channel_interface.h"
@@ -25,7 +26,6 @@
 #include "api/scoped_refptr.h"
 #include "call/call.h"
 #include "media/base/media_channel.h"
-#include "modules/audio_processing/include/audio_processing_statistics.h"
 #include "p2p/base/ice_transport_internal.h"
 #include "pc/media_stream.h"
 #include "pc/rtp_receiver.h"
@@ -1342,7 +1342,7 @@ TEST_F(LegacyStatsCollectorTest, IceCandidateReport) {
 
   cricket::Candidate local;
   EXPECT_GT(local.id().length(), 0u);
-  local.set_type(cricket::LOCAL_PORT_TYPE);
+  RTC_DCHECK_EQ(local.type(), IceCandidateType::kHost);
   local.set_protocol(cricket::UDP_PROTOCOL_NAME);
   local.set_address(kLocalAddress);
   local.set_priority(kPriority);
@@ -1350,7 +1350,7 @@ TEST_F(LegacyStatsCollectorTest, IceCandidateReport) {
 
   cricket::Candidate remote;
   EXPECT_GT(remote.id().length(), 0u);
-  remote.set_type(cricket::PRFLX_PORT_TYPE);
+  remote.set_type(IceCandidateType::kPrflx);
   remote.set_protocol(cricket::UDP_PROTOCOL_NAME);
   remote.set_address(kRemoteAddress);
   remote.set_priority(kPriority);
@@ -1391,7 +1391,7 @@ TEST_F(LegacyStatsCollectorTest, IceCandidateReport) {
       ExtractStatsValue(StatsReport::kStatsReportTypeIceLocalCandidate, reports,
                         StatsReport::kStatsValueNameCandidatePriority));
   EXPECT_EQ(
-      IceCandidateTypeToStatsType(cricket::LOCAL_PORT_TYPE),
+      IceCandidateTypeToStatsType(local),
       ExtractStatsValue(StatsReport::kStatsReportTypeIceLocalCandidate, reports,
                         StatsReport::kStatsValueNameCandidateType));
   EXPECT_EQ(
@@ -1421,7 +1421,7 @@ TEST_F(LegacyStatsCollectorTest, IceCandidateReport) {
                               reports,
                               StatsReport::kStatsValueNameCandidatePriority));
   EXPECT_EQ(
-      IceCandidateTypeToStatsType(cricket::PRFLX_PORT_TYPE),
+      IceCandidateTypeToStatsType(remote),
       ExtractStatsValue(StatsReport::kStatsReportTypeIceRemoteCandidate,
                         reports, StatsReport::kStatsValueNameCandidateType));
   EXPECT_EQ(kNotFound,

@@ -47,7 +47,7 @@ static Size64 getMappedSize(WGPUBuffer buffer, std::optional<Size64> size, Size6
     if (size.has_value())
         return size.value();
 
-    auto bufferSize = wgpuBufferGetSize(buffer);
+    auto bufferSize = wgpuBufferGetInitialSize(buffer);
     return bufferSize > offset ? (bufferSize - offset) : 0;
 }
 
@@ -77,7 +77,7 @@ void BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size, Funct
     // FIXME: Check the casts.
     auto* pointer = wgpuBufferGetMappedRange(m_backing.get(), static_cast<size_t>(offset), static_cast<size_t>(usedSize));
     // FIXME: Check the type narrowing.
-    auto bufferSize = wgpuBufferGetSize(m_backing.get());
+    auto bufferSize = wgpuBufferGetInitialSize(m_backing.get());
     size_t actualSize = pointer ? static_cast<size_t>(bufferSize) : 0;
     size_t actualOffset = pointer ? static_cast<size_t>(offset) : 0;
     callback({ static_cast<uint8_t*>(pointer) - actualOffset, actualSize });
@@ -89,11 +89,11 @@ auto BufferImpl::getBufferContents() -> MappedRange
         return { nullptr, 0 };
 
     auto* pointer = wgpuBufferGetBufferContents(m_backing.get());
-    auto bufferSize = wgpuBufferGetSize(m_backing.get());
+    auto bufferSize = wgpuBufferGetCurrentSize(m_backing.get());
     return { static_cast<uint8_t*>(pointer), static_cast<size_t>(bufferSize) };
 }
 
-void BufferImpl::copy(Vector<uint8_t>&&, size_t)
+void BufferImpl::copy(std::span<const uint8_t>, size_t)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }

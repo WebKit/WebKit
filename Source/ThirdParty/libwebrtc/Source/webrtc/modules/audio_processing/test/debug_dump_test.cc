@@ -197,7 +197,7 @@ void DebugDumpGenerator::SetOutputChannels(int channels) {
 
 void DebugDumpGenerator::StartRecording() {
   apm_->AttachAecDump(
-      AecDumpFactory::Create(dump_file_name_.c_str(), -1, &worker_queue_));
+      AecDumpFactory::Create(dump_file_name_.c_str(), -1, worker_queue_.Get()));
 }
 
 void DebugDumpGenerator::Process(size_t num_blocks) {

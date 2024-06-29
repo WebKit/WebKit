@@ -48,6 +48,7 @@
 #include "include/private/SkColorData.h"
 #include "include/private/base/SingleOwner.h"
 #include "include/private/base/SkAssert.h"
+#include "include/private/base/SkDebug.h"
 #include "include/private/base/SkTArray.h"
 #include "include/private/base/SkTo.h"
 #include "include/private/chromium/Slug.h"  // IWYU pragma: keep
@@ -772,15 +773,11 @@ void Device::drawOval(const SkRect& oval, const SkPaint& paint) {
                                   GrStyle(paint));
 }
 
-void Device::drawArc(const SkRect& oval,
-                     SkScalar startAngle,
-                     SkScalar sweepAngle,
-                     bool useCenter,
-                     const SkPaint& paint) {
+void Device::drawArc(const SkArc& arc, const SkPaint& paint) {
     ASSERT_SINGLE_OWNER
     GR_CREATE_TRACE_MARKER_CONTEXT("skgpu::ganesh::Device", "drawArc", fContext.get());
     if (paint.getMaskFilter()) {
-        this->SkDevice::drawArc(oval, startAngle, sweepAngle, useCenter, paint);
+        this->SkDevice::drawArc(arc, paint);
         return;
     }
     GrPaint grPaint;
@@ -793,9 +790,12 @@ void Device::drawArc(const SkRect& oval,
         return;
     }
 
-    fSurfaceDrawContext->drawArc(this->clip(), std::move(grPaint),
-                                 fSurfaceDrawContext->chooseAA(paint), this->localToDevice(), oval,
-                                 startAngle, sweepAngle, useCenter, GrStyle(paint));
+    fSurfaceDrawContext->drawArc(this->clip(),
+                                 std::move(grPaint),
+                                 fSurfaceDrawContext->chooseAA(paint),
+                                 this->localToDevice(),
+                                 arc,
+                                 GrStyle(paint));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1426,7 +1426,7 @@ sk_sp<SkDevice> Device::createDevice(const CreateInfo& cinfo, const SkPaint*) {
     auto sdc = SurfaceDrawContext::MakeWithFallback(
             fContext.get(),
             SkColorTypeToGrColorType(cinfo.fInfo.colorType()),
-            fSurfaceDrawContext->colorInfo().refColorSpace(),
+            cinfo.fInfo.refColorSpace(),
             SkBackingFit::kApprox,
             cinfo.fInfo.dimensions(),
             props,

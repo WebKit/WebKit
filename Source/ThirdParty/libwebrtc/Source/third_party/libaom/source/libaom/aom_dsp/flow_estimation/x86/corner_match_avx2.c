@@ -17,64 +17,112 @@
 #include "aom_ports/mem.h"
 #include "aom_dsp/flow_estimation/corner_match.h"
 
-DECLARE_ALIGNED(16, static const uint8_t,
-                byte_mask[16]) = { 255, 255, 255, 255, 255, 255, 255, 255,
-                                   255, 255, 255, 255, 255, 0,   0,   0 };
-#if MATCH_SZ != 13
-#error "Need to change byte_mask in corner_match_sse4.c if MATCH_SZ != 13"
+DECLARE_ALIGNED(32, static const uint16_t, ones_array[16]) = { 1, 1, 1, 1, 1, 1,
+                                                               1, 1, 1, 1, 1, 1,
+                                                               1, 1, 1, 1 };
+
+#if MATCH_SZ != 16
+#error "Need to apply pixel mask in corner_match_avx2.c if MATCH_SZ != 16"
 #endif
 
-/* Compute corr(frame1, frame2) * MATCH_SZ * stddev(frame1), where the
-correlation/standard deviation are taken over MATCH_SZ by MATCH_SZ windows
-of each image, centered at (x1, y1) and (x2, y2) respectively.
-*/
-double av1_compute_cross_correlation_avx2(const unsigned char *frame1,
-                                          int stride1, int x1, int y1,
-                                          const unsigned char *frame2,
-                                          int stride2, int x2, int y2) {
-  int i, stride1_i = 0, stride2_i = 0;
-  __m256i temp1, sum_vec, sumsq2_vec, cross_vec, v, v1_1, v2_1;
-  const __m128i mask = _mm_load_si128((__m128i *)byte_mask);
-  const __m256i zero = _mm256_setzero_si256();
-  __m128i v1, v2;
+/* Compute mean and standard deviation of pixels in a window of size
+   MATCH_SZ by MATCH_SZ centered at (x, y).
+   Store results into *mean and *one_over_stddev
 
-  sum_vec = zero;
-  sumsq2_vec = zero;
-  cross_vec = zero;
+   Note: The output of this function is scaled by MATCH_SZ, as in
+   *mean = MATCH_SZ * <true mean> and
+   *one_over_stddev = 1 / (MATCH_SZ * <true stddev>)
+
+   Combined with the fact that we return 1/stddev rather than the standard
+   deviation itself, this allows us to completely avoid divisions in
+   aom_compute_correlation, which is much hotter than this function is.
+
+   Returns true if this feature point is usable, false otherwise.
+*/
+bool aom_compute_mean_stddev_avx2(const unsigned char *frame, int stride, int x,
+                                  int y, double *mean,
+                                  double *one_over_stddev) {
+  __m256i sum_vec = _mm256_setzero_si256();
+  __m256i sumsq_vec = _mm256_setzero_si256();
+
+  frame += (y - MATCH_SZ_BY2) * stride + (x - MATCH_SZ_BY2);
+
+  for (int i = 0; i < MATCH_SZ; ++i) {
+    const __m256i v = _mm256_cvtepu8_epi16(_mm_loadu_si128((__m128i *)frame));
+
+    sum_vec = _mm256_add_epi16(sum_vec, v);
+    sumsq_vec = _mm256_add_epi32(sumsq_vec, _mm256_madd_epi16(v, v));
+
+    frame += stride;
+  }
+
+  // Reduce sum_vec and sumsq_vec into single values
+  // Start by reducing each vector to 8x32-bit values, hadd() to perform 8
+  // additions, sum vertically to do 4 more, then the last 2 in scalar code.
+  const __m256i ones = _mm256_load_si256((__m256i *)ones_array);
+  const __m256i partial_sum = _mm256_madd_epi16(sum_vec, ones);
+  const __m256i tmp_8x32 = _mm256_hadd_epi32(partial_sum, sumsq_vec);
+  const __m128i tmp_4x32 = _mm_add_epi32(_mm256_extracti128_si256(tmp_8x32, 0),
+                                         _mm256_extracti128_si256(tmp_8x32, 1));
+  const int sum =
+      _mm_extract_epi32(tmp_4x32, 0) + _mm_extract_epi32(tmp_4x32, 1);
+  const int sumsq =
+      _mm_extract_epi32(tmp_4x32, 2) + _mm_extract_epi32(tmp_4x32, 3);
+
+  *mean = (double)sum / MATCH_SZ;
+  const double variance = sumsq - (*mean) * (*mean);
+  if (variance < MIN_FEATURE_VARIANCE) {
+    *one_over_stddev = 0.0;
+    return false;
+  }
+  *one_over_stddev = 1.0 / sqrt(variance);
+  return true;
+}
+
+/* Compute corr(frame1, frame2) over a window of size MATCH_SZ by MATCH_SZ.
+   To save on computation, the mean and (1 divided by the) standard deviation
+   of the window in each frame are precomputed and passed into this function
+   as arguments.
+*/
+double aom_compute_correlation_avx2(const unsigned char *frame1, int stride1,
+                                    int x1, int y1, double mean1,
+                                    double one_over_stddev1,
+                                    const unsigned char *frame2, int stride2,
+                                    int x2, int y2, double mean2,
+                                    double one_over_stddev2) {
+  __m256i cross_vec = _mm256_setzero_si256();
 
   frame1 += (y1 - MATCH_SZ_BY2) * stride1 + (x1 - MATCH_SZ_BY2);
   frame2 += (y2 - MATCH_SZ_BY2) * stride2 + (x2 - MATCH_SZ_BY2);
 
-  for (i = 0; i < MATCH_SZ; ++i) {
-    v1 = _mm_and_si128(_mm_loadu_si128((__m128i *)&frame1[stride1_i]), mask);
-    v1_1 = _mm256_cvtepu8_epi16(v1);
-    v2 = _mm_and_si128(_mm_loadu_si128((__m128i *)&frame2[stride2_i]), mask);
-    v2_1 = _mm256_cvtepu8_epi16(v2);
+  for (int i = 0; i < MATCH_SZ; ++i) {
+    const __m256i v1 = _mm256_cvtepu8_epi16(_mm_loadu_si128((__m128i *)frame1));
+    const __m256i v2 = _mm256_cvtepu8_epi16(_mm_loadu_si128((__m128i *)frame2));
 
-    v = _mm256_insertf128_si256(_mm256_castsi128_si256(v1), v2, 1);
-    sumsq2_vec = _mm256_add_epi32(sumsq2_vec, _mm256_madd_epi16(v2_1, v2_1));
+    cross_vec = _mm256_add_epi32(cross_vec, _mm256_madd_epi16(v1, v2));
 
-    sum_vec = _mm256_add_epi16(sum_vec, _mm256_sad_epu8(v, zero));
-    cross_vec = _mm256_add_epi32(cross_vec, _mm256_madd_epi16(v1_1, v2_1));
-    stride1_i += stride1;
-    stride2_i += stride2;
+    frame1 += stride1;
+    frame2 += stride2;
   }
-  __m256i sum_vec1 = _mm256_srli_si256(sum_vec, 8);
-  sum_vec = _mm256_add_epi32(sum_vec, sum_vec1);
-  int sum1_acc = _mm_cvtsi128_si32(_mm256_castsi256_si128(sum_vec));
-  int sum2_acc = _mm256_extract_epi32(sum_vec, 4);
 
-  __m256i unp_low = _mm256_unpacklo_epi64(sumsq2_vec, cross_vec);
-  __m256i unp_hig = _mm256_unpackhi_epi64(sumsq2_vec, cross_vec);
-  temp1 = _mm256_add_epi32(unp_low, unp_hig);
+  // Sum cross_vec into a single value
+  const __m128i tmp = _mm_add_epi32(_mm256_extracti128_si256(cross_vec, 0),
+                                    _mm256_extracti128_si256(cross_vec, 1));
+  const int cross = _mm_extract_epi32(tmp, 0) + _mm_extract_epi32(tmp, 1) +
+                    _mm_extract_epi32(tmp, 2) + _mm_extract_epi32(tmp, 3);
 
-  __m128i low_sumsq = _mm256_castsi256_si128(temp1);
-  low_sumsq = _mm_add_epi32(low_sumsq, _mm256_extractf128_si256(temp1, 1));
-  low_sumsq = _mm_add_epi32(low_sumsq, _mm_srli_epi64(low_sumsq, 32));
-  int sumsq2_acc = _mm_cvtsi128_si32(low_sumsq);
-  int cross_acc = _mm_extract_epi32(low_sumsq, 2);
-
-  int var2 = sumsq2_acc * MATCH_SZ_SQ - sum2_acc * sum2_acc;
-  int cov = cross_acc * MATCH_SZ_SQ - sum1_acc * sum2_acc;
-  return cov / sqrt((double)var2);
+  // Note: In theory, the calculations here "should" be
+  //   covariance = cross / N^2 - mean1 * mean2
+  //   correlation = covariance / (stddev1 * stddev2).
+  //
+  // However, because of the scaling in aom_compute_mean_stddev, the
+  // lines below actually calculate
+  //   covariance * N^2 = cross - (mean1 * N) * (mean2 * N)
+  //   correlation = (covariance * N^2) / ((stddev1 * N) * (stddev2 * N))
+  //
+  // ie. we have removed the need for a division, and still end up with the
+  // correct unscaled correlation (ie, in the range [-1, +1])
+  const double covariance = cross - mean1 * mean2;
+  const double correlation = covariance * (one_over_stddev1 * one_over_stddev2);
+  return correlation;
 }

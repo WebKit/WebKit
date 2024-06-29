@@ -223,7 +223,7 @@ TEST(TLSVersion, Preconnect)
     }, HTTPServer::Protocol::HttpsWithLegacyTLS);
 
     auto webView = adoptNS([WKWebView new]);
-    [webView loadHTMLString:makeString("<head><link rel='preconnect' href='https://127.0.0.1:", server.port(), "/'></link></head>") baseURL:nil];
+    [webView loadHTMLString:makeString("<head><link rel='preconnect' href='https://127.0.0.1:"_s, server.port(), "/'></link></head>"_s) baseURL:nil];
 
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
@@ -316,7 +316,7 @@ TEST(TLSVersion, BackForwardNegotiatedLegacyTLS)
         { "/"_s, { "hello"_s } }
     }, HTTPServer::Protocol::HttpsWithLegacyTLS);
     HTTPServer mixedContentServer({
-        { "/"_s, { {{ "Content-Type"_s, "text/html"_s }}, makeString("<img src='https://127.0.0.1:", insecureServer.port(), "/'></img>") } },
+        { "/"_s, { {{ "Content-Type"_s, "text/html"_s }}, makeString("<img src='https://127.0.0.1:"_s, insecureServer.port(), "/'></img>"_s) } },
     }, HTTPServer::Protocol::Https);
 
     auto [webView, delegate] = webViewWithNavigationDelegate();
@@ -350,7 +350,7 @@ TEST(TLSVersion, Subresource)
     }, HTTPServer::Protocol::HttpsWithLegacyTLS);
 
     HTTPServer modernTLSServer({
-        { "/"_s, { makeString("<script>fetch('https://127.0.0.1:", legacyTLSServer.port(), "/',{mode:'no-cors'})</script>") } },
+        { "/"_s, { makeString("<script>fetch('https://127.0.0.1:"_s, legacyTLSServer.port(), "/',{mode:'no-cors'})</script>"_s) } },
         { "/pageWithoutSubresource"_s, { "hello"_s }}
     }, HTTPServer::Protocol::Https);
     
@@ -403,7 +403,7 @@ TEST(TLSVersion, BackForwardHasOnlySecureContent)
         { "/"_s, { "hello"_s } }
     });
     HTTPServer mixedContentServer({
-        { "/"_s, { {{ "Content-Type"_s, "text/html"_s }}, makeString("<img src='http://127.0.0.1:", insecureServer.port(), "/'></img>") } },
+        { "/"_s, { {{ "Content-Type"_s, "text/html"_s }}, makeString("<img src='http://127.0.0.1:"_s, insecureServer.port(), "/'></img>"_s) } },
     }, HTTPServer::Protocol::Https);
 
     auto configuration = adoptNS([WKWebViewConfiguration new]);
@@ -445,7 +445,7 @@ TEST(TLSVersion, LegacySubresources)
     }, HTTPServer::Protocol::HttpsWithLegacyTLS);
 
     HTTPServer modernServer({
-        { "/"_s, { makeString("<iframe src='https://127.0.0.1:", legacyServer.port(), "/frame'/>") }}
+        { "/"_s, { makeString("<iframe src='https://127.0.0.1:"_s, legacyServer.port(), "/frame'/>"_s) }}
     }, HTTPServer::Protocol::Https);
 
     auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);

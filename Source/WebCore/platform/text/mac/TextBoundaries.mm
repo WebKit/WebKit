@@ -186,9 +186,15 @@ void findWordBoundary(StringView text, int position, int* start, int* end)
     *start = range.location;
     *end = range.location + range.length;
 #else
+    if (text.isEmpty()) {
+        *start = 0;
+        *end = 0;
+        return;
+    }
+
     unsigned pos = position;
-    if (pos == text.length() && pos)
-        --pos;
+    if (pos >= text.length() && pos)
+        pos = text.length() - 1;
 
     // For complex text (Thai, Japanese, Chinese), visible_units will pass the text in as a 
     // single contiguous run of characters, providing as much context as is possible.

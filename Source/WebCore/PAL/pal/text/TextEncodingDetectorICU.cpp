@@ -46,7 +46,7 @@ bool detectTextEncoding(std::span<const uint8_t> data, const char* hintEncodingN
     if (U_FAILURE(status))
         return false;
     ucsdet_enableInputFilter(detector, true);
-    ucsdet_setText(detector, reinterpret_cast<const char*>(data.data()), static_cast<int32_t>(data.size()), &status);
+    ucsdet_setText(detector, byteCast<char>(data.data()), static_cast<int32_t>(data.size()), &status);
     if (U_FAILURE(status))
         return false;
 

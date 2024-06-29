@@ -1,8 +1,6 @@
 /**
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
-**/ /// <reference types="@webgpu/types" />
-
-import { ErrorWithExtra, assert, objectEquals } from './util.js';
+**/import { ErrorWithExtra, assert, objectEquals } from './util.js';
 
 /**
  * Finds and returns the `navigator.gpu` object (or equivalent, for non-browser implementations).

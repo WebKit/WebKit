@@ -130,6 +130,7 @@ private:
     LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
     CachedResourceHandle<CachedFont> m_cachedFont;
     String m_replacementURLString;
+    bool m_shouldUseResolvedURLInCSSText { false };
 };
 
 } // namespace WebCore

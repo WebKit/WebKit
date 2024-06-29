@@ -40,6 +40,8 @@ from twisted.trial import unittest
 from .steps import *
 
 CURRENT_HOSTNAME = socket.gethostname().strip()
+# Workaround for https://github.com/buildbot/buildbot/issues/4669
+FakeBuild.addStepsAfterLastStep = lambda FakeBuild, step_factories: None
 FakeBuild._builderid = 1
 
 class ExpectMasterShellCommand(object):
@@ -1099,7 +1101,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['/bin/sh', '-c', ' '.join(command) + ' 2>&1 | python3 Tools/Scripts/filter-jsc-tests.py'],
+                        command=['/bin/sh', '-c', ' '.join(command) + ' 2>&1 | python3 Tools/Scripts/filter-test-logs jsc'],
                         logfiles={'json': self.jsonFileName},
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
                         timeout=72000,
@@ -1115,7 +1117,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['/bin/sh', '-c', ' '.join(command) + ' 2>&1 | python3 Tools/Scripts/filter-jsc-tests.py'],
+                        command=['/bin/sh', '-c', ' '.join(command) + ' 2>&1 | python3 Tools/Scripts/filter-test-logs jsc'],
                         logfiles={'json': self.jsonFileName},
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
                         timeout=72000,
@@ -1836,3 +1838,163 @@ exit 1''')
         self.expectOutcome(result=SKIPPED, state_string='Skipped upload to S3')
         with current_hostname('something-other-than-steps.BUILD_WEBKIT_HOSTNAMES'):
             return self.runStep()
+
+
+class TestScanBuildSmartPointer(BuildStepMixinAdditions, unittest.TestCase):
+    WORK_DIR = 'wkdir'
+    EXPECTED_BUILD_COMMAND = ['/bin/sh', '-c', f'Tools/Scripts/build-and-analyze --output-dir wkdir/build/{SCAN_BUILD_OUTPUT_DIR} --only-smart-pointers --analyzer-path=wkdir/llvm-project/build/bin/clang --scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot=macosx --preprocessor-additions=CLANG_WEBKIT_BRANCH=1 2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt']
+
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(ScanBuildSmartPointer())
+
+    def test_failure(self):
+        self.configureStep()
+        self.setProperty('builddir', self.WORK_DIR)
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=['/bin/sh', '-c', f'/bin/rm -rf wkdir/build/{SCAN_BUILD_OUTPUT_DIR}'],
+                        timeout=2 * 60 * 60) + 0,
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=self.EXPECTED_BUILD_COMMAND,
+                        timeout=2 * 60 * 60)
+            + ExpectShell.log('stdio', stdout='scan-build-static-analyzer: No bugs found.\nTotal issue count: 123\n')
+            + 0
+        )
+        self.expectOutcome(result=FAILURE, state_string='ANALYZE FAILED: scan-build-smart-pointer found 123 issues (failure)')
+        return self.runStep()
+
+    def test_success(self):
+        self.configureStep()
+        self.setProperty('builddir', self.WORK_DIR)
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=['/bin/sh', '-c', f'/bin/rm -rf wkdir/build/{SCAN_BUILD_OUTPUT_DIR}'],
+                        timeout=2 * 60 * 60)
+            + 0,
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=self.EXPECTED_BUILD_COMMAND,
+                        timeout=2 * 60 * 60)
+            + ExpectShell.log('stdio', stdout='ANALYZE SUCCEEDED No issues found.\n')
+            + 0
+        )
+        self.expectOutcome(result=SUCCESS, state_string='scan-build-smart-pointer found 0 issues')
+        return self.runStep()
+
+    def test_success_with_issues(self):
+        self.configureStep()
+        self.setProperty('builddir', self.WORK_DIR)
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=['/bin/sh', '-c', f'/bin/rm -rf wkdir/build/{SCAN_BUILD_OUTPUT_DIR}'],
+                        timeout=2 * 60 * 60)
+            + 0,
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=self.EXPECTED_BUILD_COMMAND,
+                        timeout=2 * 60 * 60)
+            + ExpectShell.log('stdio', stdout='ANALYZE SUCCEEDED\n Total issue count: 300\n')
+            + 0
+        )
+        self.expectOutcome(result=SUCCESS, state_string='scan-build-smart-pointer found 300 issues')
+        return self.runStep()
+
+
+class TestParseStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(ParseStaticAnalyzerResults())
+
+    def test_success(self):
+        self.configureStep()
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 1234)
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python3', 'Tools/Scripts/generate-dirty-files', f'wkdir/build/{SCAN_BUILD_OUTPUT_DIR}', '--output-dir', 'wkdir/smart-pointer-result-archive/1234', '--build-dir', 'wkdir/build'])
+            + ExpectShell.log('stdio', stdout='Total (24247) WebKit (327) WebCore (23920)\n')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string=' Issues by project: Total (24247) WebKit (327) WebCore (23920)\n')
+        return self.runStep()
+
+
+class TestCompareStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(CompareStaticAnalyzerResults())
+
+    def test_success_no_issues(self):
+        self.configureStep()
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 2)
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/smart-pointer-result-archive/2', '--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations'],)
+            + ExpectShell.log('stdio', stdout='')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Found no unexpected results')
+        return self.runStep()
+
+    def test_new_issues(self):
+        self.configureStep()
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 1234)
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/smart-pointer-result-archive/1234', '--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations'],)
+            + ExpectShell.log('stdio', stdout='Total unexpected failing files: 123\nTotal unexpected passing files: 456\nTotal unexpected issues: 789\n')
+            + 0,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Unexpected failing files: 123 Unexpected passing files: 456 Unexpected issues: 789 (failure)')
+        return self.runStep()
+
+
+class TestUpdateSmartPointerBaseline(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(UpdateSmartPointerBaseline())
+
+    def test_success(self):
+        self.configureStep()
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 2)
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['/bin/sh', '-c', 'rm -r wkdir/smart-pointer-result-archive/baseline'],)
+            + ExpectShell.log('stdio', stdout='')
+            + 0,
+            ExpectShell(workdir='wkdir',
+                        command=['/bin/sh', '-c', 'cp -r wkdir/smart-pointer-result-archive/2 wkdir/smart-pointer-result-archive/baseline'],)
+            + ExpectShell.log('stdio', stdout='')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS)
+        return self.runStep()

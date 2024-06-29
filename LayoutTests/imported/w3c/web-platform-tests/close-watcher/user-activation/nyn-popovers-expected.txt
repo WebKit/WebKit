@@ -1,0 +1,4 @@
+b0 b1 b2
+
+FAIL Create a popover without user activation; create a popover with user activation; create a popover without user activation assert_false: first escape: p2 should be closed. expected false got true
+

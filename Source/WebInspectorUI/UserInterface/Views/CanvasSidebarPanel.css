@@ -30,9 +30,17 @@
     overflow-y: hidden;
 }
 
+.sidebar > .panel.navigation.canvas:not(.showing-recording) > .content {
+    bottom: 0;
+}
+
 .sidebar > .panel.navigation.canvas > .navigation-bar > .item.record-start-stop.disabled > .glyph {
     filter: grayscale();
     opacity: 0.5;
+}
+
+.sidebar > .panel.navigation.canvas > .content > .tree-outline.canvas {
+    overflow-y: auto;
 }
 
 .sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas:is(.canvas-2d, .bitmaprenderer) .icon {
@@ -47,6 +55,10 @@
     border-top: 1px solid var(--border-color);
 }
 
+.sidebar > .panel.navigation.canvas:not(.showing-recording) > .content > .navigation-bar {
+    border-bottom: none;
+}
+
 .sidebar > .panel.navigation.canvas.has-recordings > .content > .recording-content {
     flex-grow: 1;
     overflow-y: auto;
@@ -56,10 +68,9 @@
     flex-shrink: 0;
     height: fit-content;
     max-height: 110px;
-    overflow-y: auto;
 }
 
-.sidebar > .panel.navigation.canvas:not(.has-recordings) > .filter-bar,
+.sidebar > .panel.navigation.canvas:not(.showing-recording) > :is(.filter-bar, .overflow-shadow),
 .sidebar > .panel.navigation.canvas:not(.has-recordings) > .content > :is(.navigation-bar, .recording-content) {
     display: none;
 }

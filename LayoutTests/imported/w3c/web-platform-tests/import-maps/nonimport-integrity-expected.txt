@@ -1,0 +1,12 @@
+
+PASS Script was not loaded as its integrity check was not ignored
+PASS Script was loaded as its correct integrity attribute was not ignored
+PASS Script was loaded as its empty integrity attribute was not ignored
+PASS Script was not loaded as its bad integrity attribute was not overridden
+FAIL Modulepreload was not loaded as its integrity check was not ignored assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Modulepreload was loaded as its correct integrity attribute was not ignored
+PASS Modulepreload was loaded as its empty integrity attribute was not ignored
+FAIL Modulepreload was not loaded as its bad integrity attribute was not ignored promise_test: Unhandled rejection with value: object "Error: It shouldn't have loaded"
+PASS Classic script was loaded as its integrity check was ignored
+PASS Image was loaded as its integrity check was ignored
+

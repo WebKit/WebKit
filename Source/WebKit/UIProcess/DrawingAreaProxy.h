@@ -150,7 +150,7 @@ public:
     virtual void addRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy&) { }
     virtual void removeRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy&) { }
 
-    virtual void remotePageProcessCrashed(WebCore::ProcessIdentifier) { }
+    virtual void remotePageProcessDidTerminate(WebCore::ProcessIdentifier) { }
 
 protected:
     DrawingAreaProxy(DrawingAreaType, WebPageProxy&, WebProcessProxy&);

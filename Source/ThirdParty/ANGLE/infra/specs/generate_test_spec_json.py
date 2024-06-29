@@ -59,6 +59,13 @@ ADDITIONAL_MIXINS = {
             'io_timeout': 300
         }
     },
+    'temp_band_below_30C': {
+        'swarming': {
+            'dimensions': {
+                'temp_band': '<30'
+            }
+        }
+    },
 }
 
 MIXIN_FILE_NAME = os.path.join(THIS_DIR, 'mixins.pyl')

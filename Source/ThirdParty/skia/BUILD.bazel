@@ -1,11 +1,25 @@
+load("@rules_license//rules:license.bzl", "license")
 load("@skia_user_config//:copts.bzl", "DEFAULT_OBJC_COPTS")
 load("//:defines.bzl", "DEFAULT_DEFINES", "DEFAULT_LOCAL_DEFINES")
 load("//bazel:gen_compile_flags_txt_linux_amd64.bzl", "gen_compile_flags_txt_linux_amd64")
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_library", "skia_objc_library")
+load("//bazel:skia_rules.bzl", "skia_cc_library", "skia_objc_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+# https://opensource.google/documentation/reference/thirdparty/new_license_rules
+# https://github.com/bazelbuild/rules_license/blob/bcffeb0c481d178cbee69bdc7e23ef22d3a087b1/rules/license.bzl
+license(
+    name = "license",
+    license_kinds = ["@rules_license//licenses/generic:notice"],
+    license_text = "LICENSE",
+)
 
 licenses(["notice"])
 
-exports_files_legacy()
+# Note, we do not need exports_files_legacy() because this file is not synced into G3.
+exports_files(["LICENSE"])
 
 # All the mm files from the Skia library are rolled up to this objc library since cc_library
 # ignores mm files. This private library is then deps'ed into the public and internal versions
@@ -29,7 +43,6 @@ skia_cc_library(
     name = "skia_public",
     srcs = [
         "//include:private_hdrs",
-        "//include:srcs",
         "//src:private_hdrs",
         "//src:srcs",
     ],
@@ -51,7 +64,6 @@ skia_cc_library(
 skia_cc_library(
     name = "skia_internal",
     srcs = [
-        "//include:srcs",
         "//src:srcs",
     ],
     hdrs = [
@@ -102,8 +114,32 @@ alias(
 )
 
 alias(
+    name = "ganesh_egl_factory",
+    actual = "//src/gpu/ganesh/gl/egl:egl_factory",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ganesh_gl_epoxy_factory",
+    actual = "//src/gpu/ganesh/gl/epoxy:epoxy_factory",
+    visibility = ["//visibility:public"],
+)
+
+alias(
     name = "ganesh_glx_factory",
     actual = "//src/gpu/ganesh/gl/glx:glx_factory",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ganesh_gl_ios_factory",
+    actual = "//src/gpu/ganesh/gl/ios:ios_factory",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ganesh_gl_mac_factory",
+    actual = "//src/gpu/ganesh/gl/mac:mac_factory",
     visibility = ["//visibility:public"],
 )
 
@@ -114,8 +150,8 @@ alias(
 )
 
 alias(
-    name = "ganesh_epoxy_factory",
-    actual = "//src/gpu/ganesh/gl/epoxy:epoxy_factory",
+    name = "ganesh_metal",
+    actual = "//src/gpu/ganesh/mtl:ganesh_metal",
     visibility = ["//visibility:public"],
 )
 
@@ -201,16 +237,21 @@ alias(
     visibility = ["//visibility:public"],
 )
 
-# TODO(kjlubick)
-# alias(
-#     name = "fontmgr_coretext",
-#     actual = "//src/ports:fontmgr_coretext",
-#     visibility = ["//visibility:public"],
-# )
+alias(
+    name = "fontmgr_coretext",
+    actual = "//src/ports:fontmgr_coretext",
+    visibility = ["//visibility:public"],
+)
 
 alias(
     name = "fontmgr_data_freetype",
     actual = "//src/ports:fontmgr_data_freetype",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "fontmgr_directory_freetype",
+    actual = "//src/ports:fontmgr_directory_freetype",
     visibility = ["//visibility:public"],
 )
 
@@ -229,8 +270,8 @@ alias(
 ###
 
 alias(
-    name = "skparagraph_harfbuzz_icu",
-    actual = "//modules/skparagraph:skparagraph_harfbuzz_icu",
+    name = "skparagraph_harfbuzz_unicode",
+    actual = "//modules/skparagraph:skparagraph_harfbuzz_unicode",
     visibility = ["//visibility:public"],
 )
 
@@ -242,12 +283,11 @@ alias(
     visibility = ["//visibility:public"],
 )
 
-# TODO(kjlubick)
-# alias(
-#     name = "skshaper_coretext",
-#     actual = "//modules/skshaper:skshaper_coretext",
-#     visibility = ["//visibility:public"],
-# )
+alias(
+    name = "skshaper_coretext",
+    actual = "//modules/skshaper:skshaper_coretext",
+    visibility = ["//visibility:public"],
+)
 
 alias(
     name = "skshaper_harfbuzz",

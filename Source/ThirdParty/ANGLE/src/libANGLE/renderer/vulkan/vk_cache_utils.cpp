@@ -238,7 +238,7 @@ uint8_t PackGLBlendFactor(gl::BlendFactorType blendFactor)
     }
 }
 
-void UnpackAttachmentDesc(Context *context,
+void UnpackAttachmentDesc(Renderer *renderer,
                           VkAttachmentDescription2 *desc,
                           angle::FormatID formatID,
                           uint8_t samples,
@@ -247,7 +247,7 @@ void UnpackAttachmentDesc(Context *context,
     *desc         = {};
     desc->sType   = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2;
     desc->format  = GetVkFormatFromFormatID(formatID);
-    desc->samples = gl_vk::GetSamples(samples, context->getFeatures().limitSampleCountTo2.enabled);
+    desc->samples = gl_vk::GetSamples(samples, renderer->getFeatures().limitSampleCountTo2.enabled);
     desc->loadOp  = ConvertRenderPassLoadOpToVkLoadOp(static_cast<RenderPassLoadOp>(ops.loadOp));
     desc->storeOp =
         ConvertRenderPassStoreOpToVkStoreOp(static_cast<RenderPassStoreOp>(ops.storeOp));
@@ -256,9 +256,9 @@ void UnpackAttachmentDesc(Context *context,
     desc->stencilStoreOp =
         ConvertRenderPassStoreOpToVkStoreOp(static_cast<RenderPassStoreOp>(ops.stencilStoreOp));
     desc->initialLayout =
-        ConvertImageLayoutToVkImageLayout(context, static_cast<ImageLayout>(ops.initialLayout));
+        ConvertImageLayoutToVkImageLayout(renderer, static_cast<ImageLayout>(ops.initialLayout));
     desc->finalLayout =
-        ConvertImageLayoutToVkImageLayout(context, static_cast<ImageLayout>(ops.finalLayout));
+        ConvertImageLayoutToVkImageLayout(renderer, static_cast<ImageLayout>(ops.finalLayout));
 }
 
 struct AttachmentInfo
@@ -754,8 +754,11 @@ void InitializeDefaultSubpassSelfDependencies(
         renderer->getFeatures().supportsRasterizationOrderAttachmentAccess.enabled;
     const bool hasBlendOperationAdvanced =
         renderer->getFeatures().supportsBlendOperationAdvanced.enabled;
+    const bool hasCoherentBlendOperationAdvanced =
+        renderer->getFeatures().supportsBlendOperationAdvancedCoherent.enabled;
 
-    if (hasRasterizationOrderAttachmentAccess && !hasBlendOperationAdvanced)
+    if (hasRasterizationOrderAttachmentAccess &&
+        (!hasBlendOperationAdvanced || hasCoherentBlendOperationAdvanced))
     {
         // No need to specify a subpass dependency if VK_EXT_rasterization_order_attachment_access
         // is enabled, as that extension makes this subpass dependency implicit.
@@ -777,7 +780,7 @@ void InitializeDefaultSubpassSelfDependencies(
         dependency->dstStageMask |= VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
         dependency->dstAccessMask |= VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
     }
-    if (renderer->getFeatures().supportsBlendOperationAdvanced.enabled)
+    if (hasBlendOperationAdvanced && !hasCoherentBlendOperationAdvanced)
     {
         dependency->dstAccessMask |= VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT;
     }
@@ -792,13 +795,11 @@ void InitializeMSRTSS(Context *context,
                       uint8_t renderToTextureSamples,
                       VkSubpassDescription2 *subpass,
                       VkSubpassDescriptionDepthStencilResolve *msrtssResolve,
-                      VkMultisampledRenderToSingleSampledInfoEXT *msrtss,
-                      VkMultisampledRenderToSingleSampledInfoGOOGLEX *msrtssGOOGLEX)
+                      VkMultisampledRenderToSingleSampledInfoEXT *msrtss)
 {
     Renderer *renderer = context->getRenderer();
 
-    ASSERT(renderer->getFeatures().supportsMultisampledRenderToSingleSampled.enabled ||
-           renderer->getFeatures().supportsMultisampledRenderToSingleSampledGOOGLEX.enabled);
+    ASSERT(renderer->getFeatures().supportsMultisampledRenderToSingleSampled.enabled);
 
     *msrtssResolve                    = {};
     msrtssResolve->sType              = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE;
@@ -812,22 +813,8 @@ void InitializeMSRTSS(Context *context,
     msrtss->rasterizationSamples                    = gl_vk::GetSamples(
         renderToTextureSamples, context->getFeatures().limitSampleCountTo2.enabled);
 
-    *msrtssGOOGLEX       = {};
-    msrtssGOOGLEX->sType = VK_STRUCTURE_TYPE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_INFO_GOOGLEX;
-    msrtssGOOGLEX->multisampledRenderToSingleSampledEnable = true;
-    msrtssGOOGLEX->rasterizationSamples                    = msrtss->rasterizationSamples;
-    msrtssGOOGLEX->depthResolveMode                        = VK_RESOLVE_MODE_SAMPLE_ZERO_BIT;
-    msrtssGOOGLEX->stencilResolveMode                      = VK_RESOLVE_MODE_SAMPLE_ZERO_BIT;
-
-    if (renderer->getFeatures().supportsMultisampledRenderToSingleSampled.enabled)
-    {
-        // msrtss->pNext is not null so can't use AddToPNextChain
-        AppendToPNextChain(subpass, msrtss);
-    }
-    else
-    {
-        AddToPNextChain(subpass, msrtssGOOGLEX);
-    }
+    // msrtss->pNext is not null so can't use AddToPNextChain
+    AppendToPNextChain(subpass, msrtss);
 }
 
 void SetRenderPassViewMask(Context *context,
@@ -4274,10 +4261,8 @@ bool operator==(const AttachmentOpsArray &lhs, const AttachmentOpsArray &rhs)
 
 // DescriptorSetLayoutDesc implementation.
 DescriptorSetLayoutDesc::DescriptorSetLayoutDesc()
-    : mPackedDescriptorSetLayout{}, mValidDescriptorSetLayoutIndexMask()
-{
-    mImmutableSamplers.fill(VK_NULL_HANDLE);
-}
+    : mImmutableSamplers{}, mDescriptorSetLayoutBindings{}
+{}
 
 DescriptorSetLayoutDesc::~DescriptorSetLayoutDesc() = default;
 
@@ -4288,20 +4273,32 @@ DescriptorSetLayoutDesc &DescriptorSetLayoutDesc::operator=(const DescriptorSetL
 
 size_t DescriptorSetLayoutDesc::hash() const
 {
-    size_t genericHash = angle::ComputeGenericHash(mValidDescriptorSetLayoutIndexMask);
-    for (size_t bindingIndex : mValidDescriptorSetLayoutIndexMask)
+    size_t validDescriptorSetLayoutBindingsCount = mDescriptorSetLayoutBindings.size();
+    size_t validImmutableSamplersCount           = mImmutableSamplers.size();
+
+    ASSERT(validDescriptorSetLayoutBindingsCount != 0 || validImmutableSamplersCount == 0);
+
+    size_t genericHash = 0;
+    if (validDescriptorSetLayoutBindingsCount > 0)
     {
-        genericHash ^= angle::ComputeGenericHash(mPackedDescriptorSetLayout[bindingIndex]) ^
-                       angle::ComputeGenericHash(mImmutableSamplers[bindingIndex]);
+        genericHash = angle::ComputeGenericHash(
+            mDescriptorSetLayoutBindings.data(),
+            validDescriptorSetLayoutBindingsCount * sizeof(PackedDescriptorSetBinding));
     }
+
+    if (validImmutableSamplersCount > 0)
+    {
+        genericHash ^= angle::ComputeGenericHash(mImmutableSamplers.data(),
+                                                 validImmutableSamplersCount * sizeof(VkSampler));
+    }
+
     return genericHash;
 }
 
 bool DescriptorSetLayoutDesc::operator==(const DescriptorSetLayoutDesc &other) const
 {
-    return memcmp(&mPackedDescriptorSetLayout, &other.mPackedDescriptorSetLayout,
-                  sizeof(mPackedDescriptorSetLayout)) == 0 &&
-           memcmp(&mImmutableSamplers, &other.mImmutableSamplers, sizeof(mImmutableSamplers)) == 0;
+    return mDescriptorSetLayoutBindings == other.mDescriptorSetLayoutBindings &&
+           mImmutableSamplers == other.mImmutableSamplers;
 }
 
 void DescriptorSetLayoutDesc::update(uint32_t bindingIndex,
@@ -4310,31 +4307,49 @@ void DescriptorSetLayoutDesc::update(uint32_t bindingIndex,
                                      VkShaderStageFlags stages,
                                      const Sampler *immutableSampler)
 {
-    ASSERT(static_cast<size_t>(descriptorType) < std::numeric_limits<uint16_t>::max());
+    ASSERT(static_cast<size_t>(descriptorType) < std::numeric_limits<uint8_t>::max());
     ASSERT(count < std::numeric_limits<uint16_t>::max());
+    ASSERT(bindingIndex < std::numeric_limits<uint16_t>::max());
 
-    PackedDescriptorSetBinding &packedBinding = mPackedDescriptorSetLayout[bindingIndex];
+    if (bindingIndex >= mDescriptorSetLayoutBindings.size())
+    {
+        PackedDescriptorSetBinding invalid = {};
+        invalid.type                       = PackedDescriptorSetBinding::kInvalidType;
+        mDescriptorSetLayoutBindings.resize(bindingIndex + 1, invalid);
+    }
 
+    PackedDescriptorSetBinding &packedBinding = mDescriptorSetLayoutBindings[bindingIndex];
     SetBitField(packedBinding.type, descriptorType);
     SetBitField(packedBinding.count, count);
     SetBitField(packedBinding.stages, stages);
+    SetBitField(packedBinding.hasImmutableSampler, 0);
 
     if (immutableSampler)
     {
-        ASSERT(count == 1);
-        ASSERT(bindingIndex < gl::IMPLEMENTATION_MAX_ACTIVE_TEXTURES);
+        if (bindingIndex >= mImmutableSamplers.size())
+        {
+            mImmutableSamplers.resize(bindingIndex + 1);
+        }
 
+        ASSERT(count == 1);
+        SetBitField(packedBinding.hasImmutableSampler, 1);
         mImmutableSamplers[bindingIndex] = immutableSampler->getHandle();
     }
-
-    mValidDescriptorSetLayoutIndexMask.set(bindingIndex, count > 0);
 }
 
 void DescriptorSetLayoutDesc::unpackBindings(DescriptorSetLayoutBindingVector *bindings) const
 {
-    for (size_t bindingIndex : mValidDescriptorSetLayoutIndexMask)
+    // Unpack all valid descriptor set layout bindings
+    for (size_t bindingIndex = 0; bindingIndex < mDescriptorSetLayoutBindings.size();
+         ++bindingIndex)
     {
-        const PackedDescriptorSetBinding &packedBinding = mPackedDescriptorSetLayout[bindingIndex];
+        const PackedDescriptorSetBinding &packedBinding =
+            mDescriptorSetLayoutBindings[bindingIndex];
+        if (packedBinding.type == PackedDescriptorSetBinding::kInvalidType)
+        {
+            continue;
+        }
+
         ASSERT(packedBinding.count != 0);
 
         VkDescriptorSetLayoutBinding binding = {};
@@ -4342,10 +4357,10 @@ void DescriptorSetLayoutDesc::unpackBindings(DescriptorSetLayoutBindingVector *b
         binding.descriptorCount              = packedBinding.count;
         binding.descriptorType               = static_cast<VkDescriptorType>(packedBinding.type);
         binding.stageFlags = static_cast<VkShaderStageFlags>(packedBinding.stages);
-        if (mImmutableSamplers[bindingIndex] != VK_NULL_HANDLE)
+
+        if (packedBinding.hasImmutableSampler)
         {
             ASSERT(packedBinding.count == 1);
-            ASSERT(bindingIndex < gl::IMPLEMENTATION_MAX_ACTIVE_TEXTURES);
             binding.pImmutableSamplers = &mImmutableSamplers[bindingIndex];
         }
 
@@ -4371,12 +4386,18 @@ PipelineLayoutDesc &PipelineLayoutDesc::operator=(const PipelineLayoutDesc &rhs)
 
 size_t PipelineLayoutDesc::hash() const
 {
-    return angle::ComputeGenericHash(*this);
+    size_t genericHash = angle::ComputeGenericHash(mPushConstantRange);
+    for (const DescriptorSetLayoutDesc &descriptorSetLayoutDesc : mDescriptorSetLayouts)
+    {
+        genericHash ^= descriptorSetLayoutDesc.hash();
+    }
+    return genericHash;
 }
 
 bool PipelineLayoutDesc::operator==(const PipelineLayoutDesc &other) const
 {
-    return memcmp(this, &other, sizeof(PipelineLayoutDesc)) == 0;
+    return mPushConstantRange == other.mPushConstantRange &&
+           mDescriptorSetLayouts == other.mDescriptorSetLayouts;
 }
 
 void PipelineLayoutDesc::updateDescriptorSetLayout(DescriptorSetIndex setIndex,
@@ -5412,7 +5433,7 @@ void WriteDescriptorDescs::streamOut(std::ostream &ostr) const
 }
 
 // DescriptorSetDesc implementation.
-void DescriptorSetDesc::updateDescriptorSet(Context *context,
+void DescriptorSetDesc::updateDescriptorSet(Renderer *renderer,
                                             const WriteDescriptorDescs &writeDescriptorDescs,
                                             UpdateDescriptorSetsBuilder *updateBuilder,
                                             const DescriptorDescHandles *handles,
@@ -5489,9 +5510,10 @@ void DescriptorSetDesc::updateDescriptorSet(Context *context,
 
                     ImageLayout imageLayout = static_cast<ImageLayout>(infoDesc.imageLayoutOrRange);
 
-                    imageInfo.imageLayout = ConvertImageLayoutToVkImageLayout(context, imageLayout);
-                    imageInfo.imageView   = handles[infoDescIndex + arrayElement].imageView;
-                    imageInfo.sampler     = handles[infoDescIndex + arrayElement].sampler;
+                    imageInfo.imageLayout =
+                        ConvertImageLayoutToVkImageLayout(renderer, imageLayout);
+                    imageInfo.imageView = handles[infoDescIndex + arrayElement].imageView;
+                    imageInfo.sampler   = handles[infoDescIndex + arrayElement].sampler;
                 }
                 writeSet.pImageInfo = writeImages;
                 break;
@@ -6250,12 +6272,12 @@ angle::Result DescriptorSetDescBuilder::updateInputAttachments(
     return angle::Result::Continue;
 }
 
-void DescriptorSetDescBuilder::updateDescriptorSet(Context *context,
+void DescriptorSetDescBuilder::updateDescriptorSet(Renderer *renderer,
                                                    const WriteDescriptorDescs &writeDescriptorDescs,
                                                    UpdateDescriptorSetsBuilder *updateBuilder,
                                                    VkDescriptorSet descriptorSet) const
 {
-    mDesc.updateDescriptorSet(context, writeDescriptorDescs, updateBuilder, mHandles.data(),
+    mDesc.updateDescriptorSet(renderer, writeDescriptorDescs, updateBuilder, mHandles.data(),
                               descriptorSet);
 }
 
@@ -6360,21 +6382,21 @@ template class SharedCacheKeyManager<SharedFramebufferCacheKey>;
 template class SharedCacheKeyManager<SharedDescriptorSetCacheKey>;
 
 // PipelineCacheAccess implementation.
-std::unique_lock<std::mutex> PipelineCacheAccess::getLock()
+std::unique_lock<angle::SimpleMutex> PipelineCacheAccess::getLock()
 {
     if (mMutex == nullptr)
     {
-        return std::unique_lock<std::mutex>();
+        return std::unique_lock<angle::SimpleMutex>();
     }
 
-    return std::unique_lock<std::mutex>(*mMutex);
+    return std::unique_lock<angle::SimpleMutex>(*mMutex);
 }
 
 VkResult PipelineCacheAccess::createGraphicsPipeline(vk::Context *context,
                                                      const VkGraphicsPipelineCreateInfo &createInfo,
                                                      vk::Pipeline *pipelineOut)
 {
-    std::unique_lock<std::mutex> lock = getLock();
+    std::unique_lock<angle::SimpleMutex> lock = getLock();
 
     return pipelineOut->initGraphics(context->getDevice(), createInfo, *mPipelineCache);
 }
@@ -6383,7 +6405,7 @@ VkResult PipelineCacheAccess::createComputePipeline(vk::Context *context,
                                                     const VkComputePipelineCreateInfo &createInfo,
                                                     vk::Pipeline *pipelineOut)
 {
-    std::unique_lock<std::mutex> lock = getLock();
+    std::unique_lock<angle::SimpleMutex> lock = getLock();
 
     return pipelineOut->initCompute(context->getDevice(), createInfo, *mPipelineCache);
 }
@@ -6392,7 +6414,7 @@ void PipelineCacheAccess::merge(Renderer *renderer, const vk::PipelineCache &pip
 {
     ASSERT(isThreadSafe());
 
-    std::unique_lock<std::mutex> lock = getLock();
+    std::unique_lock<angle::SimpleMutex> lock = getLock();
 
     mPipelineCache->merge(renderer->getDevice(), 1, pipelineCache.ptr());
 }
@@ -6699,6 +6721,7 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
                                               vk::RenderPass *renderPass,
                                               vk::RenderPassPerfCounters *renderPassCounters)
 {
+    vk::Renderer *renderer                             = context->getRenderer();
     constexpr VkAttachmentReference2 kUnusedAttachment = {VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2,
                                                           nullptr, VK_ATTACHMENT_UNUSED,
                                                           VK_IMAGE_LAYOUT_UNDEFINED, 0};
@@ -6706,8 +6729,7 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
     const bool needInputAttachments = desc.hasFramebufferFetch();
     const bool isRenderToTextureThroughExtension =
         desc.isRenderToTexture() &&
-        (context->getFeatures().supportsMultisampledRenderToSingleSampled.enabled ||
-         context->getFeatures().supportsMultisampledRenderToSingleSampledGOOGLEX.enabled);
+        renderer->getFeatures().supportsMultisampledRenderToSingleSampled.enabled;
     const bool isRenderToTextureThroughEmulation =
         desc.isRenderToTexture() && !isRenderToTextureThroughExtension;
 
@@ -6765,8 +6787,7 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
         ASSERT(attachmentFormatID != angle::FormatID::NONE);
 
         bool isYUVExternalFormat = vk::IsYUVExternalFormat(attachmentFormatID);
-        if (isYUVExternalFormat &&
-            context->getRenderer()->nullColorAttachmentWithExternalFormatResolve())
+        if (isYUVExternalFormat && renderer->nullColorAttachmentWithExternalFormatResolve())
         {
             colorAttachmentRefs.push_back(kUnusedAttachment);
             // temporary workaround for ARM driver assertion. Will remove once driver fix lands
@@ -6782,11 +6803,11 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
             needInputAttachments
                 ? VK_IMAGE_LAYOUT_GENERAL
                 : vk::ConvertImageLayoutToVkImageLayout(
-                      context, static_cast<vk::ImageLayout>(ops[attachmentCount].initialLayout));
+                      renderer, static_cast<vk::ImageLayout>(ops[attachmentCount].initialLayout));
         colorRef.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         colorAttachmentRefs.push_back(colorRef);
 
-        vk::UnpackAttachmentDesc(context, &attachmentDescs[attachmentCount.get()],
+        vk::UnpackAttachmentDesc(renderer, &attachmentDescs[attachmentCount.get()],
                                  attachmentFormatID, attachmentSamples, ops[attachmentCount]);
 
         // If this renderpass uses EXT_srgb_write_control, we need to override the format to its
@@ -6804,8 +6825,7 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
         if (isYUVExternalFormat)
         {
             const vk::ExternalYuvFormatInfo &externalFormatInfo =
-                context->getRenderer()->getExternalFormatTable()->getExternalFormatInfo(
-                    attachmentFormatID);
+                renderer->getExternalFormatTable()->getExternalFormatInfo(attachmentFormatID);
             attachmentDescs[attachmentCount.get()].format =
                 externalFormatInfo.colorAttachmentFormat;
         }
@@ -6839,11 +6859,11 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
         depthStencilAttachmentRef.sType      = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2;
         depthStencilAttachmentRef.attachment = attachmentCount.get();
         depthStencilAttachmentRef.layout     = ConvertImageLayoutToVkImageLayout(
-            context, static_cast<vk::ImageLayout>(ops[attachmentCount].initialLayout));
+            renderer, static_cast<vk::ImageLayout>(ops[attachmentCount].initialLayout));
         depthStencilAttachmentRef.aspectMask =
             VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
 
-        vk::UnpackAttachmentDesc(context, &attachmentDescs[attachmentCount.get()],
+        vk::UnpackAttachmentDesc(renderer, &attachmentDescs[attachmentCount.get()],
                                  attachmentFormatID, attachmentSamples, ops[attachmentCount]);
 
         if (isRenderToTextureThroughEmulation)
@@ -6901,10 +6921,9 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
 
         const bool isInvalidated = isMSRTTEmulationColorInvalidated.test(colorIndexGL);
 
-        if (isYUVExternalFormat &&
-            context->getRenderer()->nullColorAttachmentWithExternalFormatResolve())
+        if (isYUVExternalFormat && renderer->nullColorAttachmentWithExternalFormatResolve())
         {
-            vk::UnpackAttachmentDesc(context, &attachmentDescs[attachmentCount.get()],
+            vk::UnpackAttachmentDesc(renderer, &attachmentDescs[attachmentCount.get()],
                                      attachmentFormatID, attachmentSamples, ops[attachmentCount]);
         }
         else
@@ -6919,8 +6938,7 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
         if (isYUVExternalFormat)
         {
             const vk::ExternalYuvFormatInfo &externalFormatInfo =
-                context->getRenderer()->getExternalFormatTable()->getExternalFormatInfo(
-                    attachmentFormatID);
+                renderer->getExternalFormatTable()->getExternalFormatInfo(attachmentFormatID);
             externalFormat.externalFormat        = externalFormatInfo.externalFormat;
             VkAttachmentDescription2 &attachment = attachmentDescs[attachmentCount.get()];
             attachment.pNext                     = &externalFormat;
@@ -7025,7 +7043,7 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
     // Specify rasterization order for color on the subpass when available and
     // there is framebuffer fetch.  This is required when the corresponding
     // flag is set on the pipeline.
-    if (context->getFeatures().supportsRasterizationOrderAttachmentAccess.enabled &&
+    if (renderer->getFeatures().supportsRasterizationOrderAttachmentAccess.enabled &&
         desc.hasFramebufferFetch())
     {
         for (VkSubpassDescription2 &subpass : subpassDesc)
@@ -7035,17 +7053,16 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
         }
     }
 
-    if (context->getFeatures().supportsLegacyDithering.enabled && desc.isLegacyDitherEnabled())
+    if (renderer->getFeatures().supportsLegacyDithering.enabled && desc.isLegacyDitherEnabled())
     {
         subpassDesc.back().flags |= VK_SUBPASS_DESCRIPTION_ENABLE_LEGACY_DITHERING_BIT_EXT;
     }
 
     // If depth/stencil is to be resolved, add a VkSubpassDescriptionDepthStencilResolve to the
     // pNext chain of the subpass description.
-    VkSubpassDescriptionDepthStencilResolve depthStencilResolve  = {};
-    VkSubpassDescriptionDepthStencilResolve msrtssResolve        = {};
-    VkMultisampledRenderToSingleSampledInfoEXT msrtss            = {};
-    VkMultisampledRenderToSingleSampledInfoGOOGLEX msrtssGOOGLEX = {};
+    VkSubpassDescriptionDepthStencilResolve depthStencilResolve = {};
+    VkSubpassDescriptionDepthStencilResolve msrtssResolve       = {};
+    VkMultisampledRenderToSingleSampledInfoEXT msrtss           = {};
     if (desc.hasDepthStencilResolveAttachment())
     {
         ASSERT(!isRenderToTextureThroughExtension);
@@ -7055,7 +7072,7 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
 
         depthStencilResolve.sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE;
 
-        if (!context->getFeatures().supportsDepthStencilIndependentResolveNone.enabled)
+        if (!renderer->getFeatures().supportsDepthStencilIndependentResolveNone.enabled)
         {
             // Assert that depth/stencil is not separately resolved without this feature
             ASSERT(desc.hasDepthResolveAttachment() || angleFormat.depthBits == 0);
@@ -7095,7 +7112,7 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
     {
         ASSERT(subpassDesc.size() == 1);
         vk::InitializeMSRTSS(context, renderToTextureSamples, &subpassDesc.back(), &msrtssResolve,
-                             &msrtss, &msrtssGOOGLEX);
+                             &msrtss);
     }
 
     VkFragmentShadingRateAttachmentInfoKHR fragmentShadingRateAttachmentInfo = {};
@@ -7106,7 +7123,7 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
         fragmentShadingRateAttachmentInfo.pFragmentShadingRateAttachment =
             &fragmentShadingRateAttachmentRef;
         fragmentShadingRateAttachmentInfo.shadingRateAttachmentTexelSize =
-            context->getRenderer()->getMaxFragmentShadingRateAttachmentTexelSize();
+            renderer->getMaxFragmentShadingRateAttachmentTexelSize();
 
         vk::AddToPNextChain(&subpassDesc.back(), &fragmentShadingRateAttachmentInfo);
     }
@@ -7145,7 +7162,7 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
     // If VK_KHR_create_renderpass2 is not supported, we must use core Vulkan 1.0.  This is
     // increasingly uncommon.  Note that extensions that require chaining information to subpasses
     // are automatically not used when this extension is not available.
-    if (!context->getFeatures().supportsRenderpass2.enabled)
+    if (!renderer->getFeatures().supportsRenderpass2.enabled)
     {
         ANGLE_TRY(vk::CreateRenderPass1(context, createInfo, desc.viewCount(), renderPass));
     }
@@ -7457,7 +7474,7 @@ angle::Result DescriptorSetLayoutCache::getDescriptorSetLayout(
     vk::AtomicBindingPointer<vk::DescriptorSetLayout> *descriptorSetLayoutOut)
 {
     // Note: this function may be called without holding the share group lock.
-    std::unique_lock<std::mutex> lock(mMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mMutex);
 
     auto iter = mPayload.find(desc);
     if (iter != mPayload.end())
@@ -7465,6 +7482,13 @@ angle::Result DescriptorSetLayoutCache::getDescriptorSetLayout(
         vk::RefCountedDescriptorSetLayout &layout = iter->second;
         descriptorSetLayoutOut->set(&layout);
         mCacheStats.hit();
+        return angle::Result::Continue;
+    }
+
+    // If DescriptorSetLayoutDesc is empty, reuse placeholder descriptor set layout handle
+    if (desc.empty())
+    {
+        descriptorSetLayoutOut->set(context->getRenderer()->getDescriptorLayoutForEmptyDesc());
         return angle::Result::Continue;
     }
 
@@ -7519,7 +7543,7 @@ angle::Result PipelineLayoutCache::getPipelineLayout(
     vk::AtomicBindingPointer<vk::PipelineLayout> *pipelineLayoutOut)
 {
     // Note: this function may be called without holding the share group lock.
-    std::unique_lock<std::mutex> lock(mMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mMutex);
 
     auto iter = mPayload.find(desc);
     if (iter != mPayload.end())
@@ -7538,10 +7562,8 @@ angle::Result PipelineLayoutCache::getPipelineLayout(
         if (layoutPtr.valid())
         {
             VkDescriptorSetLayout setLayout = layoutPtr.get().getHandle();
-            if (setLayout != VK_NULL_HANDLE)
-            {
-                setLayoutHandles.push_back(setLayout);
-            }
+            ASSERT(setLayout != VK_NULL_HANDLE);
+            setLayoutHandles.push_back(setLayout);
         }
     }
 

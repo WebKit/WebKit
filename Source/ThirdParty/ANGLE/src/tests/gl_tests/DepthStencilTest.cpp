@@ -244,7 +244,7 @@ TEST_P(DepthStencilTest, DepthOnlyEmulatedWithPacked)
 // Tests that clearing or rendering into a stencil-only format doesn't affect depth.
 TEST_P(DepthStencilTest, StencilOnlyEmulatedWithPacked)
 {
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D9());
     bindColorStencilFBO();
     prepareSingleEmulatedWithPacked();

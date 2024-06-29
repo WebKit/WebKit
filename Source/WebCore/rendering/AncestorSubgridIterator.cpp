@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-AncestorSubgridIterator::AncestorSubgridIterator() { }
+AncestorSubgridIterator::AncestorSubgridIterator() = default;
 
 AncestorSubgridIterator::AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, GridTrackSizingDirection direction)
     : m_firstAncestorSubgrid(firstAncestorSubgrid)

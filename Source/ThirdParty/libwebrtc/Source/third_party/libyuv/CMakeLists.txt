@@ -37,6 +37,10 @@ if(WIN32)
   SET_TARGET_PROPERTIES	( ${ly_lib_shared} PROPERTIES IMPORT_PREFIX "lib" )
 endif()
 
+# this creates the cpuid tool
+ADD_EXECUTABLE      ( cpuid ${ly_base_dir}/util/cpuid.c )
+TARGET_LINK_LIBRARIES  ( cpuid ${ly_lib_static} )
+
 # this creates the conversion tool
 ADD_EXECUTABLE			( yuvconvert ${ly_base_dir}/util/yuvconvert.cc )
 TARGET_LINK_LIBRARIES	( yuvconvert ${ly_lib_static} )

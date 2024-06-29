@@ -33,7 +33,7 @@ public:
 
     void dispatchLoadEvent() override;
 
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
 };
 
 }

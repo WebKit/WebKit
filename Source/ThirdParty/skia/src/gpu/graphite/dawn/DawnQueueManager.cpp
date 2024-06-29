@@ -76,7 +76,7 @@ DawnWorkSubmissionWithFuture::DawnWorkSubmissionWithFuture(std::unique_ptr<Comma
                                                            DawnQueueManager* queueManager)
         : GpuWorkSubmission(std::move(cmdBuffer), queueManager) {
     wgpu::QueueWorkDoneCallbackInfo callbackInfo{};
-    callbackInfo.mode = wgpu::CallbackMode::AllowSpontaneous;
+    callbackInfo.mode = wgpu::CallbackMode::WaitAnyOnly;
     callbackInfo.callback = [](WGPUQueueWorkDoneStatus, void*) {};
 
     fSubmittedWorkDoneFuture = queueManager->dawnQueue().OnSubmittedWorkDone(callbackInfo);

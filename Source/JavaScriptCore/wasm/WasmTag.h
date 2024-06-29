@@ -39,6 +39,15 @@ public:
     static Ref<Tag> create(const TypeDefinition& type) { return adoptRef(*new Tag(type)); }
 
     FunctionArgCount parameterCount() const { return m_type->as<FunctionSignature>()->argumentCount(); }
+
+    size_t parameterBufferSize() const
+    {
+        size_t result = 0;
+        for (size_t i = 0; i < parameterCount(); i ++)
+            result += m_type->as<FunctionSignature>()->argumentType(i).kind == TypeKind::V128 ? 2 : 1;
+        return result;
+    }
+
     Type parameter(FunctionArgCount i) const { return m_type->as<FunctionSignature>()->argumentType(i); }
     TypeIndex typeIndex() const { return m_type->index(); }
 

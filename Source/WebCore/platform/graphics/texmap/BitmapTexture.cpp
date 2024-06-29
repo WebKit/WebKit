@@ -77,6 +77,9 @@ BitmapTexture::BitmapTexture(const IntSize& size, OptionSet<Flags> flags, GLint 
     , m_internalFormat(internalFormat == GL_DONT_CARE ? GL_RGBA : internalFormat)
     , m_format(GL_RGBA)
 {
+    GLint boundTexture = 0;
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundTexture);
+
     glGenTextures(1, &m_id);
     glBindTexture(GL_TEXTURE_2D, m_id);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -84,6 +87,8 @@ BitmapTexture::BitmapTexture(const IntSize& size, OptionSet<Flags> flags, GLint 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_size.width(), m_size.height(), 0, m_format, s_pixelDataType, nullptr);
+
+    glBindTexture(GL_TEXTURE_2D, boundTexture);
 }
 
 void BitmapTexture::reset(const IntSize& size, OptionSet<Flags> flags)
@@ -180,7 +185,7 @@ void BitmapTexture::updateContents(GraphicsLayer* sourceLayer, const IntRect& ta
 {
     // Making an unconditionally unaccelerated buffer here is OK because this code
     // isn't used by any platforms that respect the accelerated bit.
-    auto imageBuffer = ImageBuffer::create(targetRect.size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(targetRect.size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
     if (!imageBuffer)
         return;
 

@@ -27,6 +27,7 @@
 
 #include "ASTForward.h"
 #include "WGSLEnums.h"
+#include <functional>
 #include <wtf/FixedVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/Markable.h>
@@ -46,9 +47,11 @@ enum Packing : uint8_t {
     Either       = Packed | Unpacked,
 
     PStruct = 1 << 2,
-    Vec3   = 1 << 3,
+    PArray = 1 << 3,
+    Vec3   = 1 << 4,
 
     PackedStruct = Packed | PStruct,
+    PackedArray = Packed | PArray,
     PackedVec3   = Packed | Vec3,
 };
 

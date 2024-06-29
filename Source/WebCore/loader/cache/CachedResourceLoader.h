@@ -69,6 +69,8 @@ enum class CachePolicy : uint8_t;
 enum class ImageLoading : uint8_t { Immediate, DeferredUntilVisible };
 enum class FetchMetadataSite : uint8_t { None, SameOrigin, SameSite, CrossSite };
 
+const String& convertEnumerationToString(FetchMetadataSite);
+
 // The CachedResourceLoader provides a per-context interface to the MemoryCache
 // and enforces a bunch of security checks and rules for resource revalidation.
 // Its lifetime is roughly per-DocumentLoader, in that it is generally created
@@ -173,7 +175,8 @@ public:
 
     Vector<CachedResourceHandle<CachedResource>> visibleResourcesToPrioritize();
 
-    static FetchMetadataSite computeFetchMetadataSite(const ResourceRequest&, CachedResource::Type, FetchOptions::Mode, const SecurityOrigin& originalOrigin, FetchMetadataSite originalSite, bool isDirectlyUserInitiatedRequest);
+    static FetchMetadataSite computeFetchMetadataSite(const ResourceRequest&, CachedResource::Type, FetchOptions::Mode, const LocalFrame&, bool isDirectlyUserInitiatedRequest);
+    static FetchMetadataSite computeFetchMetadataSiteAfterRedirection(const ResourceRequest&, CachedResource::Type, FetchOptions::Mode, const SecurityOrigin& originalOrigin, FetchMetadataSite originalSite, bool isDirectlyUserInitiatedRequest);
 
 private:
     explicit CachedResourceLoader(DocumentLoader*);

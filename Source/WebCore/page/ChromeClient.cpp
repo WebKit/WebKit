@@ -50,9 +50,10 @@ RefPtr<ImageBuffer> ChromeClient::sinkIntoImageBuffer(std::unique_ptr<WebCore::S
     return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(imageBuffer));
 }
 
-std::unique_ptr<ScrollbarsController> ChromeClient::createScrollbarsController(Page&, ScrollableArea&) const
+
+void ChromeClient::ensureScrollbarsController(Page&, ScrollableArea& area) const
 {
-    return nullptr;
+    area.ScrollableArea::createScrollbarsController();
 }
 
 }

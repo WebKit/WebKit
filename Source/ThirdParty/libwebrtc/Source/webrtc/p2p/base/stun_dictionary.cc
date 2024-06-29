@@ -18,6 +18,31 @@
 
 namespace cricket {
 
+namespace {
+
+StunAttributeValueType GetStunAttributeValueType(int value_type) {
+  switch (value_type) {
+    case STUN_VALUE_ADDRESS:
+      return STUN_VALUE_ADDRESS;
+    case STUN_VALUE_XOR_ADDRESS:
+      return STUN_VALUE_XOR_ADDRESS;
+    case STUN_VALUE_UINT32:
+      return STUN_VALUE_UINT32;
+    case STUN_VALUE_UINT64:
+      return STUN_VALUE_UINT64;
+    case STUN_VALUE_BYTE_STRING:
+      return STUN_VALUE_BYTE_STRING;
+    case STUN_VALUE_ERROR_CODE:
+      return STUN_VALUE_ERROR_CODE;
+    case STUN_VALUE_UINT16_LIST:
+      return STUN_VALUE_UINT16_LIST;
+    default:
+      return STUN_VALUE_UNKNOWN;
+  }
+}
+
+}  // namespace
+
 const StunAddressAttribute* StunDictionaryView::GetAddress(int key) const {
   const StunAttribute* attr = GetOrNull(key, STUN_VALUE_ADDRESS);
   if (attr == nullptr) {
@@ -80,7 +105,7 @@ const StunAttribute* StunDictionaryView::GetOrNull(
 webrtc::RTCErrorOr<
     std::pair<uint64_t, std::deque<std::unique_ptr<StunAttribute>>>>
 StunDictionaryView::ParseDelta(const StunByteStringAttribute& delta) {
-  rtc::ByteBufferReader buf(delta.bytes(), delta.length());
+  rtc::ByteBufferReader buf(delta.array_view());
   uint16_t magic;
   if (!buf.ReadUInt16(&magic)) {
     return webrtc::RTCError(webrtc::RTCErrorType::INVALID_PARAMETER,
@@ -120,7 +145,7 @@ StunDictionaryView::ParseDelta(const StunByteStringAttribute& delta) {
     }
 
     StunAttributeValueType value_type_enum =
-        static_cast<StunAttributeValueType>(value_type);
+        GetStunAttributeValueType(value_type);
     std::unique_ptr<StunAttribute> attr(
         StunAttribute::Create(value_type_enum, key, length, nullptr));
     if (!attr) {
@@ -214,7 +239,8 @@ StunDictionaryView::ApplyDelta(const StunByteStringAttribute& delta) {
       if (attr->value_type() == STUN_VALUE_BYTE_STRING && attr->length() == 0) {
         attrs_.erase(attr->type());
       } else {
-        attrs_[attr->type()] = std::move(attr);
+        int attribute_type = attr->type();
+        attrs_[attribute_type] = std::move(attr);
       }
     }
   }

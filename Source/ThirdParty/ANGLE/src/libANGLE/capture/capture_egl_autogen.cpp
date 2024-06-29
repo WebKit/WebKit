@@ -1146,6 +1146,17 @@ CallCapture CaptureCopyMetalSharedEventANGLE(egl::Thread *thread,
     return CallCapture(angle::EntryPoint::EGLCopyMetalSharedEventANGLE, std::move(paramBuffer));
 }
 
+CallCapture CaptureSetValidationEnabledANGLE(egl::Thread *thread,
+                                             bool isCallValid,
+                                             EGLBoolean validationState)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("validationState", ParamType::TEGLBoolean, validationState);
+
+    return CallCapture(angle::EntryPoint::EGLSetValidationEnabledANGLE, std::move(paramBuffer));
+}
+
 CallCapture CaptureReleaseHighPowerGPUANGLE(egl::Thread *thread,
                                             bool isCallValid,
                                             egl::Display *dpyPacked,

@@ -1,30 +1,39 @@
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: ReferenceError: Can't find variable: fail
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: ReferenceError: Can't find variable: fail
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: fail
-
-FAIL Regression test: Bypass via insertAdjacentText, initial comment. promise_test: Unhandled rejection with value: "'block' received (beforebegin should be blocked)"
+PASS Regression test: Bypass via insertAdjacentText, initial comment.
 PASS Regression test: Bypass via insertAdjacentText, initial comment. script
-FAIL Regression test: Bypass via appendChild into off-document script elementscript promise_test: Unhandled rejection with value: "'block' received (beforebegin should be blocked)"
+PASS Regression test: Bypass via appendChild into off-document script elementscript
 PASS Regression test: Bypass via appendChild into live script element script
-FAIL Regression test: Bypass via insertAdjacentText, initial comment. svg:script promise_test: Unhandled rejection with value: "'block' received (appendChild with a text node should be blocked)"
+PASS Regression test: Bypass via insertAdjacentText, initial comment. svg:script
 PASS Regression test: Bypass via appendChild into off-document script elementsvg:script
-FAIL Regression test: Bypass via appendChild into live script element svg:script promise_test: Unhandled rejection with value: "'block' received (appendChild with a live text node should be blocked)"
+PASS Regression test: Bypass via appendChild into live script element svg:script
 PASS Prep for subsequent tests: Clear SPV event queue.
-FAIL Spot tests around script + innerHTML interaction. promise_test: Unhandled rejection with value: "'trigger' received, but unexpected counts: expected 3 != actual 2"
+PASS Spot tests around script + innerHTML interaction.
 PASS Prep for subsequent tests: Create default policy.
-FAIL Test that default policy applies. script promise_test: Unhandled rejection with value: "unexpected message received: default"
-FAIL Test a failing default policy. script promise_test: Unhandled rejection with value: "'trigger' received, but unexpected counts: expected 1 != actual 0"
-FAIL Test that default policy applies. svg:script promise_test: Unhandled rejection with value: "'done' received, but unexpected counts: expected 1 != actual 0 (done)"
-FAIL Test a failing default policy. svg:script promise_test: Unhandled rejection with value: "'trigger' received, but unexpected counts: expected 1 != actual 0"
+PASS Test that default policy applies. script
+PASS Test a failing default policy. script
+PASS Test that default policy applies. svg:script
+PASS Test a failing default policy. svg:script
 PASS Spot tests around script + innerHTML interaction with default policy.
 

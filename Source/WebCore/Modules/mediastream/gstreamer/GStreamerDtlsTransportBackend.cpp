@@ -29,6 +29,9 @@
 
 namespace WebCore {
 
+GST_DEBUG_CATEGORY(webkit_webrtc_dtls_transport_debug);
+#define GST_CAT_DEFAULT webkit_webrtc_dtls_transport_debug
+
 class GStreamerDtlsTransportBackendObserver final : public ThreadSafeRefCounted<GStreamerDtlsTransportBackendObserver> {
 public:
     static Ref<GStreamerDtlsTransportBackendObserver> create(RTCDtlsTransportBackendClient& client, GRefPtr<GstWebRTCDTLSTransport>&& backend) { return adoptRef(*new GStreamerDtlsTransportBackendObserver(client, WTFMove(backend))); }
@@ -64,6 +67,11 @@ void GStreamerDtlsTransportBackendObserver::stateChanged()
         GstWebRTCDTLSTransportState state;
         g_object_get(m_backend.get(), "state", &state, nullptr);
 
+#ifndef GST_DISABLE_GST_DEBUG
+        GUniquePtr<char> desc(g_enum_to_string(GST_TYPE_WEBRTC_DTLS_TRANSPORT_STATE, state));
+        GST_DEBUG_OBJECT(m_backend.get(), "DTLS transport state changed to %s", desc.get());
+#endif
+
         Vector<Ref<JSC::ArrayBuffer>> certificates;
 
         // Access to DTLS certificates is not memory-safe in GStreamer versions older than 1.22.3.
@@ -73,17 +81,11 @@ void GStreamerDtlsTransportBackendObserver::stateChanged()
             GUniqueOutPtr<char> certificate;
             g_object_get(m_backend.get(), "remote-certificate", &remoteCertificate.outPtr(), "certificate", &certificate.outPtr(), nullptr);
 
-            if (remoteCertificate) {
-                auto remoteCertificateString = makeString(remoteCertificate.get());
-                auto jsRemoteCertificate = JSC::ArrayBuffer::create(remoteCertificateString.span8());
-                certificates.append(WTFMove(jsRemoteCertificate));
-            }
+            if (remoteCertificate)
+                certificates.append(JSC::ArrayBuffer::create(span8(remoteCertificate.get())));
 
-            if (certificate) {
-                auto certificateString = makeString(certificate.get());
-                auto jsCertificate = JSC::ArrayBuffer::create(certificateString.span8());
-                certificates.append(WTFMove(jsCertificate));
-            }
+            if (certificate)
+                certificates.append(JSC::ArrayBuffer::create(span8(certificate.get())));
         }
         m_client->onStateChanged(toRTCDtlsTransportState(state), WTFMove(certificates));
     });
@@ -105,6 +107,10 @@ void GStreamerDtlsTransportBackendObserver::stop()
 GStreamerDtlsTransportBackend::GStreamerDtlsTransportBackend(GRefPtr<GstWebRTCDTLSTransport>&& transport)
     : m_backend(WTFMove(transport))
 {
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_webrtc_dtls_transport_debug, "webkitwebrtcdtls", 0, "WebKit WebRTC DTLS Transport");
+    });
     ASSERT(m_backend);
     ASSERT(isMainThread());
 }
@@ -130,6 +136,8 @@ void GStreamerDtlsTransportBackend::unregisterClient()
     if (m_observer)
         m_observer->stop();
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 

@@ -220,6 +220,9 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
             if (m_includedProperties.containsAll(normalProperties()))
                 return true;
 
+            if (matchedProperties.isCacheable == IsCacheable::Partially && m_includedProperties.contains(PropertyType::NonCacheable))
+                return true;
+
             // If we have applied this property for some reason already we must apply anything that overrides it.
             if (hasProperty(propertyID, *current.value()))
                 return true;

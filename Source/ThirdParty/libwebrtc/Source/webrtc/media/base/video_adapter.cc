@@ -23,7 +23,6 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/time_utils.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace {
 
@@ -59,8 +58,7 @@ int roundUp(int value_to_round, int multiple, int max_value) {
 Fraction FindScale(int input_width,
                    int input_height,
                    int target_pixels,
-                   int max_pixels,
-                   bool variable_start_scale_factor) {
+                   int max_pixels) {
   // This function only makes sense for a positive target.
   RTC_DCHECK_GT(target_pixels, 0);
   RTC_DCHECK_GT(max_pixels, 0);
@@ -75,16 +73,14 @@ Fraction FindScale(int input_width,
   Fraction current_scale = Fraction{1, 1};
   Fraction best_scale = Fraction{1, 1};
 
-  if (variable_start_scale_factor) {
-    // Start scaling down by 2/3 depending on `input_width` and `input_height`.
-    if (input_width % 3 == 0 && input_height % 3 == 0) {
-      // 2/3 (then alternates 3/4, 2/3, 3/4,...).
-      current_scale = Fraction{6, 6};
-    }
-    if (input_width % 9 == 0 && input_height % 9 == 0) {
-      // 2/3, 2/3 (then alternates 3/4, 2/3, 3/4,...).
-      current_scale = Fraction{36, 36};
-    }
+  // Start scaling down by 2/3 depending on `input_width` and `input_height`.
+  if (input_width % 3 == 0 && input_height % 3 == 0) {
+    // 2/3 (then alternates 3/4, 2/3, 3/4,...).
+    current_scale = Fraction{6, 6};
+  }
+  if (input_width % 9 == 0 && input_height % 9 == 0) {
+    // 2/3, 2/3 (then alternates 3/4, 2/3, 3/4,...).
+    current_scale = Fraction{36, 36};
   }
 
   // The minimum (absolute) difference between the number of output pixels and
@@ -144,8 +140,6 @@ VideoAdapter::VideoAdapter(int source_resolution_alignment)
       adaption_changes_(0),
       previous_width_(0),
       previous_height_(0),
-      variable_start_scale_factor_(!webrtc::field_trial::IsDisabled(
-          "WebRTC-Video-VariableStartScaleFactor")),
       source_resolution_alignment_(source_resolution_alignment),
       resolution_alignment_(source_resolution_alignment),
       resolution_request_target_pixel_count_(std::numeric_limits<int>::max()),
@@ -233,7 +227,7 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
   }
   const Fraction scale =
       FindScale(*cropped_width, *cropped_height, target_pixel_count,
-                max_pixel_count, variable_start_scale_factor_);
+                max_pixel_count);
   // Adjust cropping slightly to get correctly aligned output size and a perfect
   // scale factor.
   *cropped_width = roundUp(*cropped_width,
@@ -358,12 +352,6 @@ void VideoAdapter::OnSinkWants(const rtc::VideoSinkWants& sink_wants) {
   // that are NOT using requested_resolution (aka newapi), then override
   // calls to OnOutputFormatRequest and use values from requested_resolution
   // instead (combined with qualityscaling based on pixel counts above).
-  if (webrtc::field_trial::IsDisabled(
-          "WebRTC-Video-RequestedResolutionOverrideOutputFormatRequest")) {
-    // kill-switch...
-    return;
-  }
-
   if (!sink_wants.requested_resolution) {
     if (stashed_output_format_request_) {
       // because current active_output_format_request is based on

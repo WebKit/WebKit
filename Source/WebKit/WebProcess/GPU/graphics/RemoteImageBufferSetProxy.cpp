@@ -94,10 +94,14 @@ public:
         , m_generation(generation)
     { }
 
-    void flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>& handlesMap) final
+    bool flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>& handlesMap) final
     {
-        if (m_flushState->waitFor(RemoteRenderingBackendProxy::defaultTimeout))
+        if (m_flushState->waitFor(RemoteRenderingBackendProxy::defaultTimeout)) {
             handlesMap.add(m_identifier, makeUnique<BufferSetBackendHandle>(*m_flushState->takeHandles()));
+            return true;
+        }
+        RELEASE_LOG(RemoteLayerBuffers, "RemoteImageBufferSetProxyFlusher::flushAndCollectHandlers - failed");
+        return false;
     }
 
 private:
@@ -109,38 +113,51 @@ private:
 }
 
 template<typename T>
-ALWAYS_INLINE void RemoteImageBufferSetProxy::send(T&& message)
+ALWAYS_INLINE auto RemoteImageBufferSetProxy::send(T&& message)
 {
-    if (UNLIKELY(!m_remoteRenderingBackendProxy))
-        return;
+    RefPtr connection = this->connection();
+    if (UNLIKELY(!connection))
+        return IPC::Error::InvalidConnection;
 
-    auto result = m_remoteRenderingBackendProxy->streamConnection().send(std::forward<T>(message), identifier(), RemoteRenderingBackendProxy::defaultTimeout);
-#if !RELEASE_LOG_DISABLED
+    auto result = connection->send(std::forward<T>(message), identifier(), RemoteRenderingBackendProxy::defaultTimeout);
     if (UNLIKELY(result != IPC::Error::NoError)) {
-        auto& parameters = m_remoteRenderingBackendProxy->parameters();
-        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] Proxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
-            parameters.pageProxyID.toUInt64(), parameters.pageID.toUInt64(), parameters.identifier.toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
+        RELEASE_LOG(RemoteLayerBuffers, "RemoteImageBufferSetProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
+            IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
+        didBecomeUnresponsive();
     }
-#else
-    UNUSED_VARIABLE(result);
-#endif
+    return result;
 }
 
 template<typename T>
 ALWAYS_INLINE auto RemoteImageBufferSetProxy::sendSync(T&& message)
 {
-    if (UNLIKELY(!m_remoteRenderingBackendProxy))
+    RefPtr connection = this->connection();
+    if (UNLIKELY(!connection))
         return IPC::StreamClientConnection::SendSyncResult<T> { IPC::Error::InvalidConnection };
 
-    auto result = m_remoteRenderingBackendProxy->streamConnection().sendSync(std::forward<T>(message), identifier(), RemoteRenderingBackendProxy::defaultTimeout);
-#if !RELEASE_LOG_DISABLED
+    auto result = connection->sendSync(std::forward<T>(message), identifier(), RemoteRenderingBackendProxy::defaultTimeout);
     if (UNLIKELY(!result.succeeded())) {
-        auto& parameters = m_remoteRenderingBackendProxy->parameters();
-        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] Proxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
-            parameters.pageProxyID.toUInt64(), parameters.pageID.toUInt64(), parameters.identifier.toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result.error()).characters());
+        RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] Proxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
+            m_remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result.error()).characters());
+        didBecomeUnresponsive();
     }
-#endif
     return result;
+}
+
+ALWAYS_INLINE RefPtr<IPC::StreamClientConnection> RemoteImageBufferSetProxy::connection() const
+{
+    auto* backend = m_remoteRenderingBackendProxy.get();
+    if (UNLIKELY(!backend))
+        return nullptr;
+    return backend->connection();
+}
+
+void RemoteImageBufferSetProxy::didBecomeUnresponsive() const
+{
+    auto* backend = m_remoteRenderingBackendProxy.get();
+    if (UNLIKELY(!backend))
+        return;
+    backend->didBecomeUnresponsive();
 }
 
 RemoteImageBufferSetProxy::RemoteImageBufferSetProxy(RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
@@ -217,7 +234,7 @@ void RemoteImageBufferSetProxy::close()
         m_remoteRenderingBackendProxy->releaseRemoteImageBufferSet(*this);
 }
 
-void RemoteImageBufferSetProxy::setConfiguration(WebCore::FloatSize size, float scale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingMode renderingMode, WebCore::RenderingPurpose renderingPurpose)
+void RemoteImageBufferSetProxy::setConfiguration(WebCore::FloatSize size, float scale, const WebCore::DestinationColorSpace& colorSpace, WebCore::ImageBufferPixelFormat pixelFormat, WebCore::RenderingMode renderingMode, WebCore::RenderingPurpose renderingPurpose)
 {
     m_size = size;
     m_scale = scale;
@@ -230,20 +247,24 @@ void RemoteImageBufferSetProxy::setConfiguration(WebCore::FloatSize size, float 
 
 std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteImageBufferSetProxy::flushFrontBufferAsync(ThreadSafeImageBufferSetFlusher::FlushType flushType)
 {
-    if (!m_remoteRenderingBackendProxy)
+    RefPtr connection = this->connection();
+    if (!connection)
         return nullptr;
-
-    Locker locker { m_lock };
-    m_pendingFlush = RemoteImageBufferSetProxyFlushFence::create(m_remoteRenderingBackendProxy->renderingUpdateID());
-
-    send(Messages::RemoteImageBufferSet::EndPrepareForDisplay(m_remoteRenderingBackendProxy->renderingUpdateID()));
-
-    return makeUnique<RemoteImageBufferSetProxyFlusher>(identifier(), Ref { *m_pendingFlush }, m_generation);
+    Ref pendingFlush = RemoteImageBufferSetProxyFlushFence::create(m_remoteRenderingBackendProxy->renderingUpdateID());
+    {
+        Locker locker { m_lock };
+        m_pendingFlush = pendingFlush.ptr();
+    }
+    auto result = send(Messages::RemoteImageBufferSet::EndPrepareForDisplay(m_remoteRenderingBackendProxy->renderingUpdateID()));
+    if (result != IPC::Error::NoError)
+        return nullptr;
+    return makeUnique<RemoteImageBufferSetProxyFlusher>(identifier(), WTFMove(pendingFlush), m_generation);
 }
 
 void RemoteImageBufferSetProxy::willPrepareForDisplay()
 {
-    if (!m_remoteRenderingBackendProxy)
+    RefPtr connection = this->connection();
+    if (!connection)
         return;
 
     if (m_remoteNeedsConfigurationUpdate) {
@@ -260,7 +281,7 @@ void RemoteImageBufferSetProxy::willPrepareForDisplay()
     Locker locker { m_lock };
 
     if (!m_streamConnection) {
-        m_streamConnection = &m_remoteRenderingBackendProxy->streamConnection();
+        m_streamConnection = connection;
         m_streamConnection->addWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), m_remoteRenderingBackendProxy->workQueue(), *this, identifier().toUInt64());
     }
     m_prepareForDisplayIsPending = true;

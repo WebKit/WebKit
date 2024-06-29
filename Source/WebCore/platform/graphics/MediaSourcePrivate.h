@@ -98,7 +98,6 @@ public:
 
     Ref<MediaTimePromise> waitForTarget(const SeekTarget&);
     Ref<MediaPromise> seekToTime(const MediaTime&);
-    void seeked(const MediaTime&);
 
     virtual void setTimeFudgeFactor(const MediaTime& fudgeFactor) { m_timeFudgeFactor = fudgeFactor; }
     MediaTime timeFudgeFactor() const { return m_timeFudgeFactor; }

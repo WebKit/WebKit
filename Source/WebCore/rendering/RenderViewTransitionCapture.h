@@ -37,16 +37,16 @@ public:
     virtual ~RenderViewTransitionCapture();
 
     void setImage(RefPtr<ImageBuffer>);
-    void setSize(const LayoutSize&, const LayoutRect& overflowRect);
+    bool setCapturedSize(const LayoutSize&, const LayoutRect& overflowRect, const LayoutPoint& layerToLayoutOffset);
 
     void paintReplaced(PaintInfo&, const LayoutPoint& paintOffset) override;
+    void intrinsicSizeChanged() override;
 
     void layout() override;
 
     FloatSize scale() const { return m_scale; }
 
-    // Rect covered by the captured contents, relative to the
-    // intrinsic size.
+    // Rect covered by the captured contents, in RenderLayer coordinates of the captured renderer
     LayoutRect captureOverflowRect() const { return m_overflowRect; }
 
     // Inset of the scaled capture from the visualOverflowRect()
@@ -60,10 +60,22 @@ private:
 
     void updateFromStyle() override;
 
+    Node* nodeForHitTest() const override;
+
     RefPtr<ImageBuffer> m_oldImage;
+    // The overflow rect that the captured image represents, in RenderLayer coordinates
+    // of the captured renderer (see layerToLayoutOffset in ViewTransition.cpp).
+    // The intrisic size subset of the image is stored as the intrinsic size of the RenderReplaced.
     LayoutRect m_overflowRect;
-    FloatSize m_scale;
+    // The offset between coordinates used by RenderLayer, and RenderObject
+    // for the captured renderer
+    LayoutPoint m_layerToLayoutOffset;
+    // The overflow rect of the snapshot (replaced content), scaled and positioned
+    // so that the intrinsic size of the image fits the replaced content rect.
     LayoutRect m_localOverflowRect;
+    LayoutSize m_imageIntrinsicSize;
+    // Scale factor between the intrinsic size and the replaced content rect size.
+    FloatSize m_scale;
 };
 
 } // namespace WebCore

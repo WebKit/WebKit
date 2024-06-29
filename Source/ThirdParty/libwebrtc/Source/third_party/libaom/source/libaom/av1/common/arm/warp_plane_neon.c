@@ -11,8 +11,8 @@
 
 #include "warp_plane_neon.h"
 
-static INLINE int16x8_t horizontal_filter_4x1_f4(const uint8x16_t in, int sx,
-                                                 int alpha) {
+static AOM_FORCE_INLINE int16x8_t horizontal_filter_4x1_f4(const uint8x16_t in,
+                                                           int sx, int alpha) {
   const int32x4_t add_const = vdupq_n_s32(1 << (8 + FILTER_BITS - 1));
 
   // Loading the 8 filter taps
@@ -39,8 +39,8 @@ static INLINE int16x8_t horizontal_filter_4x1_f4(const uint8x16_t in, int sx,
   return vreinterpretq_s16_u16(res);
 }
 
-static INLINE int16x8_t horizontal_filter_8x1_f8(const uint8x16_t in, int sx,
-                                                 int alpha) {
+static AOM_FORCE_INLINE int16x8_t horizontal_filter_8x1_f8(const uint8x16_t in,
+                                                           int sx, int alpha) {
   const int32x4_t add_const = vdupq_n_s32(1 << (8 + FILTER_BITS - 1));
 
   // Loading the 8 filter taps
@@ -75,7 +75,8 @@ static INLINE int16x8_t horizontal_filter_8x1_f8(const uint8x16_t in, int sx,
   return vreinterpretq_s16_u16(res);
 }
 
-static INLINE int16x8_t horizontal_filter_4x1_f1(const uint8x16_t in, int sx) {
+static AOM_FORCE_INLINE int16x8_t horizontal_filter_4x1_f1(const uint8x16_t in,
+                                                           int sx) {
   const int32x4_t add_const = vdupq_n_s32(1 << (8 + FILTER_BITS - 1));
 
   int16x8_t f_s16 =
@@ -101,7 +102,8 @@ static INLINE int16x8_t horizontal_filter_4x1_f1(const uint8x16_t in, int sx) {
   return vreinterpretq_s16_u16(res);
 }
 
-static INLINE int16x8_t horizontal_filter_8x1_f1(const uint8x16_t in, int sx) {
+static AOM_FORCE_INLINE int16x8_t horizontal_filter_8x1_f1(const uint8x16_t in,
+                                                           int sx) {
   const int32x4_t add_const = vdupq_n_s32(1 << (8 + FILTER_BITS - 1));
 
   int16x8_t f_s16 =
@@ -135,8 +137,8 @@ static INLINE int16x8_t horizontal_filter_8x1_f1(const uint8x16_t in, int sx) {
   return vreinterpretq_s16_u16(res);
 }
 
-static INLINE void vertical_filter_4x1_f1(const int16x8_t *src, int32x4_t *res,
-                                          int sy) {
+static AOM_FORCE_INLINE void vertical_filter_4x1_f1(const int16x8_t *src,
+                                                    int32x4_t *res, int sy) {
   int16x4_t s0 = vget_low_s16(src[0]);
   int16x4_t s1 = vget_low_s16(src[1]);
   int16x4_t s2 = vget_low_s16(src[2]);
@@ -161,8 +163,9 @@ static INLINE void vertical_filter_4x1_f1(const int16x8_t *src, int32x4_t *res,
   *res = m0123;
 }
 
-static INLINE void vertical_filter_4x1_f4(const int16x8_t *src, int32x4_t *res,
-                                          int sy, int gamma) {
+static AOM_FORCE_INLINE void vertical_filter_4x1_f4(const int16x8_t *src,
+                                                    int32x4_t *res, int sy,
+                                                    int gamma) {
   int16x8_t s0, s1, s2, s3;
   transpose_elems_s16_4x8(
       vget_low_s16(src[0]), vget_low_s16(src[1]), vget_low_s16(src[2]),
@@ -186,9 +189,10 @@ static INLINE void vertical_filter_4x1_f4(const int16x8_t *src, int32x4_t *res,
   *res = horizontal_add_4d_s32x4(m0123_pairs);
 }
 
-static INLINE void vertical_filter_8x1_f1(const int16x8_t *src,
-                                          int32x4_t *res_low,
-                                          int32x4_t *res_high, int sy) {
+static AOM_FORCE_INLINE void vertical_filter_8x1_f1(const int16x8_t *src,
+                                                    int32x4_t *res_low,
+                                                    int32x4_t *res_high,
+                                                    int sy) {
   int16x8_t s0 = src[0];
   int16x8_t s1 = src[1];
   int16x8_t s2 = src[2];
@@ -223,10 +227,10 @@ static INLINE void vertical_filter_8x1_f1(const int16x8_t *src,
   *res_high = m4567;
 }
 
-static INLINE void vertical_filter_8x1_f8(const int16x8_t *src,
-                                          int32x4_t *res_low,
-                                          int32x4_t *res_high, int sy,
-                                          int gamma) {
+static AOM_FORCE_INLINE void vertical_filter_8x1_f8(const int16x8_t *src,
+                                                    int32x4_t *res_low,
+                                                    int32x4_t *res_high, int sy,
+                                                    int gamma) {
   int16x8_t s0 = src[0];
   int16x8_t s1 = src[1];
   int16x8_t s2 = src[2];

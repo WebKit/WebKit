@@ -1,0 +1,21 @@
+DOMMatrix.invers() should not return NaN for small but normal values.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS matrixInverse.a is not NaN
+PASS matrixInverse.b is not NaN
+PASS matrixInverse.c is not NaN
+PASS matrixInverse.d is not NaN
+PASS matrixInverse.e is not NaN
+PASS matrixInverse.f is not NaN
+PASS Math.abs(matrixInverse.a - svgMatrixInverse.a) < 0.0000001 is true
+PASS Math.abs(matrixInverse.b - svgMatrixInverse.b) < 0.0000001 is true
+PASS Math.abs(matrixInverse.c - svgMatrixInverse.c) < 0.0000001 is true
+PASS Math.abs(matrixInverse.d - svgMatrixInverse.d) < 0.0000001 is true
+PASS Math.abs(matrixInverse.e - svgMatrixInverse.e) < 0.0000001 is true
+PASS Math.abs(matrixInverse.f - svgMatrixInverse.f) < 0.0000001 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

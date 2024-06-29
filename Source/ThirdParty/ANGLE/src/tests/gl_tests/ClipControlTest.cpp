@@ -540,6 +540,31 @@ TEST_P(ClipControlTest, DepthModeSimple)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test that gl_FragCoord.z has expected values for ZERO_TO_ONE clip depth mode
+TEST_P(ClipControlTest, DepthFragCoord)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_clip_control"));
+
+    const char kFS[] = R"(precision mediump float;
+void main()
+{
+    gl_FragColor = vec4(gl_FragCoord.z, 0, 0, 1);
+})";
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+
+    glClipControlEXT(GL_LOWER_LEFT_EXT, GL_ZERO_TO_ONE_EXT);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 1.0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(127, 0, 0, 255), 1);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+}
+
 class ClipControlTestES3 : public ClipControlTest
 {};
 

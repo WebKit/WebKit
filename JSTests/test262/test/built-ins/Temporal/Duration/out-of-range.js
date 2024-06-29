@@ -12,8 +12,8 @@ assert.throws(RangeError, () => new Temporal.Duration(4294967296), "years > max"
 assert.throws(RangeError, () => new Temporal.Duration(-4294967296), "years < min");
 assert.throws(RangeError, () => new Temporal.Duration(0, 4294967296), "months > max");
 assert.throws(RangeError, () => new Temporal.Duration(0, -4294967296), "months < min");
-assert.throws(RangeError, () => new Temporal.Duration(0, 0, 4294967296), "days > max");
-assert.throws(RangeError, () => new Temporal.Duration(0, 0, -4294967296), "days < min");
+assert.throws(RangeError, () => new Temporal.Duration(0, 0, 4294967296), "weeks > max");
+assert.throws(RangeError, () => new Temporal.Duration(0, 0, -4294967296), "weeks < min");
 
 // ceil(max safe integer / 86400) = 104249991375
 assert.throws(RangeError, () => new Temporal.Duration(0, 0, 0, 104249991375), "days > max");

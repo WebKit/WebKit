@@ -8,7 +8,7 @@ layer at (8,16) size 750x400
     RenderBlock {H2} at (0,19) size 750x55 [bgcolor=#CCCCCC]
       RenderText {#text} at (0,0) size 687x53
         text run at (0,0) width 670: "This is a spanning element at the beginning of the columns block. "
-        text run at (669,0) width 18: "It"
+        text run at (670,0) width 17: "It"
         text run at (0,27) width 527: "should collapse its margins with the top of the page."
     RenderMultiColumnSet at (0,93) size 750x307
 layer at (8,16) size 367x612
@@ -58,7 +58,7 @@ layer at (8,432) size 750x400
     RenderBlock {H2} at (0,325) size 750x55 [bgcolor=#CCCCCC]
       RenderText {#text} at (0,0) size 696x53
         text run at (0,0) width 606: "This is a spanning element at the end of the columns block. "
-        text run at (605,0) width 91: "It should"
+        text run at (606,0) width 90: "It should"
         text run at (0,27) width 504: "collapse its margins with the h2 in the next block."
     RenderMultiColumnSet at (0,399) size 750x0
 layer at (8,432) size 367x612
@@ -107,7 +107,7 @@ layer at (8,848) size 750x399
     RenderBlock {H2} at (0,19) size 750x55 [bgcolor=#CCCCCC]
       RenderText {#text} at (0,0) size 687x53
         text run at (0,0) width 670: "This is a spanning element at the beginning of the columns block. "
-        text run at (669,0) width 18: "It"
+        text run at (670,0) width 17: "It"
         text run at (0,27) width 621: "should collapse its margins with the h2 in the previous block."
     RenderMultiColumnSet at (0,93) size 750x307
 layer at (8,848) size 367x612
@@ -157,13 +157,13 @@ layer at (8,1263) size 750x564
     RenderBlock {H2} at (0,217) size 750x55 [bgcolor=#CCCCCC]
       RenderText {#text} at (0,0) size 730x53
         text run at (0,0) width 640: "This is a spanning element in the middle of the columns block. "
-        text run at (639,0) width 91: "It should"
+        text run at (640,0) width 90: "It should"
         text run at (0,27) width 569: "collapse its margins with the spanning element below it."
     RenderMultiColumnSet at (0,291) size 750x0
     RenderBlock {H2} at (0,291) size 750x55 [bgcolor=#CCCCCC]
       RenderText {#text} at (0,0) size 730x53
         text run at (0,0) width 640: "This is a spanning element in the middle of the columns block. "
-        text run at (639,0) width 91: "It should"
+        text run at (640,0) width 90: "It should"
         text run at (0,27) width 569: "collapse its margins with the spanning element above it."
     RenderMultiColumnSet at (0,365) size 750x199
 layer at (8,1263) size 367x792 backgroundClip at (0,0) size 785x1843 clip at (0,0) size 785x1843

@@ -36,9 +36,7 @@ namespace JSC { namespace DFG {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PhiChildren);
 
-PhiChildren::PhiChildren()
-{
-}
+PhiChildren::PhiChildren() = default;
 
 PhiChildren::PhiChildren(Graph& graph)
 {
@@ -52,9 +50,7 @@ PhiChildren::PhiChildren(Graph& graph)
     }
 }
 
-PhiChildren::~PhiChildren()
-{
-}
+PhiChildren::~PhiChildren() = default;
 
 const PhiChildren::List& PhiChildren::upsilonsOf(Node* node) const
 {

@@ -29,6 +29,7 @@
 
 #include <wpe/drm/WPEDisplayDRM.h>
 #include <wpe/drm/WPEMonitorDRM.h>
+#include <wpe/drm/WPEToplevelDRM.h>
 #include <wpe/drm/WPEViewDRM.h>
 
 #undef __WPE_DRM_H_INSIDE__

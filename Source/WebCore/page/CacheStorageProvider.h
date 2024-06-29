@@ -43,11 +43,11 @@ public:
         }
 
         Ref<OpenPromise> open(const ClientOrigin&, const String&) final { return OpenPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
-        void remove(DOMCacheIdentifier, DOMCacheEngine::RemoveCacheIdentifierCallback&&) final { }
-        void retrieveCaches(const ClientOrigin&, uint64_t, DOMCacheEngine::CacheInfosCallback&&) final { }
-        void retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&, DOMCacheEngine::CrossThreadRecordsCallback&&) final { }
-        void batchDeleteOperation(DOMCacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&&) final { }
-        void batchPutOperation(DOMCacheIdentifier, Vector<DOMCacheEngine::CrossThreadRecord>&&, DOMCacheEngine::RecordIdentifiersCallback&&) final { }
+        Ref<RemovePromise> remove(DOMCacheIdentifier) final { return RemovePromise::createAndReject(DOMCacheEngine::Error::Stopped); }
+        Ref<RetrieveCachesPromise> retrieveCaches(const ClientOrigin&, uint64_t)  final { return RetrieveCachesPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
+        Ref<RetrieveRecordsPromise> retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&)  final { return RetrieveRecordsPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
+        Ref<BatchPromise> batchDeleteOperation(DOMCacheIdentifier, const ResourceRequest&, CacheQueryOptions&&)  final { return BatchPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
+        Ref<BatchPromise> batchPutOperation(DOMCacheIdentifier, Vector<DOMCacheEngine::CrossThreadRecord>&&)  final { return BatchPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
         void reference(DOMCacheIdentifier) final { }
         void dereference(DOMCacheIdentifier) final { }
         void lockStorage(const ClientOrigin&) final { }

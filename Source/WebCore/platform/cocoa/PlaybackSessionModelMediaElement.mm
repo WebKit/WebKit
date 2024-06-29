@@ -49,6 +49,7 @@ namespace WebCore {
 
 PlaybackSessionModelMediaElement::PlaybackSessionModelMediaElement()
     : EventListener(EventListener::CPPEventListenerType)
+    , m_soundStageSize { AudioSessionSoundStageSize::Automatic }
 {
 }
 

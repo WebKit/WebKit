@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (16,39) size 409x35
+    RenderSVGContainer {g} at (16,39) size 409x34
       RenderSVGText {text} at (10,23) size 245x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 245x21
+        RenderSVGInlineText {#text} at (0,0) size 245x20
           chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 33 width 244.60: "Test values attribute list syntax"
       RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=50.00] [width=50.00] [height=0.00]
     RenderSVGContainer {g} at (16,518) size 388x60

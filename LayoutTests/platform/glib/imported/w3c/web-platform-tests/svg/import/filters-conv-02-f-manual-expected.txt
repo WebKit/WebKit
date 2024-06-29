@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
           [feConvolveMatrix order="width=3 height=3" kernelMatrix="[1.00, 1.00, 1.00, 1.00, -8.00, 1.00, 1.00, 1.00, 1.00]" divisor="1.00" bias="0.00" target="(1,1)" edgeMode="DUPLICATE" kernelUnitLength="(1,1)" preserveAlpha="1"]
             [SourceGraphic]
       RenderSVGText {text} at (107,37) size 266x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 266x21
+        RenderSVGInlineText {#text} at (0,0) size 266x20
           chunk 1 (middle anchor) text run 1 at (107.40,54.00) startOffset 0 endOffset 34 width 265.20: "feConvolveMatrix 'order' attribute"
       RenderSVGImage {image} at (150,166) size 167x168
         [filter="convolve-without-order"] RenderSVGResourceFilter {filter} at (90,100) size 100x100

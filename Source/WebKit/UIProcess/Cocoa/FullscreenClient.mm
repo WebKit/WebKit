@@ -26,6 +26,7 @@
 #import "config.h"
 #import "FullscreenClient.h"
 
+#import "WKWebViewInternal.h"
 #import "_WKFullscreenDelegate.h"
 
 namespace WebKit {
@@ -55,6 +56,9 @@ void FullscreenClient::setDelegate(id <_WKFullscreenDelegate> delegate)
     m_delegateMethods.webViewWillExitElementFullscreen = [delegate respondsToSelector:@selector(_webViewWillExitElementFullscreen:)];
     m_delegateMethods.webViewDidExitElementFullscreen = [delegate respondsToSelector:@selector(_webViewDidExitElementFullscreen:)];
 #endif
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    m_delegateMethods.webViewDidFullscreenImageWithQuickLook = [delegate respondsToSelector:@selector(_webView:didFullscreenImageWithQuickLook:)];
+#endif
 }
 
 void FullscreenClient::willEnterFullscreen(WebPageProxy*)
@@ -81,6 +85,14 @@ void FullscreenClient::didEnterFullscreen(WebPageProxy*)
     if (m_delegateMethods.webViewDidEnterElementFullscreen)
         [m_delegate.get() _webViewDidEnterElementFullscreen:m_webView];
 #endif
+
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    if (auto fullScreenController = [m_webView fullScreenWindowController]) {
+        CGSize imageDimensions = fullScreenController.imageDimensions;
+        if (fullScreenController.isUsingQuickLook && m_delegateMethods.webViewDidFullscreenImageWithQuickLook)
+            [m_delegate.get() _webView:m_webView didFullscreenImageWithQuickLook:imageDimensions];
+    }
+#endif // ENABLE(QUICKLOOK_FULLSCREEN)
 }
 
 void FullscreenClient::willExitFullscreen(WebPageProxy*)

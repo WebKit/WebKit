@@ -1,7 +1,9 @@
-CONSOLE MESSAGE: Permission policy 'Geolocation' check failed for element with origin 'https://127.0.0.1:9443' and allow attribute ''.
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object GeolocationPosition]
 
+
+Harness Error (FAIL), message = Unhandled rejection
 
 FAIL Permissions-Policy header geolocation=() disallows the top-level document. promise_test: Unhandled rejection with value: object "[object GeolocationPosition]"
-FAIL Permissions-Policy header geolocation=() disallows same-origin iframes. assert_false: geolocation expected false got true
-PASS Permissions-Policy header geolocation=() disallows cross-origin iframes.
+TIMEOUT Permissions-Policy header geolocation=() disallows same-origin iframes. Test timed out
+NOTRUN Permissions-Policy header geolocation=() disallows cross-origin iframes.
 

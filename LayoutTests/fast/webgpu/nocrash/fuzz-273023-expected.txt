@@ -1,0 +1,75 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: OperationError: popErrorScope failed
+CONSOLE MESSAGE: Unhandled Promise Rejection: OperationError: popErrorScope failed
+CONSOLE MESSAGE: Unhandled Promise Rejection: OperationError: popErrorScope failed
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600 [color=#99DDBBCC] [bgcolor=#102030E0]
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,137) size 107x17
+        text run at (0,137) width 107: "\x{CDEB}\x{237D}\x{E8E2}\x{9BD}\x{D83E}\x{DCCC}\x{E11C}\x{73A}\x{974B}\x{DAE4}\x{D83D}\x{DE78}"
+      RenderText {#text} at (106,137) size 60x17
+        text run at (106,137) width 60: "\x{4C5D}\x{D83E}\x{DD24}\x{97BA}\x{CA4}"
+      RenderText {#text} at (165,137) size 36x17
+        text run at (165,137) width 36: "\x{31A1}\x{D83F}\x{DC07}\x{EFA}"
+      RenderText {#text} at (500,137) size 137x17
+        text run at (500,137) width 137: "\x{D83F}\x{DD18}\x{8719}\x{480C}\x{8D26}\x{3042}\x{5A47}\x{3B44}\x{D83E}\x{DEB9}\x{35A0}"
+      RenderText {#text} at (636,137) size 29x17
+        text run at (636,137) width 29: "\x{EC3}\x{75F5}\x{11D}"
+      RenderText {#text} at (664,137) size 43x17
+        text run at (664,137) width 43: "\x{D83F}\x{DFB8}\x{9D1}\x{606}\x{D83D}\x{DF8B}"
+      RenderText {#text} at (706,137) size 45x17
+        text run at (706,137) width 45: "\x{B57E}\x{1AE2}\x{F1C4}\x{11F}"
+      RenderText {#text} at (0,137) size 777x100
+        text run at (750,137) width 27: "\x{806D}\x{CD2}"
+        text run at (0,220) width 57: "\x{8866}\x{268}\x{D83F}\x{DFAD}\x{B2C}\x{182F}\x{A5B5}"
+      RenderText {#text} at (56,220) size 90x17
+        text run at (56,220) width 82: "\x{DD8D}\x{D83F}\x{DDD7}\x{855E}\x{D83D}\x{DE3E}\x{B21}\x{4E4C}"
+        text run at (137,220) width 9 RTL: "\x{7FF}"
+      RenderImage {IMG} at (145,158) size 299x75
+      RenderText {#text} at (443,220) size 113x17
+        text run at (443,220) width 113: "\x{51B}\x{C62B}\x{563}\x{D83F}\x{DFBA}\x{D83F}\x{DF13}\x{F49A}\x{D83E}\x{DD39}\x{2187}\x{CA03}"
+      RenderText {#text} at (555,220) size 31x17
+        text run at (555,220) width 31: "\x{CDD2}\x{3287}"
+      RenderText {#text} at (585,220) size 41x17
+        text run at (585,220) width 41: "\x{B15B}\x{F5F}\x{3DF}\x{1BF}"
+      RenderText {#text} at (267,435) size 88x17
+        text run at (267,435) width 81: "\x{36C2}\x{2B31}\x{D83E}\x{DCD0}\x{D83F}\x{DCC1}\x{6EC1}\x{8940}"
+        text run at (347,435) width 8 RTL: "\x{771}"
+      RenderText {#text} at (354,435) size 105x17
+        text run at (354,435) width 105: "\x{E739}\x{D83E}\x{DD6D}\x{D83F}\x{DF09}\x{D83D}\x{DFC2}\x{D83E}\x{DF18}\x{78B9}\x{D83E}\x{DF03}\x{73A7}"
+      RenderText {#text} at (458,435) size 22x17
+        text run at (458,435) width 22: "\x{D83F}\x{DD07}\x{E522}"
+      RenderText {#text} at (479,435) size 45x17
+        text run at (479,435) width 38: "\x{6F8}\x{1230}\x{FDF}\x{2931}"
+        text run at (516,435) width 8 RTL: "\x{6C3}"
+      RenderText {#text} at (523,435) size 87x17
+        text run at (523,435) width 87: "\x{D83E}\x{DE12}\x{13A1}\x{D83D}\x{DE3D}\x{9412}\x{19}\x{D83D}\x{DE6D}\x{A60E}"
+      RenderText {#text} at (609,435) size 60x17
+        text run at (609,435) width 60: "\x{E3B}\x{D97}\x{D83F}\x{DE36}\x{D713}\x{D83F}\x{DF69}"
+      RenderText {#text} at (0,435) size 745x42
+        text run at (668,435) width 77: "\x{248E}\x{12C4}\x{D4FB}\x{DDA9}\x{90A}\x{2E91}"
+        text run at (0,460) width 11: "\x{D83E}\x{DFCE}"
+      RenderText {#text} at (10,460) size 59x17
+        text run at (10,460) width 59: "\x{2E5}\x{F153}\x{912}\x{7E31}\x{14BA}"
+      RenderText {#text} at (68,460) size 94x17
+        text run at (68,460) width 94: "\x{D83E}\x{DF92}\x{D83E}\x{DC5F}\x{D83E}\x{DE91}\x{D83F}\x{DFB2}\x{D83E}\x{DD4F}\x{D83D}\x{DFC8}\x{ED3}"
+      RenderText {#text} at (161,460) size 80x17
+        text run at (161,460) width 80: "\x{CC1}\x{D83F}\x{DF19}\x{E091}\x{5A5E}\x{E99}\x{F262}\x{A1D0}"
+      RenderText {#text} at (240,460) size 104x17
+        text run at (240,460) width 11 RTL: "\x{5D8}"
+        text run at (250,460) width 39: "\x{8283}\x{D83E}\x{DC66}\x{C98}"
+        text run at (288,460) width 8 RTL: "\x{6B7}"
+        text run at (295,460) width 49: "\x{9D3C}\x{D83D}\x{DE72}\x{D83E}\x{DF95}\x{20C}"
+      RenderText {#text} at (343,460) size 116x17
+        text run at (343,460) width 116: "\x{EB64}\x{DDF3}\x{2BD5}\x{47C3}\x{D83E}\x{DF72}\x{6287}\x{D83F}\x{DF3E}\x{D83E}\x{DDE7}\x{D83F}\x{DEDE}"
+      RenderText {#text} at (458,460) size 34x17
+        text run at (458,460) width 34: "\x{7A9D}\x{D83F}\x{DC51}\x{922}"
+      RenderText {#text} at (491,460) size 23x17
+        text run at (491,460) width 23: "\x{D83F}\x{DCE4}\x{C4F}"
+      RenderText {#text} at (513,460) size 64x17
+        text run at (513,460) width 64: "\x{57A4}\x{3C7D}\x{66A}\x{B8EB}\x{DF6}"
+layer at (209,8) size 300x150
+  RenderHTMLCanvas {CANVAS} at (200,0) size 301x150
+layer at (8,250) size 267x206
+  RenderVideo {VIDEO} at (0,242) size 267x206

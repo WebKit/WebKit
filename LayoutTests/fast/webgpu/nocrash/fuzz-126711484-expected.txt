@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600 [color=#99DDBBCC] [bgcolor=#102030E0]
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,6) size 55x17
+        text run at (0,6) width 15: "\x{3B2B}"
+        text run at (15,6) width 14 RTL: "\x{8A1}"
+        text run at (28,6) width 27: "\x{59B4}\x{5BD}\x{D83F}\x{DF00}"
+      RenderText {#text} at (54,6) size 28x17
+        text run at (54,6) width 28: "\x{D83E}\x{DF70}\x{1079}"
+      RenderText {#text} at (81,6) size 77x17
+        text run at (81,6) width 77: "\x{D83F}\x{DFCA}\x{310}\x{A04}\x{D83D}\x{DF87}\x{A1DC}\x{36A2}\x{D942}"
+      RenderText {#text} at (157,6) size 90x17
+        text run at (157,6) width 90: "\x{11B3}\x{C51F}\x{D80}\x{D83F}\x{DEFC}\x{D83E}\x{DE3A}\x{5FF6}\x{E223}"
+      RenderText {#text} at (246,6) size 138x17
+        text run at (246,6) width 138: "\x{52A2}\x{EF2B}\x{EDBA}\x{D83E}\x{DD60}\x{E19}\x{D26}\x{6558}\x{126}\x{2A8D}\x{1B33}\x{D4F}"
+      RenderText {#text} at (383,6) size 58x17
+        text run at (383,6) width 58: "\x{FA85}\x{D83F}\x{DDE0}\x{D83E}\x{DD89}\x{CE2F}"
+      RenderText {#text} at (440,6) size 117x17
+        text run at (440,6) width 117: "\x{443C}\x{D83D}\x{DEBA}\x{D23}\x{D83F}\x{DDD9}\x{5093}\x{4203}\x{D83E}\x{DFFF}\x{4EA}"
+      RenderText {#text} at (556,6) size 84x17
+        text run at (556,6) width 84: "\x{4F4}\x{82E2}\x{1B3}\x{F091}\x{D83F}\x{DF1E}\x{B6C1}\x{10E}"
+      RenderText {#text} at (639,6) size 93x17
+        text run at (639,6) width 93: "\x{D83D}\x{DEDA}\x{A4F4}\x{5BFF}\x{4F3}\x{CDA5}\x{32F2}\x{124F}\x{22FE}"
+      RenderText {#text} at (0,6) size 782x52
+        text run at (731,6) width 51: "\x{D83D}\x{DEB5}\x{38F6}\x{88D6}"
+        text run at (0,41) width 9: "\x{EA5}"
+      RenderText {#text} at (8,41) size 57x17
+        text run at (8,41) width 57: "\x{3A02}\x{B53}\x{5FA6}\x{81F7}"

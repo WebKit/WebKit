@@ -35,7 +35,7 @@ WebKit::WebProcessPool& webkitWebContextGetProcessPool(WebKitWebContext*);
 #if !ENABLE(2022_GLIB_API)
 void webkitWebContextDownloadStarted(WebKitWebContext*, WebKitDownload*);
 #endif
-void webkitWebContextCreatePageForWebView(WebKitWebContext*, WebKitWebView*, WebKitUserContentManager*, WebKitWebView*, WebKitWebsitePolicies*);
+void webkitWebContextWebViewCreated(WebKitWebContext*, WebKitWebView*);
 void webkitWebContextWebViewDestroyed(WebKitWebContext*, WebKitWebView*);
 WebKitWebView* webkitWebContextGetWebViewForPage(WebKitWebContext*, WebKit::WebPageProxy*);
 GVariant* webkitWebContextInitializeWebProcessExtensions(WebKitWebContext*);

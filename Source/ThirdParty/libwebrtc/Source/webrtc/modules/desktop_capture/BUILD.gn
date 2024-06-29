@@ -453,8 +453,7 @@ rtc_library("desktop_capture") {
       "../../rtc_base:divide_round",
       "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.sysmem",
       "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.ui.composition",
-      "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.ui.scenic",
-      "//third_party/fuchsia-sdk/sdk/pkg/scenic_cpp",
+      "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.ui.display.singleton",
       "//third_party/fuchsia-sdk/sdk/pkg/sys_cpp",
     ]
   }

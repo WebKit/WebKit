@@ -1,0 +1,525 @@
+
+PASS :attribute_names:case="align"
+PASS :attribute_names:case="binding"
+PASS :attribute_names:case="builtin"
+PASS :attribute_names:case="group"
+PASS :attribute_names:case="id"
+PASS :attribute_names:case="interpolate"
+PASS :attribute_names:case="invariant"
+PASS :attribute_names:case="location"
+PASS :attribute_names:case="must_use"
+PASS :attribute_names:case="size"
+PASS :attribute_names:case="workgroup_size"
+PASS :attribute_names:case="compute"
+PASS :attribute_names:case="fragment"
+PASS :attribute_names:case="vertex"
+PASS :builtin_value_names:case="vertex_index"
+PASS :builtin_value_names:case="instance_index"
+PASS :builtin_value_names:case="position_vertex"
+PASS :builtin_value_names:case="position_fragment"
+PASS :builtin_value_names:case="front_facing"
+PASS :builtin_value_names:case="frag_depth"
+PASS :builtin_value_names:case="sample_index"
+PASS :builtin_value_names:case="sample_mask_input"
+PASS :builtin_value_names:case="sample_mask_output"
+PASS :builtin_value_names:case="local_invocation_id"
+PASS :builtin_value_names:case="local_invocation_index"
+PASS :builtin_value_names:case="global_invocation_id"
+PASS :builtin_value_names:case="workgroup_id"
+PASS :builtin_value_names:case="num_workgroups"
+FAIL :diagnostic_severity_names:case="error" assert_unreached:
+  - VALIDATION FAILED: subcase: decl="override"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(error, derivative_uniformity);
+      @diagnostic(error, derivative_uniformity) fn foo() { }
+
+        override error : u32 = 0;
+        fn use_var() -> u32 {
+          return error;
+        }
+
+      at (elided: below max severity)
+  - VALIDATION FAILED: subcase: decl="const"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(error, derivative_uniformity);
+      @diagnostic(error, derivative_uniformity) fn foo() { }
+
+        const error : u32 = 0;
+        fn use_var() -> u32 {
+          return error;
+        }
+
+      at (elided: below max severity)
+  - VALIDATION FAILED: subcase: decl="var<private>"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(error, derivative_uniformity);
+      @diagnostic(error, derivative_uniformity) fn foo() { }
+
+        var<private> error : u32 = 0;
+        fn use_var() -> u32 {
+          return error;
+        }
+
+      at (elided: only 2 shown)
+  - INFO: subcase: decl="override"
+    OK
+  - INFO: subcase: decl="const"
+    OK
+  - INFO: subcase: decl="var<private>"
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    4:2: invalid attribute for function declaration
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :diagnostic_severity_names:case="warning" assert_unreached:
+  - VALIDATION FAILED: subcase: decl="override"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(warning, derivative_uniformity);
+      @diagnostic(warning, derivative_uniformity) fn foo() { }
+
+        override warning : u32 = 0;
+        fn use_var() -> u32 {
+          return warning;
+        }
+
+      at (elided: below max severity)
+  - VALIDATION FAILED: subcase: decl="const"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(warning, derivative_uniformity);
+      @diagnostic(warning, derivative_uniformity) fn foo() { }
+
+        const warning : u32 = 0;
+        fn use_var() -> u32 {
+          return warning;
+        }
+
+      at (elided: below max severity)
+  - VALIDATION FAILED: subcase: decl="var<private>"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(warning, derivative_uniformity);
+      @diagnostic(warning, derivative_uniformity) fn foo() { }
+
+        var<private> warning : u32 = 0;
+        fn use_var() -> u32 {
+          return warning;
+        }
+
+      at (elided: only 2 shown)
+  - INFO: subcase: decl="override"
+    OK
+  - INFO: subcase: decl="const"
+    OK
+  - INFO: subcase: decl="var<private>"
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    4:2: invalid attribute for function declaration
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :diagnostic_severity_names:case="off" assert_unreached:
+  - VALIDATION FAILED: subcase: decl="override"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(off, derivative_uniformity);
+      @diagnostic(off, derivative_uniformity) fn foo() { }
+
+        override off : u32 = 0;
+        fn use_var() -> u32 {
+          return off;
+        }
+
+      at (elided: below max severity)
+  - VALIDATION FAILED: subcase: decl="const"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(off, derivative_uniformity);
+      @diagnostic(off, derivative_uniformity) fn foo() { }
+
+        const off : u32 = 0;
+        fn use_var() -> u32 {
+          return off;
+        }
+
+      at (elided: below max severity)
+  - VALIDATION FAILED: subcase: decl="var<private>"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(off, derivative_uniformity);
+      @diagnostic(off, derivative_uniformity) fn foo() { }
+
+        var<private> off : u32 = 0;
+        fn use_var() -> u32 {
+          return off;
+        }
+
+      at (elided: only 2 shown)
+  - INFO: subcase: decl="override"
+    OK
+  - INFO: subcase: decl="const"
+    OK
+  - INFO: subcase: decl="var<private>"
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    4:2: invalid attribute for function declaration
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :diagnostic_severity_names:case="info" assert_unreached:
+  - VALIDATION FAILED: subcase: decl="override"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(info, derivative_uniformity);
+      @diagnostic(info, derivative_uniformity) fn foo() { }
+
+        override info : u32 = 0;
+        fn use_var() -> u32 {
+          return info;
+        }
+
+      at (elided: below max severity)
+  - VALIDATION FAILED: subcase: decl="const"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(info, derivative_uniformity);
+      @diagnostic(info, derivative_uniformity) fn foo() { }
+
+        const info : u32 = 0;
+        fn use_var() -> u32 {
+          return info;
+        }
+
+      at (elided: below max severity)
+  - VALIDATION FAILED: subcase: decl="var<private>"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(info, derivative_uniformity);
+      @diagnostic(info, derivative_uniformity) fn foo() { }
+
+        var<private> info : u32 = 0;
+        fn use_var() -> u32 {
+          return info;
+        }
+
+      at (elided: only 2 shown)
+  - INFO: subcase: decl="override"
+    OK
+  - INFO: subcase: decl="const"
+    OK
+  - INFO: subcase: decl="var<private>"
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    4:2: invalid attribute for function declaration
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :diagnostic_rule_names:case="derivative_uniformity" assert_unreached:
+  - VALIDATION FAILED: subcase: decl="override"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(off, derivative_uniformity);
+      @diagnostic(warning, derivative_uniformity) fn foo() { }
+        override derivative_uniformity : u32 = 0;
+        fn use_var() -> u32 {
+          return derivative_uniformity;
+        }
+
+      at (elided: below max severity)
+  - VALIDATION FAILED: subcase: decl="const"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(off, derivative_uniformity);
+      @diagnostic(warning, derivative_uniformity) fn foo() { }
+        const derivative_uniformity : u32 = 0;
+        fn use_var() -> u32 {
+          return derivative_uniformity;
+        }
+
+      at (elided: below max severity)
+  - VALIDATION FAILED: subcase: decl="var<private>"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(off, derivative_uniformity);
+      @diagnostic(warning, derivative_uniformity) fn foo() { }
+        var<private> derivative_uniformity : u32 = 0;
+        fn use_var() -> u32 {
+          return derivative_uniformity;
+        }
+
+      at (elided: only 2 shown)
+  - INFO: subcase: decl="override"
+    OK
+  - INFO: subcase: decl="const"
+    OK
+  - INFO: subcase: decl="var<private>"
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    4:2: invalid attribute for function declaration
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :diagnostic_rule_names:case="unknown_rule" assert_unreached:
+  - VALIDATION FAILED: subcase: decl="override"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(off, unknown_rule);
+      @diagnostic(warning, unknown_rule) fn foo() { }
+        override unknown_rule : u32 = 0;
+        fn use_var() -> u32 {
+          return unknown_rule;
+        }
+
+      at (elided: below max severity)
+  - VALIDATION FAILED: subcase: decl="const"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(off, unknown_rule);
+      @diagnostic(warning, unknown_rule) fn foo() { }
+        const unknown_rule : u32 = 0;
+        fn use_var() -> u32 {
+          return unknown_rule;
+        }
+
+      at (elided: below max severity)
+  - VALIDATION FAILED: subcase: decl="var<private>"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(off, unknown_rule);
+      @diagnostic(warning, unknown_rule) fn foo() { }
+        var<private> unknown_rule : u32 = 0;
+        fn use_var() -> u32 {
+          return unknown_rule;
+        }
+
+      at (elided: only 2 shown)
+  - INFO: subcase: decl="override"
+    OK
+  - INFO: subcase: decl="const"
+    OK
+  - INFO: subcase: decl="var<private>"
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    4:2: invalid attribute for function declaration
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :diagnostic_rule_names:case="unknown" assert_unreached:
+  - VALIDATION FAILED: subcase: decl="override"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(off, unknown.rule);
+      @diagnostic(warning, unknown.rule) fn foo() { }
+        override unknown : u32 = 0;
+        fn use_var() -> u32 {
+          return unknown;
+        }
+
+      at (elided: below max severity)
+  - VALIDATION FAILED: subcase: decl="const"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(off, unknown.rule);
+      @diagnostic(warning, unknown.rule) fn foo() { }
+        const unknown : u32 = 0;
+        fn use_var() -> u32 {
+          return unknown;
+        }
+
+      at (elided: below max severity)
+  - VALIDATION FAILED: subcase: decl="var<private>"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(off, unknown.rule);
+      @diagnostic(warning, unknown.rule) fn foo() { }
+        var<private> unknown : u32 = 0;
+        fn use_var() -> u32 {
+          return unknown;
+        }
+
+      at (elided: only 2 shown)
+  - INFO: subcase: decl="override"
+    OK
+  - INFO: subcase: decl="const"
+    OK
+  - INFO: subcase: decl="var<private>"
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    4:2: invalid attribute for function declaration
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :diagnostic_rule_names:case="rule" assert_unreached:
+  - VALIDATION FAILED: subcase: decl="override"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(off, unknown.rule);
+      @diagnostic(warning, unknown.rule) fn foo() { }
+        override rule : u32 = 0;
+        fn use_var() -> u32 {
+          return rule;
+        }
+
+      at (elided: below max severity)
+  - VALIDATION FAILED: subcase: decl="const"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(off, unknown.rule);
+      @diagnostic(warning, unknown.rule) fn foo() { }
+        const rule : u32 = 0;
+        fn use_var() -> u32 {
+          return rule;
+        }
+
+      at (elided: below max severity)
+  - VALIDATION FAILED: subcase: decl="var<private>"
+    Unexpected compilationInfo 'error' message.
+    4:3: error: invalid attribute for function declaration
+
+    ---- shader ----
+
+
+      diagnostic(off, unknown.rule);
+      @diagnostic(warning, unknown.rule) fn foo() { }
+        var<private> rule : u32 = 0;
+        fn use_var() -> u32 {
+          return rule;
+        }
+
+      at (elided: only 2 shown)
+  - INFO: subcase: decl="override"
+    OK
+  - INFO: subcase: decl="const"
+    OK
+  - INFO: subcase: decl="var<private>"
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    4:2: invalid attribute for function declaration
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :enable_names:case="f16"
+PASS :language_names:case="readonly_and_readwrite_storage_textures"
+PASS :language_names:case="packed_4x8_integer_dot_product"
+PASS :language_names:case="unrestricted_pointer_parameters"
+PASS :language_names:case="pointer_composite_access"
+PASS :swizzle_names:case="x"
+PASS :swizzle_names:case="y"
+PASS :swizzle_names:case="z"
+PASS :swizzle_names:case="w"
+PASS :swizzle_names:case="xy"
+PASS :swizzle_names:case="yxz"
+PASS :swizzle_names:case="wxyz"
+PASS :swizzle_names:case="xyxy"
+PASS :swizzle_names:case="r"
+PASS :swizzle_names:case="g"
+PASS :swizzle_names:case="b"
+PASS :swizzle_names:case="a"
+PASS :swizzle_names:case="rgb"
+PASS :swizzle_names:case="arr"
+PASS :swizzle_names:case="bgra"
+PASS :swizzle_names:case="agra"
+PASS :interpolation_type_names:case="perspective"
+PASS :interpolation_type_names:case="linear"
+PASS :interpolation_type_names:case="flat"
+PASS :interpolation_sampling_names:case="center"
+PASS :interpolation_sampling_names:case="centroid"
+PASS :interpolation_sampling_names:case="sample"
+

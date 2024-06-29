@@ -998,8 +998,8 @@ ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, s
     ASSERT(start + matchString.size() <= string.length());
 
     if (string.is8Bit())
-        return equal(string.span8().data() + start, spanReinterpretCast<const LChar>(matchString));
-    return equal(string.span16().data() + start, spanReinterpretCast<const LChar>(matchString));
+        return equal(string.span8().data() + start, byteCast<LChar>(matchString));
+    return equal(string.span16().data() + start, byteCast<LChar>(matchString));
 }
 
 ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, StringView matchString)
@@ -1543,30 +1543,30 @@ size_t StringImpl::sizeInBytes() const
 
 Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<const LChar> source)
 {
-    return tryGetUTF8ForCharacters([] (std::span<const char> converted) {
+    return tryGetUTF8ForCharacters([] (std::span<const char8_t> converted) {
         return CString { converted };
     }, source);
 }
 
 Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<const UChar> characters, ConversionMode mode)
 {
-    return tryGetUTF8ForCharacters([] (std::span<const char> converted) {
+    return tryGetUTF8ForCharacters([] (std::span<const char8_t> converted) {
         return CString { converted };
     }, characters, mode);
 }
 
-Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(std::span<const UChar> span, ConversionMode mode, Vector<char, 1024>& bufferVector)
+Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(std::span<const UChar> span, ConversionMode mode, Vector<char8_t, 1024>& bufferVector)
 {
     ASSERT(bufferVector.size() == span.size() * 3);
     ConversionResult<char8_t> result;
     switch (mode) {
     case StrictConversion:
-        result = Unicode::convert(span, spanReinterpretCast<char8_t>(bufferVector.mutableSpan()));
+        result = Unicode::convert(span, bufferVector.mutableSpan());
         break;
     // FIXME: Lenient is exactly the same as "replacing unpaired surrogates with FFFD"; we don't need both.
     case StrictConversionReplacingUnpairedSurrogatesWithFFFD:
     case LenientConversion:
-        result = Unicode::convertReplacingInvalidSequences(span, spanReinterpretCast<char8_t>(bufferVector.mutableSpan()));
+        result = Unicode::convertReplacingInvalidSequences(span, bufferVector.mutableSpan());
         break;
     }
     if (result.code == ConversionResultCode::SourceInvalid)

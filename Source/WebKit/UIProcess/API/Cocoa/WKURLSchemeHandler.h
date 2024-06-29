@@ -35,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*! A class conforming to the WKURLSchemeHandler protocol provides methods for
  loading resources with URL schemes that WebKit doesn't know how to handle itself.
  */
+WK_SWIFT_UI_ACTOR
 WK_API_AVAILABLE(macos(10.13), ios(11.0))
 @protocol WKURLSchemeHandler <NSObject>
 

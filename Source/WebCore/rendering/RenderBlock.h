@@ -38,6 +38,7 @@ class RenderText;
 
 struct BidiRun;
 struct PaintInfo;
+struct RenderBlockRareData;
 
 using TrackedRendererListHashSet = SingleThreadWeakListHashSet<RenderBox>;
 
@@ -391,8 +392,6 @@ protected:
 
     void computeChildPreferredLogicalWidths(RenderObject&, LayoutUnit& minPreferredLogicalWidth, LayoutUnit& maxPreferredLogicalWidth) const;
 
-    void blockWillBeDestroyed();
-
     virtual void computeChildIntrinsicLogicalWidths(RenderObject&, LayoutUnit& minPreferredLogicalWidth, LayoutUnit& maxPreferredLogicalWidth) const;
 
 private:
@@ -465,11 +464,11 @@ private:
 
     void absoluteQuadsIgnoringContinuation(const FloatRect&, Vector<FloatQuad>&, bool* wasFixed) const override;
 
-private:
-    bool hasRareData() const;
-    
 protected:
     void dirtyForLayoutFromPercentageHeightDescendants();
+
+    RenderBlockRareData& ensureBlockRareData();
+    RenderBlockRareData* getBlockRareData() const;
 
 protected:
     bool recomputeLogicalWidth();

@@ -253,17 +253,17 @@ int Collator::collate(StringView a, StringView b) const
     return result;
 }
 
-static UCharIterator createIteratorUTF8(const char* string)
+static UCharIterator createIterator(const char8_t* string)
 {
     UCharIterator iterator;
-    uiter_setUTF8(&iterator, string, strlen(string));
+    uiter_setUTF8(&iterator, byteCast<char>(string), strlen(byteCast<char>(string)));
     return iterator;
 }
 
-int Collator::collateUTF8(const char* a, const char* b) const
+int Collator::collate(const char8_t* a, const char8_t* b) const
 {
-    UCharIterator iteratorA = createIteratorUTF8(a);
-    UCharIterator iteratorB = createIteratorUTF8(b);
+    UCharIterator iteratorA = createIterator(a);
+    UCharIterator iteratorB = createIterator(b);
     UErrorCode status = U_ZERO_ERROR;
     int result = ucol_strcollIter(m_collator, &iteratorA, &iteratorB, &status);
     ASSERT(U_SUCCESS(status));

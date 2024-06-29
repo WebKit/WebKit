@@ -88,6 +88,7 @@ private:
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
 
     GCGLuint m_compositorTexture { 0 };
+    bool m_isCompositorTextureInitialized { false };
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::unique_ptr<GLFence> m_frameFence;

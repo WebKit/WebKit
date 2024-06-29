@@ -457,7 +457,7 @@ void RealtimeMediaSource::captureFailed()
     end();
 }
 
-bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<int>, std::optional<int>, std::optional<double>, std::optional<double>)
+bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(const VideoPresetConstraints&)
 {
     // The size and frame rate are within the capability limits, so they are supported.
     return true;
@@ -545,9 +545,9 @@ std::optional<MediaConstraintType> RealtimeMediaSource::hasInvalidSizeFrameRateA
     }
 
     // Each of the non-null values is supported individually, see if they all can be applied at the same time.
-    if (!supportsSizeFrameRateAndZoom(width, height, WTFMove(frameRate), WTFMove(zoom))) {
+    if (!supportsSizeFrameRateAndZoom({ width, height, frameRate, zoom })) {
         // Let's try without frame rate and zoom constraints if not mandatory.
-        if ((!frameRateConstraint || !frameRateConstraint->isMandatory()) && (!zoomConstraint || !zoomConstraint->isMandatory()) && supportsSizeFrameRateAndZoom(WTFMove(width), WTFMove(height), { }, { }))
+        if ((!frameRateConstraint || !frameRateConstraint->isMandatory()) && (!zoomConstraint || !zoomConstraint->isMandatory()) && supportsSizeFrameRateAndZoom({ width, height, { }, { } }))
             return { };
 
         if (widthConstraint)
@@ -606,6 +606,7 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::PowerEfficient:
     case MediaConstraintType::Unknown:
         break;
     }
@@ -652,6 +653,7 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::PowerEfficient:
     case MediaConstraintType::Unknown:
         break;
     }
@@ -701,6 +703,7 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::PowerEfficient:
     case MediaConstraintType::Unknown:
         break;
     }
@@ -727,6 +730,7 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
 
         return constraint.fitnessDistance(capabilities.torch());
     case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::PowerEfficient:
         return 0;
     case MediaConstraintType::Width:
     case MediaConstraintType::Height:
@@ -781,18 +785,18 @@ static void applyNumericConstraint(const NumericConstraint<ValueType>& constrain
         (source.*applier)(value);
 }
 
-void RealtimeMediaSource::setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
+void RealtimeMediaSource::setSizeFrameRateAndZoom(const VideoPresetConstraints& constraints)
 {
     IntSize size;
-    if (width)
-        size.setWidth(width.value());
-    if (height)
-        size.setHeight(height.value());
+    if (constraints.width)
+        size.setWidth(*constraints.width);
+    if (constraints.height)
+        size.setHeight(*constraints.height);
     setSize(size);
-    if (frameRate)
-        setFrameRate(frameRate.value());
-    if (zoom)
-        setZoom(zoom.value());
+    if (constraints.frameRate)
+        setFrameRate(*constraints.frameRate);
+    if (constraints.zoom)
+        setZoom(*constraints.zoom);
 }
 
 void RealtimeMediaSource::applyConstraint(MediaConstraintType constraintType, const MediaConstraint& constraint)
@@ -931,7 +935,12 @@ void RealtimeMediaSource::applyConstraint(MediaConstraintType constraintType, co
     }
     case MediaConstraintType::BackgroundBlur: {
         ASSERT(constraint.isBoolean());
-        // FIXME: Add support
+        // FIXME: Implement support, https://bugs.webkit.org/show_bug.cgi?id=275491
+        break;
+    }
+    case MediaConstraintType::PowerEfficient: {
+        ASSERT(constraint.isBoolean());
+        // FIXME: Implement support, https://bugs.webkit.org/show_bug.cgi?id=275491
         break;
     }
 
@@ -985,7 +994,7 @@ std::optional<MediaConstraintType> RealtimeMediaSource::selectSettings(const Med
         if (!supportsConstraint(constraintType))
             return false;
 
-        if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom) {
+        if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom || constraintType == MediaConstraintType::PowerEfficient) {
             candidates.set(constraintType, constraint);
             return false;
         }
@@ -1030,7 +1039,7 @@ std::optional<MediaConstraintType> RealtimeMediaSource::selectSettings(const Med
 
         advancedConstraint.forEach([&](auto constraintType, const MediaConstraint& constraint) {
 
-            if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom)
+            if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom || constraintType == MediaConstraintType::PowerEfficient)
                 return;
 
             distance = fitnessDistance(constraintType, constraint);
@@ -1103,6 +1112,8 @@ bool RealtimeMediaSource::supportsConstraint(MediaConstraintType constraintType)
         return capabilities.supportsTorch();
     case MediaConstraintType::BackgroundBlur:
         return capabilities.supportsBackgroundBlur();
+    case MediaConstraintType::PowerEfficient:
+        return deviceType() == CaptureDevice::DeviceType::Camera;
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
         // https://www.w3.org/TR/screen-capture/#new-constraints-for-captured-display-surfaces
@@ -1155,6 +1166,7 @@ std::optional<MediaConstraintType> RealtimeMediaSource::hasAnyInvalidConstraint(
         case MediaConstraintType::Zoom:
         case MediaConstraintType::Torch:
         case MediaConstraintType::BackgroundBlur:
+        case MediaConstraintType::PowerEfficient:
         case MediaConstraintType::Unknown:
             m_fitnessScore += distance ? 1 : 2;
             break;
@@ -1166,17 +1178,17 @@ std::optional<MediaConstraintType> RealtimeMediaSource::hasAnyInvalidConstraint(
     return { };
 }
 
-RealtimeMediaSource::VideoFrameSizeConstraints RealtimeMediaSource::extractVideoFrameSizeConstraints(const MediaConstraints& constraints)
+RealtimeMediaSource::VideoPresetConstraints RealtimeMediaSource::extractVideoPresetConstraints(const MediaConstraints& constraints)
 {
     MediaTrackConstraintSetMap candidates;
     if (auto invalidConstraint = selectSettings(constraints, candidates))
         return { };
-    return extractVideoFrameSizeConstraints(candidates);
+    return extractVideoPresetConstraints(candidates);
 }
 
-RealtimeMediaSource::VideoFrameSizeConstraints RealtimeMediaSource::extractVideoFrameSizeConstraints(const MediaTrackConstraintSetMap& constraints)
+RealtimeMediaSource::VideoPresetConstraints RealtimeMediaSource::extractVideoPresetConstraints(const MediaTrackConstraintSetMap& constraints)
 {
-    VideoFrameSizeConstraints result;
+    VideoPresetConstraints result;
     auto& capabilities = this->capabilities();
 
     if (auto constraint = constraints.width()) {
@@ -1210,6 +1222,16 @@ RealtimeMediaSource::VideoFrameSizeConstraints RealtimeMediaSource::extractVideo
         }
     }
 
+    if (auto constraint = constraints.zoom()) {
+        if (capabilities.supportsZoom()) {
+            auto range = capabilities.zoom();
+            result.zoom = constraint->valueForCapabilityRange(this->zoom(), range);
+        }
+    }
+
+    if (auto contraint = constraints.powerEfficient())
+        contraint->getExact(result.shouldPreferPowerEfficiency) || contraint->getIdeal(result.shouldPreferPowerEfficiency);
+
     return result;
 }
 
@@ -1220,19 +1242,10 @@ void RealtimeMediaSource::applyConstraints(const MediaTrackConstraintSetMap& con
 
     startApplyingConstraints();
 
-    auto videoFrameSizeConstraints = extractVideoFrameSizeConstraints(constraints);
+    auto videoPresetConstraints = extractVideoPresetConstraints(constraints);
 
-    std::optional<double> zoom;
-    if (auto constraint = constraints.zoom()) {
-        auto& capabilities = this->capabilities();
-        if (capabilities.supportsZoom()) {
-            auto range = capabilities.zoom();
-            zoom = constraint->valueForCapabilityRange(this->zoom(), range);
-        }
-    }
-
-    if (videoFrameSizeConstraints.width || videoFrameSizeConstraints.height || videoFrameSizeConstraints.frameRate || zoom)
-        setSizeFrameRateAndZoom(videoFrameSizeConstraints.width, videoFrameSizeConstraints.height, videoFrameSizeConstraints.frameRate, WTFMove(zoom));
+    if (videoPresetConstraints.hasConstraints())
+        setSizeFrameRateAndZoom(videoPresetConstraints);
 
     constraints.forEach([&] (auto constraintType, auto& constraint) {
         if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::AspectRatio || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom)

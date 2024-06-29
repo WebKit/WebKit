@@ -42,7 +42,7 @@ PASS SVGElement.prototype.getPresentationAttribute must be removed
 PASS SVGElement.prototype.xmlbase must be removed
 PASS SVGElement.prototype.xmllang must be removed
 PASS SVGElement.prototype.xmlspace must be removed
-FAIL SVGGraphicsElement.prototype.getTransformToElement must be removed assert_false: expected false got true
+PASS SVGGraphicsElement.prototype.getTransformToElement must be removed
 FAIL SVGGraphicsElement.prototype.hasExtension must be removed assert_false: expected false got true
 FAIL SVGGraphicsElement.prototype.requiredFeatures must be removed assert_false: expected false got true
 FAIL SVGSVGElement.prototype.currentView must be removed assert_false: expected false got true

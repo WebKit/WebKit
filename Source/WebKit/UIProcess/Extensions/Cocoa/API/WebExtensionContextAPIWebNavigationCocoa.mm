@@ -98,6 +98,12 @@ void WebExtensionContext::webNavigationGetFrame(WebExtensionTabIdentifier tabIde
     }
 
     [webView _frames:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), tab, frameIdentifier](_WKFrameTreeNode *mainFrame) mutable {
+        if (!mainFrame.info.isMainFrame) {
+            RELEASE_LOG_INFO(Extensions, "Skipping frame traversal because the mainFrame is nil");
+            completionHandler(toWebExtensionError(@"webNavigation.getFrame()", nil, @"main frame not found"));
+            return;
+        }
+
         if (auto frameParameters = webNavigationFindFrameIdentifierInFrameTree(mainFrame, nil, tab.get(), frameIdentifier))
             completionHandler(WTFMove(frameParameters));
         else
@@ -109,17 +115,23 @@ void WebExtensionContext::webNavigationGetAllFrames(WebExtensionTabIdentifier ta
 {
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
-        completionHandler(toWebExtensionError(@"webNavigation.getFrame()", nil, @"tab not found"));
+        completionHandler(toWebExtensionError(@"webNavigation.getAllFrames()", nil, @"tab not found"));
         return;
     }
 
     auto *webView = tab->mainWebView();
     if (!webView) {
-        completionHandler(toWebExtensionError(@"webNavigation.getFrame()", nil, @"tab not found"));
+        completionHandler(toWebExtensionError(@"webNavigation.getAllFrames()", nil, @"tab not found"));
         return;
     }
 
     [webView _frames:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), tab](_WKFrameTreeNode *mainFrame) mutable {
+        if (!mainFrame.info.isMainFrame) {
+            RELEASE_LOG_INFO(Extensions, "Skipping frame traversal because the mainFrame is nil");
+            completionHandler(toWebExtensionError(@"webNavigation.getAllFrames()", nil, @"main frame not found"));
+            return;
+        }
+
         Vector<WebExtensionFrameParameters> frameParameters;
         webNavigationTraverseFrameTreeForFrame(mainFrame, nil, tab.get(), frameParameters);
 

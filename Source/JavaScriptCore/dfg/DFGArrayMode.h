@@ -239,13 +239,28 @@ public:
         Array::Class myArrayClass;
         if (isJSArray()) {
             if (profile->usesOriginalArrayStructures(locker) && benefitsFromOriginalArray()) {
-                ArrayModes arrayModes = profile->observedArrayModes(locker);
-                if (hasSeenCopyOnWriteArray(arrayModes) && !hasSeenWritableArray(arrayModes))
-                    myArrayClass = Array::OriginalCopyOnWriteArray;
-                else if (!hasSeenCopyOnWriteArray(arrayModes) && hasSeenWritableArray(arrayModes))
-                    myArrayClass = Array::OriginalNonCopyOnWriteArray;
-                else
+                switch (type()) {
+                case Array::Int32:
+                case Array::Double:
+                case Array::Contiguous: {
+                    ArrayModes arrayModes = profile->observedArrayModes(locker);
+                    if (hasSeenCopyOnWriteArray(arrayModes) && !hasSeenWritableArray(arrayModes))
+                        myArrayClass = Array::OriginalCopyOnWriteArray;
+                    else if (!hasSeenCopyOnWriteArray(arrayModes) && hasSeenWritableArray(arrayModes))
+                        myArrayClass = Array::OriginalNonCopyOnWriteArray;
+                    else
+                        myArrayClass = Array::OriginalArray;
+                    break;
+                }
+                case Array::Undecided:
+                case Array::ArrayStorage: {
                     myArrayClass = Array::OriginalArray;
+                    break;
+                }
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
             } else
                 myArrayClass = Array::Array;
         } else

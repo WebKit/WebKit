@@ -25,7 +25,5 @@
 
 // https://w3c.github.io/DOM-Parsing/#extensions-to-the-range-interface
 partial interface Range {
-    [CEReactions=Needed, NewObject] DocumentFragment createContextualFragment(HTMLString fragment);
+    [CEReactions=Needed, NewObject] DocumentFragment createContextualFragment((TrustedHTML or DOMString) fragment);
 };
-
-typedef [StringContext=TrustedHTML] DOMString HTMLString;

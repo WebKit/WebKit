@@ -19,6 +19,8 @@
 #include "aom_dsp/noise_model.h"
 #include "aom_dsp/noise_util.h"
 #include "aom_mem/aom_mem.h"
+#include "aom_ports/mem.h"
+#include "aom_scale/yv12config.h"
 
 #define kLowPolyNumParams 3
 
@@ -1555,7 +1557,7 @@ void aom_denoise_and_model_free(struct aom_denoise_and_model_t *ctx) {
 }
 
 static int denoise_and_model_realloc_if_necessary(
-    struct aom_denoise_and_model_t *ctx, YV12_BUFFER_CONFIG *sd) {
+    struct aom_denoise_and_model_t *ctx, const YV12_BUFFER_CONFIG *sd) {
   if (ctx->width == sd->y_width && ctx->height == sd->y_height &&
       ctx->y_stride == sd->y_stride && ctx->uv_stride == sd->uv_stride)
     return 1;
@@ -1624,7 +1626,7 @@ static int denoise_and_model_realloc_if_necessary(
 // TODO(aomedia:3151): Handle a monochrome image (sd->u_buffer and sd->v_buffer
 // are null pointers) correctly.
 int aom_denoise_and_model_run(struct aom_denoise_and_model_t *ctx,
-                              YV12_BUFFER_CONFIG *sd,
+                              const YV12_BUFFER_CONFIG *sd,
                               aom_film_grain_t *film_grain, int apply_denoise) {
   const int block_size = ctx->block_size;
   const int use_highbd = (sd->flags & YV12_FLAG_HIGHBITDEPTH) != 0;

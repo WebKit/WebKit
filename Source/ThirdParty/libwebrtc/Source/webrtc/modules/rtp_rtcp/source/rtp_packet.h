@@ -11,6 +11,7 @@
 #define MODULES_RTP_RTCP_SOURCE_RTP_PACKET_H_
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "absl/types/optional.h"
@@ -127,7 +128,7 @@ class RtpPacket {
   bool IsRegistered() const;
 
   template <typename Extension, typename FirstValue, typename... Values>
-  bool GetExtension(FirstValue, Values...) const;
+  bool GetExtension(FirstValue&&, Values&&...) const;
 
   template <typename Extension>
   absl::optional<typename Extension::value_type> GetExtension() const;
@@ -231,11 +232,12 @@ bool RtpPacket::IsRegistered() const {
 }
 
 template <typename Extension, typename FirstValue, typename... Values>
-bool RtpPacket::GetExtension(FirstValue first, Values... values) const {
+bool RtpPacket::GetExtension(FirstValue&& first, Values&&... values) const {
   auto raw = FindExtension(Extension::kId);
   if (raw.empty())
     return false;
-  return Extension::Parse(raw, first, values...);
+  return Extension::Parse(raw, std::forward<FirstValue>(first),
+                          std::forward<Values>(values)...);
 }
 
 template <typename Extension>

@@ -41,8 +41,8 @@ ImmutableStyleProperties::ImmutableStyleProperties(const CSSProperty* properties
     auto* valueArray = bitwise_cast<PackedPtr<CSSValue>*>(this->valueArray());
     for (unsigned i = 0; i < length; ++i) {
         metadataArray[i] = properties[i].metadata();
-        auto* value = properties[i].value();
-        valueArray[i] = value;
+        RefPtr value = properties[i].value();
+        valueArray[i] = value.get();
         value->ref();
     }
 }

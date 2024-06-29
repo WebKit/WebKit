@@ -27,8 +27,6 @@ UIProcess/API/glib/WebKitJavascriptResult.cpp @no-unify
 UIProcess/API/glib/WebKitMimeInfo.cpp @no-unify
 UIProcess/API/glib/WebKitPlugin.cpp @no-unify
 
-WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.cpp @no-unify
-
 WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMDocument.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMElement.cpp @no-unify

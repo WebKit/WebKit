@@ -273,7 +273,7 @@ void FormSubmission::populateFrameLoadRequest(FrameLoadRequest& frameRequest)
         if (m_boundary.isEmpty())
             frameRequest.resourceRequest().setHTTPContentType(m_contentType);
         else
-            frameRequest.resourceRequest().setHTTPContentType(m_contentType + "; boundary=" + m_boundary);
+            frameRequest.resourceRequest().setHTTPContentType(makeString(m_contentType, "; boundary="_s, m_boundary));
     }
 
     frameRequest.resourceRequest().setURL(requestURL());

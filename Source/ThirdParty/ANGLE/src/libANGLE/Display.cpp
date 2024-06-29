@@ -244,28 +244,25 @@ rx::DisplayImpl *CreateDisplayFromDevice(Device *eglDevice, const DisplayState &
 {
     rx::DisplayImpl *impl = nullptr;
 
-    switch (eglDevice->getType())
-    {
 #if defined(ANGLE_ENABLE_D3D11)
-        case EGL_D3D11_DEVICE_ANGLE:
-            impl = new rx::DisplayD3D(state);
-            break;
-#endif
-#if defined(ANGLE_ENABLE_D3D9)
-        case EGL_D3D9_DEVICE_ANGLE:
-            // Currently the only way to get EGLDeviceEXT representing a D3D9 device
-            // is to retrieve one from an already-existing EGLDisplay.
-            // When eglGetPlatformDisplayEXT is called with a D3D9 EGLDeviceEXT,
-            // the already-existing display should be returned.
-            // Therefore this codepath to create a new display from the device
-            // should never be hit.
-            UNREACHABLE();
-            break;
-#endif
-        default:
-            UNREACHABLE();
-            break;
+    if (eglDevice->getExtensions().deviceD3D11)
+    {
+        impl = new rx::DisplayD3D(state);
     }
+#endif
+
+#if defined(ANGLE_ENABLE_D3D9)
+    if (eglDevice->getExtensions().deviceD3D9)
+    {
+        // Currently the only way to get EGLDeviceEXT representing a D3D9 device
+        // is to retrieve one from an already-existing EGLDisplay.
+        // When eglGetPlatformDisplayEXT is called with a D3D9 EGLDeviceEXT,
+        // the already-existing display should be returned.
+        // Therefore this codepath to create a new display from the device
+        // should never be hit.
+        UNREACHABLE();
+    }
+#endif
 
     ASSERT(impl != nullptr);
     return impl;
@@ -1029,7 +1026,7 @@ void Display::setupDisplayPlatform(rx::DisplayImpl *impl)
     SafeDelete(mImplementation);
     mImplementation = impl;
 
-    // TODO(anglebug.com/7365): Remove PlatformMethods.
+    // TODO(anglebug.com/42265835): Remove PlatformMethods.
     const angle::PlatformMethods *platformMethods =
         reinterpret_cast<const angle::PlatformMethods *>(
             mAttributeMap.get(EGL_PLATFORM_ANGLE_PLATFORM_METHODS_ANGLEX, 0));
@@ -1332,10 +1329,12 @@ Error Display::terminate(Thread *thread, TerminateReason terminateReason)
     return NoError();
 }
 
+#if ANGLE_USE_DISPLAY_PREPARE_FOR_CALL
 Error Display::prepareForCall()
 {
     return mImplementation->prepareForCall();
 }
+#endif
 
 Error Display::releaseThread()
 {
@@ -1754,7 +1753,7 @@ Error Display::makeCurrent(Thread *thread,
     // Tick all the scratch buffers to make sure they get cleaned up eventually if they stop being
     // used.
     {
-        std::lock_guard<std::mutex> lock(mScratchBufferMutex);
+        std::lock_guard<angle::SimpleMutex> lock(mScratchBufferMutex);
 
         for (angle::ScratchBuffer &scatchBuffer : mScratchBuffers)
         {
@@ -1929,7 +1928,7 @@ Error Display::destroyContext(Thread *thread, gl::Context *context)
 
         // Make the context current, so we can release resources belong to the context, and then
         // when context is released from the current, it will be destroyed.
-        // TODO(http://www.anglebug.com/6322): Don't require a Context to be current in order to
+        // TODO(http://www.anglebug.com/42264840): Don't require a Context to be current in order to
         // destroy it.
         ANGLE_TRY(makeCurrent(thread, currentContext, nullptr, nullptr, context));
         ANGLE_TRY(
@@ -2178,6 +2177,7 @@ static ClientExtensions GenerateClientExtensions()
     extensions.debug                     = true;
     extensions.featureControlANGLE       = true;
     extensions.deviceQueryEXT            = true;
+    extensions.noErrorANGLE              = true;
 
     return extensions;
 }
@@ -2351,7 +2351,7 @@ void Display::initializeFrontendFeatures()
     ANGLE_FEATURE_CONDITION(&mFrontendFeatures, loseContextOnOutOfMemory, true);
     ANGLE_FEATURE_CONDITION(&mFrontendFeatures, allowCompressedFormats, true);
 
-    // Togglable until work on the extension is complete - anglebug.com/7279.
+    // Togglable until work on the extension is complete - anglebug.com/40096838.
     ANGLE_FEATURE_CONDITION(&mFrontendFeatures, emulatePixelLocalStorage, true);
 
     ANGLE_FEATURE_CONDITION(&mFrontendFeatures, forceMinimumMaxVertexAttributes, false);
@@ -2591,7 +2591,7 @@ void Display::returnZeroFilledBuffer(angle::ScratchBuffer zeroFilledBuffer)
 angle::ScratchBuffer Display::requestScratchBufferImpl(
     std::vector<angle::ScratchBuffer> *bufferVector)
 {
-    std::lock_guard<std::mutex> lock(mScratchBufferMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mScratchBufferMutex);
     if (!bufferVector->empty())
     {
         angle::ScratchBuffer buffer = std::move(bufferVector->back());
@@ -2605,7 +2605,7 @@ angle::ScratchBuffer Display::requestScratchBufferImpl(
 void Display::returnScratchBufferImpl(angle::ScratchBuffer scratchBuffer,
                                       std::vector<angle::ScratchBuffer> *bufferVector)
 {
-    std::lock_guard<std::mutex> lock(mScratchBufferMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mScratchBufferMutex);
     bufferVector->push_back(std::move(scratchBuffer));
 }
 

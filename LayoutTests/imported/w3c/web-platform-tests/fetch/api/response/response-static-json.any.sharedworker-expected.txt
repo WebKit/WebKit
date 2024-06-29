@@ -12,4 +12,7 @@ PASS Check static json() encodes JSON objects correctly
 PASS Check static json() throws when data is not encodable
 PASS Check static json() throws when data is circular
 PASS Check static json() propagates JSON serializer errors
+PASS Check response returned by static json() with input 𝌆
+PASS Check response returned by static json() with input U+df06U+d834
+PASS Check response returned by static json() with input U+dead
 

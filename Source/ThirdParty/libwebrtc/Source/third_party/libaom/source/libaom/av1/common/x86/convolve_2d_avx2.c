@@ -21,13 +21,11 @@
 
 #include "av1/common/convolve.h"
 
-void av1_convolve_2d_sr_general_avx2(const uint8_t *src, int src_stride,
-                                     uint8_t *dst, int dst_stride, int w, int h,
-                                     const InterpFilterParams *filter_params_x,
-                                     const InterpFilterParams *filter_params_y,
-                                     const int subpel_x_qn,
-                                     const int subpel_y_qn,
-                                     ConvolveParams *conv_params) {
+static void convolve_2d_sr_general_avx2(
+    const uint8_t *src, int src_stride, uint8_t *dst, int dst_stride, int w,
+    int h, const InterpFilterParams *filter_params_x,
+    const InterpFilterParams *filter_params_y, const int subpel_x_qn,
+    const int subpel_y_qn, ConvolveParams *conv_params) {
   if (filter_params_x->taps > 8) {
     const int bd = 8;
     int im_stride = 8, i;
@@ -150,9 +148,9 @@ void av1_convolve_2d_sr_avx2(
 
   const bool use_general = (tap_x == 12 || tap_y == 12);
   if (use_general) {
-    av1_convolve_2d_sr_general_avx2(src, src_stride, dst, dst_stride, w, h,
-                                    filter_params_x, filter_params_y,
-                                    subpel_x_q4, subpel_y_q4, conv_params);
+    convolve_2d_sr_general_avx2(src, src_stride, dst, dst_stride, w, h,
+                                filter_params_x, filter_params_y, subpel_x_q4,
+                                subpel_y_q4, conv_params);
   } else {
     av1_convolve_2d_sr_specialized_avx2(src, src_stride, dst, dst_stride, w, h,
                                         filter_params_x, filter_params_y,

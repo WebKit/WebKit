@@ -56,7 +56,6 @@
 #include "RemoteRemoteCommandListenerProxy.h"
 #include "RemoteRemoteCommandListenerProxyMessages.h"
 #include "RemoteRenderingBackend.h"
-#include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteSampleBufferDisplayLayerManager.h"
 #include "RemoteSampleBufferDisplayLayerManagerMessages.h"
 #include "RemoteSampleBufferDisplayLayerMessages.h"
@@ -150,6 +149,10 @@
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
 #include "LocalAudioSessionRoutingArbitrator.h"
+#endif
+
+#if PLATFORM(MAC) && ENABLE(MEDIA_STREAM)
+#include <WebCore/CoreAudioSharedUnit.h>
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -366,7 +369,7 @@ Ref<LibWebRTCCodecsProxy> GPUConnectionToWebProcess::protectedLibWebRTCCodecsPro
 Ref<RemoteSharedResourceCache> GPUConnectionToWebProcess::sharedResourceCache()
 {
     if (!m_sharedResourceCache)
-        m_sharedResourceCache = RemoteSharedResourceCache::create();
+        m_sharedResourceCache = RemoteSharedResourceCache::create(*this);
     return *m_sharedResourceCache;
 }
 
@@ -382,7 +385,7 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
 
 #if USE(AUDIO_SESSION)
     if (m_audioSessionProxy) {
-        gpuProcess().audioSessionManager().removeProxy(*m_audioSessionProxy);
+        protectedGPUProcess()->audioSessionManager().removeProxy(*m_audioSessionProxy);
         m_audioSessionProxy = nullptr;
     }
 #endif
@@ -552,8 +555,8 @@ void GPUConnectionToWebProcess::terminateWebProcess()
 
 void GPUConnectionToWebProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
 {
-    for (auto& remoteRenderingBackend : m_remoteRenderingBackendMap.values())
-        remoteRenderingBackend->lowMemoryHandler(critical, synchronous);
+    if (m_sharedResourceCache)
+        m_sharedResourceCache->lowMemoryHandler();
 #if ENABLE(VIDEO)
     protectedVideoFrameObjectHeap()->lowMemoryHandler();
 #endif
@@ -655,7 +658,7 @@ RemoteImageDecoderAVFProxy& GPUConnectionToWebProcess::imageDecoderAVFProxy()
 }
 #endif
 
-void GPUConnectionToWebProcess::createRenderingBackend(RemoteRenderingBackendCreationParameters&& creationParameters, IPC::StreamServerConnection::Handle&& connectionHandle)
+void GPUConnectionToWebProcess::createRenderingBackend(RenderingBackendIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
     IPC::StreamServerConnectionParameters params;
 #if ENABLE(IPC_TESTING_API)
@@ -664,10 +667,13 @@ void GPUConnectionToWebProcess::createRenderingBackend(RemoteRenderingBackendCre
     auto streamConnection = IPC::StreamServerConnection::tryCreate(WTFMove(connectionHandle), params);
     MESSAGE_CHECK(streamConnection);
 
-    auto addResult = m_remoteRenderingBackendMap.ensure(creationParameters.identifier, [&, streamConnection = WTFMove(streamConnection)] () mutable {
-        return IPC::ScopedActiveMessageReceiveQueue { RemoteRenderingBackend::create(*this, WTFMove(creationParameters), streamConnection.releaseNonNull()) };
+    auto addResult = m_remoteRenderingBackendMap.ensure(identifier, [&, streamConnection] () mutable {
+        return IPC::ScopedActiveMessageReceiveQueue { RemoteRenderingBackend::create(*this, identifier, streamConnection.releaseNonNull()) };
     });
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    if (!addResult.isNewEntry) {
+        streamConnection->invalidate();
+        MESSAGE_CHECK(false);
+    }
 }
 
 void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifier renderingBackendIdentifier)
@@ -678,7 +684,7 @@ void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifi
 }
 
 #if ENABLE(WEBGL)
-void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContextGLAttributes attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
+void GPUConnectionToWebProcess::createGraphicsContextGL(GraphicsContextGLIdentifier identifier, WebCore::GraphicsContextGLAttributes attributes, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
     MESSAGE_CHECK(!isLockdownModeEnabled());
 
@@ -694,17 +700,17 @@ void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContext
     auto streamConnection = IPC::StreamServerConnection::tryCreate(WTFMove(connectionHandle), params);
     MESSAGE_CHECK(streamConnection);
 
-    auto addResult = m_remoteGraphicsContextGLMap.ensure(graphicsContextGLIdentifier, [&, streamConnection = WTFMove(streamConnection)] () mutable {
-        return IPC::ScopedActiveMessageReceiveQueue { RemoteGraphicsContextGL::create(*this, WTFMove(attributes), graphicsContextGLIdentifier, *renderingBackend, streamConnection.releaseNonNull()) };
+    auto addResult = m_remoteGraphicsContextGLMap.ensure(identifier, [&, streamConnection = WTFMove(streamConnection)] () mutable {
+        return IPC::ScopedActiveMessageReceiveQueue { RemoteGraphicsContextGL::create(*this, WTFMove(attributes), identifier, *renderingBackend, streamConnection.releaseNonNull()) };
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-void GPUConnectionToWebProcess::releaseGraphicsContextGL(GraphicsContextGLIdentifier graphicsContextGLIdentifier)
+void GPUConnectionToWebProcess::releaseGraphicsContextGL(GraphicsContextGLIdentifier identifier)
 {
     MESSAGE_CHECK(!isLockdownModeEnabled());
 
-    m_remoteGraphicsContextGLMap.remove(graphicsContextGLIdentifier);
+    m_remoteGraphicsContextGLMap.remove(identifier);
     if (m_remoteGraphicsContextGLMap.isEmpty())
         protectedGPUProcess()->tryExitIfUnusedAndUnderMemoryPressure();
 }
@@ -738,14 +744,14 @@ void GPUConnectionToWebProcess::performWithMediaPlayerOnMainThread(MediaPlayerId
 }
 #endif
 
-void GPUConnectionToWebProcess::createRemoteGPU(WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
+void GPUConnectionToWebProcess::createGPU(WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
     MESSAGE_CHECK(isWebGPUEnabled());
 
     auto it = m_remoteRenderingBackendMap.find(renderingBackendIdentifier);
     if (it == m_remoteRenderingBackendMap.end())
         return;
-    auto* renderingBackend = it->value.get();
+    RefPtr renderingBackend = it->value.get();
 
     IPC::StreamServerConnectionParameters params;
 #if ENABLE(IPC_TESTING_API)
@@ -760,7 +766,7 @@ void GPUConnectionToWebProcess::createRemoteGPU(WebGPUIdentifier identifier, Ren
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-void GPUConnectionToWebProcess::releaseRemoteGPU(WebGPUIdentifier identifier)
+void GPUConnectionToWebProcess::releaseGPU(WebGPUIdentifier identifier)
 {
     bool result = m_remoteGPUMap.remove(identifier);
     ASSERT_UNUSED(result, result);
@@ -1031,6 +1037,12 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
         return remoteMediaPlayerManagerProxy().didReceiveSyncPlayerMessage(connection, decoder, replyEncoder);
     }
 #endif
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    if (decoder.messageReceiverName() == Messages::UserMediaCaptureManagerProxy::messageReceiverName()) {
+        userMediaCaptureManagerProxy().didReceiveSyncMessage(connection, decoder, replyEncoder);
+        return true;
+    }
+#endif
 #if ENABLE(ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteCDMFactoryProxy::messageReceiverName()) {
         return cdmFactoryProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
@@ -1107,6 +1119,11 @@ void GPUConnectionToWebProcess::setOrientationForMediaCapture(IntDegrees orienta
 
 void GPUConnectionToWebProcess::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture)
 {
+#if PLATFORM(MAC) && ENABLE(MEDIA_STREAM)
+    if (allowAudioCapture)
+        CoreAudioSharedUnit::singleton().prewarmAudioUnitCreation([] { });
+#endif
+
     m_allowsAudioCapture |= allowAudioCapture;
     m_allowsVideoCapture |= allowVideoCapture;
     m_allowsDisplayCapture |= allowDisplayCapture;

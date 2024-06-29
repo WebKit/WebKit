@@ -162,6 +162,8 @@ enum ImageSmoothingQuality;
     macro(RefPtr<HTMLImageElement>&) \
     macro(RefPtr<ImageBitmap>&) \
     macro(RefPtr<ImageData>&) \
+    macro(Ref<JSC::ArrayBuffer>&) \
+    macro(Ref<JSC::ArrayBufferView>&) \
     macro(RefPtr<JSC::ArrayBuffer>&) \
     macro(RefPtr<JSC::ArrayBufferView>&) \
     macro(RefPtr<JSC::Float32Array>&) \

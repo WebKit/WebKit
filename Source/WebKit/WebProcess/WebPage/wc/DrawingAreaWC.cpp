@@ -99,6 +99,7 @@ void DrawingAreaWC::addRootFrame(WebCore::FrameIdentifier frameID)
     auto layer = GraphicsLayer::create(graphicsLayerFactory(), this->m_rootLayerClient);
     // FIXME: This has an unnecessary string allocation. Adding a StringTypeAdapter for FrameIdentifier or ProcessQualified would remove that.
     layer->setName(makeString("drawing area root "_s, frameID.toString()));
+    layer->setAnchorPoint({ });
     m_rootLayers.append(RootLayerInfo {
         WTFMove(layer),
         nullptr,
@@ -138,9 +139,10 @@ void DrawingAreaWC::setLayerTreeStateIsFrozen(bool isFrozen)
     }
 }
 
-void DrawingAreaWC::updateGeometryWC(uint64_t backingStoreStateID, IntSize viewSize)
+void DrawingAreaWC::updateGeometryWC(uint64_t backingStoreStateID, IntSize viewSize, float deviceScaleFactor)
 {
     m_backingStoreStateID = backingStoreStateID;
+    m_webPage->setDeviceScaleFactor(deviceScaleFactor);
     m_webPage->setSize(viewSize);
 }
 
@@ -268,7 +270,10 @@ void DrawingAreaWC::sendUpdateAC()
             size = m_webPage->size();
         else
             size = frame->size();
-        rootLayer.layer->setSize(size);
+        FloatSize viewport { size };
+        viewport.scale(m_webPage->deviceScaleFactor());
+        m_updateInfo.viewport = WebCore::expandedIntSize(viewport);
+        updateRootLayerDeviceScaleFactor(rootLayer.layer);
         rootLayer.layer->flushCompositingStateForThisLayerOnly();
 
         // Because our view-relative overlay root layer is not attached to the FrameView's GraphicsLayer tree, we need to flush it manually.
@@ -297,6 +302,14 @@ void DrawingAreaWC::sendUpdateAC()
             });
         });
     }
+}
+
+void DrawingAreaWC::updateRootLayerDeviceScaleFactor(WebCore::GraphicsLayer& layer)
+{
+    float deviceScaleFactor = m_webPage->deviceScaleFactor();
+    TransformationMatrix m;
+    m.scale(deviceScaleFactor);
+    layer.setTransform(m);
 }
 
 static bool shouldPaintBoundsRect(const IntRect& bounds, const Vector<IntRect, 1>& rects)
@@ -329,9 +342,7 @@ void DrawingAreaWC::sendUpdateNonAC()
     ASSERT(webPage->bounds().contains(bounds));
     IntSize bitmapSize = bounds.size();
     float deviceScaleFactor = webPage->corePage()->deviceScaleFactor();
-    bitmapSize.scale(deviceScaleFactor);
-
-    auto image = createImageBuffer(bitmapSize);
+    auto image = createImageBuffer(bitmapSize, deviceScaleFactor);
     auto rects = m_dirtyRegion.rects();
     if (shouldPaintBoundsRect(bounds, rects)) {
         rects.clear();
@@ -341,7 +352,7 @@ void DrawingAreaWC::sendUpdateNonAC()
 
     UpdateInfo updateInfo;
     updateInfo.viewSize = webPage->size();
-    updateInfo.deviceScaleFactor = webPage->corePage()->deviceScaleFactor();
+    updateInfo.deviceScaleFactor = deviceScaleFactor;
     updateInfo.updateRectBounds = bounds;
     updateInfo.updateRects = rects;
     updateInfo.scrollRect = m_scrollRect;
@@ -350,10 +361,9 @@ void DrawingAreaWC::sendUpdateNonAC()
     m_scrollOffset = { };
 
     auto& graphicsContext = image->context();
-    graphicsContext.applyDeviceScaleFactor(deviceScaleFactor);
     graphicsContext.translate(-bounds.x(), -bounds.y());
     for (const auto& rect : rects)
-        webPage->drawRect(image->context(), rect);
+        webPage->drawRect(graphicsContext, rect);
     image->flushDrawingContextAsync();
 
     auto fence = m_webPage->ensureRemoteRenderingBackendProxy().flushImageBuffers();
@@ -396,11 +406,11 @@ void DrawingAreaWC::commitLayerUpdateInfo(WCLayerUpdateInfo&& info)
     m_updateInfo.changedLayers.append(WTFMove(info));
 }
 
-RefPtr<ImageBuffer> DrawingAreaWC::createImageBuffer(FloatSize size)
+RefPtr<ImageBuffer> DrawingAreaWC::createImageBuffer(FloatSize size, float deviceScaleFactor)
 {
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM))
-        return Ref { m_webPage.get() }->ensureRemoteRenderingBackendProxy().createImageBuffer(size, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, { });
-    return ImageBuffer::create<ImageBufferShareableBitmapBackend>(size, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, RenderingPurpose::DOM, { });
+        return Ref { m_webPage.get() }->ensureRemoteRenderingBackendProxy().createImageBuffer(size, RenderingPurpose::DOM, deviceScaleFactor, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8, { });
+    return ImageBuffer::create<ImageBufferShareableBitmapBackend>(size, deviceScaleFactor, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8, RenderingPurpose::DOM, { });
 }
 
 void DrawingAreaWC::displayDidRefresh()

@@ -330,6 +330,9 @@ void RenderTreeUpdater::updateBeforeDescendants(Element& element, const Style::E
 {
     if (update)
         generatedContent().updatePseudoElement(element, *update, PseudoId::Before);
+
+    if (auto* before = element.beforePseudoElement())
+        storePreviousRenderer(*before);
 }
 
 void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::ElementUpdate* update)
@@ -341,10 +344,14 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
     if (!renderer)
         return;
 
-    generatedContent().updateBackdropRenderer(*renderer);
-    generatedContent().updateWritingSuggestionsRenderer(*renderer);
+    StyleDifference minimalStyleDifference = StyleDifference::Equal;
+    if (update && update->recompositeLayer)
+        minimalStyleDifference = StyleDifference::RecompositeLayer;
+
+    generatedContent().updateBackdropRenderer(*renderer, minimalStyleDifference);
+    generatedContent().updateWritingSuggestionsRenderer(*renderer, minimalStyleDifference);
     if (&element == element.document().documentElement())
-        viewTransition().updatePseudoElementTree(*renderer);
+        viewTransition().updatePseudoElementTree(*renderer, minimalStyleDifference);
 
     m_builder.updateAfterDescendants(*renderer);
 
@@ -552,20 +559,14 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
         // <span><div/> <div/></span>
         if (previousRenderer && !previousRenderer->isInline() && !previousRenderer->isOutOfFlowPositioned())
             return false;
-    } else {
-        if (parentRenderer.isRenderBlock() && !parentRenderer.childrenInline() && (!previousRenderer || !previousRenderer->isInline()))
-            return false;
 
-        RenderObject* first = parentRenderer.firstChild();
-        while (first && first->isFloatingOrOutOfFlowPositioned())
-            first = first->nextSibling();
-        RenderObject* nextRenderer = textNode.renderer() ? textNode.renderer() :  renderTreePosition().nextSiblingRenderer(textNode);
-        if (!first || nextRenderer == first) {
-            // Whitespace at the start of a block just goes away. Don't even make a render object for this text.
-            return false;
-        }
+        return true;
     }
-    return true;
+
+    if (parentRenderer.isRenderBlock() && !parentRenderer.childrenInline() && (!previousRenderer || !previousRenderer->isInline()))
+        return false;
+
+    return renderingParent.hasPrecedingInFlowChild;
 }
 
 void RenderTreeUpdater::createTextRenderer(Text& textNode, const Style::TextUpdate* textUpdate)
@@ -638,6 +639,8 @@ void RenderTreeUpdater::storePreviousRenderer(Node& node)
         return;
     ASSERT(renderingParent().previousChildRenderer != renderer);
     renderingParent().previousChildRenderer = renderer;
+    if (renderer->isInFlow())
+        renderingParent().hasPrecedingInFlowChild = true;
 }
 
 void RenderTreeUpdater::updateRenderViewStyle()
@@ -697,13 +700,33 @@ void RenderTreeUpdater::tearDownRenderer(Text& text)
     invalidateRebuildRootIfNeeded(text);
 }
 
-static void repaintBeforeTearDown(const Element& root, auto composedTreeDescendantsIterator)
+static void repaintAndMarkContainingBlockDirtyBeforeTearDown(const Element& root, auto composedTreeDescendantsIterator)
 {
     auto* destroyRootRenderer = root.renderer();
     if (destroyRootRenderer && destroyRootRenderer->renderTreeBeingDestroyed())
         return;
 
-    auto repaint = [&](auto& renderer) {
+    auto markContainingBlockDirty = [&](auto& renderer) {
+        auto* container = renderer.container();
+        if (!container) {
+            ASSERT_NOT_REACHED();
+            renderer.setNeedsLayout();
+            return;
+        }
+        if (!renderer.isOutOfFlowPositioned()) {
+            container->setChildNeedsLayout();
+            container->setPreferredLogicalWidthsDirty(true);
+            return;
+        }
+        container->setNeedsSimplifiedNormalFlowLayout();
+    };
+
+    auto repaintBackdropIfApplicable = [&](auto& renderer) {
+        if (auto backdropRenderer = renderer.backdropRenderer())
+            backdropRenderer->repaint(RenderObject::ForceRepaint::Yes);
+    };
+
+    auto repaintRoot = [&](auto& renderer) {
         if (renderer.isBody()) {
             renderer.view().repaintRootContents();
             return;
@@ -717,8 +740,11 @@ static void repaintBeforeTearDown(const Element& root, auto composedTreeDescenda
         renderer.repaint(RenderObject::ForceRepaint::Yes);
     };
 
-    if (destroyRootRenderer)
-        repaint(*destroyRootRenderer);
+    if (destroyRootRenderer) {
+        repaintRoot(*destroyRootRenderer);
+        repaintBackdropIfApplicable(*destroyRootRenderer);
+        markContainingBlockDirty(*destroyRootRenderer);
+    }
 
     for (auto it = composedTreeDescendantsIterator.begin(), end = composedTreeDescendantsIterator.end(); it != end; ++it) {
         auto* element = dynamicDowncast<Element>(*it);
@@ -736,6 +762,11 @@ static void repaintBeforeTearDown(const Element& root, auto composedTreeDescenda
         };
         if (shouldRepaint())
             renderer.repaint();
+        repaintBackdropIfApplicable(renderer);
+        if (renderer.isOutOfFlowPositioned()) {
+            // FIXME: Ideally we would check if containing block is the destory root or a descendent of the destroy root.
+            markContainingBlockDirty(renderer);
+        }
     }
 }
 
@@ -794,6 +825,8 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             }
 
             if (auto* renderer = element.renderer()) {
+                if (auto backdropRenderer = renderer->backdropRenderer())
+                    builder.destroyAndCleanUpAnonymousWrappers(*backdropRenderer, { });
                 builder.destroyAndCleanUpAnonymousWrappers(*renderer, root.renderer());
                 element.setRenderer(nullptr);
             }
@@ -806,12 +839,12 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
     push(root);
 
     auto descendants = composedTreeDescendants(root);
-    repaintBeforeTearDown(root, descendants);
+    repaintAndMarkContainingBlockDirtyBeforeTearDown(root, descendants);
     for (auto it = descendants.begin(), end = descendants.end(); it != end; ++it) {
         pop(it.depth());
 
         if (auto* text = dynamicDowncast<Text>(*it)) {
-            tearDownTextRenderer(*text, &root, builder, NeedsRepaint::No);
+            tearDownTextRenderer(*text, &root, builder, NeedsRepaintAndLayout::No);
             continue;
         }
 
@@ -823,13 +856,18 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
     tearDownLeftoverPaginationRenderersIfNeeded(root, builder);
 }
 
-void RenderTreeUpdater::tearDownTextRenderer(Text& text, const ContainerNode* root, RenderTreeBuilder& builder, NeedsRepaint needsRepaint)
+void RenderTreeUpdater::tearDownTextRenderer(Text& text, const ContainerNode* root, RenderTreeBuilder& builder, NeedsRepaintAndLayout needsRepaintAndLayout)
 {
     auto* renderer = text.renderer();
     if (!renderer)
         return;
-    if (needsRepaint == NeedsRepaint::Yes)
+    if (needsRepaintAndLayout == NeedsRepaintAndLayout::Yes) {
         renderer->repaint();
+        if (auto* parent = renderer->parent()) {
+            parent->setChildNeedsLayout();
+            parent->setPreferredLogicalWidthsDirty(true);
+        }
+    }
     builder.destroyAndCleanUpAnonymousWrappers(*renderer, root ? root->renderer() : nullptr);
     text.setRenderer(nullptr);
 }
@@ -852,7 +890,7 @@ void RenderTreeUpdater::tearDownLeftoverChildrenOfComposedTree(Element& element,
         if (!child->renderer())
             continue;
         if (auto* text = dynamicDowncast<Text>(*child)) {
-            tearDownTextRenderer(*text, &element, builder, NeedsRepaint::No);
+            tearDownTextRenderer(*text, &element, builder, NeedsRepaintAndLayout::No);
             continue;
         }
         if (auto* element = dynamicDowncast<Element>(*child))

@@ -13,13 +13,9 @@
 #include <utility>
 #include <vector>
 
-#include "api/priority.h"
-#include "api/sequence_checker.h"
+#include "absl/functional/any_invocable.h"
 #include "api/task_queue/task_queue_base.h"
-#include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
-#include "rtc_base/event.h"
-#include "rtc_base/task_utils/repeating_task.h"
 
 namespace webrtc::test {
 
@@ -48,6 +44,10 @@ void ForcedTickMetronome::Tick() {
 
 FakeMetronome::FakeMetronome(TimeDelta tick_period)
     : tick_period_(tick_period) {}
+
+void FakeMetronome::SetTickPeriod(TimeDelta tick_period) {
+  tick_period_ = tick_period;
+}
 
 void FakeMetronome::RequestCallOnNextTick(
     absl::AnyInvocable<void() &&> callback) {

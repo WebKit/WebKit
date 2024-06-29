@@ -8,7 +8,7 @@ features: [Temporal]
 ---*/
 
 var zone = new Temporal.TimeZone("+01:00");
-var inst = Temporal.Instant.fromEpochSeconds(Math.floor(Math.random() * 1000000000));
+var inst = Temporal.Instant.fromEpochMilliseconds(Math.floor(Math.random() * 1_000_000_000_000));
 var dtm = new Temporal.PlainDateTime(1976, 11, 18, 15, 23, 30, 123, 456, 789);
 assert.sameValue(zone.id, `${ zone }`)
 assert.sameValue(zone.getOffsetNanosecondsFor(inst), 3600000000000)

@@ -211,7 +211,7 @@ void Debug::insertMessage(GLenum source,
     }
     else
     {
-        std::lock_guard<std::mutex> lock(mMutex);
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
 
         if (mMessages.size() >= mMaxLoggedMessages)
         {
@@ -239,7 +239,7 @@ size_t Debug::getMessages(GLuint count,
                           GLsizei *lengths,
                           GLchar *messageLog)
 {
-    std::lock_guard<std::mutex> lock(mMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
 
     size_t messageCount       = 0;
     size_t messageStringIndex = 0;
@@ -297,13 +297,13 @@ size_t Debug::getMessages(GLuint count,
 
 size_t Debug::getNextMessageLength() const
 {
-    std::lock_guard<std::mutex> lock(mMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
     return mMessages.empty() ? 0 : mMessages.front().message.length() + 1;
 }
 
 size_t Debug::getMessageCount() const
 {
-    std::lock_guard<std::mutex> lock(mMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
     return mMessages.size();
 }
 
@@ -490,7 +490,7 @@ void Debug::insertMessage(EGLenum error,
         INFO() << messageStream.str();
     }
 
-    // TODO(geofflang): Lock before checking the callback. http://anglebug.com/2464
+    // TODO(geofflang): Lock before checking the callback. http://anglebug.com/40096492
     if (mCallback && isMessageTypeEnabled(messageType))
     {
         mCallback(error, command, egl::ToEGLenum(messageType), threadLabel, objectLabel,

@@ -31,10 +31,6 @@ Name IdGen::createNewName(size_t count,
     mNewNameBuffer += '_';
     mNewNameBuffer += idBuffer;
 
-    // Note:
-    // Double underscores are only allowed in C++ (and thus Metal) vendor identifiers, so here we
-    // take care not to introduce any.
-
     for (size_t i = 0; i < count; ++i)
     {
         const ImmutableString baseName = toImmutable(baseNames[i]);
@@ -43,19 +39,15 @@ Name IdGen::createNewName(size_t count,
             const char *base = baseName.data();
             if (baseName.beginsWith(kAngleInternalPrefix))
             {
+                // skip 'ANGLE' or 'ANGLE_' prefix
                 base += sizeof(kAngleInternalPrefix) - 1;
-            }
-            if (*base == '_')
-            {
-                ++base;
-            }
-            ASSERT(*base != '_');
-
-            if (mNewNameBuffer.back() != '_')
-            {
-                mNewNameBuffer += '_';
+                if (*base == '_')
+                {
+                    ++base;
+                }
             }
 
+            mNewNameBuffer += '_';
             mNewNameBuffer += base;
         }
     }
@@ -98,6 +90,6 @@ Name IdGen::createNewName(std::initializer_list<const char *> baseNames)
 
 Name IdGen::createNewName()
 {
-    // TODO(anglebug.com/5505): refactor this later.
+    // TODO(anglebug.com/40096755): refactor this later.
     return createNewName<int>(0, nullptr, [](int) { return kEmptyImmutableString; });
 }

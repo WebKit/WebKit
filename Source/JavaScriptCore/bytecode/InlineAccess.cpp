@@ -174,12 +174,12 @@ ALWAYS_INLINE static bool linkCodeInline(const char* name, CCallHelpers& jit, St
     return false;
 }
 
-bool InlineAccess::generateSelfPropertyAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset)
+bool InlineAccess::generateSelfPropertyAccess(StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset)
 {
-    if (!stubInfo.hasConstantIdentifier)
+    if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
 
-    if (codeBlock->useDataIC()) {
+    if (stubInfo.useDataIC) {
         // These dynamic slots get filled in by StructureStubInfo. Nothing else to do.
         return true;
     }
@@ -233,12 +233,12 @@ ALWAYS_INLINE static bool hasFreeRegister(StructureStubInfo& stubInfo)
     return getScratchRegister(stubInfo) != InvalidGPRReg;
 }
 
-bool InlineAccess::canGenerateSelfPropertyReplace(CodeBlock* codeBlock, StructureStubInfo& stubInfo, PropertyOffset offset)
+bool InlineAccess::canGenerateSelfPropertyReplace(StructureStubInfo& stubInfo, PropertyOffset offset)
 {
-    if (!stubInfo.hasConstantIdentifier)
+    if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
 
-    if (codeBlock->useDataIC())
+    if (stubInfo.useDataIC)
         return true;
 
     if (isInlineOffset(offset))
@@ -247,14 +247,14 @@ bool InlineAccess::canGenerateSelfPropertyReplace(CodeBlock* codeBlock, Structur
     return hasFreeRegister(stubInfo);
 }
 
-bool InlineAccess::generateSelfPropertyReplace(CodeBlock* codeBlock, StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset)
+bool InlineAccess::generateSelfPropertyReplace(StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset)
 {
-    if (!stubInfo.hasConstantIdentifier)
+    if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
 
-    ASSERT(canGenerateSelfPropertyReplace(codeBlock, stubInfo, offset));
+    ASSERT(canGenerateSelfPropertyReplace(stubInfo, offset));
 
-    if (codeBlock->useDataIC()) {
+    if (stubInfo.useDataIC) {
         // These dynamic slots get filled in by StructureStubInfo. Nothing else to do.
         return true;
     }
@@ -284,14 +284,14 @@ bool InlineAccess::generateSelfPropertyReplace(CodeBlock* codeBlock, StructureSt
     return linkCodeInline("property replace", jit, stubInfo);
 }
 
-bool InlineAccess::isCacheableArrayLength(CodeBlock* codeBlock, StructureStubInfo& stubInfo, JSArray* array)
+bool InlineAccess::isCacheableArrayLength(StructureStubInfo& stubInfo, JSArray* array)
 {
     ASSERT(array->indexingType() & IsArray);
 
-    if (!stubInfo.hasConstantIdentifier)
+    if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
 
-    if (codeBlock->useDataIC())
+    if (stubInfo.useDataIC)
         return false;
 
     if (!hasFreeRegister(stubInfo))
@@ -300,12 +300,12 @@ bool InlineAccess::isCacheableArrayLength(CodeBlock* codeBlock, StructureStubInf
     return !hasAnyArrayStorage(array->indexingType()) && array->indexingType() != ArrayClass;
 }
 
-bool InlineAccess::generateArrayLength(CodeBlock* codeBlock, StructureStubInfo& stubInfo, JSArray* array)
+bool InlineAccess::generateArrayLength(StructureStubInfo& stubInfo, JSArray* array)
 {
-    ASSERT_UNUSED(codeBlock, !codeBlock->useDataIC());
-    ASSERT_UNUSED(codeBlock, isCacheableArrayLength(codeBlock, stubInfo, array));
+    ASSERT(!stubInfo.useDataIC);
+    ASSERT(isCacheableArrayLength(stubInfo, array));
 
-    if (!stubInfo.hasConstantIdentifier)
+    if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
 
     CCallHelpers jit;
@@ -325,23 +325,23 @@ bool InlineAccess::generateArrayLength(CodeBlock* codeBlock, StructureStubInfo& 
     return linkCodeInline("array length", jit, stubInfo);
 }
 
-bool InlineAccess::isCacheableStringLength(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
+bool InlineAccess::isCacheableStringLength(StructureStubInfo& stubInfo)
 {
-    if (!stubInfo.hasConstantIdentifier)
+    if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
 
-    if (codeBlock->useDataIC())
+    if (stubInfo.useDataIC)
         return false;
 
     return hasFreeRegister(stubInfo);
 }
 
-bool InlineAccess::generateStringLength(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
+bool InlineAccess::generateStringLength(StructureStubInfo& stubInfo)
 {
-    ASSERT_UNUSED(codeBlock, !codeBlock->useDataIC());
-    ASSERT_UNUSED(codeBlock, isCacheableStringLength(codeBlock, stubInfo));
+    ASSERT(!stubInfo.useDataIC);
+    ASSERT(isCacheableStringLength(stubInfo));
 
-    if (!stubInfo.hasConstantIdentifier)
+    if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
 
     CCallHelpers jit;
@@ -370,14 +370,14 @@ bool InlineAccess::generateStringLength(CodeBlock* codeBlock, StructureStubInfo&
 }
 
 
-bool InlineAccess::generateSelfInAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo, Structure* structure)
+bool InlineAccess::generateSelfInAccess(StructureStubInfo& stubInfo, Structure* structure)
 {
     CCallHelpers jit;
 
-    if (!stubInfo.hasConstantIdentifier)
+    if (!hasConstantIdentifier(stubInfo.accessType))
         return false;
 
-    if (codeBlock->useDataIC()) {
+    if (stubInfo.useDataIC) {
         // These dynamic slots get filled in by StructureStubInfo. Nothing else to do.
         return true;
     }

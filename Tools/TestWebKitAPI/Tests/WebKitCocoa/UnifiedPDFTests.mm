@@ -32,6 +32,8 @@
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebCore/ColorSerialization.h>
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/_WKFeature.h>
 #import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
@@ -92,6 +94,27 @@ TEST(UnifiedPDF, KeyboardScrollingInSinglePageMode)
 }
 
 #endif // PLATFORM(MAC)
+
+TEST(UnifiedPDF, CopyEditingCommandOnEmptySelectionShouldNotCrash)
+{
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"UnifiedPDFEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configuration.get() addToWindow:YES]);
+    [webView setForceWindowToBecomeKey:YES];
+
+    RetainPtr request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"multiple-pages" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView synchronouslyLoadRequest:request.get()];
+    [[webView window] makeFirstResponder:webView.get()];
+    [[webView window] makeKeyAndOrderFront:nil];
+    [[webView window] orderFrontRegardless];
+
+    [webView sendClickAtPoint:NSMakePoint(200, 200)];
+    [webView objectByEvaluatingJavaScript:@"internals.sendEditingCommandToPDFForTesting(document.querySelector('embed'), 'copy')"];
+}
 
 } // namespace TestWebKitAPI
 

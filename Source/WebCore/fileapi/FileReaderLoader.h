@@ -74,10 +74,10 @@ public:
     WEBCORE_EXPORT void cancel();
 
     // ThreadableLoaderClient
-    void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) override;
+    void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse&) override;
     void didReceiveData(const SharedBuffer&) override;
-    void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) override;
-    void didFail(const ResourceError&) override;
+    void didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&) override;
+    void didFail(ScriptExecutionContextIdentifier, const ResourceError&) override;
 
     String stringResult();
     WEBCORE_EXPORT RefPtr<JSC::ArrayBuffer> arrayBufferResult() const;

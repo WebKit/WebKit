@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/BrowserCaptureMediaStreamTrack-cropTo.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/BrowserCaptureMediaStreamTrack-restrictTo.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-api.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-deny.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-empty-option-param.https.html

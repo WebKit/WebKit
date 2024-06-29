@@ -1,0 +1,25 @@
+<style>
+.fixed_pos {
+  position: fixed;
+}
+.container {
+  content-visibility: hidden;
+}
+td {
+  container-type: size;
+}
+</style>
+<div class=container><audio controls="controls"></audio><table><td><div class=fixed_pos></div></td></table></div>
+<pre id=result></pre>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+document.body.offsetHeight;
+setTimeout(function() {
+  result.innerText = "PASS if no crash or assert.";
+  if (window.testRunner)
+    testRunner.notifyDone();
+}, 0);
+</script>

@@ -133,7 +133,7 @@ unsigned int aom_avg_8x8_sse2(const uint8_t *s, int p) {
   return (avg + 32) >> 6;
 }
 
-void calc_avg_8x8_dual_sse2(const uint8_t *s, int p, int *avg) {
+static void calc_avg_8x8_dual_sse2(const uint8_t *s, int p, int *avg) {
   __m128i sum0, sum1, s0, s1, s2, s3, u0;
   u0 = _mm_setzero_si128();
   s0 = _mm_sad_epu8(_mm_loadu_si128((const __m128i *)(s)), u0);

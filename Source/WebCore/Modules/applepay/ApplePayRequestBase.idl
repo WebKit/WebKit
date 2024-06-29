@@ -49,4 +49,6 @@
     [Conditional=APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE] ApplePayShippingContactEditingMode shippingContactEditingMode;
 
     [Conditional=APPLE_PAY_LATER_AVAILABILITY] ApplePayLaterAvailability applePayLaterAvailability;
+
+    [Conditional=APPLE_PAY_MERCHANT_CATEGORY_CODE] DOMString merchantCategoryCode;
 };

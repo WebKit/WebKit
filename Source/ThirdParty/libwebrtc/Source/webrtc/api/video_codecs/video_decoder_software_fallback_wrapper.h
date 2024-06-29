@@ -13,6 +13,7 @@
 
 #include <memory>
 
+#include "api/environment/environment.h"
 #include "api/video_codecs/video_decoder.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -23,6 +24,7 @@ namespace webrtc {
 // hardware restrictions, such as max resolution.
 RTC_EXPORT std::unique_ptr<VideoDecoder>
 CreateVideoDecoderSoftwareFallbackWrapper(
+    const Environment& env,
     std::unique_ptr<VideoDecoder> sw_fallback_decoder,
     std::unique_ptr<VideoDecoder> hw_decoder);
 

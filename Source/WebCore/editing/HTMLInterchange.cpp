@@ -41,7 +41,7 @@ String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
     if (node->renderer() && node->renderer()->style().preserveNewline())
         return in;
 
-    static NeverDestroyed<const String> convertedSpaceString { makeString("<span class=\"", AppleConvertedSpace, "\">", noBreakSpace, "</span>") };
+    static NeverDestroyed<const String> convertedSpaceString { makeString("<span class=\""_s, AppleConvertedSpace, "\">"_s, noBreakSpace, "</span>"_s) };
 
     StringBuilder s;
 

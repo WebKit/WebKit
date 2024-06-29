@@ -107,7 +107,7 @@ void NetEqReplacementInput::ReplacePacket() {
       next_hdr->timestamp - packet_->header.timestamp;
   const bool opus_dtx = packet_->payload.size() <= 2;
   if (next_hdr->sequenceNumber == packet_->header.sequenceNumber + 1 &&
-      timestamp_diff <= 120 * 48 && !opus_dtx) {
+      timestamp_diff <= 120 * 48 && timestamp_diff > 0 && !opus_dtx) {
     // Packets are in order and the timestamp diff is less than 5760 samples.
     // Accept the timestamp diff as a valid frame size.
     input_frame_size_timestamps = timestamp_diff;

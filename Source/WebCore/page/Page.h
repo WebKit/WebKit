@@ -100,6 +100,7 @@ class BadgeClient;
 class BroadcastChannelRegistry;
 class CacheStorageProvider;
 class Chrome;
+class CompositeEditCommand;
 class ContextMenuController;
 class CookieJar;
 class CryptoClient;
@@ -110,6 +111,7 @@ class DiagnosticLoggingClient;
 class DragCaretController;
 class DragController;
 class EditorClient;
+class EditCommandComposition;
 class ElementTargetingController;
 class Element;
 class FocusController;
@@ -174,8 +176,30 @@ class WheelEventDeltaFilter;
 class WheelEventTestMonitor;
 class WindowEventLoop;
 
+#if ENABLE(WRITING_TOOLS)
+class WritingToolsController;
+
+namespace WritingTools {
+enum class Action : uint8_t;
+enum class TextSuggestionState : uint8_t;
+
+struct Context;
+struct TextSuggestion;
+struct Session;
+
+using TextSuggestionID = WTF::UUID;
+using SessionID = WTF::UUID;
+}
+#endif
+
+#if ENABLE(WEBXR)
+class WebXRSession;
+#endif
+
 struct AXTreeData;
 struct ApplePayAMSUIRequest;
+struct AttributedString;
+struct CharacterRange;
 struct SimpleRange;
 struct TextRecognitionResult;
 
@@ -183,6 +207,7 @@ using PlatformDisplayID = uint32_t;
 using SharedStringHash = uint32_t;
 
 enum class ActivityState : uint16_t;
+enum class AdvancedPrivacyProtections : uint16_t;
 enum class CanWrap : bool;
 enum class DidWrap : bool;
 enum class DisabledAdaptations : uint8_t;
@@ -297,7 +322,7 @@ public:
     WEBCORE_EXPORT static void updateStyleForAllPagesAfterGlobalChangeInEnvironment();
     WEBCORE_EXPORT static void clearPreviousItemFromAllPages(HistoryItem*);
 
-    WEBCORE_EXPORT void setupForRemoteWorker(const URL& scriptURL, const SecurityOriginData& topOrigin, const String& referrerPolicy);
+    WEBCORE_EXPORT void setupForRemoteWorker(const URL& scriptURL, const SecurityOriginData& topOrigin, const String& referrerPolicy, OptionSet<AdvancedPrivacyProtections>);
 
     WEBCORE_EXPORT void updateStyleAfterChangeInEnvironment();
 
@@ -342,7 +367,7 @@ public:
     bool openedByDOMWithOpener() const { return m_openedByDOMWithOpener; }
     void setOpenedByDOMWithOpener(bool value) { m_openedByDOMWithOpener = value; }
 
-    WEBCORE_EXPORT void goToItem(LocalFrame& localMainFrame, HistoryItem&, FrameLoadType, ShouldTreatAsContinuingLoad);
+    WEBCORE_EXPORT void goToItem(Frame& mainFrame, HistoryItem&, FrameLoadType, ShouldTreatAsContinuingLoad);
 
     WEBCORE_EXPORT void setGroupName(const String&);
     WEBCORE_EXPORT const String& groupName() const;
@@ -393,7 +418,7 @@ public:
     PointerLockController& pointerLockController() { return m_pointerLockController.get(); }
 #endif
     WebRTCProvider& webRTCProvider() { return m_webRTCProvider.get(); }
-    RTCController& rtcController() { return m_rtcController; }
+    RTCController& rtcController() { return m_rtcController.get(); }
     WEBCORE_EXPORT void disableICECandidateFiltering();
     WEBCORE_EXPORT void enableICECandidateFiltering();
     bool shouldEnableICECandidateFilteringByDefault() const { return m_shouldEnableICECandidateFilteringByDefault; }
@@ -891,10 +916,9 @@ public:
     inline bool isMediaCaptureMuted() const;
     void schedulePlaybackControlsManagerUpdate();
 #if ENABLE(VIDEO)
-    void playbackControlsMediaEngineChanged();
+    void mediaEngineChanged(HTMLMediaElement&);
 #endif
     WEBCORE_EXPORT void setMuted(MediaProducerMutedStateFlags);
-    WEBCORE_EXPORT bool shouldBlockLayerTreeFreezingForVideo();
 
     WEBCORE_EXPORT void stopMediaCapture(MediaProducerMediaCaptureKind);
 
@@ -1016,6 +1040,7 @@ public:
 #endif
 
     WEBCORE_EXPORT void forEachDocument(const Function<void(Document&)>&) const;
+    void forEachRenderableDocument(const Function<void(Document&)>&) const;
     void forEachMediaElement(const Function<void(HTMLMediaElement&)>&);
     static void forEachDocumentFromMainFrame(const Frame&, const Function<void(Document&)>&);
     void forEachLocalFrame(const Function<void(LocalFrame&)>&);
@@ -1120,6 +1145,37 @@ public:
     const String& defaultSpatialTrackingLabel() const { return m_defaultSpatialTrackingLabel; }
 #endif
 
+#if ENABLE(GAMEPAD)
+    void gamepadsRecentlyAccessed();
+#endif
+
+#if ENABLE(WRITING_TOOLS)
+    WEBCORE_EXPORT void willBeginWritingToolsSession(const std::optional<WritingTools::Session>&, CompletionHandler<void(const Vector<WritingTools::Context>&)>&&);
+
+    WEBCORE_EXPORT void didBeginWritingToolsSession(const WritingTools::Session&, const Vector<WritingTools::Context>&);
+
+    WEBCORE_EXPORT void proofreadingSessionDidReceiveSuggestions(const WritingTools::Session&, const Vector<WritingTools::TextSuggestion>&, const WritingTools::Context&, bool finished);
+
+    WEBCORE_EXPORT void proofreadingSessionDidUpdateStateForSuggestion(const WritingTools::Session&, WritingTools::TextSuggestionState, const WritingTools::TextSuggestion&, const WritingTools::Context&);
+
+    WEBCORE_EXPORT void didEndWritingToolsSession(const WritingTools::Session&, bool accepted);
+
+    WEBCORE_EXPORT void compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished);
+
+    WEBCORE_EXPORT void writingToolsSessionDidReceiveAction(const WritingTools::Session&, WritingTools::Action);
+
+    WEBCORE_EXPORT void updateStateForSelectedSuggestionIfNeeded();
+
+    void respondToUnappliedWritingToolsEditing(EditCommandComposition*);
+    void respondToReappliedWritingToolsEditing(EditCommandComposition*);
+
+    WEBCORE_EXPORT std::optional<SimpleRange> contextRangeForSessionWithID(const WritingTools::SessionID&) const;
+#endif
+
+    bool hasActiveNowPlayingSession() const { return m_hasActiveNowPlayingSession; }
+    void hasActiveNowPlayingSessionChanged();
+    void activeNowPlayingSessionUpdateTimerFired();
+
 private:
     explicit Page(PageConfiguration&&);
 
@@ -1178,6 +1234,10 @@ private:
     void updateElementsWithTextRecognitionResults();
 #endif
 
+#if ENABLE(WEBXR)
+    RefPtr<WebXRSession> activeImmersiveXRSession() const;
+#endif
+
     std::optional<PageIdentifier> m_identifier;
     UniqueRef<Chrome> m_chrome;
     UniqueRef<DragCaretController> m_dragCaretController;
@@ -1223,7 +1283,7 @@ private:
 
     UniqueRef<MediaRecorderProvider> m_mediaRecorderProvider;
     UniqueRef<WebRTCProvider> m_webRTCProvider;
-    RTCController m_rtcController;
+    Ref<RTCController> m_rtcController;
 
     PlatformDisplayID m_displayID { 0 };
     std::optional<FramesPerSecond> m_displayNominalFramesPerSecond;
@@ -1514,7 +1574,18 @@ private:
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_defaultSpatialTrackingLabel;
 #endif
-};
+
+#if ENABLE(GAMEPAD)
+    MonotonicTime m_lastAccessNotificationTime;
+#endif
+
+#if ENABLE(WRITING_TOOLS)
+    UniqueRef<WritingToolsController> m_writingToolsController;
+#endif
+
+    bool m_hasActiveNowPlayingSession { false };
+    Timer m_activeNowPlayingSessionUpdateTimer;
+}; // class Page
 
 inline Page* Frame::page() const
 {

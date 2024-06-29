@@ -1,0 +1,632 @@
+
+PASS :layout_constraints:case="u32"
+PASS :layout_constraints:case="i32"
+PASS :layout_constraints:case="f32"
+PASS :layout_constraints:case="f16"
+PASS :layout_constraints:case="bool"
+PASS :layout_constraints:case="vec2u"
+PASS :layout_constraints:case="vec3u"
+PASS :layout_constraints:case="vec4u"
+PASS :layout_constraints:case="vec2i"
+PASS :layout_constraints:case="vec3i"
+PASS :layout_constraints:case="vec4i"
+PASS :layout_constraints:case="vec2f"
+PASS :layout_constraints:case="vec3f"
+PASS :layout_constraints:case="vec4f"
+PASS :layout_constraints:case="vec2h"
+PASS :layout_constraints:case="vec3h"
+PASS :layout_constraints:case="vec4h"
+PASS :layout_constraints:case="vec2b"
+PASS :layout_constraints:case="vec3b"
+PASS :layout_constraints:case="vec4b"
+PASS :layout_constraints:case="mat2x2f"
+PASS :layout_constraints:case="mat2x3f"
+PASS :layout_constraints:case="mat2x4f"
+PASS :layout_constraints:case="mat3x2f"
+PASS :layout_constraints:case="mat3x3f"
+PASS :layout_constraints:case="mat3x4f"
+PASS :layout_constraints:case="mat4x2f"
+PASS :layout_constraints:case="mat4x3f"
+PASS :layout_constraints:case="mat4x4f"
+PASS :layout_constraints:case="mat2x2h"
+PASS :layout_constraints:case="mat2x3h"
+PASS :layout_constraints:case="mat2x4h"
+PASS :layout_constraints:case="mat3x2h"
+PASS :layout_constraints:case="mat3x3h"
+PASS :layout_constraints:case="mat3x4h"
+PASS :layout_constraints:case="mat4x2h"
+PASS :layout_constraints:case="mat4x3h"
+PASS :layout_constraints:case="mat4x4h"
+PASS :layout_constraints:case="atomic_u32"
+PASS :layout_constraints:case="atomic_i32"
+FAIL :layout_constraints:case="array_u32" assert_unreached:
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+
+
+    @group(0) @binding(0) var<uniform> v : array<u32, 16>;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - INFO: subcase: aspace="storage"
+    OK
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="function"
+    OK
+  - INFO: subcase: aspace="private"
+    OK
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+FAIL :layout_constraints:case="array_i32" assert_unreached:
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+
+
+    @group(0) @binding(0) var<uniform> v : array<i32, 16>;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - INFO: subcase: aspace="storage"
+    OK
+  - INFO: subcase: aspace="function"
+    OK
+  - INFO: subcase: aspace="private"
+    OK
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+FAIL :layout_constraints:case="array_f32" assert_unreached:
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+
+
+    @group(0) @binding(0) var<uniform> v : array<f32, 16>;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="storage"
+    OK
+  - INFO: subcase: aspace="function"
+    OK
+  - INFO: subcase: aspace="private"
+    OK
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+FAIL :layout_constraints:case="array_f16" assert_unreached:
+  - INFO: subcase: aspace="storage"
+    OK
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+
+
+    @group(0) @binding(0) var<uniform> v : array<f16, 16>;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - INFO: subcase: aspace="function"
+    OK
+  - INFO: subcase: aspace="private"
+    OK
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+PASS :layout_constraints:case="array_bool"
+FAIL :layout_constraints:case="array_vec2f" assert_unreached:
+  - INFO: subcase: aspace="storage"
+    OK
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+
+
+    @group(0) @binding(0) var<uniform> v : array<vec2f, 16>;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="function"
+    OK
+  - INFO: subcase: aspace="private"
+    OK
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+PASS :layout_constraints:case="array_vec3f"
+PASS :layout_constraints:case="array_vec4f"
+FAIL :layout_constraints:case="array_vec2h" assert_unreached:
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+
+
+    @group(0) @binding(0) var<uniform> v : array<vec2h, 16>;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="storage"
+    OK
+  - INFO: subcase: aspace="function"
+    OK
+  - INFO: subcase: aspace="private"
+    OK
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+FAIL :layout_constraints:case="array_vec3h" assert_unreached:
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+
+
+    @group(0) @binding(0) var<uniform> v : array<vec3h, 16>;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="storage"
+    OK
+  - INFO: subcase: aspace="function"
+    OK
+  - INFO: subcase: aspace="private"
+    OK
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+FAIL :layout_constraints:case="array_vec4h" assert_unreached:
+  - INFO: subcase: aspace="storage"
+    OK
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+
+
+    @group(0) @binding(0) var<uniform> v : array<vec4h, 16>;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="function"
+    OK
+  - INFO: subcase: aspace="private"
+    OK
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+PASS :layout_constraints:case="array_vec2b"
+PASS :layout_constraints:case="array_vec3b"
+PASS :layout_constraints:case="array_vec4b"
+PASS :layout_constraints:case="array_mat2x2f"
+PASS :layout_constraints:case="array_mat2x4f"
+PASS :layout_constraints:case="array_mat4x2f"
+PASS :layout_constraints:case="array_mat4x4f"
+FAIL :layout_constraints:case="array_mat2x2h" assert_unreached:
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+
+
+    @group(0) @binding(0) var<uniform> v : array<mat2x2h, 16>;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - INFO: subcase: aspace="storage"
+    OK
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="function"
+    OK
+  - INFO: subcase: aspace="private"
+    OK
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+PASS :layout_constraints:case="array_mat2x4h"
+FAIL :layout_constraints:case="array_mat3x2h" assert_unreached:
+  - INFO: subcase: aspace="storage"
+    OK
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+
+
+    @group(0) @binding(0) var<uniform> v : array<mat3x2h, 16>;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - INFO: subcase: aspace="function"
+    OK
+  - INFO: subcase: aspace="private"
+    OK
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+PASS :layout_constraints:case="array_mat4x2h"
+PASS :layout_constraints:case="array_mat4x4h"
+PASS :layout_constraints:case="array_atomic"
+PASS :layout_constraints:case="runtime_array_u32"
+PASS :layout_constraints:case="runtime_array_i32"
+PASS :layout_constraints:case="runtime_array_f32"
+PASS :layout_constraints:case="runtime_array_f16"
+PASS :layout_constraints:case="runtime_array_bool"
+PASS :layout_constraints:case="runtime_array_vec2f"
+PASS :layout_constraints:case="runtime_array_vec3f"
+PASS :layout_constraints:case="runtime_array_vec4f"
+PASS :layout_constraints:case="runtime_array_vec2h"
+PASS :layout_constraints:case="runtime_array_vec3h"
+PASS :layout_constraints:case="runtime_array_vec4h"
+PASS :layout_constraints:case="runtime_array_vec2b"
+PASS :layout_constraints:case="runtime_array_vec3b"
+PASS :layout_constraints:case="runtime_array_vec4b"
+PASS :layout_constraints:case="runtime_array_mat2x2f"
+PASS :layout_constraints:case="runtime_array_mat2x4f"
+PASS :layout_constraints:case="runtime_array_mat4x2f"
+PASS :layout_constraints:case="runtime_array_mat4x4f"
+PASS :layout_constraints:case="runtime_array_mat2x2h"
+PASS :layout_constraints:case="runtime_array_mat2x4h"
+PASS :layout_constraints:case="runtime_array_mat3x2h"
+PASS :layout_constraints:case="runtime_array_mat4x2h"
+PASS :layout_constraints:case="runtime_array_mat4x4h"
+PASS :layout_constraints:case="runtime_array_atomic"
+FAIL :layout_constraints:case="array_struct_u32" assert_unreached:
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    struct S { x : u32 }
+
+    @group(0) @binding(0) var<uniform> v : array<S, 16>;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - INFO: subcase: aspace="storage"
+    OK
+  - INFO: subcase: aspace="function"
+    OK
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="private"
+    OK
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+PASS :layout_constraints:case="array_struct_u32_size16"
+FAIL :layout_constraints:case="array_struct_vec2f" assert_unreached:
+  - INFO: subcase: aspace="storage"
+    OK
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    struct S { x : vec2f }
+
+    @group(0) @binding(0) var<uniform> v : array<S, 16>;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - INFO: subcase: aspace="function"
+    OK
+  - INFO: subcase: aspace="private"
+    OK
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+FAIL :layout_constraints:case="array_struct_vec2h" assert_unreached:
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    enable f16;
+    struct S { x : vec2h }
+
+    @group(0) @binding(0) var<uniform> v : array<S, 16>;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="storage"
+    OK
+  - INFO: subcase: aspace="function"
+    OK
+  - INFO: subcase: aspace="private"
+    OK
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+PASS :layout_constraints:case="array_struct_vec2h_align16"
+PASS :layout_constraints:case="size_too_small"
+FAIL :layout_constraints:case="struct_padding" assert_unreached:
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    struct T { x : u32 }
+        struct S { t : T, x : u32 }
+
+    @group(0) @binding(0) var<uniform> v : S;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="storage"
+    OK
+  - INFO: subcase: aspace="function"
+    OK
+  - INFO: subcase: aspace="private"
+    OK
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+FAIL :layout_constraints:case="struct_array_u32" assert_unreached:
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    struct S { x : array<u32, 4> }
+
+    @group(0) @binding(0) var<uniform> v : S;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="storage"
+    OK
+  - INFO: subcase: aspace="function"
+    OK
+  - INFO: subcase: aspace="private"
+    OK
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+PASS :layout_constraints:case="struct_runtime_array_u32"
+FAIL :layout_constraints:case="array_struct_size_5" assert_unreached:
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    struct S { @size(5) x : u32, y : u32 }
+
+    @group(0) @binding(0) var<uniform> v : array<S, 16>;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - INFO: subcase: aspace="storage"
+    OK
+  - INFO: subcase: aspace="function"
+    OK
+  - INFO: subcase: aspace="private"
+    OK
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+PASS :layout_constraints:case="array_struct_size_5x2"
+FAIL :layout_constraints:case="struct_size_5" assert_unreached:
+  - VALIDATION FAILED: subcase: aspace="uniform"
+    Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+
+    struct T { @size(5) x : u32 }
+        struct S { x : u32, y : T }
+
+    @group(0) @binding(0) var<uniform> v : S;
+    @compute @workgroup_size(1,1,1)
+        fn main() {
+        }
+
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/layout_constraints.spec.js:542:24
+  - INFO: subcase: aspace="storage"
+    OK
+  - INFO: subcase: aspace="function"
+    OK
+  - INFO: subcase: aspace="private"
+    OK
+  - EXPECTATION FAILED: subcase: aspace="uniform"
+    Expected validation error
+      at (elided: below max severity)
+  - INFO: subcase: aspace="workgroup"
+    OK
+  - INFO: subcase: aspace="uniform"
+    OK
+ Reached unreachable code
+PASS :layout_constraints:case="struct_size_5_align16"
+

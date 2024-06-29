@@ -987,7 +987,7 @@ class TestBitBucket(testing.TestCase):
         with mocks.remote.BitBucket():
             repo = remote.BitBucket(self.remote)
             self.assertEqual([
-                '--- a/ChangeLog',
+                '--- /dev/null',
                 '+++ b/ChangeLog',
                 '@@ -1,0 +1,0 @@',
                 '+Patch Series',
@@ -1002,7 +1002,7 @@ class TestBitBucket(testing.TestCase):
                 'Date: {}'.format(datetime.fromtimestamp(1601668000).strftime('%a %b %d %H:%M:%S %Y')),
                 'Subject: [PATCH] 8th commit',
                 '---',
-                '--- a/ChangeLog',
+                '--- /dev/null',
                 '+++ b/ChangeLog',
                 '@@ -1,0 +1,0 @@',
                 '+8th commit',
@@ -1018,7 +1018,7 @@ class TestBitBucket(testing.TestCase):
                 'Date: {}'.format(datetime.fromtimestamp(1601668000).strftime('%a %b %d %H:%M:%S %Y')),
                 'Subject: [PATCH 1/2] 8th commit',
                 '---',
-                '--- a/ChangeLog',
+                '--- /dev/null',
                 '+++ b/ChangeLog',
                 '@@ -1,0 +1,0 @@',
                 '+8th commit',
@@ -1027,7 +1027,7 @@ class TestBitBucket(testing.TestCase):
                 'Date: {}'.format(datetime.fromtimestamp(1601663000).strftime('%a %b %d %H:%M:%S %Y')),
                 'Subject: [PATCH 2/2] 4th commit',
                 '---',
-                '--- a/ChangeLog',
+                '--- /dev/null',
                 '+++ b/ChangeLog',
                 '@@ -1,0 +1,0 @@',
                 '+4th commit',

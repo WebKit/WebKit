@@ -103,7 +103,7 @@ RenderWidget::RenderWidget(Type type, HTMLFrameOwnerElement& element, RenderStyl
 
 void RenderWidget::willBeDestroyed()
 {
-    if (AXObjectCache* cache = document().existingAXObjectCache()) {
+    if (CheckedPtr cache = document().existingAXObjectCache()) {
         cache->childrenChanged(this->parent());
         cache->remove(this);
     }
@@ -201,13 +201,13 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
                 m_widget->show();
                 repaint();
             }
-            if (auto* cache = document().existingAXObjectCache())
+            if (CheckedPtr cache = document().existingAXObjectCache())
                 cache->onWidgetVisibilityChanged(*this);
         }
         moveWidgetToParentSoon(*m_widget, &view().frameView());
     }
     
-    if (auto* cache = document().existingAXObjectCache())
+    if (CheckedPtr cache = document().existingAXObjectCache())
         cache->childrenChanged(this);
 }
 
@@ -228,7 +228,7 @@ void RenderWidget::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
         else
             m_widget->show();
 
-        if (auto* cache = document().existingAXObjectCache())
+        if (CheckedPtr cache = document().existingAXObjectCache())
             cache->onWidgetVisibilityChanged(*this);
     }
 }

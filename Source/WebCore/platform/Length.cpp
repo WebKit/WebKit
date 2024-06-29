@@ -132,25 +132,18 @@ public:
 
 private:
     struct Entry {
-        uint64_t referenceCountMinusOne;
-        CalculationValue* value;
-        Entry();
-        Entry(CalculationValue&);
+        uint64_t referenceCountMinusOne { 0 };
+        RefPtr<CalculationValue> value;
+        Entry() = default;
+        Entry(Ref<CalculationValue>&&);
     };
 
     unsigned m_nextAvailableHandle;
     HashMap<unsigned, Entry> m_map;
 };
 
-inline CalculationValueMap::Entry::Entry()
-    : referenceCountMinusOne(0)
-    , value(nullptr)
-{
-}
-
-inline CalculationValueMap::Entry::Entry(CalculationValue& value)
-    : referenceCountMinusOne(0)
-    , value(&value)
+inline CalculationValueMap::Entry::Entry(Ref<CalculationValue>&& value)
+    : value(WTFMove(value))
 {
 }
 
@@ -163,12 +156,11 @@ inline unsigned CalculationValueMap::insert(Ref<CalculationValue>&& value)
 {
     ASSERT(m_nextAvailableHandle);
 
-    // The leakRef below is balanced by the adoptRef in the deref member function.
-    Entry leakedValue = value.leakRef();
+    Entry entry(WTFMove(value));
 
     // FIXME: This monotonically increasing handle generation scheme is potentially wasteful
     // of the handle space. Consider reusing empty handles. https://bugs.webkit.org/show_bug.cgi?id=80489
-    while (!m_map.isValidKey(m_nextAvailableHandle) || !m_map.add(m_nextAvailableHandle, leakedValue).isNewEntry)
+    while (!m_map.isValidKey(m_nextAvailableHandle) || !m_map.add(m_nextAvailableHandle, entry).isNewEntry)
         ++m_nextAvailableHandle;
 
     return m_nextAvailableHandle++;
@@ -198,9 +190,6 @@ inline void CalculationValueMap::deref(unsigned handle)
         return;
     }
 
-    // The adoptRef here is balanced by the leakRef in the insert member function.
-    Ref<CalculationValue> value { adoptRef(*it->value.value) };
-
     m_map.remove(it);
 }
 
@@ -220,6 +209,11 @@ CalculationValue& Length::calculationValue() const
 {
     ASSERT(isCalculated());
     return calculationValues().get(m_calculationValueHandle);
+}
+
+Ref<CalculationValue> Length::protectedCalculationValue() const
+{
+    return calculationValue();
 }
     
 void Length::ref() const
@@ -336,7 +330,7 @@ auto Length::floatOrInt() const -> FloatOrInt
 float Length::nonNanCalculatedValue(float maxValue) const
 {
     ASSERT(isCalculated());
-    float result = calculationValue().evaluate(maxValue);
+    float result = protectedCalculationValue()->evaluate(maxValue);
     if (std::isnan(result))
         return 0;
     return result;
@@ -500,7 +494,7 @@ TextStream& operator<<(TextStream& ts, Length length)
         ts << TextStream::FormatNumberRespectingIntegers(length.percent()) << "%";
         break;
     case LengthType::Calculated:
-        ts << length.calculationValue();
+        ts << length.protectedCalculationValue();
         break;
     }
     

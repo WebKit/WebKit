@@ -39,6 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
  make use of. This includes cookies, disk and memory caches, and persistent data such as WebSQL,
  IndexedDB databases, and local storage.
  */
+WK_SWIFT_UI_ACTOR
 WK_CLASS_AVAILABLE(macos(10.11), ios(9.0))
 @interface WKWebsiteDataStore : NSObject <NSSecureCoding>
 
@@ -64,21 +65,21 @@ WK_CLASS_AVAILABLE(macos(10.11), ios(9.0))
   @param dataTypes The website data types to fetch records for.
   @param completionHandler A block to invoke when the data records have been fetched.
 */
-- (void)fetchDataRecordsOfTypes:(NSSet<NSString *> *)dataTypes completionHandler:(void (^)(NSArray<WKWebsiteDataRecord *> *))completionHandler WK_SWIFT_ASYNC_NAME(dataRecords(ofTypes:));
+- (void)fetchDataRecordsOfTypes:(NSSet<NSString *> *)dataTypes completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSArray<WKWebsiteDataRecord *> *))completionHandler WK_SWIFT_ASYNC_NAME(dataRecords(ofTypes:));
 
 /*! @abstract Removes website data of the given types for the given data records.
  @param dataTypes The website data types that should be removed.
  @param dataRecords The website data records to delete website data for.
  @param completionHandler A block to invoke when the website data for the records has been removed.
 */
-- (void)removeDataOfTypes:(NSSet<NSString *> *)dataTypes forDataRecords:(NSArray<WKWebsiteDataRecord *> *)dataRecords completionHandler:(void (^)(void))completionHandler;
+- (void)removeDataOfTypes:(NSSet<NSString *> *)dataTypes forDataRecords:(NSArray<WKWebsiteDataRecord *> *)dataRecords completionHandler:(WK_SWIFT_UI_ACTOR void (^)(void))completionHandler;
 
 /*! @abstract Removes all website data of the given types that has been modified since the given date.
  @param dataTypes The website data types that should be removed.
  @param date A date. All website data modified after this date will be removed.
  @param completionHandler A block to invoke when the website data has been removed.
 */
-- (void)removeDataOfTypes:(NSSet<NSString *> *)dataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)(void))completionHandler;
+- (void)removeDataOfTypes:(NSSet<NSString *> *)dataTypes modifiedSince:(NSDate *)date completionHandler:(WK_SWIFT_UI_ACTOR void (^)(void))completionHandler;
 
 /*! @abstract Returns the cookie store representing HTTP cookies in this website data store. */
 @property (nonatomic, readonly) WKHTTPCookieStore *httpCookieStore WK_API_AVAILABLE(macos(10.13), ios(11.0));
@@ -101,13 +102,13 @@ WK_CLASS_AVAILABLE(macos(10.11), ios(9.0))
  @discussion This should be called when the data store is not used any more. Returns error if removal fails
  to complete. WKWebView using the data store must be released before removal.
 */
-+ (void)removeDataStoreForIdentifier:(NSUUID *)identifier completionHandler:(void(^)(NSError * _Nullable))completionHandler WK_API_AVAILABLE(macos(14.0), ios(17.0));
++ (void)removeDataStoreForIdentifier:(NSUUID *)identifier completionHandler:(WK_SWIFT_UI_ACTOR void(^)(NSError * _Nullable))completionHandler WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
 /*! @abstract Fetch all data stores identifiers.
  @param completionHandler A block to invoke with an array of identifiers when the operation completes.
  @discussion Default or non-persistent data store do not have an identifier.
 */
-+ (void)fetchAllDataStoreIdentifiers:(void(^)(NSArray<NSUUID *> *))completionHandler WK_SWIFT_ASYNC_NAME(getter:allDataStoreIdentifiers()) WK_API_AVAILABLE(macos(14.0), ios(17.0));
++ (void)fetchAllDataStoreIdentifiers:(WK_SWIFT_UI_ACTOR void(^)(NSArray<NSUUID *> *))completionHandler WK_SWIFT_ASYNC_NAME(getter:allDataStoreIdentifiers()) WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
 #if ((TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 140000) \
     || ((TARGET_OS_IOS || TARGET_OS_MACCATALYST) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 170000) \

@@ -406,27 +406,30 @@ sk_sp<PrecompileShader> PrecompileShaders::CoordClamp(SkSpan<const sk_sp<Precomp
 // TODO: Investigate the YUV-image use case
 class PrecompileImageShader : public PrecompileShader {
 public:
-    PrecompileImageShader(bool isRaw) : fIsRaw(isRaw) {}
+    PrecompileImageShader(SkEnumBitMask<PrecompileImageShaderFlags> flags) : fFlags(flags) {}
 
 private:
-    // The ImageShader has 3 sampling/tiling variants: hardware-tiled, shader-tiled and
+    // The ImageShader has 3 potential sampling/tiling variants: hardware-tiled, shader-tiled and
     // cubic sampling (which always uses shader-tiling)
-    inline static constexpr int kNumSamplingTilingCombinations = 3;
+    inline static constexpr int kNumSamplingTilingCombos = 3;
     inline static constexpr int kCubicSampled = 2;
     inline static constexpr int kHWTiled      = 1;
     inline static constexpr int kShaderTiled  = 0;
 
-    // There are 2 alpha combinations: alpha-only and not-alpha-only
+    // There are also 2 potential alpha combinations: alpha-only and not-alpha-only
     inline static constexpr int kNumAlphaCombinations = 2;
     inline static constexpr int kAlphaOnly    = 1;
     inline static constexpr int kNonAlphaOnly = 0;
 
     int numIntrinsicCombinations() const override {
-        if (fIsRaw) {
+        int numSamplingTilingCombos =
+                (fFlags & PrecompileImageShaderFlags::kExcludeCubic) ? 2 : kNumSamplingTilingCombos;
+
+        if (fFlags & PrecompileImageShaderFlags::kExcludeAlpha) {
             // RawImageShaders don't blend alpha-only images w/ the paint color
-            return kNumSamplingTilingCombinations;
+            return numSamplingTilingCombos;
         }
-        return kNumSamplingTilingCombinations * kNumAlphaCombinations;
+        return numSamplingTilingCombos * kNumAlphaCombinations;
     }
 
     void addToKey(const KeyContext& keyContext,
@@ -437,14 +440,16 @@ private:
 
         int desiredAlphaCombo, desiredSamplingTilingCombo;
 
-        if (fIsRaw) {
+        if (fFlags & PrecompileImageShaderFlags::kExcludeAlpha) {
             desiredAlphaCombo = kNonAlphaOnly;
             desiredSamplingTilingCombo = desiredCombination;
         } else {
             desiredAlphaCombo = desiredCombination % kNumAlphaCombinations;
             desiredSamplingTilingCombo = desiredCombination / kNumAlphaCombinations;
         }
-        SkASSERT(desiredSamplingTilingCombo < kNumSamplingTilingCombinations);
+        SkDEBUGCODE(int numSamplingTilingCombos =
+            (fFlags & PrecompileImageShaderFlags::kExcludeCubic) ? 2 : kNumSamplingTilingCombos;)
+        SkASSERT(desiredSamplingTilingCombo < numSamplingTilingCombos);
 
         static constexpr SkSamplingOptions kDefaultCubicSampling(SkCubicResampler::Mitchell());
         static constexpr SkSamplingOptions kDefaultSampling;
@@ -465,7 +470,7 @@ private:
                 kSubset, kIgnoredSwizzle);
 
         if (desiredAlphaCombo == kAlphaOnly) {
-            SkASSERT(!fIsRaw);
+            SkASSERT(!(fFlags & PrecompileImageShaderFlags::kExcludeAlpha));
 
             Blend(keyContext, builder, gatherer,
                   /* addBlendToKey= */ [&] () -> void {
@@ -482,19 +487,24 @@ private:
         }
     }
 
-    bool fIsRaw;
+    SkEnumBitMask<PrecompileImageShaderFlags> fFlags;
 };
 
 sk_sp<PrecompileShader> PrecompileShaders::Image() {
-    constexpr bool kIsNotRaw = false;
-    return PrecompileShaders::LocalMatrix({ sk_make_sp<PrecompileImageShader>(kIsNotRaw) });
+    return PrecompileShaders::LocalMatrix(
+            { sk_make_sp<PrecompileImageShader>(PrecompileImageShaderFlags::kNone) });
 }
 
 sk_sp<PrecompileShader> PrecompileShaders::RawImage() {
-    constexpr bool kIsRaw = false;
     // Raw images do not perform color space conversion, but in Graphite, this is represented as
     // an identity color space xform, not as a distinct shader
-    return PrecompileShaders::LocalMatrix({ sk_make_sp<PrecompileImageShader>(kIsRaw) });
+    return PrecompileShaders::LocalMatrix(
+            { sk_make_sp<PrecompileImageShader>(PrecompileImageShaderFlags::kExcludeAlpha) });
+}
+
+sk_sp<PrecompileShader> PrecompileShadersPriv::Image(
+        SkEnumBitMask<PrecompileImageShaderFlags> flags) {
+    return PrecompileShaders::LocalMatrix({ sk_make_sp<PrecompileImageShader>(flags) });
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -538,7 +548,15 @@ sk_sp<PrecompileShader> PrecompileShaders::YUVImage() {
 sk_sp<PrecompileShader> PrecompileShaders::Picture() {
     // Note: We don't need to consider the PrecompileYUVImageShader since the image
     // being drawn was created internally by Skia (as non-YUV).
-    return PrecompileShaders::LocalMatrix({ PrecompileShaders::Image() });
+    return PrecompileShadersPriv::LocalMatrixBothVariants({ PrecompileShaders::Image() });
+}
+
+sk_sp<PrecompileShader> PrecompileShadersPriv::Picture(bool withLM) {
+    sk_sp<PrecompileShader> s = PrecompileShaders::Image();
+    if (withLM) {
+        return PrecompileShaders::LocalMatrix({ std::move(s) });
+    }
+    return s;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -572,7 +590,6 @@ private:
         ColorSpaceTransformBlock::ColorSpaceTransformData csData(sk_srgb_singleton(), kAlphaType,
                                                                  sk_srgb_singleton(), kAlphaType);
 
-        // TODO: we may need SkLocalMatrixShader-wrapped versions too
         Compose(keyContext, builder, gatherer,
                 /* addInnerToKey= */ [&]() -> void {
                     GradientShaderBlocks::AddBlock(keyContext, builder, gatherer, gradData);
@@ -586,19 +603,63 @@ private:
 };
 
 sk_sp<PrecompileShader> PrecompileShaders::LinearGradient() {
-    return sk_make_sp<PrecompileGradientShader>(SkShaderBase::GradientType::kLinear);
+    sk_sp<PrecompileShader> s =
+            sk_make_sp<PrecompileGradientShader>(SkShaderBase::GradientType::kLinear);
+    return PrecompileShadersPriv::LocalMatrixBothVariants({ std::move(s) });
+}
+
+sk_sp<PrecompileShader> PrecompileShadersPriv::LinearGradient(bool withLM) {
+    sk_sp<PrecompileShader> s =
+            sk_make_sp<PrecompileGradientShader>(SkShaderBase::GradientType::kLinear);
+    if (withLM) {
+        return PrecompileShaders::LocalMatrix({ std::move(s) });
+    }
+    return s;
 }
 
 sk_sp<PrecompileShader> PrecompileShaders::RadialGradient() {
-    return sk_make_sp<PrecompileGradientShader>(SkShaderBase::GradientType::kRadial);
+    sk_sp<PrecompileShader> s =
+            sk_make_sp<PrecompileGradientShader>(SkShaderBase::GradientType::kRadial);
+    return PrecompileShadersPriv::LocalMatrixBothVariants({ std::move(s) });
+}
+
+sk_sp<PrecompileShader> PrecompileShadersPriv::RadialGradient(bool withLM) {
+    sk_sp<PrecompileShader> s =
+            sk_make_sp<PrecompileGradientShader>(SkShaderBase::GradientType::kRadial);
+    if (withLM) {
+        return PrecompileShaders::LocalMatrix({ std::move(s) });
+    }
+    return s;
 }
 
 sk_sp<PrecompileShader> PrecompileShaders::SweepGradient() {
-    return sk_make_sp<PrecompileGradientShader>(SkShaderBase::GradientType::kSweep);
+    sk_sp<PrecompileShader> s =
+            sk_make_sp<PrecompileGradientShader>(SkShaderBase::GradientType::kSweep);
+    return PrecompileShadersPriv::LocalMatrixBothVariants({ std::move(s) });
+}
+
+sk_sp<PrecompileShader> PrecompileShadersPriv::SweepGradient(bool withLM) {
+    sk_sp<PrecompileShader> s =
+            sk_make_sp<PrecompileGradientShader>(SkShaderBase::GradientType::kSweep);
+    if (withLM) {
+        return PrecompileShaders::LocalMatrix({ std::move(s) });
+    }
+    return s;
 }
 
 sk_sp<PrecompileShader> PrecompileShaders::TwoPointConicalGradient() {
-    return sk_make_sp<PrecompileGradientShader>(SkShaderBase::GradientType::kConical);
+    sk_sp<PrecompileShader> s =
+            sk_make_sp<PrecompileGradientShader>(SkShaderBase::GradientType::kConical);
+    return PrecompileShadersPriv::LocalMatrixBothVariants({ std::move(s) });
+}
+
+sk_sp<PrecompileShader> PrecompileShadersPriv::TwoPointConicalGradient(bool withLM) {
+    sk_sp<PrecompileShader> s =
+            sk_make_sp<PrecompileGradientShader>(SkShaderBase::GradientType::kConical);
+    if (withLM) {
+        return PrecompileShaders::LocalMatrix({ std::move(s) });
+    }
+    return s;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -607,8 +668,15 @@ sk_sp<PrecompileShader> PrecompileShaders::TwoPointConicalGradient() {
 // One with the LMShader wrapping the child and one without the LMShader.
 class PrecompileLocalMatrixShader : public PrecompileShader {
 public:
-    PrecompileLocalMatrixShader(SkSpan<const sk_sp<PrecompileShader>> wrapped)
-            : fWrapped(wrapped.begin(), wrapped.end()) {
+    enum class Flags {
+        kNone,
+        kIncludeWithOutVariant,
+    };
+
+    PrecompileLocalMatrixShader(SkSpan<const sk_sp<PrecompileShader>> wrapped,
+                                Flags flags = Flags::kNone)
+            : fWrapped(wrapped.begin(), wrapped.end())
+            , fFlags(flags) {
         fNumWrappedCombos = 0;
         for (const auto& s : fWrapped) {
             fNumWrappedCombos += s->numCombinations();
@@ -625,7 +693,7 @@ public:
         int desiredWrappedCombination = desiredCombination / kNumIntrinsicCombinations;
         SkASSERT(desiredWrappedCombination < fNumWrappedCombos);
 
-        auto wrapped = PrecompileBase::SelectOption(fWrapped, desiredWrappedCombination);
+        auto wrapped = PrecompileBase::SelectOption(SkSpan(fWrapped), desiredWrappedCombination);
         if (wrapped.first) {
             return wrapped.first->isConstant(wrapped.second);
         }
@@ -634,12 +702,19 @@ public:
     }
 
 private:
+    // The LocalMatrixShader has two potential variants: with and without the LocalMatrixShader
+    inline static constexpr int kNumIntrinsicCombinations = 2;
+    inline static constexpr int kWithLocalMatrix    = 1;
+    inline static constexpr int kWithoutLocalMatrix = 0;
+
     bool isALocalMatrixShader() const override { return true; }
 
-    // Two combinations: with and without the LocalMatrixShader
-    inline static constexpr int kNumIntrinsicCombinations = 2;
-
-    int numIntrinsicCombinations() const override { return kNumIntrinsicCombinations; }
+    int numIntrinsicCombinations() const override {
+        if (fFlags != Flags::kIncludeWithOutVariant) {
+            return 1;   // just kWithLocalMatrix
+        }
+        return kNumIntrinsicCombinations;
+    }
 
     int numChildCombinations() const override { return fNumWrappedCombos; }
 
@@ -649,11 +724,18 @@ private:
                   int desiredCombination) const override {
         SkASSERT(desiredCombination < this->numCombinations());
 
-        int desiredLMCombination = desiredCombination % kNumIntrinsicCombinations;
-        int desiredWrappedCombination = desiredCombination / kNumIntrinsicCombinations;
+        int desiredLMCombination, desiredWrappedCombination;
+
+        if (fFlags != Flags::kIncludeWithOutVariant) {
+            desiredLMCombination = kWithLocalMatrix;
+            desiredWrappedCombination = desiredCombination;
+        } else {
+            desiredLMCombination = desiredCombination % kNumIntrinsicCombinations;
+            desiredWrappedCombination = desiredCombination / kNumIntrinsicCombinations;
+        }
         SkASSERT(desiredWrappedCombination < fNumWrappedCombos);
 
-        if (desiredLMCombination) {
+        if (desiredLMCombination == kWithLocalMatrix) {
             LocalMatrixShaderBlock::LMShaderData kIgnoredLMShaderData(SkMatrix::I());
 
             LocalMatrixShaderBlock::BeginBlock(keyContext, builder, gatherer, kIgnoredLMShaderData);
@@ -662,18 +744,26 @@ private:
             AddToKey<PrecompileShader>(keyContext, builder, gatherer, fWrapped,
                                        desiredWrappedCombination);
 
-        if (desiredLMCombination) {
+        if (desiredLMCombination == kWithLocalMatrix) {
             builder->endBlock();
         }
     }
 
     std::vector<sk_sp<PrecompileShader>> fWrapped;
     int fNumWrappedCombos;
+    Flags fFlags;
 };
 
 sk_sp<PrecompileShader> PrecompileShaders::LocalMatrix(
         SkSpan<const sk_sp<PrecompileShader>> wrapped) {
     return sk_make_sp<PrecompileLocalMatrixShader>(std::move(wrapped));
+}
+
+sk_sp<PrecompileShader> PrecompileShadersPriv::LocalMatrixBothVariants(
+        SkSpan<const sk_sp<PrecompileShader>> wrapped) {
+    return sk_make_sp<PrecompileLocalMatrixShader>(
+            std::move(wrapped),
+            PrecompileLocalMatrixShader::Flags::kIncludeWithOutVariant);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -805,7 +895,7 @@ public:
     bool isConstant(int desiredCombination) const override {
         SkASSERT(desiredCombination < fNumWrappedCombos);
 
-        auto wrapped = PrecompileBase::SelectOption(fWrapped, desiredCombination);
+        auto wrapped = PrecompileBase::SelectOption(SkSpan(fWrapped), desiredCombination);
         if (wrapped.first) {
             return wrapped.first->isConstant(wrapped.second);
         }
@@ -837,6 +927,59 @@ private:
 
 sk_sp<PrecompileShader> PrecompileShadersPriv::CTM(SkSpan<const sk_sp<PrecompileShader>> wrapped) {
     return sk_make_sp<PrecompileCTMShader>(std::move(wrapped));
+}
+
+//--------------------------------------------------------------------------------------------------
+class PrecompileBlurShader : public PrecompileShader {
+public:
+    PrecompileBlurShader(sk_sp<PrecompileShader> wrapped)
+            : fWrapped(std::move(wrapped)) {
+        fNumWrappedCombos = fWrapped->numCombinations();
+    }
+
+private:
+    // 6 known 1D blur effects + 6 known 2D blur effects
+    inline static constexpr int kNumIntrinsicCombinations = 12;
+
+    int numIntrinsicCombinations() const override { return kNumIntrinsicCombinations; }
+
+    int numChildCombinations() const override { return fNumWrappedCombos; }
+
+    void addToKey(const KeyContext& keyContext,
+                  PaintParamsKeyBuilder* builder,
+                  PipelineDataGatherer* gatherer,
+                  int desiredCombination) const override {
+        SkASSERT(desiredCombination < this->numCombinations());
+
+        using namespace SkKnownRuntimeEffects;
+
+        int desiredBlurCombination = desiredCombination % kNumIntrinsicCombinations;
+        int desiredWrappedCombination = desiredCombination / kNumIntrinsicCombinations;
+        SkASSERT(desiredWrappedCombination < fNumWrappedCombos);
+
+        static const StableKey kIDs[kNumIntrinsicCombinations] = {
+                StableKey::k1DBlur4,  StableKey::k1DBlur8,  StableKey::k1DBlur12,
+                StableKey::k1DBlur16, StableKey::k1DBlur20, StableKey::k1DBlur28,
+
+                StableKey::k2DBlur4,  StableKey::k2DBlur8,  StableKey::k2DBlur12,
+                StableKey::k2DBlur16, StableKey::k2DBlur20, StableKey::k2DBlur28,
+        };
+
+        const SkRuntimeEffect* fEffect = GetKnownRuntimeEffect(kIDs[desiredBlurCombination]);
+
+        KeyContextWithScope childContext(keyContext, KeyContext::Scope::kRuntimeEffect);
+
+        RuntimeEffectBlock::BeginBlock(keyContext, builder, gatherer, { sk_ref_sp(fEffect) });
+            fWrapped->priv().addToKey(childContext, builder, gatherer, desiredWrappedCombination);
+        builder->endBlock();
+    }
+
+    sk_sp<PrecompileShader> fWrapped;
+    int fNumWrappedCombos;
+};
+
+sk_sp<PrecompileShader> PrecompileShadersPriv::Blur(sk_sp<PrecompileShader> wrapped) {
+    return sk_make_sp<PrecompileBlurShader>(std::move(wrapped));
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1154,16 +1297,6 @@ sk_sp<PrecompileColorFilter> PrecompileColorFiltersPriv::WithWorkingFormat(
 }
 
 //--------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------
-// TODO: need to figure out how we're going to decompose ImageFilters
-sk_sp<PrecompileImageFilter> PrecompileImageFilters::Blur() {
-    return nullptr; // sk_make_sp<PrecompileImageFilter>();
-}
-
-sk_sp<PrecompileImageFilter> PrecompileImageFilters::Image() {
-    return nullptr; // sk_make_sp<PrecompileImageFilter>();
-}
-
 //--------------------------------------------------------------------------------------------------
 PrecompileChildPtr::PrecompileChildPtr(sk_sp<PrecompileShader> s) : fChild(std::move(s)) {}
 PrecompileChildPtr::PrecompileChildPtr(sk_sp<PrecompileColorFilter> cf)

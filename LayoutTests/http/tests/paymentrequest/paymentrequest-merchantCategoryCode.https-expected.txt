@@ -1,0 +1,5 @@
+
+PASS Should have a feature for `paymentRequestMerchantCategoryCode`.
+PASS Should not have a default value for `merchantCategoryCode`.
+PASS Should propagate `merchantCategoryCode` if provided.
+

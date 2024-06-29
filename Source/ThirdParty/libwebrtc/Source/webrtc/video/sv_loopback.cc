@@ -664,13 +664,15 @@ void Loopback() {
     params.ss[screenshare_idx].infer_streams = true;
   }
 
+  VideoQualityTest fixture(nullptr);
+
   std::vector<std::string> stream_descriptors;
   stream_descriptors.push_back(ScreenshareStream0());
   stream_descriptors.push_back(ScreenshareStream1());
   std::vector<std::string> SL_descriptors;
   SL_descriptors.push_back(ScreenshareSL0());
   SL_descriptors.push_back(ScreenshareSL1());
-  VideoQualityTest::FillScalabilitySettings(
+  fixture.FillScalabilitySettings(
       &params, screenshare_idx, stream_descriptors, ScreenshareNumStreams(),
       ScreenshareSelectedStream(), ScreenshareNumSpatialLayers(),
       ScreenshareSelectedSL(), ScreenshareInterLayerPred(), SL_descriptors);
@@ -681,16 +683,15 @@ void Loopback() {
   SL_descriptors.clear();
   SL_descriptors.push_back(VideoSL0());
   SL_descriptors.push_back(VideoSL1());
-  VideoQualityTest::FillScalabilitySettings(
-      &params, camera_idx, stream_descriptors, VideoNumStreams(),
-      VideoSelectedStream(), VideoNumSpatialLayers(), VideoSelectedSL(),
-      VideoInterLayerPred(), SL_descriptors);
+  fixture.FillScalabilitySettings(&params, camera_idx, stream_descriptors,
+                                  VideoNumStreams(), VideoSelectedStream(),
+                                  VideoNumSpatialLayers(), VideoSelectedSL(),
+                                  VideoInterLayerPred(), SL_descriptors);
 
-  auto fixture = std::make_unique<VideoQualityTest>(nullptr);
   if (DurationSecs()) {
-    fixture->RunWithAnalyzer(params);
+    fixture.RunWithAnalyzer(params);
   } else {
-    fixture->RunWithRenderers(params);
+    fixture.RunWithRenderers(params);
   }
 }
 }  // namespace webrtc

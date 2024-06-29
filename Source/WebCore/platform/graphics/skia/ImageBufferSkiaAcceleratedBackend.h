@@ -31,9 +31,19 @@
 #include "ImageBufferSkiaSurfaceBackend.h"
 #include <wtf/IsoMalloc.h>
 
+#if USE(NICOSIA)
+#include "NicosiaContentLayer.h"
+#endif
+
 namespace WebCore {
 
-class ImageBufferSkiaAcceleratedBackend final : public ImageBufferSkiaSurfaceBackend {
+class BitmapTexture;
+
+class ImageBufferSkiaAcceleratedBackend final : public ImageBufferSkiaSurfaceBackend
+#if USE(NICOSIA)
+    , public Nicosia::ContentLayer::Client
+#endif
+{
     WTF_MAKE_ISO_ALLOCATED(ImageBufferSkiaAcceleratedBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferSkiaAcceleratedBackend);
 public:
@@ -50,6 +60,18 @@ private:
 
     void getPixelBuffer(const IntRect&, PixelBuffer&) final;
     void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) final;
+
+#if USE(NICOSIA)
+    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() const final;
+    void swapBuffersIfNeeded() final;
+
+    RefPtr<Nicosia::ContentLayer> m_contentLayer;
+    RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
+    struct {
+        RefPtr<BitmapTexture> back;
+        RefPtr<BitmapTexture> front;
+    } m_texture;
+#endif
 };
 
 } // namespace WebCore

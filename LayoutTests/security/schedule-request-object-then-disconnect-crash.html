@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<style id="style"></style>
+<embed id="embed"></embed>
+<div id="picture">
+  <object id="object" data="foo"></object>
+</div>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  var embed = document.getElementById("embed");
+  document.styleSheets[0].insertRule("#picture { content: no-open-quote;}");
+  object.contentDocument.adoptNode(embed);
+  picture.append(style);
+  embed.width;
+
+  document.body.replaceWith("PASS if no crash.");
+</script>

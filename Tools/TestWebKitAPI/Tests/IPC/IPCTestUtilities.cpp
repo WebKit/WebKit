@@ -67,7 +67,7 @@ void ConnectionTestBase::teardownBase()
         auto messages = aClient().takeMessages();
         EXPECT_EQ(messages.size(), 0u);
         for (uint64_t i = 0u; i < messages.size(); ++i) {
-            SCOPED_TRACE(makeString("A had unexpected message: ", i));
+            SCOPED_TRACE(makeString("A had unexpected message: "_s, i));
             EXPECT_EQ(messages[i].messageName, static_cast<IPC::MessageName>(0xaaaa));
             EXPECT_EQ(messages[i].destinationID, 0xddddddu);
         }
@@ -76,7 +76,7 @@ void ConnectionTestBase::teardownBase()
         auto messages = bClient().takeMessages();
         EXPECT_EQ(messages.size(), 0u);
         for (uint64_t i = 0u; i < messages.size(); ++i) {
-            SCOPED_TRACE(makeString("B had unexpected message message: ", i));
+            SCOPED_TRACE(makeString("B had unexpected message message: "_s, i));
             EXPECT_EQ(messages[i].messageName, static_cast<IPC::MessageName>(0xaaaa));
             EXPECT_EQ(messages[i].destinationID, 0xddddddu);
         }

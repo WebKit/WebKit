@@ -42,10 +42,12 @@
 #include <wtf/text/WTFString.h>
 
 ALLOW_COMMA_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 #include <webrtc/p2p/base/basic_packet_socket_factory.h>
 #include <webrtc/rtc_base/third_party/sigslot/sigslot.h>
 
+ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_COMMA_END
 
 namespace IPC {
@@ -145,8 +147,6 @@ private:
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-
-    static rtc::ProxyInfo proxyInfoFromSession(const RTCNetwork::SocketAddress&, NetworkSession&);
 
 #if PLATFORM(COCOA)
     const String& attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier);

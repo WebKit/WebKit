@@ -44,6 +44,7 @@ namespace {
 class MockGraphicsContextGLClient final : public WebCore::GraphicsContextGL::Client {
 public:
     void forceContextLost() final { ++m_contextLostCalls; }
+    void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, const String&) final { }
 
     int contextLostCalls() { return m_contextLostCalls; }
 private:
@@ -137,7 +138,7 @@ static ::testing::AssertionResult changeContextContents(TestedGraphicsContextGLC
     auto sampleAt = context.getInternalFramebufferSize();
     sampleAt.contract(2, 3);
     sampleAt.clampNegativeToZero();
-    context.readPixels({ sampleAt.width(), sampleAt.height(), 1, 1 }, WebCore::GraphicsContextGL::RGBA, WebCore::GraphicsContextGL::UNSIGNED_BYTE, gotValues, 4, 0);
+    context.readPixels({ sampleAt.width(), sampleAt.height(), 1, 1 }, WebCore::GraphicsContextGL::RGBA, WebCore::GraphicsContextGL::UNSIGNED_BYTE, gotValues, 4, 0, false);
     WebCore::Color got { WebCore::SRGBA<uint8_t> { gotValues[0], gotValues[1], gotValues[2], gotValues[3] } };
     if (got != expected)
         return ::testing::AssertionFailure() << "Failed to verify draw to context. Got: " << got << ", expected: " << expected << ".";
@@ -299,6 +300,93 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsDifferentGPUIDsMetal)
 }
 #endif
 
+TEST_F(GraphicsContextGLCocoaTest, ClearBufferIncorrectSizes)
+{
+    using GL = WebCore::GraphicsContextGL;
+    WebCore::GraphicsContextGLAttributes attributes;
+    attributes.useMetal = true;
+    attributes.isWebGL2 = true;
+    attributes.depth = true;
+    attributes.stencil = true;
+    auto gl = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
+    gl->reshape(1, 1);
+
+    float floats5[5] { 0.1f, 0.2f, 0.3f, 0.4f, 0.5f };
+    float floats4[4] { 0.1f, 0.2f, 0.3f, 0.4f };
+    float floats3[3] { 0.1f, 0.2f, 0.3f };
+    float floats2[2] { 0.1f, 0.2f };
+    float floats1[1] { 0.1f };
+    std::span<const float> floats0;
+
+    gl->clearBufferfv(GL::COLOR, 0, floats4);
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+
+    gl->clearBufferfv(GL::COLOR, 0, floats5);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+
+    gl->clearBufferfv(GL::COLOR, 0, floats3);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+
+    gl->clearBufferfv(GL::COLOR, 0, floats2);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+
+    gl->clearBufferfv(GL::COLOR, 0, floats1);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+
+    gl->clearBufferfv(GL::COLOR, 0, floats0);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+
+    gl->clearBufferfv(GL::DEPTH, 0, floats1);
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+
+    gl->clearBufferfv(GL::DEPTH, 0, floats4);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+
+    int ints2[2] { 1, 2 };
+    int ints1[1] { 1 };
+
+    gl->clearBufferiv(GL::STENCIL, 0, ints1);
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+
+    gl->clearBufferiv(GL::STENCIL, 0, ints2);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+
+    auto texture = gl->createTexture();
+    gl->bindTexture(GL::TEXTURE_2D, texture);
+    gl->texParameteri(GL::TEXTURE_2D, GL::TEXTURE_MIN_FILTER, GL::NEAREST);
+    gl->texImage2D(GL::TEXTURE_2D, 0, GL::R8UI, 1, 1, 0, GL::RED_INTEGER, GL::UNSIGNED_BYTE, 0);
+    ASSERT_TRUE(gl->getErrors().isEmpty());
+
+    auto fbo = gl->createFramebuffer();
+    gl->bindFramebuffer(GL::FRAMEBUFFER, fbo);
+    gl->framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, texture, 0);
+    ASSERT_EQ(gl->checkFramebufferStatus(GL::FRAMEBUFFER), GL::FRAMEBUFFER_COMPLETE);
+
+    unsigned uints4[4] { 1, 2, 3, 4 };
+    unsigned uints2[2] { 1, 2 };
+    unsigned uints1[1] { 1 };
+
+    gl->clearBufferuiv(GL::COLOR, 0, uints4);
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+
+    gl->clearBufferuiv(GL::COLOR, 0, uints2);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+
+    gl->clearBufferuiv(GL::COLOR, 0, uints1);
+    EXPECT_TRUE(gl->getErrors().contains(GCGLErrorCode::InvalidOperation));
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+
+    gl = nullptr;
+}
+
 TEST_F(GraphicsContextGLCocoaTest, TwoLinks)
 {
     WebCore::GraphicsContextGLAttributes attributes;
@@ -423,7 +511,7 @@ TEST_P(AnyContextAttributeTest, PrepareFailureWorks)
     } else {
         ASSERT_FALSE(changeContextContents(*context, 1));
         uint32_t gotValue = 0;
-        context->readPixels({ 0, 0, 1, 1 }, WebCore::GraphicsContextGL::RGBA, WebCore::GraphicsContextGL::UNSIGNED_BYTE, { reinterpret_cast<uint8_t*>(&gotValue), 4 }, 4, 0);
+        context->readPixels({ 0, 0, 1, 1 }, WebCore::GraphicsContextGL::RGBA, WebCore::GraphicsContextGL::UNSIGNED_BYTE, { reinterpret_cast<uint8_t*>(&gotValue), 4 }, 4, 0, false);
         EXPECT_EQ(0u, gotValue);
         EXPECT_EQ(GCGLErrorCode::InvalidFramebufferOperation, context->getErrors());
     }
@@ -453,7 +541,7 @@ TEST_P(AnyContextAttributeTest, FinishIsSignaled)
     if (context->contextAttributes().useMetal)
         EXPECT_NE(Thread::current().uid(), signalThreadUID);
     else
-        EXPECT_EQ(Thread::current().uid(), signalThreadUID);    
+        EXPECT_EQ(Thread::current().uid(), signalThreadUID);
 }
 
 #if PLATFORM(IOS_FAMILY) || PLATFORM(IOS_FAMILY_SIMULATOR)

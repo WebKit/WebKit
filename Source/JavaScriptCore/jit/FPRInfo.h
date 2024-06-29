@@ -35,7 +35,7 @@ static constexpr FPRReg InvalidFPRReg { FPRReg::InvalidFPRReg };
 
 #if ENABLE(ASSEMBLER)
 
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
 
 class FPRInfo {
 public:
@@ -50,8 +50,6 @@ public:
     static constexpr FPRReg fpRegT3 = X86Registers::xmm3;
     static constexpr FPRReg fpRegT4 = X86Registers::xmm4;
     static constexpr FPRReg fpRegT5 = X86Registers::xmm5;
-#if CPU(X86_64)
-    // Only X86_64 passes aguments in xmm registers
     static constexpr FPRReg argumentFPR0 = X86Registers::xmm0; // fpRegT0
     static constexpr FPRReg argumentFPR1 = X86Registers::xmm1; // fpRegT1
     static constexpr FPRReg argumentFPR2 = X86Registers::xmm2; // fpRegT2
@@ -60,16 +58,11 @@ public:
     static constexpr FPRReg argumentFPR5 = X86Registers::xmm5; // fpRegT5
     static constexpr FPRReg argumentFPR6 = X86Registers::xmm6;
     static constexpr FPRReg argumentFPR7 = X86Registers::xmm7;
-#endif
     // On X86 the return will actually be on the x87 stack,
     // so we'll copy to xmm0 for sanity!
     static constexpr FPRReg returnValueFPR = X86Registers::xmm0; // fpRegT0
 
-#if CPU(X86_64)
     static constexpr FPRReg nonPreservedNonArgumentFPR0 = X86Registers::xmm8;
-#else
-    static constexpr FPRReg nonPreservedNonArgumentFPR0 = X86Registers::xmm5;
-#endif
 
     // FPRReg mapping is direct, the machine regsiter numbers can
     // be used directly as indices into the FPR RegisterBank.
@@ -105,7 +98,7 @@ public:
     static constexpr unsigned InvalidIndex = 0xffffffff;
 };
 
-#endif // CPU(X86) || CPU(X86_64)
+#endif // CPU(X86_64)
 
 #if CPU(ARM)
 

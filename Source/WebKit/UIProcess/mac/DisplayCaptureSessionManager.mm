@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
+#import "APIPageConfiguration.h"
 #import "Logging.h"
 #import "MediaPermissionUtilities.h"
 #import "WKWebViewInternal.h"
@@ -214,7 +215,7 @@ void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionR
             return;
         }
 
-        Ref gpuProcess = page.process().processPool().ensureGPUProcess();
+        Ref gpuProcess = page.configuration().processPool().ensureGPUProcess();
         gpuProcess->updateSandboxAccess(false, false, true);
         gpuProcess->promptForGetDisplayMedia(toScreenCaptureKitPromptType(promptType), WTFMove(completionHandler));
         return;
@@ -263,7 +264,7 @@ void DisplayCaptureSessionManager::cancelGetDisplayMediaPrompt(WebPageProxy& pag
         return;
     }
 
-    auto gpuProcess = page.process().processPool().gpuProcess();
+    auto gpuProcess = page.configuration().processPool().gpuProcess();
     if (!gpuProcess)
         return;
 

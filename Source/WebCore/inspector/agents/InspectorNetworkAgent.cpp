@@ -113,7 +113,7 @@ public:
 
     ~InspectorThreadableLoaderClient() override = default;
 
-    void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response) override
+    void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse& response) override
     {
         m_mimeType = response.mimeType();
         m_statusCode = response.httpStatusCode();
@@ -137,7 +137,7 @@ public:
         m_responseText.append(m_decoder->decode(buffer.span()));
     }
 
-    void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) override
+    void didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&) override
     {
         if (m_decoder)
             m_responseText.append(m_decoder->flush());
@@ -146,7 +146,7 @@ public:
         dispose();
     }
 
-    void didFail(const ResourceError& error) override
+    void didFail(ScriptExecutionContextIdentifier, const ResourceError& error) override
     {
         m_callback->sendFailure(error.isAccessControl() ? "Loading resource for inspector failed access control check"_s : "Loading resource for inspector failed"_s);
         dispose();
@@ -573,7 +573,7 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
     if (cachedResource) {
         // Use mime type from cached resource in case the one in response is empty.
         if (resourceResponse && response.mimeType().isEmpty())
-            resourceResponse->setString(Inspector::Protocol::Network::Response::mimeTypeKey, cachedResource->response().mimeType());
+            resourceResponse->setString("mimeType"_s, cachedResource->response().mimeType());
         m_resourcesData->addCachedResource(requestId, cachedResource);
     }
 
@@ -596,12 +596,12 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
                 });
             }
             
-            resourceResponse->setString(Inspector::Protocol::Network::Response::mimeTypeKey, previousResourceData->mimeType());
+            resourceResponse->setString("mimeType"_s, previousResourceData->mimeType());
             
-            resourceResponse->setInteger(Inspector::Protocol::Network::Response::statusKey, previousResourceData->httpStatusCode());
-            resourceResponse->setString(Inspector::Protocol::Network::Response::statusTextKey, previousResourceData->httpStatusText());
+            resourceResponse->setInteger("status"_s, previousResourceData->httpStatusCode());
+            resourceResponse->setString("statusText"_s, previousResourceData->httpStatusText());
             
-            resourceResponse->setString(Inspector::Protocol::Network::Response::sourceKey, Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::Network::Response::Source::DiskCache));
+            resourceResponse->setString("source"_s, Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::Network::Response::Source::DiskCache));
         }
     }
 
@@ -632,7 +632,7 @@ void InspectorNetworkAgent::didReceiveData(ResourceLoaderIdentifier identifier, 
         // Often the data is text and we would have a decoder, but for non-text we won't have a decoder.
         // Sync XHRs may not have a cached resource, while non-sync XHRs usually transfer data over on completion.
         if (m_loadingXHRSynchronously && resourceData && !resourceData->hasBufferedData() && !resourceData->cachedResource())
-            m_resourcesData->setResourceContent(requestId, base64EncodeToString(data->data(), data->size()), true);
+            m_resourcesData->setResourceContent(requestId, base64EncodeToString(data->span()), true);
     }
 
     m_frontendDispatcher->dataReceived(requestId, timestamp(), expectedDataLength, encodedDataLength);
@@ -1052,7 +1052,7 @@ Inspector::Protocol::ErrorStringOr<String> InspectorNetworkAgent::getSerializedC
 
     WTF::Persistence::Encoder encoder;
     WTF::Persistence::Coder<WebCore::CertificateInfo>::encodeForPersistence(encoder, certificate.value());
-    return base64EncodeToString(encoder.buffer(), encoder.bufferSize());
+    return base64EncodeToString(encoder.span());
 }
 
 WebSocket* InspectorNetworkAgent::webSocketForRequestId(const Inspector::Protocol::Network::RequestId& requestId)
@@ -1382,7 +1382,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequest
     if (loader.reachedTerminalState())
         return makeUnexpected("Unable to abort request, it has already been processed"_s);
 
-    addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Info, makeString("Web Inspector blocked ", loader.url().string(), " from loading"), loader.identifier().toUInt64()));
+    addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Info, makeString("Web Inspector blocked "_s, loader.url().string(), " from loading"_s), loader.identifier().toUInt64()));
 
     loader.didFail(ResourceError(InspectorNetworkAgent::errorDomain(), 0, loader.url(), "Blocked by Web Inspector"_s, toResourceErrorType(errorType)));
     return { };

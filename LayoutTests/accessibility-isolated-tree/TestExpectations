@@ -24,7 +24,6 @@ accessibility/mac/attributed-string/attributed-string-has-completion-annotation.
 # we never create an isolated object for #menu-item-one, causing ariaLabelledByElementAtIndex(0) to return null.
 accessibility/menuitem-is-selected.html [ Failure ]
 
-accessibility/aria-owns-hierarchy-remap.html [ Failure ]
 accessibility/element-reflection-ariaactivedescendant.html [ Failure ]
 
 # Used to be a timeout until https://github.com/WebKit/WebKit/commit/c69e4c0caaf5368db791652eee3a057ed2751144, now is a text failure.

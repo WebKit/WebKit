@@ -192,7 +192,7 @@ QualityAnalyzingVideoDecoder::DecoderCallback::IrrelevantSimulcastStreamDecoded(
   webrtc::VideoFrame dummy_frame =
       webrtc::VideoFrame::Builder()
           .set_video_frame_buffer(GetDummyFrameBuffer())
-          .set_timestamp_rtp(timestamp_ms)
+          .set_rtp_timestamp(timestamp_ms)
           .set_id(frame_id)
           .build();
   MutexLock lock(&callback_mutex_);
@@ -218,19 +218,19 @@ void QualityAnalyzingVideoDecoder::OnFrameDecoded(
   std::string codec_name;
   {
     MutexLock lock(&mutex_);
-    auto it = timestamp_to_frame_id_.find(frame->timestamp());
+    auto it = timestamp_to_frame_id_.find(frame->rtp_timestamp());
     if (it == timestamp_to_frame_id_.end()) {
       // Ensure, that we have info about this frame. It can happen that for some
       // reasons decoder response, that it failed to decode, when we were
       // posting frame to it, but then call the callback for this frame.
       RTC_LOG(LS_ERROR) << "QualityAnalyzingVideoDecoder::OnFrameDecoded: No "
                            "frame id for frame for frame->timestamp()="
-                        << frame->timestamp();
+                        << frame->rtp_timestamp();
       return;
     }
     frame_id = it->second;
     timestamp_to_frame_id_.erase(it);
-    decoding_images_.erase(frame->timestamp());
+    decoding_images_.erase(frame->rtp_timestamp());
     codec_name = codec_name_;
   }
   // Set frame id to the value, that was extracted from corresponding encoded
@@ -259,10 +259,10 @@ QualityAnalyzingVideoDecoderFactory::GetSupportedFormats() const {
   return delegate_->GetSupportedFormats();
 }
 
-std::unique_ptr<VideoDecoder>
-QualityAnalyzingVideoDecoderFactory::CreateVideoDecoder(
+std::unique_ptr<VideoDecoder> QualityAnalyzingVideoDecoderFactory::Create(
+    const Environment& env,
     const SdpVideoFormat& format) {
-  std::unique_ptr<VideoDecoder> decoder = delegate_->CreateVideoDecoder(format);
+  std::unique_ptr<VideoDecoder> decoder = delegate_->Create(env, format);
   return std::make_unique<QualityAnalyzingVideoDecoder>(
       peer_name_, std::move(decoder), extractor_, analyzer_);
 }

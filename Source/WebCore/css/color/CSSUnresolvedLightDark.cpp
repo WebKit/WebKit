@@ -26,8 +26,8 @@
 #include "config.h"
 #include "CSSUnresolvedLightDark.h"
 
-#include "ColorFromPrimitiveValue.h"
-#include "ColorSerialization.h"
+#include "CSSUnresolvedColor.h"
+#include "CSSUnresolvedColorResolutionContext.h"
 #include "Document.h"
 #include "StyleBuilderState.h"
 
@@ -35,7 +35,11 @@ namespace WebCore {
 
 void serializationForCSS(StringBuilder& builder, const CSSUnresolvedLightDark& lightDark)
 {
-    builder.append("light-dark("_s, lightDark.lightColor->customCSSText(), ", "_s, lightDark.darkColor->customCSSText(), ')');
+    builder.append("light-dark("_s);
+    lightDark.lightColor->serializationForCSS(builder);
+    builder.append(", "_s);
+    lightDark.darkColor->serializationForCSS(builder);
+    builder.append(')');
 }
 
 String serializationForCSS(const CSSUnresolvedLightDark& unresolved)
@@ -45,17 +49,39 @@ String serializationForCSS(const CSSUnresolvedLightDark& unresolved)
     return builder.toString();
 }
 
-bool operator==(const CSSUnresolvedLightDark& a, const CSSUnresolvedLightDark& b)
+bool CSSUnresolvedLightDark::operator==(const CSSUnresolvedLightDark& other) const
 {
-    return compareCSSValue(a.lightColor, b.lightColor)
-        && compareCSSValue(a.darkColor, b.darkColor);
+    return lightColor == other.lightColor
+        && darkColor == other.darkColor;
 }
 
 StyleColor createStyleColor(const CSSUnresolvedLightDark& unresolved, const Document& document, RenderStyle& style, Style::ForVisitedLink forVisitedLink)
 {
     if (document.useDarkAppearance(&style))
-        return colorFromPrimitiveValue(document, style, unresolved.darkColor.get(), forVisitedLink);
-    return colorFromPrimitiveValue(document, style, unresolved.lightColor.get(), forVisitedLink);
+        return unresolved.darkColor->createStyleColor(document, style, forVisitedLink);
+    return unresolved.lightColor->createStyleColor(document, style, forVisitedLink);
+}
+
+Color createColor(const CSSUnresolvedLightDark& unresolved, const CSSUnresolvedColorResolutionContext& context)
+{
+    if (!context.appearance)
+        return { };
+
+    switch (*context.appearance) {
+    case CSSUnresolvedLightDarkAppearance::Light:
+        return unresolved.lightColor->createColor(context);
+    case CSSUnresolvedLightDarkAppearance::Dark:
+        return unresolved.darkColor->createColor(context);
+    }
+
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+bool containsCurrentColor(const CSSUnresolvedLightDark& unresolved)
+{
+    return unresolved.lightColor->containsCurrentColor()
+        || unresolved.darkColor->containsCurrentColor();
 }
 
 } // namespace WebCore

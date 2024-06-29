@@ -19,10 +19,10 @@
 #include "api/call/transport.h"
 #include "api/units/timestamp.h"
 #include "call/call.h"
-#include "call/simulated_network.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "test/network/network_emulation.h"
+#include "test/network/simulated_network.h"
 #include "test/scenario/column_printer.h"
 #include "test/scenario/scenario_config.h"
 

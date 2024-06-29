@@ -26,7 +26,7 @@ config("audio_device_warnings_config") {
 rtc_source_set("audio_device_default") {
   visibility = [ "*" ]
   sources = [ "include/audio_device_default.h" ]
-  deps = [ ":audio_device_api" ]
+  deps = [ "../../api/audio:audio_device" ]
 }
 
 rtc_source_set("audio_device") {
@@ -47,14 +47,7 @@ rtc_source_set("audio_device_api") {
     "include/audio_device.h",
     "include/audio_device_defines.h",
   ]
-  deps = [
-    "../../api:scoped_refptr",
-    "../../api/task_queue",
-    "../../rtc_base:checks",
-    "../../rtc_base:refcount",
-    "../../rtc_base:stringutils",
-  ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  deps = [ "../../api/audio:audio_device" ]
 }
 
 rtc_library("audio_device_config") {
@@ -69,9 +62,9 @@ rtc_library("audio_device_buffer") {
     "fine_audio_buffer.h",
   ]
   deps = [
-    ":audio_device_api",
     "../../api:array_view",
     "../../api:sequence_checker",
+    "../../api/audio:audio_device",
     "../../api/task_queue",
     "../../common_audio:common_audio_c",
     "../../rtc_base:buffer",
@@ -79,7 +72,6 @@ rtc_library("audio_device_buffer") {
     "../../rtc_base:event_tracer",
     "../../rtc_base:logging",
     "../../rtc_base:macromagic",
-    "../../rtc_base:rtc_task_queue",
     "../../rtc_base:safe_conversions",
     "../../rtc_base:timestamp_aligner",
     "../../rtc_base:timeutils",
@@ -87,6 +79,7 @@ rtc_library("audio_device_buffer") {
     "../../system_wrappers",
     "../../system_wrappers:metrics",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("audio_device_generic") {
@@ -95,8 +88,8 @@ rtc_library("audio_device_generic") {
     "audio_device_generic.h",
   ]
   deps = [
-    ":audio_device_api",
     ":audio_device_buffer",
+    "../../api/audio:audio_device",
     "../../rtc_base:logging",
   ]
 }
@@ -117,8 +110,8 @@ rtc_source_set("windows_core_audio_utility") {
     ]
 
     deps = [
-      ":audio_device_api",
       ":audio_device_name",
+      "../../api/audio:audio_device",
       "../../api/units:time_delta",
       "../../rtc_base:checks",
       "../../rtc_base:logging",
@@ -156,12 +149,12 @@ rtc_source_set("audio_device_module_from_input_and_output") {
     ]
 
     deps = [
-      ":audio_device_api",
       ":audio_device_buffer",
       ":windows_core_audio_utility",
       "../../api:make_ref_counted",
       "../../api:scoped_refptr",
       "../../api:sequence_checker",
+      "../../api/audio:audio_device",
       "../../api/task_queue",
       "../../rtc_base:checks",
       "../../rtc_base:logging",
@@ -190,7 +183,6 @@ if (!build_with_chromium) {
       "test_audio_device_impl.h",
     ]
     deps = [
-      ":audio_device_api",
       ":audio_device_buffer",
       ":audio_device_default",
       ":audio_device_generic",
@@ -198,6 +190,7 @@ if (!build_with_chromium) {
       "../../api:array_view",
       "../../api:make_ref_counted",
       "../../api:scoped_refptr",
+      "../../api/audio:audio_device",
       "../../api/task_queue",
       "../../api/units:time_delta",
       "../../common_audio",
@@ -208,7 +201,6 @@ if (!build_with_chromium) {
       "../../rtc_base:platform_thread",
       "../../rtc_base:random",
       "../../rtc_base:rtc_event",
-      "../../rtc_base:rtc_task_queue",
       "../../rtc_base:safe_conversions",
       "../../rtc_base:timeutils",
       "../../rtc_base/synchronization:mutex",
@@ -228,9 +220,9 @@ rtc_library("audio_device_dummy") {
     "dummy/audio_device_dummy.h",
   ]
   deps = [
-    ":audio_device_api",
     ":audio_device_buffer",
     ":audio_device_generic",
+    "../../api/audio:audio_device",
   ]
 }
 
@@ -267,7 +259,6 @@ if (!build_with_chromium) {
 rtc_library("audio_device_impl") {
   visibility = [ "*" ]
   deps = [
-    ":audio_device_api",
     ":audio_device_buffer",
     ":audio_device_config",
     ":audio_device_default",
@@ -278,6 +269,7 @@ rtc_library("audio_device_impl") {
     "../../api:refcountedbase",
     "../../api:scoped_refptr",
     "../../api:sequence_checker",
+    "../../api/audio:audio_device",
     "../../api/task_queue",
     "../../api/units:time_delta",
     "../../common_audio",
@@ -289,7 +281,6 @@ rtc_library("audio_device_impl") {
     "../../rtc_base:platform_thread",
     "../../rtc_base:random",
     "../../rtc_base:rtc_event",
-    "../../rtc_base:rtc_task_queue",
     "../../rtc_base:safe_conversions",
     "../../rtc_base:stringutils",
     "../../rtc_base:timeutils",
@@ -451,8 +442,10 @@ rtc_source_set("mock_audio_device") {
     ":audio_device_buffer",
     ":audio_device_impl",
     "../../api:make_ref_counted",
+    "../../api/audio:audio_device",
     "../../test:test_support",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 if (rtc_include_tests && !build_with_chromium) {
@@ -474,6 +467,7 @@ if (rtc_include_tests && !build_with_chromium) {
       "../../api:array_view",
       "../../api:scoped_refptr",
       "../../api:sequence_checker",
+      "../../api/audio:audio_device",
       "../../api/task_queue",
       "../../api/task_queue:default_task_queue_factory",
       "../../api/units:time_delta",
@@ -481,7 +475,6 @@ if (rtc_include_tests && !build_with_chromium) {
       "../../common_audio",
       "../../rtc_base:buffer",
       "../../rtc_base:checks",
-      "../../rtc_base:ignore_wundef",
       "../../rtc_base:logging",
       "../../rtc_base:macromagic",
       "../../rtc_base:race_checker",

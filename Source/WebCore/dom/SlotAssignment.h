@@ -107,8 +107,6 @@ private:
     struct Slot {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        Slot() { }
-
         bool hasSlotElements() { return !!elementCount; }
         bool hasDuplicatedSlotElements() { return elementCount > 1; }
         bool shouldResolveSlotElement() { return !element && elementCount; }

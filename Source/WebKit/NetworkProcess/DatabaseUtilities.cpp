@@ -257,7 +257,7 @@ static Expected<WebCore::SQLiteStatement, int> insertDistinctValuesInTableStatem
     if (table == "TopFrameLinkDecorationsFrom"_s)
         return database.prepareStatement("INSERT INTO TopFrameLinkDecorationsFrom SELECT toDomainID, MAX(lastUpdated), fromDomainID FROM _TopFrameLinkDecorationsFrom GROUP BY toDomainID, fromDomainID"_s);
 
-    return database.prepareStatementSlow(makeString("INSERT INTO ", table, " SELECT DISTINCT * FROM _", table));
+    return database.prepareStatementSlow(makeString("INSERT INTO "_s, table, " SELECT DISTINCT * FROM _"_s, table));
 }
 
 void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
@@ -270,7 +270,7 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
     transaction.begin();
 
     for (auto& table : expectedTableAndIndexQueries().keys()) {
-        auto alterTable = m_database.prepareStatementSlow(makeString("ALTER TABLE ", table, " RENAME TO _", table));
+        auto alterTable = m_database.prepareStatementSlow(makeString("ALTER TABLE "_s, table, " RENAME TO _"_s, table));
         if (!alterTable || alterTable->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary failed to rename table, error message: %s", this, m_database.lastErrorMsg());
             transaction.rollback();
@@ -295,7 +295,7 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
 
     // Drop all tables at the end to avoid trashing data that references data in other tables.
     for (auto& table : sortedTables()) {
-        auto dropTableQuery = m_database.prepareStatementSlow(makeString("DROP TABLE _", table));
+        auto dropTableQuery = m_database.prepareStatementSlow(makeString("DROP TABLE _"_s, table));
         if (!dropTableQuery || dropTableQuery->step() != SQLITE_DONE) {
             transaction.rollback();
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary failed to drop temporary tables, error message: %s", this, m_database.lastErrorMsg());
@@ -314,7 +314,7 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
 
 Vector<String> DatabaseUtilities::columnsForTable(ASCIILiteral tableName)
 {
-    auto statement = m_database.prepareStatementSlow(makeString("PRAGMA table_info(", tableName, ")"));
+    auto statement = m_database.prepareStatementSlow(makeString("PRAGMA table_info("_s, tableName, ')'));
 
     if (!statement) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::columnsForTable Unable to prepare statement to fetch schema for table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
@@ -332,7 +332,7 @@ Vector<String> DatabaseUtilities::columnsForTable(ASCIILiteral tableName)
 
 bool DatabaseUtilities::addMissingColumnToTable(ASCIILiteral tableName, ASCIILiteral columnName)
 {
-    auto statement = m_database.prepareStatementSlow(makeString("ALTER TABLE ", tableName, " ADD COLUMN ", columnName));
+    auto statement = m_database.prepareStatementSlow(makeString("ALTER TABLE "_s, tableName, " ADD COLUMN "_s, columnName));
     if (!statement) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::addMissingColumnToTable Unable to prepare statement to add missing columns to table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         return false;

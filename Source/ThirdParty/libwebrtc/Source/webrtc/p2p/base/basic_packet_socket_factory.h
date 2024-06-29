@@ -19,7 +19,6 @@
 #include "api/async_dns_resolver.h"
 #include "api/packet_socket_factory.h"
 #include "rtc_base/async_packet_socket.h"
-#include "rtc_base/proxy_info.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/socket_factory.h"
@@ -44,13 +43,7 @@ class RTC_EXPORT BasicPacketSocketFactory : public PacketSocketFactory {
   AsyncPacketSocket* CreateClientTcpSocket(
       const SocketAddress& local_address,
       const SocketAddress& remote_address,
-      const ProxyInfo& proxy_info,
-      const std::string& user_agent,
       const PacketSocketTcpOptions& tcp_options) override;
-
-  // TODO(bugs.webrtc.org/12598) Remove when downstream stops using it.
-  ABSL_DEPRECATED("Use CreateAsyncDnsResolver")
-  AsyncResolverInterface* CreateAsyncResolver() override;
 
   std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAsyncDnsResolver()
       override;

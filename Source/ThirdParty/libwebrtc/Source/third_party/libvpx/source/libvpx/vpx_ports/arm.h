@@ -23,6 +23,10 @@ extern "C" {
 #define HAS_NEON_DOTPROD (1 << 1)
 // Armv8.2-A optional Neon i8mm instructions, mandatory from Armv8.6-A.
 #define HAS_NEON_I8MM (1 << 2)
+// Armv8.2-A optional SVE instructions, mandatory from Armv9.0-A.
+#define HAS_SVE (1 << 3)
+// Armv9.0-A SVE2 instructions.
+#define HAS_SVE2 (1 << 4)
 
 int arm_cpu_caps(void);
 

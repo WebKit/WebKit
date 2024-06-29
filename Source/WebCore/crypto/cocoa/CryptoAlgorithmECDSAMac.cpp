@@ -46,9 +46,9 @@ static ExceptionOr<Vector<uint8_t>> signECDSACryptoKit(CryptoAlgorithmIdentifier
     if (!isValidHashParameter(hash))
         return Exception { ExceptionCode::OperationError };
     auto rv = (*priv)->sign(data.span(), toCKHashFunction(hash));
-    if (!(rv.getErrorCode().isSuccess() && rv.getSignature()))
+    if (rv.errorCode != Cpp::ErrorCodes::Success)
         return Exception { ExceptionCode::OperationError };
-    return *rv.getSignature();
+    return WTFMove(rv.result);
 }
 
 static ExceptionOr<bool> verifyECDSACryptoKit(CryptoAlgorithmIdentifier hash, const PlatformECKeyContainer& key, const Vector<uint8_t>& signature, const Vector<uint8_t> data)
@@ -58,7 +58,7 @@ static ExceptionOr<bool> verifyECDSACryptoKit(CryptoAlgorithmIdentifier hash, co
         return Exception { ExceptionCode::OperationError };
     if (!isValidHashParameter(hash))
         return Exception { ExceptionCode::OperationError };
-    return (*pub)->verify(data.span(), signature.span(), toCKHashFunction(hash)).getErrorCode().isSuccess();
+    return (*pub)->verify(data.span(), signature.span(), toCKHashFunction(hash)).errorCode == Cpp::ErrorCodes::Success;
 }
 #endif
 

@@ -505,9 +505,9 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncJoin(VM& vm, JSGlobal
     JSString* separatorString = separatorValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto viewWithString = separatorString->viewWithUnderlyingString(globalObject);
+    auto view = separatorString->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    return joinWithSeparator(viewWithString.view);
+    return joinWithSeparator(view);
 }
 
 template<typename ViewClass>

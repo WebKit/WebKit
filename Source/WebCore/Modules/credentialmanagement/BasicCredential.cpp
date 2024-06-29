@@ -59,7 +59,7 @@ String BasicCredential::type() const
 
 void BasicCredential::isConditionalMediationAvailable(Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    if (auto* page = document.page())
+    if (RefPtr page = document.page())
         page->authenticatorCoordinator().isConditionalMediationAvailable(document, WTFMove(promise));
     else
         promise.reject(Exception { ExceptionCode::InvalidStateError });

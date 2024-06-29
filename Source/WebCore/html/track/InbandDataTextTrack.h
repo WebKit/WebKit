@@ -43,7 +43,7 @@ public:
 private:
     InbandDataTextTrack(ScriptExecutionContext&, InbandTextTrackPrivate&);
 
-    void addDataCue(const MediaTime& start, const MediaTime& end, const void*, unsigned) final;
+    void addDataCue(const MediaTime& start, const MediaTime& end, std::span<const uint8_t>) final;
 
     bool shouldPurgeCuesFromUnbufferedRanges() const final { return true; }
 

@@ -70,8 +70,8 @@ bool ImageInputType::appendFormData(DOMFormData& formData) const
         return true;
     }
 
-    formData.append(makeString(name, ".x"), String::number(m_clickLocation.x()));
-    formData.append(makeString(name, ".y"), String::number(m_clickLocation.y()));
+    formData.append(makeString(name, ".x"_s), String::number(m_clickLocation.x()));
+    formData.append(makeString(name, ".y"_s), String::number(m_clickLocation.y()));
 
     return true;
 }
@@ -84,8 +84,6 @@ void ImageInputType::handleDOMActivateEvent(Event& event)
         return;
 
     Ref<HTMLFormElement> protectedForm(*protectedElement->form());
-
-    protectedElement->setActivatedSubmit(true);
 
     m_clickLocation = IntPoint();
     if (event.underlyingEvent()) {
@@ -103,7 +101,6 @@ void ImageInputType::handleDOMActivateEvent(Event& event)
     if (auto currentForm = protectedElement->form())
         currentForm->submitIfPossible(&event, element()); // Event handlers can run.
 
-    protectedElement->setActivatedSubmit(false);
     event.setDefaultHandled();
 }
 

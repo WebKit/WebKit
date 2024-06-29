@@ -347,7 +347,8 @@ static size_params_type calculate_next_size_params(AV1_COMP *cpi) {
                            SCALE_NUMERATOR };
   int resize_denom = SCALE_NUMERATOR;
   if (has_no_stats_stage(cpi) && cpi->ppi->use_svc &&
-      cpi->svc.spatial_layer_id < cpi->svc.number_spatial_layers - 1) {
+      (cpi->common.width != cpi->oxcf.frm_dim_cfg.width ||
+       cpi->common.height != cpi->oxcf.frm_dim_cfg.height)) {
     rsz.resize_width = cpi->common.width;
     rsz.resize_height = cpi->common.height;
     return rsz;
@@ -403,7 +404,7 @@ void av1_superres_post_encode(AV1_COMP *cpi) {
   assert(!is_lossless_requested(&cpi->oxcf.rc_cfg));
   assert(!cm->features.all_lossless);
 
-  av1_superres_upscale(cm, NULL, cpi->image_pyramid_levels);
+  av1_superres_upscale(cm, NULL, cpi->alloc_pyramid);
 
   // If regular resizing is occurring the source will need to be downscaled to
   // match the upscaled superres resolution. Otherwise the original source is

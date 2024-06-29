@@ -240,7 +240,7 @@ void AXLogger::log(const String& collectionName, const AXObjectCache::DeferredCo
             return;
         });
     if (size)
-        log(makeString(collectionName, " size: ", size));
+        log(makeString(collectionName, " size: "_s, size));
 }
 
 #endif // !LOG_DISABLED

@@ -70,8 +70,8 @@ class MostlyMockVoiceEngineInterface : public VoiceEngineInterface {
               GetAudioState,
               (),
               (const, override));
-  MOCK_METHOD(std::vector<AudioCodec>&, send_codecs, (), (const, override));
-  MOCK_METHOD(std::vector<AudioCodec>&, recv_codecs, (), (const, override));
+  MOCK_METHOD(std::vector<Codec>&, send_codecs, (), (const, override));
+  MOCK_METHOD(std::vector<Codec>&, recv_codecs, (), (const, override));
   MOCK_METHOD(bool,
               StartAecDump,
               (webrtc::FileWrapper file, int64_t max_size_bytes),

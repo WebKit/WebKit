@@ -19,7 +19,7 @@ class TIntermNode;
 // are conditional to certain passes.
 struct ValidateASTOptions
 {
-    // TODO: add support for the flags marked with TODO. http://anglebug.com/2733
+    // TODO: add support for the flags marked with TODO. http://anglebug.com/42261441
 
     // Check that every node always has only one parent,
     bool validateSingleParent = true;
@@ -44,7 +44,7 @@ struct ValidateASTOptions
     // function is called.
     bool validateFunctionCall = true;
     // Check that EOpCallInternalRawFunction is not used.  This OP is deprecated and needs to be
-    // removed.  http://anglebug.com/6059
+    // removed.  http://anglebug.com/42264589
     bool validateNoRawFunctionCalls = true;
     // Check that there are no null nodes where they are not allowed, for example as children of
     // TIntermDeclaration or TIntermBlock.
@@ -100,6 +100,8 @@ struct ValidateASTOptions
     // Check that swizzle is not applied to swizzle.  Swizzles of swizzles are folded in
     // TIntermSwizzle::fold.
     bool validateNoSwizzleOfSwizzle = true;
+    // Check that constructors' types don't have qualifiers such as invariant, row_major etc.
+    bool validateNoQualifiersOnConstructors = true;
 
     // Once set, disallows any further transformations on the tree.  Used before AST post-processing
     // which requires that the tree remains unmodified.

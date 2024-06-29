@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
- * Copyright (C) 2010-2021 Google Inc. All Rights Reserved.
+ * Copyright (C) 2010-2023 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -454,6 +454,8 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
                 --m_templateCount;
             return;
         }
+        if (m_templateCount)
+            return;
         if (tagId == TagId::Style) {
             if (m_inStyle)
                 m_cssScanner.reset();
@@ -467,8 +469,19 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
     case HTMLToken::Type::StartTag: {
         TagId tagId = tagIdFor(token.name());
         if (tagId == TagId::Template) {
-            ++m_templateCount;
-            return;
+            bool isDeclarativeShadowRoot = false;
+            static constexpr UChar shadowRootAsUChar[] = { 's', 'h', 'a', 'd', 'o', 'w', 'r', 'o', 'o', 't', 'm', 'o', 'd', 'e' };
+            const auto* shadowRootModeAttribute = findAttribute(token.attributes(), shadowRootAsUChar);
+            if (shadowRootModeAttribute) {
+                String shadowRootValue(shadowRootModeAttribute->value);
+                isDeclarativeShadowRoot = equalIgnoringASCIICase(shadowRootValue, "open"_s) || equalIgnoringASCIICase(shadowRootValue, "closed"_s);
+            }
+            // If this is a declarative shadow root <template shadowrootmode> element
+            // *and* we're not already inside a non-Declartive Shadow DOM (DSD)
+            // <template> element, then we leave the template count at zero.
+            // Otherwise, increment it.
+            if (!(isDeclarativeShadowRoot && !m_templateCount))
+                ++m_templateCount;
         }
         if (m_templateCount)
             return;

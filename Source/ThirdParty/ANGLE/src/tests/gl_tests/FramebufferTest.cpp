@@ -272,7 +272,7 @@ TEST_P(FramebufferFormatsTest, RenderbufferMultisample_STENCIL_INDEX8)
 // Test that binding an incomplete cube map is rejected by ANGLE.
 TEST_P(FramebufferFormatsTest, IncompleteCubeMap)
 {
-    // http://anglebug.com/3145
+    // http://anglebug.com/42261821
     ANGLE_SKIP_TEST_IF(IsFuchsia() && IsIntel() && IsVulkan());
 
     // First make a complete CubeMap.
@@ -1219,7 +1219,7 @@ TEST_P(FramebufferTest_ES3, ClearNonexistentDepthStencil)
 TEST_P(FramebufferTest_ES3, ClearDeletedAttachment)
 {
     // An INVALID_FRAMEBUFFER_OPERATION error was seen in this test on Mac, not sure where it might
-    // be originating from. http://anglebug.com/2834
+    // be originating from. http://anglebug.com/42261536
     ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     GLFramebuffer fbo;
@@ -3626,7 +3626,7 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitNonZeroLevel)
 // object's default width and height.
 TEST_P(FramebufferTest_ES31, RenderingLimitToDefaultFBOSizeWithNoAttachments)
 {
-    // anglebug.com/2253
+    // anglebug.com/40644635
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsDesktopOpenGL());
 
     constexpr char kVS1[] = R"(#version 310 es
@@ -4516,7 +4516,7 @@ class AddMockTextureNoRenderTargetTest : public ANGLETest<>
     }
 };
 
-// Test to verify workaround succeeds when no program outputs exist http://anglebug.com/2283
+// Test to verify workaround succeeds when no program outputs exist http://anglebug.com/42260995
 TEST_P(AddMockTextureNoRenderTargetTest, NoProgramOutputWorkaround)
 {
     constexpr char kVS[] = "void main() {}";
@@ -4583,7 +4583,7 @@ TEST_P(FramebufferTest_ES3, AttachmentStateChange)
 // (https://issuetracker.google.com/175584609) is doing exactly this.
 TEST_P(FramebufferTest_ES3, SampleFromAttachedTextureWithDifferentLOD)
 {
-    // TODO: https://anglebug.com/5760
+    // TODO: https://anglebug.com/42264297
     ANGLE_SKIP_TEST_IF(IsD3D());
 
     constexpr GLuint kLevel0Size = 4;
@@ -4651,7 +4651,7 @@ TEST_P(FramebufferTest_ES3, SampleFromAttachedTextureWithDifferentLOD)
 // change.
 TEST_P(FramebufferTest_ES3, SampleFromAttachedTextureWithDifferentLODAndFBOSwitch)
 {
-    // TODO: https://anglebug.com/5760
+    // TODO: https://anglebug.com/42264297
     ANGLE_SKIP_TEST_IF(IsD3D());
 
     constexpr GLuint kLevel0Size = 4;
@@ -6075,7 +6075,7 @@ void main()
 // Tests blits between draw and read surfaces with different pre-rotation values.
 TEST_P(FramebufferTest_ES3, BlitWithDifferentPreRotations)
 {
-    // TODO(anglebug.com/7594): Untriaged bot failures with non-Vulkan backends
+    // TODO(anglebug.com/42266059): Untriaged bot failures with non-Vulkan backends
     ANGLE_SKIP_TEST_IF(!IsVulkan());
 
     EGLWindow *window = getEGLWindow();

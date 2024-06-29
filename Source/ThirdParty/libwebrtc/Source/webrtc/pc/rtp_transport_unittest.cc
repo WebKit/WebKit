@@ -301,6 +301,29 @@ TEST(RtpTransportTest, SignalHandledRtpPayloadType) {
   transport.UnregisterRtpDemuxerSink(&observer);
 }
 
+TEST(RtpTransportTest, ReceivedPacketEcnMarkingPropagatedToDemuxedPacket) {
+  RtpTransport transport(kMuxDisabled);
+  // Setup FakePacketTransport to send packets to itself.
+  rtc::FakePacketTransport fake_rtp("fake_rtp");
+  fake_rtp.SetDestination(&fake_rtp, true);
+  transport.SetRtpPacketTransport(&fake_rtp);
+  TransportObserver observer(&transport);
+  RtpDemuxerCriteria demuxer_criteria;
+  // Add a payload type of kRtpData.
+  demuxer_criteria.payload_types().insert(0x11);
+  transport.RegisterRtpDemuxerSink(demuxer_criteria, &observer);
+
+  rtc::PacketOptions options;
+  options.ecn_1 = true;
+  const int flags = 0;
+  rtc::Buffer rtp_data(kRtpData, kRtpLen);
+  fake_rtp.SendPacket(rtp_data.data<char>(), kRtpLen, options, flags);
+  ASSERT_EQ(observer.rtp_count(), 1);
+  EXPECT_EQ(observer.last_recv_rtp_packet().ecn(), rtc::EcnMarking::kEct1);
+
+  transport.UnregisterRtpDemuxerSink(&observer);
+}
+
 // Test that SignalPacketReceived does not fire when a RTP packet with an
 // unhandled payload type is received.
 TEST(RtpTransportTest, DontSignalUnhandledRtpPayloadType) {
@@ -347,6 +370,30 @@ TEST(RtpTransportTest, RecursiveSetSendDoesNotCrash) {
   // After the wait, the ready-to-send false is observed.
   EXPECT_EQ_WAIT(observer.ready_to_send_signal_count(), 2, kShortTimeout);
   EXPECT_FALSE(observer.ready_to_send());
+}
+
+TEST(RtpTransportTest, RecursiveOnSentPacketDoesNotCrash) {
+  const int kShortTimeout = 100;
+  test::RunLoop loop;
+  RtpTransport transport(kMuxEnabled);
+  rtc::FakePacketTransport fake_rtp("fake_rtp");
+  transport.SetRtpPacketTransport(&fake_rtp);
+  fake_rtp.SetDestination(&fake_rtp, true);
+  TransportObserver observer(&transport);
+  const rtc::PacketOptions options;
+  const int flags = 0;
+
+  fake_rtp.SetWritable(true);
+  observer.SetActionOnSentPacket([&]() {
+    rtc::CopyOnWriteBuffer rtp_data(kRtpData, kRtpLen);
+    if (observer.sent_packet_count() < 2) {
+      transport.SendRtpPacket(&rtp_data, options, flags);
+    }
+  });
+  rtc::CopyOnWriteBuffer rtp_data(kRtpData, kRtpLen);
+  transport.SendRtpPacket(&rtp_data, options, flags);
+  EXPECT_EQ(observer.sent_packet_count(), 1);
+  EXPECT_EQ_WAIT(observer.sent_packet_count(), 2, kShortTimeout);
 }
 
 }  // namespace webrtc

@@ -27,6 +27,7 @@
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] dictionary RTCRtcpParameters {
     DOMString cname;
     boolean reducedSize;

@@ -240,17 +240,9 @@ public:
         return adoptRef(*new ImageDecoderAVFObjCSample(WTFMove(sampleBuffer)));
     }
 
-    CGImageRef image() const { return m_image.get(); }
-    void setImage(RetainPtr<CGImageRef>&& image)
+    void setAlpha(bool hasAlpha)
     {
-        m_image = WTFMove(image);
-        if (!m_image) {
-            m_hasAlpha = false;
-            return;
-        }
-
-        auto alphaInfo = CGImageGetAlphaInfo(m_image.get());
-        m_hasAlpha = alphaInfo != kCGImageAlphaNone && alphaInfo != kCGImageAlphaNoneSkipLast && alphaInfo != kCGImageAlphaNoneSkipFirst;
+        m_hasAlpha = hasAlpha;
     }
 
     std::optional<ByteRange> byteRange() const final
@@ -294,14 +286,8 @@ private:
         return { { CheckedSize(byteOffset), singleSizeEntry } };
     }
 
-    RetainPtr<CGImageRef> m_image;
     bool m_hasAlpha { false };
 };
-
-static ImageDecoderAVFObjCSample* toSample(const PresentationOrderSampleMap::value_type& pair)
-{
-    return (ImageDecoderAVFObjCSample*)pair.second.ptr();
-}
 
 template <typename Iterator>
 ImageDecoderAVFObjCSample* toSample(Iterator iter)
@@ -420,8 +406,18 @@ void ImageDecoderAVFObjC::readTrackMetadata()
     m_size = expandedIntSize(m_imageRotationSession->rotatedSize());
 }
 
-bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
+bool ImageDecoderAVFObjC::createFrameImageFromSampleBuffer(CMSampleBufferRef sampleBuffer, CGImageRef *imageOut)
 {
+    if (!sampleBuffer) {
+        RELEASE_LOG_ERROR(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - sampleBuffer is null", this);
+        return false;
+    }
+
+    if (!imageOut) {
+        RELEASE_LOG_ERROR(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - imageOut is null", this);
+        return false;
+    }
+
     auto pixelBuffer = m_decompressionSession->decodeSampleSync(sampleBuffer);
     if (!pixelBuffer) {
         RELEASE_LOG_ERROR(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - could not decode sampleBuffer", this);
@@ -445,18 +441,24 @@ bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
         setOwnershipIdentityForCVPixelBuffer(pixelBuffer.get(), m_resourceOwner);
     }
 
-    CGImageRef rawImage = nullptr;
-    if (noErr != VTCreateCGImageFromCVPixelBuffer(pixelBuffer.get(), nullptr, &rawImage)) {
+    if (noErr != VTCreateCGImageFromCVPixelBuffer(pixelBuffer.get(), nullptr, imageOut)) {
         RELEASE_LOG_ERROR(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - could not create CGImage from pixelBuffer", this);
         return false;
     }
+
+    auto alphaFromFrameImage = [](CGImageRef image) -> bool {
+        if (!image)
+            return false;
+        auto alphaInfo = CGImageGetAlphaInfo(image);
+        return alphaInfo != kCGImageAlphaNone && alphaInfo != kCGImageAlphaNoneSkipLast && alphaInfo != kCGImageAlphaNoneSkipFirst;
+    };
 
     // FIXME(rdar://115887662): The pixel buffer being passed to the VTCreateCGImageFromCVPixelBuffer may
     // not be the pixel buffer that will be used. It is unclear if the request to
     // obtain RGBA IOSurface-backed CVPixelBuffer from the decoding session is enough
     // to ensure the pixel buffer is not replaced in VTCreateCGImageFromCVPixelBuffer.
 
-    toSample(iter)->setImage(adoptCF(rawImage));
+    toSample(iter)->setAlpha(alphaFromFrameImage(*imageOut));
 
     return true;
 }
@@ -590,9 +592,6 @@ PlatformImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, Subs
     if (!sampleData)
         return nullptr;
 
-    if (auto image = sampleData->image())
-        return image;
-
     if (m_cursor == m_sampleData.decodeOrder().end())
         m_cursor = m_sampleData.decodeOrder().begin();
 
@@ -607,7 +606,9 @@ PlatformImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, Subs
         } while (--m_cursor != m_sampleData.decodeOrder().begin());
     }
 
-    while (true) {
+    CGImageRef image = nullptr;
+
+    for (bool succeeded = true; succeeded && !image; advanceCursor()) {
         if (decodeTime < m_cursor->second->decodeTime())
             return nullptr;
 
@@ -645,19 +646,10 @@ PlatformImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, Subs
         }
 
         auto cursorSampleBuffer = cursorSample->sampleBuffer();
-        if (!cursorSampleBuffer)
-            break;
-
-        if (!storeSampleBuffer(cursorSampleBuffer))
-            break;
-
-        advanceCursor();
-        if (auto image = sampleData->image())
-            return image;
+        succeeded = createFrameImageFromSampleBuffer(cursorSampleBuffer, &image);
     }
 
-    advanceCursor();
-    return nullptr;
+    return adoptCF(image);
 }
 
 void ImageDecoderAVFObjC::setExpectedContentSize(long long expectedContentSize)
@@ -680,16 +672,6 @@ void ImageDecoderAVFObjC::setData(const FragmentedSharedBuffer& data, bool allDa
 
         readTrackMetadata();
         readSamples();
-    }
-}
-
-void ImageDecoderAVFObjC::clearFrameBufferCache(size_t index)
-{
-    size_t i = 0;
-    for (auto& samplePair : m_sampleData.presentationOrder()) {
-        toSample(samplePair)->setImage(nullptr);
-        if (++i > index)
-            break;
     }
 }
 

@@ -37,7 +37,7 @@ layer at (0,0) size 800x600
             [SourceGraphic]
       RenderSVGContainer {g} at (150,97) size 617x87 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
         RenderSVGText {text} at (90,8) size 371x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 371x21
+          RenderSVGInlineText {#text} at (0,0) size 371x20
             chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 46 width 370.06: "Various values for surfaceScale: 1, 10 and -10"
         RenderSVGImage {image} at (150,133) size 84x51
           [filter="surfaceScaleA"] RenderSVGResourceFilter {filter} at (90,30) size 50x30
@@ -47,7 +47,7 @@ layer at (0,0) size 800x600
           [filter="surfaceScaleC"] RenderSVGResourceFilter {filter} at (230,30) size 50x30
       RenderSVGContainer {g} at (150,214) size 623x86 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
         RenderSVGText {text} at (90,8) size 374x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 374x21
+          RenderSVGInlineText {#text} at (0,0) size 374x20
             chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 47 width 373.34: "Various values for diffuseConstants: 0, 1 and 2"
         RenderSVGImage {image} at (150,250) size 84x50
           [filter="diffuseConstantA"] RenderSVGResourceFilter {filter} at (90,30) size 50x30
@@ -57,7 +57,7 @@ layer at (0,0) size 800x600
           [filter="diffuseConstantC"] RenderSVGResourceFilter {filter} at (230,30) size 50x30
       RenderSVGContainer {g} at (150,331) size 650x86 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,190.00)}]
         RenderSVGText {text} at (90,8) size 423x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 423x21
+          RenderSVGInlineText {#text} at (0,0) size 423x20
             chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 55 width 422.86: "Various values for lighting color: red, yellow and blue"
         RenderSVGImage {image} at (150,366) size 84x51
           [filter="lightingColorA"] RenderSVGResourceFilter {filter} at (90,30) size 50x30

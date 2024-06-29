@@ -54,7 +54,7 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
     for (auto& child : childrenOfType<RenderObject>(*m_table)) {
         if (CheckedPtr column = dynamicDowncast<RenderTableCol>(child)) {
             // RenderTableCols don't have the concept of preferred logical width, but we need to clear their dirty bits
-            // so that if we call setPreferredWidthsDirty(true) on a col or one of its descendants, we'll mark it's
+            // so that if we call setPreferredWidthsDirty(true) on a col or one of its descendants, we'll mark its
             // ancestors as dirty.
             column->clearPreferredLogicalWidthsDirtyBits();
         } else if (CheckedPtr section = dynamicDowncast<RenderTableSection>(child)) {
@@ -181,6 +181,12 @@ void AutoTableLayout::fullRecalc()
 
     for (unsigned i = 0; i < nEffCols; i++)
         recalcColumn(i);
+
+    for (auto& section : childrenOfType<RenderTableSection>(*m_table)) {
+        section.setPreferredLogicalWidthsDirty(false);
+        for (auto* row = section.firstRow(); row; row = row->nextRow())
+            row->setPreferredLogicalWidthsDirty(false);
+    }
 }
 
 static bool shouldScaleColumnsForParent(const RenderTable& table)
@@ -282,7 +288,7 @@ void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, Layout
 void AutoTableLayout::applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
 {
     if (auto tableLogicalWidth = m_table->style().logicalWidth(); tableLogicalWidth.isFixed() && tableLogicalWidth.isPositive()) {
-        minWidth = std::max(minWidth, m_table->hasOverridingLogicalWidth() ? m_table->overridingLogicalWidth() : LayoutUnit(tableLogicalWidth.value()));
+        minWidth = std::max(minWidth, m_table->overridingLogicalWidth().value_or(LayoutUnit { tableLogicalWidth.value() }));
         maxWidth = minWidth;
     }
 }
@@ -674,6 +680,16 @@ void AutoTableLayout::layout()
             available -= cellLogicalWidth;
             total--;
             m_layoutStruct[i].computedLogicalWidth += cellLogicalWidth;
+        }
+    }
+
+    if (available > 0 && numAutoEmptyCellsOnly && nEffCols == numAutoEmptyCellsOnly) {
+        // All columns in this table are empty with 'width: auto'.
+        auto equalWidthForColumns = available / numAutoEmptyCellsOnly;
+        for (size_t i = 0; i < nEffCols; ++i) {
+            auto& column = m_layoutStruct[i];
+            column.computedLogicalWidth = equalWidthForColumns;
+            available -= column.computedLogicalWidth;
         }
     }
 

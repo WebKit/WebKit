@@ -1,5 +1,9 @@
 load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
 
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
 licenses(["notice"])
 
 exports_files_legacy()
@@ -19,6 +23,7 @@ skia_filegroup(
         "SkSVGFe.h",
         "SkSVGFeBlend.h",
         "SkSVGFeColorMatrix.h",
+        "SkSVGFeComponentTransfer.h",
         "SkSVGFeComposite.h",
         "SkSVGFeDisplacementMap.h",
         "SkSVGFeFlood.h",
@@ -26,6 +31,7 @@ skia_filegroup(
         "SkSVGFeImage.h",
         "SkSVGFeLightSource.h",
         "SkSVGFeLighting.h",
+        "SkSVGFeMerge.h",
         "SkSVGFeMorphology.h",
         "SkSVGFeOffset.h",
         "SkSVGFeTurbulence.h",

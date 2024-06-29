@@ -135,6 +135,17 @@ public:
     id<MTLTexture> placeholderTexture(WGPUTextureFormat) const;
     bool isDestroyed() const;
     NSString *errorValidatingTextureCreation(const WGPUTextureDescriptor&, const Vector<WGPUTextureFormat>& viewFormats);
+    id<MTLBuffer> dispatchCallBuffer();
+    id<MTLComputePipelineState> dispatchCallPipelineState(id<MTLFunction>);
+    id<MTLRenderPipelineState> indexBufferClampPipeline(MTLIndexType, NSUInteger rasterSampleCount);
+    id<MTLRenderPipelineState> indexedIndirectBufferClampPipeline(NSUInteger rasterSampleCount);
+    id<MTLRenderPipelineState> indirectBufferClampPipeline(NSUInteger rasterSampleCount);
+    id<MTLRenderPipelineState> icbCommandClampPipeline(MTLIndexType, NSUInteger rasterSampleCount);
+    id<MTLFunction> icbCommandClampFunction(MTLIndexType);
+    id<MTLRenderPipelineState> copyIndexIndirectArgsPipeline(NSUInteger rasterSampleCount);
+    id<MTLBuffer> safeCreateBuffer(NSUInteger length, MTLStorageMode, MTLCPUCacheMode = MTLCPUCacheModeDefaultCache, MTLHazardTrackingMode = MTLHazardTrackingModeDefault) const;
+    void loseTheDevice(WGPUDeviceLostReason);
+    int bufferIndexForICBContainer() const;
 
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&&, Adapter&);
@@ -143,7 +154,6 @@ private:
     struct ErrorScope;
     ErrorScope* currentErrorScope(WGPUErrorFilter);
     std::optional<WGPUErrorType> validatePopErrorScope() const;
-    id<MTLBuffer> safeCreateBuffer(NSUInteger length, MTLStorageMode, MTLCPUCacheMode = MTLCPUCacheModeDefaultCache, MTLHazardTrackingMode = MTLHazardTrackingModeDefault) const;
     bool validateCreateIOSurfaceBackedTexture(const WGPUTextureDescriptor&, const Vector<WGPUTextureFormat>& viewFormats, IOSurfaceRef backing);
 
     bool validateRenderPipeline(const WGPURenderPipelineDescriptor&);
@@ -152,7 +162,6 @@ private:
     NSString* addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>&, const std::optional<WGSL::PipelineLayout>&);
     Ref<PipelineLayout> generatePipelineLayout(const Vector<Vector<WGPUBindGroupLayoutEntry>> &bindGroupEntries);
 
-    void loseTheDevice(WGPUDeviceLostReason);
     void captureFrameIfNeeded() const;
     struct ExternalTextureData {
         id<MTLTexture> texture0 { nil };
@@ -188,6 +197,27 @@ private:
     id<MTLBuffer> m_placeholderBuffer { nil };
     id<MTLTexture> m_placeholderTexture { nil };
     id<MTLTexture> m_placeholderDepthStencilTexture { nil };
+    id<MTLBuffer> m_dispatchCallBuffer { nil };
+    id<MTLComputePipelineState> m_dispatchCallPipelineState { nil };
+
+    id<MTLRenderPipelineState> m_indexBufferClampUintPSO { nil };
+    id<MTLRenderPipelineState> m_indexBufferClampUshortPSO { nil };
+    id<MTLRenderPipelineState> m_indexBufferClampUintPSOMS { nil };
+    id<MTLRenderPipelineState> m_indexBufferClampUshortPSOMS { nil };
+
+    id<MTLRenderPipelineState> m_indexedIndirectBufferClampPSO { nil };
+    id<MTLRenderPipelineState> m_indexedIndirectBufferClampPSOMS { nil };
+
+    id<MTLRenderPipelineState> m_indirectBufferClampPSO { nil };
+    id<MTLRenderPipelineState> m_indirectBufferClampPSOMS { nil };
+
+    id<MTLRenderPipelineState> m_icbCommandClampUintPSO { nil };
+    id<MTLRenderPipelineState> m_icbCommandClampUshortPSO { nil };
+    id<MTLRenderPipelineState> m_icbCommandClampUintPSOMS { nil };
+    id<MTLRenderPipelineState> m_icbCommandClampUshortPSOMS { nil };
+
+    id<MTLRenderPipelineState> m_copyIndexedIndirectArgsPSO { nil };
+    id<MTLRenderPipelineState> m_copyIndexedIndirectArgsPSOMS { nil };
 
     const Ref<Adapter> m_adapter;
 #if HAVE(COREVIDEO_METAL_SUPPORT)

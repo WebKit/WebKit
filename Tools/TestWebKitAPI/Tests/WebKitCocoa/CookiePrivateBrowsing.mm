@@ -28,6 +28,7 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKProcessPool.h>
@@ -145,7 +146,7 @@ TEST(WebKit, CookieCachePruning)
     auto view = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     for (unsigned i = 0; i < 100; ++i) {
-        [view synchronouslyLoadHTMLString:@"foo" baseURL:[NSURL URLWithString:makeString("http://foo", i, ".example.com/")]];
+        [view synchronouslyLoadHTMLString:@"foo" baseURL:[NSURL URLWithString:makeString("http://foo"_s, i, ".example.com/"_s)]];
 
         __block bool doneEvaluatingJavaScript = false;
         [view evaluateJavaScript:@"document.cookie;" completionHandler:^(id _Nullable cookie, NSError * _Nullable error) {

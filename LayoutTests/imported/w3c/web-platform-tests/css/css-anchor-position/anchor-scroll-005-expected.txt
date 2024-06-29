@@ -1,0 +1,3 @@
+
+FAIL Target should not scroll with viewport when anchor is in fixed-positioned scroller assert_equals: expected 100 but got 500
+

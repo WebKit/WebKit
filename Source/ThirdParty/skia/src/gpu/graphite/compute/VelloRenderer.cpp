@@ -241,28 +241,20 @@ void VelloScene::popClipLayer() {
     SkDEBUGCODE(fLayers--;)
 }
 
-VelloRenderer::VelloRenderer(const Caps* caps)
-        // We currently use the fine stage to rasterize a coverage mask. For full compositing, we
-        // should instantiate a second variant of fine with a different color format.
-        //
-        // Currently fine has only one variant: on Metal this variant can operate on any floating
-        // point format (so we set it to R8) but on Dawn it must use RGBA8unorm.
-        : fFineArea(ComputeShaderCoverageMaskTargetFormat(caps))
-        , fFineMsaa16(ComputeShaderCoverageMaskTargetFormat(caps)) {
-    fGradientImage = TextureProxy::Make(caps,
-                                        {1, 1},
-                                        kRGBA_8888_SkColorType,
-                                        skgpu::Mipmapped::kNo,
-                                        skgpu::Protected::kNo,
-                                        skgpu::Renderable::kNo,
-                                        skgpu::Budgeted::kYes);
-    fImageAtlas = TextureProxy::Make(caps,
-                                     {1, 1},
-                                     kRGBA_8888_SkColorType,
-                                     skgpu::Mipmapped::kNo,
-                                     skgpu::Protected::kNo,
-                                     skgpu::Renderable::kNo,
-                                     skgpu::Budgeted::kYes);
+void VelloScene::append(const VelloScene& other) {
+    fEncoding->append(*other.fEncoding);
+}
+
+VelloRenderer::VelloRenderer(const Caps* caps) {
+    if (ComputeShaderCoverageMaskTargetFormat(caps) == kAlpha_8_SkColorType) {
+        fFineArea = std::make_unique<VelloFineAreaAlpha8Step>();
+        fFineMsaa16 = std::make_unique<VelloFineMsaa16Alpha8Step>();
+        fFineMsaa8 = std::make_unique<VelloFineMsaa8Alpha8Step>();
+    } else {
+        fFineArea = std::make_unique<VelloFineAreaStep>();
+        fFineMsaa16 = std::make_unique<VelloFineMsaa16Step>();
+        fFineMsaa8 = std::make_unique<VelloFineMsaa8Step>();
+    }
 }
 
 VelloRenderer::~VelloRenderer() = default;
@@ -282,7 +274,7 @@ std::unique_ptr<DispatchGroup> VelloRenderer::renderScene(const RenderParams& pa
         return nullptr;
     }
 
-    // TODO: validate that the pixel format is kRGBA_8888_SkColorType.
+    // TODO: validate that the pixel format matches the pipeline layout.
     // Clamp the draw region to the target texture dimensions.
     const SkISize dims = target->dimensions();
     if (dims.isEmpty() || dims.fWidth < 0 || dims.fHeight < 0) {
@@ -307,13 +299,13 @@ std::unique_ptr<DispatchGroup> VelloRenderer::renderScene(const RenderParams& pa
 
     size_t uboSize = config->config_uniform_buffer_size();
     auto [uboPtr, configBuf] = bufMgr->getUniformPointer(uboSize);
-    if (!config->write_config_uniform_buffer(to_slice(uboPtr, uboSize))) {
+    if (!uboPtr || !config->write_config_uniform_buffer(to_slice(uboPtr, uboSize))) {
         return nullptr;
     }
 
     size_t sceneSize = config->scene_buffer_size();
     auto [scenePtr, sceneBuf] = bufMgr->getStoragePointer(sceneSize);
-    if (!config->write_scene_buffer(to_slice(scenePtr, sceneSize))) {
+    if (!scenePtr || !config->write_scene_buffer(to_slice(scenePtr, sceneSize))) {
         return nullptr;
     }
 
@@ -479,12 +471,20 @@ std::unique_ptr<DispatchGroup> VelloRenderer::renderScene(const RenderParams& pa
     builder.appendStepIndirect(&fPathTiling, indirectCountBuffer);
 
     // fine
-    builder.assignSharedTexture(fImageAtlas, kVelloSlot_ImageAtlas);
-    builder.assignSharedTexture(fGradientImage, kVelloSlot_GradientImage);
     builder.assignSharedTexture(std::move(target), kVelloSlot_OutputImage);
-    const ComputeStep* fineVariant = params.fAaConfig == VelloAaConfig::kMSAA16
-                                             ? static_cast<const ComputeStep*>(&fFineMsaa16)
-                                             : static_cast<const ComputeStep*>(&fFineArea);
+    const ComputeStep* fineVariant = nullptr;
+    switch (params.fAaConfig) {
+        case VelloAaConfig::kAnalyticArea:
+            fineVariant = fFineArea.get();
+            break;
+        case VelloAaConfig::kMSAA16:
+            fineVariant = fFineMsaa16.get();
+            break;
+        case VelloAaConfig::kMSAA8:
+            fineVariant = fFineMsaa8.get();
+            break;
+    }
+    SkASSERT(fineVariant != nullptr);
     builder.appendStep(fineVariant, to_wg_size(dispatchInfo.fine));
 
     return builder.finalize();

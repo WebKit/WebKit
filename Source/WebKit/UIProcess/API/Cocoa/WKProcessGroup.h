@@ -26,23 +26,8 @@
 #import <WebKit/WKFoundation.h>
 
 #import <Foundation/Foundation.h>
-#import <WebKit/WKConnection.h>
 
 @class WKProcessGroup;
-
-@protocol WKProcessGroupDelegate <NSObject>
-@optional
-
-- (id)processGroupWillCreateConnectionToWebProcessPlugIn:(WKProcessGroup *)processGroup;
-
-@required
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-- (void)processGroup:(WKProcessGroup *)processGroup didCreateConnectionToWebProcessPlugIn:(WKConnection *)connection;
-#pragma clang diagnostic pop
-
-@end
 
 WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKProcessPool", macos(10.10, 10.14.4), ios(8.0, 12.2))
 @interface WKProcessGroup : NSObject
@@ -51,7 +36,5 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKProcessPool", macos(10.10, 10.14.4), ios
 - (id)initWithInjectedBundleURL:(NSURL *)bundleURL andCustomClassesForParameterCoder:(NSSet *)classesForCoder;
 
 #pragma mark Delegates
-
-@property (nonatomic, weak) id <WKProcessGroupDelegate> delegate;
 
 @end

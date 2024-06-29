@@ -79,7 +79,7 @@ SIMD_INLINE v128 v128_align(v128 a, v128 b, const unsigned int c) {
 #endif
 #endif
 
-SIMD_INLINE v128 v128_zero() { return _mm_setzero_si128(); }
+SIMD_INLINE v128 v128_zero(void) { return _mm_setzero_si128(); }
 
 SIMD_INLINE v128 v128_dup_8(uint8_t x) { return _mm_set1_epi8((char)x); }
 
@@ -345,7 +345,9 @@ SIMD_INLINE uint64_t v128_hadd_u8(v128 a) {
 
 typedef v128 sad128_internal;
 
-SIMD_INLINE sad128_internal v128_sad_u8_init() { return _mm_setzero_si128(); }
+SIMD_INLINE sad128_internal v128_sad_u8_init(void) {
+  return _mm_setzero_si128();
+}
 
 /* Implementation dependent return value.  Result must be finalised with
    v128_sad_sum().
@@ -360,7 +362,7 @@ SIMD_INLINE uint32_t v128_sad_u8_sum(sad128_internal s) {
 
 typedef int32_t ssd128_internal;
 
-SIMD_INLINE ssd128_internal v128_ssd_u8_init() { return 0; }
+SIMD_INLINE ssd128_internal v128_ssd_u8_init(void) { return 0; }
 
 /* Implementation dependent return value.  Result must be finalised with
  * v128_ssd_sum(). */
@@ -612,7 +614,7 @@ SIMD_INLINE v128 v128_shr_s64(v128 a, unsigned int c) {
 
 typedef v128 sad128_internal_u16;
 
-SIMD_INLINE sad128_internal_u16 v128_sad_u16_init() { return v128_zero(); }
+SIMD_INLINE sad128_internal_u16 v128_sad_u16_init(void) { return v128_zero(); }
 
 /* Implementation dependent return value.  Result must be finalised with
  * v128_sad_u16_sum(). */
@@ -638,7 +640,7 @@ SIMD_INLINE uint32_t v128_sad_u16_sum(sad128_internal_u16 s) {
 
 typedef v128 ssd128_internal_s16;
 
-SIMD_INLINE ssd128_internal_s16 v128_ssd_s16_init() { return v128_zero(); }
+SIMD_INLINE ssd128_internal_s16 v128_ssd_s16_init(void) { return v128_zero(); }
 
 /* Implementation dependent return value.  Result must be finalised with
  * v128_ssd_s16_sum(). */

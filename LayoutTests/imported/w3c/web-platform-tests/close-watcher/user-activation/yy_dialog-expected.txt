@@ -1,0 +1,3 @@
+
+FAIL Create two close watchers with user activation assert_array_equals: lengths differ, expected array ["watcher2 cancel[cancelable=true]", "watcher2 close"] length 2, got ["watcher2 cancel[cancelable=true]"] length 1
+

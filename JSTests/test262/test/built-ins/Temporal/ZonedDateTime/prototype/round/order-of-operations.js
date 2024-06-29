@@ -48,7 +48,7 @@ const instance = new Temporal.ZonedDateTime(
   calendar,
 );
 
-const fallBackTimeZone = TemporalHelpers.oneShiftTimeZone(Temporal.Instant.fromEpochSeconds(1800), -3600_000_000_000);
+const fallBackTimeZone = TemporalHelpers.oneShiftTimeZone(Temporal.Instant.fromEpochMilliseconds(1800_000), -3600_000_000_000);
 const fallBackTimeZoneObserver = TemporalHelpers.timeZoneObserver(actual, "this.timeZone", {
   getOffsetNanosecondsFor: fallBackTimeZone.getOffsetNanosecondsFor.bind(fallBackTimeZone),
   getPossibleInstantsFor: fallBackTimeZone.getPossibleInstantsFor.bind(fallBackTimeZone),
@@ -56,7 +56,7 @@ const fallBackTimeZoneObserver = TemporalHelpers.timeZoneObserver(actual, "this.
 const fallBackInstance = new Temporal.ZonedDateTime(0n, fallBackTimeZoneObserver, calendar);
 const beforeFallBackInstance = new Temporal.ZonedDateTime(-3599_000_000_000n, fallBackTimeZoneObserver, calendar);
 
-const springForwardTimeZone = TemporalHelpers.oneShiftTimeZone(Temporal.Instant.fromEpochSeconds(-1800), 3600_000_000_000);
+const springForwardTimeZone = TemporalHelpers.oneShiftTimeZone(Temporal.Instant.fromEpochMilliseconds(-1800_000), 3600_000_000_000);
 const springForwardTimeZoneObserver = TemporalHelpers.timeZoneObserver(actual, "this.timeZone", {
   getOffsetNanosecondsFor: springForwardTimeZone.getOffsetNanosecondsFor.bind(springForwardTimeZone),
   getPossibleInstantsFor: springForwardTimeZone.getPossibleInstantsFor.bind(springForwardTimeZone),

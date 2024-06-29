@@ -1,0 +1,10 @@
+
+FAIL --pf  assert_equals: offsetLeft expected 45 but got 99999
+FAIL --pf flip-block assert_equals: offsetLeft expected 45 but got 99999
+FAIL --pf flip-inline assert_equals: offsetLeft expected 325 but got 99999
+FAIL --pf flip-block flip-inline assert_equals: offsetLeft expected 325 but got 99999
+FAIL --pf flip-start assert_equals: offsetLeft expected 25 but got 99999
+FAIL --pf flip-block flip-start assert_equals: offsetLeft expected 335 but got 99999
+FAIL --pf flip-inline flip-start assert_equals: offsetLeft expected 25 but got 99999
+FAIL --pf flip-block flip-inline flip-start assert_equals: offsetLeft expected 335 but got 99999
+

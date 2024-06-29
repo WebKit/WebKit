@@ -28,5 +28,9 @@ specific_include_rules = {
   ],
   "call_perf_tests\.cc": [
     "+media/engine",
+  ],
+  "simulated_network\.h": [
+    "+test/network/simulated_network.h",
   ]
+
 }

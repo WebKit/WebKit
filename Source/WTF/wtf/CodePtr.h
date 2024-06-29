@@ -91,6 +91,13 @@ public:
         : m_value(encodeFunc(ptr))
     { }
 
+#if OS(WINDOWS)
+    template<typename Out, typename... In>
+    constexpr CodePtr(Out(SYSV_ABI *ptr)(In...))
+        : m_value(encodeFunc(ptr))
+    { }
+#endif
+
 // MSVC doesn't seem to treat functions with different calling conventions as
 // different types; these methods already defined for fastcall, below.
 #if CALLING_CONVENTION_IS_STDCALL && !OS(WINDOWS)

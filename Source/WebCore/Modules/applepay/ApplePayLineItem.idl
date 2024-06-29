@@ -41,6 +41,7 @@
     Conditional=APPLE_PAY,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] dictionary ApplePayLineItem {
     ApplePayLineItemType type = "final";
     DOMString label;

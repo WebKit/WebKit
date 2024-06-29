@@ -178,12 +178,12 @@ JSValue RegExpObject::matchGlobal(JSGlobalObject* globalObject, JSString* string
     setLastIndex(globalObject, 0);
     RETURN_IF_EXCEPTION(scope, { });
 
-    String s = string->value(globalObject);
+    auto s = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    ASSERT(!s.isNull());
+    ASSERT(!s->isNull());
     if (regExp->eitherUnicode()) {
-        unsigned stringLength = s.length();
+        unsigned stringLength = s->length();
         RELEASE_AND_RETURN(scope, collectMatches(
             vm, globalObject, string, s, regExp,
             [&](size_t end) ALWAYS_INLINE_LAMBDA {

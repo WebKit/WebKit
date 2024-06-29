@@ -46,10 +46,11 @@ JSValue JSRTCRtpSFrameTransform::setEncryptionKey(JSGlobalObject& lexicalGlobalO
     }
 
     EnsureStillAliveScope argument0 = callFrame.uncheckedArgument(0);
-    auto key = convert<IDLInterface<CryptoKey>>(lexicalGlobalObject, argument0.value(), [](auto& lexicalGlobalObject, auto& scope) {
-        throwArgumentTypeError(lexicalGlobalObject, scope, 0, "key", "SFrameTransform", "setEncryptionKey", "CryptoKey");
+    auto keyConversionResult = convert<IDLInterface<CryptoKey>>(lexicalGlobalObject, argument0.value(), [](auto& lexicalGlobalObject, auto& scope) {
+        throwArgumentTypeError(lexicalGlobalObject, scope, 0, "key"_s, "SFrameTransform"_s, "setEncryptionKey"_s, "CryptoKey"_s);
     });
-    RETURN_IF_EXCEPTION(throwScope, jsUndefined());
+    if (UNLIKELY(keyConversionResult.hasException(throwScope)))
+        return jsUndefined();
 
     EnsureStillAliveScope argument1 = callFrame.argument(1);
     std::optional<uint64_t> keyID;
@@ -60,13 +61,17 @@ JSValue JSRTCRtpSFrameTransform::setEncryptionKey(JSGlobalObject& lexicalGlobalO
                 return jsUndefined();
             }
             keyID = JSBigInt::toBigUInt64(argument1.value());
-        } else
-            keyID = std::optional<Converter<IDLUnsignedLongLong>::ReturnType>(convert<IDLUnsignedLongLong>(lexicalGlobalObject, argument1.value()));
+        } else {
+            auto keyIDConversionResult = convert<IDLUnsignedLongLong>(lexicalGlobalObject, argument1.value());
+            if (UNLIKELY(keyIDConversionResult.hasException(throwScope)))
+                return jsUndefined();
+            keyID = keyIDConversionResult.releaseReturnValue();
+        }
     }
     RETURN_IF_EXCEPTION(throwScope, jsUndefined());
     throwScope.release();
 
-    wrapped().setEncryptionKey(*key, keyID, WTFMove(promise));
+    wrapped().setEncryptionKey(*keyConversionResult.releaseReturnValue(), keyID, WTFMove(promise));
     return jsUndefined();
 }
 

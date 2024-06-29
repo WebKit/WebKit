@@ -90,14 +90,14 @@ public:
     void setFromValue(const WebCore::TransformationMatrix&) override;
     void setFromValue(const WebCore::FloatPoint3D&) override;
     void setFromValue(const WebCore::Color&) override;
-    void setFromValue(const WebCore::FilterOperation*) override;
+    void setFromValue(const WebCore::FilterOperation&) override;
     void copyFromValueFrom(const WebCore::PlatformCAAnimation&) override;
 
     void setToValue(float) override;
     void setToValue(const WebCore::TransformationMatrix&) override;
     void setToValue(const WebCore::FloatPoint3D&) override;
     void setToValue(const WebCore::Color&) override;
-    void setToValue(const WebCore::FilterOperation*) override;
+    void setToValue(const WebCore::FilterOperation&) override;
     void copyToValueFrom(const WebCore::PlatformCAAnimation&) override;
 
     // Keyframe-animation properties.
@@ -105,7 +105,7 @@ public:
     void setValues(const Vector<WebCore::TransformationMatrix>&) override;
     void setValues(const Vector<WebCore::FloatPoint3D>&) override;
     void setValues(const Vector<WebCore::Color>&) override;
-    void setValues(const Vector<RefPtr<WebCore::FilterOperation>>&) override;
+    void setValues(const Vector<Ref<WebCore::FilterOperation>>&) override;
     void copyValuesFrom(const WebCore::PlatformCAAnimation&) override;
 
     void setKeyTimes(const Vector<float>&) override;

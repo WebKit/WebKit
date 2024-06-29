@@ -26,10 +26,13 @@
 #pragma once
 
 #include "Connection.h"
-#include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteVideoFrameObjectHeapProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WorkerClient.h>
+
+namespace WebCore {
+class Page;
+}
 
 namespace WebCore::WebGPU {
 class GPU;
@@ -38,57 +41,36 @@ class GPU;
 namespace WebKit {
 
 class WebPage;
-class RemoteRenderingBackendProxy;
 
 class WebWorkerClient : public WebCore::WorkerClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    ~WebWorkerClient();
     // Constructed on the main thread, and then transferred to the
     // worker thread. All further operations on this object will
     // happen on the worker.
     // Any details needed from the page must be copied at this
     // point, but can't hold references to any main-thread objects.
-    static UniqueRef<WebWorkerClient> create(WebPage&, SerialFunctionDispatcher&);
+    static UniqueRef<WebWorkerClient> create(WebCore::Page&, SerialFunctionDispatcher&);
 
-    UniqueRef<WorkerClient> createNestedWorkerClient(SerialFunctionDispatcher&) final;
+    UniqueRef<WorkerClient> createNestedWorkerClient(SerialFunctionDispatcher&) override;
 
     WebCore::PlatformDisplayID displayID() const final;
 
-    RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) final;
-    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, OptionSet<WebCore::ImageBufferOptions>) const final;
+    RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) override;
+    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferPixelFormat, OptionSet<WebCore::ImageBufferOptions>) const override;
 #if ENABLE(WEBGL)
-    RefPtr<WebCore::GraphicsContextGL> createGraphicsContextGL(const WebCore::GraphicsContextGLAttributes&) const final;
+    RefPtr<WebCore::GraphicsContextGL> createGraphicsContextGL(const WebCore::GraphicsContextGLAttributes&) const override;
 #endif
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
-    RefPtr<WebCore::WebGPU::GPU> createGPUForWebGPU() const final;
+    RefPtr<WebCore::WebGPU::GPU> createGPUForWebGPU() const override;
 #endif
 
-private:
-    WebWorkerClient(SerialFunctionDispatcher&, WebCore::PlatformDisplayID
-#if ENABLE(GPU_PROCESS)
-        , Ref<IPC::Connection>, WebPageProxyIdentifier, WebCore::PageIdentifier
-#if ENABLE(VIDEO)
-        , Ref<RemoteVideoFrameObjectHeapProxy>
-#endif
-#endif
-        ); //  NOLINT
-
-#if ENABLE(GPU_PROCESS)
-    RemoteRenderingBackendProxy& ensureRenderingBackend() const;
-#endif
-
+protected:
+    WebWorkerClient(SerialFunctionDispatcher&, WebCore::PlatformDisplayID);
     SerialFunctionDispatcher& m_dispatcher;
     const WebCore::PlatformDisplayID m_displayID;
-#if ENABLE(GPU_PROCESS)
-    Ref<IPC::Connection> m_connection;
-    mutable std::unique_ptr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
-    const WebPageProxyIdentifier m_pageProxyID;
-    const WebCore::PageIdentifier m_pageID;
-#if ENABLE(VIDEO)
-    Ref<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
-#endif
-#endif
 };
 
 } // namespace WebKit

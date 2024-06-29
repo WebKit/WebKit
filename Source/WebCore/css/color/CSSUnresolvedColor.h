@@ -25,8 +25,13 @@
 
 #pragma once
 
+#include "CSSColorDescriptors.h"
+#include "CSSUnresolvedAbsoluteColor.h"
+#include "CSSUnresolvedColorHex.h"
+#include "CSSUnresolvedColorKeyword.h"
 #include "CSSUnresolvedColorMix.h"
 #include "CSSUnresolvedLightDark.h"
+#include "CSSUnresolvedRelativeColor.h"
 #include <variant>
 #include <wtf/Forward.h>
 
@@ -39,12 +44,16 @@ enum class ForVisitedLink : bool;
 class Document;
 class RenderStyle;
 
+struct CSSUnresolvedColorResolutionContext;
+
 class CSSUnresolvedColor {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     template<typename T> explicit CSSUnresolvedColor(T&& value)
         : m_value { std::forward<T>(value) }
     {
     }
+
     CSSUnresolvedColor(CSSUnresolvedColor&&) = default;
     CSSUnresolvedColor& operator=(CSSUnresolvedColor&&) = default;
     ~CSSUnresolvedColor();
@@ -58,13 +67,40 @@ public:
     bool equals(const CSSUnresolvedColor&) const;
 
     StyleColor createStyleColor(const Document&, RenderStyle&, Style::ForVisitedLink) const;
+    Color createColor(const CSSUnresolvedColorResolutionContext&) const;
+
+    std::optional<CSSUnresolvedAbsoluteColor> absolute() const;
+    std::optional<CSSUnresolvedColorKeyword> keyword() const;
+    std::optional<CSSUnresolvedColorHex> hex() const;
 
 private:
-    // FIXME: Add support for unresolved relative colors.
     std::variant<
+        CSSUnresolvedAbsoluteColor,
+        CSSUnresolvedColorKeyword,
+        CSSUnresolvedColorHex,
         CSSUnresolvedColorMix,
-        CSSUnresolvedLightDark
+        CSSUnresolvedLightDark,
+        CSSUnresolvedRelativeColor<RGBFunctionModernRelative>,
+        CSSUnresolvedRelativeColor<HSLFunctionModern>,
+        CSSUnresolvedRelativeColor<HWBFunction>,
+        CSSUnresolvedRelativeColor<LabFunction>,
+        CSSUnresolvedRelativeColor<LCHFunction>,
+        CSSUnresolvedRelativeColor<OKLabFunction>,
+        CSSUnresolvedRelativeColor<OKLCHFunction>,
+        CSSUnresolvedRelativeColor<ColorRGBFunction<ExtendedA98RGB<float>>>,
+        CSSUnresolvedRelativeColor<ColorRGBFunction<ExtendedDisplayP3<float>>>,
+        CSSUnresolvedRelativeColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>,
+        CSSUnresolvedRelativeColor<ColorRGBFunction<ExtendedRec2020<float>>>,
+        CSSUnresolvedRelativeColor<ColorRGBFunction<ExtendedSRGBA<float>>>,
+        CSSUnresolvedRelativeColor<ColorRGBFunction<ExtendedLinearSRGBA<float>>>,
+        CSSUnresolvedRelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D50>>>,
+        CSSUnresolvedRelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D65>>>
     > m_value;
 };
+
+void serializationForCSS(StringBuilder&, const CSSUnresolvedColor&);
+String serializationForCSS(const CSSUnresolvedColor&);
+
+bool operator==(const UniqueRef<CSSUnresolvedColor>&, const UniqueRef<CSSUnresolvedColor>&);
 
 } // namespace WebCore

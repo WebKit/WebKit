@@ -247,12 +247,16 @@ public:
     virtual void applyConstraints(const MediaConstraints&, ApplyConstraintsHandler&&);
     std::optional<ApplyConstraintsError> applyConstraints(const MediaConstraints&);
 
-    struct VideoFrameSizeConstraints {
+    struct VideoPresetConstraints {
         std::optional<int> width;
         std::optional<int> height;
         std::optional<double> frameRate;
+        std::optional<double> zoom;
+        bool shouldPreferPowerEfficiency { false };
+
+        bool hasConstraints() const { return !!width || !!height || !!frameRate || !!zoom; }
     };
-    WEBCORE_EXPORT VideoFrameSizeConstraints extractVideoFrameSizeConstraints(const MediaConstraints&);
+    WEBCORE_EXPORT VideoPresetConstraints extractVideoPresetConstraints(const MediaConstraints&);
 
     std::optional<MediaConstraintType> hasAnyInvalidConstraint(const MediaConstraints&);
     bool supportsConstraint(MediaConstraintType);
@@ -297,6 +301,8 @@ public:
     using OwnerCallback = std::function<void(RealtimeMediaSource&, bool isNewClonedSource)>;
     void registerOwnerCallback(OwnerCallback&&);
 
+    virtual bool isPowerEfficient() const { return false; }
+
 protected:
     RealtimeMediaSource(const CaptureDevice&, MediaDeviceHashSalts&& hashSalts = { }, PageIdentifier = { });
 
@@ -315,11 +321,11 @@ protected:
 
     void applyConstraint(MediaConstraintType, const MediaConstraint&);
     void applyConstraints(const MediaTrackConstraintSetMap&);
-    VideoFrameSizeConstraints extractVideoFrameSizeConstraints(const MediaTrackConstraintSetMap&);
+    VideoPresetConstraints extractVideoPresetConstraints(const MediaTrackConstraintSetMap&);
     std::optional<MediaConstraintType> hasInvalidSizeFrameRateAndZoomConstraints(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, std::optional<DoubleConstraint>, double& fitnessDistance);
 
-    virtual bool supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>);
-    virtual void setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>);
+    virtual bool supportsSizeFrameRateAndZoom(const VideoPresetConstraints&);
+    virtual void setSizeFrameRateAndZoom(const VideoPresetConstraints&);
 
     void notifyMutedObservers();
     void notifyMutedChange(bool muted);

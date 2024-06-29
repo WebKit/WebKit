@@ -14,6 +14,7 @@
 #import "RTCVideoEncoderVP9.h"
 #import "RTCWrappedNativeVideoEncoder.h"
 
+#include "api/environment/environment_factory.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
 #include "sdk/objc/api/peerconnection/RTCVideoCodecInfo+Private.h"
 
@@ -21,7 +22,7 @@
 
 + (id<RTCVideoEncoder>)vp9Encoder:(RTCVideoCodecInfo *)codecInfo {
   return [[RTCWrappedNativeVideoEncoder alloc]
-      initWithNativeEncoder:std::unique_ptr<webrtc::VideoEncoder>(webrtc::VP9Encoder::Create(cricket::CreateVideoCodec(codecInfo.nativeSdpVideoFormat)))];
+      initWithNativeEncoder:std::unique_ptr<webrtc::VideoEncoder>(webrtc::CreateVp9Encoder(webrtc::EnvironmentFactory().Create(), { webrtc::VP9Profile::kProfile0 }))];
 }
 
 @end

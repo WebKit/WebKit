@@ -20,6 +20,7 @@
 #include "vpx_version.h"
 #include "common/alloccommon.h"
 #include "common/common.h"
+#include "common/onyxc_int.h"
 #include "common/onyxd.h"
 #include "decoder/onyxd_int.h"
 #include "vpx_dsp/vpx_dsp_common.h"
@@ -249,14 +250,14 @@ static int update_fragments(vpx_codec_alg_priv_t *ctx, const uint8_t *data,
     /* Store a pointer to this fragment and return. We haven't
      * received the complete frame yet, so we will wait with decoding.
      */
-    ctx->fragments.ptrs[ctx->fragments.count] = data;
-    ctx->fragments.sizes[ctx->fragments.count] = data_sz;
-    ctx->fragments.count++;
-    if (ctx->fragments.count > (1 << EIGHT_PARTITION) + 1) {
+    if (ctx->fragments.count >= MAX_PARTITIONS) {
       ctx->fragments.count = 0;
       *res = VPX_CODEC_INVALID_PARAM;
       return -1;
     }
+    ctx->fragments.ptrs[ctx->fragments.count] = data;
+    ctx->fragments.sizes[ctx->fragments.count] = data_sz;
+    ctx->fragments.count++;
     return 0;
   }
 
@@ -275,7 +276,7 @@ static int update_fragments(vpx_codec_alg_priv_t *ctx, const uint8_t *data,
 
 static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
                                   const uint8_t *data, unsigned int data_sz,
-                                  void *user_priv, long deadline) {
+                                  void *user_priv) {
   volatile vpx_codec_err_t res;
   volatile unsigned int resolution_change = 0;
   volatile unsigned int w, h;
@@ -487,7 +488,7 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
       if (pc->fb_idx_ref_cnt[pc->new_fb_idx] > 0) {
         pc->fb_idx_ref_cnt[pc->new_fb_idx]--;
       }
-      pc->error.setjmp = 0;
+      pbi->common.error.setjmp = 0;
 #if CONFIG_MULTITHREAD
       if (pbi->restart_threads) {
         ctx->si.w = 0;
@@ -507,7 +508,7 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
     pbi->restart_threads = 0;
 #endif
     ctx->user_priv = user_priv;
-    if (vp8dx_receive_compressed_data(pbi, deadline)) {
+    if (vp8dx_receive_compressed_data(pbi)) {
       res = update_error_state(ctx, &pbi->common.error);
     }
 
@@ -528,7 +529,6 @@ static vpx_image_t *vp8_get_frame(vpx_codec_alg_priv_t *ctx,
    */
   if (!(*iter) && ctx->yv12_frame_buffers.pbi[0]) {
     YV12_BUFFER_CONFIG sd;
-    int64_t time_stamp = 0, time_end_stamp = 0;
     vp8_ppflags_t flags;
     vp8_zero(flags);
 
@@ -538,8 +538,7 @@ static vpx_image_t *vp8_get_frame(vpx_codec_alg_priv_t *ctx,
       flags.noise_level = ctx->postproc_cfg.noise_level;
     }
 
-    if (0 == vp8dx_get_raw_frame(ctx->yv12_frame_buffers.pbi[0], &sd,
-                                 &time_stamp, &time_end_stamp, &flags)) {
+    if (0 == vp8dx_get_raw_frame(ctx->yv12_frame_buffers.pbi[0], &sd, &flags)) {
       yuvconfig2image(&ctx->img, &sd, ctx->user_priv);
 
       img = &ctx->img;

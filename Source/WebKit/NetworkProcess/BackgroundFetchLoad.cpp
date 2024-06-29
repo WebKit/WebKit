@@ -54,7 +54,7 @@ BackgroundFetchLoad::BackgroundFetchLoad(NetworkProcess& networkProcess, PAL::Se
     }
 
     if (responseDataSize)
-        m_request.setHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes=", responseDataSize, '-'));
+        m_request.setHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, responseDataSize, '-'));
 
     m_networkLoadChecker->enableContentExtensionsCheck();
     if (request.cspResponseHeaders)

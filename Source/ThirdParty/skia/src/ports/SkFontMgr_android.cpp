@@ -104,7 +104,8 @@ public:
                 this->makeStream(), fIndex, 0, fAxes.begin(), fAxes.size(), nullptr, 0);
     }
     sk_sp<SkTypeface> onMakeClone(const SkFontArguments& args) const override {
-        std::unique_ptr<SkFontData> data = this->cloneFontData(args);
+        SkFontStyle style = this->fontStyle();
+        std::unique_ptr<SkFontData> data = this->cloneFontData(args, &style);
         if (!data) {
             return nullptr;
         }
@@ -113,7 +114,7 @@ public:
                                                     fIndex,
                                                     data->getAxis(),
                                                     data->getAxisCount(),
-                                                    this->fontStyle(),
+                                                    style,
                                                     this->isFixedPitch(),
                                                     fFamilyName,
                                                     fLang,
@@ -139,7 +140,7 @@ public:
     explicit SkFontStyleSet_Android(const FontFamily& family, const SkFontScanner* scanner,
                                     const bool cacheFontFiles) {
         const SkString* cannonicalFamilyName = nullptr;
-        if (family.fNames.size() > 0) {
+        if (!family.fNames.empty()) {
             cannonicalFamilyName = &family.fNames[0];
         }
         fFallbackFor = family.fFallbackFor;
@@ -199,7 +200,7 @@ public:
                 fontFile.fVariationDesignPosition.size()
             };
             SkFontScanner_FreeType::computeAxisValues(
-                    axisDefinitions, position, axisValues, familyName);
+                    axisDefinitions, position, axisValues, familyName, &style);
 
             fStyles.push_back().reset(new SkTypeface_AndroidSystem(
                     pathName, cacheFontFiles, ttcIndex, axisValues.get(), axisDefinitions.size(),
@@ -452,9 +453,9 @@ private:
         if (family.fIsFallbackFont) {
             nameToFamily = &fFallbackNameToFamilyMap;
 
-            if (0 == family.fNames.size()) {
+            if (family.fNames.empty()) {
                 SkString& fallbackName = family.fNames.push_back();
-                fallbackName.printf("%.2x##fallback", familyIndex);
+                fallbackName.printf("%.2x##fallback", (uint32_t)familyIndex);
             }
         }
 

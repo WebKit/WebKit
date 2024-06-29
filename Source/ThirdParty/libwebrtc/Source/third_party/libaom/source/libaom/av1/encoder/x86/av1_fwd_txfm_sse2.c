@@ -2638,6 +2638,11 @@ void av1_lowbd_fwd_txfm2d_16x64_sse2(const int16_t *input, int32_t *output,
   }
 }
 
+// Include top-level function only for 32-bit x86, to support Valgrind.
+// For normal use, we require SSE4.1, so av1_lowbd_fwd_txfm_sse4_1 will be used
+// instead of this function. However, 32-bit Valgrind does not support SSE4.1,
+// so we include a fallback to SSE2 to improve performance
+#if AOM_ARCH_X86
 static FwdTxfm2dFunc fwd_txfm2d_func_ls[TX_SIZES_ALL] = {
   av1_lowbd_fwd_txfm2d_4x4_sse2,    // 4x4 transform
   av1_lowbd_fwd_txfm2d_8x8_sse2,    // 8x8 transform
@@ -2671,3 +2676,4 @@ void av1_lowbd_fwd_txfm_sse2(const int16_t *src_diff, tran_low_t *coeff,
     fwd_txfm2d_func(src_diff, coeff, diff_stride, txfm_param->tx_type,
                     txfm_param->bd);
 }
+#endif  // AOM_ARCH_X86

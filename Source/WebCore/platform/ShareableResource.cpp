@@ -43,7 +43,7 @@ ShareableResourceHandle::ShareableResourceHandle(SharedMemory::Handle&& handle, 
 RefPtr<SharedBuffer> ShareableResource::wrapInSharedBuffer()
 {
     return SharedBuffer::create(DataSegment::Provider {
-        [self = Ref { *this }]() { return self->data(); },
+        [self = Ref { *this }]() { return self->span().data(); },
         [self = Ref { *this }]() { return self->size(); }
     });
 }
@@ -100,9 +100,9 @@ auto ShareableResource::createHandle() -> std::optional<Handle>
     return { Handle { WTFMove(*memoryHandle), m_offset, m_size } };
 }
 
-const uint8_t* ShareableResource::data() const
+std::span<const uint8_t> ShareableResource::span() const
 {
-    return static_cast<const uint8_t*>(m_sharedMemory->data()) + m_offset;
+    return m_sharedMemory->span().subspan(m_offset);
 }
 
 unsigned ShareableResource::size() const

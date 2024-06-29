@@ -9,7 +9,8 @@
     var loader;
     var source;
     var sourceBuffer;
-    var sourceElement;
+    var sourceElement1;
+    var sourceElement2;
     var sourceOpenAllowed = false;
 
     function loaderPromise(loader) {
@@ -57,13 +58,18 @@
                 endTest();
             });
 
-            run('video.src = URL.createObjectURL(source)');
+            run('video.removeAttribute("src")');
             await sleepFor(100);
 
-            run('sourceElement = document.createElement("source")');
-            run('sourceElement.src = "http://foo.com/playlist.m3u8"');
-            run('sourceElement.type = "application/vnd.apple.mpegurl"');
-            run('video.appendChild(sourceElement)');
+            run('sourceElement1 = document.createElement("source")');
+            run('sourceElement1.src = URL.createObjectURL(source)');
+            run('video.appendChild(sourceElement1)');
+            await sleepFor(100);
+
+            run('sourceElement2 = document.createElement("source")');
+            run('sourceElement2.src = "http://foo.com/playlist.m3u8"');
+            run('sourceElement2.type = "application/vnd.apple.mpegurl"');
+            run('video.appendChild(sourceElement2)');
             run('sourceOpenAllowed = true');
 
         } catch (e) {

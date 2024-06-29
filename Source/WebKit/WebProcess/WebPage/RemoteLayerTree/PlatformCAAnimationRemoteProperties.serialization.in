@@ -22,7 +22,7 @@
 
 struct WebKit::PlatformCAAnimationRemoteProperties {
     String keyPath;
-    WebCore::PlatformCAAnimationType animationType;
+    [Validator='WebCore::PlatformCAAnimation::isValidKeyPath(*keyPath, *animationType)'] WebCore::PlatformCAAnimationType animationType;
 
     CFTimeInterval beginTime;
     double duration;
@@ -47,4 +47,4 @@ struct WebKit::PlatformCAAnimationRemoteProperties {
     Vector<WebKit::PlatformCAAnimationRemoteProperties> animations;
 };
 
-using WebKit::PlatformCAAnimationRemoteProperties::KeyframeValue = std::variant<float, WebCore::Color, WebCore::FloatPoint3D, WebCore::TransformationMatrix, RefPtr<WebCore::FilterOperation>>
+using WebKit::PlatformCAAnimationRemoteProperties::KeyframeValue = std::variant<float, WebCore::Color, WebCore::FloatPoint3D, WebCore::TransformationMatrix, Ref<WebCore::FilterOperation>>

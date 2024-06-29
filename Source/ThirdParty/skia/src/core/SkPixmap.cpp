@@ -140,6 +140,11 @@ float SkPixmap::getAlphaf(int x, int y) const {
             value = (u32 >> 30) * (1.0f/3);
             break;
         }
+        case kBGRA_10101010_XR_SkColorType: {
+            uint64_t u64 = static_cast<const uint64_t*>(srcPtr)[0];
+            value = ((u64 >> 54) - 384) / 510.f;
+            break;
+        }
         case kRGBA_10x6_SkColorType: {
             uint64_t u64 = static_cast<const uint64_t*>(srcPtr)[0];
             value = (u64 >> 54) * (1.0f/1023);
@@ -253,7 +258,7 @@ SkColor SkPixmap::getColor(int x, int y) const {
         case kSRGBA_8888_SkColorType: {
             auto srgb_to_linear = [](float x) {
                 return (x <= 0.04045f) ? x * (1 / 12.92f)
-                                       : sk_float_pow(x * (1 / 1.055f) + (0.055f / 1.055f), 2.4f);
+                                       : std::pow(x * (1 / 1.055f) + (0.055f / 1.055f), 2.4f);
             };
 
             uint32_t value = *this->addr32(x, y);
@@ -314,6 +319,10 @@ SkColor SkPixmap::getColor(int x, int y) const {
                  | (uint32_t)( g * 255.0f ) <<  8
                  | (uint32_t)( b * 255.0f ) <<  0
                  | (uint32_t)( a * 255.0f ) << 24;
+        }
+        case kBGRA_10101010_XR_SkColorType: {
+            SkASSERT(false);
+            return 0;
         }
         case kRGBA_10x6_SkColorType: {
             uint64_t value = *this->addr64(x, y);
@@ -453,7 +462,7 @@ SkColor4f SkPixmap::getColor4f(int x, int y) const {
         case kSRGBA_8888_SkColorType: {
             auto srgb_to_linear = [](float x) {
                 return (x <= 0.04045f) ? x * (1 / 12.92f)
-                                       : sk_float_pow(x * (1 / 1.055f) + (0.055f / 1.055f), 2.4f);
+                                       : std::pow(x * (1 / 1.055f) + (0.055f / 1.055f), 2.4f);
             };
 
             uint32_t value = *this->addr32(x, y);
@@ -510,6 +519,10 @@ SkColor4f SkPixmap::getColor4f(int x, int y) const {
                 b = SkTPin(b / a, 0.0f, 1.0f);
             }
             return SkColor4f{r, g, b, a};
+        }
+        case kBGRA_10101010_XR_SkColorType: {
+            SkASSERT(false);
+            return {};
         }
         case kRGBA_10x6_SkColorType: {
             uint64_t value = *this->addr64(x, y);
@@ -677,6 +690,18 @@ bool SkPixmap::computeIsOpaque() const {
                 }
                 if (0b11 != c >> 30) {
                     return false;
+                }
+            }
+            return true;
+        }
+        case kBGRA_10101010_XR_SkColorType:{
+            static constexpr uint64_t kOne = 510 + 384;
+            for (int y = 0; y < height; ++y) {
+                const uint64_t* row = this->addr64(0, y);
+                for (int x = 0; x < width; ++x) {
+                    if ((row[x] >> 54) < kOne) {
+                        return false;
+                    }
                 }
             }
             return true;

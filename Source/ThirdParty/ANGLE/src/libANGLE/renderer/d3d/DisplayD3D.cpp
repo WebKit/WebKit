@@ -16,7 +16,6 @@
 #include "libANGLE/Surface.h"
 #include "libANGLE/Thread.h"
 #include "libANGLE/histogram_macros.h"
-#include "libANGLE/renderer/d3d/DeviceD3D.h"
 #include "libANGLE/renderer/d3d/EGLImageD3D.h"
 #include "libANGLE/renderer/d3d/RendererD3D.h"
 #include "libANGLE/renderer/d3d/SurfaceD3D.h"
@@ -113,7 +112,7 @@ egl::Error CreateRendererD3D(egl::Display *display, RendererD3D **outRenderer)
     else if (display->getPlatform() == EGL_PLATFORM_DEVICE_EXT)
     {
 #if defined(ANGLE_ENABLE_D3D11)
-        if (display->getDevice()->getType() == EGL_D3D11_DEVICE_ANGLE)
+        if (display->getDevice()->getExtensions().deviceD3D11)
         {
             rendererCreationFunctions.push_back(CreateRenderer11);
         }

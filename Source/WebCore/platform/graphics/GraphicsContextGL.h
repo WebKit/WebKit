@@ -56,10 +56,6 @@
 template<typename... Types>
 struct GCGLSpanTuple;
 
-namespace PlatformXR {
-enum class Layout : uint8_t;
-}
-
 namespace WebCore {
 class ImageBuffer;
 class PixelBuffer;
@@ -954,6 +950,22 @@ public:
     static constexpr GCGLenum VARIABLE_RASTERIZATION_RATE_ANGLE = 0x96BC;
     static constexpr GCGLenum METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE = 0x96BD;
 
+    // GL_KHR_debug
+    static constexpr GCGLenum DEBUG_OUTPUT = 0x92E0;
+    static constexpr GCGLenum DEBUG_OUTPUT_SYNCHRONOUS = 0x8242;
+    static constexpr GCGLenum DEBUG_TYPE_ERROR = 0x824C;
+    static constexpr GCGLenum DEBUG_TYPE_DEPRECATED_BEHAVIOR = 0x824D;
+    static constexpr GCGLenum DEBUG_TYPE_UNDEFINED_BEHAVIOR = 0x824E;
+    static constexpr GCGLenum DEBUG_TYPE_PORTABILITY = 0x824F;
+    static constexpr GCGLenum DEBUG_TYPE_PERFORMANCE = 0x8250;
+    static constexpr GCGLenum DEBUG_TYPE_OTHER = 0x8251;
+    static constexpr GCGLenum DEBUG_TYPE_MARKER = 0x8268;
+    static constexpr GCGLenum DEBUG_SEVERITY_HIGH = 0x9146;
+    static constexpr GCGLenum DEBUG_SEVERITY_MEDIUM = 0x9147;
+    static constexpr GCGLenum DEBUG_SEVERITY_LOW = 0x9148;
+    static constexpr GCGLenum DEBUG_SEVERITY_NOTIFICATION = 0x826B;
+    static constexpr GCGLenum DEBUG_SOURCE_API = 0x8246;
+
     // Attempt to enumerate all possible native image formats to
     // reduce the amount of temporary allocations during texture
     // uploading. This enum must be public because it is accessed
@@ -1197,6 +1209,7 @@ public:
         WEBCORE_EXPORT Client();
         WEBCORE_EXPORT virtual ~Client();
         virtual void forceContextLost() = 0;
+        virtual void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, const String&) = 0;
     };
 
     WEBCORE_EXPORT GraphicsContextGL(GraphicsContextGLAttributes);
@@ -1382,7 +1395,7 @@ public:
     virtual void bufferData(GCGLenum target, std::span<const uint8_t> data, GCGLenum usage) = 0;
     virtual void bufferSubData(GCGLenum target, GCGLintptr offset, std::span<const uint8_t> data) = 0;
 
-    virtual void readPixels(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint alignment, GCGLint rowLength) = 0;
+    virtual void readPixels(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint packAlignment, GCGLint packRowLength, GCGLboolean packReverseRowOrder) = 0;
     virtual void readPixelsBufferObject(IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset, GCGLint alignment, GCGLint rowLength) = 0;
 
     virtual void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type,  std::span<const uint8_t> pixels) = 0;
@@ -1605,6 +1618,9 @@ public:
     // GL_EXT_polygon_offset_clamp
     virtual void polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp) = 0;
 
+    // GL_EXT_discard_framebuffer
+    WEBCORE_EXPORT virtual void framebufferDiscard(GCGLenum, std::span<const GCGLenum>);
+
     // ========== Internal use for WebXR on WebGL1 contexts.
     virtual void renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
 
@@ -1638,7 +1654,6 @@ public:
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     virtual RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) = 0;
 #endif
-    virtual RefPtr<PixelBuffer> drawingBufferToPixelBuffer(FlipY) = 0;
 
     using SimulatedEventForTesting = GraphicsContextGLSimulatedEventForTesting;
     virtual void simulateEventForTesting(SimulatedEventForTesting) = 0;

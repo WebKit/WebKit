@@ -34,7 +34,6 @@
 #import <mach/mach.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
-#import <pal/spi/cocoa/NotifySPI.h>
 #import <sys/sysctl.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Language.h>
@@ -104,42 +103,6 @@ static void initializeLogd(bool disableLogging)
     RELEASE_LOG(Process, "Initialized logd %s", stringWithSpaces);
 }
 
-#if ENABLE(NOTIFY_BLOCKING)
-static bool shouldRestrictNotifyd()
-{
-    static dispatch_once_t once;
-    static bool hasEntitlement = false;
-    dispatch_once(&once, ^{
-        xpc_object_t entitlement = xpc_copy_entitlement_for_token("com.apple.developer.web-browser-engine.restrict.notifyd", nullptr);
-        if (entitlement == XPC_BOOL_TRUE)
-            hasEntitlement = true;
-        if (entitlement)
-            xpc_release(entitlement);
-    });
-    return hasEntitlement;
-}
-#endif
-
-static void setNotifyOptions()
-{
-    static bool hasSetOptions = false;
-    if (hasSetOptions)
-        return;
-    hasSetOptions = true;
-
-    uint32_t opts = 0;
-#if ENABLE(NOTIFY_FILTERING)
-    opts |= NOTIFY_OPT_DISPATCH | NOTIFY_OPT_REGEN | NOTIFY_OPT_FILTERED;
-#endif
-#if ENABLE(NOTIFY_BLOCKING)
-    if (shouldRestrictNotifyd())
-        opts |= NOTIFY_OPT_LOOPBACK;
-#endif
-    if (!opts)
-        return;
-    notify_set_options(opts);
-}
-
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
 NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashDueWebKitFrameworkVersionMismatch()
@@ -149,8 +112,9 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashDueWebKitFrameworkVersionMi
 static void checkFrameworkVersion(xpc_object_t message)
 {
     auto uiProcessWebKitBundleVersion = String::fromLatin1(xpc_dictionary_get_string(message, "WebKitBundleVersion"));
-    if (!uiProcessWebKitBundleVersion.isNull() && uiProcessWebKitBundleVersion != ASCIILiteral::fromLiteralUnsafe(WEBKIT_BUNDLE_VERSION)) {
-        auto errorMessage = makeString("WebKit framework version mismatch: ", uiProcessWebKitBundleVersion, " != ", WEBKIT_BUNDLE_VERSION);
+    auto webkitBundleVersion = ASCIILiteral::fromLiteralUnsafe(WEBKIT_BUNDLE_VERSION);
+    if (!uiProcessWebKitBundleVersion.isNull() && uiProcessWebKitBundleVersion != webkitBundleVersion) {
+        auto errorMessage = makeString("WebKit framework version mismatch: "_s, uiProcessWebKitBundleVersion, " != "_s, webkitBundleVersion);
         logAndSetCrashLogMessage(errorMessage.utf8().data());
         crashDueWebKitFrameworkVersionMismatch();
     }
@@ -186,8 +150,6 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             return;
         }
         if (!strcmp(messageName, "bootstrap")) {
-            setNotifyOptions();
-
             bool disableLogging = xpc_dictionary_get_bool(event, "disable-logging");
             initializeLogd(disableLogging);
 
@@ -281,8 +243,6 @@ void XPCServiceEventHandler(xpc_connection_t peer)
 
 int XPCServiceMain(int, const char**)
 {
-    setNotifyOptions();
-
     auto bootstrap = adoptOSObject(xpc_copy_bootstrap());
 
     if (bootstrap) {

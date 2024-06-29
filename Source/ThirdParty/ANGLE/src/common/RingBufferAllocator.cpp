@@ -294,7 +294,7 @@ void SharedRingBufferAllocatorCheckPoint::releaseAndUpdate(RingBufferAllocatorCh
     // Must always remain 1 ref
 #endif
     {
-        std::lock_guard<std::mutex> lock(mMutex);
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
         mValue = *newValue;
     }
     newValue->reset();
@@ -302,7 +302,7 @@ void SharedRingBufferAllocatorCheckPoint::releaseAndUpdate(RingBufferAllocatorCh
 
 RingBufferAllocatorCheckPoint SharedRingBufferAllocatorCheckPoint::pop()
 {
-    std::lock_guard<std::mutex> lock(mMutex);
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
     RingBufferAllocatorCheckPoint value = mValue;
     mValue.reset();
     return value;

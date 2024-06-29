@@ -275,7 +275,7 @@ void AudioFileReader::handleMessage(GstMessage* message)
         GST_INFO_OBJECT(m_pipeline.get(), "State changed (old: %s, new: %s, pending: %s)",
             gst_element_state_get_name(oldState), gst_element_state_get_name(newState), gst_element_state_get_name(pending));
 
-        auto dotFileName = makeString(GST_OBJECT_NAME(m_pipeline.get()), '_', gst_element_state_get_name(oldState), '_', gst_element_state_get_name(newState));
+        auto dotFileName = makeString(span(GST_OBJECT_NAME(m_pipeline.get())), '_', span(gst_element_state_get_name(oldState)), '_', span(gst_element_state_get_name(newState)));
         GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
         break;
     }
@@ -387,7 +387,7 @@ void AudioFileReader::decodeAudioForBusCreation()
     // Build the pipeline giostreamsrc ! decodebin
     // A deinterleave element is added once a src pad becomes available in decodebin.
     static Atomic<uint32_t> pipelineId;
-    m_pipeline = gst_pipeline_new(makeString("audio-file-reader-", pipelineId.exchangeAdd(1)).ascii().data());
+    m_pipeline = gst_pipeline_new(makeString("audio-file-reader-"_s, pipelineId.exchangeAdd(1)).ascii().data());
     registerActivePipeline(m_pipeline);
 
     GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));

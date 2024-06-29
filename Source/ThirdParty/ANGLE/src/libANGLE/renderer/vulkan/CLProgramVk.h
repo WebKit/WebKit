@@ -8,6 +8,8 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLPROGRAMVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLPROGRAMVK_H_
 
+#include "common/SimpleMutex.h"
+
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLKernelVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
@@ -247,7 +249,7 @@ class CLProgramVk : public CLProgramImpl
     DescriptorSetLayoutCache mDescSetLayoutCache;
     vk::DescriptorSetArray<vk::DescriptorPoolPointer> mDescriptorPools;
     vk::RefCountedDescriptorPoolBinding mPoolBinding;
-    std::mutex mProgramMutex;
+    angle::SimpleMutex mProgramMutex;
 };
 
 class CLAsyncBuildTask : public angle::Closure

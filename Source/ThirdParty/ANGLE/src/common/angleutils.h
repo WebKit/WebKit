@@ -375,32 +375,6 @@ inline bool IsLittleEndian()
     return isLittleEndian;
 }
 
-// Helper class to use a mutex with the control of boolean.
-class ConditionalMutex final : angle::NonCopyable
-{
-  public:
-    ConditionalMutex() : mUseMutex(true) {}
-    void init(bool useMutex) { mUseMutex = useMutex; }
-    void lock()
-    {
-        if (mUseMutex)
-        {
-            mMutex.lock();
-        }
-    }
-    void unlock()
-    {
-        if (mUseMutex)
-        {
-            mMutex.unlock();
-        }
-    }
-
-  private:
-    std::mutex mMutex;
-    bool mUseMutex;
-};
-
 // Helper macro that casts to a bitfield type then verifies no bits were dropped.
 #define SetBitField(lhs, rhs)                                                         \
     do                                                                                \

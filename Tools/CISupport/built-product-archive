@@ -87,7 +87,7 @@ def main():
 def webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform='', returnTopLevelDirectory=False, crossTarget=None):
     if 'simulator' in fullPlatform:
         platform = platform + '-simulator'
-    elif platform in ['ios', 'tvos', 'watchos']:
+    elif platform in ['ios', 'tvos', 'visionos', 'watchos']:
         platform = platform + '-device'
     command = ['perl', os.path.join(os.path.dirname(__file__), '..', 'Scripts', 'webkit-build-directory'), '--' + platform, '--' + configuration]
     if returnTopLevelDirectory:
@@ -105,7 +105,7 @@ def determineWebKitBuildDirectories(platform, fullPlatform, configuration, cross
     global _hostBuildDirectory
     _configurationBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform, crossTarget=cross_target)
     _topLevelBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform, returnTopLevelDirectory=True, crossTarget=cross_target)
-    if platform in ['ios', 'tvos', 'watchos']:
+    if platform in ['ios', 'tvos', 'visionos', 'watchos']:
         _hostBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, 'mac')
     else:
         _hostBuildDirectory = _configurationBuildDirectory
@@ -234,12 +234,12 @@ ALWAYS_EXCLUDED_PATTERNS = ('*.a',)
 MINIFIED_EXCLUDED_PATTERNS = (*ALWAYS_EXCLUDED_PATTERNS, '*.dSYM', 'DerivedSources')
 
 def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
-    assert platform in ('gtk', 'ios', 'jsc-only', 'mac', 'tvos', 'watchos', 'win', 'wincairo', 'wpe')
+    assert platform in ('gtk', 'ios', 'jsc-only', 'mac', 'tvos', 'visionos', 'watchos', 'win', 'wincairo', 'wpe')
     global _configurationBuildDirectory
 
     print("Archiving built product from directory: %s" % _configurationBuildDirectory)
 
-    if platform in ['ios', 'tvos', 'watchos']:
+    if platform in ['ios', 'tvos', 'visionos', 'watchos']:
         combinedDirectory = os.path.join(_topLevelBuildDirectory, 'combined-mac-and-{}'.format(platform))
         removeDirectoryIfExists(combinedDirectory)
         os.makedirs(combinedDirectory)
@@ -347,14 +347,14 @@ def unzipArchive(directoryToExtractTo, configuration):
 
 
 def extractBuiltProduct(configuration, platform):
-    assert platform in ('gtk', 'ios', 'jsc-only', 'mac', 'tvos', 'watchos', 'win', 'wincairo', 'wpe')
+    assert platform in ('gtk', 'ios', 'jsc-only', 'mac', 'tvos', 'visionos', 'watchos', 'win', 'wincairo', 'wpe')
 
     archiveFile = os.path.join(_topLevelBuildDirectory, configuration + '.zip')
 
     removeDirectoryIfExists(_configurationBuildDirectory)
     os.makedirs(_configurationBuildDirectory)
 
-    if platform in ('mac', 'ios', 'tvos', 'watchos'):
+    if platform in ('mac', 'ios', 'visionos', 'tvos', 'watchos'):
         return unzipArchive(_topLevelBuildDirectory, configuration)
     elif platform in ('gtk', 'jsc-only', 'win', 'wincairo', 'wpe'):
         print('Extracting: {}'.format(_configurationBuildDirectory))

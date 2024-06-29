@@ -99,6 +99,13 @@
     if (_unfocusWebView)
         _unfocusWebView(webView);
 }
+
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> *))completionHandler
+{
+    if (_runOpenPanelWithParameters)
+        _runOpenPanelWithParameters(webView, parameters, frame, completionHandler);
+}
+
 #endif // PLATFORM(MAC)
 
 - (void)webViewDidClose:(WKWebView *)webView

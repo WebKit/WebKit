@@ -33,6 +33,7 @@
 #include <glib-object.h>
 #include <wpe/WPEBufferDMABufFormats.h>
 #include <wpe/WPEDefines.h>
+#include <wpe/WPEInputMethodContext.h>
 #include <wpe/WPEKeymap.h>
 #include <wpe/WPEMonitor.h>
 #include <wpe/WPEView.h>
@@ -61,6 +62,8 @@ struct _WPEDisplayClass
                                                                guint       index);
     const char             *(* get_drm_device)                (WPEDisplay *display);
     const char             *(* get_drm_render_node)           (WPEDisplay *display);
+
+    WPEInputMethodContext   *(* create_input_method_context)    (WPEDisplay *display);
 
     gpointer padding[32];
 };

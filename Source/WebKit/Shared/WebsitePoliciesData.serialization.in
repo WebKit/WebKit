@@ -53,7 +53,7 @@ enum class WebKit::WebContentMode : uint8_t {
 struct WebKit::WebsitePoliciesData {
     HashMap<String, Vector<String>> activeContentRuleListActionPatterns;
     Vector<WebCore::CustomHeaderFields> customHeaderFields;
-    Vector<Vector<HashSet<String>>> visibilityAdjustmentSelectors;
+    Vector<WebCore::TargetedElementSelectors> visibilityAdjustmentSelectors;
     String customUserAgent;
     String customUserAgentAsSiteSpecificQuirks;
     String customNavigatorPlatform;
@@ -75,7 +75,6 @@ struct WebKit::WebsitePoliciesData {
 #if ENABLE(DEVICE_ORIENTATION)
     WebCore::DeviceOrientationOrMotionPermissionState deviceOrientationAndMotionAccessState;
 #endif
-    bool allowContentChangeObserverQuirk;
     bool idempotentModeAutosizingOnlyHonorsPercentages;
     bool allowPrivacyProxy;
     bool allowSiteSpecificQuirksToOverrideContentMode;

@@ -62,7 +62,7 @@ public:
         if (!m_buffer->isContiguous())
             m_buffer = m_buffer->makeContiguous();
 
-        return downcast<SharedBuffer>(*m_buffer).data();
+        return downcast<SharedBuffer>(*m_buffer).span().data();
     }
 
     void lockUnderlyingBuffer() final

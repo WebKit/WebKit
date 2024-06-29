@@ -1,3 +1,4 @@
 
-FAIL reload() appears as a reload to service worker fetch event handlers promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')"
+
+FAIL reload() appears as a reload to service worker fetch event handlers assert_equals: expected "method = GET, isReloadNavigation = false" but got "We can't use /common/blank.html because of scope restrictions.\n"
 

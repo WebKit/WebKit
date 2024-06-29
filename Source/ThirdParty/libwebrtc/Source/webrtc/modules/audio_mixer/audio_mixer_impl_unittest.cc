@@ -517,13 +517,8 @@ TEST(AudioMixerDeathTest, MultipleChannelsAndHighRate) {
   other_frame->samples_per_channel_ = kSamplesPerChannel;
   mixer->AddSource(&other_source);
 
-#if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
+#if GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
   EXPECT_DEATH(mixer->Mix(kNumberOfChannels, &frame_for_mixing), "");
-#elif !RTC_DCHECK_IS_ON
-  mixer->Mix(kNumberOfChannels, &frame_for_mixing);
-  EXPECT_EQ(frame_for_mixing.num_channels_, kNumberOfChannels);
-  EXPECT_EQ(frame_for_mixing.sample_rate_hz_,
-            HighOutputRateCalculator::kDefaultFrequency);
 #endif
 }
 

@@ -204,10 +204,11 @@ static inline bool setJSTestDefaultToJSONInherit_inheritLongAttributeSetter(JSGl
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLong>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLLong>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setInheritLongAttribute(WTFMove(nativeValue));
+        return impl.setInheritLongAttribute(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }

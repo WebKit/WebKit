@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body>
+    <pre id="scrollingTree"></pre>
+</body>
+<script>
+description("Verifies that root frames are successfully removed from scrolling trees when removed from the DOM.");
+jsTestIsAsync = true;
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();            
+}
+
+window.addEventListener('load', async () => {
+    if (!window.internals)
+        return
+    frameToRemove.parentElement.removeChild(frameToRemove);
+    if (window.GCController)
+        GCController.collect();
+    document.getElementById('scrollingTree').innerText = await UIHelper.getScrollingTree();
+    setTimeout(function() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 500);
+}, false);
+</script>
+<iframe width="300" height="400" src="http://localhost:8000/site-isolation/scrolling/resources/empty-iframe.html"></iframe>
+<iframe width="200" height="100" id=frameToRemove src="http://localhost:8000/site-isolation/scrolling/resources/empty-iframe.html"></iframe>

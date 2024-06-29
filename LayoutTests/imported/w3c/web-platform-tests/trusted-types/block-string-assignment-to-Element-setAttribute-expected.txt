@@ -1,23 +1,24 @@
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
-FAIL script.src accepts only TrustedScriptURL assert_throws_js: function "_ => {
-    elem.setAttribute(attribute, value);
-  }" did not throw
-FAIL iframe.srcdoc accepts only TrustedHTML assert_throws_js: function "_ => {
-    elem.setAttribute(attribute, value);
-  }" did not throw
-FAIL div.onclick accepts only TrustedScript assert_throws_js: function "_ => {
-    elem.setAttribute(attribute, value);
-  }" did not throw
-FAIL `Script.prototype.setAttribute.SrC = string` throws. assert_throws_js: function "_ => {
-      el.setAttribute('SrC', INPUTS.URL);
-    }" did not throw
+PASS script.src accepts only TrustedScriptURL
+PASS iframe.srcdoc accepts only TrustedHTML
+PASS div.onclick accepts only TrustedScript
+PASS `Script.prototype.setAttribute.SrC = string` throws.
 PASS script.src accepts string and null after default policy was created.
-FAIL script.src's mutationobservers receive the default policy's value. assert_equals: expected "http://this.is.a.successful.test/" but got "http://this.is.a.scripturl.test/"
-FAIL iframe.srcdoc's mutationobservers receive the default policy's value. assert_equals: expected "Quack, I want to be a duck!" but got "Hi, I want to be transformed!"
-FAIL div.onclick's mutationobservers receive the default policy's value. assert_equals: expected "Meow, I want to be a cat!" but got "Hi, I want to be transformed!"
+PASS script.src's mutationobservers receive the default policy's value.
+PASS iframe.srcdoc's mutationobservers receive the default policy's value.
+PASS div.onclick's mutationobservers receive the default policy's value.
 PASS iframe.srcdoc accepts string and null after default policy was created.
-FAIL div.onclick accepts string and null after default policy was created. assert_equals: expected "Meow, I want to be a cat!" but got "Hi, I want to be transformed!"
+PASS div.onclick accepts string and null after default policy was created.
 PASS a.rel accepts strings
 PASS a.rel accepts null
-FAIL `script.src = setAttributeNode(embed.src)` with string works. assert_equals: expected "http://this.is.a.successful.test/" but got "http://this.is.a.scripturl.test/"
+PASS `script.src = setAttributeNode(embed.src)` with string works.
 

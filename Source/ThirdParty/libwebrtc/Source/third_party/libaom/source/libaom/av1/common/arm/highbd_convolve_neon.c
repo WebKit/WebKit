@@ -1927,7 +1927,7 @@ void av1_highbd_convolve_x_sr_intrabc_neon(
       uint16x4_t d0 = vrhadd_u16(s0, s1);
 
       if (w == 2) {
-        store_u16_2x1(dst, d0, 0);
+        store_u16_2x1(dst, d0);
       } else {
         vst1_u16(dst, d0);
       }
@@ -1978,7 +1978,7 @@ void av1_highbd_convolve_y_sr_intrabc_neon(
       uint16x4_t d0 = vrhadd_u16(s0, s1);
 
       if (w == 2) {
-        store_u16_2x1(dst, d0, 0);
+        store_u16_2x1(dst, d0);
       } else {
         vst1_u16(dst, d0);
       }
@@ -2086,7 +2086,7 @@ void av1_highbd_convolve_2d_sr_intrabc_neon(
       d0 = vhadd_u16(d0, vget_low_u16(vert_offset));
 
       if (w == 2) {
-        store_u16_2x1(dst, d0, 0);
+        store_u16_2x1(dst, d0);
       } else {
         vst1_u16(dst, d0);
       }

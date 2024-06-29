@@ -29,34 +29,87 @@
 #if USE(SKIA)
 
 #include "UpdateInfo.h"
-#include <WebCore/NotImplemented.h>
+#include <WebCore/GraphicsContextSkia.h>
+#include <skia/core/SkBitmap.h>
+#include <skia/core/SkCanvas.h>
 
 namespace WebKit {
-
-static const Seconds s_scrollHysteresisDuration { 300_ms };
 
 BackingStore::BackingStore(const WebCore::IntSize& size, float deviceScaleFactor)
     : m_size(size)
     , m_deviceScaleFactor(deviceScaleFactor)
-    , m_scrolledHysteresis([this](PAL::HysteresisState state) { if (state == PAL::HysteresisState::Stopped) m_scrollSurface = nullptr; }, s_scrollHysteresisDuration)
 {
+    WebCore::IntSize scaledSize(size);
+    scaledSize.scale(deviceScaleFactor);
+    auto info = SkImageInfo::MakeN32Premul(scaledSize.width(), scaledSize.height(), SkColorSpace::MakeSRGB());
+    m_surface = SkSurfaces::Raster(info);
+    RELEASE_ASSERT(m_surface);
 }
 
 BackingStore::~BackingStore() = default;
 
 void BackingStore::paint(PlatformPaintContextPtr cr, const WebCore::IntRect& rect)
 {
-    notImplemented();
+    m_surface->draw(cr, rect.x(), rect.y());
 }
 
 void BackingStore::incorporateUpdate(UpdateInfo&& updateInfo)
 {
-    notImplemented();
+    ASSERT(m_size == updateInfo.viewSize);
+    if (!updateInfo.bitmapHandle)
+        return;
+
+    auto bitmap = WebCore::ShareableBitmap::create(WTFMove(*updateInfo.bitmapHandle));
+    if (!bitmap)
+        return;
+
+#if ASSERT_ENABLED
+    WebCore::IntSize updateSize = updateInfo.updateRectBounds.size();
+    updateSize.scale(m_deviceScaleFactor);
+    ASSERT(bitmap->size() == updateSize);
+#endif
+
+    scroll(updateInfo.scrollRect, updateInfo.scrollOffset);
+
+    // Paint all update rects.
+    WebCore::IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
+
+    SkCanvas* canvas = m_surface->getCanvas();
+    if (!canvas)
+        return;
+
+    WebCore::GraphicsContextSkia graphicsContext(*canvas, WebCore::RenderingMode::Unaccelerated, WebCore::RenderingPurpose::ShareableLocalSnapshot);
+    graphicsContext.setCompositeOperation(WebCore::CompositeOperator::Copy);
+
+    for (const auto& updateRect : updateInfo.updateRects) {
+        WebCore::IntRect srcRect = updateRect;
+        srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
+        bitmap->paint(graphicsContext, m_deviceScaleFactor, updateRect.location(), srcRect);
+    }
 }
 
 void BackingStore::scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset)
 {
-    notImplemented();
+    if (scrollOffset.isZero())
+        return;
+
+    WebCore::IntRect targetRect = scrollRect;
+    targetRect.move(scrollOffset);
+    targetRect.intersect(scrollRect);
+    if (targetRect.isEmpty())
+        return;
+
+    WebCore::IntSize scaledScrollOffset = scrollOffset;
+    targetRect.scale(m_deviceScaleFactor);
+    scaledScrollOffset.scale(m_deviceScaleFactor, m_deviceScaleFactor);
+
+    SkBitmap bitmap;
+    bitmap.allocPixels(m_surface->imageInfo().makeWH(targetRect.width(), targetRect.height()));
+
+    if (!m_surface->readPixels(bitmap, targetRect.x() - scaledScrollOffset.width(), targetRect.y() - scaledScrollOffset.height()))
+        return;
+
+    m_surface->writePixels(bitmap, targetRect.x(), targetRect.y());
 }
 
 } // namespace WebKit

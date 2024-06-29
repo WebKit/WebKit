@@ -393,7 +393,6 @@ IntRect ScrollbarThemeMac::trackRect(Scrollbar& scrollbar, bool painting)
     if (painting || !hasButtons(scrollbar))
         return scrollbar.frameRect();
     
-    IntRect result;
     int thickness = scrollbarThickness(scrollbar.widthStyle());
     int startWidth = 0;
     int endWidth = 0;

@@ -62,6 +62,8 @@ PDFDataDetectorOverlayController::PDFDataDetectorOverlayController(UnifiedPDFPlu
 {
 }
 
+PDFDataDetectorOverlayController::~PDFDataDetectorOverlayController() = default;
+
 RefPtr<UnifiedPDFPlugin> PDFDataDetectorOverlayController::protectedPlugin() const
 {
     return m_plugin.get();
@@ -72,7 +74,7 @@ PageOverlay& PDFDataDetectorOverlayController::installOverlayIfNeeded()
     if (m_overlay)
         return *m_overlay;
 
-    m_overlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document, PageOverlay::AlwaysTileOverlayLayer::Yes);
+    m_overlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
     protectedPlugin()->installDataDetectorOverlay(*m_overlay);
 
     return *m_overlay;
@@ -245,6 +247,12 @@ void PDFDataDetectorOverlayController::updatePlatformHighlightData(PDFDocumentLa
     });
 }
 
+void PDFDataDetectorOverlayController::hideActiveHighlightOverlay()
+{
+    if (RefPtr activeHighlight = m_activeDataDetectorItemWithHighlight.second)
+        activeHighlight->dismissImmediately();
+}
+
 void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(std::optional<PDFDocumentLayout::PageIndex> pageIndex, ShouldUpdatePlatformHighlightData shouldUpdatePlatformHighlightData, ActiveHighlightChanged activeHighlightChanged)
 {
     // Regardless of what we repaint, we don't need the stale data after this.
@@ -252,43 +260,31 @@ void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(std::o
         m_staleDataDetectorItemWithHighlight = { { }, { } };
     });
 
-    auto [previousDataDetectorItem, previousActiveHighlight] = m_staleDataDetectorItemWithHighlight;
-    auto [activeDataDetectorItem, activeHighlight] = m_activeDataDetectorItemWithHighlight;
-
-    bool shouldMakePaintRequest = activeHighlightChanged == ActiveHighlightChanged::Yes || activeHighlight || previousActiveHighlight;
-
-    if (!shouldMakePaintRequest)
-        return;
-
-    if (shouldUpdatePlatformHighlightData == ShouldUpdatePlatformHighlightData::Yes) {
-        auto pageIndices = [&] {
-            if (pageIndex) {
-                if (auto iterator = m_pdfDataDetectorItemsWithHighlightsMap.find(*pageIndex); iterator != m_pdfDataDetectorItemsWithHighlightsMap.end())
-                    return makeSizedIteratorRange(m_pdfDataDetectorItemsWithHighlightsMap, iterator.keys(), std::next(iterator).keys());
-            }
-
-            return m_pdfDataDetectorItemsWithHighlightsMap.keys();
-        }();
-
-        WTF::forEach(pageIndices, [this](auto pageIndex) {
-            updatePlatformHighlightData(pageIndex);
-        });
-    }
-
     RefPtr plugin = protectedPlugin();
     if (!plugin)
         return;
 
-    Vector<IntRect> dirtyRectsInMainFrameContentsSpace;
+    auto [previousDataDetectorItem, previousActiveHighlight] = m_staleDataDetectorItemWithHighlight;
+    auto [activeDataDetectorItem, activeHighlight] = m_activeDataDetectorItemWithHighlight;
 
-    if (activeHighlight)
-        dirtyRectsInMainFrameContentsSpace.append(plugin->rectForSelectionInMainFrameContentsSpace(activeDataDetectorItem->selection().get()));
+    bool shouldUpdateHighlights = activeHighlightChanged == ActiveHighlightChanged::Yes || activeHighlight || previousActiveHighlight;
+    if (!shouldUpdateHighlights || !plugin->canShowDataDetectorHighlightOverlays())
+        return;
 
-    if (previousActiveHighlight)
-        dirtyRectsInMainFrameContentsSpace.append(plugin->rectForSelectionInMainFrameContentsSpace(previousDataDetectorItem->selection().get()));
+    if (shouldUpdatePlatformHighlightData == ShouldUpdatePlatformHighlightData::No)
+        return;
 
-    WTF::forEach(dirtyRectsInMainFrameContentsSpace, [&](const auto& dirtyRectInMainFrameContentsSpace) {
-        installOverlayIfNeeded().setNeedsDisplay(dirtyRectInMainFrameContentsSpace);
+    auto pageIndices = [&] {
+        if (pageIndex) {
+            if (auto iterator = m_pdfDataDetectorItemsWithHighlightsMap.find(*pageIndex); iterator != m_pdfDataDetectorItemsWithHighlightsMap.end())
+                return makeSizedIteratorRange(m_pdfDataDetectorItemsWithHighlightsMap, iterator.keys(), std::next(iterator).keys());
+        }
+
+        return m_pdfDataDetectorItemsWithHighlightsMap.keys();
+    }();
+
+    WTF::forEach(pageIndices, [this](auto pageIndex) {
+        updatePlatformHighlightData(pageIndex);
     });
 }
 

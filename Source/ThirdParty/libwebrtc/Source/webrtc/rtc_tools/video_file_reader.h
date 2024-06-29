@@ -16,16 +16,16 @@
 #include <iterator>
 #include <string>
 
+#include "api/ref_count.h"
 #include "api/scoped_refptr.h"
 #include "api/video/video_frame_buffer.h"
-#include "rtc_base/ref_count.h"
 
 namespace webrtc {
 namespace test {
 
 // Iterable class representing a sequence of I420 buffers. This class is not
 // thread safe because it is expected to be backed by a file.
-class Video : public rtc::RefCountInterface {
+class Video : public RefCountInterface {
  public:
   class Iterator {
    public:

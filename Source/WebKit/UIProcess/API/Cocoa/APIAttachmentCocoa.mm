@@ -206,8 +206,34 @@ void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&
     if (![fileWrapper isKindOfClass:NSFileWrapper.class])
         return;
 
+    m_isCreatedFromSerializedRepresentation = true;
     setFileWrapperAndUpdateContentType(fileWrapper, contentType);
     m_webPage->updateAttachmentAttributes(*this, [] { });
+}
+
+void Attachment::cloneFileWrapperTo(Attachment& other)
+{
+    other.m_isCreatedFromSerializedRepresentation = m_isCreatedFromSerializedRepresentation;
+
+    Locker locker { m_fileWrapperLock };
+    other.setFileWrapper(m_fileWrapper.get());
+}
+
+bool Attachment::shouldUseFileWrapperIconForDirectory() const
+{
+    if (m_contentType != "public.directory"_s)
+        return false;
+
+    if (m_isCreatedFromSerializedRepresentation)
+        return false;
+
+    {
+        Locker locker { m_fileWrapperLock };
+        if (![m_fileWrapper isDirectory])
+            return false;
+    }
+
+    return true;
 }
 
 } // namespace API

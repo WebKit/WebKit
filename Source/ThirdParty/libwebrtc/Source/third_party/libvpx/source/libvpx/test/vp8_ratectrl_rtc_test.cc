@@ -45,6 +45,7 @@ struct Vp8RCTestVideo {
 const Vp8RCTestVideo kVp8RCTestVectors[] = {
   Vp8RCTestVideo("niklas_640_480_30.yuv", 640, 480, 470),
   Vp8RCTestVideo("desktop_office1.1280_720-020.yuv", 1280, 720, 300),
+  Vp8RCTestVideo("hantro_collage_w352h288.yuv", 352, 288, 100),
 };
 
 class Vp8RcInterfaceTest
@@ -52,7 +53,8 @@ class Vp8RcInterfaceTest
       public ::libvpx_test::CodecTestWith2Params<int, Vp8RCTestVideo> {
  public:
   Vp8RcInterfaceTest()
-      : EncoderTest(GET_PARAM(0)), key_interval_(3000), encoder_exit_(false) {}
+      : EncoderTest(GET_PARAM(0)), key_interval_(3000), encoder_exit_(false),
+        frame_drop_thresh_(0) {}
   ~Vp8RcInterfaceTest() override = default;
 
  protected:
@@ -127,6 +129,9 @@ class Vp8RcInterfaceTest
         encoder->Control(VP8E_SET_CPUUSED, -6);
         encoder->Control(VP8E_SET_RTC_EXTERNAL_RATECTRL, 1);
         encoder->Control(VP8E_SET_MAX_INTRA_BITRATE_PCT, 1000);
+        if (rc_cfg_.is_screen) {
+          encoder->Control(VP8E_SET_SCREEN_CONTENT_MODE, 1);
+        }
       } else if (frame_params_.frame_type == libvpx::RcFrameType::kInterFrame) {
         // Disable golden frame update.
         frame_flags_ |= VP8_EFLAG_NO_UPD_GF;
@@ -144,9 +149,19 @@ class Vp8RcInterfaceTest
       return;
     }
     int qp;
+    libvpx::UVDeltaQP uv_delta_qp;
     encoder->Control(VP8E_GET_LAST_QUANTIZER, &qp);
-    rc_api_->ComputeQP(frame_params_);
-    ASSERT_EQ(rc_api_->GetQP(), qp);
+    if (rc_api_->ComputeQP(frame_params_) == libvpx::FrameDropDecision::kOk) {
+      ASSERT_EQ(rc_api_->GetQP(), qp);
+      uv_delta_qp = rc_api_->GetUVDeltaQP();
+      // delta_qp for UV channel is only set for screen.
+      if (!rc_cfg_.is_screen) {
+        ASSERT_EQ(uv_delta_qp.uvdc_delta_q, 0);
+        ASSERT_EQ(uv_delta_qp.uvac_delta_q, 0);
+      }
+    } else {
+      num_drops_++;
+    }
   }
 
   void FramePktHook(const vpx_codec_cx_pkt_t *pkt) override {
@@ -156,8 +171,6 @@ class Vp8RcInterfaceTest
   void RunOneLayer() {
     test_video_ = GET_PARAM(2);
     target_bitrate_ = GET_PARAM(1);
-    if (test_video_.width == 1280 && target_bitrate_ == 200) return;
-    if (test_video_.width == 640 && target_bitrate_ == 1000) return;
     SetConfig();
     rc_api_ = libvpx::VP8RateControlRTC::Create(rc_cfg_);
     ASSERT_TRUE(rc_api_->UpdateRateControl(rc_cfg_));
@@ -169,12 +182,48 @@ class Vp8RcInterfaceTest
     ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
   }
 
+  void RunOneLayerScreen() {
+    test_video_ = GET_PARAM(2);
+    target_bitrate_ = GET_PARAM(1);
+    SetConfig();
+    rc_cfg_.is_screen = true;
+    rc_api_ = libvpx::VP8RateControlRTC::Create(rc_cfg_);
+    ASSERT_TRUE(rc_api_->UpdateRateControl(rc_cfg_));
+
+    ::libvpx_test::I420VideoSource video(test_video_.name, test_video_.width,
+                                         test_video_.height, 30, 1, 0,
+                                         test_video_.frames);
+
+    ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+  }
+
+  void RunOneLayerDropFrames() {
+    test_video_ = GET_PARAM(2);
+    target_bitrate_ = GET_PARAM(1);
+    frame_drop_thresh_ = 30;
+    num_drops_ = 0;
+    // Use lower target_bitrate and max_quantizer to trigger drops.
+    target_bitrate_ = target_bitrate_ >> 2;
+    SetConfig();
+    rc_cfg_.max_quantizer = 56;
+    cfg_.rc_max_quantizer = 56;
+    rc_api_ = libvpx::VP8RateControlRTC::Create(rc_cfg_);
+    ASSERT_TRUE(rc_api_->UpdateRateControl(rc_cfg_));
+
+    ::libvpx_test::I420VideoSource video(test_video_.name, test_video_.width,
+                                         test_video_.height, 30, 1, 0,
+                                         test_video_.frames);
+
+    ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+    // Check that some frames were dropped, otherwise test has no value.
+    ASSERT_GE(num_drops_, 1);
+  }
+
   void RunPeriodicKey() {
     test_video_ = GET_PARAM(2);
     target_bitrate_ = GET_PARAM(1);
-    if (test_video_.width == 1280 && target_bitrate_ == 200) return;
-    if (test_video_.width == 640 && target_bitrate_ == 1000) return;
     key_interval_ = 100;
+    frame_drop_thresh_ = 30;
     SetConfig();
     rc_api_ = libvpx::VP8RateControlRTC::Create(rc_cfg_);
     ASSERT_TRUE(rc_api_->UpdateRateControl(rc_cfg_));
@@ -189,8 +238,6 @@ class Vp8RcInterfaceTest
   void RunTemporalLayers2TL() {
     test_video_ = GET_PARAM(2);
     target_bitrate_ = GET_PARAM(1);
-    if (test_video_.width == 1280 && target_bitrate_ == 200) return;
-    if (test_video_.width == 640 && target_bitrate_ == 1000) return;
     SetConfigTemporalLayers(2);
     rc_api_ = libvpx::VP8RateControlRTC::Create(rc_cfg_);
     ASSERT_TRUE(rc_api_->UpdateRateControl(rc_cfg_));
@@ -205,8 +252,6 @@ class Vp8RcInterfaceTest
   void RunTemporalLayers3TL() {
     test_video_ = GET_PARAM(2);
     target_bitrate_ = GET_PARAM(1);
-    if (test_video_.width == 1280 && target_bitrate_ == 200) return;
-    if (test_video_.width == 640 && target_bitrate_ == 1000) return;
     SetConfigTemporalLayers(3);
     rc_api_ = libvpx::VP8RateControlRTC::Create(rc_cfg_);
     ASSERT_TRUE(rc_api_->UpdateRateControl(rc_cfg_));
@@ -216,6 +261,28 @@ class Vp8RcInterfaceTest
                                          test_video_.frames);
 
     ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+  }
+
+  void RunTemporalLayers3TLDropFrames() {
+    test_video_ = GET_PARAM(2);
+    target_bitrate_ = GET_PARAM(1);
+    frame_drop_thresh_ = 30;
+    num_drops_ = 0;
+    // Use lower target_bitrate and max_quantizer to trigger drops.
+    target_bitrate_ = target_bitrate_ >> 2;
+    SetConfigTemporalLayers(3);
+    rc_cfg_.max_quantizer = 56;
+    cfg_.rc_max_quantizer = 56;
+    rc_api_ = libvpx::VP8RateControlRTC::Create(rc_cfg_);
+    ASSERT_TRUE(rc_api_->UpdateRateControl(rc_cfg_));
+
+    ::libvpx_test::I420VideoSource video(test_video_.name, test_video_.width,
+                                         test_video_.height, 30, 1, 0,
+                                         test_video_.frames);
+
+    ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+    // Check that some frames were dropped, otherwise test has no value.
+    ASSERT_GE(num_drops_, 1);
   }
 
  private:
@@ -233,6 +300,7 @@ class Vp8RcInterfaceTest
     rc_cfg_.max_intra_bitrate_pct = 1000;
     rc_cfg_.framerate = 30.0;
     rc_cfg_.layer_target_bitrate[0] = target_bitrate_;
+    rc_cfg_.frame_drop_thresh = frame_drop_thresh_;
 
     // Encoder settings for ground truth.
     cfg_.g_w = test_video_.width;
@@ -251,6 +319,7 @@ class Vp8RcInterfaceTest
     cfg_.rc_target_bitrate = target_bitrate_;
     cfg_.kf_min_dist = key_interval_;
     cfg_.kf_max_dist = key_interval_;
+    cfg_.rc_dropframe_thresh = frame_drop_thresh_;
   }
 
   void SetConfigTemporalLayers(int temporal_layers) {
@@ -266,6 +335,7 @@ class Vp8RcInterfaceTest
     rc_cfg_.overshoot_pct = 50;
     rc_cfg_.max_intra_bitrate_pct = 1000;
     rc_cfg_.framerate = 30.0;
+    rc_cfg_.frame_drop_thresh = frame_drop_thresh_;
     if (temporal_layers == 2) {
       rc_cfg_.layer_target_bitrate[0] = 60 * target_bitrate_ / 100;
       rc_cfg_.layer_target_bitrate[1] = target_bitrate_;
@@ -299,6 +369,7 @@ class Vp8RcInterfaceTest
     cfg_.rc_target_bitrate = target_bitrate_;
     cfg_.kf_min_dist = key_interval_;
     cfg_.kf_max_dist = key_interval_;
+    cfg_.rc_dropframe_thresh = frame_drop_thresh_;
     // 2 Temporal layers, no spatial layers, CBR mode.
     cfg_.ss_number_layers = 1;
     cfg_.ts_number_layers = temporal_layers;
@@ -326,15 +397,25 @@ class Vp8RcInterfaceTest
   Vp8RCTestVideo test_video_;
   libvpx::VP8FrameParamsQpRTC frame_params_;
   bool encoder_exit_;
+  int frame_drop_thresh_;
+  int num_drops_;
 };
 
 TEST_P(Vp8RcInterfaceTest, OneLayer) { RunOneLayer(); }
+
+TEST_P(Vp8RcInterfaceTest, OneLayerScreen) { RunOneLayerScreen(); }
+
+TEST_P(Vp8RcInterfaceTest, OneLayerDropFrames) { RunOneLayerDropFrames(); }
 
 TEST_P(Vp8RcInterfaceTest, OneLayerPeriodicKey) { RunPeriodicKey(); }
 
 TEST_P(Vp8RcInterfaceTest, TemporalLayers2TL) { RunTemporalLayers2TL(); }
 
 TEST_P(Vp8RcInterfaceTest, TemporalLayers3TL) { RunTemporalLayers3TL(); }
+
+TEST_P(Vp8RcInterfaceTest, TemporalLayers3TLDropFrames) {
+  RunTemporalLayers3TLDropFrames();
+}
 
 VP8_INSTANTIATE_TEST_SUITE(Vp8RcInterfaceTest,
                            ::testing::Values(200, 400, 1000),

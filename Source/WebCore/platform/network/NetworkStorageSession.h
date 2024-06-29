@@ -121,8 +121,12 @@ public:
     virtual void cookieEnabledStateMayHaveChanged() = 0;
 };
 
-class NetworkStorageSession : public CanMakeWeakPtr<NetworkStorageSession> {
-    WTF_MAKE_NONCOPYABLE(NetworkStorageSession); WTF_MAKE_FAST_ALLOCATED;
+class NetworkStorageSession
+    : public CanMakeWeakPtr<NetworkStorageSession>
+    , public CanMakeCheckedPtr<NetworkStorageSession> {
+    WTF_MAKE_NONCOPYABLE(NetworkStorageSession);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkStorageSession);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     using TopFrameDomain = WebCore::RegistrableDomain;
     using SubResourceDomain = WebCore::RegistrableDomain;

@@ -67,6 +67,9 @@ std::optional<int> parseValidHTMLNonNegativeInteger(StringView);
 // https://html.spec.whatwg.org/#valid-floating-point-number
 std::optional<double> parseValidHTMLFloatingPointNumber(StringView);
 
+// https://html.spec.whatwg.org/#rules-for-parsing-floating-point-number-values
+double parseHTMLFloatingPointNumberValue(StringView, double fallbackValue = std::numeric_limits<double>::quiet_NaN());
+
 // https://html.spec.whatwg.org/multipage/infrastructure.html#rules-for-parsing-floating-point-number-values
 Vector<double> parseHTMLListOfOfFloatingPointNumberValues(StringView);
 

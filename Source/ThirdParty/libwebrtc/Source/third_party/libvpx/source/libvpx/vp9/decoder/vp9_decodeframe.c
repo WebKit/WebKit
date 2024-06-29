@@ -22,6 +22,7 @@
 #include "vpx_ports/mem.h"
 #include "vpx_ports/mem_ops.h"
 #include "vpx_scale/vpx_scale.h"
+#include "vpx_util/vpx_pthread.h"
 #include "vpx_util/vpx_thread.h"
 #if CONFIG_BITSTREAM_DEBUG || CONFIG_MISMATCH_DEBUG
 #include "vpx_util/vpx_debug_util.h"
@@ -67,6 +68,7 @@ static int decode_unsigned_max(struct vpx_read_bit_buffer *rb, int max) {
 static TX_MODE read_tx_mode(vpx_reader *r) {
   TX_MODE tx_mode = vpx_read_literal(r, 2);
   if (tx_mode == ALLOW_32X32) tx_mode += vpx_read_bit(r);
+  assert(tx_mode < TX_MODES);
   return tx_mode;
 }
 
@@ -2292,6 +2294,7 @@ static INLINE void init_mt(VP9Decoder *pbi) {
       ++pbi->num_tile_workers;
 
       winterface->init(worker);
+      worker->thread_name = "vpx tile worker";
       if (n < num_threads - 1 && !winterface->reset(worker)) {
         do {
           winterface->end(&pbi->tile_workers[pbi->num_tile_workers - 1]);

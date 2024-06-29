@@ -488,7 +488,7 @@ void ContentChangeObserver::elementDidBecomeHidden(const Element& element)
 void ContentChangeObserver::touchEventDidStart(PlatformEvent::Type eventType)
 {
 #if ENABLE(TOUCH_EVENTS)
-    if (!isContentChangeObserverEnabled() || m_document.quirks().shouldDisableContentChangeObserverTouchEventAdjustment())
+    if (!isContentChangeObserverEnabled())
         return;
     if (eventType != PlatformEvent::Type::TouchStart)
         return;

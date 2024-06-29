@@ -200,7 +200,6 @@ ABSL_FLAG(bool,
 
 ABSL_FLAG(bool, video, true, "Add video stream");
 
-// Video-specific flags.
 ABSL_FLAG(std::string,
           clip,
           "",
@@ -419,15 +418,16 @@ void Loopback() {
   SL_descriptors.push_back(SL0());
   SL_descriptors.push_back(SL1());
   SL_descriptors.push_back(SL2());
-  VideoQualityTest::FillScalabilitySettings(
+
+  VideoQualityTest fixture(nullptr);
+  fixture.FillScalabilitySettings(
       &params, 0, stream_descriptors, NumStreams(), SelectedStream(),
       NumSpatialLayers(), SelectedSL(), InterLayerPred(), SL_descriptors);
 
-  auto fixture = std::make_unique<VideoQualityTest>(nullptr);
   if (DurationSecs()) {
-    fixture->RunWithAnalyzer(params);
+    fixture.RunWithAnalyzer(params);
   } else {
-    fixture->RunWithRenderers(params);
+    fixture.RunWithRenderers(params);
   }
 }
 

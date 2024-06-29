@@ -23,8 +23,11 @@
 #include <assert.h>
 #include <string.h>  // for memset()
 
+#include "config/aom_config.h"
+
 #include "aom_mem/aom_mem.h"
 #include "aom_ports/sanitizer.h"
+#include "aom_util/aom_pthread.h"
 #include "aom_util/aom_thread.h"
 
 #if CONFIG_MULTITHREAD
@@ -65,29 +68,30 @@ static THREADFN thread_loop(void *ptr) {
 #endif
   pthread_mutex_lock(&worker->impl_->mutex_);
   for (;;) {
-    while (worker->status_ == OK) {  // wait in idling mode
+    while (worker->status_ == AVX_WORKER_STATUS_OK) {  // wait in idling mode
       pthread_cond_wait(&worker->impl_->condition_, &worker->impl_->mutex_);
     }
-    if (worker->status_ == WORK) {
-      // When worker->status_ is WORK, the main thread doesn't change
-      // worker->status_ and will wait until the worker changes worker->status_
-      // to OK. See change_state(). So the worker can safely call execute()
-      // without holding worker->impl_->mutex_. When the worker reacquires
-      // worker->impl_->mutex_, worker->status_ must still be WORK.
+    if (worker->status_ == AVX_WORKER_STATUS_WORKING) {
+      // When worker->status_ is AVX_WORKER_STATUS_WORKING, the main thread
+      // doesn't change worker->status_ and will wait until the worker changes
+      // worker->status_ to AVX_WORKER_STATUS_OK. See change_state(). So the
+      // worker can safely call execute() without holding worker->impl_->mutex_.
+      // When the worker reacquires worker->impl_->mutex_, worker->status_ must
+      // still be AVX_WORKER_STATUS_WORKING.
       pthread_mutex_unlock(&worker->impl_->mutex_);
       execute(worker);
       pthread_mutex_lock(&worker->impl_->mutex_);
-      assert(worker->status_ == WORK);
-      worker->status_ = OK;
+      assert(worker->status_ == AVX_WORKER_STATUS_WORKING);
+      worker->status_ = AVX_WORKER_STATUS_OK;
       // signal to the main thread that we're done (for sync())
       pthread_cond_signal(&worker->impl_->condition_);
     } else {
-      assert(worker->status_ == NOT_OK);  // finish the worker
+      assert(worker->status_ == AVX_WORKER_STATUS_NOT_OK);  // finish the worker
       break;
     }
   }
   pthread_mutex_unlock(&worker->impl_->mutex_);
-  return THREAD_RETURN(NULL);  // Thread is finished
+  return THREAD_EXIT_SUCCESS;  // Thread is finished
 }
 
 // main thread state control
@@ -98,13 +102,13 @@ static void change_state(AVxWorker *const worker, AVxWorkerStatus new_status) {
   if (worker->impl_ == NULL) return;
 
   pthread_mutex_lock(&worker->impl_->mutex_);
-  if (worker->status_ >= OK) {
+  if (worker->status_ >= AVX_WORKER_STATUS_OK) {
     // wait for the worker to finish
-    while (worker->status_ != OK) {
+    while (worker->status_ != AVX_WORKER_STATUS_OK) {
       pthread_cond_wait(&worker->impl_->condition_, &worker->impl_->mutex_);
     }
     // assign new status and release the working thread if needed
-    if (new_status != OK) {
+    if (new_status != AVX_WORKER_STATUS_OK) {
       worker->status_ = new_status;
       pthread_cond_signal(&worker->impl_->condition_);
     }
@@ -118,21 +122,21 @@ static void change_state(AVxWorker *const worker, AVxWorkerStatus new_status) {
 
 static void init(AVxWorker *const worker) {
   memset(worker, 0, sizeof(*worker));
-  worker->status_ = NOT_OK;
+  worker->status_ = AVX_WORKER_STATUS_NOT_OK;
 }
 
 static int sync(AVxWorker *const worker) {
 #if CONFIG_MULTITHREAD
-  change_state(worker, OK);
+  change_state(worker, AVX_WORKER_STATUS_OK);
 #endif
-  assert(worker->status_ <= OK);
+  assert(worker->status_ <= AVX_WORKER_STATUS_OK);
   return !worker->had_error;
 }
 
 static int reset(AVxWorker *const worker) {
   int ok = 1;
   worker->had_error = 0;
-  if (worker->status_ < OK) {
+  if (worker->status_ < AVX_WORKER_STATUS_OK) {
 #if CONFIG_MULTITHREAD
     worker->impl_ = (AVxWorkerImpl *)aom_calloc(1, sizeof(*worker->impl_));
     if (worker->impl_ == NULL) {
@@ -152,19 +156,21 @@ static int reset(AVxWorker *const worker) {
       // See: https://crbug.com/aomedia/3379
 #if defined(AOM_ADDRESS_SANITIZER) && defined(__APPLE__) && AOM_ARCH_ARM && \
     !defined(NDEBUG)
+    const size_t kMinStackSize = 1024 * 1024;
+#else
+    const size_t kMinStackSize = 256 * 1024;
+#endif
     size_t stacksize;
     if (!pthread_attr_getstacksize(&attr, &stacksize)) {
-      const size_t kMinStackSize = 1 << 20;  // 1 MiB
       if (stacksize < kMinStackSize &&
           pthread_attr_setstacksize(&attr, kMinStackSize)) {
         pthread_attr_destroy(&attr);
         goto Error2;
       }
     }
-#endif
     pthread_mutex_lock(&worker->impl_->mutex_);
     ok = !pthread_create(&worker->impl_->thread_, &attr, thread_loop, worker);
-    if (ok) worker->status_ = OK;
+    if (ok) worker->status_ = AVX_WORKER_STATUS_OK;
     pthread_mutex_unlock(&worker->impl_->mutex_);
     pthread_attr_destroy(&attr);
     if (!ok) {
@@ -177,12 +183,12 @@ static int reset(AVxWorker *const worker) {
       return 0;
     }
 #else
-    worker->status_ = OK;
+    worker->status_ = AVX_WORKER_STATUS_OK;
 #endif
-  } else if (worker->status_ > OK) {
+  } else if (worker->status_ > AVX_WORKER_STATUS_OK) {
     ok = sync(worker);
   }
-  assert(!ok || (worker->status_ == OK));
+  assert(!ok || (worker->status_ == AVX_WORKER_STATUS_OK));
   return ok;
 }
 
@@ -194,7 +200,7 @@ static void execute(AVxWorker *const worker) {
 
 static void launch(AVxWorker *const worker) {
 #if CONFIG_MULTITHREAD
-  change_state(worker, WORK);
+  change_state(worker, AVX_WORKER_STATUS_WORKING);
 #else
   execute(worker);
 #endif
@@ -203,7 +209,7 @@ static void launch(AVxWorker *const worker) {
 static void end(AVxWorker *const worker) {
 #if CONFIG_MULTITHREAD
   if (worker->impl_ != NULL) {
-    change_state(worker, NOT_OK);
+    change_state(worker, AVX_WORKER_STATUS_NOT_OK);
     pthread_join(worker->impl_->thread_, NULL);
     pthread_mutex_destroy(&worker->impl_->mutex_);
     pthread_cond_destroy(&worker->impl_->condition_);
@@ -211,10 +217,10 @@ static void end(AVxWorker *const worker) {
     worker->impl_ = NULL;
   }
 #else
-  worker->status_ = NOT_OK;
+  worker->status_ = AVX_WORKER_STATUS_NOT_OK;
   assert(worker->impl_ == NULL);
 #endif
-  assert(worker->status_ == NOT_OK);
+  assert(worker->status_ == AVX_WORKER_STATUS_NOT_OK);
 }
 
 //------------------------------------------------------------------------------

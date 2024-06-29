@@ -97,7 +97,8 @@ bool FEColorMatrixSkiaApplier::apply(const Filter&, const FilterImageVector& inp
     SkPaint paint;
     paint.setColorFilter(SkColorFilters::Matrix(matrix.data()));
 
-    resultImage->context().platformContext()->drawImage(nativeImage->platformImage(), 0, 0, { }, &paint);
+    auto inputOffsetWithinResult = input.absoluteImageRectRelativeTo(result).location();
+    resultImage->context().platformContext()->drawImage(nativeImage->platformImage(), inputOffsetWithinResult.x(), inputOffsetWithinResult.y(), { }, &paint);
     return true;
 }
 

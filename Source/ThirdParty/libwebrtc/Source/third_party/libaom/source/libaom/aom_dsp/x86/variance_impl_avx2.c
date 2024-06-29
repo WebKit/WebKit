@@ -648,7 +648,7 @@ MAKE_SUB_PIXEL_VAR_16XH(4, 2)
 #endif
 
 #define MAKE_SUB_PIXEL_AVG_VAR_32XH(height, log2height)                       \
-  int aom_sub_pixel_avg_variance32x##height##_imp_avx2(                       \
+  static int sub_pixel_avg_variance32x##height##_imp_avx2(                    \
       const uint8_t *src, int src_stride, int x_offset, int y_offset,         \
       const uint8_t *dst, int dst_stride, const uint8_t *sec, int sec_stride, \
       unsigned int *sse) {                                                    \
@@ -876,7 +876,7 @@ MAKE_SUB_PIXEL_VAR_16XH(4, 2)
       const uint8_t *src, int src_stride, int x_offset, int y_offset,         \
       const uint8_t *dst, int dst_stride, unsigned int *sse,                  \
       const uint8_t *sec_ptr) {                                               \
-    const int sum = aom_sub_pixel_avg_variance32x##height##_imp_avx2(         \
+    const int sum = sub_pixel_avg_variance32x##height##_imp_avx2(             \
         src, src_stride, x_offset, y_offset, dst, dst_stride, sec_ptr, 32,    \
         sse);                                                                 \
     return *sse - (unsigned int)(((int64_t)sum * sum) >> (5 + log2height));   \
@@ -899,7 +899,7 @@ MAKE_SUB_PIXEL_AVG_VAR_32XH(16, 4)
       const uint8_t *sec_ptr = sec;                                       \
       for (int j = 0; j < (h / hf); ++j) {                                \
         unsigned int sse2;                                                \
-        const int se2 = aom_sub_pixel_avg_variance##wf##x##hf##_imp_avx2( \
+        const int se2 = sub_pixel_avg_variance##wf##x##hf##_imp_avx2(     \
             src_ptr, src_stride, x_offset, y_offset, dst_ptr, dst_stride, \
             sec_ptr, w, &sse2);                                           \
         dst_ptr += hf * dst_stride;                                       \

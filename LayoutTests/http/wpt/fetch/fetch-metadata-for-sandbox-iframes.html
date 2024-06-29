@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src=/fetch/metadata/resources/helper.js></script>
+<script src=/common/utils.js></script>
+<body></body>
+<script>
+function load_iframe(test, url, shouldSandbox) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => reject("message frame timed out"), 5000);
+        const frame = document.createElement('iframe');
+        test.add_cleanup(() => frame.remove());
+        if (shouldSandbox)
+            frame.sandbox = "allow-scripts";
+        frame.src = url;
+        window.onmessage = e => resolve(e.data);
+        document.body.appendChild(frame);
+    });
+}
+
+async function getFrameSecFetchSite(test, options)
+{
+    const nonce = token();
+    const path = "/WebKit/fetch/resources/sec-fetch-site.py?nonce=" + nonce;
+
+    const finalURL = options.isCrossOriginFinalURL ? "http://127.0.0.1:8800" : "http://localhost:8800" + path;
+
+    let url = finalURL
+    if (options.shouldRedirect) {
+        url = "/xhr/resources/redirect.py?location=" + encodeURIComponent(url);
+        if (options.shouldRedirectCrossOrigin)
+            url = "http://127.0.0.1:8800" + url;
+    }
+    return await load_iframe(test, url, options.shouldSandbox);
+}
+
+promise_test(async t => {
+    const result = await getFrameSecFetchSite(t, { });
+    assert_equals(result, "same-origin");
+}, "same-origin iframe");
+
+promise_test(async t => {
+    const result = await getFrameSecFetchSite(t, { shouldSandbox : true });
+    assert_equals(result, "same-origin");
+}, "same-origin sandboxed iframe");
+
+promise_test(async t => {
+    const result = await getFrameSecFetchSite(t, { shouldRedirect: true });
+    assert_equals(result, "same-origin");
+}, "same-origin redirect iframe");
+
+promise_test(async t => {
+    const result = await getFrameSecFetchSite(t, { shouldRedirect: true, shouldSandbox : true });
+    assert_equals(result, "same-origin");
+}, "same-origin redirect sandboxed iframe");
+
+promise_test(async t => {
+    const result = await getFrameSecFetchSite(t, { shouldRedirect: true, shouldRedirectCrossOrigin: true });
+    assert_equals(result, "cross-site");
+}, "cross-origin redirect iframe");
+
+promise_test(async t => {
+    const result = await getFrameSecFetchSite(t, { shouldRedirect: true, shouldRedirectCrossOrigin: true, shouldSandbox : true });
+    assert_equals(result, "cross-site");
+}, "cross-origin redirect sandboxed iframe");
+
+</script>

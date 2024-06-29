@@ -42,11 +42,6 @@ egl::Error DeviceCGL::getAttribute(const egl::Display *display, EGLint attribute
     return egl::NoError();
 }
 
-EGLint DeviceCGL::getType()
-{
-    return 0;
-}
-
 void DeviceCGL::generateExtensions(egl::DeviceExtensions *outExtensions) const
 {
     outExtensions->deviceCGL = true;

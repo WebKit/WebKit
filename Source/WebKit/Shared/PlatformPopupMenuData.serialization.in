@@ -33,7 +33,8 @@ struct WebKit::PlatformPopupMenuData {
     int m_clientInsetLeft;
     int m_clientInsetRight;
     int m_popupWidth;
-    int m_itemHeight;
+    float m_itemHeight;
+    bool m_isRTL
     RefPtr<WebCore::ShareableBitmap> m_notSelectedBackingStore;
     RefPtr<WebCore::ShareableBitmap> m_selectedBackingStore;
 #endif

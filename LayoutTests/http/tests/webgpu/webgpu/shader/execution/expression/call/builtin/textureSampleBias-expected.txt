@@ -1,1 +1,7 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :sampled_2d_coords:
+PASS :sampled_3d_coords:texture_type="texture_3d"
+PASS :sampled_3d_coords:texture_type="texture_cube"
+PASS :arrayed_2d_coords:
+PASS :arrayed_3d_coords:
+

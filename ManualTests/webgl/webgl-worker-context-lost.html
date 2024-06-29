@@ -1,0 +1,12 @@
+<body>
+<canvas id="c"></canvas>
+<script>
+// python3 -m http.server
+// run-minibrowser --debug http://localhost:8000/webgl-worker-context-lost.html
+// killall GPU.Development
+// observe green
+const worker = new Worker("./webgl-worker-context-lost-worker.js");
+let oc = c.transferControlToOffscreen();
+worker.postMessage({ oc }, [oc]);
+ </script>
+</body>

@@ -882,6 +882,8 @@ void WebExtensionAction::readyToPresentPopup()
     setHasUnreadBadgeText(false);
 
     m_popupPresented = true;
+    if (RefPtr extensionController = extensionContext()->extensionController())
+        extensionController->setShowingActionPopup(true);
 
     dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
         if (!extensionContext() || !popupPresented())
@@ -941,6 +943,9 @@ void WebExtensionAction::closePopup()
 
     m_popupPresented = false;
     m_presentsPopupWhenReady = false;
+
+    if (RefPtr extensionController = extensionContext()->extensionController())
+        extensionController->setShowingActionPopup(false);
 
     [m_popupWebView _close];
     m_popupWebView = nil;

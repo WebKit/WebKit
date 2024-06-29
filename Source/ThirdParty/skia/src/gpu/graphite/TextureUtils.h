@@ -11,6 +11,7 @@
 #include "include/core/SkImage.h"
 #include "include/core/SkRefCnt.h"
 #include "include/gpu/GpuTypes.h"
+#include "include/gpu/graphite/Image.h"
 #include "src/gpu/graphite/TextureProxyView.h"
 
 #include <functional>
@@ -23,10 +24,15 @@ class SkImage;
 struct SkImageInfo;
 struct SkSamplingOptions;
 
+namespace skgpu {
+    class RefCntedCallback;
+}
+
 namespace skgpu::graphite {
 
 class Caps;
 class Context;
+class Image;
 class Recorder;
 class TextureProxyView;
 
@@ -36,16 +42,36 @@ std::tuple<TextureProxyView, SkColorType> MakeBitmapProxyView(Recorder*,
                                                               const SkBitmap&,
                                                               sk_sp<SkMipmap>,
                                                               Mipmapped,
-                                                              skgpu::Budgeted);
+                                                              skgpu::Budgeted,
+                                                              std::string_view label);
+
+sk_sp<TextureProxy> MakePromiseImageLazyProxy(const Caps*,
+                                              SkISize dimensions,
+                                              TextureInfo,
+                                              Volatile,
+                                              sk_sp<skgpu::RefCntedCallback> releaseHelper,
+                                              SkImages::GraphitePromiseTextureFulfillProc,
+                                              SkImages::GraphitePromiseTextureFulfillContext,
+                                              SkImages::GraphitePromiseTextureReleaseProc);
 
 sk_sp<SkImage> MakeFromBitmap(Recorder*,
                               const SkColorInfo&,
                               const SkBitmap&,
                               sk_sp<SkMipmap>,
                               skgpu::Budgeted,
-                              SkImage::RequiredProperties);
+                              SkImage::RequiredProperties,
+                              std::string_view label);
 
 size_t ComputeSize(SkISize dimensions, const TextureInfo&);
+
+sk_sp<Image> CopyAsDraw(Recorder*,
+                        const SkImage* image,
+                        const SkIRect& subset,
+                        const SkColorInfo& dstColorInfo,
+                        Budgeted,
+                        Mipmapped,
+                        SkBackingFit,
+                        std::string_view label);
 
 sk_sp<SkImage> RescaleImage(Recorder*,
                             const SkImage* srcImage,
@@ -58,6 +84,7 @@ bool GenerateMipmaps(Recorder*, sk_sp<TextureProxy>, const SkColorInfo&);
 
 // Returns the underlying TextureProxyView if it's a non-YUVA Graphite-backed image.
 TextureProxyView AsView(const SkImage*);
+inline TextureProxyView AsView(sk_sp<SkImage> image) { return AsView(image.get()); }
 
 std::pair<sk_sp<SkImage>, SkSamplingOptions> GetGraphiteBacked(Recorder*,
                                                                const SkImage*,

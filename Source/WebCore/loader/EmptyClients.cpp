@@ -104,7 +104,7 @@ namespace WebCore {
 class UserMessageHandlerDescriptor;
 
 class EmptyBackForwardClient final : public BackForwardClient {
-    void addItem(Ref<HistoryItem>&&) final { }
+    void addItem(FrameIdentifier, Ref<HistoryItem>&&) final { }
     void goToItem(HistoryItem&) final { }
     RefPtr<HistoryItem> itemAtIndex(int) final { return nullptr; }
     unsigned backListCount() const final { return 0; }
@@ -129,8 +129,8 @@ class EmptyContextMenuClient final : public ContextMenuClient {
     void handleTranslation(const TranslationContextMenuInfo&) final { }
 #endif
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    void handleSwapCharacters(IntRect) final { };
+#if ENABLE(WRITING_TOOLS)
+    void handleWritingTools(IntRect) final { };
 #endif
 
 #if PLATFORM(GTK)
@@ -288,7 +288,7 @@ private:
     void didEndUserTriggeredSelectionChanges() final { }
     void willWriteSelectionToPasteboard(const std::optional<SimpleRange>&) final { }
     void didWriteSelectionToPasteboard() final { }
-    void getClientPasteboardData(const std::optional<SimpleRange>&, Vector<String>&, Vector<RefPtr<SharedBuffer>>&) final { }
+    void getClientPasteboardData(const std::optional<SimpleRange>&, Vector<std::pair<String, RefPtr<SharedBuffer>>>&) final { }
     void requestCandidatesForSelection(const VisibleSelection&) final { }
     void handleAcceptedCandidateWithSoftSpaces(TextCheckingResult) final { }
 
@@ -296,7 +296,7 @@ private:
     void registerRedoStep(UndoStep&) final;
     void clearUndoRedoOperations() final { }
 
-    DOMPasteAccessResponse requestDOMPasteAccess(DOMPasteAccessCategory, const String&) final { return DOMPasteAccessResponse::DeniedForGesture; }
+    DOMPasteAccessResponse requestDOMPasteAccess(DOMPasteAccessCategory, FrameIdentifier, const String&) final { return DOMPasteAccessResponse::DeniedForGesture; }
 
     bool canCopyCut(LocalFrame*, bool defaultValue) const final { return defaultValue; }
     bool canPaste(LocalFrame*, bool defaultValue) const final { return defaultValue; }
@@ -565,14 +565,6 @@ std::unique_ptr<DataListSuggestionPicker> EmptyChromeClient::createDataListSugge
 std::unique_ptr<DateTimeChooser> EmptyChromeClient::createDateTimeChooser(DateTimeChooserClient&)
 {
     return nullptr;
-}
-
-#endif
-
-#if ENABLE(APP_HIGHLIGHTS)
-
-void EmptyChromeClient::storeAppHighlight(AppHighlight&&) const
-{
 }
 
 #endif

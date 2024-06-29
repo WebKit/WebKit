@@ -84,6 +84,7 @@ private:
     void shutDownTrackingAndRendering();
     void requestFrame(CompletionHandler<void(PlatformXR::FrameData&&)>&&);
     void submitFrame();
+    void didCompleteShutdownTriggeredBySystem();
 
     // PlatformXRCoordinatorSessionEventClient
     void sessionDidEnd(XRDeviceIdentifier) final;
@@ -96,11 +97,13 @@ private:
         Idle,
         RequestingPermissions,
         PermissionsGranted,
-        SessionRunning
+        SessionRunning,
+        SessionEndingFromWebContent,
+        SessionEndingFromSystem,
     };
     ImmersiveSessionState m_immersiveSessionState { ImmersiveSessionState::Idle };
     void setImmersiveSessionState(ImmersiveSessionState);
-    void invalidateImmersiveSessionState();
+    void invalidateImmersiveSessionState(ImmersiveSessionState nextSessionState = ImmersiveSessionState::Idle);
 
     WebPageProxy& m_page;
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_immersiveSessionActivity;

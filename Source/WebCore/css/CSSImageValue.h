@@ -93,6 +93,7 @@ private:
     RefPtr<CSSImageValue> m_unresolvedValue;
     bool m_isInvalid { false };
     String m_replacementURLString;
+    bool m_shouldUseResolvedURLInCSSText { false };
 };
 
 } // namespace WebCore

@@ -32,11 +32,9 @@
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
 #include "api/task_queue/pending_task_safety_flag.h"
-#include "api/transport/field_trial_based_config.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/memory/always_valid_pointer.h"
 #include "rtc_base/network_monitor.h"
 #include "rtc_base/socket.h"  // includes something that makes windows happy
 #include "rtc_base/string_encode.h"
@@ -308,14 +306,8 @@ webrtc::MdnsResponderInterface* NetworkManager::GetMdnsResponder() const {
   return nullptr;
 }
 
-NetworkManagerBase::NetworkManagerBase(
-    const webrtc::FieldTrialsView* field_trials)
-    : field_trials_(field_trials),
-      enumeration_permission_(NetworkManager::ENUMERATION_ALLOWED),
-      signal_network_preference_change_(
-          field_trials
-              ? field_trials->IsEnabled("WebRTC-SignalNetworkPreferenceChange")
-              : false) {}
+NetworkManagerBase::NetworkManagerBase()
+    : enumeration_permission_(NetworkManager::ENUMERATION_ALLOWED) {}
 
 NetworkManager::EnumerationPermission
 NetworkManagerBase::enumeration_permission() const {
@@ -441,9 +433,6 @@ void NetworkManagerBase::MergeNetworkList(
       }
       if (net->network_preference() != existing_net->network_preference()) {
         existing_net->set_network_preference(net->network_preference());
-        if (signal_network_preference_change_) {
-          *changed = true;
-        }
       }
       RTC_DCHECK(net->active());
     }
@@ -548,14 +537,13 @@ BasicNetworkManager::BasicNetworkManager(
     NetworkMonitorFactory* network_monitor_factory,
     SocketFactory* socket_factory,
     const webrtc::FieldTrialsView* field_trials_view)
-    : NetworkManagerBase(field_trials_view),
-      field_trials_(field_trials_view),
+    : field_trials_(field_trials_view),
       network_monitor_factory_(network_monitor_factory),
       socket_factory_(socket_factory),
       allow_mac_based_ipv6_(
-          field_trials()->IsEnabled("WebRTC-AllowMACBasedIPv6")),
+          field_trials_->IsEnabled("WebRTC-AllowMACBasedIPv6")),
       bind_using_ifname_(
-          !field_trials()->IsDisabled("WebRTC-BindUsingInterfaceName")) {
+          !field_trials_->IsDisabled("WebRTC-BindUsingInterfaceName")) {
   RTC_DCHECK(socket_factory_);
 }
 
@@ -1000,7 +988,7 @@ void BasicNetworkManager::StartNetworkMonitor() {
   }
   if (!network_monitor_) {
     network_monitor_.reset(
-        network_monitor_factory_->CreateNetworkMonitor(*field_trials()));
+        network_monitor_factory_->CreateNetworkMonitor(*field_trials_));
     if (!network_monitor_) {
       return;
     }
@@ -1203,12 +1191,6 @@ webrtc::MdnsResponderInterface* Network::GetMdnsResponder() const {
     return nullptr;
   }
   return mdns_responder_provider_->GetMdnsResponder();
-}
-
-uint16_t Network::GetCost(const webrtc::FieldTrialsView* field_trials) const {
-  return GetCost(
-      *webrtc::AlwaysValidPointer<const webrtc::FieldTrialsView,
-                                  webrtc::FieldTrialBasedConfig>(field_trials));
 }
 
 uint16_t Network::GetCost(const webrtc::FieldTrialsView& field_trials) const {

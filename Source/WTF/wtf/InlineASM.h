@@ -45,8 +45,6 @@
 
 #if (OS(LINUX) || OS(FREEBSD) || OS(QNX)) && CPU(X86_64)
 #define GLOBAL_REFERENCE(name) #name "@plt"
-#elif CPU(X86) && COMPILER(MINGW)
-#define GLOBAL_REFERENCE(name) "@" #name "@4"
 #elif OS(LINUX) && CPU(X86) && defined(__PIC__)
 #define GLOBAL_REFERENCE(name) SYMBOL_STRING(name) "@plt"
 #else
@@ -90,7 +88,7 @@
     || OS(HURD)                \
     || OS(NETBSD)              \
     || OS(QNX)                 \
-    || COMPILER(MINGW)
+    || OS(WINDOWS)
     // GNU as-compatible syntax.
 #define LOCAL_LABEL_STRING(name) ".L" #name
 #endif

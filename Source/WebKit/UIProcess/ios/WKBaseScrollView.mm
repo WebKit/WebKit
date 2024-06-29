@@ -181,6 +181,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #import <WebKitAdditions/WKBaseScrollViewAdditions.mm>
 #else
 - (BOOL)_hasEnoughContentForOverlayRegions { return false; }
+- (void)_updateOverlayRegionsBehavior:(BOOL)selected { }
 - (void)_updateOverlayRegionRects:(HashSet<WebCore::IntRect>&)overlayRegions { }
 - (void)_updateOverlayRegions:(NSArray<NSData *> *)overlayRegions { }
 #endif

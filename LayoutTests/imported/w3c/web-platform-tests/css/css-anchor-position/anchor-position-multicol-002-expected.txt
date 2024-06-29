@@ -1,0 +1,40 @@
+The green box should be a union of blue boxes, and the purple box should be at the right-bottom of the green box.
+
+
+FAIL .target 1 assert_equals:
+<div class="target target1" data-offset-x="18" data-offset-y="65" data-expected-width="160" data-expected-height="100"></div>
+width expected 160 but got 0
+FAIL .target 2 assert_equals:
+<div class="target target1-rb" data-offset-x="168" data-offset-y="155"></div>
+offsetLeft expected 168 but got 76
+FAIL .target 3 assert_equals:
+<div class="target fixed target1" data-offset-x="26" data-offset-y="70" data-expected-width="160" data-expected-height="100"></div>
+width expected 160 but got 0
+FAIL .target 4 assert_equals:
+<div class="target fixed target1-rb" data-offset-x="176" data-offset-y="160"></div>
+offsetLeft expected 176 but got 84
+FAIL .target 5 assert_equals:
+<div class="target target1" data-offset-x="144" data-offset-y="5" data-expected-width="160" data-expected-height="100"></div>
+width expected 160 but got 0
+FAIL .target 6 assert_equals:
+<div class="target target1-rb" data-offset-x="294" data-offset-y="95"></div>
+offsetLeft expected 294 but got 760
+FAIL .target 7 assert_equals:
+<div class="target fixed target1" data-offset-x="152" data-offset-y="10" data-expected-width="160" data-expected-height="100"></div>
+width expected 160 but got 0
+FAIL .target 8 assert_equals:
+<div class="target fixed target1-rb" data-offset-x="302" data-offset-y="100"></div>
+offsetLeft expected 302 but got 768
+FAIL .target 9 assert_equals:
+<div class="target target1" data-offset-x="144" data-offset-y="5" data-expected-width="160" data-expected-height="100"></div>
+width expected 160 but got 0
+FAIL .target 10 assert_equals:
+<div class="target target1-rb" data-offset-x="294" data-offset-y="95"></div>
+offsetLeft expected 294 but got 760
+FAIL .target 11 assert_equals:
+<div class="target fixed target1" data-offset-x="152" data-offset-y="10" data-expected-width="160" data-expected-height="100"></div>
+width expected 160 but got 0
+FAIL .target 12 assert_equals:
+<div class="target fixed target1-rb" data-offset-x="302" data-offset-y="100"></div>
+offsetLeft expected 302 but got 768
+

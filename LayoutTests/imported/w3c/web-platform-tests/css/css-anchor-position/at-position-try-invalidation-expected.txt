@@ -1,0 +1,8 @@
+anchor
+anchored
+
+PASS position-try-options initially not matching any rules
+FAIL Enable @position-try rule stylesheet assert_equals: expected 100 but got 999999
+FAIL Insert overriding @position-try rule The index is not in the allowed range.
+PASS Disable the @position-try rules
+

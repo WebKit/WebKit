@@ -71,8 +71,8 @@ static unsigned keyValueCountForFilter(const FilterOperation& filterOperation)
 size_t PlatformCAFilters::presentationModifierCount(const FilterOperations& filters)
 {
     size_t count = 0;
-    for (const auto& filter : filters.operations())
-        count += keyValueCountForFilter(*filter.get());
+    for (const auto& filter : filters)
+        count += keyValueCountForFilter(filter);
     return count;
 }
 
@@ -121,17 +121,19 @@ void PlatformCAFilters::presentationModifiers(const FilterOperations& initialFil
     if (!canonicalFilters || canonicalFilters->isEmpty())
         return;
 
-    ASSERT(canonicalFilters->size() >= initialFilters.size());
+    auto numberOfCanonicalFilters = canonicalFilters->size();
+    auto numberOfInitialFilters = initialFilters.size();
+
+    ASSERT(numberOfCanonicalFilters >= numberOfInitialFilters);
     ASSERT(presentationModifierCount(*canonicalFilters));
 
-    auto& canonicalFilterOperations = canonicalFilters->operations();
-    auto& initialFilterOperations = initialFilters.operations();
-    auto numberOfInitialFilters = initialFilterOperations.size();
-    for (size_t i = 0; i < canonicalFilterOperations.size(); ++i) {
-        auto& canonicalFilterOperation = *canonicalFilterOperations[i];
-        auto& initialFilterOperation = i < numberOfInitialFilters ? *initialFilterOperations[i] : passthroughFilter(canonicalFilterOperation.type());
+    for (size_t i = 0; i < numberOfCanonicalFilters; ++i) {
+        auto& canonicalFilterOperation = (*canonicalFilters)[i].get();
+        auto& initialFilterOperation = i < numberOfInitialFilters ? initialFilters[i].get() : passthroughFilter(canonicalFilterOperation.type());
         ASSERT(canonicalFilterOperation.type() == initialFilterOperation.type());
-        auto filterName = makeString("filter_", i);
+
+        auto filterName = makeString("filter_"_s, i);
+
         auto type = initialFilterOperation.type();
         switch (type) {
         case FilterOperation::Type::Default:
@@ -156,8 +158,8 @@ void PlatformCAFilters::presentationModifiers(const FilterOperations& initialFil
         case FilterOperation::Type::Brightness:
         case FilterOperation::Type::Contrast:
         case FilterOperation::Type::Blur: {
-            auto keyValueName = makeString("filters.", filterName, ".", animatedFilterPropertyName(initialFilterOperation.type()));
-            presentationModifiers.append({ type, adoptNS([[CAPresentationModifier alloc] initWithKeyPath:keyValueName initialValue:filterValueForOperation(&initialFilterOperation).get() additive:NO group:group.get()]) });
+            auto keyValueName = makeString("filters."_s, filterName, '.', animatedFilterPropertyName(initialFilterOperation.type()));
+            presentationModifiers.append({ type, adoptNS([[CAPresentationModifier alloc] initWithKeyPath:keyValueName initialValue:filterValueForOperation(initialFilterOperation).get() additive:NO group:group.get()]) });
             continue;
         }
         case FilterOperation::Type::AppleInvertLightness:
@@ -206,7 +208,7 @@ void PlatformCAFilters::updatePresentationModifiers(const FilterOperations& filt
         case FilterOperation::Type::Brightness:
         case FilterOperation::Type::Contrast:
         case FilterOperation::Type::Blur: {
-            [presentationModifiers[i].second.get() setValue:filterValueForOperation(&filterOperation).get()];
+            [presentationModifiers[i].second.get() setValue:filterValueForOperation(filterOperation).get()];
             continue;
         }
         case FilterOperation::Type::AppleInvertLightness:
@@ -241,9 +243,10 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     unsigned i = 0;
-    auto array = createNSArray(filters.operations(), [&] (auto& operationPtr) -> id {
-        auto filterName = makeString("filter_", i++);
-        auto& filterOperation = *operationPtr;
+    auto array = createNSArray(filters, [&](auto& operation) -> id {
+        auto filterName = makeString("filter_"_s, i++);
+
+        auto& filterOperation = operation.get();
         switch (filterOperation.type()) {
         case FilterOperation::Type::Default:
         case FilterOperation::Type::Reference:
@@ -324,18 +327,19 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
             CAFilter *filter = [CAFilter filterWithType:kCAFilterGaussianBlur];
             [filter setValue:[NSNumber numberWithFloat:floatValueForLength(blurOperation.stdDeviation(), 0)] forKey:@"inputRadius"];
             if ([layer isKindOfClass:[CABackdropLayer class]]) {
+#if PLATFORM(VISION)
+                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=275965
+                UNUSED_PARAM(backdropIsOpaque);
+                [filter setValue:@YES forKey:@"inputNormalizeEdgesTransparent"];
+#else
                 // If the backdrop is displayed inside a transparent web view over
                 // a material background, we need `normalizeEdgesTransparent`
                 // in order to render correctly.
                 if (backdropIsOpaque)
                     [filter setValue:@YES forKey:@"inputNormalizeEdges"];
-                else {
-#if PLATFORM(VISION)
-                    [filter setValue:@YES forKey:@"inputNormalizeEdgesTransparent"];
-#else
+                else
                     [filter setValue:@YES forKey:@"inputHardEdges"];
 #endif
-                }
             }
             [filter setName:filterName];
             return filter;
@@ -353,16 +357,18 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperation* operation)
+RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperation& filterOperation)
 {
-    FilterOperation::Type type = operation->type();
-    RetainPtr<id> value;
-    
-    if (auto* defaultOperation = dynamicDowncast<DefaultFilterOperation>(*operation)) {
+    auto* operation = &filterOperation;
+    auto type = filterOperation.type();
+
+    if (auto* defaultOperation = dynamicDowncast<DefaultFilterOperation>(filterOperation)) {
         type = defaultOperation->representedType();
         operation = nullptr;
     }
-    
+
+    RetainPtr<id> value;
+
     switch (type) {
     case FilterOperation::Type::Default:
         ASSERT_NOT_REACHED();
@@ -494,7 +500,7 @@ RetainPtr<NSValue> PlatformCAFilters::colorMatrixValueForFilter(FilterOperation:
     }
     default:
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
 }
 

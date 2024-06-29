@@ -27,4 +27,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url-with-fetch.any.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url-with-xhr.any.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html

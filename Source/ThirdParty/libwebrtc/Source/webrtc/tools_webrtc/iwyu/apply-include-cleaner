@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+#
+# Run the include-cleaner tool (iwyu replacement) on a file in the webrtc source
+# directory.
+#
+#
+# In order to handle include paths correctly, you need to provide
+# a compile DB (aka compile_commands.json).
+# You can create it in one of the following ways:
+# "gn gen --export-compile-commands path/to/out"
+# "tools/clang/scripts/generate_compdb.py -p path/to/out > compile_commands.json"
+# If "out/Default" exists, the script will attempt to generate it for you.
+#
+# clang-include-cleaner is built as part of the "clangd" package in our
+# LLVM build.
+# Example .gclient file:
+# solutions = [
+#  {
+#    "name": "src",
+#    "url": "https://webrtc.googlesource.com/src.git",
+#    "deps_file": "DEPS",
+#    "managed": False,
+#    "custom_deps": {},
+#    "custom_vars" : {
+#      "checkout_clangd": True,
+#      "download_remoteexec_cfg" : True,
+#    }
+#  },
+# ]
+
+
+CLEANER=third_party/llvm-build/Release+Asserts/bin/clang-include-cleaner
+if [ ! -x $CLEANER ]; then
+  echo "clang-include-cleaner not found"
+  echo -n "Add '\"checkout_clangd\": True' to 'custom_vars' in your"
+  echo ".gclient file and run 'gclient sync'."
+  exit 1
+fi
+
+# Debug level, also controlled by the "-d" argument.
+# Set this to 1 to get more debug information.
+# Set this to 2 to also get a dump of the iwyu tool output.
+DEBUG=0
+
+set -e
+if [ $DEBUG -gt 0 ]; then
+  set -x
+fi
+
+error() {
+  echo "$*" >&2
+  exit 1
+}
+
+WORKDIR=out/Default
+
+usage() {
+  echo "Usage: $0 [ -c compile-commands-file.json ] [-r] file.cc"
+  echo "Runs the include-cleaner tool on a file"
+  echo "Arguments:"
+  echo " -n : just print changes, don't do them"
+  echo " -r : Remove non-required includes from .h file"
+  echo " -d <n> : Set debug level to <n>"
+  echo " -h : Print this help message"
+}
+
+COMMAND=" --edit"
+INCLUDE_ARGS=""
+
+while getopts 'd:rnh' opts; do
+  case "${opts}" in
+    n) COMMAND=" --print=changes" ;;
+    r) INCLUDE_ARGS=" --remove" ;;
+    d) DEBUG=${OPTARG};if [ $DEBUG -gt 0 ]; then set -x; fi  ;;
+    h) usage; exit 1 ;;
+    *) error "Unexpected option ${opts}" ;;
+  esac
+done
+shift $(expr $OPTIND - 1 )
+
+if [[ -z "$COMPILE_COMMANDS" ]]; then
+  if [ -d "$WORKDIR" ]; then
+    if [ ! -f "$WORKDIR/compile_commands.json" ]; then
+      echo "Generating compile commands file"
+      tools/clang/scripts/generate_compdb.py -p $WORKDIR > $WORKDIR/compile_commands.json
+    fi
+    COMPILE_COMMANDS="$WORKDIR/compile_commands.json"
+  else
+    error "Could not generate $WORKDIR/compile_commands.json."
+  fi
+fi
+
+FILE="$1"
+
+if [ ! -f $FILE ]; then
+  error "File $FILE is not found"
+fi
+
+cd $WORKDIR
+../../$CLEANER $INCLUDE_ARGS $COMMAND ../../$FILE
+
+echo "Finished. Check diff, compile, gn gen --check and git cl format"
+echo "before uploading."

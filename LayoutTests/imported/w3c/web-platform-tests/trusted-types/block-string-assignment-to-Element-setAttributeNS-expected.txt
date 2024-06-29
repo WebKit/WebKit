@@ -1,3 +1,7 @@
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
 PASS Element.setAttributeNS assigned via policy (successful HTML transformation)
 PASS Element.setAttributeNS assigned via policy (successful Script transformation)
@@ -5,9 +9,7 @@ PASS Element.setAttributeNS assigned via policy (successful ScriptURL transforma
 PASS Element.setAttributeNS accepts untrusted string for non-specced accessor
 PASS Element.setAttributeNS accepts null for non-specced accessor
 PASS Assigning TrustedScriptURL to <svg:script xlink:href=...> works
-FAIL Blocking non-TrustedScriptURL assignment to <svg:script xlink:href=...> works assert_throws_js: function "_ => {
-          elem.setAttributeNS(xlinkNamespace, "href", v);
-        }" did not throw
+PASS Blocking non-TrustedScriptURL assignment to <svg:script xlink:href=...> works
 PASS Check `setAttributeNS` allows setting non-trusted string for non-lowercase attribute "SRCDOC" (ns=null) for "iframe" element (ns=http://www.w3.org/1999/xhtml).
 PASS Check `setAttributeNS` allows setting non-trusted string for non-lowercase attribute "SRC" (ns=null) for "script" element (ns=http://www.w3.org/1999/xhtml).
 PASS Check `setAttributeNS` allows setting non-trusted string for non-lowercase attribute "HREF" (ns=null) for "script" element (ns=http://www.w3.org/2000/svg).

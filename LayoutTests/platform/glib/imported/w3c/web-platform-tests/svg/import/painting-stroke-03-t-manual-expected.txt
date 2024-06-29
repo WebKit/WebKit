@@ -9,10 +9,10 @@ layer at (0,0) size 800x600
           chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 31 width 472.80: "Basic paint: stroke properties."
       RenderSVGPath {path} at (241,91) size 362x118 [stroke={[type=SOLID] [color=#0000FF] [stroke width=30.00] [line cap=ROUND]}] [data="M 160 70 L 360 90 L 160 110"]
       RenderSVGPath {path} at (264,291) size 339x118 [stroke={[type=SOLID] [color=#0000FF] [stroke width=30.00] [miter limit=1.00]}] [data="M 160 190 L 360 210 L 160 230"]
-      RenderSVGText {text} at (60,123) size 403x46 contains 1 chunk(s)
+      RenderSVGText {text} at (60,124) size 403x45 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 403x45
           chunk 1 text run 1 at (60.00,160.00) startOffset 0 endOffset 22 width 402.60: "stroke-linecap=\"round\""
-      RenderSVGText {text} at (130,243) size 358x46 contains 1 chunk(s)
+      RenderSVGText {text} at (130,244) size 358x45 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 358x45
           chunk 1 text run 1 at (130.00,280.00) startOffset 0 endOffset 21 width 357.60: "stroke-miterlimit=\"1\""
     RenderSVGContainer {g} at (16,518) size 388x60

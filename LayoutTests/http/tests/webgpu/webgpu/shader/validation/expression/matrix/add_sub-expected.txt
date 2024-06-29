@@ -1,0 +1,529 @@
+
+PASS :invalid:op="add";rhs="ai";test="bool"
+PASS :invalid:op="add";rhs="ai";test="vec"
+PASS :invalid:op="add";rhs="ai";test="i32"
+PASS :invalid:op="add";rhs="ai";test="u32"
+PASS :invalid:op="add";rhs="ai";test="ai"
+PASS :invalid:op="add";rhs="ai";test="f32"
+PASS :invalid:op="add";rhs="ai";test="f16"
+PASS :invalid:op="add";rhs="ai";test="af"
+PASS :invalid:op="add";rhs="ai";test="texture"
+PASS :invalid:op="add";rhs="ai";test="sampler"
+PASS :invalid:op="add";rhs="ai";test="atomic"
+PASS :invalid:op="add";rhs="ai";test="struct"
+PASS :invalid:op="add";rhs="ai";test="array"
+PASS :invalid:op="add";rhs="ai";test="matf_ai_matching"
+PASS :invalid:op="add";rhs="ai";test="matf_ai_no_matching"
+PASS :invalid:op="add";rhs="ai";test="matf_size_matching"
+PASS :invalid:op="add";rhs="ai";test="matf_size_no_match"
+PASS :invalid:op="add";rhs="ai";test="math_size_matching"
+PASS :invalid:op="add";rhs="ai";test="math_size_no_matching"
+PASS :invalid:op="add";rhs="mat2x3f()";test="bool"
+PASS :invalid:op="add";rhs="mat2x3f()";test="vec"
+PASS :invalid:op="add";rhs="mat2x3f()";test="i32"
+PASS :invalid:op="add";rhs="mat2x3f()";test="u32"
+PASS :invalid:op="add";rhs="mat2x3f()";test="ai"
+PASS :invalid:op="add";rhs="mat2x3f()";test="f32"
+PASS :invalid:op="add";rhs="mat2x3f()";test="f16"
+PASS :invalid:op="add";rhs="mat2x3f()";test="af"
+PASS :invalid:op="add";rhs="mat2x3f()";test="texture"
+PASS :invalid:op="add";rhs="mat2x3f()";test="sampler"
+PASS :invalid:op="add";rhs="mat2x3f()";test="atomic"
+PASS :invalid:op="add";rhs="mat2x3f()";test="struct"
+PASS :invalid:op="add";rhs="mat2x3f()";test="array"
+PASS :invalid:op="add";rhs="mat2x3f()";test="matf_ai_matching"
+PASS :invalid:op="add";rhs="mat2x3f()";test="matf_ai_no_matching"
+PASS :invalid:op="add";rhs="mat2x3f()";test="matf_size_matching"
+PASS :invalid:op="add";rhs="mat2x3f()";test="matf_size_no_match"
+PASS :invalid:op="add";rhs="mat2x3f()";test="math_size_matching"
+PASS :invalid:op="add";rhs="mat2x3f()";test="math_size_no_matching"
+PASS :invalid:op="add";rhs="mat2x3h()";test="bool"
+PASS :invalid:op="add";rhs="mat2x3h()";test="vec"
+PASS :invalid:op="add";rhs="mat2x3h()";test="i32"
+PASS :invalid:op="add";rhs="mat2x3h()";test="u32"
+PASS :invalid:op="add";rhs="mat2x3h()";test="ai"
+PASS :invalid:op="add";rhs="mat2x3h()";test="f32"
+PASS :invalid:op="add";rhs="mat2x3h()";test="f16"
+PASS :invalid:op="add";rhs="mat2x3h()";test="af"
+PASS :invalid:op="add";rhs="mat2x3h()";test="texture"
+PASS :invalid:op="add";rhs="mat2x3h()";test="sampler"
+PASS :invalid:op="add";rhs="mat2x3h()";test="atomic"
+PASS :invalid:op="add";rhs="mat2x3h()";test="struct"
+PASS :invalid:op="add";rhs="mat2x3h()";test="array"
+PASS :invalid:op="add";rhs="mat2x3h()";test="matf_ai_matching"
+PASS :invalid:op="add";rhs="mat2x3h()";test="matf_ai_no_matching"
+PASS :invalid:op="add";rhs="mat2x3h()";test="matf_size_matching"
+PASS :invalid:op="add";rhs="mat2x3h()";test="matf_size_no_match"
+PASS :invalid:op="add";rhs="mat2x3h()";test="math_size_matching"
+PASS :invalid:op="add";rhs="mat2x3h()";test="math_size_no_matching"
+PASS :invalid:op="sub";rhs="ai";test="bool"
+PASS :invalid:op="sub";rhs="ai";test="vec"
+PASS :invalid:op="sub";rhs="ai";test="i32"
+PASS :invalid:op="sub";rhs="ai";test="u32"
+PASS :invalid:op="sub";rhs="ai";test="ai"
+PASS :invalid:op="sub";rhs="ai";test="f32"
+PASS :invalid:op="sub";rhs="ai";test="f16"
+PASS :invalid:op="sub";rhs="ai";test="af"
+PASS :invalid:op="sub";rhs="ai";test="texture"
+PASS :invalid:op="sub";rhs="ai";test="sampler"
+PASS :invalid:op="sub";rhs="ai";test="atomic"
+PASS :invalid:op="sub";rhs="ai";test="struct"
+PASS :invalid:op="sub";rhs="ai";test="array"
+PASS :invalid:op="sub";rhs="ai";test="matf_ai_matching"
+PASS :invalid:op="sub";rhs="ai";test="matf_ai_no_matching"
+PASS :invalid:op="sub";rhs="ai";test="matf_size_matching"
+PASS :invalid:op="sub";rhs="ai";test="matf_size_no_match"
+PASS :invalid:op="sub";rhs="ai";test="math_size_matching"
+PASS :invalid:op="sub";rhs="ai";test="math_size_no_matching"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="bool"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="vec"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="i32"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="u32"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="ai"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="f32"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="f16"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="af"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="texture"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="sampler"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="atomic"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="struct"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="array"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="matf_ai_matching"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="matf_ai_no_matching"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="matf_size_matching"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="matf_size_no_match"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="math_size_matching"
+PASS :invalid:op="sub";rhs="mat2x3f()";test="math_size_no_matching"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="bool"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="vec"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="i32"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="u32"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="ai"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="f32"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="f16"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="af"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="texture"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="sampler"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="atomic"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="struct"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="array"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="matf_ai_matching"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="matf_ai_no_matching"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="matf_size_matching"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="matf_size_no_match"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="math_size_matching"
+PASS :invalid:op="sub";rhs="mat2x3h()";test="math_size_no_matching"
+PASS :with_abstract:op="add";rhs="mat2x3f()";swap=true
+PASS :with_abstract:op="add";rhs="mat2x3f()";swap=false
+PASS :with_abstract:op="add";rhs="mat2x3h()";swap=true
+PASS :with_abstract:op="add";rhs="mat2x3h()";swap=false
+PASS :with_abstract:op="sub";rhs="mat2x3f()";swap=true
+PASS :with_abstract:op="sub";rhs="mat2x3f()";swap=false
+PASS :with_abstract:op="sub";rhs="mat2x3h()";swap=true
+PASS :with_abstract:op="sub";rhs="mat2x3h()";swap=false
+PASS :overflow_f32:rhs=3.4028234663852886e%2B38;c=2;r=2
+PASS :overflow_f32:rhs=3.4028234663852886e%2B38;c=2;r=3
+PASS :overflow_f32:rhs=3.4028234663852886e%2B38;c=2;r=4
+PASS :overflow_f32:rhs=3.4028234663852886e%2B38;c=3;r=2
+PASS :overflow_f32:rhs=3.4028234663852886e%2B38;c=3;r=3
+PASS :overflow_f32:rhs=3.4028234663852886e%2B38;c=3;r=4
+PASS :overflow_f32:rhs=3.4028234663852886e%2B38;c=4;r=2
+PASS :overflow_f32:rhs=3.4028234663852886e%2B38;c=4;r=3
+PASS :overflow_f32:rhs=3.4028234663852886e%2B38;c=4;r=4
+PASS :overflow_f32:rhs=1;c=2;r=2
+PASS :overflow_f32:rhs=1;c=2;r=3
+PASS :overflow_f32:rhs=1;c=2;r=4
+PASS :overflow_f32:rhs=1;c=3;r=2
+PASS :overflow_f32:rhs=1;c=3;r=3
+PASS :overflow_f32:rhs=1;c=3;r=4
+PASS :overflow_f32:rhs=1;c=4;r=2
+PASS :overflow_f32:rhs=1;c=4;r=3
+PASS :overflow_f32:rhs=1;c=4;r=4
+PASS :underflow_f32:rhs=3.4028234663852886e%2B38;c=2;r=2
+PASS :underflow_f32:rhs=3.4028234663852886e%2B38;c=2;r=3
+PASS :underflow_f32:rhs=3.4028234663852886e%2B38;c=2;r=4
+PASS :underflow_f32:rhs=3.4028234663852886e%2B38;c=3;r=2
+PASS :underflow_f32:rhs=3.4028234663852886e%2B38;c=3;r=3
+PASS :underflow_f32:rhs=3.4028234663852886e%2B38;c=3;r=4
+PASS :underflow_f32:rhs=3.4028234663852886e%2B38;c=4;r=2
+PASS :underflow_f32:rhs=3.4028234663852886e%2B38;c=4;r=3
+PASS :underflow_f32:rhs=3.4028234663852886e%2B38;c=4;r=4
+PASS :underflow_f32:rhs=1;c=2;r=2
+PASS :underflow_f32:rhs=1;c=2;r=3
+PASS :underflow_f32:rhs=1;c=2;r=4
+PASS :underflow_f32:rhs=1;c=3;r=2
+PASS :underflow_f32:rhs=1;c=3;r=3
+PASS :underflow_f32:rhs=1;c=3;r=4
+PASS :underflow_f32:rhs=1;c=4;r=2
+PASS :underflow_f32:rhs=1;c=4;r=3
+PASS :underflow_f32:rhs=1;c=4;r=4
+PASS :overflow_f16:rhs=65504;c=2;r=2
+PASS :overflow_f16:rhs=65504;c=2;r=3
+PASS :overflow_f16:rhs=65504;c=2;r=4
+PASS :overflow_f16:rhs=65504;c=3;r=2
+PASS :overflow_f16:rhs=65504;c=3;r=3
+PASS :overflow_f16:rhs=65504;c=3;r=4
+PASS :overflow_f16:rhs=65504;c=4;r=2
+PASS :overflow_f16:rhs=65504;c=4;r=3
+PASS :overflow_f16:rhs=65504;c=4;r=4
+PASS :overflow_f16:rhs=1;c=2;r=2
+PASS :overflow_f16:rhs=1;c=2;r=3
+PASS :overflow_f16:rhs=1;c=2;r=4
+PASS :overflow_f16:rhs=1;c=3;r=2
+PASS :overflow_f16:rhs=1;c=3;r=3
+PASS :overflow_f16:rhs=1;c=3;r=4
+PASS :overflow_f16:rhs=1;c=4;r=2
+PASS :overflow_f16:rhs=1;c=4;r=3
+PASS :overflow_f16:rhs=1;c=4;r=4
+PASS :underflow_f16:rhs=65504;c=2;r=2
+PASS :underflow_f16:rhs=65504;c=2;r=3
+PASS :underflow_f16:rhs=65504;c=2;r=4
+PASS :underflow_f16:rhs=65504;c=3;r=2
+PASS :underflow_f16:rhs=65504;c=3;r=3
+PASS :underflow_f16:rhs=65504;c=3;r=4
+PASS :underflow_f16:rhs=65504;c=4;r=2
+PASS :underflow_f16:rhs=65504;c=4;r=3
+PASS :underflow_f16:rhs=65504;c=4;r=4
+FAIL :underflow_f16:rhs=1;c=2;r=2 assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:23: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:47: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:71: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:95: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+
+    ---- shader ----
+
+    enable f16;
+    @compute @workgroup_size(1)
+    fn main() {
+      const foo = mat2x2h(-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,) - mat2x2h(1,1,1,1,);
+    }
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 4 errors generated while compiling the shader:
+    5:22: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:46: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:70: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:94: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :underflow_f16:rhs=1;c=2;r=3 assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:23: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:47: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:71: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:95: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:119: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:143: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+
+    ---- shader ----
+
+    enable f16;
+    @compute @workgroup_size(1)
+    fn main() {
+      const foo = mat2x3h(-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,) - mat2x3h(1,1,1,1,1,1,);
+    }
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 6 errors generated while compiling the shader:
+    5:22: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:46: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:70: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:94: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:118: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:142: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :underflow_f16:rhs=1;c=2;r=4 assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:23: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:47: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:71: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:95: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:119: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:143: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:167: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:191: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+
+    ---- shader ----
+
+    enable f16;
+    @compute @workgroup_size(1)
+    fn main() {
+      const foo = mat2x4h(-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,) - mat2x4h(1,1,1,1,1,1,1,1,);
+    }
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 8 errors generated while compiling the shader:
+    5:22: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:46: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:70: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:94: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:118: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:142: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:166: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:190: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :underflow_f16:rhs=1;c=3;r=2 assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:23: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:47: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:71: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:95: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:119: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:143: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+
+    ---- shader ----
+
+    enable f16;
+    @compute @workgroup_size(1)
+    fn main() {
+      const foo = mat3x2h(-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,) - mat3x2h(1,1,1,1,1,1,);
+    }
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 6 errors generated while compiling the shader:
+    5:22: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:46: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:70: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:94: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:118: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:142: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :underflow_f16:rhs=1;c=3;r=3 assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:23: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:47: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:71: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:95: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:119: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:143: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:167: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:191: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:215: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+
+    ---- shader ----
+
+    enable f16;
+    @compute @workgroup_size(1)
+    fn main() {
+      const foo = mat3x3h(-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,) - mat3x3h(1,1,1,1,1,1,1,1,1,);
+    }
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 9 errors generated while compiling the shader:
+    5:22: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:46: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:70: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:94: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:118: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:142: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:166: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:190: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:214: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :underflow_f16:rhs=1;c=3;r=4 assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:23: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:47: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:71: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:95: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:119: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:143: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:167: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:191: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:215: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:239: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:263: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:287: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+
+    ---- shader ----
+
+    enable f16;
+    @compute @workgroup_size(1)
+    fn main() {
+      const foo = mat3x4h(-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,) - mat3x4h(1,1,1,1,1,1,1,1,1,1,1,1,);
+    }
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 12 errors generated while compiling the shader:
+    5:22: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:46: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:70: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:94: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:118: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:142: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:166: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:190: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:214: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:238: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:262: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:286: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :underflow_f16:rhs=1;c=4;r=2 assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:23: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:47: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:71: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:95: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:119: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:143: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:167: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:191: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+
+    ---- shader ----
+
+    enable f16;
+    @compute @workgroup_size(1)
+    fn main() {
+      const foo = mat4x2h(-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,) - mat4x2h(1,1,1,1,1,1,1,1,);
+    }
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 8 errors generated while compiling the shader:
+    5:22: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:46: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:70: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:94: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:118: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:142: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:166: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:190: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :underflow_f16:rhs=1;c=4;r=3 assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:23: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:47: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:71: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:95: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:119: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:143: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:167: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:191: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:215: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:239: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:263: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:287: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+
+    ---- shader ----
+
+    enable f16;
+    @compute @workgroup_size(1)
+    fn main() {
+      const foo = mat4x3h(-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,) - mat4x3h(1,1,1,1,1,1,1,1,1,1,1,1,);
+    }
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 12 errors generated while compiling the shader:
+    5:22: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:46: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:70: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:94: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:118: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:142: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:166: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:190: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:214: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:238: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:262: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:286: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+FAIL :underflow_f16:rhs=1;c=4;r=4 assert_unreached:
+  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
+    5:23: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:47: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:71: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:95: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:119: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:143: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:167: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:191: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:215: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:239: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:263: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:287: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:311: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:335: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:359: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:383: error: value -1.7014117331926443e+38 cannot be represented as 'f16'
+
+    ---- shader ----
+
+    enable f16;
+    @compute @workgroup_size(1)
+    fn main() {
+      const foo = mat4x4h(-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,-1.7014117331926443e+38,) - mat4x4h(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,);
+    }
+
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 16 errors generated while compiling the shader:
+    5:22: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:46: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:70: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:94: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:118: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:142: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:166: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:190: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:214: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:238: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:262: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:286: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:310: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:334: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:358: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    5:382: value -1.7014117331926443e+38 cannot be represented as 'f16'
+    TestFailedButDeviceReusable@
+    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:409:44
+ Reached unreachable code
+PASS :overflow_abstract:rhs=1.7976931348623157e%2B308;c=2;r=2
+PASS :overflow_abstract:rhs=1.7976931348623157e%2B308;c=2;r=3
+PASS :overflow_abstract:rhs=1.7976931348623157e%2B308;c=2;r=4
+PASS :overflow_abstract:rhs=1.7976931348623157e%2B308;c=3;r=2
+PASS :overflow_abstract:rhs=1.7976931348623157e%2B308;c=3;r=3
+PASS :overflow_abstract:rhs=1.7976931348623157e%2B308;c=3;r=4
+PASS :overflow_abstract:rhs=1.7976931348623157e%2B308;c=4;r=2
+PASS :overflow_abstract:rhs=1.7976931348623157e%2B308;c=4;r=3
+PASS :overflow_abstract:rhs=1.7976931348623157e%2B308;c=4;r=4
+PASS :overflow_abstract:rhs=1;c=2;r=2
+PASS :overflow_abstract:rhs=1;c=2;r=3
+PASS :overflow_abstract:rhs=1;c=2;r=4
+PASS :overflow_abstract:rhs=1;c=3;r=2
+PASS :overflow_abstract:rhs=1;c=3;r=3
+PASS :overflow_abstract:rhs=1;c=3;r=4
+PASS :overflow_abstract:rhs=1;c=4;r=2
+PASS :overflow_abstract:rhs=1;c=4;r=3
+PASS :overflow_abstract:rhs=1;c=4;r=4
+PASS :underflow_abstract:rhs=1.7976931348623157e%2B308;c=2;r=2
+PASS :underflow_abstract:rhs=1.7976931348623157e%2B308;c=2;r=3
+PASS :underflow_abstract:rhs=1.7976931348623157e%2B308;c=2;r=4
+PASS :underflow_abstract:rhs=1.7976931348623157e%2B308;c=3;r=2
+PASS :underflow_abstract:rhs=1.7976931348623157e%2B308;c=3;r=3
+PASS :underflow_abstract:rhs=1.7976931348623157e%2B308;c=3;r=4
+PASS :underflow_abstract:rhs=1.7976931348623157e%2B308;c=4;r=2
+PASS :underflow_abstract:rhs=1.7976931348623157e%2B308;c=4;r=3
+PASS :underflow_abstract:rhs=1.7976931348623157e%2B308;c=4;r=4
+PASS :underflow_abstract:rhs=1;c=2;r=2
+PASS :underflow_abstract:rhs=1;c=2;r=3
+PASS :underflow_abstract:rhs=1;c=2;r=4
+PASS :underflow_abstract:rhs=1;c=3;r=2
+PASS :underflow_abstract:rhs=1;c=3;r=3
+PASS :underflow_abstract:rhs=1;c=3;r=4
+PASS :underflow_abstract:rhs=1;c=4;r=2
+PASS :underflow_abstract:rhs=1;c=4;r=3
+PASS :underflow_abstract:rhs=1;c=4;r=4
+

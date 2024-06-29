@@ -1,4 +1,8 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_library", "skia_filegroup", "split_srcs_and_hdrs")
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "generate_cpp_files_for_headers", "skia_cc_library", "skia_filegroup", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
 
 licenses(["notice"])
 
@@ -376,13 +380,6 @@ CORE_FILES = [
 split_srcs_and_hdrs(
     name = "legacy_core",
     files = CORE_FILES,
-)
-
-skia_filegroup(
-    name = "legacy_draw_looper",
-    srcs = [
-        "SkDrawLooper.cpp",
-    ],
 )
 
 skia_filegroup(
@@ -830,7 +827,6 @@ skia_cc_library(
         "//include/codec:core_hdrs",
         "//include/core:core_hdrs",
         "//include/effects:core_hdrs",
-        "//include/ports:core_hdrs",
         "//include/sksl:core_hdrs",
         "//include/utils:core_hdrs",
     ],
@@ -871,5 +867,21 @@ skia_cc_library(
         ":core",
         "//modules/skcms",
         "//src/base",
+    ],
+)
+
+generate_cpp_files_for_headers(
+    name = "headers_to_compile",
+    headers = [
+        # All headers listed here will have a .cpp file generated that is a copy of the header file
+        # just with a .cpp suffix so Bazel will try to compile it.
+        # This allows us to run IWYU on these files.
+        "SkAdvancedTypefaceMetrics.h",
+        "SkColorSpacePriv.h",
+        "SkCoreBlitters.h",
+        "SkDrawProcs.h",
+        "SkMatrixPriv.h",
+        "SkPathPriv.h",
+        "SkRuntimeEffectPriv.h",
     ],
 )

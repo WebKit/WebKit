@@ -185,10 +185,11 @@ static inline bool setJSTestLegacyNoInterfaceObject_readWriteStringAttributeSett
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setReadWriteStringAttribute(WTFMove(nativeValue));
+        return impl.setReadWriteStringAttribute(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -241,10 +242,11 @@ static inline bool setJSTestLegacyNoInterfaceObject_nodeAttributeSetter(JSGlobal
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RefPtr nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestLegacyNoInterfaceObject", "nodeAttribute", "Node"); });
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestLegacyNoInterfaceObject"_s, "nodeAttribute"_s, "Node"_s); });
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setNodeAttribute(*nativeValue);
+        return impl.setNodeAttribute(*nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -271,10 +273,11 @@ static inline bool setJSTestLegacyNoInterfaceObjectConstructor_staticStringAttri
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    auto nativeValueConversionResult = convert<IDLDOMString>(lexicalGlobalObject, value);
+    if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
+        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return TestLegacyNoInterfaceObject::setStaticStringAttribute(WTFMove(nativeValue));
+        return TestLegacyNoInterfaceObject::setStaticStringAttribute(nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -368,14 +371,9 @@ extern "C" { extern void (*const __identifier("??_7TestLegacyNoInterfaceObject@W
 #else
 extern "C" { extern void* _ZTVN7WebCore27TestLegacyNoInterfaceObjectE[]; }
 #endif
-#endif
-
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestLegacyNoInterfaceObject>&& impl)
-{
-
-    if constexpr (std::is_polymorphic_v<TestLegacyNoInterfaceObject>) {
-#if ENABLE(BINDING_INTEGRITY)
-        const void* actualVTablePointer = getVTablePointer(impl.ptr());
+template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestLegacyNoInterfaceObject>, void>> static inline void verifyVTable(TestLegacyNoInterfaceObject* ptr) {
+    if constexpr (std::is_polymorphic_v<T>) {
+        const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
         void* expectedVTablePointer = __identifier("??_7TestLegacyNoInterfaceObject@WebCore@@6B@");
 #else
@@ -387,8 +385,14 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObj
         // to toJS() we currently require TestLegacyNoInterfaceObject you to opt out of binding hardening
         // by adding the SkipVTableValidation attribute to the interface IDL definition
         RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
-#endif
     }
+}
+#endif
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestLegacyNoInterfaceObject>&& impl)
+{
+#if ENABLE(BINDING_INTEGRITY)
+    verifyVTable<TestLegacyNoInterfaceObject>(impl.ptr());
+#endif
     return createWrapper<TestLegacyNoInterfaceObject>(globalObject, WTFMove(impl));
 }
 

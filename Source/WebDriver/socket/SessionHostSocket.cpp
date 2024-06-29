@@ -28,6 +28,7 @@
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/UUID.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebDriver {
 
@@ -68,13 +69,13 @@ void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&
     }
 
     if (targetIp.isEmpty() || !targetPort) {
-        completionHandler(makeString("Target IP/port is invalid, or not specified."));
+        completionHandler(makeString("Target IP/port is invalid, or not specified."_s));
         return;
     }
 
     m_clientID = connectInet(targetIp.utf8().data(), targetPort);
     if (!m_clientID)
-        completionHandler(makeString(targetIp.utf8().data(), ":", String::number(targetPort), " is not reachable."));
+        completionHandler(makeString(targetIp.utf8().span(), ':', targetPort, " is not reachable."_s));
     else
         completionHandler(std::nullopt);
 }

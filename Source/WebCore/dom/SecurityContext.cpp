@@ -41,9 +41,15 @@ SecurityContext::~SecurityContext() = default;
 
 void SecurityContext::setSecurityOriginPolicy(RefPtr<SecurityOriginPolicy>&& securityOriginPolicy)
 {
+    auto currentOrigin = securityOrigin() ? securityOrigin()->data() : SecurityOriginData { };
+    bool haveInitializedSecurityOrigin = std::exchange(m_haveInitializedSecurityOrigin, true);
+
     m_securityOriginPolicy = WTFMove(securityOriginPolicy);
-    m_haveInitializedSecurityOrigin = true;
     m_hasEmptySecurityOriginPolicy = false;
+
+    auto origin = securityOrigin() ? securityOrigin()->data() : SecurityOriginData { };
+    if (!haveInitializedSecurityOrigin || currentOrigin != origin)
+        securityOriginDidChange();
 }
 
 ContentSecurityPolicy* SecurityContext::contentSecurityPolicy()

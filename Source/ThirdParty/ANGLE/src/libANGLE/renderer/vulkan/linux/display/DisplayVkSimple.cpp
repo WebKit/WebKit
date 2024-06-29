@@ -42,7 +42,7 @@ egl::ConfigSet DisplayVkSimple::generateConfigs()
     return egl_vk::GenerateConfigs(kColorFormats, egl_vk::kConfigDepthStencilFormats, this);
 }
 
-// TODO: anglebug.com/5214
+// TODO: anglebug.com/40096731
 // Detemine if check is needed.
 void DisplayVkSimple::checkConfigSupport(egl::Config *config) {}
 

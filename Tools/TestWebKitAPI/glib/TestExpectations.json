@@ -1,15 +1,8 @@
 {
     "TestAuthentication": {
         "subtests": {
-            "/webkit/Authentication/authentication-empty-realm": {
-                "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
-            },
-            "/webkit/Authentication/authentication-no-credential": {
-                "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
-            },
             "/webkit/Authentication/authentication-success": {
                 "expected": {
-                        "all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"},
                         "gtk@Release": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/233509"}
                 }
             }
@@ -49,7 +42,7 @@
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/256557"}}
             },
             "/webkit/WebKitAccessibility/text/state-changed": {
-                "expected": {"gtk": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/256557"}}
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/256557"}}
             },
             "/webkit/WebKitAccessibility/selection/menulist": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
@@ -62,13 +55,21 @@
             },
             "/webkit/WebKitAccessibility/value/basic": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
-            }
-        }
-    },
-    "TestWebKitSettings": {
-        "subtests": {
-            "/webkit/WebKitSettings/javascript-markup": {
-                "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
+            },
+            "/webkit/WebKitAccessibility/accessible/list-markers": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
+            },
+            "/webkit/WebKitAccessibility/accessible/state": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
+            },
+            "/webkit/WebKitAccessibility/accessible/ignored-objects": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/273682"}}
+            },
+            "/webkit/WebKitAccessibility/document/load-events": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/273682"}}
+            },
+            "/webkit/WebKitAccessibility/hyperlink/basic": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/273682"}}
             }
         }
     },
@@ -83,6 +84,13 @@
         "subtests": {
             "/webkit/WebKitFaviconDatabase/get-favicon": {
                 "expected": {"gtk": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/205381"}}
+            }
+        }
+    },
+    "TestWebKitWebContext": {
+        "subtests": {
+            "/webkit/WebKitWebContext/memory-pressure": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/274345"}}
             }
         }
     },
@@ -111,6 +119,9 @@
                         "gtk": {"status": ["CRASH", "FAIL"], "bug": "webkit.org/b/269585"},
                         "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/271327"}
                 }
+            },
+            "/webkit/WebKitWebView/is-playing-audio": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/274344"}}
             }
         }
     },
@@ -136,9 +147,6 @@
         "subtests": {
             "/webkit/WebKitWebPage/get-uri": {
                 "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/206728"}}
-            },
-            "/webkit/WebKitWebView/title": {
-                "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
             }
         }
     },
@@ -327,13 +335,6 @@
         }
 
     },
-    "TestNetworkProcessMemoryPressure": {
-        "subtests": {
-            "/webkit/WebKitWebsiteData/memory-pressure": {
-                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/263016"}}
-            }
-        }
-    },
     "TestWebKitNetworkSession": {
         "subtests": {
             "/webkit/WebKitNetworkSession/proxy": {
@@ -345,6 +346,9 @@
         "subtests": {
             "/webkit/WebKitWebProcessExtension/page-id": {
                 "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/264505"}}
+            },
+            "/webkit/WebKitWebProcessExtension/user-messages": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/274584"}}
             }
         }
     },

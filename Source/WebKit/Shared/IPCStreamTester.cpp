@@ -85,8 +85,8 @@ void IPCStreamTester::syncMessageReturningSharedMemory1(uint32_t byteCount, Comp
         auto handle = sharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
         if (!handle)
             return std::nullopt;
-        uint8_t* data = static_cast<uint8_t*>(sharedMemory->data());
-        for (size_t i = 0; i < sharedMemory->size(); ++i)
+        auto data = sharedMemory->mutableSpan();
+        for (size_t i = 0; i < data.size(); ++i)
             data[i] = i;
         return WTFMove(*handle);
     }();

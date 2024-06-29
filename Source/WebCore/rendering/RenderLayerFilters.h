@@ -40,7 +40,7 @@ namespace WebCore {
 class CachedSVGDocument;
 class Element;
 class FilterOperations;
-class FilterTargetSwitcher;
+class GraphicsContextSwitcher;
 
 class RenderLayerFilters final : private CachedSVGDocumentClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -74,7 +74,7 @@ public:
     void applyFilterEffect(GraphicsContext& destinationContext);
 
 private:
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
     void resetDirtySourceRect() { m_dirtySourceRect = LayoutRect(); }
 
     RenderLayer& m_layer;
@@ -90,7 +90,7 @@ private:
     FloatRect m_filterRegion;
 
     RefPtr<CSSFilter> m_filter;
-    std::unique_ptr<FilterTargetSwitcher> m_targetSwitcher;
+    std::unique_ptr<GraphicsContextSwitcher> m_targetSwitcher;
 };
 
 } // namespace WebCore

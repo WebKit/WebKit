@@ -14,6 +14,7 @@
 #include "test/util.h"
 #include "test/video_source.h"
 #include "third_party/googletest/src/include/gtest/gtest.h"
+#include "vpx_config.h"
 
 namespace {
 
@@ -94,8 +95,11 @@ TEST_P(RealtimeTest, RealtimeDefaultCpuUsed) {
 TEST_P(RealtimeTest, IntegerOverflow) { TestIntegerOverflow(2048, 2048); }
 
 TEST_P(RealtimeTest, IntegerOverflowLarge) {
+#ifdef CHROMIUM
+  GTEST_SKIP() << "16K framebuffers are not supported by Chromium's allocator.";
+#else
   if (IsVP9()) {
-#if VPX_ARCH_X86_64
+#if VPX_ARCH_AARCH64 || VPX_ARCH_X86_64
     TestIntegerOverflow(16384, 16384);
 #else
     TestIntegerOverflow(4096, 4096);
@@ -107,6 +111,7 @@ TEST_P(RealtimeTest, IntegerOverflowLarge) {
            "warnings are fixed.";
     // TestIntegerOverflow(16383, 16383);
   }
+#endif  // defined(CHROMIUM)
 }
 
 VP8_INSTANTIATE_TEST_SUITE(RealtimeTest,

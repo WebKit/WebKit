@@ -1,0 +1,5 @@
+div id=listener
+div id=target
+
+FAIL A pointerout should be fired on the capturing element after losing the capture assert_equals: expected "[pointerdown@target(pointerType=touch,isPrimary=true), pointerover@listener(pointerType=touch,isPrimary=true), gotpointercapture@listener(pointerType=touch,isPrimary=true), pointermove@listener(pointerType=touch,isPrimary=true), lostpointercapture@listener(pointerType=touch,isPrimary=true), pointerout@listener(pointerType=touch,isPrimary=true)]" but got "[]"
+

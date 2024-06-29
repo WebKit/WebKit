@@ -168,9 +168,9 @@ WTF_EXPORT_PRIVATE long long seekFile(PlatformFileHandle, long long offset, File
 WTF_EXPORT_PRIVATE bool truncateFile(PlatformFileHandle, long long offset);
 WTF_EXPORT_PRIVATE bool flushFile(PlatformFileHandle);
 // Returns number of bytes actually read if successful, -1 otherwise.
-WTF_EXPORT_PRIVATE int64_t writeToFile(PlatformFileHandle, const void* data, size_t length);
+WTF_EXPORT_PRIVATE int64_t writeToFile(PlatformFileHandle, std::span<const uint8_t> data);
 // Returns number of bytes actually written if successful, -1 otherwise.
-WTF_EXPORT_PRIVATE int64_t readFromFile(PlatformFileHandle, void* data, size_t length);
+WTF_EXPORT_PRIVATE int64_t readFromFile(PlatformFileHandle, std::span<uint8_t> data);
 
 WTF_EXPORT_PRIVATE PlatformFileHandle openAndLockFile(const String&, FileOpenMode, OptionSet<FileLockMode> = FileLockMode::Exclusive);
 WTF_EXPORT_PRIVATE void unlockAndCloseFile(PlatformFileHandle);
@@ -254,9 +254,9 @@ public:
     MappedFileData& operator=(MappedFileData&&);
 
     explicit operator bool() const { return !!m_fileData; }
-    const void* data() const { return m_fileData; }
+    const void* data() const { return m_fileData; } // FIXME: Port callers to span() and remove.
     unsigned size() const { return m_fileSize; }
-    std::span<const uint8_t> span() { return { static_cast<const uint8_t *>(data()), size() }; }
+    std::span<const uint8_t> span() const { return { static_cast<const uint8_t *>(data()), size() }; }
 
 #if PLATFORM(COCOA)
     void* leakHandle() { return std::exchange(m_fileData, nullptr); }

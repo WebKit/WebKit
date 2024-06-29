@@ -33,8 +33,17 @@
 
 namespace WebCore {
 
+class SVGRectElement;
+class SVGCircleElement;
+
 class SVGAttributeAnimator;
 class SVGConditionalProcessingAttributes;
+
+template<typename T>
+concept HasFastPropertyForAttribute = requires(const T& element, const QualifiedName& name)
+{
+    { element.propertyForAttribute(name) } -> std::same_as<SVGAnimatedProperty*>;
+};
 
 struct SVGAttributeHashTranslator {
     static unsigned hash(const QualifiedName& key)
@@ -89,7 +98,7 @@ public:
     {
         registerProperty(attributeName, SVGAnimatedIntegerAccessor<OwnerType>::template singleton<property>());
     }
-    
+
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedLength> OwnerType::*property>
     static void registerProperty()
     {
@@ -231,6 +240,11 @@ public:
 
     void setAnimatedPropertyDirty(const QualifiedName& attributeName, SVGAnimatedProperty& animatedProperty) const override
     {
+        if (auto* property = fastAnimatedPropertyLookup(m_owner, attributeName)) {
+            property->setDirty();
+            return;
+        }
+
         lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
             accessor.setDirty(m_owner, animatedProperty);
         });
@@ -245,10 +259,23 @@ public:
         });
     }
 
+    static inline SVGAnimatedProperty* fastAnimatedPropertyLookup(OwnerType& owner, const QualifiedName& attributeName)
+    {
+        if constexpr (HasFastPropertyForAttribute<OwnerType>)
+            return owner.propertyForAttribute(attributeName);
+        else {
+            static_assert(!std::is_same_v<OwnerType, SVGRectElement> && !std::is_same_v<OwnerType, SVGCircleElement>, "Element should use fast property path");
+            return nullptr;
+        }
+    }
+
     // Finds the property whose name is attributeName and returns the synchronize
     // string through the associated SVGMemberAccessor.
     std::optional<String> synchronize(const QualifiedName& attributeName) const override
     {
+        if (auto* property = fastAnimatedPropertyLookup(m_owner, attributeName))
+            return property->synchronize();
+
         std::optional<String> value;
         lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
             value = accessor.synchronize(m_owner);
@@ -271,6 +298,9 @@ public:
 
     bool isAnimatedPropertyAttribute(const QualifiedName& attributeName) const override
     {
+        if (auto* property = fastAnimatedPropertyLookup(m_owner, attributeName))
+            return true;
+
         bool isAnimatedPropertyAttribute = false;
         lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
             isAnimatedPropertyAttribute = accessor.isAnimatedProperty();

@@ -94,6 +94,24 @@ void TileController::setClient(TiledBackingClient* client)
     m_client = nullptr;
 }
 
+PlatformLayerIdentifier TileController::layerIdentifier() const
+{
+    return owningGraphicsLayer()->platformCALayerIdentifier();
+}
+
+TileGridIdentifier TileController::primaryGridIdentifier() const
+{
+    return tileGrid().identifier();
+}
+
+std::optional<TileGridIdentifier> TileController::secondaryGridIdentifier() const
+{
+    if (m_zoomedOutTileGrid)
+        m_zoomedOutTileGrid->identifier();
+
+    return { };
+}
+
 void TileController::tileCacheLayerBoundsChanged()
 {
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
@@ -136,7 +154,10 @@ void TileController::setContentsScale(float contentsScale)
         m_coverageMap->setDeviceScaleFactor(deviceScaleFactor);
 
     if (m_zoomedOutTileGrid && m_zoomedOutTileGrid->scale() == scale) {
-        m_tileGrid = WTFMove(m_zoomedOutTileGrid);
+        if (m_tileGrid && m_client)
+            m_client->willRemoveGrid(*this, m_tileGrid->identifier());
+
+        m_tileGrid = std::exchange(m_zoomedOutTileGrid, nullptr);
         m_tileGrid->setIsZoomedOutTileGrid(false);
         m_tileGrid->revalidateTiles();
         tileGridsChanged();
@@ -144,9 +165,16 @@ void TileController::setContentsScale(float contentsScale)
     }
 
     if (m_zoomedOutContentsScale && m_zoomedOutContentsScale == tileGrid().scale() && tileGrid().scale() != scale && !m_hasTilesWithTemporaryScaleFactor) {
-        m_zoomedOutTileGrid = WTFMove(m_tileGrid);
+        if (m_zoomedOutTileGrid && m_client)
+            m_client->willRemoveGrid(*this, m_zoomedOutTileGrid->identifier());
+
+        m_zoomedOutTileGrid = std::exchange(m_tileGrid, nullptr);
         m_zoomedOutTileGrid->setIsZoomedOutTileGrid(true);
         m_tileGrid = makeUnique<TileGrid>(*this);
+
+        if (m_client)
+            m_client->didAddGrid(*this, m_tileGrid->identifier());
+
         tileGridsChanged();
     }
 
@@ -154,7 +182,7 @@ void TileController::setContentsScale(float contentsScale)
     tileGrid().setScale(scale);
 
     if (m_client && scale != oldScale)
-        m_client->tilingScaleFactorDidChange(scale);
+        m_client->tilingScaleFactorDidChange(*this, scale);
 
     tileGrid().setNeedsDisplay();
 }
@@ -247,7 +275,7 @@ void TileController::setCoverageRect(const FloatRect& rect)
     if (!m_client)
         return;
 
-    m_client->coverageRectDidChange(m_coverageRect);
+    m_client->coverageRectDidChange(*this, m_coverageRect);
 }
 
 bool TileController::tilesWouldChangeForCoverageRect(const FloatRect& rect) const
@@ -559,8 +587,7 @@ void TileController::willRepaintTile(TileGrid& tileGrid, TileIndex tileIndex, co
     if (!m_client)
         return;
 
-    unsigned gridIndex = &tileGrid == m_tileGrid.get() ? 0 : 1;
-    m_client->willRepaintTile(gridIndex, tileIndex, tileClip, paintDirtyRect);
+    m_client->willRepaintTile(*this, tileGrid.identifier(), tileIndex, tileClip, paintDirtyRect);
 }
 
 void TileController::willRemoveTile(TileGrid& tileGrid, TileIndex tileIndex)
@@ -568,8 +595,7 @@ void TileController::willRemoveTile(TileGrid& tileGrid, TileIndex tileIndex)
     if (!m_client)
         return;
 
-    unsigned gridIndex = &tileGrid == m_tileGrid.get() ? 0 : 1;
-    m_client->willRemoveTile(gridIndex, tileIndex);
+    m_client->willRemoveTile(*this, tileGrid.identifier(), tileIndex);
 }
 
 void TileController::willRepaintAllTiles(TileGrid& tileGrid)
@@ -577,8 +603,7 @@ void TileController::willRepaintAllTiles(TileGrid& tileGrid)
     if (!m_client)
         return;
 
-    unsigned gridIndex = &tileGrid == m_tileGrid.get() ? 0 : 1;
-    m_client->willRepaintAllTiles(gridIndex);
+    m_client->willRepaintAllTiles(*this, tileGrid.identifier());
 }
 
 void TileController::notePendingTileSizeChange()
@@ -815,7 +840,7 @@ Ref<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect, Ti
     layer->setBorderWidth(m_tileDebugBorderWidth);
     layer->setAntialiasesEdges(false);
     layer->setOpaque(m_tilesAreOpaque);
-    layer->setName(makeString("tile at ", tileRect.location().x(), ',', tileRect.location().y()));
+    layer->setName(makeString("tile at "_s, tileRect.location().x(), ',', tileRect.location().y()));
     layer->setContentsScale(m_deviceScaleFactor * temporaryScaleFactor);
     layer->setAcceleratesDrawing(m_acceleratesDrawing);
     layer->setWantsDeepColorBackingStore(m_wantsDeepColorBackingStore);

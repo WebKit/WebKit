@@ -232,6 +232,11 @@ async function loadChromiumResources() {
 }
 
 function setupWebKitWebXRTestAPI() {
+  // Disable output of WebGL errors to the JS console as these affect the
+  // expected results
+  if (window.internals)
+    internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
   // WebKit setup. The internals object is used by the WebKit test runner
   // to provide JS access to internal APIs. In this case it's used to
   // ensure that XRTest is only exposed to wpt tests.

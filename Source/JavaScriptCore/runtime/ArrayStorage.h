@@ -81,12 +81,12 @@ public:
 
     ContiguousJSValues vector() { return ContiguousJSValues(m_vector, vectorLength()); }
 
-    static ptrdiff_t lengthOffset() { return Butterfly::offsetOfPublicLength(); }
-    static ptrdiff_t vectorLengthOffset() { return Butterfly::offsetOfVectorLength(); }
-    static ptrdiff_t numValuesInVectorOffset() { return OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector); }
-    static ptrdiff_t vectorOffset() { return OBJECT_OFFSETOF(ArrayStorage, m_vector); }
-    static ptrdiff_t indexBiasOffset() { return OBJECT_OFFSETOF(ArrayStorage, m_indexBias); }
-    static ptrdiff_t sparseMapOffset() { return OBJECT_OFFSETOF(ArrayStorage, m_sparseMap); }
+    static constexpr ptrdiff_t lengthOffset() { return Butterfly::offsetOfPublicLength(); }
+    static constexpr ptrdiff_t vectorLengthOffset() { return Butterfly::offsetOfVectorLength(); }
+    static constexpr ptrdiff_t numValuesInVectorOffset() { return OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector); }
+    static constexpr ptrdiff_t vectorOffset() { return OBJECT_OFFSETOF(ArrayStorage, m_vector); }
+    static constexpr ptrdiff_t indexBiasOffset() { return OBJECT_OFFSETOF(ArrayStorage, m_indexBias); }
+    static constexpr ptrdiff_t sparseMapOffset() { return OBJECT_OFFSETOF(ArrayStorage, m_sparseMap); }
 
     static size_t sizeFor(unsigned vectorLength)
     {

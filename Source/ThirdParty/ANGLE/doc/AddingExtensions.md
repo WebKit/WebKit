@@ -4,7 +4,7 @@ This page describes how to add new extensions to ANGLE.
 
 # Adding EGL extensions
 
-Note: see also [anglebug.com/2621](http://anglebug.com/2621), linked
+Note: see also [anglebug.com/42261334](http://anglebug.com/42261334), linked
 from the [starter project](Starter-Projects.md) doc, to simplify some
 of these steps.
 

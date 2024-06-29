@@ -7,7 +7,7 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "modules/audio_processing/include/audio_processing.h"
+#include "api/audio/audio_processing.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -38,7 +38,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/fake_clock.h"
 #include "rtc_base/gtest_prod_util.h"
-#include "rtc_base/ignore_wundef.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/protobuf_utils.h"
@@ -51,14 +50,13 @@
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
-RTC_PUSH_IGNORING_WUNDEF()
-#include "modules/audio_processing/debug.pb.h"
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
+#include "external/webrtc/webrtc/modules/audio_processing/debug.pb.h"
 #include "external/webrtc/webrtc/modules/audio_processing/test/unittest.pb.h"
 #else
+#include "modules/audio_processing/debug.pb.h"
 #include "modules/audio_processing/test/unittest.pb.h"
 #endif
-RTC_POP_IGNORING_WUNDEF()
 
 ABSL_FLAG(bool,
           write_apm_ref_data,
@@ -1487,8 +1485,8 @@ void ApmTest::ProcessDebugDump(absl::string_view in_filename,
       if (first_init) {
         // AttachAecDump() writes an additional init message. Don't start
         // recording until after the first init to avoid the extra message.
-        auto aec_dump =
-            AecDumpFactory::Create(out_filename, max_size_bytes, &worker_queue);
+        auto aec_dump = AecDumpFactory::Create(out_filename, max_size_bytes,
+                                               worker_queue.Get());
         EXPECT_TRUE(aec_dump);
         apm_->AttachAecDump(std::move(aec_dump));
         first_init = false;
@@ -1634,7 +1632,7 @@ TEST_F(ApmTest, DebugDump) {
   const std::string filename =
       test::TempFilename(test::OutputPath(), "debug_aec");
   {
-    auto aec_dump = AecDumpFactory::Create("", -1, &worker_queue);
+    auto aec_dump = AecDumpFactory::Create("", -1, worker_queue.Get());
     EXPECT_FALSE(aec_dump);
   }
 
@@ -1642,7 +1640,7 @@ TEST_F(ApmTest, DebugDump) {
   // Stopping without having started should be OK.
   apm_->DetachAecDump();
 
-  auto aec_dump = AecDumpFactory::Create(filename, -1, &worker_queue);
+  auto aec_dump = AecDumpFactory::Create(filename, -1, worker_queue.Get());
   EXPECT_TRUE(aec_dump);
   apm_->AttachAecDump(std::move(aec_dump));
   EXPECT_EQ(apm_->kNoError,
@@ -1685,7 +1683,7 @@ TEST_F(ApmTest, DebugDumpFromFileHandle) {
   // Stopping without having started should be OK.
   apm_->DetachAecDump();
 
-  auto aec_dump = AecDumpFactory::Create(std::move(f), -1, &worker_queue);
+  auto aec_dump = AecDumpFactory::Create(std::move(f), -1, worker_queue.Get());
   EXPECT_TRUE(aec_dump);
   apm_->AttachAecDump(std::move(aec_dump));
   EXPECT_EQ(apm_->kNoError,
@@ -2200,7 +2198,8 @@ TEST_P(AudioProcessingTest, Formats) {
           // necessary.
           ASSERT_EQ(ref_length,
                     static_cast<size_t>(resampler.Resample(
-                        out_ptr, out_length, cmp_data.get(), ref_length)));
+                        rtc::ArrayView<const float>(out_ptr, out_length),
+                        rtc::ArrayView<float>(cmp_data.get(), ref_length))));
           out_ptr = cmp_data.get();
         }
 

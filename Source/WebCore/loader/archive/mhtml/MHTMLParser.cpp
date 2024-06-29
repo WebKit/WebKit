@@ -197,7 +197,7 @@ RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader,
     auto contiguousContent = content.takeAsContiguous();
     switch (mimeHeader.contentTransferEncoding()) {
     case MIMEHeader::Base64: {
-        auto decodedData = base64Decode(contiguousContent->data(), contiguousContent->size());
+        auto decodedData = base64Decode(contiguousContent->span());
         if (!decodedData) {
             LOG_ERROR("Invalid base64 content for MHTML part.");
             return nullptr;

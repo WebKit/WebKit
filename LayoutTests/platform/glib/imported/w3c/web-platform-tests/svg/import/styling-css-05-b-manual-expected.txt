@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (225,121) size 350x223
-      RenderSVGContainer {g} at (225,121) size 350x223
-        RenderSVGText {text} at (140,72) size 200x35 contains 1 chunk(s)
+    RenderSVGContainer {g} at (225,121) size 350x224
+      RenderSVGContainer {g} at (225,121) size 350x224
+        RenderSVGText {text} at (140,73) size 200x34 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 200x34
             chunk 1 (middle anchor) text run 1 at (140.10,100.00) startOffset 0 endOffset 13 width 199.80: "Good morning!"
-        RenderSVGText {text} at (135,172) size 210x35 contains 1 chunk(s)
+        RenderSVGText {text} at (135,173) size 210x34 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 62x34
             chunk 1 (middle anchor) text run 1 at (135.30,200.00) startOffset 0 endOffset 4 width 61.80: "Bon "
           RenderSVGTSpan {tspan} at (61,0) size 140x34

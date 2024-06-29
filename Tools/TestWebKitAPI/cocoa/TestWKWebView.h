@@ -26,6 +26,7 @@
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
+@class _WKFrameTreeNode;
 @class _WKProcessPoolConfiguration;
 
 #if PLATFORM(IOS_FAMILY)
@@ -119,6 +120,7 @@ struct AutocorrectionContext {
 - (NSString *)stringByEvaluatingJavaScript:(NSString *)script;
 - (id)objectByEvaluatingJavaScriptWithUserGesture:(NSString *)script;
 - (id)objectByEvaluatingJavaScript:(NSString *)script;
+- (id)objectByEvaluatingJavaScript:(NSString *)script inFrame:(WKFrameInfo *)frame;
 - (id)objectByCallingAsyncFunction:(NSString *)script withArguments:(NSDictionary *)arguments error:(NSError **)errorOut;
 - (unsigned)waitUntilClientWidthIs:(unsigned)expectedClientWidth;
 - (CGRect)elementRectFromSelector:(NSString *)selector;
@@ -144,6 +146,7 @@ struct AutocorrectionContext {
 - (void)performAfterLoading:(dispatch_block_t)actions;
 
 - (void)waitForNextPresentationUpdate;
+- (void)waitForNextVisibleContentRectUpdate;
 - (void)waitUntilActivityStateUpdateDone;
 - (void)forceDarkMode;
 - (NSString *)stylePropertyAtSelectionStart:(NSString *)propertyName;
@@ -205,4 +208,11 @@ struct AutocorrectionContext {
 @property (nonatomic) BOOL forceWindowToBecomeKey;
 @end
 #endif
+
+@interface TestWKWebView (SiteIsolation)
+- (_WKFrameTreeNode *)mainFrame;
+- (_WKFrameTreeNode *)firstChildFrame;
+- (void)evaluateJavaScript:(NSString *)string inFrame:(WKFrameInfo *)frame completionHandler:(void(^)(id, NSError *))completionHandler;
+- (WKFindResult *)findStringAndWait:(NSString *)string withConfiguration:(WKFindConfiguration *)configuration;
+@end
 

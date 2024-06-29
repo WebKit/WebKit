@@ -677,7 +677,7 @@ MallocPtr<ExpressionInfo> ExpressionInfo::Encoder::createExpressionInfo()
     size_t numberOfChapters = m_expressionInfoChapters.size();
     size_t numberOfEncodedInfo = m_expressionInfoEncodedInfo.size() - m_numberOfEncodedInfoExtensions;
     size_t totalSize = ExpressionInfo::totalSizeInBytes(numberOfChapters, numberOfEncodedInfo, m_numberOfEncodedInfoExtensions);
-    auto info = MallocPtr<ExpressionInfo, VMMalloc>::malloc(totalSize);
+    auto info = MallocPtr<ExpressionInfo>::malloc(totalSize);
     new (info.get()) ExpressionInfo(WTFMove(m_expressionInfoChapters), WTFMove(m_expressionInfoEncodedInfo), m_numberOfEncodedInfoExtensions);
     return info;
 }
@@ -888,7 +888,7 @@ IterationStatus ExpressionInfo::Decoder::decode(std::optional<ExpressionInfo::In
 MallocPtr<ExpressionInfo> ExpressionInfo::createUninitialized(unsigned numberOfChapters, unsigned numberOfEncodedInfo, unsigned numberOfEncodedInfoExtensions)
 {
     size_t totalSize = ExpressionInfo::totalSizeInBytes(numberOfChapters, numberOfEncodedInfo, numberOfEncodedInfoExtensions);
-    auto info = MallocPtr<ExpressionInfo, VMMalloc>::malloc(totalSize);
+    auto info = MallocPtr<ExpressionInfo>::malloc(totalSize);
     new (info.get()) ExpressionInfo(numberOfChapters, numberOfEncodedInfo, numberOfEncodedInfoExtensions);
     return info;
 }

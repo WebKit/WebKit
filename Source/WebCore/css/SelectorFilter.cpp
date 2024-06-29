@@ -55,10 +55,9 @@ void SelectorFilter::collectElementIdentifierHashes(const Element& element, Vect
         identifierHashes.append(id.impl()->existingHash() * IdSalt);
 
     if (element.hasClass()) {
-        const SpaceSplitString& classNames = element.classNames();
-        size_t count = classNames.size();
-        for (size_t i = 0; i < count; ++i)
-            identifierHashes.append(classNames[i].impl()->existingHash() * ClassSalt);
+        identifierHashes.appendContainerWithMapping(element.classNames(), [](auto& className) {
+            return className.impl()->existingHash() * ClassSalt;
+        });
     }
     
     if (element.hasAttributesWithoutUpdate()) {

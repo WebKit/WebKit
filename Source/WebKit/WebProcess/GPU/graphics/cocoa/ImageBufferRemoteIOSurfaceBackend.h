@@ -40,7 +40,6 @@ class ImageBufferRemoteIOSurfaceBackend final : public WebCore::ImageBufferBacke
 public:
     static WebCore::IntSize calculateSafeBackendSize(const Parameters&);
     static size_t calculateMemoryCost(const Parameters&);
-    static size_t calculateExternalMemoryCost(const Parameters&);
 
     static std::unique_ptr<ImageBufferRemoteIOSurfaceBackend> create(const Parameters&, ImageBufferBackendHandle);
 
@@ -50,7 +49,6 @@ public:
     {
     }
 
-    static constexpr bool isOriginAtBottomLeftCorner = true;
     static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::Accelerated;
     bool canMapBackingStore() const final;
 
@@ -64,8 +62,6 @@ private:
 
     void getPixelBuffer(const WebCore::IntRect&, WebCore::PixelBuffer&) final;
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
-
-    bool originAtBottomLeftCorner() const final { return isOriginAtBottomLeftCorner; }
 
     unsigned bytesPerRow() const final;
 

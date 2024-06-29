@@ -259,7 +259,7 @@ void HTMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomSt
         if (relValue.contains(opener))
             m_linkRelations.add(Relation::Opener);
         if (m_relList)
-            m_relList->associatedAttributeValueChanged(newValue);
+            m_relList->associatedAttributeValueChanged();
     }
 }
 
@@ -374,8 +374,8 @@ void HTMLAnchorElement::sendPings(const URL& destinationURL)
         return;
 
     SpaceSplitString pingURLs(pingValue, SpaceSplitString::ShouldFoldCase::No);
-    for (unsigned i = 0; i < pingURLs.size(); i++)
-        PingLoader::sendPing(*document().frame(), document().completeURL(pingURLs[i]), destinationURL);
+    for (auto& pingURL : pingURLs)
+        PingLoader::sendPing(*document().frame(), document().completeURL(pingURL), destinationURL);
 }
 
 #if USE(SYSTEM_PREVIEW)
@@ -522,7 +522,7 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
     }
     
     if (attributionSourceID.value() > std::numeric_limits<uint8_t>::max()) {
-        protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("attributionsourceid must have a non-negative value less than or equal to ", std::numeric_limits<uint8_t>::max(), " for Private Click Measurement."));
+        protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("attributionsourceid must have a non-negative value less than or equal to "_s, std::numeric_limits<uint8_t>::max(), " for Private Click Measurement."_s));
         return std::nullopt;
     }
 

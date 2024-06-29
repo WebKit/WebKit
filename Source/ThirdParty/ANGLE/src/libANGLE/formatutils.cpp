@@ -1089,7 +1089,7 @@ void AddYUVFormat(InternalFormatInfoMap *map,
 // 2. Sized half float types are a combination of GL_HALF_FLOAT and GL_HALF_FLOAT_OES support,
 //    due to a limitation that only one type for sized formats is allowed.
 //
-// TODO(ynovikov): http://anglebug.com/2846 Verify support fields of BGRA, depth, stencil
+// TODO(ynovikov): http://anglebug.com/42261549 Verify support fields of BGRA, depth, stencil
 // and compressed formats. Perform texturable check as part of filterable and attachment checks.
 static InternalFormatInfoMap BuildInternalFormatInfoMap()
 {

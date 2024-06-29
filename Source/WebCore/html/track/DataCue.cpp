@@ -50,9 +50,9 @@ DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& en
     setData(data);
 }
 
-DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
+DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& end, std::span<const uint8_t> data)
     : TextTrackCue(document, start, end)
-    , m_data(ArrayBuffer::create(data, length))
+    , m_data(ArrayBuffer::create(data))
 {
 }
 
@@ -70,9 +70,9 @@ DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& en
 {
 }
 
-Ref<DataCue> DataCue::create(Document& document, const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
+Ref<DataCue> DataCue::create(Document& document, const MediaTime& start, const MediaTime& end, std::span<const uint8_t> data)
 {
-    auto dataCue = adoptRef(*new DataCue(document, start, end, data, length));
+    auto dataCue = adoptRef(*new DataCue(document, start, end, data));
     dataCue->suspendIfNeeded();
     return dataCue;
 }

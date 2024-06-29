@@ -1,0 +1,5 @@
+
+FAIL Basic case assert_equals: expected "100px" but got "0px"
+FAIL Mixed writing modes and directions assert_equals: expected "100px" but got "0px"
+FAIL With containing block padding assert_equals: expected "90px" but got "0px"
+

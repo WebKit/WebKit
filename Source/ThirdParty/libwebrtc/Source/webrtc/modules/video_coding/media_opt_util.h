@@ -16,6 +16,8 @@
 
 #include <memory>
 
+#include "api/environment/environment.h"
+#include "api/field_trials_view.h"
 #include "modules/video_coding/internal_defines.h"
 #include "rtc_base/experiments/rate_control_settings.h"
 #include "rtc_base/numerics/exp_filter.h"
@@ -153,7 +155,7 @@ class VCMNackMethod : public VCMProtectionMethod {
 
 class VCMFecMethod : public VCMProtectionMethod {
  public:
-  VCMFecMethod();
+  explicit VCMFecMethod(const FieldTrialsView& field_trials);
   ~VCMFecMethod() override;
   bool UpdateParameters(const VCMProtectionParameters* parameters) override;
   // Get the effective packet loss for ER
@@ -190,7 +192,8 @@ class VCMFecMethod : public VCMProtectionMethod {
 
 class VCMNackFecMethod : public VCMFecMethod {
  public:
-  VCMNackFecMethod(int64_t lowRttNackThresholdMs,
+  VCMNackFecMethod(const FieldTrialsView& field_trials,
+                   int64_t lowRttNackThresholdMs,
                    int64_t highRttNackThresholdMs);
   ~VCMNackFecMethod() override;
   bool UpdateParameters(const VCMProtectionParameters* parameters) override;
@@ -213,7 +216,7 @@ class VCMNackFecMethod : public VCMFecMethod {
 
 class VCMLossProtectionLogic {
  public:
-  explicit VCMLossProtectionLogic(int64_t nowMs);
+  explicit VCMLossProtectionLogic(const Environment& env);
   ~VCMLossProtectionLogic();
 
   // Set the protection method to be used
@@ -322,6 +325,8 @@ class VCMLossProtectionLogic {
   // Sets the available loss protection methods.
   void UpdateMaxLossHistory(uint8_t lossPr255, int64_t now);
   uint8_t MaxFilteredLossPr(int64_t nowMs) const;
+
+  const Environment env_;
   std::unique_ptr<VCMProtectionMethod> _selectedMethod;
   VCMProtectionParameters _currentParameters;
   int64_t _rtt;

@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (33,80) size 537x350
-      RenderSVGContainer {g} at (33,80) size 537x350
-        RenderSVGContainer {g} at (33,80) size 537x350
+    RenderSVGContainer {g} at (33,80) size 536x350
+      RenderSVGContainer {g} at (33,80) size 536x350
+        RenderSVGContainer {g} at (33,80) size 536x350
           RenderSVGText {text} at (20,48) size 215x40 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 215x40
               chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 10 width 214.80: "Sample 123"
-          RenderSVGText {text} at (20,107) size 322x60 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 322x60
-              chunk 1 text run 1 at (20.00,155.00) startOffset 0 endOffset 10 width 321.60: "Sample 123"
+          RenderSVGText {text} at (20,107) size 321x60 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 321x60
+              chunk 1 text run 1 at (20.00,155.00) startOffset 0 endOffset 10 width 321.00: "Sample 123"
           RenderSVGText {text} at (20,218) size 215x40 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 215x40
               chunk 1 text run 1 at (20.00,250.00) startOffset 0 endOffset 10 width 214.80: "Sample 123"

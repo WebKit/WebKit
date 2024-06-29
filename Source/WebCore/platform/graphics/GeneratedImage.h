@@ -47,7 +47,7 @@ protected:
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const override { return false; }
 
-    GeneratedImage() { }
+    GeneratedImage() = default;
 
 private:
     bool isGeneratedImage() const override { return true; }

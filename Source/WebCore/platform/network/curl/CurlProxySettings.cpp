@@ -145,8 +145,8 @@ static std::optional<String> createProxyUrl(const URL &url)
     if (!port)
         return std::nullopt;
 
-    auto userpass = url.hasCredentials() ? makeString(url.user(), ":", url.password(), "@") : String();
-    return makeString(url.protocol(), "://", userpass, url.host(), ":", *port);
+    auto userpass = url.hasCredentials() ? makeString(url.user(), ':', url.password(), '@') : String();
+    return makeString(url.protocol(), "://"_s, userpass, url.host(), ':', *port);
 }
 
 }

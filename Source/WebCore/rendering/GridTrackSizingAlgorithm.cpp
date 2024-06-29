@@ -40,6 +40,15 @@
 
 namespace WebCore {
 
+GridTrackSizingAlgorithm::GridTrackSizingAlgorithm(const RenderGrid* renderGrid, Grid& grid)
+    : m_grid(grid)
+    , m_renderGrid(renderGrid)
+    , m_sizingState(SizingState::ColumnSizingFirstIteration)
+{
+}
+
+GridTrackSizingAlgorithm::~GridTrackSizingAlgorithm() = default;
+
 LayoutUnit GridTrack::baseSize() const
 {
     ASSERT(isGrowthLimitBiggerThanBaseSize());
@@ -829,7 +838,12 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::logicalHeightForChild(RenderBox& ch
     GridTrackSizingDirection childBlockDirection = GridLayoutFunctions::flowAwareDirectionForChild(*renderGrid(), child, GridTrackSizingDirection::ForRows);
     // If |child| has a relative logical height, we shouldn't let it override its intrinsic height, which is
     // what we are interested in here. Thus we need to set the block-axis override size to nullopt (no possible resolution).
-    if (GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, GridTrackSizingDirection::ForRows) && shouldClearOverridingContainingBlockContentSizeForChild(child, GridTrackSizingDirection::ForRows)) {
+    auto hasOverridingContainingBlockContentSizeForChild = [&] {
+        if (auto overridingContainingBlockContentSizeForChild = GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, GridTrackSizingDirection::ForRows); overridingContainingBlockContentSizeForChild && *overridingContainingBlockContentSizeForChild)
+            return true;
+        return false;
+    };
+    if (hasOverridingContainingBlockContentSizeForChild() && shouldClearOverridingContainingBlockContentSizeForChild(child, GridTrackSizingDirection::ForRows)) {
         setOverridingContainingBlockContentSizeForChild(*renderGrid(), child, childBlockDirection, std::nullopt);
         child.setNeedsLayout(MarkOnlyThis);
     }
@@ -904,7 +918,7 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minSizeForChild(RenderBox& child) c
         const GridSpan& span = m_algorithm.m_renderGrid->gridSpanForChild(child, direction());
 
         LayoutUnit maxBreadth;
-        auto allTracks = m_algorithm.tracks(direction());
+        const auto& allTracks = m_algorithm.tracks(direction());
         bool allFixed = true;
         for (auto trackPosition : span) {
             const auto& trackSize = allTracks[trackPosition].cachedTrackSize();
@@ -1056,7 +1070,7 @@ bool GridTrackSizingAlgorithmStrategy::updateOverridingContainingBlockContentSiz
         }
     }
 
-    if (GridLayoutFunctions::hasOverridingContainingBlockContentSizeForChild(child, direction) && GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, direction) == overrideSize)
+    if (auto overridingContainingBlockContentSizeForChild = GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, direction); overridingContainingBlockContentSizeForChild && *overridingContainingBlockContentSizeForChild == overrideSize)
         return false;
 
     setOverridingContainingBlockContentSizeForChild(*renderGrid(), child, direction, overrideSize);

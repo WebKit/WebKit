@@ -1,3 +1,4 @@
 
 PASS :command_buffer,device_mismatch:
+PASS :command_buffer,duplicate_buffers:
 

@@ -260,8 +260,11 @@ void RemoteEstimatorProxy::SendFeedbackOnRequest(
       feedback_request.include_timestamps, first_sequence_number,
       sequence_number + 1, /*is_periodic_update=*/false);
 
-  // This is called when a packet has just been added.
-  RTC_DCHECK(feedback_packet != nullptr);
+  // Even though this is called when a packet has just been added,
+  // no feedback may be produced when that new packet is too old.
+  if (feedback_packet == nullptr) {
+    return;
+  }
 
   // Clear up to the first packet that is included in this feedback packet.
   packet_arrival_times_.EraseTo(first_sequence_number);

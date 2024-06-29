@@ -56,6 +56,12 @@
 #define WK_NULLABLE_RESULT _Nullable
 #endif
 
+#ifdef NS_SWIFT_UI_ACTOR
+#define WK_SWIFT_UI_ACTOR NS_SWIFT_UI_ACTOR
+#else
+#define WK_SWIFT_UI_ACTOR
+#endif
+
 #ifndef WK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED
 
 #define WK_API_AVAILABLE(...)

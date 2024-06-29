@@ -66,6 +66,12 @@ void HTMLScriptElement::childrenChanged(const ChildChange& change)
     ScriptElement::childrenChanged(change);
 }
 
+void HTMLScriptElement::finishParsingChildren()
+{
+    HTMLElement::finishParsingChildren();
+    ScriptElement::finishParsingChildren();
+}
+
 void HTMLScriptElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == srcAttr)
@@ -108,7 +114,10 @@ ExceptionOr<void> HTMLScriptElement::setTextContent(ExceptionOr<String> value)
     if (value.hasException())
         return value.releaseException();
 
-    setTextContent(value.releaseReturnValue());
+    auto newValue = value.releaseReturnValue();
+
+    setTrustedScriptText(newValue);
+    setTextContent(WTFMove(newValue));
     return { };
 }
 
@@ -118,7 +127,10 @@ ExceptionOr<void> HTMLScriptElement::setInnerText(std::variant<RefPtr<TrustedScr
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
 
-    setInnerText(stringValueHolder.releaseReturnValue());
+    auto newValue = stringValueHolder.releaseReturnValue();
+
+    setTrustedScriptText(newValue);
+    setInnerText(WTFMove(newValue));
     return { };
 }
 

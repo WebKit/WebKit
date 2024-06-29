@@ -37,7 +37,7 @@ namespace Layout {
 // the line box dimensions themselves (i.e. this won't change where text is aligned, etc).
 class AvailableLineWidthOverride {
 public:
-    AvailableLineWidthOverride() { }
+    AvailableLineWidthOverride() = default;
     AvailableLineWidthOverride(LayoutUnit globalLineWidthOverride) { m_globalLineWidthOverride = globalLineWidthOverride; }
     AvailableLineWidthOverride(Vector<LayoutUnit> individualLineWidthOverrides) { m_individualLineWidthOverrides = individualLineWidthOverrides; }
     std::optional<LayoutUnit> availableLineWidthOverrideForLine(size_t lineIndex) const

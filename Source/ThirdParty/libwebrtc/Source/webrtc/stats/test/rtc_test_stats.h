@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "api/stats/rtc_stats.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -24,27 +25,25 @@ namespace webrtc {
 class RTC_EXPORT RTCTestStats : public RTCStats {
  public:
   WEBRTC_RTCSTATS_DECL();
-
   RTCTestStats(const std::string& id, Timestamp timestamp);
-  RTCTestStats(const RTCTestStats& other);
   ~RTCTestStats() override;
 
-  RTCStatsMember<bool> m_bool;
-  RTCStatsMember<int32_t> m_int32;
-  RTCStatsMember<uint32_t> m_uint32;
-  RTCStatsMember<int64_t> m_int64;
-  RTCStatsMember<uint64_t> m_uint64;
-  RTCStatsMember<double> m_double;
-  RTCStatsMember<std::string> m_string;
-  RTCStatsMember<std::vector<bool>> m_sequence_bool;
-  RTCStatsMember<std::vector<int32_t>> m_sequence_int32;
-  RTCStatsMember<std::vector<uint32_t>> m_sequence_uint32;
-  RTCStatsMember<std::vector<int64_t>> m_sequence_int64;
-  RTCStatsMember<std::vector<uint64_t>> m_sequence_uint64;
-  RTCStatsMember<std::vector<double>> m_sequence_double;
-  RTCStatsMember<std::vector<std::string>> m_sequence_string;
-  RTCStatsMember<std::map<std::string, uint64_t>> m_map_string_uint64;
-  RTCStatsMember<std::map<std::string, double>> m_map_string_double;
+  absl::optional<bool> m_bool;
+  absl::optional<int32_t> m_int32;
+  absl::optional<uint32_t> m_uint32;
+  absl::optional<int64_t> m_int64;
+  absl::optional<uint64_t> m_uint64;
+  absl::optional<double> m_double;
+  absl::optional<std::string> m_string;
+  absl::optional<std::vector<bool>> m_sequence_bool;
+  absl::optional<std::vector<int32_t>> m_sequence_int32;
+  absl::optional<std::vector<uint32_t>> m_sequence_uint32;
+  absl::optional<std::vector<int64_t>> m_sequence_int64;
+  absl::optional<std::vector<uint64_t>> m_sequence_uint64;
+  absl::optional<std::vector<double>> m_sequence_double;
+  absl::optional<std::vector<std::string>> m_sequence_string;
+  absl::optional<std::map<std::string, uint64_t>> m_map_string_uint64;
+  absl::optional<std::map<std::string, double>> m_map_string_double;
 };
 
 }  // namespace webrtc

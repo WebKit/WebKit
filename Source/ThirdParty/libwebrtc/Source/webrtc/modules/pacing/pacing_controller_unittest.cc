@@ -427,6 +427,7 @@ TEST_F(PacingControllerTest, BudgetAffectsAudioInTrial) {
   DataRate pacing_rate =
       DataRate::BitsPerSec(kPacketSize / 3 * 8 * kProcessIntervalsPerSecond);
   pacer.SetPacingRates(pacing_rate, DataRate::Zero());
+  pacer.SetSendBurstInterval(TimeDelta::Zero());
   // Video fills budget for following process periods.
   pacer.EnqueuePacket(video_.BuildNextPacket(kPacketSize));
   EXPECT_CALL(callback_, SendPacket).Times(1);
@@ -484,7 +485,7 @@ TEST_F(PacingControllerTest, FirstSentPacketTimeIsSet) {
   EXPECT_EQ(kStartTime, pacer->FirstSentPacketTime());
 }
 
-TEST_F(PacingControllerTest, QueueAndPacePackets) {
+TEST_F(PacingControllerTest, QueueAndPacePacketsWithZeroBurstPeriod) {
   const uint32_t kSsrc = 12345;
   uint16_t sequence_number = 1234;
   const DataSize kPackeSize = DataSize::Bytes(250);
@@ -495,6 +496,7 @@ TEST_F(PacingControllerTest, QueueAndPacePackets) {
   const size_t kPacketsToSend = (kSendInterval * kTargetRate).bytes() *
                                 kPaceMultiplier / kPackeSize.bytes();
   auto pacer = std::make_unique<PacingController>(&clock_, &callback_, trials_);
+  pacer->SetSendBurstInterval(TimeDelta::Zero());
   pacer->SetPacingRates(kTargetRate * kPaceMultiplier, DataRate::Zero());
 
   for (size_t i = 0; i < kPacketsToSend; ++i) {
@@ -536,30 +538,30 @@ TEST_F(PacingControllerTest, PaceQueuedPackets) {
   auto pacer = std::make_unique<PacingController>(&clock_, &callback_, trials_);
   pacer->SetPacingRates(kTargetRate * kPaceMultiplier, DataRate::Zero());
 
-  // Due to the multiplicative factor we can send 5 packets during a send
-  // interval. (network capacity * multiplier / (8 bits per byte *
-  // (packet size * #send intervals per second)
-  const size_t packets_to_send_per_interval =
-      kTargetRate.bps() * kPaceMultiplier / (8 * kPacketSize * 200);
-  for (size_t i = 0; i < packets_to_send_per_interval; ++i) {
+  const size_t packets_to_send_per_burst_interval =
+      (kTargetRate * kPaceMultiplier * PacingController::kDefaultBurstInterval)
+          .bytes() /
+      kPacketSize;
+  for (size_t i = 0; i < packets_to_send_per_burst_interval; ++i) {
     SendAndExpectPacket(pacer.get(), RtpPacketMediaType::kVideo, ssrc,
                         sequence_number++, clock_.TimeInMilliseconds(),
                         kPacketSize);
   }
 
-  for (size_t j = 0; j < packets_to_send_per_interval * 10; ++j) {
+  for (size_t j = 0; j < packets_to_send_per_burst_interval * 10; ++j) {
     pacer->EnqueuePacket(BuildPacket(RtpPacketMediaType::kVideo, ssrc,
                                      sequence_number++,
                                      clock_.TimeInMilliseconds(), kPacketSize));
   }
-  EXPECT_EQ(packets_to_send_per_interval + packets_to_send_per_interval * 10,
+  EXPECT_EQ(packets_to_send_per_burst_interval +
+                packets_to_send_per_burst_interval * 10,
             pacer->QueueSizePackets());
 
-  while (pacer->QueueSizePackets() > packets_to_send_per_interval * 10) {
+  while (pacer->QueueSizePackets() > packets_to_send_per_burst_interval * 10) {
     AdvanceTimeUntil(pacer->NextSendTime());
     pacer->ProcessPackets();
   }
-  EXPECT_EQ(pacer->QueueSizePackets(), packets_to_send_per_interval * 10);
+  EXPECT_EQ(pacer->QueueSizePackets(), packets_to_send_per_burst_interval * 10);
   EXPECT_CALL(callback_, SendPadding).Times(0);
 
   EXPECT_CALL(callback_, SendPacket(ssrc, _, _, false, false))
@@ -582,12 +584,12 @@ TEST_F(PacingControllerTest, PaceQueuedPackets) {
   pacer->ProcessPackets();
 
   // Send some more packet, just show that we can..?
-  for (size_t i = 0; i < packets_to_send_per_interval; ++i) {
+  for (size_t i = 0; i < packets_to_send_per_burst_interval; ++i) {
     SendAndExpectPacket(pacer.get(), RtpPacketMediaType::kVideo, ssrc,
                         sequence_number++, clock_.TimeInMilliseconds(), 250);
   }
-  EXPECT_EQ(packets_to_send_per_interval, pacer->QueueSizePackets());
-  for (size_t i = 0; i < packets_to_send_per_interval; ++i) {
+  EXPECT_EQ(packets_to_send_per_burst_interval, pacer->QueueSizePackets());
+  for (size_t i = 0; i < packets_to_send_per_burst_interval; ++i) {
     AdvanceTimeUntil(pacer->NextSendTime());
     pacer->ProcessPackets();
   }
@@ -641,19 +643,23 @@ TEST_F(PacingControllerTest,
 TEST_F(PacingControllerTest, Padding) {
   uint32_t ssrc = 12345;
   uint16_t sequence_number = 1234;
-  const size_t kPacketSize = 250;
+  const size_t kPacketSize = 1000;
   auto pacer = std::make_unique<PacingController>(&clock_, &callback_, trials_);
   pacer->SetPacingRates(kTargetRate * kPaceMultiplier, kTargetRate);
 
-  const size_t kPacketsToSend = 20;
+  const size_t kPacketsToSend = 30;
   for (size_t i = 0; i < kPacketsToSend; ++i) {
     SendAndExpectPacket(pacer.get(), RtpPacketMediaType::kVideo, ssrc,
                         sequence_number++, clock_.TimeInMilliseconds(),
                         kPacketSize);
   }
+
+  int expected_bursts =
+      floor(DataSize::Bytes(pacer->QueueSizePackets() * kPacketSize) /
+            (kPaceMultiplier * kTargetRate) /
+            PacingController::kDefaultBurstInterval);
   const TimeDelta expected_pace_time =
-      DataSize::Bytes(pacer->QueueSizePackets() * kPacketSize) /
-      (kPaceMultiplier * kTargetRate);
+      (expected_bursts - 1) * PacingController::kDefaultBurstInterval;
   EXPECT_CALL(callback_, SendPadding).Times(0);
   // Only the media packets should be sent.
   Timestamp start_time = clock_.CurrentTime();
@@ -663,7 +669,7 @@ TEST_F(PacingControllerTest, Padding) {
   }
   const TimeDelta actual_pace_time = clock_.CurrentTime() - start_time;
   EXPECT_LE((actual_pace_time - expected_pace_time).Abs(),
-            PacingController::kMinSleepTime);
+            PacingController::kDefaultBurstInterval);
 
   // Pacing media happens at 2.5x, but padding was configured with 1.0x
   // factor. We have to wait until the padding debt is gone before we start
@@ -766,8 +772,8 @@ TEST_F(PacingControllerTest, VerifyAverageBitrateVaryingMediaPayload) {
                                        media_payload));
       media_bytes += media_payload;
     }
-
-    AdvanceTimeUntil(pacer->NextSendTime());
+    AdvanceTimeUntil(std::min(clock_.CurrentTime() + TimeDelta::Millis(20),
+                              pacer->NextSendTime()));
     pacer->ProcessPackets();
   }
 
@@ -805,20 +811,18 @@ TEST_F(PacingControllerTest, Priority) {
 
   // Expect all high and normal priority to be sent out first.
   EXPECT_CALL(callback_, SendPadding).Times(0);
+  testing::Sequence s;
   EXPECT_CALL(callback_, SendPacket(ssrc, _, capture_time_ms, _, _))
-      .Times(packets_to_send_per_interval + 1);
+      .Times(packets_to_send_per_interval + 1)
+      .InSequence(s);
+  EXPECT_CALL(callback_, SendPacket(ssrc_low_priority, _,
+                                    capture_time_ms_low_priority, _, _))
+      .InSequence(s);
 
-  while (pacer->QueueSizePackets() > 1) {
+  while (pacer->QueueSizePackets() > 0) {
     AdvanceTimeUntil(pacer->NextSendTime());
     pacer->ProcessPackets();
   }
-
-  EXPECT_EQ(1u, pacer->QueueSizePackets());
-
-  EXPECT_CALL(callback_, SendPacket(ssrc_low_priority, _,
-                                    capture_time_ms_low_priority, _, _));
-  AdvanceTimeUntil(pacer->NextSendTime());
-  pacer->ProcessPackets();
 }
 
 TEST_F(PacingControllerTest, RetransmissionPriority) {
@@ -829,23 +833,22 @@ TEST_F(PacingControllerTest, RetransmissionPriority) {
   auto pacer = std::make_unique<PacingController>(&clock_, &callback_, trials_);
   pacer->SetPacingRates(kTargetRate * kPaceMultiplier, DataRate::Zero());
 
-  // Due to the multiplicative factor we can send 5 packets during a send
-  // interval. (network capacity * multiplier / (8 bits per byte *
-  // (packet size * #send intervals per second)
-  const size_t packets_to_send_per_interval =
-      kTargetRate.bps() * kPaceMultiplier / (8 * 250 * 200);
+  const size_t packets_to_send_per_burst_interval =
+      (kTargetRate * kPaceMultiplier * PacingController::kDefaultBurstInterval)
+          .bytes() /
+      250;
   pacer->ProcessPackets();
   EXPECT_EQ(0u, pacer->QueueSizePackets());
 
   // Alternate retransmissions and normal packets.
-  for (size_t i = 0; i < packets_to_send_per_interval; ++i) {
+  for (size_t i = 0; i < packets_to_send_per_burst_interval; ++i) {
     pacer->EnqueuePacket(BuildPacket(RtpPacketMediaType::kVideo, ssrc,
                                      sequence_number++, capture_time_ms, 250));
     pacer->EnqueuePacket(BuildPacket(RtpPacketMediaType::kRetransmission, ssrc,
                                      sequence_number++,
                                      capture_time_ms_retransmission, 250));
   }
-  EXPECT_EQ(2 * packets_to_send_per_interval, pacer->QueueSizePackets());
+  EXPECT_EQ(2 * packets_to_send_per_burst_interval, pacer->QueueSizePackets());
 
   // Expect all retransmissions to be sent out first despite having a later
   // capture time.
@@ -853,19 +856,19 @@ TEST_F(PacingControllerTest, RetransmissionPriority) {
   EXPECT_CALL(callback_, SendPacket(_, _, _, false, _)).Times(0);
   EXPECT_CALL(callback_,
               SendPacket(ssrc, _, capture_time_ms_retransmission, true, _))
-      .Times(packets_to_send_per_interval);
+      .Times(packets_to_send_per_burst_interval);
 
-  while (pacer->QueueSizePackets() > packets_to_send_per_interval) {
+  while (pacer->QueueSizePackets() > packets_to_send_per_burst_interval) {
     AdvanceTimeUntil(pacer->NextSendTime());
     pacer->ProcessPackets();
   }
-  EXPECT_EQ(packets_to_send_per_interval, pacer->QueueSizePackets());
+  EXPECT_EQ(packets_to_send_per_burst_interval, pacer->QueueSizePackets());
 
   // Expect the remaining (non-retransmission) packets to be sent.
   EXPECT_CALL(callback_, SendPadding).Times(0);
   EXPECT_CALL(callback_, SendPacket(_, _, _, true, _)).Times(0);
   EXPECT_CALL(callback_, SendPacket(ssrc, _, capture_time_ms, false, _))
-      .Times(packets_to_send_per_interval);
+      .Times(packets_to_send_per_burst_interval);
 
   while (pacer->QueueSizePackets() > 0) {
     AdvanceTimeUntil(pacer->NextSendTime());
@@ -890,13 +893,13 @@ TEST_F(PacingControllerTest, HighPrioDoesntAffectBudget) {
                         sequence_number++, capture_time_ms, kPacketSize);
   }
   pacer->ProcessPackets();
+  EXPECT_EQ(pacer->QueueSizePackets(), 0u);
   // Low prio packets does affect the budget.
-  // Due to the multiplicative factor we can send 5 packets during a send
-  // interval. (network capacity * multiplier / (8 bits per byte *
-  // (packet size * #send intervals per second)
-  const size_t kPacketsToSendPerInterval =
-      kTargetRate.bps() * kPaceMultiplier / (8 * kPacketSize * 200);
-  for (size_t i = 0; i < kPacketsToSendPerInterval; ++i) {
+  const size_t kPacketsToSendPerBurstInterval =
+      (kTargetRate * kPaceMultiplier * PacingController::kDefaultBurstInterval)
+          .bytes() /
+      kPacketSize;
+  for (size_t i = 0; i < kPacketsToSendPerBurstInterval; ++i) {
     SendAndExpectPacket(pacer.get(), RtpPacketMediaType::kVideo, ssrc,
                         sequence_number++, clock_.TimeInMilliseconds(),
                         kPacketSize);
@@ -904,16 +907,16 @@ TEST_F(PacingControllerTest, HighPrioDoesntAffectBudget) {
 
   // Send all packets and measure pace time.
   Timestamp start_time = clock_.CurrentTime();
+  EXPECT_EQ(pacer->NextSendTime(), clock_.CurrentTime());
   while (pacer->QueueSizePackets() > 0) {
     AdvanceTimeUntil(pacer->NextSendTime());
     pacer->ProcessPackets();
   }
 
-  // Measure pacing time. Expect only low-prio packets to affect this.
+  // Measure pacing time.
   TimeDelta pacing_time = clock_.CurrentTime() - start_time;
-  TimeDelta expected_pacing_time =
-      DataSize::Bytes(kPacketsToSendPerInterval * kPacketSize) /
-      (kTargetRate * kPaceMultiplier);
+  // All packets sent in one burst since audio packets are not accounted for.
+  TimeDelta expected_pacing_time = TimeDelta::Zero();
   EXPECT_NEAR(pacing_time.us<double>(), expected_pacing_time.us<double>(),
               PacingController::kMinSleepTime.us<double>());
 }
@@ -965,6 +968,7 @@ TEST_F(PacingControllerTest, DoesNotAllowOveruseAfterCongestion) {
   auto now_ms = [this] { return clock_.TimeInMilliseconds(); };
   auto pacer = std::make_unique<PacingController>(&clock_, &callback_, trials_);
   pacer->SetPacingRates(kTargetRate * kPaceMultiplier, DataRate::Zero());
+  pacer->SetSendBurstInterval(TimeDelta::Zero());
   EXPECT_CALL(callback_, SendPadding).Times(0);
   // The pacing rate is low enough that the budget should not allow two packets
   // to be sent in a row.
@@ -1362,10 +1366,9 @@ TEST_F(PacingControllerTest, CanProbeWithPaddingBeforeFirstMediaPacket) {
   const int kInitialBitrateBps = 300000;
 
   PacingControllerProbing packet_sender;
-  const test::ExplicitKeyValueConfig trials(
-      "WebRTC-Bwe-ProbingBehavior/min_packet_size:0/");
   auto pacer =
-      std::make_unique<PacingController>(&clock_, &packet_sender, trials);
+      std::make_unique<PacingController>(&clock_, &packet_sender, trials_);
+  pacer->SetAllowProbeWithoutMediaPacket(true);
   std::vector<ProbeClusterConfig> probe_clusters = {
       {.at_time = clock_.CurrentTime(),
        .target_data_rate = kFirstClusterRate,
@@ -1389,16 +1392,46 @@ TEST_F(PacingControllerTest, CanProbeWithPaddingBeforeFirstMediaPacket) {
   EXPECT_GT(packet_sender.padding_packets_sent(), 5);
 }
 
+TEST_F(PacingControllerTest, ProbeSentAfterSetAllowProbeWithoutMediaPacket) {
+  const int kInitialBitrateBps = 300000;
+
+  PacingControllerProbing packet_sender;
+  auto pacer =
+      std::make_unique<PacingController>(&clock_, &packet_sender, trials_);
+  std::vector<ProbeClusterConfig> probe_clusters = {
+      {.at_time = clock_.CurrentTime(),
+       .target_data_rate = kFirstClusterRate,
+       .target_duration = TimeDelta::Millis(15),
+       .target_probe_count = 5,
+       .id = 0}};
+  pacer->CreateProbeClusters(probe_clusters);
+
+  pacer->SetPacingRates(
+      DataRate::BitsPerSec(kInitialBitrateBps * kPaceMultiplier),
+      DataRate::Zero());
+
+  pacer->SetAllowProbeWithoutMediaPacket(true);
+
+  Timestamp start = clock_.CurrentTime();
+  Timestamp next_process = pacer->NextSendTime();
+  while (clock_.CurrentTime() < start + TimeDelta::Millis(100) &&
+         next_process.IsFinite()) {
+    AdvanceTimeUntil(next_process);
+    pacer->ProcessPackets();
+    next_process = pacer->NextSendTime();
+  }
+  EXPECT_GT(packet_sender.padding_packets_sent(), 5);
+}
+
 TEST_F(PacingControllerTest, CanNotProbeWithPaddingIfGeneratePaddingFails) {
   // const size_t kPacketSize = 1200;
   const int kInitialBitrateBps = 300000;
 
   PacingControllerProbing packet_sender;
   packet_sender.SetCanGeneratePadding(false);
-  const test::ExplicitKeyValueConfig trials(
-      "WebRTC-Bwe-ProbingBehavior/min_packet_size:0/");
   auto pacer =
-      std::make_unique<PacingController>(&clock_, &packet_sender, trials);
+      std::make_unique<PacingController>(&clock_, &packet_sender, trials_);
+  pacer->SetAllowProbeWithoutMediaPacket(true);
   std::vector<ProbeClusterConfig> probe_clusters = {
       {.at_time = clock_.CurrentTime(),
        .target_data_rate = kFirstClusterRate,
@@ -1853,6 +1886,7 @@ TEST_F(PacingControllerTest, AccountsForAudioEnqueueTime) {
   // Audio not paced, but still accounted for in budget.
   pacer->SetAccountForAudioPackets(true);
   pacer->SetPacingRates(kPacingDataRate, kPaddingDataRate);
+  pacer->SetSendBurstInterval(TimeDelta::Zero());
 
   // Enqueue two audio packets, advance clock to where one packet
   // should have drained the buffer already, has they been sent
@@ -1898,13 +1932,12 @@ TEST_F(PacingControllerTest, NextSendTimeAccountsForPadding) {
   EXPECT_EQ(pacer->NextSendTime() - clock_.CurrentTime(),
             PacingController::kPausedProcessInterval);
 
-  // Enqueue a new packet, that can't be sent until previous buffer has
-  // drained.
+  // Enqueue a new packet, that can be sent immediately due to default burst
+  // rate is 40ms.
   SendAndExpectPacket(pacer.get(), RtpPacketMediaType::kVideo, kSsrc,
                       sequnce_number++, clock_.TimeInMilliseconds(),
                       kPacketSize.bytes());
-  EXPECT_EQ(pacer->NextSendTime() - clock_.CurrentTime(), kPacketPacingTime);
-  clock_.AdvanceTime(kPacketPacingTime);
+  EXPECT_EQ(pacer->NextSendTime() - clock_.CurrentTime(), TimeDelta::Zero());
   pacer->ProcessPackets();
   ::testing::Mock::VerifyAndClearExpectations(&callback_);
 
@@ -1916,11 +1949,13 @@ TEST_F(PacingControllerTest, NextSendTimeAccountsForPadding) {
   // previous debt has cleared. Since padding was disabled before, there
   // currently is no padding debt.
   pacer->SetPacingRates(kPacingDataRate, kPacingDataRate / 2);
-  EXPECT_EQ(pacer->NextSendTime() - clock_.CurrentTime(), kPacketPacingTime);
+  EXPECT_EQ(pacer->QueueSizePackets(), 0u);
+  EXPECT_LT(pacer->NextSendTime() - clock_.CurrentTime(),
+            PacingController::kDefaultBurstInterval);
 
   // Advance time, expect padding.
   EXPECT_CALL(callback_, SendPadding).WillOnce(Return(kPacketSize.bytes()));
-  clock_.AdvanceTime(kPacketPacingTime);
+  clock_.AdvanceTime(pacer->NextSendTime() - clock_.CurrentTime());
   pacer->ProcessPackets();
   ::testing::Mock::VerifyAndClearExpectations(&callback_);
 
@@ -1933,7 +1968,7 @@ TEST_F(PacingControllerTest, NextSendTimeAccountsForPadding) {
   pacer->EnqueuePacket(
       BuildPacket(RtpPacketMediaType::kVideo, kSsrc, sequnce_number++,
                   clock_.TimeInMilliseconds(), kPacketSize.bytes()));
-  EXPECT_EQ(pacer->NextSendTime() - clock_.CurrentTime(), kPacketPacingTime);
+  EXPECT_EQ(pacer->NextSendTime(), clock_.CurrentTime());
 }
 
 TEST_F(PacingControllerTest, PaddingTargetAccountsForPaddingRate) {
@@ -2011,8 +2046,8 @@ TEST_F(PacingControllerTest, SendsFecPackets) {
 TEST_F(PacingControllerTest, GapInPacingDoesntAccumulateBudget) {
   const uint32_t kSsrc = 12345;
   uint16_t sequence_number = 1234;
-  const DataSize kPackeSize = DataSize::Bytes(250);
-  const TimeDelta kPacketSendTime = TimeDelta::Millis(15);
+  const DataSize kPackeSize = DataSize::Bytes(1000);
+  const TimeDelta kPacketSendTime = TimeDelta::Millis(25);
   auto pacer = std::make_unique<PacingController>(&clock_, &callback_, trials_);
 
   pacer->SetPacingRates(kPackeSize / kPacketSendTime,
@@ -2028,15 +2063,20 @@ TEST_F(PacingControllerTest, GapInPacingDoesntAccumulateBudget) {
   // Advance time kPacketSendTime past where the media debt should be 0.
   clock_.AdvanceTime(2 * kPacketSendTime);
 
-  // Enqueue two new packets. Expect only one to be sent one ProcessPackets().
+  // Enqueue three new packets. Expect only two to be sent one ProcessPackets()
+  // since the default burst interval is 40ms.
+  SendAndExpectPacket(pacer.get(), RtpPacketMediaType::kVideo, kSsrc,
+                      sequence_number++, clock_.TimeInMilliseconds(),
+                      kPackeSize.bytes());
+  SendAndExpectPacket(pacer.get(), RtpPacketMediaType::kVideo, kSsrc,
+                      sequence_number++, clock_.TimeInMilliseconds(),
+                      kPackeSize.bytes());
+  EXPECT_CALL(callback_, SendPacket(kSsrc, sequence_number + 1, _, _, _))
+      .Times(0);
   pacer->EnqueuePacket(
       BuildPacket(RtpPacketMediaType::kVideo, kSsrc, sequence_number + 1,
                   clock_.TimeInMilliseconds(), kPackeSize.bytes()));
-  pacer->EnqueuePacket(
-      BuildPacket(RtpPacketMediaType::kVideo, kSsrc, sequence_number + 2,
-                  clock_.TimeInMilliseconds(), kPackeSize.bytes()));
-  EXPECT_CALL(callback_, SendPacket(kSsrc, sequence_number + 1,
-                                    clock_.TimeInMilliseconds(), false, false));
+
   pacer->ProcessPackets();
 }
 
@@ -2044,6 +2084,7 @@ TEST_F(PacingControllerTest, HandlesSubMicrosecondSendIntervals) {
   static constexpr DataSize kPacketSize = DataSize::Bytes(1);
   static constexpr TimeDelta kPacketSendTime = TimeDelta::Micros(1);
   auto pacer = std::make_unique<PacingController>(&clock_, &callback_, trials_);
+  pacer->SetSendBurstInterval(TimeDelta::Zero());
 
   // Set pacing rate such that a packet is sent in 0.5us.
   pacer->SetPacingRates(/*pacing_rate=*/2 * kPacketSize / kPacketSendTime,
@@ -2334,6 +2375,44 @@ TEST_F(PacingControllerTest, FlushesPacketsOnKeyFrames) {
                                     /*is_padding=*/false));
   AdvanceTimeUntil(pacer->NextSendTime());
   pacer->ProcessPackets();
+}
+
+TEST_F(PacingControllerTest, CanControlQueueSizeUsingTtl) {
+  const uint32_t kSsrc = 12345;
+  const uint32_t kAudioSsrc = 2345;
+  uint16_t sequence_number = 1234;
+
+  PacingController::Configuration config;
+  config.drain_large_queues = false;
+  config.packet_queue_ttl.video = TimeDelta::Millis(500);
+  auto pacer =
+      std::make_unique<PacingController>(&clock_, &callback_, trials_, config);
+  pacer->SetPacingRates(DataRate::BitsPerSec(100'000), DataRate::Zero());
+
+  Timestamp send_time = Timestamp::Zero();
+  for (int i = 0; i < 100; ++i) {
+    // Enqueue a new audio and video frame every 33ms.
+    if (clock_.CurrentTime() - send_time > TimeDelta::Millis(33)) {
+      for (int j = 0; j < 3; ++j) {
+        auto packet = BuildPacket(RtpPacketMediaType::kVideo, kSsrc,
+                                  /*sequence_number=*/++sequence_number,
+                                  /*capture_time_ms=*/2,
+                                  /*size_bytes=*/1000);
+        pacer->EnqueuePacket(std::move(packet));
+      }
+      auto packet = BuildPacket(RtpPacketMediaType::kAudio, kAudioSsrc,
+                                /*sequence_number=*/++sequence_number,
+                                /*capture_time_ms=*/2,
+                                /*size_bytes=*/100);
+      pacer->EnqueuePacket(std::move(packet));
+      send_time = clock_.CurrentTime();
+    }
+
+    EXPECT_LE(clock_.CurrentTime() - pacer->OldestPacketEnqueueTime(),
+              TimeDelta::Millis(500));
+    clock_.AdvanceTime(pacer->NextSendTime() - clock_.CurrentTime());
+    pacer->ProcessPackets();
+  }
 }
 
 }  // namespace

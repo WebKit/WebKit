@@ -1,0 +1,13 @@
+
+FAIL Offsets for inset-area: span-all assert_equals: Check expected offsetWidth expected 400 but got 0
+FAIL Offsets for inset-area: left span-all assert_equals: Check expected offsetLeft expected -200 but got 0
+FAIL Offsets for inset-area: span-left span-all assert_equals: Check expected offsetLeft expected -100 but got 0
+FAIL Offsets for inset-area: span-all center assert_equals: Check expected offsetLeft expected -200 but got 0
+FAIL Offsets for inset-area: span-right span-all assert_equals: Check expected offsetLeft expected -200 but got 0
+FAIL Offsets for inset-area: right span-all assert_equals: Check expected offsetLeft expected -100 but got 0
+FAIL Offsets for inset-area: top span-all assert_equals: Check expected offsetWidth expected 400 but got 0
+FAIL Offsets for inset-area: span-top span-all assert_equals: Check expected offsetWidth expected 400 but got 0
+FAIL Offsets for inset-area: center span-all assert_equals: Check expected offsetTop expected 500 but got 0
+FAIL Offsets for inset-area: span-bottom span-all assert_equals: Check expected offsetTop expected 500 but got 0
+FAIL Offsets for inset-area: bottom span-all assert_equals: Check expected offsetTop expected 600 but got 0
+

@@ -35,7 +35,6 @@
 #include "MessageSender.h"
 #include "RemoteDisplayListRecorderMessages.h"
 #include "RemoteImageBufferProxy.h"
-#include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteResourceCacheProxy.h"
 #include "RemoteSerializedImageBufferIdentifier.h"
@@ -89,13 +88,11 @@ class RemoteRenderingBackendProxy
     : public IPC::Connection::Client, SerialFunctionDispatcher {
 public:
     static std::unique_ptr<RemoteRenderingBackendProxy> create(WebPage&);
-    static std::unique_ptr<RemoteRenderingBackendProxy> create(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
+    static std::unique_ptr<RemoteRenderingBackendProxy> create(SerialFunctionDispatcher&);
 
     ~RemoteRenderingBackendProxy();
 
     static bool canMapRemoteImageBufferBackendBackingStore();
-
-    const RemoteRenderingBackendCreationParameters& parameters() const { return m_parameters; }
 
     RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
 
@@ -111,7 +108,7 @@ public:
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
     // Messages to be sent.
-    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, OptionSet<WebCore::ImageBufferOptions>);
+    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferPixelFormat, OptionSet<WebCore::ImageBufferOptions>);
     void releaseImageBuffer(WebCore::RenderingResourceIdentifier);
     bool getPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier, const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect, std::span<uint8_t> result);
     void putPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier, const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat);
@@ -133,7 +130,7 @@ public:
     Function<bool()> flushImageBuffers();
 #endif
 
-    std::unique_ptr<RemoteDisplayListRecorderProxy> createDisplayListRecorder(WebCore::RenderingResourceIdentifier, const WebCore::FloatSize&, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, OptionSet<WebCore::ImageBufferOptions>);
+    std::unique_ptr<RemoteDisplayListRecorderProxy> createDisplayListRecorder(WebCore::RenderingResourceIdentifier, const WebCore::FloatSize&, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferPixelFormat, OptionSet<WebCore::ImageBufferOptions>);
 
     struct BufferSet {
         RefPtr<WebCore::ImageBuffer> front;
@@ -163,23 +160,24 @@ public:
 
     RenderingBackendIdentifier ensureBackendCreated();
 
-    bool isGPUProcessConnectionClosed() const { return !m_streamConnection; }
+    bool isGPUProcessConnectionClosed() const { return !m_connection; }
 
     void didInitialize(IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore);
 
-    IPC::StreamClientConnection& streamConnection();
-    IPC::Connection* connection() { return m_connection.get(); }
+    RefPtr<IPC::StreamClientConnection> connection();
 
     SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
     Ref<WorkQueue> workQueue() { return m_queue; }
 
+    void didBecomeUnresponsive();
+
     static constexpr Seconds defaultTimeout = 15_s;
 private:
-    explicit RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
+    explicit RemoteRenderingBackendProxy(SerialFunctionDispatcher&);
 
-    template<typename T, typename U, typename V> auto send(T&& message, ObjectIdentifierGeneric<U, V>);
+    template<typename T, typename U, typename V, typename W> auto send(T&& message, ObjectIdentifierGeneric<U, V, W>);
     template<typename T> auto send(T&& message) { return send(std::forward<T>(message), renderingBackendIdentifier()); }
-    template<typename T, typename U, typename V> auto sendSync(T&& message, ObjectIdentifierGeneric<U, V>);
+    template<typename T, typename U, typename V, typename W> auto sendSync(T&& message, ObjectIdentifierGeneric<U, V, W>);
     template<typename T> auto sendSync(T&& message) { return sendSync(std::forward<T>(message), renderingBackendIdentifier()); }
 
     // Connection::Client
@@ -204,21 +202,23 @@ private:
     // SerialFunctionDispatcher
     void dispatch(Function<void()>&& function) final { m_dispatcher.dispatch(WTFMove(function)); }
     bool isCurrent() const final { return m_dispatcher.isCurrent(); }
-    RefPtr<IPC::Connection> m_connection;
-    RefPtr<IPC::StreamClientConnection> m_streamConnection;
+
+    SerialFunctionDispatcher& m_dispatcher;
+    WeakPtr<GPUProcessConnection> m_gpuProcessConnection; // Only for main thread operation.
+    RefPtr<IPC::StreamClientConnection> m_connection;
     RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
-    RemoteRenderingBackendCreationParameters m_parameters;
+    RenderingBackendIdentifier m_identifier { RenderingBackendIdentifier::generate() };
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
     RefPtr<WebCore::SharedMemory> m_getPixelBufferSharedMemory;
     WebCore::Timer m_destroyGetPixelBufferSharedMemoryTimer { *this, &RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory };
     MarkSurfacesAsVolatileRequestIdentifier m_currentVolatilityRequest;
     HashMap<MarkSurfacesAsVolatileRequestIdentifier, CompletionHandler<void(bool)>> m_markAsVolatileRequests;
     HashMap<RemoteImageBufferSetIdentifier, WeakPtr<RemoteImageBufferSetProxy>> m_bufferSets;
-    SerialFunctionDispatcher& m_dispatcher;
     Ref<WorkQueue> m_queue;
 
     RenderingUpdateID m_renderingUpdateID;
     RenderingUpdateID m_didRenderingUpdateID;
+    bool m_isResponsive { true };
 };
 
 } // namespace WebKit

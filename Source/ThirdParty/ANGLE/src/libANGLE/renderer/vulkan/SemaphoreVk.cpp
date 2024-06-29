@@ -71,8 +71,6 @@ angle::Result SemaphoreVk::wait(gl::Context *context,
         ANGLE_TRY(contextVk->syncExternalMemory());
     }
 
-    uint32_t rendererQueueFamilyIndex = contextVk->getRenderer()->getQueueFamilyIndex();
-
     if (!bufferBarriers.empty())
     {
         // Perform a queue ownership transfer for each buffer.
@@ -87,8 +85,8 @@ angle::Result SemaphoreVk::wait(gl::Context *context,
             ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
 
             // Queue ownership transfer.
-            bufferHelper.acquireFromExternal(VK_QUEUE_FAMILY_EXTERNAL, rendererQueueFamilyIndex,
-                                             commandBuffer);
+            bufferHelper.acquireFromExternal(vk::kExternalDeviceQueueIndex,
+                                             contextVk->getDeviceQueueIndex(), commandBuffer);
         }
     }
 
@@ -114,8 +112,8 @@ angle::Result SemaphoreVk::wait(gl::Context *context,
             ASSERT(!image.hasStagedUpdatesInAllocatedLevels() || image.hasEmulatedImageChannels());
 
             // Queue ownership transfer and layout transition.
-            image.acquireFromExternal(contextVk, VK_QUEUE_FAMILY_EXTERNAL, rendererQueueFamilyIndex,
-                                      layout, commandBuffer);
+            image.acquireFromExternal(contextVk, vk::kExternalDeviceQueueIndex,
+                                      contextVk->getDeviceQueueIndex(), layout, commandBuffer);
         }
     }
 
@@ -129,8 +127,6 @@ angle::Result SemaphoreVk::signal(gl::Context *context,
 {
     ContextVk *contextVk   = vk::GetImpl(context);
     vk::Renderer *renderer = contextVk->getRenderer();
-
-    uint32_t rendererQueueFamilyIndex = renderer->getQueueFamilyIndex();
 
     if (!bufferBarriers.empty())
     {
@@ -147,8 +143,7 @@ angle::Result SemaphoreVk::signal(gl::Context *context,
             ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
 
             // Queue ownership transfer.
-            bufferHelper.releaseToExternal(rendererQueueFamilyIndex, VK_QUEUE_FAMILY_EXTERNAL,
-                                           commandBuffer);
+            bufferHelper.releaseToExternal(vk::kExternalDeviceQueueIndex, commandBuffer);
         }
     }
 
@@ -180,8 +175,8 @@ angle::Result SemaphoreVk::signal(gl::Context *context,
             ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
 
             // Queue ownership transfer and layout transition.
-            image.releaseToExternal(contextVk, rendererQueueFamilyIndex, VK_QUEUE_FAMILY_EXTERNAL,
-                                    layout, commandBuffer);
+            image.releaseToExternal(contextVk, vk::kExternalDeviceQueueIndex, layout,
+                                    commandBuffer);
         }
     }
 

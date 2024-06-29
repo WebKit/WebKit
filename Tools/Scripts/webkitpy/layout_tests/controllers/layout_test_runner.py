@@ -165,19 +165,38 @@ class LayoutTestRunner(object):
             LayoutTestRunner.instance = self
             with TaskPool(
                 workers=num_workers,
+                mutually_exclusive_groups=list(self._port.sharding_groups().keys()),
                 setup=setup_shard, setupkwargs=dict(
                     port=self._port,
                     devices=devices,
                     results_directory=self._results_directory,
                     retrying=self._retrying,
                 ), teardown=teardown_shard,
-                enter_grace_period=300, exit_grace_period=30
+                enter_grace_period=300, exit_grace_period=30,
             ) as pool:
+                was_sent = set()
+
+                # Dispatch shards from groups first, so we start dedicated groups running before all our other shards
                 for shard in all_shards:
+                    group = self._port.group_for_shard(shard)
+                    if not group:
+                        continue
+
+                    was_sent.add(shard.name)
+                    pool.do(
+                        run_shard, shard,
+                        callback=lambda value: self._annotate_results_with_additional_failures(value),
+                        group=group,
+                    )
+
+                for shard in all_shards:
+                    if shard.name in was_sent:
+                        continue
                     pool.do(
                         run_shard, shard,
                         callback=lambda value: self._annotate_results_with_additional_failures(value),
                     )
+
                 pool.wait()
 
         except TestRunInterruptedException as e:
@@ -510,7 +529,7 @@ class TestShard(object):
     def __init__(self, name, test_inputs):
         self.name = name
         self.test_inputs = test_inputs
-        self.needs_servers = test_inputs[0].needs_servers
+        self.needs_servers = test_inputs[0].needs_servers if len(test_inputs) > 0 else False
 
     def shorten(self, string):
         if not string:

@@ -249,6 +249,7 @@ public:
 
     WTF_EXPORT_PRIVATE bool hasSpecialScheme() const;
     WTF_EXPORT_PRIVATE bool hasLocalScheme() const;
+    WTF_EXPORT_PRIVATE bool hasFetchScheme() const;
 
 private:
     friend class URLParser;

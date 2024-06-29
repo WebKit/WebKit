@@ -1,0 +1,10 @@
+Test DOMMatrix.inverse()/invertSelf() for invertible matrices
+
+
+PASS identity
+PASS translate
+PASS translate3d
+PASS scale
+PASS scale3d
+PASS complex
+

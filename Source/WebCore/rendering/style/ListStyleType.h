@@ -42,7 +42,6 @@ struct ListStyleType {
     bool isCircle() const;
     bool isSquare() const;
     bool isDisc() const;
-    bool isDisclosureClosed() const;
 
     friend bool operator==(const ListStyleType&, const ListStyleType&) = default;
 

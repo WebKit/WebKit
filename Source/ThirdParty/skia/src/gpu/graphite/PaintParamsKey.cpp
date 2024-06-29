@@ -108,12 +108,10 @@ SkSpan<const ShaderNode*> PaintParamsKey::getRootNodes(const ShaderCodeDictionar
     return SkSpan(rootSpan, roots.size());
 }
 
-#if defined(GRAPHITE_TEST_UTILS)
-
-int key_to_string(SkString* str,
-                  const ShaderCodeDictionary* dict,
-                  SkSpan<const int32_t> keyData,
-                  int currentIndex) {
+static int key_to_string(SkString* str,
+                         const ShaderCodeDictionary* dict,
+                         SkSpan<const int32_t> keyData,
+                         int currentIndex) {
     SkASSERT(currentIndex < SkTo<int>(keyData.size()));
 
     int32_t id = keyData[currentIndex++];
@@ -152,14 +150,12 @@ SkString PaintParamsKey::toString(const ShaderCodeDictionary* dict) const {
     return str.isEmpty() ? SkString("(empty)") : str;
 }
 
-#endif  // defined(GRAPHITE_TEST_UTILS)
-
 #ifdef SK_DEBUG
 
-int dump_node(const ShaderCodeDictionary* dict,
-              SkSpan<const int32_t> keyData,
-              int currentIndex,
-              int indent) {
+static int dump_node(const ShaderCodeDictionary* dict,
+                     SkSpan<const int32_t> keyData,
+                     int currentIndex,
+                     int indent) {
     SkASSERT(currentIndex < SkTo<int>(keyData.size()));
 
     SkDebugf("%*c", 2 * indent, ' ');
@@ -182,7 +178,7 @@ void PaintParamsKey::dump(const ShaderCodeDictionary* dict) const {
     const int keySize = SkTo<int>(fData.size());
 
     SkDebugf("--------------------------------------\n");
-    SkDebugf("PaintParamsKey (%d):\n", keySize);
+    SkDebugf("PaintParamsKey (keySize: %d):\n", keySize);
 
     int currentIndex = 0;
     while (currentIndex < keySize) {

@@ -62,9 +62,7 @@ SSACalculator::SSACalculator(Graph& graph)
 {
 }
 
-SSACalculator::~SSACalculator()
-{
-}
+SSACalculator::~SSACalculator() = default;
 
 void SSACalculator::reset()
 {

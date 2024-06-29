@@ -127,13 +127,13 @@ inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument,
     , m_hasPausedImageAnimations(false)
     , m_hasCounterNodeMap(false)
     , m_hasContinuationChainNode(false)
-    , m_lastChild(nullptr)
     , m_isContinuation(false)
     , m_isFirstLetter(false)
     , m_renderBlockHasMarginBeforeQuirk(false)
     , m_renderBlockHasMarginAfterQuirk(false)
     , m_renderBlockShouldForceRelayoutChildren(false)
     , m_renderBlockFlowLineLayoutPath(RenderBlockFlow::UndeterminedPath)
+    , m_lastChild(nullptr)
     , m_isRegisteredForVisibleInViewportCallback(false)
     , m_visibleInViewportState(static_cast<unsigned>(VisibleInViewportState::Unknown))
     , m_didContributeToVisuallyNonEmptyPixelCount(false)
@@ -1101,6 +1101,11 @@ void RenderElement::willBeRemovedFromTree()
     RenderObject::willBeRemovedFromTree();
 }
 
+bool RenderElement::didVisitDuringLastLayout() const
+{
+    return layoutIdentifier() == view().frameView().layoutContext().layoutIdentifier();
+}
+
 inline void RenderElement::clearSubtreeLayoutRootIfNeeded() const
 {
     if (renderTreeBeingDestroyed())
@@ -1191,6 +1196,7 @@ void RenderElement::clearChildNeedsLayout()
     setPosChildNeedsLayoutBit(false);
     setNeedsSimplifiedNormalFlowLayoutBit(false);
     setNeedsPositionedMovementLayoutBit(false);
+    setOutOfFlowChildNeedsStaticPositionLayoutBit(false);
 }
 
 void RenderElement::setNeedsSimplifiedNormalFlowLayout()
@@ -1202,6 +1208,16 @@ void RenderElement::setNeedsSimplifiedNormalFlowLayout()
     scheduleLayout(markContainingBlocksForLayout());
     if (hasLayer())
         setLayerNeedsFullRepaint();
+}
+
+void RenderElement::setOutOfFlowChildNeedsStaticPositionLayout()
+{
+    // FIXME: Currently this dirty bit has a very limited useage but should be expanded to
+    // optimize all kinds of out-of-flow cases.
+    // It's also assumed that regular, positioned child related bits are already set.
+    ASSERT(!isSetNeedsLayoutForbidden());
+    ASSERT(posChildNeedsLayout() || selfNeedsLayout() || needsSimplifiedNormalFlowLayout() || !parent());
+    setOutOfFlowChildNeedsStaticPositionLayoutBit(true);
 }
 
 static inline void paintPhase(RenderElement& element, PaintPhase phase, PaintInfo& paintInfo, const LayoutPoint& childPoint)
@@ -1274,7 +1290,7 @@ static bool mustRepaintFillLayers(const RenderElement& renderer, const FillLayer
     return false;
 }
 
-bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repaintContainer, RequiresFullRepaint requiresFullRepaint, const RepaintRects& oldRects, const RepaintRects& newRects)
+bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderLayerModelObject>&& repaintContainer, RequiresFullRepaint requiresFullRepaint, const RepaintRects& oldRects, const RepaintRects& newRects)
 {
     if (view().printing())
         return false; // Don't repaint if we're printing.
@@ -1344,12 +1360,12 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
 
     if (fullRepaint) {
         if (newClippedOverflowRect.contains(oldClippedOverflowRect))
-            repaintUsingContainer(repaintContainer, newClippedOverflowRect);
+            repaintUsingContainer(WeakPtr { repaintContainer }, newClippedOverflowRect);
         else if (oldClippedOverflowRect.contains(newClippedOverflowRect))
-            repaintUsingContainer(repaintContainer, oldClippedOverflowRect);
+            repaintUsingContainer(WeakPtr { repaintContainer }, oldClippedOverflowRect);
         else {
-            repaintUsingContainer(repaintContainer, oldClippedOverflowRect);
-            repaintUsingContainer(repaintContainer, newClippedOverflowRect);
+            repaintUsingContainer(WeakPtr { repaintContainer }, oldClippedOverflowRect);
+            repaintUsingContainer(WeakPtr { repaintContainer }, newClippedOverflowRect);
         }
         return true;
     }
@@ -1359,27 +1375,27 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
 
     LayoutUnit deltaLeft = newClippedOverflowRect.x() - oldClippedOverflowRect.x();
     if (deltaLeft > 0)
-        repaintUsingContainer(repaintContainer, LayoutRect(oldClippedOverflowRect.x(), oldClippedOverflowRect.y(), deltaLeft, oldClippedOverflowRect.height()));
+        repaintUsingContainer(WeakPtr { repaintContainer }, LayoutRect(oldClippedOverflowRect.x(), oldClippedOverflowRect.y(), deltaLeft, oldClippedOverflowRect.height()));
     else if (deltaLeft < 0)
-        repaintUsingContainer(repaintContainer, LayoutRect(newClippedOverflowRect.x(), newClippedOverflowRect.y(), -deltaLeft, newClippedOverflowRect.height()));
+        repaintUsingContainer(WeakPtr { repaintContainer }, LayoutRect(newClippedOverflowRect.x(), newClippedOverflowRect.y(), -deltaLeft, newClippedOverflowRect.height()));
 
     LayoutUnit deltaRight = newClippedOverflowRect.maxX() - oldClippedOverflowRect.maxX();
     if (deltaRight > 0)
-        repaintUsingContainer(repaintContainer, LayoutRect(oldClippedOverflowRect.maxX(), newClippedOverflowRect.y(), deltaRight, newClippedOverflowRect.height()));
+        repaintUsingContainer(WeakPtr { repaintContainer }, LayoutRect(oldClippedOverflowRect.maxX(), newClippedOverflowRect.y(), deltaRight, newClippedOverflowRect.height()));
     else if (deltaRight < 0)
-        repaintUsingContainer(repaintContainer, LayoutRect(newClippedOverflowRect.maxX(), oldClippedOverflowRect.y(), -deltaRight, oldClippedOverflowRect.height()));
+        repaintUsingContainer(WeakPtr { repaintContainer }, LayoutRect(newClippedOverflowRect.maxX(), oldClippedOverflowRect.y(), -deltaRight, oldClippedOverflowRect.height()));
 
     LayoutUnit deltaTop = newClippedOverflowRect.y() - oldClippedOverflowRect.y();
     if (deltaTop > 0)
-        repaintUsingContainer(repaintContainer, LayoutRect(oldClippedOverflowRect.x(), oldClippedOverflowRect.y(), oldClippedOverflowRect.width(), deltaTop));
+        repaintUsingContainer(WeakPtr { repaintContainer }, LayoutRect(oldClippedOverflowRect.x(), oldClippedOverflowRect.y(), oldClippedOverflowRect.width(), deltaTop));
     else if (deltaTop < 0)
-        repaintUsingContainer(repaintContainer, LayoutRect(newClippedOverflowRect.x(), newClippedOverflowRect.y(), newClippedOverflowRect.width(), -deltaTop));
+        repaintUsingContainer(WeakPtr { repaintContainer }, LayoutRect(newClippedOverflowRect.x(), newClippedOverflowRect.y(), newClippedOverflowRect.width(), -deltaTop));
 
     LayoutUnit deltaBottom = newClippedOverflowRect.maxY() - oldClippedOverflowRect.maxY();
     if (deltaBottom > 0)
-        repaintUsingContainer(repaintContainer, LayoutRect(newClippedOverflowRect.x(), oldClippedOverflowRect.maxY(), newClippedOverflowRect.width(), deltaBottom));
+        repaintUsingContainer(WeakPtr { repaintContainer }, LayoutRect(newClippedOverflowRect.x(), oldClippedOverflowRect.maxY(), newClippedOverflowRect.width(), deltaBottom));
     else if (deltaBottom < 0)
-        repaintUsingContainer(repaintContainer, LayoutRect(oldClippedOverflowRect.x(), newClippedOverflowRect.maxY(), oldClippedOverflowRect.width(), -deltaBottom));
+        repaintUsingContainer(WeakPtr { repaintContainer }, LayoutRect(oldClippedOverflowRect.x(), newClippedOverflowRect.maxY(), oldClippedOverflowRect.width(), -deltaBottom));
 
     if (!haveOutlinesBoundsRects || *oldRects.outlineBoundsRect == *newRects.outlineBoundsRect)
         return false;
@@ -1436,7 +1452,7 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
         if (damageExtentWithinClippedOverflow > 0) {
             damageExtentWithinClippedOverflow = std::min(sizeDelta.width() + decorationRightExtent, damageExtentWithinClippedOverflow);
             auto damagedRect = LayoutRect { decorationLeft, newOutlineBoundsRect.y(), damageExtentWithinClippedOverflow, std::max(newOutlineBoundsRect.height(), oldOutlineBoundsRect.height()) };
-            repaintUsingContainer(repaintContainer, damagedRect);
+            repaintUsingContainer(WeakPtr { repaintContainer }, damagedRect);
         }
     }
     if (sizeDelta.height()) {
@@ -1478,7 +1494,7 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
         if (damageExtentWithinClippedOverflow > 0) {
             damageExtentWithinClippedOverflow = std::min(sizeDelta.height() + decorationBottomExtent, damageExtentWithinClippedOverflow);
             auto damagedRect = LayoutRect { newOutlineBoundsRect.x(), decorationTop, std::max(newOutlineBoundsRect.width(), oldOutlineBoundsRect.width()), damageExtentWithinClippedOverflow };
-            repaintUsingContainer(repaintContainer, damagedRect);
+            repaintUsingContainer(WeakPtr { repaintContainer }, damagedRect);
         }
     }
     return false;
@@ -1611,7 +1627,7 @@ VisibleInViewportState RenderElement::imageVisibleInViewport(const Document& doc
     return isVisibleInViewport() ? VisibleInViewportState::Yes : VisibleInViewportState::No;
 }
 
-void RenderElement::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
+void RenderElement::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     document().protectedCachedResourceLoader()->notifyFinished(resource);
 }
@@ -2509,8 +2525,8 @@ bool RenderElement::hasEligibleContainmentForSizeQuery() const
 void RenderElement::clearNeedsLayoutForSkippedContent()
 {
     for (CheckedRef descendant : descendantsOfTypePostOrder<RenderObject>(*this))
-        descendant->clearNeedsLayout(EverHadSkippedContentLayout::No);
-    clearNeedsLayout(EverHadSkippedContentLayout::No);
+        descendant->clearNeedsLayout(HadSkippedLayout::Yes);
+    clearNeedsLayout(HadSkippedLayout::Yes);
 }
 
 void RenderElement::layoutIfNeeded()

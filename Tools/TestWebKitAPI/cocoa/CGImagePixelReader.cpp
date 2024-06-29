@@ -51,7 +51,7 @@ bool CGImagePixelReader::isTransparentBlack(unsigned x, unsigned y) const
 
 Color CGImagePixelReader::at(unsigned x, unsigned y) const
 {
-    auto* data = reinterpret_cast<uint8_t*>(CGBitmapContextGetData(m_context.get()));
+    auto* data = static_cast<uint8_t*>(CGBitmapContextGetData(m_context.get()));
     auto offset = 4 * (width() * y + x);
     return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
 }

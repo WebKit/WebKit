@@ -31,6 +31,9 @@
 #include "Logging.h"
 #include "NowPlayingInfo.h"
 #include "PlatformMediaSession.h"
+#if PLATFORM(COCOA)
+#include "VP9UtilitiesCocoa.h"
+#endif
 
 namespace WebCore {
 
@@ -59,7 +62,7 @@ bool PlatformMediaSessionManager::s_useSCContentSharingPicker;
 #if ENABLE(VP9)
 bool PlatformMediaSessionManager::m_vp9DecoderEnabled;
 bool PlatformMediaSessionManager::m_vp8DecoderEnabled;
-bool PlatformMediaSessionManager::m_vp9SWDecoderEnabled;
+bool PlatformMediaSessionManager::m_swVPDecodersAlwaysEnabled;
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
@@ -108,7 +111,8 @@ void PlatformMediaSessionManager::updateAudioSessionCategoryIfNecessary()
 
 PlatformMediaSessionManager::PlatformMediaSessionManager()
 #if !RELEASE_LOG_DISABLED
-    : m_logger(AggregateLogger::create(this))
+    : m_stateLogTimer(makeUniqueRef<Timer>(*this, &PlatformMediaSessionManager::dumpSessionStates))
+    , m_logger(AggregateLogger::create(this))
 #endif
 {
 }
@@ -331,6 +335,10 @@ void PlatformMediaSessionManager::sessionStateChanged(PlatformMediaSession& sess
         updateSessionState();
     else
         scheduleUpdateSessionState();
+
+#if !RELEASE_LOG_DISABLED
+    scheduleStateLog();
+#endif
 }
 
 void PlatformMediaSessionManager::setCurrentSession(PlatformMediaSession& session)
@@ -808,14 +816,17 @@ bool PlatformMediaSessionManager::shouldEnableVP8Decoder()
     return m_vp8DecoderEnabled;
 }
 
-void PlatformMediaSessionManager::setShouldEnableVP9SWDecoder(bool vp9SWDecoderEnabled)
+void PlatformMediaSessionManager::setSWVPDecodersAlwaysEnabled(bool swVPDecodersAlwaysEnabled)
 {
-    m_vp9SWDecoderEnabled = vp9SWDecoderEnabled;
+    m_swVPDecodersAlwaysEnabled = swVPDecodersAlwaysEnabled;
+#if PLATFORM(COCOA)
+    VP9TestingOverrides::singleton().setSWVPDecodersAlwaysEnabled(swVPDecodersAlwaysEnabled);
+#endif
 }
 
-bool PlatformMediaSessionManager::shouldEnableVP9SWDecoder()
+bool PlatformMediaSessionManager::swVPDecodersAlwaysEnabled()
 {
-    return m_vp9SWDecoderEnabled;
+    return m_swVPDecodersAlwaysEnabled;
 }
 #endif // ENABLE(VP9)
 
@@ -881,10 +892,41 @@ void PlatformMediaSessionManager::nowPlayingMetadataChanged(const NowPlayingMeta
     });
 }
 
+bool PlatformMediaSessionManager::hasActiveNowPlayingSessionInGroup(MediaSessionGroupIdentifier mediaSessionGroupIdentifier)
+{
+    bool hasActiveNowPlayingSession = false;
+
+    forEachSessionInGroup(mediaSessionGroupIdentifier, [&](auto& session) {
+        hasActiveNowPlayingSession |= session.isActiveNowPlayingSession();
+    });
+
+    return hasActiveNowPlayingSession;
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& PlatformMediaSessionManager::logChannel() const
 {
     return LogMedia;
+}
+
+void PlatformMediaSessionManager::scheduleStateLog()
+{
+    if (m_stateLogTimer->isActive())
+        return;
+
+    static constexpr Seconds StateLogDelay { 5_s };
+    m_stateLogTimer->startOneShot(StateLogDelay);
+}
+
+void PlatformMediaSessionManager::dumpSessionStates()
+{
+    StringBuilder builder;
+
+    forEachSession([&](auto& session) {
+        builder.append('(', hex(reinterpret_cast<uintptr_t>(session.logIdentifier())), "): "_s, session.description(), "\n"_s);
+    });
+
+    ALWAYS_LOG(LOGIDENTIFIER, " Sessions:\n", builder.toString());
 }
 #endif
 

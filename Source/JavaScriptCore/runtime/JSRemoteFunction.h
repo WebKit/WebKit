@@ -71,7 +71,7 @@ public:
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
     
-    static ptrdiff_t offsetOfTargetFunction() { return OBJECT_OFFSETOF(JSRemoteFunction, m_targetFunction); }
+    static constexpr ptrdiff_t offsetOfTargetFunction() { return OBJECT_OFFSETOF(JSRemoteFunction, m_targetFunction); }
 
     DECLARE_EXPORT_INFO;
 

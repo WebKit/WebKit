@@ -21,6 +21,7 @@
 #include "aom_mem/aom_mem.h"
 #include "aom_ports/aom_timer.h"
 #include "aom_scale/aom_scale.h"
+#include "aom_util/aom_pthread.h"
 #include "aom_util/aom_thread.h"
 
 #include "av1/common/alloccommon.h"
@@ -79,9 +80,10 @@ static void dec_setup_mi(CommonModeInfoParams *mi_params) {
 static void dec_free_mi(CommonModeInfoParams *mi_params) {
   aom_free(mi_params->mi_alloc);
   mi_params->mi_alloc = NULL;
+  mi_params->mi_alloc_size = 0;
   aom_free(mi_params->mi_grid_base);
   mi_params->mi_grid_base = NULL;
-  mi_params->mi_alloc_size = 0;
+  mi_params->mi_grid_size = 0;
   aom_free(mi_params->tx_type_map);
   mi_params->tx_type_map = NULL;
 }

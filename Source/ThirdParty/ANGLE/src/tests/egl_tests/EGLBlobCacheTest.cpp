@@ -359,7 +359,7 @@ TEST_P(EGLBlobCacheTest, NegativeAPI)
 }
 
 // Regression test for including the fragment output locatins in the program key.
-// http://anglebug.com/4535
+// http://anglebug.com/42263144
 TEST_P(EGLBlobCacheTest, FragmentOutputLocationKey)
 {
     ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::CacheCompiledShader));

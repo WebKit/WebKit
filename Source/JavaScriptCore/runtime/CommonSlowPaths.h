@@ -243,11 +243,8 @@ inline JSArray* allocateNewArrayBuffer(VM& vm, Structure* structure, JSImmutable
 
 class CallFrame;
 
-#define JSC_DECLARE_COMMON_SLOW_PATH(name) \
-    JSC_DECLARE_JIT_OPERATION(name, UGPRPair, (CallFrame*, const JSInstruction*))
-
-#define JSC_DEFINE_COMMON_SLOW_PATH(name) \
-    JSC_DEFINE_JIT_OPERATION(name, UGPRPair, (CallFrame* callFrame, const JSInstruction* pc))
+#define JSC_DECLARE_COMMON_SLOW_PATH(name) JSC_DECLARE_JIT_OPERATION(name, UGPRPair, (CallFrame*, const JSInstruction*))
+#define JSC_DEFINE_COMMON_SLOW_PATH(name) JSC_DEFINE_JIT_OPERATION(name, UGPRPair, (CallFrame* callFrame, const JSInstruction* pc))
 
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_this);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_enter);

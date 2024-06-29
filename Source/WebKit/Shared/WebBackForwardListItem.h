@@ -69,6 +69,7 @@ public:
 
     const String& originalURL() const { return m_itemState.pageState.mainFrameState.originalURLString; }
     const String& url() const { return m_itemState.pageState.mainFrameState.urlString; }
+    const String& title() const { return m_itemState.pageState.title; }
     bool wasCreatedByJSWithoutUserInteraction() const { return m_itemState.pageState.wasCreatedByJSWithoutUserInteraction; }
 
     const URL& resourceDirectoryURL() const { return m_resourceDirectoryURL; }
@@ -89,6 +90,16 @@ public:
     WebBackForwardCacheEntry* backForwardCacheEntry() const { return m_backForwardCacheEntry.get(); }
     SuspendedPageProxy* suspendedPage() const;
 
+    void setFrameID(WebCore::FrameIdentifier frameID) { m_frameID = frameID; }
+    WebCore::FrameIdentifier frameID() const { return m_frameID; }
+
+    void addRootChildFrameItem(Ref<WebBackForwardListItem>&& item) { m_rootChildFrameItems.append(WTFMove(item)); }
+    WebBackForwardListItem* childItemForFrameID(WebCore::FrameIdentifier) const;
+    WebBackForwardListItem* childItemForProcessID(WebCore::ProcessIdentifier) const;
+
+    void setMainFrameItem(WebBackForwardListItem* item) { m_mainFrameItem = item; }
+    WebBackForwardListItem* mainFrameItem() { return m_mainFrameItem.get(); }
+
 #if !LOG_DISABLED
     String loggingString();
 #endif
@@ -108,7 +119,10 @@ private:
     URL m_resourceDirectoryURL;
     WebPageProxyIdentifier m_pageID;
     WebCore::ProcessIdentifier m_lastProcessIdentifier;
+    WebCore::FrameIdentifier m_frameID;
     std::unique_ptr<WebBackForwardCacheEntry> m_backForwardCacheEntry;
+    WeakPtr<WebBackForwardListItem> m_mainFrameItem;
+    Vector<Ref<WebBackForwardListItem>> m_rootChildFrameItems;
 };
 
 typedef Vector<Ref<WebBackForwardListItem>> BackForwardListItemVector;

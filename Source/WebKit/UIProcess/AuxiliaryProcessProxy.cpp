@@ -59,6 +59,12 @@
 
 namespace WebKit {
 
+static HashMap<IPC::Connection::UniqueID, WeakPtr<AuxiliaryProcessProxy>>& connectionToProcessMap()
+{
+    static MainThreadNeverDestroyed<HashMap<IPC::Connection::UniqueID, WeakPtr<AuxiliaryProcessProxy>>> map;
+    return map.get();
+}
+
 static Seconds adjustedTimeoutForThermalState(Seconds timeout)
 {
 #if PLATFORM(VISION)
@@ -93,6 +99,10 @@ AuxiliaryProcessProxy::~AuxiliaryProcessProxy()
 #if ENABLE(EXTENSION_CAPABILITIES)
     ASSERT(m_extensionCapabilityGrants.isEmpty());
 #endif
+    if (m_connection) {
+        ASSERT(connectionToProcessMap().get(m_connection->uniqueID()) == this);
+        connectionToProcessMap().remove(m_connection->uniqueID());
+    }
 }
 
 void AuxiliaryProcessProxy::populateOverrideLanguagesLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions) const
@@ -176,7 +186,7 @@ void AuxiliaryProcessProxy::terminate()
 {
     RELEASE_LOG(Process, "AuxiliaryProcessProxy::terminate: PID=%d", processID());
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) && !USE(EXTENSIONKIT)
     if (RefPtr connection = m_connection) {
         if (connection->kill())
             return;
@@ -252,7 +262,7 @@ bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, Optio
 
     if (asyncReplyHandler && canSendMessage() && shouldStartProcessThrottlerActivity == ShouldStartProcessThrottlerActivity::Yes) {
         auto completionHandler = WTFMove(asyncReplyHandler->completionHandler);
-        asyncReplyHandler->completionHandler = [activity = throttler().quietBackgroundActivity(descriptionLiteral(encoder->messageName())), completionHandler = WTFMove(completionHandler)](IPC::Decoder* decoder) mutable {
+        asyncReplyHandler->completionHandler = [activity = throttler().quietBackgroundActivity(description(encoder->messageName())), completionHandler = WTFMove(completionHandler)](IPC::Decoder* decoder) mutable {
             completionHandler(decoder);
         };
     }
@@ -335,6 +345,8 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::C
 
     RefPtr connection = IPC::Connection::createServerConnection(connectionIdentifier, Thread::QOS::UserInteractive);
     m_connection = connection.copyRef();
+    auto addResult = connectionToProcessMap().add(m_connection->uniqueID(), *this);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
     connectionWillOpen(*connection);
     connection->open(*this);
@@ -419,8 +431,15 @@ void AuxiliaryProcessProxy::shutDownProcess()
         send(Messages::AuxiliaryProcess::ShutDown(), 0);
 
     connection->invalidate();
+    ASSERT(connectionToProcessMap().get(m_connection->uniqueID()) == this);
+    connectionToProcessMap().remove(m_connection->uniqueID());
     m_connection = nullptr;
     m_responsivenessTimer.invalidate();
+}
+
+AuxiliaryProcessProxy* AuxiliaryProcessProxy::fromConnection(const IPC::Connection& connection)
+{
+    return connectionToProcessMap().get(connection.uniqueID()).get();
 }
 
 void AuxiliaryProcessProxy::setProcessSuppressionEnabled(bool processSuppressionEnabled)
@@ -558,6 +577,11 @@ void AuxiliaryProcessProxy::platformStartConnectionTerminationWatchdog()
 }
 
 #endif
+
+void AuxiliaryProcessProxy::requestRemoteProcessTermination()
+{
+    terminate();
+}
 
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
 void AuxiliaryProcessProxy::setRunningBoardThrottlingEnabled()

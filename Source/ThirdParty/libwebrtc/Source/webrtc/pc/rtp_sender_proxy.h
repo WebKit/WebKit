@@ -47,12 +47,16 @@ PROXY_CONSTMETHOD0(rtc::scoped_refptr<FrameEncryptorInterface>,
                    GetFrameEncryptor)
 PROXY_METHOD1(void, SetStreams, const std::vector<std::string>&)
 PROXY_METHOD1(void,
-              SetEncoderToPacketizerFrameTransformer,
+              SetFrameTransformer,
               rtc::scoped_refptr<FrameTransformerInterface>)
 PROXY_METHOD1(void,
               SetEncoderSelector,
               std::unique_ptr<VideoEncoderFactory::EncoderSelectorInterface>)
+
+#if defined(WEBRTC_WEBKIT_BUILD)
 PROXY_METHOD1(RTCError, GenerateKeyFrame, const std::vector<std::string>&)
+#endif
+
 END_PROXY_MAP(RtpSender)
 
 }  // namespace webrtc

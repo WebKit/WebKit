@@ -78,6 +78,74 @@ TEST_P(UniformBufferTest, Simple)
     EXPECT_PIXEL_NEAR(0, 0, 128, 191, 64, 255, 1);
 }
 
+// Test a scenario that draws then update UBO (using bufferData or bufferSubData or mapBuffer) then
+// draws with updated data.
+TEST_P(UniformBufferTest, DrawThenUpdateThenDraw)
+{
+    constexpr char kVS[] = R"(#version 300 es
+precision highp float;
+
+void main()
+{
+    vec2 position = vec2(float(gl_VertexID >> 1), float(gl_VertexID & 1));
+    position = 2.0 * position - 1.0;
+    gl_Position = vec4(position.x, position.y, 0.0, 1.0);
+})";
+
+    enum class BufferUpdateMethod
+    {
+        BUFFER_DATA,
+        BUFFER_SUB_DATA,
+        MAP_BUFFER,
+    };
+
+    ANGLE_GL_PROGRAM(program, kVS, mkFS);
+    GLint uniformBufferIndex = glGetUniformBlockIndex(program, "uni");
+    ASSERT_NE(uniformBufferIndex, -1);
+
+    for (BufferUpdateMethod method :
+         {BufferUpdateMethod::BUFFER_DATA, BufferUpdateMethod::BUFFER_SUB_DATA,
+          BufferUpdateMethod::MAP_BUFFER})
+    {
+        glClear(GL_COLOR_BUFFER_BIT);
+        float floatData1[4] = {0.25f, 0.75f, 0.125f, 1.0f};
+
+        GLBuffer uniformBuffer;
+        glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer);
+        glBufferData(GL_UNIFORM_BUFFER, sizeof(float) * 4, floatData1, GL_DYNAMIC_DRAW);
+
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniformBuffer);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+
+        glUniformBlockBinding(program, uniformBufferIndex, 0);
+        glUseProgram(program);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        float floatData2[4] = {0.25f, 0.0f, 0.125f, 0.0f};
+        switch (method)
+        {
+            case BufferUpdateMethod::BUFFER_DATA:
+                glBufferData(GL_UNIFORM_BUFFER, sizeof(float) * 4, floatData2, GL_DYNAMIC_DRAW);
+                break;
+            case BufferUpdateMethod::BUFFER_SUB_DATA:
+                glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(float) * 4, floatData2);
+                break;
+            case BufferUpdateMethod::MAP_BUFFER:
+                void *mappedBuffer =
+                    glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(float) * 4, GL_MAP_WRITE_BIT);
+                memcpy(mappedBuffer, floatData2, sizeof(floatData2));
+                glUnmapBuffer(GL_UNIFORM_BUFFER);
+                break;
+        }
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_NEAR(0, 0, 128, 191, 64, 255, 1);
+    }
+}
+
 // Test that using a UBO with a non-zero offset and size actually works.
 // The first step of this test renders a color from a UBO with a zero offset.
 // The second step renders a color from a UBO with a non-zero offset.
@@ -996,10 +1064,10 @@ TEST_P(UniformBufferTest31, BindingMustBeBothSpecified)
 // Test that uploading data to buffer that's in use then using it as indirect buffer works.
 TEST_P(UniformBufferTest31, UseAsUBOThenUpdateThenDrawIndirect)
 {
-    // http://anglebug.com/5826
+    // http://anglebug.com/42264362
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
-    // http://anglebug.com/5871
+    // http://anglebug.com/42264411
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsPixel2());
 
     const std::array<uint32_t, 4> kInitialData = {100, 200, 300, 400};
@@ -1403,7 +1471,7 @@ TEST_P(UniformBufferTest, Std140UniformBlockInstanceWithNestedStructsContainingV
 {
     // Got incorrect test result on non-NVIDIA Android - the alpha channel was not set correctly
     // from the second vector, possibly the platform doesn't implement std140 packing right?
-    // http://anglebug.com/2217
+    // http://anglebug.com/42260937
     ANGLE_SKIP_TEST_IF(IsAndroid() && !IsNVIDIA());
 
     constexpr char kFS[] =
@@ -1499,7 +1567,7 @@ TEST_P(UniformBufferTest, DetachShaders)
 TEST_P(UniformBufferTest, Std140UniformBlockWithRowMajorQualifier)
 {
     // AMD OpenGL driver doesn't seem to apply the row-major qualifier right.
-    // http://anglebug.com/2273
+    // http://anglebug.com/40096480
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL() && !IsMac());
 
     constexpr char kFS[] =
@@ -1547,7 +1615,7 @@ TEST_P(UniformBufferTest, Std140UniformBlockWithRowMajorQualifier)
 TEST_P(UniformBufferTest, Std140UniformBlockWithPerMemberRowMajorQualifier)
 {
     // AMD OpenGL driver doesn't seem to apply the row-major qualifier right.
-    // http://anglebug.com/2273
+    // http://anglebug.com/40096480
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL() && !IsMac());
 
     constexpr char kFS[] =
@@ -1641,7 +1709,7 @@ TEST_P(UniformBufferTest, Std140UniformBlockWithPerMemberColumnMajorQualifier)
 TEST_P(UniformBufferTest, Std140UniformBlockWithRowMajorQualifierOnStruct)
 {
     // AMD OpenGL driver doesn't seem to apply the row-major qualifier right.
-    // http://anglebug.com/2273
+    // http://anglebug.com/40096480
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL() && !IsMac());
 
     constexpr char kFS[] =
@@ -1706,7 +1774,7 @@ void main()
   fragColor = color;
 })";
 
-    // http://anglebug.com/2287
+    // http://anglebug.com/40096481
     ANGLE_SKIP_TEST_IF(IsMac() && IsNVIDIA() && IsDesktopOpenGL());
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFragmentShader);
@@ -1867,7 +1935,7 @@ void main()
 }
 
 // Recreate WebGL conformance test conformance2/uniforms/large-uniform-buffers.html to test
-// regression in http://anglebug.com/3388
+// regression in http://anglebug.com/42262055
 TEST_P(UniformBufferTest, SizeOverMaxBlockSize)
 {
     constexpr char kFragmentShader[] = R"(#version 300 es
@@ -1886,7 +1954,7 @@ void main()
 
     // Test crashes on Windows AMD OpenGL
     ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsOpenGL());
-    // http://anglebug.com/5382
+    // http://anglebug.com/42263922
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsDesktopOpenGL());
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFragmentShader);
@@ -1968,7 +2036,7 @@ void main()
 // Test a uniform block where an array of row-major matrices is dynamically indexed.
 TEST_P(UniformBufferTest, Std140UniformBlockWithDynamicallyIndexedRowMajorArray)
 {
-    // http://anglebug.com/3837 , http://anglebug.com/2273
+    // http://anglebug.com/42262481 , http://anglebug.com/40096480
     ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL() && (IsIntel() || IsAMD()));
 
     constexpr char kFS[] =
@@ -2024,7 +2092,7 @@ TEST_P(UniformBufferTest, Std140UniformBlockWithDynamicallyIndexedRowMajorArray)
 // Test with many uniform buffers work as expected.
 TEST_P(UniformBufferTest, ManyBlocks)
 {
-    // http://anglebug.com/5039
+    // http://anglebug.com/42263608
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     constexpr char kFS[] =
@@ -3083,7 +3151,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMatrixAndInstanced)
 // Test uniform block with row major qualifier whose member is matrix type.
 TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMatrixAndRowMajorQualifier)
 {
-    // http://anglebug.com/3837 , http://anglebug.com/2273
+    // http://anglebug.com/42262481 , http://anglebug.com/40096480
     ANGLE_SKIP_TEST_IF((IsMac() && IsOpenGL()) || IsAndroid() || (IsAMD() && IsOpenGL()) ||
                        (IsLinux() && IsIntel() && IsOpenGL()));
 
@@ -3694,6 +3762,9 @@ class UniformBufferMemoryTest : public UniformBufferTest
 // supposedly to issue flush if needed.
 TEST_P(UniformBufferMemoryTest, BufferDataInLoopManyTimes)
 {
+    GLPerfMonitor monitor;
+    glBeginPerfMonitorAMD(monitor);
+
     // Run this test for Vulkan only.
     ANGLE_SKIP_TEST_IF(!IsVulkan());
     uint64_t expectedSubmitCalls = getPerfCounters().commandQueueSubmitCallsTotal + 1;
@@ -3733,6 +3804,8 @@ TEST_P(UniformBufferMemoryTest, BufferDataInLoopManyTimes)
             break;
         }
     }
+    glEndPerfMonitorAMD(monitor);
+
     EXPECT_EQ(getPerfCounters().commandQueueSubmitCallsTotal, expectedSubmitCalls);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_NEAR(0, 0, 128, 191, 64, 255, 1);
@@ -3762,7 +3835,7 @@ TEST_P(WebGL2UniformBufferTest, LargeArrayOfStructs)
     constexpr char kVertexShader[] = R"(
         struct InstancingData
         {
-            mat4 transformation;
+            vec4 transformation;
         };
 
         layout(std140) uniform InstanceBlock
@@ -3772,7 +3845,7 @@ TEST_P(WebGL2UniformBufferTest, LargeArrayOfStructs)
 
         void main()
         {
-            gl_Position = vec4(1.0) * instances[gl_InstanceID].transformation;
+            gl_Position = vec4(1.0) * instances[gl_InstanceID].transformation[0];
         })";
 
     constexpr char kFragmentShader[] = R"(#version 300 es
@@ -3787,12 +3860,9 @@ TEST_P(WebGL2UniformBufferTest, LargeArrayOfStructs)
     glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &maxUniformBlockSize);
 
     std::string vs = "#version 300 es\n#define MAX_INSTANCE_COUNT " +
-                     std::to_string(std::min(800, maxUniformBlockSize / 64)) + kVertexShader;
+                     std::to_string(maxUniformBlockSize / 16) + kVertexShader;
 
     ANGLE_GL_PROGRAM(program, vs.c_str(), kFragmentShader);
-    // Add a draw call for the sake of the Vulkan backend that currently really builds shaders at
-    // draw time.
-    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(UniformBufferTest);

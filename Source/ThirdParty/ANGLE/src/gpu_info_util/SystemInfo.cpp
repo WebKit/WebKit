@@ -265,7 +265,7 @@ void GetDualGPUInfo(SystemInfo *info)
     // determined correctly.  A potential solution is to create an OpenGL context and parse
     // GL_VENDOR.  Currently, our test infrastructure is relying on this information and incorrectly
     // applies test expectations on dual-GPU systems when the Intel GPU is active.
-    // http://anglebug.com/6174.
+    // http://anglebug.com/40644803.
     int active    = 0;
     bool hasIntel = false;
     for (size_t i = 0; i < info->gpus.size(); ++i)

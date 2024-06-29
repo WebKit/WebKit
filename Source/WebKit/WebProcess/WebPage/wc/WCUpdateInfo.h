@@ -103,6 +103,7 @@ struct WCLayerUpdateInfo {
     struct BackgroundChanges {
         WebCore::Color color;
         bool hasBackingStore;
+        WebCore::IntSize backingStoreSize;
         Vector<WCTileUpdate> tileUpdates;
     } background;
 
@@ -122,6 +123,7 @@ struct WCLayerUpdateInfo {
 };
 
 struct WCUpdateInfo {
+    WebCore::IntSize viewport;
     Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostedIdentifier;
     WebCore::PlatformLayerIdentifier rootLayer;
     Vector<WebCore::PlatformLayerIdentifier> addedLayers;

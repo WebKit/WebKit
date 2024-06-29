@@ -308,9 +308,9 @@ export class TextureZeroInitTest extends GPUTest {
           colorAttachments: [
           {
             view: texture.createView(viewDescriptor),
-            storeOp: 'store',
             clearValue: initializedStateAsColor(state, this.p.format),
-            loadOp: 'clear'
+            loadOp: 'clear',
+            storeOp: 'store'
           }]
 
         }).
@@ -419,8 +419,8 @@ export class TextureZeroInitTest extends GPUTest {
           colorAttachments: [
           {
             view: texture.createView(desc),
-            storeOp: 'discard',
-            loadOp: 'load'
+            loadOp: 'load',
+            storeOp: 'discard'
           }]
 
         }).

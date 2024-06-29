@@ -99,6 +99,8 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValue);
 template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visitor&& visitor)
 {
     switch (classType()) {
+    case AnchorClass:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSAnchorValue>(*this));
     case AspectRatioClass:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSAspectRatioValue>(*this));
     case BackgroundRepeatClass:

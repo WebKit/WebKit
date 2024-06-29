@@ -86,24 +86,18 @@ int FindSupportedFormat(vk::Renderer *renderer,
                         SupportTest hasSupport)
 {
     ASSERT(numInfo > 0);
-    const int last = numInfo - 1;
 
-    for (int i = static_cast<int>(skip); i < last; ++i)
+    for (int i = static_cast<int>(skip); i < numInfo; ++i)
     {
         ASSERT(info[i].format != angle::FormatID::NONE);
         if (hasSupport(renderer, info[i].format))
+        {
             return i;
+        }
     }
 
-    if (skip > 0 && !hasSupport(renderer, info[last].format))
-    {
-        // We couldn't find a valid fallback, try again without skip
-        return FindSupportedFormat(renderer, info, 0, numInfo, hasSupport);
-    }
-
-    ASSERT(info[last].format != angle::FormatID::NONE);
-    ASSERT(hasSupport(renderer, info[last].format));
-    return last;
+    // We couldn't find a valid fallback, ignore the skip and return 0
+    return 0;
 }
 
 bool HasNonFilterableTextureFormatSupport(vk::Renderer *renderer, angle::FormatID formatID)
@@ -311,7 +305,7 @@ angle::FormatID ExternalFormatTable::getOrAllocExternalFormatID(uint64_t externa
                                                                 VkFormat colorAttachmentFormat,
                                                                 VkFormatFeatureFlags formatFeatures)
 {
-    std::unique_lock<std::mutex> lock(mExternalYuvFormatMutex);
+    std::unique_lock<angle::SimpleMutex> lock(mExternalYuvFormatMutex);
     for (size_t index = 0; index < mExternalYuvFormats.size(); index++)
     {
         if (mExternalYuvFormats[index].externalFormat == externalFormat)

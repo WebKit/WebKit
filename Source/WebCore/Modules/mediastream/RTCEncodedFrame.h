@@ -40,6 +40,8 @@ namespace WebCore {
 
 class RTCEncodedFrame : public RefCounted<RTCEncodedFrame> {
 public:
+    virtual ~RTCEncodedFrame() { }
+
     RefPtr<JSC::ArrayBuffer> data() const;
     void setData(JSC::ArrayBuffer&);
 

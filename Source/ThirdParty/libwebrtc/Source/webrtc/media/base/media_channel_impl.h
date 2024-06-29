@@ -106,20 +106,6 @@ class MediaChannelUtil {
   // Must be called on the network thread.
   bool HasNetworkInterface() const;
 
-  void SetFrameEncryptor(
-      uint32_t ssrc,
-      rtc::scoped_refptr<webrtc::FrameEncryptorInterface> frame_encryptor);
-  void SetFrameDecryptor(
-      uint32_t ssrc,
-      rtc::scoped_refptr<webrtc::FrameDecryptorInterface> frame_decryptor);
-
-  void SetEncoderToPacketizerFrameTransformer(
-      uint32_t ssrc,
-      rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer);
-  void SetDepacketizerToDecoderFrameTransformer(
-      uint32_t ssrc,
-      rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer);
-
  protected:
   bool DscpEnabled() const;
 

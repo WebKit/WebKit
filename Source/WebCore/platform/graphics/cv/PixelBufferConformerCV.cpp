@@ -31,11 +31,33 @@
 #include "ImageBufferUtilitiesCG.h"
 #include "Logging.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <wtf/StackTrace.h>
 
 #include "CoreVideoSoftLink.h"
 #include "VideoToolboxSoftLink.h"
 
 namespace WebCore {
+
+#if RELEASE_LOG_DISABLED
+#define RELEASE_LOG_STACKTRACE(channel) ((void)0)
+#else
+static constexpr int kDefaultFramesToShow = 31;
+static constexpr int kDefaultFramesToSkip = 2;
+
+static void logStackTrace(WTFLogChannel* channel)
+{
+    void* stack[kDefaultFramesToShow + kDefaultFramesToSkip];
+    int frames = kDefaultFramesToShow + kDefaultFramesToSkip;
+    WTFGetBacktrace(stack, &frames);
+    StackTraceSymbolResolver { { stack, static_cast<size_t>(frames) } }.forEach([&](int frameNumber, void* stackFrame, const char* name) {
+        if (name)
+            os_log(channel->osLogChannel, "%-3d %p %{public}s", frameNumber, stackFrame, name);
+        else
+            os_log(channel->osLogChannel, "%-3d %p", frameNumber, stackFrame);
+    });
+}
+#define RELEASE_LOG_STACKTRACE(channel) logStackTrace(&LOG_CHANNEL(channel))
+#endif
 
 PixelBufferConformerCV::PixelBufferConformerCV(CFDictionaryRef attributes)
 {
@@ -79,7 +101,7 @@ static const void* CVPixelBufferGetBytePointerCallback(void* refcon)
 
     size_t byteLength = CVPixelBufferGetBytesPerRow(info->pixelBuffer.get()) * CVPixelBufferGetHeight(info->pixelBuffer.get());
 
-    verifyImageBufferIsBigEnough(address, byteLength);
+    verifyImageBufferIsBigEnough({ static_cast<const uint8_t*>(address), byteLength });
     RELEASE_LOG_INFO(Media, "CVPixelBufferGetBytePointerCallback() returning bytePointer: %p, size: %zu", address, byteLength);
     return address;
 }

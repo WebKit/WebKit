@@ -90,6 +90,7 @@ private:
 
     class MainThreadBridge;
     Ref<MainThreadBridge> m_mainThreadBridge;
+    Ref<MainThreadBridge> protectedMainThreadBridge() const;
 
     bool m_hasChangeEventListener { false };
     WeakPtr<CookieJar> m_cookieJar;

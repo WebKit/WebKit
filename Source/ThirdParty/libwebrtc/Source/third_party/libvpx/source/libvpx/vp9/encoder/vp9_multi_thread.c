@@ -10,6 +10,7 @@
 
 #include <assert.h>
 
+#include "vpx_util/vpx_pthread.h"
 #include "vp9/encoder/vp9_encoder.h"
 #include "vp9/encoder/vp9_ethread.h"
 #include "vp9/encoder/vp9_multi_thread.h"
@@ -54,16 +55,23 @@ void *vp9_enc_grp_get_next_job(MultiThreadHandle *multi_thread_ctxt,
 void vp9_row_mt_alloc_rd_thresh(VP9_COMP *const cpi,
                                 TileDataEnc *const this_tile) {
   VP9_COMMON *const cm = &cpi->common;
-  const int sb_rows =
-      (mi_cols_aligned_to_sb(cm->mi_rows) >> MI_BLOCK_SIZE_LOG2) + 1;
+  const int sb_rows = mi_cols_aligned_to_sb(cm->mi_rows) >> MI_BLOCK_SIZE_LOG2;
   int i;
 
+  if (this_tile->row_base_thresh_freq_fact != NULL) {
+    if (sb_rows <= this_tile->sb_rows) {
+      return;
+    }
+    vpx_free(this_tile->row_base_thresh_freq_fact);
+    this_tile->row_base_thresh_freq_fact = NULL;
+  }
   CHECK_MEM_ERROR(
       &cm->error, this_tile->row_base_thresh_freq_fact,
       (int *)vpx_calloc(sb_rows * BLOCK_SIZES * MAX_MODES,
                         sizeof(*(this_tile->row_base_thresh_freq_fact))));
   for (i = 0; i < sb_rows * BLOCK_SIZES * MAX_MODES; i++)
     this_tile->row_base_thresh_freq_fact[i] = RD_THRESH_INIT_FACT;
+  this_tile->sb_rows = sb_rows;
 }
 
 void vp9_row_mt_mem_alloc(VP9_COMP *cpi) {
@@ -100,13 +108,6 @@ void vp9_row_mt_mem_alloc(VP9_COMP *cpi) {
   for (tile_col = 0; tile_col < tile_cols; tile_col++) {
     TileDataEnc *this_tile = &cpi->tile_data[tile_col];
     vp9_row_mt_sync_mem_alloc(&this_tile->row_mt_sync, cm, jobs_per_tile_col);
-    if (cpi->sf.adaptive_rd_thresh_row_mt) {
-      if (this_tile->row_base_thresh_freq_fact != NULL) {
-        vpx_free(this_tile->row_base_thresh_freq_fact);
-        this_tile->row_base_thresh_freq_fact = NULL;
-      }
-      vp9_row_mt_alloc_rd_thresh(cpi, this_tile);
-    }
   }
 
   // Assign the sync pointer of tile row zero for every tile row > 0
@@ -135,14 +136,17 @@ void vp9_row_mt_mem_dealloc(VP9_COMP *cpi) {
 #endif
 
   // Deallocate memory for job queue
-  if (multi_thread_ctxt->job_queue) vpx_free(multi_thread_ctxt->job_queue);
+  if (multi_thread_ctxt->job_queue) {
+    vpx_free(multi_thread_ctxt->job_queue);
+    multi_thread_ctxt->job_queue = NULL;
+  }
 
 #if CONFIG_MULTITHREAD
   // Destroy mutex for each tile
   for (tile_col = 0; tile_col < multi_thread_ctxt->allocated_tile_cols;
        tile_col++) {
     RowMTInfo *row_mt_info = &multi_thread_ctxt->row_mt_info[tile_col];
-    if (row_mt_info) pthread_mutex_destroy(&row_mt_info->job_mutex);
+    pthread_mutex_destroy(&row_mt_info->job_mutex);
   }
 #endif
 
@@ -168,6 +172,10 @@ void vp9_row_mt_mem_dealloc(VP9_COMP *cpi) {
     }
   }
 #endif
+
+  multi_thread_ctxt->allocated_tile_cols = 0;
+  multi_thread_ctxt->allocated_tile_rows = 0;
+  multi_thread_ctxt->allocated_vert_unit_rows = 0;
 }
 
 void vp9_multi_thread_tile_init(VP9_COMP *cpi) {

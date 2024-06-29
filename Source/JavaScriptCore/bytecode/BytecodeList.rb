@@ -26,7 +26,7 @@ types [
 
     :BasicBlockLocation,
     :BoundLabel,
-    :BaselineCallLinkInfo,
+    :DataOnlyCallLinkInfo,
     :DebugHookType,
     :ECMAMode,
     :ErrorTypeWithExtension,
@@ -95,7 +95,7 @@ op :tail_call_varargs,
         firstVarArg: int,
     },
     metadata: {
-        callLinkInfo: BaselineCallLinkInfo,
+        callLinkInfo: DataOnlyCallLinkInfo,
     },
     tmps: {
         argCountIncludingThis: unsigned
@@ -116,7 +116,7 @@ op :call_varargs,
         valueProfile: unsigned,
     },
     metadata: {
-        callLinkInfo: BaselineCallLinkInfo,
+        callLinkInfo: DataOnlyCallLinkInfo,
     },
     tmps: {
         argCountIncludingThis: unsigned,
@@ -140,7 +140,7 @@ op :iterator_next,
         valueValueProfile: unsigned,
     },
     metadata: {
-        callLinkInfo: BaselineCallLinkInfo,
+        callLinkInfo: DataOnlyCallLinkInfo,
         doneModeMetadata: GetByIdModeMetadata,
         valueModeMetadata: GetByIdModeMetadata,
         iterableProfile: ArrayProfile,
@@ -166,7 +166,7 @@ op :construct_varargs,
         valueProfile: unsigned,
     },
     metadata: {
-        callLinkInfo: BaselineCallLinkInfo,
+        callLinkInfo: DataOnlyCallLinkInfo,
     },
     tmps: {
         argCountIncludingThis: unsigned
@@ -192,7 +192,7 @@ op :iterator_open,
         nextValueProfile: unsigned,
     },
     metadata: {
-        callLinkInfo: BaselineCallLinkInfo,
+        callLinkInfo: DataOnlyCallLinkInfo,
         modeMetadata: GetByIdModeMetadata,
         arrayProfile: ArrayProfile,
         iterationMetadata: IterationModeMetadata,
@@ -247,7 +247,7 @@ op :construct,
         valueProfile: unsigned,
     },
     metadata: {
-        callLinkInfo: BaselineCallLinkInfo,
+        callLinkInfo: DataOnlyCallLinkInfo,
     }
 
 op :tail_call,
@@ -258,7 +258,7 @@ op :tail_call,
         argv: unsigned,
     },
     metadata: {
-        callLinkInfo: BaselineCallLinkInfo,
+        callLinkInfo: DataOnlyCallLinkInfo,
         arrayProfile: ArrayProfile,
     }
 
@@ -274,7 +274,7 @@ op :call_direct_eval,
         valueProfile: unsigned,
     },
     metadata: {
-        callLinkInfo: BaselineCallLinkInfo,
+        callLinkInfo: DataOnlyCallLinkInfo,
     }
 
 op :tail_call_forward_arguments,
@@ -287,7 +287,7 @@ op :tail_call_forward_arguments,
         firstVarArg: int,
     },
     metadata: {
-        callLinkInfo: BaselineCallLinkInfo,
+        callLinkInfo: DataOnlyCallLinkInfo,
     }
 
 op_group :CreateInternalFieldObjectOp,
@@ -405,7 +405,7 @@ op :call,
         valueProfile: unsigned,
     },
     metadata: {
-        callLinkInfo: BaselineCallLinkInfo,
+        callLinkInfo: DataOnlyCallLinkInfo,
         arrayProfile: ArrayProfile,
     }
 
@@ -416,7 +416,7 @@ op :call_ignore_result,
         argv: unsigned,
     },
     metadata: {
-        callLinkInfo: BaselineCallLinkInfo,
+        callLinkInfo: DataOnlyCallLinkInfo,
         arrayProfile: ArrayProfile,
     }
 
@@ -1418,6 +1418,8 @@ op :llint_default_call_trampoline
 op :llint_virtual_call_trampoline
 op :llint_virtual_construct_trampoline
 op :llint_virtual_tail_call_trampoline
+op :llint_polymorphic_normal_call_trampoline
+op :llint_polymorphic_closure_call_trampoline
 op :checkpoint_osr_exit_from_inlined_call_trampoline
 op :checkpoint_osr_exit_trampoline
 op :normal_osr_exit_trampoline

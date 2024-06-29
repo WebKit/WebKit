@@ -36,11 +36,13 @@
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorController.h"
 #include "JSDOMBindingSecurity.h"
+#include "JSDOMExceptionHandling.h"
 #include "JSDOMWindowCustom.h"
 #include "JSDocument.h"
 #include "JSFetchResponse.h"
 #include "JSMicrotaskCallback.h"
 #include "JSNode.h"
+#include "JSTrustedScript.h"
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "Page.h"
@@ -51,6 +53,7 @@
 #include "ScriptModuleLoader.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "TrustedType.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/CodeBlock.h>
 #include <JavaScriptCore/DeferredWorkTimer.h>
@@ -103,7 +106,9 @@ const GlobalObjectMethodTable* JSDOMWindowBase::globalObjectMethodTable()
         nullptr,
         nullptr,
 #endif
-        deriveShadowRealmGlobalObject
+        deriveShadowRealmGlobalObject,
+        codeForEval,
+        canCompileStrings
     };
     return &table;
 };
@@ -295,6 +300,21 @@ void JSDOMWindowBase::reportViolationForUnsafeEval(JSGlobalObject* object, JSStr
     if (source)
         sourceString = source->tryGetValue();
     contentSecurityPolicy->allowEval(object, LogToConsole::No, sourceString);
+}
+
+String JSDOMWindowBase::codeForEval(JSGlobalObject* globalObject, JSValue value)
+{
+    VM& vm = globalObject->vm();
+
+    if (auto* script = JSTrustedScript::toWrapped(vm, value))
+        return script->toString();
+
+    return nullString();
+}
+
+bool JSDOMWindowBase::canCompileStrings(JSGlobalObject* globalObject, CompilationType compilationType, String codeString, JSValue bodyArgument)
+{
+    return JSDOMGlobalObject::canCompileStrings(globalObject, compilationType, codeString, bodyArgument);
 }
 
 void JSDOMWindowBase::willRemoveFromWindowProxy()

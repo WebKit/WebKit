@@ -278,22 +278,22 @@ TEST(WKWebExtensionAPIWebNavigation, OnErrorOccurredDuringLoadEvent)
             auto request = co_await connection.awaitableReceiveHTTPRequest();
             auto path = TestWebKitAPI::HTTPServer::parsePath(request);
             if (path == "/"_s) {
-                const char* body = "<iframe src='/frame.html'></iframe>";
+                constexpr auto body = "<iframe src='/frame.html'></iframe>"_s;
                 auto reply = makeString(
                     "HTTP/1.1 200 OK\r\n"
                     "Content-Type: text/html\r\n"
-                    "Content-Length: ", strlen(body), "\r\n"
+                    "Content-Length: "_s, body.length(), "\r\n"
                     "Connection: close\r\n"
-                    "\r\n", body
+                    "\r\n"_s, body
                 );
                 co_await connection.awaitableSend(WTFMove(reply));
                 continue;
             }
             if (path == "/frame.html"_s) {
                 auto response = makeString(
-                    "HTTP/1.1 200 OK\r\n",
+                    "HTTP/1.1 200 OK\r\n"_s,
                     "Content-Length: 1000000\r\n"
-                    "\r\n", longString<500000>(' ')
+                    "\r\n"_s, longString<500000>(' ')
                 );
 
                 co_await connection.awaitableSend(WTFMove(response));

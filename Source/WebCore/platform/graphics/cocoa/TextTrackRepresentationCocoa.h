@@ -56,6 +56,7 @@ public:
 
     PlatformLayer* platformLayer() final { return m_layer.get(); }
 
+    WEBCORE_EXPORT void setBounds(const IntRect&) override;
     WEBCORE_EXPORT IntRect bounds() const override;
     void boundsChanged();
 

@@ -116,8 +116,8 @@ public:
 
     explicit BaselineJITData(unsigned poolSize, unsigned stubInfoSize, CodeBlock*);
 
-    static ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(BaselineJITData, m_globalObject); }
-    static ptrdiff_t offsetOfStackOffset() { return OBJECT_OFFSETOF(BaselineJITData, m_stackOffset); }
+    static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(BaselineJITData, m_globalObject); }
+    static constexpr ptrdiff_t offsetOfStackOffset() { return OBJECT_OFFSETOF(BaselineJITData, m_stackOffset); }
 
     StructureStubInfo& stubInfo(unsigned index)
     {

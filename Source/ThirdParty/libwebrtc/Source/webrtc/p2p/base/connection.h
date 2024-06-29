@@ -11,19 +11,31 @@
 #ifndef P2P_BASE_CONNECTION_H_
 #define P2P_BASE_CONNECTION_H_
 
+#include <stddef.h>
+
+#include <cstdint>
+#include <functional>
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
+#include "absl/functional/any_invocable.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/candidate.h"
+#include "api/rtc_error.h"
+#include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/transport/stun.h"
+#include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair.h"
+#include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair_config.h"
 #include "logging/rtc_event_log/ice_logger.h"
 #include "p2p/base/candidate_pair_interface.h"
 #include "p2p/base/connection_info.h"
 #include "p2p/base/p2p_transport_channel_ice_field_trials.h"
+#include "p2p/base/port_interface.h"
 #include "p2p/base/stun_request.h"
 #include "p2p/base/transport_description.h"
 #include "rtc_base/async_packet_socket.h"
@@ -32,6 +44,8 @@
 #include "rtc_base/numerics/event_based_exponential_moving_average.h"
 #include "rtc_base/rate_tracker.h"
 #include "rtc_base/system/rtc_export.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
+#include "rtc_base/thread_annotations.h"
 #include "rtc_base/weak_ptr.h"
 
 namespace cricket {
@@ -40,22 +54,8 @@ namespace cricket {
 // adding other flavors in the future.
 constexpr int kGoogPingVersion = 1;
 
-// Connection and Port has circular dependencies.
-// So we use forward declaration rather than include.
-class Port;
-
 // Forward declaration so that a ConnectionRequest can contain a Connection.
 class Connection;
-
-struct CandidatePair final : public CandidatePairInterface {
-  ~CandidatePair() override = default;
-
-  const Candidate& local_candidate() const override { return local; }
-  const Candidate& remote_candidate() const override { return remote; }
-
-  Candidate local;
-  Candidate remote;
-};
 
 // Represents a communication link between a port on the local client and a
 // port on the remote client.
@@ -102,7 +102,7 @@ class RTC_EXPORT Connection : public CandidatePairInterface {
   bool writable() const;
   bool receiving() const;
 
-  const Port* port() const {
+  const PortInterface* port() const {
     RTC_DCHECK_RUN_ON(network_thread_);
     return port_.get();
   }
@@ -147,10 +147,6 @@ class RTC_EXPORT Connection : public CandidatePairInterface {
   // Error if Send() returns < 0
   virtual int GetError() = 0;
 
-  // TODO(webrtc:11943): Remove SignalReadPacket once upstream projects have
-  // switched to use RegisterReceivedPacket.
-  sigslot::signal4<Connection*, const char*, size_t, int64_t> SignalReadPacket;
-
   // Register as a recipient of received packets. There can only be one.
   void RegisterReceivedPacketCallback(
       absl::AnyInvocable<void(Connection*, const rtc::ReceivedPacket&)>
@@ -160,7 +156,9 @@ class RTC_EXPORT Connection : public CandidatePairInterface {
   sigslot::signal1<Connection*> SignalReadyToSend;
 
   // Called when a packet is received on this connection.
-  void OnReadPacket(const char* data, size_t size, int64_t packet_time_us);
+  void OnReadPacket(const rtc::ReceivedPacket& packet);
+  [[deprecated("Pass a rtc::ReceivedPacket")]] void
+  OnReadPacket(const char* data, size_t size, int64_t packet_time_us);
 
   // Called when the socket is currently able to send.
   void OnReadyToSend();
@@ -328,8 +326,8 @@ class RTC_EXPORT Connection : public CandidatePairInterface {
   void SendResponseMessage(const StunMessage& response);
 
   // An accessor for unit tests.
-  Port* PortForTest() { return port_.get(); }
-  const Port* PortForTest() const { return port_.get(); }
+  PortInterface* PortForTest() { return port_.get(); }
+  const PortInterface* PortForTest() const { return port_.get(); }
 
   std::unique_ptr<IceMessage> BuildPingRequestForTest() {
     RTC_DCHECK_RUN_ON(network_thread_);
@@ -366,7 +364,9 @@ class RTC_EXPORT Connection : public CandidatePairInterface {
   class ConnectionRequest;
 
   // Constructs a new connection to the given remote port.
-  Connection(rtc::WeakPtr<Port> port, size_t index, const Candidate& candidate);
+  Connection(rtc::WeakPtr<PortInterface> port,
+             size_t index,
+             const Candidate& candidate);
 
   // Called back when StunRequestManager has a stun packet to send
   void OnSendStunPacket(const void* data, size_t size, StunRequest* req);
@@ -395,7 +395,7 @@ class RTC_EXPORT Connection : public CandidatePairInterface {
   void set_connected(bool value);
 
   // The local port where this connection sends and receives packets.
-  Port* port() { return port_.get(); }
+  PortInterface* port() { return port_.get(); }
 
   // NOTE: A pointer to the network thread is held by `port_` so in theory we
   // shouldn't need to hold on to this pointer here, but rather defer to
@@ -404,7 +404,7 @@ class RTC_EXPORT Connection : public CandidatePairInterface {
   // TODO(tommi): This ^^^ should be fixed.
   webrtc::TaskQueueBase* const network_thread_;
   const uint32_t id_;
-  rtc::WeakPtr<Port> port_;
+  rtc::WeakPtr<PortInterface> port_;
   Candidate local_candidate_ RTC_GUARDED_BY(network_thread_);
   Candidate remote_candidate_;
 
@@ -517,7 +517,7 @@ class RTC_EXPORT Connection : public CandidatePairInterface {
 // ProxyConnection defers all the interesting work to the port.
 class ProxyConnection : public Connection {
  public:
-  ProxyConnection(rtc::WeakPtr<Port> port,
+  ProxyConnection(rtc::WeakPtr<PortInterface> port,
                   size_t index,
                   const Candidate& remote_candidate);
 

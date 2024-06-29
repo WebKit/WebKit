@@ -100,7 +100,7 @@ public:
 
     virtual bool isFlexibleBoxImpl() const { return false; };
     
-    bool useChildOverridingLogicalHeightForPercentageResolution(const RenderBox&);
+    std::optional<LayoutUnit> usedChildOverridingLogicalHeightForPercentageResolution(const RenderBox&);
     
     void clearCachedMainSizeForChild(const RenderBox& child);
     
@@ -209,8 +209,8 @@ private:
     Overflow mainAxisOverflowForChild(const RenderBox& child) const;
     Overflow crossAxisOverflowForChild(const RenderBox& child) const;
     void cacheChildMainSize(const RenderBox& child);
-    bool useChildOverridingCrossSizeForPercentageResolution(const RenderBox&);
-    bool useChildOverridingMainSizeForPercentageResolution(const RenderBox&);
+    std::optional<LayoutUnit> usedChildOverridingCrossSizeForPercentageResolution(const RenderBox&);
+    std::optional<LayoutUnit> usedChildOverridingMainSizeForPercentageResolution(const RenderBox&);
 
     void layoutFlexItems(bool relayoutChildren);
     LayoutUnit autoMarginOffsetInMainAxis(const FlexItems&, LayoutUnit& availableFreeSpace);
@@ -291,6 +291,9 @@ private:
         SingleThreadWeakHashSet<const RenderBox> m_itemsOnFirstFlexLine;
         SingleThreadWeakHashSet<const RenderBox> m_itemsOnLastFlexLine;
     } m_marginTrimItems;
+
+    LayoutUnit m_alignContentStartOverflow { 0 };
+    LayoutUnit m_justifyContentStartOverflow { 0 };
 
     // This is SizeIsUnknown outside of layoutBlock()
     SizeDefiniteness m_hasDefiniteHeight { SizeDefiniteness::Unknown };

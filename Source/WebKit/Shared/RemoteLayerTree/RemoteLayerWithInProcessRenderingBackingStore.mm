@@ -37,6 +37,7 @@
 #import "SwapBuffersDisplayRequirement.h"
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/IOSurfacePool.h>
+#import <WebCore/ImageBufferPixelFormat.h>
 #import <WebCore/PlatformCALayerClient.h>
 #import <wtf/Scope.h>
 
@@ -149,9 +150,10 @@ public:
         return std::unique_ptr<ImageBufferBackingStoreFlusher> { new ImageBufferBackingStoreFlusher(WTFMove(imageBufferFlusher)) };
     }
 
-    void flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) final
+    bool flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) final
     {
         m_imageBufferFlusher->flush();
+        return true;
     }
 
 private:
@@ -248,7 +250,7 @@ SetNonVolatileResult RemoteLayerWithInProcessRenderingBackingStore::setFrontBuff
 }
 
 template<typename ImageBufferType>
-static RefPtr<ImageBuffer> allocateBufferInternal(RemoteLayerBackingStore::Type type, const WebCore::FloatSize& logicalSize, WebCore::RenderingPurpose purpose, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::ImageBufferCreationContext& creationContext)
+static RefPtr<ImageBuffer> allocateBufferInternal(RemoteLayerBackingStore::Type type, const WebCore::FloatSize& logicalSize, WebCore::RenderingPurpose purpose, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::ImageBufferPixelFormat pixelFormat, WebCore::ImageBufferCreationContext& creationContext)
 {
     switch (type) {
     case RemoteLayerBackingStore::Type::IOSurface:

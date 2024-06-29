@@ -11,6 +11,7 @@
 #include <unordered_map>
 
 #include "astcenc.h"
+#include "common/SimpleMutex.h"
 #include "common/WorkerThread.h"
 #include "image_util/AstcDecompressor.h"
 
@@ -243,7 +244,7 @@ class AstcDecompressorImpl : public AstcDecompressor
 
   private:
     std::unique_ptr<AstcDecompressorContextCache> mContextCache;
-    std::mutex mMutex;  // Locked while calling `decode()`
+    angle::SimpleMutex mMutex;  // Locked while calling `decode()`
     std::vector<std::shared_ptr<DecompressTask>> mTasks;
     std::vector<std::shared_ptr<WaitableEvent>> mWaitEvents;
 };

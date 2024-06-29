@@ -28,7 +28,7 @@
 [
     ActiveDOMObject,
     EnabledBySetting=WebGPUEnabled,
-    Exposed=(Window,DedicatedWorker),
+    Exposed=(Window,Worker),
     SecureContext,
     SkipVTableValidation,
 ]

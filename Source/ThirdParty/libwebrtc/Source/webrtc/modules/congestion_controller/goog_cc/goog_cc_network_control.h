@@ -96,6 +96,7 @@ class GoogCcNetworkController : public NetworkControllerInterface {
   const bool limit_probes_lower_than_throughput_estimate_;
   const RateControlSettings rate_control_settings_;
   const bool pace_at_max_of_bwe_and_lower_link_capacity_;
+  const bool limit_pacingfactor_by_upper_link_capacity_estimate_;
 
   const std::unique_ptr<ProbeController> probe_controller_;
   const std::unique_ptr<CongestionWindowPushbackController>

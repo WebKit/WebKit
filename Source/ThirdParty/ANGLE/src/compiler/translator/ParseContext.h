@@ -82,10 +82,18 @@ class TParseContext : angle::NonCopyable
 
     void setLoopNestingLevel(int loopNestintLevel) { mLoopNestingLevel = loopNestintLevel; }
 
-    void incrLoopNestingLevel() { ++mLoopNestingLevel; }
+    void incrLoopNestingLevel(const TSourceLoc &line)
+    {
+        ++mLoopNestingLevel;
+        checkNestingLevel(line);
+    }
     void decrLoopNestingLevel() { --mLoopNestingLevel; }
 
-    void incrSwitchNestingLevel() { ++mSwitchNestingLevel; }
+    void incrSwitchNestingLevel(const TSourceLoc &line)
+    {
+        ++mSwitchNestingLevel;
+        checkNestingLevel(line);
+    }
     void decrSwitchNestingLevel() { --mSwitchNestingLevel; }
 
     bool isComputeShaderLocalSizeDeclared() const { return mComputeShaderLocalSizeDeclared; }
@@ -521,6 +529,9 @@ class TParseContext : angle::NonCopyable
 
     ShShaderOutput getOutputType() const { return mOutputType; }
 
+    size_t getMaxExpressionComplexity() const { return mMaxExpressionComplexity; }
+    size_t getMaxStatementDepth() const { return mMaxStatementDepth; }
+
     // TODO(jmadill): make this private
     TSymbolTable &symbolTable;  // symbol table that goes with the language currently being parsed
 
@@ -549,6 +560,8 @@ class TParseContext : angle::NonCopyable
                          const ImmutableString &identifier,
                          const TType *type,
                          TVariable **variable);
+
+    void checkNestingLevel(const TSourceLoc &line);
 
     void checkCanBeDeclaredWithoutInitializer(const TSourceLoc &line,
                                               const ImmutableString &identifier,
@@ -763,6 +776,7 @@ class TParseContext : angle::NonCopyable
     angle::pp::Preprocessor mPreprocessor;
     void *mScanner;
     const size_t mMaxExpressionComplexity;
+    const size_t mMaxStatementDepth;
     int mMinProgramTexelOffset;
     int mMaxProgramTexelOffset;
 

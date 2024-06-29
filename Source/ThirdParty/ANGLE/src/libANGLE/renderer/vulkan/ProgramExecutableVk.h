@@ -53,13 +53,17 @@ class ShaderInfo final : angle::NonCopyable
     bool mIsInitialized = false;
 };
 
-struct ProgramTransformOptions final
+union ProgramTransformOptions final
 {
-    uint8_t surfaceRotation : 1;
-    uint8_t removeTransformFeedbackEmulation : 1;
-    uint8_t multiSampleFramebufferFetch : 1;
-    uint8_t enableSampleShading : 1;
-    uint8_t reserved : 4;  // must initialize to zero
+    struct
+    {
+        uint8_t surfaceRotation : 1;
+        uint8_t removeTransformFeedbackEmulation : 1;
+        uint8_t multiSampleFramebufferFetch : 1;
+        uint8_t enableSampleShading : 1;
+        uint8_t reserved : 4;  // must initialize to zero
+    };
+    uint8_t permutationIndex;
     static constexpr uint32_t kPermutationCount = 0x1 << 4;
 };
 static_assert(sizeof(ProgramTransformOptions) == 1, "Size check failed");
@@ -85,7 +89,7 @@ class ProgramInfo final : angle::NonCopyable
         return mProgramHelper.valid(shaderType);
     }
 
-    vk::ShaderProgramHelper *getShaderProgram() { return &mProgramHelper; }
+    vk::ShaderProgramHelper &getShaderProgram() { return mProgramHelper; }
 
   private:
     vk::ShaderProgramHelper mProgramHelper;
@@ -295,7 +299,27 @@ class ProgramExecutableVk : public ProgramExecutableImpl
         return mDefaultUniformBlocks[shaderType];
     }
 
-    bool hasDirtyUniforms() const { return mDefaultUniformBlocksDirty.any(); }
+    bool updateAndCheckDirtyUniforms()
+    {
+        if (ANGLE_LIKELY(!mExecutable->IsPPO()))
+        {
+            return mDefaultUniformBlocksDirty.any();
+        }
+
+        const auto &ppoExecutables = mExecutable->getPPOProgramExecutables();
+        for (gl::ShaderType shaderType : mExecutable->getLinkedShaderStages())
+        {
+            ProgramExecutableVk *executableVk = vk::GetImpl(ppoExecutables[shaderType].get());
+            if (executableVk->mDefaultUniformBlocksDirty.test(shaderType))
+            {
+                mDefaultUniformBlocksDirty.set(shaderType);
+                // Note: this relies on onProgramBind marking everything as dirty
+                executableVk->mDefaultUniformBlocksDirty.reset(shaderType);
+            }
+        }
+
+        return mDefaultUniformBlocksDirty.any();
+    }
 
     void setAllDefaultUniformsDirty();
     angle::Result updateUniforms(vk::Context *context,
@@ -323,15 +347,19 @@ class ProgramExecutableVk : public ProgramExecutableImpl
         vk::PipelineProtectedAccess pipelineProtectedAccess,
         vk::GraphicsPipelineSubset subset,
         std::vector<std::shared_ptr<LinkSubTask>> *postLinkSubTasksOut);
+
     void waitForPostLinkTasks(const gl::Context *context) override
     {
         ContextVk *contextVk = vk::GetImpl(context);
         waitForPostLinkTasksImpl(contextVk);
     }
-
-    void waitForPostLinkTasksIfNecessary(
-        ContextVk *contextVk,
-        const vk::GraphicsPipelineDesc *currentGraphicsPipelineDesc);
+    void waitForComputePostLinkTasks(ContextVk *contextVk)
+    {
+        ASSERT(mExecutable->hasLinkedShaderStage(gl::ShaderType::Compute));
+        waitForPostLinkTasksImpl(contextVk);
+    }
+    void waitForGraphicsPostLinkTasks(ContextVk *contextVk,
+                                      const vk::GraphicsPipelineDesc &currentGraphicsPipelineDesc);
 
     angle::Result mergePipelineCacheToRenderer(vk::Context *context) const;
 
@@ -374,24 +402,14 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     class WarmUpTaskCommon;
     class WarmUpComputeTask;
     class WarmUpGraphicsTask;
+
     friend class ProgramVk;
     friend class ProgramPipelineVk;
-    friend class WarmUpComputeTask;
-    friend class WarmUpGraphicsTask;
 
     void reset(ContextVk *contextVk);
 
-    template <int cols, int rows>
-    void setUniformMatrixfv(GLint location,
-                            GLsizei count,
-                            GLboolean transpose,
-                            const GLfloat *value);
-
     template <class T>
     void getUniformImpl(GLint location, T *v, GLenum entryPointType) const;
-
-    template <typename T>
-    void setUniformImpl(GLint location, GLsizei count, const T *v, GLenum entryPointType);
 
     void addInterfaceBlockDescriptorSetDesc(const std::vector<gl::InterfaceBlock> &blocks,
                                             gl::ShaderBitSet shaderTypes,
@@ -442,6 +460,7 @@ class ProgramExecutableVk : public ProgramExecutableImpl
         ProgramInfo *programInfo,
         const ShaderInterfaceVariableInfoMap &variableInfoMap)
     {
+        mValidGraphicsPermutations.set(optionBits.permutationIndex);
         return initProgram(context, shaderType, isLastPreFragmentStage, isTransformFeedbackProgram,
                            optionBits, programInfo, variableInfoMap);
     }
@@ -449,8 +468,10 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     ANGLE_INLINE angle::Result initComputeProgram(
         vk::Context *context,
         ProgramInfo *programInfo,
-        const ShaderInterfaceVariableInfoMap &variableInfoMap)
+        const ShaderInterfaceVariableInfoMap &variableInfoMap,
+        const vk::ComputePipelineOptions &pipelineOptions)
     {
+        mValidComputePermutations.set(pipelineOptions.permutationIndex);
         ProgramTransformOptions optionBits = {};
         return initProgram(context, gl::ShaderType::Compute, false, false, optionBits, programInfo,
                            variableInfoMap);
@@ -459,8 +480,7 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     ProgramTransformOptions getTransformOptions(ContextVk *contextVk,
                                                 const vk::GraphicsPipelineDesc &desc);
     angle::Result initGraphicsShaderPrograms(vk::Context *context,
-                                             ProgramTransformOptions transformOptions,
-                                             vk::ShaderProgramHelper **shaderProgramOut);
+                                             ProgramTransformOptions transformOptions);
     angle::Result initProgramThenCreateGraphicsPipeline(vk::Context *context,
                                                         ProgramTransformOptions transformOptions,
                                                         vk::GraphicsPipelineSubset pipelineSubset,
@@ -537,6 +557,14 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     std::vector<uint32_t> mDynamicShaderResourceDescriptorOffsets;
 
     ShaderInterfaceVariableInfoMap mVariableInfoMap;
+
+    static_assert((ProgramTransformOptions::kPermutationCount == 16),
+                  "ProgramTransformOptions::kPermutationCount must be 16.");
+    angle::BitSet16<ProgramTransformOptions::kPermutationCount> mValidGraphicsPermutations;
+
+    static_assert((vk::ComputePipelineOptions::kPermutationCount == 4),
+                  "ComputePipelineOptions::kPermutationCount must be 4.");
+    angle::BitSet8<vk::ComputePipelineOptions::kPermutationCount> mValidComputePermutations;
 
     // We store all permutations of surface rotation and transformed SPIR-V programs here. We may
     // need some LRU algorithm to free least used programs to reduce the number of programs.

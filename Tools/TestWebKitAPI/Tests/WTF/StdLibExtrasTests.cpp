@@ -132,7 +132,6 @@ TEST(WTF_StdLibExtras, MakeUniqueFunctionLocalTypeCompiles)
     auto c = makeUnique<LocalClass>();
 }
 
-
 TEST(WTF_StdLibExtras, RoundUpToMultipleOfWorks)
 {
     EXPECT_EQ(2u, roundUpToMultipleOf(static_cast<uint8_t>(2), static_cast<uint8_t>(1)));
@@ -179,6 +178,32 @@ TEST(WTF_StdLibExtras, RoundUpToMultipleOfNonPowerOfTwoWorks)
     EXPECT_TRUE(roundUpToMultipleOfNonPowerOfTwo(CheckedSize { WTF::ResultOverflowed }, CheckedSize { 78 }).hasOverflowed());
     EXPECT_TRUE(roundUpToMultipleOfNonPowerOfTwo(CheckedSize { 78 }, CheckedSize { WTF::ResultOverflowed }).hasOverflowed());
 
+}
+
+TEST(WTF_StdLibExtras, ByteCast)
+{
+    uint8_t u8 = 0;
+    const uint8_t cu8 = 0;
+    std::span su8 = { &u8, 1 };
+    std::span scu8 = { &cu8, 1 };
+    static_assert(std::same_as<char, decltype(byteCast<char>(u8))>);
+    static_assert(std::same_as<char8_t, decltype(byteCast<char8_t>(u8))>);
+    static_assert(std::same_as<std::byte, decltype(byteCast<std::byte>(u8))>);
+    static_assert(std::same_as<char, decltype(byteCast<char>(cu8))>);
+    static_assert(std::same_as<char8_t, decltype(byteCast<char8_t>(cu8))>);
+    static_assert(std::same_as<std::byte, decltype(byteCast<std::byte>(cu8))>);
+    static_assert(std::same_as<char*, decltype(byteCast<char>(&u8))>);
+    static_assert(std::same_as<char8_t*, decltype(byteCast<char8_t>(&u8))>);
+    static_assert(std::same_as<std::byte*, decltype(byteCast<std::byte>(&u8))>);
+    static_assert(std::same_as<const char*, decltype(byteCast<char>(&cu8))>);
+    static_assert(std::same_as<const char8_t*, decltype(byteCast<char8_t>(&cu8))>);
+    static_assert(std::same_as<const std::byte*, decltype(byteCast<std::byte>(&cu8))>);
+    static_assert(std::same_as<std::span<char>, decltype(byteCast<char>(su8))>);
+    static_assert(std::same_as<std::span<char8_t>, decltype(byteCast<char8_t>(su8))>);
+    static_assert(std::same_as<std::span<std::byte>, decltype(byteCast<std::byte>(su8))>);
+    static_assert(std::same_as<std::span<const char>, decltype(byteCast<char>(scu8))>);
+    static_assert(std::same_as<std::span<const char8_t>, decltype(byteCast<char8_t>(scu8))>);
+    static_assert(std::same_as<std::span<const std::byte>, decltype(byteCast<std::byte>(scu8))>);
 }
 
 } // namespace TestWebKitAPI

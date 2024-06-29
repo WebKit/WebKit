@@ -499,8 +499,12 @@ class GitHub(bmocks.GitHub):
             for candidate in self.pull_requests:
                 if stripped_url.split('/')[5] != str(candidate['number']):
                     continue
+                state = json.get('event', 'COMMENT')
                 candidate['reviews'].append(
-                    dict(user=dict(login=auth.username), state=json.get('event', 'COMMENT')),
+                    dict(user=dict(login=auth.username), state=dict(
+                        REQUEST_CHANGES='CHANGES_REQUESTED',
+                        APPROVE='APPROVED',
+                    ).get(state, state)),
                 )
                 if 'body' in json:
                     self.issues[candidate['number']]['comments'].append(

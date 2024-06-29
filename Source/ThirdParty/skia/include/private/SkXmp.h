@@ -35,10 +35,19 @@ public:
     static std::unique_ptr<SkXmp> Make(sk_sp<SkData> xmpStandard, sk_sp<SkData> xmpExtended);
 
     // Extract HDRGM gainmap parameters.
-    virtual bool getGainmapInfoHDRGM(SkGainmapInfo* info) const = 0;
+    // TODO(b/338342146): Remove this once all callers are removed.
+    bool getGainmapInfoHDRGM(SkGainmapInfo* info) const { return getGainmapInfoAdobe(info); }
 
-    // Extract HDRGainMap gainmap parameters.
-    virtual bool getGainmapInfoHDRGainMap(SkGainmapInfo* info) const = 0;
+    // Extract gainmap parameters from http://ns.adobe.com/hdr-gain-map/1.0/.
+    virtual bool getGainmapInfoAdobe(SkGainmapInfo* info) const = 0;
+
+    // If the image specifies http://ns.apple.com/pixeldatainfo/1.0/ AuxiliaryImageType of
+    // urn:com:apple:photo:2020:aux:hdrgainmap, and includes a http://ns.apple.com/HDRGainMap/1.0/
+    // HDRGainMapVersion, then populate |info| with gainmap parameters that will approximate the
+    // math specified at [0] and return true.
+    // [0] https://developer.apple.com/documentation/appkit/images_and_pdf/
+    //     applying_apple_hdr_effect_to_your_photos
+    virtual bool getGainmapInfoApple(float exifHdrHeadroom, SkGainmapInfo* info) const = 0;
 
     // If this includes GContainer metadata and the GContainer contains an item with semantic
     // GainMap and Mime of image/jpeg, then return true, and populate |offset| and |size| with

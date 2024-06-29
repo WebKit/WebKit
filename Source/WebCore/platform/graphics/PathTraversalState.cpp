@@ -35,7 +35,7 @@ static inline float distanceLine(const FloatPoint& start, const FloatPoint& end)
 }
 
 struct QuadraticBezier {
-    QuadraticBezier() { }
+    QuadraticBezier() = default;
     QuadraticBezier(const FloatPoint& s, const FloatPoint& c, const FloatPoint& e)
         : start(s)
         , control(c)
@@ -71,7 +71,7 @@ struct QuadraticBezier {
 };
 
 struct CubicBezier {
-    CubicBezier() { }
+    CubicBezier() = default;
     CubicBezier(const FloatPoint& s, const FloatPoint& c1, const FloatPoint& c2, const FloatPoint& e)
         : start(s)
         , control1(c1)

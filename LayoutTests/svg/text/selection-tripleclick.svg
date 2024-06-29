@@ -4,7 +4,7 @@
 <script>
 var line1 = document.getElementById("line1");
 var center = document.rootElement.createSVGPoint();
-var matrix = document.rootElement.getTransformToElement(line1);
+var matrix = line1.getCTM().inverse().multiply(document.rootElement.getCTM())
 var bbox = line1.getBBox();
 
 center.x = bbox.x + bbox.width/2;

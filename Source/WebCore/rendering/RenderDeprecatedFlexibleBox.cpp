@@ -161,15 +161,15 @@ static bool childDoesNotAffectWidthOrFlexing(RenderObject* child)
 
 static LayoutUnit widthForChild(RenderBox* child)
 {
-    if (child->hasOverridingLogicalWidth())
-        return child->overridingLogicalWidth();
+    if (auto overridingLogicalWidth = child->overridingLogicalWidth())
+        return *overridingLogicalWidth;
     return child->logicalWidth();
 }
 
 static LayoutUnit heightForChild(RenderBox* child)
 {
-    if (child->hasOverridingLogicalHeight())
-        return child->overridingLogicalHeight();
+    if (auto overridingLogicalHeight = child->overridingLogicalHeight())
+        return *overridingLogicalHeight;
     return child->logicalHeight();
 }
 
@@ -307,7 +307,7 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     if (!relayoutChildren && simplifiedLayout())
         return;
 
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this);
     {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || style().isFlippedBlocksWritingMode());
 

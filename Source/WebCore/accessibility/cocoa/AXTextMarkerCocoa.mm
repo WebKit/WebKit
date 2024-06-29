@@ -46,14 +46,18 @@ AXTextMarker::AXTextMarker(PlatformTextMarkerData platformData)
         return;
     }
 
-    if (AXTextMarkerGetLength(platformData) != sizeof(m_data)) {
+    RawTextMarkerData rawTextMarkerData;
+    if (AXTextMarkerGetLength(platformData) != sizeof(rawTextMarkerData)) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    memcpy(&m_data, AXTextMarkerGetBytePtr(platformData), sizeof(m_data));
+    memcpy(&rawTextMarkerData, AXTextMarkerGetBytePtr(platformData), sizeof(rawTextMarkerData));
+    m_data = rawTextMarkerData.toTextMarkerData();
 #else // PLATFORM(IOS_FAMILY)
-    [platformData getBytes:&m_data length:sizeof(m_data)];
+    RawTextMarkerData rawTextMarkerData;
+    [platformData getBytes:&rawTextMarkerData length:sizeof(rawTextMarkerData)];
+    m_data = rawTextMarkerData.toTextMarkerData();
 #endif
 
     if (isMainThread())
@@ -62,10 +66,11 @@ AXTextMarker::AXTextMarker(PlatformTextMarkerData platformData)
 
 RetainPtr<PlatformTextMarkerData> AXTextMarker::platformData() const
 {
+    auto rawTextMarkerData = m_data.toRawTextMarkerData();
 #if PLATFORM(MAC)
-    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&m_data, sizeof(m_data)));
+    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&rawTextMarkerData, sizeof(rawTextMarkerData)));
 #else // PLATFORM(IOS_FAMILY)
-    return [NSData dataWithBytes:&m_data length:sizeof(m_data)];
+    return [NSData dataWithBytes:&rawTextMarkerData length:sizeof(rawTextMarkerData)];
 #endif
 }
 

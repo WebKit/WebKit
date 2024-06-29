@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,11 +88,8 @@ RefPtr<ByteArrayPixelBuffer> ByteArrayPixelBuffer::tryCreate(const PixelBufferFo
     if (bufferSize != arrayBuffer->byteLength())
         return nullptr;
 
-    auto data = Uint8ClampedArray::tryCreate(WTFMove(arrayBuffer), 0, bufferSize);
-    if (!data)
-        return nullptr;
-
-    return create(format, size, data.releaseNonNull());
+    Ref data = Uint8ClampedArray::create(WTFMove(arrayBuffer));
+    return create(format, size, WTFMove(data));
 }
 
 ByteArrayPixelBuffer::ByteArrayPixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::Uint8ClampedArray>&& data)
@@ -106,10 +103,10 @@ RefPtr<PixelBuffer> ByteArrayPixelBuffer::createScratchPixelBuffer(const IntSize
     return ByteArrayPixelBuffer::tryCreate(m_format, size);
 }
 
-std::span<const uint8_t> ByteArrayPixelBuffer::dataSpan() const
+std::span<const uint8_t> ByteArrayPixelBuffer::span() const
 {
     ASSERT(m_data->byteLength() == (m_size.area() * 4));
-    return { m_data->data(), m_data->byteLength() };
+    return m_data->span();
 }
 
 } // namespace WebCore

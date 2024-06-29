@@ -147,6 +147,23 @@ typedef struct SVC {
    * different/lower bitrate.
    */
   int has_lower_quality_layer;
+
+  /*!
+   * Flag to indicate the frame drop mode for SVC: one of the two settings:
+   * AOM_LAYER_DROP (default) or AOM_FULL_SUPERFRAME_DROP.
+   */
+  AOM_SVC_FRAME_DROP_MODE framedrop_mode;
+
+  /*!
+   * Flag to indicate if frame was dropped for a given spatial_layer_id on
+   * previous superframe.
+   */
+  bool last_layer_dropped[AOM_MAX_SS_LAYERS];
+
+  /*!
+   * Flag to indicate if a previous spatial was dropped for the same superframe.
+   */
+  bool drop_spatial_layer[AOM_MAX_SS_LAYERS];
 } SVC;
 
 struct AV1_COMP;
@@ -205,6 +222,21 @@ void av1_update_layer_context_change_config(struct AV1_COMP *const cpi,
  layer are updated.
  */
 void av1_update_temporal_layer_framerate(struct AV1_COMP *const cpi);
+
+/*!\brief Prior to check if reference is lower spatial layer at the same
+ *        timestamp/superframe.
+ *
+ * \ingroup SVC
+ * \callgraph
+ * \callergraph
+ *
+ * \param[in]       cpi  Top level encoder structure
+ * \param[in]       ref_frame Reference frame
+ *
+ * \return  True if the ref_frame if lower spatial layer, otherwise false.
+ */
+bool av1_check_ref_is_low_spatial_res_super_frame(struct AV1_COMP *const cpi,
+                                                  int ref_frame);
 
 /*!\brief Prior to encoding the frame, set the layer context, for the current
  layer to be encoded, to the cpi struct.

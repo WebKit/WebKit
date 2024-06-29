@@ -25,6 +25,8 @@
 #include "ArgList.h"
 #include "CallFrame.h"
 #include "CommonIdentifiers.h"
+#include "EnsureStillAliveHere.h"
+#include "GCOwnedDataScope.h"
 #include "GetVM.h"
 #include "Identifier.h"
 #include "PropertyDescriptor.h"
@@ -120,7 +122,7 @@ public:
     {
         return &vm.stringSpace();
     }
-    
+
     // We employ overflow checks in many places with the assumption that MaxLength
     // is INT_MAX. Hence, it cannot be changed into another length value without
     // breaking all the bounds and overflow checks that assume this.
@@ -221,12 +223,13 @@ public:
     AtomString toAtomString(JSGlobalObject*) const;
     AtomString toExistingAtomString(JSGlobalObject*) const;
 
-    StringViewWithUnderlyingString viewWithUnderlyingString(JSGlobalObject*) const;
+    GCOwnedDataScope<StringView> view(JSGlobalObject*) const;
 
     ALWAYS_INLINE bool equalInline(JSGlobalObject*, JSString* other) const;
     inline bool equal(JSGlobalObject*, JSString* other) const;
-    const String& value(JSGlobalObject*) const;
-    inline const String& tryGetValue(bool allocationAllowed = true) const;
+    GCOwnedDataScope<const String&> value(JSGlobalObject*) const;
+    inline GCOwnedDataScope<const String&> tryGetValue(bool allocationAllowed = true) const;
+    GCOwnedDataScope<const String&> tryGetValueWithoutGC() const;
     const StringImpl* getValueImpl() const;
     const StringImpl* tryGetValueImpl() const;
     ALWAYS_INLINE unsigned length() const;
@@ -245,7 +248,7 @@ public:
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(JSString, m_fiber); }
+    static constexpr ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(JSString, m_fiber); }
 
     DECLARE_EXPORT_INFO;
 
@@ -278,8 +281,6 @@ protected:
 
 private:
     friend class LLIntOffsetsExtractor;
-
-    StringView unsafeView(JSGlobalObject*) const;
 
     void swapToAtomString(VM&, RefPtr<AtomStringImpl>&&) const;
 
@@ -370,9 +371,9 @@ public:
             m_length = length;
         }
 
-        static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(CompactFibers, m_length); }
-        static ptrdiff_t offsetOfFiber1() { return OBJECT_OFFSETOF(CompactFibers, m_length); }
-        static ptrdiff_t offsetOfFiber2() { return OBJECT_OFFSETOF(CompactFibers, m_fiber1Upper); }
+        static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(CompactFibers, m_length); }
+        static constexpr ptrdiff_t offsetOfFiber1() { return OBJECT_OFFSETOF(CompactFibers, m_length); }
+        static constexpr ptrdiff_t offsetOfFiber2() { return OBJECT_OFFSETOF(CompactFibers, m_fiber1Upper); }
 
     private:
         friend class LLIntOffsetsExtractor;
@@ -411,9 +412,9 @@ public:
             m_length = length;
         }
 
-        static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(CompactFibers, m_length); }
-        static ptrdiff_t offsetOfFiber1() { return OBJECT_OFFSETOF(CompactFibers, m_fiber1); }
-        static ptrdiff_t offsetOfFiber2() { return OBJECT_OFFSETOF(CompactFibers, m_fiber2); }
+        static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(CompactFibers, m_length); }
+        static constexpr ptrdiff_t offsetOfFiber1() { return OBJECT_OFFSETOF(CompactFibers, m_fiber1); }
+        static constexpr ptrdiff_t offsetOfFiber2() { return OBJECT_OFFSETOF(CompactFibers, m_fiber2); }
 
     private:
         friend class LLIntOffsetsExtractor;
@@ -589,17 +590,18 @@ private:
     }
 
 public:
-    static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfLength(); } // 32byte width.
-    static ptrdiff_t offsetOfFlags() { return offsetOfValue(); }
-    static ptrdiff_t offsetOfFiber0() { return offsetOfValue(); }
-    static ptrdiff_t offsetOfFiber1() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfFiber1(); }
-    static ptrdiff_t offsetOfFiber2() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfFiber2(); }
+    static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfLength(); } // 32byte width.
+    static constexpr ptrdiff_t offsetOfFlags() { return offsetOfValue(); }
+    static constexpr ptrdiff_t offsetOfFiber0() { return offsetOfValue(); }
+    static constexpr ptrdiff_t offsetOfFiber1() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfFiber1(); }
+    static constexpr ptrdiff_t offsetOfFiber2() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfFiber2(); }
 
     static constexpr unsigned s_maxInternalRopeLength = 3;
 
     // If nullOrExecForOOM is null, resolveRope() will be do nothing in the event of an OOM error.
     // The rope value will remain a null string in that case.
     JS_EXPORT_PRIVATE const String& resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM) const;
+    JS_EXPORT_PRIVATE const String& resolveRopeWithoutGC() const;
 
     template<typename CharacterType>
     static void resolveToBuffer(JSString*, JSString*, JSString*, CharacterType* buffer, unsigned length, uint8_t* stackLimit);
@@ -640,14 +642,13 @@ private:
 
     friend JSValue jsStringFromRegisterArray(JSGlobalObject*, Register*, unsigned);
 
-    template<typename Function> const String& resolveRopeWithFunction(JSGlobalObject* nullOrGlobalObjectForOOM, Function&&) const;
+    template<bool reportAllocation, typename Function> const String& resolveRopeWithFunction(JSGlobalObject* nullOrGlobalObjectForOOM, Function&&) const;
     JS_EXPORT_PRIVATE AtomString resolveRopeToAtomString(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE RefPtr<AtomStringImpl> resolveRopeToExistingAtomString(JSGlobalObject*) const;
     template<typename CharacterType> void resolveRopeInternalNoSubstring(CharacterType*, uint8_t* stackLimit) const;
     Identifier toIdentifier(JSGlobalObject*) const;
     void outOfMemory(JSGlobalObject* nullOrGlobalObjectForOOM) const;
-    StringView unsafeView(JSGlobalObject*) const;
-    StringViewWithUnderlyingString viewWithUnderlyingString(JSGlobalObject*) const;
+    GCOwnedDataScope<StringView> view(JSGlobalObject*) const;
 
     JSString* fiber0() const
     {
@@ -883,13 +884,13 @@ ALWAYS_INLINE AtomString JSString::toExistingAtomString(JSGlobalObject* globalOb
     return AtomStringImpl::lookUp(valueInternal().impl());
 }
 
-inline const String& JSString::value(JSGlobalObject* globalObject) const
+inline GCOwnedDataScope<const String&> JSString::value(JSGlobalObject* globalObject) const
 {
     if constexpr (validateDFGDoesGC)
         vm().verifyCanGC();
     if (isRope())
-        return static_cast<const JSRopeString*>(this)->resolveRope(globalObject);
-    return valueInternal();
+        return { this, static_cast<const JSRopeString*>(this)->resolveRope(globalObject) };
+    return { this, valueInternal() };
 }
 
 inline void JSString::value(jsstring_iterator* iterator) const
@@ -910,18 +911,18 @@ inline void JSString::value(jsstring_iterator* iterator) const
     }
 }
 
-inline const String& JSString::tryGetValue(bool allocationAllowed) const
+inline GCOwnedDataScope<const String&> JSString::tryGetValue(bool allocationAllowed) const
 {
     if (allocationAllowed) {
         if constexpr (validateDFGDoesGC)
             vm().verifyCanGC();
         if (isRope()) {
             // Pass nullptr for the JSGlobalObject so that resolveRope does not throw in the event of an OOM error.
-            return static_cast<const JSRopeString*>(this)->resolveRope(nullptr);
+            return { this, static_cast<const JSRopeString*>(this)->resolveRope(nullptr) };
         }
     } else
         RELEASE_ASSERT(!isRope());
-    return valueInternal();
+    return { this, valueInternal() };
 }
 
 inline JSString* JSString::getIndex(JSGlobalObject* globalObject, unsigned i)
@@ -929,7 +930,7 @@ inline JSString* JSString::getIndex(JSGlobalObject* globalObject, unsigned i)
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(canGetIndex(i));
-    StringView view = unsafeView(globalObject);
+    auto view = this->view(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
     return jsSingleCharacterString(vm, view[i]);
 }
@@ -1152,41 +1153,24 @@ inline bool isJSString(JSValue v)
     return v.isCell() && isJSString(v.asCell());
 }
 
-ALWAYS_INLINE StringView JSRopeString::unsafeView(JSGlobalObject* globalObject) const
-{
-    if constexpr (validateDFGDoesGC)
-        vm().verifyCanGC();
-    if (isSubstring())
-        return StringView { substringBase()->valueInternal() }.substring(substringOffset(), length());
-    return resolveRope(globalObject);
-}
-
-ALWAYS_INLINE StringViewWithUnderlyingString JSRopeString::viewWithUnderlyingString(JSGlobalObject* globalObject) const
+ALWAYS_INLINE GCOwnedDataScope<StringView> JSRopeString::view(JSGlobalObject* globalObject) const
 {
     if constexpr (validateDFGDoesGC)
         vm().verifyCanGC();
     if (isSubstring()) {
         auto& base = substringBase()->valueInternal();
-        return { StringView { base }.substring(substringOffset(), length()), base };
+        // We return the substring as that's the owner and JSStringJoiner will end up retaining a reference to the underlying string.
+        return { substringBase(), StringView { base }.substring(substringOffset(), length()) };
     }
     auto& string = resolveRope(globalObject);
-    return { string, string };
+    return { this, string };
 }
 
-ALWAYS_INLINE StringView JSString::unsafeView(JSGlobalObject* globalObject) const
-{
-    if constexpr (validateDFGDoesGC)
-        vm().verifyCanGC();
-    if (isRope())
-        return static_cast<const JSRopeString*>(this)->unsafeView(globalObject);
-    return valueInternal();
-}
-
-ALWAYS_INLINE StringViewWithUnderlyingString JSString::viewWithUnderlyingString(JSGlobalObject* globalObject) const
+ALWAYS_INLINE GCOwnedDataScope<StringView> JSString::view(JSGlobalObject* globalObject) const
 {
     if (isRope())
-        return static_cast<const JSRopeString&>(*this).viewWithUnderlyingString(globalObject);
-    return { valueInternal(), valueInternal() };
+        return static_cast<const JSRopeString&>(*this).view(globalObject);
+    return { this, valueInternal() };
 }
 
 inline bool JSString::isSubstring() const

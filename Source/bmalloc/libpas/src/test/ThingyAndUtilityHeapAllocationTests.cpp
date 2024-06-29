@@ -294,7 +294,7 @@ public:
     
     void* allocate() const override
     {
-        return thingy_try_allocate_primitive(m_objectSize);
+        return thingy_try_allocate_primitive(m_objectSize, pas_non_compact_allocation_mode);
     }
 
     pas_heap* heap() const override
@@ -323,7 +323,7 @@ public:
     
     void* allocate() const override
     {
-        return thingy_try_reallocate_primitive(nullptr, m_objectSize);
+        return thingy_try_reallocate_primitive(nullptr, m_objectSize, pas_non_compact_allocation_mode);
     }
 
     pas_heap* heap() const override
@@ -353,7 +353,7 @@ public:
     
     void* allocate() const override
     {
-        void* result = thingy_try_allocate_primitive_with_alignment(m_objectSize, m_alignment);
+        void* result = thingy_try_allocate_primitive_with_alignment(m_objectSize, m_alignment, pas_non_compact_allocation_mode);
         CHECK(pas_is_aligned(reinterpret_cast<uintptr_t>(result), m_alignment));
         return result;
     }
@@ -402,7 +402,7 @@ public:
     
     void* allocate() const override
     {
-        void* result = thingy_try_allocate(m_heapRef);
+        void* result = thingy_try_allocate(m_heapRef, pas_non_compact_allocation_mode);
         CHECK(pas_is_aligned(reinterpret_cast<uintptr_t>(result),
                              pas_simple_type_alignment(reinterpret_cast<pas_simple_type>(m_heapRef->type))));
         return result;
@@ -441,7 +441,7 @@ public:
     
     void* allocate() const override
     {
-        void* result = thingy_try_allocate_array(m_heapRef, m_count, m_alignment);
+        void* result = thingy_try_allocate_array(m_heapRef, m_count, m_alignment, pas_non_compact_allocation_mode);
         CHECK(pas_is_aligned(reinterpret_cast<uintptr_t>(result),
                              pas_simple_type_alignment(reinterpret_cast<pas_simple_type>(m_heapRef->type))));
         CHECK(pas_is_aligned(reinterpret_cast<uintptr_t>(result), m_alignment));
@@ -738,7 +738,7 @@ void testFreeListRefillSpans(unsigned prewarmObjectSize,
 
     if (prewarmObjectSize) {
         // Need this to skip the weird page at the start of the megapage.
-        thingy_try_allocate_primitive(prewarmObjectSize);
+        thingy_try_allocate_primitive(prewarmObjectSize, pas_non_compact_allocation_mode);
 
 #if PAS_ENABLE_TESTING
         thingy_allocator_counts.slow_paths = 0;
@@ -764,7 +764,7 @@ void testFreeListRefillSpans(unsigned prewarmObjectSize,
         unsigned numberOfObjectsInThisSpan = span ? numberOfObjectsPerSpan : numberOfObjectsInLastSpan;
         vector<void*> objectsInThisSpan;
         for (unsigned objectIndex = numberOfObjectsInThisSpan; objectIndex--;) {
-            void* ptr = thingy_try_allocate_primitive(objectSize);
+            void* ptr = thingy_try_allocate_primitive(objectSize, pas_non_compact_allocation_mode);
             CHECK(ptr);
             CHECK_EQUAL(pas_get_object_kind(ptr, THINGY_HEAP_CONFIG),
                         pas_object_kind_for_segregated_variant(variant));
@@ -795,7 +795,7 @@ void testFreeListRefillSpans(unsigned prewarmObjectSize,
     flushDeallocationLogAndStopAllocators();
     
     for (unsigned objectIndex = numberOfObjectsFreed; objectIndex--;) {
-        void* ptr = thingy_try_allocate_primitive(objectSize);
+        void* ptr = thingy_try_allocate_primitive(objectSize, pas_non_compact_allocation_mode);
         CHECK(ptr);
         CHECK(freedObject.count(ptr));
         freedObject.erase(ptr);
@@ -848,7 +848,7 @@ void testInternalScavenge(unsigned firstObjectSize,
         pas_page_sharing_pool_verify(
             &pas_physical_page_sharing_pool,
             pas_lock_is_not_held);
-        void* object = thingy_try_allocate_primitive(firstObjectSize);
+        void* object = thingy_try_allocate_primitive(firstObjectSize, pas_non_compact_allocation_mode);
         CHECK(object);
         CHECK(!objects.count(object));
         objects.insert(object);
@@ -895,7 +895,7 @@ void testInternalScavenge(unsigned firstObjectSize,
             // reusing pages from the first size class.
             CHECK(pas_page_sharing_pool_has_current_participant(&pas_physical_page_sharing_pool));
         }
-        void* object = thingy_try_allocate_primitive(secondObjectSize);
+        void* object = thingy_try_allocate_primitive(secondObjectSize, pas_non_compact_allocation_mode);
     
         CHECK(object);
         CHECK(!objects.count(object));
@@ -929,7 +929,7 @@ void testInternalScavenge(unsigned firstObjectSize,
         pas_page_sharing_pool_verify(
             &pas_physical_page_sharing_pool,
             pas_lock_is_not_held);
-        void* object = thingy_try_allocate_primitive(firstObjectSize);
+        void* object = thingy_try_allocate_primitive(firstObjectSize, pas_non_compact_allocation_mode);
         CHECK(object);
         CHECK(!objects.count(object));
         objects.insert(object);
@@ -963,7 +963,7 @@ void testInternalScavengeFromCorrectDirectory(size_t firstSize, size_t secondSiz
     pas_physical_page_sharing_pool_balancing_enabled_for_utility = false;
     pas_large_utility_free_heap_talks_to_large_sharing_pool = false;
 
-    void* object1 = thingy_try_allocate_primitive(firstSize);
+    void* object1 = thingy_try_allocate_primitive(firstSize, pas_non_compact_allocation_mode);
     CHECK(object1);
 
     pas_segregated_view view1 = pas_segregated_view_for_object(reinterpret_cast<uintptr_t>(object1),
@@ -991,7 +991,7 @@ void testInternalScavengeFromCorrectDirectory(size_t firstSize, size_t secondSiz
         pas_segregated_directory_get(&directory1->base, 0),
         view1);
     
-    void* object2 = thingy_try_allocate_primitive(secondSize);
+    void* object2 = thingy_try_allocate_primitive(secondSize, pas_non_compact_allocation_mode);
     CHECK(object2);
 
     pas_segregated_view view2 = pas_segregated_view_for_object(reinterpret_cast<uintptr_t>(object2),
@@ -1057,7 +1057,7 @@ void testInternalScavengeFromCorrectDirectory(size_t firstSize, size_t secondSiz
         pas_segregated_directory_get(&directory2->base, 0),
         view2);
     
-    void* object3 = thingy_try_allocate_primitive(thirdSize);
+    void* object3 = thingy_try_allocate_primitive(thirdSize, pas_non_compact_allocation_mode);
     CHECK(object3);
 
     pas_segregated_view view3 = pas_segregated_view_for_object(reinterpret_cast<uintptr_t>(object3),
@@ -1189,14 +1189,14 @@ void testSpuriousEligibility()
     
     vector<void*> firstObjects;
     for (unsigned i = numberOfObjectsInFirstSpan; i--;)
-        firstObjects.push_back(thingy_try_allocate_primitive(objectSize));
+        firstObjects.push_back(thingy_try_allocate_primitive(objectSize,pas_non_compact_allocation_mode));
     
     if (verbose)
         cout << "Allocating second span of objects.\n";
     
     vector<void*> secondObjects;
     for (unsigned i = numberOfObjectsInSecondSpan; i--;)
-        secondObjects.push_back(thingy_try_allocate_primitive(objectSize));
+        secondObjects.push_back(thingy_try_allocate_primitive(objectSize, pas_non_compact_allocation_mode));
     
     if (verbose)
         cout << "Shrinking.\n";
@@ -1218,7 +1218,7 @@ void testSpuriousEligibility()
         cout << "Reallocating first span of objects.\n";
     
     for (void* object : firstObjects) {
-        void* reallocatedObject = thingy_try_allocate_primitive(objectSize);
+        void* reallocatedObject = thingy_try_allocate_primitive(objectSize,pas_non_compact_allocation_mode);
         CHECK_EQUAL(reallocatedObject, object);
     }
 
@@ -1237,7 +1237,7 @@ void testSpuriousEligibility()
         cout << "Reallocating second span of objects.\n";
     
     for (void* object : secondObjects) {
-        void* reallocatedObject = thingy_try_allocate_primitive(objectSize);
+        void* reallocatedObject = thingy_try_allocate_primitive(objectSize, pas_non_compact_allocation_mode);
         CHECK_EQUAL(reallocatedObject, object);
     }
 
@@ -1246,7 +1246,7 @@ void testSpuriousEligibility()
     
     flushDeallocationLogAndStopAllocators();
 
-    thingy_try_allocate_primitive(objectSize);
+    thingy_try_allocate_primitive(objectSize, pas_non_compact_allocation_mode);
     
     flushDeallocationLogAndStopAllocators();
     
@@ -1259,11 +1259,11 @@ void testSpuriousEligibility()
     flushDeallocationLogAndStopAllocators();
     
     for (void* object : firstObjects) {
-        void* reallocatedObject = thingy_try_allocate_primitive(objectSize);
+        void* reallocatedObject = thingy_try_allocate_primitive(objectSize, pas_non_compact_allocation_mode);
         CHECK_EQUAL(reallocatedObject, object);
     }
     for (void* object : secondObjects) {
-        void* reallocatedObject = thingy_try_allocate_primitive(objectSize);
+        void* reallocatedObject = thingy_try_allocate_primitive(objectSize, pas_non_compact_allocation_mode);
         CHECK_EQUAL(reallocatedObject, object);
     }
 
@@ -1272,13 +1272,13 @@ void testSpuriousEligibility()
 
 void testBasicSizeClassNotSet()
 {
-    (thread([&] () { thingy_try_allocate_primitive(2); })).join();
-    (thread([&] () { thingy_try_allocate_primitive(1); })).join();
+    (thread([&] () { thingy_try_allocate_primitive(2, pas_non_compact_allocation_mode); })).join();
+    (thread([&] () { thingy_try_allocate_primitive(1, pas_non_compact_allocation_mode); })).join();
 }
 
 void testSmallDoubleFree()
 {
-    void* ptr = thingy_try_allocate_primitive(1);
+    void* ptr = thingy_try_allocate_primitive(1, pas_non_compact_allocation_mode);
     CHECK(ptr);
     thingy_deallocate(ptr);
     DeallocationShouldFail deallocationShouldFail;
@@ -1288,7 +1288,7 @@ void testSmallDoubleFree()
 
 void testSmallFreeInner()
 {
-    void* ptr = thingy_try_allocate_primitive(32);
+    void* ptr = thingy_try_allocate_primitive(32, pas_non_compact_allocation_mode);
     CHECK(ptr);
     DeallocationShouldFail deallocationShouldFail;
     thingy_deallocate(reinterpret_cast<char*>(ptr) + 16);
@@ -1296,7 +1296,7 @@ void testSmallFreeInner()
 
 void testSmallFreeNextWithShrink()
 {
-    void* ptr = thingy_try_allocate_primitive(16);
+    void* ptr = thingy_try_allocate_primitive(16, pas_non_compact_allocation_mode);
     CHECK(ptr);
     flushDeallocationLogAndStopAllocators();
     DeallocationShouldFail deallocationShouldFail;
@@ -1305,21 +1305,21 @@ void testSmallFreeNextWithShrink()
 
 void testSmallFreeNextWithoutShrink()
 {
-    void* ptr = thingy_try_allocate_primitive(16);
+    void* ptr = thingy_try_allocate_primitive(16, pas_non_compact_allocation_mode);
     CHECK(ptr);
     thingy_deallocate(ptr);
 #if !TLC
     DeallocationShouldFail deallocationShouldFail;
 #endif    
     thingy_deallocate(reinterpret_cast<char*>(ptr) + 16);
-    void* ptr2 = thingy_try_allocate_primitive(16);
+    void* ptr2 = thingy_try_allocate_primitive(16, pas_non_compact_allocation_mode);
     CHECK(ptr2 == reinterpret_cast<char*>(ptr) + 16);
     verifyHeapEmpty(&thingy_primitive_heap);
 }
 
 void testSmallFreeNextBeforeShrink()
 {
-    void* ptr = thingy_try_allocate_primitive(16);
+    void* ptr = thingy_try_allocate_primitive(16, pas_non_compact_allocation_mode);
     CHECK(ptr);
 #if !TLC
     DeallocationShouldFail deallocationShouldFail;
@@ -1392,7 +1392,7 @@ class PrimitiveComplexAllocator : public ComplexAllocator {
 public:
     void* allocate(size_t count, size_t alignment) const override
     {
-        return thingy_try_allocate_primitive_with_alignment(count, alignment);
+        return thingy_try_allocate_primitive_with_alignment(count, alignment, pas_non_compact_allocation_mode);
     }
     
     pas_heap* heap() const override
@@ -1415,7 +1415,7 @@ public:
     
     void* allocate(size_t count, size_t alignment) const override
     {
-        return thingy_try_allocate_array(m_heapRef, count, alignment);
+        return thingy_try_allocate_array(m_heapRef, count, alignment, pas_non_compact_allocation_mode);
     }
     
     pas_heap* heap() const override
@@ -1442,8 +1442,8 @@ public:
     void* allocate(size_t count, size_t alignment) const override
     {
         if (count == 1 && alignment == 1)
-            return thingy_try_allocate(m_heapRef);
-        return thingy_try_allocate_array(m_heapRef, count, alignment);
+            return thingy_try_allocate(m_heapRef, pas_non_compact_allocation_mode);
+        return thingy_try_allocate_array(m_heapRef, count, alignment, pas_non_compact_allocation_mode);
     }
     
     pas_heap* heap() const override
@@ -1692,7 +1692,7 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
         unsigned size = deterministicRandomNumber(5000);
         
         if (heapIndex == isolatedHeaps.size()) {
-            void* ptr = thingy_try_allocate_primitive(size);
+            void* ptr = thingy_try_allocate_primitive(size, pas_non_compact_allocation_mode);
             addObject(ptr, size);
             return;
         }
@@ -1703,9 +1703,9 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
             count * pas_simple_type_size(reinterpret_cast<pas_simple_type>(heap->type)));
         void* ptr;
         if (count <= 1)
-            ptr = thingy_try_allocate(heap);
+            ptr = thingy_try_allocate(heap, pas_non_compact_allocation_mode);
         else
-            ptr = thingy_try_allocate_array(heap, count, 1);
+            ptr = thingy_try_allocate_array(heap, count, 1, pas_non_compact_allocation_mode);
         addObject(ptr, size);
     };
     
@@ -1972,9 +1972,9 @@ void testCombinedAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
         if (heapIndex == isolatedHeaps.size()) {
             void* ptr;
             if (calloc)
-                ptr = thingy_try_allocate_primitive_zeroed(size);
+                ptr = thingy_try_allocate_primitive_zeroed(size, pas_non_compact_allocation_mode);
             else
-                ptr = thingy_try_allocate_primitive(size);
+                ptr = thingy_try_allocate_primitive(size, pas_non_compact_allocation_mode);
             addObject(ptr, size, false);
             return;
         }
@@ -1986,14 +1986,14 @@ void testCombinedAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
         void* ptr;
         if (count <= 1) {
             if (calloc)
-                ptr = thingy_try_allocate_zeroed(heap);
+                ptr = thingy_try_allocate_zeroed(heap, pas_non_compact_allocation_mode);
             else
-                ptr = thingy_try_allocate(heap);
+                ptr = thingy_try_allocate(heap, pas_non_compact_allocation_mode);
         } else {
             if (calloc)
-                ptr = thingy_try_allocate_zeroed_array(heap, count, 1);
+                ptr = thingy_try_allocate_zeroed_array(heap, count, 1, pas_non_compact_allocation_mode);
             else
-                ptr = thingy_try_allocate_array(heap, count, 1);
+                ptr = thingy_try_allocate_array(heap, count, 1, pas_non_compact_allocation_mode);
         }
         addObject(ptr, size, false);
     };
@@ -2085,7 +2085,7 @@ void testCombinedAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
 
 void testLargeDoubleFree()
 {
-    void* ptr = thingy_try_allocate_primitive(10000);
+    void* ptr = thingy_try_allocate_primitive(10000, pas_non_compact_allocation_mode);
     CHECK(ptr);
     thingy_deallocate(ptr);
     DeallocationShouldFail deallocationShouldFail;
@@ -2094,7 +2094,7 @@ void testLargeDoubleFree()
 
 void testLargeOffsetFree()
 {
-    void* ptr = thingy_try_allocate_primitive(10000);
+    void* ptr = thingy_try_allocate_primitive(10000, pas_non_compact_allocation_mode);
     CHECK(ptr);
     DeallocationShouldFail deallocationShouldFail;
     thingy_deallocate(reinterpret_cast<char*>(ptr) + 1);
@@ -2114,11 +2114,11 @@ void testReallocatePrimitive(size_t originalSize, size_t expectedOriginalSize,
     pas_scavenger_suspend();
 
     for (size_t i = count; i--;) {
-        void* originalObject = thingy_try_allocate_primitive(originalSize);
+        void* originalObject = thingy_try_allocate_primitive(originalSize, pas_non_compact_allocation_mode);
         CHECK(originalObject);
         CHECK_EQUAL(thingy_get_allocation_size(originalObject), expectedOriginalSize);
         
-        void* newObject = thingy_try_reallocate_primitive(originalObject, newSize);
+        void* newObject = thingy_try_reallocate_primitive(originalObject, newSize, pas_non_compact_allocation_mode);
         CHECK(newObject);
         CHECK_EQUAL(thingy_get_allocation_size(newObject), expectedNewSize);
         
@@ -2138,11 +2138,11 @@ void testReallocateArray(size_t typeSize, size_t typeAlignment,
     pas_heap_ref* heapRef = createIsolatedHeapRef(typeSize, typeAlignment);
     
     for (size_t i = count; i--;) {
-        void* originalObject = thingy_try_allocate_array(heapRef, originalCount, 1);
+        void* originalObject = thingy_try_allocate_array(heapRef, originalCount, 1, pas_non_compact_allocation_mode);
         CHECK(originalObject);
         CHECK_EQUAL(thingy_get_allocation_size(originalObject), expectedOriginalSize);
         
-        void* newObject = thingy_try_reallocate_array(originalObject, heapRef, newCount);
+        void* newObject = thingy_try_reallocate_array(originalObject, heapRef, newCount, pas_non_compact_allocation_mode);
         CHECK(newObject);
         CHECK_EQUAL(thingy_get_allocation_size(newObject), expectedNewSize);
         

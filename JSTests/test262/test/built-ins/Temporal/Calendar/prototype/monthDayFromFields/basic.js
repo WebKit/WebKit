@@ -29,7 +29,7 @@ const options = [
 ];
 options.forEach((opt) => {
   const optionsDesc = opt && JSON.stringify(opt);
-  result = cal.monthDayFromFields({ year: 2021, month: 7, day: 3 }, opt);
+  let result = cal.monthDayFromFields({ year: 2021, month: 7, day: 3 }, opt);
   TemporalHelpers.assertPlainMonthDay(result, "M07", 3, `month 7, day 3, with year, options = ${optionsDesc}`);
   result = cal.monthDayFromFields({ year: 2021, month: 12, day: 31 }, opt);
   TemporalHelpers.assertPlainMonthDay(result, "M12", 31, `month 12, day 31, with year, options = ${optionsDesc}`);
@@ -40,7 +40,7 @@ options.forEach((opt) => {
 });
 
 TemporalHelpers.ISOMonths.forEach(({ month, monthCode, daysInMonth }) => {
-  result = cal.monthDayFromFields({ month, day: daysInMonth });
+  let result = cal.monthDayFromFields({ month, day: daysInMonth });
   TemporalHelpers.assertPlainMonthDay(result, monthCode, daysInMonth, `month ${month}, day ${daysInMonth}`);
 
   result = cal.monthDayFromFields({ monthCode, day: daysInMonth });

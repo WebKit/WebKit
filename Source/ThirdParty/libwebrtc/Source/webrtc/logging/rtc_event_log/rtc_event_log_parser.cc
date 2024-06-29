@@ -53,7 +53,7 @@ using webrtc_event_logging::ToUnsigned;
 namespace webrtc {
 
 namespace {
-constexpr int64_t kMaxLogSize = 250000000;
+constexpr size_t kMaxLogSize = 250000000;
 
 constexpr size_t kIpv4Overhead = 20;
 constexpr size_t kIpv6Overhead = 40;
@@ -163,22 +163,29 @@ IceCandidatePairConfigType GetRuntimeIceCandidatePairConfigType(
   return IceCandidatePairConfigType::kAdded;
 }
 
-IceCandidateType GetRuntimeIceCandidateType(
-    rtclog::IceCandidatePairConfig::IceCandidateType type) {
-  switch (type) {
+// Converts a log type (proto based) to a matching `IceCandidateType` value
+// and checks for validity of the log type (since the enums aren't a perfect
+// match).
+bool GetRuntimeIceCandidateType(
+    rtclog::IceCandidatePairConfig::IceCandidateType log_type,
+    IceCandidateType& parsed_type) {
+  switch (log_type) {
     case rtclog::IceCandidatePairConfig::LOCAL:
-      return IceCandidateType::kLocal;
+      parsed_type = IceCandidateType::kHost;
+      break;
     case rtclog::IceCandidatePairConfig::STUN:
-      return IceCandidateType::kStun;
+      parsed_type = IceCandidateType::kSrflx;
+      break;
     case rtclog::IceCandidatePairConfig::PRFLX:
-      return IceCandidateType::kPrflx;
+      parsed_type = IceCandidateType::kPrflx;
+      break;
     case rtclog::IceCandidatePairConfig::RELAY:
-      return IceCandidateType::kRelay;
-    case rtclog::IceCandidatePairConfig::UNKNOWN_CANDIDATE_TYPE:
-      return IceCandidateType::kUnknown;
+      parsed_type = IceCandidateType::kRelay;
+      break;
+    default:
+      return false;
   }
-  RTC_DCHECK_NOTREACHED();
-  return IceCandidateType::kUnknown;
+  return true;
 }
 
 IceCandidatePairProtocol GetRuntimeIceCandidatePairProtocol(
@@ -264,12 +271,11 @@ VideoCodecType GetRuntimeCodecType(rtclog2::FrameDecodedEvents::Codec codec) {
     case rtclog2::FrameDecodedEvents::CODEC_H265:
       return VideoCodecType::kVideoCodecH265;
     case rtclog2::FrameDecodedEvents::CODEC_UNKNOWN:
-      RTC_LOG(LS_ERROR) << "Unknown codec type. Assuming "
-                           "VideoCodecType::kVideoCodecMultiplex";
-      return VideoCodecType::kVideoCodecMultiplex;
+      RTC_LOG(LS_ERROR) << "Unknown codec type. Returning generic.";
+      return VideoCodecType::kVideoCodecGeneric;
   }
   RTC_DCHECK_NOTREACHED();
-  return VideoCodecType::kVideoCodecMultiplex;
+  return VideoCodecType::kVideoCodecGeneric;
 }
 
 ParsedRtcEventLog::ParseStatus GetHeaderExtensions(
@@ -352,13 +358,10 @@ ParsedRtcEventLog::ParseStatus StoreRtpPackets(
     }
     if (proto.has_audio_level()) {
       RTC_PARSE_CHECK_OR_RETURN(proto.has_voice_activity());
-      header.extension.hasAudioLevel = true;
-      header.extension.voiceActivity =
-          rtc::checked_cast<bool>(proto.voice_activity());
-      const uint8_t audio_level =
-          rtc::checked_cast<uint8_t>(proto.audio_level());
-      RTC_PARSE_CHECK_OR_RETURN_LE(audio_level, 0x7Fu);
-      header.extension.audioLevel = audio_level;
+      bool voice_activity = rtc::checked_cast<bool>(proto.voice_activity());
+      int audio_level = rtc::checked_cast<int>(proto.audio_level());
+      RTC_PARSE_CHECK_OR_RETURN_LE(audio_level, 0x7F);
+      header.extension.set_audio_level(AudioLevel(voice_activity, audio_level));
     } else {
       RTC_PARSE_CHECK_OR_RETURN(!proto.has_voice_activity());
     }
@@ -556,13 +559,11 @@ ParsedRtcEventLog::ParseStatus StoreRtpPackets(
     if (audio_level_values.size() > i && audio_level_values[i].has_value()) {
       RTC_PARSE_CHECK_OR_RETURN(voice_activity_values.size() > i &&
                                 voice_activity_values[i].has_value());
-      header.extension.hasAudioLevel = true;
-      header.extension.voiceActivity =
+      bool voice_activity =
           rtc::checked_cast<bool>(voice_activity_values[i].value());
-      const uint8_t audio_level =
-          rtc::checked_cast<uint8_t>(audio_level_values[i].value());
-      RTC_PARSE_CHECK_OR_RETURN_LE(audio_level, 0x7Fu);
-      header.extension.audioLevel = audio_level;
+      int audio_level = rtc::checked_cast<int>(audio_level_values[i].value());
+      RTC_PARSE_CHECK_OR_RETURN_LE(audio_level, 0x7F);
+      header.extension.set_audio_level(AudioLevel(voice_activity, audio_level));
     } else {
       RTC_PARSE_CHECK_OR_RETURN(voice_activity_values.size() <= i ||
                                 !voice_activity_values[i].has_value());
@@ -806,18 +807,39 @@ IceCandidateType GetRuntimeIceCandidateType(
     rtclog2::IceCandidatePairConfig::IceCandidateType type) {
   switch (type) {
     case rtclog2::IceCandidatePairConfig::LOCAL:
-      return IceCandidateType::kLocal;
+      return IceCandidateType::kHost;
     case rtclog2::IceCandidatePairConfig::STUN:
-      return IceCandidateType::kStun;
+      return IceCandidateType::kSrflx;
     case rtclog2::IceCandidatePairConfig::PRFLX:
       return IceCandidateType::kPrflx;
     case rtclog2::IceCandidatePairConfig::RELAY:
       return IceCandidateType::kRelay;
-    case rtclog2::IceCandidatePairConfig::UNKNOWN_CANDIDATE_TYPE:
-      return IceCandidateType::kUnknown;
+    default:
+      RTC_DCHECK_NOTREACHED();
+      return IceCandidateType::kHost;
   }
-  RTC_DCHECK_NOTREACHED();
-  return IceCandidateType::kUnknown;
+}
+
+bool GetRuntimeIceCandidateType(
+    rtclog2::IceCandidatePairConfig::IceCandidateType log_type,
+    IceCandidateType& parsed_type) {
+  switch (log_type) {
+    case rtclog2::IceCandidatePairConfig::LOCAL:
+      parsed_type = IceCandidateType::kHost;
+      break;
+    case rtclog2::IceCandidatePairConfig::STUN:
+      parsed_type = IceCandidateType::kSrflx;
+      break;
+    case rtclog2::IceCandidatePairConfig::PRFLX:
+      parsed_type = IceCandidateType::kPrflx;
+      break;
+    case rtclog2::IceCandidatePairConfig::RELAY:
+      parsed_type = IceCandidateType::kRelay;
+      break;
+    default:
+      return false;
+  }
+  return true;
 }
 
 IceCandidatePairProtocol GetRuntimeIceCandidatePairProtocol(
@@ -1008,7 +1030,7 @@ ParsedRtcEventLog::GetDefaultHeaderExtensionMap() {
   constexpr int kDependencyDescriptorDefaultId = 9;
 
   webrtc::RtpHeaderExtensionMap default_map(/*extmap_allow_mixed=*/true);
-  default_map.Register<AudioLevel>(kAudioLevelDefaultId);
+  default_map.Register<AudioLevelExtension>(kAudioLevelDefaultId);
   default_map.Register<TransmissionOffset>(kTimestampOffsetDefaultId);
   default_map.Register<AbsoluteSendTime>(kAbsSendTimeDefaultId);
   default_map.Register<VideoOrientation>(kVideoRotationDefaultId);
@@ -1105,17 +1127,17 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::ParseFile(
   }
 
   // Compute file size.
-  long signed_filesize = file.FileSize();  // NOLINT(runtime/int)
-  RTC_PARSE_CHECK_OR_RETURN_GE(signed_filesize, 0);
-  RTC_PARSE_CHECK_OR_RETURN_LE(signed_filesize, kMaxLogSize);
-  size_t filesize = rtc::checked_cast<size_t>(signed_filesize);
+  absl::optional<size_t> file_size = file.FileSize();
+  RTC_PARSE_CHECK_OR_RETURN(file_size.has_value());
+  RTC_PARSE_CHECK_OR_RETURN_GE(*file_size, 0u);
+  RTC_PARSE_CHECK_OR_RETURN_LE(*file_size, kMaxLogSize);
 
   // Read file into memory.
-  std::string buffer(filesize, '\0');
+  std::string buffer(*file_size, '\0');
   size_t bytes_read = file.Read(&buffer[0], buffer.size());
-  if (bytes_read != filesize) {
+  if (bytes_read != *file_size) {
     RTC_LOG(LS_WARNING) << "Failed to read file " << filename;
-    RTC_PARSE_CHECK_OR_RETURN_EQ(bytes_read, filesize);
+    RTC_PARSE_CHECK_OR_RETURN_EQ(bytes_read, *file_size);
   }
 
   return ParseStream(buffer);
@@ -2142,8 +2164,8 @@ ParsedRtcEventLog::GetIceCandidatePairConfig(
   RTC_PARSE_CHECK_OR_RETURN(config.has_candidate_pair_id());
   res.candidate_pair_id = config.candidate_pair_id();
   RTC_PARSE_CHECK_OR_RETURN(config.has_local_candidate_type());
-  res.local_candidate_type =
-      GetRuntimeIceCandidateType(config.local_candidate_type());
+  RTC_PARSE_CHECK_OR_RETURN(GetRuntimeIceCandidateType(
+      config.local_candidate_type(), res.local_candidate_type));
   RTC_PARSE_CHECK_OR_RETURN(config.has_local_relay_protocol());
   res.local_relay_protocol =
       GetRuntimeIceCandidatePairProtocol(config.local_relay_protocol());
@@ -2154,8 +2176,8 @@ ParsedRtcEventLog::GetIceCandidatePairConfig(
   res.local_address_family =
       GetRuntimeIceCandidatePairAddressFamily(config.local_address_family());
   RTC_PARSE_CHECK_OR_RETURN(config.has_remote_candidate_type());
-  res.remote_candidate_type =
-      GetRuntimeIceCandidateType(config.remote_candidate_type());
+  RTC_PARSE_CHECK_OR_RETURN(GetRuntimeIceCandidateType(
+      config.remote_candidate_type(), res.remote_candidate_type));
   RTC_PARSE_CHECK_OR_RETURN(config.has_remote_address_family());
   res.remote_address_family =
       GetRuntimeIceCandidatePairAddressFamily(config.remote_address_family());
@@ -2242,13 +2264,13 @@ std::vector<InferredRouteChangeEvent> ParsedRtcEventLog::GetRouteChanges()
       if (candidate.remote_address_family ==
           IceCandidatePairAddressFamily::kIpv6)
         route.send_overhead += kIpv6Overhead - kIpv4Overhead;
-      if (candidate.remote_candidate_type != IceCandidateType::kLocal)
+      if (candidate.remote_candidate_type != IceCandidateType::kHost)
         route.send_overhead += kStunOverhead;
       route.return_overhead = kUdpOverhead + kSrtpOverhead + kIpv4Overhead;
       if (candidate.remote_address_family ==
           IceCandidatePairAddressFamily::kIpv6)
         route.return_overhead += kIpv6Overhead - kIpv4Overhead;
-      if (candidate.remote_candidate_type != IceCandidateType::kLocal)
+      if (candidate.remote_candidate_type != IceCandidateType::kHost)
         route.return_overhead += kStunOverhead;
       route_changes.push_back(route);
     }
@@ -3498,8 +3520,8 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreIceCandidatePairConfig(
   RTC_PARSE_CHECK_OR_RETURN(proto.has_candidate_pair_id());
   ice_config.candidate_pair_id = proto.candidate_pair_id();
   RTC_PARSE_CHECK_OR_RETURN(proto.has_local_candidate_type());
-  ice_config.local_candidate_type =
-      GetRuntimeIceCandidateType(proto.local_candidate_type());
+  RTC_PARSE_CHECK_OR_RETURN(GetRuntimeIceCandidateType(
+      proto.local_candidate_type(), ice_config.local_candidate_type));
   RTC_PARSE_CHECK_OR_RETURN(proto.has_local_relay_protocol());
   ice_config.local_relay_protocol =
       GetRuntimeIceCandidatePairProtocol(proto.local_relay_protocol());
@@ -3510,8 +3532,8 @@ ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreIceCandidatePairConfig(
   ice_config.local_address_family =
       GetRuntimeIceCandidatePairAddressFamily(proto.local_address_family());
   RTC_PARSE_CHECK_OR_RETURN(proto.has_remote_candidate_type());
-  ice_config.remote_candidate_type =
-      GetRuntimeIceCandidateType(proto.remote_candidate_type());
+  RTC_PARSE_CHECK_OR_RETURN(GetRuntimeIceCandidateType(
+      proto.remote_candidate_type(), ice_config.remote_candidate_type));
   RTC_PARSE_CHECK_OR_RETURN(proto.has_remote_address_family());
   ice_config.remote_address_family =
       GetRuntimeIceCandidatePairAddressFamily(proto.remote_address_family());

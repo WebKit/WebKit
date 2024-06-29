@@ -10,7 +10,7 @@
  */
 #include <immintrin.h>  // AVX2
 
-#include "config/aom_dsp_rtcd.h"
+#include "config/av1_rtcd.h"
 #include "aom_dsp/x86/synonyms.h"
 
 static int64_t k_means_horizontal_sum_avx2(__m256i a) {

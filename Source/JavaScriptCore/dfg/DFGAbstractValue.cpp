@@ -524,7 +524,9 @@ void AbstractValue::validateReferences(const TrackedReferences& trackedReference
 #if USE(JSVALUE64) && !defined(NDEBUG)
 void AbstractValue::ensureCanInitializeWithZeros()
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     std::aligned_storage<sizeof(AbstractValue), alignof(AbstractValue)>::type zeroFilledStorage;
+    ALLOW_DEPRECATED_DECLARATIONS_END
     memset(static_cast<void*>(&zeroFilledStorage), 0, sizeof(AbstractValue));
     ASSERT(*this == *static_cast<AbstractValue*>(static_cast<void*>(&zeroFilledStorage)));
 }

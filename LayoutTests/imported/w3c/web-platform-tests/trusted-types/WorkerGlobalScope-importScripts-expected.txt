@@ -6,9 +6,9 @@ PASS importScripts with two URLs, both trusted, in dedicated worker
 PASS importScripts with two URLs, both strings, in dedicated worker
 PASS importScripts with two URLs, one trusted, in dedicated worker
 PASS importScripts with untrusted URLs and default policy works in dedicated worker
-PASS importScripts with one trusted and one untrusted URLs and default policy works in dedicated worker
 PASS importScripts with TrustedScriptURL works in service worker
 PASS importScripts with untrusted URLs throws in service worker
+PASS importScripts with one trusted and one untrusted URLs and default policy works in dedicated worker
 PASS null is not a trusted script URL throws in service worker
 PASS importScripts with two URLs, both trusted, in service worker
 PASS importScripts with two URLs, both strings, in service worker

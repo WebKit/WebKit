@@ -45,6 +45,7 @@ class ScrollbarsControllerMock final : public ScrollbarsController {
 public:
     ScrollbarsControllerMock(ScrollableArea&, Function<void(const String&)>&&);
     virtual ~ScrollbarsControllerMock();
+    bool isScrollbarsControllerMock() const final { return true; }
 
 private:
 
@@ -67,3 +68,6 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ScrollbarsControllerMock)
+    static bool isType(const WebCore::ScrollbarsController& controller) { return controller.isScrollbarsControllerMock(); }
+SPECIALIZE_TYPE_TRAITS_END()

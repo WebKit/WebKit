@@ -72,7 +72,7 @@ TEST_F(FragmentedSharedBufferTest, copyBufferCreatedWithContentsOfExistingFile)
     auto copy = buffer->copy();
     EXPECT_GT(buffer->size(), 0U);
     EXPECT_TRUE(buffer->size() == copy->size());
-    EXPECT_TRUE(!memcmp(buffer->data(), copy->makeContiguous()->data(), buffer->size()));
+    EXPECT_TRUE(!memcmp(buffer->span().data(), copy->makeContiguous()->span().data(), buffer->size()));
 }
 
 TEST_F(FragmentedSharedBufferTest, appendBufferCreatedWithContentsOfExistingFile)
@@ -83,8 +83,8 @@ TEST_F(FragmentedSharedBufferTest, appendBufferCreatedWithContentsOfExistingFile
     builder.append(*buffer);
     builder.append("a"_span);
     EXPECT_TRUE(builder.size() == (strlen(FragmentedSharedBufferTest::testData()) + 1));
-    EXPECT_TRUE(!memcmp(builder.get()->makeContiguous()->data(), FragmentedSharedBufferTest::testData(), strlen(FragmentedSharedBufferTest::testData())));
-    EXPECT_EQ('a', builder.get()->makeContiguous()->data()[strlen(FragmentedSharedBufferTest::testData())]);
+    EXPECT_TRUE(!memcmp(builder.get()->makeContiguous()->span().data(), FragmentedSharedBufferTest::testData(), strlen(FragmentedSharedBufferTest::testData())));
+    EXPECT_EQ('a', builder.get()->makeContiguous()->span().data()[strlen(FragmentedSharedBufferTest::testData())]);
 }
 
 TEST_F(FragmentedSharedBufferTest, tryCreateArrayBuffer)
@@ -152,7 +152,7 @@ TEST_F(FragmentedSharedBufferTest, copy)
     EXPECT_EQ(length * 4, builder1.size());
     RefPtr<FragmentedSharedBuffer> clone = builder1.copy();
     EXPECT_EQ(length * 4, clone->size());
-    EXPECT_EQ(0, memcmp(clone->makeContiguous()->data(), builder1.get()->makeContiguous()->data(), clone->size()));
+    EXPECT_EQ(0, memcmp(clone->makeContiguous()->span().data(), builder1.get()->makeContiguous()->span().data(), clone->size()));
 
     SharedBufferBuilder builder2;
     builder2.append(*clone);
@@ -225,21 +225,21 @@ TEST_F(FragmentedSharedBufferTest, getSomeData)
     auto ijkl = buffer->getSomeData(8);
     auto kl = buffer->getSomeData(10);
     auto contiguousBuffer = buffer->makeContiguous();
-    auto abcdefghijkl = contiguousBuffer->data();
+    auto abcdefghijkl = contiguousBuffer->span().data();
     auto gh2 = buffer->getSomeData(6);
     auto ghijkl = contiguousBuffer->getSomeData(6);
     auto l = buffer->getSomeData(11);
-    checkBuffer(abcd.data(), abcd.size(), "abcd");
-    checkBuffer(gh1.data(), gh1.size(), "gh");
-    checkBuffer(h.data(), h.size(), "h");
-    checkBuffer(ijkl.data(), ijkl.size(), "ijkl");
-    checkBuffer(kl.data(), kl.size(), "kl");
+    checkBuffer(abcd.span().data(), abcd.size(), "abcd");
+    checkBuffer(gh1.span().data(), gh1.size(), "gh");
+    checkBuffer(h.span().data(), h.size(), "h");
+    checkBuffer(ijkl.span().data(), ijkl.size(), "ijkl");
+    checkBuffer(kl.span().data(), kl.size(), "kl");
     checkBuffer(abcdefghijkl, buffer->size(), "abcdefghijkl");
-    checkBuffer(gh2.data(), gh2.size(), "gh");
-    checkBuffer(ghijkl.data(), ghijkl.size(), "ghijkl");
+    checkBuffer(gh2.span().data(), gh2.size(), "gh");
+    checkBuffer(ghijkl.span().data(), ghijkl.size(), "ghijkl");
     EXPECT_EQ(gh1.size(), gh2.size());
-    checkBufferWithLength(gh1.data(), gh1.size(), gh2.dataAsCharPtr(), gh2.size());
-    checkBuffer(l.data(), l.size(), "l");
+    checkBufferWithLength(gh1.span().data(), gh1.size(), byteCast<char>(gh2.span().data()), gh2.size());
+    checkBuffer(l.span().data(), l.size(), "l");
 }
 
 TEST_F(FragmentedSharedBufferTest, getContiguousData)
@@ -262,17 +262,17 @@ TEST_F(FragmentedSharedBufferTest, getContiguousData)
     auto ijk = buffer->getContiguousData(8, 3);
     auto kl = buffer->getContiguousData(10, 2);
     auto l = buffer->getContiguousData(11, 1);
-    checkBuffer(abcd->data(), abcd->size(), "abcd");
-    checkBuffer(bcdefghi->data(), bcdefghi->size(), "bcdefghi");
-    checkBuffer(gh->data(), gh->size(), "gh");
-    checkBuffer(ghij->data(), ghij->size(), "ghij");
-    checkBuffer(h->data(), h->size(), "h");
-    checkBuffer(ijk->data(), ijk->size(), "ijk");
-    checkBuffer(kl->data(), kl->size(), "kl");
-    checkBuffer(l->data(), l->size(), "l");
+    checkBuffer(abcd->span().data(), abcd->size(), "abcd");
+    checkBuffer(bcdefghi->span().data(), bcdefghi->size(), "bcdefghi");
+    checkBuffer(gh->span().data(), gh->size(), "gh");
+    checkBuffer(ghij->span().data(), ghij->size(), "ghij");
+    checkBuffer(h->span().data(), h->size(), "h");
+    checkBuffer(ijk->span().data(), ijk->size(), "ijk");
+    checkBuffer(kl->span().data(), kl->size(), "kl");
+    checkBuffer(l->span().data(), l->size(), "l");
     auto fghijkl = buffer->getContiguousData(5, 20);
     EXPECT_EQ(fghijkl->size(), buffer->size() - 5);
-    checkBuffer(fghijkl->data(), fghijkl->size(), "fghijkl");
+    checkBuffer(fghijkl->span().data(), fghijkl->size(), "fghijkl");
     auto outBound = buffer->getContiguousData(30, 20);
     EXPECT_EQ(outBound->size(), 0u);
 }

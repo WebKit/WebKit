@@ -31,6 +31,7 @@
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUDevice.h"
 #include "WebGPUQueue.h"
+#include "WebGPUTextureFormat.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/IOSurface.h>
 #include <WebCore/NativeImage.h>
@@ -56,7 +57,7 @@ void CompositorIntegrationImpl::prepareForDisplay(CompletionHandler<void()>&& co
 }
 
 #if PLATFORM(COCOA)
-Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&& colorSpace, WebCore::AlphaPremultiplication alphaMode, Device& device)
+Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&& colorSpace, WebCore::AlphaPremultiplication alphaMode, TextureFormat textureFormat, Device& device)
 {
     m_renderBuffers.clear();
     m_device = device;
@@ -69,7 +70,13 @@ Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width
     constexpr int max2DTextureSize = 16384;
     width = std::max(1, std::min(max2DTextureSize, width));
     height = std::max(1, std::min(max2DTextureSize, height));
-    auto colorFormat = alphaMode == AlphaPremultiplication::Unpremultiplied ? IOSurface::Format::BGRX : IOSurface::Format::BGRA;
+    bool isRGBA = (textureFormat == TextureFormat::Rgba8unorm || textureFormat == TextureFormat::Rgba8unormSRGB);
+    IOSurface::Format colorFormat;
+    if (isRGBA)
+        colorFormat = alphaMode == AlphaPremultiplication::Unpremultiplied ? IOSurface::Format::RGBX : IOSurface::Format::RGBA;
+    else
+        colorFormat = alphaMode == AlphaPremultiplication::Unpremultiplied ? IOSurface::Format::BGRX : IOSurface::Format::BGRA;
+
     if (auto buffer = WebCore::IOSurface::create(nullptr, WebCore::IntSize(width, height), colorSpace, IOSurface::Name::Default, colorFormat))
         m_renderBuffers.append(makeUniqueRefFromNonNullUniquePtr(WTFMove(buffer)));
     if (auto buffer = WebCore::IOSurface::create(nullptr, WebCore::IntSize(width, height), colorSpace, IOSurface::Name::Default, colorFormat))

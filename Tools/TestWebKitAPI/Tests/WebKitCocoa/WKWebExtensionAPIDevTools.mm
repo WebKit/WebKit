@@ -24,6 +24,7 @@
  */
 
 #import "config.h"
+#import "HTTPServer.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
 

@@ -17,6 +17,16 @@
 #include "aom/aom_integer.h"
 #include "aom_ports/mem.h"
 
+static INLINE int horizontal_add_u8x8(const uint8x8_t a) {
+#if AOM_ARCH_AARCH64
+  return vaddlv_u8(a);
+#else
+  uint16x4_t b = vpaddl_u8(a);
+  uint32x2_t c = vpaddl_u16(b);
+  return vget_lane_u32(c, 0) + vget_lane_u32(c, 1);
+#endif
+}
+
 static INLINE int horizontal_add_s16x8(const int16x8_t a) {
 #if AOM_ARCH_AARCH64
   return vaddlvq_s16(a);
@@ -183,6 +193,23 @@ static INLINE uint32x4_t horizontal_add_4d_u16x8(const uint16x8_t sum[4]) {
   const uint16x4_t b0 = vpadd_u16(a0, a1);
   const uint16x4_t b1 = vpadd_u16(a2, a3);
   return vpaddlq_u16(vcombine_u16(b0, b1));
+#endif
+}
+
+static INLINE int32x4_t horizontal_add_4d_s16x8(const int16x8_t sum[4]) {
+#if AOM_ARCH_AARCH64
+  const int16x8_t a0 = vpaddq_s16(sum[0], sum[1]);
+  const int16x8_t a1 = vpaddq_s16(sum[2], sum[3]);
+  const int16x8_t b0 = vpaddq_s16(a0, a1);
+  return vpaddlq_s16(b0);
+#else
+  const int16x4_t a0 = vadd_s16(vget_low_s16(sum[0]), vget_high_s16(sum[0]));
+  const int16x4_t a1 = vadd_s16(vget_low_s16(sum[1]), vget_high_s16(sum[1]));
+  const int16x4_t a2 = vadd_s16(vget_low_s16(sum[2]), vget_high_s16(sum[2]));
+  const int16x4_t a3 = vadd_s16(vget_low_s16(sum[3]), vget_high_s16(sum[3]));
+  const int16x4_t b0 = vpadd_s16(a0, a1);
+  const int16x4_t b1 = vpadd_s16(a2, a3);
+  return vpaddlq_s16(vcombine_s16(b0, b1));
 #endif
 }
 

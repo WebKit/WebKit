@@ -144,11 +144,17 @@ int TestCpuEnv(int cpu_info) {
   if (TestEnv("LIBYUV_DISABLE_AVX512VBITALG")) {
     cpu_info &= ~libyuv::kCpuHasAVX512VBITALG;
   }
-  if (TestEnv("LIBYUV_DISABLE_AVX512VPOPCNTDQ")) {
-    cpu_info &= ~libyuv::kCpuHasAVX512VPOPCNTDQ;
+  if (TestEnv("LIBYUV_DISABLE_AVX10")) {
+    cpu_info &= ~libyuv::kCpuHasAVX10;
   }
-  if (TestEnv("LIBYUV_DISABLE_GFNI")) {
-    cpu_info &= ~libyuv::kCpuHasGFNI;
+  if (TestEnv("LIBYUV_DISABLE_AVXVNNI")) {
+    cpu_info &= ~libyuv::kCpuHasAVXVNNI;
+  }
+  if (TestEnv("LIBYUV_DISABLE_AVXVNNIINT8")) {
+    cpu_info &= ~libyuv::kCpuHasAVXVNNIINT8;
+  }
+  if (TestEnv("LIBYUV_DISABLE_AMXINT8")) {
+    cpu_info &= ~libyuv::kCpuHasAMXINT8;
   }
 #endif
   if (TestEnv("LIBYUV_DISABLE_ASM")) {

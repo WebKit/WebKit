@@ -44,11 +44,12 @@ class VideoCaptureModulePipeWire : public VideoCaptureImpl {
   void ProcessBuffers();
 
   const rtc::scoped_refptr<PipeWireSession> session_
-      RTC_GUARDED_BY(capture_checker_);
+      RTC_GUARDED_BY(api_checker_);
+  bool initialized_ RTC_GUARDED_BY(api_checker_);
+  bool started_ RTC_GUARDED_BY(api_lock_);
   int node_id_ RTC_GUARDED_BY(capture_checker_);
   VideoCaptureCapability configured_capability_
       RTC_GUARDED_BY(capture_checker_);
-  bool started_ RTC_GUARDED_BY(api_lock_);
 
   struct pw_stream* stream_ RTC_GUARDED_BY(capture_checker_) = nullptr;
   struct spa_hook stream_listener_ RTC_GUARDED_BY(capture_checker_);

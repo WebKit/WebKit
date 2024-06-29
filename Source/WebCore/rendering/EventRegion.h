@@ -62,9 +62,10 @@ public:
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     void uniteInteractionRegions(RenderObject&, const FloatRect&, const FloatSize&, const std::optional<AffineTransform>&);
     bool shouldConsolidateInteractionRegion(RenderObject&, const IntRect&, const ElementIdentifier&);
+    void convertGuardContainersToInterationIfNeeded(float minimumCornerRadius);
     void removeSuperfluousInteractionRegions();
     void shrinkWrapInteractionRegions();
-    void copyInteractionRegionsToEventRegion();
+    void copyInteractionRegionsToEventRegion(float minimumCornerRadius);
 #endif
 
 private:
@@ -106,7 +107,7 @@ public:
 
     friend bool operator==(const EventRegion&, const EventRegion&) = default;
 
-    void unite(const Region&, const RenderStyle&, bool overrideUserModifyIsEditable = false);
+    void unite(const Region&, RenderObject&, const RenderStyle&, bool overrideUserModifyIsEditable = false);
     void translate(const IntSize&);
 
     bool contains(const IntPoint& point) const { return m_region.contains(point); }

@@ -152,6 +152,8 @@ class AudioCodingModuleImpl final : public AudioCodingModule {
   bool first_frame_ RTC_GUARDED_BY(acm_mutex_);
   uint32_t last_timestamp_ RTC_GUARDED_BY(acm_mutex_);
   uint32_t last_rtp_timestamp_ RTC_GUARDED_BY(acm_mutex_);
+  absl::optional<int64_t> absolute_capture_timestamp_ms_
+      RTC_GUARDED_BY(acm_mutex_);
 
   Mutex callback_mutex_;
   AudioPacketizationCallback* packetization_callback_
@@ -225,6 +227,10 @@ int32_t AudioCodingModuleImpl::Encode(
   last_rtp_timestamp_ = rtp_timestamp;
   first_frame_ = false;
 
+  if (!absolute_capture_timestamp_ms_.has_value()) {
+    absolute_capture_timestamp_ms_ = absolute_capture_timestamp_ms;
+  }
+
   // Clear the buffer before reuse - encoded data will get appended.
   encode_buffer_.Clear();
   encoded_info = encoder_stack_->Encode(
@@ -271,9 +277,10 @@ int32_t AudioCodingModuleImpl::Encode(
       packetization_callback_->SendData(
           frame_type, encoded_info.payload_type, encoded_info.encoded_timestamp,
           encode_buffer_.data(), encode_buffer_.size(),
-          absolute_capture_timestamp_ms.value_or(-1));
+          absolute_capture_timestamp_ms_.value_or(-1));
     }
   }
+  absolute_capture_timestamp_ms_ = absl::nullopt;
   previous_pltype_ = encoded_info.payload_type;
   return static_cast<int32_t>(encode_buffer_.size());
 }

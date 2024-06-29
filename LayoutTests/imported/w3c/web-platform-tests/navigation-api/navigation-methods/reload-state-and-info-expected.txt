@@ -1,4 +1,6 @@
 
 
-FAIL reload() variant with info and new state undefined is not an object (evaluating 'i.contentWindow.navigation.navigate("#1", { state: navState1 }).committed.then')
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT reload() variant with info and new state Test timed out
 

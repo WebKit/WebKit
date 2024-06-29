@@ -14,9 +14,9 @@
 
 #include <cstdint>
 
+#include "api/audio/audio_processing.h"
 #include "modules/audio_processing/aecm/echo_control_mobile.h"
 #include "modules/audio_processing/audio_buffer.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

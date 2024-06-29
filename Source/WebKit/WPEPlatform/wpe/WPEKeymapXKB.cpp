@@ -87,22 +87,71 @@ static gboolean wpeKeymapXKBGetEntriesForKeyval(WPEKeymap* keymap, guint keyval,
     return FALSE;
 }
 
+static xkb_mod_mask_t xkbModifiersFromWPEModifiers(struct xkb_keymap* xkbKeymap, WPEModifiers modifiers)
+{
+    xkb_mod_mask_t mask = 0;
+    if (modifiers & WPE_MODIFIER_KEYBOARD_CONTROL)
+        mask |= 1 << xkb_keymap_mod_get_index(xkbKeymap, XKB_MOD_NAME_CTRL);
+    if (modifiers & WPE_MODIFIER_KEYBOARD_SHIFT)
+        mask |= 1 << xkb_keymap_mod_get_index(xkbKeymap, XKB_MOD_NAME_SHIFT);
+    if (modifiers & WPE_MODIFIER_KEYBOARD_ALT)
+        mask |= 1 << xkb_keymap_mod_get_index(xkbKeymap, XKB_MOD_NAME_ALT);
+    if (modifiers & WPE_MODIFIER_KEYBOARD_META)
+        mask |= 1 << xkb_keymap_mod_get_index(xkbKeymap, "Meta");
+    if (modifiers & WPE_MODIFIER_KEYBOARD_CAPS_LOCK)
+        mask |= 1 << xkb_keymap_mod_get_index(xkbKeymap, XKB_MOD_NAME_CAPS);
+    return mask;
+}
+
+static WPEModifiers wpeModifiersFromXKBModifiers(struct xkb_keymap* xkbKeymap, xkb_state* xkbState, xkb_mod_mask_t mask)
+{
+    unsigned modifiers = 0;
+    if (mask & (1 << xkb_keymap_mod_get_index(xkbKeymap, XKB_MOD_NAME_CTRL)))
+        modifiers |= WPE_MODIFIER_KEYBOARD_CONTROL;
+    if (mask & (1 << xkb_keymap_mod_get_index(xkbKeymap, XKB_MOD_NAME_SHIFT)))
+        modifiers |= WPE_MODIFIER_KEYBOARD_SHIFT;
+    if (mask & (1 << xkb_keymap_mod_get_index(xkbKeymap, XKB_MOD_NAME_ALT)))
+        modifiers |= WPE_MODIFIER_KEYBOARD_ALT;
+    if (mask & (1 << xkb_keymap_mod_get_index(xkbKeymap, "Meta")))
+        modifiers |= WPE_MODIFIER_KEYBOARD_META;
+    if (xkb_state_led_name_is_active(xkbState, XKB_LED_NAME_CAPS))
+        modifiers |= WPE_MODIFIER_KEYBOARD_CAPS_LOCK;
+    return static_cast<WPEModifiers>(modifiers);
+}
+
+static gboolean wpeKeymapXKBTranslateKeyboardState(WPEKeymap* keymap, guint keycode, WPEModifiers modifiers, int group, guint* keyval, int* effectiveGroup, int* level, WPEModifiers* consumedModifiers)
+{
+    g_return_val_if_fail(group < 4, FALSE);
+
+    auto* priv = WPE_KEYMAP_XKB(keymap)->priv;
+    auto* xkbState = xkb_state_new(priv->xkbKeymap);
+    xkb_mod_mask_t mask = xkbModifiersFromWPEModifiers(priv->xkbKeymap, modifiers);
+    xkb_state_update_mask(xkbState, mask, 0, 0, group, 0, 0);
+
+    auto keysym = xkb_state_key_get_one_sym(xkbState, keycode);
+    if (keyval)
+        *keyval = keysym;
+    if (effectiveGroup)
+        *effectiveGroup = xkb_state_key_get_layout(xkbState, keycode);
+    if (level) {
+        auto layout = xkb_state_key_get_layout(xkbState, keycode);
+        *level = xkb_state_key_get_level(xkbState, keycode, layout);
+    }
+    if (consumedModifiers) {
+        xkb_mod_mask_t consumed = mask & ~xkb_state_mod_mask_remove_consumed(xkbState, keycode, mask);
+        *consumedModifiers = wpeModifiersFromXKBModifiers(priv->xkbKeymap, xkbState, consumed);
+    }
+
+    xkb_state_unref(xkbState);
+
+    return keysym != XKB_KEY_NoSymbol;
+}
+
 static WPEModifiers wpeKeymapXKBGetModifiers(WPEKeymap* keymap)
 {
     auto* priv = WPE_KEYMAP_XKB(keymap)->priv;
     xkb_mod_mask_t mask = xkb_state_serialize_mods(priv->xkbState, XKB_STATE_MODS_EFFECTIVE);
-    unsigned modifiers = 0;
-    if (mask & (1 << xkb_keymap_mod_get_index(priv->xkbKeymap, XKB_MOD_NAME_CTRL)))
-        modifiers |= WPE_MODIFIER_KEYBOARD_CONTROL;
-    if (mask & (1 << xkb_keymap_mod_get_index(priv->xkbKeymap, XKB_MOD_NAME_SHIFT)))
-        modifiers |= WPE_MODIFIER_KEYBOARD_SHIFT;
-    if (mask & (1 << xkb_keymap_mod_get_index(priv->xkbKeymap, XKB_MOD_NAME_ALT)))
-        modifiers |= WPE_MODIFIER_KEYBOARD_ALT;
-    if (mask & (1 << xkb_keymap_mod_get_index(priv->xkbKeymap, "Meta")))
-        modifiers |= WPE_MODIFIER_KEYBOARD_META;
-    if (xkb_state_led_name_is_active(priv->xkbState, XKB_LED_NAME_CAPS))
-        modifiers |= WPE_MODIFIER_KEYBOARD_CAPS_LOCK;
-    return static_cast<WPEModifiers>(modifiers);
+    return wpeModifiersFromXKBModifiers(priv->xkbKeymap, priv->xkbState, mask);
 }
 
 static void wpe_keymap_xkb_class_init(WPEKeymapXKBClass* keymapXKBClass)
@@ -112,13 +161,14 @@ static void wpe_keymap_xkb_class_init(WPEKeymapXKBClass* keymapXKBClass)
 
     WPEKeymapClass* keymapClass = WPE_KEYMAP_CLASS(keymapXKBClass);
     keymapClass->get_entries_for_keyval = wpeKeymapXKBGetEntriesForKeyval;
+    keymapClass->translate_keyboard_state = wpeKeymapXKBTranslateKeyboardState;
     keymapClass->get_modifiers = wpeKeymapXKBGetModifiers;
 }
 
 /**
  * wpe_keymap_xkb_new: (skip)
  *
- * Crerate a new #WPEKeymapXKB
+ * Create a new #WPEKeymapXKB
  *
  * Returns: (transfer full): a #WPEKeymapXKB
  */

@@ -118,6 +118,13 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
             JSC::Options::useSharedArrayBuffer() = true;
             optionsChanged = true;
         }
+        // FIXME (276012): Remove this XPC bootstrap message when it's no longer necessary. See rdar://130669638 for more context.
+        if (xpc_dictionary_get_bool(initializerMessage, "disable-jit-cage")) {
+            JSC::Options::initialize();
+            JSC::Options::AllowUnfinalizedAccessScope scope;
+            JSC::Options::useJITCage() = false;
+            optionsChanged = true;
+        }
         if (optionsChanged)
             JSC::Options::notifyOptionsChanged();
     }

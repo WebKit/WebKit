@@ -19,6 +19,7 @@
 #include <sstream>
 #include <string>
 
+#include "common/SimpleMutex.h"
 #include "common/angleutils.h"
 #include "common/entry_points_enum_autogen.h"
 #include "common/log_utils.h"
@@ -83,7 +84,7 @@ bool DebugAnnotationsInitialized();
 
 void InitializeDebugMutexIfNeeded();
 
-std::mutex &GetDebugMutex();
+angle::SimpleMutex &GetDebugMutex();
 }  // namespace gl
 
 // The state tracked by ANGLE will be validated with the driver state before each call

@@ -44,7 +44,7 @@ private:
     void stopProducingData() final;
     void updateSampleBuffer() final;
     bool canResizeVideoFrames() const final { return true; }
-    void setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>) final;
+    void setSizeFrameRateAndZoom(const VideoPresetConstraints&) final;
 
     RefPtr<GStreamerVideoCapturer> m_capturer;
 };

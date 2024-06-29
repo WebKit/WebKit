@@ -30,6 +30,7 @@
 #include "RetrieveRecordsOptions.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/NativePromise.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -43,12 +44,16 @@ public:
 
     using OpenPromise = NativePromise<DOMCacheEngine::CacheIdentifierOperationResult, DOMCacheEngine::Error>;
     virtual Ref<OpenPromise> open(const ClientOrigin&, const String& cacheName) = 0;
-    virtual void remove(DOMCacheIdentifier, DOMCacheEngine::RemoveCacheIdentifierCallback&&) = 0;
-    virtual void retrieveCaches(const ClientOrigin&, uint64_t updateCounter, DOMCacheEngine::CacheInfosCallback&&) = 0;
+    using RemovePromise = NativePromise<bool, DOMCacheEngine::Error>;
+    virtual Ref<RemovePromise> remove(DOMCacheIdentifier) = 0;
+    using RetrieveCachesPromise = NativePromise<DOMCacheEngine::CacheInfos, DOMCacheEngine::Error>;
+    virtual Ref<RetrieveCachesPromise> retrieveCaches(const ClientOrigin&, uint64_t updateCounter) = 0;
 
-    virtual void retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&, DOMCacheEngine::CrossThreadRecordsCallback&&) = 0;
-    virtual void batchDeleteOperation(DOMCacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&&) = 0;
-    virtual void batchPutOperation(DOMCacheIdentifier, Vector<DOMCacheEngine::CrossThreadRecord>&&, DOMCacheEngine::RecordIdentifiersCallback&&) = 0;
+    using RetrieveRecordsPromise = NativePromise<Vector<DOMCacheEngine::CrossThreadRecord>, DOMCacheEngine::Error>;
+    virtual Ref<RetrieveRecordsPromise> retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&) = 0;
+    using BatchPromise = NativePromise<Vector<uint64_t>, DOMCacheEngine::Error>;
+    virtual Ref<BatchPromise> batchDeleteOperation(DOMCacheIdentifier, const ResourceRequest&, CacheQueryOptions&&) = 0;
+    virtual Ref<BatchPromise> batchPutOperation(DOMCacheIdentifier, Vector<DOMCacheEngine::CrossThreadRecord>&&) = 0;
 
     virtual void reference(DOMCacheIdentifier /* cacheIdentifier */) = 0;
     virtual void dereference(DOMCacheIdentifier /* cacheIdentifier */) = 0;
@@ -58,8 +63,10 @@ public:
     uint64_t computeRecordBodySize(const FetchResponse&, const DOMCacheEngine::ResponseBody&);
 
     // Used only for testing purposes.
-    virtual void clearMemoryRepresentation(const ClientOrigin&, DOMCacheEngine::CompletionCallback&& callback) { callback(DOMCacheEngine::Error::NotImplemented); }
-    virtual void engineRepresentation(CompletionHandler<void(const String&)>&& callback) { callback(String { }); }
+    using CompletionPromise = NativePromise<void, DOMCacheEngine::Error>;
+    virtual Ref<CompletionPromise> clearMemoryRepresentation(const ClientOrigin&) { return CompletionPromise::createAndReject(DOMCacheEngine::Error::NotImplemented); }
+    using EngineRepresentationPromise = NativePromise<String, DOMCacheEngine::Error>;
+    virtual Ref<EngineRepresentationPromise> engineRepresentation() { return EngineRepresentationPromise::createAndReject(DOMCacheEngine::Error::NotImplemented); }
     virtual void updateQuotaBasedOnSpaceUsage(const ClientOrigin&) { }
 
 private:

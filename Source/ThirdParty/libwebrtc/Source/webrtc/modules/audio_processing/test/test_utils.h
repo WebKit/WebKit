@@ -21,9 +21,9 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/audio/audio_processing.h"
 #include "common_audio/channel_buffer.h"
 #include "common_audio/wav_file.h"
-#include "modules/audio_processing/include/audio_processing.h"
 
 namespace webrtc {
 

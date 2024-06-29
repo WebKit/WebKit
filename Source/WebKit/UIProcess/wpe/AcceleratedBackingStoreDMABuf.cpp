@@ -31,7 +31,7 @@
 #include "AcceleratedSurfaceDMABufMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
-#include <WebCore/IntRect.h>
+#include <WebCore/Region.h>
 #include <WebCore/ShareableBitmap.h>
 #include <wpe/wpe-platform.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -78,12 +78,12 @@ void AcceleratedBackingStoreDMABuf::updateSurfaceID(uint64_t surfaceID)
         }
         m_buffers.clear();
         m_bufferIDs.clear();
-        m_webPage.process().removeMessageReceiver(Messages::AcceleratedBackingStoreDMABuf::messageReceiverName(), m_surfaceID);
+        m_webPage.legacyMainFrameProcess().removeMessageReceiver(Messages::AcceleratedBackingStoreDMABuf::messageReceiverName(), m_surfaceID);
     }
 
     m_surfaceID = surfaceID;
     if (m_surfaceID)
-        m_webPage.process().addMessageReceiver(Messages::AcceleratedBackingStoreDMABuf::messageReceiverName(), m_surfaceID, *this);
+        m_webPage.legacyMainFrameProcess().addMessageReceiver(Messages::AcceleratedBackingStoreDMABuf::messageReceiverName(), m_surfaceID, *this);
 
 }
 
@@ -106,10 +106,9 @@ void AcceleratedBackingStoreDMABuf::didCreateBufferSHM(uint64_t id, WebCore::Sha
         return;
 
     auto size = bitmap->size();
-    const auto* data = bitmap->data();
-    auto dataSize = bitmap->sizeInBytes();
+    auto data = bitmap->span();
     auto stride = bitmap->bytesPerRow();
-    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(data, dataSize, [](gpointer userData) {
+    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(data.data(), data.size(), [](gpointer userData) {
         delete static_cast<WebCore::ShareableBitmap*>(userData);
     }, bitmap.leakRef()));
 
@@ -124,7 +123,7 @@ void AcceleratedBackingStoreDMABuf::didDestroyBuffer(uint64_t id)
         m_bufferIDs.remove(buffer.get());
 }
 
-void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID)
+void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID, const std::optional<WebCore::Region>& damage)
 {
     ASSERT(!m_pendingBuffer);
     auto* buffer = m_buffers.get(bufferID);
@@ -133,9 +132,24 @@ void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID)
         return;
     }
 
+    // Rely on the layout of IntRect matching that of WPERectangle
+    // to pass directly a pointer below instead of using copies.
+    static_assert(sizeof(WebCore::IntRect) == sizeof(WPERectangle));
+
+    Vector<WebCore::IntRect, 1> damageRects;
+    if (damage) {
+        if (damage->isEmpty())
+            damageRects.append({ 0, 0, 0, 0 });
+        else
+            damageRects = damage->rects();
+    }
+
+    ASSERT(damageRects.size() <= std::numeric_limits<guint>::max());
+    const auto* rects = damageRects.size() ? reinterpret_cast<const WPERectangle*>(damageRects.data()) : nullptr;
+
     m_pendingBuffer = buffer;
     GUniqueOutPtr<GError> error;
-    if (!wpe_view_render_buffer(m_wpeView.get(), m_pendingBuffer.get(), &error.outPtr())) {
+    if (!wpe_view_render_buffer(m_wpeView.get(), m_pendingBuffer.get(), rects, damageRects.size(), &error.outPtr())) {
         g_warning("Failed to render frame: %s", error->message);
         frameDone();
     }
@@ -143,7 +157,7 @@ void AcceleratedBackingStoreDMABuf::frame(uint64_t bufferID)
 
 void AcceleratedBackingStoreDMABuf::frameDone()
 {
-    m_webPage.process().send(Messages::AcceleratedSurfaceDMABuf::FrameDone(), m_surfaceID);
+    m_webPage.legacyMainFrameProcess().send(Messages::AcceleratedSurfaceDMABuf::FrameDone(), m_surfaceID);
 }
 
 void AcceleratedBackingStoreDMABuf::bufferRendered()
@@ -155,7 +169,7 @@ void AcceleratedBackingStoreDMABuf::bufferRendered()
 void AcceleratedBackingStoreDMABuf::bufferReleased(WPEBuffer* buffer)
 {
     if (auto id = m_bufferIDs.get(buffer))
-        m_webPage.process().send(Messages::AcceleratedSurfaceDMABuf::ReleaseBuffer(id), m_surfaceID);
+        m_webPage.legacyMainFrameProcess().send(Messages::AcceleratedSurfaceDMABuf::ReleaseBuffer(id), m_surfaceID);
 }
 
 RendererBufferFormat AcceleratedBackingStoreDMABuf::bufferFormat() const

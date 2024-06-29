@@ -45,7 +45,9 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/URL.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/text/StringConcatenateNumbers.h>
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
 #import <UIKit/UIApplication.h>
@@ -210,7 +212,7 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
 
 void WebPushDaemon::connectionAdded(xpc_connection_t connection)
 {
-    broadcastDebugMessage(makeString("New connection: 0x", hex(reinterpret_cast<uint64_t>(connection), WTF::HexConversionMode::Lowercase)));
+    broadcastDebugMessage(makeString("New connection: 0x"_s, hex(reinterpret_cast<uint64_t>(connection), WTF::HexConversionMode::Lowercase)));
 
     RELEASE_ASSERT(!m_connectionMap.contains(connection));
     m_connectionMap.set(connection, PushClientConnection::create(connection));
@@ -302,7 +304,7 @@ void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection
         return Deque<PushMessageForTesting> { };
     });
 
-    connection.broadcastDebugMessage(makeString("Injected a test push message for ", message.targetAppCodeSigningIdentifier, " at ", message.registrationURL.string(), ", there are now ", addResult.iterator->value.size() + 1, " pending messages"));
+    connection.broadcastDebugMessage(makeString("Injected a test push message for "_s, message.targetAppCodeSigningIdentifier, " at "_s, message.registrationURL.string(), ", there are now "_s, addResult.iterator->value.size() + 1, " pending messages"_s));
     connection.broadcastDebugMessage(message.payload);
 
     addResult.iterator->value.append(WTFMove(message));
@@ -327,7 +329,7 @@ void WebPushDaemon::injectEncryptedPushMessageForTesting(PushClientConnection& c
         }
 
         auto bytes = message.utf8();
-        RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytes:bytes.data() length: bytes.length()]);
+        RetainPtr data = toNSData(bytes.span());
 
         id obj = [NSJSONSerialization JSONObjectWithData:data.get() options:0 error:nullptr];
         if (!obj || ![obj isKindOfClass:[NSDictionary class]]) {
@@ -424,7 +426,7 @@ void WebPushDaemon::getPendingPushMessages(PushClientConnection& connection, Com
     }
 
     RELEASE_LOG(Push, "Fetched %zu pending push messages for %{public}s", resultMessages.size(), connection.subscriptionSetIdentifier().debugDescription().utf8().data());
-    connection.broadcastDebugMessage(makeString("Fetching ", String::number(resultMessages.size()), " pending push messages"));
+    connection.broadcastDebugMessage(makeString("Fetching "_s, resultMessages.size(), " pending push messages"_s));
 
     replySender(WTFMove(resultMessages));
     

@@ -25,6 +25,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/memory/always_valid_pointer.h"
 #include "rtc_base/network.h"
+#include "rtc_base/network/received_packet.h"
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_annotations.h"
@@ -84,9 +85,6 @@ class RTC_EXPORT BasicPortAllocator : public PortAllocator {
   }
 
  private:
-  void OnIceRegathering(PortAllocatorSession* session,
-                        IceRegatheringReason reason);
-
   bool MdnsObfuscationEnabled() const override;
 
   webrtc::AlwaysValidPointer<const webrtc::FieldTrialsView,
@@ -330,7 +328,7 @@ class TurnPort;
 // Performs the allocation of ports, in a sequenced (timed) manner, for a given
 // network and IP address.
 // This class is thread-compatible.
-class AllocationSequence : public sigslot::has_slots<> {
+class AllocationSequence {
  public:
   enum State {
     kInit,       // Initial state.
@@ -390,10 +388,7 @@ class AllocationSequence : public sigslot::has_slots<> {
   void CreateRelayPorts();
 
   void OnReadPacket(rtc::AsyncPacketSocket* socket,
-                    const char* data,
-                    size_t size,
-                    const rtc::SocketAddress& remote_addr,
-                    const int64_t& packet_time_us);
+                    const rtc::ReceivedPacket& packet);
 
   void OnPortDestroyed(PortInterface* port);
 

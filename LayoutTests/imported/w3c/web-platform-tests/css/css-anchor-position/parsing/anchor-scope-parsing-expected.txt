@@ -1,0 +1,17 @@
+
+FAIL e.style['anchor-scope'] = "initial" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['anchor-scope'] = "inherit" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['anchor-scope'] = "unset" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['anchor-scope'] = "revert" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['anchor-scope'] = "none" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['anchor-scope'] = "all" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['anchor-scope'] = "--a" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['anchor-scope'] = "--a, --b" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['anchor-scope'] = "--a, --b, --c" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['anchor-scope'] = "--a none" should not set the property value
+PASS e.style['anchor-scope'] = "none --a" should not set the property value
+PASS e.style['anchor-scope'] = "none all" should not set the property value
+PASS e.style['anchor-scope'] = "--a --b" should not set the property value
+PASS e.style['anchor-scope'] = "a, b, c" should not set the property value
+PASS e.style['anchor-scope'] = "" should not set the property value
+

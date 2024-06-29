@@ -80,33 +80,28 @@ void InitBuiltInAtanFunctionEmulatorForGLSLWorkarounds(BuiltInFunctionEmulator *
                              "    else if (x < 0.0 && y < 0.0) return atan(y / x) - 3.14159265;\n"
                              "    else return 1.57079632 * sign(y);\n"
                              "}\n");
-    static const std::array<TSymbolUniqueId, 4> ids = {
-        BuiltInId::atan_Float1_Float1,
-        BuiltInId::atan_Float2_Float2,
-        BuiltInId::atan_Float3_Float3,
-        BuiltInId::atan_Float4_Float4,
-    };
-    for (int dim = 2; dim <= 4; ++dim)
-    {
-        std::stringstream ss = sh::InitializeStream<std::stringstream>();
-        ss << "emu_precision vec" << dim << " atan_emu(emu_precision vec" << dim
-           << " y, emu_precision vec" << dim << " x)\n"
-           << "{\n"
-              "    return vec"
-           << dim << "(";
-        for (int i = 0; i < dim; ++i)
-        {
-            ss << "atan_emu(y[" << i << "], x[" << i << "])";
-            if (i < dim - 1)
-            {
-                ss << ", ";
-            }
-        }
-        ss << ");\n"
-              "}\n";
-        emu->addEmulatedFunctionWithDependency(BuiltInId::atan_Float1_Float1, ids[dim - 1],
-                                               ss.str().c_str());
-    }
+
+    emu->addEmulatedFunctionWithDependency(
+        BuiltInId::atan_Float1_Float1, BuiltInId::atan_Float2_Float2,
+        "emu_precision vec2 atan_emu(emu_precision vec2 y, emu_precision vec2 x)\n"
+        "{\n"
+        "    return vec2(atan_emu(y[0], x[0]), atan_emu(y[1], x[1]));\n"
+        "}\n");
+
+    emu->addEmulatedFunctionWithDependency(
+        BuiltInId::atan_Float1_Float1, BuiltInId::atan_Float3_Float3,
+        "emu_precision vec3 atan_emu(emu_precision vec3 y, emu_precision vec3 x)\n"
+        "{\n"
+        "    return vec3(atan_emu(y[0], x[0]), atan_emu(y[1], x[1]), atan_emu(y[2], x[2]));\n"
+        "}\n");
+
+    emu->addEmulatedFunctionWithDependency(
+        BuiltInId::atan_Float1_Float1, BuiltInId::atan_Float4_Float4,
+        "emu_precision vec4 atan_emu(emu_precision vec4 y, emu_precision vec4 x)\n"
+        "{\n"
+        "    return vec4(atan_emu(y[0], x[0]), atan_emu(y[1], x[1]), atan_emu(y[2], x[2]), "
+        "atan_emu(y[3], x[3]))\n;"
+        "}\n");
 }
 
 // Emulate built-in functions missing from GLSL 1.30 and higher

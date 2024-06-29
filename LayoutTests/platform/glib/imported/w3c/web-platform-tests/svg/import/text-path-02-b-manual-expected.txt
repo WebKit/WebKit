@@ -5,11 +5,11 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (0,0) size 704x539
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGPath {path} at (330,44) size 368x132 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 199 89.3 C 206.6 66.6 235.8 13.2 270 30.3 C 286.6 38.6 298.9 59.4 310 73.3 C 321.7 87.9 338.6 99 356 103.3 C 387.3 111.1 396.6 90.4 418 74.3"]
+        RenderSVGPath {path} at (330,43) size 368x133 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 199 89.3 C 206.6 66.6 235.8 13.2 270 30.3 C 286.6 38.6 298.9 59.4 310 73.3 C 321.7 87.9 338.6 99 356 103.3 C 387.3 111.1 396.6 90.4 418 74.3"]
         RenderSVGPath {path} at (55,138) size 367x132 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 33.5 145.8 C 41 123 70.3 69.7 104.5 86.8 C 121 95 133 116 144.5 129.8 C 156.2 144.4 173 155.5 190.5 159.8 C 221.8 167.6 231 146.9 252.5 130.8"]
       RenderSVGContainer {g} at (268,0) size 430x191
-        RenderSVGContainer {use} at (330,44) size 368x132
-          RenderSVGPath {path} at (330,44) size 368x132 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 199 89.3 C 206.6 66.6 235.8 13.2 270 30.3 C 286.6 38.6 298.9 59.4 310 73.3 C 321.7 87.9 338.6 99 356 103.3 C 387.3 111.1 396.6 90.4 418 74.3"]
+        RenderSVGContainer {use} at (330,43) size 368x133
+          RenderSVGPath {path} at (330,43) size 368x133 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 199 89.3 C 206.6 66.6 235.8 13.2 270 30.3 C 286.6 38.6 298.9 59.4 310 73.3 C 321.7 87.9 338.6 99 356 103.3 C 387.3 111.1 396.6 90.4 418 74.3"]
         RenderSVGText {text} at (160,-10) size 209x125 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 208x124
             RenderSVGTSpan {tspan} at (0,0) size 208x124
@@ -54,8 +54,8 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGContainer {g} at (55,233) size 649x306 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
         RenderSVGContainer {g} at (330,233) size 374x212
-          RenderSVGContainer {use} at (330,294) size 368x132
-            RenderSVGPath {path} at (330,294) size 368x132 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 199 89.3 C 206.6 66.6 235.8 13.2 270 30.3 C 286.6 38.6 298.9 59.4 310 73.3 C 321.7 87.9 338.6 99 356 103.3 C 387.3 111.1 396.6 90.4 418 74.3"]
+          RenderSVGContainer {use} at (330,293) size 368x133
+            RenderSVGPath {path} at (330,293) size 368x133 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 199 89.3 C 206.6 66.6 235.8 13.2 270 30.3 C 286.6 38.6 298.9 59.4 310 73.3 C 321.7 87.9 338.6 99 356 103.3 C 387.3 111.1 396.6 90.4 418 74.3"]
           RenderSVGText {text} at (211,-10) size 212x127 contains 1 chunk(s)
             RenderSVGTextPath {textPath} at (0,0) size 211x127
               RenderSVGTSpan {tspan} at (0,0) size 211x127

@@ -161,7 +161,7 @@ private:
 
     // CachedRawResourceClient overrides.
     void dataReceived(CachedResource&, const SharedBuffer&) final;
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
 
     // ModelPlayerClient overrides.
     void didUpdateLayerHostingContextIdentifier(ModelPlayer&, LayerHostingContextIdentifier) final;

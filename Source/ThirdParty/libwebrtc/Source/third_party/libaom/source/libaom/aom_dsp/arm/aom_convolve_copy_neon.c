@@ -9,6 +9,7 @@
  */
 
 #include <arm_neon.h>
+#include <string.h>
 
 #include "config/aom_dsp_rtcd.h"
 
@@ -38,13 +39,13 @@ void aom_convolve_copy_neon(const uint8_t *src, ptrdiff_t src_stride,
     }
   } else if (!(w & 0x03)) {
     for (y = 0; y < h; ++y) {
-      vst1_lane_u32((uint32_t *)(dst), vreinterpret_u32_u8(vld1_u8(src)), 0);
+      memcpy(dst, src, sizeof(uint32_t));
       src += src_stride;
       dst += dst_stride;
     }
   } else if (!(w & 0x01)) {
     for (y = 0; y < h; ++y) {
-      vst1_lane_u16((uint16_t *)(dst), vreinterpret_u16_u8(vld1_u8(src)), 0);
+      memcpy(dst, src, sizeof(uint16_t));
       src += src_stride;
       dst += dst_stride;
     }

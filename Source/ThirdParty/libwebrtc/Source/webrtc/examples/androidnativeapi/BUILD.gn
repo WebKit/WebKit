@@ -47,6 +47,7 @@ if (is_android) {
 
     deps = [
       ":generated_jni",
+      "../../api:enable_media_with_defaults",
       "../../api:scoped_refptr",
       "../../api:sequence_checker",
       "../../rtc_base:ssl",
@@ -56,7 +57,6 @@ if (is_android) {
       "//api/task_queue:default_task_queue_factory",
       "//media:rtc_audio_video",
       "//media:rtc_internal_video_codecs",
-      "//media:rtc_media_engine_defaults",
       "//modules/utility",
       "//pc:libjingle_peerconnection",
       "//sdk/android:native_api_base",

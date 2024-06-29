@@ -29,11 +29,9 @@
 #include "DaemonDecoder.h"
 #include "DaemonEncoder.h"
 #include <WebCore/CertificateInfo.h>
-#include <WebCore/ExceptionData.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/PushSubscriptionData.h>
 #include <WebCore/RegistrableDomain.h>
-#include <WebCore/SecurityOriginData.h>
 
 #if PLATFORM(COCOA)
 #include <CoreFoundation/CoreFoundation.h>
@@ -41,58 +39,6 @@
 #endif
 
 namespace WebKit::Daemon {
-
-void Coder<WebCore::PushSubscriptionData>::encode(Encoder& encoder, const WebCore::PushSubscriptionData& instance)
-{
-    encoder << instance.identifier;
-    encoder << instance.endpoint;
-    encoder << instance.expirationTime;
-    encoder << instance.serverVAPIDPublicKey;
-    encoder << instance.clientECDHPublicKey;
-    encoder << instance.sharedAuthenticationSecret;
-}
-
-std::optional<WebCore::PushSubscriptionData> Coder<WebCore::PushSubscriptionData>::decode(Decoder& decoder)
-{
-    std::optional<WebCore::PushSubscriptionIdentifier> identifier;
-    decoder >> identifier;
-    if (!identifier)
-        return std::nullopt;
-
-    std::optional<String> endpoint;
-    decoder >> endpoint;
-    if (!endpoint)
-        return std::nullopt;
-
-    std::optional<std::optional<WebCore::EpochTimeStamp>> expirationTime;
-    decoder >> expirationTime;
-    if (!expirationTime)
-        return std::nullopt;
-
-    std::optional<Vector<uint8_t>> serverVAPIDPublicKey;
-    decoder >> serverVAPIDPublicKey;
-    if (!serverVAPIDPublicKey)
-        return std::nullopt;
-
-    std::optional<Vector<uint8_t>> clientECDHPublicKey;
-    decoder >> clientECDHPublicKey;
-    if (!clientECDHPublicKey)
-        return std::nullopt;
-
-    std::optional<Vector<uint8_t>> sharedAuthenticationSecret;
-    decoder >> sharedAuthenticationSecret;
-    if (!sharedAuthenticationSecret)
-        return std::nullopt;
-
-    return { {
-        WTFMove(*identifier),
-        WTFMove(*endpoint),
-        WTFMove(*expirationTime),
-        WTFMove(*serverVAPIDPublicKey),
-        WTFMove(*clientECDHPublicKey),
-        WTFMove(*sharedAuthenticationSecret),
-    } };
-}
 
 void Coder<WTF::WallTime>::encode(Encoder& encoder, const WTF::WallTime& instance)
 {
@@ -348,58 +294,6 @@ std::optional<WebCore::PCM::AttributionTriggerData> Coder<WebCore::PCM::Attribut
     } };
 }
 
-void Coder<WebCore::ExceptionData, void>::encode(Encoder& encoder, const WebCore::ExceptionData& instance)
-{
-    encoder << instance.code;
-    encoder << instance.message;
-}
-
-std::optional<WebCore::ExceptionData> Coder<WebCore::ExceptionData, void>::decode(Decoder& decoder)
-{
-    std::optional<WebCore::ExceptionCode> code;
-    decoder >> code;
-    if (!code)
-        return std::nullopt;
-
-    std::optional<String> message;
-    decoder >> message;
-    if (!message)
-        return std::nullopt;
-
-    return WebCore::ExceptionData { WTFMove(*code), WTFMove(*message) };
-}
-
-void Coder<WebCore::SecurityOriginData, void>::encode(Encoder& encoder, const WebCore::SecurityOriginData& instance)
-{
-    encoder << instance.protocol();
-    encoder << instance.host();
-    encoder << instance.port();
-}
-
-std::optional<WebCore::SecurityOriginData> Coder<WebCore::SecurityOriginData, void>::decode(Decoder& decoder)
-{
-    std::optional<String> protocol;
-    decoder >> protocol;
-    if (!protocol)
-        return std::nullopt;
-    
-    std::optional<String> host;
-    decoder >> host;
-    if (!host)
-        return std::nullopt;
-    
-    std::optional<std::optional<uint16_t>> port;
-    decoder >> port;
-    if (!port)
-        return std::nullopt;
-    
-    WebCore::SecurityOriginData data { WTFMove(*protocol), WTFMove(*host), WTFMove(*port) };
-    if (data.isHashTableDeletedValue())
-        return std::nullopt;
-
-    return data;
-}
-
 void Coder<WebCore::RegistrableDomain, void>::encode(Encoder& encoder, const WebCore::RegistrableDomain& instance)
 {
     encoder << instance.string();
@@ -413,21 +307,6 @@ std::optional<WebCore::RegistrableDomain> Coder<WebCore::RegistrableDomain, void
         return std::nullopt;
 
     return { WebCore::RegistrableDomain::fromRawString(WTFMove(*host)) };
-}
-
-void Coder<WebCore::PushSubscriptionIdentifier>::encode(Encoder& encoder, const WebCore::PushSubscriptionIdentifier& instance)
-{
-    encoder << instance.toUInt64();
-}
-
-std::optional<WebCore::PushSubscriptionIdentifier> Coder<WebCore::PushSubscriptionIdentifier>::decode(Decoder& decoder)
-{
-    std::optional<uint64_t> rawID;
-    decoder >> rawID;
-    if (!rawID)
-        return std::nullopt;
-
-    return { WebCore::PushSubscriptionIdentifier(*rawID) };
 }
 
 }

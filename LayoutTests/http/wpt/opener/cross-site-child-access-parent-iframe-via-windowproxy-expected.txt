@@ -1,0 +1,4 @@
+
+
+PASS Test cross-site child window accessing parent window's iframe via WindowProxy.
+

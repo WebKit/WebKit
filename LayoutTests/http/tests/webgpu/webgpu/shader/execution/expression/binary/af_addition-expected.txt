@@ -1,0 +1,12 @@
+
+PASS :scalar:inputSource="const"
+PASS :vector:inputSource="const";vectorize=2
+PASS :vector:inputSource="const";vectorize=3
+PASS :vector:inputSource="const";vectorize=4
+PASS :vector_scalar:inputSource="const";dim=2
+PASS :vector_scalar:inputSource="const";dim=3
+PASS :vector_scalar:inputSource="const";dim=4
+PASS :scalar_vector:inputSource="const";dim=2
+PASS :scalar_vector:inputSource="const";dim=3
+PASS :scalar_vector:inputSource="const";dim=4
+

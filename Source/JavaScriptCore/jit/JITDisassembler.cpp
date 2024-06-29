@@ -48,9 +48,7 @@ JITDisassembler::JITDisassembler(CodeBlock *codeBlock)
 {
 }
 
-JITDisassembler::~JITDisassembler()
-{
-}
+JITDisassembler::~JITDisassembler() = default;
 
 void JITDisassembler::dump(PrintStream& out, LinkBuffer& linkBuffer)
 {

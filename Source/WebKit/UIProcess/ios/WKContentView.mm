@@ -36,6 +36,7 @@
 #import "Logging.h"
 #import "ModelProcessProxy.h"
 #import "PageClientImplIOS.h"
+#import "PickerDismissalReason.h"
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingAreaProxyIOS.h"
 #import "SmartMagnificationController.h"
@@ -315,10 +316,10 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
 #if USE(EXTENSIONKIT)
     for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
-        [visibilityPropagationView propagateVisibilityToProcess:_page->process()];
+        [visibilityPropagationView propagateVisibilityToProcess:_page->legacyMainFrameProcess()];
 #else
 
-    auto processID = _page->process().processID();
+    auto processID = _page->legacyMainFrameProcess().processID();
     auto contextID = _page->contextIDForVisibilityPropagationInWebProcess();
 #if HAVE(NON_HOSTING_VISIBILITY_PROPAGATION_VIEW)
     if (!processID)
@@ -330,7 +331,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     ASSERT(!_visibilityPropagationViewForWebProcess);
     // Propagate the view's visibility state to the WebContent process so that it is marked as "Foreground Running" when necessary.
 #if HAVE(NON_HOSTING_VISIBILITY_PROPAGATION_VIEW)
-    auto environmentIdentifier = _page->process().environmentIdentifier();
+    auto environmentIdentifier = _page->legacyMainFrameProcess().environmentIdentifier();
     _visibilityPropagationViewForWebProcess = adoptNS([[_UINonHostingVisibilityPropagationView alloc] initWithFrame:CGRectZero pid:processID environmentIdentifier:environmentIdentifier]);
 #else
     _visibilityPropagationViewForWebProcess = adoptNS([[_UILayerHostView alloc] initWithFrame:CGRectZero pid:processID contextID:contextID]);
@@ -343,7 +344,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 #if ENABLE(GPU_PROCESS)
 - (void)_setupVisibilityPropagationForGPUProcess
 {
-    auto* gpuProcess = _page->process().processPool().gpuProcess();
+    auto* gpuProcess = _page->configuration().processPool().gpuProcess();
     if (!gpuProcess)
         return;
 
@@ -370,7 +371,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 #if ENABLE(MODEL_PROCESS)
 - (void)_setupVisibilityPropagationForModelProcess
 {
-    auto* modelProcess = _page->process().processPool().modelProcess();
+    auto* modelProcess = _page->configuration().processPool().modelProcess();
     if (!modelProcess)
         return;
     auto processIdentifier = modelProcess->processID();
@@ -393,7 +394,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 #if USE(EXTENSIONKIT)
     if (auto page = _page.get()) {
         for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
-            [visibilityPropagationView stopPropagatingVisibilityToProcess:page->process()];
+            [visibilityPropagationView stopPropagatingVisibilityToProcess:page->legacyMainFrameProcess()];
     }
 #endif
 
@@ -409,7 +410,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 {
 #if USE(EXTENSIONKIT)
     auto page = _page.get();
-    if (auto gpuProcess = page ? page->process().processPool().gpuProcess() : nullptr) {
+    if (auto gpuProcess = page ? page->configuration().processPool().gpuProcess() : nullptr) {
         for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
             [visibilityPropagationView stopPropagatingVisibilityToProcess:*gpuProcess];
     }
@@ -525,6 +526,9 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
         [self _updateForScreen:newWindow.screen];
     }
+
+    if (window && !newWindow)
+        [self dismissPickersIfNeededWithReason:WebKit::PickerDismissalReason::ViewRemoved];
 }
 
 - (void)didMoveToWindow
@@ -800,7 +804,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 #if PLATFORM(MACCATALYST)
     pid_t pid = 0;
     if (registerProcess)
-        pid = _page->process().processID();
+        pid = _page->legacyMainFrameProcess().processID();
     else
         pid = [objc_getAssociatedObject(self, (void*)[@"ax-pid" hash]) intValue];
     if (!pid)
@@ -819,9 +823,9 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     NSData *remoteElementToken = WebKit::newAccessibilityRemoteToken(uuid);
 
     // Store information about the WebProcess that can later be retrieved by the iOS Accessibility runtime.
-    if (_page->process().state() == WebKit::WebProcessProxy::State::Running) {
+    if (_page->legacyMainFrameProcess().state() == WebKit::WebProcessProxy::State::Running) {
         [self _updateRemoteAccessibilityRegistration:YES];
-        storeAccessibilityRemoteConnectionInformation(self, _page->process().processID(), uuid);
+        storeAccessibilityRemoteConnectionInformation(self, _page->legacyMainFrameProcess().processID(), uuid);
 
         auto elementToken = span(remoteElementToken);
         _page->registerUIProcessAccessibilityTokens(elementToken, elementToken);
@@ -1261,7 +1265,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         if (!callbackID)
             return;
 
-        _page->process().connection()->waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawToPDFiOS>(callbackID, Seconds::infinity());
+        _page->legacyMainFrameProcess().connection()->waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawToPDFiOS>(callbackID, Seconds::infinity());
         return;
     }
 
@@ -1305,7 +1309,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         if (!callbackID)
             return;
 
-        _page->process().connection()->waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawRectToImage>(callbackID, Seconds::infinity());
+        _page->legacyMainFrameProcess().connection()->waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawRectToImage>(callbackID, Seconds::infinity());
         return;
     }
 

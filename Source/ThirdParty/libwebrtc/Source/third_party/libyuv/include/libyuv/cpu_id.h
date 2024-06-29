@@ -24,31 +24,32 @@ static const int kCpuInitialized = 0x1;
 // These flags are only valid on ARM processors.
 static const int kCpuHasARM = 0x2;
 static const int kCpuHasNEON = 0x4;
-// 0x8 reserved for future ARM flag.
 
 // These flags are only valid on x86 processors.
-static const int kCpuHasX86 = 0x10;
-static const int kCpuHasSSE2 = 0x20;
-static const int kCpuHasSSSE3 = 0x40;
-static const int kCpuHasSSE41 = 0x80;
-static const int kCpuHasSSE42 = 0x100;  // unused at this time.
-static const int kCpuHasAVX = 0x200;
-static const int kCpuHasAVX2 = 0x400;
-static const int kCpuHasERMS = 0x800;
-static const int kCpuHasFMA3 = 0x1000;
-static const int kCpuHasF16C = 0x2000;
-static const int kCpuHasGFNI = 0x4000;
-static const int kCpuHasAVX512BW = 0x8000;
-static const int kCpuHasAVX512VL = 0x10000;
-static const int kCpuHasAVX512VNNI = 0x20000;
-static const int kCpuHasAVX512VBMI = 0x40000;
-static const int kCpuHasAVX512VBMI2 = 0x80000;
-static const int kCpuHasAVX512VBITALG = 0x100000;
-static const int kCpuHasAVX512VPOPCNTDQ = 0x200000;
+static const int kCpuHasX86 = 0x8;
+static const int kCpuHasSSE2 = 0x10;
+static const int kCpuHasSSSE3 = 0x20;
+static const int kCpuHasSSE41 = 0x40;
+static const int kCpuHasSSE42 = 0x80;
+static const int kCpuHasAVX = 0x100;
+static const int kCpuHasAVX2 = 0x200;
+static const int kCpuHasERMS = 0x400;
+static const int kCpuHasFMA3 = 0x800;
+static const int kCpuHasF16C = 0x1000;
+static const int kCpuHasAVX512BW = 0x2000;
+static const int kCpuHasAVX512VL = 0x4000;
+static const int kCpuHasAVX512VNNI = 0x8000;
+static const int kCpuHasAVX512VBMI = 0x10000;
+static const int kCpuHasAVX512VBMI2 = 0x20000;
+static const int kCpuHasAVX512VBITALG = 0x40000;
+static const int kCpuHasAVX10 = 0x80000;
+static const int kCpuHasAVXVNNI = 0x100000;
+static const int kCpuHasAVXVNNIINT8 = 0x200000;
+static const int kCpuHasAMXINT8 = 0x400000;
 
 // These flags are only valid on MIPS processors.
-static const int kCpuHasMIPS = 0x400000;
-static const int kCpuHasMSA = 0x800000;
+static const int kCpuHasMIPS = 0x800000;
+static const int kCpuHasMSA = 0x1000000;
 
 // These flags are only valid on LOONGARCH processors.
 static const int kCpuHasLOONGARCH = 0x2000000;

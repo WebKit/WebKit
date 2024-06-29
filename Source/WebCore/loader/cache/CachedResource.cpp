@@ -321,14 +321,14 @@ void CachedResource::setBodyDataFrom(const CachedResource& resource)
     setEncodedSize(resource.encodedSize());
 }
 
-void CachedResource::checkNotify(const NetworkLoadMetrics& metrics)
+void CachedResource::checkNotify(const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     if (isLoading() || stillNeedsLoad())
         return;
 
     CachedResourceClientWalker<CachedResourceClient> walker(*this);
     while (CachedResourceClient* client = walker.next())
-        client->notifyFinished(*this, metrics);
+        client->notifyFinished(*this, metrics, loadWillContinueInAnotherProcess);
 }
 
 void CachedResource::updateBuffer(const FragmentedSharedBuffer&)
@@ -364,7 +364,7 @@ void CachedResource::clearCachedCryptographicDigests()
     m_cryptographicDigests.fill(std::nullopt);
 }
     
-void CachedResource::cancelLoad()
+void CachedResource::cancelLoad(LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     if (!isLoading() && !stillNeedsLoad())
         return;
@@ -377,7 +377,7 @@ void CachedResource::cancelLoad()
         setStatus(LoadError);
 
     setLoading(false);
-    checkNotify({ });
+    checkNotify({ }, loadWillContinueInAnotherProcess);
 }
 
 void CachedResource::finish()

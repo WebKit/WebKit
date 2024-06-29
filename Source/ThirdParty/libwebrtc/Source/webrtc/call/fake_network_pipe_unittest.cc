@@ -15,7 +15,6 @@
 
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "call/simulated_network.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
@@ -23,6 +22,7 @@
 #include "system_wrappers/include/clock.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/network/simulated_network.h"
 
 using ::testing::_;
 using ::testing::Property;

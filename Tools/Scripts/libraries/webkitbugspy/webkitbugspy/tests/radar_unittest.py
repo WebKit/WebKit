@@ -423,6 +423,18 @@ What version of 'WebKit Text' should the bug be associated with?:
                 redact_exemption={'component:Scrolling': True},
             ).issue(1).redacted, radar.Tracker.Redaction(True, 'is a Radar'))
 
+    def test_redacted_exception_duplicate(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            tracker = radar.Tracker(
+                project='WebKit',
+                redact={'component:Scrolling': True},
+                redact_exemption={'version:Safari 15': True},
+            )
+            self.assertEqual(tracker.issue(1).redacted, False)
+            self.assertEqual(tracker.issue(2).redacted, radar.Tracker.Redaction(exemption=True, reason="matches 'version:Safari 15'"))
+            tracker.issue(1).close(original=tracker.issue(2))
+            self.assertEqual(tracker.issue(1).redacted, False)
+
     def test_milestone(self):
         with mocks.Radar(issues=mocks.ISSUES):
             tracker = radar.Tracker()

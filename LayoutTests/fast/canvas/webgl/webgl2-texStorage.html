@@ -6,6 +6,9 @@
 <body>
 <canvas id="canvas" width="40" height="40"></canvas>
 <script>
+if (window.internals)
+    internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 description("Test that texStorage2D() works.");
 
 var canvas = document.getElementById("canvas");

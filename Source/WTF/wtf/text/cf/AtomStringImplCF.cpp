@@ -40,7 +40,7 @@ RefPtr<AtomStringImpl> AtomStringImpl::add(CFStringRef string)
 
     size_t length = CFStringGetLength(string);
 
-    if (const LChar* ptr = reinterpret_cast<const LChar*>(CFStringGetCStringPtr(string, kCFStringEncodingISOLatin1)))
+    if (const LChar* ptr = byteCast<LChar>(CFStringGetCStringPtr(string, kCFStringEncodingISOLatin1)))
         return add(std::span { ptr, length });
 
     if (const UniChar* ptr = CFStringGetCharactersPtr(string))

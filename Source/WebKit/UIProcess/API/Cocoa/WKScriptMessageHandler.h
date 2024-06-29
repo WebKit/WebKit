@@ -35,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*! A class conforming to the WKScriptMessageHandler protocol provides a
  method for receiving messages from JavaScript running in a webpage.
  */
+WK_SWIFT_UI_ACTOR
 @protocol WKScriptMessageHandler <NSObject>
 
 @required

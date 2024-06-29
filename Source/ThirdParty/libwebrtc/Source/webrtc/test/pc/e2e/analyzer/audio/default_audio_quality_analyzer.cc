@@ -42,29 +42,27 @@ void DefaultAudioQualityAnalyzer::OnStatsReports(
   auto stats = report->GetStatsOfType<RTCInboundRtpStreamStats>();
 
   for (auto& stat : stats) {
-    if (!stat->kind.is_defined() || !(*stat->kind == "audio")) {
+    if (!stat->kind.has_value() || !(*stat->kind == "audio")) {
       continue;
     }
 
     StatsSample sample;
-    sample.total_samples_received =
-        stat->total_samples_received.ValueOrDefault(0ul);
-    sample.concealed_samples = stat->concealed_samples.ValueOrDefault(0ul);
+    sample.total_samples_received = stat->total_samples_received.value_or(0ul);
+    sample.concealed_samples = stat->concealed_samples.value_or(0ul);
     sample.removed_samples_for_acceleration =
-        stat->removed_samples_for_acceleration.ValueOrDefault(0ul);
+        stat->removed_samples_for_acceleration.value_or(0ul);
     sample.inserted_samples_for_deceleration =
-        stat->inserted_samples_for_deceleration.ValueOrDefault(0ul);
+        stat->inserted_samples_for_deceleration.value_or(0ul);
     sample.silent_concealed_samples =
-        stat->silent_concealed_samples.ValueOrDefault(0ul);
+        stat->silent_concealed_samples.value_or(0ul);
     sample.jitter_buffer_delay =
-        TimeDelta::Seconds(stat->jitter_buffer_delay.ValueOrDefault(0.));
+        TimeDelta::Seconds(stat->jitter_buffer_delay.value_or(0.));
     sample.jitter_buffer_target_delay =
-        TimeDelta::Seconds(stat->jitter_buffer_target_delay.ValueOrDefault(0.));
+        TimeDelta::Seconds(stat->jitter_buffer_target_delay.value_or(0.));
     sample.jitter_buffer_emitted_count =
-        stat->jitter_buffer_emitted_count.ValueOrDefault(0ul);
-    sample.total_samples_duration =
-        stat->total_samples_duration.ValueOrDefault(0.);
-    sample.total_audio_energy = stat->total_audio_energy.ValueOrDefault(0.);
+        stat->jitter_buffer_emitted_count.value_or(0ul);
+    sample.total_samples_duration = stat->total_samples_duration.value_or(0.);
+    sample.total_audio_energy = stat->total_audio_energy.value_or(0.);
 
     TrackIdStreamInfoMap::StreamInfo stream_info =
         analyzer_helper_->GetStreamInfoFromTrackId(*stat->track_identifier);

@@ -11,9 +11,12 @@
 
 #include <assert.h>
 
+#include "config/aom_config.h"
+
+#include "aom/aom_image.h"
 #include "aom/internal/aom_image_internal.h"
-#include "aom_dsp/pyramid.h"
 #include "aom_dsp/flow_estimation/corner_detect.h"
+#include "aom_dsp/pyramid.h"
 #include "aom_mem/aom_mem.h"
 #include "aom_ports/mem.h"
 #include "aom_scale/yv12config.h"
@@ -60,7 +63,7 @@ static int realloc_frame_buffer_aligned(
     const uint64_t uvplane_size, const int aligned_width,
     const int aligned_height, const int uv_width, const int uv_height,
     const int uv_stride, const int uv_border_w, const int uv_border_h,
-    int num_pyramid_levels, int alloc_y_plane_only) {
+    bool alloc_pyramid, int alloc_y_plane_only) {
   if (ybf) {
     const int aom_byte_align = (byte_alignment == 0) ? 1 : byte_alignment;
     const uint64_t frame_size =
@@ -71,8 +74,8 @@ static int realloc_frame_buffer_aligned(
 #if CONFIG_REALTIME_ONLY || !CONFIG_AV1_ENCODER
     // We should only need an 8-bit version of the source frame if we are
     // encoding in non-realtime mode
-    (void)num_pyramid_levels;
-    assert(num_pyramid_levels == 0);
+    (void)alloc_pyramid;
+    assert(!alloc_pyramid);
 #endif  // CONFIG_REALTIME_ONLY || !CONFIG_AV1_ENCODER
 
 #if defined AOM_MAX_ALLOCABLE_MEMORY
@@ -80,9 +83,8 @@ static int realloc_frame_buffer_aligned(
     uint64_t alloc_size = frame_size;
 #if CONFIG_AV1_ENCODER && !CONFIG_REALTIME_ONLY
     // The size of ybf->y_pyramid
-    if (num_pyramid_levels > 0) {
-      alloc_size += aom_get_pyramid_alloc_size(
-          width, height, num_pyramid_levels, use_highbitdepth);
+    if (alloc_pyramid) {
+      alloc_size += aom_get_pyramid_alloc_size(width, height, use_highbitdepth);
       alloc_size += av1_get_corner_list_size();
     }
 #endif  // CONFIG_AV1_ENCODER && !CONFIG_REALTIME_ONLY
@@ -190,10 +192,11 @@ static int realloc_frame_buffer_aligned(
       av1_free_corner_list(ybf->corners);
       ybf->corners = NULL;
     }
-    if (num_pyramid_levels > 0) {
-      ybf->y_pyramid = aom_alloc_pyramid(width, height, num_pyramid_levels,
-                                         use_highbitdepth);
+    if (alloc_pyramid) {
+      ybf->y_pyramid = aom_alloc_pyramid(width, height, use_highbitdepth);
+      if (!ybf->y_pyramid) return AOM_CODEC_MEM_ERROR;
       ybf->corners = av1_alloc_corner_list();
+      if (!ybf->corners) return AOM_CODEC_MEM_ERROR;
     }
 #endif  // CONFIG_AV1_ENCODER && !CONFIG_REALTIME_ONLY
 
@@ -235,7 +238,7 @@ int aom_realloc_frame_buffer(YV12_BUFFER_CONFIG *ybf, int width, int height,
                              int border, int byte_alignment,
                              aom_codec_frame_buffer_t *fb,
                              aom_get_frame_buffer_cb_fn_t cb, void *cb_priv,
-                             int num_pyramid_levels, int alloc_y_plane_only) {
+                             bool alloc_pyramid, int alloc_y_plane_only) {
 #if CONFIG_SIZE_LIMIT
   if (width > DECODE_WIDTH_LIMIT || height > DECODE_HEIGHT_LIMIT)
     return AOM_CODEC_MEM_ERROR;
@@ -262,21 +265,20 @@ int aom_realloc_frame_buffer(YV12_BUFFER_CONFIG *ybf, int width, int height,
         ybf, width, height, ss_x, ss_y, use_highbitdepth, border,
         byte_alignment, fb, cb, cb_priv, y_stride, yplane_size, uvplane_size,
         aligned_width, aligned_height, uv_width, uv_height, uv_stride,
-        uv_border_w, uv_border_h, num_pyramid_levels, alloc_y_plane_only);
+        uv_border_w, uv_border_h, alloc_pyramid, alloc_y_plane_only);
   }
   return AOM_CODEC_MEM_ERROR;
 }
 
 int aom_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf, int width, int height,
                            int ss_x, int ss_y, int use_highbitdepth, int border,
-                           int byte_alignment, int num_pyramid_levels,
+                           int byte_alignment, bool alloc_pyramid,
                            int alloc_y_plane_only) {
   if (ybf) {
     aom_free_frame_buffer(ybf);
-    return aom_realloc_frame_buffer(ybf, width, height, ss_x, ss_y,
-                                    use_highbitdepth, border, byte_alignment,
-                                    NULL, NULL, NULL, num_pyramid_levels,
-                                    alloc_y_plane_only);
+    return aom_realloc_frame_buffer(
+        ybf, width, height, ss_x, ss_y, use_highbitdepth, border,
+        byte_alignment, NULL, NULL, NULL, alloc_pyramid, alloc_y_plane_only);
   }
   return AOM_CODEC_MEM_ERROR;
 }

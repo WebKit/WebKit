@@ -35,6 +35,7 @@ class AutoHideController
         this._pointerIdentifiersPreventingAutoHide = new Set;
         this._pointerIdentifiersPreventingAutoHideForHover = new Set;
 
+        this._mediaControls.element.addEventListener("mousemove", this);
         this._mediaControls.element.addEventListener("pointermove", this);
         this._mediaControls.element.addEventListener("pointerdown", this);
         this._mediaControls.element.addEventListener("pointerup", this);
@@ -90,6 +91,8 @@ class AutoHideController
             return;
 
         switch (event.type) {
+        case "mousemove":
+                this._mediaControls.faded = false;
         case "pointermove":
             // If the pointer is a mouse (supports hover), immediately show the controls.
             if (event.pointerType === "mouse")

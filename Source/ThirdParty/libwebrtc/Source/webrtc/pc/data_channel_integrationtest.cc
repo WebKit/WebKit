@@ -90,7 +90,7 @@ class FakeClockForTest : public rtc::ScopedFakeClock {
     // Some things use a time of "0" as a special value, so we need to start out
     // the fake clock at a nonzero time.
     // TODO(deadbeef): Fix this.
-    AdvanceTime(webrtc::TimeDelta::Seconds(1));
+    AdvanceTime(TimeDelta::Seconds(1));
   }
 
   // Explicit handle.
@@ -253,6 +253,59 @@ TEST_P(DataChannelIntegrationTest,
     EXPECT_EQ_WAIT(data, caller()->data_observer()->last_message(),
                    kDefaultTimeout);
   }
+  caller()->data_channel()->Close();
+
+  EXPECT_EQ_WAIT(caller()->data_observer()->state(),
+                 webrtc::DataChannelInterface::kClosed, kDefaultTimeout);
+  EXPECT_EQ_WAIT(callee()->data_observer()->state(),
+                 webrtc::DataChannelInterface::kClosed, kDefaultTimeout);
+}
+
+// This test sets up a call between two parties with an SCTP
+// data channel only, and sends enough messages to fill the queue and then
+// closes on the caller. We expect the state to transition to closed on both
+// caller and callee.
+TEST_P(DataChannelIntegrationTest, EndToEndCallWithSctpDataChannelFullBuffer) {
+  ASSERT_TRUE(CreatePeerConnectionWrappers());
+  ConnectFakeSignaling();
+  // Expect that data channel created on caller side will show up for callee as
+  // well.
+  caller()->CreateDataChannel();
+  caller()->CreateAndSetAndSignalOffer();
+  ASSERT_TRUE_WAIT(SignalingStateStable(), kDefaultTimeout);
+  // Caller data channel should already exist (it created one). Callee data
+  // channel may not exist yet, since negotiation happens in-band, not in SDP.
+  ASSERT_NE(nullptr, caller()->data_channel());
+  ASSERT_TRUE_WAIT(callee()->data_channel() != nullptr, kDefaultTimeout);
+  EXPECT_TRUE_WAIT(caller()->data_observer()->IsOpen(), kDefaultTimeout);
+  EXPECT_TRUE_WAIT(callee()->data_observer()->IsOpen(), kDefaultTimeout);
+
+  std::string data(256 * 1024, 'a');
+  for (size_t queued_size = 0;
+       queued_size < webrtc::DataChannelInterface::MaxSendQueueSize();
+       queued_size += data.size()) {
+    caller()->data_channel()->SendAsync(DataBuffer(data), nullptr);
+  }
+
+  caller()->data_channel()->Close();
+
+  DataChannelInterface::DataState expected_states[] = {
+      DataChannelInterface::DataState::kConnecting,
+      DataChannelInterface::DataState::kOpen,
+      DataChannelInterface::DataState::kClosing,
+      DataChannelInterface::DataState::kClosed};
+
+  // Debug data channels are very slow, use a long timeout for those slow,
+  // heavily parallelized runs.
+  EXPECT_EQ_WAIT(DataChannelInterface::DataState::kClosed,
+                 caller()->data_observer()->state(), kLongTimeout);
+  EXPECT_THAT(caller()->data_observer()->states(),
+              ::testing::ElementsAreArray(expected_states));
+
+  EXPECT_EQ_WAIT(DataChannelInterface::DataState::kClosed,
+                 callee()->data_observer()->state(), kDefaultTimeout);
+  EXPECT_THAT(callee()->data_observer()->states(),
+              ::testing::ElementsAreArray(expected_states));
 }
 
 // This test sets up a call between two parties with an SCTP
@@ -422,7 +475,7 @@ TEST_P(DataChannelIntegrationTest, CalleeClosesSctpDataChannel) {
 TEST_P(DataChannelIntegrationTest, SctpDataChannelConfigSentToOtherSide) {
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
-  webrtc::DataChannelInit init;
+  DataChannelInit init;
   init.id = 53;
   init.maxRetransmits = 52;
   caller()->CreateDataChannel("data-channel", &init);
@@ -453,7 +506,7 @@ TEST_P(DataChannelIntegrationTest, StressTestUnorderedSctpDataChannel) {
   // Normal procedure, but with unordered data channel config.
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
-  webrtc::DataChannelInit init;
+  DataChannelInit init;
   init.ordered = false;
   caller()->CreateDataChannel(&init);
   caller()->CreateAndSetAndSignalOffer();
@@ -515,7 +568,7 @@ TEST_P(DataChannelIntegrationTest, StressTestOpenCloseChannelNoDelay) {
   const size_t kIterations = 10;
   bool has_negotiated = false;
 
-  webrtc::DataChannelInit init;
+  DataChannelInit init;
   for (size_t repeats = 0; repeats < kIterations; ++repeats) {
     RTC_LOG(LS_INFO) << "Iteration " << (repeats + 1) << "/" << kIterations;
 
@@ -592,7 +645,7 @@ TEST_P(DataChannelIntegrationTest, StressTestOpenCloseChannelWithDelay) {
   const size_t kIterations = 10;
   bool has_negotiated = false;
 
-  webrtc::DataChannelInit init;
+  DataChannelInit init;
   for (size_t repeats = 0; repeats < kIterations; ++repeats) {
     RTC_LOG(LS_INFO) << "Iteration " << (repeats + 1) << "/" << kIterations;
 
@@ -1042,14 +1095,16 @@ TEST_P(DataChannelIntegrationTest,
                  kDefaultTimeout);
   // Cause a temporary network outage
   virtual_socket_server()->set_drop_probability(1.0);
-  // Fill the buffer until queued data starts to build
+  // Fill the SCTP socket buffer until queued data starts to build.
+  constexpr size_t kBufferedDataInSctpSocket = 2'000'000;
   size_t packet_counter = 0;
-  while (caller()->data_channel()->buffered_amount() < 1 &&
+  while (caller()->data_channel()->buffered_amount() <
+             kBufferedDataInSctpSocket &&
          packet_counter < 10000) {
     packet_counter++;
     caller()->data_channel()->Send(DataBuffer("Sent while blocked"));
   }
-  if (caller()->data_channel()->buffered_amount()) {
+  if (caller()->data_channel()->buffered_amount() > kBufferedDataInSctpSocket) {
     RTC_LOG(LS_INFO) << "Buffered data after " << packet_counter << " packets";
   } else {
     RTC_LOG(LS_INFO) << "No buffered data after " << packet_counter

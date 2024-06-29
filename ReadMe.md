@@ -45,6 +45,8 @@ Run the following command to clone WebKit's Git repository:
 git clone https://github.com/WebKit/WebKit.git WebKit
 ```
 
+You can enable [git fsmonitor](https://git-scm.com/docs/git-config#Documentation/git-config.txt-corefsmonitor) to make many git commands faster (such as `git status`) with `git config core.fsmonitor true`
+
 ## Building WebKit
 
 ### Building for Apple platforms

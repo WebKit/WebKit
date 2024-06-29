@@ -31,10 +31,15 @@ DSP_SRCS-yes += bitwriter_buffer.c
 DSP_SRCS-yes += bitwriter_buffer.h
 DSP_SRCS-yes += psnr.c
 DSP_SRCS-yes += psnr.h
+DSP_SRCS-yes += sse.c
 DSP_SRCS-$(CONFIG_INTERNAL_STATS) += ssim.c
 DSP_SRCS-$(CONFIG_INTERNAL_STATS) += ssim.h
 DSP_SRCS-$(CONFIG_INTERNAL_STATS) += psnrhvs.c
 DSP_SRCS-$(CONFIG_INTERNAL_STATS) += fastssim.c
+DSP_SRCS-$(HAVE_NEON) += arm/sse_neon.c
+DSP_SRCS-$(HAVE_NEON_DOTPROD) += arm/sse_neon_dotprod.c
+DSP_SRCS-$(HAVE_SSE4_1) += x86/sse_sse4.c
+DSP_SRCS-$(HAVE_AVX2) += x86/sse_avx2.c
 endif
 
 ifeq ($(CONFIG_DECODERS),yes)
@@ -107,7 +112,8 @@ DSP_SRCS-$(HAVE_AVX2)  += x86/highbd_convolve_avx2.c
 DSP_SRCS-$(HAVE_NEON)  += arm/highbd_vpx_convolve_copy_neon.c
 DSP_SRCS-$(HAVE_NEON)  += arm/highbd_vpx_convolve_avg_neon.c
 DSP_SRCS-$(HAVE_NEON)  += arm/highbd_vpx_convolve8_neon.c
-DSP_SRCS-$(HAVE_NEON)  += arm/highbd_vpx_convolve_neon.c
+DSP_SRCS-$(HAVE_SVE)   += arm/highbd_vpx_convolve8_sve.c
+DSP_SRCS-$(HAVE_SVE2)  += arm/highbd_vpx_convolve8_sve2.c
 endif
 
 DSP_SRCS-$(HAVE_SSE2)  += x86/vpx_convolve_copy_sse2.asm
@@ -134,9 +140,7 @@ DSP_SRCS-yes += arm/vpx_convolve8_neon.c
 DSP_SRCS-yes += arm/vpx_convolve_avg_neon.c
 DSP_SRCS-yes += arm/vpx_convolve_neon.c
 DSP_SRCS-$(HAVE_NEON_DOTPROD) += arm/vpx_convolve8_neon_dotprod.c
-DSP_SRCS-$(HAVE_NEON_DOTPROD) += arm/vpx_convolve_neon_dotprod.c
 DSP_SRCS-$(HAVE_NEON_I8MM) += arm/vpx_convolve8_neon_i8mm.c
-DSP_SRCS-$(HAVE_NEON_I8MM) += arm/vpx_convolve_neon_i8mm.c
 endif  # HAVE_NEON
 endif  # HAVE_NEON_ASM
 
@@ -369,6 +373,7 @@ DSP_SRCS-yes            += sad.c
 DSP_SRCS-yes            += subtract.c
 DSP_SRCS-yes            += sum_squares.c
 DSP_SRCS-$(HAVE_NEON)   += arm/sum_squares_neon.c
+DSP_SRCS-$(HAVE_SVE)    += arm/sum_squares_sve.c
 DSP_SRCS-$(HAVE_SSE2)   += x86/sum_squares_sse2.c
 DSP_SRCS-$(HAVE_MSA)    += mips/sum_squares_msa.c
 
@@ -447,7 +452,10 @@ DSP_SRCS-$(HAVE_SSE2)   += x86/highbd_variance_sse2.c
 DSP_SRCS-$(HAVE_SSE2)   += x86/highbd_variance_impl_sse2.asm
 DSP_SRCS-$(HAVE_SSE2)   += x86/highbd_subpel_variance_impl_sse2.asm
 DSP_SRCS-$(HAVE_NEON)   += arm/highbd_avg_pred_neon.c
+DSP_SRCS-$(HAVE_NEON)   += arm/highbd_sse_neon.c
 DSP_SRCS-$(HAVE_NEON)   += arm/highbd_variance_neon.c
+DSP_SRCS-$(HAVE_NEON_DOTPROD)   += arm/highbd_variance_neon_dotprod.c
+DSP_SRCS-$(HAVE_SVE)    += arm/highbd_variance_sve.c
 DSP_SRCS-$(HAVE_NEON)   += arm/highbd_subpel_variance_neon.c
 endif  # CONFIG_VP9_HIGHBITDEPTH
 endif  # CONFIG_ENCODERS || CONFIG_POSTPROC || CONFIG_VP9_POSTPROC

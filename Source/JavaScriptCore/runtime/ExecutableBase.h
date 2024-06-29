@@ -176,7 +176,7 @@ public:
         return result;
     }
 
-    static ptrdiff_t offsetOfJITCodeWithArityCheckFor(
+    static constexpr ptrdiff_t offsetOfJITCodeWithArityCheckFor(
         CodeSpecializationKind kind)
     {
         switch (kind) {

@@ -46,6 +46,13 @@ static INLINE __m128i xx_loadu_128(const void *a) {
   return _mm_loadu_si128((const __m128i *)a);
 }
 
+// Load 64 bits from each of hi and low, and pack into an SSE register
+// Since directly loading as `int64_t`s and using _mm_set_epi64 may violate
+// the strict aliasing rule, this takes a different approach
+static INLINE __m128i xx_loadu_2x64(const void *hi, const void *lo) {
+  return _mm_unpacklo_epi64(_mm_loadu_si64(lo), _mm_loadu_si64(hi));
+}
+
 static INLINE void xx_storel_32(void *const a, const __m128i v) {
   const int val = _mm_cvtsi128_si32(v);
   memcpy(a, &val, sizeof(val));

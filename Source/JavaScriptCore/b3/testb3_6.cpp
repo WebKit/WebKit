@@ -1613,8 +1613,8 @@ void testLateRegister()
     CHECK(invoke<uint64_t>(*code) == result);
 }
 
-JSC_DECLARE_JIT_OPERATION(interpreterPrint, void, (Vector<intptr_t>* stream, intptr_t value));
-JSC_DEFINE_JIT_OPERATION(interpreterPrint, void, (Vector<intptr_t>* stream, intptr_t value))
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(interpreterPrint, void, (Vector<intptr_t>* stream, intptr_t value));
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(interpreterPrint, void, (Vector<intptr_t>* stream, intptr_t value))
 {
     stream->append(value);
 }
@@ -2840,9 +2840,9 @@ void testMoveConstants()
 }
 
 extern "C" {
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(testMoveConstantsWithLargeOffsetsFunc, double, (double));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(testMoveConstantsWithLargeOffsetsFunc, double, (double));
 }
-JSC_DEFINE_JIT_OPERATION(testMoveConstantsWithLargeOffsetsFunc, double, (double a))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(testMoveConstantsWithLargeOffsetsFunc, double, (double a))
 {
     return a;
 }

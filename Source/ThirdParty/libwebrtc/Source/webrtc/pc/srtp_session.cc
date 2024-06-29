@@ -332,6 +332,12 @@ bool SrtpSession::IsExternalAuthActive() const {
   return external_auth_active_;
 }
 
+bool SrtpSession::RemoveSsrcFromSession(uint32_t ssrc) {
+  RTC_DCHECK(session_);
+  // libSRTP expects the SSRC to be in network byte order.
+  return srtp_remove_stream(session_, htonl(ssrc)) == srtp_err_status_ok;
+}
+
 bool SrtpSession::GetSendStreamPacketIndex(void* p,
                                            int in_len,
                                            int64_t* index) {

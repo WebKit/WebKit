@@ -847,14 +847,7 @@ bool RenderLayerScrollableArea::canShowNonOverlayScrollbars() const
 
 void RenderLayerScrollableArea::createScrollbarsController()
 {
-    if (usesAsyncScrolling()) {
-        if (auto scrollbarController = m_layer.page().chrome().client().createScrollbarsController(m_layer.page(), *this)) {
-            setScrollbarsController(WTFMove(scrollbarController));
-            return;
-        }
-    }
-
-    ScrollableArea::createScrollbarsController();
+    m_layer.page().chrome().client().ensureScrollbarsController(m_layer.page(), *this);
 }
 
 static inline RenderElement* rendererForScrollbar(RenderLayerModelObject& renderer)
@@ -1583,7 +1576,6 @@ bool RenderLayerScrollableArea::hitTestOverflowControls(HitTestResult& result, c
 
     auto rects = overflowControlsRects();
 
-    IntRect resizeControlRect;
     auto& renderer = m_layer.renderer();
     if (renderer.style().resize() != Resize::None) {
         if (rects.resizer.contains(localPoint))
@@ -2003,7 +1995,7 @@ bool RenderLayerScrollableArea::mockScrollbarsControllerEnabled() const
 
 void RenderLayerScrollableArea::logMockScrollbarsControllerMessage(const String& message) const
 {
-    m_layer.renderer().document().addConsoleMessage(MessageSource::Other, MessageLevel::Debug, "RenderLayer: " + message);
+    m_layer.renderer().document().addConsoleMessage(MessageSource::Other, MessageLevel::Debug, makeString("RenderLayer: "_s, message));
 }
 
 String RenderLayerScrollableArea::debugDescription() const
@@ -2047,6 +2039,11 @@ void RenderLayerScrollableArea::invalidateScrollAnchoringElement()
 {
     if (m_scrollAnchoringController)
         m_scrollAnchoringController->invalidateAnchorElement();
+}
+
+FrameIdentifier RenderLayerScrollableArea::rootFrameID() const
+{
+    return m_layer.renderer().frame().rootFrame().frameID();
 }
 
 

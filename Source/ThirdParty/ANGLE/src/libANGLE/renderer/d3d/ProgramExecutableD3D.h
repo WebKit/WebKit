@@ -177,20 +177,25 @@ class D3DPixelExecutable
 {
   public:
     D3DPixelExecutable(const std::vector<GLenum> &outputSignature,
+                       const gl::ImageUnitTextureTypeMap &image2DSignature,
                        ShaderExecutableD3D *shaderExecutable);
     ~D3DPixelExecutable();
 
-    bool matchesSignature(const std::vector<GLenum> &signature) const
+    bool matchesSignature(const std::vector<GLenum> &outputSignature,
+                          const gl::ImageUnitTextureTypeMap &image2DSignature) const
     {
-        return mOutputSignature == signature;
+        return mOutputSignature == outputSignature && mImage2DSignature == image2DSignature;
     }
 
     const std::vector<GLenum> &outputSignature() const { return mOutputSignature; }
+
+    const gl::ImageUnitTextureTypeMap &image2DSignature() const { return mImage2DSignature; }
 
     ShaderExecutableD3D *shaderExecutable() const { return mShaderExecutable; }
 
   private:
     const std::vector<GLenum> mOutputSignature;
+    const gl::ImageUnitTextureTypeMap mImage2DSignature;
     ShaderExecutableD3D *mShaderExecutable;
 };
 
@@ -300,7 +305,7 @@ class ProgramExecutableD3D : public ProgramExecutableImpl
                                  UniqueSerial associatedSerial,
                                  const gl::State &state);
     void updateCachedOutputLayout(const gl::Context *context, const gl::Framebuffer *framebuffer);
-    void updateCachedComputeImage2DBindLayout(const gl::Context *context);
+    void updateCachedImage2DBindLayout(const gl::Context *context, const gl::ShaderType shaderType);
     void updateUniformBufferCache(const gl::Caps &caps);
 
     // Checks if we need to recompile certain shaders.

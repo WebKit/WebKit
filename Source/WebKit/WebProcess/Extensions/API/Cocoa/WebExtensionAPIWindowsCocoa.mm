@@ -376,7 +376,7 @@ bool isValid(std::optional<WebExtensionWindowIdentifier> identifier, NSString **
     return true;
 }
 
-bool WebExtensionAPIWindows::isPropertyAllowed(const ASCIILiteral& name, WebPage&)
+bool WebExtensionAPIWindows::isPropertyAllowed(const ASCIILiteral& name, WebPage*)
 {
     if (UNLIKELY(extensionContext().isUnsupportedAPI(propertyPath(), name)))
         return false;

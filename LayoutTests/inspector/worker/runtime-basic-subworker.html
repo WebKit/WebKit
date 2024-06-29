@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/worker-utilities.js"></script>
+<script>
+passphrase = "page-passphrase";
+
+let worker = new Worker("resources/subworker-manager.js");
+worker.postMessage({url: "worker-1.js", data: null});
+
+async function test()
+{
+    let mainTarget = WI.mainTarget;
+
+    let subworkerTarget = await window.awaitTarget((target) => target instanceof WI.WorkerTarget && target.displayName.endsWith("worker-1.js"));
+
+    let suite = InspectorTest.createAsyncSuite("Subworker.Runtime.basic");
+
+    suite.addTestCase({
+        name: "Main.Runtime.evaluate",
+        description: "Main target evaluation.",
+        async test() {
+            let {result} = await mainTarget.RuntimeAgent.evaluate("passphrase");
+            let remoteObject = WI.RemoteObject.fromPayload(result, mainTarget);
+            InspectorTest.log(`Target - ${mainTarget.displayName} - passphrase - ${remoteObject.description}`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Subworker.Runtime.evaluate",
+        description: "Subworker target evaluation.",
+        async test() {
+            let {result} = await subworkerTarget.RuntimeAgent.evaluate("passphrase");
+            let remoteObject = WI.RemoteObject.fromPayload(result, subworkerTarget);
+            InspectorTest.log(`Target - ${subworkerTarget.displayName} - passphrase - ${remoteObject.description}`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Main.Runtime.RemoteObjectAndPropertyDescriptor.",
+        description: "Should be able to dig further into RemoteObjects.",
+        async test() {
+            let {result} = await mainTarget.RuntimeAgent.evaluate("location");
+            let remoteObject = WI.RemoteObject.fromPayload(result, mainTarget);
+            let [propertyDescriptors] = await promisify((callback) => { remoteObject.getDisplayablePropertyDescriptors(callback); });
+            let hrefPropertyDescriptor = propertyDescriptors.find((p) => p.name === "href");
+            let hrefValue = sanitizeURL(hrefPropertyDescriptor.value.description);
+            InspectorTest.log(`Target - ${mainTarget.displayName} - location and href - ${remoteObject.description}: ${hrefValue}`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Subworker.Runtime.RemoteObjectAndPropertyDescriptor.",
+        description: "Should be able to dig further into RemoteObjects.",
+        async test() {
+            let {result} = await subworkerTarget.RuntimeAgent.evaluate("location");
+            let remoteObject = WI.RemoteObject.fromPayload(result, subworkerTarget);
+            let [propertyDescriptors] = await promisify((callback) => { remoteObject.getDisplayablePropertyDescriptors(callback); });
+            let hrefPropertyDescriptor = propertyDescriptors.find((p) => p.name === "href");
+            let hrefValue = sanitizeURL(hrefPropertyDescriptor.value.description);
+            InspectorTest.log(`Target - ${subworkerTarget.displayName} - location and href - ${remoteObject.description}: ${hrefValue}`);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for RuntimeAgent in a Subworker.</p>
+</body>
+</html>

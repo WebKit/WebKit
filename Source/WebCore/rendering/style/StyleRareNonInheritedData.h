@@ -188,6 +188,9 @@ public:
     float zoom;
     AtomString pseudoElementNameArgument;
 
+    Vector<AtomString> anchorNames;
+    AtomString positionAnchor;
+
     std::optional<Length> blockStepSize;
     unsigned blockStepInsert : 1; // BlockStepInsert
 

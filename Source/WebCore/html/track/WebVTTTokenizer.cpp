@@ -56,11 +56,6 @@ namespace WebCore {
         goto stateName; \
     } while (false)
 
-template<unsigned charactersCount> ALWAYS_INLINE bool equalLiteral(const StringBuilder& s, const char (&characters)[charactersCount])
-{
-    return equal(s, reinterpret_cast<const LChar*>(characters), charactersCount - 1);
-}
-
 static void addNewClass(StringBuilder& classes, const StringBuilder& newClass)
 {
     if (!classes.isEmpty())

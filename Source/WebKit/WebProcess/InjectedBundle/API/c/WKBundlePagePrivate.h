@@ -47,14 +47,11 @@ enum RenderTreeExternalRepresentationFlags {
 };
 typedef uint32_t RenderTreeExternalRepresentationBehavior;
 
-WK_EXPORT void WKBundlePageStopLoading(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageSetDefersLoading(WKBundlePageRef page, bool defersLoading) WK_C_API_DEPRECATED;
-WK_EXPORT bool WKBundlePageIsEditingCommandEnabled(WKBundlePageRef page, WKStringRef commandName);
 WK_EXPORT void WKBundlePageClearMainFrameName(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageClose(WKBundlePageRef page);
 WK_EXPORT WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef page, RenderTreeExternalRepresentationBehavior);
 WK_EXPORT WKStringRef WKBundlePageCopyRenderTreeExternalRepresentationForPrinting(WKBundlePageRef page);
-WK_EXPORT void WKBundlePageExecuteEditingCommand(WKBundlePageRef page, WKStringRef commandName, WKStringRef argument);
 
 WK_EXPORT double WKBundlePageGetTextZoomFactor(WKBundlePageRef page);
 WK_EXPORT double WKBundlePageGetPageZoomFactor(WKBundlePageRef page);
@@ -63,10 +60,6 @@ WK_EXPORT void WKBundlePageSetScaleAtOrigin(WKBundlePageRef page, double scale, 
 
 WK_EXPORT void WKBundlePageForceRepaint(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageFlushPendingEditorStateUpdate(WKBundlePageRef page);
-
-WK_EXPORT void WKBundlePageSimulateMouseDown(WKBundlePageRef page, int button, WKPoint position, int clickCount, WKEventModifiers modifiers, double time) WK_C_API_DEPRECATED;
-WK_EXPORT void WKBundlePageSimulateMouseUp(WKBundlePageRef page, int button, WKPoint position, int clickCount, WKEventModifiers modifiers, double time) WK_C_API_DEPRECATED;
-WK_EXPORT void WKBundlePageSimulateMouseMotion(WKBundlePageRef page, WKPoint position, double time) WK_C_API_DEPRECATED;
 
 WK_EXPORT uint64_t WKBundlePageGetRenderTreeSize(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageCopyRenderTree(WKBundlePageRef page);

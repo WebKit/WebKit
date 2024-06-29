@@ -103,9 +103,9 @@ IDBCursorInfo IDBCursorInfo::isolatedCopy() const
 String IDBCursorInfo::loggingString() const
 {
     if (m_source == IndexedDB::CursorSource::Index)
-        return makeString("<Crsr: ", m_cursorIdentifier.loggingString(), " Idx ", m_sourceIdentifier, ", OS ", m_objectStoreIdentifier, ", tx ", m_transactionIdentifier.loggingString(), '>');
+        return makeString("<Crsr: "_s, m_cursorIdentifier.loggingString(), " Idx "_s, m_sourceIdentifier, ", OS "_s, m_objectStoreIdentifier, ", tx "_s, m_transactionIdentifier.loggingString(), '>');
 
-    return makeString("<Crsr: ", m_cursorIdentifier.loggingString(), " OS ", m_objectStoreIdentifier, ", tx ", m_transactionIdentifier.loggingString(), '>');
+    return makeString("<Crsr: "_s, m_cursorIdentifier.loggingString(), " OS "_s, m_objectStoreIdentifier, ", tx "_s, m_transactionIdentifier.loggingString(), '>');
 }
 
 #endif

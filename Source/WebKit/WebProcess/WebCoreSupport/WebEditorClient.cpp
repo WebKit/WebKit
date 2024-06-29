@@ -268,9 +268,21 @@ void WebEditorClient::willWriteSelectionToPasteboard(const std::optional<SimpleR
     m_page->injectedBundleEditorClient().willWriteToPasteboard(*m_page, range);
 }
 
-void WebEditorClient::getClientPasteboardData(const std::optional<SimpleRange>& range, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData)
+void WebEditorClient::getClientPasteboardData(const std::optional<SimpleRange>& range, Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>>& pasteboardTypesAndData)
 {
+    Vector<String> pasteboardTypes;
+    Vector<RefPtr<WebCore::SharedBuffer>> pasteboardData;
+    for (size_t i = 0; i < pasteboardTypesAndData.size(); ++i) {
+        pasteboardTypes.append(pasteboardTypesAndData[i].first);
+        pasteboardData.append(pasteboardTypesAndData[i].second);
+    }
+
     m_page->injectedBundleEditorClient().getPasteboardDataForRange(*m_page, range, pasteboardTypes, pasteboardData);
+
+    ASSERT(pasteboardTypes.size() == pasteboardData.size());
+    pasteboardTypesAndData.clear();
+    for (size_t i = 0; i < pasteboardTypes.size(); ++i)
+        pasteboardTypesAndData.append(std::make_pair(pasteboardTypes[i], pasteboardData[i]));
 }
 
 bool WebEditorClient::performTwoStepDrop(DocumentFragment& fragment, const SimpleRange& destination, bool isMove)
@@ -335,9 +347,9 @@ void WebEditorClient::redo()
     m_page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(UndoOrRedo::Redo));
 }
 
-WebCore::DOMPasteAccessResponse WebEditorClient::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, const String& originIdentifier)
+WebCore::DOMPasteAccessResponse WebEditorClient::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::FrameIdentifier frameID, const String& originIdentifier)
 {
-    return m_page->requestDOMPasteAccess(pasteAccessCategory, originIdentifier);
+    return m_page->requestDOMPasteAccess(pasteAccessCategory, frameID, originIdentifier);
 }
 
 #if !PLATFORM(COCOA) && !USE(GLIB)

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <iterator>
 #include <wtf/Noncopyable.h>
 #include <wtf/Nonmovable.h>
 #include <wtf/TrailingArray.h>
@@ -75,6 +76,16 @@ public:
         return UniqueRef { *new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, std::forward<Args>(args)...) };
     }
 
+    template<std::invocable<size_t> Generator>
+    static std::unique_ptr<EmbeddedFixedVector> createWithSizeFromGenerator(unsigned size, Generator&& generator)
+    {
+
+        auto result = std::unique_ptr<EmbeddedFixedVector> { new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(typename Base::Failable { }, size, std::forward<Generator>(generator)) };
+        if (result->size() != size)
+            return nullptr;
+        return result;
+    }
+
     UniqueRef<EmbeddedFixedVector> clone() const
     {
         return create(Base::begin(), Base::end());
@@ -107,6 +118,12 @@ private:
     template<typename... Args>
     explicit EmbeddedFixedVector(unsigned size, Args&&... args) // create with given size and constructor arguments for all elements
         : Base(size, std::forward<Args>(args)...)
+    {
+    }
+
+    template<std::invocable<size_t> FailableGenerator>
+    EmbeddedFixedVector(typename Base::Failable failable, unsigned size, FailableGenerator&& generator)
+        : Base(failable, size, std::forward<FailableGenerator>(generator))
     {
     }
 };

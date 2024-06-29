@@ -11,6 +11,7 @@ import("../../../webrtc.gni")
 rtc_source_set("types") {
   deps = [
     "../../../api:array_view",
+    "../../../api/units:time_delta",
     "../../../rtc_base:strong_alias",
   ]
   sources = [
@@ -26,6 +27,7 @@ rtc_source_set("socket") {
     ":types",
     "../../../api:array_view",
     "../../../api/task_queue:task_queue",
+    "../../../api/units:timestamp",
     "../../../rtc_base:checks",
     "../../../rtc_base:strong_alias",
   ]

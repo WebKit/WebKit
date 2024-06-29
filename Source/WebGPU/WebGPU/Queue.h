@@ -63,9 +63,9 @@ public:
 
     void onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback);
     void submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands);
-    void writeBuffer(const Buffer&, uint64_t bufferOffset, void* data, size_t);
-    void writeBuffer(id<MTLBuffer>, uint64_t bufferOffset, void* data, size_t);
-    void writeTexture(const WGPUImageCopyTexture& destination, void* data, size_t dataSize, const WGPUTextureDataLayout&, const WGPUExtent3D& writeSize, bool skipValidation = false);
+    void writeBuffer(const Buffer&, uint64_t bufferOffset, std::span<uint8_t> data);
+    void writeBuffer(id<MTLBuffer>, uint64_t bufferOffset, std::span<uint8_t> data);
+    void writeTexture(const WGPUImageCopyTexture& destination, std::span<uint8_t> data, const WGPUTextureDataLayout&, const WGPUExtent3D& writeSize, bool skipValidation = false);
     void setLabel(String&&);
 
     void onSubmittedWorkScheduled(Function<void()>&&);
@@ -81,6 +81,7 @@ public:
     id<MTLCommandEncoder> encoderForBuffer(id<MTLCommandBuffer>) const;
     void clearTextureViewIfNeeded(TextureView&);
     static bool writeWillCompletelyClear(WGPUTextureDimension, uint32_t widthForMetal, uint32_t logicalSizeWidth, uint32_t heightForMetal, uint32_t logicalSizeHeight, uint32_t depthForMetal, uint32_t logicalSizeDepthOrArrayLayers);
+    void endEncoding(id<MTLCommandEncoder>, id<MTLCommandBuffer>) const;
 
 private:
     Queue(id<MTLCommandQueue>, Device&);

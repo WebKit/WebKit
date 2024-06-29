@@ -12,6 +12,7 @@
 
 #include "libANGLE/Error.h"
 
+#include "common/SimpleMutex.h"
 #include "common/debug.h"
 #include "libANGLE/renderer/d3d/d3d9/Context9.h"
 
@@ -41,7 +42,7 @@ class ShaderCache : angle::NonCopyable
                          size_t length,
                          ShaderObject **outShaderObject)
     {
-        std::lock_guard<std::mutex> lock(mMutex);
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
 
         std::string key(reinterpret_cast<const char *>(function), length);
         typename Map::iterator it = mMap.find(key);
@@ -72,7 +73,7 @@ class ShaderCache : angle::NonCopyable
 
     void clear()
     {
-        std::lock_guard<std::mutex> lock(mMutex);
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
 
         for (typename Map::iterator it = mMap.begin(); it != mMap.end(); ++it)
         {
@@ -97,7 +98,7 @@ class ShaderCache : angle::NonCopyable
 
     typedef angle::HashMap<std::string, ShaderObject *> Map;
     Map mMap;
-    std::mutex mMutex;
+    angle::SimpleMutex mMutex;
 
     IDirect3DDevice9 *mDevice;
 };

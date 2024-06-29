@@ -39,7 +39,6 @@
 #include "MessageArgumentDescriptions.h"
 #include "MessageObserver.h"
 #include "NetworkProcessConnection.h"
-#include "RemoteRenderingBackendCreationParameters.h"
 #include "SerializedTypeInfo.h"
 #include "StreamClientConnection.h"
 #include "StreamConnectionBuffer.h"
@@ -65,6 +64,7 @@
 #include <WebCore/SharedMemory.h>
 #include <wtf/PageBlock.h>
 #include <wtf/Scope.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringConcatenate.h>
 
 namespace WebKit::IPCTestingAPI {
@@ -527,8 +527,8 @@ static JSValueRef jsSendWithAsyncReply(IPC::Connection& connection, uint64_t des
                 jsResult = jsResultFromReplyDecoder(globalObject, messageName, *replyDecoder);
             JSValueRef arguments[1] = { nullptr };
             if (auto* exception = scope.exception()) {
-                scope.clearException();
                 arguments[0] = toRef(globalObject, exception);
+                scope.clearException();
             } else
                 arguments[0] = toRef(globalObject, jsResult);
             JSObjectCallAsFunction(context, callback, callback, 1, arguments, nullptr);
@@ -1547,7 +1547,7 @@ JSValueRef JSSharedMemory::readBytes(JSContextRef context, JSObjectRef, JSObject
             length = *lengthValue;
     }
 
-    auto arrayBuffer = JSC::ArrayBuffer::create(static_cast<uint8_t*>(jsSharedMemory->m_sharedMemory->data()) + offset, length);
+    auto arrayBuffer = JSC::ArrayBuffer::create(jsSharedMemory->m_sharedMemory->span().subspan(offset, length));
     JSC::JSArrayBuffer* jsArrayBuffer = nullptr;
     if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode()))
         jsArrayBuffer = JSC::JSArrayBuffer::create(vm, structure, WTFMove(arrayBuffer));
@@ -1637,7 +1637,7 @@ JSValueRef JSSharedMemory::writeBytes(JSContextRef context, JSObjectRef, JSObjec
         length = *lengthValue;
     }
 
-    memcpy(static_cast<uint8_t*>(jsSharedMemory->m_sharedMemory->data()) + offset, span.data(), length);
+    memcpySpan(jsSharedMemory->m_sharedMemory->mutableSpan().subspan(offset, length), span.first(length));
 
     return JSValueMakeUndefined(context);
 }
@@ -1684,7 +1684,6 @@ JSValueRef JSIPCStreamConnectionBuffer::readBytes(JSContextRef context, JSObject
 {
     size_t offset = 0;
     size_t length = span.size();
-    uint8_t* data = span.data();
     auto* globalObject = toJS(context);
     auto& vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);
@@ -1711,7 +1710,7 @@ JSValueRef JSIPCStreamConnectionBuffer::readBytes(JSContextRef context, JSObject
             length = *lengthValue;
     }
 
-    auto arrayBuffer = JSC::ArrayBuffer::create(data + offset, length);
+    auto arrayBuffer = JSC::ArrayBuffer::create(span.subspan(offset, length));
     JSC::JSArrayBuffer* jsArrayBuffer = nullptr;
     if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode()))
         jsArrayBuffer = JSC::JSArrayBuffer::create(vm, structure, WTFMove(arrayBuffer));
@@ -2061,24 +2060,6 @@ std::optional<T> getObjectIdentifierFromProperty(JSC::JSGlobalObject* globalObje
     return std::optional<T> { *number };
 }
 
-static bool encodeRemoteRenderingBackendCreationParameters(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::CatchScope& scope)
-{
-    auto identifier = getObjectIdentifierFromProperty<RenderingBackendIdentifier>(globalObject, jsObject, "identifier"_s, scope);
-    if (!identifier)
-        return false;
-
-    auto pageProxyID = getObjectIdentifierFromProperty<WebPageProxyIdentifier>(globalObject, jsObject, "pageProxyID"_s, scope);
-    if (!pageProxyID)
-        return false;
-
-    auto pageID = getObjectIdentifierFromProperty<WebCore::PageIdentifier>(globalObject, jsObject, "pageID"_s, scope);
-    if (!pageID)
-        return false;
-
-    RemoteRenderingBackendCreationParameters parameters { *identifier, *pageProxyID, *pageID };
-    encoder << parameters;
-    return true;
-}
 #endif
 
 static bool encodeSharedMemory(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::CatchScope& scope)
@@ -2289,16 +2270,6 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         return true;
     }
 
-#if ENABLE(GPU_PROCESS)
-    if (type == "RemoteRenderingBackendCreationParameters"_s) {
-        if (!encodeRemoteRenderingBackendCreationParameters(encoder, globalObject, jsObject, scope)) {
-            *exception = createTypeError(context, "Failed to convert RemoteRenderingBackendCreationParameters"_s);
-            return false;
-        }
-        return true;
-    }
-#endif
-
     if (type == "SharedMemory"_s) {
         if (!encodeSharedMemory(encoder, globalObject, jsObject, scope)) {
             *exception = createTypeError(context, "Failed to convert SharedMemory"_s);
@@ -2461,7 +2432,7 @@ static JSC::JSObject* jsResultFromReplyDecoder(JSC::JSGlobalObject* globalObject
         return nullptr;
     }
 
-    auto arrayBuffer = JSC::ArrayBuffer::create(decoder.buffer());
+    auto arrayBuffer = JSC::ArrayBuffer::create(decoder.span());
     JSC::JSArrayBuffer* jsArrayBuffer = nullptr;
     if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode()))
         jsArrayBuffer = JSC::JSArrayBuffer::create(vm, structure, WTFMove(arrayBuffer));
@@ -3028,7 +2999,7 @@ void JSMessageListener::didReceiveMessage(const IPC::Decoder& decoder)
     auto context = toRef(globalObject);
     JSC::JSLockHolder lock(globalObject->vm());
 
-    auto mutableDecoder = IPC::Decoder::create(decoder.buffer(), { });
+    auto mutableDecoder = IPC::Decoder::create(decoder.span(), { });
     auto* description = jsDescriptionFromDecoder(globalObject, *mutableDecoder);
 
     JSValueRef arguments[] = { description ? toRef(globalObject, description) : JSValueMakeUndefined(context) };
@@ -3043,7 +3014,7 @@ void JSMessageListener::willSendMessage(const IPC::Encoder& encoder, OptionSet<I
     RELEASE_ASSERT(m_jsIPC);
     Ref protectOwnerOfThis = *m_jsIPC;
 
-    auto decoder = IPC::Decoder::create({ encoder.buffer(), encoder.bufferSize() }, { });
+    auto decoder = IPC::Decoder::create(encoder.span(), { });
     RunLoop::main().dispatch([this, protectOwnerOfThis = WTFMove(protectOwnerOfThis), decoder = WTFMove(decoder)] {
         auto* globalObject = m_globalObject.get();
         if (!globalObject)
@@ -3082,7 +3053,7 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
     }
-    auto arrayBuffer = JSC::ArrayBuffer::create(decoder.buffer());
+    auto arrayBuffer = JSC::ArrayBuffer::create(decoder.span());
     if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode())) {
         if (auto* jsArrayBuffer = JSC::JSArrayBuffer::create(vm, structure, WTFMove(arrayBuffer))) {
             jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "buffer"_s), jsArrayBuffer);

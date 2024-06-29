@@ -570,7 +570,7 @@ angle::Result DmaBufImageSiblingVkLinux::initWithFormat(DisplayVk *displayVk,
 
     return mImage->initExternalMemory(
         displayVk, renderer->getMemoryProperties(), externalMemoryRequirements, allocateInfoCount,
-        allocateInfo.allocateInfoPtr.data(), VK_QUEUE_FAMILY_FOREIGN_EXT, flags);
+        allocateInfo.allocateInfoPtr.data(), vk::kForeignDeviceQueueIndex, flags);
 }
 
 angle::Result DmaBufImageSiblingVkLinux::initImpl(DisplayVk *displayVk)

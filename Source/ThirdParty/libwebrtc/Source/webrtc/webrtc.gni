@@ -39,6 +39,10 @@ if (is_fuchsia) {
   import("//build/config/fuchsia/config.gni")
 }
 
+if (build_with_chromium) {
+  import("//media/media_options.gni")
+}
+
 # This declare_args is separated from the next one because args declared
 # in this one, can be read from the next one (args defined in the same
 # declare_args cannot be referenced in that scope).
@@ -190,7 +194,11 @@ declare_args() {
       proprietary_codecs && !is_android && !is_ios && !(is_win && !is_clang)
 
   # Enable to use H265
-  rtc_use_h265 = proprietary_codecs
+  if (build_with_chromium) {
+    rtc_use_h265 = enable_hevc_parser_and_hw_decoder
+  } else {
+    rtc_use_h265 = proprietary_codecs
+  }
 
   # Enable this flag to make webrtc::Mutex be implemented by absl::Mutex.
   rtc_use_absl_mutex = false
@@ -260,6 +268,9 @@ declare_args() {
   # WebRTC does not declare its public dependencies. See webrtc:8603. Instead
   # WebRTC is using a global common dependencies.
   rtc_common_public_deps = []  # no-presubmit-check TODO(webrtc:8603)
+
+  # When true, include the Perfetto library.
+  rtc_use_perfetto = false
 }
 
 if (!build_with_mozilla) {
@@ -378,6 +389,10 @@ if (is_mac || is_ios) {
   }
 }
 
+if (build_with_chromium) {
+  rtc_use_perfetto = true
+}
+
 # Global public configuration that should be applied to all WebRTC targets. You
 # normally shouldn't need to include this in your target as it's automatically
 # included when using the rtc_* templates. It set the defines, include paths and
@@ -474,11 +489,13 @@ all_poison_types = [
   # Encoders and decoders for specific audio codecs such as Opus and iSAC.
   "audio_codecs",
 
-  # Default task queue implementation.
-  "default_task_queue",
-
   # Default echo detector implementation.
   "default_echo_detector",
+
+  # Implementations of the utilities exposed through `Environment`.
+  # Most webrtc classes must use propagated `Environment`. Only few top-level
+  # classes are allowed to create `Environment` from individual utilities.
+  "environment_construction",
 
   # Software video codecs (VP8 and VP9 through libvpx).
   "software_video_codecs",
@@ -1019,6 +1036,7 @@ if (is_mac || is_ios) {
     umbrella_header_path =
         "$target_gen_dir/$output_name.framework/WebRTC/$output_name.h"
     modulemap_path = "$target_gen_dir/Modules/module.modulemap"
+    privacy_manifest_path = "$target_gen_dir/$target_name/PrivacyInfo.xcprivacy"
 
     action_foreach("create_bracket_include_headers_$target_name") {
       script = "//tools_webrtc/apple/copy_framework_header.py"
@@ -1059,6 +1077,7 @@ if (is_mac || is_ios) {
         deps += [
           ":copy_framework_headers_$this_target_name",
           ":copy_modulemap_$this_target_name",
+          ":copy_privacy_manifest_$this_target_name",
           ":copy_umbrella_header_$this_target_name",
           ":create_bracket_include_headers_$this_target_name",
           ":modulemap_$this_target_name",
@@ -1081,6 +1100,7 @@ if (is_mac || is_ios) {
                 ":create_bracket_include_headers_$this_target_name")
 
         deps += [
+          ":copy_privacy_manifest_$this_target_name",
           ":copy_umbrella_header_$this_target_name",
           ":create_bracket_include_headers_$this_target_name",
         ]
@@ -1090,8 +1110,13 @@ if (is_mac || is_ios) {
     if (is_mac || target_environment == "catalyst") {
       # Catalyst frameworks use the same layout as regular Mac frameworks.
       headers_dir = "Versions/A/Headers"
+
+      # The path to the privacy manifest file differs between Mac and iOS.
+      # https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/adding_a_privacy_manifest_to_your_app_or_third-party_sdk
+      privacy_manifest_out_path = "Versions/A/Resources/PrivacyInfo.xcprivacy"
     } else {
       headers_dir = "Headers"
+      privacy_manifest_out_path = "PrivacyInfo.xcprivacy"
     }
 
     bundle_data("copy_framework_headers_$this_target_name") {
@@ -1140,6 +1165,25 @@ if (is_mac || is_ios) {
           [ "$root_out_dir/$output_name.framework/$headers_dir/$output_name.h" ]
 
       deps = [ ":umbrella_header_$target_name" ]
+    }
+
+    action("create_privacy_manifest_$target_name") {
+      script = "//tools_webrtc/apple/generate_privacy_manifest.py"
+
+      args = [
+        "--output",
+        rebase_path(privacy_manifest_path),
+      ]
+
+      outputs = [ privacy_manifest_path ]
+    }
+
+    copy("copy_privacy_manifest_$target_name") {
+      sources = [ privacy_manifest_path ]
+      outputs =
+          [ "$root_out_dir/$output_name.framework/$privacy_manifest_out_path" ]
+
+      deps = [ ":create_privacy_manifest_$target_name" ]
     }
   }
 }

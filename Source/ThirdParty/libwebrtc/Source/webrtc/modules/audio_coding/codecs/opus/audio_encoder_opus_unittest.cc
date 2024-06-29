@@ -39,7 +39,7 @@ constexpr int kDefaultOpusPacSize = 960;
 constexpr int64_t kInitialTimeUs = 12345678;
 
 AudioEncoderOpusConfig CreateConfigWithParameters(
-    const SdpAudioFormat::Parameters& params) {
+    const CodecParameterMap& params) {
   const SdpAudioFormat format("opus", 48000, 2, params);
   return *AudioEncoderOpus::SdpToConfig(format);
 }

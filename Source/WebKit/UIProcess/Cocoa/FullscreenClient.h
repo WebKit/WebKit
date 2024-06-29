@@ -67,6 +67,9 @@ private:
         bool webViewWillExitElementFullscreen : 1;
         bool webViewDidExitElementFullscreen : 1;
 #endif
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+        bool webViewDidFullscreenImageWithQuickLook : 1;
+#endif
     } m_delegateMethods;
 };
 

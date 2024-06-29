@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Assertions.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace JSC {
 

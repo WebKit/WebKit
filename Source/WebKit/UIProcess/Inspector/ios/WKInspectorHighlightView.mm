@@ -41,6 +41,7 @@
         return nil;
     _layers = adoptNS([[NSMutableArray alloc] init]);
     self.opaque = NO;
+    self.userInteractionEnabled = NO;
     return self;
 }
 

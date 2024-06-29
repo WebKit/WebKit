@@ -14,8 +14,8 @@
 #include <memory>
 #include <utility>
 
+#include "api/task_queue/task_queue_base.h"
 #include "rtc_base/event.h"
-#include "rtc_base/task_queue.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -88,11 +88,11 @@ TEST(ExternalTimeControllerTest, TaskIsStoppedOnStop) {
   const int kMargin = 1;
   FakeAlarm alarm(kStartTime);
   ExternalTimeController time_simulation(&alarm);
-  rtc::TaskQueue task_queue(
+  std::unique_ptr<TaskQueueBase, TaskQueueDeleter> task_queue =
       time_simulation.GetTaskQueueFactory()->CreateTaskQueue(
-          "TestQueue", TaskQueueFactory::Priority::NORMAL));
+          "TestQueue", TaskQueueFactory::Priority::NORMAL);
   std::atomic_int counter(0);
-  auto handle = RepeatingTaskHandle::Start(task_queue.Get(), [&] {
+  auto handle = RepeatingTaskHandle::Start(task_queue.get(), [&] {
     if (++counter >= kShortIntervalCount)
       return kLongInterval;
     return kShortInterval;
@@ -101,7 +101,7 @@ TEST(ExternalTimeControllerTest, TaskIsStoppedOnStop) {
   time_simulation.AdvanceTime(kShortInterval * (kShortIntervalCount + kMargin));
   EXPECT_EQ(counter.load(), kShortIntervalCount);
 
-  task_queue.PostTask(
+  task_queue->PostTask(
       [handle = std::move(handle)]() mutable { handle.Stop(); });
 
   // Sleep long enough that the task would run at least once more if not
@@ -114,13 +114,13 @@ TEST(ExternalTimeControllerTest, TaskCanStopItself) {
   std::atomic_int counter(0);
   FakeAlarm alarm(kStartTime);
   ExternalTimeController time_simulation(&alarm);
-  rtc::TaskQueue task_queue(
+  std::unique_ptr<TaskQueueBase, TaskQueueDeleter> task_queue =
       time_simulation.GetTaskQueueFactory()->CreateTaskQueue(
-          "TestQueue", TaskQueueFactory::Priority::NORMAL));
+          "TestQueue", TaskQueueFactory::Priority::NORMAL);
 
   RepeatingTaskHandle handle;
-  task_queue.PostTask([&] {
-    handle = RepeatingTaskHandle::Start(task_queue.Get(), [&] {
+  task_queue->PostTask([&] {
+    handle = RepeatingTaskHandle::Start(task_queue.get(), [&] {
       ++counter;
       handle.Stop();
       return TimeDelta::Millis(2);
@@ -134,12 +134,12 @@ TEST(ExternalTimeControllerTest, YieldForTask) {
   FakeAlarm alarm(kStartTime);
   ExternalTimeController time_simulation(&alarm);
 
-  rtc::TaskQueue task_queue(
+  std::unique_ptr<TaskQueueBase, TaskQueueDeleter> task_queue =
       time_simulation.GetTaskQueueFactory()->CreateTaskQueue(
-          "TestQueue", TaskQueueFactory::Priority::NORMAL));
+          "TestQueue", TaskQueueFactory::Priority::NORMAL);
 
   rtc::Event event;
-  task_queue.PostTask([&] { event.Set(); });
+  task_queue->PostTask([&] { event.Set(); });
   EXPECT_TRUE(event.Wait(TimeDelta::Millis(200)));
 }
 
@@ -147,16 +147,16 @@ TEST(ExternalTimeControllerTest, TasksYieldToEachOther) {
   FakeAlarm alarm(kStartTime);
   ExternalTimeController time_simulation(&alarm);
 
-  rtc::TaskQueue task_queue(
+  std::unique_ptr<TaskQueueBase, TaskQueueDeleter> task_queue =
       time_simulation.GetTaskQueueFactory()->CreateTaskQueue(
-          "TestQueue", TaskQueueFactory::Priority::NORMAL));
-  rtc::TaskQueue other_queue(
+          "TestQueue", TaskQueueFactory::Priority::NORMAL);
+  std::unique_ptr<TaskQueueBase, TaskQueueDeleter> other_queue =
       time_simulation.GetTaskQueueFactory()->CreateTaskQueue(
-          "OtherQueue", TaskQueueFactory::Priority::NORMAL));
+          "OtherQueue", TaskQueueFactory::Priority::NORMAL);
 
-  task_queue.PostTask([&] {
+  task_queue->PostTask([&] {
     rtc::Event event;
-    other_queue.PostTask([&] { event.Set(); });
+    other_queue->PostTask([&] { event.Set(); });
     EXPECT_TRUE(event.Wait(TimeDelta::Millis(200)));
   });
 
@@ -167,11 +167,11 @@ TEST(ExternalTimeControllerTest, CurrentTaskQueue) {
   FakeAlarm alarm(kStartTime);
   ExternalTimeController time_simulation(&alarm);
 
-  rtc::TaskQueue task_queue(
+  std::unique_ptr<TaskQueueBase, TaskQueueDeleter> task_queue =
       time_simulation.GetTaskQueueFactory()->CreateTaskQueue(
-          "TestQueue", TaskQueueFactory::Priority::NORMAL));
+          "TestQueue", TaskQueueFactory::Priority::NORMAL);
 
-  task_queue.PostTask([&] { EXPECT_TRUE(task_queue.IsCurrent()); });
+  task_queue->PostTask([&] { EXPECT_TRUE(task_queue->IsCurrent()); });
 
   time_simulation.AdvanceTime(TimeDelta::Millis(10));
 }

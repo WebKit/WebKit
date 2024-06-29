@@ -146,7 +146,7 @@ void printInternal(PrintStream& out, unsigned char value)
 
 void printInternal(PrintStream& out, char16_t value)
 {
-    out.printf("%lc", value);
+    out.printf("%lc", static_cast<wint_t>(value));
 }
 
 void printInternal(PrintStream& out, char32_t value)

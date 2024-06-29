@@ -68,20 +68,36 @@ struct _WPEKeymapClass
 {
     GObjectClass parent_class;
 
-    gboolean     (* get_entries_for_keyval) (WPEKeymap       *keymap,
-                                             guint            keyval,
-                                             WPEKeymapEntry **entries,
-                                             guint           *n_entries);
-    WPEModifiers (* get_modifiers)          (WPEKeymap       *keymap);
+    gboolean     (* get_entries_for_keyval)   (WPEKeymap       *keymap,
+                                               guint            keyval,
+                                               WPEKeymapEntry **entries,
+                                               guint           *n_entries);
+    gboolean     (* translate_keyboard_state) (WPEKeymap       *keymap,
+                                               guint            keycode,
+                                               WPEModifiers     modifiers,
+                                               int              group,
+                                               guint           *keyval,
+                                               int             *effective_group,
+                                               int             *level,
+                                               WPEModifiers    *consumed_modifiers);
+    WPEModifiers (* get_modifiers)            (WPEKeymap       *keymap);
 
     gpointer padding[32];
 };
 
-WPE_API gboolean     wpe_keymap_get_entries_for_keyval (WPEKeymap       *keymap,
-                                                        guint            keyval,
-                                                        WPEKeymapEntry **entries,
-                                                        guint           *n_entries);
-WPE_API WPEModifiers wpe_keymap_get_modifiers          (WPEKeymap       *keymap);
+WPE_API gboolean     wpe_keymap_get_entries_for_keyval   (WPEKeymap       *keymap,
+                                                          guint            keyval,
+                                                          WPEKeymapEntry **entries,
+                                                          guint           *n_entries);
+WPE_API gboolean     wpe_keymap_translate_keyboard_state (WPEKeymap       *keymap,
+                                                          guint            keycode,
+                                                          WPEModifiers     modifiers,
+                                                          int              group,
+                                                          guint           *keyval,
+                                                          int             *effective_group,
+                                                          int             *level,
+                                                          WPEModifiers    *consumed_modifiers);
+WPE_API WPEModifiers wpe_keymap_get_modifiers            (WPEKeymap       *keymap);
 
 G_END_DECLS
 

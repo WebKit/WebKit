@@ -25,15 +25,15 @@ void GetInstructionOpAndLength(const uint32_t *_instruction, spv::Op *opOut, uin
     *opOut                     = static_cast<spv::Op>(_instruction[0] & kOpMask);
     *lengthOut                 = _instruction[0] >> 16;
 }
-void ParseUndef(const uint32_t *_instruction, IdResultType *idResultType, IdResult *idResult)
+void ParseUndef(const uint32_t *_instruction, IdResultType *idResultType1, IdResult *idResult2)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpUndef);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
 }
 void ParseSourceContinued(const uint32_t *_instruction, LiteralString *continuedSource)
 {
@@ -47,7 +47,7 @@ void ParseSourceContinued(const uint32_t *_instruction, LiteralString *continued
     _o += strlen(*continuedSource) / 4 + 1;
 }
 void ParseSource(const uint32_t *_instruction,
-                 spv::SourceLanguage *sourceLanguage,
+                 spv::SourceLanguage *sourceLanguage1,
                  LiteralInteger *version,
                  IdRef *file,
                  LiteralString *source)
@@ -56,9 +56,9 @@ void ParseSource(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSource);
-    uint32_t _o     = 1;
-    *sourceLanguage = spv::SourceLanguage(_instruction[_o++]);
-    *version        = LiteralInteger(_instruction[_o++]);
+    uint32_t _o      = 1;
+    *sourceLanguage1 = spv::SourceLanguage(_instruction[_o++]);
+    *version         = LiteralInteger(_instruction[_o++]);
     if (file && _o < _length)
     {
         *file = IdRef(_instruction[_o++]);
@@ -109,14 +109,14 @@ void ParseMemberName(const uint32_t *_instruction,
     *name = reinterpret_cast<const char *>(&_instruction[_o]);
     _o += strlen(*name) / 4 + 1;
 }
-void ParseString(const uint32_t *_instruction, IdResult *idResult, LiteralString *string)
+void ParseString(const uint32_t *_instruction, IdResult *idResult1, LiteralString *string)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpString);
     uint32_t _o = 1;
-    *idResult   = IdResult(_instruction[_o++]);
+    *idResult1  = IdResult(_instruction[_o++]);
     ASSERT(IsLittleEndian());
     *string = reinterpret_cast<const char *>(&_instruction[_o]);
     _o += strlen(*string) / 4 + 1;
@@ -146,21 +146,21 @@ void ParseExtension(const uint32_t *_instruction, LiteralString *name)
     *name = reinterpret_cast<const char *>(&_instruction[_o]);
     _o += strlen(*name) / 4 + 1;
 }
-void ParseExtInstImport(const uint32_t *_instruction, IdResult *idResult, LiteralString *name)
+void ParseExtInstImport(const uint32_t *_instruction, IdResult *idResult1, LiteralString *name)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpExtInstImport);
     uint32_t _o = 1;
-    *idResult   = IdResult(_instruction[_o++]);
+    *idResult1  = IdResult(_instruction[_o++]);
     ASSERT(IsLittleEndian());
     *name = reinterpret_cast<const char *>(&_instruction[_o]);
     _o += strlen(*name) / 4 + 1;
 }
 void ParseExtInst(const uint32_t *_instruction,
-                  IdResultType *idResultType,
-                  IdResult *idResult,
+                  IdResultType *idResultType1,
+                  IdResult *idResult2,
                   IdRef *set,
                   LiteralExtInstInteger *instruction,
                   IdRefList *operandList)
@@ -169,11 +169,11 @@ void ParseExtInst(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpExtInst);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *set          = IdRef(_instruction[_o++]);
-    *instruction  = LiteralExtInstInteger(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *set           = IdRef(_instruction[_o++]);
+    *instruction   = LiteralExtInstInteger(_instruction[_o++]);
     if (operandList)
     {
         while (_o < _length)
@@ -183,19 +183,19 @@ void ParseExtInst(const uint32_t *_instruction,
     }
 }
 void ParseMemoryModel(const uint32_t *_instruction,
-                      spv::AddressingModel *addressingModel,
-                      spv::MemoryModel *memoryModel)
+                      spv::AddressingModel *addressingModel1,
+                      spv::MemoryModel *memoryModel2)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpMemoryModel);
-    uint32_t _o      = 1;
-    *addressingModel = spv::AddressingModel(_instruction[_o++]);
-    *memoryModel     = spv::MemoryModel(_instruction[_o++]);
+    uint32_t _o       = 1;
+    *addressingModel1 = spv::AddressingModel(_instruction[_o++]);
+    *memoryModel2     = spv::MemoryModel(_instruction[_o++]);
 }
 void ParseEntryPoint(const uint32_t *_instruction,
-                     spv::ExecutionModel *executionModel,
+                     spv::ExecutionModel *executionModel1,
                      IdRef *entryPoint,
                      LiteralString *name,
                      IdRefList *interfaceList)
@@ -204,9 +204,9 @@ void ParseEntryPoint(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpEntryPoint);
-    uint32_t _o     = 1;
-    *executionModel = spv::ExecutionModel(_instruction[_o++]);
-    *entryPoint     = IdRef(_instruction[_o++]);
+    uint32_t _o      = 1;
+    *executionModel1 = spv::ExecutionModel(_instruction[_o++]);
+    *entryPoint      = IdRef(_instruction[_o++]);
     ASSERT(IsLittleEndian());
     *name = reinterpret_cast<const char *>(&_instruction[_o]);
     _o += strlen(*name) / 4 + 1;
@@ -247,26 +247,26 @@ void ParseCapability(const uint32_t *_instruction, spv::Capability *capability)
     uint32_t _o = 1;
     *capability = spv::Capability(_instruction[_o++]);
 }
-void ParseTypeVoid(const uint32_t *_instruction, IdResult *idResult)
+void ParseTypeVoid(const uint32_t *_instruction, IdResult *idResult1)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpTypeVoid);
     uint32_t _o = 1;
-    *idResult   = IdResult(_instruction[_o++]);
+    *idResult1  = IdResult(_instruction[_o++]);
 }
-void ParseTypeBool(const uint32_t *_instruction, IdResult *idResult)
+void ParseTypeBool(const uint32_t *_instruction, IdResult *idResult1)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpTypeBool);
     uint32_t _o = 1;
-    *idResult   = IdResult(_instruction[_o++]);
+    *idResult1  = IdResult(_instruction[_o++]);
 }
 void ParseTypeInt(const uint32_t *_instruction,
-                  IdResult *idResult,
+                  IdResult *idResult1,
                   LiteralInteger *width,
                   LiteralInteger *signedness)
 {
@@ -275,22 +275,22 @@ void ParseTypeInt(const uint32_t *_instruction,
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpTypeInt);
     uint32_t _o = 1;
-    *idResult   = IdResult(_instruction[_o++]);
+    *idResult1  = IdResult(_instruction[_o++]);
     *width      = LiteralInteger(_instruction[_o++]);
     *signedness = LiteralInteger(_instruction[_o++]);
 }
-void ParseTypeFloat(const uint32_t *_instruction, IdResult *idResult, LiteralInteger *width)
+void ParseTypeFloat(const uint32_t *_instruction, IdResult *idResult1, LiteralInteger *width)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpTypeFloat);
     uint32_t _o = 1;
-    *idResult   = IdResult(_instruction[_o++]);
+    *idResult1  = IdResult(_instruction[_o++]);
     *width      = LiteralInteger(_instruction[_o++]);
 }
 void ParseTypeVector(const uint32_t *_instruction,
-                     IdResult *idResult,
+                     IdResult *idResult1,
                      IdRef *componentType,
                      LiteralInteger *componentCount)
 {
@@ -299,12 +299,12 @@ void ParseTypeVector(const uint32_t *_instruction,
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpTypeVector);
     uint32_t _o     = 1;
-    *idResult       = IdResult(_instruction[_o++]);
+    *idResult1      = IdResult(_instruction[_o++]);
     *componentType  = IdRef(_instruction[_o++]);
     *componentCount = LiteralInteger(_instruction[_o++]);
 }
 void ParseTypeMatrix(const uint32_t *_instruction,
-                     IdResult *idResult,
+                     IdResult *idResult1,
                      IdRef *columnType,
                      LiteralInteger *columnCount)
 {
@@ -313,60 +313,60 @@ void ParseTypeMatrix(const uint32_t *_instruction,
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpTypeMatrix);
     uint32_t _o  = 1;
-    *idResult    = IdResult(_instruction[_o++]);
+    *idResult1   = IdResult(_instruction[_o++]);
     *columnType  = IdRef(_instruction[_o++]);
     *columnCount = LiteralInteger(_instruction[_o++]);
 }
 void ParseTypeImage(const uint32_t *_instruction,
-                    IdResult *idResult,
+                    IdResult *idResult1,
                     IdRef *sampledType,
-                    spv::Dim *dim,
+                    spv::Dim *dim3,
                     LiteralInteger *depth,
                     LiteralInteger *arrayed,
                     LiteralInteger *mS,
                     LiteralInteger *sampled,
-                    spv::ImageFormat *imageFormat,
-                    spv::AccessQualifier *accessQualifier)
+                    spv::ImageFormat *imageFormat8,
+                    spv::AccessQualifier *accessQualifier9)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpTypeImage);
-    uint32_t _o  = 1;
-    *idResult    = IdResult(_instruction[_o++]);
-    *sampledType = IdRef(_instruction[_o++]);
-    *dim         = spv::Dim(_instruction[_o++]);
-    *depth       = LiteralInteger(_instruction[_o++]);
-    *arrayed     = LiteralInteger(_instruction[_o++]);
-    *mS          = LiteralInteger(_instruction[_o++]);
-    *sampled     = LiteralInteger(_instruction[_o++]);
-    *imageFormat = spv::ImageFormat(_instruction[_o++]);
-    if (accessQualifier && _o < _length)
+    uint32_t _o   = 1;
+    *idResult1    = IdResult(_instruction[_o++]);
+    *sampledType  = IdRef(_instruction[_o++]);
+    *dim3         = spv::Dim(_instruction[_o++]);
+    *depth        = LiteralInteger(_instruction[_o++]);
+    *arrayed      = LiteralInteger(_instruction[_o++]);
+    *mS           = LiteralInteger(_instruction[_o++]);
+    *sampled      = LiteralInteger(_instruction[_o++]);
+    *imageFormat8 = spv::ImageFormat(_instruction[_o++]);
+    if (accessQualifier9 && _o < _length)
     {
-        *accessQualifier = spv::AccessQualifier(_instruction[_o++]);
+        *accessQualifier9 = spv::AccessQualifier(_instruction[_o++]);
     }
 }
-void ParseTypeSampler(const uint32_t *_instruction, IdResult *idResult)
+void ParseTypeSampler(const uint32_t *_instruction, IdResult *idResult1)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpTypeSampler);
     uint32_t _o = 1;
-    *idResult   = IdResult(_instruction[_o++]);
+    *idResult1  = IdResult(_instruction[_o++]);
 }
-void ParseTypeSampledImage(const uint32_t *_instruction, IdResult *idResult, IdRef *imageType)
+void ParseTypeSampledImage(const uint32_t *_instruction, IdResult *idResult1, IdRef *imageType)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpTypeSampledImage);
     uint32_t _o = 1;
-    *idResult   = IdResult(_instruction[_o++]);
+    *idResult1  = IdResult(_instruction[_o++]);
     *imageType  = IdRef(_instruction[_o++]);
 }
 void ParseTypeArray(const uint32_t *_instruction,
-                    IdResult *idResult,
+                    IdResult *idResult1,
                     IdRef *elementType,
                     IdRef *length)
 {
@@ -375,28 +375,28 @@ void ParseTypeArray(const uint32_t *_instruction,
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpTypeArray);
     uint32_t _o  = 1;
-    *idResult    = IdResult(_instruction[_o++]);
+    *idResult1   = IdResult(_instruction[_o++]);
     *elementType = IdRef(_instruction[_o++]);
     *length      = IdRef(_instruction[_o++]);
 }
-void ParseTypeRuntimeArray(const uint32_t *_instruction, IdResult *idResult, IdRef *elementType)
+void ParseTypeRuntimeArray(const uint32_t *_instruction, IdResult *idResult1, IdRef *elementType)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpTypeRuntimeArray);
     uint32_t _o  = 1;
-    *idResult    = IdResult(_instruction[_o++]);
+    *idResult1   = IdResult(_instruction[_o++]);
     *elementType = IdRef(_instruction[_o++]);
 }
-void ParseTypeStruct(const uint32_t *_instruction, IdResult *idResult, IdRefList *memberList)
+void ParseTypeStruct(const uint32_t *_instruction, IdResult *idResult1, IdRefList *memberList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpTypeStruct);
     uint32_t _o = 1;
-    *idResult   = IdResult(_instruction[_o++]);
+    *idResult1  = IdResult(_instruction[_o++]);
     if (memberList)
     {
         while (_o < _length)
@@ -406,21 +406,21 @@ void ParseTypeStruct(const uint32_t *_instruction, IdResult *idResult, IdRefList
     }
 }
 void ParseTypePointer(const uint32_t *_instruction,
-                      IdResult *idResult,
-                      spv::StorageClass *storageClass,
+                      IdResult *idResult1,
+                      spv::StorageClass *storageClass2,
                       IdRef *type)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpTypePointer);
-    uint32_t _o   = 1;
-    *idResult     = IdResult(_instruction[_o++]);
-    *storageClass = spv::StorageClass(_instruction[_o++]);
-    *type         = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResult1     = IdResult(_instruction[_o++]);
+    *storageClass2 = spv::StorageClass(_instruction[_o++]);
+    *type          = IdRef(_instruction[_o++]);
 }
 void ParseTypeFunction(const uint32_t *_instruction,
-                       IdResult *idResult,
+                       IdResult *idResult1,
                        IdRef *returnType,
                        IdRefList *parameterList)
 {
@@ -429,7 +429,7 @@ void ParseTypeFunction(const uint32_t *_instruction,
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpTypeFunction);
     uint32_t _o = 1;
-    *idResult   = IdResult(_instruction[_o++]);
+    *idResult1  = IdResult(_instruction[_o++]);
     *returnType = IdRef(_instruction[_o++]);
     if (parameterList)
     {
@@ -439,54 +439,56 @@ void ParseTypeFunction(const uint32_t *_instruction,
         }
     }
 }
-void ParseConstantTrue(const uint32_t *_instruction, IdResultType *idResultType, IdResult *idResult)
+void ParseConstantTrue(const uint32_t *_instruction,
+                       IdResultType *idResultType1,
+                       IdResult *idResult2)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpConstantTrue);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
 }
 void ParseConstantFalse(const uint32_t *_instruction,
-                        IdResultType *idResultType,
-                        IdResult *idResult)
+                        IdResultType *idResultType1,
+                        IdResult *idResult2)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpConstantFalse);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
 }
 void ParseConstant(const uint32_t *_instruction,
-                   IdResultType *idResultType,
-                   IdResult *idResult,
+                   IdResultType *idResultType1,
+                   IdResult *idResult2,
                    LiteralContextDependentNumber *value)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpConstant);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *value        = LiteralContextDependentNumber(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *value         = LiteralContextDependentNumber(_instruction[_o++]);
 }
 void ParseConstantComposite(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult,
+                            IdResultType *idResultType1,
+                            IdResult *idResult2,
                             IdRefList *constituentsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpConstantComposite);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
     if (constituentsList)
     {
         while (_o < _length)
@@ -495,66 +497,68 @@ void ParseConstantComposite(const uint32_t *_instruction,
         }
     }
 }
-void ParseConstantNull(const uint32_t *_instruction, IdResultType *idResultType, IdResult *idResult)
+void ParseConstantNull(const uint32_t *_instruction,
+                       IdResultType *idResultType1,
+                       IdResult *idResult2)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpConstantNull);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
 }
 void ParseSpecConstantTrue(const uint32_t *_instruction,
-                           IdResultType *idResultType,
-                           IdResult *idResult)
+                           IdResultType *idResultType1,
+                           IdResult *idResult2)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSpecConstantTrue);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
 }
 void ParseSpecConstantFalse(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult)
+                            IdResultType *idResultType1,
+                            IdResult *idResult2)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSpecConstantFalse);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
 }
 void ParseSpecConstant(const uint32_t *_instruction,
-                       IdResultType *idResultType,
-                       IdResult *idResult,
+                       IdResultType *idResultType1,
+                       IdResult *idResult2,
                        LiteralContextDependentNumber *value)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSpecConstant);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *value        = LiteralContextDependentNumber(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *value         = LiteralContextDependentNumber(_instruction[_o++]);
 }
 void ParseSpecConstantComposite(const uint32_t *_instruction,
-                                IdResultType *idResultType,
-                                IdResult *idResult,
+                                IdResultType *idResultType1,
+                                IdResult *idResult2,
                                 IdRefList *constituentsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSpecConstantComposite);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
     if (constituentsList)
     {
         while (_o < _length)
@@ -564,36 +568,36 @@ void ParseSpecConstantComposite(const uint32_t *_instruction,
     }
 }
 void ParseFunction(const uint32_t *_instruction,
-                   IdResultType *idResultType,
-                   IdResult *idResult,
-                   spv::FunctionControlMask *functionControl,
+                   IdResultType *idResultType1,
+                   IdResult *idResult2,
+                   spv::FunctionControlMask *functionControl3,
                    IdRef *functionType)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFunction);
-    uint32_t _o      = 1;
-    *idResultType    = IdResultType(_instruction[_o++]);
-    *idResult        = IdResult(_instruction[_o++]);
-    *functionControl = spv::FunctionControlMask(_instruction[_o++]);
-    *functionType    = IdRef(_instruction[_o++]);
+    uint32_t _o       = 1;
+    *idResultType1    = IdResultType(_instruction[_o++]);
+    *idResult2        = IdResult(_instruction[_o++]);
+    *functionControl3 = spv::FunctionControlMask(_instruction[_o++]);
+    *functionType     = IdRef(_instruction[_o++]);
 }
 void ParseFunctionParameter(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult)
+                            IdResultType *idResultType1,
+                            IdResult *idResult2)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFunctionParameter);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
 }
 void ParseFunctionCall(const uint32_t *_instruction,
-                       IdResultType *idResultType,
-                       IdResult *idResult,
+                       IdResultType *idResultType1,
+                       IdResult *idResult2,
                        IdRef *function,
                        IdRefList *argumentList)
 {
@@ -601,10 +605,10 @@ void ParseFunctionCall(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFunctionCall);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *function     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *function      = IdRef(_instruction[_o++]);
     if (argumentList)
     {
         while (_o < _length)
@@ -614,27 +618,27 @@ void ParseFunctionCall(const uint32_t *_instruction,
     }
 }
 void ParseVariable(const uint32_t *_instruction,
-                   IdResultType *idResultType,
-                   IdResult *idResult,
-                   spv::StorageClass *storageClass,
+                   IdResultType *idResultType1,
+                   IdResult *idResult2,
+                   spv::StorageClass *storageClass3,
                    IdRef *initializer)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpVariable);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *storageClass = spv::StorageClass(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *storageClass3 = spv::StorageClass(_instruction[_o++]);
     if (initializer && _o < _length)
     {
         *initializer = IdRef(_instruction[_o++]);
     }
 }
 void ParseImageTexelPointer(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult,
+                            IdResultType *idResultType1,
+                            IdResult *idResult2,
                             IdRef *image,
                             IdRef *coordinate,
                             IdRef *sample)
@@ -643,36 +647,36 @@ void ParseImageTexelPointer(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageTexelPointer);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *image        = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    *sample       = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *image         = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    *sample        = IdRef(_instruction[_o++]);
 }
 void ParseLoad(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *pointer,
-               spv::MemoryAccessMask *memoryAccess)
+               spv::MemoryAccessMask *memoryAccess4)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpLoad);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *pointer      = IdRef(_instruction[_o++]);
-    if (memoryAccess && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *pointer       = IdRef(_instruction[_o++]);
+    if (memoryAccess4 && _o < _length)
     {
-        *memoryAccess = spv::MemoryAccessMask(_instruction[_o++]);
+        *memoryAccess4 = spv::MemoryAccessMask(_instruction[_o++]);
     }
 }
 void ParseStore(const uint32_t *_instruction,
                 IdRef *pointer,
                 IdRef *object,
-                spv::MemoryAccessMask *memoryAccess)
+                spv::MemoryAccessMask *memoryAccess3)
 {
     spv::Op _op;
     uint32_t _length;
@@ -681,15 +685,16 @@ void ParseStore(const uint32_t *_instruction,
     uint32_t _o = 1;
     *pointer    = IdRef(_instruction[_o++]);
     *object     = IdRef(_instruction[_o++]);
-    if (memoryAccess && _o < _length)
+    if (memoryAccess3 && _o < _length)
     {
-        *memoryAccess = spv::MemoryAccessMask(_instruction[_o++]);
+        *memoryAccess3 = spv::MemoryAccessMask(_instruction[_o++]);
     }
 }
 void ParseCopyMemory(const uint32_t *_instruction,
                      IdRef *target,
                      IdRef *source,
-                     spv::MemoryAccessMask *memoryAccess)
+                     spv::MemoryAccessMask *memoryAccess3,
+                     spv::MemoryAccessMask *memoryAccess4)
 {
     spv::Op _op;
     uint32_t _length;
@@ -698,14 +703,18 @@ void ParseCopyMemory(const uint32_t *_instruction,
     uint32_t _o = 1;
     *target     = IdRef(_instruction[_o++]);
     *source     = IdRef(_instruction[_o++]);
-    if (memoryAccess && _o < _length)
+    if (memoryAccess3 && _o < _length)
     {
-        *memoryAccess = spv::MemoryAccessMask(_instruction[_o++]);
+        *memoryAccess3 = spv::MemoryAccessMask(_instruction[_o++]);
+    }
+    if (memoryAccess4 && _o < _length)
+    {
+        *memoryAccess4 = spv::MemoryAccessMask(_instruction[_o++]);
     }
 }
 void ParseAccessChain(const uint32_t *_instruction,
-                      IdResultType *idResultType,
-                      IdResult *idResult,
+                      IdResultType *idResultType1,
+                      IdResult *idResult2,
                       IdRef *base,
                       IdRefList *indexesList)
 {
@@ -713,10 +722,10 @@ void ParseAccessChain(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAccessChain);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *base         = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *base          = IdRef(_instruction[_o++]);
     if (indexesList)
     {
         while (_o < _length)
@@ -726,8 +735,8 @@ void ParseAccessChain(const uint32_t *_instruction,
     }
 }
 void ParseInBoundsAccessChain(const uint32_t *_instruction,
-                              IdResultType *idResultType,
-                              IdResult *idResult,
+                              IdResultType *idResultType1,
+                              IdResult *idResult2,
                               IdRef *base,
                               IdRefList *indexesList)
 {
@@ -735,10 +744,10 @@ void ParseInBoundsAccessChain(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpInBoundsAccessChain);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *base         = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *base          = IdRef(_instruction[_o++]);
     if (indexesList)
     {
         while (_o < _length)
@@ -748,8 +757,8 @@ void ParseInBoundsAccessChain(const uint32_t *_instruction,
     }
 }
 void ParseArrayLength(const uint32_t *_instruction,
-                      IdResultType *idResultType,
-                      IdResult *idResult,
+                      IdResultType *idResultType1,
+                      IdResult *idResult2,
                       IdRef *structure,
                       LiteralInteger *arraymember)
 {
@@ -757,24 +766,24 @@ void ParseArrayLength(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpArrayLength);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *structure    = IdRef(_instruction[_o++]);
-    *arraymember  = LiteralInteger(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *structure     = IdRef(_instruction[_o++]);
+    *arraymember   = LiteralInteger(_instruction[_o++]);
 }
 void ParseDecorate(const uint32_t *_instruction,
                    IdRef *target,
-                   spv::Decoration *decoration,
+                   spv::Decoration *decoration2,
                    LiteralIntegerList *valuesList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpDecorate);
-    uint32_t _o = 1;
-    *target     = IdRef(_instruction[_o++]);
-    *decoration = spv::Decoration(_instruction[_o++]);
+    uint32_t _o  = 1;
+    *target      = IdRef(_instruction[_o++]);
+    *decoration2 = spv::Decoration(_instruction[_o++]);
     if (valuesList)
     {
         while (_o < _length)
@@ -786,7 +795,7 @@ void ParseDecorate(const uint32_t *_instruction,
 void ParseMemberDecorate(const uint32_t *_instruction,
                          IdRef *structureType,
                          LiteralInteger *member,
-                         spv::Decoration *decoration,
+                         spv::Decoration *decoration3,
                          LiteralIntegerList *valuesList)
 {
     spv::Op _op;
@@ -796,7 +805,7 @@ void ParseMemberDecorate(const uint32_t *_instruction,
     uint32_t _o    = 1;
     *structureType = IdRef(_instruction[_o++]);
     *member        = LiteralInteger(_instruction[_o++]);
-    *decoration    = spv::Decoration(_instruction[_o++]);
+    *decoration3   = spv::Decoration(_instruction[_o++]);
     if (valuesList)
     {
         while (_o < _length)
@@ -805,14 +814,14 @@ void ParseMemberDecorate(const uint32_t *_instruction,
         }
     }
 }
-void ParseDecorationGroup(const uint32_t *_instruction, IdResult *idResult)
+void ParseDecorationGroup(const uint32_t *_instruction, IdResult *idResult1)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpDecorationGroup);
     uint32_t _o = 1;
-    *idResult   = IdResult(_instruction[_o++]);
+    *idResult1  = IdResult(_instruction[_o++]);
 }
 void ParseGroupDecorate(const uint32_t *_instruction,
                         IdRef *decorationGroup,
@@ -853,8 +862,8 @@ void ParseGroupMemberDecorate(const uint32_t *_instruction,
     }
 }
 void ParseVectorExtractDynamic(const uint32_t *_instruction,
-                               IdResultType *idResultType,
-                               IdResult *idResult,
+                               IdResultType *idResultType1,
+                               IdResult *idResult2,
                                IdRef *vector,
                                IdRef *index)
 {
@@ -862,15 +871,15 @@ void ParseVectorExtractDynamic(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpVectorExtractDynamic);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *vector       = IdRef(_instruction[_o++]);
-    *index        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *vector        = IdRef(_instruction[_o++]);
+    *index         = IdRef(_instruction[_o++]);
 }
 void ParseVectorInsertDynamic(const uint32_t *_instruction,
-                              IdResultType *idResultType,
-                              IdResult *idResult,
+                              IdResultType *idResultType1,
+                              IdResult *idResult2,
                               IdRef *vector,
                               IdRef *component,
                               IdRef *index)
@@ -879,16 +888,16 @@ void ParseVectorInsertDynamic(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpVectorInsertDynamic);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *vector       = IdRef(_instruction[_o++]);
-    *component    = IdRef(_instruction[_o++]);
-    *index        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *vector        = IdRef(_instruction[_o++]);
+    *component     = IdRef(_instruction[_o++]);
+    *index         = IdRef(_instruction[_o++]);
 }
 void ParseVectorShuffle(const uint32_t *_instruction,
-                        IdResultType *idResultType,
-                        IdResult *idResult,
+                        IdResultType *idResultType1,
+                        IdResult *idResult2,
                         IdRef *vector1,
                         IdRef *vector2,
                         LiteralIntegerList *componentsList)
@@ -897,11 +906,11 @@ void ParseVectorShuffle(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpVectorShuffle);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *vector1      = IdRef(_instruction[_o++]);
-    *vector2      = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *vector1       = IdRef(_instruction[_o++]);
+    *vector2       = IdRef(_instruction[_o++]);
     if (componentsList)
     {
         while (_o < _length)
@@ -911,17 +920,17 @@ void ParseVectorShuffle(const uint32_t *_instruction,
     }
 }
 void ParseCompositeConstruct(const uint32_t *_instruction,
-                             IdResultType *idResultType,
-                             IdResult *idResult,
+                             IdResultType *idResultType1,
+                             IdResult *idResult2,
                              IdRefList *constituentsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpCompositeConstruct);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
     if (constituentsList)
     {
         while (_o < _length)
@@ -931,8 +940,8 @@ void ParseCompositeConstruct(const uint32_t *_instruction,
     }
 }
 void ParseCompositeExtract(const uint32_t *_instruction,
-                           IdResultType *idResultType,
-                           IdResult *idResult,
+                           IdResultType *idResultType1,
+                           IdResult *idResult2,
                            IdRef *composite,
                            LiteralIntegerList *indexesList)
 {
@@ -940,10 +949,10 @@ void ParseCompositeExtract(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpCompositeExtract);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *composite    = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *composite     = IdRef(_instruction[_o++]);
     if (indexesList)
     {
         while (_o < _length)
@@ -953,8 +962,8 @@ void ParseCompositeExtract(const uint32_t *_instruction,
     }
 }
 void ParseCompositeInsert(const uint32_t *_instruction,
-                          IdResultType *idResultType,
-                          IdResult *idResult,
+                          IdResultType *idResultType1,
+                          IdResult *idResult2,
                           IdRef *object,
                           IdRef *composite,
                           LiteralIntegerList *indexesList)
@@ -963,11 +972,11 @@ void ParseCompositeInsert(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpCompositeInsert);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *object       = IdRef(_instruction[_o++]);
-    *composite    = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *object        = IdRef(_instruction[_o++]);
+    *composite     = IdRef(_instruction[_o++]);
     if (indexesList)
     {
         while (_o < _length)
@@ -977,36 +986,36 @@ void ParseCompositeInsert(const uint32_t *_instruction,
     }
 }
 void ParseCopyObject(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *operand)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpCopyObject);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand      = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand       = IdRef(_instruction[_o++]);
 }
 void ParseTranspose(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
+                    IdResultType *idResultType1,
+                    IdResult *idResult2,
                     IdRef *matrix)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpTranspose);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *matrix       = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *matrix        = IdRef(_instruction[_o++]);
 }
 void ParseSampledImage(const uint32_t *_instruction,
-                       IdResultType *idResultType,
-                       IdResult *idResult,
+                       IdResultType *idResultType1,
+                       IdResult *idResult2,
                        IdRef *image,
                        IdRef *sampler)
 {
@@ -1014,32 +1023,32 @@ void ParseSampledImage(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSampledImage);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *image        = IdRef(_instruction[_o++]);
-    *sampler      = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *image         = IdRef(_instruction[_o++]);
+    *sampler       = IdRef(_instruction[_o++]);
 }
 void ParseImageSampleImplicitLod(const uint32_t *_instruction,
-                                 IdResultType *idResultType,
-                                 IdResult *idResult,
+                                 IdResultType *idResultType1,
+                                 IdResult *idResult2,
                                  IdRef *sampledImage,
                                  IdRef *coordinate,
-                                 spv::ImageOperandsMask *imageOperands,
+                                 spv::ImageOperandsMask *imageOperands5,
                                  IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSampleImplicitLod);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *sampledImage = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *sampledImage  = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    if (imageOperands5 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands5 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -1050,23 +1059,23 @@ void ParseImageSampleImplicitLod(const uint32_t *_instruction,
     }
 }
 void ParseImageSampleExplicitLod(const uint32_t *_instruction,
-                                 IdResultType *idResultType,
-                                 IdResult *idResult,
+                                 IdResultType *idResultType1,
+                                 IdResult *idResult2,
                                  IdRef *sampledImage,
                                  IdRef *coordinate,
-                                 spv::ImageOperandsMask *imageOperands,
+                                 spv::ImageOperandsMask *imageOperands5,
                                  IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSampleExplicitLod);
-    uint32_t _o    = 1;
-    *idResultType  = IdResultType(_instruction[_o++]);
-    *idResult      = IdResult(_instruction[_o++]);
-    *sampledImage  = IdRef(_instruction[_o++]);
-    *coordinate    = IdRef(_instruction[_o++]);
-    *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+    uint32_t _o     = 1;
+    *idResultType1  = IdResultType(_instruction[_o++]);
+    *idResult2      = IdResult(_instruction[_o++]);
+    *sampledImage   = IdRef(_instruction[_o++]);
+    *coordinate     = IdRef(_instruction[_o++]);
+    *imageOperands5 = spv::ImageOperandsMask(_instruction[_o++]);
     if (imageOperandIdsList)
     {
         while (_o < _length)
@@ -1076,27 +1085,27 @@ void ParseImageSampleExplicitLod(const uint32_t *_instruction,
     }
 }
 void ParseImageSampleDrefImplicitLod(const uint32_t *_instruction,
-                                     IdResultType *idResultType,
-                                     IdResult *idResult,
+                                     IdResultType *idResultType1,
+                                     IdResult *idResult2,
                                      IdRef *sampledImage,
                                      IdRef *coordinate,
                                      IdRef *dref,
-                                     spv::ImageOperandsMask *imageOperands,
+                                     spv::ImageOperandsMask *imageOperands6,
                                      IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSampleDrefImplicitLod);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *sampledImage = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    *dref         = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *sampledImage  = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    *dref          = IdRef(_instruction[_o++]);
+    if (imageOperands6 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands6 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -1107,25 +1116,25 @@ void ParseImageSampleDrefImplicitLod(const uint32_t *_instruction,
     }
 }
 void ParseImageSampleDrefExplicitLod(const uint32_t *_instruction,
-                                     IdResultType *idResultType,
-                                     IdResult *idResult,
+                                     IdResultType *idResultType1,
+                                     IdResult *idResult2,
                                      IdRef *sampledImage,
                                      IdRef *coordinate,
                                      IdRef *dref,
-                                     spv::ImageOperandsMask *imageOperands,
+                                     spv::ImageOperandsMask *imageOperands6,
                                      IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSampleDrefExplicitLod);
-    uint32_t _o    = 1;
-    *idResultType  = IdResultType(_instruction[_o++]);
-    *idResult      = IdResult(_instruction[_o++]);
-    *sampledImage  = IdRef(_instruction[_o++]);
-    *coordinate    = IdRef(_instruction[_o++]);
-    *dref          = IdRef(_instruction[_o++]);
-    *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+    uint32_t _o     = 1;
+    *idResultType1  = IdResultType(_instruction[_o++]);
+    *idResult2      = IdResult(_instruction[_o++]);
+    *sampledImage   = IdRef(_instruction[_o++]);
+    *coordinate     = IdRef(_instruction[_o++]);
+    *dref           = IdRef(_instruction[_o++]);
+    *imageOperands6 = spv::ImageOperandsMask(_instruction[_o++]);
     if (imageOperandIdsList)
     {
         while (_o < _length)
@@ -1135,25 +1144,25 @@ void ParseImageSampleDrefExplicitLod(const uint32_t *_instruction,
     }
 }
 void ParseImageSampleProjImplicitLod(const uint32_t *_instruction,
-                                     IdResultType *idResultType,
-                                     IdResult *idResult,
+                                     IdResultType *idResultType1,
+                                     IdResult *idResult2,
                                      IdRef *sampledImage,
                                      IdRef *coordinate,
-                                     spv::ImageOperandsMask *imageOperands,
+                                     spv::ImageOperandsMask *imageOperands5,
                                      IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSampleProjImplicitLod);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *sampledImage = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *sampledImage  = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    if (imageOperands5 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands5 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -1164,23 +1173,23 @@ void ParseImageSampleProjImplicitLod(const uint32_t *_instruction,
     }
 }
 void ParseImageSampleProjExplicitLod(const uint32_t *_instruction,
-                                     IdResultType *idResultType,
-                                     IdResult *idResult,
+                                     IdResultType *idResultType1,
+                                     IdResult *idResult2,
                                      IdRef *sampledImage,
                                      IdRef *coordinate,
-                                     spv::ImageOperandsMask *imageOperands,
+                                     spv::ImageOperandsMask *imageOperands5,
                                      IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSampleProjExplicitLod);
-    uint32_t _o    = 1;
-    *idResultType  = IdResultType(_instruction[_o++]);
-    *idResult      = IdResult(_instruction[_o++]);
-    *sampledImage  = IdRef(_instruction[_o++]);
-    *coordinate    = IdRef(_instruction[_o++]);
-    *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+    uint32_t _o     = 1;
+    *idResultType1  = IdResultType(_instruction[_o++]);
+    *idResult2      = IdResult(_instruction[_o++]);
+    *sampledImage   = IdRef(_instruction[_o++]);
+    *coordinate     = IdRef(_instruction[_o++]);
+    *imageOperands5 = spv::ImageOperandsMask(_instruction[_o++]);
     if (imageOperandIdsList)
     {
         while (_o < _length)
@@ -1190,27 +1199,27 @@ void ParseImageSampleProjExplicitLod(const uint32_t *_instruction,
     }
 }
 void ParseImageSampleProjDrefImplicitLod(const uint32_t *_instruction,
-                                         IdResultType *idResultType,
-                                         IdResult *idResult,
+                                         IdResultType *idResultType1,
+                                         IdResult *idResult2,
                                          IdRef *sampledImage,
                                          IdRef *coordinate,
                                          IdRef *dref,
-                                         spv::ImageOperandsMask *imageOperands,
+                                         spv::ImageOperandsMask *imageOperands6,
                                          IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSampleProjDrefImplicitLod);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *sampledImage = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    *dref         = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *sampledImage  = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    *dref          = IdRef(_instruction[_o++]);
+    if (imageOperands6 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands6 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -1221,25 +1230,25 @@ void ParseImageSampleProjDrefImplicitLod(const uint32_t *_instruction,
     }
 }
 void ParseImageSampleProjDrefExplicitLod(const uint32_t *_instruction,
-                                         IdResultType *idResultType,
-                                         IdResult *idResult,
+                                         IdResultType *idResultType1,
+                                         IdResult *idResult2,
                                          IdRef *sampledImage,
                                          IdRef *coordinate,
                                          IdRef *dref,
-                                         spv::ImageOperandsMask *imageOperands,
+                                         spv::ImageOperandsMask *imageOperands6,
                                          IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSampleProjDrefExplicitLod);
-    uint32_t _o    = 1;
-    *idResultType  = IdResultType(_instruction[_o++]);
-    *idResult      = IdResult(_instruction[_o++]);
-    *sampledImage  = IdRef(_instruction[_o++]);
-    *coordinate    = IdRef(_instruction[_o++]);
-    *dref          = IdRef(_instruction[_o++]);
-    *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+    uint32_t _o     = 1;
+    *idResultType1  = IdResultType(_instruction[_o++]);
+    *idResult2      = IdResult(_instruction[_o++]);
+    *sampledImage   = IdRef(_instruction[_o++]);
+    *coordinate     = IdRef(_instruction[_o++]);
+    *dref           = IdRef(_instruction[_o++]);
+    *imageOperands6 = spv::ImageOperandsMask(_instruction[_o++]);
     if (imageOperandIdsList)
     {
         while (_o < _length)
@@ -1249,25 +1258,25 @@ void ParseImageSampleProjDrefExplicitLod(const uint32_t *_instruction,
     }
 }
 void ParseImageFetch(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *image,
                      IdRef *coordinate,
-                     spv::ImageOperandsMask *imageOperands,
+                     spv::ImageOperandsMask *imageOperands5,
                      IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageFetch);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *image        = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *image         = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    if (imageOperands5 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands5 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -1278,27 +1287,27 @@ void ParseImageFetch(const uint32_t *_instruction,
     }
 }
 void ParseImageGather(const uint32_t *_instruction,
-                      IdResultType *idResultType,
-                      IdResult *idResult,
+                      IdResultType *idResultType1,
+                      IdResult *idResult2,
                       IdRef *sampledImage,
                       IdRef *coordinate,
                       IdRef *component,
-                      spv::ImageOperandsMask *imageOperands,
+                      spv::ImageOperandsMask *imageOperands6,
                       IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageGather);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *sampledImage = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    *component    = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *sampledImage  = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    *component     = IdRef(_instruction[_o++]);
+    if (imageOperands6 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands6 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -1309,27 +1318,27 @@ void ParseImageGather(const uint32_t *_instruction,
     }
 }
 void ParseImageDrefGather(const uint32_t *_instruction,
-                          IdResultType *idResultType,
-                          IdResult *idResult,
+                          IdResultType *idResultType1,
+                          IdResult *idResult2,
                           IdRef *sampledImage,
                           IdRef *coordinate,
                           IdRef *dref,
-                          spv::ImageOperandsMask *imageOperands,
+                          spv::ImageOperandsMask *imageOperands6,
                           IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageDrefGather);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *sampledImage = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    *dref         = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *sampledImage  = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    *dref          = IdRef(_instruction[_o++]);
+    if (imageOperands6 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands6 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -1340,25 +1349,25 @@ void ParseImageDrefGather(const uint32_t *_instruction,
     }
 }
 void ParseImageRead(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
+                    IdResultType *idResultType1,
+                    IdResult *idResult2,
                     IdRef *image,
                     IdRef *coordinate,
-                    spv::ImageOperandsMask *imageOperands,
+                    spv::ImageOperandsMask *imageOperands5,
                     IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageRead);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *image        = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *image         = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    if (imageOperands5 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands5 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -1372,7 +1381,7 @@ void ParseImageWrite(const uint32_t *_instruction,
                      IdRef *image,
                      IdRef *coordinate,
                      IdRef *texel,
-                     spv::ImageOperandsMask *imageOperands,
+                     spv::ImageOperandsMask *imageOperands4,
                      IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
@@ -1383,9 +1392,9 @@ void ParseImageWrite(const uint32_t *_instruction,
     *image      = IdRef(_instruction[_o++]);
     *coordinate = IdRef(_instruction[_o++]);
     *texel      = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    if (imageOperands4 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands4 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -1396,22 +1405,22 @@ void ParseImageWrite(const uint32_t *_instruction,
     }
 }
 void ParseImage(const uint32_t *_instruction,
-                IdResultType *idResultType,
-                IdResult *idResult,
+                IdResultType *idResultType1,
+                IdResult *idResult2,
                 IdRef *sampledImage)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImage);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *sampledImage = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *sampledImage  = IdRef(_instruction[_o++]);
 }
 void ParseImageQuerySizeLod(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult,
+                            IdResultType *idResultType1,
+                            IdResult *idResult2,
                             IdRef *image,
                             IdRef *levelofDetail)
 {
@@ -1420,28 +1429,28 @@ void ParseImageQuerySizeLod(const uint32_t *_instruction,
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageQuerySizeLod);
     uint32_t _o    = 1;
-    *idResultType  = IdResultType(_instruction[_o++]);
-    *idResult      = IdResult(_instruction[_o++]);
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
     *image         = IdRef(_instruction[_o++]);
     *levelofDetail = IdRef(_instruction[_o++]);
 }
 void ParseImageQuerySize(const uint32_t *_instruction,
-                         IdResultType *idResultType,
-                         IdResult *idResult,
+                         IdResultType *idResultType1,
+                         IdResult *idResult2,
                          IdRef *image)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageQuerySize);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *image        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *image         = IdRef(_instruction[_o++]);
 }
 void ParseImageQueryLod(const uint32_t *_instruction,
-                        IdResultType *idResultType,
-                        IdResult *idResult,
+                        IdResultType *idResultType1,
+                        IdResult *idResult2,
                         IdRef *sampledImage,
                         IdRef *coordinate)
 {
@@ -1449,85 +1458,85 @@ void ParseImageQueryLod(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageQueryLod);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *sampledImage = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *sampledImage  = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
 }
 void ParseImageQueryLevels(const uint32_t *_instruction,
-                           IdResultType *idResultType,
-                           IdResult *idResult,
+                           IdResultType *idResultType1,
+                           IdResult *idResult2,
                            IdRef *image)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageQueryLevels);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *image        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *image         = IdRef(_instruction[_o++]);
 }
 void ParseImageQuerySamples(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult,
+                            IdResultType *idResultType1,
+                            IdResult *idResult2,
                             IdRef *image)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageQuerySamples);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *image        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *image         = IdRef(_instruction[_o++]);
 }
 void ParseConvertFToU(const uint32_t *_instruction,
-                      IdResultType *idResultType,
-                      IdResult *idResult,
+                      IdResultType *idResultType1,
+                      IdResult *idResult2,
                       IdRef *floatValue)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpConvertFToU);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *floatValue   = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *floatValue    = IdRef(_instruction[_o++]);
 }
 void ParseConvertFToS(const uint32_t *_instruction,
-                      IdResultType *idResultType,
-                      IdResult *idResult,
+                      IdResultType *idResultType1,
+                      IdResult *idResult2,
                       IdRef *floatValue)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpConvertFToS);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *floatValue   = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *floatValue    = IdRef(_instruction[_o++]);
 }
 void ParseConvertSToF(const uint32_t *_instruction,
-                      IdResultType *idResultType,
-                      IdResult *idResult,
+                      IdResultType *idResultType1,
+                      IdResult *idResult2,
                       IdRef *signedValue)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpConvertSToF);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *signedValue  = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *signedValue   = IdRef(_instruction[_o++]);
 }
 void ParseConvertUToF(const uint32_t *_instruction,
-                      IdResultType *idResultType,
-                      IdResult *idResult,
+                      IdResultType *idResultType1,
+                      IdResult *idResult2,
                       IdRef *unsignedValue)
 {
     spv::Op _op;
@@ -1535,13 +1544,13 @@ void ParseConvertUToF(const uint32_t *_instruction,
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpConvertUToF);
     uint32_t _o    = 1;
-    *idResultType  = IdResultType(_instruction[_o++]);
-    *idResult      = IdResult(_instruction[_o++]);
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
     *unsignedValue = IdRef(_instruction[_o++]);
 }
 void ParseUConvert(const uint32_t *_instruction,
-                   IdResultType *idResultType,
-                   IdResult *idResult,
+                   IdResultType *idResultType1,
+                   IdResult *idResult2,
                    IdRef *unsignedValue)
 {
     spv::Op _op;
@@ -1549,97 +1558,97 @@ void ParseUConvert(const uint32_t *_instruction,
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpUConvert);
     uint32_t _o    = 1;
-    *idResultType  = IdResultType(_instruction[_o++]);
-    *idResult      = IdResult(_instruction[_o++]);
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
     *unsignedValue = IdRef(_instruction[_o++]);
 }
 void ParseSConvert(const uint32_t *_instruction,
-                   IdResultType *idResultType,
-                   IdResult *idResult,
+                   IdResultType *idResultType1,
+                   IdResult *idResult2,
                    IdRef *signedValue)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSConvert);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *signedValue  = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *signedValue   = IdRef(_instruction[_o++]);
 }
 void ParseFConvert(const uint32_t *_instruction,
-                   IdResultType *idResultType,
-                   IdResult *idResult,
+                   IdResultType *idResultType1,
+                   IdResult *idResult2,
                    IdRef *floatValue)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFConvert);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *floatValue   = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *floatValue    = IdRef(_instruction[_o++]);
 }
 void ParseQuantizeToF16(const uint32_t *_instruction,
-                        IdResultType *idResultType,
-                        IdResult *idResult,
+                        IdResultType *idResultType1,
+                        IdResult *idResult2,
                         IdRef *value)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpQuantizeToF16);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *value        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
 }
 void ParseBitcast(const uint32_t *_instruction,
-                  IdResultType *idResultType,
-                  IdResult *idResult,
+                  IdResultType *idResultType1,
+                  IdResult *idResult2,
                   IdRef *operand)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpBitcast);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand      = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand       = IdRef(_instruction[_o++]);
 }
 void ParseSNegate(const uint32_t *_instruction,
-                  IdResultType *idResultType,
-                  IdResult *idResult,
+                  IdResultType *idResultType1,
+                  IdResult *idResult2,
                   IdRef *operand)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSNegate);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand      = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand       = IdRef(_instruction[_o++]);
 }
 void ParseFNegate(const uint32_t *_instruction,
-                  IdResultType *idResultType,
-                  IdResult *idResult,
+                  IdResultType *idResultType1,
+                  IdResult *idResult2,
                   IdRef *operand)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFNegate);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand      = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand       = IdRef(_instruction[_o++]);
 }
 void ParseIAdd(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *operand1,
                IdRef *operand2)
 {
@@ -1647,15 +1656,15 @@ void ParseIAdd(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpIAdd);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFAdd(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *operand1,
                IdRef *operand2)
 {
@@ -1663,15 +1672,15 @@ void ParseFAdd(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFAdd);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseISub(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *operand1,
                IdRef *operand2)
 {
@@ -1679,15 +1688,15 @@ void ParseISub(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpISub);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFSub(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *operand1,
                IdRef *operand2)
 {
@@ -1695,15 +1704,15 @@ void ParseFSub(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFSub);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseIMul(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *operand1,
                IdRef *operand2)
 {
@@ -1711,15 +1720,15 @@ void ParseIMul(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpIMul);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFMul(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *operand1,
                IdRef *operand2)
 {
@@ -1727,15 +1736,15 @@ void ParseFMul(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFMul);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseUDiv(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *operand1,
                IdRef *operand2)
 {
@@ -1743,15 +1752,15 @@ void ParseUDiv(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpUDiv);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseSDiv(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *operand1,
                IdRef *operand2)
 {
@@ -1759,15 +1768,15 @@ void ParseSDiv(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSDiv);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFDiv(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *operand1,
                IdRef *operand2)
 {
@@ -1775,15 +1784,15 @@ void ParseFDiv(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFDiv);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseUMod(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *operand1,
                IdRef *operand2)
 {
@@ -1791,15 +1800,15 @@ void ParseUMod(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpUMod);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseSRem(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *operand1,
                IdRef *operand2)
 {
@@ -1807,15 +1816,15 @@ void ParseSRem(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSRem);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseSMod(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *operand1,
                IdRef *operand2)
 {
@@ -1823,15 +1832,15 @@ void ParseSMod(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSMod);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFRem(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *operand1,
                IdRef *operand2)
 {
@@ -1839,15 +1848,15 @@ void ParseFRem(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFRem);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFMod(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *operand1,
                IdRef *operand2)
 {
@@ -1855,15 +1864,15 @@ void ParseFMod(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFMod);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseVectorTimesScalar(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult,
+                            IdResultType *idResultType1,
+                            IdResult *idResult2,
                             IdRef *vector,
                             IdRef *scalar)
 {
@@ -1871,15 +1880,15 @@ void ParseVectorTimesScalar(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpVectorTimesScalar);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *vector       = IdRef(_instruction[_o++]);
-    *scalar       = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *vector        = IdRef(_instruction[_o++]);
+    *scalar        = IdRef(_instruction[_o++]);
 }
 void ParseMatrixTimesScalar(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult,
+                            IdResultType *idResultType1,
+                            IdResult *idResult2,
                             IdRef *matrix,
                             IdRef *scalar)
 {
@@ -1887,15 +1896,15 @@ void ParseMatrixTimesScalar(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpMatrixTimesScalar);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *matrix       = IdRef(_instruction[_o++]);
-    *scalar       = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *matrix        = IdRef(_instruction[_o++]);
+    *scalar        = IdRef(_instruction[_o++]);
 }
 void ParseVectorTimesMatrix(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult,
+                            IdResultType *idResultType1,
+                            IdResult *idResult2,
                             IdRef *vector,
                             IdRef *matrix)
 {
@@ -1903,15 +1912,15 @@ void ParseVectorTimesMatrix(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpVectorTimesMatrix);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *vector       = IdRef(_instruction[_o++]);
-    *matrix       = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *vector        = IdRef(_instruction[_o++]);
+    *matrix        = IdRef(_instruction[_o++]);
 }
 void ParseMatrixTimesVector(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult,
+                            IdResultType *idResultType1,
+                            IdResult *idResult2,
                             IdRef *matrix,
                             IdRef *vector)
 {
@@ -1919,15 +1928,15 @@ void ParseMatrixTimesVector(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpMatrixTimesVector);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *matrix       = IdRef(_instruction[_o++]);
-    *vector       = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *matrix        = IdRef(_instruction[_o++]);
+    *vector        = IdRef(_instruction[_o++]);
 }
 void ParseMatrixTimesMatrix(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult,
+                            IdResultType *idResultType1,
+                            IdResult *idResult2,
                             IdRef *leftMatrix,
                             IdRef *rightMatrix)
 {
@@ -1935,15 +1944,15 @@ void ParseMatrixTimesMatrix(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpMatrixTimesMatrix);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *leftMatrix   = IdRef(_instruction[_o++]);
-    *rightMatrix  = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *leftMatrix    = IdRef(_instruction[_o++]);
+    *rightMatrix   = IdRef(_instruction[_o++]);
 }
 void ParseOuterProduct(const uint32_t *_instruction,
-                       IdResultType *idResultType,
-                       IdResult *idResult,
+                       IdResultType *idResultType1,
+                       IdResult *idResult2,
                        IdRef *vector1,
                        IdRef *vector2)
 {
@@ -1951,15 +1960,15 @@ void ParseOuterProduct(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpOuterProduct);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *vector1      = IdRef(_instruction[_o++]);
-    *vector2      = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *vector1       = IdRef(_instruction[_o++]);
+    *vector2       = IdRef(_instruction[_o++]);
 }
 void ParseDot(const uint32_t *_instruction,
-              IdResultType *idResultType,
-              IdResult *idResult,
+              IdResultType *idResultType1,
+              IdResult *idResult2,
               IdRef *vector1,
               IdRef *vector2)
 {
@@ -1967,15 +1976,15 @@ void ParseDot(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpDot);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *vector1      = IdRef(_instruction[_o++]);
-    *vector2      = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *vector1       = IdRef(_instruction[_o++]);
+    *vector2       = IdRef(_instruction[_o++]);
 }
 void ParseIAddCarry(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
+                    IdResultType *idResultType1,
+                    IdResult *idResult2,
                     IdRef *operand1,
                     IdRef *operand2)
 {
@@ -1983,15 +1992,15 @@ void ParseIAddCarry(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpIAddCarry);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseISubBorrow(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *operand1,
                      IdRef *operand2)
 {
@@ -1999,15 +2008,15 @@ void ParseISubBorrow(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpISubBorrow);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseUMulExtended(const uint32_t *_instruction,
-                       IdResultType *idResultType,
-                       IdResult *idResult,
+                       IdResultType *idResultType1,
+                       IdResult *idResult2,
                        IdRef *operand1,
                        IdRef *operand2)
 {
@@ -2015,15 +2024,15 @@ void ParseUMulExtended(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpUMulExtended);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseSMulExtended(const uint32_t *_instruction,
-                       IdResultType *idResultType,
-                       IdResult *idResult,
+                       IdResultType *idResultType1,
+                       IdResult *idResult2,
                        IdRef *operand1,
                        IdRef *operand2)
 {
@@ -2031,71 +2040,71 @@ void ParseSMulExtended(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSMulExtended);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseAny(const uint32_t *_instruction,
-              IdResultType *idResultType,
-              IdResult *idResult,
+              IdResultType *idResultType1,
+              IdResult *idResult2,
               IdRef *vector)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAny);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *vector       = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *vector        = IdRef(_instruction[_o++]);
 }
 void ParseAll(const uint32_t *_instruction,
-              IdResultType *idResultType,
-              IdResult *idResult,
+              IdResultType *idResultType1,
+              IdResult *idResult2,
               IdRef *vector)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAll);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *vector       = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *vector        = IdRef(_instruction[_o++]);
 }
 void ParseIsNan(const uint32_t *_instruction,
-                IdResultType *idResultType,
-                IdResult *idResult,
+                IdResultType *idResultType1,
+                IdResult *idResult2,
                 IdRef *x)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpIsNan);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *x             = IdRef(_instruction[_o++]);
 }
 void ParseIsInf(const uint32_t *_instruction,
-                IdResultType *idResultType,
-                IdResult *idResult,
+                IdResultType *idResultType1,
+                IdResult *idResult2,
                 IdRef *x)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpIsInf);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *x             = IdRef(_instruction[_o++]);
 }
 void ParseLogicalEqual(const uint32_t *_instruction,
-                       IdResultType *idResultType,
-                       IdResult *idResult,
+                       IdResultType *idResultType1,
+                       IdResult *idResult2,
                        IdRef *operand1,
                        IdRef *operand2)
 {
@@ -2103,15 +2112,15 @@ void ParseLogicalEqual(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpLogicalEqual);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseLogicalNotEqual(const uint32_t *_instruction,
-                          IdResultType *idResultType,
-                          IdResult *idResult,
+                          IdResultType *idResultType1,
+                          IdResult *idResult2,
                           IdRef *operand1,
                           IdRef *operand2)
 {
@@ -2119,15 +2128,15 @@ void ParseLogicalNotEqual(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpLogicalNotEqual);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseLogicalOr(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
+                    IdResultType *idResultType1,
+                    IdResult *idResult2,
                     IdRef *operand1,
                     IdRef *operand2)
 {
@@ -2135,15 +2144,15 @@ void ParseLogicalOr(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpLogicalOr);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseLogicalAnd(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *operand1,
                      IdRef *operand2)
 {
@@ -2151,29 +2160,29 @@ void ParseLogicalAnd(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpLogicalAnd);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseLogicalNot(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *operand)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpLogicalNot);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand      = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand       = IdRef(_instruction[_o++]);
 }
 void ParseSelect(const uint32_t *_instruction,
-                 IdResultType *idResultType,
-                 IdResult *idResult,
+                 IdResultType *idResultType1,
+                 IdResult *idResult2,
                  IdRef *condition,
                  IdRef *object1,
                  IdRef *object2)
@@ -2182,16 +2191,16 @@ void ParseSelect(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSelect);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *condition    = IdRef(_instruction[_o++]);
-    *object1      = IdRef(_instruction[_o++]);
-    *object2      = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *condition     = IdRef(_instruction[_o++]);
+    *object1       = IdRef(_instruction[_o++]);
+    *object2       = IdRef(_instruction[_o++]);
 }
 void ParseIEqual(const uint32_t *_instruction,
-                 IdResultType *idResultType,
-                 IdResult *idResult,
+                 IdResultType *idResultType1,
+                 IdResult *idResult2,
                  IdRef *operand1,
                  IdRef *operand2)
 {
@@ -2199,15 +2208,15 @@ void ParseIEqual(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpIEqual);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseINotEqual(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
+                    IdResultType *idResultType1,
+                    IdResult *idResult2,
                     IdRef *operand1,
                     IdRef *operand2)
 {
@@ -2215,15 +2224,15 @@ void ParseINotEqual(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpINotEqual);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseUGreaterThan(const uint32_t *_instruction,
-                       IdResultType *idResultType,
-                       IdResult *idResult,
+                       IdResultType *idResultType1,
+                       IdResult *idResult2,
                        IdRef *operand1,
                        IdRef *operand2)
 {
@@ -2231,15 +2240,15 @@ void ParseUGreaterThan(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpUGreaterThan);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseSGreaterThan(const uint32_t *_instruction,
-                       IdResultType *idResultType,
-                       IdResult *idResult,
+                       IdResultType *idResultType1,
+                       IdResult *idResult2,
                        IdRef *operand1,
                        IdRef *operand2)
 {
@@ -2247,15 +2256,15 @@ void ParseSGreaterThan(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSGreaterThan);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseUGreaterThanEqual(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult,
+                            IdResultType *idResultType1,
+                            IdResult *idResult2,
                             IdRef *operand1,
                             IdRef *operand2)
 {
@@ -2263,15 +2272,15 @@ void ParseUGreaterThanEqual(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpUGreaterThanEqual);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseSGreaterThanEqual(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult,
+                            IdResultType *idResultType1,
+                            IdResult *idResult2,
                             IdRef *operand1,
                             IdRef *operand2)
 {
@@ -2279,15 +2288,15 @@ void ParseSGreaterThanEqual(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSGreaterThanEqual);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseULessThan(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
+                    IdResultType *idResultType1,
+                    IdResult *idResult2,
                     IdRef *operand1,
                     IdRef *operand2)
 {
@@ -2295,15 +2304,15 @@ void ParseULessThan(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpULessThan);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseSLessThan(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
+                    IdResultType *idResultType1,
+                    IdResult *idResult2,
                     IdRef *operand1,
                     IdRef *operand2)
 {
@@ -2311,15 +2320,15 @@ void ParseSLessThan(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSLessThan);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseULessThanEqual(const uint32_t *_instruction,
-                         IdResultType *idResultType,
-                         IdResult *idResult,
+                         IdResultType *idResultType1,
+                         IdResult *idResult2,
                          IdRef *operand1,
                          IdRef *operand2)
 {
@@ -2327,15 +2336,15 @@ void ParseULessThanEqual(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpULessThanEqual);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseSLessThanEqual(const uint32_t *_instruction,
-                         IdResultType *idResultType,
-                         IdResult *idResult,
+                         IdResultType *idResultType1,
+                         IdResult *idResult2,
                          IdRef *operand1,
                          IdRef *operand2)
 {
@@ -2343,15 +2352,15 @@ void ParseSLessThanEqual(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSLessThanEqual);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFOrdEqual(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
+                    IdResultType *idResultType1,
+                    IdResult *idResult2,
                     IdRef *operand1,
                     IdRef *operand2)
 {
@@ -2359,15 +2368,15 @@ void ParseFOrdEqual(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFOrdEqual);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFUnordEqual(const uint32_t *_instruction,
-                      IdResultType *idResultType,
-                      IdResult *idResult,
+                      IdResultType *idResultType1,
+                      IdResult *idResult2,
                       IdRef *operand1,
                       IdRef *operand2)
 {
@@ -2375,15 +2384,15 @@ void ParseFUnordEqual(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFUnordEqual);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFOrdNotEqual(const uint32_t *_instruction,
-                       IdResultType *idResultType,
-                       IdResult *idResult,
+                       IdResultType *idResultType1,
+                       IdResult *idResult2,
                        IdRef *operand1,
                        IdRef *operand2)
 {
@@ -2391,15 +2400,15 @@ void ParseFOrdNotEqual(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFOrdNotEqual);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFUnordNotEqual(const uint32_t *_instruction,
-                         IdResultType *idResultType,
-                         IdResult *idResult,
+                         IdResultType *idResultType1,
+                         IdResult *idResult2,
                          IdRef *operand1,
                          IdRef *operand2)
 {
@@ -2407,15 +2416,15 @@ void ParseFUnordNotEqual(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFUnordNotEqual);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFOrdLessThan(const uint32_t *_instruction,
-                       IdResultType *idResultType,
-                       IdResult *idResult,
+                       IdResultType *idResultType1,
+                       IdResult *idResult2,
                        IdRef *operand1,
                        IdRef *operand2)
 {
@@ -2423,15 +2432,15 @@ void ParseFOrdLessThan(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFOrdLessThan);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFUnordLessThan(const uint32_t *_instruction,
-                         IdResultType *idResultType,
-                         IdResult *idResult,
+                         IdResultType *idResultType1,
+                         IdResult *idResult2,
                          IdRef *operand1,
                          IdRef *operand2)
 {
@@ -2439,15 +2448,15 @@ void ParseFUnordLessThan(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFUnordLessThan);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFOrdGreaterThan(const uint32_t *_instruction,
-                          IdResultType *idResultType,
-                          IdResult *idResult,
+                          IdResultType *idResultType1,
+                          IdResult *idResult2,
                           IdRef *operand1,
                           IdRef *operand2)
 {
@@ -2455,15 +2464,15 @@ void ParseFOrdGreaterThan(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFOrdGreaterThan);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFUnordGreaterThan(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult,
+                            IdResultType *idResultType1,
+                            IdResult *idResult2,
                             IdRef *operand1,
                             IdRef *operand2)
 {
@@ -2471,15 +2480,15 @@ void ParseFUnordGreaterThan(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFUnordGreaterThan);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFOrdLessThanEqual(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult,
+                            IdResultType *idResultType1,
+                            IdResult *idResult2,
                             IdRef *operand1,
                             IdRef *operand2)
 {
@@ -2487,15 +2496,15 @@ void ParseFOrdLessThanEqual(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFOrdLessThanEqual);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFUnordLessThanEqual(const uint32_t *_instruction,
-                              IdResultType *idResultType,
-                              IdResult *idResult,
+                              IdResultType *idResultType1,
+                              IdResult *idResult2,
                               IdRef *operand1,
                               IdRef *operand2)
 {
@@ -2503,15 +2512,15 @@ void ParseFUnordLessThanEqual(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFUnordLessThanEqual);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFOrdGreaterThanEqual(const uint32_t *_instruction,
-                               IdResultType *idResultType,
-                               IdResult *idResult,
+                               IdResultType *idResultType1,
+                               IdResult *idResult2,
                                IdRef *operand1,
                                IdRef *operand2)
 {
@@ -2519,15 +2528,15 @@ void ParseFOrdGreaterThanEqual(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFOrdGreaterThanEqual);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseFUnordGreaterThanEqual(const uint32_t *_instruction,
-                                 IdResultType *idResultType,
-                                 IdResult *idResult,
+                                 IdResultType *idResultType1,
+                                 IdResult *idResult2,
                                  IdRef *operand1,
                                  IdRef *operand2)
 {
@@ -2535,15 +2544,15 @@ void ParseFUnordGreaterThanEqual(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFUnordGreaterThanEqual);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseShiftRightLogical(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult,
+                            IdResultType *idResultType1,
+                            IdResult *idResult2,
                             IdRef *base,
                             IdRef *shift)
 {
@@ -2551,15 +2560,15 @@ void ParseShiftRightLogical(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpShiftRightLogical);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *base         = IdRef(_instruction[_o++]);
-    *shift        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *base          = IdRef(_instruction[_o++]);
+    *shift         = IdRef(_instruction[_o++]);
 }
 void ParseShiftRightArithmetic(const uint32_t *_instruction,
-                               IdResultType *idResultType,
-                               IdResult *idResult,
+                               IdResultType *idResultType1,
+                               IdResult *idResult2,
                                IdRef *base,
                                IdRef *shift)
 {
@@ -2567,15 +2576,15 @@ void ParseShiftRightArithmetic(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpShiftRightArithmetic);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *base         = IdRef(_instruction[_o++]);
-    *shift        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *base          = IdRef(_instruction[_o++]);
+    *shift         = IdRef(_instruction[_o++]);
 }
 void ParseShiftLeftLogical(const uint32_t *_instruction,
-                           IdResultType *idResultType,
-                           IdResult *idResult,
+                           IdResultType *idResultType1,
+                           IdResult *idResult2,
                            IdRef *base,
                            IdRef *shift)
 {
@@ -2583,15 +2592,15 @@ void ParseShiftLeftLogical(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpShiftLeftLogical);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *base         = IdRef(_instruction[_o++]);
-    *shift        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *base          = IdRef(_instruction[_o++]);
+    *shift         = IdRef(_instruction[_o++]);
 }
 void ParseBitwiseOr(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
+                    IdResultType *idResultType1,
+                    IdResult *idResult2,
                     IdRef *operand1,
                     IdRef *operand2)
 {
@@ -2599,15 +2608,15 @@ void ParseBitwiseOr(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpBitwiseOr);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseBitwiseXor(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *operand1,
                      IdRef *operand2)
 {
@@ -2615,15 +2624,15 @@ void ParseBitwiseXor(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpBitwiseXor);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseBitwiseAnd(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *operand1,
                      IdRef *operand2)
 {
@@ -2631,29 +2640,29 @@ void ParseBitwiseAnd(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpBitwiseAnd);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand1     = IdRef(_instruction[_o++]);
-    *operand2     = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
 }
 void ParseNot(const uint32_t *_instruction,
-              IdResultType *idResultType,
-              IdResult *idResult,
+              IdResultType *idResultType1,
+              IdResult *idResult2,
               IdRef *operand)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpNot);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *operand      = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand       = IdRef(_instruction[_o++]);
 }
 void ParseBitFieldInsert(const uint32_t *_instruction,
-                         IdResultType *idResultType,
-                         IdResult *idResult,
+                         IdResultType *idResultType1,
+                         IdResult *idResult2,
                          IdRef *base,
                          IdRef *insert,
                          IdRef *offset,
@@ -2663,17 +2672,17 @@ void ParseBitFieldInsert(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpBitFieldInsert);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *base         = IdRef(_instruction[_o++]);
-    *insert       = IdRef(_instruction[_o++]);
-    *offset       = IdRef(_instruction[_o++]);
-    *count        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *base          = IdRef(_instruction[_o++]);
+    *insert        = IdRef(_instruction[_o++]);
+    *offset        = IdRef(_instruction[_o++]);
+    *count         = IdRef(_instruction[_o++]);
 }
 void ParseBitFieldSExtract(const uint32_t *_instruction,
-                           IdResultType *idResultType,
-                           IdResult *idResult,
+                           IdResultType *idResultType1,
+                           IdResult *idResult2,
                            IdRef *base,
                            IdRef *offset,
                            IdRef *count)
@@ -2682,16 +2691,16 @@ void ParseBitFieldSExtract(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpBitFieldSExtract);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *base         = IdRef(_instruction[_o++]);
-    *offset       = IdRef(_instruction[_o++]);
-    *count        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *base          = IdRef(_instruction[_o++]);
+    *offset        = IdRef(_instruction[_o++]);
+    *count         = IdRef(_instruction[_o++]);
 }
 void ParseBitFieldUExtract(const uint32_t *_instruction,
-                           IdResultType *idResultType,
-                           IdResult *idResult,
+                           IdResultType *idResultType1,
+                           IdResult *idResult2,
                            IdRef *base,
                            IdRef *offset,
                            IdRef *count)
@@ -2700,166 +2709,166 @@ void ParseBitFieldUExtract(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpBitFieldUExtract);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *base         = IdRef(_instruction[_o++]);
-    *offset       = IdRef(_instruction[_o++]);
-    *count        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *base          = IdRef(_instruction[_o++]);
+    *offset        = IdRef(_instruction[_o++]);
+    *count         = IdRef(_instruction[_o++]);
 }
 void ParseBitReverse(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *base)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpBitReverse);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *base         = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *base          = IdRef(_instruction[_o++]);
 }
 void ParseBitCount(const uint32_t *_instruction,
-                   IdResultType *idResultType,
-                   IdResult *idResult,
+                   IdResultType *idResultType1,
+                   IdResult *idResult2,
                    IdRef *base)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpBitCount);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *base         = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *base          = IdRef(_instruction[_o++]);
 }
 void ParseDPdx(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *p)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpDPdx);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *p            = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *p             = IdRef(_instruction[_o++]);
 }
 void ParseDPdy(const uint32_t *_instruction,
-               IdResultType *idResultType,
-               IdResult *idResult,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
                IdRef *p)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpDPdy);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *p            = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *p             = IdRef(_instruction[_o++]);
 }
 void ParseFwidth(const uint32_t *_instruction,
-                 IdResultType *idResultType,
-                 IdResult *idResult,
+                 IdResultType *idResultType1,
+                 IdResult *idResult2,
                  IdRef *p)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFwidth);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *p            = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *p             = IdRef(_instruction[_o++]);
 }
 void ParseDPdxFine(const uint32_t *_instruction,
-                   IdResultType *idResultType,
-                   IdResult *idResult,
+                   IdResultType *idResultType1,
+                   IdResult *idResult2,
                    IdRef *p)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpDPdxFine);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *p            = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *p             = IdRef(_instruction[_o++]);
 }
 void ParseDPdyFine(const uint32_t *_instruction,
-                   IdResultType *idResultType,
-                   IdResult *idResult,
+                   IdResultType *idResultType1,
+                   IdResult *idResult2,
                    IdRef *p)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpDPdyFine);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *p            = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *p             = IdRef(_instruction[_o++]);
 }
 void ParseFwidthFine(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *p)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFwidthFine);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *p            = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *p             = IdRef(_instruction[_o++]);
 }
 void ParseDPdxCoarse(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *p)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpDPdxCoarse);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *p            = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *p             = IdRef(_instruction[_o++]);
 }
 void ParseDPdyCoarse(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *p)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpDPdyCoarse);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *p            = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *p             = IdRef(_instruction[_o++]);
 }
 void ParseFwidthCoarse(const uint32_t *_instruction,
-                       IdResultType *idResultType,
-                       IdResult *idResult,
+                       IdResultType *idResultType1,
+                       IdResult *idResult2,
                        IdRef *p)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpFwidthCoarse);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *p            = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *p             = IdRef(_instruction[_o++]);
 }
 void ParseEmitStreamVertex(const uint32_t *_instruction, IdRef *stream)
 {
@@ -2904,26 +2913,26 @@ void ParseMemoryBarrier(const uint32_t *_instruction, IdScope *memory, IdMemoryS
     *semantics  = IdMemorySemantics(_instruction[_o++]);
 }
 void ParseAtomicLoad(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *pointer,
-                     IdScope *scope,
+                     IdScope *memory,
                      IdMemorySemantics *semantics)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAtomicLoad);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *pointer      = IdRef(_instruction[_o++]);
-    *scope        = IdScope(_instruction[_o++]);
-    *semantics    = IdMemorySemantics(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *pointer       = IdRef(_instruction[_o++]);
+    *memory        = IdScope(_instruction[_o++]);
+    *semantics     = IdMemorySemantics(_instruction[_o++]);
 }
 void ParseAtomicStore(const uint32_t *_instruction,
                       IdRef *pointer,
-                      IdScope *scope,
+                      IdScope *memory,
                       IdMemorySemantics *semantics,
                       IdRef *value)
 {
@@ -2933,15 +2942,15 @@ void ParseAtomicStore(const uint32_t *_instruction,
     ASSERT(_op == spv::OpAtomicStore);
     uint32_t _o = 1;
     *pointer    = IdRef(_instruction[_o++]);
-    *scope      = IdScope(_instruction[_o++]);
+    *memory     = IdScope(_instruction[_o++]);
     *semantics  = IdMemorySemantics(_instruction[_o++]);
     *value      = IdRef(_instruction[_o++]);
 }
 void ParseAtomicExchange(const uint32_t *_instruction,
-                         IdResultType *idResultType,
-                         IdResult *idResult,
+                         IdResultType *idResultType1,
+                         IdResult *idResult2,
                          IdRef *pointer,
-                         IdScope *scope,
+                         IdScope *memory,
                          IdMemorySemantics *semantics,
                          IdRef *value)
 {
@@ -2949,19 +2958,19 @@ void ParseAtomicExchange(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAtomicExchange);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *pointer      = IdRef(_instruction[_o++]);
-    *scope        = IdScope(_instruction[_o++]);
-    *semantics    = IdMemorySemantics(_instruction[_o++]);
-    *value        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *pointer       = IdRef(_instruction[_o++]);
+    *memory        = IdScope(_instruction[_o++]);
+    *semantics     = IdMemorySemantics(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
 }
 void ParseAtomicCompareExchange(const uint32_t *_instruction,
-                                IdResultType *idResultType,
-                                IdResult *idResult,
+                                IdResultType *idResultType1,
+                                IdResult *idResult2,
                                 IdRef *pointer,
-                                IdScope *scope,
+                                IdScope *memory,
                                 IdMemorySemantics *equal,
                                 IdMemorySemantics *unequal,
                                 IdRef *value,
@@ -2971,57 +2980,57 @@ void ParseAtomicCompareExchange(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAtomicCompareExchange);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *pointer      = IdRef(_instruction[_o++]);
-    *scope        = IdScope(_instruction[_o++]);
-    *equal        = IdMemorySemantics(_instruction[_o++]);
-    *unequal      = IdMemorySemantics(_instruction[_o++]);
-    *value        = IdRef(_instruction[_o++]);
-    *comparator   = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *pointer       = IdRef(_instruction[_o++]);
+    *memory        = IdScope(_instruction[_o++]);
+    *equal         = IdMemorySemantics(_instruction[_o++]);
+    *unequal       = IdMemorySemantics(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    *comparator    = IdRef(_instruction[_o++]);
 }
 void ParseAtomicIIncrement(const uint32_t *_instruction,
-                           IdResultType *idResultType,
-                           IdResult *idResult,
+                           IdResultType *idResultType1,
+                           IdResult *idResult2,
                            IdRef *pointer,
-                           IdScope *scope,
+                           IdScope *memory,
                            IdMemorySemantics *semantics)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAtomicIIncrement);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *pointer      = IdRef(_instruction[_o++]);
-    *scope        = IdScope(_instruction[_o++]);
-    *semantics    = IdMemorySemantics(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *pointer       = IdRef(_instruction[_o++]);
+    *memory        = IdScope(_instruction[_o++]);
+    *semantics     = IdMemorySemantics(_instruction[_o++]);
 }
 void ParseAtomicIDecrement(const uint32_t *_instruction,
-                           IdResultType *idResultType,
-                           IdResult *idResult,
+                           IdResultType *idResultType1,
+                           IdResult *idResult2,
                            IdRef *pointer,
-                           IdScope *scope,
+                           IdScope *memory,
                            IdMemorySemantics *semantics)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAtomicIDecrement);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *pointer      = IdRef(_instruction[_o++]);
-    *scope        = IdScope(_instruction[_o++]);
-    *semantics    = IdMemorySemantics(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *pointer       = IdRef(_instruction[_o++]);
+    *memory        = IdScope(_instruction[_o++]);
+    *semantics     = IdMemorySemantics(_instruction[_o++]);
 }
 void ParseAtomicIAdd(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *pointer,
-                     IdScope *scope,
+                     IdScope *memory,
                      IdMemorySemantics *semantics,
                      IdRef *value)
 {
@@ -3029,19 +3038,19 @@ void ParseAtomicIAdd(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAtomicIAdd);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *pointer      = IdRef(_instruction[_o++]);
-    *scope        = IdScope(_instruction[_o++]);
-    *semantics    = IdMemorySemantics(_instruction[_o++]);
-    *value        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *pointer       = IdRef(_instruction[_o++]);
+    *memory        = IdScope(_instruction[_o++]);
+    *semantics     = IdMemorySemantics(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
 }
 void ParseAtomicISub(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *pointer,
-                     IdScope *scope,
+                     IdScope *memory,
                      IdMemorySemantics *semantics,
                      IdRef *value)
 {
@@ -3049,19 +3058,19 @@ void ParseAtomicISub(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAtomicISub);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *pointer      = IdRef(_instruction[_o++]);
-    *scope        = IdScope(_instruction[_o++]);
-    *semantics    = IdMemorySemantics(_instruction[_o++]);
-    *value        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *pointer       = IdRef(_instruction[_o++]);
+    *memory        = IdScope(_instruction[_o++]);
+    *semantics     = IdMemorySemantics(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
 }
 void ParseAtomicSMin(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *pointer,
-                     IdScope *scope,
+                     IdScope *memory,
                      IdMemorySemantics *semantics,
                      IdRef *value)
 {
@@ -3069,19 +3078,19 @@ void ParseAtomicSMin(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAtomicSMin);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *pointer      = IdRef(_instruction[_o++]);
-    *scope        = IdScope(_instruction[_o++]);
-    *semantics    = IdMemorySemantics(_instruction[_o++]);
-    *value        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *pointer       = IdRef(_instruction[_o++]);
+    *memory        = IdScope(_instruction[_o++]);
+    *semantics     = IdMemorySemantics(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
 }
 void ParseAtomicUMin(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *pointer,
-                     IdScope *scope,
+                     IdScope *memory,
                      IdMemorySemantics *semantics,
                      IdRef *value)
 {
@@ -3089,19 +3098,19 @@ void ParseAtomicUMin(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAtomicUMin);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *pointer      = IdRef(_instruction[_o++]);
-    *scope        = IdScope(_instruction[_o++]);
-    *semantics    = IdMemorySemantics(_instruction[_o++]);
-    *value        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *pointer       = IdRef(_instruction[_o++]);
+    *memory        = IdScope(_instruction[_o++]);
+    *semantics     = IdMemorySemantics(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
 }
 void ParseAtomicSMax(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *pointer,
-                     IdScope *scope,
+                     IdScope *memory,
                      IdMemorySemantics *semantics,
                      IdRef *value)
 {
@@ -3109,19 +3118,19 @@ void ParseAtomicSMax(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAtomicSMax);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *pointer      = IdRef(_instruction[_o++]);
-    *scope        = IdScope(_instruction[_o++]);
-    *semantics    = IdMemorySemantics(_instruction[_o++]);
-    *value        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *pointer       = IdRef(_instruction[_o++]);
+    *memory        = IdScope(_instruction[_o++]);
+    *semantics     = IdMemorySemantics(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
 }
 void ParseAtomicUMax(const uint32_t *_instruction,
-                     IdResultType *idResultType,
-                     IdResult *idResult,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
                      IdRef *pointer,
-                     IdScope *scope,
+                     IdScope *memory,
                      IdMemorySemantics *semantics,
                      IdRef *value)
 {
@@ -3129,19 +3138,19 @@ void ParseAtomicUMax(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAtomicUMax);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *pointer      = IdRef(_instruction[_o++]);
-    *scope        = IdScope(_instruction[_o++]);
-    *semantics    = IdMemorySemantics(_instruction[_o++]);
-    *value        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *pointer       = IdRef(_instruction[_o++]);
+    *memory        = IdScope(_instruction[_o++]);
+    *semantics     = IdMemorySemantics(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
 }
 void ParseAtomicAnd(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
+                    IdResultType *idResultType1,
+                    IdResult *idResult2,
                     IdRef *pointer,
-                    IdScope *scope,
+                    IdScope *memory,
                     IdMemorySemantics *semantics,
                     IdRef *value)
 {
@@ -3149,19 +3158,19 @@ void ParseAtomicAnd(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAtomicAnd);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *pointer      = IdRef(_instruction[_o++]);
-    *scope        = IdScope(_instruction[_o++]);
-    *semantics    = IdMemorySemantics(_instruction[_o++]);
-    *value        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *pointer       = IdRef(_instruction[_o++]);
+    *memory        = IdScope(_instruction[_o++]);
+    *semantics     = IdMemorySemantics(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
 }
 void ParseAtomicOr(const uint32_t *_instruction,
-                   IdResultType *idResultType,
-                   IdResult *idResult,
+                   IdResultType *idResultType1,
+                   IdResult *idResult2,
                    IdRef *pointer,
-                   IdScope *scope,
+                   IdScope *memory,
                    IdMemorySemantics *semantics,
                    IdRef *value)
 {
@@ -3169,19 +3178,19 @@ void ParseAtomicOr(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAtomicOr);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *pointer      = IdRef(_instruction[_o++]);
-    *scope        = IdScope(_instruction[_o++]);
-    *semantics    = IdMemorySemantics(_instruction[_o++]);
-    *value        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *pointer       = IdRef(_instruction[_o++]);
+    *memory        = IdScope(_instruction[_o++]);
+    *semantics     = IdMemorySemantics(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
 }
 void ParseAtomicXor(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
+                    IdResultType *idResultType1,
+                    IdResult *idResult2,
                     IdRef *pointer,
-                    IdScope *scope,
+                    IdScope *memory,
                     IdMemorySemantics *semantics,
                     IdRef *value)
 {
@@ -3189,26 +3198,26 @@ void ParseAtomicXor(const uint32_t *_instruction,
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpAtomicXor);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *pointer      = IdRef(_instruction[_o++]);
-    *scope        = IdScope(_instruction[_o++]);
-    *semantics    = IdMemorySemantics(_instruction[_o++]);
-    *value        = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *pointer       = IdRef(_instruction[_o++]);
+    *memory        = IdScope(_instruction[_o++]);
+    *semantics     = IdMemorySemantics(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
 }
 void ParsePhi(const uint32_t *_instruction,
-              IdResultType *idResultType,
-              IdResult *idResult,
+              IdResultType *idResultType1,
+              IdResult *idResult2,
               PairIdRefIdRefList *variableParentPairList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpPhi);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
     if (variableParentPairList)
     {
         while (_o < _length)
@@ -3222,7 +3231,7 @@ void ParsePhi(const uint32_t *_instruction,
 void ParseLoopMerge(const uint32_t *_instruction,
                     IdRef *mergeBlock,
                     IdRef *continueTarget,
-                    spv::LoopControlMask *loopControl)
+                    spv::LoopControlMask *loopControl3)
 {
     spv::Op _op;
     uint32_t _length;
@@ -3231,28 +3240,28 @@ void ParseLoopMerge(const uint32_t *_instruction,
     uint32_t _o     = 1;
     *mergeBlock     = IdRef(_instruction[_o++]);
     *continueTarget = IdRef(_instruction[_o++]);
-    *loopControl    = spv::LoopControlMask(_instruction[_o++]);
+    *loopControl3   = spv::LoopControlMask(_instruction[_o++]);
 }
 void ParseSelectionMerge(const uint32_t *_instruction,
                          IdRef *mergeBlock,
-                         spv::SelectionControlMask *selectionControl)
+                         spv::SelectionControlMask *selectionControl2)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpSelectionMerge);
-    uint32_t _o       = 1;
-    *mergeBlock       = IdRef(_instruction[_o++]);
-    *selectionControl = spv::SelectionControlMask(_instruction[_o++]);
+    uint32_t _o        = 1;
+    *mergeBlock        = IdRef(_instruction[_o++]);
+    *selectionControl2 = spv::SelectionControlMask(_instruction[_o++]);
 }
-void ParseLabel(const uint32_t *_instruction, IdResult *idResult)
+void ParseLabel(const uint32_t *_instruction, IdResult *idResult1)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpLabel);
     uint32_t _o = 1;
-    *idResult   = IdResult(_instruction[_o++]);
+    *idResult1  = IdResult(_instruction[_o++]);
 }
 void ParseBranch(const uint32_t *_instruction, IdRef *targetLabel)
 {
@@ -3316,220 +3325,26 @@ void ParseReturnValue(const uint32_t *_instruction, IdRef *value)
     uint32_t _o = 1;
     *value      = IdRef(_instruction[_o++]);
 }
-void ParseGroupAll(const uint32_t *_instruction,
-                   IdResultType *idResultType,
-                   IdResult *idResult,
-                   IdScope *execution,
-                   IdRef *predicate)
-{
-    spv::Op _op;
-    uint32_t _length;
-    GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupAll);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *predicate    = IdRef(_instruction[_o++]);
-}
-void ParseGroupAny(const uint32_t *_instruction,
-                   IdResultType *idResultType,
-                   IdResult *idResult,
-                   IdScope *execution,
-                   IdRef *predicate)
-{
-    spv::Op _op;
-    uint32_t _length;
-    GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupAny);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *predicate    = IdRef(_instruction[_o++]);
-}
-void ParseGroupBroadcast(const uint32_t *_instruction,
-                         IdResultType *idResultType,
-                         IdResult *idResult,
-                         IdScope *execution,
-                         IdRef *value,
-                         IdRef *localId)
-{
-    spv::Op _op;
-    uint32_t _length;
-    GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupBroadcast);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *value        = IdRef(_instruction[_o++]);
-    *localId      = IdRef(_instruction[_o++]);
-}
-void ParseGroupIAdd(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
-                    IdScope *execution,
-                    spv::GroupOperation *operation,
-                    IdRef *x)
-{
-    spv::Op _op;
-    uint32_t _length;
-    GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupIAdd);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *operation    = spv::GroupOperation(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
-}
-void ParseGroupFAdd(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
-                    IdScope *execution,
-                    spv::GroupOperation *operation,
-                    IdRef *x)
-{
-    spv::Op _op;
-    uint32_t _length;
-    GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupFAdd);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *operation    = spv::GroupOperation(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
-}
-void ParseGroupFMin(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
-                    IdScope *execution,
-                    spv::GroupOperation *operation,
-                    IdRef *x)
-{
-    spv::Op _op;
-    uint32_t _length;
-    GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupFMin);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *operation    = spv::GroupOperation(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
-}
-void ParseGroupUMin(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
-                    IdScope *execution,
-                    spv::GroupOperation *operation,
-                    IdRef *x)
-{
-    spv::Op _op;
-    uint32_t _length;
-    GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupUMin);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *operation    = spv::GroupOperation(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
-}
-void ParseGroupSMin(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
-                    IdScope *execution,
-                    spv::GroupOperation *operation,
-                    IdRef *x)
-{
-    spv::Op _op;
-    uint32_t _length;
-    GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupSMin);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *operation    = spv::GroupOperation(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
-}
-void ParseGroupFMax(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
-                    IdScope *execution,
-                    spv::GroupOperation *operation,
-                    IdRef *x)
-{
-    spv::Op _op;
-    uint32_t _length;
-    GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupFMax);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *operation    = spv::GroupOperation(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
-}
-void ParseGroupUMax(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
-                    IdScope *execution,
-                    spv::GroupOperation *operation,
-                    IdRef *x)
-{
-    spv::Op _op;
-    uint32_t _length;
-    GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupUMax);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *operation    = spv::GroupOperation(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
-}
-void ParseGroupSMax(const uint32_t *_instruction,
-                    IdResultType *idResultType,
-                    IdResult *idResult,
-                    IdScope *execution,
-                    spv::GroupOperation *operation,
-                    IdRef *x)
-{
-    spv::Op _op;
-    uint32_t _length;
-    GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupSMax);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *operation    = spv::GroupOperation(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
-}
 void ParseImageSparseSampleImplicitLod(const uint32_t *_instruction,
-                                       IdResultType *idResultType,
-                                       IdResult *idResult,
+                                       IdResultType *idResultType1,
+                                       IdResult *idResult2,
                                        IdRef *sampledImage,
                                        IdRef *coordinate,
-                                       spv::ImageOperandsMask *imageOperands,
+                                       spv::ImageOperandsMask *imageOperands5,
                                        IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSparseSampleImplicitLod);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *sampledImage = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *sampledImage  = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    if (imageOperands5 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands5 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -3540,23 +3355,23 @@ void ParseImageSparseSampleImplicitLod(const uint32_t *_instruction,
     }
 }
 void ParseImageSparseSampleExplicitLod(const uint32_t *_instruction,
-                                       IdResultType *idResultType,
-                                       IdResult *idResult,
+                                       IdResultType *idResultType1,
+                                       IdResult *idResult2,
                                        IdRef *sampledImage,
                                        IdRef *coordinate,
-                                       spv::ImageOperandsMask *imageOperands,
+                                       spv::ImageOperandsMask *imageOperands5,
                                        IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSparseSampleExplicitLod);
-    uint32_t _o    = 1;
-    *idResultType  = IdResultType(_instruction[_o++]);
-    *idResult      = IdResult(_instruction[_o++]);
-    *sampledImage  = IdRef(_instruction[_o++]);
-    *coordinate    = IdRef(_instruction[_o++]);
-    *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+    uint32_t _o     = 1;
+    *idResultType1  = IdResultType(_instruction[_o++]);
+    *idResult2      = IdResult(_instruction[_o++]);
+    *sampledImage   = IdRef(_instruction[_o++]);
+    *coordinate     = IdRef(_instruction[_o++]);
+    *imageOperands5 = spv::ImageOperandsMask(_instruction[_o++]);
     if (imageOperandIdsList)
     {
         while (_o < _length)
@@ -3566,27 +3381,27 @@ void ParseImageSparseSampleExplicitLod(const uint32_t *_instruction,
     }
 }
 void ParseImageSparseSampleDrefImplicitLod(const uint32_t *_instruction,
-                                           IdResultType *idResultType,
-                                           IdResult *idResult,
+                                           IdResultType *idResultType1,
+                                           IdResult *idResult2,
                                            IdRef *sampledImage,
                                            IdRef *coordinate,
                                            IdRef *dref,
-                                           spv::ImageOperandsMask *imageOperands,
+                                           spv::ImageOperandsMask *imageOperands6,
                                            IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSparseSampleDrefImplicitLod);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *sampledImage = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    *dref         = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *sampledImage  = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    *dref          = IdRef(_instruction[_o++]);
+    if (imageOperands6 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands6 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -3597,25 +3412,25 @@ void ParseImageSparseSampleDrefImplicitLod(const uint32_t *_instruction,
     }
 }
 void ParseImageSparseSampleDrefExplicitLod(const uint32_t *_instruction,
-                                           IdResultType *idResultType,
-                                           IdResult *idResult,
+                                           IdResultType *idResultType1,
+                                           IdResult *idResult2,
                                            IdRef *sampledImage,
                                            IdRef *coordinate,
                                            IdRef *dref,
-                                           spv::ImageOperandsMask *imageOperands,
+                                           spv::ImageOperandsMask *imageOperands6,
                                            IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSparseSampleDrefExplicitLod);
-    uint32_t _o    = 1;
-    *idResultType  = IdResultType(_instruction[_o++]);
-    *idResult      = IdResult(_instruction[_o++]);
-    *sampledImage  = IdRef(_instruction[_o++]);
-    *coordinate    = IdRef(_instruction[_o++]);
-    *dref          = IdRef(_instruction[_o++]);
-    *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+    uint32_t _o     = 1;
+    *idResultType1  = IdResultType(_instruction[_o++]);
+    *idResult2      = IdResult(_instruction[_o++]);
+    *sampledImage   = IdRef(_instruction[_o++]);
+    *coordinate     = IdRef(_instruction[_o++]);
+    *dref           = IdRef(_instruction[_o++]);
+    *imageOperands6 = spv::ImageOperandsMask(_instruction[_o++]);
     if (imageOperandIdsList)
     {
         while (_o < _length)
@@ -3625,25 +3440,25 @@ void ParseImageSparseSampleDrefExplicitLod(const uint32_t *_instruction,
     }
 }
 void ParseImageSparseSampleProjImplicitLod(const uint32_t *_instruction,
-                                           IdResultType *idResultType,
-                                           IdResult *idResult,
+                                           IdResultType *idResultType1,
+                                           IdResult *idResult2,
                                            IdRef *sampledImage,
                                            IdRef *coordinate,
-                                           spv::ImageOperandsMask *imageOperands,
+                                           spv::ImageOperandsMask *imageOperands5,
                                            IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSparseSampleProjImplicitLod);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *sampledImage = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *sampledImage  = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    if (imageOperands5 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands5 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -3654,23 +3469,23 @@ void ParseImageSparseSampleProjImplicitLod(const uint32_t *_instruction,
     }
 }
 void ParseImageSparseSampleProjExplicitLod(const uint32_t *_instruction,
-                                           IdResultType *idResultType,
-                                           IdResult *idResult,
+                                           IdResultType *idResultType1,
+                                           IdResult *idResult2,
                                            IdRef *sampledImage,
                                            IdRef *coordinate,
-                                           spv::ImageOperandsMask *imageOperands,
+                                           spv::ImageOperandsMask *imageOperands5,
                                            IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSparseSampleProjExplicitLod);
-    uint32_t _o    = 1;
-    *idResultType  = IdResultType(_instruction[_o++]);
-    *idResult      = IdResult(_instruction[_o++]);
-    *sampledImage  = IdRef(_instruction[_o++]);
-    *coordinate    = IdRef(_instruction[_o++]);
-    *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+    uint32_t _o     = 1;
+    *idResultType1  = IdResultType(_instruction[_o++]);
+    *idResult2      = IdResult(_instruction[_o++]);
+    *sampledImage   = IdRef(_instruction[_o++]);
+    *coordinate     = IdRef(_instruction[_o++]);
+    *imageOperands5 = spv::ImageOperandsMask(_instruction[_o++]);
     if (imageOperandIdsList)
     {
         while (_o < _length)
@@ -3680,27 +3495,27 @@ void ParseImageSparseSampleProjExplicitLod(const uint32_t *_instruction,
     }
 }
 void ParseImageSparseSampleProjDrefImplicitLod(const uint32_t *_instruction,
-                                               IdResultType *idResultType,
-                                               IdResult *idResult,
+                                               IdResultType *idResultType1,
+                                               IdResult *idResult2,
                                                IdRef *sampledImage,
                                                IdRef *coordinate,
                                                IdRef *dref,
-                                               spv::ImageOperandsMask *imageOperands,
+                                               spv::ImageOperandsMask *imageOperands6,
                                                IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSparseSampleProjDrefImplicitLod);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *sampledImage = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    *dref         = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *sampledImage  = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    *dref          = IdRef(_instruction[_o++]);
+    if (imageOperands6 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands6 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -3711,25 +3526,25 @@ void ParseImageSparseSampleProjDrefImplicitLod(const uint32_t *_instruction,
     }
 }
 void ParseImageSparseSampleProjDrefExplicitLod(const uint32_t *_instruction,
-                                               IdResultType *idResultType,
-                                               IdResult *idResult,
+                                               IdResultType *idResultType1,
+                                               IdResult *idResult2,
                                                IdRef *sampledImage,
                                                IdRef *coordinate,
                                                IdRef *dref,
-                                               spv::ImageOperandsMask *imageOperands,
+                                               spv::ImageOperandsMask *imageOperands6,
                                                IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSparseSampleProjDrefExplicitLod);
-    uint32_t _o    = 1;
-    *idResultType  = IdResultType(_instruction[_o++]);
-    *idResult      = IdResult(_instruction[_o++]);
-    *sampledImage  = IdRef(_instruction[_o++]);
-    *coordinate    = IdRef(_instruction[_o++]);
-    *dref          = IdRef(_instruction[_o++]);
-    *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+    uint32_t _o     = 1;
+    *idResultType1  = IdResultType(_instruction[_o++]);
+    *idResult2      = IdResult(_instruction[_o++]);
+    *sampledImage   = IdRef(_instruction[_o++]);
+    *coordinate     = IdRef(_instruction[_o++]);
+    *dref           = IdRef(_instruction[_o++]);
+    *imageOperands6 = spv::ImageOperandsMask(_instruction[_o++]);
     if (imageOperandIdsList)
     {
         while (_o < _length)
@@ -3739,25 +3554,25 @@ void ParseImageSparseSampleProjDrefExplicitLod(const uint32_t *_instruction,
     }
 }
 void ParseImageSparseFetch(const uint32_t *_instruction,
-                           IdResultType *idResultType,
-                           IdResult *idResult,
+                           IdResultType *idResultType1,
+                           IdResult *idResult2,
                            IdRef *image,
                            IdRef *coordinate,
-                           spv::ImageOperandsMask *imageOperands,
+                           spv::ImageOperandsMask *imageOperands5,
                            IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSparseFetch);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *image        = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *image         = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    if (imageOperands5 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands5 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -3768,27 +3583,27 @@ void ParseImageSparseFetch(const uint32_t *_instruction,
     }
 }
 void ParseImageSparseGather(const uint32_t *_instruction,
-                            IdResultType *idResultType,
-                            IdResult *idResult,
+                            IdResultType *idResultType1,
+                            IdResult *idResult2,
                             IdRef *sampledImage,
                             IdRef *coordinate,
                             IdRef *component,
-                            spv::ImageOperandsMask *imageOperands,
+                            spv::ImageOperandsMask *imageOperands6,
                             IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSparseGather);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *sampledImage = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    *component    = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *sampledImage  = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    *component     = IdRef(_instruction[_o++]);
+    if (imageOperands6 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands6 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -3799,27 +3614,27 @@ void ParseImageSparseGather(const uint32_t *_instruction,
     }
 }
 void ParseImageSparseDrefGather(const uint32_t *_instruction,
-                                IdResultType *idResultType,
-                                IdResult *idResult,
+                                IdResultType *idResultType1,
+                                IdResult *idResult2,
                                 IdRef *sampledImage,
                                 IdRef *coordinate,
                                 IdRef *dref,
-                                spv::ImageOperandsMask *imageOperands,
+                                spv::ImageOperandsMask *imageOperands6,
                                 IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSparseDrefGather);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *sampledImage = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    *dref         = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *sampledImage  = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    *dref          = IdRef(_instruction[_o++]);
+    if (imageOperands6 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands6 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -3830,39 +3645,39 @@ void ParseImageSparseDrefGather(const uint32_t *_instruction,
     }
 }
 void ParseImageSparseTexelsResident(const uint32_t *_instruction,
-                                    IdResultType *idResultType,
-                                    IdResult *idResult,
+                                    IdResultType *idResultType1,
+                                    IdResult *idResult2,
                                     IdRef *residentCode)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSparseTexelsResident);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *residentCode = IdRef(_instruction[_o++]);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *residentCode  = IdRef(_instruction[_o++]);
 }
 void ParseImageSparseRead(const uint32_t *_instruction,
-                          IdResultType *idResultType,
-                          IdResult *idResult,
+                          IdResultType *idResultType1,
+                          IdResult *idResult2,
                           IdRef *image,
                           IdRef *coordinate,
-                          spv::ImageOperandsMask *imageOperands,
+                          spv::ImageOperandsMask *imageOperands5,
                           IdRefList *imageOperandIdsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
     ASSERT(_op == spv::OpImageSparseRead);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *image        = IdRef(_instruction[_o++]);
-    *coordinate   = IdRef(_instruction[_o++]);
-    if (imageOperands && _o < _length)
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *image         = IdRef(_instruction[_o++]);
+    *coordinate    = IdRef(_instruction[_o++]);
+    if (imageOperands5 && _o < _length)
     {
-        *imageOperands = spv::ImageOperandsMask(_instruction[_o++]);
+        *imageOperands5 = spv::ImageOperandsMask(_instruction[_o++]);
     }
     if (imageOperandIdsList)
     {
@@ -3872,149 +3687,886 @@ void ParseImageSparseRead(const uint32_t *_instruction,
         }
     }
 }
-void ParseGroupIAddNonUniformAMD(const uint32_t *_instruction,
-                                 IdResultType *idResultType,
-                                 IdResult *idResult,
-                                 IdScope *execution,
-                                 spv::GroupOperation *operation,
-                                 IdRef *x)
+void ParseModuleProcessed(const uint32_t *_instruction, LiteralString *process)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupIAddNonUniformAMD);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *operation    = spv::GroupOperation(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
+    ASSERT(_op == spv::OpModuleProcessed);
+    uint32_t _o = 1;
+    ASSERT(IsLittleEndian());
+    *process = reinterpret_cast<const char *>(&_instruction[_o]);
+    _o += strlen(*process) / 4 + 1;
 }
-void ParseGroupFAddNonUniformAMD(const uint32_t *_instruction,
-                                 IdResultType *idResultType,
-                                 IdResult *idResult,
-                                 IdScope *execution,
-                                 spv::GroupOperation *operation,
-                                 IdRef *x)
+void ParseExecutionModeId(const uint32_t *_instruction,
+                          IdRef *entryPoint,
+                          spv::ExecutionMode *mode,
+                          LiteralIntegerList *operandsList)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupFAddNonUniformAMD);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *operation    = spv::GroupOperation(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
+    ASSERT(_op == spv::OpExecutionModeId);
+    uint32_t _o = 1;
+    *entryPoint = IdRef(_instruction[_o++]);
+    *mode       = spv::ExecutionMode(_instruction[_o++]);
+    if (operandsList)
+    {
+        while (_o < _length)
+        {
+            operandsList->emplace_back(_instruction[_o++]);
+        }
+    }
 }
-void ParseGroupFMinNonUniformAMD(const uint32_t *_instruction,
-                                 IdResultType *idResultType,
-                                 IdResult *idResult,
-                                 IdScope *execution,
-                                 spv::GroupOperation *operation,
-                                 IdRef *x)
+void ParseGroupNonUniformElect(const uint32_t *_instruction,
+                               IdResultType *idResultType1,
+                               IdResult *idResult2,
+                               IdScope *execution)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupFMinNonUniformAMD);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *operation    = spv::GroupOperation(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
+    ASSERT(_op == spv::OpGroupNonUniformElect);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
 }
-void ParseGroupUMinNonUniformAMD(const uint32_t *_instruction,
-                                 IdResultType *idResultType,
-                                 IdResult *idResult,
-                                 IdScope *execution,
-                                 spv::GroupOperation *operation,
-                                 IdRef *x)
+void ParseGroupNonUniformAll(const uint32_t *_instruction,
+                             IdResultType *idResultType1,
+                             IdResult *idResult2,
+                             IdScope *execution,
+                             IdRef *predicate)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupUMinNonUniformAMD);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *operation    = spv::GroupOperation(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
+    ASSERT(_op == spv::OpGroupNonUniformAll);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *predicate     = IdRef(_instruction[_o++]);
 }
-void ParseGroupSMinNonUniformAMD(const uint32_t *_instruction,
-                                 IdResultType *idResultType,
-                                 IdResult *idResult,
-                                 IdScope *execution,
-                                 spv::GroupOperation *operation,
-                                 IdRef *x)
+void ParseGroupNonUniformAny(const uint32_t *_instruction,
+                             IdResultType *idResultType1,
+                             IdResult *idResult2,
+                             IdScope *execution,
+                             IdRef *predicate)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupSMinNonUniformAMD);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *operation    = spv::GroupOperation(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
+    ASSERT(_op == spv::OpGroupNonUniformAny);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *predicate     = IdRef(_instruction[_o++]);
 }
-void ParseGroupFMaxNonUniformAMD(const uint32_t *_instruction,
-                                 IdResultType *idResultType,
-                                 IdResult *idResult,
-                                 IdScope *execution,
-                                 spv::GroupOperation *operation,
-                                 IdRef *x)
+void ParseGroupNonUniformAllEqual(const uint32_t *_instruction,
+                                  IdResultType *idResultType1,
+                                  IdResult *idResult2,
+                                  IdScope *execution,
+                                  IdRef *value)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupFMaxNonUniformAMD);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *operation    = spv::GroupOperation(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
+    ASSERT(_op == spv::OpGroupNonUniformAllEqual);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
 }
-void ParseGroupUMaxNonUniformAMD(const uint32_t *_instruction,
-                                 IdResultType *idResultType,
-                                 IdResult *idResult,
-                                 IdScope *execution,
-                                 spv::GroupOperation *operation,
-                                 IdRef *x)
+void ParseGroupNonUniformBroadcast(const uint32_t *_instruction,
+                                   IdResultType *idResultType1,
+                                   IdResult *idResult2,
+                                   IdScope *execution,
+                                   IdRef *value,
+                                   IdRef *id)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupUMaxNonUniformAMD);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *operation    = spv::GroupOperation(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
+    ASSERT(_op == spv::OpGroupNonUniformBroadcast);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    *id            = IdRef(_instruction[_o++]);
 }
-void ParseGroupSMaxNonUniformAMD(const uint32_t *_instruction,
-                                 IdResultType *idResultType,
-                                 IdResult *idResult,
-                                 IdScope *execution,
-                                 spv::GroupOperation *operation,
-                                 IdRef *x)
+void ParseGroupNonUniformBroadcastFirst(const uint32_t *_instruction,
+                                        IdResultType *idResultType1,
+                                        IdResult *idResult2,
+                                        IdScope *execution,
+                                        IdRef *value)
 {
     spv::Op _op;
     uint32_t _length;
     GetInstructionOpAndLength(_instruction, &_op, &_length);
-    ASSERT(_op == spv::OpGroupSMaxNonUniformAMD);
-    uint32_t _o   = 1;
-    *idResultType = IdResultType(_instruction[_o++]);
-    *idResult     = IdResult(_instruction[_o++]);
-    *execution    = IdScope(_instruction[_o++]);
-    *operation    = spv::GroupOperation(_instruction[_o++]);
-    *x            = IdRef(_instruction[_o++]);
+    ASSERT(_op == spv::OpGroupNonUniformBroadcastFirst);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+}
+void ParseGroupNonUniformBallot(const uint32_t *_instruction,
+                                IdResultType *idResultType1,
+                                IdResult *idResult2,
+                                IdScope *execution,
+                                IdRef *predicate)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformBallot);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *predicate     = IdRef(_instruction[_o++]);
+}
+void ParseGroupNonUniformInverseBallot(const uint32_t *_instruction,
+                                       IdResultType *idResultType1,
+                                       IdResult *idResult2,
+                                       IdScope *execution,
+                                       IdRef *value)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformInverseBallot);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+}
+void ParseGroupNonUniformBallotBitExtract(const uint32_t *_instruction,
+                                          IdResultType *idResultType1,
+                                          IdResult *idResult2,
+                                          IdScope *execution,
+                                          IdRef *value,
+                                          IdRef *index)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformBallotBitExtract);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    *index         = IdRef(_instruction[_o++]);
+}
+void ParseGroupNonUniformBallotBitCount(const uint32_t *_instruction,
+                                        IdResultType *idResultType1,
+                                        IdResult *idResult2,
+                                        IdScope *execution,
+                                        spv::GroupOperation *operation,
+                                        IdRef *value)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformBallotBitCount);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+}
+void ParseGroupNonUniformBallotFindLSB(const uint32_t *_instruction,
+                                       IdResultType *idResultType1,
+                                       IdResult *idResult2,
+                                       IdScope *execution,
+                                       IdRef *value)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformBallotFindLSB);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+}
+void ParseGroupNonUniformBallotFindMSB(const uint32_t *_instruction,
+                                       IdResultType *idResultType1,
+                                       IdResult *idResult2,
+                                       IdScope *execution,
+                                       IdRef *value)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformBallotFindMSB);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+}
+void ParseGroupNonUniformShuffle(const uint32_t *_instruction,
+                                 IdResultType *idResultType1,
+                                 IdResult *idResult2,
+                                 IdScope *execution,
+                                 IdRef *value,
+                                 IdRef *id)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformShuffle);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    *id            = IdRef(_instruction[_o++]);
+}
+void ParseGroupNonUniformShuffleXor(const uint32_t *_instruction,
+                                    IdResultType *idResultType1,
+                                    IdResult *idResult2,
+                                    IdScope *execution,
+                                    IdRef *value,
+                                    IdRef *mask)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformShuffleXor);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    *mask          = IdRef(_instruction[_o++]);
+}
+void ParseGroupNonUniformShuffleUp(const uint32_t *_instruction,
+                                   IdResultType *idResultType1,
+                                   IdResult *idResult2,
+                                   IdScope *execution,
+                                   IdRef *value,
+                                   IdRef *delta)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformShuffleUp);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    *delta         = IdRef(_instruction[_o++]);
+}
+void ParseGroupNonUniformShuffleDown(const uint32_t *_instruction,
+                                     IdResultType *idResultType1,
+                                     IdResult *idResult2,
+                                     IdScope *execution,
+                                     IdRef *value,
+                                     IdRef *delta)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformShuffleDown);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    *delta         = IdRef(_instruction[_o++]);
+}
+void ParseGroupNonUniformIAdd(const uint32_t *_instruction,
+                              IdResultType *idResultType1,
+                              IdResult *idResult2,
+                              IdScope *execution,
+                              spv::GroupOperation *operation,
+                              IdRef *value,
+                              IdRef *clusterSize)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformIAdd);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    if (clusterSize && _o < _length)
+    {
+        *clusterSize = IdRef(_instruction[_o++]);
+    }
+}
+void ParseGroupNonUniformFAdd(const uint32_t *_instruction,
+                              IdResultType *idResultType1,
+                              IdResult *idResult2,
+                              IdScope *execution,
+                              spv::GroupOperation *operation,
+                              IdRef *value,
+                              IdRef *clusterSize)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformFAdd);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    if (clusterSize && _o < _length)
+    {
+        *clusterSize = IdRef(_instruction[_o++]);
+    }
+}
+void ParseGroupNonUniformIMul(const uint32_t *_instruction,
+                              IdResultType *idResultType1,
+                              IdResult *idResult2,
+                              IdScope *execution,
+                              spv::GroupOperation *operation,
+                              IdRef *value,
+                              IdRef *clusterSize)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformIMul);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    if (clusterSize && _o < _length)
+    {
+        *clusterSize = IdRef(_instruction[_o++]);
+    }
+}
+void ParseGroupNonUniformFMul(const uint32_t *_instruction,
+                              IdResultType *idResultType1,
+                              IdResult *idResult2,
+                              IdScope *execution,
+                              spv::GroupOperation *operation,
+                              IdRef *value,
+                              IdRef *clusterSize)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformFMul);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    if (clusterSize && _o < _length)
+    {
+        *clusterSize = IdRef(_instruction[_o++]);
+    }
+}
+void ParseGroupNonUniformSMin(const uint32_t *_instruction,
+                              IdResultType *idResultType1,
+                              IdResult *idResult2,
+                              IdScope *execution,
+                              spv::GroupOperation *operation,
+                              IdRef *value,
+                              IdRef *clusterSize)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformSMin);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    if (clusterSize && _o < _length)
+    {
+        *clusterSize = IdRef(_instruction[_o++]);
+    }
+}
+void ParseGroupNonUniformUMin(const uint32_t *_instruction,
+                              IdResultType *idResultType1,
+                              IdResult *idResult2,
+                              IdScope *execution,
+                              spv::GroupOperation *operation,
+                              IdRef *value,
+                              IdRef *clusterSize)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformUMin);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    if (clusterSize && _o < _length)
+    {
+        *clusterSize = IdRef(_instruction[_o++]);
+    }
+}
+void ParseGroupNonUniformFMin(const uint32_t *_instruction,
+                              IdResultType *idResultType1,
+                              IdResult *idResult2,
+                              IdScope *execution,
+                              spv::GroupOperation *operation,
+                              IdRef *value,
+                              IdRef *clusterSize)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformFMin);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    if (clusterSize && _o < _length)
+    {
+        *clusterSize = IdRef(_instruction[_o++]);
+    }
+}
+void ParseGroupNonUniformSMax(const uint32_t *_instruction,
+                              IdResultType *idResultType1,
+                              IdResult *idResult2,
+                              IdScope *execution,
+                              spv::GroupOperation *operation,
+                              IdRef *value,
+                              IdRef *clusterSize)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformSMax);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    if (clusterSize && _o < _length)
+    {
+        *clusterSize = IdRef(_instruction[_o++]);
+    }
+}
+void ParseGroupNonUniformUMax(const uint32_t *_instruction,
+                              IdResultType *idResultType1,
+                              IdResult *idResult2,
+                              IdScope *execution,
+                              spv::GroupOperation *operation,
+                              IdRef *value,
+                              IdRef *clusterSize)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformUMax);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    if (clusterSize && _o < _length)
+    {
+        *clusterSize = IdRef(_instruction[_o++]);
+    }
+}
+void ParseGroupNonUniformFMax(const uint32_t *_instruction,
+                              IdResultType *idResultType1,
+                              IdResult *idResult2,
+                              IdScope *execution,
+                              spv::GroupOperation *operation,
+                              IdRef *value,
+                              IdRef *clusterSize)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformFMax);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    if (clusterSize && _o < _length)
+    {
+        *clusterSize = IdRef(_instruction[_o++]);
+    }
+}
+void ParseGroupNonUniformBitwiseAnd(const uint32_t *_instruction,
+                                    IdResultType *idResultType1,
+                                    IdResult *idResult2,
+                                    IdScope *execution,
+                                    spv::GroupOperation *operation,
+                                    IdRef *value,
+                                    IdRef *clusterSize)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformBitwiseAnd);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    if (clusterSize && _o < _length)
+    {
+        *clusterSize = IdRef(_instruction[_o++]);
+    }
+}
+void ParseGroupNonUniformBitwiseOr(const uint32_t *_instruction,
+                                   IdResultType *idResultType1,
+                                   IdResult *idResult2,
+                                   IdScope *execution,
+                                   spv::GroupOperation *operation,
+                                   IdRef *value,
+                                   IdRef *clusterSize)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformBitwiseOr);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    if (clusterSize && _o < _length)
+    {
+        *clusterSize = IdRef(_instruction[_o++]);
+    }
+}
+void ParseGroupNonUniformBitwiseXor(const uint32_t *_instruction,
+                                    IdResultType *idResultType1,
+                                    IdResult *idResult2,
+                                    IdScope *execution,
+                                    spv::GroupOperation *operation,
+                                    IdRef *value,
+                                    IdRef *clusterSize)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformBitwiseXor);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    if (clusterSize && _o < _length)
+    {
+        *clusterSize = IdRef(_instruction[_o++]);
+    }
+}
+void ParseGroupNonUniformLogicalAnd(const uint32_t *_instruction,
+                                    IdResultType *idResultType1,
+                                    IdResult *idResult2,
+                                    IdScope *execution,
+                                    spv::GroupOperation *operation,
+                                    IdRef *value,
+                                    IdRef *clusterSize)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformLogicalAnd);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    if (clusterSize && _o < _length)
+    {
+        *clusterSize = IdRef(_instruction[_o++]);
+    }
+}
+void ParseGroupNonUniformLogicalOr(const uint32_t *_instruction,
+                                   IdResultType *idResultType1,
+                                   IdResult *idResult2,
+                                   IdScope *execution,
+                                   spv::GroupOperation *operation,
+                                   IdRef *value,
+                                   IdRef *clusterSize)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformLogicalOr);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    if (clusterSize && _o < _length)
+    {
+        *clusterSize = IdRef(_instruction[_o++]);
+    }
+}
+void ParseGroupNonUniformLogicalXor(const uint32_t *_instruction,
+                                    IdResultType *idResultType1,
+                                    IdResult *idResult2,
+                                    IdScope *execution,
+                                    spv::GroupOperation *operation,
+                                    IdRef *value,
+                                    IdRef *clusterSize)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformLogicalXor);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *operation     = spv::GroupOperation(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    if (clusterSize && _o < _length)
+    {
+        *clusterSize = IdRef(_instruction[_o++]);
+    }
+}
+void ParseGroupNonUniformQuadBroadcast(const uint32_t *_instruction,
+                                       IdResultType *idResultType1,
+                                       IdResult *idResult2,
+                                       IdScope *execution,
+                                       IdRef *value,
+                                       IdRef *index)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformQuadBroadcast);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    *index         = IdRef(_instruction[_o++]);
+}
+void ParseGroupNonUniformQuadSwap(const uint32_t *_instruction,
+                                  IdResultType *idResultType1,
+                                  IdResult *idResult2,
+                                  IdScope *execution,
+                                  IdRef *value,
+                                  IdRef *direction)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpGroupNonUniformQuadSwap);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *execution     = IdScope(_instruction[_o++]);
+    *value         = IdRef(_instruction[_o++]);
+    *direction     = IdRef(_instruction[_o++]);
+}
+void ParseCopyLogical(const uint32_t *_instruction,
+                      IdResultType *idResultType1,
+                      IdResult *idResult2,
+                      IdRef *operand)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpCopyLogical);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand       = IdRef(_instruction[_o++]);
+}
+void ParsePtrEqual(const uint32_t *_instruction,
+                   IdResultType *idResultType1,
+                   IdResult *idResult2,
+                   IdRef *operand1,
+                   IdRef *operand2)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpPtrEqual);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
+}
+void ParsePtrNotEqual(const uint32_t *_instruction,
+                      IdResultType *idResultType1,
+                      IdResult *idResult2,
+                      IdRef *operand1,
+                      IdRef *operand2)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpPtrNotEqual);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *operand1      = IdRef(_instruction[_o++]);
+    *operand2      = IdRef(_instruction[_o++]);
+}
+void ParseSDot(const uint32_t *_instruction,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
+               IdRef *vector1,
+               IdRef *vector2,
+               spv::PackedVectorFormat *packedVectorFormat)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpSDot);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *vector1       = IdRef(_instruction[_o++]);
+    *vector2       = IdRef(_instruction[_o++]);
+    if (packedVectorFormat && _o < _length)
+    {
+        *packedVectorFormat = spv::PackedVectorFormat(_instruction[_o++]);
+    }
+}
+void ParseUDot(const uint32_t *_instruction,
+               IdResultType *idResultType1,
+               IdResult *idResult2,
+               IdRef *vector1,
+               IdRef *vector2,
+               spv::PackedVectorFormat *packedVectorFormat)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpUDot);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *vector1       = IdRef(_instruction[_o++]);
+    *vector2       = IdRef(_instruction[_o++]);
+    if (packedVectorFormat && _o < _length)
+    {
+        *packedVectorFormat = spv::PackedVectorFormat(_instruction[_o++]);
+    }
+}
+void ParseSUDot(const uint32_t *_instruction,
+                IdResultType *idResultType1,
+                IdResult *idResult2,
+                IdRef *vector1,
+                IdRef *vector2,
+                spv::PackedVectorFormat *packedVectorFormat)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpSUDot);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *vector1       = IdRef(_instruction[_o++]);
+    *vector2       = IdRef(_instruction[_o++]);
+    if (packedVectorFormat && _o < _length)
+    {
+        *packedVectorFormat = spv::PackedVectorFormat(_instruction[_o++]);
+    }
+}
+void ParseSDotAccSat(const uint32_t *_instruction,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
+                     IdRef *vector1,
+                     IdRef *vector2,
+                     IdRef *accumulator,
+                     spv::PackedVectorFormat *packedVectorFormat)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpSDotAccSat);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *vector1       = IdRef(_instruction[_o++]);
+    *vector2       = IdRef(_instruction[_o++]);
+    *accumulator   = IdRef(_instruction[_o++]);
+    if (packedVectorFormat && _o < _length)
+    {
+        *packedVectorFormat = spv::PackedVectorFormat(_instruction[_o++]);
+    }
+}
+void ParseUDotAccSat(const uint32_t *_instruction,
+                     IdResultType *idResultType1,
+                     IdResult *idResult2,
+                     IdRef *vector1,
+                     IdRef *vector2,
+                     IdRef *accumulator,
+                     spv::PackedVectorFormat *packedVectorFormat)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpUDotAccSat);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *vector1       = IdRef(_instruction[_o++]);
+    *vector2       = IdRef(_instruction[_o++]);
+    *accumulator   = IdRef(_instruction[_o++]);
+    if (packedVectorFormat && _o < _length)
+    {
+        *packedVectorFormat = spv::PackedVectorFormat(_instruction[_o++]);
+    }
+}
+void ParseSUDotAccSat(const uint32_t *_instruction,
+                      IdResultType *idResultType1,
+                      IdResult *idResult2,
+                      IdRef *vector1,
+                      IdRef *vector2,
+                      IdRef *accumulator,
+                      spv::PackedVectorFormat *packedVectorFormat)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpSUDotAccSat);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+    *vector1       = IdRef(_instruction[_o++]);
+    *vector2       = IdRef(_instruction[_o++]);
+    *accumulator   = IdRef(_instruction[_o++]);
+    if (packedVectorFormat && _o < _length)
+    {
+        *packedVectorFormat = spv::PackedVectorFormat(_instruction[_o++]);
+    }
 }
 
 }  // namespace spirv

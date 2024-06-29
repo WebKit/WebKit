@@ -196,6 +196,17 @@ void DataDetectorHighlight::fadeAnimationTimerFired()
     }
 }
 
+void DataDetectorHighlight::dismissImmediately()
+{
+    layer().setOpacity(0);
+
+    if (m_fadeAnimationTimer.isActive())
+        m_fadeAnimationTimer.stop();
+
+    m_fadeAnimationState = FadeAnimationState::NotAnimating;
+    didFinishFadeOutAnimation();
+}
+
 void DataDetectorHighlight::fadeIn()
 {
     if (m_fadeAnimationState == FadeAnimationState::FadingIn && m_fadeAnimationTimer.isActive())

@@ -306,7 +306,7 @@ typedef struct SPEED_FEATURES {
   // Turned off when (row_mt_bit_exact == 1 && adaptive_rd_thresh_row_mt == 0).
   int adaptive_rd_thresh;
 
-  // Flag to use adaptive_rd_thresh when row-mt it enabled, only for non-rd
+  // Flag to use adaptive_rd_thresh when row-mt is enabled, only for non-rd
   // pickmode.
   int adaptive_rd_thresh_row_mt;
 

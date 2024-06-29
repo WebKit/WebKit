@@ -99,7 +99,7 @@ static RetainPtr<NSData> produceClientDataJson(_WKWebAuthenticationType type, NS
     auto securityOrigin = WebCore::SecurityOrigin::createFromString(origin);
 
     auto clientDataJson = buildClientDataJson(clientDataType, WebCore::BufferSource(challengeBuffer), securityOrigin, scope, topOrigin);
-    return adoptNS([[NSData alloc] initWithBytes:clientDataJson->data() length:clientDataJson->byteLength()]);
+    return toNSData(clientDataJson->span());
 }
 
 static Vector<uint8_t> produceClientDataJsonHash(NSData *clientDataJson)
@@ -107,11 +107,6 @@ static Vector<uint8_t> produceClientDataJsonHash(NSData *clientDataJson)
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     crypto->addBytes(span(clientDataJson));
     return crypto->computeHash();
-}
-
-static inline RetainPtr<NSData> toNSData(const Vector<uint8_t>& data)
-{
-    return adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
 }
 #endif
 
@@ -307,7 +302,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
         it = responseMap.find(cbor::CBORValue(fido::kEntityIdMapKey));
         if (it != responseMap.end() && it->second.isByteString()) {
             auto& userHandle = it->second.getByteString();
-            [credential setObject:adoptNS([[NSData alloc] initWithBytes:userHandle.data() length:userHandle.size()]).get() forKey:_WKLocalAuthenticatorCredentialUserHandleKey];
+            [credential setObject:toNSData(userHandle.span()).get() forKey:_WKLocalAuthenticatorCredentialUserHandleKey];
         } else
             [credential setObject:[NSNull null] forKey:_WKLocalAuthenticatorCredentialUserHandleKey];
 
@@ -449,7 +444,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
         updatedUserMap[cbor::CBORValue(fido::kDisplayNameMapKey)] = cbor::CBORValue(String(displayName));
     auto updatedTag = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(updatedUserMap)));
 
-    auto secAttrApplicationTag = adoptNS([[NSData alloc] initWithBytes:updatedTag->data() length:updatedTag->size()]);
+    RetainPtr secAttrApplicationTag = toNSData(updatedTag->span());
 
     NSDictionary *updateParams = @{
         (__bridge id)kSecAttrApplicationTag: secAttrApplicationTag.get(),
@@ -512,7 +507,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
         updatedUserMap[cbor::CBORValue(fido::kEntityNameMapKey)] = cbor::CBORValue(String(name));
     auto updatedTag = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(updatedUserMap)));
 
-    auto secAttrApplicationTag = adoptNS([[NSData alloc] initWithBytes:updatedTag->data() length:updatedTag->size()]);
+    RetainPtr secAttrApplicationTag = toNSData(updatedTag->span());
 
     NSDictionary *updateParams = @{
         (__bridge id)kSecAttrApplicationTag: secAttrApplicationTag.get(),
@@ -561,7 +556,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
         createNSErrorFromWKErrorIfNecessary(error, WKErrorMalformedCredential);
         return nullptr;
     }
-    auto privateKey = adoptNS([[NSData alloc] initWithBytes:it->second.getByteString().data() length:it->second.getByteString().size()]);
+    RetainPtr privateKey = toNSData(it->second.getByteString().span());
 
     it = credentialMap.find(cbor::CBORValue(WebCore::keyTypeKey));
     if (it == credentialMap.end() || !it->second.isInteger()) {
@@ -619,7 +614,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
     auto digest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_1);
     digest->addBytes(span(nsPublicKeyData));
     auto credentialId = digest->computeHash();
-    auto nsCredentialId = adoptNS([[NSData alloc] initWithBytes:credentialId.data() length:credentialId.size()]);
+    RetainPtr nsCredentialId = toNSData(credentialId.span());
 
     auto query = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
         (id)kSecClassKey, (id)kSecClass,
@@ -641,7 +636,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
         return nullptr;
     }
 
-    auto secAttrApplicationTag = adoptNS([[NSData alloc] initWithBytes:keyTag->data() length:keyTag->size()]);
+    RetainPtr secAttrApplicationTag = toNSData(keyTag->span());
 
     auto addQuery = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
         (id)key.get(), (id)kSecValueRef,
@@ -735,7 +730,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
     }
     credentialMap[cbor::CBORValue(WebCore::applicationTagKey)] = cbor::CBORValue(WTFMove(*decodedResponse));
     auto serializedCredential = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(credentialMap)));
-    return adoptNS([[NSData alloc] initWithBytes:serializedCredential.value().data() length:serializedCredential.value().size()]).autorelease();
+    return toNSData(serializedCredential.value().span()).autorelease();
 #else
     return nullptr;
 #endif // ENABLE(WEB_AUTHN)
@@ -964,7 +959,7 @@ static RetainPtr<NSArray<NSNumber *>> wkTransports(const Vector<WebCore::Authent
 
 static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestationResponse(const WebCore::AuthenticatorResponseData& data, NSData *clientDataJSON, WebCore::AuthenticatorAttachment attachment)
 {
-    auto value = adoptNS([[_WKAuthenticatorAttestationResponse alloc] initWithClientDataJSON:clientDataJSON rawId:[NSData dataWithBytes:data.rawId->data() length:data.rawId->byteLength()] extensionOutputsCBOR:toNSData(data.extensionOutputs->toCBOR()).autorelease() attestationObject:[NSData dataWithBytes:data.attestationObject->data() length:data.attestationObject->byteLength()] attachment: authenticatorAttachmentToWKAuthenticatorAttachment(attachment) transports:wkTransports(data.transports).autorelease()]);
+    auto value = adoptNS([[_WKAuthenticatorAttestationResponse alloc] initWithClientDataJSON:clientDataJSON rawId:toNSData(data.rawId->span()).get() extensionOutputsCBOR:toNSData(data.extensionOutputs->toCBOR()).autorelease() attestationObject:toNSData(data.attestationObject->span()).get() attachment: authenticatorAttachmentToWKAuthenticatorAttachment(attachment) transports:wkTransports(data.transports).autorelease()]);
     
     return value;
 }
@@ -1030,11 +1025,11 @@ static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestation
 #if ENABLE(WEB_AUTHN)
 static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResponse(const WebCore::AuthenticatorResponseData& data, NSData *clientDataJSON, WebCore::AuthenticatorAttachment attachment)
 {
-    NSData *userHandle = nil;
+    RetainPtr<NSData> userHandle;
     if (data.userHandle)
-        userHandle = [NSData dataWithBytes:data.userHandle->data() length:data.userHandle->byteLength()];
+        userHandle = toNSData(data.userHandle->span());
 
-    return adoptNS([[_WKAuthenticatorAssertionResponse alloc] initWithClientDataJSON:clientDataJSON rawId:[NSData dataWithBytes:data.rawId->data() length:data.rawId->byteLength()] extensionOutputsCBOR:toNSData(data.extensionOutputs->toCBOR()).autorelease() authenticatorData:[NSData dataWithBytes:data.authenticatorData->data() length:data.authenticatorData->byteLength()] signature:[NSData dataWithBytes:data.signature->data() length:data.signature->byteLength()] userHandle:userHandle attachment:authenticatorAttachmentToWKAuthenticatorAttachment(attachment)]);
+    return adoptNS([[_WKAuthenticatorAssertionResponse alloc] initWithClientDataJSON:clientDataJSON rawId:toNSData(data.rawId->span()).get() extensionOutputsCBOR:toNSData(data.extensionOutputs->toCBOR()).autorelease() authenticatorData:toNSData(data.authenticatorData->span()).get() signature:toNSData(data.signature->span()).get() userHandle:userHandle.get() attachment:authenticatorAttachmentToWKAuthenticatorAttachment(attachment)]);
 }
 #endif
 
@@ -1115,7 +1110,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
 #if ENABLE(WEB_AUTHN)
     auto hash = produceClientDataJsonHash(clientDataJSON);
     auto encodedVector = fido::encodeMakeCredentialRequestAsCBOR(hash, [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], coreUserVerificationAvailability(userVerificationAvailability), fido::AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, makeVector<String>(authenticatorSupportedExtensions), std::nullopt);
-    encodedCommand = adoptNS([[NSData alloc] initWithBytes:encodedVector.data() length:encodedVector.size()]);
+    encodedCommand = toNSData(encodedVector);
 #endif
 
     return encodedCommand.autorelease();
@@ -1132,7 +1127,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
 #if ENABLE(WEB_AUTHN)
     auto hash = produceClientDataJsonHash(clientDataJSON);
     auto encodedVector = fido::encodeGetAssertionRequestAsCBOR(hash, [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options], coreUserVerificationAvailability(userVerificationAvailability), makeVector<String>(authenticatorSupportedExtensions), std::nullopt);
-    encodedCommand = adoptNS([[NSData alloc] initWithBytes:encodedVector.data() length:encodedVector.size()]);
+    encodedCommand = toNSData(encodedVector);
 #endif
 
     return encodedCommand.autorelease();
@@ -1148,7 +1143,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
     RetainPtr<NSData> encodedCommand;
 #if ENABLE(WEB_AUTHN)
     auto encodedVector = fido::encodeMakeCredentialRequestAsCBOR(makeVector(clientDataHash), [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], coreUserVerificationAvailability(userVerificationAvailability), fido::AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, makeVector<String>(authenticatorSupportedExtensions), std::nullopt);
-    encodedCommand = adoptNS([[NSData alloc] initWithBytes:encodedVector.data() length:encodedVector.size()]);
+    encodedCommand = toNSData(encodedVector);
 #endif
 
     return encodedCommand.autorelease();
@@ -1164,7 +1159,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
     RetainPtr<NSData> encodedCommand;
 #if ENABLE(WEB_AUTHN)
     auto encodedVector = fido::encodeGetAssertionRequestAsCBOR(makeVector(clientDataHash), [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options], coreUserVerificationAvailability(userVerificationAvailability), makeVector<String>(authenticatorSupportedExtensions), std::nullopt);
-    encodedCommand = adoptNS([[NSData alloc] initWithBytes:encodedVector.data() length:encodedVector.size()]);
+    encodedCommand = toNSData(encodedVector);
 #endif
 
     return encodedCommand.autorelease();

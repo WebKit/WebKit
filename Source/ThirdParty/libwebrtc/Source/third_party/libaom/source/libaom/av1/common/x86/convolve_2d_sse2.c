@@ -19,12 +19,11 @@
 #include "aom_dsp/x86/convolve_common_intrin.h"
 #include "av1/common/convolve.h"
 
-void av1_convolve_2d_sr_12tap_sse2(const uint8_t *src, int src_stride,
-                                   uint8_t *dst, int dst_stride, int w, int h,
-                                   const InterpFilterParams *filter_params_x,
-                                   const InterpFilterParams *filter_params_y,
-                                   const int subpel_x_qn, const int subpel_y_qn,
-                                   ConvolveParams *conv_params) {
+static void convolve_2d_sr_12tap_sse2(
+    const uint8_t *src, int src_stride, uint8_t *dst, int dst_stride, int w,
+    int h, const InterpFilterParams *filter_params_x,
+    const InterpFilterParams *filter_params_y, const int subpel_x_qn,
+    const int subpel_y_qn, ConvolveParams *conv_params) {
   const int bd = 8;
 
   DECLARE_ALIGNED(16, int16_t,
@@ -231,9 +230,9 @@ void av1_convolve_2d_sr_sse2(const uint8_t *src, int src_stride, uint8_t *dst,
                            filter_params_x, filter_params_y, subpel_x_qn,
                            subpel_y_qn, conv_params);
     } else {
-      av1_convolve_2d_sr_12tap_sse2(src, src_stride, dst, dst_stride, w, h,
-                                    filter_params_x, filter_params_y,
-                                    subpel_x_qn, subpel_y_qn, conv_params);
+      convolve_2d_sr_12tap_sse2(src, src_stride, dst, dst_stride, w, h,
+                                filter_params_x, filter_params_y, subpel_x_qn,
+                                subpel_y_qn, conv_params);
     }
   } else {
     const int bd = 8;

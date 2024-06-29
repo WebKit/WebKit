@@ -112,6 +112,7 @@ void BaseCapturerPipeWire::OnScreenCastSessionClosed() {
   if (!capturer_failed_) {
     options_.screencast_stream()->StopScreenCastStream();
   }
+  capturer_failed_ = true;
 }
 
 void BaseCapturerPipeWire::UpdateResolution(uint32_t width, uint32_t height) {

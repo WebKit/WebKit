@@ -91,6 +91,9 @@ public:
 
 #if ENABLE(WEBXR)
     bool enableRequiredWebXRExtensions() final;
+
+    // GL_EXT_discard_framebuffer
+    void framebufferDiscard(GCGLenum, std::span<const GCGLenum>) final;
 #endif
 
     void waitUntilWorkScheduled();

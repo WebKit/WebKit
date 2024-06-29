@@ -28,19 +28,15 @@
 
 #include "Document.h"
 #include "InstrumentingAgents.h"
-#include "Page.h"
-#include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 using namespace Inspector;
 
-InspectorWorkerAgent::InspectorWorkerAgent(PageAgentContext& context)
+InspectorWorkerAgent::InspectorWorkerAgent(WebAgentContext& context)
     : InspectorAgentBase("Worker"_s, context)
     , m_frontendDispatcher(makeUnique<Inspector::WorkerFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::WorkerBackendDispatcher::create(context.backendDispatcher, this))
-    , m_page(context.inspectedPage)
 {
 }
 
@@ -65,7 +61,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::enable()
 
     m_enabled = true;
 
-    connectToAllWorkerInspectorProxiesForPage();
+    connectToAllWorkerInspectorProxies();
 
     return { };
 }
@@ -131,22 +127,6 @@ void InspectorWorkerAgent::workerTerminated(WorkerInspectorProxy& proxy)
         return;
 
     disconnectFromWorkerInspectorProxy(proxy);
-}
-
-void InspectorWorkerAgent::connectToAllWorkerInspectorProxiesForPage()
-{
-    ASSERT(m_connectedProxies.isEmpty());
-
-    for (Ref proxy : WorkerInspectorProxy::allWorkerInspectorProxiesCopy()) {
-        if (!is<Document>(proxy->scriptExecutionContext()))
-            continue;
-
-        auto& document = downcast<Document>(*proxy->scriptExecutionContext());
-        if (document.page() != &m_page)
-            continue;
-
-        connectToWorkerInspectorProxy(proxy);
-    }
 }
 
 void InspectorWorkerAgent::disconnectFromAllWorkerInspectorProxies()

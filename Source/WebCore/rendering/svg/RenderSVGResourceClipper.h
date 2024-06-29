@@ -36,7 +36,6 @@ public:
     RenderSVGResourceClipper(SVGClipPathElement&, RenderStyle&&);
     virtual ~RenderSVGResourceClipper();
 
-    inline SVGClipPathElement& clipPathElement() const;
     inline Ref<SVGClipPathElement> protectedClipPathElement() const;
 
     RefPtr<SVGGraphicsElement> shouldApplyPathClipping() const;

@@ -781,8 +781,6 @@ template<> std::optional<Protocol::Database::PrimaryColors> parseEnumValueFromSt
 
 } // namespace TestHelpers
 
-
-
 } // namespace Protocol
 
 } // namespace Inspector

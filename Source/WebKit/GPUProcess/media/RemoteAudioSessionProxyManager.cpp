@@ -138,6 +138,24 @@ void RemoteAudioSessionProxyManager::updatePreferredBufferSizeForProcess()
         AudioSession::sharedSession().setPreferredBufferSize(preferredBufferSize);
 }
 
+void RemoteAudioSessionProxyManager::updateSpatialExperience()
+{
+    String sceneIdentifier;
+    std::optional<AudioSession::SoundStageSize> maxSize;
+    for (auto& proxy : m_proxies) {
+        if (!proxy.isActive())
+            continue;
+
+        if (!maxSize || proxy.soundStageSize() > *maxSize) {
+            maxSize = proxy.soundStageSize();
+            sceneIdentifier = proxy.sceneIdentifier();
+        }
+    }
+
+    AudioSession::sharedSession().setSceneIdentifier(sceneIdentifier);
+    AudioSession::sharedSession().setSoundStageSize(maxSize.value_or(AudioSession::SoundStageSize::Automatic));
+}
+
 bool RemoteAudioSessionProxyManager::hasOtherActiveProxyThan(RemoteAudioSessionProxy& proxyToExclude)
 {
     for (auto& proxy : m_proxies) {

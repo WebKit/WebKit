@@ -39,7 +39,7 @@ platform/graphics/nicosia/NicosiaContentLayer.cpp
 platform/graphics/nicosia/NicosiaGCGLANGLELayer.cpp
 platform/graphics/nicosia/NicosiaImageBacking.cpp
 platform/graphics/nicosia/NicosiaImageBackingStore.cpp
-platform/graphics/nicosia/NicosiaImageBufferPipe.cpp
+platform/graphics/nicosia/NicosiaPlaceholderRenderingContextSource.cpp
 platform/graphics/nicosia/NicosiaScene.cpp
 platform/graphics/nicosia/NicosiaSceneIntegration.cpp
 

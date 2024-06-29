@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -353,7 +353,7 @@ public:
     void bail(AbortReason);
     void compileCurrentBlock();
 
-    void exceptionCheck();
+    void exceptionCheck(GPRReg exceptionReg = InvalidGPRReg);
     CallSiteIndex recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(const CodeOrigin& callSiteCodeOrigin, unsigned eventStreamIndex);
 
     void checkArgumentTypes();
@@ -367,33 +367,48 @@ public:
     // in the GenerationInfo.
     SilentRegisterSavePlan silentSavePlanForGPR(VirtualRegister spillMe, GPRReg source);
     SilentRegisterSavePlan silentSavePlanForFPR(VirtualRegister spillMe, FPRReg source);
-    void silentSpill(const SilentRegisterSavePlan&);
-    void silentFill(const SilentRegisterSavePlan&);
+    void silentSpillImpl(const SilentRegisterSavePlan&);
+    void silentFillImpl(const SilentRegisterSavePlan&);
+
+    RegisterSetBuilder spilledRegsForSilentSpillPlans(const auto& plans)
+    {
+        RegisterSetBuilder usedRegisters;
+        for (auto& plan : plans)
+            usedRegisters.add(plan.reg(), IgnoreVectors);
+        return usedRegisters;
+    }
 
     template<typename CollectionType>
     void silentSpill(const CollectionType& savePlans)
     {
+        ASSERT(!m_underSilentSpill);
+        m_underSilentSpill = true;
         for (unsigned i = 0; i < savePlans.size(); ++i)
-            silentSpill(savePlans[i]);
+            silentSpillImpl(savePlans[i]);
     }
 
     template<typename CollectionType>
     void silentFill(const CollectionType& savePlans)
     {
+        ASSERT(m_underSilentSpill);
         for (unsigned i = savePlans.size(); i--;)
-            silentFill(savePlans[i]);
+            silentFillImpl(savePlans[i]);
+        m_underSilentSpill = false;
     }
 
     template<typename CollectionType>
     void silentSpillAllRegistersImpl(bool doSpill, CollectionType& plans, GPRReg exclude, GPRReg exclude2 = InvalidGPRReg, FPRReg fprExclude = InvalidFPRReg)
     {
         ASSERT(plans.isEmpty());
+        ASSERT(!m_underSilentSpill);
+        if (doSpill)
+            m_underSilentSpill = true;
         for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
             GPRReg gpr = iter.regID();
             if (iter.name().isValid() && gpr != exclude && gpr != exclude2) {
                 SilentRegisterSavePlan plan = silentSavePlanForGPR(iter.name(), gpr);
                 if (doSpill)
-                    silentSpill(plan);
+                    silentSpillImpl(plan);
                 plans.append(plan);
             }
         }
@@ -401,7 +416,7 @@ public:
             if (iter.name().isValid() && iter.regID() != fprExclude) {
                 SilentRegisterSavePlan plan = silentSavePlanForFPR(iter.name(), iter.regID());
                 if (doSpill)
-                    silentSpill(plan);
+                    silentSpillImpl(plan);
                 plans.append(plan);
             }
         }
@@ -445,11 +460,8 @@ public:
 
     void silentFillAllRegisters()
     {
-        while (!m_plans.isEmpty()) {
-            SilentRegisterSavePlan& plan = m_plans.last();
-            silentFill(plan);
-            m_plans.removeLast();
-        }
+        silentFill(m_plans);
+        m_plans.clear();
     }
 
     // These methods convert between doubles, and doubles boxed and JSValues.
@@ -937,44 +949,230 @@ public:
         }
     }
 
+    template<typename OperationType>
+    void operationExceptionCheck()
+    {
+        using ResultType = typename FunctionTraits<OperationType>::ResultType;
+        ASSERT(!m_underSilentSpill);
+        exceptionCheck(operationExceptionRegister<ResultType>());
+    }
+
     template<typename OperationType, typename ResultRegType, typename... Args>
-    std::enable_if_t<
-        FunctionTraits<OperationType>::hasResult,
-    JITCompiler::Call>
-    callOperation(OperationType operation, ResultRegType result, Args... args)
+    requires (OperationHasResult<OperationType>)
+    JITCompiler::Call callOperation(OperationType operation, ResultRegType result, Args... args)
     {
         setupArguments<OperationType>(args...);
-        return appendCallSetResult(operation, result);
+        auto call = appendCall(operation);
+        operationExceptionCheck<OperationType>();
+        setupResults(result);
+        return call;
     }
 
     template<typename OperationType, typename... Args>
-    std::enable_if_t<
-        !FunctionTraits<OperationType>::hasResult,
-    JITCompiler::Call>
-    callOperation(OperationType operation, Args... args)
+    requires (OperationIsVoid<OperationType>)
+    JITCompiler::Call callOperation(OperationType operation, Args... args)
+    {
+        setupArguments<OperationType>(args...);
+        auto call = appendCall(operation);
+        operationExceptionCheck<OperationType>();
+        return call;
+    }
+
+    template<typename OperationType, typename ResultRegType, typename... Args>
+    requires (OperationHasResult<OperationType>)
+    JITCompiler::Call callOperation(const CodePtr<OperationPtrTag> operation, ResultRegType result, Args... args)
+    {
+        setupArguments<OperationType>(args...);
+        auto call = appendCall(operation);
+        operationExceptionCheck<OperationType>();
+        setupResults(result);
+        return call;
+    }
+
+    template<typename OperationType, typename... Args>
+    requires (OperationIsVoid<OperationType>)
+    JITCompiler::Call callOperation(const CodePtr<OperationPtrTag> operation, Args... args)
+    {
+        setupArguments<OperationType>(args...);
+        auto call = appendCall(operation);
+        operationExceptionCheck<OperationType>();
+        return call;
+    }
+
+    template<typename OperationType, typename ResultRegType, typename... Args>
+    requires (OperationHasResult<OperationType>)
+    void callOperation(Address address, ResultRegType result, Args... args)
+    {
+        setupArgumentsForIndirectCall<OperationType>(address, args...);
+        appendCall(Address(GPRInfo::nonArgGPR0, address.offset));
+        operationExceptionCheck<OperationType>();
+        setupResults(result);
+    }
+
+    template<typename OperationType, typename... Args>
+    requires (OperationIsVoid<OperationType>)
+    void callOperation(Address address, Args... args)
+    {
+        setupArgumentsForIndirectCall<OperationType>(address, args...);
+        appendCall(Address(GPRInfo::nonArgGPR0, address.offset));
+        operationExceptionCheck<OperationType>();
+    }
+
+    template<typename OperationType, typename... Args>
+    requires (OperationIsVoid<OperationType>
+        && !isExceptionOperationResult<typename FunctionTraits<OperationType>::ResultType>) // Sanity check
+    void callOperationWithoutExceptionCheck(Address address, Args... args)
+    {
+        setupArgumentsForIndirectCall<OperationType>(address, args...);
+        appendCall(Address(GPRInfo::nonArgGPR0, address.offset));
+    }
+
+    template<typename OperationType, typename ResultRegType, typename... Args>
+    requires (OperationHasResult<OperationType>
+        && !isExceptionOperationResult<typename FunctionTraits<OperationType>::ResultType>) // Sanity check
+    JITCompiler::Call callOperationWithoutExceptionCheck(OperationType operation, ResultRegType result, Args... args)
+    {
+        setupArguments<OperationType>(args...);
+        auto call = appendCall(operation);
+        setupResults(result);
+        return call;
+    }
+
+    template<typename OperationType, typename... Args>
+    requires (OperationIsVoid<OperationType>
+        && !isExceptionOperationResult<typename FunctionTraits<OperationType>::ResultType>) // Sanity check
+    JITCompiler::Call callOperationWithoutExceptionCheck(OperationType operation, Args... args)
     {
         setupArguments<OperationType>(args...);
         return appendCall(operation);
     }
 
     template<typename OperationType, typename ResultRegType, typename... Args>
-    std::enable_if_t<
-        FunctionTraits<OperationType>::hasResult,
-    void>
-    callOperation(Address address, ResultRegType result, Args... args)
+    requires (OperationHasResult<OperationType>
+        && !isExceptionOperationResult<typename FunctionTraits<OperationType>::ResultType>) // Sanity check
+    void callOperationWithoutExceptionCheck(Address address, ResultRegType result, Args... args)
     {
         setupArgumentsForIndirectCall<OperationType>(address, args...);
-        appendCallSetResult(Address(GPRInfo::nonArgGPR0, address.offset), result);
+        appendCall(Address(GPRInfo::nonArgGPR0, address.offset), result);
+        setupResults(result);
+    }
+
+    // There are three cases here:
+    // 1) nullopt the exception was handled
+    // 2) valid GPRReg containing the exception that won't interfere with silentFill.
+    // 3) InvalidGPRReg meaning the exception needs to be loaded from VM.
+    template<typename OperationType, typename ResultRegType>
+    std::optional<GPRReg> tryHandleOrGetExceptionUnderSilentSpill(const auto& plans, ResultRegType result)
+    {
+        ASSERT(m_underSilentSpill);
+        using ResultType = typename FunctionTraits<OperationType>::ResultType;
+        GPRReg exceptionReg = operationExceptionRegister<ResultType>();
+        CodeOrigin opCatchOrigin;
+        HandlerInfo* exceptionHandler;
+        bool willCatchException = m_graph.willCatchExceptionInMachineFrame(m_currentNode->origin.forExit, opCatchOrigin, exceptionHandler);
+        // The simplest (and most common) case is when we're not going to catch in this frame, then we don't need to fill since
+        // no one's going to look.
+        if (!willCatchException) {
+            exceptionCheck(exceptionReg);
+            return std::nullopt;
+        }
+
+        if (exceptionReg != InvalidGPRReg) {
+            RegisterSetBuilder spilledRegs = spilledRegsForSilentSpillPlans(plans);
+            if constexpr (std::is_same_v<GPRReg, ResultRegType> || std::is_same_v<JSValueRegs, ResultRegType>) {
+                spilledRegs.add(GPRInfo::returnValueGPR, IgnoreVectors);
+                spilledRegs.add(result, IgnoreVectors);
+            }
+
+            if (spilledRegs.buildAndValidate().contains(exceptionReg, IgnoreVectors)) {
+                // It would be nice if we could do m_gprs.tryAllocate() but we're possibly on a slow path and register allocation state is
+                // probably garbage.
+                constexpr RegisterSetBuilder registersInBank = decltype(m_gprs)::registersInBank();
+                // Move to a non-constexpr local so we can call exclude.
+                RegisterSetBuilder possibleRegisters = registersInBank;
+                RegisterSet freeRegs = possibleRegisters.exclude(spilledRegs).buildAndValidate();
+                auto iter = freeRegs.begin();
+                if (iter != freeRegs.end()) {
+                    move(exceptionReg, iter.gpr());
+                    exceptionReg = iter.gpr();
+                } else {
+                    // We tried but there were no free regs.
+                    exceptionReg = InvalidGPRReg;
+                }
+            }
+        }
+
+        return exceptionReg;
+    }
+
+    template<typename OperationType, typename ResultRegType, typename... Args>
+    requires (OperationHasResult<OperationType>)
+    JITCompiler::Call callOperationWithSilentSpill(OperationType operation, ResultRegType result, Args... args)
+    {
+        silentSpillAllRegisters(result);
+        setupArguments<OperationType>(args...);
+        auto call = appendCall(operation);
+
+        std::optional<GPRReg> exceptionReg = tryHandleOrGetExceptionUnderSilentSpill<OperationType>(m_plans, result);
+
+        setupResults(result);
+        silentFillAllRegisters();
+        if (exceptionReg)
+            exceptionCheck(*exceptionReg);
+
+        return call;
+    }
+
+    template<typename OperationType, typename ResultRegType, typename... Args>
+    requires (OperationHasResult<OperationType>)
+    JITCompiler::Call callOperationWithSilentSpill(std::span<const SilentRegisterSavePlan> plans, OperationType operation, ResultRegType result, Args... args)
+    {
+        silentSpill(plans);
+        setupArguments<OperationType>(args...);
+        auto call = appendCall(operation);
+
+        std::optional<GPRReg> exceptionReg = tryHandleOrGetExceptionUnderSilentSpill<OperationType>(plans, result);
+
+        setupResults(result);
+        silentFill(plans);
+        if (exceptionReg)
+            exceptionCheck(*exceptionReg);
+
+        return call;
     }
 
     template<typename OperationType, typename... Args>
-    std::enable_if_t<
-        !FunctionTraits<OperationType>::hasResult,
-    void>
-    callOperation(Address address, Args... args)
+    requires (OperationIsVoid<OperationType>)
+    JITCompiler::Call callOperationWithSilentSpill(OperationType operation, Args... args)
     {
-        setupArgumentsForIndirectCall<OperationType>(address, args...);
-        appendCall(Address(GPRInfo::nonArgGPR0, address.offset));
+        silentSpillAllRegisters(InvalidGPRReg);
+        setupArguments<OperationType>(args...);
+        auto call = appendCall(operation);
+
+        std::optional<GPRReg> exceptionReg = tryHandleOrGetExceptionUnderSilentSpill<OperationType>(m_plans, NoResult);
+
+        silentFillAllRegisters();
+        if (exceptionReg)
+            exceptionCheck(*exceptionReg);
+
+        return call;
+    }
+
+    template<typename OperationType, typename... Args>
+    requires (OperationIsVoid<OperationType>)
+    JITCompiler::Call callOperationWithSilentSpill(std::span<const SilentRegisterSavePlan> plans, OperationType operation, Args... args)
+    {
+        silentSpill(plans);
+        setupArguments<OperationType>(args...);
+        auto call = appendCall(operation);
+
+        std::optional<GPRReg> exceptionReg = tryHandleOrGetExceptionUnderSilentSpill<OperationType>(plans, NoResult);
+
+        silentFill(plans);
+        if (exceptionReg)
+            exceptionCheck(*exceptionReg);
+
+        return call;
     }
 
     JITCompiler::Call callThrowOperationWithCallFrameRollback(V_JITOperation_Cb operation, GPRReg codeBlockGPR)
@@ -1004,21 +1202,12 @@ public:
     }
 
     // These methods add call instructions, optionally setting results, and optionally rolling back the call frame on an exception.
-    JITCompiler::Call appendCall(const CodePtr<CFunctionPtrTag> function)
+    JITCompiler::Call appendCall(const CodePtr<OperationPtrTag> function)
     {
         prepareForExternalCall();
         emitStoreCodeOrigin(m_currentNode->origin.semantic);
         return Base::appendCall(function);
     }
-
-#if OS(WINDOWS) && CPU(X86_64)
-    JITCompiler::Call appendCallWithUGPRPair(const CodePtr<CFunctionPtrTag> function)
-    {
-        prepareForExternalCall();
-        emitStoreCodeOrigin(m_currentNode->origin.semantic);
-        return Base::appendCallWithUGPRPair(function);
-    }
-#endif
 
     void appendCall(Address address)
     {
@@ -1027,15 +1216,6 @@ public:
         Base::appendCall(address);
     }
 
-#if OS(WINDOWS) && CPU(X86_64)
-    void appendCallWithUGPRPair(Address address)
-    {
-        prepareForExternalCall();
-        emitStoreCodeOrigin(m_currentNode->origin.semantic);
-        Base::appendCallWithUGPRPair(address);
-    }
-#endif
-
     JITCompiler::Call appendOperationCall(const CodePtr<OperationPtrTag> function)
     {
         prepareForExternalCall();
@@ -1043,65 +1223,11 @@ public:
         return Base::appendOperationCall(function);
     }
 
-    void appendCallSetResult(Address address, GPRReg result)
+    // FIXME: We can remove this when we don't support MSVC since on clang-cl we could use systemV ABI for JIT operations.
+    JITCompiler::Call appendCallSetResult(const CodePtr<OperationPtrTag> function, GPRReg result1, GPRReg result2)
     {
-        appendCall(address);
-        if (result != InvalidGPRReg)
-            move(GPRInfo::returnValueGPR, result);
-    }
-
-    void appendCallSetResult(Address address, GPRReg result1, GPRReg result2)
-    {
-#if OS(WINDOWS) && CPU(X86_64)
-        appendCallWithUGPRPair(address);
-#else
-        appendCall(address);
-#endif
+        JITCompiler::Call call = appendCall(function);
         setupResults(result1, result2);
-    }
-
-    void appendCallSetResult(Address address, JSValueRegs resultRegs)
-    {
-#if USE(JSVALUE64)
-        appendCallSetResult(address, resultRegs.gpr());
-#else
-        appendCallSetResult(address, resultRegs.payloadGPR(), resultRegs.tagGPR());
-#endif
-    }
-
-    JITCompiler::Call appendCallSetResult(const CodePtr<CFunctionPtrTag> function, GPRReg result)
-    {
-        JITCompiler::Call call = appendCall(function);
-        if (result != InvalidGPRReg)
-            move(GPRInfo::returnValueGPR, result);
-        return call;
-    }
-
-    JITCompiler::Call appendCallSetResult(const CodePtr<CFunctionPtrTag> function, GPRReg result1, GPRReg result2)
-    {
-#if OS(WINDOWS) && CPU(X86_64)
-        JITCompiler::Call call = appendCallWithUGPRPair(function);
-#else
-        JITCompiler::Call call = appendCall(function);
-#endif
-        setupResults(result1, result2);
-        return call;
-    }
-
-    JITCompiler::Call appendCallSetResult(const CodePtr<CFunctionPtrTag> function, JSValueRegs resultRegs)
-    {
-#if USE(JSVALUE64)
-        return appendCallSetResult(function, resultRegs.gpr());
-#else
-        return appendCallSetResult(function, resultRegs.payloadGPR(), resultRegs.tagGPR());
-#endif
-    }
-
-    JITCompiler::Call appendCallSetResult(const CodePtr<CFunctionPtrTag> function, FPRReg result)
-    {
-        JITCompiler::Call call = appendCall(function);
-        if (result != InvalidFPRReg)
-            moveDouble(FPRInfo::returnValueFPR, result);
         return call;
     }
 
@@ -1439,7 +1565,7 @@ public:
     template <typename Generator, typename RepatchingFunction, typename NonRepatchingFunction>
     void compileMathIC(Node*, JITUnaryMathIC<Generator>*, RepatchingFunction, NonRepatchingFunction);
 
-    void compileArithDoubleUnaryOp(Node*, double (*doubleFunction)(double), double (*operation)(JSGlobalObject*, EncodedJSValue));
+    void compileArithDoubleUnaryOp(Node*, Arith::UnaryFunction, Arith::UnaryOperation);
     void compileValueAdd(Node*);
     void compileValueSub(Node*);
     void compileArithAdd(Node*);
@@ -1903,6 +2029,7 @@ public:
     };
     Vector<SlowPathLambda> m_slowPathLambdas;
     Vector<SilentRegisterSavePlan> m_plans;
+    bool m_underSilentSpill { false };
     std::optional<unsigned> m_outOfLineStreamIndex;
 };
 

@@ -83,7 +83,7 @@ WEBKIT_API WebKitPrintOperationResponse
 webkit_print_operation_run_dialog         (WebKitPrintOperation *print_operation,
                                            GtkWindow            *parent);
 
-WEBKIT_DEPRECATED void
+WEBKIT_API void
 webkit_print_operation_print              (WebKitPrintOperation *print_operation);
 
 G_END_DECLS

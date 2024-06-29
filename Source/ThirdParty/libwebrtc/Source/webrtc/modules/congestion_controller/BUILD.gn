@@ -28,6 +28,7 @@ rtc_library("congestion_controller") {
 
   deps = [
     "../../api:rtp_parameters",
+    "../../api/environment",
     "../../api/transport:network_control",
     "../../api/units:data_rate",
     "../../api/units:time_delta",
@@ -39,6 +40,7 @@ rtc_library("congestion_controller") {
     "../remote_bitrate_estimator",
     "../rtp_rtcp:rtp_rtcp_format",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/base:nullability" ]
 }
 
 if (rtc_include_tests && !build_with_chromium) {
@@ -51,6 +53,7 @@ if (rtc_include_tests && !build_with_chromium) {
     ]
     deps = [
       ":congestion_controller",
+      "../../api/environment:environment_factory",
       "../../api/test/network_emulation",
       "../../api/test/network_emulation:create_cross_traffic",
       "../../api/units:data_rate",

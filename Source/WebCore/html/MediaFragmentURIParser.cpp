@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Google Inc. All rights reserved. 
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -275,10 +276,8 @@ bool MediaFragmentURIParser::parseNPTTime(std::span<const LChar> timeString, uns
         return true;
     }
     
-    if (digits1.length() < 2)
+    if (digits1.length() < 1)
         return false;
-    if (digits1.length() > 2)
-        mode = hours;
 
     // Collect the next sequence of 0-9 after ':'
     if (offset >= timeString.size() || timeString[offset++] != ':')
@@ -291,6 +290,15 @@ bool MediaFragmentURIParser::parseNPTTime(std::span<const LChar> timeString, uns
     int value2 = parseInteger<int>(digits2).value();
 
     // Detect whether this timestamp includes hours.
+    if (offset < timeString.size() && timeString[offset] == ':')
+        mode = hours;
+    if (mode == minutes) {
+        if (digits1.length() != 2)
+            return false;
+        if (value1 > 59 || value2 > 59)
+            return false;
+    }
+
     int value3;
     if (mode == hours || (offset < timeString.size() && timeString[offset] == ':')) {
         if (offset >= timeString.size() || timeString[offset++] != ':')
@@ -301,6 +309,8 @@ bool MediaFragmentURIParser::parseNPTTime(std::span<const LChar> timeString, uns
         if (digits3.length() != 2)
             return false;
         value3 = parseInteger<int>(digits3).value();
+        if (value2 > 59 || value3 > 59)
+            return false;
     } else {
         value3 = value2;
         value2 = value1;

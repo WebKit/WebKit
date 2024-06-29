@@ -28,6 +28,7 @@
 
 #if ENABLE(GAMEPAD)
 
+#include "APIPageConfiguration.h"
 #include "GamepadData.h"
 #include "UIGamepad.h"
 #include "WebPageProxy.h"
@@ -62,7 +63,7 @@ UIGamepadProvider::~UIGamepadProvider()
 void UIGamepadProvider::gamepadSyncTimerFired()
 {
     RefPtr webPageProxy = platformWebPageProxyForGamepadInput();
-    if (!webPageProxy || !m_processPoolsUsingGamepads.contains(webPageProxy->process().processPool()))
+    if (!webPageProxy || !m_processPoolsUsingGamepads.contains(webPageProxy->configuration().processPool()))
         return;
 
     webPageProxy->gamepadActivity(snapshotGamepads(), m_shouldMakeGamepadsVisibleOnSync ? EventMakesGamepadsVisible::Yes : EventMakesGamepadsVisible::No);
@@ -149,7 +150,7 @@ void UIGamepadProvider::processPoolStoppedUsingGamepads(WebProcessPool& pool)
 
 void UIGamepadProvider::viewBecameActive(WebPageProxy& page)
 {
-    if (!m_processPoolsUsingGamepads.contains(page.process().processPool()))
+    if (!m_processPoolsUsingGamepads.contains(page.configuration().processPool()))
         return;
 
     if (!m_isMonitoringGamepads)

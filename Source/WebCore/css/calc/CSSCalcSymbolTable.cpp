@@ -45,4 +45,9 @@ std::optional<CSSCalcSymbolTable::Value> CSSCalcSymbolTable::get(CSSValueID valu
     return {{ it->value.first, it->value.second }};
 }
 
+bool CSSCalcSymbolTable::contains(CSSValueID valueID) const
+{
+    return m_table.contains(valueID);
 }
+
+} // namespace WebCore

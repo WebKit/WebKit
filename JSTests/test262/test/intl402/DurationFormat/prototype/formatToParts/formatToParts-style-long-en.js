@@ -40,7 +40,8 @@ const duration = {
 
 const style = "long";
 
-const expected = partitionDurationFormatPattern(duration, style);
+const df = new Intl.DurationFormat('en', { style });
 
-let df = new Intl.DurationFormat('en', { style });
+const expected = partitionDurationFormatPattern(df, duration);
+
 compare(df.formatToParts(duration), expected, `Using style : ${style}`);

@@ -35,6 +35,7 @@
 
 #include "BMPImageReader.h"
 #include "PNGImageDecoder.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -144,7 +145,7 @@ void ICOImageDecoder::setDataForPNGDecoderAtIndex(size_t index)
     // Copy out PNG data to a separate vector and send to the PNG decoder.
     // FIXME: Save this copy by making the PNG decoder able to take an
     // optional offset.
-    auto pngData = SharedBuffer::create(std::span { &m_data->data()[dirEntry.m_imageOffset], m_data->size() - dirEntry.m_imageOffset });
+    auto pngData = SharedBuffer::create(m_data->span().subspan(dirEntry.m_imageOffset));
     m_pngDecoders[index]->setData(pngData.get(), isAllDataReceived());
 }
 
@@ -274,10 +275,11 @@ ICOImageDecoder::IconDirectoryEntry ICOImageDecoder::readDirectoryEntry()
     // type of the width and height values.  Storing them in ints (instead of
     // matching uint8_ts) is so we can record dimensions of size 256 (which is
     // what a zero byte really means).
-    int width = static_cast<uint8_t>(m_data->data()[m_decodedOffset]);
+    auto dataSpan = m_data->span();
+    int width = dataSpan[m_decodedOffset];
     if (!width)
         width = 256;
-    int height = static_cast<uint8_t>(m_data->data()[m_decodedOffset + 1]);
+    int height = dataSpan[m_decodedOffset + 1];
     if (!height)
         height = 256;
     IconDirectoryEntry entry;
@@ -296,7 +298,7 @@ ICOImageDecoder::IconDirectoryEntry ICOImageDecoder::readDirectoryEntry()
     // this isn't quite what the bitmap info header says later, as we only use
     // this value to determine which icon entry is best.
     if (!entry.m_bitCount) {
-        int colorCount = static_cast<uint8_t>(m_data->data()[m_decodedOffset + 2]);
+        int colorCount = dataSpan[m_decodedOffset + 2];
         if (!colorCount)
             colorCount = 256;  // Vague in the spec, needed by real-world icons.
         for (--colorCount; colorCount; colorCount >>= 1)
@@ -315,7 +317,7 @@ ICOImageDecoder::ImageType ICOImageDecoder::imageTypeAtIndex(size_t index)
     const uint32_t imageOffset = m_dirEntries[index].m_imageOffset;
     if ((imageOffset > m_data->size()) || ((m_data->size() - imageOffset) < 4))
         return Unknown;
-    return memcmp(&m_data->data()[imageOffset], "\x89PNG", 4) ? BMP : PNG;
+    return equalSpans(m_data->span().subspan(imageOffset, 4), std::span { "\x89PNG", 4 }) ? PNG : BMP;
 }
 
 }

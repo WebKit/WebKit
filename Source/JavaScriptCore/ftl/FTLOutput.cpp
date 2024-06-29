@@ -50,9 +50,7 @@ Output::Output(State& state)
 {
 }
 
-Output::~Output()
-{
-}
+Output::~Output() = default;
 
 void Output::initialize(AbstractHeapRepository& heaps)
 {
@@ -778,6 +776,14 @@ void Output::check(LValue condition, WeightedTarget taken)
 void Output::ret(LValue value)
 {
     m_block->appendNewControlValue(m_proc, B3::Return, origin(), value);
+}
+
+void Output::verify(LValue value)
+{
+    CheckValue* check = speculate(logicalNot(value));
+    check->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        jit.breakpoint();
+    });
 }
 
 void Output::unreachable()

@@ -46,10 +46,10 @@ public:
     CodePtr<JSEntryPtrTag> m_target;
     CodeBlock* m_codeBlock { nullptr }; // This is weakly held. And cleared whenever m_target is changed.
 
-    static ptrdiff_t offsetOfCalleeOrExecutable() { return OBJECT_OFFSETOF(CallSlot, m_calleeOrExecutable); }
-    static ptrdiff_t offsetOfCount() { return OBJECT_OFFSETOF(CallSlot, m_count); }
-    static ptrdiff_t offsetOfTarget() { return OBJECT_OFFSETOF(CallSlot, m_target); }
-    static ptrdiff_t offsetOfCodeBlock() { return OBJECT_OFFSETOF(CallSlot, m_codeBlock); }
+    static constexpr ptrdiff_t offsetOfCalleeOrExecutable() { return OBJECT_OFFSETOF(CallSlot, m_calleeOrExecutable); }
+    static constexpr ptrdiff_t offsetOfCount() { return OBJECT_OFFSETOF(CallSlot, m_count); }
+    static constexpr ptrdiff_t offsetOfTarget() { return OBJECT_OFFSETOF(CallSlot, m_target); }
+    static constexpr ptrdiff_t offsetOfCodeBlock() { return OBJECT_OFFSETOF(CallSlot, m_codeBlock); }
 };
 static_assert(sizeof(CallSlot) <= 32, "This should be small enough to keep iteration of vector in polymorphic call fast");
 
@@ -57,8 +57,8 @@ class CallLinkInfoBase : public BasicRawSentinelNode<CallLinkInfoBase> {
 public:
     enum class CallSiteType : uint8_t {
         CallLinkInfo,
-#if ENABLE(JIT)
         PolymorphicCallNode,
+#if ENABLE(JIT)
         DirectCall,
 #endif
         CachedCall,

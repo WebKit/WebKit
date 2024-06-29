@@ -1,5 +1,9 @@
 load("//bazel:skia_rules.bzl", "exports_files_legacy", "select_multi", "skia_cc_library")
 
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
 licenses(["notice"])
 
 exports_files_legacy()
@@ -111,6 +115,7 @@ skia_cc_library(
     ],
     visibility = [
         "//bench:__subpackages__",
+        "//modules/skottie:__pkg__",
         "//tools:__subpackages__",
     ],
     deps = [

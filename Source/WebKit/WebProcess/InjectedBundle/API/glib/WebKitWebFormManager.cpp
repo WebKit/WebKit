@@ -192,7 +192,7 @@ gboolean webkit_web_form_manager_input_element_is_user_edited(JSCValue* element)
     g_return_val_if_fail(JSC_IS_VALUE(element), FALSE);
     g_return_val_if_fail(jsc_value_is_object(element), FALSE);
 
-    auto* node = nodeForJSCValue(element);
+    RefPtr node = nodeForJSCValue(element);
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(node))
         return input->lastChangeWasUserEdit();
 
@@ -218,7 +218,7 @@ void webkit_web_form_manager_input_element_auto_fill(JSCValue* element, const ch
     g_return_if_fail(JSC_IS_VALUE(element));
     g_return_if_fail(jsc_value_is_object(element));
 
-    auto* node = nodeForJSCValue(element);
+    RefPtr node = nodeForJSCValue(element);
     RefPtr input = dynamicDowncast<HTMLInputElement>(node);
     if (!input)
         return;
@@ -243,7 +243,7 @@ gboolean webkit_web_form_manager_input_element_is_auto_filled(JSCValue* element)
     g_return_val_if_fail(JSC_IS_VALUE(element), FALSE);
     g_return_val_if_fail(jsc_value_is_object(element), FALSE);
 
-    auto* node = nodeForJSCValue(element);
+    RefPtr node = nodeForJSCValue(element);
     RefPtr input = dynamicDowncast<HTMLInputElement>(node);
     return input && input->isAutoFilled();
 }

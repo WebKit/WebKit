@@ -130,6 +130,8 @@ public:
     virtual void setNeedsDisplay() = 0;
     virtual void setNeedsDisplayInRect(const FloatRect& dirtyRect) = 0;
 
+    virtual bool needsDisplay() const = 0;
+
     virtual void copyContentsFromLayer(PlatformCALayer*) = 0;
 
     LayerType layerType() const { return m_layerType; }
@@ -301,7 +303,7 @@ public:
 
     virtual TiledBacking* tiledBacking() = 0;
 
-    virtual void drawTextAtPoint(CGContextRef, CGFloat x, CGFloat y, CGSize scale, CGFloat fontSize, const char* text, size_t length, CGFloat strokeWidthAsPercentageOfFontSize = 0, Color strokeColor = Color()) const;
+    void drawTextAtPoint(CGContextRef, CGFloat x, CGFloat y, CGSize scale, CGFloat fontSize, std::span<const char8_t> text, CGFloat strokeWidthAsPercentageOfFontSize = 0, Color strokeColor = Color()) const;
 
     static void flipContext(CGContextRef, CGFloat height);
     
@@ -343,7 +345,7 @@ public:
 protected:
     PlatformCALayer(LayerType, PlatformCALayerClient* owner);
 
-    virtual LayerPool& layerPool();
+    virtual LayerPool* layerPool();
 
     const LayerType m_layerType;
     const PlatformLayerIdentifier m_layerID;

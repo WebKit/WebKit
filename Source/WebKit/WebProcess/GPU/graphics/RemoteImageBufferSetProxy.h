@@ -62,7 +62,8 @@ public:
 
     ThreadSafeImageBufferSetFlusher() = default;
     virtual ~ThreadSafeImageBufferSetFlusher() = default;
-    virtual void flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) = 0;
+    // Returns true if flush succeeded, false if it failed.
+    virtual bool flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) = 0;
 };
 
 // A RemoteImageBufferSet is a set of three ImageBuffers (front, back,
@@ -98,7 +99,7 @@ public:
 
     std::unique_ptr<ThreadSafeImageBufferSetFlusher> flushFrontBufferAsync(ThreadSafeImageBufferSetFlusher::FlushType);
 
-    void setConfiguration(WebCore::FloatSize, float, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, WebCore::RenderingMode, WebCore::RenderingPurpose);
+    void setConfiguration(WebCore::FloatSize, float, const WebCore::DestinationColorSpace&, WebCore::ImageBufferPixelFormat, WebCore::RenderingMode, WebCore::RenderingPurpose);
     void willPrepareForDisplay();
     void remoteBufferSetWasDestroyed();
 
@@ -113,8 +114,10 @@ public:
     void close();
 
 private:
-    template<typename T> void send(T&& message);
+    template<typename T> auto send(T&& message);
     template<typename T> auto sendSync(T&& message);
+    RefPtr<IPC::StreamClientConnection> connection() const;
+    void didBecomeUnresponsive() const;
 
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
 
@@ -128,7 +131,7 @@ private:
     WebCore::FloatSize m_size;
     float m_scale { 1.0f };
     WebCore::DestinationColorSpace m_colorSpace { WebCore::DestinationColorSpace::SRGB() };
-    WebCore::PixelFormat m_pixelFormat;
+    WebCore::ImageBufferPixelFormat m_pixelFormat;
     WebCore::RenderingMode m_renderingMode { WebCore::RenderingMode::Unaccelerated };
     WebCore::RenderingPurpose m_renderingPurpose { WebCore::RenderingPurpose::Unspecified };
     unsigned m_generation { 0 };

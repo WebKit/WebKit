@@ -111,8 +111,8 @@ RenderMathMLRoot::HorizontalParameters RenderMathMLRoot::horizontalParameters()
         return parameters;
 
     // We try and read constants to draw the radical from the OpenType MATH and use fallback values otherwise.
-    const auto& primaryFont = style().fontCascade().primaryFont();
-    if (auto* mathData = style().fontCascade().primaryFont().mathData()) {
+    const Ref primaryFont = style().fontCascade().primaryFont();
+    if (RefPtr mathData = primaryFont->mathData()) {
         parameters.kernBeforeDegree = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalKernBeforeDegree);
         parameters.kernAfterDegree = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalKernAfterDegree);
     } else {
@@ -128,8 +128,8 @@ RenderMathMLRoot::VerticalParameters RenderMathMLRoot::verticalParameters()
 {
     VerticalParameters parameters;
     // We try and read constants to draw the radical from the OpenType MATH and use fallback values otherwise.
-    const auto& primaryFont = style().fontCascade().primaryFont();
-    if (auto* mathData = style().fontCascade().primaryFont().mathData()) {
+    const Ref primaryFont = style().fontCascade().primaryFont();
+    if (RefPtr mathData = primaryFont->mathData()) {
         parameters.ruleThickness = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalRuleThickness);
         parameters.verticalGap = mathData->getMathConstant(primaryFont, style().mathStyle() == MathStyle::Normal ? OpenTypeMathData::RadicalDisplayStyleVerticalGap : OpenTypeMathData::RadicalVerticalGap);
         parameters.extraAscender = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalExtraAscender);

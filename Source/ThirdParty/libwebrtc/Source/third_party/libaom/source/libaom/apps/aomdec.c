@@ -834,6 +834,8 @@ static int main_loop(int argc, const char **argv_) {
     dx_time += aom_usec_timer_elapsed(&timer);
 
     got_data = 0;
+    // TODO(aomedia:3519): Change the prototype of aom_codec_get_frame_fn_t to
+    // facilitate error handling.
     while ((img = aom_codec_get_frame(&decoder, &iter))) {
       ++frame_out;
       got_data = 1;

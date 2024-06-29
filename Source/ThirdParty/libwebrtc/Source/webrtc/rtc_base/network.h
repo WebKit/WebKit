@@ -191,7 +191,7 @@ class RTC_EXPORT NetworkManager : public DefaultLocalAddressProvider,
 // Base class for NetworkManager implementations.
 class RTC_EXPORT NetworkManagerBase : public NetworkManager {
  public:
-  NetworkManagerBase(const webrtc::FieldTrialsView* field_trials = nullptr);
+  NetworkManagerBase();
 
   std::vector<const Network*> GetNetworks() const override;
   std::vector<const Network*> GetAnyAddressNetworks() override;
@@ -237,15 +237,8 @@ class RTC_EXPORT NetworkManagerBase : public NetworkManager {
                                          int prefix_length,
                                          AdapterType type) const;
 
-  const webrtc::FieldTrialsView* field_trials() const {
-    return field_trials_.get();
-  }
-
  private:
   friend class NetworkTest;
-  webrtc::AlwaysValidPointer<const webrtc::FieldTrialsView,
-                             webrtc::FieldTrialBasedConfig>
-      field_trials_;
   EnumerationPermission enumeration_permission_;
 
   std::vector<Network*> networks_;
@@ -262,10 +255,6 @@ class RTC_EXPORT NetworkManagerBase : public NetworkManager {
   // network id 0 because we only compare the network ids in the old and the new
   // best connections in the transport channel.
   uint16_t next_available_network_id_ = 1;
-
-  // True if calling network_preference() with a changed value
-  // should result in firing the SignalNetworkChanged signal.
-  bool signal_network_preference_change_ = false;
 };
 
 // Basic implementation of the NetworkManager interface that gets list
@@ -535,9 +524,6 @@ class RTC_EXPORT Network {
   // Twice per Network in BasicPortAllocator if
   // PORTALLOCATOR_DISABLE_COSTLY_NETWORKS. Once in Port::Construct() (and when
   // Port::OnNetworkTypeChanged is called).
-  ABSL_DEPRECATED(
-      "Use the version with field trials, see bugs.webrtc.org/webrtc:10335")
-  uint16_t GetCost(const webrtc::FieldTrialsView* field_trials = nullptr) const;
   uint16_t GetCost(const webrtc::FieldTrialsView& field_trials) const;
 
   // A unique id assigned by the network manager, which may be signaled

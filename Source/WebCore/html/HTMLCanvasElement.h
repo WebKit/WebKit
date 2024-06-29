@@ -125,7 +125,7 @@ public:
 
     SecurityOrigin* securityOrigin() const final;
 
-    // FIXME: Only some canvas rendering contexts need an ImageBuffer.
+    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=275100): Only some canvas rendering contexts need an ImageBuffer.
     // It would be better to have the contexts own the buffers.
     void setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&&) final;
 
@@ -143,6 +143,8 @@ public:
     // ActiveDOMObject.
     void ref() const final { HTMLElement::ref(); }
     void deref() const final { HTMLElement::deref(); }
+
+    using HTMLElement::scriptExecutionContext;
 
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
@@ -172,9 +174,7 @@ private:
 
     void setSurfaceSize(const IntSize&);
 
-    bool paintsIntoCanvasBuffer() const;
-
-    bool isGPUBased() const;
+    bool usesContentsAsLayerContents() const;
 
     void refCanvasBase() const final { HTMLElement::ref(); }
     void derefCanvasBase() const final { HTMLElement::deref(); }

@@ -71,7 +71,7 @@ CallLinkStatus CallLinkStatus::computeFor(
     if (!callLinkInfo)
         return CallLinkStatus();
     // m_jitData is nullptr when it is tied to LLInt (not Baseline).
-    if (callLinkInfo->type() == CallLinkInfo::Type::Baseline && !profiledBlock->m_jitData) {
+    if (callLinkInfo->type() == CallLinkInfo::Type::DataOnly && !profiledBlock->m_jitData) {
         if (exitSiteData.takesSlowPath)
             return takesSlowPath();
 #if ENABLE(DFG_JIT)

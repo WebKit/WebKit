@@ -178,6 +178,8 @@ private:
     void setVolume(double) final;
     void setPlayingOnSecondScreen(bool) final;
     void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) final { }
+    AudioSessionSoundStageSize soundStageSize() const final { return AudioSessionSoundStageSize::Automatic; }
+    void setSoundStageSize(AudioSessionSoundStageSize) final { }
 
     // PlaybackSessionModelClient
     void durationChanged(double) override;
@@ -199,6 +201,7 @@ private:
     void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) override;
     void setVideoLayerFrame(FloatRect) override;
     void setVideoLayerGravity(MediaPlayerEnums::VideoGravity) override;
+    void setVideoFullscreenFrame(FloatRect) override { }
     void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;
     bool hasVideo() const override;
     FloatSize videoDimensions() const override;

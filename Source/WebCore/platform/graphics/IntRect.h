@@ -66,7 +66,7 @@ class LayoutRect;
 class IntRect {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    IntRect() { }
+    IntRect() = default;
     IntRect(const IntPoint& location, const IntSize& size)
         : m_location(location), m_size(size) { }
     IntRect(int x, int y, int width, int height)
@@ -144,10 +144,20 @@ public:
         setWidth(std::max(0, width() - delta));
     }
 
+    void shiftMaxXEdgeBy(int delta)
+    {
+        setWidth(std::max(0, width() + delta));
+    }
+
     void shiftYEdgeBy(int delta)
     {
         move(0, delta);
         setHeight(std::max(0, height() - delta));
+    }
+
+    void shiftMaxYEdgeBy(int delta)
+    {
+        setHeight(std::max(0, height() + delta));
     }
 
     IntPoint minXMinYCorner() const { return m_location; } // typically topLeft

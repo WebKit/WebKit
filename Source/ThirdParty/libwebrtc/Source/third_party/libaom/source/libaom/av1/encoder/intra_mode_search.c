@@ -882,9 +882,9 @@ int64_t av1_rd_pick_intra_sbuv_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
         mode_costs->intra_uv_mode_cost[cfl_allowed][mbmi->mode][uv_mode];
     if (RDCOST(x->rdmult, mode_rate, 0) > best_rd) continue;
 
-    PREDICTION_MODE equiv_mode = get_uv_mode(uv_mode);
-    const int is_diagonal_mode = av1_is_diagonal_mode(equiv_mode);
-    const int is_directional_mode = av1_is_directional_mode(equiv_mode);
+    PREDICTION_MODE intra_mode = get_uv_mode(uv_mode);
+    const int is_diagonal_mode = av1_is_diagonal_mode(intra_mode);
+    const int is_directional_mode = av1_is_directional_mode(intra_mode);
 
     if (is_diagonal_mode && !cpi->oxcf.intra_mode_cfg.enable_diagonal_intra)
       continue;

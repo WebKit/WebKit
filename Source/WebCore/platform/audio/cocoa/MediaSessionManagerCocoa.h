@@ -84,6 +84,7 @@ public:
 protected:
     void scheduleSessionStatusUpdate() final;
     void updateNowPlayingInfo();
+    void updateActiveNowPlayingSession(CheckedPtr<PlatformMediaSession>);
 
     void removeSession(PlatformMediaSession&) final;
     void addSession(PlatformMediaSession&) final;
@@ -145,6 +146,6 @@ private:
     bool m_previousHadAudibleAudioOrVideoMediaType { false };
 };
 
-}
+} // namespace WebCore
 
 #endif // PLATFORM(COCOA)

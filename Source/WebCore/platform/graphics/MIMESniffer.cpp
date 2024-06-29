@@ -35,7 +35,7 @@ namespace MIMESniffer {
 template<std::size_t N>
 constexpr auto span8(const char(&p)[N])
 {
-    return std::span<const uint8_t, N - 1>(reinterpret_cast<const uint8_t*>(p), N - 1);
+    return std::span<const uint8_t, N - 1>(byteCast<uint8_t>(&p[0]), N - 1);
 }
 
 static bool hasSignatureForMP4(std::span<const uint8_t> sequence)

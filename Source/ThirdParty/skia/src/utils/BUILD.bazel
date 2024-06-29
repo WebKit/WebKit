@@ -1,5 +1,9 @@
 load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_library", "skia_filegroup", "split_srcs_and_hdrs")
 
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
 licenses(["notice"])
 
 exports_files_legacy()
@@ -90,16 +94,6 @@ skia_filegroup(
 )
 
 skia_filegroup(
-    name = "chromium_hdrs",
-    # We allow chromium to use this as a diagnostic tool, but it is not
-    # part of Skia's public API. It is in its own filegroup to create
-    # a gni entry containing it.
-    srcs = [
-        "SkMultiPictureDocument.h",
-    ],
-)
-
-skia_filegroup(
     name = "srcs",
     srcs = [
         ":json_srcs",
@@ -115,7 +109,6 @@ skia_filegroup(
 skia_filegroup(
     name = "private_hdrs",
     srcs = [
-        ":chromium_hdrs",
         ":json_hdrs",
         ":utils_hdrs",
         ":utils_skslc_hdrs",
@@ -155,6 +148,7 @@ skia_filegroup(
         "SkMatrix22.cpp",
         "SkNWayCanvas.cpp",
         "SkOSPath.cpp",
+        "SkOrderedFontMgr.cpp",
         "SkPaintFilterCanvas.cpp",
         "SkParse.cpp",
         "SkParseColor.cpp",
@@ -198,7 +192,6 @@ skia_cc_library(
     name = "multi_picture_document",
     srcs = [
         "SkMultiPictureDocument.cpp",
-        "SkMultiPictureDocument.h",
         "SkMultiPictureDocumentPriv.h",
     ],
     hdrs = [

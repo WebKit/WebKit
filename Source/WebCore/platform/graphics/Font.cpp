@@ -190,9 +190,9 @@ RenderingResourceIdentifier FontInternalAttributes::ensureRenderingResourceIdent
     return *renderingResourceIdentifier;
 }
 
-static bool fillGlyphPage(GlyphPage& pageToFill, UChar* buffer, unsigned bufferLength, const Font& font)
+static bool fillGlyphPage(GlyphPage& pageToFill, std::span<const UChar> buffer, const Font& font)
 {
-    bool hasGlyphs = pageToFill.fill(buffer, bufferLength);
+    bool hasGlyphs = pageToFill.fill(buffer);
 #if ENABLE(OPENTYPE_VERTICAL)
     if (hasGlyphs && font.verticalData())
         font.verticalData()->substituteWithVerticalGlyphs(&font, &pageToFill);
@@ -400,7 +400,7 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font&
     // for only 128 out of 256 characters.
     Ref glyphPage = GlyphPage::create(font);
 
-    bool haveGlyphs = fillGlyphPage(glyphPage, buffer.data(), bufferLength, font);
+    bool haveGlyphs = fillGlyphPage(glyphPage, buffer.span().first(bufferLength), font);
     if (!haveGlyphs)
         return nullptr;
 

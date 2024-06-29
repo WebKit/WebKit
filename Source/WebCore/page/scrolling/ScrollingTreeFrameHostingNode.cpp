@@ -83,6 +83,14 @@ void ScrollingTreeFrameHostingNode::willBeDestroyed()
     removeHostedChildren();
 }
 
+void ScrollingTreeFrameHostingNode::removeHostedChild(RefPtr<ScrollingTreeNode> node)
+{
+    if (node) {
+        m_hostedChildren.remove(node);
+        m_children.removeFirst(node.releaseNonNull());
+    }
+}
+
 void ScrollingTreeFrameHostingNode::applyLayerPositions()
 {
 }

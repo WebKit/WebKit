@@ -261,8 +261,11 @@ class ContextWgpu : public ContextImpl
     DisplayWgpu *getDisplay() { return mDisplay; }
     wgpu::Device &getDevice() { return mDisplay->getDevice(); }
     wgpu::Queue &getQueue() { return mDisplay->getQueue(); }
-    angle::Result ensureRenderPassStarted(const wgpu::RenderPassDescriptor &desc);
+    angle::ImageLoadContext &getImageLoadContext() { return mImageLoadContext; }
+    angle::Result startRenderPass(const wgpu::RenderPassDescriptor &desc);
     angle::Result endRenderPass(webgpu::RenderPassClosureReason closure_reason);
+
+    bool hasActiveRenderPass() { return mCurrentRenderPass != nullptr; }
 
     angle::Result flush();
 
@@ -279,7 +282,6 @@ class ContextWgpu : public ContextImpl
 
     wgpu::CommandEncoder mCurrentCommandEncoder;
     wgpu::RenderPassEncoder mCurrentRenderPass;
-    wgpu::RenderPassDescriptor mCurrentRenderPassDesc;
 };
 
 }  // namespace rx

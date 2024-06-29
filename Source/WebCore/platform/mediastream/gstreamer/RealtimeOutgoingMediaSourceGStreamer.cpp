@@ -203,7 +203,7 @@ void RealtimeOutgoingMediaSourceGStreamer::initializeFromTrack()
     m_outgoingSource = webkitMediaStreamSrcNew();
     GST_DEBUG_OBJECT(m_bin.get(), "Created outgoing source %" GST_PTR_FORMAT, m_outgoingSource.get());
     gst_bin_add(GST_BIN_CAST(m_bin.get()), m_outgoingSource.get());
-    webkitMediaStreamSrcAddTrack(WEBKIT_MEDIA_STREAM_SRC(m_outgoingSource.get()), m_source->ptr(), true);
+    webkitMediaStreamSrcAddTrack(WEBKIT_MEDIA_STREAM_SRC(m_outgoingSource.get()), m_source->ptr());
 }
 
 void RealtimeOutgoingMediaSourceGStreamer::link()

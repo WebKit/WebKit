@@ -64,17 +64,17 @@ static ExceptionOr<Vector<uint8_t>> unwrapKeyAESKW(const Vector<uint8_t>& key, c
 static ExceptionOr<Vector<uint8_t>> wrapKeyAESKWCryptoKit(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
     auto rv = PAL::AesKw::wrap(data.span(), key.span());
-    if (!rv.getErrorCode().isSuccess())
+    if (rv.errorCode != Cpp::ErrorCodes::Success)
         return Exception { ExceptionCode::OperationError };
-    return WTFMove(*rv.getResult());
+    return WTFMove(rv.result);
 }
 
 static ExceptionOr<Vector<uint8_t>> unwrapKeyAESKWCryptoKit(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
     auto rv = PAL::AesKw::unwrap(data.span(), key.span());
-    if (!rv.getErrorCode().isSuccess())
+    if (rv.errorCode != Cpp::ErrorCodes::Success)
         return Exception { ExceptionCode::OperationError };
-    return WTFMove(*rv.getResult());
+    return WTFMove(rv.result);
 }
 #endif
 

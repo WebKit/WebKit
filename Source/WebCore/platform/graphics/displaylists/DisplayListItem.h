@@ -43,6 +43,7 @@ class ResourceHeap;
 
 class ApplyDeviceScaleFactor;
 class BeginTransparencyLayer;
+class BeginTransparencyLayerWithCompositeMode;
 class ClearRect;
 class ClearDropShadow;
 class Clip;
@@ -122,6 +123,7 @@ class ApplyStrokePattern;
 using Item = std::variant
     < ApplyDeviceScaleFactor
     , BeginTransparencyLayer
+    , BeginTransparencyLayerWithCompositeMode
     , ClearRect
     , ClearDropShadow
     , Clip

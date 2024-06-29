@@ -120,12 +120,12 @@ public:
             || type == ClonedArgumentsType;
     }
 
-    static ptrdiff_t flagsOffset()
+    static constexpr ptrdiff_t flagsOffset()
     {
         return OBJECT_OFFSETOF(TypeInfo, m_flags);
     }
 
-    static ptrdiff_t typeOffset()
+    static constexpr ptrdiff_t typeOffset()
     {
         return OBJECT_OFFSETOF(TypeInfo, m_type);
     }

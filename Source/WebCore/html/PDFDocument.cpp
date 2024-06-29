@@ -149,7 +149,6 @@ void PDFDocument::createDocumentStructure()
     auto viewerURL = "webkit-pdfjs-viewer://pdfjs/web/viewer.html?file="_s;
     auto rootElement = HTMLHtmlElement::create(*this);
     appendChild(rootElement);
-    rootElement->insertedByParser();
 
     frame()->injectUserScripts(UserScriptInjectionTime::DocumentStart);
 

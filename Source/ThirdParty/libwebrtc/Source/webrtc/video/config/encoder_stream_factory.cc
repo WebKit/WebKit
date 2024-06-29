@@ -17,6 +17,7 @@
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/match.h"
+#include "api/field_trials_view.h"
 #include "api/video/video_codec_constants.h"
 #include "media/base/media_constants.h"
 #include "media/base/video_adapter.h"
@@ -28,6 +29,8 @@
 
 namespace cricket {
 namespace {
+
+using ::webrtc::FieldTrialsView;
 
 const int kMinLayerSize = 16;
 
@@ -99,35 +102,23 @@ static int GetMaxDefaultVideoBitrateKbps(int width,
 // TODO(bugs.webrtc.org/8785): Consider removing max_qp as member of
 // EncoderStreamFactory and instead set this value individually for each stream
 // in the VideoEncoderConfig.simulcast_layers.
-EncoderStreamFactory::EncoderStreamFactory(std::string codec_name,
-                                           int max_qp,
-                                           bool is_screenshare,
-                                           bool conference_mode)
-    : codec_name_(codec_name),
-      max_qp_(max_qp),
-      is_screenshare_(is_screenshare),
-      conference_mode_(conference_mode),
-      trials_(fallback_trials_),
-      encoder_info_requested_resolution_alignment_(1) {}
-
 EncoderStreamFactory::EncoderStreamFactory(
     std::string codec_name,
     int max_qp,
     bool is_screenshare,
     bool conference_mode,
     const webrtc::VideoEncoder::EncoderInfo& encoder_info,
-    absl::optional<webrtc::VideoSourceRestrictions> restrictions,
-    const webrtc::FieldTrialsView* trials)
+    absl::optional<webrtc::VideoSourceRestrictions> restrictions)
     : codec_name_(codec_name),
       max_qp_(max_qp),
       is_screenshare_(is_screenshare),
       conference_mode_(conference_mode),
-      trials_(trials ? *trials : fallback_trials_),
       encoder_info_requested_resolution_alignment_(
           encoder_info.requested_resolution_alignment),
       restrictions_(restrictions) {}
 
 std::vector<webrtc::VideoStream> EncoderStreamFactory::CreateEncoderStreams(
+    const FieldTrialsView& trials,
     int frame_width,
     int frame_height,
     const webrtc::VideoEncoderConfig& encoder_config) {
@@ -136,7 +127,7 @@ std::vector<webrtc::VideoStream> EncoderStreamFactory::CreateEncoderStreams(
                 encoder_config.number_of_streams);
 
   const absl::optional<webrtc::DataRate> experimental_min_bitrate =
-      GetExperimentalMinVideoBitrate(encoder_config.codec_type);
+      GetExperimentalMinVideoBitrate(trials, encoder_config.codec_type);
 
   bool is_simulcast = (encoder_config.number_of_streams > 1);
   // If scalability mode was specified, don't treat {active,inactive,inactive}
@@ -159,7 +150,8 @@ std::vector<webrtc::VideoStream> EncoderStreamFactory::CreateEncoderStreams(
                         absl::EqualsIgnoreCase(codec_name_, kH264CodecName)) &&
                        is_screenshare_ && conference_mode_)) {
     return CreateSimulcastOrConferenceModeScreenshareStreams(
-        frame_width, frame_height, encoder_config, experimental_min_bitrate);
+        trials, frame_width, frame_height, encoder_config,
+        experimental_min_bitrate);
   }
 
   return CreateDefaultVideoStreams(frame_width, frame_height, encoder_config,
@@ -307,6 +299,7 @@ EncoderStreamFactory::CreateDefaultVideoStreams(
 
 std::vector<webrtc::VideoStream>
 EncoderStreamFactory::CreateSimulcastOrConferenceModeScreenshareStreams(
+    const FieldTrialsView& trials,
     int width,
     int height,
     const webrtc::VideoEncoderConfig& encoder_config,
@@ -320,7 +313,8 @@ EncoderStreamFactory::CreateSimulcastOrConferenceModeScreenshareStreams(
                               encoder_config.number_of_streams, width, height,
                               encoder_config.bitrate_priority, max_qp_,
                               is_screenshare_ && conference_mode_,
-                              temporal_layers_supported, trials_);
+                              temporal_layers_supported, trials,
+                              encoder_config.codec_type);
   // Allow an experiment to override the minimum bitrate for the lowest
   // spatial layer. The experiment's configuration has the lowest priority.
   if (experimental_min_bitrate) {
@@ -339,16 +333,19 @@ EncoderStreamFactory::CreateSimulcastOrConferenceModeScreenshareStreams(
     default_scale_factors_used = IsScaleFactorsPowerOfTwo(encoder_config);
   }
   const bool norm_size_configured =
-      webrtc::NormalizeSimulcastSizeExperiment::GetBase2Exponent().has_value();
+      webrtc::NormalizeSimulcastSizeExperiment::GetBase2Exponent(trials)
+          .has_value();
   const int normalized_width =
       (default_scale_factors_used || norm_size_configured) &&
               (width >= kMinLayerSize)
-          ? NormalizeSimulcastSize(width, encoder_config.number_of_streams)
+          ? NormalizeSimulcastSize(trials, width,
+                                   encoder_config.number_of_streams)
           : width;
   const int normalized_height =
       (default_scale_factors_used || norm_size_configured) &&
               (height >= kMinLayerSize)
-          ? NormalizeSimulcastSize(height, encoder_config.number_of_streams)
+          ? NormalizeSimulcastSize(trials, height,
+                                   encoder_config.number_of_streams)
           : height;
   for (size_t i = 0; i < layers.size(); ++i) {
     layers[i].active = encoder_config.simulcast_layers[i].active;

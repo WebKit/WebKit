@@ -194,14 +194,15 @@ static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, I
         return attachment;
     }, [] (const TextAttachmentFileWrapper& value) -> RetainPtr<id> {
         RetainPtr<NSData> data = value.data ? bridge_cast((value.data).get()) : nil;
-        RetainPtr<NSFileWrapper> fileWrapper = nil;
-        if (!value.preferredFilename.isNull()) {
-            fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data.get()]);
+
+        RetainPtr fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data.get()]);
+        if (!value.preferredFilename.isNull())
             [fileWrapper setPreferredFilename:filenameByFixingIllegalCharacters((NSString *)value.preferredFilename)];
-        }
+
         auto textAttachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()]);
         if (!value.accessibilityLabel.isNull())
             ((NSTextAttachment*)textAttachment.get()).accessibilityLabel = (NSString *)value.accessibilityLabel;
+
         return textAttachment;
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     }, [] (const MultiRepresentationHEICAttachmentData& value) -> RetainPtr<id> {

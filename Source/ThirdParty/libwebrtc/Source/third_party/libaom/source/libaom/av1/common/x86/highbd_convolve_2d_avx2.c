@@ -12,7 +12,7 @@
 #include <immintrin.h>
 #include <assert.h>
 
-#include "config/aom_dsp_rtcd.h"
+#include "config/av1_rtcd.h"
 
 #include "aom_dsp/x86/convolve_avx2.h"
 #include "aom_dsp/x86/synonyms.h"

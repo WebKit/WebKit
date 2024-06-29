@@ -299,7 +299,7 @@ static void getSubjectAltName(const X509* x509, Vector<String>& dnsNames, Vector
         } else if (value->type == GEN_IPADD) {
             auto data = value->d.iPAddress->data;
             if (value->d.iPAddress->length == 4)
-                ipAddresses.append(makeString(data[0], ".", data[1], ".", data[2], ".", data[3]));
+                ipAddresses.append(makeString(data[0], '.', data[1], '.', data[2], '.', data[3]));
             else if (value->d.iPAddress->length == 16) {
                 std::span<uint8_t, 16> dataSpan { data, 16 };
                 ipAddresses.append(canonicalizeIPv6Address(dataSpan));

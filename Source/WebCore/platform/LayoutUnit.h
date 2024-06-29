@@ -66,7 +66,7 @@ const int intMinForLayoutUnit = INT_MIN / kFixedPointDenominator;
 
 class LayoutUnit {
 public:
-    LayoutUnit() : m_value(0) { }
+    constexpr LayoutUnit() : m_value(0) { }
     LayoutUnit(const LayoutUnit&) = default;
     LayoutUnit(int value) { setValue(value); }
     LayoutUnit(unsigned short value) { setValue(value); }
@@ -117,15 +117,15 @@ public:
         return v;
     }
 
-    int toInt() const { return m_value / kFixedPointDenominator; }
-    float toFloat() const { return static_cast<float>(m_value) / kFixedPointDenominator; }
-    double toDouble() const { return static_cast<double>(m_value) / kFixedPointDenominator; }
-    unsigned toUnsigned() const { REPORT_OVERFLOW(m_value >= 0); return toInt(); }
+    constexpr int toInt() const { return m_value / kFixedPointDenominator; }
+    constexpr float toFloat() const { return static_cast<float>(m_value) / kFixedPointDenominator; }
+    constexpr double toDouble() const { return static_cast<double>(m_value) / kFixedPointDenominator; }
+    constexpr unsigned toUnsigned() const { REPORT_OVERFLOW(m_value >= 0); return toInt(); }
 
-    operator int() const { return toInt(); }
-    operator float() const { return toFloat(); }
-    operator double() const { return toDouble(); }
-    explicit operator bool() const { return m_value; }
+    constexpr operator int() const { return toInt(); }
+    constexpr operator float() const { return toFloat(); }
+    constexpr operator double() const { return toDouble(); }
+    explicit constexpr operator bool() const { return m_value; }
 
     LayoutUnit& operator++()
     {
@@ -133,7 +133,7 @@ public:
         return *this;
     }
 
-    inline int rawValue() const { return m_value; }
+    constexpr int rawValue() const { return m_value; }
     inline void setRawValue(int value) { m_value = value; }
     void setRawValue(long long value)
     {
@@ -147,6 +147,7 @@ public:
         returnValue.setRawValue(::abs(m_value));
         return returnValue;
     }
+
     int ceil() const
     {
         if (UNLIKELY(m_value >= INT_MAX - kFixedPointDenominator + 1))

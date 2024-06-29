@@ -8,6 +8,7 @@
 #ifndef SkCanvas_DEFINED
 #define SkCanvas_DEFINED
 
+#include "include/core/SkArc.h"
 #include "include/core/SkBlendMode.h"
 #include "include/core/SkClipOp.h"
 #include "include/core/SkColor.h"
@@ -51,6 +52,7 @@ class GrRecordingContext;
 
 class SkBitmap;
 class SkBlender;
+class SkColorSpace;
 class SkData;
 class SkDevice;
 class SkDrawable;
@@ -694,7 +696,7 @@ public:
             @return                SaveLayerRec with empty fBackdrop
         */
         SaveLayerRec(const SkRect* bounds, const SkPaint* paint, SaveLayerFlags saveLayerFlags = 0)
-            : SaveLayerRec(bounds, paint, nullptr, 1.f, saveLayerFlags, /*filters=*/{}) {}
+            : SaveLayerRec(bounds, paint, nullptr, nullptr, 1.f, saveLayerFlags, /*filters=*/{}) {}
 
         /** Sets fBounds, fPaint, fBackdrop, and fSaveLayerFlags.
 
@@ -710,7 +712,29 @@ public:
         */
         SaveLayerRec(const SkRect* bounds, const SkPaint* paint, const SkImageFilter* backdrop,
                      SaveLayerFlags saveLayerFlags)
-            : SaveLayerRec(bounds, paint, backdrop, 1.f, saveLayerFlags, /*filters=*/{}) {}
+            : SaveLayerRec(bounds, paint, backdrop, nullptr, 1.f, saveLayerFlags, /*filters=*/{}) {}
+
+        /** Sets fBounds, fColorSpace, and fSaveLayerFlags.
+
+            @param bounds          layer dimensions; may be nullptr
+            @param paint           applied to layer when overlaying prior layer;
+                                   may be nullptr
+            @param backdrop        If not null, this causes the current layer to be filtered by
+                                   backdrop, and then drawn into the new layer
+                                   (respecting the current clip).
+                                   If null, the new layer is initialized with transparent-black.
+            @param colorSpace      If not null, when the layer is restored, a color space
+                                   conversion will be applied from this color space to the
+                                   parent's color space. The restore paint and backdrop filters will
+                                   be applied in this color space.
+                                   If null, the new layer will inherit the color space from its
+                                   parent.
+            @param saveLayerFlags  SaveLayerRec options to modify layer
+            @return                SaveLayerRec fully specified
+        */
+        SaveLayerRec(const SkRect* bounds, const SkPaint* paint, const SkImageFilter* backdrop,
+                     const SkColorSpace* colorSpace, SaveLayerFlags saveLayerFlags)
+            : SaveLayerRec(bounds, paint, backdrop, colorSpace, 1.f, saveLayerFlags, /*filters=*/{}) {}
 
         /** hints at layer size limit */
         const SkRect*        fBounds         = nullptr;
@@ -728,6 +752,13 @@ public:
          */
         const SkImageFilter* fBackdrop       = nullptr;
 
+        /**
+         * If not null, this triggers a color space conversion when the layer is restored. It
+         * will be as if the layer's contents are drawn in this color space. Filters from
+         * fBackdrop and fPaint will be applied in this color space.
+         */
+        const SkColorSpace* fColorSpace      = nullptr;
+
         /** preserves LCD text, creates with prior layer contents */
         SaveLayerFlags       fSaveLayerFlags = 0;
 
@@ -738,6 +769,7 @@ public:
         SaveLayerRec(const SkRect* bounds,
                      const SkPaint* paint,
                      const SkImageFilter* backdrop,
+                     const SkColorSpace* colorSpace,
                      SkScalar backdropScale,
                      SaveLayerFlags saveLayerFlags,
                      FilterSpan filters)
@@ -745,6 +777,7 @@ public:
                 , fPaint(paint)
                 , fFilters(filters)
                 , fBackdrop(backdrop)
+                , fColorSpace(colorSpace)
                 , fSaveLayerFlags(saveLayerFlags)
                 , fExperimentalBackdropScale(backdropScale) {
             // We only allow the paint's image filter or the side-car list of filters -- not both.
@@ -1435,6 +1468,27 @@ public:
     */
     void drawArc(const SkRect& oval, SkScalar startAngle, SkScalar sweepAngle,
                  bool useCenter, const SkPaint& paint);
+
+    /** Draws arc using clip, SkMatrix, and SkPaint paint.
+
+        Arc is part of oval bounded by oval, sweeping from startAngle to startAngle plus
+        sweepAngle. startAngle and sweepAngle are in degrees.
+
+        startAngle of zero places start point at the right middle edge of oval.
+        A positive sweepAngle places arc end point clockwise from start point;
+        a negative sweepAngle places arc end point counterclockwise from start point.
+        sweepAngle may exceed 360 degrees, a full circle.
+        If useCenter is true, draw a wedge that includes lines from oval
+        center to arc end points. If useCenter is false, draw arc between end points.
+
+        If SkRect oval is empty or sweepAngle is zero, nothing is drawn.
+
+        @param arc    SkArc specifying oval, startAngle, sweepAngle, and arc-vs-wedge
+        @param paint  SkPaint stroke or fill, blend, color, and so on, used to draw
+    */
+    void drawArc(const SkArc& arc, const SkPaint& paint) {
+        this->drawArc(arc.fOval, arc.fStartAngle, arc.fSweepAngle, arc.isWedge(), paint);
+    }
 
     /** Draws SkRRect bounded by SkRect rect, with corner radii (rx, ry) using clip,
         SkMatrix, and SkPaint paint.
@@ -2528,6 +2582,7 @@ private:
     void internalDrawDeviceWithFilter(SkDevice* src, SkDevice* dst,
                                       FilterSpan filters, const SkPaint& paint,
                                       DeviceCompatibleWithFilter compat,
+                                      const SkColorInfo& filterColorInfo,
                                       SkScalar scaleFactor = 1.f,
                                       bool srcIsCoverageLayer = false);
 
@@ -2567,6 +2622,14 @@ private:
     // Compute the clip's bounds based on all clipped SkDevice's reported device bounds transformed
     // into the canvas' global space.
     SkRect computeDeviceClipBounds(bool outsetForAA=true) const;
+
+    // Attempt to draw a rrect with an analytic blur. If the paint does not contain a blur, or the
+    // geometry can't be drawn with an analytic blur by the device, a layer is returned for a
+    // regular draw. If the draw succeeds or predrawNotify fails, nullopt is returned indicating
+    // that nothing further should be drawn.
+    std::optional<AutoLayerForImageFilter> attemptBlurredRRectDraw(const SkRRect&,
+                                                                   const SkPaint&,
+                                                                   SkEnumBitMask<PredrawFlags>);
 
     class AutoUpdateQRBounds;
     void validateClip() const;

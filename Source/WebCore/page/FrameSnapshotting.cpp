@@ -109,6 +109,8 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(LocalFrame& frame, const IntRect& 
         paintBehavior.add(PaintBehavior::SelectionAndBackgroundsOnly);
     if (options.flags.contains(SnapshotFlags::PaintEverythingExcludingSelection))
         paintBehavior.add(PaintBehavior::ExcludeSelection);
+    if (options.flags.contains(SnapshotFlags::ExcludeReplacedContent))
+        paintBehavior.add(PaintBehavior::ExcludeReplacedContent);
 
     // Other paint behaviors are set by paintContentsForSnapshot.
     frame.view()->setPaintBehavior(paintBehavior);

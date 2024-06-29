@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,22 +36,22 @@ XPathResult::XPathResult(Document& document, const XPath::Value& value)
     : m_value(value)
 {
     switch (m_value.type()) {
-        case XPath::Value::BooleanValue:
-            m_resultType = BOOLEAN_TYPE;
-            return;
-        case XPath::Value::NumberValue:
-            m_resultType = NUMBER_TYPE;
-            return;
-        case XPath::Value::StringValue:
-            m_resultType = STRING_TYPE;
-            return;
-        case XPath::Value::NodeSetValue:
-            m_resultType = UNORDERED_NODE_ITERATOR_TYPE;
-            m_nodeSetPosition = 0;
-            m_nodeSet = m_value.toNodeSet();
-            m_document = &document;
-            m_domTreeVersion = document.domTreeVersion();
-            return;
+    case XPath::Value::Type::Boolean:
+        m_resultType = BOOLEAN_TYPE;
+        return;
+    case XPath::Value::Type::Number:
+        m_resultType = NUMBER_TYPE;
+        return;
+    case XPath::Value::Type::String:
+        m_resultType = STRING_TYPE;
+        return;
+    case XPath::Value::Type::NodeSet:
+        m_resultType = UNORDERED_NODE_ITERATOR_TYPE;
+        m_nodeSetPosition = 0;
+        m_nodeSet = m_value.toNodeSet();
+        m_document = &document;
+        m_domTreeVersion = document.domTreeVersion();
+        return;
     }
     ASSERT_NOT_REACHED();
 }
@@ -180,4 +180,4 @@ ExceptionOr<Node*> XPathResult::snapshotItem(unsigned index)
     return nodes[index];
 }
 
-}
+} // namespace WebCore

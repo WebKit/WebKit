@@ -67,6 +67,8 @@ public:
     bool isValid() const { return !!m_webPage; }
 
 #if PLATFORM(COCOA)
+    void cloneFileWrapperTo(Attachment&);
+    bool shouldUseFileWrapperIconForDirectory() const;
     void doWithFileWrapper(Function<void(NSFileWrapper *)>&&) const;
     void setFileWrapper(NSFileWrapper *);
     void setFileWrapperAndUpdateContentType(NSFileWrapper *, NSString *contentType);
@@ -111,6 +113,8 @@ private:
     WeakPtr<WebKit::WebPageProxy> m_webPage;
     InsertionState m_insertionState { InsertionState::NotInserted };
     WebCore::AttachmentAssociatedElementType m_associatedElementType { WebCore::AttachmentAssociatedElementType::None };
+    bool m_hasEnclosingImage { false };
+    bool m_isCreatedFromSerializedRepresentation { false };
 };
 
 } // namespace API

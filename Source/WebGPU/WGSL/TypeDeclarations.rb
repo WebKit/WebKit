@@ -1600,5 +1600,5 @@ function :workgroupUniformLoad, {
     stage: :compute,
 
     # @must_use fn workgroupUniformLoad(p : ptr<workgroup, T>) -> T
-    [T].(ptr[workgroup, T]) => void,
+    [T].(ptr[workgroup, T]) => T,
 }

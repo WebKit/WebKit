@@ -47,7 +47,7 @@ static bool readUInt32(SharedBuffer& buffer, size_t& offset, uint32_t& value)
     if (buffer.size() - offset < sizeof(value))
         return false;
 
-    value = ntohl(*reinterpret_cast_ptr<const uint32_t*>(buffer.data() + offset));
+    value = ntohl(*reinterpret_cast_ptr<const uint32_t*>(buffer.span().subspan(offset).data()));
     offset += sizeof(value);
 
     return true;
@@ -59,7 +59,7 @@ static bool readUInt16(SharedBuffer& buffer, size_t& offset, uint16_t& value)
     if (buffer.size() - offset < sizeof(value))
         return false;
 
-    value = ntohs(*reinterpret_cast_ptr<const uint16_t*>(buffer.data() + offset));
+    value = ntohs(*reinterpret_cast_ptr<const uint16_t*>(buffer.span().subspan(offset).data()));
     offset += sizeof(value);
 
     return true;
@@ -145,15 +145,14 @@ bool convertWOFFToSfnt(SharedBuffer& woff, Vector<uint8_t>& sfnt)
 
 #if USE(WOFF2)
     if (signature == kWoff2Signature) {
-        auto* woffData = woff.data();
-        const size_t woffSize = woff.size();
-        const size_t sfntSize = woff2::ComputeWOFF2FinalSize(woffData, woffSize);
+        auto woffData = woff.span();
+        const size_t sfntSize = woff2::ComputeWOFF2FinalSize(woffData.data(), woffData.size());
 
         if (!sfnt.tryReserveCapacity(sfntSize))
             return false;
 
         WOFF2VectorOut out(sfnt);
-        return woff2::ConvertWOFF2ToTTF(woffData, woffSize, &out);
+        return woff2::ConvertWOFF2ToTTF(woffData.data(), woffData.size(), &out);
     }
 #endif
 
@@ -273,7 +272,7 @@ bool convertWOFFToSfnt(SharedBuffer& woff, Vector<uint8_t>& sfnt)
                 return false;
             Bytef* dest = reinterpret_cast<Bytef*>(sfnt.end());
             sfnt.grow(sfnt.size() + tableOrigLength);
-            if (uncompress(dest, &destLen, reinterpret_cast<const Bytef*>(woff.data() + tableOffset), tableCompLength) != Z_OK)
+            if (uncompress(dest, &destLen, reinterpret_cast<const Bytef*>(woff.span().subspan(tableOffset).data()), tableCompLength) != Z_OK)
                 return false;
             if (destLen != tableOrigLength)
                 return false;

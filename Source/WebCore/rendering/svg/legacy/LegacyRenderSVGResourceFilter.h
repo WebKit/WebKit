@@ -24,7 +24,7 @@
 #pragma once
 
 #include "FilterResults.h"
-#include "FilterTargetSwitcher.h"
+#include "GraphicsContextSwitcher.h"
 #include "LegacyRenderSVGResourceContainer.h"
 #include "SVGFilter.h"
 #include "SVGUnitTypes.h"
@@ -46,7 +46,7 @@ public:
 
     RefPtr<SVGFilter> filter;
 
-    std::unique_ptr<FilterTargetSwitcher> targetSwitcher;
+    std::unique_ptr<GraphicsContextSwitcher> targetSwitcher;
     FloatRect sourceImageRect;
 
     GraphicsContext* savedContext { nullptr };
@@ -95,6 +95,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, FilterData::FilterDataState);
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LegacyRenderSVGResourceFilter)
-    static bool isType(const WebCore::RenderObject& renderer) { return renderer.isRenderSVGResourceFilter(); }
+    static bool isType(const WebCore::RenderObject& renderer) { return renderer.isLegacyRenderSVGResourceFilter(); }
     static bool isType(const WebCore::LegacyRenderSVGResource& resource) { return resource.resourceType() == WebCore::FilterResourceType; }
 SPECIALIZE_TYPE_TRAITS_END()

@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <atomic>
+#include <cstdint>
 #include <deque>
 #include <memory>
 #include <utility>
@@ -19,6 +20,7 @@
 
 #include "absl/algorithm/container.h"
 #include "absl/base/attributes.h"
+#include "absl/cleanup/cleanup.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
@@ -50,45 +52,47 @@ class AdapterMode {
 
   // Called on the worker thread for every frame that enters.
   virtual void OnFrame(Timestamp post_time,
-                       int frames_scheduled_for_processing,
+                       bool queue_overload,
                        const VideoFrame& frame) = 0;
 
   // Returns the currently estimated input framerate.
   virtual absl::optional<uint32_t> GetInputFrameRateFps() = 0;
 
   // Updates the frame rate.
-  virtual void UpdateFrameRate() = 0;
+  virtual void UpdateFrameRate(Timestamp frame_timestamp) = 0;
 };
 
 // Implements a pass-through adapter. Single-threaded.
 class PassthroughAdapterMode : public AdapterMode {
  public:
-  PassthroughAdapterMode(Clock* clock,
-                         FrameCadenceAdapterInterface::Callback* callback)
-      : clock_(clock), callback_(callback) {
+  explicit PassthroughAdapterMode(
+      FrameCadenceAdapterInterface::Callback* callback)
+      : callback_(callback) {
     sequence_checker_.Detach();
   }
 
   // Adapter overrides.
   void OnFrame(Timestamp post_time,
-               int frames_scheduled_for_processing,
+               bool queue_overload,
                const VideoFrame& frame) override {
     RTC_DCHECK_RUN_ON(&sequence_checker_);
-    callback_->OnFrame(post_time, frames_scheduled_for_processing, frame);
+    callback_->OnFrame(post_time, queue_overload, frame);
   }
 
   absl::optional<uint32_t> GetInputFrameRateFps() override {
     RTC_DCHECK_RUN_ON(&sequence_checker_);
-    return input_framerate_.Rate(clock_->TimeInMilliseconds());
+    return last_frame_rate_;
   }
 
-  void UpdateFrameRate() override {
+  void UpdateFrameRate(Timestamp frame_timestamp) override {
     RTC_DCHECK_RUN_ON(&sequence_checker_);
-    input_framerate_.Update(1, clock_->TimeInMilliseconds());
+    // RateStatistics will calculate a too high rate immediately after Update.
+    last_frame_rate_ = input_framerate_.Rate(frame_timestamp.ms());
+    input_framerate_.Update(1, frame_timestamp.ms());
   }
 
  private:
-  Clock* const clock_;
+  absl::optional<uint64_t> last_frame_rate_;
   FrameCadenceAdapterInterface::Callback* const callback_;
   RTC_NO_UNIQUE_ADDRESS SequenceChecker sequence_checker_;
   // Input frame rate statistics for use when not in zero-hertz mode.
@@ -102,7 +106,9 @@ class ZeroHertzAdapterMode : public AdapterMode {
   ZeroHertzAdapterMode(TaskQueueBase* queue,
                        Clock* clock,
                        FrameCadenceAdapterInterface::Callback* callback,
-                       double max_fps);
+                       double max_fps,
+                       std::atomic<int>& frames_scheduled_for_processing,
+                       bool zero_hertz_queue_overload);
   ~ZeroHertzAdapterMode() { refresh_frame_requester_.Stop(); }
 
   // Reconfigures according to parameters.
@@ -119,10 +125,10 @@ class ZeroHertzAdapterMode : public AdapterMode {
 
   // Adapter overrides.
   void OnFrame(Timestamp post_time,
-               int frames_scheduled_for_processing,
+               bool queue_overload,
                const VideoFrame& frame) override;
   absl::optional<uint32_t> GetInputFrameRateFps() override;
-  void UpdateFrameRate() override {}
+  void UpdateFrameRate(Timestamp frame_timestamp) override {}
 
   // Notified on dropped frames.
   void OnDiscardedFrame();
@@ -130,6 +136,10 @@ class ZeroHertzAdapterMode : public AdapterMode {
   // Conditionally requests a refresh frame via
   // Callback::RequestRefreshFrame.
   void ProcessKeyFrameRequest();
+
+  // Updates the restrictions of max frame rate for the video source.
+  // Always called during construction using latest `restricted_frame_delay_`.
+  void UpdateVideoSourceRestrictions(absl::optional<double> max_frame_rate);
 
  private:
   // The tracking state of each spatial layer. Used for determining when to
@@ -171,24 +181,34 @@ class ZeroHertzAdapterMode : public AdapterMode {
   // after this call.
   void ResetQualityConvergenceInfo() RTC_RUN_ON(sequence_checker_);
   // Processes incoming frames on a delayed cadence.
-  void ProcessOnDelayedCadence() RTC_RUN_ON(sequence_checker_);
-  // Schedules a later repeat with delay depending on state of layer trackers.
+  void ProcessOnDelayedCadence(Timestamp post_time)
+      RTC_RUN_ON(sequence_checker_);
+  // Schedules a later repeat with delay depending on state of layer trackers
+  // and if UpdateVideoSourceRestrictions has been called or not.
   // If true is passed in `idle_repeat`, the repeat is going to be
-  // kZeroHertzIdleRepeatRatePeriod. Otherwise it'll be the value of
-  // `frame_delay`.
+  // kZeroHertzIdleRepeatRatePeriod. Otherwise it'll be the maximum value of
+  // `frame_delay` or `restricted_frame_delay_` if it has been set.
   void ScheduleRepeat(int frame_id, bool idle_repeat)
       RTC_RUN_ON(sequence_checker_);
-  // Repeats a frame in the abscence of incoming frames. Slows down when quality
+  // Repeats a frame in the absence of incoming frames. Slows down when quality
   // convergence is attained, and stops the cadence terminally when new frames
   // have arrived.
   void ProcessRepeatedFrameOnDelayedCadence(int frame_id)
       RTC_RUN_ON(sequence_checker_);
-  // Sends a frame, updating the timestamp to the current time.
-  void SendFrameNow(const VideoFrame& frame) const
-      RTC_RUN_ON(sequence_checker_);
+  // Sends a frame, updating the timestamp to the current time. Also updates
+  // `queue_overload_count_` based on the time it takes to encode a frame and
+  // the amount of received frames while encoding. The `queue_overload`
+  // parameter in the OnFrame callback will be true while
+  // `queue_overload_count_` is larger than zero to allow the client to drop
+  // frames and thereby mitigate delay buildups.
+  // Repeated frames are sent with `post_time` set to absl::nullopt.
+  void SendFrameNow(absl::optional<Timestamp> post_time,
+                    const VideoFrame& frame) RTC_RUN_ON(sequence_checker_);
   // Returns the repeat duration depending on if it's an idle repeat or not.
   TimeDelta RepeatDuration(bool idle_repeat) const
       RTC_RUN_ON(sequence_checker_);
+  // Returns the frame duration taking potential restrictions into account.
+  TimeDelta FrameDuration() const RTC_RUN_ON(sequence_checker_);
   // Unless timer already running, starts repeatedly requesting refresh frames
   // after a grace_period. If a frame appears before the grace_period has
   // passed, the request is cancelled.
@@ -201,6 +221,14 @@ class ZeroHertzAdapterMode : public AdapterMode {
   // The configured max_fps.
   // TODO(crbug.com/1255737): support max_fps updates.
   const double max_fps_;
+
+  // Number of frames that are currently scheduled for processing on the
+  // `queue_`.
+  const std::atomic<int>& frames_scheduled_for_processing_;
+
+  // Can be used as kill-switch for the queue overload mechanism.
+  const bool zero_hertz_queue_overload_enabled_;
+
   // How much the incoming frame sequence is delayed by.
   const TimeDelta frame_delay_ = TimeDelta::Seconds(1) / max_fps_;
 
@@ -220,14 +248,96 @@ class ZeroHertzAdapterMode : public AdapterMode {
   // they can be dropped in various places in the capture pipeline.
   RepeatingTaskHandle refresh_frame_requester_
       RTC_GUARDED_BY(sequence_checker_);
+  // Can be set by UpdateVideoSourceRestrictions when the video source restricts
+  // the max frame rate.
+  absl::optional<TimeDelta> restricted_frame_delay_
+      RTC_GUARDED_BY(sequence_checker_);
+  // Set in OnSendFrame to reflect how many future frames will be forwarded with
+  // the `queue_overload` flag set to true.
+  int queue_overload_count_ RTC_GUARDED_BY(sequence_checker_) = 0;
 
   ScopedTaskSafety safety_;
+};
+
+// Implements a frame cadence adapter supporting VSync aligned encoding.
+class VSyncEncodeAdapterMode : public AdapterMode {
+ public:
+  VSyncEncodeAdapterMode(
+      Clock* clock,
+      TaskQueueBase* queue,
+      rtc::scoped_refptr<PendingTaskSafetyFlag> queue_safety_flag,
+      Metronome* metronome,
+      TaskQueueBase* worker_queue,
+      FrameCadenceAdapterInterface::Callback* callback)
+      : clock_(clock),
+        queue_(queue),
+        queue_safety_flag_(queue_safety_flag),
+        callback_(callback),
+        metronome_(metronome),
+        worker_queue_(worker_queue) {
+    queue_sequence_checker_.Detach();
+    worker_sequence_checker_.Detach();
+  }
+
+  // Adapter overrides.
+  void OnFrame(Timestamp post_time,
+               bool queue_overload,
+               const VideoFrame& frame) override;
+
+  absl::optional<uint32_t> GetInputFrameRateFps() override {
+    RTC_DCHECK_RUN_ON(&queue_sequence_checker_);
+    return last_frame_rate_;
+  }
+
+  void UpdateFrameRate(Timestamp frame_timestamp) override {
+    RTC_DCHECK_RUN_ON(&queue_sequence_checker_);
+    // RateStatistics will calculate a too high rate immediately after Update.
+    last_frame_rate_ = input_framerate_.Rate(frame_timestamp.ms());
+    input_framerate_.Update(1, frame_timestamp.ms());
+  }
+
+  void EncodeAllEnqueuedFrames();
+
+ private:
+  // Holds input frames coming from the client ready to be encoded.
+  struct InputFrameRef {
+    InputFrameRef(const VideoFrame& video_frame, Timestamp time_when_posted_us)
+        : time_when_posted_us(time_when_posted_us),
+          video_frame(std::move(video_frame)) {}
+    Timestamp time_when_posted_us;
+    const VideoFrame video_frame;
+  };
+
+  Clock* const clock_;
+  TaskQueueBase* queue_;
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker queue_sequence_checker_;
+  rtc::scoped_refptr<PendingTaskSafetyFlag> queue_safety_flag_;
+  // Input frame rate statistics for use when not in zero-hertz mode.
+  absl::optional<uint64_t> last_frame_rate_
+      RTC_GUARDED_BY(queue_sequence_checker_);
+  RateStatistics input_framerate_ RTC_GUARDED_BY(queue_sequence_checker_){
+      FrameCadenceAdapterInterface::kFrameRateAveragingWindowSizeMs, 1000};
+  FrameCadenceAdapterInterface::Callback* const callback_;
+
+  Metronome* metronome_;
+  TaskQueueBase* const worker_queue_;
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker worker_sequence_checker_;
+  // `worker_safety_` protects tasks on the worker queue related to
+  // `metronome_` since metronome usage must happen on worker thread.
+  ScopedTaskSafetyDetached worker_safety_;
+  Timestamp expected_next_tick_ RTC_GUARDED_BY(worker_sequence_checker_) =
+      Timestamp::PlusInfinity();
+  // Vector of input frames to be encoded.
+  std::vector<InputFrameRef> input_queue_
+      RTC_GUARDED_BY(worker_sequence_checker_);
 };
 
 class FrameCadenceAdapterImpl : public FrameCadenceAdapterInterface {
  public:
   FrameCadenceAdapterImpl(Clock* clock,
                           TaskQueueBase* queue,
+                          Metronome* metronome,
+                          TaskQueueBase* worker_queue,
                           const FieldTrialsView& field_trials);
   ~FrameCadenceAdapterImpl();
 
@@ -236,10 +346,11 @@ class FrameCadenceAdapterImpl : public FrameCadenceAdapterInterface {
   void SetZeroHertzModeEnabled(
       absl::optional<ZeroHertzModeParams> params) override;
   absl::optional<uint32_t> GetInputFrameRateFps() override;
-  void UpdateFrameRate() override;
   void UpdateLayerQualityConvergence(size_t spatial_index,
                                      bool quality_converged) override;
   void UpdateLayerStatus(size_t spatial_index, bool enabled) override;
+  void UpdateVideoSourceRestrictions(
+      absl::optional<double> max_frame_rate) override;
   void ProcessKeyFrameRequest() override;
 
   // VideoFrameSink overrides.
@@ -249,9 +360,10 @@ class FrameCadenceAdapterImpl : public FrameCadenceAdapterInterface {
       const VideoTrackSourceConstraints& constraints) override;
 
  private:
-  // Called from OnFrame in zero-hertz mode.
+  void UpdateFrameRate(Timestamp frame_timestamp);
+  // Called from OnFrame in both pass-through and zero-hertz mode.
   void OnFrameOnMainQueue(Timestamp post_time,
-                          int frames_scheduled_for_processing,
+                          bool queue_overload,
                           const VideoFrame& frame) RTC_RUN_ON(queue_);
 
   // Returns true under all of the following conditions:
@@ -261,23 +373,40 @@ class FrameCadenceAdapterImpl : public FrameCadenceAdapterInterface {
   // - zero-hertz mode enabled
   bool IsZeroHertzScreenshareEnabled() const RTC_RUN_ON(queue_);
 
+  // Configures current adapter on non-ZeroHertz mode, called when Initialize or
+  // MaybeReconfigureAdapters.
+  void ConfigureCurrentAdapterWithoutZeroHertz();
+
   // Handles adapter creation on configuration changes.
   void MaybeReconfigureAdapters(bool was_zero_hertz_enabled) RTC_RUN_ON(queue_);
 
   Clock* const clock_;
   TaskQueueBase* const queue_;
 
-  // True if we support frame entry for screenshare with a minimum frequency of
-  // 0 Hz.
-  const bool zero_hertz_screenshare_enabled_;
+  // Kill-switch for the queue overload mechanism in zero-hertz mode.
+  const bool frame_cadence_adapter_zero_hertz_queue_overload_enabled_;
 
-  // The two possible modes we're under.
+  // Field trial for using timestamp from video frames, rather than clock when
+  // calculating input frame rate.
+  const bool use_video_frame_timestamp_;
+  // Used for verifying that timestamps are monotonically increasing.
+  absl::optional<Timestamp> last_incoming_frame_timestamp_;
+  bool incoming_frame_timestamp_monotonically_increasing_ = true;
+
+  // The three possible modes we're under.
   absl::optional<PassthroughAdapterMode> passthrough_adapter_;
   absl::optional<ZeroHertzAdapterMode> zero_hertz_adapter_;
+  // The `vsync_encode_adapter_` must be destroyed on the worker queue since
+  // VSync metronome needs to happen on worker thread.
+  std::unique_ptr<VSyncEncodeAdapterMode> vsync_encode_adapter_;
   // If set, zero-hertz mode has been enabled.
   absl::optional<ZeroHertzModeParams> zero_hertz_params_;
   // Cache for the current adapter mode.
   AdapterMode* current_adapter_mode_ = nullptr;
+
+  // VSync encoding is used when this valid.
+  Metronome* const metronome_;
+  TaskQueueBase* const worker_queue_;
 
   // Timestamp for statistics reporting.
   absl::optional<Timestamp> zero_hertz_adapter_created_timestamp_
@@ -290,10 +419,14 @@ class FrameCadenceAdapterImpl : public FrameCadenceAdapterInterface {
   absl::optional<VideoTrackSourceConstraints> source_constraints_
       RTC_GUARDED_BY(queue_);
 
+  // Stores the latest restriction in max frame rate set by
+  // UpdateVideoSourceRestrictions. Ensures that a previously set restriction
+  // can be maintained during reconstructions of the adapter.
+  absl::optional<double> restricted_max_frame_rate_ RTC_GUARDED_BY(queue_);
+
   // Race checker for incoming frames. This is the network thread in chromium,
   // but may vary from test contexts.
   rtc::RaceChecker incoming_frame_race_checker_;
-  bool has_reported_screenshare_frame_rate_umas_ RTC_GUARDED_BY(queue_) = false;
 
   // Number of frames that are currently scheduled for processing on the
   // `queue_`.
@@ -306,8 +439,15 @@ ZeroHertzAdapterMode::ZeroHertzAdapterMode(
     TaskQueueBase* queue,
     Clock* clock,
     FrameCadenceAdapterInterface::Callback* callback,
-    double max_fps)
-    : queue_(queue), clock_(clock), callback_(callback), max_fps_(max_fps) {
+    double max_fps,
+    std::atomic<int>& frames_scheduled_for_processing,
+    bool zero_hertz_queue_overload_enabled)
+    : queue_(queue),
+      clock_(clock),
+      callback_(callback),
+      max_fps_(max_fps),
+      frames_scheduled_for_processing_(frames_scheduled_for_processing),
+      zero_hertz_queue_overload_enabled_(zero_hertz_queue_overload_enabled) {
   sequence_checker_.Detach();
   MaybeStartRefreshFrameRequester();
 }
@@ -329,8 +469,8 @@ void ZeroHertzAdapterMode::UpdateLayerQualityConvergence(
     bool quality_converged) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   TRACE_EVENT_INSTANT2(TRACE_DISABLED_BY_DEFAULT("webrtc"), __func__,
-                       "spatial_index", spatial_index, "converged",
-                       quality_converged);
+                       TRACE_EVENT_SCOPE_GLOBAL, "spatial_index", spatial_index,
+                       "converged", quality_converged);
   if (spatial_index >= layer_trackers_.size())
     return;
   if (layer_trackers_[spatial_index].quality_converged.has_value())
@@ -341,7 +481,8 @@ void ZeroHertzAdapterMode::UpdateLayerStatus(size_t spatial_index,
                                              bool enabled) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   TRACE_EVENT_INSTANT2(TRACE_DISABLED_BY_DEFAULT("webrtc"), __func__,
-                       "spatial_index", spatial_index, "enabled", enabled);
+                       TRACE_EVENT_SCOPE_GLOBAL, "spatial_index", spatial_index,
+                       "enabled", enabled);
   if (spatial_index >= layer_trackers_.size())
     return;
   if (enabled) {
@@ -355,7 +496,7 @@ void ZeroHertzAdapterMode::UpdateLayerStatus(size_t spatial_index,
 }
 
 void ZeroHertzAdapterMode::OnFrame(Timestamp post_time,
-                                   int frames_scheduled_for_processing,
+                                   bool queue_overload,
                                    const VideoFrame& frame) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   TRACE_EVENT0("webrtc", "ZeroHertzAdapterMode::OnFrame");
@@ -374,23 +515,14 @@ void ZeroHertzAdapterMode::OnFrame(Timestamp post_time,
 
   // Store the frame in the queue and schedule deferred processing.
   queued_frames_.push_back(frame);
-  int frame_id = current_frame_id_;
   current_frame_id_++;
   scheduled_repeat_ = absl::nullopt;
   TimeDelta time_spent_since_post = clock_->CurrentTime() - post_time;
-  TRACE_EVENT_ASYNC_BEGIN0(TRACE_DISABLED_BY_DEFAULT("webrtc"), "QueueToEncode",
-                           frame_id);
   queue_->PostDelayedHighPrecisionTask(
       SafeTask(safety_.flag(),
-               [this, frame_id, frame] {
-                 RTC_UNUSED(frame_id);
+               [this, post_time] {
                  RTC_DCHECK_RUN_ON(&sequence_checker_);
-                 TRACE_EVENT_ASYNC_END0(TRACE_DISABLED_BY_DEFAULT("webrtc"),
-                                        "QueueToEncode", frame_id);
-                 TRACE_EVENT_ASYNC_END0(TRACE_DISABLED_BY_DEFAULT("webrtc"),
-                                        "OnFrameToEncode",
-                                        frame.video_frame_buffer().get());
-                 ProcessOnDelayedCadence();
+                 ProcessOnDelayedCadence(post_time);
                }),
       std::max(frame_delay_ - time_spent_since_post, TimeDelta::Zero()));
 }
@@ -411,9 +543,24 @@ absl::optional<uint32_t> ZeroHertzAdapterMode::GetInputFrameRateFps() {
   return max_fps_;
 }
 
+void ZeroHertzAdapterMode::UpdateVideoSourceRestrictions(
+    absl::optional<double> max_frame_rate) {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  TRACE_EVENT_INSTANT1(TRACE_DISABLED_BY_DEFAULT("webrtc"), __func__,
+                       TRACE_EVENT_SCOPE_GLOBAL, "max_frame_rate",
+                       max_frame_rate.value_or(-1));
+  if (max_frame_rate.value_or(0) > 0) {
+    // Set new, validated (> 0) and restricted frame rate.
+    restricted_frame_delay_ = TimeDelta::Seconds(1) / *max_frame_rate;
+  } else {
+    // Source reports that the frame rate is now unrestricted.
+    restricted_frame_delay_ = absl::nullopt;
+  }
+}
+
 void ZeroHertzAdapterMode::ProcessKeyFrameRequest() {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  TRACE_EVENT_INSTANT0("webrtc", __func__);
+  TRACE_EVENT_INSTANT0("webrtc", __func__, TRACE_EVENT_SCOPE_GLOBAL);
   // If we're new and don't have a frame, there's no need to request refresh
   // frames as this was being triggered for us when zero-hz mode was set up.
   //
@@ -475,13 +622,13 @@ void ZeroHertzAdapterMode::ResetQualityConvergenceInfo() {
   }
 }
 
-void ZeroHertzAdapterMode::ProcessOnDelayedCadence() {
+void ZeroHertzAdapterMode::ProcessOnDelayedCadence(Timestamp post_time) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   RTC_DCHECK(!queued_frames_.empty());
   TRACE_EVENT0("webrtc", __func__);
 
   // Avoid sending the front frame for encoding (which could take a long time)
-  // until we schedule a repeate.
+  // until we schedule a repeat.
   VideoFrame front_frame = queued_frames_.front();
 
   // If there were two or more frames stored, we do not have to schedule repeats
@@ -494,7 +641,7 @@ void ZeroHertzAdapterMode::ProcessOnDelayedCadence() {
     // arrive.
     ScheduleRepeat(current_frame_id_, HasQualityConverged());
   }
-  SendFrameNow(front_frame);
+  SendFrameNow(post_time, front_frame);
 }
 
 void ZeroHertzAdapterMode::ScheduleRepeat(int frame_id, bool idle_repeat) {
@@ -551,23 +698,70 @@ void ZeroHertzAdapterMode::ProcessRepeatedFrameOnDelayedCadence(int frame_id) {
 
   // Schedule another repeat before sending the frame off which could take time.
   ScheduleRepeat(frame_id, HasQualityConverged());
-  SendFrameNow(frame);
+  SendFrameNow(absl::nullopt, frame);
 }
 
-void ZeroHertzAdapterMode::SendFrameNow(const VideoFrame& frame) const {
+void ZeroHertzAdapterMode::SendFrameNow(absl::optional<Timestamp> post_time,
+                                        const VideoFrame& frame) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   TRACE_EVENT0("webrtc", __func__);
-  // TODO(crbug.com/1255737): figure out if frames_scheduled_for_processing
-  // makes sense to compute in this implementation.
-  callback_->OnFrame(/*post_time=*/clock_->CurrentTime(),
-                     /*frames_scheduled_for_processing=*/1, frame);
+
+  Timestamp encode_start_time = clock_->CurrentTime();
+  if (post_time.has_value()) {
+    TimeDelta delay = (encode_start_time - *post_time);
+    RTC_HISTOGRAM_COUNTS_10000("WebRTC.Screenshare.ZeroHz.DelayMs", delay.ms());
+  }
+
+  // Forward the frame and set `queue_overload` if is has been detected that it
+  // is not possible to deliver frames at the expected rate due to slow
+  // encoding.
+  callback_->OnFrame(/*post_time=*/encode_start_time, queue_overload_count_ > 0,
+                     frame);
+
+  // WebRTC-ZeroHertzQueueOverload kill-switch.
+  if (!zero_hertz_queue_overload_enabled_)
+    return;
+
+  // `queue_overload_count_` determines for how many future frames the
+  // `queue_overload` flag will be set and it is only increased if:
+  // o We are not already in an overload state.
+  // o New frames have been scheduled for processing on the queue while encoding
+  //   took place in OnFrame.
+  // o The duration of OnFrame is longer than the current frame duration.
+  // If all these conditions are fulfilled, `queue_overload_count_` is set to
+  // `frames_scheduled_for_processing_` and any pending repeat is canceled since
+  // new frames are available and the repeat is not needed.
+  // If the adapter is already in an overload state, simply decrease
+  // `queue_overload_count_` by one.
+  if (queue_overload_count_ == 0) {
+    const int frames_scheduled_for_processing =
+        frames_scheduled_for_processing_.load(std::memory_order_relaxed);
+    if (frames_scheduled_for_processing > 0) {
+      TimeDelta encode_time = clock_->CurrentTime() - encode_start_time;
+      if (encode_time > FrameDuration()) {
+        queue_overload_count_ = frames_scheduled_for_processing;
+        // Invalidates any outstanding repeat to avoid sending pending repeat
+        // directly after too long encode.
+        current_frame_id_++;
+      }
+    }
+  } else {
+    queue_overload_count_--;
+  }
+  RTC_HISTOGRAM_BOOLEAN("WebRTC.Screenshare.ZeroHz.QueueOverload",
+                        queue_overload_count_ > 0);
+}
+
+TimeDelta ZeroHertzAdapterMode::FrameDuration() const {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  return std::max(frame_delay_, restricted_frame_delay_.value_or(frame_delay_));
 }
 
 TimeDelta ZeroHertzAdapterMode::RepeatDuration(bool idle_repeat) const {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   return idle_repeat
              ? FrameCadenceAdapterInterface::kZeroHertzIdleRepeatRatePeriod
-             : frame_delay_;
+             : FrameDuration();
 }
 
 void ZeroHertzAdapterMode::MaybeStartRefreshFrameRequester() {
@@ -586,31 +780,110 @@ void ZeroHertzAdapterMode::MaybeStartRefreshFrameRequester() {
   }
 }
 
+void VSyncEncodeAdapterMode::OnFrame(Timestamp post_time,
+                                     bool queue_overload,
+                                     const VideoFrame& frame) {
+  // We expect `metronome_` and `EncodeAllEnqueuedFrames()` runs on
+  // `worker_queue_`.
+  if (!worker_queue_->IsCurrent()) {
+    worker_queue_->PostTask(SafeTask(
+        worker_safety_.flag(), [this, post_time, queue_overload, frame] {
+          OnFrame(post_time, queue_overload, frame);
+        }));
+    return;
+  }
+
+  RTC_DCHECK_RUN_ON(&worker_sequence_checker_);
+  TRACE_EVENT0("webrtc", "VSyncEncodeAdapterMode::OnFrame");
+
+  input_queue_.emplace_back(std::move(frame), post_time);
+
+  // The `metronome_` tick period maybe throttled in some case, so here we only
+  // align encode task to VSync event when `metronome_` tick period is less
+  // than 34ms (30Hz).
+  static constexpr TimeDelta kMaxAllowedDelay = TimeDelta::Millis(34);
+  if (metronome_->TickPeriod() <= kMaxAllowedDelay) {
+    // The metronome is ticking frequently enough that it is worth the extra
+    // delay.
+    metronome_->RequestCallOnNextTick(
+        SafeTask(worker_safety_.flag(), [this] { EncodeAllEnqueuedFrames(); }));
+  } else {
+    // The metronome is ticking too infrequently, encode immediately.
+    EncodeAllEnqueuedFrames();
+  }
+}
+
+void VSyncEncodeAdapterMode::EncodeAllEnqueuedFrames() {
+  RTC_DCHECK_RUN_ON(&worker_sequence_checker_);
+  TRACE_EVENT0("webrtc", "VSyncEncodeAdapterMode::EncodeAllEnqueuedFrames");
+
+  // Local time in webrtc time base.
+  Timestamp post_time = clock_->CurrentTime();
+
+  for (auto& input : input_queue_) {
+    TRACE_EVENT1("webrtc", "FrameCadenceAdapterImpl::EncodeAllEnqueuedFrames",
+                 "VSyncEncodeDelay",
+                 (post_time - input.time_when_posted_us).ms());
+
+    const VideoFrame frame = std::move(input.video_frame);
+    queue_->PostTask(SafeTask(queue_safety_flag_, [this, post_time, frame] {
+      RTC_DCHECK_RUN_ON(queue_);
+
+      // TODO(b/304158952): Support more refined queue overload control.
+      callback_->OnFrame(post_time, /*queue_overload=*/false, frame);
+    }));
+  }
+
+  input_queue_.clear();
+}
+
 FrameCadenceAdapterImpl::FrameCadenceAdapterImpl(
     Clock* clock,
     TaskQueueBase* queue,
+    Metronome* metronome,
+    TaskQueueBase* worker_queue,
     const FieldTrialsView& field_trials)
     : clock_(clock),
       queue_(queue),
-      zero_hertz_screenshare_enabled_(
-          !field_trials.IsDisabled("WebRTC-ZeroHertzScreenshare")) {}
+      frame_cadence_adapter_zero_hertz_queue_overload_enabled_(
+          !field_trials.IsDisabled("WebRTC-ZeroHertzQueueOverload")),
+      use_video_frame_timestamp_(field_trials.IsEnabled(
+          "WebRTC-FrameCadenceAdapter-UseVideoFrameTimestamp")),
+      metronome_(metronome),
+      worker_queue_(worker_queue) {}
 
 FrameCadenceAdapterImpl::~FrameCadenceAdapterImpl() {
   RTC_DLOG(LS_VERBOSE) << __func__ << " this " << this;
+
+  // VSync adapter needs to be destroyed on worker queue when metronome is
+  // valid.
+  if (metronome_) {
+    absl::Cleanup cleanup = [adapter = std::move(vsync_encode_adapter_)] {};
+    worker_queue_->PostTask([cleanup = std::move(cleanup)] {});
+  }
+
+  RTC_HISTOGRAM_BOOLEAN(
+      "WebRTC.Video.InputFrameTimestampMonotonicallyIncreasing",
+      incoming_frame_timestamp_monotonically_increasing_);
 }
 
 void FrameCadenceAdapterImpl::Initialize(Callback* callback) {
   callback_ = callback;
-  passthrough_adapter_.emplace(clock_, callback);
-  current_adapter_mode_ = &passthrough_adapter_.value();
+  // Use VSync encode mode if metronome is valid, otherwise passthrough mode
+  // would be used.
+  if (metronome_) {
+    vsync_encode_adapter_ = std::make_unique<VSyncEncodeAdapterMode>(
+        clock_, queue_, safety_.flag(), metronome_, worker_queue_, callback_);
+  } else {
+    passthrough_adapter_.emplace(callback);
+  }
+  ConfigureCurrentAdapterWithoutZeroHertz();
 }
 
 void FrameCadenceAdapterImpl::SetZeroHertzModeEnabled(
     absl::optional<ZeroHertzModeParams> params) {
   RTC_DCHECK_RUN_ON(queue_);
   bool was_zero_hertz_enabled = zero_hertz_params_.has_value();
-  if (params.has_value() && !was_zero_hertz_enabled)
-    has_reported_screenshare_frame_rate_umas_ = false;
   zero_hertz_params_ = params;
   MaybeReconfigureAdapters(was_zero_hertz_enabled);
 }
@@ -620,12 +893,19 @@ absl::optional<uint32_t> FrameCadenceAdapterImpl::GetInputFrameRateFps() {
   return current_adapter_mode_->GetInputFrameRateFps();
 }
 
-void FrameCadenceAdapterImpl::UpdateFrameRate() {
+void FrameCadenceAdapterImpl::UpdateFrameRate(Timestamp frame_timestamp) {
   RTC_DCHECK_RUN_ON(queue_);
   // The frame rate need not be updated for the zero-hertz adapter. The
-  // passthrough adapter however uses it. Always pass frames into the
-  // passthrough to keep the estimation alive should there be an adapter switch.
-  passthrough_adapter_->UpdateFrameRate();
+  // vsync encode and passthrough adapter however uses it. Always pass frames
+  // into the vsync encode or passthrough to keep the estimation alive should
+  // there be an adapter switch.
+  if (metronome_) {
+    RTC_CHECK(vsync_encode_adapter_);
+    vsync_encode_adapter_->UpdateFrameRate(frame_timestamp);
+  } else {
+    RTC_CHECK(passthrough_adapter_);
+    passthrough_adapter_->UpdateFrameRate(frame_timestamp);
+  }
 }
 
 void FrameCadenceAdapterImpl::UpdateLayerQualityConvergence(
@@ -640,6 +920,17 @@ void FrameCadenceAdapterImpl::UpdateLayerStatus(size_t spatial_index,
                                                 bool enabled) {
   if (zero_hertz_adapter_.has_value())
     zero_hertz_adapter_->UpdateLayerStatus(spatial_index, enabled);
+}
+
+void FrameCadenceAdapterImpl::UpdateVideoSourceRestrictions(
+    absl::optional<double> max_frame_rate) {
+  RTC_DCHECK_RUN_ON(queue_);
+  // Store the restriction to ensure that it can be reapplied in possible
+  // future adapter creations on configuration changes.
+  restricted_max_frame_rate_ = max_frame_rate;
+  if (zero_hertz_adapter_) {
+    zero_hertz_adapter_->UpdateVideoSourceRestrictions(max_frame_rate);
+  }
 }
 
 void FrameCadenceAdapterImpl::ProcessKeyFrameRequest() {
@@ -657,14 +948,8 @@ void FrameCadenceAdapterImpl::OnFrame(const VideoFrame& frame) {
   // Local time in webrtc time base.
   Timestamp post_time = clock_->CurrentTime();
   frames_scheduled_for_processing_.fetch_add(1, std::memory_order_relaxed);
-  TRACE_EVENT_ASYNC_BEGIN0(TRACE_DISABLED_BY_DEFAULT("webrtc"),
-                           "OnFrameToEncode", frame.video_frame_buffer().get());
-  TRACE_EVENT_ASYNC_BEGIN0(TRACE_DISABLED_BY_DEFAULT("webrtc"),
-                           "OnFrameToQueue", frame.video_frame_buffer().get());
   queue_->PostTask(SafeTask(safety_.flag(), [this, post_time, frame] {
     RTC_DCHECK_RUN_ON(queue_);
-    TRACE_EVENT_ASYNC_END0(TRACE_DISABLED_BY_DEFAULT("webrtc"),
-                           "OnFrameToQueue", frame.video_frame_buffer().get());
     if (zero_hertz_adapter_created_timestamp_.has_value()) {
       TimeDelta time_until_first_frame =
           clock_->CurrentTime() - *zero_hertz_adapter_created_timestamp_;
@@ -677,7 +962,7 @@ void FrameCadenceAdapterImpl::OnFrame(const VideoFrame& frame) {
     const int frames_scheduled_for_processing =
         frames_scheduled_for_processing_.fetch_sub(1,
                                                    std::memory_order_relaxed);
-    OnFrameOnMainQueue(post_time, frames_scheduled_for_processing,
+    OnFrameOnMainQueue(post_time, frames_scheduled_for_processing > 1,
                        std::move(frame));
   }));
 }
@@ -705,21 +990,43 @@ void FrameCadenceAdapterImpl::OnConstraintsChanged(
   }));
 }
 
-void FrameCadenceAdapterImpl::OnFrameOnMainQueue(
-    Timestamp post_time,
-    int frames_scheduled_for_processing,
-    const VideoFrame& frame) {
+void FrameCadenceAdapterImpl::OnFrameOnMainQueue(Timestamp post_time,
+                                                 bool queue_overload,
+                                                 const VideoFrame& frame) {
   RTC_DCHECK_RUN_ON(queue_);
-  current_adapter_mode_->OnFrame(post_time, frames_scheduled_for_processing,
-                                 frame);
+  current_adapter_mode_->OnFrame(post_time, queue_overload, frame);
+  if (last_incoming_frame_timestamp_ &&
+      last_incoming_frame_timestamp_ >=
+          Timestamp::Micros(frame.timestamp_us())) {
+    RTC_LOG(LS_ERROR)
+        << "Incoming frame timestamp is not monotonically increasing"
+        << " current: " << frame.timestamp_us()
+        << " last: " << last_incoming_frame_timestamp_.value().us();
+    incoming_frame_timestamp_monotonically_increasing_ = false;
+  }
+  last_incoming_frame_timestamp_ = Timestamp::Micros(frame.timestamp_us());
+  Timestamp update_frame_rate_timestamp =
+      use_video_frame_timestamp_ ? *last_incoming_frame_timestamp_ : post_time;
+  UpdateFrameRate(update_frame_rate_timestamp);
 }
 
 bool FrameCadenceAdapterImpl::IsZeroHertzScreenshareEnabled() const {
   RTC_DCHECK_RUN_ON(queue_);
-  return zero_hertz_screenshare_enabled_ && source_constraints_.has_value() &&
+  return source_constraints_.has_value() &&
          source_constraints_->max_fps.value_or(-1) > 0 &&
          source_constraints_->min_fps.value_or(-1) == 0 &&
          zero_hertz_params_.has_value();
+}
+
+void FrameCadenceAdapterImpl::ConfigureCurrentAdapterWithoutZeroHertz() {
+  // Enable VSyncEncodeAdapterMode if metronome is valid.
+  if (metronome_) {
+    RTC_CHECK(vsync_encode_adapter_);
+    current_adapter_mode_ = vsync_encode_adapter_.get();
+  } else {
+    RTC_CHECK(passthrough_adapter_);
+    current_adapter_mode_ = &passthrough_adapter_.value();
+  }
 }
 
 void FrameCadenceAdapterImpl::MaybeReconfigureAdapters(
@@ -727,18 +1034,27 @@ void FrameCadenceAdapterImpl::MaybeReconfigureAdapters(
   RTC_DCHECK_RUN_ON(queue_);
   bool is_zero_hertz_enabled = IsZeroHertzScreenshareEnabled();
   if (is_zero_hertz_enabled) {
-    if (!was_zero_hertz_enabled) {
-      zero_hertz_adapter_.emplace(queue_, clock_, callback_,
-                                  source_constraints_->max_fps.value());
-      RTC_LOG(LS_INFO) << "Zero hertz mode activated.";
+    bool max_fps_has_changed = GetInputFrameRateFps().value_or(-1) !=
+                               source_constraints_->max_fps.value_or(-1);
+    if (!was_zero_hertz_enabled || max_fps_has_changed) {
+      RTC_LOG(LS_INFO) << "Zero hertz mode enabled (max_fps="
+                       << source_constraints_->max_fps.value() << ")";
+      zero_hertz_adapter_.emplace(
+          queue_, clock_, callback_, source_constraints_->max_fps.value(),
+          frames_scheduled_for_processing_,
+          frame_cadence_adapter_zero_hertz_queue_overload_enabled_);
+      zero_hertz_adapter_->UpdateVideoSourceRestrictions(
+          restricted_max_frame_rate_);
       zero_hertz_adapter_created_timestamp_ = clock_->CurrentTime();
     }
     zero_hertz_adapter_->ReconfigureParameters(zero_hertz_params_.value());
     current_adapter_mode_ = &zero_hertz_adapter_.value();
   } else {
-    if (was_zero_hertz_enabled)
+    if (was_zero_hertz_enabled) {
       zero_hertz_adapter_ = absl::nullopt;
-    current_adapter_mode_ = &passthrough_adapter_.value();
+      RTC_LOG(LS_INFO) << "Zero hertz mode disabled.";
+    }
+    ConfigureCurrentAdapterWithoutZeroHertz();
   }
 }
 
@@ -747,8 +1063,11 @@ void FrameCadenceAdapterImpl::MaybeReconfigureAdapters(
 std::unique_ptr<FrameCadenceAdapterInterface>
 FrameCadenceAdapterInterface::Create(Clock* clock,
                                      TaskQueueBase* queue,
+                                     Metronome* metronome,
+                                     TaskQueueBase* worker_queue,
                                      const FieldTrialsView& field_trials) {
-  return std::make_unique<FrameCadenceAdapterImpl>(clock, queue, field_trials);
+  return std::make_unique<FrameCadenceAdapterImpl>(clock, queue, metronome,
+                                                   worker_queue, field_trials);
 }
 
 }  // namespace webrtc

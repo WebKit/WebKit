@@ -36,7 +36,10 @@ VideoFullscreenCaptions::~VideoFullscreenCaptions() = default;
 
 void VideoFullscreenCaptions::setTrackRepresentationImage(PlatformImagePtr textTrack)
 {
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
     [m_captionsLayer setContents:(__bridge id)textTrack.get()];
+    [CATransaction commit];
 }
 
 void VideoFullscreenCaptions::setTrackRepresentationContentsScale(float scale)

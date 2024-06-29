@@ -74,7 +74,7 @@ static angle::Result ValidateStateHelperGetIntegerv(const gl::Context *context,
     {
         WARN() << localName << " (" << localValue << ") != " << driverName << " (" << queryValue
                << ")";
-        // Re-add ASSERT: http://anglebug.com/3900
+        // Re-add ASSERT: http://anglebug.com/42262547
         // ASSERT(false);
     }
 
@@ -96,7 +96,7 @@ static angle::Result ValidateStateHelperGetVertexAttribiv(const gl::Context *con
     {
         WARN() << localName << "[" << index << "] (" << localValue << ") != " << driverName << "["
                << index << "] (" << queryValue << ")";
-        // Re-add ASSERT: http://anglebug.com/3900
+        // Re-add ASSERT: http://anglebug.com/42262547
         // ASSERT(false);
     }
 
@@ -1061,7 +1061,7 @@ angle::Result VertexArrayGL::validateState(const gl::Context *context) const
     {
         WARN() << "mNativeState->attributes.size() (" << mNativeState->attributes.size()
                << ") > GL_MAX_VERTEX_ATTRIBS (" << queryValue << ")";
-        // Re-add ASSERT: http://anglebug.com/3900
+        // Re-add ASSERT: http://anglebug.com/42262547
         // ASSERT(false);
     }
 

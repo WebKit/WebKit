@@ -44,7 +44,7 @@ class ScriptExecutionContext;
 class ClipboardItemBindingsDataSource : public ClipboardItemDataSource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ClipboardItemBindingsDataSource(ClipboardItem&, Vector<KeyValuePair<String, RefPtr<DOMPromise>>>&&);
+    ClipboardItemBindingsDataSource(ClipboardItem&, Vector<KeyValuePair<String, Ref<DOMPromise>>>&&);
     ~ClipboardItemBindingsDataSource();
 
 private:
@@ -99,7 +99,7 @@ private:
     Vector<Ref<ClipboardItemTypeLoader>> m_itemTypeLoaders;
     WeakPtr<Clipboard, WeakPtrImplWithEventTargetData> m_writingDestination;
 
-    Vector<KeyValuePair<String, RefPtr<DOMPromise>>> m_itemPromises;
+    Vector<KeyValuePair<String, Ref<DOMPromise>>> m_itemPromises;
 };
 
 } // namespace WebCore

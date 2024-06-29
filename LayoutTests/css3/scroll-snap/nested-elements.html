@@ -63,11 +63,7 @@
             debug("Scroll-snap offsets for 'container': " + window.internals.scrollSnapOffsets(container));
 
             var invalidContainer = document.getElementById('invalidContainer');
-            try {
-                testFailed("Scroll-snap offsets for 'invalidContainer': " + window.internals.scrollSnapOffsets(invalidContainer));
-            } catch(ex) {
-                testPassed("Scroll-snap offsets for 'invalidContainer': UNDEFINED");
-            }
+            debug("Scroll-snap offsets for 'invalidContainer': " + window.internals.scrollSnapOffsets(invalidContainer));
 
             finishJSTest();
         }

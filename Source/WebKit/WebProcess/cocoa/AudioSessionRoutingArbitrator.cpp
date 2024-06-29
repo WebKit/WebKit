@@ -30,7 +30,6 @@
 
 #include "AudioSessionRoutingArbitratorProxy.h"
 #include "AudioSessionRoutingArbitratorProxyMessages.h"
-#include "WebConnectionToUIProcess.h"
 #include "WebProcess.h"
 #include <wtf/LoggerHelper.h>
 

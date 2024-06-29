@@ -128,7 +128,7 @@ void WebExtensionMessagePort::sendMessage(id message, CompletionHandler<void(Err
         return;
     }
 
-    if (!isValidJSONObject(message, JSONOptions::FragmentsAllowed)) {
+    if (message && !isValidJSONObject(message, JSONOptions::FragmentsAllowed)) {
         completionHandler({ { ErrorType::MessageInvalid, std::nullopt } });
         return;
     }

@@ -51,6 +51,7 @@
 #include <wtf/cocoa/Entitlements.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &m_connectionProxy->connection())
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, &m_connectionProxy->connection(), completion)
 
 namespace WebKit {
 class UserMediaCaptureManagerProxySourceProxy;
@@ -141,11 +142,16 @@ public:
     void setShouldApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = true; }
     void setIsInBackground(bool value) { m_source->setIsInBackground(value); }
 
+    bool isPowerEfficient()
+    {
+        return m_source->isPowerEfficient();
+    }
+
     bool updateVideoConstraints(const WebCore::MediaConstraints& constraints)
     {
         m_videoConstraints = constraints;
 
-        auto resultingConstraints = m_source->extractVideoFrameSizeConstraints(constraints);
+        auto resultingConstraints = m_source->extractVideoPresetConstraints(constraints);
 
         bool didChange = false;
         if (resultingConstraints.width) {
@@ -552,13 +558,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
             return;
         }
 
-        proxy->source().whenReady([completionHandler = WTFMove(completionHandler), proxy = WeakPtr { *proxy }] (auto&& error) mutable {
-            if (!!error || !proxy) {
-                completionHandler(error, { }, { });
-                return;
-            }
-            completionHandler({ }, proxy->settings(), proxy->source().capabilities());
-        });
+        completionHandler({ }, proxy->settings(), proxy->source().capabilities());
         m_proxies.add(id, WTFMove(proxy));
     };
 
@@ -566,6 +566,10 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         completeSetup(WTFMove(proxy), id, WTFMove(completionHandler));
         return;
     }
+
+    MESSAGE_CHECK_COMPLETION(constraints->mandatoryConstraints.isValid(), completionHandler({ "Invalid mandatoryConstraints"_s, WebCore::MediaAccessDenialReason::InvalidConstraint }, { }, { }));
+    for (const auto& advancedConstraint : constraints->advancedConstraints)
+        MESSAGE_CHECK_COMPLETION(advancedConstraint.isValid(), completionHandler({ "Invalid advancedConstraints"_s, WebCore::MediaAccessDenialReason::InvalidConstraint }, { }, { }));
 
     proxy->applyConstraints(WTFMove(mediaConstraints), [proxy = WTFMove(proxy), id, completionHandler = WTFMove(completionHandler), completeSetup = WTFMove(completeSetup)](auto&& error) mutable {
         if (error) {
@@ -591,15 +595,15 @@ void UserMediaCaptureManagerProxy::startProducingData(RealtimeMediaSourceIdentif
 #if ENABLE(APP_PRIVACY_REPORT)
     m_connectionProxy->setTCCIdentity();
 #endif
-#if ENABLE(EXTENSION_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     bool hasValidMediaEnvironmentOrIdentity = m_connectionProxy->setCurrentMediaEnvironment(pageIdentifier) || RealtimeMediaSourceCenter::singleton().hasIdentity();
-    if (PlatformMediaSessionManager::mediaCapabilityGrantsEnabled() && !hasValidMediaEnvironmentOrIdentity && proxy->source().deviceType() == CaptureDevice::DeviceType::Camera
+    if (!hasValidMediaEnvironmentOrIdentity && proxy->source().deviceType() == CaptureDevice::DeviceType::Camera
         && WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s)) {
         RELEASE_LOG_ERROR(WebRTC, "Unable to set media environment, failing capture.");
         proxy->source().captureFailed();
         return;
     }
-#endif
+#endif // ENABLE(EXTENSION_CAPABILITIES) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     m_connectionProxy->startProducingData(proxy->source().deviceType());
     proxy->start();
 }
@@ -630,6 +634,10 @@ void UserMediaCaptureManagerProxy::applyConstraints(RealtimeMediaSourceIdentifie
         m_connectionProxy->connection().send(Messages::UserMediaCaptureManager::ApplyConstraintsFailed(id, { }, "Unknown source"_s), 0);
         return;
     }
+
+    MESSAGE_CHECK(constraints.mandatoryConstraints.isValid());
+    for (const auto& advancedConstraint : constraints.advancedConstraints)
+        MESSAGE_CHECK(advancedConstraint.isValid());
 
     proxy->applyConstraints(WTFMove(constraints), [this, weakThis = WeakPtr { *this }, id, proxy](auto&& result) {
 
@@ -718,6 +726,12 @@ void UserMediaCaptureManagerProxy::setIsInBackground(RealtimeMediaSourceIdentifi
         proxy->setIsInBackground(isInBackground);
 }
 
+void UserMediaCaptureManagerProxy::isPowerEfficient(WebCore::RealtimeMediaSourceIdentifier sourceID, CompletionHandler<void(bool)>&& callback)
+{
+    auto* proxy = m_proxies.get(sourceID);
+    callback(proxy ? proxy->isPowerEfficient() : false);
+}
+
 void UserMediaCaptureManagerProxy::clear()
 {
     m_proxies.clear();
@@ -742,6 +756,7 @@ bool UserMediaCaptureManagerProxy::hasSourceProxies() const
 
 }
 
+#undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK
 
 #endif

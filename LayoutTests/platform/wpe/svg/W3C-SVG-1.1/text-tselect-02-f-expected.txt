@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 176x18
             chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 26 width 175.80: "StartIndex: 0. NumChars: 9"
         RenderSVGText {text} at (10,85) size 380x54 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 380x54
+          RenderSVGInlineText {#text} at (0,0) size 380x53
             chunk 1 text run 1 at (10.00,128.00) startOffset 0 endOffset 4 width 79.20: "abc "
             chunk 1 text run 1 at (89.20,128.00) startOffset 0 endOffset 4 width 74.40 RTL: " \x{5D3}\x{5D4}\x{5D5}"
             chunk 1 text run 1 at (163.60,128.00) startOffset 0 endOffset 3 width 72.00: "123"
@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
             RenderSVGInlineText {#text} at (0,0) size 77x18
               chunk 1 (middle anchor) text run 1 at (351.90,175.00) startOffset 0 endOffset 10 width 76.20: "numChars--"
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 264x45
+      RenderSVGInlineText {#text} at (0,0) size 264x44
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.40: "$Revision: 1.2 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
 selection start: position 3 of child 0 {#text} of child 3 {text} of child 3 {g} of child 35 {g} of child 1 {svg} of document

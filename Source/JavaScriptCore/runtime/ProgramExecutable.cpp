@@ -119,9 +119,6 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
         // Check if any new "let"/"const"/"class" will shadow any pre-existing global property names (with configurable = false), or "var"/"let"/"const" variables.
         // It's an error to introduce a shadow.
         for (auto& entry : lexicalDeclarations) {
-            if (globalObject->hasVarDeclaration(entry.key))
-                return createErrorForDuplicateGlobalVariableDeclaration(globalObject, entry.key.get());
-
             if (hasGlobalLexicalDeclarations) {
                 bool hasProperty = globalLexicalEnvironment->hasProperty(globalObject, entry.key.get());
                 throwScope.assertNoExceptionExceptTermination();

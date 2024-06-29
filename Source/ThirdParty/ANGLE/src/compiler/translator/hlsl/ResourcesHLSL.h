@@ -147,8 +147,8 @@ class ResourcesHLSL : angle::NonCopyable
     std::map<std::string, unsigned int> mShaderStorageBlockRegisterMap;
     std::map<std::string, unsigned int> mUniformRegisterMap;
     std::map<std::string, bool> mUniformBlockUseStructuredBufferMap;
-    unsigned int mReadonlyImage2DRegisterIndex;
-    unsigned int mImage2DRegisterIndex;
+    unsigned int mReadonlyImage2DRegisterIndex = 0;
+    unsigned int mImage2DRegisterIndex         = 0;
 };
 }  // namespace sh
 

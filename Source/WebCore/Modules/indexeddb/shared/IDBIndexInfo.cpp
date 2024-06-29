@@ -62,12 +62,12 @@ String IDBIndexInfo::loggingString(int indent) const
     StringBuilder indentString;
     for (int i = 0; i < indent; ++i)
         indentString.append(' ');
-    return makeString(indentString.toString(), "Index: ", m_name, " (", m_identifier, ") keyPath: ", WebCore::loggingString(m_keyPath), '\n');
+    return makeString(indentString.toString(), "Index: "_s, m_name, " ("_s, m_identifier, ") keyPath: "_s, WebCore::loggingString(m_keyPath), '\n');
 }
 
 String IDBIndexInfo::condensedLoggingString() const
 {
-    return makeString("<Idx: ", m_name, " (", m_identifier, "), OS (", m_objectStoreIdentifier, ")>");
+    return makeString("<Idx: "_s, m_name, " ("_s, m_identifier, "), OS ("_s, m_objectStoreIdentifier, ")>"_s);
 }
 
 #endif

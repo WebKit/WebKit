@@ -34,6 +34,7 @@
 #include "DisplayLinkObserverID.h"
 #include "DownloadID.h"
 #include "DrawingAreaInfo.h"
+#include "GPUProcessConnectionIdentifier.h"
 #include "GeneratedSerializers.h"
 #include "GeolocationIdentifier.h"
 #include "GraphicsContextGLIdentifier.h"
@@ -71,10 +72,14 @@
 #include "RemoteLegacyCDMSessionIdentifier.h"
 #endif
 #include "RemoteMediaResourceIdentifier.h"
+#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 #include "RemoteMediaSourceIdentifier.h"
+#endif
 #include "RemoteRemoteCommandListenerIdentifier.h"
 #include "RemoteSerializedImageBufferIdentifier.h"
+#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 #include "RemoteSourceBufferIdentifier.h"
+#endif
 #include "RemoteVideoFrameIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include "RenderingUpdateID.h"
@@ -120,6 +125,7 @@
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/LibWebRTCSocketIdentifier.h>
 #include <WebCore/MediaKeySystemRequestIdentifier.h>
+#include <WebCore/MediaPlayerClientIdentifier.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/MediaUniqueIdentifier.h>
@@ -483,6 +489,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebCore::LayerHostingContextIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::LibWebRTCSocketIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::MediaKeySystemRequestIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::MediaPlayerClientIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::MediaPlayerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::MediaSessionIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::ModelPlayerIdentifier));
@@ -525,6 +532,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::DownloadID));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::DrawingAreaIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::GeolocationIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::GPUProcessConnectionIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::GraphicsContextGLIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::IPCConnectionTesterIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::IPCStreamTesterIdentifier));
@@ -559,10 +567,14 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteLegacyCDMSessionIdentifier));
 #endif
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteMediaResourceIdentifier));
+#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteMediaSourceIdentifier));
+#endif
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteRemoteCommandListenerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteSerializedImageBufferIdentifier));
+#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteSourceBufferIdentifier));
+#endif
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteVideoFrameIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RenderingBackendIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RenderingUpdateID));
@@ -620,6 +632,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::LayerHostingContextIdentifier"_s,
         "WebCore::LibWebRTCSocketIdentifier"_s,
         "WebCore::MediaKeySystemRequestIdentifier"_s,
+        "WebCore::MediaPlayerClientIdentifier"_s,
         "WebCore::MediaPlayerIdentifier"_s,
         "WebCore::MediaSessionIdentifier"_s,
         "WebCore::ModelPlayerIdentifier"_s,
@@ -662,6 +675,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::DownloadID"_s,
         "WebKit::DrawingAreaIdentifier"_s,
         "WebKit::GeolocationIdentifier"_s,
+        "WebKit::GPUProcessConnectionIdentifier"_s,
         "WebKit::GraphicsContextGLIdentifier"_s,
         "WebKit::IPCConnectionTesterIdentifier"_s,
         "WebKit::IPCStreamTesterIdentifier"_s,
@@ -696,10 +710,14 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::RemoteLegacyCDMSessionIdentifier"_s,
 #endif
         "WebKit::RemoteMediaResourceIdentifier"_s,
+#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
         "WebKit::RemoteMediaSourceIdentifier"_s,
+#endif
         "WebKit::RemoteRemoteCommandListenerIdentifier"_s,
         "WebKit::RemoteSerializedImageBufferIdentifier"_s,
+#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
         "WebKit::RemoteSourceBufferIdentifier"_s,
+#endif
         "WebKit::RemoteVideoFrameIdentifier"_s,
         "WebKit::RenderingBackendIdentifier"_s,
         "WebKit::RenderingUpdateID"_s,

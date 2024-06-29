@@ -1211,7 +1211,7 @@ TEST_P(MultiviewRenderTest, AttribDivisor)
     ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     // Looks like an incorrect D3D debug layer message is generated on Windows AMD and NVIDIA.
-    // May be specific to Windows 7 / Windows Server 2008. http://anglebug.com/2778
+    // May be specific to Windows 7 / Windows Server 2008. http://anglebug.com/42261480
     if (IsWindows() && IsD3D11())
     {
         ignoreD3D11SDKLayersWarnings();
@@ -1836,7 +1836,7 @@ TEST_P(MultiviewRenderPrimitiveTest, LineLoop)
         return;
     }
     // Only this subtest fails on intel-hd-630-ubuntu-stable. Driver bug?
-    // https://anglebug.com/3472
+    // https://anglebug.com/42262137
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
     ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
@@ -1943,7 +1943,7 @@ TEST_P(MultiviewRenderTest, ProgramRelinkUpdatesAttribDivisor)
     }
 
     // Looks like an incorrect D3D debug layer message is generated on Windows AMD and NVIDIA.
-    // May be specific to Windows 7 / Windows Server 2008. http://anglebug.com/2778
+    // May be specific to Windows 7 / Windows Server 2008. http://anglebug.com/42261480
     if (IsWindows() && IsD3D11())
     {
         ignoreD3D11SDKLayersWarnings();
@@ -2091,7 +2091,7 @@ TEST_P(MultiviewRenderTest, DivisorUpdatedOnProgramChange)
     ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     // Looks like an incorrect D3D debug layer message is generated on Windows / AMD.
-    // May be specific to Windows 7 / Windows Server 2008. http://anglebug.com/2778
+    // May be specific to Windows 7 / Windows Server 2008. http://anglebug.com/42261480
     if (IsWindows() && IsD3D11())
     {
         ignoreD3D11SDKLayersWarnings();

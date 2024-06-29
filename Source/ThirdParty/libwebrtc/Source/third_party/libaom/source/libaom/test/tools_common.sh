@@ -312,7 +312,11 @@ run_tests() {
   # Combine environment and actual tests.
   local tests_to_run="${env_tests} ${tests_to_filter}"
 
-  check_version_strings
+  # av1_c_vs_simd_encode is a standalone test, and it doesn't need to check the
+  # version string.
+  if [ "${test_name}" != "av1_c_vs_simd_encode" ]; then
+    check_version_strings
+  fi
 
   # Run tests.
   for test in ${tests_to_run}; do
@@ -464,6 +468,8 @@ fi
 
 AOM_TEST_PRESERVE_OUTPUT=${AOM_TEST_PRESERVE_OUTPUT:-no}
 
+# This checking requires config/aom_config.c that is available in Jenkins
+# testing.
 if [ "$(is_windows_target)" = "yes" ]; then
   AOM_TEST_EXE_SUFFIX=".exe"
 fi

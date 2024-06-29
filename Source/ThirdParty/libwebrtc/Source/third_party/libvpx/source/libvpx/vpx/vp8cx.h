@@ -166,6 +166,7 @@ enum vp8e_enc_control_id {
    *
    * \note Valid range for VP8: -16..16
    * \note Valid range for VP9: -9..9
+   * \note A negative value (-n) is treated as its absolute value (n) in VP9.
    *
    * Supported in codecs: VP8, VP9
    */
@@ -768,17 +769,15 @@ enum vp8e_enc_control_id {
    */
   VP9E_SET_QUANTIZER_ONE_PASS,
 
-  /*!\brief Codec control to get TPL stats for the current GOP.
+  /*!\brief Codec control to use external RC to control TPL.
    *
-   * Allocation and free of memory of size MAX_ARF_GOP_SIZE (50) *
-   * sizeof(VpxTplFrameStats) should be done by applications.
-   *
-   * VPX_CODEC_INVALID_PARAM will be returned if the pointer passed in is NULL.
+   * This will use external RC to control the QP and GOP structure for TPL.
+   * (rc_type & VPX_RC_QP) in vpx_rc_funcs_t must be non zero.
+   * get_encodeframe_decision callback in vpx_rc_funcs_t also needs to be set.
    *
    * Supported in codecs: VP9
-   *
    */
-  VP9E_GET_TPL_STATS,
+  VP9E_ENABLE_EXTERNAL_RC_TPL,
 };
 
 /*!\brief vpx 1-D scaling mode
@@ -1109,8 +1108,8 @@ VPX_CTRL_USE_TYPE(VP8E_SET_RTC_EXTERNAL_RATECTRL, int)
 #define VPX_CTRL_VP8E_SET_RTC_EXTERNAL_RATECTRL
 VPX_CTRL_USE_TYPE(VP9E_SET_QUANTIZER_ONE_PASS, int)
 #define VPX_CTRL_VP9E_SET_QUANTIZER_ONE_PASS
-VPX_CTRL_USE_TYPE(VP9E_GET_TPL_STATS, void *)
-#define VPX_CTRL_VP9E_GET_TPL_STATS
+VPX_CTRL_USE_TYPE(VP9E_ENABLE_EXTERNAL_RC_TPL, int)
+#define VPX_CTRL_VP9E_ENABLE_EXTERNAL_RC_TPL
 
 /*!\endcond */
 /*! @} - end defgroup vp8_encoder */

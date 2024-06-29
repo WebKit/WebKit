@@ -31,7 +31,7 @@ typedef [EnforceRange] unsigned long long GPUSize64;
 
 [
     EnabledBySetting=WebGPUEnabled,
-    Exposed=(Window,DedicatedWorker),
+    Exposed=(Window,Worker),
     SecureContext
 ]
 interface GPUComputePassEncoder {

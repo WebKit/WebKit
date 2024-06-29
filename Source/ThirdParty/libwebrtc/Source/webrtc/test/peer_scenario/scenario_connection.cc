@@ -25,7 +25,8 @@ class ScenarioIceConnectionImpl : public ScenarioIceConnection,
                                   private JsepTransportController::Observer,
                                   private RtpPacketSinkInterface {
  public:
-  ScenarioIceConnectionImpl(test::NetworkEmulationManagerImpl* net,
+  ScenarioIceConnectionImpl(const Environment& env,
+                            test::NetworkEmulationManagerImpl* net,
                             IceConnectionObserver* observer);
   ~ScenarioIceConnectionImpl() override;
 
@@ -73,12 +74,14 @@ class ScenarioIceConnectionImpl : public ScenarioIceConnection,
 };
 
 std::unique_ptr<ScenarioIceConnection> ScenarioIceConnection::Create(
+    const Environment& env,
     webrtc::test::NetworkEmulationManagerImpl* net,
     IceConnectionObserver* observer) {
-  return std::make_unique<ScenarioIceConnectionImpl>(net, observer);
+  return std::make_unique<ScenarioIceConnectionImpl>(env, net, observer);
 }
 
 ScenarioIceConnectionImpl::ScenarioIceConnectionImpl(
+    const Environment& env,
     test::NetworkEmulationManagerImpl* net,
     IceConnectionObserver* observer)
     : observer_(observer),
@@ -100,7 +103,8 @@ ScenarioIceConnectionImpl::ScenarioIceConnectionImpl(
           new cricket::BasicPortAllocator(manager_->network_manager(),
                                           manager_->packet_socket_factory())),
       jsep_controller_(
-          new JsepTransportController(network_thread_,
+          new JsepTransportController(env,
+                                      network_thread_,
                                       port_allocator_.get(),
                                       /*async_resolver_factory*/ nullptr,
                                       CreateJsepConfig())) {
@@ -135,7 +139,6 @@ JsepTransportController::Config ScenarioIceConnectionImpl::CreateJsepConfig() {
     RTC_DCHECK_RUN_ON(network_thread_);
     observer_->OnPacketReceived(packet);
   };
-  config.field_trials = &field_trials;
   return config;
 }
 
@@ -173,21 +176,14 @@ void ScenarioIceConnectionImpl::SetRemoteSdp(SdpType type,
       });
 
   auto res = jsep_controller_->SetRemoteDescription(
-      remote_description_->GetType(), remote_description_->description());
+      remote_description_->GetType(),
+      local_description_ ? local_description_->description() : nullptr,
+      remote_description_->description());
   RTC_CHECK(res.ok()) << res.message();
   RtpDemuxerCriteria criteria;
   for (const auto& content : remote_description_->description()->contents()) {
-    if (content.media_description()->as_audio()) {
-      for (const auto& codec :
-           content.media_description()->as_audio()->codecs()) {
-        criteria.payload_types().insert(codec.id);
-      }
-    }
-    if (content.media_description()->as_video()) {
-      for (const auto& codec :
-           content.media_description()->as_video()->codecs()) {
-        criteria.payload_types().insert(codec.id);
-      }
+    for (const auto& codec : content.media_description()->codecs()) {
+      criteria.payload_types().insert(codec.id);
     }
   }
 
@@ -203,7 +199,8 @@ void ScenarioIceConnectionImpl::SetLocalSdp(SdpType type,
   RTC_DCHECK_RUN_ON(signaling_thread_);
   local_description_ = webrtc::CreateSessionDescription(type, local_sdp);
   auto res = jsep_controller_->SetLocalDescription(
-      local_description_->GetType(), local_description_->description());
+      local_description_->GetType(), local_description_->description(),
+      remote_description_ ? remote_description_->description() : nullptr);
   RTC_CHECK(res.ok()) << res.message();
   jsep_controller_->MaybeStartGathering();
 }

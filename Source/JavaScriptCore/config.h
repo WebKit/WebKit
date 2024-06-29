@@ -41,11 +41,3 @@
 #endif
 
 #include <wtf/DisallowCType.h>
-
-/* Disabling warning C4206: nonstandard extension used: translation unit is empty.
-   By design, we rely on #define flags to make some translation units empty.
-   Make sure this warning does not turn into an error.
-*/
-#if COMPILER(MSVC)
-#pragma warning(disable:4206)
-#endif

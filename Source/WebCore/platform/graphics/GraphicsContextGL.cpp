@@ -37,6 +37,7 @@
 #include "HostWindow.h"
 #include "Image.h"
 #include "ImageObserver.h"
+#include "NotImplemented.h"
 #include "PixelBuffer.h"
 #include "VideoFrame.h"
 
@@ -571,6 +572,11 @@ GCGLint GraphicsContextGL::getInternalformati(GCGLenum target, GCGLenum internal
     return value[0];
 }
 
+void GraphicsContextGL::framebufferDiscard(GCGLenum, std::span<const GCGLenum>)
+{
+    notImplemented();
+}
+
 void GraphicsContextGL::setDrawingBufferColorSpace(const DestinationColorSpace&)
 {
 }
@@ -616,7 +622,7 @@ void GraphicsContextGL::forceContextLost()
 RefPtr<Image> GraphicsContextGL::videoFrameToImage(VideoFrame& frame)
 {
     IntSize size { static_cast<int>(frame.presentationSize().width()), static_cast<int>(frame.presentationSize().height()) };
-    auto imageBuffer = ImageBuffer::create(size, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(size, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
     if (!imageBuffer)
         return { };
     imageBuffer->context().paintVideoFrame(frame, { { }, size }, true);

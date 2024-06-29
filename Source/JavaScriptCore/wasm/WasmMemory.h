@@ -93,9 +93,9 @@ public:
 
     void registerInstance(Instance&);
 
-    void check() {  ASSERT(!deletionHasBegun()); }
+    void checkLifetime() { ASSERT(!deletionHasBegun()); }
 
-    static ptrdiff_t offsetOfHandle() { return OBJECT_OFFSETOF(Memory, m_handle); }
+    static constexpr ptrdiff_t offsetOfHandle() { return OBJECT_OFFSETOF(Memory, m_handle); }
 
     SharedArrayBufferContents* shared() const { return m_shared.get(); }
 

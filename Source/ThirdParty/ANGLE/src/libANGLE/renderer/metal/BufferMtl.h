@@ -184,6 +184,11 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
         const mtl::BufferRef clientBuffer);
 
   private:
+    angle::Result allocateNewMetalBuffer(ContextMtl *contextMtl,
+                                         MTLStorageMode storageMode,
+                                         size_t size,
+                                         bool returnOldBufferImmediately);
+
     angle::Result setDataImpl(const gl::Context *context,
                               gl::BufferBinding target,
                               const void *data,

@@ -18,12 +18,12 @@
 
 #include "absl/strings/string_view.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/test/pclf/media_configuration.h"
 #include "api/test/pclf/media_quality_test_params.h"
 #include "api/test/pclf/peer_configurer.h"
 #include "api/test/time_controller.h"
 #include "modules/audio_device/include/test_audio_device.h"
-#include "rtc_base/task_queue.h"
 #include "test/pc/e2e/analyzer/video/video_quality_analyzer_injection_helper.h"
 #include "test/pc/e2e/test_peer.h"
 
@@ -55,7 +55,7 @@ class TestPeerFactory {
   TestPeerFactory(rtc::Thread* signaling_thread,
                   TimeController& time_controller,
                   VideoQualityAnalyzerInjectionHelper* video_analyzer_helper,
-                  rtc::TaskQueue* task_queue)
+                  TaskQueueBase* task_queue)
       : signaling_thread_(signaling_thread),
         time_controller_(time_controller),
         video_analyzer_helper_(video_analyzer_helper),
@@ -75,7 +75,7 @@ class TestPeerFactory {
   rtc::Thread* signaling_thread_;
   TimeController& time_controller_;
   VideoQualityAnalyzerInjectionHelper* video_analyzer_helper_;
-  rtc::TaskQueue* task_queue_;
+  TaskQueueBase* const task_queue_;
 };
 
 }  // namespace webrtc_pc_e2e

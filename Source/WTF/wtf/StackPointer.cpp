@@ -42,7 +42,7 @@ extern "C" __declspec(naked) void currentStackPointer()
     }
 }
 
-#elif CPU(X86) & COMPILER(GCC_COMPATIBLE)
+#elif CPU(X86)
 asm (
     ".text" "\n"
     ".globl " SYMBOL_STRING(currentStackPointer) "\n"
@@ -58,7 +58,20 @@ asm (
 // The Win64 port will use a hack where we define currentStackPointer in
 // LowLevelInterpreter.asm.
 
-#elif CPU(X86_64) && COMPILER(GCC_COMPATIBLE)
+asm (
+    ".text" "\n"
+    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
+    SYMBOL_STRING(currentStackPointer) ":" "\n"
+
+    "movq %rsp, %rax" "\n"
+    "addq $40, %rax" "\n" // Account for return address and shadow stack
+    "ret" "\n"
+
+    ".section .drectve" "\n"
+    ".ascii \"-export:currentStackPointer\"" "\n"
+);
+
+#elif CPU(X86_64)
 asm (
     ".text" "\n"
     ".globl " SYMBOL_STRING(currentStackPointer) "\n"
@@ -70,7 +83,7 @@ asm (
     ".previous" "\n"
 );
 
-#elif CPU(ARM64E) && COMPILER(GCC_COMPATIBLE)
+#elif CPU(ARM64E)
 asm (
     ".text" "\n"
     ".balign 16" "\n"
@@ -83,7 +96,7 @@ asm (
     ".previous" "\n"
 );
 
-#elif CPU(ARM64) && COMPILER(GCC_COMPATIBLE)
+#elif CPU(ARM64)
 asm (
     ".text" "\n"
     ".balign 16" "\n"
@@ -95,7 +108,7 @@ asm (
     ".previous" "\n"
 );
 
-#elif CPU(ARM_THUMB2) && COMPILER(GCC_COMPATIBLE)
+#elif CPU(ARM_THUMB2)
 asm (
     ".text" "\n"
     ".align 2" "\n"
@@ -109,7 +122,7 @@ asm (
     ".previous" "\n"
 );
 
-#elif CPU(MIPS) && COMPILER(GCC_COMPATIBLE)
+#elif CPU(MIPS)
 asm (
     ".text" "\n"
     ".globl " SYMBOL_STRING(currentStackPointer) "\n"
@@ -125,7 +138,7 @@ asm (
     ".previous" "\n"
 );
 
-#elif CPU(RISCV64) && COMPILER(GCC_COMPATIBLE)
+#elif CPU(RISCV64)
 asm (
     ".text" "\n"
     ".globl " SYMBOL_STRING(currentStackPointer) "\n"
@@ -136,7 +149,7 @@ asm (
      ".previous" "\n"
 );
 
-#elif CPU(LOONGARCH64) && COMPILER(GCC_COMPATIBLE)
+#elif CPU(LOONGARCH64)
 asm (
     ".text" "\n"
     ".globl " SYMBOL_STRING(currentStackPointer) "\n"
@@ -157,13 +170,7 @@ constexpr size_t sizeOfFrameHeader = 2 * sizeof(void*);
 SUPPRESS_ASAN NEVER_INLINE
 void* currentStackPointer()
 {
-#if COMPILER(GCC_COMPATIBLE)
     return reinterpret_cast<uint8_t*>(__builtin_frame_address(0)) + sizeOfFrameHeader;
-#else
-    // Make sure that sp is the only local variable declared in this function.
-    void* sp = reinterpret_cast<uint8_t*>(&sp) + sizeOfFrameHeader + sizeof(sp);
-    return sp;
-#endif
 }
 #endif // USE(GENERIC_CURRENT_STACK_POINTER)
 

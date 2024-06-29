@@ -609,7 +609,7 @@ TEST_P(WebGLCompatibilityTest, EnablePixelBufferObjectExtensions)
     // These extensions become core in in ES3/WebGL2.
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() >= 3);
 
-    // http://anglebug.com/5268
+    // http://anglebug.com/40644771
     ANGLE_SKIP_TEST_IF(IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
     GLBuffer buffer;
@@ -2750,7 +2750,7 @@ void main() {
 // Based on the WebGL test conformance/textures/misc/texture-copying-feedback-loops.html
 TEST_P(WebGLCompatibilityTest, TextureCopyingFeedbackLoops)
 {
-    // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
+    // TODO(anglebug.com/40096747): Failing on ARM-based Apple DTKs.
     ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     GLTexture texture;
@@ -2815,13 +2815,13 @@ TEST_P(WebGLCompatibilityTest, TextureCopyingFeedbackLoops)
 // framebuffer to mip 0, it is being redefined.
 TEST_P(WebGL2CompatibilityTest, CopyMip1ToMip0)
 {
-    // http://anglebug.com/4804
+    // http://anglebug.com/42263391
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
-    // http://anglebug.com/4805
+    // http://anglebug.com/42263392
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && (IsWindows() || IsMac()));
 
-    // TODO(anglebug.com/5360): Failing on ARM64-based Apple DTKs.
+    // TODO(anglebug.com/40096747): Failing on ARM64-based Apple DTKs.
     ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     GLFramebuffer framebuffer;
@@ -2856,10 +2856,10 @@ TEST_P(WebGL2CompatibilityTest, CopyMip1ToMip0)
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT,
                      glCheckFramebufferStatus(GL_FRAMEBUFFER));
 
-    // http://anglebug.com/4802
+    // http://anglebug.com/42263389
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsNVIDIA());
 
-    // http://anglebug.com/4803
+    // http://anglebug.com/42263390
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsMac());
 
     // Bind framebuffer to mip 0 and make sure the copy was done.
@@ -2875,7 +2875,7 @@ TEST_P(WebGL2CompatibilityTest, CopyMip1ToMip0)
 // framebuffer to mip 1, it is being redefined.
 TEST_P(WebGL2CompatibilityTest, CopyMip0ToMip1)
 {
-    // http://anglebug.com/4805
+    // http://anglebug.com/42263392
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
 
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsWindows());
@@ -3367,7 +3367,7 @@ TEST_P(WebGLCompatibilityTest, RGB32FTextures)
 
 TEST_P(WebGLCompatibilityTest, RGBA32FTextures)
 {
-    // http://anglebug.com/5357
+    // http://anglebug.com/42263897
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     constexpr float data[] = {7000.0f, 100.0f, 33.0f, -1.0f};
@@ -3673,7 +3673,7 @@ TEST_P(WebGLCompatibilityTest, HalfFloatBlend)
 
 TEST_P(WebGLCompatibilityTest, R16FTextures)
 {
-    // http://anglebug.com/5357
+    // http://anglebug.com/42263897
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     constexpr float readPixelsData[] = {-5000.0f, 0.0f, 0.0f, 1.0f};
@@ -3734,7 +3734,7 @@ TEST_P(WebGLCompatibilityTest, R16FTextures)
 
 TEST_P(WebGLCompatibilityTest, RG16FTextures)
 {
-    // http://anglebug.com/5357
+    // http://anglebug.com/42263897
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     constexpr float readPixelsData[] = {7108.0f, -10.0f, 0.0f, 1.0f};
@@ -3795,7 +3795,7 @@ TEST_P(WebGLCompatibilityTest, RG16FTextures)
 
 TEST_P(WebGLCompatibilityTest, RGB16FTextures)
 {
-    // http://anglebug.com/5357
+    // http://anglebug.com/42263897
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     ANGLE_SKIP_TEST_IF(IsOzone() && IsIntel());
@@ -3858,7 +3858,7 @@ TEST_P(WebGLCompatibilityTest, RGB16FTextures)
 
 TEST_P(WebGLCompatibilityTest, RGBA16FTextures)
 {
-    // http://anglebug.com/5357
+    // http://anglebug.com/42263897
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     ANGLE_SKIP_TEST_IF(IsOzone() && IsIntel());
@@ -5736,7 +5736,7 @@ TEST_P(WebGLCompatibilityTest, DrawWithNoProgram)
 // Ensures that rendering to different texture levels of a sampled texture is supported.
 TEST_P(WebGL2CompatibilityTest, RenderToLevelsOfSampledTexture)
 {
-    // TODO: Fix on Vulkan back-end. http://anglebug.com/4690
+    // TODO: Fix on Vulkan back-end. http://anglebug.com/40644733
     ANGLE_SKIP_TEST_IF(IsVulkan());
 
     constexpr GLsizei kTexSize   = 2;
@@ -6363,6 +6363,78 @@ void main() {
         drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
         ASSERT_GL_NO_ERROR();
     }
+}
+
+// Test that vertex conversion correctly no-ops when the vertex format requires conversion but there
+// are no vertices to convert.
+TEST_P(WebGLCompatibilityTest, ConversionWithNoVertices)
+{
+    constexpr char kVS[] = R"(precision highp float;
+attribute vec3 attr1;
+void main(void) {
+   gl_Position = vec4(attr1, 1.0);
+})";
+
+    constexpr char kFS[] = R"(precision highp float;
+void main(void) {
+   gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+})";
+
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    std::array<int8_t, 12> data = {
+        1,
+    };
+    glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(data[0]), data.data(), GL_STATIC_DRAW);
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glBindAttribLocation(program, 0, "attr1");
+    glLinkProgram(program);
+    ASSERT_TRUE(CheckLinkStatusAndReturnProgram(program, true));
+    glUseProgram(program);
+
+    // Set the offset of the attribute past the end of the buffer but use a format that requires
+    // conversion in Vulkan
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_BYTE, true, 128, reinterpret_cast<void *>(256));
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    // Either no error or invalid operation is okay.
+}
+
+// Tests that using an out of bounds draw offset with a dynamic array succeeds.
+TEST_P(WebGLCompatibilityTest, DynamicVertexArrayOffsetOutOfBounds)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    glUseProgram(program);
+
+    GLint posLoc = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_NE(-1, posLoc);
+
+    glEnableVertexAttribArray(posLoc);
+    GLBuffer buf;
+    glBindBuffer(GL_ARRAY_BUFFER, buf);
+    glVertexAttribPointer(posLoc, 4, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const void *>(500));
+    glBufferData(GL_ARRAY_BUFFER, 100, nullptr, GL_DYNAMIC_DRAW);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Either no error or invalid operation is okay.
+}
+
+// Covers situations where vertex conversion could read out of bounds.
+TEST_P(WebGL2CompatibilityTest, OutOfBoundsByteAttribute)
+{
+    ANGLE_GL_PROGRAM(testProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    glUseProgram(testProgram);
+
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, 2, nullptr, GL_STREAM_COPY);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_BYTE, false, 0xff, reinterpret_cast<const void *>(0xfe));
+
+    glDrawArraysInstanced(GL_TRIANGLE_STRIP, 1, 10, 1000);
 }
 
 // Test for a mishandling of instanced vertex attributes with zero-sized buffers bound on Apple

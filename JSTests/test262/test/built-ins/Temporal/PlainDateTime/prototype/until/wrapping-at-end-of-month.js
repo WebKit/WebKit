@@ -115,3 +115,25 @@ features: [Temporal]
     "Jan 31st 1970 to May 30th 1971 is 1 year, 3 months, 30 days, not 1 year, 2 months, 60 days"
   );
 }
+
+// Test that 1-day backoff to maintain date/time sign compatibility backs-off from correct end
+// while moving *backwards* in time and does not interfere with month boundaries
+// https://github.com/tc39/proposal-temporal/issues/2820
+{
+  TemporalHelpers.assertDuration(
+    new Temporal.PlainDateTime(2023, 2, 28, 3).until(new Temporal.PlainDateTime(2023, 4, 1, 2), { largestUnit: "years" }),
+    0, 1, 0, 3, 23, 0, 0, 0, 0, 0,
+    "Feb 28th (3am) to Apr 1st (2am) is 1 month, 3 days, and 23 hours"
+  );
+}
+
+// Test that 1-day backoff to maintain date/time sign compatibility backs-off from correct end
+// while moving *forwards* in time and does not interfere with month boundaries
+// https://github.com/tc39/proposal-temporal/issues/2820
+{
+  TemporalHelpers.assertDuration(
+    new Temporal.PlainDateTime(2023, 3, 1, 2).until(new Temporal.PlainDateTime(2023, 1, 1, 3), { largestUnit: "years" }),
+    0, -1, 0, -30, -23, 0, 0, 0, 0, 0,
+    "Mar 1st (2am) to Jan 1st (3am) is -1 month, -30 days, and -23 hours"
+  );
+}

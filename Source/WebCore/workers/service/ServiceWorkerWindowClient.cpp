@@ -74,12 +74,12 @@ void ServiceWorkerWindowClient::navigate(ScriptExecutionContext& context, const 
     auto url = context.completeURL(urlString);
 
     if (!url.isValid()) {
-        promise->reject(Exception { ExceptionCode::TypeError, makeString("URL string ", urlString, " cannot successfully be parsed") });
+        promise->reject(Exception { ExceptionCode::TypeError, makeString("URL string "_s, urlString, " cannot successfully be parsed"_s) });
         return;
     }
 
     if (url.protocolIsAbout()) {
-        promise->reject(Exception { ExceptionCode::TypeError, makeString("ServiceWorkerClients.navigate() cannot be called with URL ", url.string()) });
+        promise->reject(Exception { ExceptionCode::TypeError, makeString("ServiceWorkerClients.navigate() cannot be called with URL "_s, url.string()) });
         return;
     }
 

@@ -1,0 +1,76 @@
+spacer
+0 12 a1 34
+0 12 a1 a1 a1 345
+0 12 a1
+a1 345
+0 12 a1 a1 a1 345
+
+FAIL .target 1 assert_equals:
+<span class="target target1-pos" data-offset-x="30" data-offset-y="0" data-expected-width="20" data-expected-height="10"></span>
+width expected 20 but got 80
+FAIL .target 2 assert_equals:
+<span class="target target1-size" data-offset-x="30" data-offset-y="0" data-expected-width="20" data-expected-height="10"></span>
+width expected 20 but got 0
+FAIL .target 3 assert_equals:
+<span class="target target1-pos" data-offset-x="50" data-offset-y="10" data-expected-width="20" data-expected-height="10"></span>
+width expected 20 but got 100
+FAIL .target 4 assert_equals:
+<span class="target target1-size" data-offset-x="50" data-offset-y="10" data-expected-width="20" data-expected-height="10"></span>
+width expected 20 but got 0
+FAIL .target 5 assert_equals:
+<span class="target target1-pos" data-offset-x="50" data-offset-y="10" data-expected-width="20" data-expected-height="10"></span>
+width expected 20 but got 100
+FAIL .target 6 assert_equals:
+<span class="target target1-size" data-offset-x="50" data-offset-y="10" data-expected-width="20" data-expected-height="10"></span>
+width expected 20 but got 0
+FAIL .target 7 assert_equals:
+<span class="target target1-pos" data-offset-x="-20" data-offset-y="0" data-expected-width="100" data-expected-height="20"></span>
+width expected 100 but got 40
+FAIL .target 8 assert_equals:
+<span class="target target1-size" data-offset-x="-20" data-offset-y="0" data-expected-width="100" data-expected-height="20"></span>
+width expected 100 but got 0
+PASS .target 9
+FAIL .target 10 assert_equals:
+<span class="target target1-size" data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="20"></span>
+width expected 100 but got 0
+PASS .target 11
+FAIL .target 12 assert_equals:
+<span class="target target1-size" data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="20"></span>
+width expected 100 but got 0
+FAIL .target 13 assert_equals:
+<span class="target target1-pos" data-offset-x="-20" data-offset-y="0" data-expected-width="70" data-expected-height="20"></span>
+width expected 70 but got 40
+FAIL .target 14 assert_equals:
+<span class="target target1-size" data-offset-x="-20" data-offset-y="0" data-expected-width="70" data-expected-height="20"></span>
+width expected 70 but got 0
+FAIL .target 15 assert_equals:
+<span class="target target1-pos" data-offset-x="0" data-offset-y="0" data-expected-width="70" data-expected-height="20"></span>
+width expected 70 but got 100
+FAIL .target 16 assert_equals:
+<span class="target target1-size" data-offset-x="0" data-offset-y="0" data-expected-width="70" data-expected-height="20"></span>
+width expected 70 but got 0
+FAIL .target 17 assert_equals:
+<span class="target target1-pos" data-offset-x="0" data-offset-y="0" data-expected-width="70" data-expected-height="20"></span>
+width expected 70 but got 100
+FAIL .target 18 assert_equals:
+<span class="target target1-size" data-offset-x="0" data-offset-y="0" data-expected-width="70" data-expected-height="20"></span>
+width expected 70 but got 0
+FAIL .target 19 assert_equals:
+<span class="target target1-pos" data-offset-x="30" data-offset-y="-40" data-expected-width="80" data-expected-height="50"></span>
+width expected 80 but got 40
+FAIL .target 20 assert_equals:
+<span class="target target1-size" data-offset-x="30" data-offset-y="-40" data-expected-width="80" data-expected-height="50"></span>
+width expected 80 but got 0
+FAIL .target 21 assert_equals:
+<span class="target target1-pos" data-offset-x="160" data-offset-y="0" data-expected-width="80" data-expected-height="50"></span>
+width expected 80 but got 320
+FAIL .target 22 assert_equals:
+<span class="target target1-size" data-offset-x="160" data-offset-y="0" data-expected-width="80" data-expected-height="50"></span>
+width expected 80 but got 0
+FAIL .target 23 assert_equals:
+<span class="target target1-pos" data-offset-x="160" data-offset-y="0" data-expected-width="80" data-expected-height="50"></span>
+width expected 80 but got 320
+FAIL .target 24 assert_equals:
+<span class="target target1-size" data-offset-x="160" data-offset-y="0" data-expected-width="80" data-expected-height="50"></span>
+width expected 80 but got 0
+

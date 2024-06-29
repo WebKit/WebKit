@@ -10,7 +10,10 @@
 
 #include "test/test_main_lib.h"
 
+#include <cstddef>
+#include <cstdio>
 #include <fstream>
+#include <ios>
 #include <memory>
 #include <string>
 #include <vector>
@@ -18,6 +21,7 @@
 #include "absl/flags/flag.h"
 #include "absl/memory/memory.h"
 #include "absl/strings/match.h"
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/test/metrics/chrome_perf_dashboard_metrics_exporter.h"
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
@@ -38,6 +42,13 @@
 #include "test/test_flags.h"
 #include "test/testsupport/perf_test.h"
 #include "test/testsupport/resources_dir_flag.h"
+
+#if defined(RTC_USE_PERFETTO)
+#include "rtc_base/event_tracer.h"
+#include "third_party/perfetto/include/perfetto/tracing/backend_type.h"
+#include "third_party/perfetto/include/perfetto/tracing/tracing.h"
+#include "third_party/perfetto/protos/perfetto/config/trace_config.gen.h"
+#endif
 
 #if defined(WEBRTC_WIN)
 #include "rtc_base/win32_socket_init.h"
@@ -92,8 +103,7 @@ ABSL_FLAG(bool, verbose, false, "verbose logs to stderr");
 ABSL_FLAG(std::string,
           trace_event,
           "",
-          "Path to collect trace events (json file) for chrome://tracing. "
-          "If not set, events aren't captured.");
+          "Path to collect trace events. If not set, events aren't captured.");
 
 ABSL_FLAG(std::string,
           test_launcher_shard_index,
@@ -133,19 +143,6 @@ class TestMainImpl : public TestMain {
     rtc::LogMessage::SetLogToStderr(absl::GetFlag(FLAGS_logs) ||
                                     absl::GetFlag(FLAGS_verbose));
 
-    // The sharding arguments take precedence over the sharding environment
-    // variables.
-    if (!absl::GetFlag(FLAGS_test_launcher_shard_index).empty() &&
-        !absl::GetFlag(FLAGS_test_launcher_total_shards).empty()) {
-      std::string shard_index =
-          "GTEST_SHARD_INDEX=" + absl::GetFlag(FLAGS_test_launcher_shard_index);
-      std::string total_shards =
-          "GTEST_TOTAL_SHARDS=" +
-          absl::GetFlag(FLAGS_test_launcher_total_shards);
-      putenv(shard_index.data());
-      putenv(total_shards.data());
-    }
-
     // InitFieldTrialsFromString stores the char*, so the char array must
     // outlive the application.
     field_trials_ = absl::GetFlag(FLAGS_force_fieldtrials);
@@ -167,8 +164,7 @@ class TestMainImpl : public TestMain {
     std::string trace_event_path = absl::GetFlag(FLAGS_trace_event);
     const bool capture_events = !trace_event_path.empty();
     if (capture_events) {
-      rtc::tracing::SetupInternalTracer();
-      rtc::tracing::StartInternalCapture(trace_event_path);
+      StartTracingCapture(trace_event_path);
     }
 
     absl::optional<std::vector<std::string>> metrics_to_plot =
@@ -181,6 +177,18 @@ class TestMainImpl : public TestMain {
           (*metrics_to_plot)[0] == kPlotAllMetrics) {
         metrics_to_plot->clear();
       }
+    }
+    // The sharding arguments take precedence over the sharding environment
+    // variables.
+    if (!absl::GetFlag(FLAGS_test_launcher_shard_index).empty() &&
+        !absl::GetFlag(FLAGS_test_launcher_total_shards).empty()) {
+      std::string shard_index =
+          "GTEST_SHARD_INDEX=" + absl::GetFlag(FLAGS_test_launcher_shard_index);
+      std::string total_shards =
+          "GTEST_TOTAL_SHARDS=" +
+          absl::GetFlag(FLAGS_test_launcher_total_shards);
+      putenv(total_shards.data());
+      putenv(shard_index.data());
     }
 
 #if defined(WEBRTC_IOS)
@@ -236,7 +244,7 @@ class TestMainImpl : public TestMain {
 #endif
 
     if (capture_events) {
-      rtc::tracing::StopInternalCapture();
+      StopTracingCapture();
     }
 
 #if defined(ADDRESS_SANITIZER) || defined(LEAK_SANITIZER) ||  \
@@ -256,6 +264,59 @@ class TestMainImpl : public TestMain {
 #if defined(WEBRTC_WIN)
   std::unique_ptr<rtc::WinsockInitializer> winsock_init_;
 #endif
+#if defined(RTC_USE_PERFETTO)
+  std::unique_ptr<perfetto::TracingSession> tracing_session_;
+  FILE* tracing_output_file_ = nullptr;
+#endif
+
+  void StartTracingCapture(absl::string_view trace_output_file) {
+#if defined(RTC_USE_PERFETTO)
+    tracing_output_file_ = std::fopen(trace_output_file.data(), "w");
+    if (!tracing_output_file_) {
+      RTC_LOG(LS_ERROR) << "Failed to open trace file \"" << trace_output_file
+                        << "\". Tracing will be disabled.";
+    }
+    perfetto::TracingInitArgs args;
+    args.backends |= perfetto::kInProcessBackend;
+    perfetto::Tracing::Initialize(args);
+    webrtc::RegisterPerfettoTrackEvents();
+
+    perfetto::TraceConfig cfg;
+    cfg.add_buffers()->set_size_kb(1024);  // Record up to 1 MiB.
+    tracing_session_ = perfetto::Tracing::NewTrace();
+    tracing_session_->Setup(cfg);
+    RTC_LOG(LS_INFO)
+        << "Starting tracing with Perfetto and outputting to file \""
+        << trace_output_file << "\"";
+    tracing_session_->StartBlocking();
+#else
+    rtc::tracing::SetupInternalTracer();
+    rtc::tracing::StartInternalCapture(trace_output_file);
+#endif
+  }
+
+  void StopTracingCapture() {
+#if defined(RTC_USE_PERFETTO)
+    if (tracing_output_file_) {
+      RTC_CHECK(tracing_session_);
+      tracing_session_->StopBlocking();
+      std::vector<char> tracing_data = tracing_session_->ReadTraceBlocking();
+      size_t count = std::fwrite(tracing_data.data(), sizeof tracing_data[0],
+                                 tracing_data.size(), tracing_output_file_);
+      if (count != tracing_data.size()) {
+        RTC_LOG(LS_ERROR) << "Expected to write " << tracing_data.size()
+                          << " bytes but only " << count << " bytes written";
+      }
+      std::fclose(tracing_output_file_);
+      tracing_output_file_ = nullptr;
+    } else {
+      RTC_LOG(LS_INFO) << "no file";
+    }
+
+#else
+    rtc::tracing::StopInternalCapture();
+#endif
+  }
 };
 
 }  // namespace

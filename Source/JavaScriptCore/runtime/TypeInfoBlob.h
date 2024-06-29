@@ -70,7 +70,7 @@ public:
 
     int32_t blob() const { return u.word; }
 
-    static ptrdiff_t indexingModeIncludingHistoryOffset()
+    static constexpr ptrdiff_t indexingModeIncludingHistoryOffset()
     {
         return OBJECT_OFFSETOF(TypeInfoBlob, u.fields.indexingModeIncludingHistory);
     }

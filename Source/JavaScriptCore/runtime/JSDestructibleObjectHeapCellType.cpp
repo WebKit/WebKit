@@ -49,9 +49,7 @@ JSDestructibleObjectHeapCellType::JSDestructibleObjectHeapCellType()
 {
 }
 
-JSDestructibleObjectHeapCellType::~JSDestructibleObjectHeapCellType()
-{
-}
+JSDestructibleObjectHeapCellType::~JSDestructibleObjectHeapCellType() = default;
 
 void JSDestructibleObjectHeapCellType::finishSweep(MarkedBlock::Handle& handle, FreeList* freeList) const
 {

@@ -57,7 +57,7 @@ String CSSPageRule::selectorText() const
     if (auto* selector = m_pageRule->selector()) {
         String pageSpecification = selector->selectorText();
         if (!pageSpecification.isEmpty() && pageSpecification != starAtom())
-            return makeString("@page ", pageSpecification);
+            return makeString("@page "_s, pageSpecification);
     }
     return "@page"_s;
 }
@@ -78,8 +78,8 @@ void CSSPageRule::setSelectorText(const String& selectorText)
 String CSSPageRule::cssText() const
 {
     if (auto declarations = m_pageRule->properties().asText(); !declarations.isEmpty())
-        return makeString(selectorText(), " { ", declarations, " }");
-    return makeString(selectorText(), " { }");
+        return makeString(selectorText(), " { "_s, declarations, " }"_s);
+    return makeString(selectorText(), " { }"_s);
 }
 
 void CSSPageRule::reattach(StyleRuleBase& rule)

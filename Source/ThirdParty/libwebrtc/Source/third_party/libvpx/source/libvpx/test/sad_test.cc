@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <stdio.h>
 #include <string.h>
 #include <limits.h>
 
@@ -23,7 +24,6 @@
 #include "vpx/vpx_codec.h"
 #include "vpx_mem/vpx_mem.h"
 #include "vpx_ports/mem.h"
-#include "vpx_ports/msvc.h"
 #include "vpx_ports/vpx_timer.h"
 
 // const[expr] should be sufficient for DECLARE_ALIGNED but early

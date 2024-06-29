@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+<div role="textbox" contenteditable="true">
+    <table>
+        <tr>
+            <th id="head1">Head 1</th>
+            <th>Head 2</th>
+        </tr>
+        <tr>
+            <td id="cell1">Cell 1</td>
+            <td>cell 2</td>
+        </tr>
+    </table>
+</div>
+
+<script>
+
+let output = "This test verifies that cells expose their static text when inside contenteditable + textbox containers.\n\n";
+
+function getStaticTextValue(object) {
+    return accessibilityController.platformName === "ios" ? object.description : object.stringValue;
+}
+    
+if (window.accessibilityController) {
+    var headStaticText = getStaticTextValue(accessibilityController.accessibleElementById('head1').childAtIndex(0));
+    output += `${headStaticText}\n`;
+    var cellStaticText = getStaticTextValue(accessibilityController.accessibleElementById('cell1').childAtIndex(0));
+    output += `${cellStaticText}\n`;
+    debug(output);
+}
+
+</script>
+
+</body>
+</html>

@@ -45,7 +45,7 @@ Compilation::Compilation(Bytecodes* bytecodes, CompilationKind kind)
 {
 }
 
-Compilation::~Compilation() { }
+Compilation::~Compilation() = default;
 
 void Compilation::addProfiledBytecodes(Database& database, CodeBlock* profiledBlock)
 {

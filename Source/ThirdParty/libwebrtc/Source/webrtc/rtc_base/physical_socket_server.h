@@ -23,7 +23,7 @@
 #include <sys/epoll.h>
 
 #define WEBRTC_USE_EPOLL 1
-#elif defined(WEBRTC_FUCHSIA)
+#elif defined(WEBRTC_FUCHSIA) || (defined(WEBRTC_MAC) && !defined(WEBRTC_WEBKIT_BUILD))
 // Fuchsia implements select and poll but not epoll, and testing shows that poll
 // is faster than select.
 #include <poll.h>
@@ -31,7 +31,7 @@
 #define WEBRTC_USE_POLL 1
 #else
 // On other POSIX systems, use select by default.
-#endif  // WEBRTC_LINUX, WEBRTC_FUCHSIA
+#endif  // WEBRTC_LINUX, WEBRTC_FUCHSIA, WEBRTC_MAC
 #endif  // WEBRTC_POSIX
 
 #include <array>
@@ -41,8 +41,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "rtc_base/async_resolver.h"
-#include "rtc_base/async_resolver_interface.h"
 #include "rtc_base/deprecated/recursive_critical_section.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/synchronization/mutex.h"
@@ -127,9 +125,6 @@ class RTC_EXPORT PhysicalSocketServer : public SocketServer {
   const int epoll_fd_ = INVALID_SOCKET;
 
 #elif defined(WEBRTC_USE_POLL)
-  void AddPoll(Dispatcher* dispatcher, uint64_t key);
-  void RemovePoll(Dispatcher* dispatcher);
-  void UpdatePoll(Dispatcher* dispatcher, uint64_t key);
   bool WaitPoll(int cmsWait, bool process_io);
 
 #endif  // WEBRTC_USE_EPOLL, WEBRTC_USE_POLL
@@ -190,10 +185,12 @@ class PhysicalSocket : public Socket, public sigslot::has_slots<> {
              const SocketAddress& addr) override;
 
   int Recv(void* buffer, size_t length, int64_t* timestamp) override;
+  // TODO(webrtc:15368): Deprecate and remove.
   int RecvFrom(void* buffer,
                size_t length,
                SocketAddress* out_addr,
                int64_t* timestamp) override;
+  int RecvFrom(ReceiveBuffer& buffer) override;
 
   int Listen(int backlog) override;
   Socket* Accept(SocketAddress* out_addr) override;
@@ -224,7 +221,8 @@ class PhysicalSocket : public Socket, public sigslot::has_slots<> {
   int DoReadFromSocket(void* buffer,
                        size_t length,
                        SocketAddress* out_addr,
-                       int64_t* timestamp);
+                       int64_t* timestamp,
+                       EcnMarking* ecn);
 
   void OnResolveResult(const webrtc::AsyncDnsResolverResult& resolver);
 
@@ -246,13 +244,14 @@ class PhysicalSocket : public Socket, public sigslot::has_slots<> {
   int error_ RTC_GUARDED_BY(mutex_);
   ConnState state_;
   std::unique_ptr<webrtc::AsyncDnsResolverInterface> resolver_;
+  uint8_t dscp_ = 0;  // 6bit.
+  uint8_t ecn_ = 0;   // 2bits.
 
 #if !defined(NDEBUG)
   std::string dbg_addr_;
 #endif
 
  private:
-  const bool read_scm_timestamp_experiment_;
   uint8_t enabled_events_ = 0;
 };
 

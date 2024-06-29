@@ -36,7 +36,8 @@ u.combine('type', [
 'array<u32>',
 'array<i32>',
 'atomic<u32>',
-'atomic<i32>']
+'atomic<i32>',
+'sampler']
 )
 ).
 beforeAllSubcases((t) => {
@@ -63,6 +64,51 @@ struct Test {
 
   const expect = t.params.type === 'u32' || t.params.type === 'i32';
   t.expectCompileResult(expect, code);
+});
+
+const kSpecifierCases = {
+  no_type: {
+    code: `alias T = atomic;`,
+    valid: false
+  },
+  missing_l_template: {
+    code: `alias T = atomici32>;`,
+    valid: false
+  },
+  missing_r_template: {
+    code: `alias T = atomic<i32;`,
+    valid: false
+  },
+  template_comma: {
+    code: `alias T = atomic<i32,>;`,
+    valid: true
+  },
+  missing_template_param: {
+    code: `alias T = atomic<>;`,
+    valid: false
+  },
+  space_in_specifier: {
+    code: `alias T = atomic <i32>;`,
+    valid: true
+  },
+  space_as_l_template: {
+    code: `alias T = atomic i32>;`,
+    valid: false
+  },
+  comment: {
+    code: `alias T = atomic
+    /* comment */
+    <i32>;`,
+    valid: true
+  }
+};
+
+g.test('parse').
+desc('Test atomic parsing').
+params((u) => u.combine('case', keysOf(kSpecifierCases))).
+fn((t) => {
+  const testcase = kSpecifierCases[t.params.case];
+  t.expectCompileResult(testcase.valid, testcase.code);
 });
 
 g.test('address_space').
@@ -142,4 +188,12 @@ fn foo() {
 `;
 
   t.expectCompileResult(false, code);
+});
+
+g.test('trailing_comma').
+desc('Test that trailing commas are accepted').
+params((u) => u.combine('type', ['u32', 'i32']).combine('comma', ['', ','])).
+fn((t) => {
+  const code = `alias T = atomic<${t.params.type}${t.params.comma}>;`;
+  t.expectCompileResult(true, code);
 });

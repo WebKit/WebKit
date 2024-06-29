@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@ public:
     static Ref<GenericTypedArrayView> create(size_t length);
     static Ref<GenericTypedArrayView> create(const typename Adaptor::Type* array, size_t length);
     static Ref<GenericTypedArrayView> create(std::span<const typename Adaptor::Type> data) { return create(data.data(), data.size()); }
+    static Ref<GenericTypedArrayView> create(Ref<ArrayBuffer>&&);
     static Ref<GenericTypedArrayView> create(RefPtr<ArrayBuffer>&&, size_t byteOffset, std::optional<size_t> length);
     static RefPtr<GenericTypedArrayView> tryCreate(size_t length);
     static RefPtr<GenericTypedArrayView> tryCreate(const typename Adaptor::Type* array, size_t length);

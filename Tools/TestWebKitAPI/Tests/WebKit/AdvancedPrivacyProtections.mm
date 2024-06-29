@@ -614,7 +614,12 @@ TEST(AdvancedPrivacyProtections, LinkPreconnectUsesEnhancedPrivacy)
 
 #if PLATFORM(MAC)
     auto logMessages = [webView collectLogsForNewConnections];
-    EXPECT_EQ([logMessages count], 2U);
+    if ([logMessages.firstObject containsString:@"CFNetwork"]) {
+        // The old HTTP stack in CFNetwork creates one connection per TCP/QUIC connection, but the new HTTP stack creates one connection per task.
+        // This path can be removed when this test stops running on macOS 14 / iOS 17 or below.
+        EXPECT_EQ([logMessages count], 2U);
+    } else
+        EXPECT_EQ([logMessages count], 4U);
     for (NSString *message : logMessages)
         EXPECT_TRUE([message containsString:@"enhanced privacy"]);
 #endif
@@ -877,6 +882,7 @@ TEST(AdvancedPrivacyProtections, AddNoiseToWebAudioAPIs)
     checkFingerprintForNoise(@"testOscillatorCompressor");
     checkFingerprintForNoise(@"testOscillatorCompressorWorklet");
     checkFingerprintForNoise(@"testOscillatorCompressorAnalyzer");
+    checkFingerprintForNoise(@"testLoopingOscillatorCompressorBiquadFilter");
 }
 
 // FIXME when rdar://115137641 is resolved.
@@ -1149,6 +1155,96 @@ TEST(AdvancedPrivacyProtections, Canvas2DQuirks)
     }];
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
     EXPECT_TRUE(finishedSuccessfully);
+}
+
+inline static String sharedWorkerMainBytes()
+{
+    return R"TESTRESOURCE(
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <script>
+        const worker = new SharedWorker("SharedWorker.js");
+        worker.port.onmessage = function(event) {
+            document.querySelector("code").textContent = event.data;
+        };
+        worker.port.postMessage({ command: "draw" });
+        </script>
+        </head>
+        <body>
+            <h1>SharedWorker</h1>
+            The result is: <code></code>
+        </body>
+        </html>
+        )TESTRESOURCE"_s;
+}
+
+inline static String sharedWorkerBytes()
+{
+    return String::fromUTF8(R"TESTRESOURCE(
+        onconnect = (event) => {
+            const port = event.ports[0];
+            port.onmessage = function(event) {
+                if (event.data.command !== "draw")
+                    return;
+
+                const offscreen = new OffscreenCanvas(200, 200);
+                const context = offscreen.getContext("2d");
+
+                const gradient = context.createLinearGradient(0, 0, 200, 0);
+                gradient.addColorStop(0, "red");
+                gradient.addColorStop(1, "blue");
+
+                context.fillStyle = gradient;
+                context.fillRect(0, 0, 200, 200);
+
+                context.fillStyle = "white";
+                context.font = "48px serif";
+                context.fillText("🙃", 10, 50);
+
+                offscreen.convertToBlob().then(blob => {
+                    const reader = new FileReader;
+                    reader.onloadend = async () => {
+                        const base64 = reader.result.split(",")[1];
+                        const bytes = new Uint8Array(atob(base64).split("").map(char => char.charCodeAt(0)));
+                        const hashBuffer = await crypto.subtle.digest("SHA-256", bytes);
+                        const hashArray = Array.from(new Uint8Array(hashBuffer));
+                        const hexRepresentation = hashArray.map(byte => byte.toString(16).padStart(2, "0")).join("");
+                        port.postMessage(hexRepresentation);
+                    };
+                    reader.readAsDataURL(blob);
+                });
+            };
+        };
+        )TESTRESOURCE");
+}
+
+TEST(AdvancedPrivacyProtections, NoiseInjectionForOffscreenCanvasInSharedWorker)
+{
+    auto server = HTTPServer { {
+        { "/"_s, { sharedWorkerMainBytes() } },
+        { "/SharedWorker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, sharedWorkerBytes() } }
+    } };
+
+    auto computeHash = [&](TestWKWebView *webView) {
+        [webView synchronouslyLoadRequest:server.request("/"_s)];
+
+        RetainPtr<NSString> result;
+        Util::waitForConditionWithLogging([&] {
+            result = [webView stringByEvaluatingJavaScript:@"document.querySelector('code').textContent"];
+            return [result length] > 0;
+        }, 3, @"Failed to compute hash using OffscreenCanvas.");
+        return result.autorelease();
+    };
+
+    RetainPtr hashWithoutNoiseInjectionInEphemeralStore = computeHash(createWebViewWithAdvancedPrivacyProtections(NO, nil, WKWebsiteDataStore.nonPersistentDataStore).get());
+    RetainPtr hashWithoutNoiseInjectionInDefaultStore = computeHash(createWebViewWithAdvancedPrivacyProtections(NO, nil, WKWebsiteDataStore.defaultDataStore).get());
+    RetainPtr hashWithNoiseInjectionInEphemeralStore = computeHash(createWebViewWithAdvancedPrivacyProtections(YES, nil, WKWebsiteDataStore.nonPersistentDataStore).get());
+    EXPECT_NOT_NULL(hashWithoutNoiseInjectionInEphemeralStore);
+    EXPECT_NOT_NULL(hashWithoutNoiseInjectionInDefaultStore);
+    EXPECT_NOT_NULL(hashWithNoiseInjectionInEphemeralStore);
+    EXPECT_FALSE([hashWithNoiseInjectionInEphemeralStore isEqual:hashWithoutNoiseInjectionInDefaultStore.get()]);
+    EXPECT_FALSE([hashWithNoiseInjectionInEphemeralStore isEqual:hashWithoutNoiseInjectionInEphemeralStore.get()]);
 }
 
 } // namespace TestWebKitAPI

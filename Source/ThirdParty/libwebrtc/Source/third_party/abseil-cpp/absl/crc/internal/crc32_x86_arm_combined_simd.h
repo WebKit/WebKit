@@ -33,14 +33,15 @@
 #include <x86intrin.h>
 #define ABSL_CRC_INTERNAL_HAVE_X86_SIMD
 
-#elif defined(_MSC_VER) && !defined(__clang__) && defined(__AVX__)
+#elif defined(_MSC_VER) && !defined(__clang__) && defined(__AVX__) && \
+    defined(_M_AMD64)
 
 // MSVC AVX (/arch:AVX) implies SSE 4.2 and PCLMULQDQ.
 #include <intrin.h>
 #define ABSL_CRC_INTERNAL_HAVE_X86_SIMD
 
-#elif defined(__aarch64__) && defined(__LITTLE_ENDIAN__) && \
-    defined(__ARM_FEATURE_CRC32) && defined(ABSL_INTERNAL_HAVE_ARM_NEON) &&  \
+#elif defined(__aarch64__) && defined(__LITTLE_ENDIAN__) &&                 \
+    defined(__ARM_FEATURE_CRC32) && defined(ABSL_INTERNAL_HAVE_ARM_NEON) && \
     defined(__ARM_FEATURE_CRYPTO)
 
 #include <arm_acle.h>
@@ -58,10 +59,10 @@ namespace crc_internal {
 
 #if defined(ABSL_CRC_INTERNAL_HAVE_ARM_SIMD)
 using V128 = uint64x2_t;
-using V128u = uint64x2_t;
 #else
+// Note: Do not use __m128i_u, it is not portable.
+// Use V128_LoadU() perform an unaligned load from __m128i*.
 using V128 = __m128i;
-using V128u = __m128i_u;
 #endif
 
 // Starting with the initial value in |crc|, accumulates a CRC32 value for
@@ -78,7 +79,7 @@ uint32_t CRC32_u64(uint32_t crc, uint64_t v);
 V128 V128_Load(const V128* src);
 
 // Load 128 bits of integer data. |src| does not need to be aligned.
-V128 V128_LoadU(const V128u* src);
+V128 V128_LoadU(const V128* src);
 
 // Store 128 bits of integer data. |src| must be 16-byte aligned.
 void V128_Store(V128* dst, V128 data);
@@ -101,10 +102,11 @@ V128 V128_Xor(const V128 l, const V128 r);
 // Produces an AND operation of |l| and |r|.
 V128 V128_And(const V128 l, const V128 r);
 
-// Sets two 64 bit integers to one 128 bit vector. The order is reverse.
+// Sets the lower half of a 128 bit register to the given 64-bit value and
+// zeroes the upper half.
 // dst[63:0] := |r|
-// dst[127:64] := |l|
-V128 V128_From2x64(const uint64_t l, const uint64_t r);
+// dst[127:64] := |0|
+V128 V128_From64WithZeroFill(const uint64_t r);
 
 // Shift |l| right by |imm| bytes while shifting in zeros.
 template <int imm>
@@ -121,8 +123,8 @@ uint64_t V128_Extract64(const V128 l);
 // Extracts the low 64 bits from V128.
 int64_t V128_Low64(const V128 l);
 
-// Left-shifts packed 64-bit integers in l by r.
-V128 V128_ShiftLeft64(const V128 l, const V128 r);
+// Add packed 64-bit integers in |l| and |r|.
+V128 V128_Add64(const V128 l, const V128 r);
 
 #endif
 
@@ -146,7 +148,7 @@ inline uint32_t CRC32_u64(uint32_t crc, uint64_t v) {
 
 inline V128 V128_Load(const V128* src) { return _mm_load_si128(src); }
 
-inline V128 V128_LoadU(const V128u* src) { return _mm_loadu_si128(src); }
+inline V128 V128_LoadU(const V128* src) { return _mm_loadu_si128(src); }
 
 inline void V128_Store(V128* dst, V128 data) { _mm_store_si128(dst, data); }
 
@@ -170,8 +172,8 @@ inline V128 V128_Xor(const V128 l, const V128 r) { return _mm_xor_si128(l, r); }
 
 inline V128 V128_And(const V128 l, const V128 r) { return _mm_and_si128(l, r); }
 
-inline V128 V128_From2x64(const uint64_t l, const uint64_t r) {
-  return _mm_set_epi64x(static_cast<int64_t>(l), static_cast<int64_t>(r));
+inline V128 V128_From64WithZeroFill(const uint64_t r) {
+  return _mm_set_epi64x(static_cast<int64_t>(0), static_cast<int64_t>(r));
 }
 
 template <int imm>
@@ -191,8 +193,8 @@ inline uint64_t V128_Extract64(const V128 l) {
 
 inline int64_t V128_Low64(const V128 l) { return _mm_cvtsi128_si64(l); }
 
-inline V128 V128_ShiftLeft64(const V128 l, const V128 r) {
-  return _mm_sll_epi64(l, r);
+inline V128 V128_Add64(const V128 l, const V128 r) {
+  return _mm_add_epi64(l, r);
 }
 
 #elif defined(ABSL_CRC_INTERNAL_HAVE_ARM_SIMD)
@@ -215,7 +217,7 @@ inline V128 V128_Load(const V128* src) {
   return vld1q_u64(reinterpret_cast<const uint64_t*>(src));
 }
 
-inline V128 V128_LoadU(const V128u* src) {
+inline V128 V128_LoadU(const V128* src) {
   return vld1q_u64(reinterpret_cast<const uint64_t*>(src));
 }
 
@@ -261,9 +263,11 @@ inline V128 V128_Xor(const V128 l, const V128 r) { return veorq_u64(l, r); }
 
 inline V128 V128_And(const V128 l, const V128 r) { return vandq_u64(l, r); }
 
-inline V128 V128_From2x64(const uint64_t l, const uint64_t r) {
-  return vcombine_u64(vcreate_u64(r), vcreate_u64(l));
+inline V128 V128_From64WithZeroFill(const uint64_t r){
+  constexpr uint64x2_t kZero = {0, 0};
+  return vsetq_lane_u64(r, kZero, 0);
 }
+
 
 template <int imm>
 inline V128 V128_ShiftRight(const V128 l) {
@@ -285,9 +289,7 @@ inline int64_t V128_Low64(const V128 l) {
   return vgetq_lane_s64(vreinterpretq_s64_u64(l), 0);
 }
 
-inline V128 V128_ShiftLeft64(const V128 l, const V128 r) {
-  return vshlq_u64(l, vreinterpretq_s64_u64(r));
-}
+inline V128 V128_Add64(const V128 l, const V128 r) { return vaddq_u64(l, r); }
 
 #endif
 

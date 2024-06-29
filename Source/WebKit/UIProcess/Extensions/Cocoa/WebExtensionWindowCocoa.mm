@@ -156,7 +156,7 @@ bool WebExtensionWindow::extensionHasAccess() const
     return !isPrivate || (isPrivate && extensionContext()->hasAccessInPrivateBrowsing());
 }
 
-WebExtensionWindow::TabVector WebExtensionWindow::tabs() const
+WebExtensionWindow::TabVector WebExtensionWindow::tabs(SkipValidation skipValidation) const
 {
     TabVector result;
 
@@ -176,15 +176,20 @@ WebExtensionWindow::TabVector WebExtensionWindow::tabs() const
         result.append(m_extensionContext->getOrCreateTab(tab));
     }
 
-    if (auto activeTab = [m_delegate activeTabForWebExtensionContext:m_extensionContext->wrapper()]) {
-        THROW_UNLESS([activeTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object returned by activeTabForWebExtensionContext: does not conform to the _WKWebExtensionTab protocol");
-        THROW_UNLESS([tabs containsObject:activeTab], @"Array returned by tabsForWebExtensionContext: does not contain the active tab");
+    if (skipValidation == SkipValidation::No) {
+        // SkipValidation::Yes is needed to avoid reentry, since activeTab() calls tabs().
+        RefPtr activeTab = this->activeTab(SkipValidation::Yes);
+        if (!activeTab || !result.contains(*activeTab)) {
+            RELEASE_LOG_ERROR(Extensions, "Array returned by tabsForWebExtensionContext: does not contain the active tab; %{public}@ not in %{public}@", activeTab ? activeTab->delegate() : nil, tabs);
+            ASSERT_NOT_REACHED();
+            return { };
+        }
     }
 
     return result;
 }
 
-RefPtr<WebExtensionTab> WebExtensionWindow::activeTab() const
+RefPtr<WebExtensionTab> WebExtensionWindow::activeTab(SkipValidation skipValidation) const
 {
     if (!isValid() || !m_respondsToActiveTab || !m_respondsToTabs)
         return nullptr;
@@ -197,9 +202,15 @@ RefPtr<WebExtensionTab> WebExtensionWindow::activeTab() const
 
     Ref result = m_extensionContext->getOrCreateTab(activeTab);
 
-    auto *tabs = [m_delegate tabsForWebExtensionContext:m_extensionContext->wrapper()];
-    THROW_UNLESS([tabs isKindOfClass:NSArray.class], @"Object returned by tabsForWebExtensionContext: is not an array");
-    THROW_UNLESS([tabs containsObject:activeTab], @"Array returned by tabsForWebExtensionContext: does not contain the active tab");
+    if (skipValidation == SkipValidation::No) {
+        // SkipValidation::Yes is needed to avoid reentry, since tabs() calls activeTab().
+        auto tabs = this->tabs(SkipValidation::Yes);
+        if (!tabs.contains(result)) {
+            RELEASE_LOG_ERROR(Extensions, "Array returned by tabsForWebExtensionContext: does not contain the active tab; %{public}@ not in %{public}@", result->delegate(), [m_delegate tabsForWebExtensionContext:m_extensionContext->wrapper()] ?: @[ ]);
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        }
+    }
 
     return result;
 }

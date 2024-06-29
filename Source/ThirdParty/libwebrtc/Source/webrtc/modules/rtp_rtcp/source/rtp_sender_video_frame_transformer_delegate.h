@@ -75,6 +75,8 @@ class RTPSenderVideoFrameTransformerDelegate : public TransformedFrameCallback {
   void OnTransformedFrame(
       std::unique_ptr<TransformableFrameInterface> frame) override;
 
+  void StartShortCircuiting() override;
+
   // Delegates the call to RTPSendVideo::SendVideo on the `encoder_queue_`.
   void SendVideo(std::unique_ptr<TransformableFrameInterface> frame) const
       RTC_RUN_ON(transformation_queue_);
@@ -107,6 +109,7 @@ class RTPSenderVideoFrameTransformerDelegate : public TransformedFrameCallback {
   // Used when the encoded frames arrives without a current task queue. This can
   // happen if a hardware encoder was used.
   std::unique_ptr<TaskQueueBase, TaskQueueDeleter> transformation_queue_;
+  bool short_circuit_ RTC_GUARDED_BY(sender_lock_) = false;
 };
 
 // Method to support cloning a Sender frame from another frame

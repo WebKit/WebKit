@@ -71,7 +71,7 @@ private:
     WEBCORE_EXPORT RemoteDOMWindow(RemoteFrame&, GlobalWindowIdentifier&&);
 
     void closePage() final;
-    void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, SetLocationLocking) final;
+    void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, NavigationHistoryBehavior, SetLocationLocking) final;
 
     WeakPtr<RemoteFrame> m_frame;
 };

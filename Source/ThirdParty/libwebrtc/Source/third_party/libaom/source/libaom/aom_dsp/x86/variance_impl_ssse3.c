@@ -15,6 +15,7 @@
 #include "config/aom_dsp_rtcd.h"
 
 #include "aom_dsp/x86/synonyms.h"
+#include "aom_dsp/x86/variance_impl_ssse3.h"
 
 void aom_var_filter_block2d_bil_first_pass_ssse3(
     const uint8_t *a, uint16_t *b, unsigned int src_pixels_per_line,

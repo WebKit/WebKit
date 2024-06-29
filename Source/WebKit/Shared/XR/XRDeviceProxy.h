@@ -57,6 +57,7 @@ private:
     WebCore::IntSize recommendedResolution(PlatformXR::SessionMode) final { return m_recommendedResolution; }
     void initializeTrackingAndRendering(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&) final;
     void shutDownTrackingAndRendering() final;
+    void didCompleteShutdownTriggeredBySystem() final;
     bool supportsSessionShutdownNotification() const final { return true; }
     void initializeReferenceSpace(PlatformXR::ReferenceSpaceType) final { }
     Vector<PlatformXR::Device::ViewData> views(PlatformXR::SessionMode) const final;

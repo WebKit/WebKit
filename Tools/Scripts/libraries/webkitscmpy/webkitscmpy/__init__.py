@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,9 +20,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
+
+if sys.version_info < (3, 6):
+    raise ImportError("webkitscmpy requires Python 3.6 or above")
+
 import logging
 import os
-import sys
 
 log = logging.getLogger('webkitscmpy')
 
@@ -46,7 +50,9 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(6, 8, 0)
+version = Version(7, 0, 0)
+if sys.version_info < (3, 0):
+    raise ImportError('webkitscmpy no longer supports Python 2')
 
 AutoInstall.register(Package('fasteners', Version(0, 15, 0)))
 AutoInstall.register(Package('jinja2', Version(2, 11, 3)))

@@ -67,10 +67,10 @@ private:
 
     private:
         // ThreadableLoaderClient API.
-        void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final;
+        void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse&) final;
         void didReceiveData(const SharedBuffer&) final;
-        void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) final;
-        void didFail(const ResourceError&) final;
+        void didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&) final;
+        void didFail(ScriptExecutionContextIdentifier, const ResourceError&) final;
 
         bool m_finished { false };
         SharedBufferBuilder m_buffer;

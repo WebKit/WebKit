@@ -74,6 +74,12 @@ public:
     void beginInterruption();
     void endInterruption(WebCore::AudioSession::MayResume);
 
+    const String& sceneIdentifier() const { return m_sceneIdentifier; }
+    void setSceneIdentifier(const String&);
+
+    WebCore::AudioSession::SoundStageSize soundStageSize() const { return m_soundStageSize; }
+    void setSoundStageSize(WebCore::AudioSession::SoundStageSize);
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
@@ -105,6 +111,8 @@ private:
     WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::CategoryType::None };
     WebCore::AudioSession::Mode m_mode { WebCore::AudioSession::Mode::Default };
     WebCore::RouteSharingPolicy m_routeSharingPolicy { WebCore::RouteSharingPolicy::Default };
+    WebCore::AudioSession::SoundStageSize m_soundStageSize { WebCore::AudioSession::SoundStageSize::Automatic };
+    String m_sceneIdentifier;
     size_t m_preferredBufferSize { 0 };
     bool m_active { false };
     bool m_isInterrupted { false };

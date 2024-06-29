@@ -4644,120 +4644,120 @@ PASS undefinedelement.tabIndex: IDL set to 0
 PASS undefinedelement.tabIndex: IDL set to 1
 PASS undefinedelement.tabIndex: IDL set to 2147483647
 PASS undefinedelement.tabIndex: IDL set to -2147483648
-FAIL undefinedelement.enterKeyHint: typeof IDL attribute assert_equals: expected "string" but got "undefined"
-FAIL undefinedelement.enterKeyHint: IDL get with DOM attribute unset assert_equals: expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to undefined assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to 7 assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to 1.5 assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "5%" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "+100" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to ".5" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to true assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to false assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to object "[object Object]" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to NaN assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to Infinity assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to -Infinity assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to null assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to object "test-toString" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "enter" assert_equals: IDL get expected (string) "enter" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "xenter" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "enter\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "nter" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "ENTER" assert_equals: IDL get expected (string) "enter" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "done" assert_equals: IDL get expected (string) "done" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "xdone" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "done\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "one" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "DONE" assert_equals: IDL get expected (string) "done" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "go" assert_equals: IDL get expected (string) "go" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "xgo" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "go\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "o" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "GO" assert_equals: IDL get expected (string) "go" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "next" assert_equals: IDL get expected (string) "next" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "xnext" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "next\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "ext" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "NEXT" assert_equals: IDL get expected (string) "next" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "previous" assert_equals: IDL get expected (string) "previous" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "xprevious" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "previous\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "revious" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "PREVIOUS" assert_equals: IDL get expected (string) "previous" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "previouſ" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "search" assert_equals: IDL get expected (string) "search" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "xsearch" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "search\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "earch" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "SEARCH" assert_equals: IDL get expected (string) "search" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "ſearch" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "send" assert_equals: IDL get expected (string) "send" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "xsend" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "send\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "end" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "SEND" assert_equals: IDL get expected (string) "send" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: setAttribute() to "ſend" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL undefinedelement.enterKeyHint: IDL set to "" assert_equals: getAttribute() expected "" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to 7 assert_equals: getAttribute() expected "7" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to true assert_equals: getAttribute() expected "true" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to false assert_equals: getAttribute() expected "false" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to null assert_equals: IDL get expected (string) "" but got (object) null
-FAIL undefinedelement.enterKeyHint: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to object "test-valueOf" assert_equals: getAttribute() expected "test-valueOf" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "enter" assert_equals: getAttribute() expected "enter" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "xenter" assert_equals: getAttribute() expected "xenter" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "enter\0" assert_equals: getAttribute() expected "enter\0" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "nter" assert_equals: getAttribute() expected "nter" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "ENTER" assert_equals: getAttribute() expected "ENTER" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "done" assert_equals: getAttribute() expected "done" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "xdone" assert_equals: getAttribute() expected "xdone" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "done\0" assert_equals: getAttribute() expected "done\0" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "one" assert_equals: getAttribute() expected "one" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "DONE" assert_equals: getAttribute() expected "DONE" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "go" assert_equals: getAttribute() expected "go" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "xgo" assert_equals: getAttribute() expected "xgo" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "go\0" assert_equals: getAttribute() expected "go\0" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "o" assert_equals: getAttribute() expected "o" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "GO" assert_equals: getAttribute() expected "GO" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "next" assert_equals: getAttribute() expected "next" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "xnext" assert_equals: getAttribute() expected "xnext" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "next\0" assert_equals: getAttribute() expected "next\0" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "ext" assert_equals: getAttribute() expected "ext" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "NEXT" assert_equals: getAttribute() expected "NEXT" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "previous" assert_equals: getAttribute() expected "previous" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "xprevious" assert_equals: getAttribute() expected "xprevious" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "previous\0" assert_equals: getAttribute() expected "previous\0" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "revious" assert_equals: getAttribute() expected "revious" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "PREVIOUS" assert_equals: getAttribute() expected "PREVIOUS" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "previouſ" assert_equals: getAttribute() expected "previouſ" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "search" assert_equals: getAttribute() expected "search" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "xsearch" assert_equals: getAttribute() expected "xsearch" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "search\0" assert_equals: getAttribute() expected "search\0" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "earch" assert_equals: getAttribute() expected "earch" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "SEARCH" assert_equals: getAttribute() expected "SEARCH" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "ſearch" assert_equals: getAttribute() expected "ſearch" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "send" assert_equals: getAttribute() expected "send" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "xsend" assert_equals: getAttribute() expected "xsend" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "send\0" assert_equals: getAttribute() expected "send\0" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "end" assert_equals: getAttribute() expected "end" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "SEND" assert_equals: getAttribute() expected "SEND" but got "ſend"
-FAIL undefinedelement.enterKeyHint: IDL set to "ſend" assert_equals: IDL get expected "" but got "ſend"
+PASS undefinedelement.enterKeyHint: typeof IDL attribute
+PASS undefinedelement.enterKeyHint: IDL get with DOM attribute unset
+PASS undefinedelement.enterKeyHint: setAttribute() to ""
+PASS undefinedelement.enterKeyHint: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS undefinedelement.enterKeyHint: setAttribute() to undefined
+PASS undefinedelement.enterKeyHint: setAttribute() to 7
+PASS undefinedelement.enterKeyHint: setAttribute() to 1.5
+PASS undefinedelement.enterKeyHint: setAttribute() to "5%"
+PASS undefinedelement.enterKeyHint: setAttribute() to "+100"
+PASS undefinedelement.enterKeyHint: setAttribute() to ".5"
+PASS undefinedelement.enterKeyHint: setAttribute() to true
+PASS undefinedelement.enterKeyHint: setAttribute() to false
+PASS undefinedelement.enterKeyHint: setAttribute() to object "[object Object]"
+PASS undefinedelement.enterKeyHint: setAttribute() to NaN
+PASS undefinedelement.enterKeyHint: setAttribute() to Infinity
+PASS undefinedelement.enterKeyHint: setAttribute() to -Infinity
+PASS undefinedelement.enterKeyHint: setAttribute() to "\0"
+PASS undefinedelement.enterKeyHint: setAttribute() to null
+PASS undefinedelement.enterKeyHint: setAttribute() to object "test-toString"
+PASS undefinedelement.enterKeyHint: setAttribute() to object "test-valueOf"
+PASS undefinedelement.enterKeyHint: setAttribute() to "enter"
+PASS undefinedelement.enterKeyHint: setAttribute() to "xenter"
+PASS undefinedelement.enterKeyHint: setAttribute() to "enter\0"
+PASS undefinedelement.enterKeyHint: setAttribute() to "nter"
+PASS undefinedelement.enterKeyHint: setAttribute() to "ENTER"
+PASS undefinedelement.enterKeyHint: setAttribute() to "done"
+PASS undefinedelement.enterKeyHint: setAttribute() to "xdone"
+PASS undefinedelement.enterKeyHint: setAttribute() to "done\0"
+PASS undefinedelement.enterKeyHint: setAttribute() to "one"
+PASS undefinedelement.enterKeyHint: setAttribute() to "DONE"
+PASS undefinedelement.enterKeyHint: setAttribute() to "go"
+PASS undefinedelement.enterKeyHint: setAttribute() to "xgo"
+PASS undefinedelement.enterKeyHint: setAttribute() to "go\0"
+PASS undefinedelement.enterKeyHint: setAttribute() to "o"
+PASS undefinedelement.enterKeyHint: setAttribute() to "GO"
+PASS undefinedelement.enterKeyHint: setAttribute() to "next"
+PASS undefinedelement.enterKeyHint: setAttribute() to "xnext"
+PASS undefinedelement.enterKeyHint: setAttribute() to "next\0"
+PASS undefinedelement.enterKeyHint: setAttribute() to "ext"
+PASS undefinedelement.enterKeyHint: setAttribute() to "NEXT"
+PASS undefinedelement.enterKeyHint: setAttribute() to "previous"
+PASS undefinedelement.enterKeyHint: setAttribute() to "xprevious"
+PASS undefinedelement.enterKeyHint: setAttribute() to "previous\0"
+PASS undefinedelement.enterKeyHint: setAttribute() to "revious"
+PASS undefinedelement.enterKeyHint: setAttribute() to "PREVIOUS"
+PASS undefinedelement.enterKeyHint: setAttribute() to "previouſ"
+PASS undefinedelement.enterKeyHint: setAttribute() to "search"
+PASS undefinedelement.enterKeyHint: setAttribute() to "xsearch"
+PASS undefinedelement.enterKeyHint: setAttribute() to "search\0"
+PASS undefinedelement.enterKeyHint: setAttribute() to "earch"
+PASS undefinedelement.enterKeyHint: setAttribute() to "SEARCH"
+PASS undefinedelement.enterKeyHint: setAttribute() to "ſearch"
+PASS undefinedelement.enterKeyHint: setAttribute() to "send"
+PASS undefinedelement.enterKeyHint: setAttribute() to "xsend"
+PASS undefinedelement.enterKeyHint: setAttribute() to "send\0"
+PASS undefinedelement.enterKeyHint: setAttribute() to "end"
+PASS undefinedelement.enterKeyHint: setAttribute() to "SEND"
+PASS undefinedelement.enterKeyHint: setAttribute() to "ſend"
+PASS undefinedelement.enterKeyHint: IDL set to ""
+PASS undefinedelement.enterKeyHint: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS undefinedelement.enterKeyHint: IDL set to undefined
+PASS undefinedelement.enterKeyHint: IDL set to 7
+PASS undefinedelement.enterKeyHint: IDL set to 1.5
+PASS undefinedelement.enterKeyHint: IDL set to "5%"
+PASS undefinedelement.enterKeyHint: IDL set to "+100"
+PASS undefinedelement.enterKeyHint: IDL set to ".5"
+PASS undefinedelement.enterKeyHint: IDL set to true
+PASS undefinedelement.enterKeyHint: IDL set to false
+PASS undefinedelement.enterKeyHint: IDL set to object "[object Object]"
+PASS undefinedelement.enterKeyHint: IDL set to NaN
+PASS undefinedelement.enterKeyHint: IDL set to Infinity
+PASS undefinedelement.enterKeyHint: IDL set to -Infinity
+PASS undefinedelement.enterKeyHint: IDL set to "\0"
+PASS undefinedelement.enterKeyHint: IDL set to null
+PASS undefinedelement.enterKeyHint: IDL set to object "test-toString"
+PASS undefinedelement.enterKeyHint: IDL set to object "test-valueOf"
+PASS undefinedelement.enterKeyHint: IDL set to "enter"
+PASS undefinedelement.enterKeyHint: IDL set to "xenter"
+PASS undefinedelement.enterKeyHint: IDL set to "enter\0"
+PASS undefinedelement.enterKeyHint: IDL set to "nter"
+PASS undefinedelement.enterKeyHint: IDL set to "ENTER"
+PASS undefinedelement.enterKeyHint: IDL set to "done"
+PASS undefinedelement.enterKeyHint: IDL set to "xdone"
+PASS undefinedelement.enterKeyHint: IDL set to "done\0"
+PASS undefinedelement.enterKeyHint: IDL set to "one"
+PASS undefinedelement.enterKeyHint: IDL set to "DONE"
+PASS undefinedelement.enterKeyHint: IDL set to "go"
+PASS undefinedelement.enterKeyHint: IDL set to "xgo"
+PASS undefinedelement.enterKeyHint: IDL set to "go\0"
+PASS undefinedelement.enterKeyHint: IDL set to "o"
+PASS undefinedelement.enterKeyHint: IDL set to "GO"
+PASS undefinedelement.enterKeyHint: IDL set to "next"
+PASS undefinedelement.enterKeyHint: IDL set to "xnext"
+PASS undefinedelement.enterKeyHint: IDL set to "next\0"
+PASS undefinedelement.enterKeyHint: IDL set to "ext"
+PASS undefinedelement.enterKeyHint: IDL set to "NEXT"
+PASS undefinedelement.enterKeyHint: IDL set to "previous"
+PASS undefinedelement.enterKeyHint: IDL set to "xprevious"
+PASS undefinedelement.enterKeyHint: IDL set to "previous\0"
+PASS undefinedelement.enterKeyHint: IDL set to "revious"
+PASS undefinedelement.enterKeyHint: IDL set to "PREVIOUS"
+PASS undefinedelement.enterKeyHint: IDL set to "previouſ"
+PASS undefinedelement.enterKeyHint: IDL set to "search"
+PASS undefinedelement.enterKeyHint: IDL set to "xsearch"
+PASS undefinedelement.enterKeyHint: IDL set to "search\0"
+PASS undefinedelement.enterKeyHint: IDL set to "earch"
+PASS undefinedelement.enterKeyHint: IDL set to "SEARCH"
+PASS undefinedelement.enterKeyHint: IDL set to "ſearch"
+PASS undefinedelement.enterKeyHint: IDL set to "send"
+PASS undefinedelement.enterKeyHint: IDL set to "xsend"
+PASS undefinedelement.enterKeyHint: IDL set to "send\0"
+PASS undefinedelement.enterKeyHint: IDL set to "end"
+PASS undefinedelement.enterKeyHint: IDL set to "SEND"
+PASS undefinedelement.enterKeyHint: IDL set to "ſend"
 PASS undefinedelement.inputMode: typeof IDL attribute
 PASS undefinedelement.inputMode: IDL get with DOM attribute unset
 PASS undefinedelement.inputMode: setAttribute() to ""

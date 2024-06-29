@@ -69,7 +69,7 @@ static UnixFileDescriptor createSharedMemory()
 #else
     CString tempName;
     for (int tries = 0; fileDescriptor == -1 && tries < 10; ++tries) {
-        auto name = makeString("/WPEWaylandSHMPool.", cryptographicallyRandomNumber<unsigned>());
+        auto name = makeString("/WPEWaylandSHMPool."_s, cryptographicallyRandomNumber<unsigned>());
         tempName = name.utf8();
 
         do {

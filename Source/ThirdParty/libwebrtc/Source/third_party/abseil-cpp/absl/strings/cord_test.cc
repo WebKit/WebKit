@@ -38,10 +38,12 @@
 #include "absl/base/config.h"
 #include "absl/base/internal/endian.h"
 #include "absl/base/macros.h"
+#include "absl/base/no_destructor.h"
 #include "absl/base/options.h"
 #include "absl/container/fixed_array.h"
 #include "absl/functional/function_ref.h"
 #include "absl/hash/hash.h"
+#include "absl/hash/hash_testing.h"
 #include "absl/log/check.h"
 #include "absl/log/log.h"
 #include "absl/random/random.h"
@@ -241,12 +243,14 @@ class CordTestPeer {
 ABSL_NAMESPACE_END
 }  // namespace absl
 
-// The CordTest fixture runs all tests with and without Cord Btree enabled,
-// and with our without expected CRCs being set on the subject Cords.
-class CordTest : public testing::TestWithParam<int> {
+
+
+// The CordTest fixture runs all tests with and without expected CRCs being set
+// on the subject Cords.
+class CordTest : public testing::TestWithParam<bool /*useCrc*/> {
  public:
-  // Returns true if test is running with btree enabled.
-  bool UseCrc() const { return GetParam() == 2 || GetParam() == 3; }
+  // Returns true if test is running with Crc enabled.
+  bool UseCrc() const { return GetParam(); }
   void MaybeHarden(absl::Cord& c) {
     if (UseCrc()) {
       c.SetExpectedChecksum(1);
@@ -258,20 +262,16 @@ class CordTest : public testing::TestWithParam<int> {
   }
 
   // Returns human readable string representation of the test parameter.
-  static std::string ToString(testing::TestParamInfo<int> param) {
-    switch (param.param) {
-      case 0:
-        return "Btree";
-      case 1:
-        return "BtreeHardened";
-      default:
-        assert(false);
-        return "???";
+  static std::string ToString(testing::TestParamInfo<bool> useCrc) {
+    if (useCrc.param) {
+      return "BtreeHardened";
+    } else {
+      return "Btree";
     }
   }
 };
 
-INSTANTIATE_TEST_SUITE_P(WithParam, CordTest, testing::Values(0, 1),
+INSTANTIATE_TEST_SUITE_P(WithParam, CordTest, testing::Bool(),
                          CordTest::ToString);
 
 TEST(CordRepFlat, AllFlatCapacities) {
@@ -700,6 +700,38 @@ TEST_P(CordTest, CopyToString) {
   VerifyCopyToString(MaybeHardened(
       absl::MakeFragmentedCord({"fragmented ", "cord ", "to ", "test ",
                                 "copying ", "to ", "a ", "string."})));
+}
+
+static void VerifyAppendCordToString(const absl::Cord& cord) {
+  std::string initially_empty;
+  absl::AppendCordToString(cord, &initially_empty);
+  EXPECT_EQ(initially_empty, cord);
+
+  const absl::string_view kInitialContents = "initial contents.";
+  std::string expected_after_append =
+      absl::StrCat(kInitialContents, std::string(cord));
+
+  std::string no_reserve(kInitialContents);
+  absl::AppendCordToString(cord, &no_reserve);
+  EXPECT_EQ(no_reserve, expected_after_append);
+
+  std::string has_reserved_capacity(kInitialContents);
+  has_reserved_capacity.reserve(has_reserved_capacity.size() + cord.size());
+  const char* address_before_copy = has_reserved_capacity.data();
+  absl::AppendCordToString(cord, &has_reserved_capacity);
+  EXPECT_EQ(has_reserved_capacity, expected_after_append);
+  EXPECT_EQ(has_reserved_capacity.data(), address_before_copy)
+      << "AppendCordToString allocated new string storage; "
+         "has_reserved_capacity = \""
+      << has_reserved_capacity << "\"";
+}
+
+TEST_P(CordTest, AppendToString) {
+  VerifyAppendCordToString(absl::Cord());  // empty cords cannot carry CRCs
+  VerifyAppendCordToString(MaybeHardened(absl::Cord("small cord")));
+  VerifyAppendCordToString(MaybeHardened(
+      absl::MakeFragmentedCord({"fragmented ", "cord ", "to ", "test ",
+                                "appending ", "to ", "a ", "string."})));
 }
 
 TEST_P(CordTest, AppendEmptyBuffer) {
@@ -1512,12 +1544,11 @@ TEST_P(CordTest, CompareAfterAssign) {
 // comparison methods from basic_string.
 static void TestCompare(const absl::Cord& c, const absl::Cord& d,
                         RandomEngine* rng) {
-  typedef std::basic_string<uint8_t> ustring;
-  ustring cs(reinterpret_cast<const uint8_t*>(std::string(c).data()), c.size());
-  ustring ds(reinterpret_cast<const uint8_t*>(std::string(d).data()), d.size());
-  // ustring comparison is ideal because we expect Cord comparisons to be
-  // based on unsigned byte comparisons regardless of whether char is signed.
-  int expected = sign(cs.compare(ds));
+  // char_traits<char>::lt is guaranteed to do an unsigned comparison:
+  // https://en.cppreference.com/w/cpp/string/char_traits/cmp. We also expect
+  // Cord comparisons to be based on unsigned byte comparisons regardless of
+  // whether char is signed.
+  int expected = sign(std::string(c).compare(std::string(d)));
   EXPECT_EQ(expected, sign(c.Compare(d))) << c << ", " << d;
 }
 
@@ -2011,6 +2042,26 @@ TEST(CordTest, CordMemoryUsageBTree) {
   EXPECT_EQ(cord.EstimatedMemoryUsage(kFairShare),
             sizeof(absl::Cord) + sizeof(CordRepBtree) + rep1_shared_size / 2 +
                 rep2_size);
+}
+
+TEST(CordTest, TestHashFragmentation) {
+  // Make sure we hit these boundary cases precisely.
+  EXPECT_EQ(1024, absl::hash_internal::PiecewiseChunkSize());
+  EXPECT_TRUE(absl::VerifyTypeImplementsAbslHashCorrectly({
+      absl::Cord(),
+      absl::MakeFragmentedCord({std::string(600, 'a'), std::string(600, 'a')}),
+      absl::MakeFragmentedCord({std::string(1200, 'a')}),
+      absl::MakeFragmentedCord({std::string(900, 'b'), std::string(900, 'b')}),
+      absl::MakeFragmentedCord({std::string(1800, 'b')}),
+      absl::MakeFragmentedCord(
+          {std::string(2000, 'c'), std::string(2000, 'c')}),
+      absl::MakeFragmentedCord({std::string(4000, 'c')}),
+      absl::MakeFragmentedCord({std::string(1024, 'd')}),
+      absl::MakeFragmentedCord({std::string(1023, 'd'), "d"}),
+      absl::MakeFragmentedCord({std::string(1025, 'e')}),
+      absl::MakeFragmentedCord({std::string(1024, 'e'), "e"}),
+      absl::MakeFragmentedCord({std::string(1023, 'e'), "e", "e"}),
+  }));
 }
 
 // Regtest for a change that had to be rolled back because it expanded out
@@ -2744,34 +2795,15 @@ class AfterExitCordTester {
   absl::string_view expected_;
 };
 
-// Deliberately prevents the destructor for an absl::Cord from running. The cord
-// is accessible via the cord member during the lifetime of the CordLeaker.
-// After the CordLeaker is destroyed, pointers to the cord will remain valid
-// until the CordLeaker's memory is deallocated.
-struct CordLeaker {
-  union {
-    absl::Cord cord;
-  };
-
-  template <typename Str>
-  constexpr explicit CordLeaker(const Str& str) : cord(str) {}
-
-  ~CordLeaker() {
-    // Don't do anything, including running cord's destructor. (cord's
-    // destructor won't run automatically because cord is hidden inside a
-    // union.)
-  }
-};
-
 template <typename Str>
-void TestConstinitConstructor(Str) {
+void TestAfterExit(Str) {
   const auto expected = Str::value;
   // Defined before `cord` to be destroyed after it.
   static AfterExitCordTester exit_tester;  // NOLINT
-  ABSL_CONST_INIT static CordLeaker cord_leaker(Str{});  // NOLINT
+  static absl::NoDestructor<absl::Cord> cord_leaker(Str{});
   // cord_leaker is static, so this reference will remain valid through the end
   // of program execution.
-  static absl::Cord& cord = cord_leaker.cord;
+  static absl::Cord& cord = *cord_leaker;
   static bool init_exit_tester = exit_tester.Set(&cord, expected);
   (void)init_exit_tester;
 
@@ -2823,11 +2855,9 @@ struct LongView {
 };
 
 
-TEST_P(CordTest, ConstinitConstructor) {
-  TestConstinitConstructor(
-      absl::strings_internal::MakeStringConstant(ShortView{}));
-  TestConstinitConstructor(
-      absl::strings_internal::MakeStringConstant(LongView{}));
+TEST_P(CordTest, AfterExit) {
+  TestAfterExit(absl::strings_internal::MakeStringConstant(ShortView{}));
+  TestAfterExit(absl::strings_internal::MakeStringConstant(LongView{}));
 }
 
 namespace {

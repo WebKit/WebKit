@@ -28,6 +28,7 @@
 #include "NodeName.h"
 #include "RenderSVGRect.h"
 #include "SVGElementInlines.h"
+#include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -53,6 +54,23 @@ inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document& do
 Ref<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new SVGRectElement(tagName, document));
+}
+
+SVGAnimatedProperty* SVGRectElement::propertyForAttribute(const QualifiedName& name) const
+{
+    if (name == SVGNames::xAttr)
+        return m_x.ptr();
+    if (name == SVGNames::yAttr)
+        return m_y.ptr();
+    if (name == SVGNames::widthAttr)
+        return m_width.ptr();
+    if (name == SVGNames::heightAttr)
+        return m_height.ptr();
+    if (name == SVGNames::rxAttr)
+        return m_rx.ptr();
+    if (name == SVGNames::ryAttr)
+        return m_ry.ptr();
+    return nullptr;
 }
 
 void SVGRectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

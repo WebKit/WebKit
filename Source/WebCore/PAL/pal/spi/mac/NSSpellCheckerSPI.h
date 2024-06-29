@@ -56,6 +56,9 @@ extern NSString *NSTextCompletionAttributeName;
 
 #if HAVE(INLINE_PREDICTIONS)
 typedef NS_OPTIONS(uint64_t, NSTextCheckingTypeAppKitTemporary) {
+#if HAVE(NS_TEXT_CHECKING_TYPE_MATH_COMPLETION)
+    _NSTextCheckingTypeMathCompletion   = 1ULL << 28,
+#endif
     _NSTextCheckingTypeSingleCompletion = 1ULL << 29,
 };
 #endif

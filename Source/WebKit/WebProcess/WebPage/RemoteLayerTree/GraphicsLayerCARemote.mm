@@ -52,8 +52,8 @@ GraphicsLayerCARemote::GraphicsLayerCARemote(Type layerType, GraphicsLayerClient
 
 GraphicsLayerCARemote::~GraphicsLayerCARemote()
 {
-    if (m_context)
-        m_context->graphicsLayerWillLeaveContext(*this);
+    if (RefPtrAllowingPartiallyDestroyed<RemoteLayerTreeContext> protectedContext = m_context.get())
+        protectedContext->graphicsLayerWillLeaveContext(*this);
 }
 
 bool GraphicsLayerCARemote::filtersCanBeComposited(const FilterOperations& filters)
@@ -63,6 +63,7 @@ bool GraphicsLayerCARemote::filtersCanBeComposited(const FilterOperations& filte
 
 Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
 {
+    RELEASE_ASSERT(m_context.get());
     auto result = PlatformCALayerRemote::create(layerType, owner, *m_context);
 
     if (result->canHaveBackingStore())
@@ -73,29 +74,34 @@ Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformCALaye
 
 Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformLayer* platformLayer, PlatformCALayerClient* owner)
 {
+    RELEASE_ASSERT(m_context.get());
     return PlatformCALayerRemote::create(platformLayer, owner, *m_context);
 }
 
 Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier, PlatformCALayerClient* owner)
 {
+    RELEASE_ASSERT(m_context.get());
     return PlatformCALayerRemote::create(layerHostingContextIdentifier.toUInt64(), owner, *m_context);
 }
 
 #if ENABLE(MODEL_ELEMENT)
 Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(Ref<WebCore::Model> model, PlatformCALayerClient* owner)
 {
+    RELEASE_ASSERT(m_context.get());
     return PlatformCALayerRemote::create(model, owner, *m_context);
 }
 #endif
 
 Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayerHost(WebCore::LayerHostingContextIdentifier identifier, PlatformCALayerClient* owner)
 {
+    RELEASE_ASSERT(m_context.get());
     return PlatformCALayerRemoteHost::create(identifier, owner, *m_context);
 }
 
 #if HAVE(AVKIT)
 Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformVideoLayer(WebCore::HTMLVideoElement& videoElement, PlatformCALayerClient* owner)
 {
+    RELEASE_ASSERT(m_context.get());
     return PlatformCALayerRemote::create(videoElement, owner, *m_context);
 }
 #endif
@@ -107,8 +113,8 @@ Ref<PlatformCAAnimation> GraphicsLayerCARemote::createPlatformCAAnimation(Platfo
 
 void GraphicsLayerCARemote::moveToContext(RemoteLayerTreeContext& context)
 {
-    if (m_context)
-        m_context->graphicsLayerWillLeaveContext(*this);
+    if (RefPtr protectedContext = m_context.get())
+        protectedContext->graphicsLayerWillLeaveContext(*this);
 
     m_context = &context;
 
@@ -178,7 +184,8 @@ private:
 
 RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCARemote::createAsyncContentsDisplayDelegate(GraphicsLayerAsyncContentsDisplayDelegate* existing)
 {
-    if (!m_context || !m_context->drawingAreaIdentifier() || !WebProcess::singleton().parentProcessConnection())
+    RefPtr protectedContext = m_context.get();
+    if (!protectedContext || !protectedContext->drawingAreaIdentifier() || !WebProcess::singleton().parentProcessConnection())
         return nullptr;
 
     RefPtr<GraphicsLayerCARemoteAsyncContentsDisplayDelegate> delegate;
@@ -187,7 +194,7 @@ RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCARemote
 
     if (!delegate) {
         ASSERT(!existing);
-        delegate = adoptRef(new GraphicsLayerCARemoteAsyncContentsDisplayDelegate(*WebProcess::singleton().parentProcessConnection(), m_context->drawingAreaIdentifier()));
+        delegate = adoptRef(new GraphicsLayerCARemoteAsyncContentsDisplayDelegate(*WebProcess::singleton().parentProcessConnection(), protectedContext->drawingAreaIdentifier()));
     }
 
     auto layerID = setContentsToAsyncDisplayDelegate(delegate, ContentsLayerPurpose::Canvas);
@@ -198,7 +205,7 @@ RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCARemote
 
 GraphicsLayer::LayerMode GraphicsLayerCARemote::layerMode() const
 {
-    if (m_context->layerHostingMode() == LayerHostingMode::InProcess)
+    if (m_context && m_context->layerHostingMode() == LayerHostingMode::InProcess)
         return GraphicsLayer::LayerMode::PlatformLayer;
     return GraphicsLayer::LayerMode::LayerHostingContextId;
 }

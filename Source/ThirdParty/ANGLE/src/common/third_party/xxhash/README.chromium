@@ -1,5 +1,6 @@
 Name: xxHash
 URL: https://github.com/Cyan4973/xxHash
+Revision: 0f2dd4a1cb103e3fc8c55c855b821eb24c6d82c3
 License: BSD
 License File: LICENSE
 Security Critical: yes

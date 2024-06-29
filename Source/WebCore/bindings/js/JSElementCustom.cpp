@@ -103,8 +103,8 @@ static JSValue getElementsArrayAttribute(JSGlobalObject& lexicalGlobalObject, co
     auto propertyName = PropertyName(Identifier::fromString(vm, attributeName.toString()));
     JSValue cachedValue = cachedObject->getDirect(vm, propertyName);
     if (!cachedValue.isEmpty()) {
-        std::optional<Vector<Ref<Element>>> cachedElements = convert<IDLNullable<IDLFrozenArray<IDLInterface<Element>>>>(lexicalGlobalObject, cachedValue);
-        if (elements == cachedElements)
+        auto cachedElements = convert<IDLNullable<IDLFrozenArray<IDLInterface<Element>>>>(lexicalGlobalObject, cachedValue);
+        if (!cachedElements.hasException(throwScope) && elements == cachedElements.returnValue())
             return cachedValue;
     }
 

@@ -23,7 +23,6 @@
 
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
-#include "api/crypto_params.h"
 #include "api/media_types.h"
 #include "api/rtp_parameters.h"
 #include "api/rtp_transceiver_direction.h"
@@ -43,7 +42,6 @@
 
 namespace cricket {
 
-using CryptoParamsVec = std::vector<CryptoParams>;
 using RtpHeaderExtensions = std::vector<webrtc::RtpExtension>;
 
 // Options to control how session descriptions are generated.
@@ -121,12 +119,6 @@ class MediaContentDescription {
   std::string bandwidth_type() const { return bandwidth_type_; }
   void set_bandwidth_type(std::string bandwidth_type) {
     bandwidth_type_ = bandwidth_type;
-  }
-
-  const std::vector<CryptoParams>& cryptos() const { return cryptos_; }
-  void AddCrypto(const CryptoParams& params) { cryptos_.push_back(params); }
-  void set_cryptos(const std::vector<CryptoParams>& cryptos) {
-    cryptos_ = cryptos;
   }
 
   // List of RTP header extensions. URIs are **NOT** guaranteed to be unique
@@ -268,7 +260,6 @@ class MediaContentDescription {
   int bandwidth_ = kAutoBandwidth;
   std::string bandwidth_type_ = kApplicationSpecificBandwidth;
 
-  std::vector<CryptoParams> cryptos_;
   std::vector<webrtc::RtpExtension> rtp_header_extensions_;
   bool rtp_header_extensions_set_ = false;
   StreamParamsVec send_streams_;
@@ -468,13 +459,23 @@ const ContentInfo* FindContentInfoByName(const ContentInfos& contents,
 const ContentInfo* FindContentInfoByType(const ContentInfos& contents,
                                          const std::string& type);
 
-// Determines how the MSID will be signaled in the SDP. These can be used as
-// flags to indicate both or none.
+// Determines how the MSID will be signaled in the SDP.
+// These can be used as bit flags to indicate both or the special value none.
 enum MsidSignaling {
-  // Signal MSID with one a=msid line in the media section.
+  // MSID is not signaled. This is not a bit flag and must be compared for
+  // equality.
+  kMsidSignalingNotUsed = 0x0,
+  // Signal MSID with at least one a=msid line in the media section.
+  // This requires unified plan.
   kMsidSignalingMediaSection = 0x1,
   // Signal MSID with a=ssrc: msid lines in the media section.
-  kMsidSignalingSsrcAttribute = 0x2
+  // This should only be used with plan-b but is signalled in
+  // offers for backward compability reasons.
+  kMsidSignalingSsrcAttribute = 0x2,
+  // Signal MSID with a=msid-semantic: WMS in the session section.
+  // This is deprecated but signalled for backward compability reasons.
+  // It is typically combined with 0x1 or 0x2.
+  kMsidSignalingSemantic = 0x4
 };
 
 // Describes a collection of contents, each with its own name and
@@ -548,9 +549,6 @@ class SessionDescription {
   void RemoveGroupByName(const std::string& name);
 
   // Global attributes.
-  void set_msid_supported(bool supported) { msid_supported_ = supported; }
-  bool msid_supported() const { return msid_supported_; }
-
   // Determines how the MSIDs were/will be signaled. Flag value composed of
   // MsidSignaling bits (see enum above).
   void set_msid_signaling(int msid_signaling) {
@@ -582,10 +580,7 @@ class SessionDescription {
   ContentInfos contents_;
   TransportInfos transport_infos_;
   ContentGroups content_groups_;
-  bool msid_supported_ = true;
-  // Default to what Plan B would do.
-  // TODO(bugs.webrtc.org/8530): Change default to kMsidSignalingMediaSection.
-  int msid_signaling_ = kMsidSignalingSsrcAttribute;
+  int msid_signaling_ = kMsidSignalingMediaSection | kMsidSignalingSemantic;
   bool extmap_allow_mixed_ = true;
 };
 

@@ -32,10 +32,10 @@ class GStreamerVideoEncoderFactory final : public webrtc::VideoEncoderFactory {
 public:
     GStreamerVideoEncoderFactory(bool isSupportingVP9Profile0, bool isSupportingVP9Profile2);
 
-private:
-    std::vector<webrtc::SdpVideoFormat> GetSupportedFormats() const override;
-    std::unique_ptr<webrtc::VideoEncoder> CreateVideoEncoder(const webrtc::SdpVideoFormat&) final;
+    std::vector<webrtc::SdpVideoFormat> GetSupportedFormats() const final;
+    std::unique_ptr<webrtc::VideoEncoder> Create(const webrtc::Environment&, const webrtc::SdpVideoFormat&) final;
 
+private:
     bool m_isSupportingVP9Profile0;
     bool m_isSupportingVP9Profile2;
 };

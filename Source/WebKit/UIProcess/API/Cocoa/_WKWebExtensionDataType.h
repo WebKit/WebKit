@@ -28,17 +28,17 @@
 #import <WebKit/WKFoundation.h>
 
 /*! @abstract Constants for specifying data types for a @link WKWebExtensionContext @/link. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 typedef NSString * _WKWebExtensionDataType NS_TYPED_EXTENSIBLE_ENUM NS_SWIFT_NAME(_WKWebExtension.DataType);
 
 /*! @abstract Specifies local storage, including `browser.storage.local`. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 WK_EXTERN _WKWebExtensionDataType const _WKWebExtensionDataTypeLocal;
 
 /*! @abstract Specifies session storage, including `browser.storage.session`. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 WK_EXTERN _WKWebExtensionDataType const _WKWebExtensionDataTypeSession;
 
 /*! @abstract Specifies synchronized storage, including `browser.storage.sync`. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 WK_EXTERN _WKWebExtensionDataType const _WKWebExtensionDataTypeSync;

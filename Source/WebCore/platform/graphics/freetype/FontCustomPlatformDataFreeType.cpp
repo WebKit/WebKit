@@ -148,8 +148,9 @@ RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buff
         return nullptr;
     }
 
+    auto span = buffer.span();
     FT_Face freeTypeFace;
-    if (FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(buffer.data()), buffer.size(), 0, &freeTypeFace))
+    if (FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(span.data()), span.size(), 0, &freeTypeFace))
         return nullptr;
     FontPlatformData::CreationData creationData = { buffer, itemInCollection };
     return adoptRef(new FontCustomPlatformData(freeTypeFace, WTFMove(creationData)));

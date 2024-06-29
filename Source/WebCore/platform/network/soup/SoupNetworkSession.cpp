@@ -87,8 +87,7 @@ private:
         auto digest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
         digest->addBytes(std::span { certificateData->data, certificateData->len });
 
-        auto hash = digest->computeHash();
-        return base64EncodeToString(hash);
+        return base64EncodeToString(digest->computeHash());
     }
 
     HashSet<String> m_certificates;

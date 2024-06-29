@@ -67,13 +67,13 @@ public:
     constexpr bool isNull() const { return m_charactersWithNullTerminator.empty(); }
 
     constexpr const char* characters() const { return m_charactersWithNullTerminator.data(); }
-    const LChar* characters8() const { return bitwise_cast<const LChar*>(characters()); }
     constexpr size_t length() const { return !m_charactersWithNullTerminator.empty() ? m_charactersWithNullTerminator.size() - 1 : 0; }
-    std::span<const LChar> span8() const { return { characters8(), length() }; }
+    std::span<const LChar> span8() const { return { bitwise_cast<const LChar*>(characters()), length() }; }
+    std::span<const char> spanIncludingNullTerminator() const { return m_charactersWithNullTerminator; }
     size_t isEmpty() const { return m_charactersWithNullTerminator.size() <= 1; }
 
-    constexpr char operator[](unsigned index) const { return m_charactersWithNullTerminator[index]; }
-    constexpr char characterAt(unsigned index) const { return m_charactersWithNullTerminator[index]; }
+    constexpr char operator[](size_t index) const { return m_charactersWithNullTerminator[index]; }
+    constexpr char characterAt(size_t index) const { return m_charactersWithNullTerminator[index]; }
 
 #if defined(__OBJC__) && !USE(BUN_JSC_ADDITIONS)
     // This function convert null strings to empty strings.

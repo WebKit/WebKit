@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Canon Inc.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -55,7 +56,7 @@ ExceptionOr<FetchBody> FetchBody::extract(Init&& value, String& contentType)
     }, [&](RefPtr<DOMFormData>& value) mutable -> ExceptionOr<FetchBody> {
         Ref<DOMFormData> domFormData = value.releaseNonNull();
         auto formData = FormData::createMultiPart(domFormData.get());
-        contentType = makeString("multipart/form-data; boundary=", formData->boundary());
+        contentType = makeString("multipart/form-data; boundary="_s, formData->boundary());
         return FetchBody(WTFMove(formData));
     }, [&](RefPtr<URLSearchParams>& value) mutable -> ExceptionOr<FetchBody> {
         Ref<const URLSearchParams> params = value.releaseNonNull();
@@ -109,6 +110,12 @@ void FetchBody::arrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promis
 void FetchBody::blob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
     m_consumer.setType(FetchBodyConsumer::Type::Blob);
+    consume(owner, WTFMove(promise));
+}
+
+void FetchBody::bytes(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
+{
+    m_consumer.setType(FetchBodyConsumer::Type::Bytes);
     consume(owner, WTFMove(promise));
 }
 
@@ -178,15 +185,15 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
 {
     bool closeStream = false;
     if (isArrayBuffer())
-        closeStream = source.enqueue(ArrayBuffer::tryCreate(arrayBufferBody().data(), arrayBufferBody().byteLength()));
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(arrayBufferBody().span()));
     else if (isArrayBufferView())
-        closeStream = source.enqueue(ArrayBuffer::tryCreate(arrayBufferViewBody().baseAddress(), arrayBufferViewBody().byteLength()));
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(arrayBufferViewBody().span()));
     else if (isText()) {
         auto data = PAL::TextCodecUTF8::encodeUTF8(textBody());
-        closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(data));
     } else if (isURLSearchParams()) {
         auto data = PAL::TextCodecUTF8::encodeUTF8(urlSearchParamsBody().toString());
-        closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(data));
     } else if (isBlob())
         owner.loadBlob(blobBody(), nullptr);
     else if (isFormData())

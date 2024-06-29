@@ -3,12 +3,7 @@
 <script>
 function testOne(operation)
 {
-    if (window.testRunner){
-		testRunner.dumpAsText(true);
-    }
-
-    var canvas = document.getElementById(operation);
-    var context = canvas.getContext('2d');
+    var context = document.getElementById(operation).getContext('2d');
 
     context.fillStyle = "red";
     context.fillRect(0, 0, 1000, 1000);

@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: Permission policy 'Payment' check failed for element with origin 'https://localhost:8443' and allow attribute ''.
-CONSOLE MESSAGE: Permission policy 'Payment' check failed for element with origin 'https://localhost:8443' and allow attribute 'payment 'none''.
-CONSOLE MESSAGE: Permission policy 'Payment' check failed for element with origin 'https://127.0.0.1:8443' and allow attribute 'payment 'none''.
-CONSOLE MESSAGE: Permission policy 'Payment' check failed for element with origin 'https://localhost:8443' and allow attribute 'payment 'self''.
-CONSOLE MESSAGE: Permission policy 'Payment' check failed for element with origin 'https://127.0.0.1:8443' and allow attribute 'payment https://localhost:8443'.
+CONSOLE MESSAGE: Permission policy 'Payment' check failed for document with origin 'https://localhost:8443'.
+CONSOLE MESSAGE: Permission policy 'Payment' check failed for document with origin 'https://localhost:8443'.
+CONSOLE MESSAGE: Permission policy 'Payment' check failed for document with origin 'https://127.0.0.1:8443'.
+CONSOLE MESSAGE: Permission policy 'Payment' check failed for document with origin 'https://localhost:8443'.
+CONSOLE MESSAGE: Permission policy 'Payment' check failed for document with origin 'https://127.0.0.1:8443'.
 PASS iframe src: "https://localhost:8443/paymentrequest/resources/payment-postmessage.html" with allow="" MUST NOT create a PaymentRequest. SecurityError Third-party iframes are not allowed to request payments unless explicitly allowed via Feature-Policy (payment)
 PASS iframe src: "https://127.0.0.1:8443/paymentrequest/resources/payment-postmessage.html" with allow="" is allowed to create a PaymentRequest.
 PASS iframe src: "https://localhost:8443/paymentrequest/resources/payment-postmessage.html" with allow="payment" is allowed to create a PaymentRequest.

@@ -1038,6 +1038,11 @@ void CairoOperationRecorder::beginTransparencyLayer(float opacity)
     append(createCommand<BeginTransparencyLayer>(opacity));
 }
 
+void CairoOperationRecorder::beginTransparencyLayer(CompositeOperator, BlendMode)
+{
+    beginTransparencyLayer(1);
+}
+
 void CairoOperationRecorder::endTransparencyLayer()
 {
     struct EndTransparencyLayer final : PaintingOperation, OperationData<> {

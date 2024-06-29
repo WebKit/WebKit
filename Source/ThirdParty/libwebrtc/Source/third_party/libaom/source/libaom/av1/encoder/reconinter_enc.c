@@ -157,7 +157,7 @@ static void setup_address_for_obmc(MACROBLOCKD *xd, int mi_row_offset,
       get_ref_scale_factors_const(ctxt->cm, frame);
 
   xd->block_ref_scale_factors[0] = sf;
-  if ((!av1_is_valid_scale(sf)))
+  if (!av1_is_valid_scale(sf))
     aom_internal_error(xd->error_info, AOM_CODEC_UNSUP_BITSTREAM,
                        "Reference frame has invalid dimensions");
 

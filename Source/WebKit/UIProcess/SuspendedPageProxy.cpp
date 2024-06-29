@@ -106,7 +106,7 @@ static const MessageNameSet& messageNamesToIgnoreWhileSuspended()
 
 SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&& browsingContextGroup, ShouldDelayClosingUntilFirstLayerFlush shouldDelayClosingUntilFirstLayerFlush)
     : m_page(page)
-    , m_webPageID(page.webPageID())
+    , m_webPageID(page.webPageIDInMainFrameProcess())
     , m_process(WTFMove(process))
     , m_mainFrame(WTFMove(mainFrame))
     , m_browsingContextGroup(WTFMove(browsingContextGroup))
@@ -305,7 +305,7 @@ bool SuspendedPageProxy::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, 
 
 String SuspendedPageProxy::loggingString() const
 {
-    return makeString("(0x", hex(reinterpret_cast<uintptr_t>(this)), " WebPage ID ", m_webPageID.toUInt64(), ", m_suspensionState ", static_cast<unsigned>(m_suspensionState), ')');
+    return makeString("(0x"_s, hex(reinterpret_cast<uintptr_t>(this)), " WebPage ID "_s, m_webPageID.toUInt64(), ", m_suspensionState "_s, static_cast<unsigned>(m_suspensionState), ')');
 }
 
 #endif

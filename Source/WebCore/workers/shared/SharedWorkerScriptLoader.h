@@ -28,6 +28,7 @@
 #include "MessagePortIdentifier.h"
 #include "ResourceLoaderIdentifier.h"
 #include "ResourceResponse.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "WorkerOptions.h"
 #include "WorkerScriptLoaderClient.h"
 #include <wtf/CompletionHandler.h>
@@ -53,8 +54,8 @@ public:
     const WorkerOptions& options() const { return m_options; }
 
 private:
-    void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final;
-    void notifyFinished() final;
+    void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse&) final;
+    void notifyFinished(ScriptExecutionContextIdentifier) final;
 
     const WorkerOptions m_options;
     const Ref<SharedWorker> m_worker;

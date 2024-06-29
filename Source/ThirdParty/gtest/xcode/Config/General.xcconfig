@@ -48,7 +48,7 @@ SEPARATE_STRIP = YES
 GCC_C_LANGUAGE_STANDARD = c99
 
 // Force C++14
-CLANG_CXX_LANGUAGE_STANDARD = c++2a;
+CLANG_CXX_LANGUAGE_STANDARD = c++2b;
 
 // not sure why apple defaults this on, but it's pretty risky
 ALWAYS_SEARCH_USER_PATHS = NO

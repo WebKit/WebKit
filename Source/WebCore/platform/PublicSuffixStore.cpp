@@ -52,7 +52,7 @@ bool PublicSuffixStore::isPublicSuffix(StringView domain) const
     return platformIsPublicSuffix(domain);
 }
 
-String PublicSuffixStore::publicSuffix(const URL& url) const
+PublicSuffix PublicSuffixStore::publicSuffix(const URL& url) const
 {
     if (!url.isValid())
         return { };
@@ -65,25 +65,24 @@ String PublicSuffixStore::publicSuffix(const URL& url) const
     for (unsigned labelStart = 0; (separatorPosition = host.find('.', labelStart)) != notFound; labelStart = separatorPosition + 1) {
         auto candidate = host.substring(separatorPosition + 1);
         if (isPublicSuffix(candidate))
-            return candidate.toString();
+            return PublicSuffix::fromRawString(candidate.toString());
     }
 
     return { };
 }
 
-String PublicSuffixStore::topPrivatelyControlledDomain(const String& host) const
+String PublicSuffixStore::topPrivatelyControlledDomain(StringView host) const
 {
     // FIXME: if host is a URL, we could drop these checks.
     if (host.isEmpty())
         return { };
 
     if (!host.containsOnlyASCII())
-        return host;
+        return host.toString();
 
     Locker locker { m_HostTopPrivatelyControlledDomainCacheLock };
-    auto hostCopy = crossThreadCopy(host);
-    auto result = m_hostTopPrivatelyControlledDomainCache.ensure(hostCopy, [&] {
-        const auto lowercaseHost = hostCopy.convertToASCIILowercase();
+    auto result = m_hostTopPrivatelyControlledDomainCache.ensure<ASCIICaseInsensitiveStringViewHashTranslator>(host, [&] {
+        const auto lowercaseHost = host.convertToASCIILowercase();
         if (lowercaseHost == "localhost"_s || URL::hostIsIPAddress(lowercaseHost))
             return lowercaseHost;
 

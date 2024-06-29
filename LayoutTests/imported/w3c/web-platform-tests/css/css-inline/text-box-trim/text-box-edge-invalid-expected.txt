@@ -1,0 +1,13 @@
+
+PASS e.style['text-box-edge'] = "auto" should not set the property value
+PASS e.style['text-box-edge'] = "auto leading" should not set the property value
+PASS e.style['text-box-edge'] = "leading auto" should not set the property value
+PASS e.style['text-box-edge'] = "alphabetic" should not set the property value
+PASS e.style['text-box-edge'] = "alphabetic text" should not set the property value
+PASS e.style['text-box-edge'] = "text cap" should not set the property value
+PASS e.style['text-box-edge'] = "text ex" should not set the property value
+PASS e.style['text-box-edge'] = "leading leading" should not set the property value
+PASS e.style['text-box-edge'] = "leading text" should not set the property value
+PASS e.style['text-box-edge'] = "text leading" should not set the property value
+PASS e.style['text-box-edge'] = "text text text" should not set the property value
+

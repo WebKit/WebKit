@@ -32,6 +32,7 @@
 #include <CoreMedia/CMTime.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
+#include <wtf/MainThreadDispatcher.h>
 #include <wtf/Observer.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/WorkQueue.h>
@@ -165,6 +166,7 @@ private:
     void notifyTrackModeChanged() final;
     void synchronizeTextTrackState() final;
 
+    bool timeIsProgressing() const final { return effectiveRate(); }
     void platformSetVisible(bool) final;
     void platformPlay() final;
     void platformPause() final;
@@ -223,7 +225,7 @@ private:
     void sizeChanged() final;
     void resolvedURLChanged() final;
 
-    bool isHLS() const { return m_cachedAssetIsHLS.value_or(false); }
+    bool isHLS() const final { return m_cachedAssetIsHLS.value_or(false); }
 
     bool hasAvailableVideoFrame() const final;
 
@@ -246,7 +248,6 @@ private:
 
     MediaTime getStartDate() const final;
 
-    bool requiresTextTrackRepresentation() const final;
     void setTextTrackRepresentation(TextTrackRepresentation*) final;
     void syncTextTrackBounds() final;
 
@@ -369,7 +370,7 @@ private:
 
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics(AVPlayerLayer*) const;
 
-    void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) final;
+    void setVideoTarget(const PlatformVideoTarget&) final;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     const String& defaultSpatialTrackingLabel() const;
@@ -382,6 +383,10 @@ private:
 #endif
 
     void isInFullscreenOrPictureInPictureChanged(bool) final;
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    bool supportsLinearMediaPlayer() const final { return true; }
+#endif
 
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
@@ -511,7 +516,7 @@ private:
     ProcessIdentity m_resourceOwner;
     PlatformTimeRanges m_buffered;
     TrackID m_currentTextTrackID { 0 };
-    Ref<WorkQueue> m_targetQueue { WorkQueue::main() };
+    Ref<RefCountedSerialFunctionDispatcher> m_targetDispatcher { MainThreadDispatcher::singleton() };
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;

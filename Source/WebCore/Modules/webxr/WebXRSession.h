@@ -90,6 +90,12 @@ public:
     bool supportsViewportScaling() const; 
     bool isPositionEmulated() const;
 
+    // If the immersive session obscures the HTML document (for example, in standalone devices),
+    // Page::updateRendering() won't be called and the WebXRSession needs to take over the
+    // responsibility to service requestVideoFrameCallbacks.
+    void applicationDidEnterBackground() { m_shouldServiceRequestVideoFrameCallbacks = true; }
+    void applicationWillEnterForeground() { m_shouldServiceRequestVideoFrameCallbacks = false; }
+
     // EventTarget.
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
@@ -133,12 +139,14 @@ private:
     void requestFrameIfNeeded();
     void onFrame(PlatformXR::FrameData&&);
     void applyPendingRenderState();
+    void minimalUpdateRendering();
 
     XREnvironmentBlendMode m_environmentBlendMode { XREnvironmentBlendMode::Opaque };
     XRInteractionMode m_interactionMode { XRInteractionMode::WorldSpace };
     XRVisibilityState m_visibilityState { XRVisibilityState::Visible };
     UniqueRef<WebXRInputSourceArray> m_inputSources;
     bool m_ended { false };
+    bool m_shouldServiceRequestVideoFrameCallbacks { false };
     std::unique_ptr<EndPromise> m_endPromise;
 
     WebXRSystem& m_xrSystem;

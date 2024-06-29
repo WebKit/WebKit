@@ -42,9 +42,7 @@ CompleteSubspace::CompleteSubspace(CString name, JSC::Heap& heap, const HeapCell
     initialize(heapCellType, alignedMemoryAllocator);
 }
 
-CompleteSubspace::~CompleteSubspace()
-{
-}
+CompleteSubspace::~CompleteSubspace() = default;
 
 Allocator CompleteSubspace::allocatorForNonInline(size_t size, AllocatorForMode mode)
 {

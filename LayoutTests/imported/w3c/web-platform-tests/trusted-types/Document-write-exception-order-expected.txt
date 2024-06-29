@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+
+PASS `document.write(string)` throws TypeError
+PASS `document.write(TrustedHTML)` throws InvalidStateError
+PASS `document.write(string)` w/ default policy throws InvalidStateError
+

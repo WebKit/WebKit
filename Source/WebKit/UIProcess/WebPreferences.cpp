@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPreferences.h"
 
+#include "APIPageConfiguration.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferencesKeys.h"
@@ -190,7 +191,7 @@ void WebPreferences::updateBoolValueForKey(const String& key, bool value, bool e
     
     if (key == WebPreferencesKey::processSwapOnCrossSiteNavigationEnabledKey()) {
         for (auto& page : m_pages)
-            page.process().processPool().configuration().setProcessSwapsOnNavigation(value);
+            page.configuration().processPool().configuration().setProcessSwapsOnNavigation(value);
 
         return;
     }

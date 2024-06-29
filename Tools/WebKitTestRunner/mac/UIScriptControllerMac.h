@@ -42,6 +42,7 @@ private:
     void replaceTextAtRange(JSStringRef, int, int) override;
     void zoomToScale(double, JSValueRef) override;
     double zoomScale() const override;
+    double minimumZoomScale() const override;
     void simulateAccessibilitySettingsChangeNotification(JSValueRef) override;
     bool isShowingDateTimePicker() const override;
     double dateTimePickerValue() const override;

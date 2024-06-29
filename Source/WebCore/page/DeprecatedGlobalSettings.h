@@ -100,8 +100,6 @@ public:
 #if ENABLE(WEB_RTC)
     static bool webRTCH264LowLatencyEncoderEnabled() { return shared().m_isWebRTCH264LowLatencyEncoderEnabled; }
     static void setWebRTCH264LowLatencyEncoderEnabled(bool isEnabled) { shared().m_isWebRTCH264LowLatencyEncoderEnabled = isEnabled; }
-    static bool webRTCH264SimulcastEnabled() { return shared().m_isWebRTCH264SimulcastEnabled; }
-    static void setWebRTCH264SimulcastEnabled(bool isEnabled) { shared().m_isWebRTCH264SimulcastEnabled = isEnabled; }
     static bool webRTCPlatformTCPSocketsEnabled() { return shared().m_isWebRTCPlatformTCPSocketsEnabled; }
     static void setWebRTCPlatformTCPSocketsEnabled(bool isEnabled) { shared().m_isWebRTCPlatformTCPSocketsEnabled = isEnabled; }
     static bool webRTCPlatformUDPSocketsEnabled() { return shared().m_isWebRTCPlatformUDPSocketsEnabled; }
@@ -194,7 +192,6 @@ private:
 #endif
 
 #if ENABLE(WEB_RTC)
-    bool m_isWebRTCH264SimulcastEnabled { true };
     bool m_isWebRTCH264LowLatencyEncoderEnabled { false };
     bool m_isWebRTCPlatformTCPSocketsEnabled { false };
     bool m_isWebRTCPlatformUDPSocketsEnabled { false };

@@ -71,7 +71,7 @@ const String WebSocketExtensionDispatcher::createHeaderValue() const
 
 void WebSocketExtensionDispatcher::appendAcceptedExtension(const String& extensionToken, HashMap<String, String>& extensionParameters)
 {
-    m_acceptedExtensionsBuilder.append(m_acceptedExtensionsBuilder.isEmpty() ? "" : ", ", extensionToken);
+    m_acceptedExtensionsBuilder.append(m_acceptedExtensionsBuilder.isEmpty() ? ""_s : ", "_s, extensionToken);
     // FIXME: Should use ListHashSet to keep the order of the parameters.
     for (auto& parameter : extensionParameters) {
         m_acceptedExtensionsBuilder.append("; "_s, parameter.key);
@@ -121,7 +121,7 @@ bool WebSocketExtensionDispatcher::processHeaderValue(const String& headerValue)
         }
         // There is no extension which can process the response.
         if (index == m_processors.size()) {
-            fail("Received unexpected extension: " + extensionToken);
+            fail(makeString("Received unexpected extension: "_s + extensionToken));
             return false;
         }
     }

@@ -46,6 +46,7 @@
 #import "PasteboardStrategy.h"
 #import "PlatformStrategies.h"
 #import "Range.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -118,20 +119,19 @@ DragOperation DragController::platformGenericDragOperation()
 void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHandlingMethod dragHandlingMethod, const DragData& dragData) const
 {
     Vector<String> supportedTypes;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     switch (dragHandlingMethod) {
     case DragHandlingMethod::PageLoad:
-        supportedTypes.append(kUTTypeURL);
+        supportedTypes.append(UTTypeURL.identifier);
         break;
     case DragHandlingMethod::EditPlainText:
-        supportedTypes.append(kUTTypeURL);
-        supportedTypes.append(kUTTypePlainText);
+        supportedTypes.append(UTTypeURL.identifier);
+        supportedTypes.append(UTTypePlainText.identifier);
         break;
     case DragHandlingMethod::EditRichText:
         if (DeprecatedGlobalSettings::attachmentElementEnabled()) {
             supportedTypes.append(WebArchivePboardType);
-            supportedTypes.append(kUTTypeContent);
-            supportedTypes.append(kUTTypeItem);
+            supportedTypes.append(UTTypeContent.identifier);
+            supportedTypes.append(UTTypeItem.identifier);
         } else {
             for (NSString *type in Pasteboard::supportedWebContentPasteboardTypes())
                 supportedTypes.append(type);
@@ -145,7 +145,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             supportedTypes.append(type);
         break;
     }
-ALLOW_DEPRECATED_DECLARATIONS_END
+
     auto context = dragData.createPasteboardContext();
     platformStrategies()->pasteboardStrategy()->updateSupportedTypeIdentifiers(supportedTypes, dragData.pasteboardName(), context.get());
 }

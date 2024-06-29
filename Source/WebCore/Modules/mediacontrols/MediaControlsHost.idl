@@ -61,6 +61,9 @@ enum DeviceType {
     readonly attribute boolean userGestureRequired;
     readonly attribute boolean isInMediaDocument;
     readonly attribute boolean shouldForceControlsDisplay;
+    readonly attribute boolean supportsSeeking;
+    readonly attribute boolean inWindowFullscreen;
+    readonly attribute boolean supportsRewind;
 
     readonly attribute DOMString externalDeviceDisplayName;
     readonly attribute DeviceType externalDeviceType;

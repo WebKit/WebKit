@@ -1,0 +1,40 @@
+<style>
+    .class1,
+    .class0:dir(rtl),
+    span {
+        scroll;
+        -webkit-animation: keyframes2, keyframes4
+    }
+
+    @keyframes keyframes4 {}
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    function f0() {
+        try { x47.select(); } catch { }
+        try { window.onanimationstart = f4; } catch { }
+    }
+    function f4() {
+        try { x19.addEventListener("DOMSubtreeModified", f0); } catch { }
+        try { v12 = window.document; } catch { }
+        try { window.find("a"); } catch { }
+        try { x19.type = "a"; } catch { }
+        try { v55 = window.top; } catch { }
+        try { document.designMode = "on"; } catch { }
+        try { v55.find("This test passes if it does not crash"); } catch { }
+        try { v12.execCommand("subscript", false, null); } catch { }
+        try { x47.selectionEnd = 4; } catch { }
+    }
+</script>
+<textarea id="x47" onfocus="f0()" autofocus="" class="class3">
+</textarea>
+<embed class="class1" part="part1">
+</object>
+<details open>
+    <summary itemgroup="AA" id="summary">This test passes if it does not crash.</summary>
+    <dd dir="rtl" class="class0" onclick="f0()">
+        <li id="x19" accesskey="A">
+        </li>
+    </dd>
+</details>

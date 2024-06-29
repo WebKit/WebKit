@@ -87,6 +87,7 @@ class BrowserPerfDashRunner(object):
                              'bot_password': None,
                              'browser_id': self._args.browser,
                              'browser_version': self._args.browser_version,
+                             'local_hostname': os.uname().nodename,
                              'test_id': None,
                              'test_version': None,
                              'test_data': None}
@@ -189,6 +190,43 @@ class BrowserPerfDashRunner(object):
         except urllib.error.HTTPError as e:
             return e
 
+    # browserperfdash uses code 202 for handling long StreamingHttpResponses that ouput text meanwhile
+    # processing to avoid timeouts and then put the real reply at the end.
+    def _read_stream_response(self, post_request, server_name):
+        try:
+            reply_code = post_request.getcode()
+            if reply_code != 202:
+                return reply_code, post_request.read().decode('utf-8', errors='ignore')
+            post_reply = b''
+            last_status_update = datetime.now()
+            while True:
+                chunk = post_request.read(1)
+                if not chunk:
+                    break
+                post_reply += chunk
+                seconds_elapased_since_status_update = (datetime.now() - last_status_update).total_seconds()
+                # Each minute log an status update to avoid timeouts on the worker side due to not output
+                if seconds_elapased_since_status_update > 60:
+                    _log.info('Waiting for server {server_name} to process the results from {test_name} and browser {browser_name} version {browser_version} ...'.format(
+                              server_name=server_name, test_name=self._result_data['test_id'], browser_name=self._result_data['browser_id'], browser_version=self._result_data['browser_version']))
+                    last_status_update = datetime.now()
+            post_reply = post_reply.decode('utf-8', errors='ignore')
+            recording_reply_msg = False
+            reply_msg = ''
+            for line in post_reply.splitlines():
+                if line.startswith('HTTP_202_FINAL_STATUS_CODE') and '=' in line:
+                    reply_code = int(line.split("=")[1].strip())
+                if recording_reply_msg:
+                    reply_msg += line + '\n'
+                if line.startswith('HTTP_202_FINAL_MSG_NEXT_LINES'):
+                    recording_reply_msg = True
+            reply_msg = reply_msg.strip()
+            return reply_code, reply_msg
+        except Exception as e:
+            reply_code = 400
+            reply_msg = ('Exception when trying to read the response from server {server_name}: {e}'.format(server_name=server_name, e=str(e)))
+            return reply_code, reply_msg
+
     def _upload_result(self):
         upload_failed = False
         for server in self._config_parser.sections():
@@ -200,13 +238,14 @@ class BrowserPerfDashRunner(object):
             post_url = self._config_parser.get(server, 'post_url')
             try:
                 post_request = self._send_post_request_data(post_url, post_data)
-                if post_request.getcode() == 200:
+                reply_code, reply_msg = self._read_stream_response(post_request, server)
+                if reply_code == 200:
                     _log.info('Sucesfully uploaded results to server {server_name} for test {test_name} and browser {browser_name} version {browser_version}'.format(
                                server_name=server, test_name=self._result_data['test_id'], browser_name=self._result_data['browser_id'], browser_version=self._result_data['browser_version']))
                 else:
                     upload_failed = True
-                    _log.error('The server {server_name} returned an error code: {http_error}'.format(server_name=server, http_error=post_request.getcode()))
-                    _log.error('The error text from the server {server_name} was: "{error_text}"'.format(server_name=server, error_text=post_request.read().decode('utf-8')))
+                    _log.error('The server {server_name} returned an error code: {http_error}'.format(server_name=server, http_error=reply_code))
+                    _log.error('The error text from the server {server_name} was: "{error_text}"'.format(server_name=server, error_text=reply_msg))
             except Exception as e:
                 upload_failed = True
                 _log.error('Exception while trying to upload results to server {server_name}'.format(server_name=server))
@@ -272,7 +311,9 @@ class BrowserPerfDashRunner(object):
                                                     self._args.browser,
                                                     None,
                                                     browser_args=self._args.browser_args)
+                    self._result_data['local_timestamp_teststart'] = datetime.now().strftime('%s')
                     runner.execute()
+                    self._result_data['local_timestamp_testend'] = datetime.now().strftime('%s')
                     _log.info('Finished benchmark plan: {plan_name}'.format(plan_name=plan))
                     # Fill test info for upload
                     self._result_data['test_id'] = plan

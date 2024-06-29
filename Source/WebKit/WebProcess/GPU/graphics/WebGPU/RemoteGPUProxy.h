@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUProcessConnection.h"
 #include "RenderingBackendIdentifier.h"
 #include "StreamClientConnection.h"
 #include "WebGPUIdentifier.h"
@@ -42,16 +43,19 @@ class NativeImage;
 }
 
 namespace WebKit {
+class RemoteRenderingBackendProxy;
+class WebPage;
 
 namespace WebGPU {
 class ConvertToBackingContext;
 class DowncastConvertToBackingContext;
 }
 
-class RemoteGPUProxy final : public WebCore::WebGPU::GPU, private IPC::Connection::Client, public ThreadSafeRefCounted<RemoteGPUProxy> {
+class RemoteGPUProxy final : public WebCore::WebGPU::GPU, private IPC::Connection::Client, public ThreadSafeRefCounted<RemoteGPUProxy>, SerialFunctionDispatcher {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<RemoteGPUProxy> create(IPC::Connection&, WebGPU::ConvertToBackingContext&, WebGPUIdentifier, RenderingBackendIdentifier);
+    static RefPtr<RemoteGPUProxy> create(WebGPU::ConvertToBackingContext&, WebPage&);
+    static RefPtr<RemoteGPUProxy> create(WebGPU::ConvertToBackingContext&, RemoteRenderingBackendProxy&, SerialFunctionDispatcher&);
 
     virtual ~RemoteGPUProxy();
 
@@ -68,8 +72,8 @@ public:
 private:
     friend class WebGPU::DowncastConvertToBackingContext;
 
-    RemoteGPUProxy(IPC::Connection&, Ref<IPC::StreamClientConnection>, WebGPU::ConvertToBackingContext&, WebGPUIdentifier);
-    void initializeIPC(IPC::StreamServerConnection::Handle&&, RenderingBackendIdentifier);
+    RemoteGPUProxy(WebGPU::ConvertToBackingContext&, SerialFunctionDispatcher&);
+    void initializeIPC(Ref<IPC::StreamClientConnection>&&, RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
 
     RemoteGPUProxy(const RemoteGPUProxy&) = delete;
     RemoteGPUProxy(RemoteGPUProxy&&) = delete;
@@ -130,14 +134,18 @@ private:
     void abandonGPUProcess();
     void disconnectGpuProcessIfNeeded();
 
-    Deque<CompletionHandler<void(RefPtr<WebCore::WebGPU::Adapter>&&)>> m_callbacks;
+    // SerialFunctionDispatcher
+    void dispatch(Function<void()>&& function) final { m_dispatcher.dispatch(WTFMove(function)); }
+    bool isCurrent() const final { return m_dispatcher.isCurrent(); }
 
-    WebGPUIdentifier m_backing;
     Ref<WebGPU::ConvertToBackingContext> m_convertToBackingContext;
-    RefPtr<IPC::Connection> m_connection;
+    Deque<CompletionHandler<void(RefPtr<WebCore::WebGPU::Adapter>&&)>> m_callbacks;
+    SerialFunctionDispatcher& m_dispatcher;
+    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
+    RefPtr<IPC::StreamClientConnection> m_streamConnection;
+    WebGPUIdentifier m_backing { WebGPUIdentifier::generate() };
     bool m_didInitialize { false };
     bool m_lost { false };
-    RefPtr<IPC::StreamClientConnection> m_streamConnection;
 };
 
 } // namespace WebKit

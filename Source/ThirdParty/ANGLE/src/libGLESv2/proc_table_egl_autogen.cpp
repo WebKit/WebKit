@@ -137,6 +137,7 @@ const ProcEntry g_procTable[] = {
     {"eglReleaseThread", P(EGL_ReleaseThread)},
     {"eglSetBlobCacheFuncsANDROID", P(EGL_SetBlobCacheFuncsANDROID)},
     {"eglSetDamageRegionKHR", P(EGL_SetDamageRegionKHR)},
+    {"eglSetValidationEnabledANGLE", P(EGL_SetValidationEnabledANGLE)},
     {"eglSignalSyncKHR", P(EGL_SignalSyncKHR)},
     {"eglStreamAttribKHR", P(EGL_StreamAttribKHR)},
     {"eglStreamConsumerAcquireKHR", P(EGL_StreamConsumerAcquireKHR)},
@@ -263,7 +264,9 @@ const ProcEntry g_procTable[] = {
     DESKTOP_ONLY("glClearNamedFramebufferuiv", GL_ClearNamedFramebufferuiv)
     {"glClearStencil", P(GL_ClearStencil)},
     DESKTOP_ONLY("glClearTexImage", GL_ClearTexImage)
+    {"glClearTexImageEXT", P(GL_ClearTexImageEXT)},
     DESKTOP_ONLY("glClearTexSubImage", GL_ClearTexSubImage)
+    {"glClearTexSubImageEXT", P(GL_ClearTexSubImageEXT)},
     {"glClientActiveTexture", P(GL_ClientActiveTexture)},
     {"glClientWaitSync", P(GL_ClientWaitSync)},
     DESKTOP_ONLY("glClipControl", GL_ClipControl)
@@ -480,6 +483,7 @@ const ProcEntry g_procTable[] = {
     {"glEndQuery", P(GL_EndQuery)},
     {"glEndQueryEXT", P(GL_EndQueryEXT)},
     DESKTOP_ONLY("glEndQueryIndexed", GL_EndQueryIndexed)
+    {"glEndTilingQCOM", P(GL_EndTilingQCOM)},
     {"glEndTransformFeedback", P(GL_EndTransformFeedback)},
     DESKTOP_ONLY("glEvalCoord1d", GL_EvalCoord1d)
     DESKTOP_ONLY("glEvalCoord1dv", GL_EvalCoord1dv)
@@ -619,6 +623,7 @@ const ProcEntry g_procTable[] = {
     {"glGetFramebufferPixelLocalStorageParameterivRobustANGLE", P(GL_GetFramebufferPixelLocalStorageParameterivRobustANGLE)},
     {"glGetGraphicsResetStatus", P(GL_GetGraphicsResetStatus)},
     {"glGetGraphicsResetStatusEXT", P(GL_GetGraphicsResetStatusEXT)},
+    {"glGetGraphicsResetStatusKHR", P(GL_GetGraphicsResetStatusKHR)},
     {"glGetInteger64i_v", P(GL_GetInteger64i_v)},
     {"glGetInteger64i_vRobustANGLE", P(GL_GetInteger64i_vRobustANGLE)},
     {"glGetInteger64v", P(GL_GetInteger64v)},
@@ -822,11 +827,14 @@ const ProcEntry g_procTable[] = {
     DESKTOP_ONLY("glGetnUniformdv", GL_GetnUniformdv)
     {"glGetnUniformfv", P(GL_GetnUniformfv)},
     {"glGetnUniformfvEXT", P(GL_GetnUniformfvEXT)},
+    {"glGetnUniformfvKHR", P(GL_GetnUniformfvKHR)},
     {"glGetnUniformfvRobustANGLE", P(GL_GetnUniformfvRobustANGLE)},
     {"glGetnUniformiv", P(GL_GetnUniformiv)},
     {"glGetnUniformivEXT", P(GL_GetnUniformivEXT)},
+    {"glGetnUniformivKHR", P(GL_GetnUniformivKHR)},
     {"glGetnUniformivRobustANGLE", P(GL_GetnUniformivRobustANGLE)},
     {"glGetnUniformuiv", P(GL_GetnUniformuiv)},
+    {"glGetnUniformuivKHR", P(GL_GetnUniformuivKHR)},
     {"glGetnUniformuivRobustANGLE", P(GL_GetnUniformuivRobustANGLE)},
     {"glHint", P(GL_Hint)},
     {"glImportMemoryFdEXT", P(GL_ImportMemoryFdEXT)},
@@ -1040,6 +1048,7 @@ const ProcEntry g_procTable[] = {
     DESKTOP_ONLY("glPatchParameterfv", GL_PatchParameterfv)
     {"glPatchParameteri", P(GL_PatchParameteri)},
     {"glPatchParameteriEXT", P(GL_PatchParameteriEXT)},
+    {"glPatchParameteriOES", P(GL_PatchParameteriOES)},
     {"glPauseTransformFeedback", P(GL_PauseTransformFeedback)},
     {"glPixelLocalStorageBarrierANGLE", P(GL_PixelLocalStorageBarrierANGLE)},
     DESKTOP_ONLY("glPixelMapfv", GL_PixelMapfv)
@@ -1207,6 +1216,7 @@ const ProcEntry g_procTable[] = {
     {"glReadPixelsRobustANGLE", P(GL_ReadPixelsRobustANGLE)},
     {"glReadnPixels", P(GL_ReadnPixels)},
     {"glReadnPixelsEXT", P(GL_ReadnPixelsEXT)},
+    {"glReadnPixelsKHR", P(GL_ReadnPixelsKHR)},
     {"glReadnPixelsRobustANGLE", P(GL_ReadnPixelsRobustANGLE)},
     DESKTOP_ONLY("glRectd", GL_Rectd)
     DESKTOP_ONLY("glRectdv", GL_Rectdv)
@@ -1284,6 +1294,7 @@ const ProcEntry g_procTable[] = {
     {"glShadingRateQCOM", P(GL_ShadingRateQCOM)},
     {"glSignalSemaphoreEXT", P(GL_SignalSemaphoreEXT)},
     DESKTOP_ONLY("glSpecializeShader", GL_SpecializeShader)
+    {"glStartTilingQCOM", P(GL_StartTilingQCOM)},
     {"glStencilFunc", P(GL_StencilFunc)},
     {"glStencilFuncSeparate", P(GL_StencilFuncSeparate)},
     {"glStencilMask", P(GL_StencilMask)},

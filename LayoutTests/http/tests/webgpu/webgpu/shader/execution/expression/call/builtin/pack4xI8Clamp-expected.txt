@@ -1,0 +1,6 @@
+
+PASS :basic:inputSource="const"
+PASS :basic:inputSource="uniform"
+PASS :basic:inputSource="storage_r"
+PASS :basic:inputSource="storage_rw"
+

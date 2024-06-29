@@ -77,6 +77,8 @@ const GlobalObjectMethodTable* JSAPIGlobalObject::globalObjectMethodTable()
         nullptr, // compileStreaming
         nullptr, // instantiateStreaming
         &deriveShadowRealmGlobalObject,
+        &codeForEval,
+        &canCompileStrings,
     };
     return &table;
 };

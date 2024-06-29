@@ -1,3 +1,5 @@
+//@ slow!
+//@ $skipModes << :wasm_aggressive_inline
 /*
  * Copyright (C) 2020 Apple Inc. All rights reserved.
  *

@@ -119,7 +119,7 @@ std::optional<ApplicationManifest>& ApplicationManifestLoader::processManifest()
     return m_processedManifest;
 }
 
-void ApplicationManifestLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
+void ApplicationManifestLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
     Ref { m_documentLoader.get() }->finishedLoadingApplicationManifest(*this);

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,52 +29,52 @@
 #include "XPathExpressionNode.h"
 
 namespace WebCore {
-    namespace XPath {
+namespace XPath {
 
-        class Step;
+class Step;
 
-        class Filter final : public Expression {
-        public:
-            Filter(std::unique_ptr<Expression>, Vector<std::unique_ptr<Expression>> predicates);
+class Filter final : public Expression {
+public:
+    Filter(std::unique_ptr<Expression>, Vector<std::unique_ptr<Expression>> predicates);
 
-        private:
-            Value evaluate() const override;
-            Value::Type resultType() const override { return Value::NodeSetValue; }
+private:
+    Value evaluate() const override;
+    Value::Type resultType() const override { return Value::Type::NodeSet; }
 
-            std::unique_ptr<Expression> m_expression;
-            Vector<std::unique_ptr<Expression>> m_predicates;
-        };
+    std::unique_ptr<Expression> m_expression;
+    Vector<std::unique_ptr<Expression>> m_predicates;
+};
 
-        class LocationPath final : public Expression {
-        public:
-            LocationPath();
+class LocationPath final : public Expression {
+public:
+    LocationPath();
 
-            void setAbsolute() { m_isAbsolute = true; setIsContextNodeSensitive(false); }
+    void setAbsolute() { m_isAbsolute = true; setIsContextNodeSensitive(false); }
 
-            void evaluate(NodeSet& nodes) const; // nodes is an input/output parameter
+    void evaluate(NodeSet& nodes) const; // nodes is an input/output parameter
 
-            void appendStep(std::unique_ptr<Step>);
-            void prependStep(std::unique_ptr<Step>);
+    void appendStep(std::unique_ptr<Step>);
+    void prependStep(std::unique_ptr<Step>);
 
-        private:
-            Value evaluate() const override;
-            Value::Type resultType() const override { return Value::NodeSetValue; }
+private:
+    Value evaluate() const override;
+    Value::Type resultType() const override { return Value::Type::NodeSet; }
 
-            Vector<std::unique_ptr<Step>> m_steps;
-            bool m_isAbsolute;
-        };
+    Vector<std::unique_ptr<Step>> m_steps;
+    bool m_isAbsolute;
+};
 
-        class Path final : public Expression {
-        public:
-            Path(std::unique_ptr<Expression> filter, std::unique_ptr<LocationPath>);
+class Path final : public Expression {
+public:
+    Path(std::unique_ptr<Expression> filter, std::unique_ptr<LocationPath>);
 
-        private:
-            Value evaluate() const override;
-            Value::Type resultType() const override { return Value::NodeSetValue; }
+private:
+    Value evaluate() const override;
+    Value::Type resultType() const override { return Value::Type::NodeSet; }
 
-            std::unique_ptr<Expression> m_filter;
-            std::unique_ptr<LocationPath> m_path;
-        };
+    std::unique_ptr<Expression> m_filter;
+    std::unique_ptr<LocationPath> m_path;
+};
 
-    } // namespace XPath
+} // namespace XPath
 } // namespace WebCore

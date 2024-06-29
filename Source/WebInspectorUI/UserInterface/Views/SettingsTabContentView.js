@@ -409,6 +409,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         
         let consoleGroup = experimentalSettingsView.addGroup(WI.UIString("Console:"));
         consoleGroup.addSetting(WI.settings.experimentalGroupSourceMapErrors, WI.UIString("Group source map network errors"));
+        consoleGroup.addSetting(WI.settings.experimentalShowCaseSensitiveAutocomplete, WI.UIString("Use case sensitive autocomplete"));
         
         experimentalSettingsView.addSeparator();
 
@@ -433,6 +434,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         let sourcesGroup = experimentalSettingsView.addGroup(WI.UIString("Sources:"));
         sourcesGroup.addSetting(WI.settings.experimentalLimitSourceCodeHighlighting, WI.UIString("Limit syntax highlighting on long lines of code"));
+        sourcesGroup.addSetting(WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion, WI.UIString("Use fuzzy matching for CSS code completion"));
 
         experimentalSettingsView.addSeparator();
 

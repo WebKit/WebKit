@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (25,28) size 722x436
-      RenderSVGText {text} at (162,16) size 156x24 contains 1 chunk(s)
+      RenderSVGText {text} at (162,17) size 156x23 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 155x23
           chunk 1 (middle anchor) text run 1 at (162.60,35.00) startOffset 0 endOffset 17 width 154.80: "CSS selector test"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0

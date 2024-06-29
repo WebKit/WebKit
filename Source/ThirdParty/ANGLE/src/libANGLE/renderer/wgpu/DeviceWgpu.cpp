@@ -29,11 +29,6 @@ egl::Error DeviceWgpu::getAttribute(const egl::Display *display, EGLint attribut
     return egl::EglBadAccess();
 }
 
-EGLint DeviceWgpu::getType()
-{
-    return 0;
-}
-
 void DeviceWgpu::generateExtensions(egl::DeviceExtensions *outExtensions) const {}
 
 }  // namespace rx

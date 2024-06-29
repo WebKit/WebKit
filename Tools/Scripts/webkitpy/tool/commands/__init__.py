@@ -19,7 +19,6 @@ from webkitpy.tool.commands.format import Format
 from webkitpy.tool.commands.prettydiff import PrettyDiff
 from webkitpy.tool.commands.queries import SuggestReviewers
 from webkitpy.tool.commands.rebaselineserver import RebaselineServer
-from webkitpy.tool.commands.setupgitclone import SetupGitClone
 from webkitpy.tool.commands.suggestnominations import (
     SuggestNominations,
 )
@@ -55,7 +54,6 @@ __all__ = [
     "PrettyDiff",
     "RebaselineServer",
     "Revert",
-    "SetupGitClone",
     "SuggestNominations",
     "SuggestReviewers",
     "Upload",

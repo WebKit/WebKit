@@ -715,12 +715,6 @@ std::unique_ptr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTime
 }
 #endif
 
-#if ENABLE(APP_HIGHLIGHTS)
-void WebChromeClient::storeAppHighlight(WebCore::AppHighlight&&) const
-{
-}
-#endif
-
 void WebChromeClient::setTextIndicator(const WebCore::TextIndicatorData& indicatorData) const
 {
 }
@@ -1023,7 +1017,7 @@ void WebChromeClient::clearPlaybackControlsManager()
     [m_webView _clearPlaybackControlsManager];
 }
 
-void WebChromeClient::playbackControlsMediaEngineChanged()
+void WebChromeClient::mediaEngineChanged(WebCore::HTMLMediaElement&)
 {
     [m_webView _playbackControlsMediaEngineChanged];
 }

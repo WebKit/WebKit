@@ -1118,25 +1118,25 @@ TEST(WTF_HashMap, ReserveInitialCapacity)
     EXPECT_EQ(32768u, map.capacity());
 
     for (int i = 0; i < 9999; ++i)
-        map.add(makeString("foo", i), makeString("bar", i));
+        map.add(makeString("foo"_s, i), makeString("bar"_s, i));
     EXPECT_EQ(9999u, map.size());
     EXPECT_EQ(32768u, map.capacity());
     EXPECT_TRUE(map.contains("foo3"_str));
     EXPECT_STREQ("bar3", map.get("foo3"_str).utf8().data());
 
     for (int i = 0; i < 9999; ++i)
-        map.add(makeString("excess", i), makeString("baz", i));
+        map.add(makeString("excess"_s, i), makeString("baz"_s, i));
     EXPECT_EQ(9999u + 9999u, map.size());
     EXPECT_EQ(32768u + 32768u, map.capacity());
 
     for (int i = 0; i < 9999; ++i)
-        EXPECT_TRUE(map.remove(makeString("foo", i)));
+        EXPECT_TRUE(map.remove(makeString("foo"_s, i)));
     EXPECT_EQ(9999u, map.size());
     EXPECT_EQ(32768u, map.capacity());
     EXPECT_STREQ("baz3", map.get("excess3"_str).utf8().data());
 
     for (int i = 0; i < 9999; ++i)
-        EXPECT_TRUE(map.remove(makeString("excess", i)));
+        EXPECT_TRUE(map.remove(makeString("excess"_s, i)));
     EXPECT_EQ(0u, map.size());
     EXPECT_EQ(8u, map.capacity());
 
@@ -1145,12 +1145,12 @@ TEST(WTF_HashMap, ReserveInitialCapacity)
     EXPECT_FALSE(map2.remove("foo1"_s));
 
     for (int i = 0; i < 2000; ++i)
-        map2.add(makeString("foo", i), makeString("bar", i));
+        map2.add(makeString("foo"_s, i), makeString("bar"_s, i));
     EXPECT_EQ(2000u, map2.size());
     EXPECT_EQ(32768u, map2.capacity());
 
     for (int i = 0; i < 2000; ++i)
-        EXPECT_TRUE(map2.remove(makeString("foo", i)));
+        EXPECT_TRUE(map2.remove(makeString("foo"_s, i)));
     EXPECT_EQ(0u, map2.size());
     EXPECT_EQ(8u, map2.capacity());
 }
@@ -1213,6 +1213,30 @@ TEST(WTF_HashMap, Clear_Reenter)
     map.clear();
     EXPECT_EQ(0U, map.size());
     EXPECT_TRUE(map.isEmpty());
+}
+
+TEST(WTF_HashMap, Ensure_Translator)
+{
+    HashMap<String, unsigned> map;
+    auto addResult = map.ensure<StringViewHashTranslator>(StringView { "foo"_s }, [] { return 1u; });
+    EXPECT_TRUE(addResult.isNewEntry);
+    EXPECT_TRUE(map.contains<StringViewHashTranslator>(StringView { "foo"_s }));
+    EXPECT_EQ(map.size(), 1u);
+    unsigned existingValue = map.get<StringViewHashTranslator>(StringView { "foo"_s });
+    EXPECT_EQ(existingValue, 1u);
+    existingValue = map.get<StringViewHashTranslator>("foo"_str);
+    EXPECT_EQ(existingValue, 1u);
+    addResult = map.ensure<StringViewHashTranslator>(StringView { "foo"_s }, [] {
+        EXPECT_TRUE(false);
+        return 2u;
+    });
+    EXPECT_FALSE(addResult.isNewEntry);
+    EXPECT_EQ(map.size(), 1u);
+    existingValue = map.get<StringViewHashTranslator>("foo"_str);
+    EXPECT_EQ(existingValue, 1u);
+    bool didRemove = map.remove<StringViewHashTranslator>(StringView { "foo"_s });
+    EXPECT_TRUE(didRemove);
+    EXPECT_EQ(map.size(), 0u);
 }
 
 TEST(WTF_HashMap, GetOptional)

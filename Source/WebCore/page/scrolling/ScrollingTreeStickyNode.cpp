@@ -81,10 +81,9 @@ FloatPoint ScrollingTreeStickyNode::computeLayerPosition() const
         FloatRect constrainingRect;
         if (auto* frameScrollingNode = dynamicDowncast<ScrollingTreeFrameScrollingNode>(scrollingNode))
             constrainingRect = frameScrollingNode->layoutViewport();
-        else {
-            auto& overflowScrollingNode = downcast<ScrollingTreeOverflowScrollingNode>(scrollingNode);
+        else if (auto* overflowScrollingNode = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(scrollingNode)) {
             constrainingRect = m_constraints.constrainingRectAtLastLayout();
-            constrainingRect.move(overflowScrollingNode.scrollDeltaSinceLastCommit());
+            constrainingRect.move(overflowScrollingNode->scrollDeltaSinceLastCommit());
         }
         constrainingRect.move(-offsetFromStickyAncestors);
         return m_constraints.layerPositionForConstrainingRect(constrainingRect);

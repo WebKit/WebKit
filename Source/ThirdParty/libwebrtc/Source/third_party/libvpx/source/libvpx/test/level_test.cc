@@ -12,6 +12,7 @@
 #include "test/encode_test_driver.h"
 #include "test/i420_video_source.h"
 #include "test/util.h"
+#include "vpx_config.h"
 
 namespace {
 class LevelTest
@@ -67,6 +68,9 @@ class LevelTest
 };
 
 TEST_P(LevelTest, TestTargetLevel11Large) {
+#if CONFIG_REALTIME_ONLY
+  GTEST_SKIP();
+#else
   ASSERT_NE(encoding_mode_, ::libvpx_test::kRealTime);
   ::libvpx_test::I420VideoSource video("hantro_odd.yuv", 208, 144, 30, 1, 0,
                                        60);
@@ -74,9 +78,13 @@ TEST_P(LevelTest, TestTargetLevel11Large) {
   cfg_.rc_target_bitrate = 150;
   ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
   ASSERT_GE(target_level_, level_);
+#endif
 }
 
 TEST_P(LevelTest, TestTargetLevel20Large) {
+#if CONFIG_REALTIME_ONLY
+  GTEST_SKIP();
+#else
   ASSERT_NE(encoding_mode_, ::libvpx_test::kRealTime);
   ::libvpx_test::I420VideoSource video("hantro_collage_w352h288.yuv", 352, 288,
                                        30, 1, 0, 60);
@@ -84,9 +92,13 @@ TEST_P(LevelTest, TestTargetLevel20Large) {
   cfg_.rc_target_bitrate = 1200;
   ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
   ASSERT_GE(target_level_, level_);
+#endif
 }
 
 TEST_P(LevelTest, TestTargetLevel31Large) {
+#if CONFIG_REALTIME_ONLY
+  GTEST_SKIP();
+#else
   ASSERT_NE(encoding_mode_, ::libvpx_test::kRealTime);
   ::libvpx_test::I420VideoSource video("niklas_1280_720_30.y4m", 1280, 720, 30,
                                        1, 0, 60);
@@ -94,6 +106,7 @@ TEST_P(LevelTest, TestTargetLevel31Large) {
   cfg_.rc_target_bitrate = 8000;
   ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
   ASSERT_GE(target_level_, level_);
+#endif
 }
 
 // Test for keeping level stats only
@@ -120,7 +133,7 @@ TEST_P(LevelTest, TestTargetLevel255) {
 
 TEST_P(LevelTest, TestTargetLevelApi) {
   ::libvpx_test::I420VideoSource video("hantro_odd.yuv", 208, 144, 30, 1, 0, 1);
-  static const vpx_codec_iface_t *codec = &vpx_codec_vp9_cx_algo;
+  static vpx_codec_iface_t *codec = &vpx_codec_vp9_cx_algo;
   vpx_codec_ctx_t enc;
   vpx_codec_enc_cfg_t cfg;
   EXPECT_EQ(VPX_CODEC_OK, vpx_codec_enc_config_default(codec, &cfg, 0));
@@ -140,8 +153,6 @@ TEST_P(LevelTest, TestTargetLevelApi) {
   EXPECT_EQ(VPX_CODEC_OK, vpx_codec_destroy(&enc));
 }
 
-VP9_INSTANTIATE_TEST_SUITE(LevelTest,
-                           ::testing::Values(::libvpx_test::kTwoPassGood,
-                                             ::libvpx_test::kOnePassGood),
+VP9_INSTANTIATE_TEST_SUITE(LevelTest, ONE_OR_TWO_PASS_TEST_MODES,
                            ::testing::Range(0, 9));
 }  // namespace

@@ -239,13 +239,13 @@ void CrossOriginOpenerPolicy::addPolicyHeadersTo(ResourceResponse& response) con
         if (reportingEndpoint.isEmpty())
             response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicy, crossOriginOpenerPolicyToString(value));
         else
-            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicy, makeString(crossOriginOpenerPolicyToString(value), "; report-to=\"", reportingEndpoint, '\"'));
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicy, makeString(crossOriginOpenerPolicyToString(value), "; report-to=\""_s, reportingEndpoint, '\"'));
     }
     if (reportOnlyValue != CrossOriginOpenerPolicyValue::UnsafeNone) {
         if (reportOnlyReportingEndpoint.isEmpty())
             response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicyReportOnly, crossOriginOpenerPolicyToString(reportOnlyValue));
         else
-            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicyReportOnly, makeString(crossOriginOpenerPolicyToString(reportOnlyValue), "; report-to=\"", reportOnlyReportingEndpoint, '\"'));
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicyReportOnly, makeString(crossOriginOpenerPolicyToString(reportOnlyValue), "; report-to=\""_s, reportOnlyReportingEndpoint, '\"'));
     }
 }
 

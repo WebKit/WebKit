@@ -160,9 +160,9 @@ CSSKeyframeRule* CSSKeyframesRule::findRule(const String& s)
 String CSSKeyframesRule::cssText() const
 {
     StringBuilder result;
-    result.append("@keyframes ", name(), " { \n");
+    result.append("@keyframes "_s, name(), " { \n"_s);
     for (unsigned i = 0, size = length(); i < size; ++i)
-        result.append("  ", m_keyframesRule->keyframes()[i]->cssText(), '\n');
+        result.append("  "_s, m_keyframesRule->keyframes()[i]->cssText(), '\n');
     result.append('}');
     return result.toString();
 }

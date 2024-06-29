@@ -28,6 +28,7 @@
 #include "ViewSnapshotStore.h"
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/SerializedScriptValue.h>
@@ -76,10 +77,13 @@ public:
     void setDocumentState(const Vector<AtomString>&, ShouldValidate = ShouldValidate::No);
     static bool validateDocumentState(const Vector<AtomString>&);
 
+    const FrameState* stateForFrameID(WebCore::FrameIdentifier) const;
+
     String urlString;
     String originalURLString;
     String referrer;
     AtomString target;
+    std::optional<WebCore::FrameIdentifier> frameID;
 
     std::optional<Vector<uint8_t>> stateObjectData;
 

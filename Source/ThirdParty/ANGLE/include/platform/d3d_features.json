@@ -49,7 +49,7 @@
                 "Bug in some drivers triggers a TDR when using CopySubresourceRegion from a staging ",
                 "texture to a depth/stencil"
             ],
-            "issue": "http://anglebug.com/1452"
+            "issue": "http://anglebug.com/40096371"
         },
         {
             "name": "expand_integer_pow_expressions",
@@ -143,7 +143,7 @@
             "description": [
                 "On some drivers when rendering with no render target, two bugs lead to incorrect behavior"
             ],
-            "issue": "http://anglebug.com/2152"
+            "issue": "http://anglebug.com/40644627"
         },
         {
             "name": "skip_VS_constant_register_zero",
@@ -159,7 +159,7 @@
                 "On some drivers the return value from RWByteAddressBuffer.InterlockedAdd does not resolve ",
                 "when used in the .yzw components of a RWByteAddressBuffer.Store operation"
             ],
-            "issue": "http://anglebug.com/3246"
+            "issue": "http://anglebug.com/42261924"
         },
         {
             "name": "allow_clear_for_robust_resource_init",
@@ -176,7 +176,7 @@
                 "There is a slow fxc compile performance issue with dynamic uniform indexing if ",
                 "translating a uniform block with a large array member to cbuffer."
             ],
-            "issue": "http://anglebug.com/3682"
+            "issue": "http://anglebug.com/40096608"
         },
         {
             "name": "allow_ES3_on_FL10_0",
@@ -191,7 +191,7 @@
             "description": [
                 "Disable ROVs for testing"
             ],
-            "issue": "http://anglebug.com/7279"
+            "issue": "http://anglebug.com/40096838"
         },
         {
             "name": "enable_timestamp_queries",

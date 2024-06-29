@@ -15,6 +15,7 @@
 #include "aom/aom_integer.h"
 #include "aom_dsp/blend.h"
 #include "av1/common/blockd.h"
+#include "config/av1_rtcd.h"
 
 static INLINE __m128i calc_mask(const __m128i mask_base, const __m128i s0,
                                 const __m128i s1) {

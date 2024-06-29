@@ -177,9 +177,9 @@ public:
     void terminateWebContentProcess();
     void reattachPageToWebProcess();
 
-    static const char* webProcessName();
-    static const char* networkProcessName();
-    static const char* gpuProcessName();
+    static ASCIILiteral webProcessName();
+    static ASCIILiteral networkProcessName();
+    static ASCIILiteral gpuProcessName();
 
     WorkQueueManager& workQueueManager() { return m_workQueueManager; }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -153,7 +153,7 @@ void RenderTreeBuilder::Inline::insertChildToContinuation(RenderInline& parent, 
     bool childInline = newChildIsInline(parent, *child);
     // The goal here is to match up if we can, so that we can coalesce and create the
     // minimal # of continuations needed for the inline.
-    if (childInline == beforeChildAncestor->isInline())
+    if (childInline == beforeChildAncestor->isInline() || (beforeChild && beforeChild->isInline()))
         return m_builder.attachIgnoringContinuation(*beforeChildAncestor, WTFMove(child), beforeChild);
     if (flow->isInline() == childInline)
         return m_builder.attachIgnoringContinuation(*flow, WTFMove(child)); // Just treat like an append.

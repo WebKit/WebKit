@@ -127,7 +127,9 @@ SubresourceLoader::SubresourceLoader(LocalFrame& frame, CachedResource& resource
     m_resourceType = ContentExtensions::toResourceType(resource.type(), resource.resourceRequest().requester());
 #endif
     m_canCrossOriginRequestsAskUserForCredentials = resource.type() == CachedResource::Type::MainResource;
-    m_site = CachedResourceLoader::computeFetchMetadataSite(resource.resourceRequest(), resource.type(), options.mode, frame.document()->securityOrigin(), FetchMetadataSite::SameOrigin, frame.isMainFrame() && m_documentLoader && m_documentLoader->isRequestFromClientOrUserInput());
+
+    m_site = CachedResourceLoader::computeFetchMetadataSite(resource.resourceRequest(), resource.type(), options.mode, frame, frame.isMainFrame() && m_documentLoader && m_documentLoader->isRequestFromClientOrUserInput());
+    ASSERT(!resource.resourceRequest().hasHTTPHeaderField(HTTPHeaderName::SecFetchSite) || resource.resourceRequest().httpHeaderField(HTTPHeaderName::SecFetchSite) == convertEnumerationToString(m_site));
 }
 
 SubresourceLoader::~SubresourceLoader()
@@ -255,7 +257,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
         CachedResourceHandle resource = m_resource.get();
         if (options().redirect != FetchOptions::Redirect::Follow) {
             if (options().redirect == FetchOptions::Redirect::Error) {
-                ResourceError error { errorDomainWebKitInternal, 0, request().url(), makeString("Not allowed to follow a redirection while loading ", request().url().string()), ResourceError::Type::AccessControl };
+                ResourceError error { errorDomainWebKitInternal, 0, request().url(), makeString("Not allowed to follow a redirection while loading "_s, request().url().string()), ResourceError::Type::AccessControl };
 
                 if (m_frame && m_frame->document())
                     m_frame->protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, error.localizedDescription());
@@ -300,7 +302,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
         RefPtr documentLoader = this->documentLoader();
         Ref originalOrigin = SecurityOrigin::create(redirectResponse.url());
         Ref cachedResourceLoader = documentLoader->cachedResourceLoader();
-        m_site = CachedResourceLoader::computeFetchMetadataSite(newRequest, m_resource->type(), options().mode, originalOrigin, m_site, m_frame && m_frame->isMainFrame() && documentLoader->isRequestFromClientOrUserInput());
+        m_site = CachedResourceLoader::computeFetchMetadataSiteAfterRedirection(newRequest, m_resource->type(), options().mode, originalOrigin.get(), m_site, m_frame && m_frame->isMainFrame() && documentLoader->isRequestFromClientOrUserInput());
 
         if (!cachedResourceLoader->updateRequestAfterRedirection(resource->type(), newRequest, options(), m_site, originalRequest().url())) {
             SUBRESOURCELOADER_RELEASE_LOG("willSendRequestInternal: resource load canceled because CachedResourceLoader::updateRequestAfterRedirection (really CachedResourceLoader::canRequestAfterRedirection) said no");
@@ -318,7 +320,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
 
         auto accessControlCheckResult = checkRedirectionCrossOriginAccessControl(request(), redirectResponse, newRequest);
         if (!accessControlCheckResult) {
-            auto errorMessage = makeString("Cross-origin redirection to ", newRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: ", accessControlCheckResult.error());
+            auto errorMessage = makeString("Cross-origin redirection to "_s, newRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: "_s, accessControlCheckResult.error());
             if (m_frame && m_frame->document())
                 m_frame->protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
             SUBRESOURCELOADER_RELEASE_LOG("willSendRequestInternal: resource load canceled because crosss-origin redirection denied by CORS policy");
@@ -861,7 +863,7 @@ void SubresourceLoader::willCancel(const ResourceError& error)
     memoryCache.remove(*resource);
 }
 
-void SubresourceLoader::didCancel(const ResourceError&)
+void SubresourceLoader::didCancel(LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     if (m_state == Uninitialized || reachedTerminalState())
         return;
@@ -872,7 +874,7 @@ void SubresourceLoader::didCancel(const ResourceError&)
     if (resource->type() != CachedResource::Type::MainResource)
         tracePoint(SubresourceLoadDidEnd, identifier().toUInt64());
 
-    resource->cancelLoad();
+    resource->cancelLoad(loadWillContinueInAnotherProcess);
     notifyDone(LoadCompletionType::Cancel);
 }
 

@@ -73,32 +73,31 @@ int PushResampler<T>::InitializeIfNeeded(int src_sample_rate_hz,
 }
 
 template <typename T>
-int PushResampler<T>::Resample(const T* src,
-                               size_t src_length,
-                               T* dst,
-                               size_t dst_capacity) {
+int PushResampler<T>::Resample(rtc::ArrayView<const T> src,
+                               rtc::ArrayView<T> dst) {
   // These checks used to be factored out of this template function due to
   // Windows debug build issues with clang. http://crbug.com/615050
   const size_t src_size_10ms = (src_sample_rate_hz_ / 100) * num_channels_;
   const size_t dst_size_10ms = (dst_sample_rate_hz_ / 100) * num_channels_;
-  RTC_DCHECK_EQ(src_length, src_size_10ms);
-  RTC_DCHECK_GE(dst_capacity, dst_size_10ms);
+  RTC_DCHECK_EQ(src.size(), src_size_10ms);
+  RTC_DCHECK_GE(dst.size(), dst_size_10ms);
 
   if (src_sample_rate_hz_ == dst_sample_rate_hz_) {
     // The old resampler provides this memcpy facility in the case of matching
     // sample rates, so reproduce it here for the sinc resampler.
-    memcpy(dst, src, src_length * sizeof(T));
-    return static_cast<int>(src_length);
+    memcpy(dst.data(), src.data(), src.size() * sizeof(T));
+    return static_cast<int>(src.size());
   }
 
-  const size_t src_length_mono = src_length / num_channels_;
-  const size_t dst_capacity_mono = dst_capacity / num_channels_;
+  const size_t src_length_mono = src.size() / num_channels_;
+  const size_t dst_capacity_mono = dst.size() / num_channels_;
 
   for (size_t ch = 0; ch < num_channels_; ++ch) {
     channel_data_array_[ch] = channel_resamplers_[ch].source.data();
   }
 
-  Deinterleave(src, src_length_mono, num_channels_, channel_data_array_.data());
+  Deinterleave(src.data(), src_length_mono, num_channels_,
+               channel_data_array_.data());
 
   size_t dst_length_mono = 0;
 
@@ -112,7 +111,8 @@ int PushResampler<T>::Resample(const T* src,
     channel_data_array_[ch] = channel_resamplers_[ch].destination.data();
   }
 
-  Interleave(channel_data_array_.data(), dst_length_mono, num_channels_, dst);
+  Interleave(channel_data_array_.data(), dst_length_mono, num_channels_,
+             dst.data());
   return static_cast<int>(dst_length_mono * num_channels_);
 }
 

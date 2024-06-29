@@ -177,7 +177,7 @@ void ModifyHeadersAction::ModifyHeaderInfo::applyToRequest(ResourceRequest& requ
         if (existingValue.isEmpty())
             request.setHTTPHeaderField(operation.header, operation.value);
         else
-            request.setHTTPHeaderField(operation.header, makeString(existingValue, "; ", operation.value));
+            request.setHTTPHeaderField(operation.header, makeString(existingValue, "; "_s, operation.value));
 
         if (previouslyAppliedHeaderOperation == ModifyHeadersAction::ModifyHeadersOperationType::Unknown)
             headerNameToFirstOperationApplied.add(operation.header, ModifyHeadersAction::ModifyHeadersOperationType::Append);

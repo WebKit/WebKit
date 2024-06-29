@@ -32,7 +32,6 @@
 #import <AVFoundation/AVPlayerItem.h>
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
-#import <wtf/BlockObjCExceptions.h>
 #import <wtf/Language.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
@@ -181,9 +180,11 @@ void MediaSelectionGroupAVFObjC::setSelectedOption(MediaSelectionOptionAVFObjC* 
 
 void MediaSelectionGroupAVFObjC::selectionTimerFired()
 {
-BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_playerItem selectMediaOption:(m_selectedOption ? m_selectedOption->avMediaSelectionOption() : nil) inMediaSelectionGroup:m_mediaSelectionGroup.get()];
-END_BLOCK_OBJC_EXCEPTIONS
+    @try {
+        [m_playerItem selectMediaOption:(m_selectedOption ? m_selectedOption->avMediaSelectionOption() : nil) inMediaSelectionGroup:m_mediaSelectionGroup.get()];
+    } @catch(NSException *exception) {
+        WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "exception thrown from -selectMediaOption:inMediaSelectionGroup: %s", exception.name.UTF8String);
+    }
 }
 
 }

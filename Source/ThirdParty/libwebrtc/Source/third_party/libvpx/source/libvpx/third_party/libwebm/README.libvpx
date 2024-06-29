@@ -1,5 +1,5 @@
 URL: https://chromium.googlesource.com/webm/libwebm
-Version: 1930e3ca23b007f3ff11d98a570077be6201957e
+Version: affd7f4d9644aa2b65981fa6c7616400be760e6e
 License: BSD
 License File: LICENSE.TXT
 
@@ -18,4 +18,3 @@ Only keep:
  - mkvmuxer/
  - mkvparser/
  - PATENTS.TXT
-- use -std=gnu++11 in Android.mk (https://crbug.com/webm/1708)

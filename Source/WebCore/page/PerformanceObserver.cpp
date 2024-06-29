@@ -110,7 +110,7 @@ ExceptionOr<void> PerformanceObserver::observe(Init&& init)
     return { };
 }
 
-Vector<RefPtr<PerformanceEntry>> PerformanceObserver::takeRecords()
+Vector<Ref<PerformanceEntry>> PerformanceObserver::takeRecords()
 {
     return std::exchange(m_entriesToDeliver, { });
 }
@@ -127,7 +127,7 @@ void PerformanceObserver::disconnect()
 
 void PerformanceObserver::queueEntry(PerformanceEntry& entry)
 {
-    m_entriesToDeliver.append(&entry);
+    m_entriesToDeliver.append(entry);
 }
 
 void PerformanceObserver::deliver()
@@ -139,7 +139,7 @@ void PerformanceObserver::deliver()
     if (!context)
         return;
 
-    Vector<RefPtr<PerformanceEntry>> entries = std::exchange(m_entriesToDeliver, { });
+    Vector<Ref<PerformanceEntry>> entries = std::exchange(m_entriesToDeliver, { });
     auto list = PerformanceObserverEntryList::create(WTFMove(entries));
 
     InspectorInstrumentation::willFireObserverCallback(*context, "PerformanceObserver"_s);

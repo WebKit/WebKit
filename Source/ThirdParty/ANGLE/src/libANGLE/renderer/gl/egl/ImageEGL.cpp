@@ -10,6 +10,7 @@
 
 #include "common/utilities.h"
 #include "libANGLE/Context.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 #include "libANGLE/renderer/gl/RenderbufferGL.h"
 #include "libANGLE/renderer/gl/StateManagerGL.h"
@@ -99,11 +100,19 @@ egl::Error ImageEGL::initialize(const egl::Display *display)
 
     attributes.push_back(EGL_NONE);
 
-    mImage = mEGL->createImageKHR(mContext, mTarget, buffer, attributes.data());
-    if (mImage == EGL_NO_IMAGE)
-    {
-        return egl::EglBadAlloc() << "eglCreateImage failed with " << egl::Error(mEGL->getError());
-    }
+    egl::Display::GetCurrentThreadUnlockedTailCall()->add([egl = mEGL, &image = mImage,
+                                                           context = mContext, target = mTarget,
+                                                           buffer, attributes](void *resultOut) {
+        image = egl->createImageKHR(context, target, buffer, attributes.data());
+
+        // If image creation failed, force the return value of eglCreateImage to EGL_NO_IMAGE. This
+        // won't delete this image object but a driver error is unexpected at this point.
+        if (image == EGL_NO_IMAGE)
+        {
+            ERR() << "eglCreateImage failed with " << gl::FmtHex(egl->getError());
+            *static_cast<EGLImage *>(resultOut) = EGL_NO_IMAGE;
+        }
+    });
 
     return egl::NoError();
 }

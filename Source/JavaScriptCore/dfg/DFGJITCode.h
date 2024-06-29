@@ -66,7 +66,6 @@ struct UnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
     GPRReg m_extraTagGPR { InvalidGPRReg };
     GPRReg m_extra2TagGPR { InvalidGPRReg };
 #endif
-    bool hasConstantIdentifier { false };
 };
 
 struct UnlinkedCallLinkInfo : JSC::UnlinkedCallLinkInfo {
@@ -154,8 +153,8 @@ public:
     using Base = ButterflyArray<JITData, StructureStubInfo, void*>;
     using ExitVector = FixedVector<MacroAssemblerCodeRef<OSRExitPtrTag>>;
 
-    static ptrdiff_t offsetOfExits() { return OBJECT_OFFSETOF(JITData, m_exits); }
-    static ptrdiff_t offsetOfIsInvalidated() { return OBJECT_OFFSETOF(JITData, m_isInvalidated); }
+    static constexpr ptrdiff_t offsetOfExits() { return OBJECT_OFFSETOF(JITData, m_exits); }
+    static constexpr ptrdiff_t offsetOfIsInvalidated() { return OBJECT_OFFSETOF(JITData, m_isInvalidated); }
 
     static std::unique_ptr<JITData> tryCreate(VM&, CodeBlock*, const JITCode&, ExitVector&& exits);
 
@@ -185,8 +184,8 @@ public:
 
     FixedVector<OptimizingCallLinkInfo>& callLinkInfos() { return m_callLinkInfos; }
 
-    static ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(JITData, m_globalObject); }
-    static ptrdiff_t offsetOfStackOffset() { return OBJECT_OFFSETOF(JITData, m_stackOffset); }
+    static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(JITData, m_globalObject); }
+    static constexpr ptrdiff_t offsetOfStackOffset() { return OBJECT_OFFSETOF(JITData, m_stackOffset); }
 
     explicit JITData(unsigned stubInfoSize, unsigned poolSize, const JITCode&, ExitVector&&);
 
@@ -254,7 +253,7 @@ public:
     void clearOSREntryBlockAndResetThresholds(CodeBlock* dfgCodeBlock);
 #endif
 
-    static ptrdiff_t commonDataOffset() { return OBJECT_OFFSETOF(JITCode, common); }
+    static constexpr ptrdiff_t commonDataOffset() { return OBJECT_OFFSETOF(JITCode, common); }
 
     std::optional<CodeOrigin> findPC(CodeBlock*, void* pc) final;
 

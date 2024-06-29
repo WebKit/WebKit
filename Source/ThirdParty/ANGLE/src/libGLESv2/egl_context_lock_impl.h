@@ -740,6 +740,12 @@ GetContextLock_StreamConsumerGLTextureExternalAttribsNV(Thread *thread, egl::Dis
     return TryLockCurrentContext(thread);
 }
 
+// EGL_ANGLE_no_error
+ANGLE_INLINE ScopedContextMutexLock GetContextLock_SetValidationEnabledANGLE(Thread *thread)
+{
+    return {};
+}
+
 }  // namespace egl
 
 #endif  // LIBGLESV2_EGL_CONTEXT_LOCK_IMPL_H_

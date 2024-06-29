@@ -86,7 +86,6 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         if (!domNode || domNode.destroyed)
             return;
 
-        this.contentView.element.scrollTop = 0;
         this._panel.markAsNeedsRefresh(domNode);
 
         if (this._forcedPseudoClassContainerToggledSetting)

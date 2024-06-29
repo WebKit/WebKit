@@ -34,12 +34,29 @@ using VectorUInt8 = WTF::Vector<uint8_t>;
 using SpanConstUInt8 = std::span<const uint8_t>;
 using OptionalVectorUInt8 = std::optional<WTF::Vector<uint8_t>>;
 
-
-// FIXME: remove when swift support is available rdar://118026392
-inline OptionalVectorUInt8 makeOptional(VectorUInt8 val)
-{
-    return val;
-}
+enum class ErrorCodes: int {
+    Success = 0,
+    WrongTagSize,
+    EncryptionFailed,
+    EncryptionResultNil,
+    InvalidArgument,
+    TooBigArguments,
+    DecryptionFailed,
+    HashingFailed,
+    PublicKeyProvidedToSign,
+    FailedToSign,
+    FailedToVerify,
+    PrivateKeyProvidedForVerification,
+    FailedToImport,
+    FailedToDerive,
+    FailedToExport,
+    DefaultValue,
+    UnsupportedAlgorithm,
+};
+struct CryptoOperationReturnValue {
+    ErrorCodes errorCode = ErrorCodes::DefaultValue;
+    VectorUInt8 result;
+};
 
 } // Cpp
 

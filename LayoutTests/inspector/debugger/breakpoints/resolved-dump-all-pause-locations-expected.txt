@@ -1437,11 +1437,41 @@ PAUSES AT: 217:0
     220        a(),
 
 INSERTING AT: 217:1
+PAUSES AT: 217:9
+    214    b(),
+    215    c();
+    216
+-=> 217    t#rue && (|a(), b(), c()) && true;
+    218
+    219    true && (
+    220        a(),
+
+INSERTING AT: 217:10
+PAUSES AT: 217:14
+    214    b(),
+    215    c();
+    216
+-=> 217    true && (a#(), |b(), c()) && true;
+    218
+    219    true && (
+    220        a(),
+
+INSERTING AT: 217:15
+PAUSES AT: 217:19
+    214    b(),
+    215    c();
+    216
+-=> 217    true && (a(), b#(), |c()) && true;
+    218
+    219    true && (
+    220        a(),
+
+INSERTING AT: 217:20
 PAUSES AT: 219:0
     214    b(),
     215    c();
     216
- -> 217    t#rue && (a(), b(), c()) && true;
+ -> 217    true && (a(), b(), c#()) && true;
     218
  => 219    |true && (
     220        a(),
@@ -1449,14 +1479,44 @@ PAUSES AT: 219:0
     222        c()
 
 INSERTING AT: 219:1
-PAUSES AT: 226:4
+PAUSES AT: 220:4
     216
     217    true && (a(), b(), c()) && true;
     218
  -> 219    t#rue && (
-    220        a(),
+ => 220        |a(),
     221        b(),
     222        c()
+    223    ) && true;
+
+INSERTING AT: 220:5
+PAUSES AT: 221:4
+    217    true && (a(), b(), c()) && true;
+    218
+    219    true && (
+ -> 220        a#(),
+ => 221        |b(),
+    222        c()
+    223    ) && true;
+    224
+
+INSERTING AT: 221:5
+PAUSES AT: 222:4
+    218
+    219    true && (
+    220        a(),
+ -> 221        b#(),
+ => 222        |c()
+    223    ) && true;
+    224
+    225    try {
+
+INSERTING AT: 222:5
+PAUSES AT: 226:4
+    219    true && (
+    220        a(),
+    221        b(),
+ -> 222        c#()
     223    ) && true;
     224
     225    try {

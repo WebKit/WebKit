@@ -290,12 +290,12 @@ bool ValidateColorMaskForSharedExponentColorBuffer(const Context *context,
 }
 }  // anonymous namespace
 
-static bool ValidateTexImageFormatCombination(const Context *context,
-                                              angle::EntryPoint entryPoint,
-                                              TextureType target,
-                                              GLenum internalFormat,
-                                              GLenum format,
-                                              GLenum type)
+bool ValidateTexImageFormatCombination(const Context *context,
+                                       angle::EntryPoint entryPoint,
+                                       TextureType target,
+                                       GLenum internalFormat,
+                                       GLenum format,
+                                       GLenum type)
 {
     // Different validation if on desktop api
     if (context->getClientType() == EGL_OPENGL_API)

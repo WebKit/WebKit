@@ -1,0 +1,10 @@
+
+
+submit
+
+
+
+PASS PreventDefaulting input onclick should allow submit() to succeed
+PASS PreventDefaulting button onclick should allow submit() to succeed
+PASS PreventDefaulting form onclick should allow submit() to succeed
+

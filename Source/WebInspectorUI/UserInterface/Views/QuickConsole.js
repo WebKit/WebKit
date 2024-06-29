@@ -77,6 +77,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
         WI.notifications.addEventListener(WI.Notification.TransitionPageTarget, this._handleTransitionPageTarget, this);
 
+        WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, this._handleTargetAdded, this);
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._handleTargetRemoved, this);
 
         WI.domManager.addEventListener(WI.DOMManager.Event.InspectedNodeChanged, this._handleInspectedNodeChanged, this);
@@ -111,6 +112,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
         WI.notifications.removeEventListener(WI.Notification.TransitionPageTarget, this._handleTransitionPageTarget, this);
 
+        WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, this._handleTargetAdded, this);
         WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetRemoved, this._handleTargetRemoved, this);
 
         WI.domManager.removeEventListener(WI.DOMManager.Event.InspectedNodeChanged, this._handleInspectedNodeChanged, this);
@@ -253,8 +255,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
             contextMenu.appendSeparator();
         }
 
-        let indent = 0;
-        let addExecutionContext = (context) => {
+        let addExecutionContext = (context, indent) => {
             if (context.type === WI.ExecutionContext.Type.Internal && !WI.settings.engineeringShowInternalExecutionContexts.value)
                 return;
 
@@ -267,7 +268,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
             }, activeExecutionContext === context);
         };
 
-        let addExecutionContextsForFrame = (frame) => {
+        let addExecutionContextsForFrame = (frame, indent) => {
             let pageExecutionContext = frame.executionContextList.pageExecutionContext;
 
             let contexts = frame.executionContextList.contexts.sort((a, b) => {
@@ -284,28 +285,37 @@ WI.QuickConsole = class QuickConsole extends WI.View
                 return executionContextTypeRanking.indexOf(a.type) - executionContextTypeRanking.indexOf(b.type);
             });
             for (let context of contexts)
-                addExecutionContext(context);
+                addExecutionContext(context, indent);
         };
 
         let mainFrame = WI.networkManager.mainFrame;
-        addExecutionContextsForFrame(mainFrame);
-
-        indent = 1;
+        addExecutionContextsForFrame(mainFrame, 0);
 
         let otherFrames = WI.networkManager.frames.filter((frame) => frame !== mainFrame && frame.executionContextList.pageExecutionContext);
         if (otherFrames.length) {
             contextMenu.appendHeader(WI.UIString("Frames", "Frames @ Execution Context Picker", "Title for list of HTML subframe JavaScript execution contexts"));
 
             for (let frame of otherFrames)
-                addExecutionContextsForFrame(frame);
+                addExecutionContextsForFrame(frame, 1);
         }
 
         let workerTargets = WI.targetManager.workerTargets;
         if (workerTargets.length) {
             contextMenu.appendHeader(WI.UIString("Workers", "Workers @ Execution Context Picker", "Title for list of JavaScript web worker execution contexts"));
 
-            for (let target of workerTargets)
-                addExecutionContext(target.executionContext);
+            let addExecutionContextsForWorker = (workerTarget, indent) => {
+                addExecutionContext(workerTarget.executionContext, indent);
+
+                for (let subworkerTarget of workerTargets) {
+                    if (subworkerTarget.parentTarget === workerTarget)
+                        addExecutionContextsForWorker(subworkerTarget, indent + 1);
+                }
+            };
+
+            for (let workerTarget of workerTargets) {
+                if (!workerTargets.includes(workerTarget.parentTarget))
+                    addExecutionContextsForWorker(workerTarget, 1);
+            }
         }
     }
 
@@ -419,6 +429,11 @@ WI.QuickConsole = class QuickConsole extends WI.View
     }
 
     _handleTransitionPageTarget()
+    {
+        this._updateActiveExecutionContextDisplay();
+    }
+
+    _handleTargetAdded(event)
     {
         this._updateActiveExecutionContextDisplay();
     }

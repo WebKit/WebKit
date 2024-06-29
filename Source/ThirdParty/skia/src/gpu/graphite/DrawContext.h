@@ -13,10 +13,10 @@
 #include "include/core/SkSurfaceProps.h"
 #include "include/private/base/SkTArray.h"
 
-#include "src/gpu/graphite/AttachmentTypes.h"
 #include "src/gpu/graphite/DrawList.h"
 #include "src/gpu/graphite/DrawOrder.h"
 #include "src/gpu/graphite/DrawTypes.h"
+#include "src/gpu/graphite/ResourceTypes.h"
 #include "src/gpu/graphite/TextureProxyView.h"
 #include "src/gpu/graphite/task/UploadTask.h"
 
@@ -65,6 +65,7 @@ public:
     int pendingRenderSteps() const { return fPendingDraws->renderStepCount(); }
 
     void clear(const SkColor4f& clearColor);
+    void discard();
 
     void recordDraw(const Renderer* renderer,
                     const Transform& localToDevice,
@@ -81,6 +82,10 @@ public:
                       const std::vector<MipLevel>& levels,
                       const SkIRect& dstRect,
                       std::unique_ptr<ConditionalUploadContext>);
+
+    // Add a Task that will be executed *before* any of the pending draws and uploads are
+    // executed as part of the next flush(). Dependency
+    void recordDependency(sk_sp<Task>);
 
     // Returns the transient path atlas that uses compute to accumulate coverage masks for atlas
     // draws recorded to this SDC. The atlas gets created lazily upon request. Returns nullptr

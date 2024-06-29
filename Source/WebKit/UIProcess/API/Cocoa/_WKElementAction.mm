@@ -275,12 +275,14 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         return [UIImage systemImageNamed:@"doc.on.doc"];
     case _WKElementActionTypeSaveImage:
         return [UIImage systemImageNamed:@"square.and.arrow.down"];
+#if HAVE(LINK_PREVIEW)
     case _WKElementActionTypeAddToReadingList:
         return [UIImage systemImageNamed:@"eyeglasses"];
     case _WKElementActionTypeOpenInDefaultBrowser:
         return [UIImage systemImageNamed:@"safari"];
     case _WKElementActionTypeOpenInExternalApplication:
         return [UIImage systemImageNamed:@"arrow.up.forward.app"];
+#endif // HAVE(LINK_PREVIEW)
     case _WKElementActionTypeShare:
         return [UIImage systemImageNamed:@"square.and.arrow.up"];
     case _WKElementActionTypeOpenInNewTab:
@@ -323,12 +325,14 @@ UIActionIdentifier elementActionTypeToUIActionIdentifier(_WKElementActionType ac
         return WKElementActionTypeCopyIdentifier;
     case _WKElementActionTypeSaveImage:
         return WKElementActionTypeSaveImageIdentifier;
+#if HAVE(LINK_PREVIEW)
     case _WKElementActionTypeAddToReadingList:
         return WKElementActionTypeAddToReadingListIdentifier;
     case _WKElementActionTypeOpenInDefaultBrowser:
         return WKElementActionTypeOpenInDefaultBrowserIdentifier;
     case _WKElementActionTypeOpenInExternalApplication:
         return WKElementActionTypeOpenInExternalApplicationIdentifier;
+#endif // HAVE(LINK_PREVIEW)
     case _WKElementActionTypeShare:
         return WKElementActionTypeShareIdentifier;
     case _WKElementActionTypeOpenInNewTab:
@@ -362,12 +366,14 @@ static _WKElementActionType uiActionIdentifierToElementActionType(UIActionIdenti
         return _WKElementActionTypeCopy;
     if ([identifier isEqualToString:WKElementActionTypeSaveImageIdentifier])
         return _WKElementActionTypeSaveImage;
+#if HAVE(LINK_PREVIEW)
     if ([identifier isEqualToString:WKElementActionTypeAddToReadingListIdentifier])
         return _WKElementActionTypeAddToReadingList;
     if ([identifier isEqualToString:WKElementActionTypeOpenInDefaultBrowserIdentifier])
         return _WKElementActionTypeOpenInDefaultBrowser;
     if ([identifier isEqualToString:WKElementActionTypeOpenInExternalApplicationIdentifier])
         return _WKElementActionTypeOpenInExternalApplication;
+#endif // HAVE(LINK_PREVIEW)
     if ([identifier isEqualToString:WKElementActionTypeShareIdentifier])
         return _WKElementActionTypeShare;
     if ([identifier isEqualToString:WKElementActionTypeOpenInNewTabIdentifier])

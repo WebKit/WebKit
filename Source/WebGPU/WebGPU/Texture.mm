@@ -2991,13 +2991,13 @@ void Texture::makeCanvasBacking()
 
 void Texture::waitForCommandBufferCompletion()
 {
-    if (auto* commandEncoder = m_commandEncoder.get())
-        commandEncoder->waitForCommandBufferCompletion();
+    for (auto& commandEncoder : m_commandEncoders)
+        commandEncoder.waitForCommandBufferCompletion();
 }
 
 void Texture::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
-    m_commandEncoder = commandEncoder;
+    m_commandEncoders.add(commandEncoder);
     if (!m_canvasBacking && isDestroyed())
         commandEncoder.makeSubmitInvalid();
 }
@@ -3218,9 +3218,11 @@ void Texture::destroy()
         if (view.get())
             view->destroy();
     }
-    if (!m_canvasBacking && m_commandEncoder)
-        m_commandEncoder.get()->makeSubmitInvalid();
-    m_commandEncoder = nullptr;
+    if (!m_canvasBacking) {
+        for (auto& commandEncoder : m_commandEncoders)
+            commandEncoder.makeSubmitInvalid();
+    }
+    m_commandEncoders.clear();
 
     m_textureViews.clear();
 }

@@ -66,7 +66,7 @@ JSWebAssemblyStruct* JSWebAssemblyStruct::tryCreate(JSGlobalObject* globalObject
 
 const uint8_t* JSWebAssemblyStruct::fieldPointer(uint32_t fieldIndex) const
 {
-    return m_payload.data() + structType()->offsetOfFieldInternal(fieldIndex);
+    return m_payload.span().data() + structType()->offsetOfFieldInternal(fieldIndex);
 }
 
 uint8_t* JSWebAssemblyStruct::fieldPointer(uint32_t fieldIndex)

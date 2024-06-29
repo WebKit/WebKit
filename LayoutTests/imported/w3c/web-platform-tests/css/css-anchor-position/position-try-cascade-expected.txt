@@ -1,0 +1,9 @@
+
+
+FAIL @position-try rule applies assert_equals: expected 50 but got 0
+FAIL @position-try rule wins over inline style assert_equals: expected 50 but got 20
+FAIL @position-try rule does not win over !important assert_equals: expected 50 but got 0
+FAIL @position-try rule does not win over animations assert_equals: expected 50 but got 0
+FAIL @position-try rule does not win over transitions assert_equals: expected 50 but got 0
+FAIL @position-try revert / revert-layer reverts to user / author origin assert_equals: left reverted back to user origin expected 0 but got 20
+

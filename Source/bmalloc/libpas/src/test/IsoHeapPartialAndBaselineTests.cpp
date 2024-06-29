@@ -191,7 +191,7 @@ void testSimplePartialAllocations(size_t size,
     pas_heap_ref heap = ISO_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(size, alignment);
 
     for (size_t index = 0; index < count; ++index) {
-        void* ptr = iso_allocate(&heap);
+        void* ptr = iso_allocate(&heap, pas_non_compact_allocation_mode);
         CHECK(ptr);
         CHECK(pas_is_aligned(reinterpret_cast<uintptr_t>(ptr), alignment));
         pas_segregated_view view =
@@ -268,7 +268,7 @@ void testSimplePartialAllocations(size_t size,
         scavengeKind == pas_scavenger_run_synchronously_now_kind ? 0 : numPages);
 
     for (size_t index = 0; index < secondCount; ++index) {
-        void* ptr = iso_allocate(&heap);
+        void* ptr = iso_allocate(&heap, pas_non_compact_allocation_mode);
         CHECK(ptr);
         CHECK(pas_is_aligned(reinterpret_cast<uintptr_t>(ptr), alignment));
         if (verbose)
@@ -314,7 +314,7 @@ void testFreeAroundPrimordialStop(size_t size, size_t alignment, size_t numObjec
     pas_heap_ref heap = ISO_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(size, alignment);
 
     for (size_t index = 0; index < numObjectsToAllocate; ++index) {
-        void* ptr = iso_test_allocate(&heap);
+        void* ptr = iso_test_allocate(&heap, pas_non_compact_allocation_mode);
         if (verbose)
             cout << "Allocated " << ptr << "\n";
         objects.push_back(ptr);
@@ -335,7 +335,7 @@ void testFreeAroundPrimordialStop(size_t size, size_t alignment, size_t numObjec
         scavenge();
         
         for (size_t index = freeObjectStart; index < freeObjectEnd; ++index) {
-            void* ptr = iso_test_allocate(&heap);
+            void* ptr = iso_test_allocate(&heap, pas_non_compact_allocation_mode);
             if (verbose)
                 cout << "Reallocated " << ptr << "\n";
             CHECK_EQUAL(ptr, objects[index]);
@@ -343,7 +343,7 @@ void testFreeAroundPrimordialStop(size_t size, size_t alignment, size_t numObjec
     }
 
     for (size_t index = numAdditionalObjects; index--;) {
-        void* ptr = iso_test_allocate(&heap);
+        void* ptr = iso_test_allocate(&heap, pas_non_compact_allocation_mode);
         CHECK(!objectSet.count(ptr));
         objectSet.insert(ptr);
     }
@@ -361,7 +361,7 @@ void testFreeInterleavedAroundPrimordialStop(size_t size, size_t alignment, size
     pas_heap_ref heap = ISO_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(size, alignment);
 
     for (size_t index = 0; index < numObjectsToAllocate; ++index) {
-        void* ptr = iso_test_allocate(&heap);
+        void* ptr = iso_test_allocate(&heap, pas_non_compact_allocation_mode);
         if (verbose)
             cout << "Allocated " << ptr << "\n";
         objects.push_back(ptr);
@@ -387,7 +387,7 @@ void testFreeInterleavedAroundPrimordialStop(size_t size, size_t alignment, size
         
         for (size_t index = freeObjectStart; index < numObjectsToAllocate;) {
             for (size_t count = freeRunLength; count-- && index < numObjectsToAllocate; ++index) {
-                void* ptr = iso_test_allocate(&heap);
+                void* ptr = iso_test_allocate(&heap, pas_non_compact_allocation_mode);
                 if (verbose)
                     cout << "Reallocated " << ptr << "\n";
                 CHECK_EQUAL(ptr, objects[index]);
@@ -398,7 +398,7 @@ void testFreeInterleavedAroundPrimordialStop(size_t size, size_t alignment, size
     }
 
     for (size_t index = numAdditionalObjects; index--;) {
-        void* ptr = iso_test_allocate(&heap);
+        void* ptr = iso_test_allocate(&heap, pas_non_compact_allocation_mode);
         CHECK(!objectSet.count(ptr));
         objectSet.insert(ptr);
     }
@@ -456,7 +456,7 @@ void testMultiplePartialsFromDifferentHeapsPerShared(const vector<PartialProgram
     auto allocatePrimordial =
         [&] (size_t programIndex, size_t objectIndex) {
             PAS_ASSERT(objectIndex == objects[programIndex].size());
-            void* ptr = iso_test_allocate(heaps[programIndex]);
+            void* ptr = iso_test_allocate(heaps[programIndex], pas_non_compact_allocation_mode);
             if (verbose)
                 cout << "Allocated ptr = " << ptr << "\n";
             objects[programIndex].push_back(ptr);
@@ -524,7 +524,7 @@ void testMultiplePartialsFromDifferentHeapsPerShared(const vector<PartialProgram
                     || objectIndex >= programs[programIndex].freeEnd)
                     return;
 
-                void* ptr = iso_test_allocate(heaps[programIndex]);
+                void* ptr = iso_test_allocate(heaps[programIndex], pas_non_compact_allocation_mode);
                 if (verbose)
                     cout << "Reallocated ptr = " << ptr << "\n";
                 CHECK_EQUAL(ptr, objects[programIndex][objectIndex]);
@@ -534,7 +534,7 @@ void testMultiplePartialsFromDifferentHeapsPerShared(const vector<PartialProgram
     }
 
     for (size_t programIndex = 0; programIndex < programs.size(); ++programIndex) {
-        void* ptr = iso_test_allocate(heaps[programIndex]);
+        void* ptr = iso_test_allocate(heaps[programIndex], pas_non_compact_allocation_mode);
         CHECK(!objectSet.count(ptr));
         objects[programIndex].push_back(ptr);
         objectSet.insert(ptr);
@@ -649,7 +649,7 @@ void testMultiplePartialsFromDifferentThreadsPerShared(size_t size,
             set<void*> localObjectSet;
 
             for (size_t index = 0; index < numObjects; index++) {
-                void* ptr = iso_test_allocate(&heap);
+                void* ptr = iso_test_allocate(&heap, pas_non_compact_allocation_mode);
                 pas_segregated_view view = pas_segregated_view_for_object(
                     reinterpret_cast<uintptr_t>(ptr),
                     &iso_test_heap_config);
@@ -712,7 +712,7 @@ void testMultiplePartialsFromDifferentThreadsPerShared(size_t size,
         // We avert this by doing the rest of the test from a single thread.
 
         while (freedObjects.size()) {
-            void* ptr = iso_test_allocate(&heap);
+            void* ptr = iso_test_allocate(&heap, pas_non_compact_allocation_mode);
             if (verbose)
                 cout << "Allocated " << ptr << "\n";
             pas_segregated_view view = pas_segregated_view_for_object(
@@ -767,8 +767,8 @@ void testTwoBaselinesEvictions(size_t size1, size_t size2, size_t count,
     pas_mock_fast_random = random;
 
     for (size_t index = 0; index < count; ++index) {
-        objects.push_back(iso_allocate(&heap1));
-        objects.push_back(iso_allocate(&heap2));
+        objects.push_back(iso_allocate(&heap1, pas_non_compact_allocation_mode));
+        objects.push_back(iso_allocate(&heap2, pas_non_compact_allocation_mode));
     }
 
     CHECK_EQUAL(pas_num_baseline_allocator_evictions, numEvictions);
@@ -781,9 +781,9 @@ void testTwoBaselinesEvictions(size_t size1, size_t size2, size_t count,
     scavenge();
 
     for (size_t index = 0; index < count; ++index) {
-        CHECK_EQUAL(iso_allocate(&heap1),
+        CHECK_EQUAL(iso_allocate(&heap1, pas_non_compact_allocation_mode),
                     objects[index * 2 + 0]);
-        CHECK_EQUAL(iso_allocate(&heap2),
+        CHECK_EQUAL(iso_allocate(&heap2, pas_non_compact_allocation_mode),
                     objects[index * 2 + 1]);
     }
 }

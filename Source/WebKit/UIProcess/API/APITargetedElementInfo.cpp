@@ -31,6 +31,7 @@
 #include "PageClient.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/Box.h>
 #include <wtf/CallbackAggregator.h>
 
@@ -83,6 +84,15 @@ void TargetedElementInfo::childFrames(CompletionHandler<void(Vector<Ref<FrameTre
             aggregateData->append(WTFMove(data));
         });
     }
+}
+
+void TargetedElementInfo::takeSnapshot(CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&& completion)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return completion({ });
+
+    page->takeSnapshotForTargetedElement(*this, WTFMove(completion));
 }
 
 } // namespace API

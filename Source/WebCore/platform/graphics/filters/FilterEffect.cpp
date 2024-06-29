@@ -191,19 +191,19 @@ RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, const FilterImageV
     return result;
 }
 
-FilterStyleVector FilterEffect::createFilterStyles(const Filter& filter, const FilterStyle& input) const
+FilterStyleVector FilterEffect::createFilterStyles(GraphicsContext& context, const Filter& filter, const FilterStyle& input) const
 {
-    return { createFilterStyle(filter, input) };
+    return { createFilterStyle(context, filter, input) };
 }
 
-FilterStyle FilterEffect::createFilterStyle(const Filter& filter, const FilterStyle& input, const std::optional<FilterEffectGeometry>& geometry) const
+FilterStyle FilterEffect::createFilterStyle(GraphicsContext& context, const Filter& filter, const FilterStyle& input, const std::optional<FilterEffectGeometry>& geometry) const
 {
     ASSERT(supportedFilterRenderingModes().contains(FilterRenderingMode::GraphicsContext));
 
     auto primitiveSubregion = calculatePrimitiveSubregion(filter, { &input.primitiveSubregion, 1 }, geometry);
     auto imageRect = calculateImageRect(filter, { &input.imageRect, 1 }, primitiveSubregion);
 
-    auto style = createGraphicsStyle(filter);
+    auto style = createGraphicsStyle(context, filter);
     return FilterStyle { style, primitiveSubregion, imageRect };
 }
 

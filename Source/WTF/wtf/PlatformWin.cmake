@@ -20,6 +20,16 @@ list(APPEND WTF_SOURCES
     win/Win32Handle.cpp
 )
 
+list(APPEND WTF_PUBLIC_HEADERS
+    text/win/WCharStringExtras.h
+
+    win/DbgHelperWin.h
+    win/GDIObject.h
+    win/PathWalker.h
+    win/SoftLinking.h
+    win/Win32Handle.h
+)
+
 list(APPEND WTF_LIBRARIES
     DbgHelp
     shlwapi

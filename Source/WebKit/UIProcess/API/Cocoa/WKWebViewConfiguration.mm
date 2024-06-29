@@ -28,20 +28,24 @@
 
 #import "APIPageConfiguration.h"
 #import "CSPExtensionUtilities.h"
+#import "PlatformWritingToolsUtilities.h"
 #import "WKDataDetectorTypesInternal.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKUserContentControllerInternal.h"
 #import "WKWebViewContentProviderRegistry.h"
+#import "WKWebViewInternal.h"
 #import "WKWebpagePreferencesInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
 #import "WebKit2Initialize.h"
+#import "WebPageProxy.h"
 #import "WebPreferencesDefinitions.h"
 #import "WebURLSchemeHandlerCocoa.h"
 #import "_WKApplicationManifestInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/WKProcessPool.h>
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKUserContentController.h>
@@ -244,6 +248,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     [coder encodeBool:self._scrollToTextFragmentIndicatorEnabled forKey:@"scrollToTextFragmentIndicatorEnabled"];
     [coder encodeBool:self._scrollToTextFragmentMarkingEnabled forKey:@"scrollToTextFragmentMarkingEnabled"];
+    [coder encodeBool:self._multiRepresentationHEICInsertionEnabled forKey:@"multiRepresentationHEICInsertionEnabled"];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder
@@ -290,6 +295,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     self._scrollToTextFragmentIndicatorEnabled = [coder decodeBoolForKey:@"scrollToTextFragmentIndicatorEnabled"];
     self._scrollToTextFragmentMarkingEnabled = [coder decodeBoolForKey:@"scrollToTextFragmentMarkingEnabled"];
+    self._multiRepresentationHEICInsertionEnabled = [coder decodeBoolForKey:@"multiRepresentationHEICInsertionEnabled"];
 
     return self;
 }
@@ -542,6 +548,30 @@ static NSString *defaultApplicationNameForUserAgent()
     _pageConfiguration->setLimitsNavigationsToAppBoundDomains(limitsToAppBoundDomains);
 }
 #endif
+
+#if ENABLE(WRITING_TOOLS)
+
+- (void)setSupportsAdaptiveImageGlyph:(BOOL)supportsAdaptiveImageGlyph
+{
+    [self _setMultiRepresentationHEICInsertionEnabled:supportsAdaptiveImageGlyph];
+}
+
+- (BOOL)supportsAdaptiveImageGlyph
+{
+    return [self _multiRepresentationHEICInsertionEnabled];
+}
+
+- (void)setWritingToolsBehavior:(PlatformWritingToolsBehavior)writingToolsBehavior
+{
+    _pageConfiguration->setWritingToolsBehavior(WebKit::convertToWebWritingToolsBehavior(writingToolsBehavior));
+}
+
+- (PlatformWritingToolsBehavior)writingToolsBehavior
+{
+    return WebKit::convertToPlatformWritingToolsBehavior(_pageConfiguration->writingToolsBehavior());
+}
+
+#endif // ENABLE(WRITING_TOOLS)
 
 #pragma mark WKObject protocol implementation
 
@@ -1428,6 +1458,22 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 - (BOOL)_markedTextInputEnabled
 {
     return _pageConfiguration->allowsInlinePredictions();
+}
+
+- (void)_setMultiRepresentationHEICInsertionEnabled:(BOOL)enabled
+{
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    _pageConfiguration->setMultiRepresentationHEICInsertionEnabled(enabled);
+#endif
+}
+
+- (BOOL)_multiRepresentationHEICInsertionEnabled
+{
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    return _pageConfiguration->multiRepresentationHEICInsertionEnabled();
+#else
+    return NO;
+#endif
 }
 
 @end

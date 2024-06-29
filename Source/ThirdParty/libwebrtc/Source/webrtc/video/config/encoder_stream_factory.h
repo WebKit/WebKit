@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-#include "api/transport/field_trial_based_config.h"
+#include "api/field_trials_view.h"
 #include "api/units/data_rate.h"
 #include "api/video_codecs/video_encoder.h"
 #include "call/adaptation/video_source_restrictions.h"
@@ -24,22 +24,16 @@ namespace cricket {
 class EncoderStreamFactory
     : public webrtc::VideoEncoderConfig::VideoStreamFactoryInterface {
  public:
-  // Note: this constructor is used by testcase in downstream.
-  EncoderStreamFactory(std::string codec_name,
-                       int max_qp,
-                       bool is_screenshare,
-                       bool conference_mode);
-
   EncoderStreamFactory(std::string codec_name,
                        int max_qp,
                        bool is_screenshare,
                        bool conference_mode,
                        const webrtc::VideoEncoder::EncoderInfo& encoder_info,
                        absl::optional<webrtc::VideoSourceRestrictions>
-                           restrictions = absl::nullopt,
-                       const webrtc::FieldTrialsView* trials = nullptr);
+                           restrictions = absl::nullopt);
 
   std::vector<webrtc::VideoStream> CreateEncoderStreams(
+      const webrtc::FieldTrialsView& trials,
       int width,
       int height,
       const webrtc::VideoEncoderConfig& encoder_config) override;
@@ -53,6 +47,7 @@ class EncoderStreamFactory
 
   std::vector<webrtc::VideoStream>
   CreateSimulcastOrConferenceModeScreenshareStreams(
+      const webrtc::FieldTrialsView& trials,
       int width,
       int height,
       const webrtc::VideoEncoderConfig& encoder_config,
@@ -69,8 +64,6 @@ class EncoderStreamFactory
   // Allows a screenshare specific configuration, which enables temporal
   // layering and various settings.
   const bool conference_mode_;
-  const webrtc::FieldTrialBasedConfig fallback_trials_;
-  const webrtc::FieldTrialsView& trials_;
   const int encoder_info_requested_resolution_alignment_;
   const absl::optional<webrtc::VideoSourceRestrictions> restrictions_;
 };

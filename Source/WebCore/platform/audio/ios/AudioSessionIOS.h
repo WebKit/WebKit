@@ -64,8 +64,18 @@ private:
     bool isMuted() const final;
     void handleMutedStateChange() final;
 
+    void updateSpatialExperience();
+
+    void setSceneIdentifier(const String&) final;
+    const String& sceneIdentifier() const final { return m_sceneIdentifier; }
+
+    void setSoundStageSize(SoundStageSize) final;
+    SoundStageSize soundStageSize() const final { return m_soundStageSize; }
+
     String m_lastSetPreferredAudioDeviceUID;
     RetainPtr<WebInterruptionObserverHelper> m_interruptionObserverHelper;
+    String m_sceneIdentifier;
+    SoundStageSize m_soundStageSize { SoundStageSize::Automatic };
 };
 
 }

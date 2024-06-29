@@ -411,6 +411,25 @@ export class ConstantOrOverrideValueChecker {
     if (!Number.isFinite(quantizedValue)) {
       this.#allChecksPassed = false;
     }
+    return quantizedValue;
+  }
+
+  checkedResultBigInt(value) {
+    if (kValue.i64.isOOB(value)) {
+      this.#allChecksPassed = false;
+    }
+    return value;
+  }
+
+  skipIfCheckFails(value) {
+    if (this.isAmbiguousOverflow(value)) {
+      this.t.skip(`Checked value, ${value}, was within the ambiguous overflow rounding range.`);
+    }
+
+    const quantizedValue = this.quantize(value);
+    if (!Number.isFinite(quantizedValue)) {
+      this.t.skip(`Checked value, ${value}, was not finite after quantization.`);
+    }
     return value;
   }
 

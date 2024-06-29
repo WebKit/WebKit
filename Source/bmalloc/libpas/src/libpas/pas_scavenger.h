@@ -33,6 +33,8 @@
 
 PAS_BEGIN_EXTERN_C;
 
+#include "pas_allocation_mode.h"
+
 enum pas_scavenger_state {
     pas_scavenger_state_no_thread,
     pas_scavenger_state_polling,

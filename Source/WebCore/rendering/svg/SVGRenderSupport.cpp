@@ -123,14 +123,17 @@ const RenderElement* SVGRenderSupport::pushMappingToContainer(const RenderElemen
     return &parent;
 }
 
-bool SVGRenderSupport::checkForSVGRepaintDuringLayout(const RenderElement& renderer)
+LayoutRepainter::CheckForRepaint SVGRenderSupport::checkForSVGRepaintDuringLayout(const RenderElement& renderer)
 {
     if (!renderer.checkForRepaintDuringLayout())
-        return false;
+        return LayoutRepainter::CheckForRepaint::No;
     // When a parent container is transformed in SVG, all children will be painted automatically
     // so we are able to skip redundant repaint checks.
-    CheckedPtr parent = dynamicDowncast<LegacyRenderSVGContainer>(renderer.parent());
-    return !parent || !parent->didTransformToRootUpdate();
+    if (CheckedPtr parent = dynamicDowncast<LegacyRenderSVGContainer>(renderer.parent())) {
+        if (parent->isRepaintSuspendedForChildren() || parent->didTransformToRootUpdate())
+            return LayoutRepainter::CheckForRepaint::No;
+    }
+    return LayoutRepainter::CheckForRepaint::Yes;
 }
 
 // Update a bounding box taking into account the validity of the other bounding box.

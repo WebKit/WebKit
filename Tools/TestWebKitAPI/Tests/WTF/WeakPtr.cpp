@@ -3152,6 +3152,8 @@ TEST(WTF_ThreadSafeWeakPtr, WeakRefInDestructor)
     EXPECT_NULL(shouldBeNull.get());
 }
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DidUpdateRefCountWeakPtrImpl);
+
 class DidUpdateRefCountWeakPtrImpl final {
     WTF_MAKE_NONCOPYABLE(DidUpdateRefCountWeakPtrImpl);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DidUpdateRefCountWeakPtrImpl);
@@ -3200,6 +3202,7 @@ private:
     void* m_ptr;
     mutable bool m_didUpdateRefCount { false };
 };
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DidUpdateRefCountWeakPtrImpl);
 
 class TestType : public WTF::CanMakeWeakPtr<TestType, WeakPtrFactoryInitialization::Lazy, DidUpdateRefCountWeakPtrImpl> {
 public:

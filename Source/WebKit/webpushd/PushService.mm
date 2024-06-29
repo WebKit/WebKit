@@ -251,7 +251,7 @@ public:
             return;
         }
         
-        String transactionDescription = makeString("com.apple.webkit.webpushd:", description(), ":"_s, m_identifier.debugDescription(), ":"_s, m_scope);
+        String transactionDescription = makeString("com.apple.webkit.webpushd:"_s, description(), ':', m_identifier.debugDescription(), ':', m_scope);
         m_transaction = adoptOSObject(os_transaction_create(transactionDescription.utf8().data()));
 
         RELEASE_LOG(Push, "Started pushServiceRequest %{public}s (%p) for %{public}s, scope = %{sensitive}s", description().characters(), this, m_identifier.debugDescription().utf8().data(), m_scope.utf8().data());

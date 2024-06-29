@@ -23,7 +23,8 @@
 
 namespace
 {
-constexpr unsigned int kComponentsPerVector = 4;
+constexpr unsigned int kComponentsPerVector         = 4;
+constexpr bool kEnableLogMissingExtensionsForGLES32 = false;
 }  // anonymous namespace
 
 namespace rx
@@ -218,13 +219,111 @@ uint32_t GetTimestampValidBits(const std::vector<VkQueueFamilyProperties> &queue
     }
     return timestampValidBits;
 }
-}  // namespace
-}  // namespace vk
 
-void vk::Renderer::ensureCapsInitialized() const
+bool CanSupportGPUShader5(const VkPhysicalDeviceFeatures &features)
+{
+    // We use the following Vulkan features to implement EXT_gpu_shader5 and OES_gpu_shader5:
+    // - shaderImageGatherExtended: textureGatherOffset with non-constant offset and
+    //   textureGatherOffsets family of functions.
+    // - shaderSampledImageArrayDynamicIndexing and shaderUniformBufferArrayDynamicIndexing:
+    //   dynamically uniform indices for samplers and uniform buffers.
+    return features.shaderImageGatherExtended && features.shaderSampledImageArrayDynamicIndexing &&
+           features.shaderUniformBufferArrayDynamicIndexing;
+}
+
+ANGLE_INLINE std::vector<bool> GetRequiredGLES32ExtensionList(
+    const gl::Extensions &nativeExtensions)
+{
+    // From the GLES 3.2 spec: Almost all features of [ANDROID_extension_pack_es31a], incorporating
+    // by reference all of the following features - with the exception of the sRGB decode features
+    // of EXT_texture_sRGB_decode.
+
+    // The extension debugKHR (also required for the Android extension pack) is a frontend feature
+    // and is unconditionally enabled as a supported feature (in generateSupportedExtensions()).
+    // Therefore, it is not included here.
+    return {
+        // From ANDROID_extension_pack_es31a
+        nativeExtensions.textureCompressionAstcLdrKHR,
+        nativeExtensions.blendEquationAdvancedKHR,
+        nativeExtensions.sampleShadingOES,
+        nativeExtensions.sampleVariablesOES,
+        nativeExtensions.shaderImageAtomicOES,
+        nativeExtensions.shaderMultisampleInterpolationOES,
+        nativeExtensions.textureStencil8OES,
+        nativeExtensions.textureStorageMultisample2dArrayOES,
+        nativeExtensions.copyImageEXT,
+        nativeExtensions.drawBuffersIndexedEXT,
+        nativeExtensions.geometryShaderEXT,
+        nativeExtensions.gpuShader5EXT,
+        nativeExtensions.primitiveBoundingBoxEXT,
+        nativeExtensions.shaderIoBlocksEXT,
+        nativeExtensions.tessellationShaderEXT,
+        nativeExtensions.textureBorderClampEXT,
+        nativeExtensions.textureBufferEXT,
+        nativeExtensions.textureCubeMapArrayEXT,
+
+        // Other extensions
+        nativeExtensions.drawElementsBaseVertexOES,
+        nativeExtensions.colorBufferFloatEXT,
+        nativeExtensions.robustnessKHR,
+    };
+}
+
+void LogMissingExtensionsForGLES32(const gl::Extensions &nativeExtensions)
+{
+    if (!kEnableLogMissingExtensionsForGLES32)
+    {
+        return;
+    }
+    std::vector<bool> requiredExtensions = GetRequiredGLES32ExtensionList(nativeExtensions);
+
+    constexpr const char *kRequiredExtensionNames[] = {
+        // From ANDROID_extension_pack_es31a
+        "textureCompressionAstcLdrKHR",
+        "blendEquationAdvancedKHR",
+        "sampleShadingOES",
+        "sampleVariablesOES",
+        "shaderImageAtomicOES",
+        "shaderMultisampleInterpolationOES",
+        "textureStencil8OES",
+        "textureStorageMultisample2dArrayOES",
+        "copyImageEXT",
+        "drawBuffersIndexedEXT",
+        "geometryShaderEXT",
+        "gpuShader5EXT",
+        "primitiveBoundingBoxEXT",
+        "shaderIoBlocksEXT",
+        "tessellationShaderEXT",
+        "textureBorderClampEXT",
+        "textureBufferEXT",
+        "textureCubeMapArrayEXT",
+
+        // Other extensions
+        "drawElementsBaseVertexOES",
+        "colorBufferFloatEXT",
+        "robustnessKHR",
+    };
+    ASSERT(std::end(kRequiredExtensionNames) - std::begin(kRequiredExtensionNames) ==
+           requiredExtensions.size());
+
+    for (uint32_t index = 0; index < requiredExtensions.size(); index++)
+    {
+        if (!requiredExtensions[index])
+        {
+            INFO() << "The following extension is required for GLES 3.2: "
+                   << kRequiredExtensionNames[index];
+        }
+    }
+}
+
+}  // namespace
+
+void Renderer::ensureCapsInitialized() const
 {
     if (mCapsInitialized)
+    {
         return;
+    }
     mCapsInitialized = true;
 
     const VkPhysicalDeviceLimits &limitsVk = mPhysicalDeviceProperties.limits;
@@ -289,6 +388,7 @@ void vk::Renderer::ensureCapsInitialized() const
     mNativeExtensions.copyCompressedTextureCHROMIUM = true;
     mNativeExtensions.debugMarkerEXT                = true;
     mNativeExtensions.robustnessEXT                 = true;
+    mNativeExtensions.robustnessKHR                 = true;
     mNativeExtensions.translatedShaderSourceANGLE   = true;
     mNativeExtensions.discardFramebufferEXT         = true;
     mNativeExtensions.stencilTexturingANGLE         = true;
@@ -436,7 +536,9 @@ void vk::Renderer::ensureCapsInitialized() const
     mNativeExtensions.shaderIoBlocksOES = true;
     mNativeExtensions.shaderIoBlocksEXT = true;
 
-    mNativeExtensions.gpuShader5EXT = vk::CanSupportGPUShader5EXT(mPhysicalDeviceFeatures);
+    bool gpuShader5Support          = vk::CanSupportGPUShader5(mPhysicalDeviceFeatures);
+    mNativeExtensions.gpuShader5EXT = gpuShader5Support;
+    mNativeExtensions.gpuShader5OES = gpuShader5Support;
 
     // Only expose texture cubemap array if the physical device supports it.
     mNativeExtensions.textureCubeMapArrayOES = getFeatures().supportsImageCubeArray.enabled;
@@ -444,8 +546,8 @@ void vk::Renderer::ensureCapsInitialized() const
 
     mNativeExtensions.shadowSamplersEXT = true;
 
-    // Enable EXT_external_buffer on Andoid. External buffers are implemented using Android hadware
-    // buffer (struct AHardwareBuffer).
+    // Enable EXT_external_buffer on Android. External buffers are implemented using Android
+    // hardware buffer (struct AHardwareBuffer).
     mNativeExtensions.externalBufferEXT = IsAndroid() && GetAndroidSDKVersion() >= 26;
 
     // From the Vulkan specs:
@@ -482,8 +584,14 @@ void vk::Renderer::ensureCapsInitialized() const
     // Vulkan requires advancedBlendMaxColorAttachments to be at least one, so we can support
     // advanced blend as long as the Vulkan extension is supported.  Otherwise, the extension is
     // emulated where possible.
+    // GL_EXT_blend_minmax is required for this extension, which is always enabled (hence omitted).
     mNativeExtensions.blendEquationAdvancedKHR = mFeatures.supportsBlendOperationAdvanced.enabled ||
                                                  mFeatures.emulateAdvancedBlendEquations.enabled;
+
+    mNativeExtensions.blendEquationAdvancedCoherentKHR =
+        mFeatures.supportsBlendOperationAdvancedCoherent.enabled ||
+        (mFeatures.emulateAdvancedBlendEquations.enabled &&
+         mFeatures.supportsShaderFramebufferFetch.enabled);
 
     // Enable EXT_unpack_subimage
     mNativeExtensions.unpackSubimageEXT = true;
@@ -535,6 +643,7 @@ void vk::Renderer::ensureCapsInitialized() const
     mNativeCaps.minAliasedPointSize = std::max(1.0f, limitsVk.pointSizeRange[0]);
     mNativeCaps.maxAliasedPointSize = limitsVk.pointSizeRange[1];
 
+    // Line width ranges and granularity
     if (mPhysicalDeviceFeatures.wideLines && mFeatures.bresenhamLineRasterization.enabled)
     {
         mNativeCaps.minAliasedLineWidth = std::max(1.0f, limitsVk.lineWidthRange[0]);
@@ -545,6 +654,9 @@ void vk::Renderer::ensureCapsInitialized() const
         mNativeCaps.minAliasedLineWidth = 1.0f;
         mNativeCaps.maxAliasedLineWidth = 1.0f;
     }
+    mNativeCaps.minMultisampleLineWidth = mNativeCaps.minAliasedLineWidth;
+    mNativeCaps.maxMultisampleLineWidth = mNativeCaps.maxAliasedLineWidth;
+    mNativeCaps.lineWidthGranularity    = limitsVk.lineWidthGranularity;
 
     mNativeCaps.maxDrawBuffers =
         std::min(limitsVk.maxColorAttachments, limitsVk.maxFragmentOutputAttachments);
@@ -657,9 +769,10 @@ void vk::Renderer::ensureCapsInitialized() const
     // Note that Vulkan requires maxPerStageDescriptorStorageBuffers to be at least 4 (i.e. the same
     // as gl::IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_BUFFERS).
     // TODO(syoussefi): This should be conditioned to transform feedback extension not being
-    // present.  http://anglebug.com/3206.
+    // present.  http://anglebug.com/42261882.
     // TODO(syoussefi): If geometry shader is supported, emulation will be done at that stage, and
-    // so the reserved storage buffers should be accounted in that stage.  http://anglebug.com/3606
+    // so the reserved storage buffers should be accounted in that stage.
+    // http://anglebug.com/42262271
     static_assert(
         gl::IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_BUFFERS == 4,
         "Limit to ES2.0 if supported SSBO count < supporting transform feedback buffer count");
@@ -719,8 +832,18 @@ void vk::Renderer::ensureCapsInitialized() const
         rx::LimitToInt(maxPerStageStorageBuffers);
     mNativeCaps.maxCombinedShaderStorageBlocks = rx::LimitToInt(maxCombinedStorageBuffers);
 
+    // Emulated as storage buffers, atomic counter buffers have the same size limit.  However, the
+    // limit is a signed integer and values above int max will end up as a negative size.  The
+    // storage buffer size is just capped to int unconditionally.
+    uint32_t maxStorageBufferRange = rx::LimitToInt(limitsVk.maxStorageBufferRange);
+    if (mFeatures.limitMaxStorageBufferSize.enabled)
+    {
+        constexpr uint32_t kStorageBufferLimit = 256 * 1024 * 1024;
+        maxStorageBufferRange = std::min(maxStorageBufferRange, kStorageBufferLimit);
+    }
+
     mNativeCaps.maxShaderStorageBufferBindings = rx::LimitToInt(maxCombinedStorageBuffers);
-    mNativeCaps.maxShaderStorageBlockSize      = limitsVk.maxStorageBufferRange;
+    mNativeCaps.maxShaderStorageBlockSize      = maxStorageBufferRange;
     mNativeCaps.shaderStorageBufferOffsetAlignment =
         rx::LimitToInt(static_cast<uint32_t>(limitsVk.minStorageBufferOffsetAlignment));
 
@@ -737,14 +860,12 @@ void vk::Renderer::ensureCapsInitialized() const
     mNativeCaps.maxCombinedAtomicCounterBuffers = rx::LimitToInt(maxCombinedAtomicCounterBuffers);
 
     mNativeCaps.maxAtomicCounterBufferBindings = rx::LimitToInt(maxCombinedAtomicCounterBuffers);
-    // Emulated as storage buffers, atomic counter buffers have the same size limit.  However, the
-    // limit is a signed integer and values above int max will end up as a negative size.
-    mNativeCaps.maxAtomicCounterBufferSize = rx::LimitToInt(limitsVk.maxStorageBufferRange);
+    mNativeCaps.maxAtomicCounterBufferSize     = maxStorageBufferRange;
 
     // There is no particular limit to how many atomic counters there can be, other than the size of
     // a storage buffer.  We nevertheless limit this to something reasonable (4096 arbitrarily).
     const int32_t maxAtomicCounters =
-        std::min<int32_t>(4096, limitsVk.maxStorageBufferRange / sizeof(uint32_t));
+        std::min<int32_t>(4096, maxStorageBufferRange / sizeof(uint32_t));
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
         mNativeCaps.maxShaderAtomicCounters[shaderType] = maxAtomicCounters;
@@ -905,6 +1026,7 @@ void vk::Renderer::ensureCapsInitialized() const
 
     // Enable GL_EXT_copy_image
     mNativeExtensions.copyImageEXT = true;
+    mNativeExtensions.copyImageOES = true;
 
     // GL_EXT_clip_control
     mNativeExtensions.clipControlEXT = true;
@@ -992,6 +1114,7 @@ void vk::Renderer::ensureCapsInitialized() const
             (mFeatures.supportsPrimitivesGeneratedQuery.enabled ||
              mFeatures.exposeNonConformantExtensionsAndVersions.enabled);
         mNativeExtensions.tessellationShaderEXT = tessellationShaderEnabled;
+        mNativeExtensions.tessellationShaderOES = tessellationShaderEnabled;
         mNativeCaps.maxPatchVertices            = rx::LimitToInt(limitsVk.maxTessellationPatchSize);
         mNativeCaps.maxTessPatchComponents =
             rx::LimitToInt(limitsVk.maxTessellationControlPerPatchOutputComponents);
@@ -1095,7 +1218,7 @@ void vk::Renderer::ensureCapsInitialized() const
     constexpr uint32_t kMaxCullDistancePerSpec                = 8;
     constexpr uint32_t kMaxCombinedClipAndCullDistancePerSpec = 8;
 
-    // TODO: http://anglebug.com/5466
+    // TODO: http://anglebug.com/42264006
     // After implementing EXT_geometry_shader, EXT_clip_cull_distance should be additionally
     // implemented to support the geometry shader. Until then, EXT_clip_cull_distance is enabled
     // only in the experimental cases.
@@ -1196,10 +1319,24 @@ void vk::Renderer::ensureCapsInitialized() const
     mNativeExtensions.logicOpANGLE = mPhysicalDeviceFeatures.logicOp == VK_TRUE;
 
     mNativeExtensions.YUVTargetEXT = mFeatures.supportsExternalFormatResolve.enabled;
+
+    // Log any missing extensions required for GLES 3.2.
+    LogMissingExtensionsForGLES32(mNativeExtensions);
 }
 
-namespace vk
+bool CanSupportGLES32(const gl::Extensions &nativeExtensions)
 {
+    std::vector<bool> requiredExtensions = GetRequiredGLES32ExtensionList(nativeExtensions);
+    for (uint32_t index = 0; index < requiredExtensions.size(); index++)
+    {
+        if (!requiredExtensions[index])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 bool CanSupportTransformFeedbackExtension(
     const VkPhysicalDeviceTransformFeedbackFeaturesEXT &xfbFeatures)
@@ -1210,17 +1347,6 @@ bool CanSupportTransformFeedbackExtension(
 bool CanSupportTransformFeedbackEmulation(const VkPhysicalDeviceFeatures &features)
 {
     return features.vertexPipelineStoresAndAtomics == VK_TRUE;
-}
-
-bool CanSupportGPUShader5EXT(const VkPhysicalDeviceFeatures &features)
-{
-    // We use the following Vulkan features to implement EXT_gpu_shader5:
-    // - shaderImageGatherExtended: textureGatherOffset with non-constant offset and
-    //   textureGatherOffsets family of functions.
-    // - shaderSampledImageArrayDynamicIndexing and shaderUniformBufferArrayDynamicIndexing:
-    //   dynamically uniform indices for samplers and uniform buffers.
-    return features.shaderImageGatherExtended && features.shaderSampledImageArrayDynamicIndexing &&
-           features.shaderUniformBufferArrayDynamicIndexing;
 }
 
 }  // namespace vk
@@ -1242,7 +1368,8 @@ EGLint ComputeMaximumPBufferPixels(const VkPhysicalDeviceProperties &physicalDev
     // from vkGetPhysicalDeviceImageFormatProperties for both the color and depth stencil format and
     // the exact image creation parameters that would be used to create the pbuffer. Because it is
     // always safe to return out-of-memory errors on pbuffer allocation, it's fine to simply return
-    // the number of pixels in a max width by max height pbuffer for now. http://anglebug.com/2622
+    // the number of pixels in a max width by max height pbuffer for now.
+    // http://anglebug.com/42261335
 
     // Storing the result of squaring a 32-bit unsigned int in a 64-bit unsigned int is safe.
     static_assert(std::is_same<decltype(physicalDeviceProperties.limits.maxImageDimension2D),

@@ -162,7 +162,7 @@ void GCController::dumpHeapForVM(VM& vm)
 
     CString utf8String = jsonData.utf8();
 
-    FileSystem::writeToFile(fileHandle, utf8String.data(), utf8String.length());
+    FileSystem::writeToFile(fileHandle, utf8String.span());
     FileSystem::closeFile(fileHandle);
     WTFLogAlways("Dumped GC heap to %s%s", tempFilePath.utf8().data(), isMainThread() ? ""_s : " for Worker");
 }

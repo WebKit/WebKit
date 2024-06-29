@@ -1,5 +1,6 @@
 // Copyright 2015 The Chromium Authors. All rights reserved.
 // Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+// Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -47,11 +48,17 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParserConsumer+Angle.h"
 #include "CSSPropertyParserConsumer+Color.h"
+#include "CSSPropertyParserConsumer+Ident.h"
+#include "CSSPropertyParserConsumer+Image.h"
 #include "CSSPropertyParserConsumer+Integer.h"
 #include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+List.h"
+#include "CSSPropertyParserConsumer+Number.h"
+#include "CSSPropertyParserConsumer+Percent.h"
+#include "CSSPropertyParserConsumer+Position.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
 #include "CSSPropertyParserConsumer+Time.h"
+#include "CSSPropertyParserConsumer+URL.h"
 #include "CSSPropertyParsing.h"
 #include "CSSQuadValue.h"
 #include "CSSTokenizer.h"
@@ -354,9 +361,9 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> CSSPropertyParser::co
     auto consumeSingleValue = [&](auto& range, auto& component) -> RefPtr<CSSValue> {
         switch (component.type) {
         case CSSCustomPropertySyntax::Type::Length:
-            return consumeLength(range, m_context.mode, ValueRange::All);
+            return consumeLength(range, m_context.mode);
         case CSSCustomPropertySyntax::Type::LengthPercentage:
-            return consumeLengthOrPercent(range, m_context.mode, ValueRange::All);
+            return consumeLengthOrPercent(range, m_context.mode);
         case CSSCustomPropertySyntax::Type::CustomIdent:
             if (RefPtr value = consumeCustomIdent(range)) {
                 if (component.ident.isNull() || value->stringValue() == component.ident)
@@ -364,15 +371,15 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> CSSPropertyParser::co
             }
             return nullptr;
         case CSSCustomPropertySyntax::Type::Percentage:
-            return consumePercent(range, ValueRange::All);
+            return consumePercent(range);
         case CSSCustomPropertySyntax::Type::Integer:
             return consumeInteger(range);
         case CSSCustomPropertySyntax::Type::Number:
-            return consumeNumber(range, ValueRange::All);
+            return consumeNumber(range);
         case CSSCustomPropertySyntax::Type::Angle:
             return consumeAngle(range, m_context.mode);
         case CSSCustomPropertySyntax::Type::Time:
-            return consumeTime(range, m_context.mode, ValueRange::All);
+            return consumeTime(range, m_context.mode);
         case CSSCustomPropertySyntax::Type::Resolution:
             return consumeResolution(range);
         case CSSCustomPropertySyntax::Type::Color:
@@ -488,8 +495,8 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
 
         case CSSCustomPropertySyntax::Type::TransformFunction:
         case CSSCustomPropertySyntax::Type::TransformList:
-            if (auto transform = transformForValue(value, builderState.cssToLengthConversionData()))
-                return { CSSCustomPropertyValue::TransformSyntaxValue { transform } };
+            if (RefPtr transform = transformForValue(value, builderState.cssToLengthConversionData()))
+                return { CSSCustomPropertyValue::TransformSyntaxValue { transform.releaseNonNull() } };
             return { };
         case CSSCustomPropertySyntax::Type::Unknown:
             return { };
@@ -1707,12 +1714,12 @@ static RefPtr<CSSValue> consumeAnimationValueForShorthand(CSSPropertyID property
     switch (property) {
     case CSSPropertyAnimationDelay:
     case CSSPropertyTransitionDelay:
-        return consumeTime(range, context.mode, ValueRange::All, UnitlessQuirk::Forbid);
+        return consumeTime(range, context.mode);
     case CSSPropertyAnimationDirection:
         return CSSPropertyParsing::consumeSingleAnimationDirection(range);
     case CSSPropertyAnimationDuration:
     case CSSPropertyTransitionDuration:
-        return consumeTime(range, context.mode, ValueRange::NonNegative, UnitlessQuirk::Forbid);
+        return consumeTime(range, context.mode, ValueRange::NonNegative);
     case CSSPropertyAnimationFillMode:
         return CSSPropertyParsing::consumeSingleAnimationFillMode(range);
     case CSSPropertyAnimationIterationCount:
@@ -2421,7 +2428,7 @@ bool CSSPropertyParser::consumeTransformOrigin(bool important)
     if (auto resultXY = consumeOneOrTwoValuedPositionCoordinates(m_range, m_context.mode, UnitlessQuirk::Forbid)) {
         m_range.consumeWhitespace();
         bool atEnd = m_range.atEnd();
-        auto resultZ = consumeLength(m_range, m_context.mode, ValueRange::All);
+        auto resultZ = consumeLength(m_range, m_context.mode);
         if ((!resultZ && !atEnd) || !m_range.atEnd())
             return false;
         addProperty(CSSPropertyTransformOriginX, CSSPropertyTransformOrigin, WTFMove(resultXY->x), important);

@@ -118,7 +118,7 @@ TEST_P(QueryObjectTest, QueryObjectResultAfterEnd)
 // Test glGetQueryObjectuiv after glEndQuery with GL_PRIMITIVES_GENERATED
 TEST_P(QueryObjectTestES32, QueryObjectResultAfterEndPrimitivesGenerated)
 {
-    // TODO(anglebug.com/5430): Allow GL_PRIMITIVES_GENERATED query objects
+    // TODO(anglebug.com/42263969): Allow GL_PRIMITIVES_GENERATED query objects
     // when transform feedback is not active
     ANGLE_SKIP_TEST_IF(IsVulkan());
     glBeginQuery(GL_PRIMITIVES_GENERATED, mQueryObjectName);

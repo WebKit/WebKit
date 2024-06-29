@@ -35,6 +35,7 @@
 #include "Blob.h"
 #include "CloseEvent.h"
 #include "ContentSecurityPolicy.h"
+#include "DNS.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventListener.h"
@@ -231,7 +232,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     auto& context = *scriptExecutionContext();
 
     if (!m_url.isValid()) {
-        context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Invalid url for WebSocket " + m_url.stringCenterEllipsizedToLength());
+        context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Invalid url for WebSocket "_s, m_url.stringCenterEllipsizedToLength()));
         m_state = CLOSED;
         return Exception { ExceptionCode::SyntaxError };
     }
@@ -242,12 +243,12 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         m_url.setProtocol("wss"_s);
 
     if (!m_url.protocolIs("ws"_s) && !m_url.protocolIs("wss"_s)) {
-        context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Wrong url scheme for WebSocket " + m_url.stringCenterEllipsizedToLength());
+        context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Wrong url scheme for WebSocket "_s, m_url.stringCenterEllipsizedToLength()));
         m_state = CLOSED;
         return Exception { ExceptionCode::SyntaxError };
     }
     if (m_url.hasFragmentIdentifier()) {
-        context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, "URL has fragment component " + m_url.stringCenterEllipsizedToLength());
+        context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("URL has fragment component "_s, m_url.stringCenterEllipsizedToLength()));
         m_state = CLOSED;
         return Exception { ExceptionCode::SyntaxError };
     }
@@ -257,10 +258,12 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
 
     contentSecurityPolicy->upgradeInsecureRequestIfNeeded(m_url, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    if (!portAllowed(m_url)) {
+    if (!portAllowed(m_url) || isIPAddressDisallowed(m_url)) {
         String message;
-        if (m_url.port())
-            message = makeString("WebSocket port ", m_url.port().value(), " blocked");
+        if (isIPAddressDisallowed(m_url))
+            message = makeString("WebSocket address "_s, m_url.host(), " blocked"_s);
+        else if (m_url.port())
+            message = makeString("WebSocket port "_s, m_url.port().value(), " blocked"_s);
         else
             message = "WebSocket without port blocked"_s;
         context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, message);
@@ -291,7 +294,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     // comply with WebSocket API specification, but it seems to be the only reasonable way to handle this conflict.
     for (auto& protocol : protocols) {
         if (!isValidProtocolString(protocol)) {
-            context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Wrong protocol for WebSocket '" + encodeProtocolString(protocol) + "'");
+            context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Wrong protocol for WebSocket '"_s, encodeProtocolString(protocol), '\''));
             m_state = CLOSED;
             return Exception { ExceptionCode::SyntaxError };
         }
@@ -299,7 +302,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     HashSet<String> visited;
     for (auto& protocol : protocols) {
         if (!visited.add(protocol).isNewEntry) {
-            context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, "WebSocket protocols contain duplicates: '" + encodeProtocolString(protocol) + "'");
+            context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("WebSocket protocols contain duplicates: '"_s, encodeProtocolString(protocol), '\''));
             m_state = CLOSED;
             return Exception { ExceptionCode::SyntaxError };
         }
@@ -581,7 +584,7 @@ void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
             dispatchEvent(MessageEvent::create(Blob::create(scriptExecutionContext(), WTFMove(binaryData), emptyString()), SecurityOrigin::create(m_url)->toString()));
             break;
         case BinaryType::Arraybuffer:
-            dispatchEvent(MessageEvent::create(ArrayBuffer::create(binaryData.data(), binaryData.size()), SecurityOrigin::create(m_url)->toString()));
+            dispatchEvent(MessageEvent::create(ArrayBuffer::create(binaryData), SecurityOrigin::create(m_url)->toString()));
             break;
         }
     });

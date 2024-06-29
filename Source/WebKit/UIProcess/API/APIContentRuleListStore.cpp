@@ -148,7 +148,7 @@ template<> void getData(const WebKit::NetworkCache::Data& data, const Function<b
 }
 template<> void getData(const WebCore::SharedBuffer& data, const Function<bool(std::span<const uint8_t>)>& function)
 {
-    function({ data.data(), data.size() });
+    function(data.span());
 }
 
 static std::optional<ContentRuleListMetaData> decodeContentRuleListMetaData(const WebKit::NetworkCache::Data& fileData)
@@ -240,7 +240,7 @@ static bool writeDataToFile(const WebKit::NetworkCache::Data& fileData, Platform
 {
     bool success = true;
     fileData.apply([fd, &success](std::span<const uint8_t> span) {
-        if (writeToFile(fd, span.data(), span.size()) == -1) {
+        if (writeToFile(fd, span) == -1) {
             success = false;
             return false;
         }
@@ -364,10 +364,10 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
         return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
     }
     
-    char invalidHeader[CurrentVersionFileHeaderSize];
-    memset(invalidHeader, 0xFF, sizeof(invalidHeader));
+    std::array<uint8_t, CurrentVersionFileHeaderSize> invalidHeader;
+    memset(invalidHeader.data(), 0xFF, invalidHeader.size());
     // This header will be rewritten in CompilationClient::finalize.
-    if (writeToFile(temporaryFileHandle, invalidHeader, sizeof(invalidHeader)) == -1) {
+    if (writeToFile(temporaryFileHandle, invalidHeader) == -1) {
         WTFLogAlways("Content Rule List compiling failed: Writing header to file failed.");
         closeFile(temporaryFileHandle);
         return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
@@ -453,7 +453,7 @@ static WTF::String getContentRuleListSourceFromMappedFile(const MappedData& mapp
         return { };
 
     auto headerSizeBytes = headerSize(mappedData.metaData.version);
-    bool is8Bit = mappedData.data.data()[headerSizeBytes];
+    bool is8Bit = mappedData.data.span()[headerSizeBytes];
     size_t start = headerSizeBytes + sizeof(bool);
     size_t length = mappedData.metaData.sourceSize - sizeof(bool);
     if (is8Bit)
@@ -464,7 +464,7 @@ static WTF::String getContentRuleListSourceFromMappedFile(const MappedData& mapp
         return { };
     }
 
-    return WTF::String({ reinterpret_cast<const UChar*>(mappedData.data.data() + start), length / sizeof(UChar) });
+    return spanReinterpretCast<const UChar>(mappedData.data.span().subspan(start, length));
 }
 
 void ContentRuleListStore::lookupContentRuleList(WTF::String&& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
@@ -592,7 +592,7 @@ void ContentRuleListStore::invalidateContentRuleListVersion(const WTF::String& i
         return;
 
     ContentRuleListMetaData invalidHeader = {0, 0, 0, 0, 0, 0};
-    auto bytesWritten = writeToFile(file, &invalidHeader, sizeof(invalidHeader));
+    auto bytesWritten = writeToFile(file, { reinterpret_cast<const uint8_t*>(&invalidHeader), sizeof(invalidHeader) });
     ASSERT_UNUSED(bytesWritten, bytesWritten == sizeof(invalidHeader));
     closeFile(file);
 }

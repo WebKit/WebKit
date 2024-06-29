@@ -65,6 +65,9 @@ NSString *toErrorString(NSString *callingAPIName, NSString *sourceKey, NSString 
 /// Returns an error object that combines the provided information into a single, descriptive message.
 JSObjectRef toJSError(JSContextRef, NSString *callingAPIName, NSString *sourceKey, NSString *underlyingErrorString);
 
+/// Returns a rejected Promise object that combines the provided information into a single, descriptive error message.
+JSObjectRef toJSRejectedPromise(JSContextRef, NSString *callingAPIName, NSString *sourceKey, NSString *underlyingErrorString);
+
 NSString *toWebAPI(NSLocale *);
 
 /// Returns the storage size of a string.

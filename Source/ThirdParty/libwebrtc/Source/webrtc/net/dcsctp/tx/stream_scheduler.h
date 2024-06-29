@@ -87,7 +87,7 @@ class StreamScheduler {
     // The parameter `max_size` specifies the maximum amount of actual payload
     // that may be returned. If these constraints prevents the stream from
     // sending some data, `absl::nullopt` should be returned.
-    virtual absl::optional<SendQueue::DataToSend> Produce(TimeMs now,
+    virtual absl::optional<SendQueue::DataToSend> Produce(webrtc::Timestamp now,
                                                           size_t max_size) = 0;
 
     // Returns the number of payload bytes that is scheduled to be sent in the
@@ -132,7 +132,8 @@ class StreamScheduler {
 
     // Produces a message from this stream. This will only be called on streams
     // that have data.
-    absl::optional<SendQueue::DataToSend> Produce(TimeMs now, size_t max_size);
+    absl::optional<SendQueue::DataToSend> Produce(webrtc::Timestamp now,
+                                                  size_t max_size);
 
     void MakeActive(size_t bytes_to_send_next);
     void ForceMarkInactive();
@@ -180,7 +181,8 @@ class StreamScheduler {
   // `now` and will be used to skip chunks with expired limited lifetime. The
   // parameter `max_size` specifies the maximum amount of actual payload that
   // may be returned. If no data can be produced, `absl::nullopt` is returned.
-  absl::optional<SendQueue::DataToSend> Produce(TimeMs now, size_t max_size);
+  absl::optional<SendQueue::DataToSend> Produce(webrtc::Timestamp now,
+                                                size_t max_size);
 
   std::set<StreamID> ActiveStreamsForTesting() const;
 

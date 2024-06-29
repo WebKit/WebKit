@@ -78,7 +78,7 @@ void XMLErrors::handleError(ErrorType type, const char* message, TextPosition po
 void XMLErrors::appendErrorMessage(ASCIILiteral typeString, TextPosition position, const char* message)
 {
     // <typeString> on line <lineNumber> at column <columnNumber>: <message>
-    m_errorMessages.append(typeString, " on line ", position.m_line.oneBasedInt(), " at column ", position.m_column.oneBasedInt(), ": ", message);
+    m_errorMessages.append(typeString, " on line "_s, position.m_line.oneBasedInt(), " at column "_s, position.m_column.oneBasedInt(), ": "_s, span(message));
 }
 
 static inline Ref<Element> createXHTMLParserErrorHeader(Document& document, String&& errorMessages)

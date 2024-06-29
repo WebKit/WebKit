@@ -803,6 +803,8 @@ void SourceBufferPrivateAVFObjC::videoRendererDidReceiveError(WebSampleBufferVid
 #if PLATFORM(IOS_FAMILY)
     if (renderer.status == AVQueuedSampleBufferRenderingStatusFailed && [error.domain isEqualToString:@"AVFoundationErrorDomain"] && error.code == AVErrorOperationInterrupted) {
         m_displayLayerWasInterrupted = true;
+        if (RefPtr player = this->player())
+            player->setNeedsPlaceholderImage(true);
         return;
     }
 #endif

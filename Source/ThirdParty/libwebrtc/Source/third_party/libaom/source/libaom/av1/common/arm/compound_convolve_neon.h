@@ -282,10 +282,8 @@ static INLINE void dist_wtd_convolve_2d_vert_6tap_dist_wtd_avg_neon(
       compute_dist_wtd_avg_4x4(dd0, dd1, dd2, dd3, d0, d1, d2, d3, fwd_offset,
                                bck_offset, round_offset_vec, &d01_u8, &d23_u8);
 
-      store_u8_4x1(dst8_ptr + 0 * dst8_stride, d01_u8, 0);
-      store_u8_4x1(dst8_ptr + 1 * dst8_stride, d01_u8, 1);
-      store_u8_4x1(dst8_ptr + 2 * dst8_stride, d23_u8, 0);
-      store_u8_4x1(dst8_ptr + 3 * dst8_stride, d23_u8, 1);
+      store_u8x4_strided_x2(dst8_ptr + 0 * dst8_stride, dst8_stride, d01_u8);
+      store_u8x4_strided_x2(dst8_ptr + 2 * dst8_stride, dst8_stride, d23_u8);
       dst8_ptr += 4 * dst8_stride;
 
       s0 = s4;
@@ -308,7 +306,7 @@ static INLINE void dist_wtd_convolve_2d_vert_6tap_dist_wtd_avg_neon(
       compute_dist_wtd_avg_4x1(dd0, d0, fwd_offset, bck_offset,
                                vget_low_s16(round_offset_vec), &d01_u8);
 
-      store_u8_4x1(dst8_ptr, d01_u8, 0);
+      store_u8_4x1(dst8_ptr, d01_u8);
       dst8_ptr += dst8_stride;
 
       s0 = s1;
@@ -437,10 +435,8 @@ static INLINE void dist_wtd_convolve_2d_vert_6tap_avg_neon(
       compute_basic_avg_4x4(dd0, dd1, dd2, dd3, d0, d1, d2, d3,
                             round_offset_vec, &d01_u8, &d23_u8);
 
-      store_u8_4x1(dst8_ptr + 0 * dst8_stride, d01_u8, 0);
-      store_u8_4x1(dst8_ptr + 1 * dst8_stride, d01_u8, 1);
-      store_u8_4x1(dst8_ptr + 2 * dst8_stride, d23_u8, 0);
-      store_u8_4x1(dst8_ptr + 3 * dst8_stride, d23_u8, 1);
+      store_u8x4_strided_x2(dst8_ptr + 0 * dst8_stride, dst8_stride, d01_u8);
+      store_u8x4_strided_x2(dst8_ptr + 2 * dst8_stride, dst8_stride, d23_u8);
       dst8_ptr += 4 * dst8_stride;
 
       s0 = s4;
@@ -462,7 +458,7 @@ static INLINE void dist_wtd_convolve_2d_vert_6tap_avg_neon(
       uint8x8_t d01_u8;
       compute_basic_avg_4x1(dd0, d0, vget_low_s16(round_offset_vec), &d01_u8);
 
-      store_u8_4x1(dst8_ptr, d01_u8, 0);
+      store_u8_4x1(dst8_ptr, d01_u8);
       dst8_ptr += dst8_stride;
 
       s0 = s1;
@@ -761,10 +757,8 @@ static INLINE void dist_wtd_convolve_2d_vert_8tap_dist_wtd_avg_neon(
       compute_dist_wtd_avg_4x4(dd0, dd1, dd2, dd3, d0, d1, d2, d3, fwd_offset,
                                bck_offset, round_offset_vec, &d01_u8, &d23_u8);
 
-      store_u8_4x1(dst8_ptr + 0 * dst8_stride, d01_u8, 0);
-      store_u8_4x1(dst8_ptr + 1 * dst8_stride, d01_u8, 1);
-      store_u8_4x1(dst8_ptr + 2 * dst8_stride, d23_u8, 0);
-      store_u8_4x1(dst8_ptr + 3 * dst8_stride, d23_u8, 1);
+      store_u8x4_strided_x2(dst8_ptr + 0 * dst8_stride, dst8_stride, d01_u8);
+      store_u8x4_strided_x2(dst8_ptr + 2 * dst8_stride, dst8_stride, d23_u8);
       dst8_ptr += 4 * dst8_stride;
 
       s0 = s4;
@@ -789,7 +783,7 @@ static INLINE void dist_wtd_convolve_2d_vert_8tap_dist_wtd_avg_neon(
       compute_dist_wtd_avg_4x1(dd0, d0, fwd_offset, bck_offset,
                                vget_low_s16(round_offset_vec), &d01_u8);
 
-      store_u8_4x1(dst8_ptr, d01_u8, 0);
+      store_u8_4x1(dst8_ptr, d01_u8);
       dst8_ptr += dst8_stride;
 
       s0 = s1;
@@ -924,10 +918,8 @@ static INLINE void dist_wtd_convolve_2d_vert_8tap_avg_neon(
       compute_basic_avg_4x4(dd0, dd1, dd2, dd3, d0, d1, d2, d3,
                             round_offset_vec, &d01_u8, &d23_u8);
 
-      store_u8_4x1(dst8_ptr + 0 * dst8_stride, d01_u8, 0);
-      store_u8_4x1(dst8_ptr + 1 * dst8_stride, d01_u8, 1);
-      store_u8_4x1(dst8_ptr + 2 * dst8_stride, d23_u8, 0);
-      store_u8_4x1(dst8_ptr + 3 * dst8_stride, d23_u8, 1);
+      store_u8x4_strided_x2(dst8_ptr + 0 * dst8_stride, dst8_stride, d01_u8);
+      store_u8x4_strided_x2(dst8_ptr + 2 * dst8_stride, dst8_stride, d23_u8);
       dst8_ptr += 4 * dst8_stride;
 
       s0 = s4;
@@ -951,7 +943,7 @@ static INLINE void dist_wtd_convolve_2d_vert_8tap_avg_neon(
       uint8x8_t d01_u8;
       compute_basic_avg_4x1(dd0, d0, vget_low_s16(round_offset_vec), &d01_u8);
 
-      store_u8_4x1(dst8_ptr, d01_u8, 0);
+      store_u8_4x1(dst8_ptr, d01_u8);
       dst8_ptr += dst8_stride;
 
       s0 = s1;

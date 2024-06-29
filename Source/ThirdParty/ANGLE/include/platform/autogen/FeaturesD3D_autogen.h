@@ -60,7 +60,7 @@ struct FeaturesD3D : FeatureSetBase
         FeatureCategory::D3DWorkarounds,
         "Bug in some drivers triggers a TDR when using CopySubresourceRegion from a staging "
         "texture to a depth/stencil",
-        &members, "http://anglebug.com/1452"
+        &members, "http://anglebug.com/40096371"
     };
 
     FeatureInfo expandIntegerPowExpressions = {
@@ -150,7 +150,7 @@ struct FeaturesD3D : FeatureSetBase
         "addMockTextureNoRenderTarget",
         FeatureCategory::D3DWorkarounds,
         "On some drivers when rendering with no render target, two bugs lead to incorrect behavior",
-        &members, "http://anglebug.com/2152"
+        &members, "http://anglebug.com/40644627"
     };
 
     FeatureInfo skipVSConstantRegisterZero = {
@@ -165,7 +165,7 @@ struct FeaturesD3D : FeatureSetBase
         FeatureCategory::D3DWorkarounds,
         "On some drivers the return value from RWByteAddressBuffer.InterlockedAdd does not resolve "
         "when used in the .yzw components of a RWByteAddressBuffer.Store operation",
-        &members, "http://anglebug.com/3246"
+        &members, "http://anglebug.com/42261924"
     };
 
     FeatureInfo allowClearForRobustResourceInit = {
@@ -180,7 +180,7 @@ struct FeaturesD3D : FeatureSetBase
         FeatureCategory::D3DWorkarounds,
         "There is a slow fxc compile performance issue with dynamic uniform indexing if "
         "translating a uniform block with a large array member to cbuffer.",
-        &members, "http://anglebug.com/3682"
+        &members, "http://anglebug.com/40096608"
     };
 
     FeatureInfo allowES3OnFL100 = {
@@ -194,7 +194,7 @@ struct FeaturesD3D : FeatureSetBase
         "disableRasterizerOrderViews",
         FeatureCategory::D3DWorkarounds,
         "Disable ROVs for testing",
-        &members, "http://anglebug.com/7279"
+        &members, "http://anglebug.com/40096838"
     };
 
     FeatureInfo enableTimestampQueries = {

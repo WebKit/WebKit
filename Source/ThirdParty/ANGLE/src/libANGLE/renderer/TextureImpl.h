@@ -205,6 +205,18 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
 
     virtual angle::Result generateMipmap(const gl::Context *context) = 0;
 
+    virtual angle::Result clearImage(const gl::Context *context,
+                                     GLint level,
+                                     GLenum format,
+                                     GLenum type,
+                                     const uint8_t *data);
+    virtual angle::Result clearSubImage(const gl::Context *context,
+                                        GLint level,
+                                        const gl::Box &area,
+                                        GLenum format,
+                                        GLenum type,
+                                        const uint8_t *data);
+
     virtual angle::Result setBaseLevel(const gl::Context *context, GLuint baseLevel) = 0;
 
     virtual angle::Result bindTexImage(const gl::Context *context, egl::Surface *surface) = 0;

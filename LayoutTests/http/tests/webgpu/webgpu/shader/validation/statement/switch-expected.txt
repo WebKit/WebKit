@@ -1,0 +1,141 @@
+
+PASS :condition_type:type="bool"
+PASS :condition_type:type="i32"
+PASS :condition_type:type="u32"
+PASS :condition_type:type="f32"
+PASS :condition_type:type="f16"
+PASS :condition_type:type="abstract-int"
+PASS :condition_type:type="abstract-float"
+PASS :condition_type:type="vec2af"
+PASS :condition_type:type="vec3af"
+PASS :condition_type:type="vec4af"
+PASS :condition_type:type="vec2ai"
+PASS :condition_type:type="vec3ai"
+PASS :condition_type:type="vec4ai"
+PASS :condition_type:type="vec2f"
+PASS :condition_type:type="vec3h"
+PASS :condition_type:type="vec4u"
+PASS :condition_type:type="vec3b"
+PASS :condition_type:type="mat2x3f"
+PASS :condition_type:type="mat4x2h"
+PASS :condition_type:type="array"
+PASS :condition_type:type="atomic"
+PASS :condition_type:type="struct"
+PASS :condition_type:type="texture"
+PASS :condition_type:type="sampler"
+PASS :condition_type_match_case_type:cond_type="i32";case_type="i32"
+PASS :condition_type_match_case_type:cond_type="i32";case_type="u32"
+PASS :condition_type_match_case_type:cond_type="i32";case_type="abstract-int"
+PASS :condition_type_match_case_type:cond_type="u32";case_type="i32"
+PASS :condition_type_match_case_type:cond_type="u32";case_type="u32"
+PASS :condition_type_match_case_type:cond_type="u32";case_type="abstract-int"
+PASS :condition_type_match_case_type:cond_type="abstract-int";case_type="i32"
+PASS :condition_type_match_case_type:cond_type="abstract-int";case_type="u32"
+PASS :condition_type_match_case_type:cond_type="abstract-int";case_type="abstract-int"
+PASS :case_types_match:case_a_type="i32";case_b_type="i32"
+PASS :case_types_match:case_a_type="i32";case_b_type="u32"
+PASS :case_types_match:case_a_type="i32";case_b_type="abstract-int"
+PASS :case_types_match:case_a_type="u32";case_b_type="i32"
+PASS :case_types_match:case_a_type="u32";case_b_type="u32"
+PASS :case_types_match:case_a_type="u32";case_b_type="abstract-int"
+PASS :case_types_match:case_a_type="abstract-int";case_b_type="i32"
+PASS :case_types_match:case_a_type="abstract-int";case_b_type="u32"
+PASS :case_types_match:case_a_type="abstract-int";case_b_type="abstract-int"
+PASS :parse:test="L_default"
+PASS :parse:test="L_paren_default"
+PASS :parse:test="L_case_1_2_default"
+PASS :parse:test="L_case_1_case_2_default"
+PASS :parse:test="L_case_1_colon_case_2_colon_default_colon"
+PASS :parse:test="L_case_1_colon_default_colon"
+PASS :parse:test="L_case_1_colon_default"
+PASS :parse:test="L_case_1_default_2"
+PASS :parse:test="L_case_1_default_case_2"
+PASS :parse:test="L_case_1_default_colon"
+PASS :parse:test="L_case_1_default"
+PASS :parse:test="L_case_2_1_default"
+PASS :parse:test="L_case_2_case_1_default"
+PASS :parse:test="L_case_2_default_case_1"
+PASS :parse:test="L_case_builtin_default"
+PASS :parse:test="L_case_C1_case_C2_default"
+PASS :parse:test="L_case_C1_default"
+PASS :parse:test="L_case_default_1"
+PASS :parse:test="L_case_default_2_1"
+PASS :parse:test="L_case_default_2_case_1"
+PASS :parse:test="L_case_default"
+PASS :parse:test="L_case_expr_default"
+PASS :parse:test="L_default_break"
+PASS :parse:test="L_default_case_1_2"
+PASS :parse:test="L_default_case_1_break"
+PASS :parse:test="L_default_case_1_case_2"
+PASS :parse:test="L_default_case_1_colon_break"
+PASS :parse:test="L_default_case_2_case_1"
+PASS :parse:test="L_default_colon_break"
+PASS :parse:test="L_default_colon"
+PASS :parse:test="L_no_block"
+PASS :parse:test="L_empty_block"
+PASS :parse:test="L_no_default"
+PASS :parse:test="L_default_default"
+PASS :parse:test="L_default_block_default_block"
+FAIL :parse:test="L_case_1_case_1_default" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    fn f() {
+      let L = 1;
+      const C1 = 1;
+      const C2 = 2;
+      switch L { case 1 {} case 1 {} default {} }
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/switch.spec.js:171:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :parse:test="L_case_C1_case_C1_default" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    fn f() {
+      let L = 1;
+      const C1 = 1;
+      const C2 = 2;
+      switch L { case C1 {} case C1 {} default {} }
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/switch.spec.js:171:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+FAIL :parse:test="L_case_C2_case_expr_default" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    fn f() {
+      let L = 1;
+      const C1 = 1;
+      const C2 = 2;
+      switch L { case C2 {} case 1+1 {} default {} }
+    }
+    ErrorWithExtra@http://127.0.0.1:8000/webgpu/common/util/util.js:23:10
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:28:37
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/switch.spec.js:171:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :parse:test="L_default_1"
+PASS :parse:test="L_default_2_case_1"
+PASS :parse:test="no_cond"
+PASS :parse:test="no_cond_no_block"
+PASS :parse:test="lparen_L"
+PASS :parse:test="L_lparen"
+PASS :parse:test="lparen_L_lparen"
+PASS :parse:test="rparen_L_rparen"
+

@@ -35,6 +35,8 @@ class PlatformCALayer;
 
 class PlatformCALayerClient {
 public:
+    virtual PlatformLayerIdentifier platformCALayerIdentifier() const = 0;
+
     virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*) { }
     virtual bool platformCALayerRespondsToLayoutChanges() const { return false; }
 
@@ -54,6 +56,8 @@ public:
     virtual bool platformCALayerDelegatesDisplay(PlatformCALayer*) const { return false; };
     virtual void platformCALayerLayerDisplay(PlatformCALayer*) { }
     virtual void platformCALayerLayerDidDisplay(PlatformCALayer*) { }
+
+    virtual bool platformCALayerRenderingIsSuppressedIncludingDescendants() const { return false; }
 
     virtual void platformCALayerSetNeedsToRevalidateTiles() { }
     virtual float platformCALayerDeviceScaleFactor() const = 0;

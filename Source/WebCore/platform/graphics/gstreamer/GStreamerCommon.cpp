@@ -469,14 +469,63 @@ void registerActivePipeline(const GRefPtr<GstElement>& pipeline)
 {
     GUniquePtr<gchar> name(gst_object_get_name(GST_OBJECT_CAST(pipeline.get())));
     Locker locker { s_activePipelinesMapLock };
-    activePipelinesMap().add(makeString(name.get()), GRefPtr<GstElement>(pipeline));
+    activePipelinesMap().add(span(name.get()), GRefPtr<GstElement>(pipeline));
 }
 
 void unregisterPipeline(const GRefPtr<GstElement>& pipeline)
 {
     GUniquePtr<gchar> name(gst_object_get_name(GST_OBJECT_CAST(pipeline.get())));
     Locker locker { s_activePipelinesMapLock };
-    activePipelinesMap().remove(makeString(name.get()));
+    activePipelinesMap().remove(span(name.get()));
+}
+
+void WebCoreLogObserver::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Vector<JSONLogValue>&& values)
+{
+#ifndef GST_DISABLE_GST_DEBUG
+    if (!shouldEmitLogMessage(channel))
+        return;
+
+    StringBuilder builder;
+    for (auto& [_, value] : values)
+        builder.append(value);
+
+    auto logString = builder.toString();
+    GstDebugLevel gstDebugLevel;
+    switch (level) {
+    case WTFLogLevel::Error:
+        gstDebugLevel = GST_LEVEL_ERROR;
+        break;
+    case WTFLogLevel::Debug:
+        gstDebugLevel = GST_LEVEL_DEBUG;
+        break;
+    case WTFLogLevel::Always:
+    case WTFLogLevel::Info:
+        gstDebugLevel = GST_LEVEL_INFO;
+        break;
+    case WTFLogLevel::Warning:
+        gstDebugLevel = GST_LEVEL_WARNING;
+        break;
+    };
+    gst_debug_log(debugCategory(), gstDebugLevel, __FILE__, __FUNCTION__, __LINE__, nullptr, "%s", logString.utf8().data());
+#else
+    UNUSED_PARAM(channel);
+    UNUSED_PARAM(level);
+    UNUSED_PARAM(values);
+#endif
+}
+
+void WebCoreLogObserver::addWatch(const Logger& logger)
+{
+    auto totalObservers = m_totalObservers.exchangeAdd(1);
+    if (!totalObservers)
+        logger.addObserver(*this);
+}
+
+void WebCoreLogObserver::removeWatch(const Logger& logger)
+{
+    auto totalObservers = m_totalObservers.exchangeSub(1);
+    if (totalObservers <= 1)
+        logger.removeObserver(*this);
 }
 
 void deinitializeGStreamer()
@@ -546,6 +595,158 @@ uint64_t toGstUnsigned64Time(const MediaTime& mediaTime)
     return time.timeValue();
 }
 
+RefPtr<GstMappedOwnedBuffer> GstMappedOwnedBuffer::create(GRefPtr<GstBuffer>&& buffer)
+{
+    auto* mappedBuffer = new GstMappedOwnedBuffer(WTFMove(buffer));
+    if (!mappedBuffer->isValid()) {
+        delete mappedBuffer;
+        return nullptr;
+    }
+
+    return adoptRef(mappedBuffer);
+}
+
+RefPtr<GstMappedOwnedBuffer> GstMappedOwnedBuffer::create(const GRefPtr<GstBuffer>& buffer)
+{
+    return GstMappedOwnedBuffer::create(GRefPtr(buffer));
+}
+
+// This GstBuffer is [ transfer none ], meaning the reference
+// count is increased during the life of this object.
+RefPtr<GstMappedOwnedBuffer> GstMappedOwnedBuffer::create(GstBuffer* buffer)
+{
+    return GstMappedOwnedBuffer::create(GRefPtr(buffer));
+}
+
+GstMappedOwnedBuffer::~GstMappedOwnedBuffer()
+{
+    unmapEarly();
+}
+
+Ref<SharedBuffer> GstMappedOwnedBuffer::createSharedBuffer()
+{
+    return SharedBuffer::create(*this);
+}
+
+GstMappedFrame::GstMappedFrame(GstBuffer* buffer, GstVideoInfo* info, GstMapFlags flags)
+{
+    gst_video_frame_map(&m_frame, info, buffer, flags);
+}
+
+GstMappedFrame::GstMappedFrame(const GRefPtr<GstSample>& sample, GstMapFlags flags)
+{
+    GstVideoInfo info;
+    if (!gst_video_info_from_caps(&info, gst_sample_get_caps(sample.get())))
+        return;
+
+    gst_video_frame_map(&m_frame, &info, gst_sample_get_buffer(sample.get()), flags);
+}
+
+GstMappedFrame::~GstMappedFrame()
+{
+    // FIXME: Make this un-conditional when the minimum GStreamer dependency version is >= 1.22.
+    if (m_frame.buffer)
+        gst_video_frame_unmap(&m_frame);
+}
+
+GstVideoFrame* GstMappedFrame::get()
+{
+    RELEASE_ASSERT(isValid());
+    return &m_frame;
+}
+
+uint8_t* GstMappedFrame::componentData(int comp) const
+{
+    RELEASE_ASSERT(isValid());
+    return GST_VIDEO_FRAME_COMP_DATA(&m_frame, comp);
+}
+
+int GstMappedFrame::componentStride(int stride) const
+{
+    RELEASE_ASSERT(isValid());
+    return GST_VIDEO_FRAME_COMP_STRIDE(&m_frame, stride);
+}
+
+GstVideoInfo* GstMappedFrame::info()
+{
+    RELEASE_ASSERT(isValid());
+    return &m_frame.info;
+}
+
+int GstMappedFrame::width() const
+{
+    RELEASE_ASSERT(isValid());
+    return GST_VIDEO_FRAME_WIDTH(&m_frame);
+}
+
+int GstMappedFrame::height() const
+{
+    RELEASE_ASSERT(isValid());
+    return GST_VIDEO_FRAME_HEIGHT(&m_frame);
+}
+
+int GstMappedFrame::format() const
+{
+    RELEASE_ASSERT(isValid());
+    return GST_VIDEO_FRAME_FORMAT(&m_frame);
+}
+
+void* GstMappedFrame::planeData(uint32_t planeIndex) const
+{
+    RELEASE_ASSERT(isValid());
+    return GST_VIDEO_FRAME_PLANE_DATA(&m_frame, planeIndex);
+}
+
+int GstMappedFrame::planeStride(uint32_t planeIndex) const
+{
+    RELEASE_ASSERT(isValid());
+    return GST_VIDEO_FRAME_PLANE_STRIDE(&m_frame, planeIndex);
+}
+
+GstMappedAudioBuffer::GstMappedAudioBuffer(GstBuffer* buffer, GstAudioInfo info, GstMapFlags flags)
+{
+    m_isValid = gst_audio_buffer_map(&m_buffer, &info, buffer, flags);
+}
+
+GstMappedAudioBuffer::GstMappedAudioBuffer(GRefPtr<GstSample> sample, GstMapFlags flags)
+{
+    GstAudioInfo info;
+
+    if (!gst_audio_info_from_caps(&info, gst_sample_get_caps(sample.get())))
+        return;
+
+    m_isValid = gst_audio_buffer_map(&m_buffer, &info, gst_sample_get_buffer(sample.get()), flags);
+}
+
+GstMappedAudioBuffer::~GstMappedAudioBuffer()
+{
+    if (!m_isValid)
+        return;
+
+    gst_audio_buffer_unmap(&m_buffer);
+    m_isValid = false;
+}
+
+GstAudioBuffer* GstMappedAudioBuffer::get()
+{
+    if (!m_isValid) {
+        GST_INFO("Invalid buffer, returning NULL");
+        return nullptr;
+    }
+
+    return &m_buffer;
+}
+
+GstAudioInfo* GstMappedAudioBuffer::info()
+{
+    if (!m_isValid) {
+        GST_INFO("Invalid frame, returning NULL");
+        return nullptr;
+    }
+
+    return &m_buffer.info;
+}
+
 static GQuark customMessageHandlerQuark()
 {
     static GQuark quark = g_quark_from_static_string("pipeline-custom-message-handler");
@@ -587,7 +788,7 @@ void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMess
         switch (GST_MESSAGE_TYPE(message)) {
         case GST_MESSAGE_ERROR: {
             GST_ERROR_OBJECT(pipeline.get(), "Got message: %" GST_PTR_FORMAT, message);
-            auto dotFileName = makeString(GST_OBJECT_NAME(pipeline.get()), "_error"_s);
+            auto dotFileName = makeString(span(GST_OBJECT_NAME(pipeline.get())), "_error"_s);
             GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
             break;
         }
@@ -603,7 +804,7 @@ void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMess
             GST_INFO_OBJECT(pipeline.get(), "State changed (old: %s, new: %s, pending: %s)", gst_element_state_get_name(oldState),
                 gst_element_state_get_name(newState), gst_element_state_get_name(pending));
 
-            auto dotFileName = makeString(GST_OBJECT_NAME(pipeline.get()), '_', gst_element_state_get_name(oldState), '_', gst_element_state_get_name(newState));
+            auto dotFileName = makeString(span(GST_OBJECT_NAME(pipeline.get())), '_', span(gst_element_state_get_name(oldState)), '_', span(gst_element_state_get_name(newState)));
             GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
             break;
         }
@@ -625,11 +826,6 @@ template<>
 Vector<uint8_t> GstMappedBuffer::createVector() const
 {
     return std::span<const uint8_t> { data(), size() };
-}
-
-Ref<SharedBuffer> GstMappedOwnedBuffer::createSharedBuffer()
-{
-    return SharedBuffer::create(*this);
 }
 
 bool isGStreamerPluginAvailable(const char* name)
@@ -801,12 +997,12 @@ static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* 
         return JSON::Value::create(static_cast<int>(g_value_get_uint64(value)))->asValue();
 
     if (valueType == G_TYPE_STRING)
-        return JSON::Value::create(makeString(g_value_get_string(value)))->asValue();
+        return JSON::Value::create(makeString(span(g_value_get_string(value))))->asValue();
 
 #if USE(GSTREAMER_WEBRTC)
     if (valueType == GST_TYPE_WEBRTC_STATS_TYPE) {
         GUniquePtr<char> statsType(g_enum_to_string(GST_TYPE_WEBRTC_STATS_TYPE, g_value_get_enum(value)));
-        return JSON::Value::create(makeString(statsType.get()))->asValue();
+        return JSON::Value::create(makeString(span(statsType.get())))->asValue();
     }
 #endif
 
@@ -1202,5 +1398,14 @@ GRefPtr<GstBuffer> wrapSpanData(const std::span<const uint8_t>& span)
 } // namespace WebCore
 
 #undef IS_GST_FULL_1_18
+
+#if !GST_CHECK_VERSION(1, 20, 0)
+GstBuffer* gst_buffer_new_memdup(gconstpointer data, gsize size)
+{
+    gpointer copiedData = g_memdup2(data, size);
+
+    return gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), copiedData, size, 0, size, copiedData, g_free);
+}
+#endif
 
 #endif // USE(GSTREAMER)

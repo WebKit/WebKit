@@ -10,8 +10,8 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"
 #include "modules/rtp_rtcp/source/rtcp_receiver.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
-#include "rtc_base/checks.h"
 #include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 namespace {
@@ -37,7 +37,8 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   if (size > kMaxInputLenBytes) {
     return;
   }
-
+  field_trial::InitFieldTrialsFromString(
+      "WebRTC-RFC8888CongestionControlFeedback/Enabled/");
   NullModuleRtpRtcp rtp_rtcp_module;
   SimulatedClock clock(1234);
 

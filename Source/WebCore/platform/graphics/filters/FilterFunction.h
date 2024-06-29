@@ -43,6 +43,7 @@ namespace WebCore {
 
 class Filter;
 class FilterResults;
+class GraphicsContext;
 
 enum class FilterRepresentation : uint8_t {
     TestOutput,
@@ -94,7 +95,7 @@ public:
 
     virtual OptionSet<FilterRenderingMode> supportedFilterRenderingModes() const { return FilterRenderingMode::Software; }
     virtual RefPtr<FilterImage> apply(const Filter&, FilterImage&, FilterResults&) { return nullptr; }
-    virtual FilterStyleVector createFilterStyles(const Filter&, const FilterStyle&) const { return { }; }
+    virtual FilterStyleVector createFilterStyles(GraphicsContext&, const Filter&, const FilterStyle&) const { return { }; }
 
     virtual WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation = FilterRepresentation::TestOutput) const = 0;
 

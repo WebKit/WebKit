@@ -26,7 +26,7 @@ struct PICK_MODE_CONTEXT;
 struct macroblock;
 
 /*!\cond */
-#define AV1_K_MEANS_RENAME(func, dim) func##_dim##dim##_c
+#define AV1_K_MEANS_RENAME(func, dim) func##_dim##dim
 
 void AV1_K_MEANS_RENAME(av1_k_means, 1)(const int16_t *data, int16_t *centroids,
                                         uint8_t *indices, int n, int k,

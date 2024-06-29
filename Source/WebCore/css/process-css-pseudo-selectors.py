@@ -437,7 +437,7 @@ class GPerfOutputGenerator:
         writer.write_block("""
         static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* findPseudoClassAndCompatibilityElementName(std::span<const LChar> characters)
         {
-            return SelectorPseudoClassAndCompatibilityElementMapHash::in_word_set(reinterpret_cast<const char*>(characters.data()), characters.size());
+            return SelectorPseudoClassAndCompatibilityElementMapHash::in_word_set(byteCast<char>(characters.data()), characters.size());
         }""")
 
         writer.write_block(f"""
@@ -477,7 +477,7 @@ class GPerfOutputGenerator:
         writer.write_block("""
             static inline std::optional<CSSSelector::PseudoElement> findPseudoElementName(std::span<const LChar> characters)
             {
-                if (const SelectorPseudoTypeEntry* entry = SelectorPseudoElementMapHash::in_word_set(reinterpret_cast<const char*>(characters.data()), characters.size()))
+                if (auto entry = SelectorPseudoElementMapHash::in_word_set(byteCast<char>(characters.data()), characters.size()))
                     return entry->type;
                 return std::nullopt;
             }""")

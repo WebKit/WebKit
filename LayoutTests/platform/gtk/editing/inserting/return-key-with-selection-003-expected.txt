@@ -25,13 +25,13 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,54) size 260x26
               text run at (0,54) width 260: "<rdar://problem/4045521>"
           RenderText {#text} at (0,54) size 744x53
-            text run at (259,54) width 485: " Hitting return key with full line selected does not"
+            text run at (260,54) width 484: " Hitting return key with full line selected does not"
             text run at (0,81) width 254: "add blank line as it should"
         RenderBlock {DIV} at (14,138) size 756x216
           RenderBlock (anonymous) at (0,0) size 756x108
             RenderText {#text} at (0,0) size 183x26
               text run at (0,0) width 183: "Expected Results:"
-            RenderBR {BR} at (182,0) size 1x26
+            RenderBR {BR} at (183,0) size 0x26
             RenderText {#text} at (0,27) size 748x80
               text run at (0,27) width 724: "Should see this content in the red box below (note that there should be two"
               text run at (0,54) width 748: "blank lines between \"foo\" and \"baz\"; also note that the insertion point should"

@@ -46,9 +46,18 @@ void EnsureBuffersDontShareData(const CopyOnWriteBuffer& buf1,
 
 TEST(CopyOnWriteBufferTest, TestCreateEmptyData) {
   CopyOnWriteBuffer buf(static_cast<const uint8_t*>(nullptr), 0);
+  EXPECT_TRUE(buf.empty());
   EXPECT_EQ(buf.size(), 0u);
   EXPECT_EQ(buf.capacity(), 0u);
   EXPECT_EQ(buf.data(), nullptr);
+}
+
+TEST(CopyOnWriteBufferTest, CreateEmptyDataWithCapacity) {
+  CopyOnWriteBuffer buf(0, 16);
+  EXPECT_TRUE(buf.empty());
+  EXPECT_EQ(buf.size(), 0u);
+  EXPECT_EQ(buf.capacity(), 16u);
+  EXPECT_NE(buf.MutableData(), nullptr);
 }
 
 TEST(CopyOnWriteBufferTest, TestMoveConstruct) {
@@ -60,9 +69,11 @@ TEST(CopyOnWriteBufferTest, TestMoveConstruct) {
   const uint8_t* buf1_data = buf1.cdata();
 
   CopyOnWriteBuffer buf2(std::move(buf1));
+  EXPECT_TRUE(buf1.empty());
   EXPECT_EQ(buf1.size(), 0u);
   EXPECT_EQ(buf1.capacity(), 0u);
   EXPECT_EQ(buf1.data(), nullptr);
+  EXPECT_FALSE(buf2.empty());
   EXPECT_EQ(buf2.size(), buf1_size);
   EXPECT_EQ(buf2.capacity(), buf1_capacity);
   EXPECT_EQ(buf2.data(), buf1_data);
@@ -127,6 +138,7 @@ TEST(CopyOnWriteBufferTest, SetEmptyData) {
   buf.SetData<uint8_t>(nullptr, 0);
 
   EXPECT_EQ(0u, buf.size());
+  EXPECT_TRUE(buf.empty());
 }
 
 TEST(CopyOnWriteBufferTest, SetDataNoMoreThanCapacityDoesntCauseReallocation) {

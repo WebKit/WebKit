@@ -44,8 +44,10 @@ class StunProberTest : public ::testing::Test {
       : ss_(std::make_unique<rtc::VirtualSocketServer>()),
         main_(ss_.get()),
         result_(StunProber::SUCCESS),
-        stun_server_1_(cricket::TestStunServer::Create(ss_.get(), kStunAddr1)),
-        stun_server_2_(cricket::TestStunServer::Create(ss_.get(), kStunAddr2)) {
+        stun_server_1_(
+            cricket::TestStunServer::Create(ss_.get(), kStunAddr1, main_)),
+        stun_server_2_(
+            cricket::TestStunServer::Create(ss_.get(), kStunAddr2, main_)) {
     stun_server_1_->set_fake_stun_addr(kStunMappedAddr);
     stun_server_2_->set_fake_stun_addr(kStunMappedAddr);
     rtc::InitializeSSL();
@@ -57,8 +59,8 @@ class StunProberTest : public ::testing::Test {
 
   void CreateProber(rtc::PacketSocketFactory* socket_factory,
                     std::vector<const rtc::Network*> networks) {
-    prober_ = std::make_unique<StunProber>(
-        socket_factory, rtc::Thread::Current(), std::move(networks));
+    prober_ = std::make_unique<StunProber>(socket_factory, &main_,
+                                           std::move(networks));
   }
 
   void StartProbing(rtc::PacketSocketFactory* socket_factory,
@@ -137,8 +139,8 @@ class StunProberTest : public ::testing::Test {
   std::unique_ptr<StunProber> prober_;
   int result_ = 0;
   bool stopped_ = false;
-  std::unique_ptr<cricket::TestStunServer> stun_server_1_;
-  std::unique_ptr<cricket::TestStunServer> stun_server_2_;
+  cricket::TestStunServer::StunServerPtr stun_server_1_;
+  cricket::TestStunServer::StunServerPtr stun_server_2_;
   StunProber::Stats stats_;
 };
 

@@ -98,6 +98,7 @@ public:
     WEBCORE_EXPORT virtual void setInlineRect(const FloatRect&, bool visible);
     WEBCORE_EXPORT void preparedToReturnToStandby();
     bool changingStandbyOnly() { return m_changingStandbyOnly; }
+    WEBCORE_EXPORT void failedToRestoreFullscreen();
 
     enum class ExitFullScreenReason {
         DoneButtonTapped,

@@ -45,3 +45,18 @@ fn((t) => {
     t.device.queue.submit([cb0, cb1]);
   }, mismatched);
 });
+
+g.test('command_buffer,duplicate_buffers').
+desc(
+  `
+    Tests submit cannot be called with the same command buffer listed multiple times:
+    `
+).
+fn((t) => {
+  const encoder0 = t.device.createCommandEncoder();
+  const cb = encoder0.finish();
+
+  t.expectValidationError(() => {
+    t.device.queue.submit([cb, cb]);
+  }, true);
+});

@@ -49,7 +49,7 @@ static std::optional<Vector<uint8_t>> platformDeriveBitsCC(const CryptoKeyEC& ba
 #else
     if (!CCECCryptorComputeSharedSecret(baseKey.platformKey().get(), publicKey.platformKey().get(), derivedKey.data(), &size))
 #endif
-        result = WTFMove(derivedKey);
+        result = std::make_optional(WTFMove(derivedKey));
     return result;
 }
 
@@ -61,9 +61,9 @@ static std::optional<Vector<uint8_t>> platformDeriveBitsCryptoKit(const CryptoKe
     if (!priv || !pub)
         return std::nullopt;
     auto rv = (*priv)->deriveBits(*pub);
-    if (!(rv.getErrorCode().isSuccess() && rv.getKeyBytes()))
+    if (rv.errorCode != Cpp::ErrorCodes::Success)
         return std::nullopt;
-    return rv.getKeyBytes();
+    return std::make_optional(WTFMove(rv.result));
 }
 #endif
 

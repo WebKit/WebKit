@@ -3,6 +3,12 @@ function shouldBe(actual, expected) {
         throw new Error(`expected ${expected} but got ${actual}`);
 }
 
+function shouldBeOneOf(actual, expectedArray) {
+    if (!expectedArray.some((value) => value === actual))
+        throw new Error('bad value: ' + actual + ' expected values: ' + expectedArray);
+}
+
+
 function shouldNotThrow(func) {
     func();
 }
@@ -460,7 +466,7 @@ shouldThrow(() => Intl.NumberFormat.prototype.resolvedOptions.call(5), TypeError
 // BigInt tests
 shouldBe(Intl.NumberFormat().format(0n), '0');
 shouldBe(Intl.NumberFormat().format(BigInt(1)), '1');
-shouldBe(Intl.NumberFormat('ar').format(123456789n), '١٢٣٬٤٥٦٬٧٨٩');
+shouldBeOneOf(Intl.NumberFormat('ar').format(123456789n), ['١٢٣٬٤٥٦٬٧٨٩','123,456,789']);
 shouldBe(Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec').format(123456789n), '一二三,四五六,七八九');
 shouldBe(Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(123456n), '123,000');
 

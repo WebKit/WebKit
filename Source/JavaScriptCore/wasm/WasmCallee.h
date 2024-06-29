@@ -54,6 +54,8 @@ namespace Wasm {
 
 // This class is fast allocated (instead of using TZone) because
 // the subclass JSEntrypointInterpreterCalleeMetadata is variable-sized
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Callee);
+
 class Callee : public NativeCallee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Callee);
 public:
@@ -88,6 +90,8 @@ private:
 protected:
     FixedVector<HandlerInfo> m_exceptionHandlers;
 };
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JITCallee);
 
 class JITCallee : public Callee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JITCallee);
@@ -126,11 +130,15 @@ protected:
 #endif
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointCallee);
+
 class JSEntrypointCallee : public Callee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSEntrypointCallee);
 protected:
     JS_EXPORT_PRIVATE JSEntrypointCallee(Wasm::CompilationMode mode) : Callee(mode) { }
 };
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointJITCallee);
 
 class JSEntrypointJITCallee final : public JSEntrypointCallee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSEntrypointJITCallee);
@@ -175,7 +183,7 @@ private:
 };
 
 #define FOR_EACH_JS_TO_WASM_WRAPPER_METADATA_OPCODE(macro) \
-/* Load/Store accumulator; followed by (offset from cfr : int8_t) */ \
+/* Load/Store accumulator; followed by (offset from sp (load) or cfr (store): int8_t) */ \
 macro(0, LoadI32) \
 macro(1, LoadI64) \
 macro(2, LoadF32) \
@@ -376,7 +384,10 @@ public:
 
     void setReplacement(RefPtr<Wasm::Callee> callee)
     {
-        ASSERT(!m_replacementCallee);
+        // Note that we can compile the same function with multiple memory modes, which can cause the JS->Wasm stub generator to
+        // race. That's fine, both stubs should do the same thing.
+        if (m_replacementCallee)
+            return;
         ASSERT(callee);
         m_replacementCallee = WTFMove(callee);
     }
@@ -385,8 +396,8 @@ public:
     JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegistersImpl();
     std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; }
 
-    static ptrdiff_t offsetOfWasmCallee() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, wasmCallee); }
-    static ptrdiff_t offsetOfWasmFunctionPrologue() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, wasmFunctionPrologue); }
+    static constexpr ptrdiff_t offsetOfWasmCallee() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, wasmCallee); }
+    static constexpr ptrdiff_t offsetOfWasmFunctionPrologue() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, wasmFunctionPrologue); }
     static constexpr ptrdiff_t offsetOfMetadataStorage() { return offsetOfData(); }
 
 private:
@@ -397,19 +408,18 @@ public:
     const intptr_t wasmCallee;
     // In the JIT case, we want to always call the llint prologue from a jit function.
     // In the no-jit case, we dont' care.
-    CodePtr<LLintToWasmEntryPtrTag> wasmFunctionPrologue;
+    CodePtr<LLIntToWasmEntryPtrTag> wasmFunctionPrologue;
     RefPtr<Wasm::Callee> m_replacementCallee { nullptr };
 };
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WasmToJSCallee);
 
 class WasmToJSCallee final : public Callee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(WasmToJSCallee);
 public:
     friend class Callee;
 
-    static Ref<WasmToJSCallee> create()
-    {
-        return adoptRef(*new WasmToJSCallee);
-    }
+    static WasmToJSCallee& singleton();
 
 private:
     WasmToJSCallee();
@@ -425,6 +435,9 @@ private:
 };
 
 #if ENABLE(JIT)
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSToWasmICCallee);
+
 class JSToWasmICCallee final : public JITCallee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSToWasmICCallee);
 public:
@@ -451,6 +464,8 @@ struct WasmCodeOrigin {
     unsigned functionIndex;
     unsigned moduleIndex;
 };
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OptimizingJITCallee);
 
 class OptimizingJITCallee : public JITCallee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(OptimizingJITCallee);
@@ -485,6 +500,8 @@ private:
 
 constexpr int32_t stackCheckUnset = 0;
 constexpr int32_t stackCheckNotNeeded = -1;
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OSREntryCallee);
 
 class OSREntryCallee final : public OptimizingJITCallee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(OSREntryCallee);
@@ -533,6 +550,8 @@ private:
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OMGCallee);
+
 class OMGCallee final : public OptimizingJITCallee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(OMGCallee);
 public:
@@ -554,6 +573,8 @@ private:
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
 
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BBQCallee);
 
 class BBQCallee final : public OptimizingJITCallee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BBQCallee);
@@ -644,6 +665,8 @@ private:
 #endif
 
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(IPIntCallee);
+
 class IPIntCallee final : public Callee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(IPIntCallee);
     friend class JSC::LLIntOffsetsExtractor;
@@ -716,6 +739,8 @@ public:
     IPIntTierUpCounter m_tierUpCounter;
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LLIntCallee);
+
 class LLIntCallee final : public Callee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LLIntCallee);
     friend JSC::LLIntOffsetsExtractor;
@@ -739,7 +764,7 @@ public:
     ALWAYS_INLINE uint64_t getConstant(VirtualRegister reg) const { return m_constants[reg.toConstantIndex()]; }
     ALWAYS_INLINE Type getConstantType(VirtualRegister reg) const
     {
-        ASSERT(Options::dumpGeneratedWasmBytecodes());
+        ASSERT(Options::dumpGeneratedWebAssemblyBytecodes());
         return m_constantTypes[reg.toConstantIndex()];
     }
 

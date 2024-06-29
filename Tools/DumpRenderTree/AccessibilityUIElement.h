@@ -259,8 +259,6 @@ public:
     bool isInsertion();
     bool isFirstItemInSuggestion();
     bool isLastItemInSuggestion();
-
-    bool isInNonNativeTextControl() const;
 #endif
 
     // Table-specific

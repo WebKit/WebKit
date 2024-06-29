@@ -281,7 +281,7 @@ DOMElement *kit(WebCore::Element* value)
 - (void)setAttribute:(NSString *)name value:(NSString *)value
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(unwrap(*self).setAttribute(name, value));
+    raiseOnDOMError(unwrap(*self).setAttribute(name, AtomString { value }));
 }
 
 - (void)removeAttribute:(NSString *)name
@@ -331,7 +331,7 @@ DOMElement *kit(WebCore::Element* value)
 - (void)setAttributeNS:(NSString *)namespaceURI qualifiedName:(NSString *)qualifiedName value:(NSString *)value
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(unwrap(*self).setAttributeNS(namespaceURI, qualifiedName, value));
+    raiseOnDOMError(unwrap(*self).setAttributeNS(namespaceURI, qualifiedName, AtomString { value }));
 }
 
 - (void)removeAttributeNS:(NSString *)namespaceURI localName:(NSString *)localName

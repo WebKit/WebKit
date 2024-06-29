@@ -50,7 +50,7 @@
 namespace WebCore {
 using namespace JSC;
 
-template<> ExposedToWorkerAndWindow::Dict convertDictionary<ExposedToWorkerAndWindow::Dict>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+template<> ConversionResult<IDLDictionary<ExposedToWorkerAndWindow::Dict>> convertDictionary<ExposedToWorkerAndWindow::Dict>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -58,7 +58,7 @@ template<> ExposedToWorkerAndWindow::Dict convertDictionary<ExposedToWorkerAndWi
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
     if (UNLIKELY(!isNullOrUndefined && !object)) {
         throwTypeError(&lexicalGlobalObject, throwScope);
-        return { };
+        return ConversionResultException { };
     }
     ExposedToWorkerAndWindow::Dict result;
     JSValue objValue;
@@ -66,11 +66,13 @@ template<> ExposedToWorkerAndWindow::Dict convertDictionary<ExposedToWorkerAndWi
         objValue = jsUndefined();
     else {
         objValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "obj"_s));
-        RETURN_IF_EXCEPTION(throwScope, { });
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
     if (!objValue.isUndefined()) {
-        result.obj = convert<IDLInterface<TestObj>>(lexicalGlobalObject, objValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
+        auto objConversionResult = convert<IDLInterface<TestObj>>(lexicalGlobalObject, objValue);
+        if (UNLIKELY(objConversionResult.hasException(throwScope)))
+            return ConversionResultException { };
+        result.obj = objConversionResult.releaseReturnValue();
     }
     return result;
 }
@@ -283,14 +285,9 @@ extern "C" { extern void (*const __identifier("??_7ExposedToWorkerAndWindow@WebC
 #else
 extern "C" { extern void* _ZTVN7WebCore24ExposedToWorkerAndWindowE[]; }
 #endif
-#endif
-
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<ExposedToWorkerAndWindow>&& impl)
-{
-
-    if constexpr (std::is_polymorphic_v<ExposedToWorkerAndWindow>) {
-#if ENABLE(BINDING_INTEGRITY)
-        const void* actualVTablePointer = getVTablePointer(impl.ptr());
+template<typename T, typename = std::enable_if_t<std::is_same_v<T, ExposedToWorkerAndWindow>, void>> static inline void verifyVTable(ExposedToWorkerAndWindow* ptr) {
+    if constexpr (std::is_polymorphic_v<T>) {
+        const void* actualVTablePointer = getVTablePointer<T>(ptr);
 #if PLATFORM(WIN)
         void* expectedVTablePointer = __identifier("??_7ExposedToWorkerAndWindow@WebCore@@6B@");
 #else
@@ -302,8 +299,14 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObj
         // to toJS() we currently require ExposedToWorkerAndWindow you to opt out of binding hardening
         // by adding the SkipVTableValidation attribute to the interface IDL definition
         RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
-#endif
     }
+}
+#endif
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<ExposedToWorkerAndWindow>&& impl)
+{
+#if ENABLE(BINDING_INTEGRITY)
+    verifyVTable<ExposedToWorkerAndWindow>(impl.ptr());
+#endif
     return createWrapper<ExposedToWorkerAndWindow>(globalObject, WTFMove(impl));
 }
 

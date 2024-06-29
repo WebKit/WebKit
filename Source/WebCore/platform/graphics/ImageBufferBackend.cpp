@@ -76,7 +76,7 @@ void ImageBufferBackend::convertToLuminanceMask()
     putPixelBuffer(*pixelBuffer, sourceRect, IntPoint::zero(), AlphaPremultiplication::Premultiplied);
 }
 
-void ImageBufferBackend::getPixelBuffer(const IntRect& sourceRect, void* sourceData, PixelBuffer& destinationPixelBuffer)
+void ImageBufferBackend::getPixelBuffer(const IntRect& sourceRect, const uint8_t* sourceData, PixelBuffer& destinationPixelBuffer)
 {
     IntRect backendRect { { }, size() };
     auto sourceRectClipped = intersection(backendRect, sourceRect);
@@ -93,9 +93,9 @@ void ImageBufferBackend::getPixelBuffer(const IntRect& sourceRect, void* sourceD
 
     unsigned sourceBytesPerRow = bytesPerRow();
     ConstPixelBufferConversionView source {
-        { AlphaPremultiplication::Premultiplied, pixelFormat(), colorSpace() },
+        { AlphaPremultiplication::Premultiplied, convertToPixelFormat(pixelFormat()), colorSpace() },
         sourceBytesPerRow,
-        static_cast<uint8_t*>(sourceData) + sourceRectClipped.y() * sourceBytesPerRow + sourceRectClipped.x() * 4
+        sourceData + sourceRectClipped.y() * sourceBytesPerRow + sourceRectClipped.x() * 4
     };
     unsigned destinationBytesPerRow = static_cast<unsigned>(4u * sourceRect.width());
     PixelBufferConversionView destination {
@@ -107,7 +107,7 @@ void ImageBufferBackend::getPixelBuffer(const IntRect& sourceRect, void* sourceD
     convertImagePixels(source, destination, destinationRect.size());
 }
 
-void ImageBufferBackend::putPixelBuffer(const PixelBuffer& sourcePixelBuffer, const IntRect& sourceRect, const IntPoint& destinationPoint, AlphaPremultiplication destinationAlphaFormat, void* destinationData)
+void ImageBufferBackend::putPixelBuffer(const PixelBuffer& sourcePixelBuffer, const IntRect& sourceRect, const IntPoint& destinationPoint, AlphaPremultiplication destinationAlphaFormat, uint8_t* destinationData)
 {
     IntRect backendRect { { }, size() };
     auto sourceRectClipped = intersection({ IntPoint::zero(), sourcePixelBuffer.size() }, sourceRect);
@@ -131,25 +131,24 @@ void ImageBufferBackend::putPixelBuffer(const PixelBuffer& sourcePixelBuffer, co
     };
     unsigned destinationBytesPerRow = bytesPerRow();
     PixelBufferConversionView destination {
-        { destinationAlphaFormat, pixelFormat(), colorSpace() },
+        { destinationAlphaFormat, convertToPixelFormat(pixelFormat()), colorSpace() },
         destinationBytesPerRow,
-        static_cast<uint8_t*>(destinationData) + destinationRect.y() * destinationBytesPerRow + destinationRect.x() * 4
+        destinationData + destinationRect.y() * destinationBytesPerRow + destinationRect.x() * 4
     };
 
     convertImagePixels(source, destination, destinationRect.size());
 }
 
-AffineTransform ImageBufferBackend::calculateBaseTransform(const Parameters& parameters, bool originAtBottomLeftCorner)
+AffineTransform ImageBufferBackend::calculateBaseTransform(const Parameters& parameters)
 {
     AffineTransform baseTransform;
-
-    if (originAtBottomLeftCorner) {
-        baseTransform.scale(1, -1);
-        baseTransform.translate(0, -parameters.backendSize.height());
-    }
-
+#if USE(CG)
+    // CoreGraphics origin is at bottom left corner. GraphicsContext origin is at top left corner. Flip the drawing with GraphicsContext base
+    // transform.
+    baseTransform.scale(1, -1);
+    baseTransform.translate(0, -parameters.backendSize.height());
+#endif
     baseTransform.scale(parameters.resolutionScale);
-
     return baseTransform;
 }
 

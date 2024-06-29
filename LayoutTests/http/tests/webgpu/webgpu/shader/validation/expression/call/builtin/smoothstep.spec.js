@@ -12,7 +12,8 @@ import {
   isConvertibleToFloatType,
   kAllScalarsAndVectors,
   kConvertableToFloatScalarsAndVectors,
-  scalarTypeOf } from
+  scalarTypeOf,
+  f32 } from
 '../../../../../util/conversion.js';
 import { ShaderValidationTest } from '../../../shader_validation_test.js';
 
@@ -201,6 +202,11 @@ const kTests = {
   too_many_args: {
     src: `_ = ${builtin}(1.0, 2.0, 3.0, 4.0);`,
     pass: false
+  },
+
+  must_use: {
+    src: `${builtin}(1.0,2.0,3.0);`,
+    pass: false
   }
 };
 
@@ -238,4 +244,26 @@ fn((t) => {
     return vec4<f32>(.4, .2, .3, .1);
   }`;
   t.expectCompileResult(kTests[t.params.test].pass, code);
+});
+
+g.test('early_eval_errors').
+desc('Validates that high must be greater than low').
+params((u) =>
+u.
+combine('stage', kConstantAndOverrideStages).
+beginSubcases().
+combineWithParams([
+{ low: 1, high: 2 },
+{ low: 2, high: 1 },
+{ low: 1, high: 1 }]
+)
+).
+fn((t) => {
+  validateConstOrOverrideBuiltinEval(
+    t,
+    builtin,
+    /* expectedResult */t.params.low < t.params.high,
+    [f32(0), f32(t.params.low), f32(t.params.high)],
+    t.params.stage
+  );
 });

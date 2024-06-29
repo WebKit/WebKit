@@ -1274,8 +1274,8 @@ bool CollectVariablesTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
             ASSERT(fieldIndex < namedBlock->fields.size());
             // TODO(oetuaho): Would be nicer to record static use of fields of named interface
             // blocks more accurately at parse time - now we only mark the fields statically used if
-            // they are active. http://anglebug.com/2440 We need to mark this field and all of its
-            // sub-fields, as static/active
+            // they are active. http://anglebug.com/42261150 We need to mark this field and all of
+            // its sub-fields, as static/active
             MarkActive(&namedBlock->fields[fieldIndex]);
         }
 

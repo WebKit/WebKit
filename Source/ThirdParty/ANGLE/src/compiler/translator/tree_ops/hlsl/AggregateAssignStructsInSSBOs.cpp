@@ -29,9 +29,9 @@ class AggregateAssignStructsInSSBOsTraverser : public TIntermTraverser
     bool visitBinary(Visit visit, TIntermBinary *node) override
     {
         // Replace all assignments to structs in SSBOs with field-by-field asignments.
-        // TODO(anglebug.com/7362): this implementation only works for the simple case (assignment
-        // statement), not more complex cases such as assignment-as-expression or functions with
-        // side effects in the RHS.
+        // TODO(anglebug.com/42265832): this implementation only works for the simple case
+        // (assignment statement), not more complex cases such as assignment-as-expression or
+        // functions with side effects in the RHS.
         const TStructure *s;
         if (node->getOp() != EOpAssign)
         {

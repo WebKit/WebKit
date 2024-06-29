@@ -89,11 +89,11 @@ angle::Result CLKernelVk::createInfo(CLKernelImpl::Info *info) const
             continue;
         }
 
-        // TODO: http://anglebug.com/8576
+        // TODO: http://anglebug.com/42267005
         ANGLE_TRY(
             deviceVk->getInfoSizeT(cl::DeviceInfo::MaxWorkGroupSize, &workGroup.workGroupSize));
 
-        // TODO: http://anglebug.com/8575
+        // TODO: http://anglebug.com/42267004
         workGroup.privateMemSize = 0;
         workGroup.localMemSize   = 0;
 
@@ -181,7 +181,7 @@ angle::Result CLKernelVk::getOrCreateComputePipeline(vk::PipelineCacheAccess *pi
     // Now get or create (on compute pipeline cache miss) compute pipeline and return it
     return mShaderProgramHelper.getOrCreateComputePipeline(
         mContext, &mComputePipelineCache, pipelineCache, getPipelineLayout().get(),
-        vk::ComputePipelineFlags{}, PipelineSource::Draw, pipelineOut, mName.c_str(),
+        vk::ComputePipelineOptions{}, PipelineSource::Draw, pipelineOut, mName.c_str(),
         &computeSpecializationInfo);
 }
 

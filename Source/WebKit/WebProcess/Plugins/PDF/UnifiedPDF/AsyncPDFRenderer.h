@@ -44,10 +44,15 @@ OBJC_CLASS PDFDocument;
 namespace WebKit {
 
 struct TileForGrid {
-    WebCore::TileGridIndex gridIndex { 0 };
+    WebCore::TileGridIdentifier gridIdentifier;
     WebCore::TileIndex tileIndex;
 
     bool operator==(const TileForGrid&) const = default;
+
+    unsigned computeHash() const
+    {
+        return WTF::computeHash(gridIdentifier.toUInt64(), tileIndex.x(), tileIndex.y());
+    }
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const TileForGrid&);
@@ -59,20 +64,19 @@ namespace WTF {
 struct TileForGridHash {
     static unsigned hash(const WebKit::TileForGrid& key)
     {
-        return pairIntHash(key.gridIndex, DefaultHash<WebCore::IntPoint>::hash(key.tileIndex));
+        return key.computeHash();
     }
     static bool equal(const WebKit::TileForGrid& a, const WebKit::TileForGrid& b)
     {
-        return a.gridIndex == b.gridIndex && DefaultHash<WebCore::IntPoint>::equal(a.tileIndex, b.tileIndex);
-
+        return a == b;
     }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
 template<> struct HashTraits<WebKit::TileForGrid> : GenericHashTraits<WebKit::TileForGrid> {
     static const bool emptyValueIsZero = false;
-    static WebKit::TileForGrid emptyValue()  { return { std::numeric_limits<unsigned>::max(), { -1, -1 } }; }
-    static WebKit::TileForGrid deletedValue() { return { 0, { -1, -1 } }; }
+    static WebKit::TileForGrid emptyValue()  { return { WebCore::TileGridIdentifier { std::numeric_limits<uint64_t>::max() }, { -1, -1 } }; }
+    static WebKit::TileForGrid deletedValue() { return { WebCore::TileGridIdentifier { 0 }, { -1, -1 } }; }
     static void constructDeletedValue(WebKit::TileForGrid& tileForGrid) { tileForGrid = deletedValue(); }
     static bool isDeletedValue(const WebKit::TileForGrid& tileForGrid) { return tileForGrid == deletedValue(); }
 };
@@ -87,10 +91,7 @@ class UnifiedPDFPlugin;
 struct PDFTileRenderType;
 using PDFTileRenderIdentifier = ObjectIdentifier<PDFTileRenderType>;
 
-struct PDFContentsVersionType;
-using PDFContentsVersionIdentifier = ObjectIdentifier<PDFContentsVersionType>;
-
-class AsyncPDFRenderer : public WebCore::TiledBackingClient,
+class AsyncPDFRenderer final : public WebCore::TiledBackingClient,
     public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AsyncPDFRenderer> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AsyncPDFRenderer);
@@ -101,6 +102,8 @@ public:
 
     void setupWithLayer(WebCore::GraphicsLayer&);
     void teardown();
+
+    void releaseMemory();
 
     bool paintTilesForPage(WebCore::GraphicsContext&, float documentScale, const WebCore::FloatRect& clipRect, const WebCore::FloatRect& pageBoundsInPaintingCoordinates, PDFDocumentLayout::PageIndex);
     void paintPagePreview(WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, const WebCore::FloatRect& pageBoundsInPaintingCoordinates, PDFDocumentLayout::PageIndex);
@@ -123,12 +126,11 @@ private:
     struct TileRenderInfo {
         WebCore::FloatRect tileRect;
         std::optional<WebCore::FloatRect> clipRect; // If set, represents the portion of the tile that needs repaint (in the same coordinate system as tileRect).
-        PDFPageCoverage pageCoverage;
-        PDFContentsVersionIdentifier contentsVersion;
+        PDFPageCoverageAndScales pageCoverage;
 
         bool equivalentForPainting(const TileRenderInfo& other) const
         {
-            return tileRect == other.tileRect && pageCoverage == other.pageCoverage && contentsVersion == other.contentsVersion;
+            return tileRect == other.tileRect && pageCoverage == other.pageCoverage;
         }
     };
 
@@ -137,11 +139,13 @@ private:
     bool renderInfoIsValidForTile(const TileForGrid&, const TileRenderInfo&) const;
 
     // TiledBackingClient
-    void willRepaintTile(WebCore::TileGridIndex, WebCore::TileIndex, const WebCore::FloatRect& tileRect, const WebCore::FloatRect& tileDirtyRect) final;
-    void willRemoveTile(WebCore::TileGridIndex, WebCore::TileIndex) final;
-    void willRepaintAllTiles(WebCore::TileGridIndex) final;
-    void coverageRectDidChange(const WebCore::FloatRect&) final;
-    void tilingScaleFactorDidChange(float) final;
+    void willRepaintTile(WebCore::TiledBacking&, WebCore::TileGridIdentifier, WebCore::TileIndex, const WebCore::FloatRect& tileRect, const WebCore::FloatRect& tileDirtyRect) final;
+    void willRemoveTile(WebCore::TiledBacking&, WebCore::TileGridIdentifier, WebCore::TileIndex) final;
+    void willRepaintAllTiles(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
+    void coverageRectDidChange(WebCore::TiledBacking&, const WebCore::FloatRect&) final;
+    void tilingScaleFactorDidChange(WebCore::TiledBacking&, float) final;
+    void didAddGrid(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
+    void willRemoveGrid(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
 
     void enqueueTilePaintIfNecessary(const TileForGrid&, const WebCore::FloatRect& tileRect, const std::optional<WebCore::FloatRect>& clipRect = { });
     void enqueuePaintWithClip(const TileForGrid&, const TileRenderInfo&);
@@ -163,6 +167,9 @@ private:
     };
 
     void paintPagePreviewOnWorkQueue(RetainPtr<PDFDocument>&&, const PagePreviewRequest&);
+    void didCompletePagePreviewRender(RefPtr<WebCore::ImageBuffer>&&, const PagePreviewRequest&);
+    void removePagePreviewsOutsideCoverageRect(const WebCore::FloatRect&);
+
     void paintPDFPageIntoBuffer(RetainPtr<PDFDocument>&&, Ref<WebCore::ImageBuffer>, PDFDocumentLayout::PageIndex, const WebCore::FloatRect& pageBounds);
 
     static WebCore::FloatRect convertTileRectToPaintingCoords(const WebCore::FloatRect&, float pageScaleFactor);
@@ -172,8 +179,6 @@ private:
     ThreadSafeWeakPtr<UnifiedPDFPlugin> m_plugin;
     RefPtr<WebCore::GraphicsLayer> m_pdfContentsLayer;
     Ref<ConcurrentWorkQueue> m_paintingWorkQueue;
-
-    PDFContentsVersionIdentifier m_contentsVersion;
 
     struct TileRenderData {
         PDFTileRenderIdentifier renderIdentifier;

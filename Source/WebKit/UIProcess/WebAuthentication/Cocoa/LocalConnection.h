@@ -66,6 +66,7 @@ public:
     virtual ~LocalConnection();
 
     // Overrided by MockLocalConnection.
+    virtual RetainPtr<NSArray> getExistingCredentials(const String& rpId);
     virtual void verifyUser(const String& rpId, WebCore::ClientDataType, SecAccessControlRef, WebCore::UserVerificationRequirement, UserVerificationCallback&&);
     virtual void verifyUser(SecAccessControlRef, LAContext *, CompletionHandler<void(UserVerification)>&&);
     virtual RetainPtr<SecKeyRef> createCredentialPrivateKey(LAContext *, SecAccessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const;

@@ -14,11 +14,10 @@
 #include <string>
 
 #include "api/async_dns_resolver.h"
-#include "api/async_resolver_factory.h"
+#include "api/ref_count.h"
 #include "api/rtc_error.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/scoped_refptr.h"
-#include "rtc_base/ref_count.h"
 
 namespace cricket {
 class IceTransportInternal;
@@ -33,7 +32,7 @@ class FieldTrialsView;
 // An ICE transport, as represented to the outside world.
 // This object is refcounted, and is therefore alive until the
 // last holder has released it.
-class IceTransportInterface : public rtc::RefCountInterface {
+class IceTransportInterface : public webrtc::RefCountInterface {
  public:
   // Accessor for the internal representation of an ICE transport.
   // The returned object can only be safely used on the signalling thread.
@@ -61,18 +60,7 @@ struct IceTransportInit final {
   }
   void set_async_dns_resolver_factory(
       AsyncDnsResolverFactoryInterface* async_dns_resolver_factory) {
-    RTC_DCHECK(!async_resolver_factory_);
     async_dns_resolver_factory_ = async_dns_resolver_factory;
-  }
-  [[deprecated("Use async_dns_resolver_factory")]] AsyncResolverFactory*
-  async_resolver_factory() {
-    return async_resolver_factory_;
-  }
-  ABSL_DEPRECATED("bugs.webrtc.org/12598")
-  void set_async_resolver_factory(
-      AsyncResolverFactory* async_resolver_factory) {
-    RTC_DCHECK(!async_dns_resolver_factory_);
-    async_resolver_factory_ = async_resolver_factory;
   }
 
   RtcEventLog* event_log() { return event_log_; }
@@ -115,11 +103,6 @@ struct IceTransportInit final {
  private:
   cricket::PortAllocator* port_allocator_ = nullptr;
   AsyncDnsResolverFactoryInterface* async_dns_resolver_factory_ = nullptr;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  // For backwards compatibility. Only one resolver factory can be set.
-  AsyncResolverFactory* async_resolver_factory_ = nullptr;
-#pragma clang diagnostic pop
   RtcEventLog* event_log_ = nullptr;
   cricket::IceControllerFactoryInterface* ice_controller_factory_ = nullptr;
   cricket::ActiveIceControllerFactoryInterface* active_ice_controller_factory_ =

@@ -307,6 +307,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithLegacyReceiver_CreatePluginReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<bool>;
+    using Reply = CompletionHandler<void(bool)>;
     using Promise = WTF::NativePromise<bool, IPC::Error>;
     CreatePlugin(uint64_t pluginInstanceID, const WebKit::Plugin::Parameters& parameters)
         : m_arguments(pluginInstanceID, parameters)
@@ -334,6 +335,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithLegacyReceiver_RunJavaScriptAlertReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
+    using Reply = CompletionHandler<void()>;
     using Promise = WTF::NativePromise<void, IPC::Error>;
     RunJavaScriptAlert(uint64_t frameID, const String& message)
         : m_arguments(frameID, message)
@@ -361,6 +363,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithLegacyReceiver_GetPluginsReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<Vector<WebCore::PluginInfo>>;
+    using Reply = CompletionHandler<void(Vector<WebCore::PluginInfo>&&)>;
     using Promise = WTF::NativePromise<Vector<WebCore::PluginInfo>, IPC::Error>;
     explicit GetPlugins(bool refresh)
         : m_arguments(refresh)
@@ -387,6 +390,7 @@ public:
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<IPC::Connection::Handle>;
+    using Reply = CompletionHandler<void(IPC::Connection::Handle&&)>;
     explicit GetPluginProcessConnection(const String& pluginPath)
         : m_arguments(pluginPath)
     {
@@ -412,6 +416,7 @@ public:
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
+    using Reply = CompletionHandler<void()>;
     auto&& arguments()
     {
         return WTFMove(m_arguments);
@@ -528,6 +533,7 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithLegacyReceiver_InterpretKeyEventReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<Vector<WebCore::KeypressCommand>>;
+    using Reply = CompletionHandler<void(Vector<WebCore::KeypressCommand>&&)>;
     using Promise = WTF::NativePromise<Vector<WebCore::KeypressCommand>, IPC::Error>;
     explicit InterpretKeyEvent(uint32_t type)
         : m_arguments(type)

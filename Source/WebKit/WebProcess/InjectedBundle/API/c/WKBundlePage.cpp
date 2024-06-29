@@ -353,11 +353,6 @@ void WKAccessibilitySetForceInitialFrameCaching(bool shouldForce)
     WebCore::AXObjectCache::setForceInitialFrameCaching(shouldForce);
 }
 
-void WKBundlePageStopLoading(WKBundlePageRef pageRef)
-{
-    WebKit::toImpl(pageRef)->stopLoading();
-}
-
 void WKBundlePageSetDefersLoading(WKBundlePageRef, bool)
 {
 }
@@ -371,16 +366,6 @@ WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef pag
 WKStringRef WKBundlePageCopyRenderTreeExternalRepresentationForPrinting(WKBundlePageRef pageRef)
 {
     return WebKit::toCopiedAPI(WebKit::toImpl(pageRef)->renderTreeExternalRepresentationForPrinting());
-}
-
-void WKBundlePageExecuteEditingCommand(WKBundlePageRef pageRef, WKStringRef name, WKStringRef argument)
-{
-    WebKit::toImpl(pageRef)->executeEditingCommand(WebKit::toWTFString(name), WebKit::toWTFString(argument));
-}
-
-bool WKBundlePageIsEditingCommandEnabled(WKBundlePageRef pageRef, WKStringRef name)
-{
-    return WebKit::toImpl(pageRef)->isEditingCommandEnabled(WebKit::toWTFString(name));
 }
 
 void WKBundlePageClearMainFrameName(WKBundlePageRef pageRef)
@@ -566,18 +551,6 @@ void WKBundlePageForceRepaint(WKBundlePageRef page)
 void WKBundlePageFlushPendingEditorStateUpdate(WKBundlePageRef page)
 {
     WebKit::toImpl(page)->flushPendingEditorStateUpdate();
-}
-
-void WKBundlePageSimulateMouseDown(WKBundlePageRef, int, WKPoint, int, WKEventModifiers, double)
-{
-}
-
-void WKBundlePageSimulateMouseUp(WKBundlePageRef, int, WKPoint, int, WKEventModifiers, double)
-{
-}
-
-void WKBundlePageSimulateMouseMotion(WKBundlePageRef, WKPoint, double)
-{
 }
 
 uint64_t WKBundlePageGetRenderTreeSize(WKBundlePageRef pageRef)
@@ -801,11 +774,6 @@ void WKBundlePageCallAfterTasksAndTimers(WKBundlePageRef pageRef, WKBundlePageTe
     document->postTask([=] (WebCore::ScriptExecutionContext&) {
         new TimerOwner(callback, context); // deletes itself when done.
     });
-}
-
-void WKBundlePageFlushDeferredDidReceiveMouseEventForTesting(WKBundlePageRef page)
-{
-    WebKit::toImpl(page)->flushDeferredDidReceiveMouseEvent();
 }
 
 void WKBundlePagePostMessage(WKBundlePageRef pageRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)

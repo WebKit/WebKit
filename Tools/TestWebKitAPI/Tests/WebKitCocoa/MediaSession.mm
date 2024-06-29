@@ -177,10 +177,10 @@ public:
         return sendMediaRemoteCommand(command, (__bridge CFDictionaryRef)options);
     }
 
-    void listenForEventMessages(std::initializer_list<const char*> events)
+    void listenForEventMessages(std::initializer_list<ASCIILiteral> events)
     {
-        for (auto* event : events) {
-            auto eventMessage = makeString(event, " event");
+        for (auto event : events) {
+            auto eventMessage = makeString(event, " event"_s);
             [_messageHandlers addObject:eventMessage];
             [webView() performAfterReceivingMessage:eventMessage action:[this, eventMessage = WTFMove(eventMessage)] {
                 _eventListenersCalled.add(eventMessage);
@@ -190,7 +190,7 @@ public:
 
     bool eventListenerWasCalled(StringView event)
     {
-        return _eventListenersCalled.contains(makeString(event, " event"));
+        return _eventListenersCalled.contains(makeString(event, " event"_s));
     }
 
     void clearEventListenerState()
@@ -210,10 +210,10 @@ public:
         return;
     }
 
-    void listenForSessionHandlerMessages(std::initializer_list<const char*> handlers)
+    void listenForSessionHandlerMessages(std::initializer_list<ASCIILiteral> handlers)
     {
-        for (auto* handler : handlers) {
-            auto handlerMessage = makeString(handler, " handler");
+        for (auto handler : handlers) {
+            auto handlerMessage = makeString(handler, " handler"_s);
             [_messageHandlers addObject:handlerMessage];
             [webView() performAfterReceivingMessage:handlerMessage action:[this, handlerMessage = WTFMove(handlerMessage)] {
                 _mediaSessionHandlersCalled.add(handlerMessage);
@@ -223,7 +223,7 @@ public:
 
     bool sessionHandlerWasCalled(StringView handler)
     {
-        return _mediaSessionHandlersCalled.contains(makeString(handler, " handler"));
+        return _mediaSessionHandlersCalled.contains(makeString(handler, " handler"_s));
     }
 
     void waitForSessionHandlerToBeCalled(StringView handler)
@@ -268,8 +268,8 @@ TEST_F(MediaSessionTest, DISABLED_OnlyOneHandler)
 
     [webView() objectByEvaluatingJavaScript:@"setEmptyActionHandlers([ 'play' ])"];
 
-    listenForSessionHandlerMessages({ "play", "pause", "seekto", "seekforward", "seekbackward", "previoustrack", "nexttrack" });
-    listenForEventMessages({ "play", "pause", "seeked" });
+    listenForSessionHandlerMessages({ "play"_s, "pause"_s, "seekto"_s, "seekforward"_s, "seekbackward"_s, "previoustrack"_s, "nexttrack"_s });
+    listenForEventMessages({ "play"_s, "pause"_s, "seeked"_s });
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 101500
     static Vector<MRMediaRemoteCommand> registeredCommands = { MRMediaRemoteCommandPlay };
@@ -313,8 +313,8 @@ TEST_F(MediaSessionTest, DISABLED_RemoteCommands)
 
     [webView() objectByEvaluatingJavaScript:@"setEmptyActionHandlers([ 'play', 'pause', 'seekto', 'seekforward', 'seekbackward', 'previoustrack', 'nexttrack' ])"];
 
-    listenForSessionHandlerMessages({ "play", "pause", "seekto", "seekforward", "seekbackward", "previoustrack", "nexttrack" });
-    listenForEventMessages({ "play", "pause", "seeked" });
+    listenForSessionHandlerMessages({ "play"_s, "pause"_s, "seekto"_s, "seekforward"_s, "seekbackward"_s, "previoustrack"_s, "nexttrack"_s });
+    listenForEventMessages({ "play"_s, "pause"_s, "seeked"_s });
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 101500
     static Vector<MRMediaRemoteCommand> registeredCommands = { MRMediaRemoteCommandPlay, MRMediaRemoteCommandPause, MRMediaRemoteCommandSeekToPlaybackPosition, MRMediaRemoteCommandSkipForward, MRMediaRemoteCommandSkipBackward, MRMediaRemoteCommandPreviousTrack, MRMediaRemoteCommandNextTrack };

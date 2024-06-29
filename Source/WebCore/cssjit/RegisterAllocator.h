@@ -56,7 +56,6 @@ static const JSC::MacroAssembler::RegisterID calleeSavedRegisters[] = {
 };
 static const JSC::MacroAssembler::RegisterID tempRegister = JSC::ARM64Registers::x15;
 #elif CPU(X86_64)
-#if !OS(WINDOWS)
 static const JSC::MacroAssembler::RegisterID callerSavedRegisters[] = {
     JSC::X86Registers::eax,
     JSC::X86Registers::ecx,
@@ -73,24 +72,6 @@ static const JSC::MacroAssembler::RegisterID calleeSavedRegisters[] = {
     JSC::X86Registers::r14,
     JSC::X86Registers::r15
 };
-#else // OS(WINDOWS)
-static const JSC::MacroAssembler::RegisterID callerSavedRegisters[] = {
-    JSC::X86Registers::eax,
-    JSC::X86Registers::ecx,
-    JSC::X86Registers::edx,
-    JSC::X86Registers::r8,
-    JSC::X86Registers::r9,
-    JSC::X86Registers::r10,
-};
-static const JSC::MacroAssembler::RegisterID calleeSavedRegisters[] = {
-    JSC::X86Registers::esi,
-    JSC::X86Registers::edi,
-    JSC::X86Registers::r12,
-    JSC::X86Registers::r13,
-    JSC::X86Registers::r14,
-    JSC::X86Registers::r15
-};
-#endif // !OS(WINDOWS)
 #else
 #error RegisterAllocator has no defined registers for the architecture.
 #endif
@@ -207,13 +188,8 @@ public:
 #if CPU(ARM64)
         return registerID >= JSC::ARM64Registers::x0 && registerID <= JSC::ARM64Registers::x14;
 #elif CPU(X86_64)
-#if !OS(WINDOWS)
         return (registerID >= JSC::X86Registers::eax && registerID <= JSC::X86Registers::edx)
             || (registerID >= JSC::X86Registers::esi && registerID <= JSC::X86Registers::r10);
-#else
-        return (registerID >= JSC::X86Registers::eax && registerID <= JSC::X86Registers::edx)
-            || (registerID >= JSC::X86Registers::r8 && registerID <= JSC::X86Registers::r10);
-#endif
 #else
 #error RegisterAllocator does not define the valid caller saved register range for the current architecture.
 #endif

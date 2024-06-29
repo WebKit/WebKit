@@ -28,6 +28,7 @@
 #include "ExtendableMessageEvent.h"
 
 #include "EventNames.h"
+#include "JSDOMConvert.h"
 #include "JSExtendableMessageEvent.h"
 #include <wtf/IsoMallocInlines.h>
 

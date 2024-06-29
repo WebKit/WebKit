@@ -23,6 +23,7 @@
 #include "p2p/base/ice_transport_internal.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/buffer_queue.h"
+#include "rtc_base/network/received_packet.h"
 #include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/stream.h"
 #include "rtc_base/strings/string_builder.h"
@@ -57,10 +58,9 @@ class StreamInterfaceChannel : public rtc::StreamInterface {
                           int& error) override;
 
  private:
-  RTC_NO_UNIQUE_ADDRESS webrtc::SequenceChecker sequence_checker_;
   IceTransportInternal* const ice_transport_;  // owned by DtlsTransport
-  rtc::StreamState state_ RTC_GUARDED_BY(sequence_checker_);
-  rtc::BufferQueue packets_ RTC_GUARDED_BY(sequence_checker_);
+  rtc::StreamState state_ RTC_GUARDED_BY(callback_sequence_);
+  rtc::BufferQueue packets_ RTC_GUARDED_BY(callback_sequence_);
 };
 
 // This class provides a DTLS SSLStreamAdapter inside a TransportChannel-style
@@ -216,19 +216,16 @@ class DtlsTransport : public DtlsTransportInternal {
 
   void OnWritableState(rtc::PacketTransportInternal* transport);
   void OnReadPacket(rtc::PacketTransportInternal* transport,
-                    const char* data,
-                    size_t size,
-                    const int64_t& packet_time_us,
-                    int flags);
+                    const rtc::ReceivedPacket& packet);
   void OnSentPacket(rtc::PacketTransportInternal* transport,
                     const rtc::SentPacket& sent_packet);
   void OnReadyToSend(rtc::PacketTransportInternal* transport);
   void OnReceivingState(rtc::PacketTransportInternal* transport);
-  void OnDtlsEvent(rtc::StreamInterface* stream_, int sig, int err);
+  void OnDtlsEvent(int sig, int err);
   void OnNetworkRouteChanged(absl::optional<rtc::NetworkRoute> network_route);
   bool SetupDtls();
   void MaybeStartDtls();
-  bool HandleDtlsPacket(const char* data, size_t size);
+  bool HandleDtlsPacket(rtc::ArrayView<const uint8_t> payload);
   void OnDtlsHandshakeError(rtc::SSLHandshakeError error);
   void ConfigureHandshakeTimeout();
 
@@ -237,7 +234,7 @@ class DtlsTransport : public DtlsTransportInternal {
   // Sets the DTLS state, signaling if necessary.
   void set_dtls_state(webrtc::DtlsTransportState state);
 
-  webrtc::SequenceChecker thread_checker_;
+  RTC_NO_UNIQUE_ADDRESS webrtc::SequenceChecker thread_checker_;
 
   const int component_;
   webrtc::DtlsTransportState dtls_state_ = webrtc::DtlsTransportState::kNew;

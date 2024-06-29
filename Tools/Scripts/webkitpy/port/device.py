@@ -73,6 +73,11 @@ class Device(object):
             return self.platform_device.release_worker_resources()
         return None
 
+    def set_up_environment_extras(self):
+        if hasattr(self.platform_device, 'set_up_environment_extras'):
+            return self.platform_device.set_up_environment_extras()
+        return True
+
     @property
     def executive(self):
         return self.platform_device.executive

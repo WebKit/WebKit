@@ -81,7 +81,7 @@ private:
     NetscapePlugInStreamLoader(LocalFrame&, NetscapePlugInStreamLoaderClient&);
 
     void willCancel(const ResourceError&) override;
-    void didCancel(const ResourceError&) override;
+    void didCancel(LoadWillContinueInAnotherProcess) override;
 
     void notifyDone();
 

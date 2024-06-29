@@ -33,7 +33,7 @@ TEST(AV1, TestAccounting) {
     aom_write(&bw, 0, 32);
     aom_write(&bw, 0, 32);
   }
-  aom_stop_encode(&bw);
+  GTEST_ASSERT_GE(aom_stop_encode(&bw), 0);
   aom_reader br;
   aom_reader_init(&br, bw_buffer, bw.pos);
 

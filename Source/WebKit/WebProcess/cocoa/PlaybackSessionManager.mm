@@ -305,8 +305,22 @@ void PlaybackSessionManager::clearPlaybackControlsManager()
     m_page->send(Messages::PlaybackSessionManagerProxy::ClearPlaybackControlsManager());
 }
 
-void PlaybackSessionManager::mediaEngineChanged()
+void PlaybackSessionManager::mediaEngineChanged(HTMLMediaElement& mediaElement)
 {
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    RefPtr player = mediaElement.protectedPlayer();
+    bool supportsLinearMediaPlayer = player && player->supportsLinearMediaPlayer();
+    Ref { *m_page }->send(Messages::PlaybackSessionManagerProxy::SupportsLinearMediaPlayerChanged(mediaElement.identifier(), supportsLinearMediaPlayer));
+#else
+    UNUSED_PARAM(mediaElement);
+#endif
+
+    // FIXME: mediaEngineChanged is called whenever an HTMLMediaElement's media engine changes, but
+    // that element's identifier may not match m_controlsManagerContextId. That means that (a) the
+    // current playback controls element's PlaybackSessionModel is notified whenever *any* element
+    // changes its media engine, and (b) mediaElement's PlaybackSessionModel is *never* notified if
+    // it's not the current playback controls element.
+
     if (!m_controlsManagerContextId)
         return;
 
@@ -512,7 +526,12 @@ void PlaybackSessionManager::selectAudioMediaOption(PlaybackSessionContextIdenti
 void PlaybackSessionManager::selectLegibleMediaOption(PlaybackSessionContextIdentifier contextId, uint64_t index)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
-    ensureModel(contextId).selectLegibleMediaOption(index);
+    Ref model = ensureModel(contextId);
+    model->selectLegibleMediaOption(index);
+
+    // Selecting a text track may not result in a call to legibleMediaSelectionIndexChanged(), so just
+    // artificially trigger it here:
+    legibleMediaSelectionIndexChanged(contextId, model->legibleMediaSelectedIndex());
 }
 
 void PlaybackSessionManager::handleControlledElementIDRequest(PlaybackSessionContextIdentifier contextId)
@@ -574,12 +593,32 @@ void PlaybackSessionManager::sendRemoteCommand(PlaybackSessionContextIdentifier 
     ensureModel(contextId).sendRemoteCommand(command, argument);
 }
 
+void PlaybackSessionManager::setSoundStageSize(PlaybackSessionContextIdentifier contextId, WebCore::AudioSessionSoundStageSize size)
+{
+    ensureModel(contextId).setSoundStageSize(size);
+    auto maxSize = size;
+    forEachModel([&] (auto& model) {
+        if (model.soundStageSize() > maxSize)
+            maxSize = model.soundStageSize();
+    });
+    AudioSession::sharedSession().setSoundStageSize(maxSize);
+}
+
 #if HAVE(SPATIAL_TRACKING_LABEL)
 void PlaybackSessionManager::setSpatialTrackingLabel(PlaybackSessionContextIdentifier contextId, const String& label)
 {
     ensureModel(contextId).setSpatialTrackingLabel(label);
 }
 #endif
+
+void PlaybackSessionManager::forEachModel(Function<void(PlaybackSessionModel&)>&& callback)
+{
+    for (auto& [model, interface] : m_contextMap.values()) {
+        UNUSED_PARAM(interface);
+        if (model)
+            callback(*model);
+    }
+}
 
 #if !RELEASE_LOG_DISABLED
 void PlaybackSessionManager::sendLogIdentifierForMediaElement(HTMLMediaElement& mediaElement)

@@ -62,7 +62,7 @@ constexpr size_t kMaxClientArrays = 16;
 GLint **gUniformLocations;
 GLuint gCurrentProgram = 0;
 
-// TODO(jmadill): Hide from the traces. http://anglebug.com/7753
+// TODO(jmadill): Hide from the traces. http://anglebug.com/42266223
 BlockIndexesMap gUniformBlockIndexes;
 
 void UpdateUniformLocation(GLuint program, const char *name, GLint location, GLint count)
@@ -125,7 +125,7 @@ GLuint *gTextureMap;
 GLuint *gTransformFeedbackMap;
 GLuint *gVertexArrayMap;
 
-// TODO(jmadill): Consolidate. http://anglebug.com/7753
+// TODO(jmadill): Consolidate. http://anglebug.com/42266223
 ClientBufferMap gClientBufferMap;
 EGLImageMap gEGLImageMap;
 SurfaceMap gSurfaceMap;

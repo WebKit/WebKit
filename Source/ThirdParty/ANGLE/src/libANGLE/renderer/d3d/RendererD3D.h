@@ -45,7 +45,6 @@ namespace rx
 class ContextImpl;
 struct D3DUniform;
 struct D3DVarying;
-class DeviceD3D;
 class EGLImageD3D;
 class FramebufferImpl;
 class ImageD3D;

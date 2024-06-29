@@ -1100,9 +1100,9 @@ bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex 
             RELEASE_ASSERT_NOT_REACHED();
         }
     } else {
-        const TypeDefinition& signature = TypeInformation::get(typeIndex);
+        const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
         auto signatureRTT = TypeInformation::getCanonicalRTT(typeIndex);
-        if (signature.expand().is<FunctionSignature>()) {
+        if (signature.is<FunctionSignature>()) {
             WebAssemblyFunctionBase* funcRef = jsDynamicCast<WebAssemblyFunctionBase*>(refValue);
             if (!funcRef)
                 return false;
@@ -1111,7 +1111,7 @@ bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex 
                 return true;
             return funcRTT->isSubRTT(*signatureRTT);
         }
-        if (signature.expand().is<ArrayType>()) {
+        if (signature.is<ArrayType>()) {
             JSWebAssemblyArray* arrayRef = jsDynamicCast<JSWebAssemblyArray*>(refValue);
             if (!arrayRef)
                 return false;
@@ -1120,7 +1120,7 @@ bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex 
                 return true;
             return arrayRTT->isSubRTT(*signatureRTT);
         }
-        ASSERT(signature.expand().is<StructType>());
+        ASSERT(signature.is<StructType>());
         JSWebAssemblyStruct* structRef = jsDynamicCast<JSWebAssemblyStruct*>(refValue);
         if (!structRef)
             return false;

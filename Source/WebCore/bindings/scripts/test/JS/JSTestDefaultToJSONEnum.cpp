@@ -64,9 +64,9 @@ template<> std::optional<TestDefaultToJSONEnum> parseEnumeration<TestDefaultToJS
     return parseEnumerationFromString<TestDefaultToJSONEnum>(value.toWTFString(&lexicalGlobalObject));
 }
 
-template<> const char* expectedEnumerationValues<TestDefaultToJSONEnum>()
+template<> ASCIILiteral expectedEnumerationValues<TestDefaultToJSONEnum>()
 {
-    return "\"EnumValue1\", \"EnumValue2\"";
+    return "\"EnumValue1\", \"EnumValue2\""_s;
 }
 
 } // namespace WebCore

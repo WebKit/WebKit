@@ -20,7 +20,7 @@ target_cpu = "arm64"
 is_component_build = false
 is_debug = false
 angle_assert_always_on = true   # Recommended for debugging. Turn off for performance.
-use_goma = true                 # Googlers-only! If you're not a Googler remove this.
+use_remoteexec = true           # Googlers-only! If you're not a Googler remove this.
 ```
 
 More targeted GN arg combinations can be found [below](#android-gn-args-combinations).
@@ -29,8 +29,7 @@ If you run into any problems with the above, you can copy the canonical args fro
  - Visit the ANGLE [CI Waterfall](https://ci.chromium.org/p/angle/g/ci/console).
  - Open any recent Android build.
  - Expand the for "lookup GN args" step and copy the GN args.
- - Always omit the `goma_dir` flag.
- - If you are not a Googler, also omit the `use_goma` flag.
+ - If you are not a Googler, also omit the `use_remoteexec` flag.
 
 ## Building ANGLE for Android
 

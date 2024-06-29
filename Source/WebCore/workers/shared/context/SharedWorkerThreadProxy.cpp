@@ -66,7 +66,7 @@ static WorkerParameters generateWorkerParameters(const WorkerFetchResult& worker
         workerFetchResult.responseURL,
         document.url(),
         workerOptions.name,
-        "sharedworker:" + Inspector::IdentifiersFactory::createIdentifier(),
+        makeString("sharedworker:"_s, Inspector::IdentifiersFactory::createIdentifier()),
         WTFMove(initializationData.userAgent),
         platformStrategies()->loaderStrategy()->isOnLine(),
         workerFetchResult.contentSecurityPolicy,
@@ -81,6 +81,7 @@ static WorkerParameters generateWorkerParameters(const WorkerFetchResult& worker
         *document.sessionID(),
         WTFMove(initializationData.serviceWorkerData),
         *initializationData.clientIdentifier,
+        document.advancedPrivacyProtections(),
         document.noiseInjectionHashSalt()
     };
 }

@@ -170,10 +170,10 @@ static String processFilesizeString(const String& size, bool isDirectory)
         return unknownFileSizeText();
 
     if (*bytes < 1000000)
-        return makeString(FormattedNumber::fixedWidth(*bytes / 1000.0, 2), " KB");
+        return makeString(FormattedNumber::fixedWidth(*bytes / 1000.0, 2), " KB"_s);
     if (*bytes < 1000000000)
-        return makeString(FormattedNumber::fixedWidth(*bytes / 1000000.0, 2), " MB");
-    return makeString(FormattedNumber::fixedWidth(*bytes / 1000000000.0, 2), " GB");
+        return makeString(FormattedNumber::fixedWidth(*bytes / 1000000.0, 2), " MB"_s);
+    return makeString(FormattedNumber::fixedWidth(*bytes / 1000000000.0, 2), " GB"_s);
 }
 
 static bool wasLastDayOfMonth(int year, int month, int day)
@@ -210,12 +210,12 @@ static String processFileDateString(const FTPTime& fileTime)
         if (hour < 12) {
             if (hour == 0)
                 hour = 12;
-            timeOfDay = makeString(", ", hour, ':', pad('0', 2, fileTime.tm_min), " AM");
+            timeOfDay = makeString(", "_s, hour, ':', pad('0', 2, fileTime.tm_min), " AM"_s);
         } else {
             hour = hour - 12;
             if (hour == 0)
                 hour = 12;
-            timeOfDay = makeString(", ", hour, ':', pad('0', 2, fileTime.tm_min), " PM");
+            timeOfDay = makeString(", "_s, hour, ':', pad('0', 2, fileTime.tm_min), " PM"_s);
         }
     }
 
@@ -226,18 +226,18 @@ static String processFileDateString(const FTPTime& fileTime)
     if (fileTime.tm_year == now.year()) {
         if (fileTime.tm_mon == now.month()) {
             if (fileTime.tm_mday == now.monthDay())
-                return "Today" + timeOfDay;
+                return makeString("Today"_s, timeOfDay);
             if (fileTime.tm_mday == now.monthDay() - 1)
-                return "Yesterday" + timeOfDay;
+                return makeString("Yesterday"_s, timeOfDay);
         }
         
         if (now.monthDay() == 1 && (now.month() == fileTime.tm_mon + 1 || (now.month() == 0 && fileTime.tm_mon == 11)) &&
             wasLastDayOfMonth(fileTime.tm_year, fileTime.tm_mon, fileTime.tm_mday))
-                return "Yesterday" + timeOfDay;
+                return makeString("Yesterday"_s, timeOfDay);
     }
 
     if (fileTime.tm_year == now.year() - 1 && fileTime.tm_mon == 12 && fileTime.tm_mday == 31 && now.month() == 1 && now.monthDay() == 1)
-        return "Yesterday" + timeOfDay;
+        return makeString("Yesterday"_s, timeOfDay);
 
     static constexpr std::array months = { "Jan"_s, "Feb"_s, "Mar"_s, "Apr"_s, "May"_s, "Jun"_s, "Jul"_s, "Aug"_s, "Sep"_s, "Oct"_s, "Nov"_s, "Dec"_s, "???"_s };
 
@@ -248,9 +248,9 @@ static String processFileDateString(const FTPTime& fileTime)
     String dateString;
 
     if (fileTime.tm_year > -1)
-        dateString = makeString(months[month], ' ', fileTime.tm_mday, ", ", fileTime.tm_year);
+        dateString = makeString(months[month], ' ', fileTime.tm_mday, ", "_s, fileTime.tm_year);
     else
-        dateString = makeString(months[month], ' ', fileTime.tm_mday, ", ", now.year());
+        dateString = makeString(months[month], ' ', fileTime.tm_mday, ", "_s, now.year());
 
     return dateString + timeOfDay;
 }

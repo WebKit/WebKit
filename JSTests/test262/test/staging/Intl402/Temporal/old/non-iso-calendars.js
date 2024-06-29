@@ -170,7 +170,7 @@ compareFormatToPartsSnapshot("2000-01-01T00:00Z", {
 // sensitive to other bugs that may crop up.
 const yearOneDay = new Map(
   ["iso8601", "gregory", "roc", "buddhist", "japanese"].map(calendar => {
-    hasGregorianSwitchoverBug = new Date("+001001-01-01T00:00Z")
+    const hasGregorianSwitchoverBug = new Date("+001001-01-01T00:00Z")
       .toLocaleDateString(`en-US-u-ca-${calendar}`, { timeZone: "UTC" })
       .startsWith("12");
     return [calendar, hasGregorianSwitchoverBug ? 3 : 1]
@@ -1267,7 +1267,6 @@ var daysInMonthCases = {
     ]
   }
 };
-totalNow = 0;
 for (var id of Object.keys(daysInMonthCases)) {
   var {year, leap, days} = daysInMonthCases[id];
   var date = hasOutdatedChineseIcuData && (id === "chinese" || id === "dangi") ? undefined : Temporal.PlainDate.from({

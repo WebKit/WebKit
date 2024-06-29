@@ -30,31 +30,27 @@
 #include "CanvasPattern.h"
 #include "Color.h"
 #include "ColorSerialization.h"
+#include <optional>
 #include <variant>
 
 namespace WebCore {
 
+class CanvasBase;
 class Document;
 class GraphicsContext;
-class CanvasBase;
+class ScriptExecutionContext;
 
 class CanvasStyle {
 public:
-    CanvasStyle();
     CanvasStyle(Color);
     CanvasStyle(const SRGBA<float>&);
     CanvasStyle(CanvasGradient&);
     CanvasStyle(CanvasPattern&);
 
-    static CanvasStyle createFromString(const String& color, CanvasBase&);
-    static CanvasStyle createFromStringWithOverrideAlpha(const String& color, float alpha, CanvasBase&);
-
-    bool isValid() const { return !std::holds_alternative<Invalid>(m_style); }
-    bool isCurrentColor() const { return std::holds_alternative<CurrentColor>(m_style); }
-    std::optional<float> overrideAlpha() const { return std::get<CurrentColor>(m_style).overrideAlpha; }
+    static std::optional<CanvasStyle> createFromString(const String& color, CanvasBase&);
+    static std::optional<CanvasStyle> createFromStringWithOverrideAlpha(const String& color, float alpha, CanvasBase&);
 
     String color() const;
-    std::optional<Color> srgbaColor() const;
     RefPtr<CanvasGradient> canvasGradient() const;
     RefPtr<CanvasPattern> canvasPattern() const;
 
@@ -64,52 +60,49 @@ public:
     bool isEquivalentColor(const CanvasStyle&) const;
     bool isEquivalent(const SRGBA<float>&) const;
 
+    template<typename... F>
+    decltype(auto) visit(F&&... f) const
+    {
+        auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
+        return WTF::switchOn(m_style,
+            [&](const Color& color) {
+                return visitor(serializationForHTML(color));
+            },
+            [&](const Ref<CanvasGradient>& gradient) {
+                return visitor(gradient);
+            },
+            [&](const Ref<CanvasPattern>& pattern) {
+                return visitor(pattern);
+            }
+        );
+    }
+
 private:
-    struct Invalid { };
-
-    struct CurrentColor {
-        std::optional<float> overrideAlpha;
-    };
-
-    CanvasStyle(CurrentColor);
-
-    std::variant<Invalid, Color, RefPtr<CanvasGradient>, RefPtr<CanvasPattern>, CurrentColor> m_style;
+    std::variant<Color, Ref<CanvasGradient>, Ref<CanvasPattern>> m_style;
 };
 
-bool isCurrentColorString(const String& colorString);
-
-Color currentColor(CanvasBase&);
 Color parseColor(const String& colorString, CanvasBase&);
-Color parseColor(const String& colorString);
-Color parseColorOrCurrentColor(const String& colorString, CanvasBase&);
-
-inline CanvasStyle::CanvasStyle()
-    : m_style(Invalid { })
-{
-}
+Color parseColor(const String& colorString, ScriptExecutionContext&);
 
 inline RefPtr<CanvasGradient> CanvasStyle::canvasGradient() const
 {
-    if (!std::holds_alternative<RefPtr<CanvasGradient>>(m_style))
+    if (!std::holds_alternative<Ref<CanvasGradient>>(m_style))
         return nullptr;
-    return std::get<RefPtr<CanvasGradient>>(m_style);
+    return std::get<Ref<CanvasGradient>>(m_style).ptr();
 }
 
 inline RefPtr<CanvasPattern> CanvasStyle::canvasPattern() const
 {
-    if (!std::holds_alternative<RefPtr<CanvasPattern>>(m_style))
+    if (!std::holds_alternative<Ref<CanvasPattern>>(m_style))
         return nullptr;
-    return std::get<RefPtr<CanvasPattern>>(m_style);
+    return std::get<Ref<CanvasPattern>>(m_style).ptr();
 }
 
 inline String CanvasStyle::color() const
 {
+    if (!std::holds_alternative<Color>(m_style))
+        return String();
     return serializationForHTML(std::get<Color>(m_style));
-}
-
-inline std::optional<Color> CanvasStyle::srgbaColor() const
-{
-    return std::holds_alternative<Color>(m_style) ? std::optional { std::get<Color>(m_style) } : std::nullopt;
 }
 
 } // namespace WebCore

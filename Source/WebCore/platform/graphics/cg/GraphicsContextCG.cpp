@@ -1030,6 +1030,11 @@ void GraphicsContextCG::beginTransparencyLayer(float opacity)
     m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
+void GraphicsContextCG::beginTransparencyLayer(CompositeOperator, BlendMode)
+{
+    beginTransparencyLayer(1);
+}
+
 void GraphicsContextCG::endTransparencyLayer()
 {
     GraphicsContext::endTransparencyLayer();

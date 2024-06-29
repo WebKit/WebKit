@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (28,19) size 731x482
-      RenderSVGText {text} at (123,11) size 234x24 contains 1 chunk(s)
+    RenderSVGContainer {g} at (28,20) size 731x481
+      RenderSVGText {text} at (123,12) size 234x23 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 233x23
           chunk 1 (middle anchor) text run 1 at (123.60,30.00) startOffset 0 endOffset 27 width 232.80: "Radial gradient focal point"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0

@@ -1,0 +1,45 @@
+
+FAIL .target 1 assert_equals:
+<div class="container">
+  <div class="anchor"></div>
+  <div class="target" data-expected-width="70" data-offset-x="30"></div>
+</div>
+width expected 70 but got 100
+FAIL .target 2 assert_equals:
+<div class="container">
+  <div class="anchor"></div>
+  <div class="target" style="left: 20px;" data-expected-width="70" data-offset-x="30"></div>
+</div>
+width expected 70 but got 80
+FAIL .target 3 assert_equals:
+<div class="container">
+  <div class="anchor"></div>
+  <div class="target" style="right: 20px;" data-expected-width="30" data-offset-x="50"></div>
+</div>
+width expected 30 but got 80
+FAIL .target 4 assert_equals:
+<div class="container">
+  <div class="anchor"></div>
+  <div class="target" style="right: -20px;" data-expected-width="110" data-offset-x="10"></div>
+</div>
+width expected 110 but got 120
+FAIL .target 5 assert_equals:
+<div class="container">
+  <div class="anchor"></div>
+  <div class="target" style="right: -100px;" data-expected-width="130" data-offset-x="0"></div>
+</div>
+width expected 130 but got 196
+FAIL .target 6 assert_equals:
+<div class="container">
+  <div class="anchor"></div>
+  <div class="target" style="left: 10px; right: 20px;" data-expected-width="30" data-offset-x="50"></div>
+</div>
+width expected 30 but got 70
+PASS .target 7
+FAIL .target 8 assert_equals:
+<div class="container">
+  <div class="anchor"></div>
+  <div class="target" style="left: -10px; right: -50px;" data-expected-width="150" data-offset-x="-10"></div>
+</div>
+width expected 150 but got 160
+

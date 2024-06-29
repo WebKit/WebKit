@@ -90,7 +90,7 @@ class PeerConnectionE2EQualityTestTest : public Test {
 
 TEST_F(PeerConnectionE2EQualityTestTest, OutputVideoIsDumpedWhenRequested) {
   std::unique_ptr<NetworkEmulationManager> network_emulation =
-      CreateNetworkEmulationManager(TimeMode::kSimulated);
+      CreateNetworkEmulationManager({.time_mode = TimeMode::kSimulated});
   PeerConnectionE2EQualityTest fixture(
       "test_case", *network_emulation->time_controller(),
       /*audio_quality_analyzer=*/nullptr, /*video_quality_analyzer=*/nullptr,

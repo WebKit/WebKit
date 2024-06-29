@@ -1,0 +1,7 @@
+
+PASS Blob.bytes()
+PASS Blob.bytes() empty Blob data
+PASS Blob.bytes() non-ascii input
+PASS Blob.bytes() non-unicode input
+PASS Blob.bytes() concurrent reads
+

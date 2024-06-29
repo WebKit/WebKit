@@ -18,6 +18,7 @@
 #include "test/util.h"
 #include "test/y4m_video_source.h"
 #include "test/yuv_video_source.h"
+#include "vpx_config.h"
 
 namespace {
 
@@ -65,7 +66,9 @@ const TestVideoParam kTestVectorsNv12[] = {
 
 // Encoding modes tested
 const libvpx_test::TestMode kEncodingModeVectors[] = {
+#if !CONFIG_REALTIME_ONLY
   ::libvpx_test::kTwoPassGood, ::libvpx_test::kOnePassGood,
+#endif
   ::libvpx_test::kRealTime
 };
 

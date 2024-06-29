@@ -281,6 +281,8 @@ public:
     bool hasVector() const { return !!m_vector; }
     void* vector() const { return m_vector.getMayBeNull(); }
     void* vectorWithoutPACValidation() const { return m_vector.getUnsafe(); }
+
+    std::span<const uint8_t> span() const { return { static_cast<const uint8_t*>(vector()), byteLength() }; }
     
     size_t byteOffset() const
     {
@@ -341,10 +343,10 @@ public:
 
     DECLARE_EXPORT_INFO;
     
-    static ptrdiff_t offsetOfVector() { return OBJECT_OFFSETOF(JSArrayBufferView, m_vector); }
-    static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSArrayBufferView, m_length); }
-    static ptrdiff_t offsetOfByteOffset() { return OBJECT_OFFSETOF(JSArrayBufferView, m_byteOffset); }
-    static ptrdiff_t offsetOfMode() { return OBJECT_OFFSETOF(JSArrayBufferView, m_mode); }
+    static constexpr ptrdiff_t offsetOfVector() { return OBJECT_OFFSETOF(JSArrayBufferView, m_vector); }
+    static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSArrayBufferView, m_length); }
+    static constexpr ptrdiff_t offsetOfByteOffset() { return OBJECT_OFFSETOF(JSArrayBufferView, m_byteOffset); }
+    static constexpr ptrdiff_t offsetOfMode() { return OBJECT_OFFSETOF(JSArrayBufferView, m_mode); }
     
     static inline RefPtr<ArrayBufferView> toWrapped(VM&, JSValue);
     static inline RefPtr<ArrayBufferView> toWrappedAllowShared(VM&, JSValue);

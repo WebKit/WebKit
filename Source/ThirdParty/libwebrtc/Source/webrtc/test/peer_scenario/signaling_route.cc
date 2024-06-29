@@ -59,6 +59,7 @@ void StartSdpNegotiation(
     CrossTrafficRoute* ret_route,
     std::function<void(SessionDescriptionInterface* offer)> munge_offer,
     std::function<void(SessionDescriptionInterface*)> modify_offer,
+    std::function<void()> callee_remote_description_set,
     std::function<void(const SessionDescriptionInterface&)> exchange_finished) {
   caller->CreateAndSetSdp(munge_offer, [=](std::string sdp_offer) {
     if (modify_offer) {
@@ -67,11 +68,14 @@ void StartSdpNegotiation(
       RTC_CHECK(offer->ToString(&sdp_offer));
     }
     send_route->NetworkDelayedAction(kSdpPacketSize, [=] {
-      callee->SetSdpOfferAndGetAnswer(sdp_offer, [=](std::string answer) {
-        ret_route->NetworkDelayedAction(kSdpPacketSize, [=] {
-          caller->SetSdpAnswer(std::move(answer), std::move(exchange_finished));
-        });
-      });
+      callee->SetSdpOfferAndGetAnswer(
+          sdp_offer, std::move(callee_remote_description_set),
+          [=](std::string answer) {
+            ret_route->NetworkDelayedAction(kSdpPacketSize, [=] {
+              caller->SetSdpAnswer(std::move(answer),
+                                   std::move(exchange_finished));
+            });
+          });
     });
   });
 }
@@ -92,22 +96,39 @@ void SignalingRoute::StartIceSignaling() {
 }
 
 void SignalingRoute::NegotiateSdp(
+    std::function<void(SessionDescriptionInterface* offer)> munge_offer,
+    std::function<void(SessionDescriptionInterface* offer)> modify_offer,
+    std::function<void()> callee_remote_description_set,
+    std::function<void(const SessionDescriptionInterface& answer)>
+        exchange_finished) {
+  StartSdpNegotiation(caller_, callee_, send_route_, ret_route_, munge_offer,
+                      modify_offer, callee_remote_description_set,
+                      exchange_finished);
+}
+
+void SignalingRoute::NegotiateSdp(
     std::function<void(SessionDescriptionInterface*)> munge_offer,
     std::function<void(SessionDescriptionInterface*)> modify_offer,
     std::function<void(const SessionDescriptionInterface&)> exchange_finished) {
-  StartSdpNegotiation(caller_, callee_, send_route_, ret_route_, munge_offer,
-                      modify_offer, exchange_finished);
+  NegotiateSdp(munge_offer, modify_offer, {}, exchange_finished);
 }
 
 void SignalingRoute::NegotiateSdp(
     std::function<void(SessionDescriptionInterface*)> modify_offer,
     std::function<void(const SessionDescriptionInterface&)> exchange_finished) {
-  NegotiateSdp({}, modify_offer, exchange_finished);
+  NegotiateSdp({}, modify_offer, {}, exchange_finished);
+}
+
+void SignalingRoute::NegotiateSdp(
+    std::function<void()> remote_description_set,
+    std::function<void(const SessionDescriptionInterface& answer)>
+        exchange_finished) {
+  NegotiateSdp({}, {}, remote_description_set, exchange_finished);
 }
 
 void SignalingRoute::NegotiateSdp(
     std::function<void(const SessionDescriptionInterface&)> exchange_finished) {
-  NegotiateSdp({}, {}, exchange_finished);
+  NegotiateSdp({}, {}, {}, exchange_finished);
 }
 
 }  // namespace test

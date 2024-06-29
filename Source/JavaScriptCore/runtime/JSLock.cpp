@@ -82,9 +82,7 @@ JSLock::JSLock(VM* vm)
 {
 }
 
-JSLock::~JSLock()
-{
-}
+JSLock::~JSLock() = default;
 
 void JSLock::willDestroyVM(VM* vm)
 {

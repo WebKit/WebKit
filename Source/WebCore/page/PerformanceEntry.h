@@ -60,7 +60,7 @@ public:
 
     static std::optional<Type> parseEntryTypeString(const String& entryType);
 
-    static bool startTimeCompareLessThan(const RefPtr<PerformanceEntry>& a, const RefPtr<PerformanceEntry>& b)
+    static bool startTimeCompareLessThan(const Ref<PerformanceEntry>& a, const Ref<PerformanceEntry>& b)
     {
         return a->startTime() < b->startTime();
     }

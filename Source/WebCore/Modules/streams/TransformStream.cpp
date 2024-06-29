@@ -109,7 +109,14 @@ ExceptionOr<CreateInternalTransformStreamResult> createInternalTransformStream(J
     if (UNLIKELY(result.hasException()))
         return result.releaseException();
 
-    auto results = Detail::SequenceConverter<IDLObject>::convert(globalObject, result.returnValue());
+    JSC::VM& vm = globalObject.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto resultsConversionResult = convert<IDLSequence<IDLObject>>(globalObject, result.returnValue());
+    if (UNLIKELY(resultsConversionResult.hasException(scope)))
+        return Exception { ExceptionCode::ExistingExceptionError };
+
+    auto results = resultsConversionResult.releaseReturnValue();
     ASSERT(results.size() == 3);
 
     return CreateInternalTransformStreamResult { results[0].get(), JSC::jsDynamicCast<JSReadableStream*>(results[1].get())->wrapped(), JSC::jsDynamicCast<JSWritableStream*>(results[2].get())->wrapped() };

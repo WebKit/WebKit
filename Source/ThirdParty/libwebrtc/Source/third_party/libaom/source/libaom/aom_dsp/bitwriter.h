@@ -62,6 +62,8 @@ static INLINE void init_token_stats(TOKEN_STATS *token_stats) {
 
 void aom_start_encode(aom_writer *w, uint8_t *buffer);
 
+// Returns a negative number on error. Caller must check the return value and
+// handle error.
 int aom_stop_encode(aom_writer *w);
 
 int aom_tell_size(aom_writer *w);

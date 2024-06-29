@@ -118,7 +118,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     MediaTime currentTime() const override;
     bool timeIsProgressing() const final;
-    AVSampleBufferDisplayLayer *sampleBufferDisplayLayer() const { return m_sampleBufferDisplayLayer.get(); }
     WebCoreDecompressionSession *decompressionSession() const { return m_decompressionSession.get(); }
     WebSampleBufferVideoRendering *layerOrVideoRenderer() const;
 
@@ -128,7 +127,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     void setVideoFullscreenFrame(FloatRect) override;
 #endif
 
-    bool requiresTextTrackRepresentation() const override;
     void setTextTrackRepresentation(TextTrackRepresentation*) override;
     void syncTextTrackBounds() override;
 
@@ -160,9 +158,10 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
 
     void needsVideoLayerChanged();
+    void setNeedsPlaceholderImage(bool);
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) final;
+    void setVideoTarget(const PlatformVideoTarget&) final;
 #endif
 
 #if !RELEASE_LOG_DISABLED
@@ -214,7 +213,7 @@ private:
     bool hasVideo() const override;
     bool hasAudio() const override;
 
-    void setPageIsVisible(bool, String&& sceneIdentifier) final;
+    void setPageIsVisible(bool) final;
 
     MediaTime duration() const override;
     MediaTime startTime() const override;
@@ -237,6 +236,7 @@ private:
     RefPtr<NativeImage> nativeImageForCurrentTime() override;
     bool updateLastPixelBuffer();
     bool updateLastImage();
+    void maybePurgeLastImage();
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
 #if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
@@ -289,11 +289,13 @@ private:
     void ensureVideoRenderer();
     void destroyVideoRenderer();
 
+    bool shouldEnsureLayerOrVideoRenderer() const;
     void ensureLayerOrVideoRenderer();
     void destroyLayerOrVideoRenderer();
     void configureLayerOrVideoRenderer(WebSampleBufferVideoRendering *);
 
     bool shouldBePlaying() const;
+    void setSynchronizerRate(double, std::optional<MonotonicTime>&& = std::nullopt);
 
     bool setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&&) final;
 
@@ -310,8 +312,6 @@ private:
     void checkNewVideoFrameMetadata(CMTime);
     MediaTime clampTimeToSensicalValue(const MediaTime&) const;
 
-    bool shouldEnsureLayerOrVideoRenderer() const;
-
     void setShouldDisableHDR(bool) final;
     void playerContentBoxRectChanged(const LayoutRect&) final;
     void setShouldMaintainAspectRatio(bool) final;
@@ -325,6 +325,10 @@ private:
 #endif
 
     void isInFullscreenOrPictureInPictureChanged(bool) final;
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    bool supportsLinearMediaPlayer() const final { return true; }
+#endif
 
     friend class MediaSourcePrivateAVFObjC;
     void bufferedChanged();
@@ -402,11 +406,13 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     uint64_t m_lastConvertedSampleCount { 0 };
     ProcessIdentity m_resourceOwner;
     bool m_shouldMaintainAspectRatio { true };
+    bool m_needsPlaceholderImage { false };
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;
 #endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
+    bool m_usingLinearMediaPlayer { false };
     RetainPtr<FigVideoTargetRef> m_videoTarget;
 #endif
 };

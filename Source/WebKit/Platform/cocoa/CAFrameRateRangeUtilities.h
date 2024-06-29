@@ -41,6 +41,7 @@ static CAFrameRateRange highFrameRateRange()
 
 static CAHighFrameRateReason webAnimationHighFrameRateReason = CAHighFrameRateReasonMake(WEBKIT_HIGH_FRAME_RATE_REASON_COMPONENT, 1);
 static CAHighFrameRateReason keyboardScrollingAnimationHighFrameRateReason = CAHighFrameRateReasonMake(WEBKIT_HIGH_FRAME_RATE_REASON_COMPONENT, 2);
+static CAHighFrameRateReason preferPageRenderingUpdatesNear60FPSDisabledHighFrameRateReason = CAHighFrameRateReasonMake(WEBKIT_HIGH_FRAME_RATE_REASON_COMPONENT, 3);
 
 }
 

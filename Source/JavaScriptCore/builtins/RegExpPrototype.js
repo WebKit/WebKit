@@ -452,6 +452,9 @@ function hasObservableSideEffectsForRegExpSplit(regexp)
     var regexpGlobal = @tryGetById(regexp, "global");
     if (regexpGlobal !== @regExpProtoGlobalGetter)
         return true;
+    var regexpHasIndices = @tryGetById(regexp, "hasIndices");
+    if (regexpHasIndices !== @regExpProtoHasIndicesGetter)
+        return true;
     var regexpIgnoreCase = @tryGetById(regexp, "ignoreCase");
     if (regexpIgnoreCase !== @regExpProtoIgnoreCaseGetter)
         return true;
@@ -460,6 +463,9 @@ function hasObservableSideEffectsForRegExpSplit(regexp)
         return true;
     var regexpSticky = @tryGetById(regexp, "sticky");
     if (regexpSticky !== @regExpProtoStickyGetter)
+        return true;
+    var regexpDotAll = @tryGetById(regexp, "dotAll");
+    if (regexpDotAll !== @regExpProtoDotAllGetter)
         return true;
     var regexpUnicode = @tryGetById(regexp, "unicode");
     if (regexpUnicode !== @regExpProtoUnicodeGetter)

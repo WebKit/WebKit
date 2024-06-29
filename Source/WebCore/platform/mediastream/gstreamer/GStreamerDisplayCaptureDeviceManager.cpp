@@ -53,7 +53,7 @@ void GStreamerDisplayCaptureDeviceManager::computeCaptureDevices(CompletionHandl
 {
     m_devices.clear();
 
-    CaptureDevice screenCaptureDevice(createVersion4UUIDString(), CaptureDevice::DeviceType::Screen, makeString("Capture Screen"));
+    CaptureDevice screenCaptureDevice(createVersion4UUIDString(), CaptureDevice::DeviceType::Screen, "Capture Screen"_s);
     screenCaptureDevice.setEnabled(true);
     m_devices.append(WTFMove(screenCaptureDevice));
     callback();
@@ -76,8 +76,8 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
         return CaptureSourceOrError({ { } , MediaAccessDenialReason::PermissionDenied });
     }
 
-    auto token = makeString("WebKit", weakRandomNumber<uint32_t>());
-    auto sessionToken = makeString("WebKit", weakRandomNumber<uint32_t>());
+    auto token = makeString("WebKit"_s, weakRandomNumber<uint32_t>());
+    auto sessionToken = makeString("WebKit"_s, weakRandomNumber<uint32_t>());
     GVariantBuilder options;
     g_variant_builder_init(&options, G_VARIANT_TYPE_VARDICT);
     g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(token.ascii().data()));
@@ -101,7 +101,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
     // FIXME: Maybe check this depending on device.type().
     auto outputType = GStreamerDisplayCaptureDeviceManager::PipeWireOutputType::Monitor | GStreamerDisplayCaptureDeviceManager::PipeWireOutputType::Window;
 
-    token = makeString("WebKit", weakRandomNumber<uint32_t>());
+    token = makeString("WebKit"_s, weakRandomNumber<uint32_t>());
     g_variant_builder_init(&options, G_VARIANT_TYPE_VARDICT);
     g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(token.ascii().data()));
     g_variant_builder_add(&options, "{sv}", "types", g_variant_new_uint32(static_cast<uint32_t>(outputType)));
@@ -128,7 +128,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
     g_variant_get(result.get(), "(o)", &objectPath.outPtr());
     waitResponseSignal(objectPath.get());
 
-    token = makeString("WebKit", weakRandomNumber<uint32_t>());
+    token = makeString("WebKit"_s, weakRandomNumber<uint32_t>());
     g_variant_builder_init(&options, G_VARIANT_TYPE_VARDICT);
     g_variant_builder_add(&options, "{sv}", "handle_token", g_variant_new_string(token.ascii().data()));
     result = adoptGRef(g_dbus_proxy_call_sync(m_proxy.get(), "Start",

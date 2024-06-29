@@ -50,7 +50,7 @@ Ref<InspectorShaderProgram> InspectorShaderProgram::create(WebGLProgram& program
 }
 
 InspectorShaderProgram::InspectorShaderProgram(WebGLProgram& program, InspectorCanvas& inspectorCanvas)
-    : m_identifier("program:" + IdentifiersFactory::createIdentifier())
+    : m_identifier(makeString("program:"_s, IdentifiersFactory::createIdentifier()))
     , m_canvas(inspectorCanvas)
     , m_program(program)
 {

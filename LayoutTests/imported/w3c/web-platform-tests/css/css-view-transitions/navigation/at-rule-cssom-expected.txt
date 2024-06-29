@@ -1,0 +1,9 @@
+
+FAIL CSSViewTransitionRule is correctly parsed and accessible via CSSOM. The string did not match the expected pattern.
+FAIL `navigation: auto` is correctly parsed. The string did not match the expected pattern.
+FAIL `navigation: none` is correctly parsed. The string did not match the expected pattern.
+PASS @view-transition fails parsing with a preamble
+FAIL Invalid `navigation` value fails to parse. The string did not match the expected pattern.
+FAIL `navigation` with !important flag should fail to parse. The string did not match the expected pattern.
+FAIL `navigation` descriptor cannot be set. The string did not match the expected pattern.
+

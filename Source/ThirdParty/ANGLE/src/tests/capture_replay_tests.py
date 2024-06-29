@@ -359,7 +359,7 @@ class Test():
         source_json_count = 0
         context_id = 0
         for f in test_files:
-            # TODO: Consolidate. http://anglebug.com/7753
+            # TODO: Consolidate. http://anglebug.com/42266223
             if "_001.cpp" in f or "_001.c" in f:
                 frame_files_count += 1
             elif f.endswith(".json"):
@@ -369,7 +369,7 @@ class Test():
                 if TRACE_FILE_SUFFIX in f:
                     context = f.split(TRACE_FILE_SUFFIX)[1][:-2]
                     context_id = int(context)
-            # TODO: Consolidate. http://anglebug.com/7753
+            # TODO: Consolidate. http://anglebug.com/42266223
             elif f.endswith(".cpp") or f.endswith(".c"):
                 context_source_count += 1
         can_run_replay = frame_files_count >= 1 and context_header_count >= 1 \
@@ -871,7 +871,7 @@ def main(args):
         os.environ["RBE_experimental_credentials_helper_args"] = ""
 
     if sys.platform == 'linux' and is_bot:
-        logger.warning('Test is currently a no-op https://anglebug.com/6085')
+        logger.warning('Test is currently a no-op https://anglebug.com/42264614')
         return EXIT_SUCCESS
 
     ninja_lock = multiprocessing.Semaphore(args.max_ninja_jobs)

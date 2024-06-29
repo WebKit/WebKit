@@ -199,7 +199,10 @@ bool Is11thGenIntel(uint32_t DeviceId);
 bool Is12thGenIntel(uint32_t DeviceId);
 
 using ARMDriverVersion = angle::VersionTriple;
-ARMDriverVersion ParseARMDriverVersion(uint32_t driverVersion);
+ARMDriverVersion ParseARMVulkanDriverVersion(uint32_t driverVersion);
+
+using QualcommDriverVersion = angle::VersionTriple;
+QualcommDriverVersion ParseQualcommVulkanDriverVersion(uint32_t driverVersion);
 
 // Platform helpers
 using angle::IsAndroid;

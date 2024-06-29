@@ -164,12 +164,12 @@ struct MinimalValueProfile : public ValueProfileBase<0, 1> {
 
 struct ValueProfile : public ValueProfileBase<1, 0> {
     ValueProfile() : ValueProfileBase<1, 0>() { }
-    static ptrdiff_t offsetOfFirstBucket() { return OBJECT_OFFSETOF(ValueProfile, m_buckets[0]); }
+    static constexpr ptrdiff_t offsetOfFirstBucket() { return OBJECT_OFFSETOF(ValueProfile, m_buckets[0]); }
 };
 
 struct ArgumentValueProfile : public ValueProfileBase<1, 1> {
     ArgumentValueProfile() : ValueProfileBase<1, 1>() { }
-    static ptrdiff_t offsetOfFirstBucket() { return OBJECT_OFFSETOF(ValueProfile, m_buckets[0]); }
+    static constexpr ptrdiff_t offsetOfFirstBucket() { return OBJECT_OFFSETOF(ValueProfile, m_buckets[0]); }
 };
 
 struct ValueProfileAndVirtualRegister : public ValueProfile {

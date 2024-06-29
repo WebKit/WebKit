@@ -28,10 +28,8 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER) && USE(SKIA)
 
-#include "GStreamerCommon.h"
 #include "NotImplemented.h"
-#include <gst/gst.h>
-#include <gst/video/gstvideometa.h>
+#include <skia/ColorSpaceSkia.h>
 #include <skia/core/SkImage.h>
 
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
@@ -47,16 +45,14 @@ ImageGStreamer::ImageGStreamer(GRefPtr<GstSample>&& sample)
     if (UNLIKELY(!GST_IS_BUFFER(buffer)))
         return;
 
-    GstVideoInfo videoInfo;
-    if (!gst_video_info_from_caps(&videoInfo, gst_sample_get_caps(m_sample.get())))
+    GstMappedFrame videoFrame(m_sample, GST_MAP_READ);
+    if (!videoFrame)
         return;
 
-    auto videoFrame = makeUnique<GstMappedFrame>(buffer, &videoInfo, GST_MAP_READ);
-    if (!*videoFrame)
-        return;
+    auto* videoInfo = videoFrame.info();
 
     // The frame has to be RGB so we can paint it.
-    ASSERT(GST_VIDEO_INFO_IS_RGB(&videoInfo));
+    ASSERT(GST_VIDEO_INFO_IS_RGB(videoInfo));
 
     // The video buffer may have these formats in these cases:
     // { BGRx, BGRA } on little endian
@@ -64,7 +60,7 @@ ImageGStreamer::ImageGStreamer(GRefPtr<GstSample>&& sample)
     // { RGBx, RGBA }
     SkColorType colorType = kUnknown_SkColorType;
     SkAlphaType alphaType = kUnknown_SkAlphaType;
-    switch (videoFrame->format()) {
+    switch (videoFrame.format()) {
     case GST_VIDEO_FORMAT_BGRx:
         colorType = kBGRA_8888_SkColorType;
         alphaType = kOpaque_SkAlphaType;
@@ -91,17 +87,19 @@ ImageGStreamer::ImageGStreamer(GRefPtr<GstSample>&& sample)
         break;
     }
 
+    m_size = { static_cast<float>(videoFrame.width()), static_cast<float>(videoFrame.height()) };
+
     auto toSkiaColorSpace = [](const PlatformVideoColorSpace&) {
         notImplemented();
         return SkColorSpace::MakeSRGB();
     };
-    auto imageInfo = SkImageInfo::Make(videoFrame->width(), videoFrame->height(), colorType, alphaType, toSkiaColorSpace(videoColorSpaceFromInfo(videoInfo)));
-    SkPixmap pixmap(imageInfo, videoFrame->planeData(0), videoFrame->planeStride(0));
-    auto image = SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
-        std::unique_ptr<GstMappedFrame> videoFrame(static_cast<GstMappedFrame*>(context));
-    }, videoFrame.release());
+    auto imageInfo = SkImageInfo::Make(videoFrame.width(), videoFrame.height(), colorType, alphaType, toSkiaColorSpace(videoColorSpaceFromInfo(*videoInfo)));
 
-    m_image = BitmapImage::create(WTFMove(image));
+    // Copy the buffer data. Keeping the whole mapped GstVideoFrame alive would increase memory
+    // pressure and the file descriptor(s) associated with the buffer pool open. We only need the
+    // data here.
+    SkPixmap pixmap(imageInfo, videoFrame.planeData(0), videoFrame.planeStride(0));
+    m_image = SkImages::RasterFromPixmapCopy(pixmap);
 
     if (auto* cropMeta = gst_buffer_get_video_crop_meta(buffer))
         m_cropRect = FloatRect(cropMeta->x, cropMeta->y, cropMeta->width, cropMeta->height);

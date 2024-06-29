@@ -14,7 +14,9 @@
 #include <mutex>
 #include <vector>
 
+#include "common/SimpleMutex.h"
 #include "common/WorkerThread.h"
+#include "common/platform.h"
 #include "libANGLE/AttributeMap.h"
 #include "libANGLE/BlobCache.h"
 #include "libANGLE/Caps.h"
@@ -30,6 +32,16 @@
 #include "libANGLE/Version.h"
 #include "platform/Feature.h"
 #include "platform/autogen/FrontendFeatures_autogen.h"
+
+// Only DisplayCGL and DisplayEAGL need to be notified about an EGL call about to be made to prepare
+// per-thread data. Disable Display::prepareForCall on other platforms for performance.
+#if !defined(ANGLE_USE_DISPLAY_PREPARE_FOR_CALL)
+#    if ANGLE_PLATFORM_APPLE
+#        define ANGLE_USE_DISPLAY_PREPARE_FOR_CALL 1
+#    else
+#        define ANGLE_USE_DISPLAY_PREPARE_FOR_CALL 0
+#    endif
+#endif
 
 namespace angle
 {
@@ -113,10 +125,14 @@ class Display final : public LabeledObject,
         EnumCount = InvalidEnum,
     };
     Error terminate(Thread *thread, TerminateReason terminateReason);
+
+#if ANGLE_USE_DISPLAY_PREPARE_FOR_CALL
     // Called before all display state dependent EGL functions. Backends can set up, for example,
     // thread-specific backend state through this function. Not called for functions that do not
     // need the state.
     Error prepareForCall();
+#endif
+
     // Called on eglReleaseThread. Backends can tear down thread-specific backend state through
     // this function.
     Error releaseThread();
@@ -281,8 +297,8 @@ class Display final : public LabeledObject,
 
     egl::Error waitUntilWorkScheduled();
 
-    std::mutex &getDisplayGlobalMutex() { return mDisplayGlobalMutex; }
-    std::mutex &getProgramCacheMutex() { return mProgramCacheMutex; }
+    angle::SimpleMutex &getDisplayGlobalMutex() { return mDisplayGlobalMutex; }
+    angle::SimpleMutex &getProgramCacheMutex() { return mProgramCacheMutex; }
 
     gl::MemoryShaderCache *getMemoryShaderCache() { return &mMemoryShaderCache; }
 
@@ -417,12 +433,12 @@ class Display final : public LabeledObject,
 
     angle::FeatureList mFeatures;
 
-    std::mutex mScratchBufferMutex;
+    angle::SimpleMutex mScratchBufferMutex;
     std::vector<angle::ScratchBuffer> mScratchBuffers;
     std::vector<angle::ScratchBuffer> mZeroFilledBuffers;
 
-    std::mutex mDisplayGlobalMutex;
-    std::mutex mProgramCacheMutex;
+    angle::SimpleMutex mDisplayGlobalMutex;
+    angle::SimpleMutex mProgramCacheMutex;
 
     bool mTerminatedByApi;
 };

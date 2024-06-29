@@ -23,13 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://w3c.github.io/DOM-Parsing/#the-innerhtml-mixin
 // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-parsing-and-serialization
 
 interface mixin InnerHTML {
-    [CEReactions=Needed, EnabledBySetting=DeclarativeShadowRootsParserAPIsEnabled] undefined setHTMLUnsafe(HTMLString html);
+    [CEReactions=Needed, EnabledBySetting=DeclarativeShadowRootsParserAPIsEnabled] undefined setHTMLUnsafe((TrustedHTML or DOMString) html);
     [CEReactions=NotNeeded, EnabledBySetting=DeclarativeShadowRootsSerializerAPIsEnabled] DOMString getHTML(optional GetHTMLOptions options = {});
-    [CEReactions=Needed] attribute [LegacyNullToEmptyString] HTMLString innerHTML;
+    [CEReactions=Needed] attribute (TrustedHTML or [LegacyNullToEmptyString] DOMString) innerHTML;
 };
-
-typedef [StringContext=TrustedHTML] DOMString HTMLString;

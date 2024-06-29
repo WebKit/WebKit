@@ -63,7 +63,7 @@ public:
     WebExtensionAPIRuntime& runtime() const final { return const_cast<WebExtensionAPIRuntime&>(*this); }
 
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
+    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
     NSURL *getURL(NSString *resourcePath, NSString **outExceptionString);
     NSDictionary *getManifest();

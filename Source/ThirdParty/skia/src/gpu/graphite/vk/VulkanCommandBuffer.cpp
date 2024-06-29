@@ -14,6 +14,7 @@
 #include "src/gpu/DataUtils.h"
 #include "src/gpu/graphite/DescriptorData.h"
 #include "src/gpu/graphite/Log.h"
+#include "src/gpu/graphite/RenderPassDesc.h"
 #include "src/gpu/graphite/Surface_Graphite.h"
 #include "src/gpu/graphite/TextureProxy.h"
 #include "src/gpu/graphite/vk/VulkanBuffer.h"
@@ -55,18 +56,16 @@ std::unique_ptr<VulkanCommandBuffer> VulkanCommandBuffer::Make(
     }
 
     const VkCommandPoolCreateInfo cmdPoolInfo = {
-        VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,  // sType
-        nullptr,                                     // pNext
-        cmdPoolCreateFlags,                          // CmdPoolCreateFlags
-        sharedContext->queueIndex(),                 // queueFamilyIndex
+            VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,  // sType
+            nullptr,                                     // pNext
+            cmdPoolCreateFlags,                          // CmdPoolCreateFlags
+            sharedContext->queueIndex(),                 // queueFamilyIndex
     };
-    auto interface = sharedContext->interface();
     VkResult result;
     VkCommandPool pool;
-    VULKAN_CALL_RESULT(interface, result, CreateCommandPool(sharedContext->device(),
-                                                            &cmdPoolInfo,
-                                                            nullptr,
-                                                            &pool));
+    VULKAN_CALL_RESULT(sharedContext,
+                       result,
+                       CreateCommandPool(sharedContext->device(), &cmdPoolInfo, nullptr, &pool));
     if (result != VK_SUCCESS) {
         return nullptr;
     }
@@ -80,11 +79,13 @@ std::unique_ptr<VulkanCommandBuffer> VulkanCommandBuffer::Make(
     };
 
     VkCommandBuffer primaryCmdBuffer;
-    VULKAN_CALL_RESULT(interface, result, AllocateCommandBuffers(sharedContext->device(),
-                                                                 &cmdInfo,
-                                                                 &primaryCmdBuffer));
+    VULKAN_CALL_RESULT(
+            sharedContext,
+            result,
+            AllocateCommandBuffers(sharedContext->device(), &cmdInfo, &primaryCmdBuffer));
     if (result != VK_SUCCESS) {
-        VULKAN_CALL(interface, DestroyCommandPool(sharedContext->device(), pool, nullptr));
+        VULKAN_CALL(sharedContext->interface(),
+                    DestroyCommandPool(sharedContext->device(), pool, nullptr));
         return nullptr;
     }
 
@@ -114,21 +115,17 @@ VulkanCommandBuffer::~VulkanCommandBuffer() {
     }
 
     if (VK_NULL_HANDLE != fSubmitFence) {
-        VULKAN_CALL(fSharedContext->interface(), DestroyFence(fSharedContext->device(),
-                                                              fSubmitFence,
-                                                              nullptr));
+        VULKAN_CALL(fSharedContext->interface(),
+                    DestroyFence(fSharedContext->device(), fSubmitFence, nullptr));
     }
     // This should delete any command buffers as well.
-    VULKAN_CALL(fSharedContext->interface(), DestroyCommandPool(fSharedContext->device(),
-                                                                fPool,
-                                                                nullptr));
+    VULKAN_CALL(fSharedContext->interface(),
+                DestroyCommandPool(fSharedContext->device(), fPool, nullptr));
 }
 
 void VulkanCommandBuffer::onResetCommandBuffer() {
     SkASSERT(!fActive);
-    VULKAN_CALL_ERRCHECK(fSharedContext->interface(), ResetCommandPool(fSharedContext->device(),
-                                                                       fPool,
-                                                                       0));
+    VULKAN_CALL_ERRCHECK(fSharedContext, ResetCommandPool(fSharedContext->device(), fPool, 0));
     fActiveGraphicsPipeline = nullptr;
     fBindUniformBuffers = true;
     fBoundIndexBuffer = VK_NULL_HANDLE;
@@ -163,8 +160,8 @@ void VulkanCommandBuffer::begin() {
     cmdBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     cmdBufferBeginInfo.pInheritanceInfo = nullptr;
 
-    VULKAN_CALL_ERRCHECK(fSharedContext->interface(), BeginCommandBuffer(fPrimaryCommandBuffer,
-                                                                         &cmdBufferBeginInfo));
+    VULKAN_CALL_ERRCHECK(fSharedContext,
+                         BeginCommandBuffer(fPrimaryCommandBuffer, &cmdBufferBeginInfo));
     fActive = true;
 }
 
@@ -174,7 +171,7 @@ void VulkanCommandBuffer::end() {
 
     this->submitPipelineBarriers();
 
-    VULKAN_CALL_ERRCHECK(fSharedContext->interface(), EndCommandBuffer(fPrimaryCommandBuffer));
+    VULKAN_CALL_ERRCHECK(fSharedContext, EndCommandBuffer(fPrimaryCommandBuffer));
 
     fActive = false;
 }
@@ -244,7 +241,7 @@ void VulkanCommandBuffer::prepareSurfaceForStateUpdate(SkSurface* targetSurface,
                                          newQueueFamilyIndex);
 }
 
-static bool submit_to_queue(const VulkanInterface* interface,
+static bool submit_to_queue(const VulkanSharedContext* sharedContext,
                             VkQueue queue,
                             VkFence fence,
                             uint32_t waitCount,
@@ -275,14 +272,13 @@ static bool submit_to_queue(const VulkanInterface* interface,
     submitInfo.signalSemaphoreCount = signalCount;
     submitInfo.pSignalSemaphores = signalSemaphores;
     VkResult result;
-    VULKAN_CALL_RESULT(interface, result, QueueSubmit(queue, 1, &submitInfo, fence));
+    VULKAN_CALL_RESULT(sharedContext, result, QueueSubmit(queue, 1, &submitInfo, fence));
     return result == VK_SUCCESS;
 }
 
 bool VulkanCommandBuffer::submit(VkQueue queue) {
     this->end();
 
-    auto interface = fSharedContext->interface();
     auto device = fSharedContext->device();
     VkResult err;
 
@@ -290,17 +286,15 @@ bool VulkanCommandBuffer::submit(VkQueue queue) {
         VkFenceCreateInfo fenceInfo;
         memset(&fenceInfo, 0, sizeof(VkFenceCreateInfo));
         fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-        VULKAN_CALL_RESULT(interface, err, CreateFence(device,
-                                                       &fenceInfo,
-                                                       nullptr,
-                                                       &fSubmitFence));
+        VULKAN_CALL_RESULT(
+                fSharedContext, err, CreateFence(device, &fenceInfo, nullptr, &fSubmitFence));
         if (err) {
             fSubmitFence = VK_NULL_HANDLE;
             return false;
         }
     } else {
         // This cannot return DEVICE_LOST so we assert we succeeded.
-        VULKAN_CALL_RESULT(interface, err, ResetFences(device, 1, &fSubmitFence));
+        VULKAN_CALL_RESULT(fSharedContext, err, ResetFences(device, 1, &fSubmitFence));
         SkASSERT(err == VK_SUCCESS);
     }
 
@@ -312,13 +306,13 @@ bool VulkanCommandBuffer::submit(VkQueue queue) {
                                VK_PIPELINE_STAGE_TRANSFER_BIT);
     }
 
-    bool submitted = submit_to_queue(interface,
+    bool submitted = submit_to_queue(fSharedContext,
                                      queue,
                                      fSubmitFence,
                                      waitCount,
                                      fWaitSemaphores.data(),
                                      vkWaitStages.data(),
-                                     /*commandBufferCount*/1,
+                                     /*commandBufferCount*/ 1,
                                      &fPrimaryCommandBuffer,
                                      fSignalSemaphores.size(),
                                      fSignalSemaphores.data(),
@@ -327,7 +321,7 @@ bool VulkanCommandBuffer::submit(VkQueue queue) {
     fSignalSemaphores.clear();
     if (!submitted) {
         // Destroy the fence or else we will try to wait forever for it to finish.
-        VULKAN_CALL(interface, DestroyFence(device, fSubmitFence, nullptr));
+        VULKAN_CALL(fSharedContext->interface(), DestroyFence(device, fSubmitFence, nullptr));
         fSubmitFence = VK_NULL_HANDLE;
         return false;
     }
@@ -362,11 +356,12 @@ void VulkanCommandBuffer::waitUntilFinished() {
     if (fSubmitFence == VK_NULL_HANDLE) {
         return;
     }
-    VULKAN_CALL_ERRCHECK(fSharedContext->interface(), WaitForFences(fSharedContext->device(),
-                                                                    1,
-                                                                    &fSubmitFence,
-                                                                    /*waitAll=*/true,
-                                                                    /*timeout=*/UINT64_MAX));
+    VULKAN_CALL_ERRCHECK(fSharedContext,
+                         WaitForFences(fSharedContext->device(),
+                                       1,
+                                       &fSubmitFence,
+                                       /*waitAll=*/true,
+                                       /*timeout=*/UINT64_MAX));
 }
 
 void VulkanCommandBuffer::updateRtAdjustUniform(const SkRect& viewport) {
@@ -971,7 +966,7 @@ void VulkanCommandBuffer::bindUniformBuffers() {
             fSharedContext)->vulkanCaps().maxUniformBufferRange();
 
     for (int i = 0; i < descriptors.size(); i++) {
-        int descriptorBindingIndex = descriptors.at(i).bindingIndex;
+        int descriptorBindingIndex = descriptors.at(i).fBindingIndex;
         SkASSERT(static_cast<unsigned long>(descriptorBindingIndex)
                     < fUniformBuffersToBind.size());
         if (fUniformBuffersToBind[descriptorBindingIndex].fBuffer) {
@@ -991,8 +986,8 @@ void VulkanCommandBuffer::bindUniformBuffers() {
             writeInfo.dstSet = *set->descriptorSet();
             writeInfo.dstBinding = descriptorBindingIndex;
             writeInfo.dstArrayElement = 0;
-            writeInfo.descriptorCount = descriptors.at(i).count;
-            writeInfo.descriptorType = DsTypeEnumToVkDs(descriptors.at(i).type);
+            writeInfo.descriptorCount = descriptors.at(i).fCount;
+            writeInfo.descriptorType = DsTypeEnumToVkDs(descriptors.at(i).fType);
             writeInfo.pImageInfo = nullptr;
             writeInfo.pBufferInfo = &bufferInfo;
             writeInfo.pTexelBufferView = nullptr;
@@ -1107,7 +1102,7 @@ void VulkanCommandBuffer::recordTextureAndSamplerDescSet(
     TArray<DescriptorData> descriptors(command.fNumTexSamplers);
     for (int i = 0; i < command.fNumTexSamplers; i++) {
         descriptors.push_back({DescriptorType::kCombinedTextureSampler,
-                               /*descCount=*/1,
+                               /*count=*/1,
                                /*bindingIdx=*/i,
                                PipelineStageFlags::kFragmentShader});
     }
@@ -1160,12 +1155,11 @@ void VulkanCommandBuffer::recordTextureAndSamplerDescSet(
         writeInfo.pTexelBufferView = nullptr;
     }
 
-    VULKAN_CALL(fSharedContext->interface(),
-            UpdateDescriptorSets(fSharedContext->device(),
-                                    command.fNumTexSamplers,
-                                    &writeDescriptorSets[0],
-                                    /*descriptorCopyCount=*/0,
-                                    /*pDescriptorCopies=*/nullptr));
+    VULKAN_CALL(fSharedContext->interface(), UpdateDescriptorSets(fSharedContext->device(),
+                                                                  command.fNumTexSamplers,
+                                                                  &writeDescriptorSets[0],
+                                                                  /*descriptorCopyCount=*/0,
+                                                                  /*pDescriptorCopies=*/nullptr));
 
     // Store the updated descriptor set to be actually bound later on. This avoids binding and
     // potentially having to re-bind in cases where earlier descriptor sets change while going

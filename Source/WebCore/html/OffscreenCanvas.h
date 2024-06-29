@@ -35,7 +35,6 @@
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
 #include "ImageBuffer.h"
-#include "ImageBufferPipe.h"
 #include "IntSize.h"
 #include "ScriptWrappable.h"
 #include <wtf/FixedVector.h>
@@ -74,7 +73,8 @@ using OffscreenRenderingContext = std::variant<
     RefPtr<OffscreenCanvasRenderingContext2D>
 >;
 
-class OffscreenCanvasPlaceholderData;
+class PlaceholderRenderingContext;
+class PlaceholderRenderingContextSource;
 
 class DetachedOffscreenCanvas {
     WTF_MAKE_NONCOPYABLE(DetachedOffscreenCanvas);
@@ -82,24 +82,14 @@ class DetachedOffscreenCanvas {
     friend class OffscreenCanvas;
 
 public:
-    DetachedOffscreenCanvas(std::unique_ptr<SerializedImageBuffer>, const IntSize&, bool originClean, RefPtr<OffscreenCanvasPlaceholderData>);
+    DetachedOffscreenCanvas(const IntSize&, bool originClean, RefPtr<PlaceholderRenderingContextSource>&&);
     WEBCORE_EXPORT ~DetachedOffscreenCanvas();
-
-    RefPtr<ImageBuffer> takeImageBuffer(ScriptExecutionContext&);
     const IntSize& size() const { return m_size; }
     bool originClean() const { return m_originClean; }
-    size_t memoryCost() const
-    {
-        auto* buffer = m_buffer.get();
-        if (buffer)
-            return buffer->memoryCost();
-        return 0;
-    }
-    RefPtr<OffscreenCanvasPlaceholderData> takePlaceholderData();
+    RefPtr<PlaceholderRenderingContextSource> takePlaceholderSource();
 
 private:
-    std::unique_ptr<SerializedImageBuffer> m_buffer;
-    RefPtr<OffscreenCanvasPlaceholderData> m_placeholderData;
+    RefPtr<PlaceholderRenderingContextSource> m_placeholderSource;
     IntSize m_size;
     bool m_originClean;
 };
@@ -125,7 +115,7 @@ public:
 
     static Ref<OffscreenCanvas> create(ScriptExecutionContext&, unsigned width, unsigned height);
     static Ref<OffscreenCanvas> create(ScriptExecutionContext&, std::unique_ptr<DetachedOffscreenCanvas>&&);
-    static Ref<OffscreenCanvas> create(ScriptExecutionContext&, HTMLCanvasElement& placeholder);
+    static Ref<OffscreenCanvas> create(ScriptExecutionContext&, PlaceholderRenderingContext&);
     WEBCORE_EXPORT virtual ~OffscreenCanvas();
 
     void setWidth(unsigned);
@@ -164,7 +154,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
 private:
-    OffscreenCanvas(ScriptExecutionContext&, IntSize, RefPtr<OffscreenCanvasPlaceholderData>);
+    OffscreenCanvas(ScriptExecutionContext&, IntSize, RefPtr<PlaceholderRenderingContextSource>&&);
 
     bool isOffscreenCanvas() const final { return true; }
 
@@ -181,13 +171,12 @@ private:
     void setSize(const IntSize&) final;
 
     void createImageBuffer() const final;
-    std::unique_ptr<SerializedImageBuffer> takeImageBuffer() const;
 
     void reset();
     void scheduleCommitToPlaceholderCanvas();
 
     std::unique_ptr<CanvasRenderingContext> m_context;
-    RefPtr<OffscreenCanvasPlaceholderData> m_placeholderData;
+    RefPtr<PlaceholderRenderingContextSource> m_placeholderSource;
     mutable RefPtr<Image> m_copiedImage;
     // m_hasCreatedImageBuffer means we tried to malloc the buffer. We didn't necessarily get it.
     mutable bool m_hasCreatedImageBuffer { false };

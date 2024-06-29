@@ -65,7 +65,7 @@ private:
     RemoteTextTrackProxy(GPUConnectionToWebProcess&, WebCore::InbandTextTrackPrivate&, WebCore::MediaPlayerIdentifier);
 
     // InbandTextTrackPrivateClient
-    virtual void addDataCue(const MediaTime& start, const MediaTime& end, const void*, unsigned);
+    virtual void addDataCue(const MediaTime& start, const MediaTime& end, std::span<const uint8_t>);
 
 #if ENABLE(DATACUE_VALUE)
     virtual void addDataCue(const MediaTime& start, const MediaTime& end, Ref<WebCore::SerializedPlatformDataCue>&&, const String&);

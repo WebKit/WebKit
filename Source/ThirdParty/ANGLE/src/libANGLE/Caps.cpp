@@ -282,8 +282,9 @@ static bool DetermineBGRAReadFormatSupport(const TextureCapsMap &textureCaps)
 {
     constexpr GLenum requiredFormats[] = {
         GL_BGRA8_EXT,
-        // TODO(http://anglebug.com/4302): GL_EXT_read_format_bgra specifies 2 more types, which are
-        // currently ignored. The equivalent formats would be: GL_BGRA4_ANGLEX, GL_BGR5_A1_ANGLEX
+        // TODO(http://anglebug.com/42262931): GL_EXT_read_format_bgra specifies 2 more types, which
+        // are currently ignored. The equivalent formats would be: GL_BGRA4_ANGLEX,
+        // GL_BGR5_A1_ANGLEX
     };
 
     return GetFormatSupport(textureCaps, requiredFormats, true, false, true, true, false);
@@ -651,7 +652,7 @@ static bool DetermineDepthTextureANGLESupport(const TextureCapsMap &textureCaps)
     constexpr GLenum requiredFormats[] = {
         GL_DEPTH_COMPONENT16,
 #if !ANGLE_PLATFORM_IOS_FAMILY
-        // anglebug.com/6082
+        // anglebug.com/42264611
         // TODO(dino): Temporarily Removing the need for GL_DEPTH_COMPONENT32_OES
         // because it is not supported on iOS.
         // TODO(dino): I think this needs to be a runtime check when running an iOS app on Mac.
@@ -669,7 +670,7 @@ static bool DetermineDepthTextureOESSupport(const TextureCapsMap &textureCaps)
     constexpr GLenum requiredFormats[] = {
         GL_DEPTH_COMPONENT16,
 #if !ANGLE_PLATFORM_IOS_FAMILY
-        // anglebug.com/6082
+        // anglebug.com/42264611
         // TODO(dino): Temporarily Removing the need for GL_DEPTH_COMPONENT32_OES
         // because it is not supported on iOS.
         // TODO(dino): I think this needs to be a runtime check when running an iOS app on Mac.
@@ -1168,6 +1169,14 @@ Caps GenerateMinimumCaps(const Version &clientVersion, const Extensions &extensi
         caps.shaderStorageBufferOffsetAlignment = 256;
     }
 
+    if (clientVersion >= Version(3, 2))
+    {
+        // Table 21.40
+        caps.lineWidthGranularity    = 1.0;
+        caps.minMultisampleLineWidth = 1.0;
+        caps.maxMultisampleLineWidth = 1.0;
+    }
+
     if (extensions.blendFuncExtendedEXT)
     {
         caps.maxDualSourceDrawBuffers = 1;
@@ -1206,7 +1215,7 @@ Caps GenerateMinimumCaps(const Version &clientVersion, const Extensions &extensi
         caps.maxCombinedTextureImageUnits = 64;
     }
 
-    if (extensions.tessellationShaderEXT)
+    if (extensions.tessellationShaderAny())
     {
         // Table 20.43 "Implementation Dependent Tessellation Shader Limits"
         caps.maxTessControlInputComponents                          = 64;
@@ -1361,6 +1370,8 @@ std::vector<std::string> DeviceExtensions::getStrings() const
     // clang-format off
     //                   | Extension name                                 | Supported flag                | Output vector   |
     InsertExtensionString("EGL_ANGLE_device_d3d",                          deviceD3D,                      &extensionStrings);
+    InsertExtensionString("EGL_ANGLE_device_d3d9",                         deviceD3D9,                     &extensionStrings);
+    InsertExtensionString("EGL_ANGLE_device_d3d11",                        deviceD3D11,                    &extensionStrings);
     InsertExtensionString("EGL_ANGLE_device_cgl",                          deviceCGL,                      &extensionStrings);
     InsertExtensionString("EGL_ANGLE_device_eagl",                         deviceEAGL,                     &extensionStrings);
     InsertExtensionString("EGL_ANGLE_device_metal",                        deviceMetal,                    &extensionStrings);
@@ -1410,6 +1421,7 @@ std::vector<std::string> ClientExtensions::getStrings() const
     InsertExtensionString("EGL_KHR_debug",                                    debug,                              &extensionStrings);
     InsertExtensionString("EGL_ANGLE_feature_control",                        featureControlANGLE,                &extensionStrings);
     InsertExtensionString("EGL_ANGLE_display_power_preference",               displayPowerPreferenceANGLE,        &extensionStrings);
+    InsertExtensionString("EGL_ANGLE_no_error",                               noErrorANGLE,                       &extensionStrings);
     // clang-format on
 
     return extensionStrings;

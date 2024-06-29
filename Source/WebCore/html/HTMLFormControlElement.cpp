@@ -429,6 +429,8 @@ RefPtr<Element> HTMLFormControlElement::invokeTargetElement() const
 constexpr ASCIILiteral togglePopoverLiteral = "togglepopover"_s;
 constexpr ASCIILiteral showPopoverLiteral = "showpopover"_s;
 constexpr ASCIILiteral hidePopoverLiteral = "hidepopover"_s;
+constexpr ASCIILiteral showModalLiteral = "showmodal"_s;
+constexpr ASCIILiteral closeLiteral = "close"_s;
 InvokeAction HTMLFormControlElement::invokeAction() const
 {
     auto action = attributeWithoutSynchronization(HTMLNames::invokeactionAttr);
@@ -443,6 +445,12 @@ InvokeAction HTMLFormControlElement::invokeAction() const
 
     if (equalLettersIgnoringASCIICase(action, hidePopoverLiteral))
         return InvokeAction::HidePopover;
+
+    if (equalLettersIgnoringASCIICase(action, showModalLiteral))
+        return InvokeAction::ShowModal;
+
+    if (equalLettersIgnoringASCIICase(action, closeLiteral))
+        return InvokeAction::Close;
 
     if (action.contains('-'))
         return InvokeAction::Custom;

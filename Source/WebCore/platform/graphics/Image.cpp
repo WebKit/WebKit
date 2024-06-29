@@ -99,7 +99,7 @@ RefPtr<Image> Image::create(ImageObserver& observer)
         return SVGImage::create(observer);
 
     auto url = observer.sourceUrl();
-    if (isPDFResource(mimeType, url) || isPostScriptResource(mimeType, url)) {
+    if (isPDFResource(mimeType, url)) {
 #if USE(CG) && !USE(WEBKIT_IMAGE_DECODERS)
         if (!DeprecatedGlobalSettings::arePDFImagesEnabled())
             return nullptr;
@@ -133,14 +133,6 @@ bool Image::isPDFResource(const String& mimeType, const URL& url)
         return url.path().endsWithIgnoringASCIICase(".pdf"_s);
     return MIMETypeRegistry::isPDFMIMEType(mimeType);
 }
-
-bool Image::isPostScriptResource(const String& mimeType, const URL& url)
-{
-    if (mimeType.isEmpty())
-        return url.path().endsWithIgnoringASCIICase(".ps"_s);
-    return MIMETypeRegistry::isPostScriptMIMEType(mimeType);
-}
-
 
 EncodedDataStatus Image::setData(RefPtr<FragmentedSharedBuffer>&& data, bool allDataReceived)
 {

@@ -21,11 +21,11 @@ rtc_library("agc") {
   deps = [
     ":gain_control_interface",
     ":level_estimation",
-    "..:api",
     "..:apm_logging",
     "..:audio_buffer",
     "..:audio_frame_view",
     "../../../api:array_view",
+    "../../../api/audio:audio_processing",
     "../../../common_audio",
     "../../../common_audio:common_audio_c",
     "../../../rtc_base:checks",

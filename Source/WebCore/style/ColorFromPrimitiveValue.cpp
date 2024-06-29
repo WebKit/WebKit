@@ -38,15 +38,9 @@ namespace WebCore {
 
 namespace Style {
 
-StyleColor colorFromPrimitiveValue(const Document& document, RenderStyle& style, const CSSPrimitiveValue& value, ForVisitedLink forVisitedLink)
+StyleColor colorFromValueID(const Document& document, RenderStyle& style, CSSValueID valueID, ForVisitedLink forVisitedLink)
 {
-    if (value.isColor())
-        return value.color();
-    if (value.isUnresolvedColor())
-        return value.unresolvedColor().createStyleColor(document, style, forVisitedLink);
-
-    auto identifier = value.valueID();
-    switch (identifier) {
+    switch (valueID) {
     case CSSValueInternalDocumentTextColor:
         return { document.textColor() };
     case CSSValueWebkitLink:
@@ -58,8 +52,17 @@ StyleColor colorFromPrimitiveValue(const Document& document, RenderStyle& style,
     case CSSValueCurrentcolor:
         return StyleColor::currentColor();
     default:
-        return { StyleColor::colorFromKeyword(identifier, document.styleColorOptions(&style)) };
+        return { StyleColor::colorFromKeyword(valueID, document.styleColorOptions(&style)) };
     }
+}
+
+StyleColor colorFromPrimitiveValue(const Document& document, RenderStyle& style, const CSSPrimitiveValue& value, ForVisitedLink forVisitedLink)
+{
+    if (value.isColor())
+        return value.color();
+    if (value.isUnresolvedColor())
+        return value.unresolvedColor().createStyleColor(document, style, forVisitedLink);
+    return colorFromValueID(document, style, value.valueID(), forVisitedLink);
 }
 
 Color colorFromPrimitiveValueWithResolvedCurrentColor(const Document& document, RenderStyle& style, const CSSPrimitiveValue& value)

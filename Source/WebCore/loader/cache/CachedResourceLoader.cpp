@@ -47,9 +47,11 @@
 #include "CookieJar.h"
 #include "CrossOriginAccessControl.h"
 #include "CustomHeaderFields.h"
+#include "DNS.h"
 #include "DateComponents.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
+#include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -679,7 +681,7 @@ bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type,
 String convertEnumerationToString(FetchOptions::Destination);
 String convertEnumerationToString(FetchOptions::Mode);
 
-static const String& convertEnumerationToString(FetchMetadataSite enumerationValue)
+const String& convertEnumerationToString(FetchMetadataSite enumerationValue)
 {
     static NeverDestroyed<const String> none(MAKE_STATIC_STRING_IMPL("none"));
     static NeverDestroyed<const String> sameOrigin(MAKE_STATIC_STRING_IMPL("same-origin"));
@@ -711,7 +713,7 @@ static void updateRequestFetchMetadataHeaders(ResourceRequest& request, const Re
 
     String destinationString;
     // The Fetch IDL documents this as "" while FetchMetadata expects "empty".
-    if (options.destination == FetchOptions::Destination::EmptyString)
+    if (options.destination == FetchOptions::Destination::EmptyString || options.loadedFromFetch == LoadedFromFetch::Yes)
         destinationString = "empty"_s;
     else
         destinationString = convertEnumerationToString(options.destination);
@@ -721,21 +723,39 @@ static void updateRequestFetchMetadataHeaders(ResourceRequest& request, const Re
     request.setHTTPHeaderField(HTTPHeaderName::SecFetchSite, convertEnumerationToString(site));
 }
 
-FetchMetadataSite CachedResourceLoader::computeFetchMetadataSite(const ResourceRequest& request, CachedResource::Type type, FetchOptions::Mode mode, const SecurityOrigin& originalOrigin, FetchMetadataSite originalSite, bool isDirectlyUserInitiatedRequest)
+static FetchMetadataSite computeFetchMetadataSiteInternal(const ResourceRequest& request, CachedResource::Type type, FetchOptions::Mode mode, const SecurityOrigin* originalOrigin, const LocalFrame* frame, FetchMetadataSite originalSite, bool isDirectlyUserInitiatedRequest)
 {
+    ASSERT(frame || originalOrigin);
+
     // This is true when a user causes a request, such as entering a URL.
     if (mode == FetchOptions::Mode::Navigate && type == CachedResource::Type::MainResource && isDirectlyUserInitiatedRequest)
         return FetchMetadataSite::None;
+
+    Ref contextOrigin = originalOrigin ? *originalOrigin : frame->document()->securityOrigin();
+    if (type == CachedResource::Type::MainResource && frame && frame->loader().activeDocumentLoader()) {
+        if (auto& request = frame->loader().activeDocumentLoader()->triggeringAction().requester())
+            contextOrigin = request->securityOrigin;
+    }
 
     // If this is a redirect we start with the old value.
     // The value can never get more "secure" so a full redirect
     // chain only degrades towards cross-site.
     Ref requestOrigin = SecurityOrigin::create(request.url());
-    if ((originalSite == FetchMetadataSite::SameOrigin || originalSite == FetchMetadataSite::None) && originalOrigin.isSameOriginAs(requestOrigin))
+    if ((originalSite == FetchMetadataSite::SameOrigin || originalSite == FetchMetadataSite::None) && contextOrigin->isSameOriginAs(requestOrigin))
         return FetchMetadataSite::SameOrigin;
-    if (originalSite != FetchMetadataSite::CrossSite && originalOrigin.isSameSiteAs(requestOrigin))
+    if (originalSite != FetchMetadataSite::CrossSite && contextOrigin->isSameSiteAs(requestOrigin))
         return FetchMetadataSite::SameSite;
     return FetchMetadataSite::CrossSite;
+}
+
+FetchMetadataSite CachedResourceLoader::computeFetchMetadataSite(const ResourceRequest& request, CachedResource::Type type, FetchOptions::Mode mode, const LocalFrame& frame, bool isDirectlyUserInitiatedRequest)
+{
+    return computeFetchMetadataSiteInternal(request, type, mode, nullptr, &frame, FetchMetadataSite::SameOrigin, isDirectlyUserInitiatedRequest);
+}
+
+FetchMetadataSite CachedResourceLoader::computeFetchMetadataSiteAfterRedirection(const ResourceRequest& request, CachedResource::Type type, FetchOptions::Mode mode, const SecurityOrigin& originalOrigin, FetchMetadataSite originalSite, bool isDirectlyUserInitiatedRequest)
+{
+    return computeFetchMetadataSiteInternal(request, type, mode, &originalOrigin, nullptr, originalSite, isDirectlyUserInitiatedRequest);
 }
 
 bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type type, ResourceRequest& request, const ResourceLoaderOptions& options, FetchMetadataSite site, const URL& preRedirectURL)
@@ -800,7 +820,7 @@ bool CachedResourceLoader::canRequestInContentDispositionAttachmentSandbox(Cache
     if (!document->shouldEnforceContentDispositionAttachmentSandbox() || document->protectedSecurityOrigin()->canRequest(url, OriginAccessPatternsForWebProcess::singleton()))
         return true;
 
-    String message = "Unsafe attempt to load URL " + url.stringCenterEllipsizedToLength() + " from document with Content-Disposition: attachment at URL " + document->url().stringCenterEllipsizedToLength() + ".";
+    auto message = makeString("Unsafe attempt to load URL "_s, url.stringCenterEllipsizedToLength(), " from document with Content-Disposition: attachment at URL "_s, document->url().stringCenterEllipsizedToLength(), '.');
     document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
     return false;
 }
@@ -926,8 +946,8 @@ void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, Ca
     // FetchMetadata depends on PSL to determine same-site relationships and without this
     // ability it is best to not set any FetchMetadata headers as sites generally expect
     // all of them or none.
-    if (!frameLoader.frame().document() || !frameLoader.frame().document()->quirks().shouldDisableFetchMetadata()) {
-        auto site = computeFetchMetadataSite(request.resourceRequest(), type, request.options().mode, frameLoader.frame().document()->protectedSecurityOrigin(), FetchMetadataSite::SameOrigin, frameLoader.frame().isMainFrame() && m_documentLoader && m_documentLoader->isRequestFromClientOrUserInput());
+    if (frameLoader.frame().document() && !frameLoader.frame().document()->quirks().shouldDisableFetchMetadata()) {
+        auto site = computeFetchMetadataSite(request.resourceRequest(), type, request.options().mode, frameLoader.frame(), frameLoader.frame().isMainFrame() && m_documentLoader && m_documentLoader->isRequestFromClientOrUserInput());
         updateRequestFetchMetadataHeaders(request.resourceRequest(), request.options(), site);
     }
     request.updateUserAgentHeader(frameLoader);
@@ -1058,6 +1078,12 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         return makeUnexpected(frame->checkedLoader()->blockedError(request.resourceRequest()));
     }
 
+    if (isIPAddressDisallowed(url)) {
+        FrameLoader::reportBlockedLoadFailed(frame, url);
+        CACHEDRESOURCELOADER_RELEASE_LOG_WITH_FRAME("CachedResourceLoader::requestResource URL has a disallowd address", frame.get());
+        return makeUnexpected(frame->checkedLoader()->blockedError(request.resourceRequest()));
+    }
+
     request.updateReferrerPolicy(document() ? document()->referrerPolicy() : ReferrerPolicy::Default);
 
     if (InspectorInstrumentation::willIntercept(frame.ptr(), request.resourceRequest()))
@@ -1070,6 +1096,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 #if ENABLE(CONTENT_EXTENSIONS)
         const auto& resourceRequest = request.resourceRequest();
         if (request.options().shouldEnableContentExtensionsCheck == ShouldEnableContentExtensionsCheck::Yes) {
+            RegistrableDomain originalDomain { resourceRequest.url() };
             auto results = page->protectedUserContentProvider()->processContentRuleListsForLoad(page, resourceRequest.url(), ContentExtensions::toResourceType(type, request.resourceRequest().requester()), *documentLoader);
             bool blockedLoad = results.summary.blockedLoad;
             madeHTTPS = results.summary.madeHTTPS;
@@ -1088,6 +1115,10 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
                         document->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, WTFMove(*message));
                 }
                 return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Resource blocked by content blocker"_s, ResourceError::Type::AccessControl });
+            }
+            if (type == CachedResource::Type::MainResource && RegistrableDomain { resourceRequest.url() } != originalDomain) {
+                frame->loader().load(FrameLoadRequest { frame, { resourceRequest.url() } });
+                return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Loading in a new process"_s, ResourceError::Type::Cancellation });
             }
         }
 #endif
@@ -1492,9 +1523,9 @@ void CachedResourceLoader::printAccessDeniedMessage(const URL& url) const
 
     String message;
     if (!m_document || m_document->url().isNull())
-        message = makeString("Unsafe attempt to load URL ", url.stringCenterEllipsizedToLength(), '.');
+        message = makeString("Unsafe attempt to load URL "_s, url.stringCenterEllipsizedToLength(), '.');
     else
-        message = makeString("Unsafe attempt to load URL ", url.stringCenterEllipsizedToLength(), " from origin ", m_document->securityOrigin().toString(), ". Domains, protocols and ports must match.\n");
+        message = makeString("Unsafe attempt to load URL "_s, url.stringCenterEllipsizedToLength(), " from origin "_s, m_document->securityOrigin().toString(), ". Domains, protocols and ports must match.\n"_s);
 
     if (RefPtr frameDocument = frame->document())
         frameDocument->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
@@ -1703,8 +1734,8 @@ void CachedResourceLoader::warnUnusedPreloads()
     for (const auto& resource : *m_preloads) {
         if (resource.isLinkPreload() && resource.preloadResult() == CachedResource::PreloadResult::PreloadNotReferenced) {
             document->addConsoleMessage(MessageSource::Other, MessageLevel::Warning,
-                "The resource " + resource.url().string() +
-                " was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.");
+                makeString("The resource "_s, resource.url().string(),
+                " was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing."_s));
         }
     }
 }

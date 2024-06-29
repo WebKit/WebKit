@@ -103,12 +103,12 @@ void RemoteScrollingCoordinator::setScrollPinningBehavior(ScrollPinningBehavior)
     // FIXME: send to the UI process.
 }
 
-RemoteScrollingCoordinatorTransaction RemoteScrollingCoordinator::buildTransaction()
+RemoteScrollingCoordinatorTransaction RemoteScrollingCoordinator::buildTransaction(FrameIdentifier rootFrameID)
 {
-    willCommitTree();
+    willCommitTree(rootFrameID);
 
     return {
-        scrollingStateTree()->commit(LayerRepresentation::PlatformLayerIDRepresentation),
+        ensureScrollingStateTreeForRootFrameID(rootFrameID).commit(LayerRepresentation::PlatformLayerIDRepresentation),
         std::exchange(m_clearScrollLatchingInNextTransaction, false),
         { },
         RemoteScrollingCoordinatorTransaction::FromDeserialization::No

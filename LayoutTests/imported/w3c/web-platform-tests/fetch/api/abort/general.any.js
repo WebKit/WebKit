@@ -4,7 +4,7 @@
 // META: script=/common/get-host-info.sub.js
 // META: script=../request/request-error.js
 
-const BODY_METHODS = ['arrayBuffer', 'blob', 'formData', 'json', 'text'];
+const BODY_METHODS = ['arrayBuffer', 'blob', 'bytes', 'formData', 'json', 'text'];
 
 const error1 = new Error('error1');
 error1.name = 'error1';
@@ -519,6 +519,7 @@ promise_test(async t => {
   const fetchPromise = fetch('../resources/empty.txt', {
     body, signal,
     method: 'POST',
+    duplex: 'half',
     headers: {
       'Content-Type': 'text/plain'
     }
@@ -565,7 +566,7 @@ test(() => {
 
   controller.abort();
 
-  assert_array_equals(log, ['clone-aborted', 'original-aborted'], "Abort events fired in correct order");
+  assert_array_equals(log, ['original-aborted', 'clone-aborted'], "Abort events fired in correct order");
   assert_true(request.signal.aborted, 'Signal aborted');
   assert_true(clonedRequest.signal.aborted, 'Signal aborted');
 }, "Clone aborts with original controller");

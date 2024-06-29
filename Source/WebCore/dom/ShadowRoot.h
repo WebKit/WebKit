@@ -39,6 +39,7 @@ namespace WebCore {
 class HTMLSlotElement;
 class SlotAssignment;
 class StyleSheetList;
+class TrustedHTML;
 class WebAnimation;
 
 enum class ParserContentPolicy : uint8_t;
@@ -97,11 +98,11 @@ public:
     RefPtr<Element> protectedHost() const { return m_host.get(); }
     void setHost(WeakPtr<Element, WeakPtrImplWithEventTargetData>&& host) { m_host = WTFMove(host); }
 
-    ExceptionOr<void> setHTMLUnsafe(const String&);
+    ExceptionOr<void> setHTMLUnsafe(std::variant<RefPtr<TrustedHTML>, String>&&);
     String getHTML(GetHTMLOptions&&) const;
 
     String innerHTML() const;
-    ExceptionOr<void> setInnerHTML(const String&);
+    ExceptionOr<void> setInnerHTML(std::variant<RefPtr<TrustedHTML>, String>&&);
 
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 

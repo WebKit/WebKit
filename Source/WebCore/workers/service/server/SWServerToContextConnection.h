@@ -42,6 +42,7 @@
 
 namespace WebCore {
 
+enum class AdvancedPrivacyProtections : uint16_t;
 struct BackgroundFetchInformation;
 struct NotificationData;
 struct NotificationPayload;
@@ -65,7 +66,7 @@ public:
     void terminateWhenPossible();
 
     // Messages to the SW host process
-    virtual void installServiceWorkerContext(const ServiceWorkerContextData&, const ServiceWorkerData&, const String& userAgent, WorkerThreadMode) = 0;
+    virtual void installServiceWorkerContext(const ServiceWorkerContextData&, const ServiceWorkerData&, const String& userAgent, WorkerThreadMode, OptionSet<AdvancedPrivacyProtections>) = 0;
     virtual void updateAppInitiatedValue(ServiceWorkerIdentifier, LastNavigationWasAppInitiated) = 0;
     virtual void fireInstallEvent(ServiceWorkerIdentifier) = 0;
     virtual void fireActivateEvent(ServiceWorkerIdentifier) = 0;

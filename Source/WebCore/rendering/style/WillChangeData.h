@@ -79,7 +79,7 @@ private:
         static_assert(numCSSProperties < (1 << numCSSPropertyIDBits), "CSSPropertyID should fit in 14_bits");
 
         Feature m_feature { Feature::Property };
-        unsigned m_cssPropertyID : numCSSPropertyIDBits;
+        unsigned m_cssPropertyID : numCSSPropertyIDBits { CSSPropertyInvalid };
 
         Feature feature() const
         {

@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: Permission policy 'Camera' check failed for element with origin 'http://127.0.0.1:8000' and allow attribute 'microphone:'none'; camera:'none''.
-CONSOLE MESSAGE: Permission policy 'Microphone' check failed for element with origin 'http://127.0.0.1:8000' and allow attribute 'microphone:'none'; camera:'none''.
+CONSOLE MESSAGE: Permission policy 'Camera' check failed for document with origin 'http://127.0.0.1:8000'.
+CONSOLE MESSAGE: Permission policy 'Microphone' check failed for document with origin 'http://127.0.0.1:8000'.
 CONSOLE MESSAGE: Not allowed to call enumerateDevices.
 
 

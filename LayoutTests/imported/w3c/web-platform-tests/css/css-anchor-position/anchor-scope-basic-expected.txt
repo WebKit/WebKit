@@ -1,0 +1,12 @@
+
+FAIL anchor-scope:all on common ancestor assert_equals: expected "40px" but got "0px"
+FAIL anchor-scope:--a on common ancestor assert_equals: expected "40px" but got "0px"
+FAIL anchor-scope:all on sibling assert_equals: expected "20px" but got "0px"
+FAIL anchor-scope:all scopes multiple names assert_equals: expected "20px" but got "0px"
+FAIL anchor-scope:--a,--b scopes --a and --b assert_equals: expected "20px" but got "0px"
+FAIL anchor-scope:--a scopes only --a assert_equals: expected "20px" but got "0px"
+FAIL anchor-scope:--b scopes only --b assert_equals: expected "40px" but got "0px"
+FAIL anchor-scope:--a scopes only --a (out-of-flow anchors) assert_equals: expected "5px" but got "0px"
+FAIL anchor-scope:--a scopes only --a (both out-of-flow and in-flow anchors) assert_equals: expected "20px" but got "0px"
+FAIL anchor-scope:--a scopes only --a (both out-of-flow and in-flow anchors, reverse) assert_equals: expected "55px" but got "0px"
+

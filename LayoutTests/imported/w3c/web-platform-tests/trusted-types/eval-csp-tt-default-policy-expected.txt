@@ -1,7 +1,8 @@
 
-FAIL eval of TrustedScript works. assert_equals: expected (number) 2 but got (object) object "1+1"
-FAIL eval of string works. assert_equals: expected 5 but got 2
+PASS eval of TrustedScript works.
+PASS indirect eval of TrustedScript works.
+PASS eval of string works.
 PASS eval of !TrustedScript and !string works.
 PASS Function constructor of TrustedScript works.
-FAIL Function constructor of string works. assert_equals: expected 5 but got 2
+PASS Function constructor of string works.
 

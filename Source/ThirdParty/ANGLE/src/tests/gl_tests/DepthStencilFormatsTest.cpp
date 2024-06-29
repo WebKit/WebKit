@@ -447,7 +447,7 @@ TEST_P(DepthStencilFormatsTest, DepthStencilReadback_UShort)
 // This test will initialize a depth texture, clear it and read it back, if possible
 TEST_P(DepthStencilFormatsTest, DepthStencilReadback_UInt)
 {
-    // http://anglebug.com/5269
+    // http://anglebug.com/40644772
     ANGLE_SKIP_TEST_IF(IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
     GLuint fakeData[10]    = {0};
@@ -459,7 +459,7 @@ TEST_P(DepthStencilFormatsTest, DepthStencilReadback_UInt)
 // This test will initialize a depth texture, clear it and read it back, if possible
 TEST_P(DepthStencilFormatsTest, DepthStencilReadback_Float)
 {
-    // http://anglebug.com/5269
+    // http://anglebug.com/40644772
     ANGLE_SKIP_TEST_IF(IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
     GLuint fakeData[10]    = {0};
@@ -543,7 +543,7 @@ void main()
     bool depthTextureCubeSupport  = IsGLExtensionEnabled("GL_OES_depth_texture_cube_map");
     bool textureSrgbDecodeSupport = IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode");
 
-    // http://anglebug.com/3454
+    // http://anglebug.com/42262117
     ANGLE_SKIP_TEST_IF(IsIntel() && IsWindows() && IsD3D9());
 
     const int res     = 2;
@@ -949,11 +949,11 @@ TEST_P(DepthStencilFormatsTestES3, DrawWithLargeViewport)
 // Verify that stencil component of depth texture is uploaded
 TEST_P(DepthStencilFormatsTest, VerifyDepthStencilUploadData)
 {
-    // http://anglebug.com/3683
+    // http://anglebug.com/42262342
     // When bug is resolved we can remove this skip.
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
 
-    // http://anglebug.com/3689
+    // http://anglebug.com/42262345
     ANGLE_SKIP_TEST_IF(IsWindows() && IsVulkan() && IsAMD());
 
     bool shouldHaveTextureSupport = (IsGLExtensionEnabled("GL_OES_packed_depth_stencil") &&
@@ -1317,13 +1317,13 @@ class TinyDepthStencilWorkaroundTest : public ANGLETest<>
 };
 
 // Tests that the tiny depth stencil textures workaround does not "stick" depth textures.
-// http://anglebug.com/1664
+// http://anglebug.com/40644610
 TEST_P(TinyDepthStencilWorkaroundTest, DepthTexturesStick)
 {
-    // http://anglebug.com/4092
+    // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF((IsAndroid() && IsOpenGLES()) || (IsLinux() && IsVulkan()));
 
-    // TODO(anglebug.com/5491)
+    // TODO(anglebug.com/42264029)
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     constexpr char kDrawVS[] =

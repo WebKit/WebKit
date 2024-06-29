@@ -75,7 +75,9 @@ RemoteAudioSessionConfiguration RemoteAudioSessionProxy::configuration()
         session.maximumNumberOfOutputChannels(),
         session.preferredBufferSize(),
         session.isMuted(),
-        m_active
+        m_active,
+        m_sceneIdentifier,
+        m_soundStageSize,
     };
 }
 
@@ -113,6 +115,7 @@ void RemoteAudioSessionProxy::tryToSetActive(bool active, SetActiveCompletion&& 
         configurationChanged();
 
     audioSessionManager().updatePresentingProcesses();
+    audioSessionManager().updateSpatialExperience();
 }
 
 void RemoteAudioSessionProxy::setIsPlayingToBluetoothOverride(std::optional<bool>&& value)
@@ -146,6 +149,18 @@ void RemoteAudioSessionProxy::beginInterruptionRemote()
 void RemoteAudioSessionProxy::endInterruptionRemote(AudioSession::MayResume mayResume)
 {
     audioSessionManager().endInterruptionRemote(mayResume);
+}
+
+void RemoteAudioSessionProxy::setSceneIdentifier(const String& sceneIdentifier)
+{
+    m_sceneIdentifier = sceneIdentifier;
+    audioSessionManager().updateSpatialExperience();
+}
+
+void RemoteAudioSessionProxy::setSoundStageSize(AudioSession::SoundStageSize size)
+{
+    m_soundStageSize = size;
+    audioSessionManager().updateSpatialExperience();
 }
 
 RemoteAudioSessionProxyManager& RemoteAudioSessionProxy::audioSessionManager()

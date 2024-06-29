@@ -41,6 +41,7 @@
 #import "NetworkSessionCreationParameters.h"
 #import "PrivateRelayed.h"
 #import "WKURLSessionTaskDelegate.h"
+#import "WebErrors.h"
 #import "WebPageNetworkParameters.h"
 #import "WebSocketTask.h"
 #import <Foundation/NSURLSession.h>
@@ -55,6 +56,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/ThreadableWebSocketChannel.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
@@ -227,6 +229,8 @@ static String stringForTLSCipherSuite(tls_ciphersuite_t suite)
     case tls_ciphersuite_##cipher: \
         return "" #cipher ""_s
 
+// FIXME: rdar://128061442
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     switch (suite) {
         STRINGIFY_CIPHER(RSA_WITH_3DES_EDE_CBC_SHA);
         STRINGIFY_CIPHER(RSA_WITH_AES_128_CBC_SHA);
@@ -255,6 +259,7 @@ static String stringForTLSCipherSuite(tls_ciphersuite_t suite)
         STRINGIFY_CIPHER(AES_256_GCM_SHA384);
         STRINGIFY_CIPHER(CHACHA20_POLY1305_SHA256);
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return { };
 
@@ -303,6 +308,8 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
     case cipher: \
         return "" #cipher ""_s
 
+// FIXME: rdar://128061442
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     switch (cipher) {
     STRINGIFY_CIPHER(SSL_RSA_EXPORT_WITH_RC4_40_MD5);
     STRINGIFY_CIPHER(SSL_RSA_EXPORT_WITH_RC2_CBC_40_MD5);
@@ -474,6 +481,7 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
         ASSERT_NOT_REACHED();
         return emptyString();
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 #undef STRINGIFY_CIPHER
 }
@@ -740,7 +748,7 @@ void NetworkSessionCocoa::setClientAuditToken(const WebCore::AuthenticationChall
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
 {
-    auto* sessionCocoa = [self sessionFromTask: task];
+    auto* sessionCocoa = [self sessionFromTask:task];
     if (!sessionCocoa || [task state] == NSURLSessionTaskStateCanceling) {
         completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
         return;
@@ -784,7 +792,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             auto networkDataTask = [self existingTask:task];
             if (networkDataTask) {
                 NSURLProtectionSpace *protectionSpace = challenge.protectionSpace;
-                networkDataTask->didNegotiateModernTLS(URL { makeString(String(protectionSpace.protocol), "://", String(protectionSpace.host), ':', protectionSpace.port) });
+                networkDataTask->didNegotiateModernTLS(URL { makeString(String(protectionSpace.protocol), "://"_s, String(protectionSpace.host), ':', protectionSpace.port) });
             }
             auto decisionHandler = makeBlockPtr([weakSelf = WeakObjCPtr<WKNetworkSessionDelegate>(self), sessionCocoa = WeakPtr { sessionCocoa }, completionHandler = makeBlockPtr(completionHandler), taskIdentifier, networkDataTask = RefPtr { networkDataTask }, negotiatedLegacyTLS](NSURLAuthenticationChallenge *challenge, OSStatus trustResult) mutable {
                 auto strongSelf = weakSelf.get();
@@ -899,7 +907,11 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
 
     if (auto networkDataTask = [self existingTask:task])
         networkDataTask->didCompleteWithError(error, networkDataTask->networkLoadMetrics());
-    else if (error) {
+    else if (auto* webSocketTask = [self existingWebSocketTask:task]) {
+        // Even if error is null here, it's an error to close a WebSocket without a close frame which should be received
+        // in URLSession:webSocketTask:didCloseWithCode:reason: but this can be hit in some TCP error cases like rdar://110487778
+        webSocketTask->didClose(WebCore::ThreadableWebSocketChannel::CloseEventCodeAbnormalClosure, emptyString());
+    } else if (error) {
         if (!_sessionWrapper)
             return;
         auto downloadID = _sessionWrapper->downloadMap.take(task.taskIdentifier);
@@ -1993,15 +2005,69 @@ private:
     const DataTaskIdentifier m_identifier;
 };
 
-void NetworkSessionCocoa::loadImageForDecoding(WebCore::ResourceRequest&& request, WebPageProxyIdentifier pageID, CompletionHandler<void(std::variant<WebCore::ResourceError, Ref<WebCore::SharedBuffer>>&&)>&& completionHandler)
+void NetworkSessionCocoa::loadImageForDecoding(WebCore::ResourceRequest&& request, WebPageProxyIdentifier pageID, size_t maximumBytesFromNetwork, CompletionHandler<void(std::variant<WebCore::ResourceError, Ref<WebCore::FragmentedSharedBuffer>>&&)>&& completionHandler)
 {
-    auto session = sessionWrapperForTask(pageID, request, WebCore::StoredCredentialsPolicy::Use, std::nullopt).session;
-    RetainPtr task = [session dataTaskWithRequest:request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (NSData *data, NSURLResponse *response, NSError *error) mutable {
-        if (error)
-            return completionHandler(error);
-        completionHandler(WebCore::SharedBuffer::create(data));
-    }).get()];
-    [task resume];
+    class Client : public NetworkDataTaskClient {
+    public:
+        Client(NetworkSession& networkSession, Ref<NetworkProcess>&& networkProcess, WebPageProxyIdentifier pageID, const NetworkLoadParameters& loadParameters, size_t maximumBytesFromNetwork, CompletionHandler<void(std::variant<WebCore::ResourceError, Ref<WebCore::FragmentedSharedBuffer>>&&)>&& completionHandler)
+            : m_networkProcess(WTFMove(networkProcess))
+            , m_url(loadParameters.request.url())
+            , m_sessionID(networkSession.sessionID())
+            , m_pageID(pageID)
+            , m_maximumBytesFromNetwork(maximumBytesFromNetwork)
+            , m_dataTask(NetworkDataTask::create(networkSession, *this, loadParameters))
+            , m_completionHandler(WTFMove(completionHandler))
+        {
+            m_dataTask->resume();
+        }
+    private:
+        void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&& request, RedirectCompletionHandler&& completionHandler) final { completionHandler(WTFMove(request)); }
+        void didReceiveChallenge(WebCore::AuthenticationChallenge&& challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, ChallengeCompletionHandler&& completionHandler) final
+        {
+            m_networkProcess->authenticationManager().didReceiveAuthenticationChallenge(m_sessionID, m_pageID, nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
+        }
+        void didReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&& completionHandler) final
+        {
+            completionHandler(WebCore::PolicyAction::Use);
+        }
+        void didReceiveData(const WebCore::SharedBuffer& buffer) final
+        {
+            m_buffer.append(buffer);
+            if (m_buffer.size() > m_maximumBytesFromNetwork)
+                didCompleteWithError(WebCore::ResourceError([NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorDataLengthExceedsMaximum userInfo:nil]), WebCore::NetworkLoadMetrics { });
+        }
+        void didCompleteWithError(const WebCore::ResourceError& error, const WebCore::NetworkLoadMetrics&) final
+        {
+            if (error.isNull())
+                m_completionHandler(m_buffer.take());
+            else
+                m_completionHandler(error);
+            delete this;
+        }
+        void didSendData(uint64_t, uint64_t) final { }
+        void wasBlocked() final { completeWithBlockedError(); }
+        void cannotShowURL() final { completeWithBlockedError(); }
+        void wasBlockedByRestrictions() final { completeWithBlockedError(); }
+        void wasBlockedByDisabledFTP() final { completeWithBlockedError(); }
+        void completeWithBlockedError()
+        {
+            didCompleteWithError(blockedError({ m_url }), WebCore::NetworkLoadMetrics { });
+        }
+
+        const Ref<NetworkProcess> m_networkProcess;
+        const URL m_url;
+        const PAL::SessionID m_sessionID;
+        const WebPageProxyIdentifier m_pageID;
+        const size_t m_maximumBytesFromNetwork;
+        const Ref<NetworkDataTask> m_dataTask;
+        CompletionHandler<void(std::variant<WebCore::ResourceError, Ref<WebCore::FragmentedSharedBuffer>>&&)> m_completionHandler;
+        WebCore::SharedBufferBuilder m_buffer;
+    };
+
+    NetworkLoadParameters loadParameters;
+    loadParameters.request = WTFMove(request);
+    // Client manages its own lifetime, deleting itself when its purpose has been fulfilled.
+    new Client(*this, networkProcess(), pageID, loadParameters, maximumBytesFromNetwork, WTFMove(completionHandler));
 }
 
 void NetworkSessionCocoa::dataTaskWithRequest(WebPageProxyIdentifier pageID, WebCore::ResourceRequest&& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, CompletionHandler<void(DataTaskIdentifier)>&& completionHandler)

@@ -26,13 +26,14 @@ namespace WebCore {
 class Document;
 class WeakPtrImplWithEventTargetData;
 class Settings;
+class TrustedHTML;
 
 class DOMParser : public RefCounted<DOMParser> {
 public:
     static Ref<DOMParser> create(Document& contextDocument);
     ~DOMParser();
 
-    ExceptionOr<Ref<Document>> parseFromString(const String&, const AtomString& contentType);
+    ExceptionOr<Ref<Document>> parseFromString(std::variant<RefPtr<TrustedHTML>, String>&&, const AtomString& contentType);
 
 private:
     explicit DOMParser(Document& contextDocument);

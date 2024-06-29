@@ -38,7 +38,7 @@
 
 namespace WebKit {
 
-bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPage& page)
+bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPage* page)
 {
     if (UNLIKELY(extensionContext().isUnsupportedAPI(propertyPath(), name)))
         return false;
@@ -57,7 +57,7 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     if (name == "devtools"_s)
-        return objectForKey<NSString>(extensionContext().manifest(), @"devtools_page") && (page.isInspectorPage() || extensionContext().isInspectorBackgroundPage(page));
+        return objectForKey<NSString>(extensionContext().manifest(), @"devtools_page") && page && (page->isInspectorPage() || extensionContext().isInspectorBackgroundPage(*page));
 #else
     if (name == "devtools"_s)
         return false;

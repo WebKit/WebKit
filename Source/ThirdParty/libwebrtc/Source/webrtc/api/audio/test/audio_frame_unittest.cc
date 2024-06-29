@@ -19,10 +19,27 @@ namespace webrtc {
 
 namespace {
 
+bool AllSamplesAre(int16_t sample, rtc::ArrayView<const int16_t> samples) {
+  for (const auto s : samples) {
+    if (s != sample) {
+      return false;
+    }
+  }
+  return true;
+}
+
 bool AllSamplesAre(int16_t sample, const AudioFrame& frame) {
-  const int16_t* frame_data = frame.data();
-  for (size_t i = 0; i < frame.max_16bit_samples(); i++) {
-    if (frame_data[i] != sample) {
+  return AllSamplesAre(sample, frame.data_view());
+}
+
+// Checks the values of samples in the AudioFrame buffer, regardless of whether
+// they're valid or not, and disregard the `muted()` state of the frame.
+// I.e. use `max_16bit_samples()` instead of the audio properties
+// `num_samples * samples_per_channel`.
+bool AllBufferSamplesAre(int16_t sample, const AudioFrame& frame) {
+  const auto* data = frame.data_view().data();
+  for (size_t i = 0; i < frame.max_16bit_samples(); ++i) {
+    if (data[i] != sample) {
       return false;
     }
   }
@@ -38,29 +55,46 @@ constexpr size_t kSamplesPerChannel = kSampleRateHz / 100;
 
 }  // namespace
 
-TEST(AudioFrameTest, FrameStartsMuted) {
+TEST(AudioFrameTest, FrameStartsZeroedAndMuted) {
   AudioFrame frame;
   EXPECT_TRUE(frame.muted());
+  EXPECT_TRUE(frame.data_view().empty());
   EXPECT_TRUE(AllSamplesAre(0, frame));
+}
+
+// TODO: b/335805780 - Delete test when `mutable_data()` returns ArrayView.
+TEST(AudioFrameTest, UnmutedFrameIsInitiallyZeroedLegacy) {
+  AudioFrame frame(kSampleRateHz, kNumChannelsMono, CHANNEL_LAYOUT_NONE);
+  frame.mutable_data();
+  EXPECT_FALSE(frame.muted());
+  EXPECT_TRUE(AllSamplesAre(0, frame));
+  EXPECT_TRUE(AllBufferSamplesAre(0, frame));
 }
 
 TEST(AudioFrameTest, UnmutedFrameIsInitiallyZeroed) {
   AudioFrame frame;
-  frame.mutable_data();
+  auto data = frame.mutable_data(kSamplesPerChannel, kNumChannelsMono);
   EXPECT_FALSE(frame.muted());
+  EXPECT_EQ(frame.data_view().size(), kSamplesPerChannel);
+  EXPECT_EQ(data.size(), kSamplesPerChannel);
   EXPECT_TRUE(AllSamplesAre(0, frame));
 }
 
 TEST(AudioFrameTest, MutedFrameBufferIsZeroed) {
   AudioFrame frame;
-  int16_t* frame_data = frame.mutable_data();
+  int16_t* frame_data =
+      frame.mutable_data(kSamplesPerChannel, kNumChannelsMono).begin();
+  EXPECT_FALSE(frame.muted());
+  // Fill the reserved buffer with non-zero data.
   for (size_t i = 0; i < frame.max_16bit_samples(); i++) {
     frame_data[i] = 17;
   }
   ASSERT_TRUE(AllSamplesAre(17, frame));
+  ASSERT_TRUE(AllBufferSamplesAre(17, frame));
   frame.Mute();
   EXPECT_TRUE(frame.muted());
   EXPECT_TRUE(AllSamplesAre(0, frame));
+  ASSERT_TRUE(AllBufferSamplesAre(0, frame));
 }
 
 TEST(AudioFrameTest, UpdateFrameMono) {
@@ -95,11 +129,17 @@ TEST(AudioFrameTest, UpdateFrameMultiChannel) {
   EXPECT_EQ(kSamplesPerChannel, frame.samples_per_channel());
   EXPECT_EQ(kNumChannelsStereo, frame.num_channels());
   EXPECT_EQ(CHANNEL_LAYOUT_STEREO, frame.channel_layout());
+  EXPECT_TRUE(frame.muted());
 
-  frame.UpdateFrame(kTimestamp, nullptr /* data */, kSamplesPerChannel,
+  // Initialize the frame with valid `kNumChannels5_1` data to make sure we
+  // get an unmuted frame with valid samples.
+  int16_t samples[kSamplesPerChannel * kNumChannels5_1] = {17};
+  frame.UpdateFrame(kTimestamp, samples /* data */, kSamplesPerChannel,
                     kSampleRateHz, AudioFrame::kPLC, AudioFrame::kVadActive,
                     kNumChannels5_1);
+  EXPECT_FALSE(frame.muted());
   EXPECT_EQ(kSamplesPerChannel, frame.samples_per_channel());
+  EXPECT_EQ(kSamplesPerChannel * kNumChannels5_1, frame.data_view().size());
   EXPECT_EQ(kNumChannels5_1, frame.num_channels());
   EXPECT_EQ(CHANNEL_LAYOUT_5_1, frame.channel_layout());
 }
@@ -121,6 +161,7 @@ TEST(AudioFrameTest, CopyFrom) {
   EXPECT_EQ(frame2.vad_activity_, frame1.vad_activity_);
   EXPECT_EQ(frame2.num_channels_, frame1.num_channels_);
 
+  EXPECT_EQ(frame2.data_view().size(), frame1.data_view().size());
   EXPECT_EQ(frame2.muted(), frame1.muted());
   EXPECT_EQ(0, memcmp(frame2.data(), frame1.data(), sizeof(samples)));
 

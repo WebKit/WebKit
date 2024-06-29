@@ -39,11 +39,14 @@ messages -> PlaybackSessionManagerProxy {
     VolumeChanged(WebKit::PlaybackSessionContextIdentifier contextId, double volume);
     PictureInPictureSupportedChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool pictureInPictureSupported)
     IsInWindowFullscreenActiveChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool isInWindow)
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    SupportsLinearMediaPlayerChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool supportsLinearMediaPlayer)
+#endif
     SetUpPlaybackControlsManagerWithID(WebKit::PlaybackSessionContextIdentifier contextId)
     ClearPlaybackControlsManager()
 
     HandleControlledElementIDResponse(WebKit::PlaybackSessionContextIdentifier contextId, String id)
-    
+
 #if !RELEASE_LOG_DISABLED
     SetLogIdentifier(WebKit::PlaybackSessionContextIdentifier contextId, uint64_t logIdentifier)
 #endif

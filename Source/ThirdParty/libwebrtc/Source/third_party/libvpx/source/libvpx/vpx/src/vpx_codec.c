@@ -13,6 +13,7 @@
  *
  */
 #include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "vpx/vpx_integer.h"
 #include "vpx/internal/vpx_codec_internal.h"

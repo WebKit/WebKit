@@ -40,21 +40,10 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(NavigationHistoryEntry);
 
-NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, Ref<HistoryItem>& historyItem)
+NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem)
     : ContextDestructionObserver(context)
-    , m_url(historyItem->url())
-    , m_key(WTF::UUID::createVersion4())
     , m_id(WTF::UUID::createVersion4())
-    , m_associatedHistoryItem(historyItem)
-    , m_documentSequenceNumber(historyItem->documentSequenceNumber())
-{
-}
-
-NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, const URL& url)
-    : ContextDestructionObserver(context)
-    , m_url(url)
-    , m_key(WTF::UUID::createVersion4())
-    , m_id(WTF::UUID::createVersion4())
+    , m_associatedHistoryItem(WTFMove(historyItem))
 {
 }
 
@@ -68,10 +57,34 @@ enum EventTargetInterfaceType NavigationHistoryEntry::eventTargetInterface() con
     return EventTargetInterfaceType::NavigationHistoryEntry;
 }
 
+const String& NavigationHistoryEntry::url() const
+{
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (!document || !document->isFullyActive())
+        return nullString();
+    return m_associatedHistoryItem->urlString();
+}
+
+String NavigationHistoryEntry::key() const
+{
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (!document || !document->isFullyActive())
+        return nullString();
+    return m_associatedHistoryItem->uuidIdentifier().toString();
+}
+
+String NavigationHistoryEntry::id() const
+{
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (!document || !document->isFullyActive())
+        return nullString();
+    return m_id.toString();
+}
+
 uint64_t NavigationHistoryEntry::index() const
 {
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
-    if (!document || !document->domWindow())
+    if (!document || !document->isFullyActive())
         return -1;
     return document->domWindow()->navigation().entries().findIf([this] (auto& entry) {
         return entry.ptr() == this;
@@ -81,23 +94,22 @@ uint64_t NavigationHistoryEntry::index() const
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigationhistoryentry-samedocument
 bool NavigationHistoryEntry::sameDocument() const
 {
-    if (!m_documentSequenceNumber)
-        return false;
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
-    if (!document || !document->frame())
+    if (!document || !document->isFullyActive())
         return false;
     RefPtr currentItem = document->frame()->checkedHistory()->currentItem();
     if (!currentItem)
         return false;
-    return currentItem->documentSequenceNumber() == *m_documentSequenceNumber;
+    return currentItem->documentSequenceNumber() == m_associatedHistoryItem->documentSequenceNumber();
 }
 
 JSC::JSValue NavigationHistoryEntry::getState(JSDOMGlobalObject& globalObject) const
 {
-    if (!m_associatedHistoryItem)
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (!document || !document->isFullyActive())
         return JSC::jsUndefined();
 
-    auto stateObject = m_associatedHistoryItem->get().navigationAPIStateObject();
+    auto stateObject = m_associatedHistoryItem->navigationAPIStateObject();
     if (!stateObject)
         return JSC::jsUndefined();
 
@@ -106,10 +118,7 @@ JSC::JSValue NavigationHistoryEntry::getState(JSDOMGlobalObject& globalObject) c
 
 void NavigationHistoryEntry::setState(RefPtr<SerializedScriptValue>&& state)
 {
-    if (!m_associatedHistoryItem)
-        return;
-
-    m_associatedHistoryItem->get().setNavigationAPIStateObject(WTFMove(state));
+    m_associatedHistoryItem->setNavigationAPIStateObject(WTFMove(state));
 }
 
 } // namespace WebCore

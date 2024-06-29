@@ -1,0 +1,5 @@
+slotted
+
+FAIL Text inside a dialog inside a shadowroot should be findable. assert_true: expected true got false
+PASS Text slotted into a dialog which is inside a shadowroot should be findable.
+

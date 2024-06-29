@@ -26,4 +26,5 @@
 .content-view.local-remote-object {
     padding: 10px;
     overflow: auto;
+    display: flex;
 }

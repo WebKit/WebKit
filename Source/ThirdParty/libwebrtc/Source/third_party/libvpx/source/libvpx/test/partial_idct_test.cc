@@ -25,6 +25,7 @@
 #include "vp9/common/vp9_blockd.h"
 #include "vp9/common/vp9_scan.h"
 #include "vpx/vpx_integer.h"
+#include "vpx_config.h"
 #include "vpx_ports/vpx_timer.h"
 
 using libvpx_test::ACMRandom;

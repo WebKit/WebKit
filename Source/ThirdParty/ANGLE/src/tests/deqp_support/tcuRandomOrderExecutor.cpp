@@ -196,7 +196,7 @@ TestStatus RandomOrderExecutor::execute(const std::string &casePath)
 tcu::TestStatus RandomOrderExecutor::executeInner(TestCase *testCase, const std::string &casePath)
 {
     TestLog &log                 = m_testCtx.getLog();
-    const deUint64 testStartTime = deGetMicroseconds();
+    const uint64_t testStartTime = deGetMicroseconds();
 
     m_testCtx.setTestResult(QP_TEST_RESULT_LAST, "");
 

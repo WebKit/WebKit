@@ -66,6 +66,8 @@
 #import <WebCore/ScrollAnimator.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/VoidCallback.h>
+#import <wtf/StdLibExtras.h>
+#import <wtf/cf/VectorCF.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
 
@@ -249,7 +251,7 @@ bool PDFPluginBase::haveStreamedDataForRange(uint64_t offset, size_t count) cons
     return m_streamedBytes >= offset + count;
 }
 
-size_t PDFPluginBase::copyDataAtPosition(void* buffer, uint64_t sourcePosition, size_t count) const
+size_t PDFPluginBase::copyDataAtPosition(std::span<uint8_t> buffer, uint64_t sourcePosition) const
 {
     ASSERT(isMainRunLoop());
 
@@ -260,14 +262,14 @@ size_t PDFPluginBase::copyDataAtPosition(void* buffer, uint64_t sourcePosition, 
 
     Locker locker { m_streamedDataLock };
 
-    if (!haveStreamedDataForRange(sourcePosition, count))
+    if (!haveStreamedDataForRange(sourcePosition, buffer.size()))
         return 0;
 
-    memcpy(buffer, CFDataGetBytePtr(m_data.get()) + sourcePosition, count);
-    return count;
+    memcpySpan(buffer, span(m_data.get()).subspan(sourcePosition, buffer.size()));
+    return buffer.size();
 }
 
-std::span<const uint8_t> PDFPluginBase::dataPtrForRange(uint64_t sourcePosition, size_t count, CheckValidRanges checkValidRanges) const
+std::span<const uint8_t> PDFPluginBase::dataSpanForRange(uint64_t sourcePosition, size_t count, CheckValidRanges checkValidRanges) const
 {
     Locker locker { m_streamedDataLock };
 
@@ -369,7 +371,8 @@ void PDFPluginBase::streamDidReceiveData(const SharedBuffer& buffer)
             m_data = adoptCF(CFDataCreateMutable(0, 0));
 
         ensureDataBufferLength(m_streamedBytes + buffer.size());
-        memcpy(CFDataGetMutableBytePtr(m_data.get()) + m_streamedBytes, buffer.data(), buffer.size());
+        auto bufferSpan = buffer.span();
+        memcpy(CFDataGetMutableBytePtr(m_data.get()) + m_streamedBytes, bufferSpan.data(), bufferSpan.size());
         m_streamedBytes += buffer.size();
 
         // Keep our ranges-lookup-table compact by continuously updating its first range
@@ -386,6 +389,8 @@ void PDFPluginBase::streamDidReceiveData(const SharedBuffer& buffer)
     if (m_incrementalLoader)
         m_incrementalLoader->incrementalPDFStreamDidReceiveData(buffer);
 #endif
+
+    incrementalLoadingDidProgress();
 }
 
 void PDFPluginBase::streamDidFinishLoading()
@@ -415,6 +420,7 @@ void PDFPluginBase::streamDidFinishLoading()
         installPDFDocument();
     }
 
+    incrementalLoadingDidFinish();
     tryRunScriptsInPDFDocument();
 
 #if ENABLE(PDF_HUD)
@@ -436,6 +442,8 @@ void PDFPluginBase::streamDidFail()
     if (m_incrementalLoader)
         m_incrementalLoader->incrementalPDFStreamDidFail();
 #endif
+
+    incrementalLoadingDidCancel();
 }
 
 #if HAVE(INCREMENTAL_PDF_APIS)
@@ -490,7 +498,7 @@ void PDFPluginBase::startByteRangeRequest(NetscapePlugInStreamLoaderClient& stre
     auto resourceRequest = documentLoader->request();
     resourceRequest.setRequester(ResourceRequestRequester::Unspecified);
     resourceRequest.setURL(m_view->mainResourceURL());
-    resourceRequest.setHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, position, "-"_s, position + count - 1));
+    resourceRequest.setHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, position, '-', position + count - 1));
     resourceRequest.setCachePolicy(ResourceRequestCachePolicy::DoNotUseAnyCache);
 
     WebProcess::singleton().webLoaderStrategy().schedulePluginStreamLoad(*coreFrame, streamLoaderClient, WTFMove(resourceRequest), [incrementalLoader = Ref { *m_incrementalLoader }, requestIdentifier] (RefPtr<NetscapePlugInStreamLoader>&& streamLoader) {
@@ -517,6 +525,8 @@ void PDFPluginBase::receivedNonLinearizedPDFSentinel()
 
     if (m_incrementalLoader)
         m_incrementalLoader->receivedNonLinearizedPDFSentinel();
+
+    incrementalLoadingDidCancel();
 
     if (!m_documentFinishedLoading || m_pdfDocument)
         return;
@@ -811,7 +821,7 @@ IntPoint PDFPluginBase::convertFromContainingViewToScrollbar(const Scrollbar& sc
 
 String PDFPluginBase::debugDescription() const
 {
-    return makeString("PDFPluginBase 0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase));
+    return makeString("PDFPluginBase 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
 }
 
 void PDFPluginBase::willDetachRenderer()
@@ -1226,6 +1236,11 @@ void PDFPluginBase::registerPDFTest(RefPtr<WebCore::VoidCallback>&& callback)
         callback->handleEvent();
     else
         m_pdfTestCallback = WTFMove(callback);
+}
+
+FrameIdentifier PDFPluginBase::rootFrameID() const
+{
+    return m_view->frame()->rootFrame().frameID();
 }
 
 } // namespace WebKit

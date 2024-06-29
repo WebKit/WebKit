@@ -59,9 +59,9 @@ public:
 
     JS_EXPORT_PRIVATE ~SharedArrayBufferContents();
 
-    static Ref<SharedArrayBufferContents> create(void* data, size_t size, std::optional<size_t> maxByteLength, RefPtr<BufferMemoryHandle> memoryHandle, ArrayBufferDestructorFunction&& destructor, Mode mode)
+    static Ref<SharedArrayBufferContents> create(std::span<uint8_t> data, std::optional<size_t> maxByteLength, RefPtr<BufferMemoryHandle> memoryHandle, ArrayBufferDestructorFunction&& destructor, Mode mode)
     {
-        return adoptRef(*new SharedArrayBufferContents(data, size, maxByteLength, WTFMove(memoryHandle), WTFMove(destructor), mode));
+        return adoptRef(*new SharedArrayBufferContents(data, maxByteLength, WTFMove(memoryHandle), WTFMove(destructor), mode));
     }
     
     void* data() const { return m_data.getMayBeNull(); }
@@ -90,15 +90,15 @@ public:
 
     BufferMemoryHandle* memoryHandle() const { return m_memoryHandle.get(); }
 
-    static ptrdiff_t offsetOfSizeInBytes() { return OBJECT_OFFSETOF(SharedArrayBufferContents, m_sizeInBytes); }
+    static constexpr ptrdiff_t offsetOfSizeInBytes() { return OBJECT_OFFSETOF(SharedArrayBufferContents, m_sizeInBytes); }
     
 private:
-    SharedArrayBufferContents(void* data, size_t size, std::optional<size_t> maxByteLength, RefPtr<BufferMemoryHandle> memoryHandle, ArrayBufferDestructorFunction&& destructor, Mode mode)
-        : m_data(data)
+    SharedArrayBufferContents(std::span<uint8_t> data, std::optional<size_t> maxByteLength, RefPtr<BufferMemoryHandle> memoryHandle, ArrayBufferDestructorFunction&& destructor, Mode mode)
+        : m_data(data.data())
         , m_destructor(WTFMove(destructor))
         , m_memoryHandle(WTFMove(memoryHandle))
-        , m_sizeInBytes(size)
-        , m_maxByteLength(maxByteLength.value_or(size))
+        , m_sizeInBytes(data.size())
+        , m_maxByteLength(maxByteLength.value_or(data.size()))
         , m_hasMaxByteLength(!!maxByteLength)
         , m_mode(mode)
     {
@@ -132,6 +132,11 @@ public:
         RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
     }
 
+    ArrayBufferContents(std::span<const uint8_t> data, std::optional<size_t> maxByteLength, ArrayBufferDestructorFunction&& destructor)
+        : ArrayBufferContents(const_cast<uint8_t*>(data.data()), data.size(), maxByteLength, WTFMove(destructor))
+    {
+    }
+
     ArrayBufferContents(Ref<SharedArrayBufferContents>&& shared)
         : m_shared(WTFMove(shared))
         , m_memoryHandle(m_shared->memoryHandle())
@@ -158,7 +163,7 @@ public:
         RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
     }
 
-    JS_EXPORT_PRIVATE static std::optional<ArrayBufferContents> fromDataSpan(std::span<const uint8_t>);
+    JS_EXPORT_PRIVATE static std::optional<ArrayBufferContents> fromSpan(std::span<const uint8_t>);
 
     ArrayBufferContents(ArrayBufferContents&& other)
     {
@@ -199,7 +204,8 @@ public:
         return std::nullopt;
     }
 
-    std::span<const uint8_t> dataSpan() const { return { static_cast<const uint8_t*>(data()), sizeInBytes() }; }
+    std::span<uint8_t> mutableSpan() { return { static_cast<uint8_t*>(data()), sizeInBytes() }; }
+    std::span<const uint8_t> span() const { return { static_cast<const uint8_t*>(data()), sizeInBytes() }; }
     
     bool isShared() const { return m_shared; }
     bool isResizableOrGrowableShared() const { return m_hasMaxByteLength; }
@@ -265,17 +271,14 @@ class ArrayBuffer final : public GCIncomingRefCounted<ArrayBuffer> {
 public:
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(size_t numElements, unsigned elementByteSize);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(ArrayBuffer&);
-    JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(const void* source, size_t byteLength);
-    JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(std::span<uint8_t>);
+    JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(std::span<const uint8_t> = { });
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(ArrayBufferContents&&);
-    JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(const Vector<uint8_t>&);
-    JS_EXPORT_PRIVATE static Ref<ArrayBuffer> createAdopted(const void* data, size_t byteLength);
-    JS_EXPORT_PRIVATE static Ref<ArrayBuffer> createFromBytes(const void* data, size_t byteLength, ArrayBufferDestructorFunction&&);
+    JS_EXPORT_PRIVATE static Ref<ArrayBuffer> createAdopted(std::span<const uint8_t>);
+    JS_EXPORT_PRIVATE static Ref<ArrayBuffer> createFromBytes(std::span<const uint8_t> data, ArrayBufferDestructorFunction&&);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> createShared(Ref<SharedArrayBufferContents>&&);
     JS_EXPORT_PRIVATE static RefPtr<ArrayBuffer> tryCreate(size_t numElements, unsigned elementByteSize, std::optional<size_t> maxByteLength = std::nullopt);
     JS_EXPORT_PRIVATE static RefPtr<ArrayBuffer> tryCreate(ArrayBuffer&);
-    JS_EXPORT_PRIVATE static RefPtr<ArrayBuffer> tryCreate(const void* source, size_t byteLength);
-    JS_EXPORT_PRIVATE static RefPtr<ArrayBuffer> tryCreate(std::span<const uint8_t>);
+    JS_EXPORT_PRIVATE static RefPtr<ArrayBuffer> tryCreate(std::span<const uint8_t> = { });
     JS_EXPORT_PRIVATE static RefPtr<ArrayBuffer> tryCreateShared(VM&, size_t numElements, unsigned elementByteSize, size_t maxByteLength);
 
     // Only for use by Uint8ClampedArray::tryCreateUninitialized and FragmentedSharedBuffer::tryCreateArrayBuffer.
@@ -320,9 +323,9 @@ public:
     bool isDetached() { return !m_contents.m_data; }
     InlineWatchpointSet& detachingWatchpointSet() { return m_detachingWatchpointSet; }
 
-    static ptrdiff_t offsetOfSizeInBytes() { return OBJECT_OFFSETOF(ArrayBuffer, m_contents) + OBJECT_OFFSETOF(ArrayBufferContents, m_sizeInBytes); }
-    static ptrdiff_t offsetOfData() { return OBJECT_OFFSETOF(ArrayBuffer, m_contents) + OBJECT_OFFSETOF(ArrayBufferContents, m_data); }
-    static ptrdiff_t offsetOfShared() { return OBJECT_OFFSETOF(ArrayBuffer, m_contents) + OBJECT_OFFSETOF(ArrayBufferContents, m_shared); }
+    static constexpr ptrdiff_t offsetOfSizeInBytes() { return OBJECT_OFFSETOF(ArrayBuffer, m_contents) + OBJECT_OFFSETOF(ArrayBufferContents, m_sizeInBytes); }
+    static constexpr ptrdiff_t offsetOfData() { return OBJECT_OFFSETOF(ArrayBuffer, m_contents) + OBJECT_OFFSETOF(ArrayBufferContents, m_data); }
+    static constexpr ptrdiff_t offsetOfShared() { return OBJECT_OFFSETOF(ArrayBuffer, m_contents) + OBJECT_OFFSETOF(ArrayBufferContents, m_shared); }
 
     ~ArrayBuffer() { }
 
@@ -331,6 +334,7 @@ public:
     Expected<int64_t, GrowFailReason> grow(VM&, size_t newByteLength);
     Expected<int64_t, GrowFailReason> resize(VM&, size_t newByteLength);
 
+    std::span<uint8_t> mutableSpan() { return { static_cast<uint8_t*>(data()), byteLength() }; }
     std::span<const uint8_t> span() const { return { static_cast<const uint8_t*>(data()), byteLength() }; }
     Vector<uint8_t> toVector() const { return { span() }; }
 

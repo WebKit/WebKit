@@ -44,8 +44,8 @@ Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(const
 {
     RefPtr<ArrayBuffer> userhandleBuffer;
     if (!userHandle.isEmpty())
-        userhandleBuffer = ArrayBuffer::create(userHandle.data(), userHandle.size());
-    return create(ArrayBuffer::create(rawId.data(), rawId.size()), ArrayBuffer::create(authenticatorData.data(), authenticatorData.size()), ArrayBuffer::create(signature.data(), signature.size()), WTFMove(userhandleBuffer), std::nullopt, attachment);
+        userhandleBuffer = ArrayBuffer::create(userHandle);
+    return create(ArrayBuffer::create(rawId), ArrayBuffer::create(authenticatorData), ArrayBuffer::create(signature), WTFMove(userhandleBuffer), std::nullopt, attachment);
 }
 
 Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(Ref<ArrayBuffer>&& rawId, RefPtr<ArrayBuffer>&& userHandle, String&& name, SecAccessControlRef accessControl, AuthenticatorAttachment attachment)
@@ -55,7 +55,7 @@ Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(Ref<A
 
 void AuthenticatorAssertionResponse::setAuthenticatorData(Vector<uint8_t>&& authenticatorData)
 {
-    m_authenticatorData = ArrayBuffer::create(authenticatorData.data(), authenticatorData.size());
+    m_authenticatorData = ArrayBuffer::create(authenticatorData);
 }
 
 AuthenticatorAssertionResponse::AuthenticatorAssertionResponse(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& authenticatorData, Ref<ArrayBuffer>&& signature, RefPtr<ArrayBuffer>&& userHandle, AuthenticatorAttachment attachment)

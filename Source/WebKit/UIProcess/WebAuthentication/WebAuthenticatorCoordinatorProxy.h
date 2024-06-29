@@ -123,7 +123,9 @@ private:
     void performRequest(WebAuthenticationRequestData&&, RequestCompletionHandler&&);
 
     RetainPtr<ASCCredentialRequestContext> contextForRequest(WebAuthenticationRequestData&&);
+#if HAVE(UNIFIED_ASC_AUTH_UI)
     void performRequestLegacy(RetainPtr<ASCCredentialRequestContext>, RequestCompletionHandler&&);
+#endif
 
 #if HAVE(WEB_AUTHN_AS_MODERN)
     RequestCompletionHandler m_completionHandler;

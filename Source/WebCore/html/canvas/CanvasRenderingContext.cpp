@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -87,6 +87,22 @@ void CanvasRenderingContext::deref() const
     m_canvas.derefCanvasBase();
 }
 
+RefPtr<ImageBuffer> CanvasRenderingContext::surfaceBufferToImageBuffer(SurfaceBuffer)
+{
+    // This will be removed once all contexts store their own buffers.
+    return canvasBase().buffer();
+}
+
+bool CanvasRenderingContext::isSurfaceBufferTransparentBlack(SurfaceBuffer) const
+{
+    return false;
+}
+
+bool CanvasRenderingContext::delegatesDisplay() const
+{
+    return false;
+}
+
 RefPtr<GraphicsLayerContentsDisplayDelegate> CanvasRenderingContext::layerContentsDisplayDelegate()
 {
     return nullptr;
@@ -97,9 +113,15 @@ void CanvasRenderingContext::setContentsToLayer(GraphicsLayer& layer)
     layer.setContentsDisplayDelegate(layerContentsDisplayDelegate(), GraphicsLayer::ContentsLayerPurpose::Canvas);
 }
 
-PixelFormat CanvasRenderingContext::pixelFormat() const
+RefPtr<ImageBuffer> CanvasRenderingContext::transferToImageBuffer()
 {
-    return PixelFormat::BGRA8;
+    ASSERT_NOT_REACHED(); // Implemented and called only for offscreen capable contexts.
+    return nullptr;
+}
+
+ImageBufferPixelFormat CanvasRenderingContext::pixelFormat() const
+{
+    return ImageBufferPixelFormat::BGRA8;
 }
 
 DestinationColorSpace CanvasRenderingContext::colorSpace() const

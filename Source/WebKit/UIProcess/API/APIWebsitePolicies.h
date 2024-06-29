@@ -107,9 +107,6 @@ public:
     WTF::String applicationNameForDesktopUserAgent() const { return m_data.applicationNameForDesktopUserAgent; }
     void setApplicationNameForDesktopUserAgent(const WTF::String& applicationName) { m_data.applicationNameForDesktopUserAgent = applicationName; }
 
-    bool allowContentChangeObserverQuirk() const { return m_data.allowContentChangeObserverQuirk; }
-    void setAllowContentChangeObserverQuirk(bool allow) { m_data.allowContentChangeObserverQuirk = allow; }
-
     WebCore::AllowsContentJavaScript allowsContentJavaScript() const { return m_data.allowsContentJavaScript; }
     void setAllowsContentJavaScript(WebCore::AllowsContentJavaScript allows) { m_data.allowsContentJavaScript = allows; }
 

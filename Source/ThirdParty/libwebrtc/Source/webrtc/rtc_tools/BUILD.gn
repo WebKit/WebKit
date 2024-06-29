@@ -54,6 +54,7 @@ rtc_library("video_file_reader") {
   ]
   deps = [
     "../api:make_ref_counted",
+    "../api:ref_count",
     "../api:scoped_refptr",
     "../api/video:video_frame",
     "../api/video:video_rtp_headers",
@@ -200,12 +201,12 @@ if (!is_component_build) {
       "..//api/video_codecs:video_encoder_factory_template_libvpx_vp8_adapter",
       "..//api/video_codecs:video_encoder_factory_template_libvpx_vp9_adapter",
       "..//api/video_codecs:video_encoder_factory_template_open_h264_adapter",
+      "..//test/network:simulated_network",
       "../api:create_frame_generator",
       "../api:rtp_parameters",
       "../api:transport_api",
-      "../api/rtc_event_log",
-      "../api/task_queue:default_task_queue_factory",
-      "../api/task_queue:task_queue",
+      "../api/environment",
+      "../api/environment:environment_factory",
       "../api/video:builtin_video_bitrate_allocator_factory",
       "../api/video_codecs:video_codecs_api",
       "../call",
@@ -213,12 +214,10 @@ if (!is_component_build) {
       "../call:fake_network",
       "../call:rtp_interfaces",
       "../call:rtp_sender",
-      "../call:simulated_network",
       "../call:simulated_packet_receiver",
       "../call:video_stream_api",
       "../media:media_constants",
       "../media:rtc_audio_video",
-      "../media:rtc_media_base",
       "../rtc_base:rtc_json",
       "../rtc_base:threading",
       "../rtc_base/system:file_wrapper",
@@ -256,8 +255,9 @@ if (!is_component_build) {
     deps = [
       "../api:field_trials",
       "../api:rtp_parameters",
-      "../api/rtc_event_log",
-      "../api/task_queue:default_task_queue_factory",
+      "../api/environment",
+      "../api/environment:environment_factory",
+      "../api/task_queue",
       "../api/test/video:function_video_factory",
       "../api/transport:field_trial_based_config",
       "../api/units:timestamp",
@@ -272,7 +272,6 @@ if (!is_component_build) {
       "../rtc_base:checks",
       "../rtc_base:rtc_json",
       "../rtc_base:stringutils",
-      "../rtc_base:timeutils",
       "../system_wrappers",
       "../test:call_config_utils",
       "../test:encoder_settings",
@@ -291,6 +290,7 @@ if (!is_component_build) {
       "../test/time_controller:time_controller",
       "//third_party/abseil-cpp/absl/flags:flag",
       "//third_party/abseil-cpp/absl/flags:parse",
+      "//third_party/abseil-cpp/absl/strings:strings",
     ]
     if (build_with_chromium) {
       # When building from Chromium, WebRTC's metrics and field trial
@@ -359,6 +359,7 @@ if (!build_with_chromium) {
 
     rtc_library("event_log_visualizer_utils") {
       visibility = [ "*" ]
+      allow_poison = [ "environment_construction" ]
       sources = [
         "rtc_event_log_visualizer/alerts.cc",
         "rtc_event_log_visualizer/alerts.h",
@@ -372,10 +373,6 @@ if (!build_with_chromium) {
         "rtc_event_log_visualizer/log_simulation.h",
         "rtc_event_log_visualizer/plot_base.cc",
         "rtc_event_log_visualizer/plot_base.h",
-        "rtc_event_log_visualizer/plot_protobuf.cc",
-        "rtc_event_log_visualizer/plot_protobuf.h",
-        "rtc_event_log_visualizer/plot_python.cc",
-        "rtc_event_log_visualizer/plot_python.h",
       ]
       deps = [
         ":chart_proto",
@@ -388,6 +385,7 @@ if (!build_with_chromium) {
         "../api:scoped_refptr",
         "../api/audio_codecs:audio_codecs_api",  # TODO(kwiberg): Remove this
                                                  # dependency.
+        "../api/environment:environment_factory",
         "../api/neteq:neteq_api",
         "../api/rtc_event_log:rtc_event_log",
         "../api/transport:field_trial_based_config",
@@ -420,7 +418,6 @@ if (!build_with_chromium) {
         "../modules/rtp_rtcp",
         "../modules/rtp_rtcp:rtp_rtcp_format",
         "../rtc_base:checks",
-        "../rtc_base:ignore_wundef",
         "../rtc_base:logging",
         "../rtc_base:macromagic",
         "../rtc_base:rate_statistics",
@@ -442,6 +439,7 @@ if (!build_with_chromium) {
 
     rtc_library("event_log_visualizer_bindings") {
       visibility = [ "*" ]
+      allow_poison = [ "environment_construction" ]
       sources = [
         "rtc_event_log_visualizer/analyzer_bindings.cc",
         "rtc_event_log_visualizer/analyzer_bindings.h",
@@ -482,6 +480,8 @@ if (!build_with_chromium) {
     deps = [
       "//api:create_frame_generator",
       "//api:frame_generator_api",
+      "//api/environment",
+      "//api/environment:environment_factory",
       "//api/video:builtin_video_bitrate_allocator_factory",
       "//api/video_codecs:builtin_video_encoder_factory",
       "//api/video_codecs:video_codecs_api",
@@ -642,8 +642,8 @@ if (rtc_include_tests) {
         sources = [ "audioproc_f/audioproc_float_main.cc" ]
         deps = [
           "../api:audioproc_f_api",
+          "../api/audio:audio_processing",
           "../modules/audio_processing",
-          "../modules/audio_processing:api",
         ]
       }
 
@@ -659,7 +659,6 @@ if (rtc_include_tests) {
           "../modules/audio_processing:audioproc_debug_proto",
           "../modules/audio_processing:audioproc_protobuf_utils",
           "../rtc_base:checks",
-          "../rtc_base:ignore_wundef",
           "../rtc_base:macromagic",
           "../rtc_base:protobuf_utils",
           "../rtc_base:stringutils",

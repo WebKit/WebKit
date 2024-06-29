@@ -33,31 +33,9 @@
 
 namespace WebCore {
 
-namespace Detail {
+template<typename IDL> struct Converter<IDLNullable<IDL>> : DefaultConverter<IDLNullable<IDL>> {
+    using Result = ConversionResult<IDLNullable<IDL>>;
 
-template<typename IDLType>
-struct NullableConversionType;
-
-template<typename IDLType> 
-struct NullableConversionType {
-    using Type = typename IDLNullable<IDLType>::ImplementationType;
-};
-
-template<typename T>
-struct NullableConversionType<IDLInterface<T>> {
-    using Type = typename Converter<IDLInterface<T>>::ReturnType;
-};
-
-template<>
-struct NullableConversionType<IDLAny> {
-    using Type = typename Converter<IDLAny>::ReturnType;
-};
-
-}
-
-template<typename T> struct Converter<IDLNullable<T>> : DefaultConverter<IDLNullable<T>> {
-    using ReturnType = typename Detail::NullableConversionType<T>::Type;
-    
     // 1. If Type(V) is not Object, and the conversion to an IDL value is being performed
     // due to V being assigned to an attribute whose type is a nullable callback function
     // that is annotated with [LegacyTreatNonObjectAsNull], then return the IDL nullable
@@ -68,83 +46,108 @@ template<typename T> struct Converter<IDLNullable<T>> : DefaultConverter<IDLNull
     // 2. Otherwise, if V is null or undefined, then return the IDL nullable type T? value null.
     // 3. Otherwise, return the result of converting V using the rules for the inner IDL type T.
 
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
         if (value.isUndefinedOrNull())
-            return T::nullValue();
-        return Converter<T>::convert(lexicalGlobalObject, value);
+            return { IDL::nullValue() };
+        return WebCore::convert<IDL>(lexicalGlobalObject, value);
     }
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSC::JSObject& thisObject)
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSC::JSObject& thisObject)
     {
         if (value.isUndefinedOrNull())
-            return T::nullValue();
-        return Converter<T>::convert(lexicalGlobalObject, value, thisObject);
+            return { IDL::nullValue() };
+        return WebCore::convert<IDL>(lexicalGlobalObject, value, thisObject);
     }
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject)
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject)
     {
         if (value.isUndefinedOrNull())
-            return T::nullValue();
-        return Converter<T>::convert(lexicalGlobalObject, value, globalObject);
-    }
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower)
-    {
-        if (value.isUndefinedOrNull())
-            return T::nullValue();
-        return Converter<T>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
+            return { IDL::nullValue() };
+        return WebCore::convert<IDL>(lexicalGlobalObject, value, globalObject);
     }
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSC::JSObject& thisObject, ExceptionThrower&& exceptionThrower)
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower)
     {
         if (value.isUndefinedOrNull())
-            return T::nullValue();
-        return Converter<T>::convert(lexicalGlobalObject, value, thisObject, std::forward<ExceptionThrower>(exceptionThrower));
+            return { IDL::nullValue() };
+        return WebCore::convert<IDL>(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
     }
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, ExceptionThrower&& exceptionThrower)
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSC::JSObject& thisObject, ExceptionThrower&& exceptionThrower)
     {
         if (value.isUndefinedOrNull())
-            return T::nullValue();
-        return Converter<T>::convert(lexicalGlobalObject, value, globalObject, std::forward<ExceptionThrower>(exceptionThrower));
+            return { IDL::nullValue() };
+        return WebCore::convert<IDL>(lexicalGlobalObject, value, thisObject, std::forward<ExceptionThrower>(exceptionThrower));
+    }
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, ExceptionThrower&& exceptionThrower)
+    {
+        if (value.isUndefinedOrNull())
+            return { IDL::nullValue() };
+        return WebCore::convert<IDL>(lexicalGlobalObject, value, globalObject, std::forward<ExceptionThrower>(exceptionThrower));
     }
 };
 
-template<typename T> struct JSConverter<IDLNullable<T>> {
-    using ImplementationType = typename IDLNullable<T>::ImplementationType;
+template<typename IDL> struct JSConverter<IDLNullable<IDL>> {
+    using ImplementationType = typename IDLNullable<IDL>::ImplementationType;
 
-    static constexpr bool needsState = JSConverter<T>::needsState;
-    static constexpr bool needsGlobalObject = JSConverter<T>::needsGlobalObject;
+    static constexpr bool needsState = JSConverter<IDL>::needsState;
+    static constexpr bool needsGlobalObject = JSConverter<IDL>::needsGlobalObject;
 
-    template<typename U>
+    template<std::convertible_to<ImplementationType> U>
     static JSC::JSValue convert(U&& value)
     {
-        if (T::isNullValue(value))
+        if (IDL::isNullValue(value))
             return JSC::jsNull();
-        return JSConverter<T>::convert(T::extractValueFromNullable(value));
+        return toJS<IDL>(IDL::extractValueFromNullable(std::forward<U>(value)));
     }
-    template<typename U>
+
+    template<std::convertible_to<ImplementationType> U>
+    static JSC::JSValue convert(const U& value)
+    {
+        if (IDL::isNullValue(value))
+            return JSC::jsNull();
+        return toJS<IDL>(IDL::extractValueFromNullable(value));
+    }
+
+    template<std::convertible_to<ImplementationType> U>
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, U&& value)
     {
-        if (T::isNullValue(value))
+        if (IDL::isNullValue(value))
             return JSC::jsNull();
-        return JSConverter<T>::convert(lexicalGlobalObject, T::extractValueFromNullable(value));
+        return toJS<IDL>(lexicalGlobalObject, IDL::extractValueFromNullable(std::forward<U>(value)));
     }
-    template<typename U>
+
+    template<std::convertible_to<ImplementationType> U>
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const U& value)
+    {
+        if (IDL::isNullValue(value))
+            return JSC::jsNull();
+        return toJS<IDL>(lexicalGlobalObject, IDL::extractValueFromNullable(value));
+    }
+
+    template<std::convertible_to<ImplementationType> U>
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U&& value)
     {
-        if (T::isNullValue(value))
+        if (IDL::isNullValue(value))
             return JSC::jsNull();
-        return JSConverter<T>::convert(lexicalGlobalObject, globalObject, T::extractValueFromNullable(value));
+        return toJS<IDL>(lexicalGlobalObject, globalObject, IDL::extractValueFromNullable(std::forward<U>(value)));
     }
 
-    template<typename U>
+    template<std::convertible_to<ImplementationType> U>
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        if (IDL::isNullValue(value))
+            return JSC::jsNull();
+        return toJS<IDL>(lexicalGlobalObject, globalObject, IDL::extractValueFromNullable(value));
+    }
+
+    template<std::convertible_to<ImplementationType> U>
     static JSC::JSValue convertNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U&& value)
     {
-        if (T::isNullValue(value))
+        if (IDL::isNullValue(value))
             return JSC::jsNull();
-        return JSConverter<T>::convert(lexicalGlobalObject, globalObject, T::extractValueFromNullable(value));
+        return toJSNewlyCreated<IDL>(lexicalGlobalObject, globalObject, IDL::extractValueFromNullable(std::forward<U>(value)));
     }
 };
-
 
 } // namespace WebCore

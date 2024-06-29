@@ -37,12 +37,12 @@ AtomString fileSizeDescription(uint64_t size)
     // FIXME: These strings should be localized, but that would require bringing LocalizedStrings into PAL.
     // See <https://bugs.webkit.org/show_bug.cgi?id=179019> for more details.
     if (size < 1000)
-        return makeAtomString(size, " bytes");
+        return makeAtomString(size, " bytes"_s);
     if (size < 1000000)
-        return makeAtomString(FormattedNumber::fixedWidth(size / 1000., 1), " KB");
+        return makeAtomString(FormattedNumber::fixedWidth(size / 1000., 1), " KB"_s);
     if (size < 1000000000)
-        return makeAtomString(FormattedNumber::fixedWidth(size / 1000000., 1), " MB");
-    return makeAtomString(FormattedNumber::fixedWidth(size / 1000000000., 1), " GB");
+        return makeAtomString(FormattedNumber::fixedWidth(size / 1000000., 1), " MB"_s);
+    return makeAtomString(FormattedNumber::fixedWidth(size / 1000000000., 1), " GB"_s);
 }
 
 #endif

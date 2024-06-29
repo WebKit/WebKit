@@ -151,7 +151,7 @@ class FramebufferAttachment final
     const egl::Surface *getSurface() const;
     FramebufferAttachmentObject *getResource() const;
     InitState initState() const;
-    angle::Result initializeContents(const Context *context);
+    angle::Result initializeContents(const Context *context) const;
     void setInitState(InitState initState) const;
 
     // "T" must be static_castable from FramebufferAttachmentRenderTarget

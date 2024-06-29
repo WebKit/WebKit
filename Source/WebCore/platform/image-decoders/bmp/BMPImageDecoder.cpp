@@ -116,7 +116,8 @@ bool BMPImageDecoder::processFileHeader(size_t* imgDataOffset)
     ASSERT(!m_decodedOffset);
     if (m_data->size() < sizeOfFileHeader)
         return false;
-    const uint16_t fileType = (m_data->data()[0] << 8) | static_cast<uint8_t>(m_data->data()[1]);
+    auto dataSpan = m_data->span();
+    const uint16_t fileType = (dataSpan[0] << 8) | dataSpan[1];
     *imgDataOffset = readUint32(10);
     m_decodedOffset = sizeOfFileHeader;
 

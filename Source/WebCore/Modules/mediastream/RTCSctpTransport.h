@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,10 +47,10 @@ public:
 
     RTCDtlsTransport& transport() { return m_transport.get(); }
     RTCSctpTransportState state() const { return m_state; }
-    double maxMessageSize() const { return m_maxMessageSize; }
+    double maxMessageSize() const { return m_maxMessageSize.value_or(std::numeric_limits<double>::infinity()); }
     std::optional<unsigned short>  maxChannels() const { return m_maxChannels; }
 
-    void update() { }
+    void updateMaxMessageSize(std::optional<double>);
 
     const RTCSctpTransportBackend& backend() const { return m_backend.get(); }
 
@@ -73,7 +73,7 @@ private:
     UniqueRef<RTCSctpTransportBackend> m_backend;
     Ref<RTCDtlsTransport> m_transport;
     RTCSctpTransportState m_state { RTCSctpTransportState::Connecting };
-    double m_maxMessageSize { std::numeric_limits<double>::max() };
+    std::optional<double> m_maxMessageSize;
     std::optional<unsigned short> m_maxChannels;
 };
 

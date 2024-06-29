@@ -165,8 +165,6 @@ struct LooksLikeRCSerialDispatcher : decltype(detail::LooksLikeRCSerialDispatche
 class NativePromiseBase;
 class ConvertibleToNativePromise;
 
-// The use of C++20 concepts causes a crash with the current msvc (see webkit.org/b/261598)
-#if !COMPILER(MSVC)
 template <typename T>
 concept IsNativePromise = std::is_base_of<NativePromiseBase, T>::value;
 
@@ -180,20 +178,6 @@ concept RelatedNativePromise = requires(T, U)
     { IsConvertibleToNativePromise<U> };
     { std::is_same<typename T::PromiseType, typename U::PromiseType>::value };
 };
-#else
-template <typename T>
-constexpr bool IsNativePromise = std::is_base_of<NativePromiseBase, T>::value;
-
-template <typename T>
-constexpr bool IsConvertibleToNativePromise = std::is_base_of<ConvertibleToNativePromise, T>::value;
-
-// The test isn't as exhaustive as concept's version.
-// It will prevent having more user-friendly compilation error should mix&match of NativePromise is used.
-// This will do for now.
-template <typename T, typename U>
-constexpr bool RelatedNativePromise = IsConvertibleToNativePromise<T> && IsConvertibleToNativePromise<U>;
-#endif
-
 
 template <typename T>
 struct IsExpected : std::false_type { };

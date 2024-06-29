@@ -54,12 +54,13 @@ class TestClone(testing.PathTestCase):
             issues=bmocks.ISSUES,
             projects=bmocks.PROJECTS,
             milestones=bmocks.MILESTONES,
-        ), OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+        ) as mock_radar, OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
 
             self.assertEqual(255, program.main(
                 args=('clone', 'rdar://1'),
                 path=self.path,
             ))
+            self.assertEqual(2, mock_radar.request_count)
 
         self.assertEqual(
             captured.stderr.getvalue(),
@@ -71,12 +72,14 @@ class TestClone(testing.PathTestCase):
             issues=bmocks.ISSUES,
             projects=bmocks.PROJECTS,
             milestones=bmocks.MILESTONES,
-        ), OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+        ) as mock_radar, OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
 
             self.assertEqual(0, program.main(
                 args=('clone', 'rdar://1', '--reason', 'Cloning for a future branch', '--milestone', 'Future'),
                 path=self.path,
             ))
+            self.assertEqual(22, mock_radar.request_count)
+
             tracker = radar.Tracker()
             raw_issue = tracker.client.radar_for_id(4)
 
@@ -97,12 +100,13 @@ class TestClone(testing.PathTestCase):
             issues=bmocks.ISSUES,
             projects=bmocks.PROJECTS,
             milestones=bmocks.MILESTONES,
-        ), MockTerminal.input('1'), OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+        ) as mock_radar, MockTerminal.input('1'), OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
 
             self.assertEqual(255, program.main(
                 args=('clone', 'rdar://1', '--reason', 'Cloning for an October branch', '--milestone', 'October', '--no-prompt'),
                 path=self.path,
             ))
+            self.assertEqual(5, mock_radar.request_count)
 
         self.assertEqual(
             captured.stderr.getvalue(),
@@ -116,12 +120,14 @@ class TestClone(testing.PathTestCase):
             issues=bmocks.ISSUES,
             projects=bmocks.PROJECTS,
             milestones=bmocks.MILESTONES,
-        ), MockTerminal.input('2'), OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+        ) as mock_radar, MockTerminal.input('2'), OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
 
             self.assertEqual(0, program.main(
                 args=('clone', 'rdar://1', '--reason', 'Cloning for an October branch', '--milestone', 'October', '--prompt'),
                 path=self.path,
             ))
+            self.assertEqual(22, mock_radar.request_count)
+
             tracker = radar.Tracker()
             raw_issue = tracker.client.radar_for_id(4)
 
@@ -182,11 +188,12 @@ class TestClone(testing.PathTestCase):
             issues=issues,
             projects=bmocks.PROJECTS,
             milestones=bmocks.MILESTONES,
-        ), MockTerminal.input('1'), OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+        ) as mock_radar, MockTerminal.input('1'), OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
             self.assertEqual(255, program.main(
                 args=('clone', 'rdar://1', '--reason', 'Cloning for an October branch', '--milestone', 'October', '--merge-back'),
                 path=self.path,
             ))
+            self.assertEqual(11, mock_radar.request_count)
 
         self.assertEqual(
             captured.stderr.getvalue(),
@@ -216,11 +223,13 @@ class TestClone(testing.PathTestCase):
             issues=issues,
             projects=bmocks.PROJECTS,
             milestones=bmocks.MILESTONES,
-        ), MockTerminal.input('1'), OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+        ) as mock_radar, MockTerminal.input('1'), OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
             self.assertEqual(0, program.main(
                 args=('clone', 'rdar://1', '--reason', 'Cloning for an October branch', '--milestone', 'October', '--merge-back'),
                 path=self.path,
             ))
+            self.assertEqual(42, mock_radar.request_count)
+
             tracker = radar.Tracker()
             raw_issue = tracker.client.radar_for_id(5)
 
@@ -261,7 +270,7 @@ class TestClone(testing.PathTestCase):
             issues=issues,
             projects=bmocks.PROJECTS,
             milestones=bmocks.MILESTONES,
-        ), MockTerminal.input('y', '1'), OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+        ) as mock_radar, MockTerminal.input('y', '1'), OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
             tracker = radar.Tracker()
             tracker.issue(1).add_comment('Committed 1234.10@some-branch (12345678) to some-branch referencing this bug')
 
@@ -269,6 +278,8 @@ class TestClone(testing.PathTestCase):
                 args=('clone', 'rdar://1', '--milestone', 'October'),
                 path=self.path,
             ))
+            self.assertEqual(49, mock_radar.request_count)
+
             raw_issue = tracker.client.radar_for_id(5)
 
             self.assertEqual(raw_issue.milestone.name, 'Internal Tools - October')

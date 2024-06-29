@@ -11,7 +11,7 @@
 // - ... and it is in {-4, -3, -2, 2, 3, 4, 5, 6, 7, 8}
 //
 // The workaround is to replace the pow with a series of multiplies.
-// See http://anglebug.com/851
+// See http://anglebug.com/40096900
 
 #ifndef COMPILER_TRANSLATOR_TREEOPS_HLSL_EXPANDINTEGERPOWEXPRESSIONS_H_
 #define COMPILER_TRANSLATOR_TREEOPS_HLSL_EXPANDINTEGERPOWEXPRESSIONS_H_

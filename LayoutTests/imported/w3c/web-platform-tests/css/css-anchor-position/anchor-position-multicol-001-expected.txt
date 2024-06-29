@@ -1,0 +1,13 @@
+spacer
+
+FAIL .target 1 assert_equals:
+<div class="target" style="left: anchor(--a1 left)" data-offset-x="110"></div>
+offsetLeft expected 110 but got 0
+FAIL .target 2 assert_equals:
+<div class="target" style="right: anchor(--a1 right)" data-offset-x="320"></div>
+offsetLeft expected 320 but got 100
+FAIL .target 3 assert_equals:
+<div class="target" style="top: anchor(--a1 top)" data-offset-y="10"></div>
+offsetTop expected 10 but got 0
+PASS .target 4
+

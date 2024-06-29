@@ -225,7 +225,7 @@ def upgrade_single_trace(args, trace_binary, trace, out_path, no_overwrite, c_so
             'ANGLE_FEATURE_OVERRIDES_ENABLED'] = 'allocateNonZeroMemory:forceInitShaderVariables'
     if args.validation_expr:
         additional_env['ANGLE_CAPTURE_VALIDATION_EXPR'] = args.validation_expr
-    # TODO: Remove when default. http://anglebug.com/7753
+    # TODO: Remove when default. http://anglebug.com/42266223
     if c_sources:
         additional_env['ANGLE_CAPTURE_SOURCE_EXT'] = 'c'
 

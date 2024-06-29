@@ -92,13 +92,8 @@ using namespace WebKit;
 
 - (void)deleteDatabaseWithCompletionHandler:(void (^)(NSString *errorMessage))completionHandler
 {
-    auto weakSelf = WeakObjCPtr<_WKWebExtensionSQLiteStore> { self };
     dispatch_async(_databaseQueue, ^{
-        auto strongSelf = weakSelf.get();
-        if (!strongSelf)
-            return;
-
-        NSString *deleteDatabaseErrorMessage = [strongSelf _deleteDatabase];
+        NSString *deleteDatabaseErrorMessage = [self _deleteDatabase];
         dispatch_async(dispatch_get_main_queue(), ^{
             completionHandler(deleteDatabaseErrorMessage);
         });

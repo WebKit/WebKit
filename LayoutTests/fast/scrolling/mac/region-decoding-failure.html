@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        html, body, .scroller, .contents {
+            scale: 500;
+        }
+       
+        .scroller {
+            width: 1200px;
+            height: 50px;
+            overflow: -webkit-paged-y visible;
+            border: 1px solid black;
+            transform: translateX(100%);
+            transform-origin: 100%;
+        }
+        
+        .contents {
+            height: 200%;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents">This test should not crash.</div>
+    </div>
+</body>
+</html>

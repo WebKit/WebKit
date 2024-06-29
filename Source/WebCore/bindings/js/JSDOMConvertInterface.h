@@ -57,18 +57,21 @@ struct JSToWrappedOverloader<T, typename std::enable_if<JSDOMWrapperConverterTra
 };
 
 template<typename T> struct Converter<IDLInterface<T>> : DefaultConverter<IDLInterface<T>> {
-    using ReturnType = typename JSDOMWrapperConverterTraits<T>::ToWrappedReturnType;
-    using WrapperType = typename JSDOMWrapperConverterTraits<T>::WrapperClass;
+    using Result = ConversionResult<IDLInterface<T>>;
 
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    static Result convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
         auto& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        ReturnType object = JSToWrappedOverloader<T>::toWrapped(lexicalGlobalObject, value);
-        if (UNLIKELY(!object))
+
+        auto object = JSToWrappedOverloader<T>::toWrapped(lexicalGlobalObject, value);
+        if (UNLIKELY(!object)) {
             exceptionThrower(lexicalGlobalObject, scope);
-        return object;
+            return Result::exception();
+        }
+
+        return Result { object };
     }
 };
 
@@ -94,10 +97,14 @@ template<typename T> struct VariadicConverter<IDLInterface<T>> {
 
     static std::optional<Item> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        auto* result = Converter<IDLInterface<T>>::convert(lexicalGlobalObject, value);
-        if (!result)
+        auto& vm = lexicalGlobalObject.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        auto result = WebCore::convert<IDLInterface<T>>(lexicalGlobalObject, value);
+        if (UNLIKELY(result.hasException(scope)))
             return std::nullopt;
-        return std::optional<Item> { *result };
+
+        return Item { *result.releaseReturnValue() };
     }
 };
 

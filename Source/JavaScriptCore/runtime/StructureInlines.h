@@ -36,6 +36,7 @@
 #include "Structure.h"
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"
+#include "SymbolPrototype.h"
 #include "Watchpoint.h"
 #include <wtf/CompactRefPtr.h>
 #include <wtf/Threading.h>

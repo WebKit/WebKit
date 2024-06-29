@@ -60,7 +60,6 @@ public:
     virtual ExceptionOr<void> configure(GPUCanvasConfiguration&&) = 0;
     virtual void unconfigure() = 0;
     virtual ExceptionOr<RefPtr<GPUTexture>> getCurrentTexture() = 0;
-    virtual ExceptionOr<RefPtr<ImageBitmap>> getCurrentTextureAsImageBitmap(ImageBuffer&, bool originClean) = 0;
 
     bool isWebGPU() const override { return true; }
 

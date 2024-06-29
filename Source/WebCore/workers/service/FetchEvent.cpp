@@ -77,7 +77,7 @@ FetchEvent::~FetchEvent()
 
 ResourceError FetchEvent::createResponseError(const URL& url, const String& errorMessage, ResourceError::IsSanitized isSanitized)
 {
-    return ResourceError { errorDomainWebKitServiceWorker, 0, url, makeString("FetchEvent.respondWith received an error: ", errorMessage), ResourceError::Type::General, isSanitized };
+    return ResourceError { errorDomainWebKitServiceWorker, 0, url, makeString("FetchEvent.respondWith received an error: "_s, errorMessage), ResourceError::Type::General, isSanitized };
 
 }
 

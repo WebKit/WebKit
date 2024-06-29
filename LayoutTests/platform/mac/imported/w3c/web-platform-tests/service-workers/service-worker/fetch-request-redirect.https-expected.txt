@@ -14,7 +14,7 @@ PASS Loading redirected image with Request.redirect=error should fail. - default
 PASS Loading redirected image with Request.redirect=manual should fail. - default
 PASS Normal audio resource should be loaded. - default
 PASS Redirected audio resource should be loaded. - default
-FAIL Loading redirected audio with Request.redirect=follow should succeed. - default undefined
+PASS Loading redirected audio with Request.redirect=follow should succeed. - default
 PASS Loading redirected audio with Request.redirect=error should fail. - default
 PASS Loading redirected audio with Request.redirect=manual should fail. - default
 PASS Normal iframe loading should succeed. - default

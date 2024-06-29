@@ -46,6 +46,17 @@ PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="rgb10a2unorm"
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,unaligned:formats=["r8unorm","r32float","rgba8unorm","rgba32float","r8unorm"]
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,unaligned:formats=["r32float","rgba8unorm","rgba32float","r8unorm","r8unorm"]
+PASS :color_attachments,depthSlice,definedness:dimension="2d"
+PASS :color_attachments,depthSlice,definedness:dimension="3d"
+PASS :color_attachments,depthSlice,bound_check:mipLevel=0
+PASS :color_attachments,depthSlice,bound_check:mipLevel=1
+PASS :color_attachments,depthSlice,bound_check:mipLevel=2
+PASS :color_attachments,depthSlice,bound_check:mipLevel=3
+PASS :color_attachments,depthSlice,bound_check:mipLevel=4
+PASS :color_attachments,depthSlice,overlaps,same_miplevel:sameDepthSlice=true
+PASS :color_attachments,depthSlice,overlaps,same_miplevel:sameDepthSlice=false
+PASS :color_attachments,depthSlice,overlaps,diff_miplevel:sameMipLevel=true
+PASS :color_attachments,depthSlice,overlaps,diff_miplevel:sameMipLevel=false
 PASS :color_attachments,non_multisampled:
 PASS :color_attachments,sample_count:
 PASS :resolveTarget,sample_count:

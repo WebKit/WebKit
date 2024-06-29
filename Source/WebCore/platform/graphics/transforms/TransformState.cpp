@@ -78,10 +78,14 @@ void TransformState::translateMappedCoordinates(const LayoutSize& offset)
     if (m_tracking != DoNotTrackTransformMatrix) {
         if (!m_trackedTransform)
             m_trackedTransform = makeUnique<TransformationMatrix>();
+        if (shouldFlattenBefore())
+            m_trackedTransform->flatten();
         if (m_direction == ApplyTransformDirection)
             m_trackedTransform->translateRight(offset.width(), offset.height());
         else
             m_trackedTransform->translate(offset.width(), offset.height());
+        if (shouldFlattenAfter())
+            m_trackedTransform->flatten();
     }
 }
 
@@ -270,10 +274,15 @@ void TransformState::flattenWithTransform(const TransformationMatrix& t, bool* w
         }
     }
 
-    if (m_trackedTransform)
+    if (m_trackedTransform) {
+        if (shouldFlattenBefore())
+            m_trackedTransform->flatten();
         *m_trackedTransform = (m_direction == ApplyTransformDirection) ? (t * *m_trackedTransform) : (*m_trackedTransform * t);
-    else if (m_tracking != DoNotTrackTransformMatrix)
+    } else if (m_tracking != DoNotTrackTransformMatrix)
         m_trackedTransform = makeUnique<TransformationMatrix>(t);
+
+    if (m_trackedTransform && shouldFlattenAfter())
+        m_trackedTransform->flatten();
 
     // We could throw away m_accumulatedTransform if we wanted to here, but that
     // would cause thrash when traversing hierarchies with alternating

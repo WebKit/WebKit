@@ -34,9 +34,7 @@
 
 namespace JSC { namespace B3 {
 
-ConstFloatValue::~ConstFloatValue()
-{
-}
+ConstFloatValue::~ConstFloatValue() = default;
 
 Value* ConstFloatValue::negConstant(Procedure& proc) const
 {

@@ -77,8 +77,9 @@ absl::optional<Metric> FindMeetricByName(absl::string_view name,
 
 TEST(StatsBasedNetworkQualityMetricsReporterTest, DebugStatsAreCollected) {
   std::unique_ptr<NetworkEmulationManager> network_emulation =
-      CreateNetworkEmulationManager(TimeMode::kSimulated,
-                                    EmulatedNetworkStatsGatheringMode::kDebug);
+      CreateNetworkEmulationManager(
+          {.time_mode = TimeMode::kSimulated,
+           .stats_gathering_mode = EmulatedNetworkStatsGatheringMode::kDebug});
   DefaultMetricsLogger metrics_logger(
       network_emulation->time_controller()->GetClock());
   PeerConnectionE2EQualityTest fixture(

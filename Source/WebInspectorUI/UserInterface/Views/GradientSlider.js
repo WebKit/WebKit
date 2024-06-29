@@ -317,16 +317,6 @@ WI.GradientSliderKnob = class GradientSliderKnob extends WI.Object
         this._updateTransform();
     }
 
-    get y()
-    {
-        return this._x;
-    }
-
-    set y(y) {
-        this._y = y;
-        this._updateTransform();
-    }
-
     get wellColor()
     {
         return this._wellColor;
@@ -414,9 +404,10 @@ WI.GradientSliderKnob = class GradientSliderKnob extends WI.Object
             x = Math.min(Math.max(0, x), w);
         this.x = x;
 
-        if (this._detaching)
-            this.y = event.pageY - this._startMouseY;
-        else if (this.delegate && typeof this.delegate.knobXDidChange === "function")
+        if (this._detaching) {
+            this._y = event.pageY - this._startMouseY;
+            this._updateTransform();
+        } else if (this.delegate && typeof this.delegate.knobXDidChange === "function")
             this.delegate.knobXDidChange(this);
     }
 

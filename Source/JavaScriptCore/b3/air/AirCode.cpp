@@ -122,9 +122,7 @@ Code::Code(Procedure& proc)
     m_pinnedRegs.add(MacroAssembler::framePointerRegister, IgnoreVectors);
 }
 
-Code::~Code()
-{
-}
+Code::~Code() = default;
 
 void Code::emitDefaultPrologue(CCallHelpers& jit)
 {
@@ -192,7 +190,7 @@ StackSlot* Code::addStackSlot(uint64_t byteSize, StackSlotKind kind)
         // FIXME: This is unnecessarily awful. Fortunately, it doesn't run often.
         unsigned extent = WTF::roundUpToMultipleOf(result->alignment(), frameSize() - stackAdjustmentForAlignment() + byteSize);
         result->setOffsetFromFP(-static_cast<ptrdiff_t>(extent));
-        setFrameSize(WTF::roundUpToMultipleOf(stackAlignmentBytes(), extent) + stackAdjustmentForAlignment());
+        setFrameSize(WTF::roundUpToMultipleOf<stackAlignmentBytes()>(extent) + stackAdjustmentForAlignment());
     }
     return result;
 }

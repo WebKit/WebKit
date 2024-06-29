@@ -30,6 +30,7 @@
 #include "DNSResolveQueue.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
+#include <wtf/URL.h>
 
 #if OS(UNIX)
 #include <arpa/inet.h>
@@ -64,6 +65,14 @@ void stopResolveDNS(uint64_t identifier)
     WebCore::DNSResolveQueue::singleton().stopResolve(identifier);
 }
 
+// FIXME: Temporary fix until we have rdar://63797758
+bool isIPAddressDisallowed(const URL& url)
+{
+    if (auto address = IPAddress::fromString(url.host().toStringWithoutCopying()))
+        return address->containsOnlyZeros();
+    return false;
+}
+
 bool IPAddress::containsOnlyZeros() const
 {
     return std::visit(WTF::makeVisitor([] (const WTF::HashTableEmptyValueType&) {
@@ -84,7 +93,7 @@ bool IPAddress::isLoopback() const
 {
     return WTF::switchOn(m_address,
         [] (const struct in_addr& address) {
-        return address.s_addr == INADDR_LOOPBACK;
+        return address.s_addr == htonl(INADDR_LOOPBACK);
     }, [] (const struct in6_addr& address) {
         constexpr auto in6addrLoopback = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1";
         return !memcmp(&address.s6_addr, in6addrLoopback, sizeof(address.s6_addr));

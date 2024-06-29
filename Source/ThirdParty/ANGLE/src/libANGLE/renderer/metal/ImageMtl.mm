@@ -149,7 +149,9 @@ angle::Result TextureImageSiblingMtl::initImpl(DisplayMtl *displayMtl)
 
     mRenderable = mFormat.getCaps().depthRenderable || mFormat.getCaps().colorRenderable;
 
-    mTextureable = mFormat.getCaps().filterable || mFormat.hasDepthOrStencilBits();
+    // Some formats are not filterable but renderable such as integer formats. In this case, treat
+    // them as texturable as well.
+    mTextureable = mFormat.getCaps().filterable || mRenderable;
 
     return angle::Result::Continue;
 }

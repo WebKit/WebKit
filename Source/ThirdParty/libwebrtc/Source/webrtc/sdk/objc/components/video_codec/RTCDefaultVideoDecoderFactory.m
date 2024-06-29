@@ -109,7 +109,7 @@
   if ([info.name isEqualToString:kRTCVideoCodecH264Name]) {
     return [[RTCVideoDecoderH264 alloc] init];
   } else if ([info.name isEqualToString:kRTCVideoCodecVp8Name]) {
-    return [RTCVideoDecoderVP8 vp8Decoder];
+      return [RTCVideoDecoderVP8 vp8Decoder];
 #if !defined(RTC_DISABLE_H265)
   } else if ([info.name isEqualToString:kRTCVideoCodecH265Name]) {
     return [[RTCVideoDecoderH265 alloc] init];

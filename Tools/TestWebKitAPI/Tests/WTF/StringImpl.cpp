@@ -108,8 +108,7 @@ TEST(WTF, StringImplEqualIgnoringASCIICaseBasic)
     auto b = StringImpl::create("ABCDEFG"_s);
     auto c = StringImpl::create("abcdefg"_s);
     constexpr auto d = "aBcDeFG"_s;
-    constexpr size_t zeroLength = 0; // LLVM bug workaround.
-    auto empty = StringImpl::create(std::span { reinterpret_cast<const LChar*>(""), zeroLength });
+    auto empty = StringImpl::create(""_span);
     auto shorter = StringImpl::create("abcdef"_s);
     auto different = StringImpl::create("abcrefg"_s);
 
@@ -152,9 +151,8 @@ TEST(WTF, StringImplEqualIgnoringASCIICaseWithNull)
 
 TEST(WTF, StringImplEqualIgnoringASCIICaseWithEmpty)
 {
-    constexpr size_t zeroLength = 0; // LLVM bug workaround.
-    auto a = StringImpl::create(std::span { reinterpret_cast<const LChar*>(""), zeroLength });
-    auto b = StringImpl::create(std::span { reinterpret_cast<const LChar*>(""), zeroLength });
+    auto a = StringImpl::create(""_span);
+    auto b = StringImpl::create(""_span);
     ASSERT_TRUE(equalIgnoringASCIICase(a.ptr(), b.ptr()));
     ASSERT_TRUE(equalIgnoringASCIICase(b.ptr(), a.ptr()));
 }
@@ -332,8 +330,7 @@ TEST(WTF, StringImplFindIgnoringASCIICaseOnNull)
 TEST(WTF, StringImplFindIgnoringASCIICaseOnEmpty)
 {
     auto reference = stringFromUTF8("ABCÉEFG");
-    constexpr size_t zeroLength = 0; // LLVM bug workaround.
-    auto empty = StringImpl::create({ reinterpret_cast<const LChar*>(""), zeroLength });
+    auto empty = StringImpl::create(""_span);
     EXPECT_EQ(static_cast<size_t>(0), reference->findIgnoringASCIICase(empty.ptr()));
     EXPECT_EQ(static_cast<size_t>(0), reference->findIgnoringASCIICase(empty.ptr(), 0));
     EXPECT_EQ(static_cast<size_t>(3), reference->findIgnoringASCIICase(empty.ptr(), 3));
@@ -409,16 +406,14 @@ TEST(WTF, StringImplStartsWithIgnoringASCIICaseWithNull)
     auto reference = StringImpl::create("aBcDeFG"_s);
     ASSERT_FALSE(reference->startsWithIgnoringASCIICase(StringView { }));
 
-    constexpr size_t zeroLength = 0; // LLVM bug workaround.
-    auto empty = StringImpl::create(std::span { reinterpret_cast<const LChar*>(""), zeroLength });
+    auto empty = StringImpl::create(""_span);
     ASSERT_FALSE(empty->startsWithIgnoringASCIICase(StringView { }));
 }
 
 TEST(WTF, StringImplStartsWithIgnoringASCIICaseWithEmpty)
 {
     auto reference = StringImpl::create("aBcDeFG"_s);
-    constexpr size_t zeroLength = 0; // LLVM bug workaround.
-    auto empty = StringImpl::create(std::span { reinterpret_cast<const LChar*>(""), zeroLength });
+    auto empty = StringImpl::create(""_span);
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(empty.ptr()));
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(*empty.ptr()));
     ASSERT_TRUE(empty->startsWithIgnoringASCIICase(empty.ptr()));
@@ -500,16 +495,14 @@ TEST(WTF, StringImplEndsWithIgnoringASCIICaseWithNull)
     auto reference = StringImpl::create("aBcDeFG"_s);
     ASSERT_FALSE(reference->endsWithIgnoringASCIICase(StringView { }));
 
-    constexpr size_t zeroLength = 0; // LLVM bug workaround.
-    auto empty = StringImpl::create(std::span { reinterpret_cast<const LChar*>(""), zeroLength });
+    auto empty = StringImpl::create(""_span);
     ASSERT_FALSE(empty->endsWithIgnoringASCIICase(StringView { }));
 }
 
 TEST(WTF, StringImplEndsWithIgnoringASCIICaseWithEmpty)
 {
     auto reference = StringImpl::create("aBcDeFG"_s);
-    constexpr size_t zeroLength = 0; // LLVM bug workaround.
-    auto empty = StringImpl::create(std::span { reinterpret_cast<const LChar*>(""), zeroLength });
+    auto empty = StringImpl::create(""_span);
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(empty.ptr()));
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(*empty.ptr()));
     ASSERT_TRUE(empty->endsWithIgnoringASCIICase(empty.ptr()));

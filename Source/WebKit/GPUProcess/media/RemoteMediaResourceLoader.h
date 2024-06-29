@@ -56,7 +56,7 @@ public:
 private:
     RefPtr<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, LoadOptions) final;
     void sendH2Ping(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&) final;
-    Ref<WorkQueue> targetQueue() final { return defaultQueue(); }
+    Ref<RefCountedSerialFunctionDispatcher> targetDispatcher() final { return defaultQueue(); }
 
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
 };

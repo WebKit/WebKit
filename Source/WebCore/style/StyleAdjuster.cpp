@@ -954,7 +954,7 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
             static MainThreadNeverDestroyed<const AtomString> instreamNativeVideoDivClass("instream-native-video--mobile"_s);
             static MainThreadNeverDestroyed<const AtomString> videoElementID("vjs_video_3_html5_api"_s);
 
-            if (div->hasClass() && div->classNames().contains(instreamNativeVideoDivClass)) {
+            if (div->hasClassName(instreamNativeVideoDivClass)) {
                 RefPtr video = dynamicDowncast<HTMLVideoElement>(div->treeScope().getElementById(videoElementID));
                 if (video && video->isFullscreen())
                     style.setEffectiveDisplay(DisplayType::Block);
@@ -966,7 +966,7 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         static MainThreadNeverDestroyed<const AtomString> playerClassName("top-player-video-element"_s);
         bool isFullscreen = fullscreenManager->isFullscreen();
         RefPtr video = dynamicDowncast<HTMLVideoElement>(m_element);
-        if (video && isFullscreen && video->hasClass() && video->classNames().contains(playerClassName) && style.objectFit() == ObjectFit::Fill)
+        if (video && isFullscreen && video->hasClassName(playerClassName) && style.objectFit() == ObjectFit::Fill)
             style.setObjectFit(ObjectFit::Contain);
     }
 #endif

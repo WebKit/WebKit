@@ -26,68 +26,46 @@
 #pragma once
 
 #include "CSSUnresolvedColorMix.h"
-#include "StyleColor.h"
+#include "StyleColorMix.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-static inline void serializeColorMixColor(StringBuilder& builder, const CSSUnresolvedColorMix::Component& component)
-{
-    builder.append(component.color->customCSSText());
-}
+void serializeColorMixColor(StringBuilder&, const CSSUnresolvedColorMix::Component&);
+void serializeColorMixColor(StringBuilder&, const StyleColorMix::Component&);
 
-static inline void serializeColorMixColor(StringBuilder& builder, const StyleColorMix::Component& component)
-{
-    serializationForCSS(builder, component.color);
-}
+void serializeColorMixPercentage(StringBuilder&, const CSSUnresolvedColorMix::Component::Percentage&);
+void serializeColorMixPercentage(StringBuilder&, const StyleColorMix::Component::Percentage&);
+void serializeColorMixPercentage(StringBuilder&, double);
 
-static inline void serializeColorMixPercentage(StringBuilder& builder, const CSSUnresolvedColorMix::Component& component)
-{
-    builder.append(component.percentage->customCSSText());
-}
-
-static inline void serializeColorMixPercentage(StringBuilder& builder, const StyleColorMix::Component& component)
-{
-    builder.append(*component.percentage, '%');
-}
-
-static inline double percentageDoubleValue(const CSSUnresolvedColorMix::Component& component)
-{
-    return component.percentage->doubleValue();
-}
-
-static inline double percentageDoubleValue(const StyleColorMix::Component& component)
-{
-    return *component.percentage;
-}
+double percentageDoubleValue(const CSSUnresolvedColorMix::Component::Percentage&);
+double percentageDoubleValue(const StyleColorMix::Component::Percentage&);
 
 // https://drafts.csswg.org/css-color-5/#serial-color-mix
 template<typename ColorMixType>
 void serializationForCSSColorMix(StringBuilder& builder, const ColorMixType& colorMix)
 {
-    auto mixComponents1 = colorMix.mixComponents1;
-    auto mixComponents2 = colorMix.mixComponents2;
-
     builder.append("color-mix(in "_s);
     serializationForCSS(builder, colorMix.colorInterpolationMethod);
     builder.append(", "_s);
-    serializeColorMixColor(builder, mixComponents1);
+    serializeColorMixColor(builder, colorMix.mixComponents1);
 
-    if ((mixComponents1.percentage && percentageDoubleValue(mixComponents1) != 50.0) || (mixComponents2.percentage && percentageDoubleValue(mixComponents2) != 50.0)) {
-        if (!mixComponents1.percentage && mixComponents2.percentage)
-            builder.append(' ', makeString(100.0 - percentageDoubleValue(mixComponents2)), '%');
-        else {
-            builder.append(' ');
-            serializeColorMixPercentage(builder, mixComponents1);
-        }
+    if ((colorMix.mixComponents1.percentage && percentageDoubleValue(*colorMix.mixComponents1.percentage) != 50.0) || (colorMix.mixComponents2.percentage && percentageDoubleValue(*colorMix.mixComponents2.percentage) != 50.0)) {
+        builder.append(' ');
+
+        if (!colorMix.mixComponents1.percentage && colorMix.mixComponents2.percentage)
+            serializeColorMixPercentage(builder, 100.0 - percentageDoubleValue(*colorMix.mixComponents2.percentage));
+        else
+            serializeColorMixPercentage(builder, *colorMix.mixComponents1.percentage);
     }
 
     builder.append(", "_s);
-    serializeColorMixColor(builder, mixComponents2);
+    serializeColorMixColor(builder, colorMix.mixComponents2);
 
-    bool percentagesNormalized = !mixComponents1.percentage || !mixComponents2.percentage || (percentageDoubleValue(mixComponents1) + percentageDoubleValue(mixComponents2) == 100.0);
+    bool percentagesNormalized = !colorMix.mixComponents1.percentage || !colorMix.mixComponents2.percentage || (percentageDoubleValue(*colorMix.mixComponents1.percentage) + percentageDoubleValue(*colorMix.mixComponents2.percentage) == 100.0);
     if (!percentagesNormalized) {
         builder.append(' ');
-        serializeColorMixPercentage(builder, mixComponents2);
+        serializeColorMixPercentage(builder, *colorMix.mixComponents2.percentage);
     }
 
     builder.append(')');

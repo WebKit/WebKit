@@ -55,7 +55,7 @@ inline String resultToString(XrResult value, XrInstance instance)
     XrResult result = xrResultToString(instance, value, buffer);
     if (result == XR_SUCCESS)
         return String::fromLatin1(buffer);
-    return makeString("<unknown ", int(value), ">");
+    return makeString("<unknown "_s, int(value), '>');
 }
 
 #define RETURN_IF_FAILED(call, label, instance, ...)                                                      \

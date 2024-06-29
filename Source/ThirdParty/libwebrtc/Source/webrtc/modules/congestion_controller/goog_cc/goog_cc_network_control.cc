@@ -65,14 +65,6 @@ constexpr float kDefaultPaceMultiplier = 2.5f;
 // below the current throughput estimate to drain the network queues.
 constexpr double kProbeDropThroughputFraction = 0.85;
 
-bool IsEnabled(const FieldTrialsView* config, absl::string_view key) {
-  return absl::StartsWith(config->Lookup(key), "Enabled");
-}
-
-bool IsNotDisabled(const FieldTrialsView* config, absl::string_view key) {
-  return !absl::StartsWith(config->Lookup(key), "Disabled");
-}
-
 BandwidthLimitedCause GetBandwidthLimitedCause(LossBasedState loss_based_state,
                                                bool is_rtt_above_limit,
                                                BandwidthUsage bandwidth_usage) {
@@ -108,24 +100,24 @@ GoogCcNetworkController::GoogCcNetworkController(NetworkControllerConfig config,
       safe_reset_on_route_change_("Enabled"),
       safe_reset_acknowledged_rate_("ack"),
       use_min_allocatable_as_lower_bound_(
-          IsNotDisabled(key_value_config_, "WebRTC-Bwe-MinAllocAsLowerBound")),
-      ignore_probes_lower_than_network_estimate_(IsNotDisabled(
-          key_value_config_,
+          !key_value_config_->IsDisabled("WebRTC-Bwe-MinAllocAsLowerBound")),
+      ignore_probes_lower_than_network_estimate_(!key_value_config_->IsDisabled(
           "WebRTC-Bwe-IgnoreProbesLowerThanNetworkStateEstimate")),
       limit_probes_lower_than_throughput_estimate_(
-          IsNotDisabled(key_value_config_,
-                        "WebRTC-Bwe-LimitProbesLowerThanThroughputEstimate")),
-      rate_control_settings_(
-          RateControlSettings::ParseFromKeyValueConfig(key_value_config_)),
-      pace_at_max_of_bwe_and_lower_link_capacity_(
-          IsEnabled(key_value_config_,
-                    "WebRTC-Bwe-PaceAtMaxOfBweAndLowerLinkCapacity")),
+          !key_value_config_->IsDisabled(
+              "WebRTC-Bwe-LimitProbesLowerThanThroughputEstimate")),
+      rate_control_settings_(*key_value_config_),
+      pace_at_max_of_bwe_and_lower_link_capacity_(key_value_config_->IsEnabled(
+          "WebRTC-Bwe-PaceAtMaxOfBweAndLowerLinkCapacity")),
+      limit_pacingfactor_by_upper_link_capacity_estimate_(
+          key_value_config_->IsEnabled(
+              "WebRTC-Bwe-LimitPacingFactorByUpperLinkCapacityEstimate")),
       probe_controller_(
           new ProbeController(key_value_config_, config.event_log)),
       congestion_window_pushback_controller_(
           rate_control_settings_.UseCongestionWindowPushback()
               ? std::make_unique<CongestionWindowPushbackController>(
-                    key_value_config_)
+                    *key_value_config_)
               : nullptr),
       bandwidth_estimation_(
           std::make_unique<SendSideBandwidthEstimation>(key_value_config_,
@@ -217,6 +209,11 @@ NetworkControlUpdate GoogCcNetworkController::OnProcessInterval(
     if (initial_config_->stream_based_config.requests_alr_probing) {
       probe_controller_->EnablePeriodicAlrProbing(
           *initial_config_->stream_based_config.requests_alr_probing);
+    }
+    if (initial_config_->stream_based_config.enable_repeated_initial_probing) {
+      probe_controller_->EnableRepeatedInitialProbing(
+          *initial_config_->stream_based_config
+               .enable_repeated_initial_probing);
     }
     absl::optional<DataRate> total_bitrate =
         initial_config_->stream_based_config.max_total_allocated_bitrate;
@@ -720,7 +717,8 @@ PacerConfig GoogCcNetworkController::GetPacingRates(Timestamp at_time) const {
   // Pacing rate is based on target rate before congestion window pushback,
   // because we don't want to build queues in the pacer when pushback occurs.
   DataRate pacing_rate = DataRate::Zero();
-  if (pace_at_max_of_bwe_and_lower_link_capacity_ && estimate_) {
+  if (pace_at_max_of_bwe_and_lower_link_capacity_ && estimate_ &&
+      !bandwidth_estimation_->PaceAtLossBasedEstimate()) {
     pacing_rate =
         std::max({min_total_allocated_bitrate_, estimate_->link_capacity_lower,
                   last_loss_based_target_rate_}) *
@@ -730,6 +728,14 @@ PacerConfig GoogCcNetworkController::GetPacingRates(Timestamp at_time) const {
         std::max(min_total_allocated_bitrate_, last_loss_based_target_rate_) *
         pacing_factor_;
   }
+  if (limit_pacingfactor_by_upper_link_capacity_estimate_ && estimate_ &&
+      estimate_->link_capacity_upper.IsFinite() &&
+      pacing_rate > estimate_->link_capacity_upper) {
+    pacing_rate =
+        std::max({estimate_->link_capacity_upper, min_total_allocated_bitrate_,
+                  last_loss_based_target_rate_});
+  }
+
   DataRate padding_rate =
       (last_loss_base_state_ == LossBasedState::kIncreaseUsingPadding)
           ? std::max(max_padding_rate_, last_loss_based_target_rate_)

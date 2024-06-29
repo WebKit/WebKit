@@ -239,54 +239,54 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
 {
     RefPtr<FilterFunction> function;
 
-    for (auto& operation : operations.operations()) {
+    for (auto& operation : operations) {
         switch (operation->type()) {
         case FilterOperation::Type::AppleInvertLightness:
             ASSERT_NOT_REACHED(); // AppleInvertLightness is only used in -apple-color-filter.
             break;
 
         case FilterOperation::Type::Blur:
-            function = createBlurEffect(uncheckedDowncast<BlurFilterOperation>(*operation));
+            function = createBlurEffect(uncheckedDowncast<BlurFilterOperation>(operation));
             break;
 
         case FilterOperation::Type::Brightness:
-            function = createBrightnessEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
+            function = createBrightnessEffect(downcast<BasicComponentTransferFilterOperation>(operation));
             break;
 
         case FilterOperation::Type::Contrast:
-            function = createContrastEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
+            function = createContrastEffect(downcast<BasicComponentTransferFilterOperation>(operation));
             break;
 
         case FilterOperation::Type::DropShadow:
-            function = createDropShadowEffect(uncheckedDowncast<DropShadowFilterOperation>(*operation));
+            function = createDropShadowEffect(uncheckedDowncast<DropShadowFilterOperation>(operation));
             break;
 
         case FilterOperation::Type::Grayscale:
-            function = createGrayScaleEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
+            function = createGrayScaleEffect(downcast<BasicColorMatrixFilterOperation>(operation));
             break;
 
         case FilterOperation::Type::HueRotate:
-            function = createHueRotateEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
+            function = createHueRotateEffect(downcast<BasicColorMatrixFilterOperation>(operation));
             break;
 
         case FilterOperation::Type::Invert:
-            function = createInvertEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
+            function = createInvertEffect(downcast<BasicComponentTransferFilterOperation>(operation));
             break;
 
         case FilterOperation::Type::Opacity:
-            function = createOpacityEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
+            function = createOpacityEffect(downcast<BasicComponentTransferFilterOperation>(operation));
             break;
 
         case FilterOperation::Type::Saturate:
-            function = createSaturateEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
+            function = createSaturateEffect(downcast<BasicColorMatrixFilterOperation>(operation));
             break;
 
         case FilterOperation::Type::Sepia:
-            function = createSepiaEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
+            function = createSepiaEffect(downcast<BasicColorMatrixFilterOperation>(operation));
             break;
 
         case FilterOperation::Type::Reference:
-            function = createReferenceFilter(*this, uncheckedDowncast<ReferenceFilterOperation>(*operation), renderer, preferredFilterRenderingModes, targetBoundingBox, destinationContext);
+            function = createReferenceFilter(*this, uncheckedDowncast<ReferenceFilterOperation>(operation), renderer, preferredFilterRenderingModes, targetBoundingBox, destinationContext);
             break;
 
         default:
@@ -354,7 +354,7 @@ RefPtr<FilterImage> CSSFilter::apply(FilterImage* sourceImage, FilterResults& re
     return result;
 }
 
-FilterStyleVector CSSFilter::createFilterStyles(const FilterStyle& sourceStyle) const
+FilterStyleVector CSSFilter::createFilterStyles(GraphicsContext& context, const FilterStyle& sourceStyle) const
 {
     ASSERT(supportedFilterRenderingModes().contains(FilterRenderingMode::GraphicsContext));
 
@@ -365,7 +365,7 @@ FilterStyleVector CSSFilter::createFilterStyles(const FilterStyle& sourceStyle) 
         if (function->filterType() == FilterEffect::Type::SourceGraphic)
             continue;
 
-        auto result = function->createFilterStyles(*this, lastStyle);
+        auto result = function->createFilterStyles(context, *this, lastStyle);
         if (result.isEmpty())
             return { };
 
@@ -387,8 +387,8 @@ bool CSSFilter::isIdentity(RenderElement& renderer, const FilterOperations& oper
     if (operations.hasFilterThatShouldBeRestrictedBySecurityOrigin())
         return false;
 
-    for (auto& operation : operations.operations()) {
-        if (RefPtr referenceOperation = dynamicDowncast<ReferenceFilterOperation>(*operation)) {
+    for (auto& operation : operations) {
+        if (RefPtr referenceOperation = dynamicDowncast<ReferenceFilterOperation>(operation)) {
             if (!isIdentityReferenceFilter(*referenceOperation, renderer))
                 return false;
             continue;
@@ -405,8 +405,8 @@ IntOutsets CSSFilter::calculateOutsets(RenderElement& renderer, const FilterOper
 {
     IntOutsets outsets;
 
-    for (auto& operation : operations.operations()) {
-        if (RefPtr referenceOperation = dynamicDowncast<ReferenceFilterOperation>(*operation)) {
+    for (auto& operation : operations) {
+        if (RefPtr referenceOperation = dynamicDowncast<ReferenceFilterOperation>(operation)) {
             outsets += calculateReferenceFilterOutsets(*referenceOperation, renderer, targetBoundingBox);
             continue;
         }

@@ -263,6 +263,7 @@ struct EncodeFrameResult {
   // The EncodeFrame will allocate a buffer, write the coding data into the
   // buffer and give the ownership of the buffer to coding_data.
   std::unique_ptr<unsigned char[]> coding_data;
+  size_t max_coding_data_byte_size;
   double psnr;
   uint64_t sse;
   int quantize_index;

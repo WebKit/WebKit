@@ -39,6 +39,20 @@
 
 namespace JSC { namespace Wasm {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Callee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JITCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointInterpreterCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointJITCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WasmToJSCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSToWasmICCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OptimizingJITCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OSREntryCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OMGCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BBQCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(IPIntCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LLIntCallee);
+
 Callee::Callee(Wasm::CompilationMode compilationMode)
     : NativeCallee(NativeCallee::Category::Wasm, ImplementationVisibility::Private)
     , m_compilationMode(compilationMode)
@@ -185,6 +199,16 @@ WasmToJSCallee::WasmToJSCallee()
     NativeCalleeRegistry::singleton().registerCallee(this);
 }
 
+WasmToJSCallee& WasmToJSCallee::singleton()
+{
+    static LazyNeverDestroyed<Ref<WasmToJSCallee>> callee;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&]() {
+        callee.construct(adoptRef(*new WasmToJSCallee));
+    });
+    return callee.get().get();
+}
+
 IPIntCallee::IPIntCallee(FunctionIPIntMetadataGenerator& generator, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     : Callee(Wasm::CompilationMode::IPIntMode, index, WTFMove(name))
     , m_functionIndex(generator.m_functionIndex)
@@ -306,11 +330,8 @@ RegisterAtOffsetList* LLIntCallee::calleeSaveRegistersImpl()
     std::call_once(initializeFlag, [] {
         RegisterSet registers;
         registers.add(GPRInfo::regCS0, IgnoreVectors); // Wasm::Instance
-#if CPU(X86_64) && !OS(WINDOWS)
+#if CPU(X86_64)
         registers.add(GPRInfo::regCS2, IgnoreVectors); // PB
-#elif CPU(X86_64) && OS(WINDOWS)
-        registers.add(GPRInfo::regCS2, IgnoreVectors); // wasmScratch
-        registers.add(GPRInfo::regCS4, IgnoreVectors); // PB
 #elif CPU(ARM64) || CPU(RISCV64)
         registers.add(GPRInfo::regCS7, IgnoreVectors); // PB
 #elif CPU(ARM)
@@ -397,7 +418,7 @@ JSEntrypointInterpreterCallee::JSEntrypointInterpreterCallee(Vector<JSEntrypoint
     , wasmCallee(reinterpret_cast<intptr_t>(CalleeBits::boxNativeCalleeIfExists(callee)))
 {
     if (Options::useJIT())
-        wasmFunctionPrologue = LLInt::wasmFunctionEntryThunk().code().retagged<LLintToWasmEntryPtrTag>();
+        wasmFunctionPrologue = LLInt::wasmFunctionEntryThunk().code().retagged<LLIntToWasmEntryPtrTag>();
     else
         wasmFunctionPrologue = LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline);
 
@@ -421,7 +442,7 @@ RegisterAtOffsetList* JSEntrypointInterpreterCallee::calleeSaveRegistersImpl()
         RegisterSet registers = RegisterSetBuilder::wasmPinnedRegisters();
 #if CPU(X86_64)
 #elif CPU(ARM64) || CPU(RISCV64)
-        ASSERT(registers.numberOfSetRegisters() == 4);
+        ASSERT(registers.numberOfSetRegisters() == 3);
 #elif CPU(ARM)
 #else
 #error Unsupported architecture.

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#define errorNameAndDetailsSeparator ";"
+#define errorNameAndDetailsSeparator ';'
 
 // Make sure the predefined error name is valid, otherwise use InternalError.
 #define VALIDATED_ERROR_MESSAGE(errorString) Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::ErrorMessage>(errorString).value_or(Inspector::Protocol::Automation::ErrorMessage::InternalError)

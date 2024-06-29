@@ -50,6 +50,7 @@ angle::Result OcclusionQueryPool::allocateQueryOffset(ContextMtl *contextMtl,
         static_cast<uint32_t>(mAllocatedQueries.size()) * kOcclusionQueryResultSize;
     if (!mRenderPassResultsPool)
     {
+        ASSERT(!mUsed);
         // First allocation
         ANGLE_TRY(Buffer::MakeBufferWithStorageMode(contextMtl, MTLStorageModePrivate,
                                                     kOcclusionQueryResultSize, nullptr,
@@ -62,6 +63,7 @@ angle::Result OcclusionQueryPool::allocateQueryOffset(ContextMtl *contextMtl,
         ANGLE_TRY(Buffer::MakeBufferWithStorageMode(contextMtl, MTLStorageModePrivate,
                                                     mRenderPassResultsPool->size() * 2, nullptr,
                                                     &mRenderPassResultsPool));
+        mUsed                               = false;
         mRenderPassResultsPool->get().label = @"OcclusionQueryPool";
     }
 
@@ -178,6 +180,30 @@ void OcclusionQueryPool::resolveVisibilityResults(ContextMtl *contextMtl)
     }
 
     mAllocatedQueries.clear();
+}
+
+void OcclusionQueryPool::prepareRenderPassVisibilityPoolBuffer(ContextMtl *contextMtl)
+{
+    if (mAllocatedQueries.empty())
+    {
+        return;
+    }
+
+    // If the current visibility pool buffer was not used before,
+    // ensure that it will be cleared next time.
+    if (!mUsed)
+    {
+        mUsed = true;
+        return;
+    }
+
+    // If the current visibility pool buffer was used before,
+    // ensure that it does not contain previous results.
+    auto blitEncoder = contextMtl->getBlitCommandEncoderWithoutEndingRenderEncoder();
+    blitEncoder->fillBuffer(mRenderPassResultsPool,
+                            NSMakeRange(0, mAllocatedQueries.size() * kOcclusionQueryResultSize),
+                            0);
+    blitEncoder->endEncoding();
 }
 
 }  // namespace mtl

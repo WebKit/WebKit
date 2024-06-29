@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "FrameIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -40,7 +41,7 @@ public:
     {
     }
 
-    virtual void addItem(Ref<HistoryItem>&&) = 0;
+    virtual void addItem(FrameIdentifier, Ref<HistoryItem>&&) = 0;
 
     virtual void goToItem(HistoryItem&) = 0;
         

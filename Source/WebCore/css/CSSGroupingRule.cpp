@@ -125,7 +125,7 @@ void CSSGroupingRule::appendCSSTextForItemsInternal(StringBuilder& builder, Stri
         return;
     }
 
-    builder.append(static_cast<StringView>(rules), "\n}");
+    builder.append(static_cast<StringView>(rules), "\n}"_s);
 }
 
 void CSSGroupingRule::appendCSSTextForItems(StringBuilder& builder) const
@@ -165,8 +165,7 @@ RefPtr<StyleRuleWithNesting> CSSGroupingRule::prepareChildStyleRuleForNesting(St
     CSSStyleSheet::RuleMutationScope scope(this);
     auto& rules = m_groupRule->m_childRules;
     for (size_t i = 0 ; i < rules.size() ; i++) {
-        auto& rule = rules[i];
-        if (rule.ptr() == &styleRule) {
+        if (rules[i].ptr() == &styleRule) {
             auto styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(styleRule));
             rules[i] = styleRuleWithNesting;
             if (auto* styleSheet = parentStyleSheet())

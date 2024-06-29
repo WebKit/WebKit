@@ -37,11 +37,7 @@ public:
     using BaseList::size;
     using BaseList::append;
 
-    // Visual Studio doesn't seem to see these private constructors from subclasses.
-    // FIXME: See what it takes to remove this hack.
-#if !COMPILER(MSVC)
 protected:
-#endif
     using SVGPropertyOwner::SVGPropertyOwner;
     using BaseList::m_items;
     using BaseList::m_access;

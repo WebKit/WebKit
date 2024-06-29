@@ -91,7 +91,7 @@ CertificateInfo ResourceResponse::platformCertificateInfo(std::span<const std::b
     auto trust = checked_cf_cast<SecTrustRef>(trustValue);
 
     if (trust && auditToken.size()) {
-        auto data = adoptCF(CFDataCreate(nullptr, reinterpret_cast<const uint8_t*>(auditToken.data()), auditToken.size()));
+        auto data = adoptCF(CFDataCreate(nullptr, byteCast<uint8_t>(auditToken.data()), auditToken.size()));
         SecTrustSetClientAuditToken(trust, data.get());
     }
 

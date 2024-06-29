@@ -12,6 +12,7 @@
 #include "test/encode_test_driver.h"
 #include "test/i420_video_source.h"
 #include "test/util.h"
+#include "vpx_config.h"
 namespace {
 
 #if CONFIG_VP8_ENCODER

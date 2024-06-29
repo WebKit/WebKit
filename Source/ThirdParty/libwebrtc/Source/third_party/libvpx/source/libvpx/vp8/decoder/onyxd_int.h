@@ -14,6 +14,7 @@
 #include <assert.h>
 
 #include "vpx_config.h"
+#include "vpx_util/vpx_pthread.h"
 #include "vp8/common/onyxd.h"
 #include "treereader.h"
 #include "vp8/common/onyxc_int.h"
@@ -94,12 +95,11 @@ typedef struct VP8D_COMP {
   DECODETHREAD_DATA *de_thread_data;
 
   pthread_t *h_decoding_thread;
-  sem_t *h_event_start_decoding;
-  sem_t h_event_end_decoding;
+  vp8_sem_t *h_event_start_decoding;
+  vp8_sem_t h_event_end_decoding;
 /* end of threading data */
 #endif
 
-  int64_t last_time_stamp;
   int ready_for_new_data;
 
   vp8_prob prob_intra;

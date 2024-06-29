@@ -101,8 +101,14 @@ static HashMap<RegistrableDomain, String>& updatableStorageAccessUserAgentString
 static inline bool isYahooMail(Document& document)
 {
     auto host = document.topDocument().url().host();
-    return host.startsWith("mail."_s) && PublicSuffixStore::singleton().topPrivatelyControlledDomain(host.toString()).startsWith("yahoo."_s);
+    return host.startsWith("mail."_s) && PublicSuffixStore::singleton().topPrivatelyControlledDomain(host).startsWith("yahoo."_s);
 }
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/QuirksAdditions.cpp>
+#else
+static inline bool needsDesktopUserAgentInternal(const URL&) { return false; }
 #endif
 
 Quirks::Quirks(Document& document)
@@ -221,20 +227,6 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 #endif
 }
 
-// youtube.com https://bugs.webkit.org/show_bug.cgi?id=200609
-bool Quirks::shouldDisableContentChangeObserverTouchEventAdjustment() const
-{
-    if (!needsQuirks())
-        return false;
-
-    auto& topDocument = m_document->topDocument();
-    auto* topDocumentLoader = topDocument.loader();
-    if (!topDocumentLoader || !topDocumentLoader->allowContentChangeObserverQuirk())
-        return false;
-
-    return isDomain("youtube.com"_s);
-}
-
 // covid.cdc.gov https://bugs.webkit.org/show_bug.cgi?id=223620
 bool Quirks::shouldTooltipPreventFromProceedingWithClick(const Element& element) const
 {
@@ -243,7 +235,9 @@ bool Quirks::shouldTooltipPreventFromProceedingWithClick(const Element& element)
 
     if (!isDomain("covid.cdc.gov"_s))
         return false;
-    return element.hasClass() && element.classNames().contains("tooltip"_s);
+
+    static MainThreadNeverDestroyed<const AtomString> tooltipClass("tooltip"_s);
+    return element.hasClassName(tooltipClass.get());
 }
 
 // google.com https://bugs.webkit.org/show_bug.cgi?id=223700
@@ -254,7 +248,7 @@ bool Quirks::shouldHideSearchFieldResultsButton() const
     if (!needsQuirks())
         return false;
 
-    if (PublicSuffixStore::singleton().topPrivatelyControlledDomain(m_document->topDocument().url().host().toString()).startsWith("google."_s))
+    if (PublicSuffixStore::singleton().topPrivatelyControlledDomain(m_document->topDocument().url().host()).startsWith("google."_s))
         return true;
 #endif
     return false;
@@ -371,6 +365,16 @@ bool Quirks::shouldAvoidUsingIOS13ForGmail() const
 #endif
 }
 
+// mail.google.com rdar://128360054
+// FIXME (rdar://130624461): Remove this quirk once Gmail adopts the `writingsuggestions` attribute.
+bool Quirks::shouldDisableWritingSuggestionsByDefault() const
+{
+    if (!needsQuirks())
+        return false;
+    auto& url = m_document->topDocument().url();
+    return url.host() == "mail.google.com"_s;
+}
+
 void Quirks::updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&& userAgentStringQuirks)
 {
     auto& quirks = updatableStorageAccessUserAgentStringQuirks();
@@ -431,13 +435,13 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
 #if ENABLE(TOUCH_EVENTS)
 bool Quirks::isAmazon() const
 {
-    return PublicSuffixStore::singleton().topPrivatelyControlledDomain(m_document->topDocument().url().host().toString()).startsWith("amazon."_s);
+    return PublicSuffixStore::singleton().topPrivatelyControlledDomain(m_document->topDocument().url().host()).startsWith("amazon."_s);
 }
 
 bool Quirks::isGoogleMaps() const
 {
     auto& url = m_document->topDocument().url();
-    return PublicSuffixStore::singleton().topPrivatelyControlledDomain(url.host().toString()).startsWith("google."_s) && startsWithLettersIgnoringASCIICase(url.path(), "/maps/"_s);
+    return PublicSuffixStore::singleton().topPrivatelyControlledDomain(url.host()).startsWith("google."_s) && startsWithLettersIgnoringASCIICase(url.path(), "/maps/"_s);
 }
 
 // rdar://49124313
@@ -955,7 +959,7 @@ bool Quirks::shouldBypassBackForwardCache() const
                 static MainThreadNeverDestroyed<const AtomString> signInId("signIn"_s);
                 static MainThreadNeverDestroyed<const AtomString> loadingClass("loading"_s);
                 RefPtr signinButton = document->getElementById(signInId.get());
-                return signinButton && signinButton->classNames().contains(loadingClass.get());
+                return signinButton && signinButton->hasClassName(loadingClass.get());
             }
         }
     }
@@ -968,7 +972,7 @@ bool Quirks::shouldBypassBackForwardCache() const
     static MainThreadNeverDestroyed<const AtomString> googleDocsOverlayDivClass("docs-homescreen-freeze-el-full"_s);
     auto* firstChildInBody = document->body() ? document->body()->firstChild() : nullptr;
     if (RefPtr div = dynamicDowncast<HTMLDivElement>(firstChildInBody)) {
-        if (div->hasClass() && div->classNames().contains(googleDocsOverlayDivClass))
+        if (div->hasClassName(googleDocsOverlayDivClass))
             return true;
     }
 
@@ -1134,14 +1138,14 @@ bool Quirks::isMicrosoftTeamsRedirectURL(const URL& url)
 
 static bool elementHasClassInClosestAncestors(const Element& element, const AtomString& className, unsigned distance)
 {
-    if (element.hasClass() && element.classNames().contains(className))
+    if (element.hasClassName(className))
         return true;
 
     unsigned currentDistance = 0;
     RefPtr ancestor = dynamicDowncast<Element>(element.parentNode());
     while (ancestor && currentDistance < distance) {
         ++currentDistance;
-        if (ancestor->hasClass() && ancestor->classNames().contains(className))
+        if (ancestor->hasClassName(className))
             return true;
 
         ancestor = dynamicDowncast<Element>(ancestor->parentNode());
@@ -1207,7 +1211,7 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
     }
 
-    document->addConsoleMessage(MessageSource::Other, MessageLevel::Info, makeString("requestStorageAccess is invoked on behalf of domain \"", domainInNeedOfStorageAccess.string(), "\""));
+    document->addConsoleMessage(MessageSource::Other, MessageLevel::Info, makeString("requestStorageAccess is invoked on behalf of domain \""_s, domainInNeedOfStorageAccess.string(), "\""_s));
     DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*document, WTFMove(domainInNeedOfStorageAccess), [firstPartyDomain, domainInNeedOfStorageAccess, completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted storageAccessGranted) mutable {
         if (storageAccessGranted == StorageAccessWasGranted::No) {
             completionHandler(ShouldDispatchClick::Yes);
@@ -1721,7 +1725,7 @@ bool Quirks::shouldDisableNavigatorStandaloneQuirk() const
 // FIXME: find the reference radars and/or bugs.webkit.org issues on why these were added in the first place.
 // FIXME: There is no check currently on needsQuirks(), this needs to be fixed so it makes it easier
 // to deactivate them for testing.
-bool Quirks::needsIpadMiniUserAgent(const URL& url)
+bool Quirks::needsIPadMiniUserAgent(const URL& url)
 {
     auto host = url.host();
 
@@ -1801,6 +1805,21 @@ bool Quirks::needsIpadMiniUserAgent(const URL& url)
     return false;
 }
 
+bool Quirks::needsIPhoneUserAgent(const URL& url)
+{
+#if PLATFORM(IOS_FAMILY)
+    if (url.host() == "shopee.sg"_s && url.path() == "/payment/account-linking/landing"_s)
+        return true;
+#else
+    UNUSED_PARAM(url);
+#endif
+    return false;
+}
+
+bool Quirks::needsDesktopUserAgent(const URL& url)
+{
+    return needsDesktopUserAgentInternal(url);
+}
 
 bool Quirks::shouldIgnorePlaysInlineRequirementQuirk() const
 {
@@ -1865,21 +1884,22 @@ bool Quirks::needsRelaxedCorsMixedContentCheckQuirk() const
 }
 
 // rdar://127398734
-bool Quirks::needsLaxSameSiteCookieQuirk() const
+bool Quirks::needsLaxSameSiteCookieQuirk(const URL& requestURL) const
 {
     if (!needsQuirks())
         return false;
 
-    if (m_needsLaxSameSiteCookieQuirk)
-        return *m_needsLaxSameSiteCookieQuirk;
-
-    m_needsLaxSameSiteCookieQuirk = false;
-
     auto url = m_document->url();
-    if (url.protocolIs("https"_s) && url.host() == "www.bing.com"_s)
-        m_needsLaxSameSiteCookieQuirk = true;
-
-    return *m_needsLaxSameSiteCookieQuirk;
+    return url.protocolIs("https"_s) && url.host() == "login.microsoftonline.com"_s && requestURL.protocolIs("https"_s) && requestURL.host() == "www.bing.com"_s;
 }
+#if ENABLE(TEXT_AUTOSIZING)
+// rdar://127246368
+bool Quirks::shouldIgnoreTextAutoSizing() const
+{
+    if (!needsQuirks())
+        return false;
+    return m_document->topDocument().url().host() == "news.ycombinator.com"_s;
+}
+#endif
 
 }

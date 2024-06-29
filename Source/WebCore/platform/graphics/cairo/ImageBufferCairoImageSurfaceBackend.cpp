@@ -74,7 +74,7 @@ size_t ImageBufferCairoImageSurfaceBackend::calculateMemoryCost(const Parameters
 
 std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfaceBackend::create(const Parameters& parameters, const ImageBufferCreationContext&)
 {
-    ASSERT(parameters.pixelFormat == PixelFormat::BGRA8);
+    ASSERT(parameters.pixelFormat == ImageBufferPixelFormat::BGRA8);
 
     static cairo_user_data_key_t s_surfaceDataKey;
 

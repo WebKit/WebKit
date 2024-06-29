@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+}
+
+async function doTest() {
+  var canvasElement = document.getElementById("canvas");
+
+  let ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = 'green';
+  ctx.fillRect(0, 0, 100, 100);
+
+  await new Promise(resolve => requestAnimationFrame(resolve));
+
+  ctx.fillStyle = 'green';
+  ctx.fillRect(0, 0, 100, 100);
+
+  await new Promise(resolve => requestAnimationFrame(resolve));
+
+  document.getElementById("parent").style.visibility = "hidden";
+
+  if (window.testRunner) {
+    testRunner.notifyDone();
+  }
+}
+
+window.addEventListener('load', doTest, false);
+</script>
+</head>
+
+<body>
+<div id="parent">
+  <canvas id="canvas"></canvas>
+</div>
+</body>
+
+</html>

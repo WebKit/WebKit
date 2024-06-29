@@ -27,7 +27,7 @@ namespace webrtc {
 class CongestionWindowPushbackController {
  public:
   explicit CongestionWindowPushbackController(
-      const FieldTrialsView* key_value_config);
+      const FieldTrialsView& key_value_config);
   void UpdateOutstandingData(int64_t outstanding_bytes);
   void UpdatePacingQueue(int64_t pacing_bytes);
   uint32_t UpdateTargetBitrate(uint32_t bitrate_bps);

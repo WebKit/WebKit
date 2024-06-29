@@ -27,6 +27,7 @@
 
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "LoaderMalloc.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/URL.h>
@@ -48,7 +49,7 @@ public:
     void stopLoading();
 
 private:
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
 
     SingleThreadWeakRef<DocumentLoader> m_documentLoader;
     URL m_url;

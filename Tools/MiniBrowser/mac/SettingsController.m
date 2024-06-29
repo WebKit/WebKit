@@ -69,6 +69,7 @@ static NSString * const DataDetectorsEnabledPreferenceKey = @"DataDetectorsEnabl
 static NSString * const UseMockCaptureDevicesPreferenceKey = @"UseMockCaptureDevices";
 static NSString * const AttachmentElementEnabledPreferenceKey = @"AttachmentElementEnabled";
 static NSString * const AdvancedPrivacyProtectionsPreferenceKey = @"AdvancedPrivacyProtectionsEnabled";
+static NSString * const AllowsContentJavascriptPreferenceKey = @"AllowsContentJavascript";
 
 static NSString * const SiteIsolationOverlayPreferenceKey = @"SiteIsolationOverlayEnabled";
 
@@ -108,6 +109,7 @@ typedef NS_ENUM(NSInteger, AttachmentElementEnabledMenuItemTag) {
         AnimatedImageAsyncDecodingEnabledPreferenceKey,
         WebViewFillsWindowKey,
         ResourceLoadStatisticsEnabledPreferenceKey,
+        AllowsContentJavascriptPreferenceKey,
     ];
 
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -210,6 +212,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItem(@"Load All Site Icons Per-Page", @selector(toggleLoadsAllSiteIcons:));
     addItem(@"Use GameController.framework on macOS (Restart required)", @selector(toggleUsesGameControllerFramework:));
     addItem(@"Disable network cache speculative revalidation", @selector(toggleNetworkCacheSpeculativeRevalidationDisabled:));
+    addItem(@"Allow JavaScript from web content to run", @selector(toggleAllowsContentJavascript:));
     indent = NO;
 
     NSMenu *debugOverlaysMenu = addSubmenu(@"Debug Overlays");
@@ -385,6 +388,8 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         [menuItem setState:[self useMockCaptureDevices] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleAdvancedPrivacyProtections:))
         [menuItem setState:[self advancedPrivacyProtectionsEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleAllowsContentJavascript:))
+        [menuItem setState:[self allowsContentJavascript] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleReserveSpaceForBanners:))
         [menuItem setState:[self isSpaceReservedForBanners] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleShowTiledScrollingIndicator:))
@@ -715,6 +720,16 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 - (BOOL)advancedPrivacyProtectionsEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:AdvancedPrivacyProtectionsPreferenceKey];
+}
+
+- (void)toggleAllowsContentJavascript:(id)sender
+{
+    [self _toggleBooleanDefault:AllowsContentJavascriptPreferenceKey];
+}
+
+- (BOOL)allowsContentJavascript
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:AllowsContentJavascriptPreferenceKey];
 }
 
 - (BOOL)nonFastScrollableRegionOverlayVisible
