@@ -463,7 +463,7 @@ set(WTF_PUBLIC_HEADERS
 
     unicode/icu/ICUHelpers.h
 
-    # ForkExtras.h
+    ForkExtras.h
     # unix/UnixFileDescriptor.h
 
     # win/DbgHelperWin.h

@@ -177,7 +177,7 @@ DeferredWorkTimer::Ticket DeferredWorkTimer::addPendingWork(VM& vm, JSObject* ta
 
     dataLogLnIf(DeferredWorkTimerInternal::verbose, "Adding new pending ticket: ", RawPointer(ticket));
     if (onAddPendingWork) {
-        onAddPendingWork(WTFMove(ticketData), workKind);
+        onAddPendingWork(ticketData, workKind);
     } else {
         auto result = m_pendingTickets.add(WTFMove(ticketData));
         RELEASE_ASSERT(result.isNewEntry);

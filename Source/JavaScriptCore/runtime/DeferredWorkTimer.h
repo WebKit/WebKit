@@ -101,7 +101,7 @@ public:
 
     static Ref<DeferredWorkTimer> create(VM& vm) { return adoptRef(*new DeferredWorkTimer(vm)); }
 
-    WTF::Function<void(std::unique_ptr<TicketData>, WorkKind)> onAddPendingWork;
+    WTF::Function<void(Ref<TicketData>, WorkKind)> onAddPendingWork;
     WTF::Function<void(Ticket, Task&&)> onScheduleWorkSoon;
     WTF::Function<void(Ticket)> onCancelPendingWork;
 private:
