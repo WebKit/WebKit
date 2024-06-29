@@ -591,7 +591,7 @@ std::optional<audit_token_t> Connection::getAuditToken()
     return WTFMove(auditToken);
 }
 
-#if !USE(EXTENSIONKIT)
+#if !USE(EXTENSIONKIT_PROCESS_TERMINATION)
 bool Connection::kill()
 {
     if (m_xpcConnection) {

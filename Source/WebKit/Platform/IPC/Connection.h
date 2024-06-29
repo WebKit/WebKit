@@ -425,7 +425,7 @@ public:
 
     Identifier identifier() const;
 
-#if PLATFORM(COCOA) && !USE(EXTENSIONKIT)
+#if PLATFORM(COCOA) && !USE(EXTENSIONKIT_PROCESS_TERMINATION)
     bool kill();
 #endif
 

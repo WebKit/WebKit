@@ -56,7 +56,7 @@ private:
 
     RunLoop::Timer m_watchdogTimer;
     Ref<ProcessAndUIAssertion> m_assertion;
-#if USE(EXTENSIONKIT)
+#if USE(EXTENSIONKIT_PROCESS_TERMINATION)
     std::optional<ExtensionProcess> m_process;
 #else
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
