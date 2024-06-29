@@ -1585,6 +1585,9 @@ fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate.html [ Skip ]
 http/tests/download/convert-cached-load-to-download.html [ Skip ]
 
+# Can't load application/octet-stream in WK1
+http/tests/mime/html-with-nosniff-html.html [ Skip ]
+
 # dumpPolicyDelegateCallbacks is not supported in DumpRenderTree
 fast/loader/iframe-src-invalid-url.html [ Skip ]
 
