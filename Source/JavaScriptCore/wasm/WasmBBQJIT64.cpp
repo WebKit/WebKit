@@ -3000,10 +3000,9 @@ void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& excepti
             case TypeKind::Subfinal:
             case TypeKind::Array:
             case TypeKind::Struct:
-            case TypeKind::Func: {
+            case TypeKind::Func:
                 m_jit.transfer64(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
                 break;
-            }
             case TypeKind::F32:
                 m_jit.transfer32(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
                 break;
@@ -3011,8 +3010,7 @@ void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& excepti
                 m_jit.transfer64(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
                 break;
             case TypeKind::V128:
-                m_jit.loadVector(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), wasmScratchFPR);
-                m_jit.storeVector(wasmScratchFPR, slot.asAddress());
+                m_jit.transferVector(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
                 break;
             case TypeKind::Void:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -4445,11 +4443,8 @@ void BBQJIT::emitMoveMemory(TypeKind type, Location src, Location dst)
         m_jit.transfer32(src.asAddress(), dst.asAddress());
         break;
     case TypeKind::I64:
-        m_jit.transfer64(src.asAddress(), dst.asAddress());
-        break;
     case TypeKind::F64:
-        m_jit.loadDouble(src.asAddress(), wasmScratchFPR);
-        m_jit.storeDouble(wasmScratchFPR, dst.asAddress());
+        m_jit.transfer64(src.asAddress(), dst.asAddress());
         break;
     case TypeKind::Externref:
     case TypeKind::Ref:
@@ -4464,13 +4459,9 @@ void BBQJIT::emitMoveMemory(TypeKind type, Location src, Location dst)
     case TypeKind::Nullexternref:
         m_jit.transfer64(src.asAddress(), dst.asAddress());
         break;
-    case TypeKind::V128: {
-        Address srcAddress = src.asAddress();
-        Address dstAddress = dst.asAddress();
-        m_jit.loadVector(srcAddress, wasmScratchFPR);
-        m_jit.storeVector(wasmScratchFPR, dstAddress);
+    case TypeKind::V128:
+        m_jit.transferVector(src.asAddress(), dst.asAddress());
         break;
-    }
     default:
         RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unimplemented type kind move.");
     }

@@ -1276,6 +1276,12 @@ public:
         store64(scratchRegister(), dest);
     }
 
+    void transferVector(Address src, Address dest)
+    {
+        loadVector(src, fpTempRegister);
+        storeVector(fpTempRegister, dest);
+    }
+
     void transferPtr(Address src, Address dest)
     {
         transfer64(src, dest);
@@ -1291,6 +1297,12 @@ public:
     {
         load64(src, scratchRegister());
         store64(scratchRegister(), dest);
+    }
+
+    void transferVector(BaseIndex src, BaseIndex dest)
+    {
+        loadVector(src, fpTempRegister);
+        storeVector(fpTempRegister, dest);
     }
 
     void transferPtr(BaseIndex src, BaseIndex dest)
@@ -1320,12 +1332,9 @@ public:
         if (reg1 == reg2)
             return;
 
-        // FIXME: This is kinda a hack since we don't use xmm7 as a temp.
-        ASSERT(reg1 != FPRegisterID::xmm7);
-        ASSERT(reg2 != FPRegisterID::xmm7);
-        moveDouble(reg1, FPRegisterID::xmm7);
+        moveDouble(reg1, fpTempRegister);
         moveDouble(reg2, reg1);
-        moveDouble(FPRegisterID::xmm7, reg2);
+        moveDouble(fpTempRegister, reg2);
     }
 
     void move32ToFloat(RegisterID src, FPRegisterID dest)
