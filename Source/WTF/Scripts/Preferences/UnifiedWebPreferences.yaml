@@ -3463,21 +3463,6 @@ IsFirstPartyWebsiteDataRemovalReproTestingEnabled:
       default: false
 
 # FIXME: The 'Is' prefix is inconsistent with most other preferences and should be removed.
-IsLoggedInAPIEnabled:
-  type: bool
-  status: testable
-  category: dom
-  humanReadableName: "IsLoggedIn web API"
-  humanReadableDescription: "Enable the proposed IsLoggedIn web API"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
-# FIXME: The 'Is' prefix is inconsistent with most other preferences and should be removed.
 IsSameSiteStrictEnforcementEnabled:
   type: bool
   status: unstable
@@ -3926,6 +3911,20 @@ LockdownFontParserEnabled:
   humanReadableDescription: "Try parsing Web fonts with safe font parser in Lockdown Mode"
   exposed: [ WebKit ]
   category: security
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+LoginStatusAPIEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Login Status API"
+  humanReadableDescription: "Enable the proposed Login Status API"
   defaultValue:
     WebKitLegacy:
       default: false

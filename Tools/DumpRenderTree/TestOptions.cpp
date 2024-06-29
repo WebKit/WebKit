@@ -121,7 +121,7 @@ const TestFeatures& TestOptions::defaults()
             { "CoreMathMLEnabled", false },
             { "DigitalCredentialsEnabled", false },
             { "GenericCueAPIEnabled", false },
-            { "IsLoggedInAPIEnabled", false },
+            { "LoginStatusAPIEnabled", false },
             { "LazyIframeLoadingEnabled", false },
             { "LazyImageLoadingEnabled", false },
             { "RequestIdleCallbackEnabled", false },
