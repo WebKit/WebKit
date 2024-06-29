@@ -2614,7 +2614,7 @@ class GenerateCSSPropertyNames:
         to.write(f"{signature}")
         to.write(f"{{")
         with to.indent():
-            to.write(f"auto textflow = makeTextFlow(writingMode, direction);")
+            to.write(f"TextFlow flow {{ writingModeToBlockFlowDirection(writingMode), direction }};")
             to.write(f"switch (id) {{")
 
             for group_name, property_group in sorted(self.properties_and_descriptors.style_properties.logical_property_groups.items(), key=lambda x: x[0]):
@@ -2631,7 +2631,7 @@ class GenerateCSSPropertyNames:
                     to.write(f"case {property.id}: {{")
                     with to.indent():
                         to.write(f"static constexpr CSSPropertyID properties[{len(properties)}] = {{ {', '.join(properties)} }};")
-                        to.write(f"return properties[static_cast<size_t>(map{source_as_id}{kind_as_id}To{destination_as_id}{kind_as_id}(textflow, {resolver_enum}))];")
+                        to.write(f"return properties[static_cast<size_t>(map{source_as_id}{kind_as_id}To{destination_as_id}{kind_as_id}(flow, {resolver_enum}))];")
                     to.write(f"}}")
 
             to.write(f"default:")

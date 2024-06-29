@@ -699,7 +699,7 @@ static double lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis logicalA
     if (!style)
         return 0;
 
-    switch (mapLogicalAxisToPhysicalAxis(makeTextFlow(style->writingMode(), style->direction()), logicalAxis)) {
+    switch (mapLogicalAxisToPhysicalAxis({ style->blockFlowDirection(), style->direction() }, logicalAxis)) {
     case BoxAxis::Horizontal:
         return size.width();
 
