@@ -3235,49 +3235,43 @@ void RenderBlockFlow::addOverflowFromInlineChildren()
 std::optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
 {
     if (isWritingModeRoot() && !isGridItem() && !isFlexItem())
-        return std::nullopt;
+        return { };
 
     if (shouldApplyLayoutContainment())
-        return std::nullopt;
+        return { };
 
     if (!childrenInline())
         return RenderBlock::firstLineBaseline();
 
     if (!hasLines())
-        return std::nullopt;
+        return { };
 
-    if (modernLineLayout())
-        return LayoutUnit { floorToInt(modernLineLayout()->firstLinePhysicalBaseline()) };
+    if (auto* lineLayout = this->modernLineLayout())
+        return LayoutUnit { floorToInt(lineLayout->firstLinePhysicalBaseline()) };
 
-    ASSERT(firstRootBox());
-    if (style().isFlippedLinesWritingMode())
-        return LayoutUnit { firstRootBox()->logicalTop() + firstLineStyle().metricsOfPrimaryFont().intDescent(firstRootBox()->baselineType()) };
-    return LayoutUnit { firstRootBox()->logicalTop() + firstLineStyle().metricsOfPrimaryFont().intAscent(firstRootBox()->baselineType()) };
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 std::optional<LayoutUnit> RenderBlockFlow::lastLineBaseline() const
 {
     if (isWritingModeRoot() && !isGridItem() && !isFlexItem())
-        return std::nullopt;
+        return { };
 
     if (shouldApplyLayoutContainment())
-        return std::nullopt;
+        return { };
 
     if (!childrenInline())
         return RenderBlock::lastLineBaseline();
 
     if (!hasLines())
-        return std::nullopt;
+        return { };
 
     if (auto* lineLayout = modernLineLayout())
         return LayoutUnit { floorToInt(lineLayout->lastLinePhysicalBaseline()) };
 
-    ASSERT(lastRootBox()); 
-    auto rootBox = lastRootBox();
-    const RenderStyle& lastLineBoxStyle = InlineIterator::lastLineBoxFor(*this)->style();
-    if (style().isFlippedLinesWritingMode())
-        return LayoutUnit { rootBox->logicalTop() + lastLineBoxStyle.metricsOfPrimaryFont().intDescent(rootBox->baselineType()) };
-    return LayoutUnit { rootBox->logicalTop() + lastLineBoxStyle.metricsOfPrimaryFont().intAscent(rootBox->baselineType()) };
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 std::optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
