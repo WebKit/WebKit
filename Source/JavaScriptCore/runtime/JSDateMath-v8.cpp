@@ -126,7 +126,8 @@ private:
     public:
         explicit InputReader(const unsigned char* s, size_t size)
             : index_(0)
-            , buffer_({ *s, static_cast<unsigned char>(size) })
+            , buffer_(s)
+            , size_(size)
         {
             Next();
         }
@@ -136,7 +137,7 @@ private:
         // Advance to the next character of the string.
         void Next()
         {
-            ch_ = (index_ < static_cast<int>(buffer_.size())) ? buffer_[index_] : 0;
+            ch_ = (index_ < size_) ? buffer_[index_] : 0;
             index_++;
         }
 
@@ -202,7 +203,8 @@ private:
 
     private:
         int index_;
-        WTF::Vector<unsigned char> buffer_;
+        const unsigned char* buffer_;
+        size_t size_;
         uint32_t ch_;
     };
 
