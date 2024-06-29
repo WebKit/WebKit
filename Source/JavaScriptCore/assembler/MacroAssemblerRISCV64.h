@@ -1259,6 +1259,12 @@ public:
         store64(temp.data(), dest);
     }
 
+    void transferVector(Address src, Address dest)
+    {
+        loadVector(src, fpTempRegister);
+        storeVector(fpTempRegister, dest);
+    }
+
     void transferPtr(Address src, Address dest)
     {
         transfer64(src, dest);
@@ -1276,6 +1282,12 @@ public:
         auto temp = temps<Data>();
         load64(src, temp.data());
         store64(temp.data(), dest);
+    }
+
+    void transferVector(BaseIndex src, BaseIndex dest)
+    {
+        loadVector(src, fpTempRegister);
+        storeVector(fpTempRegister, dest);
     }
 
     void transferPtr(BaseIndex src, BaseIndex dest)

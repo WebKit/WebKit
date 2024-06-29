@@ -40,26 +40,34 @@ static constexpr FPRReg InvalidFPRReg { FPRReg::InvalidFPRReg };
 class FPRInfo {
 public:
     typedef FPRReg RegisterType;
-    static constexpr unsigned numberOfRegisters = 6;
+    static constexpr unsigned numberOfRegisters = 15;
     static constexpr unsigned numberOfArgumentRegisters = is64Bit() ? 8 : 0;
 
     // Temporary registers.
+    // xmm15 is use by the MacroAssembler as fpTempRegister.
     static constexpr FPRReg fpRegT0 = X86Registers::xmm0;
     static constexpr FPRReg fpRegT1 = X86Registers::xmm1;
     static constexpr FPRReg fpRegT2 = X86Registers::xmm2;
     static constexpr FPRReg fpRegT3 = X86Registers::xmm3;
     static constexpr FPRReg fpRegT4 = X86Registers::xmm4;
     static constexpr FPRReg fpRegT5 = X86Registers::xmm5;
+    static constexpr FPRReg fpRegT6 = X86Registers::xmm6;
+    static constexpr FPRReg fpRegT7 = X86Registers::xmm7;
+    static constexpr FPRReg fpRegT8 = X86Registers::xmm8;
+    static constexpr FPRReg fpRegT9 = X86Registers::xmm9;
+    static constexpr FPRReg fpRegT10 = X86Registers::xmm10;
+    static constexpr FPRReg fpRegT11 = X86Registers::xmm11;
+    static constexpr FPRReg fpRegT12 = X86Registers::xmm12;
+    static constexpr FPRReg fpRegT13 = X86Registers::xmm13;
+    static constexpr FPRReg fpRegT14 = X86Registers::xmm14;
     static constexpr FPRReg argumentFPR0 = X86Registers::xmm0; // fpRegT0
     static constexpr FPRReg argumentFPR1 = X86Registers::xmm1; // fpRegT1
     static constexpr FPRReg argumentFPR2 = X86Registers::xmm2; // fpRegT2
     static constexpr FPRReg argumentFPR3 = X86Registers::xmm3; // fpRegT3
     static constexpr FPRReg argumentFPR4 = X86Registers::xmm4; // fpRegT4
     static constexpr FPRReg argumentFPR5 = X86Registers::xmm5; // fpRegT5
-    static constexpr FPRReg argumentFPR6 = X86Registers::xmm6;
-    static constexpr FPRReg argumentFPR7 = X86Registers::xmm7;
-    // On X86 the return will actually be on the x87 stack,
-    // so we'll copy to xmm0 for sanity!
+    static constexpr FPRReg argumentFPR6 = X86Registers::xmm6; // fpRegT6
+    static constexpr FPRReg argumentFPR7 = X86Registers::xmm7; // fpRegT7
     static constexpr FPRReg returnValueFPR = X86Registers::xmm0; // fpRegT0
 
     static constexpr FPRReg nonPreservedNonArgumentFPR0 = X86Registers::xmm8;
@@ -72,6 +80,16 @@ public:
     static_assert(X86Registers::xmm3 == 3);
     static_assert(X86Registers::xmm4 == 4);
     static_assert(X86Registers::xmm5 == 5);
+    static_assert(X86Registers::xmm6 == 6);
+    static_assert(X86Registers::xmm7 == 7);
+    static_assert(X86Registers::xmm8 == 8);
+    static_assert(X86Registers::xmm9 == 9);
+    static_assert(X86Registers::xmm10 == 10);
+    static_assert(X86Registers::xmm11 == 11);
+    static_assert(X86Registers::xmm12 == 12);
+    static_assert(X86Registers::xmm13 == 13);
+    static_assert(X86Registers::xmm14 == 14);
+    static_assert(X86Registers::xmm15 == 15);
     static FPRReg toRegister(unsigned index)
     {
         return (FPRReg)index;
@@ -84,7 +102,7 @@ public:
         return result;
     }
     
-    static FPRReg toArgumentRegister(unsigned index)
+    static constexpr FPRReg toArgumentRegister(unsigned index)
     {
         return (FPRReg)index;
     }
@@ -155,9 +173,9 @@ public:
         return (unsigned)reg;
     }
 
-    static FPRReg toArgumentRegister(unsigned index)
+    static constexpr FPRReg toArgumentRegister(unsigned index)
     {
-        ASSERT(index < numberOfArgumentRegisters);
+        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfArgumentRegisters);
         return static_cast<FPRReg>(index);
     }
 
@@ -251,9 +269,9 @@ public:
         return result;
     }
 
-    static FPRReg toArgumentRegister(unsigned index)
+    static constexpr FPRReg toArgumentRegister(unsigned index)
     {
-        ASSERT(index < 8);
+        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < 8);
         return static_cast<FPRReg>(index);
     }
 
@@ -331,10 +349,10 @@ public:
         return registerForIndex[index];
     }
 
-    static FPRReg toArgumentRegister(unsigned index)
+    static constexpr FPRReg toArgumentRegister(unsigned index)
     {
-        ASSERT(index < numberOfArgumentRegisters);
-        static const FPRReg registerForIndex[numberOfArgumentRegisters] = {
+        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfArgumentRegisters);
+        constexpr FPRReg registerForIndex[numberOfArgumentRegisters] = {
             argumentFPR0, argumentFPR1, argumentFPR2, argumentFPR3,
             argumentFPR4, argumentFPR5, argumentFPR6, argumentFPR7,
         };

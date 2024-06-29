@@ -2167,6 +2167,12 @@ public:
         store64(getCachedDataTempRegisterIDAndInvalidate(), dest);
     }
 
+    void transferVector(Address src, Address dest)
+    {
+        loadVector(src, fpTempRegister);
+        storeVector(fpTempRegister, dest);
+    }
+
     void transferPtr(Address src, Address dest)
     {
         transfer64(src, dest);
@@ -2182,6 +2188,12 @@ public:
     {
         load64(src, getCachedDataTempRegisterIDAndInvalidate());
         store64(getCachedDataTempRegisterIDAndInvalidate(), dest);
+    }
+
+    void transferVector(BaseIndex src, BaseIndex dest)
+    {
+        loadVector(src, fpTempRegister);
+        storeVector(fpTempRegister, dest);
     }
 
     void transferPtr(BaseIndex src, BaseIndex dest)

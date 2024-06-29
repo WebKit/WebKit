@@ -170,11 +170,6 @@ WebXRWebGLLayer::~WebXRWebGLLayer()
     auto canvasElement = canvas();
     if (canvasElement)
         canvasElement->removeObserver(*this);
-    if (m_framebuffer) {
-        auto device = m_session->device();
-        if (device)
-            device->deleteLayer(m_framebuffer->handle());
-    }
 }
 
 bool WebXRWebGLLayer::antialias() const
@@ -220,7 +215,7 @@ ExceptionOr<RefPtr<WebXRViewport>> WebXRWebGLLayer::getViewport(WebXRView& view)
     // 1. Let session be view’s session.
     // 2. Let frame be session’s animation frame.
     // 3. If session is not equal to layer’s session, throw an InvalidStateError and abort these steps.
-    if (&view.frame().session() != m_session.ptr())
+    if (&view.frame().session() != m_session.get())
         return Exception { ExceptionCode::InvalidStateError };
 
     // 4. If frame’s active boolean is false, throw an InvalidStateError and abort these steps.
@@ -272,8 +267,16 @@ HTMLCanvasElement* WebXRWebGLLayer::canvas() const
 void WebXRWebGLLayer::sessionEnded()
 {
 #if PLATFORM(COCOA)
-    if (m_framebuffer)
-        m_framebuffer->releaseAllDisplayAttachments();
+    ASSERT(m_session);
+
+    if (m_framebuffer) {
+        auto device = m_session->device();
+        if (device)
+            device->deleteLayer(m_framebuffer->handle());
+        m_framebuffer = nullptr;
+    }
+
+    m_session = nullptr;
 #endif
 }
 
@@ -311,6 +314,8 @@ void WebXRWebGLLayer::canvasResized(CanvasBase&)
 // https://immersive-web.github.io/webxr/#xrview-obtain-a-scaled-viewport
 void WebXRWebGLLayer::computeViewports()
 {
+    ASSERT(m_session);
+
     auto roundDown = [](IntSize size, double scale) -> IntSize {
         // Round down to integer value and ensure that the value is not zero.
         size.scale(scale);

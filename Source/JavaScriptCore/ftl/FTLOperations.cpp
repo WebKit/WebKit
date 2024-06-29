@@ -47,6 +47,7 @@
 #include "JSMapIterator.h"
 #include "JSSetIterator.h"
 #include "RegExpObject.h"
+#include "ResourceExhaustion.h"
 #include "VMTrapsInlines.h"
 #include <wtf/Assertions.h>
 
@@ -470,8 +471,8 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSG
         case PhantomClonedArguments: {
             unsigned length = argumentCount - 1;
             JSGlobalObject* globalObject = codeBlock->globalObject();
-            ClonedArguments* result = ClonedArguments::createEmpty(globalObject, globalObject->clonedArgumentsStructure(), callee, length, nullptr);
-            RELEASE_ASSERT(result);
+            ClonedArguments* result = ClonedArguments::createEmpty(vm, nullptr, globalObject->clonedArgumentsStructure(), callee, length, nullptr);
+            RELEASE_ASSERT_RESOURCE_AVAILABLE(result, MemoryExhaustion, "Crash intentionally because memory is exhausted.");
 
             for (unsigned i = materialization->properties().size(); i--;) {
                 const ExitPropertyValue& property = materialization->properties()[i];

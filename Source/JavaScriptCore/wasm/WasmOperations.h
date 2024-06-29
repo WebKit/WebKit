@@ -50,6 +50,9 @@ class TypeDefinition;
 
 typedef int64_t EncodedWasmValue;
 
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, void, (void*, CallFrame*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, void, (void*, CallFrame*));
+
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 void loadValuesIntoBuffer(Probe::Context&, const StackMap&, uint64_t* buffer, SavedFPWidth);
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (Instance*, uint32_t functionIndex));

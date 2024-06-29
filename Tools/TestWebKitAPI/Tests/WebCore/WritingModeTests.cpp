@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2022 Igalia S.L.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,27 +37,34 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-constexpr std::array<TextFlow, 8> allTextFlows = {
-    InlineEastBlockSouth,
-    InlineWestBlockSouth,
-    InlineEastBlockNorth,
-    InlineWestBlockNorth,
-    InlineSouthBlockEast,
-    InlineSouthBlockWest,
-    InlineNorthBlockEast,
-    InlineNorthBlockWest,
+constexpr std::array<TextFlow, 8> flows = {
+    TextFlow { BlockFlowDirection::TopToBottom, TextDirection::LTR },
+    TextFlow { BlockFlowDirection::TopToBottom, TextDirection::RTL },
+    TextFlow { BlockFlowDirection::BottomToTop, TextDirection::LTR },
+    TextFlow { BlockFlowDirection::BottomToTop, TextDirection::RTL },
+    TextFlow { BlockFlowDirection::LeftToRight, TextDirection::LTR },
+    TextFlow { BlockFlowDirection::LeftToRight, TextDirection::RTL },
+    TextFlow { BlockFlowDirection::RightToLeft, TextDirection::LTR },
+    TextFlow { BlockFlowDirection::RightToLeft, TextDirection::RTL }
 };
+
+inline std::string textFlowString(TextFlow flow)
+{
+    TextStream stream;
+    stream << flow;
+    return stream.release().utf8().toStdString();
+}
 
 TEST(WritingMode, LogicalBoxSide)
 {
     auto mapBackAndForth = [](TextFlow textFlow, LogicalBoxSide logicalSide) {
         return mapPhysicalSideToLogicalSide(textFlow, mapLogicalSideToPhysicalSide(textFlow, logicalSide));
     };
-    for (TextFlow textFlow : allTextFlows) {
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxSide::BlockStart), LogicalBoxSide::BlockStart) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxSide::BlockEnd), LogicalBoxSide::BlockEnd) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxSide::InlineStart), LogicalBoxSide::InlineStart) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxSide::InlineEnd), LogicalBoxSide::InlineEnd) << "with textFlow=" << textFlow;
+    for (auto flow : flows) {
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxSide::BlockStart), LogicalBoxSide::BlockStart) << "with flow=" << textFlowString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxSide::BlockEnd), LogicalBoxSide::BlockEnd) << "with flow=" << textFlowString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxSide::InlineStart), LogicalBoxSide::InlineStart) << "with flow=" << textFlowString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxSide::InlineEnd), LogicalBoxSide::InlineEnd) << "with flow=" << textFlowString(flow);
     }
 }
 
@@ -65,11 +73,11 @@ TEST(WritingMode, BoxSide)
     auto mapBackAndForth = [](TextFlow textFlow, BoxSide side) {
         return mapLogicalSideToPhysicalSide(textFlow, mapPhysicalSideToLogicalSide(textFlow, side));
     };
-    for (TextFlow textFlow : allTextFlows) {
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxSide::Top), BoxSide::Top) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxSide::Right), BoxSide::Right) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxSide::Bottom), BoxSide::Bottom) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxSide::Left), BoxSide::Left) << "with textFlow=" << textFlow;
+    for (auto flow : flows) {
+        EXPECT_EQ(mapBackAndForth(flow, BoxSide::Top), BoxSide::Top) << "with flow=" << textFlowString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, BoxSide::Right), BoxSide::Right) << "with flow=" << textFlowString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, BoxSide::Bottom), BoxSide::Bottom) << "with flow=" << textFlowString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, BoxSide::Left), BoxSide::Left) << "with flow=" << textFlowString(flow);
     }
 }
 
@@ -78,11 +86,11 @@ TEST(WritingMode, LogicalBoxCorner)
     auto mapBackAndForth = [](TextFlow textFlow, LogicalBoxCorner logicalCorner) {
         return mapPhysicalCornerToLogicalCorner(textFlow, mapLogicalCornerToPhysicalCorner(textFlow, logicalCorner));
     };
-    for (TextFlow textFlow : allTextFlows) {
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxCorner::StartStart), LogicalBoxCorner::StartStart) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxCorner::StartEnd), LogicalBoxCorner::StartEnd) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxCorner::EndStart), LogicalBoxCorner::EndStart) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxCorner::EndEnd), LogicalBoxCorner::EndEnd) << "with textFlow=" << textFlow;
+    for (auto flow : flows) {
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxCorner::StartStart), LogicalBoxCorner::StartStart) << "with flow=" << textFlowString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxCorner::StartEnd), LogicalBoxCorner::StartEnd) << "with flow=" << textFlowString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxCorner::EndStart), LogicalBoxCorner::EndStart) << "with flow=" << textFlowString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxCorner::EndEnd), LogicalBoxCorner::EndEnd) << "with flow=" << textFlowString(flow);
     }
 }
 
@@ -91,11 +99,11 @@ TEST(WritingMode, BoxCorner)
     auto mapBackAndForth = [](TextFlow textFlow, BoxCorner corner) {
         return mapLogicalCornerToPhysicalCorner(textFlow, mapPhysicalCornerToLogicalCorner(textFlow, corner));
     };
-    for (TextFlow textFlow : allTextFlows) {
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxCorner::TopLeft), BoxCorner::TopLeft) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxCorner::TopRight), BoxCorner::TopRight) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxCorner::BottomRight), BoxCorner::BottomRight) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxCorner::BottomLeft), BoxCorner::BottomLeft) << "with textFlow=" << textFlow;
+    for (auto flow : flows) {
+        EXPECT_EQ(mapBackAndForth(flow, BoxCorner::TopLeft), BoxCorner::TopLeft) << "with flow=" << textFlowString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, BoxCorner::TopRight), BoxCorner::TopRight) << "with flow=" << textFlowString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, BoxCorner::BottomRight), BoxCorner::BottomRight) << "with flow=" << textFlowString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, BoxCorner::BottomLeft), BoxCorner::BottomLeft) << "with flow=" << textFlowString(flow);
     }
 }
 
@@ -104,9 +112,9 @@ TEST(WritingMode, LogicalBoxAxis)
     auto mapBackAndForth = [](TextFlow textFlow, LogicalBoxAxis logicalAxis) {
         return mapPhysicalAxisToLogicalAxis(textFlow, mapLogicalAxisToPhysicalAxis(textFlow, logicalAxis));
     };
-    for (TextFlow textFlow : allTextFlows) {
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxAxis::Block), LogicalBoxAxis::Block) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, LogicalBoxAxis::Inline), LogicalBoxAxis::Inline) << "with textFlow=" << textFlow;
+    for (auto flow : flows) {
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxAxis::Block), LogicalBoxAxis::Block) << "with flow=" << textFlowString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, LogicalBoxAxis::Inline), LogicalBoxAxis::Inline) << "with flow=" << textFlowString(flow);
     }
 }
 
@@ -115,9 +123,9 @@ TEST(WritingMode, BoxAxis)
     auto mapBackAndForth = [](TextFlow textFlow, BoxAxis axis) {
         return mapLogicalAxisToPhysicalAxis(textFlow, mapPhysicalAxisToLogicalAxis(textFlow, axis));
     };
-    for (TextFlow textFlow : allTextFlows) {
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxAxis::Horizontal), BoxAxis::Horizontal) << "with textFlow=" << textFlow;
-        EXPECT_EQ(mapBackAndForth(textFlow, BoxAxis::Vertical), BoxAxis::Vertical) << "with textFlow=" << textFlow;
+    for (auto flow : flows) {
+        EXPECT_EQ(mapBackAndForth(flow, BoxAxis::Horizontal), BoxAxis::Horizontal) << "with flow=" << textFlowString(flow);
+        EXPECT_EQ(mapBackAndForth(flow, BoxAxis::Vertical), BoxAxis::Vertical) << "with flow=" << textFlowString(flow);
     }
 }
 

@@ -704,6 +704,13 @@
    },
    {
       "emails" : [
+         "a_fryer@apple.com"
+      ],
+      "github" : "Andrew-Fryer",
+      "name" : "Andrew Fryer"
+   },
+   {
+      "emails" : [
          "anlo@rim.com",
          "anlo@blackberry.com",
          "andrewlo@gmail.com"

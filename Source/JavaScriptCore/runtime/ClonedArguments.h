@@ -77,7 +77,7 @@ private:
     ClonedArguments(VM&, Structure*, Butterfly*);
 
 public:
-    static ClonedArguments* createEmpty(JSGlobalObject*, Structure*, JSFunction* callee, unsigned length, Butterfly*);
+    static ClonedArguments* createEmpty(VM&, JSGlobalObject* nullOrGlobalObjectForOOM, Structure*, JSFunction* callee, unsigned length, Butterfly*);
     static ClonedArguments* createWithInlineFrame(JSGlobalObject*, CallFrame* targetFrame, InlineCallFrame*, ArgumentsMode);
     static ClonedArguments* createWithMachineFrame(JSGlobalObject*, CallFrame* targetFrame, ArgumentsMode);
     static ClonedArguments* createByCopyingFrom(JSGlobalObject*, Structure*, Register* argumentsStart, unsigned length, JSFunction* callee, Butterfly*);

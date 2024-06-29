@@ -88,10 +88,8 @@ public:
         poke(GPRInfo::nonArgGPR0, POKE_ARGUMENT_OFFSET + argumentIndex - GPRInfo::numberOfArgumentRegisters);
     }
 
-private:
-
-    template<unsigned NumberOfRegisters, typename RegType>
-    ALWAYS_INLINE void setupStubArgs(std::array<RegType, NumberOfRegisters> destinations, std::array<RegType, NumberOfRegisters> sources)
+    template<typename RegType, unsigned NumberOfRegisters>
+    ALWAYS_INLINE void shuffleRegisters(std::array<RegType, NumberOfRegisters> destinations, std::array<RegType, NumberOfRegisters> sources)
     {
         if (ASSERT_ENABLED) {
             RegisterSetBuilder set;
@@ -100,7 +98,7 @@ private:
             ASSERT_WITH_MESSAGE(set.numberOfSetRegisters() == NumberOfRegisters, "Destinations should not be aliased.");
         }
 
-        typedef std::pair<RegType, RegType> RegPair;
+        using RegPair = std::pair<RegType, RegType>;
         Vector<RegPair, NumberOfRegisters> pairs;
 
         // if constexpr avoids warnings when NumberOfRegisters is 0.
@@ -135,7 +133,7 @@ private:
         };
 #endif
 
-        while (pairs.size()) {
+        while (!pairs.isEmpty()) {
             RegisterSet freeDestinations;
             for (auto& pair : pairs) {
                 RegType dest = pair.second;
@@ -149,9 +147,7 @@ private:
             if (freeDestinations.numberOfSetRegisters()) {
                 bool madeMove = false;
                 for (unsigned i = 0; i < pairs.size(); i++) {
-                    auto& pair = pairs[i];
-                    RegType source = pair.first;
-                    RegType dest = pair.second;
+                    auto [source, dest] = pairs[i];
                     if (freeDestinations.contains(dest, IgnoreVectors)) {
                         // This means that this setup function cannot handle SIMD vectors as a part of parameters.
                         // Now, this is guaranteed that we ensure FP parameter is always `double`.
@@ -174,8 +170,7 @@ private:
             // any free destination registers that won't also clobber a source. We get around this by
             // exchanging registers.
 
-            RegType source = pairs[0].first;
-            RegType dest = pairs[0].second;
+            auto [source, dest] = pairs.first();
             if constexpr (std::is_same_v<RegType, FPRReg>)
                 swapDouble(source, dest);
             else
@@ -192,16 +187,13 @@ private:
             }
 
             // We may have introduced pairs that have the same source and destination. Remove those now.
-            for (unsigned i = 0; i < pairs.size(); i++) {
-                auto& pair = pairs[i];
-                if (pair.first == pair.second) {
-                    pairs.remove(i);
-                    i--;
-                }
-            }
+            pairs.removeAllMatching([](const auto& pair) {
+                return pair.first == pair.second;
+            });
         }
     }
 
+private:
     template<typename RegType>
     using InfoTypeForReg = decltype(toInfoFromReg(RegType(-1)));
 
@@ -677,10 +669,10 @@ private:
         static_assert(gprArgsCount<TraitsType>(std::make_index_sequence<TraitsType::arity>()) == numGPRArgs);
         static_assert(fprArgsCount<TraitsType>(std::make_index_sequence<TraitsType::arity>()) == numFPRArgs);
 
-        setupStubArgs<numGPRSources, GPRReg>(clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprDestinations), clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprSources));
+        shuffleRegisters<GPRReg, numGPRSources>(clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprDestinations), clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprSources));
         static_assert(!numCrossSources, "shouldn't be used on this architecture.");
 
-        setupStubArgs<numFPRSources, FPRReg>(clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprDestinations), clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprSources));
+        shuffleRegisters<FPRReg, numFPRSources>(clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprDestinations), clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprSources));
     }
 
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename... Args>

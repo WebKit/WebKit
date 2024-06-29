@@ -76,7 +76,7 @@ public:
 
     static double getNativeFramebufferScaleFactor(const WebXRSession&);
 
-    const WebXRSession& session() { return m_session; }
+    const WebXRSession* session() { return m_session.get(); }
 
     bool isCompositionEnabled() const { return m_isCompositionEnabled; }
 
@@ -98,7 +98,7 @@ private:
     void canvasChanged(CanvasBase&, const FloatRect&) final { };
     void canvasResized(CanvasBase&) final;
     void canvasDestroyed(CanvasBase&) final { };
-    Ref<WebXRSession> m_session;
+    RefPtr<WebXRSession> m_session;
     WebXRRenderingContext m_context;
 
     struct ViewportData {

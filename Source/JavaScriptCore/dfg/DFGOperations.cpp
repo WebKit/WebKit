@@ -80,6 +80,7 @@
 #include "RegExpMatchesArray.h"
 #include "RegExpObjectInlines.h"
 #include "Repatch.h"
+#include "ResourceExhaustion.h"
 #include "ScopedArguments.h"
 #include "StringConstructor.h"
 #include "StringPrototypeInlines.h"
@@ -2303,8 +2304,8 @@ JSC_DEFINE_JIT_OPERATION(operationCreateClonedArgumentsDuringExit, JSCell*, (VM*
     
     unsigned length = argumentCount - 1;
     JSGlobalObject* globalObject = codeBlock->globalObject();
-    ClonedArguments* result = ClonedArguments::createEmpty(globalObject, globalObject->clonedArgumentsStructure(), callee, length, nullptr);
-    RELEASE_ASSERT(!scope.exception() && result);
+    ClonedArguments* result = ClonedArguments::createEmpty(vm, nullptr, globalObject->clonedArgumentsStructure(), callee, length, nullptr);
+    RELEASE_ASSERT_RESOURCE_AVAILABLE(result, MemoryExhaustion, "Crash intentionally because memory is exhausted.");
 
     Register* arguments =
         callFrame->registers() + (inlineCallFrame ? inlineCallFrame->stackOffset : 0) +

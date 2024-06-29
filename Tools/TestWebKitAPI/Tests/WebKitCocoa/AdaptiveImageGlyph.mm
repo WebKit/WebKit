@@ -409,6 +409,9 @@ TEST(AdaptiveImageGlyph, InsertWKAttachmentsOnPaste)
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     [pasteboard clearContents];
     [pasteboard writeObjects:@[ attributedString.get() ]];
+#elif PLATFORM(APPLETV) || PLATFORM(WATCHOS)
+    RetainPtr stringData = [attributedString dataFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ } error:nil];
+    [[UIPasteboard generalPasteboard] setData:stringData.get() forPasteboardType:UTTypeFlatRTFD.identifier];
 #else
     auto item = adoptNS([[NSItemProvider alloc] init]);
     [item registerObject:attributedString.get() visibility:NSItemProviderRepresentationVisibilityAll];

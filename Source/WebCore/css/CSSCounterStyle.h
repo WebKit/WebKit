@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ public:
             && m_predefinedCounterStyle == other.m_predefinedCounterStyle;
     }
 
-    String text(int, TextFlow = TextFlow::InlineEastBlockSouth);
+    String text(int, TextFlow);
     const CSSCounterStyleDescriptors::Name& name() const { return m_descriptors.m_name; }
     CSSCounterStyleDescriptors::System system() const { return m_descriptors.m_system; }
     const CSSCounterStyleDescriptors::NegativeSymbols& negative() const { return m_descriptors.m_negativeSymbols; }

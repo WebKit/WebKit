@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -238,40 +238,30 @@ static String counterForSystemCJK(int number, const std::array<UChar, 17>& table
     return std::span<const UChar> { characters, length };
 }
 
-String CSSCounterStyle::counterForSystemDisclosureClosed(TextFlow textFlow)
+String CSSCounterStyle::counterForSystemDisclosureClosed(TextFlow flow)
 {
-    switch (textFlow) {
-    case TextFlow::InlineEastBlockSouth:
-    case TextFlow::InlineEastBlockNorth:
-        return span(blackRightPointingSmallTriangle);
-    case TextFlow::InlineWestBlockSouth:
-    case TextFlow::InlineWestBlockNorth:
-        return span(blackLeftPointingSmallTriangle);
-    case TextFlow::InlineSouthBlockEast:
-    case TextFlow::InlineNorthBlockEast:
-        return span(blackDownPointingSmallTriangle);
-    case TextFlow::InlineSouthBlockWest:
-    case TextFlow::InlineNorthBlockWest:
-        return span(blackUpPointingSmallTriangle);
+    switch (flow.blockDirection) {
+    case BlockFlowDirection::TopToBottom:
+    case BlockFlowDirection::BottomToTop:
+        return span(flow.textDirection == TextDirection::LTR ? blackRightPointingSmallTriangle : blackLeftPointingSmallTriangle);
+    case BlockFlowDirection::LeftToRight:
+    case BlockFlowDirection::RightToLeft:
+        return span(flow.textDirection == TextDirection::LTR ? blackDownPointingSmallTriangle : blackUpPointingSmallTriangle);
     }
     ASSERT_NOT_REACHED();
     return { };
 }
 
-String CSSCounterStyle::counterForSystemDisclosureOpen(TextFlow textFlow)
+String CSSCounterStyle::counterForSystemDisclosureOpen(TextFlow flow)
 {
-    switch (textFlow) {
-    case TextFlow::InlineEastBlockSouth:
-    case TextFlow::InlineWestBlockSouth:
+    switch (flow.blockDirection) {
+    case BlockFlowDirection::TopToBottom:
         return span(blackDownPointingSmallTriangle);
-    case TextFlow::InlineEastBlockNorth:
-    case TextFlow::InlineWestBlockNorth:
+    case BlockFlowDirection::BottomToTop:
         return span(blackUpPointingSmallTriangle);
-    case TextFlow::InlineSouthBlockEast:
-    case TextFlow::InlineSouthBlockWest:
+    case BlockFlowDirection::LeftToRight:
         return span(blackRightPointingSmallTriangle);
-    case TextFlow::InlineNorthBlockEast:
-    case TextFlow::InlineNorthBlockWest:
+    case BlockFlowDirection::RightToLeft:
         return span(blackLeftPointingSmallTriangle);
     }
     ASSERT_NOT_REACHED();
