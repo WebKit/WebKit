@@ -55,6 +55,10 @@ RUN for f in /usr/lib/llvm-${LLVM_VERSION}/bin/*; do ln -sf "$f" /usr/bin; done 
     ln -sf llvm-ranlib /usr/bin/ranlib && \
     ln -sf ld.lld /usr/bin/ld
 
+
+ENV WEBKIT_OUT_DIR=/webkitbuild
+RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc /output/include/unicode
+
 # Debian repos may not have the latest ICU version, so we ensure build reliability by downloading
 # the exact version we need. Unfortunately, aarch64 is not pre-built so we have to build it from source.
 ADD https://github.com/unicode-org/icu/releases/download/release-75-1/icu4c-75_1-src.tgz /icu.tgz
@@ -65,7 +69,7 @@ RUN --mount=type=tmpfs,target=/icu \
     cd source && \
     CFLAGS="${DEFAULT_CFLAGS} $CFLAGS" CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS" ./runConfigureICU Linux/clang --enable-static --disable-shared --with-data-packaging=static --disable-samples --disable-debug --enable-release && \
     make -j$(nproc) && \
-    make install
+    make install && cp -r /icu/source/lib/* /output/lib && cp -r /icu/source/i18n/unicode/* /icu/source/common/unicode/* /output/include/unicode
 
 # WebKit has a minimum cmake version of 3.20
 ADD https://github.com/Kitware/CMake/releases/download/v3.29.6/cmake-3.29.6.tar.gz /cmake.tar.gz
@@ -76,11 +80,6 @@ RUN --mount=type=tmpfs,target=/cmakebuild install_packages libssl-dev && tar -xf
     make install && \
     rm -rf /cmakebuild/cmake-3.29.6 /cmake.tar.gz
 
-ENV WEBKIT_OUT_DIR=/webkitbuild
-RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc /output/include/unicode
-
-RUN cp -r /icu/source/lib/* /output/lib
-RUN cp -r /icu/source/i18n/unicode/* /icu/source/common/unicode/* /output/include/unicode
 
 COPY . /webkit
 WORKDIR /webkit
