@@ -39,3 +39,15 @@ index 9459f4c..e74a20c 100644
      gdk-pixbuf-xlib \
      liberation-fonts \
      atk \
+diff --git a/sources/meta-browser/meta-chromium/recipes-browser/chromium/chromium-gn.inc b/sources/meta-browser/meta-chromium/recipes-browser/chromium/chromium-gn.inc
+index 0ca91f5..0cc8eb5 100644
+--- a/sources/meta-browser/meta-chromium/recipes-browser/chromium/chromium-gn.inc
++++ b/sources/meta-browser/meta-chromium/recipes-browser/chromium/chromium-gn.inc
+@@ -157,6 +157,7 @@ GN_ARGS = " \
+         use_alsa=${@bb.utils.contains('DISTRO_FEATURES', 'alsa', 'true', 'false', d)} \
+         use_pulseaudio=${@bb.utils.contains('DISTRO_FEATURES', 'pulseaudio', 'true', 'false', d)} \
+         use_system_libjpeg=true \
++        use_system_icu=false \
+ "
+ # Not enabled by default, because the freetype version from oe-core
+ # often isn't compatible, e.g. freetype-2.11 isn't compatible with
