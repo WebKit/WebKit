@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Animation triggers on 'repeatEvent' Test timed out
+PASS Animation triggers on 'repeatEvent'
 
