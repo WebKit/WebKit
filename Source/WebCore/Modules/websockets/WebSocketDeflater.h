@@ -51,7 +51,6 @@ public:
     bool initialize();
     bool addBytes(std::span<const uint8_t>);
     bool finish();
-    const uint8_t* data() { return m_buffer.data(); }
     size_t size() const { return m_buffer.size(); }
     std::span<const uint8_t> span() const { return m_buffer.span(); }
     void reset();
@@ -72,7 +71,6 @@ public:
     bool initialize();
     bool addBytes(std::span<const uint8_t>);
     bool finish();
-    const uint8_t* data() const { return m_buffer.data(); }
     size_t size() const { return m_buffer.size(); }
     std::span<const uint8_t> span() const { return m_buffer.span(); }
     void reset();
