@@ -196,6 +196,7 @@ void findWordBoundary(StringView text, int position, int* start, int* end)
         ASSERT_WITH_MESSAGE(static_cast<unsigned>(position) < text.length(), "position exceeds text.length()");
         *start = text.length() - 1;
         *end = text.length() - 1;
+        return;
     }
 
     // For complex text (Thai, Japanese, Chinese), visible_units will pass the text in as a 
