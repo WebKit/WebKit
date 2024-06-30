@@ -70,7 +70,7 @@ ReverbConvolver::ReverbConvolver(AudioChannel* impulseResponse, size_t renderSli
     // Otherwise, assume we're being run from a command-line tool.
     bool hasRealtimeConstraint = useBackgroundThreads;
 
-    const float* response = impulseResponse->data();
+    const float* response = impulseResponse->span().data();
     size_t totalResponseLength = impulseResponse->length();
 
     // The total latency is zero because the direct-convolution is used in the leading portion.
@@ -174,8 +174,8 @@ void ReverbConvolver::process(const AudioChannel* sourceChannel, AudioChannel* d
     if (!isSafe)
         return;
         
-    const float* source = sourceChannel->data();
-    float* destination = destinationChannel->mutableData();
+    const float* source = sourceChannel->span().data();
+    float* destination = destinationChannel->mutableSpan().data();
     bool isDataSafe = source && destination;
     ASSERT(isDataSafe);
     if (!isDataSafe)

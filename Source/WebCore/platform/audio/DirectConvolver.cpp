@@ -58,15 +58,15 @@ void DirectConvolver::process(AudioFloatArray* convolutionKernel, const float* s
     if (kernelSize > m_inputBlockSize)
         return;
 
-    float* kernelP = convolutionKernel->data();
+    float* kernelP = convolutionKernel->mutableSpan().data();
 
     // Sanity check
-    bool isCopyGood = kernelP && sourceP && destP && m_buffer.data();
+    bool isCopyGood = kernelP && sourceP && destP && m_buffer.span().data();
     ASSERT(isCopyGood);
     if (!isCopyGood)
         return;
 
-    float* inputP = m_buffer.data() + m_inputBlockSize;
+    float* inputP = m_buffer.mutableSpan().subspan(m_inputBlockSize).data();
 
     // Copy samples to 2nd half of input buffer.
     memcpy(inputP, sourceP, sizeof(float) * framesToProcess);
@@ -346,7 +346,7 @@ void DirectConvolver::process(AudioFloatArray* convolutionKernel, const float* s
 #endif // USE(ACCELERATE)
 
     // Copy 2nd half of input buffer to 1st half.
-    memcpy(m_buffer.data(), inputP, sizeof(float) * framesToProcess);
+    memcpy(m_buffer.mutableSpan().data(), inputP, sizeof(float) * framesToProcess);
 }
 
 void DirectConvolver::reset()

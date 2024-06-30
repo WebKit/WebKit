@@ -33,6 +33,7 @@
 #include <string.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -73,10 +74,8 @@ public:
         zero();
     }
 
-    std::span<T> span() { return { data(), size() }; }
-    std::span<const T> span() const { return { data(), size() }; }
-    T* data() { return m_allocation; }
-    const T* data() const { return m_allocation; }
+    std::span<T> mutableSpan() { return { m_allocation, size() }; }
+    std::span<const T> span() const { return { m_allocation, size() }; }
     size_t size() const { return m_size; }
     bool isEmpty() const { return !m_size; }
 
@@ -84,16 +83,14 @@ public:
     {
         // Note that although it is a size_t, m_size is now guaranteed to be
         // no greater than max unsigned. This guarantee is enforced in resize().
-        ASSERT_WITH_SECURITY_IMPLICATION(i < size());
-        return data()[i];
+        return mutableSpan()[i];
     }
 
     const T& at(size_t i) const
     {
         // Note that although it is a size_t, m_size is now guaranteed to be
         // no greater than max unsigned. This guarantee is enforced in resize().
-        RELEASE_ASSERT(i < size());
-        return data()[i];
+        return span()[i];
     }
 
     T& operator[](size_t i) { return at(i); }
@@ -102,7 +99,7 @@ public:
     void zero()
     {
         // This multiplication is made safe by the check in resize().
-        memset(this->data(), 0, sizeof(T) * this->size());
+        memsetSpan(mutableSpan(), 0);
     }
 
     void zeroRange(unsigned start, unsigned end)
@@ -114,7 +111,7 @@ public:
 
         // This expression cannot overflow because end - start cannot be
         // greater than m_size, which is safe due to the check in resize().
-        memset(this->data() + start, 0, sizeof(T) * (end - start));
+        memsetSpan(mutableSpan().subspan(start, end - start), 0);
     }
 
     void copyToRange(const T* sourceData, unsigned start, unsigned end)
@@ -126,16 +123,16 @@ public:
 
         // This expression cannot overflow because end - start cannot be
         // greater than m_size, which is safe due to the check in resize().
-        memcpy(this->data() + start, sourceData, sizeof(T) * (end - start));
+        memcpySpan(mutableSpan().subspan(start, end - start), std::span { sourceData, end - start });
     }
 
     bool containsConstantValue() const
     {
         if (m_size <= 1)
             return true;
-        float constant = data()[0];
-        for (unsigned i = 1; i < m_size; ++i) {
-            if (data()[i] != constant)
+        float constant = span().front();
+        for (auto value : span().subspan(1)) {
+            if (value != constant)
                 return false;
         }
         return true;

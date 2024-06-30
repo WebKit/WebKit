@@ -221,7 +221,7 @@ void AudioWorkletNode::process(size_t framesToProcess)
             if (auto& input = m_inputs[inputIndex]) {
                 for (unsigned channelIndex = 0; channelIndex < input->numberOfChannels(); ++channelIndex) {
                     auto* channel = input->channel(channelIndex);
-                    AudioUtilities::applyNoise(channel->mutableData(), channel->length(), 0.01);
+                    AudioUtilities::applyNoise(channel->mutableSpan().data(), channel->length(), 0.01);
                 }
             }
         }
@@ -232,9 +232,9 @@ void AudioWorkletNode::process(size_t framesToProcess)
         ASSERT(paramValues);
         RELEASE_ASSERT(paramValues->size() >= framesToProcess);
         if (audioParam->hasSampleAccurateValues() && audioParam->automationRate() == AutomationRate::ARate)
-            audioParam->calculateSampleAccurateValues(paramValues->data(), framesToProcess);
+            audioParam->calculateSampleAccurateValues(paramValues->mutableSpan().data(), framesToProcess);
         else
-            std::fill_n(paramValues->data(), framesToProcess, audioParam->finalValue());
+            std::fill_n(paramValues->mutableSpan().data(), framesToProcess, audioParam->finalValue());
     }
 
     bool threwException = false;

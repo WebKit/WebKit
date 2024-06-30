@@ -130,7 +130,7 @@ bool OscillatorNode::calculateSampleAccuratePhaseIncrements(size_t framesToProce
 
     bool hasSampleAccurateValues = false;
     bool hasFrequencyChanges = false;
-    float* phaseIncrements = m_phaseIncrements.data();
+    float* phaseIncrements = m_phaseIncrements.mutableSpan().data();
 
     float finalScale = m_periodicWave->rateScale();
 
@@ -150,7 +150,7 @@ bool OscillatorNode::calculateSampleAccuratePhaseIncrements(size_t framesToProce
         hasSampleAccurateValues = true;
 
         // Get the sample-accurate detune values.
-        float* detuneValues = hasFrequencyChanges ? m_detuneValues.data() : phaseIncrements;
+        float* detuneValues = hasFrequencyChanges ? m_detuneValues.mutableSpan().data() : phaseIncrements;
         m_detune->calculateSampleAccurateValues(detuneValues, framesToProcess);
 
         // Convert from cents to rate scalar.
@@ -375,7 +375,7 @@ void OscillatorNode::process(size_t framesToProcess)
         return;
     }
 
-    float* destP = outputBus.channel(0)->mutableData();
+    float* destP = outputBus.channel(0)->mutableSpan().data();
 
     ASSERT(quantumFrameOffset <= framesToProcess);
 
@@ -399,7 +399,7 @@ void OscillatorNode::process(size_t framesToProcess)
         m_periodicWave->waveDataForFundamentalFrequency(frequency, lowerWaveData, higherWaveData, tableInterpolationFactor);
     }
 
-    float* phaseIncrements = m_phaseIncrements.data();
+    float* phaseIncrements = m_phaseIncrements.mutableSpan().data();
 
     // Start rendering at the correct offset.
     destP += quantumFrameOffset;

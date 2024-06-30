@@ -92,7 +92,7 @@ void IIRProcessor::process(const AudioBus* source, AudioBus* destination, size_t
     // For each channel of our input, process using the corresponding IIRDSPKernel
     // into the output channel.
     for (size_t i = 0; i < m_kernels.size(); ++i)
-        m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->mutableData(), framesToProcess);
+        m_kernels[i]->process(source->channel(i)->span().data(), destination->channel(i)->mutableSpan().data(), framesToProcess);
 }
 
 void IIRProcessor::getFrequencyResponse(unsigned length, const float* frequencyHz, float* magResponse, float* phaseResponse)

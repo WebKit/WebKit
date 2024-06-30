@@ -82,11 +82,11 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
         double y1 = m_y1;
         double y2 = m_y2;
 
-        auto* b0 = m_b0.data();
-        auto* b1 = m_b1.data();
-        auto* b2 = m_b2.data();
-        auto* a1 = m_a1.data();
-        auto* a2 = m_a2.data();
+        auto b0 = m_b0.span();
+        auto b1 = m_b1.span();
+        auto b2 = m_b2.span();
+        auto a1 = m_a1.span();
+        auto a2 = m_a2.span();
 
         for (size_t k = 0; k < n; ++k) {
             // FIXME: this can be optimized by pipelining the multiply adds...
@@ -121,8 +121,8 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
     }
 
 #if USE(ACCELERATE)
-    auto* inputP = m_inputBuffer.data();
-    auto* outputP = m_outputBuffer.data();
+    auto inputP = m_inputBuffer.mutableSpan();
+    auto outputP = m_outputBuffer.mutableSpan();
 
     // Set up filter state. This is needed in case we're switching from
     // filtering with variable coefficients (i.e., with automations) to
@@ -198,8 +198,8 @@ void Biquad::processFast(const float* sourceP, float* destP, size_t framesToProc
     filterCoefficients[3] = m_a1[0];
     filterCoefficients[4] = m_a2[0];
 
-    double* inputP = m_inputBuffer.data();
-    double* outputP = m_outputBuffer.data();
+    double* inputP = m_inputBuffer.mutableSpan().data();
+    double* outputP = m_outputBuffer.mutableSpan().data();
 
     double* input2P = inputP + 2;
     double* output2P = outputP + 2;
@@ -246,11 +246,11 @@ void Biquad::reset()
 {
 #if USE(ACCELERATE)
     // Two extra samples for filter history
-    double* inputP = m_inputBuffer.data();
+    auto inputP = m_inputBuffer.mutableSpan();
     inputP[0] = 0;
     inputP[1] = 0;
 
-    double* outputP = m_outputBuffer.data();
+    auto outputP = m_outputBuffer.mutableSpan();
     outputP[0] = 0;
     outputP[1] = 0;
 #endif

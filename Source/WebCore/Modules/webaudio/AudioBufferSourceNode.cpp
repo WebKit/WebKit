@@ -136,7 +136,7 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
     }
 
     for (unsigned i = 0; i < outputBus.numberOfChannels(); ++i)
-        m_destinationChannels[i] = outputBus.channel(i)->mutableData();
+        m_destinationChannels[i] = outputBus.channel(i)->mutableSpan().data();
 
     // Render by reading directly from the buffer.
     if (!renderFromBuffer(&outputBus, quantumFrameOffset, bufferFramesToProcess, startFrameOffset)) {

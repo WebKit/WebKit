@@ -48,7 +48,7 @@ static float extractAverageGroupDelay(AudioChannel* channel, size_t analysisFFTS
 {
     ASSERT(channel);
         
-    float* impulseP = channel->mutableData();
+    float* impulseP = channel->mutableSpan().data();
     
     bool isSizeGood = channel->length() >= analysisFFTSize;
     ASSERT(isSizeGood);
@@ -75,7 +75,7 @@ HRTFKernel::HRTFKernel(AudioChannel* channel, size_t fftSize, float sampleRate)
     // Determine the leading delay (average group delay) for the response.
     m_frameDelay = extractAverageGroupDelay(channel, fftSize / 2);
 
-    float* impulseResponse = channel->mutableData();
+    float* impulseResponse = channel->mutableSpan().data();
     size_t responseLength = channel->length();
 
     // We need to truncate to fit into 1/2 the FFT size (with zero padding) in order to do proper convolution.
@@ -107,7 +107,7 @@ std::unique_ptr<AudioChannel> HRTFKernel::createImpulseResponse()
 
     // Add leading delay back in.
     fftFrame.addConstantGroupDelay(m_frameDelay);
-    fftFrame.doInverseFFT(channel->mutableData());
+    fftFrame.doInverseFFT(channel->mutableSpan().data());
 
     return channel;
 }

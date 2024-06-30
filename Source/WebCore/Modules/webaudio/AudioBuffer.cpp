@@ -136,7 +136,7 @@ AudioBuffer::AudioBuffer(AudioBus& bus)
             return;
         }
 
-        channelDataArray->setRange(bus.channel(i)->data(), m_originalLength, 0);
+        channelDataArray->setRange(bus.channel(i)->span().data(), m_originalLength, 0);
         channels.append(WTFMove(channelDataArray));
     }
 

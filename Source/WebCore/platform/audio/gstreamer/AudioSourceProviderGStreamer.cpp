@@ -77,7 +77,7 @@ static void copyGStreamerBuffersToAudioChannel(GstAdapter* adapter, AudioBus* bu
     GST_TRACE("%zu samples available for channel %d (%zu frames requested)", available, channelNumber, framesToProcess);
     size_t bytes = framesToProcess * sizeof(float);
     if (available >= bytes) {
-        gst_adapter_copy(adapter, bus->channel(channelNumber)->mutableData(), 0, bytes);
+        gst_adapter_copy(adapter, bus->channel(channelNumber)->mutableSpan().data(), 0, bytes);
         gst_adapter_flush(adapter, bytes);
     } else
         bus->zero();

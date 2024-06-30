@@ -137,7 +137,7 @@ void AudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProc
     for (unsigned i = 0; i < m_list->mNumberBuffers; ++i) {
         AudioChannel* channel = bus->channel(i);
         m_list->mBuffers[i].mNumberChannels = 1;
-        m_list->mBuffers[i].mData = channel->mutableData();
+        m_list->mBuffers[i].mData = channel->mutableSpan().data();
         m_list->mBuffers[i].mDataByteSize = channel->length() * sizeof(float);
     }
 

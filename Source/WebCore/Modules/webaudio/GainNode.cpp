@@ -80,7 +80,7 @@ void GainNode::process(size_t framesToProcess)
             // Apply sample-accurate gain scaling for precise envelopes, grain windows, etc.
             ASSERT(framesToProcess <= m_sampleAccurateGainValues.size());
             if (framesToProcess <= m_sampleAccurateGainValues.size()) {
-                float* gainValues = m_sampleAccurateGainValues.data();
+                float* gainValues = m_sampleAccurateGainValues.mutableSpan().data();
                 gain().calculateSampleAccurateValues(gainValues, framesToProcess);
                 outputBus->copyWithSampleAccurateGainValuesFrom(*inputBus, gainValues, framesToProcess);
             }

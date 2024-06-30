@@ -56,7 +56,7 @@ void ReverbAccumulationBuffer::readAndClear(float* destination, size_t numberOfF
     size_t numberOfFrames1 = std::min(numberOfFrames, framesAvailable);
     size_t numberOfFrames2 = numberOfFrames - numberOfFrames1;
 
-    float* source = m_buffer.data();
+    float* source = m_buffer.mutableSpan().data();
     memcpy(destination, source + m_readIndex, sizeof(float) * numberOfFrames1);
     memset(source + m_readIndex, 0, sizeof(float) * numberOfFrames1);
 
@@ -89,7 +89,7 @@ int ReverbAccumulationBuffer::accumulate(float* source, size_t numberOfFrames, i
     size_t numberOfFrames1 = std::min(numberOfFrames, framesAvailable);
     size_t numberOfFrames2 = numberOfFrames - numberOfFrames1;
 
-    float* destination = m_buffer.data();
+    float* destination = m_buffer.mutableSpan().data();
 
     bool isSafe = writeIndex <= bufferLength && numberOfFrames1 + writeIndex <= bufferLength && numberOfFrames2 <= bufferLength;
     ASSERT(isSafe);

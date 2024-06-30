@@ -81,10 +81,10 @@ void ConstantSourceNode::process(size_t framesToProcess)
     
     bool isSampleAccurate = m_offset->hasSampleAccurateValues();
     if (isSampleAccurate && m_offset->automationRate() == AutomationRate::ARate) {
-        float* offsets = m_sampleAccurateValues.data();
+        float* offsets = m_sampleAccurateValues.mutableSpan().data();
         m_offset->calculateSampleAccurateValues(offsets, framesToProcess);
         if (nonSilentFramesToProcess > 0) {
-            memcpy(outputBus.channel(0)->mutableData() + quantumFrameOffset, offsets + quantumFrameOffset, nonSilentFramesToProcess * sizeof(*offsets));
+            memcpy(outputBus.channel(0)->mutableSpan().subspan(quantumFrameOffset).data(), offsets + quantumFrameOffset, nonSilentFramesToProcess * sizeof(*offsets));
             outputBus.clearSilentFlag();
         } else
             outputBus.zero();
@@ -95,7 +95,7 @@ void ConstantSourceNode::process(size_t framesToProcess)
     if (!value)
         outputBus.zero();
     else {
-        float* dest = outputBus.channel(0)->mutableData();
+        float* dest = outputBus.channel(0)->mutableSpan().data();
         std::fill_n(dest + quantumFrameOffset, nonSilentFramesToProcess, value);
         outputBus.clearSilentFlag();
     }

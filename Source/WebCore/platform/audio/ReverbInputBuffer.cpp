@@ -47,7 +47,7 @@ void ReverbInputBuffer::write(const float* sourceP, size_t numberOfFrames)
     if (!isCopySafe)
         return;
         
-    memcpy(m_buffer.data() + m_writeIndex, sourceP, sizeof(float) * numberOfFrames);
+    memcpy(m_buffer.mutableSpan().subspan(m_writeIndex).data(), sourceP, sizeof(float) * numberOfFrames);
 
     m_writeIndex += numberOfFrames;
     ASSERT(m_writeIndex <= bufferLength);
@@ -65,10 +65,10 @@ float* ReverbInputBuffer::directReadFrom(int* readIndex, size_t numberOfFrames)
         // Should never happen in practice but return pointer to start of buffer (avoid crash)
         if (readIndex)
             *readIndex = 0;
-        return m_buffer.data();
+        return m_buffer.mutableSpan().data();
     }
         
-    float* sourceP = m_buffer.data();
+    float* sourceP = m_buffer.mutableSpan().data();
     float* p = sourceP + *readIndex;
 
     // Update readIndex

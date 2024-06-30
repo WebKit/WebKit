@@ -60,7 +60,7 @@ void FFTConvolver::process(FFTFrame* fftKernel, const float* sourceP, float* des
 
     for (size_t i = 0; i < numberOfDivisions; ++i, sourceP += divisionSize, destP += divisionSize) {
         // Copy samples to input buffer (note contraint above!)
-        float* inputP = m_inputBuffer.data();
+        float* inputP = m_inputBuffer.mutableSpan().data();
 
         // Sanity check
         bool isCopyGood1 = sourceP && inputP && m_readWriteIndex + divisionSize <= m_inputBuffer.size();
@@ -71,7 +71,7 @@ void FFTConvolver::process(FFTFrame* fftKernel, const float* sourceP, float* des
         memcpy(inputP + m_readWriteIndex, sourceP, sizeof(float) * divisionSize);
 
         // Copy samples from output buffer
-        float* outputP = m_outputBuffer.data();
+        float* outputP = m_outputBuffer.mutableSpan().data();
 
         // Sanity check
         bool isCopyGood2 = destP && outputP && m_readWriteIndex + divisionSize <= m_outputBuffer.size();
@@ -85,12 +85,12 @@ void FFTConvolver::process(FFTFrame* fftKernel, const float* sourceP, float* des
         // Check if it's time to perform the next FFT
         if (m_readWriteIndex == halfSize) {
             // The input buffer is now filled (get frequency-domain version)
-            m_frame.doFFT(m_inputBuffer.data());
+            m_frame.doFFT(m_inputBuffer.span().data());
             m_frame.multiply(*fftKernel);
-            m_frame.doInverseFFT(m_outputBuffer.data());
+            m_frame.doInverseFFT(m_outputBuffer.mutableSpan().data());
 
             // Overlap-add 1st half from previous time
-            VectorMath::add(m_outputBuffer.data(), m_lastOverlapBuffer.data(), m_outputBuffer.data(), halfSize);
+            VectorMath::add(m_outputBuffer.span().data(), m_lastOverlapBuffer.span().data(), m_outputBuffer.mutableSpan().data(), halfSize);
 
             // Finally, save 2nd half of result
             bool isCopyGood3 = m_outputBuffer.size() == 2 * halfSize && m_lastOverlapBuffer.size() == halfSize;
@@ -98,7 +98,7 @@ void FFTConvolver::process(FFTFrame* fftKernel, const float* sourceP, float* des
             if (!isCopyGood3)
                 return;
 
-            memcpy(m_lastOverlapBuffer.data(), m_outputBuffer.data() + halfSize, sizeof(float) * halfSize);
+            memcpySpan(m_lastOverlapBuffer.mutableSpan().first(halfSize), m_outputBuffer.span().subspan(halfSize, halfSize));
 
             // Reset index back to start for next time
             m_readWriteIndex = 0;

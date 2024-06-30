@@ -195,7 +195,7 @@ void ScriptProcessorNode::process(size_t framesToProcess)
 
     // Copy from the output buffer to the output. 
     for (unsigned i = 0; i < numberOfOutputChannels; ++i)
-        memcpy(outputBus->channel(i)->mutableData(), outputBuffer->rawChannelData(i) + m_bufferReadWriteIndex, sizeof(float) * framesToProcess);
+        memcpy(outputBus->channel(i)->mutableSpan().data(), outputBuffer->rawChannelData(i) + m_bufferReadWriteIndex, sizeof(float) * framesToProcess);
 
     // Update the buffering index.
     m_bufferReadWriteIndex = (m_bufferReadWriteIndex + framesToProcess) % bufferSize();

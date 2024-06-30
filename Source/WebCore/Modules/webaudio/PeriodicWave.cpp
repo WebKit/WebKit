@@ -154,8 +154,8 @@ void PeriodicWave::waveDataForFundamentalFrequency(float fundamentalFrequency, f
     unsigned rangeIndex1 = static_cast<unsigned>(pitchRange);
     unsigned rangeIndex2 = rangeIndex1 < m_numberOfRanges - 1 ? rangeIndex1 + 1 : rangeIndex1;
 
-    lowerWaveData = m_bandLimitedTables[rangeIndex2]->data();
-    higherWaveData = m_bandLimitedTables[rangeIndex1]->data();
+    lowerWaveData = m_bandLimitedTables[rangeIndex2]->mutableSpan().data();
+    higherWaveData = m_bandLimitedTables[rangeIndex1]->mutableSpan().data();
     
     // Ranges from 0 -> 1 to interpolate between lower -> higher.
     tableInterpolationFactor = pitchRange - rangeIndex1;
@@ -204,8 +204,8 @@ void PeriodicWave::createBandLimitedTables(const float* realData, const float* i
         RELEASE_ASSERT(imagP.size() >= numberOfComponents);
 
         // Copy from loaded frequency data and scale.
-        VectorMath::multiplyByScalar(realData, fftSize, realP.data(), numberOfComponents);
-        VectorMath::multiplyByScalar(imagData, -static_cast<float>(fftSize), imagP.data(), numberOfComponents);
+        VectorMath::multiplyByScalar(realData, fftSize, realP.mutableSpan().data(), numberOfComponents);
+        VectorMath::multiplyByScalar(imagData, -static_cast<float>(fftSize), imagP.mutableSpan().data(), numberOfComponents);
 
         // Find the starting bin where we should start culling.
         // We need to clear out the highest frequencies to band-limit the waveform.
@@ -230,7 +230,7 @@ void PeriodicWave::createBandLimitedTables(const float* realData, const float* i
         m_bandLimitedTables.append(makeUnique<AudioFloatArray>(waveSize));
 
         // Apply an inverse FFT to generate the time-domain table data.
-        float* data = m_bandLimitedTables[rangeIndex]->data();
+        float* data = m_bandLimitedTables[rangeIndex]->mutableSpan().data();
         frame.doInverseFFT(data);
 
         // For the first range (which has the highest power), calculate its peak value then compute normalization scale.
@@ -255,8 +255,8 @@ void PeriodicWave::generateBasicWaveform(Type shape)
 
     AudioFloatArray real(halfSize);
     AudioFloatArray imag(halfSize);
-    float* realP = real.data();
-    float* imagP = imag.data();
+    float* realP = real.mutableSpan().data();
+    float* imagP = imag.mutableSpan().data();
 
     // Clear DC and Nyquist.
     realP[0] = 0;

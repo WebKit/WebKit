@@ -97,7 +97,7 @@ void UpSampler::process(const float* sourceP, float* destP, size_t sourceFramesT
     if (!isInputBufferGood)
         return;
 
-    float* inputP = m_inputBuffer.data() + sourceFramesToProcess;
+    float* inputP = m_inputBuffer.mutableSpan().subspan(sourceFramesToProcess).data();
     memcpy(inputP, sourceP, sizeof(float) * sourceFramesToProcess);
 
     // Copy even sample-frames 0,2,4,6... (delayed by the linear phase delay) directly into destP.
@@ -105,14 +105,14 @@ void UpSampler::process(const float* sourceP, float* destP, size_t sourceFramesT
         destP[i * 2] = *((inputP - halfSize) + i);
 
     // Compute odd sample-frames 1,3,5,7...
-    float* oddSamplesP = m_tempBuffer.data();
+    float* oddSamplesP = m_tempBuffer.mutableSpan().data();
     m_convolver.process(&m_kernel, sourceP, oddSamplesP, sourceFramesToProcess);
 
     for (unsigned i = 0; i < sourceFramesToProcess; ++i)
         destP[i * 2 + 1] = oddSamplesP[i];
 
     // Copy 2nd half of input buffer to 1st half.
-    memcpy(m_inputBuffer.data(), inputP, sizeof(float) * sourceFramesToProcess);
+    memcpy(m_inputBuffer.mutableSpan().data(), inputP, sizeof(float) * sourceFramesToProcess);
 }
 
 void UpSampler::reset()

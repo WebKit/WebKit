@@ -105,10 +105,10 @@ void DynamicsCompressor::process(const AudioBus* sourceBus, AudioBus* destinatio
 
     switch (numberOfChannels) {
     case 2: // stereo
-        m_sourceChannels[0] = sourceBus->channel(0)->data();
+        m_sourceChannels[0] = sourceBus->channel(0)->span().data();
 
         if (numberOfSourceChannels > 1)
-            m_sourceChannels[1] = sourceBus->channel(1)->data();
+            m_sourceChannels[1] = sourceBus->channel(1)->span().data();
         else
             // Simply duplicate mono channel input data to right channel for stereo processing.
             m_sourceChannels[1] = m_sourceChannels[0];
@@ -122,7 +122,7 @@ void DynamicsCompressor::process(const AudioBus* sourceBus, AudioBus* destinatio
     }
 
     for (unsigned i = 0; i < numberOfChannels; ++i)
-        m_destinationChannels[i] = destinationBus->channel(i)->mutableData();
+        m_destinationChannels[i] = destinationBus->channel(i)->mutableSpan().data();
 
     float dbThreshold = parameterValue(ParamThreshold);
     float dbKnee = parameterValue(ParamKnee);

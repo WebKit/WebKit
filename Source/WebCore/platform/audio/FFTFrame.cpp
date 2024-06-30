@@ -50,7 +50,7 @@ void FFTFrame::doPaddedFFT(const float* data, size_t dataSize)
     paddedResponse.copyToRange(data, 0, dataSize);
 
     // Get the frequency-domain version of padded response
-    doFFT(paddedResponse.data());
+    doFFT(paddedResponse.span().data());
 }
 
 std::unique_ptr<FFTFrame> FFTFrame::createInterpolatedFrame(const FFTFrame& frame1, const FFTFrame& frame2, double x)
@@ -62,11 +62,11 @@ std::unique_ptr<FFTFrame> FFTFrame::createInterpolatedFrame(const FFTFrame& fram
     // In the time-domain, the 2nd half of the response must be zero, to avoid circular convolution aliasing...
     int fftSize = newFrame->fftSize();
     AudioFloatArray buffer(fftSize);
-    newFrame->doInverseFFT(buffer.data());
+    newFrame->doInverseFFT(buffer.mutableSpan().data());
     buffer.zeroRange(fftSize / 2, fftSize);
 
     // Put back into frequency domain.
-    newFrame->doFFT(buffer.data());
+    newFrame->doFFT(buffer.span().data());
 
     return newFrame;
 }
@@ -175,8 +175,8 @@ void FFTFrame::interpolateFrequencyComponents(const FFTFrame& frame1, const FFTF
 
 void FFTFrame::scaleFFT(float factor)
 {
-    VectorMath::multiplyByScalar(realData().data(), factor, realData().data(), realData().size());
-    VectorMath::multiplyByScalar(imagData().data(), factor, imagData().data(), realData().size());
+    VectorMath::multiplyByScalar(realData().span().data(), factor, realData().mutableSpan().data(), realData().size());
+    VectorMath::multiplyByScalar(imagData().span().data(), factor, imagData().mutableSpan().data(), realData().size());
 }
 
 void FFTFrame::multiply(const FFTFrame& frame)
@@ -200,7 +200,7 @@ void FFTFrame::multiply(const FFTFrame& frame)
     float imag0 = imagP1[0];
 
     // Complex multiply
-    VectorMath::multiplyComplex(realP1.data(), imagP1.data(), realP2.data(), imagP2.data(), realP1.data(), imagP1.data(), halfSize);
+    VectorMath::multiplyComplex(realP1.span().data(), imagP1.span().data(), realP2.span().data(), imagP2.span().data(), realP1.mutableSpan().data(), imagP1.mutableSpan().data(), halfSize);
 
     // Multiply the packed DC/nyquist component
     realP1[0] = real0 * realP2[0];

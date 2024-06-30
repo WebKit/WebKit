@@ -82,17 +82,21 @@ public:
         m_length = newLength;
     }
 
-    std::span<const float> span() const { return { data(), length() }; }
-    std::span<float> mutableSpan() { return { mutableData(), length() }; }
-
-    // Direct access to PCM sample data. Non-const accessor clears silent flag.
-    float* mutableData()
+    std::span<const float> span() const
     {
-        clearSilentFlag();
-        return m_rawPointer ? m_rawPointer : m_memBuffer->data(); 
+        if (m_rawPointer)
+            return { m_rawPointer, length() };
+        return m_memBuffer->span();
     }
 
-    const float* data() const { return m_rawPointer ? m_rawPointer : m_memBuffer->data(); }
+    // Direct access to PCM sample data. Non-const accessor clears silent flag.
+    std::span<float> mutableSpan()
+    {
+        clearSilentFlag();
+        if (m_rawPointer)
+            return { m_rawPointer, length() };
+        return m_memBuffer->mutableSpan();
+    }
 
     // Zeroes out all sample values in buffer.
     void zero()
@@ -102,10 +106,7 @@ public:
 
         m_silent = true;
 
-        if (m_memBuffer.get())
-            m_memBuffer->zero();
-        else
-            memset(m_rawPointer, 0, sizeof(float) * m_length);
+        memsetSpan(mutableSpan(), 0);
     }
 
     // Clears the silent flag.
