@@ -5163,6 +5163,14 @@
    },
    {
       "emails" : [
+         "lingfeng.hou@vantiva.com",
+         "fyomtain@163.com"
+      ],
+      "github" : "hlf401",
+      "name" : "Lingfeng Hou"
+   },
+   {
+      "emails" : [
          "ltilve@igalia.com"
       ],
       "name" : "Lorenzo Tilve",
