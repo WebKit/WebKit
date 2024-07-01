@@ -98,6 +98,8 @@ ImageFrameWorkQueue& BitmapImageSource::workQueue() const
 
 void BitmapImageSource::encodedDataStatusChanged(EncodedDataStatus status)
 {
+    ASSERT(m_decoder);
+
     if (status >= EncodedDataStatus::SizeAvailable)
         m_frames.resizeToFit(m_decoder->frameCount());
 
@@ -446,6 +448,8 @@ unsigned BitmapImageSource::currentFrameIndex() const
 
 void BitmapImageSource::cacheMetadataAtIndex(unsigned index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options)
 {
+    ASSERT(m_decoder);
+
     if (index >= m_frames.size())
         return;
 
@@ -544,6 +548,9 @@ DecodingStatus BitmapImageSource::requestNativeImageAtIndexIfNeeded(unsigned ind
 
 Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::nativeImageAtIndexCacheIfNeeded(unsigned index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options)
 {
+    if (!m_decoder)
+        return makeUnexpected(DecodingStatus::Invalid);
+
     if (index >= m_frames.size())
         return makeUnexpected(DecodingStatus::Invalid);
 
@@ -573,6 +580,9 @@ Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::nativeImageAtIndex
 
 Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::nativeImageAtIndexRequestIfNeeded(unsigned index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options)
 {
+    if (!m_decoder)
+        return makeUnexpected(DecodingStatus::Invalid);
+
     ASSERT(!isAnimated());
 
     auto status = requestNativeImageAtIndexIfNeeded(index, subsamplingLevel, ImageAnimatingState::No, options);
