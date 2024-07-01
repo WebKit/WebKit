@@ -460,9 +460,8 @@
                     "workernames": ["gtk-linux-bot-9"]
                   },
                   {
-                    "name": "GTK-Linux-64-bit-Release-Debian-11-Build", "factory": "NoInstallDependenciesBuildFactory",
+                    "name": "GTK-Linux-64-bit-Release-Debian-11-Build", "factory": "BuildFactory",
                     "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                    "additionalArguments": ["--no-experimental-features"],
                     "workernames": ["gtk-linux-bot-10"]
                   },
                   {
