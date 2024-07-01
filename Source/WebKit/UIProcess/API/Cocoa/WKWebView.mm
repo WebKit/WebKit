@@ -2085,9 +2085,20 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     return PlatformWritingToolsAllowedInputOptionsPlainText | PlatformWritingToolsAllowedInputOptionsRichText | listOption | PlatformWritingToolsAllowedInputOptionsTable;
 }
 
-- (BOOL)wantsWritingToolsInlineEditing
+- (PlatformWritingToolsBehavior)writingToolsBehavior
 {
-    return [self _isEditable] || [_configuration writingToolsBehavior] == PlatformWritingToolsBehaviorComplete;
+    if ([self _isEditable])
+        return PlatformWritingToolsBehaviorComplete;
+
+    auto& editorState = _page->editorState();
+
+    if ([_configuration writingToolsBehavior] == PlatformWritingToolsBehaviorNone || editorState.selectionIsNone || editorState.isInPasswordField)
+        return PlatformWritingToolsBehaviorNone;
+
+    if ([_configuration writingToolsBehavior] == PlatformWritingToolsBehaviorComplete && editorState.isContentEditable)
+        return PlatformWritingToolsBehaviorComplete;
+
+    return PlatformWritingToolsBehaviorLimited;
 }
 
 - (void)willBeginWritingToolsSession:(WTSession *)session requestContexts:(void (^)(NSArray<WTContext *> *))completion

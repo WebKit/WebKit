@@ -1239,13 +1239,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
 }
 
-#if ENABLE(WRITING_TOOLS)
-- (BOOL)_web_wantsWritingToolsInlineEditing
-{
-    return [self wantsWritingToolsInlineEditing];
-}
-#endif
-
 #if ENABLE(DRAG_SUPPORT)
 
 - (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo

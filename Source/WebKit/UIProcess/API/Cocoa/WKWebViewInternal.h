@@ -57,7 +57,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #if ENABLE(WRITING_TOOLS)
-#define WK_WEB_VIEW_PROTOCOLS <WKBEScrollViewDelegate, WTWritingToolsDelegate>
+#define WK_WEB_VIEW_PROTOCOLS <WKBEScrollViewDelegate, WTWritingToolsDelegate, UITextInputTraits>
 #else
 #define WK_WEB_VIEW_PROTOCOLS <WKBEScrollViewDelegate>
 #endif
@@ -67,7 +67,7 @@
 #if PLATFORM(MAC)
 
 #if ENABLE(WRITING_TOOLS)
-#define WK_WEB_VIEW_PROTOCOLS <WKShareSheetDelegate, WTWritingToolsDelegate>
+#define WK_WEB_VIEW_PROTOCOLS <WKShareSheetDelegate, WTWritingToolsDelegate, NSTextInputTraits>
 #else
 #define WK_WEB_VIEW_PROTOCOLS <WKShareSheetDelegate>
 #endif

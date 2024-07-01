@@ -4435,11 +4435,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (action == @selector(cut:))
         return !editorState.isInPasswordField && editorState.isContentEditable && editorState.selectionIsRange;
 
-#if ENABLE(WRITING_TOOLS)
-    if (action == @selector(_startWritingTools:))
-        return _page->configuration().writingToolsBehavior() != WebCore::WritingTools::Behavior::None && [super canPerformAction:action withSender:sender];
-#endif
-
     if (action == @selector(paste:) || action == @selector(_pasteAsQuotation:) || action == @selector(_pasteAndMatchStyle:) || action == @selector(pasteAndMatchStyle:)) {
         if (editorState.selectionIsNone || !editorState.isContentEditable)
             return NO;
@@ -4730,13 +4725,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self lookupForWebView:sender];
 }
-
-#if ENABLE(WRITING_TOOLS)
-- (void)_startWritingToolsForWebView:(id)sender
-{
-    [super _startWritingTools:sender];
-}
-#endif
 
 - (void)accessibilityRetrieveSpeakSelectionContent
 {
@@ -6933,11 +6921,6 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
         return _focusedElementInformation.isWritingSuggestionsEnabled;
     }();
     traits.inlinePredictionType = allowsInlinePredictions ? UITextInlinePredictionTypeDefault : UITextInlinePredictionTypeNo;
-#endif
-
-#if ENABLE(WRITING_TOOLS)
-    auto behavior = WebKit::convertToPlatformWritingToolsBehavior(_page->configuration().writingToolsBehavior());
-    [traits setWritingToolsBehavior:behavior];
 #endif
 
     [self _updateTextInputTraitsForInteractionTintColor];
@@ -13195,9 +13178,9 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
     return [_webView writingToolsAllowedInputOptions];
 }
 
-- (BOOL)wantsWritingToolsInlineEditing
+- (UIWritingToolsBehavior)writingToolsBehavior
 {
-    return [_webView wantsWritingToolsInlineEditing];
+    return [_webView writingToolsBehavior];
 }
 
 - (void)willBeginWritingToolsSession:(WTSession *)session requestContexts:(void (^)(NSArray<WTContext *> *))completion
