@@ -254,31 +254,60 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
     return hasElementForCaps(factoryType, caps, shouldCheckHardwareClassifier, disallowedList);
 }
 
+static Vector<GRefPtr<GstElementFactory>> findCompatibleFactories(GList* list, const GRefPtr<GstCaps>& caps, GstPadDirection direction)
+{
+    Vector<GRefPtr<GstElementFactory>> results;
+    results.reserveInitialCapacity(g_list_length(list));
+    for (; list; list = g_list_next(list)) {
+        auto factory = GST_ELEMENT_FACTORY_CAST(list->data);
+        const auto templates = gst_element_factory_get_static_pad_templates(factory);
+        for (GList* walk = const_cast<GList*>(templates); walk; walk = g_list_next(walk)) {
+            auto capsTemplate = static_cast<GstStaticPadTemplate*>(walk->data);
+            if (capsTemplate->direction != direction)
+                continue;
+
+            auto templateCaps = adoptGRef(gst_static_caps_get(&capsTemplate->static_caps));
+            if (gst_caps_is_any(templateCaps.get()) || !gst_caps_can_intersect(caps.get(), templateCaps.get()))
+                continue;
+
+            results.append(factory);
+            break;
+        }
+    }
+
+    results.shrinkToFit();
+    return results;
+}
+
 GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::ElementFactories::hasElementForCaps(ElementFactories::Type factoryType, const GRefPtr<GstCaps>& caps, ElementFactories::CheckHardwareClassifier shouldCheckHardwareClassifier, std::optional<Vector<String>> disallowedList) const
 {
     auto* elementFactories = factory(factoryType);
     if (!elementFactories)
         return { };
 
+    RELEASE_ASSERT(!gst_caps_is_any(caps.get()));
+
     GstPadDirection padDirection = GST_PAD_SINK;
     if (factoryType == Type::AudioEncoder || factoryType == Type::VideoEncoder || factoryType == Type::Muxer || factoryType == Type::RtpDepayloader)
         padDirection = GST_PAD_SRC;
 
-    GList* candidates = gst_element_factory_list_filter(elementFactories, caps.get(), padDirection, false);
-    bool isSupported = candidates;
+    // We can't use gst_element_factory_list_filter here because it would allow-list elements with
+    // pads using ANY in their caps template.
+    auto candidates = findCompatibleFactories(elementFactories, caps, padDirection);
+    bool isSupported = !candidates.isEmpty();
     bool isUsingHardware = false;
     GRefPtr<GstElementFactory> selectedFactory;
     if (isSupported)
-        selectedFactory = GST_ELEMENT_FACTORY_CAST(candidates->data);
+        selectedFactory = candidates.first();
 
     if (disallowedList && !disallowedList->isEmpty()) {
         bool hasValidCandidate = false;
-        for (GList* factories = candidates; factories; factories = g_list_next(factories)) {
-            String name = String::fromUTF8(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE_CAST(factories->data)));
+        for (auto& factory : candidates) {
+            String name = String::fromUTF8(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE_CAST(factory.get())));
             if (disallowedList->contains(name))
                 continue;
 
-            selectedFactory = GST_ELEMENT_FACTORY_CAST(factories->data);
+            selectedFactory = factory;
             hasValidCandidate = true;
             break;
         }
@@ -290,13 +319,12 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
     }
 
     if (shouldCheckHardwareClassifier == CheckHardwareClassifier::Yes) {
-        for (GList* factories = candidates; factories; factories = g_list_next(factories)) {
-            auto* factory = reinterpret_cast<GstElementFactory*>(factories->data);
-            auto metadata = String::fromLatin1(gst_element_factory_get_metadata(factory, GST_ELEMENT_METADATA_KLASS));
+        for (auto& factory : candidates) {
+            auto metadata = String::fromLatin1(gst_element_factory_get_metadata(factory.get(), GST_ELEMENT_METADATA_KLASS));
             auto components = metadata.split('/');
             auto& quirksManager = GStreamerQuirksManager::singleton();
             if (quirksManager.isEnabled()) {
-                auto isAccelerated = quirksManager.isHardwareAccelerated(factory);
+                auto isAccelerated = quirksManager.isHardwareAccelerated(factory.get());
                 if (isAccelerated && *isAccelerated) {
                     isUsingHardware = true;
                     selectedFactory = factory;
@@ -311,7 +339,6 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
         }
     }
 
-    gst_plugin_feature_list_free(candidates);
     if (!isSupported)
         selectedFactory.clear();
 
