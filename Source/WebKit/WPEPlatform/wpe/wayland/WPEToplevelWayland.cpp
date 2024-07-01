@@ -34,6 +34,7 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <wtf/Vector.h>
+#include <wtf/glib/Application.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -552,6 +553,7 @@ static void wpeToplevelWaylandConstructed(GObject *object)
             xdg_toplevel_add_listener(priv->xdgToplevel, &xdgToplevelListener, object);
             const char* title = defaultTitle();
             xdg_toplevel_set_title(priv->xdgToplevel, title ? title : "");
+            xdg_toplevel_set_app_id(priv->xdgToplevel, WTF::applicationID().data());
             wl_surface_commit(priv->wlSurface);
         }
     }
