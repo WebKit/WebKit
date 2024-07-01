@@ -185,6 +185,8 @@ public:
 
     const CSSCalcValue* cssCalcValue() const { return isCalculated() ? m_value.calc : nullptr; }
 
+    const CSSAnchorValue* cssAnchorValue() const { return isAnchor() ? m_value.anchor : nullptr; }
+
     String customCSSText() const;
 
     bool equals(const CSSPrimitiveValue&) const;

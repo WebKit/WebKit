@@ -2548,6 +2548,17 @@ void Element::invalidateForResumingQueryContainerResolution()
     markAncestorsForInvalidatedStyle();
 }
 
+void Element::invalidateAncestorsForAnchor()
+{
+    markAncestorsForInvalidatedStyle();
+}
+
+void Element::invalidateForResumingAnchorPositionedElementResolution()
+{
+    invalidateStyleInternal();
+    markAncestorsForInvalidatedStyle();
+}
+
 bool Element::needsUpdateQueryContainerDependentStyle() const
 {
     return hasElementStateFlag(ElementStateFlag::NeedsUpdateQueryContainerDependentStyle);

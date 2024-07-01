@@ -2499,6 +2499,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     storage/StorageType.h
     storage/StorageUtilities.h
 
+    style/AnchorPositionEvaluator.h
     style/PseudoElementIdentifier.h
     style/ScopedName.h
     style/StyleAppearance.h

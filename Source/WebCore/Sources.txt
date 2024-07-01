@@ -2937,6 +2937,7 @@ storage/StorageEventDispatcher.cpp
 storage/StorageMap.cpp
 storage/StorageNamespaceProvider.cpp
 storage/StorageUtilities.cpp
+style/AnchorPositionEvaluator.cpp
 style/AttributeChangeInvalidation.cpp
 style/ChildChangeInvalidation.cpp
 style/ClassChangeInvalidation.cpp

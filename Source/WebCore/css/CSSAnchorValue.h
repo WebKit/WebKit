@@ -26,11 +26,16 @@
 #pragma once
 
 #include "CSSValue.h"
+#include "Length.h"
 
 namespace WebCore {
 
+class Element;
+
 class CSSAnchorValue final : public CSSValue {
 public:
+    void collectAnchorNames(HashSet<String>& accumulator) const;
+
     static Ref<CSSAnchorValue> create(RefPtr<CSSPrimitiveValue>&& anchorElement, Ref<CSSValue>&& anchorSide, RefPtr<CSSPrimitiveValue>&& fallback);
 
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;

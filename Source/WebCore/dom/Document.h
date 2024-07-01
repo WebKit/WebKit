@@ -1542,6 +1542,8 @@ public:
     bool inRenderTreeUpdate() const { return m_inRenderTreeUpdate; }
     bool isResolvingContainerQueries() const { return m_isResolvingContainerQueries; }
     bool isResolvingContainerQueriesForSelfOrAncestor() const;
+    bool isInStyleInterleavedLayout() const { return m_isResolvingContainerQueries || m_isResolvingAnchorPositionedElements; };
+    bool isInStyleInterleavedLayoutForSelfOrAncestor() const;
     bool isResolvingTreeStyle() const { return m_isResolvingTreeStyle; }
     void setIsResolvingTreeStyle(bool);
 
@@ -2527,6 +2529,7 @@ private:
     bool m_inRenderTreeUpdate { false };
     bool m_isResolvingTreeStyle { false };
     bool m_isResolvingContainerQueries { false };
+    bool m_isResolvingAnchorPositionedElements { false };
 
     bool m_gotoAnchorNeededAfterStylesheetsLoad { false };
     TriState m_isDNSPrefetchEnabled { TriState::Indeterminate };

@@ -203,7 +203,7 @@ void LocalFrameViewLayoutContext::performLayout()
     {
         SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InPreLayout);
 
-        if (!document()->isResolvingContainerQueriesForSelfOrAncestor()) {
+        if (!document()->isInStyleInterleavedLayoutForSelfOrAncestor()) {
             // If this is a new top-level layout and there are any remaining tasks from the previous layout, finish them now.
             if (!isLayoutNested() && m_postLayoutTaskTimer.isActive())
                 runPostLayoutTasks();
@@ -283,8 +283,8 @@ void LocalFrameViewLayoutContext::runOrScheduleAsynchronousTasks()
     if (m_postLayoutTaskTimer.isActive())
         return;
 
-    if (document()->isResolvingContainerQueries()) {
-        // We are doing layout from style resolution to resolve container queries.
+    if (document()->isInStyleInterleavedLayout()) {
+        // We are doing layout from style resolution to resolve container queries and/or anchor-positioned elements.
         m_postLayoutTaskTimer.startOneShot(0_s);
         return;
     }
