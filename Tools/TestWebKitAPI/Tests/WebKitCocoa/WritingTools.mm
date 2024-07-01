@@ -2326,4 +2326,50 @@ TEST(WritingTools, SuggestedTextIsSelectedAfterSmartReply)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(WritingTools, BlockquoteAndPreContentsAreIgnored)
+{
+    auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p>AAAA</p><blockquote>BBBB</blockquote><p>CCCC</p><pre>DDDD</pre></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    __block bool finished = false;
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        EXPECT_WK_STREQ(@"AAAA\n\nBBBB\nCCCC\n\nDDDD", contexts.firstObject.attributedText.string);
+
+        __block size_t i = 0;
+        [contexts.firstObject.attributedText enumerateAttribute:WTWritingToolsPreservedAttributeName inRange:NSMakeRange(0, [contexts.firstObject.attributedText length]) options:0 usingBlock:^(id value, NSRange attributeRange, BOOL *stop) {
+            switch (i) {
+            case 0: // "AAAA"
+                EXPECT_NULL(value);
+                break;
+
+            case 1: // "BBBB"
+                EXPECT_EQ([value integerValue], 1);
+                break;
+
+            case 2: // "CCCC"
+                EXPECT_NULL(value);
+                break;
+
+            case 3: // "DDDD"
+                EXPECT_EQ([value integerValue], 1);
+                break;
+
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+
+            ++i;
+        }];
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
 #endif
