@@ -4187,6 +4187,9 @@
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-attribute-basic.tentative.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus.html": [
         "slow"
     ],
@@ -4215,6 +4218,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-hint.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-with-anchor.tentative.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-with-anchor.tentative.tentative.html": [

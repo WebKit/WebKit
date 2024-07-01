@@ -4564,7 +4564,7 @@ imported/w3c/web-platform-tests/html/semantics/popovers/popover-close-request.ht
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-harness.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-hint.tentative.html [ Failure ]
-imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-with-anchor.tentative.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-with-anchor.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-nesting-anchor.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-nesting-hints.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-nesting.html [ Skip ]

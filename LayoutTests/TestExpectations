@@ -765,6 +765,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/srcdoc_change_hash.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/natural-size-orientation.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-submit-remove-children.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-inset-rule-display.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-change-display.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-display.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-nested-display.tentative.html [ ImageOnlyFailure ]

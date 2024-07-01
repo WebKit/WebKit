@@ -7543,6 +7543,7 @@
         "web-platform-tests/html/semantics/links/linktypes/link-type-stylesheet/process-stylesheet-linked-resource-ascii-case-insensitive-ref.html",
         "web-platform-tests/html/semantics/popovers/popover-anchor-change-display-ref.html",
         "web-platform-tests/html/semantics/popovers/popover-anchor-display-ref.html",
+        "web-platform-tests/html/semantics/popovers/popover-anchor-inset-rule-display-ref.html",
         "web-platform-tests/html/semantics/popovers/popover-anchor-nested-display-ref.html",
         "web-platform-tests/html/semantics/popovers/popover-anchor-scroll-display-ref.html",
         "web-platform-tests/html/semantics/popovers/popover-and-svg-ref.html",
