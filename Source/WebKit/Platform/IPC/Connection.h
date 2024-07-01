@@ -270,6 +270,11 @@ public:
 #endif
     };
 
+#if ENABLE(IPC_TRACE)
+    static void enableIPCTracing();
+    static bool ipcTracingEnabled();
+#endif
+
 #if OS(DARWIN)
     xpc_connection_t xpcConnection() const { return m_xpcConnection.get(); }
     std::optional<audit_token_t> getAuditToken();
