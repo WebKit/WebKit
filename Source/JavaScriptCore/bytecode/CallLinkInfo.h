@@ -128,7 +128,7 @@ public:
 
 #if ENABLE(JIT)
 protected:
-    static void emitFastPathImpl(CallLinkInfo*, CCallHelpers&, UseDataIC, bool isTailCall, ScopedLambda<void()>&& prepareForTailCall);
+    static void emitFastPathImpl(CallLinkInfo*, CCallHelpers&, bool isTailCall, ScopedLambda<void()>&& prepareForTailCall);
 public:
     static void emitDataICFastPath(CCallHelpers&);
     static void emitTailCallDataICFastPath(CCallHelpers&, ScopedLambda<void()>&& prepareForTailCall);
@@ -138,9 +138,6 @@ public:
 #endif
 
     void revertCallToStub();
-
-    bool isDataIC() const { return useDataIC() == UseDataIC::Yes; }
-    UseDataIC useDataIC() const { return static_cast<UseDataIC>(m_useDataIC); }
 
     void setMonomorphicCallee(VM&, JSCell*, JSObject* callee, CodeBlock*, CodePtr<JSEntryPtrTag>);
     void clearCallee();
@@ -243,12 +240,12 @@ public:
 
     static constexpr ptrdiff_t offsetOfCodeBlock()
     {
-        return OBJECT_OFFSETOF(CallLinkInfo, u) + OBJECT_OFFSETOF(UnionType, dataIC.m_codeBlock);
+        return OBJECT_OFFSETOF(CallLinkInfo, m_codeBlock);
     }
 
     static constexpr ptrdiff_t offsetOfMonomorphicCallDestination()
     {
-        return OBJECT_OFFSETOF(CallLinkInfo, u) + OBJECT_OFFSETOF(UnionType, dataIC.m_monomorphicCallDestination);
+        return OBJECT_OFFSETOF(CallLinkInfo, m_monomorphicCallDestination);
     }
 
     static constexpr ptrdiff_t offsetOfStub()
@@ -291,15 +288,13 @@ public:
     std::tuple<CodeBlock*, BytecodeIndex> retrieveCaller(JSCell* owner);
 
 protected:
-    CallLinkInfo(Type type, UseDataIC useDataIC, JSCell* owner, CodeOrigin codeOrigin)
+    CallLinkInfo(Type type, JSCell* owner, CodeOrigin codeOrigin)
         : CallLinkInfoBase(CallSiteType::CallLinkInfo)
-        , m_useDataIC(static_cast<unsigned>(useDataIC))
         , m_type(static_cast<unsigned>(type))
         , m_owner(owner)
         , m_codeOrigin(codeOrigin)
     {
         ASSERT(type == this->type());
-        ASSERT(useDataIC == this->useDataIC());
     }
 
     void reset(VM&);
@@ -309,28 +304,13 @@ protected:
     bool m_clearedByGC : 1 { false };
     bool m_clearedByVirtual : 1 { false };
     unsigned m_callType : 4 { CallType::None }; // CallType
-    unsigned m_useDataIC : 1; // UseDataIC
     unsigned m_type : 1; // Type
     unsigned m_mode : 3 { static_cast<unsigned>(Mode::Init) }; // Mode
     uint8_t m_maxArgumentCountIncludingThisForVarargs { 0 }; // For varargs: the profiled maximum number of arguments. For direct: the number of stack slots allocated for arguments.
     uint32_t m_slowPathCount { 0 };
 
-    union UnionType {
-        UnionType()
-            : dataIC { nullptr, nullptr }
-        { }
-
-        struct DataIC {
-            CodeBlock* m_codeBlock; // This is weakly held. And cleared whenever m_monomorphicCallDestination is changed.
-            CodePtr<JSEntryPtrTag> m_monomorphicCallDestination;
-        } dataIC;
-
-        struct {
-            CodeLocationDataLabelPtr<JSInternalPtrTag> m_codeBlockLocation;
-            CodeLocationDataLabelPtr<JSInternalPtrTag> m_calleeLocation;
-        } codeIC;
-    } u;
-
+    CodeBlock* m_codeBlock { nullptr }; // This is weakly held. And cleared whenever m_monomorphicCallDestination is changed.
+    CodePtr<JSEntryPtrTag> m_monomorphicCallDestination { nullptr };
     WriteBarrier<JSObject> m_callee;
     WriteBarrier<JSObject> m_lastSeenCallee;
     RefPtr<PolymorphicCallStubRoutine> m_stub;
@@ -341,7 +321,7 @@ protected:
 class DataOnlyCallLinkInfo final : public CallLinkInfo {
 public:
     DataOnlyCallLinkInfo()
-        : CallLinkInfo(Type::DataOnly, UseDataIC::Yes, nullptr, CodeOrigin { })
+        : CallLinkInfo(Type::DataOnly, nullptr, CodeOrigin { })
     {
     }
 
@@ -460,12 +440,12 @@ public:
     friend class CallLinkInfo;
 
     OptimizingCallLinkInfo()
-        : CallLinkInfo(Type::Optimizing, UseDataIC::Yes, nullptr, CodeOrigin { })
+        : CallLinkInfo(Type::Optimizing, nullptr, CodeOrigin { })
     {
     }
 
-    OptimizingCallLinkInfo(CodeOrigin codeOrigin, UseDataIC useDataIC, JSCell* owner)
-        : CallLinkInfo(Type::Optimizing, useDataIC, owner, codeOrigin)
+    OptimizingCallLinkInfo(CodeOrigin codeOrigin, JSCell* owner)
+        : CallLinkInfo(Type::Optimizing, owner, codeOrigin)
     {
     }
 
