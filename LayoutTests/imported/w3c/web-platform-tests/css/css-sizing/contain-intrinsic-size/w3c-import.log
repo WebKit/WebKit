@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-003.html
@@ -26,6 +27,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-010.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-011.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-015.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-016.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-017.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-018.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-001.html
