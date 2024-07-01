@@ -599,7 +599,7 @@ static gboolean wpeToplevelWaylandResize(WPEToplevel* toplevel, int width, int h
     if (!priv->xdgToplevel)
         return FALSE;
 
-    wpe_toplevel_resized(toplevel, width, height);
+    wpeToplevelWaylandResized(toplevel, width, height);
     return TRUE;
 }
 
