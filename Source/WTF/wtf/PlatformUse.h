@@ -376,12 +376,6 @@
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 130000) \
     || PLATFORM(IOS_FAMILY)
-// The header says "Before macOS 13.0 and iOS 16.0 this attribute is not accurate"
-#define USE_KCTFONTVARIATIONAXESATTRIBUTE 1
-#endif
-
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 130000) \
-    || PLATFORM(IOS_FAMILY)
 #define USE_VARIABLE_OPTICAL_SIZING 1
 #endif
 

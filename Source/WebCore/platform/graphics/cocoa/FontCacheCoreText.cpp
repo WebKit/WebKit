@@ -349,15 +349,11 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
 
     bool optOutFromGXNormalization = CTFontDescriptorIsSystemUIFont(fontDescriptor);
 
-#if USE(KCTFONTVARIATIONAXESATTRIBUTE)
     auto variationType = [&] {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=247987 Stop creating a whole CTFont here. Ideally we'd be able to do all the inspection we need to do without one.
         auto font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor, 0, nullptr));
         return FontInterrogation(font.get()).variationType;
     }();
-#else
-    auto variationType = FontInterrogation(font.get()).variationType;
-#endif
     if (variationType == FontInterrogation::VariationType::TrueTypeGX && !optOutFromGXNormalization) {
         if (result.weight)
             result.weight = { { normalizeGXWeight(result.weight.value().minimum), normalizeGXWeight(result.weight.value().maximum) } };
