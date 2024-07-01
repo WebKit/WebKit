@@ -49,7 +49,7 @@ HTMLParserOptions::HTMLParserOptions(Document& document)
     if (document.settings().htmlParserScriptingFlagPolicy() == HTMLParserScriptingFlagPolicy::Enabled)
         scriptingFlag = true;
     else
-        scriptingFlag = frame && frame->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript);
+        scriptingFlag = frame && frame->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript) && document.allowsContentJavaScript();
 
     usePreHTML5ParserQuirks = document.settings().usePreHTML5ParserQuirks();
     maximumDOMTreeDepth = document.settings().maximumHTMLParserDOMTreeDepth();
