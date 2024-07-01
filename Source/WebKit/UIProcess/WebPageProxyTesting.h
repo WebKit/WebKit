@@ -73,6 +73,8 @@ public:
 
     void flushDeferredDidReceiveMouseEvent();
 
+    void clearOpener();
+
 private:
     bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>) final;
     bool sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&&, AsyncReplyHandler, OptionSet<IPC::SendOption>) final;

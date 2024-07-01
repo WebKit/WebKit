@@ -3302,3 +3302,9 @@ void WKPageFlushDeferredDidReceiveMouseEventForTesting(WKPageRef pageRef)
     if (auto* pageForTesting = toImpl(pageRef)->pageForTesting())
         pageForTesting->flushDeferredDidReceiveMouseEvent();
 }
+
+void WKPageClearOpenerForTesting(WKPageRef pageRef)
+{
+    if (auto* pageForTesting = toImpl(pageRef)->pageForTesting())
+        pageForTesting->clearOpener();
+}

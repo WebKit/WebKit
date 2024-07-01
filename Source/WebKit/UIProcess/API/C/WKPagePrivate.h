@@ -218,6 +218,8 @@ WK_EXPORT void WKPageSetPermissionLevelForTesting(WKPageRef page, WKStringRef or
 
 WK_EXPORT void WKPageFlushDeferredDidReceiveMouseEventForTesting(WKPageRef page);
 
+WK_EXPORT void WKPageClearOpenerForTesting(WKPageRef page);
+
 #ifdef __cplusplus
 }
 #endif
