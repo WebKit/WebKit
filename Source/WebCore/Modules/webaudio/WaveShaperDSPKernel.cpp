@@ -124,7 +124,7 @@ void WaveShaperDSPKernel::processCurve2x(const float* source, float* destination
     if (!isSafe)
         return;
 
-    float* tempP = m_tempBuffer->mutableSpan().data();
+    float* tempP = m_tempBuffer->data();
 
     m_upSampler->process(source, tempP, framesToProcess);
 
@@ -141,8 +141,8 @@ void WaveShaperDSPKernel::processCurve4x(const float* source, float* destination
     if (!isSafe)
         return;
 
-    float* tempP = m_tempBuffer->mutableSpan().data();
-    float* tempP2 = m_tempBuffer2->mutableSpan().data();
+    float* tempP = m_tempBuffer->data();
+    float* tempP2 = m_tempBuffer2->data();
 
     m_upSampler->process(source, tempP, framesToProcess);
     m_upSampler2->process(tempP, tempP2, framesToProcess * 2);

@@ -65,14 +65,14 @@ float* AudioResamplerKernel::getSourcePointer(size_t framesToProcess, size_t* nu
     if (!isGood)
         return 0;
 
-    return m_sourceBuffer.mutableSpan().subspan(m_fillIndex).data();
+    return m_sourceBuffer.data() + m_fillIndex;
 }
 
 void AudioResamplerKernel::process(float* destination, size_t framesToProcess)
 {
     ASSERT(framesToProcess <= AudioUtilities::renderQuantumSize);
 
-    float* source = m_sourceBuffer.mutableSpan().data();
+    float* source = m_sourceBuffer.data();
     
     double rate = this->rate();
     rate = std::max(0.0, rate);

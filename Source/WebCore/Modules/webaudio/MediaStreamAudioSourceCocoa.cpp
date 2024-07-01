@@ -59,7 +59,7 @@ static inline void copyChannelData(AudioChannel& channel, AudioBuffer& buffer, s
         memset(buffer.mData, 0, buffer.mDataByteSize);
         return;
     }
-    memcpy(buffer.mData, channel.span().data(), buffer.mDataByteSize);
+    memcpy(buffer.mData, channel.data(), buffer.mDataByteSize);
 }
 
 void MediaStreamAudioSource::consumeAudio(AudioBus& bus, size_t numberOfFrames)

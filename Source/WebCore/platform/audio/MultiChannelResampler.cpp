@@ -50,7 +50,7 @@ MultiChannelResampler::MultiChannelResampler(double scaleFactor, unsigned number
         m_channelsMemory = Vector<std::unique_ptr<AudioFloatArray>>(numberOfChannels - 1, [&](size_t i) {
             size_t channelIndex = i + 1;
             auto floatArray = makeUnique<AudioFloatArray>(requestFrames);
-            m_multiChannelBus->setChannelMemory(channelIndex, floatArray->mutableSpan().data(), requestFrames);
+            m_multiChannelBus->setChannelMemory(channelIndex, floatArray->data(), requestFrames);
             return floatArray;
         });
     }

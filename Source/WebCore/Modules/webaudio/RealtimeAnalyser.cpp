@@ -87,13 +87,13 @@ void RealtimeAnalyser::writeInput(AudioBus* bus, size_t framesToProcess)
         return;    
     
     // Perform real-time analysis
-    auto dest = m_inputBuffer.mutableSpan().subspan(m_writeIndex, framesToProcess);
+    float* dest = m_inputBuffer.data() + m_writeIndex;
 
     // Clear the bus and downmix the input according to the down mixing rules.
     // Then save the result in the m_inputBuffer at the appropriate place.
     m_downmixBus->zero();
     m_downmixBus->sumFrom(*bus);
-    memcpySpan(dest, m_downmixBus->channel(0)->span().first(framesToProcess));
+    memcpy(dest, m_downmixBus->channel(0)->data(), sizeof(float) * framesToProcess);
 
     m_writeIndex += framesToProcess;
     if (m_writeIndex >= InputBufferSize)
@@ -137,23 +137,23 @@ void RealtimeAnalyser::doFFTAnalysisIfNecessary()
     size_t fftSize = this->fftSize();
     
     AudioFloatArray temporaryBuffer(fftSize);
-    auto inputBuffer = m_inputBuffer.span();
-    auto tempP = temporaryBuffer.mutableSpan();
+    float* inputBuffer = m_inputBuffer.data();
+    float* tempP = temporaryBuffer.data();
 
     // Take the previous fftSize values from the input buffer and copy into the temporary buffer.
     unsigned writeIndex = m_writeIndex;
     if (writeIndex < fftSize) {
-        memcpySpan(tempP.first(fftSize - writeIndex), inputBuffer.subspan(writeIndex - fftSize + InputBufferSize, fftSize - writeIndex));
-        memcpySpan(tempP.subspan(fftSize - writeIndex, writeIndex), inputBuffer.first(writeIndex));
+        memcpy(tempP, inputBuffer + writeIndex - fftSize + InputBufferSize, sizeof(*tempP) * (fftSize - writeIndex));
+        memcpy(tempP + fftSize - writeIndex, inputBuffer, sizeof(*tempP) * writeIndex);
     } else 
-        memcpySpan(tempP.first(fftSize), inputBuffer.subspan(writeIndex - fftSize, fftSize));
+        memcpy(tempP, inputBuffer + writeIndex - fftSize, sizeof(*tempP) * fftSize);
 
     
     // Window the input samples.
-    applyWindow(tempP.data(), fftSize);
+    applyWindow(tempP, fftSize);
     
     // Do the analysis.
-    m_analysisFrame->doFFT(tempP.data());
+    m_analysisFrame->doFFT(tempP);
 
     auto& realP = m_analysisFrame->realData();
     auto& imagP = m_analysisFrame->imagData();
@@ -170,7 +170,7 @@ void RealtimeAnalyser::doFFTAnalysisIfNecessary()
     k = std::min(1.0, k);    
     
     // Convert the analysis data from complex to magnitude and average with the previous result.
-    auto destination = magnitudeBuffer().mutableSpan();
+    float* destination = magnitudeBuffer().data();
     size_t n = magnitudeBuffer().size();
     for (size_t i = 0; i < n; ++i) {
         std::complex<double> c(realP[i], imagP[i]);
@@ -179,7 +179,7 @@ void RealtimeAnalyser::doFFTAnalysisIfNecessary()
     }
 
     if (m_noiseInjectionPolicy == NoiseInjectionPolicy::Minimal)
-        AudioUtilities::applyNoise(destination.data(), n, 0.25);
+        AudioUtilities::applyNoise(destination, n, 0.25);
 }
 
 void RealtimeAnalyser::getFloatFrequencyData(Float32Array& destinationArray)
@@ -190,7 +190,7 @@ void RealtimeAnalyser::getFloatFrequencyData(Float32Array& destinationArray)
     
     // Convert from linear magnitude to floating-point decibels.
     size_t length = std::min<size_t>(magnitudeBuffer().size(), destinationArray.length());
-    VectorMath::linearToDecibels(magnitudeBuffer().mutableSpan().data(), destinationArray.data(), length);
+    VectorMath::linearToDecibels(magnitudeBuffer().data(), destinationArray.data(), length);
 }
 
 void RealtimeAnalyser::getByteFrequencyData(Uint8Array& destinationArray)
@@ -207,8 +207,8 @@ void RealtimeAnalyser::getByteFrequencyData(Uint8Array& destinationArray)
         const double rangeScaleFactor = m_maxDecibels == m_minDecibels ? 1 : 1 / (m_maxDecibels - m_minDecibels);
         const double minDecibels = m_minDecibels;
 
-        auto source = magnitudeBuffer().span();
-        auto destination = destinationArray.mutableSpan();
+        const float* source = magnitudeBuffer().data();
+        unsigned char* destination = destinationArray.data();
         
         for (size_t i = 0; i < length; ++i) {
             float linearValue = source[i];
@@ -241,8 +241,8 @@ void RealtimeAnalyser::getFloatTimeDomainData(Float32Array& destinationArray)
         if (!isInputBufferGood)
             return;
         
-        auto inputBuffer = m_inputBuffer.span();
-        auto destination = destinationArray.mutableSpan();
+        float* inputBuffer = m_inputBuffer.data();
+        float* destination = destinationArray.data();
         
         unsigned writeIndex = m_writeIndex;
         
@@ -266,7 +266,7 @@ void RealtimeAnalyser::getByteTimeDomainData(Uint8Array& destinationArray)
         if (!isInputBufferGood)
             return;
 
-        auto inputBuffer = m_inputBuffer.span();
+        float* inputBuffer = m_inputBuffer.data();        
         unsigned char* destination = destinationArray.data();
         
         unsigned writeIndex = m_writeIndex;

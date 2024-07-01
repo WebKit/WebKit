@@ -43,7 +43,7 @@ void AudioChannel::scale(float scale)
     if (isSilent())
         return;
 
-    VectorMath::multiplyByScalar(span().data(), scale, mutableSpan().data(), length());
+    VectorMath::multiplyByScalar(data(), scale, mutableData(), length());
 }
 
 void AudioChannel::copyFrom(const AudioChannel* sourceChannel)
@@ -55,7 +55,7 @@ void AudioChannel::copyFrom(const AudioChannel* sourceChannel)
         zero();
         return;
     }
-    memcpySpan(mutableSpan(), sourceChannel->span().first(length()));
+    memcpy(mutableData(), sourceChannel->data(), sizeof(float) * length());
 }
 
 void AudioChannel::copyFromRange(const AudioChannel* sourceChannel, unsigned startFrame, unsigned endFrame)
@@ -76,17 +76,16 @@ void AudioChannel::copyFromRange(const AudioChannel* sourceChannel, unsigned sta
     if (!isRangeLengthSafe)
         return;
 
+    const float* source = sourceChannel->data();
+    float* destination = mutableData();
 
-    auto destination = mutableSpan().first(rangeLength);
     if (sourceChannel->isSilent()) {
         if (rangeLength == length())
             zero();
         else
-            memsetSpan(destination, 0);
-    } else {
-        auto source = sourceChannel->span().subspan(startFrame, rangeLength);
-        memcpySpan(destination, source);
-    }
+            memset(destination, 0, sizeof(float) * rangeLength);
+    } else
+        memcpy(destination, source + startFrame, sizeof(float) * rangeLength);
 }
 
 void AudioChannel::sumFrom(const AudioChannel* sourceChannel)
@@ -102,7 +101,7 @@ void AudioChannel::sumFrom(const AudioChannel* sourceChannel)
     if (isSilent())
         copyFrom(sourceChannel);
     else
-        VectorMath::add(span().data(), sourceChannel->span().data(), mutableSpan().data(), length());
+        VectorMath::add(data(), sourceChannel->data(), mutableData(), length());
 }
 
 float AudioChannel::maxAbsValue() const
@@ -110,7 +109,7 @@ float AudioChannel::maxAbsValue() const
     if (isSilent())
         return 0;
 
-    return VectorMath::maximumMagnitude(span().data(), length());
+    return VectorMath::maximumMagnitude(data(), length());
 }
 
 } // WebCore

@@ -93,7 +93,7 @@ void WebAudioSourceProviderCocoa::provideInput(AudioBus* bus, size_t framesToPro
         }
         auto* buffer = m_audioBufferList->buffer(i);
         buffer->mNumberChannels = 1;
-        buffer->mData = channel.mutableSpan().data();
+        buffer->mData = channel.mutableData();
         buffer->mDataByteSize = channel.length() * sizeof(float);
     }
 

@@ -132,8 +132,8 @@ SincResampler::SincResampler(double scaleFactor, unsigned requestFrames, Functio
     , m_requestFrames(requestFrames)
     , m_provideInput(WTFMove(provideInput))
     , m_inputBuffer(m_requestFrames + kernelSize) // See input buffer layout above.
-    , m_r1(m_inputBuffer.mutableSpan())
-    , m_r2(m_inputBuffer.mutableSpan().subspan(kernelSize / 2))
+    , m_r1(m_inputBuffer.data(), m_inputBuffer.size())
+    , m_r2(m_inputBuffer.span().subspan(kernelSize / 2))
 {
     ASSERT(m_provideInput);
     ASSERT(m_requestFrames > 0);
@@ -146,14 +146,14 @@ void SincResampler::updateRegions(bool isSecondLoad)
 {
     // Setup various region pointers in the buffer (see diagram above). If we're
     // on the second load we need to slide m_r0 to the right by kernelSize / 2.
-    m_r0 = m_inputBuffer.mutableSpan().subspan(isSecondLoad ? kernelSize : kernelSize / 2);
+    m_r0 = m_inputBuffer.span().subspan(isSecondLoad ? kernelSize : kernelSize / 2);
     m_r3 = m_r0.subspan(m_requestFrames - kernelSize);
     m_r4 = m_r0.subspan(m_requestFrames - kernelSize / 2);
     m_blockSize = std::distance(m_r2.begin(), m_r4.begin());
     m_chunkSize = calculateChunkSize(m_blockSize, m_scaleFactor);
 
     // m_r1 at the beginning of the buffer.
-    ASSERT(m_r1.data() == m_inputBuffer.span().data());
+    ASSERT(m_r1.data() == m_inputBuffer.data());
     // m_r1 left of m_r2, m_r4 left of m_r3 and size correct.
     ASSERT(std::distance(m_r1.begin(), m_r2.begin()) == std::distance(m_r3.begin(), m_r4.begin()));
     // m_r2 left of r3.

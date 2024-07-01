@@ -577,11 +577,11 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
 
         bufferList->mBuffers[0].mNumberChannels = 1;
         bufferList->mBuffers[0].mDataByteSize = bufferSize;
-        bufferList->mBuffers[0].mData = leftChannel.mutableSpan().data();
+        bufferList->mBuffers[0].mData = leftChannel.data();
 
         bufferList->mBuffers[1].mNumberChannels = 1;
         bufferList->mBuffers[1].mDataByteSize = bufferSize;
-        bufferList->mBuffers[1].mData = rightChannel.mutableSpan().data();
+        bufferList->mBuffers[1].mData = rightChannel.data();
     } else {
         RELEASE_ASSERT(!mixToMono || numberOfChannels == 1);
 
@@ -590,7 +590,7 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
             audioBus->channel(i)->zero();
             bufferList->mBuffers[i].mNumberChannels = 1;
             bufferList->mBuffers[i].mDataByteSize = bufferSize;
-            bufferList->mBuffers[i].mData = audioBus->channel(i)->mutableSpan().data();
+            bufferList->mBuffers[i].mData = audioBus->channel(i)->mutableData();
             ASSERT(bufferList->mBuffers[i].mData);
         }
     }
@@ -637,7 +637,7 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
 
     if (mixToMono && numberOfChannels == 2) {
         // Mix stereo down to mono
-        auto destL = audioBus->channel(0)->mutableSpan();
+        float* destL = audioBus->channel(0)->mutableData();
         for (size_t i = 0; i < numberOfFrames; ++i)
             destL[i] = 0.5f * (leftChannel[i] + rightChannel[i]);
     }

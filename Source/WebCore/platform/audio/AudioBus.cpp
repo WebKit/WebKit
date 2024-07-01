@@ -309,21 +309,21 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
         // Handle stereo -> mono case. output += 0.5 * (input.L + input.R).
         AudioBus& sourceBusSafe = const_cast<AudioBus&>(sourceBus);
 
-        const float* sourceL = sourceBusSafe.channelByType(ChannelLeft)->span().data();
-        const float* sourceR = sourceBusSafe.channelByType(ChannelRight)->span().data();
+        const float* sourceL = sourceBusSafe.channelByType(ChannelLeft)->data();
+        const float* sourceR = sourceBusSafe.channelByType(ChannelRight)->data();
 
-        float* destination = channelByType(ChannelLeft)->mutableSpan().data();
+        float* destination = channelByType(ChannelLeft)->mutableData();
         VectorMath::multiplyByScalarThenAddToOutput(sourceL, 0.5, destination, length());
         VectorMath::multiplyByScalarThenAddToOutput(sourceR, 0.5, destination, length());
     } else if (numberOfSourceChannels == 4 && numberOfDestinationChannels == 1) {
         // Down-mixing: 4 -> 1
         // output = 0.25 * (input.L + input.R + input.SL + input.SR)
-        auto* sourceL = sourceBus.channelByType(ChannelLeft)->span().data();
-        auto* sourceR = sourceBus.channelByType(ChannelRight)->span().data();
-        auto* sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->span().data();
-        auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->span().data();
+        auto* sourceL = sourceBus.channelByType(ChannelLeft)->data();
+        auto* sourceR = sourceBus.channelByType(ChannelRight)->data();
+        auto* sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->data();
+        auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->data();
 
-        auto* destination = channelByType(ChannelLeft)->mutableSpan().data();
+        auto* destination = channelByType(ChannelLeft)->mutableData();
 
         VectorMath::multiplyByScalarThenAddToOutput(sourceL, 0.25, destination, length());
         VectorMath::multiplyByScalarThenAddToOutput(sourceR, 0.25, destination, length());
@@ -332,13 +332,13 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
     } else if (numberOfSourceChannels == 6 && numberOfDestinationChannels == 1) {
         // Down-mixing: 5.1 -> 1
         // output = sqrt(1/2) * (input.L + input.R) + input.C + 0.5 * (input.SL + input.SR)
-        auto* sourceL = sourceBus.channelByType(ChannelLeft)->span().data();
-        auto* sourceR = sourceBus.channelByType(ChannelRight)->span().data();
-        auto* sourceC = sourceBus.channelByType(ChannelCenter)->span().data();
-        auto* sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->span().data();
-        auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->span().data();
+        auto* sourceL = sourceBus.channelByType(ChannelLeft)->data();
+        auto* sourceR = sourceBus.channelByType(ChannelRight)->data();
+        auto* sourceC = sourceBus.channelByType(ChannelCenter)->data();
+        auto* sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->data();
+        auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->data();
 
-        auto* destination = channelByType(ChannelLeft)->mutableSpan().data();
+        auto* destination = channelByType(ChannelLeft)->mutableData();
         float scaleSqrtHalf = sqrtf(0.5);
 
         VectorMath::multiplyByScalarThenAddToOutput(sourceL, scaleSqrtHalf, destination, length());
@@ -350,13 +350,13 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
         // Down-mixing: 4 -> 2
         // output.L = 0.5 * (input.L + input.SL)
         // output.R = 0.5 * (input.R + input.SR)
-        auto* sourceL = sourceBus.channelByType(ChannelLeft)->span().data();
-        auto* sourceR = sourceBus.channelByType(ChannelRight)->span().data();
-        auto* sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->span().data();
-        auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->span().data();
+        auto* sourceL = sourceBus.channelByType(ChannelLeft)->data();
+        auto* sourceR = sourceBus.channelByType(ChannelRight)->data();
+        auto* sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->data();
+        auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->data();
 
-        auto* destinationL = channelByType(ChannelLeft)->mutableSpan().data();
-        auto* destinationR = channelByType(ChannelRight)->mutableSpan().data();
+        auto* destinationL = channelByType(ChannelLeft)->mutableData();
+        auto* destinationR = channelByType(ChannelRight)->mutableData();
 
         VectorMath::multiplyByScalarThenAddToOutput(sourceL, 0.5, destinationL, length());
         VectorMath::multiplyByScalarThenAddToOutput(sourceSL, 0.5, destinationL, length());
@@ -366,14 +366,14 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
         // Down-mixing: 5.1 -> 2
         // output.L = input.L + sqrt(1/2) * (input.C + input.SL)
         // output.R = input.R + sqrt(1/2) * (input.C + input.SR)
-        auto* sourceL = sourceBus.channelByType(ChannelLeft)->span().data();
-        auto* sourceR = sourceBus.channelByType(ChannelRight)->span().data();
-        auto* sourceC = sourceBus.channelByType(ChannelCenter)->span().data();
-        auto* sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->span().data();
-        auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->span().data();
+        auto* sourceL = sourceBus.channelByType(ChannelLeft)->data();
+        auto* sourceR = sourceBus.channelByType(ChannelRight)->data();
+        auto* sourceC = sourceBus.channelByType(ChannelCenter)->data();
+        auto* sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->data();
+        auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->data();
 
-        float* destinationL = channelByType(ChannelLeft)->mutableSpan().data();
-        float* destinationR = channelByType(ChannelRight)->mutableSpan().data();
+        float* destinationL = channelByType(ChannelLeft)->mutableData();
+        float* destinationR = channelByType(ChannelRight)->mutableData();
         float scaleSqrtHalf = sqrtf(0.5);
 
         VectorMath::add(sourceL, destinationL, destinationL, length());
@@ -388,12 +388,12 @@ void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
         // output.R = input.R + sqrt(1/2) * input.C
         // output.SL = input.SL
         // output.SR = input.SR
-        auto* sourceL = sourceBus.channelByType(ChannelLeft)->span().data();
-        auto* sourceR = sourceBus.channelByType(ChannelRight)->span().data();
-        auto* sourceC = sourceBus.channelByType(ChannelCenter)->span().data();
+        auto* sourceL = sourceBus.channelByType(ChannelLeft)->data();
+        auto* sourceR = sourceBus.channelByType(ChannelRight)->data();
+        auto* sourceC = sourceBus.channelByType(ChannelCenter)->data();
 
-        auto* destinationL = channelByType(ChannelLeft)->mutableSpan().data();
-        auto* destinationR = channelByType(ChannelRight)->mutableSpan().data();
+        auto* destinationL = channelByType(ChannelLeft)->mutableData();
+        auto* destinationR = channelByType(ChannelRight)->mutableData();
         auto scaleSqrtHalf = sqrtf(0.5);
 
         VectorMath::add(sourceL, destinationL, destinationL, length());
@@ -451,8 +451,8 @@ void AudioBus::copyWithGainFrom(const AudioBus& sourceBus, float gain)
     float* destinations[MaxBusChannels];
 
     for (unsigned i = 0; i < numberOfChannels; ++i) {
-        sources[i] = sourceBusSafe.channel(i)->span().data();
-        destinations[i] = channel(i)->mutableSpan().data();
+        sources[i] = sourceBusSafe.channel(i)->data();
+        destinations[i] = channel(i)->mutableData();
     }
 
     unsigned framesToProcess = length();
@@ -490,11 +490,11 @@ void AudioBus::copyWithSampleAccurateGainValuesFrom(const AudioBus &sourceBus, f
     }
 
     // We handle both the 1 -> N and N -> N case here.
-    const float* source = sourceBus.channel(0)->span().data();
+    const float* source = sourceBus.channel(0)->data();
     for (unsigned channelIndex = 0; channelIndex < numberOfChannels(); ++channelIndex) {
         if (sourceBus.numberOfChannels() == numberOfChannels())
-            source = sourceBus.channel(channelIndex)->span().data();
-        float* destination = channel(channelIndex)->mutableSpan().data();
+            source = sourceBus.channel(channelIndex)->data();
+        float* destination = channel(channelIndex)->mutableData();
         VectorMath::multiply(source, gainValues, destination, numberOfGainValues);
     }
 }
@@ -574,9 +574,9 @@ RefPtr<AudioBus> AudioBus::createByMixingToMono(const AudioBus* sourceBus)
             unsigned n = sourceBus->length();
             RefPtr<AudioBus> destinationBus = create(1, n);
 
-            const float* sourceL = sourceBus->channel(0)->span().data();
-            const float* sourceR = sourceBus->channel(1)->span().data();
-            float* destination = destinationBus->channel(0)->mutableSpan().data();
+            const float* sourceL = sourceBus->channel(0)->data();
+            const float* sourceR = sourceBus->channel(1)->data();
+            float* destination = destinationBus->channel(0)->mutableData();
         
             // Do the mono mixdown.
             VectorMath::addVectorsThenMultiplyByScalar(sourceL, sourceR, 0.5, destination, n);

@@ -114,9 +114,9 @@ void DelayDSPKernel::process(const float* source, float* destination, size_t fra
 void DelayDSPKernel::processARate(const float* source, float* destination, size_t framesToProcess)
 {
     size_t bufferLength = m_buffer.size();
-    auto* buffer = m_buffer.mutableSpan().data();
+    auto* buffer = m_buffer.data();
 
-    delayProcessor()->delayTime().calculateSampleAccurateValues(m_delayTimes.mutableSpan().data(), framesToProcess);
+    delayProcessor()->delayTime().calculateSampleAccurateValues(m_delayTimes.data(), framesToProcess);
 
     copyToCircularBuffer(buffer, m_writeIndex, bufferLength, source, framesToProcess);
 
@@ -150,7 +150,7 @@ void DelayDSPKernel::processARate(const float* source, float* destination, size_
 void DelayDSPKernel::processKRate(const float* source, float* destination, size_t framesToProcess)
 {
     size_t bufferLength = m_buffer.size();
-    auto* buffer = m_buffer.mutableSpan().data();
+    auto* buffer = m_buffer.data();
 
     double delayTime = delayProcessor() ? delayProcessor()->delayTime().finalValue() : m_desiredDelayFrames / sampleRate();
     // Make sure the delay time is in a valid range.
@@ -192,7 +192,7 @@ void DelayDSPKernel::processKRate(const float* source, float* destination, size_
     ASSERT(framesToProcess <= m_tempBuffer.size());
 
     size_t readIndex2 = (readIndex1 + 1) % bufferLength;
-    auto* sample2 = m_tempBuffer.mutableSpan().data();
+    auto* sample2 = m_tempBuffer.data();
 
     readPointer = &buffer[readIndex2];
     remainder = positiveSubtract(bufferEnd, readPointer);

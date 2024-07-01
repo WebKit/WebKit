@@ -106,12 +106,12 @@ void DownSampler::process(const float* sourceP, float* destP, size_t sourceFrame
     if (!isInputBufferGood)
         return;
 
-    float* inputP = m_inputBuffer.mutableSpan().subspan(sourceFramesToProcess).data();
+    float* inputP = m_inputBuffer.data() + sourceFramesToProcess;
     memcpy(inputP, sourceP, sizeof(float) * sourceFramesToProcess);
 
     // Copy the odd sample-frames from sourceP, delayed by one sample-frame (destination sample-rate)
     // to match shifting forward in time in m_reducedKernel.
-    float* oddSamplesP = m_tempBuffer.mutableSpan().data();
+    float* oddSamplesP = m_tempBuffer.data();
     for (unsigned i = 0; i < destFramesToProcess; ++i)
         oddSamplesP[i] = *((inputP - 1) + i * 2);
 
@@ -128,7 +128,7 @@ void DownSampler::process(const float* sourceP, float* destP, size_t sourceFrame
         destP[i] += 0.5 * *((inputP - halfSize) + i * 2);
 
     // Copy 2nd half of input buffer to 1st half.
-    memcpy(m_inputBuffer.mutableSpan().data(), inputP, sizeof(float) * sourceFramesToProcess);
+    memcpy(m_inputBuffer.data(), inputP, sizeof(float) * sourceFramesToProcess);
 }
 
 void DownSampler::reset()

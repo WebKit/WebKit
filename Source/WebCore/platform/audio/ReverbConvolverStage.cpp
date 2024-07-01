@@ -69,7 +69,7 @@ ReverbConvolverStage::ReverbConvolverStage(const float* impulseResponse, size_t,
         m_directKernel->copyToRange(impulseResponse, 0, stageLength);
         // Account for the normalization (if any) of the convolver node.
         if (scale != 1)
-            VectorMath::multiplyByScalar(m_directKernel->span().data(), scale, m_directKernel->mutableSpan().data(), stageLength);
+            VectorMath::multiplyByScalar(m_directKernel->data(), scale, m_directKernel->data(), stageLength);
         m_directConvolver = makeUnique<DirectConvolver>(renderSliceSize);
     }
 
@@ -130,14 +130,14 @@ void ReverbConvolverStage::process(const float* source, size_t framesToProcess)
 
         isTemporaryBufferSafe = framesToProcess <= m_temporaryBuffer.size();
 
-        preDelayedDestination = m_preDelayBuffer.mutableSpan().subspan(m_preReadWriteIndex).data();
+        preDelayedDestination = m_preDelayBuffer.data() + m_preReadWriteIndex;
         preDelayedSource = preDelayedDestination;
-        temporaryBuffer = m_temporaryBuffer.mutableSpan().data();
+        temporaryBuffer = m_temporaryBuffer.data();        
     } else {
         // Zero delay
         preDelayedDestination = 0;
         preDelayedSource = source;
-        temporaryBuffer = m_preDelayBuffer.mutableSpan().data();
+        temporaryBuffer = m_preDelayBuffer.data();
         
         isTemporaryBufferSafe = framesToProcess <= m_preDelayBuffer.size();
     }

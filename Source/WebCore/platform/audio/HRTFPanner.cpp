@@ -168,10 +168,10 @@ void HRTFPanner::pan(double desiredAzimuth, double elevation, const AudioBus* in
     const AudioChannel* inputChannelR = numInputChannels > 1 ? inputBus->channelByType(AudioBus::ChannelRight) : 0;
 
     // Get source and destination pointers.
-    const float* sourceL = inputChannelL->span().data();
-    const float* sourceR = numInputChannels > 1 ? inputChannelR->span().data() : sourceL;
-    float* destinationL = outputBus->channelByType(AudioBus::ChannelLeft)->mutableSpan().data();
-    float* destinationR = outputBus->channelByType(AudioBus::ChannelRight)->mutableSpan().data();
+    const float* sourceL = inputChannelL->data();
+    const float* sourceR = numInputChannels > 1 ? inputChannelR->data() : sourceL;
+    float* destinationL = outputBus->channelByType(AudioBus::ChannelLeft)->mutableData();
+    float* destinationR = outputBus->channelByType(AudioBus::ChannelRight)->mutableData();
 
     double azimuthBlend;
     int desiredAzimuthIndex = calculateDesiredAzimuthIndexAndBlend(azimuth, azimuthBlend);
@@ -259,10 +259,10 @@ void HRTFPanner::pan(double desiredAzimuth, double elevation, const AudioBus* in
         bool needsCrossfading = m_crossfadeIncr;
         
         // Have the convolvers render directly to the final destination if we're not cross-fading.
-        float* convolutionDestinationL1 = needsCrossfading ? m_tempL1.mutableSpan().data() : segmentDestinationL;
-        float* convolutionDestinationR1 = needsCrossfading ? m_tempR1.mutableSpan().data() : segmentDestinationR;
-        float* convolutionDestinationL2 = needsCrossfading ? m_tempL2.mutableSpan().data() : segmentDestinationL;
-        float* convolutionDestinationR2 = needsCrossfading ? m_tempR2.mutableSpan().data() : segmentDestinationR;
+        float* convolutionDestinationL1 = needsCrossfading ? m_tempL1.data() : segmentDestinationL;
+        float* convolutionDestinationR1 = needsCrossfading ? m_tempR1.data() : segmentDestinationR;
+        float* convolutionDestinationL2 = needsCrossfading ? m_tempL2.data() : segmentDestinationL;
+        float* convolutionDestinationR2 = needsCrossfading ? m_tempR2.data() : segmentDestinationR;
 
         // Now do the convolutions.
         // Note that we avoid doing convolutions on both sets of convolvers if we're not currently cross-fading.

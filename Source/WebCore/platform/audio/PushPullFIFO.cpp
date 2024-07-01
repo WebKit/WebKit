@@ -52,8 +52,8 @@ void PushPullFIFO::push(const AudioBus* inputBus)
     const size_t remainder = m_fifoLength - m_indexWrite;
 
     for (unsigned i = 0; i < m_fifoBus->numberOfChannels(); ++i) {
-        float* fifoBusChannel = m_fifoBus->channel(i)->mutableSpan().data();
-        const float* inputBusChannel = inputBus->channel(i)->span().data();
+        float* fifoBusChannel = m_fifoBus->channel(i)->mutableData();
+        const float* inputBusChannel = inputBus->channel(i)->data();
         if (remainder >= inputBusLength) {
             // The remainder is big enough for the input data.
             memcpy(fifoBusChannel + m_indexWrite, inputBusChannel, inputBusLength * sizeof(*fifoBusChannel));
@@ -90,8 +90,8 @@ size_t PushPullFIFO::pull(AudioBus* outputBus, size_t framesRequested)
     const size_t framesToFill = std::min(m_framesAvailable, framesRequested);
 
     for (unsigned i = 0; i < m_fifoBus->numberOfChannels(); ++i) {
-        const float* fifoBusChannel = m_fifoBus->channel(i)->span().data();
-        float* outputBusChannel = outputBus->channel(i)->mutableSpan().data();
+        const float* fifoBusChannel = m_fifoBus->channel(i)->data();
+        float* outputBusChannel = outputBus->channel(i)->mutableData();
 
         // Fill up the output bus with the available frames first.
         if (remainder >= framesToFill) {

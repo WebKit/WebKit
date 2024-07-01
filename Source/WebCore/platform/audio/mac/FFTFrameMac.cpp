@@ -70,8 +70,8 @@ FFTFrame::FFTFrame(unsigned fftSize)
     m_FFTSetup = fftSetupForSize(fftSize);
 
     // Setup frame data
-    m_frame.realp = m_realData.mutableSpan().data();
-    m_frame.imagp = m_imagData.mutableSpan().data();
+    m_frame.realp = m_realData.data();
+    m_frame.imagp = m_imagData.data();
 }
 
 // Creates a blank/empty frame (interpolate() must later be called)
@@ -94,12 +94,12 @@ FFTFrame::FFTFrame(const FFTFrame& frame)
     , m_imagData(frame.m_FFTSize)
 {
     // Setup frame data
-    m_frame.realp = m_realData.mutableSpan().data();
-    m_frame.imagp = m_imagData.mutableSpan().data();
+    m_frame.realp = m_realData.data();
+    m_frame.imagp = m_imagData.data();
 
     // Copy/setup frame data
-    memcpy(realData().mutableSpan().data(), frame.m_frame.realp, sizeof(float) * realData().size());
-    memcpy(imagData().mutableSpan().data(), frame.m_frame.imagp, sizeof(float) * imagData().size());
+    memcpy(realData().data(), frame.m_frame.realp, sizeof(float) * realData().size());
+    memcpy(imagData().data(), frame.m_frame.imagp, sizeof(float) * imagData().size());
 }
 
 FFTFrame::~FFTFrame() = default;
@@ -118,8 +118,8 @@ void FFTFrame::doFFT(const float* data)
     // (See https://developer.apple.com/library/archive/documentation/Performance/Conceptual/vDSP_Programming_Guide/UsingFourierTransforms/UsingFourierTransforms.html#//apple_ref/doc/uid/TP40005147-CH3-SW5)
     // In the case of a Real forward Transform like above: RFimp = RFmath * 2 so we need to divide the output
     // by 2 to get the correct value.
-    VectorMath::multiplyByScalar(realData().span().data(), 0.5, realData().mutableSpan().data(), halfSize);
-    VectorMath::multiplyByScalar(imagData().span().data(), 0.5, imagData().mutableSpan().data(), halfSize);
+    VectorMath::multiplyByScalar(realData().data(), 0.5, realData().data(), halfSize);
+    VectorMath::multiplyByScalar(imagData().data(), 0.5, imagData().data(), halfSize);
 }
 
 void FFTFrame::doInverseFFT(float* data)

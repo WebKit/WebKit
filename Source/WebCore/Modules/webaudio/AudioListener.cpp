@@ -109,17 +109,17 @@ void AudioListener::updateValuesIfNeeded(size_t framesToProcess)
         ASSERT(framesToProcess <= m_upYValues.size());
         ASSERT(framesToProcess <= m_upZValues.size());
 
-        positionX().calculateSampleAccurateValues(m_positionXValues.mutableSpan().data(), framesToProcess);
-        positionY().calculateSampleAccurateValues(m_positionYValues.mutableSpan().data(), framesToProcess);
-        positionZ().calculateSampleAccurateValues(m_positionZValues.mutableSpan().data(), framesToProcess);
+        positionX().calculateSampleAccurateValues(m_positionXValues.data(), framesToProcess);
+        positionY().calculateSampleAccurateValues(m_positionYValues.data(), framesToProcess);
+        positionZ().calculateSampleAccurateValues(m_positionZValues.data(), framesToProcess);
 
-        forwardX().calculateSampleAccurateValues(m_forwardXValues.mutableSpan().data(), framesToProcess);
-        forwardY().calculateSampleAccurateValues(m_forwardYValues.mutableSpan().data(), framesToProcess);
-        forwardZ().calculateSampleAccurateValues(m_forwardZValues.mutableSpan().data(), framesToProcess);
+        forwardX().calculateSampleAccurateValues(m_forwardXValues.data(), framesToProcess);
+        forwardY().calculateSampleAccurateValues(m_forwardYValues.data(), framesToProcess);
+        forwardZ().calculateSampleAccurateValues(m_forwardZValues.data(), framesToProcess);
 
-        upX().calculateSampleAccurateValues(m_upXValues.mutableSpan().data(), framesToProcess);
-        upY().calculateSampleAccurateValues(m_upYValues.mutableSpan().data(), framesToProcess);
-        upZ().calculateSampleAccurateValues(m_upZValues.mutableSpan().data(), framesToProcess);
+        upX().calculateSampleAccurateValues(m_upXValues.data(), framesToProcess);
+        upY().calculateSampleAccurateValues(m_upYValues.data(), framesToProcess);
+        upZ().calculateSampleAccurateValues(m_upZValues.data(), framesToProcess);
     }
 }
 
@@ -140,55 +140,55 @@ void AudioListener::updateDirtyState()
 const float* AudioListener::positionXValues(size_t framesToProcess)
 {
     updateValuesIfNeeded(framesToProcess);
-    return m_positionXValues.span().data();
+    return m_positionXValues.data();
 }
 
 const float* AudioListener::positionYValues(size_t framesToProcess)
 {
     updateValuesIfNeeded(framesToProcess);
-    return m_positionYValues.span().data();
+    return m_positionYValues.data();
 }
 
 const float* AudioListener::positionZValues(size_t framesToProcess)
 {
     updateValuesIfNeeded(framesToProcess);
-    return m_positionZValues.span().data();
+    return m_positionZValues.data();
 }
 
 const float* AudioListener::forwardXValues(size_t framesToProcess)
 {
     updateValuesIfNeeded(framesToProcess);
-    return m_forwardXValues.span().data();
+    return m_forwardXValues.data();
 }
 
 const float* AudioListener::forwardYValues(size_t framesToProcess)
 {
     updateValuesIfNeeded(framesToProcess);
-    return m_forwardYValues.span().data();
+    return m_forwardYValues.data();
 }
 
 const float* AudioListener::forwardZValues(size_t framesToProcess)
 {
     updateValuesIfNeeded(framesToProcess);
-    return m_forwardZValues.span().data();
+    return m_forwardZValues.data();
 }
 
 const float* AudioListener::upXValues(size_t framesToProcess)
 {
     updateValuesIfNeeded(framesToProcess);
-    return m_upXValues.span().data();
+    return m_upXValues.data();
 }
 
 const float* AudioListener::upYValues(size_t framesToProcess)
 {
     updateValuesIfNeeded(framesToProcess);
-    return m_upYValues.span().data();
+    return m_upYValues.data();
 }
 
 const float* AudioListener::upZValues(size_t framesToProcess)
 {
     updateValuesIfNeeded(framesToProcess);
-    return m_upZValues.span().data();
+    return m_upZValues.data();
 }
 
 ExceptionOr<void> AudioListener::setPosition(float x, float y, float z)

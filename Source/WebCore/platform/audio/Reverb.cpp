@@ -57,7 +57,7 @@ static float calculateNormalizationScale(AudioBus* response)
     float power = 0;
 
     for (size_t i = 0; i < numberOfChannels; ++i)
-        power += VectorMath::sumOfSquares(response->channel(i)->span().data(), length);
+        power += VectorMath::sumOfSquares(response->channel(i)->data(), length);
 
     power = sqrt(power / (numberOfChannels * length));
 

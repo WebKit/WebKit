@@ -358,7 +358,7 @@ void DynamicsCompressorKernel::process(const float* sourceChannels[],
 
                 // Predelay signal, computing compression amount from un-delayed version.
                 for (unsigned i = 0; i < numberOfChannels; ++i) {
-                    float* delayBuffer = m_preDelayBuffers[i]->mutableSpan().data();
+                    float* delayBuffer = m_preDelayBuffers[i]->data();
                     float undelayedSource = sourceChannels[i][frameIndex];
                     delayBuffer[preDelayWriteIndex] = undelayedSource;
 
@@ -424,7 +424,7 @@ void DynamicsCompressorKernel::process(const float* sourceChannels[],
 
                 // Apply final gain.
                 for (unsigned i = 0; i < numberOfChannels; ++i) {
-                    float* delayBuffer = m_preDelayBuffers[i]->mutableSpan().data();
+                    float* delayBuffer = m_preDelayBuffers[i]->data();
                     destinationChannels[i][frameIndex] = delayBuffer[preDelayReadIndex] * totalGain;
                 }
 

@@ -185,7 +185,7 @@ auto OfflineAudioDestinationNode::renderOnAudioThread() -> RenderResult
         size_t framesAvailableToCopy = std::min(m_framesToProcess, AudioUtilities::renderQuantumSize);
         
         for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex) {
-            const float* source = m_renderBus->channel(channelIndex)->span().data();
+            const float* source = m_renderBus->channel(channelIndex)->data();
             float* destination = m_renderTarget->channelData(channelIndex)->data();
             memcpy(destination + m_destinationOffset, source, sizeof(float) * framesAvailableToCopy);
         }

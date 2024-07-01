@@ -82,7 +82,7 @@ void StereoPannerNode::process(size_t framesToProcess)
     }
 
     if (m_pan->hasSampleAccurateValues() && m_pan->automationRate() == AutomationRate::ARate) {
-        float* panValues = m_sampleAccurateValues.mutableSpan().data();
+        float* panValues = m_sampleAccurateValues.data();
         m_pan->calculateSampleAccurateValues(panValues, framesToProcess);
         StereoPanner::panWithSampleAccurateValues(source, destination, panValues, framesToProcess);
         return;

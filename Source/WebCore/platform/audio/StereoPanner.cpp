@@ -51,10 +51,10 @@ void panWithSampleAccurateValues(const AudioBus* inputBus, AudioBus* outputBus, 
     if (!isOutputSafe)
         return;
     
-    const float* sourceL = inputBus->channel(0)->span().data();
-    const float* sourceR = numberOfInputChannels > 1 ? inputBus->channel(1)->span().data() : sourceL;
-    float* destinationL = outputBus->channelByType(AudioBus::ChannelLeft)->mutableSpan().data();
-    float* destinationR = outputBus->channelByType(AudioBus::ChannelRight)->mutableSpan().data();
+    const float* sourceL = inputBus->channel(0)->data();
+    const float* sourceR = numberOfInputChannels > 1 ? inputBus->channel(1)->data() : sourceL;
+    float* destinationL = outputBus->channelByType(AudioBus::ChannelLeft)->mutableData();
+    float* destinationR = outputBus->channelByType(AudioBus::ChannelRight)->mutableData();
     
     if (!sourceL || !sourceR || !destinationL || !destinationR)
         return;
@@ -111,10 +111,10 @@ void panToTargetValue(const AudioBus* inputBus, AudioBus* outputBus, float panVa
     if (!isOutputSafe)
         return;
     
-    const float* sourceL = inputBus->channel(0)->span().data();
-    const float* sourceR = numberOfInputChannels > 1 ? inputBus->channel(1)->span().data() : sourceL;
-    float* destinationL = outputBus->channelByType(AudioBus::ChannelLeft)->mutableSpan().data();
-    float* destinationR = outputBus->channelByType(AudioBus::ChannelRight)->mutableSpan().data();
+    const float* sourceL = inputBus->channel(0)->data();
+    const float* sourceR = numberOfInputChannels > 1 ? inputBus->channel(1)->data() : sourceL;
+    float* destinationL = outputBus->channelByType(AudioBus::ChannelLeft)->mutableData();
+    float* destinationR = outputBus->channelByType(AudioBus::ChannelRight)->mutableData();
     
     if (!sourceL || !sourceR || !destinationL || !destinationR)
         return;
