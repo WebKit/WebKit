@@ -102,7 +102,7 @@ Data concatenate(const Data& a, const Data& b)
 
 Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::PlatformFileHandle fd)
 {
-    ASSERT(mappedFile.data());
+    ASSERT(mappedFile);
     FileSystem::closeFile(fd);
 
     return { WTFMove(mappedFile) };
