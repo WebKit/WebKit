@@ -234,13 +234,13 @@ static String decodeEscapeSequencesFromParsedURLForWindowsPath(const std::span<c
 {
     size_t length = input.size();
 
-    WTF::StringBuilder builder;
-    builder.reserveCapacity(length);
-
     if (WTF::find(input, '%') == notFound) {
+        WTF::StringBuilder builder;
+        builder.reserveCapacity(length);
         // Fast path: no escape sequences.
+        // That also means we don't have to worry about non-ASCII characters.
         // We just need to normalize slashes.
-        size_t lastSlash = 1;
+        size_t lastSlash = 0;
         size_t index = WTF::find(input, '/', lastSlash);
         while (index != notFound) {
             builder.append(input.subspan(lastSlash, index - lastSlash));
@@ -250,26 +250,26 @@ static String decodeEscapeSequencesFromParsedURLForWindowsPath(const std::span<c
         }
 
         builder.append(input.subspan(lastSlash));
-    } else {
-        const auto view = StringView(input);
-        for (size_t i = 1; i < length; ) {
-            if (auto decodedCharacter = decodeEscapeSequence(view, i, length)) {
-                builder.append(*decodedCharacter);
-                i += 3;
-            } else {
-                if (input[i] == '/') {
-                    builder.append('\\');
-                    ++i;
-                } else {
-                    builder.append(input[i]);
-                    ++i;
-                }
-            }
-        }
+        return builder.toString();
     }
 
-    
-    return builder.toString();
+    Vector<LChar, 256> percentDecodedUTF8;
+    percentDecodedUTF8.reserveInitialCapacity(length);
+    WTF::StringView inputView = input;
+    for (size_t i = input[0] == '/' ? 1 : 0; i < length; ) {
+        if (auto decodedCharacter = decodeEscapeSequence(inputView, i, length)) {
+            percentDecodedUTF8.append(*decodedCharacter);
+            i += 3;
+        } else if (input[i] != '/') {
+            percentDecodedUTF8.append(input[i]);
+            ++i;
+        } else {
+            percentDecodedUTF8.append('\\');
+            ++i;
+        }
+    }   
+
+    return String::fromUTF8ReplacingInvalidSequences(percentDecodedUTF8.span());
 }
 
 String URL::user() const
