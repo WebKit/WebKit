@@ -73,10 +73,33 @@ uint32_t RenderTargetMtl::getRenderSamples() const
 
 void RenderTargetMtl::toRenderPassAttachmentDesc(mtl::RenderPassAttachmentDesc *rpaDescOut) const
 {
-    rpaDescOut->texture           = mTexture.lock();
-    rpaDescOut->implicitMSTexture = mImplicitMSTexture.lock();
-    rpaDescOut->level             = mLevelIndex;
-    rpaDescOut->sliceOrDepth      = mLayerIndex;
-    rpaDescOut->blendable         = mFormat.getCaps().blendable;
+    mtl::TextureRef implicitMSTex = getImplicitMSTexture();
+    mtl::TextureRef tex           = getTexture();
+    if (implicitMSTex)
+    {
+        rpaDescOut->texture             = implicitMSTex;
+        rpaDescOut->resolveTexture      = tex;
+        rpaDescOut->resolveLevel        = mLevelIndex;
+        rpaDescOut->resolveSliceOrDepth = mLayerIndex;
+    }
+    else
+    {
+        rpaDescOut->texture      = tex;
+        rpaDescOut->level        = mLevelIndex;
+        rpaDescOut->sliceOrDepth = mLayerIndex;
+    }
+    rpaDescOut->blendable = mFormat.getCaps().blendable;
 }
+
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+void RenderTargetMtl::toRenderPassResolveAttachmentDesc(
+    mtl::RenderPassAttachmentDesc *rpaDescOut) const
+{
+    ASSERT(!getImplicitMSTexture());
+    ASSERT(getRenderSamples() == 1);
+    rpaDescOut->resolveTexture      = getTexture();
+    rpaDescOut->resolveLevel        = mLevelIndex;
+    rpaDescOut->resolveSliceOrDepth = mLayerIndex;
+}
+#endif
 }  // namespace rx

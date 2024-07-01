@@ -828,6 +828,7 @@
 #define glTextureFoveationParametersQCOM t_glTextureFoveationParametersQCOM
 #define glEndTilingQCOM t_glEndTilingQCOM
 #define glStartTilingQCOM t_glStartTilingQCOM
+#define glFramebufferResolveRenderbufferWEBKIT t_glFramebufferResolveRenderbufferWEBKIT
 #define glDrawTexfOES t_glDrawTexfOES
 #define glDrawTexfvOES t_glDrawTexfvOES
 #define glDrawTexiOES t_glDrawTexiOES
@@ -1785,6 +1786,8 @@ ANGLE_TRACE_LOADER_EXPORT extern PFNGLTEXTUREFOVEATIONPARAMETERSQCOMPROC
     t_glTextureFoveationParametersQCOM;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLENDTILINGQCOMPROC t_glEndTilingQCOM;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLSTARTTILINGQCOMPROC t_glStartTilingQCOM;
+ANGLE_TRACE_LOADER_EXPORT extern PFNGLFRAMEBUFFERRESOLVERENDERBUFFERWEBKITPROC
+    t_glFramebufferResolveRenderbufferWEBKIT;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLDRAWTEXFOESPROC t_glDrawTexfOES;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLDRAWTEXFVOESPROC t_glDrawTexfvOES;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLDRAWTEXIOESPROC t_glDrawTexiOES;

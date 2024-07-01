@@ -1664,8 +1664,7 @@ static NSUInteger getNextLocationForAttachment(const mtl::RenderPassAttachmentDe
                                                const Context *context,
                                                NSUInteger currentRenderTargetSize)
 {
-    mtl::TextureRef texture =
-        attachment.implicitMSTexture ? attachment.implicitMSTexture : attachment.texture;
+    mtl::TextureRef texture = attachment.texture;
 
     if (texture)
     {

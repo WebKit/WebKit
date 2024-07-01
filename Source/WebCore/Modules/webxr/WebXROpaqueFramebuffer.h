@@ -122,6 +122,9 @@ private:
     void allocateRenderbufferStorage(GraphicsContextGL&, GCGLOwnedRenderbuffer&, GCGLsizei, GCGLenum, IntSize);
     void allocateAttachments(GraphicsContextGL&, WebXRAttachments&, GCGLsizei, IntSize);
     void bindAttachments(GraphicsContextGL&, WebXRAttachments&);
+#if PLATFORM(COCOA)
+    void bindResolveAttachments(GraphicsContextGL&, WebXRAttachments&);
+#endif
     void resolveMSAAFramebuffer(GraphicsContextGL&);
     void blitShared(GraphicsContextGL&);
     void blitSharedToLayered(GraphicsContextGL&);

@@ -221,6 +221,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_CHROMIUM_copy_compressed_texture](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_copy_compressed_texture.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_CHROMIUM_copy_texture](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_copy_texture.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_copy_texture_3d](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_copy_texture_3d.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| [GL_WEBKIT_explicit_resolve_target](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/WEBKIT_explicit_resolve_target.txt) |  |  |  |  |  |  |  |
 | [GL_CHROMIUM_framebuffer_mixed_samples](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_framebuffer_mixed_samples.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_framebuffer_multisample](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_framebuffer_multisample.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_get_image](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_get_image.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |

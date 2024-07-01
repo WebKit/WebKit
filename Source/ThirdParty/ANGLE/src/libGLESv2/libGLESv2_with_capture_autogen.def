@@ -1268,6 +1268,9 @@ EXPORTS
     glEndTilingQCOM
     glStartTilingQCOM
 
+    ; GL_WEBKIT_explicit_resolve_target
+    glFramebufferResolveRenderbufferWEBKIT
+
     ; EGL 1.0
     EGL_ChooseConfig
     EGL_CopyBuffers

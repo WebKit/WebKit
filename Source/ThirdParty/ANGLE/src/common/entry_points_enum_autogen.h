@@ -615,6 +615,7 @@ enum class EntryPoint
     GLFramebufferPixelLocalStorageRestoreANGLE,
     GLFramebufferRenderbuffer,
     GLFramebufferRenderbufferOES,
+    GLFramebufferResolveRenderbufferWEBKIT,
     GLFramebufferTexture,
     GLFramebufferTexture1D,
     GLFramebufferTexture2D,

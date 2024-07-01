@@ -1517,12 +1517,12 @@ void RenderCommandEncoder::endEncodingImpl(bool considerDiscardSimulation)
 inline void RenderCommandEncoder::initAttachmentWriteDependencyAndScissorRect(
     const RenderPassAttachmentDesc &attachment)
 {
-    TextureRef texture = attachment.texture;
+    auto texture = attachment.hasResolveTexture() ? attachment.resolveTexture : attachment.texture;
+    auto &mipLevel = attachment.hasResolveTexture() ? attachment.resolveLevel : attachment.level;
+
     if (texture)
     {
         cmdBuffer().setWriteDependency(texture, /*isRenderCommand=*/true);
-
-        const MipmapNativeLevel &mipLevel = attachment.level;
 
         mRenderPassMaxScissorRect.width =
             std::min<NSUInteger>(mRenderPassMaxScissorRect.width, texture->width(mipLevel));

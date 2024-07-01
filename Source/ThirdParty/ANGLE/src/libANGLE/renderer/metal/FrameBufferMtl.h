@@ -207,6 +207,14 @@ class FramebufferMtl : public FramebufferImpl
     angle::FixedVector<RenderTargetMtl *, mtl::kMaxRenderTargets> mColorRenderTargets;
     RenderTargetMtl *mDepthRenderTarget   = nullptr;
     RenderTargetMtl *mStencilRenderTarget = nullptr;
+
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+    // GL_WEBKIT_explicit_resolve_target
+    angle::FixedVector<RenderTargetMtl *, mtl::kMaxRenderTargets> mColorResolveRenderTargets;
+    RenderTargetMtl *mDepthResolveRenderTarget   = nullptr;
+    RenderTargetMtl *mStencilResolveRenderTarget = nullptr;
+#endif
+
     mtl::RenderPassDesc mRenderPassDesc;
 
     const mtl::Format *mRenderPassFirstColorAttachmentFormat = nullptr;

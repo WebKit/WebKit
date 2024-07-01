@@ -227,6 +227,7 @@ void WebXROpaqueFramebuffer::releaseAllDisplayAttachments()
 
 void WebXROpaqueFramebuffer::resolveMSAAFramebuffer(GraphicsContextGL& gl)
 {
+    /*
     IntSize size = m_framebufferSize; // Physical Space
     PlatformGLObject readFBO = m_drawFramebuffer->object();
     PlatformGLObject drawFBO = m_resolvedFBO ? m_resolvedFBO : m_displayFBO;
@@ -242,6 +243,12 @@ void WebXROpaqueFramebuffer::resolveMSAAFramebuffer(GraphicsContextGL& gl)
     gl.bindFramebuffer(GL::DRAW_FRAMEBUFFER, drawFBO);
     ASSERT(gl.checkFramebufferStatus(GL::DRAW_FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
     gl.blitFramebuffer(0, 0, size.width(), size.height(), 0, 0, size.width(), size.height(), buffers, GL::NEAREST);
+    */
+
+    // End of rendering. Discard the MSAA buffers to avoid writing them back to
+    // memory since we only need the resolved versions.
+    Vector<GCGLenum, 3> discardAttachments = { GL::COLOR_ATTACHMENT0, GL::DEPTH_ATTACHMENT, GL::STENCIL_ATTACHMENT };
+    gl.framebufferDiscard(GL::FRAMEBUFFER, discardAttachments);
 }
 
 void WebXROpaqueFramebuffer::blitShared(GraphicsContextGL& gl)
@@ -404,6 +411,10 @@ bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const Platf
     if ((!m_resolvedFBO || framebufferResize) && needsIntermediateResolve) {
         allocateAttachments(gl, m_resolveAttachments, 0, m_framebufferSize);
 
+        gl.bindFramebuffer(GL::FRAMEBUFFER, m_drawFramebuffer->object());
+        bindResolveAttachments(gl, m_resolveAttachments);
+        ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
+
         ensure(gl, m_resolvedFBO);
         gl.bindFramebuffer(GL::FRAMEBUFFER, m_resolvedFBO);
         bindAttachments(gl, m_resolveAttachments);
@@ -518,6 +529,15 @@ void WebXROpaqueFramebuffer::bindAttachments(GraphicsContextGL& gl, WebXRAttachm
     // NOTE: In WebGL2, GL::DEPTH_STENCIL_ATTACHMENT is an alias to set GL::DEPTH_ATTACHMENT and GL::STENCIL_ATTACHMENT, which is all we require.
     ASSERT((m_attributes.stencil || m_attributes.depth) && attachments.depthStencilBuffer);
     gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::DEPTH_STENCIL_ATTACHMENT, GL::RENDERBUFFER, attachments.depthStencilBuffer);
+}
+
+
+void WebXROpaqueFramebuffer::bindResolveAttachments(GraphicsContextGL& gl, WebXRAttachments& attachments)
+{
+    gl.framebufferResolveRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, attachments.colorBuffer);
+    // NOTE: In WebGL2, GL::DEPTH_STENCIL_ATTACHMENT is an alias to set GL::DEPTH_ATTACHMENT and GL::STENCIL_ATTACHMENT, which is all we require.
+    ASSERT((m_attributes.stencil || m_attributes.depth) && attachments.depthStencilBuffer);
+    gl.framebufferResolveRenderbuffer(GL::FRAMEBUFFER, GL::DEPTH_STENCIL_ATTACHMENT, GL::RENDERBUFFER, attachments.depthStencilBuffer);
 }
 
 void WebXRExternalRenderbuffer::destroyImage(GraphicsContextGL& gl)

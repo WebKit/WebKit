@@ -659,6 +659,9 @@ struct Extensions
     // GL_ANGLE_copy_texture_3d
     bool copyTexture3dANGLE = false;
 
+    // GL_WEBKIT_explicit_resolve_target
+    bool explicitResolveTargetWEBKIT = false;
+
     // GL_CHROMIUM_framebuffer_mixed_samples
     bool framebufferMixedSamplesCHROMIUM = false;
 

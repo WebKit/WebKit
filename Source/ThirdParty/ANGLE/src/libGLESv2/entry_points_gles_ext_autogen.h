@@ -1939,6 +1939,12 @@ ANGLE_EXPORT void GL_APIENTRY GL_TextureFoveationParametersQCOM(GLuint texture,
 ANGLE_EXPORT void GL_APIENTRY GL_EndTilingQCOM(GLbitfield preserveMask);
 ANGLE_EXPORT void GL_APIENTRY
 GL_StartTilingQCOM(GLuint x, GLuint y, GLuint width, GLuint height, GLbitfield preserveMask);
+
+// GL_WEBKIT_explicit_resolve_target
+ANGLE_EXPORT void GL_APIENTRY GL_FramebufferResolveRenderbufferWEBKIT(GLenum target,
+                                                                      GLenum attachment,
+                                                                      GLenum renderbuffertarget,
+                                                                      GLuint renderbuffer);
 }  // extern "C"
 
 #endif  // LIBGLESV2_ENTRY_POINTS_GLES_EXT_AUTOGEN_H_

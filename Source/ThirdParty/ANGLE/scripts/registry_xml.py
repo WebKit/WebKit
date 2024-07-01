@@ -80,6 +80,7 @@ angle_requestable_extensions = [
     "GL_CHROMIUM_color_buffer_float_rgba",
     "GL_CHROMIUM_lose_context",
     "GL_CHROMIUM_sync_query",
+    "GL_WEBKIT_explicit_resolve_target",
 ]
 
 gles_requestable_extensions = [

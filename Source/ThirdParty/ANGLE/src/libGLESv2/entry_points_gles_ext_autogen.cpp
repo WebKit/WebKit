@@ -13889,4 +13889,44 @@ GL_StartTilingQCOM(GLuint x, GLuint y, GLuint width, GLuint height, GLbitfield p
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
+// GL_WEBKIT_explicit_resolve_target
+void GL_APIENTRY GL_FramebufferResolveRenderbufferWEBKIT(GLenum target,
+                                                         GLenum attachment,
+                                                         GLenum renderbuffertarget,
+                                                         GLuint renderbuffer)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLFramebufferResolveRenderbufferWEBKIT,
+          "context = %d, target = %s, attachment = %s, renderbuffertarget = %s, renderbuffer = %u",
+          CID(context), GLenumToString(GLESEnum::AllEnums, target),
+          GLenumToString(GLESEnum::AllEnums, attachment),
+          GLenumToString(GLESEnum::AllEnums, renderbuffertarget), renderbuffer);
+
+    if (context)
+    {
+        RenderbufferID renderbufferPacked = PackParam<RenderbufferID>(renderbuffer);
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(
+                  context->getPrivateState(), context->getMutableErrorSetForValidation(),
+                  angle::EntryPoint::GLFramebufferResolveRenderbufferWEBKIT) &&
+              ValidateFramebufferResolveRenderbufferWEBKIT(
+                  context, angle::EntryPoint::GLFramebufferResolveRenderbufferWEBKIT, target,
+                  attachment, renderbuffertarget, renderbufferPacked)));
+        if (isCallValid)
+        {
+            context->framebufferResolveRenderbufferWEBKIT(target, attachment, renderbuffertarget,
+                                                          renderbufferPacked);
+        }
+        ANGLE_CAPTURE_GL(FramebufferResolveRenderbufferWEBKIT, isCallValid, context, target,
+                         attachment, renderbuffertarget, renderbufferPacked);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+}
+
 }  // extern "C"

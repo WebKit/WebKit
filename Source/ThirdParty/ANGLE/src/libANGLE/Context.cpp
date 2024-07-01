@@ -9958,6 +9958,33 @@ void Context::textureFoveationParameters(TextureID texturePacked,
     texture->setFocalPoint(layer, focalPoint, focalX, focalY, gainX, gainY, foveaArea);
 }
 
+void Context::framebufferResolveRenderbufferWEBKIT(GLenum target,
+                                                   GLenum attachment,
+                                                   GLenum renderbuffertarget,
+                                                   RenderbufferID renderbuffer)
+{
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+    Framebuffer *framebuffer = mState.getTargetFramebuffer(target);
+    ASSERT(framebuffer);
+
+    if (renderbuffer.value != 0)
+    {
+        Renderbuffer *renderbufferObject = getRenderbuffer(renderbuffer);
+
+        framebuffer->setAttachmentResolve(this, GL_RENDERBUFFER, attachment, gl::ImageIndex(),
+                                          renderbufferObject);
+    }
+    else
+    {
+        framebuffer->resetAttachmentResolve(this, attachment);
+    }
+
+    mState.setObjectDirty(target);
+#else
+    UNIMPLEMENTED();
+#endif
+}
+
 void Context::endTiling(GLbitfield preserveMask)
 {
     ANGLE_CONTEXT_TRY(mImplementation->endTiling(this, preserveMask));

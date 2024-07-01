@@ -149,44 +149,29 @@ id<MTLTexture> ToObjC(const TextureRef &texture)
 void BaseRenderPassAttachmentDescToObjC(const RenderPassAttachmentDesc &src,
                                         MTLRenderPassAttachmentDescriptor *dst)
 {
-    const TextureRef &implicitMsTexture = src.implicitMSTexture;
-
-    if (implicitMsTexture)
+    dst.texture = ToObjC(src.texture);
+    dst.level   = src.level.get();
+    if (dst.texture.textureType == MTLTextureType3D)
     {
-        dst.texture        = ToObjC(implicitMsTexture);
-        dst.level          = 0;
-        dst.slice          = 0;
-        dst.depthPlane     = 0;
-        dst.resolveTexture = ToObjC(src.texture);
-        dst.resolveLevel   = src.level.get();
-        if (dst.resolveTexture.textureType == MTLTextureType3D)
-        {
-            dst.resolveDepthPlane = src.sliceOrDepth;
-            dst.resolveSlice      = 0;
-        }
-        else
-        {
-            dst.resolveSlice      = src.sliceOrDepth;
-            dst.resolveDepthPlane = 0;
-        }
+        dst.slice      = 0;
+        dst.depthPlane = src.sliceOrDepth;
     }
     else
     {
-        dst.texture = ToObjC(src.texture);
-        dst.level   = src.level.get();
-        if (dst.texture.textureType == MTLTextureType3D)
-        {
-            dst.depthPlane = src.sliceOrDepth;
-            dst.slice      = 0;
-        }
-        else
-        {
-            dst.slice      = src.sliceOrDepth;
-            dst.depthPlane = 0;
-        }
-        dst.resolveTexture    = nil;
-        dst.resolveLevel      = 0;
+        dst.slice      = src.sliceOrDepth;
+        dst.depthPlane = 0;
+    }
+
+    dst.resolveTexture = ToObjC(src.resolveTexture);
+    dst.resolveLevel   = src.resolveLevel.get();
+    if (dst.resolveTexture.textureType == MTLTextureType3D)
+    {
         dst.resolveSlice      = 0;
+        dst.resolveDepthPlane = src.resolveSliceOrDepth;
+    }
+    else
+    {
+        dst.resolveSlice      = src.resolveSliceOrDepth;
         dst.resolveDepthPlane = 0;
     }
 
@@ -699,19 +684,21 @@ RenderPassAttachmentDesc::RenderPassAttachmentDesc()
 void RenderPassAttachmentDesc::reset()
 {
     texture.reset();
-    implicitMSTexture.reset();
-    level              = mtl::kZeroNativeMipLevel;
-    sliceOrDepth       = 0;
-    blendable          = false;
-    loadAction         = MTLLoadActionLoad;
-    storeAction        = MTLStoreActionStore;
-    storeActionOptions = MTLStoreActionOptionNone;
+    resolveTexture.reset();
+    level               = mtl::kZeroNativeMipLevel;
+    sliceOrDepth        = 0;
+    resolveLevel        = mtl::kZeroNativeMipLevel;
+    resolveSliceOrDepth = 0;
+    blendable           = false;
+    loadAction          = MTLLoadActionLoad;
+    storeAction         = MTLStoreActionStore;
+    storeActionOptions  = MTLStoreActionOptionNone;
 }
 
 bool RenderPassAttachmentDesc::equalIgnoreLoadStoreOptions(
     const RenderPassAttachmentDesc &other) const
 {
-    return texture == other.texture && implicitMSTexture == other.implicitMSTexture &&
+    return texture == other.texture && resolveTexture == other.resolveTexture &&
            level == other.level && sliceOrDepth == other.sliceOrDepth &&
            blendable == other.blendable;
 }

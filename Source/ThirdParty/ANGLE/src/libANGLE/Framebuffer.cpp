@@ -164,6 +164,47 @@ FramebufferStatus CheckAttachmentCompleteness(const Context *context,
     return FramebufferStatus::Complete();
 }
 
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+// Check the |checkAttachment| in reference to |firstAttachment| for the sake of explicit resolve
+// target framebuffer completeness.
+FramebufferStatus CheckResolveTargetMatchesForCompleteness(
+    const Context *context,
+    const FramebufferAttachment &firstAttachment,
+    const FramebufferAttachment &checkAttachment)
+{
+    ASSERT(firstAttachment.isAttached() && checkAttachment.isAttached());
+
+    FramebufferStatus attachmentCompleteness =
+        CheckAttachmentCompleteness(context, checkAttachment);
+    if (!attachmentCompleteness.isComplete())
+    {
+        return attachmentCompleteness;
+    }
+
+    if (checkAttachment.getSamples() != 0)
+    {
+        return FramebufferStatus::Incomplete(GL_FRAMEBUFFER_UNSUPPORTED,
+            "Framebuffer is incomplete: Resolve attachments have multiple samples.");
+    }
+
+    if (firstAttachment.getSize() != checkAttachment.getSize())
+    {
+        return gl::FramebufferStatus::Incomplete(
+            GL_FRAMEBUFFER_UNSUPPORTED,
+            gl::err::kFramebufferIncompleteUnsupportedMissmatchedDimensions);
+    }
+
+    if (!Format::EquivalentForBlit(firstAttachment.getFormat(), checkAttachment.getFormat()))
+    {
+        return gl::FramebufferStatus::Incomplete(GL_FRAMEBUFFER_UNSUPPORTED,
+                                                 "Framebuffer is incomplete: Attempting to resolve "
+                                                 "to target with non-equivalent format for blit");
+    }
+
+    return FramebufferStatus::Complete();
+}
+#endif
+
 FramebufferStatus CheckAttachmentSampleCounts(const Context *context,
                                               GLsizei currAttachmentSamples,
                                               GLsizei samples,
@@ -369,6 +410,9 @@ FramebufferState::FramebufferState(rx::UniqueSerial serial)
       mFramebufferSerial(serial),
       mLabel(),
       mColorAttachments(1),
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+      mColorResolveAttachments(1),
+#endif
       mColorAttachmentsMask(0),
       mDrawBufferStates(1, GL_BACK),
       mReadBufferState(GL_BACK),
@@ -392,6 +436,9 @@ FramebufferState::FramebufferState(const Caps &caps, FramebufferID id, rx::Uniqu
       mFramebufferSerial(serial),
       mLabel(),
       mColorAttachments(caps.maxColorAttachments),
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+      mColorResolveAttachments(caps.maxColorAttachments),
+#endif
       mColorAttachmentsMask(0),
       mDrawBufferStates(caps.maxDrawBuffers, GL_NONE),
       mReadBufferState(GL_COLOR_ATTACHMENT0_EXT),
@@ -597,6 +644,27 @@ const FramebufferAttachment *FramebufferState::getDepthStencilAttachment() const
 
     return nullptr;
 }
+
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+const FramebufferAttachment *FramebufferState::getColorResolveAttachment(
+    size_t colorAttachment) const
+{
+    ASSERT(colorAttachment < mColorResolveAttachments.size());
+    return mColorResolveAttachments[colorAttachment].isAttached()
+               ? &mColorResolveAttachments[colorAttachment]
+               : nullptr;
+}
+
+const FramebufferAttachment *FramebufferState::getDepthResolveAttachment() const
+{
+    return mDepthResolveAttachment.isAttached() ? &mDepthResolveAttachment : nullptr;
+}
+
+const FramebufferAttachment *FramebufferState::getStencilResolveAttachment() const
+{
+    return mStencilResolveAttachment.isAttached() ? &mStencilResolveAttachment : nullptr;
+}
+#endif
 
 const Extents FramebufferState::getAttachmentExtentsIntersection() const
 {
@@ -828,6 +896,10 @@ Framebuffer::Framebuffer(const Context *context, rx::GLImplFactory *factory, Fra
     ASSERT(mImpl != nullptr);
     ASSERT(mState.mColorAttachments.size() ==
            static_cast<size_t>(context->getCaps().maxColorAttachments));
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+    ASSERT(mState.mColorResolveAttachments.size() ==
+           static_cast<size_t>(context->getCaps().maxColorAttachments));
+#endif
 
     for (uint32_t colorIndex = 0;
          colorIndex < static_cast<uint32_t>(mState.mColorAttachments.size()); ++colorIndex)
@@ -861,6 +933,15 @@ void Framebuffer::onDestroy(const Context *context)
     mState.mWebGLDepthAttachment.detach(context, mState.mFramebufferSerial);
     mState.mWebGLStencilAttachment.detach(context, mState.mFramebufferSerial);
     mState.mWebGLDepthStencilAttachment.detach(context, mState.mFramebufferSerial);
+
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+    for (auto &attachment : mState.mColorResolveAttachments)
+    {
+        attachment.detach(context, mState.mFramebufferSerial);
+    }
+    mState.mDepthResolveAttachment.detach(context, mState.mFramebufferSerial);
+    mState.mStencilResolveAttachment.detach(context, mState.mFramebufferSerial);
+#endif
 
     if (mPixelLocalStorage)
     {
@@ -1145,6 +1226,23 @@ const FramebufferAttachment *Framebuffer::getAttachment(const Context *context,
 {
     return mState.getAttachment(context, attachment);
 }
+
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+const FramebufferAttachment *Framebuffer::getColorResolveAttachment(size_t colorAttachment) const
+{
+    return mState.getColorResolveAttachment(colorAttachment);
+}
+
+const FramebufferAttachment *Framebuffer::getDepthResolveAttachment() const
+{
+    return mState.getDepthResolveAttachment();
+}
+
+const FramebufferAttachment *Framebuffer::getStencilResolveAttachment() const
+{
+    return mState.getStencilResolveAttachment();
+}
+#endif
 
 size_t Framebuffer::getDrawbufferStateCount() const
 {
@@ -1445,6 +1543,25 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
         }
     }
 
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+    for (size_t index = 0; index < mState.mColorAttachments.size(); ++index)
+    {
+        const FramebufferAttachment &colorAttachment = mState.mColorAttachments[index];
+        const FramebufferAttachment &colorResolveAttachment =
+            mState.mColorResolveAttachments[index];
+        if (colorResolveAttachment.isAttached() && colorAttachment.isAttached())
+        {
+            FramebufferStatus resolveAttachmentCompleteness =
+                CheckResolveTargetMatchesForCompleteness(context, colorAttachment,
+                                                         colorResolveAttachment);
+            if (!resolveAttachmentCompleteness.isComplete())
+            {
+                return resolveAttachmentCompleteness;
+            }
+        }
+    }
+#endif
+
     const FramebufferAttachment &depthAttachment = mState.mDepthAttachment;
     if (depthAttachment.isAttached())
     {
@@ -1498,6 +1615,20 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
                     err::kFramebufferIncompleteMismatchedLayeredAttachments);
             }
         }
+
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+        const FramebufferAttachment &depthResolveAttachment = mState.mDepthResolveAttachment;
+        if (depthResolveAttachment.isAttached())
+        {
+            FramebufferStatus resolveAttachmentCompleteness =
+                CheckResolveTargetMatchesForCompleteness(context, depthAttachment,
+                                                         depthResolveAttachment);
+            if (!resolveAttachmentCompleteness.isComplete())
+            {
+                return resolveAttachmentCompleteness;
+            }
+        }
+#endif
     }
 
     const FramebufferAttachment &stencilAttachment = mState.mStencilAttachment;
@@ -1553,6 +1684,20 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
                     err::kFramebufferIncompleteMismatchedLayeredAttachments);
             }
         }
+
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+        const FramebufferAttachment &stencilResolveAttachment = mState.mStencilResolveAttachment;
+        if (stencilResolveAttachment.isAttached())
+        {
+            FramebufferStatus resolveAttachmentCompleteness =
+                CheckResolveTargetMatchesForCompleteness(context, stencilAttachment,
+                                                         stencilResolveAttachment);
+            if (!resolveAttachmentCompleteness.isComplete())
+            {
+                return resolveAttachmentCompleteness;
+            }
+        }
+#endif
     }
 
     // Starting from ES 3.0 stencil and depth, if present, should be the same image
@@ -2016,6 +2161,66 @@ void Framebuffer::setAttachmentMultiview(const Context *context,
                   FramebufferAttachment::kDefaultRenderToTextureSamples);
 }
 
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+void Framebuffer::setAttachmentResolve(const Context *context,
+                                       GLenum type,
+                                       GLenum binding,
+                                       const ImageIndex &textureIndex,
+                                       FramebufferAttachmentObject *resource)
+{
+    switch (binding)
+    {
+        case GL_DEPTH_STENCIL:
+        case GL_DEPTH_STENCIL_ATTACHMENT:
+            updateAttachmentResolve(context, &mState.mDepthResolveAttachment,
+                                    DIRTY_BIT_DEPTH_ATTACHMENT, &mDirtyDepthAttachmentBinding, type,
+                                    binding, textureIndex, resource);
+            updateAttachmentResolve(context, &mState.mStencilResolveAttachment,
+                                    DIRTY_BIT_STENCIL_ATTACHMENT, &mDirtyStencilAttachmentBinding,
+                                    type, binding, textureIndex, resource);
+            break;
+        case GL_DEPTH:
+        case GL_DEPTH_ATTACHMENT:
+            updateAttachmentResolve(context, &mState.mDepthResolveAttachment,
+                                    DIRTY_BIT_DEPTH_ATTACHMENT, &mDirtyDepthAttachmentBinding, type,
+                                    binding, textureIndex, resource);
+            if (context->isWebGL1())
+            {
+                updateAttachmentResolve(context, &mState.mStencilResolveAttachment,
+                                        DIRTY_BIT_STENCIL_ATTACHMENT,
+                                        &mDirtyStencilAttachmentBinding, GL_NONE,
+                                        GL_STENCIL_ATTACHMENT, ImageIndex(), nullptr);
+            }
+            break;
+
+        case GL_STENCIL:
+        case GL_STENCIL_ATTACHMENT:
+            updateAttachmentResolve(context, &mState.mStencilResolveAttachment,
+                                    DIRTY_BIT_STENCIL_ATTACHMENT, &mDirtyStencilAttachmentBinding,
+                                    type, binding, textureIndex, resource);
+            if (context->isWebGL1())
+            {
+                updateAttachmentResolve(context, &mState.mDepthResolveAttachment,
+                                        DIRTY_BIT_DEPTH_ATTACHMENT, &mDirtyDepthAttachmentBinding,
+                                        GL_NONE, GL_DEPTH_ATTACHMENT, ImageIndex(), nullptr);
+            }
+            break;
+
+        default:
+        {
+            const size_t colorIndex = binding - GL_COLOR_ATTACHMENT0;
+            ASSERT(colorIndex < mState.mColorResolveAttachments.size());
+
+            const size_t dirtyBit = DIRTY_BIT_COLOR_ATTACHMENT_0 + colorIndex;
+            updateAttachmentResolve(context, &mState.mColorResolveAttachments[colorIndex], dirtyBit,
+                                    &mDirtyColorAttachmentBindings[colorIndex], type, binding,
+                                    textureIndex, resource);
+        }
+        break;
+    }
+}
+#endif
+
 void Framebuffer::commitWebGL1DepthStencilIfConsistent(const Context *context,
                                                        GLsizei numViews,
                                                        GLuint baseViewIndex,
@@ -2193,10 +2398,39 @@ void Framebuffer::updateAttachment(const Context *context,
     invalidateCompletenessCache();
 }
 
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+void Framebuffer::updateAttachmentResolve(const Context *context,
+                                          FramebufferAttachment *attachment,
+                                          size_t dirtyBit,
+                                          angle::ObserverBinding *onDirtyBinding,
+                                          GLenum type,
+                                          GLenum binding,
+                                          const ImageIndex &textureIndex,
+                                          FramebufferAttachmentObject *resource)
+{
+    attachment->attach(
+        context, type, binding, textureIndex, resource, FramebufferAttachment::kDefaultNumViews,
+        FramebufferAttachment::kDefaultBaseViewIndex, false,
+        FramebufferAttachment::kDefaultRenderToTextureSamples, mState.mFramebufferSerial);
+    mDirtyBits.set(dirtyBit);
+    onDirtyBinding->bind(resource);
+    mAttachmentChangedAfterEnablingFoveation = isFoveationEnabled();
+
+    invalidateCompletenessCache();
+}
+#endif
+
 void Framebuffer::resetAttachment(const Context *context, GLenum binding)
 {
     setAttachment(context, GL_NONE, binding, ImageIndex(), nullptr);
 }
+
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+void Framebuffer::resetAttachmentResolve(const Context *context, GLenum binding)
+{
+    setAttachmentResolve(context, GL_NONE, binding, ImageIndex(), nullptr);
+}
+#endif
 
 void Framebuffer::setWriteControlMode(SrgbWriteControlMode srgbWriteControlMode)
 {
