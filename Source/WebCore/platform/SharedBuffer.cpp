@@ -616,7 +616,7 @@ const uint8_t* DataSegment::data() const
 #if USE(SKIA)
         [](const sk_sp<SkData>& data) -> const uint8_t* { return data->bytes(); },
 #endif
-        [](const FileSystem::MappedFileData& data) -> const uint8_t* { return static_cast<const uint8_t*>(data.data()); },
+        [](const FileSystem::MappedFileData& data) -> const uint8_t* { return data.span().data(); },
         [](const Provider& provider) -> const uint8_t* { return provider.data(); }
     );
     return std::visit(visitor, m_immutableData);

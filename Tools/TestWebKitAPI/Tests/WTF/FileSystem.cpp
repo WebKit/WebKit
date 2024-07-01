@@ -124,7 +124,7 @@ TEST_F(FileSystemTest, MappingExistingFile)
     EXPECT_TRUE(success);
     EXPECT_TRUE(!!mappedFileData);
     EXPECT_TRUE(mappedFileData.size() == strlen(FileSystemTestData));
-    EXPECT_TRUE(strnstr(FileSystemTestData, static_cast<const char*>(mappedFileData.data()), mappedFileData.size()));
+    EXPECT_TRUE(strnstr(FileSystemTestData, byteCast<char>(mappedFileData.span().data()), mappedFileData.size()));
 }
 
 TEST_F(FileSystemTest, MappingExistingEmptyFile)

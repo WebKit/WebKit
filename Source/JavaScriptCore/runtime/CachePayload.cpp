@@ -60,7 +60,7 @@ const uint8_t* CachePayload::data() const
 {
     return WTF::switchOn(m_data,
         [](const FileSystem::MappedFileData& data) {
-            return static_cast<const uint8_t*>(data.data());
+            return data.span().data();
         }, [](const std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>& data) -> const uint8_t* {
             return data.first.get();
         }

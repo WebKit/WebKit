@@ -140,7 +140,7 @@ static FileSystem::MappedFileData storeInMappedFileData(const String& path, std:
         return { };
     FileSystem::deleteFile(path);
 
-    memcpy(const_cast<void*>(mappedFileData.data()), data.data(), data.size());
+    memcpySpan(mappedFileData.mutableSpan().first(data.size()), data);
 
     FileSystem::finalizeMappedFileData(mappedFileData, data.size());
     return mappedFileData;

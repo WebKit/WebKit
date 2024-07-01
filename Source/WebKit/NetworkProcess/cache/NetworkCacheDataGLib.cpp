@@ -132,7 +132,7 @@ static void deleteMapWrapper(MapWrapper* wrapper)
 Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::PlatformFileHandle fd)
 {
     size_t size = mappedFile.size();
-    const void* map = mappedFile.data();
+    auto* map = mappedFile.span().data();
     ASSERT(map);
     ASSERT(map != MAP_FAILED);
     MapWrapper* wrapper = new MapWrapper { WTFMove(mappedFile), fd };
