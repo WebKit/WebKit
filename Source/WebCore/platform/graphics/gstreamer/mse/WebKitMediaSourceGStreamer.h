@@ -67,6 +67,9 @@ void webKitMediaSrcFlush(WebKitMediaSrc*, const AtomString& streamName);
 
 void webKitMediaSrcSetPlayer(WebKitMediaSrc*, ThreadSafeWeakPtr<WebCore::MediaPlayerPrivateGStreamerMSE>&&);
 
+void webKitMediaSrcNotifyStreamStart(WebKitMediaSrc*, const String& streamName);
+void webKitMediaSrcNotifyCaps(WebKitMediaSrc*, const String& streamName);
+
 G_END_DECLS
 
 namespace WTF {

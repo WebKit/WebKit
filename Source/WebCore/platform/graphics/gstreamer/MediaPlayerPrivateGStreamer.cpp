@@ -3129,6 +3129,9 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
             g_object_set(m_pipeline.get(), "audio-filter", scale, nullptr);
     }
 
+    if (isMediaSource())
+        addPlaysinkQuirksForEarlyMediaSourceFlushes();
+
     if (!player->isVideoPlayer())
         return;
 
@@ -3174,6 +3177,49 @@ void MediaPlayerPrivateGStreamer::setupCodecProbe(GstElement* element)
 #else
     UNUSED_PARAM(element);
 #endif
+}
+
+void MediaPlayerPrivateGStreamer::addPlaysinkQuirksForEarlyMediaSourceFlushes()
+{
+    ASSERT(isMediaSource());
+    GRefPtr<GstElement> playsink = adoptGRef(gst_bin_get_by_name(GST_BIN(m_pipeline.get()), "playsink"));
+    g_signal_connect_swapped(playsink.get(), "pad-added", G_CALLBACK(+[](MediaPlayerPrivateGStreamer* player, GstPad* newPad) {
+        GST_DEBUG_OBJECT(newPad, "New pad on playsink!");
+
+        g_signal_connect(newPad, "notify::caps", G_CALLBACK(+[](GstPad* pad, GParamSpec*, MediaPlayerPrivateGStreamer* player) {
+            if (player->isPlayerShuttingDown())
+                return;
+
+            GRefPtr<GstStream> stream = adoptGRef(gst_pad_get_stream(pad));
+            if (!stream)
+                return;
+
+            GST_DEBUG_OBJECT(pad, "Notifying WebKitMediaSrc about playsink CAPS on '%s'", gst_stream_get_stream_id(stream.get()));
+            webKitMediaSrcNotifyCaps(WEBKIT_MEDIA_SRC(player->m_source.get()), String::fromLatin1(gst_stream_get_stream_id(stream.get())));
+        }), player);
+
+        gst_pad_add_probe(newPad, GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad* pad, GstPadProbeInfo* info, MediaPlayerPrivateGStreamer* player) {
+            ASSERT(GST_PAD_PROBE_INFO_TYPE(info) & GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM);
+            if (player->isPlayerShuttingDown())
+                return GST_PAD_PROBE_REMOVE;
+
+            auto* event = GST_PAD_PROBE_INFO_EVENT(info);
+            auto eventType = GST_EVENT_TYPE(event);
+            auto* element = gst_pad_get_parent_element(pad);
+            auto* elementName = gst_element_get_name(element);
+            GST_DEBUG_OBJECT(pad, "<%s:%s> received event '%s'", elementName, gst_pad_get_name(pad), gst_event_type_get_name(eventType));
+            if (eventType == GST_EVENT_STREAM_START) {
+                GstStream* stream = nullptr;
+                gst_event_parse_stream(event, &stream);
+                ASSERT(stream);
+                GST_DEBUG_OBJECT(pad, "Notifying WebKitMediaSrc about STREAM_START on '%s' and stream_id '%s'", elementName, gst_stream_get_stream_id(stream));
+                webKitMediaSrcNotifyStreamStart(WEBKIT_MEDIA_SRC(player->m_source.get()), String::fromLatin1(gst_stream_get_stream_id(stream)));
+                gst_object_unref(stream);
+                return GST_PAD_PROBE_REMOVE;
+            }
+            return GST_PAD_PROBE_OK;
+        }), player, nullptr);
+    }), this);
 }
 
 void MediaPlayerPrivateGStreamer::configureAudioDecoder(GstElement* decoder)

@@ -74,6 +74,34 @@ struct WebKitMediaSrcPrivate {
         return stream;
     }
 
+    using StreamID = String;
+    struct EarlyFlushQuirk {
+        HashMap<StreamID, bool> streamStarts;
+        HashMap<StreamID, bool> capsNotifications;
+        Condition condition;
+
+        unsigned numStreamStarts()
+        {
+            return streamStarts.size();
+        }
+
+        unsigned numCaps()
+        {
+            return capsNotifications.size();
+        }
+
+        bool hasStreamStart(const StreamID& stream)
+        {
+            return streamStarts.find(stream) != streamStarts.end();
+        }
+
+        bool hasCapsNotification(const StreamID& stream)
+        {
+            return capsNotifications.find(stream) != capsNotifications.end();
+        }
+    };
+    DataMutex<EarlyFlushQuirk> earlyFlushQuirk;
+
     // Used for stream-start events, shared by all streams.
     const unsigned groupId { gst_util_group_id_next() };
 
@@ -98,7 +126,7 @@ static gboolean webKitMediaSrcActivateMode(GstPad*, GstObject*, GstPadMode, gboo
 static void webKitMediaSrcLoop(void*);
 static void webKitMediaSrcTearDownStream(WebKitMediaSrc* source, const AtomString& name);
 static void webKitMediaSrcGetProperty(GObject*, unsigned propId, GValue*, GParamSpec*);
-static void webKitMediaSrcStreamFlush(Stream*, bool isSeekingFlush);
+static void webKitMediaSrcStreamFlush(Stream*, bool isSeekingFlush, bool isTearingDown = false);
 static gboolean webKitMediaSrcSendEvent(GstElement*, GstEvent*);
 static RefPtr<MediaPlayerPrivateGStreamerMSE> webKitMediaSrcPlayer(WebKitMediaSrc*);
 
@@ -377,7 +405,7 @@ static void webKitMediaSrcTearDownStream(WebKitMediaSrc* source, const AtomStrin
     GST_DEBUG_OBJECT(source, "Tearing down stream '%s'", name.string().utf8().data());
 
     // Flush the source element **and** downstream. We want to stop the streaming thread and for that we need all elements downstream to be idle.
-    webKitMediaSrcStreamFlush(stream, false);
+    webKitMediaSrcStreamFlush(stream, false, true);
     // Stop the thread now.
     gst_pad_set_active(stream->pad.get(), false);
 
@@ -616,12 +644,53 @@ static void webKitMediaSrcLoop(void* userData)
         ASSERT_NOT_REACHED();
 }
 
-static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
+void webKitMediaSrcNotifyStreamStart(WebKitMediaSrc* source, const String& streamName)
+{
+    GST_DEBUG_OBJECT(source, "Notified about STREAM_START from stream '%s'", streamName.utf8().data());
+    DataMutexLocker earlyFlushQuirk { source->priv->earlyFlushQuirk };
+    earlyFlushQuirk->streamStarts.add(streamName, true);
+    earlyFlushQuirk->condition.notifyAll();
+}
+
+void webKitMediaSrcNotifyCaps(WebKitMediaSrc* source, const String& streamName)
+{
+    GST_DEBUG_OBJECT(source, "Notified about CAPS from stream '%s'", streamName.utf8().data());
+    DataMutexLocker earlyFlushQuirk { source->priv->earlyFlushQuirk };
+    earlyFlushQuirk->capsNotifications.add(streamName, true);
+    earlyFlushQuirk->condition.notifyAll();
+}
+
+void waitForEarlyFlushConditions(Stream* stream)
+{
+    for (auto& [k, s] : stream->source->priv->streams) {
+        DataMutexLocker earlyFlushQuirk { s->source->priv->earlyFlushQuirk };
+        DataMutexLocker streamingMembers { s->streamingMembersDataMutex };
+
+        if (streamingMembers->hasPushedFirstBuffer && !earlyFlushQuirk->hasStreamStart(s->track->stringId().string())) {
+            earlyFlushQuirk->condition.wait(earlyFlushQuirk.mutex(), [&]() {
+                return earlyFlushQuirk->hasStreamStart(s->track->stringId().string());
+            });
+        }
+    }
+
+    DataMutexLocker earlyFlushQuirk { stream->source->priv->earlyFlushQuirk };
+    if (earlyFlushQuirk->numStreamStarts() == stream->source->priv->streams.size() && !earlyFlushQuirk->hasCapsNotification(stream->track->stringId().string())) {
+        earlyFlushQuirk->condition.wait(earlyFlushQuirk.mutex(), [&]() {
+            return earlyFlushQuirk->numCaps() == earlyFlushQuirk->numStreamStarts();
+        });
+    }
+    GST_DEBUG_OBJECT(stream->pad.get(), "Finished waiting for STREAM_START CAPS while flushing '%s'", stream->track->stringId().string().utf8().data());
+}
+
+static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush, bool isTearingDown)
 {
     ASSERT(isMainThread());
     bool skipFlush = false;
     GST_DEBUG_OBJECT(stream->source, "Flush requested for stream '%s'. isSeekingFlush = %s",
         stream->track->stringId().string().utf8().data(), boolForPrinting(isSeekingFlush));
+
+    if (!isTearingDown)
+        waitForEarlyFlushConditions(stream);
 
     {
         DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };

@@ -540,6 +540,8 @@ private:
     void configureMediaStreamAudioTracks();
     void invalidateCachedPositionOnNextIteration() const;
 
+    void addPlaysinkQuirksForEarlyMediaSourceFlushes();
+
     Atomic<bool> m_isPlayerShuttingDown;
     GRefPtr<GstElement> m_textSink;
     GUniquePtr<GstStructure> m_mediaLocations;
