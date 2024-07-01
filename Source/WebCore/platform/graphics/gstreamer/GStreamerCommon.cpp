@@ -992,9 +992,17 @@ static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* 
     if (valueType == G_TYPE_FLOAT)
         return JSON::Value::create(static_cast<double>(g_value_get_float(value)))->asValue();
 
-    // FIXME: bigint support missing in JSON.
-    if (valueType == G_TYPE_UINT64)
-        return JSON::Value::create(static_cast<int>(g_value_get_uint64(value)))->asValue();
+    // BigInt is not officially supported in JSON, so the workaround is to serialize to a string. See:
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt#use_within_json
+    if (valueType == G_TYPE_UINT64) {
+        auto jsonObject = JSON::Object::create();
+        auto resultValue = jsonObject->asObject();
+        if (!resultValue)
+            return nullptr;
+        auto bigIntValue = JSON::Value::create(makeString(g_value_get_uint64(value)));
+        resultValue->setValue("$bigint"_s, bigIntValue->asValue().releaseNonNull());
+        return resultValue;
+    }
 
     if (valueType == G_TYPE_STRING)
         return JSON::Value::create(makeString(span(g_value_get_string(value))))->asValue();
