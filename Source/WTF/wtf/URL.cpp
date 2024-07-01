@@ -225,35 +225,52 @@ static String decodeEscapeSequencesFromParsedURL(StringView input)
     return String::fromUTF8(percentDecoded.span());
 }
 
-#if OS(WINDOWS)
 // This decodes url escape sequences and also converts / into \ for the Windows
 // port of URL::fileSystemPath(). It is done here to avoid a second copy when url
 // escapes AND slashes are present in the file. The check to skip copying is not
 // done as every valid absolute file path on Windows will include a slash.
-static String decodeEscapeSequencesFromParsedURLForWindowsPath(StringView input)
+template<typename CharacterType>
+static String decodeEscapeSequencesFromParsedURLForWindowsPath(const std::span<const CharacterType> input)
 {
-    ASSERT(input.containsOnlyASCII());
+    size_t length = input.size();
 
-    auto length = input.length();
+    WTF::StringBuilder builder;
+    builder.reserveCapacity(length);
 
-    // FIXME: This 100 is arbitrary. Should make a histogram of how this function is actually used to choose a better value.
-    Vector<LChar, 100> percentDecoded;
-    percentDecoded.reserveInitialCapacity(length);
-    for (unsigned i = 1; i < length; ) {
-        if (auto decodedCharacter = decodeEscapeSequence(input, i, length)) {
-            percentDecoded.unsafeAppendWithoutCapacityCheck(*decodedCharacter);
-            i += 3;
-        } else {
-            percentDecoded.unsafeAppendWithoutCapacityCheck(UNLIKELY(input[i]) == '/' ? '\\' : input[i]);
-            ++i;
+    if (WTF::find(input, '%') == notFound) {
+        // Fast path: no escape sequences.
+        // We just need to normalize slashes.
+        size_t lastSlash = 1;
+        size_t index = WTF::find(input, '/', lastSlash);
+        while (index != notFound) {
+            builder.append(input.subspan(lastSlash, index - lastSlash));
+            builder.append('\\');
+            lastSlash = index + 1;
+            index = WTF::find(input, '/', lastSlash);
+        }
+
+        builder.append(input.subspan(lastSlash));
+    } else {
+        const auto view = StringView(input);
+        for (size_t i = 1; i < length; ) {
+            if (auto decodedCharacter = decodeEscapeSequence(view, i, length)) {
+                builder.append(*decodedCharacter);
+                i += 3;
+            } else {
+                if (input[i] == '/') {
+                    builder.append('\\');
+                    ++i;
+                } else {
+                    builder.append(input[i]);
+                    ++i;
+                }
+            }
         }
     }
 
-    // FIXME: Is UTF-8 always the correct encoding?
-    // FIXME: This returns a null string when we encounter an invalid UTF-8 sequence. Is that OK?
-    return String::fromUTF8(percentDecoded.span());
+    
+    return builder.toString();
 }
-#endif // OS(WINDOWS)
 
 String URL::user() const
 {
@@ -315,18 +332,25 @@ URL URL::truncatedForUseAsBase() const
 
 #if !USE(CF)
 
+static inline String fileSystemPathWindows(WTF::StringView host, WTF::StringView path)
+{
+    ASSERT(path.containsOnlyASCII());
+
+    // UNC paths look like '\\server\share\etc', but in a URL they look like 'file://server/share/etc'.
+    String decodedPath = path.is8Bit() ? decodeEscapeSequencesFromParsedURLForWindowsPath<LChar>(path.span8()) : decodeEscapeSequencesFromParsedURLForWindowsPath<UChar>(path.span16());   
+    if (UNLIKELY(host.length() > 0)) {
+        return makeString("\\\\"_s, host, "\\"_s, decodedPath);
+    }
+    return decodedPath;
+}
+
 String URL::fileSystemPath() const
 {
     if (!protocolIsFile())
         return { };
 
 #if OS(WINDOWS)
-    // UNC paths look like '\\server\share\etc', but in a URL they look like 'file://server/share/etc'.
-    auto unc_host = host();
-    if (UNLIKELY(unc_host.length() > 0)) {
-        return makeString("\\\\"_s, unc_host, "\\"_s, decodeEscapeSequencesFromParsedURLForWindowsPath(path()));
-    }
-    return decodeEscapeSequencesFromParsedURLForWindowsPath(path());
+    return fileSystemPathWindows(host(), path());
 #else
     return decodeEscapeSequencesFromParsedURL(path());
 #endif
