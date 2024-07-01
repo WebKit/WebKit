@@ -106,11 +106,6 @@ inline void CallFrame::setCallee(JSObject* callee)
     static_cast<Register*>(this)[static_cast<int>(CallFrameSlot::callee)] = callee;
 }
 
-inline void CallFrame::setCallee(NativeCallee* callee)
-{
-    reinterpret_cast<uint64_t*>(this)[static_cast<int>(CallFrameSlot::callee)] = CalleeBits::encodeNativeCallee(callee);
-}
-
 inline void CallFrame::setCodeBlock(CodeBlock* codeBlock)
 {
     static_cast<Register*>(this)[static_cast<int>(CallFrameSlot::codeBlock)] = codeBlock;

@@ -39,18 +39,19 @@
 
 namespace JSC { namespace Wasm {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(Callee);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(JITCallee);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(JSEntrypointCallee);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(JSEntrypointInterpreterCallee);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(WasmToJSCallee);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(JSToWasmICCallee);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(OptimizingJITCallee);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(OMGCallee);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(OSREntryCallee);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(BBQCallee);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(IPIntCallee);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(LLIntCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Callee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JITCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointInterpreterCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointJITCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WasmToJSCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSToWasmICCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OptimizingJITCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OSREntryCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OMGCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BBQCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(IPIntCallee);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LLIntCallee);
 
 Callee::Callee(Wasm::CompilationMode compilationMode)
     : NativeCallee(NativeCallee::Category::Wasm, ImplementationVisibility::Private)
@@ -411,14 +412,16 @@ const StackMap& OptimizingJITCallee::stackmap(CallSiteIndex callSiteIndex) const
 }
 #endif
 
-JSEntrypointInterpreterCallee::JSEntrypointInterpreterCallee(unsigned frameSize, TypeIndex typeIndex)
+JSEntrypointInterpreterCallee::JSEntrypointInterpreterCallee(Vector<JSEntrypointInterpreterCalleeMetadata>&& metadata, LLIntCallee* callee)
     : JSEntrypointCallee(Wasm::CompilationMode::JSEntrypointInterpreterMode)
-    , frameSize(frameSize)
-    , typeIndex(typeIndex)
-    , wasmFunctionPrologue(Options::useJIT()
-        ? LLInt::wasmFunctionEntryThunk().code().retagged<LLIntToWasmEntryPtrTag>()
-        : CodePtr<CFunctionPtrTag>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline)).retagged<LLIntToWasmEntryPtrTag>())
+    , TrailingArray<JSEntrypointInterpreterCallee, JSEntrypointInterpreterCalleeMetadata>(metadata.size(), metadata.begin(), metadata.end())
+    , wasmCallee(reinterpret_cast<intptr_t>(CalleeBits::boxNativeCalleeIfExists(callee)))
 {
+    if (Options::useJIT())
+        wasmFunctionPrologue = LLInt::wasmFunctionEntryThunk().code().retagged<LLIntToWasmEntryPtrTag>();
+    else
+        wasmFunctionPrologue = LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline);
+
 }
 
 CodePtr<WasmEntryPtrTag> JSEntrypointInterpreterCallee::entrypointImpl() const
@@ -446,7 +449,6 @@ RegisterAtOffsetList* JSEntrypointInterpreterCallee::calleeSaveRegistersImpl()
 #endif
         calleeSaveRegisters.construct(WTFMove(registers));
     });
-    ASSERT(WTF::roundUpToMultipleOf<stackAlignmentBytes()>(calleeSaveRegisters->sizeOfAreaInBytes()) == SpillStackSpaceAligned);
     return &calleeSaveRegisters.get();
 }
 

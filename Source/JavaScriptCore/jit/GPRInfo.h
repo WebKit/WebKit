@@ -405,10 +405,10 @@ public:
         return registerForIndex[index];
     }
     
-    static constexpr GPRReg toArgumentRegister(unsigned index)
+    static GPRReg toArgumentRegister(unsigned index)
     {
-        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfArgumentRegisters);
-        constexpr GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3, argumentGPR4, argumentGPR5 };
+        ASSERT(index < numberOfArgumentRegisters);
+        static const GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3, argumentGPR4, argumentGPR5 };
         return registerForIndex[index];
     }
     
@@ -500,10 +500,10 @@ public:
         return registerForIndex[index];
     }
 
-    static constexpr GPRReg toArgumentRegister(unsigned index)
+    static GPRReg toArgumentRegister(unsigned index)
     {
-        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfArgumentRegisters);
-        constexpr GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3 };
+        ASSERT(index < numberOfArgumentRegisters);
+        static const GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3 };
         return registerForIndex[index];
     }
 
@@ -631,9 +631,9 @@ public:
         return (unsigned)reg;
     }
 
-    static constexpr GPRReg toArgumentRegister(unsigned index)
+    static GPRReg toArgumentRegister(unsigned index)
     {
-        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfArgumentRegisters);
+        ASSERT(index < numberOfArgumentRegisters);
         return toRegister(index);
     }
 
@@ -741,10 +741,10 @@ public:
         return registerForIndex[index];
     }
 
-    static constexpr GPRReg toArgumentRegister(unsigned index)
+    static GPRReg toArgumentRegister(unsigned index)
     {
-        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfArgumentRegisters);
-        constexpr GPRReg registerForIndex[numberOfArgumentRegisters] = {
+        ASSERT(index < numberOfArgumentRegisters);
+        static const GPRReg registerForIndex[numberOfArgumentRegisters] = {
             argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3,
             argumentGPR4, argumentGPR5, argumentGPR6, argumentGPR7,
         };

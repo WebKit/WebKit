@@ -473,6 +473,7 @@ WebAssemblyFunction::WebAssemblyFunction(VM& vm, NativeExecutable* executable, J
     , m_jsEntrypoint { jsEntrypoint }
     , m_boxedWasmCallee(reinterpret_cast<uint64_t>(CalleeBits::boxNativeCalleeIfExists(wasmCallee)))
     , m_jsToWasmInterpreterCallee(jsEntrypoint.compilationMode() == Wasm::CompilationMode::JSEntrypointInterpreterMode ? static_cast<Wasm::JSEntrypointInterpreterCallee*>(&jsEntrypoint) : nullptr)
+    , m_jsToWasmBoxedInterpreterCallee(CalleeBits::boxNativeCalleeIfExists(m_jsToWasmInterpreterCallee.get()))
 { }
 
 template<typename Visitor>

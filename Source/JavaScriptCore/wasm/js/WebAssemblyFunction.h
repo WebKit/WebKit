@@ -96,6 +96,7 @@ private:
     uintptr_t m_boxedWasmCallee;
     // This let's the JS->Wasm interpreter find its metadata
     RefPtr<Wasm::JSEntrypointInterpreterCallee> m_jsToWasmInterpreterCallee;
+    void* m_jsToWasmBoxedInterpreterCallee;
 #if ENABLE(JIT)
     RefPtr<Wasm::JSToWasmICCallee> m_jsToWasmICCallee;
 #endif

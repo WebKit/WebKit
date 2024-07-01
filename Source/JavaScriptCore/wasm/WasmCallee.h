@@ -30,7 +30,6 @@
 #include "JITCompilation.h"
 #include "NativeCallee.h"
 #include "RegisterAtOffsetList.h"
-#include "StackAlignment.h"
 #include "WasmCompilationMode.h"
 #include "WasmFormat.h"
 #include "WasmFunctionCodeBlockGenerator.h"
@@ -53,8 +52,12 @@ class LLIntOffsetsExtractor;
 
 namespace Wasm {
 
+// This class is fast allocated (instead of using TZone) because
+// the subclass JSEntrypointInterpreterCalleeMetadata is variable-sized
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Callee);
+
 class Callee : public NativeCallee {
-    WTF_MAKE_TZONE_ALLOCATED(Callee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Callee);
 public:
     IndexOrName indexOrName() const { return m_indexOrName; }
     CompilationMode compilationMode() const { return m_compilationMode; }
@@ -88,8 +91,10 @@ protected:
     FixedVector<HandlerInfo> m_exceptionHandlers;
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JITCallee);
+
 class JITCallee : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(JITCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JITCallee);
 public:
     friend class Callee;
     FixedVector<UnlinkedWasmToWasmCall>& wasmToWasmCallsites() { return m_wasmToWasmCallsites; }
@@ -125,14 +130,18 @@ protected:
 #endif
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointCallee);
+
 class JSEntrypointCallee : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(JSEntrypointCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSEntrypointCallee);
 protected:
     JS_EXPORT_PRIVATE JSEntrypointCallee(Wasm::CompilationMode mode) : Callee(mode) { }
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointJITCallee);
+
 class JSEntrypointJITCallee final : public JSEntrypointCallee {
-    WTF_MAKE_TZONE_ALLOCATED(JSEntrypointJITCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSEntrypointJITCallee);
 public:
     friend class Callee;
 
@@ -173,17 +182,207 @@ private:
 #endif
 };
 
-class JSEntrypointInterpreterCallee final : public JSEntrypointCallee {
-    WTF_MAKE_TZONE_ALLOCATED(JSEntrypointInterpreterCallee);
-public:
-    static inline Ref<JSEntrypointInterpreterCallee> create(unsigned frameSize, TypeIndex typeIndex)
-    {
-        return adoptRef(*new JSEntrypointInterpreterCallee(frameSize, typeIndex));
+#define FOR_EACH_JS_TO_WASM_WRAPPER_METADATA_OPCODE(macro) \
+/* Load/Store accumulator; followed by (offset from sp (load) or cfr (store): int8_t) */ \
+macro(0, LoadI32) \
+macro(1, LoadI64) \
+macro(2, LoadF32) \
+macro(3, LoadF64) \
+macro(4, StoreI32) \
+macro(5, StoreI64) \
+macro(6, StoreF32) \
+macro(7, StoreF64) \
+/* Box/unbox accumulator */ \
+macro(8, BoxInt32) \
+macro(9, BoxInt64) \
+macro(10, BoxFloat32) \
+macro(11, BoxFloat64) \
+macro(12, UnBoxInt32) \
+macro(13, UnBoxInt64) \
+macro(14, UnBoxFloat32) \
+macro(15, UnBoxFloat64) \
+/* Move constant to accumulator */ \
+macro(16, Zero) \
+macro(17, Undefined) \
+/* JSValue32_64 only: copy tag accumulator to payload accumulator. */ \
+macro(18, ShiftTag) \
+/* No args; mark a phase in stack creation */ \
+macro(19, Memory) \
+macro(20, Call) \
+macro(21, Done) \
+/* Write accumulator to register */ \
+macro(22, WA0) \
+macro(23, WA1) \
+macro(24, WA2) \
+macro(25, WA3) \
+macro(26, WA4) \
+macro(27, WA5) \
+macro(28, WA6) \
+macro(29, WA7) \
+/* Result registers */ \
+macro(30, WR0) \
+macro(31, WA0_READ) \
+macro(32, WR1) \
+/* FP registers */ \
+macro(33, WAF0) \
+
+
+#define DEFINE_OP(i, n) \
+    n = i,
+
+
+// See WasmLLIntPlan to see how this bytecode is constructed.
+// This is a simple accumulator-based bytecode for setting up a frame and marshalling args
+// Each argument reads or writes to the accumulator
+// On JSValue32_64 platforms, reg is actually two registers for 64-bit operations
+enum class JSEntrypointInterpreterCalleeMetadata : int8_t {
+    FOR_EACH_JS_TO_WASM_WRAPPER_METADATA_OPCODE(DEFINE_OP)
+
+    InvalidRegister,
+
+    // We mask opcodes in the llint to prevent arbitrary jumps.
+    OpcodeMask = 63,
+
+    // This is the first byte of every program
+    FrameSize, // size : int8_t
+
+    InvalidOp,
+};
+
+#undef DEFINE_OP
+
+enum class MetadataReadMode {
+    Read,
+    Write
+};
+
+#if USE(JSVALUE64)
+
+constexpr inline JSEntrypointInterpreterCalleeMetadata jsEntrypointMetadataForGPR(GPRReg g, MetadataReadMode mode)
+{
+    if (mode == MetadataReadMode::Write) {
+        for (unsigned i = 0; i < GPRInfo::numberOfArgumentRegisters; ++i) {
+            if (g == GPRInfo::toArgumentRegister(i)) {
+                return static_cast<JSEntrypointInterpreterCalleeMetadata>(
+                    static_cast<int8_t>(JSEntrypointInterpreterCalleeMetadata::WA0) + i);
+            }
+        }
+
+        if (g == GPRInfo::returnValueGPR)
+            return JSEntrypointInterpreterCalleeMetadata::WR0;
+        if (g == GPRInfo::returnValueGPR2)
+            return JSEntrypointInterpreterCalleeMetadata::WR1;
+
+        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(false);
+        return JSEntrypointInterpreterCalleeMetadata::InvalidRegister;
     }
 
-    inline bool hasReplacement() const { return !!m_replacementCallee; }
+    if (g == GPRInfo::argumentGPR0)
+        return JSEntrypointInterpreterCalleeMetadata::WA0_READ;
 
-    inline void setReplacement(RefPtr<Wasm::Callee> callee)
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(false);
+    return JSEntrypointInterpreterCalleeMetadata::InvalidRegister;
+}
+
+constexpr inline JSEntrypointInterpreterCalleeMetadata jsEntrypointMetadataForFPR(FPRReg f, MetadataReadMode mode)
+{
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(mode == MetadataReadMode::Write);
+
+    for (unsigned i = 0; i < GPRInfo::numberOfArgumentRegisters; ++i) {
+        if (f == FPRInfo::toArgumentRegister(i)) {
+            return static_cast<JSEntrypointInterpreterCalleeMetadata>(
+                static_cast<int8_t>(JSEntrypointInterpreterCalleeMetadata::WAF0) + i);
+        }
+    }
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(false);
+    return JSEntrypointInterpreterCalleeMetadata::InvalidRegister;
+}
+
+inline void dumpJSEntrypointInterpreterCalleeMetadata(const Vector<JSEntrypointInterpreterCalleeMetadata>& data)
+{
+    constexpr auto printOp = [](JSEntrypointInterpreterCalleeMetadata o) {
+        switch (o) {
+        case JSEntrypointInterpreterCalleeMetadata::Memory: dataLog("Memory"); break;
+        case JSEntrypointInterpreterCalleeMetadata::Done: dataLog("Done"); break;
+        case JSEntrypointInterpreterCalleeMetadata::FrameSize: dataLog("FrameSize"); break;
+        case JSEntrypointInterpreterCalleeMetadata::LoadI32: dataLog("LoadI32"); break;
+        case JSEntrypointInterpreterCalleeMetadata::LoadF32: dataLog("LoadF32"); break;
+        case JSEntrypointInterpreterCalleeMetadata::LoadF64: dataLog("LoadF64"); break;
+        case JSEntrypointInterpreterCalleeMetadata::StoreI32: dataLog("StoreI32"); break;
+        case JSEntrypointInterpreterCalleeMetadata::StoreF32: dataLog("StoreF32"); break;
+        case JSEntrypointInterpreterCalleeMetadata::StoreF64: dataLog("StoreF64"); break;
+        case JSEntrypointInterpreterCalleeMetadata::LoadI64: dataLog("LoadI64"); break;
+        case JSEntrypointInterpreterCalleeMetadata::StoreI64: dataLog("StoreI64"); break;
+        case JSEntrypointInterpreterCalleeMetadata::BoxInt32: dataLog("BoxInt32"); break;
+        case JSEntrypointInterpreterCalleeMetadata::BoxFloat32: dataLog("BoxFloat32"); break;
+        case JSEntrypointInterpreterCalleeMetadata::BoxFloat64: dataLog("BoxFloat64"); break;
+        case JSEntrypointInterpreterCalleeMetadata::UnBoxInt32: dataLog("UnBoxInt32"); break;
+        case JSEntrypointInterpreterCalleeMetadata::UnBoxFloat32: dataLog("UnBoxFloat32"); break;
+        case JSEntrypointInterpreterCalleeMetadata::UnBoxFloat64: dataLog("UnBoxFloat64"); break;
+        case JSEntrypointInterpreterCalleeMetadata::Zero: dataLog("Zero"); break;
+        case JSEntrypointInterpreterCalleeMetadata::Undefined: dataLog("Undefined"); break;
+        case JSEntrypointInterpreterCalleeMetadata::BoxInt64: dataLog("BoxInt64"); break;
+        case JSEntrypointInterpreterCalleeMetadata::UnBoxInt64: dataLog("UnBoxInt64"); break;
+        case JSEntrypointInterpreterCalleeMetadata::Call: dataLog("Call"); break;
+        case JSEntrypointInterpreterCalleeMetadata::WA0_READ: dataLog("WA0_READ"); break;
+        default: {
+            RELEASE_ASSERT(o >= JSEntrypointInterpreterCalleeMetadata::WA0);
+            RELEASE_ASSERT(o < JSEntrypointInterpreterCalleeMetadata::InvalidRegister);
+            if (o < JSEntrypointInterpreterCalleeMetadata::WR0) {
+                dataLog("WA");
+                dataLog(static_cast<int8_t>(o) - static_cast<int8_t>(JSEntrypointInterpreterCalleeMetadata::WA0));
+            } else if (o < JSEntrypointInterpreterCalleeMetadata::WAF0) {
+                dataLog("R");
+                dataLog(static_cast<int8_t>(o) - static_cast<int8_t>(JSEntrypointInterpreterCalleeMetadata::WR0));
+            } else {
+                dataLog("FA");
+                dataLog(static_cast<int8_t>(o) - static_cast<int8_t>(JSEntrypointInterpreterCalleeMetadata::WAF0));
+            }
+        }
+        }
+        dataLog(" ");
+    };
+    constexpr auto printOffset = [](JSEntrypointInterpreterCalleeMetadata o) {
+        dataLog("cfr[", static_cast<int8_t>(o), "]");
+        dataLog(" ");
+    };
+    for (unsigned pc = 0; pc < data.size();) {
+        switch (data[pc]) {
+        case JSEntrypointInterpreterCalleeMetadata::FrameSize:
+            printOp(data[pc++]);
+            dataLog(static_cast<int>(data[pc++]));
+            break;
+        case JSEntrypointInterpreterCalleeMetadata::LoadI32:
+        case JSEntrypointInterpreterCalleeMetadata::LoadF32:
+        case JSEntrypointInterpreterCalleeMetadata::LoadF64:
+        case JSEntrypointInterpreterCalleeMetadata::StoreI32:
+        case JSEntrypointInterpreterCalleeMetadata::StoreF32:
+        case JSEntrypointInterpreterCalleeMetadata::StoreF64:
+        case JSEntrypointInterpreterCalleeMetadata::LoadI64:
+        case JSEntrypointInterpreterCalleeMetadata::StoreI64:
+            printOp(data[pc++]);
+            printOffset(data[pc++]);
+            break;
+        default: printOp(data[pc++]);
+        }
+        dataLogLn();
+    }
+}
+
+#endif // USE(JSVALUE64)
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointInterpreterCallee);
+class JSEntrypointInterpreterCallee final : public JSEntrypointCallee,
+    public TrailingArray<JSEntrypointInterpreterCallee, JSEntrypointInterpreterCalleeMetadata> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSEntrypointInterpreterCallee);
+public:
+    static Ref<JSEntrypointInterpreterCallee> create(Vector<JSEntrypointInterpreterCalleeMetadata>&& metadata, LLIntCallee* callee)
+    {
+        auto metadataSize = metadata.size();
+        return adoptRef(*new (NotNull, JSEntrypointInterpreterCalleeMalloc::malloc(JSEntrypointInterpreterCallee::allocationSize(metadataSize))) JSEntrypointInterpreterCallee(WTFMove(metadata), callee));
+    }
+
+    void setReplacement(RefPtr<Wasm::Callee> callee)
     {
         // Note that we can compile the same function with multiple memory modes, which can cause the JS->Wasm stub generator to
         // race. That's fine, both stubs should do the same thing.
@@ -199,31 +398,24 @@ public:
 
     static constexpr ptrdiff_t offsetOfWasmCallee() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, wasmCallee); }
     static constexpr ptrdiff_t offsetOfWasmFunctionPrologue() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, wasmFunctionPrologue); }
-    static constexpr ptrdiff_t offsetOfFrameSize() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, frameSize); }
-
-    // Space for callee-saves; Not included in frameSize
-    static constexpr unsigned SpillStackSpaceAligned = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(3 * sizeof(UCPURegister));
-    // Extra space used to return argument register values from cpp before they get filled. Included in frameSize
-    static constexpr unsigned RegisterStackSpaceAligned = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(
-        FPRInfo::numberOfArgumentRegisters * bytesForWidth(Width::Width64) + GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister));
-
-    const unsigned ident { 0xBF };
-    const unsigned frameSize;
-    // This must be initialized after the callee is created unfortunately.
-    EncodedJSValue wasmCallee;
-    const TypeIndex typeIndex;
-    // In the JIT case, we want to always call the llint prologue from a jit function.
-    // In the no-jit case, we dont' care.
-    const CodePtr<LLIntToWasmEntryPtrTag> wasmFunctionPrologue;
+    static constexpr ptrdiff_t offsetOfMetadataStorage() { return offsetOfData(); }
 
 private:
-    JSEntrypointInterpreterCallee(unsigned frameSize, TypeIndex);
+    JSEntrypointInterpreterCallee(Vector<JSEntrypointInterpreterCalleeMetadata>&&, LLIntCallee*);
 
+public:
+    const intptr_t ident { 0xBF };
+    const intptr_t wasmCallee;
+    // In the JIT case, we want to always call the llint prologue from a jit function.
+    // In the no-jit case, we dont' care.
+    CodePtr<LLIntToWasmEntryPtrTag> wasmFunctionPrologue;
     RefPtr<Wasm::Callee> m_replacementCallee { nullptr };
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WasmToJSCallee);
+
 class WasmToJSCallee final : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(WasmToJSCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(WasmToJSCallee);
 public:
     friend class Callee;
 
@@ -244,8 +436,10 @@ private:
 
 #if ENABLE(JIT)
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSToWasmICCallee);
+
 class JSToWasmICCallee final : public JITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(JSToWasmICCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSToWasmICCallee);
 public:
     static Ref<JSToWasmICCallee> create()
     {
@@ -271,8 +465,10 @@ struct WasmCodeOrigin {
     unsigned moduleIndex;
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OptimizingJITCallee);
+
 class OptimizingJITCallee : public JITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(OptimizingJITCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(OptimizingJITCallee);
 public:
     const StackMap& stackmap(CallSiteIndex) const;
 
@@ -305,8 +501,10 @@ private:
 constexpr int32_t stackCheckUnset = 0;
 constexpr int32_t stackCheckNotNeeded = -1;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OSREntryCallee);
+
 class OSREntryCallee final : public OptimizingJITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(OSREntryCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(OSREntryCallee);
 public:
     static Ref<OSREntryCallee> create(CompilationMode compilationMode, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, uint32_t loopIndex)
     {
@@ -352,8 +550,10 @@ private:
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OMGCallee);
+
 class OMGCallee final : public OptimizingJITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(OMGCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(OMGCallee);
 public:
     static Ref<OMGCallee> create(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     {
@@ -373,8 +573,11 @@ private:
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
 
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BBQCallee);
+
 class BBQCallee final : public OptimizingJITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(BBQCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BBQCallee);
 public:
     static constexpr unsigned extraOSRValuesForLoopIndex = 1;
 
@@ -462,8 +665,10 @@ private:
 #endif
 
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(IPIntCallee);
+
 class IPIntCallee final : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(IPIntCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(IPIntCallee);
     friend class JSC::LLIntOffsetsExtractor;
     friend class Callee;
 public:
@@ -534,8 +739,10 @@ public:
     IPIntTierUpCounter m_tierUpCounter;
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LLIntCallee);
+
 class LLIntCallee final : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(LLIntCallee);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LLIntCallee);
     friend JSC::LLIntOffsetsExtractor;
     friend class Callee;
 public:

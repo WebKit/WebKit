@@ -196,6 +196,7 @@ bool LLIntPlan::ensureEntrypoint(LLIntCallee& llintCallee, unsigned functionInde
 #endif
 }
 
+#if USE(JSVALUE64)
 RefPtr<JSEntrypointCallee> LLIntPlan::tryCreateInterpretedJSToWasmCallee(unsigned functionIndex)
 {
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
@@ -207,36 +208,112 @@ RefPtr<JSEntrypointCallee> LLIntPlan::tryCreateInterpretedJSToWasmCallee(unsigne
         || functionSignature.argumentCount() > 16
         || functionSignature.returnCount() > 16)
         return nullptr;
+    Vector<JSEntrypointInterpreterCalleeMetadata> metadata;
+
     CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
 
-    RegisterAtOffsetList savedResultRegisters = wasmFrameConvention.computeResultsOffsetList();
-    size_t totalFrameSize = wasmFrameConvention.headerAndArgumentStackSizeInBytes;
-    totalFrameSize += savedResultRegisters.sizeOfAreaInBytes();
-    totalFrameSize += JSEntrypointInterpreterCallee::RegisterStackSpaceAligned;
-    totalFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(totalFrameSize);
+    {
+        RegisterAtOffsetList savedResultRegisters = wasmFrameConvention.computeResultsOffsetList();
+        size_t totalFrameSize = wasmFrameConvention.headerAndArgumentStackSizeInBytes;
+        totalFrameSize += savedResultRegisters.sizeOfAreaInBytes();
+        totalFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(totalFrameSize);
+
+        metadata.append(JSEntrypointInterpreterCalleeMetadata::FrameSize);
+        metadata.append(static_cast<JSEntrypointInterpreterCalleeMetadata>(safeCast<int8_t>(totalFrameSize / 8)));
+    }
+
+    if (m_moduleInformation->memoryCount())
+        metadata.append(JSEntrypointInterpreterCalleeMetadata::Memory);
 
     CallInformation jsFrameConvention = jsCallingConvention().callInformationFor(signature, CallRole::Callee);
 
-    // For now, we only support a few signatures.
     for (unsigned i = 0; i < functionSignature.argumentCount(); ++i) {
         RELEASE_ASSERT(jsFrameConvention.params[i].location.isStack());
+
         Type type = functionSignature.argumentType(i);
+        // Note: Loads are FP relative, Stores are SP relative.
+        auto jsParam = static_cast<JSEntrypointInterpreterCalleeMetadata>(safeCast<int8_t >(
+            (jsFrameConvention.params[i].location.offsetFromFP() + static_cast<int>(PayloadOffset)) / 8));
 
-        if (!wasmFrameConvention.params[i].location.isStackArgument()
-            && !type.isF32() && !type.isF64() && !type.isI32() && !type.isI64())
-            return nullptr;
+        if (!type.isI32())
+            return nullptr; // FIXME: eventually we should support this
+
+        if (wasmFrameConvention.params[i].location.isStackArgument()) {
+            auto wasmParam = static_cast<JSEntrypointInterpreterCalleeMetadata>(safeCast<int8_t>(
+                (wasmFrameConvention.params[i].location.offsetFromSP() + static_cast<int>(PayloadOffset)) / 8));
+            auto wasmParamTag = static_cast<JSEntrypointInterpreterCalleeMetadata>(safeCast<int8_t>(
+                (wasmFrameConvention.params[i].location.offsetFromSP() + static_cast<int>(TagOffset)) / 8));
+            auto loadType = (type.width() == Width32) ? JSEntrypointInterpreterCalleeMetadata::LoadI32 : JSEntrypointInterpreterCalleeMetadata::LoadI64;
+            auto storeType = (type.width() == Width32) ? JSEntrypointInterpreterCalleeMetadata::StoreI32 : JSEntrypointInterpreterCalleeMetadata::StoreI64;
+            metadata.append(loadType);
+            metadata.append(jsParam);
+            metadata.append(storeType);
+            metadata.append(wasmParam);
+
+            if (!is64Bit() && loadType == JSEntrypointInterpreterCalleeMetadata::LoadI32) {
+                metadata.append(JSEntrypointInterpreterCalleeMetadata::Zero);
+                metadata.append(JSEntrypointInterpreterCalleeMetadata::StoreI32);
+                metadata.append(wasmParamTag);
+            }
+        } else {
+            if (type.isF32() || type.isF64()) {
+                metadata.append(type.isF64() ? JSEntrypointInterpreterCalleeMetadata::LoadF64 : JSEntrypointInterpreterCalleeMetadata::LoadF32);
+                metadata.append(jsParam);
+                metadata.append(jsEntrypointMetadataForFPR(wasmFrameConvention.params[i].location.fpr(), MetadataReadMode::Write));
+            } else if (type.isI32() || type.isI64()) {
+                metadata.append(type.isI64() ? JSEntrypointInterpreterCalleeMetadata::LoadI64 : JSEntrypointInterpreterCalleeMetadata::LoadI32);
+                metadata.append(jsParam);
+                metadata.append(jsEntrypointMetadataForGPR(wasmFrameConvention.params[i].location.jsr().payloadGPR(), MetadataReadMode::Write));
+
+                if (!is64Bit() && type.isI32()) {
+                    metadata.append(JSEntrypointInterpreterCalleeMetadata::Zero);
+                    metadata.append(jsEntrypointMetadataForGPR(wasmFrameConvention.params[i].location.jsr().tagGPR(), MetadataReadMode::Write));
+                }
+            } else
+                return nullptr;
+        }
     }
-    if (functionSignature.returnCount() > 1)
+
+    metadata.append(JSEntrypointInterpreterCalleeMetadata::Call);
+
+    if (functionSignature.returnsVoid()) {
+        metadata.append(JSEntrypointInterpreterCalleeMetadata::Undefined);
+        metadata.append(jsEntrypointMetadataForGPR(JSRInfo::returnValueJSR.payloadGPR(), MetadataReadMode::Write));
+        if constexpr (!is64Bit()) {
+            metadata.append(JSEntrypointInterpreterCalleeMetadata::ShiftTag);
+            metadata.append(jsEntrypointMetadataForGPR(JSRInfo::returnValueJSR.tagGPR(), MetadataReadMode::Write));
+        }
+    } else if (functionSignature.returnCount() == 1) {
+        if (!functionSignature.returnType(0).isI32())
+            return nullptr; // FIXME: eventually we should support this
+
+        JSValueRegs inputJSR = wasmFrameConvention.results[0].location.jsr();
+        JSValueRegs outputJSR = jsFrameConvention.results[0].location.jsr();
+        metadata.append(jsEntrypointMetadataForGPR(inputJSR.payloadGPR(), MetadataReadMode::Read));
+        if (functionSignature.returnType(0).isI64())
+            metadata.append(JSEntrypointInterpreterCalleeMetadata::BoxInt64);
+        else if (functionSignature.returnType(0).isI32())
+            metadata.append(JSEntrypointInterpreterCalleeMetadata::BoxInt32);
+        else
+            return nullptr; // FIXME
+        metadata.append(jsEntrypointMetadataForGPR(outputJSR.payloadGPR(), MetadataReadMode::Write));
+        if (!is64Bit()) {
+            metadata.append(JSEntrypointInterpreterCalleeMetadata::ShiftTag);
+            metadata.append(jsEntrypointMetadataForGPR(outputJSR.tagGPR(), MetadataReadMode::Write));
+        }
+    } else
         return nullptr;
+    metadata.append(JSEntrypointInterpreterCalleeMetadata::Done);
 
-    if (functionSignature.returnCount()) {
-        auto type = functionSignature.returnType(0);
-        if (!type.isF32() && !type.isF64() && !type.isI32() && !type.isI64())
-            return nullptr;
-    }
+    if ((false))
+        dumpJSEntrypointInterpreterCalleeMetadata(metadata);
 
-    return JSEntrypointInterpreterCallee::create(totalFrameSize, typeIndex);
+    auto callee = JSEntrypointInterpreterCallee::create(WTFMove(metadata), &m_callees[functionIndex].get());
+    return callee;
 }
+#else
+RefPtr<JSEntrypointCallee> LLIntPlan::tryCreateInterpretedJSToWasmCallee(unsigned) { return nullptr; }
+#endif
 
 void LLIntPlan::didCompleteCompilation()
 {
@@ -266,11 +343,8 @@ void LLIntPlan::didCompleteCompilation()
                 }
             }
         }
-        if (auto& callee = m_entrypoints[functionIndex]) {
-            if (callee->compilationMode() == CompilationMode::JSEntrypointInterpreterMode)
-                static_cast<JSEntrypointInterpreterCallee*>(callee.get())->wasmCallee = CalleeBits::encodeNativeCallee(&m_callees[functionIndex].get());
+        if (auto& callee = m_entrypoints[functionIndex])
             m_jsEntrypointCallees.add(functionIndex, callee);
-        }
     }
 
     for (auto& unlinked : m_unlinkedWasmToWasmCalls) {
