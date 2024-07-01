@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>webvtt-white-space-pre-line</title>
+    <script src="resources/webvtt-rendering-test.js"></script>
+    <link rel="stylesheet" type="text/css" href="resources/reference.css">
+    <link rel="match" href="white-space-pre-line.html">
+    <body>
+        <div>Test rendering of wrapped text when <code>white-space: pre-line</code> is set.</div>
+        <div class="test-wrapper">
+            <div class="cue-test">
+                <div class="expected-track-display" style="width: 40%; left: 30%; bottom: 0px;">
+                    <span class="expected-cue" style="margin: auto">Test Text</span>
+                </div>
+            </div>
+            <video muted playsinline>
+                <source src="content/silence.m4a#t=0.05" type="audio/m4a">
+                <source src="content/silence.mp3#t=0.05" type="audio/mp3">
+                <track src="white-space-pre-line.webvtt" kind="captions" default>
+            </video>
+        </div>
+    </body>
+</html>
