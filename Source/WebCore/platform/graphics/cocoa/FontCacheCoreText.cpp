@@ -57,24 +57,18 @@ bool fontNameIsSystemFont(CFStringRef fontName)
     return CFStringGetLength(fontName) > 0 && CFStringGetCharacterAtIndex(fontName, 0) == '.';
 }
 
-static RetainPtr<CFArrayRef> variationAxes(CTFontRef font, ShouldLocalizeAxisNames shouldLocalizeAxisNames)
+static RetainPtr<CFArrayRef> variationAxesWithNonLocalizedAxesNames(CTFontDescriptorRef fontDescriptor)
 {
-#if defined(HAVE_CTFontCopyVariationAxesInternal) // This macro is defined inside CoreText, not WebKit.
-    if (shouldLocalizeAxisNames == ShouldLocalizeAxisNames::Yes)
-        return adoptCF(CTFontCopyVariationAxes(font));
-    return adoptCF(CTFontCopyVariationAxesInternal(font));
-#else
-    UNUSED_PARAM(shouldLocalizeAxisNames);
-    return adoptCF(CTFontCopyVariationAxes(font));
-#endif
-}
-
-#if USE(KCTFONTVARIATIONAXESATTRIBUTE)
-static RetainPtr<CFArrayRef> variationAxes(CTFontDescriptorRef fontDescriptor)
-{
+    // Reading kCTFontVariationAxesAttribute returns non localized axes names
     return adoptCF(static_cast<CFArrayRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontVariationAxesAttribute)));
 }
-#endif
+
+static RetainPtr<CFArrayRef> variationAxes(CTFontRef font, ShouldLocalizeAxisNames shouldLocalizeAxisNames)
+{
+    if (shouldLocalizeAxisNames == ShouldLocalizeAxisNames::Yes)
+        return adoptCF(CTFontCopyVariationAxes(font));
+    return variationAxesWithNonLocalizedAxesNames(CTFontCopyFontDescriptor(font));
+}
 
 VariationDefaultsMap defaultVariationValues(CTFontRef font, ShouldLocalizeAxisNames shouldLocalizeAxisNames)
 {
@@ -331,12 +325,7 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
     if (!adoptCF(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontVariationAttribute)))
         return result;
 
-#if USE(KCTFONTVARIATIONAXESATTRIBUTE)
-    auto variations = variationAxes(fontDescriptor);
-#else
-    auto font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor, 0, nullptr));
-    auto variations = variationAxes(font.get(), ShouldLocalizeAxisNames::No);
-#endif
+    auto variations = variationAxesWithNonLocalizedAxesNames(fontDescriptor);
     if (!variations)
         return result;
 
