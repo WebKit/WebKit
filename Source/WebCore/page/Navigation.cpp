@@ -623,8 +623,7 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
         return true;
     }
 
-    if (m_ongoingNavigateEvent)
-        abortOngoingNavigation(*m_ongoingNavigateEvent);
+    abortOngoingNavigationIfNeeded();
 
     promoteUpcomingAPIMethodTracker(destination->key());
 
@@ -793,6 +792,14 @@ bool Navigation::dispatchDownloadNavigateEvent(const URL& url, const String& dow
 {
     Ref destination = NavigationDestination::create(url, nullptr, false);
     return innerDispatchNavigateEvent(NavigationNavigationType::Push, WTFMove(destination), downloadFilename);
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#inform-the-navigation-api-about-aborting-navigation
+void Navigation::abortOngoingNavigationIfNeeded()
+{
+    if (!m_ongoingNavigateEvent)
+        return;
+    abortOngoingNavigation(*m_ongoingNavigateEvent);
 }
 
 } // namespace WebCore
