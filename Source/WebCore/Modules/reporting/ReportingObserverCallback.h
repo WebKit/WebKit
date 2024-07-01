@@ -40,6 +40,8 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<void> handleEvent(const Vector<Ref<Report>>&, ReportingObserver&) = 0;
+
+    virtual bool hasCallback() const = 0;
 };
 
 } // namespace WebCore

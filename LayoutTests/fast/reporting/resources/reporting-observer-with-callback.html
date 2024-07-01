@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+var reportingObserver = new ReportingObserver((reports, observer) => {
+    let d = document;
+    let p = d.createElement("p");
+    p.innerText = "I hope the document doesn't leak because of this!";
+    document.body.appendChild(p);
+});
+
+onload = () => parent.postMessage("frameLoaded");
+
+</script>
+</body>
+</html>
