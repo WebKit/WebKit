@@ -155,15 +155,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - runner: windows-2022
+          - runner: windows
             build-type: Release
             arch: amd64
             suffix: ""
-          - runner: windows-2022
+          - runner: windows
             build-type: Debug
             arch: amd64
             suffix: -debug
-    runs-on: windows-2022
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 90
     steps:
       - name: Install VS2022 BuildTools 17.9.7

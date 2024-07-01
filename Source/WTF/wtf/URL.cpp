@@ -240,15 +240,17 @@ static String decodeEscapeSequencesFromParsedURLForWindowsPath(const std::span<c
         // Fast path: no escape sequences.
         // That also means we don't have to worry about non-ASCII characters.
         // We just need to normalize slashes.
-        size_t lastSlash = 0;
+        size_t lastSlash = input[0] == '/' ? 1 : 0;
         size_t index = WTF::find(input, '/', lastSlash);
         while (index != notFound) {
+            ASSERT(index < length);
             builder.append(input.subspan(lastSlash, index - lastSlash));
             builder.append('\\');
             lastSlash = index + 1;
             index = WTF::find(input, '/', lastSlash);
         }
 
+        ASSERT(lastSlash <= length);
         builder.append(input.subspan(lastSlash));
         return builder.toString();
     }
