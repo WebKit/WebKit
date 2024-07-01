@@ -719,6 +719,11 @@ public:
         return OBJECT_OFFSETOF(VM, heap) + OBJECT_OFFSETOF(Heap, m_mutatorShouldBeFenced);
     }
 
+    static constexpr ptrdiff_t offsetOfTrapsBits()
+    {
+        return OBJECT_OFFSETOF(VM, m_traps) + VMTraps::offsetOfTrapsBits();
+    }
+
     static constexpr ptrdiff_t offsetOfSoftStackLimit()
     {
         return OBJECT_OFFSETOF(VM, m_softStackLimit);

@@ -59,8 +59,9 @@ namespace CheckTraps {
 }
 
 namespace Enter {
-    static constexpr GPRReg canBeOptimizedGPR { GPRInfo::regT0 };
-    static constexpr GPRReg localsToInitGPR { GPRInfo::regT1 };
+    static constexpr GPRReg scratch1GPR { GPRInfo::regT4 };
+    static constexpr GPRReg scratch2GPR { GPRInfo::regT5 };
+    static constexpr JSValueRegs scratch3JSR { JSRInfo::jsRegT32 };
 }
 
 namespace Instanceof {

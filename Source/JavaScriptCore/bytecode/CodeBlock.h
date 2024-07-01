@@ -171,6 +171,7 @@ public:
     unsigned numTmps() const { return m_unlinkedCode->hasCheckpoints() * maxNumCheckpointTmps; }
 
     static constexpr ptrdiff_t offsetOfNumParameters() { return OBJECT_OFFSETOF(CodeBlock, m_numParameters); }
+    static constexpr ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(CodeBlock, m_vm); }
 
     CodeBlock* alternative() const { return static_cast<CodeBlock*>(m_alternative.get()); }
     void setAlternative(VM&, CodeBlock*);

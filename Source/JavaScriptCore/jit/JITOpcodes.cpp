@@ -1469,18 +1469,68 @@ void JIT::emit_op_enter(const JSInstruction*)
     uint32_t localsToInit = count - CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters();
     RELEASE_ASSERT(localsToInit < count);
 
-    using BaselineJITRegisters::Enter::canBeOptimizedGPR;
-    using BaselineJITRegisters::Enter::localsToInitGPR;
+    using BaselineJITRegisters::Enter::scratch1GPR;
+    using BaselineJITRegisters::Enter::scratch2GPR;
+    using BaselineJITRegisters::Enter::scratch3JSR;
 
     if (m_profiledCodeBlock->couldBeTainted())
         store8(TrustedImm32(1), vm().addressOfMightBeExecutingTaintedCode());
 
-    move(TrustedImm32(canBeOptimized()), canBeOptimizedGPR);
-    move(TrustedImm32(localsToInit), localsToInitGPR);
-    nearCallThunk(CodeLocationLabel { vm().getCTIStub(op_enter_handlerGenerator).retaggedCode<NoPtrTag>() });
+    size_t startLocal = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters();
+    int startOffset = virtualRegisterForLocal(startLocal).offset();
+    ASSERT(startOffset <= 0);
+    int32_t base = (startOffset + 1) - localsToInit;
+
+    if (localsToInit == 1 && virtualRegisterForLocal(startLocal) == m_profiledCodeBlock->scopeRegister()) {
+        // This happens frequently. Only one var is used and it is |scope|. Since emitGetScope will fill it,
+        // we do not need to fill it to undefined.
+        localsToInit = 0;
+    }
+
+    if (localsToInit) {
+        moveTrustedValue(jsUndefined(), scratch3JSR);
+#if CPU(ARM64)
+        unsigned index = 0;
+        if (localsToInit & 0x1) {
+            storeValue(scratch3JSR, Address(GPRInfo::callFrameRegister, (base + index) * sizeof(Register)));
+            ++index;
+        }
+        if (localsToInit <= 10) {
+            for (; index < localsToInit; index += 2)
+                storePair64(scratch3JSR.payloadGPR(), scratch3JSR.payloadGPR(), Address(GPRInfo::callFrameRegister, (base + index) * sizeof(Register)));
+        } else {
+            addPtr(TrustedImm32((base + localsToInit) * sizeof(Register)), GPRInfo::callFrameRegister, scratch1GPR);
+            addPtr(TrustedImm32((base + index) * sizeof(Register)), GPRInfo::callFrameRegister, scratch2GPR);
+            auto initLoop = label();
+            storePair64(scratch3JSR.payloadGPR(), scratch3JSR.payloadGPR(), PostIndexAddress(scratch2GPR, sizeof(Register) * 2));
+            branchPtr(LessThan, scratch2GPR, scratch1GPR).linkTo(initLoop, this);
+        }
+#else
+        addPtr(TrustedImm32((base + localsToInit) * sizeof(Register)), GPRInfo::callFrameRegister, scratch1GPR);
+        addPtr(TrustedImm32(base * sizeof(Register)), GPRInfo::callFrameRegister, scratch2GPR);
+        auto initLoop = label();
+        storeValue(scratch3JSR, Address(scratch2GPR));
+        addPtr(TrustedImm32(sizeof(Register)), scratch2GPR);
+        branchPtr(LessThan, scratch2GPR, scratch1GPR).linkTo(initLoop, this);
+#endif
+    }
 
     emitGetScope(m_profiledCodeBlock->scopeRegister());
-    emitCheckTraps();
+
+    loadPtr(addressFor(CallFrameSlot::codeBlock), argumentGPR1);
+    loadPtr(Address(argumentGPR1, CodeBlock::offsetOfVM()), argumentGPR3);
+
+    addSlowCase(branchTest32(NonZero, Address(argumentGPR3, VM::offsetOfTrapsBits()), TrustedImm32(VMTraps::AsyncEvents))); // Fast check-traps.
+    addSlowCase(branchIfBarriered(argumentGPR3, argumentGPR1, argumentGPR2));
+#if ENABLE(DFG_JIT)
+    if (Options::useDFGJIT()) {
+        if (canBeOptimized()) {
+            load32(Address(argumentGPR1, CodeBlock::offsetOfJITExecuteCounter()), argumentGPR2);
+            addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForEntry()), argumentGPR2));
+            store32(argumentGPR2, Address(argumentGPR1, CodeBlock::offsetOfJITExecuteCounter()));
+        }
+    }
+#endif
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
@@ -1489,75 +1539,35 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
 
     jit.emitCTIThunkPrologue();
 
-    using BaselineJITRegisters::Enter::canBeOptimizedGPR; // Incoming
-
+    auto noTrap = jit.branchTest32(Zero, AbsoluteAddress(vm.traps().trapBitsAddress()), TrustedImm32(VMTraps::AsyncEvents));
     {
-        using BaselineJITRegisters::Enter::localsToInitGPR; // Incoming
-        constexpr GPRReg iteratorGPR = regT4;
-        constexpr GPRReg endGPR = regT5;
-        constexpr JSValueRegs undefinedJSR = jsRegT32;
-        static_assert(noOverlap(localsToInitGPR, canBeOptimizedGPR, iteratorGPR, undefinedJSR));
-
-        size_t startLocal = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters();
-        int startOffset = virtualRegisterForLocal(startLocal).offset();
-        ASSERT(startOffset <= 0);
-        jit.subPtr(GPRInfo::callFrameRegister, TrustedImm32((-startOffset - 1) * sizeof(Register)), endGPR);
-        jit.mul32(TrustedImm32(sizeof(Register)), localsToInitGPR, localsToInitGPR);
-        jit.subPtr(endGPR, localsToInitGPR, iteratorGPR);
-        jit.moveTrustedValue(jsUndefined(), undefinedJSR);
-
-#if CPU(ARM64)
-        auto evenCase = jit.branchTest32(Zero, localsToInitGPR, TrustedImm32(sizeof(Register)));
-        jit.store64(undefinedJSR.payloadGPR(), PostIndexAddress(iteratorGPR, sizeof(Register)));
-        evenCase.link(&jit);
-        auto initLoop = jit.label();
-        Jump initDone = jit.branch32(GreaterThanOrEqual, iteratorGPR, endGPR);
-        {
-            jit.storePair64(undefinedJSR.payloadGPR(), undefinedJSR.payloadGPR(), PostIndexAddress(iteratorGPR, sizeof(Register) * 2));
-            jit.jump(initLoop);
-        }
-        initDone.link(&jit);
-#else
-        auto initLoop = jit.label();
-        Jump initDone = jit.branch32(GreaterThanOrEqual, iteratorGPR, endGPR);
-        {
-            jit.storeValue(undefinedJSR, Address(iteratorGPR));
-            jit.addPtr(TrustedImm32(sizeof(Register)), iteratorGPR);
-            jit.jump(initLoop);
-        }
-        initDone.link(&jit);
-#endif
+        // Call slow operation
+        jit.store32(TrustedImm32(0), tagFor(CallFrameSlot::argumentCountIncludingThis));
+        jit.prepareCallOperation(vm);
+        loadGlobalObject(jit, argumentGPR1);
+        jit.setupArguments<decltype(operationHandleTraps)>(argumentGPR1);
+        jit.callOperation<OperationPtrTag>(operationHandleTraps);
+        jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel { vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>() }, &jit);
     }
+    noTrap.link(&jit);
 
     // emitWriteBarrier(m_codeBlock).
-    static_assert(noOverlap(canBeOptimizedGPR, argumentGPR1, argumentGPR2));
     jit.loadPtr(addressFor(CallFrameSlot::codeBlock), argumentGPR1);
-    Jump ownerIsRememberedOrInEden = jit.barrierBranch(vm, argumentGPR1, argumentGPR2);
+    auto ownerIsRememberedOrInEden = jit.barrierBranch(vm, argumentGPR1, argumentGPR2);
+    {
+        // op_enter is always at bytecodeOffset 0.
+        jit.store32(TrustedImm32(0), tagFor(CallFrameSlot::argumentCountIncludingThis));
+        jit.prepareCallOperation(vm);
 
-    // op_enter is always at bytecodeOffset 0.
-    jit.store32(TrustedImm32(0), tagFor(CallFrameSlot::argumentCountIncludingThis));
-    jit.prepareCallOperation(vm);
-
-    // save canBeOptimizedGPR (arguments to call below are in registers on all platforms, so ok to stack this).
-    // Note: we will do a call, so can't use pushToSave, as it does not maintain ABI stack alignment.
-    jit.subPtr(TrustedImmPtr(16), stackPointerRegister);
-    jit.storePtr(canBeOptimizedGPR, Address(stackPointerRegister));
-
-    jit.setupArguments<decltype(operationWriteBarrierSlowPath)>(TrustedImmPtr(&vm), argumentGPR1);
-    Call operationWriteBarrierCall = jit.call(OperationPtrTag);
-
-    jit.loadPtr(Address(stackPointerRegister), canBeOptimizedGPR); // Restore canBeOptimizedGPR
-    jit.addPtr(TrustedImmPtr(16), stackPointerRegister); // Restore stack pointer
-
+        jit.setupArguments<decltype(operationWriteBarrierSlowPath)>(TrustedImmPtr(&vm), argumentGPR1);
+        jit.callOperation<OperationPtrTag>(operationWriteBarrierSlowPath);
+    }
     ownerIsRememberedOrInEden.link(&jit);
 
 #if ENABLE(DFG_JIT)
-    Call operationOptimizeCall;
     if (Options::useDFGJIT()) {
         // emitEnterOptimizationCheck().
         JumpList skipOptimize;
-
-        skipOptimize.append(jit.branchTest32(Zero, canBeOptimizedGPR));
 
         jit.loadPtr(addressFor(CallFrameSlot::codeBlock), argumentGPR1);
         skipOptimize.append(jit.branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), Address(argumentGPR1, CodeBlock::offsetOfJITExecuteCounter())));
@@ -1571,7 +1581,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
         jit.move(TrustedImmPtr(&vm), vmPointerArgGPR);
         jit.move(TrustedImm32(0), bytecodeIndexBitsArgGPR);
 
-        operationOptimizeCall = jit.call(OperationPtrTag);
+        jit.callOperation<OperationPtrTag>(operationOptimize);
 
         skipOptimize.append(jit.branchTestPtr(Zero, returnValueGPR));
         jit.farJump(returnValueGPR, GPRInfo::callFrameRegister);
@@ -1584,11 +1594,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link<OperationPtrTag>(operationWriteBarrierCall, operationWriteBarrierSlowPath);
-#if ENABLE(DFG_JIT)
-    if (Options::useDFGJIT())
-        patchBuffer.link<OperationPtrTag>(operationOptimizeCall, operationOptimize);
-#endif
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "op_enter_handler"_s, "Baseline: op_enter_handler");
 }
 
@@ -1796,7 +1801,8 @@ void JIT::emit_op_super_sampler_end(const JSInstruction*)
 
 void JIT::emitSlow_op_enter(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emitSlow_op_check_traps(nullptr, iter);
+    linkAllSlowCases(iter);
+    nearCallThunk(CodeLocationLabel { vm().getCTIStub(op_enter_handlerGenerator).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emitSlow_op_check_traps(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)

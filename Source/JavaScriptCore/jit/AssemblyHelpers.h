@@ -1759,6 +1759,12 @@ public:
         load8(address, scratchGPR);
         return branch32(Above, scratchGPR, AbsoluteAddress(vm.heap.addressOfBarrierThreshold()));
     }
+
+    Jump branchIfBarriered(GPRReg vmGPR, GPRReg cellGPR, GPRReg scratchGPR)
+    {
+        load8(Address(cellGPR, JSCell::cellStateOffset()), scratchGPR);
+        return branch32(BelowOrEqual, scratchGPR, Address(vmGPR, VM::offsetOfHeapBarrierThreshold()));
+    }
     
     void barrierStoreLoadFence(VM& vm)
     {
