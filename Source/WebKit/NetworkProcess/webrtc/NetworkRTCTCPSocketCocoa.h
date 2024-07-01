@@ -53,6 +53,8 @@ public:
 
     NetworkRTCTCPSocketCocoa(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, int options, const String& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&, Ref<IPC::Connection>&&);
 
+    static void getInterfaceName(NetworkRTCProvider&, const URL&, const String& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&, CompletionHandler<void(String&&)>&&);
+
 private:
     // NetworkRTCProvider::Socket.
     WebCore::LibWebRTCSocketIdentifier identifier() const final { return m_identifier; }

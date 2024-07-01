@@ -77,6 +77,20 @@ static inline void processIncomingData(RetainPtr<nw_connection_t>&& nwConnection
     }).get());
 }
 
+static RetainPtr<nw_connection_t> createNWConnection(NetworkRTCProvider& rtcProvider, const char* hostName, const char* port, bool isTLS, const String& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain)
+{
+    auto host = adoptNS(nw_endpoint_create_host(hostName, port));
+    // FIXME: Handle TLS certificate validation like for other network code paths, using sec_protocol_options_set_verify_block
+    auto tcpTLS = adoptNS(nw_parameters_create_secure_tcp(isTLS ? NW_PARAMETERS_DEFAULT_CONFIGURATION : NW_PARAMETERS_DISABLE_PROTOCOL, ^(nw_protocol_options_t tcp_options) {
+        nw_tcp_options_set_no_delay(tcp_options, true);
+    }));
+
+    setNWParametersApplicationIdentifiers(tcpTLS.get(), rtcProvider.applicationBundleIdentifier(), rtcProvider.sourceApplicationAuditToken(), attributedBundleIdentifier);
+    setNWParametersTrackerOptions(tcpTLS.get(), isRelayDisabled, isFirstParty, isKnownTracker(domain));
+
+    return adoptNS(nw_connection_create(host.get(), tcpTLS.get()));
+}
+
 NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& remoteAddress, int options, const String& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain, Ref<IPC::Connection>&& connection)
     : m_identifier(identifier)
     , m_rtcProvider(rtcProvider)
@@ -86,17 +100,8 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
     auto hostName = remoteAddress.hostname();
     if (hostName.empty())
         hostName = remoteAddress.ipaddr().ToString();
-    auto host = adoptNS(nw_endpoint_create_host(hostName.c_str(), String::number(remoteAddress.port()).utf8().data()));
-    // FIXME: Handle TLS certificate validation like for other network code paths, using sec_protocol_options_set_verify_block
     bool isTLS = options & rtc::PacketSocketFactory::OPT_TLS;
-    auto tcpTLS = adoptNS(nw_parameters_create_secure_tcp(isTLS ? NW_PARAMETERS_DEFAULT_CONFIGURATION : NW_PARAMETERS_DISABLE_PROTOCOL, ^(nw_protocol_options_t tcp_options) {
-        nw_tcp_options_set_no_delay(tcp_options, true);
-    }));
-
-    setNWParametersApplicationIdentifiers(tcpTLS.get(), rtcProvider.applicationBundleIdentifier(), rtcProvider.sourceApplicationAuditToken(), attributedBundleIdentifier);
-    setNWParametersTrackerOptions(tcpTLS.get(), isRelayDisabled, isFirstParty, isKnownTracker(domain));
-
-    m_nwConnection = adoptNS(nw_connection_create(host.get(), tcpTLS.get()));
+    m_nwConnection = createNWConnection(rtcProvider, hostName.c_str(), String::number(remoteAddress.port()).utf8().data(), isTLS, attributedBundleIdentifier, isFirstParty, isRelayDisabled, domain);
 
     nw_connection_set_queue(m_nwConnection.get(), tcpSocketQueue());
     nw_connection_set_state_changed_handler(m_nwConnection.get(), makeBlockPtr([weakThis = WeakPtr { *this }, identifier = m_identifier, rtcProvider = Ref { rtcProvider }, connection = m_connection.copyRef()](nw_connection_state_t state, _Nullable nw_error_t error) {
@@ -206,6 +211,63 @@ void NetworkRTCTCPSocketCocoa::sendTo(std::span<const uint8_t> data, const rtc::
     nw_connection_send(m_nwConnection.get(), dataFromVector(WTFMove(buffer)).get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([identifier = m_identifier, connection = m_connection.copyRef(), options](_Nullable nw_error_t) {
         connection->send(Messages::LibWebRTCNetwork::SignalSentPacket { identifier, options.packet_id, rtc::TimeMillis() }, 0);
     }).get());
+}
+
+void NetworkRTCTCPSocketCocoa::getInterfaceName(NetworkRTCProvider& rtcProvider, const URL& url, const String& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain, CompletionHandler<void(String&&)>&& completionHandler)
+{
+    ASSERT(!isMainRunLoop());
+
+    bool isHTTPS = url.protocolIs("https"_s);
+    auto port = url.port().value_or(isHTTPS ? 443 : 80);
+    auto nwConnection = createNWConnection(rtcProvider, url.host().toString().utf8().data(), String::number(port).utf8().data(), isHTTPS, attributedBundleIdentifier, isFirstParty, isRelayDisabled, domain);
+
+    Function<void(String&&)> callback = [completionHandler = WTFMove(completionHandler), rtcProvider = Ref { rtcProvider }] (auto&& name) mutable {
+        rtcProvider->callOnRTCNetworkThread([completionHandler = WTFMove(completionHandler), name = WTFMove(name).isolatedCopy()] () mutable {
+            completionHandler(WTFMove(name));
+        });
+    };
+
+    nw_connection_set_queue(nwConnection.get(), tcpSocketQueue());
+    nw_connection_set_state_changed_handler(nwConnection.get(), makeBlockPtr([callback = WTFMove(callback), nwConnection](nw_connection_state_t state, _Nullable nw_error_t error) mutable {
+        auto checkInterface = [&] {
+            if (!nwConnection)
+                return;
+
+            auto path = adoptNS(nw_connection_copy_current_path(nwConnection.get()));
+            auto interface = adoptNS(nw_path_copy_interface(path.get()));
+
+            auto* name = nw_interface_get_name(interface.get());
+            callback(name ? String::fromUTF8(name) : String { });
+            nw_connection_cancel(nwConnection.get());
+            nwConnection = { };
+        };
+
+        switch (state) {
+        case nw_connection_state_preparing:
+            checkInterface();
+            return;
+        case nw_connection_state_ready:
+        case nw_connection_state_waiting:
+        case nw_connection_state_invalid:
+        case nw_connection_state_failed:
+            if (!nwConnection)
+                return;
+
+            callback({ });
+            nw_connection_cancel(nwConnection.get());
+            nwConnection = { };
+            return;
+        case nw_connection_state_cancelled:
+            if (!nwConnection)
+                return;
+
+            callback({ });
+            nwConnection = { };
+            return;
+        }
+    }).get());
+
+    nw_connection_start(nwConnection.get());
 }
 
 } // namespace WebKit

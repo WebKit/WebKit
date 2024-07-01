@@ -1782,6 +1782,7 @@ webkit.org/b/264805 imported/w3c/web-platform-tests/websockets/basic-auth.any.wo
 
 media/audioSession [ Skip ]
 http/tests/webrtc/audioSessionInFrames.html [ Skip ]
+http/wpt/webrtc/rtcNetworkInterface.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Media-related bugs

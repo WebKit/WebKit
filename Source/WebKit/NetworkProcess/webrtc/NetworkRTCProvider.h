@@ -137,6 +137,7 @@ private:
 
     void createResolver(LibWebRTCResolverIdentifier, String&&);
     void stopResolver(LibWebRTCResolverIdentifier);
+    void getInterfaceName(URL&&, WebPageProxyIdentifier, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain&&, CompletionHandler<void(String&&)>&&);
 
     void addSocket(WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<Socket>&&);
 

@@ -30,9 +30,13 @@
 
 #include "LibWebRTCNetwork.h"
 #include "Logging.h"
+#include "NetworkProcessConnection.h"
+#include "NetworkRTCProviderMessages.h"
+#include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/Document.h>
 #include <WebCore/LibWebRTCUtils.h>
+#include <WebCore/Page.h>
 #include <wtf/EnumTraits.h>
 
 namespace WebKit {
@@ -146,6 +150,25 @@ void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks
     if (m_enableEnumeratingAllNetworkInterfaces)
         filteredNetworks = networks;
     else {
+#if PLATFORM(COCOA)
+        if (!m_useMDNSCandidates && m_enableEnumeratingVisibleNetworkInterfaces && m_allowedInterfaces.isEmpty() && !m_hasQueriedInterface) {
+            RefPtr document = WebCore::Document::allDocumentsMap().get(m_documentIdentifier);
+            RefPtr page = document ? document->page() : nullptr;
+            RefPtr webPage = page ? WebPage::fromCorePage(*page) : nullptr;
+            if (webPage) {
+                m_hasQueriedInterface = true;
+
+                RegistrableDomain domain { document->url() };
+                bool isFirstParty = domain == RegistrableDomain(document->firstPartyForCookies());
+                bool isRelayDisabled = true;
+                WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkRTCProvider::GetInterfaceName { document->url(), webPage->webPageProxyIdentifier(), isFirstParty, isRelayDisabled, WTFMove(domain) }, [weakThis = WeakPtr { *this }] (auto&& interfaceName) {
+                    RefPtr protectedThis = weakThis.get();
+                    if (protectedThis && !interfaceName.isNull())
+                        protectedThis->signalUsedInterface(WTFMove(interfaceName));
+                }, 0);
+            }
+        }
+#endif
         for (auto& network : networks) {
             if (WTF::anyOf(network.ips, [&](const auto& ip) { return ipv4.rtcAddress() == ip.rtcAddress() || ipv6.rtcAddress() == ip.rtcAddress(); }) || (!m_useMDNSCandidates && m_enableEnumeratingVisibleNetworkInterfaces && m_allowedInterfaces.contains(String::fromUTF8(network.name))))
                 filteredNetworks.append(network);
@@ -164,6 +187,14 @@ void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks
             SignalNetworksChanged();
     });
 
+}
+
+const String& LibWebRTCNetworkManager::interfaceNameForTesting() const
+{
+    ASSERT(isMainRunLoop());
+    for (auto& name : m_allowedInterfaces)
+        return name;
+    return emptyString();
 }
 
 void LibWebRTCNetworkManager::signalUsedInterface(String&& name)

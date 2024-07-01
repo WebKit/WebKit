@@ -385,6 +385,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @property (assign, readonly) NSInteger _responseHeaderBytesReceived;
 @property (assign, readonly) int64_t _responseBodyBytesReceived;
 @property (assign, readonly) int64_t _responseBodyBytesDecoded;
+@property (nullable, copy, readonly) NSString* _interfaceName;
 #if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
 @property (assign, readonly) nw_connection_privacy_stance_t _privacyStance;
 #endif
