@@ -250,13 +250,14 @@ const GstStructure* GStreamerIncomingTrackProcessor::stats()
         return nullptr;
 
     m_stats.reset(gst_structure_new_empty("incoming-video-stats"));
-    uint64_t droppedVideoFrames = 0;
     GUniqueOutPtr<GstStructure> stats;
     g_object_get(m_fakeVideoSink.get(), "stats", &stats.outPtr(), nullptr);
-    if (!gst_structure_get_uint64(stats.get(), "dropped", &droppedVideoFrames))
+
+    auto droppedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "dropped"_s);
+    if (!droppedVideoFrames)
         return m_stats.get();
 
-    gst_structure_set(m_stats.get(), "frames-decoded", G_TYPE_UINT64, m_decodedVideoFrames, "frames-dropped", G_TYPE_UINT64, droppedVideoFrames, nullptr);
+    gst_structure_set(m_stats.get(), "frames-decoded", G_TYPE_UINT64, m_decodedVideoFrames, "frames-dropped", G_TYPE_UINT64, *droppedVideoFrames, nullptr);
     if (!m_videoSize.isZero())
         gst_structure_set(m_stats.get(), "frame-width", G_TYPE_UINT, static_cast<unsigned>(m_videoSize.width()), "frame-height", G_TYPE_UINT, static_cast<unsigned>(m_videoSize.height()), nullptr);
     return m_stats.get();
