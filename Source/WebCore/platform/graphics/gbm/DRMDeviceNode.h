@@ -27,7 +27,7 @@
 
 #if USE(LIBDRM)
 
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/CString.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
@@ -41,7 +41,7 @@ class String;
 
 namespace WebCore {
 
-class DRMDeviceNode : public RefCounted<DRMDeviceNode> {
+class DRMDeviceNode : public ThreadSafeRefCounted<DRMDeviceNode, WTF::DestructionThread::Main> {
 public:
     static RefPtr<DRMDeviceNode> create(CString&&);
     ~DRMDeviceNode();

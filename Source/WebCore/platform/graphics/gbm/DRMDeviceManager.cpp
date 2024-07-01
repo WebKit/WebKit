@@ -64,6 +64,7 @@ static void drmForeachDevice(Function<bool(drmDevice*)>&& functor)
 
 void DRMDeviceManager::initializeMainDevice(const String& deviceFile)
 {
+    RELEASE_ASSERT(isMainThread());
     RELEASE_ASSERT(!m_mainDevice.isInitialized);
     m_mainDevice.isInitialized = true;
     if (deviceFile.isEmpty())
@@ -111,18 +112,29 @@ struct gbm_device* DRMDeviceManager::mainGBMDeviceNode(NodeType nodeType) const
 
 RefPtr<DRMDeviceNode> DRMDeviceManager::deviceNode(const CString& filename)
 {
+    RELEASE_ASSERT(isMainThread());
     RELEASE_ASSERT(m_mainDevice.isInitialized);
 
     if (filename.isNull())
         return nullptr;
 
-    if (m_mainDevice.primaryNode && m_mainDevice.primaryNode->filename() == filename)
-        return m_mainDevice.primaryNode;
+    auto node = [&] -> RefPtr<DRMDeviceNode> {
+        if (m_mainDevice.primaryNode && m_mainDevice.primaryNode->filename() == filename)
+            return m_mainDevice.primaryNode;
 
-    if (m_mainDevice.renderNode && m_mainDevice.renderNode->filename() == filename)
-        return m_mainDevice.renderNode;
+        if (m_mainDevice.renderNode && m_mainDevice.renderNode->filename() == filename)
+            return m_mainDevice.renderNode;
 
-    return DRMDeviceNode::create(CString { filename.data() });
+        return DRMDeviceNode::create(CString { filename.data() });
+    }();
+
+#if USE(GBM)
+    // Make sure GBMDevice is created in the main thread.
+    if (node)
+        node->gbmDevice();
+#endif
+
+    return node;
 }
 
 } // namespace WebCore

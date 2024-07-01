@@ -41,6 +41,7 @@ namespace WebCore {
 
 RefPtr<DRMDeviceNode> DRMDeviceNode::create(CString&& filename)
 {
+    RELEASE_ASSERT(isMainThread());
     return adoptRef(*new DRMDeviceNode(WTFMove(filename)));
 }
 
@@ -63,6 +64,7 @@ struct gbm_device* DRMDeviceNode::gbmDevice() const
     if (m_gbmDevice)
         return m_gbmDevice.value();
 
+    RELEASE_ASSERT(isMainThread());
     m_fd = UnixFileDescriptor { open(m_filename.data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
     if (m_fd) {
         m_gbmDevice = gbm_create_device(m_fd.value());
