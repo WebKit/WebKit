@@ -196,20 +196,6 @@ static void webViewTitleChanged(WebKitWebView* webView, GParamSpec*, WPEView* vi
 }
 #endif
 
-static WebKitWebView* createWebViewForAutomationCallback(WebKitAutomationSession*, WebKitWebView* view)
-{
-    return view;
-}
-
-static void automationStartedCallback(WebKitWebContext*, WebKitAutomationSession* session, WebKitWebView* view)
-{
-    auto* info = webkit_application_info_new();
-    webkit_application_info_set_version(info, WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION, WEBKIT_MICRO_VERSION);
-    webkit_automation_session_set_application_info(session, info);
-    webkit_application_info_unref(info);
-
-    g_signal_connect(session, "create-web-view", G_CALLBACK(createWebViewForAutomationCallback), view);
-}
 
 static gboolean decidePermissionRequest(WebKitWebView *, WebKitPermissionRequest *request, gpointer)
 {
@@ -288,6 +274,49 @@ static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationActi
     g_hash_table_add(openViews, newWebView);
 
     return newWebView;
+}
+
+static WebKitWebView* createWebViewForAutomationCallback(WebKitAutomationSession*, WebKitWebView* view)
+{
+#if ENABLE_WPE_PLATFORM
+    // Creating new views in the old API is not supported by WPE's MiniBrowser, so we just return the same view as before
+    if (!useWPEPlatformAPI)
+        return view;
+
+    if (g_hash_table_size(openViews) == 1 && !webkit_web_view_get_uri(view)) {
+        webkit_web_view_load_uri(view, "about:blank");
+        return view;
+    }
+
+    auto* newWebView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "settings", webkit_web_view_get_settings(view),
+        "web-context", webkit_web_view_get_context(view),
+        "is-controlled-by-automation", TRUE,
+        "user-content-manager", webkit_web_view_get_user_content_manager(view),
+        "website-policies", webkit_web_view_get_website_policies(view),
+        nullptr));
+
+    auto* application = g_application_get_default();
+    g_signal_connect(newWebView, "create", G_CALLBACK(createWebView), application);
+    g_signal_connect(newWebView, "close", G_CALLBACK(webViewClose), application);
+    webkit_web_view_load_uri(newWebView, "about:blank");
+
+    g_hash_table_add(openViews, newWebView);
+
+    return newWebView;
+#else
+    return view;
+#endif
+}
+
+static void automationStartedCallback(WebKitWebContext*, WebKitAutomationSession* session, WebKitWebView* view)
+{
+    auto* info = webkit_application_info_new();
+    webkit_application_info_set_version(info, WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION, WEBKIT_MICRO_VERSION);
+    webkit_automation_session_set_application_info(session, info);
+    webkit_application_info_unref(info);
+
+    g_signal_connect(session, "create-web-view", G_CALLBACK(createWebViewForAutomationCallback), view);
 }
 
 static WebKitFeature* findFeature(WebKitFeatureList* featureList, const char* identifier)
@@ -503,9 +532,7 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
         g_object_unref(file);
         webkit_web_view_load_uri(webView, url);
         g_free(url);
-    } else if (automationMode)
-        webkit_web_view_load_uri(webView, "about:blank");
-    else
+    } else if (!automationMode)
         webkit_web_view_load_uri(webView, "https://wpewebkit.org");
 
     g_object_unref(webContext);
