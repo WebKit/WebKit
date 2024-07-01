@@ -1,0 +1,16 @@
+No intrinsic attributes:
+viewBox and height:
+viewBox and width:
+viewBox, width, height:
+Just viewBox:
+
+PASS svg 1
+FAIL svg 2 assert_equals:
+<svg height="40" viewBox="0 0 4 1" data-expected-client-width="160" data-expected-client-height="40"></svg>
+clientWidth expected 160 but got 300
+PASS svg 3
+PASS svg 4
+FAIL svg 5 assert_equals:
+<svg viewBox="0 0 4 1" data-expected-client-width="600" data-expected-client-height="150"></svg>
+clientWidth expected 600 but got 300
+
