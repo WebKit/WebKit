@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that ReportingObserver callbacks do not leak documents.");
+
+jsTestIsAsync = true;
+var framesToCreate = 20;
+var allFrames = new Array(framesToCreate);
+
+for (let i = 0; i < framesToCreate; ++i) {
+    let iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+    allFrames[i] = iframe;
+}
+
+function iframeForMessage(message)
+{
+    return allFrames.find(frame => frame.contentWindow === message.source);
+}
+
+var failCount = 0;
+function iframeLeaked()
+{
+    if (++failCount >= framesToCreate) {
+        testFailed("All iframe documents leaked.");
+        finishJSTest();
+    }
+}
+
+function iframeLoaded(iframe)
+{
+    let frameDocumentID = internals.documentIdentifier(iframe.contentWindow.document);
+    let checkCount = 0;
+
+    iframe.addEventListener("load", () => {
+        let handle = setInterval(() => {
+            gc();
+            if (!internals.isDocumentAlive(frameDocumentID)) {
+                clearInterval(handle);
+                testPassed("The iframe document didn't leak");
+                finishJSTest();
+            }
+            if (++checkCount > 5) {
+                clearInterval(handle);
+                iframeLeaked();
+            }
+        }, 10);
+    });
+
+    iframe.src = "about:blank";
+}
+
+onload = () => {
+    if (!(window.internals && window.testRunner)) {
+        testFailed("Test requires internals and testRunner.");
+        finishJSTest();
+    }
+
+    window.addEventListener("message", message => iframeLoaded(iframeForMessage(message)));
+
+    allFrames.forEach(iframe => iframe.src = "./resources/reporting-observer-with-callback.html");
+};
+
+</script>
+</body>
+</html>

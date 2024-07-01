@@ -703,6 +703,7 @@ bindings/js/JSReadableStreamSourceCustom.cpp
 bindings/js/JSRemoteDOMWindowBase.cpp
 bindings/js/JSRemoteDOMWindowCustom.cpp
 bindings/js/JSReportBodyCustom.cpp
+bindings/js/JSReportingObserverCustom.cpp
 bindings/js/JSResizeObserverCustom.cpp
 bindings/js/JSResizeObserverEntryCustom.cpp
 bindings/js/JSSVGPathSegCustom.cpp

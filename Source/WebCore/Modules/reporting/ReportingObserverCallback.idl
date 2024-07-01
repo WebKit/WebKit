@@ -27,4 +27,4 @@
 
 typedef sequence<Report> ReportList;
 
-callback ReportingObserverCallback = undefined (ReportList reports, ReportingObserver observer);
+[ IsWeakCallback ] callback ReportingObserverCallback = undefined (ReportList reports, ReportingObserver observer);
