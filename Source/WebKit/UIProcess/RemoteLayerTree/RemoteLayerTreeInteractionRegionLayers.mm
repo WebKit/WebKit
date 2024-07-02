@@ -33,6 +33,7 @@
 #import "RemoteLayerTreeHost.h"
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/text/MakeString.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(RealitySystemSupport)
 SOFT_LINK_CLASS_OPTIONAL(RealitySystemSupport, RCPGlowEffectLayer)

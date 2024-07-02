@@ -38,6 +38,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/Base64.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 

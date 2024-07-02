@@ -58,6 +58,7 @@
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/MakeString.h>
 
 using namespace PAL;
 

@@ -38,7 +38,6 @@
 #import <wtf/MachSendRight.h>
 #import <wtf/ResourceUsage.h>
 #import <wtf/spi/cocoa/MachVMSPI.h>
-#import <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

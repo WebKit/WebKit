@@ -33,6 +33,7 @@
 #include "TrackPrivateBase.h"
 #include "TrackPrivateBaseClient.h"
 #include <wtf/Language.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 

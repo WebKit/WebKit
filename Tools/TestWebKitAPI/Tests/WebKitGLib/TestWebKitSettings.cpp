@@ -36,7 +36,7 @@
 #include <WebCore/SoupVersioning.h>
 #include <wtf/HashSet.h>
 #include <wtf/glib/GRefPtr.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 static WebKitTestServer* gServer;
 

@@ -41,6 +41,7 @@
 #include "WasmIPIntGenerator.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/GraphNodeWorklist.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
 

@@ -41,6 +41,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

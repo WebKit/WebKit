@@ -33,6 +33,7 @@
 #include <wtf/dragonbox/dragonbox_to_chars.h>
 #include <wtf/dtoa.h>
 #include <wtf/dtoa/double-conversion.h>
+#include <wtf/text/MakeString.h>
 
 using DoubleToStringConverter = WTF::double_conversion::DoubleToStringConverter;
 

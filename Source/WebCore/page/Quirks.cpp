@@ -70,6 +70,7 @@
 #include <JavaScriptCore/SourceCode.h>
 #include <JavaScriptCore/SourceProvider.h>
 #include <JavaScriptCore/StackVisitor.h>
+#include <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include <pal/system/ios/UserInterfaceIdiom.h>

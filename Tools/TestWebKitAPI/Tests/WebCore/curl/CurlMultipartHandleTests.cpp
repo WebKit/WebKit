@@ -31,6 +31,7 @@
 #include <WebCore/CurlMultipartHandleClient.h>
 #include <WebCore/CurlResponse.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/text/MakeString.h>
 
 namespace TestWebKitAPI {
 

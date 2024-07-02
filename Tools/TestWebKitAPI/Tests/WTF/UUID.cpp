@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include <wtf/UUID.h>
+#include <wtf/text/MakeString.h>
 
 TEST(WTF, BootSessionUUIDIdentity)
 {

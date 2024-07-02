@@ -83,6 +83,7 @@
 #include "TiledBacking.h"
 #include "ViewTransition.h"
 #include <wtf/SystemTracing.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(FULLSCREEN_API)

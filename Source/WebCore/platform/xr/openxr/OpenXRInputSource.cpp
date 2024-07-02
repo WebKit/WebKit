@@ -22,6 +22,8 @@
 
 #if ENABLE(WEBXR) && USE(OPENXR)
 
+#include <wtf/text/MakeString.h>
+
 constexpr auto OPENXR_INPUT_HAND_PATH { "/user/hand/"_s };
 constexpr auto OPENXR_INPUT_GRIP_PATH { "/input/grip/pose"_s };
 constexpr auto OPENXR_INPUT_AIM_PATH { "/input/aim/pose"_s };

@@ -54,6 +54,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>

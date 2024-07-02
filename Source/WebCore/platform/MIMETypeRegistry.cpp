@@ -37,6 +37,7 @@
 #include <wtf/SortedArrayMap.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 
 #if USE(CG)
 #include "ImageBufferUtilitiesCG.h"

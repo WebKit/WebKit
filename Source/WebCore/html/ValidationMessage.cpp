@@ -49,6 +49,7 @@
 #include "Text.h"
 #include "UserAgentParts.h"
 #include "ValidationMessageClient.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -95,7 +96,7 @@ void ValidationMessage::updateValidationMessage(HTMLElement& element, const Stri
         if (!updatedMessage.isEmpty()) {
             const AtomString& title = m_element->attributeWithoutSynchronization(titleAttr);
             if (!title.isEmpty())
-                updatedMessage = updatedMessage + '\n' + title;
+                updatedMessage = makeString(updatedMessage, '\n', title);
         }
     }
 

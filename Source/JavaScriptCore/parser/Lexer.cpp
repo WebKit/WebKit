@@ -37,6 +37,7 @@
 #include <wtf/HexNumber.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/dtoa.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

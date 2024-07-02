@@ -29,6 +29,7 @@
 
 #include "StyleBuilderState.h"
 #include "StyleCrossfadeImage.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

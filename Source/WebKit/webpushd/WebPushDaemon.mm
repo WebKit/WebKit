@@ -47,7 +47,7 @@
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/darwin/XPCSPI.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
 #import <UIKit/UIApplication.h>

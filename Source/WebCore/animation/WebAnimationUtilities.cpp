@@ -43,6 +43,7 @@
 #include "StyleOriginatedAnimation.h"
 #include "ViewTransition.h"
 #include "WebAnimation.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

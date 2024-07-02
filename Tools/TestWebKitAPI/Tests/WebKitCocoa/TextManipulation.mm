@@ -38,8 +38,7 @@
 #import <WebKit/_WKTextManipulationToken.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/text/StringConcatenate.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 
 typedef void(^ItemCallback)(_WKTextManipulationItem *);
 typedef void(^ItemListCallback)(NSArray<_WKTextManipulationItem *> *);

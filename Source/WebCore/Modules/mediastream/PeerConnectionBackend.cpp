@@ -52,7 +52,6 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 #if USE(GSTREAMER_WEBRTC)
 #include "GStreamerWebRTCUtils.h"

@@ -33,6 +33,7 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/MakeString.h>
 
 @interface CookieAcceptPolicyMessageHandler : NSObject <WKScriptMessageHandler>
 @end

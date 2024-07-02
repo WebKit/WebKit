@@ -23,6 +23,7 @@
 #include "GStreamerCommon.h"
 
 #include <gst/pbutils/pbutils.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)
 

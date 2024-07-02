@@ -79,6 +79,7 @@
 #include "TransformFunctions.h"
 #include "ViewTimeline.h"
 #include "WillChangeData.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace Style {
@@ -1312,12 +1313,12 @@ inline void BuilderConverter::createImplicitNamedGridLinesFromGridArea(const Nam
     for (auto& area : namedGridAreas.map) {
         GridSpan areaSpan = direction == GridTrackSizingDirection::ForRows ? area.value.rows : area.value.columns;
         {
-            auto& startVector = namedGridLines.map.add(area.key + "-start"_s, Vector<unsigned>()).iterator->value;
+            auto& startVector = namedGridLines.map.add(makeString(area.key, "-start"_s), Vector<unsigned>()).iterator->value;
             startVector.append(areaSpan.startLine());
             std::sort(startVector.begin(), startVector.end());
         }
         {
-            auto& endVector = namedGridLines.map.add(area.key + "-end"_s, Vector<unsigned>()).iterator->value;
+            auto& endVector = namedGridLines.map.add(makeString(area.key, "-end"_s), Vector<unsigned>()).iterator->value;
             endVector.append(areaSpan.endLine());
             std::sort(endVector.begin(), endVector.end());
         }

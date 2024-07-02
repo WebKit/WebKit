@@ -30,8 +30,8 @@
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "TemporalObject.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenate.h>
 
 namespace JSC {
 

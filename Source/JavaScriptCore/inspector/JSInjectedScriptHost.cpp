@@ -70,7 +70,7 @@
 #include <wtf/Lock.h>
 #include <wtf/PrintStream.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/MakeString.h>
 
 namespace Inspector {
 

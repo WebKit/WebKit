@@ -155,7 +155,7 @@
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/OSVariantSPI.h>
-#import <wtf/text/StringConcatenate.h>
+#import <wtf/text/MakeString.h>
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 #include "MediaSessionCoordinatorProxyPrivate.h"

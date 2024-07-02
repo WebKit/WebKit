@@ -37,6 +37,7 @@
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

@@ -40,6 +40,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
+#include <wtf/text/MakeString.h>
 
 OBJC_CLASS NSMutableArray;
 

@@ -52,6 +52,7 @@
 #include "Settings.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(VIDEO)

@@ -34,6 +34,7 @@
 #include "Exception.h"
 #include "JSCInlines.h"
 #include "RuntimeType.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
 

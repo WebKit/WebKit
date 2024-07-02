@@ -5267,12 +5267,13 @@ sub GenerateImplementation
         AddToImplIncludes("<JavaScriptCore/HeapAnalyzer.h>");
         AddToImplIncludes("ScriptExecutionContext.h");
         AddToImplIncludes("<wtf/URL.h>");
+        AddToImplIncludes("<wtf/text/MakeString.h>");
         push(@implContent, "void ${className}::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)\n");
         push(@implContent, "{\n");
         push(@implContent, "    auto* thisObject = jsCast<${className}*>(cell);\n");
         push(@implContent, "    analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());\n");
         push(@implContent, "    if (thisObject->scriptExecutionContext())\n");
-        push(@implContent, "        analyzer.setLabelForCell(cell, \"url \"_s + thisObject->scriptExecutionContext()->url().string());\n");
+        push(@implContent, "        analyzer.setLabelForCell(cell, makeString(\"url \"_s, thisObject->scriptExecutionContext()->url().string()));\n");
         push(@implContent, "    Base::analyzeHeap(cell, analyzer);\n");
         push(@implContent, "}\n\n");
     }

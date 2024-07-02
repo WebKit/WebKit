@@ -43,6 +43,7 @@
 #include "WasmOperationsInlines.h"
 #include "WasmTypeDefinitionInlines.h"
 #include "WebAssemblyFunction.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

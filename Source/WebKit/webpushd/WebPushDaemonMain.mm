@@ -44,6 +44,7 @@
 #import <wtf/OSObjectPtr.h>
 #import <wtf/WTFProcess.h>
 #import <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/text/MakeString.h>
 
 using WebKit::Daemon::EncodedMessage;
 using WebPushD::WebPushDaemon;

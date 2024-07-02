@@ -82,8 +82,8 @@
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/TextStream.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -2729,7 +2729,7 @@ String RenderLayerCompositor::layerTreeAsText(OptionSet<LayerTreeAsTextOptions> 
     // The true root layer is not included in the dump, so if we want to report
     // its repaint rects, they must be included here.
     if (options & LayerTreeAsTextOptions::IncludeRepaintRects)
-        return m_renderView.frameView().trackedRepaintRectsAsText() + layerTreeText;
+        return makeString(m_renderView.frameView().trackedRepaintRectsAsText(), layerTreeText);
 
     return layerTreeText;
 }

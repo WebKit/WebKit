@@ -35,6 +35,7 @@
 #include "MultiCacheQueryOptions.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

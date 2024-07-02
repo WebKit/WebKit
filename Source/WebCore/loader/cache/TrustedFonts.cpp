@@ -27,13 +27,13 @@
 #include "TrustedFonts.h"
 
 #include "Logging.h"
-
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/Base64.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -31,8 +31,8 @@
 #include "HTMLEntityParser.h"
 #include "HTMLNames.h"
 #include "MarkupTokenizerInlines.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
-
 
 namespace WebCore {
 

@@ -45,6 +45,7 @@
 #include "ParserError.h"
 #include "SyntheticModuleRecord.h"
 #include "VMTrapsInlines.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

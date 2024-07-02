@@ -28,7 +28,7 @@
 #include "Test.h"
 #include <wtf/StackTrace.h>
 #include <wtf/StringPrintStream.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(WIN) && defined(NDEBUG)

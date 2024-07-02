@@ -39,7 +39,7 @@
 #import <wtf/HexNumber.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/Entitlements.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 
 #if PLATFORM(MAC)
 #import <bsm/libbsm.h>

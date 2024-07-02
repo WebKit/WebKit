@@ -37,6 +37,7 @@
 #include "StylePropertiesInlines.h"
 #include "StylePropertyShorthand.h"
 #include <bitset>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 #ifndef NDEBUG

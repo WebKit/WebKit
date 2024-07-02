@@ -52,6 +52,7 @@
 #include <wtf/URL.h>
 #include <wtf/WindowsExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/win/WCharStringExtras.h>
 #include <wtf/win/GDIObject.h>

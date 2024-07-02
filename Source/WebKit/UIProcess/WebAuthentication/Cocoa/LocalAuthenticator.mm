@@ -52,6 +52,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
 
 #import "AuthenticationServicesCoreSoftLink.h"

@@ -41,6 +41,7 @@
 #include <algorithm>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/OptionSet.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

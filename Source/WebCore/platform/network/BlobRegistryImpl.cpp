@@ -50,6 +50,7 @@
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

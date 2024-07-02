@@ -25,6 +25,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -160,7 +161,7 @@ inline String QualifiedName::toString() const
     if (!hasPrefix())
         return localName();
 
-    return prefix().string() + ':' + localName().string();
+    return makeString(prefix().string(), ':', localName().string());
 }
 
 inline AtomString QualifiedName::toAtomString() const

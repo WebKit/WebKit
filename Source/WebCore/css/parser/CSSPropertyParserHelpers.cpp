@@ -108,7 +108,6 @@
 #include "TimingFunction.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/SortedArrayMap.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

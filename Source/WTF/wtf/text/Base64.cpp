@@ -26,6 +26,7 @@
 
 #include <limits.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/MakeString.h>
 
 namespace WTF {
 

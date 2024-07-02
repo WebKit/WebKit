@@ -35,6 +35,7 @@
 #include <wtf/URL.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/Base64.h>
+#include <wtf/text/MakeString.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>

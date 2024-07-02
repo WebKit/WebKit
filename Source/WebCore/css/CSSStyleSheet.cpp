@@ -44,8 +44,8 @@
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include "StyleSheetContentsCache.h"
-
 #include <wtf/HexNumber.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

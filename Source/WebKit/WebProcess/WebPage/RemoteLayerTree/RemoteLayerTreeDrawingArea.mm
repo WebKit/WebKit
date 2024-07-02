@@ -57,6 +57,7 @@
 #import <wtf/SetForScope.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/text/MakeString.h>
 
 namespace WebKit {
 using namespace WebCore;

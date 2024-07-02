@@ -41,6 +41,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>

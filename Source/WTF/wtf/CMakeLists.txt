@@ -420,6 +420,7 @@ set(WTF_PUBLIC_HEADERS
     text/IntegerToStringConversion.h
     text/LChar.h
     text/LineEnding.h
+    text/MakeString.h
     text/NullTextBreakIterator.h
     text/OrdinalNumber.h
     text/StringBuffer.h
@@ -434,7 +435,6 @@ set(WTF_PUBLIC_HEADERS
     text/SuperFastHash.h
     text/WYHash.h
     text/StringImpl.h
-    text/StringOperators.h
     text/StringParsingBuffer.h
     text/StringSearch.h
     text/StringToIntegerConversion.h

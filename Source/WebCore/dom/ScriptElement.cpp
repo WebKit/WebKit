@@ -62,6 +62,7 @@
 #include <JavaScriptCore/ImportMap.h>
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -38,6 +38,7 @@
 #include "ModuleAnalyzer.h"
 #include "Parser.h"
 #include "ScriptProfilingScope.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

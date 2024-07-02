@@ -94,7 +94,7 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/WTFProcess.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 #if PLATFORM(COCOA)
 #include <WebKit/WKContextPrivateMac.h>
@@ -2706,27 +2706,22 @@ void TestController::downloadDidStart(WKDownloadRef download)
 
 WKStringRef TestController::decideDestinationWithSuggestedFilename(WKDownloadRef download, WKStringRef filename)
 {
-    String suggestedFilename = toWTFString(filename);
+    auto suggestedFilename = toWTFString(filename);
 
-    if (m_shouldLogDownloadCallbacks) {
-        StringBuilder builder;
-        builder.append("Downloading URL with suggested filename \""_s);
-        builder.append(suggestedFilename);
-        builder.append("\"\n"_s);
-        m_currentInvocation->outputText(builder.toString());
-    }
+    if (m_shouldLogDownloadCallbacks)
+        m_currentInvocation->outputText(makeString("Downloading URL with suggested filename \""_s, suggestedFilename, "\"\n"_s));
 
     const char* dumpRenderTreeTemp = libraryPathForTesting();
     if (!dumpRenderTreeTemp)
         return nullptr;
 
-    String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
+    auto temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
     if (suggestedFilename.isEmpty())
         suggestedFilename = "Unknown"_s;
     
-    String destination = temporaryFolder + pathSeparator + suggestedFilename;
+    auto destination = makeString(temporaryFolder, pathSeparator, suggestedFilename);
     if (auto downloadIndex = m_downloadIndex++)
-        destination = destination + downloadIndex;
+        destination = makeString(destination, downloadIndex);
     if (FileSystem::fileExists(destination))
         FileSystem::deleteFile(destination);
 

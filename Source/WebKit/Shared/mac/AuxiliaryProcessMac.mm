@@ -58,6 +58,7 @@
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/Base64.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
 

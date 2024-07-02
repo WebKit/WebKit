@@ -32,6 +32,7 @@
 #include "Types.h"
 #include "WGSL.h"
 #include "WGSLShaderModule.h"
+#include <wtf/text/MakeString.h>
 
 namespace WGSL {
 

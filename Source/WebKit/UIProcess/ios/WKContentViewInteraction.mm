@@ -166,6 +166,7 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/TextStream.h>
 
 #if ENABLE(DRAG_SUPPORT)
@@ -3992,7 +3993,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
         else
             presentationRect = visualData.caretRectAtStart;
         
-        String selectionContext = textBefore + selectedText + textAfter;
+        auto selectionContext = makeString(textBefore, selectedText, textAfter);
         NSRange selectedRangeInContext = NSMakeRange(textBefore.length(), selectedText.length());
 
         if (auto textSelectionAssistant = view->_textInteractionWrapper)

@@ -60,6 +60,7 @@
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/Base64.h>
+#import <wtf/text/MakeString.h>
 
 // FIXME: Work through enabling on iOS
 #if ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT) && PLATFORM(MAC)

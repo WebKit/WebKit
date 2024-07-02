@@ -30,6 +30,7 @@
 #include "ParsingUtilities.h"
 #include "ResourceCryptographicDigest.h"
 #include "SharedBuffer.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {

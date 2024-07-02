@@ -35,6 +35,7 @@
 
 #include <functional>
 #include <wtf/CommaPrinter.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WTF {

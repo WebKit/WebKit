@@ -38,6 +38,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomStringHash.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
@@ -659,7 +660,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
         return previousSelector->selectorText(separator, builder);
     } else if (auto separatorText = separatorTextForNestingRelative(); !separatorText.isNull()) {
         // We have a separator but no tag history which can happen with implicit relative nesting selector
-        return separatorText + builder.toString();
+        return makeString(separatorText, builder.toString());
     }
 
     return builder.toString();

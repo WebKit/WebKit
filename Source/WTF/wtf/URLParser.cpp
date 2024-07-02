@@ -30,6 +30,7 @@
 #include <functional>
 #include <mutex>
 #include <wtf/text/CodePointIterator.h>
+#include <wtf/text/MakeString.h>
 
 namespace WTF {
 

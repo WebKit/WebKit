@@ -30,6 +30,7 @@
 
 #include "StyleBuilderState.h"
 #include "StyleFilterImage.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

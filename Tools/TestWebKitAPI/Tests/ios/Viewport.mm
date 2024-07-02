@@ -38,6 +38,7 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/MakeString.h>
 
 namespace TestWebKitAPI {
 

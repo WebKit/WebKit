@@ -25,6 +25,7 @@
 #include "GStreamerCommon.h"
 #include "NotImplemented.h"
 #include <gst/app/gstappsink.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtc_incoming_media_debug);

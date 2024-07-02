@@ -35,7 +35,7 @@
 #include "Test.h"
 #include "WTFTestUtilities.h"
 #include <sstream>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WTF {

@@ -112,6 +112,7 @@
 #include <wtf/Box.h>
 #include <wtf/GenericHashKey.h>
 #include <wtf/RecursableLambda.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace FTL {
 

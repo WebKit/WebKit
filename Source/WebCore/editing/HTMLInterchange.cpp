@@ -30,6 +30,7 @@
 #include "RenderStyleInlines.h"
 #include "RenderText.h"
 #include "Text.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 

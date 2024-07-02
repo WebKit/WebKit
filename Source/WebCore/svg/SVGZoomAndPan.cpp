@@ -22,7 +22,6 @@
 #include "config.h"
 #include "SVGZoomAndPan.h"
 
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {

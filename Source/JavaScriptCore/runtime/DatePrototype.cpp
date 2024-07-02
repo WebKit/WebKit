@@ -37,6 +37,7 @@
 #include "JSString.h"
 #include "TemporalInstant.h"
 #include <wtf/Assertions.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

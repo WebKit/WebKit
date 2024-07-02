@@ -39,7 +39,7 @@
 #include "StyleScope.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {

@@ -25,6 +25,7 @@
 #include "ExceptionHelpers.h"
 #include "JSBigInt.h"
 #include "JSGlobalObject.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

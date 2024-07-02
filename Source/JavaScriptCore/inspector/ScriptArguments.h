@@ -35,6 +35,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 class CallFrame;

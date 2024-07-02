@@ -69,6 +69,7 @@
 #include <wtf/PlatformRegisters.h>
 #include <wtf/SmallSet.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
 

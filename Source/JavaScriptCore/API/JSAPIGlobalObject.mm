@@ -52,6 +52,7 @@
 #import "SourceOrigin.h"
 #import "StrongInlines.h"
 #import <wtf/URL.h>
+#import <wtf/text/MakeString.h>
 
 namespace JSC {
 

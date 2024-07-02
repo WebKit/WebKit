@@ -32,6 +32,7 @@
 #import "ApplePayShippingMethod.h"
 #import <unicode/ucurr.h>
 #import <unicode/uloc.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/unicode/icu/ICUHelpers.h>
 
 namespace WebCore {

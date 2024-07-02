@@ -64,6 +64,7 @@
 #include <wtf/Scope.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(DATA_DETECTION)
 #include "DataDetection.h"

@@ -35,6 +35,7 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 

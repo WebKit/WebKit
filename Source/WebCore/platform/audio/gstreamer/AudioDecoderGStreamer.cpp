@@ -29,6 +29,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

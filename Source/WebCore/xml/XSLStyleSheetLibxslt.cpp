@@ -38,6 +38,7 @@
 #include <libxslt/xsltutils.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HexNumber.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {

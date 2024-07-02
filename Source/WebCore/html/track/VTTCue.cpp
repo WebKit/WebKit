@@ -63,7 +63,6 @@
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

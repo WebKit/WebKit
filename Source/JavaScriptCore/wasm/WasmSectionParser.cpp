@@ -39,6 +39,7 @@
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/HexNumber.h>
 #include <wtf/SetForScope.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
 

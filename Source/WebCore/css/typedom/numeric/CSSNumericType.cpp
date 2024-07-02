@@ -25,8 +25,10 @@
 
 #include "config.h"
 #include "CSSNumericType.h"
+
 #include "CSSNumericValue.h"
 #include "CSSUnits.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

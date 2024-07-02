@@ -165,6 +165,7 @@
 #import <wtf/SetForScope.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/TextBreakIterator.h>
 #import <wtf/text/TextStream.h>
@@ -2856,7 +2857,7 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
     if (auto compositionRange = frame->editor().compositionRange()) {
         auto markedTextBefore = plainTextForContext(makeSimpleRange(compositionRange->start, startPosition));
         auto markedTextAfter = plainTextForContext(makeSimpleRange(endPosition, compositionRange->end));
-        markedText = markedTextBefore + selectedText + markedTextAfter;
+        markedText = makeString(markedTextBefore, selectedText, markedTextAfter);
         if (!markedText.isEmpty()) {
             selectedRangeInMarkedText.location = markedTextBefore.length();
             selectedRangeInMarkedText.length = selectedText.length();

@@ -34,6 +34,7 @@
 #include "WasmIPIntPlan.h"
 #include "WasmLLIntPlan.h"
 #include "WasmWorklist.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
 

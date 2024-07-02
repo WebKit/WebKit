@@ -40,6 +40,7 @@
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/URLParser.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
 
 namespace WebKit {

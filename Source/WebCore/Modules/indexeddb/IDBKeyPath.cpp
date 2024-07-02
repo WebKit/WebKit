@@ -29,6 +29,7 @@
 
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

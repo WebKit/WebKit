@@ -190,6 +190,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/text/Base64.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/TextStream.h>
 

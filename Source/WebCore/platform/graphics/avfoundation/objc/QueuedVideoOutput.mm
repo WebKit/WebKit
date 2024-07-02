@@ -31,7 +31,6 @@
 #include <AVFoundation/AVPlayerItemOutput.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <pal/spi/cocoa/AVFoundationSPI.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>
 #include <pal/cocoa/AVFoundationSoftLink.h>

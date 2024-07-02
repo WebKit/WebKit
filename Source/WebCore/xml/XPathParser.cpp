@@ -36,6 +36,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 
 extern int xpathyyparse(WebCore::XPath::Parser&);

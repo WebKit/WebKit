@@ -29,6 +29,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include <JavaScriptCore/RegularExpression.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

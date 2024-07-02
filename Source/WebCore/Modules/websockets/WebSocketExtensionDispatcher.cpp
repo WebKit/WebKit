@@ -35,6 +35,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -121,7 +122,7 @@ bool WebSocketExtensionDispatcher::processHeaderValue(const String& headerValue)
         }
         // There is no extension which can process the response.
         if (index == m_processors.size()) {
-            fail(makeString("Received unexpected extension: "_s + extensionToken));
+            fail(makeString("Received unexpected extension: "_s, extensionToken));
             return false;
         }
     }

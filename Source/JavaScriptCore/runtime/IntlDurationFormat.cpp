@@ -31,6 +31,7 @@
 #include "IteratorOperations.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
+#include <wtf/text/MakeString.h>
 
 // While UListFormatter APIs are draft in ICU 67, they are stable in ICU 68 with the same function signatures.
 // So we can assume that these signatures of draft APIs are stable.

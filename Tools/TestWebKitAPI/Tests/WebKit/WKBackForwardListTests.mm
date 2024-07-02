@@ -39,6 +39,7 @@
 #import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKSessionState.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/WTFString.h>
 
 static NSString *loadableURL1 = @"data:text/html,no%20error%20A";

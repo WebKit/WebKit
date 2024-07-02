@@ -30,6 +30,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/text/MakeString.h>
 
 #if USE(GSTREAMER_GL)
 #include <gst/gl/gstglmemory.h>

@@ -46,6 +46,7 @@
 #include "VideoColorSpace.h"
 #include "WebCodecsVideoFrameAlgorithms.h"
 #include <wtf/Seconds.h>
+#include <wtf/text/MakeString.h>
 
 #if PLATFORM(COCOA)
 #include "VideoFrameCV.h"

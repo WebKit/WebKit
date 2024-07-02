@@ -42,6 +42,7 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
 

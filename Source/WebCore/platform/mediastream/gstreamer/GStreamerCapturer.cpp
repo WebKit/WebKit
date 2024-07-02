@@ -33,6 +33,7 @@
 #include <wtf/HexNumber.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/PrintStream.h>
+#include <wtf/text/MakeString.h>
 
 GST_DEBUG_CATEGORY(webkit_capturer_debug);
 #define GST_CAT_DEFAULT webkit_capturer_debug

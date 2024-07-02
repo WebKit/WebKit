@@ -50,6 +50,7 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 
 #if USE(GSTREAMER_MPEGTS)

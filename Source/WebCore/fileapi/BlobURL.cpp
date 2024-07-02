@@ -29,14 +29,14 @@
  */
 
 #include "config.h"
-
 #include "BlobURL.h"
+
 #include "Document.h"
 #include "SecurityOrigin.h"
 #include "ThreadableBlobRegistry.h"
-
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

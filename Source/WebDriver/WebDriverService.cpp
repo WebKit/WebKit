@@ -31,6 +31,7 @@
 #include "SessionHost.h"
 #include <wtf/RunLoop.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>
 

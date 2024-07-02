@@ -33,6 +33,7 @@
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/CurlStreamScheduler.h>
 #include <WebCore/WebSocketHandshake.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 

@@ -34,6 +34,7 @@
 #include <WebCore/ResourceResponse.h>
 #include <wtf/DebugUtilities.h>
 #include <wtf/HexNumber.h>
+#include <wtf/text/MakeString.h>
 
 namespace API {
 using namespace WebCore;

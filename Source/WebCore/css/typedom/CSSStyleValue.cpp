@@ -35,6 +35,7 @@
 #include "CSSStyleValueFactory.h"
 #include "CSSUnitValue.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {

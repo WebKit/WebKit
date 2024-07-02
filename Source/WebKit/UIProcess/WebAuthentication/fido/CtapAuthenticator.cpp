@@ -45,7 +45,7 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/Base64.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 #define CTAP_RELEASE_LOG(fmt, ...) RELEASE_LOG(WebAuthn, "%p [aaguid=%s, transport=%s] - CtapAuthenticator::" fmt, this, aaguidForDebugging().utf8().data(), transportForDebugging().utf8().data(), ##__VA_ARGS__)
 

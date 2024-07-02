@@ -21,8 +21,7 @@
 #pragma once
 
 #include <array>
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/StringImpl.h>
 
 namespace WTF {
 

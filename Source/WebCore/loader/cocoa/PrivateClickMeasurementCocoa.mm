@@ -27,6 +27,7 @@
 #import "PrivateClickMeasurement.h"
 
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/text/MakeString.h>
 
 #import <pal/cocoa/CryptoKitPrivateSoftLink.h>
 

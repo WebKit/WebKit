@@ -27,6 +27,8 @@
 
 #include "ServiceWorkerTypes.h"
 
+#include <wtf/text/MakeString.h>
+
 namespace WebCore {
 
 struct ServiceWorkerJobDataIdentifier {

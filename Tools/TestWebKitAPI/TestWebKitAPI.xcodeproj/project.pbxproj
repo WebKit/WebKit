@@ -655,7 +655,6 @@
 		7C83DF321D0A590C00FEBCF3 /* StringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81B50192140F232300D9EB58 /* StringBuilder.cpp */; };
 		7C83DF361D0A590C00FEBCF3 /* StringHasher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABA80816DDAB91002DB2FA /* StringHasher.cpp */; };
 		7C83DF371D0A590C00FEBCF3 /* StringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F1B44315CA434F00D1E4BF /* StringImpl.cpp */; };
-		7C83DF381D0A590C00FEBCF3 /* StringOperators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C01363C713C3997300EF3964 /* StringOperators.cpp */; settings = {COMPILER_FLAGS = "-O1"; }; };
 		7C83DF3A1D0A590C00FEBCF3 /* StringView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74D42D188228F300E5ED57 /* StringView.cpp */; };
 		7C83DF3D1D0A590C00FEBCF3 /* SetForScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BCD85691485C98B00EA2003 /* SetForScope.cpp */; };
 		7C83DF401D0A590C00FEBCF3 /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
@@ -3271,7 +3270,6 @@
 		BCBD372E125ABBE600D2C29F /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameMIMETypePNG.cpp; sourceTree = "<group>"; };
 		BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FailedLoad.cpp; sourceTree = "<group>"; };
-		C01363C713C3997300EF3964 /* StringOperators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringOperators.cpp; sourceTree = "<group>"; };
 		C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpacebarScrolling.cpp; sourceTree = "<group>"; };
 		C02B7853126613AE0026BF0F /* Carbon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Carbon.framework; sourceTree = SDKROOT; };
 		C02B7882126615410026BF0F /* spacebar-scrolling.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "spacebar-scrolling.html"; sourceTree = "<group>"; };
@@ -5478,7 +5476,6 @@
 				7CD4C26C1E2C0E6E00929470 /* StringConcatenate.cpp */,
 				93ABA80816DDAB91002DB2FA /* StringHasher.cpp */,
 				26F1B44315CA434F00D1E4BF /* StringImpl.cpp */,
-				C01363C713C3997300EF3964 /* StringOperators.cpp */,
 				7CD70C4E24A436EE00E61040 /* StringParsingBuffer.cpp */,
 				E3A24FDB28CAB75B008D810B /* StringSearch.cpp */,
 				9332EF932649BB68009F5D6D /* StringToIntegerConversion.cpp */,
@@ -6477,7 +6474,6 @@
 				7CD4C26E1E2C0E6E00929470 /* StringConcatenate.cpp in Sources */,
 				7C83DF361D0A590C00FEBCF3 /* StringHasher.cpp in Sources */,
 				7C83DF371D0A590C00FEBCF3 /* StringImpl.cpp in Sources */,
-				7C83DF381D0A590C00FEBCF3 /* StringOperators.cpp in Sources */,
 				7CD70C4F24A436EE00E61040 /* StringParsingBuffer.cpp in Sources */,
 				E3A24FDC28CAB75B008D810B /* StringSearch.cpp in Sources */,
 				9332EF942649BB68009F5D6D /* StringToIntegerConversion.cpp in Sources */,

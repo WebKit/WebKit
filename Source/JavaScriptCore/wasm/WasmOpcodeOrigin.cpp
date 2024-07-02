@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WasmOpcodeOrigin.h"
 
+#include <wtf/text/MakeString.h>
+
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 
 namespace JSC { namespace Wasm {

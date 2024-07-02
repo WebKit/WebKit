@@ -31,6 +31,7 @@
 #include "SVGAnimatedPropertyPairAccessor.h"
 #include "SVGAnimatedPropertyPairAnimatorImpl.h"
 #include "SVGNames.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

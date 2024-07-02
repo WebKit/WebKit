@@ -50,7 +50,7 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/XPCSPI.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 
 #if HAVE(RSA_BSSA)
 

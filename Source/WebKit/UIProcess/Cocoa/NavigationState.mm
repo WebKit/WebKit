@@ -82,6 +82,7 @@
 #import <wtf/URL.h>
 #import <wtf/WeakHashMap.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 #import "WKWebViewConfigurationPrivate.h"

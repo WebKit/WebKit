@@ -78,6 +78,7 @@
 #include <wtf/Box.h>
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace DFG {
 

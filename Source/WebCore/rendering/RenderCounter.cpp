@@ -483,8 +483,7 @@ String RenderCounter::originalText() const
         if (!child->actsAsReset())
             child = child->parent();
         while (CounterNode* parent = child->parent()) {
-            text = counterText(child->countInParent())
-                + m_counter.separator() + text;
+            text = makeString(counterText(child->countInParent()), m_counter.separator(), text);
             child = parent;
         }
     }

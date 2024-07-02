@@ -50,6 +50,7 @@
 #import <wtf/URL.h>
 #import <wtf/UUID.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
 
 #if ENABLE(GPU_PROCESS)
@@ -907,7 +908,7 @@ String WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory(const String& 
     if (path.isEmpty())
         path = NSHomeDirectory();
 
-    return path + subpath;
+    return makeString(path, subpath);
 }
 
 String WebsiteDataStore::parentBundleDirectory() const

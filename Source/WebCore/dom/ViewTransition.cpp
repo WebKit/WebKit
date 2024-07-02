@@ -50,6 +50,7 @@
 #include "StyleScope.h"
 #include "Styleable.h"
 #include "WebAnimation.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

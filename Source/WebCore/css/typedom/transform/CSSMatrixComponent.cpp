@@ -39,7 +39,7 @@
 #include "DOMMatrixInit.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

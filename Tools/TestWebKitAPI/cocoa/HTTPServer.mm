@@ -36,6 +36,7 @@
 #import <wtf/SHA1.h>
 #import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/text/Base64.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
 

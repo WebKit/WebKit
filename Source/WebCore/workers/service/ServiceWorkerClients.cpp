@@ -34,6 +34,7 @@
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerThread.h"
 #include "WebCoreOpaqueRoot.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {

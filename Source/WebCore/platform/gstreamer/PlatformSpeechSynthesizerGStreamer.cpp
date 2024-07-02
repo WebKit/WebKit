@@ -34,7 +34,7 @@
 #include "PlatformSpeechSynthesisVoice.h"
 #include "WebKitAudioSinkGStreamer.h"
 #include "WebKitFliteSourceGStreamer.h"
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

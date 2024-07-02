@@ -36,6 +36,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/text/MakeString.h>
 
 #import <pal/ios/UIKitSoftLink.h>
 

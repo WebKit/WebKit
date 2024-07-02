@@ -26,6 +26,7 @@
 #include <gio/gio.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

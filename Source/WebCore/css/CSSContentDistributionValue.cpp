@@ -27,6 +27,7 @@
 #include "CSSContentDistributionValue.h"
 
 #include "CSSValueKeywords.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

@@ -39,6 +39,7 @@
 #include <utility>
 #include <wtf/MainThread.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 #if HAVE(IOSURFACE)

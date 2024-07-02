@@ -32,6 +32,7 @@
 #include "PlatformCALayerClient.h"
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 
 // Enable this to add a light red wash over the visible portion of Tiled Layers, as computed

@@ -43,7 +43,7 @@
 #include <gst/video/video.h>
 #include <wtf/Condition.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
 #define GST_CAT_DEFAULT webkit_mse_debug

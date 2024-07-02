@@ -35,7 +35,7 @@
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/FileSystem.h>
 #include <wtf/UnalignedAccess.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
 

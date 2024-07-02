@@ -30,6 +30,7 @@
 
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <wtf/FileSystem.h>
+#include <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>

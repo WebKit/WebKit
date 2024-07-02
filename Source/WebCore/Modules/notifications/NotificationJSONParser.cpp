@@ -29,6 +29,7 @@
 
 #include "JSDOMConvertEnumeration.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {

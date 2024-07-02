@@ -44,6 +44,7 @@
 #import <sysexits.h>
 #import <wtf/FileSystem.h>
 #import <wtf/MemoryPressureHandler.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {

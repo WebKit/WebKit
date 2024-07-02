@@ -37,6 +37,7 @@
 #include "WasmTag.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
 

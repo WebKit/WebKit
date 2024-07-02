@@ -52,7 +52,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/StackTrace.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/text/StringBuilder.h>
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

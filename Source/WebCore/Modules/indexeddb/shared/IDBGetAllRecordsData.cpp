@@ -27,7 +27,7 @@
 #include "IDBGetAllRecordsData.h"
 
 #include "IDBKeyRangeData.h"
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

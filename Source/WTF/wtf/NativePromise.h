@@ -50,6 +50,7 @@
 #include <wtf/Unexpected.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/MakeString.h>
 
 namespace WTF {
 class NativePromiseRequest;

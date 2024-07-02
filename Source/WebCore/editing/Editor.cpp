@@ -131,6 +131,7 @@
 #include <pal/text/KillRing.h>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(MAC)

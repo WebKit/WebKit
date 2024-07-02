@@ -79,6 +79,7 @@
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/WeakHashSet.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(SEC_ITEM_SHIM)
 #include "SecItemShimProxy.h"

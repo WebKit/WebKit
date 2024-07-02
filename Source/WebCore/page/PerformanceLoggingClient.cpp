@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PerformanceLoggingClient.h"
 
+#include <wtf/text/MakeString.h>
+
 namespace WebCore {
 
 String PerformanceLoggingClient::synchronousScrollingReasonsAsString(OptionSet<SynchronousScrollingReason> reasons)

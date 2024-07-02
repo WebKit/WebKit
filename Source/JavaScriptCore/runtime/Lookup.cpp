@@ -22,6 +22,7 @@
 
 #include "GetterSetter.h"
 #include "StructureInlines.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 

@@ -32,6 +32,7 @@
 #include "HTMLInputElement.h"
 #include "RenderObject.h"
 #include "TextIterator.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXTextMarker);

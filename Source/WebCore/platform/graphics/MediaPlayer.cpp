@@ -33,6 +33,7 @@
 #include "DeprecatedGlobalSettings.h"
 #include "FourCC.h"
 #include "GraphicsContext.h"
+#include "InbandTextTrackPrivate.h"
 #include "IntRect.h"
 #include "LegacyCDMSession.h"
 #include "Logging.h"
@@ -54,7 +55,7 @@
 #include <wtf/NativePromise.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
-#include "InbandTextTrackPrivate.h"
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(MEDIA_SOURCE)
 #include "MediaSourcePrivateClient.h"

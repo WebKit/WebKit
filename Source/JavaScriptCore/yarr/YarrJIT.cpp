@@ -46,6 +46,7 @@
 #include <wtf/ListDump.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(YARR_JIT)
 

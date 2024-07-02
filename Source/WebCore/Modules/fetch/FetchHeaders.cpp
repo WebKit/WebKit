@@ -30,6 +30,7 @@
 #include "FetchHeaders.h"
 
 #include "HTTPParsers.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

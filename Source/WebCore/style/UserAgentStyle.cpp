@@ -65,6 +65,7 @@
 #include "StyleSheetContents.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace Style {
@@ -205,7 +206,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
     if (is<HTMLElement>(element)) {
         if (is<HTMLObjectElement>(element) || is<HTMLEmbedElement>(element)) {
             if (!plugInsStyleSheet && element.document().page()) {
-                String plugInsRules = RenderTheme::singleton().extraPlugInsStyleSheet() + element.document().page()->chrome().client().plugInExtraStyleSheet();
+                auto plugInsRules = makeString(RenderTheme::singleton().extraPlugInsStyleSheet(),  element.document().page()->chrome().client().plugInExtraStyleSheet());
                 if (plugInsRules.isEmpty())
                     plugInsRules = String(StringImpl::createWithoutCopying(plugInsUserAgentStyleSheet));
                 plugInsStyleSheet = parseUASheet(plugInsRules);

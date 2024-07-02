@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include <wtf/Assertions.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

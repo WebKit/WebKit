@@ -25,7 +25,7 @@
 #include "GStreamerCommon.h"
 #include "GStreamerRegistryScanner.h"
 #include "MediaStreamTrack.h"
-
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtc_outgoing_audio_debug);

@@ -38,6 +38,7 @@
 #include <wtf/NumberOfCores.h>
 #include <wtf/TZoneMallocInitialization.h>
 #include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringCommon.h>
 
 #if PLATFORM(COCOA)

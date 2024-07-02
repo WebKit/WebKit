@@ -34,6 +34,7 @@
 #include <wtf/PageBlock.h>
 #include <wtf/UUID.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 

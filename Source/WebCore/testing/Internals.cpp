@@ -260,8 +260,8 @@
 #include <wtf/ProcessID.h>
 #include <wtf/RunLoop.h>
 #include <wtf/URLHelpers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(CG)

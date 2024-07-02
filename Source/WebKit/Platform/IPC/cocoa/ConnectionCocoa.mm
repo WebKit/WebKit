@@ -44,7 +44,7 @@
 #import <wtf/MachSendRight.h>
 #import <wtf/RunLoop.h>
 #import <wtf/spi/darwin/XPCSPI.h>
-#import <wtf/text/StringConcatenate.h>
+#import <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "ProcessAssertion.h"

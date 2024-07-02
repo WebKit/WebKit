@@ -30,8 +30,7 @@
 #include <cstdint>
 #include <unicode/uvernum.h>
 #include <wtf/HexNumber.h>
-#include <wtf/text/StringConcatenate.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace TestWebKitAPI {
 

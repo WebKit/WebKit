@@ -65,7 +65,7 @@
 #include <wtf/PageBlock.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit::IPCTestingAPI {
 

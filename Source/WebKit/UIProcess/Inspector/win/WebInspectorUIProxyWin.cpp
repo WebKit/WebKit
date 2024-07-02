@@ -48,6 +48,7 @@
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebKit/WKPage.h>
 #include <wtf/FileSystem.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 

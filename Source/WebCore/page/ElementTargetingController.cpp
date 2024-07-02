@@ -67,6 +67,7 @@
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VisibilityAdjustment.h"
 #include <wtf/Scope.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

@@ -47,7 +47,7 @@
 #include "TemporalTimeZoneConstructor.h"
 #include "TemporalTimeZonePrototype.h"
 #include <wtf/Int128.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace JSC {
@@ -515,7 +515,7 @@ static double doubleNumberOption(JSGlobalObject* globalObject, JSObject* options
     RETURN_IF_EXCEPTION(scope, 0);
 
     if (std::isnan(doubleValue)) {
-        throwRangeError(globalObject, scope, *property.publicName() + " is NaN"_s);
+        throwRangeError(globalObject, scope, makeString(property.publicName(), " is NaN"_s));
         return 0;
     }
 

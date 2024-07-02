@@ -33,7 +33,7 @@
 #include "MutableStyleProperties.h"
 #include "SpringSolver.h"
 #include "UnitBezier.h"
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

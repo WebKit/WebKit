@@ -69,6 +69,7 @@
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <JavaScriptCore/RegularExpression.h>
 #include <wtf/NotFound.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 using JSON::ArrayOf;
@@ -1130,7 +1131,7 @@ ExceptionOr<void> InspectorStyleSheet::setRuleHeaderText(const InspectorCSSId& i
         // include the space between the `@whatever` and the query/name/etc.. However, not all rules must contain a
         // space between those, for example `@media(...)`. We need to add the space if the new header text does not
         // start with an opening parenthesis, otherwise we will create an invalid declaration (e.g. `@mediascreen`).
-        correctedHeaderText = " "_s + correctedHeaderText;
+        correctedHeaderText = makeString(' ', correctedHeaderText);
     }
 
     sheetText = makeStringByReplacing(sheetText, sourceData->ruleHeaderRange.start, sourceData->ruleHeaderRange.length(), correctedHeaderText);

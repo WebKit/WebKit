@@ -35,6 +35,7 @@
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include <sqlite3.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace IDBServer {

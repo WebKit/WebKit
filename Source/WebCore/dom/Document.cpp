@@ -314,6 +314,7 @@
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/UUID.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/TextStream.h>
 

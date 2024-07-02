@@ -25,7 +25,12 @@
 
 #include "config.h"
 #include "IsoAlignedMemoryAllocator.h"
+
 #include "MarkedBlock.h"
+
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+#include <wtf/text/MakeString.h>
+#endif
 
 namespace JSC {
 

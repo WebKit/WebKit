@@ -47,6 +47,7 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

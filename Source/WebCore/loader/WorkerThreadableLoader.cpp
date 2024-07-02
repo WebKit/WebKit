@@ -52,6 +52,7 @@
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
 #include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

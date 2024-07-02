@@ -112,7 +112,6 @@ set(TestWTF_SOURCES
     Tests/WTF/SuperFastHash.cpp
     Tests/WTF/WYHash.cpp
     Tests/WTF/StringImpl.cpp
-    Tests/WTF/StringOperators.cpp
     Tests/WTF/StringParsingBuffer.cpp
     Tests/WTF/StringSearch.cpp
     Tests/WTF/StringToIntegerConversion.cpp

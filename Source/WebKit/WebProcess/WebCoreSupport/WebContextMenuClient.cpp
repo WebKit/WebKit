@@ -36,6 +36,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/UserGestureIndicator.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 

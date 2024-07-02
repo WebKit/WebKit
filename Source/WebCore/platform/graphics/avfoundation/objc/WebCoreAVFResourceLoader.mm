@@ -44,6 +44,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/text/CString.h>
+#import <wtf/text/MakeString.h>
 
 @interface AVAssetResourceLoadingContentInformationRequest (WebKitExtensions)
 @property (nonatomic, getter=isEntireLengthAvailableOnDemand) BOOL entireLengthAvailableOnDemand;

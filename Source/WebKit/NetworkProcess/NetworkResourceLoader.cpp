@@ -81,6 +81,7 @@
 #include <wtf/CallbackAggregator.h>
 #include <wtf/Expected.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/MakeString.h>
 
 #if USE(QUICK_LOOK)
 #include <WebCore/PreviewConverter.h>

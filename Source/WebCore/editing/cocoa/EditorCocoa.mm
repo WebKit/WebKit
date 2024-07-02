@@ -72,6 +72,7 @@
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/text/MakeString.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/MultiRepresentationHEICAdditions.h>

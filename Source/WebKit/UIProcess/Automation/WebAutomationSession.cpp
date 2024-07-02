@@ -53,7 +53,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
 #include <wtf/text/TextBreakIterator.h>

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,7 @@
 #include "CSSAnchorValue.h"
 
 #include "CSSPrimitiveValue.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

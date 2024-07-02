@@ -34,6 +34,7 @@
 #include "WebMediaSessionManagerClient.h"
 #include <wtf/Algorithms.h>
 #include <wtf/Logger.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

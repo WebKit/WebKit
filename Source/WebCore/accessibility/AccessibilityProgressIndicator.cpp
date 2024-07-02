@@ -72,7 +72,7 @@ String AccessibilityProgressIndicator::valueDescription() const
 
     String gaugeRegionValue = gaugeRegionValueDescription();
     if (!gaugeRegionValue.isEmpty())
-        description = description.isEmpty() ? gaugeRegionValue : description + ", "_s + gaugeRegionValue;
+        description = description.isEmpty() ? gaugeRegionValue : makeString(description, ", "_s,  gaugeRegionValue);
 
     return description;
 }

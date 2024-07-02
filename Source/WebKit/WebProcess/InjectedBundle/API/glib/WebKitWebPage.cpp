@@ -59,6 +59,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 
 #if !ENABLE(2022_GLIB_API)
 #include "WebKitDOMDocumentPrivate.h"

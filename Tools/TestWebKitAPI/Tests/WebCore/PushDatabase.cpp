@@ -24,12 +24,14 @@
  */
 
 #include "config.h"
+
 #include "Utilities.h"
 #include <WebCore/PushDatabase.h>
 #include <WebCore/SQLiteDatabase.h>
 #include <algorithm>
 #include <iterator>
 #include <wtf/FileSystem.h>
+#include <wtf/text/MakeString.h>
 
 using namespace WebCore;
 

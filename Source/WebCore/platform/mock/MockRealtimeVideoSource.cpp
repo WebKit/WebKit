@@ -47,7 +47,7 @@
 #include <math.h>
 #include <wtf/NativePromise.h>
 #include <wtf/UUID.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(EXTENSION_CAPABILITIES)
 #include <wtf/cocoa/Entitlements.h>

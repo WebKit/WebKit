@@ -42,6 +42,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/WeakRandom.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 
 #import <pal/cocoa/WebPrivacySoftLink.h>
 

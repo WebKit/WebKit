@@ -33,6 +33,7 @@
 #include <wtf/SetForScope.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 #define updateErrorMessage(shouldPrintToken, ...) do {\
     propagateError(); \

@@ -98,6 +98,7 @@
 #include "WebContentReader.h"
 #include "markup.h"
 #include <wtf/SetForScope.h>
+#include <wtf/text/MakeString.h>
 #endif
 
 #if ENABLE(DATA_DETECTION)

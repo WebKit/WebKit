@@ -52,6 +52,7 @@
 #include "TextIterator.h"
 #include "WritingMode.h"
 #include <unicode/uchar.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

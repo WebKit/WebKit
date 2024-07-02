@@ -34,6 +34,7 @@
 #include "WebProcessProxy.h"
 #include <wtf/DebugUtilities.h>
 #include <wtf/URL.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 using namespace WebCore;

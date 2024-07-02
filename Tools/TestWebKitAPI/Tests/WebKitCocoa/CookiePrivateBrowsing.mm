@@ -37,7 +37,7 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/WTFString.h>
 
 static bool didRunJavaScriptAlertForCookiePrivateBrowsing;

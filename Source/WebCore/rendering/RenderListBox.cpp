@@ -70,6 +70,7 @@
 #include <math.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

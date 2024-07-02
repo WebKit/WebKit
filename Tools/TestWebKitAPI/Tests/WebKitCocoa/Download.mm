@@ -58,6 +58,7 @@
 #import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)

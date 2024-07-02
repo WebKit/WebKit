@@ -32,6 +32,7 @@
 #include <gst/app/gstappsink.h>
 #include <gst/gst.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

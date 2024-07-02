@@ -29,6 +29,7 @@
 #include "WTFTestUtilities.h"
 #include <wtf/MainThread.h>
 #include <wtf/URLParser.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace TestWebKitAPI {

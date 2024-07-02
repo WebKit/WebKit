@@ -29,7 +29,7 @@
 #include "IDBDatabase.h"
 #include "IDBTransaction.h"
 #include "IndexedDB.h"
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

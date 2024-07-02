@@ -44,6 +44,7 @@
 #include <wtf/DateMath.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/OptionSet.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>

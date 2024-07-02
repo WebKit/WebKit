@@ -59,6 +59,7 @@
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/SuspendableWorkQueue.h>
 #include <wtf/text/Base64.h>
+#include <wtf/text/MakeString.h>
 
 #define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
 #define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion)

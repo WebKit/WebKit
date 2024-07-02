@@ -55,6 +55,7 @@
 #import <wtf/HashMap.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
@@ -2048,7 +2049,7 @@ TEST(WebpagePreferences, ExtensionPageAdvancedPrivacyProtectionsReferrer)
         { "/subframe2.html"_s, { "<script>window.top.postMessage(document.referrer, '*');</script>"_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    server.addResponse("/subframe1.html"_s, { "<iframe src='http://127.0.0.1:"_s + server.port() + "/subframe2.html'></iframe>"_s });
+    server.addResponse("/subframe1.html"_s, { makeString("<iframe src='http://127.0.0.1:"_s, server.port(), "/subframe2.html'></iframe>"_s) });
 
     __block auto port = server.port();
     auto handler = adoptNS([TestURLSchemeHandler new]);

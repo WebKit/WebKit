@@ -61,8 +61,9 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/URLHash.h>
 #include <wtf/URLParser.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -506,7 +507,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(Loca
     String markupString = serializeFragment(node, SerializedNodes::SubtreeIncludingNode, &nodeList, ResolveURLs::No, std::nullopt, SerializeShadowRoots::AllForInterchange, { }, markupExclusionRules);
     auto nodeType = node.nodeType();
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
-        markupString = documentTypeString(node.document()) + markupString;
+        markupString = makeString(documentTypeString(node.document()), markupString);
 
     return create(markupString, *frame, WTFMove(nodeList), WTFMove(frameFilter), markupExclusionRules, mainResourceFilePath);
 }
@@ -542,7 +543,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const SimpleRange& range)
 
     // FIXME: This is always "for interchange". Is that right?
     Vector<Ref<Node>> nodeList;
-    String markupString = documentTypeString(document) + serializePreservingVisualAppearance(range, &nodeList, AnnotateForInterchange::Yes);
+    auto markupString = makeString(documentTypeString(document), serializePreservingVisualAppearance(range, &nodeList, AnnotateForInterchange::Yes));
     return create(markupString, *frame, WTFMove(nodeList), nullptr);
 }
 

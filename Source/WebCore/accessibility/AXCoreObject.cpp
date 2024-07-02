@@ -28,7 +28,9 @@
 
 #include "config.h"
 #include "AXCoreObject.h"
+
 #include "LocalFrameView.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

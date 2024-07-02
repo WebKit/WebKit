@@ -252,6 +252,7 @@
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/TextStream.h>
 

@@ -33,7 +33,7 @@
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

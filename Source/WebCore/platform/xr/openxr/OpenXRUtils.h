@@ -33,8 +33,7 @@
 #include "PlatformXR.h"
 #include <openxr/openxr.h>
 #include <openxr/openxr_platform.h>
-
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace PlatformXR {

@@ -31,6 +31,7 @@
 
 #include <WebCore/GStreamerCodecUtilities.h>
 #include <WebCore/GStreamerCommon.h>
+#include <wtf/text/MakeString.h>
 
 using namespace WebCore;
 

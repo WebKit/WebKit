@@ -29,6 +29,7 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGParserUtilities.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

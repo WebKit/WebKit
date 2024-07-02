@@ -30,6 +30,7 @@
 #include <wtf/DateMath.h>
 #include <wtf/HexNumber.h>
 #include <wtf/Seconds.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace OpenSSL {

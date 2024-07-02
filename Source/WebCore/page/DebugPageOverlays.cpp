@@ -48,6 +48,7 @@
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include <wtf/SortedArrayMap.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

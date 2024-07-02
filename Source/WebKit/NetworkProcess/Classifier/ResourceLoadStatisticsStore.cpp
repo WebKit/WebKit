@@ -56,6 +56,7 @@
 #include <wtf/StdSet.h>
 #include <wtf/SuspendableWorkQueue.h>
 #include <wtf/WeakHashSet.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebKit {

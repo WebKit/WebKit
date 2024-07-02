@@ -27,6 +27,7 @@
 #include <gst/app/gstappsink.h>
 #include <gst/audio/audio-info.h>
 #include <gst/base/gstadapter.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(MEDIA_STREAM)
 #include "GStreamerAudioData.h"

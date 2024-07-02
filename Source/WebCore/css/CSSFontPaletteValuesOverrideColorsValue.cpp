@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CSSFontPaletteValuesOverrideColorsValue.h"
 
+#include <wtf/text/MakeString.h>
+
 namespace WebCore {
 
 String CSSFontPaletteValuesOverrideColorsValue::customCSSText() const

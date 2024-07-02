@@ -26,6 +26,7 @@
 
 #include "GStreamerCommon.h"
 #include "GStreamerMockDeviceProvider.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 

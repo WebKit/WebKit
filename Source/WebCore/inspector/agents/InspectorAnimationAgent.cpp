@@ -61,6 +61,7 @@
 #include <wtf/Seconds.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 

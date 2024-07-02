@@ -39,6 +39,7 @@
 #include "ProcessCapabilities.h"
 #include "TransparencyLayerContextSwitcher.h"
 #include <wtf/text/Base64.h>
+#include <wtf/text/MakeString.h>
 
 #if USE(CG)
 #include "ImageBufferUtilitiesCG.h"

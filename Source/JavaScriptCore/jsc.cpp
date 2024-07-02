@@ -109,6 +109,7 @@
 #include <wtf/WTFProcess.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/Base64.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/threads/BinarySemaphore.h>
 #include <wtf/threads/Signals.h>
@@ -3810,8 +3811,7 @@ static void runInteractive(GlobalObject* globalObject)
             shouldQuit = !line;
             if (!line)
                 break;
-            source = source + String::fromUTF8(line);
-            source = source + '\n';
+            source = makeString(source, String::fromUTF8(line), '\n');
             checkSyntax(vm, jscSource(source, sourceOrigin), error);
             if (!line[0]) {
                 free(line);
