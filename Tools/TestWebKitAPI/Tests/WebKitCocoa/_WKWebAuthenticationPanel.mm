@@ -1092,6 +1092,24 @@ TEST(WebAuthenticationPanel, MakeCredentialPin)
     [webView waitForMessage:@"Succeeded!"];
 }
 
+//TODO: my silly little test
+//TEST(WebAuthenticationPanel, MakeCredentialPin)
+//{
+//    reset();
+//    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid-pin" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+//
+//    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+//
+//    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+//    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+//    [webView setUIDelegate:delegate.get()];
+//    [webView focus];
+//
+//    webAuthenticationPanelPin = "1234"_s;
+//    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+//    [webView waitForMessage:@"Succeeded!"];
+//}
+
 TEST(WebAuthenticationPanel, MakeCredentialPinAuthBlockedError)
 {
     reset();

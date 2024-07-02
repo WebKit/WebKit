@@ -28,10 +28,17 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "FidoAuthenticator.h"
+#include "WebCore/Pin.h"
 #include <WebCore/AuthenticatorGetInfoResponse.h>
 
 namespace fido {
 namespace pin {
+
+enum class PinRequestType : uint8_t {
+    kSetPin = 1,
+    kGetPinToken = 2,
+};
+
 class TokenRequest;
 }
 }
@@ -65,6 +72,8 @@ private:
     void continueRequestPinAfterGetKeyAgreement(Vector<uint8_t>&&, uint64_t retries);
     void continueGetPinTokenAfterRequestPin(const String& pin, const WebCore::CryptoKeyEC&);
     void continueRequestAfterGetPinToken(Vector<uint8_t>&&, const fido::pin::TokenRequest&);
+    void continueSetPinAfterRequestPin(const String& pin, const WebCore::CryptoKeyEC&);
+    void continueRequestAfterSetPin(Vector<uint8_t>&&, const fido::pin::SetPinRequest&);
     bool tryRestartPin(const fido::CtapDeviceResponseCode&);
 
     bool tryDowngrade();
@@ -76,6 +85,7 @@ private:
     fido::AuthenticatorGetInfoResponse m_info;
     bool m_isDowngraded { false };
     bool m_isKeyStoreFull { false };
+    fido::pin::PinRequestType m_requestType = fido::pin::PinRequestType::kGetPinToken; //TODO: probably should change this later
     size_t m_remainingAssertionResponses { 0 };
     Vector<Ref<WebCore::AuthenticatorAssertionResponse>> m_assertionResponses;
     Vector<uint8_t> m_pinAuth;

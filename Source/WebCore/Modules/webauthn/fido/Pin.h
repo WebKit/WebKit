@@ -134,7 +134,7 @@ private:
     explicit KeyAgreementResponse(Ref<WebCore::CryptoKeyEC>&&);
 };
 
-struct SetPinRequest {
+class SetPinRequest {
 public:
     WEBCORE_EXPORT const WebCore::CryptoKeyAES& sharedKey() const;
     WEBCORE_EXPORT static std::optional<SetPinRequest> tryCreate(const String& newPin, const WebCore::CryptoKeyEC&);

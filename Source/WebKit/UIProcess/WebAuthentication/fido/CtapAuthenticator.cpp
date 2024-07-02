@@ -34,6 +34,8 @@
 #include "U2fAuthenticator.h"
 #include <WebCore/AuthenticationExtensionsClientOutputs.h>
 #include <WebCore/AuthenticatorAttachment.h>
+#include <WebCore/CryptoAlgorithmAESCBC.h>
+#include <WebCore/CryptoAlgorithmAesCbcCfbParams.h>
 #include <WebCore/CryptoKeyAES.h>
 #include <WebCore/CryptoKeyHMAC.h>
 #include <WebCore/DeviceRequestConverter.h>
@@ -66,6 +68,8 @@ WebAuthenticationStatus toStatus(const CtapDeviceResponseCode& error)
         return WebAuthenticationStatus::PinAuthBlocked;
     case CtapDeviceResponseCode::kCtap2ErrPinBlocked:
         return WebAuthenticationStatus::PinBlocked;
+    case CtapDeviceResponseCode::kCtap2ErrPinRequired:
+        return WebAuthenticationStatus::PinRequired;
     default:
         ASSERT_NOT_REACHED();
         return WebAuthenticationStatus::PinInvalid;
@@ -340,9 +344,86 @@ void CtapAuthenticator::continueRequestPinAfterGetKeyAgreement(Vector<uint8_t>&&
             if (!weakThis)
                 return;
             CTAP_RELEASE_LOG("continueRequestPinAfterGetKeyAgreement: Got pin from observer.");
-            weakThis->continueGetPinTokenAfterRequestPin(pin, keyAgreement.peerKey);
+            if (weakThis->m_requestType == fido::pin::PinRequestType::kSetPin)
+                WTFLogAlways("ABIGAIL: hi");
+            else if (weakThis->m_requestType == fido::pin::PinRequestType::kGetPinToken)
+                weakThis->continueGetPinTokenAfterRequestPin(pin, keyAgreement.peerKey);
+            else
+                ASSERT_NOT_REACHED();
         });
     }
+}
+
+void CtapAuthenticator::continueSetPinAfterRequestPin(const String& pin, const CryptoKeyEC& peerKey)
+{
+    CTAP_RELEASE_LOG("continueSetPinAfterRequestPin");
+    if (pin.isNull()) {
+        receiveRespond(ExceptionData { ExceptionCode::UnknownError, "Pin is null."_s });
+        return;
+    }
+
+    auto pinUTF8 = pin::validateAndConvertToUTF8(pin);
+    if (!pinUTF8) {
+        // Fake a pin invalid response from the authenticator such that clients could show some error to the user.
+        if (auto* observer = this->observer())
+            observer->authenticatorStatusUpdated(WebAuthenticationStatus::PinInvalid);
+        tryRestartPin(CtapDeviceResponseCode::kCtap2ErrPinInvalid);
+        return;
+    }
+    auto setPinRequest = pin::SetPinRequest::tryCreate(pin, peerKey);
+
+    if (!setPinRequest) {
+        receiveRespond(ExceptionData { ExceptionCode::UnknownError, "Cannot create a SetPinRequest."_s });
+        return;
+    }
+
+    auto cborCmd = encodeAsCBOR(*setPinRequest);
+    driver().transact(WTFMove(cborCmd), [weakThis = WeakPtr { *this }, setPinRequest = WTFMove(*setPinRequest)] (Vector<uint8_t>&& data) {
+        ASSERT(RunLoop::isMain());
+        if (!weakThis)
+            return;
+        weakThis->continueRequestAfterSetPin(WTFMove(data), setPinRequest);
+    });
+}
+
+void CtapAuthenticator::continueRequestAfterSetPin(Vector<uint8_t>&& data, const fido::pin::SetPinRequest& setPinRequest)
+{
+    auto decodedMap = decodeResponseMap(data);
+    if (!decodedMap)
+        return; //or ...?
+    const auto& responseMap = decodedMap->getMap();
+
+    auto it = responseMap.find(cbor::CBORValue(static_cast<int64_t>(fido::pin::RequestKey::kNewPinEnc)));
+    if (it == responseMap.end() || !it->second.isByteString())
+        return; //or...?
+    const auto& newPinEnc = it->second.getByteString();
+
+   auto newPinResult = CryptoAlgorithmAESCBC::platformDecrypt({ }, setPinRequest.sharedKey(), newPinEnc, CryptoAlgorithmAESCBC::Padding::No);
+
+    if (newPinResult.hasException())
+        return; //TODO: or...?
+    auto newPin = newPinResult.releaseReturnValue();
+
+    if (!newPin.isEmpty()) {
+        auto error = getResponseCode(data);
+
+        if (isPinError(error)) {
+            if (auto* observer = this->observer())
+                observer->authenticatorStatusUpdated(toStatus(error));
+            if (tryRestartPin(error))
+                return;
+        }
+
+        receiveRespond(ExceptionData { ExceptionCode::UnknownError, makeString("Unknown internal error. Error code: "_s, static_cast<uint8_t>(error)) });
+        return;
+    }
+
+    WTF::switchOn(requestData().options, [&](const PublicKeyCredentialCreationOptions& options) {
+        makeCredential();
+    }, [&](const PublicKeyCredentialRequestOptions& options) {
+        m_requestType = fido::pin::PinRequestType::kSetPin;
+        getAssertion();
+    });
 }
 
 void CtapAuthenticator::continueGetPinTokenAfterRequestPin(const String& pin, const CryptoKeyEC& peerKey)
@@ -400,6 +481,7 @@ void CtapAuthenticator::continueRequestAfterGetPinToken(Vector<uint8_t>&& data, 
     WTF::switchOn(requestData().options, [&](const PublicKeyCredentialCreationOptions& options) {
         makeCredential();
     }, [&](const PublicKeyCredentialRequestOptions& options) {
+        m_requestType = fido::pin::PinRequestType::kGetPinToken;
         getAssertion();
     });
 }
