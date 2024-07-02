@@ -944,7 +944,10 @@ static void allocate_gf_group_bits(GF_GROUP *gf_group,
       case ARF_UPDATE:
       case INTNL_ARF_UPDATE:
         arf_extra_bits = layer_extra_bits[gf_group->layer_depth[idx]];
-        gf_group->bit_allocation[idx] = base_frame_bits + arf_extra_bits;
+        gf_group->bit_allocation[idx] =
+            (base_frame_bits > INT_MAX - arf_extra_bits)
+                ? INT_MAX
+                : (base_frame_bits + arf_extra_bits);
         break;
       case INTNL_OVERLAY_UPDATE:
       case OVERLAY_UPDATE: gf_group->bit_allocation[idx] = 0; break;
@@ -4136,7 +4139,12 @@ void av1_twopass_postencode_update(AV1_COMP *cpi) {
   }
 
   // Target vs actual bits for this arf group.
-  twopass->rolling_arf_group_target_bits += rc->base_frame_target;
+  if (twopass->rolling_arf_group_target_bits >
+      INT_MAX - rc->base_frame_target) {
+    twopass->rolling_arf_group_target_bits = INT_MAX;
+  } else {
+    twopass->rolling_arf_group_target_bits += rc->base_frame_target;
+  }
   twopass->rolling_arf_group_actual_bits += rc->projected_frame_size;
 
   // Calculate the pct rc error.
