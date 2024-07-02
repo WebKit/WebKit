@@ -36,7 +36,6 @@
 #include "ScreenManager.h"
 #include "WebPreferences.h"
 #include <WebCore/Cursor.h>
-#include <wpe/wpe-platform.h>
 
 #if USE(CAIRO)
 #include <WebCore/RefPtrCairo.h>
@@ -77,20 +76,7 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& co
 
     g_signal_connect(m_wpeView.get(), "notify::mapped", G_CALLBACK(+[](WPEView* view, GParamSpec*, gpointer userData) {
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
-
-        OptionSet<WebCore::ActivityState> flagsToUpdate { WebCore::ActivityState::IsVisible };
-        if (wpe_view_get_mapped(view)) {
-            if (webView.m_viewStateFlags.contains(WebCore::ActivityState::IsVisible))
-                return;
-
-            webView.m_viewStateFlags.add(WebCore::ActivityState::IsVisible);
-        } else {
-            if (!webView.m_viewStateFlags.contains(WebCore::ActivityState::IsVisible))
-                return;
-
-            webView.m_viewStateFlags.remove(WebCore::ActivityState::IsVisible);
-        }
-        webView.page().activityStateDidChange(flagsToUpdate);
+        webView.activityStateChanged(WebCore::ActivityState::IsVisible, wpe_view_get_mapped(view));
     }), this);
     g_signal_connect(m_wpeView.get(), "resized", G_CALLBACK(+[](WPEView* view, gpointer userData) {
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
@@ -106,147 +92,25 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& co
     }), this);
     g_signal_connect(m_wpeView.get(), "notify::toplevel", G_CALLBACK(+[](WPEView* view, GParamSpec*, gpointer userData) {
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
-
-        OptionSet<WebCore::ActivityState> flagsToUpdate { WebCore::ActivityState::IsInWindow };
-        if (wpe_view_get_toplevel(view)) {
-            if (webView.m_viewStateFlags.contains(WebCore::ActivityState::IsInWindow))
-                return;
-
-            webView.m_viewStateFlags.add(WebCore::ActivityState::IsInWindow);
-        } else {
-            if (!webView.m_viewStateFlags.contains(WebCore::ActivityState::IsInWindow))
-                return;
-
-            webView.m_viewStateFlags.remove(WebCore::ActivityState::IsInWindow);
-        }
-        webView.page().activityStateDidChange(flagsToUpdate);
-    }), this);
-    g_signal_connect_after(m_wpeView.get(), "event", G_CALLBACK(+[](WPEView* view, WPEEvent* event, gpointer userData) -> gboolean {
-        auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
-        switch (wpe_event_get_event_type(event)) {
-        case WPE_EVENT_NONE:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        case WPE_EVENT_POINTER_DOWN:
-            webView.m_inputMethodFilter.cancelComposition();
-            FALLTHROUGH;
-        case WPE_EVENT_POINTER_UP:
-        case WPE_EVENT_POINTER_MOVE:
-        case WPE_EVENT_POINTER_ENTER:
-        case WPE_EVENT_POINTER_LEAVE:
-            webView.page().handleMouseEvent(WebKit::NativeWebMouseEvent(event));
-            return TRUE;
-        case WPE_EVENT_SCROLL:
-            webView.page().handleNativeWheelEvent(WebKit::NativeWebWheelEvent(event));
-            return TRUE;
-        case WPE_EVENT_KEYBOARD_KEY_DOWN: {
-            auto modifiers = wpe_event_get_modifiers(event);
-            auto keyval = wpe_event_keyboard_get_keyval(event);
-            if (modifiers & WPE_MODIFIER_KEYBOARD_CONTROL && modifiers & WPE_MODIFIER_KEYBOARD_SHIFT && keyval == WPE_KEY_G) {
-                auto& preferences = webView.page().preferences();
-                preferences.setResourceUsageOverlayVisible(!preferences.resourceUsageOverlayVisible());
-                return TRUE;
-            }
-            auto filterResult = webView.m_inputMethodFilter.filterKeyEvent(event);
-            if (!filterResult.handled)
-                webView.page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, filterResult.keyText, webView.m_keyAutoRepeatHandler.keyPress(wpe_event_keyboard_get_keycode(event))));
-            return TRUE;
-        }
-        case WPE_EVENT_KEYBOARD_KEY_UP: {
-            webView.m_keyAutoRepeatHandler.keyRelease();
-            auto filterResult = webView.m_inputMethodFilter.filterKeyEvent(event);
-            if (!filterResult.handled)
-                webView.page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, String(), false));
-            return TRUE;
-        }
-        case WPE_EVENT_TOUCH_DOWN:
-            // FIXME: gestures
-#if ENABLE(TOUCH_EVENTS)
-            webView.m_touchEvents.add(wpe_event_touch_get_sequence_id(event), event);
-            webView.page().handleTouchEvent(NativeWebTouchEvent(event, webView.touchPointsForEvent(event)));
-#endif
-            return TRUE;
-        case WPE_EVENT_TOUCH_UP:
-        case WPE_EVENT_TOUCH_CANCEL: {
-            // FIXME: gestures
-#if ENABLE(TOUCH_EVENTS)
-            webView.m_touchEvents.set(wpe_event_touch_get_sequence_id(event), event);
-            auto points = webView.touchPointsForEvent(event);
-            webView.m_touchEvents.remove(wpe_event_touch_get_sequence_id(event));
-            webView.page().handleTouchEvent(NativeWebTouchEvent(event, WTFMove(points)));
-#endif
-            return TRUE;
-        }
-        case WPE_EVENT_TOUCH_MOVE:
-            // FIXME: gestures
-#if ENABLE(TOUCH_EVENTS)
-            webView.m_touchEvents.set(wpe_event_touch_get_sequence_id(event), event);
-            webView.page().handleTouchEvent(NativeWebTouchEvent(event, webView.touchPointsForEvent(event)));
-#endif
-            return TRUE;
-        };
-        return FALSE;
+        webView.activityStateChanged(WebCore::ActivityState::IsInWindow, !!wpe_view_get_toplevel(view));
     }), this);
     g_signal_connect(m_wpeView.get(), "focus-in", G_CALLBACK(+[](WPEView* view, gpointer userData) {
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
-        if (webView.m_viewStateFlags.contains(WebCore::ActivityState::IsFocused))
-            return;
-
-        OptionSet<WebCore::ActivityState> flagsToUpdate { WebCore::ActivityState::IsFocused };
-        webView.m_viewStateFlags.add(WebCore::ActivityState::IsFocused);
-        webView.m_inputMethodFilter.notifyFocusedIn();
-        webView.page().activityStateDidChange(flagsToUpdate);
+        if (webView.activityStateChanged(WebCore::ActivityState::IsFocused, true))
+            webView.m_inputMethodFilter.notifyFocusedIn();
     }), this);
     g_signal_connect(m_wpeView.get(), "focus-out", G_CALLBACK(+[](WPEView* view, gpointer userData) {
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
-        if (!webView.m_viewStateFlags.contains(WebCore::ActivityState::IsFocused))
-            return;
-
-        OptionSet<WebCore::ActivityState> flagsToUpdate { WebCore::ActivityState::IsFocused };
-        webView.m_viewStateFlags.remove(WebCore::ActivityState::IsFocused);
-        webView.m_inputMethodFilter.notifyFocusedOut();
-        webView.page().activityStateDidChange(flagsToUpdate);
+        if (webView.activityStateChanged(WebCore::ActivityState::IsFocused, false))
+            webView.m_inputMethodFilter.notifyFocusedOut();
+    }), this);
+    g_signal_connect_after(m_wpeView.get(), "event", G_CALLBACK(+[](WPEView* view, WPEEvent* event, gpointer userData) -> gboolean {
+        auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
+        return webView.handleEvent(event);
     }), this);
     g_signal_connect(m_wpeView.get(), "toplevel-state-changed", G_CALLBACK(+[](WPEView* view, WPEToplevelState previousState, gpointer userData) {
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
-        auto state = wpe_view_get_toplevel_state(view);
-        uint32_t changedMask = state ^ previousState;
-        if (changedMask & WPE_TOPLEVEL_STATE_FULLSCREEN) {
-            switch (webView.m_fullscreenState) {
-            case WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen:
-                if (state & WPE_TOPLEVEL_STATE_FULLSCREEN)
-                    webView.didEnterFullScreen();
-                break;
-            case WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen:
-                if (!(state & WPE_TOPLEVEL_STATE_FULLSCREEN))
-                    webView.didExitFullScreen();
-                break;
-            case WebFullScreenManagerProxy::FullscreenState::InFullscreen:
-                if (!(state & WPE_TOPLEVEL_STATE_FULLSCREEN) && webView.isFullScreen())
-                    webView.requestExitFullScreen();
-                break;
-            case WebFullScreenManagerProxy::FullscreenState::NotInFullscreen:
-                break;
-            }
-        }
-        if (changedMask & WPE_TOPLEVEL_STATE_ACTIVE) {
-            OptionSet<WebCore::ActivityState> flagsToUpdate;
-            constexpr auto flagToCheck { WebCore::ActivityState::WindowIsActive };
-
-            if (state & WPE_TOPLEVEL_STATE_ACTIVE) {
-                if (!webView.m_viewStateFlags.contains(flagToCheck)) {
-                    flagsToUpdate.add(flagToCheck);
-                    webView.m_viewStateFlags.add(flagToCheck);
-                }
-            } else {
-                if (webView.m_viewStateFlags.contains(flagToCheck)) {
-                    flagsToUpdate.add(flagToCheck);
-                    webView.m_viewStateFlags.remove(flagToCheck);
-                }
-            }
-            if (!flagsToUpdate.isEmpty())
-                webView.page().activityStateDidChange(flagsToUpdate);
-        }
+        webView.toplevelStateChanged(previousState, wpe_view_get_toplevel_state(view));
     }), this);
     g_signal_connect(m_wpeView.get(), "preferred-dma-buf-formats-changed", G_CALLBACK(+[](WPEView*, gpointer userData) {
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
@@ -360,6 +224,49 @@ void ViewPlatform::updateDisplayID()
     m_pageProxy->windowScreenDidChange(m_displayID);
 }
 
+bool ViewPlatform::activityStateChanged(WebCore::ActivityState state, bool value)
+{
+    if (value) {
+        if (m_viewStateFlags.contains(state))
+            return false;
+
+        m_viewStateFlags.add(state);
+    } else {
+        if (!m_viewStateFlags.contains(state))
+            return false;
+
+        m_viewStateFlags.remove(state);
+    }
+    page().activityStateDidChange({ state });
+    return true;
+}
+
+void ViewPlatform::toplevelStateChanged(WPEToplevelState previousState, WPEToplevelState state)
+{
+    uint32_t changedMask = state ^ previousState;
+    if (changedMask & WPE_TOPLEVEL_STATE_FULLSCREEN) {
+        switch (m_fullscreenState) {
+        case WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen:
+            if (state & WPE_TOPLEVEL_STATE_FULLSCREEN)
+                didEnterFullScreen();
+            break;
+        case WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen:
+            if (!(state & WPE_TOPLEVEL_STATE_FULLSCREEN))
+                didExitFullScreen();
+            break;
+        case WebFullScreenManagerProxy::FullscreenState::InFullscreen:
+            if (!(state & WPE_TOPLEVEL_STATE_FULLSCREEN) && isFullScreen())
+                requestExitFullScreen();
+            break;
+        case WebFullScreenManagerProxy::FullscreenState::NotInFullscreen:
+            break;
+        }
+    }
+
+    if (changedMask & WPE_TOPLEVEL_STATE_ACTIVE)
+        activityStateChanged(WebCore::ActivityState::WindowIsActive, state & WPE_TOPLEVEL_STATE_ACTIVE);
+}
+
 #if ENABLE(TOUCH_EVENTS)
 Vector<WebKit::WebPlatformTouchPoint> ViewPlatform::touchPointsForEvent(WPEEvent* event)
 {
@@ -395,6 +302,73 @@ Vector<WebKit::WebPlatformTouchPoint> ViewPlatform::touchPointsForEvent(WPEEvent
     return points;
 }
 #endif // ENABLE(TOUCH_EVENTS)
+
+gboolean ViewPlatform::handleEvent(WPEEvent* event)
+{
+    switch (wpe_event_get_event_type(event)) {
+    case WPE_EVENT_NONE:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    case WPE_EVENT_POINTER_DOWN:
+        m_inputMethodFilter.cancelComposition();
+        FALLTHROUGH;
+    case WPE_EVENT_POINTER_UP:
+    case WPE_EVENT_POINTER_MOVE:
+    case WPE_EVENT_POINTER_ENTER:
+    case WPE_EVENT_POINTER_LEAVE:
+        page().handleMouseEvent(WebKit::NativeWebMouseEvent(event));
+        return TRUE;
+    case WPE_EVENT_SCROLL:
+        page().handleNativeWheelEvent(WebKit::NativeWebWheelEvent(event));
+        return TRUE;
+    case WPE_EVENT_KEYBOARD_KEY_DOWN: {
+        auto modifiers = wpe_event_get_modifiers(event);
+        auto keyval = wpe_event_keyboard_get_keyval(event);
+        if (modifiers & WPE_MODIFIER_KEYBOARD_CONTROL && modifiers & WPE_MODIFIER_KEYBOARD_SHIFT && keyval == WPE_KEY_G) {
+            auto& preferences = page().preferences();
+            preferences.setResourceUsageOverlayVisible(!preferences.resourceUsageOverlayVisible());
+            return TRUE;
+        }
+        auto filterResult = m_inputMethodFilter.filterKeyEvent(event);
+        if (!filterResult.handled)
+            page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, filterResult.keyText, m_keyAutoRepeatHandler.keyPress(wpe_event_keyboard_get_keycode(event))));
+        return TRUE;
+    }
+    case WPE_EVENT_KEYBOARD_KEY_UP: {
+        m_keyAutoRepeatHandler.keyRelease();
+        auto filterResult = m_inputMethodFilter.filterKeyEvent(event);
+        if (!filterResult.handled)
+            page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, String(), false));
+        return TRUE;
+    }
+    case WPE_EVENT_TOUCH_DOWN:
+        // FIXME: gestures
+#if ENABLE(TOUCH_EVENTS)
+        m_touchEvents.add(wpe_event_touch_get_sequence_id(event), event);
+        page().handleTouchEvent(NativeWebTouchEvent(event, touchPointsForEvent(event)));
+#endif
+        return TRUE;
+    case WPE_EVENT_TOUCH_UP:
+    case WPE_EVENT_TOUCH_CANCEL: {
+        // FIXME: gestures
+#if ENABLE(TOUCH_EVENTS)
+        m_touchEvents.set(wpe_event_touch_get_sequence_id(event), event);
+        auto points = touchPointsForEvent(event);
+        m_touchEvents.remove(wpe_event_touch_get_sequence_id(event));
+        page().handleTouchEvent(NativeWebTouchEvent(event, WTFMove(points)));
+#endif
+        return TRUE;
+    }
+    case WPE_EVENT_TOUCH_MOVE:
+        // FIXME: gestures
+#if ENABLE(TOUCH_EVENTS)
+        m_touchEvents.set(wpe_event_touch_get_sequence_id(event), event);
+        page().handleTouchEvent(NativeWebTouchEvent(event, touchPointsForEvent(event)));
+#endif
+        return TRUE;
+    };
+    return FALSE;
+}
 
 void ViewPlatform::synthesizeCompositionKeyPress(const String&, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&)
 {

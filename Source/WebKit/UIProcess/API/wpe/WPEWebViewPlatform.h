@@ -30,10 +30,9 @@
 #include "GRefPtrWPE.h"
 #include "RendererBufferFormat.h"
 #include "WPEWebView.h"
+#include <wpe/wpe-platform.h>
 #include <wtf/HashMap.h>
 #include <wtf/glib/GRefPtr.h>
-
-typedef struct _WPEDisplay WPEDisplay;
 
 namespace WebKit {
 class AcceleratedBackingStoreDMABuf;
@@ -70,10 +69,14 @@ private:
     void setCursor(const WebCore::Cursor&) override;
 
     void updateDisplayID();
+    bool activityStateChanged(WebCore::ActivityState, bool);
+    void toplevelStateChanged(WPEToplevelState previousState, WPEToplevelState);
 
 #if ENABLE(TOUCH_EVENTS)
     Vector<WebKit::WebPlatformTouchPoint> touchPointsForEvent(WPEEvent*);
 #endif
+
+    gboolean handleEvent(WPEEvent*);
 
     GRefPtr<WPEView> m_wpeView;
     std::unique_ptr<WebKit::AcceleratedBackingStoreDMABuf> m_backingStore;
