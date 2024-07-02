@@ -105,8 +105,9 @@ ExceptionOr<void> PaymentRequestValidator::validateTotal(const ApplePayLineItem&
     if (amount < 0)
         return Exception { ExceptionCode::TypeError, "Total amount must not be negative."_s };
 
-    if (amount > 100000000)
-        return Exception { ExceptionCode::TypeError, "Total amount is too big."_s };
+    // We can safely defer a maximum amount check to the underlying payment system, instead.
+    // The downside is we lose an informative error mode and get an opaque payment sheet error for too large total amounts.
+    // FIXME: <https://webkit.org/b/276088> PaymentRequestValidator should adopt per-currency checks for total amounts.
 
     return { };
 }
