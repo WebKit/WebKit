@@ -117,6 +117,8 @@ private:
     NetworkSession* session();
     void preloadResponseIsReady();
 
+    void workerClosed();
+
     template<typename Message> bool sendToServiceWorker(Message&&);
     template<typename Message> bool sendToClient(Message&&);
 
