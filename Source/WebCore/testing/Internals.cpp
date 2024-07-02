@@ -6094,11 +6094,6 @@ bool Internals::isMediaStreamSourceEnded(MediaStreamTrack& track) const
     return track.source().isEnded();
 }
 
-bool Internals::isMediaStreamTrackPowerEfficient(const MediaStreamTrack& track) const
-{
-    return track.source().isPowerEfficient();
-}
-
 bool Internals::isMockRealtimeMediaSourceCenterEnabled()
 {
     return MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled();

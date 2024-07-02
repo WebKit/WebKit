@@ -244,6 +244,9 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
         capabilities.setBackgroundBlur(std::get<MockCameraProperties>(m_device.properties).hasBackgroundBlur ? RealtimeMediaSourceCapabilities::BackgroundBlur::On : RealtimeMediaSourceCapabilities::BackgroundBlur::Off);
         supportedConstraints.setSupportsBackgroundBlur(true);
 
+        capabilities.setPowerEfficient(canBePowerEfficient());
+        supportedConstraints.setSupportsPowerEfficient(true);
+
         capabilities.setSupportedConstraints(supportedConstraints);
     } else if (mockDisplay()) {
         capabilities.setWidth({ 72, std::get<MockDisplayProperties>(m_device.properties).defaultSize.width() });
@@ -364,6 +367,10 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
             supportedConstraints.setSupportsTorch(true);
             settings.setTorch(torch());
         }
+
+        if (canBePowerEfficient())
+            settings.setPowerEfficient(m_preset ? m_preset->isEfficient() : false);
+        supportedConstraints.setSupportsPowerEfficient(true);
 
         supportedConstraints.setSupportsBackgroundBlur(true);
         settings.setBackgroundBlur(std::get<MockCameraProperties>(m_device.properties).hasBackgroundBlur);

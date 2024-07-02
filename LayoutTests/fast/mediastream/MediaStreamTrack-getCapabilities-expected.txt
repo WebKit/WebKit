@@ -11,6 +11,7 @@ video track capabilities:
   capabilities.frameRate = { max: 30, min: 1 }
   capabilities.groupId = <UUID>
   capabilities.height = { max: 1440, min: 1 }
+  capabilities.powerEfficient = [ false ]
   capabilities.width = { max: 2560, min: 1 }
 
 audio track capabilities:
@@ -29,6 +30,7 @@ video track capabilities:
   capabilities.frameRate = { max: 120, min: 1 }
   capabilities.groupId = <UUID>
   capabilities.height = { max: 2160, min: 1 }
+  capabilities.powerEfficient = [ false, true ]
   capabilities.torch = true
   capabilities.whiteBalanceMode = [ manual, single-shot, continuous ]
   capabilities.width = { max: 3840, min: 1 }
@@ -50,6 +52,7 @@ video track capabilities:
   capabilities.frameRate = { max: 120, min: 1 }
   capabilities.groupId = <UUID>
   capabilities.height = { max: 2160, min: 1 }
+  capabilities.powerEfficient = [ false, true ]
   capabilities.torch = true
   capabilities.whiteBalanceMode = [ manual, single-shot, continuous ]
   capabilities.width = { max: 3840, min: 1 }
