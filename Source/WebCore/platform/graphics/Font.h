@@ -78,7 +78,6 @@ enum class FontVisibility : bool { Visible, Invisible };
 enum class FontIsOrientationFallback : bool { No, Yes };
 
 #if USE(CORE_TEXT)
-bool fontHasTable(CTFontRef, unsigned tableTag);
 bool fontHasEitherTable(CTFontRef, unsigned tableTag1, unsigned tableTag2);
 #endif
 
