@@ -3210,10 +3210,8 @@ void WebPage::pageDidScroll()
 
     m_pageScrolledHysteresis.impulse();
 
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {
-        auto scrollPosition = localMainFrame->view()->scrollPosition();
-        send(Messages::WebPageProxy::PageDidScroll(scrollPosition));
-    }
+    if (RefPtr view = m_page->protectedMainFrame()->virtualView())
+        send(Messages::WebPageProxy::PageDidScroll(view->scrollPosition()));
 }
 
 void WebPage::pageStoppedScrolling()

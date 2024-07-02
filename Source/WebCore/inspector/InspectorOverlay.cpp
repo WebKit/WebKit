@@ -840,11 +840,8 @@ void InspectorOverlay::drawPaintRects(GraphicsContext& context, const Deque<Time
 
 void InspectorOverlay::drawBounds(GraphicsContext& context, const InspectorOverlay::Highlight::Bounds& bounds)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
-    if (!localMainFrame)
-        return;
-
-    auto* pageView = localMainFrame->view();
+    Ref mainFrame = m_page.mainFrame();
+    RefPtr pageView = mainFrame->virtualView();
     FloatSize viewportSize = pageView->sizeForVisibleContent();
     FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
 
@@ -1242,12 +1239,8 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
         }
     }
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
-    if (!localMainFrame)
-        return { };
-
-    auto* pageView = localMainFrame->view();
-
+    Ref mainFrame = m_page.mainFrame();
+    RefPtr pageView = mainFrame->virtualView();
     FloatSize viewportSize = pageView->sizeForVisibleContent();
     FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
     if (m_showRulers || m_showRulersForNodeHighlight)

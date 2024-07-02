@@ -1512,12 +1512,10 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID, std::optional<Fram
     });
 
 #if ENABLE(VIDEO)
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame())) {
-        auto mode = preferredDynamicRangeMode(localMainFrame->protectedView().get());
-        forEachMediaElement([mode] (auto& element) {
-            element.setPreferredDynamicRangeMode(mode);
-        });
-    }
+    auto mode = preferredDynamicRangeMode(mainFrame().protectedVirtualView().get());
+    forEachMediaElement([mode] (auto& element) {
+        element.setPreferredDynamicRangeMode(mode);
+    });
 #endif
 
     if (RefPtr scrollingCoordinator = m_scrollingCoordinator)
@@ -2202,8 +2200,7 @@ void Page::didCompleteRenderingFrame()
 
     // FIXME: This is where we'd call requestPostAnimationFrame callbacks: webkit.org/b/249798.
     // FIXME: Run WindowEventLoop tasks from here: webkit.org/b/249684.
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()))
-        InspectorInstrumentation::didCompleteRenderingFrame(*localMainFrame);
+    InspectorInstrumentation::didCompleteRenderingFrame(m_mainFrame);
 
     forEachDocument([&] (Document& document) {
         document.flushDeferredRenderingIsSuppressedForViewTransitionChanges();
@@ -3565,7 +3562,8 @@ void Page::setSessionID(PAL::SessionID sessionID)
     if (sessionID != m_sessionID) {
         constexpr auto doNotCreate = StorageNamespaceProvider::ShouldCreateNamespace::No;
         auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
-        if (RefPtr sessionStorage = localMainFrame ? m_storageNamespaceProvider->sessionStorageNamespace(localMainFrame->document()->protectedTopOrigin(), *this, doNotCreate) : nullptr)
+        RefPtr topOrigin = localMainFrame ? &localMainFrame->document()->topOrigin() : m_mainFrameOrigin;
+        if (RefPtr sessionStorage = topOrigin ? m_storageNamespaceProvider->sessionStorageNamespace(*topOrigin, *this, doNotCreate) : nullptr)
             sessionStorage->setSessionIDForTesting(sessionID);
     }
 
@@ -4121,7 +4119,7 @@ ScrollLatchingController& Page::scrollLatchingController()
 #endif // ENABLE(WHEEL_EVENT_LATCHING)
 
 enum class DispatchedOnDocumentEventLoop : bool { No, Yes };
-static void dispatchPrintEvent(LocalFrame& mainFrame, const AtomString& eventType, DispatchedOnDocumentEventLoop dispatchedOnDocumentEventLoop)
+static void dispatchPrintEvent(Frame& mainFrame, const AtomString& eventType, DispatchedOnDocumentEventLoop dispatchedOnDocumentEventLoop)
 {
     Vector<Ref<LocalFrame>> frames;
     for (Frame* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
@@ -4146,14 +4144,12 @@ static void dispatchPrintEvent(LocalFrame& mainFrame, const AtomString& eventTyp
 
 void Page::dispatchBeforePrintEvent()
 {
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get()))
-        dispatchPrintEvent(*localMainFrame, eventNames().beforeprintEvent, DispatchedOnDocumentEventLoop::No);
+    dispatchPrintEvent(m_mainFrame, eventNames().beforeprintEvent, DispatchedOnDocumentEventLoop::No);
 }
 
 void Page::dispatchAfterPrintEvent()
 {
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get()))
-        dispatchPrintEvent(*localMainFrame, eventNames().afterprintEvent, DispatchedOnDocumentEventLoop::Yes);
+    dispatchPrintEvent(m_mainFrame, eventNames().afterprintEvent, DispatchedOnDocumentEventLoop::Yes);
 }
 
 #if ENABLE(APPLE_PAY)

@@ -352,12 +352,10 @@ void Chrome::setStatusbarText(LocalFrame& frame, const String& status)
 
 void Chrome::mouseDidMoveOverElement(const HitTestResult& result, OptionSet<PlatformEventModifier> modifiers)
 {
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (!localMainFrame)
-        return;
-
-    if (result.innerNode() && result.innerNode()->document().isDNSPrefetchEnabled())
-        localMainFrame->checkedLoader()->client().prefetchDNS(result.absoluteLinkURL().host().toString());
+    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {
+        if (result.innerNode() && result.innerNode()->document().isDNSPrefetchEnabled())
+            localMainFrame->checkedLoader()->client().prefetchDNS(result.absoluteLinkURL().host().toString());
+    }
 
     String toolTip;
     TextDirection toolTipDirection;
