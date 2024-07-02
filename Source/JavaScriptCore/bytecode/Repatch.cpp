@@ -746,6 +746,8 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
             accessType = AccessCase::IndexedScopedArgumentsLoad;
         else if (base->type() == StringType)
             accessType = AccessCase::IndexedStringLoad;
+        else if (base->type() == ProxyObjectType)
+            newCase = ProxyObjectAccessCase::create(vm, codeBlock, AccessCase::IndexedProxyObjectLoad, nullptr);
         else if (isTypedView(base->type())) {
             auto* typedArray = jsCast<JSArrayBufferView*>(base);
 #if USE(JSVALUE32_64)
