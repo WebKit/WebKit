@@ -22,15 +22,15 @@
 
         let x = 1920;
         let y = 540;
-        let sigma = 5;
 
         let pixel = "pixelColor(" + x + " ," + y + ")";
         let expectedColor = [0, 174, 0, 255];
+        let sigma = [0, 0, 0, 0];
 
-        shouldBeCloseTo(pixel + "[0]", expectedColor[0], sigma);
-        shouldBeCloseTo(pixel + "[1]", expectedColor[1], sigma);
-        shouldBeCloseTo(pixel + "[2]", expectedColor[2], sigma);
-        shouldBeCloseTo(pixel + "[3]", expectedColor[3], sigma);
+        shouldBeCloseTo(pixel + "[0]", expectedColor[0], sigma[0]);
+        shouldBeCloseTo(pixel + "[1]", expectedColor[1], sigma[1]);
+        shouldBeCloseTo(pixel + "[2]", expectedColor[2], sigma[2]);
+        shouldBeCloseTo(pixel + "[3]", expectedColor[3], sigma[3]);
 
         finishJSTest();
     });
