@@ -59,8 +59,6 @@ private:
 
     void clearWheelEventTestMonitor();
 
-    void flushDeferredDidReceiveMouseEvent(CompletionHandler<void()>&&);
-
     void clearOpener();
 
     const WebCore::PageIdentifier m_identifier;

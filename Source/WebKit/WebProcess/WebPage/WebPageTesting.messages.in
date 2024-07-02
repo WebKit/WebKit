@@ -32,7 +32,5 @@ messages -> WebPageTesting NotRefCounted {
 
     ClearWheelEventTestMonitor()
 
-    FlushDeferredDidReceiveMouseEvent() -> () Synchronous
-
     ClearOpener()
 }

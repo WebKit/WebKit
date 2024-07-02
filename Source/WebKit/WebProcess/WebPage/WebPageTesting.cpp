@@ -103,12 +103,6 @@ void WebPageTesting::clearWheelEventTestMonitor()
     page->clearWheelEventTestMonitor();
 }
 
-void WebPageTesting::flushDeferredDidReceiveMouseEvent(CompletionHandler<void()>&& completionHandler)
-{
-    m_page->flushDeferredDidReceiveMouseEvent();
-    completionHandler();
-}
-
 void WebPageTesting::clearOpener()
 {
     if (RefPtr mainFrame = m_page->mainFrame())
