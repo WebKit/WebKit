@@ -42,6 +42,7 @@ set(WPEPlatformWayland_SYSTEM_INCLUDE_DIRECTORIES
 set(WPEPlatformWayland_LIBRARIES
     ${WAYLAND_LIBRARIES}
     ${WPEPlatform_LIBRARIES}
+    "-lrt"
 )
 
 set(WPEPlatformWayland_SOURCES_FOR_INTROSPECTION
