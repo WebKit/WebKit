@@ -573,12 +573,6 @@ void WritingToolsController::didEndWritingToolsSession(const WritingTools::Sessi
 
     m_page->chrome().client().removeInitialTextAnimation(session.identifier);
 
-    // At this point, the selection will be the replaced text, which is the desired behavior for
-    // Smart Reply sessions. However, for others, the entire session context range should be selected.
-
-    if (session.compositionType != WritingTools::Session::CompositionType::SmartReply)
-        document->selection().setSelection({ *sessionRange });
-
     m_page->chrome().client().removeTransparentMarkersForSessionID(session.identifier);
 
     m_states.remove(session.identifier);

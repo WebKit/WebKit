@@ -334,7 +334,12 @@ TEST(WritingTools, ProofreadingAcceptReject)
 
         EXPECT_WK_STREQ(@"ZZZZ BBBB CCCC", [webView contentsAsString]);
 
+        auto selectionBeforeEnd = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
+
         [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
+
+        auto selectionAfterEnd = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
+        EXPECT_WK_STREQ(selectionBeforeEnd, selectionAfterEnd);
 
         NSString *hasFirstMarkerAfterEnding = [webView stringByEvaluatingJavaScript:@"internals.hasWritingToolsTextSuggestionMarker(0, 4);"];
         EXPECT_WK_STREQ("0", hasFirstMarkerAfterEnding);
@@ -343,9 +348,6 @@ TEST(WritingTools, ProofreadingAcceptReject)
         EXPECT_WK_STREQ("0", hasSecondMarkerAfterEnding);
 
         EXPECT_WK_STREQ(@"ZZZZ BBBB CCCC", [webView contentsAsString]);
-
-        auto selectionAfterEnd = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
-        EXPECT_WK_STREQ(@"ZZZZ BBBB CCCC", selectionAfterEnd);
 
         finished = true;
     }];
@@ -2224,14 +2226,17 @@ TEST(WritingTools, ContextRangeFromCaretSelection)
 
         [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
 
-        RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@""]);
+        RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@"DD"]);
 
         [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 5) inContext:contexts.firstObject finished:YES];
+
+        auto selectionAfterDidReceiveText = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
+        EXPECT_WK_STREQ(@"DD", selectionAfterDidReceiveText);
 
         [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
 
         auto selectionAfterEnd = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
-        EXPECT_WK_STREQ(@"BBBB CCCC\n\nXXXX YYYY ZZZZ", selectionAfterEnd);
+        EXPECT_WK_STREQ(@"DD", selectionAfterEnd);
 
         finished = true;
     }];
@@ -2268,14 +2273,30 @@ TEST(WritingTools, ContextRangeFromRangeSelection)
 
         [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
 
-        RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@""]);
+        RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@"DD"]);
 
         [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 5) inContext:contexts.firstObject finished:YES];
 
+        auto selectionAfterDidReceiveText = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
+        EXPECT_WK_STREQ(@"DD", selectionAfterDidReceiveText);
+
+        // Simulate clicking/tapping away to end the session.
+        NSString *setSelectionToCaret = @""
+            "(() => {"
+            "  const first = document.getElementById('p').childNodes[0].firstChild;"
+            "  const range = document.createRange();"
+            "  range.setStart(first, 0);"
+            "  range.setEnd(first, 0);"
+            "  "
+            "  var selection = window.getSelection();"
+            "  selection.removeAllRanges();"
+            "  selection.addRange(range);"
+            "})();";
+        [webView stringByEvaluatingJavaScript:setSelectionToCaret];
         [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
 
         auto selectionAfterEnd = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
-        EXPECT_WK_STREQ(@"BBBB CCCC", selectionAfterEnd);
+        EXPECT_WK_STREQ(@"", selectionAfterEnd);
 
         finished = true;
     }];
