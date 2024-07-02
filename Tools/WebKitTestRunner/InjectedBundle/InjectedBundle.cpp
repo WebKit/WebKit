@@ -389,9 +389,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
 #if ENABLE(VIDEO)
     WKBundlePageSetCaptionDisplayMode(page()->page(), stringValue(settings, "CaptionDisplayMode"));
 #endif
-    // [WK2] REGRESSION(r128623): It made layout tests extremely slow
-    // https://bugs.webkit.org/show_bug.cgi?id=96862
-    // WKBundleSetDatabaseQuota(m_bundle.get(), 5 * 1024 * 1024);
 }
 
 void InjectedBundle::done(bool forceRepaint)

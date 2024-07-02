@@ -381,7 +381,7 @@ void TestRunner::clearAllDatabases()
 
 void TestRunner::setDatabaseQuota(uint64_t quota)
 {
-    return WKBundleSetDatabaseQuota(InjectedBundle::singleton().bundle(), quota);
+    postPageMessage("SetDatabaseQuota", quota);
 }
 
 void TestRunner::syncLocalStorage()

@@ -57,9 +57,6 @@ WK_EXPORT void WKBundleSetAsynchronousSpellCheckingEnabledForTesting(WKBundleRef
 // Returns array of dictionaries. Dictionary keys are document identifiers, values are document URLs.
 WK_EXPORT WKArrayRef WKBundleGetLiveDocumentURLsForTesting(WKBundleRef bundle, bool excludeDocumentsInPageGroupPages);
 
-// Local storage API
-WK_EXPORT void WKBundleSetDatabaseQuota(WKBundleRef bundle, uint64_t);
-
 // Garbage collection API
 WK_EXPORT void WKBundleGarbageCollectJavaScriptObjects(WKBundleRef bundle);
 WK_EXPORT void WKBundleGarbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(WKBundleRef bundle, bool waitUntilDone);

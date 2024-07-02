@@ -218,6 +218,8 @@ WK_EXPORT void WKPageSetPermissionLevelForTesting(WKPageRef page, WKStringRef or
 
 WK_EXPORT void WKPageClearOpenerForTesting(WKPageRef page);
 
+WK_EXPORT void WKPageSetDatabaseQuotaForTesting(WKPageRef page, uint64_t quota);
+
 #ifdef __cplusplus
 }
 #endif

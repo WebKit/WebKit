@@ -33,4 +33,6 @@ messages -> WebPageTesting NotRefCounted {
     ClearWheelEventTestMonitor()
 
     ClearOpener()
+
+    SetDatabaseQuota(uint64_t quota)
 }

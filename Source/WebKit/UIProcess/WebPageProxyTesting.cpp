@@ -202,4 +202,11 @@ void WebPageProxyTesting::clearOpener()
     });
 }
 
+void WebPageProxyTesting::setDatabaseQuota(uint64_t quota)
+{
+    m_page->forEachWebContentProcess([=](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPageTesting::SetDatabaseQuota(quota), pageID);
+    });
+}
+
 } // namespace WebKit

@@ -3302,3 +3302,9 @@ void WKPageClearOpenerForTesting(WKPageRef pageRef)
     if (auto* pageForTesting = toImpl(pageRef)->pageForTesting())
         pageForTesting->clearOpener();
 }
+
+void WKPageSetDatabaseQuotaForTesting(WKPageRef pageRef, uint64_t quota)
+{
+    if (auto* pageForTesting = toImpl(pageRef)->pageForTesting())
+        pageForTesting->setDatabaseQuota(quota);
+}

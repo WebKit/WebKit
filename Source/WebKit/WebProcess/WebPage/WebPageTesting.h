@@ -61,6 +61,8 @@ private:
 
     void clearOpener();
 
+    void setDatabaseQuota(uint64_t);
+
     const WebCore::PageIdentifier m_identifier;
     WeakRef<WebPage> m_page;
 };

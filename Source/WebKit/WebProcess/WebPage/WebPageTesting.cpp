@@ -32,6 +32,7 @@
 #include "WebPage.h"
 #include "WebPageTestingMessages.h"
 #include "WebProcess.h"
+#include <WebCore/DatabaseTracker.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/NotificationController.h>
@@ -107,6 +108,12 @@ void WebPageTesting::clearOpener()
 {
     if (RefPtr mainFrame = m_page->mainFrame())
         mainFrame->setOpener(nullptr);
+}
+
+void WebPageTesting::setDatabaseQuota(uint64_t quota)
+{
+    // Historically, we've used the following (somewhat nonsensical) string for the databaseIdentifier of local files.
+    WebCore::DatabaseTracker::singleton().setQuota(*WebCore::SecurityOriginData::fromDatabaseIdentifier("file__0"_s), quota);
 }
 
 } // namespace WebKit

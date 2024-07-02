@@ -692,6 +692,9 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     if (WKStringIsEqualToUTF8CString(messageName, "StopLoading"))
         return WKPageStopLoading(TestController::singleton().mainWebView()->page());
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetDatabaseQuota"))
+        return WKPageSetDatabaseQuotaForTesting(TestController::singleton().mainWebView()->page(), uint64Value(messageBody));
+
     ASSERT_NOT_REACHED();
 }
 
