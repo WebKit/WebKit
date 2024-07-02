@@ -4171,5 +4171,6 @@ resize-observer/contain-instrinsic-size-should-not-leak-nodes.html [ Failure Pas
 
 fast/css/view-transitions-nested-transparency-layers.html [ ImageOnlyFailure Pass ]
 
-imported/w3c/web-platform-tests/css/css-viewport/zoom/background-image.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-viewport/zoom/image-intrinsic-size.html [ ImageOnlyFailure ]
+# ImageOnlyFailure only on EWS. The background images doesn't seem to be loaded.
+imported/w3c/web-platform-tests/css/css-viewport/zoom/background-image.html [ ImageOnlyFailure Pass ]
+imported/w3c/web-platform-tests/css/css-viewport/zoom/image-intrinsic-size.html [ ImageOnlyFailure Pass ]
