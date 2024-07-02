@@ -53,16 +53,14 @@ using namespace WebKit;
 
 namespace WKWPE {
 
-ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& baseConfiguration)
-    : View(baseConfiguration)
-    , m_wpeView(adoptGRef(wpe_view_new(display)))
+ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& configuration)
+    : m_wpeView(adoptGRef(wpe_view_new(display)))
 {
     ASSERT(m_wpeView);
 
     m_inputMethodFilter.setUseWPEPlatformEvents(true);
     m_size.setWidth(wpe_view_get_width(m_wpeView.get()));
     m_size.setHeight(wpe_view_get_height(m_wpeView.get()));
-    m_pageProxy->setIntrinsicDeviceScaleFactor(wpe_view_get_scale(m_wpeView.get()));
 
     if (wpe_view_get_mapped(m_wpeView.get()))
         m_viewStateFlags.add(WebCore::ActivityState::IsVisible);
@@ -71,13 +69,11 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& ba
         if (wpe_toplevel_get_state(toplevel) & WPE_TOPLEVEL_STATE_ACTIVE)
             m_viewStateFlags.add(WebCore::ActivityState::WindowIsActive);
     }
-    m_pageProxy->activityStateDidChange(m_viewStateFlags);
 
     if (auto* monitor = wpe_view_get_monitor(m_wpeView.get()))
         m_displayID = wpe_monitor_get_id(monitor);
     else
         m_displayID = ScreenManager::singleton().primaryDisplayID();
-    m_pageProxy->windowScreenDidChange(m_displayID);
 
     g_signal_connect(m_wpeView.get(), "notify::mapped", G_CALLBACK(+[](WPEView* view, GParamSpec*, gpointer userData) {
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
@@ -256,8 +252,11 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& ba
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
         webView.page().preferredBufferFormatsDidChange();
     }), this);
-    m_backingStore = AcceleratedBackingStoreDMABuf::create(*m_pageProxy, m_wpeView.get());
 
+    createWebPage(configuration);
+    m_pageProxy->setIntrinsicDeviceScaleFactor(wpe_view_get_scale(m_wpeView.get()));
+    m_pageProxy->windowScreenDidChange(m_displayID);
+    m_backingStore = AcceleratedBackingStoreDMABuf::create(*m_pageProxy, m_wpeView.get());
     m_pageProxy->initializeWebPage();
 }
 
