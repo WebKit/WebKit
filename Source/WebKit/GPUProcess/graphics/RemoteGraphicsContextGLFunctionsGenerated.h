@@ -1707,5 +1707,12 @@
         assertIsCurrent(workQueue());
         m_context->framebufferDiscard(target, attachments);
     }
+    void framebufferResolveRenderbuffer(uint32_t target, uint32_t attachment, uint32_t renderbuffertarget, uint32_t arg3)
+    {
+        assertIsCurrent(workQueue());
+        if (arg3)
+            arg3 = m_objectNames.get(arg3);
+        m_context->framebufferResolveRenderbuffer(target, attachment, renderbuffertarget, arg3);
+    }
 #endif
 

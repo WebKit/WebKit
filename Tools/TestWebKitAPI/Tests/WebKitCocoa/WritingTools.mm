@@ -50,6 +50,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/unicode/CharacterNames.h>
+#import <pal/cocoa/WritingToolsUISoftLink.h>
 
 #if PLATFORM(MAC)
 
@@ -176,6 +177,15 @@
     return [(id<UITextInput>)[self textInputContentView] writingToolsAllowedInputOptions];
 #else
     return [(id<NSTextInputTraits>)self writingToolsAllowedInputOptions];
+#endif
+}
+
+- (PlatformWritingToolsBehavior)writingToolsBehaviorForTesting
+{
+#if PLATFORM(IOS_FAMILY)
+    return [[self textInputContentView] writingToolsBehavior];
+#else
+    return [(id<NSTextInputTraits>)self writingToolsBehavior];
 #endif
 }
 
@@ -1637,10 +1647,33 @@ TEST(WritingTools, WantsInlineEditing)
     auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable>Hello World</body>" writingToolsBehavior:PlatformWritingToolsBehaviorDefault]);
 
     [webView _setEditable:NO];
-    EXPECT_FALSE([[webView writingToolsDelegate] wantsWritingToolsInlineEditing]);
+    EXPECT_EQ([webView writingToolsBehaviorForTesting], PlatformWritingToolsBehaviorNone);
 
     [webView _setEditable:YES];
-    EXPECT_TRUE([[webView writingToolsDelegate] wantsWritingToolsInlineEditing]);
+    EXPECT_EQ([webView writingToolsBehaviorForTesting], PlatformWritingToolsBehaviorComplete);
+}
+
+TEST(WritingTools, WritingToolsBehaviorNonEditableWithSelection)
+{
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body>Hello World</body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    EXPECT_EQ([webView writingToolsBehaviorForTesting], PlatformWritingToolsBehaviorLimited);
+}
+
+TEST(WritingTools, WritingToolsBehaviorWithNoSelection)
+{
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable>Hello World</body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete]);
+
+    EXPECT_EQ([webView writingToolsBehaviorForTesting], PlatformWritingToolsBehaviorNone);
+}
+
+TEST(WritingTools, WritingToolsBehaviorEditableWithSelection)
+{
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable>Hello World</body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    EXPECT_EQ([webView writingToolsBehaviorForTesting], PlatformWritingToolsBehaviorComplete);
 }
 
 TEST(WritingTools, AllowedInputOptionsNonEditable)
@@ -1836,7 +1869,7 @@ TEST(WritingTools, APIWithBehaviorNone)
     // If `PlatformWritingToolsBehaviorNone`, there should be no affordance, no context menu item, and no inline editing support.
 
 #if PLATFORM(MAC)
-    InstanceMethodSwizzler swizzler(WTWritingTools.class, @selector(scheduleShowAffordanceForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
+    InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(scheduleShowAffordanceForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
         didCallScheduleShowAffordanceForSelectionRect = true;
     }));
 #endif
@@ -1862,7 +1895,7 @@ TEST(WritingTools, APIWithBehaviorNone)
 
     [webView waitForNextPresentationUpdate];
 
-    EXPECT_FALSE([[webView writingToolsDelegate] wantsWritingToolsInlineEditing]);
+    EXPECT_EQ([webView writingToolsBehaviorForTesting], PlatformWritingToolsBehaviorNone);
 
 #if PLATFORM(MAC)
     [webView mouseDownAtPoint:NSMakePoint(10, 10) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
@@ -1883,7 +1916,7 @@ TEST(WritingTools, APIWithBehaviorDefault)
     // If `PlatformWritingToolsBehaviorDefault` (or `Limited`), there should be a context menu item, but no affordance nor inline editing support.
 
 #if PLATFORM(MAC)
-    InstanceMethodSwizzler swizzler(WTWritingTools.class, @selector(scheduleShowAffordanceForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
+    InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(scheduleShowAffordanceForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
         didCallScheduleShowAffordanceForSelectionRect = true;
     }));
 #endif
@@ -1909,7 +1942,7 @@ TEST(WritingTools, APIWithBehaviorDefault)
 
     [webView waitForNextPresentationUpdate];
 
-    EXPECT_FALSE([[webView writingToolsDelegate] wantsWritingToolsInlineEditing]);
+    EXPECT_EQ([webView writingToolsBehaviorForTesting], PlatformWritingToolsBehaviorLimited);
 
 #if PLATFORM(MAC)
     [webView mouseDownAtPoint:NSMakePoint(10, 10) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
@@ -1930,7 +1963,7 @@ TEST(WritingTools, APIWithBehaviorComplete)
     // If `PlatformWritingToolsBehaviorComplete`, there should be a context menu item, an affordance, and inline editing support.
 
 #if PLATFORM(MAC)
-    InstanceMethodSwizzler swizzler(WTWritingTools.class, @selector(scheduleShowAffordanceForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
+    InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(scheduleShowAffordanceForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
         didCallScheduleShowAffordanceForSelectionRect = true;
     }));
 #endif
@@ -1956,7 +1989,7 @@ TEST(WritingTools, APIWithBehaviorComplete)
 
     [webView waitForNextPresentationUpdate];
 
-    EXPECT_TRUE([[webView writingToolsDelegate] wantsWritingToolsInlineEditing]);
+    EXPECT_EQ([webView writingToolsBehaviorForTesting], PlatformWritingToolsBehaviorComplete);
 
 #if PLATFORM(MAC)
     [webView mouseDownAtPoint:NSMakePoint(10, 10) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
@@ -2070,7 +2103,8 @@ TEST(WritingTools, IsWritingToolsActiveAPIWithNoInlineEditing)
 #if PLATFORM(MAC)
 TEST(WritingTools, ShowAffordance)
 {
-    InstanceMethodSwizzler swizzler(WTWritingTools.class, @selector(scheduleShowAffordanceForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
+    InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(scheduleShowAffordanceForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
+
         didCallScheduleShowAffordanceForSelectionRect = true;
     }));
 
@@ -2106,7 +2140,8 @@ TEST(WritingTools, ShowAffordanceForMultipleLines)
 
     __block int count = 0;
 
-    InstanceMethodSwizzler swizzler(WTWritingTools.class, @selector(scheduleShowAffordanceForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
+    InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(scheduleShowAffordanceForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
+
         auto actualRect = WebCore::IntRect { rect };
         auto expectedRect = expectedRects[count];
 
@@ -2284,6 +2319,52 @@ TEST(WritingTools, SuggestedTextIsSelectedAfterSmartReply)
         EXPECT_WK_STREQ(@"Z", selectionAfterEnd);
 
         EXPECT_WK_STREQ(@"ZAAAA\n\nBBBB", [webView contentsAsString]);
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
+TEST(WritingTools, BlockquoteAndPreContentsAreIgnored)
+{
+    auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+
+    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p>AAAA</p><blockquote>BBBB</blockquote><p>CCCC</p><pre>DDDD</pre></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    __block bool finished = false;
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        EXPECT_WK_STREQ(@"AAAA\n\nBBBB\nCCCC\n\nDDDD", contexts.firstObject.attributedText.string);
+
+        __block size_t i = 0;
+        [contexts.firstObject.attributedText enumerateAttribute:WTWritingToolsPreservedAttributeName inRange:NSMakeRange(0, [contexts.firstObject.attributedText length]) options:0 usingBlock:^(id value, NSRange attributeRange, BOOL *stop) {
+            switch (i) {
+            case 0: // "AAAA"
+                EXPECT_NULL(value);
+                break;
+
+            case 1: // "BBBB"
+                EXPECT_EQ([value integerValue], 1);
+                break;
+
+            case 2: // "CCCC"
+                EXPECT_NULL(value);
+                break;
+
+            case 3: // "DDDD"
+                EXPECT_EQ([value integerValue], 1);
+                break;
+
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+
+            ++i;
+        }];
 
         finished = true;
     }];

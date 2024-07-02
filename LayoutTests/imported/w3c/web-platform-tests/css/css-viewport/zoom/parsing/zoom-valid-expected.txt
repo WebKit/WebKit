@@ -1,0 +1,16 @@
+
+PASS e.style['zoom'] = "normal" should set the property value
+PASS e.style['zoom'] = "1" should set the property value
+PASS e.style['zoom'] = "100%" should set the property value
+PASS e.style['zoom'] = "0" should set the property value
+PASS e.style['zoom'] = "0%" should set the property value
+PASS e.style['zoom'] = "1.5" should set the property value
+PASS e.style['zoom'] = "150%" should set the property value
+PASS e.style['zoom'] = "75%" should set the property value
+PASS e.style['zoom'] = "0.5" should set the property value
+PASS e.style['zoom'] = "auto" should not set the property value
+PASS e.style['zoom'] = "-100%" should not set the property value
+PASS e.style['zoom'] = "-200%" should not set the property value
+PASS e.style['zoom'] = "-1" should not set the property value
+PASS e.style['zoom'] = "-2" should not set the property value
+

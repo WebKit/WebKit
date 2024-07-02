@@ -1623,7 +1623,9 @@ public:
 
     // ========== Internal use for WebXR on WebGL1 contexts.
     virtual void renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
-
+#if ENABLE(WEBXR)
+    WEBCORE_EXPORT virtual void framebufferResolveRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject);
+#endif
 
     // ========== Other functions.
     GCGLfloat getFloat(GCGLenum pname);

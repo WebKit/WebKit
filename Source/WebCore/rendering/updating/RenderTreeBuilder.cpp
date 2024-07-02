@@ -439,6 +439,12 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
     while (beforeChild && beforeChild->parent() && beforeChild->parent() != &parent)
         beforeChild = beforeChild->parent();
 
+    if (beforeChild && !beforeChild->parent()) {
+        // Should never let the RenderView be beforeChild (as who is the parent then)
+        ASSERT_NOT_REACHED();
+        beforeChild = nullptr;
+    }
+
     ASSERT(!beforeChild || beforeChild->parent() == &parent);
     ASSERT(!is<RenderText>(beforeChild) || !downcast<RenderText>(*beforeChild).inlineWrapperForDisplayContents());
 

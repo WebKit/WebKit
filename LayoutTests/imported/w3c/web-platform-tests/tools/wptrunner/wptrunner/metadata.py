@@ -10,6 +10,7 @@ from six import ensure_str, ensure_text
 from sys import intern
 
 from . import manifestupdate
+from . import products
 from . import testloader
 from . import wptmanifest
 from . import wpttest
@@ -56,14 +57,11 @@ def get_properties(properties_file=None, extra_properties=None, config=None, pro
 
     :param properties_file: Path to a JSON file containing properties.
     :param extra_properties: List of extra properties to use
-    :param config: (deprecated, unused) wptrunner config
-    :param Product: (deprecated) product name
+    :param config: (deprecated) wptrunner config
+    :param Product: (deprecated) product name (requires a config argument to be used)
     """
     properties = []
     dependents = {}
-
-    if config is not None:
-        logger.warning("Got `config` in metadata.get_properties; this is ignored")
 
     if properties_file is not None:
         logger.debug(f"Reading update properties from {properties_file}")
@@ -101,8 +99,12 @@ def get_properties(properties_file=None, extra_properties=None, config=None, pro
     elif product is not None:
         logger.warning("Falling back to getting metadata update properties from wptrunner browser "
                        "product file, this will be removed")
+        if config is None:
+            msg = "Must provide a config together with a product"
+            logger.critical(msg)
+            raise ValueError(msg)
 
-        properties, dependents = product.update_properties
+        properties, dependents = products.load_product_update(config, product)
 
     if extra_properties is not None:
         properties.extend(extra_properties)

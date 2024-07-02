@@ -176,6 +176,7 @@
 #include "PseudoElement.h"
 #include "PushSubscription.h"
 #include "PushSubscriptionData.h"
+#include "RTCNetworkManager.h"
 #include "RTCRtpSFrameTransform.h"
 #include "Range.h"
 #include "ReadableStream.h"
@@ -6109,7 +6110,19 @@ bool Internals::shouldAudioTrackPlay(const AudioTrack& track)
         return false;
     return downcast<AudioTrackPrivateMediaStream>(track.privateTrack()).shouldPlay();
 }
-#endif
+#endif // ENABLE(MEDIA_STREAM)
+
+#if ENABLE(WEB_RTC)
+String Internals::rtcNetworkInterfaceName() const
+{
+    RefPtr document = contextDocument();
+    RefPtr rtcNetworkManager = document ? document->rtcNetworkManager() : nullptr;
+    if (!rtcNetworkManager)
+        return { };
+
+    return rtcNetworkManager->interfaceNameForTesting();
+}
+#endif // ENABLE(WEB_RTC)
 
 bool Internals::isHardwareVP9DecoderExpected()
 {

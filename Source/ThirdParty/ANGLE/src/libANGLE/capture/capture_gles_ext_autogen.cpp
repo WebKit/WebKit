@@ -12248,4 +12248,23 @@ CallCapture CaptureStartTilingQCOM(const State &glState,
     return CallCapture(angle::EntryPoint::GLStartTilingQCOM, std::move(paramBuffer));
 }
 
+CallCapture CaptureFramebufferResolveRenderbufferWEBKIT(const State &glState,
+                                                        bool isCallValid,
+                                                        GLenum target,
+                                                        GLenum attachment,
+                                                        GLenum renderbuffertarget,
+                                                        RenderbufferID renderbufferPacked)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addEnumParam("target", GLESEnum::AllEnums, ParamType::TGLenum, target);
+    paramBuffer.addEnumParam("attachment", GLESEnum::AllEnums, ParamType::TGLenum, attachment);
+    paramBuffer.addEnumParam("renderbuffertarget", GLESEnum::AllEnums, ParamType::TGLenum,
+                             renderbuffertarget);
+    paramBuffer.addValueParam("renderbufferPacked", ParamType::TRenderbufferID, renderbufferPacked);
+
+    return CallCapture(angle::EntryPoint::GLFramebufferResolveRenderbufferWEBKIT,
+                       std::move(paramBuffer));
+}
+
 }  // namespace gl

@@ -1175,6 +1175,11 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKPageClearUserMediaState(m_mainWebView->page());
 
+    WKPageSetPageZoomFactor(m_mainWebView->page(), 1);
+    WKPageSetTextZoomFactor(m_mainWebView->page(), 1);
+
+    WKPageClearOpenerForTesting(m_mainWebView->page());
+
     // Reset notification permissions
     m_webNotificationProvider.reset();
     m_notificationOriginsToDenyOnPrompt.clear();
@@ -2191,10 +2196,8 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
             return completionHandler(nullptr);
         }
 
-        if (WKStringIsEqualToUTF8CString(subMessageName, "WaitForDeferredMouseEvents")) {
-            WKPageFlushDeferredDidReceiveMouseEventForTesting(mainWebView()->page());
+        if (WKStringIsEqualToUTF8CString(subMessageName, "WaitForDeferredMouseEvents"))
             return completionHandler(nullptr);
-        }
 
 #if PLATFORM(MAC)
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseForceClick")) {

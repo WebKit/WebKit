@@ -1516,9 +1516,10 @@ class YarrGenerator final : public YarrJITInfo {
 #endif
         readCharacter(op.m_checkedOffset - term->inputPosition, character);
     
-        if (!m_pattern.ignoreCase())
+        if (!m_pattern.ignoreCase()) {
+            characterMatchFails.append(m_jit.branch32(MacroAssembler::Equal, character, MacroAssembler::TrustedImm32(errorCodePoint)));
             characterMatchFails.append(m_jit.branch32(MacroAssembler::NotEqual, character, patternCharacter));
-        else if (m_charSize == CharSize::Char8) {
+        } else if (m_charSize == CharSize::Char8) {
             MacroAssembler::Jump charactersMatch = m_jit.branch32(MacroAssembler::Equal, character, patternCharacter);
             MacroAssembler::ExtendedAddress characterTableEntry(character, reinterpret_cast<intptr_t>(&canonicalTableLChar));
             m_jit.load16(characterTableEntry, character);
@@ -1535,6 +1536,10 @@ class YarrGenerator final : public YarrJITInfo {
             RELEASE_ASSERT(m_regs.regUnicodeInputAndTrail == areCanonicallyEquivalentCanonicalModeArgReg);
             ASSERT(m_decode16BitForBackreferencesWithCalls);
 
+            // Fail matching for dangling surrogates.
+            characterMatchFails.append(m_jit.branch32(MacroAssembler::Equal, character, MacroAssembler::TrustedImm32(errorCodePoint)));
+            characterMatchFails.append(m_jit.branch32(MacroAssembler::Equal, patternCharacter, MacroAssembler::TrustedImm32(errorCodePoint)));
+
             MacroAssembler::JumpList charactersMatch;
             charactersMatch.append(m_jit.branch32(MacroAssembler::Equal, character, patternCharacter));
             MacroAssembler::Jump notASCII = m_jit.branch32(MacroAssembler::GreaterThan, character, MacroAssembler::TrustedImm32(127));
@@ -1545,8 +1550,8 @@ class YarrGenerator final : public YarrJITInfo {
             m_jit.load16(patternTableEntry, patternCharacter);
             characterMatchFails.append(m_jit.branch32(MacroAssembler::NotEqual, character, patternCharacter));
             charactersMatch.append(m_jit.jump());
-            notASCII.link(&m_jit);
 
+            notASCII.link(&m_jit);
             // We are safe to use the regUnicodeInputAndTrail register as an argument since it
             // is only used when reading unicode characters.
             int32_t canonicalMode = static_cast<int32_t>(m_decodeSurrogatePairs ? CanonicalMode::Unicode : CanonicalMode::UCS2);
@@ -1565,7 +1570,7 @@ class YarrGenerator final : public YarrJITInfo {
         m_jit.add32(MacroAssembler::TrustedImm32(1), patternIndex);
 
         if (m_decodeSurrogatePairs) {
-            MacroAssembler::Jump isBMPChar = m_jit.branch32(MacroAssembler::LessThan, character, m_regs.supplementaryPlanesBase);
+            auto isBMPChar = m_jit.branch32(MacroAssembler::LessThan, patternCharacter, m_regs.supplementaryPlanesBase);
             m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index);
             m_jit.add32(MacroAssembler::TrustedImm32(1), patternIndex);
             isBMPChar.link(&m_jit);
@@ -5301,12 +5306,17 @@ MacroAssemblerCodeRef<JITThunkPtrTag> areCanonicallyEquivalentThunkGenerator(VM&
     jit.callOperation<OperationPtrTag>(operationAreCanonicallyEquivalent);
 
 #if CPU(ARM64)
-    jit.move(GPRInfo::returnValueGPR, ARM64Registers::ip0);
+    // Convert 8-bit bool result into 32 bit value and save in IP0 while restoring callee saves.
+    jit.zeroExtend8To32(GPRInfo::returnValueGPR, ARM64Registers::ip0);
+
     while (pushCount)
         popCallerSavePair();
 
     jit.move(ARM64Registers::ip0, areCanonicallyEquivalentCharArgReg);
 #elif CPU(X86_64)
+    // Convert 8-bit bool result into 32 bit value.
+    jit.zeroExtend8To32(GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);
+
     while (pushCount)
         popCallerSave();
 #endif

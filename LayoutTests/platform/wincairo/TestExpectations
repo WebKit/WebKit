@@ -770,6 +770,7 @@ http/tests/media [ Skip ]
 
 # need to implement content sniffing
 http/tests/mime/mime-type-sniff.html [ Skip ]
+http/tests/mime/html-with-nosniff-html.html [ Skip ]
 
 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
 http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
@@ -4169,3 +4170,7 @@ http/tests/loading/reusing-cached-stylesheet-from-different-domain.html [ ImageO
 resize-observer/contain-instrinsic-size-should-not-leak-nodes.html [ Failure Pass ]
 
 fast/css/view-transitions-nested-transparency-layers.html [ ImageOnlyFailure Pass ]
+
+# ImageOnlyFailure only on EWS. The background images doesn't seem to be loaded.
+imported/w3c/web-platform-tests/css/css-viewport/zoom/background-image.html [ ImageOnlyFailure Pass ]
+imported/w3c/web-platform-tests/css/css-viewport/zoom/image-intrinsic-size.html [ ImageOnlyFailure Pass ]

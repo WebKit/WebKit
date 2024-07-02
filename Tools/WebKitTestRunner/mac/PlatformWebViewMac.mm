@@ -78,6 +78,7 @@ PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const Tes
     NSRect windowRect = m_options.shouldShowWindow() ? NSOffsetRect(rect, 100, 100) : NSOffsetRect(rect, -10000, [firstScreen frame].size.height - rect.size.height + 10000);
     m_window = [[WebKitTestRunnerWindow alloc] initWithContentRect:windowRect styleMask:NSWindowStyleMaskBorderless backing:(NSBackingStoreType)_NSBackingStoreUnbuffered defer:YES];
     m_window.platformWebView = this;
+    [m_window setHasShadow:NO];
     [m_window setColorSpace:[firstScreen colorSpace]];
     [m_window setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameAqua]];
     [m_window setCollectionBehavior:NSWindowCollectionBehaviorStationary];

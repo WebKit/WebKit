@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import importlib.metadata
-
 
 __all__ = ["tag", "version", "commit"]
 
@@ -20,7 +18,7 @@ __all__ = ["tag", "version", "commit"]
 
 released = True
 
-tag = version = commit = "12.0"
+tag = version = commit = "10.3"
 
 
 if not released:  # pragma: no cover
@@ -46,11 +44,7 @@ if not released:  # pragma: no cover
                 text=True,
             ).stdout.strip()
         # subprocess.run raises FileNotFoundError if git isn't on $PATH.
-        except (
-            FileNotFoundError,
-            subprocess.CalledProcessError,
-            subprocess.TimeoutExpired,
-        ):
+        except (FileNotFoundError, subprocess.CalledProcessError):
             pass
         else:
             description_re = r"[0-9.]+-([0-9]+)-(g[0-9a-f]{7,}(?:-dirty)?)"
@@ -62,6 +56,8 @@ if not released:  # pragma: no cover
 
         # Read version from package metadata if it is installed.
         try:
+            import importlib.metadata  # move up when dropping Python 3.7
+
             return importlib.metadata.version("websockets")
         except ImportError:
             pass

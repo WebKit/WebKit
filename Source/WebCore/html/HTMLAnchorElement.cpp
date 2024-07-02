@@ -413,16 +413,9 @@ std::optional<URL> HTMLAnchorElement::attributionDestinationURLForPCM() const
 
 std::optional<RegistrableDomain> HTMLAnchorElement::mainDocumentRegistrableDomainForPCM() const
 {
-    if (auto frame = document().frame()) {
-
-        auto* localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
-        if (!localFrame)
-            return std::nullopt;
-
-        if (auto mainDocument = localFrame->document()) {
-            if (auto mainDocumentRegistrableDomain = RegistrableDomain { mainDocument->url() }; !mainDocumentRegistrableDomain.isEmpty())
-                return mainDocumentRegistrableDomain;
-        }
+    if (auto* page = document().page()) {
+        if (auto mainFrameURL = page->mainFrameURL(); !mainFrameURL.isEmpty())
+            return RegistrableDomain(mainFrameURL);
     }
 
     protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_s);

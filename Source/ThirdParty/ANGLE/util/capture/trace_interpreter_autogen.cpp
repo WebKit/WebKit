@@ -2297,6 +2297,13 @@ CallCapture ParseCallCapture(const Token &nameToken,
                 paramTokens, strings);
         return CallCapture(EntryPoint::GLFramebufferRenderbufferOES, std::move(params));
     }
+    if (strcmp(nameToken, "glFramebufferResolveRenderbufferWEBKIT") == 0)
+    {
+        ParamBuffer params = ParseParameters<
+            std::remove_pointer<PFNGLFRAMEBUFFERRESOLVERENDERBUFFERWEBKITPROC>::type>(paramTokens,
+                                                                                      strings);
+        return CallCapture(EntryPoint::GLFramebufferResolveRenderbufferWEBKIT, std::move(params));
+    }
     if (strcmp(nameToken, "glFramebufferTexture") == 0)
     {
         ParamBuffer params =

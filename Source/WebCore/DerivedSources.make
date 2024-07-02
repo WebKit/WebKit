@@ -1457,7 +1457,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/NavigationNavigationType.idl \
     $(WebCore)/page/NavigationTransition.idl \
     $(WebCore)/page/Navigator.idl \
-    $(WebCore)/page/Navigator+IsLoggedIn.idl \
+    $(WebCore)/page/Navigator+LoginStatus.idl \
     $(WebCore)/page/Navigator+UserActivation.idl \
     $(WebCore)/page/NavigatorCookies.idl \
     $(WebCore)/page/NavigatorID.idl \

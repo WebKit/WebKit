@@ -1,62 +1,83 @@
 API Reference
 =============
 
-.. module:: attrs
+.. currentmodule:: attr
 
-*attrs* works by decorating a class using `attrs.define` or `attr.s` and then defining attributes on the class using `attrs.field`, `attr.ib`, or type annotations.
+``attrs`` works by decorating a class using `attrs.define` or `attr.s` and then optionally defining attributes on the class using `attrs.field`, `attr.ib`, or a type annotation.
 
-What follows is the API explanation, if you'd like a more hands-on tutorial, have a look at `examples`.
+If you're confused by the many names, please check out `names` for clarification.
 
-If you're confused by the many names, please check out `names` for clarification, but the `TL;DR <https://en.wikipedia.org/wiki/TL;DR>`_ is that as of version 21.3.0, *attrs* consists of **two** top-level package names:
+What follows is the API explanation, if you'd like a more hands-on introduction, have a look at `examples`.
 
-- The classic ``attr`` that powers the venerable `attr.s` and `attr.ib`.
-- The newer ``attrs`` that only contains most modern APIs and relies on `attrs.define` and `attrs.field` to define your classes.
+As of version 21.3.0, ``attrs`` consists of **two** to-level package names:
+
+- The classic ``attr`` that powered the venerable `attr.s` and `attr.ib`
+- The modern ``attrs`` that only contains most modern APIs and relies on `attrs.define` and `attrs.field` to define your classes.
   Additionally it offers some ``attr`` APIs with nicer defaults (e.g. `attrs.asdict`).
+  Using this namespace requires Python 3.6 or later.
 
-The ``attrs`` namespace is built *on top of* ``attr`` -- which will *never* go away -- and is just as stable, since it doesn't constitute a rewrite.
-To keep repetition low and this document at a reasonable size, the ``attr`` namespace is `documented on a separate page <api-attr>`, though.
+The ``attrs`` namespace is built *on top of* ``attr`` which will *never* go away.
 
 
 Core
 ----
 
+.. note::
+
+  Please note that the ``attrs`` namespace has been added in version 21.3.0.
+  Most of the objects are simply re-imported from ``attr``.
+  Therefore if a class, method, or function claims that it has been added in an older version, it is only available in the ``attr`` namespace.
+
 .. autodata:: attrs.NOTHING
-   :no-value:
 
 .. autofunction:: attrs.define
 
-.. function:: mutable(same_as_define)
+.. function:: attrs.mutable(same_as_define)
 
-   Same as `attrs.define`.
+   Alias for `attrs.define`.
 
    .. versionadded:: 20.1.0
 
-.. function:: frozen(same_as_define)
+.. function:: attrs.frozen(same_as_define)
 
    Behaves the same as `attrs.define` but sets *frozen=True* and *on_setattr=None*.
 
    .. versionadded:: 20.1.0
 
-.. autofunction:: field
+.. autofunction:: attrs.field
 
-.. autoclass:: Attribute
+.. function:: define
+
+   Old import path for `attrs.define`.
+
+.. function:: mutable
+
+   Old import path for `attrs.mutable`.
+
+.. function:: frozen
+
+   Old import path for `attrs.frozen`.
+
+.. function:: field
+
+   Old import path for `attrs.field`.
+
+.. autoclass:: attrs.Attribute
    :members: evolve
 
    For example:
 
    .. doctest::
 
-      >>> import attrs
-      >>> from attrs import define, field
-
-      >>> @define
-      ... class C:
-      ...     x = field()
-      >>> attrs.fields(C).x
-      Attribute(name='x', default=NOTHING, validator=None, repr=True, eq=True, eq_key=None, order=True, order_key=None, hash=None, init=True, metadata=mappingproxy({}), type=None, converter=None, kw_only=False, inherited=False, on_setattr=None, alias='x')
+      >>> import attr
+      >>> @attr.s
+      ... class C(object):
+      ...     x = attr.ib()
+      >>> attr.fields(C).x
+      Attribute(name='x', default=NOTHING, validator=None, repr=True, eq=True, eq_key=None, order=True, order_key=None, hash=None, init=True, metadata=mappingproxy({}), type=None, converter=None, kw_only=False, inherited=False, on_setattr=None)
 
 
-.. autofunction:: make_class
+.. autofunction:: attrs.make_class
 
    This is handy if you want to programmatically create classes.
 
@@ -64,27 +85,25 @@ Core
 
    .. doctest::
 
-      >>> C1 = attrs.make_class("C1", ["x", "y"])
+      >>> C1 = attr.make_class("C1", ["x", "y"])
       >>> C1(1, 2)
       C1(x=1, y=2)
-      >>> C2 = attrs.make_class("C2", {
-      ...     "x": field(default=42),
-      ...     "y": field(factory=list)
-      ... })
+      >>> C2 = attr.make_class("C2", {"x": attr.ib(default=42),
+      ...                             "y": attr.ib(default=attr.Factory(list))})
       >>> C2()
       C2(x=42, y=[])
 
 
-.. autoclass:: Factory
+.. autoclass:: attrs.Factory
 
    For example:
 
    .. doctest::
 
-      >>> @define
-      ... class C:
-      ...     x = field(default=attrs.Factory(list))
-      ...     y = field(default=attrs.Factory(
+      >>> @attr.s
+      ... class C(object):
+      ...     x = attr.ib(default=attr.Factory(list))
+      ...     y = attr.ib(default=attr.Factory(
       ...         lambda self: set(self.x),
       ...         takes_self=True)
       ...     )
@@ -94,10 +113,85 @@ Core
       C(x=[1, 2, 3], y={1, 2, 3})
 
 
+Classic
+~~~~~~~
+
+.. data:: attr.NOTHING
+
+   Same as `attrs.NOTHING`.
+
+.. autofunction:: attr.s(these=None, repr_ns=None, repr=None, cmp=None, hash=None, init=None, slots=False, frozen=False, weakref_slot=True, str=False, auto_attribs=False, kw_only=False, cache_hash=False, auto_exc=False, eq=None, order=None, auto_detect=False, collect_by_mro=False, getstate_setstate=None, on_setattr=None, field_transformer=None, match_args=True)
+
+   .. note::
+
+      ``attrs`` also comes with a serious business alias ``attr.attrs``.
+
+   For example:
+
+   .. doctest::
+
+      >>> import attr
+      >>> @attr.s
+      ... class C(object):
+      ...     _private = attr.ib()
+      >>> C(private=42)
+      C(_private=42)
+      >>> class D(object):
+      ...     def __init__(self, x):
+      ...         self.x = x
+      >>> D(1)
+      <D object at ...>
+      >>> D = attr.s(these={"x": attr.ib()}, init=False)(D)
+      >>> D(1)
+      D(x=1)
+      >>> @attr.s(auto_exc=True)
+      ... class Error(Exception):
+      ...     x = attr.ib()
+      ...     y = attr.ib(default=42, init=False)
+      >>> Error("foo")
+      Error(x='foo', y=42)
+      >>> raise Error("foo")
+      Traceback (most recent call last):
+         ...
+      Error: ('foo', 42)
+      >>> raise ValueError("foo", 42)   # for comparison
+      Traceback (most recent call last):
+         ...
+      ValueError: ('foo', 42)
+
+
+.. autofunction:: attr.ib
+
+   .. note::
+
+      ``attrs`` also comes with a serious business alias ``attr.attrib``.
+
+   The object returned by `attr.ib` also allows for setting the default and the validator using decorators:
+
+   .. doctest::
+
+      >>> @attr.s
+      ... class C(object):
+      ...     x = attr.ib()
+      ...     y = attr.ib()
+      ...     @x.validator
+      ...     def _any_name_except_a_name_of_an_attribute(self, attribute, value):
+      ...         if value < 0:
+      ...             raise ValueError("x must be positive")
+      ...     @y.default
+      ...     def _any_name_except_a_name_of_an_attribute(self):
+      ...         return self.x + 1
+      >>> C(1)
+      C(x=1, y=2)
+      >>> C(-1)
+      Traceback (most recent call last):
+          ...
+      ValueError: x must be positive
+
+
+
 Exceptions
 ----------
-
-.. module:: attrs.exceptions
 
 All exceptions are available from both ``attr.exceptions`` and ``attrs.exceptions`` and are the same thing.
 That means that it doesn't matter from from which namespace they've been raised and/or caught:
@@ -111,15 +205,15 @@ That means that it doesn't matter from from which namespace they've been raised 
    ...     print("this works!")
    this works!
 
-.. autoexception:: PythonTooOldError
-.. autoexception:: FrozenError
-.. autoexception:: FrozenInstanceError
-.. autoexception:: FrozenAttributeError
-.. autoexception:: AttrsAttributeNotFoundError
-.. autoexception:: NotAnAttrsClassError
-.. autoexception:: DefaultAlreadySetError
-.. autoexception:: NotCallableError
-.. autoexception:: UnannotatedAttributeError
+.. autoexception:: attrs.exceptions.PythonTooOldError
+.. autoexception:: attrs.exceptions.FrozenError
+.. autoexception:: attrs.exceptions.FrozenInstanceError
+.. autoexception:: attrs.exceptions.FrozenAttributeError
+.. autoexception:: attrs.exceptions.AttrsAttributeNotFoundError
+.. autoexception:: attrs.exceptions.NotAnAttrsClassError
+.. autoexception:: attrs.exceptions.DefaultAlreadySetError
+.. autoexception:: attrs.exceptions.UnannotatedAttributeError
+.. autoexception:: attrs.exceptions.NotCallableError
 
    For example::
 
@@ -134,11 +228,12 @@ That means that it doesn't matter from from which namespace they've been raised 
 Helpers
 -------
 
-*attrs* comes with a bunch of helper methods that make working with it easier:
-
-.. currentmodule:: attrs
+``attrs`` comes with a bunch of helper methods that make working with it easier:
 
 .. autofunction:: attrs.cmp_using
+.. function:: attr.cmp_using
+
+   Same as `attrs.cmp_using`.
 
 .. autofunction:: attrs.fields
 
@@ -146,16 +241,20 @@ Helpers
 
    .. doctest::
 
-      >>> @define
-      ... class C:
-      ...     x = field()
-      ...     y = field()
+      >>> @attr.s
+      ... class C(object):
+      ...     x = attr.ib()
+      ...     y = attr.ib()
       >>> attrs.fields(C)
-      (Attribute(name='x', default=NOTHING, validator=None, repr=True, eq=True, eq_key=None, order=True, order_key=None, hash=None, init=True, metadata=mappingproxy({}), type=None, converter=None, kw_only=False, inherited=False, on_setattr=None, alias='x'), Attribute(name='y', default=NOTHING, validator=None, repr=True, eq=True, eq_key=None, order=True, order_key=None, hash=None, init=True, metadata=mappingproxy({}), type=None, converter=None, kw_only=False, inherited=False, on_setattr=None, alias='y'))
+      (Attribute(name='x', default=NOTHING, validator=None, repr=True, eq=True, eq_key=None, order=True, order_key=None, hash=None, init=True, metadata=mappingproxy({}), type=None, converter=None, kw_only=False, inherited=False, on_setattr=None), Attribute(name='y', default=NOTHING, validator=None, repr=True, eq=True, eq_key=None, order=True, order_key=None, hash=None, init=True, metadata=mappingproxy({}), type=None, converter=None, kw_only=False, inherited=False, on_setattr=None))
       >>> attrs.fields(C)[1]
-      Attribute(name='y', default=NOTHING, validator=None, repr=True, eq=True, eq_key=None, order=True, order_key=None, hash=None, init=True, metadata=mappingproxy({}), type=None, converter=None, kw_only=False, inherited=False, on_setattr=None, alias='y')
+      Attribute(name='y', default=NOTHING, validator=None, repr=True, eq=True, eq_key=None, order=True, order_key=None, hash=None, init=True, metadata=mappingproxy({}), type=None, converter=None, kw_only=False, inherited=False, on_setattr=None)
       >>> attrs.fields(C).y is attrs.fields(C)[1]
       True
+
+.. function:: attr.fields
+
+   Same as `attrs.fields`.
 
 .. autofunction:: attrs.fields_dict
 
@@ -164,15 +263,19 @@ Helpers
    .. doctest::
 
       >>> @attr.s
-      ... class C:
+      ... class C(object):
       ...     x = attr.ib()
       ...     y = attr.ib()
       >>> attrs.fields_dict(C)
-      {'x': Attribute(name='x', default=NOTHING, validator=None, repr=True, eq=True, eq_key=None, order=True, order_key=None, hash=None, init=True, metadata=mappingproxy({}), type=None, converter=None, kw_only=False, inherited=False, on_setattr=None, alias='x'), 'y': Attribute(name='y', default=NOTHING, validator=None, repr=True, eq=True, eq_key=None, order=True, order_key=None, hash=None, init=True, metadata=mappingproxy({}), type=None, converter=None, kw_only=False, inherited=False, on_setattr=None, alias='y')}
+      {'x': Attribute(name='x', default=NOTHING, validator=None, repr=True, eq=True, eq_key=None, order=True, order_key=None, hash=None, init=True, metadata=mappingproxy({}), type=None, converter=None, kw_only=False, inherited=False, on_setattr=None), 'y': Attribute(name='y', default=NOTHING, validator=None, repr=True, eq=True, eq_key=None, order=True, order_key=None, hash=None, init=True, metadata=mappingproxy({}), type=None, converter=None, kw_only=False, inherited=False, on_setattr=None)}
       >>> attr.fields_dict(C)['y']
-      Attribute(name='y', default=NOTHING, validator=None, repr=True, eq=True, eq_key=None, order=True, order_key=None, hash=None, init=True, metadata=mappingproxy({}), type=None, converter=None, kw_only=False, inherited=False, on_setattr=None, alias='y')
+      Attribute(name='y', default=NOTHING, validator=None, repr=True, eq=True, eq_key=None, order=True, order_key=None, hash=None, init=True, metadata=mappingproxy({}), type=None, converter=None, kw_only=False, inherited=False, on_setattr=None)
       >>> attrs.fields_dict(C)['y'] is attrs.fields(C).y
       True
+
+.. function:: attr.fields_dict
+
+   Same as `attrs.fields_dict`.
 
 .. autofunction:: attrs.has
 
@@ -181,12 +284,16 @@ Helpers
    .. doctest::
 
       >>> @attr.s
-      ... class C:
+      ... class C(object):
       ...     pass
       >>> attr.has(C)
       True
       >>> attr.has(object)
       False
+
+.. function:: attr.has
+
+   Same as `attrs.has`.
 
 .. autofunction:: attrs.resolve_types
 
@@ -195,12 +302,12 @@ Helpers
     .. doctest::
 
         >>> import typing
-        >>> @define
+        >>> @attrs.define
         ... class A:
         ...     a: typing.List['A']
         ...     b: 'B'
         ...
-        >>> @define
+        >>> @attrs.define
         ... class B:
         ...     a: A
         ...
@@ -215,18 +322,24 @@ Helpers
         >>> attrs.fields(A).b.type
         <class 'B'>
 
+.. function:: attr.resolve_types
+
+   Same as `attrs.resolve_types`.
+
 .. autofunction:: attrs.asdict
 
    For example:
 
    .. doctest::
 
-      >>> @define
+      >>> @attrs.define
       ... class C:
       ...     x: int
       ...     y: int
       >>> attrs.asdict(C(1, C(2, 3)))
       {'x': 1, 'y': {'x': 2, 'y': 3}}
+
+.. autofunction:: attr.asdict
 
 .. autofunction:: attrs.astuple
 
@@ -234,28 +347,35 @@ Helpers
 
    .. doctest::
 
-      >>> @define
+      >>> @attrs.define
       ... class C:
-      ...     x = field()
-      ...     y = field()
+      ...     x = attr.field()
+      ...     y = attr.field()
       >>> attrs.astuple(C(1,2))
       (1, 2)
 
-.. module:: attrs.filters
+.. autofunction:: attr.astuple
 
-*attrs* includes helpers for filtering the attributes in `attrs.asdict` and `attrs.astuple`:
 
-.. autofunction:: include
+``attrs`` includes some handy helpers for filtering the attributes in `attrs.asdict` and `attrs.astuple`:
 
-.. autofunction:: exclude
+.. autofunction:: attrs.filters.include
+
+.. autofunction:: attrs.filters.exclude
+
+.. function:: attr.filters.include
+
+   Same as `attrs.filters.include`.
+
+.. function:: attr.filters.exclude
+
+   Same as `attrs.filters.exclude`.
 
 See :func:`attrs.asdict` for examples.
 
-All objects from ``attrs.filters`` are also available from ``attr.filters`` (it's the same module in a different namespace).
+All objects from ``attrs.filters`` are also available from ``attr.filters``.
 
 ----
-
-.. currentmodule:: attrs
 
 .. autofunction:: attrs.evolve
 
@@ -263,7 +383,7 @@ All objects from ``attrs.filters`` are also available from ``attr.filters`` (it'
 
    .. doctest::
 
-      >>> @define
+      >>> @attrs.define
       ... class C:
       ...     x: int
       ...     y: int
@@ -283,15 +403,19 @@ All objects from ``attrs.filters`` are also available from ``attr.filters`` (it'
    * attributes with ``init=False`` can't be set with ``evolve``.
    * the usual ``__init__`` validators will validate the new values.
 
+.. function:: attr.evolve
+
+   Same as `attrs.evolve`.
+
 .. autofunction:: attrs.validate
 
    For example:
 
    .. doctest::
 
-      >>> @define(on_setattr=attrs.setters.NO_OP)
+      >>> @attrs.define(on_setattr=attrs.setters.NO_OP)
       ... class C:
-      ...     x = field(validator=attrs.validators.instance_of(int))
+      ...     x = attrs.field(validator=attrs.validators.instance_of(int))
       >>> i = C(1)
       >>> i.x = "1"
       >>> attrs.validate(i)
@@ -299,16 +423,26 @@ All objects from ``attrs.filters`` are also available from ``attr.filters`` (it'
          ...
       TypeError: ("'x' must be <class 'int'> (got '1' that is a <class 'str'>).", ...)
 
+.. function:: attr.validate
 
-.. _api-validators:
+   Same as `attrs.validate`.
+
+
+Validators can be globally disabled if you want to run them only in development and tests but not in production because you fear their performance impact:
+
+.. autofunction:: set_run_validators
+
+.. autofunction:: get_run_validators
+
+
+.. _api_validators:
 
 Validators
 ----------
 
-.. module:: attrs.validators
+``attrs`` comes with some common validators in the ``attrs.validators`` module.
+All objects from ``attrs.converters`` are also available from ``attr.converters``.
 
-*attrs* comes with some common validators in the ``attrs.validators`` module.
-All objects from ``attrs.validators`` are also available from ``attr.validators`` (it's the same module in a different namespace).
 
 .. autofunction:: attrs.validators.lt
 
@@ -316,9 +450,9 @@ All objects from ``attrs.validators`` are also available from ``attr.validators`
 
    .. doctest::
 
-      >>> @define
+      >>> @attrs.define
       ... class C:
-      ...     x = field(validator=attrs.validators.lt(42))
+      ...     x = attrs.field(validator=attrs.validators.lt(42))
       >>> C(41)
       C(x=41)
       >>> C(42)
@@ -332,9 +466,9 @@ All objects from ``attrs.validators`` are also available from ``attr.validators`
 
    .. doctest::
 
-      >>> @define
-      ... class C:
-      ...     x = field(validator=attrs.validators.le(42))
+      >>> @attrs.define
+      ... class C(object):
+      ...     x = attrs.field(validator=attr.validators.le(42))
       >>> C(42)
       C(x=42)
       >>> C(43)
@@ -348,7 +482,7 @@ All objects from ``attrs.validators`` are also available from ``attr.validators`
 
    .. doctest::
 
-      >>> @define
+      >>> @attrs.define
       ... class C:
       ...     x = attrs.field(validator=attrs.validators.ge(42))
       >>> C(42)
@@ -364,9 +498,9 @@ All objects from ``attrs.validators`` are also available from ``attr.validators`
 
    .. doctest::
 
-      >>> @define
+      >>> @attrs.define
       ... class C:
-      ...     x = field(validator=attrs.validators.gt(42))
+      ...     x = attr.field(validator=attrs.validators.gt(42))
       >>> C(43)
       C(x=43)
       >>> C(42)
@@ -380,9 +514,9 @@ All objects from ``attrs.validators`` are also available from ``attr.validators`
 
    .. doctest::
 
-      >>> @define
+      >>> @attrs.define
       ... class C:
-      ...     x = field(validator=attrs.validators.max_len(4))
+      ...     x = attrs.field(validator=attrs.validators.max_len(4))
       >>> C("spam")
       C(x='spam')
       >>> C("bacon")
@@ -390,31 +524,15 @@ All objects from ``attrs.validators`` are also available from ``attr.validators`
          ...
       ValueError: ("Length of 'x' must be <= 4: 5")
 
-.. autofunction:: attrs.validators.min_len
-
-   For example:
-
-   .. doctest::
-
-      >>> @define
-      ... class C:
-      ...     x = field(validator=attrs.validators.min_len(1))
-      >>> C("bacon")
-      C(x='bacon')
-      >>> C("")
-      Traceback (most recent call last):
-         ...
-      ValueError: ("Length of 'x' must be => 1: 0")
-
 .. autofunction:: attrs.validators.instance_of
 
    For example:
 
    .. doctest::
 
-      >>> @define
+      >>> @attrs.define
       ... class C:
-      ...     x = field(validator=attrs.validators.instance_of(int))
+      ...     x = attrs.field(validator=attrs.validators.instance_of(int))
       >>> C(42)
       C(x=42)
       >>> C("42")
@@ -432,24 +550,24 @@ All objects from ``attrs.validators`` are also available from ``attr.validators`
 
    .. doctest::
 
-      >>> import enum
-      >>> class State(enum.Enum):
-      ...     ON = "on"
-      ...     OFF = "off"
-      >>> @define
-      ... class C:
-      ...     state = field(validator=attrs.validators.in_(State))
-      ...     val = field(validator=attrs.validators.in_([1, 2, 3]))
-      >>> C(State.ON, 1)
-      C(state=<State.ON: 'on'>, val=1)
-      >>> C("On", 1)
-      Traceback (most recent call last):
-         ...
-      ValueError: 'state' must be in <enum 'State'> (got 'On'), Attribute(name='state', default=NOTHING, validator=<in_ validator with options <enum 'State'>>, repr=True, eq=True, eq_key=None, order=True, order_key=None, hash=None, init=True, metadata=mappingproxy({}), type=None, converter=None, kw_only=False, inherited=False, on_setattr=None), <enum 'State'>, 'on')
-      >>> C(State.ON, 4)
-      Traceback (most recent call last):
-      ...
-      ValueError: 'val' must be in [1, 2, 3] (got 4), Attribute(name='val', default=NOTHING, validator=<in_ validator with options [1, 2, 3]>, repr=True, eq=True, eq_key=None, order=True, order_key=None, hash=None, init=True, metadata=mappingproxy({}), type=None, converter=None, kw_only=False, inherited=False, on_setattr=None), [1, 2, 3], 4)
+       >>> import enum
+       >>> class State(enum.Enum):
+       ...     ON = "on"
+       ...     OFF = "off"
+       >>> @attrs.define
+       ... class C:
+       ...     state = attrs.field(validator=attrs.validators.in_(State))
+       ...     val = attrs.field(validator=attrs.validators.in_([1, 2, 3]))
+       >>> C(State.ON, 1)
+       C(state=<State.ON: 'on'>, val=1)
+       >>> C("on", 1)
+       Traceback (most recent call last):
+          ...
+       ValueError: 'state' must be in <enum 'State'> (got 'on')
+       >>> C(State.ON, 4)
+       Traceback (most recent call last):
+          ...
+       ValueError: 'val' must be in [1, 2, 3] (got 4)
 
 .. autofunction:: attrs.validators.provides
 
@@ -459,34 +577,8 @@ All objects from ``attrs.validators`` are also available from ``attr.validators`
 
    Thus the following two statements are equivalent::
 
-      x = field(validator=attrs.validators.and_(v1, v2, v3))
-      x = field(validator=[v1, v2, v3])
-
-.. autofunction:: attrs.validators.not_
-
-   For example:
-
-   .. doctest::
-
-      >>> reserved_names = {"id", "time", "source"}
-      >>> @define
-      ... class Measurement:
-      ...     tags = field(
-      ...         validator=attrs.validators.deep_mapping(
-      ...             key_validator=attrs.validators.not_(
-      ...                 attrs.validators.in_(reserved_names),
-      ...                 msg="reserved tag key",
-      ...             ),
-      ...             value_validator=attrs.validators.instance_of((str, int)),
-      ...         )
-      ...     )
-      >>> Measurement(tags={"source": "universe"})
-      Traceback (most recent call last):
-         ...
-      ValueError: ("reserved tag key", Attribute(name='tags', default=NOTHING, validator=<not_ validator wrapping <in_ validator with options {'id', 'time', 'source'}>, capturing (<class 'ValueError'>, <class 'TypeError'>)>, type=None, kw_only=False), <in_ validator with options {'id', 'time', 'source'}>, {'source_': 'universe'}, (<class 'ValueError'>, <class 'TypeError'>))
-      >>> Measurement(tags={"source_": "universe"})
-      Measurement(tags={'source_': 'universe'})
-
+      x = attrs.field(validator=attrs.validators.and_(v1, v2, v3))
+      x = attrs.field(validator=[v1, v2, v3])
 
 .. autofunction:: attrs.validators.optional
 
@@ -494,12 +586,9 @@ All objects from ``attrs.validators`` are also available from ``attr.validators`
 
    .. doctest::
 
-      >>> @define
+      >>> @attrs.define
       ... class C:
-      ...     x = field(
-      ...         validator=attrs.validators.optional(
-      ...             attrs.validators.instance_of(int)
-      ...         ))
+      ...     x = attrs.field(validator=attrs.validators.optional(attr.validators.instance_of(int)))
       >>> C(42)
       C(x=42)
       >>> C("42")
@@ -516,9 +605,9 @@ All objects from ``attrs.validators`` are also available from ``attr.validators`
 
     .. doctest::
 
-        >>> @define
+        >>> @attrs.define
         ... class C:
-        ...     x = field(validator=attrs.validators.is_callable())
+        ...     x = attrs.field(validator=attrs.validators.is_callable())
         >>> C(isinstance)
         C(x=<built-in function isinstance>)
         >>> C("not a callable")
@@ -533,10 +622,10 @@ All objects from ``attrs.validators`` are also available from ``attr.validators`
 
     .. doctest::
 
-        >>> @define
+        >>> @attrs.define
         ... class User:
-        ...     email = field(validator=attrs.validators.matches_re(
-        ...         r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"))
+        ...     email = attrs.field(validator=attrs.validators.matches_re(
+        ...         "(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"))
         >>> User(email="user@example.com")
         User(email='user@example.com')
         >>> User(email="user@example.com@test.com")
@@ -551,11 +640,11 @@ All objects from ``attrs.validators`` are also available from ``attr.validators`
 
     .. doctest::
 
-        >>> @define
+        >>> @attrs.define
         ... class C:
-        ...     x = field(validator=attrs.validators.deep_iterable(
-        ...             member_validator=attrs.validators.instance_of(int),
-        ...             iterable_validator=attrs.validators.instance_of(list)
+        ...     x = attrs.field(validator=attrs.validators.deep_iterable(
+        ...     member_validator=attrs.validators.instance_of(int),
+        ...     iterable_validator=attrs.validators.instance_of(list)
         ...     ))
         >>> C(x=[1, 2, 3])
         C(x=[1, 2, 3])
@@ -575,12 +664,12 @@ All objects from ``attrs.validators`` are also available from ``attr.validators`
 
     .. doctest::
 
-        >>> @define
+        >>> @attrs.define
         ... class C:
-        ...     x = field(validator=attrs.validators.deep_mapping(
-        ...             key_validator=attrs.validators.instance_of(str),
-        ...             value_validator=attrs.validators.instance_of(int),
-        ...             mapping_validator=attrs.validators.instance_of(dict)
+        ...     x = attrs.field(validator=attrs.validators.deep_mapping(
+        ...         key_validator=attrs.validators.instance_of(str),
+        ...         value_validator=attrs.validators.instance_of(int),
+        ...         mapping_validator=attrs.validators.instance_of(dict)
         ...     ))
         >>> C(x={"a": 1, "b": 2})
         C(x={'a': 1, 'b': 2})
@@ -609,18 +698,16 @@ Validators can be both globally and locally disabled:
 Converters
 ----------
 
-.. module:: attrs.converters
-
-All objects from ``attrs.converters`` are also available from ``attr.converters`` (it's the same module in a different namespace).
+All objects from ``attrs.converters`` are also available from ``attr.converters``.
 
 .. autofunction:: attrs.converters.pipe
 
-   For convenience, it's also possible to pass a list to `attrs.field` / `attr.ib`'s converter arguments.
+   For convenience, it's also possible to pass a list to `attr.ib`'s converter argument.
 
    Thus the following two statements are equivalent::
 
-      x = attrs.field(converter=attrs.converter.pipe(c1, c2, c3))
-      x = attrs.field(converter=[c1, c2, c3])
+      x = attr.ib(converter=attr.converter.pipe(c1, c2, c3))
+      x = attr.ib(converter=[c1, c2, c3])
 
 .. autofunction:: attrs.converters.optional
 
@@ -628,9 +715,9 @@ All objects from ``attrs.converters`` are also available from ``attr.converters`
 
    .. doctest::
 
-      >>> @define
-      ... class C:
-      ...     x = field(converter=attrs.converters.optional(int))
+      >>> @attr.s
+      ... class C(object):
+      ...     x = attr.ib(converter=attr.converters.optional(int))
       >>> C(None)
       C(x=None)
       >>> C(42)
@@ -643,10 +730,10 @@ All objects from ``attrs.converters`` are also available from ``attr.converters`
 
    .. doctest::
 
-      >>> @define
-      ... class C:
-      ...     x = field(
-      ...         converter=attrs.converters.default_if_none("")
+      >>> @attr.s
+      ... class C(object):
+      ...     x = attr.ib(
+      ...         converter=attr.converters.default_if_none("")
       ...     )
       >>> C(None)
       C(x='')
@@ -658,10 +745,10 @@ All objects from ``attrs.converters`` are also available from ``attr.converters`
 
    .. doctest::
 
-      >>> @define
-      ... class C:
-      ...     x = field(
-      ...         converter=attrs.converters.to_bool
+      >>> @attr.s
+      ... class C(object):
+      ...     x = attr.ib(
+      ...         converter=attr.converters.to_bool
       ...     )
       >>> C("yes")
       C(x=True)
@@ -679,32 +766,23 @@ All objects from ``attrs.converters`` are also available from ``attr.converters`
 Setters
 -------
 
-.. module:: attrs.setters
-
 These are helpers that you can use together with `attrs.define`'s and `attrs.fields`'s ``on_setattr`` arguments.
-All setters in ``attrs.setters`` are also available from ``attr.setters`` (it's the same module in a different namespace).
+All setters in ``attrs.setters`` are also available from ``attr.setters``.
 
-.. autofunction:: frozen
-.. autofunction:: validate
-.. autofunction:: convert
-.. autofunction:: pipe
-
-.. data:: NO_OP
-
-   Sentinel for disabling class-wide *on_setattr* hooks for certain attributes.
-
-   Does not work in `attrs.setters.pipe` or within lists.
-
-   .. versionadded:: 20.1.0
+.. autofunction:: attrs.setters.frozen
+.. autofunction:: attrs.setters.validate
+.. autofunction:: attrs.setters.convert
+.. autofunction:: attrs.setters.pipe
+.. autodata:: attrs.setters.NO_OP
 
    For example, only ``x`` is frozen here:
 
    .. doctest::
 
-     >>> @define(on_setattr=attr.setters.frozen)
+     >>> @attrs.define(on_setattr=attr.setters.frozen)
      ... class C:
-     ...     x = field()
-     ...     y = field(on_setattr=attr.setters.NO_OP)
+     ...     x = attr.field()
+     ...     y = attr.field(on_setattr=attr.setters.NO_OP)
      >>> c = C(1, 2)
      >>> c.y = 3
      >>> c.y
@@ -715,3 +793,34 @@ All setters in ``attrs.setters`` are also available from ``attr.setters`` (it's 
      attrs.exceptions.FrozenAttributeError: ()
 
    N.B. Please use `attrs.define`'s *frozen* argument (or `attrs.frozen`) to freeze whole classes; it is more efficient.
+
+
+Deprecated APIs
+---------------
+
+.. _version-info:
+
+To help you write backward compatible code that doesn't throw warnings on modern releases, the ``attr`` module has an ``__version_info__`` attribute as of version 19.2.0.
+It behaves similarly to `sys.version_info` and is an instance of `VersionInfo`:
+
+.. autoclass:: VersionInfo
+
+   With its help you can write code like this:
+
+   >>> if getattr(attr, "__version_info__", (0,)) >= (19, 2):
+   ...     cmp_off = {"eq": False}
+   ... else:
+   ...     cmp_off = {"cmp": False}
+   >>> cmp_off == {"eq":  False}
+   True
+   >>> @attr.s(**cmp_off)
+   ... class C(object):
+   ...     pass
+
+
+----
+
+The serious business aliases used to be called ``attr.attributes`` and ``attr.attr``.
+There are no plans to remove them but they shouldn't be used in new code.
+
+.. autofunction:: assoc

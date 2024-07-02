@@ -59,7 +59,6 @@ public:
 
     RefPtr<AudioBus> createBus(float sampleRate, bool mixToMono); // Returns nullptr on error
 
-    const uint8_t* data() const { return m_data.data(); }
     size_t dataSize() const { return m_data.size(); }
     std::span<const uint8_t> span() const { return m_data; }
 

@@ -1218,6 +1218,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glFramebufferRenderbuffer";
         case EntryPoint::GLFramebufferRenderbufferOES:
             return "glFramebufferRenderbufferOES";
+        case EntryPoint::GLFramebufferResolveRenderbufferWEBKIT:
+            return "glFramebufferResolveRenderbufferWEBKIT";
         case EntryPoint::GLFramebufferTexture:
             return "glFramebufferTexture";
         case EntryPoint::GLFramebufferTexture1D:

@@ -1,0 +1,70 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/background-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/background-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/background-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/basic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/basic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/basic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/border-spacing-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/border-spacing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/font-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/font-size-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/font-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/green-square-100px.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/iframe-zoom-nested-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/iframe-zoom-nested.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/iframe-zoom.sub-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/iframe-zoom.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/image-intrinsic-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/image-intrinsic-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/inherited-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/inherited-length-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/inherited-length.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/inherited.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/letter-spacing-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/letter-spacing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/line-height-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/line-height-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/line-height.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/list-style-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/list-style-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/relative-units-from-parent-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/relative-units-from-parent-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/relative-units-from-parent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/relative-units.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/scroll-corner-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/scroll-top-test-with-zoom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/scrollbar-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/stroke-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/stroke.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/svg-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/svg-path-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/svg-path-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/svg-path.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/svg-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/svg.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/text-indent-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/text-indent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/text-shadow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/text-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/text-stroke-width-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/text-stroke-width.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/text-underline-offset-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/text-underline-offset.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/word-spacing-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/word-spacing.html

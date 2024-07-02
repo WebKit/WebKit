@@ -1,4 +1,3 @@
-# mypy: allow-untyped-defs
 import unittest
 
 import pytest

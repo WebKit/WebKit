@@ -1,3 +1,5 @@
+//@ skip
+//@ requireOptions("--useJITCage=0") # temporary workaround for rdar://127308350
 //@ requireOptions("--useInterpretedJSEntryWrappers=1")
 //  Debugging: jsc -m cc-int-to-int.js --useConcurrentJIT=0 --useBBQJIT=0 --useOMGJIT=0 --jitAllowList=nothing --useDFGJIT=0 --dumpDisassembly=0 --forceICFailure=1 --useInterpretedJSEntryWrappers=1 --dumpDisassembly=0
 import { instantiate } from "../wabt-wrapper.js"
@@ -19,7 +21,7 @@ async function test() {
     const instance = await instantiate(wat, {}, { simd: true })
     const { test } = instance.exports
 
-    for (let i = 0; i < 1000; ++i) {
+    for (let i = 0; i < 10000000; ++i) {
         assert.eq(test(5), 42 + 5)
         assert.eq(test(), 42 + 0)
         assert.eq(test(null), 42 + 0)

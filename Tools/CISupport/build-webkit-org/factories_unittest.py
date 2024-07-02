@@ -1118,6 +1118,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'delete-WebKitBuild-directory',
             'delete-stale-build-files',
+            'jhbuild',
             'compile-webkit'
         ],
         'GTK-Linux-64-bit-Release-Debian-Stable-Build': [

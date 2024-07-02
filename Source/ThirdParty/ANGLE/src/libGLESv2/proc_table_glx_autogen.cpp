@@ -406,6 +406,7 @@ const ProcEntry g_procTable[] = {
     {"glFramebufferPixelLocalStorageRestoreANGLE", P(GL_FramebufferPixelLocalStorageRestoreANGLE)},
     {"glFramebufferRenderbuffer", P(GL_FramebufferRenderbuffer)},
     {"glFramebufferRenderbufferOES", P(GL_FramebufferRenderbufferOES)},
+    {"glFramebufferResolveRenderbufferWEBKIT", P(GL_FramebufferResolveRenderbufferWEBKIT)},
     {"glFramebufferTexture", P(GL_FramebufferTexture)},
     {"glFramebufferTexture1D", P(GL_FramebufferTexture1D)},
     {"glFramebufferTexture2D", P(GL_FramebufferTexture2D)},

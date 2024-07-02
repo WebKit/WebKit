@@ -234,7 +234,7 @@ public:
     static void loaderDetachedFromFrame(LocalFrame&, DocumentLoader&);
     static void frameStartedLoading(LocalFrame&);
     static void frameStoppedLoading(LocalFrame&);
-    static void didCompleteRenderingFrame(LocalFrame&);
+    static void didCompleteRenderingFrame(Frame&);
     static void frameScheduledNavigation(Frame&, Seconds delay);
     static void frameClearedScheduledNavigation(Frame&);
     static void accessibilitySettingsDidChange(Page&);
@@ -257,14 +257,14 @@ public:
     static void consoleCountReset(Page&, JSC::JSGlobalObject*, const String& label);
     static void consoleCountReset(WorkerOrWorkletGlobalScope&, JSC::JSGlobalObject*, const String& label);
 
-    static void takeHeapSnapshot(LocalFrame&, const String& title);
-    static void startConsoleTiming(LocalFrame&, JSC::JSGlobalObject*, const String& label);
+    static void takeHeapSnapshot(Frame&, const String& title);
+    static void startConsoleTiming(Frame&, JSC::JSGlobalObject*, const String& label);
     static void startConsoleTiming(WorkerOrWorkletGlobalScope&, JSC::JSGlobalObject*, const String& label);
-    static void logConsoleTiming(LocalFrame&, JSC::JSGlobalObject*, const String& label, Ref<Inspector::ScriptArguments>&&);
+    static void logConsoleTiming(Frame&, JSC::JSGlobalObject*, const String& label, Ref<Inspector::ScriptArguments>&&);
     static void logConsoleTiming(WorkerOrWorkletGlobalScope&, JSC::JSGlobalObject*, const String& label, Ref<Inspector::ScriptArguments>&&);
-    static void stopConsoleTiming(LocalFrame&, JSC::JSGlobalObject*, const String& label);
+    static void stopConsoleTiming(Frame&, JSC::JSGlobalObject*, const String& label);
     static void stopConsoleTiming(WorkerOrWorkletGlobalScope&, JSC::JSGlobalObject*, const String& label);
-    static void consoleTimeStamp(LocalFrame&, Ref<Inspector::ScriptArguments>&&);
+    static void consoleTimeStamp(Frame&, Ref<Inspector::ScriptArguments>&&);
     static void startProfiling(Page&, JSC::JSGlobalObject*, const String& title);
     static void stopProfiling(Page&, JSC::JSGlobalObject*, const String& title);
     static void consoleStartRecordingCanvas(CanvasRenderingContext&, JSC::JSGlobalObject&, JSC::JSObject* options);
@@ -469,12 +469,12 @@ private:
     static void consoleCountImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& label);
     static void consoleCountResetImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& label);
     static void takeHeapSnapshotImpl(InstrumentingAgents&, const String& title);
-    static void startConsoleTimingImpl(InstrumentingAgents&, LocalFrame&, JSC::JSGlobalObject*, const String& label);
+    static void startConsoleTimingImpl(InstrumentingAgents&, Frame&, JSC::JSGlobalObject*, const String& label);
     static void startConsoleTimingImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& label);
     static void logConsoleTimingImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& label, Ref<Inspector::ScriptArguments>&&);
-    static void stopConsoleTimingImpl(InstrumentingAgents&, LocalFrame&, JSC::JSGlobalObject*, const String& label);
+    static void stopConsoleTimingImpl(InstrumentingAgents&, Frame&, JSC::JSGlobalObject*, const String& label);
     static void stopConsoleTimingImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& label);
-    static void consoleTimeStampImpl(InstrumentingAgents&, LocalFrame&, Ref<Inspector::ScriptArguments>&&);
+    static void consoleTimeStampImpl(InstrumentingAgents&, Frame&, Ref<Inspector::ScriptArguments>&&);
     static void startProfilingImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& title);
     static void stopProfilingImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& title);
     static void consoleStartRecordingCanvasImpl(InstrumentingAgents&, CanvasRenderingContext&, JSC::JSGlobalObject&, JSC::JSObject* options);
@@ -1276,7 +1276,7 @@ inline void InspectorInstrumentation::frameStartedLoading(LocalFrame& frame)
         frameStartedLoadingImpl(*agents, frame);
 }
 
-inline void InspectorInstrumentation::didCompleteRenderingFrame(LocalFrame& frame)
+inline void InspectorInstrumentation::didCompleteRenderingFrame(Frame& frame)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
@@ -1620,14 +1620,14 @@ inline void InspectorInstrumentation::consoleCountReset(WorkerOrWorkletGlobalSco
     consoleCountResetImpl(instrumentingAgents(globalScope), state, label);
 }
 
-inline void InspectorInstrumentation::takeHeapSnapshot(LocalFrame& frame, const String& title)
+inline void InspectorInstrumentation::takeHeapSnapshot(Frame& frame, const String& title)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
         takeHeapSnapshotImpl(*agents, title);
 }
 
-inline void InspectorInstrumentation::startConsoleTiming(LocalFrame& frame, JSC::JSGlobalObject* exec, const String& label)
+inline void InspectorInstrumentation::startConsoleTiming(Frame& frame, JSC::JSGlobalObject* exec, const String& label)
 {
     if (auto* agents = instrumentingAgents(frame))
         startConsoleTimingImpl(*agents, frame, exec, label);
@@ -1638,7 +1638,7 @@ inline void InspectorInstrumentation::startConsoleTiming(WorkerOrWorkletGlobalSc
     startConsoleTimingImpl(instrumentingAgents(globalScope), exec, label);
 }
 
-inline void InspectorInstrumentation::logConsoleTiming(LocalFrame& frame, JSC::JSGlobalObject* exec, const String& label, Ref<Inspector::ScriptArguments>&& arguments)
+inline void InspectorInstrumentation::logConsoleTiming(Frame& frame, JSC::JSGlobalObject* exec, const String& label, Ref<Inspector::ScriptArguments>&& arguments)
 {
     if (auto* agents = instrumentingAgents(frame))
         logConsoleTimingImpl(*agents, exec, label, WTFMove(arguments));
@@ -1649,7 +1649,7 @@ inline void InspectorInstrumentation::logConsoleTiming(WorkerOrWorkletGlobalScop
     logConsoleTimingImpl(instrumentingAgents(globalScope), exec, label, WTFMove(arguments));
 }
 
-inline void InspectorInstrumentation::stopConsoleTiming(LocalFrame& frame, JSC::JSGlobalObject* exec, const String& label)
+inline void InspectorInstrumentation::stopConsoleTiming(Frame& frame, JSC::JSGlobalObject* exec, const String& label)
 {
     if (auto* agents = instrumentingAgents(frame))
         stopConsoleTimingImpl(*agents, frame, exec, label);
@@ -1660,7 +1660,7 @@ inline void InspectorInstrumentation::stopConsoleTiming(WorkerOrWorkletGlobalSco
     stopConsoleTimingImpl(instrumentingAgents(globalScope), exec, label);
 }
 
-inline void InspectorInstrumentation::consoleTimeStamp(LocalFrame& frame, Ref<Inspector::ScriptArguments>&& arguments)
+inline void InspectorInstrumentation::consoleTimeStamp(Frame& frame, Ref<Inspector::ScriptArguments>&& arguments)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))

@@ -543,7 +543,7 @@
 		6B306106218A372900F5A802 /* ClosingWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6B306105218A372900F5A802 /* ClosingWebView.mm */; };
 		6B4E861C2220A5520022F389 /* RegistrableDomain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B4E861B2220A5520022F389 /* RegistrableDomain.cpp */; };
 		6B9ABE122086952F00D75DE6 /* HTTPParsers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B9ABE112086952F00D75DE6 /* HTTPParsers.cpp */; };
-		6BF4A683239ED4CD00E2F45B /* LoggedInStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BF4A682239ED4CD00E2F45B /* LoggedInStatus.cpp */; };
+		6BF4A683239ED4CD00E2F45B /* LoginStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BF4A682239ED4CD00E2F45B /* LoginStatus.cpp */; };
 		6BFD294C1D5E6C1D008EC968 /* HashCountedSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A38D7E51C752D5F004F157D /* HashCountedSet.cpp */; };
 		712E4BC125DDC52A0007201C /* AnimationFrameRate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 712E4BC025DDC52A0007201C /* AnimationFrameRate.cpp */; };
 		7141156429754422005011D6 /* PlatformCAAnimationKeyPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7141156329754422005011D6 /* PlatformCAAnimationKeyPath.cpp */; };
@@ -2058,7 +2058,7 @@
 		0746645722FF62D000E3451A /* AccessibilityTestSupportProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityTestSupportProtocol.h; sourceTree = "<group>"; };
 		0746645822FF630500E3451A /* AccessibilityTestPlugin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTestPlugin.mm; sourceTree = "<group>"; };
 		07492B391DF8ADA400633DE1 /* enumerateMediaDevices.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = enumerateMediaDevices.html; sourceTree = "<group>"; };
-		07492B391DF8ADA400633DQ1 /* playable-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = playable-audio.html; sourceTree = "<group>"; };
+		07492B391DF8ADA400633DQ1 /* playable-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "playable-audio.html"; sourceTree = "<group>"; };
 		07492B3A1DF8AE2D00633DE1 /* EnumerateMediaDevices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnumerateMediaDevices.cpp; sourceTree = "<group>"; };
 		074AD7092B604E7600FFA67B /* WritingTools.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WritingTools.mm; sourceTree = "<group>"; };
 		075A9CF426177217006DFA3A /* MediaSessionCoordinatorTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSessionCoordinatorTest.mm; sourceTree = "<group>"; };
@@ -2849,7 +2849,7 @@
 		6B306105218A372900F5A802 /* ClosingWebView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ClosingWebView.mm; sourceTree = "<group>"; };
 		6B4E861B2220A5520022F389 /* RegistrableDomain.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RegistrableDomain.cpp; sourceTree = "<group>"; };
 		6B9ABE112086952F00D75DE6 /* HTTPParsers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPParsers.cpp; sourceTree = "<group>"; };
-		6BF4A682239ED4CD00E2F45B /* LoggedInStatus.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LoggedInStatus.cpp; sourceTree = "<group>"; };
+		6BF4A682239ED4CD00E2F45B /* LoginStatus.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LoginStatus.cpp; sourceTree = "<group>"; };
 		712E4BC025DDC52A0007201C /* AnimationFrameRate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationFrameRate.cpp; sourceTree = "<group>"; };
 		7141156329754422005011D6 /* PlatformCAAnimationKeyPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformCAAnimationKeyPath.cpp; sourceTree = "<group>"; };
 		71E88C4024B5299C00665160 /* ShareSheetTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ShareSheetTests.mm; sourceTree = "<group>"; };
@@ -4512,8 +4512,8 @@
 				CD5FF4962162E27E004BD86F /* ISOBox.cpp */,
 				278E3E1823CD82FA005A6B80 /* KeyedCoding.cpp */,
 				14464012167A8305000BD218 /* LayoutUnitTests.cpp */,
-				6BF4A682239ED4CD00E2F45B /* LoggedInStatus.cpp */,
 				076E507E1F45031E006E9F5A /* Logging.cpp */,
+				6BF4A682239ED4CD00E2F45B /* LoginStatus.cpp */,
 				CE1866471F72E8F100A0CAB6 /* MarkedText.cpp */,
 				512F290F2BA1D03100F1C326 /* MIMESniffer.cpp */,
 				A5B149DD1F5A19DC00C6DAFF /* MIMETypeRegistry.cpp */,
@@ -6733,8 +6733,8 @@
 				5778D05622110A2600899E3B /* LoadWebArchive.mm in Sources */,
 				F4EC78102ADF8BC300C37592 /* LoadWebViewWithEmptyAppName.mm in Sources */,
 				E35B908223F60DD0000011FF /* LocalizedDeviceModel.mm in Sources */,
-				6BF4A683239ED4CD00E2F45B /* LoggedInStatus.cpp in Sources */,
 				076E507F1F4513D6006E9F5A /* Logging.cpp in Sources */,
+				6BF4A683239ED4CD00E2F45B /* LoginStatus.cpp in Sources */,
 				510A920A24D5048900BFD89C /* LogitechF310.mm in Sources */,
 				510A920C24D5275500BFD89C /* LogitechF710.mm in Sources */,
 				CE1866491F72E8F100A0CAB6 /* MarkedText.cpp in Sources */,

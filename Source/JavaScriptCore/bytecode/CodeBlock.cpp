@@ -3306,7 +3306,11 @@ bool CodeBlock::couldTakeSpecialArithFastCase(BytecodeIndex bytecodeIndex)
 #if ENABLE(JIT)
 DFG::CapabilityLevel CodeBlock::capabilityLevel()
 {
-    DFG::CapabilityLevel result = computeCapabilityLevel();
+    DFG::CapabilityLevel result = capabilityLevelState();
+    if (result != DFG::CapabilityLevelNotSet)
+        return result;
+
+    result = computeCapabilityLevel();
     m_capabilityLevelState = result;
     return result;
 }

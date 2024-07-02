@@ -2337,7 +2337,7 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
     loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_callee[t5], t3
     btpz t3, (constexpr CallLinkInfo::polymorphicCalleeMask), .notPolymorphic
     prepareCall(t2, t3, t4, t6, macro(address)
-        loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
+        loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_codeBlock[t5], t2
         storep t2, address
     end)
     addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
@@ -2346,12 +2346,12 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
 .notPolymorphic:
     bpneq t0, t3, .opCallSlow
     prepareCall(t2, t3, t4, t6, macro(address)
-        loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
+        loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_codeBlock[t5], t2
         storep t2, address
     end)
 
 .goPolymorphic:
-    loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_monomorphicCallDestination[t5], t5
+    loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_monomorphicCallDestination[t5], t5
 .dispatch:
     invokeCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, t5, t1, JSEntryPtrTag)
 
@@ -2427,7 +2427,7 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
             loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_callee[t5], t3
             btpz t3, (constexpr CallLinkInfo::polymorphicCalleeMask), .notPolymorphic
             prepareCall(t2, t3, t4, t6, macro(address)
-                loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
+                loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_codeBlock[t5], t2
                 storep t2, address
             end)
             addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
@@ -2436,12 +2436,12 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
         .notPolymorphic:
             bpneq t0, t3, .opCallSlow
             prepareCall(t2, t3, t4, t6, macro(address)
-                loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
+                loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_codeBlock[t5], t2
                 storep t2, address
             end)
 
         .goPolymorphic:
-            loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_monomorphicCallDestination[t5], t5
+            loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_monomorphicCallDestination[t5], t5
         .dispatch:
             invokeCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, t5, t1, JSEntryPtrTag)
 

@@ -2570,9 +2570,10 @@ void Document::resolveStyle(ResolveStyleType type)
         Style::TreeResolver resolver(*this, WTFMove(m_pendingRenderTreeUpdate));
         auto styleUpdate = resolver.resolve();
 
-        while (resolver.hasUnresolvedQueryContainers()) {
+        while (resolver.hasUnresolvedQueryContainers() || resolver.hasUnresolvedAnchorPositionedElements()) {
             if (styleUpdate) {
-                SetForScope resolvingContainerQueriesScope(m_isResolvingContainerQueries, true);
+                SetForScope resolvingContainerQueriesScope(m_isResolvingContainerQueries, resolver.hasUnresolvedQueryContainers());
+                SetForScope resolvingAnchorPositionedElementsScope(m_isResolvingAnchorPositionedElements, resolver.hasUnresolvedAnchorPositionedElements());
 
                 updateRenderTree(WTFMove(styleUpdate));
 
@@ -2995,6 +2996,15 @@ bool Document::isResolvingContainerQueriesForSelfOrAncestor() const
         return true;
     if (RefPtr owner = ownerElement())
         return owner->document().isResolvingContainerQueriesForSelfOrAncestor();
+    return false;
+}
+
+bool Document::isInStyleInterleavedLayoutForSelfOrAncestor() const
+{
+    if (isInStyleInterleavedLayout())
+        return true;
+    if (RefPtr owner = ownerElement())
+        return owner->document().isInStyleInterleavedLayoutForSelfOrAncestor();
     return false;
 }
 

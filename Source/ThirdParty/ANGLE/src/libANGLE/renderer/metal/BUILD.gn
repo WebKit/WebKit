@@ -15,7 +15,10 @@ assert(is_mac || is_ios)
 assert(angle_enable_metal)
 
 config("angle_metal_backend_config") {
-  defines = [ "ANGLE_ENABLE_METAL" ]
+  defines = [
+    "ANGLE_ENABLE_METAL",
+    "ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED=1",
+  ]
   ldflags = [
     "-weak_framework",
     "Metal",

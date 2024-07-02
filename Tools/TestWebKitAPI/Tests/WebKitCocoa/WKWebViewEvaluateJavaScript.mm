@@ -485,6 +485,20 @@ TEST(WebKit, AllowsContentJavaScriptFromDefaultPreferences)
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(WebKit, AllowsContentJavaScriptAffectsNoscriptElements)
+{
+    RetainPtr preferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    [preferences setAllowsContentJavaScript:NO];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setDefaultWebpagePreferences:preferences.get()];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView synchronouslyLoadHTMLString:@"<noscript>this text should be inserted into the DOM</noscript>"];
+    EXPECT_WK_STREQ([webView contentsAsString], "this text should be inserted into the DOM");
+}
+
 TEST(WebKit, SPIJavascriptMarkupVsAPIContentJavaScript)
 {
     // There's not a dynamically configuration setting for javascript markup,

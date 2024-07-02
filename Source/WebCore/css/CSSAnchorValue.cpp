@@ -30,6 +30,14 @@
 
 namespace WebCore {
 
+void CSSAnchorValue::collectAnchorNames(HashSet<String>& accumulator) const
+{
+    if (m_anchorElement)
+        accumulator.add(m_anchorElement->stringValue());
+    // FIXME: Support collecting anchor names from m_fallback
+}
+
+
 Ref<CSSAnchorValue> CSSAnchorValue::create(RefPtr<CSSPrimitiveValue>&& anchorElement, Ref<CSSValue>&& anchorSide, RefPtr<CSSPrimitiveValue>&& fallback)
 {
     return adoptRef(*new CSSAnchorValue(WTFMove(anchorElement), WTFMove(anchorSide), WTFMove(fallback)));

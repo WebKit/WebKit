@@ -235,6 +235,7 @@ void EventSendingController::mouseMoveTo(int x, int y, JSStringRef pointerType)
     m_position = WKPointMake(x, y);
     postSynchronousPageMessage("EventSender", body);
 
+    WKBundlePageFlushDeferredDidReceiveMouseEventForTesting(InjectedBundle::singleton().pageRef());
     auto waitForDidReceiveEventBody = adoptWK(WKMutableDictionaryCreate());
     setValue(waitForDidReceiveEventBody, "SubMessage", "WaitForDeferredMouseEvents");
     postSynchronousPageMessage("EventSender", waitForDidReceiveEventBody);

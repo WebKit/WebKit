@@ -146,4 +146,9 @@ void ReportingObserver::appendQueuedReportIfCorrectType(const Ref<Report>& repor
     });
 }
 
+ReportingObserverCallback& ReportingObserver::callbackConcurrently()
+{
+    return m_callback.get();
+}
+
 } // namespace WebCore

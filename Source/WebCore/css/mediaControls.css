@@ -263,7 +263,7 @@ video::-webkit-media-text-track-region-container.scrolling {
 video::-webkit-media-text-track-display {
     position: absolute;
     overflow: hidden;
-    white-space: pre-wrap;
+    white-space: pre-line;
     box-sizing: border-box;
     font: 22px sans-serif;
     flex: 0 0 auto;

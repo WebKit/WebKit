@@ -984,6 +984,9 @@ public:
     bool isMediaStreamTrackPowerEfficient(const MediaStreamTrack&) const;
     bool isMockRealtimeMediaSourceCenterEnabled();
     bool shouldAudioTrackPlay(const AudioTrack&);
+#endif // ENABLE(MEDIA_STREAM)
+#if ENABLE(WEB_RTC)
+    String rtcNetworkInterfaceName() const;
 #endif
 
     bool isHardwareVP9DecoderExpected();

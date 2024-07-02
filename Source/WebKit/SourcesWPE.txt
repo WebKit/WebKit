@@ -211,6 +211,8 @@ UIProcess/API/wpe/WebKitWebViewWPE1.cpp @no-unify
 UIProcess/API/wpe/WebKitWebViewWPE2.cpp @no-unify
 UIProcess/API/wpe/WebKitWebViewWPE.cpp @no-unify
 UIProcess/API/wpe/WPEWebView.cpp @no-unify
+UIProcess/API/wpe/WPEWebViewLegacy.cpp @no-unify
+UIProcess/API/wpe/WPEWebViewPlatform.cpp @no-unify
 
 UIProcess/Automation/libwpe/WebAutomationSessionLibWPE.cpp
 UIProcess/Automation/libwpe/WebAutomationSessionWPE.cpp

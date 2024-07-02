@@ -27,15 +27,19 @@ messages -> NetworkRTCProvider {
     CreateClientTCPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::RTC::Network::SocketAddress localAddress, WebKit::RTC::Network::SocketAddress remoteAddress, String userAgent, int options, WebKit::WebPageProxyIdentifier pageIdentifier, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain domain)
     WrapNewTCPConnection(WebCore::LibWebRTCSocketIdentifier identifier, WebCore::LibWebRTCSocketIdentifier newConnectionSocketIdentifier)
 
-    void SetPlatformTCPSocketsEnabled(bool enabled)
-    void SetPlatformUDPSocketsEnabled(bool enabled)
+    SetPlatformTCPSocketsEnabled(bool enabled)
+    SetPlatformUDPSocketsEnabled(bool enabled)
 
     CreateResolver(WebKit::LibWebRTCResolverIdentifier identifier, String address)
     StopResolver(WebKit::LibWebRTCResolverIdentifier identifier)
 
-    void SendToSocket(WebCore::LibWebRTCSocketIdentifier identifier, std::span<const uint8_t> data, WebKit::RTC::Network::SocketAddress address, struct WebKit::RTCPacketOptions options)
-    void CloseSocket(WebCore::LibWebRTCSocketIdentifier identifier)
-    void SetSocketOption(WebCore::LibWebRTCSocketIdentifier identifier, int option, int value)
+#if PLATFORM(COCOA)
+    GetInterfaceName(URL url, WebKit::WebPageProxyIdentifier pageIdentifier, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain domain) -> (String interfaceName) async
+#endif
+
+    SendToSocket(WebCore::LibWebRTCSocketIdentifier identifier, std::span<const uint8_t> data, WebKit::RTC::Network::SocketAddress address, struct WebKit::RTCPacketOptions options)
+    CloseSocket(WebCore::LibWebRTCSocketIdentifier identifier)
+    SetSocketOption(WebCore::LibWebRTCSocketIdentifier identifier, int option, int value)
 }
 
 #endif // USE(LIBWEBRTC)

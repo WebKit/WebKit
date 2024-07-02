@@ -1,4 +1,3 @@
-# mypy: allow-untyped-defs
 def pytest_configure(config):
     import pytest
 

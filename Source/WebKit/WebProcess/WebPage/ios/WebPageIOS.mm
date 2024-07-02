@@ -2766,6 +2766,9 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
     if (!frame->selection().isCaretOrRange())
         return false;
 
+    if (correction == originalText)
+        return false;
+
     std::optional<SimpleRange> range;
     String textForRange;
     auto originalTextWithFoldedQuoteMarks = foldQuoteMarks(originalText);

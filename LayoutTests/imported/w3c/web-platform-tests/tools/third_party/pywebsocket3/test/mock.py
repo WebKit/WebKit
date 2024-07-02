@@ -30,13 +30,16 @@
 """
 
 from __future__ import absolute_import
-
-import six
 import six.moves.queue
-from six.moves import range
+import threading
+import struct
+import six
 
-from pywebsocket3 import common, util
-from pywebsocket3.stream import Stream, StreamOptions
+from mod_pywebsocket import common
+from mod_pywebsocket import util
+from mod_pywebsocket.stream import Stream
+from mod_pywebsocket.stream import StreamOptions
+from six.moves import range
 
 
 class _MockConnBase(object):

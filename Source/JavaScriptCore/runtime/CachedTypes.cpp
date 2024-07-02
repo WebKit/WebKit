@@ -304,8 +304,9 @@ size_t Decoder::size() const
 ptrdiff_t Decoder::offsetOf(const void* ptr)
 {
     const uint8_t* addr = static_cast<const uint8_t*>(ptr);
-    ASSERT(addr >= m_cachedBytecode->data() && addr < m_cachedBytecode->data() + m_cachedBytecode->size());
-    return addr - m_cachedBytecode->data();
+    auto cachedBytecodeSpan = m_cachedBytecode->span();
+    ASSERT(addr >= cachedBytecodeSpan.data() && addr < (cachedBytecodeSpan.data() + cachedBytecodeSpan.size()));
+    return addr - cachedBytecodeSpan.data();
 }
 
 void Decoder::cacheOffset(ptrdiff_t offset, void* ptr)
@@ -324,7 +325,7 @@ std::optional<void*> Decoder::cachedPtrForOffset(ptrdiff_t offset)
 const void* Decoder::ptrForOffsetFromBase(ptrdiff_t offset)
 {
     ASSERT(offset > 0 && static_cast<size_t>(offset) < m_cachedBytecode->size());
-    return m_cachedBytecode->data() + offset;
+    return m_cachedBytecode->span().subspan(offset).data();
 }
 
 CompactTDZEnvironmentMap::Handle Decoder::handleForTDZEnvironment(CompactTDZEnvironment* environment) const
@@ -2605,7 +2606,7 @@ RefPtr<CachedBytecode> encodeFunctionCodeBlock(VM& vm, const UnlinkedFunctionCod
 
 UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, Ref<CachedBytecode> cachedBytecode)
 {
-    const auto* cachedEntry = bitwise_cast<const GenericCacheEntry*>(cachedBytecode->data());
+    const auto* cachedEntry = bitwise_cast<const GenericCacheEntry*>(cachedBytecode->span().data());
     Ref<Decoder> decoder = Decoder::create(vm, WTFMove(cachedBytecode), &key.source().provider());
     std::pair<SourceCodeKey, UnlinkedCodeBlock*> entry;
     {
@@ -2621,11 +2622,9 @@ UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, Ref<Cac
 
 bool isCachedBytecodeStillValid(VM& vm, Ref<CachedBytecode> cachedBytecode, const SourceCodeKey& key, SourceCodeType type)
 {
-    const void* buffer = cachedBytecode->data();
-    size_t size = cachedBytecode->size();
-    if (!size)
+    if (!cachedBytecode->size())
         return false;
-    const auto* cachedEntry = bitwise_cast<const GenericCacheEntry*>(buffer);
+    const auto* cachedEntry = bitwise_cast<const GenericCacheEntry*>(cachedBytecode->span().data());
     Ref<Decoder> decoder = Decoder::create(vm, WTFMove(cachedBytecode));
     return cachedEntry->isStillValid(decoder.get(), key, tagFromSourceCodeType(type));
 }

@@ -1,3 +1,4 @@
+//@ skip
 //@ runDefaultWasm("-m", "--useJIT=0", "--useWebAssembly=1", "--useInterpretedJSEntryWrappers=1")
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
@@ -29,7 +30,7 @@ async function test() {
     const instance = await instantiate(wat, {}, { simd: true })
     const { test, test_with_call, test_with_call_indirect } = instance.exports
 
-    for (let i = 0; i < 1000; ++i) {
+    for (let i = 0; i < 10000000; ++i) {
         assert.eq(test(5), 42 + 5)
         assert.eq(test(), 42 + 0)
         assert.eq(test(null), 42 + 0)

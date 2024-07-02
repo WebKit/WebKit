@@ -1551,7 +1551,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/MemoryRelease.h
     page/ModalContainerTypes.h
     page/NavigationNavigationType.h
-    page/NavigatorIsLoggedIn.h
+    page/NavigatorLoginStatus.h
     page/OriginAccessPatterns.h
     page/Page.h
     page/PageColorSampler.h
@@ -2499,6 +2499,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     storage/StorageType.h
     storage/StorageUtilities.h
 
+    style/AnchorPositionEvaluator.h
     style/PseudoElementIdentifier.h
     style/ScopedName.h
     style/StyleAppearance.h

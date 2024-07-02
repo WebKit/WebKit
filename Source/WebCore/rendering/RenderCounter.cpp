@@ -472,7 +472,7 @@ String RenderCounter::originalText() const
 
         if (m_counter.listStyleType().type == ListStyleType::Type::CounterStyle) {
             ASSERT(counterStyle());
-            return counterStyle()->text(value, makeTextFlow(style().writingMode(), style().direction()));
+            return counterStyle()->text(value, { style().blockFlowDirection(), style().direction() });
         }
 
         ASSERT_NOT_REACHED();

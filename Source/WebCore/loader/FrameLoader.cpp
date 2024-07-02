@@ -2020,6 +2020,11 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItem clearProvisionalItem, Stop
             localChild->checkedLoader()->stopAllLoaders(clearProvisionalItem);
     }
 
+    if (m_frame->document()->settings().navigationAPIEnabled()) {
+        RefPtr window = m_frame->document()->domWindow();
+        window->protectedNavigation()->abortOngoingNavigationIfNeeded();
+    }
+
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "stopAllLoaders: m_provisionalDocumentLoader=%p, m_documentLoader=%p", m_provisionalDocumentLoader.get(), m_documentLoader.get());
 
     if (RefPtr provisionalDocumentLoader = m_provisionalDocumentLoader)
@@ -2763,8 +2768,7 @@ void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess
         if (RefPtr page = m_frame->page()) {
             if (isBackForwardLoadType(loadType())) {
                 // Reset the back forward list to the last committed history item at the top level.
-                if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame()))
-                    item = localMainFrame->history().currentItem();
+                item = page->mainFrame().history().currentItem();
             }
         }
 
@@ -3474,8 +3478,8 @@ ResourceLoaderIdentifier FrameLoader::loadResourceSynchronously(const ResourceRe
         initialRequest.setHTTPReferrer(referrer);
     addHTTPOriginIfNeeded(initialRequest, outgoingOrigin());
 
-    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_frame->mainFrame()))
-        initialRequest.setFirstPartyForCookies(localFrame->loader().documentLoader()->request().url());
+    if (auto* page = m_frame->page())
+        initialRequest.setFirstPartyForCookies(page->mainFrameURL());
     
     updateRequestAndAddExtraFields(initialRequest, IsMainResource::No);
 
@@ -3904,10 +3908,8 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         // we only do this when punting a navigation for the target frame or top-level frame.  
         if ((isTargetItem || frame->isMainFrame()) && isBackForwardLoadType(policyChecker().loadType())) {
             if (RefPtr page = frame->page()) {
-                if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame())) {
-                    if (RefPtr resetItem = localFrame->history().currentItem())
-                        page->backForward().setCurrentItem(*resetItem);
-                }
+                if (RefPtr resetItem = frame->mainFrame().history().currentItem())
+                    page->backForward().setCurrentItem(*resetItem);
             }
         }
         return;

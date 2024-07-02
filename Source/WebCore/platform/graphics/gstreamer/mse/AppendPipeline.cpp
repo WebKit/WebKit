@@ -732,9 +732,8 @@ GRefPtr<GstElement> createOptionalParserForFormat(GstBin* bin, const AtomString&
         // as the (as of writing) only one spec-defined format that has the "Generate Timestamps Flag" set
         // to false, i.e. is used without a demuxer, in "sequence" mode.
         // We need a parser to take care of extracting the frames from the byte stream.
-        int mpegversion = 0;
-        gst_structure_get_int(structure, "mpegversion", &mpegversion);
-        switch (mpegversion) {
+        int mpegVersion = gstStructureGet<int>(structure, "mpegversion"_s).value_or(0);
+        switch (mpegVersion) {
         case 1:
             // MPEG-1 Part 3 Audio (ISO 11172-3) Layer I -- MP1, archaic
             // MPEG-1 Part 3 Audio (ISO 11172-3) Layer II -- MP2, common in audio broadcasting, e.g. DVB

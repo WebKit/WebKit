@@ -53,6 +53,7 @@ private:
     void setICECandidateFiltering(bool doFiltering) final { m_useMDNSCandidates = doFiltering; }
     void unregisterMDNSNames() final;
     void close() final;
+    const String& interfaceNameForTesting() const final;
 
     // webrtc::NetworkManagerBase
     void StartUpdating() final;
@@ -78,6 +79,7 @@ private:
 #endif
     bool m_enableEnumeratingAllNetworkInterfaces { false };
     bool m_enableEnumeratingVisibleNetworkInterfaces { false };
+    bool m_hasQueriedInterface { false };
     HashSet<String> m_allowedInterfaces;
 };
 

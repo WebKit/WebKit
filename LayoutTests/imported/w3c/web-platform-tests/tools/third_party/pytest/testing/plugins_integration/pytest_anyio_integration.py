@@ -1,4 +1,3 @@
-# mypy: allow-untyped-defs
 import anyio
 
 import pytest

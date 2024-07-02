@@ -2886,6 +2886,14 @@ angle::CallCapture CaptureStartTilingQCOM(const State &glState,
                                           GLuint height,
                                           GLbitfield preserveMask);
 
+// GL_WEBKIT_explicit_resolve_target
+angle::CallCapture CaptureFramebufferResolveRenderbufferWEBKIT(const State &glState,
+                                                               bool isCallValid,
+                                                               GLenum target,
+                                                               GLenum attachment,
+                                                               GLenum renderbuffertarget,
+                                                               RenderbufferID renderbufferPacked);
+
 // Parameter Captures
 
 void CaptureDeletePerfMonitorsAMD_monitors(const State &glState,

@@ -102,7 +102,7 @@ public:
         return result;
     }
     
-    static constexpr FPRReg toArgumentRegister(unsigned index)
+    static FPRReg toArgumentRegister(unsigned index)
     {
         return (FPRReg)index;
     }
@@ -173,9 +173,9 @@ public:
         return (unsigned)reg;
     }
 
-    static constexpr FPRReg toArgumentRegister(unsigned index)
+    static FPRReg toArgumentRegister(unsigned index)
     {
-        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfArgumentRegisters);
+        ASSERT(index < numberOfArgumentRegisters);
         return static_cast<FPRReg>(index);
     }
 
@@ -269,9 +269,9 @@ public:
         return result;
     }
 
-    static constexpr FPRReg toArgumentRegister(unsigned index)
+    static FPRReg toArgumentRegister(unsigned index)
     {
-        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < 8);
+        ASSERT(index < 8);
         return static_cast<FPRReg>(index);
     }
 
@@ -349,10 +349,10 @@ public:
         return registerForIndex[index];
     }
 
-    static constexpr FPRReg toArgumentRegister(unsigned index)
+    static FPRReg toArgumentRegister(unsigned index)
     {
-        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfArgumentRegisters);
-        constexpr FPRReg registerForIndex[numberOfArgumentRegisters] = {
+        ASSERT(index < numberOfArgumentRegisters);
+        static const FPRReg registerForIndex[numberOfArgumentRegisters] = {
             argumentFPR0, argumentFPR1, argumentFPR2, argumentFPR3,
             argumentFPR4, argumentFPR5, argumentFPR6, argumentFPR7,
         };

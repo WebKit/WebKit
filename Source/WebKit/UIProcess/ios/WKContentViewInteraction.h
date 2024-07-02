@@ -178,13 +178,6 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
 #define FOR_EACH_FIND_WKCONTENTVIEW_ACTION(M)
 #endif
 
-#if ENABLE(WRITING_TOOLS)
-#define FOR_EACH_UNIFIED_TEXT_REPLACEMENT_PRIVATE_WKCONTENTVIEW_ACTION(M) \
-    M(_startWritingTools)
-#else
-#define FOR_EACH_UNIFIED_TEXT_REPLACEMENT_PRIVATE_WKCONTENTVIEW_ACTION(M)
-#endif
-
 #define FOR_EACH_WKCONTENTVIEW_ACTION(M) \
     FOR_EACH_INSERT_TEXT_FROM_CAMERA_WKCONTENTVIEW_ACTION(M) \
     FOR_EACH_FIND_WKCONTENTVIEW_ACTION(M) \
@@ -221,7 +214,6 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
     M(makeTextWritingDirectionRightToLeft)
 
 #define FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(M) \
-    FOR_EACH_UNIFIED_TEXT_REPLACEMENT_PRIVATE_WKCONTENTVIEW_ACTION(M) \
     M(_alignCenter) \
     M(_alignJustified) \
     M(_alignLeft) \

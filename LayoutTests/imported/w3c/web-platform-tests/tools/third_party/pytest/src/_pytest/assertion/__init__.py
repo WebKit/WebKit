@@ -1,6 +1,4 @@
-# mypy: allow-untyped-defs
 """Support for presenting detailed information in failing assertions."""
-
 import sys
 from typing import Any
 from typing import Generator
@@ -16,7 +14,6 @@ from _pytest.config import Config
 from _pytest.config import hookimpl
 from _pytest.config.argparsing import Parser
 from _pytest.nodes import Item
-
 
 if TYPE_CHECKING:
     from _pytest.main import Session
@@ -42,16 +39,8 @@ def pytest_addoption(parser: Parser) -> None:
         "enable_assertion_pass_hook",
         type="bool",
         default=False,
-        help="Enables the pytest_assertion_pass hook. "
+        help="Enables the pytest_assertion_pass hook."
         "Make sure to delete any previously generated pyc cache files.",
-    )
-    Config._add_verbosity_ini(
-        parser,
-        Config.VERBOSITY_ASSERTIONS,
-        help=(
-            "Specify a verbosity level for assertions, overriding the main level. "
-            "Higher levels will provide more detailed explanation when an assertion fails."
-        ),
     )
 
 
@@ -64,7 +53,7 @@ def register_assert_rewrite(*names: str) -> None:
     actually imported, usually in your __init__.py if you are a plugin
     using a package.
 
-    :param names: The module names to register.
+    :raises TypeError: If the given module names are not strings.
     """
     for name in names:
         if not isinstance(name, str):
@@ -123,14 +112,15 @@ def pytest_collection(session: "Session") -> None:
             assertstate.hook.set_session(session)
 
 
-@hookimpl(wrapper=True, tryfirst=True)
-def pytest_runtest_protocol(item: Item) -> Generator[None, object, object]:
+@hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_protocol(item: Item) -> Generator[None, None, None]:
     """Setup the pytest_assertrepr_compare and pytest_assertion_pass hooks.
 
     The rewrite module will use util._reprcompare if it exists to use custom
     reporting via the pytest_assertrepr_compare hook.  This sets up this custom
     comparison for the test.
     """
+
     ihook = item.ihook
 
     def callbinrepr(op, left: object, right: object) -> Optional[str]:
@@ -172,11 +162,10 @@ def pytest_runtest_protocol(item: Item) -> Generator[None, object, object]:
 
         util._assertion_pass = call_assertion_pass_hook
 
-    try:
-        return (yield)
-    finally:
-        util._reprcompare, util._assertion_pass = saved_assert_hooks
-        util._config = None
+    yield
+
+    util._reprcompare, util._assertion_pass = saved_assert_hooks
+    util._config = None
 
 
 def pytest_sessionfinish(session: "Session") -> None:

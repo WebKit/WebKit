@@ -1,34 +1,28 @@
-# mypy: allow-untyped-defs
 """(Disabled by default) support for testing pytest and pytest plugins.
 
 PYTEST_DONT_REWRITE
 """
-
 import collections.abc
 import contextlib
-from fnmatch import fnmatch
 import gc
 import importlib
-from io import StringIO
-import locale
 import os
-from pathlib import Path
 import platform
 import re
 import shutil
 import subprocess
 import sys
 import traceback
+from fnmatch import fnmatch
+from io import StringIO
+from pathlib import Path
 from typing import Any
 from typing import Callable
 from typing import Dict
-from typing import Final
-from typing import final
 from typing import Generator
 from typing import IO
 from typing import Iterable
 from typing import List
-from typing import Literal
 from typing import Optional
 from typing import overload
 from typing import Sequence
@@ -45,6 +39,7 @@ from iniconfig import SectionWrapper
 from _pytest import timing
 from _pytest._code import Source
 from _pytest.capture import _get_multicapture
+from _pytest.compat import final
 from _pytest.compat import NOTSET
 from _pytest.compat import NotSetType
 from _pytest.config import _PluggyPlugin
@@ -65,6 +60,7 @@ from _pytest.outcomes import fail
 from _pytest.outcomes import importorskip
 from _pytest.outcomes import skip
 from _pytest.pathlib import bestrelpath
+from _pytest.pathlib import copytree
 from _pytest.pathlib import make_numbered_dir
 from _pytest.reports import CollectReport
 from _pytest.reports import TestReport
@@ -73,6 +69,9 @@ from _pytest.warning_types import PytestWarning
 
 
 if TYPE_CHECKING:
+    from typing_extensions import Final
+    from typing_extensions import Literal
+
     import pexpect
 
 
@@ -90,7 +89,7 @@ def pytest_addoption(parser: Parser) -> None:
         action="store_true",
         dest="lsof",
         default=False,
-        help="Run FD checks if lsof is available",
+        help="run FD checks if lsof is available",
     )
 
     parser.addoption(
@@ -99,13 +98,13 @@ def pytest_addoption(parser: Parser) -> None:
         dest="runpytest",
         choices=("inprocess", "subprocess"),
         help=(
-            "Run pytest sub runs in tests using an 'inprocess' "
+            "run pytest sub runs in tests using an 'inprocess' "
             "or 'subprocess' (python -m main) method"
         ),
     )
 
     parser.addini(
-        "pytester_example_dir", help="Directory to take the pytester example files from"
+        "pytester_example_dir", help="directory to take the pytester example files from"
     )
 
 
@@ -124,18 +123,12 @@ def pytest_configure(config: Config) -> None:
 
 class LsofFdLeakChecker:
     def get_open_files(self) -> List[Tuple[str, str]]:
-        if sys.version_info >= (3, 11):
-            # New in Python 3.11, ignores utf-8 mode
-            encoding = locale.getencoding()
-        else:
-            encoding = locale.getpreferredencoding(False)
         out = subprocess.run(
             ("lsof", "-Ffn0", "-p", str(os.getpid())),
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
             check=True,
-            text=True,
-            encoding=encoding,
+            universal_newlines=True,
         ).stdout
 
         def isopen(line: str) -> bool:
@@ -168,31 +161,29 @@ class LsofFdLeakChecker:
         else:
             return True
 
-    @hookimpl(wrapper=True, tryfirst=True)
-    def pytest_runtest_protocol(self, item: Item) -> Generator[None, object, object]:
+    @hookimpl(hookwrapper=True, tryfirst=True)
+    def pytest_runtest_protocol(self, item: Item) -> Generator[None, None, None]:
         lines1 = self.get_open_files()
-        try:
-            return (yield)
-        finally:
-            if hasattr(sys, "pypy_version_info"):
-                gc.collect()
-            lines2 = self.get_open_files()
+        yield
+        if hasattr(sys, "pypy_version_info"):
+            gc.collect()
+        lines2 = self.get_open_files()
 
-            new_fds = {t[0] for t in lines2} - {t[0] for t in lines1}
-            leaked_files = [t for t in lines2 if t[0] in new_fds]
-            if leaked_files:
-                error = [
-                    "***** %s FD leakage detected" % len(leaked_files),
-                    *(str(f) for f in leaked_files),
-                    "*** Before:",
-                    *(str(f) for f in lines1),
-                    "*** After:",
-                    *(str(f) for f in lines2),
-                    "***** %s FD leakage detected" % len(leaked_files),
-                    "*** function {}:{}: {} ".format(*item.location),
-                    "See issue #2366",
-                ]
-                item.warn(PytestWarning("\n".join(error)))
+        new_fds = {t[0] for t in lines2} - {t[0] for t in lines1}
+        leaked_files = [t for t in lines2 if t[0] in new_fds]
+        if leaked_files:
+            error = [
+                "***** %s FD leakage detected" % len(leaked_files),
+                *(str(f) for f in leaked_files),
+                "*** Before:",
+                *(str(f) for f in lines1),
+                "*** After:",
+                *(str(f) for f in lines2),
+                "***** %s FD leakage detected" % len(leaked_files),
+                "*** function %s:%s: %s " % item.location,
+                "See issue #2366",
+            ]
+            item.warn(PytestWarning("\n".join(error)))
 
 
 # used at least by pytest-xdist plugin
@@ -246,7 +237,8 @@ class RecordedHookCall:
 
     if TYPE_CHECKING:
         # The class has undetermined attributes, this tells mypy about it.
-        def __getattr__(self, key: str): ...
+        def __getattr__(self, key: str):
+            ...
 
 
 @final
@@ -289,8 +281,7 @@ class HookRecorder:
         __tracebackhide__ = True
         i = 0
         entries = list(entries)
-        # Since Python 3.13, f_locals is not a dict, but eval requires a dict.
-        backlocals = dict(sys._getframe(1).f_locals)
+        backlocals = sys._getframe(1).f_locals
         while entries:
             name, check = entries.pop(0)
             for ind, call in enumerate(self.calls[i:]):
@@ -328,13 +319,15 @@ class HookRecorder:
     def getreports(
         self,
         names: "Literal['pytest_collectreport']",
-    ) -> Sequence[CollectReport]: ...
+    ) -> Sequence[CollectReport]:
+        ...
 
     @overload
     def getreports(
         self,
         names: "Literal['pytest_runtest_logreport']",
-    ) -> Sequence[TestReport]: ...
+    ) -> Sequence[TestReport]:
+        ...
 
     @overload
     def getreports(
@@ -343,7 +336,8 @@ class HookRecorder:
             "pytest_collectreport",
             "pytest_runtest_logreport",
         ),
-    ) -> Sequence[Union[CollectReport, TestReport]]: ...
+    ) -> Sequence[Union[CollectReport, TestReport]]:
+        ...
 
     def getreports(
         self,
@@ -375,12 +369,14 @@ class HookRecorder:
                 values.append(rep)
         if not values:
             raise ValueError(
-                f"could not find test report matching {inamepart!r}: "
-                "no test reports at all!"
+                "could not find test report matching %r: "
+                "no test reports at all!" % (inamepart,)
             )
         if len(values) > 1:
             raise ValueError(
-                f"found 2 or more testreports matching {inamepart!r}: {values}"
+                "found 2 or more testreports matching {!r}: {}".format(
+                    inamepart, values
+                )
             )
         return values[0]
 
@@ -388,13 +384,15 @@ class HookRecorder:
     def getfailures(
         self,
         names: "Literal['pytest_collectreport']",
-    ) -> Sequence[CollectReport]: ...
+    ) -> Sequence[CollectReport]:
+        ...
 
     @overload
     def getfailures(
         self,
         names: "Literal['pytest_runtest_logreport']",
-    ) -> Sequence[TestReport]: ...
+    ) -> Sequence[TestReport]:
+        ...
 
     @overload
     def getfailures(
@@ -403,7 +401,8 @@ class HookRecorder:
             "pytest_collectreport",
             "pytest_runtest_logreport",
         ),
-    ) -> Sequence[Union[CollectReport, TestReport]]: ...
+    ) -> Sequence[Union[CollectReport, TestReport]]:
+        ...
 
     def getfailures(
         self,
@@ -478,9 +477,7 @@ def LineMatcher_fixture(request: FixtureRequest) -> Type["LineMatcher"]:
 
 
 @fixture
-def pytester(
-    request: FixtureRequest, tmp_path_factory: TempPathFactory, monkeypatch: MonkeyPatch
-) -> "Pytester":
+def pytester(request: FixtureRequest, tmp_path_factory: TempPathFactory) -> "Pytester":
     """
     Facilities to write tests/configuration files, execute pytest in isolation, and match
     against expected output, perfect for black-box testing of pytest plugins.
@@ -491,7 +488,7 @@ def pytester(
     It is particularly useful for testing plugins. It is similar to the :fixture:`tmp_path`
     fixture but provides methods which aid in testing pytest itself.
     """
-    return Pytester(request, tmp_path_factory, monkeypatch, _ispytest=True)
+    return Pytester(request, tmp_path_factory, _ispytest=True)
 
 
 @fixture
@@ -625,6 +622,14 @@ class RunResult:
         )
 
 
+class CwdSnapshot:
+    def __init__(self) -> None:
+        self.__saved = os.getcwd()
+
+    def restore(self) -> None:
+        os.chdir(self.__saved)
+
+
 class SysModulesSnapshot:
     def __init__(self, preserve: Optional[Callable[[str], bool]] = None) -> None:
         self.__preserve = preserve
@@ -654,7 +659,17 @@ class Pytester:
     against expected output, perfect for black-box testing of pytest plugins.
 
     It attempts to isolate the test run from external factors as much as possible, modifying
-    the current working directory to :attr:`path` and environment variables during initialization.
+    the current working directory to ``path`` and environment variables during initialization.
+
+    Attributes:
+
+    :ivar Path path: temporary directory path used to create files/run tests from, etc.
+
+    :ivar plugins:
+       A list of plugins to use with :py:meth:`parseconfig` and
+       :py:meth:`runpytest`.  Initially this is an empty list but plugins can
+       be added to the list.  The type of items to add to the list depends on
+       the method using them so refer to them for details.
     """
 
     __test__ = False
@@ -668,7 +683,6 @@ class Pytester:
         self,
         request: FixtureRequest,
         tmp_path_factory: TempPathFactory,
-        monkeypatch: MonkeyPatch,
         *,
         _ispytest: bool = False,
     ) -> None:
@@ -683,19 +697,16 @@ class Pytester:
             name = request.node.name
         self._name = name
         self._path: Path = tmp_path_factory.mktemp(name, numbered=True)
-        #: A list of plugins to use with :py:meth:`parseconfig` and
-        #: :py:meth:`runpytest`.  Initially this is an empty list but plugins can
-        #: be added to the list.  The type of items to add to the list depends on
-        #: the method using them so refer to them for details.
         self.plugins: List[Union[str, _PluggyPlugin]] = []
+        self._cwd_snapshot = CwdSnapshot()
         self._sys_path_snapshot = SysPathsSnapshot()
         self._sys_modules_snapshot = self.__take_sys_modules_snapshot()
+        self.chdir()
         self._request.addfinalizer(self._finalize)
         self._method = self._request.config.getoption("--runpytest")
         self._test_tmproot = tmp_path_factory.mktemp(f"tmp-{name}", numbered=True)
 
-        self._monkeypatch = mp = monkeypatch
-        self.chdir()
+        self._monkeypatch = mp = MonkeyPatch()
         mp.setenv("PYTEST_DEBUG_TEMPROOT", str(self._test_tmproot))
         # Ensure no unexpected caching via tox.
         mp.delenv("TOX_ENV_DIR", raising=False)
@@ -710,7 +721,7 @@ class Pytester:
 
     @property
     def path(self) -> Path:
-        """Temporary directory path used to create files/run tests from, etc."""
+        """Temporary directory where files are created and pytest is executed."""
         return self._path
 
     def __repr__(self) -> str:
@@ -726,6 +737,8 @@ class Pytester:
         """
         self._sys_modules_snapshot.restore()
         self._sys_path_snapshot.restore()
+        self._cwd_snapshot.restore()
+        self._monkeypatch.undo()
 
     def __take_sys_modules_snapshot(self) -> SysModulesSnapshot:
         # Some zope modules used by twisted-related tests keep internal state
@@ -740,8 +753,8 @@ class Pytester:
         return SysModulesSnapshot(preserve=preserve_module)
 
     def make_hook_recorder(self, pluginmanager: PytestPluginManager) -> HookRecorder:
-        """Create a new :class:`HookRecorder` for a :class:`PytestPluginManager`."""
-        pluginmanager.reprec = reprec = HookRecorder(pluginmanager, _ispytest=True)  # type: ignore[attr-defined]
+        """Create a new :py:class:`HookRecorder` for a PluginManager."""
+        pluginmanager.reprec = reprec = HookRecorder(pluginmanager, _ispytest=True)
         self._request.addfinalizer(reprec.finish_recording)
         return reprec
 
@@ -750,7 +763,7 @@ class Pytester:
 
         This is done automatically upon instantiation.
         """
-        self._monkeypatch.chdir(self.path)
+        os.chdir(self.path)
 
     def _makefile(
         self,
@@ -760,9 +773,6 @@ class Pytester:
         encoding: str = "utf-8",
     ) -> Path:
         items = list(files.items())
-
-        if ext is None:
-            raise TypeError("ext must not be None")
 
         if ext and not ext.startswith("."):
             raise ValueError(
@@ -792,7 +802,7 @@ class Pytester:
     def makefile(self, ext: str, *args: str, **kwargs: str) -> Path:
         r"""Create new text file(s) in the test directory.
 
-        :param ext:
+        :param str ext:
             The extension the file(s) should use, including the dot, e.g. `.py`.
         :param args:
             All args are treated as strings and joined using newlines.
@@ -801,10 +811,9 @@ class Pytester:
         :param kwargs:
             Each keyword is the name of a file, while the value of it will
             be written as contents of the file.
-        :returns:
-            The first created file.
 
         Examples:
+
         .. code-block:: python
 
             pytester.makefile(".txt", "line1", "line2")
@@ -821,19 +830,11 @@ class Pytester:
         return self._makefile(ext, args, kwargs)
 
     def makeconftest(self, source: str) -> Path:
-        """Write a conftest.py file.
-
-        :param source: The contents.
-        :returns: The conftest.py file.
-        """
+        """Write a contest.py file with 'source' as contents."""
         return self.makepyfile(conftest=source)
 
     def makeini(self, source: str) -> Path:
-        """Write a tox.ini file.
-
-        :param source: The contents.
-        :returns: The tox.ini file.
-        """
+        """Write a tox.ini file with 'source' as contents."""
         return self.makefile(".ini", tox=source)
 
     def getinicfg(self, source: str) -> SectionWrapper:
@@ -842,10 +843,7 @@ class Pytester:
         return IniConfig(str(p))["pytest"]
 
     def makepyprojecttoml(self, source: str) -> Path:
-        """Write a pyproject.toml file.
-
-        :param source: The contents.
-        :returns: The pyproject.ini file.
+        """Write a pyproject.toml file with 'source' as contents.
 
         .. versionadded:: 6.0
         """
@@ -858,6 +856,7 @@ class Pytester:
         existing files.
 
         Examples:
+
         .. code-block:: python
 
             def test_something(pytester):
@@ -877,6 +876,7 @@ class Pytester:
         existing files.
 
         Examples:
+
         .. code-block:: python
 
             def test_something(pytester):
@@ -896,28 +896,19 @@ class Pytester:
 
         This is undone automatically when this object dies at the end of each
         test.
-
-        :param path:
-            The path.
         """
         if path is None:
             path = self.path
 
         self._monkeypatch.syspath_prepend(str(path))
 
-    def mkdir(self, name: Union[str, "os.PathLike[str]"]) -> Path:
-        """Create a new (sub)directory.
-
-        :param name:
-            The name of the directory, relative to the pytester path.
-        :returns:
-            The created directory.
-        """
+    def mkdir(self, name: str) -> Path:
+        """Create a new (sub)directory."""
         p = self.path / name
         p.mkdir()
         return p
 
-    def mkpydir(self, name: Union[str, "os.PathLike[str]"]) -> Path:
+    def mkpydir(self, name: str) -> Path:
         """Create a new python package.
 
         This creates a (sub)directory with an empty ``__init__.py`` file so it
@@ -931,15 +922,14 @@ class Pytester:
     def copy_example(self, name: Optional[str] = None) -> Path:
         """Copy file from project's directory into the testdir.
 
-        :param name:
-            The name of the file to copy.
-        :return:
-            Path to the copied directory (inside ``self.path``).
+        :param str name: The name of the file to copy.
+        :return: path to the copied directory (inside ``self.path``).
+
         """
-        example_dir_ = self._request.config.getini("pytester_example_dir")
-        if example_dir_ is None:
+        example_dir = self._request.config.getini("pytester_example_dir")
+        if example_dir is None:
             raise ValueError("pytester_example_dir is unset, can't copy examples")
-        example_dir: Path = self._request.config.rootpath / example_dir_
+        example_dir = self._request.config.rootpath / example_dir
 
         for extra_element in self._request.node.iter_markers("pytester_example_path"):
             assert extra_element.args
@@ -962,7 +952,7 @@ class Pytester:
             example_path = example_dir.joinpath(name)
 
         if example_path.is_dir() and not example_path.joinpath("__init__.py").is_file():
-            shutil.copytree(example_path, self.path, symlinks=True, dirs_exist_ok=True)
+            copytree(example_path, self.path)
             return self.path
         elif example_path.is_file():
             result = self.path.joinpath(example_path.name)
@@ -975,16 +965,14 @@ class Pytester:
 
     def getnode(
         self, config: Config, arg: Union[str, "os.PathLike[str]"]
-    ) -> Union[Collector, Item]:
-        """Get the collection node of a file.
+    ) -> Optional[Union[Collector, Item]]:
+        """Return the collection node of a file.
 
-        :param config:
+        :param pytest.Config config:
            A pytest config.
            See :py:meth:`parseconfig` and :py:meth:`parseconfigure` for creating it.
-        :param arg:
+        :param os.PathLike[str] arg:
             Path to the file.
-        :returns:
-            The node.
         """
         session = Session.from_config(config)
         assert "::" not in str(arg)
@@ -994,18 +982,13 @@ class Pytester:
         config.hook.pytest_sessionfinish(session=session, exitstatus=ExitCode.OK)
         return res
 
-    def getpathnode(
-        self, path: Union[str, "os.PathLike[str]"]
-    ) -> Union[Collector, Item]:
+    def getpathnode(self, path: Union[str, "os.PathLike[str]"]):
         """Return the collection node of a file.
 
         This is like :py:meth:`getnode` but uses :py:meth:`parseconfigure` to
         create the (configured) pytest Config instance.
 
-        :param path:
-            Path to the file.
-        :returns:
-            The node.
+        :param os.PathLike[str] path: Path to the file.
         """
         path = Path(path)
         config = self.parseconfigure(path)
@@ -1021,11 +1004,6 @@ class Pytester:
 
         This recurses into the collection node and returns a list of all the
         test items contained within.
-
-        :param colitems:
-            The collection nodes.
-        :returns:
-            The collected items.
         """
         session = colitems[0].session
         result: List[Item] = []
@@ -1039,7 +1017,7 @@ class Pytester:
         The calling test instance (class containing the test method) must
         provide a ``.getrunner()`` method which should return a runner which
         can run the test protocol for a single item, e.g.
-        ``_pytest.runner.runtestprotocol``.
+        :py:func:`_pytest.runner.runtestprotocol`.
         """
         # used from runner functional tests
         item = self.getitem(source)
@@ -1059,11 +1037,11 @@ class Pytester:
         :param cmdlineargs: Any extra command line arguments to use.
         """
         p = self.makepyfile(source)
-        values = [*list(cmdlineargs), p]
+        values = list(cmdlineargs) + [p]
         return self.inline_run(*values)
 
     def inline_genitems(self, *args) -> Tuple[List[Item], HookRecorder]:
-        """Run ``pytest.main(['--collect-only'])`` in-process.
+        """Run ``pytest.main(['--collectonly'])`` in-process.
 
         Runs the :py:func:`pytest.main` function to run all of pytest inside
         the test process itself like :py:meth:`inline_run`, but returns a
@@ -1212,16 +1190,15 @@ class Pytester:
         return new_args
 
     def parseconfig(self, *args: Union[str, "os.PathLike[str]"]) -> Config:
-        """Return a new pytest :class:`pytest.Config` instance from given
-        commandline args.
+        """Return a new pytest Config instance from given commandline args.
 
-        This invokes the pytest bootstrapping code in _pytest.config to create a
-        new :py:class:`pytest.PytestPluginManager` and call the
-        :hook:`pytest_cmdline_parse` hook to create a new :class:`pytest.Config`
-        instance.
+        This invokes the pytest bootstrapping code in _pytest.config to create
+        a new :py:class:`_pytest.core.PluginManager` and call the
+        pytest_cmdline_parse hook to create a new
+        :py:class:`pytest.Config` instance.
 
-        If :attr:`plugins` has been populated they should be plugin modules
-        to be registered with the plugin manager.
+        If :py:attr:`plugins` has been populated they should be plugin modules
+        to be registered with the PluginManager.
         """
         import _pytest.config
 
@@ -1239,8 +1216,7 @@ class Pytester:
         """Return a new pytest configured Config instance.
 
         Returns a new :py:class:`pytest.Config` instance like
-        :py:meth:`parseconfig`, but also calls the :hook:`pytest_configure`
-        hook.
+        :py:meth:`parseconfig`, but also calls the pytest_configure hook.
         """
         config = self.parseconfig(*args)
         config._do_configure()
@@ -1259,14 +1235,14 @@ class Pytester:
             The module source.
         :param funcname:
             The name of the test function for which to return a test item.
-        :returns:
-            The test item.
         """
         items = self.getitems(source)
         for item in items:
             if item.name == funcname:
                 return item
-        assert 0, f"{funcname!r} item not found in module:\n{source}\nitems: {items}"
+        assert 0, "{!r} item not found in module:\n{}\nitems: {}".format(
+            funcname, source, items
+        )
 
     def getitems(self, source: Union[str, "os.PathLike[str]"]) -> List[Item]:
         """Return all test items collected from the module.
@@ -1388,7 +1364,7 @@ class Pytester:
         :param stdin:
             Optional standard input.
 
-            - If it is ``CLOSE_STDIN`` (Default), then this method calls
+            - If it is :py:attr:`CLOSE_STDIN` (Default), then this method calls
               :py:class:`subprocess.Popen` with ``stdin=subprocess.PIPE``, and
               the standard input is closed immediately after the new command is
               started.
@@ -1399,8 +1375,6 @@ class Pytester:
             - Otherwise, it is passed through to :py:class:`subprocess.Popen`.
               For further information in this case, consult the document of the
               ``stdin`` parameter in :py:class:`subprocess.Popen`.
-        :returns:
-            The result.
         """
         __tracebackhide__ = True
 
@@ -1425,7 +1399,10 @@ class Pytester:
             def handle_timeout() -> None:
                 __tracebackhide__ = True
 
-                timeout_message = f"{timeout} second timeout expired running: {cmdargs}"
+                timeout_message = (
+                    "{seconds} second timeout expired running:"
+                    " {command}".format(seconds=timeout, command=cmdargs)
+                )
 
                 popen.kill()
                 popen.wait()
@@ -1484,15 +1461,13 @@ class Pytester:
         :param timeout:
             The period in seconds after which to timeout and raise
             :py:class:`Pytester.TimeoutExpired`.
-        :returns:
-            The result.
         """
         __tracebackhide__ = True
         p = make_numbered_dir(root=self.path, prefix="runpytest-", mode=0o700)
-        args = ("--basetemp=%s" % p, *args)
+        args = ("--basetemp=%s" % p,) + args
         plugins = [x for x in self.plugins if isinstance(x, str)]
         if plugins:
-            args = ("-p", plugins[0], *args)
+            args = ("-p", plugins[0]) + args
         args = self._getpytestargs() + args
         return self.run(*args, timeout=timeout)
 

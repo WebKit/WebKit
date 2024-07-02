@@ -440,6 +440,9 @@
     "glFramebufferFoveationParameters": {
         "framebuffer": "FramebufferID"
     },
+    "glFramebufferResolveRenderbufferWEBKIT": {
+        "renderbuffer": "RenderbufferID"
+    },
     "glFramebufferRenderbuffer": {
         "renderbuffer": "RenderbufferID"
     },

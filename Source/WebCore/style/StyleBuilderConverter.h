@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "AnchorPositionEvaluator.h"
 #include "BasicShapeFunctions.h"
 #include "CSSBasicShapes.h"
 #include "CSSCalcValue.h"
@@ -264,8 +265,10 @@ inline Length BuilderConverter::convertLength(const BuilderState& builderState, 
     if (primitiveValue.isCalculatedPercentageWithLength())
         return Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData));
 
-    if (primitiveValue.isAnchor())
-        return Length(0, LengthType::Fixed);
+    if (primitiveValue.isAnchor()) {
+        auto& anchorPositionedElement = *builderState.element();
+        return AnchorPositionEvaluator::resolveAnchorValue(primitiveValue.cssAnchorValue(), anchorPositionedElement);
+    }
 
     ASSERT_NOT_REACHED();
     return Length(0, LengthType::Fixed);

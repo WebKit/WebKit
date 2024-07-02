@@ -1,7 +1,7 @@
 import re
 
-from _pytest.scope import Scope
 import pytest
+from _pytest.scope import Scope
 
 
 def test_ordering() -> None:

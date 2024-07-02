@@ -71,7 +71,7 @@ public:
     void setSystemCanPromptForGetDisplayMediaForTesting(bool);
 #endif
 
-    void flushDeferredDidReceiveMouseEvent();
+    void clearOpener();
 
 private:
     bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>) final;

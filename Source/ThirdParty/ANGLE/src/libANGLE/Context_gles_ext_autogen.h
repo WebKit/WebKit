@@ -660,6 +660,10 @@
     /* GL_CHROMIUM_framebuffer_mixed_samples */                                                    \
     /* GL_CHROMIUM_lose_context */                                                                 \
     void loseContext(GraphicsResetStatus currentPacked, GraphicsResetStatus otherPacked);          \
-    /* GL_CHROMIUM_sync_query */
+    /* GL_CHROMIUM_sync_query */                                                                   \
+    /* GL_WEBKIT_explicit_resolve_target */                                                        \
+    void framebufferResolveRenderbufferWEBKIT(GLenum target, GLenum attachment,                    \
+                                              GLenum renderbuffertarget,                           \
+                                              RenderbufferID renderbufferPacked);
 
 #endif  // ANGLE_CONTEXT_API_EXT_AUTOGEN_H_

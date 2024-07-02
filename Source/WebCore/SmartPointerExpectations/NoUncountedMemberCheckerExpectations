@@ -132,7 +132,7 @@ layout/formattingContexts/inline/InlineItemsBuilder.h
 loader/appcache/ApplicationCacheStorage.cpp
 page/FrameSnapshotting.cpp
 page/LocalFrameViewLayoutContext.cpp
-page/NavigatorIsLoggedIn.h
+page/NavigatorLoginStatus.h
 page/OpportunisticTaskScheduler.h
 page/PerformanceLogging.h
 page/PointerCaptureController.h

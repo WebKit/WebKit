@@ -46,11 +46,8 @@ def untar(fileobj, dest="."):
     """Extract tar archive."""
     logger.debug("untar")
     fileobj = seekable(fileobj)
-    kwargs = {}
-    if sys.version_info.major >= 3 and sys.version_info.minor >= 12:
-        kwargs["filter"] = "tar"
     with tarfile.open(fileobj=fileobj) as tar_data:
-        tar_data.extractall(path=dest, **kwargs)
+        tar_data.extractall(path=dest)
 
 
 def unzip(fileobj, dest=None, limit=None):

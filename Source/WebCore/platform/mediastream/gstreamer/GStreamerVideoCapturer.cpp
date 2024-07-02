@@ -293,11 +293,8 @@ void GStreamerVideoCapturer::reconfigure()
 
     // If nothing has been specified by the user, we target at least an arbitrary resolution of 1920x1080@24fps.
     const GstStructure* capsStruct = gst_caps_get_structure(m_caps.get(), 0);
-    if (!gst_structure_get_int(capsStruct, "width", &selector.stopCondition.width))
-        selector.stopCondition.width = 1920;
-
-    if (!gst_structure_get_int(capsStruct, "height", &selector.stopCondition.height))
-        selector.stopCondition.height = 1080;
+    selector.stopCondition.width = gstStructureGet<int>(capsStruct, "width"_s).value_or(1920);
+    selector.stopCondition.height = gstStructureGet<int>(capsStruct, "height"_s).value_or(1080);
 
     int numerator = 0;
     int denominator = 1;

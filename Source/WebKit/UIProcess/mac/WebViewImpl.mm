@@ -2787,7 +2787,7 @@ void WebViewImpl::selectionDidChange()
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    if ([m_view _web_wantsWritingToolsInlineEditing]) {
+    if (isEditable() || m_page->configuration().writingToolsBehavior() == WebCore::WritingTools::Behavior::Complete) {
         auto isRange = m_page->editorState().hasPostLayoutData() && m_page->editorState().selectionIsRange;
         auto selectionRect = isRange ? m_page->editorState().postLayoutData->selectionBoundingRect : IntRect { };
 

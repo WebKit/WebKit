@@ -1057,6 +1057,11 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
                                          captures[2].value.GLenumVal,
                                          gRenderbufferMap[captures[3].value.GLuintVal]);
             break;
+        case angle::EntryPoint::GLFramebufferResolveRenderbufferWEBKIT:
+            glFramebufferResolveRenderbufferWEBKIT(
+                captures[0].value.GLenumVal, captures[1].value.GLenumVal,
+                captures[2].value.GLenumVal, gRenderbufferMap[captures[3].value.GLuintVal]);
+            break;
         case angle::EntryPoint::GLFramebufferTexture:
             glFramebufferTexture(captures[0].value.GLenumVal, captures[1].value.GLenumVal,
                                  gTextureMap[captures[2].value.GLuintVal],

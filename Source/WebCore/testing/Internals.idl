@@ -1107,6 +1107,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=MEDIA_STREAM] boolean isMockRealtimeMediaSourceCenterEnabled();
     [Conditional=MEDIA_STREAM] boolean shouldAudioTrackPlay(AudioTrack track);
 
+    [Conditional=WEB_RTC] readonly attribute DOMString rtcNetworkInterfaceName;
+
     boolean isHardwareVP9DecoderExpected();
 
     DOMString documentIdentifier(Document document);

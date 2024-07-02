@@ -1304,14 +1304,10 @@ void LocalFrame::didAccessWindowProxyPropertyViaOpener(WindowProxyProperty prope
     if (origin.isNull() || origin.isOpaque())
         return;
 
-    if (!opener())
+    if (!opener() || !opener()->page())
         return;
 
-    auto openerMainFrame = dynamicDowncast<LocalFrame>(opener()->mainFrame());
-    if (!openerMainFrame)
-        return;
-
-    auto openerMainFrameOrigin = SecurityOriginData::fromFrame(openerMainFrame);
+    auto openerMainFrameOrigin = opener()->page()->mainFrameOrigin().data();
     if (openerMainFrameOrigin.isNull() || openerMainFrameOrigin.isOpaque())
         return;
 

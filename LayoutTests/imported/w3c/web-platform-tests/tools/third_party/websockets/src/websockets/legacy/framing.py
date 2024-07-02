@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import struct
 from typing import Any, Awaitable, Callable, NamedTuple, Optional, Sequence, Tuple
 
@@ -9,11 +10,12 @@ from ..exceptions import PayloadTooBig, ProtocolError
 
 try:
     from ..speedups import apply_mask
-except ImportError:
+except ImportError:  # pragma: no cover
     from ..utils import apply_mask
 
 
 class Frame(NamedTuple):
+
     fin: bool
     opcode: frames.Opcode
     data: bytes
@@ -51,16 +53,16 @@ class Frame(NamedTuple):
         Read a WebSocket frame.
 
         Args:
-            reader: Coroutine that reads exactly the requested number of
+            reader: coroutine that reads exactly the requested number of
                 bytes, unless the end of file is reached.
-            mask: Whether the frame should be masked i.e. whether the read
+            mask: whether the frame should be masked i.e. whether the read
                 happens on the server side.
-            max_size: Maximum payload size in bytes.
-            extensions: List of extensions, applied in reverse order.
+            max_size: maximum payload size in bytes.
+            extensions: list of extensions, applied in reverse order.
 
         Raises:
-            PayloadTooBig: If the frame exceeds ``max_size``.
-            ProtocolError: If the frame contains incorrect values.
+            PayloadTooBig: if the frame exceeds ``max_size``.
+            ProtocolError: if the frame contains incorrect values.
 
         """
 
@@ -128,14 +130,14 @@ class Frame(NamedTuple):
         Write a WebSocket frame.
 
         Args:
-            frame: Frame to write.
-            write: Function that writes bytes.
-            mask: Whether the frame should be masked i.e. whether the write
+            frame: frame to write.
+            write: function that writes bytes.
+            mask: whether the frame should be masked i.e. whether the write
                 happens on the client side.
-            extensions: List of extensions, applied in order.
+            extensions: list of extensions, applied in order.
 
         Raises:
-            ProtocolError: If the frame contains incorrect values.
+            ProtocolError: if the frame contains incorrect values.
 
         """
         # The frame is written in a single call to write in order to prevent
@@ -145,11 +147,8 @@ class Frame(NamedTuple):
 
 
 # Backwards compatibility with previously documented public APIs
-from ..frames import (  # noqa: E402, F401, I001
-    Close,
-    prepare_ctrl as encode_data,
-    prepare_data,
-)
+
+from ..frames import Close, prepare_ctrl as encode_data, prepare_data  # noqa
 
 
 def parse_close(data: bytes) -> Tuple[int, str]:
@@ -157,15 +156,14 @@ def parse_close(data: bytes) -> Tuple[int, str]:
     Parse the payload from a close frame.
 
     Returns:
-        Close code and reason.
+        Tuple[int, str]: close code and reason.
 
     Raises:
-        ProtocolError: If data is ill-formed.
-        UnicodeDecodeError: If the reason isn't valid UTF-8.
+        ProtocolError: if data is ill-formed.
+        UnicodeDecodeError: if the reason isn't valid UTF-8.
 
     """
-    close = Close.parse(data)
-    return close.code, close.reason
+    return dataclasses.astuple(Close.parse(data))  # type: ignore
 
 
 def serialize_close(code: int, reason: str) -> bytes:

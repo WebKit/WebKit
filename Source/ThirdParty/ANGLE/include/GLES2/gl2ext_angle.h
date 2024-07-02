@@ -736,6 +736,13 @@ GL_APICALL void GL_APIENTRY glLogicOpANGLE (GLenum);
 #define GL_PROGRAM_BINARY_READY_ANGLE    0x96BE
 #endif /* GL_ANGLE_program_binary_readiness_query */
 
+#ifndef GL_WEBKIT_explicit_resolve_target
+typedef void (GL_APIENTRYP PFNGLFRAMEBUFFERRESOLVERENDERBUFFERWEBKITPROC) (GLenum, GLenum, GLenum, GLuint);
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glFramebufferResolveRenderbufferWEBKIT(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
+#endif
+#endif /* GL_WEBKIT_explicit_resolve_target */
+
 #ifndef GL_ANGLE_variable_rasterization_rate_metal
 #define GL_ANGLE_variable_rasterization_rate_metal 1
 

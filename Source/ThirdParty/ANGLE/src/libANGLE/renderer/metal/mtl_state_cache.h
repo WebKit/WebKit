@@ -319,14 +319,18 @@ struct RenderPassAttachmentDesc
     bool equalIgnoreLoadStoreOptions(const RenderPassAttachmentDesc &other) const;
     bool operator==(const RenderPassAttachmentDesc &other) const;
 
-    ANGLE_INLINE bool hasImplicitMSTexture() const { return implicitMSTexture.get(); }
+    ANGLE_INLINE bool hasResolveTexture() const { return resolveTexture.get(); }
 
+    // When rendering with implicit multisample, |texture| is the texture that
+    // will be rendered into and discarded at the end of a render pass. Its
+    // result will be automatically resolved into |resolveTexture|.
     TextureRef texture;
-    // Implicit multisample texture that will be rendered into and discarded at the end of
-    // a render pass. Its result will be resolved into normal texture above.
-    TextureRef implicitMSTexture;
+    TextureRef resolveTexture;
     MipmapNativeLevel level;
     uint32_t sliceOrDepth;
+
+    MipmapNativeLevel resolveLevel;
+    uint32_t resolveSliceOrDepth;
 
     // This attachment is blendable or not.
     bool blendable;

@@ -760,6 +760,8 @@ public:
     void invalidateStyleForSubtreeInternal();
     void invalidateForQueryContainerSizeChange();
     void invalidateForResumingQueryContainerResolution();
+    void invalidateAncestorsForAnchor();
+    void invalidateForResumingAnchorPositionedElementResolution();
 
     bool needsUpdateQueryContainerDependentStyle() const;
     void clearNeedsUpdateQueryContainerDependentStyle();

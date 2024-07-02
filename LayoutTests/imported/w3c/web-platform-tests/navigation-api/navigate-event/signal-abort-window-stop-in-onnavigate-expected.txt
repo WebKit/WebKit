@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: Navigation aborted
 
-FAIL window.stop() signals event.signal inside a navigate event handler assert_true: expected true got false
+PASS window.stop() signals event.signal inside a navigate event handler
 

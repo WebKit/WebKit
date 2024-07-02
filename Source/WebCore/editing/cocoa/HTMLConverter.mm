@@ -96,6 +96,10 @@
 using namespace WebCore;
 using namespace HTMLNames;
 
+#if ENABLE(WRITING_TOOLS)
+NSAttributedStringKey const WTWritingToolsPreservedAttributeName = @"WTWritingToolsPreserved";
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 
 enum {
@@ -2434,6 +2438,24 @@ static RetainPtr<NSAttributedString> attributedStringWithAttachmentForElement(co
     return [NSAttributedString attributedStringWithAttachment:attachment.get()];
 }
 
+#if ENABLE(WRITING_TOOLS)
+static bool hasAncestorQualifyingForWritingToolsPreservation(Element* ancestor, WeakHashMap<Element, bool, WeakPtrImplWithEventTargetData>& cache)
+{
+    if (!ancestor)
+        return false;
+
+    return cache.ensure(*ancestor, [&] {
+        if (isMailBlockquote(*ancestor))
+            return true;
+
+        if (auto renderer = ancestor->renderer(); renderer && renderer->style().whiteSpace() == WhiteSpace::Pre)
+            return true;
+
+        return hasAncestorQualifyingForWritingToolsPreservation(ancestor->parentElement(), cache);
+    }).iterator->value;
+}
+#endif
+
 namespace WebCore {
 
 // This function supports more HTML features than the editing variant below, such as tables.
@@ -2448,6 +2470,8 @@ AttributedString editingAttributedString(const SimpleRange& range, OptionSet<Inc
 #if PLATFORM(MAC)
     auto fontManager = [NSFontManager sharedFontManager];
 #endif
+
+    WeakHashMap<Element, bool, WeakPtrImplWithEventTargetData> elementQualifiesForWritingToolsPreservationCache;
 
     auto string = adoptNS([[NSMutableAttributedString alloc] init]);
     auto attrs = adoptNS([[NSMutableDictionary alloc] init]);
@@ -2480,6 +2504,15 @@ AttributedString editingAttributedString(const SimpleRange& range, OptionSet<Inc
         if (!renderer)
             continue;
         auto& style = renderer->style();
+
+#if ENABLE(WRITING_TOOLS)
+        if (includedElements.contains(IncludedElement::PreservedContent)) {
+            if (hasAncestorQualifyingForWritingToolsPreservation(node->parentElement(), elementQualifiesForWritingToolsPreservationCache))
+                [attrs setObject:@(1) forKey:WTWritingToolsPreservedAttributeName];
+            else
+                [attrs removeObjectForKey:WTWritingToolsPreservedAttributeName];
+        }
+#endif
 
         if (style.textDecorationsInEffect() & TextDecorationLine::Underline)
             [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];

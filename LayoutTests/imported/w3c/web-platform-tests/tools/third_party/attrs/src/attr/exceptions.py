@@ -1,8 +1,6 @@
 # SPDX-License-Identifier: MIT
 
-from __future__ import annotations
-
-from typing import ClassVar
+from __future__ import absolute_import, division, print_function
 
 
 class FrozenError(AttributeError):
@@ -17,7 +15,7 @@ class FrozenError(AttributeError):
     """
 
     msg = "can't set attribute"
-    args: ClassVar[tuple[str]] = [msg]
+    args = [msg]
 
 
 class FrozenInstanceError(FrozenError):
@@ -38,7 +36,7 @@ class FrozenAttributeError(FrozenError):
 
 class AttrsAttributeNotFoundError(ValueError):
     """
-    An *attrs* function couldn't find an attribute that the user asked for.
+    An ``attrs`` function couldn't find an attribute that the user asked for.
 
     .. versionadded:: 16.2.0
     """
@@ -46,7 +44,7 @@ class AttrsAttributeNotFoundError(ValueError):
 
 class NotAnAttrsClassError(ValueError):
     """
-    A non-*attrs* class has been passed into an *attrs* function.
+    A non-``attrs`` class has been passed into an ``attrs`` function.
 
     .. versionadded:: 16.2.0
     """
@@ -54,7 +52,7 @@ class NotAnAttrsClassError(ValueError):
 
 class DefaultAlreadySetError(RuntimeError):
     """
-    A default has been set when defining the field and is attempted to be reset
+    A default has been set using ``attr.ib()`` and is attempted to be reset
     using the decorator.
 
     .. versionadded:: 17.1.0
@@ -63,7 +61,8 @@ class DefaultAlreadySetError(RuntimeError):
 
 class UnannotatedAttributeError(RuntimeError):
     """
-    A class with ``auto_attribs=True`` has a field without a type annotation.
+    A class with ``auto_attribs=True`` has an ``attr.ib()`` without a type
+    annotation.
 
     .. versionadded:: 17.3.0
     """
@@ -71,7 +70,7 @@ class UnannotatedAttributeError(RuntimeError):
 
 class PythonTooOldError(RuntimeError):
     """
-    It was attempted to use an *attrs* feature that requires a newer Python
+    It was attempted to use an ``attrs`` feature that requires a newer Python
     version.
 
     .. versionadded:: 18.2.0
@@ -80,8 +79,8 @@ class PythonTooOldError(RuntimeError):
 
 class NotCallableError(TypeError):
     """
-    A field requiring a callable has been set with a value that is not
-    callable.
+    A ``attr.ib()`` requiring a callable has been set with a value
+    that is not callable.
 
     .. versionadded:: 19.2.0
     """

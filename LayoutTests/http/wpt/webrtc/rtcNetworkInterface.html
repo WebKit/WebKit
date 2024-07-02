@@ -1,0 +1,52 @@
+<!doctype html> <!-- webkit-test-runner [ EnumeratingVisibleNetworkInterfacesEnabled=true ] -->
+<document>
+<head>
+<meta charset="utf-8">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+function with_iframe(url) {
+    return new Promise(function(resolve) {
+        var frame = document.createElement('iframe');
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+async function testNetworkInterface(test, frame)
+{
+    await frame.contentWindow.navigator.mediaDevices.getUserMedia({ video: true });
+
+    const pc = new frame.contentWindow.RTCPeerConnection();
+    pc.createDataChannel("test");
+    pc.setLocalDescription();
+    await new Promise((resolve, reject) => {
+       pc.onicecandidate = e => {
+           if (!e.candidate)
+               resolve();
+       };
+       setTimeout(() => reject("end of candidate time out"), 5000);
+    });
+
+    return frame.contentWindow.internals ? frame.contentWindow.internals.rtcNetworkInterfaceName : "";
+}
+
+promise_test(async test => {
+    // Actual network load to get the iframe.
+    const frame1 = await with_iframe("resources/cacheable-iframe.py");
+    const rtcNetworkInterfaceName1 = await testNetworkInterface(test, frame1);
+
+    assert_greater_than(rtcNetworkInterfaceName1.length, 0, "test1");
+
+    // Get iframe content from the cache, no network load.
+    const frame2 = await with_iframe("resources/cacheable-iframe.py");
+    const rtcNetworkInterfaceName2 = await testNetworkInterface(test, frame2);
+
+    assert_equals(rtcNetworkInterfaceName2, rtcNetworkInterfaceName1, "test5");
+}, 'Check rtc network interface detection');
+</script>
+</body>
+</html>

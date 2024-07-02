@@ -4,11 +4,15 @@
 Commonly useful converters.
 """
 
+from __future__ import absolute_import, division, print_function
 
-import typing
-
-from ._compat import _AnnotationExtractor
+from ._compat import PY2
 from ._make import NOTHING, Factory, pipe
+
+
+if not PY2:
+    import inspect
+    import typing
 
 
 __all__ = [
@@ -38,15 +42,22 @@ def optional(converter):
             return None
         return converter(val)
 
-    xtr = _AnnotationExtractor(converter)
-
-    t = xtr.get_first_param_type()
-    if t:
-        optional_converter.__annotations__["val"] = typing.Optional[t]
-
-    rt = xtr.get_return_type()
-    if rt:
-        optional_converter.__annotations__["return"] = typing.Optional[rt]
+    if not PY2:
+        sig = None
+        try:
+            sig = inspect.signature(converter)
+        except (ValueError, TypeError):  # inspect failed
+            pass
+        if sig:
+            params = list(sig.parameters.values())
+            if params and params[0].annotation is not inspect.Parameter.empty:
+                optional_converter.__annotations__["val"] = typing.Optional[
+                    params[0].annotation
+                ]
+            if sig.return_annotation is not inspect.Signature.empty:
+                optional_converter.__annotations__["return"] = typing.Optional[
+                    sig.return_annotation
+                ]
 
     return optional_converter
 
@@ -70,20 +81,21 @@ def default_if_none(default=NOTHING, factory=None):
     .. versionadded:: 18.2.0
     """
     if default is NOTHING and factory is None:
-        msg = "Must pass either `default` or `factory`."
-        raise TypeError(msg)
+        raise TypeError("Must pass either `default` or `factory`.")
 
     if default is not NOTHING and factory is not None:
-        msg = "Must pass either `default` or `factory` but not both."
-        raise TypeError(msg)
+        raise TypeError(
+            "Must pass either `default` or `factory` but not both."
+        )
 
     if factory is not None:
         default = Factory(factory)
 
     if isinstance(default, Factory):
         if default.takes_self:
-            msg = "`takes_self` is not supported by default_if_none."
-            raise ValueError(msg)
+            raise ValueError(
+                "`takes_self` is not supported by default_if_none."
+            )
 
         def default_if_none_converter(val):
             if val is not None:
@@ -140,5 +152,4 @@ def to_bool(val):
     except TypeError:
         # Raised when "val" is not hashable (e.g., lists)
         pass
-    msg = f"Cannot convert value to bool: {val}"
-    raise ValueError(msg)
+    raise ValueError("Cannot convert value to bool: {}".format(val))

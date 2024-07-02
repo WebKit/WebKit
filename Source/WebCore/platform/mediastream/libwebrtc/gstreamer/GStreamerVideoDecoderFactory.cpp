@@ -413,11 +413,11 @@ private:
 
 std::unique_ptr<webrtc::VideoDecoder> GStreamerVideoDecoderFactory::Create(const webrtc::Environment& environment, const webrtc::SdpVideoFormat& format)
 {
-    if (format == webrtc::SdpVideoFormat::H264())
+    if (format.name == "H264")
         return std::unique_ptr<webrtc::VideoDecoder>(new H264Decoder());
-    else if (format == webrtc::SdpVideoFormat::VP8())
+    if (format == webrtc::SdpVideoFormat::VP8())
         return VP8Decoder::Create(environment);
-    else if (format == webrtc::SdpVideoFormat::VP9Profile0() || format == webrtc::SdpVideoFormat::VP9Profile2())
+    if (format.name == "VP9")
         return VP9Decoder::Create();
 
     GST_ERROR("Could not create decoder for %s", format.name.c_str());

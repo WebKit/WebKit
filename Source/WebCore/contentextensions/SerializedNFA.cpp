@@ -106,7 +106,7 @@ SerializedNFA::SerializedNFA(FileSystem::MappedFileData&& file, Metadata&& metad
 template<typename T>
 const T* SerializedNFA::pointerAtOffsetInFile(size_t offset) const
 {
-    return reinterpret_cast<const T*>(static_cast<const uint8_t*>(m_file.data()) + offset);
+    return reinterpret_cast<const T*>(m_file.span().subspan(offset).data());
 }
 
 auto SerializedNFA::nodes() const -> const Range<ImmutableNFANode>

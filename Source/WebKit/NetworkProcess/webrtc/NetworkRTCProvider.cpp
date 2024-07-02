@@ -339,6 +339,18 @@ void NetworkRTCProvider::stopResolver(LibWebRTCResolverIdentifier identifier)
     WebCore::stopResolveDNS(identifier.toUInt64());
 }
 
+#if PLATFORM(COCOA)
+void NetworkRTCProvider::getInterfaceName(URL&& url, WebPageProxyIdentifier pageIdentifier, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain&& domain, CompletionHandler<void(String&&)>&& completionHandler)
+{
+    if (!url.protocolIsInHTTPFamily()) {
+        completionHandler({ });
+        return;
+    }
+
+    NetworkRTCTCPSocketCocoa::getInterfaceName(*this, url, attributedBundleIdentifierFromPageIdentifier(pageIdentifier), isFirstParty, isRelayDisabled, domain, WTFMove(completionHandler));
+}
+#endif
+
 void NetworkRTCProvider::callOnRTCNetworkThread(Function<void()>&& callback)
 {
     m_rtcNetworkThread.PostTask(WTFMove(callback));

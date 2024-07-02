@@ -743,6 +743,13 @@ void GraphicsContextGLCocoa::framebufferDiscard(GCGLenum target, std::span<const
         return;
     GL_DiscardFramebufferEXT(target, attachments.size(), attachments.data());
 }
+
+void GraphicsContextGLCocoa::framebufferResolveRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject renderbuffer)
+{
+    if (!makeContextCurrent())
+        return;
+    GL_FramebufferResolveRenderbufferWEBKIT(target, attachment, renderbuffertarget, renderbuffer);
+}
 #endif
 
 RetainPtr<id> GraphicsContextGLCocoa::newSharedEventWithMachPort(mach_port_t sharedEventSendRight)
@@ -781,6 +788,9 @@ bool GraphicsContextGLCocoa::enableRequiredWebXRExtensionsImpl()
         && enableExtension("GL_OES_rgb8_rgba8"_s)
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
         && enableExtension("GL_ANGLE_variable_rasterization_rate_metal"_s)
+#endif
+#if PLATFORM(VISION)
+        && enableExtension("GL_WEBKIT_explicit_resolve_target"_s)
 #endif
         && enableExtension("GL_NV_framebuffer_blit"_s);
 }

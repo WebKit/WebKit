@@ -1708,7 +1708,7 @@ angle::Result ContextMtl::bindMetalRasterizationRateMap(gl::Context *context,
             {
                 mtl::RenderPassAttachmentDesc desc;
                 renderTargetMetal->toRenderPassAttachmentDesc(&desc);
-                mRasterizationRateMapTexture = desc.hasImplicitMSTexture() ? desc.implicitMSTexture.get()->get() : desc.texture.get()->get();
+                mRasterizationRateMapTexture = desc.texture.get()->get();
             }
         }
     }

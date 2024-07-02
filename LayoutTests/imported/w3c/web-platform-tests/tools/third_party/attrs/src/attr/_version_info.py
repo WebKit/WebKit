@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: MIT
 
+from __future__ import absolute_import, division, print_function
 
 from functools import total_ordering
 
@@ -9,7 +10,7 @@ from ._make import attrib, attrs
 
 @total_ordering
 @attrs(eq=False, order=False, slots=True, frozen=True)
-class VersionInfo:
+class VersionInfo(object):
     """
     A version object that can be compared to tuple of length 1--4:
 

@@ -308,10 +308,7 @@ public:
         
         // go(i!=0) from a frame navigates into the history of the frame only,
         // in both IE and NS (but not in Mozilla). We can't easily do that.
-        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
-        if (!localMainFrame)
-            return;
-        page->goToItem(*localMainFrame, m_historyItem, FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
+        page->goToItem(page->mainFrame(), m_historyItem, FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
     }
 
 private:

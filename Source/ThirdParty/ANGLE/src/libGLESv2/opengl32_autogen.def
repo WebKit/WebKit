@@ -1268,6 +1268,9 @@ EXPORTS
     glEndTilingQCOM
     glStartTilingQCOM
 
+    ; GL_WEBKIT_explicit_resolve_target
+    glFramebufferResolveRenderbufferWEBKIT
+
     ; GL 1.0
     glAccum
     glAlphaFunc

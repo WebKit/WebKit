@@ -107,40 +107,9 @@ static bool isAhemFont(CFStringRef familyName)
     return familyName && caseInsensitiveCompare(familyName, CFSTR("Ahem"));
 }
 
-bool fontHasTable(CTFontRef ctFont, unsigned tableTag)
-{
-#if USE(CTFONTHASTABLE)
-    return CTFontHasTable(ctFont, tableTag);
-#else
-    auto tableTags = adoptCF(CTFontCopyAvailableTables(ctFont, kCTFontTableOptionNoOptions));
-    if (!tableTags)
-        return false;
-    CFIndex numTables = CFArrayGetCount(tableTags.get());
-    for (CFIndex index = 0; index < numTables; ++index) {
-        auto tag = static_cast<CTFontTableTag>(reinterpret_cast<uintptr_t>(CFArrayGetValueAtIndex(tableTags.get(), index)));
-        if (tag == tableTag)
-            return true;
-    }
-    return false;
-#endif
-}
-
 bool fontHasEitherTable(CTFontRef ctFont, unsigned tableTag1, unsigned tableTag2)
 {
-#if USE(CTFONTHASTABLE)
-    return fontHasTable(ctFont, tableTag1) || fontHasTable(ctFont, tableTag2);
-#else
-    auto tableTags = adoptCF(CTFontCopyAvailableTables(ctFont, kCTFontTableOptionNoOptions));
-    if (!tableTags)
-        return false;
-    CFIndex numTables = CFArrayGetCount(tableTags.get());
-    for (CFIndex index = 0; index < numTables; ++index) {
-        auto tag = static_cast<CTFontTableTag>(reinterpret_cast<uintptr_t>(CFArrayGetValueAtIndex(tableTags.get(), index)));
-        if (tag == tableTag1 || tag == tableTag2)
-            return true;
-    }
-    return false;
-#endif
+    return CTFontHasTable(ctFont, tableTag1) || CTFontHasTable(ctFont, tableTag2);
 }
 
 void Font::platformInit()
@@ -161,7 +130,7 @@ void Font::platformInit()
     // The Open Font Format describes the OS/2 USE_TYPO_METRICS flag as follows:
     // "If set, it is strongly recommended to use OS/2.sTypoAscender - OS/2.sTypoDescender+ OS/2.sTypoLineGap as a value for default line spacing for this font."
     // On OS X, we only apply this rule in the important case of fonts with a MATH table.
-    if (fontHasTable(m_platformData.ctFont(), kCTFontTableMATH)) {
+    if (CTFontHasTable(m_platformData.ctFont(), kCTFontTableMATH)) {
         short typoAscent, typoDescent, typoLineGap;
         if (OpenType::tryGetTypoMetrics(m_platformData.font(), typoAscent, typoDescent, typoLineGap)) {
             ascent = scaleEmToUnits(typoAscent, unitsPerEm) * pointSize;

@@ -44,6 +44,7 @@ How-to guides
 
    how-to/existingtestsuite
    how-to/unittest
+   how-to/nose
    how-to/xunit_setup
 
    how-to/bash-completion
@@ -84,6 +85,7 @@ Further topics
 
    backwards-compatibility
    deprecations
+   py27-py34-deprecation
 
    contributing
    development_guide

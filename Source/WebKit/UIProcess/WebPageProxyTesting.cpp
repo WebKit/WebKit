@@ -195,10 +195,10 @@ void WebPageProxyTesting::setSystemCanPromptForGetDisplayMediaForTesting(bool ca
 }
 #endif
 
-void WebPageProxyTesting::flushDeferredDidReceiveMouseEvent()
+void WebPageProxyTesting::clearOpener()
 {
     m_page->forEachWebContentProcess([](auto& webProcess, auto pageID) {
-        [[maybe_unused]] auto sendResult = webProcess.sendSync(Messages::WebPageTesting::FlushDeferredDidReceiveMouseEvent(), pageID, Seconds::infinity());
+        webProcess.send(Messages::WebPageTesting::ClearOpener(), pageID);
     });
 }
 

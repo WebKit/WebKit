@@ -2834,6 +2834,10 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, UGPRPair, (VM* vmPointer, uint32_t b
         dataLog("Unexpected code block in Baseline->DFG tier-up: ", *codeBlock, "\n");
         RELEASE_ASSERT_NOT_REACHED();
     }
+
+    DFG::CapabilityLevel level = codeBlock->capabilityLevel();
+    if (level == DFG::CannotCompile)
+        OPERATION_RETURN(scope, encodeResult(nullptr, nullptr));
     
     if (bytecodeIndex) {
         // If we're attempting to OSR from a loop, assume that this should be

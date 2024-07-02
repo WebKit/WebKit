@@ -335,6 +335,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     [EnabledIf='webXREnabled()'] void EnableFoveation(uint32_t arg0)
     [EnabledIf='webXREnabled()'] void DisableFoveation()
     [EnabledIf='webXREnabled()'] void FramebufferDiscard(uint32_t target, std::span<const uint32_t> attachments)
+    [EnabledIf='webXREnabled()'] void FramebufferResolveRenderbuffer(uint32_t target, uint32_t attachment, uint32_t renderbuffertarget, uint32_t arg3)
 #endif
 }
 

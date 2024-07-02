@@ -264,14 +264,10 @@ const FeatureSchema& colorGamut()
         "color-gamut"_s,
         FixedVector { CSSValueSRGB, CSSValueP3, CSSValueRec2020 },
         [](auto& context) {
-            Ref frame = *context.document->frame();
-
             // FIXME: At some point we should start detecting displays that support more colors.
             MatchingIdentifiers identifiers { CSSValueSRGB };
-            if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame())) {
-                if (screenSupportsExtendedColor(localFrame->protectedView().get()))
-                    identifiers.append(CSSValueP3);
-            }
+            if (screenSupportsExtendedColor(context.document->protectedFrame()->mainFrame().protectedVirtualView().get()))
+                identifiers.append(CSSValueP3);
             return identifiers;
         }
     };

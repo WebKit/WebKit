@@ -30,6 +30,7 @@
 #include "config.h"
 #include "StyleResolver.h"
 
+#include "AnchorPositionEvaluator.h"
 #include "BlendingKeyframes.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSFontSelector.h"

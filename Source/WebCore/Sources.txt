@@ -708,6 +708,7 @@ bindings/js/JSRTCRtpSFrameTransformCustom.cpp
 bindings/js/JSRangeCustom.cpp
 bindings/js/JSReadableStreamSourceCustom.cpp
 bindings/js/JSReportBodyCustom.cpp
+bindings/js/JSReportingObserverCustom.cpp
 bindings/js/JSResizeObserverCustom.cpp
 bindings/js/JSResizeObserverEntryCustom.cpp
 bindings/js/JSSVGPathSegCustom.cpp
@@ -1991,7 +1992,7 @@ page/LocalFrame.cpp
 page/LocalFrameView.cpp
 page/LocalFrameViewLayoutContext.cpp
 page/Location.cpp
-page/LoggedInStatus.cpp
+page/LoginStatus.cpp
 page/MemoryRelease.cpp
 page/MouseEventWithHitTestResults.cpp
 page/NavigateEvent.cpp
@@ -2003,7 +2004,7 @@ page/NavigationHistoryEntry.cpp
 page/NavigationTransition.cpp
 page/Navigator.cpp
 page/NavigatorBase.cpp
-page/NavigatorIsLoggedIn.cpp
+page/NavigatorLoginStatus.cpp
 page/OpportunisticTaskScheduler.cpp
 page/OriginAccessEntry.cpp
 page/OriginAccessPatterns.cpp
@@ -2937,6 +2938,7 @@ storage/StorageEventDispatcher.cpp
 storage/StorageMap.cpp
 storage/StorageNamespaceProvider.cpp
 storage/StorageUtilities.cpp
+style/AnchorPositionEvaluator.cpp
 style/AttributeChangeInvalidation.cpp
 style/ChildChangeInvalidation.cpp
 style/ClassChangeInvalidation.cpp

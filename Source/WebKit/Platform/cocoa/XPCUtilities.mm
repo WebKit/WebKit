@@ -36,7 +36,7 @@ namespace WebKit {
 static constexpr auto messageNameKey = "message-name"_s;
 static constexpr auto exitProcessMessage = "exit"_s;
 
-#if !USE(EXTENSIONKIT)
+#if !USE(EXTENSIONKIT_PROCESS_TERMINATION)
 void terminateWithReason(xpc_connection_t connection, ReasonCode, const char*)
 {
     // This could use ReasonSPI.h, but currently does not as the SPI is blocked by the sandbox.

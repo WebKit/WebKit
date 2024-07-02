@@ -55,6 +55,8 @@ public:
 
     void appendQueuedReportIfCorrectType(const Ref<Report>&);
 
+    ReportingObserverCallback& callbackConcurrently();
+
 private:
     explicit ReportingObserver(ScriptExecutionContext&, Ref<ReportingObserverCallback>&&, ReportingObserver::Options&&);
 

@@ -379,7 +379,7 @@ std::unique_ptr<webrtc::VideoEncoder> GStreamerVideoEncoderFactory::Create(const
         return webrtc::CreateVp8Encoder(environment);
     }
 
-    if (format == webrtc::SdpVideoFormat::H264()) {
+    if (format.name == "H264") {
 #if WEBKIT_LIBWEBRTC_OPENH264_ENCODER
         GST_INFO("Using OpenH264 libwebrtc encoder.");
         return webrtc::CreateH264Encoder(environment, webrtc::H264EncoderSettings::Parse(format));

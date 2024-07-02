@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AnchorPositionEvaluator.h"
 #include "SelectorChecker.h"
 #include "SelectorMatchingState.h"
 #include "StyleChange.h"
@@ -59,6 +60,7 @@ public:
     std::unique_ptr<Update> resolve();
 
     bool hasUnresolvedQueryContainers() const { return m_hasUnresolvedQueryContainers; }
+    bool hasUnresolvedAnchorPositionedElements() const { return m_hasUnresolvedAnchorPositionedElements; }
 
 private:
     enum class ResolutionType : uint8_t { RebuildUsingExisting, AnimationOnly, FastPathInherit, Full };
@@ -68,6 +70,7 @@ private:
 
     const RenderStyle* existingStyle(const Element&);
 
+    enum class AnchorPositionedElementAction : bool { None, SkipDescendants };
     enum class QueryContainerAction : uint8_t { None, Resolve, Continue };
     enum class DescendantsToResolve : uint8_t { None, RebuildAllUsingExisting, ChildrenWithExplicitInherit, Children, All };
 
@@ -135,6 +138,11 @@ private:
     const RenderStyle* parentBoxStyle() const;
     const RenderStyle* parentBoxStyleForPseudoElement(const ElementUpdate&) const;
 
+    AnchorPositionedElementAction updateAnchorPositioningState(Element&, const RenderStyle*);
+    void findAnchorsForAnchorPositionedElement(const Element& anchorPositionedElement, const Element* containingBlock);
+    std::optional<Ref<Element>> findLastAcceptableAnchorWithName(String anchorName, const Element* containingBlock);
+    void updateAnchorPositioningStateInInitialContainingBlock();
+
     struct QueryContainerState {
         Change change { Change::None };
         DescendantsToResolve descendantsToResolve { DescendantsToResolve::None };
@@ -149,6 +157,13 @@ private:
 
     HashMap<Ref<Element>, std::optional<QueryContainerState>> m_queryContainerStates;
     bool m_hasUnresolvedQueryContainers { false };
+
+    HashSet<Ref<Element>> m_anchorElements;
+    HashMap<String, Vector<Ref<Element>>> m_anchorsForAnchorName;
+    HashMap<Ref<Element>, Vector<Ref<Element>>> m_unresolvedAnchorPositionedElementsForContainingBlock;
+    Vector<Ref<Element>> m_unresolvedAnchorPositionedElementsForInitialContainingBlock;
+    bool m_hasUnresolvedAnchorPositionedElements { false };
+    bool m_canFindAnchorsForNextAnchorPositionedElement { false };
 
     std::unique_ptr<Update> m_update;
 };

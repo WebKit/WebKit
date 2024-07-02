@@ -1,6 +1,7 @@
 "use strict";
 
 (function() {
+    const is_test_context = window.__wptrunner_message_queue !== undefined;
     const pending = new Map();
 
     let result = null;
@@ -14,7 +15,7 @@
             return;
         }
 
-        if (is_test_context() && data.type === "testdriver-command") {
+        if (is_test_context && data.type === "testdriver-command") {
             const command = data.message;
             const ctx_id = command.cmd_id;
             delete command.cmd_id;
@@ -36,15 +37,11 @@
             pending.delete(cmd_id);
             const resolver = data.status === "success" ? on_success : on_failure;
             resolver(data);
-            if (is_test_context()) {
+            if (is_test_context) {
                 window.__wptrunner_process_next_event();
             }
         }
     });
-
-    function is_test_context() {
-      return window.__wptrunner_message_queue !== undefined;
-    }
 
     // Code copied from /common/utils.js
     function rand_int(bits) {
@@ -70,7 +67,7 @@
     }
 
     function get_window_id(win) {
-        if (win == window && is_test_context()) {
+        if (win == window && is_test_context) {
             return null;
         }
         if (!win.__wptrunner_id) {
@@ -133,7 +130,7 @@
         if (action_msg.context) {
           action_msg.context = get_window_id(action_msg.context);
         }
-        if (is_test_context()) {
+        if (is_test_context) {
             cmd_id = window.__wptrunner_message_queue.push(action_msg);
         } else {
             if (testharness_context === null) {
@@ -326,13 +323,5 @@
 
     window.test_driver_internal.get_virtual_sensor_information = function(sensor_type, context=null) {
         return create_action("get_virtual_sensor_information", {sensor_type, context});
-    };
-
-    window.test_driver_internal.set_device_posture = function(posture, context=null) {
-        return create_action("set_device_posture", {posture, context});
-    };
-
-    window.test_driver_internal.clear_device_posture = function(context=null) {
-        return create_action("clear_device_posture", {context});
     };
 })();

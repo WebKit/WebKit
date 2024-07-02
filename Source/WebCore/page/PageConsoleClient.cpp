@@ -241,32 +241,27 @@ void PageConsoleClient::profileEnd(JSC::JSGlobalObject* lexicalGlobalObject, con
 
 void PageConsoleClient::takeHeapSnapshot(JSC::JSGlobalObject*, const String& title)
 {
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
-        InspectorInstrumentation::takeHeapSnapshot(*localMainFrame, title);
+    InspectorInstrumentation::takeHeapSnapshot(m_page->mainFrame(), title);
 }
 
 void PageConsoleClient::time(JSC::JSGlobalObject* lexicalGlobalObject, const String& label)
 {
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
-        InspectorInstrumentation::startConsoleTiming(*localMainFrame, lexicalGlobalObject, label);
+    InspectorInstrumentation::startConsoleTiming(m_page->mainFrame(), lexicalGlobalObject, label);
 }
 
 void PageConsoleClient::timeLog(JSC::JSGlobalObject* lexicalGlobalObject, const String& label, Ref<ScriptArguments>&& arguments)
 {
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
-        InspectorInstrumentation::logConsoleTiming(*localMainFrame, lexicalGlobalObject, label, WTFMove(arguments));
+    InspectorInstrumentation::logConsoleTiming(m_page->mainFrame(), lexicalGlobalObject, label, WTFMove(arguments));
 }
 
 void PageConsoleClient::timeEnd(JSC::JSGlobalObject* lexicalGlobalObject, const String& label)
 {
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
-        InspectorInstrumentation::stopConsoleTiming(*localMainFrame, lexicalGlobalObject, label);
+    InspectorInstrumentation::stopConsoleTiming(m_page->mainFrame(), lexicalGlobalObject, label);
 }
 
 void PageConsoleClient::timeStamp(JSC::JSGlobalObject*, Ref<ScriptArguments>&& arguments)
 {
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
-        InspectorInstrumentation::consoleTimeStamp(*localMainFrame, WTFMove(arguments));
+    InspectorInstrumentation::consoleTimeStamp(m_page->mainFrame(), WTFMove(arguments));
 }
 
 static JSC::JSObject* objectArgumentAt(ScriptArguments& arguments, unsigned index)

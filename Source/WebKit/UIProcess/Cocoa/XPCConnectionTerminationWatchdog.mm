@@ -44,7 +44,7 @@ void XPCConnectionTerminationWatchdog::startConnectionTerminationWatchdog(Auxili
 XPCConnectionTerminationWatchdog::XPCConnectionTerminationWatchdog(AuxiliaryProcessProxy& process, Seconds interval)
     : m_watchdogTimer(RunLoop::main(), this, &XPCConnectionTerminationWatchdog::watchdogTimerFired)
     , m_assertion(ProcessAndUIAssertion::create(process, "XPCConnectionTerminationWatchdog"_s, ProcessAssertionType::Background))
-#if USE(EXTENSIONKIT)
+#if USE(EXTENSIONKIT_PROCESS_TERMINATION)
     , m_process(process.extensionProcess())
 #else
     , m_xpcConnection(process.connection()->xpcConnection())
@@ -55,7 +55,7 @@ XPCConnectionTerminationWatchdog::XPCConnectionTerminationWatchdog(AuxiliaryProc
     
 void XPCConnectionTerminationWatchdog::watchdogTimerFired()
 {
-#if USE(EXTENSIONKIT)
+#if USE(EXTENSIONKIT_PROCESS_TERMINATION)
     if (m_process)
         m_process->invalidate();
 #else

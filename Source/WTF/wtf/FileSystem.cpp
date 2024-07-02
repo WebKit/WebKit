@@ -464,7 +464,7 @@ MappedFileData createMappedFileData(const String& path, size_t bytesSize, Platfo
 
 void finalizeMappedFileData(MappedFileData& mappedFileData, size_t bytesSize)
 {
-    void* map = const_cast<void*>(mappedFileData.data());
+    auto* map = mappedFileData.mutableSpan().data();
 #if OS(WINDOWS)
     DWORD oldProtection;
     VirtualProtect(map, bytesSize, FILE_MAP_READ, &oldProtection);
@@ -484,12 +484,11 @@ MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(con
     if (!mappedFile)
         return { };
 
-    void* map = const_cast<void*>(mappedFile.data());
-    uint8_t* mapData = static_cast<uint8_t*>(map);
+    auto mapData = mappedFile.mutableSpan();
 
     apply([&mapData](std::span<const uint8_t> chunk) {
-        memcpy(mapData, chunk.data(), chunk.size());
-        mapData += chunk.size();
+        memcpySpan(mapData.first(chunk.size()), chunk);
+        mapData = mapData.subspan(chunk.size());
         return true;
     });
 

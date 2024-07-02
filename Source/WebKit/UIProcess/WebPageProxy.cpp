@@ -9778,7 +9778,8 @@ void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason re
     resetStateAfterProcessExited(reason);
     stopAllURLSchemeTasks(protectedLegacyMainFrameProcess().ptr());
 #if ENABLE(PDF_HUD)
-    protectedPageClient()->removeAllPDFHUDs();
+    if (RefPtr pageClient = optionalProtectedPageClient())
+        pageClient->removeAllPDFHUDs();
 #endif
 
     if (reason != ProcessTerminationReason::NavigationSwap) {

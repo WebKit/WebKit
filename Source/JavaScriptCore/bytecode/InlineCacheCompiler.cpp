@@ -3356,7 +3356,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
             // We *always* know that the getter/setter, if non-null, is a cell.
             jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
 #endif
-            m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo.codeOrigin, m_stubInfo.useDataIC ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
+            m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo.codeOrigin, nullptr);
             auto* callLinkInfo = m_callLinkInfos[index].get();
             callLinkInfo->setUpCall(CallLinkInfo::Call);
             CallLinkInfo::emitFastPath(jit, callLinkInfo);
@@ -4059,7 +4059,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, ProxyObjectAcces
         // We *always* know that the proxy function, if non-null, is a cell.
         jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
 #endif
-        m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo.codeOrigin, m_stubInfo.useDataIC ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No, nullptr);
+        m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo.codeOrigin, nullptr);
         auto* callLinkInfo = m_callLinkInfos[index].get();
         callLinkInfo->setUpCall(CallLinkInfo::Call);
         CallLinkInfo::emitFastPath(jit, callLinkInfo);

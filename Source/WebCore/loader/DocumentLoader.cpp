@@ -1081,8 +1081,7 @@ bool DocumentLoader::disallowWebArchive() const
 
 #if ENABLE(WEB_ARCHIVE)
     // On purpose of maintaining existing tests.
-    auto* localFrame = dynamicDowncast<LocalFrame>(frame()->mainFrame());
-    bool alwaysAllowLocalWebArchive = localFrame && localFrame->settings().alwaysAllowLocalWebarchive();
+    bool alwaysAllowLocalWebArchive = frame()->mainFrame().settings().alwaysAllowLocalWebarchive();
 #else
     bool alwaysAllowLocalWebArchive { false };
 #endif

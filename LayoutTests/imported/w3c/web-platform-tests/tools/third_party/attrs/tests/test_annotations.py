@@ -2,6 +2,8 @@
 
 """
 Tests for PEP-526 type annotations.
+
+Python 3.6+ only.
 """
 
 import sys
@@ -92,10 +94,7 @@ class TestAnnotations:
         assert 1 == len(attr.fields(C))
         assert_init_annotations(C, x=typing.List[int])
 
-    @pytest.mark.skipif(
-        sys.version_info[:2] < (3, 11),
-        reason="Incompatible behavior on older Pythons",
-    )
+    @pytest.mark.parametrize("slots", [True, False])
     def test_auto_attribs(self, slots):
         """
         If *auto_attribs* is True, bare annotations are collected too.
@@ -114,7 +113,7 @@ class TestAnnotations:
         i = C(42)
         assert "C(a=42, x=[], y=2, z=3, foo=None)" == repr(i)
 
-        attr_names = {a.name for a in C.__attrs_attrs__}
+        attr_names = set(a.name for a in C.__attrs_attrs__)
         assert "a" in attr_names  # just double check that the set works
         assert "cls_var" not in attr_names
 
@@ -150,9 +149,10 @@ class TestAnnotations:
             x=typing.List[int],
             y=int,
             z=int,
-            foo=typing.Any,
+            foo=typing.Optional[typing.Any],
         )
 
+    @pytest.mark.parametrize("slots", [True, False])
     def test_auto_attribs_unannotated(self, slots):
         """
         Unannotated `attr.ib`s raise an error.
@@ -170,6 +170,7 @@ class TestAnnotations:
             "The following `attr.ib`s lack a type annotation: v, y.",
         ) == e.value.args
 
+    @pytest.mark.parametrize("slots", [True, False])
     def test_auto_attribs_subclassing(self, slots):
         """
         Attributes from base classes are inherited, it doesn't matter if the
@@ -250,7 +251,7 @@ class TestAnnotations:
 
     def test_nullary_converter(self):
         """
-        A converter with no arguments doesn't cause a crash.
+        A coverter with no arguments doesn't cause a crash.
         """
 
         def noop():
@@ -383,15 +384,15 @@ class TestAnnotations:
 
         assert attr.converters.optional(noop).__annotations__ == {}
 
-    @pytest.mark.skipif(
-        sys.version_info[:2] < (3, 11),
-        reason="Incompatible behavior on older Pythons",
+    @pytest.mark.xfail(
+        sys.version_info[:2] == (3, 6), reason="Does not work on 3.6."
     )
+    @pytest.mark.parametrize("slots", [True, False])
     def test_annotations_strings(self, slots):
         """
         String annotations are passed into __init__ as is.
 
-        The strings keep changing between releases.
+        It fails on 3.6 due to a bug in Python.
         """
         import typing as t
 
@@ -416,9 +417,10 @@ class TestAnnotations:
             x=typing.List[int],
             y=int,
             z=int,
-            foo=typing.Any,
+            foo=typing.Optional[typing.Any],
         )
 
+    @pytest.mark.parametrize("slots", [True, False])
     def test_typing_extensions_classvar(self, slots):
         """
         If ClassVar is coming from typing_extensions, it is recognized too.
@@ -426,7 +428,7 @@ class TestAnnotations:
 
         @attr.s(auto_attribs=True, slots=slots)
         class C:
-            cls_var: "typing_extensions.ClassVar" = 23  # noqa: F821
+            cls_var: "typing_extensions.ClassVar" = 23  # noqa
 
         assert_init_annotations(C)
 
@@ -516,34 +518,7 @@ class TestAnnotations:
         assert str is attr.fields(C).y.type
         assert None is attr.fields(C).z.type
 
-    @pytest.mark.skipif(
-        sys.version_info[:2] < (3, 9),
-        reason="Incompatible behavior on older Pythons",
-    )
-    def test_extra_resolve(self):
-        """
-        `get_type_hints` returns extra type hints.
-        """
-        from typing import Annotated
-
-        globals = {"Annotated": Annotated}
-
-        @attr.define
-        class C:
-            x: 'Annotated[float, "test"]'
-
-        attr.resolve_types(C, globals)
-
-        assert attr.fields(C).x.type == Annotated[float, "test"]
-
-        @attr.define
-        class D:
-            x: 'Annotated[float, "test"]'
-
-        attr.resolve_types(D, globals, include_extras=False)
-
-        assert attr.fields(D).x.type == float
-
+    @pytest.mark.parametrize("slots", [True, False])
     def test_resolve_types_auto_attrib(self, slots):
         """
         Types can be resolved even when strings are involved.
@@ -563,6 +538,7 @@ class TestAnnotations:
         assert typing.List[int] == attr.fields(A).b.type
         assert typing.List[int] == attr.fields(A).c.type
 
+    @pytest.mark.parametrize("slots", [True, False])
     def test_resolve_types_decorator(self, slots):
         """
         Types can be resolved using it as a decorator.
@@ -579,6 +555,7 @@ class TestAnnotations:
         assert typing.List[int] == attr.fields(A).b.type
         assert typing.List[int] == attr.fields(A).c.type
 
+    @pytest.mark.parametrize("slots", [True, False])
     def test_self_reference(self, slots):
         """
         References to self class using quotes can be resolved.
@@ -587,13 +564,14 @@ class TestAnnotations:
         @attr.s(slots=slots, auto_attribs=True)
         class A:
             a: "A"
-            b: typing.Optional["A"]  # will resolve below -- noqa: F821
+            b: typing.Optional["A"]  # noqa: will resolve below
 
         attr.resolve_types(A, globals(), locals())
 
         assert A == attr.fields(A).a.type
         assert typing.Optional[A] == attr.fields(A).b.type
 
+    @pytest.mark.parametrize("slots", [True, False])
     def test_forward_reference(self, slots):
         """
         Forward references can be resolved.
@@ -601,7 +579,7 @@ class TestAnnotations:
 
         @attr.s(slots=slots, auto_attribs=True)
         class A:
-            a: typing.List["B"]  # will resolve below -- noqa: F821
+            a: typing.List["B"]  # noqa: will resolve below
 
         @attr.s(slots=slots, auto_attribs=True)
         class B:

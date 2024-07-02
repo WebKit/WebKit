@@ -46,6 +46,7 @@ namespace WebCore {
 
 class Event;
 class FloatQuad;
+class Frame;
 class LocalFrame;
 class RenderObject;
 class RunLoopObserver;
@@ -126,16 +127,16 @@ public:
     void willRecalculateStyle(LocalFrame*);
     void didRecalculateStyle();
     void didScheduleStyleRecalculation(LocalFrame*);
-    void didTimeStamp(LocalFrame&, const String&);
-    void didPerformanceMark(const String&, std::optional<MonotonicTime>, LocalFrame*);
+    void didTimeStamp(Frame&, const String&);
+    void didPerformanceMark(const String&, std::optional<MonotonicTime>, Frame*);
     void didRequestAnimationFrame(int callbackId, LocalFrame*);
     void didCancelAnimationFrame(int callbackId, LocalFrame*);
     void willFireAnimationFrame(int callbackId, LocalFrame*);
     void didFireAnimationFrame();
     void willFireObserverCallback(const String& callbackType, LocalFrame*);
     void didFireObserverCallback();
-    void time(LocalFrame&, const String&);
-    void timeEnd(LocalFrame&, const String&);
+    void time(Frame&, const String&);
+    void timeEnd(Frame&, const String&);
     void mainFrameStartedLoading();
     void mainFrameNavigated();
     void didCompleteRenderingFrame();
@@ -184,13 +185,13 @@ private:
     std::optional<double> timestampFromMonotonicTime(MonotonicTime);
 
     void sendEvent(Ref<JSON::Object>&&);
-    void appendRecord(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, LocalFrame*, std::optional<double> startTime = std::nullopt);
+    void appendRecord(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, Frame*, std::optional<double> startTime = std::nullopt);
     void pushCurrentRecord(Ref<JSON::Object>&&, TimelineRecordType, bool captureCallStack, LocalFrame*, std::optional<double> startTime = std::nullopt);
     void pushCurrentRecord(const TimelineRecordEntry& record) { m_recordStack.append(record); }
 
     TimelineRecordEntry createRecordEntry(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, LocalFrame*, std::optional<double> startTime = std::nullopt);
 
-    void setFrameIdentifier(JSON::Object* record, LocalFrame*);
+    void setFrameIdentifier(JSON::Object* record, Frame*);
 
     void didCompleteRecordEntry(const TimelineRecordEntry&);
     void didCompleteCurrentRecord(TimelineRecordType);

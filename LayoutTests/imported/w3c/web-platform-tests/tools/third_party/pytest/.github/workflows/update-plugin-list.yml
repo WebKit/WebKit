@@ -11,7 +11,7 @@ on:
 permissions: {}
 
 jobs:
-  update-plugin-list:
+  createPullRequest:
     if: github.repository_owner == 'pytest-dev'
     runs-on: ubuntu-latest
     permissions:
@@ -20,33 +20,25 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v2
         with:
-          python-version: "3.11"
-          cache: pip
-      - name: requests-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pytest-plugin-list/
-          key: plugins-http-cache-${{ github.run_id }} # Can use time based key as well
-          restore-keys: plugins-http-cache-
+          python-version: 3.8
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install packaging requests tabulate[widechars] tqdm requests-cache platformdirs
-
+          pip install packaging requests tabulate[widechars] tqdm
 
       - name: Update Plugin List
         run: python scripts/update-plugin-list.py
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@9153d834b60caba6d51c9b9510b087acf9f33f83
+        uses: peter-evans/create-pull-request@2455e1596942c2902952003bbb574afbbe2ab2e6
         with:
           commit-message: '[automated] Update plugin list'
           author: 'pytest bot <pytestbot@users.noreply.github.com>'

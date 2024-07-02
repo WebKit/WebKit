@@ -1058,6 +1058,13 @@
             <param><ptype>GLuint</ptype> <name>framebuffer</name></param>
             <param><ptype>GLMTLRasterizationRateMapANGLE</ptype> <name>map</name></param>
         </command>
+        <command>
+            <proto>void <name>glFramebufferResolveRenderbufferWEBKIT</name></proto>
+            <param><ptype>GLenum</ptype> <name>target</name></param>
+            <param><ptype>GLenum</ptype> <name>attachment</name></param>
+            <param><ptype>GLenum</ptype> <name>renderbuffertarget</name></param>
+            <param><ptype>GLuint</ptype> <name>renderbuffer</name></param>
+        </command>
     </commands>
 
     <!-- SECTION: ANGLE extension interface definitions -->
@@ -1464,6 +1471,11 @@
                 <enum name="GL_VARIABLE_RASTERIZATION_RATE_ANGLE"/>
                 <enum name="GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE"/>
                 <command name="glBindMetalRasterizationRateMapANGLE"/>
+            </require>
+        </extension>
+        <extension name="GL_WEBKIT_explicit_resolve_target" supported='gles2'>
+            <require>
+                <command name="glFramebufferResolveRenderbufferWEBKIT"/>
             </require>
         </extension>
     </extensions>

@@ -700,11 +700,12 @@ void RenderTreeUpdater::tearDownRenderer(Text& text)
     invalidateRebuildRootIfNeeded(text);
 }
 
-static void repaintAndMarkContainingBlockDirtyBeforeTearDown(const Element& root, auto composedTreeDescendantsIterator)
+enum class DidRepaintAndMarkContainingBlock : bool { Yes, No };
+static std::optional<DidRepaintAndMarkContainingBlock> repaintAndMarkContainingBlockDirtyBeforeTearDown(const Element& root, auto composedTreeDescendantsIterator)
 {
     auto* destroyRootRenderer = root.renderer();
     if (destroyRootRenderer && destroyRootRenderer->renderTreeBeingDestroyed())
-        return;
+        return { };
 
     auto markContainingBlockDirty = [&](auto& renderer) {
         auto* container = renderer.container();
@@ -768,6 +769,7 @@ static void repaintAndMarkContainingBlockDirtyBeforeTearDown(const Element& root
             markContainingBlockDirty(renderer);
         }
     }
+    return destroyRootRenderer ? DidRepaintAndMarkContainingBlock::Yes : DidRepaintAndMarkContainingBlock::No;
 }
 
 void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType, RenderTreeBuilder& builder)
@@ -839,12 +841,13 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
     push(root);
 
     auto descendants = composedTreeDescendants(root);
-    repaintAndMarkContainingBlockDirtyBeforeTearDown(root, descendants);
+    auto didRepaintRoot = repaintAndMarkContainingBlockDirtyBeforeTearDown(root, descendants);
+    auto needsDescendantRepaintAndLayout = !didRepaintRoot || *didRepaintRoot == DidRepaintAndMarkContainingBlock::Yes ? NeedsRepaintAndLayout::No : NeedsRepaintAndLayout::Yes;
     for (auto it = descendants.begin(), end = descendants.end(); it != end; ++it) {
         pop(it.depth());
 
         if (auto* text = dynamicDowncast<Text>(*it)) {
-            tearDownTextRenderer(*text, &root, builder, NeedsRepaintAndLayout::No);
+            tearDownTextRenderer(*text, &root, builder, needsDescendantRepaintAndLayout);
             continue;
         }
 

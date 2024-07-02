@@ -67,7 +67,7 @@ video[controls]::-webkit-media-text-track-container.visible-controls-bar {
 }
 
 ::-webkit-media-text-track-display {
-    white-space: pre-wrap;
+    white-space: pre-line;
     box-sizing: border-box;
     font: 22px sans-serif; /* Keep in sync with `DEFAULTCAPTIONFONTSIZE`. */
 }

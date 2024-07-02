@@ -103,10 +103,10 @@ void WebPageTesting::clearWheelEventTestMonitor()
     page->clearWheelEventTestMonitor();
 }
 
-void WebPageTesting::flushDeferredDidReceiveMouseEvent(CompletionHandler<void()>&& completionHandler)
+void WebPageTesting::clearOpener()
 {
-    m_page->flushDeferredDidReceiveMouseEvent();
-    completionHandler();
+    if (RefPtr mainFrame = m_page->mainFrame())
+        mainFrame->setOpener(nullptr);
 }
 
 } // namespace WebKit

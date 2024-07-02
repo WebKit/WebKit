@@ -4461,6 +4461,29 @@ bool ValidateLogicOpANGLE(const PrivateState &state,
     return ValidateLogicOpCommon(state, errors, entryPoint, opcodePacked);
 }
 
+// GL_WEBKIT_explicit_resolve_target
+bool ValidateFramebufferResolveRenderbufferWEBKIT(const Context *context,
+                                                  angle::EntryPoint entryPoint,
+                                                  GLenum target,
+                                                  GLenum attachment,
+                                                  GLenum renderbuffertarget,
+                                                  RenderbufferID renderbuffer)
+{
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+    if (!context->getExtensions().explicitResolveTargetWEBKIT)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateFramebufferRenderbufferBase(context, entryPoint, target, attachment,
+                                               renderbuffertarget, renderbuffer);
+#else
+    UNIMPLEMENTED();
+    return false;
+#endif
+}
+
 bool ValidateFramebufferFoveationConfigQCOM(const Context *context,
                                             angle::EntryPoint entryPoint,
                                             FramebufferID framebufferPacked,

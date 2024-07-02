@@ -1194,6 +1194,10 @@ void DisplayMtl::initializeExtensions() const
 
     // GL_ANGLE_variable_rasterization_rate_metal
     mNativeExtensions.variableRasterizationRateMetalANGLE = mFeatures.hasVariableRasterizationRate.enabled;
+#if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
+    // GL_WEBKIT_explicit_resolve_target
+    mNativeExtensions.explicitResolveTargetWEBKIT = true;
+#endif
 
     // "The GPUs in Apple3 through Apple8 families only support memory barriers for compute command
     // encoders, and for vertex-to-vertex and vertex-to-fragment stages of render command encoders."

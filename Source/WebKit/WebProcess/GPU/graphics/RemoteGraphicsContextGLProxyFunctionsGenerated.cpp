@@ -3167,6 +3167,17 @@ void RemoteGraphicsContextGLProxy::framebufferDiscard(GCGLenum target, std::span
         return;
     }
 }
+
+void RemoteGraphicsContextGLProxy::framebufferResolveRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject arg3)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::FramebufferResolveRenderbuffer(target, attachment, renderbuffertarget, arg3));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return;
+    }
+}
 #endif
 
 }

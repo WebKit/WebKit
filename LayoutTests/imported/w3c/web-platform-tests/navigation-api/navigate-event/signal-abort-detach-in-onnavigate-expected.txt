@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT window detach inside a navigate event signals event.signal Test timed out
+PASS window detach inside a navigate event signals event.signal
 

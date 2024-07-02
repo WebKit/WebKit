@@ -9633,7 +9633,8 @@ void HTMLMediaElement::setSpatialTrackingLabel(const String& spatialTrackingLabe
         return;
     m_spatialTrackingLabel = spatialTrackingLabel;
 
-    m_player->setSpatialTrackingLabel(spatialTrackingLabel);
+    if (m_player)
+        m_player->setSpatialTrackingLabel(spatialTrackingLabel);
 }
 
 void HTMLMediaElement::defaultSpatialTrackingLabelChanged(const String& defaultSpatialTrackingLabel)

@@ -2889,6 +2889,14 @@ bool ValidateStartTilingQCOM(const Context *context,
                              GLuint width,
                              GLuint height,
                              GLbitfield preserveMask);
+
+// GL_WEBKIT_explicit_resolve_target
+bool ValidateFramebufferResolveRenderbufferWEBKIT(const Context *context,
+                                                  angle::EntryPoint entryPoint,
+                                                  GLenum target,
+                                                  GLenum attachment,
+                                                  GLenum renderbuffertarget,
+                                                  RenderbufferID renderbufferPacked);
 }  // namespace gl
 
 #endif  // LIBANGLE_VALIDATION_ESEXT_AUTOGEN_H_

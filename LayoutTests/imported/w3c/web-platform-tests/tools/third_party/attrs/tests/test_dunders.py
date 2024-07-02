@@ -4,9 +4,9 @@
 Tests for dunder methods from `attrib._make`.
 """
 
+from __future__ import absolute_import, division, print_function
 
 import copy
-import inspect
 import pickle
 
 import pytest
@@ -22,6 +22,7 @@ from attr._make import (
     _add_repr,
     _is_slot_cls,
     _make_init,
+    _Nothing,
     fields,
     make_class,
 )
@@ -39,25 +40,25 @@ ReprCSlots = simple_class(repr=True, slots=True)
 
 
 @attr.s(eq=True)
-class EqCallableC:
+class EqCallableC(object):
     a = attr.ib(eq=str.lower, order=False)
     b = attr.ib(eq=True)
 
 
 @attr.s(eq=True, slots=True)
-class EqCallableCSlots:
+class EqCallableCSlots(object):
     a = attr.ib(eq=str.lower, order=False)
     b = attr.ib(eq=True)
 
 
 @attr.s(order=True)
-class OrderCallableC:
+class OrderCallableC(object):
     a = attr.ib(eq=True, order=str.lower)
     b = attr.ib(order=True)
 
 
 @attr.s(order=True, slots=True)
-class OrderCallableCSlots:
+class OrderCallableCSlots(object):
     a = attr.ib(eq=True, order=str.lower)
     b = attr.ib(order=True)
 
@@ -85,15 +86,10 @@ def _add_init(cls, frozen):
     This function used to be part of _make.  It wasn't used anymore however
     the tests for it are still useful to test the behavior of _make_init.
     """
-    has_pre_init = bool(getattr(cls, "__attrs_pre_init__", False))
-
     cls.__init__ = _make_init(
         cls,
         cls.__attrs_attrs__,
-        has_pre_init,
-        len(inspect.signature(cls.__attrs_pre_init__).parameters) > 1
-        if has_pre_init
-        else False,
+        getattr(cls, "__attrs_pre_init__", False),
         getattr(cls, "__attrs_post_init__", False),
         frozen,
         _is_slot_cls(cls),
@@ -106,14 +102,14 @@ def _add_init(cls, frozen):
     return cls
 
 
-class InitC:
+class InitC(object):
     __attrs_attrs__ = [simple_attr("a"), simple_attr("b")]
 
 
 InitC = _add_init(InitC, False)
 
 
-class TestEqOrder:
+class TestEqOrder(object):
     """
     Tests for eq and order related methods.
     """
@@ -172,7 +168,7 @@ class TestEqOrder:
         match.
         """
 
-        class NotEqC:
+        class NotEqC(object):
             a = 1
             b = 2
 
@@ -320,11 +316,12 @@ class TestEqOrder:
         assert NotImplemented == (cls(1, 2).__ge__(42))
 
 
-class TestAddRepr:
+class TestAddRepr(object):
     """
     Tests for `_add_repr`.
     """
 
+    @pytest.mark.parametrize("slots", [True, False])
     def test_repr(self, slots):
         """
         If `repr` is False, ignore that attribute.
@@ -352,7 +349,7 @@ class TestAddRepr:
             return "foo:" + str(value)
 
         @attr.s
-        class C:
+        class C(object):
             a = attr.ib(repr=custom_repr)
 
         assert "C(a=foo:1)" == repr(C(1))
@@ -364,7 +361,7 @@ class TestAddRepr:
         """
 
         @attr.s
-        class Cycle:
+        class Cycle(object):
             value = attr.ib(default=7)
             cycle = attr.ib(default=None)
 
@@ -379,7 +376,7 @@ class TestAddRepr:
         """
 
         @attr.s
-        class LongCycle:
+        class LongCycle(object):
             value = attr.ib(default=14)
             cycle = attr.ib(default=None)
 
@@ -394,7 +391,7 @@ class TestAddRepr:
         repr does not strip underscores.
         """
 
-        class C:
+        class C(object):
             __attrs_attrs__ = [simple_attr("_x")]
 
         C = _add_repr(C)
@@ -443,21 +440,21 @@ class TestAddRepr:
 # these are for use in TestAddHash.test_cache_hash_serialization
 # they need to be out here so they can be un-pickled
 @attr.attrs(hash=True, cache_hash=False)
-class HashCacheSerializationTestUncached:
+class HashCacheSerializationTestUncached(object):
     foo_value = attr.ib()
 
 
 @attr.attrs(hash=True, cache_hash=True)
-class HashCacheSerializationTestCached:
+class HashCacheSerializationTestCached(object):
     foo_value = attr.ib()
 
 
 @attr.attrs(slots=True, hash=True, cache_hash=True)
-class HashCacheSerializationTestCachedSlots:
+class HashCacheSerializationTestCachedSlots(object):
     foo_value = attr.ib()
 
 
-class IncrementingHasher:
+class IncrementingHasher(object):
     def __init__(self):
         self.hash_value = 100
 
@@ -467,7 +464,7 @@ class IncrementingHasher:
         return rv
 
 
-class TestAddHash:
+class TestAddHash(object):
     """
     Tests for `_add_hash`.
     """
@@ -650,19 +647,21 @@ class TestAddHash:
         assert 1 == cached_instance.hash_counter.times_hash_called
 
     @pytest.mark.parametrize("cache_hash", [True, False])
+    @pytest.mark.parametrize("frozen", [True, False])
+    @pytest.mark.parametrize("slots", [True, False])
     def test_copy_hash_cleared(self, cache_hash, frozen, slots):
         """
         Test that the default hash is recalculated after a copy operation.
         """
 
-        kwargs = {"frozen": frozen, "slots": slots, "cache_hash": cache_hash}
+        kwargs = dict(frozen=frozen, slots=slots, cache_hash=cache_hash)
 
         # Give it an explicit hash if we don't have an implicit one
         if not frozen:
             kwargs["hash"] = True
 
         @attr.s(**kwargs)
-        class C:
+        class C(object):
             x = attr.ib()
 
         a = C(IncrementingHasher())
@@ -677,7 +676,7 @@ class TestAddHash:
         assert orig_hash != hash(b)
 
     @pytest.mark.parametrize(
-        ("klass", "cached"),
+        "klass,cached",
         [
             (HashCacheSerializationTestUncached, False),
             (HashCacheSerializationTestCached, True),
@@ -703,6 +702,7 @@ class TestAddHash:
 
         assert original_hash != hash(obj_rt)
 
+    @pytest.mark.parametrize("frozen", [True, False])
     def test_copy_two_arg_reduce(self, frozen):
         """
         If __getstate__ returns None, the tuple returned by object.__reduce__
@@ -711,7 +711,7 @@ class TestAddHash:
         """
 
         @attr.s(frozen=frozen, cache_hash=True, hash=True)
-        class C:
+        class C(object):
             x = attr.ib()
 
             def __getstate__(self):
@@ -729,7 +729,7 @@ class TestAddHash:
         return pickle.loads(pickle_str)
 
 
-class TestAddInit:
+class TestAddInit(object):
     """
     Tests for `_add_init`.
     """
@@ -802,7 +802,7 @@ class TestAddInit:
         If a default value is present, it's used as fallback.
         """
 
-        class C:
+        class C(object):
             __attrs_attrs__ = [
                 simple_attr(name="a", default=2),
                 simple_attr(name="b", default="hallo"),
@@ -820,10 +820,10 @@ class TestAddInit:
         If a default factory is present, it's used as fallback.
         """
 
-        class D:
+        class D(object):
             pass
 
-        class C:
+        class C(object):
             __attrs_attrs__ = [
                 simple_attr(name="a", default=Factory(list)),
                 simple_attr(name="b", default=Factory(D)),
@@ -898,7 +898,7 @@ class TestAddInit:
         underscores.
         """
 
-        class C:
+        class C(object):
             __attrs_attrs__ = [simple_attr("_private")]
 
         C = _add_init(C, False)
@@ -906,32 +906,32 @@ class TestAddInit:
         assert 42 == i._private
 
 
-class TestNothing:
+class TestNothing(object):
     """
-    Tests for `NOTHING`.
+    Tests for `_Nothing`.
     """
 
     def test_copy(self):
         """
         __copy__ returns the same object.
         """
-        n = NOTHING
+        n = _Nothing()
         assert n is copy.copy(n)
 
     def test_deepcopy(self):
         """
         __deepcopy__ returns the same object.
         """
-        n = NOTHING
+        n = _Nothing()
         assert n is copy.deepcopy(n)
 
     def test_eq(self):
         """
         All instances are equal.
         """
-        assert NOTHING == NOTHING == NOTHING
-        assert not (NOTHING != NOTHING)
-        assert 1 != NOTHING
+        assert _Nothing() == _Nothing() == NOTHING
+        assert not (_Nothing() != _Nothing())
+        assert 1 != _Nothing()
 
     def test_false(self):
         """
@@ -942,7 +942,7 @@ class TestNothing:
 
 
 @attr.s(hash=True, order=True)
-class C:
+class C(object):
     pass
 
 
@@ -951,7 +951,7 @@ OriginalC = C
 
 
 @attr.s(hash=True, order=True)
-class C:
+class C(object):
     pass
 
 
@@ -959,13 +959,13 @@ CopyC = C
 
 
 @attr.s(hash=True, order=True)
-class C:
+class C(object):
     """A different class, to generate different methods."""
 
     a = attr.ib()
 
 
-class TestFilenames:
+class TestFilenames(object):
     def test_filenames(self):
         """
         The created dunder methods have a "consistent" filename.

@@ -143,16 +143,25 @@ bool getVideoSizeAndFormatFromCaps(const GstCaps* caps, WebCore::IntSize& size, 
         else
             format = GST_VIDEO_FORMAT_UNKNOWN;
         stride = 0;
-        int width = 0, height = 0;
-        gst_structure_get_int(structure, "width", &width);
-        gst_structure_get_int(structure, "height", &height);
+
+        auto width = gstStructureGet<int>(structure, "width"_s);
+        if (!width) {
+            GST_WARNING("Missing width field in %" GST_PTR_FORMAT, caps);
+            return false;
+        }
+        auto height = gstStructureGet<int>(structure, "height"_s);
+        if (!height) {
+            GST_WARNING("Missing height field in %" GST_PTR_FORMAT, caps);
+            return false;
+        }
+
         if (!gst_structure_get_fraction(structure, "pixel-aspect-ratio", &pixelAspectRatioNumerator, &pixelAspectRatioDenominator)) {
             pixelAspectRatioNumerator = 1;
             pixelAspectRatioDenominator = 1;
         }
 
-        size.setWidth(width);
-        size.setHeight(height);
+        size.setWidth(*width);
+        size.setHeight(*height);
     }
 
     return true;
@@ -180,8 +189,19 @@ std::optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
         pixelAspectRatioNumerator = GST_VIDEO_INFO_PAR_N(&info);
         pixelAspectRatioDenominator = GST_VIDEO_INFO_PAR_D(&info);
     } else {
-        gst_structure_get_int(structure, "width", &width);
-        gst_structure_get_int(structure, "height", &height);
+        auto widthField = gstStructureGet<int>(structure, "width"_s);
+        if (!widthField) {
+            GST_WARNING("Missing width field in %" GST_PTR_FORMAT, caps);
+            return std::nullopt;
+        }
+        auto heightField = gstStructureGet<int>(structure, "height"_s);
+        if (!heightField) {
+            GST_WARNING("Missing height field in %" GST_PTR_FORMAT, caps);
+            return std::nullopt;
+        }
+
+        width = *widthField;
+        height = *heightField;
         gst_structure_get_fraction(structure, "pixel-aspect-ratio", &pixelAspectRatioNumerator, &pixelAspectRatioDenominator);
     }
 
@@ -992,9 +1012,17 @@ static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* 
     if (valueType == G_TYPE_FLOAT)
         return JSON::Value::create(static_cast<double>(g_value_get_float(value)))->asValue();
 
-    // FIXME: bigint support missing in JSON.
-    if (valueType == G_TYPE_UINT64)
-        return JSON::Value::create(static_cast<int>(g_value_get_uint64(value)))->asValue();
+    // BigInt is not officially supported in JSON, so the workaround is to serialize to a string. See:
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt#use_within_json
+    if (valueType == G_TYPE_UINT64) {
+        auto jsonObject = JSON::Object::create();
+        auto resultValue = jsonObject->asObject();
+        if (!resultValue)
+            return nullptr;
+        auto bigIntValue = JSON::Value::create(makeString(g_value_get_uint64(value)));
+        resultValue->setValue("$bigint"_s, bigIntValue->asValue().releaseNonNull());
+        return resultValue;
+    }
 
     if (valueType == G_TYPE_STRING)
         return JSON::Value::create(makeString(span(g_value_get_string(value))))->asValue();

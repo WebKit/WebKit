@@ -6073,6 +6073,16 @@ glStartTilingQCOM(GLuint x, GLuint y, GLuint width, GLuint height, GLbitfield pr
     return GL_StartTilingQCOM(x, y, width, height, preserveMask);
 }
 
+// GL_WEBKIT_explicit_resolve_target
+void GL_APIENTRY glFramebufferResolveRenderbufferWEBKIT(GLenum target,
+                                                        GLenum attachment,
+                                                        GLenum renderbuffertarget,
+                                                        GLuint renderbuffer)
+{
+    return GL_FramebufferResolveRenderbufferWEBKIT(target, attachment, renderbuffertarget,
+                                                   renderbuffer);
+}
+
 #if defined(ANGLE_ENABLE_GL_DESKTOP_FRONTEND)
 
 // GL 1.0

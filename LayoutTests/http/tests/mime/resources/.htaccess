@@ -1,3 +1,7 @@
+<Files nosniff-html.html>
+Header always set X-Content-Type-Options "nosniff"
+Header always set Content-Type ""
+</Files>
 <Files xml-with-html.xml>
 ForceType "text/plain"
 </Files>

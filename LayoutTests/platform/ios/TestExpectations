@@ -4564,7 +4564,7 @@ imported/w3c/web-platform-tests/html/semantics/popovers/popover-close-request.ht
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-harness.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-hint.tentative.html [ Failure ]
-imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-with-anchor.tentative.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-with-anchor.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-nesting-anchor.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-nesting-hints.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-nesting.html [ Skip ]
@@ -6662,6 +6662,7 @@ webkit.org/b/245007 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 webkit.org/b/245009 http/wpt/service-workers/controlled-sharedworker.https.html [ Pass Failure ]
 
 webkit.org/b/245010 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/location-setter.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-041.html [ ImageOnlyFailure ]
 
 webkit.org/b/245091 http/wpt/shared-workers/connect-event-ordering.html [ Pass Failure ]
 
@@ -6900,12 +6901,14 @@ imported/w3c/web-platform-tests/css/css-ui/text-overflow-010.html [ Pass ImageOn
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-011.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-013.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-014.html [ Pass ImageOnlyFailure ]
-fast/events/ios/key-events-comprehensive/key-events-control-shift.html [ Pass Failure ]
-fast/events/ios/key-events-comprehensive/key-events-control.html [ Pass Failure ]
 fast/forms/textfield-outline.html [ Pass Failure ]
 http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html [ Pass Failure ]
 http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html [ Pass Failure ]
 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-report-only-policy-works-with-external-hash-policy.html [ Pass Failure ]
+
+# webkit.org/b/276092 (REGRESSION (iOS 17.5?): [ iOS Debug ] 2 fast/events/ios/key-events-comprehensive/* tests are constantly failing.)
+fast/events/ios/key-events-comprehensive/key-events-control-shift.html [ Pass Failure ]
+fast/events/ios/key-events-comprehensive/key-events-control.html [ Pass Failure ]
 
 webkit.org/b/271445 fast/events/ios/rotation/resize-iframe-after-orientation-change.html [ Pass Failure ]
 
