@@ -44,9 +44,9 @@ namespace WKWPE {
 
 class ViewPlatform final : public View {
 public:
-    static View* create(WPEDisplay* display, const API::PageConfiguration& configuration)
+    static Ref<View> create(WPEDisplay* display, const API::PageConfiguration& configuration)
     {
-        return new ViewPlatform(display, configuration);
+        return adoptRef(*new ViewPlatform(display, configuration));
     }
     ~ViewPlatform();
 

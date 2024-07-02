@@ -38,9 +38,9 @@ namespace WKWPE {
 
 class ViewLegacy final : public View {
 public:
-    static View* create(struct wpe_view_backend* backend, const API::PageConfiguration& configuration)
+    static Ref<View> create(struct wpe_view_backend* backend, const API::PageConfiguration& configuration)
     {
-        return new ViewLegacy(backend, configuration);
+        return adoptRef(*new ViewLegacy(backend, configuration));
     }
     ~ViewLegacy();
 
