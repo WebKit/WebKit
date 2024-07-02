@@ -276,10 +276,9 @@ void RemoteMediaPlayerManager::gpuProcessConnectionDidClose(GPUProcessConnection
     m_gpuProcessConnection = nullptr;
 
     for (auto& player : copyToVector(m_players.values())) {
-        if (RefPtr protectedPlayer = player.get()) {
+        if (RefPtr protectedPlayer = player.get())
             protectedPlayer->player()->reloadAndResumePlaybackIfNeeded();
-            ASSERT_WITH_MESSAGE(!player.get(), "reloadAndResumePlaybackIfNeeded should destroy this player and construct a new one");
-        }
+        ASSERT_WITH_MESSAGE(!player.get(), "reloadAndResumePlaybackIfNeeded should destroy this player and construct a new one");
     }
 }
 
