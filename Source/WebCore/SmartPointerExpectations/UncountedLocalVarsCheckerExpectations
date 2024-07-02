@@ -294,12 +294,8 @@ JSReadableStreamDefaultController.h
 JSRemotePlayback.cpp
 JSRemotePlaybackAvailabilityCallback.cpp
 JSReportingObserver.cpp
-JSSQLResultSet.cpp
-JSSQLResultSet.h
 JSSQLResultSetRowList.cpp
 JSSQLStatementCallback.cpp
-JSSVGGradientElement.cpp
-JSSVGGraphicsElement.cpp
 JSSVGLengthList.cpp
 JSSVGUseElement.cpp
 JSScreen.cpp
@@ -333,6 +329,7 @@ JSTextTrackCueList.cpp
 JSTextTrackList.cpp
 JSTrustedHTML.h
 JSTrustedScript.h
+JSTrustedTypePolicy.cpp
 JSTrustedTypePolicyFactory.cpp
 JSTypeConversions.cpp
 JSTypeConversions.h
@@ -346,7 +343,6 @@ JSVideoTrackList.cpp
 JSViewTransition.cpp
 JSVisualViewport.cpp
 JSWakeLock.cpp
-JSWakeLock.h
 JSWakeLockSentinel.cpp
 JSWaveShaperNode.cpp
 JSWebAnimation.cpp
@@ -383,7 +379,6 @@ JSWebGLQuery.cpp
 JSWebGLRenderSharedExponent.cpp
 JSWebGLRenderbuffer.cpp
 JSWebGLRenderingContext.cpp
-JSWebGLRenderingContext.h
 JSWebGLSampler.cpp
 JSWebGLShader.cpp
 JSWebGLStencilTexturing.cpp
@@ -1167,14 +1162,11 @@ platform/graphics/filters/FilterImage.cpp
 platform/graphics/filters/FilterOperations.cpp
 platform/graphics/filters/software/FEBlendSoftwareApplier.cpp
 platform/graphics/filters/software/FEComponentTransferSoftwareApplier.cpp
-platform/graphics/filters/software/FECompositeSoftwareApplier.cpp
 platform/graphics/filters/software/FECompositeSoftwareArithmeticApplier.cpp
 platform/graphics/filters/software/FEConvolveMatrixSoftwareApplier.cpp
 platform/graphics/filters/software/FEImageSoftwareApplier.cpp
-platform/graphics/filters/software/FELightingSoftwareApplier.cpp
 platform/graphics/filters/software/FEMorphologySoftwareApplier.cpp
 platform/graphics/filters/software/FETurbulenceSoftwareApplier.cpp
-platform/graphics/filters/software/SourceGraphicSoftwareApplier.cpp
 platform/graphics/mac/ComplexTextControllerCoreText.mm
 platform/graphics/mac/controls/MeterMac.mm
 platform/graphics/mac/controls/ProgressBarMac.mm
