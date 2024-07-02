@@ -144,6 +144,7 @@
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebEventPrivate.h>
 #import <WebCore/WebTextIndicatorLayer.h>
+#import <WebCore/WindowsKeyboardCodes.h>
 #import <WebCore/WritingDirection.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WebKit should not include WebKitLegacy headers!
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -7209,6 +7210,26 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
         completionHandler(event, NO);
         return;
     }
+
+#if PLATFORM(MACCATALYST)
+    bool hasPendingArrowKey = _keyWebEventHandlers.containsIf([](auto& eventAndCompletion) {
+        switch ([eventAndCompletion.event keyCode]) {
+        case VK_RIGHT:
+        case VK_LEFT:
+        case VK_DOWN:
+        case VK_UP:
+            return true;
+        default:
+            return false;
+        }
+    });
+
+    if (hasPendingArrowKey) {
+        RELEASE_LOG_ERROR(KeyHandling, "Ignoring incoming key event due to pending arrow key event");
+        completionHandler(event, NO);
+        return;
+    }
+#endif // PLATFORM(MACCATALYST)
 
     if (event.type == WebEventKeyDown)
         _isHandlingActiveKeyEvent = YES;
