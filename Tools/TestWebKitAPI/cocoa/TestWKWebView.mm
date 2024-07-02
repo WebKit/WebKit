@@ -881,6 +881,7 @@ static InputSessionChangeCount nextInputSessionChangeCount()
 {
 #if PLATFORM(MAC)
     _hostWindow = adoptNS([[TestWKWebViewHostWindow alloc] initWithWebView:self contentRect:frame styleMask:(NSWindowStyleMaskBorderless | NSWindowStyleMaskMiniaturizable) backing:NSBackingStoreBuffered defer:NO]);
+    [_hostWindow setHasShadow:NO];
     [_hostWindow setFrameOrigin:frame.origin];
     [_hostWindow setIsVisible:YES];
     [_hostWindow contentView].wantsLayer = YES;
