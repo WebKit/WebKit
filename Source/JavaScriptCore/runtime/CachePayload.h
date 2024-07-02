@@ -41,12 +41,13 @@ public:
     JS_EXPORT_PRIVATE CachePayload(CachePayload&&);
     JS_EXPORT_PRIVATE ~CachePayload();
 
-    JS_EXPORT_PRIVATE const uint8_t* data() const;
     JS_EXPORT_PRIVATE size_t size() const;
     std::span<const uint8_t> span() const { return { data(), size() }; }
 
 private:
     CachePayload(std::variant<FileSystem::MappedFileData, std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>>&&);
+
+    JS_EXPORT_PRIVATE const uint8_t* data() const;
 
     std::variant<FileSystem::MappedFileData, std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>> m_data;
 };
