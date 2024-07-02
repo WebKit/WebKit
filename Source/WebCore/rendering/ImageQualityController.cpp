@@ -38,6 +38,12 @@ namespace WebCore {
 static const double cInterpolationCutoff = 800. * 800.;
 static const Seconds lowQualityTimeThreshold { 500_ms };
 
+#if USE(CG)
+constexpr InterpolationQuality defaultInterpolationQuality = InterpolationQuality::High;
+#else
+constexpr InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Medium;
+#endif
+
 ImageQualityController::ImageQualityController(const RenderView& renderView)
     : m_renderView(renderView)
     , m_timer(*this, &ImageQualityController::highQualityRepaintTimerFired)
@@ -107,7 +113,7 @@ std::optional<InterpolationQuality> ImageQualityController::interpolationQuality
     case ImageRendering::Pixelated:
         return InterpolationQuality::DoNotInterpolate;
     case ImageRendering::OptimizeQuality:
-        return InterpolationQuality::Default; // FIXME: CSS 3 Images says that optimizeQuality should behave like 'auto', but that prevents authors from overriding this low quality rendering behavior.
+        return defaultInterpolationQuality; // FIXME: CSS 3 Images says that optimizeQuality should behave like 'auto', but that prevents authors from overriding this low quality rendering behavior.
     case ImageRendering::Auto:
         break;
     }
@@ -118,7 +124,7 @@ InterpolationQuality ImageQualityController::chooseInterpolationQuality(Graphics
 {
     // If the image is not a bitmap image, then none of this is relevant and we just paint at high quality.
     if (!(image.isBitmapImage() || image.isPDFDocumentImage()) || context.paintingDisabled())
-        return InterpolationQuality::Default;
+        return defaultInterpolationQuality;
 
     if (std::optional<InterpolationQuality> styleInterpolation = interpolationQualityFromStyle(object->style()))
         return styleInterpolation.value();
@@ -150,7 +156,7 @@ InterpolationQuality ImageQualityController::chooseInterpolationQuality(Graphics
             return InterpolationQuality::Low;
         }
         if (m_liveResizeOptimizationIsActive)
-            return InterpolationQuality::Default;
+            return defaultInterpolationQuality;
     }
 
     const AffineTransform& currentTransform = context.getCTM();
@@ -158,7 +164,7 @@ InterpolationQuality ImageQualityController::chooseInterpolationQuality(Graphics
     if (!contextIsScaled && size == imageSize) {
         // There is no scale in effect. If we had a scale in effect before, we can just remove this object from the list.
         removeLayer(object, innerMap, layer);
-        return InterpolationQuality::Default;
+        return defaultInterpolationQuality;
     }
 
     // There is no need to hash scaled images that always use low quality mode when the page demands it. This is the iChat case.
@@ -180,13 +186,13 @@ InterpolationQuality ImageQualityController::chooseInterpolationQuality(Graphics
     if (isFirstResize || oldSize == size) {
         restartTimer();
         set(object, innerMap, layer, size);
-        return InterpolationQuality::Default;
+        return defaultInterpolationQuality;
     }
     // If the timer is no longer active, draw at high quality and don't
     // set the timer.
     if (!m_timer.isActive()) {
         removeLayer(object, innerMap, layer);
-        return InterpolationQuality::Default;
+        return defaultInterpolationQuality;
     }
     // This object has been resized to two different sizes while the timer
     // is active, so draw at low quality, set the flag for animated resizes and
