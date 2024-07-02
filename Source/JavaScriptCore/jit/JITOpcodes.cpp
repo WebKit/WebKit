@@ -1259,11 +1259,11 @@ void JIT::emit_op_catch(const JSInstruction* currentInstruction)
     // When the LLInt throws an exception, there is a chance that we've already tiered up
     // the same CodeBlock to baseline, and we'll catch the exception in the baseline JIT (because
     // we updated the exception handlers to point here). Because the LLInt uses a different value
-    // inside s_constantsGPR, the callee saves we restore above may not contain the correct register.
+    // inside GPRInfo::jitDataRegister, the callee saves we restore above may not contain the correct register.
     // So we replenish it here.
     {
         loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
-        loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), s_constantsGPR);
+        loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), GPRInfo::jitDataRegister);
     }
 
     callOperationNoExceptionCheck(operationRetrieveAndClearExceptionIfCatchable, TrustedImmPtr(&vm()));
@@ -1525,9 +1525,9 @@ void JIT::emit_op_enter(const JSInstruction*)
 #if ENABLE(DFG_JIT)
     if (Options::useDFGJIT()) {
         if (canBeOptimized()) {
-            load32(Address(argumentGPR1, CodeBlock::offsetOfJITExecuteCounter()), argumentGPR2);
+            load32(Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfExecutionCounter()), argumentGPR2);
             addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForEntry()), argumentGPR2));
-            store32(argumentGPR2, Address(argumentGPR1, CodeBlock::offsetOfJITExecuteCounter()));
+            store32(argumentGPR2, Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfExecutionCounter()));
         }
     }
 #endif
@@ -1569,8 +1569,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
         // emitEnterOptimizationCheck().
         JumpList skipOptimize;
 
-        jit.loadPtr(addressFor(CallFrameSlot::codeBlock), argumentGPR1);
-        skipOptimize.append(jit.branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), Address(argumentGPR1, CodeBlock::offsetOfJITExecuteCounter())));
+        skipOptimize.append(jit.branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfExecutionCounter())));
 
         jit.copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
         jit.prepareCallOperation(vm);
@@ -1745,12 +1744,9 @@ void JIT::emit_op_loop_hint(const JSInstruction* instruction)
         storePtr(regT0, ptr);
     }
 
-    // Emit the JIT optimization check: 
-    if (canBeOptimized()) {
-        loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
-        addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForLoop()),
-            Address(regT0, CodeBlock::offsetOfJITExecuteCounter())));
-    }
+    // Emit the JIT optimization check:
+    if (canBeOptimized())
+        addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForLoop()), Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfExecutionCounter())));
 }
 
 void JIT::emitSlow_op_loop_hint(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

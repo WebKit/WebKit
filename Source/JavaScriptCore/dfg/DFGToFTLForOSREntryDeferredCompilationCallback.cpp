@@ -53,7 +53,8 @@ void ToFTLForOSREntryDeferredCompilationCallback::compilationDidBecomeReadyAsync
         "Optimizing compilation of ", *codeBlock, " (for ", *profiledDFGCodeBlock,
         ") did become ready.");
 
-    *m_forcedOSREntryTrigger = JITCode::TriggerReason::CompilationDone;
+    if (m_forcedOSREntryTrigger)
+        *m_forcedOSREntryTrigger = JITCode::TriggerReason::CompilationDone;
 }
 
 void ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete(
@@ -70,13 +71,13 @@ void ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete(
         jitCode->setOSREntryBlock(codeBlock->vm(), profiledDFGCodeBlock, codeBlock);
         BytecodeIndex osrEntryBytecode = codeBlock->jitCode()->ftlForOSREntry()->bytecodeIndex();
         jitCode->tierUpEntryTriggers.set(osrEntryBytecode, JITCode::TriggerReason::CompilationDone);
+        profiledDFGCodeBlock->jitCode()->dfg()->setOptimizationThresholdBasedOnCompilationResult(profiledDFGCodeBlock, result);
         break;
     }
     case CompilationFailed:
         jitCode->osrEntryRetry = 0;
         jitCode->abandonOSREntry = true;
-        profiledDFGCodeBlock->jitCode()->dfg()->setOptimizationThresholdBasedOnCompilationResult(
-            profiledDFGCodeBlock, result);
+        profiledDFGCodeBlock->jitCode()->dfg()->setOptimizationThresholdBasedOnCompilationResult(profiledDFGCodeBlock, result);
         break;
     case CompilationDeferred:
         RELEASE_ASSERT_NOT_REACHED();

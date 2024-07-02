@@ -885,7 +885,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (
     dataLog(" @ exit #", vm.osrExitIndex, " (", debugInfo->bytecodeIndex, ", ", exitKindToString(debugInfo->kind), ") with ");
     if (alternative) {
         dataLog(
-            "executeCounter = ", alternative->jitExecuteCounter(),
+            "executeCounter = ", alternative->baselineExecutionCounterSnapshot(),
             ", reoptimizationRetryCounter = ", alternative->reoptimizationRetryCounter(),
             ", optimizationDelayCounter = ", alternative->optimizationDelayCounter());
     } else

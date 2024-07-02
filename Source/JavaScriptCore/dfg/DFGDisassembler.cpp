@@ -75,7 +75,7 @@ void Disassembler::reportToProfiler(Profiler::Compilation* compilation, LinkBuff
 void Disassembler::dumpHeader(PrintStream& out, LinkBuffer& linkBuffer)
 {
     out.print("Generated DFG JIT code for ", CodeBlockWithJITType(m_graph.m_codeBlock, JITType::DFGJIT), ", instructions size = ", m_graph.m_codeBlock->instructionsSize(), ":\n");
-    out.print("    Optimized with execution counter = ", m_graph.m_profiledBlock->jitExecuteCounter(), "\n");
+    out.print("    Optimized with execution counter = ", m_graph.m_profiledBlock->baselineExecutionCounterSnapshot(), "\n");
     out.print("    Code at [", RawPointer(linkBuffer.debugAddress()), ", ", RawPointer(static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.size()), "):\n");
 }
 

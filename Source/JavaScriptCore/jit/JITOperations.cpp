@@ -2848,7 +2848,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, UGPRPair, (VM* vmPointer, uint32_t b
     if (UNLIKELY(Options::verboseOSR())) {
         dataLog(
             *codeBlock, ": Entered optimize with bytecodeIndex = ", bytecodeIndex,
-            ", executeCounter = ", codeBlock->jitExecuteCounter(),
+            ", executeCounter = ", codeBlock->baselineExecutionCounterSnapshot(),
             ", optimizationDelayCounter = ", codeBlock->reoptimizationRetryCounter(),
             ", exitCounter = ");
         if (codeBlock->hasOptimizedReplacement())
@@ -2859,7 +2859,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, UGPRPair, (VM* vmPointer, uint32_t b
     }
 
     if (!codeBlock->checkIfOptimizationThresholdReached()) {
-        CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("counter = ", codeBlock->jitExecuteCounter()));
+        CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("counter = ", codeBlock->baselineExecutionCounterSnapshot()));
         codeBlock->updateAllPredictions();
         dataLogLnIf(Options::verboseOSR(), "Choosing not to optimize ", *codeBlock, " yet, because the threshold hasn't been reached.");
         OPERATION_RETURN(scope, encodeResult(nullptr, nullptr));

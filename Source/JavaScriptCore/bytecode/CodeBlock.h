@@ -602,7 +602,7 @@ public:
     // Functions for controlling when tiered compilation kicks in. This
     // controls both when the optimizing compiler is invoked and when OSR
     // entry happens. Two triggers exist: the loop trigger and the return
-    // trigger. In either case, when an addition to m_jitExecuteCounter
+    // trigger. In either case, when an addition to JITData::m_executeCounter
     // causes it to become non-negative, the optimizing compiler is
     // invoked. This includes a fast check to see if this CodeBlock has
     // already been optimized (i.e. replacement() returns a CodeBlock
@@ -640,11 +640,7 @@ public:
 
     int32_t adjustedCounterValue(int32_t desiredThreshold);
 
-    static constexpr ptrdiff_t offsetOfJITExecuteCounter() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter) + OBJECT_OFFSETOF(BaselineExecutionCounter, m_counter); }
-    static constexpr ptrdiff_t offsetOfJITExecutionActiveThreshold() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter) + OBJECT_OFFSETOF(BaselineExecutionCounter, m_activeThreshold); }
-    static constexpr ptrdiff_t offsetOfJITExecutionTotalCount() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter) + OBJECT_OFFSETOF(BaselineExecutionCounter, m_totalCount); }
-
-    const BaselineExecutionCounter& jitExecuteCounter() const { return m_jitExecuteCounter; }
+    const BaselineExecutionCounter& baselineExecutionCounterSnapshot();
 
     unsigned optimizationDelayCounter() const { return m_optimizationDelayCounter; }
 
@@ -978,8 +974,6 @@ private:
     FixedVector<WriteBarrier<FunctionExecutable>> m_functionExprs;
 
     WriteBarrier<CodeBlock> m_alternative;
-
-    BaselineExecutionCounter m_jitExecuteCounter;
 
     float m_previousCounter { 0 };
 

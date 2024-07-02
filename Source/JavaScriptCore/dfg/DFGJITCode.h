@@ -186,8 +186,13 @@ public:
 
     static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(JITData, m_globalObject); }
     static constexpr ptrdiff_t offsetOfStackOffset() { return OBJECT_OFFSETOF(JITData, m_stackOffset); }
+    static constexpr ptrdiff_t offsetOfTierUpCounter() { return OBJECT_OFFSETOF(JITData, m_tierUpCounter) + OBJECT_OFFSETOF(UpperTierExecutionCounter, m_counter); }
+    static constexpr ptrdiff_t offsetOfNeverExecutedEntry() { return OBJECT_OFFSETOF(JITData, m_neverExecutedEntry); }
 
     explicit JITData(unsigned stubInfoSize, unsigned poolSize, const JITCode&, ExitVector&&);
+
+    UpperTierExecutionCounter& tierUpCounter() { return m_tierUpCounter; }
+    bool neverExecutedEntry() const { return !!m_neverExecutedEntry; }
 
 private:
 
@@ -195,6 +200,9 @@ private:
 
     JSGlobalObject* m_globalObject { nullptr }; // This is not marked since owner CodeBlock will mark JSGlobalObject.
     intptr_t m_stackOffset { 0 };
+    UpperTierExecutionCounter m_tierUpCounter;
+    uint8_t m_neverExecutedEntry { 1 };
+
     FixedVector<OptimizingCallLinkInfo> m_callLinkInfos;
     FixedVector<CodeBlockJettisoningWatchpoint> m_watchpoints;
     ExitVector m_exits;
@@ -278,10 +286,6 @@ public:
     LinkerIR m_linkerIR;
 
 #if ENABLE(FTL_JIT)
-    uint8_t neverExecutedEntry { 1 };
-
-    UpperTierExecutionCounter tierUpCounter;
-
     // For osrEntryPoint that are in inner loop, this maps their bytecode to the bytecode
     // of the outerloop entry points in order (from innermost to outermost).
     //

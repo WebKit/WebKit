@@ -960,7 +960,7 @@ void JIT::emit_op_resolve_scope(const JSInstruction* currentInstruction)
             }
         } else {
             uint32_t metadataOffset = m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode);
-            addPtr(TrustedImm32(metadataOffset), s_metadataGPR, metadataGPR);
+            addPtr(TrustedImm32(metadataOffset), GPRInfo::metadataTableRegister, metadataGPR);
             move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
 
             MacroAssemblerCodeRef<JITThunkPtrTag> code;
@@ -1183,7 +1183,7 @@ void JIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)
         loadValue(BaseIndex(scopeGPR, scratch1GPR, TimesEight, JSLexicalEnvironment::offsetOfVariables()), returnValueJSR);
     } else {
         uint32_t metadataOffset = m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode);
-        addPtr(TrustedImm32(metadataOffset), s_metadataGPR, metadataGPR);
+        addPtr(TrustedImm32(metadataOffset), GPRInfo::metadataTableRegister, metadataGPR);
         move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
 
         MacroAssemblerCodeRef<JITThunkPtrTag> code;

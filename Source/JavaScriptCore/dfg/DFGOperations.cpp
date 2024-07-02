@@ -4636,7 +4636,7 @@ static bool shouldTriggerFTLCompile(CodeBlock* codeBlock, JITCode* jitCode)
 
     if (!codeBlock->hasOptimizedReplacement()
         && !jitCode->checkIfOptimizationThresholdReached(codeBlock)) {
-        CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("counter = ", jitCode->tierUpCounter));
+        CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("counter = ", codeBlock->dfgJITData()->tierUpCounter()));
         dataLogLnIf(Options::verboseOSR(), "Choosing not to FTL-optimize ", *codeBlock, " yet.");
         return false;
     }
@@ -4708,7 +4708,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationTriggerTierUpNow, void, (VM* vmPointe
     JITCode* jitCode = codeBlock->jitCode()->dfg();
     
     dataLogLnIf(Options::verboseOSR(),
-        *codeBlock, ": Entered triggerTierUpNow with executeCounter = ", jitCode->tierUpCounter);
+        *codeBlock, ": Entered triggerTierUpNow with executeCounter = ", codeBlock->dfgJITData()->tierUpCounter());
 
     if (shouldTriggerFTLCompile(codeBlock, jitCode))
         triggerFTLReplacementCompile(vm, codeBlock, jitCode);
@@ -4744,28 +4744,6 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
     JITCode* jitCode = codeBlock->jitCode()->dfg();
     
     bool triggeredSlowPathToStartCompilation = false;
-    auto tierUpEntryTriggers = jitCode->tierUpEntryTriggers.find(originBytecodeIndex);
-    if (tierUpEntryTriggers != jitCode->tierUpEntryTriggers.end()) {
-        switch (tierUpEntryTriggers->value) {
-        case JITCode::TriggerReason::DontTrigger:
-            // The trigger isn't set, we entered because the counter reached its
-            // threshold.
-            break;
-
-        case JITCode::TriggerReason::CompilationDone:
-            // The trigger was set because compilation completed. Don't unset it
-            // so that further DFG executions OSR enter as well.
-            break;
-
-        case JITCode::TriggerReason::StartCompilation:
-            // We were asked to enter as soon as possible and start compiling an
-            // entry for the current bytecode location. Unset this trigger so we
-            // don't continually enter.
-            tierUpEntryTriggers->value = JITCode::TriggerReason::DontTrigger;
-            triggeredSlowPathToStartCompilation = true;
-            break;
-        }
-    }
 
     if (worklistState == JITWorklist::Compiling) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("still compiling"));
@@ -4832,7 +4810,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
     if (!shouldTriggerFTLCompile(codeBlock, jitCode) && !triggeredSlowPathToStartCompilation)
         return nullptr;
 
-    if (!jitCode->neverExecutedEntry && !triggeredSlowPathToStartCompilation) {
+    if (!codeBlock->dfgJITData()->neverExecutedEntry() && !triggeredSlowPathToStartCompilation) {
         triggerFTLReplacementCompile(vm, codeBlock, jitCode);
 
         if (!codeBlock->hasOptimizedReplacement())
@@ -4860,52 +4838,6 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
 
     // It's time to try to compile code for OSR entry.
 
-    if (!triggeredSlowPathToStartCompilation) {
-
-        // An inner loop didn't specifically ask for us to kick off a compilation. This means the counter
-        // crossed its threshold. We either fall through and kick off a compile for originBytecodeIndex,
-        // or we flag an outer loop to immediately try to compile itself. If there are outer loops,
-        // we first try to make them compile themselves. But we will eventually fall back to compiling
-        // a progressively inner loop if it takes too long for control to reach an outer loop.
-
-        auto tryTriggerOuterLoopToCompile = [&] {
-            auto tierUpHierarchyEntry = jitCode->tierUpInLoopHierarchy.find(originBytecodeIndex);
-            if (tierUpHierarchyEntry == jitCode->tierUpInLoopHierarchy.end())
-                return false;
-
-            // This vector is ordered from innermost to outermost loop. Every bytecode entry in this vector is
-            // allowed to do OSR entry. We start with the outermost loop and make our way inwards (hence why we
-            // iterate the vector in reverse). Our policy is that we will trigger an outer loop to compile
-            // immediately when program control reaches it. If program control is taking too long to reach that
-            // outer loop, we progressively move inwards, meaning, we'll eventually trigger some loop that is
-            // executing to compile. We start with trying to compile outer loops since we believe outer loop
-            // compilations reveal the best opportunities for optimizing code.
-            for (auto iter = tierUpHierarchyEntry->value.rbegin(), end = tierUpHierarchyEntry->value.rend(); iter != end; ++iter) {
-                BytecodeIndex osrEntryCandidate = *iter;
-
-                if (jitCode->tierUpEntryTriggers.get(osrEntryCandidate) == JITCode::TriggerReason::StartCompilation) {
-                    // This means that we already asked this loop to compile. If we've reached here, it
-                    // means program control has not yet reached that loop. So it's taking too long to compile.
-                    // So we move on to asking the inner loop of this loop to compile itself.
-                    continue;
-                }
-
-                // This is where we ask the outer to loop to immediately compile itself if program
-                // control reaches it.
-                dataLogLnIf(Options::verboseOSR(), "Inner-loop ", originBytecodeIndex, " in ", *codeBlock, " setting parent loop ", osrEntryCandidate, "'s trigger and backing off.");
-                jitCode->tierUpEntryTriggers.set(osrEntryCandidate, JITCode::TriggerReason::StartCompilation);
-                return true;
-            }
-
-            return false;
-        };
-
-        if (tryTriggerOuterLoopToCompile()) {
-            jitCode->setOptimizationThresholdBasedOnCompilationResult(codeBlock, CompilationDeferred);
-            return nullptr;
-        }
-    }
-
     if (!canOSREnterHere) {
         jitCode->setOptimizationThresholdBasedOnCompilationResult(codeBlock, CompilationDeferred);
         return nullptr;
@@ -4913,14 +4845,6 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
 
     // We aren't compiling and haven't compiled anything for OSR entry. So, try to compile
     // something.
-
-    auto triggerIterator = jitCode->tierUpEntryTriggers.find(originBytecodeIndex);
-    if (triggerIterator == jitCode->tierUpEntryTriggers.end()) {
-        jitCode->setOptimizationThresholdBasedOnCompilationResult(codeBlock, CompilationDeferred);
-        return nullptr;
-    }
-
-    JITCode::TriggerReason* triggerAddress = &(triggerIterator->value);
 
     Operands<std::optional<JSValue>> mustHandleValues;
     unsigned streamIndex = jitCode->bytecodeIndexToStreamIndex.get(originBytecodeIndex);
@@ -4930,9 +4854,9 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
     CODEBLOCK_LOG_EVENT(codeBlock, "triggerFTLOSR", ());
     CompilationResult forEntryResult = compile(
         vm, replacementCodeBlock, codeBlock, JITCompilationMode::FTLForOSREntry, originBytecodeIndex,
-        WTFMove(mustHandleValues), ToFTLForOSREntryDeferredCompilationCallback::create(triggerAddress));
+        WTFMove(mustHandleValues), ToFTLForOSREntryDeferredCompilationCallback::create(nullptr));
 
-    if (jitCode->neverExecutedEntry)
+    if (codeBlock->dfgJITData()->neverExecutedEntry())
         triggerFTLReplacementCompile(vm, codeBlock, jitCode);
 
     if (forEntryResult != CompilationSuccessful) {
@@ -4974,7 +4898,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationTriggerTierUpNowInLoop, void, (VM* vm
 
     JITCode* jitCode = codeBlock->jitCode()->dfg();
 
-    dataLogLnIf(Options::verboseOSR(), *codeBlock, ": Entered triggerTierUpNowInLoop with executeCounter = ", jitCode->tierUpCounter);
+    dataLogLnIf(Options::verboseOSR(), *codeBlock, ": Entered triggerTierUpNowInLoop with executeCounter = ", codeBlock->dfgJITData()->tierUpCounter());
 
     if (jitCode->tierUpInLoopHierarchy.contains(bytecodeIndex))
         tierUpCommon(vm, callFrame, bytecodeIndex, false);
@@ -5004,9 +4928,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationTriggerOSREntryNow, char*, (VM* vmPoi
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    JITCode* jitCode = codeBlock->jitCode()->dfg();
-
-    dataLogLnIf(Options::verboseOSR(), *codeBlock, ": Entered triggerOSREntryNow with executeCounter = ", jitCode->tierUpCounter);
+    dataLogLnIf(Options::verboseOSR(), *codeBlock, ": Entered triggerOSREntryNow with executeCounter = ", codeBlock->dfgJITData()->tierUpCounter());
 
     return tierUpCommon(vm, callFrame, bytecodeIndex, true);
 }

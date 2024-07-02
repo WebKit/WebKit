@@ -59,11 +59,14 @@ void handleExitCounts(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
     jit.add32(AssemblyHelpers::TrustedImm32(1), GPRInfo::regT2);
     jit.store32(GPRInfo::regT2, AssemblyHelpers::Address(GPRInfo::regT3, CodeBlock::offsetOfOSRExitCounter()));
     
-    jit.move(AssemblyHelpers::TrustedImmPtr(jit.baselineCodeBlock()), GPRInfo::regT0);
-    AssemblyHelpers::Jump reoptimizeNow = jit.branch32(
+    AssemblyHelpers::JumpList reoptimizeNow;
+    jit.move(CCallHelpers::TrustedImmPtr(jit.baselineCodeBlock()), GPRInfo::regT0);
+    jit.loadPtr(AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITData()), GPRInfo::regT4);
+    reoptimizeNow.append(jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT4));
+    reoptimizeNow.append(jit.branch32(
         AssemblyHelpers::GreaterThanOrEqual,
-        AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()),
-        AssemblyHelpers::TrustedImm32(0));
+        AssemblyHelpers::Address(GPRInfo::regT4, BaselineJITData::offsetOfExecutionCounter()),
+        AssemblyHelpers::TrustedImm32(0)));
     
     // We want to figure out if there's a possibility that we're in a loop. For the outermost
     // code block in the inline stack, we handle this appropriately by having the loop OSR trigger
@@ -132,9 +135,9 @@ void handleExitCounts(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
 #endif
         break;
     }
-    jit.store32(AssemblyHelpers::TrustedImm32(-clippedValue), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()));
-    jit.store32(AssemblyHelpers::TrustedImm32(activeThreshold), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionActiveThreshold()));
-    jit.store32(AssemblyHelpers::TrustedImm32(formattedTotalExecutionCount(clippedValue)), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionTotalCount()));
+    jit.store32(AssemblyHelpers::TrustedImm32(-clippedValue), AssemblyHelpers::Address(GPRInfo::regT4, BaselineJITData::offsetOfExecutionCounter()));
+    jit.store32(AssemblyHelpers::TrustedImm32(activeThreshold), AssemblyHelpers::Address(GPRInfo::regT4, BaselineJITData::offsetOfExecutionActiveThreshold()));
+    jit.store32(AssemblyHelpers::TrustedImm32(formattedTotalExecutionCount(clippedValue)), AssemblyHelpers::Address(GPRInfo::regT4, BaselineJITData::offsetOfExecutionTotalCount()));
     
     doneAdjusting.link(&jit);
 }
@@ -347,8 +350,8 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
             jit.storePtr(CCallHelpers::TrustedImmPtr(baselineCodeBlockForCaller->instructionsRawPointer()), calleeSaveSlot(inlineCallFrame, baselineCodeBlock, LLInt::Registers::pbGPR));
         } else if (trueCaller) {
             CodeBlock* baselineCodeBlockForCaller = jit.baselineCodeBlockFor(*trueCaller);
-            jit.storePtr(CCallHelpers::TrustedImmPtr(baselineCodeBlockForCaller->metadataTable()), calleeSaveSlot(inlineCallFrame, baselineCodeBlock, JIT::s_metadataGPR));
-            jit.storePtr(CCallHelpers::TrustedImmPtr(baselineCodeBlockForCaller->baselineJITData()), calleeSaveSlot(inlineCallFrame, baselineCodeBlock, JIT::s_constantsGPR));
+            jit.storePtr(CCallHelpers::TrustedImmPtr(baselineCodeBlockForCaller->metadataTable()), calleeSaveSlot(inlineCallFrame, baselineCodeBlock, GPRInfo::metadataTableRegister));
+            jit.storePtr(CCallHelpers::TrustedImmPtr(baselineCodeBlockForCaller->baselineJITData()), calleeSaveSlot(inlineCallFrame, baselineCodeBlock, GPRInfo::jitDataRegister));
         }
 
         if (!inlineCallFrame->isVarargs())
@@ -437,8 +440,8 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
         jit.move(CCallHelpers::TrustedImm32(bytecodeIndex.offset()), LLInt::Registers::pcGPR);
         jumpTarget = destination.retagged<OSRExitPtrTag>().taggedPtr();
     } else {
-        jit.move(CCallHelpers::TrustedImmPtr(codeBlockForExit->metadataTable()), JIT::s_metadataGPR);
-        jit.move(CCallHelpers::TrustedImmPtr(codeBlockForExit->baselineJITData()), JIT::s_constantsGPR);
+        jit.move(CCallHelpers::TrustedImmPtr(codeBlockForExit->metadataTable()), GPRInfo::metadataTableRegister);
+        jit.move(CCallHelpers::TrustedImmPtr(codeBlockForExit->baselineJITData()), GPRInfo::jitDataRegister);
 
         BytecodeIndex exitIndex = exit.m_codeOrigin.bytecodeIndex();
         CodePtr<JSEntryPtrTag> destination;
