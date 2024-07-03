@@ -137,6 +137,16 @@
     _page->colorPickerClient().didChooseColor(WebCore::colorFromCocoaColor(color));
 }
 
+- (void)_createFlagsChangedEventMonitorForTesting
+{
+    _impl->createFlagsChangedEventMonitor();
+}
+
+- (void)_removeFlagsChangedEventMonitorForTesting
+{
+    _impl->removeFlagsChangedEventMonitor();
+}
+
 @end
 
 #endif // PLATFORM(MAC)

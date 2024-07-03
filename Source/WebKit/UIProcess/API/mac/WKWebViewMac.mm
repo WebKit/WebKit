@@ -1759,16 +1759,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _impl->mouseMoved(event);
 }
 
-- (void)_createFlagsChangedEventMonitorForTesting
-{
-    _impl->createFlagsChangedEventMonitor();
-}
-
-- (void)_removeFlagsChangedEventMonitorForTesting
-{
-    _impl->removeFlagsChangedEventMonitor();
-}
-
 - (void)_setFont:(NSFont *)font sender:(id)sender
 {
     _impl->setFontForWebView(font, sender);
