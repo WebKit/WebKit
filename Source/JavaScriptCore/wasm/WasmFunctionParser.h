@@ -2605,6 +2605,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTypedFunctionReferences(), "function references are not enabled");
         TypedExpression ref;
         WASM_TRY_POP_EXPRESSION_STACK_INTO(ref, "ref.as_non_null");
+        WASM_VALIDATOR_FAIL_IF(!isRefType(ref.type()), "ref.as_non_null ref to type ", ref.type(), " expected a reference type");
 
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addRefAsNonNull(ref, result));
