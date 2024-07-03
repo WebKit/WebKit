@@ -80,7 +80,7 @@ Ref<StyleRuleFontFace> SVGFontFaceElement::protectedFontFaceRule() const
 
 void SVGFontFaceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    CSSPropertyID propertyId = cssPropertyIdForSVGAttributeName(name);
+    CSSPropertyID propertyId = cssPropertyIdForSVGAttributeName(name, document().settings());
     if (propertyId > 0) {
         // FIXME: Parse using the @font-face descriptor grammars, not the property grammars.
         Ref fontFaceRule = m_fontFaceRule;
