@@ -49,7 +49,7 @@ int WKAdAttributionDaemonMain(int argc, const char** argv)
 
 int WKWebPushDaemonMain(int argc, char** argv)
 {
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
     return WebKit::WebPushDaemonMain(argc, argv);
 #else
     return -1;
@@ -58,7 +58,7 @@ int WKWebPushDaemonMain(int argc, char** argv)
 
 int WKWebPushToolMain(int argc, char** argv)
 {
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
     return WebKit::WebPushToolMain(argc, argv);
 #else
     return -1;

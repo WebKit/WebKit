@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
 #include "NotificationManagerMessageHandler.h"
 #include "WebPushDaemonConnection.h"
@@ -81,4 +81,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+#endif // ENABLE(WEB_PUSH_NOTIFICATIONS)

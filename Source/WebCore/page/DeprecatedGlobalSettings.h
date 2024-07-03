@@ -144,7 +144,7 @@ public:
     static bool mediaSourceInlinePaintingEnabled() { return shared().m_mediaSourceInlinePaintingEnabled; }
 #endif
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
     static void setBuiltInNotificationsEnabled(bool isEnabled) { shared().m_builtInNotificationsEnabled = isEnabled; }
     static bool builtInNotificationsEnabled() { return shared().m_builtInNotificationsEnabled; }
 #endif
@@ -226,7 +226,7 @@ private:
     bool m_mediaSourceInlinePaintingEnabled { false };
 #endif
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
     bool m_builtInNotificationsEnabled { false };
 #endif
 

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebPushDaemonConnection.h"
 
-#if PLATFORM(COCOA) && ENABLE(BUILT_IN_NOTIFICATIONS)
+#if PLATFORM(COCOA) && ENABLE(WEB_PUSH_NOTIFICATIONS)
 
 #import "DaemonUtilities.h"
 #import "Decoder.h"
@@ -87,4 +87,4 @@ bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IP
 
 } // namespace WebKit::WebPushD
 
-#endif // PLATFORM(COCOA) && ENABLE(BUILT_IN_NOTIFICATIONS)
+#endif // PLATFORM(COCOA) && ENABLE(WEB_PUSH_NOTIFICATIONS)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NetworkNotificationManager.h"
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
 #include "DaemonDecoder.h"
 #include "DaemonEncoder.h"
@@ -191,4 +191,4 @@ void NetworkNotificationManager::removePushSubscriptionsForOrigin(WebCore::Secur
 }
 
 } // namespace WebKit
-#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+#endif // ENABLE(WEB_PUSH_NOTIFICATIONS)

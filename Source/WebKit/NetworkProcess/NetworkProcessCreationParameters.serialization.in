@@ -53,7 +53,7 @@ headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameter
 
     bool enablePrivateClickMeasurement
     bool ftpEnabled
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
     bool builtInNotificationsEnabled
 #endif
 
