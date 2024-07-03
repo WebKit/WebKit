@@ -816,6 +816,8 @@ void VideoPresentationManager::setVideoLayerFrameFenced(PlaybackSessionContextId
         model->setVideoLayerFrame(bounds);
     } else
         model->setVideoSizeFenced(bounds.size(), WTFMove(machSendRight));
+
+    model->setTextTrackRepresentationBounds(enclosingIntRect(bounds));
 }
 
 void VideoPresentationManager::setVideoFullscreenFrame(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect frame)
