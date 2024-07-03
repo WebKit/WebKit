@@ -113,6 +113,7 @@ public:
     RTCRtpCapabilities videoRtpCapabilities(Configuration);
     Vector<RTCRtpCapabilities::HeaderExtensionCapability> audioRtpExtensions();
     Vector<RTCRtpCapabilities::HeaderExtensionCapability> videoRtpExtensions();
+    RegistryLookupResult isRtpPacketizerSupported(const String& encoding);
 #endif
 
 protected:
