@@ -57,6 +57,7 @@ const char* bgColor;
 static char* timeZone;
 static const char* featureList = nullptr;
 static gboolean enableITP;
+static gboolean enableWriteConsoleMessagesToStdout;
 static gboolean printVersion;
 static guint windowWidth = 0;
 static guint windowHeight = 0;
@@ -116,6 +117,7 @@ static const GOptionEntry commandLineOptions[] =
     { "content-filter", 0, 0, G_OPTION_ARG_FILENAME, &contentFilter, "JSON with content filtering rules", "FILE" },
     { "bg-color", 0, 0, G_OPTION_ARG_STRING, &bgColor, "Window background color. Default: white", "COLOR" },
     { "enable-itp", 0, 0, G_OPTION_ARG_NONE, &enableITP, "Enable Intelligent Tracking Prevention (ITP)", nullptr },
+    { "enable-write-console-messages-to-stdout", 0, 0, G_OPTION_ARG_NONE, &enableWriteConsoleMessagesToStdout, "Enable writing on stdout console.log() JS messages", nullptr },
     { "time-zone", 't', 0, G_OPTION_ARG_STRING, &timeZone, "Set time zone", "TIMEZONE" },
     { "features", 'F', 0, G_OPTION_ARG_STRING, &featureList, "Enable or disable WebKit features (hint: pass 'help' for a list)", "FEATURE-LIST" },
 #if ENABLE_WPE_PLATFORM
@@ -469,6 +471,7 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
         "enable-media-stream", TRUE,
         "enable-webrtc", TRUE,
         "enable-encrypted-media", TRUE,
+        "enable-write-console-messages-to-stdout", enableWriteConsoleMessagesToStdout,
         nullptr);
 
     if (featureList) {
