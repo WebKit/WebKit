@@ -425,7 +425,7 @@ void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data,
     auto fragment = document->createDocumentFragment();
     fragment->appendChild(WTFMove(picture));
 
-    ReplaceSelectionCommand::create(document.get(), WTFMove(fragment), ReplaceSelectionCommand::PreventNesting, EditAction::Insert)->apply();
+    ReplaceSelectionCommand::create(document.get(), WTFMove(fragment), { ReplaceSelectionCommand::MatchStyle, ReplaceSelectionCommand::PreventNesting }, EditAction::Insert)->apply();
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (DeprecatedGlobalSettings::attachmentElementEnabled()) {
