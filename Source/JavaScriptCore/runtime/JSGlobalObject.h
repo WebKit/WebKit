@@ -267,10 +267,13 @@ public:
     WriteBarrier<JSFunction> m_objectProtoValueOfFunction;
     WriteBarrier<JSFunction> m_functionProtoHasInstanceSymbolFunction;
     WriteBarrier<JSFunction> m_performProxyObjectHasFunction;
+    WriteBarrier<JSFunction> m_performProxyObjectHasByValFunction;
     WriteBarrier<JSFunction> m_performProxyObjectGetFunction;
     WriteBarrier<JSFunction> m_performProxyObjectGetByValFunction;
     WriteBarrier<JSFunction> m_performProxyObjectSetStrictFunction;
     WriteBarrier<JSFunction> m_performProxyObjectSetSloppyFunction;
+    WriteBarrier<JSFunction> m_performProxyObjectSetByValStrictFunction;
+    WriteBarrier<JSFunction> m_performProxyObjectSetByValSloppyFunction;
     WriteBarrier<JSObject> m_regExpProtoSymbolReplace;
     LazyProperty<JSGlobalObject, GetterSetter> m_throwTypeErrorArgumentsCalleeGetterSetter;
 
@@ -704,6 +707,8 @@ public:
     JSFunction* regExpProtoExecFunction() const;
     JSFunction* stringProtoSubstringFunction() const;
     JSFunction* performProxyObjectHasFunction() const;
+    JSFunction* performProxyObjectHasByValFunction() const;
+    JSFunction* performProxyObjectHasByValFunctionConcurrently() const;
     JSFunction* performProxyObjectGetFunction() const;
     JSFunction* performProxyObjectGetFunctionConcurrently() const;
     JSFunction* performProxyObjectGetByValFunction() const;
@@ -712,6 +717,10 @@ public:
     JSFunction* performProxyObjectSetSloppyFunctionConcurrently() const;
     JSFunction* performProxyObjectSetStrictFunction() const;
     JSFunction* performProxyObjectSetStrictFunctionConcurrently() const;
+    JSFunction* performProxyObjectSetByValSloppyFunction() const;
+    JSFunction* performProxyObjectSetByValSloppyFunctionConcurrently() const;
+    JSFunction* performProxyObjectSetByValStrictFunction() const;
+    JSFunction* performProxyObjectSetByValStrictFunctionConcurrently() const;
     JSObject* regExpProtoSymbolReplaceFunction() const { return m_regExpProtoSymbolReplace.get(); }
     GetterSetter* regExpProtoGlobalGetter() const;
     GetterSetter* regExpProtoUnicodeGetter() const;
@@ -894,10 +903,13 @@ public:
     static constexpr ptrdiff_t offsetOfVarReadOnlyWatchpoint() { return OBJECT_OFFSETOF(JSGlobalObject, m_varReadOnlyWatchpointSet); }
     static constexpr ptrdiff_t offsetOfFunctionProtoHasInstanceSymbolFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_functionProtoHasInstanceSymbolFunction); }
     static constexpr ptrdiff_t offsetOfPerformProxyObjectHasFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectHasFunction); }
+    static constexpr ptrdiff_t offsetOfPerformProxyObjectHasByValFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectHasByValFunction); }
     static constexpr ptrdiff_t offsetOfPerformProxyObjectGetFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectGetFunction); }
     static constexpr ptrdiff_t offsetOfPerformProxyObjectGetByValFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectGetByValFunction); }
     static constexpr ptrdiff_t offsetOfPerformProxyObjectSetStrictFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectSetStrictFunction); }
     static constexpr ptrdiff_t offsetOfPerformProxyObjectSetSloppyFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectSetSloppyFunction); }
+    static constexpr ptrdiff_t offsetOfPerformProxyObjectSetByValStrictFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectSetByValStrictFunction); }
+    static constexpr ptrdiff_t offsetOfPerformProxyObjectSetByValSloppyFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_performProxyObjectSetByValSloppyFunction); }
     static constexpr ptrdiff_t offsetOfNullSetterStrictFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_nullSetterStrictFunction); }
     static constexpr ptrdiff_t offsetOfStringPrototype() { return OBJECT_OFFSETOF(JSGlobalObject, m_stringPrototype); }
     static constexpr ptrdiff_t offsetOfBigIntPrototype() { return OBJECT_OFFSETOF(JSGlobalObject, m_bigIntPrototype); }
