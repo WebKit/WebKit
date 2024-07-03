@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC) && ENABLE(SCROLLING_THREAD)
 
+#include "../RemoteLayerTreeCommitTracing.h"
 #include "DisplayLink.h"
 #include "Logging.h"
 #include "NativeWebWheelEvent.h"
@@ -37,6 +38,8 @@
 #include "RemoteScrollingTree.h"
 #include "WebEventConversion.h"
 #include "WebPageProxy.h"
+#include <QuartzCore/CATransactionPrivate.h>
+#include <QuartzCore/QuartzCore.h>
 #include <WebCore/PlatformWheelEvent.h>
 #include <WebCore/ScrollingCoordinatorTypes.h>
 #include <WebCore/ScrollingNodeID.h>
@@ -190,6 +193,8 @@ void RemoteLayerTreeEventDispatcher::handleWheelEvent(const WebWheelEvent& wheel
     ASSERT(isMainRunLoop());
 
     willHandleWheelEvent(wheelEvent);
+
+    CAFrameLogging frameLogging;
 
     ScrollingThread::dispatch([dispatcher = Ref { *this }, wheelEvent, rubberBandableEdges] {
         dispatcher->scrollingThreadHandleWheelEvent(wheelEvent, rubberBandableEdges);

@@ -27,6 +27,7 @@
 
 #include "DrawingAreaProxy.h"
 #include "RemoteImageBufferSetIdentifier.h"
+#include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeHost.h"
 #include "TransactionID.h"
 #include <WebCore/AnimationFrameRate.h>
