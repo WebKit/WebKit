@@ -404,10 +404,12 @@ static inline void dispatchEventsOnWindowAndFocusedElement(Document* document, b
     if (!focused && document->focusedElement()) {
 
         document->focusedElement()->dispatchBlurEvent(nullptr);
+
         if (RefPtr formControlElement = dynamicDowncast<HTMLFormControlElement>(*document->focusedElement())) {
             if (formControlElement->wasChangedSinceLastFormControlChangeEvent())
                 formControlElement->dispatchFormControlChangeEvent();
         }
+
     }
     document->dispatchWindowEvent(Event::create(focused ? eventNames().focusEvent : eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No));
     if (focused && document->focusedElement())
