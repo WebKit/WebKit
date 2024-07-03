@@ -77,6 +77,7 @@ class MacOSFullscreenMediaControls extends MediaControls
 
         this.bottomControlsBar.element.addEventListener("mousedown", this);
         this.bottomControlsBar.element.addEventListener("click", this);
+        this.element.addEventListener("mousemove", this);
 
         this._backgroundClickDelegateNotifier = new BackgroundClickDelegateNotifier(this);
     }
@@ -181,6 +182,11 @@ class MacOSFullscreenMediaControls extends MediaControls
 
     _handleMousemove(event)
     {
+        if (!this._lastDragPoint) {
+            this.faded = false;
+            return;
+        }
+
         event.preventDefault();
 
         const currentDragPoint = this._pointForEvent(event);
