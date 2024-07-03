@@ -3893,6 +3893,8 @@ private:
                 }
                 if (edge->shouldSpeculateInt32())
                     return;
+                if (edge->shouldSpeculateNumber())
+                    return;
                 if (m_graph.canOptimizeStringObjectAccess(node->origin.semantic)) {
                     if (edge->shouldSpeculateStringObject()) {
                         atLeastOneString = true;
@@ -3921,6 +3923,10 @@ private:
                 }
                 if (edge->shouldSpeculateInt32()) {
                     convertStringAddUse<Int32Use>(node, edge);
+                    return;
+                }
+                if (edge->shouldSpeculateNumber()) {
+                    convertStringAddUse<DoubleRepUse>(node, edge);
                     return;
                 }
                 if (edge->op() == ToPrimitive) {
