@@ -49,7 +49,7 @@ void RenderMathMLSpace::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = spaceWidth();
+    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = spaceWidth() + borderAndPaddingLogicalWidth();
 
     setPreferredLogicalWidthsDirty(false);
 }
@@ -81,10 +81,12 @@ void RenderMathMLSpace::layoutBlock(bool relayoutChildren, LayoutUnit)
     if (!relayoutChildren && simplifiedLayout())
         return;
 
-    setLogicalWidth(spaceWidth());
+    recomputeLogicalWidth();
+
+    setLogicalWidth(spaceWidth() + borderAndPaddingLogicalWidth());
     LayoutUnit height, depth;
     getSpaceHeightAndDepth(height, depth);
-    setLogicalHeight(height + depth);
+    setLogicalHeight(height + depth + borderAndPaddingLogicalHeight());
 
     updateScrollInfoAfterLayout();
 
@@ -95,7 +97,7 @@ std::optional<LayoutUnit> RenderMathMLSpace::firstLineBaseline() const
 {
     LayoutUnit height, depth;
     getSpaceHeightAndDepth(height, depth);
-    return height;
+    return height + borderAndPaddingBefore();
 }
 
 }
