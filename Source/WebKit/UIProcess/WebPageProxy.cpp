@@ -403,6 +403,10 @@
 #import <pal/system/ios/Device.h>
 #endif
 
+#if USE(GLIB_EVENT_LOOP)
+#include <wtf/glib/RunLoopSourcePriority.h>
+#endif
+
 #define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
 #define MESSAGE_CHECK_URL(process, url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
 #define MESSAGE_CHECK_URL_COROUTINE(process, url) MESSAGE_CHECK_BASE_COROUTINE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
@@ -653,7 +657,15 @@ WebPageProxy::Internals::Internals(WebPageProxy& page)
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     , fullscreenVideoTextRecognitionTimer(RunLoop::main(), &page, &WebPageProxy::fullscreenVideoTextRecognitionTimerFired)
 #endif
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    , activityStateChangeTimer(RunLoop::main(), &page, &WebPageProxy::dispatchActivityStateChange)
+#endif
 {
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    activityStateChangeTimer.setName("[WebKit] ActivityStateChange"_s);
+    // Give the events causing activity state changes more priority than the change timer.
+    activityStateChangeTimer.setPriority(RunLoopSourcePriority::RunLoopTimer + 1);
+#endif
 }
 
 WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref<API::PageConfiguration>&& configuration)
@@ -2599,7 +2611,7 @@ void WebPageProxy::setSuppressVisibilityUpdates(bool flag)
     m_suppressVisibilityUpdates = flag;
 
     if (!m_suppressVisibilityUpdates) {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
         scheduleActivityStateUpdate();
 #else
         dispatchActivityStateChange();
@@ -2700,6 +2712,9 @@ void WebPageProxy::activityStateDidChange(OptionSet<ActivityState> mayHaveChange
         return;
     }
     scheduleActivityStateUpdate();
+#elif PLATFORM(GTK) || PLATFORM(WPE)
+    UNUSED_PARAM(dispatchMode);
+    scheduleActivityStateUpdate();
 #else
     UNUSED_PARAM(dispatchMode);
     dispatchActivityStateChange();
@@ -2749,6 +2764,10 @@ void WebPageProxy::dispatchActivityStateChange()
     if (m_activityStateChangeDispatcher->isScheduled())
         m_activityStateChangeDispatcher->invalidate();
     m_hasScheduledActivityStateUpdate = false;
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    internals().activityStateChangeTimer.stop();
 #endif
 
     if (!hasRunningProcess())

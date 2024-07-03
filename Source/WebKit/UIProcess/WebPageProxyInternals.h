@@ -327,6 +327,10 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     HashMap<WebCore::RegistrableDomain, OptionSet<WebCore::WindowProxyProperty>> windowOpenerAccessedProperties;
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    RunLoop::Timer activityStateChangeTimer;
+#endif
+
     bool allowsLayoutViewportHeightExpansion { true };
 
     explicit Internals(WebPageProxy&);

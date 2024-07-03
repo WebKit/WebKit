@@ -1157,9 +1157,12 @@ public:
     bool scrollPerformanceDataCollectionEnabled() const { return m_scrollPerformanceDataCollectionEnabled; }
     RemoteLayerTreeScrollingPerformanceData* scrollingPerformanceData() { return m_scrollingPerformanceData.get(); }
 
-    void scheduleActivityStateUpdate();
     void addActivityStateUpdateCompletionHandler(CompletionHandler<void()>&&);
 #endif // PLATFORM(COCOA)
+
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
+    void scheduleActivityStateUpdate();
+#endif
 
     void changeFontAttributes(WebCore::FontAttributeChanges&&);
     void changeFont(WebCore::FontChanges&&);
