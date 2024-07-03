@@ -72,7 +72,7 @@ NSString *WebExtensionAPIDevToolsPanels::themeName()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/themeName
 
-    switch (m_theme) {
+    switch (extensionContext().inspectorAppearance()) {
     case Inspector::ExtensionAppearance::Light:
         return @"light";
 
@@ -95,9 +95,10 @@ void WebExtensionContextProxy::dispatchDevToolsPanelsThemeChangedEvent(Inspector
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/onThemeChanged
 
+    setInspectorAppearance(appearance);
+
     enumerateNamespaceObjects([&](auto& namespaceObject) {
         auto& panels = namespaceObject.devtools().panels();
-        panels.setTheme(appearance);
         panels.onThemeChanged().invokeListenersWithArgument(panels.themeName());
     });
 }
