@@ -112,6 +112,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionMessagePort, WebExtensionMe
 
 - (void)sendMessage:(id)message completionHandler:(void (^)(BOOL success, NSError *))completionHandler
 {
+    completionHandler(NO, [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil]);
 }
 
 - (void)disconnectWithError:(NSError *)error

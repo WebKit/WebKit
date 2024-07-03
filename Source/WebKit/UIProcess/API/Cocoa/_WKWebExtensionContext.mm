@@ -1103,6 +1103,7 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 
 - (void)loadBackgroundContentWithCompletionHandler:(void (^)(NSError *error))completionHandler
 {
+    completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil]);
 }
 
 - (_WKWebExtensionAction *)actionForTab:(id<_WKWebExtensionTab>)tab NS_SWIFT_NAME(action(for:))
