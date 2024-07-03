@@ -312,7 +312,8 @@ void CtapAuthenticator::continueGetKeyAgreementAfterGetRetries(Vector<uint8_t>&&
     auto retries = pin::RetriesResponse::parse(data);
     if (!retries) {
         auto error = getResponseCode(data);
-        receiveRespond(ExceptionData { ExceptionCode::UnknownError, makeString("Unknown internal error. Error code: "_s, static_cast<uint8_t>(error)) });
+        //WTFReportBacktrace()
+        receiveRespond(ExceptionData { ExceptionCode::UnknownError, makeString("Unknown internal error. Error code: "_s, static_cast<uint8_t>(error)) }); //look for this w/no pin key on uv required
         return;
     }
 
