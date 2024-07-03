@@ -304,11 +304,8 @@ void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t>
     if (!hasRunningProcess())
         return;
 
-    RefPtr frame = WebFrameProxy::webFrame(frameID);
-    if (!frame)
-        return;
-
-    protectedPageClient()->accessibilityWebProcessTokenReceived(data, frameID, frame->process().connection()->remoteProcessID());
+    // Note: The WebFrameProxy with this FrameIdentifier might not exist in the UI process. See rdar://130998804.
+    protectedPageClient()->accessibilityWebProcessTokenReceived(data, frameID, legacyMainFrameProcess().connection()->remoteProcessID());
 }
 
 void WebPageProxy::makeFirstResponder()
