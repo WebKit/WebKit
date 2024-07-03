@@ -131,11 +131,9 @@ imported/w3c/web-platform-tests/webxr/xr_viewport_scale.https.html [ Failure ]
 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_draw.https.html [ Failure ]
 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer_stencil.https.html [ Failure ]
 
-webkit.org/b/274931 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_viewports.https.html [ Failure ]
-
 webkit.org/b/274980 imported/w3c/web-platform-tests/webxr/xrViewport_valid.https.html [ Failure ]
 
-imported/w3c/web-platform-tests/webxr/getInputPose_pointer.https.html275009 [VisionOS] 3 tests in fast/events/pointer/iOS tests are timing out constantly
+# webkit.org/b/275009 [VisionOS] 3 tests in fast/events/pointer/iOS tests are timing out constantly
 fast/events/pointer/ios/drag-gives-pointerdown-pointermove-pointerup.html [ Timeout ]
 fast/events/pointer/ios/drag-populates-pointer-events-with-movementxy-fields.html [ Timeout ]
 fast/events/pointer/ios/tap-gives-pointerdown-pointerup.html [ Timeout ]

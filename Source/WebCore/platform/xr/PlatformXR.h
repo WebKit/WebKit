@@ -260,7 +260,7 @@ struct FrameData {
 
 #if PLATFORM(COCOA)
     struct RateMapDescription {
-        WebCore::IntSize screenSize;
+        WebCore::IntSize screenSize = { 0, 0 };
         Vector<float> horizontalSamplesLeft;
         Vector<float> horizontalSamplesRight;
         // Vertical samples is shared by both horizontalSamples
