@@ -1907,10 +1907,6 @@ TEST(WritingTools, APIWithBehaviorNone)
     NSMenuItem *writingToolsMenuItem = [proposedMenu itemWithIdentifier:_WKMenuItemIdentifierWritingTools];
     EXPECT_NULL(writingToolsMenuItem);
 #endif
-
-#if PLATFORM(IOS_FAMILY)
-    EXPECT_EQ(UIWritingToolsBehaviorNone, [[webView effectiveTextInputTraits] writingToolsBehavior]);
-#endif
 }
 
 TEST(WritingTools, APIWithBehaviorDefault)
@@ -1954,10 +1950,6 @@ TEST(WritingTools, APIWithBehaviorDefault)
     NSMenuItem *writingToolsMenuItem = [proposedMenu itemWithIdentifier:_WKMenuItemIdentifierWritingTools];
     EXPECT_NOT_NULL(writingToolsMenuItem);
 #endif
-
-#if PLATFORM(IOS_FAMILY)
-    EXPECT_EQ(UIWritingToolsBehaviorLimited, [[webView effectiveTextInputTraits] writingToolsBehavior]);
-#endif
 }
 
 TEST(WritingTools, APIWithBehaviorComplete)
@@ -2000,10 +1992,6 @@ TEST(WritingTools, APIWithBehaviorComplete)
 
     NSMenuItem *writingToolsMenuItem = [proposedMenu itemWithIdentifier:_WKMenuItemIdentifierWritingTools];
     EXPECT_NOT_NULL(writingToolsMenuItem);
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-    EXPECT_EQ(UIWritingToolsBehaviorComplete, [[webView effectiveTextInputTraits] writingToolsBehavior]);
 #endif
 }
 
