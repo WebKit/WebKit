@@ -267,8 +267,8 @@ inline Length BuilderConverter::convertLength(const BuilderState& builderState, 
         return Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData));
 
     if (primitiveValue.isAnchor()) {
-        auto& anchorPositionedElement = *builderState.element();
-        return AnchorPositionEvaluator::resolveAnchorValue(primitiveValue.cssAnchorValue(), anchorPositionedElement);
+        RefPtr anchorPositionedElement = builderState.element();
+        return AnchorPositionEvaluator::resolveAnchorValue(primitiveValue.cssAnchorValue(), anchorPositionedElement.get());
     }
 
     ASSERT_NOT_REACHED();

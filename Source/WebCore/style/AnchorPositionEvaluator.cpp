@@ -26,16 +26,19 @@
 #include "AnchorPositionEvaluator.h"
 
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "StyleScope.h"
 
 namespace WebCore::Style {
 
-Length AnchorPositionEvaluator::resolveAnchorValue(const CSSAnchorValue* anchorValue, const Element& element)
+Length AnchorPositionEvaluator::resolveAnchorValue(const CSSAnchorValue* anchorValue, const Element* element)
 {
-    auto& anchorPositionedStateMap = element.document().styleScope().anchorPositionedStateMap();
+    if (!element)
+        return Length(0, LengthType::Fixed);
 
-    auto* anchorPositionedElementState = anchorPositionedStateMap.ensure(element, [&] {
+    auto& anchorPositionedStateMap = element->protectedDocument()->checkedStyleScope()->anchorPositionedStateMap();
+    auto* anchorPositionedElementState = anchorPositionedStateMap.ensure(*element, [&] {
         return WTF::makeUnique<AnchorPositionedElementState>();
     }).iterator->value.get();
 
